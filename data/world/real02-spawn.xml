@@ -4425,7 +4425,7 @@
 		<monster name="Ice Witch" x="0" y="0" z="7" spawntime="60" direction="1" />
 	</spawn>
 	<spawn centerx="1426" centery="1296" centerz="7" radius="1">
-		<monster name="Hellfire Fighter" x="1" y="0" z="7" spawntime="60" direction="3" />
+		<monster name="Hellfire Fighter" x="0" y="0" z="7" spawntime="60" direction="3" />
 	</spawn>
 	<spawn centerx="1418" centery="1298" centerz="7" radius="1">
 		<monster name="Minotaur archer" x="-1" y="0" z="7" spawntime="60" direction="1" />
