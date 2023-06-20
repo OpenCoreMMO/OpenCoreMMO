@@ -1,0 +1,79 @@
+{
+  "name": "Trainer",
+  "nameDescription": "a trainer",
+  "race": "blood",
+  "experience": 0,
+  "speed": 0,
+  "manaCost": 0,
+  "health": {
+    "max": 1000000,
+    "now": 1000000
+  },
+  "look": {
+    "type": 57,
+    "head": 0,
+    "body": 0,
+    "legs": 0,
+    "feet": 0,
+    "corpse": 6080
+  },
+  "targetChange": {
+    "interval": 0,
+    "chance": 0
+  },
+  "strategy": {
+    "attack": 0,
+    "defense": 0
+  },
+  "flags": {
+    "summonable": 0,
+    "attackable": 1,
+    "hostile": 1,
+    "illusionable": 0,
+    "convinceable": 0,
+    "pushable": 0,
+    "canpushitems": 0,
+    "canpushcreatures": 0,
+    "targetdistance": 1,
+    "staticattack": 90,
+    "runonhealth": 0
+  },
+  "attacks": [
+    {
+      "name": "melee",
+      "interval": "2000",
+      "skill": "0",
+      "attack": "0"
+    }
+  ],
+  "defense": {
+    "armor": 20,
+    "defense": 22
+  },
+  "defenses": [
+    {
+      "name": "healing",
+      "interval": "10000",
+      "chance": "100",
+      "min": "1000000",
+      "max": "1000000",
+      "attributes": [
+        {
+          "areaEffect": "blueshimmer"
+        }
+      ]
+    }
+  ],
+  "elements": {},
+  "loot": [],
+  "voices": {
+    "interval": 0,
+    "chance": 0,
+    "sentences": []
+  },
+  "immunities": {},
+  "summon": {
+    "maxSummons": 0,
+    "summons": []
+  }
+}

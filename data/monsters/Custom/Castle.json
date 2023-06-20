@@ -1,0 +1,88 @@
+{
+  "name": "Guarda do Castelo",
+  "nameDescription": "um guarda",
+  "race": "blood",
+  "experience": 0,
+  "speed": 0,
+  "manaCost": 0,
+  "health": {
+    "max": 10000,
+    "now": 10000
+  },
+  "look": {
+    "type": 0,
+    "head": 0,
+    "body": 0,
+    "legs": 0,
+    "feet": 0,
+    "corpse": 0
+  },
+  "targetChange": {
+    "interval": 5000,
+    "chance": 0
+  },
+  "strategy": {
+    "attack": 0,
+    "defense": 0
+  },
+  "flags": {
+    "summonable": 0,
+    "attackable": 1,
+    "hostile": 1,
+    "illusionable": 1,
+    "convinceable": 0,
+    "pushable": 0,
+    "canpushitems": 1,
+    "canpushcreatures": 0,
+    "targetdistance": 1,
+    "staticattack": 90,
+    "runonhealth": 10
+  },
+  "attacks": [
+    {
+      "name": "poison",
+      "interval": "3000",
+      "chance": "20",
+      "radius": "6",
+      "target": "0",
+      "min": "-150",
+      "max": "-200",
+      "attributes": [
+        {
+          "areaEffect": "poison"
+        }
+      ]
+    },
+    {
+      "name": "energy",
+      "interval": "1500",
+      "chance": "24",
+      "radius": "6",
+      "target": "0",
+      "min": "-200",
+      "max": "-300",
+      "attributes": [
+        {
+          "areaEffect": "energy"
+        }
+      ]
+    }
+  ],
+  "defense": {
+    "armor": 18,
+    "defense": 14
+  },
+  "defenses": [],
+  "elements": {},
+  "loot": [],
+  "voices": {
+    "interval": 5000,
+    "chance": 10,
+    "sentences": []
+  },
+  "immunities": {},
+  "summon": {
+    "maxSummons": 0,
+    "summons": []
+  }
+}

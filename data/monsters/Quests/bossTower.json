@@ -1,0 +1,148 @@
+{
+  "name": "Boss Tower",
+  "nameDescription": "a boss tower",
+  "race": "blood",
+  "experience": 5000,
+  "speed": 0,
+  "manaCost": 670,
+  "health": {
+    "max": 10000,
+    "now": 10000
+  },
+  "look": {
+    "type": 0,
+    "head": 0,
+    "body": 0,
+    "legs": 0,
+    "feet": 0,
+    "corpse": 0
+  },
+  "targetChange": {
+    "interval": 3000,
+    "chance": 0
+  },
+  "strategy": {
+    "attack": 0,
+    "defense": 0
+  },
+  "flags": {
+    "summonable": 0,
+    "attackable": 1,
+    "hostile": 1,
+    "illusionable": 0,
+    "convinceable": 1,
+    "pushable": 0,
+    "canpushitems": 1,
+    "canpushcreatures": 0,
+    "staticattack": 90,
+    "targetdistance": 1,
+    "runonhealth": 0
+  },
+  "attacks": [
+    {
+      "name": "melee",
+      "interval": "1500",
+      "skill": "120",
+      "attack": "120"
+    },
+    {
+      "name": "fire",
+      "interval": "2500",
+      "chance": "50",
+      "range": "4",
+      "radius": "7",
+      "min": "-320",
+      "max": "-460",
+      "attributes": [
+        {
+          "areaEffect": "fireattack"
+        }
+      ]
+    },
+    {
+      "name": "energy",
+      "interval": "2500",
+      "chance": "40",
+      "range": "4",
+      "radius": "7",
+      "min": "-420",
+      "max": "-660",
+      "attributes": [
+        {
+          "areaEffect": "energyarea"
+        }
+      ]
+    },
+    {
+      "name": "firecondition",
+      "interval": "3000",
+      "chance": "20",
+      "range": "7",
+      "radius": "7",
+      "target": "1",
+      "min": "-200",
+      "max": "-300",
+      "attributes": [
+        {
+          "shootEffect": "fire"
+        },
+        {
+          "areaEffect": "firearea"
+        }
+      ]
+    },
+    {
+      "name": "firefield",
+      "interval": "1000",
+      "chance": "25",
+      "range": "7",
+      "radius": "2",
+      "target": "1",
+      "attributes": [
+        {
+          "shootEffect": "fire"
+        }
+      ]
+    }
+  ],
+  "defense": {
+    "armor": 35,
+    "defense": 55
+  },
+  "defenses": [],
+  "elements": {
+    "firePercent": 20,
+    "icePercent": 20,
+    "earthPercent": 20,
+    "energyPercent": 20,
+    "holyPercent": 20,
+    "deathPercent": 20,
+    "drownPercent": 20,
+    "lifedrainPercent": 20,
+    "manadrainPercent": 20
+  },
+  "loot": [],
+  "voices": {
+    "interval": 5000,
+    "chance": 10,
+    "sentences": [
+      {
+        "sentence": "Gaaahhh!",
+        "yell": false
+      },
+      {
+        "sentence": "Tssss!",
+        "yell": false
+      }
+    ]
+  },
+  "immunities": {
+    "lifedrain": 1,
+    "paralyze": 1,
+    "drown": 1
+  },
+  "summon": {
+    "maxSummons": 0,
+    "summons": []
+  }
+}

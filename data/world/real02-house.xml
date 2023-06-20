@@ -1,0 +1,303 @@
+<?xml version="1.0"?>
+<houses>
+	<house name="Thunder City #1" houseid="1" entryx="1002" entryy="1221" entryz="7" rent="0" townid="1" size="23" />
+	<house name="Thunder City #2" houseid="2" entryx="994" entryy="1221" entryz="7" rent="0" townid="1" size="28" />
+	<house name="Thunder City #3" houseid="3" entryx="985" entryy="1221" entryz="7" rent="0" townid="1" size="28" />
+	<house name="Thunder City #4" houseid="4" entryx="976" entryy="1221" entryz="7" rent="0" townid="1" size="28" />
+	<house name="Thunder City #5" houseid="5" entryx="960" entryy="1221" entryz="7" rent="0" townid="1" size="26" />
+	<house name="Thunder City #6" houseid="6" entryx="948" entryy="1221" entryz="7" rent="0" townid="1" size="22" />
+	<house name="Thunder City #7" houseid="7" entryx="1002" entryy="1213" entryz="6" rent="0" townid="1" size="7" />
+	<house name="Thunder City #9" houseid="8" entryx="991" entryy="1209" entryz="6" rent="0" townid="1" size="28" />
+	<house name="Thunder City #10" houseid="9" entryx="989" entryy="1211" entryz="6" rent="0" townid="1" size="38" />
+	<house name="Thunder City #11" houseid="10" entryx="980" entryy="1209" entryz="6" rent="0" townid="1" size="24" />
+	<house name="Thunder City #12" houseid="11" entryx="1002" entryy="1221" entryz="6" rent="0" townid="1" size="23" />
+	<house name="Thunder City #13" houseid="12" entryx="994" entryy="1221" entryz="6" rent="0" townid="1" size="28" />
+	<house name="Thunder City #14" houseid="13" entryx="985" entryy="1221" entryz="6" rent="0" townid="1" size="28" />
+	<house name="Thunder City #15" houseid="14" entryx="963" entryy="1225" entryz="6" rent="0" townid="1" size="23" />
+	<house name="Thunder City #16" houseid="15" entryx="951" entryy="1225" entryz="6" rent="0" townid="1" size="18" />
+	<house name="Thunder City #17" houseid="16" entryx="933" entryy="1221" entryz="7" rent="0" townid="1" size="28" />
+	<house name="Thunder City #18" houseid="17" entryx="934" entryy="1215" entryz="7" rent="0" townid="1" size="22" />
+	<house name="Thunder City #19" houseid="18" entryx="934" entryy="1206" entryz="7" rent="0" townid="1" size="23" />
+	<house name="Thunder City #20" houseid="19" entryx="934" entryy="1197" entryz="7" rent="0" townid="1" size="23" />
+	<house name="Thunder City #21" houseid="20" entryx="942" entryy="1195" entryz="7" rent="0" townid="1" size="26" />
+	<house name="Thunder City #22" houseid="21" entryx="935" entryy="1188" entryz="7" rent="0" townid="1" size="32" />
+	<house name="Thunder City #23" houseid="22" entryx="945" entryy="1190" entryz="7" rent="0" townid="1" size="18" />
+	<house name="Thunder City #24" houseid="23" entryx="935" entryy="1178" entryz="7" rent="0" townid="1" size="23" />
+	<house name="Thunder City #25" houseid="24" entryx="942" entryy="1175" entryz="7" rent="0" guildhall="true" townid="1" size="355" />
+	<house name="Thunder City #26" houseid="25" entryx="956" entryy="1163" entryz="7" rent="0" townid="1" size="34" />
+	<house name="Thunder City #27" houseid="26" entryx="966" entryy="1178" entryz="7" rent="0" townid="1" size="36" />
+	<house name="Thunder City #28" houseid="27" entryx="956" entryy="1181" entryz="7" rent="0" townid="1" size="34" />
+	<house name="Thunder City #29" houseid="28" entryx="979" entryy="1174" entryz="7" rent="0" townid="1" size="44" />
+	<house name="Thunder City #30" houseid="29" entryx="971" entryy="1165" entryz="7" rent="0" townid="1" size="44" />
+	<house name="Thunder City #31" houseid="30" entryx="976" entryy="1164" entryz="7" rent="0" townid="1" size="22" />
+	<house name="Thunder City #32" houseid="31" entryx="985" entryy="1164" entryz="7" rent="0" townid="1" size="22" />
+	<house name="Thunder City #33" houseid="32" entryx="994" entryy="1164" entryz="7" rent="0" townid="1" size="22" />
+	<house name="Thunder City #34" houseid="33" entryx="991" entryy="1174" entryz="7" rent="0" townid="1" size="38" />
+	<house name="Thunder City #35" houseid="34" entryx="1003" entryy="1176" entryz="7" rent="0" guildhall="true" townid="1" size="142" />
+	<house name="Thunder City #36" houseid="35" entryx="1016" entryy="1177" entryz="7" rent="0" townid="1" size="30" />
+	<house name="Thunder City #37" houseid="36" entryx="1024" entryy="1177" entryz="7" rent="0" townid="1" size="30" />
+	<house name="Thunder City #38" houseid="37" entryx="1032" entryy="1177" entryz="7" rent="0" townid="1" size="30" />
+	<house name="Thunder City #39" houseid="38" entryx="1035" entryy="1169" entryz="7" rent="0" townid="1" size="51" />
+	<house name="Thunder City #40" houseid="39" entryx="1040" entryy="1184" entryz="7" rent="0" townid="1" size="33" />
+	<house name="Thunder City #41" houseid="40" entryx="1024" entryy="1184" entryz="7" rent="0" townid="1" size="33" />
+	<house name="Thunder City #42" houseid="41" entryx="1023" entryy="1182" entryz="7" rent="0" townid="1" size="28" />
+	<house name="Thunder City #43" houseid="42" entryx="1023" entryy="1186" entryz="7" rent="0" townid="1" size="28" />
+	<house name="Thunder City #44" houseid="43" entryx="1008" entryy="1182" entryz="7" rent="0" townid="1" size="28" />
+	<house name="Thunder City #45" houseid="44" entryx="1008" entryy="1186" entryz="7" rent="0" townid="1" size="28" />
+	<house name="Thunder City #46" houseid="45" entryx="1000" entryy="1184" entryz="7" rent="0" townid="1" size="33" />
+	<house name="Thunder City #47" houseid="46" entryx="1001" entryy="1193" entryz="7" rent="0" townid="1" size="27" />
+	<house name="Thunder City #48" houseid="47" entryx="997" entryy="1200" entryz="7" rent="0" townid="1" size="34" />
+	<house name="Thunder City #49" houseid="48" entryx="1005" entryy="1197" entryz="7" rent="0" townid="1" size="18" />
+	<house name="Thunder City #50" houseid="49" entryx="1017" entryy="1201" entryz="7" rent="0" townid="1" size="21" />
+	<house name="Thunder City #51" houseid="50" entryx="1028" entryy="1207" entryz="7" rent="0" townid="1" size="34" />
+	<house name="Thunder City #52" houseid="51" entryx="1023" entryy="1194" entryz="7" rent="0" townid="1" size="70" />
+	<house name="Thunder City #53" houseid="52" entryx="1040" entryy="1194" entryz="7" rent="0" townid="1" size="70" />
+	<house name="Thunder City #54" houseid="53" entryx="1036" entryy="1207" entryz="7" rent="0" townid="1" size="28" />
+	<house name="Thunder City #55" houseid="54" entryx="1028" entryy="1207" entryz="6" rent="0" townid="1" size="34" />
+	<house name="Thunder City #56" houseid="55" entryx="1030" entryy="1213" entryz="7" rent="0" townid="1" size="26" />
+	<house name="Thunder City #57" houseid="56" entryx="1030" entryy="1218" entryz="7" rent="0" townid="1" size="26" />
+	<house name="Thunder City #58" houseid="57" entryx="1028" entryy="1218" entryz="7" rent="0" townid="1" size="22" />
+	<house name="Thunder City #59" houseid="58" entryx="1028" entryy="1213" entryz="7" rent="0" townid="1" size="22" />
+	<house name="Thunder City #60" houseid="59" entryx="1011" entryy="1211" entryz="7" rent="0" townid="1" size="30" />
+	<house name="Thunder City #61" houseid="60" entryx="1011" entryy="1218" entryz="7" rent="0" townid="1" size="24" />
+	<house name="Thunder City #62" houseid="61" entryx="985" entryy="1200" entryz="7" rent="0" townid="1" size="34" />
+	<house name="Thunder City #63" houseid="62" entryx="990" entryy="1192" entryz="6" rent="0" townid="1" size="36" />
+	<house name="Thunder City #64" houseid="63" entryx="986" entryy="1192" entryz="7" rent="0" townid="1" size="36" />
+	<house name="Thunder City #65" houseid="64" entryx="986" entryy="1184" entryz="7" rent="0" townid="1" size="31" />
+	<house name="Thunder City #66" houseid="65" entryx="978" entryy="1183" entryz="7" rent="0" townid="1" size="14" />
+	<house name="Thunder City #67" houseid="66" entryx="973" entryy="1188" entryz="7" rent="0" townid="1" size="26" />
+	<house name="Thunder City #68" houseid="67" entryx="968" entryy="1199" entryz="7" rent="0" townid="1" size="27" />
+	<house name="Thunder City #69" houseid="68" entryx="961" entryy="1195" entryz="7" rent="0" townid="1" size="46" />
+	<house name="Thunder City #70" houseid="69" entryx="952" entryy="1195" entryz="7" rent="0" townid="1" size="38" />
+	<house name="Thunder City #71" houseid="70" entryx="953" entryy="1190" entryz="7" rent="0" townid="1" size="33" />
+	<house name="Thunder City #72" houseid="71" entryx="963" entryy="1190" entryz="7" rent="0" townid="1" size="28" />
+	<house name="Thunder City #73" houseid="72" entryx="945" entryy="1190" entryz="6" rent="0" townid="1" size="18" />
+	<house name="Thunder City #74" houseid="73" entryx="953" entryy="1190" entryz="6" rent="0" townid="1" size="33" />
+	<house name="Thunder City #75" houseid="74" entryx="963" entryy="1190" entryz="6" rent="0" townid="1" size="28" />
+	<house name="Thunder City #76" houseid="75" entryx="942" entryy="1206" entryz="6" rent="0" townid="1" size="6" />
+	<house name="Thunder City #77" houseid="76" entryx="943" entryy="1206" entryz="6" rent="0" townid="1" size="6" />
+	<house name="Thunder City #78" houseid="77" entryx="942" entryy="1211" entryz="6" rent="0" townid="1" size="6" />
+	<house name="Thunder City #79" houseid="78" entryx="943" entryy="1211" entryz="6" rent="0" townid="1" size="6" />
+	<house name="Thunder City #80" houseid="79" entryx="942" entryy="1211" entryz="7" rent="0" townid="1" size="6" />
+	<house name="Thunder City #81" houseid="80" entryx="942" entryy="1206" entryz="7" rent="0" townid="1" size="6" />
+	<house name="Thunder City #82" houseid="81" entryx="943" entryy="1206" entryz="7" rent="0" townid="1" size="6" />
+	<house name="Thunder City #83" houseid="82" entryx="943" entryy="1211" entryz="7" rent="0" townid="1" size="6" />
+	<house name="Thunder City #84" houseid="83" entryx="1001" entryy="1209" entryz="6" rent="0" townid="1" size="79" />
+	<house name="Thunder City #85" houseid="84" entryx="977" entryy="1174" entryz="6" rent="0" townid="1" size="22" />
+	<house name="Thunder City #86" houseid="85" entryx="982" entryy="1174" entryz="6" rent="0" townid="1" size="22" />
+	<house name="Thunder City #87" houseid="86" entryx="1017" entryy="1201" entryz="6" rent="0" townid="1" size="21" />
+	<house name="Thunder City #88" houseid="87" entryx="1015" entryy="1215" entryz="6" rent="0" townid="1" size="30" />
+	<house name="Thunder City #89" houseid="88" entryx="1024" entryy="1219" entryz="6" rent="0" townid="1" size="36" />
+	<house name="Thunder City #90" houseid="89" entryx="1035" entryy="1219" entryz="6" rent="0" townid="1" size="37" />
+	<house name="Thunder City #91" houseid="90" entryx="931" entryy="1191" entryz="6" rent="0" townid="1" size="28" />
+	<house name="Thunder City #92" houseid="91" entryx="933" entryy="1178" entryz="6" rent="0" townid="1" size="13" />
+	<house name="Thunder City #93" houseid="92" entryx="958" entryy="1216" entryz="4" rent="0" townid="1" size="14" />
+	<house name="Thunder City #94" houseid="93" entryx="958" entryy="1211" entryz="4" rent="0" townid="1" size="14" />
+	<house name="Thunder City #95" houseid="94" entryx="960" entryy="1209" entryz="4" rent="0" townid="1" size="32" />
+	<house name="Thunder City #96" houseid="95" entryx="957" entryy="1210" entryz="3" rent="0" townid="1" size="30" />
+	<house name="Thunder City #97" houseid="96" entryx="957" entryy="1208" entryz="3" rent="0" townid="1" size="13" />
+	<house name="Jamila Island #1" houseid="97" entryx="712" entryy="1396" entryz="7" rent="0" townid="2" size="30" />
+	<house name="Jamila Island #2" houseid="98" entryx="723" entryy="1398" entryz="7" rent="0" townid="2" size="39" />
+	<house name="Jamila Island #3" houseid="99" entryx="723" entryy="1405" entryz="7" rent="0" townid="2" size="24" />
+	<house name="Jamila Island #4" houseid="100" entryx="716" entryy="1400" entryz="7" rent="0" townid="2" size="45" />
+	<house name="Jamila Island #5" houseid="101" entryx="700" entryy="1400" entryz="7" rent="0" townid="2" size="20" />
+	<house name="Jamila Island #6" houseid="102" entryx="692" entryy="1400" entryz="7" rent="0" townid="2" size="15" />
+	<house name="Jamila Island #7" houseid="103" entryx="687" entryy="1400" entryz="7" rent="0" townid="2" size="12" />
+	<house name="Jamila Island #8" houseid="104" entryx="687" entryy="1396" entryz="7" rent="0" townid="2" size="19" />
+	<house name="Jamila Island #9" houseid="105" entryx="678" entryy="1396" entryz="7" rent="0" townid="2" size="20" />
+	<house name="Jamila Island #10" houseid="106" entryx="678" entryy="1387" entryz="7" rent="0" townid="2" size="20" />
+	<house name="Jamila Island #11" houseid="107" entryx="691" entryy="1375" entryz="7" rent="0" townid="2" size="36" />
+	<house name="Jamila Island #12" houseid="108" entryx="699" entryy="1375" entryz="7" rent="0" townid="2" size="28" />
+	<house name="Jamila Island #13" houseid="109" entryx="722" entryy="1384" entryz="7" rent="0" townid="2" size="19" />
+	<house name="Jamila Island #14" houseid="110" entryx="718" entryy="1371" entryz="7" rent="0" townid="2" size="43" />
+	<house name="Jamila Island #15" houseid="111" entryx="675" entryy="1365" entryz="7" rent="0" townid="2" size="10" />
+	<house name="Jamila Island #16" houseid="112" entryx="675" entryy="1359" entryz="7" rent="0" townid="2" size="10" />
+	<house name="Jamila Island #17" houseid="113" entryx="680" entryy="1353" entryz="7" rent="0" townid="2" size="12" />
+	<house name="Jamila Island #18" houseid="114" entryx="687" entryy="1353" entryz="7" rent="0" townid="2" size="12" />
+	<house name="Jamila Island #19" houseid="115" entryx="687" entryy="1352" entryz="6" rent="0" townid="2" size="10" />
+	<house name="Jamila Island #20" houseid="116" entryx="680" entryy="1352" entryz="6" rent="0" townid="2" size="10" />
+	<house name="Jamila Island #21" houseid="117" entryx="674" entryy="1358" entryz="6" rent="0" townid="2" size="7" />
+	<house name="Jamila Island #22" houseid="118" entryx="674" entryy="1364" entryz="6" rent="0" townid="2" size="7" />
+	<house name="Bhark #1" houseid="119" entryx="1232" entryy="1310" entryz="6" rent="0" townid="5" size="15" />
+	<house name="Bhark #2" houseid="120" entryx="1245" entryy="1310" entryz="6" rent="0" townid="5" size="15" />
+	<house name="Bhark #3" houseid="121" entryx="1248" entryy="1307" entryz="6" rent="0" townid="5" size="5" />
+	<house name="Bhark #4" houseid="122" entryx="1228" entryy="1307" entryz="6" rent="0" townid="5" size="5" />
+	<house name="Bhark #5" houseid="123" entryx="1235" entryy="1292" entryz="6" rent="0" townid="5" size="19" />
+	<house name="Bhark #6" houseid="124" entryx="1235" entryy="1289" entryz="6" rent="0" townid="5" size="19" />
+	<house name="Bhark #7" houseid="125" entryx="1246" entryy="1298" entryz="6" rent="0" townid="5" size="40" />
+	<house name="Bhark #8" houseid="126" entryx="1250" entryy="1298" entryz="6" rent="0" townid="5" size="7" />
+	<house name="Bhark #9" houseid="127" entryx="1259" entryy="1298" entryz="6" rent="0" townid="5" size="28" />
+	<house name="Bhark #10" houseid="128" entryx="1265" entryy="1298" entryz="6" rent="0" townid="5" size="22" />
+	<house name="Bhark #11" houseid="129" entryx="1257" entryy="1295" entryz="5" rent="0" townid="5" size="29" />
+	<house name="Bhark #12" houseid="130" entryx="1209" entryy="1307" entryz="6" rent="0" townid="5" size="4" />
+	<house name="Bhark #13" houseid="131" entryx="1216" entryy="1307" entryz="6" rent="0" townid="5" size="17" />
+	<house name="Bhark #14" houseid="132" entryx="1216" entryy="1306" entryz="6" rent="0" townid="5" size="6" />
+	<house name="Bhark #15" houseid="133" entryx="1216" entryy="1304" entryz="5" rent="0" townid="5" size="10" />
+	<house name="Bhark #16" houseid="134" entryx="1235" entryy="1293" entryz="5" rent="0" townid="5" size="13" />
+	<house name="Bhark #17" houseid="135" entryx="1206" entryy="1284" entryz="5" rent="0" townid="5" size="33" />
+	<house name="Bhark #18" houseid="136" entryx="1205" entryy="1287" entryz="5" rent="0" townid="5" size="17" />
+	<house name="Bhark #19" houseid="137" entryx="1221" entryy="1280" entryz="4" rent="0" townid="5" size="24" />
+	<house name="Bhark #20" houseid="138" entryx="1227" entryy="1273" entryz="4" rent="0" townid="5" size="11" />
+	<house name="Bhark #21" houseid="139" entryx="1250" entryy="1277" entryz="6" rent="0" townid="5" size="12" />
+	<house name="Bhark #22" houseid="140" entryx="1254" entryy="1279" entryz="6" rent="0" townid="5" size="7" />
+	<house name="Bhark #23" houseid="141" entryx="1260" entryy="1278" entryz="5" rent="0" townid="5" size="7" />
+	<house name="Bhark #24" houseid="142" entryx="1258" entryy="1273" entryz="5" rent="0" townid="5" size="17" />
+	<house name="Bhark #25" houseid="143" entryx="1267" entryy="1272" entryz="5" rent="0" townid="5" size="9" />
+	<house name="Bhark #26" houseid="144" entryx="1258" entryy="1266" entryz="4" rent="0" townid="5" size="10" />
+	<house name="Bhark #27" houseid="145" entryx="1242" entryy="1260" entryz="6" rent="0" townid="5" size="6" />
+	<house name="Bhark #28" houseid="146" entryx="1237" entryy="1265" entryz="6" rent="0" townid="5" size="6" />
+	<house name="Bhark #29" houseid="147" entryx="1258" entryy="1264" entryz="6" rent="0" townid="5" size="23" />
+	<house name="Bhark #30" houseid="148" entryx="1247" entryy="1265" entryz="6" rent="0" townid="5" size="36" />
+	<house name="Bhark #31" houseid="149" entryx="1250" entryy="1273" entryz="7" rent="0" townid="5" size="10" />
+	<house name="Bhark #32" houseid="150" entryx="1250" entryy="1268" entryz="7" rent="0" townid="5" size="10" />
+	<house name="Bhark #33" houseid="151" entryx="1250" entryy="1263" entryz="7" rent="0" townid="5" size="7" />
+	<house name="Bhark #34" houseid="152" entryx="1253" entryy="1263" entryz="7" rent="0" townid="5" size="7" />
+	<house name="Bhark #35" houseid="153" entryx="1253" entryy="1268" entryz="7" rent="0" townid="5" size="10" />
+	<house name="Bhark #36" houseid="154" entryx="1253" entryy="1273" entryz="7" rent="0" townid="5" size="10" />
+	<house name="Bhark #37" houseid="155" entryx="1197" entryy="1316" entryz="7" rent="0" townid="5" size="14" />
+	<house name="Bhark #38" houseid="156" entryx="1282" entryy="1240" entryz="7" rent="0" townid="5" size="10" />
+	<house name="Bhark #39" houseid="157" entryx="1276" entryy="1237" entryz="7" rent="0" townid="5" size="15" />
+	<house name="Bhark #40" houseid="158" entryx="1288" entryy="1236" entryz="7" rent="0" townid="5" size="29" />
+	<house name="Bhark #41" houseid="159" entryx="1276" entryy="1311" entryz="7" rent="0" townid="5" size="14" />
+	<house name="Bhark #42" houseid="160" entryx="1254" entryy="1309" entryz="6" rent="0" townid="5" size="16" />
+	<house name="Bhark #43" houseid="161" entryx="1248" entryy="1320" entryz="6" rent="0" townid="5" size="5" />
+	<house name="Bhark #44" houseid="162" entryx="1228" entryy="1320" entryz="6" rent="0" townid="5" size="5" />
+	<house name="Thunder City #8" houseid="163" entryx="1003" entryy="1164" entryz="7" rent="0" townid="1" size="22" />
+	<house name="Akravi #1" houseid="164" entryx="992" entryy="1415" entryz="7" rent="0" townid="3" size="34" />
+	<house name="Akravi #2" houseid="165" entryx="1005" entryy="1419" entryz="7" rent="0" townid="3" size="24" />
+	<house name="Akravi #3" houseid="166" entryx="997" entryy="1403" entryz="7" rent="0" townid="3" size="26" />
+	<house name="Akravi #4" houseid="167" entryx="1004" entryy="1403" entryz="7" rent="0" townid="3" size="24" />
+	<house name="Akravi #5" houseid="168" entryx="1019" entryy="1407" entryz="7" rent="0" townid="3" size="26" />
+	<house name="Akravi #6" houseid="169" entryx="1015" entryy="1390" entryz="7" rent="0" townid="3" size="14" />
+	<house name="Akravi #7" houseid="170" entryx="1015" entryy="1377" entryz="7" rent="0" townid="3" size="14" />
+	<house name="Akravi #8" houseid="171" entryx="995" entryy="1365" entryz="7" rent="0" townid="3" size="32" />
+	<house name="Akravi #9" houseid="172" entryx="1001" entryy="1357" entryz="7" rent="0" townid="3" size="14" />
+	<house name="Akravi #10" houseid="173" entryx="989" entryy="1357" entryz="7" rent="0" townid="3" size="14" />
+	<house name="Akravi #11" houseid="174" entryx="982" entryy="1357" entryz="7" rent="0" townid="3" size="14" />
+	<house name="Akravi #12" houseid="175" entryx="976" entryy="1365" entryz="7" rent="0" townid="3" size="32" />
+	<house name="Akravi #13" houseid="176" entryx="970" entryy="1357" entryz="7" rent="0" townid="3" size="14" />
+	<house name="Akravi #14" houseid="177" entryx="963" entryy="1357" entryz="7" rent="0" townid="3" size="14" />
+	<house name="Akravi #15" houseid="178" entryx="963" entryy="1369" entryz="7" rent="0" townid="3" size="14" />
+	<house name="Akravi #16" houseid="179" entryx="961" entryy="1386" entryz="7" rent="0" townid="3" size="32" />
+	<house name="Akravi #17" houseid="180" entryx="964" entryy="1382" entryz="6" rent="0" townid="3" size="4" />
+	<house name="Akravi #18" houseid="181" entryx="943" entryy="1412" entryz="7" rent="0" townid="3" size="44" />
+	<house name="Akravi #19" houseid="182" entryx="943" entryy="1413" entryz="7" rent="0" townid="3" size="20" />
+	<house name="Akravi #20" houseid="183" entryx="942" entryy="1413" entryz="7" rent="0" townid="3" size="26" />
+	<house name="Akravi #21" houseid="184" entryx="941" entryy="1409" entryz="6" rent="0" townid="3" size="6" />
+	<house name="Akravi #22" houseid="185" entryx="941" entryy="1415" entryz="6" rent="0" townid="3" size="4" />
+	<house name="Akravi #23" houseid="186" entryx="942" entryy="1409" entryz="6" rent="0" townid="3" size="6" />
+	<house name="Akravi #24" houseid="187" entryx="942" entryy="1415" entryz="6" rent="0" townid="3" size="4" />
+	<house name="Akravi #25" houseid="188" entryx="945" entryy="1412" entryz="5" rent="0" townid="3" size="14" />
+	<house name="Akravi #26" houseid="189" entryx="998" entryy="1417" entryz="6" rent="0" townid="3" size="14" />
+	<house name="Akravi #27" houseid="190" entryx="1006" entryy="1414" entryz="6" rent="0" townid="3" size="14" />
+	<house name="Akravi #28" houseid="191" entryx="994" entryy="1409" entryz="6" rent="0" townid="3" size="14" />
+	<house name="Akravi #29" houseid="192" entryx="1006" entryy="1409" entryz="6" rent="0" townid="3" size="14" />
+	<house name="Akravi #30" houseid="193" entryx="1000" entryy="1407" entryz="5" rent="0" townid="3" size="21" />
+	<house name="Akravi #31" houseid="194" entryx="1023" entryy="1403" entryz="6" rent="0" townid="3" size="4" />
+	<house name="Akravi #32" houseid="195" entryx="999" entryy="1387" entryz="7" rent="0" townid="3" size="10" />
+	<house name="Akravi #33" houseid="196" entryx="1003" entryy="1387" entryz="7" rent="0" townid="3" size="10" />
+	<house name="Akravi #34" houseid="197" entryx="999" entryy="1379" entryz="7" rent="0" townid="3" size="10" />
+	<house name="Akravi #35" houseid="198" entryx="1003" entryy="1379" entryz="7" rent="0" townid="3" size="10" />
+	<house name="Wintermere #1" houseid="199" entryx="805" entryy="1080" entryz="7" rent="0" townid="6" size="66" />
+	<house name="Wintermere #2" houseid="200" entryx="799" entryy="1079" entryz="7" rent="0" townid="6" size="31" />
+	<house name="Wintermere #3" houseid="201" entryx="820" entryy="1078" entryz="7" rent="0" townid="6" size="13" />
+	<house name="Wintermere #4" houseid="202" entryx="822" entryy="1080" entryz="7" rent="0" townid="6" size="61" />
+	<house name="Wintermere #5" houseid="203" entryx="826" entryy="1088" entryz="7" rent="0" townid="6" size="106" />
+	<house name="Wintermere #6" houseid="204" entryx="837" entryy="1095" entryz="7" rent="0" townid="6" size="93" />
+	<house name="Wintermere #7" houseid="205" entryx="834" entryy="1099" entryz="7" rent="0" townid="6" size="37" />
+	<house name="Wintermere #8" houseid="206" entryx="840" entryy="1086" entryz="7" rent="0" townid="6" size="29" />
+	<house name="Wintermere #9" houseid="207" entryx="814" entryy="1103" entryz="7" rent="0" townid="6" size="23" />
+	<house name="Wintermere #10" houseid="208" entryx="776" entryy="1089" entryz="7" rent="0" townid="6" size="47" />
+	<house name="Wintermere #11" houseid="209" entryx="771" entryy="1084" entryz="7" rent="0" townid="6" size="51" />
+	<house name="Wintermere #12" houseid="210" entryx="774" entryy="1072" entryz="7" rent="0" townid="6" size="97" />
+	<house name="Wintermere #13" houseid="211" entryx="788" entryy="1068" entryz="7" rent="0" townid="6" size="37" />
+	<house name="Wintermere #14" houseid="212" entryx="800" entryy="1072" entryz="7" rent="0" townid="6" size="21" />
+	<house name="Wintermere #15" houseid="213" entryx="783" entryy="1063" entryz="7" rent="0" townid="6" size="72" />
+	<house name="Wintermere #16" houseid="214" entryx="794" entryy="1062" entryz="7" rent="0" townid="6" size="56" />
+	<house name="Wintermere #17" houseid="215" entryx="806" entryy="1058" entryz="7" rent="0" townid="6" size="89" />
+	<house name="Wintermere #18" houseid="216" entryx="787" entryy="1052" entryz="7" rent="0" townid="6" size="54" />
+	<house name="Wintermere #19" houseid="217" entryx="798" entryy="1045" entryz="7" rent="0" townid="6" size="64" />
+	<house name="Wintermere #20" houseid="218" entryx="811" entryy="1047" entryz="7" rent="0" townid="6" size="23" />
+	<house name="Wintermere #21" houseid="219" entryx="811" entryy="1047" entryz="7" rent="0" townid="6" size="23" />
+	<house name="Wintermere #22" houseid="220" entryx="826" entryy="1049" entryz="7" rent="0" townid="6" size="62" />
+	<house name="Wintermere #23" houseid="221" entryx="833" entryy="1043" entryz="7" rent="0" townid="6" size="40" />
+	<house name="Wintermere #24" houseid="222" entryx="830" entryy="1039" entryz="7" rent="0" townid="6" size="31" />
+	<house name="Wintermere #25" houseid="223" entryx="812" entryy="1038" entryz="7" rent="0" townid="6" size="57" />
+	<house name="Al Arar #1" houseid="224" entryx="1077" entryy="1313" entryz="7" rent="0" townid="4" size="34" />
+	<house name="Al Arar #2" houseid="225" entryx="1046" entryy="1319" entryz="7" rent="0" townid="4" size="42" />
+	<house name="Al Arar #3" houseid="226" entryx="1048" entryy="1327" entryz="7" rent="0" townid="4" size="15" />
+	<house name="Al Arar #4" houseid="227" entryx="1052" entryy="1339" entryz="7" rent="0" townid="4" size="50" />
+	<house name="Al Arar #5" houseid="228" entryx="1058" entryy="1339" entryz="7" rent="0" townid="4" size="17" />
+	<house name="Al Arar #6" houseid="229" entryx="1050" entryy="1367" entryz="4" rent="0" townid="4" size="15" />
+	<house name="Al Arar #7" houseid="230" entryx="1079" entryy="1358" entryz="5" rent="0" townid="4" size="69" />
+	<house name="Al Arar #8" houseid="231" entryx="1097" entryy="1358" entryz="7" rent="0" townid="4" size="54" />
+	<house name="Al Arar #9" houseid="232" entryx="1088" entryy="1326" entryz="7" rent="0" townid="4" size="26" />
+	<house name="Al Arar #10" houseid="233" entryx="1038" entryy="1315" entryz="7" rent="0" townid="4" size="24" />
+	<house name="Al Arar #11" houseid="234" entryx="1023" entryy="1331" entryz="7" rent="0" townid="4" size="12" />
+	<house name="Al Arar #12" houseid="235" entryx="1040" entryy="1335" entryz="7" rent="0" townid="4" size="170" />
+	<house name="Al Arar #13" houseid="236" entryx="1115" entryy="1371" entryz="7" rent="0" townid="4" size="9" />
+	<house name="Shadow Wood #1" houseid="237" entryx="1261" entryy="1028" entryz="7" rent="0" townid="7" size="12" />
+	<house name="Shadow Wood #2" houseid="238" entryx="1261" entryy="1035" entryz="7" rent="0" townid="7" size="12" />
+	<house name="Shadow Wood #3" houseid="239" entryx="1257" entryy="1031" entryz="6" rent="0" townid="7" size="12" />
+	<house name="Shadow Wood #4" houseid="240" entryx="1257" entryy="1031" entryz="6" rent="0" townid="7" size="12" />
+	<house name="Shadow Wood #5" houseid="241" entryx="1299" entryy="1014" entryz="7" rent="0" townid="7" size="15" />
+	<house name="Shadow Wood #6" houseid="242" entryx="1287" entryy="1063" entryz="7" rent="0" townid="7" size="9" />
+	<house name="Shadow Wood #7" houseid="243" entryx="1293" entryy="1063" entryz="7" rent="0" townid="7" size="9" />
+	<house name="Shadow Wood #8" houseid="244" entryx="1290" entryy="1059" entryz="6" rent="0" townid="7" size="9" />
+	<house name="Shadow Wood #9" houseid="245" entryx="1290" entryy="1059" entryz="6" rent="0" townid="7" size="9" />
+	<house name="Shadow Wood #10" houseid="246" entryx="1276" entryy="1063" entryz="6" rent="0" townid="7" size="40" />
+	<house name="Shadow Wood #11" houseid="247" entryx="1270" entryy="1065" entryz="7" rent="0" townid="7" size="9" />
+	<house name="Shadow Wood #12" houseid="248" entryx="1260" entryy="1057" entryz="7" rent="0" townid="7" size="6" />
+	<house name="Shadow Wood #13" houseid="249" entryx="1294" entryy="1051" entryz="6" rent="0" townid="7" size="51" />
+	<house name="Fork Village #1" houseid="250" entryx="818" entryy="1252" entryz="7" rent="0" townid="1" size="12" />
+	<house name="Fork Village #2" houseid="251" entryx="818" entryy="1251" entryz="7" rent="0" townid="1" size="20" />
+	<house name="Fork Village #3" houseid="252" entryx="818" entryy="1251" entryz="6" rent="0" townid="1" size="14" />
+	<house name="Fork Village #4" houseid="253" entryx="818" entryy="1250" entryz="6" rent="0" townid="1" size="16" />
+	<house name="Fork Village #5" houseid="254" entryx="827" entryy="1253" entryz="7" rent="0" townid="1" size="28" />
+	<house name="Fork Village #6" houseid="255" entryx="825" entryy="1252" entryz="6" rent="0" townid="1" size="19" />
+	<house name="Fork Village #7" houseid="256" entryx="840" entryy="1250" entryz="7" rent="0" townid="1" size="15" />
+	<house name="Fork Village #8" houseid="257" entryx="841" entryy="1251" entryz="7" rent="0" townid="1" size="10" />
+	<house name="Fork Village #9" houseid="258" entryx="845" entryy="1242" entryz="7" rent="0" townid="1" size="15" />
+	<house name="Fork Village #10" houseid="259" entryx="838" entryy="1237" entryz="7" rent="0" townid="1" size="38" />
+	<house name="Fork Village #11" houseid="260" entryx="838" entryy="1236" entryz="6" rent="0" townid="1" size="17" />
+	<house name="Fork Village #12" houseid="261" entryx="840" entryy="1250" entryz="6" rent="0" townid="1" size="15" />
+	<house name="Fork Village #13" houseid="262" entryx="839" entryy="1252" entryz="6" rent="0" townid="1" size="8" />
+	<house name="Thunder Hut #1" houseid="263" entryx="913" entryy="1193" entryz="7" rent="0" townid="1" size="10" />
+	<house name="Thunder Hut #2" houseid="264" entryx="913" entryy="1187" entryz="7" rent="0" townid="1" size="10" />
+	<house name="Thunder Hut #3" houseid="265" entryx="913" entryy="1181" entryz="7" rent="0" townid="1" size="10" />
+	<house name="Thunder Hut #4" houseid="266" entryx="918" entryy="1181" entryz="7" rent="0" townid="1" size="7" />
+	<house name="Thunder Hut #5" houseid="267" entryx="918" entryy="1187" entryz="7" rent="0" townid="1" size="7" />
+	<house name="Premia #1" houseid="268" entryx="455" entryy="1361" entryz="6" rent="0" townid="8" size="360" />
+	<house name="Premia #2" houseid="269" entryx="455" entryy="1369" entryz="6" rent="0" townid="8" size="415" />
+	<house name="Premia #3" houseid="270" entryx="455" entryy="1390" entryz="6" rent="0" townid="8" size="242" />
+	<house name="Premia #4" houseid="271" entryx="470" entryy="1390" entryz="6" rent="0" townid="8" size="242" />
+	<house name="Premia #5" houseid="272" entryx="485" entryy="1390" entryz="6" rent="0" townid="8" size="242" />
+	<house name="Premia #6" houseid="273" entryx="500" entryy="1389" entryz="6" rent="0" townid="8" size="368" />
+	<house name="Premia #7" houseid="274" entryx="502" entryy="1379" entryz="6" rent="0" townid="8" size="154" />
+	<house name="Premia #8" houseid="275" entryx="502" entryy="1366" entryz="6" rent="0" townid="8" size="154" />
+	<house name="Premia #9" houseid="276" entryx="502" entryy="1349" entryz="6" rent="0" townid="8" size="154" />
+	<house name="Premia #10" houseid="277" entryx="499" entryy="1338" entryz="6" rent="0" townid="8" size="509" />
+	<house name="Premia #11" houseid="278" entryx="476" entryy="1330" entryz="6" rent="0" townid="8" size="206" />
+	<house name="Premia #12" houseid="279" entryx="460" entryy="1330" entryz="6" rent="0" townid="8" size="250" />
+	<house name="Premia #13" houseid="280" entryx="460" entryy="1341" entryz="6" rent="0" townid="8" size="630" />
+	<house name="Premia #14" houseid="281" entryx="486" entryy="1349" entryz="6" rent="0" townid="8" size="154" />
+	<house name="Premia #15" houseid="282" entryx="486" entryy="1366" entryz="6" rent="0" townid="8" size="154" />
+	<house name="Premia #16" houseid="283" entryx="486" entryy="1379" entryz="6" rent="0" townid="8" size="154" />
+	<house name="Premia #17" houseid="284" entryx="462" entryy="1403" entryz="6" rent="0" townid="8" size="154" />
+	<house name="Premia #18" houseid="285" entryx="478" entryy="1403" entryz="6" rent="0" townid="8" size="154" />
+	<house name="Premia Subsolo #1" houseid="286" entryx="444" entryy="1352" entryz="7" rent="0" townid="8" size="40" />
+	<house name="Premia Subsolo #2" houseid="287" entryx="448" entryy="1352" entryz="7" rent="0" townid="8" size="40" />
+	<house name="Premia Subsolo #3" houseid="288" entryx="444" entryy="1342" entryz="7" rent="0" townid="8" size="40" />
+	<house name="Premia Subsolo #4" houseid="289" entryx="448" entryy="1342" entryz="7" rent="0" townid="8" size="40" />
+	<house name="Premia Subsolo #5" houseid="290" entryx="474" entryy="1347" entryz="7" rent="0" townid="8" size="85" />
+	<house name="Premia Subsolo #6" houseid="291" entryx="477" entryy="1337" entryz="7" rent="0" townid="8" size="49" />
+	<house name="Premia Subsolo #7" houseid="292" entryx="477" entryy="1328" entryz="7" rent="0" townid="8" size="59" />
+	<house name="Premia Subsolo #8" houseid="293" entryx="485" entryy="1354" entryz="7" rent="0" townid="8" size="147" />
+	<house name="Premia Subsolo #9" houseid="294" entryx="486" entryy="1373" entryz="7" rent="0" townid="8" size="69" />
+	<house name="Premia Subsolo #10" houseid="295" entryx="486" entryy="1381" entryz="7" rent="0" townid="8" size="84" />
+	<house name="Premia Subsolo #11" houseid="296" entryx="486" entryy="1389" entryz="7" rent="0" townid="8" size="84" />
+	<house name="Premia Subsolo #12" houseid="297" entryx="462" entryy="1394" entryz="7" rent="0" townid="8" size="186" />
+	<house name="Thunder Farm #1" houseid="298" entryx="958" entryy="1251" entryz="7" rent="0" townid="1" size="143" />
+	<house name="Thunder House #98" houseid="299" entryx="1001" entryy="1209" entryz="6" rent="0" townid="1" size="24" />
+	<house name="Thunder House #99" houseid="300" entryx="976" entryy="1219" entryz="7" rent="0" townid="1" size="7" />
+</houses>

@@ -1,0 +1,133 @@
+{
+  "name": "Triptano",
+  "nameDescription": "Triptano",
+  "race": "undead",
+  "experience": 9999,
+  "speed": 380,
+  "manaCost": 0,
+  "health": {
+    "max": 50000,
+    "now": 50000
+  },
+  "look": {
+    "type": 356,
+    "head": 0,
+    "body": 0,
+    "legs": 0,
+    "feet": 0,
+    "corpse": 6068
+  },
+  "targetChange": {
+    "interval": 2000,
+    "chance": 0
+  },
+  "strategy": {
+    "attack": 0,
+    "defense": 0
+  },
+  "flags": {
+    "summonable": 0,
+    "attackable": 1,
+    "hostile": 1,
+    "illusionable": 0,
+    "convinceable": 0,
+    "pushable": 0,
+    "canpushitems": 1,
+    "canpushcreatures": 1,
+    "targetdistance": 1,
+    "runonhealth": 2500,
+    "isboss": 1
+  },
+  "attacks": [
+    {
+      "name": "melee",
+      "interval": "1500",
+      "skill": "190",
+      "attack": "199"
+    },
+    {
+      "name": "manadrain",
+      "interval": "1000",
+      "chance": "13",
+      "range": "7",
+      "min": "-300",
+      "max": "-600"
+    },
+    {
+      "name": "death",
+      "interval": "1000",
+      "min": "-210",
+      "max": "-400",
+      "chance": "6",
+      "radius": "5",
+      "target": "0",
+      "attributes": [
+        {
+          "areaEffect": "mortarea"
+        }
+      ]
+    }
+  ],
+  "defense": {
+    "armor": 90,
+    "defense": 111
+  },
+  "defenses": [
+    {
+      "name": "speed",
+      "interval": "1000",
+      "chance": "5",
+      "speedchange": "1901",
+      "duration": "7000",
+      "attributes": [
+        {
+          "areaEffect": "redshimmer"
+        }
+      ]
+    }
+  ],
+  "elements": {
+    "firePercent": 50,
+    "earthPercent": 50,
+    "deathPercent": 50,
+    "icePercent": 50,
+    "holyPercent": 50
+  },
+  "loot": [
+    {
+      "id": 2160,
+      "countmax": 10,
+      "chance": 100000,
+      "items": [],
+      "name": null
+    },
+    {
+      "id": 9020,
+      "countmax": 2,
+      "chance": 5000,
+      "items": [],
+      "name": null
+    },
+    {
+      "id": 11421,
+      "countmax": 1,
+      "chance": 10000,
+      "items": [],
+      "name": null
+    }
+  ],
+  "voices": {
+    "interval": 0,
+    "chance": 0,
+    "sentences": []
+  },
+  "immunities": {
+    "lifedrain": 1,
+    "paralyze": 1,
+    "invisible": 1
+  },
+  "summon": {
+    "maxSummons": 0,
+    "summons": []
+  }
+}

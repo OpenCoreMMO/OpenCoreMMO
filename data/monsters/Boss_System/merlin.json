@@ -1,0 +1,238 @@
+{
+  "name": "Merlin",
+  "nameDescription": "Merlin",
+  "race": "venom",
+  "experience": 25000,
+  "speed": 420,
+  "manaCost": 0,
+  "health": {
+    "max": 25000,
+    "now": 25000
+  },
+  "look": {
+    "type": 229,
+    "head": 0,
+    "body": 0,
+    "legs": 0,
+    "feet": 0,
+    "corpse": 6078
+  },
+  "targetChange": {
+    "interval": 3000,
+    "chance": 0
+  },
+  "strategy": {
+    "attack": 0,
+    "defense": 0
+  },
+  "flags": {
+    "summonable": 0,
+    "attackable": 1,
+    "hostile": 1,
+    "illusionable": 0,
+    "convinceable": 0,
+    "pushable": 0,
+    "canpushitems": 1,
+    "canpushcreatures": 1,
+    "targetdistance": 4,
+    "staticattack": 90,
+    "runonhealth": 10000,
+    "isboss": 1,
+    "rewardboss": 1
+  },
+  "attacks": [
+    {
+      "name": "melee",
+      "interval": "1500",
+      "min": "-400",
+      "max": "-850"
+    },
+    {
+      "name": "manadrain",
+      "interval": "2000",
+      "chance": "25",
+      "range": "7",
+      "min": "-300",
+      "max": "-700",
+      "attributes": [
+        {
+          "areaEffect": "redshimmer"
+        }
+      ]
+    },
+    {
+      "name": "poison",
+      "interval": "3000",
+      "chance": "20",
+      "radius": "6",
+      "target": "0",
+      "min": "-450",
+      "max": "-750",
+      "attributes": [
+        {
+          "areaEffect": "poison"
+        }
+      ]
+    },
+    {
+      "name": "energy",
+      "interval": "1500",
+      "chance": "24",
+      "radius": "6",
+      "target": "0",
+      "min": "-200",
+      "max": "-400",
+      "attributes": [
+        {
+          "areaEffect": "energy"
+        }
+      ]
+    },
+    {
+      "name": "lifedrain",
+      "interval": "2000",
+      "chance": "21",
+      "radius": "6",
+      "target": "0",
+      "min": "-200",
+      "max": "-450",
+      "attributes": [
+        {
+          "areaEffect": "poff"
+        }
+      ]
+    },
+    {
+      "name": "effect",
+      "interval": "3000",
+      "chance": "20",
+      "radius": "5",
+      "target": "0",
+      "min": "-200",
+      "max": "-600",
+      "attributes": [
+        {
+          "areaEffect": "blackspark"
+        }
+      ]
+    },
+    {
+      "name": "firecondition",
+      "interval": "3000",
+      "chance": "20",
+      "range": "7",
+      "radius": "7",
+      "target": "1",
+      "min": "-200",
+      "max": "-800",
+      "attributes": [
+        {
+          "shootEffect": "fire"
+        },
+        {
+          "areaEffect": "firearea"
+        }
+      ]
+    },
+    {
+      "name": "lifedrain",
+      "interval": "2000",
+      "chance": "25",
+      "length": "8",
+      "spread": "0",
+      "min": "-50",
+      "max": "-250",
+      "attributes": [
+        {
+          "areaEffect": "greenspark"
+        }
+      ]
+    }
+  ],
+  "defense": {
+    "armor": 100,
+    "defense": 120
+  },
+  "defenses": [
+    {
+      "name": "healing",
+      "interval": "2000",
+      "chance": "30",
+      "min": "900",
+      "max": "2500",
+      "attributes": [
+        {
+          "areaEffect": "greenshimmer"
+        }
+      ]
+    },
+    {
+      "name": "speed",
+      "interval": "3000",
+      "chance": "30",
+      "speedchange": "360",
+      "duration": "7000",
+      "attributes": [
+        {
+          "areaEffect": "blueshimmer"
+        }
+      ]
+    }
+  ],
+  "elements": {},
+  "loot": [
+    {
+      "id": 2160,
+      "countmax": 10,
+      "chance": 100000,
+      "items": [],
+      "name": null
+    },
+    {
+      "id": 2514,
+      "countmax": 1,
+      "chance": 100000,
+      "items": [],
+      "name": null
+    },
+    {
+      "id": 2472,
+      "countmax": 1,
+      "chance": 100000,
+      "items": [],
+      "name": null
+    },
+    {
+      "id": 5903,
+      "countmax": 1,
+      "chance": 100000,
+      "items": [],
+      "name": null
+    }
+  ],
+  "voices": {
+    "interval": 5000,
+    "chance": 20,
+    "sentences": [
+      {
+        "sentence": "EU IREI MATAR TODOS VOC�S!",
+        "yell": false
+      },
+      {
+        "sentence": "EU SINTO A MAGIA!",
+        "yell": false
+      }
+    ]
+  },
+  "immunities": {
+    "lifedrain": 1,
+    "paralyze": 1,
+    "outfit": 1,
+    "drunk": 1,
+    "invisible": 1
+  },
+  "summon": {
+    "maxSummons": 0,
+    "summons": []
+  }
+}
