@@ -14528,6 +14528,61 @@
 	<spawn centerx="965" centery="1182" centerz="9" radius="1">
 		<monster name="Tarantula" x="0" y="0" z="9" spawntime="60" />
 	</spawn>
+	<spawn centerx="968" centery="1190" centerz="9" radius="1">
+		<monster name="Tarantula" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="971" centery="1191" centerz="9" radius="1">
+		<monster name="Centipede" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="970" centery="1194" centerz="9" radius="1">
+		<monster name="Toad" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="983" centery="1194" centerz="9" radius="1">
+		<monster name="Tarantula" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="960" centery="1198" centerz="9" radius="1">
+		<monster name="Tarantula" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="1000" centery="1201" centerz="9" radius="1">
+		<monster name="Tarantula" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="981" centery="1203" centerz="9" radius="1">
+		<monster name="Centipede" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="999" centery="1206" centerz="9" radius="1">
+		<monster name="Toad" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="971" centery="1207" centerz="9" radius="1">
+		<monster name="Tarantula" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="984" centery="1213" centerz="9" radius="1">
+		<monster name="Tarantula" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="953" centery="1217" centerz="9" radius="1">
+		<monster name="Toad" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="950" centery="1218" centerz="9" radius="1">
+		<monster name="Tarantula" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="951" centery="1221" centerz="9" radius="1">
+		<monster name="Toad" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="997" centery="1222" centerz="9" radius="1">
+		<monster name="Centipede" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="965" centery="1224" centerz="9" radius="1">
+		<monster name="Tarantula" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="995" centery="1226" centerz="9" radius="1">
+		<monster name="Tarantula" x="0" y="0" z="9" spawntime="60" />
+		<monster name="Tarantula" x="-1" y="1" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="959" centery="1231" centerz="9" radius="1">
+		<monster name="Centipede" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
+	<spawn centerx="971" centery="1231" centerz="9" radius="1">
+		<monster name="Toad" x="0" y="0" z="9" spawntime="60" />
+	</spawn>
 	<spawn centerx="86" centery="1310" centerz="9" radius="5">
 		<monster name="Hero" x="1" y="-3" z="9" spawntime="60" />
 		<monster name="Hero" x="1" y="3" z="9" spawntime="60" />
