@@ -19631,6 +19631,440 @@
     }
   },
   {
+    "centerx": "1238",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1242",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1244",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1246",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1248",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1250",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1252",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1254",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1256",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1258",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1260",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1262",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1264",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1266",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1268",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1270",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1272",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1274",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1276",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1278",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1280",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1282",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1284",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1286",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1288",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1290",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1292",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1294",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1296",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1298",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1300",
+    "centery": "1167",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
     "centerx": "295",
     "centery": "1168",
     "centerz": "7",
@@ -19680,6 +20114,20 @@
       "y": "0",
       "z": "7",
       "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1241",
+    "centery": "1168",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "-1",
+      "y": "-1",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
     }
   },
   {
@@ -19823,6 +20271,342 @@
       "y": "0",
       "z": "7",
       "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1245",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1247",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1249",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1251",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1253",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1255",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1257",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1259",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1261",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1263",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1265",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1267",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1269",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1271",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1273",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1275",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1277",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1279",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1281",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1283",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1285",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1287",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1289",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
+    }
+  },
+  {
+    "centerx": "1291",
+    "centery": "1176",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60",
+      "direction": "2"
     }
   },
   {
@@ -20105,6 +20889,422 @@
     "radius": "1",
     "monster": {
       "name": "Hellspawn",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1238",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1240",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1242",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1244",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1246",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1248",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1250",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1252",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1254",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1256",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1258",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1260",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1262",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1264",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1266",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1268",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1270",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1272",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1274",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1276",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1278",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1280",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1282",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1284",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1286",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1288",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1290",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1292",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1294",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1296",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1298",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
+      "x": "0",
+      "y": "0",
+      "z": "7",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1300",
+    "centery": "1187",
+    "centerz": "7",
+    "radius": "1",
+    "monster": {
+      "name": "Trainer",
       "x": "0",
       "y": "0",
       "z": "7",
@@ -22260,7 +23460,7 @@
     "radius": "1",
     "monster": {
       "name": "Hellfire Fighter",
-      "x": "1",
+      "x": "0",
       "y": "0",
       "z": "7",
       "spawntime": "60",
@@ -68835,6 +70035,249 @@
     "radius": "1",
     "monster": {
       "name": "Tarantula",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "968",
+    "centery": "1190",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Tarantula",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "971",
+    "centery": "1191",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Centipede",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "970",
+    "centery": "1194",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Toad",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "983",
+    "centery": "1194",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Tarantula",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "960",
+    "centery": "1198",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Tarantula",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "1000",
+    "centery": "1201",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Tarantula",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "981",
+    "centery": "1203",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Centipede",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "999",
+    "centery": "1206",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Toad",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "971",
+    "centery": "1207",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Tarantula",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "984",
+    "centery": "1213",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Tarantula",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "953",
+    "centery": "1217",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Toad",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "950",
+    "centery": "1218",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Tarantula",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "951",
+    "centery": "1221",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Toad",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "997",
+    "centery": "1222",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Centipede",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "965",
+    "centery": "1224",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Tarantula",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "995",
+    "centery": "1226",
+    "centerz": "9",
+    "radius": "1",
+    "monster": [
+      {
+        "name": "Tarantula",
+        "x": "0",
+        "y": "0",
+        "z": "9",
+        "spawntime": "60"
+      },
+      {
+        "name": "Tarantula",
+        "x": "-1",
+        "y": "1",
+        "z": "9",
+        "spawntime": "60"
+      }
+    ]
+  },
+  {
+    "centerx": "959",
+    "centery": "1231",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Centipede",
+      "x": "0",
+      "y": "0",
+      "z": "9",
+      "spawntime": "60"
+    }
+  },
+  {
+    "centerx": "971",
+    "centery": "1231",
+    "centerz": "9",
+    "radius": "1",
+    "monster": {
+      "name": "Toad",
       "x": "0",
       "y": "0",
       "z": "9",

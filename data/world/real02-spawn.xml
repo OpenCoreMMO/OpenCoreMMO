@@ -3881,6 +3881,99 @@
 	<spawn centerx="1103" centery="1167" centerz="7" radius="1">
 		<monster name="Cyclops" x="0" y="0" z="7" spawntime="60" />
 	</spawn>
+	<spawn centerx="1238" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1242" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1244" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1246" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1248" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1250" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1252" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1254" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1256" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1258" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1260" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1262" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1264" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1266" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1268" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1270" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1272" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1274" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1276" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1278" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1280" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1282" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1284" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1286" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1288" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1290" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1292" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1294" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1296" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1298" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1300" centery="1167" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
 	<spawn centerx="295" centery="1168" centerz="7" radius="1">
 		<monster name="Grim Reaper" x="0" y="0" z="7" spawntime="60" />
 	</spawn>
@@ -3892,6 +3985,9 @@
 	</spawn>
 	<spawn centerx="1095" centery="1168" centerz="7" radius="1">
 		<monster name="Cyclops" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1241" centery="1168" centerz="7" radius="1">
+		<monster name="Trainer" x="-1" y="-1" z="7" spawntime="60" direction="2" />
 	</spawn>
 	<spawn centerx="1052" centery="1169" centerz="7" radius="1">
 		<monster name="Snake" x="0" y="0" z="7" spawntime="60" />
@@ -3925,6 +4021,78 @@
 	</spawn>
 	<spawn centerx="684" centery="1175" centerz="7" radius="1">
 		<monster name="Frost Dragon" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1245" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1247" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1249" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1251" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1253" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1255" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1257" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1259" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1261" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1263" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1265" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1267" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1269" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1271" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1273" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1275" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1277" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1279" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1281" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1283" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1285" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1287" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1289" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</spawn>
+	<spawn centerx="1291" centery="1176" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" direction="2" />
 	</spawn>
 	<spawn centerx="236" centery="1177" centerz="7" radius="1">
 		<monster name="Grim Reaper" x="0" y="0" z="7" spawntime="60" />
@@ -3991,6 +4159,102 @@
 	</spawn>
 	<spawn centerx="1819" centery="1186" centerz="7" radius="1">
 		<monster name="Hellspawn" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1238" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1240" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1242" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1244" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1246" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1248" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1250" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1252" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1254" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1256" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1258" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1260" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1262" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1264" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1266" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1268" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1270" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1272" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1274" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1276" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1278" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1280" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1282" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1284" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1286" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1288" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1290" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1292" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1294" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1296" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1298" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
+	</spawn>
+	<spawn centerx="1300" centery="1187" centerz="7" radius="1">
+		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
 	</spawn>
 	<spawn centerx="1175" centery="1188" centerz="7" radius="1">
 		<monster name="Cyclops" x="0" y="0" z="7" spawntime="60" />
