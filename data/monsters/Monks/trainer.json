@@ -47,8 +47,8 @@
     }
   ],
   "defense": {
-    "armor": 20,
-    "defense": 22
+    "armor": 1,
+    "defense": 1
   },
   "defenses": [
     {
