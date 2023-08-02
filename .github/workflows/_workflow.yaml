@@ -1,0 +1,35 @@
+﻿name: _Template Workflow
+on:
+  workflow_call:
+    inputs:
+      path:
+        description: 'The path passed from the caller workflow'
+        required: true
+        type: string
+      project:
+        description: 'The project passed from the caller workflow'
+        required: true
+        type: string
+      test:
+        description: 'The test path passed from the caller workflow'
+        required: true
+        type: string
+      deploy:
+        description: 'enable publish code to enviroment'
+        required: true
+        type: boolean
+        default: false
+jobs:
+  build:
+    name: Build & Test
+    uses: ./.github/workflows/_build.yaml
+    with:
+      project: ./${{ inputs.path }}/${{ inputs.project }}
+      deploy: ${{ inputs.deploy }}
+      test: ${{ inputs.test }}
+  quality:
+    name: CodeQL Analysis
+    needs: [ build ]
+    uses: ./.github/workflows/_codeql.yaml
+    with:
+      path: $GITHUB_WORKSPACE/${{ inputs.path }}

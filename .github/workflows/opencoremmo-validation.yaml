@@ -1,0 +1,15 @@
+﻿name: OpenCoreMMO Build & Test
+run-name: OpenCoreMMO Build Workflow
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+jobs:
+  workflow:
+    uses: ./.github/workflows/_workflow.yaml
+    with:
+      path: /
+      project: src/Standalone
+      test: src/
+      deploy: false
