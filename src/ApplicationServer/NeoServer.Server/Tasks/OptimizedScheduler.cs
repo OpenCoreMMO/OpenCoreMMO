@@ -8,13 +8,13 @@ namespace NeoServer.Server.Tasks;
 
 public class OptimizedScheduler : Scheduler
 {
-    private readonly IDispatcher dispatcher;
+    private readonly IDispatcher _dispatcher;
     protected readonly ConcurrentQueue<ISchedulerEvent> PreQueue = new();
     protected readonly object PreQueueMonitor = new();
 
     public OptimizedScheduler(IDispatcher dispatcher) : base(dispatcher)
     {
-        this.dispatcher = dispatcher;
+        _dispatcher = dispatcher;
     }
 
     public override void Start(CancellationToken token)
@@ -24,7 +24,11 @@ public class OptimizedScheduler : Scheduler
             while (await Reader.WaitToReadAsync(token))
             while (Reader.TryRead(out var evt))
             {
-                if (EventIsCancelled(evt.EventId)) continue;
+                if (EventIsCancelled(evt.EventId))
+                {
+                    CancelledEventIds.TryRemove(evt.EventId, out _);
+                    continue;
+                }
 
                 DispatchEvent(evt);
             }
@@ -64,7 +68,11 @@ public class OptimizedScheduler : Scheduler
                 AddEvent(evt);
             }
 
-            replace.ForEach(x => PreQueue.Enqueue(x));
+            foreach (var action in replace)
+            {
+                PreQueue.Enqueue(action);
+            }
+            
             replace.Clear();
         }
     }
@@ -86,11 +94,15 @@ public class OptimizedScheduler : Scheduler
 
         evt.SetToNotExpire();
 
-        if (EventIsCancelled(evt.EventId)) return false;
+        if (EventIsCancelled(evt.EventId))
+        {
+            CancelledEventIds.TryRemove(evt.EventId, out _);
+            return false;
+        }
 
         Interlocked.Increment(ref EventLength);
         ActiveEventIds.TryRemove(evt.EventId, out _);
-        dispatcher.AddEvent(evt); //send to dispatcher      
+        _dispatcher.AddEvent(evt); //send to dispatcher      
 
         return true;
     }

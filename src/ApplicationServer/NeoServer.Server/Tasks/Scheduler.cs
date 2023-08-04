@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Channels;
@@ -12,12 +13,14 @@ public class Scheduler : IScheduler
     private readonly ChannelWriter<ISchedulerEvent> _writer;
 
     protected readonly ConcurrentDictionary<uint, byte> ActiveEventIds = new();
+    protected readonly ConcurrentDictionary<uint, byte> CancelledEventIds = new();
+
     protected readonly ChannelReader<ISchedulerEvent> Reader;
     private uint _lastEventId;
 
     protected ulong EventLength;
 
-    public Scheduler(IDispatcher dispatcher)
+    protected Scheduler(IDispatcher dispatcher)
     {
         _dispatcher = dispatcher;
         var channel = Channel.CreateUnbounded<ISchedulerEvent>(new UnboundedChannelOptions { SingleReader = true });
@@ -78,6 +81,7 @@ public class Scheduler : IScheduler
     {
         if (eventId == default) return false;
         var removed = ActiveEventIds.TryRemove(eventId, out _);
+        CancelledEventIds.TryAdd(eventId, default);
         return removed;
     }
 
@@ -86,10 +90,7 @@ public class Scheduler : IScheduler
     /// </summary>
     /// <param name="eventId"></param>
     /// <returns></returns>
-    public bool EventIsCancelled(uint eventId)
-    {
-        return !ActiveEventIds.ContainsKey(eventId);
-    }
+    public bool EventIsCancelled(uint eventId) => CancelledEventIds.ContainsKey(eventId);
 
     private void SendBack(ISchedulerEvent evt)
     {
