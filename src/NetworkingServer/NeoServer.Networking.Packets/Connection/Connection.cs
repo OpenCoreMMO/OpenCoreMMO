@@ -241,12 +241,17 @@ public class Connection : IConnection
                     Close(true);
                     return false;
                 }
-                
-                while (_socket.Available > 0)
-                {
-                    if (!_stream.CanRead) break;
 
-                    var bytesRead = _stream.Read(InMessage.Buffer, totalBytesRead, BUFFER_SIZE - totalBytesRead);
+                if (size > BUFFER_SIZE) size = BUFFER_SIZE;
+                
+                while (totalBytesRead < size)
+                {
+                    if (!_stream.CanRead)
+                    {
+                        return false;
+                    }
+                    
+                    var bytesRead = _stream.Read(InMessage.Buffer, totalBytesRead, size - totalBytesRead);
                     if (bytesRead == 0) break;
 
                     totalBytesRead += bytesRead;
