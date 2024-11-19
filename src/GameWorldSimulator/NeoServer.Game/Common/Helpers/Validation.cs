@@ -85,4 +85,9 @@ public class Guard
                 return false;
         return true;
     }
+
+    public static bool IsZero(int value)
+    {
+        return value == 0;
+    }
 }

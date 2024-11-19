@@ -6,14 +6,18 @@ using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.World.Algorithms;
-using NeoServer.Modules.Combat.Attacks.InAreaAttack;
-using NeoServer.Modules.Combat.MonsterDefense;
-using NeoServer.Modules.Combat.PlayerDefense;
+using NeoServer.Modules.Combat.Defense;
+using NeoServer.Modules.Combat.Defense.MonsterDefense;
+using NeoServer.Modules.Combat.Defense.PlayerDefense;
 
-public class AreaAttackProcessor(IMap map, AreaEffectPacketDispatcher areaEffectPacketDispatcher) : ISingleton
+namespace NeoServer.Modules.Combat.Attacks.InAreaAttack;
+
+public class AreaAttackProcessor(IMap map, AreaEffectPacketDispatcher areaEffectPacketDispatcher, DefenseHandler defenseHandler) : ISingleton
 {
     public void Propagate(AttackInput attackInput, CombatDamageList combatDamageList)
     {
+        if (attackInput.Aggressor is not ICombatActor aggressor) return;
+        
         var area = attackInput.Parameters.Area;
         var affectedArea = new AffectedLocation2[area.Coordinates.Length];
         var targetCreaturesList = new List<ICombatActor>(); // Store targets and their coordinates
@@ -53,7 +57,7 @@ public class AreaAttackProcessor(IMap map, AreaEffectPacketDispatcher areaEffect
 
             foreach (var target in targetCreatures)
             {
-                if (attackInput.Aggressor == target) continue;
+                if (aggressor == target) continue;
 
                 if (target is ICombatActor targetCreature)
                 {
@@ -63,7 +67,7 @@ public class AreaAttackProcessor(IMap map, AreaEffectPacketDispatcher areaEffect
         }
 
         // Phase 2: Send the packet for the area effect before defense handling
-        areaEffectPacketDispatcher.Send(attackInput.Aggressor, new AreaEffectParam
+        areaEffectPacketDispatcher.Send(aggressor, new AreaEffectParam
         {
             Area = affectedArea,
             Effect = attackInput.Parameters.Effect
@@ -72,15 +76,7 @@ public class AreaAttackProcessor(IMap map, AreaEffectPacketDispatcher areaEffect
         // Phase 3: Now apply defense logic after sending the packet
         foreach (var targetCreature in targetCreaturesList)
         {
-            switch (targetCreature)
-            {
-                case IPlayer player:
-                    PlayerDefenseHandler.Handle(attackInput.Aggressor, player, combatDamageList);
-                    break;
-                case IMonster monster:
-                    MonsterDefenseHandler.Handle(attackInput.Aggressor, monster, combatDamageList);
-                    break;
-            }
+           defenseHandler.Handle(attackInput.Aggressor, targetCreature, combatDamageList);
         }
     }
 }

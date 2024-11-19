@@ -254,11 +254,12 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnChangedVisibility?.Invoke(this);
     }
 
-    public override Direction GetNextStep()
-    {
-        if (IsDead) return Direction.None;
-        return base.GetNextStep();
-    }
+    // public override Direction GetNextStep()
+    // {
+    //     // if (IsDead) return Direction.None;
+    //     // return base.GetNextStep();
+    //     return Direction.None;
+    // }
 
     public virtual void TurnVisible()
     {

@@ -5,15 +5,17 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Results;
 using NeoServer.Modules.Combat.Attacks.InAreaAttack;
-using NeoServer.Modules.Combat.MonsterDefense;
-using NeoServer.Modules.Combat.PlayerDefense;
+using NeoServer.Modules.Combat.Defense;
+using NeoServer.Modules.Combat.Defense.MonsterDefense;
+using NeoServer.Modules.Combat.Defense.PlayerDefense;
 
 namespace NeoServer.Modules.Combat.Attacks.DistanceAttack;
 
 public sealed class DistanceAttackStrategy(
     DistanceAttackValidation distanceAttackValidation,
     AttackCalculation attackCalculation,
-    AreaAttackProcessor areaAttackProcessor)
+    AreaAttackProcessor areaAttackProcessor,
+    DefenseHandler defenseHandler)
     : AttackStrategy
 {
     public override string Name => nameof(DistanceAttackStrategy);
@@ -22,18 +24,19 @@ public sealed class DistanceAttackStrategy(
     {
         var aggressor = attackInput.Aggressor;
         var target = attackInput.Target;
+        var creatureAggressor = attackInput.Aggressor as ICombatActor;
 
-        if (attackInput.Parameters.NeedTarget && target is not ICombatActor) 
+        if (attackInput.Parameters.NeedTarget && target is not ICombatActor)
             return Result.NotApplicable;
 
         var validationResult = distanceAttackValidation.Validate(attackInput);
         if (validationResult.Failed) return validationResult;
 
-        var missAttackResult = CalculateIfMissedAttack(aggressor, target, attackInput.Parameters);
+        var missAttackResult = CalculateIfMissedAttack(creatureAggressor, target, attackInput.Parameters);
 
-        aggressor.PreAttack(new PreAttackValues
+        creatureAggressor?.PreAttack(new PreAttackValues
         {
-            Aggressor = aggressor,
+            Aggressor = creatureAggressor,
             Target = target,
             MissLocation = missAttackResult.Destination,
             ShootType = attackInput.Parameters.ShootType
@@ -46,7 +49,7 @@ public sealed class DistanceAttackStrategy(
             result = ApplyDamage(attackInput, target);
         }
 
-        aggressor.PostAttack(attackInput);
+        creatureAggressor?.PostAttack(attackInput);
         return result ? Result.Success : Result.NotApplicable;
     }
 
@@ -71,22 +74,16 @@ public sealed class DistanceAttackStrategy(
             return true;
         }
 
-        switch (victim)
-        {
-            case IPlayer player:
-                PlayerDefenseHandler.Handle(attackInput.Aggressor, player, new CombatDamageList(damages));
-                break;
-            case IMonster monster:
-                MonsterDefenseHandler.Handle(attackInput.Aggressor, monster, new CombatDamageList(damages));
-                break;
-        }
-
+        defenseHandler.Handle(attackInput.Aggressor, victim as ICombatActor, new CombatDamageList(damages));
+     
         return true;
     }
 
     private static MissAttackResult CalculateIfMissedAttack(ICombatActor aggressor, IThing victim,
         AttackParameter parameter)
     {
+        if (aggressor is null || victim is null) return MissAttackResult.NotMissed;
+
         if (parameter.IsMagicalAttack) return MissAttackResult.NotMissed;
 
         var player = aggressor as IPlayer;

@@ -1,4 +1,6 @@
 ﻿using NeoServer.BuildingBlocks.Application.Contracts;
+using NeoServer.BuildingBlocks.Application.IntegrationEvents.Creatures;
+using NeoServer.BuildingBlocks.Infrastructure;
 using NeoServer.BuildingBlocks.Infrastructure.Threading.Scheduler;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Services;
@@ -15,7 +17,7 @@ public class GameCreatureJob(
     IGameServer game,
     SpawnManager spawnManager,
     ISummonService summonService,
-    PingRoutine pingRoutine)
+    PingRoutine pingRoutine, IEventBus eventBus)
 {
     private const ushort EVENT_CHECK_CREATURE_INTERVAL = 500;
 
@@ -36,6 +38,7 @@ public class GameCreatureJob(
             CheckNpc(creature);
 
             RespawnRoutine.Execute(spawnManager);
+            eventBus.Publish(new CreatureCheckedIntegrationEvent(creature));
         }
     }
 

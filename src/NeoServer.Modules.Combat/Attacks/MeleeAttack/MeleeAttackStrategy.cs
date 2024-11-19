@@ -4,15 +4,17 @@ using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Results;
 using NeoServer.Modules.Combat.Attacks.InAreaAttack;
-using NeoServer.Modules.Combat.MonsterDefense;
-using NeoServer.Modules.Combat.PlayerDefense;
+using NeoServer.Modules.Combat.Defense;
+using NeoServer.Modules.Combat.Defense.MonsterDefense;
+using NeoServer.Modules.Combat.Defense.PlayerDefense;
 
 namespace NeoServer.Modules.Combat.Attacks.MeleeAttack;
 
 public sealed class MeleeAttackStrategy(
     MeleeAttackValidation meleeAttackValidation,
     AttackCalculation attackCalculation,
-    AreaAttackProcessor areaAttackProcessor)
+    AreaAttackProcessor areaAttackProcessor,
+    DefenseHandler defenseHandler)
     : AttackStrategy
 {
     public override string Name { get; } = nameof(MeleeAttackStrategy);
@@ -22,7 +24,7 @@ public sealed class MeleeAttackStrategy(
     /// </summary>
     protected override Result Attack(in AttackInput attackInput)
     {
-        var aggressor = attackInput.Aggressor;
+        var aggressor = attackInput.Aggressor as ICombatActor;
 
         // Ensure the target is a valid combat actor (e.g., player or monster)
         if (attackInput.Target is not ICombatActor victim) return Result.NotApplicable;
@@ -30,8 +32,8 @@ public sealed class MeleeAttackStrategy(
         // Validate if the melee attack can be performed based on aggressor and target
         var validationResult = meleeAttackValidation.Validate(aggressor, victim);
         if (validationResult.Failed) return validationResult;
-        
-        aggressor.PreAttack(new PreAttackValues
+
+        aggressor?.PreAttack(new PreAttackValues
         {
             Aggressor = aggressor,
             Target = victim
@@ -40,11 +42,11 @@ public sealed class MeleeAttackStrategy(
         // Calculate and apply damage
         ApplyDamage(attackInput);
 
-        aggressor.PostAttack(attackInput);
+        aggressor?.PostAttack(attackInput);
 
         return Result.Success;
     }
-    
+
     /// <summary>
     /// Calculates and applies damage to the target, handling area attacks and defense mechanics.
     /// </summary>
@@ -52,7 +54,7 @@ public sealed class MeleeAttackStrategy(
     {
         // Allocate space for one or two damages based on whether there is an extra attack
         Span<CombatDamage> damages = stackalloc CombatDamage[attackInput.Parameters.HasExtraAttack ? 2 : 1];
-        
+
         var extraAttack = attackInput.Parameters.ExtraAttack;
 
         var physicalDamage = attackCalculation.Calculate(attackInput.Parameters.MinDamage,
@@ -70,7 +72,7 @@ public sealed class MeleeAttackStrategy(
         }
 
         var combatDamageList = new CombatDamageList(damages);
-        
+
         // Handle area attacks separately by propagating damage to all affected targets
         if (attackInput.Parameters.IsAttackInArea)
         {
@@ -79,15 +81,6 @@ public sealed class MeleeAttackStrategy(
         }
 
         // Handle defense logic based on the type of target (player or monster)
-        if (attackInput.Target is IPlayer)
-        {
-            PlayerDefenseHandler.Handle(attackInput.Aggressor, attackInput.Target as IPlayer, combatDamageList);
-        }
-
-        if (attackInput.Target is IMonster)
-        {
-            MonsterDefenseHandler.Handle(attackInput.Aggressor, attackInput.Target as IMonster, combatDamageList);
-        }
+        defenseHandler.Handle(attackInput.Aggressor,  attackInput.Target as ICombatActor, combatDamageList);
     }
-    
 }

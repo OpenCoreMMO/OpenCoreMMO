@@ -1,11 +1,15 @@
 ﻿using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Item;
 
 namespace NeoServer.Game.Common.Contracts.Items.Types;
 
-public interface IMagicField
+public interface IMagicField:IThing
 {
-    Location.Structs.Location Location { get; }
     IItemType Metadata { get; }
+    MinMax Damage { get; }
+    byte DamageCount { get; }
+    DamageType DamageType { get; }
+    int Interval { get; }
 
     void CauseDamage(ICreature toCreature);
 }

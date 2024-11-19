@@ -1,4 +1,3 @@
-using NeoServer.Game.Combat;
 using Serilog;
 
 namespace NeoServer.Modules.Combat.Attacks;

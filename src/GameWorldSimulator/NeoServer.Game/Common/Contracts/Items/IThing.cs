@@ -27,6 +27,7 @@ public interface IThing : IUsable
 
     public bool IsNextTo(IThing thing)
     {
+        if (thing is null) return false;
         return Location.IsNextTo(thing.Location);
     }
 

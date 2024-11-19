@@ -2,6 +2,7 @@ using NeoServer.Game.Combat;
 using NeoServer.Game.Combat.Attacks.MeleeAttack;
 using NeoServer.Game.Combat.Attacks.Validation;
 using NeoServer.Game.Common;
+using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Results;
 
 namespace NeoServer.Modules.Combat.Attacks.DistanceAttack;
@@ -12,7 +13,7 @@ public sealed class DistanceAttackValidation(AttackValidation attackValidation) 
     {
         ArgumentNullException.ThrowIfNull(parameter.Aggressor);
 
-        var aggressor = parameter.Aggressor;
+        if (parameter.Aggressor is not ICombatActor aggressor) return Result.NotApplicable;
 
         var result = attackValidation.Validate(aggressor, parameter.Target);
         if (result.Failed) return result;

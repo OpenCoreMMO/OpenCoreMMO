@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using NeoServer.Server.Standalone.IoC.Modules;
 
 namespace NeoServer.Server.Standalone.IoC;
 
@@ -12,7 +13,8 @@ public static class ContainerHelpers
     public static IServiceCollection RegisterAssembliesByInterface(this IServiceCollection builder, Type interfaceType)
     {
         var types = AssemblyCache
-            .Where(interfaceType.IsAssignableFrom)
+            .Where(x=> interfaceType.IsAssignableFrom(x) || x.GetInterfaces()
+                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType))
             .Where(type => !type.IsAbstract && !type.IsEnum && !type.IsInterface);
 
         foreach (var type in types)
@@ -38,14 +40,35 @@ public static class ContainerHelpers
 
     public static IServiceCollection RegisterAssemblyTypes<TInterface>(this IServiceCollection serviceCollection,
         params Assembly[] assemblies)
-        where TInterface : class
+        where TInterface : class =>
+        RegisterAssemblyTypes(serviceCollection, typeof(TInterface), assemblies);
+
+    public static IServiceCollection RegisterAssemblyTypes(this IServiceCollection serviceCollection, Type @interface,
+        params Assembly[] assemblies)
     {
         var types = assemblies.SelectMany(x => x.GetTypes())
             .Where(t => !t.IsAbstract && !t.IsInterface && t.IsPublic && !t.IsEnum)
-            .Where(typeof(TInterface).IsAssignableFrom)
+            .Where(x=> @interface.IsAssignableFrom(x) || x.GetInterfaces()
+                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == @interface))
             .ToList();
 
-        types.ForEach(t => serviceCollection.AddSingleton(typeof(TInterface), t));
+        types.ForEach(t => serviceCollection.AddSingleton(@interface, t));
+        return serviceCollection;
+    }
+
+    public static IServiceCollection RegisterModules(this IServiceCollection serviceCollection)
+    {
+        var types = AssemblyCache
+            .Where(x=> typeof(IModuleRegister).IsAssignableFrom(x) || x.GetInterfaces()
+                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IModuleRegister)))
+            .Where(type => !type.IsAbstract && !type.IsEnum && !type.IsInterface);
+        
+        foreach (var type in types)
+        {
+            if (type is not IModuleRegister moduleRegister) continue;
+            moduleRegister.Register(serviceCollection);
+        }
+
         return serviceCollection;
     }
 

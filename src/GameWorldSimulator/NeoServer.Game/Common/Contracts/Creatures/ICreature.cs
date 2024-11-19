@@ -177,4 +177,6 @@ public interface ICreature : IMovableThing, IHasEvent
     ///     Sets new outfit and store current as last outfit
     /// </summary>
     void SetTemporaryOutfit(ushort lookType, byte head, byte body, byte legs, byte feet, byte addon);
+
+    bool CanSee(Location.Structs.Location pos, int viewRangeX, int viewRangeY, int limitRangeOffset = 0);
 }

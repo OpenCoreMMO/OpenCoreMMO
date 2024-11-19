@@ -8,6 +8,7 @@ using NeoServer.BuildingBlocks.Application.Contracts;
 using NeoServer.BuildingBlocks.Application.Extensions;
 using NeoServer.BuildingBlocks.Application.Server;
 using NeoServer.BuildingBlocks.Application.Server.Jobs.Persistence;
+using NeoServer.BuildingBlocks.Infrastructure;
 using NeoServer.BuildingBlocks.Infrastructure.Threading.Dispatcher;
 using NeoServer.BuildingBlocks.Infrastructure.Threading.Scheduler;
 using NeoServer.Extensions.Compiler;
@@ -109,6 +110,7 @@ public class Program
         container.Resolve<IEnumerable<IStartup>>().ToList().ForEach(x => x.Run());
 
         container.Resolve<LuaGlobalRegister>().Register();
+        container.Resolve<IEventBus>().Initialize();
 
         StartListening(container, cancellationToken);
 

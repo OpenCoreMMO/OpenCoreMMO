@@ -1,26 +1,21 @@
-﻿using NeoServer.BuildingBlocks.Application.Contracts;
+﻿using Mediator;
+using NeoServer.BuildingBlocks.Application.Contracts;
 using NeoServer.BuildingBlocks.Infrastructure.Threading.Event;
 using NeoServer.Game.Common.Location;
+using NeoServer.Modules.Movement.Creature.Walk;
 using NeoServer.Networking.Packets.Network;
 using NeoServer.Networking.Packets.Network.Enums;
 
 namespace NeoServer.PacketHandler.Modules.Players.Walk;
 
-public class PlayerWalkPacketHandler : PacketHandler
+public class PlayerWalkPacketHandler(IGameServer game, IMediator mediator) : PacketHandler
 {
-    private readonly IGameServer _game;
-
-    public PlayerWalkPacketHandler(IGameServer game)
-    {
-        _game = game;
-    }
-
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
         var direction = ParseMovementPacket(message.IncomingPacket);
 
-        if (_game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player))
-            _game.Dispatcher.AddEvent(new Event(() => player.WalkTo(direction)));
+        if (game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player))
+            game.Dispatcher.AddEvent(new Event(() => mediator.Send(new StepCommand(player, direction))));
     }
 
     private Direction ParseMovementPacket(GameIncomingPacketType walkPacket)

@@ -2,6 +2,7 @@
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Game.Creature;
 
 namespace NeoServer.Game.Common.Contracts.Creatures;
 
@@ -27,10 +28,12 @@ public interface IWalkableCreature : ICreature
     bool HasNextStep { get; }
     bool IsFollowing { get; }
     ushort Speed { get; }
+    public bool HasNoSpeed => Speed is 0;
     int StepDelay { get; }
     bool FirstStep { get; } //remove
     ITileEnterRule TileEnterRule { get; }
     FindPathParams PathSearchParams { get; }
+    CooldownList Cooldowns { get; }
     event StartWalk OnStartedWalking;
     event StopWalk OnStoppedWalking;
     event TurnedToDirection OnTurnedToDirection;
@@ -108,7 +111,7 @@ public interface IWalkableCreature : ICreature
     ///     Get creature's next step direction
     /// </summary>
     /// <returns>Returns None when there is no next direction</returns>
-    Direction GetNextStep();
+    Direction NextStep { get; }
 
     /// <summary>
     ///     Sets current tile which creature is on
@@ -120,4 +123,8 @@ public interface IWalkableCreature : ICreature
     void Follow(ICreature creature);
     void CancelWalk();
     event StopWalk OnCancelledWalking;
+    void AddStep(Direction direction);
+    void ClearNextSteps();
+    void SetFirstStep(bool firstStep);
+    void AddSteps(Direction[] directions);
 }

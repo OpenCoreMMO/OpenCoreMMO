@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using NeoServer.BuildingBlocks.Application.Contracts;
+﻿using NeoServer.BuildingBlocks.Application.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
 
 namespace NeoServer.Modules.Creatures;

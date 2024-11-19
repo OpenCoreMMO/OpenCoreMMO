@@ -434,7 +434,7 @@ public class Map : IMap
 
     public void MoveCreature(IWalkableCreature creature)
     {
-        var nextDirection = creature.GetNextStep();
+        var nextDirection = creature.NextStep;
         if (nextDirection == Direction.None) return;
 
         var nextTile = GetNextTile(creature.Location, nextDirection);

@@ -37,7 +37,6 @@ public interface IMap
 
     bool ArePlayersAround(Location.Structs.Location location);
     void PlaceCreature(ICreature creature);
-    ITile GetNextTile(Location.Structs.Location fromLocation, Direction direction);
 
     IList<byte> GetFloorDescription(IThing thing, ushort fromX, ushort fromY, byte currentZ, byte width,
         byte height, int verticalOffset, ref int skip);
@@ -69,4 +68,5 @@ public interface IMap
     ITile GetTile(Location.Structs.Location location);
     ITile GetFinalTile(ITile toTile);
     void ReplaceTile(ITile newTile);
+    ITile GetNextTile(Location.Structs.Location fromLocation, Direction direction);
 }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using NeoServer.BuildingBlocks.Application;
 using NeoServer.BuildingBlocks.Domain;
+using NeoServer.BuildingBlocks.Infrastructure;
 using NeoServer.BuildingBlocks.Infrastructure.Threading.Dispatcher;
 using NeoServer.BuildingBlocks.Infrastructure.Threading.Scheduler;
 using NeoServer.Game.Common.Contracts.Creatures;
@@ -72,11 +73,14 @@ public static class Container
         builder.AddSingleton<World>();
 
         builder.AddSingleton<AttackRuneCooldownManager>();
-        builder.AddSingleton<NeoServer.BuildingBlocks.Application.Contracts.IGameCreatureManager, GameCreatureManager>();
+        builder
+            .AddSingleton<NeoServer.BuildingBlocks.Application.Contracts.IGameCreatureManager, GameCreatureManager>();
         builder.AddSingleton<IWalkToTarget, WalkToTarget>();
         builder.AddSingleton<IChatModule, ChatModule>();
+        builder.AddSingleton<IEventBus, InMemoryEventBus>();
 
-        
+        builder.RegisterAssembliesByInterface(typeof(IIntegrationEventHandler<>));
+
         var configuration = ConfigurationInjection.GetConfiguration();
 
         builder.AddFactories()
@@ -93,8 +97,9 @@ public static class Container
             .AddJobs()
             .AddDataStores()
             .AddFeatures()
+            .RegisterModules()
             .RegisterPacketHandlers();
-
+        
         //creature
         builder.AddSingleton<ICreatureGameInstance, CreatureGameInstance>();
 

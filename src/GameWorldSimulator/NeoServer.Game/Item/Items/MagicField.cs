@@ -16,16 +16,16 @@ public class MagicField : BaseItem, IMagicField
     {
     }
 
-    private byte DamageCount => Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field)
+    public byte DamageCount => Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field)
         ?.GetAttribute<byte>(ItemAttribute.Count) ?? 0;
 
-    private DamageType DamageType => DamageTypeParser.Parse(Metadata.Attributes.GetAttribute(ItemAttribute.Field));
+    public DamageType DamageType => DamageTypeParser.Parse(Metadata.Attributes.GetAttribute(ItemAttribute.Field));
 
-    private int Interval =>
+    public int Interval =>
         Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field)?.GetAttribute<int>(ItemAttribute.Ticks) ??
         10000;
 
-    private MinMax Damage
+    public MinMax Damage
     {
         get
         {

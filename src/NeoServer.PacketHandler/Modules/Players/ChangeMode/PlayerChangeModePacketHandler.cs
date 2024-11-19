@@ -1,5 +1,9 @@
-﻿using NeoServer.BuildingBlocks.Application.Contracts;
+﻿using Mediator;
+using NeoServer.BuildingBlocks.Application.Contracts;
 using NeoServer.BuildingBlocks.Infrastructure.Threading.Event;
+using NeoServer.Game.Common.Creatures.Players;
+using NeoServer.Modules.Movement.Creature.Follow;
+using NeoServer.Modules.Players.ChangeMode;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Networking.Packets.Network;
 
@@ -8,10 +12,12 @@ namespace NeoServer.PacketHandler.Modules.Players.ChangeMode;
 public class PlayerChangesModePacketHandler : PacketHandler
 {
     private readonly IGameServer _game;
+    private readonly IMediator _mediator;
 
-    public PlayerChangesModePacketHandler(IGameServer game)
+    public PlayerChangesModePacketHandler(IGameServer game, IMediator mediator)
     {
         _game = game;
+        _mediator = mediator;
     }
 
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
@@ -22,9 +28,10 @@ public class PlayerChangesModePacketHandler : PacketHandler
 
         _game.Dispatcher.AddEvent(new Event(() =>
         {
-            player.ChangeFightMode(changeMode.FightMode);
-            player.ChangeChaseMode(changeMode.ChaseMode);
-            player.ChangeSecureMode(changeMode.SecureMode);
+            _mediator.Send(new ChangeModeCommand(player, changeMode.FightMode, changeMode.ChaseMode,
+                changeMode.SecureMode));
+
+   
         }));
     }
 }

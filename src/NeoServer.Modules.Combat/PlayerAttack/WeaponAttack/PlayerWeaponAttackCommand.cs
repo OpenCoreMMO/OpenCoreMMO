@@ -1,4 +1,5 @@
 using Mediator;
+using NeoServer.BuildingBlocks.Infrastructure;
 using NeoServer.Game.Combat;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
@@ -17,7 +18,8 @@ public record PlayerWeaponAttackCommand(IPlayer Player, IThing Victim, AttackPar
 public class PlayerWeaponAttackCommandHandler(
     MeleeAttackStrategy meleeAttackStrategy,
     DistanceAttackStrategy distanceAttackStrategy,
-    GameConfiguration gameConfiguration)
+    GameConfiguration gameConfiguration,
+    IEventBus eventBus)
     : ICommandHandler<PlayerWeaponAttackCommand, Result>
 {
     public ValueTask<Result> Handle(PlayerWeaponAttackCommand command, CancellationToken cancellationToken)

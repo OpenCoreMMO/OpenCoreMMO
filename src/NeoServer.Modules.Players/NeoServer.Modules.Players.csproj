@@ -18,13 +18,18 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="ChangeMode\" />
       <Folder Include="LookAt\" />
       <Folder Include="Outfit\" />
       <Folder Include="StopAllActions\" />
       <Folder Include="TurnTo\" />
       <Folder Include="Walk\" />
       <Folder Include="Write\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="NeoServer.Server.Common">
+        <HintPath>..\ApplicationServer\NeoServer.Server.Contracts\bin\Debug\net7.0\NeoServer.Server.Common.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

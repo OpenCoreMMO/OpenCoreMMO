@@ -48,6 +48,7 @@ public interface ICombatActor : IWalkableCreature
     bool CanBeAttacked { get; }
     IDictionary<ConditionType, ICondition> Conditions { get; set; }
     ICreature CurrentTarget { get; }
+    bool HasTarget => CurrentTarget != null;
     ushort MaximumElementalAttackPower { get; }
     event Attack OnAttackEnemy;
     event BlockAttack OnBlockedAttack;

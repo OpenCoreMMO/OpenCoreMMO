@@ -13,6 +13,7 @@
       <ProjectReference Include="..\NeoServer.Modules.Combat\NeoServer.Modules.Combat.csproj" />
       <ProjectReference Include="..\NeoServer.Modules.Creatures\NeoServer.Modules.Creatures.csproj" />
       <ProjectReference Include="..\NeoServer.Modules.ItemManagement\NeoServer.Modules.ItemManagement.csproj" />
+      <ProjectReference Include="..\NeoServer.Modules.Movement\NeoServer.Modules.Movement.csproj" />
       <ProjectReference Include="..\NeoServer.Modules.Party\NeoServer.Modules.Party.csproj" />
       <ProjectReference Include="..\NeoServer.Modules.Players\NeoServer.Modules.Players.csproj" />
       <ProjectReference Include="..\NeoServer.Modules.Session\NeoServer.Modules.Session.csproj" />

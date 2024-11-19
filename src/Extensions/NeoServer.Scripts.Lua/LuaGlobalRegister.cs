@@ -86,7 +86,7 @@ public class LuaGlobalRegister
 
                 throw new Exception("Type not found");
             };
-
+            
             // ExecuteMainFiles();
             // QuestFunctions.RegisterQuests(_lua);
             //
@@ -95,7 +95,7 @@ public class LuaGlobalRegister
             // EnumSetup.Register(_lua);
             // LuaCombat.RegisterCombat(_lua);
             // _lua["Weapon"] = (WeaponType weaponType) => new LuaWeapon(weaponType);
-            
+
             return new object[] { "LUA" };
         });
     }

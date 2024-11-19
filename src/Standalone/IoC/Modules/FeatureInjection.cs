@@ -1,6 +1,5 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Game.Combat;
 using NeoServer.Game.Combat.Attacks;
 using NeoServer.Game.Combat.Attacks.MeleeAttack;
 using NeoServer.Modules.Combat.Attacks;
