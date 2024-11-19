@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Moq;
+using NeoServer.BuildingBlocks.Infrastructure.Data.InMemory;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.World;
@@ -11,7 +12,6 @@ using NeoServer.Game.Creature.Events.Monster;
 using NeoServer.Game.Creature.Monster.Summon;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Player;
-using NeoServer.Infrastructure.InMemory;
 using Xunit;
 
 namespace NeoServer.Game.Tests.Creature.Events.Monsters;

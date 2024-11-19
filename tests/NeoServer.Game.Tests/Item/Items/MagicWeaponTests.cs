@@ -11,12 +11,12 @@ using Xunit;
 
 namespace NeoServer.Game.Tests.Item.Items;
 
-public class MagicWeaponTests
+public class MagicalWeaponTests
 {
     [Fact]
     public void InspectionText_NoAttributeFound_ReturnsText()
     {
-        var sut = ItemTestData.CreateMagicWeapon(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateMagicalWeapon(1, attributes: new (ItemAttribute, IConvertible)[]
         {
         });
 
@@ -34,7 +34,7 @@ public class MagicWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation);
-        var sut = ItemTestData.CreateMagicWeapon(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateMagicalWeapon(1, attributes: new (ItemAttribute, IConvertible)[]
         {
             (ItemAttribute.BodyPosition, "body")
         });
@@ -61,7 +61,7 @@ public class MagicWeaponTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = ItemTestData.CreateMagicWeapon(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateMagicalWeapon(1, attributes: new (ItemAttribute, IConvertible)[]
         {
             (ItemAttribute.BodyPosition, "body"),
             (ItemAttribute.MinimumLevel, minLevel)
@@ -80,7 +80,7 @@ public class MagicWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: 1);
-        var sut = ItemTestData.CreateMagicWeapon(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateMagicalWeapon(1, attributes: new (ItemAttribute, IConvertible)[]
         {
             (ItemAttribute.BodyPosition, "body")
         });

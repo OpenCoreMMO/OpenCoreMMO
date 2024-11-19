@@ -1,8 +1,4 @@
 ﻿using FluentAssertions;
-using NeoServer.Application.Features.Trade;
-using NeoServer.Application.Features.Trade.TradeExchange;
-using NeoServer.Application.Features.Trade.Validations;
-using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Contracts.World;
@@ -16,7 +12,11 @@ using NeoServer.Game.Tests.Helpers.Map;
 using NeoServer.Game.Tests.Helpers.Player;
 using NeoServer.Game.Tests.Server;
 using NeoServer.Game.World.Models.Tiles;
-using NeoServer.Infrastructure.InMemory;
+using NeoServer.BuildingBlocks.Infrastructure.Data.InMemory;
+using NeoServer.Modules.Trading;
+using NeoServer.Modules.Trading.Validations;
+using NeoServer.Modules.Trading.TradeExchange;
+using NeoServer.Game.Common.Combat;
 
 namespace NeoServer.Game.Systems.Tests.SafeTrade;
 
@@ -115,7 +115,7 @@ public class TradeCancellationTests
 
         //act
         tradeSystem.Request(player, secondPlayer, item);
-        player.ReceiveAttackFrom(secondPlayer, (CombatDamageList)new CombatDamage(100, DamageType.Melee));
+        player.ReceiveAttackFrom(secondPlayer, new CombatDamageList([new CombatDamage(100, DamageType.Melee)]));
 
         //assert
         AssertTradeIsCancelled(tradeSystem, map, secondPlayer);

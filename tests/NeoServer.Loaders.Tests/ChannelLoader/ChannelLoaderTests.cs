@@ -5,6 +5,7 @@ using Moq;
 using NeoServer.BuildingBlocks.Application.Server;
 using NeoServer.Game.Chat.Channels;
 using NeoServer.Game.Common.Contracts.DataStores;
+using NeoServer.Modules.Chat.Channel;
 using Serilog;
 using Xunit;
 

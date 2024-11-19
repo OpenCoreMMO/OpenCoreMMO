@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using NeoServer.Game.Common.Combat.Structs;
+using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Tests.Helpers;
@@ -30,7 +30,7 @@ public class PlayerFollowTests
         (map[100, 108, 7] as DynamicTile)?.AddCreature(enemy);
 
         sut.Follow(enemy, fpp);
-        enemy.ReceiveAttackFrom(sut, (CombatDamageList)new CombatDamage(200, DamageType.Melee));
+        enemy.ReceiveAttackFrom(sut, new CombatDamageList([new CombatDamage(200, DamageType.Melee)]));
 
         //act
         sut.Follow(enemy, fpp);
@@ -59,7 +59,7 @@ public class PlayerFollowTests
         (map[100, 101, 7] as DynamicTile)?.AddCreature(enemy);
 
         sut.Follow(enemy, fpp);
-        enemy.ReceiveAttackFrom(sut, (CombatDamageList)new CombatDamage(200, DamageType.Melee));
+        enemy.ReceiveAttackFrom(sut, new CombatDamageList([new CombatDamage(200, DamageType.Melee)]));
 
         //act
         sut.Follow(enemy, fpp);
@@ -89,7 +89,7 @@ public class PlayerFollowTests
         (map[100, 109, 7] as DynamicTile)?.AddCreature(enemy);
 
         sut.Follow(enemy, fpp);
-        enemy.ReceiveAttackFrom(sut, (CombatDamageList)new CombatDamage(200, DamageType.Melee));
+        enemy.ReceiveAttackFrom(sut, new CombatDamageList([new CombatDamage(200, DamageType.Melee)]));
 
         (map[100, 109, 7] as DynamicTile)?.RemoveCreature(enemy, out _);
         (map[100, 110, 7] as DynamicTile)?.AddCreature(enemy);

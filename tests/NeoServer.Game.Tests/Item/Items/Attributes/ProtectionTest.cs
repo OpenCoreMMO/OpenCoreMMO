@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Moq;
-using NeoServer.Game.Common.Combat.Structs;
+using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location.Structs;
@@ -33,10 +34,10 @@ public class ProtectionTest
         sut.DressedIn(player);
 
         var resultDamage = 0;
-        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damage; };
+        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var damage = new CombatDamage(200, DamageType.Fire);
-        player.ReceiveAttackFrom(enemy, (CombatDamageList)damage);
+        player.ReceiveAttackFrom(enemy, new CombatDamageList([damage]));
 
         Assert.Equal(160, resultDamage);
     }
@@ -61,10 +62,13 @@ public class ProtectionTest
         sut.DressedIn(player);
 
         var resultDamage = 0;
-        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damage; };
+        player.OnInjured += (_, _, damage) => 
+        { 
+            resultDamage = damage.Damages[0].Damage; 
+        };
 
         var damage = new CombatDamage(200, DamageType.Fire);
-        player.ReceiveAttackFrom(enemy, (CombatDamageList)damage);
+        player.ReceiveAttackFrom(enemy, new CombatDamageList([damage]));
 
         Assert.Equal(200, resultDamage);
     }
@@ -83,10 +87,10 @@ public class ProtectionTest
         sut.DressedIn(player);
 
         var resultDamage = 0;
-        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damage; };
+        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var damage = new CombatDamage(200, DamageType.Fire);
-        player.ReceiveAttackFrom(enemy, (CombatDamageList)damage);
+        player.ReceiveAttackFrom(enemy, new CombatDamageList([damage]));
 
         Assert.Equal(0, resultDamage);
     }
@@ -106,10 +110,10 @@ public class ProtectionTest
         sut.DressedIn(player);
 
         var resultDamage = 0;
-        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damage; };
+        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var damage = new CombatDamage(200, DamageType.Energy);
-        player.ReceiveAttackFrom(enemy, (CombatDamageList)damage);
+        player.ReceiveAttackFrom(enemy, new CombatDamageList([damage]));
 
         resultDamage.Should().BeGreaterThan(0);
     }
@@ -128,16 +132,16 @@ public class ProtectionTest
         sut.DressedIn(player);
 
         var resultDamage = 0;
-        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damage; };
+        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var damage = new CombatDamage(200, DamageType.Fire);
-        player.ReceiveAttackFrom(enemy, (CombatDamageList)damage);
+        player.ReceiveAttackFrom(enemy, new CombatDamageList([damage]));
 
         Assert.Equal(0, resultDamage);
 
         sut.UndressFrom(player);
 
-        player.ReceiveAttackFrom(enemy, (CombatDamageList)damage);
+        player.ReceiveAttackFrom(enemy, new CombatDamageList([damage]));
 
         Assert.Equal(200, resultDamage);
     }
@@ -214,7 +218,7 @@ public class ProtectionTest
         (map[101, 100, 7] as DynamicTile)?.AddCreature(defender);
 
         var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
+        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var hmm = ItemTestData.CreateAttackRune(1);
 
@@ -248,7 +252,7 @@ public class ProtectionTest
         (map[101, 100, 7] as DynamicTile)?.AddCreature(defender);
 
         var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
+        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var hmm = ItemTestData.CreateAttackRune(1);
 
@@ -280,7 +284,7 @@ public class ProtectionTest
         var oldHp = defender.HealthPoints;
 
         var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
+        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var hmm = ItemTestData.CreateAttackRune(1);
 
@@ -311,7 +315,7 @@ public class ProtectionTest
         var attacker = PlayerTestDataBuilder.Build();
 
         var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
+        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var hmm = ItemTestData.CreateAttackRune(1);
 
@@ -324,7 +328,7 @@ public class ProtectionTest
 
         //act
         var damage = new CombatDamage(200, DamageType.Energy);
-        defender.ReceiveAttackFrom(attacker, (CombatDamageList)damage);
+        defender.ReceiveAttackFrom(attacker, new CombatDamageList([damage]));
 
         //assert
         totalDamage.Should().Be(expectedDamage);
@@ -340,7 +344,7 @@ public class ProtectionTest
         var oldHp = defender.HealthPoints;
 
         var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
+        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
             attributes: new (ItemAttribute, IConvertible)[]
@@ -351,7 +355,7 @@ public class ProtectionTest
 
         //act
         var damage = new CombatDamage(200, DamageType.ManaDrain);
-        defender.ReceiveAttackFrom(attacker, (CombatDamageList)damage);
+        defender.ReceiveAttackFrom(attacker, new CombatDamageList([damage]));
 
         //assert
         totalDamage.Should().Be(180);
@@ -368,7 +372,7 @@ public class ProtectionTest
         var oldHp = defender.HealthPoints;
 
         var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
+        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
             attributes: new (ItemAttribute, IConvertible)[]
@@ -379,7 +383,7 @@ public class ProtectionTest
 
         //act
         var damage = new CombatDamage(200, DamageType.LifeDrain);
-        defender.ReceiveAttackFrom(attacker, (CombatDamageList)damage);
+        defender.ReceiveAttackFrom(attacker, new CombatDamageList([damage]));
 
         //assert
         totalDamage.Should().Be(180);
@@ -405,7 +409,7 @@ public class ProtectionTest
         var attacker = PlayerTestDataBuilder.Build();
 
         var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
+        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
             attributes: new (ItemAttribute, IConvertible)[]
@@ -416,7 +420,7 @@ public class ProtectionTest
 
         //act
         var damage = new CombatDamage(200, damageType);
-        defender.ReceiveAttackFrom(attacker, (CombatDamageList)damage);
+        defender.ReceiveAttackFrom(attacker, new CombatDamageList([damage]));
 
         //assert
         totalDamage.Should().Be(180);
@@ -442,7 +446,7 @@ public class ProtectionTest
         var attacker = PlayerTestDataBuilder.Build();
 
         var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
+        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
             attributes: new (ItemAttribute, IConvertible)[]
@@ -453,7 +457,7 @@ public class ProtectionTest
 
         //act
         var damage = new CombatDamage(200, damageType);
-        defender.ReceiveAttackFrom(attacker, (CombatDamageList)damage);
+        defender.ReceiveAttackFrom(attacker, new CombatDamageList([damage]));
 
         //assert
         totalDamage.Should().Be(expectedDamage);
@@ -478,7 +482,7 @@ public class ProtectionTest
         var attacker = PlayerTestDataBuilder.Build();
 
         var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
+        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
             attributes: new (ItemAttribute, IConvertible)[]
@@ -489,7 +493,7 @@ public class ProtectionTest
 
         //act
         var damage = new CombatDamage(200, damageType);
-        defender.ReceiveAttackFrom(attacker, (CombatDamageList)damage);
+        defender.ReceiveAttackFrom(attacker, new CombatDamageList([damage]));
 
         //assert
         totalDamage.Should().Be(180);
@@ -504,7 +508,7 @@ public class ProtectionTest
         var attacker = PlayerTestDataBuilder.Build();
 
         var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
+        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
             attributes: new (ItemAttribute, IConvertible)[]
@@ -516,14 +520,14 @@ public class ProtectionTest
 
         //act
         var damage = new CombatDamage(200, DamageType.Death);
-        defender.ReceiveAttackFrom(attacker, (CombatDamageList)damage);
+        defender.ReceiveAttackFrom(attacker, new CombatDamageList([damage]));
 
         //assert
         totalDamage.Should().Be(100);
 
         //act
         var fireDamage = new CombatDamage(200, DamageType.Fire);
-        defender.ReceiveAttackFrom(attacker, (CombatDamageList)fireDamage);
+        defender.ReceiveAttackFrom(attacker, new CombatDamageList([fireDamage]));
 
         //assert
         totalDamage.Should().Be(180);
@@ -537,7 +541,7 @@ public class ProtectionTest
         var attacker = PlayerTestDataBuilder.Build();
 
         var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
+        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damages.ToArray().Sum(c => c.Damage); };
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
             attributes: new (ItemAttribute, IConvertible)[]
@@ -549,21 +553,21 @@ public class ProtectionTest
 
         //act
         var damage = new CombatDamage(200, DamageType.Death);
-        defender.ReceiveAttackFrom(attacker, (CombatDamageList)damage);
+        defender.ReceiveAttackFrom(attacker, new CombatDamageList([damage]));
 
         //assert
         totalDamage.Should().Be(100);
 
         //act
         var fireDamage = new CombatDamage(200, DamageType.Fire);
-        defender.ReceiveAttackFrom(attacker, (CombatDamageList)fireDamage);
+        defender.ReceiveAttackFrom(attacker, new CombatDamageList([fireDamage]));
 
         //assert
         totalDamage.Should().Be(180);
 
         //act
         var meleeDamage = new CombatDamage(200, DamageType.Melee);
-        defender.ReceiveAttackFrom(attacker, (CombatDamageList)meleeDamage);
+        defender.ReceiveAttackFrom(attacker, new CombatDamageList([meleeDamage]));
 
         //assert
         totalDamage.Should().Be(200);

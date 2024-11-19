@@ -1,5 +1,5 @@
 ﻿using System.Threading;
-using NeoServer.Application.Common.Contracts;
+using NeoServer.BuildingBlocks.Application.Contracts;
 
 namespace NeoServer.Game.Tests.Server;
 

@@ -570,7 +570,7 @@ public class InventoryTests
     }
 
     [Fact]
-    public void DressingItems_PlayerHasAllItems_ReturnAllExceptBag()
+    public void DressingEquipments_PlayerHasAllEquipments_ReturnAllExceptBag()
     {
         //arrange
         var inventory = PlayerTestDataBuilder.GenerateInventory();
@@ -578,16 +578,16 @@ public class InventoryTests
         var expected = inventory.Where(x => x.Key != Slot.Backpack).Select(x => x.Value.Item1);
 
         //assert
-        player.Inventory.DressingItems.Should().HaveSameCount(expected);
-        player.Inventory.DressingItems.Should().ContainSingle(x => x == inventory[Slot.Head].Item1);
-        player.Inventory.DressingItems.Should().ContainSingle(x => x == inventory[Slot.Necklace].Item1);
-        player.Inventory.DressingItems.Should().ContainSingle(x => x == inventory[Slot.Ring].Item1);
-        player.Inventory.DressingItems.Should().ContainSingle(x => x == inventory[Slot.Body].Item1);
-        player.Inventory.DressingItems.Should().ContainSingle(x => x == inventory[Slot.Left].Item1);
-        player.Inventory.DressingItems.Should().ContainSingle(x => x == inventory[Slot.Ammo].Item1);
-        player.Inventory.DressingItems.Should().ContainSingle(x => x == inventory[Slot.Legs].Item1);
-        player.Inventory.DressingItems.Should().ContainSingle(x => x == inventory[Slot.Ring].Item1);
-        player.Inventory.DressingItems.Should().ContainSingle(x => x == inventory[Slot.Feet].Item1);
+        player.Inventory.DressingEquipments.Should().HaveSameCount(expected);
+        player.Inventory.DressingEquipments.Should().ContainSingle(x => x == inventory[Slot.Head].Item1);
+        player.Inventory.DressingEquipments.Should().ContainSingle(x => x == inventory[Slot.Necklace].Item1);
+        player.Inventory.DressingEquipments.Should().ContainSingle(x => x == inventory[Slot.Ring].Item1);
+        player.Inventory.DressingEquipments.Should().ContainSingle(x => x == inventory[Slot.Body].Item1);
+        player.Inventory.DressingEquipments.Should().ContainSingle(x => x == inventory[Slot.Left].Item1);
+        player.Inventory.DressingEquipments.Should().ContainSingle(x => x == inventory[Slot.Ammo].Item1);
+        player.Inventory.DressingEquipments.Should().ContainSingle(x => x == inventory[Slot.Legs].Item1);
+        player.Inventory.DressingEquipments.Should().ContainSingle(x => x == inventory[Slot.Ring].Item1);
+        player.Inventory.DressingEquipments.Should().ContainSingle(x => x == inventory[Slot.Feet].Item1);
     }
 
     [Fact]

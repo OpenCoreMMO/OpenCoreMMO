@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using AutoFixture;
 using FluentAssertions;
 using Moq;
-using NeoServer.Game.Common.Combat.Structs;
+using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
@@ -43,7 +43,7 @@ public class PlayerTests
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100) as Player;
         var enemy = PlayerTestDataBuilder.Build() as Player;
-        sut.OnDamage(enemy, new CombatDamage(5, DamageType.Melee));
+        sut.ProcessDamage(enemy, new CombatDamage(5, DamageType.Melee));
 
         Assert.Equal((uint)95, sut.HealthPoints);
     }
@@ -53,7 +53,7 @@ public class PlayerTests
     {
         var sut = PlayerTestDataBuilder.Build(mana: 30) as Player;
         var enemy = PlayerTestDataBuilder.Build() as Player;
-        sut.OnDamage(enemy, new CombatDamage(5, DamageType.ManaDrain));
+        sut.ProcessDamage(enemy, new CombatDamage(5, DamageType.ManaDrain));
 
         Assert.Equal((uint)25, sut.Mana);
     }

@@ -1,8 +1,8 @@
-﻿using NeoServer.Application.Features.Item.Decay;
-using NeoServer.Game.Common.Contracts.DataStores;
+﻿using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Item.Services.ItemTransform;
 using NeoServer.Game.World.Services;
+using NeoServer.Modules.ItemManagement.DecayManagement;
 
 namespace NeoServer.Game.Tests.Server;
 

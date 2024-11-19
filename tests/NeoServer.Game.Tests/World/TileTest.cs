@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using NeoServer.Application.Features.Shared;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.World.Tiles;
@@ -20,6 +19,7 @@ using NeoServer.Game.Tests.Helpers.Player;
 using NeoServer.Game.Tests.Server;
 using NeoServer.Game.World.Models.Tiles;
 using NeoServer.Game.World.Services;
+using NeoServer.PacketHandler.Features.Shared;
 using Xunit;
 
 namespace NeoServer.Game.Tests.World;

@@ -5,7 +5,7 @@ using NeoServer.Game.Creature.Vocation;
 using NeoServer.Game.Item.Inspection;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Player;
-using NeoServer.Infrastructure.InMemory;
+using NeoServer.BuildingBlocks.Infrastructure.Data.InMemory;
 using Xunit;
 
 namespace NeoServer.Game.Tests.Item.Inspection;

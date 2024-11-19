@@ -5,7 +5,7 @@ using NeoServer.Game.Chat.Channels.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Creature.Services;
-using NeoServer.Infrastructure.InMemory;
+using NeoServer.Modules.Chat.Channel;
 
 namespace NeoServer.Game.Tests.Helpers;
 
