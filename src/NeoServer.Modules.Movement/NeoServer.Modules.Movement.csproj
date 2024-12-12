@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Item\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\GameWorldSimulator\NeoServer.Game\NeoServer.Game.csproj" />
+      <ProjectReference Include="..\NeoServer.BuildingBlocks.Application\NeoServer.BuildingBlocks.Application.csproj" />
+    </ItemGroup>
+
+</Project>
