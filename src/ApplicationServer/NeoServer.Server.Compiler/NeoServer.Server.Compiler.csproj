@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <UserSecretsId>ec7b0ace-791f-4a46-97cc-5bd34da37651</UserSecretsId>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <IsPublishable>false</IsPublishable>
