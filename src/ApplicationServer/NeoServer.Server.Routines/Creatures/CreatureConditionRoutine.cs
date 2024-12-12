@@ -2,9 +2,9 @@
 using NeoServer.Game.Combat.Conditions;
 using NeoServer.Game.Common.Contracts.Creatures;
 
-namespace NeoServer.Server.Jobs.Creatures;
+namespace NeoServer.Server.Routines.Creatures;
 
-public static class CreatureConditionJob
+public static class CreatureConditionRoutine
 {
     public static void Execute(ICombatActor creature)
     {

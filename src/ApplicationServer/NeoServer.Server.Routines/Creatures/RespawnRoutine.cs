@@ -1,9 +1,9 @@
 ﻿using System;
 using NeoServer.Game.World.Models.Spawns;
 
-namespace NeoServer.Server.Jobs.Creatures;
+namespace NeoServer.Server.Routines.Creatures;
 
-public static class RespawnJob
+public static class RespawnRoutine
 {
     private const int INTERVAL = 10000;
     private static long _lastRespawn;

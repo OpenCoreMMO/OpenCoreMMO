@@ -4,9 +4,9 @@ using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
 
-namespace NeoServer.Server.Jobs.Creatures;
+namespace NeoServer.Server.Routines.Creatures;
 
-public static class PlayerPingJob
+public static class PlayerPingRoutine
 {
     private const int PING_INTERVAL = 5000;
     private const int CONNECTION_LOST_INTERVAL = 60000;

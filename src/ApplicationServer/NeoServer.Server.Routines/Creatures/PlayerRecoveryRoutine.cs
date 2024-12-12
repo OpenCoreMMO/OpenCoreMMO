@@ -1,8 +1,8 @@
 ﻿using NeoServer.Game.Common.Contracts.Creatures;
 
-namespace NeoServer.Server.Jobs.Creatures;
+namespace NeoServer.Server.Routines.Creatures;
 
-public static class PlayerRecoveryJob
+public static class PlayerRecoveryRoutine
 {
     public static void Execute(IPlayer player)
     {
