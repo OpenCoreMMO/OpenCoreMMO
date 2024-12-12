@@ -3,12 +3,12 @@ using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.World.Models.Spawns;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
-using NeoServer.Server.Jobs.Creatures.Npc;
+using NeoServer.Server.Routines.Creatures.Npc;
 using NeoServer.Server.Tasks;
 
-namespace NeoServer.Server.Jobs.Creatures;
+namespace NeoServer.Server.Routines.Creatures;
 
-public class GameCreatureJob
+public class GameCreatureRoutine
 {
     private const ushort EVENT_CHECK_CREATURE_INTERVAL = 500;
     private readonly IGameServer _game;
@@ -16,7 +16,7 @@ public class GameCreatureJob
     private readonly SpawnManager _spawnManager;
     private readonly ISummonService _summonService;
 
-    public GameCreatureJob(IGameServer game, SpawnManager spawnManager, PlayerLogOutCommand playerLogOutCommand,
+    public GameCreatureRoutine(IGameServer game, SpawnManager spawnManager, PlayerLogOutCommand playerLogOutCommand,
         ISummonService summonService)
     {
         _game = game;
@@ -41,34 +41,34 @@ public class GameCreatureJob
 
             CheckNpc(creature);
 
-            RespawnJob.Execute(_spawnManager);
+            RespawnRoutine.Execute(_spawnManager);
         }
     }
 
     private static void CheckCreature(ICreature creature)
     {
-        if (creature is ICombatActor combatActor) CreatureConditionJob.Execute(combatActor);
+        if (creature is ICombatActor combatActor) CreatureConditionRoutine.Execute(combatActor);
     }
 
     private static void CheckNpc(ICreature creature)
     {
-        if (creature is INpc npc) NpcJob.Execute(npc);
+        if (creature is INpc npc) NpcRoutine.Execute(npc);
     }
 
     private void CheckMonster(ICreature creature)
     {
         if (creature is not IMonster monster) return;
 
-        CreatureDefenseJob.Execute(monster, _game);
-        MonsterStateJob.Execute(monster, _summonService);
-        MonsterYellJob.Execute(monster);
+        CreatureDefenseRoutine.Execute(monster, _game);
+        MonsterStateRoutine.Execute(monster, _summonService);
+        MonsterYellRoutine.Execute(monster);
     }
 
     private void CheckPlayer(ICreature creature)
     {
         if (creature is not IPlayer player) return;
 
-        PlayerPingJob.Execute(player, _playerLogOutCommand, _game);
-        PlayerRecoveryJob.Execute(player);
+        PlayerPingRoutine.Execute(player, _playerLogOutCommand, _game);
+        PlayerRecoveryRoutine.Execute(player);
     }
 }

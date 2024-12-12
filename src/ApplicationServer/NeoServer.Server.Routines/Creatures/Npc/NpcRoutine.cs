@@ -1,8 +1,8 @@
 ﻿using NeoServer.Game.Common.Contracts.Creatures;
 
-namespace NeoServer.Server.Jobs.Creatures.Npc;
+namespace NeoServer.Server.Routines.Creatures.Npc;
 
-public class NpcJob
+public class NpcRoutine
 {
     private static readonly IntervalControl Interval = new(3_000);
 

@@ -2,9 +2,9 @@
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Server.Common.Contracts;
 
-namespace NeoServer.Server.Jobs.Items;
+namespace NeoServer.Server.Routines.Items;
 
-public class LiquidPoolJob
+public class LiquidPoolRoutine
 {
     public static void Execute(ILiquid item, IGameServer game)
     {

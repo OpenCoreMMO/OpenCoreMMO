@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NeoServer.Server.Jobs;
+namespace NeoServer.Server.Routines;
 
 public class IntervalControl
 {

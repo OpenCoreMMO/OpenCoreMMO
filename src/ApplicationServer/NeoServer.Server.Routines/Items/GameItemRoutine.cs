@@ -1,14 +1,14 @@
 ﻿using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Tasks;
 
-namespace NeoServer.Server.Jobs.Items;
+namespace NeoServer.Server.Routines.Items;
 
-public class GameItemJob
+public class GameItemRoutine
 {
     private const ushort EVENT_CHECK_ITEM_INTERVAL = 1000;
     private readonly IGameServer _game;
 
-    public GameItemJob(IGameServer game)
+    public GameItemRoutine(IGameServer game)
     {
         _game = game;
     }

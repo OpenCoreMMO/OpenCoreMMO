@@ -31,7 +31,7 @@
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj"/>
         <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Items\NeoServer.Game.Items.csproj"/>
         <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj"/>
-        <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Jobs\NeoServer.Server.Jobs.csproj"/>
+        <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Routines\NeoServer.Server.Routines.csproj" />
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj"/>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Events\NeoServer.Server.Events.csproj"/>
         <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj"/>

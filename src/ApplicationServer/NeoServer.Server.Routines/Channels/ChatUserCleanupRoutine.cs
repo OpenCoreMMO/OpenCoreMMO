@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using NeoServer.Game.Common.Contracts.Chats;
 
-namespace NeoServer.Server.Jobs.Channels;
+namespace NeoServer.Server.Routines.Channels;
 
-public class ChatUserCleanupJob
+public class ChatUserCleanupRoutine
 {
     public static void Execute(IChatChannel channel)
     {

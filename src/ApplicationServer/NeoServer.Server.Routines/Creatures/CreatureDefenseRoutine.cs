@@ -2,9 +2,9 @@
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Tasks;
 
-namespace NeoServer.Server.Jobs.Creatures;
+namespace NeoServer.Server.Routines.Creatures;
 
-public static class CreatureDefenseJob
+public static class CreatureDefenseRoutine
 {
     public static void Execute(IMonster monster, IGameServer game)
     {

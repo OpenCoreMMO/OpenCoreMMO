@@ -10,9 +10,9 @@ using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Configurations;
 using Serilog;
 
-namespace NeoServer.Server.Jobs.Persistence;
+namespace NeoServer.Server.Routines.Persistence;
 
-public class PlayerPersistenceJob
+public class PlayerPersistenceRoutine
 {
     private readonly DepotManager _depotManager;
     private readonly IGameServer _gameServer;
@@ -24,7 +24,7 @@ public class PlayerPersistenceJob
 
     private int _saveInterval;
 
-    public PlayerPersistenceJob(IGameServer gameServer, IPlayerRepository playerRepository, ILogger logger,
+    public PlayerPersistenceRoutine(IGameServer gameServer, IPlayerRepository playerRepository, ILogger logger,
         ServerConfiguration serverConfiguration,
         IPlayerDepotItemRepository playerDepotItemRepository,
         DepotManager depotManager)
