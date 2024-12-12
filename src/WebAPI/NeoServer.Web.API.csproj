@@ -8,17 +8,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="7.0.1"/>
-        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0"/>
-        <PackageReference Include="AutoMapper" Version="12.0.1"/>
+        <PackageReference Include="Autofac" Version="8.1.1" />
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+        <PackageReference Include="AutoMapper" Version="13.0.1" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.8"/>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.8"/>
-        <PackageReference Include="Serilog.AspNetCore" Version="7.0.0"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
-        <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="7.0.0"/>
-        <PackageReference Include="Asp.Versioning.Http" Version="7.0.0"/>
-        <PackageReference Include="Swashbuckle.AspNetCore.JsonMultipartFormDataSupport" Version="1.8.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+        <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+        <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.JsonMultipartFormDataSupport" Version="2.0.0" />
     </ItemGroup>
 
     <ItemGroup>

@@ -14,8 +14,11 @@ public static class AutoMapperInjection
                 .Where(c => c.FullName?.EndsWith("Profile") ?? false)
             );
 
-        foreach (var profile in profiles)
-            services.AddAutoMapper(profile);
+        //TODO: to be fixed
+        // foreach (var profile in profiles)
+        // {
+        //     services.AddAutoMapper(profile);
+        // }
 
         return services;
     }
