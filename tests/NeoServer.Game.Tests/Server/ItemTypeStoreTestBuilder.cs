@@ -1,5 +1,5 @@
 ﻿using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Infrastructure.InMemory;
+using NeoServer.BuildingBlocks.Infrastructure.Data.InMemory;
 
 namespace NeoServer.Game.Tests.Server;
 

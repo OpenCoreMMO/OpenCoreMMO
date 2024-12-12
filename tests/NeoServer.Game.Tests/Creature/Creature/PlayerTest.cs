@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Moq;
-using NeoServer.Application.Features.Player.UseItem;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
@@ -14,6 +13,7 @@ using NeoServer.Game.Creature.Player;
 using NeoServer.Game.Tests.Helpers.Map;
 using NeoServer.Game.Tests.Helpers.Player;
 using NeoServer.Game.World.Models;
+using NeoServer.Modules.Players.UseItem;
 using Xunit;
 
 namespace NeoServer.Game.Tests.Creature.Creature;

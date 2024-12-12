@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
+using NeoServer.BuildingBlocks.Infrastructure.Data.InMemory;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Player;
-using NeoServer.Infrastructure.InMemory;
 using Xunit;
 
 namespace NeoServer.Game.Tests.Creature.Players.Inventory;

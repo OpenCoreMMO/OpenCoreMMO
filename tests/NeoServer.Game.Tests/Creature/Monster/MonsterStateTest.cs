@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using NeoServer.Game.Combat.Attacks;
-using NeoServer.Game.Common.Combat.Structs;
+using NeoServer.Game.Combat.Attacks.Legacy;
+using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Contracts.Combat.Attacks;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Item;
@@ -112,7 +112,7 @@ public class MonsterStateTest
         monster.SetAsEnemy(player);
         monster.UpdateState();
 
-        player.ReceiveAttackFrom(monster2, (CombatDamageList)new CombatDamage(200, DamageType.Melee));
+        player.ReceiveAttackFrom(monster2, new CombatDamageList([new CombatDamage(200, DamageType.Melee)]));
 
         //act
         monster.UpdateState();

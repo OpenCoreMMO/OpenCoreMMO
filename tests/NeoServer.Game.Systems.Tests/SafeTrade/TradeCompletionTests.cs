@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
-using NeoServer.Application.Features.Trade;
-using NeoServer.Application.Features.Trade.TradeExchange;
-using NeoServer.Application.Features.Trade.Validations;
 using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Item.Services;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Map;
 using NeoServer.Game.Tests.Helpers.Player;
 using NeoServer.Game.World.Models.Tiles;
+using NeoServer.Modules.Trading;
+using NeoServer.Modules.Trading.TradeExchange;
+using NeoServer.Modules.Trading.Validations;
 
 namespace NeoServer.Game.Systems.Tests.SafeTrade;
 

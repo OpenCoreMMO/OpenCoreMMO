@@ -18,7 +18,7 @@ using NeoServer.Game.Item.Items.Containers;
 using NeoServer.Game.Item.Items.Cumulatives;
 using NeoServer.Game.Item.Items.UsableItems;
 using NeoServer.Game.Item.Items.Weapons;
-using NeoServer.Infrastructure.InMemory;
+using NeoServer.BuildingBlocks.Infrastructure.Data.InMemory;
 
 namespace NeoServer.Game.Tests.Helpers;
 
@@ -152,7 +152,7 @@ public class ItemTestData
             attributes.ToDictionary(x => x.Item1, x => x.Item2));
     }
 
-    public static IEquipment CreateMagicWeapon(ushort id, bool twoHanded = false, byte charges = 0,
+    public static IEquipment CreateMagicalWeapon(ushort id, bool twoHanded = false, byte charges = 0,
         (ItemAttribute, IConvertible)[] attributes = null, Func<ushort, IItemType> itemTypeFinder = null)
     {
         var type = new ItemType();
@@ -168,7 +168,7 @@ public class ItemTestData
         attributes ??= Array.Empty<(ItemAttribute, IConvertible)>();
         foreach (var (attributeType, value) in attributes) type.Attributes.SetAttribute(attributeType, value);
 
-        return new MagicWeapon(type, new Location(100, 100, 7))
+        return new MagicalWeapon(type, new Location(100, 100, 7))
         {
             Chargeable = charges > 0
                 ? new Chargeable(charges, type.Attributes.GetAttribute<bool>(ItemAttribute.ShowCharges))
