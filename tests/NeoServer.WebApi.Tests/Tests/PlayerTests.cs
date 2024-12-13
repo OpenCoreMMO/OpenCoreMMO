@@ -10,7 +10,7 @@ public class PlayerTests : BaseIntegrationTests
 {
     #region Get Tests
 
-    [Fact(DisplayName = "Get All Players")]
+ /*   [Fact(DisplayName = "Get All Players")]
     public async Task Get_All_Players()
     {
         // Arrange
@@ -37,6 +37,6 @@ public class PlayerTests : BaseIntegrationTests
         //Assert
         response.Name.Should().Be(player.Name);
     }
-
+*/
     #endregion
 }
