@@ -29,7 +29,7 @@
 > Modern, free, and open-source MMORPG server emulator written in C#.
 > 
 > It was written from scratch and development on the project began in January 2020.
-> <br>To connect to the server, you can use either [OTClient](https://github.com/edubart/otclient) or [OTCv8](https://github.com/OTCv8/otclientv8) for version 8.6.
+> <br>To connect to the server, you can use either [OTClient](https://github.com/edubart/otclient), [OTCv8](https://github.com/OTCv8/otclientv8) or [OTCR](https://github.com/mehah/otclient) for version 8.6.
 
 ## Latest Builds
 
@@ -42,7 +42,7 @@
 ## Usage
 
 ```sh
-download and install .NET 8: https://dotnet.microsoft.com/download/dotnet/8.0
+download and install .NET 9: https://dotnet.microsoft.com/download/dotnet/9.0
 git clone https://github.com/caioavidal/OpenCoreMMO.git
 cd src
 dotnet run --project "Standalone"
@@ -84,7 +84,7 @@ To connect to the self-hosted server for development, please use the following c
 ## Technologies
 
 * C#
-* .Net 8
+* .Net 9
 * Database support: InMemory, MySQL, and SQLite
 * Console Debug Logging
 * XUnit Testing
