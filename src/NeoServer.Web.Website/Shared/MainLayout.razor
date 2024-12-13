@@ -1,0 +1,46 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page flex justify-center gap-4">
+    
+    
+<div class="container gap-2 w-100 flex flex-row justify-center">
+    <div class="left" style="width: 180px;">
+        <img src="/images/tibia-logo-artwork-top.gif" />
+
+            <div class="menu-top"></div>
+            <NeoServer.Web.Website.Shared.Components.Menu Icon="news.gif" Text="News">
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Lastet News" />
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Event Schedule" />
+            </NeoServer.Web.Website.Shared.Components.Menu>
+            <NeoServer.Web.Website.Shared.Components.Menu Icon="abouttibia.gif" Text="About Tibia">
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Lastet news" />
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Event schedule" />
+            </NeoServer.Web.Website.Shared.Components.Menu>
+
+            <NeoServer.Web.Website.Shared.Components.Menu Icon="account.gif" Text="Account">
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Create account" />
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Lost account?" />
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Downloads" />
+            </NeoServer.Web.Website.Shared.Components.Menu>
+
+            <NeoServer.Web.Website.Shared.Components.Menu Icon="account.gif" Text="Community">
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Characters" />
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Who is online?" />
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Highscores" />
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Last Kills" />
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Bans" />
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Guilds" />
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="House" />
+                <NeoServer.Web.Website.Shared.Components.Submenu Text="Rules" />
+            </NeoServer.Web.Website.Shared.Components.Menu>
+
+            <NeoServer.Web.Website.Shared.Components.Menu Icon="library.gif" Text="Library">
+
+            </NeoServer.Web.Website.Shared.Components.Menu>
+    </div>
+
+    <div class="center grow mt-36">
+        @Body
+    </div>
+</div>
+</div>

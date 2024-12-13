@@ -1,0 +1,30 @@
+﻿body {
+    margin: 0px;
+    padding: 0px;
+}
+
+.page {
+    width: 100vw;
+    min-height: 100vh;
+    overflow: hidden;
+    background: url('/images/background-artwork.webp');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position-x: center
+}
+
+@font-face {
+    font-family: 'martel';
+    src: url('fonts/martel.ttf') format('truetype');
+}
+
+.martel-text {
+    color: #f3c7a6;
+    text-shadow: 1px -2px 1px #222;
+}
+
+.chain {
+    background: url('images/chain.gif');
+    height: 20px;
+    width: 7px;
+}

@@ -1,0 +1,69 @@
+﻿
+@code {
+    [Parameter]
+    public string Icon { get; set; }
+    [Parameter]
+    public string Text { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}
+
+<style>
+    .menu {
+        background: url(/images/menu/button-background.gif);
+        background-repeat: no-repeat;
+        cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        font-family: Martel;
+        margin: 0 5px;
+    }
+
+        .menu:hover {
+            background: url(/images/menu/button-background-over.gif);
+        }
+
+    .menu-icon {
+        background-repeat: no-repeat;
+        position: relative;
+        height: 32px;
+        left: 8px;
+        top: 0;
+        width: 32px;
+    }
+
+    .menu-text {
+        font-size: 20px;
+        line-height: 32px;
+        left: 16px;
+        position: relative;
+        width: 138px
+    }
+
+    .menu-toggle {
+        background: url(/images/menu/minus.gif);
+        background-repeat: no-repeat !important;
+        height: 12px;
+        position: relative;
+        right: -2px;
+        top: 20px;
+        width: 12px;
+    }
+
+    .menu-top {
+        background: url('/images/menu/box-top.gif');
+        background-repeat: no-repeat;
+        left: -5px;
+        height: 12px;
+        padding: 5px;
+        width: 100%;
+    }
+</style>
+
+<div class="menu">
+    <div class="menu-icon" style="background: url(/images/menu/icons/@Icon);"></div>
+    <span class="menu-text martel-text ">@Text</span>
+    <div class="menu-toggle"></div>
+</div>
+
+@ChildContent

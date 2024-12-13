@@ -1,0 +1,70 @@
+﻿@code {
+    [Parameter]
+    public string TitleText { get; set; }
+
+    [Parameter]
+    public string TitleIcon { get; set; }
+}
+
+<style>
+    .first-letter {
+        font-family: "Martel";
+        font-size: 32px;
+        color: darkred;
+        text-shadow: 1px -1px 1px #222;
+        margin-left: 15px;
+        margin-right: 2px;
+    }
+
+    .contentbox-header {
+        font-family: 'martel';
+        background: url(/images/contentbox/background-green.gif);
+        height: 28px;
+        margin: 0 5px;
+        font-size: 21px;
+        line-height: 28px;
+    }
+
+    .contentbox-content-wrapper {
+        background: #debb9d;
+        border: 1px solid #793d03;
+        padding: 4px;
+        margin: 0 5px;
+    }
+
+    .contentbox-content {
+        background: url(/images/contentbox/scroll.gif);
+        border-top: 1px solid #793d03;
+        border-bottom: 1px solid #793d03;
+        font-family: Verdana,Arial,Times New Roman,sans-serif;
+        font-size: 10pt;
+        color: #5a2800;
+        padding: 20px;
+    }
+</style>
+
+<div class="contentbox-header" style="padding-left: 10px; display: flex;">
+    <img src="/images/menu/icons/@TitleIcon" height="32" width="32" />
+    <h2 class="martel-text">@TitleText</h2>
+</div>
+
+<div class="contentbox-content-wrapper">
+    <div class="contentbox-content">
+        <table class="NewsTable" cellpadding="0" cellspacing="0">
+            <tbody>
+                <tr>
+                    <td class="NewsTableContainer">
+                        <p><span class="first-letter">L</span>orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</p>
+                        <ul>
+                            <li><img style="cursor: pointer;" src="https://static.tibia.com/images/news/news_fixes_243x200.png" hspace="8" vspace="10" width="243" height="200" align="right" onclick="window.open('https://static.tibia.com/images/news/news_fixes_wb.jpg', 'fixes', 'width=486, height=398')">We have reduced the base loot by 10%.</li>
+                            <li>When an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries 4.5% to 7.8%.</li>
+                            <li><em>Bloodjaw: </em>Reduced HP&nbsp;from 48,000 to 40,000.</li>
+                            <li><em>Gloom Pillars</em>: The <em>dark energy</em> activates less frequently.</li>
+                        </ul>
+                        <p>Have fun in Tibia!<br>Your Community Managers</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,52 @@
+﻿@code {
+    [Parameter]
+    public string Text { get; set; }
+}
+
+<style>
+    .submenu {
+        display: flex;
+        flex-direction: row;
+        margin: 0 5px;
+        font-family: Arial, sans-serif !important;
+        font-stretch: 100%
+    }
+
+    .submenu-status {
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        width: 10px;
+        margin: 0px 1px;
+    }
+
+    .submenu-item {
+        background: rgb(13, 46, 43);
+        border-bottom: 1px solid #4b7874;
+        color: white;
+        display: flex;
+        flex: 1;
+        flex-direction: row;
+    }
+
+        .submenu-item:hover {
+            background: rgb(20, 67, 63);
+            color: #d7d7d7;
+        }
+
+        .submenu-item .submenu-link {
+            font-size: 13.3px;
+            font-weight: 600;
+            line-height: 16px;
+            padding: 2px;
+        }
+</style>
+
+
+<div class="submenu">
+    <div class="chain"></div>
+    <div class="submenu-item">
+        <div class="submenu-status" style="background: url(/images/menu/activesubmenu.gif);"></div>
+        <a class="submenu-link" href="/">@Text</a>
+    </div>
+    <div class="chain"></div>
+</div>

@@ -1,0 +1,32 @@
+﻿<style>
+    .box-bottom {
+        background: url(/images/infobox/border-1.gif);
+        background-repeat: repeat-x;
+        display: flex;
+        height: 6px;
+        width: 100%;
+    }
+
+    .box-bottom-corner-left {
+        content: url(/images/infobox/corner.gif);
+        height: 17px;
+        margin-top: -8px;
+        transform: rotate(270deg);
+        width: 17px;
+    }
+
+    .box-bottom-corner-right {
+        content: url(/images/infobox/corner.gif);
+        height: 17px;
+        margin-left: calc(100% - 34px);
+        margin-top: -8px;
+        top: 0px;
+        transform: rotate(180deg);
+        width: 17px;
+    }
+</style>
+
+<div class="box-bottom">
+    <div class="box-bottom-corner-left"></div>
+    <div class="box-bottom-corner-right"></div>
+</div>
