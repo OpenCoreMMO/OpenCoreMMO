@@ -5,7 +5,7 @@ using NeoServer.Data.Contexts;
 using NeoServer.Data.Factory;
 using NeoServer.Data.Interfaces;
 using NeoServer.Data.Providers.InMemory;
-using NeoServer.Data.Providers.MySQL;
+using NeoServer.Data.Providers.PostgreSQL;
 using NeoServer.Data.Providers.SQLite;
 using NeoServer.Data.Repositories;
 using NeoServer.Data.Repositories.Player;
@@ -45,7 +45,7 @@ public static class DatabaseInjection
                 .UseInMemory(config.Connections[DatabaseType.INMEMORY]),
             DatabaseType.MONGODB => DbContextFactory.GetInstance()
                 .UseInMemory(config.Connections[DatabaseType.MONGODB]),
-            DatabaseType.MYSQL => DbContextFactory.GetInstance().UseMySql(config.Connections[DatabaseType.MYSQL]),
+            DatabaseType.POSTGRESQL => DbContextFactory.GetInstance().UsePostgreSQL(config.Connections[DatabaseType.POSTGRESQL]),
             DatabaseType.MSSQL => DbContextFactory.GetInstance()
                 .UseInMemory(config.Connections[DatabaseType.MSSQL]),
             DatabaseType.SQLITE => DbContextFactory.GetInstance()

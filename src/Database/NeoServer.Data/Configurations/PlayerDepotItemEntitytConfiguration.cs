@@ -14,11 +14,11 @@ public class PlayerDepotItemEntitytConfiguration : IEntityTypeConfiguration<Play
 
         entity.Property(e => e.PlayerId)
             .IsRequired()
-            .HasColumnType("int(11)");
+            .HasColumnType("int");
 
         entity.Property(e => e.ServerId)
             .IsRequired()
-            .HasColumnType("int(11)");
+            .HasColumnType("int");
 
         entity.Property(e => e.Id)
             .IsRequired()
@@ -26,11 +26,11 @@ public class PlayerDepotItemEntitytConfiguration : IEntityTypeConfiguration<Play
 
         entity.Property(e => e.Amount)
             .IsRequired()
-            .HasColumnType("smallint(5)")
+            .HasColumnType("smallint")
             .HasDefaultValueSql("1");
 
         entity.Property(e => e.ParentId)
-            .HasColumnType("int(11)")
+            .HasColumnType("int")
             .HasDefaultValueSql("0");
 
         entity.HasOne(d => d.Player)
