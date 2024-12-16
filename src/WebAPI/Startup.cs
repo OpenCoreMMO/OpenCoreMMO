@@ -32,9 +32,7 @@ public class Startup
 
     public IConfiguration Configuration { get; }
     public IWebHostEnvironment Environment { get; }
-
-    public ILifetimeScope AutofacContainer { get; private set; }
-
+    
     #endregion
 
     #region public methods implementations
@@ -116,10 +114,6 @@ public class Startup
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        // If, for some reason, you need a reference to the built container, you
-        // can use the convenience extension method GetAutofacRoot.
-        AutofacContainer = app.ApplicationServices.GetAutofacRoot();
-
         if (env.IsDevelopment())
         {
             app.UseSwagger();

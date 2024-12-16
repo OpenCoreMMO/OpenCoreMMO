@@ -13,7 +13,7 @@ using Xunit;
 
 namespace NeoServer.Game.Items.Tests.Items.Attributes;
 
-public class DecayableTests
+public class DecayableTests: IAsyncLifetime
 {
     [Fact]
     public void Expired_DidNotStartToDecay_ReturnsFalse()
@@ -554,6 +554,7 @@ public class DecayableTests
     }
 
     [Fact]
+    [ThreadBlocking]
     public async Task Item_that_has_decay_behavior_decays_after_expiration()
     {
         //arrange
@@ -577,8 +578,7 @@ public class DecayableTests
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(map, itemTypeStore);
 
-        item1.Decay.OnStarted += decayableItemManager.Add;
-        item2.Decay.OnStarted += decayableItemManager.Add;
+        IDecayable.OnStarted += decayableItemManager.Add;
 
         //act
         item1.StartDecay();
@@ -595,5 +595,18 @@ public class DecayableTests
 
         decayableItemManager.DecayExpiredItems();
         map[101, 100, 7].TopItemOnStack.Should().NotBe(item2);
+    }
+    
+    public Task InitializeAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    [ThreadBlocking]
+    public Task DisposeAsync()
+    {
+        // Cleanup logic after each test
+        EventSubscriptionCleanUp.CleanUp<IDecayable>(nameof(IDecayable.OnStarted));
+        return Task.CompletedTask;
     }
 }

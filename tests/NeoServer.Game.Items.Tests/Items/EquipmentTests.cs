@@ -16,7 +16,7 @@ using Xunit;
 
 namespace NeoServer.Game.Items.Tests.Items;
 
-public class EquipmentTests
+public class EquipmentTests: IAsyncLifetime
 {
     [Fact]
     public void DressedIn_Null_DoNotThrow()
@@ -303,6 +303,7 @@ public class EquipmentTests
     }
 
     [Fact]
+    [ThreadBlocking]
     public void OnDecayed_NoItemToDecayTo_UndressFromPlayer()
     {
         //arrange
@@ -327,7 +328,7 @@ public class EquipmentTests
         };
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
-        sut.Decay.OnStarted += decayableItemManager.Add;
+        IDecayable.OnStarted += decayableItemManager.Add;
 
         //act
         player.Inventory.AddItem(sut, (byte)Slot.Ring);
@@ -339,6 +340,7 @@ public class EquipmentTests
         player.Inventory[Slot.Ring].Should().BeNull();
         slotRemoved.Should().Be(Slot.Ring);
         itemRemoved.Should().Be(sut);
+
     }
 
     [Fact]
@@ -586,7 +588,7 @@ public class EquipmentTests
             }, itemTypeStore.Get);
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
-        sut.Decay.OnStarted += decayableItemManager.Add;
+        IDecayable.OnStarted += decayableItemManager.Add;
 
         //act
         player.Inventory.AddItem(sut, (byte)Slot.Ring);
@@ -646,7 +648,7 @@ public class EquipmentTests
             }, itemTypeStore.Get);
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
-        sut.Decay.OnStarted += decayableItemManager.Add;
+        IDecayable.OnStarted += decayableItemManager.Add;
 
         //act
         player.Inventory.AddItem(sut, (byte)Slot.Ring);
@@ -657,8 +659,21 @@ public class EquipmentTests
         player.Inventory[Slot.Ring].Should().BeNull();
     }
 
+    public Task InitializeAsync()
+    {
+        return Task.CompletedTask;
+    }
 
+    [ThreadBlocking]
+    public Task DisposeAsync()
+    {
+        // Cleanup logic after each test
+        EventSubscriptionCleanUp.CleanUp<IDecayable>(nameof(IDecayable.OnStarted));
+        return Task.CompletedTask;
+    }
+    
     [Fact]
+    [ThreadBlocking]
     public async Task Item_that_decay_to_different_3_item_decays()
     {
         //arrange
@@ -721,7 +736,7 @@ public class EquipmentTests
             item2Equipped.Metadata, item3.Metadata, item3Equipped.Metadata);
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(map, itemTypeStore);
-        item1.Decay.OnStarted += decayableItemManager.Add;
+        IDecayable.OnStarted += decayableItemManager.Add;
 
         //assert first item
         item1.Decay?.Duration.Should().Be(0);
