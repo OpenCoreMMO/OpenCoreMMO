@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Autofac;
+
 using NeoServer.Data.Contexts;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Helpers;
@@ -129,7 +129,7 @@ public class Program
         await Task.Delay(Timeout.Infinite, cancellationToken);
     }
 
-    private static async Task LoadDatabase(IComponentContext container, ILogger logger,
+    private static async Task LoadDatabase(IServiceProvider container, ILogger logger,
         CancellationToken cancellationToken)
     {
         var (_, databaseName) = container.Resolve<DatabaseConfiguration>();
@@ -150,7 +150,7 @@ public class Program
         logger.Information("{Db} database loaded", databaseName);
     }
 
-    private static void StartListening(IComponentContext container, CancellationToken cancellationToken)
+    private static void StartListening(IServiceProvider container, CancellationToken cancellationToken)
     {
         container.Resolve<LoginListener>().BeginListening(cancellationToken);
         container.Resolve<GameListener>().BeginListening(cancellationToken);

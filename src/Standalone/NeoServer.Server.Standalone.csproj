@@ -16,7 +16,6 @@
         <UserSecretsId>d00c6b5a-86dc-4f58-b885-056c3322a45a</UserSecretsId>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="8.1.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.0" />

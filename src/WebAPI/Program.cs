@@ -1,4 +1,3 @@
-using Autofac.Extensions.DependencyInjection;
 using Serilog;
 
 namespace NeoServer.Web.API;

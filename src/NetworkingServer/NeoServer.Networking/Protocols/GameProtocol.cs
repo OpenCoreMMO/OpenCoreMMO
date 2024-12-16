@@ -1,5 +1,4 @@
-﻿using System;
-using NeoServer.Networking.Handlers;
+﻿using NeoServer.Networking.Handlers;
 using NeoServer.Networking.Packets.Security;
 using NeoServer.Server.Common.Contracts.Network;
 
@@ -7,9 +6,9 @@ namespace NeoServer.Networking.Protocols;
 
 public class GameProtocol : Protocol
 {
-    private readonly Func<IConnection, IPacketHandler> _handlerFactory;
+    private readonly PacketHandlerRouter _handlerFactory;
 
-    public GameProtocol(Func<IConnection, IPacketHandler> handlerFactory)
+    public GameProtocol(PacketHandlerRouter handlerFactory)
     {
         _handlerFactory = handlerFactory;
     }
@@ -44,7 +43,7 @@ public class GameProtocol : Protocol
         if (connection.IsAuthenticated && !connection.Disconnected)
             Xtea.Decrypt(connection.InMessage, 6, connection.XteaKey);
 
-        if (_handlerFactory(args.Connection) is not { } handler) return;
+        if (_handlerFactory.Create(args.Connection) is not { } handler) return;
 
         handler?.HandleMessage(args.Connection.InMessage, args.Connection);
     }
