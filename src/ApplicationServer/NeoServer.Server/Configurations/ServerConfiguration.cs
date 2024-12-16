@@ -8,7 +8,7 @@ public enum DatabaseType
 {
     INMEMORY,
     MONGODB,
-    MYSQL,
+    POSTGRESQL,
     MSSQL,
     SQLITE
 }

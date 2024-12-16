@@ -18,23 +18,23 @@ public class PlayerItemEntityConfiguration : IEntityTypeConfiguration<PlayerItem
 
         entity.Property(e => e.PlayerId)
             .IsRequired()
-            .HasColumnType("int(11)");
+            .HasColumnType("int");
 
         entity.Property(e => e.ServerId)
             .IsRequired()
-            .HasColumnType("int(11)");
+            .HasColumnType("int");
 
         entity.Property(e => e.Amount)
-            .HasColumnType("smallint(5)")
+            .HasColumnType("smallint")
             .HasDefaultValueSql("1");
 
         entity.Property(e => e.ParentId)
-            .HasColumnType("int(11)")
+            .HasColumnType("int")
             .HasDefaultValueSql("0");
 
         entity.Property(e => e.ContainerId)
             .IsRequired()
-            .HasColumnType("smallint(5)")
+            .HasColumnType("smallint")
             .HasDefaultValueSql("0");
 
         entity.HasOne(d => d.Player)
