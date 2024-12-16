@@ -49,7 +49,7 @@ public class ChannelLoaderTests
         sut.Load();
 
         //assert
-        loggerMock.Verify(x => x.Error("channels.json file not found at channels.json"), Times.Once);
+        loggerMock.Verify(x => x.Error("channels.json file not found at {Path}", "channels.json"), Times.Once);
         chatChannelStore?.All.Should().BeNullOrEmpty();
     }
 

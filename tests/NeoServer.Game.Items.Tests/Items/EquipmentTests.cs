@@ -8,6 +8,7 @@ using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Item;
+using NeoServer.Game.Items.Items.Attributes;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Map;
 using NeoServer.Game.Tests.Helpers.Player;
@@ -328,7 +329,7 @@ public class EquipmentTests: IAsyncLifetime
         };
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
-        IDecayable.OnStarted += decayableItemManager.Add;
+        Decayable.OnStarted += decayableItemManager.Add;
 
         //act
         player.Inventory.AddItem(sut, (byte)Slot.Ring);
@@ -588,7 +589,7 @@ public class EquipmentTests: IAsyncLifetime
             }, itemTypeStore.Get);
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
-        IDecayable.OnStarted += decayableItemManager.Add;
+        Decayable.OnStarted += decayableItemManager.Add;
 
         //act
         player.Inventory.AddItem(sut, (byte)Slot.Ring);
@@ -635,9 +636,12 @@ public class EquipmentTests: IAsyncLifetime
     public void Decayed_HasExpirationTargetButNoFound_OnlyRemovesItem()
     {
         //arrange
+
         var player = PlayerTestDataBuilder.Build();
 
         var itemTypeStore = ItemTestData.GetItemTypeStore();
+        var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
+        Decayable.OnStarted += decayableItemManager.Add;
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemAttribute, IConvertible)[]
@@ -646,9 +650,6 @@ public class EquipmentTests: IAsyncLifetime
                 (ItemAttribute.ShowDuration, 1),
                 (ItemAttribute.ExpireTarget, 5)
             }, itemTypeStore.Get);
-
-        var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
-        IDecayable.OnStarted += decayableItemManager.Add;
 
         //act
         player.Inventory.AddItem(sut, (byte)Slot.Ring);
@@ -668,7 +669,7 @@ public class EquipmentTests: IAsyncLifetime
     public Task DisposeAsync()
     {
         // Cleanup logic after each test
-        EventSubscriptionCleanUp.CleanUp<IDecayable>(nameof(IDecayable.OnStarted));
+        EventSubscriptionCleanUp.CleanUp<Decayable>(nameof(Decayable.OnStarted));
         return Task.CompletedTask;
     }
     
@@ -736,7 +737,7 @@ public class EquipmentTests: IAsyncLifetime
             item2Equipped.Metadata, item3.Metadata, item3Equipped.Metadata);
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(map, itemTypeStore);
-        IDecayable.OnStarted += decayableItemManager.Add;
+        Decayable.OnStarted += decayableItemManager.Add;
 
         //assert first item
         item1.Decay?.Duration.Should().Be(0);

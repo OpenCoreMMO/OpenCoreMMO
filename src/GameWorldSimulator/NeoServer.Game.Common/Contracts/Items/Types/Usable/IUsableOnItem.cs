@@ -22,8 +22,6 @@ public interface IUsableOnItem : IUsableOn
 
 public interface IUsableOnTile : IUsableOn
 {
-    static event UseOnTile OnUsedOnTile;
-
     /// <summary>
     ///     Usable by creatures on items (ground, weapon, stairs..)
     /// </summary>

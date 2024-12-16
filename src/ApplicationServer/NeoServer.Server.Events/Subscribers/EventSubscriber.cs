@@ -7,6 +7,8 @@ using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Services;
 using NeoServer.Game.Items.Events;
+using NeoServer.Game.Items.Items.Attributes;
+using NeoServer.Game.Items.Items.UsableItems.Runes;
 using NeoServer.Game.Systems.SafeTrade;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Events.Combat;
@@ -64,11 +66,10 @@ public sealed class EventSubscriber
         NotificationSenderService.OnNotificationSent += _container.GetRequiredService<NotificationSentEventHandler>().Execute;
         _gameServer.OnOpened += _container.GetRequiredService<ServerOpenedEventHandler>().Execute;
         
-        IDecayable.OnStarted += _itemStartedDecayingEventHandler.Execute;
-        IUsableOnTile.OnUsedOnTile += _itemUsedOnTileEventHandler.Execute;
+        Decayable.OnStarted += _itemStartedDecayingEventHandler.Execute;
         
         IConsumable.OnUsed += _itemUsedEventHandler.Execute;
-        IUsableOnTile.OnUsedOnTile += _fieldRuneUsedEventHandler.Execute;
+        FieldRune.OnUsedOnTile += _fieldRuneUsedEventHandler.Execute;
         
         AddTradeHandlers();
     }

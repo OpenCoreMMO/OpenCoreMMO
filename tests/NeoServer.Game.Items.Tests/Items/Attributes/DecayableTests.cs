@@ -310,7 +310,7 @@ public class DecayableTests: IAsyncLifetime
         var sut = new Decayable(decayableItem);
 
         var emitted = false;
-        sut.OnStarted += _ => emitted = true;
+        Decayable.OnStarted += _ => emitted = true;
         //act
         sut.StartDecay();
         //assert
@@ -331,7 +331,7 @@ public class DecayableTests: IAsyncLifetime
         var sut = new Decayable(decayableItem);
 
         var emitted = false;
-        sut.OnStarted += _ => emitted = true;
+        Decayable.OnStarted += _ => emitted = true;
         //act
         sut.StartDecay();
         //assert
@@ -578,7 +578,7 @@ public class DecayableTests: IAsyncLifetime
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(map, itemTypeStore);
 
-        IDecayable.OnStarted += decayableItemManager.Add;
+        Decayable.OnStarted += decayableItemManager.Add;
 
         //act
         item1.StartDecay();
@@ -602,11 +602,13 @@ public class DecayableTests: IAsyncLifetime
         return Task.CompletedTask;
     }
 
-    [ThreadBlocking]
     public Task DisposeAsync()
     {
+        ThreadBlocking.Wait();
         // Cleanup logic after each test
-        EventSubscriptionCleanUp.CleanUp<IDecayable>(nameof(IDecayable.OnStarted));
+        EventSubscriptionCleanUp.CleanUp<Decayable>(nameof(Decayable.OnStarted));
+        
+        ThreadBlocking.Release();
         return Task.CompletedTask;
     }
 }
