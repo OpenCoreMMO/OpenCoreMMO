@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Server.Routines.Channels;
 using NeoServer.Server.Routines.Creatures;
 using NeoServer.Server.Routines.Items;

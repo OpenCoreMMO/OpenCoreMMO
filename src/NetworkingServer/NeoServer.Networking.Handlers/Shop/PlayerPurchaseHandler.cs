@@ -11,11 +11,12 @@ namespace NeoServer.Networking.Handlers.Shop;
 
 public class PlayerPurchaseHandler : PacketHandler
 {
-    private readonly IDealTransaction _dealTransaction;
-    private readonly IItemTypeStore _itemTypeStore;
     private readonly IGameCreatureManager _creatureManager;
+    private readonly IDealTransaction _dealTransaction;
     private readonly IDispatcher _dispatcher;
-    public PlayerPurchaseHandler(IDealTransaction dealTransaction, IItemTypeStore itemTypeStore, 
+    private readonly IItemTypeStore _itemTypeStore;
+
+    public PlayerPurchaseHandler(IDealTransaction dealTransaction, IItemTypeStore itemTypeStore,
         IGameCreatureManager creatureManager, IDispatcher dispatcher)
     {
         _dealTransaction = dealTransaction;

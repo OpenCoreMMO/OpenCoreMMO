@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Server.Commands.Movements.ToContainer;
 using NeoServer.Server.Commands.Movements.ToInventory;
 

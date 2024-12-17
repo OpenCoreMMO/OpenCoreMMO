@@ -1,7 +1,6 @@
 ﻿using System;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Tasks;
 using NeoServer.Server.Tasks;
 
@@ -25,9 +24,11 @@ public class WalkToMechanism : IWalkToMechanism
             player.WalkTo(toLocation, CallBack);
             return;
 
-            void CallBack(ICreature _) =>
+            void CallBack(ICreature _)
+            {
                 _scheduler.AddEvent(
                     new SchedulerEvent(player.StepDelay, () => WalkTo(player, action, toLocation, true)));
+            }
         }
 
         action?.Invoke();

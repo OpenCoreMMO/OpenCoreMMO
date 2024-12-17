@@ -17,8 +17,21 @@ using Xunit;
 
 namespace NeoServer.Game.Items.Tests.Items;
 
-public class EquipmentTests: IAsyncLifetime
+public class EquipmentTests : IAsyncLifetime
 {
+    public Task InitializeAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    [ThreadBlocking]
+    public Task DisposeAsync()
+    {
+        // Cleanup logic after each test
+        EventSubscriptionCleanUp.CleanUp<Decayable>(nameof(Decayable.OnStarted));
+        return Task.CompletedTask;
+    }
+
     [Fact]
     public void DressedIn_Null_DoNotThrow()
     {
@@ -341,7 +354,6 @@ public class EquipmentTests: IAsyncLifetime
         player.Inventory[Slot.Ring].Should().BeNull();
         slotRemoved.Should().Be(Slot.Ring);
         itemRemoved.Should().Be(sut);
-
     }
 
     [Fact]
@@ -660,19 +672,6 @@ public class EquipmentTests: IAsyncLifetime
         player.Inventory[Slot.Ring].Should().BeNull();
     }
 
-    public Task InitializeAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-    [ThreadBlocking]
-    public Task DisposeAsync()
-    {
-        // Cleanup logic after each test
-        EventSubscriptionCleanUp.CleanUp<Decayable>(nameof(Decayable.OnStarted));
-        return Task.CompletedTask;
-    }
-    
     [Fact]
     [ThreadBlocking]
     public async Task Item_that_decay_to_different_3_item_decays()

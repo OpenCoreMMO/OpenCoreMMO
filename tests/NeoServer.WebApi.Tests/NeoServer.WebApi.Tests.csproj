@@ -7,25 +7,25 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentAssertions" Version="7.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="9.0.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-        <PackageReference Include="xunit" Version="2.9.2" />
+        <PackageReference Include="FluentAssertions" Version="7.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="9.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
+        <PackageReference Include="xunit" Version="2.9.2"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="XUnitPriorityOrderer" Version="1.0.3" />
+        <PackageReference Include="XUnitPriorityOrderer" Version="1.0.3"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Database\NeoServer.Data\NeoServer.Data.csproj" />
-        <ProjectReference Include="..\..\src\Shared\NeoServer.Web.Shared\NeoServer.Web.Shared.csproj" />
-        <ProjectReference Include="..\..\src\WebAPI\NeoServer.Web.API.csproj" />
+        <ProjectReference Include="..\..\src\Database\NeoServer.Data\NeoServer.Data.csproj"/>
+        <ProjectReference Include="..\..\src\Shared\NeoServer.Web.Shared\NeoServer.Web.Shared.csproj"/>
+        <ProjectReference Include="..\..\src\WebAPI\NeoServer.Web.API.csproj"/>
     </ItemGroup>
 
 </Project>

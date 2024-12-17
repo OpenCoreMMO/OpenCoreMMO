@@ -26,7 +26,6 @@ public class Decayable : IDecayable
     public bool StartedToDecay => _startedToDecayTime != default;
     public bool IsPaused { get; private set; } = true;
     public event PauseDecay OnPaused;
-    public static event StartDecay OnStarted;
     public ushort DecaysTo => _item.Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ExpireTarget);
 
     public uint Duration => _duration = _item.Metadata.Attributes.GetAttribute<uint>(ItemAttribute.Duration) == 0
@@ -77,6 +76,8 @@ public class Decayable : IDecayable
 
         return true;
     }
+
+    public static event StartDecay OnStarted;
 
     private void Reset()
     {

@@ -20,15 +20,10 @@ public class ItemFinderService
 
     public IItem Find(IPlayer player, Location itemLocation, ushort clientId)
     {
-        if (itemLocation.IsHotkey)
-        {
-            return _hotkeyService.GetItem(player, clientId);
-        }
+        if (itemLocation.IsHotkey) return _hotkeyService.GetItem(player, clientId);
 
         if (itemLocation.Type == LocationType.Ground)
-        {
             return _gameServer.Map[itemLocation] is not { } tile ? null : tile.TopItemOnStack;
-        }
 
         if (itemLocation.Slot == Slot.Backpack)
         {
@@ -44,10 +39,7 @@ public class ItemFinderService
             return item;
         }
 
-        if (itemLocation.Type == LocationType.Slot)
-        {
-            return player.Inventory[itemLocation.Slot];
-        }
+        if (itemLocation.Type == LocationType.Slot) return player.Inventory[itemLocation.Slot];
 
         return null;
     }

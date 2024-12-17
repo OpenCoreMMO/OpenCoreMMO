@@ -6,11 +6,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Common\NeoServer.Game.Common.csproj" />
+        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Common\NeoServer.Game.Common.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="ItemIdMapStore.cs" />
+        <Compile Remove="ItemIdMapStore.cs"/>
     </ItemGroup>
 
 </Project>

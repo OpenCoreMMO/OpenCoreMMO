@@ -11,7 +11,7 @@ public class TradeCancelHandler : PacketHandler
     private readonly IGameCreatureManager _creatureManager;
     private readonly IDispatcher _dispatcher;
     private readonly SafeTradeSystem _tradeSystem;
-    
+
     public TradeCancelHandler(SafeTradeSystem tradeSystem, IGameCreatureManager creatureManager, IDispatcher dispatcher)
     {
         _tradeSystem = tradeSystem;

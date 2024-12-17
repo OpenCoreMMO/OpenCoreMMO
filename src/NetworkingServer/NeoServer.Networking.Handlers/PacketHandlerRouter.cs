@@ -5,7 +5,6 @@ using Serilog;
 
 namespace NeoServer.Networking.Handlers;
 
-
 public class PacketHandlerRouter
 {
     private readonly ILogger _logger;

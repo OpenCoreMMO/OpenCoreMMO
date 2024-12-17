@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Creatures.Monster.Managers;
 using NeoServer.Game.Systems.Depot;
@@ -13,12 +12,12 @@ public static class ManagerInjection
 {
     public static IServiceCollection AddManagers(this IServiceCollection builder)
     {
-        builder.AddSingleton<IGameServer,GameServer>();
-        builder.AddSingleton<IGameCreatureManager,GameCreatureManager>();
-        builder.AddSingleton<IDecayableItemManager,DecayableItemManager>();
+        builder.AddSingleton<IGameServer, GameServer>();
+        builder.AddSingleton<IGameCreatureManager, GameCreatureManager>();
+        builder.AddSingleton<IDecayableItemManager, DecayableItemManager>();
 
 
-        builder.AddSingleton<IMonsterDataManager,MonsterDataManager>();
+        builder.AddSingleton<IMonsterDataManager, MonsterDataManager>();
         builder.AddSingleton<SpawnManager>();
         builder.AddSingleton<DepotManager>();
         return builder;

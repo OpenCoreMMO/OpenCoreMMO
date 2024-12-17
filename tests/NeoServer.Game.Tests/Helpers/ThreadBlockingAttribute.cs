@@ -3,48 +3,42 @@ using System.Reflection;
 using System.Threading;
 using Xunit.Sdk;
 
-namespace NeoServer.Game.Tests.Helpers
-{
-    /// <summary>
-    /// Block the unit test to avoid concurrency.
-    /// </summary>
-    public class ThreadBlockingAttribute : BeforeAfterTestAttribute
-    {
-        public override void Before(MethodInfo methodUnderTest) => ThreadBlocking.Wait();
+namespace NeoServer.Game.Tests.Helpers;
 
-        public override void After(MethodInfo methodUnderTest) => ThreadBlocking.Release();
+/// <summary>
+///     Block the unit test to avoid concurrency
+/// </summary>
+public class ThreadBlockingAttribute : BeforeAfterTestAttribute
+{
+    public override void Before(MethodInfo methodUnderTest)
+    {
+        ThreadBlocking.Wait();
     }
 
-    public static class ThreadBlocking
+    public override void After(MethodInfo methodUnderTest)
     {
-        private static readonly Mutex Mutex = new();
-        private static Thread _owningThread;
+        ThreadBlocking.Release();
+    }
+}
 
-        public static void Wait()
-        {
-            try
-            {
-                Mutex.WaitOne();
-                _owningThread = Thread.CurrentThread;
-                // Mutex acquired
-            }
-            catch (AbandonedMutexException)
-            {
-                Console.WriteLine("Warning: Mutex was abandoned by another thread.");
-            }
-        }
+public static class ThreadBlocking
+{
+    private static readonly SemaphoreSlim SemaphoreSlim = new(1, 1);
 
-        public static void Release()
+    public static void Wait()
+    {
+        try
         {
-            if (_owningThread == Thread.CurrentThread)
-            {
-                _owningThread = null; // Reset ownership before releasing
-                Mutex.ReleaseMutex();
-            }
-            else
-            {
-                Console.WriteLine("Warning: Mutex was not owned by the current thread.");
-            }
+            SemaphoreSlim.Wait();
         }
+        catch (Exception ex)
+        {
+            Console.Write(ex);
+        }
+    }
+
+    public static void Release()
+    {
+        SemaphoreSlim.Release();
     }
 }

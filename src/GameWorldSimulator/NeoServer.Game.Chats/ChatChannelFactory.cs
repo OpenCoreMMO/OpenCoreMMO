@@ -12,7 +12,7 @@ using NeoServer.Game.Common.Helpers;
 namespace NeoServer.Game.Chats;
 
 public class ChatChannelFactory
-{ 
+{
     private readonly IEnumerable<IChatChannelEventSubscriber> _channelEventSubscribers;
     private readonly IChatChannelStore _chatChannelStore;
     private readonly IGuildStore _guildStore;

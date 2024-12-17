@@ -13,8 +13,23 @@ using Xunit;
 
 namespace NeoServer.Game.Items.Tests.Items.Attributes;
 
-public class DecayableTests: IAsyncLifetime
+public class DecayableTests : IAsyncLifetime
 {
+    public Task InitializeAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task DisposeAsync()
+    {
+        ThreadBlocking.Wait();
+        // Cleanup logic after each test
+        EventSubscriptionCleanUp.CleanUp<Decayable>(nameof(Decayable.OnStarted));
+
+        ThreadBlocking.Release();
+        return Task.CompletedTask;
+    }
+
     [Fact]
     public void Expired_DidNotStartToDecay_ReturnsFalse()
     {
@@ -595,20 +610,5 @@ public class DecayableTests: IAsyncLifetime
 
         decayableItemManager.DecayExpiredItems();
         map[101, 100, 7].TopItemOnStack.Should().NotBe(item2);
-    }
-    
-    public Task InitializeAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task DisposeAsync()
-    {
-        ThreadBlocking.Wait();
-        // Cleanup logic after each test
-        EventSubscriptionCleanUp.CleanUp<Decayable>(nameof(Decayable.OnStarted));
-        
-        ThreadBlocking.Release();
-        return Task.CompletedTask;
     }
 }

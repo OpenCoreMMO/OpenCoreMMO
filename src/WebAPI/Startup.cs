@@ -32,7 +32,7 @@ public class Startup
 
     public IConfiguration Configuration { get; }
     public IWebHostEnvironment Environment { get; }
-    
+
     #endregion
 
     #region public methods implementations
