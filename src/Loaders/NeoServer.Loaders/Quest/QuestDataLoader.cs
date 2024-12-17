@@ -6,7 +6,8 @@ using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Item;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
-using Newtonsoft.Json;
+using System.Text.Json;
+using NeoServer.Loaders.Helpers;
 using Serilog;
 
 namespace NeoServer.Loaders.Quest;
@@ -41,8 +42,7 @@ public class QuestDataLoader
     {
         var basePath = $"{_serverConfiguration.Data}";
         var jsonString = File.ReadAllText(Path.Combine(basePath, "quests.json"));
-        var quests = JsonConvert.DeserializeObject<List<QuestModel>>(jsonString,
-            new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Populate });
+        var quests = JsonSerializer.Deserialize<List<QuestModel>>(jsonString, JsonSettings.Options);
 
         return quests?.Select(x => new QuestData
         {

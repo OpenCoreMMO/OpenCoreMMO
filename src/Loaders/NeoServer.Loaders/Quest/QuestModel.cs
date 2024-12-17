@@ -1,29 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace NeoServer.Loaders.Quest;
 
 public class QuestModel
 {
-    [JsonProperty("aid")] public ushort ActionId { get; set; }
-    [JsonProperty("uid")] public uint UniqueId { get; set; }
-    [JsonProperty("script")] public string Script { get; set; }
-    [JsonProperty("rewards")] public List<Reward> Rewards { get; set; }
-    [JsonProperty("name")] public string Name { get; set; }
-    [JsonProperty("group")] public string Group { get; set; }
-    [JsonProperty("group-key")] public string GroupKey { get; set; }
+    [JsonPropertyName("aid")] public ushort ActionId { get; set; }
+    [JsonPropertyName("uid")] public uint UniqueId { get; set; }
+    [JsonPropertyName("script")] public string Script { get; set; }
+    [JsonPropertyName("rewards")] public List<Reward> Rewards { get; set; }
+    [JsonPropertyName("name")] public string Name { get; set; }
+    [JsonPropertyName("group")] public string Group { get; set; }
+    [JsonPropertyName("group-key")] public string GroupKey { get; set; }
 
-    [JsonProperty("auto-load")]
+    [JsonPropertyName("auto-load")]
     [DefaultValue(true)]
     public bool AutoLoad { get; set; }
 
     public class Reward
     {
-        [JsonProperty("id")] public ushort ItemId { get; set; }
+        [JsonPropertyName("id")] public ushort ItemId { get; set; }
 
-        [JsonProperty("amount")] public byte Amount { get; set; }
+        [JsonPropertyName("amount")] public byte Amount { get; set; }
 
-        [JsonProperty("items")] public List<Reward> Children { get; set; }
+        [JsonPropertyName("items")] public List<Reward> Children { get; set; }
     }
 }
