@@ -22,7 +22,7 @@ public class FieldRune : Rune, IFieldRune
     }
 
     public override ushort Duration => 2;
-    public event UseOnTile OnUsedOnTile;
+    public static event UseOnTile OnUsedOnTile;
     public ushort Field => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.Field);
 
     public virtual string Area => Metadata.Attributes.GetAttribute(ItemAttribute.Area);

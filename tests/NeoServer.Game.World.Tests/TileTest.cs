@@ -267,7 +267,7 @@ public class TileTest
 
         mapService.ReplaceGround(destinationTile.Location, hole);
 
-        var itemMovementService = new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map)));
+        var itemMovementService = new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler));
 
         sourceTile.AddItem(item);
 
@@ -308,7 +308,7 @@ public class TileTest
         var destinationTile = (IDynamicTile)map[100, 100, 7];
         var undergroundTile = map[100, 100, 8];
 
-        var itemMovementService = new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map)));
+        var itemMovementService = new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler));
 
         var mapService = new MapService(map);
 
@@ -359,7 +359,7 @@ public class TileTest
 
         mapService.ReplaceGround(undergroundTile.Location, secondHole);
 
-        var itemMovementService = new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map)));
+        var itemMovementService = new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler));
         var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService);
 
         //act

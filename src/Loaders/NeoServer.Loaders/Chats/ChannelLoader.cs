@@ -42,7 +42,7 @@ public class ChannelLoader : IStartupLoader
         var path = Path.Combine(_serverConfiguration.Data, "channels.json");
         if (!File.Exists(path))
         {
-            _logger.Error($"channels.json file not found at {path}");
+            _logger.Error("channels.json file not found at {Path}", path);
             return;
         }
 

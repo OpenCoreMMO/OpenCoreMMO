@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿
+using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Game.Common.Contracts.DataStores;
 
@@ -6,47 +7,27 @@ namespace NeoServer.Server.Standalone.IoC.Modules;
 
 public static class DataStoreInjection
 {
-    public static ContainerBuilder AddDataStores(this ContainerBuilder builder)
+    public static IServiceCollection AddDataStores(this IServiceCollection builder)
     {
-        builder.RegisterType<ItemTypeStore>()
-            .As<IItemTypeStore>()
-            .SingleInstance();
+        builder.AddSingleton<IItemTypeStore, ItemTypeStore>();
 
-        builder.RegisterType<ChatChannelStore>()
-            .As<IChatChannelStore>()
-            .SingleInstance();
+        builder.AddSingleton<IChatChannelStore, ChatChannelStore>();
 
-        builder.RegisterType<GuildStore>()
-            .As<IGuildStore>()
-            .SingleInstance();
+        builder.AddSingleton<IGuildStore,GuildStore>();
 
-        builder.RegisterType<NpcStore>()
-            .As<INpcStore>()
-            .SingleInstance();
+        builder.AddSingleton<INpcStore, NpcStore>();
 
-        builder.RegisterType<VocationStore>()
-            .As<IVocationStore>()
-            .SingleInstance();
+        builder.AddSingleton<IVocationStore, VocationStore>();
 
-        builder.RegisterType<CoinTypeStore>()
-            .As<ICoinTypeStore>()
-            .SingleInstance();
+        builder.AddSingleton<ICoinTypeStore, CoinTypeStore>();
 
-        builder.RegisterType<AreaEffectStore>()
-            .As<IAreaEffectStore>()
-            .SingleInstance();
+        builder.AddSingleton<IAreaEffectStore, AreaEffectStore>();
 
-        builder.RegisterType<PlayerOutFitStore>()
-            .As<IPlayerOutFitStore>()
-            .SingleInstance();
+        builder.AddSingleton<IPlayerOutFitStore, PlayerOutFitStore>();
 
-        builder.RegisterType<QuestDataDataStore>()
-            .As<IQuestDataStore>()
-            .SingleInstance();
+        builder.AddSingleton<IQuestDataStore, QuestDataDataStore>();
 
-        builder.RegisterType<ItemClientServerIdMapStore>()
-            .As<IItemClientServerIdMapStore>()
-            .SingleInstance();
+        builder.AddSingleton<IItemClientServerIdMapStore, ItemClientServerIdMapStore>();
 
         return builder;
     }
