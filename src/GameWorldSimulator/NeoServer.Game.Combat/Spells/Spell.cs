@@ -41,9 +41,7 @@ public abstract class BaseSpell : ISpell
     public bool Invoke(ICombatActor actor, string words, out InvalidOperation error)
     {
         if (!CanBeUsedBy(actor, out error)) return false;
-        if (actor is IPlayer player) player.ConsumeMana(Mana);
-
-        OnSpellInvoked?.Invoke(actor, this);
+        
 
         if (!actor.HasCondition(ConditionType))
             if (!OnCast(actor, words, out error))
@@ -53,6 +51,8 @@ public abstract class BaseSpell : ISpell
 
         if (actor is IPlayer) AddCooldown(actor);
 
+        if (actor is IPlayer player) player.ConsumeMana(Mana);
+        OnSpellInvoked?.Invoke(actor, this);
         return true;
     }
 
