@@ -68,11 +68,8 @@ public class OptimizedScheduler : Scheduler
                 AddEvent(evt);
             }
 
-            foreach (var action in replace)
-            {
-                PreQueue.Enqueue(action);
-            }
-            
+            foreach (var action in replace) PreQueue.Enqueue(action);
+
             replace.Clear();
         }
     }

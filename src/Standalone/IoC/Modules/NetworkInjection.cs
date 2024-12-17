@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Networking.Handlers.ClientVersion;
 using NeoServer.Networking.Listeners;
 using NeoServer.Networking.Protocols;

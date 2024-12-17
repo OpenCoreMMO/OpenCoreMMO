@@ -14,8 +14,8 @@ namespace NeoServer.Server.Commands.Trade;
 public class TradeRequestCommand : ICommand
 {
     private readonly IGameCreatureManager _creatureManager;
-    private readonly SafeTradeSystem _tradeSystem;
     private readonly IMap _map;
+    private readonly SafeTradeSystem _tradeSystem;
 
     public TradeRequestCommand(SafeTradeSystem tradeSystem, IGameCreatureManager creatureManager, IMap map)
     {

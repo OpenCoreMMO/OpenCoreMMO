@@ -15,14 +15,10 @@ public class DefaultValueJsonConverter<T> : JsonConverter<T> where T : new()
 
         // Apply [DefaultValue] attributes
         foreach (var property in typeToConvert.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-        {
             if (property.GetCustomAttribute<DefaultValueAttribute>() is { } defaultValue
                 && property.CanWrite
                 && property.GetValue(instance) == null)
-            {
                 property.SetValue(instance, defaultValue.Value);
-            }
-        }
 
         return instance;
     }

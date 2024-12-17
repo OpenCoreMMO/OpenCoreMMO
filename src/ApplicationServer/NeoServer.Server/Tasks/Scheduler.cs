@@ -89,7 +89,10 @@ public class Scheduler : IScheduler
     /// </summary>
     /// <param name="eventId"></param>
     /// <returns></returns>
-    public bool EventIsCancelled(uint eventId) => CancelledEventIds.ContainsKey(eventId);
+    public bool EventIsCancelled(uint eventId)
+    {
+        return CancelledEventIds.ContainsKey(eventId);
+    }
 
     private void SendBack(ISchedulerEvent evt)
     {

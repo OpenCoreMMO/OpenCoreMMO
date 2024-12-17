@@ -1,5 +1,5 @@
-version: '3.5'
 services:
+# PostgreSQL: https://hub.docker.com/_/postgres/
   postgres-compose:
     image: postgres
     container_name: postgres
@@ -10,10 +10,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ../docker-volumes/postgresql-data:/var/lib/postgresql/data
+      - postgresql-data:/var/lib/postgresql/data
     networks:
-      - postgres-compose-network
+      - postgres
 
+# pgAdmin 4: https://hub.docker.com/r/dpage/pgadmin4
   pgadmin-compose:
     image: dpage/pgadmin4
     container_name: pgadmin4
@@ -25,14 +26,106 @@ services:
     depends_on:
       - postgres-compose
     networks:
-      - postgres-compose-network
+      - postgres
     volumes:
       - ./docker/pgadmin-servers.json:/pgadmin4/servers.json
-      - ../docker-volumes/pgadmin-data:/var/lib/pgadmin
+      - pgadmin-data:/var/lib/pgadmin
+
+  # MongoDB: https://hub.docker.com/_/mongo/
+  mongodb:
+    image: "mongo:6.0.18"
+    container_name: mongo
+    ports:
+      - "27017:27017"   
+    restart: "on-failure"
+    networks:
+      - graylog
+    volumes:
+      - "mongodb-data:/data/db"
+      - "mongodb-config:/data/configdb"  
+
+  #Graylog Data Node: https://hub.docker.com/r/graylog/graylog-datanode
+  datanode:
+    image: "graylog/graylog-datanode:6.1"
+    container_name: datanode
+    hostname: "datanode"
+    environment:
+      GRAYLOG_DATANODE_NODE_ID_FILE: "/var/lib/graylog-datanode/node-id"
+      GRAYLOG_DATANODE_PASSWORD_SECRET: "somepasswordpepper"
+      GRAYLOG_DATANODE_ROOT_PASSWORD_SHA2: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"
+      GRAYLOG_DATANODE_MONGODB_URI: "mongodb://mongodb:27017/graylog"
+    ulimits:
+      memlock:
+        hard: -1
+        soft: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "8999:8999/tcp"   # DataNode API
+      - "9200:9200/tcp"
+      - "9300:9300/tcp"
+    networks:
+      - graylog  
+    volumes:
+      - "graylog-datanode:/var/lib/graylog-datanode"
+    restart: "on-failure"  
+
+  # Graylog: https://hub.docker.com/r/graylog/graylog/
+  graylog:
+    hostname: "server"
+    image: "graylog/graylog:6.1"
+    container_name: graylog
+    depends_on:
+      mongodb:
+        condition: "service_started"
+      datanode:
+        condition: "service_started"
+    entrypoint: "/usr/bin/tini -- /docker-entrypoint.sh"
+    environment:
+      GRAYLOG_NODE_ID_FILE: "/usr/share/graylog/data/config/node-id"
+      GRAYLOG_HTTP_BIND_ADDRESS: "0.0.0.0:9000"
+      GRAYLOG_MONGODB_URI: "mongodb://mongodb:27017/graylog"
+      # To make reporting (headless_shell) work inside a Docker container
+      GRAYLOG_REPORT_DISABLE_SANDBOX: "true"
+      # CHANGE ME (must be at least 16 characters)!
+      GRAYLOG_PASSWORD_SECRET: "somepasswordpepper"
+      # Password: "admin"
+      GRAYLOG_ROOT_PASSWORD_SHA2: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"
+      GRAYLOG_HTTP_EXTERNAL_URI: "http://127.0.0.1:9000/"
+    ports:
+      # Graylog web interface and REST API
+      - "9000:9000/tcp"
+      # Beats
+      - "5044:5044/tcp"
+      # Syslog TCP
+      - "5140:5140/tcp"
+      # Syslog UDP
+      - "5140:5140/udp"
+      # GELF TCP
+      - "12201:12201/tcp"
+      # GELF UDP
+      - "12201:12201/udp"
+      # Forwarder data
+      - "13301:13301/tcp"
+      # Forwarder config
+      - "13302:13302/tcp"
+    restart: "on-failure"
+    networks:
+      - graylog
+    volumes:
+      - "graylog-data:/usr/share/graylog/data"
 
 networks: 
-  postgres-compose-network:
+  postgres:
+    driver: bridge
+  graylog:
     driver: bridge
 
 volumes:
+  postgresql-data:
   pgadmin-data:
+  mongodb-data:
+  mongodb-config:
+  graylog-datanode:
+  graylog-data:

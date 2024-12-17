@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Game.Common.Contracts.Inspection;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World;
@@ -28,18 +27,18 @@ public static class ServiceInjection
     public static IServiceCollection AddServices(this IServiceCollection builder)
     {
         //Game services
-        builder.AddSingleton<IDealTransaction,DealTransaction>();
-        builder.AddSingleton<ICoinTransaction,CoinTransaction>();
-        builder.AddSingleton<ISharedExperienceConfiguration,SharedExperienceConfiguration>();
-        builder.AddSingleton<IPartyInviteService,PartyInviteService>();
-        builder.AddSingleton<ISummonService,SummonService>();
-        builder.AddSingleton<IToMapMovementService,ToMapMovementService>();
-        builder.AddSingleton<IMapService,MapService>();
-        builder.AddSingleton<IMapTool,MapTool>();
-        builder.AddSingleton<IPlayerUseService,PlayerUseService>();
-        builder.AddSingleton<IItemMovementService,ItemMovementService>();
-        builder.AddSingleton<IItemService,ItemService>();
-        builder.AddSingleton<IStaticToDynamicTileService,StaticToDynamicTileService>();
+        builder.AddSingleton<IDealTransaction, DealTransaction>();
+        builder.AddSingleton<ICoinTransaction, CoinTransaction>();
+        builder.AddSingleton<ISharedExperienceConfiguration, SharedExperienceConfiguration>();
+        builder.AddSingleton<IPartyInviteService, PartyInviteService>();
+        builder.AddSingleton<ISummonService, SummonService>();
+        builder.AddSingleton<IToMapMovementService, ToMapMovementService>();
+        builder.AddSingleton<IMapService, MapService>();
+        builder.AddSingleton<IMapTool, MapTool>();
+        builder.AddSingleton<IPlayerUseService, PlayerUseService>();
+        builder.AddSingleton<IItemMovementService, ItemMovementService>();
+        builder.AddSingleton<IItemService, ItemService>();
+        builder.AddSingleton<IStaticToDynamicTileService, StaticToDynamicTileService>();
         builder.AddSingleton<SafeTradeSystem>();
 
 
@@ -47,9 +46,9 @@ public static class ServiceInjection
         builder.AddSingleton<TradeItemExchanger>();
 
         //Items
-        builder.AddSingleton<IDecayService,DecayService>();
-        builder.AddSingleton<IItemTransformService,ItemTransformService>();
-        builder.AddSingleton<IItemRemoveService,ItemRemoveService>();
+        builder.AddSingleton<IDecayService, DecayService>();
+        builder.AddSingleton<IItemTransformService, ItemTransformService>();
+        builder.AddSingleton<IItemRemoveService, ItemRemoveService>();
 
         //game builders
         builder.RegisterAssemblyTypes<IInspectionTextBuilder>(Container.AssemblyCache);
