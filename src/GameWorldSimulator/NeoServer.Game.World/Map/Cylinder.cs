@@ -191,7 +191,11 @@ public class CylinderSpectator : IEqualityComparer<ICylinderSpectator>, ICylinde
     }
 }
 
-public record Cylinder(IThing Thing, ITile FromTile, ITile ToTile, Operation Operation,
+public record Cylinder(
+    IThing Thing,
+    ITile FromTile,
+    ITile ToTile,
+    Operation Operation,
     ICylinderSpectator[] TileSpectators) : ICylinder
 {
     public bool IsTeleport => ToTile.Location.GetMaxSqmDistance(FromTile.Location) > 1;

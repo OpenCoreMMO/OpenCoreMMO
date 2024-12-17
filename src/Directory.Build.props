@@ -3,7 +3,7 @@
     <PropertyGroup>
         <ProductName>OpenCoreMMO</ProductName>
         <RepositoryUrl>https://github.com/caioavidal/OpenCoreMMO</RepositoryUrl>
-        <LangVersion>10</LangVersion>
+        <LangVersion>Latest</LangVersion>
         <TargetFramework>net9.0</TargetFramework>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <Deterministic>true</Deterministic>

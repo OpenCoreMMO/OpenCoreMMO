@@ -1,8 +1,6 @@
-﻿
-using System;
+﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Game.Combat.Spells;
-using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Services;
@@ -24,16 +22,19 @@ namespace NeoServer.Server.Events.Subscribers;
 public sealed class EventSubscriber
 {
     private readonly IServiceProvider _container;
+    private readonly FieldRuneUsedEventHandler _fieldRuneUsedEventHandler;
     private readonly IGameServer _gameServer;
+    private readonly ItemStartedDecayingEventHandler _itemStartedDecayingEventHandler;
+    private readonly ItemUsedEventHandler _itemUsedEventHandler;
+    private readonly ItemUsedOnTileEventHandler _itemUsedOnTileEventHandler;
 
     private readonly IMap _map;
     private readonly SafeTradeSystem _tradeSystem;
-    private readonly ItemStartedDecayingEventHandler _itemStartedDecayingEventHandler;
-    private readonly ItemUsedOnTileEventHandler _itemUsedOnTileEventHandler;
-    private readonly FieldRuneUsedEventHandler _fieldRuneUsedEventHandler;
-    private readonly ItemUsedEventHandler _itemUsedEventHandler;
-    public EventSubscriber(IMap map, IGameServer gameServer, IServiceProvider container, SafeTradeSystem tradeSystem, 
-        ItemStartedDecayingEventHandler itemStartedDecayingEventHandler, ItemUsedOnTileEventHandler itemUsedOnTileEventHandler, FieldRuneUsedEventHandler fieldRuneUsedEventHandler, ItemUsedEventHandler itemUsedEventHandler)
+
+    public EventSubscriber(IMap map, IGameServer gameServer, IServiceProvider container, SafeTradeSystem tradeSystem,
+        ItemStartedDecayingEventHandler itemStartedDecayingEventHandler,
+        ItemUsedOnTileEventHandler itemUsedOnTileEventHandler, FieldRuneUsedEventHandler fieldRuneUsedEventHandler,
+        ItemUsedEventHandler itemUsedEventHandler)
     {
         _map = map;
         _gameServer = gameServer;
@@ -61,16 +62,19 @@ public sealed class EventSubscriber
 
         BaseSpell.OnSpellInvoked += _container.GetRequiredService<SpellInvokedEventHandler>().Execute;
 
-        OperationFailService.OnOperationFailed += _container.GetRequiredService<PlayerOperationFailedEventHandler>().Execute;
-        OperationFailService.OnInvalidOperation += _container.GetRequiredService<PlayerOperationFailedEventHandler>().Execute;
-        NotificationSenderService.OnNotificationSent += _container.GetRequiredService<NotificationSentEventHandler>().Execute;
+        OperationFailService.OnOperationFailed +=
+            _container.GetRequiredService<PlayerOperationFailedEventHandler>().Execute;
+        OperationFailService.OnInvalidOperation +=
+            _container.GetRequiredService<PlayerOperationFailedEventHandler>().Execute;
+        NotificationSenderService.OnNotificationSent +=
+            _container.GetRequiredService<NotificationSentEventHandler>().Execute;
         _gameServer.OnOpened += _container.GetRequiredService<ServerOpenedEventHandler>().Execute;
-        
+
         Decayable.OnStarted += _itemStartedDecayingEventHandler.Execute;
-        
+
         IConsumable.OnUsed += _itemUsedEventHandler.Execute;
         FieldRune.OnUsedOnTile += _fieldRuneUsedEventHandler.Execute;
-        
+
         AddTradeHandlers();
     }
 

@@ -9,9 +9,9 @@ namespace NeoServer.Networking.Handlers.Trade;
 
 public class TradeRequestHandler : PacketHandler
 {
-    private readonly TradeRequestCommand _tradeRequestCommand;
     private readonly IGameCreatureManager _creatureManager;
     private readonly IDispatcher _dispatcher;
+    private readonly TradeRequestCommand _tradeRequestCommand;
 
     public TradeRequestHandler(TradeRequestCommand tradeRequestCommand, IGameCreatureManager creatureManager,
         IDispatcher dispatcher)

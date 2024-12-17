@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using NeoServer.Game.Chats;
 using NeoServer.Game.Chats.Rules;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Chats;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Helpers;
+using NeoServer.Loaders.Helpers;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Server.Configurations;
-using System.Text.Json;
-using NeoServer.Loaders.Helpers;
 using Serilog;
 
 namespace NeoServer.Loaders.Chats;
@@ -50,7 +50,7 @@ public class ChannelLoader : IStartupLoader
         var jsonString = File.ReadAllText(path);
 
         var channels = JsonSerializer.Deserialize<List<ChannelModel>>(jsonString, JsonSettings.Options);
-        
+
         if (channels != null)
             foreach (var channel in channels.Where(x => x.Enabled))
             {

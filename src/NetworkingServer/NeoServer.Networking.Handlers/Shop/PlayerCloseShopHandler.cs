@@ -9,6 +9,7 @@ public class PlayerCloseShopHandler : PacketHandler
 {
     private readonly IGameCreatureManager _creatureManager;
     private readonly IDispatcher _dispatcher;
+
     public PlayerCloseShopHandler(IGameCreatureManager creatureManager, IDispatcher dispatcher)
     {
         _creatureManager = creatureManager;

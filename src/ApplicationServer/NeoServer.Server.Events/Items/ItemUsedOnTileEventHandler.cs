@@ -9,8 +9,9 @@ namespace NeoServer.Server.Events.Items;
 
 public class ItemUsedOnTileEventHandler
 {
-    private readonly IMap _map;
     private readonly IGameCreatureManager _creatureManager;
+    private readonly IMap _map;
+
     public ItemUsedOnTileEventHandler(IGameCreatureManager creatureManager, IMap map)
     {
         _creatureManager = creatureManager;

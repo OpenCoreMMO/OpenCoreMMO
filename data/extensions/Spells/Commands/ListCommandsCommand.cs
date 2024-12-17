@@ -63,7 +63,7 @@ public class ListCommandsCommand : CommandSpell
                 lines.Add($"{words} {name}");
                 continue;
             }
-            
+
             lines.Add($"{words} {name} - {description}");
         }
 

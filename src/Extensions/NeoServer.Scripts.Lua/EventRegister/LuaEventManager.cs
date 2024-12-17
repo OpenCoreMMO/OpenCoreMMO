@@ -45,7 +45,7 @@ public static class LuaEventManager
             return;
         }
 
-        if (actionId > 0 && !ActionIdMap.TryAdd(ConvertToKey(eventName, actionId), action)) 
+        if (actionId > 0 && !ActionIdMap.TryAdd(ConvertToKey(eventName, actionId), action))
             logger.Warning("Lua action with actionId: {Id} is already registered", actionId);
     }
 

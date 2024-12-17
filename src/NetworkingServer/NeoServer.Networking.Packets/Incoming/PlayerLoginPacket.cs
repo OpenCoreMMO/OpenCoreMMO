@@ -22,7 +22,7 @@ public class PlayerLogInPacket : IncomingPacket
 
         var encryptedDataLength = tcpPayload - message.BytesRead;
         var encryptedData = message.GetBytes(encryptedDataLength);
-        
+
         var decryptedData = Rsa.Decrypt(encryptedData.ToArray());
         if (decryptedData is null || decryptedData.Length == 0) return;
 

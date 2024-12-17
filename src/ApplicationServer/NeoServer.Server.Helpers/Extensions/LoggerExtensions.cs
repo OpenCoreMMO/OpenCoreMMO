@@ -32,7 +32,7 @@ public static class LoggerExtensions
             logger.Information($"{afterMessage} in {{elapsed}} secs",
                 @params.Concat(new object[] { Math.Round(Sw.ElapsedMilliseconds / 1000d, 2) }).ToArray());
 
-       SetCursorPosition(0, currentRow);
+        SetCursorPosition(0, currentRow);
     }
 
     public static void Step(this ILogger logger, string beforeMessage, string afterMessage, Action action,
@@ -87,15 +87,25 @@ public static class LoggerExtensions
     private static int GetCursorTop()
     {
         var cursor = 0;
-        try { cursor = Console.CursorTop; }
-        catch { }
+        try
+        {
+            cursor = Console.CursorTop;
+        }
+        catch
+        {
+        }
 
         return cursor;
     }
 
     private static void SetCursorPosition(int position, int lastRow)
     {
-        try { Console.SetCursorPosition(position, lastRow);}
-        catch { }
+        try
+        {
+            Console.SetCursorPosition(position, lastRow);
+        }
+        catch
+        {
+        }
     }
 }

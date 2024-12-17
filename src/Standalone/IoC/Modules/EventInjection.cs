@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-
 using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Chats;
@@ -37,7 +36,7 @@ public static class EventInjection
     private static void RegisterEventSubscribers(this IServiceCollection builder)
     {
         var types = Container.AssemblyCache;
-        
+
         builder
             .RegisterAssemblyTypes<ICreatureEventSubscriber>(types)
             .RegisterAssemblyTypes<IItemEventSubscriber>(types)

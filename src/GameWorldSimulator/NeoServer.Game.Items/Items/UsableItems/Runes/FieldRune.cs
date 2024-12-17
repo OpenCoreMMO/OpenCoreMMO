@@ -22,7 +22,6 @@ public class FieldRune : Rune, IFieldRune
     }
 
     public override ushort Duration => 2;
-    public static event UseOnTile OnUsedOnTile;
     public ushort Field => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.Field);
 
     public virtual string Area => Metadata.Attributes.GetAttribute(ItemAttribute.Area);
@@ -36,6 +35,8 @@ public class FieldRune : Rune, IFieldRune
 
         return true;
     }
+
+    public static event UseOnTile OnUsedOnTile;
 
     public new static bool IsApplicable(IItemType type)
     {
