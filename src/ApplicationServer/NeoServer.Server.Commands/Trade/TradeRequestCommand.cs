@@ -1,5 +1,6 @@
 ﻿using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
@@ -12,13 +13,15 @@ namespace NeoServer.Server.Commands.Trade;
 
 public class TradeRequestCommand : ICommand
 {
-    private readonly IGameServer _gameServer;
+    private readonly IGameCreatureManager _creatureManager;
     private readonly SafeTradeSystem _tradeSystem;
+    private readonly IMap _map;
 
-    public TradeRequestCommand(IGameServer gameServer, SafeTradeSystem tradeSystem)
+    public TradeRequestCommand(SafeTradeSystem tradeSystem, IGameCreatureManager creatureManager, IMap map)
     {
-        _gameServer = gameServer;
         _tradeSystem = tradeSystem;
+        _creatureManager = creatureManager;
+        _map = map;
     }
 
     public void RequestTrade(IPlayer player, TradeRequestPacket packet)
@@ -28,7 +31,7 @@ public class TradeRequestCommand : ICommand
         var item = GetItem(player, packet);
         if (item is null) return;
 
-        _gameServer.CreatureManager.TryGetPlayer(packet.PlayerId, out var secondPlayer);
+        _creatureManager.TryGetPlayer(packet.PlayerId, out var secondPlayer);
         if (secondPlayer is null) return;
 
         _tradeSystem.Request(player, secondPlayer, item);
@@ -38,7 +41,7 @@ public class TradeRequestCommand : ICommand
     {
         if (packet.Location.Type == LocationType.Ground)
         {
-            if (_gameServer.Map[packet.Location] is not { } tile) return null;
+            if (_map[packet.Location] is not { } tile) return null;
             return tile.TopItemOnStack;
         }
 

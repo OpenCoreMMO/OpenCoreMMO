@@ -17,7 +17,7 @@ public static class NpcTestDataBuilder
     public static INpc Build(string name, INpcType npcType)
     {
         var logger = new Mock<ILogger>();
-        var itemFactory = new ItemFactory();
+        var itemFactory = new ItemFactory(null, null, null, null, null, null, null, null, null, null);
 
         var npcStore = new NpcStore();
         npcStore.Add(name, npcType);

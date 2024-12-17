@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿
+using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Creatures.Monster.Managers;
 using NeoServer.Game.Systems.Depot;
@@ -10,16 +11,16 @@ namespace NeoServer.Server.Standalone.IoC.Modules;
 
 public static class ManagerInjection
 {
-    public static ContainerBuilder AddManagers(this ContainerBuilder builder)
+    public static IServiceCollection AddManagers(this IServiceCollection builder)
     {
-        builder.RegisterType<GameServer>().As<IGameServer>().SingleInstance();
-        builder.RegisterType<GameCreatureManager>().As<IGameCreatureManager>().SingleInstance();
-        builder.RegisterType<DecayableItemManager>().As<IDecayableItemManager>().SingleInstance();
+        builder.AddSingleton<IGameServer,GameServer>();
+        builder.AddSingleton<IGameCreatureManager,GameCreatureManager>();
+        builder.AddSingleton<IDecayableItemManager,DecayableItemManager>();
 
 
-        builder.RegisterType<MonsterDataManager>().As<IMonsterDataManager>().SingleInstance();
-        builder.RegisterType<SpawnManager>().SingleInstance();
-        builder.RegisterType<DepotManager>().SingleInstance();
+        builder.AddSingleton<IMonsterDataManager,MonsterDataManager>();
+        builder.AddSingleton<SpawnManager>();
+        builder.AddSingleton<DepotManager>();
         return builder;
     }
 }
