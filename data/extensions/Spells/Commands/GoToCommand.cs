@@ -16,7 +16,7 @@ public class GoToCommand : CommandSpell
         var actorPlayer = (IPlayer)actor;
 
         // just only GOD can teleport to other players
-        if (Params.Length == 1 && actorPlayer.VocationType == 11)
+        if (Params.Length == 1)
         {
             var creatureManager = IoC.GetInstance<IGameCreatureManager>();
             creatureManager.TryGetPlayer(Params[0].ToString(), out var target);
