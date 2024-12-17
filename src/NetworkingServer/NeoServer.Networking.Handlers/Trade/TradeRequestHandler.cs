@@ -2,29 +2,33 @@
 using NeoServer.Server.Commands.Trade;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
+using NeoServer.Server.Common.Contracts.Tasks;
 using NeoServer.Server.Tasks;
 
 namespace NeoServer.Networking.Handlers.Trade;
 
 public class TradeRequestHandler : PacketHandler
 {
-    private readonly IGameServer _gameServer;
     private readonly TradeRequestCommand _tradeRequestCommand;
+    private readonly IGameCreatureManager _creatureManager;
+    private readonly IDispatcher _dispatcher;
 
-    public TradeRequestHandler(IGameServer gameServer, TradeRequestCommand tradeRequestCommand)
+    public TradeRequestHandler(TradeRequestCommand tradeRequestCommand, IGameCreatureManager creatureManager,
+        IDispatcher dispatcher)
     {
-        _gameServer = gameServer;
         _tradeRequestCommand = tradeRequestCommand;
+        _creatureManager = creatureManager;
+        _dispatcher = dispatcher;
     }
 
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
         var tradeRequestPacket = new TradeRequestPacket(message);
-        if (!_gameServer.CreatureManager.TryGetPlayer(connection.CreatureId, out var player)) return;
+        if (!_creatureManager.TryGetPlayer(connection.CreatureId, out var player)) return;
 
         if (player is null) return;
 
-        _gameServer.Dispatcher.AddEvent(new Event(2000,
+        _dispatcher.AddEvent(new Event(2000,
             () => _tradeRequestCommand.RequestTrade(player, tradeRequestPacket)));
     }
 }

@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
 
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="System.Collections" Version="4.3.0"/>
-        <PackageReference Include="System.Collections.Immutable" Version="7.0.0"/>
+        <PackageReference Include="System.Collections.Immutable" Version="9.0.0" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj"/>
@@ -24,7 +24,7 @@
         <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Commands\NeoServer.Server.Commands.csproj"/>
         <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj"/>
         <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Events\NeoServer.Server.Events.csproj"/>
-        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Jobs\NeoServer.Server.Jobs.csproj"/>
+        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Routines\NeoServer.Server.Routines.csproj" />
         <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj"/>
     </ItemGroup>
     <ItemGroup>

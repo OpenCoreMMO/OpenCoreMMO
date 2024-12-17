@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
-using Autofac;
+
+using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
@@ -11,33 +12,35 @@ namespace NeoServer.Server.Standalone.IoC.Modules;
 
 public static class EventInjection
 {
-    public static ContainerBuilder AddEvents(this ContainerBuilder builder)
+    public static IServiceCollection AddEvents(this IServiceCollection builder)
     {
         builder.RegisterServerEvents();
         builder.RegisterGameEvents();
         builder.RegisterEventSubscribers();
-        builder.RegisterType<EventSubscriber>().SingleInstance();
-        builder.RegisterType<FactoryEventSubscriber>().SingleInstance();
+        builder.AddSingleton<EventSubscriber>();
+        builder.AddSingleton<FactoryEventSubscriber>();
 
         return builder;
     }
 
-    private static void RegisterServerEvents(this ContainerBuilder builder)
+    private static void RegisterServerEvents(this IServiceCollection builder)
     {
         var assembly = Assembly.GetAssembly(typeof(CreatureAddedOnMapEventHandler));
         builder.RegisterAssemblyTypes(assembly);
     }
 
-    private static void RegisterGameEvents(this ContainerBuilder builder)
+    private static void RegisterGameEvents(this IServiceCollection builder)
     {
         builder.RegisterAssembliesByInterface(typeof(IGameEventHandler));
     }
 
-    private static void RegisterEventSubscribers(this ContainerBuilder builder)
+    private static void RegisterEventSubscribers(this IServiceCollection builder)
     {
         var types = Container.AssemblyCache;
-        builder.RegisterAssemblyTypes(types).As<ICreatureEventSubscriber>().SingleInstance();
-        builder.RegisterAssemblyTypes(types).As<IItemEventSubscriber>().SingleInstance();
-        builder.RegisterAssemblyTypes(types).As<IChatChannelEventSubscriber>().SingleInstance();
+        
+        builder
+            .RegisterAssemblyTypes<ICreatureEventSubscriber>(types)
+            .RegisterAssemblyTypes<IItemEventSubscriber>(types)
+            .RegisterAssemblyTypes<IChatChannelEventSubscriber>(types);
     }
 }

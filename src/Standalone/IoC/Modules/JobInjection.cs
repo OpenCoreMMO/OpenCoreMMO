@@ -1,20 +1,21 @@
-﻿using Autofac;
-using NeoServer.Server.Jobs.Channels;
-using NeoServer.Server.Jobs.Creatures;
-using NeoServer.Server.Jobs.Items;
-using NeoServer.Server.Jobs.Persistence;
+﻿
+using Microsoft.Extensions.DependencyInjection;
+using NeoServer.Server.Routines.Channels;
+using NeoServer.Server.Routines.Creatures;
+using NeoServer.Server.Routines.Items;
+using NeoServer.Server.Routines.Persistence;
 
 namespace NeoServer.Server.Standalone.IoC.Modules;
 
 public static class JobInjection
 {
-    public static ContainerBuilder AddJobs(this ContainerBuilder builder)
+    public static IServiceCollection AddJobs(this IServiceCollection builder)
     {
         //todo: inherit these jobs from interface and register by implementation
-        builder.RegisterType<GameCreatureJob>().SingleInstance();
-        builder.RegisterType<GameItemJob>().SingleInstance();
-        builder.RegisterType<GameChatChannelJob>().SingleInstance();
-        builder.RegisterType<PlayerPersistenceJob>().SingleInstance();
+        builder.AddSingleton<GameCreatureRoutine>();
+        builder.AddSingleton<GameItemRoutine>();
+        builder.AddSingleton<GameChatChannelRoutine>();
+        builder.AddSingleton<PlayerPersistenceRoutine>();
         return builder;
     }
 }

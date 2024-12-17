@@ -10472,6 +10472,14 @@
 			{
 				"key": "charges",
 				"value": "3"
+			},
+			{
+				"key": "minLevel",
+				"value": 15
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 0
 			}
 		]
 	},
@@ -10503,6 +10511,14 @@
 			{
 				"key": "charges",
 				"value": "2"
+			},
+			{
+				"key": "minLevel",
+				"value": 37
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 10
 			}
 		]
 	},
@@ -10564,6 +10580,14 @@
 			{
 				"key": "charges",
 				"value": "1"
+			},
+			{
+				"key": "minLevel",
+				"value": 15
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 1
 			}
 		]
 	},
@@ -10587,6 +10611,14 @@
 			{
 				"key": "charges",
 				"value": "1"
+			},
+			{
+				"key": "minLevel",
+				"value": 15
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 0
 			}
 		]
 	},
@@ -10655,6 +10687,14 @@
 					32,
 					48
 				]
+			},
+			{
+				"key": "minLevel",
+				"value": 45
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 15
 			}
 		]
 	},
@@ -10678,6 +10718,14 @@
 			{
 				"key": "charges",
 				"value": "2"
+			},
+			{
+				"key": "minLevel",
+				"value": 27
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 8
 			}
 		]
 	},
@@ -10742,6 +10790,14 @@
 					12,
 					17
 				]
+			},
+			{
+				"key": "minLevel",
+				"value": 28
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 4
 			}
 		]
 	},
@@ -10798,6 +10854,14 @@
 			{
 				"key": "charges",
 				"value": "1"
+			},
+			{
+				"key": "minLevel",
+				"value": 24
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 4
 			}
 		]
 	},
@@ -10851,6 +10915,14 @@
 					7,
 					16
 				]
+			},
+			{
+				"key": "minLevel",
+				"value": 30
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 4
 			}
 		]
 	},
@@ -10898,6 +10970,14 @@
 			{
 				"key": "shootType",
 				"value": "energy"
+			},
+			{
+				"key": "minLevel",
+				"value": 18
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 3
 			}
 		]
 	},
@@ -10921,6 +11001,14 @@
 			{
 				"key": "charges",
 				"value": "1"
+			},
+			{
+				"key": "minLevel",
+				"value": 54
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 18
 			}
 		]
 	},
@@ -10956,6 +11044,14 @@
 			{
 				"key": "area",
 				"value": "AREADIAGONAL_WALLFIELD"
+			},
+			{
+				"key": "minLevel",
+				"value": 41
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 9
 			}
 		]
 	},
@@ -11003,6 +11099,14 @@
 			{
 				"key": "shootType",
 				"value": "poison"
+			},
+			{
+				"key": "minLevel",
+				"value": 14
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 0
 			}
 		]
 	},
@@ -11026,6 +11130,14 @@
 			{
 				"key": "charges",
 				"value": "2"
+			},
+			{
+				"key": "minLevel",
+				"value": 25
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 4
 			}
 		]
 	},
@@ -11075,6 +11187,14 @@
 					3,
 					5
 				]
+			},
+			{
+				"key": "minLevel",
+				"value": 15
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 0
 			}
 		]
 	},
@@ -11128,6 +11248,14 @@
 					6,
 					16
 				]
+			},
+			{
+				"key": "minLevel",
+				"value": 28
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 4
 			}
 		]
 	},
@@ -11151,6 +11279,14 @@
 			{
 				"key": "charges",
 				"value": "4"
+			},
+			{
+				"key": "minLevel",
+				"value": 29
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 5
 			}
 		]
 	},
@@ -11174,6 +11310,14 @@
 			{
 				"key": "charges",
 				"value": "1"
+			},
+			{
+				"key": "minLevel",
+				"value": 16
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 5
 			}
 		]
 	},
@@ -11197,6 +11341,14 @@
 			{
 				"key": "charges",
 				"value": "1"
+			},
+			{
+				"key": "minLevel",
+				"value": 27
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 4
 			}
 		]
 	},
@@ -11246,6 +11398,14 @@
 					5,
 					10
 				]
+			},
+			{
+				"key": "minLevel",
+				"value": 24
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 3
 			}
 		]
 	},
@@ -11277,6 +11437,14 @@
 			{
 				"key": "shootType",
 				"value": "energy"
+			},
+			{
+				"key": "minLevel",
+				"value": 32
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 9
 			}
 		]
 	},
@@ -11341,6 +11509,14 @@
 					11,
 					23
 				]
+			},
+			{
+				"key": "minLevel",
+				"value": 27
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 4
 			}
 		]
 	},
@@ -11388,6 +11564,14 @@
 			{
 				"key": "shootType",
 				"value": "fire"
+			},
+			{
+				"key": "minLevel",
+				"value": 15
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 1
 			}
 		]
 	},
@@ -11441,6 +11625,14 @@
 					12,
 					17
 				]
+			},
+			{
+				"key": "minLevel",
+				"value": 27
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 4
 			}
 		]
 	},
@@ -11464,6 +11656,14 @@
 			{
 				"key": "charges",
 				"value": "4"
+			},
+			{
+				"key": "minLevel",
+				"value": 33
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 6
 			}
 		]
 	},
@@ -11517,6 +11717,14 @@
 					7,
 					16
 				]
+			},
+			{
+				"key": "minLevel",
+				"value": 30
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 4
 			}
 		]
 	},
@@ -11540,6 +11748,14 @@
 			{
 				"key": "charges",
 				"value": "2"
+			},
+			{
+				"key": "minLevel",
+				"value": 27
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 5
 			}
 		]
 	},
@@ -11605,6 +11821,14 @@
 					2,
 					4
 				]
+			},
+			{
+				"key": "minLevel",
+				"value": 27
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 7
 			}
 		]
 	},
@@ -11643,6 +11867,14 @@
 			{
 				"key": "charges",
 				"value": "3"
+			},
+			{
+				"key": "minLevel",
+				"value": 21
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 4
 			}
 		]
 	},
@@ -11700,6 +11932,14 @@
 					5,
 					10
 				]
+			},
+			{
+				"key": "minLevel",
+				"value": 25
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 3
 			}
 		]
 	},
@@ -11768,6 +12008,14 @@
 					9,
 					19
 				]
+			},
+			{
+				"key": "minLevel",
+				"value": 31
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 6
 			}
 		]
 	},
@@ -11836,6 +12084,14 @@
 					6,
 					16
 				]
+			},
+			{
+				"key": "minLevel",
+				"value": 28
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 4
 			}
 		]
 	},
@@ -11859,6 +12115,14 @@
 			{
 				"key": "charges",
 				"value": "1"
+			},
+			{
+				"key": "minLevel",
+				"value": 27
+			},
+			{
+				"key": "minMagicLevel",
+				"value": 4
 			}
 		]
 	},

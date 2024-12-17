@@ -1,5 +1,3 @@
-
-
 <h1 align="center">
   <img align="center" width="120px" src="https://github.com/caioavidal/OpenCoreMMO/blob/develop/ocmsquare.png?raw=true" target="_blank"  />
   <br>
@@ -29,26 +27,22 @@
 </p>
 
 > Modern, free, and open-source MMORPG server emulator written in C#.
-> <br>To connect to the server, you can use either [OTClient](https://github.com/edubart/otclient) or [OpenTibiaUnity](https://github.com/slavidodo/OpenTibia-Unity) for version 8.6.
-
-## Demo
-
-<p align="center">
-  <img width="700" align="center" src="https://github.com/caioavidal/OpenCoreMMO/blob/develop/opencoremmo.gif?raw=true" alt="demo"/>
-</p>
+> 
+> It was written from scratch and development on the project began in January 2020.
+> <br>To connect to the server, you can use either [OTClient](https://github.com/edubart/otclient), [OTCv8](https://github.com/OTCv8/otclientv8) or [OTCR](https://github.com/mehah/otclient) for version 8.6.
 
 ## Latest Builds
 
 | Enviroment | Status |
 |------------|--------|
-|![win](https://badgen.net/badge/icon/Windows,.NET%207?icon=windows&label&list=1)|[![OpenCoreMMO](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)        |
+|![win](https://badgen.net/badge/icon/Windows,.NET%209?icon=windows&label&list=1)|[![OpenCoreMMO](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)        |
 |![linux](https://badgen.net/badge/icon/Ubuntu%20Linux%2022.04%20x64?icon=terminal&label&color=orange)|[![OpenCoreMMO](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
 |![mac](https://badgen.net/badge/icon/macOS%20Latest?icon=apple&label&color=purple&list=1)|[![OpenCoreMMO](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
 
 ## Usage
 
 ```sh
-download and install .NET 7: https://dotnet.microsoft.com/download/dotnet/7.0
+download and install .NET 9: https://dotnet.microsoft.com/download/dotnet/9.0
 git clone https://github.com/caioavidal/OpenCoreMMO.git
 cd src
 dotnet run --project "Standalone"
@@ -90,7 +84,7 @@ To connect to the self-hosted server for development, please use the following c
 ## Technologies
 
 * C#
-* .Net 7
+* .Net 9
 * Database support: InMemory, MySQL, and SQLite
 * Console Debug Logging
 * XUnit Testing
@@ -101,7 +95,6 @@ To connect to the self-hosted server for development, please use the following c
 
 * Documentation: https://caioavidal.gitbook.io/opencoremmo/
 * Discord Invite: https://discord.gg/Kazq9z2
-* TibiaKing Topic: https://tibiaking.com/forums/topic/101402-open-source-tibia-server-c-net-5/
 
 ## Author
 
@@ -109,20 +102,6 @@ To connect to the self-hosted server for development, please use the following c
 
 * Github: [@caioavidal](https://github.com/caioavidal)
 * LinkedIn: [https:\/\/www.linkedin.com\/in\/caiovidal](https:\/\/www.linkedin.com\/in\/caiovidal)
-
-## Contributors
-
-Thank you to all the people who already contributed to OpenCoreMMO!
-
-* 👤 **[Marcus Vinicius(MarcusViniciusSS)](https://github.com/MarcusViniciusSS)**
-* 👤 **[Shelby115](https://github.com/Shelby115)**
-* 👤 **[Mun1z](https://github.com/Mun1z)**
-* 👤 **[alissonfabiano](https://github.com/alissonfabiano)**
-* 👤 **[elewental](https://github.com/elewental)**
-* 👤 **[VictorAmaral](https://github.com/VictorAmaral)**
-* 👤 **[jahazielhigareda](https://github.com/jahazielhigareda)**
-* 👤 **[emidiovictor](https://github.com/emidiovictor)**
-* 👤 **[themaoci](https://github.com/themaoci)**
 
 ## Show your support
 

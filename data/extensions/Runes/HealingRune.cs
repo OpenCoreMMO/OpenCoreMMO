@@ -11,7 +11,7 @@ using NeoServer.Game.Items.Items.UsableItems.Runes;
 
 namespace NeoServer.Extensions.Runes;
 
-public class HealingRune : Rune, IConsumable, IUsableOnCreature, IUsableOn
+public class HealingRune : Rune, IConsumable
 {
     public HealingRune(IItemType type, Location location, IDictionary<ItemAttribute, IConvertible> attributes) :
         base(type, location, attributes)
@@ -19,7 +19,6 @@ public class HealingRune : Rune, IConsumable, IUsableOnCreature, IUsableOn
     }
 
     public override ushort Duration => 0;
-    public event Use OnUsed;
     public EffectT Effect => EffectT.GlitterBlue;
 
     public void Use(IPlayer usedBy, ICreature creature)
@@ -30,6 +29,6 @@ public class HealingRune : Rune, IConsumable, IUsableOnCreature, IUsableOn
 
         Reduce();
 
-        OnUsed?.Invoke(usedBy, creature, this);
+        IConsumable.RaiseOnUsed(usedBy, creature, this);
     }
 }

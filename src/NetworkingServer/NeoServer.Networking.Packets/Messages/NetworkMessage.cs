@@ -28,6 +28,12 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
         _cursor = length;
     }
 
+    public override void Reset()
+    {
+        base.Reset();
+        _cursor = 0;
+    }
+
     /// <summary>
     ///     Inserts a location point on the buffer
     /// </summary>

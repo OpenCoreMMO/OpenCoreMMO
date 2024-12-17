@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using NeoServer.Game.Common.Contracts.Creatures;
@@ -22,7 +21,7 @@ public class Connection : IConnection
     private readonly ILogger _logger;
 
     private readonly Socket _socket;
-    private readonly Stream _stream;
+    private readonly NetworkStream _stream;
     private readonly object _writeLock;
 
     public Connection(Socket socket, ILogger logger)
@@ -246,7 +245,7 @@ public class Connection : IConnection
                 
                 while (totalBytesRead < size)
                 {
-                    if (!_stream.CanRead)
+                    if (!_stream.CanRead || !_stream.DataAvailable)
                     {
                         return false;
                     }
@@ -261,6 +260,11 @@ public class Connection : IConnection
             }
 
             return true;
+        }
+
+        catch (ObjectDisposedException)
+        {
+            // this exception is expected when the clientListener got disposed. In this case we don't want to spam the log.
         }
         catch (Exception ex)
         {

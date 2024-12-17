@@ -37,14 +37,14 @@ public class InventoryAttackCalculationTests
 
         var ammo = ItemTestData.CreateAmmo(1, 50, new (ItemAttribute, IConvertible)[]
         {
-            (ItemAttribute.Attack, 50)
+            (ItemAttribute.Attack, 60)
         });
 
         inventory.AddItem(weapon);
         inventory.AddItem(ammo);
 
         //assert
-        inventory.TotalAttack.Should().Be(100);
+        inventory.TotalAttack.Should().Be(110);
     }
 
     [Fact]

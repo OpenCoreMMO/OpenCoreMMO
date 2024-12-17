@@ -116,7 +116,7 @@ public class ReadOnlyNetworkMessage : IReadOnlyNetworkMessage
         BytesRead = 0;
     }
 
-    public void Reset()
+    public virtual void Reset()
     {
         Buffer = new byte[16394];
         BytesRead = 0;

@@ -9,7 +9,8 @@ using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Server.Configurations;
-using Newtonsoft.Json;
+using System.Text.Json;
+using NeoServer.Loaders.Helpers;
 using Serilog;
 
 namespace NeoServer.Loaders.Chats;
@@ -42,14 +43,14 @@ public class ChannelLoader : IStartupLoader
         var path = Path.Combine(_serverConfiguration.Data, "channels.json");
         if (!File.Exists(path))
         {
-            _logger.Error($"channels.json file not found at {path}");
+            _logger.Error("channels.json file not found at {Path}", path);
             return;
         }
 
         var jsonString = File.ReadAllText(path);
 
-        var channels = JsonConvert.DeserializeObject<List<ChannelModel>>(jsonString);
-
+        var channels = JsonSerializer.Deserialize<List<ChannelModel>>(jsonString, JsonSettings.Options);
+        
         if (channels != null)
             foreach (var channel in channels.Where(x => x.Enabled))
             {

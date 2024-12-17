@@ -76,6 +76,7 @@ public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
             dynamicTile.FloorDirection == FloorChangeDirection.None,
             monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushItems) || !dynamicTile.HasBlockPathFinding,
             !dynamicTile.HasCreature,
+            !dynamicTile.HasTeleport(out _),
             !dynamicTile.HasFlag(TileFlags.Unpassable),
             !dynamicTile.ProtectionZone,
             dynamicTile.Ground is not null);

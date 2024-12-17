@@ -49,11 +49,11 @@ public class NeoContext : DbContext
         }
         else
         {
+            modelBuilder.ApplyConfiguration(new AccountEntityConfiguration());
             modelBuilder.ApplyConfiguration(new PlayerInventoryItemEntityConfiguration());
             modelBuilder.ApplyConfiguration(new PlayerItemEntityConfiguration());
             modelBuilder.ApplyConfiguration(new PlayerDepotItemEntitytConfiguration());
             modelBuilder.ApplyConfiguration(new PlayerEntityConfiguration());
-            modelBuilder.ApplyConfiguration(new AccountEntityConfiguration());
             modelBuilder.ApplyConfiguration(new GuildEntityConfiguration());
             modelBuilder.ApplyConfiguration(new GuildRankEntityConfiguration());
             modelBuilder.ApplyConfiguration(new WorldEntityConfiguration());

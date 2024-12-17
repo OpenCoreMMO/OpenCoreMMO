@@ -7,9 +7,7 @@ namespace NeoServer.Server.Configurations;
 public enum DatabaseType
 {
     INMEMORY,
-    MONGODB,
-    MYSQL,
-    MSSQL,
+    POSTGRESQL,
     SQLITE
 }
 

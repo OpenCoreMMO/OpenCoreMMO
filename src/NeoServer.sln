@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoServer.Loaders", "Loader
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoServer.Game.World", "GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj", "{EEE980F3-5916-45FD-9ABA-8F5D078E115C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoServer.Server.Jobs", "ApplicationServer\NeoServer.Server.Jobs\NeoServer.Server.Jobs.csproj", "{966C5E69-B1DF-4594-8C6F-C7F32C02866F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoServer.Server.Routines", "ApplicationServer\NeoServer.Server.Routines\NeoServer.Server.Routines.csproj", "{966C5E69-B1DF-4594-8C6F-C7F32C02866F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoServer.Benchmarks", "..\benchmarks\NeoServer.Benchmarks\NeoServer.Benchmarks.csproj", "{96C4E3BF-842D-4132-9A23-0BA35F2660F2}"
 EndProject
@@ -77,7 +77,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoServer.Loaders.Tests", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{41D4D3B5-6FC6-48F5-9D05-EA8C293DB44B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "game world simulator", "game world simulator", "{EB46ABE5-1719-4A52-BACB-A05D6EACCAB5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{EB46ABE5-1719-4A52-BACB-A05D6EACCAB5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "loaders", "loaders", "{FA691E87-E79B-4778-9996-52077E6802B0}"
 EndProject
@@ -102,6 +102,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoServer.Web.Shared", "Shared\NeoServer.Web.Shared\NeoServer.Web.Shared.csproj", "{94C3B154-2E2F-4787-9ECD-A4B217862EC9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoServer.Shared.IoC", "Shared\NeoServer.IoC\NeoServer.Shared.IoC.csproj", "{B0353BE8-6DE2-4D8F-A518-6123B0A34124}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoServer.Aspire.AppHost", "NeoServer.Aspire\NeoServer.Aspire.AppHost\NeoServer.Aspire.AppHost.csproj", "{BC61E4DA-D4F3-46DC-9B1D-E563BDF45E02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -421,6 +423,14 @@ Global
 		{B0353BE8-6DE2-4D8F-A518-6123B0A34124}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B0353BE8-6DE2-4D8F-A518-6123B0A34124}.Release|x64.ActiveCfg = Release|Any CPU
 		{B0353BE8-6DE2-4D8F-A518-6123B0A34124}.Release|x64.Build.0 = Release|Any CPU
+		{BC61E4DA-D4F3-46DC-9B1D-E563BDF45E02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC61E4DA-D4F3-46DC-9B1D-E563BDF45E02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC61E4DA-D4F3-46DC-9B1D-E563BDF45E02}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BC61E4DA-D4F3-46DC-9B1D-E563BDF45E02}.Debug|x64.Build.0 = Debug|Any CPU
+		{BC61E4DA-D4F3-46DC-9B1D-E563BDF45E02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC61E4DA-D4F3-46DC-9B1D-E563BDF45E02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC61E4DA-D4F3-46DC-9B1D-E563BDF45E02}.Release|x64.ActiveCfg = Release|Any CPU
+		{BC61E4DA-D4F3-46DC-9B1D-E563BDF45E02}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -473,6 +483,7 @@ Global
 		{ABF0692C-9C53-472D-B960-E4444FE46B2C} = {41D4D3B5-6FC6-48F5-9D05-EA8C293DB44B}
 		{94C3B154-2E2F-4787-9ECD-A4B217862EC9} = {ABF0692C-9C53-472D-B960-E4444FE46B2C}
 		{B0353BE8-6DE2-4D8F-A518-6123B0A34124} = {ABF0692C-9C53-472D-B960-E4444FE46B2C}
+		{BC61E4DA-D4F3-46DC-9B1D-E563BDF45E02} = {41D4D3B5-6FC6-48F5-9D05-EA8C293DB44B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B3C7097-0071-4218-BE24-5EE9128763B6}

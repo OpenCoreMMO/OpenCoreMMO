@@ -28,6 +28,8 @@ jobs:
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3.0.2
+        with:
+          dotnet-version: '9.0.x'
 
       - name: Cache dependencies
         uses: actions/cache@v3.0.11
@@ -52,7 +54,7 @@ jobs:
       - name: Test
         uses: nick-fields/retry@v2
         with:
-          timeout_minutes: 15
+          timeout_minutes: 20
           max_attempts: 3
           command: dotnet test ${{ inputs.test }} --no-restore --verbosity normal
 

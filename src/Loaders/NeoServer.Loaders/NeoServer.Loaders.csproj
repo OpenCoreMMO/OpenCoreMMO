@@ -14,7 +14,7 @@
 
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-        <PackageReference Include="serilog" Version="3.0.1"/>
+        <PackageReference Include="serilog" Version="4.2.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -35,7 +35,7 @@
     </ItemGroup>
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <Platforms>AnyCPU;x64</Platforms>
         <IsPublishable>false</IsPublishable>
     </PropertyGroup>

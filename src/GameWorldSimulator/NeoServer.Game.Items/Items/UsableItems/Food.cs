@@ -22,7 +22,6 @@ public class Food : Cumulative, IConsumable, IFood
     {
     }
 
-    public event Use OnUsed;
     public int CooldownTime => 0;
 
     public void Use(IPlayer usedBy, ICreature creature)
@@ -32,8 +31,7 @@ public class Food : Cumulative, IConsumable, IFood
         if (!player.Feed(this)) return;
 
         Reduce();
-
-        OnUsed?.Invoke(usedBy, creature, this);
+        IConsumable.RaiseOnUsed(usedBy, creature, this);
     }
 
     public static bool IsApplicable(IItemType type)

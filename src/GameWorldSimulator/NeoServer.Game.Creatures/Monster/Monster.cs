@@ -137,7 +137,7 @@ public class Monster : WalkableMonster, IMonster
     public override void SetAsEnemy(ICreature creature)
     {
         if (creature is not ICombatActor enemy) return;
-        if (creature is IMonster { IsSummon: false }) return;
+        if (!(creature is Summon.Summon) && creature is IMonster { IsSummon: false }) return;
         if (creature is Summon.Summon summon && summon.Master.CreatureId == CreatureId) return;
 
         if (!enemy.CanBeAttacked) return;

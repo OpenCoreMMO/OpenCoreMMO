@@ -15,7 +15,6 @@ public interface IDecayable : IDecay
     bool IsPaused { get; }
     bool TryDecay();
     event PauseDecay OnPaused;
-    event StartDecay OnStarted;
 }
 
 public interface IDecay

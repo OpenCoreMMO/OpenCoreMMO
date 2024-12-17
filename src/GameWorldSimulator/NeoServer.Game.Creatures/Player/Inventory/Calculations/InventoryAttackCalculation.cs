@@ -16,7 +16,7 @@ internal static class InventoryAttackCalculation
             case IDistanceWeapon distance:
             {
                 attack += distance.ExtraAttack;
-                if (inventory.Ammo != null) attack += distance.ExtraAttack;
+                if (inventory.Ammo != null) attack +=  inventory.Ammo.Attack;
                 break;
             }
             case IThrowableDistanceWeaponItem distance:
