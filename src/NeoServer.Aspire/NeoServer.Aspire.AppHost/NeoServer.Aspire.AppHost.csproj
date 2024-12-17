@@ -9,7 +9,7 @@
     <Nullable>enable</Nullable>
     <IsAspireHost>true</IsAspireHost>
     <UserSecretsId>024469f1-c30b-4f99-aa0b-686047b99388</UserSecretsId>
-    <LangVersion>11.0</LangVersion>
+    <LangVersion>Latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
