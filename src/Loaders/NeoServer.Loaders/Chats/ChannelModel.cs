@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
+using NeoServer.Loaders.Helpers;
 
 namespace NeoServer.Loaders.Chats;
 
@@ -12,30 +13,40 @@ public class ChannelModel
     public bool Enabled { get; set; } = true;
     public bool Opened { get; set; }
 
-    [JsonProperty("allowed-vocations")] public byte[] Vocations { get; set; }
+    [JsonPropertyName("allowed-vocations")]
+    [JsonConverter(typeof(ByteArrayJsonConverter))]
+    public byte[] Vocations { get; set; }
 
-    [JsonProperty("allowed-levels")] public LevelModel Level { get; set; }
+    [JsonPropertyName("allowed-levels")]
+    public LevelModel Level { get; set; }
 
-    [JsonProperty("write-rules")] public WriteModel Write { get; set; }
+    [JsonPropertyName("write-rules")]
+    public WriteModel Write { get; set; }
 
     public ColorModel Color { get; set; }
 
-    [JsonProperty("mute-rule")] public MuteRuleModel MuteRule { get; set; }
+    [JsonPropertyName("mute-rule")]
+    public MuteRuleModel MuteRule { get; set; }
 
     public string Script { get; set; }
 
     public class LevelModel
     {
-        [JsonProperty("bigger-than")] public ushort BiggerThan { get; set; }
+        [JsonPropertyName("bigger-than")]
+        public ushort BiggerThan { get; set; }
 
-        [JsonProperty("lower-than")] public ushort LowerThan { get; set; }
+        [JsonPropertyName("lower-than")]
+        public ushort LowerThan { get; set; }
     }
 
     public class WriteModel
     {
-        [JsonProperty("allowed-vocations")] public byte[] Vocations { get; set; }
+        [JsonPropertyName("allowed-vocations")]
+        [JsonConverter(typeof(ByteArrayJsonConverter))]
+        public byte[] Vocations { get; set; }
 
-        [JsonProperty("allowed-levels")] public LevelModel Level { get; set; }
+        [JsonPropertyName("allowed-levels")]
+        public LevelModel Level { get; set; }
     }
 
     [Serializable]
@@ -43,19 +54,25 @@ public class ChannelModel
     {
         public string Default { get; set; }
 
-        [JsonProperty("by-vocation")] public Dictionary<int, string> ByVocation { get; set; }
+        [JsonPropertyName("by-vocation")]
+        public Dictionary<int, string> ByVocation { get; set; }
     }
 
     public class MuteRuleModel
     {
-        [JsonProperty("messages-count")] public ushort MessagesCount { get; set; }
+        [JsonPropertyName("messages-count")]
+        public ushort MessagesCount { get; set; }
 
-        [JsonProperty("time-to-block")] public ushort TimeToBlock { get; set; }
+        [JsonPropertyName("time-to-block")]
+        public ushort TimeToBlock { get; set; }
 
-        [JsonProperty("wait-time")] public ushort WaitTime { get; set; }
+        [JsonPropertyName("wait-time")]
+        public ushort WaitTime { get; set; }
 
-        [JsonProperty("time-multiplier")] public double TimeMultiplier { get; set; }
+        [JsonPropertyName("time-multiplier")]
+        public double TimeMultiplier { get; set; }
 
-        [JsonProperty("cancel-message")] public string CancelMessage { get; set; }
+        [JsonPropertyName("cancel-message")]
+        public string CancelMessage { get; set; }
     }
 }
