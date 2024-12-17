@@ -1,0 +1,38 @@
+version: '3.5'
+services:
+  postgres-compose:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "opencoremmo"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../docker-volumes/postgresql-data:/var/lib/postgresql/data
+    networks:
+      - postgres-compose-network
+
+  pgadmin-compose:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "opencoremmo@mail.com"
+      PGADMIN_DEFAULT_PASSWORD: "postgres"
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres-compose
+    networks:
+      - postgres-compose-network
+    volumes:
+      - ./docker/pgadmin-servers.json:/pgadmin4/servers.json
+      - ../docker-volumes/pgadmin-data:/var/lib/pgadmin
+
+networks: 
+  postgres-compose-network:
+    driver: bridge
+
+volumes:
+  pgadmin-data:

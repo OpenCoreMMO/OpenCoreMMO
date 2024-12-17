@@ -9,7 +9,6 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1" />
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
         <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
@@ -26,8 +25,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Shared\NeoServer.IoC\NeoServer.Shared.IoC.csproj"/>
-        <ProjectReference Include="..\Shared\NeoServer.Web.Shared\NeoServer.Web.Shared.csproj"/>
+        <ProjectReference Include="..\Shared\NeoServer.IoC\NeoServer.Shared.IoC.csproj" />
+        <ProjectReference Include="..\Shared\NeoServer.Web.Shared\NeoServer.Web.Shared.csproj" />
     </ItemGroup>
 
 </Project>
