@@ -1,14 +1,15 @@
-﻿using Serilog;
+﻿
+using Serilog;
 using Serilog.Sinks.Graylog;
-using Autofac;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog.Settings.Configuration;
 using Serilog.Sinks.SystemConsole.Themes;
 using Serilog.Sinks.Graylog.Core.Transport;
 
 public static class LoggerConfigurationExtensions
 {
-    public static ContainerBuilder AddLogger(this ContainerBuilder builder, IConfiguration configuration)
+    public static IServiceCollection AddLogger(this IServiceCollection builder, IConfiguration configuration)
     {
         var options = new ConfigurationReaderOptions(typeof(ConsoleLoggerConfigurationExtensions).Assembly)
         {
@@ -32,9 +33,8 @@ public static class LoggerConfigurationExtensions
 
         var logger = loggerConfig.CreateLogger();
 
-        builder.RegisterInstance(logger).As<ILogger>().SingleInstance();
-        builder.RegisterInstance(loggerConfig).SingleInstance();
-
+        builder.AddSingleton<ILogger>(logger);
+        builder.AddSingleton(loggerConfig);
         return builder;
     }
 }

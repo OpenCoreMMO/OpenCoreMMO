@@ -19,8 +19,28 @@ namespace NeoServer.Game.Items.Factories;
 
 public class ItemFactory : IItemFactory
 {
-    public ItemFactory()
+    public ItemFactory(
+        IEnumerable<IItemEventSubscriber> itemEventSubscribers,
+        DefenseEquipmentFactory defenseEquipmentFactory,
+        WeaponFactory weaponFactory,
+        ContainerFactory containerFactory,
+        RuneFactory runeFactory,
+        GroundFactory groundFactory,
+        CumulativeFactory cumulativeFactory,
+        GenericItemFactory genericItemFactory,
+        IItemTypeStore itemTypeStore,
+        ICoinTypeStore coinTypeStore)
     {
+        ItemEventSubscribers = itemEventSubscribers;
+        DefenseEquipmentFactory = defenseEquipmentFactory;
+        WeaponFactory = weaponFactory;
+        ContainerFactory = containerFactory;
+        RuneFactory = runeFactory;
+        GroundFactory = groundFactory;
+        CumulativeFactory = cumulativeFactory;
+        GenericItemFactory = genericItemFactory;
+        ItemTypeStore = itemTypeStore;
+        CoinTypeStore = coinTypeStore;
         Instance = this;
     }
 

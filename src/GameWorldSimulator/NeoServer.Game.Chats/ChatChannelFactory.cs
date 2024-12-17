@@ -12,11 +12,18 @@ using NeoServer.Game.Common.Helpers;
 namespace NeoServer.Game.Chats;
 
 public class ChatChannelFactory
-{
-    //injected
-    public IEnumerable<IChatChannelEventSubscriber> ChannelEventSubscribers { get; set; }
-    public IChatChannelStore ChatChannelStore { get; set; }
-    public IGuildStore GuildStore { get; set; }
+{ 
+    private readonly IEnumerable<IChatChannelEventSubscriber> _channelEventSubscribers;
+    private readonly IChatChannelStore _chatChannelStore;
+    private readonly IGuildStore _guildStore;
+
+    public ChatChannelFactory(IEnumerable<IChatChannelEventSubscriber> channelEventSubscribers,
+        IChatChannelStore chatChannelStore, IGuildStore guildStore)
+    {
+        _channelEventSubscribers = channelEventSubscribers;
+        _chatChannelStore = chatChannelStore;
+        _guildStore = guildStore;
+    }
 
     public IChatChannel Create(Type type, string name, IPlayer player = null)
     {
@@ -36,7 +43,7 @@ public class ChatChannelFactory
     public IChatChannel CreateGuildChannel(string name, ushort guildId)
     {
         var id = GenerateUniqueId();
-        var guid = GuildStore.Get(guildId);
+        var guid = _guildStore.Get(guildId);
         var channel = new GuildChatChannel(id, name, guid);
         SubscribeEvents(channel);
         return channel;
@@ -81,7 +88,7 @@ public class ChatChannelFactory
         do
         {
             id = RandomIdGenerator.Generate(ushort.MaxValue);
-        } while (ChatChannelStore.Contains(id));
+        } while (_chatChannelStore.Contains(id));
 
         return id;
     }
@@ -101,11 +108,11 @@ public class ChatChannelFactory
     //todo: move this method to a base factory to be used in other factories
     private void SubscribeEvents(IChatChannel createdChannel)
     {
-        foreach (var gameSubscriber in ChannelEventSubscribers.Where(x =>
+        foreach (var gameSubscriber in _channelEventSubscribers.Where(x =>
                      x.GetType().IsAssignableTo(typeof(IGameEventSubscriber)))) //register game events first
             gameSubscriber.Subscribe(createdChannel);
 
-        foreach (var subscriber in ChannelEventSubscribers.Where(x =>
+        foreach (var subscriber in _channelEventSubscribers.Where(x =>
                      !x.GetType().IsAssignableTo(typeof(IGameEventSubscriber)))) //than register server events
             subscriber.Subscribe(createdChannel);
     }

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
-using Autofac;
+
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Game.Common;
 using NeoServer.Server.Configurations;
 
@@ -25,7 +26,7 @@ public static class ConfigurationInjection
         return builder.Build();
     }
 
-    public static ContainerBuilder AddConfigurations(this ContainerBuilder builder,
+    public static IServiceCollection AddConfigurations(this IServiceCollection builder,
         IConfigurationRoot configuration)
     {
         ServerConfiguration serverConfiguration =
@@ -37,9 +38,9 @@ public static class ConfigurationInjection
         configuration.GetSection("game").Bind(gameConfiguration);
         configuration.GetSection("log").Bind(logConfiguration);
 
-        builder.RegisterInstance(serverConfiguration).SingleInstance();
-        builder.RegisterInstance(gameConfiguration).SingleInstance();
-        builder.RegisterInstance(logConfiguration).SingleInstance();
+        builder.AddSingleton(serverConfiguration);
+        builder.AddSingleton(gameConfiguration);
+        builder.AddSingleton(logConfiguration);
 
         return builder;
     }

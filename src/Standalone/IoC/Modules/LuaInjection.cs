@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿
+using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Scripts.Lua;
 using NLua;
 
@@ -6,10 +7,10 @@ namespace NeoServer.Server.Standalone.IoC.Modules;
 
 public static class LuaInjection
 {
-    public static ContainerBuilder AddLua(this ContainerBuilder builder)
+    public static IServiceCollection AddLua(this IServiceCollection builder)
     {
-        builder.RegisterInstance(new Lua()).SingleInstance();
-        builder.RegisterType<LuaGlobalRegister>().SingleInstance();
+        builder.AddSingleton(new Lua());
+        builder.AddSingleton<LuaGlobalRegister>();
         return builder;
     }
 }

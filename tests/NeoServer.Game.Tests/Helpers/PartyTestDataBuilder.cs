@@ -27,11 +27,11 @@ public static class PartyTestDataBuilder
             throw new ArgumentOutOfRangeException(nameof(players),
                 "Must provide at least two players to this helper to create a party.");
 
-        partyInviteService ??= new PartyInviteService(new ChatChannelFactory
-        {
-            ChannelEventSubscribers = new List<IChatChannelEventSubscriber>(),
-            ChatChannelStore = new ChatChannelStore()
-        });
+        partyInviteService ??= new PartyInviteService(new ChatChannelFactory(
+            new List<IChatChannelEventSubscriber>(),
+            new ChatChannelStore(),
+            null
+        ));
 
         var leader = players[0];
         for (var i = 1; i < players.Length; i++)

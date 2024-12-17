@@ -20,11 +20,11 @@ public class PartyInviteServiceTest
         var invitedPlayer = PlayerTestDataBuilder.Build(2);
         Assert.False(invitedPlayer.PlayerParty.IsInParty);
 
-        var chatChannelFactory = new ChatChannelFactory
-        {
-            ChannelEventSubscribers = new List<IChatChannelEventSubscriber>(),
-            ChatChannelStore = new ChatChannelStore()
-        };
+        var chatChannelFactory = new ChatChannelFactory(
+            new List<IChatChannelEventSubscriber>(),
+            new ChatChannelStore(),
+            null
+        );
         var partyInviteService = new PartyInviteService(chatChannelFactory);
 
         partyInviteService.Invite(partyLeader, invitedPlayer);

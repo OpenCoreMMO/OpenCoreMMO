@@ -1,6 +1,4 @@
 using System.Net;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using NeoServer.Shared.IoC.Modules;
 using NeoServer.Web.API.HttpFilters;
@@ -34,9 +32,7 @@ public class Startup
 
     public IConfiguration Configuration { get; }
     public IWebHostEnvironment Environment { get; }
-
-    public ILifetimeScope AutofacContainer { get; private set; }
-
+    
     #endregion
 
     #region public methods implementations
@@ -108,7 +104,7 @@ public class Startup
     // with Autofac. This runs after ConfigureServices so the things
     // here will override registrations made in ConfigureServices.
     // Don't build the container; that gets done for you by the factory.
-    public void ConfigureContainer(ContainerBuilder builder)
+    public void ConfigureContainer(IServiceCollection builder)
     {
         builder.AddLogger(Configuration);
         builder.AddDatabases(Configuration);
@@ -118,10 +114,6 @@ public class Startup
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        // If, for some reason, you need a reference to the built container, you
-        // can use the convenience extension method GetAutofacRoot.
-        AutofacContainer = app.ApplicationServices.GetAutofacRoot();
-
         if (env.IsDevelopment())
         {
             app.UseSwagger();

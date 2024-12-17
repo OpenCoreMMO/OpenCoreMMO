@@ -1,18 +1,19 @@
-﻿using Autofac;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace NeoServer.Server.Helpers;
 
 public static class IoC
 {
-    private static IContainer _container;
+    private static IServiceProvider _container;
 
-    public static void Initialize(IContainer container)
+    public static void Initialize(IServiceProvider container)
     {
         _container = container;
     }
 
-    public static T GetInstance<T>()
+    public static T GetInstance<T>() where T : class
     {
-        return _container.Resolve<T>();
+        return _container.GetService<T>();
     }
 }

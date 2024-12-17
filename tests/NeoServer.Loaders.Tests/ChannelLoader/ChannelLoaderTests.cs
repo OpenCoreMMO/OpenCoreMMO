@@ -40,7 +40,7 @@ public class ChannelLoaderTests
             .Build<ServerConfiguration>()
             .With(x => x.Data, "")
             .Create();
-        var chatChannelFactory = new ChatChannelFactory();
+        var chatChannelFactory = new ChatChannelFactory(null,null,null);
         var chatChannelStore = new ChatChannelStore();
 
         var sut = new Chats.ChannelLoader(serverConfiguration, loggerMock.Object, chatChannelFactory, chatChannelStore);
@@ -49,7 +49,7 @@ public class ChannelLoaderTests
         sut.Load();
 
         //assert
-        loggerMock.Verify(x => x.Error("channels.json file not found at channels.json"), Times.Once);
+        loggerMock.Verify(x => x.Error("channels.json file not found at {Path}", "channels.json"), Times.Once);
         chatChannelStore?.All.Should().BeNullOrEmpty();
     }
 
@@ -59,7 +59,7 @@ public class ChannelLoaderTests
         yield return new object[]
         {
             null,
-            new ChatChannelFactory(),
+            new ChatChannelFactory(null,null,null),
             new ChatChannelStore(),
             "Server configuration not found"
         };
@@ -75,7 +75,7 @@ public class ChannelLoaderTests
         yield return new object[]
         {
             new Fixture().Create<ServerConfiguration>(),
-            new ChatChannelFactory(),
+            new ChatChannelFactory(null,null,null),
             null,
             "ChatChannelStore not found"
         };
