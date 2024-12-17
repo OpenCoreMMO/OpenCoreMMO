@@ -29,7 +29,8 @@ public class PlayerUse
         tile.AddCreature(player);
         secondTile.AddItem(food);
 
-        var playerUseService = new PlayerUseService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), map);
+        var playerUseService =
+            new PlayerUseService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), map);
 
         //act
         playerUseService.Use(player, food, player);

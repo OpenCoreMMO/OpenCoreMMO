@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Loaders.Items;
 using NeoServer.Loaders.Monsters;

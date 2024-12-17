@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Factory;
 
@@ -10,7 +9,7 @@ public static class DbContextFactoryExtensions
     public static DbContextOptions<NeoContext> UsePostgreSQL(this DbContextFactory factory, string name)
     {
         var builder = new DbContextOptionsBuilder<NeoContext>();
-        builder.UseNpgsql(connectionString: name);
+        builder.UseNpgsql(name);
 
         return builder.Options;
     }

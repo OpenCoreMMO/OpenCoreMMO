@@ -25,25 +25,24 @@ public class SpyPlayerCommand : CommandSpell
             return false;
 
         var stringBuilder = new StringBuilder(1000);
-        
+
         stringBuilder.AppendLine($"*** Name: {player.Name} *****");
-        
+
         foreach (var inventoryDressingItem in player.Inventory.DressingItems)
-        {
-            stringBuilder.AppendLine($"ClientId: {inventoryDressingItem.Metadata.ClientId}-{inventoryDressingItem.FullName}");
-        }
+            stringBuilder.AppendLine(
+                $"ClientId: {inventoryDressingItem.Metadata.ClientId}-{inventoryDressingItem.FullName}");
 
         var item = new ItemType();
         item.SetClientId(2821);
-        
+
         var window = new ListCommandsCommand.TextWindow(item, player.Location, stringBuilder.ToString());
         var serverConfiguration = IoC.GetInstance<ServerConfiguration>();
-       
+
         window.WrittenBy = $"{serverConfiguration.ServerName} - SERVER";
         window.WrittenOn = DateTime.Now;
-        
+
         player.Read(window);
-        
+
         return true;
     }
 }

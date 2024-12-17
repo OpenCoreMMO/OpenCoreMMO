@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace NeoServer.Game.Tests.Helpers;
 
-public  static class EventSubscriptionCleanUp
+public static class EventSubscriptionCleanUp
 {
     public static void CleanUp<T>(string eventName)
     {
@@ -26,9 +26,6 @@ public  static class EventSubscriptionCleanUp
         if (eventDelegate == null) return;
 
         // Unsubscribe all handlers
-        foreach (var handler in eventDelegate.GetInvocationList())
-        {
-            eventInfo.RemoveEventHandler(null, handler);
-        }
+        foreach (var handler in eventDelegate.GetInvocationList()) eventInfo.RemoveEventHandler(null, handler);
     }
 }

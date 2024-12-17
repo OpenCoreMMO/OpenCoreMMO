@@ -6,12 +6,19 @@ using Xunit.Sdk;
 namespace NeoServer.Game.Tests.Helpers;
 
 /// <summary>
-/// Block the unit test to avoid concurrency
+///     Block the unit test to avoid concurrency
 /// </summary>
 public class ThreadBlockingAttribute : BeforeAfterTestAttribute
 {
-    public override void Before(MethodInfo methodUnderTest) => ThreadBlocking.Wait();
-    public override void After(MethodInfo methodUnderTest) => ThreadBlocking.Release();
+    public override void Before(MethodInfo methodUnderTest)
+    {
+        ThreadBlocking.Wait();
+    }
+
+    public override void After(MethodInfo methodUnderTest)
+    {
+        ThreadBlocking.Release();
+    }
 }
 
 public static class ThreadBlocking
@@ -30,5 +37,8 @@ public static class ThreadBlocking
         }
     }
 
-    public static void Release() => SemaphoreSlim.Release();
+    public static void Release()
+    {
+        SemaphoreSlim.Release();
+    }
 }

@@ -1,11 +1,10 @@
-﻿
-using Serilog;
-using Serilog.Sinks.Graylog;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using Serilog.Settings.Configuration;
-using Serilog.Sinks.SystemConsole.Themes;
+using Serilog.Sinks.Graylog;
 using Serilog.Sinks.Graylog.Core.Transport;
+using Serilog.Sinks.SystemConsole.Themes;
 
 public static class LoggerConfigurationExtensions
 {
@@ -28,7 +27,7 @@ public static class LoggerConfigurationExtensions
                 TransportType = TransportType.Tcp,
                 Facility = graylogConfig.GetValue<string>("Facility"),
                 UseSsl = false,
-                HostnameOverride = graylogConfig.GetValue<string>("HostnameOverride"),
+                HostnameOverride = graylogConfig.GetValue<string>("HostnameOverride")
             });
 
         var logger = loggerConfig.CreateLogger();

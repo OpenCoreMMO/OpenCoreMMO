@@ -24,7 +24,7 @@ public class HealingItem : Cumulative, IConsumable
         ?.GetAttribute<ushort>(ItemAttribute.Max) ?? 0;
 
     public string Type => Metadata.Attributes.GetAttribute(ItemAttribute.Healing);
-    
+
     public void Use(IPlayer usedBy, ICreature creature)
     {
         if (creature is not ICombatActor actor) return;

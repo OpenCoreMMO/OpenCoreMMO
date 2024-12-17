@@ -27,8 +27,10 @@ public static class DatabaseInjection
         return builder;
     }
 
-    public static IServiceCollection AddDatabases(this IServiceCollection builder, IConfiguration configuration) =>
-        builder.RegisterContext<NeoContext>(configuration);
+    public static IServiceCollection AddDatabases(this IServiceCollection builder, IConfiguration configuration)
+    {
+        return builder.RegisterContext<NeoContext>(configuration);
+    }
 
     private static IServiceCollection RegisterContext<TContext>(this IServiceCollection builder,
         IConfiguration configuration)

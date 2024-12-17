@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Game.Common.Contracts.DataStores;
 
@@ -13,7 +12,7 @@ public static class DataStoreInjection
 
         builder.AddSingleton<IChatChannelStore, ChatChannelStore>();
 
-        builder.AddSingleton<IGuildStore,GuildStore>();
+        builder.AddSingleton<IGuildStore, GuildStore>();
 
         builder.AddSingleton<INpcStore, NpcStore>();
 

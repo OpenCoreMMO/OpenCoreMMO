@@ -49,7 +49,10 @@ public abstract class Listener : TcpListener, IListener
         }, cancellationToken);
     }
 
-    public void EndListening() => Stop();
+    public void EndListening()
+    {
+        Stop();
+    }
 
     private async Task<IConnection> CreateConnection(CancellationToken cancellationToken)
     {

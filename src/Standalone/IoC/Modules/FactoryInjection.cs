@@ -1,20 +1,13 @@
-﻿using System.Collections.Generic;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Game.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Creatures.Factories;
-using NeoServer.Game.Creatures.Player;
 using NeoServer.Game.Items.Factories;
 using NeoServer.Game.Items.Factories.AttributeFactory;
 using NeoServer.Game.World.Factories;
 using NeoServer.Networking.Handlers;
-using NeoServer.Server.Common.Contracts.Network;
-using NeoServer.Server.Common.Contracts.Network.Enums;
-using Serilog;
 
 namespace NeoServer.Server.Standalone.IoC.Modules;
 
