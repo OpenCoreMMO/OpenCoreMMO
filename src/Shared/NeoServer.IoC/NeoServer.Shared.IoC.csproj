@@ -17,6 +17,7 @@
         <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.0" />
         <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+        <PackageReference Include="Serilog.Sinks.Graylog" Version="3.1.1" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\Database\NeoServer.Data\NeoServer.Data.csproj" />

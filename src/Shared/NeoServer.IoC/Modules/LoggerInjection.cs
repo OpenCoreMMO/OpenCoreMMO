@@ -1,13 +1,13 @@
 ﻿
+using Serilog;
+using Serilog.Sinks.Graylog;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
 using Serilog.Settings.Configuration;
 using Serilog.Sinks.SystemConsole.Themes;
+using Serilog.Sinks.Graylog.Core.Transport;
 
-namespace NeoServer.Shared.IoC.Modules;
-
-public static class LoggerInjection
+public static class LoggerConfigurationExtensions
 {
     public static IServiceCollection AddLogger(this IServiceCollection builder, IConfiguration configuration)
     {
@@ -16,9 +16,20 @@ public static class LoggerInjection
             SectionName = "Log"
         };
 
+        var graylogConfig = configuration.GetSection("GrayLog");
+
         var loggerConfig = new LoggerConfiguration()
             .ReadFrom.Configuration(configuration, options)
-            .WriteTo.Console(theme: AnsiConsoleTheme.Code);
+            .WriteTo.Console(theme: AnsiConsoleTheme.Code)
+            .WriteTo.Graylog(new GraylogSinkOptions
+            {
+                HostnameOrAddress = graylogConfig.GetValue<string>("HostnameOrAddress"),
+                Port = graylogConfig.GetValue<int>("Port"),
+                TransportType = TransportType.Tcp,
+                Facility = graylogConfig.GetValue<string>("Facility"),
+                UseSsl = false,
+                HostnameOverride = graylogConfig.GetValue<string>("HostnameOverride"),
+            });
 
         var logger = loggerConfig.CreateLogger();
 
