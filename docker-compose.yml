@@ -116,10 +116,25 @@ services:
     volumes:
       - "graylog-data:/usr/share/graylog/data"
 
+# OpenCoreMMO
+  webapi-compose:
+    container_name: webapi
+    build:
+      context: ./src/WebAPI/
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+    ports:
+      - "80:80"
+    networks:
+      - opencoremmo
+
 networks: 
   postgres:
     driver: bridge
   graylog:
+    driver: bridge
+  opencoremmo:
     driver: bridge
 
 volumes:
