@@ -8,9 +8,9 @@ using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Spells;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Serilog;
+using System.Text.Json;
+using NeoServer.Loaders.Extensions;
 
 namespace NeoServer.Loaders.Spells;
 
@@ -40,9 +40,8 @@ public class SpellLoader
         {
             var path = Path.Combine(serverConfiguration.Data, "spells", "spells.json");
             var jsonString = File.ReadAllText(path);
-            var spells = JsonConvert.DeserializeObject<List<IDictionary<string, object>>>(jsonString)?.ToList() ??
-                         new List<IDictionary<string, object>>(0);
-
+            var spells =  JsonSerializer.Deserialize<List<IDictionary<string, JsonElement>>>(jsonString)?.ToList() ??
+                          [];
             var types = ScriptSearch.All.Where(x => typeof(ISpell).IsAssignableFrom(x)).ToList();
 
             foreach (var spell in spells)
@@ -54,26 +53,27 @@ public class SpellLoader
 
                 if (CreateSpell(type) is not ISpell spellInstance) continue;
 
-                spellInstance.Name = spell["name"].ToString();
-                spellInstance.Cooldown = Convert.ToUInt32(spell["cooldown"]);
-                spellInstance.Mana = Convert.ToUInt16(spell["mana"]);
-                spellInstance.MinLevel = Convert.ToUInt16(spell["level"]);
+                spellInstance.Name = spell["name"].GetStringFromJson();
+                spellInstance.Cooldown = spell["cooldown"].GetUInt32FromJson();
+                spellInstance.Mana = spell["mana"].GetUInt16FromJson();
+                spellInstance.MinLevel = spell["level"].GetUInt16FromJson();
                 spellInstance.Vocations = LoadVocations(spell);
-                SpellList.Add(spell["words"].ToString(), spellInstance);
+                SpellList.Add(spell["words"].GetStringFromJson(), spellInstance);
             }
 
             return new object[] { spells.Count };
         });
     }
 
-    private byte[] LoadVocations(IDictionary<string, object> spell)
+    private byte[] LoadVocations(IDictionary<string, JsonElement> spell)
     {
         if (!spell.ContainsKey("vocations")) return null;
 
-        return (spell["vocations"] as JArray)?.Select(vocationJToken =>
+        var vocationArray = spell["vocations"].EnumerateArray();
+        
+        return vocationArray.Select(vocationJToken =>
         {
-            var vocationValue = (string)vocationJToken;
-
+            var vocationValue = vocationJToken.GetStringFromJson();
             if (vocationValue is null) return (byte)0;
 
             if (byte.TryParse(vocationValue, out var vocation)) return vocation;
