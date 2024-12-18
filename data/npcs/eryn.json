@@ -11,12 +11,12 @@
 			"then": [{
 				"words": ["trade"],
 				"action": "shop",
-				"answers": [" Of course, just browse through my wares."],
+				"answers": [" Of course, just browse through my wares."]
 			},
 			{
 				"words": ["offer"],
 				"action": "teleport",
-				"answers": ["My offers are weapons, armors, helmets, legs, and shields. If you'd like to see my offers, ask me for a {trade}."],
+				"answers": ["My offers are weapons, armors, helmets, legs, and shields. If you'd like to see my offers, ask me for a {trade}."]
 			},
 			{
 				"words": ["bye"],
@@ -30,4 +30,3 @@
 	]
 	
 }
-	

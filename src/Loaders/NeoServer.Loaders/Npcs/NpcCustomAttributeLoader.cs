@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Dynamic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using NeoServer.Game.Common.Contracts.Creatures;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace NeoServer.Loaders.Npcs;
 
@@ -12,16 +11,26 @@ public class NpcCustomAttributeLoader
     {
         if (type is null || npcData?.CustomData is null) return;
 
-        var jsonString = JsonConvert.SerializeObject(npcData.CustomData);
+        // var jsonString = JsonSerializer.Serialize(npcData.CustomData);
 
-        var converter = new ExpandoObjectConverter();
+        var list = JsonSerializer.Deserialize<List<CustomData>>(npcData.CustomData);
 
-        var list = JsonConvert.DeserializeObject<ExpandoObject[]>(jsonString, converter);
+        if (list == null) return;
 
         var map = new Dictionary<string, dynamic>();
 
-        foreach (var item in list) map.TryAdd(item.key, item.value);
+        foreach (CustomData item in list)
+            map.TryAdd(item.Key, item.Value);
 
         type.CustomAttributes.Add("custom-data", map);
+    }
+    
+    public class CustomData
+    {
+        [JsonPropertyName("key")]
+        public string Key { get; set; }
+        
+        [JsonPropertyName("value")]
+        public dynamic Value { get; set; }
     }
 }
