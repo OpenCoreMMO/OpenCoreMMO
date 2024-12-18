@@ -8,7 +8,9 @@ COPY data/. ./out/data
 
 # Copy the project files to the container
 COPY src/. .
-#COPY tests/
+
+# Remove any bin or obj folders to ensure a clean build
+RUN find . -type d \( -name "bin" -o -name "obj" \) -exec rm -rf {} +
 
 # Restore dependencies
 RUN dotnet restore Standalone/NeoServer.Server.Standalone.csproj
