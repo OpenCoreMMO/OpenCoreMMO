@@ -36,6 +36,8 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public abstract int DefendUsingShield(int attack);
     public abstract int DefendUsingArmor(int attack);
+    public bool IsShieldDefenseEnabled { get; private set; } = true;
+    public byte DamageReceivedPercentage { get; private set; }
 
     public void AddCondition(ICondition condition)
     {
@@ -95,9 +97,11 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
         int damage = attack.Damage;
 
+        damage += damage * DamageReceivedPercentage / 100;
+
         if (CanBlock(attack.Type))
         {
-            damage = DefendUsingShield(attack.Damage);
+            damage = DefendUsingShield(damage);
 
             if (damage <= 0)
             {
@@ -110,7 +114,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
             }
         }
 
-        if (!attack.IsElementalDamage) damage = DefendUsingArmor(attack.Damage);
+        if (!attack.IsElementalDamage) damage = DefendUsingArmor(damage);
 
         if (damage <= 0)
         {
@@ -349,6 +353,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public virtual bool CanBlock(DamageType damage)
     {
         if (damage != DamageType.Melee) return false;
+        if (!IsShieldDefenseEnabled) return false;
         var hasCoolDownExpired = Cooldowns.Expired(CooldownType.Block);
 
         if (!hasCoolDownExpired && blockCount >= BLOCK_LIMIT) return false;
@@ -431,6 +436,18 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     protected void InvokeAttackCanceled()
     {
         OnAttackCanceled?.Invoke(this);
+    }
+    
+    public void DisableShieldDefense() => IsShieldDefenseEnabled = false;
+    public void EnableShieldDefense() => IsShieldDefenseEnabled = true;
+    public void IncreaseDamageReceived(byte percentage)
+    {
+        DamageReceivedPercentage += percentage;
+    }
+
+    public void DecreaseDamageReceived(byte percentage)
+    {
+        DamageReceivedPercentage -= percentage;
     }
 
     #region Events
