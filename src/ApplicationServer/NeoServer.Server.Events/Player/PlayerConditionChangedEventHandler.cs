@@ -20,7 +20,10 @@ public class PlayerConditionChangedEventHandler
         if (!game.CreatureManager.GetPlayerConnection(creature.CreatureId, out var connection)) return;
 
         ushort icons = 0;
-        foreach (var condition in player.Conditions) icons |= (ushort)ConditionIconParser.Parse(condition.Key);
+        foreach (var condition in player.Conditions)
+        {
+            icons |= (ushort)ConditionIconParser.Parse(condition.Key);
+        }
 
         connection.OutgoingPackets.Enqueue(new ConditionIconPacket(icons));
         connection.Send();

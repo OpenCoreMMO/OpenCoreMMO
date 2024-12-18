@@ -66,6 +66,12 @@ public static class PlayerTestDataBuilder
                     {
                         GetIncreaseRate = () => 1
                     }
+                },
+                {
+                    SkillType.Shielding, new Skill(SkillType.Shielding, 10, 1)
+                    {
+                        GetIncreaseRate = () => 1
+                    }
                 }
             },
             300, new Outfit(), speed, new Location(100, 100, 7),
