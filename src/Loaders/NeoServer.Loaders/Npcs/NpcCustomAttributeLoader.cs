@@ -10,12 +10,9 @@ public class NpcCustomAttributeLoader
     public static void LoadCustomData(INpcType type, NpcJsonData npcData)
     {
         if (type is null || npcData?.CustomData is null) return;
+        List<CustomData> list = JsonSerializer.Deserialize<List<CustomData>>(npcData.CustomData);
 
-        // var jsonString = JsonSerializer.Serialize(npcData.CustomData);
-
-        var list = JsonSerializer.Deserialize<List<CustomData>>(npcData.CustomData);
-
-        if (list == null) return;
+        if (list == null || list.Count == 0) return;
 
         var map = new Dictionary<string, dynamic>();
 
