@@ -10,7 +10,7 @@ using NeoServer.Game.Creatures.Npcs.Shop;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Serilog;
 
 namespace NeoServer.Loaders.Npcs;
@@ -56,14 +56,16 @@ public class NpcLoader : IStartupLoader
         foreach (var file in Directory.GetFiles(basePath, "*.json"))
         {
             var jsonContent = File.ReadAllText(file);
-            var npcData = JsonConvert.DeserializeObject<NpcJsonData>(jsonContent, new JsonSerializerSettings
+            NpcJsonData npcData = null;
+            try
             {
-                Error = (_, ev) =>
-                {
-                    ev.ErrorContext.Handled = true;
-                    Console.WriteLine(ev.ErrorContext.Error);
-                }
-            });
+                npcData = JsonSerializer.Deserialize<NpcJsonData>(jsonContent);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                continue;
+            }
 
             if (npcData is null) continue;
             if (string.IsNullOrWhiteSpace(npcData.Name)) continue;
