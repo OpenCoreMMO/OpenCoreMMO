@@ -136,7 +136,7 @@
 		"cooldown":"1000",
 		"level": 23
 	},
-		{
+	{
 		"name":"WhirlwindThrow",
 		"words":"exori hur",
 		"script": "WhirlwindThrow",
@@ -144,6 +144,15 @@
 		"vocations":["knight","elite knight"],
 		"cooldown":"1000",
 		"level": 500
+	},
+  {
+		"name":"BloodRage",
+		"words":"utito tempo",
+		"script": "BloodRage",
+		"mana": 290,
+		"vocations":["knight","elite knight"],
+		"cooldown":"2000",
+		"level": 60
 	},
   {
     "name": "Create Item",
