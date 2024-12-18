@@ -35,15 +35,8 @@ public class Skill : ISkill
 
     public sbyte Bonus { get; private set; }
 
-    public void AddBonus(sbyte increase)
-    {
-        Bonus = (sbyte)(Bonus + increase);
-    }
-
-    public void RemoveBonus(sbyte decrease)
-    {
-        Bonus = (sbyte)(Bonus - decrease);
-    }
+    public void AddBonus(sbyte increase) => Bonus = (sbyte)(Bonus + increase);
+    public void RemoveBonus(sbyte decrease) => Bonus = (sbyte)(Bonus - decrease);
 
     public SkillType Type { get; }
     public ushort Level { get; private set; }

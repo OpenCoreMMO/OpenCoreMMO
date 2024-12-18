@@ -104,4 +104,8 @@ public interface ICombatActor : IWalkableCreature
     bool IsHostileTo(ICombatActor enemy);
     Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks);
     event StopAttack OnAttackCanceled;
+    void DisableShieldDefense();
+    void EnableShieldDefense();
+    void IncreaseDamageReceived(byte percentage);
+    void DecreaseDamageReceived(byte percentage);
 }
