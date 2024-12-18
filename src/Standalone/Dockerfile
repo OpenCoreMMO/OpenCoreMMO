@@ -1,27 +1,36 @@
-﻿ARG ASPNET_VERSION="9.0"
-ARG SDK_VERSION="9.0"
-ARG BASE_ADRESS="mcr.microsoft.com/dotnet"
+﻿# Use an official .NET 9 SDK as a parent image
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
-FROM $BASE_ADRESS/aspnet:$ASPNET_VERSION AS base
+# Set the working directory to /app
 WORKDIR /app
 
-EXPOSE 80
+COPY data/. ./out/data
 
-FROM $BASE_ADRESS/sdk:$SDK_VERSION AS build
+# Copy the project files to the container
+COPY src/. .
+#COPY tests/
 
-WORKDIR /src
+# Restore dependencies
+RUN dotnet restore Standalone/NeoServer.Server.Standalone.csproj
 
-COPY *.csproj ./Standalone
+# Restore dependencies
+RUN dotnet restore out/data/extensions/NeoServer.Extensions.csproj
 
-RUN dotnet restore -v m ./Standalone
+# Build the project
+RUN dotnet publish Standalone/NeoServer.Server.Standalone.csproj -c Release -o out
 
-WORKDIR /src/Standalone
-RUN dotnet build -c Release --no-restore -v m -o /app/build
+# Use an official .NET 9 runtime as a parent image
+FROM mcr.microsoft.com/dotnet/runtime:9.0
 
-FROM build AS publish
-RUN dotnet publish -c Release --no-restore -v m -o /app/publish
-
-FROM base AS final
+# Set the working directory to /app
 WORKDIR /app
-COPY --from=publish /app/publish .
+
+# Copy the published app to the container
+COPY --from=build /app/out .
+
+# Expose the ports that the server will listen on
+EXPOSE 7171
+EXPOSE 7172
+
+# Set the entrypoint to run the console app
 ENTRYPOINT ["dotnet", "NeoServer.Server.Standalone.dll"]
