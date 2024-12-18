@@ -117,17 +117,30 @@ services:
       - "graylog-data:/usr/share/graylog/data"
 
 # OpenCoreMMO
-  webapi-compose:
-    container_name: webapi
+  standalone-compose:
+    container_name: standalone
     build:
-      context: ./src/WebAPI/
+      context: ./src/Standalone/
       dockerfile: Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: "Production"
     ports:
-      - "80:80"
+      - "7171:7171"
+      - "7172:7172"
     networks:
       - opencoremmo
+
+  # webapi-compose:
+  #   container_name: webapi
+  #   build:
+  #     context: ./src/WebAPI/
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     ASPNETCORE_ENVIRONMENT: "Production"
+  #   ports:
+  #     - "80:80"
+  #   networks:
+  #     - opencoremmo
 
 networks: 
   postgres:

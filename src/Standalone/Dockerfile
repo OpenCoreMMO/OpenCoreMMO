@@ -11,17 +11,17 @@ FROM $BASE_ADRESS/sdk:$SDK_VERSION AS build
 
 WORKDIR /src
 
-COPY *.csproj ./WebAPI
+COPY *.csproj ./Standalone
 
-RUN dotnet restore -v m ./WebAPI
+RUN dotnet restore -v m ./Standalone
 
-WORKDIR /src/WebAPI
-RUN dotnet build NeoServer.Web.API.csproj -c Release -o /app/build --no-restore
+WORKDIR /src/Standalone
+RUN dotnet build -c Release --no-restore -v m -o /app/build
 
 FROM build AS publish
-RUN dotnet publish NeoServer.Web.API.csproj -c Release -o /app/publish --no-restore
+RUN dotnet publish -c Release --no-restore -v m -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "NeoServer.Web.API.dll"]
+ENTRYPOINT ["dotnet", "NeoServer.Server.Standalone.dll"]
