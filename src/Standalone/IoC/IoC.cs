@@ -38,6 +38,7 @@ public static class Container
         var configuration = ConfigurationInjection.GetConfiguration();
 
         builder
+            .AddEnvironments()
             .AddConfigurations(configuration)
             .AddLogger(configuration);
 

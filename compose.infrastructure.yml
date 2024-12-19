@@ -1,37 +1,22 @@
 services:
-# PostgreSQL: https://hub.docker.com/_/postgres/
-  postgres:
-    image: postgres
-    container_name: postgres
-    environment:
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_USER: "postgres"
-      POSTGRES_DB: "opencoremmo"
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgresql-data:/var/lib/postgresql/data
-    networks:
-      - opencoremmo
-
 # pgAdmin 4: https://hub.docker.com/r/dpage/pgadmin4
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4
     environment:
-      PGADMIN_DEFAULT_EMAIL: "opencoremmo@mail.com"
-      PGADMIN_DEFAULT_PASSWORD: "postgres"
+      PGADMIN_DEFAULT_EMAIL: "${POSTGRESQL_PGAGMIN_EMAIL}"
+      PGADMIN_DEFAULT_PASSWORD: "${POSTGRESQL_PASSWORD}"
     ports:
       - "8080:80"
+    restart: "on-failure"
     depends_on:
       - postgres
     networks:
       - opencoremmo
     volumes:
-      - ./docker/pgadmin-servers.json:/pgadmin4/servers.json
       - pgadmin-data:/var/lib/pgadmin
 
-  # MongoDB: https://hub.docker.com/_/mongo/
+# MongoDB: https://hub.docker.com/_/mongo/
   mongodb:
     image: "mongo:6.0.18"
     container_name: mongo
@@ -44,15 +29,15 @@ services:
       - "mongodb-data:/data/db"
       - "mongodb-config:/data/configdb"  
 
-  #Graylog Data Node: https://hub.docker.com/r/graylog/graylog-datanode
+# Graylog Data Node: https://hub.docker.com/r/graylog/graylog-datanode
   datanode:
     image: "graylog/graylog-datanode:6.1"
     container_name: datanode
     hostname: "datanode"
     environment:
       GRAYLOG_DATANODE_NODE_ID_FILE: "/var/lib/graylog-datanode/node-id"
-      GRAYLOG_DATANODE_PASSWORD_SECRET: "somepasswordpepper"
-      GRAYLOG_DATANODE_ROOT_PASSWORD_SHA2: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"
+      GRAYLOG_DATANODE_PASSWORD_SECRET: "${GRAYLOG_SECRET}"
+      GRAYLOG_DATANODE_ROOT_PASSWORD_SHA2: "${GRAYLOG_PASSWORD_SHA2}"
       GRAYLOG_DATANODE_MONGODB_URI: "mongodb://mongodb:27017/graylog"
     ulimits:
       memlock:
@@ -71,7 +56,7 @@ services:
       - "graylog-datanode:/var/lib/graylog-datanode"
     restart: "on-failure"  
 
-  # Graylog: https://hub.docker.com/r/graylog/graylog/
+# Graylog: https://hub.docker.com/r/graylog/graylog/
   graylog:
     hostname: "server"
     image: "graylog/graylog:6.1"
@@ -89,9 +74,9 @@ services:
       # To make reporting (headless_shell) work inside a Docker container
       GRAYLOG_REPORT_DISABLE_SANDBOX: "true"
       # CHANGE ME (must be at least 16 characters)!
-      GRAYLOG_PASSWORD_SECRET: "somepasswordpepper"
+      GRAYLOG_PASSWORD_SECRET: "${GRAYLOG_SECRET}"
       # Password: "admin"
-      GRAYLOG_ROOT_PASSWORD_SHA2: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"
+      GRAYLOG_ROOT_PASSWORD_SHA2: "${GRAYLOG_PASSWORD_SHA2}"
       GRAYLOG_HTTP_EXTERNAL_URI: "http://127.0.0.1:9000/"
     ports:
       # Graylog web interface and REST API
@@ -116,40 +101,7 @@ services:
     volumes:
       - "graylog-data:/usr/share/graylog/data"
 
-# OpenCoreMMO
-  standalone:
-    container_name: standalone
-    build:
-      context: .
-      dockerfile: ./src/Standalone/Dockerfile
-    environment:
-      ASPNETCORE_ENVIRONMENT: "Production"
-    ports:
-      - "7171:7171"
-      - "7172:7172"
-    networks:
-      - opencoremmo
-    depends_on:
-      - postgres
-
-  # webapi-compose:
-  #   container_name: webapi
-  #   build:
-  #     context: ./src/WebAPI/
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     ASPNETCORE_ENVIRONMENT: "Production"
-  #   ports:
-  #     - "80:80"
-  #   networks:
-  #     - opencoremmo
-
-networks: 
-  opencoremmo:
-    driver: bridge
-
 volumes:
-  postgresql-data:
   pgadmin-data:
   mongodb-data:
   mongodb-config:
