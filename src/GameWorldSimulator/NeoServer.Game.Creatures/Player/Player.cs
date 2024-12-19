@@ -247,6 +247,12 @@ public class Player : CombatActor, IPlayer
     public override bool CanBeSeen => FlagIsEnabled(PlayerFlag.CanBeSeen);
     public virtual bool CanSeeInspectionDetails => false;
 
+    public ushort GetRawSkillLevel(SkillType skillType)
+    {
+        var hasSkill = Skills.TryGetValue(skillType, out var skill);
+        var skillLevel = hasSkill ? skill.Level : 1;
+        return (ushort)Math.Max(0, skillLevel);
+    }
     public ushort GetSkillLevel(SkillType skillType)
     {
         var hasSkill = Skills.TryGetValue(skillType, out var skill);
@@ -408,10 +414,12 @@ public class Player : CombatActor, IPlayer
 
     public override int DefendUsingShield(int attack)
     {
+        if (!IsShieldDefenseEnabled) return attack;
+        
         var defense = Inventory.TotalDefense * Skills[SkillType.Shielding].Level *
             (DefenseFactor / 100d) - attack / 100d * ArmorRating * (Vocation.Formula?.Defense ?? 1f);
 
-        var resultDamage = (int)(attack - defense);
+        var resultDamage = Math.Max(0, (int)(attack - defense));
         if (resultDamage <= 0) IncreaseSkillCounter(SkillType.Shielding, 1);
         return resultDamage;
     }
