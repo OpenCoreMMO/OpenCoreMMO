@@ -40,6 +40,8 @@ public static class DatabaseInjection
 
         configuration.GetSection("database").Bind(config);
 
+        LoadEnvironmentVariables(ref config);
+
         var options = config.Active switch
         {
             DatabaseType.INMEMORY => DbContextFactory.GetInstance()
@@ -57,5 +59,30 @@ public static class DatabaseInjection
         builder.AddSingleton(x => new NeoContext(options, x.GetRequiredService<ILogger>()) as TContext);
 
         return builder;
+    }
+
+    private static void LoadEnvironmentVariables(ref DatabaseConfiguration databaseConfiguration)
+    {
+        var activeDatabase = Environment.GetEnvironmentVariable("ACTIVE_DATABASE");
+        var sqliteDatabase = Environment.GetEnvironmentVariable("SQLITE_DATABASE");
+        var postgresDatabase = Environment.GetEnvironmentVariable("POSTGRESQL_DATABASE");
+        var postgresUser = Environment.GetEnvironmentVariable("POSTGRESQL_USER");
+        var postgresPassword = Environment.GetEnvironmentVariable("POSTGRESQL_PASSWORD");
+        var postgresHost = Environment.GetEnvironmentVariable("POSTGRESQL_HOST");
+        var postgresPort = Environment.GetEnvironmentVariable("POSTGRESQL_PORT");
+
+        var dbConnections = databaseConfiguration.Connections;
+
+        if(!string.IsNullOrEmpty(sqliteDatabase))
+            dbConnections[DatabaseType.SQLITE] = $"Data Source={sqliteDatabase}";
+
+        if (!string.IsNullOrEmpty(postgresDatabase))
+            dbConnections[DatabaseType.POSTGRESQL] = $"host={postgresHost};port={postgresPort};database={postgresDatabase};username={postgresUser};password={postgresPassword};";
+        var active = databaseConfiguration.Active;
+
+        if (!string.IsNullOrEmpty(activeDatabase) && Enum.TryParse(activeDatabase, out DatabaseType databaseType))
+            active = databaseType;
+
+        databaseConfiguration = new(dbConnections, active);
     }
 }
