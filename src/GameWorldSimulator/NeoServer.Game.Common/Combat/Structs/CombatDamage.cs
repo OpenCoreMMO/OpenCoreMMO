@@ -10,7 +10,7 @@ public ref struct CombatDamage
         Damage = damage;
         Type = type;
         Effect = EffectT.None;
-        NoEffect = default;
+        NoEffect = false;
     }
 
     public CombatDamage(ushort damage, DamageType type, EffectT effect)
@@ -18,7 +18,7 @@ public ref struct CombatDamage
         Damage = damage;
         Type = type;
         Effect = effect;
-        NoEffect = default;
+        NoEffect = false;
     }
 
     public CombatDamage(ushort damage, DamageType type, bool noEffect)

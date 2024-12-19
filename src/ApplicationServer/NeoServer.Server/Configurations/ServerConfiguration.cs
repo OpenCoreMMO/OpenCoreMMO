@@ -20,7 +20,11 @@ public record ServerConfiguration(
     string ServerName,
     string ServerIp,
     string Extensions,
-    SaveConfiguration Save);
+    int ServerLoginPort,
+    int ServerGamePort,
+    SaveConfiguration Save)
+{
+}
 
 public record LogConfiguration(string MinimumLevel);
 

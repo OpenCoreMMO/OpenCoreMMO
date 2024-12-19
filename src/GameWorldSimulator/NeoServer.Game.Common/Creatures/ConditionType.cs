@@ -30,5 +30,6 @@ public enum ConditionType : uint
     ExhaustHeal = 1 << 24, // unused
     Pacified = 1 << 25,
     Illusion = 1 << 26,
-    Hungry = 1 << 27
+    Hungry = 1 << 27,
+    Strengthened = 1 << 28
 }

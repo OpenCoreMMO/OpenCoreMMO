@@ -237,4 +237,5 @@ public interface IPlayer : ICombatActor, ISociableCreature
     bool CanUseOutfit(IOutfit outFit);
     void SetAsHungry();
     void Use(IContainer item, byte openAtIndex);
+    ushort GetRawSkillLevel(SkillType skillType);
 }
