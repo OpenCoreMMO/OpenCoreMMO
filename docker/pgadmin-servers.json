@@ -3,7 +3,7 @@
         "1": {
             "Name": "Postgres Server",
             "Group": "Servers",
-            "Host": "postgres-compose",
+            "Host": "postgres",
             "Port": 5432,
             "Username": "postgres",
             "SSLMode": "prefer",

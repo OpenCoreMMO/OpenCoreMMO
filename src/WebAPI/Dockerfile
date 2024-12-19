@@ -1,5 +1,5 @@
-﻿ARG ASPNET_VERSION="7.0.2"
-ARG SDK_VERSION="7.0.102"
+﻿ARG ASPNET_VERSION="9.0"
+ARG SDK_VERSION="9.0"
 ARG BASE_ADRESS="mcr.microsoft.com/dotnet"
 
 FROM $BASE_ADRESS/aspnet:$ASPNET_VERSION AS base
@@ -9,23 +9,19 @@ EXPOSE 80
 
 FROM $BASE_ADRESS/sdk:$SDK_VERSION AS build
 
-COPY ./global.json ./
-COPY ./nuget.config ./
-COPY ./Directory.Build.props ./
-
 WORKDIR /src
 
-COPY *.csproj ./AdminAPI
+COPY *.csproj ./WebAPI
 
-RUN dotnet restore -v m ./AdminAPI
+RUN dotnet restore -v m ./WebAPI
 
-WORKDIR /src/AdminAPI
-RUN dotnet build -c Release --no-restore -v m -o /app/build
+WORKDIR /src/WebAPI
+RUN dotnet build NeoServer.Web.API.csproj -c Release -o /app/build --no-restore
 
 FROM build AS publish
-RUN dotnet publish -c Release --no-restore -v m -o /app/publish
+RUN dotnet publish NeoServer.Web.API.csproj -c Release -o /app/publish --no-restore
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "NeoServer.API.dll"]
+ENTRYPOINT ["dotnet", "NeoServer.Web.API.dll"]
