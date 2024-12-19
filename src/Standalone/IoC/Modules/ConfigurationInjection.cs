@@ -37,10 +37,32 @@ public static class ConfigurationInjection
         configuration.GetSection("game").Bind(gameConfiguration);
         configuration.GetSection("log").Bind(logConfiguration);
 
+        LoadEnvironmentVariables(ref serverConfiguration);
+
         builder.AddSingleton(serverConfiguration);
         builder.AddSingleton(gameConfiguration);
         builder.AddSingleton(logConfiguration);
 
         return builder;
+    }
+
+    private static void LoadEnvironmentVariables(ref ServerConfiguration serverConfiguration)
+    {
+        var serverLoginPort = Environment.GetEnvironmentVariable("SERVER_LOGIN_PORT");
+        var serverGamePort = Environment.GetEnvironmentVariable("SERVER_GAME_PORT");
+        var serverGameName = Environment.GetEnvironmentVariable("SERVER_GAME_NAME");
+        var serverGameIP = Environment.GetEnvironmentVariable("SERVER_GAME_IP");
+
+        serverConfiguration = new(
+            serverConfiguration.Version,
+            serverConfiguration.OTBM,
+            serverConfiguration.OTB,
+            serverConfiguration.Data,
+            string.IsNullOrEmpty(serverGameName) ? serverConfiguration.ServerName : serverGameName,
+            string.IsNullOrEmpty(serverGameIP) ? serverConfiguration.ServerIp : serverGameIP,
+            serverConfiguration.Extensions,
+            string.IsNullOrEmpty(serverLoginPort) ? serverConfiguration.ServerLoginPort : int.Parse(serverLoginPort),
+            string.IsNullOrEmpty(serverGamePort) ? serverConfiguration.ServerGamePort : int.Parse(serverGamePort),
+            serverConfiguration.Save);
     }
 }

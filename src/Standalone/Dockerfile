@@ -30,9 +30,5 @@ WORKDIR /app
 # Copy the published app to the container
 COPY --from=build /app/out .
 
-# Expose the ports that the server will listen on
-EXPOSE 7171
-EXPOSE 7172
-
 # Set the entrypoint to run the console app
 ENTRYPOINT ["dotnet", "NeoServer.Server.Standalone.dll"]
