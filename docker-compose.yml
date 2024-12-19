@@ -1,6 +1,6 @@
 services:
 # PostgreSQL: https://hub.docker.com/_/postgres/
-  postgres-compose:
+  postgres:
     image: postgres
     container_name: postgres
     environment:
@@ -12,10 +12,10 @@ services:
     volumes:
       - postgresql-data:/var/lib/postgresql/data
     networks:
-      - postgres
+      - opencoremmo
 
 # pgAdmin 4: https://hub.docker.com/r/dpage/pgadmin4
-  pgadmin-compose:
+  pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4
     environment:
@@ -24,9 +24,9 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - postgres-compose
-    networks:
       - postgres
+    networks:
+      - opencoremmo
     volumes:
       - ./docker/pgadmin-servers.json:/pgadmin4/servers.json
       - pgadmin-data:/var/lib/pgadmin
@@ -39,7 +39,7 @@ services:
       - "27017:27017"   
     restart: "on-failure"
     networks:
-      - graylog
+      - opencoremmo
     volumes:
       - "mongodb-data:/data/db"
       - "mongodb-config:/data/configdb"  
@@ -66,7 +66,7 @@ services:
       - "9200:9200/tcp"
       - "9300:9300/tcp"
     networks:
-      - graylog  
+      - opencoremmo  
     volumes:
       - "graylog-datanode:/var/lib/graylog-datanode"
     restart: "on-failure"  
@@ -112,16 +112,16 @@ services:
       - "13302:13302/tcp"
     restart: "on-failure"
     networks:
-      - graylog
+      - opencoremmo
     volumes:
       - "graylog-data:/usr/share/graylog/data"
 
 # OpenCoreMMO
-  standalone-compose:
+  standalone:
     container_name: standalone
     build:
-      context: ./src/Standalone/
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./src/Standalone/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: "Production"
     ports:
@@ -129,6 +129,8 @@ services:
       - "7172:7172"
     networks:
       - opencoremmo
+    depends_on:
+      - postgres
 
   # webapi-compose:
   #   container_name: webapi
@@ -143,10 +145,6 @@ services:
   #     - opencoremmo
 
 networks: 
-  postgres:
-    driver: bridge
-  graylog:
-    driver: bridge
   opencoremmo:
     driver: bridge
 
