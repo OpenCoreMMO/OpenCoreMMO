@@ -16,6 +16,7 @@ public class ForSqLiteWorldEntityConfiguration : IEntityTypeConfiguration<WorldE
         builder.Property(e => e.Id).HasAnnotation("Sqlite:Autoincrement", true);
         builder.Property(e => e.Name).IsRequired();
         builder.Property(e => e.Ip).IsRequired();
+        builder.Property(e => e.Port).IsRequired();
 
         WorldModelSeed.Seed(builder);
     }
