@@ -13,6 +13,7 @@ public class WorldModelSeed
             {
                 Id = 1,
                 Ip = "127.0.0.1",
+                Port = 7172,
                 Name = "OpenCore"
             }
         );
