@@ -31,3 +31,12 @@ public record LogConfiguration(string MinimumLevel);
 public record SaveConfiguration(uint Players);
 
 public record DatabaseConfiguration(Dictionary<DatabaseType, string> Connections, DatabaseType Active);
+
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+public record GrayLogConfiguration(
+    string HostnameOrAddress,
+    int Port,
+    string HostnameOverride,
+    string Facility)
+{
+}
