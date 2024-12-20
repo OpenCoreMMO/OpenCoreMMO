@@ -60,3 +60,4 @@ c4/icon.png
 /src/GameWorldSimulator/NeoServer.Game.Items/Properties/launchSettings.json
 /src/Loaders/NeoServer.OTBM/Properties/launchSettings.json
 /data/.env
+*.env
