@@ -47,7 +47,7 @@ services:
     depends_on:
       - postgres
 
-  webapi-compose:
+  webapi:
     container_name: webapi
     build:
       context: .
@@ -55,8 +55,8 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: "Production"
       ASPNETCORE_URLS: "https://+;http://+"
-      ASPNETCORE_Kestrel__Certificates__Default__Password: "opencoremmo"
-      ASPNETCORE_Kestrel__Certificates__Default__Path: "/app/Certificates/aspnetapp.pfx"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "${WEBAPI_CERTIFICATE_PASSWORD}"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "${WEBAPI_CERTIFICATE_PATH}"
       SQLITE_DATABASE: "${SQLITE_DATABASE}"
       POSTGRESQL_DATABASE: "${POSTGRESQL_DATABASE}"
       POSTGRESQL_USER: "${POSTGRESQL_USER}"
