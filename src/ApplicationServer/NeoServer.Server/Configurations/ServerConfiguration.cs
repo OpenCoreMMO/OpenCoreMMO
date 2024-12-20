@@ -20,10 +20,23 @@ public record ServerConfiguration(
     string ServerName,
     string ServerIp,
     string Extensions,
-    SaveConfiguration Save);
+    int ServerLoginPort,
+    int ServerGamePort,
+    SaveConfiguration Save)
+{
+}
 
 public record LogConfiguration(string MinimumLevel);
 
 public record SaveConfiguration(uint Players);
 
 public record DatabaseConfiguration(Dictionary<DatabaseType, string> Connections, DatabaseType Active);
+
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+public record GrayLogConfiguration(
+    string HostnameOrAddress,
+    int Port,
+    string HostnameOverride,
+    string Facility)
+{
+}

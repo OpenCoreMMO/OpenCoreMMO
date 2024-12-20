@@ -1,23 +1,104 @@
-using Serilog;
+using System.Net;
+using Microsoft.OpenApi.Models;
+using NeoServer.Shared.IoC.Modules;
+using NeoServer.Web.API.HttpFilters;
+using NeoServer.Web.API.IoC.Modules;
+using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.JsonMultipartFormDataSupport.Extensions;
+using Swashbuckle.AspNetCore.JsonMultipartFormDataSupport.Integrations;
 
-namespace NeoServer.Web.API;
+var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
+var environment = builder.Environment;
 
-public static class Program
+// Configure appsettings
+builder.Configuration
+    .SetBasePath(environment.ContentRootPath)
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
+
+// Add services to the container
+var services = builder.Services;
+
+services.AddHttpContextAccessor();
+services.AddBehaviours();
+services.AddServicesApi();
+services.AddAutoMapperProfiles();
+
+services.Configure<ForwardedHeadersOptions>(options =>
 {
-    public static void Main(string[] args)
-    {
-        CreateHostBuilder(args).Build().Run();
-    }
+    options.ForwardLimit = 2;
+    options.KnownProxies.Add(IPAddress.Parse("127.0.0.1"));
+    options.KnownProxies.Add(IPAddress.Parse("0.0.0.0"));
+    options.ForwardedForHeaderName = "X-Forwarded-For-My-Custom-Header-Name";
+});
 
-    private static IHostBuilder CreateHostBuilder(string[] args)
+services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "NeoServer.API", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        return Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
-            .ConfigureLogging(logging =>
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
             {
-                logging.ClearProviders();
-                logging.SetMinimumLevel(LogLevel.Trace);
-            })
-            .UseSerilog();
-    }
-}
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header
+            },
+            new List<string>()
+        }
+    });
+
+    c.OperationFilter<SwaggerJsonIgnoreFilter>();
+});
+
+services.AddJsonMultipartFormDataSupport(JsonSerializerChoice.Newtonsoft);
+
+services.AddControllersWithViews()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+    });
+
+services.AddLogger(configuration);
+services.AddDatabases(configuration);
+services.AddRepositories();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseCors(x => x
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
+
+app.MapControllers();
+
+app.Run();
+
+public partial class Program { }

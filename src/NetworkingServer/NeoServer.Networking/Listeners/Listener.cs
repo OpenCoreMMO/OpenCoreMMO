@@ -38,7 +38,7 @@ public abstract class Listener : TcpListener, IListener
                 return;
             }
 
-            _logger.Information("{Protocol} is online", _protocol);
+            _logger.Information("{Protocol} is online on port {Port}", _protocol, _port);
 
             while (!cancellationToken.IsCancellationRequested)
             {
