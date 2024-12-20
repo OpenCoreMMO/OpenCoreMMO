@@ -23,7 +23,21 @@ services:
       dockerfile: ./src/Standalone/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: "Production"
-      DOCKER: true
+      SQLITE_DATABASE: "${SQLITE_DATABASE}"
+      POSTGRESQL_DATABASE: "${POSTGRESQL_DATABASE}"
+      POSTGRESQL_USER: "${POSTGRESQL_USER}"
+      POSTGRESQL_PASSWORD: "${POSTGRESQL_PASSWORD}"
+      POSTGRESQL_HOST: "${POSTGRESQL_HOST}"
+      POSTGRESQL_PORT: "${POSTGRESQL_PORT}"
+      ACTIVE_DATABASE: "${ACTIVE_DATABASE}"
+      SERVER_LOGIN_PORT: "${SERVER_LOGIN_PORT}"
+      SERVER_GAME_PORT: "${SERVER_GAME_PORT}"
+      SERVER_GAME_NAME: "${SERVER_GAME_NAME}"
+      SERVER_GAME_IP: "${SERVER_GAME_IP}"
+      GRAYLOG_HOSTNAME_OR_ADDRESS: "${GRAYLOG_HOSTNAME_OR_ADDRESS}"
+      GRAYLOG_PORT: "${GRAYLOG_PORT}"
+      GRAYLOG_HOSTNAME_OVERRIDE: "${GRAYLOG_HOSTNAME_OVERRIDE}"
+      GRAYLOG_FACILITY: "${GRAYLOG_FACILITY_STANDALONE}"
     ports:
       - "${SERVER_LOGIN_PORT}:${SERVER_LOGIN_PORT}"
       - "${SERVER_GAME_PORT}:${SERVER_GAME_PORT}"
@@ -33,17 +47,34 @@ services:
     depends_on:
       - postgres
 
-  # webapi-compose:
-  #   container_name: webapi
-  #   build:
-  #     context: ./src/WebAPI/
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     ASPNETCORE_ENVIRONMENT: "Production"
-  #   ports:
-  #     - "80:80"
-  #   networks:
-  #     - opencoremmo
+  webapi-compose:
+    container_name: webapi
+    build:
+      context: .
+      dockerfile: ./src/WebAPI/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ASPNETCORE_URLS: "https://+;http://+"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "opencoremmo"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/app/Certificates/aspnetapp.pfx"
+      SQLITE_DATABASE: "${SQLITE_DATABASE}"
+      POSTGRESQL_DATABASE: "${POSTGRESQL_DATABASE}"
+      POSTGRESQL_USER: "${POSTGRESQL_USER}"
+      POSTGRESQL_PASSWORD: "${POSTGRESQL_PASSWORD}"
+      POSTGRESQL_HOST: "${POSTGRESQL_HOST}"
+      POSTGRESQL_PORT: "${POSTGRESQL_PORT}"
+      ACTIVE_DATABASE: "${ACTIVE_DATABASE}"
+      GRAYLOG_HOSTNAME_OR_ADDRESS: "${GRAYLOG_HOSTNAME_OR_ADDRESS}"
+      GRAYLOG_PORT: "${GRAYLOG_PORT}"
+      GRAYLOG_HOSTNAME_OVERRIDE: "${GRAYLOG_HOSTNAME_OVERRIDE}"
+      GRAYLOG_FACILITY: "${GRAYLOG_FACILITY_WEBAPI}"
+    ports:
+      - "443:443"
+      - "80:80"
+    networks:
+      - opencoremmo
+    depends_on:
+      - postgres
 
 networks: 
   opencoremmo:
