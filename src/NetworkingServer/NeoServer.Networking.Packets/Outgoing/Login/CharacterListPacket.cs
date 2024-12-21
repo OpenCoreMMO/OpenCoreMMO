@@ -7,13 +7,14 @@ public class CharacterListPacket : OutgoingPacket
 {
     private readonly AccountEntity _accountEntity;
     private readonly string _ipAddress;
+    private readonly ushort _port;
     private readonly string _serverName;
-
-    public CharacterListPacket(AccountEntity account, string serverName, string ipAddress)
+    public CharacterListPacket(AccountEntity account, string serverName, string ipAddress, ushort port)
     {
         _accountEntity = account;
         _serverName = serverName;
         _ipAddress = ipAddress;
+        _port = port;
     }
 
     public override void WriteToMessage(INetworkMessage message)
@@ -28,8 +29,10 @@ public class CharacterListPacket : OutgoingPacket
 
         var ipAddress = ParseIpAddress(_ipAddress);
 
+
         foreach (var player in _accountEntity.Players)
         {
+            var port = player.World?.Port > 0 ? player.World.Port : _port;
             if (!string.IsNullOrWhiteSpace(player.World?.Ip)) ipAddress = ParseIpAddress(player.World.Ip);
 
             message.AddString(player.Name);
@@ -40,7 +43,7 @@ public class CharacterListPacket : OutgoingPacket
             message.AddByte(ipAddress[2]);
             message.AddByte(ipAddress[3]);
 
-            message.AddUInt16(7172);
+            message.AddUInt16((ushort)port);
         }
 
         message.AddUInt16((ushort)_accountEntity.PremiumTime);

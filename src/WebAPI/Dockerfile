@@ -1,31 +1,26 @@
-﻿ARG ASPNET_VERSION="7.0.2"
-ARG SDK_VERSION="7.0.102"
-ARG BASE_ADRESS="mcr.microsoft.com/dotnet"
+﻿# Use an official .NET 9 SDK as a parent image
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
-FROM $BASE_ADRESS/aspnet:$ASPNET_VERSION AS base
+# Set the working directory to /app
 WORKDIR /app
 
-EXPOSE 80
+# Copy the project files to the container
+COPY src/. .
 
-FROM $BASE_ADRESS/sdk:$SDK_VERSION AS build
+# Restore dependencies
+RUN dotnet restore WebAPI/NeoServer.Web.API.csproj
 
-COPY ./global.json ./
-COPY ./nuget.config ./
-COPY ./Directory.Build.props ./
+# Build the project
+RUN dotnet publish WebAPI/NeoServer.Web.API.csproj -c Release -o out
 
-WORKDIR /src
+# Use an official .NET 9 runtime as a parent image
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
 
-COPY *.csproj ./AdminAPI
-
-RUN dotnet restore -v m ./AdminAPI
-
-WORKDIR /src/AdminAPI
-RUN dotnet build -c Release --no-restore -v m -o /app/build
-
-FROM build AS publish
-RUN dotnet publish -c Release --no-restore -v m -o /app/publish
-
-FROM base AS final
+# Set the working directory to /app
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "NeoServer.API.dll"]
+
+# Copy the published app to the container
+COPY --from=build /app/out .
+
+# Set the entrypoint to run the console app
+ENTRYPOINT ["dotnet", "NeoServer.Web.API.dll"]

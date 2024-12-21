@@ -16,6 +16,7 @@ public class WorldEntityConfiguration : IEntityTypeConfiguration<WorldEntity>
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(e => e.Name).IsRequired();
         builder.Property(e => e.Ip).IsRequired();
+        builder.Property(e => e.Port).IsRequired();
 
         WorldModelSeed.Seed(builder);
     }
