@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NeoServer.Application.Common.Contracts.Scripts
+﻿namespace NeoServer.Scripts.LuaJIT.Structs
 {
     public enum DirectionType : byte
     {

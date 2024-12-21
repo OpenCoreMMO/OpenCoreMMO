@@ -113,7 +113,7 @@ public class Program
 
         container.Resolve<IGameServer>().Open();
 
-        container.Resolve<ILuaManager>().Start();
+        container.Resolve<ILuaGameManager>().Start();
 
         sw.Stop();
 

@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using LuaNET;
-using NeoServer.Application.Common.Contracts.Scripts;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Scripts.LuaJIT.Structs;
 
 namespace NeoServer.Scripts.LuaJIT;
 
