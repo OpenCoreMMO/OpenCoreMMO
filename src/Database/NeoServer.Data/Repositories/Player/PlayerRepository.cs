@@ -17,8 +17,8 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
 {
     #region constructors
 
-    public PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions,
-        logger)
+    public PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions
+        )
     {
     }
 

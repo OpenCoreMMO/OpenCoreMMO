@@ -19,8 +19,7 @@ public class PlayerDepotItemRepository : BaseRepository<PlayerDepotItemEntity>,
 {
     #region constructors
 
-    public PlayerDepotItemRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions,
-        logger)
+    public PlayerDepotItemRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions)
     {
     }
 

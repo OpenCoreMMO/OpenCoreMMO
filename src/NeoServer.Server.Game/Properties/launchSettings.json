@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "NeoServer.Server.Game": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

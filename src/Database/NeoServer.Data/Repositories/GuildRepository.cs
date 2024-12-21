@@ -12,8 +12,7 @@ public class GuildRepository : BaseRepository<GuildEntity>, IGuildRepository
 {
     #region constructors
 
-    public GuildRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions,
-        logger)
+    public GuildRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions)
     {
     }
 

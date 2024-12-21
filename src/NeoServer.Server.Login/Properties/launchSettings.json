@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "NeoServer.Server.Login": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

@@ -8,12 +8,12 @@ namespace NeoServer.Data.Contexts;
 
 public class NeoContext : DbContext
 {
-    private readonly ILogger _logger;
+    //private readonly ILogger _logger;
 
-    public NeoContext(DbContextOptions<NeoContext> options, ILogger logger)
+    public NeoContext(DbContextOptions<NeoContext> options/*, ILogger logger*/)
         : base(options)
     {
-        _logger = logger;
+        //_logger = logger;
     }
 
     public DbSet<AccountEntity> Accounts { get; set; }
@@ -28,11 +28,12 @@ public class NeoContext : DbContext
     public DbSet<PlayerQuestEntity> PlayerQuests { get; set; }
     public DbSet<PlayerOutfitAddonEntity> PlayerOutfitAddons { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.LogTo(m => _logger.Verbose(m),
-            (eventId, _) => eventId.Name == $"{DbLoggerCategory.Database.Command.Name}.CommandExecuted");
-    }
+    //protected override void OnConfiguring(DbContextOptions optionsBuilder)
+    //{
+    //    optionsBuilder.UseInMemoryDatabase("fdf");
+    //    //optionsBuilder.LogTo(m => _logger.Verbose(m),
+    //    //    (eventId, _) => eventId.Name == $"{DbLoggerCategory.Database.Command.Name}.CommandExecuted");
+    //}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

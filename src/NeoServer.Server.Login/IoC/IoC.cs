@@ -12,12 +12,12 @@ using NeoServer.Networking.Handlers;
 using NeoServer.Server.Commands.Movements;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts.Tasks;
-using NeoServer.Server.Standalone.IoC.Modules;
+using NeoServer.Server.Login.IoC.Modules;
 using NeoServer.Server.Tasks;
-using NeoServer.Shared.IoC.Modules;
+using NeoServer.Server.Login.IoC.Modules;
 using PathFinder = NeoServer.Game.World.Map.PathFinder;
 
-namespace NeoServer.Server.Standalone.IoC;
+namespace NeoServer.Server.Login.IoC;
 
 public static class Container
 {
@@ -46,52 +46,6 @@ public static class Container
             //.Verify(builder);
     }
 
-    public static IServiceProvider BuildAll()
-    {
-        var builder = new ServiceCollection();
-
-        //tools
-        builder.AddSingleton<IPathFinder, PathFinder>();
-        builder.AddSingleton<IWalkToMechanism, WalkToMechanism>();
-
-        builder.RegisterPacketHandlers();
-
-        builder.AddSingleton<IScheduler, OptimizedScheduler>();
-        builder.AddSingleton<IDispatcher, Dispatcher>();
-        builder.AddSingleton<IPersistenceDispatcher, PersistenceDispatcher>();
-
-        //world
-        builder.AddSingleton<IMap, Map>();
-        builder.AddSingleton<World>();
-
-        var configuration = ConfigurationInjection.GetConfiguration();
-
-        builder.AddFactories()
-            .AddServices()
-            .AddLoaders()
-            .AddDatabases(configuration)
-            .AddRepositories()
-            .AddConfigurations(configuration)
-            .AddNetwork()
-            .AddEvents()
-            .AddManagers()
-            .AddLogger(configuration)
-            .AddCommands()
-            .AddLua()
-            .AddJobs()
-            .AddCommands()
-            .AddDataStores();
-
-        //creature
-        builder.AddSingleton<ICreatureGameInstance, CreatureGameInstance>();
-
-        builder.AddSingleton(typeof(IMemoryCache), new MemoryCache(new MemoryCacheOptions()));
-
-        return builder
-            .BuildServiceProvider()
-            .Verify(builder);
-    }
-    
     public static IServiceProvider BuildAllLogin()
     {
         var builder = new ServiceCollection();

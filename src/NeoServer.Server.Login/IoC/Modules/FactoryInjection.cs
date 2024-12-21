@@ -9,7 +9,7 @@ using NeoServer.Game.Items.Factories.AttributeFactory;
 using NeoServer.Game.World.Factories;
 using NeoServer.Networking.Handlers;
 
-namespace NeoServer.Server.Standalone.IoC.Modules;
+namespace NeoServer.Server.Login.IoC.Modules;
 
 public static class FactoryInjection
 {

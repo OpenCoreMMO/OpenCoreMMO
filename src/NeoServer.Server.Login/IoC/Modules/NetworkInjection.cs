@@ -3,7 +3,7 @@ using NeoServer.Networking.Handlers.ClientVersion;
 using NeoServer.Networking.Listeners;
 using NeoServer.Networking.Protocols;
 
-namespace NeoServer.Server.Standalone.IoC.Modules;
+namespace NeoServer.Server.Login.IoC.Modules;
 
 public static class NetworkInjection
 {

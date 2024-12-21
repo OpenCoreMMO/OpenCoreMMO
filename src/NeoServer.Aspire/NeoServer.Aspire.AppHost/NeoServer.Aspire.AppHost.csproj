@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0"/>
+    <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -13,13 +13,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0"/>
-        <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.0.0"/>
+        <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
+        <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Standalone\NeoServer.Server.Standalone.csproj"/>
-        <ProjectReference Include="..\..\WebAPI\NeoServer.Web.API.csproj"/>
+        <ProjectReference Include="..\..\NeoServer.Server.Game\NeoServer.Server.Game.csproj" />
+        <ProjectReference Include="..\..\NeoServer.Server.Login\NeoServer.Server.Login.csproj" />
+        <ProjectReference Include="..\..\NeoServer.Server.WebAPI\NeoServer.Server.WebAPI.csproj" />
+        <ProjectReference Include="..\..\Standalone\NeoServer.Server.Standalone.csproj" />
+        <ProjectReference Include="..\..\WebAPI\NeoServer.Web.API.csproj" />
     </ItemGroup>
 
 </Project>

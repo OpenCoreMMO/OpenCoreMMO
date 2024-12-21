@@ -15,19 +15,20 @@ public class BaseRepository<TEntity> : IBaseRepositoryNeo<TEntity>
     where TEntity : class
 {
     private readonly DbContextOptions<NeoContext> _contextOptions;
-    private readonly ILogger _logger;
+    //private readonly ILogger _logger;
 
     #region constructors
 
-    public BaseRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger)
+    public BaseRepository(DbContextOptions<NeoContext> contextOptions/*, ILogger logger*/)
     {
         _contextOptions = contextOptions;
-        _logger = logger;
+        //_logger = logger;
     }
 
     #endregion
 
-    public NeoContext NewDbContext => new(_contextOptions, _logger);
+    //public NeoContext NewDbContext => new(_contextOptions, _logger);
+    public NeoContext NewDbContext => new(_contextOptions);
 
 
     #region private methods implementation

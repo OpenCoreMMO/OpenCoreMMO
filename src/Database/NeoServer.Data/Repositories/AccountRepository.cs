@@ -13,8 +13,7 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
 {
     #region constructors
 
-    public AccountRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions,
-        logger)
+    public AccountRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions)
     {
     }
 
