@@ -2,8 +2,8 @@
 using NeoServer.Application.Common.Contracts.Scripts;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Scripts.LuaJIT.Functions;
 using Serilog;
-using System.Reflection.Metadata;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -35,9 +35,14 @@ public class LuaGameManager : ILuaGameManager
     /// </summary>
     private readonly IScripts _scripts;
 
-    private readonly ICreatureFunctions _creatureFunctions;
-
     private readonly ITalkActions _talkActions;
+
+    private readonly IConfigFunctions _configFunctions;
+    private readonly ICreatureFunctions _creatureFunctions;
+    private readonly IGlobalFunctions _globalFunctions;
+    private readonly ILoggerFunctions _loggerFunctions;
+    private readonly IPlayerFunctions _playerFunctions;
+    private readonly ITalkActionFunctions _talkActionFunctions;
 
     #endregion
 
@@ -48,70 +53,33 @@ public class LuaGameManager : ILuaGameManager
         ILuaEnvironment luaEnviroment,
         IConfigManager configManager,
         IScripts scripts,
+        ITalkActions talkActions,
+        IConfigFunctions configFunctions,
         ICreatureFunctions creatureFunctions,
-        ITalkActions talkActions)
+        IGlobalFunctions globalFunctions,
+        ILoggerFunctions loggerFunctions,
+        IPlayerFunctions playerFunctions,
+        ITalkActionFunctions talkActionFunctions)
     {
         _logger = logger;
         _luaEnviroment = luaEnviroment;
         _configManager = configManager;
         _scripts = scripts;
-        _creatureFunctions = creatureFunctions;
         _talkActions = talkActions;
+
+        _configFunctions = configFunctions;
+        _creatureFunctions = creatureFunctions;
+        _globalFunctions = globalFunctions;
+        _loggerFunctions = loggerFunctions;
+        _playerFunctions = playerFunctions;
+        _talkActionFunctions = talkActionFunctions;
+
+        Start();
     }
 
     #endregion
 
     #region Public Methods 
-
-    public void Start()
-    {
-        var dir = AppContext.BaseDirectory;
-
-        if (!string.IsNullOrEmpty(ArgManager.GetInstance().ExePath))
-            dir = ArgManager.GetInstance().ExePath;
-
-        ModulesLoadHelper(_luaEnviroment.InitState(), "luaEnviroment");
-
-        var luaState = _luaEnviroment.GetLuaState();
-
-        if (luaState.IsNull)
-        {
-            //Game.DieSafely("Invalid lua state, cannot load lua functions.");
-            Console.WriteLine("Invalid lua state, cannot load lua functions.");
-        }
-
-        Lua.OpenLibs(luaState);
-
-        //CoreFunctions.Init(L);
-        //CreatureFunctions.Init(L);
-        //EventFunctions.Init(L);
-        //ItemFunctions.Init(L);
-        //MapFunctions.Init(L);
-        //ZoneFunctions.Init(L);
-
-        LoggerFunctions.Init(luaState);
-        ConfigFunctions.Init(luaState);
-        GlobalFunctions.Init(luaState);
-        TalkActionFunctions.Init(luaState);
-
-        //CreatureFunctions.Init(luaState);
-        _creatureFunctions.Init(luaState);
-
-        PlayerFunctions.Init(luaState);
-
-        //GameFunctions.Init(L);
-        //CreatureFunctions.Init(L);
-        //PlayerFunctions.Init(L);
-        //ActionFunctions.Init(L);
-        //GlobalEventFunctions.Init(L);
-        //CreatureEventsFunctions.Init(L);
-
-        ModulesLoadHelper(_configManager.Load($"{dir}\\config.lua"), $"config.lua");
-
-        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}\\DataLuaJit/core.lua", "core.lua"), "core.lua");
-
-        ModulesLoadHelper(_scripts.LoadScripts($"{dir}\\DataLuaJit/scripts", false, false), "/DataLuaJit/scripts");
-    }
 
     public bool PlayerSaySpell(IPlayer player, SpeechType type, string words)
     {
@@ -137,6 +105,49 @@ public class LuaGameManager : ILuaGameManager
     #endregion
 
     #region Private Methods
+
+    private void Start()
+    {
+        var dir = AppContext.BaseDirectory;
+
+        if (!string.IsNullOrEmpty(ArgManager.GetInstance().ExePath))
+            dir = ArgManager.GetInstance().ExePath;
+
+        ModulesLoadHelper(_luaEnviroment.InitState(), "luaEnviroment");
+
+        var luaState = _luaEnviroment.GetLuaState();
+
+        if (luaState.IsNull)
+        {
+            //Game.DieSafely("Invalid lua state, cannot load lua functions.");
+            Console.WriteLine("Invalid lua state, cannot load lua functions.");
+        }
+
+        Lua.OpenLibs(luaState);
+
+        //TODO: load all functions
+        //CoreFunctions.Init(L);
+        //EventFunctions.Init(L);
+        //ItemFunctions.Init(L);
+        //MapFunctions.Init(L);
+        //ZoneFunctions.Init(L);
+        //GameFunctions.Init(L);
+        //GlobalEventFunctions.Init(L);
+        //CreatureEventsFunctions.Init(L);
+
+        _configFunctions.Init(luaState);
+        _creatureFunctions.Init(luaState);
+        _globalFunctions.Init(luaState);
+        _loggerFunctions.Init(luaState);
+        _playerFunctions.Init(luaState);
+        _talkActionFunctions.Init(luaState);
+
+        ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), $"config.lua");
+
+        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}/Data/LuaJit/core.lua", "core.lua"), "core.lua");
+
+        ModulesLoadHelper(_scripts.LoadScripts($"{dir}/Data/LuaJit/scripts", false, false), "/Data/LuaJit/scripts");
+    }
 
     private void ModulesLoadHelper(bool loaded, string moduleName)
     {

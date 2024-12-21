@@ -20,49 +20,28 @@
     <None Update="config.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="DataLuaJit\core.lua">
+    <None Update="Data\LuaJit\core.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="DataLuaJit\global.lua">
+    <None Update="Data\LuaJit\global.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="DataLuaJit\libs\functions\game.lua">
+    <None Update="Data\LuaJit\libs\functions\load.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="DataLuaJit\libs\functions\load.lua">
+    <None Update="Data\LuaJit\libs\functions\revscriptsys.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="DataLuaJit\libs\functions\revscriptsys.lua">
+    <None Update="Data\LuaJit\libs\libs.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="DataLuaJit\libs\libs.lua">
+    <None Update="Data\LuaJit\scripts\actions\Tools\shovel.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="DataLuaJit\scripts\actions\Tools\shovel.lua">
+    <None Update="Data\LuaJit\scripts\talkactions\god\reload.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="DataLuaJit\scripts\globalevents\Customs\save_interval.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="DataLuaJit\scripts\globalevents\example_one.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="DataLuaJit\scripts\globalevents\example_two.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="DataLuaJit\scripts\reward_chest\boss_think.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="DataLuaJit\scripts\talkactions\god\benchmark.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="DataLuaJit\scripts\talkactions\god\reload.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="DataLuaJit\scripts\talkactions\player\help.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="DataLuaJit\scripts\talkactions\player\test.lua">
+    <None Update="Data\LuaJit\scripts\talkactions\player\test.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

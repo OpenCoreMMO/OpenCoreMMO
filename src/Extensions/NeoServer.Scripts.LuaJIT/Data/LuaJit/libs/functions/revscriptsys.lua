@@ -99,12 +99,12 @@ do
 		end
 		rawset(self, key, value)
 	end
-	print('TalkAction revscriptsys')
-	print(configKeys.BASE_DIRECTORY)
+	logger.info('TalkAction revscriptsys')
+	logger.info(configKeys.BASE_DIRECTORY)
 
 	local meta = rawgetmetatable("TalkAction") 
-	print('meta')
-	print(meta)
+	logger.info('meta')
+	logger.info(meta)
 	meta.__newindex = TalkActionNewIndex
 end
 

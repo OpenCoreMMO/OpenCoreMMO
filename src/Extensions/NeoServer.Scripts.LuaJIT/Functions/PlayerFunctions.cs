@@ -2,15 +2,15 @@
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class PlayerFunctions : LuaScriptInterface
+public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 {
     public PlayerFunctions() : base(nameof(PlayerFunctions))
     {
     }
 
-    public static void Init(LuaState L)
+    public void Init(LuaState L)
     {
         RegisterSharedClass(L, "Player", "Creature", LuaPlayerCreate);
         RegisterMetaMethod(L, "Player", "__eq", LuaUserdataCompare<IPlayer>);

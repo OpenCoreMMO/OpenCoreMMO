@@ -2,7 +2,7 @@
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public interface ICreatureFunctions
+public interface IBaseFunctions
 {
      void Init(LuaState L);
 }

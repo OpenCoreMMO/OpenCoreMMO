@@ -3,7 +3,7 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Creatures.Models.Bases;
 using NeoServer.Server.Common.Contracts;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Functions;
 
 public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 {

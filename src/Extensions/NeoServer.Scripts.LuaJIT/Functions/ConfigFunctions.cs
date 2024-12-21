@@ -1,13 +1,13 @@
 ﻿using LuaNET;
 
-namespace NeoServer.Scripts.LuaJIT;
-public class ConfigFunctions : LuaScriptInterface
+namespace NeoServer.Scripts.LuaJIT.Functions;
+public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
 {
     public ConfigFunctions() : base(nameof(ConfigFunctions))
     {
     }
 
-    public static void Init(LuaState L)
+    public void Init(LuaState L)
     {
         RegisterTable(L, "configManager");
         RegisterMethod(L, "configManager", "getString", LuaConfigManagerGetString);
