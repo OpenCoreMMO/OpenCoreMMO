@@ -113,8 +113,6 @@ public class Program
 
         container.Resolve<IGameServer>().Open();
 
-        container.Resolve<ILuaGameManager>().Start();
-
         sw.Stop();
 
         logger.Step("Running Garbage Collector", "Garbage collected", () =>

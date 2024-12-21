@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Microsoft.VisualBasic;
 using NeoServer.Application.Common.Contracts.Scripts;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
@@ -16,13 +15,16 @@ public class PlayerSayCommand : ICommand
 {
     private readonly IChatChannelStore _chatChannelStore;
     private readonly IGameServer _game;
-    private readonly ILuaGameManager _luaManager;
+    private readonly ILuaGameManager _luaGameManager;
 
-    public PlayerSayCommand(IGameServer game, IChatChannelStore chatChannelStore, ILuaGameManager luaManager)
+    public PlayerSayCommand(
+        IGameServer game,
+        IChatChannelStore chatChannelStore,
+        ILuaGameManager luaGameManager)
     {
         _game = game;
         _chatChannelStore = chatChannelStore;
-        _luaManager = luaManager;
+        _luaGameManager = luaGameManager;
     }
 
     public void Execute(IPlayer player, IConnection connection, PlayerSayPacket playerSayPacket)
@@ -33,7 +35,7 @@ public class PlayerSayCommand : ICommand
 
         var message = playerSayPacket.Message?.Trim();
 
-        if (_luaManager.PlayerSaySpell(player, playerSayPacket.TalkType, message))
+        if (_luaGameManager.PlayerSaySpell(player, playerSayPacket.TalkType, message))
             return;
 
         if (player.CastSpell(message)) return;

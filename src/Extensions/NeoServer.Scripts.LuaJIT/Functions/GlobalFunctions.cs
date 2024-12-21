@@ -1,14 +1,14 @@
 ﻿using LuaNET;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class GlobalFunctions : LuaScriptInterface
+public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
 {
     public GlobalFunctions() : base(nameof(GlobalFunctions))
     {
     }
 
-    public static void Init(LuaState L)
+    public void Init(LuaState L)
     {
         RegisterGlobalMethod(L, "rawgetmetatable", LuaRawGetMetatable);
     }

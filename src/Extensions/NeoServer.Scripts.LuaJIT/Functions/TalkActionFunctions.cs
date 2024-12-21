@@ -1,14 +1,14 @@
 ﻿using LuaNET;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class TalkActionFunctions : LuaScriptInterface
+public class TalkActionFunctions : LuaScriptInterface, ITalkActionFunctions
 {
     public TalkActionFunctions() : base(nameof(TalkActionFunctions))
     {
     }
 
-    public static void Init(LuaState L)
+    public void Init(LuaState L)
     {
         RegisterSharedClass(L, "TalkAction", "", LuaCreateTalkAction);
         RegisterMethod(L, "TalkAction", "onSay", LuaTalkActionOnSay);

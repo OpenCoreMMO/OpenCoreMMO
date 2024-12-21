@@ -1,31 +1,31 @@
 ﻿local talkAction = TalkAction("!test")
 
 function talkAction.onSay(player, words, param)
-	print('executing talkAction from lua: '.. words .. ' ' .. param)
+	logger.info('executing talkAction from lua: '.. words .. ' ' .. param)
 
-	print(player)
-	print(player:getName())
-	print(player:getId())
+	logger.info(player)
+	logger.info(player:getName())
+	logger.info(player:getId())
 	
 	local creature = Creature("GOD")
 
 	if creature then
-		print(creature)
-		print(creature:getName())
-		print(creature:getId())
+		logger.info(creature)
+		logger.info(creature:getName())
+		logger.info(creature:getId())
 
 		if player == creature then
-			print('player == creature')
+			logger.info('player == creature')
 		end
 	end
 	
 	local showInConsole = configManager.getBoolean(configKeys.SCRIPTS_CONSOLE_LOGS);
 
-	print(showInConsole)
+	logger.info(showInConsole)
 
 	player:sendTextMessage(0, param, 0);
 	
-	print('end')
+	logger.info('end')
 
 	return true
 end

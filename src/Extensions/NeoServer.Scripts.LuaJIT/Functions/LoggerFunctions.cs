@@ -1,14 +1,18 @@
 ﻿using LuaNET;
+using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class LoggerFunctions : LuaScriptInterface
+public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
 {
-    public LoggerFunctions() : base(nameof(LoggerFunctions))
+    private static ILogger _logger;
+
+    public LoggerFunctions(ILogger logger) : base(nameof(LoggerFunctions))
     {
+        _logger = logger;
     }
 
-    public static void Init(LuaState L)
+    public void Init(LuaState L)
     {
         RegisterTable(L, "logger");
         RegisterMethod(L, "logger", "info", LuaLoggerInfo);
@@ -22,7 +26,7 @@ public class LoggerFunctions : LuaScriptInterface
         // logger.info(text)
         if (IsString(L, 1))
         {
-            Logger.GetInstance().Info(GetFormatedLoggerMessage(L));
+            _logger.Information(GetFormatedLoggerMessage(L));
         }
         else
         {
@@ -36,7 +40,7 @@ public class LoggerFunctions : LuaScriptInterface
         // logger.info(text)
         if (IsString(L, 1))
         {
-            Logger.GetInstance().Warn(GetFormatedLoggerMessage(L));
+            _logger.Warning(GetFormatedLoggerMessage(L));
         }
         else
         {
@@ -50,7 +54,7 @@ public class LoggerFunctions : LuaScriptInterface
         // logger.info(text)
         if (IsString(L, 1))
         {
-            Logger.GetInstance().Error(GetFormatedLoggerMessage(L));
+            _logger.Error(GetFormatedLoggerMessage(L));
         }
         else
         {
@@ -64,7 +68,7 @@ public class LoggerFunctions : LuaScriptInterface
         // logger.info(text)
         if (IsString(L, 1))
         {
-            Logger.GetInstance().Debug(GetFormatedLoggerMessage(L));
+            _logger.Debug(GetFormatedLoggerMessage(L));
         }
         else
         {
