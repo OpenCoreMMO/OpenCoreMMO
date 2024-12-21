@@ -78,6 +78,7 @@ public static class Container
             .AddLogger(configuration)
             .AddCommands()
             .AddLua()
+            .AddLuaJIT()
             .AddJobs()
             .AddCommands()
             .AddDataStores();

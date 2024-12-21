@@ -1,10 +1,13 @@
 ﻿using LuaNET;
 using NeoServer.Application.Common.Contracts.Scripts;
+using NeoServer.Game.Common.Chats;
+using NeoServer.Game.Common.Contracts.Creatures;
 using Serilog;
+using System.Reflection.Metadata;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public class LuaManager : ILuaManager
+public class LuaGameManager : ILuaGameManager
 {
     #region Members
 
@@ -40,7 +43,7 @@ public class LuaManager : ILuaManager
 
     #region Constructors
 
-    public LuaManager(
+    public LuaGameManager(
         ILogger logger,
         ILuaEnvironment luaEnviroment,
         IConfigManager configManager,
@@ -58,7 +61,7 @@ public class LuaManager : ILuaManager
 
     #endregion
 
-    public ITalkAction GetTalkAction(string name) => _talkActions.GetTalkAction(name);
+    #region Public Methods 
 
     public void Start()
     {
@@ -109,6 +112,29 @@ public class LuaManager : ILuaManager
 
         ModulesLoadHelper(_scripts.LoadScripts($"{dir}\\DataLuaJit/scripts", false, false), "/DataLuaJit/scripts");
     }
+
+    public bool PlayerSaySpell(IPlayer player, SpeechType type, string words)
+    {
+        var wordsSeparator = " ";
+        var talkactionWords = words.Contains(wordsSeparator) ? words.Split(" ") : [words];
+
+        if (!talkactionWords.Any())
+            return false;
+
+        var talkAction = _talkActions.GetTalkAction(talkactionWords[0]);
+
+        if (talkAction == null)
+            return false;
+
+        var parameter = "";
+
+        if (talkactionWords.Count() > 1)
+            parameter = talkactionWords[1];
+
+        return talkAction.ExecuteSay(player, talkactionWords[0], parameter, type);
+    }
+
+    #endregion
 
     #region Private Methods
 

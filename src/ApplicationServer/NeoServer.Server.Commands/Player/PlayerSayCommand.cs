@@ -16,9 +16,9 @@ public class PlayerSayCommand : ICommand
 {
     private readonly IChatChannelStore _chatChannelStore;
     private readonly IGameServer _game;
-    private readonly ILuaManager _luaManager;
+    private readonly ILuaGameManager _luaManager;
 
-    public PlayerSayCommand(IGameServer game, IChatChannelStore chatChannelStore, ILuaManager luaManager)
+    public PlayerSayCommand(IGameServer game, IChatChannelStore chatChannelStore, ILuaGameManager luaManager)
     {
         _game = game;
         _chatChannelStore = chatChannelStore;
@@ -33,19 +33,8 @@ public class PlayerSayCommand : ICommand
 
         var message = playerSayPacket.Message?.Trim();
 
-        //estava chamando aqui lua manager
-        var messageData = message.Split(" ");
-
-        var talkAction = _luaManager.GetTalkAction(messageData[0]);
-        var parameter = "";
-
-        if (messageData.Count() > 1)
-            parameter = messageData[1];
-
-        if (talkAction != null)
-        {
-            talkAction.ExecuteSay(player, messageData[0], parameter, playerSayPacket.TalkType);
-        }
+        if (_luaManager.PlayerSaySpell(player, playerSayPacket.TalkType, message))
+            return;
 
         if (player.CastSpell(message)) return;
 

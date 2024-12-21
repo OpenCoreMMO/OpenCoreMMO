@@ -45,7 +45,7 @@ public class ConfigManager : IConfigManager
         var L = Lua.NewState();
         if (L.pointer == 0)
         {
-            throw new System.IO.IOException("Failed to allocate memory");
+            throw new IOException("Failed to allocate memory");
         }
 
         Lua.OpenLibs(L);
@@ -57,9 +57,9 @@ public class ConfigManager : IConfigManager
             return false;
         }
 
-//#if !DEBUG_LOG
-//            g_logger().setLevel(getGlobalString(L, "logLevel", "info"));
-//#endif
+        //#if !DEBUG_LOG
+        //            g_logger().setLevel(getGlobalString(L, "logLevel", "info"));
+        //#endif
 
         // Parse config
         // Info that must be loaded one time (unless we reset the modules involved)

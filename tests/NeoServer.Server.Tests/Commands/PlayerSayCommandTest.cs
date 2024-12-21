@@ -1,4 +1,5 @@
 ﻿using Moq;
+using NeoServer.Application.Common.Contracts.Scripts;
 using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
@@ -19,6 +20,7 @@ public class PlayerSayCommandTest
         var player = new Mock<IPlayer>();
         var connection = new Mock<IConnection>();
         var network = new Mock<IReadOnlyNetworkMessage>();
+        var luaGameManager = new Mock<ILuaGameManager>();
 
         var playerSayPacket = new Mock<PlayerSayPacket>(network.Object);
         playerSayPacket.SetupGet(x => x.TalkType).Returns(SpeechType.Private);
@@ -33,7 +35,7 @@ public class PlayerSayCommandTest
         var game = new Mock<IGameServer>();
         game.Setup(x => x.CreatureManager.TryGetPlayer("receiver", out receiver)).Returns(true);
 
-        var sut = new PlayerSayCommand(game.Object, chatChannelStore);
+        var sut = new PlayerSayCommand(game.Object, chatChannelStore, luaGameManager.Object);
 
         //act
         sut.Execute(player.Object, connection.Object, playerSayPacket.Object);
