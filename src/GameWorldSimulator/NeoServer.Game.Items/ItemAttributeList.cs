@@ -191,7 +191,16 @@ public sealed class ItemAttributeList : IItemAttributeList
 
         if (!_defaultAttributes.TryGetValue(attribute, out var value)) return default;
         if (value.Item1 is not Array) return new[] { value.Item1 };
-        return value.Item1;
+        
+        var pool = ArrayPool<dynamic>.Shared;
+        dynamic[] newArray = pool.Rent(value.Item1.Length);
+
+        for (var i = 0; i < value.Item1.Length; i++) newArray[i] = value.Item1[i];
+
+        pool.Return(newArray);
+
+        int count = value.Item1.Length;
+        return newArray[..count];
     }
 
     public T[] GetAttributeArray<T>(ItemAttribute attribute)

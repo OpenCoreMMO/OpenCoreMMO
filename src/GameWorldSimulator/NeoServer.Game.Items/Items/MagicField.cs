@@ -38,11 +38,8 @@ public class MagicField : BaseItem, IMagicField
             var values = attributes.GetAttributeArray(ItemAttribute.Damage);
 
             if ((values?.Length ?? 0) < 2) return new MinMax(0, 0);
-
-            int.TryParse((string)values[0], out var value1);
-            int.TryParse((string)values[1], out var value2);
-
-            return new MinMax(Math.Min(value1, value2), Math.Max(value1, value2));
+            
+            return new MinMax(Math.Min((ushort)values[0], (ushort)values[1]), Math.Max((ushort)values[0], (ushort)values[1]));
         }
     }
 
