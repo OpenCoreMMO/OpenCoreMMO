@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Items;
+using NeoServer.Loaders.Extensions;
 using NeoServer.Loaders.OTB.Parsers;
 
 namespace NeoServer.Loaders.Items.Parsers
@@ -62,7 +61,7 @@ namespace NeoServer.Loaders.Items.Parsers
                 var itemAttribute = ItemAttributeTranslation.Translate(attribute.Key, out _);
                 itemType.SetOnUse();
 
-                var value = AttributeValueParser.Parse(attribute.Value);
+                var value = JsonTextExtensions.ParseFromJson(attribute.Value);
 
                 if (itemAttribute == ItemAttribute.None)
                     itemType.OnUse.SetCustomAttribute(attribute.Key, value);
@@ -79,11 +78,11 @@ namespace NeoServer.Loaders.Items.Parsers
                 {
                     var itemAttribute = ItemAttributeTranslation.Translate(attribute.Key, out _);
 
-                    var value = AttributeValueParser.Parse(attribute.Value);
+                    var value = JsonTextExtensions.ParseFromJson(attribute.Value);
                     
                     if (attribute.Attributes == null || !attribute.Attributes.Any())
                     {
-                        if (IsJsonArray(attribute.Value))
+                        if (JsonTextExtensions.IsJsonArray(attribute.Value))
                         {
                             var arrayValues = value;
                         
@@ -111,12 +110,6 @@ namespace NeoServer.Loaders.Items.Parsers
                             attributes.SetAttribute(itemAttribute, value, innerAttributes);
                     }
                 }
-        }
-
-        private static bool IsJsonArray(dynamic value)
-        {
-            if (value is JsonElement) return value.ValueKind == JsonValueKind.Array;
-            return false;
         }
     }
 }
