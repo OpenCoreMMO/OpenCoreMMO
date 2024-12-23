@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace NeoServer.Loaders.TileRule;
 
 public class TileJsonData
 {
-    [JsonProperty("tiles")] public ushort[][] Locations { get; set; }
+    [JsonPropertyName("tiles")] public ushort[][] Locations { get; set; }
 
     public int MinLevel { get; set; }
     public int MaxLevel { get; set; }
