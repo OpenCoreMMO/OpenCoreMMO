@@ -18,7 +18,7 @@ public class ClientProtocolVersion
     {
         if (version == _serverConfiguration.Version) return true;
 
-        _logger.Warning($"Client protocol version {version} is not supported");
+        _logger.Warning("Client protocol version {Version} is not supported", version);
         return false;
     }
 }

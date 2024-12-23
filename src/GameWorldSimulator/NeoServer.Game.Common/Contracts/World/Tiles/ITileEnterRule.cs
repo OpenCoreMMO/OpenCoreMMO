@@ -6,4 +6,5 @@ public interface ITileEnterRule
 {
     bool ShouldIgnore(ITile tile, ICreature creature);
     bool CanEnter(ITile tile, ICreature creature);
+    bool CanEnter(ITile tile, Location.Structs.Location location);
 }

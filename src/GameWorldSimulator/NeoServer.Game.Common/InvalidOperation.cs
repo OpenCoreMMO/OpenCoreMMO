@@ -34,5 +34,7 @@ public enum InvalidOperation
     CannotUseWeapon,
     AggressorIsNotHostile,
     CannotMove,
-    AttackTargetIsInvisible
+    AttackTargetIsInvisible,
+    InvalidPlayer,
+    PlayerLocationInvalid
 }

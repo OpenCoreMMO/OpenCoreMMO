@@ -24,14 +24,13 @@ public class AccountLoginHandler : PacketHandler
     public override async void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
         var account = new AccountLoginPacket(message);
-
+        connection.SetXtea(account.Xtea);
+        
         if (!_clientProtocolVersion.IsSupported(account.ProtocolVersion))
         {
-            connection.Close();
+            connection.Disconnect($"Client protocol version {account.ProtocolVersion} is not supported.");
             return;
         }
-
-        connection.SetXtea(account.Xtea);
 
         if (account == null)
         {
