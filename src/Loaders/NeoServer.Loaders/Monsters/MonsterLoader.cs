@@ -7,7 +7,7 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Serilog;
 
 namespace NeoServer.Loaders.Monsters;
@@ -44,7 +44,7 @@ public class MonsterLoader
     {
         var basePath = $"{_serverConfiguration.Data}/monsters";
         var jsonString = File.ReadAllText(Path.Combine(basePath, "monsters.json"));
-        var monstersPath = JsonConvert.DeserializeObject<List<IDictionary<string, string>>>(jsonString);
+        var monstersPath = JsonSerializer.Deserialize<List<IDictionary<string, string>>>(jsonString);
 
         return monstersPath.AsParallel().Select(x => (x["name"], ConvertMonster(basePath, x)));
     }
@@ -53,15 +53,11 @@ public class MonsterLoader
     {
         var json = File.ReadAllText(Path.Combine(basePath, monsterFile["file"]));
 
-        var monster = JsonConvert.DeserializeObject<MonsterData>(json, new JsonSerializerSettings
+        var monster = JsonSerializer.Deserialize<MonsterData>(json, new JsonSerializerOptions()
         {
-            Error = (_, ev) =>
-            {
-                ev.ErrorContext.Handled = true;
-                Console.WriteLine(ev.ErrorContext.Error);
-            }
+            PropertyNameCaseInsensitive = true,
         });
-
+            
         return MonsterConverter.Convert(monster, _gameConfiguration, _monsterManager, _logger, _itemTypeStore);
     }
 }
