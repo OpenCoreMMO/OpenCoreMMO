@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Text.Json;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Creatures.Vocation;
+using NeoServer.Loaders.Converts;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
 using NeoServer.Server.Helpers.JsonConverters;
-using Newtonsoft.Json;
 using Serilog;
 
 namespace NeoServer.Loaders.Vocations;
@@ -40,7 +37,9 @@ public class VocationLoader
         {
             _vocationStore.Clear();
             var vocations = GetVocations();
-            foreach (var vocation in vocations) _vocationStore.Add(vocation.VocationType, vocation);
+
+            foreach (var vocation in vocations)
+                _vocationStore.Add(vocation.VocationType, vocation);
 
             return new object[] { vocations.Count };
         });
@@ -56,7 +55,7 @@ public class VocationLoader
         });
     }
 
-    private void AddOrUpdateVocation(List<Vocation> vocations)
+    private void AddOrUpdateVocation(List<VocationData> vocations)
     {
         foreach (var vocation in vocations)
         {
@@ -118,54 +117,20 @@ public class VocationLoader
         foreach (var (key, value) in vocation.Skills) existingVocation.Skills.AddOrUpdate(key, value);
     }
 
-    private List<Vocation> GetVocations()
+    private List<VocationData> GetVocations()
     {
         var basePath = $"{_serverConfiguration.Data}";
         var jsonString = File.ReadAllText(Path.Combine(basePath, "vocations.json"));
-        var vocations = JsonConvert.DeserializeObject<List<Vocation>>(jsonString, new JsonSerializerSettings
+        var vocations = JsonSerializer.Deserialize<List<VocationData>>(jsonString, new JsonSerializerOptions
         {
+            PropertyNameCaseInsensitive = true,
             Converters =
             {
+                new SkillConverter(),
                 new AbstractConverter<VocationFormula, IVocationFormula>(),
-                new SkillConverter()
             }
         });
+
         return vocations;
-    }
-
-    private class SkillConverter : JsonConverter<Dictionary<SkillType, float>>
-    {
-        public override Dictionary<SkillType, float> ReadJson(JsonReader reader, Type objectType,
-            [AllowNull] Dictionary<SkillType, float> existingValue, bool hasExistingValue,
-            JsonSerializer serializer)
-        {
-            return serializer.Deserialize<List<Dictionary<string, string>>>(reader)?.ToDictionary(
-                x => ParseSkillName(x["name"]),
-                x => float.Parse(x["multiplier"], CultureInfo.InvariantCulture.NumberFormat));
-        }
-
-        private static SkillType ParseSkillName(string skillName)
-        {
-            return skillName switch
-            {
-                "fist" => SkillType.Fist,
-                "axe" => SkillType.Axe,
-                "sword" => SkillType.Sword,
-                "club" => SkillType.Club,
-                "shielding" => SkillType.Shielding,
-                "fishing" => SkillType.Fishing,
-                "distance" => SkillType.Distance,
-                "magic" => SkillType.Magic,
-                "level" => SkillType.Level,
-                "speed" => SkillType.Speed,
-                _ => throw new ArgumentOutOfRangeException(nameof(skillName), skillName, null)
-            };
-        }
-
-        public override void WriteJson(JsonWriter writer, [AllowNull] Dictionary<SkillType, float> value,
-            JsonSerializer serializer)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

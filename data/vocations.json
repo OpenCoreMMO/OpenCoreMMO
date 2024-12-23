@@ -25,27 +25,27 @@
       "skills": [
          {
             "name": "fist",
-            "multiplier": 1.5
+            "multiplier": "1.5"
          },
          {
             "name": "club",
-            "multiplier": 2.0
+            "multiplier": "2.0"
          },
          {
             "name": "sword",
-            "multiplier": 2.0
+            "multiplier": "2.0"
          },
          {
             "name": "axe",
-            "multiplier": 2.0
+            "multiplier": "2.0"
          },
          {
             "name": "distance",
-            "multiplier": 2.0
+            "multiplier": "2.0"
          },
          {
             "name": "shielding",
-            "multiplier": 1.5
+            "multiplier": "1.5"
          },
          {
             "name": "fishing",
@@ -83,27 +83,27 @@
       "skills": [
          {
             "name": "fist",
-            "multiplier": 1.5
+            "multiplier": "1.5"
          },
          {
             "name": "club",
-            "multiplier": 2.0
+            "multiplier": "2.0"
          },
          {
             "name": "sword",
-            "multiplier": 2.0
+            "multiplier": "2.0"
          },
          {
             "name": "axe",
-            "multiplier": 2.0
+            "multiplier": "2.0"
          },
          {
             "name": "distance",
-            "multiplier": 2.0
+            "multiplier": "2.0"
          },
          {
             "name": "shielding",
-            "multiplier": 1.5
+            "multiplier": "1.5"
          },
          {
             "name": "fishing",
@@ -142,7 +142,7 @@
       "skills": [
          {
              "name": "fist",
-            "multiplier": 1.5
+            "multiplier": "1.5"
          },
          {
              "name": "club",
@@ -162,7 +162,7 @@
          },
          {
             "name": "shielding",
-            "multiplier": 1.5
+            "multiplier": "1.5"
          },
          {
             "name": "fishing",
@@ -320,27 +320,27 @@
       "skills": [
          {
            "name": "fist",
-            "multiplier": 1.5
+            "multiplier": "1.5"
          },
          {
            "name": "club",
-            "multiplier": 2.0
+            "multiplier": "2.0"
          },
          {
             "name": "sword",
-            "multiplier": 2.0
+            "multiplier": "2.0"
          },
          {
             "name": "axe",
-            "multiplier": 2.0
+            "multiplier": "2.0"
          },
          {
             "name": "distance",
-            "multiplier": 2.0
+            "multiplier": "2.0"
          },
          {
             "name": "shielding",
-            "multiplier": 1.5
+            "multiplier": "1.5"
          },
          {
             "name": "fishing",
@@ -379,7 +379,7 @@
       "skills": [
          {
             "name": "fist",
-            "multiplier": 1.5
+            "multiplier": "1.5"
          },
          {
             "name": "club",
@@ -399,7 +399,7 @@
          },
          {
             "name": "shielding",
-            "multiplier": 1.5
+            "multiplier": "1.5"
          },
          {
             "name": "fishing",

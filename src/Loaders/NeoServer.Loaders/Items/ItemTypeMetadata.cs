@@ -8,14 +8,14 @@ namespace NeoServer.Loaders.Items
     [Serializable]
     public struct ItemTypeMetadata
     {
-        [JsonConverter(typeof(UshortConverter))]
+        [JsonConverter(typeof(UshortNullableConverter))]
         public ushort? Id { get; set; }
         public string Name { get; set; }
         
-        [JsonConverter(typeof(UshortConverter))]
+        [JsonConverter(typeof(UshortNullableConverter))]
         public ushort? Fromid { get; set; }
         
-        [JsonConverter(typeof(UshortConverter))]
+        [JsonConverter(typeof(UshortNullableConverter))]
         public ushort? Toid { get; set; }
         public IEnumerable<Attribute> Attributes { get; set; }
 
