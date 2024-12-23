@@ -11,6 +11,7 @@ using NeoServer.Game.Systems.SafeTrade.Operations;
 using NeoServer.Game.Systems.Services;
 using NeoServer.Game.World.Services;
 using NeoServer.Server.Commands.Player.UseItem;
+using NeoServer.Server.Services;
 
 namespace NeoServer.Server.Standalone.IoC.Modules;
 
@@ -55,6 +56,7 @@ public static class ServiceInjection
 
         //application services
         builder.AddSingleton<HotkeyService>();
+        builder.AddSingleton<PlayerLocationResolver>();
 
         return builder;
     }

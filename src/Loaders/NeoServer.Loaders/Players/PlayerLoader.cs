@@ -18,9 +18,11 @@ using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Game.Common.Results;
 using NeoServer.Game.Creatures.Player;
 using NeoServer.Game.Creatures.Player.Inventory;
 using NeoServer.Loaders.Interfaces;
+using NeoServer.Server.Services;
 using Serilog;
 
 namespace NeoServer.Loaders.Players;
@@ -72,7 +74,9 @@ public class PlayerLoader : IPlayerLoader
 
         var playerLocation =
             new Location((ushort)playerEntity.PosX, (ushort)playerEntity.PosY, (byte)playerEntity.PosZ);
-
+        
+        var currentTile = GetCurrentTile(playerLocation);
+        
         var player = new Player(
             (uint)playerEntity.Id,
             playerEntity.Name,
@@ -110,7 +114,8 @@ public class PlayerLoader : IPlayerLoader
             GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0)
         };
 
-        SetCurrentTile(player);
+        player.SetCurrentTile(currentTile);
+
         AddRegenerationCondition(playerEntity, player);
 
         player.AddInventory(ConvertToInventory(player, playerEntity));
@@ -134,27 +139,10 @@ public class PlayerLoader : IPlayerLoader
         return vocation;
     }
 
-    protected void SetCurrentTile(IPlayer player)
+    protected IDynamicTile GetCurrentTile(Location location)
     {
-        var location = player.Location;
-
-        var playerTile = World.TryGetTile(ref location, out var tile) && tile is IDynamicTile dynamicTile
-            ? dynamicTile
-            : null;
-
-        if (playerTile is not null)
-        {
-            player.SetCurrentTile(playerTile);
-            return;
-        }
-
-        var townLocation = player.Town.Coordinate.Location;
-
-        playerTile = World.TryGetTile(ref townLocation, out var townTile) && townTile is IDynamicTile townDynamicTile
-            ? townDynamicTile
-            : null;
-
-        player.SetCurrentTile(playerTile);
+        World.TryGetTile(ref location, out var dynamicTile);
+        return dynamicTile as IDynamicTile;
     }
 
     private static void AddRegenerationCondition(PlayerEntity playerEntity, IPlayer player)

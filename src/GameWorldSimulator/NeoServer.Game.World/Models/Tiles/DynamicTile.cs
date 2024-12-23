@@ -526,7 +526,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         AddItem(ground);
     }
 
-    public Func<ICreature, bool> CanEnter { get; set; }
+    public Func<ICreature, bool> CanEnterFunction { get; set; }
 
     public bool CanRemoveItem(IItem thing)
     {
@@ -597,7 +597,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         TileOperationEvent.OnChanged(this, ground, operations);
     }
-
+    
     public Result<OperationResultList<ICreature>> AddCreature(ICreature creature)
     {
         if (creature is not IWalkableCreature walkableCreature)
@@ -606,7 +606,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         if (!walkableCreature.TileEnterRule.CanEnter(this, creature))
             return Result<OperationResultList<ICreature>>.NotPossible;
 
-        if (!CanEnter?.Invoke(creature) ?? false) return Result<OperationResultList<ICreature>>.NotPossible;
+        if (!CanEnterFunction?.Invoke(creature) ?? false) return Result<OperationResultList<ICreature>>.NotPossible;
 
         Creatures ??= new List<IWalkableCreature>();
         Creatures.Add(walkableCreature);

@@ -28,7 +28,7 @@ public static class TileFunctions
         var tile = map.GetTile(location);
         if (tile is not IDynamicTile dynamicTile) return;
 
-        dynamicTile.CanEnter = creature => (bool)(rule.Call(creature).FirstOrDefault() ?? false);
+        dynamicTile.CanEnterFunction = creature => (bool)(rule.Call(creature).FirstOrDefault() ?? false);
     }
 
     private static bool RemoveTopItem(Location location)
