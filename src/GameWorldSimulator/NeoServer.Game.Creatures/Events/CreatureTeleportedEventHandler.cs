@@ -29,8 +29,8 @@ public class CreatureTeleportedEventHandler : IGameEventHandler
 
         if (destination == Location.Zero) return;
         if (tile is null || !creature.TileEnterRule.CanEnter(tile, creature)) return;
-        
-        map.TryMoveCreature(creature, location);
+
+        map.TryMoveCreature(creature, tile.Location);
     }
 
     private IDynamicTile FindNeighbourTile(IWalkableCreature creature, Location location)

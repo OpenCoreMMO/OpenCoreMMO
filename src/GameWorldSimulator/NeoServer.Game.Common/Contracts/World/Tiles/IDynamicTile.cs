@@ -23,7 +23,7 @@ public interface IDynamicTile : ITile, IHasItem
     bool HasBlockPathFinding { get; }
     bool HasHole { get; }
     List<IPlayer> Players { get; }
-    Func<ICreature, bool> CanEnter { get; set; }
+    Func<ICreature, bool> CanEnterFunction { get; set; }
     IItem[] AllItems { get; }
     bool HasTeleport(out ITeleport teleport);
 

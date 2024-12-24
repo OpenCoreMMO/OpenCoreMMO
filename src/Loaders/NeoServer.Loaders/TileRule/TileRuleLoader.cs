@@ -62,7 +62,7 @@ public class TileRuleLoader : IStartupLoader
 
             if (_map[tileLocation] is not IDynamicTile dynamicTile) continue;
 
-            dynamicTile.CanEnter = creature => CanEnter(creature, tileRule);
+            dynamicTile.CanEnterFunction = creature => CanEnter(creature, tileRule);
         }
 
         return tilesData.Count;

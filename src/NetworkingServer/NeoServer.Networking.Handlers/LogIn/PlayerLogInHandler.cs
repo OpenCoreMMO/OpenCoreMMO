@@ -75,7 +75,11 @@ public class PlayerLogInHandler : PacketHandler
             return;
         }
 
-        _game.Dispatcher.AddEvent(new Event(() => _playerLogInCommand.Execute(playerRecord, connection)));
+        _game.Dispatcher.AddEvent(new Event(() =>
+        {
+            var result = _playerLogInCommand.Execute(playerRecord, connection);
+            if(result.Failed) Disconnect(connection, TextMessageOutgoingParser.Parse(result.Error));
+        }));
     }
 
     private Result ValidateOnlineStatus(IConnection connection, PlayerEntity playerOnline,
