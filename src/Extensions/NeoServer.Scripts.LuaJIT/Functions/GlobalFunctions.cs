@@ -1,13 +1,10 @@
 ﻿using LuaNET;
-using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
 public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
 {
-    public GlobalFunctions(
-        ILuaEnvironment luaEnvironment, 
-        ILogger logger) : base(nameof(GlobalFunctions))
+    public GlobalFunctions() : base(nameof(GlobalFunctions))
     {
     }
 

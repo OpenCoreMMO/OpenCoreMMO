@@ -1,9 +1,9 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Networking.Packets.Outgoing;
+using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Services;
-using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -11,10 +11,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 {
     private static IGameCreatureManager _gameCreatureManager;
 
-    public PlayerFunctions(
-        ILogger logger,
-        ILuaEnvironment luaEnvironment, 
-        IGameCreatureManager gameCreatureManager) : base(nameof(PlayerFunctions))
+    public PlayerFunctions(IGameCreatureManager gameCreatureManager) : base(nameof(PlayerFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
     }
@@ -100,8 +97,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
     private static int LuaPlayerSendTextMessage(LuaState L)
     {
-        // player:sendTextMessage(type, text[, position, primaryValue = 0, primaryColor = TEXTCOLOR_NONE[, secondaryValue = 0, secondaryColor = TEXTCOLOR_NONE]])
-        // player:sendTextMessage(type, text, channelId)
+        // player:sendTextMessage(type, text)
 
         var player = GetUserdata<IPlayer>(L, 1);
         if (player == null)
@@ -114,35 +110,6 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         var messageType = GetNumber<MessageClassesType>(L, 2);
         var messageText = GetString(L, 3);
-
-        //its not used
-        //if (parameters == 4)
-        //{
-        //    var channelId = GetNumber<ushort>(L, 4);
-
-        //    const auto &channel = g_chat().getChannel(player, channelId);
-        //    if (!channel || !channel->hasUser(player))
-        //    {
-        //        pushBoolean(L, false);
-        //        return 1;
-        //    }
-        //    message.channelId = channelId;
-        //}
-        //else
-        //{
-        //    if (parameters >= 6)
-        //    {
-        //        message.position = getPosition(L, 4);
-        //        message.primary.value = getNumber<int32_t>(L, 5);
-        //        message.primary.color = getNumber<TextColor_t>(L, 6);
-        //    }
-
-        //    if (parameters >= 8)
-        //    {
-        //        message.secondary.value = getNumber<int32_t>(L, 7);
-        //        message.secondary.color = getNumber<TextColor_t>(L, 8);
-        //    }
-        //}
 
         NotificationSenderService.Send(player, messageText, (TextMessageOutgoingType)messageType);
         PushBoolean(L, true);

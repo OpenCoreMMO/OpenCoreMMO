@@ -1,5 +1,5 @@
 ﻿using LuaNET;
-using Serilog;
+using NeoServer.Scripts.LuaJIT.Enums;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -7,10 +7,7 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
 {
     private static IActions _actions;
 
-    public ActionFunctions(
-        ILuaEnvironment luaEnvironment,
-        ILogger logger,
-        IActions actions) : base(nameof(ActionFunctions))
+    public ActionFunctions(IActions actions) : base(nameof(ActionFunctions))
     {
         _actions = actions;
     }

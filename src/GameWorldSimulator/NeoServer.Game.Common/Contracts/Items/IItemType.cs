@@ -7,7 +7,7 @@ namespace NeoServer.Game.Common.Contracts.Items;
 
 public interface IItemType
 {
-    ushort TypeId { get; }
+    ushort ServerId { get; }
 
     string Name { get; }
     string FullName { get; }
@@ -42,4 +42,11 @@ public interface IItemType
     void SetOnUse();
     bool HasAtLeastOneFlag(params ItemFlag[] flags);
     void SetGroupIfNone();
+
+    bool IsFluidContainer();
+    bool IsSplash();
+    bool IsStackable();
+    ushort Charges { get; }
+    ushort Count { get; }
+    bool HasSubType();
 }

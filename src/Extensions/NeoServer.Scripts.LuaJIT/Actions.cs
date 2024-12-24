@@ -2,6 +2,7 @@
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Scripts.LuaJIT.Enums;
 using Serilog;
 using System.Text;
 
@@ -174,6 +175,7 @@ public class Actions : Scripts, IActions
 
     public bool UseItem(IPlayer player, Location pos, byte index, IItem item, bool isHotkey)
     {
+        //todo: implement this?
         //if (item == null)
         //    throw new ArgumentNullException(nameof(item));
 
@@ -221,6 +223,7 @@ public class Actions : Scripts, IActions
 
     public bool UseItemEx(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, bool isHotkey, ICreature creature = null)
     {
+        //todo: implement this?
         //var it = Item.items[item.ID];
         //if (it.isRune() || it.type == ItemType.Potion)
         //{
@@ -315,6 +318,7 @@ public class Actions : Scripts, IActions
 
     public ReturnValueType CanUseFar(ICreature creature, Location toPos, bool checkLineOfSight, bool checkFloor)
     {
+        //todo: implement this?
         //if (toPos.x == 0xFFFF)
         //{
         //    return ReturnValueType.RETURNVALUE_NOERROR;
@@ -357,6 +361,7 @@ public class Actions : Scripts, IActions
 
     public ReturnValueType InternalUseItem(IPlayer player, Location pos, byte index, IItem item, bool isHotkey)
     {
+        //todo: implement this?
         //if (std.shared_ptr < Door > door = item.GetDoor())
         //{
         //    if (!door.CanUse(player))
@@ -540,6 +545,7 @@ public class Actions : Scripts, IActions
 
     public void ShowUseHotkeyMessage(IPlayer player, IItem item, uint count)
     {
+        //todo: implement this?
         StringBuilder ss = new StringBuilder();
 
         //const ItemType &it = Item.items[item.ID];

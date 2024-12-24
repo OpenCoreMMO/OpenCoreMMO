@@ -64,7 +64,6 @@ public class TutorLoader : PlayerLoader
 
         newPlayer.AddInventory(ConvertToInventory(newPlayer, playerEntity));
 
-        //SetCurrentTile(newPlayer);
         var currentTile = GetCurrentTile(newPlayer.Location);
         newPlayer.SetCurrentTile(currentTile);
 

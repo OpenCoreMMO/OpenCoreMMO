@@ -15,7 +15,7 @@ public class ItemType : IItemType
 {
     public ItemType()
     {
-        TypeId = 0;
+        ServerId = 0;
         Name = string.Empty;
         Flags = new HashSet<ItemFlag>();
         Attributes = new ItemAttributeList();
@@ -29,7 +29,7 @@ public class ItemType : IItemType
     /// <summary>
     ///     Server Id
     /// </summary>
-    public ushort TypeId { get; private set; }
+    public ushort ServerId { get; private set; }
 
     /// <summary>
     ///     ItemType's name
@@ -98,6 +98,24 @@ public class ItemType : IItemType
         return false;
     }
 
+    public bool IsFluidContainer()
+        => Flags.Contains(ItemFlag.LiquidContainer);
+
+    public bool IsSplash()
+        => Group == ItemGroup.Splash;
+
+    public bool IsStackable()
+        => Group == ItemGroup.Splash;
+
+    public ushort Charges 
+        => Attributes.GetAttribute<ushort>(ItemAttribute.Charges);
+
+    public ushort Count
+        => Attributes.GetAttribute<ushort>(ItemAttribute.Count);
+
+    public bool HasSubType()
+        => IsFluidContainer() || IsSplash() || IsStackable() || Charges != 0;
+
     public AmmoType AmmoType => Attributes?.GetAttribute(ItemAttribute.AmmoType) switch
     {
         "bolt" => AmmoType.Bolt,
@@ -150,7 +168,7 @@ public class ItemType : IItemType
     {
         ThrowIfLocked();
 
-        TypeId = typeId;
+        ServerId = typeId;
 
         return this;
     }

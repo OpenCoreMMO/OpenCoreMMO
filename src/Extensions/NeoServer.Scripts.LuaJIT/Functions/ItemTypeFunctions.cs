@@ -2,15 +2,13 @@
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Item;
-using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
 public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
 {
     private static IItemTypeStore _itemTypeStore;
-    public ItemTypeFunctions(
-        ILuaEnvironment luaEnvironment, IItemTypeStore itemTypeStore, ILogger logger) : base(nameof(ItemTypeFunctions))
+    public ItemTypeFunctions(IItemTypeStore itemTypeStore) : base(nameof(ItemTypeFunctions))
     {
         _itemTypeStore = itemTypeStore;
     }
@@ -38,7 +36,7 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
         else 
         {
             var name = GetString(L, 2);
-            itemType = _itemTypeStore.All.FirstOrDefault(c => c.Name.ToLower().Equals(name.ToLower()));
+            itemType = _itemTypeStore.GetByName(name);
         }
 
         PushUserdata(L, itemType);
@@ -52,7 +50,7 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
         // itemType:getType()
         var itemType = GetUserdata<IItemType>(L, 1);
         if (itemType != null)
-            Lua.PushNumber(L, itemType.TypeId);
+            Lua.PushNumber(L, itemType.ServerId);
         else
             Lua.PushNil(L);
 
@@ -64,7 +62,7 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
         // itemType:getId()
         var itemType = GetUserdata<IItemType>(L, 1);
         if (itemType != null)
-            Lua.PushNumber(L, itemType.TypeId);
+            Lua.PushNumber(L, itemType.ServerId);
         else
             Lua.PushNil(L);
 

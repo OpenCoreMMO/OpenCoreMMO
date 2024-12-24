@@ -237,7 +237,7 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
 
     public bool CloseState()
     {
-        if (LuaEnvironment.IsShuttingDown())
+        if (g_luaEnvironment().IsShuttingDown())
         {
             luaState.pointer = 0;
         }

@@ -73,7 +73,7 @@ internal static class AddToSlotRule
         if (itemType.BodyPosition == Slot.None) return new Result<uint>(InvalidOperation.NotEnoughRoom);
 
         var itemOnSlot = inventory[itemType.BodyPosition];
-        if (itemOnSlot is not null && itemType.TypeId != itemOnSlot.Metadata.TypeId)
+        if (itemOnSlot is not null && itemType.ServerId != itemOnSlot.Metadata.ServerId)
             return new Result<uint>(InvalidOperation.NotEnoughRoom);
 
         byte possibleAmountToAdd;

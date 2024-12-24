@@ -1,7 +1,7 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Server.Common.Contracts;
-using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -9,10 +9,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 {
     private static IGameCreatureManager _gameCreatureManager;
 
-    public CreatureFunctions(
-        ILuaEnvironment luaEnvironment, 
-        ILogger logger,
-        IGameCreatureManager gameCreatureManager) : base(nameof(CreatureFunctions))
+    public CreatureFunctions(IGameCreatureManager gameCreatureManager) : base(nameof(CreatureFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
     }
@@ -23,6 +20,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         RegisterMetaMethod(L, "Creature", "__eq", LuaUserdataCompare<ICreature>);
         RegisterMethod(L, "Creature", "getId", LuaGetId);
         RegisterMethod(L, "Creature", "getName", LuaGetName);
+        RegisterMethod(L, "Creature", "getPosition", LuaCreatureGetPosition);
     }
 
     private static int LuaCreatureCreate(LuaState L)
@@ -71,15 +69,10 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
     {
         // creature:getId()
         var creature = GetUserdata<ICreature>(L, 1);
-
         if (creature != null)
-        {
             Lua.PushNumber(L, creature.CreatureId);
-        }
         else
-        {
             Lua.PushNil(L);
-        }
         return 1;
     }
 
@@ -96,6 +89,17 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         }
 
         PushString(L, creature.Name);
+        return 1;
+    }
+
+    private static int LuaCreatureGetPosition(LuaState L)
+    {
+        // creature:getPosition()
+        var creature = GetUserdata<ICreature>(L, 1);
+        if (creature != null)
+            PushPosition(L, creature.Location);
+        else
+            Lua.PushNil(L);
         return 1;
     }
 }

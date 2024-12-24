@@ -90,8 +90,4 @@ public class Script
 
     private int ScriptId = 0;
     protected LuaScriptInterface _scriptInterface = null;
-
-    // You may need to replace Logger.Error with the appropriate logging mechanism in your C# code.
-    // Additionally, consider using properties instead of public fields for encapsulation.
-    // The 'virtual' keyword is used to allow overriding these methods in derived classes.
 }

@@ -1,5 +1,6 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Location;
+using NeoServer.Scripts.LuaJIT.Enums;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
@@ -15,10 +16,11 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
     {
         RegisterEnumCustom<Direction>(L);
         //RegisterEnum<DirectionType>(L);
-        RegisterEnum<ReturnValueType>(L);
-        RegisterEnum<TileFlagsType>(L);
+        RegisterEnum<MagicEffectClassesType>(L);
         RegisterEnum<MessageClassesType>(L);
         RegisterEnum<ReloadType>(L);
+        RegisterEnum<ReturnValueType>(L);
+        RegisterEnum<TileFlagsType>(L);
     }
 
     private static void RegisterEnum(LuaState L, string name, Enum value)

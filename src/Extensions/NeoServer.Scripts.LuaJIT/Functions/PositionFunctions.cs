@@ -1,14 +1,22 @@
 ﻿using LuaNET;
+using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Server.Services;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
 public class PositionFunctions : LuaScriptInterface, IPositionFunctions
 {
-    public PositionFunctions(
-        ILuaEnvironment luaEnvironment, ILogger logger) : base(nameof(PositionFunctions))
+    private static ILogger _logger;
+    private static IConfigManager _configManager;
+
+    public PositionFunctions(ILogger logger, IConfigManager configManager) : base(nameof(PositionFunctions))
     {
+        _logger = logger;
+        _configManager = configManager;
     }
 
     public void Init(LuaState L)
@@ -17,6 +25,8 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
         RegisterMetaMethod(L, "Position", "__add", LuaPositionAdd);
         RegisterMetaMethod(L, "Position", "__sub", LuaPositionSub);
         RegisterMetaMethod(L, "Position", "__eq", LuaUserdataCompareStruct<Location>);
+        RegisterMethod(L, "Position", "sendMagicEffect", LuaPositionSendMagicEffect);
+        RegisterMethod(L, "Position", "toString", LuaPositionToString);
     }
 
     public static int LuaCreatePosition(LuaState L)
@@ -86,6 +96,47 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
 
         PushPosition(L, position, stackpos);
 
+        return 1;
+    }
+
+    public static int LuaPositionSendMagicEffect(LuaState L)
+    {
+        // position:sendMagicEffect(magicEffect[, player = nullptr])
+        var spectators = new List<ICreature>();
+        if (Lua.GetTop(L) >= 3)
+        {
+            var player = GetUserdata<IPlayer>(L, 3);
+            if (player == null)
+            {
+                ReportError(nameof(LuaPositionSendMagicEffect), GetErrorDesc(ErrorCodeType.LUA_ERROR_PLAYER_NOT_FOUND));
+                return 1;
+            }
+
+            spectators.Add(player);
+        }
+
+        var magicEffect = GetNumber<MagicEffectClassesType>(L, 2);
+        if (_configManager.GetBoolean(BooleanConfigType.WARN_UNSAFE_SCRIPTS)/* &&*/
+            /*!g_game().isMagicEffectRegistered(magicEffect)*/)
+        {
+            _logger.Warning("[PositionFunctions::luaPositionSendMagicEffect] An unregistered magic effect type with id '{}' was blocked to prevent client crash.", magicEffect);
+            Lua.PushBoolean(L, false);
+            return 1;
+        }
+
+        var position = GetPosition(L, 1);
+
+        EffectService.Send(position, (EffectT)magicEffect, spectators);
+
+        Lua.PushBoolean(L, true);
+        return 1;
+    }
+
+    public static int LuaPositionToString(LuaState L)
+    {
+        // position:toString()
+        var position = GetPosition(L, 1);
+        PushString(L, position.ToString());
         return 1;
     }
 }

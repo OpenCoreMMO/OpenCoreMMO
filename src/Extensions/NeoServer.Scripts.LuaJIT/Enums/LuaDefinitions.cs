@@ -1,6 +1,6 @@
 ﻿using NeoServer.Game.Common.Location.Structs;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Enums;
 
 // Enums
 public enum LuaDataType : byte
@@ -244,10 +244,10 @@ public struct LuaTimerEventDesc
 
     public LuaTimerEventDesc(int scriptId, string scriptName, int function, List<int> parameters, string eventId)
     {
-        this.ScriptId = scriptId;
-        this.ScriptName = scriptName;
-        this.Function = function;
-        this.Parameters = parameters;
-        this.EventId = eventId;
+        ScriptId = scriptId;
+        ScriptName = scriptName;
+        Function = function;
+        Parameters = parameters;
+        EventId = eventId;
     }
 }

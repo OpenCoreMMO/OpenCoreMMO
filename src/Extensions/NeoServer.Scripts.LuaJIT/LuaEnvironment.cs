@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Scripts.LuaJIT.Enums;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
@@ -10,18 +11,6 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
     private static LuaEnvironment _instance = null;
 
     private static bool shuttingDown = false;
-
-    //private static readonly Dictionary<LuaScriptInterface, List<uint>> combatIdMap = new Dictionary<LuaScriptInterface, List<uint>>();
-    //private static readonly Dictionary<uint, Combat> combatMap = new Dictionary<uint, Combat>();
-    //private static uint lastCombatId = 0;
-
-    //private static readonly Dictionary<LuaScriptInterface, List<uint>> areaIdMap = new Dictionary<LuaScriptInterface, List<uint>>();
-    //private static readonly Dictionary<uint, AreaCombat> areaMap = new Dictionary<uint, AreaCombat>();
-    //private static uint lastAreaId = 0;
-
-    //private static uint lastWeaponId;
-    //private static Dictionary<uint, YourWeaponType> weaponMap = new Dictionary<uint, YourWeaponType>();
-    //private static Dictionary<LuaScriptInterface, List<uint>> weaponIdMap = new Dictionary<LuaScriptInterface, List<uint>>();
 
     public readonly Dictionary<uint, LuaTimerEventDesc> timerEvents = new Dictionary<uint, LuaTimerEventDesc>();
     public uint LastEventTimerId = 1;
@@ -155,109 +144,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
         return testInterface;
     }
 
-    //public Combat GetCombatObject(uint id)
-    //{
-    //    if (combatMap.TryGetValue(id, out var combat))
-    //    {
-    //        return combat;
-    //    }
-    //    return null;
-    //}
-
-    //public Combat CreateCombatObject(LuaScriptInterface @interface)
-    //{
-    //    var combat = new Combat();
-    //    combatMap[++lastCombatId] = combat;
-    //    if (!combatIdMap.ContainsKey(@interface))
-    //    {
-    //        combatIdMap[@interface] = new List<uint>();
-    //    }
-    //    combatIdMap[@interface].Add(lastCombatId);
-    //    return combat;
-    //}
-
-    //public void ClearCombatObjects(LuaScriptInterface @interface)
-    //{
-    //    if (combatIdMap.TryGetValue(@interface, out var combatIds))
-    //    {
-    //        foreach (var id in combatIds)
-    //        {
-    //            if (combatMap.TryGetValue(id, out var combat))
-    //            {
-    //                combatMap.Remove(id);
-    //            }
-    //        }
-    //        combatIds.Clear();
-    //    }
-    //}
-
-    //public AreaCombat GetAreaObject(uint id)
-    //{
-    //    if (areaMap.TryGetValue(id, out var areaCombat))
-    //    {
-    //        return areaCombat;
-    //    }
-    //    return null;
-    //}
-
-    //public uint CreateAreaObject(LuaScriptInterface @interface)
-    //{
-    //    areaMap[++lastAreaId] = new AreaCombat();
-    //    if (!areaIdMap.ContainsKey(@interface))
-    //    {
-    //        areaIdMap[@interface] = new List<uint>();
-    //    }
-    //    areaIdMap[@interface].Add(lastAreaId);
-    //    return lastAreaId;
-    //}
-
-    //public void ClearAreaObjects(LuaScriptInterface @interface)
-    //{
-    //    if (areaIdMap.TryGetValue(@interface, out var areaIds))
-    //    {
-    //        foreach (var id in areaIds)
-    //        {
-    //            if (areaMap.TryGetValue(id, out var areaCombat))
-    //            {
-    //                areaMap.Remove(id);
-    //            }
-    //        }
-    //        areaIds.Clear();
-    //    }
-    //}
-
-    //public static T CreateWeaponObject<T>(LuaScriptInterface interfaceInstance) where T : YourWeaponType, new()
-    //{
-    //    var weapon = new T(interfaceInstance);
-    //    var weaponId = ++lastWeaponId;
-    //    weaponMap[weaponId] = weapon;
-    //    if (!weaponIdMap.ContainsKey(interfaceInstance))
-    //    {
-    //        weaponIdMap[interfaceInstance] = new List<uint>();
-    //    }
-    //    weaponIdMap[interfaceInstance].Add(weaponId);
-    //    return weapon;
-    //}
-
-    //public static T GetWeaponObject<T>(uint id) where T : YourWeaponType
-    //{
-    //    if (weaponMap.TryGetValue(id, out var weapon))
-    //    {
-    //        return weapon;
-    //    }
-    //    return null;
-    //}
-
-    //public static void ClearWeaponObjects(LuaScriptInterface interfaceInstance)
-    //{
-    //    if (weaponIdMap.TryGetValue(interfaceInstance, out var weaponIds))
-    //    {
-    //        weaponIds.Clear();
-    //    }
-    //    weaponMap.Clear();
-    //}
-
-    public static bool IsShuttingDown()
+    public bool IsShuttingDown()
     {
         return shuttingDown;
     }
