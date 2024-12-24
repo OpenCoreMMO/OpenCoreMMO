@@ -35,10 +35,10 @@ public class GodLoader : PlayerLoader
         if (Guard.IsNull(playerEntity)) return null;
 
         var town = GetTown(playerEntity);
-        
+
         var playerLocation =
             new Location((ushort)playerEntity.PosX, (ushort)playerEntity.PosY, (byte)playerEntity.PosZ);
-        
+
         var currentTile = GetCurrentTile(playerLocation);
 
         var newPlayer = new God(
@@ -66,7 +66,7 @@ public class GodLoader : PlayerLoader
             Guild = GuildStore.Get((ushort)(playerEntity.GuildMember?.GuildId ?? 0)),
             GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0)
         };
-        
+
         newPlayer.SetCurrentTile(currentTile);
         newPlayer.AddInventory(ConvertToInventory(newPlayer, playerEntity));
         var god = CreatureFactory.CreatePlayer(newPlayer);

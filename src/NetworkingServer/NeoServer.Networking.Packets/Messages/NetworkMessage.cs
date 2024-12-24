@@ -84,7 +84,7 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
     {
         Span<byte> buffer = stackalloc byte[4];
         BitConverter.TryWriteBytes(buffer, value);
-        
+
         Buffer[position] = buffer[position++];
         Buffer[position] = buffer[position++];
         Buffer[position] = buffer[position++];

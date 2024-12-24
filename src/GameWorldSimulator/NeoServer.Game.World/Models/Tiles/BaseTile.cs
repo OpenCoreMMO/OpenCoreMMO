@@ -30,6 +30,7 @@ public abstract class BaseTile : ITile
     {
         return ((uint)flag & Flags) != 0;
     }
+
     public bool BlockMissile => HasFlag(TileFlags.BlockMissile);
 
     public Location Location { get; private set; }

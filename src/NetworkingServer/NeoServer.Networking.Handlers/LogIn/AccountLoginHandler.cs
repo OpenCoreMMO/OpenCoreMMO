@@ -25,7 +25,7 @@ public class AccountLoginHandler : PacketHandler
     {
         var account = new AccountLoginPacket(message);
         connection.SetXtea(account.Xtea);
-        
+
         if (!_clientProtocolVersion.IsSupported(account.ProtocolVersion))
         {
             connection.Disconnect($"Client protocol version {account.ProtocolVersion} is not supported.");

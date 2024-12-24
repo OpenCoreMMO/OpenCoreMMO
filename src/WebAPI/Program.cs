@@ -14,8 +14,8 @@ var environment = builder.Environment;
 // Configure appsettings
 builder.Configuration
     .SetBasePath(environment.ContentRootPath)
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
+    .AddJsonFile("appsettings.json", true, true)
+    .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", true)
     .AddEnvironmentVariables();
 
 // Add services to the container
@@ -101,4 +101,6 @@ app.MapControllers();
 
 app.Run();
 
-public partial class Program { }
+public partial class Program
+{
+}

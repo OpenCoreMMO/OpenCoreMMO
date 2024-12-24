@@ -25,6 +25,7 @@ public interface ITile : IThing
     bool TryGetStackPositionOfThing(IPlayer player, IThing thing, out byte stackPosition);
     byte GetCreatureStackPositionIndex(IPlayer observer);
     bool HasFlag(TileFlags flag);
+
     public bool CanEnter(ICreature creature)
     {
         if (creature is not IWalkableCreature walkableCreature) return false;
