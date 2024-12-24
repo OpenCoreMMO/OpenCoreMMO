@@ -13,31 +13,12 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
 
     public void Init(LuaState L)
     {
-        //InitDirectionEnums(L);
-        RegisterEnumEx<Direction>(L);
+        RegisterEnumCustom<Direction>(L);
         //RegisterEnum<DirectionType>(L);
         RegisterEnum<ReturnValueType>(L);
         RegisterEnum<TileFlagsType>(L);
         RegisterEnum<MessageClassesType>(L);
         RegisterEnum<ReloadType>(L);
-    }
-
-    public void InitDirectionEnums(LuaState L)
-    {
-        RegisterEnum(L, "DIRECTION_NORTH", Direction.North);
-        RegisterEnum(L, "DIRECTION_EAST", Direction.East);
-        RegisterEnum(L, "DIRECTION_SOUTH", Direction.South);
-        RegisterEnum(L, "DIRECTION_WEST", Direction.West);
-        RegisterEnum(L, "DIRECTION_SOUTHWEST", Direction.SouthWest);
-        RegisterEnum(L, "DIRECTION_SOUTHEAST", Direction.SouthEast);
-        RegisterEnum(L, "DIRECTION_NORTHWEST", Direction.NorthWest);
-        RegisterEnum(L, "DIRECTION_NORTHEAST", Direction.NorthEast);
-        RegisterEnum(L, "DIRECTION_NONE", Direction.None);
-    }
-
-    public void InitReturnValueEnums(LuaState L)
-    {
-        //RegisterEnum(L, "RETURNVALUE_PLAYERISPZLOCKED", InvalidOperation.PlayerIsProtectionZoneLocked);
     }
 
     private static void RegisterEnum(LuaState L, string name, Enum value)
@@ -52,7 +33,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
             RegisterGlobalVariable(L, item.ToString(), Convert.ToUInt32(item));
     }
 
-    private static void RegisterEnumEx<T>(LuaState L) where T : Enum
+    private static void RegisterEnumCustom<T>(LuaState L) where T : Enum
     {
         string prefix = typeof(T).Name.ToUpperInvariant() + "_"; 
         foreach (var item in Enum.GetValues(typeof(T)))

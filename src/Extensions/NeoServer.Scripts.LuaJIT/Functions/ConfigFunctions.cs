@@ -1,13 +1,18 @@
 ﻿using LuaNET;
+using NeoServer.Server.Configurations;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
 {
+    private ServerConfiguration _serverConfiguration;
+
     public ConfigFunctions(
+        ServerConfiguration serverConfiguration,
         ILuaEnvironment luaEnvironment, 
         ILogger logger) : base(nameof(ConfigFunctions))
     {
+        _serverConfiguration = serverConfiguration;
     }
 
     public void Init(LuaState L)
@@ -34,7 +39,7 @@ public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
         foreach (var item in Enum.GetValues<FloatingConfigType>())
             RegisterVariable(L, "configKeys", item.ToString(), item);
 
-        RegisterVariable(L, "configKeys", "BASE_DIRECTORY", AppContext.BaseDirectory);
+        RegisterVariable(L, "configKeys", "BASE_DIRECTORY", AppContext.BaseDirectory + _serverConfiguration.DataLuaJit);
     }
 
     private static int LuaConfigManagerGetString(LuaState L)

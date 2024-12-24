@@ -28,28 +28,20 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
     public static int LuaCreateItem(LuaState L)
     {
         // Item(uid)
-        var id = GetNumber<int>(L, 2);
+        var id = GetNumber<uint>(L, 2);
 
-        //const auto &item = GetScriptEnv().GetItemByUID(id);
-        //if (item)
-        //{
-        //    Lua::pushUserdata<Item>(L, item);
-        //    Lua::setItemMetatable(L, -1, item);
-        //}
-        //else
-        //{
-        //    lua_pushnil(L);
-        //}
-        //return 1;
-
-
-        // Item(uid)
-        IItem item = null;
-        PushUserdata(L, item);
-        SetMetatable(L, -1, "Item");
+        var item = GetScriptEnv().GetItemByUID(id);
+        if (item != null)
+        {
+            PushUserdata(L, item);
+            SetMetatable(L, -1, "Item");
+        }
+        else
+        {
+            Lua.PushNil(L);
+        }
 
         return 1;
-
     }
 
     public static int LuaGetItemId(LuaState L)

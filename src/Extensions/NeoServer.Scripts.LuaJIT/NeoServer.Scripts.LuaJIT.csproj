@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\..\..\data\LuaJit\**">
+      <Link>Data\LuaJit\%(RecursiveDir)%(FileName)</Link>
+    </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
     <PackageReference Include="JAJ.Packages.LuaNET" Version="1.0.0" />
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
@@ -15,52 +21,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj" />
     <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Events\NeoServer.Server.Events.csproj" />
+    <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="config.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\core.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\global.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\libs\functions\player.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\libs\functions\tile.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\libs\functions\position.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\libs\functions\item.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\libs\functions\load.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\libs\functions\revscriptsys.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\libs\libs.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\scripts\actions\items\ladder_up.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\scripts\actions\tools\rope.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\scripts\actions\tools\shovel.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\scripts\talkactions\god\reload.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\LuaJit\scripts\talkactions\player\test.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

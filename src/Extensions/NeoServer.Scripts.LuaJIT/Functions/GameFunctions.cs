@@ -1,6 +1,6 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Extensions;
+using NeoServer.Server.Configurations;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
@@ -9,14 +9,17 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 {
     private static IScripts _scripts;
     private static ILogger _logger;
+    private static ServerConfiguration _serverConfiguration;
 
     public GameFunctions(
+        ServerConfiguration serverConfiguration,
         ILuaEnvironment luaEnvironment, 
         ILogger logger, 
         IScripts scripts) : base(nameof(GameFunctions))
     {
         _scripts = scripts;
         _logger = logger;
+        _serverConfiguration = serverConfiguration;
     }
 
     public void Init(LuaState L)
@@ -53,11 +56,12 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         }
         try
         {
-            _logger.Information("Reloading Scripts");
-            var dir = AppContext.BaseDirectory;
+            var dir = AppContext.BaseDirectory + _serverConfiguration.DataLuaJit;
             _scripts.ClearAllScripts();
-            _scripts.LoadScripts($"{dir}/Data/LuaJit/scripts", false, true);
-            _logger.Information("Reloaded Scripts");
+            _scripts.LoadScripts($"{dir}/scripts", false, true);
+
+            Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
+
         }
         catch (Exception e)
         {

@@ -22,7 +22,8 @@ public record ServerConfiguration(
     string Extensions,
     int ServerLoginPort,
     int ServerGamePort,
-    SaveConfiguration Save)
+    SaveConfiguration Save,
+    string DataLuaJit)
 {
 }
 
