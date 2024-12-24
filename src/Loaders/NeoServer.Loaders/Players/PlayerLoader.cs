@@ -18,11 +18,9 @@ using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Common.Results;
 using NeoServer.Game.Creatures.Player;
 using NeoServer.Game.Creatures.Player.Inventory;
 using NeoServer.Loaders.Interfaces;
-using NeoServer.Server.Services;
 using Serilog;
 
 namespace NeoServer.Loaders.Players;
@@ -74,9 +72,9 @@ public class PlayerLoader : IPlayerLoader
 
         var playerLocation =
             new Location((ushort)playerEntity.PosX, (ushort)playerEntity.PosY, (byte)playerEntity.PosZ);
-        
+
         var currentTile = GetCurrentTile(playerLocation);
-        
+
         var player = new Player(
             (uint)playerEntity.Id,
             playerEntity.Name,

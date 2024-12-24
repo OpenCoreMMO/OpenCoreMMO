@@ -255,6 +255,7 @@ public class Player : CombatActor, IPlayer
         var skillLevel = hasSkill ? skill.Level : 1;
         return (ushort)Math.Max(0, skillLevel);
     }
+
     public ushort GetSkillLevel(SkillType skillType)
     {
         var hasSkill = Skills.TryGetValue(skillType, out var skill);
@@ -417,7 +418,7 @@ public class Player : CombatActor, IPlayer
     public override int DefendUsingShield(int attack)
     {
         if (!IsShieldDefenseEnabled) return attack;
-        
+
         var defense = Inventory.TotalDefense * Skills[SkillType.Shielding].Level *
             (DefenseFactor / 100d) - attack / 100d * ArmorRating * (Vocation.Formula?.Defense ?? 1f);
 

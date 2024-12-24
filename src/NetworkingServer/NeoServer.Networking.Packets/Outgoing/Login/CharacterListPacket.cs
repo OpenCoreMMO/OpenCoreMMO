@@ -9,6 +9,7 @@ public class CharacterListPacket : OutgoingPacket
     private readonly string _ipAddress;
     private readonly ushort _port;
     private readonly string _serverName;
+
     public CharacterListPacket(AccountEntity account, string serverName, string ipAddress, ushort port)
     {
         _accountEntity = account;

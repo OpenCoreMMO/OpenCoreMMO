@@ -84,13 +84,10 @@ public class PlayerLogInHandler : PacketHandler
                 Disconnect(connection, TextMessageOutgoingParser.Parse(result.Error));
                 return;
             }
-            
+
             if (packet.OtcV8Version > 0 || packet.OperatingSystem >= OperatingSystem.OtcLinux)
             {
-                if (packet.OtcV8Version > 0)
-                {
-                    connection.Send(new FeaturesPacket());
-                }
+                if (packet.OtcV8Version > 0) connection.Send(new FeaturesPacket());
                 connection.Send(new OpcodeMessagePacket());
             }
         }));
@@ -122,7 +119,7 @@ public class PlayerLogInHandler : PacketHandler
             Disconnect(connection, "Login challenge is not valid.");
             return false;
         }
-        
+
         if (string.IsNullOrWhiteSpace(packet.Account))
         {
             Disconnect(connection, "You must enter your account name.");

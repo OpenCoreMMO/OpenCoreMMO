@@ -12,7 +12,7 @@ public class AccountLoginPacket : IncomingPacket
         var packetPayload = message.GetUInt16();
         var tcpPayload = packetPayload + 2;
         message.SkipBytes(5);
-        OperatingSystem = (OperatingSystem) message.GetUInt16();
+        OperatingSystem = (OperatingSystem)message.GetUInt16();
         ProtocolVersion = message.GetUInt16();
 
         message.SkipBytes(12);

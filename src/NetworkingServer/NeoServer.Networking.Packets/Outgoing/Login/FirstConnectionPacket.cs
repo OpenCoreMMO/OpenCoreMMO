@@ -1,4 +1,5 @@
 ﻿using NeoServer.Server.Common.Contracts.Network;
+using NeoServer.Server.Security;
 
 namespace NeoServer.Networking.Packets.Outgoing.Login;
 
@@ -14,6 +15,6 @@ public class FirstConnectionPacket : OutgoingPacket
         message.AddByte(0x1F);
         message.AddUInt32((uint)TimeStamp);
         message.AddByte(RandomNumber);
-        message.WriteUint32(NeoServer.Server.Security.AdlerChecksum.Checksum(message.Buffer,4, message.Length - 4), 0);
+        message.WriteUint32(AdlerChecksum.Checksum(message.Buffer, 4, message.Length - 4), 0);
     }
 }

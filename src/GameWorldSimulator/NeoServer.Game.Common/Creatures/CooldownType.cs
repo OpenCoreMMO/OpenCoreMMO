@@ -25,5 +25,5 @@ public enum CooldownType
     Advertise,
     WalkAround,
     UseItem,
-    SupportSpell,
+    SupportSpell
 }
