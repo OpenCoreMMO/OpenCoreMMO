@@ -191,8 +191,6 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
         Length++;
         Buffer[_cursor++] = b;
     }
-    
-    public void SetBufferPosition(int position) => _cursor = position;
 
     private byte[] GetHeader(bool addChecksum = true)
     {

@@ -17,5 +17,4 @@ public interface INetworkMessage : IReadOnlyNetworkMessage
     void AddItem(IItem item);
     void AddLocation(Location location);
     void AddLength();
-    void SetBufferPosition(int position);
 }
