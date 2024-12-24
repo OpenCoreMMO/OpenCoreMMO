@@ -15,6 +15,8 @@ public interface IConnection
     long LastPingRequest { get; set; }
     long LastPingResponse { get; set; }
     string Ip { get; }
+    long TimeStamp { get; }
+    byte RandomNumber { get; }
 
     event EventHandler<IConnectionEventArgs> OnProcessEvent;
     event EventHandler<IConnectionEventArgs> OnCloseEvent;
@@ -23,7 +25,7 @@ public interface IConnection
     void BeginStreamRead();
     void Close(bool force = false);
     void Disconnect(string text = null);
-    void Send(IOutgoingPacket packet);
+    public void Send(IOutgoingPacket packet);
     void SendFirstConnection();
     void SetXtea(uint[] xtea);
     void SetAsAuthenticated();

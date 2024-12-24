@@ -43,7 +43,7 @@ public class ReadOnlyNetworkMessage : IReadOnlyNetworkMessage
         {
             case true:
                 if (Buffer.Length.IsLessThan(9)) return GameIncomingPacketType.None;
-                SkipBytes(6);
+                SkipBytes(6); //skip header
                 GetUInt16();
                 var packetType = (GameIncomingPacketType)GetByte();
                 IncomingPacket = packetType;
@@ -105,6 +105,18 @@ public class ReadOnlyNetworkMessage : IReadOnlyNetworkMessage
         return Iso88591Encoding.GetString(span);
     }
 
+    /// <summary>
+    ///     Get string value based on payload length
+    /// </summary>
+    /// <returns></returns>
+    public string GetString(int length)
+    {
+        if (length == 0 || BytesRead + length > Buffer.Length) return null;
+
+        var span = GetBytes(length);
+        return Iso88591Encoding.GetString(span);
+    }
+    
     public void Resize(int length)
     {
         if (length.IsLessThanZero()) return;
