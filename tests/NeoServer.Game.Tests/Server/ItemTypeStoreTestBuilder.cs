@@ -16,7 +16,7 @@ public static class ItemTypeStoreTestBuilder
     public static ItemTypeStore Build(params IItemType[] itemsTypes)
     {
         var itemTypeStore = new ItemTypeStore();
-        foreach (var item in itemsTypes) itemTypeStore.Add(item.TypeId, item);
+        foreach (var item in itemsTypes) itemTypeStore.Add(item.ServerId, item);
 
         return itemTypeStore;
     }

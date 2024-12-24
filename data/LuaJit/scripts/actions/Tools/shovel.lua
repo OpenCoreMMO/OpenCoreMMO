@@ -1,5 +1,16 @@
 ﻿local shovel = Action()
 
+local sandIds = {231, 9059} -- desert sand
+local holes = {468, 481, 483, 7932} -- holes opened by shovel
+
+local actionIds = {
+	sandHole = 100, -- hidden sand hole
+	pickHole = 105, -- hidden mud hole
+	levelDoor = 1000, -- level door
+	citizenship = 30020, -- citizenship teleport
+	citizenshipLast = 30050, -- citizenship teleport last
+}
+
 function shovel.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 	local tile = Tile(toPosition)
 	if not tile then
@@ -18,11 +29,11 @@ function shovel.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 
 		toPosition.z = toPosition.z + 1
 		tile:relocateTo(toPosition)
-		player:addAchievementProgress("The Undertaker", 500)
+		--player:addAchievementProgress("The Undertaker", 500)
 	elseif target.itemid == 7932 then -- large hole
 		target:transform(7933)
 		target:decay()
-		player:addAchievementProgress("The Undertaker", 500)
+		--player:addAchievementProgress("The Undertaker", 500)
 	elseif table.contains(sandIds, groundId) then
 		local randomValue = math.random(1, 100)
 		if target.actionid == actionIds.sandHole and randomValue <= 20 then
@@ -30,7 +41,7 @@ function shovel.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 			ground:decay()
 		elseif randomValue == 1 then
 			Game.createItem(2159, 1, toPosition)
-			player:addAchievementProgress("Gold Digger", 100)
+			--player:addAchievementProgress("Gold Digger", 100)
 		elseif randomValue > 95 then
 			Game.createMonster("Scarab", toPosition)
 		end

@@ -20,7 +20,7 @@ public interface IItem : IThing, IHasDecay
     string Plural => Metadata.Plural;
 
     ushort ClientId => Metadata.ClientId;
-    ushort ServerId => Metadata.TypeId;
+    ushort ServerId => Metadata.ServerId;
     ushort CanTransformTo => Metadata.Attributes.GetTransformationItem();
     bool CanBeMoved => Metadata.HasFlag(ItemFlag.Movable);
     bool IsBlockeable => Metadata.HasFlag(ItemFlag.Unpassable);
@@ -79,16 +79,16 @@ public interface IItem : IThing, IHasDecay
     {
         if (Metadata.HasFlag(ItemFlag.LiquidContainer))
         {
-            var fluidType = Metadata.Attributes.GetAttribute(ItemAttribute.ContainerLiquidType);
-            return ushort.Parse(fluidType);
+            var fluidType = Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ContainerLiquidType);
+            return fluidType;
         }
         else if (Metadata.HasFlag(ItemFlag.Stackable))
         {
-            var count = Metadata.Attributes.GetAttribute(ItemAttribute.Count);
-            return ushort.Parse(count);
+            var count = Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.Count);
+            return count;
         }
 
-        var charges = Metadata.Attributes.GetAttribute(ItemAttribute.Charges);
-        return ushort.Parse(charges);
+        var charges = Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.Charges);
+        return charges;
     }
 }

@@ -47,7 +47,7 @@ public static class CanAddItemToContainerRule
     {
         var amountPossibleToAdd = toContainer.TotalOfFreeSlots * 100;
 
-        if (!toContainer.Map.TryGetValue(itemType.TypeId, out var totalAmount)) return amountPossibleToAdd;
+        if (!toContainer.Map.TryGetValue(itemType.ServerId, out var totalAmount)) return amountPossibleToAdd;
 
         var next100 = Math.Ceiling((decimal)totalAmount / 100) * 100;
         amountPossibleToAdd += (uint)(next100 - totalAmount);

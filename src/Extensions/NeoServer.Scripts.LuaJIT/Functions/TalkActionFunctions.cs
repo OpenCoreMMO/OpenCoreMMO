@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Scripts.LuaJIT.Enums;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -75,6 +76,7 @@ public class TalkActionFunctions : LuaScriptInterface, ITalkActionFunctions
             return 1;
         }
 
+        //todo: implement this
         //if (talkAction.GroupType == Account.GroupType.None)
         //{
         //    var errorString = $"TalkAction with name {talkActionSharedPtr.Words} does not have groupType";
@@ -84,8 +86,6 @@ public class TalkActionFunctions : LuaScriptInterface, ITalkActionFunctions
         //}
 
         PushBoolean(L, TalkActions.GetInstance().RegisterLuaEvent(talkAction));
-
-        //talkActionSharedPtr.ExecuteSay(Game.GetInstance().GetCurrentPlayer(), "!help", "", SpeakClassesType.TALKTYPE_SAY);
 
         return 1;
     }

@@ -2,6 +2,7 @@
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Server.Helpers;
 using Serilog;
 
@@ -133,6 +134,7 @@ public class Action : Script
 
     public virtual ReturnValueType CanExecuteAction(IPlayer player, Location toPos)
     {
+        //todo: implement this?
         //if (!allowFarUse)
         //{
         //    return g_actions().canUse(player, toPos);

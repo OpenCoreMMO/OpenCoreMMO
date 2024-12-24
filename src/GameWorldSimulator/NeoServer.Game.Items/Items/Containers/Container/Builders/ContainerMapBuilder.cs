@@ -12,8 +12,8 @@ internal static class ContainerMapBuilder
 
         foreach (var item in container.Items)
         {
-            if (map.TryGetValue(item.Metadata.TypeId, out var val)) map[item.Metadata.TypeId] = val + item.Amount;
-            else map.Add(item.Metadata.TypeId, item.Amount);
+            if (map.TryGetValue(item.Metadata.ServerId, out var val)) map[item.Metadata.ServerId] = val + item.Amount;
+            else map.Add(item.Metadata.ServerId, item.Amount);
 
             if (item is IContainer child) Build(child, map);
         }

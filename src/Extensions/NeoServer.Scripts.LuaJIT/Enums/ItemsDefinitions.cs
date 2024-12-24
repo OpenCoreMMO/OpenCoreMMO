@@ -1,4 +1,4 @@
-﻿namespace NeoServer.Scripts.LuaJIT;
+﻿namespace NeoServer.Scripts.LuaJIT.Enums;
 
 // Enums
 public enum ItemPropertyType
@@ -389,7 +389,7 @@ public enum SlotPositionBits : uint
     SLOTP_AMMO = 1 << 9,
     SLOTP_DEPOT = 1 << 10,
     SLOTPTypeWO_HAND = 1 << 11,
-    SLOTP_HAND = (SLOTP_LEFT | SLOTP_RIGHT)
+    SLOTP_HAND = SLOTP_LEFT | SLOTP_RIGHT
 };
 
 public enum TileFlagsType : uint

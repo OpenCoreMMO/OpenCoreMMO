@@ -40,7 +40,7 @@ public class DealTransaction : IDealTransaction
 
         if (removedAmount < cost) buyer.WithdrawFromBank(cost - removedAmount);
 
-        var saleContract = new SaleContract(itemType.TypeId, amount, amountToAddToInventory, amountToAddToBackpack);
+        var saleContract = new SaleContract(itemType.ServerId, amount, amountToAddToInventory, amountToAddToBackpack);
 
         AddItems(buyer, seller, saleContract);
 

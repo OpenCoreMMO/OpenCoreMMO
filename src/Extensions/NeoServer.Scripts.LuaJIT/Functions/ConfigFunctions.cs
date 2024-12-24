@@ -1,17 +1,18 @@
 ﻿using LuaNET;
+using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Server.Configurations;
-using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
 {
+    private static IConfigManager _configManager;
     private ServerConfiguration _serverConfiguration;
 
     public ConfigFunctions(
-        ServerConfiguration serverConfiguration,
-        ILuaEnvironment luaEnvironment, 
-        ILogger logger) : base(nameof(ConfigFunctions))
+        IConfigManager configManager,
+        ServerConfiguration serverConfiguration) : base(nameof(ConfigFunctions))
     {
+        _configManager = configManager;
         _serverConfiguration = serverConfiguration;
     }
 
@@ -45,28 +46,28 @@ public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
     private static int LuaConfigManagerGetString(LuaState L)
     {
         // configManager:getString()
-        PushString(L, ConfigManager.GetInstance().GetString(GetNumber<StringConfigType>(L, -1)));
+        PushString(L, _configManager.GetString(GetNumber<StringConfigType>(L, -1)));
         return 1;
     }
 
     private static int LuaConfigManagerGetNumber(LuaState L)
     {
         // configManager:getNumber()
-        Lua.PushNumber(L, ConfigManager.GetInstance().GetNumber(GetNumber<IntegerConfigType>(L, -1)));
+        Lua.PushNumber(L, _configManager.GetNumber(GetNumber<IntegerConfigType>(L, -1)));
         return 1;
     }
 
     private static int LuaConfigManagerGetBoolean(LuaState L)
     {
         // configManager:getBoolean()
-        PushBoolean(L, ConfigManager.GetInstance().GetBoolean(GetNumber<BooleanConfigType>(L, -1)));
+        PushBoolean(L, _configManager.GetBoolean(GetNumber<BooleanConfigType>(L, -1)));
         return 1;
     }
 
     private static int LuaConfigManagerGetFloat(LuaState L)
     {
         // configManager:getFloat()
-        Lua.PushNumber(L, ConfigManager.GetInstance().GetFloat(GetNumber<FloatingConfigType>(L, -1)));
+        Lua.PushNumber(L, _configManager.GetFloat(GetNumber<FloatingConfigType>(L, -1)));
         return 1;
     }
 }

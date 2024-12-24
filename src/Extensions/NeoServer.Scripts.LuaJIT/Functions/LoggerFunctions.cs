@@ -31,7 +31,7 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
         }
         else
         {
-            //reportErrorFunc("First parameter needs to be a string");
+            ReportError(nameof(LuaLoggerWarn), "First parameter needs to be a string");
         }
         return 1;
     }
@@ -45,7 +45,7 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
         }
         else
         {
-            //reportErrorFunc("First parameter needs to be a string");
+            ReportError(nameof(LuaLoggerWarn), "First parameter needs to be a string");
         }
         return 1;
     }
@@ -59,7 +59,7 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
         }
         else
         {
-            //reportErrorFunc("First parameter needs to be a string");
+            ReportError(nameof(LuaLoggerError), "First parameter needs to be a string");
         }
         return 1;
     }
@@ -73,7 +73,7 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
         }
         else
         {
-            //reportErrorFunc("First parameter needs to be a string");
+            ReportError(nameof(LuaLoggerDebug), "First parameter needs to be a string");
         }
         return 1;
     }

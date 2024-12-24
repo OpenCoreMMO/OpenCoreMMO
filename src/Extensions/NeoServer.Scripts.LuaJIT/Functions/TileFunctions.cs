@@ -5,7 +5,6 @@ using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Server.Common.Contracts;
-using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -13,8 +12,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
 {
     private static IGameServer _gameServer;
 
-    public TileFunctions(
-        ILuaEnvironment luaEnvironment, IGameServer gameServer, ILogger logger) : base(nameof(TileFunctions))
+    public TileFunctions(IGameServer gameServer) : base(nameof(TileFunctions))
     {
         _gameServer = gameServer;
     }
@@ -29,6 +27,8 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         RegisterMethod(L, "Tile", "getItemCount", LuaTileGetItemCount);
         RegisterMethod(L, "Tile", "hasProperty", LuaTileHasProperty);
         RegisterMethod(L, "Tile", "hasFlag", LuaTileHasFlag);
+        RegisterMethod(L, "Tile", "getThing", LuaTileGetThing);
+        RegisterMethod(L, "Tile", "getThingCount", LuaTileGetThingCount);
     }
 
     public static int LuaCreateTile(LuaState L)
@@ -63,9 +63,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         // tile:getPosition()
         var tile = GetUserdata<ITile>(L, 1);
         if (tile != null)
-        {
             PushPosition(L, tile.Location);
-        }
         else
             Lua.PushNil(L);
 
@@ -164,6 +162,58 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         else
             Lua.PushNil(L);
 
+        return 1;
+    }
+
+    public static int LuaTileGetThing(LuaState L)
+    {
+        // tile:getThing(index)
+        var tile = GetUserdata<ITile>(L, 1);
+        var index = GetNumber<int>(L, 2);
+
+        if (tile == null)
+        {
+            Lua.PushNil(L);
+            return 1;
+        }
+
+        var dynamicTile = (IDynamicTile)tile;
+
+        if (dynamicTile.Creatures.Count >= index + 1)
+        {
+            var creature = dynamicTile.Creatures[index];
+            if (creature != null)
+            {
+                PushUserdata(L, creature);
+                SetCreatureMetatable(L, -1, creature);
+                return 1;
+            }
+        }
+        else if (dynamicTile.AllItems.Count() >= index + 1)
+        {
+            var item = dynamicTile.AllItems[index];
+
+            if (item != null)
+            {
+                PushUserdata(L, item);
+                SetItemMetatable(L, -1, item);
+                return 1;
+            }
+        }
+
+        Lua.PushNil(L);
+
+        return 1;
+    }
+
+    public static int LuaTileGetThingCount(LuaState L)
+    {
+        // tile:getThingCount()
+        var tile = GetUserdata<ITile>(L, 1);
+        if (tile != null)
+            Lua.PushNumber(L, tile.ThingsCount);
+        else
+            Lua.PushNil(L);
         return 1;
     }
 }

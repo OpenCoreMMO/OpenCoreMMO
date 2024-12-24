@@ -1,7 +1,6 @@
 ﻿using NeoServer.Application.Common.Contracts.Scripts;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
-using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 

@@ -1,4 +1,4 @@
-﻿using NeoServer.Extensions.Services;
+﻿using NeoServer.Server.Services;
 using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;

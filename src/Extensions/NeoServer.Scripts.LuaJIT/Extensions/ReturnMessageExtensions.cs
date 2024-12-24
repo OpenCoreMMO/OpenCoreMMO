@@ -1,4 +1,6 @@
-﻿namespace NeoServer.Scripts.LuaJIT.Extensions
+﻿using NeoServer.Scripts.LuaJIT.Enums;
+
+namespace NeoServer.Scripts.LuaJIT.Extensions
 {
     public static class ReturnMessageExtensions
     {

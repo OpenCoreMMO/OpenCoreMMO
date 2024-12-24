@@ -123,12 +123,14 @@ public class ScriptEnvironment
         var result = localMap.TryAdd(uid, item);
         if (!result)
         {
+            //todo: implement this
             //g_logger().error("Thing uid already taken: {}", uid);
         }
     }
 
     public IThing GetThingByUID(uint uid)
     {
+        //todo: implement this
         //if (uid >= 0x10000000)
         //{
         //    return g_game().getCreatureByID(uid);

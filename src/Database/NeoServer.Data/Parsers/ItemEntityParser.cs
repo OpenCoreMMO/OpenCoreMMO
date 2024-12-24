@@ -15,7 +15,7 @@ public static class ItemEntityParser
     {
         var itemModel = new T
         {
-            ServerId = (short)item.Metadata.TypeId,
+            ServerId = (short)item.Metadata.ServerId,
             Amount = item is ICumulative cumulative ? cumulative.Amount : (short)1,
             DecayTo = item.Decay?.DecaysTo,
             DecayDuration = item.Decay?.Duration,

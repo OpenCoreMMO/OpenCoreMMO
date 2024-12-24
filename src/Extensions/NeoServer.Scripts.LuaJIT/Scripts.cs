@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using NeoServer.Scripts.LuaJIT.Enums;
+using Serilog;
 using System;
 
 namespace NeoServer.Scripts.LuaJIT;
@@ -69,13 +70,6 @@ public class Scripts : IScripts
     {
         _talkActions.Clear();
         _actions.Clear();
-        //_globalEvents.Clear();
-        //_creatureEvents.Clear();
-        //gSpells.Clear();
-        //gMoveEvents.Clear();
-        //gWeapons.Clear();
-        //gCallbacks.Clear();
-        //gMonsters.Clear();
     }
 
     public bool LoadEventSchedulerScripts(string fileName)
