@@ -37,7 +37,7 @@ public class TutorLoader : PlayerLoader
         var town = GetTown(playerEntity);
         var playerLocation =
             new Location((ushort)playerEntity.PosX, (ushort)playerEntity.PosY, (byte)playerEntity.PosZ);
-        
+
         var currentTile = GetCurrentTile(playerLocation);
         var newPlayer = new Tutor(
             (uint)playerEntity.Id,

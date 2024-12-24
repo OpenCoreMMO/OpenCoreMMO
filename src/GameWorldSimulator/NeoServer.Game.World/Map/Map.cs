@@ -358,7 +358,7 @@ public class Map : IMap
     {
         if (this[creature.Location] is not IDynamicTile tile) return;
 
-        if(!tile.CanEnter(creature)) return;
+        if (!tile.CanEnter(creature)) return;
 
         if (tile.HasCreature)
             foreach (var location in tile.Location.Neighbours)

@@ -34,6 +34,7 @@ public abstract class CreatureEnterTileRule<T> : ITileEnterRule
             !dynamicTile.HasFlag(TileFlags.Unpassable),
             dynamicTile.Ground is not null);
     }
+
     public virtual bool CanEnter(ITile tile, Location location)
     {
         if (tile is not IDynamicTile dynamicTile) return false;
@@ -73,6 +74,7 @@ public class PlayerEnterTileRule : CreatureEnterTileRule<PlayerEnterTileRule>
             !dynamicTile.HasFlag(TileFlags.Unpassable),
             dynamicTile.Ground is not null);
     }
+
     public override bool CanEnter(ITile tile, Location location)
     {
         if (tile is not IDynamicTile dynamicTile) return false;

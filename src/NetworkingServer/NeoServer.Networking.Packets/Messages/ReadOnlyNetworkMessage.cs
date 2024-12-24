@@ -105,18 +105,6 @@ public class ReadOnlyNetworkMessage : IReadOnlyNetworkMessage
         return Iso88591Encoding.GetString(span);
     }
 
-    /// <summary>
-    ///     Get string value based on payload length
-    /// </summary>
-    /// <returns></returns>
-    public string GetString(int length)
-    {
-        if (length == 0 || BytesRead + length > Buffer.Length) return null;
-
-        var span = GetBytes(length);
-        return Iso88591Encoding.GetString(span);
-    }
-    
     public void Resize(int length)
     {
         if (length.IsLessThanZero()) return;
@@ -135,6 +123,18 @@ public class ReadOnlyNetworkMessage : IReadOnlyNetworkMessage
     public Location GetLocation()
     {
         return new Location { X = GetUInt16(), Y = GetUInt16(), Z = GetByte() };
+    }
+
+    /// <summary>
+    ///     Get string value based on payload length
+    /// </summary>
+    /// <returns></returns>
+    public string GetString(int length)
+    {
+        if (length == 0 || BytesRead + length > Buffer.Length) return null;
+
+        var span = GetBytes(length);
+        return Iso88591Encoding.GetString(span);
     }
 
     private void IncreaseByteRead(int length)

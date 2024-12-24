@@ -2,7 +2,7 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Custom;
 
-public class OpcodeMessagePacket:OutgoingPacket
+public class OpcodeMessagePacket : OutgoingPacket
 {
     public override void WriteToMessage(INetworkMessage message)
     {

@@ -42,7 +42,7 @@ public class Dispatcher : IDispatcher
         Task.Run(async () =>
         {
             while (await _reader.WaitToReadAsync(token))
-            
+
             {
                 if (token.IsCancellationRequested) _writer.Complete();
                 // Fast loop around available jobs

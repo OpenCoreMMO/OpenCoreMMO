@@ -17,12 +17,12 @@ public class BloodRage : Spell<Food>
         error = InvalidOperation.None;
 
         if (actor is not IPlayer player) return false;
-        
+
         player.AddSkillBonus(SkillType.Axe, (sbyte)Math.Abs(player.Skills[SkillType.Axe].Level * 0.35));
         player.AddSkillBonus(SkillType.Sword, (sbyte)Math.Abs(player.Skills[SkillType.Axe].Level * 0.35));
         player.AddSkillBonus(SkillType.Club, (sbyte)Math.Abs(player.Skills[SkillType.Axe].Level * 0.35));
         player.AddSkillBonus(SkillType.Fist, (sbyte)Math.Abs(player.Skills[SkillType.Axe].Level * 0.35));
-        
+
         actor.DisableShieldDefense();
         actor.IncreaseDamageReceived(15);
         return true;
@@ -31,12 +31,12 @@ public class BloodRage : Spell<Food>
     public override void OnEnd(ICombatActor actor)
     {
         if (actor is not IPlayer player) return;
-        
+
         player.RemoveSkillBonus(SkillType.Axe, (sbyte)Math.Abs(player.Skills[SkillType.Axe].Level * 0.35));
         player.RemoveSkillBonus(SkillType.Sword, (sbyte)Math.Abs(player.Skills[SkillType.Axe].Level * 0.35));
         player.RemoveSkillBonus(SkillType.Club, (sbyte)Math.Abs(player.Skills[SkillType.Axe].Level * 0.35));
         player.RemoveSkillBonus(SkillType.Fist, (sbyte)Math.Abs(player.Skills[SkillType.Axe].Level * 0.35));
-        
+
         actor.EnableShieldDefense();
         actor.DecreaseDamageReceived(15);
 
