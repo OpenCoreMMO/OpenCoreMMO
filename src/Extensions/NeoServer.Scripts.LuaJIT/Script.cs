@@ -34,20 +34,20 @@ public class Script
     {
         if (_scriptInterface == null)
         {
-            Logger.GetInstance().Error($"[Script.LoadCallback] ScriptInterface is null, scriptId = {ScriptId}");
+            //Logger.GetInstance().Error($"[Script.LoadCallback] ScriptInterface is null, scriptId = {ScriptId}");
             return false;
         }
 
         if (ScriptId != 0)
         {
-            Logger.GetInstance().Error($"[Script.LoadCallback] ScriptId is not zero, scriptId = {ScriptId}, scriptName {_scriptInterface.GetLoadingScriptName()}");
+            //Logger.GetInstance().Error($"[Script.LoadCallback] ScriptId is not zero, scriptId = {ScriptId}, scriptName {_scriptInterface.GetLoadingScriptName()}");
             return false;
         }
 
         int id = _scriptInterface.GetEvent();
         if (id == -1)
         {
-            Logger.GetInstance().Error($"[Script.LoadCallback] Event {GetScriptTypeName()} not found for script with name {_scriptInterface.GetLoadingScriptName()}");
+            //Logger.GetInstance().Error($"[Script.LoadCallback] Event {GetScriptTypeName()} not found for script with name {_scriptInterface.GetLoadingScriptName()}");
             return false;
         }
 

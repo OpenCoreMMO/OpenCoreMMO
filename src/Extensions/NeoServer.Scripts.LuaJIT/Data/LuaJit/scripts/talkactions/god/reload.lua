@@ -1,86 +1,84 @@
-﻿-- local talkAction = TalkAction("/reload")
+﻿local talkAction = TalkAction("/reload")
 
--- function talkAction.onSay(player, words, param)
--- 	local reloadTypes = {
--- 		["all"] = RELOAD_TYPE_ALL,
+function talkAction.onSay(player, words, param)
+	local reloadTypes = {
+		["all"] = RELOAD_TYPE_ALL,
 
--- 		["chat"] = RELOAD_TYPE_CHAT,
--- 		["channel"] = RELOAD_TYPE_CHAT,
--- 		["chatchannels"] = RELOAD_TYPE_CHAT,
+		["chat"] = RELOAD_TYPE_CHAT,
+		["channel"] = RELOAD_TYPE_CHAT,
+		["chatchannels"] = RELOAD_TYPE_CHAT,
+ 		["config"] = RELOAD_TYPE_CONFIG,
+		["configuration"] = RELOAD_TYPE_CONFIG,
 
--- 		["config"] = RELOAD_TYPE_CONFIG,
--- 		["configuration"] = RELOAD_TYPE_CONFIG,
+		["events"] = RELOAD_TYPE_EVENTS,
 
--- 		["events"] = RELOAD_TYPE_EVENTS,
+		["items"] = RELOAD_TYPE_ITEMS,
+ 		["module"] = RELOAD_TYPE_MODULES,
+		 ["modules"] = RELOAD_TYPE_MODULES,
 
--- 		["items"] = RELOAD_TYPE_ITEMS,
+		["monster"] = RELOAD_TYPE_MONSTERS,
+		["monsters"] = RELOAD_TYPE_MONSTERS,
 
--- 		["module"] = RELOAD_TYPE_MODULES,
--- 		["modules"] = RELOAD_TYPE_MODULES,
+		["mount"] = RELOAD_TYPE_MOUNTS,
+		["mounts"] = RELOAD_TYPE_MOUNTS,
 
--- 		["monster"] = RELOAD_TYPE_MONSTERS,
--- 		["monsters"] = RELOAD_TYPE_MONSTERS,
+ 		["npc"] = RELOAD_TYPE_NPCS,
+		["npcs"] = RELOAD_TYPE_NPCS,
 
--- 		["mount"] = RELOAD_TYPE_MOUNTS,
--- 		["mounts"] = RELOAD_TYPE_MOUNTS,
+ 		["raid"] = RELOAD_TYPE_RAIDS,
+ 		["raids"] = RELOAD_TYPE_RAIDS,
 
--- 		["npc"] = RELOAD_TYPE_NPCS,
--- 		["npcs"] = RELOAD_TYPE_NPCS,
+ 		["scripts"] = RELOAD_TYPE_SCRIPTS,
+ 		["script"] = RELOAD_TYPE_SCRIPTS,
 
--- 		["raid"] = RELOAD_TYPE_RAIDS,
--- 		["raids"] = RELOAD_TYPE_RAIDS,
+ 		["rate"] = RELOAD_TYPE_CORE,
+ 		["rates"] = RELOAD_TYPE_CORE,
+ 		["stage"] = RELOAD_TYPE_CORE,
+ 		["stages"] = RELOAD_TYPE_CORE,
+ 		["global"] = RELOAD_TYPE_CORE,
+ 		["core"] = RELOAD_TYPE_CORE,
+ 		["lib"] = RELOAD_TYPE_CORE,
+ 		["libs"] = RELOAD_TYPE_CORE,
 
--- 		["scripts"] = RELOAD_TYPE_SCRIPTS,
--- 		["script"] = RELOAD_TYPE_SCRIPTS,
+ 		["imbuements"] = RELOAD_TYPE_IMBUEMENTS,
 
--- 		["rate"] = RELOAD_TYPE_CORE,
--- 		["rates"] = RELOAD_TYPE_CORE,
--- 		["stage"] = RELOAD_TYPE_CORE,
--- 		["stages"] = RELOAD_TYPE_CORE,
--- 		["global"] = RELOAD_TYPE_CORE,
--- 		["core"] = RELOAD_TYPE_CORE,
--- 		["lib"] = RELOAD_TYPE_CORE,
--- 		["libs"] = RELOAD_TYPE_CORE,
+ 		["group"] = RELOAD_TYPE_GROUPS,
+ 		["groups"] = RELOAD_TYPE_GROUPS,
+ 	}
 
--- 		["imbuements"] = RELOAD_TYPE_IMBUEMENTS,
+ 	--if not configManager.getBoolean(configKeys.ALLOW_RELOAD) then
+ 	--	print("Reload command is disabled.")
+ 	--	player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Reload command is disabled.")
+ 	--	return true
+ 	--end
 
--- 		["group"] = RELOAD_TYPE_GROUPS,
--- 		["groups"] = RELOAD_TYPE_GROUPS,
--- 	}
+ 	if param == "" then
+ 		print("Command param required.")
+ 		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Command param required.")
+ 		return true
+ 	end
 
--- 	if not configManager.getBoolean(configKeys.ALLOW_RELOAD) then
--- 		print("Reload command is disabled.")
--- 		--self:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Reload command is disabled.")
--- 		return true
--- 	end
+ 	-- create log
+ 	-- logCommand(self, "/reload", param)
 
--- 	if param == "" then
--- 		print("Command param required.")
--- 		--self:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Command param required.")
--- 		return true
--- 	end
+ 	local reloadType = reloadTypes[param:lower()]
+ 	if reloadType then
+ 		-- Force save server before reload
+ 		--nsaveServer()
+ 		--bSaveHirelings()
+ 		logger.info("Saved Hirelings")
+ 		player:sendTextMessage(MESSAGE_ADMINISTRADOR, "Server is saved.. Now will reload configs!")
 
--- 	-- create log
--- 	--logCommand(self, "/reload", param)
+ 		Game.reload(reloadType)
+ 		player:sendTextMessage(MESSAGE_LOOK, string.format("Reloaded %s.", param:lower()))
+ 		logger.info("Reloaded {}", param:lower())
+ 	elseif not reloadType then
+ 		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Reload type not found.")
+ 		logger.warn("[reload.onSay] - Reload type '{}' not found", param)
+ 	end
 
--- 	local reloadType = reloadTypes[param:lower()]
--- 	if reloadType then
--- 		-- Force save server before reload
--- 		--saveServer()
--- 		--SaveHirelings()
--- 		--logger.info("Saved Hirelings")
--- 		--self:sendTextMessage(MESSAGE_ADMINISTRADOR, "Server is saved.. Now will reload configs!")
+ 	return true
+end
 
--- 		Game.reload(reloadType)
--- 		--self:sendTextMessage(MESSAGE_LOOK, string.format("Reloaded %s.", param:lower()))
--- 		--logger.info("Reloaded {}", param:lower())
--- 	elseif not reloadType then
--- 		--self:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Reload type not found.")
--- 		--logger.warn("[reload.onSay] - Reload type '{}' not found", param)
--- 	end
-
--- 	return true
--- end
-
--- talkAction:separator(" ")
--- talkAction:register()
+talkAction:separator(" ")
+talkAction:register()

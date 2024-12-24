@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeoServer.Game.Common.Contracts.Items;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -171,7 +172,7 @@ public class ScriptEnvironment
     //    return null;
     //}
 
-    //public std.shared_ptr<Item> GetItemByUID(uint uid)
+    //public IItem GetItemByUID(uint uid)
     //{
     //    std.shared_ptr<Thing> thing = getThingByUID(uid);
     //    if (thing == null)
@@ -244,12 +245,12 @@ public class ScriptEnvironment
     //    return null;
     //}
 
- //   public void SetNpc(Npc npc)
- //   {
- //       curNpc = npc;
- //   }
+    //   public void SetNpc(Npc npc)
+    //   {
+    //       curNpc = npc;
+    //   }
 
- //   public Npc GetNpc() {
-		   // return curNpc;
-	    //}
+    //   public Npc GetNpc() {
+    // return curNpc;
+    //}
 }

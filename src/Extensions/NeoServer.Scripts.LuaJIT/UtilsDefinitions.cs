@@ -331,45 +331,16 @@ public enum ShootTypeType : byte
 
 public enum MessageClassesType : byte
 {
-    MESSAGE_NONE = 0, /* None */
-
-    MESSAGE_GAMEMASTER_CONSOLE = 13,
-    /* Red message in the console*/ /* TALKTYPE_BROADCAST */
-
-    MESSAGE_LOGIN = 17, /* White message at the bottom of the game window and in the console*/
-    MESSAGE_ADMINISTRADOR = 18, /* Red message in game window and in the console*/
-    MESSAGE_EVENT_ADVANCE = 19, /* White message in game window and in the console*/
-    MESSAGE_GAME_HIGHLIGHT = 20, /* Red message in game window and in the console*/
-    MESSAGE_FAILURE = 21, /* White message at the bottom of the game window"*/
-    MESSAGE_LOOK = 22, /* Green message in game window and in the console*/
-    MESSAGE_DAMAGE_DEALT = 23, /* White message on the console*/
-    MESSAGE_DAMAGE_RECEIVED = 24, /* White message on the console*/
-    MESSAGE_HEALED = 25, /* White message on the console*/
-    MESSAGE_EXPERIENCE = 26, /* White message on the console*/
-    MESSAGE_DAMAGE_OTHERS = 27, /* White message on the console*/
-    MESSAGE_HEALED_OTHERS = 28, /* White message on the console*/
-    MESSAGE_EXPERIENCE_OTHERS = 29, /* White message on the console*/
-    MESSAGE_STATUS = 30, /* White message at the bottom of the game window and in the console*/
-    MESSAGE_LOOT = 31, /* White message on the game window and in the console*/
-    MESSAGE_TRADE = 32, /* Green message in game window and in the console*/
-    MESSAGE_GUILD = 33, /* White message in channel (+ channelId)*/
-    MESSAGE_PARTY_MANAGEMENT = 34, /* Green message in game window and in the console*/
-    MESSAGE_PARTY = 35, /* White message on the console*/
-
-    MESSAGE_LAST_OLDPROTOCOL = 37, /* Last Message on old protocol*/
-
-    MESSAGE_REPORT = 38, /* White message on the game window and in the console*/
-    MESSAGE_HOTKEY_PRESSED = 39, /* Green message in game window and in the console*/
-    MESSAGE_TUTORIAL_HINT = 40, /* no effect (?)*/
-    MESSAGE_THANK_YOU = 41, /* no effect (?)*/
-    MESSAGE_MARKET = 42, /* Popout a modal window with the message and a 'ok' button*/
-    MESSAGE_MANA = 43, /* no effect (?)*/
-    MESSAGE_BEYOND_LAST = 44, /* White message on the game window and in the console*/
-    MESSAGE_ATTENTION = 48, /* White message on the console*/
-    MESSAGE_BOOSTED_CREATURE = 49, /* White message on the game window and in the console*/
-    MESSAGE_OFFLINE_TRAINING = 50, /* White message on the game window and in the console*/
-    MESSAGE_TRANSACTION = 51, /* White message on the game window and in the console*/
-    MESSAGE_POTION = 52, /* Orange creature say*/
+    MESSAGE_STATUS_CONSOLE_RED = 18, /*Red message in the console*/
+    MESSAGE_EVENT_ORANGE = 19, /*Orange message in the console*/
+    MESSAGE_STATUS_CONSOLE_ORANGE = 20,  /*Orange message in the console*/
+    MESSAGE_STATUS_WARNING = 21, /*Red message in game window and in the console*/
+    MESSAGE_EVENT_ADVANCE = 22, /*White message in game window and in the console*/
+    MESSAGE_EVENT_DEFAULT = 23, /*White message at the bottom of the game window and in the console*/
+    MESSAGE_STATUS_DEFAULT = 24, /*White message at the bottom of the game window and in the console*/
+    MESSAGE_INFO_DESCR = 25, /*Green message in game window and in the console*/
+    MESSAGE_STATUS_SMALL = 26, /*White message at the bottom of the game window"*/
+    MESSAGE_STATUS_CONSOLE_BLUE = 27, /*FIXME Blue message in the console*/
 };
 
 public enum FluidsType : byte

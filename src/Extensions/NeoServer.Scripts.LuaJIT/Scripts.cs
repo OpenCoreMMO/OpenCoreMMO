@@ -7,8 +7,8 @@ public class Scripts : IScripts
 {
     #region Instance
 
-    private static Scripts _instance = null;
-    public static Scripts GetInstance() => _instance == null ? _instance = new Scripts() : _instance;
+    //private static Scripts _instance = null;
+    //public static Scripts GetInstance() => _instance == null ? _instance = new Scripts() : _instance;
 
     #endregion
 
@@ -24,7 +24,7 @@ public class Scripts : IScripts
     /// <summary>
     /// A reference to the logger in use.
     /// </summary>
-    private readonly ILogger _logger;
+    protected readonly ILogger _logger;
 
     /// <summary>
     /// A reference to the config manager in use.
@@ -36,13 +36,13 @@ public class Scripts : IScripts
     /// </summary>
     private readonly ITalkActions _talkActions;
 
+    private readonly IActions _actions;
+
     #endregion
 
-    public Scripts()
+    public Scripts(ILogger logger)
     {
-        _logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .CreateLogger();
+        _logger = logger;
 
         _scriptInterface = new LuaScriptInterface("Scripts Interface");
         _scriptInterface.InitState();
@@ -51,13 +51,15 @@ public class Scripts : IScripts
     public Scripts(
         ILogger logger,
         IConfigManager configManager,
-        ITalkActions talkActions)
+        ITalkActions talkActions,
+        IActions actions)
     {
-        _instance = this;
+        //_instance = this;
 
         _logger = logger.ForContext<Scripts>();
         _configManager = configManager;
         _talkActions = talkActions;
+        _actions = actions;
 
         _scriptInterface = new LuaScriptInterface("Scripts Interface");
         //_scriptInterface.InitState();
@@ -66,7 +68,7 @@ public class Scripts : IScripts
     public void ClearAllScripts()
     {
         _talkActions.Clear();
-        //_actions.Clear();
+        _actions.Clear();
         //_globalEvents.Clear();
         //_creatureEvents.Clear();
         //gSpells.Clear();

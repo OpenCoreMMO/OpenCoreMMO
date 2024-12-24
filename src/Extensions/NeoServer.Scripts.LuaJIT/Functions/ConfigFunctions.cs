@@ -1,9 +1,12 @@
 ﻿using LuaNET;
+using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
 {
-    public ConfigFunctions() : base(nameof(ConfigFunctions))
+    public ConfigFunctions(
+        ILuaEnvironment luaEnvironment, 
+        ILogger logger) : base(nameof(ConfigFunctions))
     {
     }
 

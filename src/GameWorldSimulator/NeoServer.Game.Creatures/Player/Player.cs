@@ -206,6 +206,8 @@ public class Player : CombatActor, IPlayer
 
     public virtual bool CannotLogout => !(Tile?.ProtectionZone ?? false) && InFight;
 
+    public virtual bool IsProtectionZoneLocked => false;
+
     public SkillType SkillInUse
     {
         get
