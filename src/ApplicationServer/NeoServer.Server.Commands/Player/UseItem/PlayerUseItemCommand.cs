@@ -6,7 +6,6 @@ using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Location;
 using NeoServer.Networking.Packets.Incoming;
-using NeoServer.Networking.Packets.Incoming.Shop;
 using NeoServer.Server.Common.Contracts.Commands;
 
 namespace NeoServer.Server.Commands.Player.UseItem;

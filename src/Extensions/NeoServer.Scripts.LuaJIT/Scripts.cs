@@ -1,6 +1,5 @@
 ﻿using NeoServer.Scripts.LuaJIT.Enums;
 using Serilog;
-using System;
 
 namespace NeoServer.Scripts.LuaJIT;
 
