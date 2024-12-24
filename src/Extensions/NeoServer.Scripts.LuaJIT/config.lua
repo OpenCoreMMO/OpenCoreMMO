@@ -1,4 +1,6 @@
-﻿coreDirectory = "Data/LuaJit"
+﻿print('print from config.lua')
+
+coreDirectory = "Data/LuaJit"
 showScriptsLogInConsole = true
 
 -- NOTE: true will allow the /reload command to be used

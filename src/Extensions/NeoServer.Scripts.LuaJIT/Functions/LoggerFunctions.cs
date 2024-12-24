@@ -7,7 +7,8 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
 {
     private static ILogger _logger;
 
-    public LoggerFunctions(ILogger logger) : base(nameof(LoggerFunctions))
+    public LoggerFunctions(
+        ILuaEnvironment luaEnvironment, ILogger logger) : base(nameof(LoggerFunctions))
     {
         _logger = logger;
     }

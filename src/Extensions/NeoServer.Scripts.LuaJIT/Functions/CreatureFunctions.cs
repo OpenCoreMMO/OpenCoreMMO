@@ -1,7 +1,7 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Creatures.Models.Bases;
 using NeoServer.Server.Common.Contracts;
+using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -9,7 +9,10 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 {
     private static IGameCreatureManager _gameCreatureManager;
 
-    public CreatureFunctions(IGameCreatureManager gameCreatureManager) : base(nameof(TalkActionFunctions))
+    public CreatureFunctions(
+        ILuaEnvironment luaEnvironment, 
+        ILogger logger,
+        IGameCreatureManager gameCreatureManager) : base(nameof(CreatureFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
     }
@@ -36,17 +39,17 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         else if (IsString(L, 2))
         {
             var name = GetString(L, 2);
-            creature = (Creature)_gameCreatureManager.GetCreatures().FirstOrDefault(c => c.Name.Equals(name));
+            creature = (ICreature)_gameCreatureManager.GetCreatures().FirstOrDefault(c => c.Name.Equals(name));
         }
         else if (IsUserdata(L, 2))
         {
-            //LuaData_t type = getUserdataType(L, 2);
-            //if (type != LuaData_t::Player && type != LuaData_t::Monster && type != LuaData_t::Npc)
-            //{
-            //    lua_pushnil(L);
-            //    return 1;
-            //}
-            //creature = getUserdataShared<Creature>(L, 2);
+            var type = GetUserdataType(L, 2);
+            if (type != LuaDataType.Player && type != LuaDataType.Monster && type != LuaDataType.Npc)
+            {
+                Lua.PushNil(L);
+                return 1;
+            }
+            creature = GetUserdata<ICreature>(L, 2);
         }
         else
         {

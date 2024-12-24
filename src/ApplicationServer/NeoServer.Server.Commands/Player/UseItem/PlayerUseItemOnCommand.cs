@@ -1,4 +1,5 @@
 ﻿using System;
+using NeoServer.Application.Common.Contracts.Scripts;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
@@ -16,12 +17,18 @@ public class PlayerUseItemOnCommand : ICommand
     private readonly IPlayerUseService _playerUseService;
     private readonly IGameServer game;
     private readonly HotkeyService hotkeyService;
+    private readonly ILuaGameManager _luaGameManager;
 
-    public PlayerUseItemOnCommand(IGameServer game, HotkeyService hotkeyService, IPlayerUseService playerUseService)
+    public PlayerUseItemOnCommand(
+        IGameServer game,
+        HotkeyService hotkeyService,
+        IPlayerUseService playerUseService,
+        ILuaGameManager luaGameManager)
     {
         this.game = game;
         this.hotkeyService = hotkeyService;
         _playerUseService = playerUseService;
+        _luaGameManager = luaGameManager;
     }
 
     public void Execute(IPlayer player, UseItemOnPacket useItemPacket)
@@ -74,6 +81,9 @@ public class PlayerUseItemOnCommand : ICommand
             }
 
         if (thingToUse is not IUsableOn itemToUse) return;
+
+        if (_luaGameManager.PlayerUseItemEx(player, player.Location, useItemPacket.Location, useItemPacket.ToStackPosition, itemToUse, useItemPacket.Location.IsHotkey, onItem != null ? onTile : onTile))
+            return;
 
         Action action = onTile is not null
             ? () => _playerUseService.Use(player, itemToUse, onTile)

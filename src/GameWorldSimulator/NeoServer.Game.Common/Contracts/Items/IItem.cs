@@ -74,4 +74,21 @@ public interface IItem : IThing, IHasDecay
     void SetParent(IThing parent);
     event ItemRemove OnRemoved;
     void OnItemRemoved(IThing from);
+
+    ushort GetSubType()
+    {
+        if (Metadata.HasFlag(ItemFlag.LiquidContainer))
+        {
+            var fluidType = Metadata.Attributes.GetAttribute(ItemAttribute.ContainerLiquidType);
+            return ushort.Parse(fluidType);
+        }
+        else if (Metadata.HasFlag(ItemFlag.Stackable))
+        {
+            var count = Metadata.Attributes.GetAttribute(ItemAttribute.Count);
+            return ushort.Parse(count);
+        }
+
+        var charges = Metadata.Attributes.GetAttribute(ItemAttribute.Charges);
+        return ushort.Parse(charges);
+    }
 }

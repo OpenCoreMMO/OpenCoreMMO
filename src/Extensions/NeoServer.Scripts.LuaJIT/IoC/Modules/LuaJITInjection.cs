@@ -12,14 +12,23 @@ public static class LuaJITInjection
         builder.AddSingleton<IConfigManager, ConfigManager>();
         builder.AddSingleton<ILuaEnvironment, LuaEnvironment>();
         builder.AddSingleton<IScripts, Scripts.LuaJIT.Scripts>();
+        builder.AddSingleton<IActions, Actions>();
         builder.AddSingleton<ITalkActions, TalkActions>();
+
+        builder.AddSingleton<IActionFunctions, ActionFunctions>();
         builder.AddSingleton<IConfigFunctions, ConfigFunctions>();
         builder.AddSingleton<ICreatureFunctions, CreatureFunctions>();
+        builder.AddSingleton<IEnumFunctions, EnumFunctions>();
+        builder.AddSingleton<IGameFunctions, GameFunctions>();
         builder.AddSingleton<IGlobalFunctions, GlobalFunctions>();
+        builder.AddSingleton<IItemFunctions, ItemFunctions>();
+        builder.AddSingleton<IItemTypeFunctions, ItemTypeFunctions>();
         builder.AddSingleton<ILoggerFunctions, LoggerFunctions>();
         builder.AddSingleton<IPlayerFunctions, PlayerFunctions>();
+        builder.AddSingleton<IPositionFunctions, PositionFunctions>();
         builder.AddSingleton<ITalkActionFunctions, TalkActionFunctions>();
-        //
+        builder.AddSingleton<ITileFunctions, TileFunctions>();
+
         return builder;
     }
 }

@@ -59,36 +59,36 @@ do
 end
 
 -- Item index
--- do
--- 	local function ItemIndex(self, key)
--- 		local methods = getmetatable(self)
--- 		if key == "itemid" then
--- 			return methods.getId(self)
--- 		elseif key == "actionid" then
--- 			return methods.getActionId(self)
--- 		elseif key == "uid" then
--- 			return methods.getUniqueId(self)
--- 		elseif key == "type" then
--- 			return methods.getSubType(self)
--- 		end
--- 		return methods[key]
--- 	end
--- 	rawgetmetatable("Item").__index = ItemIndex
--- 	rawgetmetatable("Container").__index = ItemIndex
--- 	rawgetmetatable("Teleport").__index = ItemIndex
--- end
+do
+	local function ItemIndex(self, key)
+		local methods = getmetatable(self)
+		if key == "itemid" then
+			return methods.getId(self)
+		elseif key == "actionid" then
+			return methods.getActionId(self)
+		elseif key == "uid" then
+			return methods.getUniqueId(self)
+		elseif key == "type" then
+			return methods.getSubType(self)
+		end
+		return methods[key]
+	end
+	rawgetmetatable("Item").__index = ItemIndex
+	--rawgetmetatable("Container").__index = ItemIndex
+	--rawgetmetatable("Teleport").__index = ItemIndex
+end
 
 -- Action revscriptsys
---  do
---  	local function ActionNewIndex(self, key, value)
---  		if key == "onUse" then
---  			self:onUse(value)
---  			return
---  		end
---  		rawset(self, key, value)
---  	end
---  	rawgetmetatable("Action").__newindex = ActionNewIndex
---  end
+do
+	local function ActionNewIndex(self, key, value)
+ 		if key == "onUse" then
+ 			self:onUse(value)
+ 			return
+ 		end
+ 		rawset(self, key, value)
+ 	end
+ 	rawgetmetatable("Action").__newindex = ActionNewIndex
+end
 
 -- TalkAction revscriptsys
 do

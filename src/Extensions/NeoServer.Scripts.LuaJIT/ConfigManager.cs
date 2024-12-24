@@ -150,7 +150,7 @@ public class ConfigManager : IConfigManager
         booleanConfig[(int)BooleanConfigType.TOGGLE_SAVE_INTERVAL] = GetGlobalBoolean(L, "toggleSaveInterval", false);
         booleanConfig[(int)BooleanConfigType.TOGGLE_SAVE_INTERVAL_CLEAN_MAP] = GetGlobalBoolean(L, "toggleSaveIntervalCleanMap", false);
         //bool[TELEPORT_SUMMONS] = getGlobalBoolean(L, "teleportSummons", false);
-        booleanConfig[(int)BooleanConfigType.ALLOW_RELOAD] = GetGlobalBoolean(L, "allowReload", false);
+        booleanConfig[(int)BooleanConfigType.ALLOW_RELOAD] = GetGlobalBoolean(L, "allowReload", true);
 
         //bool[ONLY_PREMIUM_ACCOUNT] = getGlobalBoolean(L, "onlyPremiumAccount", false);
         //bool[RATE_USE_STAGES] = getGlobalBoolean(L, "rateUseStages", false);

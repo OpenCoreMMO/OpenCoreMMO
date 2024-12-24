@@ -1,22 +1,32 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Networking.Packets.Outgoing;
+using NeoServer.Server.Common.Contracts;
+using NeoServer.Server.Services;
+using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
 public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 {
-    public PlayerFunctions() : base(nameof(PlayerFunctions))
+    private static IGameCreatureManager _gameCreatureManager;
+
+    public PlayerFunctions(
+        ILogger logger,
+        ILuaEnvironment luaEnvironment, 
+        IGameCreatureManager gameCreatureManager) : base(nameof(PlayerFunctions))
     {
+        _gameCreatureManager = gameCreatureManager;
     }
 
     public void Init(LuaState L)
     {
         RegisterSharedClass(L, "Player", "Creature", LuaPlayerCreate);
         RegisterMetaMethod(L, "Player", "__eq", LuaUserdataCompare<IPlayer>);
-        //RegisterMethod(L, "Player", "teleportTo", LuaTeleportTo);
+        RegisterMethod(L, "Player", "teleportTo", LuaTeleportTo);
 
         RegisterMethod(L, "Player", "sendTextMessage", LuaPlayerSendTextMessage);
+        RegisterMethod(L, "Player", "isPzLocked", LuaPlayerIsPzLocked);
     }
 
     private static int LuaPlayerCreate(LuaState L)
@@ -25,7 +35,8 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         IPlayer player = null;
         if (IsNumber(L, 2))
         {
-            var id = GetNumber<int>(L, 2);
+            var id = GetNumber<uint>(L, 2);
+            _gameCreatureManager.TryGetPlayer(id, out player);
             //if (id >= Player::getFirstID() && id <= Player::getLastID())
             //{
             //    player = g_game().getPlayerByID(id);
@@ -37,6 +48,16 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         }
         else if (IsString(L, 2))
         {
+            var name = GetString(L, 2);
+            _gameCreatureManager.TryGetPlayer(name, out player);
+
+            if (player == null)
+            {
+                Lua.PushNil(L);
+                Lua.PushNumber(L, (int)ReturnValueType.RETURNVALUE_PLAYERWITHTHISNAMEISNOTONLINE);
+                return 2;
+            }
+
             //ReturnValue ret = g_game().getPlayerByNameWildcard(getString(L, 2), player);
             //if (ret != RETURNVALUE_NOERROR)
             //{
@@ -47,12 +68,12 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         }
         else if (IsUserdata(L, 2))
         {
-            //if (GetUserdataType(L, 2) != LuaData_t::Player)
-            //{
-            //    lua_pushnil(L);
-            //    return 1;
-            //}
-            //player = GetUserdata<Player>(L, 2);
+            if (GetUserdataType(L, 2) != LuaDataType.Player)
+            {
+                Lua.PushNil(L);
+                return 1;
+            }
+            player = GetUserdata<IPlayer>(L, 2);
         }
         else
         {
@@ -71,33 +92,35 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         return 1;
     }
 
-    //private static int LuaTeleportTo(LuaState L)
-    //{
-    //    // creature:teleportTo(position[, pushMovement = false])
-    //    bool pushMovement = GetBoolean(L, 3, false);
+    private static int LuaTeleportTo(LuaState L)
+    {
+        // creature:teleportTo(position[, pushMovement = false])
+        bool pushMovement = GetBoolean(L, 3, false);
 
-    //    var position = GetPosition(L, 2);
+        var position = GetPosition(L, 2);
 
-    //    var creature = GetUserdata<Player>(L, 1);
+        var creature = GetUserdata<IPlayer>(L, 1);
 
-    //    if (creature == null)
-    //    {
-    //        ReportError(nameof(LuaTeleportTo), GetErrorDesc(ErrorCodeType.LUA_ERROR_CREATURE_NOT_FOUND));
-    //        PushBoolean(L, false);
-    //        return 1;
-    //    }
+        if (creature == null)
+        {
+            ReportError(nameof(LuaTeleportTo), GetErrorDesc(ErrorCodeType.LUA_ERROR_CREATURE_NOT_FOUND));
+            PushBoolean(L, false);
+            return 1;
+        }
 
-    //    var oldPosition = creature.Position;
-    //    if (Game.GetInstance().InternalTeleport(creature, position, pushMovement))
-    //    {
-    //        Logger.GetInstance().Error($"[{nameof(LuaTeleportTo)}] Failed to teleport creature {creature.Name}, on position {oldPosition}, error code: {0}");// GetReturnMessage(ret));
-    //        PushBoolean(L, false);
-    //        return 1;
-    //    }
+        //var oldPosition = creature.Location;
+        //if (Game.GetInstance().InternalTeleport(creature, position, pushMovement))
+        //{
+        //    Logger.GetInstance().Error($"[{nameof(LuaTeleportTo)}] Failed to teleport creature {creature.Name}, on position {oldPosition}, error code: {0}");// GetReturnMessage(ret));
+        //    PushBoolean(L, false);
+        //    return 1;
+        //}
 
-    //    PushBoolean(L, true);
-    //    return 1;
-    //}
+        creature.TeleportTo(position);
+
+        PushBoolean(L, true);
+        return 1;
+    }
 
     private static int LuaPlayerSendTextMessage(LuaState L)
     {
@@ -144,14 +167,39 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             //}
         }
 
-        //player->sendTextMessage(message);
-
-        //Game.GetInstance().Logger.Information($"LuaPlayerSendTextMessage: player {player.Name}, message: {messageText}");
-
-        player.Say(messageText, SpeechType.Say);
-
+        NotificationSenderService.Send(player, messageText, (TextMessageOutgoingType)messageType);
         PushBoolean(L, true);
 
         return 1;
     }
+
+    private static int LuaPlayerIsPzLocked(LuaState L)
+    {
+        // player:isPzLocked()
+
+        var player = GetUserdata<IPlayer>(L, 1);
+        if (player != null)
+            PushBoolean(L, player.IsProtectionZoneLocked);
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    //private static int LuaPlayerSendCancelMessage(LuaState L)
+    //{
+    //    // player:sendCancelMessage()
+
+    //    var player = GetUserdata<IPlayer>(L, 1);
+
+    //    if (player == null)
+    //        Lua.PushNil(L);
+
+    //    var messageText = GetString(L, 2);
+
+    //    //InvalidOperation.NotAPartyLeader
+    //    OperationFailService.Send(player.Id, messageText);
+
+    //    return 1;
+    //}
 }

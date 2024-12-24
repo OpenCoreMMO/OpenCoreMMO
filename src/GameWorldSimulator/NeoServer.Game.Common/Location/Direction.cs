@@ -6,9 +6,9 @@ public enum Direction : byte
     East = 1,
     South = 2,
     West = 3,
-    NorthEast,
+    SouthWest,
     SouthEast,
     NorthWest,
-    SouthWest,
+    NorthEast,
     None
 }

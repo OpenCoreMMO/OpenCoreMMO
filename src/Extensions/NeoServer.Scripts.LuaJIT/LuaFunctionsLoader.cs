@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Structs;
 
 namespace NeoServer.Scripts.LuaJIT;
@@ -174,7 +175,7 @@ public class LuaFunctionsLoader
             return;
         }
 
-        if (thing is ItemLua item)
+        if (thing is IItem item)
         {
             PushUserdata(L, item);
             SetItemMetatable(L, -1, item);
@@ -317,7 +318,7 @@ public class LuaFunctionsLoader
         Lua.SetMetaTable(L, index - 1);
     }
 
-    public static void SetItemMetatable(LuaState L, int index, ItemLua item)
+    public static void SetItemMetatable(LuaState L, int index, IItem item)
     {
         if (ValidateDispatcherContext(nameof(SetItemMetatable)))
         {
@@ -445,13 +446,13 @@ public class LuaFunctionsLoader
         return c_str;
     }
 
-    public static PositionLua GetPosition(LuaState L, int arg, out int stackpos)
+    public static Location GetPosition(LuaState L, int arg, out int stackpos)
     {
-        PositionLua position = new PositionLua
+        Location position = new Location
         {
-            x = GetField<ushort>(L, arg, "x"),
-            y = GetField<ushort>(L, arg, "y"),
-            z = GetField<byte>(L, arg, "z")
+            X = GetField<ushort>(L, arg, "x"),
+            Y = GetField<ushort>(L, arg, "y"),
+            Z = GetField<byte>(L, arg, "z")
         };
 
         Lua.GetField(L, arg, "stackpos");
@@ -468,13 +469,13 @@ public class LuaFunctionsLoader
         return position;
     }
 
-    public static PositionLua GetPosition(LuaState L, int arg)
+    public static Location GetPosition(LuaState L, int arg)
     {
-        PositionLua position = new PositionLua
+        Location position = new Location
         {
-            x = GetField<ushort>(L, arg, "x"),
-            y = GetField<ushort>(L, arg, "y"),
-            z = GetField<byte>(L, arg, "z")
+            X = GetField<ushort>(L, arg, "x"),
+            Y = GetField<ushort>(L, arg, "y"),
+            Z = GetField<byte>(L, arg, "z")
         };
 
         Lua.Pop(L, 3);
@@ -698,7 +699,7 @@ public class LuaFunctionsLoader
     //    SetMetatable(L, -1, "Spell");
     //}
 
-    public static void PushPosition(LuaState L, PositionLua position, int stackpos = 0)
+    public static void PushPosition(LuaState L, Location position, int stackpos = 0)
     {
         if (ValidateDispatcherContext(nameof(PushPosition)))
         {
@@ -707,9 +708,9 @@ public class LuaFunctionsLoader
 
         Lua.CreateTable(L, 0, 4);
 
-        SetField(L, "x", position.x);
-        SetField(L, "y", position.y);
-        SetField(L, "z", position.z);
+        SetField(L, "x", position.X);
+        SetField(L, "y", position.Y);
+        SetField(L, "z", position.Z);
         SetField(L, "stackpos", stackpos);
 
         SetMetatable(L, -1, "Position");
@@ -937,6 +938,12 @@ public class LuaFunctionsLoader
         return 1;
     }
 
+    public static int LuaUserdataCompareStruct<T>(LuaState L) where T : struct
+    {
+        PushBoolean(L, EqualityComparer<T>.Default.Equals(GetUserdataStruct<T>(L, 1), GetUserdataStruct<T>(L, 2)));
+        return 1;
+    }
+
     public static void RegisterSharedClass(LuaState L, string className, string baseClass, LuaFunction newFunction)
     {
         RegisterClass(L, className, baseClass, newFunction);
@@ -963,7 +970,7 @@ public class LuaFunctionsLoader
         }
         catch (Exception e)
         {
-            Logger.GetInstance().Error($"Exception in GarbageCollection: {e.InnerException}");
+            //Logger.GetInstance().Error($"Exception in GarbageCollection: {e.InnerException}");
         }
 
         return 0;
@@ -1115,32 +1122,19 @@ public class LuaFunctionsLoader
         var stru = (UserDataStruct)System.Runtime.InteropServices.Marshal.PtrToStructure(System.Runtime.InteropServices.Marshal.ReadIntPtr(userdata), typeof(UserDataStruct));
 
         return (T)_objects[stru.Index];
+    }
 
-        //var type = (LuaType)Lua.Type(L, arg);
+    public static T GetUserdataStruct<T>(LuaState L, int arg) where T : struct
+    {
+        var userdata = GetRawUserdataStruct<T>(L, arg);
+        if (userdata == IntPtr.Zero)
+        {
+            return default;
+        }
 
-        //switch (type)
-        //{
-        //    case LuaType.UserData:
-        //        {
-        //            int udata = ToNetObject(L, arg, 0);
-        //            return (T)_objects[udata];
-        //            //return udata != -1 ? _objects[udata] : GetUserData(luaState, index);
-        //        }
-        //    default:
-        //        return null;
-        //}
+        var stru = (UserDataStruct)System.Runtime.InteropServices.Marshal.PtrToStructure(System.Runtime.InteropServices.Marshal.ReadIntPtr(userdata), typeof(UserDataStruct));
 
-        //if (_userData.TryGetValue(typeof(T), out var @object))
-        //    return (T)@object;
-
-        //return null;
-
-        //IntPtr userdata = GetRawUserdata<T>(L, arg);
-        //if (userdata == IntPtr.Zero)
-        //{
-        //    return null;
-        //}
-        //return (T)System.Runtime.InteropServices.Marshal.PtrToStructure(System.Runtime.InteropServices.Marshal.ReadIntPtr(userdata), typeof(T));
+        return (T)_objects[stru.Index];
     }
 
     //public static void RemoveUserdata<T>() where T : class
@@ -1158,6 +1152,11 @@ public class LuaFunctionsLoader
     //}
 
     public static IntPtr GetRawUserdata<T>(LuaState L, int arg) where T : class
+    {
+        return (nint)Lua.ToUserData(L, arg);
+    }
+
+    public static IntPtr GetRawUserdataStruct<T>(LuaState L, int arg) where T : struct
     {
         return (nint)Lua.ToUserData(L, arg);
     }

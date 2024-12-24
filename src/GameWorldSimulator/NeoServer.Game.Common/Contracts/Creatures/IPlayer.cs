@@ -87,6 +87,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     ushort MaxMana { get; }
     SkillType SkillInUse { get; }
     bool CannotLogout { get; }
+    bool IsProtectionZoneLocked { get; }
     uint Id { get; }
     bool HasDepotOpened { get; }
     uint TotalCapacity { get; }

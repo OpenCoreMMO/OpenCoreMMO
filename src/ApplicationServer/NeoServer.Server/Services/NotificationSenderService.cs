@@ -1,16 +1,17 @@
 ﻿using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Networking.Packets.Outgoing;
 
-namespace NeoServer.Game.Common.Services;
+namespace NeoServer.Server.Services;
 
 public static class NotificationSenderService
 {
     public static event SendNotification OnNotificationSent;
 
     public static void Send(IPlayer to, string message,
-        NotificationType notificationType = NotificationType.Description)
+        TextMessageOutgoingType notificationType = TextMessageOutgoingType.Description)
     {
         OnNotificationSent?.Invoke(to, message, notificationType);
     }
 }
 
-public delegate void SendNotification(IPlayer player, string message, NotificationType notificationType);
+public delegate void SendNotification(IPlayer player, string message, TextMessageOutgoingType notificationType);
