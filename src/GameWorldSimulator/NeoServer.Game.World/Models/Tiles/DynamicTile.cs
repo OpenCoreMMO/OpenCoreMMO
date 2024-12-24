@@ -597,7 +597,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         TileOperationEvent.OnChanged(this, ground, operations);
     }
-    
+
     public Result<OperationResultList<ICreature>> AddCreature(ICreature creature)
     {
         if (creature is not IWalkableCreature walkableCreature)

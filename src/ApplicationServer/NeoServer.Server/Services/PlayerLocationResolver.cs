@@ -21,23 +21,21 @@ public class PlayerLocationResolver(World world, ILogger logger)
             : null;
 
         if (playerTile is not null) return location;
-        
+
         foreach (var neighbour in location.Neighbours)
         {
             world.TryGetTile(ref location, out var neighbourTile);
             if (neighbourTile is IDynamicTile && PlayerEnterTileRule.Rule.CanEnter(neighbourTile, neighbour))
-            {
                 return location;
-            }
         }
 
         var town = GetTown(playerEntity);
         if (town is null) return Location.Zero;
-        
+
         var townLocation = town.Coordinate.Location;
 
         playerTile = world.TryGetTile(ref townLocation, out var townTile) && townTile is IDynamicTile townDynamicTile &&
-                     PlayerEnterTileRule.Rule.CanEnter(townDynamicTile, townLocation) 
+                     PlayerEnterTileRule.Rule.CanEnter(townDynamicTile, townLocation)
             ? townDynamicTile
             : null;
 

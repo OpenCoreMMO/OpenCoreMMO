@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NeoServer.Data.Entities;
-using System;
 
 namespace NeoServer.Data.Seeds;
 

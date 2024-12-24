@@ -73,16 +73,17 @@ public static class DatabaseInjection
 
         var dbConnections = databaseConfiguration.Connections;
 
-        if(!string.IsNullOrEmpty(sqliteDatabase))
+        if (!string.IsNullOrEmpty(sqliteDatabase))
             dbConnections[DatabaseType.SQLITE] = $"Data Source={sqliteDatabase}";
 
         if (!string.IsNullOrEmpty(postgresDatabase))
-            dbConnections[DatabaseType.POSTGRESQL] = $"host={postgresHost};port={postgresPort};database={postgresDatabase};username={postgresUser};password={postgresPassword};";
+            dbConnections[DatabaseType.POSTGRESQL] =
+                $"host={postgresHost};port={postgresPort};database={postgresDatabase};username={postgresUser};password={postgresPassword};";
         var active = databaseConfiguration.Active;
 
         if (!string.IsNullOrEmpty(activeDatabase) && Enum.TryParse(activeDatabase, out DatabaseType databaseType))
             active = databaseType;
 
-        databaseConfiguration = new(dbConnections, active);
+        databaseConfiguration = new DatabaseConfiguration(dbConnections, active);
     }
 }

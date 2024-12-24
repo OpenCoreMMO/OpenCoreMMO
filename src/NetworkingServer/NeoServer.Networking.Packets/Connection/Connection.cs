@@ -60,8 +60,8 @@ public class Connection : IConnection
     public bool Disconnected { get; private set; }
     public long LastPingRequest { get; set; }
     public long LastPingResponse { get; set; }
-    public long TimeStamp { get; private set; }
-    public byte RandomNumber { get; private set; }
+    public long TimeStamp { get; }
+    public byte RandomNumber { get; }
     public event EventHandler<IConnectionEventArgs> OnProcessEvent;
     public event EventHandler<IConnectionEventArgs> OnCloseEvent;
     public event EventHandler<IConnectionEventArgs> OnPostProcessEvent;
@@ -127,10 +127,10 @@ public class Connection : IConnection
             RandomNumber = RandomNumber,
             TimeStamp = TimeStamp
         }.WriteToMessage(message);
-        
+
         message.AddLength();
 
-        SendMessage(message, addHeader: false);
+        SendMessage(message, false);
     }
 
 

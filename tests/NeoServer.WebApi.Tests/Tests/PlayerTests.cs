@@ -38,6 +38,5 @@ public class PlayerTests : BaseIntegrationTests
         response.Name.Should().Be(player.Name);
     }
 
-
     #endregion
 }

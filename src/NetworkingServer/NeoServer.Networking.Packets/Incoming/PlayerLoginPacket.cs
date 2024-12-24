@@ -14,7 +14,7 @@ public class PlayerLogInPacket : IncomingPacket
         var tcpPayload = packetLength + 2;
         message.SkipBytes(5);
 
-        OperatingSystem = (OperatingSystem) message.GetUInt16();
+        OperatingSystem = (OperatingSystem)message.GetUInt16();
         Version = message.GetUInt16();
 
         //message.SkipBytes(9);
@@ -38,14 +38,11 @@ public class PlayerLogInPacket : IncomingPacket
         ChallengeTimeStamp = data.GetUInt32();
         ChallengeNumber = data.GetByte();
         var clientStringLength = data.GetUInt16();
-        if (clientStringLength == 5 && data.GetString(5) == "OTCv8")
-        {
-            OtcV8Version = data.GetUInt16();
-        }
+        if (clientStringLength == 5 && data.GetString(5) == "OTCv8") OtcV8Version = data.GetUInt16();
     }
 
     public ushort OtcV8Version { get; set; }
-    
+
     public string Account { get; set; }
     public string Password { get; set; }
     public string CharacterName { get; set; }
