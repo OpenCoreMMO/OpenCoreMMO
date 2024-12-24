@@ -37,14 +37,6 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         {
             var id = GetNumber<uint>(L, 2);
             _gameCreatureManager.TryGetPlayer(id, out player);
-            //if (id >= Player::getFirstID() && id <= Player::getLastID())
-            //{
-            //    player = g_game().getPlayerByID(id);
-            //}
-            //else
-            //{
-            //    player = g_game().getPlayerByGUID(id);
-            //}
         }
         else if (IsString(L, 2))
         {
@@ -57,14 +49,6 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
                 Lua.PushNumber(L, (int)ReturnValueType.RETURNVALUE_PLAYERWITHTHISNAMEISNOTONLINE);
                 return 2;
             }
-
-            //ReturnValue ret = g_game().getPlayerByNameWildcard(getString(L, 2), player);
-            //if (ret != RETURNVALUE_NOERROR)
-            //{
-            //    lua_pushnil(L);
-            //    lua_pushnumber(L, ret);
-            //    return 2;
-            //}
         }
         else if (IsUserdata(L, 2))
         {
@@ -108,14 +92,6 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             return 1;
         }
 
-        //var oldPosition = creature.Location;
-        //if (Game.GetInstance().InternalTeleport(creature, position, pushMovement))
-        //{
-        //    Logger.GetInstance().Error($"[{nameof(LuaTeleportTo)}] Failed to teleport creature {creature.Name}, on position {oldPosition}, error code: {0}");// GetReturnMessage(ret));
-        //    PushBoolean(L, false);
-        //    return 1;
-        //}
-
         creature.TeleportTo(position);
 
         PushBoolean(L, true);
@@ -136,36 +112,37 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         int parameters = Lua.GetTop(L);
 
-        //TextMessage message(GetNumber<MessageClassesType>(L, 2), GetString(L, 3));
         var messageType = GetNumber<MessageClassesType>(L, 2);
         var messageText = GetString(L, 3);
 
-        if (parameters == 4)
-        {
-            //uint16_t channelId = getNumber<uint16_t>(L, 4);
-            //const auto &channel = g_chat().getChannel(player, channelId);
-            //if (!channel || !channel->hasUser(player))
-            //{
-            //    pushBoolean(L, false);
-            //    return 1;
-            //}
-            //message.channelId = channelId;
-        }
-        else
-        {
-            //if (parameters >= 6)
-            //{
-            //    message.position = getPosition(L, 4);
-            //    message.primary.value = getNumber<int32_t>(L, 5);
-            //    message.primary.color = getNumber<TextColor_t>(L, 6);
-            //}
+        //its not used
+        //if (parameters == 4)
+        //{
+        //    var channelId = GetNumber<ushort>(L, 4);
 
-            //if (parameters >= 8)
-            //{
-            //    message.secondary.value = getNumber<int32_t>(L, 7);
-            //    message.secondary.color = getNumber<TextColor_t>(L, 8);
-            //}
-        }
+        //    const auto &channel = g_chat().getChannel(player, channelId);
+        //    if (!channel || !channel->hasUser(player))
+        //    {
+        //        pushBoolean(L, false);
+        //        return 1;
+        //    }
+        //    message.channelId = channelId;
+        //}
+        //else
+        //{
+        //    if (parameters >= 6)
+        //    {
+        //        message.position = getPosition(L, 4);
+        //        message.primary.value = getNumber<int32_t>(L, 5);
+        //        message.primary.color = getNumber<TextColor_t>(L, 6);
+        //    }
+
+        //    if (parameters >= 8)
+        //    {
+        //        message.secondary.value = getNumber<int32_t>(L, 7);
+        //        message.secondary.color = getNumber<TextColor_t>(L, 8);
+        //    }
+        //}
 
         NotificationSenderService.Send(player, messageText, (TextMessageOutgoingType)messageType);
         PushBoolean(L, true);
@@ -185,21 +162,4 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         return 1;
     }
-
-    //private static int LuaPlayerSendCancelMessage(LuaState L)
-    //{
-    //    // player:sendCancelMessage()
-
-    //    var player = GetUserdata<IPlayer>(L, 1);
-
-    //    if (player == null)
-    //        Lua.PushNil(L);
-
-    //    var messageText = GetString(L, 2);
-
-    //    //InvalidOperation.NotAPartyLeader
-    //    OperationFailService.Send(player.Id, messageText);
-
-    //    return 1;
-    //}
 }

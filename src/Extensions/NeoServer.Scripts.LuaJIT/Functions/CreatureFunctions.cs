@@ -32,7 +32,6 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         ICreature creature = null;
         if (IsNumber(L, 2))
         {
-            //creature = Game.GetInstance().GetCreatureByID(GetNumber<int>(L, 2));
             var id = GetNumber<int>(L, 2);
             creature = _gameCreatureManager.GetCreatures().FirstOrDefault(c => c.CreatureId == id);
         }
@@ -86,7 +85,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 
     private static int LuaGetName(LuaState L)
     {
-        // player:getName()
+        // creature:getName()
         var creature = GetUserdata<ICreature>(L, 1);
 
         if (creature == null)

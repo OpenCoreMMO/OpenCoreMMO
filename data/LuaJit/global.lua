@@ -1,5 +1,4 @@
 ﻿-- for use of: data\scripts\globalevents\customs\save_interval.lua
-logger.info('print from global.lua')
 
 SAVE_INTERVAL_TYPE = configManager.getString(configKeys.SAVE_INTERVAL_TYPE)
 SAVE_INTERVAL_CONFIG_TIME = configManager.getNumber(configKeys.SAVE_INTERVAL_TIME)

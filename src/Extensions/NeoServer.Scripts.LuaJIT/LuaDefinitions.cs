@@ -1,4 +1,6 @@
-﻿namespace NeoServer.Scripts.LuaJIT;
+﻿using NeoServer.Game.Common.Location.Structs;
+
+namespace NeoServer.Scripts.LuaJIT;
 
 // Enums
 public enum LuaDataType : byte
@@ -219,7 +221,7 @@ public struct LuaVariant
     public string Text;
     public string InstantName;
     public string RuneName;
-    //public Position Pos;
+    public Location Pos;
     public uint Number = 0;
 
     public LuaVariant()

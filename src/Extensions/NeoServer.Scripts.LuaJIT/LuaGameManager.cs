@@ -4,7 +4,7 @@ using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Scripts.LuaJIT.Functions;
+using NeoServer.Server.Configurations;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
@@ -54,6 +54,8 @@ public class LuaGameManager : ILuaGameManager
     private readonly ITalkActionFunctions _talkActionFunctions;
     private readonly ITileFunctions _tileFunctions;
 
+    private readonly ServerConfiguration _serverConfiguration;
+
     #endregion
 
     #region Constructors
@@ -77,7 +79,8 @@ public class LuaGameManager : ILuaGameManager
         IPlayerFunctions playerFunctions,
         IPositionFunctions positionFunctions,
         ITalkActionFunctions talkActionFunctions,
-        ITileFunctions tileFunctions)
+        ITileFunctions tileFunctions,
+        ServerConfiguration serverConfiguration)
     {
         _logger = logger;
         _luaEnviroment = luaEnviroment;
@@ -101,7 +104,7 @@ public class LuaGameManager : ILuaGameManager
         _talkActionFunctions = talkActionFunctions;
         _tileFunctions = tileFunctions;
 
-        Start();
+        _serverConfiguration = serverConfiguration;
     }
 
     #endregion
@@ -174,7 +177,7 @@ public class LuaGameManager : ILuaGameManager
 
     #region Private Methods
 
-    private void Start()
+    public void Start()
     {
         var dir = AppContext.BaseDirectory;
 
@@ -206,9 +209,9 @@ public class LuaGameManager : ILuaGameManager
 
         ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), $"config.lua");
 
-        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}/Data/LuaJit/core.lua", "core.lua"), "core.lua");
+        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/core.lua", "core.lua"), "core.lua");
 
-        ModulesLoadHelper(_scripts.LoadScripts($"{dir}/Data/LuaJit/scripts", false, false), "/Data/LuaJit/scripts");
+        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts", false, false), "/Data/LuaJit/scripts");
     }
 
     private void ModulesLoadHelper(bool loaded, string moduleName)

@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Server.Helpers;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -19,6 +20,16 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
     protected Dictionary<int, string> cacheFiles;
 
     private LuaEnvironment g_luaEnvironment() => LuaEnvironment.GetInstance();
+
+    //private ILuaEnvironment _luaEnvironment = null;
+
+    //private ILuaEnvironment g_luaEnvironment()
+    //{
+    //    if(_luaEnvironment == null)
+    //        _luaEnvironment = IoC.GetInstance<ILuaEnvironment>();
+
+    //    return _luaEnvironment;
+    //}
 
     public LuaScriptInterface(string initInterfaceName)
     {

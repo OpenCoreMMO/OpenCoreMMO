@@ -63,7 +63,10 @@ public class TutorLoader : PlayerLoader
         };
 
         newPlayer.AddInventory(ConvertToInventory(newPlayer, playerEntity));
-        SetCurrentTile(newPlayer);
+
+        //SetCurrentTile(newPlayer);
+        var currentTile = GetCurrentTile(newPlayer.Location);
+        newPlayer.SetCurrentTile(currentTile);
 
         var tutor = CreatureFactory.CreatePlayer(newPlayer);
         return tutor;

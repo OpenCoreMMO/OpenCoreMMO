@@ -108,6 +108,7 @@ public class Program
         container.Resolve<IEnumerable<IStartup>>().ToList().ForEach(x => x.Run());
 
         container.Resolve<LuaGlobalRegister>().Register();
+        container.Resolve<ILuaGameManager>().Start();
 
         StartListening(container, cancellationToken);
 

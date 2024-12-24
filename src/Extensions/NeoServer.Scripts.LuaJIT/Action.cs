@@ -1,7 +1,8 @@
 ﻿using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Scripts.LuaJIT.Structs;
+using NeoServer.Server.Helpers;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
@@ -17,25 +18,21 @@ public class Action : Script
     private List<ushort> _actionIds = new List<ushort>();
     private List<Location> _positions = new List<Location>();
 
-    //private Func<Player, Item, Position, Thing, Position, bool, bool> useFunction = null;
+    private ILogger _logger;
 
     public Action(LuaScriptInterface scriptInterface) : base(scriptInterface)
     {
     }
-
-    // Scripting
-    //public virtual bool ExecuteUse(
-    //    Player player, Item item, Position fromPosition, Thing target, Position toPosition, bool isHotkey)
-    //{
-    //    //return useFunction?.Invoke(player, item, fromPosition, target, toPosition, isHotkey) ?? false;
-    //}
 
     public bool ExecuteUse(IPlayer player, IItem item, Location fromPosition, IThing target, Location toPosition, bool isHotkey)
     {
         // onUse(player, item, fromPosition, target, toPosition, isHotkey)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            Console.WriteLine($"[Action::executeUse - Player {player.Name}, on item {item.Name}] " +
+            if (_logger == null)
+                _logger = IoC.GetInstance<ILogger>();
+
+            _logger.Error($"[Action::executeUse - Player {player.Name}, on item {item.Name}] " +
                               $"Call stack overflow. Too many lua script calls being nested. Script name {GetScriptInterface().GetLoadingScriptName()}");
             return false;
         }
@@ -144,21 +141,5 @@ public class Action : Script
         //return g_actions().canUseFar(player, toPos, checkLineOfSight, checkFloor);
 
         return default(ReturnValueType);
-    }
-
-    //public override bool HasOwnErrorHandler()
-    //{
-    //    return false;
-    //}
-
-    //public virtual Thing GetTarget(Player player, Creature targetCreature, Position toPosition, byte toStackPos)
-    //{
-    //    // Implement the logic for GetTarget
-    //    return null;
-    //}
-
-    private string GetScriptTypeName()
-    {
-        return "onUse";
     }
 }

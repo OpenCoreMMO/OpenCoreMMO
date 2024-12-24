@@ -1,5 +1,6 @@
 ﻿using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location.Structs;
 using Serilog;
 using System.Text;
@@ -9,9 +10,6 @@ namespace NeoServer.Scripts.LuaJIT;
 public class Actions : Scripts, IActions
 {
     #region Injection
-
-    //private static Actions _instance;
-    //public static Actions GetInstance() => _instance == null ? _instance = new Actions() : _instance;
 
     #endregion
 
@@ -28,7 +26,6 @@ public class Actions : Scripts, IActions
 
     public Actions(ILogger logger) : base(logger) 
     {
-        //_instance = this;
     }
 
     #endregion
@@ -290,29 +287,29 @@ public class Actions : Scripts, IActions
 
     public ReturnValueType CanUse(IPlayer player, Location pos)
     {
-        //if (pos.X != 0xFFFF)
-        //{
-        //    var playerPos = player.Location;
-        //    if (playerPos.Z != pos.Z)
-        //    {
-        //        return playerPos.Z > pos.Z ? ReturnValue.FIRSTGOUPSTAIRS : ReturnValue.FIRSTGODOWNSTAIRS;
-        //    }
+        if (pos.X != 0xFFFF)
+        {
+            var playerPos = player.Location;
+            if (playerPos.Z != pos.Z)
+            {
+                return playerPos.Z > pos.Z ? ReturnValueType.RETURNVALUE_FIRSTGOUPSTAIRS : ReturnValueType.RETURNVALUE_FIRSTGODOWNSTAIRS;
+            }
 
-        //    if (!Location.areInRange < 1, 1 > (playerPos, pos))
-        //    {
-        //        return ReturnValue.TOOFARAWAY;
-        //    }
-        //}
+            //if (!Location.areInRange < 1, 1 > (playerPos, pos))
+            //{
+            //    return ReturnValueType.RETURNVALUE_TOOFARAWAY;
+            //}
+        }
         return ReturnValueType.RETURNVALUE_NOERROR;
     }
 
     public ReturnValueType CanUse(IPlayer player, Location pos, IItem item)
     {
-        //var action = GetAction(item);
-        //if (action != null)
-        //{
-        //    return action.canExecuteAction(player, pos);
-        //}
+        var action = GetAction(item);
+        if (action != null)
+        {
+            return action.CanExecuteAction(player, pos);
+        }
         return ReturnValueType.RETURNVALUE_NOERROR;
     }
 
@@ -344,23 +341,13 @@ public class Actions : Scripts, IActions
 
     public Action GetAction(IItem item)
     {
-        //if (item.hasAttribute(ItemAttribute_t.UNIQUEID))
-        //{
-        //    var it = _uniqueItemMap.find(item.getAttribute<ushort>(ItemAttribute_t.UNIQUEID));
-        //    if (it != _uniqueItemMap.end())
-        //    {
-        //        return it->second;
-        //    }
-        //}
+        if (item.Metadata.Attributes.HasAttribute(ItemAttribute.UniqueId) &&
+            _uniqueItemMap.TryGetValue((ushort)item.UniqueId, out var uniqueIdAction))
+            return uniqueIdAction;
 
-        //if (item.hasAttribute(ItemAttribute_t.ACTIONID))
-        //{
-        //    var it = _actionItemMap.find(item.getAttribute<ushort>(ItemAttribute_t.ACTIONID));
-        //    if (it != _actionItemMap.end())
-        //    {
-        //        return it->second;
-        //    }
-        //}
+        if (item.Metadata.Attributes.HasAttribute(ItemAttribute.ActionId) &&
+            _actionItemMap.TryGetValue((ushort)item.UniqueId, out var actionIdAction))
+            return actionIdAction;
 
         if (_useItemMap.TryGetValue(item.ServerId, out var action))
             return action;

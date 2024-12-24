@@ -1,11 +1,6 @@
-﻿using NeoServer.Game.Common.Contracts.Items;
-using System;
-using System.Collections.Generic;
+﻿using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
 using System.ComponentModel;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -19,18 +14,14 @@ public class ScriptEnvironment
     private LuaScriptInterface luaScriptInterface;
 
     // local item map
-    //private Dictionary<uint, std.shared_ptr<Thing>> localMap;
-    //private uint lastUID;
+    private Dictionary<uint, IThing> localMap = new Dictionary<uint, IThing>();
+    private uint lastUID;
 
     // temporary item list
-    //private Dictionary<ScriptEnvironment, std.shared_ptr<Item>> tempItems;
+    private Dictionary<ScriptEnvironment, IItem> tempItems = new Dictionary<ScriptEnvironment, IItem>();
 
     // for npc scripts
-    //private Npc curNpc = nullptr;
-
-    // result map
-    //private uint lastResultId;
-    //private Dictionary<uint, DBResult_ptr> tempResults;
+    private INpc curNpc = null;
 
     public ScriptEnvironment()
     {
@@ -48,23 +39,15 @@ public class ScriptEnvironment
         callbackId = 0;
         timerEvent = false;
         luaScriptInterface = null;
-        //localMap.Clear();
-        //tempResults.Clear();
-
-        //var pair = tempItems.equal_range(this);
-        //var it = pair.first;
-        //while (it != pair.second)
-        //{
-        //    std.shared_ptr<Item> item = it->second;
-        //    it = tempItems.erase(it);
-        //}
+        localMap.Clear();
+        tempItems.Clear();
     }
 
     public void SetScriptId(int newScriptId, LuaScriptInterface newScriptInterface)
     {
         scriptId = newScriptId;
         luaScriptInterface = newScriptInterface;
-	    }
+    }
 
     public bool SetCallbackId(int newCallbackId, LuaScriptInterface scriptInterface)
     {
@@ -83,9 +66,10 @@ public class ScriptEnvironment
         return true;
     }
 
-    public int GetScriptId() {
-		    return scriptId;
-	    }
+    public int GetScriptId()
+    {
+        return scriptId;
+    }
 
     public LuaScriptInterface GetScriptInterface()
     {
@@ -105,152 +89,122 @@ public class ScriptEnvironment
         retTimerEvent = timerEvent;
     }
 
-    //public uint AddThing(std.shared_ptr<Thing> thing)
-    //{
-    //    if (thing == null || thing.isRemoved())
-    //    {
-    //        return 0;
-    //    }
+    public uint AddThing(IThing thing)
+    {
+        if (thing == null)
+        {
+            return 0;
+        }
 
-    //    std.shared_ptr<Creature> creature = thing.getCreature();
-    //    if (creature != null)
-    //    {
-    //        return creature.getID();
-    //    }
+        if (thing is ICreature creature)
+        {
+            return creature.CreatureId;
+        }
 
-    //    std.shared_ptr<Item> item = thing.getItem();
-    //    if (item != null && item.hasAttribute(ItemAttribute_t.UNIQUEID))
-    //    {
-    //        return item.getAttribute<uint>(ItemAttribute_t.UNIQUEID);
-    //    }
+        if (thing is IItem item && item.Metadata.Attributes.HasAttribute(Game.Common.Item.ItemAttribute.UniqueId))
+        {
+            return item.UniqueId;
+        }
 
-    //    foreach (var it in localMap)
-    //    {
-    //        if (it.Value == item)
-    //        {
-    //            return it.Key;
-    //        }
-    //    }
+        foreach (var it in localMap)
+        {
+            if (it.Value == thing)
+            {
+                return it.Key;
+            }
+        }
 
-    //    localMap[++lastUID] = item;
-    //    return lastUID;
-    //}
+        localMap[++lastUID] = thing;
+        return lastUID;
+    }
 
-    //public void InsertItem(uint uid, std.shared_ptr<Item> item)
-    //{
-    //    var result = localMap.TryAdd(uid, item);
-    //    if (!result)
-    //    {
-    //        g_logger().error("Thing uid already taken: {}", uid);
-    //    }
-    //}
+    public void InsertItem(uint uid, IItem item)
+    {
+        var result = localMap.TryAdd(uid, item);
+        if (!result)
+        {
+            //g_logger().error("Thing uid already taken: {}", uid);
+        }
+    }
 
-    //public std.shared_ptr<Thing> GetThingByUID(uint uid)
-    //{
-    //    if (uid >= 0x10000000)
-    //    {
-    //        return g_game().getCreatureByID(uid);
-    //    }
+    public IThing GetThingByUID(uint uid)
+    {
+        //if (uid >= 0x10000000)
+        //{
+        //    return g_game().getCreatureByID(uid);
+        //}
 
-    //    if (uid <= std.numeric_limits<uint16_t>.max())
-    //    {
-    //        std.shared_ptr<Item> item = g_game().getUniqueItem(static_cast<uint16_t>(uid));
-    //        if (item != null && !item.isRemoved())
-    //        {
-    //            return item;
-    //        }
-    //        return null;
-    //    }
+        if (uid <= ushort.MaxValue)
+        {
+            //std.shared_ptr<Item> item = g_game().getUniqueItem(static_cast<uint16_t>(uid));
+            //if (item != null && !item.isRemoved())
+            //{
+            //    return item;
+            //}
+            //return null;
+        }
 
-    //    if (localMap.TryGetValue(uid, out std.shared_ptr<Item> item))
-    //    {
-    //        if (!item.isRemoved())
-    //        {
-    //            return item;
-    //        }
-    //    }
-    //    return null;
-    //}
+        if (localMap.TryGetValue(uid, out IThing thing))
+            return thing;
 
-    //public IItem GetItemByUID(uint uid)
-    //{
-    //    std.shared_ptr<Thing> thing = getThingByUID(uid);
-    //    if (thing == null)
-    //    {
-    //        return null;
-    //    }
-    //    return thing.getItem();
-    //}
+        return null;
+    }
 
-    //public std.shared_ptr<Container> GetContainerByUID(uint uid)
-    //{
-    //    std.shared_ptr<Item> item = getItemByUID(uid);
-    //    if (item == null)
-    //    {
-    //        return null;
-    //    }
-    //    return item.getContainer();
-    //}
+    public IItem GetItemByUID(uint uid)
+    {
+        var thing = GetThingByUID(uid);
 
-    //public void RemoveItemByUID(uint uid)
-    //{
-    //    if (uid <= std.numeric_limits<uint16_t>.max())
-    //    {
-    //        g_game().removeUniqueItem(static_cast<uint16_t>(uid));
-    //        return;
-    //    }
+        if (thing != null && thing is IItem item)
+            return item;
 
-    //    localMap.TryRemove(uid, out var _);
-    //}
+        return null;
+    }
 
-    //public void AddTempItem(std.shared_ptr<Item> item)
-    //{
-    //    tempItems.Add(this, item);
-    //}
+    public IContainer GetContainerByUID(uint uid)
+    {
+        var thing = GetThingByUID(uid);
 
-    //public void RemoveTempItem(std.shared_ptr<Item> item)
-    //{
-    //    foreach (var it in tempItems)
-    //    {
-    //        if (it.Value == item)
-    //        {
-    //            tempItems.Remove(it.Key);
-    //            break;
-    //        }
-    //    }
-    //}
+        if (thing != null && thing is IContainer container)
+            return container;
 
-    //public uint AddResult(DBResult_ptr res)
-    //{
-    //    tempResults[++lastResultId] = res;
-    //    return lastResultId;
-    //}
+        return null;
+    }
 
-    //public bool RemoveResult(uint id)
-    //{
-    //    if (tempResults.TryGetValue(id, out var _))
-    //    {
-    //        tempResults.Remove(id);
-    //        return true;
-    //    }
-    //    return false;
-    //}
+    public void RemoveItemByUID(uint uid)
+    {
+        if (uid <= ushort.MaxValue)
+        {
+            //g_game().removeUniqueItem(static_cast<uint16_t>(uid));
+            return;
+        }
 
-    //public DBResult_ptr GetResultByID(uint id)
-    //{
-    //    if (tempResults.TryGetValue(id, out var result))
-    //    {
-    //        return result;
-    //    }
-    //    return null;
-    //}
+        localMap.Remove(uid, out var _);
+    }
 
-    //   public void SetNpc(Npc npc)
-    //   {
-    //       curNpc = npc;
-    //   }
+    public void AddTempItem(IItem item)
+    {
+        tempItems.Add(this, item);
+    }
 
-    //   public Npc GetNpc() {
-    // return curNpc;
-    //}
+    public void RemoveTempItem(IItem item)
+    {
+        foreach (var it in tempItems)
+        {
+            if (it.Value == item)
+            {
+                tempItems.Remove(it.Key);
+                break;
+            }
+        }
+    }
+
+    public void SetNpc(INpc npc)
+    {
+        curNpc = npc;
+    }
+
+    public INpc GetNpc()
+    {
+        return curNpc;
+    }
 }

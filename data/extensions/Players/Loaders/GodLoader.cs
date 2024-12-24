@@ -62,7 +62,9 @@ public class GodLoader : PlayerLoader
             GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0)
         };
 
-        SetCurrentTile(newPlayer);
+        //SetCurrentTile(newPlayer);
+        var currentTile = GetCurrentTile(newPlayer.Location);
+        newPlayer.SetCurrentTile(currentTile);
 
         newPlayer.AddInventory(ConvertToInventory(newPlayer, playerEntity));
         var god = CreatureFactory.CreatePlayer(newPlayer);

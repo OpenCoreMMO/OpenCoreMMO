@@ -14,7 +14,7 @@ function talkAction.onSay(player, words, param)
 
 		["items"] = RELOAD_TYPE_ITEMS,
  		["module"] = RELOAD_TYPE_MODULES,
-		 ["modules"] = RELOAD_TYPE_MODULES,
+		["modules"] = RELOAD_TYPE_MODULES,
 
 		["monster"] = RELOAD_TYPE_MONSTERS,
 		["monsters"] = RELOAD_TYPE_MONSTERS,
@@ -48,13 +48,13 @@ function talkAction.onSay(player, words, param)
 
  	--if not configManager.getBoolean(configKeys.ALLOW_RELOAD) then
  	--	print("Reload command is disabled.")
- 	--	player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Reload command is disabled.")
+ 	--	player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, "Reload command is disabled.")
  	--	return true
  	--end
 
  	if param == "" then
- 		print("Command param required.")
- 		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Command param required.")
+ 		logger.warn("Command param required.")
+ 		player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
  		return true
  	end
 
@@ -66,14 +66,18 @@ function talkAction.onSay(player, words, param)
  		-- Force save server before reload
  		--nsaveServer()
  		--bSaveHirelings()
- 		logger.info("Saved Hirelings")
- 		player:sendTextMessage(MESSAGE_ADMINISTRADOR, "Server is saved.. Now will reload configs!")
+        local reloadingMessage = string.format("Server is saved.. Now will reload %s!", param:lower())
+ 		logger.info(reloadingMessage)
+ 		player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE,  reloadingMessage)
+
+        local reloadedMessage =  string.format("Reloaded %s.", param:lower())
 
  		Game.reload(reloadType)
- 		player:sendTextMessage(MESSAGE_LOOK, string.format("Reloaded %s.", param:lower()))
- 		logger.info("Reloaded {}", param:lower())
+ 		player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, reloadedMessage)
+ 		logger.info(reloadedMessage)
+
  	elseif not reloadType then
- 		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Reload type not found.")
+ 		player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, "Reload type not found.")
  		logger.warn("[reload.onSay] - Reload type '{}' not found", param)
  	end
 

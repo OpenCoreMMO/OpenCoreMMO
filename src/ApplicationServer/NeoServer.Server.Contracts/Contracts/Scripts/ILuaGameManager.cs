@@ -7,6 +7,7 @@ namespace NeoServer.Application.Common.Contracts.Scripts;
 
 public interface ILuaGameManager
 {
+    void Start();
     bool PlayerSaySpell(IPlayer player, SpeechType type, string text);
     bool PlayerUseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item);
     bool PlayerUseItemWithCreature(IPlayer player, Location fromPos, byte fromStackPos, ICreature creature, IItem item);
