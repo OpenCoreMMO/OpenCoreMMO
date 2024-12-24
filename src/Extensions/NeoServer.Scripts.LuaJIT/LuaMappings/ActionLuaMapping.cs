@@ -1,13 +1,14 @@
 ﻿using LuaNET;
 using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
 
-namespace NeoServer.Scripts.LuaJIT.Functions;
+namespace NeoServer.Scripts.LuaJIT.LuaMappings;
 
-public class ActionFunctions : LuaScriptInterface, IActionFunctions
+public class ActionLuaMapping : LuaScriptInterface, IActionLuaMapping
 {
     private static IActions _actions;
 
-    public ActionFunctions(IActions actions) : base(nameof(ActionFunctions))
+    public ActionLuaMapping(IActions actions) : base(nameof(ActionLuaMapping))
     {
         _actions = actions;
     }

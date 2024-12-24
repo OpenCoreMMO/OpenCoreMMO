@@ -3,17 +3,18 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
 using NeoServer.Server.Services;
 using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT.Functions;
+namespace NeoServer.Scripts.LuaJIT.LuaMappings;
 
-public class PositionFunctions : LuaScriptInterface, IPositionFunctions
+public class PositionLuaMapping : LuaScriptInterface, IPositionLuaMapping
 {
     private static ILogger _logger;
     private static IConfigManager _configManager;
 
-    public PositionFunctions(ILogger logger, IConfigManager configManager) : base(nameof(PositionFunctions))
+    public PositionLuaMapping(ILogger logger, IConfigManager configManager) : base(nameof(PositionLuaMapping))
     {
         _logger = logger;
         _configManager = configManager;

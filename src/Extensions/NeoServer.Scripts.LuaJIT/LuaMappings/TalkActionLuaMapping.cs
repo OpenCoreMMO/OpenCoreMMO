@@ -1,11 +1,12 @@
 ﻿using LuaNET;
 using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
 
-namespace NeoServer.Scripts.LuaJIT.Functions;
+namespace NeoServer.Scripts.LuaJIT.LuaMappings;
 
-public class TalkActionFunctions : LuaScriptInterface, ITalkActionFunctions
+public class TalkActionLuaMapping : LuaScriptInterface, ITalkActionLuaMapping
 {
-    public TalkActionFunctions() : base(nameof(TalkActionFunctions))
+    public TalkActionLuaMapping() : base(nameof(TalkActionLuaMapping))
     {
     }
 

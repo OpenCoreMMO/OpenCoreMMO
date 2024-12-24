@@ -4,6 +4,7 @@ using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
 using NeoServer.Server.Configurations;
 using Serilog;
 
@@ -40,19 +41,19 @@ public class LuaGameManager : ILuaGameManager
     private readonly IActions _actions;
     private readonly ITalkActions _talkActions;
 
-    private readonly IActionFunctions _actionFunctions;
-    private readonly IConfigFunctions _configFunctions;
-    private readonly ICreatureFunctions _creatureFunctions;
-    private readonly IEnumFunctions _enumFunctions;
-    private readonly IGameFunctions _gameFunctions;
-    private readonly IGlobalFunctions _globalFunctions;
-    private readonly IItemFunctions _itemFunctions;
-    private readonly IItemTypeFunctions _itemTypeFunctions;
-    private readonly ILoggerFunctions _loggerFunctions;
-    private readonly IPlayerFunctions _playerFunctions;
-    private readonly IPositionFunctions _positionFunctions;
-    private readonly ITalkActionFunctions _talkActionFunctions;
-    private readonly ITileFunctions _tileFunctions;
+    private readonly IActionLuaMapping _actionLuaMapping;
+    private readonly IConfigLuaMapping _configLuaMapping;
+    private readonly ICreatureLuaMapping _creatureLuaMapping;
+    private readonly IEnumLuaMapping _enumLuaMapping;
+    private readonly IGameLuaMapping _gameLuaMapping;
+    private readonly IGlobalLuaMapping _globalLuaMapping;
+    private readonly IItemLuaMapping _itemLuaMapping;
+    private readonly IItemTypeLuaMapping _itemTypeLuaMapping;
+    private readonly ILoggerLuaMapping _loggerLuaMapping;
+    private readonly IPlayerLuaMapping _playerLuaMapping;
+    private readonly IPositionLuaMapping _positionLuaMapping;
+    private readonly ITalkActionLuaMapping _talkActionLuaMapping;
+    private readonly ITileLuaMapping _tileLuaMapping;
 
     private readonly ServerConfiguration _serverConfiguration;
 
@@ -67,19 +68,19 @@ public class LuaGameManager : ILuaGameManager
         IScripts scripts,
         IActions actions,
         ITalkActions talkActions,
-        IActionFunctions actionFunctions,
-        IConfigFunctions configFunctions,
-        ICreatureFunctions creatureFunctions,
-        IEnumFunctions enumFunctions,
-        IGameFunctions gameFunctions,
-        IGlobalFunctions globalFunctions,
-        IItemFunctions itemFunctions,
-        IItemTypeFunctions itemTypeFunctions,
-        ILoggerFunctions loggerFunctions,
-        IPlayerFunctions playerFunctions,
-        IPositionFunctions positionFunctions,
-        ITalkActionFunctions talkActionFunctions,
-        ITileFunctions tileFunctions,
+        IActionLuaMapping actionLuaMapping,
+        IConfigLuaMapping configLuaMapping,
+        ICreatureLuaMapping creatureLuaMapping,
+        IEnumLuaMapping enumLuaMapping,
+        IGameLuaMapping gameLuaMapping,
+        IGlobalLuaMapping globalLuaMapping,
+        IItemLuaMapping itemLuaMapping,
+        IItemTypeLuaMapping itemTypeLuaMapping,
+        ILoggerLuaMapping loggerLuaMapping,
+        IPlayerLuaMapping playerLuaMapping,
+        IPositionLuaMapping positionLuaMapping,
+        ITalkActionLuaMapping talkActionLuaMapping,
+        ITileLuaMapping tileLuaMapping,
         ServerConfiguration serverConfiguration)
     {
         _logger = logger;
@@ -90,19 +91,19 @@ public class LuaGameManager : ILuaGameManager
         _actions = actions;
         _talkActions = talkActions;
 
-        _actionFunctions = actionFunctions;
-        _configFunctions = configFunctions;
-        _creatureFunctions = creatureFunctions;
-        _enumFunctions = enumFunctions;
-        _gameFunctions = gameFunctions;
-        _globalFunctions = globalFunctions;
-        _itemFunctions = itemFunctions;
-        _itemTypeFunctions = itemTypeFunctions;
-        _loggerFunctions = loggerFunctions;
-        _playerFunctions = playerFunctions;
-        _positionFunctions = positionFunctions;
-        _talkActionFunctions = talkActionFunctions;
-        _tileFunctions = tileFunctions;
+        _actionLuaMapping = actionLuaMapping;
+        _configLuaMapping = configLuaMapping;
+        _creatureLuaMapping = creatureLuaMapping;
+        _enumLuaMapping = enumLuaMapping;
+        _gameLuaMapping = gameLuaMapping;
+        _globalLuaMapping = globalLuaMapping;
+        _itemLuaMapping = itemLuaMapping;
+        _itemTypeLuaMapping = itemTypeLuaMapping;
+        _loggerLuaMapping = loggerLuaMapping;
+        _playerLuaMapping = playerLuaMapping;
+        _positionLuaMapping = positionLuaMapping;
+        _talkActionLuaMapping = talkActionLuaMapping;
+        _tileLuaMapping = tileLuaMapping;
 
         _serverConfiguration = serverConfiguration;
     }
@@ -189,23 +190,23 @@ public class LuaGameManager : ILuaGameManager
         var luaState = _luaEnviroment.GetLuaState();
 
         if (luaState.IsNull)
-            _logger.Error("Invalid lua state, cannot load lua functions.");
+            _logger.Error("Invalid lua state, cannot load lua LuaMapping.");
 
         Lua.OpenLibs(luaState);
 
-        _actionFunctions.Init(luaState);
-        _configFunctions.Init(luaState);
-        _creatureFunctions.Init(luaState);
-        _enumFunctions.Init(luaState);
-        _gameFunctions.Init(luaState);
-        _globalFunctions.Init(luaState);
-        _itemFunctions.Init(luaState);
-        _itemTypeFunctions.Init(luaState);
-        _loggerFunctions.Init(luaState);
-        _playerFunctions.Init(luaState);
-        _positionFunctions.Init(luaState);
-        _talkActionFunctions.Init(luaState);
-        _tileFunctions.Init(luaState);
+        _actionLuaMapping.Init(luaState);
+        _configLuaMapping.Init(luaState);
+        _creatureLuaMapping.Init(luaState);
+        _enumLuaMapping.Init(luaState);
+        _gameLuaMapping.Init(luaState);
+        _globalLuaMapping.Init(luaState);
+        _itemLuaMapping.Init(luaState);
+        _itemTypeLuaMapping.Init(luaState);
+        _loggerLuaMapping.Init(luaState);
+        _playerLuaMapping.Init(luaState);
+        _positionLuaMapping.Init(luaState);
+        _talkActionLuaMapping.Init(luaState);
+        _tileLuaMapping.Init(luaState);
 
         ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), $"config.lua");
 
