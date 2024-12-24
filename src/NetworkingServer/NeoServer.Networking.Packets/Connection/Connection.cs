@@ -36,6 +36,8 @@ public class Connection : IConnection
         _connectionLock = new object();
         _logger = logger;
         LastPingResponse = DateTime.Now.Ticks;
+        RandomNumber = (byte)new Random().Next(byte.MinValue, byte.MaxValue);
+        TimeStamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     }
 
     private bool Closed
@@ -58,7 +60,8 @@ public class Connection : IConnection
     public bool Disconnected { get; private set; }
     public long LastPingRequest { get; set; }
     public long LastPingResponse { get; set; }
-
+    public long TimeStamp { get; private set; }
+    public byte RandomNumber { get; private set; }
     public event EventHandler<IConnectionEventArgs> OnProcessEvent;
     public event EventHandler<IConnectionEventArgs> OnCloseEvent;
     public event EventHandler<IConnectionEventArgs> OnPostProcessEvent;
@@ -119,14 +122,21 @@ public class Connection : IConnection
     {
         var message = new NetworkMessage();
 
-        new FirstConnectionPacket().WriteToMessage(message);
+        new FirstConnectionPacket
+        {
+            RandomNumber = RandomNumber,
+            TimeStamp = TimeStamp
+        }.WriteToMessage(message);
+        
+        message.AddLength();
 
-        SendMessage(message);
+        SendMessage(message, addHeader: false);
     }
 
-    public void Send(IOutgoingPacket packet)
+
+    public void Send(IOutgoingPacket packet, byte[] buffer = null, int length = 0)
     {
-        var message = new NetworkMessage();
+        NetworkMessage message =  buffer is null ?  new NetworkMessage(length) : new NetworkMessage(buffer, length);
 
         packet.WriteToMessage(message);
 
@@ -134,6 +144,7 @@ public class Connection : IConnection
 
         var encryptedMessage = Xtea.Encrypt(message, XteaKey);
 
+        _logger.Debug("To {PlayerId}: {Name}", CreatureId, packet.GetType().Name);
         SendMessage(encryptedMessage);
     }
 
@@ -285,14 +296,15 @@ public class Connection : IConnection
         }
     }
 
-    private void SendMessage(INetworkMessage message)
+    private void SendMessage(INetworkMessage message, bool addHeader = true)
     {
         try
         {
             lock (_writeLock)
             {
                 if (Closed || !_socket.Connected || Disconnected) return;
-                var streamMessage = message.AddHeader();
+
+                var streamMessage = addHeader ? message.AddHeader() : message.GetMessageInBytes().ToArray();
 
                 _stream.BeginWrite(streamMessage, 0, streamMessage.Length, null, null);
             }
