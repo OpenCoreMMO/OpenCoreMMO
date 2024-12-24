@@ -4,6 +4,7 @@ using NeoServer.Data.Interfaces;
 using NeoServer.Game.Common.Results;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Networking.Packets.Outgoing;
+using NeoServer.Networking.Packets.Outgoing.Custom;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
@@ -78,7 +79,20 @@ public class PlayerLogInHandler : PacketHandler
         _game.Dispatcher.AddEvent(new Event(() =>
         {
             var result = _playerLogInCommand.Execute(playerRecord, connection);
-            if(result.Failed) Disconnect(connection, TextMessageOutgoingParser.Parse(result.Error));
+            if (result.Failed)
+            {
+                Disconnect(connection, TextMessageOutgoingParser.Parse(result.Error));
+                return;
+            }
+            
+            if (packet.OtcV8Version > 0 || packet.OperatingSystem >= OperatingSystem.OtcLinux)
+            {
+                if (packet.OtcV8Version > 0)
+                {
+                    connection.Send(new FeaturesPacket());
+                }
+                connection.Send(new OpcodeMessagePacket());
+            }
         }));
     }
 
@@ -103,6 +117,12 @@ public class PlayerLogInHandler : PacketHandler
 
     private bool Verify(IConnection connection, PlayerLogInPacket packet)
     {
+        if (packet.ChallengeTimeStamp != connection.TimeStamp || packet.ChallengeNumber != connection.RandomNumber)
+        {
+            Disconnect(connection, "Login challenge is not valid.");
+            return false;
+        }
+        
         if (string.IsNullOrWhiteSpace(packet.Account))
         {
             Disconnect(connection, "You must enter your account name.");

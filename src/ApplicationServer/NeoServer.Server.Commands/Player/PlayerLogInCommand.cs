@@ -41,7 +41,7 @@ public class PlayerLogInCommand : ICommand
         if (playerRecord is null)
             //todo validations here
             return Result.Fail(InvalidOperation.PlayerNotFound);
-
+      
         if (!game.CreatureManager.TryGetLoggedPlayer((uint)playerRecord.Id, out var player))
         {
             if (playerLoaders.FirstOrDefault(x => x.IsApplicable(playerRecord)) is not { } playerLoader)
