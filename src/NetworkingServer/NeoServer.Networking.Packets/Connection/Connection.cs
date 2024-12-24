@@ -134,9 +134,9 @@ public class Connection : IConnection
     }
 
 
-    public void Send(IOutgoingPacket packet, byte[] buffer = null, int length = 0)
+    public void Send(IOutgoingPacket packet)
     {
-        NetworkMessage message =  buffer is null ?  new NetworkMessage(length) : new NetworkMessage(buffer, length);
+        var message = new NetworkMessage();
 
         packet.WriteToMessage(message);
 
