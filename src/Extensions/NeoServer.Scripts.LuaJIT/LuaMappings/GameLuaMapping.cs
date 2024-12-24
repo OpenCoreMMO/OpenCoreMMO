@@ -6,23 +6,24 @@ using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
+using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers;
 
-namespace NeoServer.Scripts.LuaJIT.Functions;
+namespace NeoServer.Scripts.LuaJIT.LuaMappings;
 
-public class GameFunctions : LuaScriptInterface, IGameFunctions
+public class GameLuaMapping : LuaScriptInterface, IGameLuaMapping
 {
     private static IScripts _scripts;
     private static IItemTypeStore _itemTypeStore;
     private static IItemFactory _itemFactory;
     private static ServerConfiguration _serverConfiguration;
 
-    public GameFunctions(
+    public GameLuaMapping(
         IScripts scripts,
         IItemTypeStore itemTypeStore,
         IItemFactory itemFactory,
-        ServerConfiguration serverConfiguration) : base(nameof(GameFunctions))
+        ServerConfiguration serverConfiguration) : base(nameof(GameLuaMapping))
     {
         _scripts = scripts;
         _itemTypeStore = itemTypeStore;

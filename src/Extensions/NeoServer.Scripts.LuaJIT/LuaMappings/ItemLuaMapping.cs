@@ -3,17 +3,18 @@ using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Item;
+using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
 
-namespace NeoServer.Scripts.LuaJIT.Functions;
+namespace NeoServer.Scripts.LuaJIT.LuaMappings;
 
-public class ItemFunctions : LuaScriptInterface, IItemFunctions
+public class ItemLuaMapping : LuaScriptInterface, IItemLuaMapping
 {
     private static IItemTransformService _itemTransformService;
     private static IItemTypeStore _itemTypeStore;
 
-    public ItemFunctions(
+    public ItemLuaMapping(
         IItemTransformService itemTransformService,
-        IItemTypeStore itemTypeStore) : base(nameof(ItemFunctions))
+        IItemTypeStore itemTypeStore) : base(nameof(ItemLuaMapping))
     {
         _itemTransformService = itemTransformService;
         _itemTypeStore = itemTypeStore;

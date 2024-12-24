@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Scripts.LuaJIT;
-using NeoServer.Scripts.LuaJIT.Functions;
+using NeoServer.Scripts.LuaJIT.LuaMappings;
+using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
 
 namespace NeoServer.Server.Standalone.IoC.Modules;
 
@@ -15,19 +16,19 @@ public static class LuaJITInjection
         builder.AddSingleton<IActions, Actions>();
         builder.AddSingleton<ITalkActions, TalkActions>();
 
-        builder.AddSingleton<IActionFunctions, ActionFunctions>();
-        builder.AddSingleton<IConfigFunctions, ConfigFunctions>();
-        builder.AddSingleton<ICreatureFunctions, CreatureFunctions>();
-        builder.AddSingleton<IEnumFunctions, EnumFunctions>();
-        builder.AddSingleton<IGameFunctions, GameFunctions>();
-        builder.AddSingleton<IGlobalFunctions, GlobalFunctions>();
-        builder.AddSingleton<IItemFunctions, ItemFunctions>();
-        builder.AddSingleton<IItemTypeFunctions, ItemTypeFunctions>();
-        builder.AddSingleton<ILoggerFunctions, LoggerFunctions>();
-        builder.AddSingleton<IPlayerFunctions, PlayerFunctions>();
-        builder.AddSingleton<IPositionFunctions, PositionFunctions>();
-        builder.AddSingleton<ITalkActionFunctions, TalkActionFunctions>();
-        builder.AddSingleton<ITileFunctions, TileFunctions>();
+        builder.AddSingleton<IActionLuaMapping, ActionLuaMapping>();
+        builder.AddSingleton<IConfigLuaMapping, ConfigLuaMappingr>();
+        builder.AddSingleton<ICreatureLuaMapping, CreatureLuaMapping>();
+        builder.AddSingleton<IEnumLuaMapping, EnumLuaMapping>();
+        builder.AddSingleton<IGameLuaMapping, GameLuaMapping>();
+        builder.AddSingleton<IGlobalLuaMapping, GlobalLuaMapping>();
+        builder.AddSingleton<IItemLuaMapping, ItemLuaMapping>();
+        builder.AddSingleton<IItemTypeLuaMapping, ItemTypeLuaMapping>();
+        builder.AddSingleton<ILoggerLuaMapping, LoggerLuaMapping>();
+        builder.AddSingleton<IPlayerLuaMapping, PlayerLuaMapping>();
+        builder.AddSingleton<IPositionLuaMapping, PositionLuaMapping>();
+        builder.AddSingleton<ITalkActionLuaMapping, TalkActionLuaMapping>();
+        builder.AddSingleton<ITileLuaMapping, TileLuaMapping>();
 
         return builder;
     }

@@ -1,14 +1,15 @@
 ﻿using LuaNET;
+using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
 using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT.Functions;
+namespace NeoServer.Scripts.LuaJIT.LuaMappings;
 
-public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
+public class LoggerLuaMapping : LuaScriptInterface, ILoggerLuaMapping
 {
     private static ILogger _logger;
 
-    public LoggerFunctions(
-        ILuaEnvironment luaEnvironment, ILogger logger) : base(nameof(LoggerFunctions))
+    public LoggerLuaMapping(
+        ILuaEnvironment luaEnvironment, ILogger logger) : base(nameof(LoggerLuaMapping))
     {
         _logger = logger;
     }

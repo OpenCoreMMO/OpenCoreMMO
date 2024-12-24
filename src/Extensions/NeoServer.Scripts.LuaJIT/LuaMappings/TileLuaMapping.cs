@@ -4,15 +4,16 @@ using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
 using NeoServer.Server.Common.Contracts;
 
-namespace NeoServer.Scripts.LuaJIT.Functions;
+namespace NeoServer.Scripts.LuaJIT.LuaMappings;
 
-public class TileFunctions : LuaScriptInterface, ITileFunctions
+public class TileLuaMapping : LuaScriptInterface, ITileLuaMapping
 {
     private static IGameServer _gameServer;
 
-    public TileFunctions(IGameServer gameServer) : base(nameof(TileFunctions))
+    public TileLuaMapping(IGameServer gameServer) : base(nameof(TileLuaMapping))
     {
         _gameServer = gameServer;
     }

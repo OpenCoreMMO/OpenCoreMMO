@@ -2,13 +2,14 @@
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Item;
+using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
 
-namespace NeoServer.Scripts.LuaJIT.Functions;
+namespace NeoServer.Scripts.LuaJIT.LuaMappings;
 
-public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
+public class ItemTypeLuaMapping : LuaScriptInterface, IItemTypeLuaMapping
 {
     private static IItemTypeStore _itemTypeStore;
-    public ItemTypeFunctions(IItemTypeStore itemTypeStore) : base(nameof(ItemTypeFunctions))
+    public ItemTypeLuaMapping(IItemTypeStore itemTypeStore) : base(nameof(ItemTypeLuaMapping))
     {
         _itemTypeStore = itemTypeStore;
     }
