@@ -1,6 +1,6 @@
 namespace NeoServer.Server.Security;
 
-public class AdlerChecksum
+public static class AdlerChecksum
 {
     public static uint Checksum(byte[] data, int index, int length)
     {

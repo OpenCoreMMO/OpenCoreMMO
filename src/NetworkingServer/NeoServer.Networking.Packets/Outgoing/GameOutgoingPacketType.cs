@@ -62,5 +62,6 @@ public enum GameOutgoingPacketType : byte
     AddVip = 0xD2,
     OnlineStatusVip = 0xD3,
     OfflineStatusVip = 0xD4,
-    TextWindow = 0x96
+    TextWindow = 0x96,
+    NetworkPing = 0x40,
 }

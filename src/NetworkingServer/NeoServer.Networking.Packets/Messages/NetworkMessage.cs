@@ -80,6 +80,17 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
         WriteBytes(buffer);
     }
 
+    public void WriteUint32(uint value, int position)
+    {
+        Span<byte> buffer = stackalloc byte[4];
+        BitConverter.TryWriteBytes(buffer, value);
+        
+        Buffer[position] = buffer[position++];
+        Buffer[position] = buffer[position++];
+        Buffer[position] = buffer[position++];
+        Buffer[position] = buffer[position];
+    }
+
     /// <summary>
     ///     Adds ushort (2 bytes) to buffer
     /// </summary>
@@ -97,7 +108,7 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
     /// <param name="b"></param>
     public void AddByte(byte b)
     {
-        WriteBytes(new[] { b });
+        WriteByte(b);
     }
 
     /// <summary>

@@ -2,6 +2,7 @@
 using NeoServer.Networking.Packets.Messages;
 using NeoServer.Server.Common.Contracts.Network;
 using NeoServer.Server.Security;
+using OperatingSystem = NeoServer.Server.Common.Enums.OperatingSystem;
 
 namespace NeoServer.Networking.Packets.Incoming;
 
@@ -13,7 +14,7 @@ public class PlayerLogInPacket : IncomingPacket
         var tcpPayload = packetLength + 2;
         message.SkipBytes(5);
 
-        OS = message.GetUInt16();
+        OperatingSystem = (OperatingSystem) message.GetUInt16();
         Version = message.GetUInt16();
 
         //message.SkipBytes(9);
@@ -34,14 +35,23 @@ public class PlayerLogInPacket : IncomingPacket
         Account = data.GetString();
         CharacterName = data.GetString();
         Password = data.GetString();
-        GameServerNonce = data.GetBytes(5).ToArray();
+        ChallengeTimeStamp = data.GetUInt32();
+        ChallengeNumber = data.GetByte();
+        var clientStringLength = data.GetUInt16();
+        if (clientStringLength == 5 && data.GetString(5) == "OTCv8")
+        {
+            OtcV8Version = data.GetUInt16();
+        }
     }
 
+    public ushort OtcV8Version { get; set; }
+    
     public string Account { get; set; }
     public string Password { get; set; }
     public string CharacterName { get; set; }
     public bool GameMaster { get; set; }
-    public byte[] GameServerNonce { get; set; }
-    public ushort OS { get; set; }
+    public uint ChallengeTimeStamp { get; set; }
+    public byte ChallengeNumber { get; set; }
+    public OperatingSystem OperatingSystem { get; set; }
     public ushort Version { get; set; }
 }

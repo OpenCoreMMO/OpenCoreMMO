@@ -1,5 +1,6 @@
 ﻿using NeoServer.Networking.Packets.Messages;
 using NeoServer.Server.Common.Contracts.Network;
+using NeoServer.Server.Common.Enums;
 using NeoServer.Server.Security;
 
 namespace NeoServer.Networking.Packets.Incoming;
@@ -10,8 +11,8 @@ public class AccountLoginPacket : IncomingPacket
     {
         var packetPayload = message.GetUInt16();
         var tcpPayload = packetPayload + 2;
-        message.SkipBytes(7);
-        //var os = message.GetUInt16();
+        message.SkipBytes(5);
+        OperatingSystem = (OperatingSystem) message.GetUInt16();
         ProtocolVersion = message.GetUInt16();
 
         message.SkipBytes(12);
@@ -29,6 +30,8 @@ public class AccountLoginPacket : IncomingPacket
         Account = data.GetString();
         Password = data.GetString();
     }
+
+    public OperatingSystem OperatingSystem { get; set; }
 
     public string Account { get; }
     public string Password { get; }
