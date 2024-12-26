@@ -16,6 +16,7 @@ public class InspectionTextBuilder
 
         AddItemName(item, showInternalDetails, inspectionText);
         AddEquipmentAttributes(item, inspectionText);
+
         inspectionText.AppendNewLine(".");
         AddRequirement(item, inspectionText);
 
@@ -34,6 +35,11 @@ public class InspectionTextBuilder
 
     private static void AddRequirement(IItem item, StringBuilder inspectionText)
     {
+        if (!string.IsNullOrWhiteSpace(item.Metadata.Description))
+        {
+            return;
+        }
+
         var result = RequirementInspectionTextBuilder.Build(item);
         if (string.IsNullOrWhiteSpace(result)) return;
         inspectionText.AppendNewLine(result);
