@@ -5,18 +5,21 @@ using NeoServer.Game.Common.Helpers;
 using NeoServer.Networking.Packets.Outgoing.Item;
 using NeoServer.Networking.Packets.Outgoing.Npc;
 using NeoServer.Server.Common.Contracts;
+using NeoServer.Server.Configurations;
 
 namespace NeoServer.Server.Events.Items;
 
 public class ContentModifiedOnContainerEventHandler
 {
     private readonly ICoinTypeStore _coinTypeStore;
+    private readonly ClientConfiguration _clientConfiguration;
     private readonly IGameServer game;
 
-    public ContentModifiedOnContainerEventHandler(IGameServer game, ICoinTypeStore coinTypeStore)
+    public ContentModifiedOnContainerEventHandler(IGameServer game, ICoinTypeStore coinTypeStore, ClientConfiguration clientConfiguration)
     {
         this.game = game;
         _coinTypeStore = coinTypeStore;
+        _clientConfiguration = clientConfiguration;
     }
 
     public void Execute(IPlayer player, ContainerOperation operation, byte containerId, byte slotIndex, IItem item)
@@ -32,13 +35,13 @@ public class ContentModifiedOnContainerEventHandler
             case ContainerOperation.ItemAdded:
                 connection.OutgoingPackets.Enqueue(new AddItemContainerPacket(containerId, item)
                 {
-                    ShowItemDescription = connection.OtcV8Version > 0
+                    ShowItemDescription = connection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip
                 });
                 break;
             case ContainerOperation.ItemUpdated:
                 connection.OutgoingPackets.Enqueue(new UpdateItemContainerPacket(containerId, slotIndex, item)
                 {
-                    ShowItemDescription = connection.OtcV8Version > 0
+                    ShowItemDescription = connection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip
                 });
                 break;
         }

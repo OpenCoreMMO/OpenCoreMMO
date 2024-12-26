@@ -2,16 +2,19 @@
 using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Networking.Packets.Outgoing.Player;
 using NeoServer.Server.Common.Contracts;
+using NeoServer.Server.Configurations;
 
 namespace NeoServer.Server.Events.Player.Containers;
 
 public class PlayerOpenedContainerEventHandler
 {
     private readonly IGameServer game;
+    private readonly ClientConfiguration _clientConfiguration;
 
-    public PlayerOpenedContainerEventHandler(IGameServer game)
+    public PlayerOpenedContainerEventHandler(IGameServer game, ClientConfiguration clientConfiguration)
     {
         this.game = game;
+        _clientConfiguration = clientConfiguration;
     }
 
     public void Execute(IPlayer player, byte containerId, IContainer container)
@@ -25,7 +28,7 @@ public class PlayerOpenedContainerEventHandler
 
         connection.OutgoingPackets.Enqueue(new OpenContainerPacket(container, containerId)
         {
-            WithDescription = connection.OtcV8Version > 0
+            WithDescription = connection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip
         });
         connection.Send();
     }

@@ -20,17 +20,19 @@ public class PlayerLogInHandler : PacketHandler
     private readonly IGameServer _game;
     private readonly PlayerLogInCommand _playerLogInCommand;
     private readonly PlayerLogOutCommand _playerLogOutCommand;
+    private readonly ClientConfiguration _clientConfiguration;
     private readonly ServerConfiguration _serverConfiguration;
 
     public PlayerLogInHandler(IAccountRepository repositoryNeo,
         IGameServer game, ServerConfiguration serverConfiguration, PlayerLogInCommand playerLogInCommand,
-        PlayerLogOutCommand playerLogOutCommand)
+        PlayerLogOutCommand playerLogOutCommand, ClientConfiguration clientConfiguration)
     {
         _accountRepository = repositoryNeo;
         _game = game;
         _serverConfiguration = serverConfiguration;
         _playerLogInCommand = playerLogInCommand;
         _playerLogOutCommand = playerLogOutCommand;
+        _clientConfiguration = clientConfiguration;
     }
 
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
@@ -89,7 +91,13 @@ public class PlayerLogInHandler : PacketHandler
 
             if (packet.OtcV8Version > 0 || packet.OperatingSystem >= OperatingSystem.OtcLinux)
             {
-                if (packet.OtcV8Version > 0) connection.Send(new FeaturesPacket());
+                if (packet.OtcV8Version > 0) connection.Send(new FeaturesPacket
+                {
+                    GameEnvironmentEffect = _clientConfiguration.OtcV8.GameEnvironmentEffect,
+                    GameExtendedOpcode = _clientConfiguration.OtcV8.GameExtendedOpcode,
+                    GameExtendedClientPing = _clientConfiguration.OtcV8.GameExtendedClientPing,
+                    GameItemTooltip = _clientConfiguration.OtcV8.GameItemTooltip
+                });
                 connection.Send(new OpcodeMessagePacket());
             }
         }));
