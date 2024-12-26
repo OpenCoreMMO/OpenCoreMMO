@@ -34,10 +34,11 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
     }
 
-    public abstract int DefendUsingShield(int attack);
-    public abstract int DefendUsingArmor(int attack);
     public bool IsShieldDefenseEnabled { get; private set; } = true;
     public byte DamageReceivedPercentage { get; private set; }
+
+    public abstract int DefendUsingShield(int attack);
+    public abstract int DefendUsingArmor(int attack);
 
     public void AddCondition(ICondition condition)
     {
@@ -348,6 +349,26 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return Result.Success;
     }
 
+    public void DisableShieldDefense()
+    {
+        IsShieldDefenseEnabled = false;
+    }
+
+    public void EnableShieldDefense()
+    {
+        IsShieldDefenseEnabled = true;
+    }
+
+    public void IncreaseDamageReceived(byte percentage)
+    {
+        DamageReceivedPercentage += percentage;
+    }
+
+    public void DecreaseDamageReceived(byte percentage)
+    {
+        DamageReceivedPercentage -= percentage;
+    }
+
     public abstract bool HasImmunity(Immunity immunity);
 
     public virtual bool CanBlock(DamageType damage)
@@ -436,18 +457,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     protected void InvokeAttackCanceled()
     {
         OnAttackCanceled?.Invoke(this);
-    }
-    
-    public void DisableShieldDefense() => IsShieldDefenseEnabled = false;
-    public void EnableShieldDefense() => IsShieldDefenseEnabled = true;
-    public void IncreaseDamageReceived(byte percentage)
-    {
-        DamageReceivedPercentage += percentage;
-    }
-
-    public void DecreaseDamageReceived(byte percentage)
-    {
-        DamageReceivedPercentage -= percentage;
     }
 
     #region Events

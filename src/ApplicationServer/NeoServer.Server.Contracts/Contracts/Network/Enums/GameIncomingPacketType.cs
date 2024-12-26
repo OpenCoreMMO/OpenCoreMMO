@@ -73,5 +73,6 @@ public enum GameIncomingPacketType : byte
     ReportBug = 0xE6,
     ReportViolation = 0xE7,
     ReportDebugAssertion = 0xE8,
+    NewPing = 0x40,
     Any = 0xFF // Do not send
 }

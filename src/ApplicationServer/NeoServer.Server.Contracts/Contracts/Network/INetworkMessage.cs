@@ -12,8 +12,9 @@ public interface INetworkMessage : IReadOnlyNetworkMessage
     void AddString(string value);
     void AddUInt16(ushort value);
     void AddUInt32(uint value);
+    void WriteUint32(uint value, int position);
     byte[] AddHeader(bool addChecksum = true);
-    void AddItem(IItem item);
+    void AddItem(IItem item, bool showItemDescription = false);
     void AddLocation(Location location);
     void AddLength();
 }

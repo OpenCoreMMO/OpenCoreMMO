@@ -35,7 +35,10 @@ public class TutorLoader : PlayerLoader
         if (Guard.IsNull(playerEntity)) return null;
 
         var town = GetTown(playerEntity);
+        var playerLocation =
+            new Location((ushort)playerEntity.PosX, (ushort)playerEntity.PosY, (byte)playerEntity.PosZ);
 
+        var currentTile = GetCurrentTile(playerLocation);
         var newPlayer = new Tutor(
             (uint)playerEntity.Id,
             playerEntity.Name,
@@ -63,7 +66,7 @@ public class TutorLoader : PlayerLoader
         };
 
         newPlayer.AddInventory(ConvertToInventory(newPlayer, playerEntity));
-        SetCurrentTile(newPlayer);
+        newPlayer.SetCurrentTile(currentTile);
 
         var tutor = CreatureFactory.CreatePlayer(newPlayer);
         return tutor;

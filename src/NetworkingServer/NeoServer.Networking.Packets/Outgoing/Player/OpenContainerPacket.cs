@@ -8,6 +8,7 @@ public class OpenContainerPacket : OutgoingPacket
 {
     private readonly IContainer container;
     private readonly byte containerId;
+    public required bool WithDescription { get; init; }
 
     public OpenContainerPacket(IContainer container, byte containerId)
     {
@@ -20,7 +21,7 @@ public class OpenContainerPacket : OutgoingPacket
         message.AddByte((byte)GameOutgoingPacketType.ContainerOpen);
 
         message.AddByte(containerId);
-        message.AddItem(container);
+        message.AddItem(container, WithDescription);
         message.AddString(container.Name);
         message.AddByte(container.Capacity);
 
@@ -28,6 +29,6 @@ public class OpenContainerPacket : OutgoingPacket
 
         message.AddByte(Math.Min((byte)0xFF, container.SlotsUsed));
 
-        for (byte i = 0; i < container.SlotsUsed; i++) message.AddItem(container.Items[i]);
+        for (byte i = 0; i < container.SlotsUsed; i++) message.AddItem(container.Items[i], WithDescription);
     }
 }

@@ -4,6 +4,7 @@ using NeoServer.Data.Interfaces;
 using NeoServer.Game.Common.Results;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Networking.Packets.Outgoing;
+using NeoServer.Networking.Packets.Outgoing.Custom;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
@@ -19,17 +20,19 @@ public class PlayerLogInHandler : PacketHandler
     private readonly IGameServer _game;
     private readonly PlayerLogInCommand _playerLogInCommand;
     private readonly PlayerLogOutCommand _playerLogOutCommand;
+    private readonly ClientConfiguration _clientConfiguration;
     private readonly ServerConfiguration _serverConfiguration;
 
     public PlayerLogInHandler(IAccountRepository repositoryNeo,
         IGameServer game, ServerConfiguration serverConfiguration, PlayerLogInCommand playerLogInCommand,
-        PlayerLogOutCommand playerLogOutCommand)
+        PlayerLogOutCommand playerLogOutCommand, ClientConfiguration clientConfiguration)
     {
         _accountRepository = repositoryNeo;
         _game = game;
         _serverConfiguration = serverConfiguration;
         _playerLogInCommand = playerLogInCommand;
         _playerLogOutCommand = playerLogOutCommand;
+        _clientConfiguration = clientConfiguration;
     }
 
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
@@ -74,8 +77,30 @@ public class PlayerLogInHandler : PacketHandler
             Disconnect(connection, "Your account is banned.");
             return;
         }
+        
+        connection.OtcV8Version = packet.OtcV8Version;
+        
+        _game.Dispatcher.AddEvent(new Event(() =>
+        {
+            var result = _playerLogInCommand.Execute(playerRecord, connection);
+            if (result.Failed)
+            {
+                Disconnect(connection, TextMessageOutgoingParser.Parse(result.Error));
+                return;
+            }
 
-        _game.Dispatcher.AddEvent(new Event(() => _playerLogInCommand.Execute(playerRecord, connection)));
+            if (packet.OtcV8Version > 0 || packet.OperatingSystem >= OperatingSystem.OtcLinux)
+            {
+                if (packet.OtcV8Version > 0) connection.Send(new FeaturesPacket
+                {
+                    GameEnvironmentEffect = _clientConfiguration.OtcV8.GameEnvironmentEffect,
+                    GameExtendedOpcode = _clientConfiguration.OtcV8.GameExtendedOpcode,
+                    GameExtendedClientPing = _clientConfiguration.OtcV8.GameExtendedClientPing,
+                    GameItemTooltip = _clientConfiguration.OtcV8.GameItemTooltip
+                });
+                connection.Send(new OpcodeMessagePacket());
+            }
+        }));
     }
 
     private Result ValidateOnlineStatus(IConnection connection, PlayerEntity playerOnline,
@@ -99,6 +124,12 @@ public class PlayerLogInHandler : PacketHandler
 
     private bool Verify(IConnection connection, PlayerLogInPacket packet)
     {
+        if (packet.ChallengeTimeStamp != connection.TimeStamp || packet.ChallengeNumber != connection.RandomNumber)
+        {
+            Disconnect(connection, "Login challenge is not valid.");
+            return false;
+        }
+
         if (string.IsNullOrWhiteSpace(packet.Account))
         {
             Disconnect(connection, "You must enter your account name.");

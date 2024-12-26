@@ -4,6 +4,7 @@ using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
+using NeoServer.Game.Common.Location.Structs;
 
 namespace NeoServer.Game.Creatures;
 
@@ -25,6 +26,16 @@ public abstract class CreatureEnterTileRule<T> : ITileEnterRule
     }
 
     public virtual bool CanEnter(ITile tile, ICreature creature)
+    {
+        if (tile is not IDynamicTile dynamicTile) return false;
+
+        return ConditionEvaluation.And(
+            !dynamicTile.HasCreature,
+            !dynamicTile.HasFlag(TileFlags.Unpassable),
+            dynamicTile.Ground is not null);
+    }
+
+    public virtual bool CanEnter(ITile tile, Location location)
     {
         if (tile is not IDynamicTile dynamicTile) return false;
 
@@ -55,6 +66,20 @@ public class PlayerEnterTileRule : CreatureEnterTileRule<PlayerEnterTileRule>
         if (tile is not IDynamicTile dynamicTile) return false;
 
         var goingToDifferentFloor = !creature.Location.SameFloorAs(tile.Location);
+        var hasMonsterOrNpc = !goingToDifferentFloor &&
+                              (dynamicTile.HasCreatureOfType<IMonster>() || dynamicTile.HasCreatureOfType<INpc>());
+
+        return ConditionEvaluation.And(
+            !hasMonsterOrNpc,
+            !dynamicTile.HasFlag(TileFlags.Unpassable),
+            dynamicTile.Ground is not null);
+    }
+
+    public override bool CanEnter(ITile tile, Location location)
+    {
+        if (tile is not IDynamicTile dynamicTile) return false;
+
+        var goingToDifferentFloor = !location.SameFloorAs(tile.Location);
         var hasMonsterOrNpc = !goingToDifferentFloor &&
                               (dynamicTile.HasCreatureOfType<IMonster>() || dynamicTile.HasCreatureOfType<INpc>());
 

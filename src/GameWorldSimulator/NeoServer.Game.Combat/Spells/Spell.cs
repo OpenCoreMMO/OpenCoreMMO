@@ -23,7 +23,7 @@ public abstract class BaseSpell : ISpell
     public bool InvokeOn(ICombatActor actor, ICombatActor onCreature, string words, out InvalidOperation error)
     {
         if (!CanBeUsedBy(actor, out error)) return false;
-       
+
         if (!onCreature.HasCondition(ConditionType))
             if (!OnCast(onCreature, words, out error))
                 return false;
@@ -31,17 +31,17 @@ public abstract class BaseSpell : ISpell
         AddCondition(onCreature);
 
         if (actor is IPlayer) AddCooldown(actor);
-        
+
         OnSpellInvoked?.Invoke(onCreature, this);
         if (actor is IPlayer player) player.ConsumeMana(Mana);
-        
+
         return true;
     }
 
     public bool Invoke(ICombatActor actor, string words, out InvalidOperation error)
     {
         if (!CanBeUsedBy(actor, out error)) return false;
-        
+
         if (!actor.HasCondition(ConditionType))
             if (!OnCast(actor, words, out error))
                 return false;
