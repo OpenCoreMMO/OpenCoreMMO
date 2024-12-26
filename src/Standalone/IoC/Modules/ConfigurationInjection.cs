@@ -32,16 +32,19 @@ public static class ConfigurationInjection
             new(0, null, null, null, string.Empty, string.Empty, string.Empty, 7171, 7172,new SaveConfiguration(3600), string.Empty);
         GameConfiguration gameConfiguration = new();
         LogConfiguration logConfiguration = new(null);
+        ClientConfiguration clientConfiguration = new(null);
 
         configuration.GetSection("server").Bind(serverConfiguration);
         configuration.GetSection("game").Bind(gameConfiguration);
         configuration.GetSection("log").Bind(logConfiguration);
+        configuration.GetSection("client").Bind(clientConfiguration);
 
         LoadEnvironmentVariables(ref serverConfiguration);
 
         builder.AddSingleton(serverConfiguration);
         builder.AddSingleton(gameConfiguration);
         builder.AddSingleton(logConfiguration);
+        builder.AddSingleton(clientConfiguration);
 
         return builder;
     }

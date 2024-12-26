@@ -67,6 +67,7 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
             return;
 
         AddBytes(item.GetRaw().ToArray());
+
         if (showItemDescription)
         {
             AddString("");

@@ -41,3 +41,12 @@ public record GrayLogConfiguration(
     string Facility)
 {
 }
+
+public record ClientConfiguration(ClientConfiguration.OtcV8Configuration OtcV8)
+{
+    public record OtcV8Configuration(
+        bool GameExtendedOpcode,
+        bool GameEnvironmentEffect,
+        bool GameExtendedClientPing,
+        bool GameItemTooltip);
+}
