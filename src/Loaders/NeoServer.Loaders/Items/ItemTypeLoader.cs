@@ -24,6 +24,14 @@ namespace NeoServer.Loaders.Items
         private readonly IItemTypeStore _itemTypeStore;
         private readonly ILogger _logger;
         private readonly ServerConfiguration _serverConfiguration;
+        
+        private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            DefaultBufferSize = 4096,
+            AllowTrailingCommas = true,
+            ReadCommentHandling = JsonCommentHandling.Skip,
+        };
 
         public ItemTypeLoader(ILogger logger, ServerConfiguration serverConfiguration, IItemTypeStore itemTypeStore,
             IItemClientServerIdMapStore itemClientServerIdMapStore)
@@ -110,8 +118,7 @@ namespace NeoServer.Loaders.Items
             using var stream = memoryMappedFile.CreateViewStream();
             using var reader = new StreamReader(stream);
 
-            return JsonSerializer.Deserialize<IEnumerable<ItemTypeMetadata>>(reader.ReadToEnd().Trim('\0'),
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return JsonSerializer.Deserialize<IEnumerable<ItemTypeMetadata>>(reader.ReadToEnd().Trim('\0'), _jsonOptions);
         }
     }
 }
