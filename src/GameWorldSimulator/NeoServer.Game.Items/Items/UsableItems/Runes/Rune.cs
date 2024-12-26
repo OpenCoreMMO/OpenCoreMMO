@@ -29,11 +29,6 @@ public abstract class Rune : Cumulative, IRune
     {
         get
         {
-            static double Parse(string value)
-            {
-                return double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var v) ? v : default;
-            }
-
             var x = Metadata.Attributes.GetAttributeArray("x");
             var y = Metadata.Attributes.GetAttributeArray("y");
 
@@ -42,8 +37,8 @@ public abstract class Rune : Cumulative, IRune
 
             var dictionary = new Dictionary<string, (double, double)>(2)
             {
-                { "x", (Parse(x[0]), Parse(x[1])) },
-                { "y", (Parse(y[0]), Parse(y[1])) }
+                { "x", (x[0], x[1]) },
+                { "y", (y[0], y[1]) }
             };
             return dictionary;
         }
