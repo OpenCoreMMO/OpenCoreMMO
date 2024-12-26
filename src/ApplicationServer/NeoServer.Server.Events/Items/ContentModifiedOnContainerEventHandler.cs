@@ -30,10 +30,16 @@ public class ContentModifiedOnContainerEventHandler
                 connection.OutgoingPackets.Enqueue(new RemoveItemContainerPacket(containerId, slotIndex, item));
                 break;
             case ContainerOperation.ItemAdded:
-                connection.OutgoingPackets.Enqueue(new AddItemContainerPacket(containerId, item));
+                connection.OutgoingPackets.Enqueue(new AddItemContainerPacket(containerId, item)
+                {
+                    ShowItemDescription = connection.OtcV8Version > 0
+                });
                 break;
             case ContainerOperation.ItemUpdated:
-                connection.OutgoingPackets.Enqueue(new UpdateItemContainerPacket(containerId, slotIndex, item));
+                connection.OutgoingPackets.Enqueue(new UpdateItemContainerPacket(containerId, slotIndex, item)
+                {
+                    ShowItemDescription = connection.OtcV8Version > 0
+                });
                 break;
         }
 

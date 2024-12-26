@@ -16,12 +16,14 @@ public class UpdateItemContainerPacket : OutgoingPacket
         this.slot = slot;
     }
 
+    public required bool ShowItemDescription { get; init; }
+
     public override void WriteToMessage(INetworkMessage message)
     {
         message.AddByte((byte)GameOutgoingPacketType.ContainerUpdateItem);
 
         message.AddByte(containerId);
         message.AddByte(slot);
-        message.AddItem(item);
+        message.AddItem(item, ShowItemDescription);
     }
 }

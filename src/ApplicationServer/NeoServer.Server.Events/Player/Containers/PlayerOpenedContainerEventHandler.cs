@@ -23,7 +23,10 @@ public class PlayerOpenedContainerEventHandler
     {
         if (!game.CreatureManager.GetPlayerConnection(player.CreatureId, out var connection)) return;
 
-        connection.OutgoingPackets.Enqueue(new OpenContainerPacket(container, containerId));
+        connection.OutgoingPackets.Enqueue(new OpenContainerPacket(container, containerId)
+        {
+            WithDescription = connection.OtcV8Version > 0
+        });
         connection.Send();
     }
 }

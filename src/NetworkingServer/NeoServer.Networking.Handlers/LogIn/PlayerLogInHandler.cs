@@ -75,7 +75,9 @@ public class PlayerLogInHandler : PacketHandler
             Disconnect(connection, "Your account is banned.");
             return;
         }
-
+        
+        connection.OtcV8Version = packet.OtcV8Version;
+        
         _game.Dispatcher.AddEvent(new Event(() =>
         {
             var result = _playerLogInCommand.Execute(playerRecord, connection);

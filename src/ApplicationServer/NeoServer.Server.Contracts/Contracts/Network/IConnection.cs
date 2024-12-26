@@ -17,6 +17,7 @@ public interface IConnection
     string Ip { get; }
     long TimeStamp { get; }
     byte RandomNumber { get; }
+    ushort OtcV8Version { get; set; }
 
     event EventHandler<IConnectionEventArgs> OnProcessEvent;
     event EventHandler<IConnectionEventArgs> OnCloseEvent;

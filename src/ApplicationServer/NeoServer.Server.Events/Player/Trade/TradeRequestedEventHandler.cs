@@ -27,7 +27,10 @@ public class TradeRequestedEventHandler : IEventHandler
             out var playerRequestedConnection);
 
         playerRequestingConnection.OutgoingPackets.Enqueue(new TradeRequestPacket(tradeRequest.PlayerRequesting.Name,
-            tradeRequest.Items));
+            tradeRequest.Items)
+        {
+            ShowItemDescription = playerRequestingConnection.OtcV8Version > 0
+        });
 
         SendTradeMessage(tradeRequest, playerRequestedConnection);
 
@@ -55,9 +58,15 @@ public class TradeRequestedEventHandler : IEventHandler
         var items = SafeTradeSystem.GetTradedItems(tradeRequest.PlayerRequested);
 
         playerRequestingConnection.OutgoingPackets.Enqueue(new TradeRequestPacket(tradeRequest.PlayerRequested.Name,
-            items, true));
+            items, true)
+        {
+            ShowItemDescription = playerRequestingConnection.OtcV8Version > 0
+        });
 
         playerRequestedConnection.OutgoingPackets.Enqueue(new TradeRequestPacket(tradeRequest.PlayerRequesting.Name,
-            tradeRequest.Items, true));
+            tradeRequest.Items, true)
+        {
+            ShowItemDescription = playerRequestedConnection.OtcV8Version > 0
+        });
     }
 }
