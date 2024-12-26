@@ -33,10 +33,9 @@ public class InspectionTextBuilderTest
         item.Metadata.Attributes.SetAttribute(ItemAttribute.Vocation, input);
 
         var player = PlayerTestDataBuilder.Build(hp: 200);
-        var inspectionTextBuilder = new InspectionTextBuilder(vocationStore);
 
         //act
-        var actual = inspectionTextBuilder.Build(item, player);
+        var actual = InspectionTextBuilder.Build(item);
 
         //assert
         actual.Should().Be(expected);
