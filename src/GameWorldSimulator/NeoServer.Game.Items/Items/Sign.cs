@@ -22,10 +22,10 @@ public class Sign : BaseItem, ISign
 
     public string Text { get; }
 
-    public override string GetLookText(IInspectionTextBuilder inspectionTextBuilder, IPlayer player,
-        bool isClose = false)
+    public override string GetLookText(bool isClose = false,
+        bool showInternalDetails = false)
     {
-        var lookText = base.GetLookText(inspectionTextBuilder, player, isClose);
+        var lookText = base.GetLookText(isClose, showInternalDetails);
 
         return string.IsNullOrWhiteSpace(Text) ? lookText : $"{lookText}\nYou read: {Text.AddEndOfSentencePeriod()}";
     }

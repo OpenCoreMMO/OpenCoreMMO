@@ -70,7 +70,7 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
 
         if (showItemDescription)
         {
-            AddString("");
+            AddString(item.GetLookText(true));
         }
     }
 
