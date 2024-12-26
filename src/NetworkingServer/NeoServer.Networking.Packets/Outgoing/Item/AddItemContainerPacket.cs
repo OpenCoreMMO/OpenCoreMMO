@@ -7,6 +7,7 @@ public class AddItemContainerPacket : OutgoingPacket
 {
     private readonly byte containerId;
     private readonly IItem item;
+    public required bool ShowItemDescription { get; init; }
 
     public AddItemContainerPacket(byte containerId, IItem item)
     {
@@ -14,11 +15,12 @@ public class AddItemContainerPacket : OutgoingPacket
         this.item = item;
     }
 
+
     public override void WriteToMessage(INetworkMessage message)
     {
         message.AddByte((byte)GameOutgoingPacketType.ContainerAddItem);
 
         message.AddByte(containerId);
-        message.AddItem(item);
+        message.AddItem(item, ShowItemDescription);
     }
 }

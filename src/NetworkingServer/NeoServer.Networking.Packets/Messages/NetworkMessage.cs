@@ -60,13 +60,17 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
     ///     Inserts item object into the buffer.
     /// </summary>
     /// <param name="item"></param>
-    public void AddItem(IItem item)
+    public void AddItem(IItem item, bool showItemDescription = false)
     {
         if (item == null)
             //todo log
             return;
 
         AddBytes(item.GetRaw().ToArray());
+        if (showItemDescription)
+        {
+            AddString("");
+        }
     }
 
     /// <summary>

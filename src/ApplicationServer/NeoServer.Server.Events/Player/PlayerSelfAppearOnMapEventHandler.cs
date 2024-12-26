@@ -39,7 +39,10 @@ public class PlayerSelfAppearOnMapEventHandler : IEventHandler
         connection.OutgoingPackets.Enqueue(new SelfAppearPacket(player));
         connection.OutgoingPackets.Enqueue(new MapDescriptionPacket(player, map));
         connection.OutgoingPackets.Enqueue(new MagicEffectPacket(player.Location, EffectT.BubbleBlue));
-        connection.OutgoingPackets.Enqueue(new PlayerInventoryPacket(player.Inventory));
+        connection.OutgoingPackets.Enqueue(new PlayerInventoryPacket(player.Inventory)
+        {
+            ShowItemDescription = connection.OtcV8Version > 0
+        });
         connection.OutgoingPackets.Enqueue(new PlayerStatusPacket(player));
         connection.OutgoingPackets.Enqueue(new PlayerSkillsPacket(player));
 

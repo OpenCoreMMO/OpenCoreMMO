@@ -28,7 +28,10 @@ public class PlayerChangedInventoryEventHandler
 
         if (!game.CreatureManager.GetPlayerConnection(player.CreatureId, out var connection)) return;
 
-        connection.OutgoingPackets.Enqueue(new PlayerInventoryItemPacket(player.Inventory, slot));
+        connection.OutgoingPackets.Enqueue(new PlayerInventoryItemPacket(player.Inventory, slot)
+        {
+            ShowItemDescription = connection.OtcV8Version > 0
+        });
 
         if (player.Shopping)
             connection.OutgoingPackets.Enqueue(new SaleItemListPacket(player,

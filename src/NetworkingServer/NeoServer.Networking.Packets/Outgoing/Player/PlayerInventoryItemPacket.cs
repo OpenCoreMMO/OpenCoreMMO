@@ -8,6 +8,7 @@ public class PlayerInventoryItemPacket : OutgoingPacket
 {
     private readonly IInventory inventory;
     private readonly Slot slot;
+    public required bool ShowItemDescription { get; init; }
 
     public PlayerInventoryItemPacket(IInventory inventory, Slot slot)
     {
@@ -26,7 +27,7 @@ public class PlayerInventoryItemPacket : OutgoingPacket
         {
             message.AddByte((byte)GameOutgoingPacketType.InventoryItem);
             message.AddByte((byte)slot);
-            message.AddItem(inventory[slot]);
+            message.AddItem(inventory[slot], ShowItemDescription);
         }
     }
 }
