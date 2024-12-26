@@ -12,7 +12,7 @@ internal static class TradeSlotDestinationQuery
         var existingItemOnSlot = player.Inventory[itemToAdd.Metadata.BodyPosition];
 
         if (itemToAdd.IsCumulative &&
-            existingItemOnSlot.ServerId == itemToAdd.ServerId &&
+            existingItemOnSlot?.ServerId == itemToAdd.ServerId &&
             itemToAdd.Amount + existingItemOnSlot.Amount == 100) return itemToAdd.Metadata.BodyPosition;
 
         var slotDestination = GetTwoHandedWeaponSlotDestination(player, itemToAdd, itemToBeRemoved);
