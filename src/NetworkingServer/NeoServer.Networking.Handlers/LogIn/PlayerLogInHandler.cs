@@ -79,6 +79,17 @@ public class PlayerLogInHandler : PacketHandler
         }
         
         connection.OtcV8Version = packet.OtcV8Version;
+        if (packet.OtcV8Version > 0 || packet.OperatingSystem >= OperatingSystem.OtcLinux)
+        {
+            if (packet.OtcV8Version > 0) connection.Send(new FeaturesPacket
+            {
+                GameEnvironmentEffect = _clientConfiguration.OtcV8.GameEnvironmentEffect,
+                GameExtendedOpcode = _clientConfiguration.OtcV8.GameExtendedOpcode,
+                GameExtendedClientPing = _clientConfiguration.OtcV8.GameExtendedClientPing,
+                GameItemTooltip = _clientConfiguration.OtcV8.GameItemTooltip
+            });
+            connection.Send(new OpcodeMessagePacket());
+        }
         
         _game.Dispatcher.AddEvent(new Event(() =>
         {
@@ -86,19 +97,6 @@ public class PlayerLogInHandler : PacketHandler
             if (result.Failed)
             {
                 Disconnect(connection, TextMessageOutgoingParser.Parse(result.Error));
-                return;
-            }
-
-            if (packet.OtcV8Version > 0 || packet.OperatingSystem >= OperatingSystem.OtcLinux)
-            {
-                if (packet.OtcV8Version > 0) connection.Send(new FeaturesPacket
-                {
-                    GameEnvironmentEffect = _clientConfiguration.OtcV8.GameEnvironmentEffect,
-                    GameExtendedOpcode = _clientConfiguration.OtcV8.GameExtendedOpcode,
-                    GameExtendedClientPing = _clientConfiguration.OtcV8.GameExtendedClientPing,
-                    GameItemTooltip = _clientConfiguration.OtcV8.GameItemTooltip
-                });
-                connection.Send(new OpcodeMessagePacket());
             }
         }));
     }

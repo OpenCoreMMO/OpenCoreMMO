@@ -46,6 +46,7 @@ public class PlayerSelfAppearOnMapEventHandler : IEventHandler
         {
             ShowItemDescription = connection.OtcV8Version > 0  && _clientConfiguration.OtcV8.GameItemTooltip
         });
+        
         connection.OutgoingPackets.Enqueue(new PlayerStatusPacket(player));
         connection.OutgoingPackets.Enqueue(new PlayerSkillsPacket(player));
 

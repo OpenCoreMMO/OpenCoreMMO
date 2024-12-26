@@ -31,7 +31,7 @@ public class RequirementInspectionTextBuilderTests
         item.Metadata.Attributes.SetAttribute(ItemAttribute.Vocation, input);
 
         //act
-        var actual = RequirementInspectionTextBuilder.Build(item, vocationStore);
+        var actual = RequirementInspectionTextBuilder.Build(item);
 
         //assert
         actual.Should().Be(expected);
@@ -48,7 +48,7 @@ public class RequirementInspectionTextBuilderTests
         item.Metadata.Attributes.SetAttribute(ItemAttribute.MinimumLevel, level);
 
         //act
-        var actual = RequirementInspectionTextBuilder.Build(item, null);
+        var actual = RequirementInspectionTextBuilder.Build(item);
 
         //assert
         actual.Should().Be(expected);
@@ -75,7 +75,7 @@ public class RequirementInspectionTextBuilderTests
         item.Metadata.Attributes.SetAttribute(ItemAttribute.Vocation, input);
 
         //act
-        var actual = RequirementInspectionTextBuilder.Build(item, vocationStore);
+        var actual = RequirementInspectionTextBuilder.Build(item);
 
         //assert
         actual.Should().Be(expected);
@@ -86,7 +86,7 @@ public class RequirementInspectionTextBuilderTests
     {
         var item = ItemTestData.CreateCoin(1, 10, 1);
         //act
-        var actual = RequirementInspectionTextBuilder.Build(item, null);
+        var actual = RequirementInspectionTextBuilder.Build(item);
 
         //assert
         actual.Should().BeEmpty();
@@ -113,7 +113,7 @@ public class RequirementInspectionTextBuilderTests
         item.Metadata.Attributes.SetAttribute(ItemAttribute.Vocation, input);
 
         //act
-        var actual = RequirementInspectionTextBuilder.Build(item, vocationStore);
+        var actual = RequirementInspectionTextBuilder.Build(item);
 
         //assert
         actual.Should().Be(expected);
@@ -140,7 +140,7 @@ public class RequirementInspectionTextBuilderTests
         item.Metadata.Attributes.SetAttribute(ItemAttribute.Vocation, input);
 
         //act
-        var actual = RequirementInspectionTextBuilder.Build(item, vocationStore);
+        var actual = RequirementInspectionTextBuilder.Build(item);
 
         //assert
         actual.Should().Be(expected);

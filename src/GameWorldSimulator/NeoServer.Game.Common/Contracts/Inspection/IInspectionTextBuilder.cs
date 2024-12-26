@@ -5,8 +5,8 @@ using NeoServer.Game.Common.Contracts.Items;
 namespace NeoServer.Game.Common.Contracts.Inspection;
 
 public interface IInspectionTextBuilder
-{
-    string Build(IThing thing, IPlayer player, bool isClose = false);
+{ 
+    //string Build(IThing thing, IPlayer player, bool isClose = false);
     bool IsApplicable(IThing thing);
 
     public static string GetArticle(string name)
