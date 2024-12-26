@@ -207,5 +207,6 @@ public enum ItemAttribute : byte
     ManaUse,
     CooldownTime,
     UseOn,
-    DecayElapsed
+    DecayElapsed,
+    VocationNames
 }

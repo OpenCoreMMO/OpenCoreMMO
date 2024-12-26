@@ -43,10 +43,7 @@ public abstract class BaseTile : ITile
 
     public string Name { get; }
 
-    public string GetLookText(IInspectionTextBuilder inspectionTextBuilder, IPlayer player, bool isClose = false)
-    {
-        return string.Empty;
-    }
+    public string GetLookText(bool isClose = false, bool showInternalDetails = false) => string.Empty;
 
     public void Use(IPlayer usedBy)
     {

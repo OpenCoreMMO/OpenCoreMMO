@@ -60,7 +60,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public uint MaxHealthPoints { get; protected set; }
     public string Name => CreatureType.Name;
 
-    public string GetLookText(IInspectionTextBuilder inspectionTextBuilder, IPlayer player, bool isClose = false)
+    public string GetLookText(bool isClose = false, bool showInternalDetails = false)
     {
         return $"You see {(isClose ? CloseInspectionText : InspectionText)}";
     }
