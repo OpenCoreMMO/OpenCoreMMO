@@ -1,4 +1,4 @@
-<h1 align="center">
+<h1 align="center"> 
   <img align="center" width="120px" src="https://github.com/caioavidal/OpenCoreMMO/blob/develop/ocmsquare.png?raw=true" target="_blank"  />
   <br>
   OPENCOREMMO</h1>
