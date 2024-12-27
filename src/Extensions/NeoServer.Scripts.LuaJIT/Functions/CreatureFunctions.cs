@@ -1,16 +1,16 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Enums;
-using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
+using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Common.Contracts;
 
-namespace NeoServer.Scripts.LuaJIT.LuaMappings;
+namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class CreatureLuaMapping : LuaScriptInterface, ICreatureLuaMapping
+public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 {
     private static IGameCreatureManager _gameCreatureManager;
 
-    public CreatureLuaMapping(IGameCreatureManager gameCreatureManager) : base(nameof(CreatureLuaMapping))
+    public CreatureFunctions(IGameCreatureManager gameCreatureManager) : base(nameof(CreatureFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
     }

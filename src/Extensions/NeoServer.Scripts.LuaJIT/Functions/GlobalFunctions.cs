@@ -1,11 +1,11 @@
 ﻿using LuaNET;
-using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
+using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
-namespace NeoServer.Scripts.LuaJIT.LuaMappings;
+namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class GlobalLuaMapping : LuaScriptInterface, IGlobalLuaMapping
+public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
 {
-    public GlobalLuaMapping() : base(nameof(GlobalLuaMapping))
+    public GlobalFunctions() : base(nameof(GlobalFunctions))
     {
     }
 
