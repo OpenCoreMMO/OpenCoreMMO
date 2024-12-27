@@ -62,6 +62,7 @@ public class Connection : IConnection
     public long LastPingResponse { get; set; }
     public long TimeStamp { get; }
     public byte RandomNumber { get; }
+    public ushort OtcV8Version { get; set; }
     public event EventHandler<IConnectionEventArgs> OnProcessEvent;
     public event EventHandler<IConnectionEventArgs> OnCloseEvent;
     public event EventHandler<IConnectionEventArgs> OnPostProcessEvent;

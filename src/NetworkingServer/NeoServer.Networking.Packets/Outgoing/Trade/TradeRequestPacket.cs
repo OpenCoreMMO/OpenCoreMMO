@@ -15,7 +15,7 @@ public class TradeRequestPacket : IOutgoingPacket
     private string PlayerName { get; }
     private IItem[] Items { get; }
     private bool Acknowledged { get; }
-
+    public required bool ShowItemDescription { get; init; }
     public void WriteToMessage(INetworkMessage message)
     {
         message.AddByte(Acknowledged
@@ -25,6 +25,6 @@ public class TradeRequestPacket : IOutgoingPacket
         message.AddString(PlayerName);
 
         message.AddByte((byte)Items.Length);
-        foreach (var item in Items) message.AddItem(item);
+        foreach (var item in Items) message.AddItem(item, ShowItemDescription);
     }
 }

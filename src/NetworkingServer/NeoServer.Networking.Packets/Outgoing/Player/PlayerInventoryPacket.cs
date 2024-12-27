@@ -8,6 +8,7 @@ namespace NeoServer.Networking.Packets.Outgoing.Player;
 public class PlayerInventoryPacket : OutgoingPacket
 {
     private readonly IInventory inventory;
+    public required bool ShowItemDescription { get; init; }
 
     public PlayerInventoryPacket(IInventory inventory)
     {
@@ -16,7 +17,7 @@ public class PlayerInventoryPacket : OutgoingPacket
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        var addInventoryItem = new Action<Slot>(slot =>
+        void SendInventoryItem(Slot slot)
         {
             if (inventory[slot] == null)
             {
@@ -27,19 +28,19 @@ public class PlayerInventoryPacket : OutgoingPacket
             {
                 message.AddByte((byte)GameOutgoingPacketType.InventoryItem);
                 message.AddByte((byte)slot);
-                message.AddItem(inventory[slot]);
+                message.AddItem(inventory[slot], ShowItemDescription);
             }
-        });
+        };
 
-        addInventoryItem(Slot.Head);
-        addInventoryItem(Slot.Necklace);
-        addInventoryItem(Slot.Backpack);
-        addInventoryItem(Slot.Body);
-        addInventoryItem(Slot.Right);
-        addInventoryItem(Slot.Left);
-        addInventoryItem(Slot.Legs);
-        addInventoryItem(Slot.Feet);
-        addInventoryItem(Slot.Ring);
-        addInventoryItem(Slot.Ammo);
+        SendInventoryItem(Slot.Head);
+        SendInventoryItem(Slot.Necklace);
+        SendInventoryItem(Slot.Backpack);
+        SendInventoryItem(Slot.Body);
+        SendInventoryItem(Slot.Right);
+        SendInventoryItem(Slot.Left);
+        SendInventoryItem(Slot.Legs);
+        SendInventoryItem(Slot.Feet);
+        SendInventoryItem(Slot.Ring);
+        SendInventoryItem(Slot.Ammo);
     }
 }

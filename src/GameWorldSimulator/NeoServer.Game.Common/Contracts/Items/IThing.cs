@@ -13,8 +13,7 @@ public interface IThing : IUsable
 
     Location.Structs.Location Location { get; }
 
-    string GetLookText(IInspectionTextBuilder inspectionTextBuilder, IPlayer player, bool isClose = false);
-
+    string GetLookText(bool isClose = false, bool showInternalDetails = false);
     public bool IsCloseTo(IThing thing)
     {
         if (Location.Type is not LocationType.Ground &&
