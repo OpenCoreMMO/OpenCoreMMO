@@ -31,6 +31,19 @@ function talkAction.onSay(player, words, param)
 
 	Game.createItem(2159, 1, position)
 
+	local direction = player:getDirection()
+	
+	Game.createMonster("Rat", position, true, true, player)
+
+	logger.info('direction: ' .. direction)
+
+	local nextPosition = position
+	nextPosition:getNextPosition(direction)
+	
+	logger.info('nextPosition: ' .. nextPosition:toString())
+
+	Game.createMonster("Scarab", nextPosition)
+
 	logger.info('end')
 
 	return true

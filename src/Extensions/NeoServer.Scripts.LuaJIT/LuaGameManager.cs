@@ -16,45 +16,111 @@ public class LuaGameManager : ILuaGameManager
 
     #endregion
 
-    #region Injection
+    #region Dependency Injections
 
     /// <summary>
-    /// A reference to the logger instance in use.
+    /// A reference to the <see cref="ILogger"/> instance in use.
     /// </summary>
     private readonly ILogger _logger;
 
     /// <summary>
-    /// A reference to the lua enviroment instance in use.
+    /// A reference to the <see cref="ILuaEnvironment"/> instance in use.
     /// </summary>
     private readonly ILuaEnvironment _luaEnviroment;
 
     /// <summary>
-    /// A reference to the config manager instance in use.
+    /// A reference to the <see cref="IConfigManager"/> instance in use.
     /// </summary>
     private readonly IConfigManager _configManager;
 
     /// <summary>
-    /// A reference to the scripts instance in use.
+    /// A reference to the <see cref="IScripts"/> instance in use.
     /// </summary>
     private readonly IScripts _scripts;
 
+    /// <summary>
+    /// A reference to the <see cref="IActions"/> instance in use.
+    /// </summary>
     private readonly IActions _actions;
+
+    /// <summary>
+    /// A reference to the <see cref="ITalkActions"/> instance in use.
+    /// </summary>
     private readonly ITalkActions _talkActions;
 
+    /// <summary>
+    /// A reference to the <see cref="IActionLuaMapping"/> instance in use.
+    /// </summary>
     private readonly IActionLuaMapping _actionLuaMapping;
+
+    /// <summary>
+    /// A reference to the <see cref="IConfigLuaMapping"/> instance in use.
+    /// </summary>
     private readonly IConfigLuaMapping _configLuaMapping;
+
+    /// <summary>
+    /// A reference to the <see cref="ICreatureLuaMapping"/> instance in use.
+    /// </summary>
     private readonly ICreatureLuaMapping _creatureLuaMapping;
+
+    /// <summary>
+    /// A reference to the <see cref="IEnumLuaMapping"/> instance in use.
+    /// </summary>
     private readonly IEnumLuaMapping _enumLuaMapping;
+
+    /// <summary>
+    /// A reference to the <see cref="IGameLuaMapping"/> instance in use.
+    /// </summary>
     private readonly IGameLuaMapping _gameLuaMapping;
+
+    /// <summary>
+    /// A reference to the <see cref="IGlobalLuaMapping"/> instance in use.
+    /// </summary>
     private readonly IGlobalLuaMapping _globalLuaMapping;
+
+    /// <summary>
+    /// A reference to the <see cref="IItemLuaMapping"/> instance in use.
+    /// </summary>
     private readonly IItemLuaMapping _itemLuaMapping;
+
+    /// <summary>
+    /// A reference to the <see cref="IItemTypeLuaMapping"/> instance in use.
+    /// </summary>
     private readonly IItemTypeLuaMapping _itemTypeLuaMapping;
+
+    /// <summary>
+    /// A reference to the <see cref="ILoggerLuaMapping"/> instance in use.
+    /// </summary>
     private readonly ILoggerLuaMapping _loggerLuaMapping;
+
+    /// <summary>
+    /// A reference to the <see cref="IMonsterLuaMapping"/> instance in use.
+    /// </summary>
+    private readonly IMonsterLuaMapping _monsterLuaMapping;
+
+    /// <summary>
+    /// A reference to the <see cref="IPlayerLuaMapping"/> instance in use.
+    /// </summary>
     private readonly IPlayerLuaMapping _playerLuaMapping;
+
+    /// <summary>
+    /// A reference to the <see cref="IPositionLuaMapping"/> instance in use.
+    /// </summary>
     private readonly IPositionLuaMapping _positionLuaMapping;
+
+    /// <summary>
+    /// A reference to the <see cref="ITalkActionLuaMapping"/> instance in use.
+    /// </summary>
     private readonly ITalkActionLuaMapping _talkActionLuaMapping;
+
+    /// <summary>
+    /// A reference to the <see cref="ITileLuaMapping"/> instance in use.
+    /// </summary>
     private readonly ITileLuaMapping _tileLuaMapping;
 
+    /// <summary>
+    /// A reference to the <see cref="ServerConfiguration"/> instance in use.
+    /// </summary>
     private readonly ServerConfiguration _serverConfiguration;
 
     #endregion
@@ -77,6 +143,7 @@ public class LuaGameManager : ILuaGameManager
         IItemLuaMapping itemLuaMapping,
         IItemTypeLuaMapping itemTypeLuaMapping,
         ILoggerLuaMapping loggerLuaMapping,
+        IMonsterLuaMapping monsterLuaMapping,
         IPlayerLuaMapping playerLuaMapping,
         IPositionLuaMapping positionLuaMapping,
         ITalkActionLuaMapping talkActionLuaMapping,
@@ -101,6 +168,7 @@ public class LuaGameManager : ILuaGameManager
         _itemTypeLuaMapping = itemTypeLuaMapping;
         _loggerLuaMapping = loggerLuaMapping;
         _playerLuaMapping = playerLuaMapping;
+        _monsterLuaMapping = monsterLuaMapping;
         _positionLuaMapping = positionLuaMapping;
         _talkActionLuaMapping = talkActionLuaMapping;
         _tileLuaMapping = tileLuaMapping;
@@ -111,6 +179,44 @@ public class LuaGameManager : ILuaGameManager
     #endregion
 
     #region Public Methods 
+
+    public void Start()
+    {
+        var dir = AppContext.BaseDirectory;
+
+        if (!string.IsNullOrEmpty(ArgManager.GetInstance().ExePath))
+            dir = ArgManager.GetInstance().ExePath;
+
+        ModulesLoadHelper(_luaEnviroment.InitState(), "luaEnviroment");
+
+        var luaState = _luaEnviroment.GetLuaState();
+
+        if (luaState.IsNull)
+            _logger.Error("Invalid lua state, cannot load lua LuaMapping.");
+
+        Lua.OpenLibs(luaState);
+
+        _actionLuaMapping.Init(luaState);
+        _configLuaMapping.Init(luaState);
+        _creatureLuaMapping.Init(luaState);
+        _enumLuaMapping.Init(luaState);
+        _gameLuaMapping.Init(luaState);
+        _globalLuaMapping.Init(luaState);
+        _itemLuaMapping.Init(luaState);
+        _itemTypeLuaMapping.Init(luaState);
+        _loggerLuaMapping.Init(luaState);
+        _monsterLuaMapping.Init(luaState);
+        _playerLuaMapping.Init(luaState);
+        _positionLuaMapping.Init(luaState);
+        _talkActionLuaMapping.Init(luaState);
+        _tileLuaMapping.Init(luaState);
+
+        ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), $"config.lua");
+
+        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/core.lua", "core.lua"), "core.lua");
+
+        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts", false, false), "/Data/LuaJit/scripts");
+    }
 
     public bool PlayerSaySpell(IPlayer player, SpeechType type, string words)
     {
@@ -177,43 +283,6 @@ public class LuaGameManager : ILuaGameManager
     #endregion
 
     #region Private Methods
-
-    public void Start()
-    {
-        var dir = AppContext.BaseDirectory;
-
-        if (!string.IsNullOrEmpty(ArgManager.GetInstance().ExePath))
-            dir = ArgManager.GetInstance().ExePath;
-
-        ModulesLoadHelper(_luaEnviroment.InitState(), "luaEnviroment");
-
-        var luaState = _luaEnviroment.GetLuaState();
-
-        if (luaState.IsNull)
-            _logger.Error("Invalid lua state, cannot load lua LuaMapping.");
-
-        Lua.OpenLibs(luaState);
-
-        _actionLuaMapping.Init(luaState);
-        _configLuaMapping.Init(luaState);
-        _creatureLuaMapping.Init(luaState);
-        _enumLuaMapping.Init(luaState);
-        _gameLuaMapping.Init(luaState);
-        _globalLuaMapping.Init(luaState);
-        _itemLuaMapping.Init(luaState);
-        _itemTypeLuaMapping.Init(luaState);
-        _loggerLuaMapping.Init(luaState);
-        _playerLuaMapping.Init(luaState);
-        _positionLuaMapping.Init(luaState);
-        _talkActionLuaMapping.Init(luaState);
-        _tileLuaMapping.Init(luaState);
-
-        ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), $"config.lua");
-
-        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/core.lua", "core.lua"), "core.lua");
-
-        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts", false, false), "/Data/LuaJit/scripts");
-    }
 
     private void ModulesLoadHelper(bool loaded, string moduleName)
     {

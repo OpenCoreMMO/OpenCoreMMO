@@ -54,7 +54,7 @@ do
 		return methods[key]
 	end
 	rawgetmetatable("Player").__index = CreatureIndex
-	-- rawgetmetatable("Monster").__index = CreatureIndex
+	rawgetmetatable("Monster").__index = CreatureIndex
 	-- rawgetmetatable("Npc").__index = CreatureIndex
 end
 

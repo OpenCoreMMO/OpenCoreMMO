@@ -1,8 +1,10 @@
 ﻿using LuaNET;
+using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
+using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
@@ -34,9 +36,13 @@ public class GameLuaMapping : LuaScriptInterface, IGameLuaMapping
     public void Init(LuaState L)
     {
         RegisterTable(L, "Game");
+
         RegisterMethod(L, "Game", "getReturnMessage", LuaGameGetReturnMessage);
-        RegisterMethod(L, "Game", "reload", LuaGameReload);
+
         RegisterMethod(L, "Game", "createItem", LuaGameCreateItem);
+        RegisterMethod(L, "Game", "createMonster", LuaGameCreateMonster);
+
+        RegisterMethod(L, "Game", "reload", LuaGameReload);
     }
 
     private static int LuaGameGetReturnMessage(LuaState L)
@@ -44,52 +50,6 @@ public class GameLuaMapping : LuaScriptInterface, IGameLuaMapping
         // Game.getReturnMessage(value)
         var returnValue = GetNumber<ReturnValueType>(L, 1);
         PushString(L, returnValue.GetReturnMessage());
-        return 1;
-    }
-
-    private static int LuaGameReload(LuaState L)
-    {
-        // Game.reload(reloadType)
-        var reloadType = GetNumber<ReloadType>(L, 1);
-        if (reloadType == ReloadType.RELOAD_TYPE_NONE)
-        {
-            ReportError(nameof(LuaGameReload), "Reload type is none");
-            PushBoolean(L, false);
-            return 0;
-        }
-
-        if (reloadType >= ReloadType.RELOAD_TYPE_LAST)
-        {
-            ReportError(nameof(LuaGameReload), "Reload type not exist");
-            PushBoolean(L, false);
-            return 0;
-        }
-        try
-        {
-            switch (reloadType)
-            {
-                case ReloadType.RELOAD_TYPE_SCRIPTS:
-                    {
-                        var dir = AppContext.BaseDirectory + _serverConfiguration.DataLuaJit;
-                        _scripts.ClearAllScripts();
-                        _scripts.LoadScripts($"{dir}/scripts", false, true);
-
-                        Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
-                    }
-
-                    break;
-                default:
-                    ReportError(nameof(LuaGameReload), "Reload type not implemented");
-                    break;
-            }
-        }
-        catch (Exception e)
-        {
-            PushBoolean(L, false);
-            return 0;
-        }
-
-        PushBoolean(L, true);
         return 1;
     }
 
@@ -220,4 +180,111 @@ public class GameLuaMapping : LuaScriptInterface, IGameLuaMapping
 
         return 1;
     }
+    
+    private static int LuaGameCreateMonster(LuaState L)
+    {
+        // Game.createMonster(monsterName, position[, extended = false[, force = false[, master = nil]]])
+        //todo: implements force parameter
+
+        IMonsterFactory _monsterFactory = IoC.GetInstance<IMonsterFactory>();
+        IMap _map = IoC.GetInstance<IMap>();
+
+        var monsterName = GetString(L, 1);
+
+        var position = GetPosition(L, 2);
+        var extended = GetBoolean(L, 3, false);
+        var force = GetBoolean(L, 4, false);
+
+        ICreature master = null;
+
+        bool isSummon = false;
+        if (Lua.GetTop(L) >= 5)
+        {
+            master = GetUserdata<ICreature>(L, 5);
+            if (master.IsNotNull())
+            {
+                isSummon = true;
+            }
+        }
+
+        IMonster monster = null;
+        if (isSummon && master != null)
+        {
+            monster = _monsterFactory.CreateSummon(monsterName, master as IMonster);
+            monster.SetNewLocation(master.Location);
+        }
+        else
+        {
+            monster = _monsterFactory.Create(monsterName);
+            monster.SetNewLocation(position);
+        }
+
+        if (!monster)
+        {
+            Lua.PushNil(L);
+            return 1;
+        }
+
+        foreach (var neighbour in extended ? monster.Location.ExtendedNeighbours : monster.Location.Neighbours)
+            if (_map[neighbour] is IDynamicTile { HasCreature: false })
+            {
+                monster.SetNewLocation(neighbour);
+                _map.PlaceCreature(monster);
+
+                PushUserdata(L, monster);
+                SetMetatable(L, -1, "Monster");
+
+                return 1;
+            }
+
+        Lua.PushNil(L);
+        return 1;
+    }
+
+    private static int LuaGameReload(LuaState L)
+    {
+        // Game.reload(reloadType)
+        var reloadType = GetNumber<ReloadType>(L, 1);
+        if (reloadType == ReloadType.RELOAD_TYPE_NONE)
+        {
+            ReportError(nameof(LuaGameReload), "Reload type is none");
+            PushBoolean(L, false);
+            return 0;
+        }
+
+        if (reloadType >= ReloadType.RELOAD_TYPE_LAST)
+        {
+            ReportError(nameof(LuaGameReload), "Reload type not exist");
+            PushBoolean(L, false);
+            return 0;
+        }
+        try
+        {
+            switch (reloadType)
+            {
+                case ReloadType.RELOAD_TYPE_SCRIPTS:
+                    {
+                        var dir = AppContext.BaseDirectory + _serverConfiguration.DataLuaJit;
+                        _scripts.ClearAllScripts();
+                        _scripts.LoadScripts($"{dir}/scripts", false, true);
+
+                        Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
+                    }
+
+                    break;
+                default:
+                    ReportError(nameof(LuaGameReload), "Reload type not implemented");
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+            PushBoolean(L, false);
+            return 0;
+        }
+
+        PushBoolean(L, true);
+        return 1;
+    }
+
 }

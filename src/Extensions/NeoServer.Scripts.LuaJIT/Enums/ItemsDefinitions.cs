@@ -433,7 +433,7 @@ public enum ZoneTypeType
     ZONE_NORMAL,
 };
 
-public enum CylinderFlagsType
+public enum CylinderFlagsType : uint
 {
     FLAG_NOLIMIT = 1 << 0, // Bypass limits like capacity/container limits, blocking items/creatures etc.
     FLAG_IGNOREBLOCKITEM = 1 << 1, // Bypass movable blocking item checks
