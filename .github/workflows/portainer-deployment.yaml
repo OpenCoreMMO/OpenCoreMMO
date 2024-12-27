@@ -1,0 +1,15 @@
+name: Portainer Deploy - Baiak
+
+on:
+  push:
+    branches:
+      - baiak
+
+jobs:
+  update-service:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Service via Webhook
+        uses: newarifrh/portainer-service-webhook@v1
+        with:
+          webhook_url: ${{ secrets.PORTAINER_DEPLOY_BAIAK_WEBHOOK_URL }}
