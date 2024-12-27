@@ -1,15 +1,15 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Location;
 using NeoServer.Scripts.LuaJIT.Enums;
-using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
+using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT.LuaMappings;
-public class EnumLuaMapping : LuaScriptInterface, IEnumLuaMapping
+namespace NeoServer.Scripts.LuaJIT.Functions;
+public class EnumFunctions : LuaScriptInterface, IEnumFunctions
 {
-    public EnumLuaMapping(
+    public EnumFunctions(
         ILuaEnvironment luaEnvironment, 
-        ILogger logger) : base(nameof(ConfigLuaMappingr))
+        ILogger logger) : base(nameof(ConfigFunctions))
     {
     }
 

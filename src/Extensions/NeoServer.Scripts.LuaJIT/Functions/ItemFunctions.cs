@@ -8,22 +8,22 @@ using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Item;
 using NeoServer.Scripts.LuaJIT.Enums;
-using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
+using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
-namespace NeoServer.Scripts.LuaJIT.LuaMappings;
+namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class ItemLuaMapping : LuaScriptInterface, IItemLuaMapping
+public class ItemFunctions : LuaScriptInterface, IItemFunctions
 {
     private static IItemTransformService _itemTransformService;
     private static IItemTypeStore _itemTypeStore;
     private static IMap _map;
     private static IItemMovementService _itemMovementService;
 
-    public ItemLuaMapping(
+    public ItemFunctions(
         IItemTransformService itemTransformService,
         IItemTypeStore itemTypeStore,
         IMap map,
-        IItemMovementService itemMovementService) : base(nameof(ItemLuaMapping))
+        IItemMovementService itemMovementService) : base(nameof(ItemFunctions))
         
     {
         _itemTransformService = itemTransformService;

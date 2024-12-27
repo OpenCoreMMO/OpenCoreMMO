@@ -4,7 +4,7 @@ using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
+using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Configurations;
 using Serilog;
 
@@ -49,74 +49,74 @@ public class LuaGameManager : ILuaGameManager
     private readonly ITalkActions _talkActions;
 
     /// <summary>
-    /// A reference to the <see cref="IActionLuaMapping"/> instance in use.
+    /// A reference to the <see cref="IActionFunctions"/> instance in use.
     /// </summary>
-    private readonly IActionLuaMapping _actionLuaMapping;
+    private readonly IActionFunctions _actionFunctions;
 
     /// <summary>
-    /// A reference to the <see cref="IConfigLuaMapping"/> instance in use.
+    /// A reference to the <see cref="IConfigFunctions"/> instance in use.
     /// </summary>
-    private readonly IConfigLuaMapping _configLuaMapping;
+    private readonly IConfigFunctions _configFunctions;
 
     /// <summary>
-    /// A reference to the <see cref="ICreatureLuaMapping"/> instance in use.
+    /// A reference to the <see cref="ICreatureFunctions"/> instance in use.
     /// </summary>
-    private readonly ICreatureLuaMapping _creatureLuaMapping;
+    private readonly ICreatureFunctions _creatureFunctions;
 
     /// <summary>
-    /// A reference to the <see cref="IEnumLuaMapping"/> instance in use.
+    /// A reference to the <see cref="IEnumFunctions"/> instance in use.
     /// </summary>
-    private readonly IEnumLuaMapping _enumLuaMapping;
+    private readonly IEnumFunctions _enumFunctions;
 
     /// <summary>
-    /// A reference to the <see cref="IGameLuaMapping"/> instance in use.
+    /// A reference to the <see cref="IGameFunctions"/> instance in use.
     /// </summary>
-    private readonly IGameLuaMapping _gameLuaMapping;
+    private readonly IGameFunctions _gameFunctions;
 
     /// <summary>
-    /// A reference to the <see cref="IGlobalLuaMapping"/> instance in use.
+    /// A reference to the <see cref="IGlobalFunctions"/> instance in use.
     /// </summary>
-    private readonly IGlobalLuaMapping _globalLuaMapping;
+    private readonly IGlobalFunctions _globalFunctions;
 
     /// <summary>
-    /// A reference to the <see cref="IItemLuaMapping"/> instance in use.
+    /// A reference to the <see cref="IItemFunctions"/> instance in use.
     /// </summary>
-    private readonly IItemLuaMapping _itemLuaMapping;
+    private readonly IItemFunctions _itemFunctions;
 
     /// <summary>
-    /// A reference to the <see cref="IItemTypeLuaMapping"/> instance in use.
+    /// A reference to the <see cref="IItemTypeFunctions"/> instance in use.
     /// </summary>
-    private readonly IItemTypeLuaMapping _itemTypeLuaMapping;
+    private readonly IItemTypeFunctions _itemTypeFunctions;
 
     /// <summary>
-    /// A reference to the <see cref="ILoggerLuaMapping"/> instance in use.
+    /// A reference to the <see cref="ILoggerFunctions"/> instance in use.
     /// </summary>
-    private readonly ILoggerLuaMapping _loggerLuaMapping;
+    private readonly ILoggerFunctions _loggerFunctions;
 
     /// <summary>
-    /// A reference to the <see cref="IMonsterLuaMapping"/> instance in use.
+    /// A reference to the <see cref="IMonsterFunctions"/> instance in use.
     /// </summary>
-    private readonly IMonsterLuaMapping _monsterLuaMapping;
+    private readonly IMonsterFunctions _monsterFunctions;
 
     /// <summary>
-    /// A reference to the <see cref="IPlayerLuaMapping"/> instance in use.
+    /// A reference to the <see cref="IPlayerFunctions"/> instance in use.
     /// </summary>
-    private readonly IPlayerLuaMapping _playerLuaMapping;
+    private readonly IPlayerFunctions _playerFunctions;
 
     /// <summary>
-    /// A reference to the <see cref="IPositionLuaMapping"/> instance in use.
+    /// A reference to the <see cref="IPositionFunctions"/> instance in use.
     /// </summary>
-    private readonly IPositionLuaMapping _positionLuaMapping;
+    private readonly IPositionFunctions _positionFunctions;
 
     /// <summary>
-    /// A reference to the <see cref="ITalkActionLuaMapping"/> instance in use.
+    /// A reference to the <see cref="ITalkActionFunctions"/> instance in use.
     /// </summary>
-    private readonly ITalkActionLuaMapping _talkActionLuaMapping;
+    private readonly ITalkActionFunctions _talkActionFunctions;
 
     /// <summary>
-    /// A reference to the <see cref="ITileLuaMapping"/> instance in use.
+    /// A reference to the <see cref="ITileFunctions"/> instance in use.
     /// </summary>
-    private readonly ITileLuaMapping _tileLuaMapping;
+    private readonly ITileFunctions _tileFunctions;
 
     /// <summary>
     /// A reference to the <see cref="ServerConfiguration"/> instance in use.
@@ -134,20 +134,20 @@ public class LuaGameManager : ILuaGameManager
         IScripts scripts,
         IActions actions,
         ITalkActions talkActions,
-        IActionLuaMapping actionLuaMapping,
-        IConfigLuaMapping configLuaMapping,
-        ICreatureLuaMapping creatureLuaMapping,
-        IEnumLuaMapping enumLuaMapping,
-        IGameLuaMapping gameLuaMapping,
-        IGlobalLuaMapping globalLuaMapping,
-        IItemLuaMapping itemLuaMapping,
-        IItemTypeLuaMapping itemTypeLuaMapping,
-        ILoggerLuaMapping loggerLuaMapping,
-        IMonsterLuaMapping monsterLuaMapping,
-        IPlayerLuaMapping playerLuaMapping,
-        IPositionLuaMapping positionLuaMapping,
-        ITalkActionLuaMapping talkActionLuaMapping,
-        ITileLuaMapping tileLuaMapping,
+        IActionFunctions actionFunctions,
+        IConfigFunctions configFunctions,
+        ICreatureFunctions creatureFunctions,
+        IEnumFunctions enumFunctions,
+        IGameFunctions gameFunctions,
+        IGlobalFunctions globalFunctions,
+        IItemFunctions itemFunctions,
+        IItemTypeFunctions itemTypeFunctions,
+        ILoggerFunctions loggerFunctions,
+        IMonsterFunctions monsterFunctions,
+        IPlayerFunctions playerFunctions,
+        IPositionFunctions positionFunctions,
+        ITalkActionFunctions talkActionFunctions,
+        ITileFunctions tileFunctions,
         ServerConfiguration serverConfiguration)
     {
         _logger = logger;
@@ -158,20 +158,20 @@ public class LuaGameManager : ILuaGameManager
         _actions = actions;
         _talkActions = talkActions;
 
-        _actionLuaMapping = actionLuaMapping;
-        _configLuaMapping = configLuaMapping;
-        _creatureLuaMapping = creatureLuaMapping;
-        _enumLuaMapping = enumLuaMapping;
-        _gameLuaMapping = gameLuaMapping;
-        _globalLuaMapping = globalLuaMapping;
-        _itemLuaMapping = itemLuaMapping;
-        _itemTypeLuaMapping = itemTypeLuaMapping;
-        _loggerLuaMapping = loggerLuaMapping;
-        _playerLuaMapping = playerLuaMapping;
-        _monsterLuaMapping = monsterLuaMapping;
-        _positionLuaMapping = positionLuaMapping;
-        _talkActionLuaMapping = talkActionLuaMapping;
-        _tileLuaMapping = tileLuaMapping;
+        _actionFunctions = actionFunctions;
+        _configFunctions = configFunctions;
+        _creatureFunctions = creatureFunctions;
+        _enumFunctions = enumFunctions;
+        _gameFunctions = gameFunctions;
+        _globalFunctions = globalFunctions;
+        _itemFunctions = itemFunctions;
+        _itemTypeFunctions = itemTypeFunctions;
+        _loggerFunctions = loggerFunctions;
+        _playerFunctions = playerFunctions;
+        _monsterFunctions = monsterFunctions;
+        _positionFunctions = positionFunctions;
+        _talkActionFunctions = talkActionFunctions;
+        _tileFunctions = tileFunctions;
 
         _serverConfiguration = serverConfiguration;
     }
@@ -192,24 +192,24 @@ public class LuaGameManager : ILuaGameManager
         var luaState = _luaEnviroment.GetLuaState();
 
         if (luaState.IsNull)
-            _logger.Error("Invalid lua state, cannot load lua LuaMapping.");
+            _logger.Error("Invalid lua state, cannot load lua Functions.");
 
         Lua.OpenLibs(luaState);
 
-        _actionLuaMapping.Init(luaState);
-        _configLuaMapping.Init(luaState);
-        _creatureLuaMapping.Init(luaState);
-        _enumLuaMapping.Init(luaState);
-        _gameLuaMapping.Init(luaState);
-        _globalLuaMapping.Init(luaState);
-        _itemLuaMapping.Init(luaState);
-        _itemTypeLuaMapping.Init(luaState);
-        _loggerLuaMapping.Init(luaState);
-        _monsterLuaMapping.Init(luaState);
-        _playerLuaMapping.Init(luaState);
-        _positionLuaMapping.Init(luaState);
-        _talkActionLuaMapping.Init(luaState);
-        _tileLuaMapping.Init(luaState);
+        _actionFunctions.Init(luaState);
+        _configFunctions.Init(luaState);
+        _creatureFunctions.Init(luaState);
+        _enumFunctions.Init(luaState);
+        _gameFunctions.Init(luaState);
+        _globalFunctions.Init(luaState);
+        _itemFunctions.Init(luaState);
+        _itemTypeFunctions.Init(luaState);
+        _loggerFunctions.Init(luaState);
+        _monsterFunctions.Init(luaState);
+        _playerFunctions.Init(luaState);
+        _positionFunctions.Init(luaState);
+        _talkActionFunctions.Init(luaState);
+        _tileFunctions.Init(luaState);
 
         ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), $"config.lua");
 

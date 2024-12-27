@@ -1,18 +1,18 @@
 ﻿using LuaNET;
 using NeoServer.Scripts.LuaJIT.Enums;
-using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
+using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Configurations;
 
-namespace NeoServer.Scripts.LuaJIT.LuaMappings;
+namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class ConfigLuaMappingr : LuaScriptInterface, IConfigLuaMapping
+public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
 {
     private static IConfigManager _configManager;
     private ServerConfiguration _serverConfiguration;
 
-    public ConfigLuaMappingr(
+    public ConfigFunctions(
         IConfigManager configManager,
-        ServerConfiguration serverConfiguration) : base(nameof(ConfigLuaMappingr))
+        ServerConfiguration serverConfiguration) : base(nameof(ConfigFunctions))
     {
         _configManager = configManager;
         _serverConfiguration = serverConfiguration;

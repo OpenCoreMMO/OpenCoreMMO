@@ -2,17 +2,17 @@
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Scripts.LuaJIT.Enums;
-using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
+using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Services;
 
-namespace NeoServer.Scripts.LuaJIT.LuaMappings;
+namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class PlayerLuaMapping : LuaScriptInterface, IPlayerLuaMapping
+public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 {
     private static IGameCreatureManager _gameCreatureManager;
 
-    public PlayerLuaMapping(IGameCreatureManager gameCreatureManager) : base(nameof(PlayerLuaMapping))
+    public PlayerFunctions(IGameCreatureManager gameCreatureManager) : base(nameof(PlayerFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
     }

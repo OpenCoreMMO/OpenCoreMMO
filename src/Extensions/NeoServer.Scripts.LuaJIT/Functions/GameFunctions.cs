@@ -8,24 +8,24 @@ using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
-using NeoServer.Scripts.LuaJIT.LuaMappings.Interfaces;
+using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers;
 
-namespace NeoServer.Scripts.LuaJIT.LuaMappings;
+namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class GameLuaMapping : LuaScriptInterface, IGameLuaMapping
+public class GameFunctions : LuaScriptInterface, IGameFunctions
 {
     private static IScripts _scripts;
     private static IItemTypeStore _itemTypeStore;
     private static IItemFactory _itemFactory;
     private static ServerConfiguration _serverConfiguration;
 
-    public GameLuaMapping(
+    public GameFunctions(
         IScripts scripts,
         IItemTypeStore itemTypeStore,
         IItemFactory itemFactory,
-        ServerConfiguration serverConfiguration) : base(nameof(GameLuaMapping))
+        ServerConfiguration serverConfiguration) : base(nameof(GameFunctions))
     {
         _scripts = scripts;
         _itemTypeStore = itemTypeStore;
