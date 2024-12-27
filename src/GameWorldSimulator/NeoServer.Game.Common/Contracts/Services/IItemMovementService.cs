@@ -9,4 +9,8 @@ public interface IItemMovementService
     Result<OperationResultList<IItem>> Move(IPlayer player, IItem item, IHasItem from, IHasItem destination,
         byte amount,
         byte fromPosition, byte? toPosition);
+
+    Result<OperationResultList<IItem>> Move(IItem item, IHasItem from, IHasItem destination,
+        byte amount,
+        byte fromPosition, byte? toPosition);
 }

@@ -9,7 +9,6 @@ public static class LuaJITInjection
 {
     public static IServiceCollection AddLuaJIT(this IServiceCollection builder)
     {
-        //LuaJIT todo: move this to lUaScripts
         builder.AddSingleton<IConfigManager, ConfigManager>();
         builder.AddSingleton<ILuaEnvironment, LuaEnvironment>();
         builder.AddSingleton<IScripts, Scripts.LuaJIT.Scripts>();
@@ -25,6 +24,7 @@ public static class LuaJITInjection
         builder.AddSingleton<IItemLuaMapping, ItemLuaMapping>();
         builder.AddSingleton<IItemTypeLuaMapping, ItemTypeLuaMapping>();
         builder.AddSingleton<ILoggerLuaMapping, LoggerLuaMapping>();
+        builder.AddSingleton<IMonsterLuaMapping, MonsterLuaMapping>();
         builder.AddSingleton<IPlayerLuaMapping, PlayerLuaMapping>();
         builder.AddSingleton<IPositionLuaMapping, PositionLuaMapping>();
         builder.AddSingleton<ITalkActionLuaMapping, TalkActionLuaMapping>();

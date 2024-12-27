@@ -19,9 +19,11 @@ public class CreatureLuaMapping : LuaScriptInterface, ICreatureLuaMapping
     {
         RegisterSharedClass(L, "Creature", "", LuaCreatureCreate);
         RegisterMetaMethod(L, "Creature", "__eq", LuaUserdataCompare<ICreature>);
+
         RegisterMethod(L, "Creature", "getId", LuaGetId);
         RegisterMethod(L, "Creature", "getName", LuaGetName);
         RegisterMethod(L, "Creature", "getPosition", LuaCreatureGetPosition);
+        RegisterMethod(L, "Creature", "getDirection", LuaCreatureGetDirection);
     }
 
     private static int LuaCreatureCreate(LuaState L)
@@ -99,6 +101,17 @@ public class CreatureLuaMapping : LuaScriptInterface, ICreatureLuaMapping
         var creature = GetUserdata<ICreature>(L, 1);
         if (creature != null)
             PushPosition(L, creature.Location);
+        else
+            Lua.PushNil(L);
+        return 1;
+    }
+
+    private static int LuaCreatureGetDirection(LuaState L)
+    {
+        // creature:getDirection()
+        var creature = GetUserdata<ICreature>(L, 1);
+        if (creature != null)
+            Lua.PushNumber(L, (byte)creature.Direction);
         else
             Lua.PushNil(L);
         return 1;
