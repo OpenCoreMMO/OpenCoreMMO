@@ -82,7 +82,7 @@ public class PlayerUseItemOnCommand : ICommand
 
         if (thingToUse is not IUsableOn itemToUse) return;
 
-        if (_luaGameManager.PlayerUseItemEx(player, player.Location, useItemPacket.ToLocation, useItemPacket.ToStackPosition, itemToUse, useItemPacket.Location.IsHotkey, onItem != null ? onTile : onTile))
+        if (_luaGameManager.PlayerUseItemEx(player, player.Location, useItemPacket.ToLocation, useItemPacket.ToStackPosition, itemToUse, useItemPacket.Location.IsHotkey, !onItem ? onTile : onItem))
             return;
 
         Action action = onTile is not null

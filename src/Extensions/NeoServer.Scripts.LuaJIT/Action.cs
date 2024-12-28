@@ -9,14 +9,10 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class Action : Script
 {
-    private bool _allowFarUse = false;
-    private bool _checkFloor = true;
-    private bool _checkLineOfSight = true;
-
-    private List<ushort> _itemIds = new List<ushort>();
-    private List<ushort> _uniqueIds = new List<ushort>();
-    private List<ushort> _actionIds = new List<ushort>();
-    private List<Location> _positions = new List<Location>();
+    private readonly List<ushort> _itemIds = new List<ushort>();
+    private readonly List<ushort> _uniqueIds = new List<ushort>();
+    private readonly List<ushort> _actionIds = new List<ushort>();
+    private readonly List<Location> _positions = new List<Location>();
 
     private ILogger _logger;
 
@@ -58,23 +54,10 @@ public class Action : Script
         return GetScriptInterface().CallFunction(6);
     }
 
-    public bool AllowFarUse
-    {
-        get { return _allowFarUse; }
-        set { _allowFarUse = value; }
-    }
+    public bool AllowFarUse { get; set; }
+    public bool CheckLineOfSight { get; set; }
 
-    public bool CheckLineOfSight
-    {
-        get { return _checkLineOfSight; }
-        set { _checkLineOfSight = value; }
-    }
-
-    public bool CheckFloor
-    {
-        get { return _checkFloor; }
-        set { _checkFloor = value; }
-    }
+    public bool CheckFloor { get; set; }
 
     public List<ushort> ItemIdsVector
     {
