@@ -10,16 +10,14 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
     private static LuaEnvironment _instance = null;
 
-    private static bool shuttingDown = false;
+    private static bool _shuttingDown = false;
 
-    public readonly Dictionary<uint, LuaTimerEventDesc> timerEvents = new Dictionary<uint, LuaTimerEventDesc>();
+    private readonly Dictionary<uint, LuaTimerEventDesc> _timerEvents = new Dictionary<uint, LuaTimerEventDesc>();
     public uint LastEventTimerId = 1;
 
-    private static readonly List<string> cacheFiles = new List<string>();
+    private static readonly List<string> _cacheFiles = new List<string>();
 
-    private static LuaScriptInterface testInterface;
-
-    private static int runningEventId = EVENT_ID_USER;
+    private static LuaScriptInterface _testInterface;
 
     #endregion
 
@@ -54,11 +52,11 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
     ~LuaEnvironment()
     {
-        if (testInterface == null)
+        if (_testInterface == null)
         {
         }
 
-        shuttingDown = true;
+        _shuttingDown = true;
         CloseState();
     }
 
@@ -68,7 +66,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
     public LuaState GetLuaState()
     {
-        if (shuttingDown)
+        if (_shuttingDown)
         {
             return luaState;
         }
@@ -114,7 +112,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
         //    ClearAreaObjects(areaEntry.Key);
         //}
 
-        foreach (var timerEntry in timerEvents)
+        foreach (var timerEntry in _timerEvents)
         {
             var timerEventDesc = timerEntry.Value;
             foreach (var parameter in timerEventDesc.Parameters)
@@ -126,8 +124,8 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
         //combatIdMap.Clear();
         //areaIdMap.Clear();
-        timerEvents.Clear();
-        cacheFiles.Clear();
+        _timerEvents.Clear();
+        _cacheFiles.Clear();
 
         Lua.Close(luaState);
         luaState.pointer = 0;
@@ -136,24 +134,24 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
     public LuaScriptInterface GetTestInterface()
     {
-        if (testInterface == null)
+        if (_testInterface == null)
         {
-            testInterface = new LuaScriptInterface("Test Interface");
-            testInterface.InitState();
+            _testInterface = new LuaScriptInterface("Test Interface");
+            _testInterface.InitState();
         }
-        return testInterface;
+        return _testInterface;
     }
 
     public bool IsShuttingDown()
     {
-        return shuttingDown;
+        return _shuttingDown;
     }
 
     public void ExecuteTimerEvent(uint eventIndex)
     {
-        if (timerEvents.TryGetValue(eventIndex, out var timerEventDesc))
+        if (_timerEvents.TryGetValue(eventIndex, out var timerEventDesc))
         {
-            timerEvents.Remove(eventIndex);
+            _timerEvents.Remove(eventIndex);
 
             Lua.RawGetI(luaState, LUA_REGISTRYINDEX, timerEventDesc.Function);
 
