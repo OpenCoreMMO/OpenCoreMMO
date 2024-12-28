@@ -118,9 +118,9 @@ public class LuaFunctionsLoader
 
         _logger.Error(string.Format("Lua script error: \nscriptInterface: [{0}]\nscriptId: [{1}]\ntimerEvent: [{2}]\n callbackId:[{3}]\nfunction: [{4}]\nerror [{5}]",
                      scriptInterface != null ? scriptInterface.GetInterfaceName() : "",
-                     scriptId != 0 ? scriptInterface.GetFileById(scriptId) : "",
+                     scriptId != 0 ? scriptInterface?.GetFileById(scriptId) : "",
                      timerEvent ? "in a timer event called from:" : "",
-                     callbackId != 0 ? scriptInterface.GetFileById(callbackId) : "",
+                     callbackId != 0 ? scriptInterface?.GetFileById(callbackId) : "",
                      function ?? "",
                      (stackTrace && scriptInterface != null) ? scriptInterface.GetStackTrace(errorDesc) : errorDesc));
     }
@@ -591,14 +591,9 @@ public class LuaFunctionsLoader
 
         // className.metatable['t'] = type
         Enum.TryParse<LuaDataType>(className, true, out var userTypeEnum);
-        if (userTypeEnum != null)
-        {
-            Lua.PushNumber(L, (double)userTypeEnum);
-        }
-        else
-        {
-            Lua.PushNumber(L, (double)LuaDataType.Unknown);
-        }
+
+        Lua.PushNumber(L, (double)userTypeEnum);
+
         Lua.RawSetI(L, metatable, 't');
 
         // pop className, className.metatable
@@ -714,14 +709,11 @@ public class LuaFunctionsLoader
     }
 
     public static string EscapeString(string str)
-    {
-        string s = str;
-        s.Replace("\\", "\\\\");
-        s.Replace("\"", "\\\"");
-        s.Replace("'", "\\'");
-        s.Replace("[[", "\\[[");
-        return s;
-    }
+        => str
+            .Replace("\\", "\\\\")
+            .Replace("\"", "\\\"")
+            .Replace("'", "\\'")
+            .Replace("[[", "\\[[");
 
     public static int LuaUserdataCompare<T>(LuaState L) where T : class
     {

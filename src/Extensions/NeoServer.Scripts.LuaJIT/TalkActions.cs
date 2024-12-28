@@ -15,7 +15,7 @@ public class TalkActions : ITalkActions
 
     #region Members
 
-    public readonly Dictionary<string, TalkAction> _talkActions = new Dictionary<string, TalkAction>();
+    private readonly Dictionary<string, TalkAction> _talkActions = new Dictionary<string, TalkAction>();
 
     #endregion
 
