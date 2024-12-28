@@ -1,5 +1,4 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
@@ -8,14 +7,11 @@ using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Creatures.Monster.Summon;
-using NeoServer.Game.World.Map;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
+using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Configurations;
-using NeoServer.Server.Helpers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -89,17 +85,14 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
             itemId = itemTypeByName.ServerId;
         }
 
-        var count = GetNumber<int>(L, 2, 1);
+        var count = GetNumber(L, 2, 1);
         var itemCount = 1;
         var subType = 1;
 
         var it = _itemTypeStore.Get(itemId);
         if (it.HasSubType())
         {
-            if (it.IsStackable())
-            {
-                itemCount = (int)Math.Ceiling(count / (float)it.Count);
-            }
+            if (it.IsStackable()) itemCount = (int)Math.Ceiling(count / (float)it.Count);
 
             subType = count;
         }
@@ -109,10 +102,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         }
 
         var position = new Location();
-        if (Lua.GetTop(L) >= 3)
-        {
-            position = GetPosition(L, 3);
-        }
+        if (Lua.GetTop(L) >= 3) position = GetPosition(L, 3);
 
         var hasTable = itemCount > 1;
         if (hasTable)
@@ -125,9 +115,9 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
             return 1;
         }
 
-        var map = IoC.GetInstance<IMap>();
+        var map = Server.Helpers.IoC.GetInstance<IMap>();
 
-        for (int i = 1; i <= itemCount; ++i)
+        for (var i = 1; i <= itemCount; ++i)
         {
             var stackCount = subType;
             if (it.IsStackable())
@@ -139,10 +129,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
             var item = _itemFactory.Create(itemId, position, stackCount);
             if (item == null)
             {
-                if (!hasTable)
-                {
-                    Lua.PushNil(L);
-                }
+                if (!hasTable) Lua.PushNil(L);
                 return 1;
             }
 
@@ -151,10 +138,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
                 var tile = map.GetTile(position);
                 if (tile == null)
                 {
-                    if (!hasTable)
-                    {
-                        Lua.PushNil(L);
-                    }
+                    if (!hasTable) Lua.PushNil(L);
                     return 1;
                 }
 
@@ -162,10 +146,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
                 if (result.Succeeded)
                 {
-                    if (!hasTable)
-                    {
-                        Lua.PushNil(L);
-                    }
+                    if (!hasTable) Lua.PushNil(L);
                     return 1;
                 }
             }
@@ -192,7 +173,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         return 1;
     }
-    
+
     private static int LuaGameCreateMonster(LuaState L)
     {
         // Game.createMonster(monsterName, position[, extended = false[, force = false[, master = nil]]])
@@ -206,14 +187,11 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         ICreature master = null;
 
-        bool isSummon = false;
+        var isSummon = false;
         if (Lua.GetTop(L) >= 5)
         {
             master = GetUserdata<ICreature>(L, 5);
-            if (master.IsNotNull())
-            {
-                isSummon = true;
-            }
+            if (master.IsNotNull()) isSummon = true;
         }
 
         IMonster monster = null;
@@ -308,7 +286,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
             npc.SetNewLocation(tileToBorn.Location);
             _map.PlaceCreature(npc);
-            
+
             PushUserdata(L, npc);
             SetMetatable(L, -1, "Npc");
 
@@ -320,7 +298,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
             {
                 npc.SetNewLocation(neighbour);
                 _map.PlaceCreature(npc);
-                
+
                 PushUserdata(L, npc);
                 SetMetatable(L, -1, "Npc");
 
@@ -348,18 +326,19 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
             PushBoolean(L, false);
             return 0;
         }
+
         try
         {
             switch (reloadType)
             {
                 case ReloadType.RELOAD_TYPE_SCRIPTS:
-                    {
-                        var dir = AppContext.BaseDirectory + _serverConfiguration.DataLuaJit;
-                        _scripts.ClearAllScripts();
-                        _scripts.LoadScripts($"{dir}/scripts", false, true);
+                {
+                    var dir = AppContext.BaseDirectory + _serverConfiguration.DataLuaJit;
+                    _scripts.ClearAllScripts();
+                    _scripts.LoadScripts($"{dir}/scripts", false, true);
 
-                        Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
-                    }
+                    Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
+                }
 
                     break;
                 default:
@@ -376,5 +355,4 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         PushBoolean(L, true);
         return 1;
     }
-
 }

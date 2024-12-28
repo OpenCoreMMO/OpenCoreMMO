@@ -22,10 +22,7 @@ public class TalkActionFunctions : LuaScriptInterface, ITalkActionFunctions
     {
         // TalkAction(words) or TalkAction(word1, word2, word3)
         var wordsVector = new List<string>();
-        for (var i = 2; i <= Lua.GetTop(L); i++)
-        {
-            wordsVector.Add(GetString(L, i));
-        }
+        for (var i = 2; i <= Lua.GetTop(L); i++) wordsVector.Add(GetString(L, i));
 
         var talkActionSharedPtr = new TalkAction(GetScriptEnv().GetScriptInterface());
         talkActionSharedPtr.SetWords(wordsVector);
@@ -59,7 +56,7 @@ public class TalkActionFunctions : LuaScriptInterface, ITalkActionFunctions
         return 1;
     }
 
-  
+
     private static int LuaTalkActionRegister(LuaState L)
     {
         // talkAction:register()

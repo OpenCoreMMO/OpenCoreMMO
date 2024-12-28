@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Scripts.LuaJIT;
 using NeoServer.Scripts.LuaJIT.Functions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
+using NeoServer.Scripts.LuaJIT.Interfaces;
 
-namespace NeoServer.Server.Standalone.IoC.Modules;
+namespace NeoServer.Scripts.LuaJIT.IoC.Modules;
 
 public static class LuaJITInjection
 {
@@ -11,7 +11,7 @@ public static class LuaJITInjection
     {
         builder.AddSingleton<IConfigManager, ConfigManager>();
         builder.AddSingleton<ILuaEnvironment, LuaEnvironment>();
-        builder.AddSingleton<IScripts, Scripts.LuaJIT.Scripts>();
+        builder.AddSingleton<IScripts, Scripts>();
         builder.AddSingleton<IActions, Actions>();
         builder.AddSingleton<ITalkActions, TalkActions>();
 

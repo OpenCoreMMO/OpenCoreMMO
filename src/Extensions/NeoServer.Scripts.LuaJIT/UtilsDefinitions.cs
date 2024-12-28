@@ -29,8 +29,8 @@ public enum IconsType
     ICON_GOSHNAR3 = 1 << 23,
     ICON_GOSHNAR4 = 1 << 24,
     ICON_GOSHNAR5 = 1 << 25,
-    ICON_NEWMANASHIELD = 1 << 26,
-};
+    ICON_NEWMANASHIELD = 1 << 26
+}
 
 public enum WieldInfoType
 {
@@ -38,8 +38,8 @@ public enum WieldInfoType
     WIELDINFO_LEVEL = 1 << 0,
     WIELDINFO_MAGLV = 1 << 1,
     WIELDINFO_VOCREQ = 1 << 2,
-    WIELDINFO_PREMIUM = 1 << 3,
-};
+    WIELDINFO_PREMIUM = 1 << 3
+}
 
 public enum SpawnTypeType
 {
@@ -47,8 +47,8 @@ public enum SpawnTypeType
     RESPAWN_IN_DAY = 1,
     RESPAWN_IN_NIGHT = 2,
     RESPAWN_IN_DAY_CAVE = 3,
-    RESPAWN_IN_NIGHT_CAVE = 4,
-};
+    RESPAWN_IN_NIGHT_CAVE = 4
+}
 
 public enum Cipbia_ElementalsType : byte
 {
@@ -64,8 +64,8 @@ public enum Cipbia_ElementalsType : byte
     CIPBIA_ELEMENTAL_LIFEDRAIN = 9,
     CIPBIA_ELEMENTAL_MANADRAIN = 10,
     CIPBIA_ELEMENTAL_AGONY = 11,
-    CIPBIA_ELEMENTAL_UNDEFINED = 12,
-};
+    CIPBIA_ELEMENTAL_UNDEFINED = 12
+}
 
 public enum MagicEffectClassesType : byte
 {
@@ -141,7 +141,7 @@ public enum MagicEffectClassesType : byte
     CONST_ME_SMOKE = 68,
     CONST_ME_INSECTS = 69,
     CONST_ME_DRAGONHEAD = 70
-};
+}
 
 public enum ShootTypeType : byte
 {
@@ -209,8 +209,8 @@ public enum ShootTypeType : byte
     CONST_ANI_LAST = CONST_ANI_ROYALSTAR,
 
     // for internal use, don't send to client
-    CONST_ANI_WEAPONTYPE = 0xFE, // 254
-};
+    CONST_ANI_WEAPONTYPE = 0xFE // 254
+}
 
 //public enum SpeakClassesType : byte
 //{
@@ -241,15 +241,15 @@ public enum MessageClassesType : byte
 {
     MESSAGE_STATUS_CONSOLE_RED = 18, /*Red message in the console*/
     MESSAGE_EVENT_ORANGE = 19, /*Orange message in the console*/
-    MESSAGE_STATUS_CONSOLE_ORANGE = 20,  /*Orange message in the console*/
+    MESSAGE_STATUS_CONSOLE_ORANGE = 20, /*Orange message in the console*/
     MESSAGE_STATUS_WARNING = 21, /*Red message in game window and in the console*/
     MESSAGE_EVENT_ADVANCE = 22, /*White message in game window and in the console*/
     MESSAGE_EVENT_DEFAULT = 23, /*White message at the bottom of the game window and in the console*/
     MESSAGE_STATUS_DEFAULT = 24, /*White message at the bottom of the game window and in the console*/
     MESSAGE_INFO_DESCR = 25, /*Green message in game window and in the console*/
     MESSAGE_STATUS_SMALL = 26, /*White message at the bottom of the game window"*/
-    MESSAGE_STATUS_CONSOLE_BLUE = 27, /*FIXME Blue message in the console*/
-};
+    MESSAGE_STATUS_CONSOLE_BLUE = 27 /*FIXME Blue message in the console*/
+}
 
 public enum FluidsType : byte
 {
@@ -271,14 +271,15 @@ public enum FluidsType : byte
     FLUID_COCONUTMILK = 15, /* White */
     FLUID_MEAD = 16, /* Brown */
     FLUID_TEA = 17, /* Brown */
+
     FLUID_INK = 18 /* Black */
     // 12.85 last fluid is 18, 19+ is a loop from 0 to 18 over and over again
-};
+}
 
 public enum SquareColorType : byte
 {
-    SQ_COLOR_BLACK = 0,
-};
+    SQ_COLOR_BLACK = 0
+}
 
 public enum TextColorType : byte
 {
@@ -300,8 +301,8 @@ public enum TextColorType : byte
     TEXTCOLOR_LIGHTPURPLE = 199,
     TEXTCOLOR_YELLOW = 210,
     TEXTCOLOR_WHITE_EXP = 215,
-    TEXTCOLOR_NONE = 255,
-};
+    TEXTCOLOR_NONE = 255
+}
 
 public enum WeaponTypeType : byte
 {
@@ -313,8 +314,8 @@ public enum WeaponTypeType : byte
     WEAPON_DISTANCE,
     WEAPON_WAND,
     WEAPON_AMMO,
-    WEAPON_MISSILE,
-};
+    WEAPON_MISSILE
+}
 
 public enum AmmoType : byte
 {
@@ -325,23 +326,23 @@ public enum AmmoType : byte
     AMMO_THROWINGSTAR,
     AMMO_THROWINGKNIFE,
     AMMO_STONE,
-    AMMO_SNOWBALL,
-};
+    AMMO_SNOWBALL
+}
 
 public enum WeaponActionType : byte
 {
     WEAPONACTION_NONE,
     WEAPONACTION_REMOVECOUNT,
     WEAPONACTION_REMOVECHARGE,
-    WEAPONACTION_MOVE,
-};
+    WEAPONACTION_MOVE
+}
 
 public enum PartyAnalyzerActionType : byte
 {
     PARTYANALYZERACTION_RESET = 0,
     PARTYANALYZERACTION_PRICETYPE = 1,
-    PARTYANALYZERACTION_PRICEVALUE = 2,
-};
+    PARTYANALYZERACTION_PRICEVALUE = 2
+}
 
 public enum SkullsType : byte
 {
@@ -351,8 +352,8 @@ public enum SkullsType : byte
     SKULL_WHITE = 3,
     SKULL_RED = 4,
     SKULL_BLACK = 5,
-    SKULL_ORANGE = 6,
-};
+    SKULL_ORANGE = 6
+}
 
 public enum PartyShieldsType : byte
 {
@@ -367,8 +368,8 @@ public enum PartyShieldsType : byte
     SHIELD_YELLOW_NOSHAREDEXP_BLINK = 8,
     SHIELD_BLUE_NOSHAREDEXP = 9,
     SHIELD_YELLOW_NOSHAREDEXP = 10,
-    SHIELD_GRAY = 11,
-};
+    SHIELD_GRAY = 11
+}
 
 public enum GuildEmblemsType : byte
 {
@@ -377,8 +378,8 @@ public enum GuildEmblemsType : byte
     GUILDEMBLEM_ENEMY = 2,
     GUILDEMBLEM_NEUTRAL = 3,
     GUILDEMBLEM_MEMBER = 4,
-    GUILDEMBLEM_OTHER = 5,
-};
+    GUILDEMBLEM_OTHER = 5
+}
 
 public enum NameEvalType : byte
 {
@@ -388,7 +389,7 @@ public enum NameEvalType : byte
     INVALID_TOKEN_LENGTH,
     INVALID_FORBIDDEN,
     INVALID_CHARACTER
-};
+}
 
 public enum ItemIDType : ushort
 {
@@ -549,54 +550,54 @@ public enum ItemIDType : ushort
     ITEM_BATHTUB_FILLED_NOTMOVABLE = 26100,
 
     ITEM_NONE = 0
-};
+}
 
 public enum PlayerFlagsType : byte
 {
     CannotUseCombat,
-	    CannotAttackPlayer,
-	    CannotAttackMonster,
-	    CannotBeAttacked,
-	    CanConvinceAll,
-	    CanSummonAll,
-	    CanIllusionAll,
-	    CanSenseInvisibility,
-	    IgnoredByMonsters,
-	    NotGainInFight,
-	    HasInfiniteMana,
-	    HasInfiniteSoul,
-	    HasNoExhaustion,
-	    CannotUseSpells,
-	    CannotPickupItem,
-	    CanAlwaysLogin,
-	    CanBroadcast,
-	    CanEditHouses,
-	    CannotBeBanned,
-	    CannotBePushed,
-	    HasInfiniteCapacity,
-	    CanPushAllCreatures,
-	    CanTalkRedPrivate,
-	    CanTalkRedChannel,
-	    TalkOrangeHelpChannel,
-	    NotGainExperience,
-	    NotGainMana,
-	    NotGainHealth,
-	    NotGainSkill,
-	    SetMaxSpeed,
-	    SpecialVIP,
-	    NotGenerateLoot,
-	    CanTalkRedChannelAnonymous,
-	    IgnoreProtectionZone,
-	    IgnoreSpellCheck,
-	    IgnoreWeaponCheck,
-	    CannotBeMuted,
-	    IsAlwaysPremium,
-	    CanMapClickTeleport,
-	    IgnoredByNpcs,
+    CannotAttackPlayer,
+    CannotAttackMonster,
+    CannotBeAttacked,
+    CanConvinceAll,
+    CanSummonAll,
+    CanIllusionAll,
+    CanSenseInvisibility,
+    IgnoredByMonsters,
+    NotGainInFight,
+    HasInfiniteMana,
+    HasInfiniteSoul,
+    HasNoExhaustion,
+    CannotUseSpells,
+    CannotPickupItem,
+    CanAlwaysLogin,
+    CanBroadcast,
+    CanEditHouses,
+    CannotBeBanned,
+    CannotBePushed,
+    HasInfiniteCapacity,
+    CanPushAllCreatures,
+    CanTalkRedPrivate,
+    CanTalkRedChannel,
+    TalkOrangeHelpChannel,
+    NotGainExperience,
+    NotGainMana,
+    NotGainHealth,
+    NotGainSkill,
+    SetMaxSpeed,
+    SpecialVIP,
+    NotGenerateLoot,
+    CanTalkRedChannelAnonymous,
+    IgnoreProtectionZone,
+    IgnoreSpellCheck,
+    IgnoreWeaponCheck,
+    CannotBeMuted,
+    IsAlwaysPremium,
+    CanMapClickTeleport,
+    IgnoredByNpcs,
 
-	    // Must always be the last
-	    FlagLast
-};
+    // Must always be the last
+    FlagLast
+}
 
 public enum BlessingsType : byte
 {
@@ -607,30 +608,30 @@ public enum BlessingsType : byte
     SPIRITUAL_SHIELDING = 5,
     EMBRACE_OF_TIBIA = 6,
     BLOOD_OF_THE_MOUNTAIN = 7,
-    HEARTH_OF_THE_MOUNTAIN = 8,
-};
+    HEARTH_OF_THE_MOUNTAIN = 8
+}
 
 public enum BedItemPartType : byte
 {
     BED_NONE_PART,
     BED_PILLOW_PART,
-    BED_BLANKET_PART,
-};
+    BED_BLANKET_PART
+}
 
 public enum AttrSubIdType
 {
     None,
-	    TrainParty,
-	    ProtectParty,
-	    EnchantParty,
-	    JeanPierreMagic,
-	    JeanPierreMelee,
-	    JeanPierreDistance,
-	    JeanPierreDefense,
-	    JeanPierreFishing,
-	    BloodRageProtector,
-	    Sharpshooter,
-};
+    TrainParty,
+    ProtectParty,
+    EnchantParty,
+    JeanPierreMagic,
+    JeanPierreMelee,
+    JeanPierreDistance,
+    JeanPierreDefense,
+    JeanPierreFishing,
+    BloodRageProtector,
+    Sharpshooter
+}
 
 public enum ConcoctionType : ushort
 {
@@ -653,5 +654,5 @@ public enum ConcoctionType : ushort
     EnergyAmplification = 36739,
     HolyAmplification = 36740,
     DeathAmplification = 36741,
-    PhysicalAmplification = 36742,
-};
+    PhysicalAmplification = 36742
+}

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Application.Common.Contracts.Scripts;
 using NeoServer.Scripts.Lua;
 using NeoServer.Scripts.LuaJIT;
+using NeoServer.Server.Common.Contracts.Scripts;
 using NLua;
 
 namespace NeoServer.Server.Standalone.IoC.Modules;

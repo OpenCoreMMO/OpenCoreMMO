@@ -1,33 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="..\..\..\data\LuaJit\**">
-      <Link>Data\LuaJit\%(RecursiveDir)%(FileName)</Link>
-    </Content>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="JAJ.Packages.LuaNET" Version="1.0.0" />
-    <PackageReference Include="Serilog" Version="4.2.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <Content Include="..\..\..\data\LuaJit\**">
+            <Link>Data\LuaJit\%(RecursiveDir)%(FileName)</Link>
+        </Content>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj" />
-    <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Events\NeoServer.Server.Events.csproj" />
-    <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="JAJ.Packages.LuaNET" Version="1.0.0"/>
+        <PackageReference Include="Serilog" Version="4.2.0"/>
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Update="config.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj"/>
+        <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Events\NeoServer.Server.Events.csproj"/>
+        <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="config.lua">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
 </Project>

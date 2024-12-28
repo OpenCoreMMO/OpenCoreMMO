@@ -1,5 +1,4 @@
-﻿using NeoServer.Application.Common.Contracts.Scripts;
-using NeoServer.Game.Common.Contracts.Creatures;
+﻿using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Contracts.Services;
@@ -7,15 +6,16 @@ using NeoServer.Game.Common.Location;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Commands;
+using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Commands.Player.UseItem;
 
 public class PlayerUseItemOnCreatureCommand : ICommand
 {
+    private readonly ILuaGameManager _luaGameManager;
     private readonly IPlayerUseService _playerUseService;
     private readonly IGameServer game;
     private readonly HotkeyService hotKeyService;
-    private readonly ILuaGameManager _luaGameManager;
 
     public PlayerUseItemOnCreatureCommand(
         IGameServer game,
@@ -37,7 +37,8 @@ public class PlayerUseItemOnCreatureCommand : ICommand
 
         if (itemToUse is not IUsableOn useableOn) return;
 
-        if (_luaGameManager.PlayerUseItemWithCreature(player, player.Location, useItemPacket.FromStackPosition, creature, useableOn))
+        if (_luaGameManager.PlayerUseItemWithCreature(player, player.Location, useItemPacket.FromStackPosition,
+                creature, useableOn))
             return;
 
         var action = () => _playerUseService.Use(player, useableOn, creature);

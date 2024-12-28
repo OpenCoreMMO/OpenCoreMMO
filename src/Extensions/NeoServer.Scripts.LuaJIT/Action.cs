@@ -2,34 +2,42 @@
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
-using NeoServer.Server.Helpers;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
 public class Action : Script
 {
-    private readonly List<ushort> _itemIds = new List<ushort>();
-    private readonly List<ushort> _uniqueIds = new List<ushort>();
-    private readonly List<ushort> _actionIds = new List<ushort>();
-    private readonly List<Location> _positions = new List<Location>();
-
     private ILogger _logger;
 
     public Action(LuaScriptInterface scriptInterface) : base(scriptInterface)
     {
     }
 
-    public bool ExecuteUse(IPlayer player, IItem item, Location fromPosition, IThing target, Location toPosition, bool isHotkey)
+    public bool AllowFarUse { get; set; }
+    public bool CheckLineOfSight { get; set; }
+
+    public bool CheckFloor { get; set; }
+
+    public List<ushort> ItemIdsVector { get; } = new();
+
+    public List<ushort> UniqueIdsVector { get; } = new();
+
+    public List<ushort> ActionIdsVector { get; } = new();
+
+    public List<Location> PositionsVector { get; } = new();
+
+    public bool ExecuteUse(IPlayer player, IItem item, Location fromPosition, IThing target, Location toPosition,
+        bool isHotkey)
     {
         // onUse(player, item, fromPosition, target, toPosition, isHotkey)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
             if (_logger == null)
-                _logger = IoC.GetInstance<ILogger>();
+                _logger = Server.Helpers.IoC.GetInstance<ILogger>();
 
             _logger.Error($"[Action::executeUse - Player {player.Name}, on item {item.Name}] " +
-                              $"Call stack overflow. Too many lua script calls being nested. Script name {GetScriptInterface().GetLoadingScriptName()}");
+                          $"Call stack overflow. Too many lua script calls being nested. Script name {GetScriptInterface().GetLoadingScriptName()}");
             return false;
         }
 
@@ -54,64 +62,39 @@ public class Action : Script
         return GetScriptInterface().CallFunction(6);
     }
 
-    public bool AllowFarUse { get; set; }
-    public bool CheckLineOfSight { get; set; }
-
-    public bool CheckFloor { get; set; }
-
-    public List<ushort> ItemIdsVector
-    {
-        get { return _itemIds; }
-    }
-
     public void SetItemIdsVector(ushort id)
     {
-        _itemIds.Add(id);
-    }
-
-    public List<ushort> UniqueIdsVector
-    {
-        get { return _uniqueIds; }
+        ItemIdsVector.Add(id);
     }
 
     public void SetUniqueIdsVector(ushort id)
     {
-        _uniqueIds.Add(id);
-    }
-
-    public List<ushort> ActionIdsVector
-    {
-        get { return _actionIds; }
+        UniqueIdsVector.Add(id);
     }
 
     public void SetActionIdsVector(ushort id)
     {
-        _actionIds.Add(id);
-    }
-
-    public List<Location> PositionsVector
-    {
-        get { return _positions; }
+        ActionIdsVector.Add(id);
     }
 
     public void SetPositionsVector(Location pos)
     {
-        _positions.Add(pos);
+        PositionsVector.Add(pos);
     }
 
     public bool HasPosition(Location position)
     {
-        return _positions.Exists(p => p.Equals(position));
+        return PositionsVector.Exists(p => p.Equals(position));
     }
 
     public List<Location> GetPositions()
     {
-        return _positions;
+        return PositionsVector;
     }
 
     public void SetPositions(Location pos)
     {
-        _positions.Add(pos);
+        PositionsVector.Add(pos);
     }
 
     public virtual ReturnValueType CanExecuteAction(IPlayer player, Location toPos)
@@ -124,6 +107,6 @@ public class Action : Script
 
         //return g_actions().canUseFar(player, toPos, checkLineOfSight, checkFloor);
 
-        return default(ReturnValueType);
+        return default;
     }
 }

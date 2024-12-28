@@ -1,52 +1,52 @@
 ﻿local talkAction = TalkAction("!test")
 
 function talkAction.onSay(player, words, param)
-	logger.info('executing talkAction from lua: '.. words .. ' ' .. param)
+    logger.info('executing talkAction from lua: ' .. words .. ' ' .. param)
 
-	logger.info(player:getName())
-	logger.info(player:getId())
-	
-	local creature = Creature("GOD")
+    logger.info(player:getName())
+    logger.info(player:getId())
 
-	if creature then
-		logger.info(creature:getName())
-		logger.info(creature:getId())
+    local creature = Creature("GOD")
 
-		if player == creature then
-			logger.info('player == creature')
-		end
-	end
-	
-	local showInConsole = configManager.getBoolean(configKeys.SCRIPTS_CONSOLE_LOGS);
+    if creature then
+        logger.info(creature:getName())
+        logger.info(creature:getId())
 
-	logger.info(tostring(showInConsole))
+        if player == creature then
+            logger.info('player == creature')
+        end
+    end
 
-	player:sendTextMessage(0, param, 0)
-	
-	local position = player:getPosition()
+    local showInConsole = configManager.getBoolean(configKeys.SCRIPTS_CONSOLE_LOGS);
 
-	logger.info(position:toString())
+    logger.info(tostring(showInConsole))
 
-	position:sendMagicEffect(CONST_ME_POFF)
+    player:sendTextMessage(0, param, 0)
 
-	Game.createItem(2159, 1, position)
+    local position = player:getPosition()
 
-	local direction = player:getDirection()
-	
-	Game.createMonster("Rat", position, true, true, player)
+    logger.info(position:toString())
 
-	logger.info('direction: ' .. direction)
+    position:sendMagicEffect(CONST_ME_POFF)
 
-	local nextPosition = position
-	nextPosition:getNextPosition(direction)
-	
-	logger.info('nextPosition: ' .. nextPosition:toString())
+    Game.createItem(2159, 1, position)
 
-	Game.createMonster("Scarab", nextPosition)
+    local direction = player:getDirection()
 
-	logger.info('end')
+    Game.createMonster("Rat", position, true, true, player)
 
-	return true
+    logger.info('direction: ' .. direction)
+
+    local nextPosition = position
+    nextPosition:getNextPosition(direction)
+
+    logger.info('nextPosition: ' .. nextPosition:toString())
+
+    Game.createMonster("Scarab", nextPosition)
+
+    logger.info('end')
+
+    return true
 end
 
 talkAction:separator(" ")

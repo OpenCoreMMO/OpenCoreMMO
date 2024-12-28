@@ -49,6 +49,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
                 Lua.PushNil(L);
                 return 1;
             }
+
             creature = GetUserdata<ICreature>(L, 2);
         }
         else
@@ -65,6 +66,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 

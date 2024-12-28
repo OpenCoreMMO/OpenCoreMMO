@@ -1,42 +1,45 @@
 ﻿using LuaNET;
 using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
 public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 {
-    #region Members
-
-    private static LuaEnvironment _instance = null;
-
-    private static bool _shuttingDown = false;
-
-    private readonly Dictionary<uint, LuaTimerEventDesc> _timerEvents = new Dictionary<uint, LuaTimerEventDesc>();
-    public uint LastEventTimerId = 1;
-
-    private static readonly List<string> _cacheFiles = new List<string>();
-
-    private static LuaScriptInterface _testInterface;
-
-    #endregion
-
     #region Injection
 
     /// <summary>
-    /// A reference to the logger in use.
+    ///     A reference to the logger in use.
     /// </summary>
     private readonly ILogger _logger;
 
     #endregion
 
+    #region Members
+
+    private static LuaEnvironment _instance;
+
+    private static bool _shuttingDown;
+
+    private readonly Dictionary<uint, LuaTimerEventDesc> _timerEvents = new();
+    public uint LastEventTimerId = 1;
+
+    private static readonly List<string> _cacheFiles = new();
+
+    private static LuaScriptInterface _testInterface;
+
+    #endregion
+
     #region Instance
 
-    public static LuaEnvironment GetInstance() => _instance == null ? _instance = new LuaEnvironment() : _instance;
+    public static LuaEnvironment GetInstance()
+    {
+        return _instance == null ? _instance = new LuaEnvironment() : _instance;
+    }
 
     public LuaEnvironment() : base("Main Interface")
     {
-
     }
 
     #endregion
@@ -66,15 +69,9 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
     public LuaState GetLuaState()
     {
-        if (_shuttingDown)
-        {
-            return luaState;
-        }
+        if (_shuttingDown) return luaState;
 
-        if (luaState.IsNull)
-        {
-            InitState();
-        }
+        if (luaState.IsNull) InitState();
 
         return luaState;
     }
@@ -97,10 +94,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
     public bool CloseState()
     {
-        if (luaState.IsNull)
-        {
-            return false;
-        }
+        if (luaState.IsNull) return false;
 
         //foreach (var combatEntry in combatIdMap)
         //{
@@ -115,10 +109,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
         foreach (var timerEntry in _timerEvents)
         {
             var timerEventDesc = timerEntry.Value;
-            foreach (var parameter in timerEventDesc.Parameters)
-            {
-                Lua.UnRef(luaState, LUA_REGISTRYINDEX, parameter);
-            }
+            foreach (var parameter in timerEventDesc.Parameters) Lua.UnRef(luaState, LUA_REGISTRYINDEX, parameter);
             Lua.UnRef(luaState, LUA_REGISTRYINDEX, timerEventDesc.Function);
         }
 
@@ -139,6 +130,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
             _testInterface = new LuaScriptInterface("Test Interface");
             _testInterface.InitState();
         }
+
         return _testInterface;
     }
 
@@ -158,10 +150,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
             var reverseList = timerEventDesc.Parameters.ToList();
             reverseList.Reverse();
 
-            foreach (var parameter in reverseList)
-            {
-                Lua.RawGetI(luaState, LUA_REGISTRYINDEX, parameter);
-            }
+            foreach (var parameter in reverseList) Lua.RawGetI(luaState, LUA_REGISTRYINDEX, parameter);
 
             if (ReserveScriptEnv())
             {
@@ -172,29 +161,24 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
             }
             else
             {
-                _logger.Error($"[LuaEnvironment::executeTimerEvent - Lua file {GetLoadingFile()}] Call stack overflow. Too many lua script calls being nested");
+                _logger.Error(
+                    $"[LuaEnvironment::executeTimerEvent - Lua file {GetLoadingFile()}] Call stack overflow. Too many lua script calls being nested");
             }
 
             Lua.UnRef(luaState, LUA_REGISTRYINDEX, timerEventDesc.Function);
-            foreach (var parameter in timerEventDesc.Parameters)
-            {
-                Lua.UnRef(luaState, LUA_REGISTRYINDEX, parameter);
-            }
+            foreach (var parameter in timerEventDesc.Parameters) Lua.UnRef(luaState, LUA_REGISTRYINDEX, parameter);
         }
     }
 
     public void CollectGarbage()
     {
-        bool collecting = false;
+        var collecting = false;
 
         if (!collecting)
         {
             collecting = true;
 
-            for (int i = -1; ++i < 2;)
-            {
-                Lua.GC(luaState, LuaGCParam.Collect, 0);
-            }
+            for (var i = -1; ++i < 2;) Lua.GC(luaState, LuaGCParam.Collect, 0);
 
             collecting = false;
         }

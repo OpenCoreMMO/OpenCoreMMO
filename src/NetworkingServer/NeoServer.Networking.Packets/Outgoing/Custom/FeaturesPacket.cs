@@ -9,6 +9,7 @@ public class FeaturesPacket : OutgoingPacket
     public required bool GameEnvironmentEffect { get; init; }
     public required bool GameExtendedClientPing { get; init; }
     public required bool GameItemTooltip { get; init; }
+
     public override void WriteToMessage(INetworkMessage message)
     {
         message.AddByte(0x43);
@@ -21,7 +22,7 @@ public class FeaturesPacket : OutgoingPacket
             [(byte)Feature.GameExtendedClientPing] = GameExtendedClientPing,
             [(byte)Feature.GameItemTooltip] = GameItemTooltip
         };
-        
+
         foreach (var feature in features)
         {
             message.AddByte(feature.Key);

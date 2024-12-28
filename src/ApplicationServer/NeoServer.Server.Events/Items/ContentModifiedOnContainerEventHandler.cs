@@ -11,11 +11,12 @@ namespace NeoServer.Server.Events.Items;
 
 public class ContentModifiedOnContainerEventHandler
 {
-    private readonly ICoinTypeStore _coinTypeStore;
     private readonly ClientConfiguration _clientConfiguration;
+    private readonly ICoinTypeStore _coinTypeStore;
     private readonly IGameServer game;
 
-    public ContentModifiedOnContainerEventHandler(IGameServer game, ICoinTypeStore coinTypeStore, ClientConfiguration clientConfiguration)
+    public ContentModifiedOnContainerEventHandler(IGameServer game, ICoinTypeStore coinTypeStore,
+        ClientConfiguration clientConfiguration)
     {
         this.game = game;
         _coinTypeStore = coinTypeStore;

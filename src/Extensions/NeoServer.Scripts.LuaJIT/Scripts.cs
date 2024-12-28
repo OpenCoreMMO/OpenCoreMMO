@@ -1,45 +1,11 @@
 ﻿using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
 public class Scripts : IScripts
 {
-    #region Instance
-
-    //private static Scripts _instance = null;
-    //public static Scripts GetInstance() => _instance == null ? _instance = new Scripts() : _instance;
-
-    #endregion
-
-    #region Members
-
-    private int _scriptId = 0;
-    private LuaScriptInterface _scriptInterface;
-
-    #endregion
-
-    #region Injection
-
-    /// <summary>
-    /// A reference to the logger in use.
-    /// </summary>
-    protected readonly ILogger _logger;
-
-    /// <summary>
-    /// A reference to the config manager in use.
-    /// </summary>
-    private readonly IConfigManager _configManager;
-
-    /// <summary>
-    /// A reference to the talk actions instance in use.
-    /// </summary>
-    private readonly ITalkActions _talkActions;
-
-    private readonly IActions _actions;
-
-    #endregion
-
     public Scripts(ILogger logger)
     {
         _logger = logger;
@@ -84,7 +50,8 @@ public class Scripts : IScripts
 
         if (!Directory.Exists(dir) || !Directory.GetDirectories(dir).Any())
         {
-            _logger.Warning($"{nameof(LoadEventSchedulerScripts)} - Can not load folder 'scheduler' on {coreFolder}/events/scripts'");
+            _logger.Warning(
+                $"{nameof(LoadEventSchedulerScripts)} - Can not load folder 'scheduler' on {coreFolder}/events/scripts'");
             return false;
         }
 
@@ -134,17 +101,12 @@ public class Scripts : IScripts
             var fileFolder = fileInfo.DirectoryName?.Split(Path.DirectorySeparatorChar).LastOrDefault();
             var scriptFolder = fileInfo.DirectoryName;
 
-            if (!File.Exists(filePath) || fileInfo.Extension != ".lua")
-            {
-                continue;
-            }
+            if (!File.Exists(filePath) || fileInfo.Extension != ".lua") continue;
 
             if (fileInfo.Name.StartsWith("#"))
             {
                 if (_configManager.GetBoolean(BooleanConfigType.SCRIPTS_CONSOLE_LOGS))
-                {
                     _logger.Information("[script]: {} [disabled]", fileInfo.Name);
-                }
 
                 continue;
             }
@@ -154,9 +116,8 @@ public class Scripts : IScripts
                 if (_configManager.GetBoolean(BooleanConfigType.SCRIPTS_CONSOLE_LOGS))
                 {
                     if (string.IsNullOrEmpty(lastDirectory) || lastDirectory != scriptFolder)
-                    {
-                        _logger.Information($"Loading folder: [{fileInfo.DirectoryName.Split(Path.DirectorySeparatorChar).LastOrDefault()}]");
-                    }
+                        _logger.Information(
+                            $"Loading folder: [{fileInfo.DirectoryName.Split(Path.DirectorySeparatorChar).LastOrDefault()}]");
 
                     lastDirectory = fileInfo.DirectoryName;
                 }
@@ -172,13 +133,9 @@ public class Scripts : IScripts
             if (_configManager.GetBoolean(BooleanConfigType.SCRIPTS_CONSOLE_LOGS))
             {
                 if (!reload)
-                {
                     _logger.Information("[script loaded]: {0}", fileInfo.Name);
-                }
                 else
-                {
                     _logger.Information("[script reloaded]: {0}", fileInfo.Name);
-                }
             }
         }
 
@@ -194,4 +151,39 @@ public class Scripts : IScripts
     {
         return _scriptId;
     }
+
+    #region Instance
+
+    //private static Scripts _instance = null;
+    //public static Scripts GetInstance() => _instance == null ? _instance = new Scripts() : _instance;
+
+    #endregion
+
+    #region Members
+
+    private readonly int _scriptId = 0;
+    private readonly LuaScriptInterface _scriptInterface;
+
+    #endregion
+
+    #region Injection
+
+    /// <summary>
+    ///     A reference to the logger in use.
+    /// </summary>
+    protected readonly ILogger _logger;
+
+    /// <summary>
+    ///     A reference to the config manager in use.
+    /// </summary>
+    private readonly IConfigManager _configManager;
+
+    /// <summary>
+    ///     A reference to the talk actions instance in use.
+    /// </summary>
+    private readonly ITalkActions _talkActions;
+
+    private readonly IActions _actions;
+
+    #endregion
 }

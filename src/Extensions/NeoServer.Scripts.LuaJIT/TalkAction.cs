@@ -1,42 +1,18 @@
-﻿using NeoServer.Application.Common.Contracts.Scripts;
-using NeoServer.Game.Common.Chats;
+﻿using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Scripts.LuaJIT.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT;
 
 public class TalkAction : Script, ITalkAction
 {
-    private string words;
     private string separator = "\"";
+
+    private string words;
     //private account.GroupType groupType = account.GroupType.GROUP_TYPE_NONE;
 
-    public TalkAction(LuaScriptInterface context) : base(context) { }
-
-    public string GetWords()
+    public TalkAction(LuaScriptInterface context) : base(context)
     {
-        return words;
-    }
-
-    public void SetWords(List<string> newWords)
-    {
-        foreach (var word in newWords)
-        {
-            if (!string.IsNullOrEmpty(words))
-            {
-                words += ", ";
-            }
-            words += word;
-        }
-    }
-
-    public string GetSeparator()
-    {
-        return separator;
-    }
-
-    public void SetSeparator(string sep)
-    {
-        separator = sep;
     }
 
     public bool ExecuteSay(IPlayer player, string words, string param, SpeechType type)
@@ -64,6 +40,30 @@ public class TalkAction : Script, ITalkAction
         //lua_pushnumber(L, (double)type);
 
         return GetScriptInterface().CallFunction(3);
+    }
+
+    public string GetWords()
+    {
+        return words;
+    }
+
+    public void SetWords(List<string> newWords)
+    {
+        foreach (var word in newWords)
+        {
+            if (!string.IsNullOrEmpty(words)) words += ", ";
+            words += word;
+        }
+    }
+
+    public string GetSeparator()
+    {
+        return separator;
+    }
+
+    public void SetSeparator(string sep)
+    {
+        separator = sep;
     }
 
     //public void SetGroupType(account.GroupType newGroupType)
