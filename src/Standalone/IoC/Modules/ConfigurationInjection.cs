@@ -56,7 +56,7 @@ public static class ConfigurationInjection
         var serverGameName = Environment.GetEnvironmentVariable("SERVER_GAME_NAME");
         var serverGameIP = Environment.GetEnvironmentVariable("SERVER_GAME_IP");
 
-        serverConfiguration = new ServerConfiguration(
+        serverConfiguration = new(
             serverConfiguration.Version,
             serverConfiguration.OTBM,
             serverConfiguration.OTB,
