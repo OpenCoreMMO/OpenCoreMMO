@@ -1,9 +1,13 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.DataStores;
+using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Common.Contracts;
+using NeoServer.Server.Helpers;
 using NeoServer.Server.Services;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
@@ -11,10 +15,18 @@ namespace NeoServer.Scripts.LuaJIT.Functions;
 public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 {
     private static IGameCreatureManager _gameCreatureManager;
+    private static IItemFactory _itemFactory;
+    private static IItemTypeStore _itemTypeStore;
 
-    public PlayerFunctions(IGameCreatureManager gameCreatureManager) : base(nameof(PlayerFunctions))
+
+    public PlayerFunctions(
+        IGameCreatureManager gameCreatureManager,
+        IItemFactory itemFactory,
+        IItemTypeStore itemTypeStore) : base(nameof(PlayerFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
+        _itemFactory = itemFactory;
+        _itemTypeStore = itemTypeStore;
     }
 
     public void Init(LuaState L)
@@ -25,6 +37,8 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         RegisterMethod(L, "Player", "sendTextMessage", LuaPlayerSendTextMessage);
         RegisterMethod(L, "Player", "isPzLocked", LuaPlayerIsPzLocked);
+
+        RegisterMethod(L, "Player", "addItem", LuaPlayerAddItem);
     }
 
     private static int LuaPlayerCreate(LuaState L)
@@ -128,6 +142,135 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         else
             Lua.PushNil(L);
 
+        return 1;
+    }
+
+    private static int LuaPlayerAddItem(LuaState L)
+    {
+        // player:addItem(itemId, count = 1, canDropOnMap = true, subType = 1, slot = CONST_SLOT_WHEREEVER)
+        
+        var player = GetUserdata<IPlayer>(L, 1);
+        if (!player)
+        {
+            Lua.PushBoolean(L, false);
+            return 1;
+        }
+
+        ushort itemId = 0;
+        if (Lua.IsNumber(L, 2))
+        {
+            itemId = GetNumber<ushort>(L, 2);
+        }
+        else
+        {
+            var itemName = GetString(L, 2);
+            var itemTypeByName = _itemTypeStore.GetByName(itemName);
+
+            if (itemTypeByName == null || string.IsNullOrEmpty(itemTypeByName.Name) || itemTypeByName.ServerId == 0)
+            {
+                Lua.PushNil(L);
+                return 1;
+            }
+
+            itemId = itemTypeByName.ServerId;
+        }
+
+        var count = GetNumber<int>(L, 3, 1);
+        var subType = GetNumber<int>(L, 5, 1);
+
+        IItemType it = _itemTypeStore.Get(itemId);
+
+        var itemCount = 1;
+        int parameters = Lua.GetTop(L);
+        if (parameters >= 4)
+        {
+            itemCount = int.Max(1, count);
+        }
+        else if (it.HasSubType())
+        {
+            if (it.IsStackable())
+            {
+                itemCount = (int)Math.Ceiling((float)(count / it.Count));
+            }
+
+            subType = count;
+        }
+        else
+        {
+            itemCount = int.Max(1, count);
+        }
+
+        bool hasTable = itemCount > 1;
+        if (hasTable)
+        {
+            Lua.NewTable(L);
+        }
+        else if (itemCount == 0)
+        {
+            Lua.PushNil(L);
+            return 1;
+        }
+
+        var canDropOnMap = GetBoolean(L, 4, true);
+        var slot = GetNumber(L, 6, SlotsType.CONST_SLOT_BACKPACK);
+
+        for (int i = 1; i <= itemCount; ++i)
+        {
+            int stackCount = subType;
+            if (it.IsStackable())
+            {
+                stackCount = int.Max(stackCount, it.Count);
+                subType -= stackCount;
+            }
+
+            IItem item = _itemFactory.Create(itemId, player.Location, stackCount);
+
+            if (!item)
+            {
+                if (!hasTable)
+                    Lua.PushNil(L);
+
+                return 1;
+            }
+
+            var isSuccess = false;
+
+            if (!item.IsPickupable && player.Tile is { } tile && tile.AddItem(item).Succeeded)
+            {
+                item.Decay?.StartDecay();
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = player.Inventory.AddItem(item, (Slot)slot).Succeeded;
+
+                if (!isSuccess && canDropOnMap && player.Tile is { } playerTile && playerTile.AddItem(item).Succeeded)
+                {
+                    item.Decay?.StartDecay();
+                    isSuccess = true;
+                }
+            }
+
+            if (isSuccess)
+            {
+                if (hasTable)
+                {
+                    Lua.PushNumber(L, i);
+                    PushUserdata(L, item);
+                    SetItemMetatable(L, -1, item);
+                    Lua.SetTable(L, -3);
+                }
+                else
+                {
+                    PushUserdata(L, item);
+                    SetItemMetatable(L, -1, item);
+                }
+            }
+            else if (hasTable)
+            {
+                Lua.PushNil(L);
+            }
+        }
         return 1;
     }
 }

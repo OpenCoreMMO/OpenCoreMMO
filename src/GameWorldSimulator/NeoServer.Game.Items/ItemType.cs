@@ -98,24 +98,6 @@ public class ItemType : IItemType
         return false;
     }
 
-    public bool IsFluidContainer()
-        => Flags.Contains(ItemFlag.LiquidContainer);
-
-    public bool IsSplash()
-        => Group == ItemGroup.Splash;
-
-    public bool IsStackable()
-        => Group == ItemGroup.Splash;
-
-    public ushort Charges 
-        => Attributes.GetAttribute<ushort>(ItemAttribute.Charges);
-
-    public ushort Count
-        => Attributes.GetAttribute<ushort>(ItemAttribute.Count);
-
-    public bool HasSubType()
-        => IsFluidContainer() || IsSplash() || IsStackable() || Charges != 0;
-
     public AmmoType AmmoType => Attributes?.GetAttribute(ItemAttribute.AmmoType) switch
     {
         "bolt" => AmmoType.Bolt,
