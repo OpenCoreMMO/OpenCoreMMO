@@ -39,7 +39,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         else if (IsString(L, 2))
         {
             var name = GetString(L, 2);
-            creature = (ICreature)_gameCreatureManager.GetCreatures().FirstOrDefault(c => c.Name.Equals(name));
+            creature = _gameCreatureManager.GetCreatures().FirstOrDefault(c => c.Name.Equals(name));
         }
         else if (IsUserdata(L, 2))
         {
