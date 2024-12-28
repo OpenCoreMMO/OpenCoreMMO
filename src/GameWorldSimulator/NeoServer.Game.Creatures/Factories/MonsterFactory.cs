@@ -24,7 +24,7 @@ public class MonsterFactory : IMonsterFactory
 
     public static IMonsterFactory Instance { get; private set; }
 
-    public IMonster CreateSummon(string name, IMonster master)
+    public IMonster CreateSummon(string name, ICreature master)
     {
         var result = _monsterManager.TryGetMonster(name, out var monsterType);
         if (result == false)

@@ -1,16 +1,21 @@
 ﻿using LuaNET;
+using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Helpers;
+using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Game.Creatures.Monster.Summon;
+using NeoServer.Game.World.Map;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -19,17 +24,23 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
     private static IScripts _scripts;
     private static IItemTypeStore _itemTypeStore;
     private static IItemFactory _itemFactory;
+    private static IMap _map;
+    private static ICreatureFactory _creatureFactory;
     private static ServerConfiguration _serverConfiguration;
 
     public GameFunctions(
         IScripts scripts,
         IItemTypeStore itemTypeStore,
         IItemFactory itemFactory,
+        IMap map,
+        ICreatureFactory creatureFactory,
         ServerConfiguration serverConfiguration) : base(nameof(GameFunctions))
     {
         _scripts = scripts;
         _itemTypeStore = itemTypeStore;
         _itemFactory = itemFactory;
+        _map = map;
+        _creatureFactory = creatureFactory;
         _serverConfiguration = serverConfiguration;
     }
 
@@ -186,9 +197,6 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         // Game.createMonster(monsterName, position[, extended = false[, force = false[, master = nil]]])
         //todo: implements force parameter
 
-        IMonsterFactory _monsterFactory = IoC.GetInstance<IMonsterFactory>();
-        IMap _map = IoC.GetInstance<IMap>();
-
         var monsterName = GetString(L, 1);
 
         var position = GetPosition(L, 2);
@@ -209,15 +217,9 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         IMonster monster = null;
         if (isSummon && master != null)
-        {
-            monster = _monsterFactory.CreateSummon(monsterName, master as IMonster);
-            monster.SetNewLocation(master.Location);
-        }
+            monster = _creatureFactory.CreateSummon(monsterName, master);
         else
-        {
-            monster = _monsterFactory.Create(monsterName);
-            monster.SetNewLocation(position);
-        }
+            monster = _creatureFactory.CreateMonster(monsterName);
 
         if (!monster)
         {
@@ -225,11 +227,44 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
             return 1;
         }
 
-        foreach (var neighbour in extended ? monster.Location.ExtendedNeighbours : monster.Location.Neighbours)
+        var tileToBorn = _map[position];
+
+        if (tileToBorn is IDynamicTile { HasCreature: false })
+        {
+            if (tileToBorn.HasFlag(TileFlags.ProtectionZone))
+            {
+                Lua.PushNil(L);
+                return 1;
+            }
+
+            if (isSummon)
+            {
+                monster.SetNewLocation(tileToBorn.Location);
+                _map.PlaceCreature(monster);
+            }
+            else
+            {
+                monster.Born(position);
+            }
+
+            PushUserdata(L, monster);
+            SetMetatable(L, -1, "Monster");
+
+            return 1;
+        }
+
+        foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
             if (_map[neighbour] is IDynamicTile { HasCreature: false })
             {
-                monster.SetNewLocation(neighbour);
-                _map.PlaceCreature(monster);
+                if (isSummon)
+                {
+                    monster.SetNewLocation(neighbour);
+                    _map.PlaceCreature(monster);
+                }
+                else
+                {
+                    monster.Born(neighbour);
+                }
 
                 PushUserdata(L, monster);
                 SetMetatable(L, -1, "Monster");
