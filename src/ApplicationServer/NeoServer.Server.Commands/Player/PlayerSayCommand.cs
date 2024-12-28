@@ -15,12 +15,12 @@ public class PlayerSayCommand : ICommand
 {
     private readonly IChatChannelStore _chatChannelStore;
     private readonly IGameServer _game;
-    private readonly ILuaGameManager _luaGameManager;
+    private readonly IScriptGameManager _luaGameManager;
 
     public PlayerSayCommand(
         IGameServer game,
         IChatChannelStore chatChannelStore,
-        ILuaGameManager luaGameManager)
+        IScriptGameManager luaGameManager)
     {
         _game = game;
         _chatChannelStore = chatChannelStore;

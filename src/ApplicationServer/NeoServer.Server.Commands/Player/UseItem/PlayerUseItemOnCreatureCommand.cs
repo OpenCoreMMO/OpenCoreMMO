@@ -15,13 +15,13 @@ public class PlayerUseItemOnCreatureCommand : ICommand
     private readonly IPlayerUseService _playerUseService;
     private readonly IGameServer game;
     private readonly HotkeyService hotKeyService;
-    private readonly ILuaGameManager _luaGameManager;
+    private readonly IScriptGameManager _luaGameManager;
 
     public PlayerUseItemOnCreatureCommand(
         IGameServer game,
         HotkeyService hotKeyCache,
         IPlayerUseService playerUseService,
-        ILuaGameManager luaGameManager)
+        IScriptGameManager luaGameManager)
     {
         this.game = game;
         hotKeyService = hotKeyCache;

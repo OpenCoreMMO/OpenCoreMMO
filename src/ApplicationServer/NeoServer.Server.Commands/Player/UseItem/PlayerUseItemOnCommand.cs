@@ -17,13 +17,13 @@ public class PlayerUseItemOnCommand : ICommand
     private readonly IPlayerUseService _playerUseService;
     private readonly IGameServer game;
     private readonly HotkeyService hotkeyService;
-    private readonly ILuaGameManager _luaGameManager;
+    private readonly IScriptGameManager _luaGameManager;
 
     public PlayerUseItemOnCommand(
         IGameServer game,
         HotkeyService hotkeyService,
         IPlayerUseService playerUseService,
-        ILuaGameManager luaGameManager)
+        IScriptGameManager luaGameManager)
     {
         this.game = game;
         this.hotkeyService = hotkeyService;

@@ -15,13 +15,13 @@ public class PlayerUseItemCommand : ICommand
     private readonly ItemFinderService _itemFinderService;
     private readonly PlayerOpenDepotCommand _playerOpenDepotCommand;
     private readonly IPlayerUseService _playerUseService;
-    private readonly ILuaGameManager _luaGameManager;
+    private readonly IScriptGameManager _luaGameManager;
 
     public PlayerUseItemCommand(
         IPlayerUseService playerUseService,
         PlayerOpenDepotCommand playerOpenDepotCommand,
         ItemFinderService itemFinderService,
-        ILuaGameManager luaGameManager)
+        IScriptGameManager luaGameManager)
     {
         _playerUseService = playerUseService;
         _playerOpenDepotCommand = playerOpenDepotCommand;

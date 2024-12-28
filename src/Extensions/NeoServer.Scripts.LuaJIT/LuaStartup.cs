@@ -10,7 +10,7 @@ using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public class LuaGameManager : ILuaGameManager
+public class LuaStartup : ILuaStartup
 {
     #region Members
 
@@ -142,7 +142,7 @@ public class LuaGameManager : ILuaGameManager
 
     #region Constructors
 
-    public LuaGameManager(
+    public LuaStartup(
         ILogger logger,
         ILuaEnvironment luaEnviroment,
         IConfigManager configManager,
@@ -241,68 +241,6 @@ public class LuaGameManager : ILuaGameManager
         ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/core.lua", "core.lua"), "core.lua");
 
         ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts", false, false), "/Data/LuaJit/scripts");
-    }
-
-    public bool PlayerSaySpell(IPlayer player, SpeechType type, string words)
-    {
-        var wordsSeparator = " ";
-        var talkactionWords = words.Contains(wordsSeparator) ? words.Split(" ") : [words];
-
-        if (!talkactionWords.Any())
-            return false;
-
-        var talkAction = _talkActions.GetTalkAction(talkactionWords[0]);
-
-        if (talkAction == null)
-            return false;
-
-        var parameter = "";
-
-        if (talkactionWords.Count() > 1)
-            parameter = talkactionWords[1];
-
-        return talkAction.ExecuteSay(player, talkactionWords[0], parameter, type);
-    }
-
-    public bool PlayerUseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item)
-    {
-        var action = _actions.GetAction(item);
-
-        if (action != null)
-            return action.ExecuteUse(
-                player,
-                item,
-                pos,
-                null,
-                pos,
-                false);
-        else
-            _logger.Warning($"Action with item id {item.ServerId} not found.");
-
-        return false;
-    }
-
-    public bool PlayerUseItemWithCreature(IPlayer player, Location fromPos, byte fromStackPos, ICreature creature, IItem item)
-    {
-        return PlayerUseItemEx(player, fromPos, creature.Location, creature.Tile.GetCreatureStackPositionIndex(player), item, false, creature);
-    }
-
-    public bool PlayerUseItemEx(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, bool isHotkey, IThing target)
-    {
-        var action = _actions.GetAction(item);
-
-        if (action != null)
-            return action.ExecuteUse(
-                player,
-                item,
-                player.Location,
-                target,
-                toPos,
-                isHotkey);
-        else
-            _logger.Warning($"Action with item id {item.ServerId} not found.");
-
-        return false;
     }
 
     #endregion

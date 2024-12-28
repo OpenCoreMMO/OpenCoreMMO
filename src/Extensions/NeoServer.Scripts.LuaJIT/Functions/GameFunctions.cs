@@ -67,7 +67,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
     private static int LuaGameCreateItem(LuaState L)
     {
-        // Game.createItem(itemId or name[, count[, position]])
+        // Game.createItem(itemId or name, count, position)
 
         ushort itemId;
         if (Lua.IsNumber(L, 1))
@@ -195,7 +195,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
     
     private static int LuaGameCreateMonster(LuaState L)
     {
-        // Game.createMonster(monsterName, position[, extended = false[, force = false[, master = nil]]])
+        // Game.createMonster(monsterName, position, extended = false, force = false, master = nil)
         //todo: implements force parameter
 
         var monsterName = GetString(L, 1);
@@ -279,7 +279,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
     private static int LuaGameCreateNpc(LuaState L)
     {
-        // Game.createNpc(npcName, position[, extended = false[, force = false]])
+        // Game.createNpc(npcName, position, extended = false, force = false)
         //todo: implements force parameter
 
         var ncpName = GetString(L, 1);

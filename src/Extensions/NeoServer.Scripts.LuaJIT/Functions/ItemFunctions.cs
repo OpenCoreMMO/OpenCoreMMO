@@ -135,7 +135,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
 
     public static int LuaItemMoveTo(LuaState L)
     {
-        // item:moveTo(position or cylinder[, flags])
+        // item:moveTo(position or cylinder, flags)
         //todo: implements flags
         var item = GetUserdata<IItem>(L, 1);
         if (item == null)
@@ -219,7 +219,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
 
     public static int LuaItemTransform(LuaState L)
     {
-        // item:transform(itemId[, count/subType = -1])
+        // item:transform(itemId, count/subType = -1)
         var item = GetUserdata<IItem>(L, 1);
         if (item == null)
         {

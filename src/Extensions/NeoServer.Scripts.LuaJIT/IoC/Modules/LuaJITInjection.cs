@@ -9,6 +9,7 @@ public static class LuaJITInjection
 {
     public static IServiceCollection AddLuaJIT(this IServiceCollection builder)
     {
+        builder.AddSingleton<ILuaStartup, LuaStartup>();
         builder.AddSingleton<IConfigManager, ConfigManager>();
         builder.AddSingleton<ILuaEnvironment, LuaEnvironment>();
         builder.AddSingleton<IScripts, Scripts.LuaJIT.Scripts>();
