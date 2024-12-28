@@ -52,6 +52,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         RegisterMethod(L, "Game", "createItem", LuaGameCreateItem);
         RegisterMethod(L, "Game", "createMonster", LuaGameCreateMonster);
+        RegisterMethod(L, "Game", "createNpc", LuaGameCreateNpc);
 
         RegisterMethod(L, "Game", "reload", LuaGameReload);
     }
@@ -268,6 +269,60 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
                 PushUserdata(L, monster);
                 SetMetatable(L, -1, "Monster");
+
+                return 1;
+            }
+
+        Lua.PushNil(L);
+        return 1;
+    }
+
+    private static int LuaGameCreateNpc(LuaState L)
+    {
+        // Game.createNpc(npcName, position[, extended = false[, force = false]])
+        //todo: implements force parameter
+
+        var ncpName = GetString(L, 1);
+
+        var position = GetPosition(L, 2);
+        var extended = GetBoolean(L, 3, false);
+        var force = GetBoolean(L, 4, false);
+
+        var npc = _creatureFactory.CreateNpc(ncpName);
+
+        if (!npc)
+        {
+            Lua.PushNil(L);
+            return 1;
+        }
+
+        var tileToBorn = _map[position];
+
+        if (tileToBorn is IDynamicTile { HasCreature: false })
+        {
+            if (tileToBorn.HasFlag(TileFlags.ProtectionZone))
+            {
+                Lua.PushNil(L);
+                return 1;
+            }
+
+            npc.SetNewLocation(tileToBorn.Location);
+            _map.PlaceCreature(npc);
+            
+            PushUserdata(L, npc);
+            SetMetatable(L, -1, "Npc");
+
+            return 1;
+        }
+
+        foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
+            if (_map[neighbour] is IDynamicTile { HasCreature: false })
+            {
+                npc.SetNewLocation(neighbour);
+                _map.PlaceCreature(npc);
+                
+                PushUserdata(L, npc);
+                SetMetatable(L, -1, "Npc");
 
                 return 1;
             }

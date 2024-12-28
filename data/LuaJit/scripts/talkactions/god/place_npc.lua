@@ -1,4 +1,4 @@
-﻿local talkAction = TalkAction("/m")
+﻿local talkAction = TalkAction("/n")
 
 function talkAction.onSay(player, words, param)
 	-- if not player:getGroup():getAccess() then
@@ -10,9 +10,9 @@ function talkAction.onSay(player, words, param)
 	-- end
 	
 	local position = player:getPosition()
-	local monster = Game.createMonster(param, position)
-	if monster then
-		monster:getPosition():sendMagicEffect(CONST_ME_TELEPORT)
+	local npc = Game.createNpc(param, position)
+	if npc then
+		npc:getPosition():sendMagicEffect(CONST_ME_TELEPORT)
 		position:sendMagicEffect(CONST_ME_MAGIC_RED)
 	else
 		player:sendCancelMessage("There is not enough room.")

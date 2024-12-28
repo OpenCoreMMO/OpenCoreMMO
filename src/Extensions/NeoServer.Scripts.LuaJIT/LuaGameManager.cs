@@ -59,6 +59,11 @@ public class LuaGameManager : ILuaGameManager
     private readonly IConfigFunctions _configFunctions;
 
     /// <summary>
+    /// A reference to the <see cref="IContainerFunctions"/> instance in use.
+    /// </summary>
+    private readonly IContainerFunctions _containerFunctions;
+
+    /// <summary>
     /// A reference to the <see cref="ICreatureFunctions"/> instance in use.
     /// </summary>
     private readonly ICreatureFunctions _creatureFunctions;
@@ -99,6 +104,11 @@ public class LuaGameManager : ILuaGameManager
     private readonly IMonsterFunctions _monsterFunctions;
 
     /// <summary>
+    /// A reference to the <see cref="INpcFunctions"/> instance in use.
+    /// </summary>
+    private readonly INpcFunctions _npcFunctions;
+
+    /// <summary>
     /// A reference to the <see cref="IPlayerFunctions"/> instance in use.
     /// </summary>
     private readonly IPlayerFunctions _playerFunctions;
@@ -112,6 +122,11 @@ public class LuaGameManager : ILuaGameManager
     /// A reference to the <see cref="ITalkActionFunctions"/> instance in use.
     /// </summary>
     private readonly ITalkActionFunctions _talkActionFunctions;
+
+    /// <summary>
+    /// A reference to the <see cref="ITeleportFunctions"/> instance in use.
+    /// </summary>
+    private readonly ITeleportFunctions _teleportFunctions;
 
     /// <summary>
     /// A reference to the <see cref="ITileFunctions"/> instance in use.
@@ -136,6 +151,7 @@ public class LuaGameManager : ILuaGameManager
         ITalkActions talkActions,
         IActionFunctions actionFunctions,
         IConfigFunctions configFunctions,
+        IContainerFunctions containerFunctions,
         ICreatureFunctions creatureFunctions,
         IEnumFunctions enumFunctions,
         IGameFunctions gameFunctions,
@@ -144,9 +160,11 @@ public class LuaGameManager : ILuaGameManager
         IItemTypeFunctions itemTypeFunctions,
         ILoggerFunctions loggerFunctions,
         IMonsterFunctions monsterFunctions,
+        INpcFunctions npcFunctions,
         IPlayerFunctions playerFunctions,
         IPositionFunctions positionFunctions,
         ITalkActionFunctions talkActionFunctions,
+        ITeleportFunctions teleportFunctions,
         ITileFunctions tileFunctions,
         ServerConfiguration serverConfiguration)
     {
@@ -160,6 +178,7 @@ public class LuaGameManager : ILuaGameManager
 
         _actionFunctions = actionFunctions;
         _configFunctions = configFunctions;
+        _containerFunctions = containerFunctions;
         _creatureFunctions = creatureFunctions;
         _enumFunctions = enumFunctions;
         _gameFunctions = gameFunctions;
@@ -169,8 +188,10 @@ public class LuaGameManager : ILuaGameManager
         _loggerFunctions = loggerFunctions;
         _playerFunctions = playerFunctions;
         _monsterFunctions = monsterFunctions;
+        _npcFunctions = npcFunctions;
         _positionFunctions = positionFunctions;
         _talkActionFunctions = talkActionFunctions;
+        _teleportFunctions = teleportFunctions;
         _tileFunctions = tileFunctions;
 
         _serverConfiguration = serverConfiguration;
@@ -205,11 +226,15 @@ public class LuaGameManager : ILuaGameManager
         _itemFunctions.Init(luaState);
         _itemTypeFunctions.Init(luaState);
         _loggerFunctions.Init(luaState);
-        _monsterFunctions.Init(luaState);
-        _playerFunctions.Init(luaState);
         _positionFunctions.Init(luaState);
         _talkActionFunctions.Init(luaState);
         _tileFunctions.Init(luaState);
+
+        _containerFunctions.Init(luaState);
+        _monsterFunctions.Init(luaState);
+        _npcFunctions.Init(luaState);
+        _playerFunctions.Init(luaState);
+        _teleportFunctions.Init(luaState);
 
         ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), $"config.lua");
 
