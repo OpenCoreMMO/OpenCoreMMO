@@ -303,18 +303,18 @@ public class LuaFunctionsLoader
             return;
         }
 
-        //if (item != null && item.GetContainer() != null)
-        //{
-        //    Lua.GetMetaTable(L, "Container");
-        //}
-        //else if (item != null && item.GetTeleport() != null)
-        //{
-        //    Lua.GetMetaTable(L, "Teleport");
-        //}
-        //else
-        //{
-        Lua.GetMetaTable(L, "Item");
-        //}
+        if (item != null && item.IsContainer)
+        {
+            Lua.GetMetaTable(L, "Container");
+        }
+        else if (item != null && item.IsTeleport)
+        {
+            Lua.GetMetaTable(L, "Teleport");
+        }
+        else
+        {
+            Lua.GetMetaTable(L, "Item");
+        }
 
         Lua.SetMetaTable(L, index - 1);
     }

@@ -76,7 +76,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
     private static int LuaTeleportTo(LuaState L)
     {
-        // creature:teleportTo(position[, pushMovement = false])
+        // player:teleportTo(position[, pushMovement = false])
         bool pushMovement = GetBoolean(L, 3, false);
 
         var position = GetPosition(L, 2);

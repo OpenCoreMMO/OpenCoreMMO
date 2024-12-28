@@ -37,6 +37,8 @@ public interface IItem : IThing, IHasDecay
     bool IsUsable => Metadata.HasFlag(ItemFlag.Usable);
     bool IsAntiProjectile => Metadata.HasFlag(ItemFlag.BlockProjectTile);
     bool IsContainer => Metadata.Group == ItemGroup.Container;
+    bool IsTeleport => Metadata.Group == ItemGroup.Teleport;
+
     FloorChangeDirection FloorDirection => Metadata.Attributes.GetFloorChangeDirection();
 
     bool HasDecayBehavior

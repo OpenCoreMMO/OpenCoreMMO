@@ -55,7 +55,7 @@ do
 	end
 	rawgetmetatable("Player").__index = CreatureIndex
 	rawgetmetatable("Monster").__index = CreatureIndex
-	-- rawgetmetatable("Npc").__index = CreatureIndex
+	rawgetmetatable("Npc").__index = CreatureIndex
 end
 
 -- Item index
@@ -74,8 +74,8 @@ do
 		return methods[key]
 	end
 	rawgetmetatable("Item").__index = ItemIndex
-	--rawgetmetatable("Container").__index = ItemIndex
-	--rawgetmetatable("Teleport").__index = ItemIndex
+	rawgetmetatable("Container").__index = ItemIndex
+	rawgetmetatable("Teleport").__index = ItemIndex
 end
 
 -- Action revscriptsys
