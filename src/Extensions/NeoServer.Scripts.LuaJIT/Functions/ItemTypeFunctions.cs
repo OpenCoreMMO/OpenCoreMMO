@@ -1,7 +1,6 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Item;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
@@ -18,10 +17,15 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
     {
         RegisterSharedClass(L, "ItemType", "", LuaCreateItemType);
         RegisterMetaMethod(L, "ItemType", "__eq", LuaUserdataCompare<IItemType>);
-        RegisterMethod(L, "ItemType", "getType", LuaGetItemTypeType);
-        RegisterMethod(L, "ItemType", "getId", LuaGetItemTypeId);
-        RegisterMethod(L, "ItemType", "getName", LuaGetItemTypeName);
-        RegisterMethod(L, "ItemType", "isMovable", LuaGetItemTypeIsMoveable);
+
+        RegisterMethod(L, "ItemType", "isMovable", LuaItemTypeIsMoveable);
+        RegisterMethod(L, "ItemType", "isStackable", LuaItemTypeIsStackable);
+        RegisterMethod(L, "ItemType", "isFluidContainer", LuaItemTypeIsFluidContainer);
+        RegisterMethod(L, "ItemType", "isKey", LuaItemTypeIsKey);
+
+        RegisterMethod(L, "ItemType", "getType", LuaItemTypeGetType);
+        RegisterMethod(L, "ItemType", "getId", LuaItemTypeGetId);
+        RegisterMethod(L, "ItemType", "getName", LuaItemTypeGetName);
     }
 
     public static int LuaCreateItemType(LuaState L)
@@ -46,7 +50,55 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
         return 1;
     }
 
-    public static int LuaGetItemTypeType(LuaState L)
+    public static int LuaItemTypeIsMoveable(LuaState L)
+    {
+        // item:isMovable()
+        var itemType = GetUserdata<IItemType>(L, 1);
+        if (itemType != null)
+            Lua.PushBoolean(L, itemType.IsMovable());
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    public static int LuaItemTypeIsStackable(LuaState L)
+    {
+        // item:isStackable()
+        var itemType = GetUserdata<IItemType>(L, 1);
+        if (itemType != null)
+            Lua.PushBoolean(L, itemType.IsStackable());
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    public static int LuaItemTypeIsFluidContainer(LuaState L)
+    {
+        // item:isFluidContainer()
+        var itemType = GetUserdata<IItemType>(L, 1);
+        if (itemType != null)
+            Lua.PushBoolean(L, itemType.IsFluidContainer());
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    public static int LuaItemTypeIsKey(LuaState L)
+    {
+        // item:isKey()
+        var itemType = GetUserdata<IItemType>(L, 1);
+        if (itemType != null)
+            Lua.PushBoolean(L, itemType.IsKey());
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    public static int LuaItemTypeGetType(LuaState L)
     {
         // itemType:getType()
         var itemType = GetUserdata<IItemType>(L, 1);
@@ -58,7 +110,7 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
         return 1;
     }
 
-    public static int LuaGetItemTypeId(LuaState L)
+    public static int LuaItemTypeGetId(LuaState L)
     {
         // itemType:getId()
         var itemType = GetUserdata<IItemType>(L, 1);
@@ -70,24 +122,12 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
         return 1;
     }
 
-    public static int LuaGetItemTypeName(LuaState L)
+    public static int LuaItemTypeGetName(LuaState L)
     {
         // item:getName()
         var itemType = GetUserdata<IItemType>(L, 1);
         if (itemType != null)
             Lua.PushString(L, itemType.Name);
-        else
-            Lua.PushNil(L);
-
-        return 1;
-    }
-
-    public static int LuaGetItemTypeIsMoveable(LuaState L)
-    {
-        // item:isMovable()
-        var itemType = GetUserdata<IItemType>(L, 1);
-        if (itemType != null)
-            Lua.PushBoolean(L, itemType.HasFlag(ItemFlag.MovementEvent));
         else
             Lua.PushNil(L);
 
