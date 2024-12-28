@@ -10,6 +10,9 @@ public delegate void CreateItem(IItem item);
 
 public interface IItemFactory : IFactory
 {
+    IItem Create(ushort typeId, Location.Structs.Location location, int count = 1,
+        IEnumerable<IItem> children = null);
+
     IItem Create(ushort typeId, Location.Structs.Location location,
         IDictionary<ItemAttribute, IConvertible> attributes, IEnumerable<IItem> children = null);
 

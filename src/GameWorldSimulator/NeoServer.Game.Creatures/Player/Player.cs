@@ -206,6 +206,8 @@ public class Player : CombatActor, IPlayer
 
     public virtual bool CannotLogout => !(Tile?.ProtectionZone ?? false) && InFight;
 
+    public virtual bool IsProtectionZoneLocked => false;
+
     public SkillType SkillInUse
     {
         get
@@ -755,7 +757,7 @@ public class Player : CombatActor, IPlayer
     {
         if (!ignoreEquipped) return true;
         if (Inventory.BackpackSlot?.Map is null) return false;
-        if (!Inventory.BackpackSlot.Map.TryGetValue(item.TypeId, out var itemTotalAmount)) return false;
+        if (!Inventory.BackpackSlot.Map.TryGetValue(item.ServerId, out var itemTotalAmount)) return false;
 
         if (itemTotalAmount < amount) return false;
 

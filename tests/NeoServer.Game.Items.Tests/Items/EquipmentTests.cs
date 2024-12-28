@@ -757,7 +757,7 @@ public class EquipmentTests : IAsyncLifetime
         await Task.Delay(2050);
         decayableItemManager.DecayExpiredItems();
 
-        player.Inventory[Slot.Ring].Metadata.TypeId.Should().Be(400);
+        player.Inventory[Slot.Ring].Metadata.ServerId.Should().Be(400);
 
         //assert second item equipped
         GetSlotItem().Decay?.Duration.Should().Be(2);
@@ -765,7 +765,7 @@ public class EquipmentTests : IAsyncLifetime
         //act
         await Task.Delay(2050);
         decayableItemManager.DecayExpiredItems();
-        player.Inventory[Slot.Ring].Metadata.TypeId.Should().Be(600);
+        player.Inventory[Slot.Ring].Metadata.ServerId.Should().Be(600);
 
         //assert third item equipped
         GetSlotItem().Decay?.Duration.Should().Be(2);

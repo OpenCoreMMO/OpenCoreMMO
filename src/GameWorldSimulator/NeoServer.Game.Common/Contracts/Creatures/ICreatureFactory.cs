@@ -9,6 +9,6 @@ public interface ICreatureFactory
     IMonster CreateMonster(string name, ISpawnPoint spawn = null);
     INpc CreateNpc(string name, ISpawnPoint spawn = null);
     IPlayer CreatePlayer(IPlayer playerModel);
-    IMonster CreateSummon(string name, IMonster master);
+    IMonster CreateSummon(string name, ICreature master);
     event CreatureCreated OnCreatureCreated;
 }

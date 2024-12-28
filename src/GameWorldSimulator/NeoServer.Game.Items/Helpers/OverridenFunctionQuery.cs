@@ -9,10 +9,10 @@ public static class OverridenFunctionQuery
     {
         var functions = new List<T>(3);
 
-        if (useFunctionMap.TryGetValue($"id:{item.Metadata.TypeId}", out var useFunc)) functions.Add(useFunc);
+        if (useFunctionMap.TryGetValue($"id:{item.Metadata.ServerId}", out var useFunc)) functions.Add(useFunc);
 
         if (item.ActionId != 0 && (useFunctionMap.TryGetValue($"aid:{item.ActionId}", out useFunc) ||
-                                   useFunctionMap.TryGetValue($"id:{item.Metadata.TypeId}-aid:{item.ActionId}",
+                                   useFunctionMap.TryGetValue($"id:{item.Metadata.ServerId}-aid:{item.ActionId}",
                                        out useFunc)))
             functions.Add(useFunc);
 

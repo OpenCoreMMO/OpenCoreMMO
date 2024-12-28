@@ -29,7 +29,7 @@ public static class ConfigurationInjection
         IConfigurationRoot configuration)
     {
         ServerConfiguration serverConfiguration =
-            new(0, null, null, null, string.Empty, string.Empty, string.Empty, 7171, 7172, new SaveConfiguration(3600));
+            new(0, null, null, null, string.Empty, string.Empty, string.Empty, 7171, 7172,new SaveConfiguration(3600), string.Empty);
         GameConfiguration gameConfiguration = new();
         LogConfiguration logConfiguration = new(null);
         ClientConfiguration clientConfiguration = new(null);
@@ -66,6 +66,7 @@ public static class ConfigurationInjection
             serverConfiguration.Extensions,
             string.IsNullOrEmpty(serverLoginPort) ? serverConfiguration.ServerLoginPort : int.Parse(serverLoginPort),
             string.IsNullOrEmpty(serverGamePort) ? serverConfiguration.ServerGamePort : int.Parse(serverGamePort),
-            serverConfiguration.Save);
+            serverConfiguration.Save,
+            serverConfiguration.DataLuaJit);
     }
 }

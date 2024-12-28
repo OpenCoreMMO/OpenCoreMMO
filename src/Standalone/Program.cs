@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NeoServer.Application.Common.Contracts.Scripts;
 using NeoServer.Data.Contexts;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Helpers;
@@ -107,6 +108,7 @@ public class Program
         container.Resolve<IEnumerable<IStartup>>().ToList().ForEach(x => x.Run());
 
         container.Resolve<LuaGlobalRegister>().Register();
+        container.Resolve<ILuaGameManager>().Start();
 
         StartListening(container, cancellationToken);
 

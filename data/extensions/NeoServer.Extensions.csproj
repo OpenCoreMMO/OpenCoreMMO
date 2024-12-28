@@ -6,29 +6,29 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Collections" Version="4.3.0"/>
-        <PackageReference Include="System.Collections.Immutable" Version="9.0.0"/>
+        <PackageReference Include="System.Collections" Version="4.3.0" />
+        <PackageReference Include="System.Collections.Immutable" Version="9.0.0" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj"/>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Chats\NeoServer.Game.Chats.csproj"/>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Combat\NeoServer.Game.Combat.csproj"/>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Common\NeoServer.Game.Common.csproj"/>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj"/>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Items\NeoServer.Game.Items.csproj"/>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj"/>
-        <ProjectReference Include="..\..\src\Loaders\NeoServer.Loaders\NeoServer.Loaders.csproj"/>
-        <ProjectReference Include="..\..\src\Standalone\NeoServer.Server.Standalone.csproj"/>
-        <ProjectReference Include="..\..\src\NetworkingServer\NeoServer.Networking.Handlers\NeoServer.Networking.Handlers.csproj"/>
-        <ProjectReference Include="..\..\src\NetworkingServer\NeoServer.Networking\NeoServer.Networking.csproj"/>
-        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Commands\NeoServer.Server.Commands.csproj"/>
-        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj"/>
-        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Events\NeoServer.Server.Events.csproj"/>
-        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Routines\NeoServer.Server.Routines.csproj"/>
-        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj"/>
+        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj" />
+        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Chats\NeoServer.Game.Chats.csproj" />
+        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Combat\NeoServer.Game.Combat.csproj" />
+        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Common\NeoServer.Game.Common.csproj" />
+        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj" />
+        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Items\NeoServer.Game.Items.csproj" />
+        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj" />
+        <ProjectReference Include="..\..\src\Loaders\NeoServer.Loaders\NeoServer.Loaders.csproj" />
+        <ProjectReference Include="..\..\src\Standalone\NeoServer.Server.Standalone.csproj" />
+        <ProjectReference Include="..\..\src\NetworkingServer\NeoServer.Networking.Handlers\NeoServer.Networking.Handlers.csproj" />
+        <ProjectReference Include="..\..\src\NetworkingServer\NeoServer.Networking\NeoServer.Networking.csproj" />
+        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Commands\NeoServer.Server.Commands.csproj" />
+        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj" />
+        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Events\NeoServer.Server.Events.csproj" />
+        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Routines\NeoServer.Server.Routines.csproj" />
+        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Remove="Items\Sign.cs"/>
+        <Compile Remove="Items\Sign.cs" />
     </ItemGroup>
 
 </Project>

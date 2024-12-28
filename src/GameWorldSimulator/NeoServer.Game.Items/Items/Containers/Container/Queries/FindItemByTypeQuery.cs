@@ -19,7 +19,7 @@ internal static class FindItemByTypeQuery
 
             slotIndex++;
 
-            if (item.Metadata.TypeId != itemToRemove.TypeId) continue;
+            if (item.Metadata.ServerId != itemToRemove.ServerId) continue;
             if (amount == 0) break;
 
             slotsToRemove.Push((item, (byte)slotIndex, Math.Min(item.Amount, amount)));

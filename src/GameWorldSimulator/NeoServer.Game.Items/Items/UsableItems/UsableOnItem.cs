@@ -21,12 +21,12 @@ public class UsableOnItem : BaseItem, IUsableOnItem
     {
         var useOnItems = Metadata.OnUse?.GetAttributeArray<ushort>(ItemAttribute.UseOn);
 
-        return useOnItems is not null && useOnItems.Contains(onItem.Metadata.TypeId);
+        return useOnItems is not null && useOnItems.Contains(onItem.Metadata.ServerId);
     }
 
     public bool CanUseOn(ushort[] items, IItem onItem)
     {
-        return ((IList)items)?.Contains(onItem.Metadata.TypeId) ?? false;
+        return ((IList)items)?.Contains(onItem.Metadata.ServerId) ?? false;
     }
 
     public virtual bool CanUse(ICreature usedBy, IItem onItem)

@@ -23,4 +23,7 @@ public interface IThing : IUsable
     }
 
     void SetNewLocation(Location.Structs.Location location);
+
+    static bool operator !(IThing thing)
+        => thing is null;
 }

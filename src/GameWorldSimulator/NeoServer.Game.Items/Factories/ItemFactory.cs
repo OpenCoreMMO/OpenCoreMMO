@@ -70,6 +70,13 @@ public class ItemFactory : IItemFactory
         return createdItem;
     }
 
+    public IItem Create(ushort typeId, Location location, int count = 1,
+        IEnumerable<IItem> children = null)
+    {
+        var attributes = new Dictionary<ItemAttribute, IConvertible> { { ItemAttribute.Count, count } };
+        return Create(typeId, location, attributes, children);
+    }
+
     public IItem Create(ushort typeId, Location location, IDictionary<ItemAttribute, IConvertible> attributes,
         IEnumerable<IItem> children = null)
     {
@@ -123,7 +130,7 @@ public class ItemFactory : IItemFactory
         var item = ItemTypeStore.All.FirstOrDefault(x =>
             x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
-        return item is null ? null : Create(item.TypeId, location, attributes, children);
+        return item is null ? null : Create(item.ServerId, location, attributes, children);
     }
 
     private static void SetItemIds(IDictionary<ItemAttribute, IConvertible> attributes, IItem createdItem)
@@ -158,7 +165,7 @@ public class ItemFactory : IItemFactory
     {
         itemType.Attributes.SetAttribute(attributes);
 
-        if (itemType.TypeId < 100) return null;
+        if (itemType.ServerId < 100) return null;
 
         if (itemType.Group == ItemGroup.Deprecated) return null;
 
