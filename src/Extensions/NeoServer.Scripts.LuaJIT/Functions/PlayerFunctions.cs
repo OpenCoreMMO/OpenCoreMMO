@@ -2,6 +2,7 @@
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Scripts.LuaJIT.Enums;
@@ -16,7 +17,6 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
     private static IGameCreatureManager _gameCreatureManager;
     private static IItemFactory _itemFactory;
     private static IItemTypeStore _itemTypeStore;
-
 
     public PlayerFunctions(
         IGameCreatureManager gameCreatureManager,
@@ -34,11 +34,18 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMetaMethod(L, "Player", "__eq", LuaUserdataCompare<IPlayer>);
         RegisterMethod(L, "Player", "teleportTo", LuaTeleportTo);
 
-        RegisterMethod(L, "Player", "sendTextMessage", LuaPlayerSendTextMessage);
-        RegisterMethod(L, "Player", "isPzLocked", LuaPlayerIsPzLocked);
+        RegisterMethod(L, "Player", "getSkillLevel", LuaPlayerGetSkillLevel);
+        RegisterMethod(L, "Player", "getEffectiveSkillLevel", LuaPlayerGetEffectiveSkillLevel);
+        RegisterMethod(L, "Player", "getSkillPercent", LuaPlayerGetSkillPercent);
+        RegisterMethod(L, "Player", "getSkillTries", LuaPlayerGetSkillTries);
+        RegisterMethod(L, "Player", "addSkillTries", LuaPlayerAddSkillTries);
 
         RegisterMethod(L, "Player", "addItem", LuaPlayerAddItem);
         RegisterMethod(L, "Player", "removeItem", LuaPlayerRemoveItem);
+
+        RegisterMethod(L, "Player", "sendTextMessage", LuaPlayerSendTextMessage);
+
+        RegisterMethod(L, "Player", "isPzLocked", LuaPlayerIsPzLocked);
     }
 
     private static int LuaPlayerCreate(LuaState L)
@@ -110,38 +117,77 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         return 1;
     }
 
-    private static int LuaPlayerSendTextMessage(LuaState L)
+    private static int LuaPlayerGetSkillLevel(LuaState L)
     {
-        // player:sendTextMessage(type, text)
-
+        // player:getSkillLevel(skillType)
         var player = GetUserdata<IPlayer>(L, 1);
-        if (player == null)
-        {
+        var skillType = GetNumber<SkillType>(L, 2);
+
+        if (player is not null)
+            Lua.PushNumber(L, player.GetRawSkillLevel(skillType));
+        else
             Lua.PushNil(L);
-            return 1;
-        }
-
-        int parameters = Lua.GetTop(L);
-
-        var messageType = GetNumber<MessageClassesType>(L, 2);
-        var messageText = GetString(L, 3);
-
-        NotificationSenderService.Send(player, messageText, (TextMessageOutgoingType)messageType);
-        PushBoolean(L, true);
 
         return 1;
     }
 
-    private static int LuaPlayerIsPzLocked(LuaState L)
+    private static int LuaPlayerGetEffectiveSkillLevel(LuaState L)
     {
-        // player:isPzLocked()
-
+        // player:getEffectiveSkillLevel(skillType)
         var player = GetUserdata<IPlayer>(L, 1);
-        if (player != null)
-            PushBoolean(L, player.IsProtectionZoneLocked);
+        var skillType = GetNumber<SkillType>(L, 2);
+
+        if (player is not null)
+            Lua.PushNumber(L, player.GetSkillLevel(skillType));
         else
             Lua.PushNil(L);
 
+        return 1;
+    }
+
+    private static int LuaPlayerGetSkillPercent(LuaState L)
+    {
+        // player:getSkillPercent(skillType)
+        var player = GetUserdata<IPlayer>(L, 1);
+        var skillType = GetNumber<SkillType>(L, 2);
+
+        if (player is not null)
+            Lua.PushNumber(L, player.GetSkillPercent(skillType));
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    private static int LuaPlayerGetSkillTries(LuaState L)
+    {
+        // player:getSkillTries(skillType)
+        var player = GetUserdata<IPlayer>(L, 1);
+        var skillType = GetNumber<SkillType>(L, 2);
+
+        if (player is not null)
+            Lua.PushNumber(L, player.GetSkillTries(skillType));
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    private static int LuaPlayerAddSkillTries(LuaState L)
+    {
+        // player:addSkillTries(skillType, tries)
+        var player = GetUserdata<IPlayer>(L, 1);
+        if (player is not null)
+        {
+            var skillType = GetNumber<SkillType>(L, 2);
+            var tries = GetNumber<long>(L, 3);
+            player.IncreaseSkillCounter(skillType, tries);
+            PushBoolean(L, true);
+        }
+        else
+        {
+            Lua.PushBoolean(L, false);
+        }
         return 1;
     }
 
@@ -313,4 +359,40 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         PushBoolean(L, result.Succeeded);
         return 1;
     }
+
+    private static int LuaPlayerSendTextMessage(LuaState L)
+    {
+        // player:sendTextMessage(type, text)
+
+        var player = GetUserdata<IPlayer>(L, 1);
+        if (player == null)
+        {
+            Lua.PushNil(L);
+            return 1;
+        }
+
+        int parameters = Lua.GetTop(L);
+
+        var messageType = GetNumber<MessageClassesType>(L, 2);
+        var messageText = GetString(L, 3);
+
+        NotificationSenderService.Send(player, messageText, (TextMessageOutgoingType)messageType);
+        PushBoolean(L, true);
+
+        return 1;
+    }
+
+    private static int LuaPlayerIsPzLocked(LuaState L)
+    {
+        // player:isPzLocked()
+
+        var player = GetUserdata<IPlayer>(L, 1);
+        if (player != null)
+            PushBoolean(L, player.IsProtectionZoneLocked);
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
 }

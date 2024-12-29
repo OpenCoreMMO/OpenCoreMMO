@@ -224,6 +224,8 @@ public interface IPlayer : ICombatActor, ISociableCreature
     event AddSkillBonus OnAddedSkillBonus;
     event RemoveSkillBonus OnRemovedSkillBonus;
     sbyte GetSkillBonus(SkillType skill);
+    void IncreaseSkillCounter(SkillType skill, long value);
+    void DecreaseSkillCounter(SkillType skill, long value);
     void AddInventory(IInventory inventory);
     void Read(IReadable readable);
     event ReadText OnReadText;
