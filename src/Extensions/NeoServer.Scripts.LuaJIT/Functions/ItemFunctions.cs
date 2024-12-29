@@ -26,7 +26,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         IItemTypeStore itemTypeStore,
         IMap map,
         IItemMovementService itemMovementService) : base(nameof(ItemFunctions))
-        
+
     {
         _itemService = itemService;
         _itemTypeStore = itemTypeStore;
@@ -233,7 +233,9 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             Lua.PushBoolean(L, item.Metadata.HasFlag(property));
         }
         else
+        {
             Lua.PushNil(L);
+        }
 
         return 1;
     }
@@ -279,7 +281,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         ushort itemId = 0;
         if (Lua.IsUserData(L, 2))
         {
-            LuaDataType type = GetUserdataType(L, 2);
+            var type = GetUserdataType(L, 2);
             switch (type)
             {
                 case LuaDataType.Container:
@@ -290,8 +292,6 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
                     break;
                 case LuaDataType.Tile:
                     toTile = GetUserdata<ITile>(L, 2);
-                    break;
-                default:
                     break;
             }
         }
@@ -310,8 +310,8 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
 
         if (item.Parent != null &&
             (item.Parent == toContainer ||
-            item.Parent == toPlayer ||
-            item.Parent == toTile))
+             item.Parent == toPlayer ||
+             item.Parent == toTile))
         {
             Lua.PushBoolean(L, true);
             return 1;
@@ -328,7 +328,8 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
 
         dynamicFromTile.TryGetStackPositionOfItem(item, out var stackPosition);
         dynamicToTile.TryGetStackPositionOfItem(dynamicToTile.TopItemOnStack, out var stackPositionTopItem);
-        var result = _itemMovementService.Move(item, dynamicFromTile, dynamicToTile, item.Amount, stackPosition, (byte)(dynamicToTile.ItemsCount + 1));
+        var result = _itemMovementService.Move(item, dynamicFromTile, dynamicToTile, item.Amount, stackPosition,
+            (byte)(dynamicToTile.ItemsCount + 1));
 
         if (result.Succeeded)
             Lua.PushBoolean(L, true);
@@ -367,7 +368,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             itemId = itemTypeByName.ServerId;
         }
 
-        var subType = GetNumber<int>(L, 3, -1);
+        var subType = GetNumber(L, 3, -1);
 
         if (item.ServerId == itemId && (subType == -1 || subType == item.GetSubType()))
         {
@@ -376,8 +377,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         }
 
         var it = _itemTypeStore.Get(itemId);
-        if (it.IsStackable())
-            subType = int.Min(subType, it.Count);
+        if (it.IsStackable()) subType = int.Min(subType, it.Count);
 
         var env = GetScriptEnv();
         var uid = env.AddThing(item);
@@ -415,6 +415,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 }

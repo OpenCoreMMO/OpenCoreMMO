@@ -47,6 +47,7 @@ public class MonsterFunctions : LuaScriptInterface, IMonsterFunctions
                 Lua.PushNil(L);
                 return 1;
             }
+
             monster = GetUserdata<IMonster>(L, 2);
         }
         else
@@ -63,6 +64,7 @@ public class MonsterFunctions : LuaScriptInterface, IMonsterFunctions
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 }

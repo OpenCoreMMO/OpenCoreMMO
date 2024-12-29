@@ -47,6 +47,7 @@ public class NpcFunctions : LuaScriptInterface, INpcFunctions
                 Lua.PushNil(L);
                 return 1;
             }
+
             npc = GetUserdata<INpc>(L, 2);
         }
         else
@@ -63,6 +64,7 @@ public class NpcFunctions : LuaScriptInterface, INpcFunctions
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 }

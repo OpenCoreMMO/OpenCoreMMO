@@ -4,7 +4,7 @@ using NeoServer.Game.Common.Contracts.Items;
 namespace NeoServer.Game.Common.Contracts.Inspection;
 
 public interface IInspectionTextBuilder
-{ 
+{
     bool IsApplicable(IThing thing);
 
     public static string GetArticle(string name)

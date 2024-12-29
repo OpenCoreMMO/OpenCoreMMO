@@ -7,6 +7,8 @@ using Serilog.Sinks.Graylog;
 using Serilog.Sinks.Graylog.Core.Transport;
 using Serilog.Sinks.SystemConsole.Themes;
 
+namespace NeoServer.Shared.IoC.Modules;
+
 public static class LoggerConfigurationExtensions
 {
     public static IServiceCollection AddLogger(this IServiceCollection builder, IConfiguration configuration)

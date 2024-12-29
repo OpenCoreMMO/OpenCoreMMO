@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Scripts.LuaJIT.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -6,19 +7,17 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
 {
     public static int EVENT_ID_LOADING = 1;
     public static int EVENT_ID_USER = 1000;
-
-    protected int eventTableRef;
-    protected LuaState luaState;
-    protected int runningEventId = EVENT_ID_USER;
-
-    private string lastLuaError;
-    private string interfaceName;
-    private string loadingFile;
-    private string loadedScriptName;
+    private readonly string interfaceName;
 
     protected Dictionary<int, string> cacheFiles;
 
-    private LuaEnvironment g_luaEnvironment() => LuaEnvironment.GetInstance();
+    protected int eventTableRef;
+
+    private string lastLuaError;
+    private string loadedScriptName;
+    private string loadingFile;
+    protected LuaState luaState;
+    protected int runningEventId = EVENT_ID_USER;
 
     //private ILuaEnvironment _luaEnvironment = null;
 
@@ -35,11 +34,6 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
         interfaceName = initInterfaceName;
     }
 
-    ~LuaScriptInterface()
-    {
-        CloseState();
-    }
-
     public bool ReInitState()
     {
         //g_luaEnvironment().ClearCombatObjects(this);
@@ -51,28 +45,22 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
 
     public bool LoadFile(string file, string scriptName)
     {
-        int ret = Lua.LoadFile(luaState, file);
+        var ret = Lua.LoadFile(luaState, file);
         if (ret != 0)
         {
             lastLuaError = PopString(luaState);
             return false;
         }
 
-        if (!IsFunction(luaState, -1))
-        {
-            return false;
-        }
+        if (!IsFunction(luaState, -1)) return false;
 
         loadingFile = file;
 
         SetLoadingScriptName(scriptName);
 
-        if (!ReserveScriptEnv())
-        {
-            return false;
-        }
+        if (!ReserveScriptEnv()) return false;
 
-        ScriptEnvironment env = GetScriptEnv();
+        var env = GetScriptEnv();
         env.SetScriptId(EVENT_ID_LOADING, this);
 
         ret = ProtectedCall(luaState, 0, 0);
@@ -116,10 +104,7 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
 
     public int GetEvent()
     {
-        if (!IsFunction(luaState, -1))
-        {
-            return -1;
-        }
+        if (!IsFunction(luaState, -1)) return -1;
 
         Lua.RawGetI(luaState, LUA_REGISTRYINDEX, eventTableRef);
         if (!IsTable(luaState, -1))
@@ -167,15 +152,9 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
 
     public string GetFileById(int scriptId)
     {
-        if (scriptId == EVENT_ID_LOADING)
-        {
-            return loadingFile;
-        }
+        if (scriptId == EVENT_ID_LOADING) return loadingFile;
 
-        if (cacheFiles.TryGetValue(scriptId, out var file))
-        {
-            return file;
-        }
+        if (cacheFiles.TryGetValue(scriptId, out var file)) return file;
 
         return "(Unknown scriptfile)";
     }
@@ -205,10 +184,7 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
     public bool PushFunction(int functionId)
     {
         Lua.RawGetI(luaState, LUA_REGISTRYINDEX, eventTableRef);
-        if (!IsTable(luaState, -1))
-        {
-            return false;
-        }
+        if (!IsTable(luaState, -1)) return false;
 
         Lua.RawGetI(luaState, -1, functionId);
         Lua.Replace(luaState, -2);
@@ -218,10 +194,7 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
     public bool InitState()
     {
         luaState = g_luaEnvironment().GetLuaState();
-        if (luaState.IsNull)
-        {
-            return false;
-        }
+        if (luaState.IsNull) return false;
 
         Lua.OpenLibs(luaState);
 
@@ -236,15 +209,9 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
 
     public bool CloseState()
     {
-        if (g_luaEnvironment().IsShuttingDown())
-        {
-            luaState.pointer = 0;
-        }
+        if (g_luaEnvironment().IsShuttingDown()) luaState.pointer = 0;
 
-        if (luaState.IsNull || g_luaEnvironment().GetLuaState().pointer == 0)
-        {
-            return false;
-        }
+        if (luaState.IsNull || g_luaEnvironment().GetLuaState().pointer == 0) return false;
 
         cacheFiles.Clear();
         if (eventTableRef != -1)
@@ -259,22 +226,15 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
 
     public bool CallFunction(int parameters)
     {
-        bool result = false;
-        int size = Lua.GetTop(luaState);
+        var result = false;
+        var size = Lua.GetTop(luaState);
         if (ProtectedCall(luaState, parameters, 1) != 0)
-        {
-            LuaScriptInterface.ReportError(null, LuaScriptInterface.GetString(luaState, -1));
-        }
+            ReportError(null, GetString(luaState, -1));
         else
-        {
-            result = LuaScriptInterface.GetBoolean(luaState, -1);
-        }
+            result = GetBoolean(luaState, -1);
 
         Lua.Pop(luaState, 1);
-        if ((Lua.GetTop(luaState) + parameters + 1) != size)
-        {
-            LuaScriptInterface.ReportError(null, "Stack size changed!");
-        }
+        if (Lua.GetTop(luaState) + parameters + 1 != size) ReportError(null, "Stack size changed!");
 
         ResetScriptEnv();
         return result;
@@ -282,16 +242,10 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
 
     public void CallVoidFunction(int parameters)
     {
-        int size = Lua.GetTop(luaState);
-        if (ProtectedCall(luaState, parameters, 0) != 0)
-        {
-            LuaScriptInterface.ReportError(null, LuaScriptInterface.PopString(luaState));
-        }
+        var size = Lua.GetTop(luaState);
+        if (ProtectedCall(luaState, parameters, 0) != 0) ReportError(null, PopString(luaState));
 
-        if ((Lua.GetTop(luaState) + parameters + 1) != size)
-        {
-            LuaScriptInterface.ReportError(null, "Stack size changed!");
-        }
+        if (Lua.GetTop(luaState) + parameters + 1 != size) ReportError(null, "Stack size changed!");
 
         ResetScriptEnv();
     }
@@ -315,10 +269,8 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
     {
         // If scripty name is empty, return warning informing
         if (string.IsNullOrEmpty(loadedScriptName))
-        {
             //g_logger().warn("[LuaScriptInterface::getLoadingScriptName] - Script name is empty");
             Console.WriteLine("[LuaScriptInterface::getLoadingScriptName] - Script name is empty");
-        }
 
         return loadedScriptName;
     }
@@ -326,6 +278,16 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
     public void SetLoadingScriptName(string scriptName)
     {
         loadedScriptName = scriptName;
+    }
+
+    private LuaEnvironment g_luaEnvironment()
+    {
+        return LuaEnvironment.GetInstance();
+    }
+
+    ~LuaScriptInterface()
+    {
+        CloseState();
     }
 
     public virtual LuaState GetLuaState()

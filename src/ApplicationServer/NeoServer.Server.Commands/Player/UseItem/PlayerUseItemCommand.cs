@@ -1,5 +1,4 @@
 ﻿using System;
-using NeoServer.Application.Common.Contracts.Scripts;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
@@ -7,6 +6,7 @@ using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Location;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts.Commands;
+using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Commands.Player.UseItem;
 
@@ -15,25 +15,26 @@ public class PlayerUseItemCommand : ICommand
     private readonly ItemFinderService _itemFinderService;
     private readonly PlayerOpenDepotCommand _playerOpenDepotCommand;
     private readonly IPlayerUseService _playerUseService;
-    private readonly IScriptGameManager _luaGameManager;
+    private readonly IScriptGameManager _scriptGameManager;
 
     public PlayerUseItemCommand(
         IPlayerUseService playerUseService,
         PlayerOpenDepotCommand playerOpenDepotCommand,
         ItemFinderService itemFinderService,
-        IScriptGameManager luaGameManager)
+        IScriptGameManager scriptGameManager)
     {
         _playerUseService = playerUseService;
         _playerOpenDepotCommand = playerOpenDepotCommand;
         _itemFinderService = itemFinderService;
-        _luaGameManager = luaGameManager;
+        _scriptGameManager = scriptGameManager;
     }
 
     public void Execute(IPlayer player, UseItemPacket useItemPacket)
     {
         var item = _itemFinderService.Find(player, useItemPacket.Location, useItemPacket.ClientId);
 
-        if (_luaGameManager.PlayerUseItem(player, useItemPacket.Location, useItemPacket.StackPosition, useItemPacket.Index, item))
+        if (_scriptGameManager.PlayerUseItem(player, useItemPacket.Location, useItemPacket.StackPosition,
+                useItemPacket.Index, item))
             return;
 
         Action action;

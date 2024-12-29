@@ -1,5 +1,5 @@
-﻿using NeoServer.Server.Services;
-using NeoServer.Server.Common.Contracts;
+﻿using NeoServer.Server.Common.Contracts;
+using NeoServer.Server.Services;
 using NLua;
 
 namespace NeoServer.Extensions;

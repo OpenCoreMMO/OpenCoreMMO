@@ -16,6 +16,7 @@ public class TradeRequestPacket : IOutgoingPacket
     private IItem[] Items { get; }
     private bool Acknowledged { get; }
     public required bool ShowItemDescription { get; init; }
+
     public void WriteToMessage(INetworkMessage message)
     {
         message.AddByte(Acknowledged

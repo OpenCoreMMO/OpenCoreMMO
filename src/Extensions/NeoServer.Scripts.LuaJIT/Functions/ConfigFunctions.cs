@@ -1,6 +1,7 @@
 ﻿using LuaNET;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
+using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Configurations;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
@@ -8,7 +9,7 @@ namespace NeoServer.Scripts.LuaJIT.Functions;
 public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
 {
     private static IConfigManager _configManager;
-    private ServerConfiguration _serverConfiguration;
+    private readonly ServerConfiguration _serverConfiguration;
 
     public ConfigFunctions(
         IConfigManager configManager,

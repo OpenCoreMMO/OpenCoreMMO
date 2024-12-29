@@ -1,4 +1,4 @@
-﻿namespace NeoServer.Scripts.LuaJIT;
+﻿namespace NeoServer.Scripts.LuaJIT.Interfaces;
 
 public interface IScripts
 {

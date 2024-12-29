@@ -1,31 +1,31 @@
 ﻿function Item.getType(self)
-	return ItemType(self:getId())
+    return ItemType(self:getId())
 end
 
 function Item.isContainer(self)
-	return false
+    return false
 end
 
 function Item.isCreature(self)
-	return false
+    return false
 end
 
 function Item.isMonster(self)
-	return false
+    return false
 end
 
 function Item.isNpc(self)
-	return false
+    return false
 end
 
 function Item.isPlayer(self)
-	return false
+    return false
 end
 
 function Item.isTeleport(self)
-	return false
+    return false
 end
 
 function Item.isTile(self)
-	return false
+    return false
 end

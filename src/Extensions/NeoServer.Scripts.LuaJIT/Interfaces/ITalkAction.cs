@@ -1,10 +1,9 @@
 ﻿using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 
-namespace NeoServer.Application.Common.Contracts.Scripts
+namespace NeoServer.Scripts.LuaJIT.Interfaces;
+
+public interface ITalkAction
 {
-    public interface ITalkAction
-    {
-        bool ExecuteSay(IPlayer player, string words, string param, SpeechType type);
-    }
+    bool ExecuteSay(IPlayer player, string words, string param, SpeechType type);
 }

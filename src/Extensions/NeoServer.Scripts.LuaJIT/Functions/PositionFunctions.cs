@@ -4,6 +4,7 @@ using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
+using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Services;
 using Serilog;
 
@@ -40,7 +41,7 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
             return 1;
         }
 
-        int stackpos = 0;
+        var stackpos = 0;
 
         if (Lua.IsTable(L, 2))
         {
@@ -52,7 +53,7 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
             var x = GetNumber<ushort>(L, 2, 0);
             var y = GetNumber<ushort>(L, 3, 0);
             var z = GetNumber<byte>(L, 4, 0);
-            stackpos = GetNumber<int>(L, 5, 0);
+            stackpos = GetNumber(L, 5, 0);
 
             var position = new Location(x, y, z);
 
@@ -117,10 +118,12 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
         }
 
         var magicEffect = GetNumber<MagicEffectClassesType>(L, 2);
-        if (_configManager.GetBoolean(BooleanConfigType.WARN_UNSAFE_SCRIPTS)/* &&*/
+        if (_configManager.GetBoolean(BooleanConfigType.WARN_UNSAFE_SCRIPTS) /* &&*/
             /*!g_game().isMagicEffectRegistered(magicEffect)*/)
         {
-            _logger.Warning("[PositionFunctions::luaPositionSendMagicEffect] An unregistered magic effect type with id '{}' was blocked to prevent client crash.", magicEffect);
+            _logger.Warning(
+                "[PositionFunctions::luaPositionSendMagicEffect] An unregistered magic effect type with id '{}' was blocked to prevent client crash.",
+                magicEffect);
             Lua.PushBoolean(L, false);
             return 1;
         }

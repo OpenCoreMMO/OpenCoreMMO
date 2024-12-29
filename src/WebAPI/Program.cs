@@ -101,6 +101,9 @@ app.MapControllers();
 
 app.Run();
 
-public partial class Program
+namespace NeoServer.Web.API
 {
+    public class Program
+    {
+    }
 }

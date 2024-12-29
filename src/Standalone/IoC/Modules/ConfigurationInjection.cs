@@ -29,7 +29,8 @@ public static class ConfigurationInjection
         IConfigurationRoot configuration)
     {
         ServerConfiguration serverConfiguration =
-            new(0, null, null, null, string.Empty, string.Empty, string.Empty, 7171, 7172,new SaveConfiguration(3600), string.Empty);
+            new(0, null, null, null, string.Empty, string.Empty, string.Empty, 7171, 7172, new SaveConfiguration(3600),
+                string.Empty);
         GameConfiguration gameConfiguration = new();
         LogConfiguration logConfiguration = new(null);
         ClientConfiguration clientConfiguration = new(null);

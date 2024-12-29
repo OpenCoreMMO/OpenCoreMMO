@@ -1,5 +1,4 @@
 ﻿using Moq;
-using NeoServer.Application.Common.Contracts.Scripts;
 using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
@@ -7,6 +6,7 @@ using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
+using NeoServer.Server.Common.Contracts.Scripts;
 using Xunit;
 
 namespace NeoServer.Server.Tests.Commands;

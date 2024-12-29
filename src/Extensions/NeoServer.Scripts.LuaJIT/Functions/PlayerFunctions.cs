@@ -76,6 +76,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
                 Lua.PushNil(L);
                 return 1;
             }
+
             player = GetUserdata<IPlayer>(L, 2);
         }
         else
@@ -92,13 +93,14 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 
     private static int LuaTeleportTo(LuaState L)
     {
         // player:teleportTo(position[, pushMovement = false])
-        bool pushMovement = GetBoolean(L, 3, false);
+        var pushMovement = GetBoolean(L, 3, false);
 
         var position = GetPosition(L, 2);
 
@@ -221,23 +223,20 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             itemId = itemTypeByName.ServerId;
         }
 
-        var count = GetNumber<int>(L, 3, 1);
-        var subType = GetNumber<int>(L, 5, 1);
+        var count = GetNumber(L, 3, 1);
+        var subType = GetNumber(L, 5, 1);
 
-        IItemType it = _itemTypeStore.Get(itemId);
+        var it = _itemTypeStore.Get(itemId);
 
         var itemCount = 1;
-        int parameters = Lua.GetTop(L);
+        var parameters = Lua.GetTop(L);
         if (parameters >= 4)
         {
             itemCount = int.Max(1, count);
         }
         else if (it.HasSubType())
         {
-            if (it.IsStackable())
-            {
-                itemCount = (int)Math.Ceiling((float)(count / it.Count));
-            }
+            if (it.IsStackable()) itemCount = (int)Math.Ceiling((float)(count / it.Count));
 
             subType = count;
         }
@@ -246,7 +245,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             itemCount = int.Max(1, count);
         }
 
-        bool hasTable = itemCount > 1;
+        var hasTable = itemCount > 1;
         if (hasTable)
         {
             Lua.NewTable(L);
@@ -260,16 +259,16 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         var canDropOnMap = GetBoolean(L, 4, true);
         var slot = GetNumber(L, 6, SlotsType.CONST_SLOT_BACKPACK);
 
-        for (int i = 1; i <= itemCount; ++i)
+        for (var i = 1; i <= itemCount; ++i)
         {
-            int stackCount = subType;
+            var stackCount = subType;
             if (it.IsStackable())
             {
                 stackCount = int.Max(stackCount, it.Count);
                 subType -= stackCount;
             }
 
-            IItem item = _itemFactory.Create(itemId, player.Location, stackCount);
+            var item = _itemFactory.Create(itemId, player.Location, stackCount);
 
             if (!item)
             {
@@ -317,6 +316,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
                 Lua.PushNil(L);
             }
         }
+
         return 1;
     }
 

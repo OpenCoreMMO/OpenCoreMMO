@@ -1,30 +1,24 @@
 ﻿using LuaNET;
 using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
 public class ConfigManager : IConfigManager
 {
-    #region Members
-
-    private readonly string[] stringConfig = new string[(int)StringConfigType.LAST_STRING_CONFIG];
-    private readonly int[] integerConfig = new int[(int)IntegerConfigType.LAST_INTEGER_CONFIG];
-    private readonly bool[] booleanConfig = new bool[(int)BooleanConfigType.LAST_BOOLEAN_CONFIG];
-    private readonly float[] floatingConfig = new float[(int)FloatingConfigType.LAST_FLOATING_CONFIG];
-
-    private bool loaded = false;
-
-    #endregion
+    private static readonly string DummyStr = string.Empty;
 
     #region Injection
 
     /// <summary>
-    /// A reference to the logger in use.
+    ///     A reference to the logger in use.
     /// </summary>
     private readonly ILogger _logger;
 
     #endregion
+
+    private string configFileLua = "";
 
     public ConfigManager(ILogger logger)
     {
@@ -35,10 +29,7 @@ public class ConfigManager : IConfigManager
     {
         configFileLua = file.Split("\\").LastOrDefault();
         var L = Lua.NewState();
-        if (L.pointer == 0)
-        {
-            throw new IOException("Failed to allocate memory");
-        }
+        if (L.pointer == 0) throw new IOException("Failed to allocate memory");
 
         Lua.OpenLibs(L);
 
@@ -58,14 +49,16 @@ public class ConfigManager : IConfigManager
             integerConfig[(int)IntegerConfigType.STATUS_PORT] = GetGlobalNumber(L, "statusProtocolPort", 7171);
         }
 
-        booleanConfig[(int)BooleanConfigType.SCRIPTS_CONSOLE_LOGS] = GetGlobalBoolean(L, "showScriptsLogInConsole", true);
+        booleanConfig[(int)BooleanConfigType.SCRIPTS_CONSOLE_LOGS] =
+            GetGlobalBoolean(L, "showScriptsLogInConsole", true);
 
         booleanConfig[(int)BooleanConfigType.TOGGLE_SAVE_INTERVAL] = GetGlobalBoolean(L, "toggleSaveInterval", false);
-        booleanConfig[(int)BooleanConfigType.TOGGLE_SAVE_INTERVAL_CLEAN_MAP] = GetGlobalBoolean(L, "toggleSaveIntervalCleanMap", false);
+        booleanConfig[(int)BooleanConfigType.TOGGLE_SAVE_INTERVAL_CLEAN_MAP] =
+            GetGlobalBoolean(L, "toggleSaveIntervalCleanMap", false);
         booleanConfig[(int)BooleanConfigType.ALLOW_RELOAD] = GetGlobalBoolean(L, "allowReload", true);
 
         stringConfig[(int)StringConfigType.SAVE_INTERVAL_TYPE] = GetGlobalString(L, "saveIntervalType", "");
-       
+
         stringConfig[(int)StringConfigType.CORE_DIRECTORY] = GetGlobalString(L, "coreDirectory", "data");
 
         integerConfig[(int)IntegerConfigType.SAVE_INTERVAL_TIME] = GetGlobalNumber(L, "saveIntervalTime", 1);
@@ -82,6 +75,7 @@ public class ConfigManager : IConfigManager
             _logger.Warning($"[ConfigManager.GetString] - Accessing invalid index: {what}");
             return string.Empty;
         }
+
         return stringConfig[(int)what];
     }
 
@@ -92,6 +86,7 @@ public class ConfigManager : IConfigManager
             _logger.Warning($"[ConfigManager.GetNumber] - Accessing invalid index: {what}");
             return 0;
         }
+
         return integerConfig[(int)what];
     }
 
@@ -102,10 +97,14 @@ public class ConfigManager : IConfigManager
             _logger.Warning($"[ConfigManager.GetShortNumber] - Accessing invalid index: {what}");
             return 0;
         }
+
         return (short)integerConfig[(int)what];
     }
 
-    public ushort GetUShortNumber(IntegerConfigType what) => (ushort)integerConfig[(int)what];
+    public ushort GetUShortNumber(IntegerConfigType what)
+    {
+        return (ushort)integerConfig[(int)what];
+    }
 
     public bool GetBoolean(BooleanConfigType what)
     {
@@ -114,6 +113,7 @@ public class ConfigManager : IConfigManager
             _logger.Warning($"[ConfigManager.GetBoolean] - Accessing invalid index: {what}");
             return false;
         }
+
         return booleanConfig[(int)what];
     }
 
@@ -124,6 +124,7 @@ public class ConfigManager : IConfigManager
             _logger.Warning($"[ConfigManager.GetFloat] - Accessing invalid index: {what}");
             return 0;
         }
+
         return floatingConfig[(int)what];
     }
 
@@ -137,17 +138,10 @@ public class ConfigManager : IConfigManager
         return configFileLua;
     }
 
-    private string configFileLua = "";
-
-    private static readonly string DummyStr = string.Empty;
-
     public string GetGlobalString(LuaState L, string identifier, string defaultValue)
     {
         Lua.GetGlobal(L, identifier);
-        if (Lua.IsString(L, -1))
-        {
-            return defaultValue;
-        }
+        if (Lua.IsString(L, -1)) return defaultValue;
 
         ulong len = 0;
         var str = Lua.ToLString(L, -1, ref len);
@@ -158,12 +152,9 @@ public class ConfigManager : IConfigManager
     public int GetGlobalNumber(LuaState L, string identifier, int defaultValue = 0)
     {
         Lua.GetGlobal(L, identifier);
-        if (Lua.IsNumber(L, -1))
-        {
-            return defaultValue;
-        }
+        if (Lua.IsNumber(L, -1)) return defaultValue;
 
-        int val = (int)Lua.ToNumber(L, -1);
+        var val = (int)Lua.ToNumber(L, -1);
         Lua.Pop(L, 1);
         return val;
     }
@@ -173,10 +164,7 @@ public class ConfigManager : IConfigManager
         Lua.GetGlobal(L, identifier);
         if (Lua.IsBoolean(L, -1))
         {
-            if (Lua.IsString(L, -1))
-            {
-                return defaultValue;
-            }
+            if (Lua.IsString(L, -1)) return defaultValue;
 
             ulong len = 0;
             var str = Lua.ToLString(L, -1, ref len);
@@ -192,24 +180,29 @@ public class ConfigManager : IConfigManager
     public float GetGlobalFloat(LuaState L, string identifier, float defaultValue = 0.0f)
     {
         Lua.GetGlobal(L, identifier);
-        if (Lua.IsNumber(L, -1))
-        {
-            return defaultValue;
-        }
+        if (Lua.IsNumber(L, -1)) return defaultValue;
 
-        float val = (float)Lua.ToNumber(L, -1);
+        var val = (float)Lua.ToNumber(L, -1);
         Lua.Pop(L, 1);
         return val;
     }
 
     private bool BooleanString(string str)
     {
-        if (string.IsNullOrEmpty(str))
-        {
-            return false;
-        }
+        if (string.IsNullOrEmpty(str)) return false;
 
         var ch = str.ToLower();
         return ch != "f" && ch != "n" && ch != "0";
     }
+
+    #region Members
+
+    private readonly string[] stringConfig = new string[(int)StringConfigType.LAST_STRING_CONFIG];
+    private readonly int[] integerConfig = new int[(int)IntegerConfigType.LAST_INTEGER_CONFIG];
+    private readonly bool[] booleanConfig = new bool[(int)BooleanConfigType.LAST_BOOLEAN_CONFIG];
+    private readonly float[] floatingConfig = new float[(int)FloatingConfigType.LAST_FLOATING_CONFIG];
+
+    private bool loaded;
+
+    #endregion
 }

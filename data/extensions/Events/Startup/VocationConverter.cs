@@ -31,7 +31,7 @@ public class VocationConverter : IStartup
             var vocationsAttr = itemType.Attributes.GetAttributeArray(ItemAttribute.Vocation);
 
             if (vocationsAttr is not string[] vocations) continue;
-            
+
             itemType.Attributes.SetAttribute(ItemAttribute.VocationNames, vocations);
 
             var vocationsType = new List<byte>(vocations.Length);

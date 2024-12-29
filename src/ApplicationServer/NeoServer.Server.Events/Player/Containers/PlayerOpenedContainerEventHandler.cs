@@ -8,8 +8,8 @@ namespace NeoServer.Server.Events.Player.Containers;
 
 public class PlayerOpenedContainerEventHandler
 {
-    private readonly IGameServer game;
     private readonly ClientConfiguration _clientConfiguration;
+    private readonly IGameServer game;
 
     public PlayerOpenedContainerEventHandler(IGameServer game, ClientConfiguration clientConfiguration)
     {

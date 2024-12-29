@@ -15,8 +15,8 @@ namespace NeoServer.Server.Events.Player;
 
 public class PlayerSelfAppearOnMapEventHandler : IEventHandler
 {
-    private readonly IGameServer _game;
     private readonly ClientConfiguration _clientConfiguration;
+    private readonly IGameServer _game;
     private readonly IMap _map;
 
     public PlayerSelfAppearOnMapEventHandler(IMap map, IGameServer game, ClientConfiguration clientConfiguration)
@@ -44,9 +44,9 @@ public class PlayerSelfAppearOnMapEventHandler : IEventHandler
         connection.OutgoingPackets.Enqueue(new MagicEffectPacket(player.Location, EffectT.BubbleBlue));
         connection.OutgoingPackets.Enqueue(new PlayerInventoryPacket(player.Inventory)
         {
-            ShowItemDescription = connection.OtcV8Version > 0  && _clientConfiguration.OtcV8.GameItemTooltip
+            ShowItemDescription = connection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip
         });
-        
+
         connection.OutgoingPackets.Enqueue(new PlayerStatusPacket(player));
         connection.OutgoingPackets.Enqueue(new PlayerSkillsPacket(player));
 

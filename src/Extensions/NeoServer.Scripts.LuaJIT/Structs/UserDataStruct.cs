@@ -1,4 +1,4 @@
-﻿namespace NeoServer.Scripts.LuaJIT;
+﻿namespace NeoServer.Scripts.LuaJIT.Structs;
 
 public struct UserDataStruct(int index, IntPtr ptr, int referenceIndex)
 {

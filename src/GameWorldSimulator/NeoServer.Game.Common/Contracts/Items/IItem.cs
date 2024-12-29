@@ -85,7 +85,8 @@ public interface IItem : IThing, IHasDecay
             var fluidType = Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ContainerLiquidType);
             return fluidType;
         }
-        else if (Metadata.HasFlag(ItemFlag.Stackable))
+
+        if (Metadata.HasFlag(ItemFlag.Stackable))
         {
             var count = Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.Count);
             return count;

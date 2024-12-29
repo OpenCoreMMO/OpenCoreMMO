@@ -3,13 +3,15 @@ using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Location;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
+using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
+
 public class EnumFunctions : LuaScriptInterface, IEnumFunctions
 {
     public EnumFunctions(
-        ILuaEnvironment luaEnvironment, 
+        ILuaEnvironment luaEnvironment,
         ILogger logger) : base(nameof(ConfigFunctions))
     {
     }
@@ -46,7 +48,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         string prefix = typeof(T).Name.Replace("Type", "").ToUpperInvariant() + "_"; 
         foreach (var item in Enum.GetValues(typeof(T)))
         {
-            string name = prefix + item.ToString().ToUpperInvariant(); 
+            var name = prefix + item.ToString().ToUpperInvariant();
             RegisterGlobalVariable(L, name, Convert.ToUInt32(item));
         }
     }

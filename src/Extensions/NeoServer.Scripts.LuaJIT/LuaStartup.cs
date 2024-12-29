@@ -1,5 +1,6 @@
 ﻿using LuaNET;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
+using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Configurations;
 using Serilog;
 

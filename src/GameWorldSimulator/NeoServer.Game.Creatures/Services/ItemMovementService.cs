@@ -1,4 +1,5 @@
-﻿using NeoServer.Game.Common;
+﻿using System;
+using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
@@ -9,7 +10,6 @@ using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Results;
 using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
-using System;
 
 namespace NeoServer.Game.Creatures.Services;
 

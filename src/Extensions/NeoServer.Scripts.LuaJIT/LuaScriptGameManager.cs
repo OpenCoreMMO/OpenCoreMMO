@@ -1,11 +1,10 @@
-﻿using NeoServer.Application.Common.Contracts.Scripts;
-using NeoServer.Game.Common.Chats;
+﻿using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Server.Helpers;
+using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Server.Common.Contracts.Scripts;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;

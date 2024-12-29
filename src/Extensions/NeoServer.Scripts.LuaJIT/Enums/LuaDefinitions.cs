@@ -69,8 +69,8 @@ public enum SlotsType : byte
     CONST_SLOT_AMMO = 10,
 
     CONST_SLOT_FIRST = CONST_SLOT_HEAD,
-    CONST_SLOT_LAST = CONST_SLOT_AMMO,
-};
+    CONST_SLOT_LAST = CONST_SLOT_AMMO
+}
 
 // Enums
 public enum LuaDataType : byte
@@ -110,8 +110,8 @@ public enum LuaDataType : byte
     Weapon,
     Imbuement,
     Mount,
-    ItemClassification,
-};
+    ItemClassification
+}
 
 public enum CreatureEventType
 {
@@ -127,9 +127,10 @@ public enum CreatureEventType
     CREATURE_EVENT_TEXTEDIT,
     CREATURE_EVENT_HEALTHCHANGE,
     CREATURE_EVENT_MANACHANGE,
+
     // Otclient additional network opcodes.
-    CREATURE_EVENT_EXTENDED_OPCODE,
-};
+    CREATURE_EVENT_EXTENDED_OPCODE
+}
 
 public enum MoveEventType
 {
@@ -144,20 +145,20 @@ public enum MoveEventType
 
     MOVE_EVENT_LAST,
     MOVE_EVENT_NONE
-};
+}
 
 public enum RaidStateType
 {
     RAIDSTATE_IDLE,
-    RAIDSTATE_EXECUTING,
-};
+    RAIDSTATE_EXECUTING
+}
 
 public enum TalkActionResultType
 {
     TALKACTION_CONTINUE,
     TALKACTION_BREAK,
-    TALKACTION_FAILED,
-};
+    TALKACTION_FAILED
+}
 
 public enum GlobalEventType
 {
@@ -168,14 +169,14 @@ public enum GlobalEventType
     GLOBALEVENT_SHUTDOWN,
     GLOBALEVENT_RECORD,
     GLOBALEVENT_PERIODCHANGE,
-    GLOBALEVENT_ON_THINK,
-};
+    GLOBALEVENT_ON_THINK
+}
 
 public enum ModuleTypeType
 {
     MODULE_TYPE_RECVBYTE,
-    MODULE_TYPE_NONE,
-};
+    MODULE_TYPE_NONE
+}
 
 public enum LuaVariantType
 {
@@ -184,8 +185,8 @@ public enum LuaVariantType
     VARIANT_NUMBER,
     VARIANT_POSITION,
     VARIANT_TARGETPOSITION,
-    VARIANT_STRING,
-};
+    VARIANT_STRING
+}
 
 public enum ErrorCodeType
 {
@@ -208,8 +209,8 @@ public enum ErrorCodeType
     LUA_ERROR_SPELL_NOT_FOUND,
     LUA_ERROR_ACTION_NOT_FOUND,
     LUA_ERROR_TALK_ACTION_NOT_FOUND,
-    LUA_ERROR_ZONE_NOT_FOUND,
-};
+    LUA_ERROR_ZONE_NOT_FOUND
+}
 
 public enum TargetSearchTypeType
 {
@@ -218,7 +219,7 @@ public enum TargetSearchTypeType
     TARGETSEARCH_HP,
     TARGETSEARCH_DAMAGE,
     TARGETSEARCH_RANDOM
-};
+}
 
 public enum MapMarkType
 {
@@ -241,15 +242,15 @@ public enum MapMarkType
     MAPMARK_REDEAST = 16,
     MAPMARK_REDWEST = 17,
     MAPMARK_GREENNORTH = 18,
-    MAPMARK_GREENSOUTH = 19,
-};
+    MAPMARK_GREENSOUTH = 19
+}
 
 public enum RuleViolationTypeType : byte
 {
     REPORT_TYPE_NAME = 0,
     REPORT_TYPE_STATEMENT = 1,
     REPORT_TYPE_BOT = 2
-};
+}
 
 public enum RuleViolationReasonsType : byte
 {
@@ -274,7 +275,7 @@ public enum RuleViolationReasonsType : byte
     REPORT_REASON_STEALINGDATA = 18,
     REPORT_REASON_SERVICEATTACKING = 19,
     REPORT_REASON_SERVICEAGREEMENT = 20
-};
+}
 
 public enum BugReportTypeType : byte
 {
@@ -282,7 +283,7 @@ public enum BugReportTypeType : byte
     BUG_CATEGORY_TYPO = 1,
     BUG_CATEGORY_TECHNICAL = 2,
     BUG_CATEGORY_OTHER = 3
-};
+}
 
 // Struct
 public struct LuaVariant
