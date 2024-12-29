@@ -19,6 +19,7 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
         RegisterMethod(L, "Action", "onUse", LuaActionOnUse);
         RegisterMethod(L, "Action", "register", LuaActionRegister);
         RegisterMethod(L, "Action", "id", LuaActionItemId);
+        RegisterMethod(L, "Action", "allowFarUse", LuaActionAllowFarUse);
     }
 
     public static int LuaCreateAction(LuaState L)
@@ -94,6 +95,23 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
             {
                 action.SetItemIdsVector(GetNumber<ushort>(L, 2));
             }
+            PushBoolean(L, true);
+        }
+        else
+        {
+            ReportError(nameof(LuaActionItemId), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
+            PushBoolean(L, false);
+        }
+        return 1;
+    }
+
+    public static int LuaActionAllowFarUse(LuaState L)
+    {
+        // action:allowFarUse(bool)
+        var action = GetUserdata<Action>(L, 1);
+        if (action != null)
+        {
+            action.AllowFarUse = GetBoolean(L, 2);
             PushBoolean(L, true);
         }
         else

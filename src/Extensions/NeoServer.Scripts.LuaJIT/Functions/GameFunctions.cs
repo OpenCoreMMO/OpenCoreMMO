@@ -1,5 +1,4 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
@@ -8,14 +7,10 @@ using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Creatures.Monster.Summon;
-using NeoServer.Game.World.Map;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Configurations;
-using NeoServer.Server.Helpers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -125,8 +120,6 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
             return 1;
         }
 
-        var map = IoC.GetInstance<IMap>();
-
         for (int i = 1; i <= itemCount; ++i)
         {
             var stackCount = subType;
@@ -148,7 +141,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
             if (position.X != 0)
             {
-                var tile = map.GetTile(position);
+                var tile = _map.GetTile(position);
                 if (tile == null)
                 {
                     if (!hasTable)
@@ -357,6 +350,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
                         var dir = AppContext.BaseDirectory + _serverConfiguration.DataLuaJit;
                         _scripts.ClearAllScripts();
                         _scripts.LoadScripts($"{dir}/scripts", false, true);
+                        _scripts.LoadScripts($"{dir}/scripts/lib", true, true);
 
                         Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
                     }

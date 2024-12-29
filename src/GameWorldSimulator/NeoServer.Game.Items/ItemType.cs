@@ -52,6 +52,7 @@ public class ItemType : IItemType
 
     public ushort ClientId { get; private set; }
     public ushort TransformTo => Attributes.GetTransformationItem();
+    public ushort DestroyTo => Attributes.GetDestructionItem();
 
     public ItemGroup Group { get; private set; }
 

@@ -2,7 +2,10 @@
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Contracts.Services;
+using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Server.Helpers;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
@@ -99,6 +102,15 @@ public class LuaScriptGameManager : IScriptGameManager
     public bool PlayerUseItemEx(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, bool isHotkey, IThing target)
     {
         var action = _actions.GetAction(item);
+
+        //if (target is IStaticTile staticTile)
+        //{
+        //    var staticToDynamicTileService = IoC.GetInstance<IStaticToDynamicTileService>();
+        //    target = staticToDynamicTileService.TransformIntoDynamicTile(staticTile);
+        //}
+
+        if (target is ITile tile)
+            target = tile.TopItemOnStack;
 
         if (action != null)
             return action.ExecuteUse(

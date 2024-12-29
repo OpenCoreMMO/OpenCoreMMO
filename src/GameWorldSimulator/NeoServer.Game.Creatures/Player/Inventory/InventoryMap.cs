@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Creatures.Players;
 
 namespace NeoServer.Game.Creatures.Player.Inventory;
@@ -53,6 +55,21 @@ internal class InventoryMap
         return _map.ContainsKey(slot) && _map[slot].Item is T item
             ? item
             : default;
+    }
+
+    internal (Slot, IItem) GetSlotAndItemFromItemId(ushort itemId)
+    {
+        var result = _map.FirstOrDefault(c => c.Value.Item.ServerId == itemId);
+
+        if (result.Value.Item != null)
+            return (result.Key, result.Value.Item);
+
+        var itemFromBackpack = ((IContainer)_map[Slot.Backpack].Item).Items.FirstOrDefault(c => c.ServerId == itemId);
+
+        if (itemFromBackpack != null)
+            return (Slot.Backpack, itemFromBackpack);
+
+        return (Slot.None, null);
     }
 
     internal (IItem, ushort) GetItem(Slot slot)

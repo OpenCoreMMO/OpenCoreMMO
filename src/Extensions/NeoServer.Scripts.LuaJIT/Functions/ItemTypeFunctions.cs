@@ -26,6 +26,8 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
         RegisterMethod(L, "ItemType", "getType", LuaItemTypeGetType);
         RegisterMethod(L, "ItemType", "getId", LuaItemTypeGetId);
         RegisterMethod(L, "ItemType", "getName", LuaItemTypeGetName);
+
+        RegisterMethod(L, "ItemType", "getDestroyId", LuaItemDestroyId);
     }
 
     public static int LuaCreateItemType(LuaState L)
@@ -52,7 +54,7 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
 
     public static int LuaItemTypeIsMoveable(LuaState L)
     {
-        // item:isMovable()
+        // itemType:isMovable()
         var itemType = GetUserdata<IItemType>(L, 1);
         if (itemType != null)
             Lua.PushBoolean(L, itemType.IsMovable());
@@ -64,7 +66,7 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
 
     public static int LuaItemTypeIsStackable(LuaState L)
     {
-        // item:isStackable()
+        // itemType:isStackable()
         var itemType = GetUserdata<IItemType>(L, 1);
         if (itemType != null)
             Lua.PushBoolean(L, itemType.IsStackable());
@@ -76,7 +78,7 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
 
     public static int LuaItemTypeIsFluidContainer(LuaState L)
     {
-        // item:isFluidContainer()
+        // itemType:isFluidContainer()
         var itemType = GetUserdata<IItemType>(L, 1);
         if (itemType != null)
             Lua.PushBoolean(L, itemType.IsFluidContainer());
@@ -88,7 +90,7 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
 
     public static int LuaItemTypeIsKey(LuaState L)
     {
-        // item:isKey()
+        // itemType:isKey()
         var itemType = GetUserdata<IItemType>(L, 1);
         if (itemType != null)
             Lua.PushBoolean(L, itemType.IsKey());
@@ -124,10 +126,22 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
 
     public static int LuaItemTypeGetName(LuaState L)
     {
-        // item:getName()
+        // itemType:getName()
         var itemType = GetUserdata<IItemType>(L, 1);
         if (itemType != null)
             Lua.PushString(L, itemType.Name);
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    public static int LuaItemDestroyId(LuaState L)
+    {
+        // itemType:getDestroyId()
+        var itemType = GetUserdata<IItemType>(L, 1);
+        if (itemType != null)
+            Lua.PushNumber(L, itemType.DestroyTo);
         else
             Lua.PushNil(L);
 

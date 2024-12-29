@@ -6,8 +6,6 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
-using NeoServer.Server.Helpers;
-using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -16,8 +14,6 @@ public class LuaFunctionsLoader
     public const int LUA_REGISTRYINDEX = (-10000);
     public const int LUA_ENVIRONINDEX = (-10001);
     public const int LUA_GLOBALSINDEX = (-10002);
-
-    protected static ILogger _logger;
 
     public LuaFunctionsLoader()
     {
@@ -113,10 +109,7 @@ public class LuaFunctionsLoader
 
         GetScriptEnv().GetEventInfo(out scriptId, out scriptInterface, out callbackId, out timerEvent);
 
-        if (_logger == null)
-            _logger = IoC.GetInstance<ILogger>();
-
-        _logger.Error(string.Format("Lua script error: \nscriptInterface: [{0}]\nscriptId: [{1}]\ntimerEvent: [{2}]\n callbackId:[{3}]\nfunction: [{4}]\nerror [{5}]",
+        Console.WriteLine(string.Format("Lua script error: \nscriptInterface: [{0}]\nscriptId: [{1}]\ntimerEvent: [{2}]\n callbackId:[{3}]\nfunction: [{4}]\nerror [{5}]",
                      scriptInterface != null ? scriptInterface.GetInterfaceName() : "",
                      scriptId != 0 ? scriptInterface?.GetFileById(scriptId) : "",
                      timerEvent ? "in a timer event called from:" : "",
@@ -381,7 +374,7 @@ public class LuaFunctionsLoader
             }
             else
             {
-                _logger.Warning("[{0}] invalid param type", nameof(GetFormatedLoggerMessage));
+                Console.WriteLine("[{0}] invalid param type", nameof(GetFormatedLoggerMessage));
             }
         }
 
@@ -394,7 +387,7 @@ public class LuaFunctionsLoader
         }
         catch (Exception e)
         {
-            _logger.Error("[{}] format error: {}", nameof(GetFormatedLoggerMessage), e.Message);
+            Console.WriteLine("[{}] format error: {}", nameof(GetFormatedLoggerMessage), e.Message);
         }
 
         return string.Empty;

@@ -1,9 +1,4 @@
 ﻿using LuaNET;
-using NeoServer.Application.Common.Contracts.Scripts;
-using NeoServer.Game.Common.Chats;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Configurations;
 using Serilog;
@@ -238,9 +233,10 @@ public class LuaStartup : ILuaStartup
 
         ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), $"config.lua");
 
-        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/core.lua", "core.lua"), "core.lua");
+        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/core.lua", "core.lua"), "/Data/LuaJit/core.lua");
 
         ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts", false, false), "/Data/LuaJit/scripts");
+        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts/lib", true, false), "/Data/LuaJit/scripts/lib");
     }
 
     #endregion

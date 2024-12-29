@@ -8,25 +8,27 @@ using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Item;
 using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
+using NeoServer.Server.Helpers;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
 public class ItemFunctions : LuaScriptInterface, IItemFunctions
 {
-    private static IItemTransformService _itemTransformService;
+    private static IItemService _itemService;
     private static IItemTypeStore _itemTypeStore;
     private static IMap _map;
     private static IItemMovementService _itemMovementService;
 
     public ItemFunctions(
-        IItemTransformService itemTransformService,
+        IItemService itemService,
         IItemTypeStore itemTypeStore,
         IMap map,
         IItemMovementService itemMovementService) : base(nameof(ItemFunctions))
         
     {
-        _itemTransformService = itemTransformService;
+        _itemService = itemService;
         _itemTypeStore = itemTypeStore;
         _map = map;
         _itemMovementService = itemMovementService;
@@ -37,14 +39,26 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         RegisterSharedClass(L, "Item", "", LuaCreateItem);
         RegisterMetaMethod(L, "Item", "__eq", LuaUserdataCompare<IItem>);
 
-        RegisterMethod(L, "Item", "getId", LuaGetItemId);
+        RegisterMethod(L, "Item", "isItem", LuaItemIsItem);
 
-        RegisterMethod(L, "Item", "getActionId", LuaGetActionId);
-        RegisterMethod(L, "Item", "getUniqueId", LuaGetUniqueId);
+        RegisterMethod(L, "Item", "getId", LuaItemGetId);
 
-        RegisterMethod(L, "Item", "getSubType", LuaGetSubType);
+        RegisterMethod(L, "Item", "remove", LuaItemRemove);
+
+        RegisterMethod(L, "Item", "getActionId", LuaItemGetActionId);
+        RegisterMethod(L, "Item", "getUniqueId", LuaItemGetUniqueId);
+
+        RegisterMethod(L, "Item", "getSubType", LuaItemGetSubType);
+
+        RegisterMethod(L, "Item", "getName", LuaItemGetName);
+        RegisterMethod(L, "Item", "getPluralName", LuaItemGetPluralName);
+        RegisterMethod(L, "Item", "getArticle", LuaItemGetArticle);
+
+        RegisterMethod(L, "Item", "getPosition", LuaItemGetPosition);
+        RegisterMethod(L, "Item", "getTile", LuaItemGetTile);
 
         RegisterMethod(L, "Item", "hasProperty", LuaItemHasProperty);
+        RegisterMethod(L, "Item", "hasAttribute", LuaItemHasAttribute);
 
         RegisterMethod(L, "Item", "moveTo", LuaItemMoveTo);
         RegisterMethod(L, "Item", "transform", LuaItemTransform);
@@ -70,7 +84,16 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         return 1;
     }
 
-    public static int LuaGetItemId(LuaState L)
+    public static int LuaItemIsItem(LuaState L)
+    {
+        // item:isItem()
+        var item = GetUserdata<IItem>(L, 1);
+        Lua.PushBoolean(L, item is not null);
+
+        return 1;
+    }
+
+    public static int LuaItemGetId(LuaState L)
     {
         // item:getId()
         var item = GetUserdata<IItem>(L, 1);
@@ -82,7 +105,25 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         return 1;
     }
 
-    public static int LuaGetActionId(LuaState L)
+    public static int LuaItemRemove(LuaState L)
+    {
+        // item:remove()
+        var item = GetUserdata<IItem>(L, 1);
+        if (item != null && _map[item.Location] is IDynamicTile dynamictile)
+        {
+            var count = GetNumber(L, 2, 1);
+            var result = dynamictile.RemoveItem(item, (byte)count, 0, out var removedItem);
+            Lua.PushBoolean(L, result.Succeeded);
+        }
+        else
+        {
+            Lua.PushNil(L);
+        }
+
+        return 1;
+    }
+
+    public static int LuaItemGetActionId(LuaState L)
     {
         // item:getActionId()
         var item = GetUserdata<IItem>(L, 1);
@@ -94,7 +135,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         return 1;
     }
 
-    public static int LuaGetUniqueId(LuaState L)
+    public static int LuaItemGetUniqueId(LuaState L)
     {
         // item:getUniqueId()
         var item = GetUserdata<IItem>(L, 1);
@@ -106,12 +147,76 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         return 1;
     }
 
-    public static int LuaGetSubType(LuaState L)
+    public static int LuaItemGetSubType(LuaState L)
     {
         // item:getSubType()
         var item = GetUserdata<IItem>(L, 1);
         if (item != null)
             Lua.PushNumber(L, item.GetSubType());
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    public static int LuaItemGetName(LuaState L)
+    {
+        // item:getName()
+        var item = GetUserdata<IItem>(L, 1);
+        if (item != null)
+            Lua.PushString(L, item.Name);
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    public static int LuaItemGetPluralName(LuaState L)
+    {
+        // item:getPluralName()
+        var item = GetUserdata<IItem>(L, 1);
+        if (item != null)
+            Lua.PushString(L, item.Plural);
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    public static int LuaItemGetArticle(LuaState L)
+    {
+        // item:getArticle()
+        var item = GetUserdata<IItem>(L, 1);
+        if (item != null)
+            Lua.PushString(L, item.Article);
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    public static int LuaItemGetPosition(LuaState L)
+    {
+        // item:getPosition()
+        var item = GetUserdata<IItem>(L, 1);
+        if (item != null)
+            PushPosition(L, item.Location);
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    public static int LuaItemGetTile(LuaState L)
+    {
+        // item:getTile()
+        var item = GetUserdata<IItem>(L, 1);
+        if (item != null)
+        {
+            var tile = _map[item.Location];
+            PushUserdata(L, tile);
+            SetMetatable(L, -1, "Tile");
+        }
         else
             Lua.PushNil(L);
 
@@ -133,17 +238,33 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         return 1;
     }
 
+    public static int LuaItemHasAttribute(LuaState L)
+    {
+        // item:hasAttribute()
+        var item = GetUserdata<IItem>(L, 1);
+        if (item != null)
+        {
+            var property = GetNumber<ItemAttributeType>(L, 2);
+            Lua.PushBoolean(L, item.Metadata.Attributes.HasAttribute(property.ToItemAttribute()));
+        }
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
     public static int LuaItemMoveTo(LuaState L)
     {
         // item:moveTo(position or cylinder, flags)
         //todo: implements flags
         var item = GetUserdata<IItem>(L, 1);
-        if (item == null)
+        if (!item)
         {
             Lua.PushNil(L);
             return 1;
         }
 
+        //todo: implements isRemoved
         //const auto &item = *itemPtr;
         //if (!item || item->isRemoved())
         //{
@@ -179,9 +300,9 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             toTile = _map.GetTile(GetPosition(L, 2));
         }
 
-        if (toContainer == null &&
-            toPlayer == null &&
-            toTile == null)
+        if (!toContainer &&
+            !toPlayer &&
+            !toTile)
         {
             Lua.PushNil(L);
             return 1;
@@ -256,27 +377,19 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
 
         var it = _itemTypeStore.Get(itemId);
         if (it.IsStackable())
-        {
             subType = int.Min(subType, it.Count);
-        }
 
         var env = GetScriptEnv();
         var uid = env.AddThing(item);
 
-        var result = _itemTransformService.Transform(item, itemId);
-        var newItem = result.Value;
-
-        if (result.Succeeded)
-        {
-            env.RemoveItemByUID(uid);
-        }
+        var newItem = _itemService.Transform(item.Location, item.ServerId, itemId);
 
         if (newItem != null && newItem != item)
         {
+            env.RemoveItemByUID(uid);
             env.InsertItem(uid, newItem);
         }
 
-        item = newItem;
         Lua.PushBoolean(L, true);
         return 1;
     }

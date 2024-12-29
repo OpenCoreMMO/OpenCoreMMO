@@ -7,7 +7,6 @@ using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Common.Contracts;
-using NeoServer.Server.Helpers;
 using NeoServer.Server.Services;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
@@ -39,6 +38,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(L, "Player", "isPzLocked", LuaPlayerIsPzLocked);
 
         RegisterMethod(L, "Player", "addItem", LuaPlayerAddItem);
+        RegisterMethod(L, "Player", "removeItem", LuaPlayerRemoveItem);
     }
 
     private static int LuaPlayerCreate(LuaState L)
@@ -148,7 +148,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
     private static int LuaPlayerAddItem(LuaState L)
     {
         // player:addItem(itemId, count = 1, canDropOnMap = true, subType = 1, slot = CONST_SLOT_BACKPACK)
-        
+
         var player = GetUserdata<IPlayer>(L, 1);
         if (!player)
         {
@@ -271,6 +271,46 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
                 Lua.PushNil(L);
             }
         }
+        return 1;
+    }
+
+    private static int LuaPlayerRemoveItem(LuaState L)
+    {
+        // player:removeItem(itemId, count, subType = -1, ignoreEquipped = false)
+
+        var player = GetUserdata<IPlayer>(L, 1);
+        if (!player)
+        {
+            Lua.PushBoolean(L, false);
+            return 1;
+        }
+
+        ushort itemId = 0;
+        if (Lua.IsNumber(L, 2))
+        {
+            itemId = GetNumber<ushort>(L, 2);
+        }
+        else
+        {
+            var itemName = GetString(L, 2);
+            var itemTypeByName = _itemTypeStore.GetByName(itemName);
+
+            if (itemTypeByName == null || string.IsNullOrEmpty(itemTypeByName.Name) || itemTypeByName.ServerId == 0)
+            {
+                Lua.PushNil(L);
+                return 1;
+            }
+
+            itemId = itemTypeByName.ServerId;
+        }
+
+        var count = GetNumber(L, 3, 1);
+        var subType = GetNumber(L, 4, 1);
+        var ignoreEquipped = GetBoolean(L, 5); 
+
+        var result = player.Inventory.RemoveItem(itemId, (byte)count, ignoreEquipped);
+
+        PushBoolean(L, result.Succeeded);
         return 1;
     }
 }
