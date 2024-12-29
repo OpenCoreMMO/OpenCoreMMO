@@ -38,7 +38,6 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         RegisterMethod(L, "Tile", "hasFlag", LuaTileHasFlag);
 
         RegisterMethod(L, "Tile", "queryAdd", LuaTileQueryAdd);
-
     }
 
     public static int LuaCreateTile(LuaState L)
@@ -174,7 +173,9 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
             SetItemMetatable(L, -1, tile.TopItemOnStack);
         }
         else
+        {
             Lua.PushNil(L);
+        }
 
         return 1;
     }
@@ -192,7 +193,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
 
         Lua.CreateTable(L, tile.ThingsCount, 0);
 
-        int index = 0;
+        var index = 0;
         foreach (var item in dynamicTile.AllItems)
         {
             PushUserdata(L, item);
@@ -208,9 +209,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         // tile:getItemCount()
         var tile = GetUserdata<ITile>(L, 1);
         if (tile != null)
-        {
             Lua.PushNumber(L, tile.ThingsCount);
-        }
         else
             Lua.PushNil(L);
 
@@ -254,7 +253,9 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
             Lua.PushBoolean(L, tile.HasFlag(flag));
         }
         else
+        {
             Lua.PushNil(L);
+        }
 
         return 1;
     }

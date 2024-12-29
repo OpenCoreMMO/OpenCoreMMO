@@ -1,7 +1,7 @@
 ﻿namespace NeoServer.Scripts.LuaJIT.Enums;
 
 // Enum
-public enum BooleanConfigType : int
+public enum BooleanConfigType
 {
     ALLOW_CHANGEOUTFIT,
     ONE_PLAYER_ON_ACCOUNT,
@@ -84,7 +84,7 @@ public enum BooleanConfigType : int
     TOGGLE_MAINTAIN_MODE,
 
     LAST_BOOLEAN_CONFIG
-};
+}
 
 public enum StringConfigType
 {
@@ -122,7 +122,7 @@ public enum StringConfigType
     MAINTAIN_MODE_MESSAGE,
 
     LAST_STRING_CONFIG
-};
+}
 
 public enum IntegerConfigType
 {
@@ -255,7 +255,7 @@ public enum IntegerConfigType
     PVP_MAX_LEVEL_DIFFERENCE,
 
     LAST_INTEGER_CONFIG
-};
+}
 
 public enum FloatingConfigType
 {
@@ -293,7 +293,7 @@ public enum FloatingConfigType
     HOUSE_RENT_RATE,
 
     LAST_FLOATING_CONFIG
-};
+}
 
 public enum ReloadType : byte
 {
@@ -315,4 +315,4 @@ public enum ReloadType : byte
 
     // Every is last
     RELOAD_TYPE_LAST
-};
+}

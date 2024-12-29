@@ -1,7 +1,7 @@
 ﻿using LuaNET;
 using NeoServer.Scripts.LuaJIT.Enums;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Interfaces;
 
 public interface IConfigManager
 {

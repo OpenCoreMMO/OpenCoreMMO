@@ -11,8 +11,8 @@ namespace NeoServer.Server.Events.Player.Trade;
 
 public class TradeRequestedEventHandler : IEventHandler
 {
-    private readonly IGameServer _gameServer;
     private readonly ClientConfiguration _clientConfiguration;
+    private readonly IGameServer _gameServer;
 
     public TradeRequestedEventHandler(IGameServer gameServer, ClientConfiguration clientConfiguration)
     {
@@ -32,7 +32,8 @@ public class TradeRequestedEventHandler : IEventHandler
         playerRequestingConnection.OutgoingPackets.Enqueue(new TradeRequestPacket(tradeRequest.PlayerRequesting.Name,
             tradeRequest.Items)
         {
-            ShowItemDescription = playerRequestingConnection.OtcV8Version > 0  && _clientConfiguration.OtcV8.GameItemTooltip
+            ShowItemDescription = playerRequestingConnection.OtcV8Version > 0 &&
+                                  _clientConfiguration.OtcV8.GameItemTooltip
         });
 
         SendTradeMessage(tradeRequest, playerRequestedConnection);
@@ -63,13 +64,15 @@ public class TradeRequestedEventHandler : IEventHandler
         playerRequestingConnection.OutgoingPackets.Enqueue(new TradeRequestPacket(tradeRequest.PlayerRequested.Name,
             items, true)
         {
-            ShowItemDescription = playerRequestingConnection.OtcV8Version > 0  && _clientConfiguration.OtcV8.GameItemTooltip
+            ShowItemDescription = playerRequestingConnection.OtcV8Version > 0 &&
+                                  _clientConfiguration.OtcV8.GameItemTooltip
         });
 
         playerRequestedConnection.OutgoingPackets.Enqueue(new TradeRequestPacket(tradeRequest.PlayerRequesting.Name,
             tradeRequest.Items, true)
         {
-            ShowItemDescription = playerRequestedConnection.OtcV8Version > 0  && _clientConfiguration.OtcV8.GameItemTooltip
+            ShowItemDescription =
+                playerRequestedConnection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip
         });
     }
 }

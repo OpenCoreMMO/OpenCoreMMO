@@ -1,10 +1,11 @@
 ﻿using LuaNET;
-using NeoServer.Application.Common.Contracts.Scripts;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
+using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Configurations;
 using Serilog;
 
@@ -12,134 +13,6 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class LuaGameManager : ILuaGameManager
 {
-    #region Members
-
-    #endregion
-
-    #region Dependency Injections
-
-    /// <summary>
-    /// A reference to the <see cref="ILogger"/> instance in use.
-    /// </summary>
-    private readonly ILogger _logger;
-
-    /// <summary>
-    /// A reference to the <see cref="ILuaEnvironment"/> instance in use.
-    /// </summary>
-    private readonly ILuaEnvironment _luaEnviroment;
-
-    /// <summary>
-    /// A reference to the <see cref="IConfigManager"/> instance in use.
-    /// </summary>
-    private readonly IConfigManager _configManager;
-
-    /// <summary>
-    /// A reference to the <see cref="IScripts"/> instance in use.
-    /// </summary>
-    private readonly IScripts _scripts;
-
-    /// <summary>
-    /// A reference to the <see cref="IActions"/> instance in use.
-    /// </summary>
-    private readonly IActions _actions;
-
-    /// <summary>
-    /// A reference to the <see cref="ITalkActions"/> instance in use.
-    /// </summary>
-    private readonly ITalkActions _talkActions;
-
-    /// <summary>
-    /// A reference to the <see cref="IActionFunctions"/> instance in use.
-    /// </summary>
-    private readonly IActionFunctions _actionFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="IConfigFunctions"/> instance in use.
-    /// </summary>
-    private readonly IConfigFunctions _configFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="IContainerFunctions"/> instance in use.
-    /// </summary>
-    private readonly IContainerFunctions _containerFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="ICreatureFunctions"/> instance in use.
-    /// </summary>
-    private readonly ICreatureFunctions _creatureFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="IEnumFunctions"/> instance in use.
-    /// </summary>
-    private readonly IEnumFunctions _enumFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="IGameFunctions"/> instance in use.
-    /// </summary>
-    private readonly IGameFunctions _gameFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="IGlobalFunctions"/> instance in use.
-    /// </summary>
-    private readonly IGlobalFunctions _globalFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="IItemFunctions"/> instance in use.
-    /// </summary>
-    private readonly IItemFunctions _itemFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="IItemTypeFunctions"/> instance in use.
-    /// </summary>
-    private readonly IItemTypeFunctions _itemTypeFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="ILoggerFunctions"/> instance in use.
-    /// </summary>
-    private readonly ILoggerFunctions _loggerFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="IMonsterFunctions"/> instance in use.
-    /// </summary>
-    private readonly IMonsterFunctions _monsterFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="INpcFunctions"/> instance in use.
-    /// </summary>
-    private readonly INpcFunctions _npcFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="IPlayerFunctions"/> instance in use.
-    /// </summary>
-    private readonly IPlayerFunctions _playerFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="IPositionFunctions"/> instance in use.
-    /// </summary>
-    private readonly IPositionFunctions _positionFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="ITalkActionFunctions"/> instance in use.
-    /// </summary>
-    private readonly ITalkActionFunctions _talkActionFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="ITeleportFunctions"/> instance in use.
-    /// </summary>
-    private readonly ITeleportFunctions _teleportFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="ITileFunctions"/> instance in use.
-    /// </summary>
-    private readonly ITileFunctions _tileFunctions;
-
-    /// <summary>
-    /// A reference to the <see cref="ServerConfiguration"/> instance in use.
-    /// </summary>
-    private readonly ServerConfiguration _serverConfiguration;
-
-    #endregion
-
     #region Constructors
 
     public LuaGameManager(
@@ -199,7 +72,142 @@ public class LuaGameManager : ILuaGameManager
 
     #endregion
 
-    #region Public Methods 
+    #region Private Methods
+
+    private void ModulesLoadHelper(bool loaded, string moduleName)
+    {
+        _logger.Information($"Loaded {moduleName}");
+        if (!loaded)
+            _logger.Error(string.Format("Cannot load: {0}", moduleName));
+    }
+
+    #endregion
+
+    #region Dependency Injections
+
+    /// <summary>
+    ///     A reference to the <see cref="ILogger" /> instance in use.
+    /// </summary>
+    private readonly ILogger _logger;
+
+    /// <summary>
+    ///     A reference to the <see cref="ILuaEnvironment" /> instance in use.
+    /// </summary>
+    private readonly ILuaEnvironment _luaEnviroment;
+
+    /// <summary>
+    ///     A reference to the <see cref="IConfigManager" /> instance in use.
+    /// </summary>
+    private readonly IConfigManager _configManager;
+
+    /// <summary>
+    ///     A reference to the <see cref="IScripts" /> instance in use.
+    /// </summary>
+    private readonly IScripts _scripts;
+
+    /// <summary>
+    ///     A reference to the <see cref="IActions" /> instance in use.
+    /// </summary>
+    private readonly IActions _actions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ITalkActions" /> instance in use.
+    /// </summary>
+    private readonly ITalkActions _talkActions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IActionFunctions" /> instance in use.
+    /// </summary>
+    private readonly IActionFunctions _actionFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IConfigFunctions" /> instance in use.
+    /// </summary>
+    private readonly IConfigFunctions _configFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IContainerFunctions" /> instance in use.
+    /// </summary>
+    private readonly IContainerFunctions _containerFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ICreatureFunctions" /> instance in use.
+    /// </summary>
+    private readonly ICreatureFunctions _creatureFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IEnumFunctions" /> instance in use.
+    /// </summary>
+    private readonly IEnumFunctions _enumFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IGameFunctions" /> instance in use.
+    /// </summary>
+    private readonly IGameFunctions _gameFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IGlobalFunctions" /> instance in use.
+    /// </summary>
+    private readonly IGlobalFunctions _globalFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IItemFunctions" /> instance in use.
+    /// </summary>
+    private readonly IItemFunctions _itemFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IItemTypeFunctions" /> instance in use.
+    /// </summary>
+    private readonly IItemTypeFunctions _itemTypeFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ILoggerFunctions" /> instance in use.
+    /// </summary>
+    private readonly ILoggerFunctions _loggerFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IMonsterFunctions" /> instance in use.
+    /// </summary>
+    private readonly IMonsterFunctions _monsterFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="INpcFunctions" /> instance in use.
+    /// </summary>
+    private readonly INpcFunctions _npcFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IPlayerFunctions" /> instance in use.
+    /// </summary>
+    private readonly IPlayerFunctions _playerFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IPositionFunctions" /> instance in use.
+    /// </summary>
+    private readonly IPositionFunctions _positionFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ITalkActionFunctions" /> instance in use.
+    /// </summary>
+    private readonly ITalkActionFunctions _talkActionFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ITeleportFunctions" /> instance in use.
+    /// </summary>
+    private readonly ITeleportFunctions _teleportFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ITileFunctions" /> instance in use.
+    /// </summary>
+    private readonly ITileFunctions _tileFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ServerConfiguration" /> instance in use.
+    /// </summary>
+    private readonly ServerConfiguration _serverConfiguration;
+
+    #endregion
+
+    #region Public Methods
 
     public void Start()
     {
@@ -236,11 +244,13 @@ public class LuaGameManager : ILuaGameManager
         _playerFunctions.Init(luaState);
         _teleportFunctions.Init(luaState);
 
-        ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), $"config.lua");
+        ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), "config.lua");
 
-        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/core.lua", "core.lua"), "core.lua");
+        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/core.lua", "core.lua"),
+            "core.lua");
 
-        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts", false, false), "/Data/LuaJit/scripts");
+        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts", false, false),
+            "/Data/LuaJit/scripts");
     }
 
     public bool PlayerSaySpell(IPlayer player, SpeechType type, string words)
@@ -276,18 +286,20 @@ public class LuaGameManager : ILuaGameManager
                 null,
                 pos,
                 false);
-        else
-            _logger.Warning($"Action with item id {item.ServerId} not found.");
+        _logger.Warning($"Action with item id {item.ServerId} not found.");
 
         return false;
     }
 
-    public bool PlayerUseItemWithCreature(IPlayer player, Location fromPos, byte fromStackPos, ICreature creature, IItem item)
+    public bool PlayerUseItemWithCreature(IPlayer player, Location fromPos, byte fromStackPos, ICreature creature,
+        IItem item)
     {
-        return PlayerUseItemEx(player, fromPos, creature.Location, creature.Tile.GetCreatureStackPositionIndex(player), item, false, creature);
+        return PlayerUseItemEx(player, fromPos, creature.Location, creature.Tile.GetCreatureStackPositionIndex(player),
+            item, false, creature);
     }
 
-    public bool PlayerUseItemEx(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, bool isHotkey, IThing target)
+    public bool PlayerUseItemEx(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item,
+        bool isHotkey, IThing target)
     {
         var action = _actions.GetAction(item);
 
@@ -299,21 +311,9 @@ public class LuaGameManager : ILuaGameManager
                 target,
                 toPos,
                 isHotkey);
-        else
-            _logger.Warning($"Action with item id {item.ServerId} not found.");
+        _logger.Warning($"Action with item id {item.ServerId} not found.");
 
         return false;
-    }
-
-    #endregion
-
-    #region Private Methods
-
-    private void ModulesLoadHelper(bool loaded, string moduleName)
-    {
-        _logger.Information($"Loaded {moduleName}");
-        if (!loaded)
-            _logger.Error(string.Format("Cannot load: {0}", moduleName));
     }
 
     #endregion

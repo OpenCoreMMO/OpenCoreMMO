@@ -12,11 +12,12 @@ namespace NeoServer.Server.Events.Player;
 
 public class PlayerChangedInventoryEventHandler
 {
-    private readonly ICoinTypeStore _coinTypeStore;
     private readonly ClientConfiguration _clientConfiguration;
+    private readonly ICoinTypeStore _coinTypeStore;
     private readonly IGameServer game;
 
-    public PlayerChangedInventoryEventHandler(IGameServer game, ICoinTypeStore coinTypeStore, ClientConfiguration clientConfiguration)
+    public PlayerChangedInventoryEventHandler(IGameServer game, ICoinTypeStore coinTypeStore,
+        ClientConfiguration clientConfiguration)
     {
         this.game = game;
         _coinTypeStore = coinTypeStore;
@@ -33,7 +34,7 @@ public class PlayerChangedInventoryEventHandler
 
         connection.OutgoingPackets.Enqueue(new PlayerInventoryItemPacket(player.Inventory, slot)
         {
-            ShowItemDescription = connection.OtcV8Version > 0  && _clientConfiguration.OtcV8.GameItemTooltip
+            ShowItemDescription = connection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip
         });
 
         if (player.Shopping)

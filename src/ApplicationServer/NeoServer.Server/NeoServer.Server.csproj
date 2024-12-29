@@ -7,21 +7,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Remove="Items\**" />
-        <EmbeddedResource Remove="Items\**" />
-        <None Remove="Items\**" />
+        <Compile Remove="Items\**"/>
+        <EmbeddedResource Remove="Items\**"/>
+        <None Remove="Items\**"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="BouncyCastle.NetCore" Version="2.2.1" />
-        <PackageReference Include="Serilog" Version="4.2.0" />
+        <PackageReference Include="BouncyCastle.NetCore" Version="2.2.1"/>
+        <PackageReference Include="Serilog" Version="4.2.0"/>
 
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj" />
-        <ProjectReference Include="..\..\NetworkingServer\NeoServer.Networking.Packets\NeoServer.Networking.Packets.csproj" />
-        <ProjectReference Include="..\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj" />
+        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj"/>
+        <ProjectReference Include="..\..\NetworkingServer\NeoServer.Networking.Packets\NeoServer.Networking.Packets.csproj"/>
+        <ProjectReference Include="..\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj"/>
     </ItemGroup>
 
 </Project>

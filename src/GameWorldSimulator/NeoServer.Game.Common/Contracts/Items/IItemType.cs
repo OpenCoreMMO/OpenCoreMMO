@@ -34,6 +34,13 @@ public interface IItemType
     IItemAttributeList OnUse { get; }
     DamageType DamageType { get; }
     EffectT EffectT { get; }
+
+    ushort Charges
+        => Attributes.GetAttribute<ushort>(ItemAttribute.Charges);
+
+    ushort Count
+        => Attributes.GetAttribute<ushort>(ItemAttribute.Count);
+
     void SetArticle(string article);
     void SetPlural(string plural);
 
@@ -44,26 +51,32 @@ public interface IItemType
     void SetGroupIfNone();
 
     bool IsMovable()
-        => Flags.Contains(ItemFlag.Movable);
+    {
+        return Flags.Contains(ItemFlag.Movable);
+    }
 
     bool IsFluidContainer()
-        => Flags.Contains(ItemFlag.LiquidContainer);
+    {
+        return Flags.Contains(ItemFlag.LiquidContainer);
+    }
 
     bool IsSplash()
-        => Group == ItemGroup.Splash;
+    {
+        return Group == ItemGroup.Splash;
+    }
 
     bool IsStackable()
-        => Group == ItemGroup.Splash;
+    {
+        return Group == ItemGroup.Splash;
+    }
 
     bool IsKey()
-        => Flags.Contains(ItemFlag.Key);
-
-    ushort Charges
-        => Attributes.GetAttribute<ushort>(ItemAttribute.Charges);
-
-    ushort Count
-        => Attributes.GetAttribute<ushort>(ItemAttribute.Count);
+    {
+        return Flags.Contains(ItemFlag.Key);
+    }
 
     bool HasSubType()
-        => IsFluidContainer() || IsSplash() || IsStackable() || Charges != 0;
+    {
+        return IsFluidContainer() || IsSplash() || IsStackable() || Charges != 0;
+    }
 }

@@ -7,13 +7,14 @@ public class AddItemContainerPacket : OutgoingPacket
 {
     private readonly byte containerId;
     private readonly IItem item;
-    public required bool ShowItemDescription { get; init; }
 
     public AddItemContainerPacket(byte containerId, IItem item)
     {
         this.containerId = containerId;
         this.item = item;
     }
+
+    public required bool ShowItemDescription { get; init; }
 
 
     public override void WriteToMessage(INetworkMessage message)

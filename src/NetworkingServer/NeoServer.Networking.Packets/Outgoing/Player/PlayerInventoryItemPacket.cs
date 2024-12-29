@@ -8,13 +8,14 @@ public class PlayerInventoryItemPacket : OutgoingPacket
 {
     private readonly IInventory inventory;
     private readonly Slot slot;
-    public required bool ShowItemDescription { get; init; }
 
     public PlayerInventoryItemPacket(IInventory inventory, Slot slot)
     {
         this.inventory = inventory;
         this.slot = slot;
     }
+
+    public required bool ShowItemDescription { get; init; }
 
     public override void WriteToMessage(INetworkMessage message)
     {

@@ -2,20 +2,20 @@
 
 public class ArgManager
 {
-    #region Members
+    #region Properties
+
+    public string ExePath { get; set; }
 
     #endregion
 
     #region Instance
 
-    private static ArgManager _instance = null;
-    public static ArgManager GetInstance() => _instance == null ? _instance = new ArgManager() : _instance;
+    private static ArgManager _instance;
 
-    #endregion
-
-    #region Properties
-
-    public string ExePath { get; set; }
+    public static ArgManager GetInstance()
+    {
+        return _instance == null ? _instance = new ArgManager() : _instance;
+    }
 
     #endregion
 }

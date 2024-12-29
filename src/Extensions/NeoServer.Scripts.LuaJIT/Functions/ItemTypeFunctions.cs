@@ -8,6 +8,7 @@ namespace NeoServer.Scripts.LuaJIT.Functions;
 public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
 {
     private static IItemTypeStore _itemTypeStore;
+
     public ItemTypeFunctions(IItemTypeStore itemTypeStore) : base(nameof(ItemTypeFunctions))
     {
         _itemTypeStore = itemTypeStore;
@@ -33,12 +34,12 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
         // ItemType(id or name)
         ushort id = 0;
         IItemType itemType = null;
-        if(Lua.IsNumber(L, 2))
+        if (Lua.IsNumber(L, 2))
         {
             id = GetNumber<ushort>(L, 2);
             itemType = _itemTypeStore.Get(id);
         }
-        else 
+        else
         {
             var name = GetString(L, 2);
             itemType = _itemTypeStore.GetByName(name);

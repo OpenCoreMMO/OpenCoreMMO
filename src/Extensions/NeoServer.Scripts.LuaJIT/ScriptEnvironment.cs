@@ -1,27 +1,28 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
+﻿using System.ComponentModel;
+using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
-using System.ComponentModel;
+using NeoServer.Game.Common.Item;
 
 namespace NeoServer.Scripts.LuaJIT;
 
 public class ScriptEnvironment
 {
-    // script file id
-    private int scriptId;
+    // local item map
+    private readonly Dictionary<uint, IThing> localMap = new();
+
+    // temporary item list
+    private readonly Dictionary<ScriptEnvironment, IItem> tempItems = new();
     private int callbackId;
-    private bool timerEvent;
+
+    // for npc scripts
+    private INpc curNpc;
+    private uint lastUID;
 
     private LuaScriptInterface luaScriptInterface;
 
-    // local item map
-    private Dictionary<uint, IThing> localMap = new Dictionary<uint, IThing>();
-    private uint lastUID;
-
-    // temporary item list
-    private Dictionary<ScriptEnvironment, IItem> tempItems = new Dictionary<ScriptEnvironment, IItem>();
-
-    // for npc scripts
-    private INpc curNpc = null;
+    // script file id
+    private int scriptId;
+    private bool timerEvent;
 
     public ScriptEnvironment()
     {
@@ -54,10 +55,7 @@ public class ScriptEnvironment
         if (callbackId != 0)
         {
             // nested callbacks are not allowed
-            if (luaScriptInterface != null)
-            {
-                luaScriptInterface.ReportError("Nested callbacks!");
-            }
+            if (luaScriptInterface != null) luaScriptInterface.ReportError("Nested callbacks!");
             return false;
         }
 
@@ -81,7 +79,8 @@ public class ScriptEnvironment
         timerEvent = true;
     }
 
-    public void GetEventInfo(out int retScriptId, out LuaScriptInterface retScriptInterface, out int retCallbackId, out bool retTimerEvent)
+    public void GetEventInfo(out int retScriptId, out LuaScriptInterface retScriptInterface, out int retCallbackId,
+        out bool retTimerEvent)
     {
         retScriptId = scriptId;
         retScriptInterface = luaScriptInterface;
@@ -91,28 +90,15 @@ public class ScriptEnvironment
 
     public uint AddThing(IThing thing)
     {
-        if (thing == null)
-        {
-            return 0;
-        }
+        if (thing == null) return 0;
 
-        if (thing is ICreature creature)
-        {
-            return creature.CreatureId;
-        }
+        if (thing is ICreature creature) return creature.CreatureId;
 
-        if (thing is IItem item && item.Metadata.Attributes.HasAttribute(Game.Common.Item.ItemAttribute.UniqueId))
-        {
-            return item.UniqueId;
-        }
+        if (thing is IItem item && item.Metadata.Attributes.HasAttribute(ItemAttribute.UniqueId)) return item.UniqueId;
 
         foreach (var it in localMap)
-        {
             if (it.Value == thing)
-            {
                 return it.Key;
-            }
-        }
 
         localMap[++lastUID] = thing;
         return lastUID;
@@ -146,7 +132,7 @@ public class ScriptEnvironment
             //return null;
         }
 
-        if (localMap.TryGetValue(uid, out IThing thing))
+        if (localMap.TryGetValue(uid, out var thing))
             return thing;
 
         return null;
@@ -175,12 +161,10 @@ public class ScriptEnvironment
     public void RemoveItemByUID(uint uid)
     {
         if (uid <= ushort.MaxValue)
-        {
             //g_game().removeUniqueItem(static_cast<uint16_t>(uid));
             return;
-        }
 
-        localMap.Remove(uid, out var _);
+        localMap.Remove(uid, out _);
     }
 
     public void AddTempItem(IItem item)
@@ -191,13 +175,11 @@ public class ScriptEnvironment
     public void RemoveTempItem(IItem item)
     {
         foreach (var it in tempItems)
-        {
             if (it.Value == item)
             {
                 tempItems.Remove(it.Key);
                 break;
             }
-        }
     }
 
     public void SetNpc(INpc npc)

@@ -8,13 +8,14 @@ public class OpenContainerPacket : OutgoingPacket
 {
     private readonly IContainer container;
     private readonly byte containerId;
-    public required bool WithDescription { get; init; }
 
     public OpenContainerPacket(IContainer container, byte containerId)
     {
         this.container = container;
         this.containerId = containerId;
     }
+
+    public required bool WithDescription { get; init; }
 
     public override void WriteToMessage(INetworkMessage message)
     {

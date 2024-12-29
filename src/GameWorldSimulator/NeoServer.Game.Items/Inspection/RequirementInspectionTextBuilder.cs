@@ -36,7 +36,7 @@ public static class RequirementInspectionTextBuilder
         for (var i = 0; i < allVocations.Length; i++)
         {
             var vocation = allVocations[i];
-         
+
             text.Append($"{vocation.ToLower()}s");
             var lastItem = i == allVocations.Length - 1;
             var penultimate = i == allVocations.Length - 2;

@@ -1,6 +1,5 @@
 ﻿using System;
 using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Inspection;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.Items.Types.Containers;
@@ -43,7 +42,10 @@ public abstract class BaseTile : ITile
 
     public string Name { get; }
 
-    public string GetLookText(bool isClose = false, bool showInternalDetails = false) => string.Empty;
+    public string GetLookText(bool isClose = false, bool showInternalDetails = false)
+    {
+        return string.Empty;
+    }
 
     public void Use(IPlayer usedBy)
     {

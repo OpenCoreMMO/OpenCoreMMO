@@ -14,15 +14,15 @@ public enum ItemPropertyType
     CONST_PROP_IMMOVABLEBLOCKPATH,
     CONST_PROP_IMMOVABLENOFIELDBLOCKPATH,
     CONST_PROP_NOFIELDBLOCKPATH,
-    CONST_PROP_SUPPORTHANGABLE,
-};
+    CONST_PROP_SUPPORTHANGABLE
+}
 
 public enum Attr_ReadValueType
 {
     ATTR_READ_CONTINUE,
     ATTR_READ_ERROR,
-    ATTR_READ_END,
-};
+    ATTR_READ_END
+}
 
 public enum ReturnValueType : byte
 {
@@ -99,8 +99,8 @@ public enum ReturnValueType : byte
     RETURNVALUE_YOUCANNOTTRADETHISHOUSE,
     RETURNVALUE_YOUDONTHAVEREQUIREDPROFESSION,
     RETURNVALUE_ITEMCANNOTBEMOVEDTHERE,
-    RETURNVALUE_YOUCANNOTUSETHISBED,
-};
+    RETURNVALUE_YOUCANNOTUSETHISBED
+}
 
 public enum ItemGroupType
 {
@@ -112,7 +112,7 @@ public enum ItemGroupType
     ITEM_GROUP_FLUID,
 
     ITEM_GROUP_LAST
-};
+}
 
 public enum ItemType
 {
@@ -167,19 +167,20 @@ public enum ItemType
     ITEMTypeYPE_LADDER,
     ITEMTypeYPE_DUMMY,
 
-    ITEMTypeYPE_LAST,
-};
+    ITEMTypeYPE_LAST
+}
 
 public enum TradeEventsType
 {
     ONTypeRADETypeRANSFER,
-    ONTypeRADE_CANCEL,
-};
+    ONTypeRADE_CANCEL
+}
 
 public enum AttrType
 {
     // ATTR_NONE = 0 (last enum)
     ATTR_STORE = 1,
+
     // ATTR_EXT_FILE = 2,
     ATTRTypeILE_FLAGS = 3,
     ATTR_ACTION_ID = 4,
@@ -189,8 +190,10 @@ public enum AttrType
     ATTRTypeELE_DEST = 8,
     ATTR_ITEM = 9,
     ATTR_DEPOT_ID = 10,
+
     // ATTR_EXT_SPAWN_FILE = 11,
     ATTR_RUNE_CHARGES = 12,
+
     // ATTR_EXT_HOUSE_FILE = 13,
     ATTR_HOUSEDOORID = 14,
     ATTR_COUNT = 15,
@@ -224,7 +227,7 @@ public enum AttrType
 
     // Always the last
     ATTR_NONE = 0
-};
+}
 
 public enum ImbuementType : long
 {
@@ -247,7 +250,7 @@ public enum ImbuementType : long
     IMBUEMENT_SKILLBOOST_DISTANCE = 15,
     IMBUEMENT_SKILLBOOST_MAGIC_LEVEL = 16,
     IMBUEMENT_INCREASE_CAPACITY = 17
-};
+}
 
 public enum ContainerCategoryType : byte
 {
@@ -372,7 +375,7 @@ public enum ContainerCategoryType : byte
     Walls,
     Wands,
     Windows
-};
+}
 
 public enum SlotPositionBits : uint
 {
@@ -390,7 +393,7 @@ public enum SlotPositionBits : uint
     SLOTP_DEPOT = 1 << 10,
     SLOTPTypeWO_HAND = 1 << 11,
     SLOTP_HAND = SLOTP_LEFT | SLOTP_RIGHT
-};
+}
 
 public enum TileFlagsType : uint
 {
@@ -421,8 +424,10 @@ public enum TileFlagsType : uint
     TILESTATE_NOFIELDBLOCKPATH = 1 << 22,
     TILESTATE_SUPPORTS_HANGABLE = 1 << 23,
 
-    TILESTATE_FLOORCHANGE = TILESTATE_FLOORCHANGE_DOWN | TILESTATE_FLOORCHANGE_NORTH | TILESTATE_FLOORCHANGE_SOUTH | TILESTATE_FLOORCHANGE_EAST | TILESTATE_FLOORCHANGE_WEST | TILESTATE_FLOORCHANGE_SOUTH_ALT | TILESTATE_FLOORCHANGE_EAST_ALT,
-};
+    TILESTATE_FLOORCHANGE = TILESTATE_FLOORCHANGE_DOWN | TILESTATE_FLOORCHANGE_NORTH | TILESTATE_FLOORCHANGE_SOUTH |
+                            TILESTATE_FLOORCHANGE_EAST | TILESTATE_FLOORCHANGE_WEST | TILESTATE_FLOORCHANGE_SOUTH_ALT |
+                            TILESTATE_FLOORCHANGE_EAST_ALT
+}
 
 public enum ZoneTypeType
 {
@@ -430,8 +435,8 @@ public enum ZoneTypeType
     ZONE_NOPVP,
     ZONE_PVP,
     ZONE_NOLOGOUT,
-    ZONE_NORMAL,
-};
+    ZONE_NORMAL
+}
 
 public enum CylinderFlagsType : uint
 {
@@ -442,16 +447,16 @@ public enum CylinderFlagsType : uint
     FLAG_PATHFINDING = 1 << 4, // An additional check is done for floor changing/teleport items
     FLAG_IGNOREFIELDDAMAGE = 1 << 5, // Bypass field damage checks
     FLAG_IGNORENOTMOVEABLE = 1 << 6, // Bypass check for mobility
-    FLAG_IGNOREAUTOSTACK = 1 << 7, // queryDestination will not try to stack items together
-};
+    FLAG_IGNOREAUTOSTACK = 1 << 7 // queryDestination will not try to stack items together
+}
 
 public enum CylinderLinkType
 {
     LINK_OWNER,
     LINK_PARENT,
     LINKTypeOPPARENT,
-    LINK_NEAR,
-};
+    LINK_NEAR
+}
 
 public enum ItemParseAttributesType
 {
@@ -568,6 +573,7 @@ public enum ItemParseAttributesType
     ITEM_PARSE_BLOCK_SOLID,
     ITEM_PARSE_ALLOWDISTREAD,
     ITEM_PARSE_STACKSIZE,
+
     // 12.72 modifiers
     ITEM_PARSE_DEATHMAGICLEVELPOINTS,
     ITEM_PARSE_ENERGYMAGICLEVELPOINTS,
@@ -584,11 +590,11 @@ public enum ItemParseAttributesType
     ITEM_PARSE_CLEAVEPERCENT,
     ITEM_PARSE_REFLECTPERCENTALL,
     ITEM_PARSE_REFLECTDAMAGE,
-    ITEM_PARSE_PRIMARYTYPE,
-};
+    ITEM_PARSE_PRIMARYTYPE
+}
 
 public struct ImbuementInfo
 {
     //Imbuement* imbuement;
     //uint duration = 0;
-};
+}

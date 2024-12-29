@@ -1,8 +1,5 @@
-﻿using System.Linq;
-using FluentAssertions;
-using NeoServer.Data.InMemory.DataStores;
+﻿using FluentAssertions;
 using NeoServer.Game.Common.Item;
-using NeoServer.Game.Creatures.Vocation;
 using NeoServer.Game.Items.Inspection;
 using NeoServer.Game.Tests.Helpers;
 using Xunit;
@@ -15,7 +12,8 @@ public class RequirementInspectionTextBuilderTests
     [InlineData("")]
     [InlineData("It can only be wielded properly by knights and paladins.", "knight", "paladin")]
     [InlineData("It can only be wielded properly by knights, paladins and sorcerers.", "knight", "paladin", "sorcerer")]
-    [InlineData("It can only be wielded properly by knights, paladins, sorcerers and druids.", "knight", "paladin", "sorcerer", "druid")]
+    [InlineData("It can only be wielded properly by knights, paladins, sorcerers and druids.", "knight", "paladin",
+        "sorcerer", "druid")]
     [InlineData("It can only be wielded properly by knights, sorcerers and druids.", "knight", "sorcerer", "druid")]
     public void Add_HasVocations_ReturnText(string expected, params string[] vocations)
     {
@@ -80,7 +78,8 @@ public class RequirementInspectionTextBuilderTests
     [Theory]
     [InlineData("It can only be used properly by knights of level 10 or higher.", 10, "knight")]
     [InlineData("It can only be used properly by knights and paladins of level 1 or higher.", 1, "knight", "paladin")]
-    [InlineData("It can only be used properly by knights, paladins and sorcerers of level 200 or higher.", 200, "knight", "paladin", "sorcerer")]
+    [InlineData("It can only be used properly by knights, paladins and sorcerers of level 200 or higher.", 200,
+        "knight", "paladin", "sorcerer")]
     [InlineData("", 0)]
     public void Build_UsableHasLevelAndVocations_ReturnText(string expected, int level, params string[] vocations)
     {
@@ -97,8 +96,10 @@ public class RequirementInspectionTextBuilderTests
 
     [Theory]
     [InlineData("It can only be consumed properly by knights of level 10 or higher.", 10, "knight")]
-    [InlineData("It can only be consumed properly by knights and paladins of level 1 or higher.", 1, "knight", "paladin")]
-    [InlineData("It can only be consumed properly by knights, paladins and sorcerers of level 200 or higher.", 200, "knight", "paladin", "sorcerer")]
+    [InlineData("It can only be consumed properly by knights and paladins of level 1 or higher.", 1, "knight",
+        "paladin")]
+    [InlineData("It can only be consumed properly by knights, paladins and sorcerers of level 200 or higher.", 200,
+        "knight", "paladin", "sorcerer")]
     [InlineData("", 0)]
     public void Build_ConsumableHasLevelAndVocations_ReturnText(string expected, int level, params string[] vocations)
     {

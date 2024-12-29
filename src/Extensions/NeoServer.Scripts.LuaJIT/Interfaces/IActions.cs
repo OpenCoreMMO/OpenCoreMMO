@@ -3,7 +3,7 @@ using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Interfaces;
 
 public interface IActions
 {
@@ -19,7 +19,8 @@ public interface IActions
 
     public bool UseItem(IPlayer player, Location pos, byte index, IItem item, bool isHotkey);
 
-    public bool UseItemEx(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, bool isHotkey, ICreature creature = null);
+    public bool UseItemEx(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, bool isHotkey,
+        ICreature creature = null);
 
     public ReturnValueType CanUse(IPlayer player, Location pos);
 
