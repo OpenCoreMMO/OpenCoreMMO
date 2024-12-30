@@ -14,7 +14,7 @@ public static class LuaInjection
         builder.AddSingleton<LuaGlobalRegister>();
 
         //LuaJIT
-        builder.AddSingleton<ILuaGameManager, LuaGameManager>();
+        builder.AddSingleton<IScriptGameManager, LuaScriptGameManager>();
 
         return builder;
     }

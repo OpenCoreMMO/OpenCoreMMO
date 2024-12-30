@@ -79,22 +79,24 @@ To connect to the self-hosted server for development, please use the following c
 - NPC System: :heavy_check_mark:
 - Lua Scripting: :heavy_check_mark:
 - C# Extensions: :heavy_check_mark:
+- Revscript LuaJIT Scripting: :warning:
 - In-Memory Cache: :warning:
 
 ## Technologies
 
 * C#
 * .Net 9
-* Database support: InMemory, MySQL, and SQLite
+* Database support: InMemory, PostgreSQL, and SQLite
 * Console Debug Logging
 * XUnit Testing
 
- [![My Skills](https://skillicons.dev/icons?i=dotnet,cs,docker,git,mysql,sqlite)](https://skillicons.dev)
+ [![My Skills](https://skillicons.dev/icons?i=dotnet,cs,docker,git,postgresql,sqlite,lua)](https://skillicons.dev)
 
 ## Links
 
 * Documentation: https://caioavidal.gitbook.io/opencoremmo/
 * Discord Invite: https://discord.gg/Kazq9z2
+* Revscript (LuaJIT) Functions Readme: https://github.com/caioavidal/OpenCoreMMO/tree/develop/data/LuaJit
 
 ## Author
 

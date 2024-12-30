@@ -218,7 +218,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
 
     public static int LuaTileHasProperty(LuaState L)
     {
-        // tile:hasProperty(property[, item])
+        // tile:hasProperty(property, item)
         var tile = GetUserdata<ITile>(L, 1);
 
         if (tile == null)
@@ -262,7 +262,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
 
     public static int LuaTileQueryAdd(LuaState L)
     {
-        // tile:queryAdd(thing[, flags])
+        // tile:queryAdd(thing, flags)
         //todo: implements flags
 
         var tile = GetUserdata<ITile>(L, 1);

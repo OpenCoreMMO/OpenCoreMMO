@@ -172,6 +172,24 @@ public class Inventory : IInventory
         return Result<OperationResultList<IItem>>.Ok(new OperationResultList<IItem>(removedThing));
     }
 
+    public Result<IItem> RemoveItem(ushort itemId, byte amount, bool ignoreEquipped)
+    {
+        var (slot, item) = InventoryMap.GetSlotAndItemFromItemId(itemId);
+
+        if (slot != Slot.None && slot != Slot.Backpack && !ignoreEquipped)
+            return Result<IItem>.Fail(Common.InvalidOperation.NotPossible);
+
+        if (slot == Slot.Backpack)
+        {
+            var backpack = InventoryMap.GetItem(Slot.Backpack);
+            var backpackContainer = (IContainer)backpack.Item1;
+            backpackContainer.RemoveItem(item, amount);
+            return Result<IItem>.Ok(item);
+        }
+
+        return RemoveItem(slot, amount);
+    }
+
     #endregion
 
     #region Event Handlers

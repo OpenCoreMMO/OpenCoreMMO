@@ -30,6 +30,7 @@ public interface IItemType
     Slot BodyPosition { get; }
     float Weight { get; }
     ushort TransformTo { get; }
+    ushort DestroyTo { get; }
     string Plural { get; }
     IItemAttributeList OnUse { get; }
     DamageType DamageType { get; }

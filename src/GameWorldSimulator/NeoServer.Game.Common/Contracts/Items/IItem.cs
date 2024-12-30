@@ -61,6 +61,7 @@ public interface IItem : IThing, IHasDecay
     float Weight { get; }
     IThing Parent { get; }
     string IThing.Name => Metadata.Name;
+    string Article => Metadata.Article;
     void UpdateMetadata(IItemType newMetadata);
     void MarkAsDeleted();
 

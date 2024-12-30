@@ -80,14 +80,7 @@ public class Scripts : IScripts
         if (_scriptInterface.GetLuaState().pointer == 0)
             _scriptInterface.InitState();
 
-        var dir = Directory.GetCurrentDirectory();
-
-        if (!string.IsNullOrEmpty(ArgManager.GetInstance().ExePath))
-            dir = ArgManager.GetInstance().ExePath;
-
-        dir = Path.Combine(dir, loadPath);
-
-        if (!Directory.Exists(dir) || !Directory.GetDirectories(dir).Any())
+        if (!Directory.Exists(loadPath))
         {
             _logger.Error($"Can not load folder {loadPath}");
             return false;
@@ -95,7 +88,12 @@ public class Scripts : IScripts
 
         string lastDirectory = null;
 
-        foreach (var filePath in Directory.GetFiles(dir, "*.lua", SearchOption.AllDirectories))
+        var searchOption = SearchOption.AllDirectories;
+
+        if (!Directory.GetDirectories(loadPath).Any())
+            searchOption = SearchOption.TopDirectoryOnly;
+
+        foreach (var filePath in Directory.GetFiles(loadPath, "*.lua", searchOption))
         {
             var fileInfo = new FileInfo(filePath);
             var fileFolder = fileInfo.DirectoryName?.Split(Path.DirectorySeparatorChar).LastOrDefault();

@@ -63,7 +63,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
     private static int LuaGameCreateItem(LuaState L)
     {
-        // Game.createItem(itemId or name[, count[, position]])
+        // Game.createItem(itemId or name, count, position)
 
         ushort itemId;
         if (Lua.IsNumber(L, 1))
@@ -115,9 +115,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
             return 1;
         }
 
-        var map = Server.Helpers.IoC.GetInstance<IMap>();
-
-        for (var i = 1; i <= itemCount; ++i)
+        for (int i = 1; i <= itemCount; ++i)
         {
             var stackCount = subType;
             if (it.IsStackable())
@@ -135,7 +133,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
             if (position.X != 0)
             {
-                var tile = map.GetTile(position);
+                var tile = _map.GetTile(position);
                 if (tile == null)
                 {
                     if (!hasTable) Lua.PushNil(L);
@@ -176,7 +174,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
     private static int LuaGameCreateMonster(LuaState L)
     {
-        // Game.createMonster(monsterName, position[, extended = false[, force = false[, master = nil]]])
+        // Game.createMonster(monsterName, position, extended = false, force = false, master = nil)
         //todo: implements force parameter
 
         var monsterName = GetString(L, 1);
@@ -257,7 +255,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
     private static int LuaGameCreateNpc(LuaState L)
     {
-        // Game.createNpc(npcName, position[, extended = false[, force = false]])
+        // Game.createNpc(npcName, position, extended = false, force = false)
         //todo: implements force parameter
 
         var ncpName = GetString(L, 1);
@@ -332,10 +330,11 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
             switch (reloadType)
             {
                 case ReloadType.RELOAD_TYPE_SCRIPTS:
-                {
-                    var dir = AppContext.BaseDirectory + _serverConfiguration.DataLuaJit;
-                    _scripts.ClearAllScripts();
-                    _scripts.LoadScripts($"{dir}/scripts", false, true);
+                    {
+                        var dir = AppContext.BaseDirectory + _serverConfiguration.DataLuaJit;
+                        _scripts.ClearAllScripts();
+                        _scripts.LoadScripts($"{dir}/scripts", false, true);
+                        _scripts.LoadScripts($"{dir}/scripts/libs", true, true);
 
                     Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
                 }

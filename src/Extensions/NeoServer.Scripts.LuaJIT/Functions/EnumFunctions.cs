@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Location;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -19,10 +20,14 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
     {
         RegisterEnumCustom<Direction>(L);
         //RegisterEnum<DirectionType>(L);
+        RegisterEnum<ItemAttributeType>(L);
+        RegisterEnum<ItemIdType>(L);
         RegisterEnum<MagicEffectClassesType>(L);
         RegisterEnum<MessageClassesType>(L);
         RegisterEnum<ReloadType>(L);
         RegisterEnum<ReturnValueType>(L);
+        //RegisterEnum<SkillsType>(L);
+        RegisterEnumCustom<SkillType>(L);
         RegisterEnum<TileFlagsType>(L);
     }
 
@@ -40,7 +45,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
 
     private static void RegisterEnumCustom<T>(LuaState L) where T : Enum
     {
-        var prefix = typeof(T).Name.ToUpperInvariant() + "_";
+        string prefix = typeof(T).Name.Replace("Type", "").ToUpperInvariant() + "_"; 
         foreach (var item in Enum.GetValues(typeof(T)))
         {
             var name = prefix + item.ToString().ToUpperInvariant();

@@ -27,6 +27,7 @@ public class NeoContext : DbContext
     public DbSet<WorldEntity> Worlds { get; set; }
     public DbSet<PlayerQuestEntity> PlayerQuests { get; set; }
     public DbSet<PlayerOutfitAddonEntity> PlayerOutfitAddons { get; set; }
+    public DbSet<PlayerStorageEntity> PlayerStorages { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -63,6 +64,7 @@ public class NeoContext : DbContext
         modelBuilder.ApplyConfiguration(new PlayerOutfitAddonEntityConfiguration());
         modelBuilder.ApplyConfiguration(new AccountVipListEntityConfiguration());
         modelBuilder.ApplyConfiguration(new GuildMembershipEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new PlayerStorageEntityConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

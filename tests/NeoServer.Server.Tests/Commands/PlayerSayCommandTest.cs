@@ -20,7 +20,7 @@ public class PlayerSayCommandTest
         var player = new Mock<IPlayer>();
         var connection = new Mock<IConnection>();
         var network = new Mock<IReadOnlyNetworkMessage>();
-        var luaGameManager = new Mock<ILuaGameManager>();
+        var luaGameManager = new Mock<IScriptGameManager>();
 
         var playerSayPacket = new Mock<PlayerSayPacket>(network.Object);
         playerSayPacket.SetupGet(x => x.TalkType).Returns(SpeechType.Private);

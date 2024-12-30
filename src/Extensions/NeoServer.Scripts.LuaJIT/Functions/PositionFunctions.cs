@@ -33,8 +33,8 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
 
     public static int LuaCreatePosition(LuaState L)
     {
-        // Position([x = 0[, y = 0[, z = 0[, stackpos = 0]]]])
-        // Position([position])
+        // Position(x = 0, y = 0, z = 0, stackpos = 0)
+        // Position(position)
         if (Lua.GetTop(L) <= 1)
         {
             PushPosition(L, new Location());
@@ -103,7 +103,7 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
 
     public static int LuaPositionSendMagicEffect(LuaState L)
     {
-        // position:sendMagicEffect(magicEffect[, player = nullptr])
+        // position:sendMagicEffect(magicEffect, player = nullptr)
         var spectators = new List<ICreature>();
         if (Lua.GetTop(L) >= 3)
         {

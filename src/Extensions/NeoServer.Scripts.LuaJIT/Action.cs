@@ -21,7 +21,7 @@ public class Action : Script
 
     public List<ushort> ItemIdsVector { get; } = new();
 
-    public List<ushort> UniqueIdsVector { get; } = new();
+    public List<uint> UniqueIdsVector { get; } = new();
 
     public List<ushort> ActionIdsVector { get; } = new();
 

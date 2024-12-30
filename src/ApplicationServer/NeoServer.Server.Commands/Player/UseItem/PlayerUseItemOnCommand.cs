@@ -14,21 +14,21 @@ namespace NeoServer.Server.Commands.Player.UseItem;
 
 public class PlayerUseItemOnCommand : ICommand
 {
-    private readonly ILuaGameManager _luaGameManager;
     private readonly IPlayerUseService _playerUseService;
     private readonly IGameServer game;
     private readonly HotkeyService hotkeyService;
+    private readonly IScriptGameManager _scriptGameManager;
 
     public PlayerUseItemOnCommand(
         IGameServer game,
         HotkeyService hotkeyService,
         IPlayerUseService playerUseService,
-        ILuaGameManager luaGameManager)
+        IScriptGameManager scriptGameManager)
     {
         this.game = game;
         this.hotkeyService = hotkeyService;
         _playerUseService = playerUseService;
-        _luaGameManager = luaGameManager;
+        _scriptGameManager = scriptGameManager;
     }
 
     public void Execute(IPlayer player, UseItemOnPacket useItemPacket)
@@ -82,7 +82,7 @@ public class PlayerUseItemOnCommand : ICommand
 
         if (thingToUse is not IUsableOn itemToUse) return;
 
-        if (_luaGameManager.PlayerUseItemEx(player, player.Location, useItemPacket.ToLocation,
+        if (_scriptGameManager.PlayerUseItemEx(player, player.Location, useItemPacket.ToLocation,
                 useItemPacket.ToStackPosition, itemToUse, useItemPacket.Location.IsHotkey, !onItem ? onTile : onItem))
             return;
 

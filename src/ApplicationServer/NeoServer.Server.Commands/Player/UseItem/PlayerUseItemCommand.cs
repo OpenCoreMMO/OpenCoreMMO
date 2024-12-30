@@ -13,27 +13,27 @@ namespace NeoServer.Server.Commands.Player.UseItem;
 public class PlayerUseItemCommand : ICommand
 {
     private readonly ItemFinderService _itemFinderService;
-    private readonly ILuaGameManager _luaGameManager;
     private readonly PlayerOpenDepotCommand _playerOpenDepotCommand;
     private readonly IPlayerUseService _playerUseService;
+    private readonly IScriptGameManager _scriptGameManager;
 
     public PlayerUseItemCommand(
         IPlayerUseService playerUseService,
         PlayerOpenDepotCommand playerOpenDepotCommand,
         ItemFinderService itemFinderService,
-        ILuaGameManager luaGameManager)
+        IScriptGameManager scriptGameManager)
     {
         _playerUseService = playerUseService;
         _playerOpenDepotCommand = playerOpenDepotCommand;
         _itemFinderService = itemFinderService;
-        _luaGameManager = luaGameManager;
+        _scriptGameManager = scriptGameManager;
     }
 
     public void Execute(IPlayer player, UseItemPacket useItemPacket)
     {
         var item = _itemFinderService.Find(player, useItemPacket.Location, useItemPacket.ClientId);
 
-        if (_luaGameManager.PlayerUseItem(player, useItemPacket.Location, useItemPacket.StackPosition,
+        if (_scriptGameManager.PlayerUseItem(player, useItemPacket.Location, useItemPacket.StackPosition,
                 useItemPacket.Index, item))
             return;
 

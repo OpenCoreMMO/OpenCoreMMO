@@ -12,21 +12,21 @@ namespace NeoServer.Server.Commands.Player.UseItem;
 
 public class PlayerUseItemOnCreatureCommand : ICommand
 {
-    private readonly ILuaGameManager _luaGameManager;
     private readonly IPlayerUseService _playerUseService;
     private readonly IGameServer game;
     private readonly HotkeyService hotKeyService;
+    private readonly IScriptGameManager _scriptGameManager;
 
     public PlayerUseItemOnCreatureCommand(
         IGameServer game,
         HotkeyService hotKeyCache,
         IPlayerUseService playerUseService,
-        ILuaGameManager luaGameManager)
+        IScriptGameManager scriptGameManager)
     {
         this.game = game;
         hotKeyService = hotKeyCache;
         _playerUseService = playerUseService;
-        _luaGameManager = luaGameManager;
+        _scriptGameManager = scriptGameManager;
     }
 
     public void Execute(IPlayer player, UseItemOnCreaturePacket useItemPacket)
@@ -37,7 +37,7 @@ public class PlayerUseItemOnCreatureCommand : ICommand
 
         if (itemToUse is not IUsableOn useableOn) return;
 
-        if (_luaGameManager.PlayerUseItemWithCreature(player, player.Location, useItemPacket.FromStackPosition,
+        if (_scriptGameManager.PlayerUseItemWithCreature(player, player.Location, useItemPacket.FromStackPosition,
                 creature, useableOn))
             return;
 

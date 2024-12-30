@@ -19,7 +19,7 @@ public class PlayerStatusPacket : OutgoingPacket
         message.AddByte((byte)GameOutgoingPacketType.PlayerStatus);
         message.AddUInt16((ushort)Math.Min(ushort.MaxValue, player.HealthPoints));
         message.AddUInt16((ushort)Math.Min(ushort.MaxValue, player.MaxHealthPoints));
-        message.AddUInt32((uint)player.CarryStrength * 100);
+        message.AddUInt32((uint)player.FreeCapacity * 100);
 
         message.AddUInt32(Math.Min(0x7FFFFFFF,
             player.Experience)); // Experience: Client debugs after 2,147,483,647 exp

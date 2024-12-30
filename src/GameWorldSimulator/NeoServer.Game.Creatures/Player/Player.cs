@@ -42,21 +42,45 @@ public class Player : CombatActor, IPlayer
     private uint _idleTime;
     private byte _soulPoints;
 
-    public Player(uint id, string characterName, ChaseMode chaseMode, uint capacity, uint healthPoints,
-        uint maxHealthPoints, IVocation vocation,
-        Gender gender, bool online, ushort mana, ushort maxMana, FightMode fightMode, byte soulPoints, byte soulMax,
-        IDictionary<SkillType, ISkill> skills, ushort staminaMinutes,
-        IOutfit outfit, ushort speed,
-        Location location, IMapTool mapTool, ITown town)
+    public Player(
+        uint id,
+        string characterName,
+        ChaseMode chaseMode,
+        uint capacity,
+        uint healthPoints,
+        uint maxHealthPoints,
+        IVocation vocation,
+        Gender gender,
+        bool online,
+        ushort mana,
+        ushort maxMana,
+        FightMode fightMode,
+        byte soulPoints,
+        byte soulMax,
+        IDictionary<SkillType, ISkill> skills,
+        IDictionary<int, int> storages,
+        ushort staminaMinutes,
+        IOutfit outfit,
+        ushort speed,
+        Location location,
+        IMapTool mapTool, ITown town)
         : base(
-            new CreatureType(characterName, string.Empty, maxHealthPoints, speed,
-                new Dictionary<LookType, ushort> { { LookType.Corpse, 3058 } }), mapTool, outfit, healthPoints)
+            new CreatureType(
+                characterName,
+                string.Empty,
+                maxHealthPoints,
+                speed,
+                new Dictionary<LookType, ushort> { { LookType.Corpse, 3058 } }),
+            mapTool,
+            outfit,
+            healthPoints)
     {
         Id = id;
         CharacterName = characterName;
         ChaseMode = chaseMode;
         TotalCapacity = capacity;
         Skills = skills;
+        Storages = storages;
         Vocation = vocation;
         Gender = gender;
         Online = online;
@@ -242,7 +266,7 @@ public class Player : CombatActor, IPlayer
     public override ushort MinimumAttackPower => (ushort)(Level / 5);
     public override ushort ArmorRating => Inventory.TotalArmor;
     public byte SecureMode { get; private set; }
-    public float CarryStrength => TotalCapacity - Inventory.TotalWeight;
+    public float FreeCapacity => TotalCapacity - Inventory.TotalWeight;
     public override bool UsingDistanceWeapon => Inventory.Weapon is IDistanceWeapon;
     public bool Recovering => HasCondition(ConditionType.Regeneration);
     public override bool CanSeeInvisible => FlagIsEnabled(PlayerFlag.CanSeeInvisibility);
@@ -787,7 +811,7 @@ public class Player : CombatActor, IPlayer
         var totalWeight = coins.Sum(x => x is ICumulative cumulative ? cumulative.Weight : 0);
         var totalFreeSlots = Inventory.BackpackSlot?.TotalOfFreeSlots ?? 0;
 
-        return !(totalWeight > CarryStrength) && totalFreeSlots >= coins.Count();
+        return !(totalWeight > FreeCapacity) && totalFreeSlots >= coins.Count();
     }
 
     public void ReceivePurchasedItems(INpc from, SaleContract saleContract, params IItem[] items)
@@ -1094,6 +1118,17 @@ public class Player : CombatActor, IPlayer
         return (Level + 50) * .01 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
     }
 
+    #region Storage
+
+    public IDictionary<int, int> Storages { get; }
+
+    public int GetStorageValue(int key)
+        => Storages.TryGetValue(key, out var storage) ? storage : -1;
+
+    public void AddOrUpdateStorageValue(int key, int value)
+        => Storages.AddOrUpdate(key, value);
+
+    #endregion
 
     #region Guild
 

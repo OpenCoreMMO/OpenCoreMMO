@@ -43,6 +43,7 @@ public class TutorLoader : PlayerLoader
             playerEntity.Gender,
             playerEntity.Online,
             ConvertToSkills(playerEntity),
+            ConvertToStorages(playerEntity),
             new Outfit
             {
                 Addon = (byte)playerEntity.LookAddons,
