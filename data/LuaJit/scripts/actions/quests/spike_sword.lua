@@ -1,8 +1,6 @@
 ﻿local spikeSwordQuest = Action()
 
 function spikeSwordQuest.onUse(player, item, fromPosition, target, toPosition, isHotkey)
-    logger.info("spikeSword.onUse")
-
     local questStorage = player:getStorageValue(Storage.Quest.SpikeSwordQuest.Key)
 	if questStorage > -1 then
 		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "It is empty.")

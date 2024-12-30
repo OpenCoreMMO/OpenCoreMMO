@@ -1,8 +1,6 @@
 ﻿local darkHelmetQuest = Action()
 
 function darkHelmetQuest.onUse(player, item, fromPosition, target, toPosition, isHotkey)
-    logger.info("darkHelmet.onUse")
-
     local questStorage = player:getStorageValue(Storage.Quest.DarkHelmetQuest.Key)
 	if questStorage > -1 then
 		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "It is empty.")

@@ -1,8 +1,6 @@
 ﻿local dwarvenShieldQuest = Action()
 
 function dwarvenShieldQuest.onUse(player, item, fromPosition, target, toPosition, isHotkey)
-    logger.info("dwarvenShield.onUse")
-
     local questStorage = player:getStorageValue(Storage.Quest.DwarvenShieldQuest.Key)
 	if questStorage > -1 then
 		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "It is empty.")
