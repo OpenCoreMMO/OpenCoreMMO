@@ -119,7 +119,7 @@ public class Program
 
         logger.Step("Running Garbage Collector", "Garbage collected", () =>
         {
-            GC.Collect();
+            GC.Collect(2, GCCollectionMode.Aggressive);
             GC.WaitForPendingFinalizers();
         });
 

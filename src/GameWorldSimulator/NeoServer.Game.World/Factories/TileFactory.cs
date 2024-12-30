@@ -1,18 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Game.Common.Location.Structs.Helpers;
 using NeoServer.Game.World.Models.Tiles;
 
 namespace NeoServer.Game.World.Factories;
 
 public class TileFactory : ITileFactory
 {
-    public ITile CreateTile(Coordinate coordinate, TileFlag flag, IItem[] items)
+    private readonly IDictionary<string, IStaticTile> _tileCache = new Dictionary<string, IStaticTile>();
+
+    public ITile CreateTile(Coordinate coordinate, TileFlag flag, IItem[] items, bool useCache = true)
     {
+        var hash = GetTileHash(items);
+        
+        if (useCache && _tileCache.TryGetValue(hash, out var tile))
+        {
+            return tile;
+        }
+        
         var hasUnpassableItem = false;
         var hasMoveableItem = false;
         var hasTransformableItem = false;
@@ -51,9 +62,21 @@ public class TileFactory : ITileFactory
 
         if (hasUnpassableItem &&
             !hasMoveableItem &&
-            !hasTransformableItem && !hasHeight) return new StaticTile(coordinate, items);
+            !hasTransformableItem && !hasHeight)
+        {
+            var staticTile = new StaticTile(new Coordinate(), items);
+            _tileCache.TryAdd(hash, staticTile);
+            return staticTile;
+        }
 
         return new DynamicTile(coordinate, flag, ground, topItems.ToArray(), downItems.ToArray());
+    }
+
+    public ITile GetTileFromCache(Coordinate coordinate, ref Span<byte> clientIds)
+    {
+        var hash = GetTileHash(ref clientIds);
+
+        return _tileCache.TryGetValue(hash, out var tile) ? tile : null;
     }
 
     public ITile CreateDynamicTile(Coordinate coordinate, TileFlag flag, IItem[] items)
@@ -83,5 +106,25 @@ public class TileFactory : ITileFactory
         }
 
         return new DynamicTile(coordinate, flag, ground, topItems.ToArray(), downItems.ToArray());
+    }
+
+    private static string GetTileHash(IItem[] items)
+    {
+        Span<byte> raw = stackalloc byte[items.Length * sizeof(ushort)];
+        var index = 0;
+        foreach (var item in items)
+        {
+            if (item is null) continue;
+
+            raw[index++] = (byte)(item.ClientId & 0xFF);
+            raw[index++] = (byte)((item.ClientId >> 8) & 0xFF);
+        }
+
+        return HashHelper.ComputeContentHash(ref raw);
+    }
+
+    private static string GetTileHash(ref Span<byte> clientIds)
+    {
+        return HashHelper.ComputeContentHash(ref clientIds);
     }
 }

@@ -26,6 +26,20 @@ public class Sector
     public HashSet<ICreature> Players { get; } = new();
     public List<ICreature> SpectatorsCache { get; } = new(32);
 
+    public void AddTile(ITile tile, Location location)
+    {
+        var z = location.Z;
+        var x = location.X;
+        var y = location.Y;
+
+        if (z >= MAP_MAX_LAYERS) return;
+
+        CreateFloor(z);
+
+        if (GetTile(location) is not null) return;
+
+        Tiles[z, x & SECTOR_MASK, y & SECTOR_MASK] = tile;
+    }
     public void AddTile(ITile tile)
     {
         var z = tile.Location.Z;
