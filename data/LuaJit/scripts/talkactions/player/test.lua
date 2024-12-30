@@ -44,6 +44,16 @@ function talkAction.onSay(player, words, param)
 
     Game.createMonster("Scarab", nextPosition)
 
+    local storageValue = player:getStorageValue(10000000)
+    
+    logger.info('storageValue: ' .. storageValue)
+
+    if storageValue == -1 then
+        player:setStorageValue(10000000, 1996)
+        storageValue = player:getStorageValue(10000000)
+        logger.info('storageValue2: ' .. storageValue)
+    end
+
     logger.info('end')
 
     return true

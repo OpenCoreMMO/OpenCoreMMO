@@ -78,4 +78,5 @@ public sealed class PlayerEntity
     public GuildMembershipEntity GuildMember { get; set; }
     public WorldEntity World { get; set; }
     public int WorldId { get; set; }
+    public ICollection<PlayerStorageEntity> PlayerStorages { get; set; }
 }

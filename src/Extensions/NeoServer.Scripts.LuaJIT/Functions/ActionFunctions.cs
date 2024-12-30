@@ -20,6 +20,8 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
         RegisterMethod(L, "Action", "onUse", LuaActionOnUse);
         RegisterMethod(L, "Action", "register", LuaActionRegister);
         RegisterMethod(L, "Action", "id", LuaActionItemId);
+        RegisterMethod(L, "Action", "aid", LuaActionItemActionId);
+        RegisterMethod(L, "Action", "uid", LuaActionItemUniqueId);
         RegisterMethod(L, "Action", "allowFarUse", LuaActionAllowFarUse);
     }
 
@@ -92,6 +94,50 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
                     action.SetItemIdsVector(GetNumber<ushort>(L, 2 + i));
             else
                 action.SetItemIdsVector(GetNumber<ushort>(L, 2));
+            PushBoolean(L, true);
+        }
+        else
+        {
+            ReportError(nameof(LuaActionItemId), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
+            PushBoolean(L, false);
+        }
+        return 1;
+    }
+
+    public static int LuaActionItemActionId(LuaState L)
+    {
+        // action:aid(ids)
+        var action = GetUserdata<Action>(L, 1);
+        if (action != null)
+        {
+            var parameters = Lua.GetTop(L) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
+            if (parameters > 1)
+                for (var i = 0; i < parameters; ++i)
+                    action.SetActionIdsVector(GetNumber<ushort>(L, 2 + i));
+            else
+                action.SetActionIdsVector(GetNumber<ushort>(L, 2));
+            PushBoolean(L, true);
+        }
+        else
+        {
+            ReportError(nameof(LuaActionItemId), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
+            PushBoolean(L, false);
+        }
+        return 1;
+    }
+
+    public static int LuaActionItemUniqueId(LuaState L)
+    {
+        // action:uid(ids)
+        var action = GetUserdata<Action>(L, 1);
+        if (action != null)
+        {
+            var parameters = Lua.GetTop(L) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
+            if (parameters > 1)
+                for (var i = 0; i < parameters; ++i)
+                    action.SetUniqueIdsVector(GetNumber<ushort>(L, 2 + i));
+            else
+                action.SetUniqueIdsVector(GetNumber<ushort>(L, 2));
             PushBoolean(L, true);
         }
         else

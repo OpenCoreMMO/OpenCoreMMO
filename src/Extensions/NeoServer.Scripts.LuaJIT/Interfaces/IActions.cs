@@ -44,9 +44,9 @@ public interface IActions
 
     public void SetItemId(ushort itemId, Action action);
 
-    public bool HasUniqueId(ushort uniqueId);
+    public bool HasUniqueId(uint uniqueId);
 
-    public void SetUniqueId(ushort uniqueId, Action action);
+    public void SetUniqueId(uint uniqueId, Action action);
 
     public bool HasActionId(ushort actionId);
 

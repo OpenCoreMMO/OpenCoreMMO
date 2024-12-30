@@ -9,6 +9,7 @@ using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Services;
+using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -17,15 +18,18 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
     private static IGameCreatureManager _gameCreatureManager;
     private static IItemFactory _itemFactory;
     private static IItemTypeStore _itemTypeStore;
+    private static ILogger _logger;
 
     public PlayerFunctions(
         IGameCreatureManager gameCreatureManager,
         IItemFactory itemFactory,
-        IItemTypeStore itemTypeStore) : base(nameof(PlayerFunctions))
+        IItemTypeStore itemTypeStore,
+        ILogger logger) : base(nameof(PlayerFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
         _itemFactory = itemFactory;
         _itemTypeStore = itemTypeStore;
+        _logger = logger;
     }
 
     public void Init(LuaState L)
@@ -34,11 +38,16 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMetaMethod(L, "Player", "__eq", LuaUserdataCompare<IPlayer>);
         RegisterMethod(L, "Player", "teleportTo", LuaTeleportTo);
 
+        RegisterMethod(L, "Player", "getFreeCapacity", LuaPlayerGetFreeCapacity);
+
         RegisterMethod(L, "Player", "getSkillLevel", LuaPlayerGetSkillLevel);
         RegisterMethod(L, "Player", "getEffectiveSkillLevel", LuaPlayerGetEffectiveSkillLevel);
         RegisterMethod(L, "Player", "getSkillPercent", LuaPlayerGetSkillPercent);
         RegisterMethod(L, "Player", "getSkillTries", LuaPlayerGetSkillTries);
         RegisterMethod(L, "Player", "addSkillTries", LuaPlayerAddSkillTries);
+
+        RegisterMethod(L, "Player", "getStorageValue", LuaPlayerGetStorageValue);
+        RegisterMethod(L, "Player", "setStorageValue", LuaPlayerSetStorageValue);
 
         RegisterMethod(L, "Player", "addItem", LuaPlayerAddItem);
         RegisterMethod(L, "Player", "removeItem", LuaPlayerRemoveItem);
@@ -116,6 +125,19 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         creature.TeleportTo(position);
 
         PushBoolean(L, true);
+        return 1;
+    }
+
+    private static int LuaPlayerGetFreeCapacity(LuaState L)
+    {
+        // player:getFreeCapacity()
+        var player = GetUserdata<IPlayer>(L, 1);
+
+        if (player is not null)
+            Lua.PushNumber(L, player.FreeCapacity);
+        else
+            Lua.PushNil(L);
+
         return 1;
     }
 
@@ -395,4 +417,49 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         return 1;
     }
 
+    private static int LuaPlayerGetStorageValue(LuaState L)
+    {
+        // player:getStorageValue(key)
+        var player = GetUserdata<IPlayer>(L, 1);
+        if (player != null)
+            Lua.PushNumber(L, player.GetStorageValue(GetNumber<int>(L, 2)));
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    private static int LuaPlayerSetStorageValue(LuaState L)
+    {
+        // player:setStorageValue(key, value)
+        var player = GetUserdata<IPlayer>(L, 1);
+        var key = GetNumber<int>(L, 2);
+        var value = GetNumber<int>(L, 3);
+
+        var startReservedRange = 10000000;
+        var endReservedRange = 20000000;
+
+        if (key == 0)
+        {
+            _logger.Error("Storage key is nil");
+            return 1;
+        }
+
+        if (key >= startReservedRange && key <= endReservedRange)
+        {
+            _logger.Error($"Accessing reserved storage key range: {key}");
+            PushBoolean(L, false);
+            return 1;
+        }
+
+        if (player != null)
+        {
+            player.AddOrUpdateStorageValue(key, value);
+            PushBoolean(L, true);
+        }
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
 }

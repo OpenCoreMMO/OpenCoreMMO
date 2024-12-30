@@ -69,7 +69,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     uint Experience { get; }
     byte SoulPoints { get; }
 
-    float CarryStrength { get; }
+    float FreeCapacity { get; }
 
     ushort StaminaMinutes { get; }
 
@@ -110,6 +110,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     Gender Gender { get; }
     int PremiumTime { get; }
     IDictionary<SkillType, ISkill> Skills { get; }
+    IDictionary<int, int> Storages { get; }
 
     bool CanSeeInspectionDetails { get; }
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
@@ -241,4 +242,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
     void SetAsHungry();
     void Use(IContainer item, byte openAtIndex);
     ushort GetRawSkillLevel(SkillType skillType);
+    int GetStorageValue(int key);
+    void AddOrUpdateStorageValue(int key, int value);
 }

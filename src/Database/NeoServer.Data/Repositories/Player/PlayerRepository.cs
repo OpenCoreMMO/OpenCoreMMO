@@ -87,8 +87,8 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
 
         await UpdatePlayer(player, neoContext);
         await InventoryManager.SavePlayerInventory(player, neoContext);
-
         await InventoryManager.SaveBackpack(player, neoContext);
+        await StorageManager.SaveStorages(player, neoContext);
 
         await neoContext.SaveChangesAsync();
     }

@@ -334,7 +334,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
                         var dir = AppContext.BaseDirectory + _serverConfiguration.DataLuaJit;
                         _scripts.ClearAllScripts();
                         _scripts.LoadScripts($"{dir}/scripts", false, true);
-                        _scripts.LoadScripts($"{dir}/scripts/lib", true, true);
+                        _scripts.LoadScripts($"{dir}/scripts/libs", true, true);
 
                     Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
                 }

@@ -2,6 +2,7 @@
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
+using System;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -27,6 +28,8 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
         RegisterMethod(L, "ItemType", "getType", LuaItemTypeGetType);
         RegisterMethod(L, "ItemType", "getId", LuaItemTypeGetId);
         RegisterMethod(L, "ItemType", "getName", LuaItemTypeGetName);
+
+        RegisterMethod(L, "ItemType", "getWeight", LuaItemTypeGetWeight);
 
         RegisterMethod(L, "ItemType", "getDestroyId", LuaItemDestroyId);
     }
@@ -131,6 +134,22 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
         var itemType = GetUserdata<IItemType>(L, 1);
         if (itemType != null)
             Lua.PushString(L, itemType.Name);
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    public static int LuaItemTypeGetWeight(LuaState L)
+    {
+        // itemType:getWeight(count = 1)
+        var itemType = GetUserdata<IItemType>(L, 1);
+        if (itemType != null)
+        {
+            var count = GetNumber<ushort>(L, 2, 1);
+            var weight = itemType.Weight * float.Max(1, count);
+            Lua.PushNumber(L, weight);
+        }
         else
             Lua.PushNil(L);
 

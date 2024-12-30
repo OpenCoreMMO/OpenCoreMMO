@@ -48,7 +48,8 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
             .ThenInclude(x => x.VipList)
             .ThenInclude(x => x.Player)
             .Include(x => x.GuildMember)
-            .ThenInclude(x => x.Guild).AsNoTracking().SingleOrDefaultAsync();
+            .ThenInclude(x => x.Guild)
+            .Include(x => x.PlayerStorages).AsNoTracking().SingleOrDefaultAsync();
     }
 
     public async Task<PlayerEntity> GetOnlinePlayer(string accountName)

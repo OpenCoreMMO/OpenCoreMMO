@@ -22,7 +22,7 @@ public class Actions : Scripts, IActions
     #region Members
 
     private readonly Dictionary<ushort, Action> _useItemMap = new();
-    private readonly Dictionary<ushort, Action> _uniqueItemMap = new();
+    private readonly Dictionary<uint, Action> _uniqueItemMap = new();
     private readonly Dictionary<ushort, Action> _actionItemMap = new();
     private readonly Dictionary<Location, Action> _actionPositionMap = new();
 
@@ -62,7 +62,7 @@ public class Actions : Scripts, IActions
         var uniqueIdVector = action.UniqueIdsVector;
         if (!uniqueIdVector.Any()) return false;
 
-        var tmpVector = new List<ushort>(uniqueIdVector.Count);
+        var tmpVector = new List<uint>(uniqueIdVector.Count);
 
         foreach (var uniqueId in uniqueIdVector)
             // Check if the unique is already registered and prevent it from being registered again
@@ -321,12 +321,10 @@ public class Actions : Scripts, IActions
 
     public Action GetAction(IItem item)
     {
-        if (item.Metadata.Attributes.HasAttribute(ItemAttribute.UniqueId) &&
-            _uniqueItemMap.TryGetValue((ushort)item.UniqueId, out var uniqueIdAction))
+        if (_uniqueItemMap.TryGetValue(item.UniqueId, out var uniqueIdAction))
             return uniqueIdAction;
 
-        if (item.Metadata.Attributes.HasAttribute(ItemAttribute.ActionId) &&
-            _actionItemMap.TryGetValue((ushort)item.UniqueId, out var actionIdAction))
+        if (_actionItemMap.TryGetValue(item.ActionId, out var actionIdAction))
             return actionIdAction;
 
         if (_useItemMap.TryGetValue(item.ServerId, out var action))
@@ -565,12 +563,12 @@ public class Actions : Scripts, IActions
         _useItemMap.TryAdd(itemId, action);
     }
 
-    public bool HasUniqueId(ushort uniqueId)
+    public bool HasUniqueId(uint uniqueId)
     {
         return _uniqueItemMap.ContainsKey(uniqueId);
     }
 
-    public void SetUniqueId(ushort uniqueId, Action action)
+    public void SetUniqueId(uint uniqueId, Action action)
     {
         _uniqueItemMap.TryAdd(uniqueId, action);
     }

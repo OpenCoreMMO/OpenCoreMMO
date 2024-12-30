@@ -237,7 +237,7 @@ public class LuaStartup : ILuaStartup
         ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/core.lua", "core.lua"), "/Data/LuaJit/core.lua");
 
         ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts", false, false), "/Data/LuaJit/scripts");
-        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts/lib", true, false), "/Data/LuaJit/scripts/lib");
+        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts/libs", true, false), "/Data/LuaJit/scripts/libs");
     }
 
     #endregion
