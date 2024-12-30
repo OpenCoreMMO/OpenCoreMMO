@@ -1,7 +1,7 @@
 ## Revscript support using native LuaJIT
 Simple documentation with all scripts and functions developed using LuaJIT to working with Revscript TFS and Canary retrocompatibility.
 
-### Implemented Scripts (18)
+### Implemented Scripts (21)
 
 **Actions (9)**
 
@@ -14,6 +14,12 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - rope.lua
 - shovel.lua
 - scythe.lua
+
+**Quests (3)**
+
+- dark_helmet.lua
+- dwarven_shield.lua
+- spike_sword.lua
 
 **Talk Actions (9)**
 
@@ -38,14 +44,16 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (16) and Functions (89)
+### Tables (16) and Functions (95)
 
-**Action (5)**
+**Action (7)**
 
 - Action()
 - action:onUse(callback)
 - action:register()
 - action:id(ids)
+- action:aid(ids)
+- action:uid(ids)
 - action:allowFarUse(bool)
 
 **ConfigManager (4)**
@@ -101,7 +109,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - item:getTile()
 - item:hasAttribute(ITEM_ATTRIBUTE)
 
-**ItemType (9)**
+**ItemType (10)**
 
 - ItemType(id or name)
 - itemType:getType()
@@ -111,6 +119,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - itemType:isStackable()
 - itemType:isFluidContainer()
 - itemType:isKey()
+- itemType:getWeight()
 - itemType:getDestroyId(bool)
 
 **Logger (4)**
@@ -128,19 +137,22 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 
 - Npc(id or userdata)
 
-**Player (11)**
+**Player (14)**
 
 - Player(id or guid or name or userdata)
 - player:teleportTo(position, pushMovement = false)
-- player:sendTextMessage(type, text)
-- player:isPzLocked()
-- player:addItem(itemId, count = 1, canDropOnMap = true, subType = 1, slot = CONST_SLOT_BACKPACK)
+- player:getFreeCapacity()
+- player:getStorageValue(key)
+- player:setStorageValue(key, value)
 - player:getSkillLevel(skillType)
 - player:getEffectiveSkillLevel(skillType)
 - player:getSkillPercent(skillType)
 - player:getSkillTries(skillType)
 - player:addSkillTries(skillType, tries)
+- player:addItem(itemId, count = 1, canDropOnMap = true, subType = 1, slot = CONST_SLOT_BACKPACK)
 - player:removeItem(itemId, count, subType = -1, ignoreEquipped = false)
+- player:sendTextMessage(type, text)
+- player:isPzLocked()
 
 **Position (5)**
 
