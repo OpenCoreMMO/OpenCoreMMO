@@ -53,7 +53,7 @@ public class StaticTile : BaseTile, IStaticTile
             return itemsId;
         }
     }
-
+    
     public byte[] GetRaw(IItem[] items)
     {
         var ground = new List<byte>();

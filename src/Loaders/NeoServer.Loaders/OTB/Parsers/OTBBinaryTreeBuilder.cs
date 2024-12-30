@@ -14,14 +14,13 @@ public static class OtbBinaryTreeBuilder
     /// <returns></returns>
     public static OtbNode Deserialize(ReadOnlyMemory<byte> otbmStream)
     {
-        var serializedOtbmData = otbmStream[4..];
+        var serializedOtbmData = otbmStream.Slice(4); 
         var memoryStream = new ReadOnlyMemoryStream(serializedOtbmData);
 
         return BuildTree(new OtbNode(NodeType.NotSetYet), memoryStream).Children[0];
     }
 
-    private static OtbNode
-        BuildTree(OtbNode node, ReadOnlyMemoryStream stream) //recursive method to create a binary tree
+    private static OtbNode BuildTree(OtbNode node, ReadOnlyMemoryStream stream) //recursive method to create a binary tree
     {
         var currentByte = stream.ReadByte();
 
