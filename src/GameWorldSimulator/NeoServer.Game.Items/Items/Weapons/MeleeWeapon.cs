@@ -43,14 +43,14 @@ public class MeleeWeapon : Equipment, IWeaponItem, IUsableOnItem
 
     public virtual bool CanUseOn(ushort[] items, IItem onItem)
     {
-        return items is not null && ((IList)items).Contains(onItem.Metadata.TypeId);
+        return items is not null && ((IList)items).Contains(onItem.Metadata.ServerId);
     }
 
     public virtual bool CanUseOn(IItem onItem)
     {
         var useOnItems = Metadata.OnUse?.GetAttributeArray<ushort>(ItemAttribute.UseOn);
 
-        return useOnItems is not null && ((IList)useOnItems).Contains(onItem.Metadata.TypeId);
+        return useOnItems is not null && ((IList)useOnItems).Contains(onItem.Metadata.ServerId);
     }
 
     public override bool CanBeDressed(IPlayer player)

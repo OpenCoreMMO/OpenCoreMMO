@@ -1,5 +1,4 @@
-﻿using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
+﻿using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Server.Common.Contracts;
@@ -15,17 +14,10 @@ public class NotificationSentEventHandler
         this.game = game;
     }
 
-    public void Execute(IThing thing, string message, NotificationType notificationType)
+    public void Execute(IThing thing, string message, TextMessageOutgoingType type)
     {
         if (thing is not IPlayer player) return;
         if (!game.CreatureManager.GetPlayerConnection(player.CreatureId, out var connection)) return;
-
-        var type = notificationType switch
-        {
-            NotificationType.Description => TextMessageOutgoingType.Description,
-            NotificationType.Information => TextMessageOutgoingType.MESSAGE_EVENT_LEVEL_CHANGE,
-            _ => TextMessageOutgoingType.Description
-        };
 
         connection.OutgoingPackets.Enqueue(new TextMessagePacket(message,
             type));

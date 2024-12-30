@@ -50,7 +50,7 @@ public class PlayerCapacityTests
         player.Inventory.AddItem(item, slot);
 
         //assert
-        player.CarryStrength.Should().Be(900);
+        player.FreeCapacity.Should().Be(900);
     }
 
     [Theory]
@@ -65,7 +65,7 @@ public class PlayerCapacityTests
         player.Inventory.RemoveItem(slot, item.Amount);
 
         //assert
-        player.CarryStrength.Should().Be(1000);
+        player.FreeCapacity.Should().Be(1000);
     }
 
     [Fact]
@@ -104,44 +104,44 @@ public class PlayerCapacityTests
 
         //act / assert
         item4.Reduce(10);
-        player.CarryStrength.Should().Be(810);
+        player.FreeCapacity.Should().Be(810);
 
         item4.Reduce(10);
-        player.CarryStrength.Should().Be(820);
+        player.FreeCapacity.Should().Be(820);
 
         item5.Reduce(10);
-        player.CarryStrength.Should().Be(830);
+        player.FreeCapacity.Should().Be(830);
 
         item5.Reduce(10);
-        player.CarryStrength.Should().Be(840);
+        player.FreeCapacity.Should().Be(840);
 
         innerBag.RemoveItem(item6, 1);
-        player.CarryStrength.Should().Be(860);
+        player.FreeCapacity.Should().Be(860);
 
         //Remove from root backpack
 
         item3.Reduce(10);
-        player.CarryStrength.Should().Be(870);
+        player.FreeCapacity.Should().Be(870);
 
         item3.Reduce(10);
-        player.CarryStrength.Should().Be(880);
+        player.FreeCapacity.Should().Be(880);
 
         item2.Reduce(10);
-        player.CarryStrength.Should().Be(890);
+        player.FreeCapacity.Should().Be(890);
 
         item2.Reduce(10);
-        player.CarryStrength.Should().Be(900);
+        player.FreeCapacity.Should().Be(900);
 
         backpack.RemoveItem(item, 1);
-        player.CarryStrength.Should().Be(920);
+        player.FreeCapacity.Should().Be(920);
 
         //remove from inner bag again
         innerBag.RemoveItem(item7, 20);
-        player.CarryStrength.Should().Be(940);
+        player.FreeCapacity.Should().Be(940);
 
         //remove entire inner bag
         backpack.RemoveItem(innerBag, 1);
-        player.CarryStrength.Should().Be(980);
+        player.FreeCapacity.Should().Be(980);
 
         player.Inventory.RemoveItem(Slot.Backpack, 1);
     }
@@ -154,57 +154,57 @@ public class PlayerCapacityTests
         var backpack = ItemTestData.CreateBackpack(weight: 20);
 
         player.Inventory.AddItem(backpack);
-        player.CarryStrength.Should().Be(980);
+        player.FreeCapacity.Should().Be(980);
 
         var item = ItemTestData.CreateWeaponItem(100, weight: 20);
         backpack.AddItem(item);
-        player.CarryStrength.Should().Be(960);
+        player.FreeCapacity.Should().Be(960);
 
         var item2 = ItemTestData.CreateCumulativeItem(101, 10, weight: 1);
         backpack.AddItem(item2);
-        player.CarryStrength.Should().Be(950);
+        player.FreeCapacity.Should().Be(950);
 
         var item2B = ItemTestData.CreateCumulativeItem(101, 10, weight: 1);
         backpack.AddItem(item2B);
-        player.CarryStrength.Should().Be(940);
+        player.FreeCapacity.Should().Be(940);
 
         var item3 = ItemTestData.CreateFood(102, 10, 1);
         backpack.AddItem(item3);
-        player.CarryStrength.Should().Be(930);
+        player.FreeCapacity.Should().Be(930);
 
         var item3B = ItemTestData.CreateFood(102, 10, 1);
         backpack.AddItem(item3B);
-        player.CarryStrength.Should().Be(920);
+        player.FreeCapacity.Should().Be(920);
 
         var innerBag = ItemTestData.CreateBackpack(weight: 20);
         var item8 = ItemTestData.CreateWeaponItem(100, weight: 20);
         innerBag.AddItem(item8);
 
         backpack.AddItem(innerBag);
-        player.CarryStrength.Should().Be(880);
+        player.FreeCapacity.Should().Be(880);
 
         var item4 = ItemTestData.CreateFood(102, 10, 1);
         innerBag.AddItem(item4);
-        player.CarryStrength.Should().Be(870);
+        player.FreeCapacity.Should().Be(870);
 
         var item4B = ItemTestData.CreateFood(102, 10, 1);
         innerBag.AddItem(item4B);
-        player.CarryStrength.Should().Be(860);
+        player.FreeCapacity.Should().Be(860);
 
         var item5 = ItemTestData.CreateCumulativeItem(101, 10, weight: 1);
         innerBag.AddItem(item5);
-        player.CarryStrength.Should().Be(850);
+        player.FreeCapacity.Should().Be(850);
 
         var item5B = ItemTestData.CreateCumulativeItem(101, 10, weight: 1);
         innerBag.AddItem(item5B);
-        player.CarryStrength.Should().Be(840);
+        player.FreeCapacity.Should().Be(840);
 
         var item6 = ItemTestData.CreateWeaponItem(100, weight: 20);
         innerBag.AddItem(item6);
-        player.CarryStrength.Should().Be(820);
+        player.FreeCapacity.Should().Be(820);
 
         var item7 = ItemTestData.CreateCumulativeItem(103, 20, weight: 1);
         innerBag.AddItem(item7);
-        player.CarryStrength.Should().Be(800);
+        player.FreeCapacity.Should().Be(800);
     }
 }

@@ -27,7 +27,7 @@ public class Lever : BaseItem
     {
         if (Map.Instance[Location] is not DynamicTile dynamicTile) return;
 
-        var newLeverId = (ushort)(Metadata.TypeId == 1946 ? 1945 : 1946);
+        var newLeverId = (ushort)(Metadata.ServerId == 1946 ? 1945 : 1946);
         var newLever = ItemFactory.Instance.Create(newLeverId, Location,
             Metadata.Attributes.ToDictionary<ItemAttribute, IConvertible>());
 

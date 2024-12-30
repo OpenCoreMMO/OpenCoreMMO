@@ -1,6 +1,5 @@
 ﻿using System;
 using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Inspection;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Location.Structs;
@@ -68,10 +67,10 @@ public abstract class BaseItem : IItem
         bool isClose = false, bool showInternalDetails = false)
     {
         return InspectionTextBuilder.IsApplicable(this)
-            ? InspectionTextBuilder.Build(this,  isClose, showInternalDetails)
+            ? InspectionTextBuilder.Build(this, isClose, showInternalDetails)
             : $"You see {Metadata.Article} {Metadata.Name}.";
     }
-    
+
     public string FullName => Metadata.FullName;
     public byte Amount { get; set; } = 1;
 

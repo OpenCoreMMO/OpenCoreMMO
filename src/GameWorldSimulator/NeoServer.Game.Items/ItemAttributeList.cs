@@ -319,6 +319,14 @@ public sealed class ItemAttributeList : IItemAttributeList
         return 0;
     }
 
+    public ushort GetDestructionItem()
+    {
+        if (_defaultAttributes?.ContainsKey(ItemAttribute.DestroyTo) ?? false)
+            return GetAttribute<ushort>(ItemAttribute.DestroyTarget);
+
+        return 0;
+    }
+
     public Tuple<DamageType, byte> GetWeaponElementDamage()
     {
         if (_defaultAttributes?.ContainsKey(ItemAttribute.ElementEarth) ?? false)

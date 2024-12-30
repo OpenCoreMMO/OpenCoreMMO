@@ -19,6 +19,7 @@ using NeoServer.Loaders.World;
 using NeoServer.Networking.Listeners;
 using NeoServer.Scripts.Lua;
 using NeoServer.Server.Common.Contracts;
+using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Common.Contracts.Tasks;
 using NeoServer.Server.Compiler;
 using NeoServer.Server.Configurations;

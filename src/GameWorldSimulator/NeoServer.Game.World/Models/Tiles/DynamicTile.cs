@@ -28,11 +28,11 @@ public class DynamicTile : BaseTile, IDynamicTile
         TileOperationEvent.OnLoaded(this);
     }
 
-    public int ItemsCount => (DownItems?.Count ?? 0) + (TopItems?.Count ?? 0) + (Ground is null ? 0 : 1);
-
     public byte MovementPenalty => Ground.MovementPenalty;
     public TileStack<IItem> TopItems { get; private set; }
     public TileStack<IItem> DownItems { get; private set; }
+
+    public int ItemsCount => (DownItems?.Count ?? 0) + (TopItems?.Count ?? 0) + (Ground is null ? 0 : 1);
 
     public IItem[] AllItems
     {
@@ -426,8 +426,8 @@ public class DynamicTile : BaseTile, IDynamicTile
             return;
         }
 
-        var isRemoved = DownItems.Remove(fromItem);
-        if (!isRemoved) isRemoved = TopItems.Remove(fromItem);
+        var isRemoved = DownItems != null ? DownItems.Remove(fromItem) : false;
+        if (!isRemoved) isRemoved = TopItems != null ? TopItems.Remove(fromItem) : false;
 
         if (!isRemoved) return;
 

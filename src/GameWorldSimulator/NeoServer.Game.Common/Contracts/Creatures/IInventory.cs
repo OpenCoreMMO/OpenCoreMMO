@@ -36,6 +36,7 @@ public interface IInventory : IHasItem
     IItem this[Slot slot] { get; }
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
     Result<IItem> RemoveItem(Slot slot, byte amount);
+    Result<IItem> RemoveItem(ushort itemId, byte amount, bool ignoreEquipped);
     T TryGetItem<T>(Slot slot);
     Result<OperationResultList<IItem>> AddItem(IItem item, Slot slot = Slot.None);
 

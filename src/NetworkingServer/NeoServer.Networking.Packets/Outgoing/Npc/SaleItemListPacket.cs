@@ -37,13 +37,13 @@ public class SaleItemListPacket : OutgoingPacket
         {
             if (shopItem.SellPrice == 0) continue;
 
-            var index = (int)shopItem.Item.TypeId;
+            var index = (int)shopItem.Item.ServerId;
             //if (Item::items[shopInfo.itemId].isFluidContainer()) //todo
             //{
             //    index |= (static_cast<uint32_t>(shopInfo.subType) << 16);
             //}
 
-            if (!map.TryGetValue(shopItem.Item.TypeId, out var itemAmount)) continue;
+            if (!map.TryGetValue(shopItem.Item.ServerId, out var itemAmount)) continue;
 
             temp.AddRange(BitConverter.GetBytes(shopItem.Item.ClientId));
             temp.Add((byte)Math.Min(itemAmount, byte.MaxValue));

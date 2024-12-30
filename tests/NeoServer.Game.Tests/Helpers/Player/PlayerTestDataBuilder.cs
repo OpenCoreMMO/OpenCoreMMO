@@ -18,12 +18,21 @@ namespace NeoServer.Game.Tests.Helpers.Player;
 
 public static class PlayerTestDataBuilder
 {
-    public static IPlayer Build(uint id = 1, string name = "PlayerA", uint capacity = 100, ushort hp = 100,
-        ushort mana = 30, ushort speed = 200,
+    public static IPlayer Build(
+        uint id = 1,
+        string name = "PlayerA",
+        uint capacity = 100,
+        ushort hp = 100,
+        ushort mana = 30,
+        ushort speed = 200,
         Dictionary<Slot, (IItem Item, ushort Id)> inventoryMap = null,
         Dictionary<SkillType, ISkill> skills = null,
-        byte vocationType = 1, IPathFinder pathFinder = null,
-        IVocationStore vocationStore = null, IGuild guild = null, ITown town = null)
+        Dictionary<int, int> storages = null,
+        byte vocationType = 1,
+        IPathFinder pathFinder = null,
+        IVocationStore vocationStore = null,
+        IGuild guild = null,
+        ITown town = null)
     {
         var vocation = new Vocation
         {
@@ -41,7 +50,13 @@ public static class PlayerTestDataBuilder
         pathFinder ??= new PathFinder(map);
         var mapTool = new MapTool(map, pathFinder);
 
-        var player = new Creatures.Player.Player(id, name, ChaseMode.Stand, capacity, hp, hp,
+        var player = new Creatures.Player.Player(
+            id,
+            name,
+            ChaseMode.Stand,
+            capacity,
+            hp,
+            hp,
             vocationStore.Get(vocationType),
             Gender.Male, true, mana,
             mana,
@@ -74,8 +89,13 @@ public static class PlayerTestDataBuilder
                     }
                 }
             },
-            300, new Outfit(), speed, new Location(100, 100, 7),
-            mapTool, town ??= new Town { Id = 1, Name = "Teste", Coordinate = new Coordinate(1011, 1008, 7) }
+            storages ?? new Dictionary<int, int>(),
+            300,
+            new Outfit(),
+            speed,
+            new Location(100, 100, 7),
+            mapTool,
+            town ??= new Town { Id = 1, Name = "Teste", Coordinate = new Coordinate(1011, 1008, 7) }
         )
         {
             Guild = guild

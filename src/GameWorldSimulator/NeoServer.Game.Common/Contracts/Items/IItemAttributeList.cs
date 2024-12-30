@@ -20,6 +20,7 @@ public interface IItemAttributeList
     IItemAttributeList GetInnerAttributes(ItemAttribute attribute);
     byte[] GetRequiredVocations();
     ushort GetTransformationItem();
+    ushort GetDestructionItem();
     Tuple<DamageType, byte> GetWeaponElementDamage();
     bool HasAttribute(ItemAttribute attribute);
     bool HasAttribute(string attribute);

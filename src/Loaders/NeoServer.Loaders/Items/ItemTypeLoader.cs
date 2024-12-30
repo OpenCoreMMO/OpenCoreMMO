@@ -67,7 +67,7 @@ public class ItemTypeLoader
         var otbNode = OtbBinaryTreeBuilder.Deserialize(fileStream);
         var otb = new Otb(otbNode);
 
-        var itemTypes = otb.ItemNodes.AsParallel().Select(ItemNodeParser.Parse).ToDictionary(x => x.TypeId);
+        var itemTypes = otb.ItemNodes.AsParallel().Select(ItemNodeParser.Parse).ToDictionary(x => x.ServerId);
         return itemTypes;
     }
 

@@ -7,7 +7,7 @@ namespace NeoServer.Game.Common.Contracts.Items;
 
 public interface IItemType
 {
-    ushort TypeId { get; }
+    ushort ServerId { get; }
 
     string Name { get; }
     string FullName { get; }
@@ -30,10 +30,18 @@ public interface IItemType
     Slot BodyPosition { get; }
     float Weight { get; }
     ushort TransformTo { get; }
+    ushort DestroyTo { get; }
     string Plural { get; }
     IItemAttributeList OnUse { get; }
     DamageType DamageType { get; }
     EffectT EffectT { get; }
+
+    ushort Charges
+        => Attributes.GetAttribute<ushort>(ItemAttribute.Charges);
+
+    ushort Count
+        => Attributes.GetAttribute<ushort>(ItemAttribute.Count);
+
     void SetArticle(string article);
     void SetPlural(string plural);
 
@@ -42,4 +50,34 @@ public interface IItemType
     void SetOnUse();
     bool HasAtLeastOneFlag(params ItemFlag[] flags);
     void SetGroupIfNone();
+
+    bool IsMovable()
+    {
+        return Flags.Contains(ItemFlag.Movable);
+    }
+
+    bool IsFluidContainer()
+    {
+        return Flags.Contains(ItemFlag.LiquidContainer);
+    }
+
+    bool IsSplash()
+    {
+        return Group == ItemGroup.Splash;
+    }
+
+    bool IsStackable()
+    {
+        return Group == ItemGroup.Splash;
+    }
+
+    bool IsKey()
+    {
+        return Flags.Contains(ItemFlag.Key);
+    }
+
+    bool HasSubType()
+    {
+        return IsFluidContainer() || IsSplash() || IsStackable() || Charges != 0;
+    }
 }

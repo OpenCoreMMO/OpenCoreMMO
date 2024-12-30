@@ -39,7 +39,7 @@ internal static class InventoryManager
 
             if (playerInventory.TryGetValue((int)slot, out var playerInventoryItemEntity))
             {
-                playerInventoryItemEntity.ServerId = item?.Metadata?.TypeId ?? 0;
+                playerInventoryItemEntity.ServerId = item?.Metadata?.ServerId ?? 0;
                 playerInventoryItemEntity.Amount = item?.Amount ?? 0;
                 playerInventoryItemEntity.PlayerId = (int)player.Id;
                 playerInventoryItemEntity.SlotId = (int)slot;

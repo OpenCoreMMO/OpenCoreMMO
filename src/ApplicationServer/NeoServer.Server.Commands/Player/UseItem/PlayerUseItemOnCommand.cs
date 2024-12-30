@@ -8,6 +8,7 @@ using NeoServer.Game.Common.Location;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Commands;
+using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Commands.Player.UseItem;
 
@@ -16,12 +17,18 @@ public class PlayerUseItemOnCommand : ICommand
     private readonly IPlayerUseService _playerUseService;
     private readonly IGameServer game;
     private readonly HotkeyService hotkeyService;
+    private readonly IScriptGameManager _scriptGameManager;
 
-    public PlayerUseItemOnCommand(IGameServer game, HotkeyService hotkeyService, IPlayerUseService playerUseService)
+    public PlayerUseItemOnCommand(
+        IGameServer game,
+        HotkeyService hotkeyService,
+        IPlayerUseService playerUseService,
+        IScriptGameManager scriptGameManager)
     {
         this.game = game;
         this.hotkeyService = hotkeyService;
         _playerUseService = playerUseService;
+        _scriptGameManager = scriptGameManager;
     }
 
     public void Execute(IPlayer player, UseItemOnPacket useItemPacket)
@@ -74,6 +81,10 @@ public class PlayerUseItemOnCommand : ICommand
             }
 
         if (thingToUse is not IUsableOn itemToUse) return;
+
+        if (_scriptGameManager.PlayerUseItemEx(player, player.Location, useItemPacket.ToLocation,
+                useItemPacket.ToStackPosition, itemToUse, useItemPacket.Location.IsHotkey, !onItem ? onTile : onItem))
+            return;
 
         Action action = onTile is not null
             ? () => _playerUseService.Use(player, itemToUse, onTile)

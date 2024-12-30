@@ -6,6 +6,7 @@ using NeoServer.Game.Common.Location;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Commands;
+using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Commands.Player.UseItem;
 
@@ -14,13 +15,18 @@ public class PlayerUseItemOnCreatureCommand : ICommand
     private readonly IPlayerUseService _playerUseService;
     private readonly IGameServer game;
     private readonly HotkeyService hotKeyService;
+    private readonly IScriptGameManager _scriptGameManager;
 
-    public PlayerUseItemOnCreatureCommand(IGameServer game, HotkeyService hotKeyCache,
-        IPlayerUseService playerUseService)
+    public PlayerUseItemOnCreatureCommand(
+        IGameServer game,
+        HotkeyService hotKeyCache,
+        IPlayerUseService playerUseService,
+        IScriptGameManager scriptGameManager)
     {
         this.game = game;
         hotKeyService = hotKeyCache;
         _playerUseService = playerUseService;
+        _scriptGameManager = scriptGameManager;
     }
 
     public void Execute(IPlayer player, UseItemOnCreaturePacket useItemPacket)
@@ -30,6 +36,10 @@ public class PlayerUseItemOnCreatureCommand : ICommand
         var itemToUse = GetItem(player, useItemPacket);
 
         if (itemToUse is not IUsableOn useableOn) return;
+
+        if (_scriptGameManager.PlayerUseItemWithCreature(player, player.Location, useItemPacket.FromStackPosition,
+                creature, useableOn))
+            return;
 
         var action = () => _playerUseService.Use(player, useableOn, creature);
 

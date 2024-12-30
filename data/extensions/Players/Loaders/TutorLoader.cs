@@ -35,10 +35,7 @@ public class TutorLoader : PlayerLoader
         if (Guard.IsNull(playerEntity)) return null;
 
         var town = GetTown(playerEntity);
-        var playerLocation =
-            new Location((ushort)playerEntity.PosX, (ushort)playerEntity.PosY, (byte)playerEntity.PosZ);
 
-        var currentTile = GetCurrentTile(playerLocation);
         var newPlayer = new Tutor(
             (uint)playerEntity.Id,
             playerEntity.Name,
@@ -46,6 +43,7 @@ public class TutorLoader : PlayerLoader
             playerEntity.Gender,
             playerEntity.Online,
             ConvertToSkills(playerEntity),
+            ConvertToStorages(playerEntity),
             new Outfit
             {
                 Addon = (byte)playerEntity.LookAddons,
@@ -66,6 +64,8 @@ public class TutorLoader : PlayerLoader
         };
 
         newPlayer.AddInventory(ConvertToInventory(newPlayer, playerEntity));
+
+        var currentTile = GetCurrentTile(newPlayer.Location);
         newPlayer.SetCurrentTile(currentTile);
 
         var tutor = CreatureFactory.CreatePlayer(newPlayer);

@@ -25,11 +25,13 @@ public interface IDynamicTile : ITile, IHasItem
     List<IPlayer> Players { get; }
     Func<ICreature, bool> CanEnterFunction { get; set; }
     IItem[] AllItems { get; }
+    int ItemsCount { get; }
     bool HasTeleport(out ITeleport teleport);
 
     byte[] GetRaw(IPlayer playerRequesting = null);
     ICreature GetTopVisibleCreature(ICreature creature);
     bool TryGetStackPositionOfItem(IItem item, out byte stackPosition);
+
     event AddCreatureToTile CreatureAdded;
     IItem[] RemoveAllItems();
     ICreature[] RemoveAllCreatures();

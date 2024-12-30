@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Creatures.Players;
 
 namespace NeoServer.Game.Creatures.Player.Inventory;
@@ -25,10 +27,10 @@ internal class InventoryMap
             void AddOrUpdate(IItem item)
             {
                 if (item is null) return;
-                if (map.TryGetValue(item.Metadata.TypeId, out var val))
-                    map[item.Metadata.TypeId] = val + item.Amount;
+                if (map.TryGetValue(item.Metadata.ServerId, out var val))
+                    map[item.Metadata.ServerId] = val + item.Amount;
                 else
-                    map.Add(item.Metadata.TypeId, item.Amount);
+                    map.Add(item.Metadata.ServerId, item.Amount);
             }
 
             AddOrUpdate(Inventory[Slot.Head]);
@@ -53,6 +55,21 @@ internal class InventoryMap
         return _map.ContainsKey(slot) && _map[slot].Item is T item
             ? item
             : default;
+    }
+
+    internal (Slot, IItem) GetSlotAndItemFromItemId(ushort itemId)
+    {
+        var result = _map.FirstOrDefault(c => c.Value.Item.ServerId == itemId);
+
+        if (result.Value.Item != null)
+            return (result.Key, result.Value.Item);
+
+        var itemFromBackpack = ((IContainer)_map[Slot.Backpack].Item).Items.FirstOrDefault(c => c.ServerId == itemId);
+
+        if (itemFromBackpack != null)
+            return (Slot.Backpack, itemFromBackpack);
+
+        return (Slot.None, null);
     }
 
     internal (IItem, ushort) GetItem(Slot slot)
