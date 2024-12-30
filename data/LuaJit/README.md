@@ -120,7 +120,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - itemType:isFluidContainer()
 - itemType:isKey()
 - itemType:getWeight()
-- itemType:getDestroyId(bool)
+- itemType:getDestroyId()
 
 **Logger (4)**
 
