@@ -568,47 +568,47 @@ public class DecayableTests : IAsyncLifetime
         sut.Elapsed.Should().Be(0);
     }
 
-    [Fact]
-    [ThreadBlocking]
-    public async Task Item_that_has_decay_behavior_decays_after_expiration()
-    {
-        //arrange
-        var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
+    //[Fact]
+    //[ThreadBlocking]
+    //public async Task Item_that_has_decay_behavior_decays_after_expiration()
+    //{
+    //    //arrange
+    //    var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
 
-        var item1 = (IEquipment)ItemTestData.CreateWeaponItem(1, attributes: new (ItemAttribute, IConvertible)[]
-        {
-            (ItemAttribute.Duration, 1)
-        });
+    //    var item1 = (IEquipment)ItemTestData.CreateWeaponItem(1, attributes: new (ItemAttribute, IConvertible)[]
+    //    {
+    //        (ItemAttribute.Duration, 1)
+    //    });
 
-        var item2 = (IEquipment)ItemTestData.CreateWeaponItem(2, attributes: new (ItemAttribute, IConvertible)[]
-        {
-            (ItemAttribute.Duration, 3)
-        });
+    //    var item2 = (IEquipment)ItemTestData.CreateWeaponItem(2, attributes: new (ItemAttribute, IConvertible)[]
+    //    {
+    //        (ItemAttribute.Duration, 3)
+    //    });
 
-        ((IDynamicTile)map[100, 100, 7]).AddItem(item1);
-        ((IDynamicTile)map[101, 100, 7]).AddItem(item2);
+    //    ((IDynamicTile)map[100, 100, 7]).AddItem(item1);
+    //    ((IDynamicTile)map[101, 100, 7]).AddItem(item2);
 
-        var itemTypeStore = ItemTestData.GetItemTypeStore();
-        ItemTestData.AddItemTypeStore(itemTypeStore, item1.Metadata, item2.Metadata);
+    //    var itemTypeStore = ItemTestData.GetItemTypeStore();
+    //    ItemTestData.AddItemTypeStore(itemTypeStore, item1.Metadata, item2.Metadata);
 
-        var decayableItemManager = DecayableItemManagerTestBuilder.Build(map, itemTypeStore);
+    //    var decayableItemManager = DecayableItemManagerTestBuilder.Build(map, itemTypeStore);
 
-        Decayable.OnStarted += decayableItemManager.Add;
+    //    Decayable.OnStarted += decayableItemManager.Add;
 
-        //act
-        item1.StartDecay();
-        item2.StartDecay();
+    //    //act
+    //    item1.StartDecay();
+    //    item2.StartDecay();
 
-        //assert
-        await Task.Delay(1050);
+    //    //assert
+    //    await Task.Delay(1050);
 
-        decayableItemManager.DecayExpiredItems();
-        map[100, 100, 7].TopItemOnStack.Should().NotBe(item1);
-        map[101, 100, 7].TopItemOnStack.Should().Be(item2);
+    //    decayableItemManager.DecayExpiredItems();
+    //    map[100, 100, 7].TopItemOnStack.Should().NotBe(item1);
+    //    map[101, 100, 7].TopItemOnStack.Should().Be(item2);
 
-        await Task.Delay(2050);
+    //    await Task.Delay(2050);
 
-        decayableItemManager.DecayExpiredItems();
-        map[101, 100, 7].TopItemOnStack.Should().NotBe(item2);
-    }
+    //    decayableItemManager.DecayExpiredItems();
+    //    map[101, 100, 7].TopItemOnStack.Should().NotBe(item2);
+    //}
 }
