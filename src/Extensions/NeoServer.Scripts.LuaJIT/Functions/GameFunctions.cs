@@ -2,6 +2,7 @@
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Helpers;
@@ -140,9 +141,18 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
                     return 1;
                 }
 
-                var result = ((IDynamicTile)tile).AddItem(item);
+                if (tile is IStaticTile)
+                {
+                    var staticToDynamicTileService = NeoServer.Server.Helpers.IoC.GetInstance<IStaticToDynamicTileService>();
+                    tile = staticToDynamicTileService.TransformIntoDynamicTile(tile);
+                }
 
-                if (result.Succeeded)
+                var result = false;
+
+                if (tile is IDynamicTile dynamicTile)
+                    result = dynamicTile.AddItem(item).Succeeded;
+
+                if (result)
                 {
                     if (!hasTable) Lua.PushNil(L);
                     return 1;

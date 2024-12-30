@@ -388,6 +388,8 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         {
             env.RemoveItemByUID(uid);
             env.InsertItem(uid, newItem);
+
+            UpdateLuaUserdata(L, 1, newItem);
         }
 
         Lua.PushBoolean(L, true);
@@ -398,7 +400,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
     {
         // item:decay(decayId)
         var item = GetUserdata<IItem>(L, 1);
-        if (item != null && item.Decay != null)
+        if (item != null)
         {
             if (Lua.IsNumber(L, 2))
             {
@@ -408,7 +410,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
                 item.UpdateMetadata(it);
             }
 
-            item.Decay.StartDecay();
+            item.Decay?.StartDecay();
             Lua.PushBoolean(L, true);
         }
         else

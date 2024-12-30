@@ -1087,4 +1087,20 @@ public class LuaFunctionsLoader
         Marshal.WriteIntPtr(userdata, gch2.AddrOfPinnedObject());
         gch2.Free();
     }
+
+    public static void UpdateLuaUserdata(LuaState L, int index, IItem newItem)
+    {
+        var userdata = Lua.ToUserData(L, index);
+        if (userdata == IntPtr.Zero)
+            throw new Exception("Failed to update userdata: userdata not found.");
+
+        var userDataStruct = (UserDataStruct)Marshal.PtrToStructure(
+            Marshal.ReadIntPtr(userdata),
+            typeof(UserDataStruct)
+        );
+
+        lock (_objects)
+            if (_objects.ContainsKey(userDataStruct.Index))
+                _objects[userDataStruct.Index] = newItem;
+    }
 }
