@@ -8,6 +8,7 @@ using NeoServer.Data.Contexts;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.World.Models.Spawns;
+using NeoServer.Loaders.Groups;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Loaders.Items;
 using NeoServer.Loaders.Monsters;
@@ -60,8 +61,8 @@ public class Program
         logger.Information("Log set to: {Log}", logConfiguration.MinimumLevel);
         logger.Information("Environment: {Env}", Environment.GetEnvironmentVariable("ENVIRONMENT"));
 
-        logger.Step("Building extensions...", "{files} extensions build",
-            () => ExtensionsCompiler.Compile(serverConfiguration.Data, serverConfiguration.Extensions));
+        //logger.Step("Building extensions...", "{files} extensions build",
+        //    () => ExtensionsCompiler.Compile(serverConfiguration.Data, serverConfiguration.Extensions));
 
         container = Container.BuildAll();
         Helpers.IoC.Initialize(container);
@@ -86,6 +87,7 @@ public class Program
         container.Resolve<MonsterLoader>().Load();
         container.Resolve<VocationLoader>().Load();
         container.Resolve<SpellLoader>().Load();
+        container.Resolve<GroupLoader>().Load();
 
         container.Resolve<IEnumerable<IStartupLoader>>().ToList().ForEach(x => x.Load());
 

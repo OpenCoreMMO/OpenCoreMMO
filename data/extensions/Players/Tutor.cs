@@ -13,10 +13,10 @@ namespace NeoServer.Extensions.Players;
 
 public class Tutor : Player
 {
-    public Tutor(uint id, string characterName, IVocation vocation, Gender gender, bool online,
+    public Tutor(uint id, string characterName, IVocation vocation, IGroup group, Gender gender, bool online,
         IDictionary<SkillType, ISkill> skills, IDictionary<int, int> storages, IOutfit outfit, ushort speed, Location location,
         IMapTool mapTool, ITown town) :
-        base(id, characterName, ChaseMode.Follow, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, vocation,
+        base(id, characterName, ChaseMode.Follow, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, vocation, group,
             gender, online, ushort.MaxValue, ushort.MaxValue, FightMode.Balanced, 100, 100, skills, storages, 60, outfit,
             speed, location, mapTool, town)
     {

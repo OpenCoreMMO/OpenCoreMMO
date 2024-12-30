@@ -125,7 +125,7 @@ public class PlayerTest
 
         Assert.False(sut.CanSeeInvisible);
 
-        sut.SetFlag(PlayerFlag.CanSeeInvisibility);
+        sut.SetFlag(PlayerFlag.CanSenseInvisibility);
 
         Assert.True(sut.CanSeeInvisible);
     }
@@ -148,7 +148,7 @@ public class PlayerTest
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
 
-        sut.SetFlag(PlayerFlag.CanSeeInvisibility);
+        sut.SetFlag(PlayerFlag.CanSenseInvisibility);
 
         var creature = new Mock<ICreature>();
         creature.Setup(x => x.IsInvisible).Returns(true);
@@ -234,10 +234,10 @@ public class PlayerTest
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
 
-        sut.SetFlag(PlayerFlag.CanBeSeen);
+        sut.SetFlag(PlayerFlag.IgnoreYellCheck);
         Assert.True(sut.CanBeSeen);
 
-        sut.UnsetFlag(PlayerFlag.CanBeSeen);
+        sut.UnsetFlag(PlayerFlag.IgnoreYellCheck);
         Assert.False(sut.CanBeSeen);
     }
 

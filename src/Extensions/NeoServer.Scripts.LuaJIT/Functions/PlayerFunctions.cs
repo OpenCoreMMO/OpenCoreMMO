@@ -49,6 +49,9 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(L, "Player", "getStorageValue", LuaPlayerGetStorageValue);
         RegisterMethod(L, "Player", "setStorageValue", LuaPlayerSetStorageValue);
 
+        RegisterMethod(L, "Player", "getGroup", LuaPlayerGetGroup);
+        RegisterMethod(L, "Player", "setGroup", LuaPlayerSetGroup);
+
         RegisterMethod(L, "Player", "addItem", LuaPlayerAddItem);
         RegisterMethod(L, "Player", "removeItem", LuaPlayerRemoveItem);
 
@@ -455,6 +458,42 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         if (player != null)
         {
             player.AddOrUpdateStorageValue(key, value);
+            PushBoolean(L, true);
+        }
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    private static int LuaPlayerGetGroup(LuaState L)
+    {
+        // player:getGroup()
+        var player = GetUserdata<IPlayer>(L, 1);
+        if (player != null)
+            PushUserdata(L, player.Group);
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    private static int LuaPlayerSetGroup(LuaState L)
+    {
+        // player:setGroup(group)
+        var group = GetUserdata<IGroup>(L, 2);
+
+        if (group is null)
+        {
+            PushBoolean(L, false);
+            return 1;
+        }
+
+        var player = GetUserdata<IPlayer>(L, 1);
+
+        if (player is not null)
+        {
+            player.Group = group;
             PushBoolean(L, true);
         }
         else

@@ -18,16 +18,16 @@ public class TutorLoader : PlayerLoader
 {
     public TutorLoader(IItemFactory itemFactory, ICreatureFactory creatureFactory,
         ChatChannelFactory chatChannelFactory, IGuildStore guildStore,
-        IVocationStore vocationStore, IMapTool mapTool,
+        IVocationStore vocationStore, IGroupStore groupScore, IMapTool mapTool,
         World world, ILogger logger, GameConfiguration gameConfiguration) :
-        base(itemFactory, creatureFactory, chatChannelFactory, guildStore, vocationStore, mapTool, world, logger,
+        base(itemFactory, creatureFactory, chatChannelFactory, guildStore, vocationStore, groupScore, mapTool, world, logger,
             gameConfiguration)
     {
     }
 
     public override bool IsApplicable(PlayerEntity player)
     {
-        return player?.PlayerType == 2;
+        return player?.Group == 2;
     }
 
     public override IPlayer Load(PlayerEntity playerEntity)
@@ -40,6 +40,7 @@ public class TutorLoader : PlayerLoader
             (uint)playerEntity.Id,
             playerEntity.Name,
             VocationStore.Get(playerEntity.Vocation),
+            GroupStore.Get(playerEntity.Group),
             playerEntity.Gender,
             playerEntity.Online,
             ConvertToSkills(playerEntity),

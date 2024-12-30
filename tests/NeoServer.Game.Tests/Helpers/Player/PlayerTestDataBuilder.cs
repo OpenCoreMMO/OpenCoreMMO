@@ -20,6 +20,7 @@ public static class PlayerTestDataBuilder
 {
     public static IPlayer Build(
         uint id = 1,
+        byte group = 1,
         string name = "PlayerA",
         uint capacity = 100,
         ushort hp = 100,
@@ -29,8 +30,10 @@ public static class PlayerTestDataBuilder
         Dictionary<SkillType, ISkill> skills = null,
         Dictionary<int, int> storages = null,
         byte vocationType = 1,
+        byte groupId = 1,
         IPathFinder pathFinder = null,
         IVocationStore vocationStore = null,
+        IGroupStore groupStore = null,
         IGuild guild = null,
         ITown town = null)
     {
@@ -58,6 +61,7 @@ public static class PlayerTestDataBuilder
             hp,
             hp,
             vocationStore.Get(vocationType),
+            groupStore.Get(groupId),
             Gender.Male, true, mana,
             mana,
             FightMode.Attack,

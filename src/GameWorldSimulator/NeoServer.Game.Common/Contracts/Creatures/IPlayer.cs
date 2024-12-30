@@ -94,6 +94,8 @@ public interface IPlayer : ICombatActor, ISociableCreature
     bool Recovering { get; }
     IVocation Vocation { get; }
     byte VocationType => Vocation?.VocationType ?? default;
+    IGroup Group { get; set; }
+    byte GroupId => Group?.Id ?? default;
     uint AccountId { get; init; }
     IGuild Guild { get; }
     ushort GuildId => Guild?.Id ?? default;
@@ -113,6 +115,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     IDictionary<int, int> Storages { get; }
 
     bool CanSeeInspectionDetails { get; }
+
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
     event UseSpell OnUsedSpell;
     event SendMessageTo OnSentMessage;

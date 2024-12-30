@@ -149,7 +149,7 @@ public class PlayerVipListTests
     public void AddToVip_Player_AddToVip_ReturnsTrue()
     {
         var sut = PlayerTestDataBuilder.Build();
-        var player = PlayerTestDataBuilder.Build(2, "Player X");
+        var player = PlayerTestDataBuilder.Build(2, 1, "Player X");
 
         sut.Vip.LoadVipList(new (uint, string)[] { (3, "player1") });
 

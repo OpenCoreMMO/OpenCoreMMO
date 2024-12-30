@@ -13,16 +13,16 @@ namespace NeoServer.Extensions.Players;
 
 public class God : Tutor
 {
-    public God(uint id, string characterName, IVocation vocation, Gender gender, bool online,
+    public God(uint id, string characterName, IVocation vocation, IGroup group, Gender gender, bool online,
         IDictionary<SkillType, ISkill> skills, IDictionary<int, int> storages, IOutfit outfit,
         ushort speed, Location location,
         IMapTool mapTool, ITown town) :
-        base(id, characterName, vocation, gender, online, skills, storages, outfit, speed, location, mapTool, town)
+        base(id, characterName, vocation, group, gender, online, skills, storages, outfit, speed, location, mapTool, town)
     {
-        SetFlags(PlayerFlag.CanSeeInvisibility, PlayerFlag.SpecialVip);
+        SetFlags(PlayerFlag.CanSenseInvisibility, PlayerFlag.SpecialVip);
     }
 
-    public override bool CanSeeInvisible => FlagIsEnabled(PlayerFlag.CanSeeInvisibility);
+    public override bool CanSeeInvisible => FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
     public override bool CannotLogout => false;
     public override bool CanBeSeen => false;
     public override bool CanSeeInspectionDetails => true;
