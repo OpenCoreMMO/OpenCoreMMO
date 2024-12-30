@@ -6,6 +6,7 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Helpers;
+using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.World.Models;
 
@@ -23,11 +24,17 @@ public class World
 
     public ImmutableList<ISpawn> Spawns { get; private set; }
 
+    
+    public void AddTile(ITile newTile, Location location)
+    {
+        var sector = region.CreateSector(location.X, location.Y, out var created);
+
+        sector.AddTile(newTile, location);
+        LoadedTilesCount++;
+    }
+
     public void AddTile(ITile newTile)
     {
-        var x = newTile.Location.X;
-        var y = newTile.Location.Y;
-
         var sector = region.CreateSector(newTile.Location.X, newTile.Location.Y, out var created);
 
         sector.AddTile(newTile);
