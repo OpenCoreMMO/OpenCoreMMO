@@ -78,7 +78,10 @@ namespace NeoServer.Loaders.Items.Parsers
                 {
                     var itemAttribute = ItemAttributeTranslation.Translate(attribute.Key, out _);
 
-                    var value = JsonTextExtensions.ParseFromJson(attribute.Value);
+                    var originalValue = JsonTextExtensions.ParseFromJson(attribute.Value);
+                    
+                    var value = itemAttribute == ItemAttribute.Weight ? (int.Parse(originalValue) / 100f)
+                        : originalValue;
                     
                     if (attribute.Attributes == null || !attribute.Attributes.Any())
                     {
