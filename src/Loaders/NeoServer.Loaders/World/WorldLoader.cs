@@ -70,15 +70,18 @@ public class WorldLoader
 
     private void LoadTiles(Otbm otbm)
     {
-        otbm.TileAreas.SelectMany(t => t.Tiles)
-            .ToList().ForEach(tileNode =>
-            {
-                var items = GetItemsOnTile(tileNode).ToArray();
+        foreach (var tileNode in otbm.TileAreas.SelectMany(t => t.Tiles))
+        {
+            var items = GetItemsOnTile(tileNode);
+            
+            var tile = _tileFactory.CreateTile(
+                tileNode.Coordinate, 
+                (TileFlag)tileNode.Flag, 
+                items.ToArray()
+            );
 
-                var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items);
-
-                world.AddTile(tile);
-            });
+            world.AddTile(tile);
+        }
     }
 
     private Span<IItem> GetItemsOnTile(TileNode tileNode)
