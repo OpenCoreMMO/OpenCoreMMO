@@ -471,7 +471,10 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         // player:getGroup()
         var player = GetUserdata<IPlayer>(L, 1);
         if (player != null)
+        {
             PushUserdata(L, player.Group);
+            SetMetatable(L, -1, "Group");
+        }
         else
             Lua.PushNil(L);
 

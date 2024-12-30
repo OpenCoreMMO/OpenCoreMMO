@@ -80,15 +80,17 @@ public class PlayerUseItemOnCommand : ICommand
                     break;
             }
 
-        if (thingToUse is not IUsableOn itemToUse) return;
+        if (thingToUse is not IItem itemToUse) return;
 
         if (_scriptGameManager.PlayerUseItemEx(player, player.Location, useItemPacket.ToLocation,
                 useItemPacket.ToStackPosition, itemToUse, useItemPacket.Location.IsHotkey, !onItem ? onTile : onItem))
             return;
 
+        if (thingToUse is not IUsableOn itemUsableOn) return;
+
         Action action = onTile is not null
-            ? () => _playerUseService.Use(player, itemToUse, onTile)
-            : () => _playerUseService.Use(player, itemToUse, onItem);
+            ? () => _playerUseService.Use(player, itemUsableOn, onTile)
+            : () => _playerUseService.Use(player, itemUsableOn, onItem);
 
         if (useItemPacket.Location.Type == LocationType.Ground)
         {

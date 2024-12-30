@@ -44,15 +44,20 @@ function talkAction.onSay(player, words, param)
 
     Game.createMonster("Scarab", nextPosition)
 
-    local storageValue = player:getStorageValue(10000000)
+    local storageValue = player:getStorageValue(1000)
     
     logger.info('storageValue: ' .. storageValue)
 
     if storageValue == -1 then
-        player:setStorageValue(10000000, 1996)
-        storageValue = player:getStorageValue(10000000)
+        player:setStorageValue(1000, 1996)
+        storageValue = player:getStorageValue(1000)
         logger.info('storageValue2: ' .. storageValue)
     end
+
+    local group = player:getGroup()
+    
+    logger.info('groupId: ' .. group:getId())
+    logger.info('groupName: ' .. group:getName())
 
     logger.info('end')
 

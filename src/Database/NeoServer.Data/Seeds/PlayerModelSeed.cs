@@ -9,19 +9,19 @@ internal static class PlayerModelSeed
     public static void Seed(EntityTypeBuilder<PlayerEntity> builder)
     {
         builder.HasData(
-            CreatePlayerEntity(1, 3, "GOD", 11, 1000, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 75),
-            CreatePlayerEntity(2, 1, "Sorcerer Sample", 1, 500, 2645, 2645, 14850, 14850, 1020, 1022, 7, 2520, 130, 69,
+            CreatePlayerEntity(1, "GOD", 11, 6, 1000, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 75),
+            CreatePlayerEntity(2, "Sorcerer Sample", 1, 1, 500, 2645, 2645, 14850, 14850, 1020, 1022, 7, 2520, 130, 69,
                 95, 78, 58),
-            CreatePlayerEntity(3, 1, "Knight Sample", 4, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 131, 69, 95,
+            CreatePlayerEntity(3, "Knight Sample", 4, 1, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 131, 69, 95,
                 78, 58),
-            CreatePlayerEntity(4, 1, "Druid Sample", 2, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 130, 69, 95,
+            CreatePlayerEntity(4, "Druid Sample", 2, 1, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 130, 69, 95,
                 78, 58),
-            CreatePlayerEntity(5, 1, "Paladin Sample", 3, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 137, 69, 95,
+            CreatePlayerEntity(5, "Paladin Sample", 3, 1, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 137, 69, 95,
                 78, 58)
         );
     }
 
-    private static PlayerEntity CreatePlayerEntity(int playerId, byte group, string name, byte vocation,
+    private static PlayerEntity CreatePlayerEntity(int playerId, string name, byte vocation, byte group,
         ushort level,
         ushort health, ushort maxHealth, ushort mana, ushort maxMana,
         int posX, int posY, int posZ, ushort staminaMinutes, int lookType, int lookBody = 0, int lookFeet = 0,

@@ -10,6 +10,11 @@ public class Group : IGroup
     public string Name { get; set; }
     public int Access { get; set; }
     public int MaxDepotItems { get; set; }
-    public int Maxvipentries { get; set; }
-    public Dictionary<PlayerFlag, int> Flags { get; set; }
+    public int MaxVipEntries { get; set; }
+    public Dictionary<PlayerFlag, bool> Flags { get; }
+
+    public Group()
+    {
+        Flags = new Dictionary<PlayerFlag, bool>();
+    }
 }

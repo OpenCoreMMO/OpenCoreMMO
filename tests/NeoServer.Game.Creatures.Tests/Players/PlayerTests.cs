@@ -79,8 +79,8 @@ public class PlayerTests
     public void FlagIsEnabled_Enabled_ReturnsTrue()
     {
         var sut = PlayerTestDataBuilder.Build();
-        sut.SetFlag(PlayerFlag.IgnoreYellCheck);
-        var result = sut.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
+        sut.Group.EnableFlag(PlayerFlag.IgnoreYellCheck);
+        var result = sut.Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
 
         result.Should().BeTrue();
     }
@@ -89,7 +89,7 @@ public class PlayerTests
     public void FlagIsEnabled_Disabled_ReturnsTrue()
     {
         var sut = PlayerTestDataBuilder.Build();
-        var result = sut.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
+        var result = sut.Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
 
         result.Should().BeFalse();
     }

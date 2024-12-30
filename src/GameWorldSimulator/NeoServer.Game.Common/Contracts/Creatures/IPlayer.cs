@@ -210,7 +210,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
 
     bool CastSpell(string message);
 
-    bool FlagIsEnabled(PlayerFlag flag);
     void SendMessageTo(ISociableCreature creature, SpeechType type, string message);
     void StartShopping(IShopperNpc npc);
     void StopShopping();
@@ -220,8 +219,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
     void ReceivePurchasedItems(INpc from, SaleContract saleContract, params IItem[] items);
     void WithdrawFromBank(ulong amount);
     void LoadBank(ulong amount);
-    void SetFlag(PlayerFlag flag);
-    void UnsetFlag(PlayerFlag flag);
     byte GetSkillTries(SkillType skillType);
     void AddSkillBonus(SkillType skillType, sbyte increase);
     void RemoveSkillBonus(SkillType skillType, sbyte decrease);

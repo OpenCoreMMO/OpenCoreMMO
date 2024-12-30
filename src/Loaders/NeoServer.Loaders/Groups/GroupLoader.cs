@@ -62,18 +62,12 @@ public class GroupLoader
         {
             if (_groupStore.TryGetValue(group.Id, out var existingGroup))
             {
-                UpdateGroup(existingGroup, group);
-
+                existingGroup = group;
                 continue;
             }
 
             _groupStore.Add(group.Id, group);
         }
-    }
-
-    private static void UpdateGroup(IGroup existingGroup, IGroup group)
-    {
-       
     }
 
     public List<Group> GetGroups()
@@ -90,15 +84,15 @@ public class GroupLoader
         return groups;
     }
 
-    private class FlagConverter : JsonConverter<Dictionary<PlayerFlag, int>>
+    private class FlagConverter : JsonConverter<Dictionary<PlayerFlag, bool>>
     {
-        public override Dictionary<PlayerFlag, int> ReadJson(JsonReader reader, Type objectType,
-            [AllowNull] Dictionary<PlayerFlag, int> existingValue, bool hasExistingValue,
+        public override Dictionary<PlayerFlag, bool> ReadJson(JsonReader reader, Type objectType,
+            [AllowNull] Dictionary<PlayerFlag, bool> existingValue, bool hasExistingValue,
             JsonSerializer serializer)
         {
             return serializer.Deserialize<List<Dictionary<string, string>>>(reader)?.ToDictionary(
                 x => ParsePlayerFlagName(x["name"]),
-                x => int.Parse(x["value"], CultureInfo.InvariantCulture.NumberFormat));
+                x => int.Parse(x["value"], CultureInfo.InvariantCulture.NumberFormat) > 0);
         }
 
         private static PlayerFlag ParsePlayerFlagName(string flagName)
@@ -107,53 +101,9 @@ public class GroupLoader
                 return (PlayerFlag)result;
 
             throw new ArgumentOutOfRangeException(nameof(flagName), flagName, null);
-
-            return flagName switch
-            {
-                "cannotusecombat" => PlayerFlag.CannotUseCombat,
-                "cannotattackplayer" => PlayerFlag.CannotAttackPlayer,
-                "cannotattackmonster" => PlayerFlag.CannotAttackMonster,
-                "cannotbeattacked" => PlayerFlag.CannotBeAttacked,
-                "canconvinceall" => PlayerFlag.CanConvinceAll,
-                "cansummonall" => PlayerFlag.CanSummonAll,
-                "canillusionall" => PlayerFlag.CanIllusionAll,
-                "cansenseinvisibility" => PlayerFlag.CanSenseInvisibility,
-                "ignoredbymonsters" => PlayerFlag.IgnoredByMonsters,
-                "notgaininfight" => PlayerFlag.NotGainInFight,
-                "hasinfinitemana" => PlayerFlag.HasInfiniteMana,
-                "hasinfinitesoul" => PlayerFlag.HasInfiniteSoul,
-                "hasnoexhaustion" => PlayerFlag.HasNoExhaustion,
-                "cannotusespells" => PlayerFlag.CannotUseSpells,
-                "cannotpickupitem" => PlayerFlag.CannotPickupItem,
-                "canalwayslogin" => PlayerFlag.CanAlwaysLogin,
-                "canbroadcast" => PlayerFlag.CanBroadcast,
-                "canedithouses" => PlayerFlag.CanEditHouses,
-                "cannotbebanned" => PlayerFlag.CannotBeBanned,
-                "cannotbepushed" => PlayerFlag.CannotBePushed,
-                "hasinfinitecapacity" => PlayerFlag.HasInfiniteCapacity,
-                "canpushallcreatures" => PlayerFlag.CanPushAllCreatures,
-                "cantalkredprivate" => PlayerFlag.CanTalkRedPrivate,
-                "cantalkredchannel" => PlayerFlag.CanTalkRedChannel,
-                "talkorangehelpchannel" => PlayerFlag.TalkOrangeHelpChannel,
-                "notgainexperience" => PlayerFlag.NotGainExperience,
-                "notgainmana" => PlayerFlag.NotGainMana,
-                "notgainhealth" => PlayerFlag.NotGainHealth,
-                "notgainskill" => PlayerFlag.NotGainSkill,
-                "setmaxspeed" => PlayerFlag.SetMaxSpeed,
-                "specialvip" => PlayerFlag.SpecialVip,
-                "notgenerateloot" => PlayerFlag.NotGenerateLoot,
-                "ignoreprotectionzone" => PlayerFlag.IgnoreProtectionZone,
-                "ignorespellcheck" => PlayerFlag.IgnoreSpellCheck,
-                "ignoreweaponcheck" => PlayerFlag.IgnoreWeaponCheck,
-                "cannotbemuted" => PlayerFlag.CannotBeMuted,
-                "isalwayspremium" => PlayerFlag.IsAlwaysPremium,
-                "ignoreyellcheck" => PlayerFlag.IgnoreYellCheck,
-                "ignoresendprivatecheck" => PlayerFlag.IgnoreSendPrivateCheck,
-                _ => throw new ArgumentOutOfRangeException(nameof(flagName), flagName, null)
-            };
         }
 
-        public override void WriteJson(JsonWriter writer, [AllowNull] Dictionary<PlayerFlag, int> value,
+        public override void WriteJson(JsonWriter writer, [AllowNull] Dictionary<PlayerFlag, bool> value,
             JsonSerializer serializer)
         {
             throw new NotImplementedException();
