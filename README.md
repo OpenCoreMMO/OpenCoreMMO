@@ -94,7 +94,7 @@ To connect to the self-hosted server for development, please use the following c
 
 ## Links
 
-* Documentation: https://caioavidal.gitbook.io/opencoremmo/
+* Documentation: https://opencoremmo.gitbook.io/opencoremmo/
 * Discord Invite: https://discord.gg/Kazq9z2
 * Revscript (LuaJIT) Functions Readme: https://github.com/caioavidal/OpenCoreMMO/tree/develop/data/LuaJit
 
