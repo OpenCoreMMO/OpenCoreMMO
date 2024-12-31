@@ -41,14 +41,14 @@ public class PlayerPersistenceRoutine
     {
         _saveInterval = (int)(_serverConfiguration?.Save?.Players ?? (uint)_saveInterval);
         _saveInterval = (_saveInterval == 0 ? 3600 : _saveInterval) * 1000;
-        Task.Run(async () =>
+        Task.Factory.StartNew(async () =>
         {
             while (!token.IsCancellationRequested)
             {
                 _gameServer.PersistenceDispatcher.AddEvent(async () => await SavePlayers());
                 await Task.Delay(_saveInterval, token);
             }
-        }, token);
+        }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
 
     private async Task SavePlayers()
