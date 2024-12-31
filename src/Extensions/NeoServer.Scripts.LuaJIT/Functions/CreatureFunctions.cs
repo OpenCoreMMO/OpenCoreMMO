@@ -81,7 +81,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 
     private static int LuaCreatureIsInGhostMode(LuaState L)
     {
-        // creature:getId()
+        // creature:isInGhostMode()
         var creature = GetUserdata<ICreature>(L, 1);
         if (creature != null)
             Lua.PushBoolean(L, creature.IsInvisible);
