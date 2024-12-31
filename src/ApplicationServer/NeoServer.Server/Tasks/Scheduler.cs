@@ -51,7 +51,7 @@ public class Scheduler : IScheduler
     /// <param name="token"></param>
     public virtual void Start(CancellationToken token)
     {
-        Task.Run(async () =>
+        Task.Factory.StartNew(async () =>
         {
             while (await Reader.WaitToReadAsync(token))
                 // Fast loop around available jobs
@@ -68,7 +68,7 @@ public class Scheduler : IScheduler
 
                 DispatchEvent(evt);
             }
-        }, token);
+        }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
 
     /// <summary>
