@@ -1,7 +1,6 @@
 ﻿local talkAction = TalkAction("/reload")
 
-function talkAction.onSay(player, words, param)
-    local reloadTypes = {
+local reloadTypes = {
         ["all"] = RELOAD_TYPE_ALL,
 
         ["chat"] = RELOAD_TYPE_CHAT,
@@ -45,6 +44,11 @@ function talkAction.onSay(player, words, param)
         ["group"] = RELOAD_TYPE_GROUPS,
         ["groups"] = RELOAD_TYPE_GROUPS,
     }
+
+function talkAction.onSay(player, words, param)
+    if not player:getGroup():getAccess() then
+		return true
+	end
 
     --if not configManager.getBoolean(configKeys.ALLOW_RELOAD) then
     --	print("Reload command is disabled.")

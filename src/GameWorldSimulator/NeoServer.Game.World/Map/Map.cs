@@ -363,7 +363,7 @@ public class Map : IMap
         if (tile.HasCreature)
             foreach (var location in tile.Location.Neighbours)
                 if (this[location] is IDynamicTile { HasCreature: false } t
-                    && !t.HasFlag(TileFlags.Unpassable))
+                    && !t.HasFlag(TileFlags.BLockSolid))
                 {
                     tile = t;
                     break;
@@ -405,7 +405,7 @@ public class Map : IMap
             var location = coordinate.Point.Location;
             var tile = this[location];
 
-            if (tile is not IDynamicTile walkableTile || walkableTile.HasFlag(TileFlags.Unpassable) ||
+            if (tile is not IDynamicTile walkableTile || walkableTile.HasFlag(TileFlags.BLockSolid) ||
                 walkableTile.ProtectionZone)
             {
                 coordinate.MarkAsMissed();

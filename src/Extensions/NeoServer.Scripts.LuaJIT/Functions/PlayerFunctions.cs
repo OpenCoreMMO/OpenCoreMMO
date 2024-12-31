@@ -49,12 +49,17 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(L, "Player", "getStorageValue", LuaPlayerGetStorageValue);
         RegisterMethod(L, "Player", "setStorageValue", LuaPlayerSetStorageValue);
 
+        RegisterMethod(L, "Player", "getGroup", LuaPlayerGetGroup);
+        RegisterMethod(L, "Player", "setGroup", LuaPlayerSetGroup);
+
         RegisterMethod(L, "Player", "addItem", LuaPlayerAddItem);
         RegisterMethod(L, "Player", "removeItem", LuaPlayerRemoveItem);
 
         RegisterMethod(L, "Player", "sendTextMessage", LuaPlayerSendTextMessage);
 
         RegisterMethod(L, "Player", "isPzLocked", LuaPlayerIsPzLocked);
+
+        RegisterMethod(L, "Player", "setGhostMode", LuaPlayerSetGhostMode);
     }
 
     private static int LuaPlayerCreate(LuaState L)
@@ -462,4 +467,62 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         return 1;
     }
+
+    private static int LuaPlayerGetGroup(LuaState L)
+    {
+        // player:getGroup()
+        var player = GetUserdata<IPlayer>(L, 1);
+        if (player != null)
+        {
+            PushUserdata(L, player.Group);
+            SetMetatable(L, -1, "Group");
+        }
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    private static int LuaPlayerSetGroup(LuaState L)
+    {
+        // player:setGroup(group)
+        var group = GetUserdata<IGroup>(L, 2);
+
+        if (group is null)
+        {
+            PushBoolean(L, false);
+            return 1;
+        }
+
+        var player = GetUserdata<IPlayer>(L, 1);
+
+        if (player is not null)
+        {
+            player.Group = group;
+            PushBoolean(L, true);
+        }
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
+    private static int LuaPlayerSetGhostMode(LuaState L)
+    {
+        // player:setGhostMode(enabled)
+        var player = GetUserdata<IPlayer>(L, 1);
+        bool enabled = GetBoolean(L, 2);
+
+        if (player != null && player.IsInvisible != enabled)
+        {
+            if (enabled)
+                player.TurnInvisible();
+            else 
+                player.TurnVisible();
+        }
+
+        PushBoolean(L, true);
+        return 1;
+    }
+
 }

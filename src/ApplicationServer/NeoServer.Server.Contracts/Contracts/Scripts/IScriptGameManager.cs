@@ -7,10 +7,9 @@ namespace NeoServer.Server.Common.Contracts.Scripts;
 
 public interface IScriptGameManager
 {
+    void Start();
     bool PlayerSaySpell(IPlayer player, SpeechType type, string text);
-    bool PlayerUseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item);
-    bool PlayerUseItemWithCreature(IPlayer player, Location fromPos, byte fromStackPos, ICreature creature, IItem item);
-
-    bool PlayerUseItemEx(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, bool isHotkey,
-        IThing target);
+    bool PlayerUseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item, IThing target = null);
+    bool PlayerUseItem(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, IThing target = null, bool isHotkey = false);
+    bool HasAction(IItem item);
 }

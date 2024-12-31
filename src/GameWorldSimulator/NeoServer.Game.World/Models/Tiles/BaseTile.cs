@@ -30,7 +30,7 @@ public abstract class BaseTile : ITile
         return ((uint)flag & Flags) != 0;
     }
 
-    public bool BlockMissile => HasFlag(TileFlags.BlockMissile);
+    public bool BlockMissile => HasFlag(TileFlags.BlockProjecTile);
 
     public Location Location { get; private set; }
 
@@ -80,10 +80,10 @@ public abstract class BaseTile : ITile
             if (!item.CanBeMoved) SetFlag(TileFlags.ImmovableNoFieldBlockPath);
         }
 
-        if (item.Metadata.HasFlag(ItemFlag.BlockProjectTile)) SetFlag(TileFlags.BlockMissile);
+        if (item.Metadata.HasFlag(ItemFlag.BlockProjectTile)) SetFlag(TileFlags.BlockProjecTile);
 
         if (item.Metadata.Attributes.TryGetAttribute(ItemAttribute.BlockProjectTile, out int value) && value == 1)
-            SetFlag(TileFlags.BlockMissile);
+            SetFlag(TileFlags.BlockProjecTile);
 
         if (item is ITeleport) SetFlag(TileFlags.Teleport);
 
@@ -97,7 +97,7 @@ public abstract class BaseTile : ITile
         //     setFlag(TILESTATE_TRASHHOLDER);
         // }
 
-        if (item.Metadata.HasFlag(ItemFlag.Unpassable)) SetFlag(TileFlags.Unpassable);
+        if (item.Metadata.HasFlag(ItemFlag.Unpassable)) SetFlag(TileFlags.BLockSolid);
 
         // if (item->getBed()) { //todo
         //     setFlag(TILESTATE_BED);
@@ -116,10 +116,10 @@ public abstract class BaseTile : ITile
         RemoveFlag(TileFlags.ImmovableBlockSolid);
         RemoveFlag(TileFlags.BlockPath);
         RemoveFlag(TileFlags.ImmovableNoFieldBlockPath);
-        RemoveFlag(TileFlags.BlockMissile);
+        RemoveFlag(TileFlags.BlockProjecTile);
         RemoveFlag(TileFlags.Teleport);
         RemoveFlag(TileFlags.MagicField);
-        RemoveFlag(TileFlags.Unpassable);
+        RemoveFlag(TileFlags.BLockSolid);
         RemoveFlag(TileFlags.Depot);
         RemoveFlag(TileFlags.SupportsHangable);
         RemoveFlag(TileFlags.MailBox);

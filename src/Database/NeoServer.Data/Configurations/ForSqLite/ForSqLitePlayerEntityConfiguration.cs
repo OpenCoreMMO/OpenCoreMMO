@@ -26,7 +26,7 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
             .HasAnnotation("Sqlite:Autoincrement", true)
             .ValueGeneratedOnAdd();
 
-        entity.Property(e => e.PlayerType);
+        entity.Property(e => e.Group);
 
         ConfigureProperty(entity, e => e.AccountId, "int(11)", "0");
         ConfigureProperty(entity, e => e.TownId, "int(11)", "1");

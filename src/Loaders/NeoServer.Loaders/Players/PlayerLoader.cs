@@ -35,6 +35,7 @@ public class PlayerLoader : IPlayerLoader
     protected readonly ILogger Logger;
     protected readonly IMapTool MapTool;
     protected readonly IVocationStore VocationStore;
+    protected readonly IGroupStore GroupStore;
     protected readonly Game.World.World World;
 
     [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
@@ -42,6 +43,7 @@ public class PlayerLoader : IPlayerLoader
         ChatChannelFactory chatChannelFactory,
         IGuildStore guildStore,
         IVocationStore vocationStore,
+        IGroupStore groupStore,
         IMapTool mapTool,
         Game.World.World world,
         ILogger logger,
@@ -52,6 +54,7 @@ public class PlayerLoader : IPlayerLoader
         ChatChannelFactory = chatChannelFactory;
         GuildStore = guildStore;
         VocationStore = vocationStore;
+        GroupStore = groupStore;
         MapTool = mapTool;
         World = world;
         Logger = logger;
@@ -60,7 +63,7 @@ public class PlayerLoader : IPlayerLoader
 
     public virtual bool IsApplicable(PlayerEntity player)
     {
-        return player?.PlayerType == 1;
+        return player?.Group == 1;
     }
 
     public virtual IPlayer Load(PlayerEntity playerEntity)
@@ -68,6 +71,7 @@ public class PlayerLoader : IPlayerLoader
         if (Guard.IsNull(playerEntity)) return null;
 
         var vocation = GetVocation(playerEntity);
+        var group = GetGroup(playerEntity);
         var town = GetTown(playerEntity);
 
         var playerLocation =
@@ -83,6 +87,7 @@ public class PlayerLoader : IPlayerLoader
             playerEntity.Health,
             playerEntity.MaxHealth,
             vocation,
+            group,
             playerEntity.Gender,
             playerEntity.Online,
             playerEntity.Mana,
@@ -136,6 +141,13 @@ public class PlayerLoader : IPlayerLoader
         if (!VocationStore.TryGetValue(playerEntity.Vocation, out var vocation))
             Logger.Error("Player vocation not found: {PlayerModelVocation}", playerEntity.Vocation);
         return vocation;
+    }
+
+    protected IGroup GetGroup(PlayerEntity playerEntity)
+    {
+        if (!GroupStore.TryGetValue(playerEntity.Group, out var group))
+            Logger.Error("Player group not found: {PlayerModelGroup}", playerEntity.Group);
+        return group;
     }
 
     protected IDynamicTile GetCurrentTile(Location location)

@@ -80,6 +80,11 @@ public class LuaStartup : ILuaStartup
     private readonly IGlobalFunctions _globalFunctions;
 
     /// <summary>
+    /// A reference to the <see cref="IGroupFunctions"/> instance in use.
+    /// </summary>
+    private readonly IGroupFunctions _groupFunctions;
+
+    /// <summary>
     /// A reference to the <see cref="IItemFunctions"/> instance in use.
     /// </summary>
     private readonly IItemFunctions _itemFunctions;
@@ -152,6 +157,7 @@ public class LuaStartup : ILuaStartup
         IEnumFunctions enumFunctions,
         IGameFunctions gameFunctions,
         IGlobalFunctions globalFunctions,
+        IGroupFunctions groupFunctions,
         IItemFunctions itemFunctions,
         IItemTypeFunctions itemTypeFunctions,
         ILoggerFunctions loggerFunctions,
@@ -179,6 +185,7 @@ public class LuaStartup : ILuaStartup
         _enumFunctions = enumFunctions;
         _gameFunctions = gameFunctions;
         _globalFunctions = globalFunctions;
+        _groupFunctions = groupFunctions;
         _itemFunctions = itemFunctions;
         _itemTypeFunctions = itemTypeFunctions;
         _loggerFunctions = loggerFunctions;
@@ -231,6 +238,7 @@ public class LuaStartup : ILuaStartup
         _npcFunctions.Init(luaState);
         _playerFunctions.Init(luaState);
         _teleportFunctions.Init(luaState);
+        _groupFunctions.Init(luaState);
 
         ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), $"config.lua");
 

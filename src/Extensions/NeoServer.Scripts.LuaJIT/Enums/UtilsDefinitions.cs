@@ -1,4 +1,4 @@
-﻿namespace NeoServer.Scripts.LuaJIT;
+﻿namespace NeoServer.Scripts.LuaJIT.Enums;
 
 // Enums
 public enum IconsType
@@ -432,53 +432,6 @@ public enum ItemIdType : ushort
 
     ITEM_DOCUMENT_RO = 1968
 };
-
-public enum PlayerFlagsType : byte
-{
-    CannotUseCombat,
-    CannotAttackPlayer,
-    CannotAttackMonster,
-    CannotBeAttacked,
-    CanConvinceAll,
-    CanSummonAll,
-    CanIllusionAll,
-    CanSenseInvisibility,
-    IgnoredByMonsters,
-    NotGainInFight,
-    HasInfiniteMana,
-    HasInfiniteSoul,
-    HasNoExhaustion,
-    CannotUseSpells,
-    CannotPickupItem,
-    CanAlwaysLogin,
-    CanBroadcast,
-    CanEditHouses,
-    CannotBeBanned,
-    CannotBePushed,
-    HasInfiniteCapacity,
-    CanPushAllCreatures,
-    CanTalkRedPrivate,
-    CanTalkRedChannel,
-    TalkOrangeHelpChannel,
-    NotGainExperience,
-    NotGainMana,
-    NotGainHealth,
-    NotGainSkill,
-    SetMaxSpeed,
-    SpecialVIP,
-    NotGenerateLoot,
-    CanTalkRedChannelAnonymous,
-    IgnoreProtectionZone,
-    IgnoreSpellCheck,
-    IgnoreWeaponCheck,
-    CannotBeMuted,
-    IsAlwaysPremium,
-    CanMapClickTeleport,
-    IgnoredByNpcs,
-
-    // Must always be the last
-    FlagLast
-}
 
 public enum BlessingsType : byte
 {

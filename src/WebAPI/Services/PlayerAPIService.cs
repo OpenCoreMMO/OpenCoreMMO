@@ -70,7 +70,7 @@ public class PlayerApiService : BaseApiService, IPlayerApiService
             Vocation = (byte)playerPostRequest.Vocation,
             ChaseMode = ChaseMode.Stand,
             MaxSoul = 100,
-            PlayerType = 1,
+            Group = 1,
             PosX = playerPostRequest.PosX,
             PosY = playerPostRequest.PosY,
             PosZ = playerPostRequest.PosZ,

@@ -18,6 +18,11 @@ public class LuaScriptGameManager : IScriptGameManager
     #region Dependency Injections
 
     /// <summary>
+    /// A reference to the <see cref="ILuaStartup"/> instance in use.
+    /// </summary>
+    private readonly ILuaStartup _luaStartup;
+
+    /// <summary>
     /// A reference to the <see cref="ILogger"/> instance in use.
     /// </summary>
     private readonly ILogger _logger;
@@ -42,8 +47,7 @@ public class LuaScriptGameManager : IScriptGameManager
         IActions actions,
         ITalkActions talkActions)
     {
-        luaStartup.Start();
-
+        _luaStartup = luaStartup;
         _logger = logger;
 
         _actions = actions;
@@ -54,8 +58,15 @@ public class LuaScriptGameManager : IScriptGameManager
 
     #region Public Methods 
 
+    public void Start() => _luaStartup.Start();
+
+    //public bool HasTalkAction(string text) => _talkActions.TryGetTalkAction(text, out var talkactionWords, out var talkAction);
+
     public bool PlayerSaySpell(IPlayer player, SpeechType type, string words)
     {
+        //if (!_talkActions.TryGetTalkAction(words, out var talkactionWords, out var talkAction))
+        //    return false;
+
         var wordsSeparator = " ";
         var talkactionWords = words.Contains(wordsSeparator) ? words.Split(" ") : [words];
 
@@ -75,43 +86,28 @@ public class LuaScriptGameManager : IScriptGameManager
         return talkAction.ExecuteSay(player, talkactionWords[0], parameter, type);
     }
 
-    public bool PlayerUseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item)
+    public bool HasAction(IItem item) => _actions.GetAction(item) != null;
+
+    public bool PlayerUseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item, IThing? target = null)
     {
-        if (item is null) return false;
-        var action = _actions.GetAction(item);
-
-        if (action != null)
-            return action.ExecuteUse(
-                player,
-                item,
-                pos,
-                null,
-                pos,
-                false);
-        else
-            _logger.Warning("Action with item id {ItemServerId} not found", item.ServerId);
-
-        return false;
+        return PlayerUseItem(player, pos, pos, stackpos, item, target, false);
     }
 
-    public bool PlayerUseItemWithCreature(IPlayer player, Location fromPos, byte fromStackPos, ICreature creature, IItem item)
-    {
-        return PlayerUseItemEx(player, fromPos, creature.Location, creature.Tile.GetCreatureStackPositionIndex(player), item, false, creature);
-    }
-
-    public bool PlayerUseItemEx(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, bool isHotkey, IThing target)
+    public bool PlayerUseItem(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, IThing? target = null, bool isHotkey = false)
     {
         var action = _actions.GetAction(item);
 
-        //if (target is IStaticTile staticTile)
-        //{
-        //    var staticToDynamicTileService = IoC.GetInstance<IStaticToDynamicTileService>();
-        //    target = staticToDynamicTileService.TransformIntoDynamicTile(staticTile);
-        //}
-
-        if (target is ITile tile)
-            target = tile.TopItemOnStack;
-
+        if (target != null)
+        {
+            if (target is ITile tile)
+                target = tile.TopItemOnStack;
+            else if (target is ICreature creature)
+            {
+                toPos = creature.Location;
+                toStackPos = creature.Tile.GetCreatureStackPositionIndex(player);
+            }
+        }
+        
         if (action != null)
             return action.ExecuteUse(
                 player,
@@ -121,14 +117,10 @@ public class LuaScriptGameManager : IScriptGameManager
                 toPos,
                 isHotkey);
         else
-            _logger.Warning("Action with item id {ItemServerId} not found", item.ServerId);
+            _logger.Warning("Action with item id {ItemServerId} has not found into LuaJIT Scripts.", item.ServerId);
 
         return false;
     }
-
-    #endregion
-
-    #region Private Methods
 
     #endregion
 }
