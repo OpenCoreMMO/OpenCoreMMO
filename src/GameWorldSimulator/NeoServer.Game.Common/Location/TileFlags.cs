@@ -27,15 +27,18 @@ public enum TileFlags : uint
     TrashHolder = 1 << 14,
     Bed = 1 << 15,
     Depot = 1 << 16,
-    Unpassable = 1 << 17,
+    BLockSolid = 1 << 17,
     BlockPath = 1 << 18,
     ImmovableBlockSolid = 1 << 19,
     ImmovableBlockPath = 1 << 20,
     ImmovableNoFieldBlockPath = 1 << 21,
     NoFieldBlockPath = 1 << 22,
     SupportsHangable = 1 << 23,
-    BlockMissile = 1 << 24,
-    HasHeight = 1 << 25,
+    Moveable = 1 << 24,
+    IsHorizontal = 1 << 25,
+    IsVertical = 1 << 26,
+    BlockProjecTile = 1 << 27,
+    HasHeight = 1 << 28,
 
     FloorChange = FloorChangeNorth | FloorChangeDown | FloorChangeSouth | FloorChangeEast | FloorChangeWest |
                   FloorChangeEastAlternative | FloorChangeSouthAlternative

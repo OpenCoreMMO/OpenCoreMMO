@@ -162,7 +162,7 @@ public class LuaFunctionsLoader
         SetMetatable(L, -1, "Variant");
     }
 
-    public static void PushThing(LuaState L, IThing thing)
+    public static void PushThing(LuaState L, IThing? thing)
     {
         if (ValidateDispatcherContext(nameof(PushThing)))
         {

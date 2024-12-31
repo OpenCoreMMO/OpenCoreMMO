@@ -34,6 +34,9 @@ Storage = {
 		DarkHelmetQuest = {
 			Key = 9003
 		},
+		CombatKnifeQuest = {
+			Key = 9003
+		},
 	},
 
 	Example = 30002,

@@ -28,7 +28,7 @@ public interface IActions
 
     public ReturnValueType CanUseFar(ICreature creature, Location toPos, bool checkLineOfSight, bool checkFloor);
 
-    public Action GetAction(IItem item);
+    public Action? GetAction(IItem item);
 
     public ReturnValueType InternalUseItem(IPlayer player, Location pos, byte index, IItem item, bool isHotkey);
 
@@ -54,5 +54,5 @@ public interface IActions
 
     public void Clear();
 
-    public Action GetAction(ushort id);
+    public Action? GetAction(ushort id);
 }

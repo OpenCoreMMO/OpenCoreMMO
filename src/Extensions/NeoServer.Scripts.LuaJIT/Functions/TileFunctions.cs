@@ -1,11 +1,12 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Common.Contracts;
 
@@ -14,6 +15,8 @@ namespace NeoServer.Scripts.LuaJIT.Functions;
 public class TileFunctions : LuaScriptInterface, ITileFunctions
 {
     private static IGameServer _gameServer;
+    private static IItemTypeStore _itemTypeStore; 
+    private static IItemClientServerIdMapStore _itemClientServerIdMapStore;
 
     public TileFunctions(IGameServer gameServer) : base(nameof(TileFunctions))
     {
@@ -29,6 +32,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         RegisterMethod(L, "Tile", "getGround", LuaGetGround);
         RegisterMethod(L, "Tile", "getThing", LuaTileGetThing);
         RegisterMethod(L, "Tile", "getThingCount", LuaTileGetThingCount);
+        RegisterMethod(L, "Tile", "getCreatureCount", LuaTileGetCreatureCount);
         RegisterMethod(L, "Tile", "getTopVisibleThing", LuaTileGetTopVisibleThing);
 
         RegisterMethod(L, "Tile", "getItems", LuaTileGetItems);
@@ -112,6 +116,17 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         var tile = GetUserdata<ITile>(L, 1);
         if (tile != null)
             Lua.PushNumber(L, tile.ThingsCount);
+        else
+            Lua.PushNil(L);
+        return 1;
+    }
+
+    public static int LuaTileGetCreatureCount(LuaState L)
+    {
+        // tile:getCreatureCount()
+        var tile = GetUserdata<ITile>(L, 1);
+        if (tile != null && tile is IDynamicTile dynamicTile)
+            Lua.PushNumber(L, dynamicTile.Creatures.Count);
         else
             Lua.PushNil(L);
         return 1;
@@ -216,30 +231,57 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         return 1;
     }
 
+
     public static int LuaTileHasProperty(LuaState L)
     {
         // tile:hasProperty(property, item)
         var tile = GetUserdata<ITile>(L, 1);
-
-        if (tile == null)
+        if (!tile)
         {
             Lua.PushNil(L);
             return 1;
         }
 
-        IItem? item = null;
+        IItem itemToExclude = null;
         if (Lua.GetTop(L) >= 3)
-            item = GetUserdata<IItem>(L, 3);
+            itemToExclude = GetUserdata<IItem>(L, 3);
 
-        var property = GetNumber<ItemFlag>(L, 2);
+        var property = GetNumber<ItemPropertyType>(L, 2);
 
-        if (item != null)
-            Lua.PushBoolean(L, item.Metadata.HasFlag(property));
-        else if (tile is IDynamicTile dynamicTile)
-            Lua.PushBoolean(L, dynamicTile.AllItems.Any(c => c.Metadata.HasFlag(property)));
-        else if (tile is IStaticTile staticTile)
-            Lua.PushBoolean(L, staticTile.TopItemOnStack.Metadata.HasFlag(property));
+        if (!itemToExclude)
+        {
+            PushBoolean(L, tile.HasFlag(property.ToTileFlag()));
+            return 1;
+        }
 
+        if (tile is IStaticTile staticTile)
+        {
+            foreach (var itemClientId in staticTile.AllClientIdItems)
+            {
+                _itemClientServerIdMapStore.TryGetValue(itemClientId, out var itemServerId);
+
+                if (itemToExclude.ServerId == itemServerId)
+                    continue;
+
+                _itemTypeStore.TryGetValue(itemServerId, out var itemType);
+                PushBoolean(L, itemType.HasFlag(property.ToItemFlag()));
+                return 1;
+            }
+        }
+
+        if (tile is IDynamicTile dynamicTile)
+        {
+            foreach (var tileItem in dynamicTile.AllItems)
+            {
+                if (itemToExclude.ServerId == tileItem.ServerId)
+                    continue;
+
+                PushBoolean(L, tileItem.Metadata.HasFlag(property.ToItemFlag()));
+                return 1;
+            }
+        }
+
+        PushBoolean(L, false);
         return 1;
     }
 

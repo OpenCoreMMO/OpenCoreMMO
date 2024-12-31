@@ -318,24 +318,17 @@ public class Actions : Scripts, IActions
         return ReturnValueType.RETURNVALUE_NOERROR;
     }
 
-    public Action GetAction(IItem item)
+    public Action? GetAction(IItem item)
     {
-        try
-        {
-            if (_uniqueItemMap.TryGetValue(item.UniqueId, out var uniqueIdAction))
-                return uniqueIdAction;
+        if (_uniqueItemMap.TryGetValue(item.UniqueId, out var uniqueIdAction))
+            return uniqueIdAction;
 
-            if (_actionItemMap.TryGetValue(item.ActionId, out var actionIdAction))
-                return actionIdAction;
+        if (_actionItemMap.TryGetValue(item.ActionId, out var actionIdAction))
+            return actionIdAction;
 
-            if (_useItemMap.TryGetValue(item.ServerId, out var action))
-                return action;
+        if (_useItemMap.TryGetValue(item.ServerId, out var action))
+            return action;
 
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex.Message);
-        }
         return null;
     }
 

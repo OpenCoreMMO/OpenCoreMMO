@@ -1,6 +1,7 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -29,6 +30,7 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
         RegisterMetaMethod(L, "Position", "__eq", LuaUserdataCompareStruct<Location>);
         RegisterMethod(L, "Position", "sendMagicEffect", LuaPositionSendMagicEffect);
         RegisterMethod(L, "Position", "toString", LuaPositionToString);
+        RegisterMethod(L, "Position", "getNextPosition", LuaPositionGetNextPosition);
     }
 
     public static int LuaCreatePosition(LuaState L)
@@ -141,6 +143,15 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
         // position:toString()
         var position = GetPosition(L, 1);
         PushString(L, position.ToString());
+        return 1;
+    }
+
+    public static int LuaPositionGetNextPosition(LuaState L)
+    {
+        // position:getNextPosition(direction)
+        var direction = GetNumber<Direction>(L, 2);
+        var position = GetPosition(L, 1);
+        PushPosition(L, position.GetNextLocation(direction));
         return 1;
     }
 }

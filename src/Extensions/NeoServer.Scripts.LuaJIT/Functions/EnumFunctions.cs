@@ -23,6 +23,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         //RegisterEnum<DirectionType>(L);
         RegisterEnum<ItemAttributeType>(L);
         RegisterEnum<ItemIdType>(L);
+        RegisterEnum<ItemPropertyType>(L);
         RegisterEnum<MagicEffectClassesType>(L);
         RegisterEnum<MessageClassesType>(L);
         RegisterEnumCustom<PlayerFlag>(L, false);

@@ -60,8 +60,13 @@ public class LuaScriptGameManager : IScriptGameManager
 
     public void Start() => _luaStartup.Start();
 
+    //public bool HasTalkAction(string text) => _talkActions.TryGetTalkAction(text, out var talkactionWords, out var talkAction);
+
     public bool PlayerSaySpell(IPlayer player, SpeechType type, string words)
     {
+        //if (!_talkActions.TryGetTalkAction(words, out var talkactionWords, out var talkAction))
+        //    return false;
+
         var wordsSeparator = " ";
         var talkactionWords = words.Contains(wordsSeparator) ? words.Split(" ") : [words];
 
@@ -81,42 +86,28 @@ public class LuaScriptGameManager : IScriptGameManager
         return talkAction.ExecuteSay(player, talkactionWords[0], parameter, type);
     }
 
-    public bool PlayerUseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item)
+    public bool HasAction(IItem item) => _actions.GetAction(item) != null;
+
+    public bool PlayerUseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item, IThing? target = null)
+    {
+        return PlayerUseItem(player, pos, pos, stackpos, item, target, false);
+    }
+
+    public bool PlayerUseItem(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, IThing? target = null, bool isHotkey = false)
     {
         var action = _actions.GetAction(item);
 
-        if (action != null)
-            return action.ExecuteUse(
-                player,
-                item,
-                pos,
-                null,
-                pos,
-                false);
-        else
-            _logger.Warning($"Action with item id {item.ServerId} not found.");
-
-        return false;
-    }
-
-    public bool PlayerUseItemWithCreature(IPlayer player, Location fromPos, byte fromStackPos, ICreature creature, IItem item)
-    {
-        return PlayerUseItemEx(player, fromPos, creature.Location, creature.Tile.GetCreatureStackPositionIndex(player), item, false, creature);
-    }
-
-    public bool PlayerUseItemEx(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, bool isHotkey, IThing target)
-    {
-        var action = _actions.GetAction(item);
-
-        //if (target is IStaticTile staticTile)
-        //{
-        //    var staticToDynamicTileService = IoC.GetInstance<IStaticToDynamicTileService>();
-        //    target = staticToDynamicTileService.TransformIntoDynamicTile(staticTile);
-        //}
-
-        if (target is ITile tile)
-            target = tile.TopItemOnStack;
-
+        if (target != null)
+        {
+            if (target is ITile tile)
+                target = tile.TopItemOnStack;
+            else if (target is ICreature creature)
+            {
+                toPos = creature.Location;
+                toStackPos = creature.Tile.GetCreatureStackPositionIndex(player);
+            }
+        }
+        
         if (action != null)
             return action.ExecuteUse(
                 player,
@@ -126,14 +117,10 @@ public class LuaScriptGameManager : IScriptGameManager
                 toPos,
                 isHotkey);
         else
-            _logger.Warning($"Action with item id {item.ServerId} not found.");
+            _logger.Warning($"Action with item id {item.ServerId} has not found into LuaJIT Scripts.");
 
         return false;
     }
-
-    #endregion
-
-    #region Private Methods
 
     #endregion
 }
