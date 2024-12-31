@@ -178,7 +178,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - positionValue = position - positionEx
 - position:sendMagicEffect(magicEffect, player = nullptr)
 - position:toString()
-- position:getDistance(enabled)
+- position:getDistance(positionEx)
 - position:getPathTo(positionEx, minTargetDist = 0, maxTargetDist = 1, fullPathSearch = true, clearSight = true, maxSearchDist = 0)
 - position:isSightClear(positionEx, sameFloor = true)
 
@@ -208,7 +208,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile:hasFlag(flag)
 - tile:queryAdd(thing, flags)
 
-### Enums (9) / Constants (200++)
+### Enums (11) / Constants (200++)
 
 **DirectionsType**
 
@@ -521,46 +521,61 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 
 **PlayerFlag**
 
-PlayerFlag_CannotUseCombat 
-PlayerFlag_CannotAttackPlayer
-PlayerFlag_CannotAttackMonster
-PlayerFlag_CannotBeAttacked
-PlayerFlag_CanConvinceAll
-PlayerFlag_CanSummonAll
-PlayerFlag_CanIllusionAll
-PlayerFlag_CanSenseInvisibility
-PlayerFlag_IgnoredByMonsters 
-PlayerFlag_NotGainInFight
-PlayerFlag_HasInfiniteMana
-PlayerFlag_HasInfiniteSoul 
-PlayerFlag_HasNoExhaustion 
-PlayerFlag_CannotUseSpells
-PlayerFlag_CannotPickupItem 
-PlayerFlag_CanAlwaysLogin 
-PlayerFlag_CanBroadcast
-PlayerFlag_CanEditHouses
-PlayerFlag_CannotBeBanned
-PlayerFlag_CannotBePushed
-PlayerFlag_HasInfiniteCapacity
-PlayerFlag_CanPushAllCreatures
-PlayerFlag_CanTalkRedPrivate
-PlayerFlag_CanTalkRedChannel
-PlayerFlag_TalkOrangeHelpChannel
-PlayerFlag_NotGainExperience
-PlayerFlag_NotGainMana
-PlayerFlag_NotGainHealth
-PlayerFlag_NotGainSkill 
-PlayerFlag_SetMaxSpeed
-PlayerFlag_SpecialVIP
-PlayerFlag_NotGenerateLoot 
-PlayerFlag_CanTalkRedChannelAnonymous
-PlayerFlag_IgnoreProtectionZone
-PlayerFlag_IgnoreSpellCheck
-PlayerFlag_IgnoreWeaponCheck
-PlayerFlag_CannotBeMuted 
-PlayerFlag_IsAlwaysPremium
-PlayerFlag_IgnoreYellCheck
-PlayerFlag_IgnoreSendPrivateCheck
+- PlayerFlag_CannotUseCombat 
+- PlayerFlag_CannotAttackPlayer
+- PlayerFlag_CannotAttackMonster
+- PlayerFlag_CannotBeAttacked
+- PlayerFlag_CanConvinceAll
+- PlayerFlag_CanSummonAll
+- PlayerFlag_CanIllusionAll
+- PlayerFlag_CanSenseInvisibility
+- PlayerFlag_IgnoredByMonsters 
+- PlayerFlag_NotGainInFight
+- PlayerFlag_HasInfiniteMana
+- PlayerFlag_HasInfiniteSoul 
+- PlayerFlag_HasNoExhaustion 
+- PlayerFlag_CannotUseSpells
+- PlayerFlag_CannotPickupItem 
+- PlayerFlag_CanAlwaysLogin 
+- PlayerFlag_CanBroadcast
+- PlayerFlag_CanEditHouses
+- PlayerFlag_CannotBeBanned
+- PlayerFlag_CannotBePushed
+- PlayerFlag_HasInfiniteCapacity
+- PlayerFlag_CanPushAllCreatures
+- PlayerFlag_CanTalkRedPrivate
+- PlayerFlag_CanTalkRedChannel
+- PlayerFlag_TalkOrangeHelpChannel
+- PlayerFlag_NotGainExperience
+- PlayerFlag_NotGainMana
+- PlayerFlag_NotGainHealth
+- PlayerFlag_NotGainSkill 
+- PlayerFlag_SetMaxSpeed
+- PlayerFlag_SpecialVIP
+- PlayerFlag_NotGenerateLoot 
+- PlayerFlag_CanTalkRedChannelAnonymous
+- PlayerFlag_IgnoreProtectionZone
+- PlayerFlag_IgnoreSpellCheck
+- PlayerFlag_IgnoreWeaponCheck
+- PlayerFlag_CannotBeMuted 
+- PlayerFlag_IsAlwaysPremium
+- PlayerFlag_IgnoreYellCheck
+- PlayerFlag_IgnoreSendPrivateCheck
+
+**ItemPropertyType**
+
+- CONST_PROP_BLOCKSOLID = 0,
+- CONST_PROP_HASHEIGHT,
+- CONST_PROP_BLOCKPROJECTILE,
+- CONST_PROP_BLOCKPATH,
+- CONST_PROP_ISVERTICAL,
+- CONST_PROP_ISHORIZONTAL,
+- CONST_PROP_MOVEABLE,
+- CONST_PROP_IMMOVABLEBLOCKSOLID,
+- CONST_PROP_IMMOVABLEBLOCKPATH,
+- CONST_PROP_IMMOVABLENOFIELDBLOCKPATH,
+- CONST_PROP_NOFIELDBLOCKPATH,
+- CONST_PROP_SUPPORTHANGABLE
 
 ### Demonstrations
 
