@@ -77,6 +77,7 @@ public class LuaScriptGameManager : IScriptGameManager
 
     public bool PlayerUseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item)
     {
+        if (item is null) return false;
         var action = _actions.GetAction(item);
 
         if (action != null)
@@ -88,7 +89,7 @@ public class LuaScriptGameManager : IScriptGameManager
                 pos,
                 false);
         else
-            _logger.Warning($"Action with item id {item.ServerId} not found.");
+            _logger.Warning("Action with item id {ItemServerId} not found", item.ServerId);
 
         return false;
     }
@@ -120,7 +121,7 @@ public class LuaScriptGameManager : IScriptGameManager
                 toPos,
                 isHotkey);
         else
-            _logger.Warning($"Action with item id {item.ServerId} not found.");
+            _logger.Warning("Action with item id {ItemServerId} not found", item.ServerId);
 
         return false;
     }

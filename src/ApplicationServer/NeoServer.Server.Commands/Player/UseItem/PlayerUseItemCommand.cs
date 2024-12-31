@@ -33,6 +33,8 @@ public class PlayerUseItemCommand : ICommand
     {
         var item = _itemFinderService.Find(player, useItemPacket.Location, useItemPacket.ClientId);
 
+        if (item is null) return;
+
         if (_scriptGameManager.PlayerUseItem(player, useItemPacket.Location, useItemPacket.StackPosition,
                 useItemPacket.Index, item))
             return;
