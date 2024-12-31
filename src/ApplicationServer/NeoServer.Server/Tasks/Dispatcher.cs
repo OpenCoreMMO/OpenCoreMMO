@@ -39,7 +39,7 @@ public class Dispatcher : IDispatcher
     /// <param name="token"></param>
     public void Start(CancellationToken token)
     {
-        Task.Run(async () =>
+        Task.Factory.StartNew(async () =>
         {
             while (await _reader.WaitToReadAsync(token))
 
@@ -47,6 +47,7 @@ public class Dispatcher : IDispatcher
                 if (token.IsCancellationRequested) _writer.Complete();
                 // Fast loop around available jobs
                 while (_reader.TryRead(out var evt))
+                {
                     if (!evt.HasExpired || evt.HasNoTimeout)
                         try
                         {
@@ -57,7 +58,8 @@ public class Dispatcher : IDispatcher
                         {
                             _logger.Error(ex, "Game event exception");
                         }
+                }
             }
-        }, token);
+        }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
 }
