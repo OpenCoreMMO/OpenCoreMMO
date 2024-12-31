@@ -126,7 +126,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         // tile:getCreatureCount()
         var tile = GetUserdata<ITile>(L, 1);
         if (tile != null && tile is IDynamicTile dynamicTile)
-            Lua.PushNumber(L, dynamicTile.Creatures.Count);
+            Lua.PushNumber(L, dynamicTile.CreaturesCount);
         else
             Lua.PushNil(L);
         return 1;

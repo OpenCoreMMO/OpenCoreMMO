@@ -14,6 +14,7 @@ public interface IDynamicTile : ITile, IHasItem
 {
     IGround Ground { get; }
     List<IWalkableCreature> Creatures { get; }
+    int CreaturesCount => Creatures != null ? Creatures.Count : 0;
     ushort StepSpeed { get; }
 
     FloorChangeDirection FloorDirection { get; }

@@ -23,10 +23,16 @@ public class PathFinder : IPathFinder
 
     public IMap Map { get; set; }
 
+    public (bool Founded, Direction[] Directions) Find(Location startPosition, Location targetPosition,
+        FindPathParams fpp)
+    {
+        return AStar.GetPathMatching(Map, null, startPosition, targetPosition, fpp, null);
+    }
+
     public (bool Founded, Direction[] Directions) Find(ICreature creature, Location target,
         ITileEnterRule tileEnterRule)
     {
-        return AStar.GetPathMatching(Map, creature, target, new FindPathParams(true), tileEnterRule);
+        return AStar.GetPathMatching(Map, creature, creature.Location, target, new FindPathParams(true), tileEnterRule);
     }
 
     public (bool Founded, Direction[] Directions) Find(ICreature creature, Location target, FindPathParams fpp,
@@ -48,10 +54,10 @@ public class PathFinder : IPathFinder
 
             return pathToKeepDistance.Founded
                 ? (true, pathToKeepDistance.Directions)
-                : AStar.GetPathMatching(Map, creature, target, fpp, tileEnterRule);
+                : AStar.GetPathMatching(Map, creature, creature.Location, target, fpp, tileEnterRule);
         }
 
-        return AStar.GetPathMatching(Map, creature, target, fpp, tileEnterRule);
+        return AStar.GetPathMatching(Map, creature, creature.Location, target, fpp, tileEnterRule);
     }
 
     public Direction FindRandomStep(ICreature creature, ITileEnterRule rule, Location origin,

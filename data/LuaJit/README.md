@@ -20,8 +20,9 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - dark_helmet.lua
 - dwarven_shield.lua
 - spike_sword.lua
+- combat_knife_quest.lua
 
-**Talk Actions (10)**
+**Talk Actions (11)**
 
 - reload.lua `/reload scripts` 
 - up.lua `/up` 
@@ -32,6 +33,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - create_item.lua `/i Rope` 
 - teleport_to_creature.lua `/goto` 
 - ghost.lua `/ghost` 
+- teleport_ntiles.lua `/n 5` 
 - position.lua `!position`
 
 ### Implemented Libs using lua (8)
@@ -45,7 +47,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (17) and Functions (106)
+### Tables (17) and Functions (109)
 
 **Action (7)**
 
@@ -167,15 +169,18 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - player:removeItem(itemId, count, subType = -1, ignoreEquipped = false)
 - player:sendTextMessage(type, text)
 - player:isPzLocked()
-- player:setGhostMode(enabled)
+- player:setGhostMode(positionEx)
 
-**Position (5)**
+**Position (8)**
 
 - Position(x = 0, y = 0, z = 0, stackpos = 0) or Position(position)
 - positionValue = position + positionEx
 - positionValue = position - positionEx
 - position:sendMagicEffect(magicEffect, player = nullptr)
 - position:toString()
+- position:getDistance(enabled)
+- position:getPathTo(positionEx, minTargetDist = 0, maxTargetDist = 1, fullPathSearch = true, clearSight = true, maxSearchDist = 0)
+- position:isSightClear(positionEx, sameFloor = true)
 
 **TalkAction (5)**
 

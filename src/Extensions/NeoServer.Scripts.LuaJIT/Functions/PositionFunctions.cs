@@ -1,5 +1,6 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
@@ -15,11 +16,16 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
 {
     private static ILogger _logger;
     private static IConfigManager _configManager;
+    private static IMapTool _mapTool;
 
-    public PositionFunctions(ILogger logger, IConfigManager configManager) : base(nameof(PositionFunctions))
+    public PositionFunctions(
+        ILogger logger,
+        IConfigManager configManager,
+        IMapTool mapTool) : base(nameof(PositionFunctions))
     {
         _logger = logger;
         _configManager = configManager;
+        _mapTool = mapTool;
     }
 
     public void Init(LuaState L)
@@ -28,6 +34,11 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
         RegisterMetaMethod(L, "Position", "__add", LuaPositionAdd);
         RegisterMetaMethod(L, "Position", "__sub", LuaPositionSub);
         RegisterMetaMethod(L, "Position", "__eq", LuaUserdataCompareStruct<Location>);
+
+        RegisterMethod(L, "Position", "getDistance", LuaPositionGetDistance);
+        RegisterMethod(L, "Position", "getPathTo", LuaPositionGetPathTo);
+        RegisterMethod(L, "Position", "isSightClear", LuaPositionIsSightClear);
+
         RegisterMethod(L, "Position", "sendMagicEffect", LuaPositionSendMagicEffect);
         RegisterMethod(L, "Position", "toString", LuaPositionToString);
         RegisterMethod(L, "Position", "getNextPosition", LuaPositionGetNextPosition);
@@ -100,6 +111,61 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
 
         PushPosition(L, position, stackpos);
 
+        return 1;
+    }
+
+    public static int LuaPositionGetDistance(LuaState L)
+    {
+        // position:getDistance(positionEx)
+        var position = GetPosition(L, 1);
+        var positionEx = GetPosition(L, 2);
+        Lua.PushNumber(L, position.GetMaxSqmDistance(positionEx));
+        return 1;
+    }
+
+    public static int LuaPositionGetPathTo(LuaState L)
+    {
+        // position:getPathTo(positionEx, minTargetDist = 0, maxTargetDist = 1, fullPathSearch = true, clearSight = true, maxSearchDist = 0)
+        var position = GetPosition(L, 1);
+        var positionEx = GetPosition(L, 2);
+
+        var fpp = new FindPathParams(true);
+
+        fpp.MinTargetDist = GetNumber<int>(L, 3, 0);
+        fpp.MaxTargetDist = GetNumber<int>(L, 4, 1);
+        fpp.FullPathSearch = GetBoolean(L, 5, fpp.FullPathSearch);
+        fpp.ClearSight = GetBoolean(L, 6, fpp.ClearSight);
+        fpp.MaxSearchDist = GetNumber<int>(L, 7, fpp.MaxSearchDist);
+
+        (bool hasPath, Direction[] directions) = _mapTool.PathFinder.Find(position, positionEx, fpp);
+
+        if (hasPath)
+        {
+            Lua.NewTable(L);
+
+            for (int i = 0; i < directions.Length; i++)
+            {
+                Lua.PushNumber(L, (byte)directions[i]);
+                Lua.RawSetI(L, -2, ++i);
+            }
+        }
+        else
+        {
+            PushBoolean(L, false);
+        }
+
+        return 1;
+    }
+
+    public static int LuaPositionIsSightClear(LuaState L)
+    {
+        // position:isSightClear(positionEx, sameFloor = true)
+        var position = GetPosition(L, 1);
+        var positionEx = GetPosition(L, 2);
+        var sameFloor = GetBoolean(L, 3, true);
+
+        var result = _mapTool.SightClearChecker?.Invoke(position, positionEx, sameFloor);
+        PushBoolean(L, result.HasValue ? result.Value : false);
         return 1;
     }
 

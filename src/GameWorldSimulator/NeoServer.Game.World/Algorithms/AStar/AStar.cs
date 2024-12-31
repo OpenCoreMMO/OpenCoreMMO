@@ -10,11 +10,15 @@ namespace NeoServer.Game.World.Algorithms.AStar;
 
 public static class AStar
 {
-    public static (bool Founded, Direction[] Directions) GetPathMatching(IMap map, ICreature creature,
-        Location targetPos, FindPathParams
-            fpp, ITileEnterRule tileEnterRule)
+    public static (bool Founded, Direction[] Directions) GetPathMatching(
+        IMap map,
+        ICreature creature,
+        Location startpos,
+        Location targetPos,
+        FindPathParams fpp,
+        ITileEnterRule tileEnterRule)
     {
-        var pos = creature.Location;
+        var pos = startpos;
         var endPos = new Location();
         var bestMatch = 0;
         var nodeList = new NodeList(pos);
@@ -62,7 +66,9 @@ public static class AStar
                 var neighborNode = nodeList.GetNodeByPosition(pos);
                 var tile = map[pos];
 
-                if (neighborNode is null && !tileEnterRule.ShouldIgnore(tile, creature)) continue;
+                if (neighborNode is null && 
+                    tileEnterRule != null && 
+                    !tileEnterRule.ShouldIgnore(tile, creature)) continue;
 
                 var extraCost = CalculateExtraCost(creature, neighborNode, tile);
                 var cost = bestNode.GetMapWalkCost(pos);
@@ -98,7 +104,7 @@ public static class AStar
     {
         if (neighborNode is not null) return neighborNode.ExtraCost;
 
-        if (tile is IDynamicTile walkableTile) return Node.GetTileWalkCost(creature, walkableTile);
+        if (!creature && tile is IDynamicTile walkableTile) return Node.GetTileWalkCost(creature, walkableTile);
 
         return 0;
     }
