@@ -11,6 +11,7 @@ using NeoServer.Game.Common.Contracts.Spells;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location;
@@ -198,7 +199,9 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
         foreach (var cylinderSpectator in spectators)
         {
-            var spectator = cylinderSpectator.Spectator;
+            var spectator = cylinderSpectator.Spectator; 
+
+            if (spectator is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters)) return;
 
             if (spectator is not ICombatActor spectatorEnemy) continue;
             if (spectator.GetType() == GetType()) continue;
@@ -207,6 +210,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
             if (!spectatorEnemy.IsHostileTo(this)) continue;
             if (!spectatorEnemy.Location.SameFloorAs(Location)) continue;
+
 
             SetAsEnemy(spectatorEnemy);
         }

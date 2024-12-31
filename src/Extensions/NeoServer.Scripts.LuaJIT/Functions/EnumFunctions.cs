@@ -1,5 +1,6 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Location;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -24,6 +25,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         RegisterEnum<ItemIdType>(L);
         RegisterEnum<MagicEffectClassesType>(L);
         RegisterEnum<MessageClassesType>(L);
+        RegisterEnumCustom<PlayerFlag>(L, false);
         RegisterEnum<ReloadType>(L);
         RegisterEnum<ReturnValueType>(L);
         //RegisterEnum<SkillsType>(L);
@@ -43,13 +45,18 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
             RegisterGlobalVariable(L, item.ToString(), Convert.ToUInt32(item));
     }
 
-    private static void RegisterEnumCustom<T>(LuaState L) where T : Enum
+    private static void RegisterEnumCustom<T>(LuaState L, bool upperCase = true) where T : Enum
     {
-        string prefix = typeof(T).Name.Replace("Type", "").ToUpperInvariant() + "_"; 
+        var prefix = typeof(T).Name.Replace("Type", "") + "_";
+
         foreach (var item in Enum.GetValues(typeof(T)))
         {
-            var name = prefix + item.ToString().ToUpperInvariant();
-            RegisterGlobalVariable(L, name, Convert.ToUInt32(item));
+            var name = prefix + item.ToString();
+
+            if (upperCase)
+                name = name.ToUpperInvariant();
+
+            RegisterGlobalVariable(L, name, Convert. ToUInt64(item));
         }
     }
 }

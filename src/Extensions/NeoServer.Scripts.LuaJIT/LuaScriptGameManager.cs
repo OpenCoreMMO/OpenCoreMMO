@@ -18,6 +18,11 @@ public class LuaScriptGameManager : IScriptGameManager
     #region Dependency Injections
 
     /// <summary>
+    /// A reference to the <see cref="ILuaStartup"/> instance in use.
+    /// </summary>
+    private readonly ILuaStartup _luaStartup;
+
+    /// <summary>
     /// A reference to the <see cref="ILogger"/> instance in use.
     /// </summary>
     private readonly ILogger _logger;
@@ -42,8 +47,7 @@ public class LuaScriptGameManager : IScriptGameManager
         IActions actions,
         ITalkActions talkActions)
     {
-        luaStartup.Start();
-
+        _luaStartup = luaStartup;
         _logger = logger;
 
         _actions = actions;
@@ -53,6 +57,8 @@ public class LuaScriptGameManager : IScriptGameManager
     #endregion
 
     #region Public Methods 
+
+    public void Start() => _luaStartup.Start();
 
     public bool PlayerSaySpell(IPlayer player, SpeechType type, string words)
     {

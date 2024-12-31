@@ -99,7 +99,7 @@ public class GroupFunctions : LuaScriptInterface, IGroupFunctions
         // group:getAccess()
         var group = GetUserdata<IGroup>(L, 1);
         if (group != null)
-            Lua.PushNumber(L, group.Access);
+            Lua.PushBoolean(L, group.Access);
         else
             Lua.PushNil(L);
 
@@ -135,7 +135,7 @@ public class GroupFunctions : LuaScriptInterface, IGroupFunctions
         // group:hasFlag(flag)
         var group = GetUserdata<IGroup>(L, 1);
         if (group != null  && Lua.IsNumber(L, 2))
-            Lua.PushBoolean(L, group.Flags.ContainsKey(GetNumber<PlayerFlag>(L, 2)));
+            Lua.PushBoolean(L, group.FlagIsEnabled(GetNumber<PlayerFlag>(L, 2)));
         else
             Lua.PushNil(L);
 

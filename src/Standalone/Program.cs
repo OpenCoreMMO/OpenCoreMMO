@@ -61,8 +61,8 @@ public class Program
         logger.Information("Log set to: {Log}", logConfiguration.MinimumLevel);
         logger.Information("Environment: {Env}", Environment.GetEnvironmentVariable("ENVIRONMENT"));
 
-        //logger.Step("Building extensions...", "{files} extensions build",
-        //    () => ExtensionsCompiler.Compile(serverConfiguration.Data, serverConfiguration.Extensions));
+        logger.Step("Building extensions...", "{files} extensions build",
+            () => ExtensionsCompiler.Compile(serverConfiguration.Data, serverConfiguration.Extensions));
 
         container = Container.BuildAll();
         Helpers.IoC.Initialize(container);
@@ -110,6 +110,7 @@ public class Program
         container.Resolve<IEnumerable<IStartup>>().ToList().ForEach(x => x.Run());
 
         container.Resolve<LuaGlobalRegister>().Register();
+        container.Resolve<IScriptGameManager>().Start();
 
         StartListening(container, cancellationToken);
 

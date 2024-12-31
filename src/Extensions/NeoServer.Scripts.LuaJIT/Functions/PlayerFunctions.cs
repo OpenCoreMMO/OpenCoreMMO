@@ -58,6 +58,8 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(L, "Player", "sendTextMessage", LuaPlayerSendTextMessage);
 
         RegisterMethod(L, "Player", "isPzLocked", LuaPlayerIsPzLocked);
+
+        RegisterMethod(L, "Player", "setGhostMode", LuaPlayerSetGhostMode);
     }
 
     private static int LuaPlayerCreate(LuaState L)
@@ -504,4 +506,23 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         return 1;
     }
+
+    private static int LuaPlayerSetGhostMode(LuaState L)
+    {
+        // player:setGhostMode(enabled)
+        var player = GetUserdata<IPlayer>(L, 1);
+        bool enabled = GetBoolean(L, 2);
+
+        if (player != null && player.IsInvisible != enabled)
+        {
+            if (enabled)
+                player.TurnInvisible();
+            else 
+                player.TurnVisible();
+        }
+
+        PushBoolean(L, true);
+        return 1;
+    }
+
 }

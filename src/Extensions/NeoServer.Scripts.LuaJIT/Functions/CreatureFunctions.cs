@@ -20,6 +20,8 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         RegisterSharedClass(L, "Creature", "", LuaCreatureCreate);
         RegisterMetaMethod(L, "Creature", "__eq", LuaUserdataCompare<ICreature>);
 
+        RegisterMethod(L, "Creature", "isCreature", LuaCreatureIsCreature);
+        RegisterMethod(L, "Creature", "isInGhostMode", LuaCreatureIsInGhostMode);
         RegisterMethod(L, "Creature", "getId", LuaGetId);
         RegisterMethod(L, "Creature", "getName", LuaGetName);
         RegisterMethod(L, "Creature", "getPosition", LuaCreatureGetPosition);
@@ -67,6 +69,24 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
             Lua.PushNil(L);
         }
 
+        return 1;
+    }
+
+    private static int LuaCreatureIsCreature(LuaState L)
+    {
+        // creature:isCreature()
+        Lua.PushBoolean(L, GetUserdata<ICreature>(L, 1) is not null);
+        return 1;
+    }
+
+    private static int LuaCreatureIsInGhostMode(LuaState L)
+    {
+        // creature:getId()
+        var creature = GetUserdata<ICreature>(L, 1);
+        if (creature != null)
+            Lua.PushBoolean(L, creature.IsInvisible);
+        else
+            Lua.PushNil(L);
         return 1;
     }
 

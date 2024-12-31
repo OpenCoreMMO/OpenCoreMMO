@@ -8,13 +8,8 @@ public class Group : IGroup
 {
     public byte Id { get; set; }
     public string Name { get; set; }
-    public int Access { get; set; }
+    public bool Access { get; set; }
     public int MaxDepotItems { get; set; }
     public int MaxVipEntries { get; set; }
-    public Dictionary<PlayerFlag, bool> Flags { get; }
-
-    public Group()
-    {
-        Flags = new Dictionary<PlayerFlag, bool>();
-    }
+    public Dictionary<PlayerFlag, bool> Flags { get; set; } = new Dictionary<PlayerFlag, bool>();
 }

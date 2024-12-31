@@ -2,7 +2,6 @@
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
-using System;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 

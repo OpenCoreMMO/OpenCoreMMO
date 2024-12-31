@@ -33,7 +33,7 @@ function talkAction.onSay(player, words, param)
 
     local direction = player:getDirection()
 
-    Game.createMonster("Rat", position, true, true, player)
+    -- Game.createMonster("Rat", position, true, true, player)
 
     logger.info('direction: ' .. direction)
 
@@ -42,7 +42,7 @@ function talkAction.onSay(player, words, param)
 
     logger.info('nextPosition: ' .. nextPosition:toString())
 
-    Game.createMonster("Scarab", nextPosition)
+     --Game.createMonster("Scarab", nextPosition)
 
     local storageValue = player:getStorageValue(1000)
     
@@ -58,6 +58,12 @@ function talkAction.onSay(player, words, param)
     
     logger.info('groupId: ' .. group:getId())
     logger.info('groupName: ' .. group:getName())
+    logger.info('getAccess: ' .. tostring(group:getAccess()))
+
+    logger.info('PlayerFlag_CanTalkRedChannel: ' .. tostring(group:hasFlag(PlayerFlag_CanTalkRedChannel)))
+    logger.info('PlayerFlag_IgnoreYellCheck: ' .. tostring(group:hasFlag(PlayerFlag_IgnoreYellCheck)))
+    logger.info('PlayerFlag_IgnoredByMonsters: ' .. tostring(group:hasFlag(PlayerFlag_IgnoredByMonsters)))
+    logger.info('PlayerFlag_CannotBeAttacked: ' .. tostring(group:hasFlag(PlayerFlag_CannotBeAttacked)))
 
     logger.info('end')
 
