@@ -23,6 +23,7 @@ public static class LuaJITInjection
         builder.AddSingleton<IEnumFunctions, EnumFunctions>();
         builder.AddSingleton<IGameFunctions, GameFunctions>();
         builder.AddSingleton<IGlobalFunctions, GlobalFunctions>();
+        builder.AddSingleton<IGroupFunctions, GroupFunctions>();
         builder.AddSingleton<IItemFunctions, ItemFunctions>();
         builder.AddSingleton<IItemTypeFunctions, ItemTypeFunctions>();
         builder.AddSingleton<ILoggerFunctions, LoggerFunctions>();

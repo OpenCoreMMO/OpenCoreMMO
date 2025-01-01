@@ -20,8 +20,9 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - dark_helmet.lua
 - dwarven_shield.lua
 - spike_sword.lua
+- combat_knife_quest.lua
 
-**Talk Actions (9)**
+**Talk Actions (11)**
 
 - reload.lua `/reload scripts` 
 - up.lua `/up` 
@@ -31,6 +32,8 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - create_npc.lua `/n Eryn` 
 - create_item.lua `/i Rope` 
 - teleport_to_creature.lua `/goto` 
+- ghost.lua `/ghost` 
+- teleport_ntiles.lua `/n 5` 
 - position.lua `!position`
 
 ### Implemented Libs using lua (8)
@@ -44,7 +47,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (16) and Functions (95)
+### Tables (17) and Functions (109)
 
 **Action (7)**
 
@@ -63,13 +66,15 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - configManager:getBoolean(type)
 - configManager:getFloat(type)
 
-**Creature (5)**
+**Creature (7)**
 
 - Creature(id or name or userdata)
 - creature:getId()
 - creature:getName()
 - creature:getPosition()
 - creature:getDirection()
+- creature:isCreature()
+- creature:isInGhostMode()
 
 **Container (3)**
 
@@ -88,6 +93,17 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 **Global (1)**
 
 - rawgetmetatable(metatableName)
+
+**Group(8)**
+
+- Group()
+- group:getId()
+- group:getName()
+- group:getFlags()
+- group:getAccess()
+- group:getMaxDepotItems()
+- group:getMaxVipEntries()
+- group:hasFlag(flag)
 
 **Item (17)**
 
@@ -137,7 +153,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 
 - Npc(id or userdata)
 
-**Player (14)**
+**Player (15)**
 
 - Player(id or guid or name or userdata)
 - player:teleportTo(position, pushMovement = false)
@@ -153,14 +169,18 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - player:removeItem(itemId, count, subType = -1, ignoreEquipped = false)
 - player:sendTextMessage(type, text)
 - player:isPzLocked()
+- player:setGhostMode(positionEx)
 
-**Position (5)**
+**Position (8)**
 
 - Position(x = 0, y = 0, z = 0, stackpos = 0) or Position(position)
 - positionValue = position + positionEx
 - positionValue = position - positionEx
 - position:sendMagicEffect(magicEffect, player = nullptr)
 - position:toString()
+- position:getDistance(positionEx)
+- position:getPathTo(positionEx, minTargetDist = 0, maxTargetDist = 1, fullPathSearch = true, clearSight = true, maxSearchDist = 0)
+- position:isSightClear(positionEx, sameFloor = true)
 
 **TalkAction (5)**
 
@@ -188,7 +208,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile:hasFlag(flag)
 - tile:queryAdd(thing, flags)
 
-### Enums (9) / Constants (200++)
+### Enums (11) / Constants (200++)
 
 **DirectionsType**
 
@@ -498,6 +518,64 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - SKILL_LEVEL = 8,
 - SKILL_FIRST = SKILL_FIST,
 - SKILL_LAST = SKILL_FISHING
+
+**PlayerFlag**
+
+- PlayerFlag_CannotUseCombat 
+- PlayerFlag_CannotAttackPlayer
+- PlayerFlag_CannotAttackMonster
+- PlayerFlag_CannotBeAttacked
+- PlayerFlag_CanConvinceAll
+- PlayerFlag_CanSummonAll
+- PlayerFlag_CanIllusionAll
+- PlayerFlag_CanSenseInvisibility
+- PlayerFlag_IgnoredByMonsters 
+- PlayerFlag_NotGainInFight
+- PlayerFlag_HasInfiniteMana
+- PlayerFlag_HasInfiniteSoul 
+- PlayerFlag_HasNoExhaustion 
+- PlayerFlag_CannotUseSpells
+- PlayerFlag_CannotPickupItem 
+- PlayerFlag_CanAlwaysLogin 
+- PlayerFlag_CanBroadcast
+- PlayerFlag_CanEditHouses
+- PlayerFlag_CannotBeBanned
+- PlayerFlag_CannotBePushed
+- PlayerFlag_HasInfiniteCapacity
+- PlayerFlag_CanPushAllCreatures
+- PlayerFlag_CanTalkRedPrivate
+- PlayerFlag_CanTalkRedChannel
+- PlayerFlag_TalkOrangeHelpChannel
+- PlayerFlag_NotGainExperience
+- PlayerFlag_NotGainMana
+- PlayerFlag_NotGainHealth
+- PlayerFlag_NotGainSkill 
+- PlayerFlag_SetMaxSpeed
+- PlayerFlag_SpecialVIP
+- PlayerFlag_NotGenerateLoot 
+- PlayerFlag_CanTalkRedChannelAnonymous
+- PlayerFlag_IgnoreProtectionZone
+- PlayerFlag_IgnoreSpellCheck
+- PlayerFlag_IgnoreWeaponCheck
+- PlayerFlag_CannotBeMuted 
+- PlayerFlag_IsAlwaysPremium
+- PlayerFlag_IgnoreYellCheck
+- PlayerFlag_IgnoreSendPrivateCheck
+
+**ItemPropertyType**
+
+- CONST_PROP_BLOCKSOLID = 0,
+- CONST_PROP_HASHEIGHT,
+- CONST_PROP_BLOCKPROJECTILE,
+- CONST_PROP_BLOCKPATH,
+- CONST_PROP_ISVERTICAL,
+- CONST_PROP_ISHORIZONTAL,
+- CONST_PROP_MOVEABLE,
+- CONST_PROP_IMMOVABLEBLOCKSOLID,
+- CONST_PROP_IMMOVABLEBLOCKPATH,
+- CONST_PROP_IMMOVABLENOFIELDBLOCKPATH,
+- CONST_PROP_NOFIELDBLOCKPATH,
+- CONST_PROP_SUPPORTHANGABLE
 
 ### Demonstrations
 

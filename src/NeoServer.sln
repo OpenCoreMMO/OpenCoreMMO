@@ -1,6 +1,5 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17 
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoServer.Server", "ApplicationServer\NeoServer.Server\NeoServer.Server.csproj", "{7E4B4211-CC8F-4465-9E51-ED75C63CD179}"

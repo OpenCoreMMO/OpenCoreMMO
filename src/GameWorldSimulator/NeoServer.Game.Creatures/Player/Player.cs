@@ -37,8 +37,6 @@ public class Player : CombatActor, IPlayer
 {
     private const int KNOWN_CREATURE_LIMIT = 250; //todo: for version 8.60
 
-    private ulong _flags;
-
     private uint _idleTime;
     private byte _soulPoints;
 
@@ -50,6 +48,7 @@ public class Player : CombatActor, IPlayer
         uint healthPoints,
         uint maxHealthPoints,
         IVocation vocation,
+        IGroup group,
         Gender gender,
         bool online,
         ushort mana,
@@ -82,6 +81,7 @@ public class Player : CombatActor, IPlayer
         Skills = skills;
         Storages = storages;
         Vocation = vocation;
+        Group = group;
         Gender = gender;
         Online = online;
         Mana = mana;
@@ -156,6 +156,7 @@ public class Player : CombatActor, IPlayer
     public IVip Vip { get; }
     public override IOutfit Outfit { get; protected set; }
     public IVocation Vocation { get; }
+    public IGroup Group { get; set; }
     public IPlayerChannel Channels { get; set; }
     public IPlayerParty PlayerParty { get; set; }
     public ulong BankAmount { get; private set; }
@@ -269,8 +270,8 @@ public class Player : CombatActor, IPlayer
     public float FreeCapacity => TotalCapacity - Inventory.TotalWeight;
     public override bool UsingDistanceWeapon => Inventory.Weapon is IDistanceWeapon;
     public bool Recovering => HasCondition(ConditionType.Regeneration);
-    public override bool CanSeeInvisible => FlagIsEnabled(PlayerFlag.CanSeeInvisibility);
-    public override bool CanBeSeen => FlagIsEnabled(PlayerFlag.CanBeSeen);
+    public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
+    public override bool CanBeSeen => Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
     public virtual bool CanSeeInspectionDetails => false;
 
     public ushort GetRawSkillLevel(SkillType skillType)
@@ -978,11 +979,6 @@ public class Player : CombatActor, IPlayer
         OnLevelRegressed?.Invoke(this, type, fromLevel, toLevel);
     }
 
-    public virtual void SetFlags(params PlayerFlag[] flags)
-    {
-        foreach (var flag in flags) _flags |= (ulong)flag;
-    }
-
     public void ResetMana()
     {
         HealMana(MaxMana);
@@ -1135,25 +1131,6 @@ public class Player : CombatActor, IPlayer
     public ushort GuildLevel { get; set; }
     public bool HasGuild => Guild is not null;
     public IGuild Guild { get; init; }
-
-    #endregion
-
-    #region Flags
-
-    public void UnsetFlag(PlayerFlag flag)
-    {
-        _flags &= ~(ulong)flag;
-    }
-
-    public void SetFlag(PlayerFlag flag)
-    {
-        _flags |= (ulong)flag;
-    }
-
-    public bool FlagIsEnabled(PlayerFlag flag)
-    {
-        return (_flags & (ulong)flag) != 0;
-    }
 
     #endregion
 

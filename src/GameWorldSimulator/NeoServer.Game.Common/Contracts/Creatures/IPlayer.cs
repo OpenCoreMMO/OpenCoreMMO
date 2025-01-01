@@ -94,6 +94,8 @@ public interface IPlayer : ICombatActor, ISociableCreature
     bool Recovering { get; }
     IVocation Vocation { get; }
     byte VocationType => Vocation?.VocationType ?? default;
+    IGroup Group { get; set; }
+    byte GroupId => Group?.Id ?? default;
     uint AccountId { get; init; }
     IGuild Guild { get; }
     ushort GuildId => Guild?.Id ?? default;
@@ -113,6 +115,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     IDictionary<int, int> Storages { get; }
 
     bool CanSeeInspectionDetails { get; }
+
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
     event UseSpell OnUsedSpell;
     event SendMessageTo OnSentMessage;
@@ -207,7 +210,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
 
     bool CastSpell(string message);
 
-    bool FlagIsEnabled(PlayerFlag flag);
     void SendMessageTo(ISociableCreature creature, SpeechType type, string message);
     void StartShopping(IShopperNpc npc);
     void StopShopping();
@@ -217,8 +219,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
     void ReceivePurchasedItems(INpc from, SaleContract saleContract, params IItem[] items);
     void WithdrawFromBank(ulong amount);
     void LoadBank(ulong amount);
-    void SetFlag(PlayerFlag flag);
-    void UnsetFlag(PlayerFlag flag);
     byte GetSkillTries(SkillType skillType);
     void AddSkillBonus(SkillType skillType, sbyte increase);
     void RemoveSkillBonus(SkillType skillType, sbyte decrease);

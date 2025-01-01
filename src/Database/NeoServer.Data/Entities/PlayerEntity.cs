@@ -17,7 +17,7 @@ public sealed class PlayerEntity
     public int AccountId { get; set; }
     public int TownId { get; set; }
     public string Name { get; set; }
-    public int PlayerType { get; set; } //1 = player
+    public byte Group { get; set; } //1 = player
     public uint Capacity { get; set; }
     public ushort Level { get; set; }
     public ushort Mana { get; set; }

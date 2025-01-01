@@ -25,7 +25,7 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         entity.Property(e => e.Id)
             .ValueGeneratedOnAdd();
 
-        entity.Property(e => e.PlayerType);
+        entity.Property(e => e.Group);
 
         ConfigureProperty(entity, e => e.AccountId, "int", "0");
         ConfigureProperty(entity, e => e.TownId, "int", "1");
