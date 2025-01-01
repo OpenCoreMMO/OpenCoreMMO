@@ -3,7 +3,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 
 ### Implemented Scripts (21)
 
-**Actions (9)**
+**Actions Items (9)**
 
 - crowbar.lua
 - fishing.lua
@@ -15,7 +15,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - shovel.lua
 - scythe.lua
 
-**Quests (3)**
+**Actions Quests (4)**
 
 - dark_helmet.lua
 - dwarven_shield.lua
@@ -36,6 +36,11 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - teleport_ntiles.lua `/n 5` 
 - position.lua `!position`
 
+**Global Events (4)**
+
+- example_one.lua
+- example_two.lua
+
 ### Implemented Libs using lua (8)
 
 - creature.lua
@@ -47,7 +52,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (17) and Functions (109)
+### Tables (18) and Functions (121)
 
 **Action (7)**
 
@@ -93,6 +98,21 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 **Global (1)**
 
 - rawgetmetatable(metatableName)
+
+**GlobalEvent (12)**
+
+- GlobalEvent()
+- globalevent:type(callback)
+- globalevent:register()
+- globalevent:time(time)
+- globalevent:interval(interval)
+- globalevent:onThink(callback)
+- globalevent:onTime(callback)
+- globalevent:onStartup(callback)
+- globalevent:onShutdown(callback)
+- globalevent:onRecord(callback)
+- globalevent:onPeriodChange(callback)
+- globalevent:onSave(callback)
 
 **Group(8)**
 
