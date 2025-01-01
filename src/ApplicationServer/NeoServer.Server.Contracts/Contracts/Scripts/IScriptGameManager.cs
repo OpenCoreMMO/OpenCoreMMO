@@ -14,4 +14,6 @@ public interface IScriptGameManager
     bool HasAction(IItem item);
 
     void GlobalEventExecuteRecord(int current, int old);
+    void GlobalEventExecuteSave();
+    void GlobalEventExecuteShutdown();
 }

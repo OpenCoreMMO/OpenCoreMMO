@@ -140,5 +140,11 @@ public class LuaScriptGameManager : IScriptGameManager
             globalEvent.ExecuteRecord(current, old);
     }
 
+    public void GlobalEventExecuteShutdown()
+        => _globalEvents.Shutdown();
+
+    public void GlobalEventExecuteSave()
+        => _globalEvents.Save();
+
     #endregion
 }

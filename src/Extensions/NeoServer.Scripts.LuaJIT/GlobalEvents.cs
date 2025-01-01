@@ -8,18 +8,11 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class GlobalEvents : IGlobalEvents
 {
-    #region Instance
-
-    //private static GlobalEvents _instance;
-    //public static GlobalEvents GetInstance() => _instance == null ? _instance = new GlobalEvents() : _instance;
-
-    #endregion
-
     private int SchedulerMinTicks = 50;
 
-    private readonly Dictionary<string, GlobalEvent> thinkMap = new Dictionary<string, GlobalEvent>();
-    private readonly Dictionary<string, GlobalEvent> serverMap = new Dictionary<string, GlobalEvent>();
-    private readonly Dictionary<string, GlobalEvent> timerMap = new Dictionary<string, GlobalEvent>();
+    private readonly Dictionary<string, GlobalEvent> _thinkMap = new Dictionary<string, GlobalEvent>();
+    private readonly Dictionary<string, GlobalEvent> _serverMap = new Dictionary<string, GlobalEvent>();
+    private readonly Dictionary<string, GlobalEvent> _timerMap = new Dictionary<string, GlobalEvent>();
 
     private uint thinkEventId = 0;
     private uint timerEventId = 0;
@@ -27,17 +20,10 @@ public class GlobalEvents : IGlobalEvents
     private ILogger _logger;
     private IScheduler _scheduler;
 
-    //public GlobalEvents()
-    //{
-
-    //}
-
     public GlobalEvents(
         ILogger logger,
         IScheduler dispatcher)
     {
-        //_instance = this;
-
         _logger = logger;
         _scheduler = dispatcher;
     }
@@ -47,12 +33,22 @@ public class GlobalEvents : IGlobalEvents
         Execute(GlobalEventType.GLOBALEVENT_STARTUP);
     }
 
+    public void Shutdown()
+    {
+        Execute(GlobalEventType.GLOBALEVENT_SHUTDOWN);
+    }
+
+    public void Save()
+    {
+        Execute(GlobalEventType.GLOBALEVENT_SAVE);
+    }
+
     public void Timer()
     {
         var now = DateTime.Now;
         var nextScheduledTime = long.MaxValue;
 
-        foreach (var globalEvent in timerMap.Values.ToList())
+        foreach (var globalEvent in _timerMap.Values.ToList())
         {
             var nextExecutionTime = globalEvent.NextExecution - now.Ticks;
             if (nextExecutionTime > 0)
@@ -67,7 +63,7 @@ public class GlobalEvents : IGlobalEvents
 
             if (!globalEvent.ExecuteEvent())
             {
-                timerMap.Remove(globalEvent.Name);
+                _timerMap.Remove(globalEvent.Name);
                 continue;
             }
 
@@ -93,7 +89,7 @@ public class GlobalEvents : IGlobalEvents
         var now = _scheduler.GlobalTime;
         var nextScheduledTime = long.MaxValue;
 
-        foreach (var globalEvent in thinkMap.Values.ToList())
+        foreach (var globalEvent in _thinkMap.Values.ToList())
         {
             var nextExecutionTime = globalEvent.NextExecution - now;
             if (nextExecutionTime > 0)
@@ -131,7 +127,7 @@ public class GlobalEvents : IGlobalEvents
 
     public void Execute(GlobalEventType type)
     {
-        foreach (var globalEvent in serverMap.Values)
+        foreach (var globalEvent in _serverMap.Values)
         {
             if (globalEvent.EventType == type)
             {
@@ -145,15 +141,16 @@ public class GlobalEvents : IGlobalEvents
         switch (type)
         {
             case GlobalEventType.GLOBALEVENT_NONE:
-                return thinkMap;
+                return _thinkMap;
             case GlobalEventType.GLOBALEVENT_TIMER:
-                return timerMap;
+                return _timerMap;
             case GlobalEventType.GLOBALEVENT_PERIODCHANGE:
             case GlobalEventType.GLOBALEVENT_STARTUP:
             case GlobalEventType.GLOBALEVENT_SHUTDOWN:
             case GlobalEventType.GLOBALEVENT_RECORD:
+            case GlobalEventType.GLOBALEVENT_SAVE:
                 var retMap = new Dictionary<string, GlobalEvent>();
-                foreach (var kvp in serverMap)
+                foreach (var kvp in _serverMap)
                 {
                     if (kvp.Value.EventType == type)
                     {
@@ -170,7 +167,7 @@ public class GlobalEvents : IGlobalEvents
     {
         if (globalEvent.EventType == GlobalEventType.GLOBALEVENT_TIMER)
         {
-            if (timerMap.TryAdd(globalEvent.Name, globalEvent))
+            if (_timerMap.TryAdd(globalEvent.Name, globalEvent))
             {
                 if (timerEventId == 0)
                 {
@@ -181,14 +178,14 @@ public class GlobalEvents : IGlobalEvents
         }
         else if (globalEvent.EventType != GlobalEventType.GLOBALEVENT_NONE)
         {
-            if (serverMap.TryAdd(globalEvent.Name, globalEvent))
+            if (_serverMap.TryAdd(globalEvent.Name, globalEvent))
             {
                 return true;
             }
         }
         else // think event
         {
-            if (thinkMap.TryAdd(globalEvent.Name, globalEvent))
+            if (_thinkMap.TryAdd(globalEvent.Name, globalEvent))
             {
                 if (thinkEventId == 0)
                 {
@@ -211,8 +208,8 @@ public class GlobalEvents : IGlobalEvents
         timerEventId = 0;
 
         // Clear maps
-        thinkMap.Clear();
-        serverMap.Clear();
-        timerMap.Clear();
+        _thinkMap.Clear();
+        _serverMap.Clear();
+        _timerMap.Clear();
     }
 }

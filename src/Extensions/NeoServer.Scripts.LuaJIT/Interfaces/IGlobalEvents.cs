@@ -6,6 +6,10 @@ public interface IGlobalEvents
 {
     public void Startup();
 
+    public void Shutdown();
+
+    public void Save();
+
     public void Timer();
 
     public void Think();

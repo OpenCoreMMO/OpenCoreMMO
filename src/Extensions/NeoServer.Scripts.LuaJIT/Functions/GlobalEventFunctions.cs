@@ -78,6 +78,10 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
             {
                 global.EventType = GlobalEventType.GLOBALEVENT_ON_THINK;
             }
+            else if (tmpStr == "save")
+            {
+                global.EventType = GlobalEventType.GLOBALEVENT_SAVE;
+            }
             else
             {
                 _logger.Error("[GlobalEventFunctions::luaGlobalEventType] - Invalid type for global event: {}");
