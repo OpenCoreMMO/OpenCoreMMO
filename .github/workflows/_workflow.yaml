@@ -23,6 +23,8 @@ jobs:
   build:
     name: Build & Test
     uses: ./.github/workflows/_build.yaml
+    permissions:
+      contents: read
     with:
       project: ./${{ inputs.path }}/${{ inputs.project }}
       deploy: ${{ inputs.deploy }}
@@ -33,3 +35,6 @@ jobs:
     uses: ./.github/workflows/_codeql.yaml
     with:
       path: $GITHUB_WORKSPACE/${{ inputs.path }}
+    permissions:
+        actions: read
+        security-events: write
