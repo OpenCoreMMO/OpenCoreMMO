@@ -39,6 +39,9 @@ namespace NeoServer.Server.Standalone;
 
 public class Program
 {
+    private static CancellationTokenSource _cancellationTokenSource;
+    private static CancellationToken _cancellationToken;
+
     public static async Task Main()
     {
         Console.Title = "OpenCoreMMO Server";
@@ -46,8 +49,8 @@ public class Program
         var sw = new Stopwatch();
         sw.Start();
 
-        var cancellationTokenSource = new CancellationTokenSource();
-        var cancellationToken = cancellationTokenSource.Token;
+        _cancellationTokenSource = new CancellationTokenSource();
+        _cancellationToken = _cancellationTokenSource.Token;
 
         var container = Container.BuildConfigurations();
 
@@ -69,7 +72,7 @@ public class Program
 
         GameAssemblyCache.Load();
 
-        await LoadDatabase(container, logger, cancellationToken);
+        await LoadDatabase(container, logger, _cancellationToken);
 
         Rsa.LoadPem(serverConfiguration.Data);
 
@@ -97,14 +100,14 @@ public class Program
         var dispatcher = container.Resolve<IDispatcher>();
         var persistenceDispatcher = container.Resolve<IPersistenceDispatcher>();
 
-        dispatcher.Start(cancellationToken);
-        scheduler.Start(cancellationToken);
-        persistenceDispatcher.Start(cancellationToken);
+        dispatcher.Start(_cancellationToken);
+        scheduler.Start(_cancellationToken);
+        persistenceDispatcher.Start(_cancellationToken);
 
         scheduler.AddEvent(new SchedulerEvent(1000, container.Resolve<GameCreatureRoutine>().StartChecking));
         scheduler.AddEvent(new SchedulerEvent(1000, container.Resolve<GameItemRoutine>().StartChecking));
         scheduler.AddEvent(new SchedulerEvent(1000, container.Resolve<GameChatChannelRoutine>().StartChecking));
-        container.Resolve<PlayerPersistenceRoutine>().Start(cancellationToken);
+        container.Resolve<PlayerPersistenceRoutine>().Start(_cancellationToken);
 
         container.Resolve<EventSubscriber>().AttachEvents();
         container.Resolve<IEnumerable<IStartup>>().ToList().ForEach(x => x.Run());
@@ -112,7 +115,7 @@ public class Program
         container.Resolve<LuaGlobalRegister>().Register();
         container.Resolve<IScriptGameManager>().Start();
 
-        StartListening(container, cancellationToken);
+        StartListening(container, _cancellationToken);
 
         container.Resolve<IGameServer>().Open();
 
@@ -129,7 +132,36 @@ public class Program
 
         logger.Information("Server is {Up}! {Time} ms", "up", sw.ElapsedMilliseconds);
 
-        await Task.Delay(Timeout.Infinite, cancellationToken);
+        SetupShutdownHandlers(logger, container);
+
+        try { await Task.Delay(Timeout.Infinite, _cancellationToken); }
+        catch (TaskCanceledException) { }
+        catch (Exception ex) { logger.Error(ex, "Unhandled exception occurred."); }
+        finally { await Shutdown(logger, container); }
+    }
+
+    private static void SetupShutdownHandlers(ILogger logger, IServiceProvider container)
+    {
+        Console.CancelKeyPress += (sender, eventArgs) =>
+        {
+            _cancellationTokenSource.Cancel();
+            eventArgs.Cancel = true;
+        };
+
+        AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) =>
+        {
+            if (_cancellationTokenSource.IsCancellationRequested)
+                return;
+
+            Shutdown(logger, container).Wait();
+            _cancellationTokenSource.Cancel();
+        };
+    }
+    private static async Task Shutdown(ILogger logger, IServiceProvider container)
+    {
+        logger.Warning("Server is in Shutdown...");
+        container.Resolve<IScriptGameManager>().GlobalEventExecuteShutdown();
+        await container.Resolve<PlayerPersistenceRoutine>().SavePlayers();
     }
 
     private static async Task LoadDatabase(IServiceProvider container, ILogger logger,

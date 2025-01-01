@@ -3,6 +3,7 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts.Scripts;
 using Serilog;
@@ -37,6 +38,11 @@ public class LuaScriptGameManager : IScriptGameManager
     /// </summary>
     private readonly ITalkActions _talkActions;
 
+    /// <summary>
+    /// A reference to the <see cref="IGlobalEvents"/> instance in use.
+    /// </summary>
+    private readonly IGlobalEvents _globalEvents;
+
     #endregion
 
     #region Constructors
@@ -45,20 +51,26 @@ public class LuaScriptGameManager : IScriptGameManager
         ILuaStartup luaStartup,
         ILogger logger,
         IActions actions,
-        ITalkActions talkActions)
+        ITalkActions talkActions,
+        IGlobalEvents globalEvents)
     {
         _luaStartup = luaStartup;
         _logger = logger;
 
         _actions = actions;
         _talkActions = talkActions;
+        _globalEvents = globalEvents;
     }
 
     #endregion
 
     #region Public Methods 
 
-    public void Start() => _luaStartup.Start();
+    public void Start()
+    {
+        _luaStartup.Start();
+        _globalEvents.Startup();
+    }
 
     //public bool HasTalkAction(string text) => _talkActions.TryGetTalkAction(text, out var talkactionWords, out var talkAction);
 
@@ -121,6 +133,18 @@ public class LuaScriptGameManager : IScriptGameManager
 
         return false;
     }
+
+    public void GlobalEventExecuteRecord(int current, int old)
+    {
+        foreach (var (key, globalEvent) in _globalEvents.GetEventMap(GlobalEventType.GLOBALEVENT_RECORD))
+            globalEvent.ExecuteRecord(current, old);
+    }
+
+    public void GlobalEventExecuteShutdown()
+        => _globalEvents.Shutdown();
+
+    public void GlobalEventExecuteSave()
+        => _globalEvents.Save();
 
     #endregion
 }

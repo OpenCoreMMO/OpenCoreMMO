@@ -1,9 +1,9 @@
 ## Revscript support using native LuaJIT
 Simple documentation with all scripts and functions developed using LuaJIT to working with Revscript TFS and Canary retrocompatibility.
 
-### Implemented Scripts (21)
+### Implemented Scripts (26)
 
-**Actions (9)**
+**Actions Items (9)**
 
 - crowbar.lua
 - fishing.lua
@@ -15,7 +15,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - shovel.lua
 - scythe.lua
 
-**Quests (3)**
+**Actions Quests (4)**
 
 - dark_helmet.lua
 - dwarven_shield.lua
@@ -36,6 +36,14 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - teleport_ntiles.lua `/n 5` 
 - position.lua `!position`
 
+**Global Events (5)**
+
+- example_save.lua
+- example_shutdown.lua
+- example_startup.lua
+- example_think.lua
+- online_record.lua
+
 ### Implemented Libs using lua (8)
 
 - creature.lua
@@ -47,7 +55,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (17) and Functions (109)
+### Tables (18) and Functions (124)
 
 **Action (7)**
 
@@ -82,17 +90,35 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - container:getSize()
 - container:getItem()
 
-**Game (5)**
+**Game (6)**
 
 - Game.getReturnMessage(value)
 - Game.createItem(itemId or name, count, position)
 - Game.createMonster(monsterName, position, extended = false, force = false, master = nil)
 - Game.createNpc(monsterName, position, extended = false, force = false)
 - Game.reload(reloadType)
+- Game.getPlayers()
 
-**Global (1)**
+**Global (3)**
 
 - rawgetmetatable(metatableName)
+- addEvent(callback, delay, ...)
+- stopEvent(eventid)
+
+**GlobalEvent (12)**
+
+- GlobalEvent()
+- globalevent:type(callback)
+- globalevent:register()
+- globalevent:time(time)
+- globalevent:interval(interval)
+- globalevent:onThink(callback)
+- globalevent:onTime(callback)
+- globalevent:onStartup(callback)
+- globalevent:onShutdown(callback)
+- globalevent:onRecord(callback)
+- globalevent:onPeriodChange(callback)
+- globalevent:onSave(callback)
 
 **Group(8)**
 

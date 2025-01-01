@@ -172,6 +172,7 @@ public class Player : CombatActor, IPlayer
     }
 
     public uint AccountId { get; init; }
+    public int WorldId { get; init; }
     public IPlayerContainerList Containers { get; }
     public bool HasDepotOpened => Containers.HasAnyDepotOpened;
     public IShopperNpc TradingWithNpc { get; private set; }

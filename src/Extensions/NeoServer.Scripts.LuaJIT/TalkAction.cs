@@ -37,7 +37,7 @@ public class TalkAction : Script, ITalkAction
 
         LuaScriptInterface.PushString(L, words);
         LuaScriptInterface.PushString(L, param);
-        //lua_pushnumber(L, (double)type);
+        //Lua.PushNumber(L, (double)type);
 
         return GetScriptInterface().CallFunction(3);
     }

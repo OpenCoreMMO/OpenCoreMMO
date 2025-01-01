@@ -7,6 +7,7 @@ using NeoServer.Data.Interfaces;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Systems.Depot;
 using NeoServer.Server.Common.Contracts;
+using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Configurations;
 using Serilog;
 
@@ -19,21 +20,27 @@ public class PlayerPersistenceRoutine
     private readonly ILogger _logger;
     private readonly IPlayerDepotItemRepository _playerDepotItemRepository;
     private readonly IPlayerRepository _playerRepository;
+    private readonly IScriptGameManager _scriptGameManager;
     private readonly ServerConfiguration _serverConfiguration;
     private readonly Stopwatch _stopwatch = new();
 
     private int _saveInterval;
 
-    public PlayerPersistenceRoutine(IGameServer gameServer, IPlayerRepository playerRepository, ILogger logger,
-        ServerConfiguration serverConfiguration,
+    public PlayerPersistenceRoutine(
+        IGameServer gameServer,
+        IPlayerRepository playerRepository,
+        ILogger logger,
         IPlayerDepotItemRepository playerDepotItemRepository,
+        IScriptGameManager scriptGameManager,
+        ServerConfiguration serverConfiguration,
         DepotManager depotManager)
     {
         _gameServer = gameServer;
         _playerRepository = playerRepository;
         _logger = logger;
-        _serverConfiguration = serverConfiguration;
         _playerDepotItemRepository = playerDepotItemRepository;
+        _scriptGameManager = scriptGameManager;
+        _serverConfiguration = serverConfiguration;
         _depotManager = depotManager;
     }
 
@@ -51,7 +58,7 @@ public class PlayerPersistenceRoutine
         }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
 
-    private async Task SavePlayers()
+    public async Task SavePlayers()
     {
         var players = _gameServer.CreatureManager.GetAllLoggedPlayers().ToList();
 
@@ -67,6 +74,8 @@ public class PlayerPersistenceRoutine
             _logger.Information("{NumPlayers} players saved in {Elapsed} ms", players.Count,
                 _stopwatch.ElapsedMilliseconds);
         }
+
+        _scriptGameManager.GlobalEventExecuteSave();
     }
 
     private async Task SaveDepots(List<IPlayer> players)

@@ -27,6 +27,8 @@ public class Scheduler : IScheduler
         _writer = channel.Writer;
     }
 
+    public long GlobalTime => _dispatcher.GlobalTime;
+
     public ulong Count => EventLength;
 
     public bool Empty => ActiveEventIds.IsEmpty;

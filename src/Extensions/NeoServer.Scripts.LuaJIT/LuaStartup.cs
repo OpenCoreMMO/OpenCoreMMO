@@ -35,16 +35,6 @@ public class LuaStartup : ILuaStartup
     private readonly IScripts _scripts;
 
     /// <summary>
-    /// A reference to the <see cref="IActions"/> instance in use.
-    /// </summary>
-    private readonly IActions _actions;
-
-    /// <summary>
-    /// A reference to the <see cref="ITalkActions"/> instance in use.
-    /// </summary>
-    private readonly ITalkActions _talkActions;
-
-    /// <summary>
     /// A reference to the <see cref="IActionFunctions"/> instance in use.
     /// </summary>
     private readonly IActionFunctions _actionFunctions;
@@ -78,6 +68,11 @@ public class LuaStartup : ILuaStartup
     /// A reference to the <see cref="IGlobalFunctions"/> instance in use.
     /// </summary>
     private readonly IGlobalFunctions _globalFunctions;
+
+    /// <summary>
+    /// A reference to the <see cref="IGlobalEventFunctions"/> instance in use.
+    /// </summary>
+    private readonly IGlobalEventFunctions _globalEventFunctions;
 
     /// <summary>
     /// A reference to the <see cref="IGroupFunctions"/> instance in use.
@@ -148,8 +143,6 @@ public class LuaStartup : ILuaStartup
         ILuaEnvironment luaEnviroment,
         IConfigManager configManager,
         IScripts scripts,
-        IActions actions,
-        ITalkActions talkActions,
         IActionFunctions actionFunctions,
         IConfigFunctions configFunctions,
         IContainerFunctions containerFunctions,
@@ -157,6 +150,7 @@ public class LuaStartup : ILuaStartup
         IEnumFunctions enumFunctions,
         IGameFunctions gameFunctions,
         IGlobalFunctions globalFunctions,
+        IGlobalEventFunctions globalEventFunctions,
         IGroupFunctions groupFunctions,
         IItemFunctions itemFunctions,
         IItemTypeFunctions itemTypeFunctions,
@@ -175,9 +169,6 @@ public class LuaStartup : ILuaStartup
         _configManager = configManager;
         _scripts = scripts;
 
-        _actions = actions;
-        _talkActions = talkActions;
-
         _actionFunctions = actionFunctions;
         _configFunctions = configFunctions;
         _containerFunctions = containerFunctions;
@@ -185,6 +176,7 @@ public class LuaStartup : ILuaStartup
         _enumFunctions = enumFunctions;
         _gameFunctions = gameFunctions;
         _globalFunctions = globalFunctions;
+        _globalEventFunctions = globalEventFunctions;
         _groupFunctions = groupFunctions;
         _itemFunctions = itemFunctions;
         _itemTypeFunctions = itemTypeFunctions;
@@ -226,6 +218,7 @@ public class LuaStartup : ILuaStartup
         _enumFunctions.Init(luaState);
         _gameFunctions.Init(luaState);
         _globalFunctions.Init(luaState);
+        _globalEventFunctions.Init(luaState);
         _itemFunctions.Init(luaState);
         _itemTypeFunctions.Init(luaState);
         _loggerFunctions.Init(luaState);

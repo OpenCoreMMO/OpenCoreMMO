@@ -13,6 +13,8 @@ public class Dispatcher : IDispatcher
     private readonly ChannelReader<IEvent> _reader;
     private readonly ChannelWriter<IEvent> _writer;
 
+    public long GlobalTime { get; private set; }
+
     /// <summary>
     ///     A queue responsible for process events
     /// </summary>
@@ -44,6 +46,8 @@ public class Dispatcher : IDispatcher
             while (await _reader.WaitToReadAsync(token))
 
             {
+                GlobalTime = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+
                 if (token.IsCancellationRequested) _writer.Complete();
                 // Fast loop around available jobs
                 while (_reader.TryRead(out var evt))

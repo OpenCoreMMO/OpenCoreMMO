@@ -114,6 +114,7 @@ public class PlayerLoader : IPlayerLoader
         {
             PremiumTime = playerEntity.Account?.PremiumTime ?? 0,
             AccountId = (uint)playerEntity.AccountId,
+            WorldId = playerEntity.WorldId,
             Guild = GuildStore.Get((ushort)(playerEntity.GuildMember?.GuildId ?? 0)),
             GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0)
         };

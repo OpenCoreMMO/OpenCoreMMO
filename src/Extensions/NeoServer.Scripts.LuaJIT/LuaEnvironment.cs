@@ -22,8 +22,8 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
     private static bool _shuttingDown;
 
-    private readonly Dictionary<uint, LuaTimerEventDesc> _timerEvents = new();
-    public uint LastEventTimerId = 1;
+    public Dictionary<uint, LuaTimerEventDesc> TimerEvents { get; } = new();
+    public uint LastEventTimerId { get; set; } = 1;
 
     private static readonly List<string> _cacheFiles = new();
 
@@ -106,7 +106,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
         //    ClearAreaObjects(areaEntry.Key);
         //}
 
-        foreach (var timerEntry in _timerEvents)
+        foreach (var timerEntry in TimerEvents)
         {
             var timerEventDesc = timerEntry.Value;
             foreach (var parameter in timerEventDesc.Parameters) Lua.UnRef(luaState, LUA_REGISTRYINDEX, parameter);
@@ -115,7 +115,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
         //combatIdMap.Clear();
         //areaIdMap.Clear();
-        _timerEvents.Clear();
+        TimerEvents.Clear();
         _cacheFiles.Clear();
 
         Lua.Close(luaState);
@@ -141,9 +141,9 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
     public void ExecuteTimerEvent(uint eventIndex)
     {
-        if (_timerEvents.TryGetValue(eventIndex, out var timerEventDesc))
+        if (TimerEvents.TryGetValue(eventIndex, out var timerEventDesc))
         {
-            _timerEvents.Remove(eventIndex);
+            TimerEvents.Remove(eventIndex);
 
             Lua.RawGetI(luaState, LUA_REGISTRYINDEX, timerEventDesc.Function);
 

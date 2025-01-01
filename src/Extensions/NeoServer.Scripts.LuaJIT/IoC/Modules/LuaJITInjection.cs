@@ -14,6 +14,7 @@ public static class LuaJITInjection
         builder.AddSingleton<ILuaEnvironment, LuaEnvironment>();
         builder.AddSingleton<IScripts, Scripts>();
         builder.AddSingleton<IActions, Actions>();
+        builder.AddSingleton<IGlobalEvents, GlobalEvents>();
         builder.AddSingleton<ITalkActions, TalkActions>();
 
         builder.AddSingleton<IActionFunctions, ActionFunctions>();
@@ -23,6 +24,7 @@ public static class LuaJITInjection
         builder.AddSingleton<IEnumFunctions, EnumFunctions>();
         builder.AddSingleton<IGameFunctions, GameFunctions>();
         builder.AddSingleton<IGlobalFunctions, GlobalFunctions>();
+        builder.AddSingleton<IGlobalEventFunctions, GlobalEventFunctions>();
         builder.AddSingleton<IGroupFunctions, GroupFunctions>();
         builder.AddSingleton<IItemFunctions, ItemFunctions>();
         builder.AddSingleton<IItemTypeFunctions, ItemTypeFunctions>();

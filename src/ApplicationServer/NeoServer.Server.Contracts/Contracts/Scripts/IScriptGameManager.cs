@@ -12,4 +12,8 @@ public interface IScriptGameManager
     bool PlayerUseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item, IThing target = null);
     bool PlayerUseItem(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, IThing target = null, bool isHotkey = false);
     bool HasAction(IItem item);
+
+    void GlobalEventExecuteRecord(int current, int old);
+    void GlobalEventExecuteSave();
+    void GlobalEventExecuteShutdown();
 }

@@ -97,6 +97,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     IGroup Group { get; set; }
     byte GroupId => Group?.Id ?? default;
     uint AccountId { get; init; }
+    int WorldId { get; init; }
     IGuild Guild { get; }
     ushort GuildId => Guild?.Id ?? default;
     bool HasGuild { get; }
