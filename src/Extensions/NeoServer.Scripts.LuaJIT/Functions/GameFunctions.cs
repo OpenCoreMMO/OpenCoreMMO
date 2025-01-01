@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Data.Entities;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
@@ -12,6 +13,7 @@ using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Configurations;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
@@ -23,6 +25,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
     private static IItemFactory _itemFactory;
     private static IMap _map;
     private static ICreatureFactory _creatureFactory;
+    private static IGameCreatureManager _gameCreatureManager;
     private static ServerConfiguration _serverConfiguration;
 
     public GameFunctions(
@@ -31,6 +34,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         IItemFactory itemFactory,
         IMap map,
         ICreatureFactory creatureFactory,
+        IGameCreatureManager gameCreatureManager,
         ServerConfiguration serverConfiguration) : base(nameof(GameFunctions))
     {
         _scripts = scripts;
@@ -38,6 +42,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         _itemFactory = itemFactory;
         _map = map;
         _creatureFactory = creatureFactory;
+        _gameCreatureManager = gameCreatureManager;
         _serverConfiguration = serverConfiguration;
     }
 
@@ -52,6 +57,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         RegisterMethod(L, "Game", "createNpc", LuaGameCreateNpc);
 
         RegisterMethod(L, "Game", "reload", LuaGameReload);
+
+        RegisterMethod(L, "Game", "getPlayers", LuaGameGetPlayers);
     }
 
     private static int LuaGameGetReturnMessage(LuaState L)
@@ -362,6 +369,22 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         }
 
         PushBoolean(L, true);
+        return 1;
+    }
+
+    private static int LuaGameGetPlayers(LuaState L)
+    {
+        // Game.getPlayers()
+        var allPlayers = _gameCreatureManager.GetAllLoggedPlayers();
+
+        Lua.CreateTable(L, allPlayers.Count(), 0);
+
+        int index = 0;
+        foreach (var player in allPlayers) {
+            PushUserdata(L, player);
+            SetMetatable(L, -1, "Player");
+            Lua.RawSetI(L, -2, ++index);
+        }
         return 1;
     }
 }

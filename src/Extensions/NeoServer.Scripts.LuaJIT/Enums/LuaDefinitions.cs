@@ -306,14 +306,14 @@ public struct LuaTimerEventDesc
     public string ScriptName;
     public int Function = -1;
     public List<int> Parameters;
-    public string EventId = string.Empty;
+    public uint EventId = 0;
 
     public LuaTimerEventDesc()
     {
         Parameters = new List<int>();
     }
 
-    public LuaTimerEventDesc(int scriptId, string scriptName, int function, List<int> parameters, string eventId)
+    public LuaTimerEventDesc(int scriptId, string scriptName, int function, List<int> parameters, uint eventId)
     {
         ScriptId = scriptId;
         ScriptName = scriptName;

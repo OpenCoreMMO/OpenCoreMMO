@@ -106,7 +106,7 @@ public class GlobalEvents : IGlobalEvents
                 continue;
             }
 
-            _logger.Information($"[GlobalEvents::think] - Executing event: {globalEvent.Name}");
+            _logger.Debug($"[GlobalEvents::think] - Executing event: {globalEvent.Name}");
 
             if (!globalEvent.ExecuteEvent())
             {

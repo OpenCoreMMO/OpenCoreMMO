@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading.Tasks;
+using NeoServer.Data.Interfaces;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Server.Common.Contracts;
@@ -19,15 +21,21 @@ public class GameCreatureManager : IGameCreatureManager
     private readonly ICreatureGameInstance _creatureInstances;
     private readonly ILogger _logger;
     private readonly IMap _map;
+    private readonly IWorldRecordRepository _worldRecordRepository;
 
     private readonly ConcurrentDictionary<uint, IConnection> _playersConnection;
 
-    public GameCreatureManager(ICreatureGameInstance creatureInstances, IMap map, ILogger logger)
+    public GameCreatureManager(
+        ICreatureGameInstance creatureInstances,
+        IMap map,
+        ILogger logger,
+        IWorldRecordRepository worldRecordRepository)
     {
         _creatureInstances = creatureInstances;
         _map = map;
         _playersConnection = new ConcurrentDictionary<uint, IConnection>();
         _logger = logger;
+        _worldRecordRepository = worldRecordRepository;
     }
 
     /// <summary>
@@ -196,5 +204,25 @@ public class GameCreatureManager : IGameCreatureManager
     public IImmutableList<Tuple<IMonster, TimeSpan>> GetKilledMonsters()
     {
         return _creatureInstances.AllKilledMonsters();
+    }
+
+    public async Task<(bool, int, int)> CheckPlayersRecord(int worldId)
+    {
+        var actualCount = _creatureInstances.AllLoggedPlayers().Count();
+        var lastWorldRecord = await _worldRecordRepository.GetLastFromWord(worldId);
+
+        if (lastWorldRecord is null || actualCount > lastWorldRecord.Record)
+        {
+            await _worldRecordRepository.Insert(new Data.Entities.WorldRecordEntity
+            {
+                CreatedAt = DateTime.UtcNow,
+                Record = actualCount,
+                WordId = worldId
+            });
+
+            return (true, actualCount, lastWorldRecord is  null ? 0 : lastWorldRecord.Record);
+        }
+
+        return (false, 0, 0);
     }
 }

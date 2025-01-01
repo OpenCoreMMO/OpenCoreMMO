@@ -36,10 +36,11 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - teleport_ntiles.lua `/n 5` 
 - position.lua `!position`
 
-**Global Events (4)**
+**Global Events (3)**
 
 - example_one.lua
 - example_two.lua
+- online_record.lua
 
 ### Implemented Libs using lua (8)
 
@@ -52,7 +53,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (18) and Functions (121)
+### Tables (18) and Functions (124)
 
 **Action (7)**
 
@@ -87,17 +88,20 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - container:getSize()
 - container:getItem()
 
-**Game (5)**
+**Game (6)**
 
 - Game.getReturnMessage(value)
 - Game.createItem(itemId or name, count, position)
 - Game.createMonster(monsterName, position, extended = false, force = false, master = nil)
 - Game.createNpc(monsterName, position, extended = false, force = false)
 - Game.reload(reloadType)
+- Game.getPlayers()
 
-**Global (1)**
+**Global (3)**
 
 - rawgetmetatable(metatableName)
+- addEvent(callback, delay, ...)
+- stopEvent(eventid)
 
 **GlobalEvent (12)**
 

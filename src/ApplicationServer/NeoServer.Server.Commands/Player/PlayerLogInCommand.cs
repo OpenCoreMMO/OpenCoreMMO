@@ -8,6 +8,7 @@ using NeoServer.Loaders.Interfaces;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Commands;
 using NeoServer.Server.Common.Contracts.Network;
+using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Services;
 using Serilog;
 
@@ -20,16 +21,22 @@ public class PlayerLogInCommand : ICommand
     private readonly IGameServer _game;
     private readonly GuildLoader _guildLoader;
     private readonly IPlayerLoader _playerLoader;
+    private readonly IScriptGameManager _scriptGameManager;
 
-    public PlayerLogInCommand(IGameServer game, IPlayerLoader playerLoader, GuildLoader guildLoader,
+    public PlayerLogInCommand(
+        IGameServer game,
+        IPlayerLoader playerLoader,
+        GuildLoader guildLoader,
         PlayerLocationResolver playerLocationResolver,
-        ILogger logger)
+        ILogger logger,
+        IScriptGameManager scriptGameManager)
     {
         _game = game;
         _playerLoader = playerLoader;
         _guildLoader = guildLoader;
         _playerLocationResolver = playerLocationResolver;
         _logger = logger;
+        _scriptGameManager = scriptGameManager;
     }
 
     public Result Execute(PlayerEntity playerRecord, IConnection connection)
@@ -53,6 +60,11 @@ public class PlayerLogInCommand : ICommand
         }
 
         _game.CreatureManager.AddPlayer(player, connection);
+
+        (var success, var current, var old) = _game.CreatureManager.CheckPlayersRecord(player.WorldId).Result;
+
+        if (success)
+            _scriptGameManager.GlobalEventExecuteRecord(current, old);
 
         player.Login();
         player.Vip.LoadVipList(playerRecord.Account.VipList.Select(x => ((uint)x.PlayerId, x.Player?.Name)));

@@ -77,7 +77,7 @@ public class GlobalEvent : Script
         return scriptInterface.CallFunction(2);
     }
 
-    public bool ExecuteRecord(uint current, uint old)
+    public bool ExecuteRecord(int current, int old)
     {
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {

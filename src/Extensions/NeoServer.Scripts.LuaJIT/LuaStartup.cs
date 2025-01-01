@@ -35,11 +35,6 @@ public class LuaStartup : ILuaStartup
     private readonly IScripts _scripts;
 
     /// <summary>
-    /// A reference to the <see cref="IGlobalEvents"/> instance in use.
-    /// </summary>
-    private readonly IGlobalEvents _globalEvents;
-
-    /// <summary>
     /// A reference to the <see cref="IActionFunctions"/> instance in use.
     /// </summary>
     private readonly IActionFunctions _actionFunctions;
@@ -148,7 +143,6 @@ public class LuaStartup : ILuaStartup
         ILuaEnvironment luaEnviroment,
         IConfigManager configManager,
         IScripts scripts,
-        IGlobalEvents globalEvents,
         IActionFunctions actionFunctions,
         IConfigFunctions configFunctions,
         IContainerFunctions containerFunctions,
@@ -174,8 +168,6 @@ public class LuaStartup : ILuaStartup
         _luaEnviroment = luaEnviroment;
         _configManager = configManager;
         _scripts = scripts;
-
-        _globalEvents = globalEvents;
 
         _actionFunctions = actionFunctions;
         _configFunctions = configFunctions;
@@ -247,8 +239,6 @@ public class LuaStartup : ILuaStartup
 
         ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts", false, false), "/Data/LuaJit/scripts");
         ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts/libs", true, false), "/Data/LuaJit/scripts/libs");
-
-        _globalEvents.Startup();
     }
 
     #endregion
