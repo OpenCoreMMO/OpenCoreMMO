@@ -1,7 +1,7 @@
 ## Revscript support using native LuaJIT
 Simple documentation with all scripts and functions developed using LuaJIT to working with Revscript TFS and Canary retrocompatibility.
 
-### Implemented Scripts (21)
+### Implemented Scripts (26)
 
 **Actions Items (9)**
 
@@ -36,10 +36,12 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - teleport_ntiles.lua `/n 5` 
 - position.lua `!position`
 
-**Global Events (3)**
+**Global Events (5)**
 
-- example_one.lua
-- example_two.lua
+- example_save.lua
+- example_shutdown.lua
+- example_startup.lua
+- example_think.lua
 - online_record.lua
 
 ### Implemented Libs using lua (8)
