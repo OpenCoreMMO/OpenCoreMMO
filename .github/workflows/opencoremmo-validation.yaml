@@ -8,6 +8,9 @@ on:
 jobs:
   workflow:
     uses: ./.github/workflows/_workflow.yaml
+    permissions:
+      actions: read
+      security-events: write
     with:
       path: /
       project: src/Standalone
