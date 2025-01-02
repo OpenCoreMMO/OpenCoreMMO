@@ -66,6 +66,8 @@ public class PlayerLogInCommand : ICommand
         if (success)
             _scriptGameManager.GlobalEventExecuteRecord(current, old);
 
+        _scriptGameManager.CreatureEventExecuteOnPlayerLogin(player);
+
         player.Login();
         player.Vip.LoadVipList(playerRecord.Account.VipList.Select(x => ((uint)x.PlayerId, x.Player?.Name)));
         _logger.Information("Player {PlayerName} logged in", player.Name);

@@ -34,14 +34,19 @@ public class LuaScriptGameManager : IScriptGameManager
     private readonly IActions _actions;
 
     /// <summary>
-    /// A reference to the <see cref="ITalkActions"/> instance in use.
+    /// A reference to the <see cref="ICreatureEvents"/> instance in use.
     /// </summary>
-    private readonly ITalkActions _talkActions;
+    private readonly ICreatureEvents _creatureEvents;
 
     /// <summary>
     /// A reference to the <see cref="IGlobalEvents"/> instance in use.
     /// </summary>
     private readonly IGlobalEvents _globalEvents;
+
+    /// <summary>
+    /// A reference to the <see cref="ITalkActions"/> instance in use.
+    /// </summary>
+    private readonly ITalkActions _talkActions;
 
     #endregion
 
@@ -51,15 +56,17 @@ public class LuaScriptGameManager : IScriptGameManager
         ILuaStartup luaStartup,
         ILogger logger,
         IActions actions,
-        ITalkActions talkActions,
-        IGlobalEvents globalEvents)
+        ICreatureEvents creatureEvents,
+        IGlobalEvents globalEvents,
+        ITalkActions talkActions)
     {
         _luaStartup = luaStartup;
         _logger = logger;
 
         _actions = actions;
-        _talkActions = talkActions;
+        _creatureEvents = creatureEvents;
         _globalEvents = globalEvents;
+        _talkActions = talkActions;
     }
 
     #endregion
@@ -145,6 +152,10 @@ public class LuaScriptGameManager : IScriptGameManager
 
     public void GlobalEventExecuteSave()
         => _globalEvents.Save();
+
+    public void CreatureEventExecuteOnPlayerLogin(IPlayer player) => _creatureEvents.PlayerLogin(player);
+    
+    public void CreatureEventExecuteOnPlayerLogout(IPlayer player) => _creatureEvents.PlayerLogout(player);
 
     #endregion
 }

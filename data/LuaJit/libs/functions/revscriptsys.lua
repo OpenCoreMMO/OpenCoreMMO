@@ -103,6 +103,64 @@ do
     meta.__newindex = TalkActionNewIndex
 end
 
+-- CreatureEvent revscriptsys
+do
+	local function CreatureEventNewIndex(self, key, value)
+		if key == "onLogin" then
+			self:type("login")
+			self:onLogin(value)
+			return
+		elseif key == "onLogout" then
+			self:type("logout")
+			self:onLogout(value)
+			return
+		elseif key == "onThink" then
+			self:type("think")
+			self:onThink(value)
+			return
+		elseif key == "onPrepareDeath" then
+			self:type("preparedeath")
+			self:onPrepareDeath(value)
+			return
+		elseif key == "onDeath" then
+			self:type("death")
+			self:onDeath(value)
+			return
+		elseif key == "onKill" then
+			self:type("kill")
+			self:onKill(value)
+			return
+		elseif key == "onAdvance" then
+			self:type("advance")
+			self:onAdvance(value)
+			return
+		elseif key == "onModalWindow" then
+			self:type("modalwindow")
+			self:onModalWindow(value)
+			return
+		elseif key == "onTextEdit" then
+			self:type("textedit")
+			self:onTextEdit(value)
+			return
+		elseif key == "onHealthChange" then
+			self:type("healthchange")
+			self:onHealthChange(value)
+			return
+		elseif key == "onManaChange" then
+			self:type("manachange")
+			self:onManaChange(value)
+			return
+		elseif key == "onExtendedOpcode" then
+			self:type("extendedopcode")
+			self:onExtendedOpcode(value)
+			return
+		end
+		rawset(self, key, value)
+	end
+	rawgetmetatable("CreatureEvent").__newindex = CreatureEventNewIndex
+end
+
+
 -- -- GlobalEvent revscriptsys
 do
 	local function GlobalEventNewIndex(self, key, value)

@@ -6,6 +6,28 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class Scripts : IScripts
 {
+    #region Injection
+
+    /// <summary>
+    ///     A reference to the logger in use.
+    /// </summary>
+    protected readonly ILogger _logger;
+
+    /// <summary>
+    ///     A reference to the config manager in use.
+    /// </summary>
+    private readonly IConfigManager _configManager;
+
+    private readonly IActions _actions;
+    private readonly ICreatureEvents _creatureEvents;
+    private readonly IGlobalEvents _globalEvents;
+
+    /// <summary>
+    ///     A reference to the talk actions instance in use.
+    /// </summary>
+    private readonly ITalkActions _talkActions;
+
+    #endregion
     public Scripts(ILogger logger)
     {
         _logger = logger;
@@ -18,14 +40,18 @@ public class Scripts : IScripts
         ILogger logger,
         IConfigManager configManager,
         ITalkActions talkActions,
-        IActions actions)
+        IActions actions,
+        ICreatureEvents creatureEvents,
+        IGlobalEvents globalEvents)
     {
         //_instance = this;
 
         _logger = logger.ForContext<Scripts>();
         _configManager = configManager;
-        _talkActions = talkActions;
         _actions = actions;
+        _creatureEvents = creatureEvents;
+        _globalEvents = globalEvents;
+        _talkActions = talkActions;
 
         _scriptInterface = new LuaScriptInterface("Scripts Interface");
         //_scriptInterface.InitState();
@@ -33,8 +59,10 @@ public class Scripts : IScripts
 
     public void ClearAllScripts()
     {
-        _talkActions.Clear();
         _actions.Clear();
+        _creatureEvents.Clear();
+        _globalEvents.Clear();
+        _talkActions.Clear();
     }
 
     public bool LoadEventSchedulerScripts(string fileName)
@@ -150,38 +178,10 @@ public class Scripts : IScripts
         return _scriptId;
     }
 
-    #region Instance
-
-    //private static Scripts _instance = null;
-    //public static Scripts GetInstance() => _instance == null ? _instance = new Scripts() : _instance;
-
-    #endregion
-
     #region Members
 
     private readonly int _scriptId = 0;
     private readonly LuaScriptInterface _scriptInterface;
-
-    #endregion
-
-    #region Injection
-
-    /// <summary>
-    ///     A reference to the logger in use.
-    /// </summary>
-    protected readonly ILogger _logger;
-
-    /// <summary>
-    ///     A reference to the config manager in use.
-    /// </summary>
-    private readonly IConfigManager _configManager;
-
-    /// <summary>
-    ///     A reference to the talk actions instance in use.
-    /// </summary>
-    private readonly ITalkActions _talkActions;
-
-    private readonly IActions _actions;
 
     #endregion
 }
