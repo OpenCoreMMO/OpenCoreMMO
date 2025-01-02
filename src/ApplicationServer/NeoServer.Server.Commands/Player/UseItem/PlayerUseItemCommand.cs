@@ -34,9 +34,7 @@ public class PlayerUseItemCommand : ICommand
     public void Execute(IPlayer player, UseItemPacket useItemPacket)
     {
         var item = _itemFinderService.Find(player, useItemPacket.Location, useItemPacket.ClientId);
-
-        if (item is null) return;
-
+            
         Action action;
 
         switch (item)

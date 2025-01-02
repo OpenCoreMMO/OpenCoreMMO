@@ -21,7 +21,7 @@ public interface IThing : IUsable
         return Location.IsNextTo(thing.Location);
     }
 
-    void SetNewLocation(Location.Structs.Location location);
+    void SetNewLocation(Location.Structs.Location location, bool force = false);
 
     static bool operator !(IThing thing)
     {
