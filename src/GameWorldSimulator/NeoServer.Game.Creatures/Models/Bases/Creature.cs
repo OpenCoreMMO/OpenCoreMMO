@@ -144,7 +144,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public bool IsHealthHidden { get; protected set; }
     public Location Location { get; private set; }
 
-    public void SetNewLocation(Location location)
+    public void SetNewLocation(Location location, bool force = false)
     {
         Location = location;
     }

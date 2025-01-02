@@ -57,9 +57,9 @@ public abstract class BaseItem : IItem
 
     public Location Location { get; set; }
 
-    public void SetNewLocation(Location location)
+    public void SetNewLocation(Location location, bool force = false)
     {
-        if (!((IItem)this).CanBeMoved) return;
+        if (!((IItem)this).CanBeMoved && force == false) return;
         Location = location;
     }
 

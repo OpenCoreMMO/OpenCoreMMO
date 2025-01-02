@@ -34,7 +34,7 @@ public abstract class BaseTile : ITile
 
     public Location Location { get; private set; }
 
-    public void SetNewLocation(Location location)
+    public void SetNewLocation(Location location, bool force = false)
     {
         if (Location != default) throw new InvalidOperationException();
         Location = location;
