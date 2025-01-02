@@ -37,27 +37,51 @@ public class Player : CombatActor, IPlayer
 {
     private const int KNOWN_CREATURE_LIMIT = 250; //todo: for version 8.60
 
-    private ulong _flags;
-
     private uint _idleTime;
     private byte _soulPoints;
 
-    public Player(uint id, string characterName, ChaseMode chaseMode, uint capacity, uint healthPoints,
-        uint maxHealthPoints, IVocation vocation,
-        Gender gender, bool online, ushort mana, ushort maxMana, FightMode fightMode, byte soulPoints, byte soulMax,
-        IDictionary<SkillType, ISkill> skills, ushort staminaMinutes,
-        IOutfit outfit, ushort speed,
-        Location location, IMapTool mapTool, ITown town)
+    public Player(
+        uint id,
+        string characterName,
+        ChaseMode chaseMode,
+        uint capacity,
+        uint healthPoints,
+        uint maxHealthPoints,
+        IVocation vocation,
+        IGroup group,
+        Gender gender,
+        bool online,
+        ushort mana,
+        ushort maxMana,
+        FightMode fightMode,
+        byte soulPoints,
+        byte soulMax,
+        IDictionary<SkillType, ISkill> skills,
+        IDictionary<int, int> storages,
+        ushort staminaMinutes,
+        IOutfit outfit,
+        ushort speed,
+        Location location,
+        IMapTool mapTool, ITown town)
         : base(
-            new CreatureType(characterName, string.Empty, maxHealthPoints, speed,
-                new Dictionary<LookType, ushort> { { LookType.Corpse, 3058 } }), mapTool, outfit, healthPoints)
+            new CreatureType(
+                characterName,
+                string.Empty,
+                maxHealthPoints,
+                speed,
+                new Dictionary<LookType, ushort> { { LookType.Corpse, 3058 } }),
+            mapTool,
+            outfit,
+            healthPoints)
     {
         Id = id;
         CharacterName = characterName;
         ChaseMode = chaseMode;
         TotalCapacity = capacity;
         Skills = skills;
+        Storages = storages;
         Vocation = vocation;
+        Group = group;
         Gender = gender;
         Online = online;
         Mana = mana;
@@ -132,6 +156,7 @@ public class Player : CombatActor, IPlayer
     public IVip Vip { get; }
     public override IOutfit Outfit { get; protected set; }
     public IVocation Vocation { get; }
+    public IGroup Group { get; set; }
     public IPlayerChannel Channels { get; set; }
     public IPlayerParty PlayerParty { get; set; }
     public ulong BankAmount { get; private set; }
@@ -147,6 +172,7 @@ public class Player : CombatActor, IPlayer
     }
 
     public uint AccountId { get; init; }
+    public int WorldId { get; init; }
     public IPlayerContainerList Containers { get; }
     public bool HasDepotOpened => Containers.HasAnyDepotOpened;
     public IShopperNpc TradingWithNpc { get; private set; }
@@ -206,6 +232,8 @@ public class Player : CombatActor, IPlayer
 
     public virtual bool CannotLogout => !(Tile?.ProtectionZone ?? false) && InFight;
 
+    public virtual bool IsProtectionZoneLocked => false;
+
     public SkillType SkillInUse
     {
         get
@@ -240,11 +268,11 @@ public class Player : CombatActor, IPlayer
     public override ushort MinimumAttackPower => (ushort)(Level / 5);
     public override ushort ArmorRating => Inventory.TotalArmor;
     public byte SecureMode { get; private set; }
-    public float CarryStrength => TotalCapacity - Inventory.TotalWeight;
+    public float FreeCapacity => TotalCapacity - Inventory.TotalWeight;
     public override bool UsingDistanceWeapon => Inventory.Weapon is IDistanceWeapon;
     public bool Recovering => HasCondition(ConditionType.Regeneration);
-    public override bool CanSeeInvisible => FlagIsEnabled(PlayerFlag.CanSeeInvisibility);
-    public override bool CanBeSeen => FlagIsEnabled(PlayerFlag.CanBeSeen);
+    public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
+    public override bool CanBeSeen => Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
     public virtual bool CanSeeInspectionDetails => false;
 
     public ushort GetRawSkillLevel(SkillType skillType)
@@ -253,6 +281,7 @@ public class Player : CombatActor, IPlayer
         var skillLevel = hasSkill ? skill.Level : 1;
         return (ushort)Math.Max(0, skillLevel);
     }
+
     public ushort GetSkillLevel(SkillType skillType)
     {
         var hasSkill = Skills.TryGetValue(skillType, out var skill);
@@ -415,7 +444,7 @@ public class Player : CombatActor, IPlayer
     public override int DefendUsingShield(int attack)
     {
         if (!IsShieldDefenseEnabled) return attack;
-        
+
         var defense = Inventory.TotalDefense * Skills[SkillType.Shielding].Level *
             (DefenseFactor / 100d) - attack / 100d * ArmorRating * (Vocation.Formula?.Defense ?? 1f);
 
@@ -754,7 +783,7 @@ public class Player : CombatActor, IPlayer
     {
         if (!ignoreEquipped) return true;
         if (Inventory.BackpackSlot?.Map is null) return false;
-        if (!Inventory.BackpackSlot.Map.TryGetValue(item.TypeId, out var itemTotalAmount)) return false;
+        if (!Inventory.BackpackSlot.Map.TryGetValue(item.ServerId, out var itemTotalAmount)) return false;
 
         if (itemTotalAmount < amount) return false;
 
@@ -784,7 +813,7 @@ public class Player : CombatActor, IPlayer
         var totalWeight = coins.Sum(x => x is ICumulative cumulative ? cumulative.Weight : 0);
         var totalFreeSlots = Inventory.BackpackSlot?.TotalOfFreeSlots ?? 0;
 
-        return !(totalWeight > CarryStrength) && totalFreeSlots >= coins.Count();
+        return !(totalWeight > FreeCapacity) && totalFreeSlots >= coins.Count();
     }
 
     public void ReceivePurchasedItems(INpc from, SaleContract saleContract, params IItem[] items)
@@ -951,11 +980,6 @@ public class Player : CombatActor, IPlayer
         OnLevelRegressed?.Invoke(this, type, fromLevel, toLevel);
     }
 
-    public virtual void SetFlags(params PlayerFlag[] flags)
-    {
-        foreach (var flag in flags) _flags |= (ulong)flag;
-    }
-
     public void ResetMana()
     {
         HealMana(MaxMana);
@@ -1091,31 +1115,23 @@ public class Player : CombatActor, IPlayer
         return (Level + 50) * .01 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
     }
 
+    #region Storage
+
+    public IDictionary<int, int> Storages { get; }
+
+    public int GetStorageValue(int key)
+        => Storages.TryGetValue(key, out var storage) ? storage : -1;
+
+    public void AddOrUpdateStorageValue(int key, int value)
+        => Storages.AddOrUpdate(key, value);
+
+    #endregion
 
     #region Guild
 
     public ushort GuildLevel { get; set; }
     public bool HasGuild => Guild is not null;
     public IGuild Guild { get; init; }
-
-    #endregion
-
-    #region Flags
-
-    public void UnsetFlag(PlayerFlag flag)
-    {
-        _flags &= ~(ulong)flag;
-    }
-
-    public void SetFlag(PlayerFlag flag)
-    {
-        _flags |= (ulong)flag;
-    }
-
-    public bool FlagIsEnabled(PlayerFlag flag)
-    {
-        return (_flags & (ulong)flag) != 0;
-    }
 
     #endregion
 

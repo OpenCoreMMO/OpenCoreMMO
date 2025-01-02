@@ -28,11 +28,11 @@ public class DynamicTile : BaseTile, IDynamicTile
         TileOperationEvent.OnLoaded(this);
     }
 
-    public int ItemsCount => (DownItems?.Count ?? 0) + (TopItems?.Count ?? 0) + (Ground is null ? 0 : 1);
-
     public byte MovementPenalty => Ground.MovementPenalty;
     public TileStack<IItem> TopItems { get; private set; }
     public TileStack<IItem> DownItems { get; private set; }
+
+    public int ItemsCount => (DownItems?.Count ?? 0) + (TopItems?.Count ?? 0) + (Ground is null ? 0 : 1);
 
     public IItem[] AllItems
     {
@@ -382,7 +382,7 @@ public class DynamicTile : BaseTile, IDynamicTile
     {
         if (HasFlag(TileFlags.Depot) || HasFlag(TileFlags.HasHeight)) return Result.Success;
 
-        if (HasFlag(TileFlags.Unpassable)) return new Result(InvalidOperation.NotEnoughRoom);
+        if (HasFlag(TileFlags.BLockSolid)) return new Result(InvalidOperation.NotEnoughRoom);
 
         if (thing is null) return new Result(InvalidOperation.NotPossible);
 
@@ -426,8 +426,8 @@ public class DynamicTile : BaseTile, IDynamicTile
             return;
         }
 
-        var isRemoved = DownItems.Remove(fromItem);
-        if (!isRemoved) isRemoved = TopItems.Remove(fromItem);
+        var isRemoved = DownItems != null ? DownItems.Remove(fromItem) : false;
+        if (!isRemoved) isRemoved = TopItems != null ? TopItems.Remove(fromItem) : false;
 
         if (!isRemoved) return;
 
@@ -526,7 +526,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         AddItem(ground);
     }
 
-    public Func<ICreature, bool> CanEnter { get; set; }
+    public Func<ICreature, bool> CanEnterFunction { get; set; }
 
     public bool CanRemoveItem(IItem thing)
     {
@@ -606,7 +606,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         if (!walkableCreature.TileEnterRule.CanEnter(this, creature))
             return Result<OperationResultList<ICreature>>.NotPossible;
 
-        if (!CanEnter?.Invoke(creature) ?? false) return Result<OperationResultList<ICreature>>.NotPossible;
+        if (!CanEnterFunction?.Invoke(creature) ?? false) return Result<OperationResultList<ICreature>>.NotPossible;
 
         Creatures ??= new List<IWalkableCreature>();
         Creatures.Add(walkableCreature);

@@ -1,10 +1,10 @@
 ﻿using System;
 using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Inspection;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Items.Factories.AttributeFactory;
+using NeoServer.Game.Items.Inspection;
 
 namespace NeoServer.Game.Items.Bases;
 
@@ -63,12 +63,12 @@ public abstract class BaseItem : IItem
         Location = location;
     }
 
-    public virtual string GetLookText(IInspectionTextBuilder inspectionTextBuilder, IPlayer player,
-        bool isClose = false)
+    public virtual string GetLookText(
+        bool isClose = false, bool showInternalDetails = false)
     {
-        return inspectionTextBuilder is null
-            ? $"You see {Metadata.Article} {Metadata.Name}."
-            : inspectionTextBuilder.Build(this, player, isClose);
+        return InspectionTextBuilder.IsApplicable(this)
+            ? InspectionTextBuilder.Build(this, isClose, showInternalDetails)
+            : $"You see {Metadata.Article} {Metadata.Name}.";
     }
 
     public string FullName => Metadata.FullName;

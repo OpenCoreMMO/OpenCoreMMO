@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Inspection;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
@@ -60,7 +59,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public uint MaxHealthPoints { get; protected set; }
     public string Name => CreatureType.Name;
 
-    public string GetLookText(IInspectionTextBuilder inspectionTextBuilder, IPlayer player, bool isClose = false)
+    public string GetLookText(bool isClose = false, bool showInternalDetails = false)
     {
         return $"You see {(isClose ? CloseInspectionText : InspectionText)}";
     }

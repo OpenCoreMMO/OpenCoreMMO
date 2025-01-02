@@ -108,7 +108,7 @@ public class NpcLoader : IStartupLoader
         foreach (var item in npcData.Shop)
         {
             if (!_itemTypeStore.TryGetValue(item.Item, out var itemType)) continue;
-            items.Add(itemType.TypeId, new ShopItem(itemType, item.Buy, item.Sell));
+            items.Add(itemType.ServerId, new ShopItem(itemType, item.Buy, item.Sell));
         }
 
         type.CustomAttributes.Add("shop", items);

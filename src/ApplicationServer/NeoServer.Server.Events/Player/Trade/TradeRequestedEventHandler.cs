@@ -5,16 +5,19 @@ using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Networking.Packets.Outgoing.Trade;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
+using NeoServer.Server.Configurations;
 
 namespace NeoServer.Server.Events.Player.Trade;
 
 public class TradeRequestedEventHandler : IEventHandler
 {
+    private readonly ClientConfiguration _clientConfiguration;
     private readonly IGameServer _gameServer;
 
-    public TradeRequestedEventHandler(IGameServer gameServer)
+    public TradeRequestedEventHandler(IGameServer gameServer, ClientConfiguration clientConfiguration)
     {
         _gameServer = gameServer;
+        _clientConfiguration = clientConfiguration;
     }
 
     public void Execute(TradeRequest tradeRequest)
@@ -27,7 +30,11 @@ public class TradeRequestedEventHandler : IEventHandler
             out var playerRequestedConnection);
 
         playerRequestingConnection.OutgoingPackets.Enqueue(new TradeRequestPacket(tradeRequest.PlayerRequesting.Name,
-            tradeRequest.Items));
+            tradeRequest.Items)
+        {
+            ShowItemDescription = playerRequestingConnection.OtcV8Version > 0 &&
+                                  _clientConfiguration.OtcV8.GameItemTooltip
+        });
 
         SendTradeMessage(tradeRequest, playerRequestedConnection);
 
@@ -46,7 +53,7 @@ public class TradeRequestedEventHandler : IEventHandler
             TextMessageOutgoingType.Small));
     }
 
-    private static void SendAcknowledgeTradeToBothPlayers(TradeRequest tradeRequest,
+    private void SendAcknowledgeTradeToBothPlayers(TradeRequest tradeRequest,
         IConnection playerRequestingConnection,
         IConnection playerRequestedConnection)
     {
@@ -55,9 +62,17 @@ public class TradeRequestedEventHandler : IEventHandler
         var items = SafeTradeSystem.GetTradedItems(tradeRequest.PlayerRequested);
 
         playerRequestingConnection.OutgoingPackets.Enqueue(new TradeRequestPacket(tradeRequest.PlayerRequested.Name,
-            items, true));
+            items, true)
+        {
+            ShowItemDescription = playerRequestingConnection.OtcV8Version > 0 &&
+                                  _clientConfiguration.OtcV8.GameItemTooltip
+        });
 
         playerRequestedConnection.OutgoingPackets.Enqueue(new TradeRequestPacket(tradeRequest.PlayerRequesting.Name,
-            tradeRequest.Items, true));
+            tradeRequest.Items, true)
+        {
+            ShowItemDescription =
+                playerRequestedConnection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip
+        });
     }
 }

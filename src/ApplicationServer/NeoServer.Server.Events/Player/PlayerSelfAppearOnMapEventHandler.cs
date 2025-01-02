@@ -9,18 +9,21 @@ using NeoServer.Networking.Packets.Outgoing.Map;
 using NeoServer.Networking.Packets.Outgoing.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
+using NeoServer.Server.Configurations;
 
 namespace NeoServer.Server.Events.Player;
 
 public class PlayerSelfAppearOnMapEventHandler : IEventHandler
 {
-    private readonly IGameServer game;
-    private readonly IMap map;
+    private readonly ClientConfiguration _clientConfiguration;
+    private readonly IGameServer _game;
+    private readonly IMap _map;
 
-    public PlayerSelfAppearOnMapEventHandler(IMap map, IGameServer game)
+    public PlayerSelfAppearOnMapEventHandler(IMap map, IGameServer game, ClientConfiguration clientConfiguration)
     {
-        this.map = map;
-        this.game = game;
+        _map = map;
+        _game = game;
+        _clientConfiguration = clientConfiguration;
     }
 
     public void Execute(IWalkableCreature creature)
@@ -29,7 +32,7 @@ public class PlayerSelfAppearOnMapEventHandler : IEventHandler
 
         if (creature is not IPlayer player) return;
 
-        if (!game.CreatureManager.GetPlayerConnection(creature.CreatureId, out var connection)) return;
+        if (!_game.CreatureManager.GetPlayerConnection(creature.CreatureId, out var connection)) return;
 
         SendPacketsToPlayer(player, connection);
     }
@@ -37,13 +40,17 @@ public class PlayerSelfAppearOnMapEventHandler : IEventHandler
     private void SendPacketsToPlayer(IPlayer player, IConnection connection)
     {
         connection.OutgoingPackets.Enqueue(new SelfAppearPacket(player));
-        connection.OutgoingPackets.Enqueue(new MapDescriptionPacket(player, map));
+        connection.OutgoingPackets.Enqueue(new MapDescriptionPacket(player, _map));
         connection.OutgoingPackets.Enqueue(new MagicEffectPacket(player.Location, EffectT.BubbleBlue));
-        connection.OutgoingPackets.Enqueue(new PlayerInventoryPacket(player.Inventory));
+        connection.OutgoingPackets.Enqueue(new PlayerInventoryPacket(player.Inventory)
+        {
+            ShowItemDescription = connection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip
+        });
+
         connection.OutgoingPackets.Enqueue(new PlayerStatusPacket(player));
         connection.OutgoingPackets.Enqueue(new PlayerSkillsPacket(player));
 
-        connection.OutgoingPackets.Enqueue(new WorldLightPacket(game.LightLevel, game.LightColor));
+        connection.OutgoingPackets.Enqueue(new WorldLightPacket(_game.LightLevel, _game.LightColor));
 
         connection.OutgoingPackets.Enqueue(new CreatureLightPacket(player));
 

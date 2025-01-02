@@ -15,7 +15,7 @@ public class ItemType : IItemType
 {
     public ItemType()
     {
-        TypeId = 0;
+        ServerId = 0;
         Name = string.Empty;
         Flags = new HashSet<ItemFlag>();
         Attributes = new ItemAttributeList();
@@ -29,7 +29,7 @@ public class ItemType : IItemType
     /// <summary>
     ///     Server Id
     /// </summary>
-    public ushort TypeId { get; private set; }
+    public ushort ServerId { get; private set; }
 
     /// <summary>
     ///     ItemType's name
@@ -52,6 +52,7 @@ public class ItemType : IItemType
 
     public ushort ClientId { get; private set; }
     public ushort TransformTo => Attributes.GetTransformationItem();
+    public ushort DestroyTo => Attributes.GetDestructionItem();
 
     public ItemGroup Group { get; private set; }
 
@@ -150,7 +151,7 @@ public class ItemType : IItemType
     {
         ThrowIfLocked();
 
-        TypeId = typeId;
+        ServerId = typeId;
 
         return this;
     }

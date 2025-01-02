@@ -3,9 +3,9 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Contracts.Services;
-using NeoServer.Game.Common.Location;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts.Commands;
+using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Commands.Player.UseItem;
 
@@ -14,18 +14,28 @@ public class PlayerUseItemCommand : ICommand
     private readonly ItemFinderService _itemFinderService;
     private readonly PlayerOpenDepotCommand _playerOpenDepotCommand;
     private readonly IPlayerUseService _playerUseService;
+    private readonly IScriptGameManager _scriptGameManager;
+    private readonly IWalkToMechanism _walkToMechanism;
 
-    public PlayerUseItemCommand(IPlayerUseService playerUseService, PlayerOpenDepotCommand playerOpenDepotCommand,
-        ItemFinderService itemFinderService)
+    public PlayerUseItemCommand(
+        IPlayerUseService playerUseService,
+        PlayerOpenDepotCommand playerOpenDepotCommand,
+        ItemFinderService itemFinderService,
+        IScriptGameManager scriptGameManager,
+        IWalkToMechanism walkToMechanism)
     {
         _playerUseService = playerUseService;
         _playerOpenDepotCommand = playerOpenDepotCommand;
         _itemFinderService = itemFinderService;
+        _scriptGameManager = scriptGameManager;
+        _walkToMechanism = walkToMechanism;
     }
 
     public void Execute(IPlayer player, UseItemPacket useItemPacket)
     {
         var item = _itemFinderService.Find(player, useItemPacket.Location, useItemPacket.ClientId);
+
+        if (item is null) return;
 
         Action action;
 
@@ -47,9 +57,13 @@ public class PlayerUseItemCommand : ICommand
                 break;
         }
 
-        if (useItemPacket.Location.Type == LocationType.Ground)
+        if (_scriptGameManager.HasAction(item))
+            action = () => _scriptGameManager.PlayerUseItem(player, useItemPacket.Location, useItemPacket.StackPosition,
+                useItemPacket.Index, item);
+
+        if (!player.Location.IsNextTo(item.Location))
         {
-            action();
+            _walkToMechanism.WalkTo(player, action, item.Location);
             return;
         }
 

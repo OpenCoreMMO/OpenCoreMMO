@@ -21,7 +21,7 @@ public class FloorChangerUsableItem : UsableOnItem, IUsableOnItem
         if (usedBy is not IPlayer player) return false;
         var canUseOnItems = Metadata.OnUse?.GetAttributeArray<ushort>(ItemAttribute.UseOn) ?? Array.Empty<ushort>();
 
-        if (!canUseOnItems.Contains(onItem.Metadata.TypeId)) return false;
+        if (!canUseOnItems.Contains(onItem.Metadata.ServerId)) return false;
 
         if (Metadata.OnUse?.GetAttribute(ItemAttribute.FloorChange) != "up") return false;
 

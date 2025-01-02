@@ -1,6 +1,4 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Inspection;
-using NeoServer.Game.Common.Contracts.Items.Types.Usable;
+﻿using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Location;
 
 namespace NeoServer.Game.Common.Contracts.Items;
@@ -13,7 +11,7 @@ public interface IThing : IUsable
 
     Location.Structs.Location Location { get; }
 
-    string GetLookText(IInspectionTextBuilder inspectionTextBuilder, IPlayer player, bool isClose = false);
+    string GetLookText(bool isClose = false, bool showInternalDetails = false);
 
     public bool IsCloseTo(IThing thing)
     {
@@ -24,4 +22,9 @@ public interface IThing : IUsable
     }
 
     void SetNewLocation(Location.Structs.Location location);
+
+    static bool operator !(IThing thing)
+    {
+        return thing is null;
+    }
 }

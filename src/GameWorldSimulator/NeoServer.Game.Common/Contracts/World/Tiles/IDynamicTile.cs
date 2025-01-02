@@ -14,6 +14,7 @@ public interface IDynamicTile : ITile, IHasItem
 {
     IGround Ground { get; }
     List<IWalkableCreature> Creatures { get; }
+    int CreaturesCount => Creatures != null ? Creatures.Count : 0;
     ushort StepSpeed { get; }
 
     FloorChangeDirection FloorDirection { get; }
@@ -23,13 +24,15 @@ public interface IDynamicTile : ITile, IHasItem
     bool HasBlockPathFinding { get; }
     bool HasHole { get; }
     List<IPlayer> Players { get; }
-    Func<ICreature, bool> CanEnter { get; set; }
+    Func<ICreature, bool> CanEnterFunction { get; set; }
     IItem[] AllItems { get; }
+    int ItemsCount { get; }
     bool HasTeleport(out ITeleport teleport);
 
     byte[] GetRaw(IPlayer playerRequesting = null);
     ICreature GetTopVisibleCreature(ICreature creature);
     bool TryGetStackPositionOfItem(IItem item, out byte stackPosition);
+
     event AddCreatureToTile CreatureAdded;
     IItem[] RemoveAllItems();
     ICreature[] RemoveAllCreatures();

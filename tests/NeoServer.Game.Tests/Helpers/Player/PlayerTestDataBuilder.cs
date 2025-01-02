@@ -7,6 +7,7 @@ using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Game.Creatures.Group;
 using NeoServer.Game.Creatures.Player;
 using NeoServer.Game.Creatures.Vocation;
 using NeoServer.Game.Tests.Helpers.Map;
@@ -18,31 +19,61 @@ namespace NeoServer.Game.Tests.Helpers.Player;
 
 public static class PlayerTestDataBuilder
 {
-    public static IPlayer Build(uint id = 1, string name = "PlayerA", uint capacity = 100, ushort hp = 100,
-        ushort mana = 30, ushort speed = 200,
+    public static IPlayer Build(
+        uint id = 1,
+        string name = "PlayerA",
+        uint capacity = 100,
+        ushort hp = 100,
+        ushort mana = 30,
+        ushort speed = 200,
         Dictionary<Slot, (IItem Item, ushort Id)> inventoryMap = null,
         Dictionary<SkillType, ISkill> skills = null,
-        byte vocationType = 1, IPathFinder pathFinder = null,
-        IVocationStore vocationStore = null, IGuild guild = null, ITown town = null)
+        Dictionary<int, int> storages = null,
+        byte vocationType = 1,
+        byte groupId = 1,
+        IPathFinder pathFinder = null,
+        IVocationStore vocationStore = null,
+        IGroupStore groupStore = null,
+        IGuild guild = null,
+        ITown town = null)
     {
-        var vocation = new Vocation
-        {
-            Id = vocationType.ToString(),
-            Name = "Knight"
-        };
-
         if (vocationStore is null)
         {
+            var vocation = new Vocation
+            {
+                Id = vocationType.ToString(),
+                Name = "Knight"
+            };
+
             vocationStore = new VocationStore();
             vocationStore.Add(vocationType, vocation);
+        }
+
+        if (groupStore is null)
+        {
+            var group = new Group
+            {
+                Id = groupId,
+                Name = "player"
+            };
+
+            groupStore = new GroupStore();
+            groupStore.Add(groupId, group);
         }
 
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         pathFinder ??= new PathFinder(map);
         var mapTool = new MapTool(map, pathFinder);
 
-        var player = new Creatures.Player.Player(id, name, ChaseMode.Stand, capacity, hp, hp,
+        var player = new Creatures.Player.Player(
+            id,
+            name,
+            ChaseMode.Stand,
+            capacity,
+            hp,
+            hp,
             vocationStore.Get(vocationType),
+            groupStore.Get(groupId),
             Gender.Male, true, mana,
             mana,
             FightMode.Attack,
@@ -74,8 +105,13 @@ public static class PlayerTestDataBuilder
                     }
                 }
             },
-            300, new Outfit(), speed, new Location(100, 100, 7),
-            mapTool, town ??= new Town { Id = 1, Name = "Teste", Coordinate = new Coordinate(1011, 1008, 7) }
+            storages ?? new Dictionary<int, int>(),
+            300,
+            new Outfit(),
+            speed,
+            new Location(100, 100, 7),
+            mapTool,
+            town ??= new Town { Id = 1, Name = "Teste", Coordinate = new Coordinate(1011, 1008, 7) }
         )
         {
             Guild = guild

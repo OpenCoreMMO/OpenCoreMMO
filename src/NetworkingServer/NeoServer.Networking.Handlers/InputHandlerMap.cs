@@ -5,6 +5,7 @@ using NeoServer.Networking.Handlers.LogIn;
 using NeoServer.Networking.Handlers.Player;
 using NeoServer.Networking.Handlers.Player.Movement;
 using NeoServer.Networking.Handlers.Player.Party;
+using NeoServer.Networking.Handlers.Server;
 using NeoServer.Networking.Handlers.Shop;
 using NeoServer.Networking.Handlers.Trade;
 using NeoServer.Server.Common.Contracts.Network.Enums;
@@ -66,6 +67,7 @@ public static class InputHandlerMap
             [GameIncomingPacketType.OutfitChangeCompleted] = typeof(PlayerChangeCompletedOutFitHandler),
             [GameIncomingPacketType.TradeRequest] = typeof(TradeRequestHandler),
             [GameIncomingPacketType.TradeCancel] = typeof(TradeCancelHandler),
-            [GameIncomingPacketType.TradeAccept] = typeof(TradeAcceptHandler)
+            [GameIncomingPacketType.TradeAccept] = typeof(TradeAcceptHandler),
+            [GameIncomingPacketType.NewPing] = typeof(NetworkPingHandler)
         };
 }

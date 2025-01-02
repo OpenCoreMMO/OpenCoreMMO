@@ -6,7 +6,8 @@ using Serilog.Settings.Configuration;
 using Serilog.Sinks.Graylog;
 using Serilog.Sinks.Graylog.Core.Transport;
 using Serilog.Sinks.SystemConsole.Themes;
-using static Org.BouncyCastle.Math.EC.ECCurve;
+
+namespace NeoServer.Shared.IoC.Modules;
 
 public static class LoggerConfigurationExtensions
 {
@@ -50,10 +51,14 @@ public static class LoggerConfigurationExtensions
         var graylogHostnameOverride = Environment.GetEnvironmentVariable("GRAYLOG_HOSTNAME_OVERRIDE");
         var graylogFacility = Environment.GetEnvironmentVariable("GRAYLOG_FACILITY");
 
-        grayLogConfiguration = new(
-            string.IsNullOrEmpty(graylogHostnameOrAddress) ? grayLogConfiguration.HostnameOrAddress : graylogHostnameOrAddress,
+        grayLogConfiguration = new GrayLogConfiguration(
+            string.IsNullOrEmpty(graylogHostnameOrAddress)
+                ? grayLogConfiguration.HostnameOrAddress
+                : graylogHostnameOrAddress,
             string.IsNullOrEmpty(graylogPort) ? grayLogConfiguration.Port : int.Parse(graylogPort),
-            string.IsNullOrEmpty(graylogHostnameOverride) ? grayLogConfiguration.HostnameOverride : graylogHostnameOverride,
+            string.IsNullOrEmpty(graylogHostnameOverride)
+                ? grayLogConfiguration.HostnameOverride
+                : graylogHostnameOverride,
             string.IsNullOrEmpty(graylogFacility) ? grayLogConfiguration.Facility : graylogFacility);
     }
 }

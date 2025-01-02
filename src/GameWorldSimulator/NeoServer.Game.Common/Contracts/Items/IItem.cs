@@ -20,7 +20,7 @@ public interface IItem : IThing, IHasDecay
     string Plural => Metadata.Plural;
 
     ushort ClientId => Metadata.ClientId;
-    ushort ServerId => Metadata.TypeId;
+    ushort ServerId => Metadata.ServerId;
     ushort CanTransformTo => Metadata.Attributes.GetTransformationItem();
     bool CanBeMoved => Metadata.HasFlag(ItemFlag.Movable);
     bool IsBlockeable => Metadata.HasFlag(ItemFlag.Unpassable);
@@ -37,6 +37,8 @@ public interface IItem : IThing, IHasDecay
     bool IsUsable => Metadata.HasFlag(ItemFlag.Usable);
     bool IsAntiProjectile => Metadata.HasFlag(ItemFlag.BlockProjectTile);
     bool IsContainer => Metadata.Group == ItemGroup.Container;
+    bool IsTeleport => Metadata.Group == ItemGroup.Teleport;
+
     FloorChangeDirection FloorDirection => Metadata.Attributes.GetFloorChangeDirection();
 
     bool HasDecayBehavior
@@ -59,6 +61,7 @@ public interface IItem : IThing, IHasDecay
     float Weight { get; }
     IThing Parent { get; }
     string IThing.Name => Metadata.Name;
+    string Article => Metadata.Article;
     void UpdateMetadata(IItemType newMetadata);
     void MarkAsDeleted();
 
@@ -74,4 +77,22 @@ public interface IItem : IThing, IHasDecay
     void SetParent(IThing parent);
     event ItemRemove OnRemoved;
     void OnItemRemoved(IThing from);
+
+    ushort GetSubType()
+    {
+        if (Metadata.HasFlag(ItemFlag.LiquidContainer))
+        {
+            var fluidType = Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ContainerLiquidType);
+            return fluidType;
+        }
+
+        if (Metadata.HasFlag(ItemFlag.Stackable))
+        {
+            var count = Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.Count);
+            return count;
+        }
+
+        var charges = Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.Charges);
+        return charges;
+    }
 }

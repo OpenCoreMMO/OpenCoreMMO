@@ -29,8 +29,10 @@ public class VocationConverter : IStartup
         foreach (var itemType in _itemTypeStore.All)
         {
             var vocationsAttr = itemType.Attributes.GetAttributeArray(ItemAttribute.Vocation);
+
             if (vocationsAttr is not string[] vocations) continue;
 
+            itemType.Attributes.SetAttribute(ItemAttribute.VocationNames, vocations);
 
             var vocationsType = new List<byte>(vocations.Length);
             foreach (var vocation in vocations)

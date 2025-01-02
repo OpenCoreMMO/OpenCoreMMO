@@ -358,10 +358,12 @@ public class Map : IMap
     {
         if (this[creature.Location] is not IDynamicTile tile) return;
 
+        if (!tile.CanEnter(creature)) return;
+
         if (tile.HasCreature)
             foreach (var location in tile.Location.Neighbours)
                 if (this[location] is IDynamicTile { HasCreature: false } t
-                    && !t.HasFlag(TileFlags.Unpassable))
+                    && !t.HasFlag(TileFlags.BLockSolid))
                 {
                     tile = t;
                     break;
@@ -403,7 +405,7 @@ public class Map : IMap
             var location = coordinate.Point.Location;
             var tile = this[location];
 
-            if (tile is not IDynamicTile walkableTile || walkableTile.HasFlag(TileFlags.Unpassable) ||
+            if (tile is not IDynamicTile walkableTile || walkableTile.HasFlag(TileFlags.BLockSolid) ||
                 walkableTile.ProtectionZone)
             {
                 coordinate.MarkAsMissed();
@@ -459,7 +461,7 @@ public class Map : IMap
                 nextTile = newDestinationTile;
         }
 
-        if (nextTile is IDynamicTile dynamicTile && !(dynamicTile.CanEnter?.Invoke(creature) ?? true))
+        if (nextTile is IDynamicTile dynamicTile && !(dynamicTile.CanEnterFunction?.Invoke(creature) ?? true))
         {
             creature.CancelWalk();
             OperationFailService.Send(creature.CreatureId, TextConstants.NOT_POSSIBLE);

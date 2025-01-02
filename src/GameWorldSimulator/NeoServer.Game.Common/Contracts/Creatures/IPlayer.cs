@@ -69,7 +69,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     uint Experience { get; }
     byte SoulPoints { get; }
 
-    float CarryStrength { get; }
+    float FreeCapacity { get; }
 
     ushort StaminaMinutes { get; }
 
@@ -87,13 +87,17 @@ public interface IPlayer : ICombatActor, ISociableCreature
     ushort MaxMana { get; }
     SkillType SkillInUse { get; }
     bool CannotLogout { get; }
+    bool IsProtectionZoneLocked { get; }
     uint Id { get; }
     bool HasDepotOpened { get; }
     uint TotalCapacity { get; }
     bool Recovering { get; }
     IVocation Vocation { get; }
     byte VocationType => Vocation?.VocationType ?? default;
+    IGroup Group { get; set; }
+    byte GroupId => Group?.Id ?? default;
     uint AccountId { get; init; }
+    int WorldId { get; init; }
     IGuild Guild { get; }
     ushort GuildId => Guild?.Id ?? default;
     bool HasGuild { get; }
@@ -109,8 +113,10 @@ public interface IPlayer : ICombatActor, ISociableCreature
     Gender Gender { get; }
     int PremiumTime { get; }
     IDictionary<SkillType, ISkill> Skills { get; }
+    IDictionary<int, int> Storages { get; }
 
     bool CanSeeInspectionDetails { get; }
+
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
     event UseSpell OnUsedSpell;
     event SendMessageTo OnSentMessage;
@@ -205,7 +211,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
 
     bool CastSpell(string message);
 
-    bool FlagIsEnabled(PlayerFlag flag);
     void SendMessageTo(ISociableCreature creature, SpeechType type, string message);
     void StartShopping(IShopperNpc npc);
     void StopShopping();
@@ -215,14 +220,14 @@ public interface IPlayer : ICombatActor, ISociableCreature
     void ReceivePurchasedItems(INpc from, SaleContract saleContract, params IItem[] items);
     void WithdrawFromBank(ulong amount);
     void LoadBank(ulong amount);
-    void SetFlag(PlayerFlag flag);
-    void UnsetFlag(PlayerFlag flag);
     byte GetSkillTries(SkillType skillType);
     void AddSkillBonus(SkillType skillType, sbyte increase);
     void RemoveSkillBonus(SkillType skillType, sbyte decrease);
     event AddSkillBonus OnAddedSkillBonus;
     event RemoveSkillBonus OnRemovedSkillBonus;
     sbyte GetSkillBonus(SkillType skill);
+    void IncreaseSkillCounter(SkillType skill, long value);
+    void DecreaseSkillCounter(SkillType skill, long value);
     void AddInventory(IInventory inventory);
     void Read(IReadable readable);
     event ReadText OnReadText;
@@ -238,4 +243,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
     void SetAsHungry();
     void Use(IContainer item, byte openAtIndex);
     ushort GetRawSkillLevel(SkillType skillType);
+    int GetStorageValue(int key);
+    void AddOrUpdateStorageValue(int key, int value);
 }

@@ -7,6 +7,7 @@ using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Commands;
 using NeoServer.Server.Common.Contracts.Network;
+using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Commands.Player;
 
@@ -14,11 +15,16 @@ public class PlayerSayCommand : ICommand
 {
     private readonly IChatChannelStore _chatChannelStore;
     private readonly IGameServer _game;
+    private readonly IScriptGameManager _luaGameManager;
 
-    public PlayerSayCommand(IGameServer game, IChatChannelStore chatChannelStore)
+    public PlayerSayCommand(
+        IGameServer game,
+        IChatChannelStore chatChannelStore,
+        IScriptGameManager luaGameManager)
     {
         _game = game;
         _chatChannelStore = chatChannelStore;
+        _luaGameManager = luaGameManager;
     }
 
     public void Execute(IPlayer player, IConnection connection, PlayerSayPacket playerSayPacket)
@@ -28,6 +34,9 @@ public class PlayerSayCommand : ICommand
         if ((playerSayPacket.Receiver?.Length ?? 0) > 30) return;
 
         var message = playerSayPacket.Message?.Trim();
+
+        if (_luaGameManager.PlayerSaySpell(player, playerSayPacket.TalkType, message))
+            return;
 
         if (player.CastSpell(message)) return;
 

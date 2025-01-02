@@ -4,6 +4,8 @@ namespace NeoServer.Server.Common.Contracts.Tasks;
 
 public interface IScheduler
 {
+    long GlobalTime { get; }
+
     void Start(CancellationToken token);
 
     uint AddEvent(ISchedulerEvent evt);

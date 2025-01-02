@@ -19,7 +19,7 @@ public class OptimizedScheduler : Scheduler
 
     public override void Start(CancellationToken token)
     {
-        Task.Run(async () =>
+        Task.Factory.StartNew(async () =>
         {
             while (await Reader.WaitToReadAsync(token))
             while (Reader.TryRead(out var evt))
@@ -32,16 +32,16 @@ public class OptimizedScheduler : Scheduler
 
                 DispatchEvent(evt);
             }
-        }, token);
+        }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-        Task.Run(() =>
+        Task.Factory.StartNew(() =>
         {
             var replace = new List<ISchedulerEvent>();
 
             const int minDelay = 100;
 
             PreQueueLoop(minDelay, replace, token);
-        }, token);
+        }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
 
     private void PreQueueLoop(int minDelay, List<ISchedulerEvent> replace, CancellationToken cancellationToken)

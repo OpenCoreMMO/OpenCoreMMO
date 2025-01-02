@@ -1,11 +1,11 @@
-﻿using NeoServer.Extensions.Services;
-using NeoServer.Game.Combat.Spells;
+﻿using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Helpers;
+using NeoServer.Server.Services;
 
 namespace NeoServer.Extensions.Spells.Commands;
 

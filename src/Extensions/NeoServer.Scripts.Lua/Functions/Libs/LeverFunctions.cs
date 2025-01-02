@@ -22,7 +22,7 @@ public static class LeverFunctions
 
         if (map[item.Location] is not DynamicTile dynamicTile) return;
 
-        var newLeverId = (ushort)(item.Metadata.TypeId == 1946 ? 1945 : 1946);
+        var newLeverId = (ushort)(item.Metadata.ServerId == 1946 ? 1945 : 1946);
         var newLever = ItemFactory.Instance.Create(newLeverId, item.Location,
             item.Metadata.Attributes.ToDictionary<ItemAttribute, IConvertible>());
 

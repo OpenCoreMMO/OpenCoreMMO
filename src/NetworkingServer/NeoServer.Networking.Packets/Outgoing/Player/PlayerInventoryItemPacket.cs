@@ -15,6 +15,8 @@ public class PlayerInventoryItemPacket : OutgoingPacket
         this.slot = slot;
     }
 
+    public required bool ShowItemDescription { get; init; }
+
     public override void WriteToMessage(INetworkMessage message)
     {
         if (inventory[slot] == null)
@@ -26,7 +28,7 @@ public class PlayerInventoryItemPacket : OutgoingPacket
         {
             message.AddByte((byte)GameOutgoingPacketType.InventoryItem);
             message.AddByte((byte)slot);
-            message.AddItem(inventory[slot]);
+            message.AddItem(inventory[slot], ShowItemDescription);
         }
     }
 }

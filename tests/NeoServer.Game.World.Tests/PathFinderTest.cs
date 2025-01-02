@@ -41,7 +41,7 @@ public class PathFinderTest
         var tileEnterRule = PlayerEnterTileRule.Rule;
 
         //act
-        var result = AStar.GetPathMatching(map, player, new Location(32094, 32205, 7), fpp, tileEnterRule);
+        var result = AStar.GetPathMatching(map, player, player.Location, new Location(32094, 32205, 7), fpp, tileEnterRule);
 
         //assert
         result.Founded.Should().BeTrue();
@@ -79,7 +79,7 @@ public class PathFinderTest
         var tileEnterRule = PlayerEnterTileRule.Rule;
 
         //act
-        var result = AStar.GetPathMatching(map, player, new Location(32094, 32205, 7), fpp, tileEnterRule);
+        var result = AStar.GetPathMatching(map, player, player.Location, new Location(32094, 32205, 7), fpp, tileEnterRule);
 
         //assert
         result.Founded.Should().BeTrue();

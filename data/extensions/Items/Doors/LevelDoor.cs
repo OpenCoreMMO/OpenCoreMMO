@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Inspection;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location;
@@ -62,8 +61,8 @@ public class LevelDoor : Door
             player.TeleportTo(Location.X, (ushort)(Location.Y + 1), Location.Z);
     }
 
-    public override string GetLookText(IInspectionTextBuilder inspectionTextBuilder, IPlayer player,
-        bool isClose = false)
+    public override string GetLookText(
+        bool isClose = false, bool showInternalDetails = false)
     {
         Metadata.Attributes.TryGetAttribute(ItemAttribute.ActionId, out int actionId);
 

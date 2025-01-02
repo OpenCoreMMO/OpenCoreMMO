@@ -22,7 +22,8 @@ public record ServerConfiguration(
     string Extensions,
     int ServerLoginPort,
     int ServerGamePort,
-    SaveConfiguration Save)
+    SaveConfiguration Save,
+    string DataLuaJit)
 {
 }
 
@@ -39,4 +40,13 @@ public record GrayLogConfiguration(
     string HostnameOverride,
     string Facility)
 {
+}
+
+public record ClientConfiguration(ClientConfiguration.OtcV8Configuration OtcV8)
+{
+    public record OtcV8Configuration(
+        bool GameExtendedOpcode,
+        bool GameEnvironmentEffect,
+        bool GameExtendedClientPing,
+        bool GameItemTooltip);
 }

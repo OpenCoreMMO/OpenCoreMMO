@@ -60,13 +60,15 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
     ///     Inserts item object into the buffer.
     /// </summary>
     /// <param name="item"></param>
-    public void AddItem(IItem item)
+    public void AddItem(IItem item, bool showItemDescription = false)
     {
         if (item == null)
             //todo log
             return;
 
         AddBytes(item.GetRaw().ToArray());
+
+        if (showItemDescription) AddString(item.GetLookText(true));
     }
 
     /// <summary>
@@ -78,6 +80,17 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
         Span<byte> buffer = stackalloc byte[4];
         BitConverter.TryWriteBytes(buffer, value);
         WriteBytes(buffer);
+    }
+
+    public void WriteUint32(uint value, int position)
+    {
+        Span<byte> buffer = stackalloc byte[4];
+        BitConverter.TryWriteBytes(buffer, value);
+
+        Buffer[position] = buffer[position++];
+        Buffer[position] = buffer[position++];
+        Buffer[position] = buffer[position++];
+        Buffer[position] = buffer[position];
     }
 
     /// <summary>
@@ -97,7 +110,7 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
     /// <param name="b"></param>
     public void AddByte(byte b)
     {
-        WriteBytes(new[] { b });
+        WriteByte(b);
     }
 
     /// <summary>

@@ -4,6 +4,7 @@ using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
+using NeoServer.Game.Common.Location.Structs;
 
 namespace NeoServer.Game.Creatures;
 
@@ -19,7 +20,7 @@ public abstract class CreatureEnterTileRule<T> : ITileEnterRule
         return ConditionEvaluation.And(
             dynamicTile.FloorDirection == FloorChangeDirection.None,
             !dynamicTile.HasBlockPathFinding,
-            !dynamicTile.HasFlag(TileFlags.Unpassable),
+            !dynamicTile.HasFlag(TileFlags.BLockSolid),
             !dynamicTile.HasCreature,
             dynamicTile.Ground is not null);
     }
@@ -30,7 +31,17 @@ public abstract class CreatureEnterTileRule<T> : ITileEnterRule
 
         return ConditionEvaluation.And(
             !dynamicTile.HasCreature,
-            !dynamicTile.HasFlag(TileFlags.Unpassable),
+            !dynamicTile.HasFlag(TileFlags.BLockSolid),
+            dynamicTile.Ground is not null);
+    }
+
+    public virtual bool CanEnter(ITile tile, Location location)
+    {
+        if (tile is not IDynamicTile dynamicTile) return false;
+
+        return ConditionEvaluation.And(
+            !dynamicTile.HasCreature,
+            !dynamicTile.HasFlag(TileFlags.BLockSolid),
             dynamicTile.Ground is not null);
     }
 }
@@ -45,7 +56,7 @@ public class PlayerEnterTileRule : CreatureEnterTileRule<PlayerEnterTileRule>
             dynamicTile.FloorDirection == FloorChangeDirection.None,
             !dynamicTile.HasBlockPathFinding,
             !dynamicTile.HasCreature,
-            !dynamicTile.HasFlag(TileFlags.Unpassable),
+            !dynamicTile.HasFlag(TileFlags.BLockSolid),
             dynamicTile.Ground is not null,
             !dynamicTile.HasHole);
     }
@@ -60,7 +71,21 @@ public class PlayerEnterTileRule : CreatureEnterTileRule<PlayerEnterTileRule>
 
         return ConditionEvaluation.And(
             !hasMonsterOrNpc,
-            !dynamicTile.HasFlag(TileFlags.Unpassable),
+            !dynamicTile.HasFlag(TileFlags.BLockSolid),
+            dynamicTile.Ground is not null);
+    }
+
+    public override bool CanEnter(ITile tile, Location location)
+    {
+        if (tile is not IDynamicTile dynamicTile) return false;
+
+        var goingToDifferentFloor = !location.SameFloorAs(tile.Location);
+        var hasMonsterOrNpc = !goingToDifferentFloor &&
+                              (dynamicTile.HasCreatureOfType<IMonster>() || dynamicTile.HasCreatureOfType<INpc>());
+
+        return ConditionEvaluation.And(
+            !hasMonsterOrNpc,
+            !dynamicTile.HasFlag(TileFlags.BLockSolid),
             dynamicTile.Ground is not null);
     }
 }
@@ -77,7 +102,7 @@ public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
             monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushItems) || !dynamicTile.HasBlockPathFinding,
             !dynamicTile.HasCreature,
             !dynamicTile.HasTeleport(out _),
-            !dynamicTile.HasFlag(TileFlags.Unpassable),
+            !dynamicTile.HasFlag(TileFlags.BLockSolid),
             !dynamicTile.ProtectionZone,
             dynamicTile.Ground is not null);
     }

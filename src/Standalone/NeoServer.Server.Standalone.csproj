@@ -31,6 +31,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Database\NeoServer.Data\NeoServer.Data.csproj"/>
+        <ProjectReference Include="..\Extensions\NeoServer.Scripts.LuaJIT\NeoServer.Scripts.LuaJIT.csproj"/>
         <ProjectReference Include="..\Extensions\NeoServer.Scripts.Lua\NeoServer.Scripts.Lua.csproj"/>
         <ProjectReference Include="..\GameWorldSimulator\NeoServer.Game.Common\NeoServer.Game.Common.csproj"/>
         <ProjectReference Include="..\GameWorldSimulator\NeoServer.Game.Systems\NeoServer.Game.Systems.csproj"/>

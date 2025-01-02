@@ -15,12 +15,14 @@ public class OpenContainerPacket : OutgoingPacket
         this.containerId = containerId;
     }
 
+    public required bool WithDescription { get; init; }
+
     public override void WriteToMessage(INetworkMessage message)
     {
         message.AddByte((byte)GameOutgoingPacketType.ContainerOpen);
 
         message.AddByte(containerId);
-        message.AddItem(container);
+        message.AddItem(container, WithDescription);
         message.AddString(container.Name);
         message.AddByte(container.Capacity);
 
@@ -28,6 +30,6 @@ public class OpenContainerPacket : OutgoingPacket
 
         message.AddByte(Math.Min((byte)0xFF, container.SlotsUsed));
 
-        for (byte i = 0; i < container.SlotsUsed; i++) message.AddItem(container.Items[i]);
+        for (byte i = 0; i < container.SlotsUsed; i++) message.AddItem(container.Items[i], WithDescription);
     }
 }

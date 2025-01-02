@@ -29,19 +29,23 @@ public static class ConfigurationInjection
         IConfigurationRoot configuration)
     {
         ServerConfiguration serverConfiguration =
-            new(0, null, null, null, string.Empty, string.Empty, string.Empty, 7171, 7172,new SaveConfiguration(3600));
+            new(0, null, null, null, string.Empty, string.Empty, string.Empty, 7171, 7172, new SaveConfiguration(3600),
+                string.Empty);
         GameConfiguration gameConfiguration = new();
         LogConfiguration logConfiguration = new(null);
+        ClientConfiguration clientConfiguration = new(null);
 
         configuration.GetSection("server").Bind(serverConfiguration);
         configuration.GetSection("game").Bind(gameConfiguration);
         configuration.GetSection("log").Bind(logConfiguration);
+        configuration.GetSection("client").Bind(clientConfiguration);
 
         LoadEnvironmentVariables(ref serverConfiguration);
 
         builder.AddSingleton(serverConfiguration);
         builder.AddSingleton(gameConfiguration);
         builder.AddSingleton(logConfiguration);
+        builder.AddSingleton(clientConfiguration);
 
         return builder;
     }
@@ -63,6 +67,7 @@ public static class ConfigurationInjection
             serverConfiguration.Extensions,
             string.IsNullOrEmpty(serverLoginPort) ? serverConfiguration.ServerLoginPort : int.Parse(serverLoginPort),
             string.IsNullOrEmpty(serverGamePort) ? serverConfiguration.ServerGamePort : int.Parse(serverGamePort),
-            serverConfiguration.Save);
+            serverConfiguration.Save,
+            serverConfiguration.DataLuaJit);
     }
 }

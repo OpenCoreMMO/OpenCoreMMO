@@ -35,6 +35,7 @@ public class PlayerLoader : IPlayerLoader
     protected readonly ILogger Logger;
     protected readonly IMapTool MapTool;
     protected readonly IVocationStore VocationStore;
+    protected readonly IGroupStore GroupStore;
     protected readonly Game.World.World World;
 
     [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
@@ -42,6 +43,7 @@ public class PlayerLoader : IPlayerLoader
         ChatChannelFactory chatChannelFactory,
         IGuildStore guildStore,
         IVocationStore vocationStore,
+        IGroupStore groupStore,
         IMapTool mapTool,
         Game.World.World world,
         ILogger logger,
@@ -52,6 +54,7 @@ public class PlayerLoader : IPlayerLoader
         ChatChannelFactory = chatChannelFactory;
         GuildStore = guildStore;
         VocationStore = vocationStore;
+        GroupStore = groupStore;
         MapTool = mapTool;
         World = world;
         Logger = logger;
@@ -60,7 +63,7 @@ public class PlayerLoader : IPlayerLoader
 
     public virtual bool IsApplicable(PlayerEntity player)
     {
-        return player?.PlayerType == 1;
+        return player?.Group == 1;
     }
 
     public virtual IPlayer Load(PlayerEntity playerEntity)
@@ -68,10 +71,13 @@ public class PlayerLoader : IPlayerLoader
         if (Guard.IsNull(playerEntity)) return null;
 
         var vocation = GetVocation(playerEntity);
+        var group = GetGroup(playerEntity);
         var town = GetTown(playerEntity);
 
         var playerLocation =
             new Location((ushort)playerEntity.PosX, (ushort)playerEntity.PosY, (byte)playerEntity.PosZ);
+
+        var currentTile = GetCurrentTile(playerLocation);
 
         var player = new Player(
             (uint)playerEntity.Id,
@@ -81,6 +87,7 @@ public class PlayerLoader : IPlayerLoader
             playerEntity.Health,
             playerEntity.MaxHealth,
             vocation,
+            group,
             playerEntity.Gender,
             playerEntity.Online,
             playerEntity.Mana,
@@ -89,6 +96,7 @@ public class PlayerLoader : IPlayerLoader
             playerEntity.Soul,
             vocation.SoulMax,
             ConvertToSkills(playerEntity),
+            ConvertToStorages(playerEntity),
             playerEntity.StaminaMinutes,
             new Outfit
             {
@@ -106,11 +114,13 @@ public class PlayerLoader : IPlayerLoader
         {
             PremiumTime = playerEntity.Account?.PremiumTime ?? 0,
             AccountId = (uint)playerEntity.AccountId,
+            WorldId = playerEntity.WorldId,
             Guild = GuildStore.Get((ushort)(playerEntity.GuildMember?.GuildId ?? 0)),
             GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0)
         };
 
-        SetCurrentTile(player);
+        player.SetCurrentTile(currentTile);
+
         AddRegenerationCondition(playerEntity, player);
 
         player.AddInventory(ConvertToInventory(player, playerEntity));
@@ -134,27 +144,17 @@ public class PlayerLoader : IPlayerLoader
         return vocation;
     }
 
-    protected void SetCurrentTile(IPlayer player)
+    protected IGroup GetGroup(PlayerEntity playerEntity)
     {
-        var location = player.Location;
+        if (!GroupStore.TryGetValue(playerEntity.Group, out var group))
+            Logger.Error("Player group not found: {PlayerModelGroup}", playerEntity.Group);
+        return group;
+    }
 
-        var playerTile = World.TryGetTile(ref location, out var tile) && tile is IDynamicTile dynamicTile
-            ? dynamicTile
-            : null;
-
-        if (playerTile is not null)
-        {
-            player.SetCurrentTile(playerTile);
-            return;
-        }
-
-        var townLocation = player.Town.Coordinate.Location;
-
-        playerTile = World.TryGetTile(ref townLocation, out var townTile) && townTile is IDynamicTile townDynamicTile
-            ? townDynamicTile
-            : null;
-
-        player.SetCurrentTile(playerTile);
+    protected IDynamicTile GetCurrentTile(Location location)
+    {
+        World.TryGetTile(ref location, out var dynamicTile);
+        return dynamicTile as IDynamicTile;
     }
 
     private static void AddRegenerationCondition(PlayerEntity playerEntity, IPlayer player)
@@ -193,37 +193,40 @@ public class PlayerLoader : IPlayerLoader
         return new Dictionary<SkillType, ISkill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, (ushort)playerRecord.SkillAxe, playerRecord.SkillAxeTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["axe"] },
+            { GetIncreaseRate = () => _gameConfiguration.SkillsRate["axe"] },
 
             [SkillType.Club] = new Skill(SkillType.Club, (ushort)playerRecord.SkillClub, playerRecord.SkillClubTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["club"] },
+            { GetIncreaseRate = () => _gameConfiguration.SkillsRate["club"] },
 
             [SkillType.Distance] = new Skill(SkillType.Distance, (ushort)playerRecord.SkillDist,
                     playerRecord.SkillDistTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["distance"] },
+            { GetIncreaseRate = () => _gameConfiguration.SkillsRate["distance"] },
 
             [SkillType.Fishing] = new Skill(SkillType.Fishing, (ushort)playerRecord.SkillFishing,
                     playerRecord.SkillFishingTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["fishing"] },
+            { GetIncreaseRate = () => _gameConfiguration.SkillsRate["fishing"] },
 
             [SkillType.Fist] = new Skill(SkillType.Fist, (ushort)playerRecord.SkillFist, playerRecord.SkillFistTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["fist"] },
+            { GetIncreaseRate = () => _gameConfiguration.SkillsRate["fist"] },
 
             [SkillType.Shielding] = new Skill(SkillType.Shielding, (ushort)playerRecord.SkillShielding,
                     playerRecord.SkillShieldingTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["shielding"] },
+            { GetIncreaseRate = () => _gameConfiguration.SkillsRate["shielding"] },
 
             [SkillType.Level] = new Skill(SkillType.Level, playerRecord.Level, playerRecord.Experience),
 
             [SkillType.Magic] =
                 new Skill(SkillType.Magic, (ushort)playerRecord.MagicLevel, playerRecord.MagicLevelTries)
-                    { GetIncreaseRate = () => _gameConfiguration.SkillsRate["magic"] },
+                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["magic"] },
 
             [SkillType.Sword] =
                 new Skill(SkillType.Sword, (ushort)playerRecord.SkillSword, playerRecord.SkillSwordTries)
-                    { GetIncreaseRate = () => _gameConfiguration.SkillsRate["sword"] }
+                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["sword"] }
         };
     }
+
+    protected Dictionary<int, int> ConvertToStorages(PlayerEntity playerRecord)
+        => playerRecord.PlayerStorages?.ToDictionary(c => c.Key, c => c.Value);
 
     protected IInventory ConvertToInventory(IPlayer player, PlayerEntity playerRecord)
     {

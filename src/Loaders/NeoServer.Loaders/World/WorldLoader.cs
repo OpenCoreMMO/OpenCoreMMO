@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Helpers;
@@ -27,25 +28,32 @@ public class WorldLoader
     private readonly ILogger logger;
     private readonly ServerConfiguration serverConfiguration;
     private readonly Game.World.World world;
+    private readonly IItemTypeStore _itemTypeStore;
 
     public WorldLoader(Game.World.World world, ILogger logger, IItemFactory itemFactory,
-        ServerConfiguration serverConfiguration, ITileFactory tileFactory)
+        ServerConfiguration serverConfiguration, ITileFactory tileFactory, IItemTypeStore itemTypeStore)
     {
         this.world = world;
         this.logger = logger;
         this.itemFactory = itemFactory;
         this.serverConfiguration = serverConfiguration;
         _tileFactory = tileFactory;
+        _itemTypeStore = itemTypeStore;
     }
 
     public void Load()
     {
         logger.Step("Loading world...", "{tiles} tiles, {towns} towns and {waypoints} waypoints loaded", () =>
         {
-            var fileStream = File.ReadAllBytes($"{serverConfiguration.Data}/world/{serverConfiguration.OTBM}");
-
-            var otbmNode = OtbBinaryTreeBuilder.Deserialize(fileStream);
-
+            
+            using var fileStream = new FileStream($"{serverConfiguration.Data}/world/{serverConfiguration.OTBM}",
+                FileMode.Open, FileAccess.Read);
+            
+            var fileBytes = new byte[fileStream.Length];
+            fileStream.ReadExactly(fileBytes, 0, fileBytes.Length);
+            
+            var otbmNode = OtbBinaryTreeBuilder.Deserialize(fileBytes);
+            
             var otbm = new OTBMNodeParser().Parse(otbmNode);
 
             LoadTiles(otbm);
@@ -57,6 +65,7 @@ public class WorldLoader
                     Name = townNode.Name,
                     Coordinate = townNode.Coordinate
                 });
+
             foreach (var waypointNode in otbm.Waypoints)
                 world.AddWaypoint(new Waypoint
                 {
@@ -64,7 +73,7 @@ public class WorldLoader
                     Name = waypointNode.Name
                 });
 
-            return new object[] { world.LoadedTilesCount, world.LoadedTownsCount, world.LoadedWaypointsCount };
+            return [world.LoadedTilesCount, world.LoadedTownsCount, world.LoadedWaypointsCount];
         });
     }
 
@@ -72,15 +81,50 @@ public class WorldLoader
     {
         foreach (var tileNode in otbm.TileAreas.SelectMany(t => t.Tiles))
         {
-            var items = GetItemsOnTile(tileNode);
-            
-            var tile = _tileFactory.CreateTile(
-                tileNode.Coordinate, 
-                (TileFlag)tileNode.Flag, 
-                items.ToArray()
-            );
+            LoadTile(tileNode);
+        }
+    }
 
-            world.AddTile(tile);
+    private void LoadTile(TileNode tileNode)
+    {
+        Span<byte> raw = stackalloc byte[tileNode.Items.Count * sizeof(ushort)];
+        LoadClientIdsStream(tileNode, ref raw);
+
+        var cachedTile = _tileFactory.GetTileFromCache(tileNode.Coordinate, ref raw);
+
+        if (cachedTile is not null)
+        {
+            world.AddTile(cachedTile, tileNode.Coordinate.Location);
+            return;
+        }
+
+        var items = GetItemsOnTile(tileNode).ToArray();
+
+        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items, useCache: false);
+
+        if (tile is IStaticTile)
+        {
+            world.AddTile(tile, tileNode.Coordinate.Location);
+            return;
+        }
+
+        world.AddTile(tile);
+    }
+
+    private void LoadClientIdsStream(TileNode tileNode, ref Span<byte> clientIds)
+    {
+        var index = 0;
+
+        foreach (var itemNode in tileNode.Items)
+        {
+            if (itemNode.ItemId is 0) continue;
+
+            if (!_itemTypeStore.TryGetValue(itemNode.ItemId, out var itemType)) continue;
+
+            var clientId = itemType.ClientId;
+
+            clientIds[index++] = (byte)(clientId & 0xFF);
+            clientIds[index++] = (byte)((clientId >> 8) & 0xFF);
         }
     }
 
@@ -126,7 +170,7 @@ public class WorldLoader
     private IEnumerable<IItem> CreateChildrenItems(TileNode tileNode, ItemNode itemNode,
         IDictionary<ItemAttribute, IConvertible> attributes)
     {
-        var items = new List<IItem>(20);
+        var items = new List<IItem>();
         foreach (var child in itemNode.Children)
         {
             var children = CreateChildrenItems(tileNode, child, attributes);

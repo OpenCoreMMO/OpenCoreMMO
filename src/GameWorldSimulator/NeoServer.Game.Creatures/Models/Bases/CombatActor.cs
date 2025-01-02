@@ -11,6 +11,7 @@ using NeoServer.Game.Common.Contracts.Spells;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location;
@@ -34,10 +35,11 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
     }
 
-    public abstract int DefendUsingShield(int attack);
-    public abstract int DefendUsingArmor(int attack);
     public bool IsShieldDefenseEnabled { get; private set; } = true;
     public byte DamageReceivedPercentage { get; private set; }
+
+    public abstract int DefendUsingShield(int attack);
+    public abstract int DefendUsingArmor(int attack);
 
     public void AddCondition(ICondition condition)
     {
@@ -197,7 +199,9 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
         foreach (var cylinderSpectator in spectators)
         {
-            var spectator = cylinderSpectator.Spectator;
+            var spectator = cylinderSpectator.Spectator; 
+
+            if (spectator is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters)) return;
 
             if (spectator is not ICombatActor spectatorEnemy) continue;
             if (spectator.GetType() == GetType()) continue;
@@ -206,6 +210,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
             if (!spectatorEnemy.IsHostileTo(this)) continue;
             if (!spectatorEnemy.Location.SameFloorAs(Location)) continue;
+
 
             SetAsEnemy(spectatorEnemy);
         }
@@ -348,6 +353,26 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return Result.Success;
     }
 
+    public void DisableShieldDefense()
+    {
+        IsShieldDefenseEnabled = false;
+    }
+
+    public void EnableShieldDefense()
+    {
+        IsShieldDefenseEnabled = true;
+    }
+
+    public void IncreaseDamageReceived(byte percentage)
+    {
+        DamageReceivedPercentage += percentage;
+    }
+
+    public void DecreaseDamageReceived(byte percentage)
+    {
+        DamageReceivedPercentage -= percentage;
+    }
+
     public abstract bool HasImmunity(Immunity immunity);
 
     public virtual bool CanBlock(DamageType damage)
@@ -436,18 +461,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     protected void InvokeAttackCanceled()
     {
         OnAttackCanceled?.Invoke(this);
-    }
-    
-    public void DisableShieldDefense() => IsShieldDefenseEnabled = false;
-    public void EnableShieldDefense() => IsShieldDefenseEnabled = true;
-    public void IncreaseDamageReceived(byte percentage)
-    {
-        DamageReceivedPercentage += percentage;
-    }
-
-    public void DecreaseDamageReceived(byte percentage)
-    {
-        DamageReceivedPercentage -= percentage;
     }
 
     #region Events

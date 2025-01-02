@@ -1,30 +1,20 @@
 ﻿using System.Globalization;
 using System.Text;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Inspection;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Helpers;
 
 namespace NeoServer.Game.Items.Inspection;
 
-public class InspectionTextBuilder : IInspectionTextBuilder
+public class InspectionTextBuilder
 {
-    private readonly IVocationStore _vocationStore;
-
-    public InspectionTextBuilder(IVocationStore vocationStore)
-    {
-        _vocationStore = vocationStore;
-    }
-
-    public string Build(IThing thing, IPlayer player, bool isClose = false)
+    public static string Build(IThing thing, bool isClose = false, bool showInternalDetails = false)
     {
         if (thing is not IItem item) return string.Empty;
 
         var inspectionText = new StringBuilder();
 
-        AddItemName(item, player, inspectionText);
+        AddItemName(item, showInternalDetails, inspectionText);
         AddEquipmentAttributes(item, inspectionText);
         inspectionText.AppendNewLine(".");
         AddRequirement(item, inspectionText);
@@ -37,14 +27,14 @@ public class InspectionTextBuilder : IInspectionTextBuilder
         return $"{finalText}";
     }
 
-    public bool IsApplicable(IThing thing)
+    public static bool IsApplicable(IThing thing)
     {
         return thing is IItem;
     }
 
-    private void AddRequirement(IItem item, StringBuilder inspectionText)
+    private static void AddRequirement(IItem item, StringBuilder inspectionText)
     {
-        var result = RequirementInspectionTextBuilder.Build(item, _vocationStore);
+        var result = RequirementInspectionTextBuilder.Build(item);
         if (string.IsNullOrWhiteSpace(result)) return;
         inspectionText.AppendNewLine(result);
     }
@@ -62,9 +52,9 @@ public class InspectionTextBuilder : IInspectionTextBuilder
                 $"{(item is ICumulative ? "They weigh" : "It weighs")} {item.Weight.ToString("F", CultureInfo.InvariantCulture)} oz.");
     }
 
-    private static void AddItemName(IItem item, IPlayer player, StringBuilder inspectionText)
+    private static void AddItemName(IItem item, bool showInternalDetails, StringBuilder inspectionText)
     {
-        if (player.CanSeeInspectionDetails)
+        if (showInternalDetails)
             inspectionText.AppendNewLine($"Id: [{item.ServerId}] - Pos: {item.Location}");
 
         inspectionText.Append("You see ");

@@ -27,6 +27,8 @@ public class Scheduler : IScheduler
         _writer = channel.Writer;
     }
 
+    public long GlobalTime => _dispatcher.GlobalTime;
+
     public ulong Count => EventLength;
 
     public bool Empty => ActiveEventIds.IsEmpty;
@@ -51,7 +53,7 @@ public class Scheduler : IScheduler
     /// <param name="token"></param>
     public virtual void Start(CancellationToken token)
     {
-        Task.Run(async () =>
+        Task.Factory.StartNew(async () =>
         {
             while (await Reader.WaitToReadAsync(token))
                 // Fast loop around available jobs
@@ -68,7 +70,7 @@ public class Scheduler : IScheduler
 
                 DispatchEvent(evt);
             }
-        }, token);
+        }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
 
     /// <summary>

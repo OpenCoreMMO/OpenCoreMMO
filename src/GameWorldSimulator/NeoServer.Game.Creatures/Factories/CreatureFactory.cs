@@ -39,7 +39,7 @@ public class CreatureFactory : ICreatureFactory
         return monster;
     }
 
-    public IMonster CreateSummon(string name, IMonster master)
+    public IMonster CreateSummon(string name, ICreature master)
     {
         var monster = _monsterFactory.CreateSummon(name, master);
         if (monster is null) return null;

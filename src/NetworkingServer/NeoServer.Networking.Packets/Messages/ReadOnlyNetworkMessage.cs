@@ -43,7 +43,7 @@ public class ReadOnlyNetworkMessage : IReadOnlyNetworkMessage
         {
             case true:
                 if (Buffer.Length.IsLessThan(9)) return GameIncomingPacketType.None;
-                SkipBytes(6);
+                SkipBytes(6); //skip header
                 GetUInt16();
                 var packetType = (GameIncomingPacketType)GetByte();
                 IncomingPacket = packetType;
@@ -123,6 +123,18 @@ public class ReadOnlyNetworkMessage : IReadOnlyNetworkMessage
     public Location GetLocation()
     {
         return new Location { X = GetUInt16(), Y = GetUInt16(), Z = GetByte() };
+    }
+
+    /// <summary>
+    ///     Get string value based on payload length
+    /// </summary>
+    /// <returns></returns>
+    public string GetString(int length)
+    {
+        if (length == 0 || BytesRead + length > Buffer.Length) return null;
+
+        var span = GetBytes(length);
+        return Iso88591Encoding.GetString(span);
     }
 
     private void IncreaseByteRead(int length)

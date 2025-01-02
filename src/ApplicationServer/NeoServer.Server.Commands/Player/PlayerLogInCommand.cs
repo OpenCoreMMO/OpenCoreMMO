@@ -1,11 +1,15 @@
-using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Data.Entities;
+using NeoServer.Game.Common;
+using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Game.Common.Results;
 using NeoServer.Loaders.Guilds;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Commands;
 using NeoServer.Server.Common.Contracts.Network;
+using NeoServer.Server.Common.Contracts.Scripts;
+using NeoServer.Server.Services;
 using Serilog;
 
 namespace NeoServer.Server.Commands.Player;
@@ -13,38 +17,59 @@ namespace NeoServer.Server.Commands.Player;
 public class PlayerLogInCommand : ICommand
 {
     private readonly ILogger _logger;
-    private readonly IGameServer game;
-    private readonly GuildLoader guildLoader;
-    private readonly IEnumerable<IPlayerLoader> playerLoaders;
+    private readonly PlayerLocationResolver _playerLocationResolver;
+    private readonly IGameServer _game;
+    private readonly GuildLoader _guildLoader;
+    private readonly IPlayerLoader _playerLoader;
+    private readonly IScriptGameManager _scriptGameManager;
 
-    public PlayerLogInCommand(IGameServer game, IEnumerable<IPlayerLoader> playerLoaders, GuildLoader guildLoader,
-        ILogger logger)
+    public PlayerLogInCommand(
+        IGameServer game,
+        IPlayerLoader playerLoader,
+        GuildLoader guildLoader,
+        PlayerLocationResolver playerLocationResolver,
+        ILogger logger,
+        IScriptGameManager scriptGameManager)
     {
-        this.game = game;
-        this.playerLoaders = playerLoaders;
-        this.guildLoader = guildLoader;
+        _game = game;
+        _playerLoader = playerLoader;
+        _guildLoader = guildLoader;
+        _playerLocationResolver = playerLocationResolver;
         _logger = logger;
+        _scriptGameManager = scriptGameManager;
     }
 
-    public void Execute(PlayerEntity playerRecord, IConnection connection)
+    public Result Execute(PlayerEntity playerRecord, IConnection connection)
     {
         if (playerRecord is null)
             //todo validations here
-            return;
+            return Result.Fail(InvalidOperation.PlayerNotFound);
 
-        if (!game.CreatureManager.TryGetLoggedPlayer((uint)playerRecord.Id, out var player))
+        if (!_game.CreatureManager.TryGetLoggedPlayer((uint)playerRecord.Id, out var player))
         {
-            if (playerLoaders.FirstOrDefault(x => x.IsApplicable(playerRecord)) is not { } playerLoader)
-                return;
+            _guildLoader.Load(playerRecord.GuildMember?.Guild);
 
-            guildLoader.Load(playerRecord.GuildMember?.Guild);
-            player = playerLoader.Load(playerRecord);
+            var playerLocation = _playerLocationResolver.GetPlayerLocation(playerRecord);
+            if (playerLocation == Location.Zero) return Result.Fail(InvalidOperation.PlayerLocationInvalid);
+
+            playerRecord.PosX = playerLocation.X;
+            playerRecord.PosY = playerLocation.Y;
+            playerRecord.PosZ = playerLocation.Z;
+
+            player = _playerLoader.Load(playerRecord);
         }
 
-        game.CreatureManager.AddPlayer(player, connection);
+        _game.CreatureManager.AddPlayer(player, connection);
+
+        (var success, var current, var old) = _game.CreatureManager.CheckPlayersRecord(player.WorldId).Result;
+
+        if (success)
+            _scriptGameManager.GlobalEventExecuteRecord(current, old);
 
         player.Login();
         player.Vip.LoadVipList(playerRecord.Account.VipList.Select(x => ((uint)x.PlayerId, x.Player?.Name)));
         _logger.Information("Player {PlayerName} logged in", player.Name);
+
+        return Result.Success;
     }
 }

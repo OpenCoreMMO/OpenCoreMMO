@@ -45,7 +45,7 @@ public class ShopperNpc : Npc, IShopperNpc
         var shopItems = ShopItems;
         if (shopItems is null) return false;
 
-        if (!shopItems.TryGetValue(item.TypeId, out var shopItem)) return false;
+        if (!shopItems.TryGetValue(item.ServerId, out var shopItem)) return false;
 
         return Pay(creature, shopItem.SellPrice * amount);
     }
@@ -55,7 +55,7 @@ public class ShopperNpc : Npc, IShopperNpc
         var shopItems = ShopItems;
         if (shopItems is null) return 0;
 
-        if (!shopItems.TryGetValue(itemType.TypeId, out var shopItem)) return 0;
+        if (!shopItems.TryGetValue(itemType.ServerId, out var shopItem)) return 0;
 
         return (shopItem?.BuyPrice ?? 0) * amount;
     }

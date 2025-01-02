@@ -14,11 +14,14 @@ public class AddItemContainerPacket : OutgoingPacket
         this.item = item;
     }
 
+    public required bool ShowItemDescription { get; init; }
+
+
     public override void WriteToMessage(INetworkMessage message)
     {
         message.AddByte((byte)GameOutgoingPacketType.ContainerAddItem);
 
         message.AddByte(containerId);
-        message.AddItem(item);
+        message.AddItem(item, ShowItemDescription);
     }
 }

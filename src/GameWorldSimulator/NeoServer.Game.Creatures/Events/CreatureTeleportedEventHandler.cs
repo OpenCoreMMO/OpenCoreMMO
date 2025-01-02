@@ -20,18 +20,23 @@ public class CreatureTeleportedEventHandler : IGameEventHandler
     {
         if (creature.Location == location) return;
 
+        var destination = location;
+
         if (map[location] is not IDynamicTile { FloorDirection: FloorChangeDirection.None } tile)
-        {
-            foreach (var neighbour in location.Neighbours)
-                if (map[neighbour] is IDynamicTile toTile)
-                {
-                    map.TryMoveCreature(creature, toTile.Location);
-                    return;
-                }
-        }
-        else
-        {
-            map.TryMoveCreature(creature, tile.Location);
-        }
+            tile = FindNeighbourTile(creature, location);
+
+        if (destination == Location.Zero) return;
+        if (tile is null || !creature.TileEnterRule.CanEnter(tile, creature)) return;
+
+        map.TryMoveCreature(creature, tile.Location);
+    }
+
+    private IDynamicTile FindNeighbourTile(IWalkableCreature creature, Location location)
+    {
+        foreach (var neighbour in location.Neighbours)
+            if (map[neighbour] is IDynamicTile toTile)
+                return toTile;
+
+        return null;
     }
 }

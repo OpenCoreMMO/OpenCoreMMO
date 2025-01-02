@@ -155,79 +155,9 @@
 		"level": 60
 	},
   {
-    "name": "Create Item",
-    "words": "/i",
-    "script": "ItemCreator",
-    "description": "",
-    "mana": 0,
-    "cooldown": "0",
-    "level": 1,
-    "type": "command"
-  },
-  {
-    "name": "Create Monster",
-    "words": "/m",
-    "script": "MonsterCreator",
-    "description": "",
-    "mana": 0,
-    "cooldown": "0",
-    "level": 1,
-    "type": "command"
-  },
-  {
-    "name": "Create Summon",
-    "words": "/s",
-    "script": "SummonCreator",
-    "description": "",
-    "mana": 0,
-    "cooldown": "0",
-    "level": 1,
-    "type": "command"
-  },
-  {
     "name": "Create Npc",
     "words": "/npc",
     "script": "NpcCreator",
-    "description": "",
-    "mana": 0,
-    "cooldown": "0",
-    "level": 1,
-    "type": "command"
-  },
-  {
-    "name": "Up",
-    "words": "/up",
-    "script": "UpDownCommand",
-    "description": "",
-    "mana": 0,
-    "cooldown": "0",
-    "level": 1,
-    "type": "command"
-  },
-  {
-    "name": "Down",
-    "words": "/down",
-    "script": "UpDownCommand",
-    "description": "",
-    "mana": 0,
-    "cooldown": "0",
-    "level": 1,
-    "type": "command"
-  },
-  {
-    "name": "Teleport",
-    "words": "/a",
-    "script": "TeleportCommand",
-    "description": "",
-    "mana": 0,
-    "cooldown": "0",
-    "level": 1,
-    "type": "command"
-  },
-  {
-    "name": "Hide",
-    "words": "/hide",
-    "script": "HideCommand",
     "description": "",
     "mana": 0,
     "cooldown": "0",
