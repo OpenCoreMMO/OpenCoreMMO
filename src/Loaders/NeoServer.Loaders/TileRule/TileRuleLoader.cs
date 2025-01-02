@@ -9,6 +9,7 @@ using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
+using NeoServer.Server.Services;
 using Serilog;
 
 namespace NeoServer.Loaders.TileRule;
@@ -47,7 +48,7 @@ public class TileRuleLoader : IStartupLoader
             {
                 PropertyNameCaseInsensitive = true
             });
-                
+
             if (tilesData is null) return 0;
 
             foreach (var tileRule in tilesData)
@@ -59,13 +60,13 @@ public class TileRuleLoader : IStartupLoader
 
                 if (_map[tileLocation] is not IDynamicTile dynamicTile) continue;
 
-            dynamicTile.CanEnterFunction = creature => CanEnter(creature, tileRule);
-        }
+                dynamicTile.CanEnterFunction = creature => CanEnter(creature, tileRule);
+            }
 
             return tilesData.Count;
         }
         catch (Exception e)
-        { 
+        {
             Console.WriteLine(e);
         }
 
