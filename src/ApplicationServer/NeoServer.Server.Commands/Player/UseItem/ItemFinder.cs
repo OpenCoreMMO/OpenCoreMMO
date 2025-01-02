@@ -1,5 +1,6 @@
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
@@ -22,25 +23,20 @@ public class ItemFinderService
     {
         if (itemLocation.IsHotkey) return _hotkeyService.GetItem(player, clientId);
 
-        if (itemLocation.Type == LocationType.Ground)
-            return _gameServer.Map[itemLocation] is not { } tile ? null : tile.TopItemOnStack;
-
-        if (itemLocation.Slot == Slot.Backpack)
+        var itemFound = itemLocation switch
         {
-            var item = player.Inventory[Slot.Backpack];
-            item.SetNewLocation(itemLocation);
-            return item;
+            _ when itemLocation.Type == LocationType.Ground => _gameServer.Map[itemLocation] is not { } tile ? null : tile.TopItemOnStack,
+            _ when itemLocation.Type == LocationType.Slot => player.Inventory[Slot.Backpack],
+            _ when itemLocation.Type == LocationType.Container => player.Containers[itemLocation.ContainerId][itemLocation.ContainerSlot],
+            _ => null
+        };
+
+        if (itemFound is not null)
+        {
+            itemFound.SetNewLocation(itemLocation, force: true);
+            return itemFound;
         }
 
-        if (itemLocation.Type == LocationType.Container)
-        {
-            var item = player.Containers[itemLocation.ContainerId][itemLocation.ContainerSlot];
-            item.SetNewLocation(itemLocation);
-            return item;
-        }
-
-        if (itemLocation.Type == LocationType.Slot) return player.Inventory[itemLocation.Slot];
-
-        return null;
+        return itemLocation.Type == LocationType.Slot ? player.Inventory[itemLocation.Slot] : null;
     }
 }

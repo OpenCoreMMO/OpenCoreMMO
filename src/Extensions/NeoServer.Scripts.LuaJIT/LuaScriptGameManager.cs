@@ -48,6 +48,11 @@ public class LuaScriptGameManager : IScriptGameManager
     /// </summary>
     private readonly ITalkActions _talkActions;
 
+    /// <summary>
+    /// A reference to the <see cref="IGlobalEvents"/> instance in use.
+    /// </summary>
+    private readonly IGlobalEvents _globalEvents;
+
     #endregion
 
     #region Constructors
@@ -67,6 +72,7 @@ public class LuaScriptGameManager : IScriptGameManager
         _creatureEvents = creatureEvents;
         _globalEvents = globalEvents;
         _talkActions = talkActions;
+        _globalEvents = globalEvents;
     }
 
     #endregion
