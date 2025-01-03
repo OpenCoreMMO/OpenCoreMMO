@@ -1,9 +1,9 @@
 ﻿using System.Text;
+using NeoServer.Web.API.Response;
 using NeoServer.Web.Shared.Exceptions;
-using NeoServer.Web.Shared.ViewModels.Response;
 using Newtonsoft.Json;
 
-namespace NeoServer.Web.Shared.Extensions;
+namespace NeoServer.Web.API.Extensions;
 
 public static class HttpClientExtensions
 {
@@ -60,10 +60,10 @@ public static class HttpClientExtensions
         response.EnsureSuccessStatusCode();
         var resultString = await response.Content.ReadAsStringAsync();
         var baseResponse = JsonConvert.DeserializeObject<BaseResponseViewModel>(resultString);
-
+    
         if (baseResponse.Errors.Any())
             throw new NeoException(baseResponse.Errors.FirstOrDefault());
-
+    
         var getResponseDataJson = JsonConvert.SerializeObject(baseResponse?.Data);
         return JsonConvert.DeserializeObject<T>(getResponseDataJson);
     }

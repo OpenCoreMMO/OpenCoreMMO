@@ -95,6 +95,15 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
                     .SetProperty(y => y.BanishedAt, DateTime.Now));
     }
 
+    public async Task<AccountEntity> GetByEmail(string email)
+    {
+        await using var context = NewDbContext;
+        
+        return await context.Accounts
+            .Where(x => x.EmailAddress.ToLower().Equals(email.ToLower()))
+            .SingleOrDefaultAsync();
+    }
+
     #endregion
 
     #region deletes
