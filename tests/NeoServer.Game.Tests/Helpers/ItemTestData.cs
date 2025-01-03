@@ -386,8 +386,8 @@ public class ItemTestData
         type.Attributes.SetAttribute(ItemAttribute.Damage, DamageTypeParser.Parse(damageType));
         type.Attributes.SetAttribute(ItemAttribute.Type, "rune");
         type.Attributes.SetAttribute(ItemAttribute.NeedTarget, needTarget);
-        type.Attributes.SetCustomAttribute("x", new[] { min.ToString(), max.ToString() });
-        type.Attributes.SetCustomAttribute("y", new[] { min.ToString(), max.ToString() });
+        type.Attributes.SetCustomAttribute("x", new[] { min, max });
+        type.Attributes.SetCustomAttribute("y", new[] { min, max });
 
         type.Flags.Add(ItemFlag.Stackable);
         type.Flags.Add(ItemFlag.Pickupable);

@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.Json;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Helpers;
@@ -190,7 +191,16 @@ public sealed class ItemAttributeList : IItemAttributeList
 
         if (!_defaultAttributes.TryGetValue(attribute, out var value)) return default;
         if (value.Item1 is not Array) return new[] { value.Item1 };
-        return value.Item1;
+        
+        var pool = ArrayPool<dynamic>.Shared;
+        dynamic[] newArray = pool.Rent(value.Item1.Length);
+
+        for (var i = 0; i < value.Item1.Length; i++) newArray[i] = value.Item1[i];
+
+        pool.Return(newArray);
+
+        int count = value.Item1.Length;
+        return newArray[..count];
     }
 
     public T[] GetAttributeArray<T>(ItemAttribute attribute)
@@ -219,7 +229,16 @@ public sealed class ItemAttributeList : IItemAttributeList
         if (_customAttributes.TryGetValue(attribute, out var value))
         {
             if (value.Item1 is not Array) return default;
-            return value.Item1;
+            
+            var pool = ArrayPool<dynamic>.Shared;
+            dynamic[] newArray = pool.Rent(value.Item1.Length);
+
+            for (var i = 0; i < value.Item1.Length; i++) newArray[i] = value.Item1[i];
+
+            pool.Return(newArray);
+
+            int count = value.Item1.Length;
+            return newArray[..count];
         }
 
         return default;

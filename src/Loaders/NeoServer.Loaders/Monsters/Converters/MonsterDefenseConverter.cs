@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using NeoServer.Game.Combat.Defenses;
 using NeoServer.Game.Common.Contracts.Combat;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Server.Helpers.Extensions;
-using Newtonsoft.Json.Linq;
 
 namespace NeoServer.Loaders.Monsters.Converters;
 
@@ -19,17 +19,28 @@ public class MonsterDefenseConverter
 
         foreach (var defense in data.Defenses)
         {
-            defense.TryGetValue("name", out string defenseName);
-            defense.TryGetValue("chance", out byte chance);
-            defense.TryGetValue("interval", out ushort interval);
-
-            defense.TryGetValue<JArray>("attributes", out var attributesArray);
-            var attributes = attributesArray?.ToDictionary(k => ((JObject)k).Properties().First().Name,
-                v => v.Values().First().Value<object>());
+            var defenseName = defense.TryGetValue("name", out JsonElement element) ? element.GetString() : string.Empty;
+            var chance = defense.TryGetValue("chance", out JsonElement chanceElement) ?  byte.Parse(chanceElement.GetString()!) : (byte)0;
+            var interval = defense.TryGetValue("interval", out JsonElement intervalElement) ?  ushort.Parse(intervalElement.GetString()!) : (ushort)0;
+            defense.TryGetValue("attributes", out JsonElement attributesElement);
+            
+            var attributes = new Dictionary<string, object>();
+            
+            if (attributesElement.ValueKind == JsonValueKind.Array)
+            {
+                attributes = attributesElement
+                    .EnumerateArray()
+                    .Select(item =>
+                    {
+                        var property = item.EnumerateObject().First();
+                        return new KeyValuePair<string, object>(property.Name, property.Value.GetString());
+                    })
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
 
             attributes.TryGetValue("areaEffect", out string areaEffect);
 
-            if (defenseName.Equals("healing", StringComparison.InvariantCultureIgnoreCase))
+            if (defenseName!.Equals("healing", StringComparison.InvariantCultureIgnoreCase))
             {
                 defense.TryGetValue("min", out decimal min);
                 defense.TryGetValue("max", out decimal max);

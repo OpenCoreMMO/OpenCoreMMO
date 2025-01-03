@@ -1,22 +1,18 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace NeoServer.Server.Helpers.JsonConverters;
 
-public class AbstractConverter<TReal, TAbstract> : JsonConverter where TReal : TAbstract
+public class AbstractConverter<TReal, TAbstract> : JsonConverter<TAbstract> where TReal : TAbstract
 {
-    public override bool CanConvert(Type objectType)
+    public override TAbstract Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        return objectType == typeof(TAbstract);
+        return JsonSerializer.Deserialize<TReal>(ref reader, options);
     }
 
-    public override object ReadJson(JsonReader reader, Type type, object value, JsonSerializer jser)
+    public override void Write(Utf8JsonWriter writer, TAbstract value, JsonSerializerOptions options)
     {
-        return jser.Deserialize<TReal>(reader);
-    }
-
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer jser)
-    {
-        jser.Serialize(writer, value);
+        JsonSerializer.Serialize(writer, (TReal)value, options);
     }
 }
