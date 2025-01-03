@@ -447,7 +447,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
     public void ReplaceItem(ushort fromId, IItem toItem)
     {
-        IItem removed;
+        IItem removed = null;
 
         var topItemOnStack = TopItemOnStack;
 
@@ -461,7 +461,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         if (topItemOnStack.IsAlwaysOnTop) TopItems.TryPop(out removed);
 
-        DownItems.TryPop(out removed);
+        DownItems?.TryPop(out removed);
 
         if (removed is null) return;
 
