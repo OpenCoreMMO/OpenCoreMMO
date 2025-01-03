@@ -2,6 +2,7 @@
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World;
@@ -106,17 +107,26 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
 
     public static int LuaItemRemove(LuaState L)
     {
-        // item:remove()
+        // item:remove(count = -1)
         var item = GetUserdata<IItem>(L, 1);
-        if (item != null && _map[item.Location] is IDynamicTile dynamictile)
-        {
-            var count = GetNumber(L, 2, 1);
-            var result = dynamictile.RemoveItem(item, (byte)count, 0, out var removedItem);
-            Lua.PushBoolean(L, result.Succeeded);
-        }
-        else
+        var count = GetNumber(L, 2, -1);
+
+        if (item is null)
         {
             Lua.PushNil(L);
+            return 1;
+        }
+
+        if (item is ICumulative cumulative && count > 0)
+        {
+            cumulative.Reduce((byte)count);
+            return 1;
+        }
+
+        if (_map[item.Location] is IDynamicTile dynamictile)
+        {
+            var result = dynamictile.RemoveItem(item, (byte)count, 0, out var removedItem);
+            Lua.PushBoolean(L, result.Succeeded);
         }
 
         return 1;

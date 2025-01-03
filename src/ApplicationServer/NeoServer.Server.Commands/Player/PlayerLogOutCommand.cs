@@ -19,11 +19,9 @@ public class PlayerLogOutCommand : ICommand
 
     public void Execute(IPlayer player, bool forced = false)
     {
-        if(!player.CannotLogout || forced)
-            _scriptGameManager.CreatureEventExecuteOnPlayerLogout(player);
-
         if (!player.Logout(forced) && !forced) return;
 
         game.CreatureManager.RemovePlayer(player);
+        _scriptGameManager.CreatureEventExecuteOnPlayerLogout(player);
     }
 }

@@ -48,11 +48,6 @@ public class LuaScriptGameManager : IScriptGameManager
     /// </summary>
     private readonly ITalkActions _talkActions;
 
-    /// <summary>
-    /// A reference to the <see cref="IGlobalEvents"/> instance in use.
-    /// </summary>
-    private readonly IGlobalEvents _globalEvents;
-
     #endregion
 
     #region Constructors
@@ -125,7 +120,9 @@ public class LuaScriptGameManager : IScriptGameManager
         if (target != null)
         {
             if (target is ITile tile)
+            {
                 target = tile.TopItemOnStack;
+            }
             else if (target is ICreature creature)
             {
                 toPos = creature.Location;
@@ -137,7 +134,7 @@ public class LuaScriptGameManager : IScriptGameManager
             return action.ExecuteUse(
                 player,
                 item,
-                player.Location,
+                fromPos,
                 target,
                 toPos,
                 isHotkey);

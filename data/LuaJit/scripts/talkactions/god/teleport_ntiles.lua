@@ -1,9 +1,9 @@
 ﻿local talkAction = TalkAction("/a")
 
 function talkAction.onSay(player, words, param)
-    if not player:getGroup():getAccess() then
-		return true
-	end
+    -- if not player:getGroup():getAccess() then
+	-- 	return true
+	-- end
 
     local steps = tonumber(param)
 	if not steps then

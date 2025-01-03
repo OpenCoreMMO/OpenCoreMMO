@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -26,6 +27,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         RegisterMethod(L, "Creature", "getName", LuaGetName);
         RegisterMethod(L, "Creature", "getPosition", LuaCreatureGetPosition);
         RegisterMethod(L, "Creature", "getDirection", LuaCreatureGetDirection);
+        RegisterMethod(L, "Creature", "say", LuaCreatureSay);
     }
 
     private static int LuaCreatureCreate(LuaState L)
@@ -136,6 +138,20 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
             Lua.PushNumber(L, (byte)creature.Direction);
         else
             Lua.PushNil(L);
+        return 1;
+    }
+
+    private static int LuaCreatureSay(LuaState L)
+    {
+        // creature:say(text, type)
+        var creature = GetUserdata<ICreature>(L, 1);
+        var text = GetString(L, 2);
+        var type = GetNumber<SpeakClassesType>(L, 3);
+
+        if (creature != null)
+            creature.Say(text, (SpeechType)type);
+
+        PushBoolean(L, true);
         return 1;
     }
 }

@@ -27,6 +27,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
     private static ICreatureFactory _creatureFactory;
     private static IGameCreatureManager _gameCreatureManager;
     private static ServerConfiguration _serverConfiguration;
+    private static IStaticToDynamicTileService _staticToDynamicTileService;
 
     public GameFunctions(
         IScripts scripts,
@@ -35,7 +36,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         IMap map,
         ICreatureFactory creatureFactory,
         IGameCreatureManager gameCreatureManager,
-        ServerConfiguration serverConfiguration) : base(nameof(GameFunctions))
+        ServerConfiguration serverConfiguration,
+        IStaticToDynamicTileService staticToDynamicTileService) : base(nameof(GameFunctions))
     {
         _scripts = scripts;
         _itemTypeStore = itemTypeStore;
@@ -44,6 +46,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         _creatureFactory = creatureFactory;
         _gameCreatureManager = gameCreatureManager;
         _serverConfiguration = serverConfiguration;
+        _staticToDynamicTileService = staticToDynamicTileService;
     }
 
     public void Init(LuaState L)
@@ -136,7 +139,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
             if (item == null)
             {
                 if (!hasTable) Lua.PushNil(L);
-                return 1;
+                continue;
             }
 
             if (position.X != 0)
@@ -145,13 +148,13 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
                 if (tile == null)
                 {
                     if (!hasTable) Lua.PushNil(L);
-                    return 1;
+                    continue;
                 }
 
                 if (tile is IStaticTile)
                 {
-                    var staticToDynamicTileService = NeoServer.Server.Helpers.IoC.GetInstance<IStaticToDynamicTileService>();
-                    tile = staticToDynamicTileService.TransformIntoDynamicTile(tile);
+                    tile = tile is IStaticTile staticTile ? staticTile.CreateClone(position) : tile;
+                    tile = _staticToDynamicTileService.TransformIntoDynamicTile(tile);
                 }
 
                 var result = false;
@@ -162,7 +165,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
                 if (result)
                 {
                     if (!hasTable) Lua.PushNil(L);
-                    return 1;
+                    continue;
                 }
             }
             else

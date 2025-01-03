@@ -201,7 +201,9 @@ public interface IPlayer : ICombatActor, ISociableCreature
     void Recover();
 
     void HealMana(ushort increasing);
+
     bool Feed(IFood food);
+    bool Feed(int duration);
 
     Result Use(IUsableOn item, ITile tile);
     Result Use(IUsableOn item, ICreature onCreature);

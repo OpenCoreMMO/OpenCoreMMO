@@ -711,11 +711,9 @@ public class Player : CombatActor, IPlayer
         return Result.Success;
     }
 
-    public bool Feed(IFood food)
+    public bool Feed(int duration)
     {
-        if (food is null) return false;
-
-        var regenerationMs = (uint)food.Duration * 1000;
+        var regenerationMs = (uint)duration * 1000;
         const uint maxRegenerationTime = (uint)1200 * 1000; //20 minutes
 
         if (Conditions.TryGetValue(ConditionType.Regeneration, out var condition))
@@ -736,6 +734,12 @@ public class Player : CombatActor, IPlayer
         }
 
         return true;
+    }
+
+    public bool Feed(IFood food)
+    {
+        if (food is null) return false;
+        return Feed(food.Duration);
     }
 
     public void SetAsHungry()

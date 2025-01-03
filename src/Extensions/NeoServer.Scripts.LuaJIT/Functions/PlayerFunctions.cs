@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
@@ -60,6 +61,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(L, "Player", "isPzLocked", LuaPlayerIsPzLocked);
 
         RegisterMethod(L, "Player", "setGhostMode", LuaPlayerSetGhostMode);
+        RegisterMethod(L, "Player", "feed", LuaPlayerFeed);
     }
 
     private static int LuaPlayerCreate(LuaState L)
@@ -379,7 +381,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         var count = GetNumber(L, 3, 1);
         var subType = GetNumber(L, 4, 1);
-        var ignoreEquipped = GetBoolean(L, 5); 
+        var ignoreEquipped = GetBoolean(L, 5);
 
         var result = player.Inventory.RemoveItem(itemId, (byte)count, ignoreEquipped);
 
@@ -517,7 +519,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         {
             if (enabled)
                 player.TurnInvisible();
-            else 
+            else
                 player.TurnVisible();
         }
 
@@ -525,4 +527,18 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         return 1;
     }
 
+    private static int LuaPlayerFeed(LuaState L)
+    {
+        // player:feed(food)
+        var player = GetUserdata<IPlayer>(L, 1);
+        var food = GetNumber(L, 2, 0);
+
+        if (player != null && food > 0)
+        {
+            player.Feed(food);
+        }
+
+        PushBoolean(L, true);
+        return 1;
+    }
 }

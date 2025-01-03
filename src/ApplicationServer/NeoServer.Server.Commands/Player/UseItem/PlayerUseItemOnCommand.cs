@@ -5,6 +5,7 @@ using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Location;
+using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Commands;
@@ -19,19 +20,22 @@ public class PlayerUseItemOnCommand : ICommand
     private readonly HotkeyService _hotkeyService;
     private readonly IScriptGameManager _scriptGameManager;
     private readonly IWalkToMechanism _walkToMechanism;
+    private readonly ItemFinderService _itemFinder;
 
     public PlayerUseItemOnCommand(
         IGameServer game,
         HotkeyService hotkeyService,
         IPlayerUseService playerUseService,
         IScriptGameManager scriptGameManager,
-        IWalkToMechanism walkToMechanism)
+        IWalkToMechanism walkToMechanism,
+        ItemFinderService itemFinder)
     {
         _game = game;
         _hotkeyService = hotkeyService;
         _playerUseService = playerUseService;
         _scriptGameManager = scriptGameManager;
         _walkToMechanism = walkToMechanism;
+        _itemFinder = itemFinder;
     }
 
     public void Execute(IPlayer player, UseItemOnPacket useItemPacket)
@@ -42,7 +46,7 @@ public class PlayerUseItemOnCommand : ICommand
         if (useItemPacket.ToLocation.Type == LocationType.Ground)
         {
             if (_game.Map[useItemPacket.ToLocation] is not { } tile) return;
-            onTile = tile;
+            onTile = tile is IStaticTile staticTile ? staticTile.CreateClone(useItemPacket.ToLocation) : tile;
         }
 
         if (useItemPacket.ToLocation.Type == LocationType.Slot)
@@ -60,28 +64,7 @@ public class PlayerUseItemOnCommand : ICommand
 
         if (onItem is null && onTile is null) return;
 
-        IThing thingToUse = null;
-
-        if (useItemPacket.Location.IsHotkey)
-            thingToUse = _hotkeyService.GetItem(player, useItemPacket.ClientId);
-
-        else
-            switch (useItemPacket.Location.Type)
-            {
-                case LocationType.Ground:
-                {
-                    if (_game.Map[useItemPacket.Location] is not { } tile) return;
-                    thingToUse = tile.TopItemOnStack;
-                    break;
-                }
-                case LocationType.Slot:
-                    thingToUse = player.Inventory[useItemPacket.Location.Slot];
-                    break;
-                case LocationType.Container:
-                    thingToUse =
-                        player.Containers[useItemPacket.Location.ContainerId][useItemPacket.Location.ContainerSlot];
-                    break;
-            }
+        var thingToUse = _itemFinder.Find(player, useItemPacket.Location, useItemPacket.ClientId);
 
         if (thingToUse is not IUsableOn itemUsableOn) return;
 
@@ -95,7 +78,7 @@ public class PlayerUseItemOnCommand : ICommand
         else
             action = () => _playerUseService.Use(player, itemUsableOn, onTarget);
 
-        if (!player.Location.IsNextTo(onTarget.Location))
+        if (!player.Location.IsNextTo(onTarget.Location == Location.Zero ? useItemPacket.ToLocation : onTarget.Location))
         {
             _walkToMechanism.WalkTo(player, action, onTarget.Location);
             return;

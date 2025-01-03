@@ -5,9 +5,9 @@ local invalidIds = {
 }
 
 function talkAction.onSay(player, words, param)
-    if not player:getGroup():getAccess() then
-		return true
-	end
+    -- if not player:getGroup():getAccess() then
+	-- 	return true
+	-- end
 
     -- if player:getAccountType() < ACCOUNT_TYPE_GOD then
     -- 	return false

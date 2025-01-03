@@ -1,19 +1,18 @@
 ## Revscript support using native LuaJIT
 Simple documentation with all scripts and functions developed using LuaJIT to working with Revscript TFS and Canary retrocompatibility.
 
-### Implemented Scripts (26)
+### Implemented Scripts (34)
 
-**Actions Items (9)**
+**Actions (15)**
 
-- crowbar.lua
-- fishing.lua
-- kitchen_knife.lua
+**Actions Items (1)**
+
 - ladder_up.lua
-- machete.lua
-- pick.lua
-- rope.lua
-- shovel.lua
-- scythe.lua
+
+**Actions Others (2)**
+
+- blueberry_bush.lua
+- foods.lua
 
 **Actions Quests (4)**
 
@@ -21,6 +20,17 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - dwarven_shield.lua
 - spike_sword.lua
 - combat_knife_quest.lua
+
+**Actions Tools (8)**
+
+- crowbar.lua
+- fishing.lua
+- kitchen_knife.lua
+- machete.lua
+- pick.lua
+- rope.lua
+- shovel.lua
+- scythe.lua
 
 **Talk Actions (11)**
 
@@ -44,6 +54,12 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - example_think.lua
 - online_record.lua
 
+**Creature Scripts (3)**
+
+- death.lua
+- login.lua
+- logout.lua
+
 ### Implemented Libs using lua (8)
 
 - creature.lua
@@ -55,7 +71,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (18) and Functions (124)
+### Tables (18) and Functions (126)
 
 **Action (7)**
 
@@ -74,7 +90,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - configManager:getBoolean(type)
 - configManager:getFloat(type)
 
-**Creature (7)**
+**Creature (8)**
 
 - Creature(id or name or userdata)
 - creature:getId()
@@ -83,6 +99,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - creature:getDirection()
 - creature:isCreature()
 - creature:isInGhostMode()
+- creature:say(text, type)
 
 **Container (3)**
 
@@ -179,7 +196,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 
 - Npc(id or userdata)
 
-**Player (15)**
+**Player (16)**
 
 - Player(id or guid or name or userdata)
 - player:teleportTo(position, pushMovement = false)
@@ -196,6 +213,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - player:sendTextMessage(type, text)
 - player:isPzLocked()
 - player:setGhostMode(positionEx)
+- player:feed(food)
 
 **Position (8)**
 

@@ -6,10 +6,10 @@ function talkAction.onSay(player, words, param)
     logger.info(player:getName())
     logger.info(player:getId())
 
-	local loginStr = "Welcome from playerLoginGlobal.onLogin2 !!"
+	local loginStr = "TEST !!"
 	player:sendTextMessage(MESSAGE_STATUS_DEFAULT, loginStr)
     
-    Game.createMonster("Rat", player:getPosition(), true, true, player)
+    Game.createMonster("Troll", player:getPosition(), true, true, player)
 
     -- local creature = Creature("GOD")
 
@@ -59,26 +59,27 @@ function talkAction.onSay(player, words, param)
     --     logger.info('storageValue2: ' .. storageValue)
     -- end
 
-    -- local group = player:getGroup()
+    local group = player:getGroup()
     
-    -- logger.info('groupId: ' .. group:getId())
-    -- logger.info('groupName: ' .. group:getName())
-    -- logger.info('getAccess: ' .. tostring(group:getAccess()))
+    logger.info('groupId: ' .. group:getId())
+    logger.info('groupName: ' .. group:getName())
+    logger.info('getAccess: ' .. tostring(group:getAccess()))
 
-    -- logger.info('PlayerFlag_CanTalkRedChannel: ' .. tostring(group:hasFlag(PlayerFlag_CanTalkRedChannel)))
-    -- logger.info('PlayerFlag_IgnoreYellCheck: ' .. tostring(group:hasFlag(PlayerFlag_IgnoreYellCheck)))
-    -- logger.info('PlayerFlag_IgnoredByMonsters: ' .. tostring(group:hasFlag(PlayerFlag_IgnoredByMonsters)))
-    -- logger.info('PlayerFlag_CannotBeAttacked: ' .. tostring(group:hasFlag(PlayerFlag_CannotBeAttacked)))
+    logger.info('PlayerFlag_CanTalkRedChannel: ' .. tostring(group:hasFlag(PlayerFlag_CanTalkRedChannel)))
+    logger.info('PlayerFlag_IgnoreYellCheck: ' .. tostring(group:hasFlag(PlayerFlag_IgnoreYellCheck)))
+    logger.info('PlayerFlag_IgnoredByMonsters: ' .. tostring(group:hasFlag(PlayerFlag_IgnoredByMonsters)))
+    logger.info('PlayerFlag_CannotBeAttacked: ' .. tostring(group:hasFlag(PlayerFlag_CannotBeAttacked)))
 
-    -- addEvent(Game.broadcastMessage, 1000, "New record1: " .. 0 .. " players are logged in.", MESSAGE_LOGIN)
-    -- addEvent(Game.broadcastMessage, 2000, "New record2: " .. 0 .. " players are logged in.", MESSAGE_LOGIN)
-    -- addEvent(Game.broadcastMessage, 3000, "New record3: " .. 0 .. " players are logged in.", MESSAGE_LOGIN)
-    -- addEvent(Game.broadcastMessage, 4000, "New record4: " .. 0 .. " players are logged in.", MESSAGE_LOGIN)
-    -- local eventId = addEvent(Game.broadcastMessage, 5000, "New record5: " .. 0 .. " players are logged in.", MESSAGE_LOGIN)
+    addEvent(Game.broadcastMessage, 1000, "New record1: " .. 0 .. " players are logged in.", MESSAGE_LOGIN)
+    addEvent(Game.broadcastMessage, 2000, "New record2: " .. 0 .. " players are logged in.", MESSAGE_LOGIN)
+    addEvent(Game.broadcastMessage, 3000, "New record3: " .. 0 .. " players are logged in.", MESSAGE_LOGIN)
+    addEvent(Game.broadcastMessage, 4000, "New record4: " .. 0 .. " players are logged in.", MESSAGE_LOGIN)
     
-    -- logger.info('eventId5 = ' .. tostring(eventId))
+    local eventId = addEvent(Game.broadcastMessage, 5000, "New record5: " .. 0 .. " players are logged in.", MESSAGE_LOGIN)
+    
+    logger.info('eventId5 = ' .. tostring(eventId))
 
-    -- stopEvent(eventId);
+    stopEvent(eventId);
     
     logger.info('end')
 

@@ -14,6 +14,7 @@ using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
@@ -141,6 +142,10 @@ public class Monster : WalkableMonster, IMonster
         if (creature is Summon.Summon summon && summon.Master.CreatureId == CreatureId) return;
 
         if (!enemy.CanBeAttacked) return;
+        
+        if (creature is IPlayer player && (
+            player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters) ||
+            player.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))) return;
 
         var canSee = CanSee(creature.Location, (int)MapViewPort.MaxClientViewPortX + 1,
             (int)MapViewPort.MaxClientViewPortX + 1);
