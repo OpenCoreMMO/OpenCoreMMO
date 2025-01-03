@@ -17,7 +17,7 @@ internal class MonsterAttackConverter
 {
     public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)
     {
-        if (data.Attacks is null) return Array.Empty<IMonsterCombatAttack>();
+        if (data.Attacks is null) return [];
 
         var attacks = new List<IMonsterCombatAttack>();
 
@@ -25,21 +25,24 @@ internal class MonsterAttackConverter
         
         foreach (var attack in data.Attacks)
         {
-            var attackName = attack.TryGetValue("name", out JsonElement attackNameElement) ? attackNameElement.GetString() : string.Empty;
-            var attackValue  = attack.TryGetValue("attack", out JsonElement attackValueElement) ? ushort.Parse(attackValueElement.GetString())  : (ushort)0;
-            var skill = attack.TryGetValue("skill", out JsonElement skillElement) ? ushort.Parse(skillElement.GetString()) : (ushort)0;
-            var min = attack.TryGetValue("min", out JsonElement minElement) ?  ParseDecimalSafely(minElement.GetString()) : 0m;
-            var max = attack.TryGetValue("max", out JsonElement maxElement) ?  ParseDecimalSafely(maxElement.GetString()): 0m;
-            var interval = attack.TryGetValue("interval", out JsonElement intervalElement) ? ushort.Parse(intervalElement.GetString()): (ushort)0;
-            var length = attack.TryGetValue("length", out JsonElement lengthElement) ? byte.Parse(lengthElement.GetString()): (byte)0;
-            var radius = attack.TryGetValue("radius", out JsonElement radiusElement) ? byte.Parse(radiusElement.GetString()): (byte)0;
-            var target = attack.TryGetValue("target", out JsonElement targetElement) ? byte.Parse(targetElement.GetString()): (byte)0;
-            var range  = attack.TryGetValue("range", out JsonElement rangeElement) ? byte.Parse(rangeElement.GetString()): (byte)0;
-            var spread  = attack.TryGetValue("spread", out JsonElement spreadElement) ? byte.Parse(spreadElement.GetString()): (byte)0;
+            attack.TryGetValue("name", out string attackName);
+            attack.TryGetValue("attack", out ushort attackValue);
+            attack.TryGetValue("skill", out int skill);
+            attack.TryGetValue("min", out decimal min);
+            attack.TryGetValue("max", out decimal max);
+            attack.TryGetValue("interval", out ushort interval);
+            attack.TryGetValue("length", out byte length);
+            attack.TryGetValue("radius", out byte radius);
+            attack.TryGetValue("target", out byte target);
+            attack.TryGetValue("range", out byte range);
+            attack.TryGetValue("spread", out byte spread);
 
             attack.TryGetValue("attributes", out JsonElement attributesElement);
 
-            if (!attack.TryGetValue("chance", out byte chance)) chance = 100;
+            if (!attack.TryGetValue("chance", out byte chance))
+            {
+                chance = 100;
+            } 
 
             var attributes = new Dictionary<string, object>();
             
