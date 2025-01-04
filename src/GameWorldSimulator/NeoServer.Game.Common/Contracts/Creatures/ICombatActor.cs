@@ -57,7 +57,7 @@ public interface ICombatActor : IWalkableCreature
     event BlockAttack OnBlockedAttack;
     event Damage OnInjured;
     event Heal OnHeal;
-    event PrepareDeath OnPrepareDeath;
+    event BeforeDeath OnBeforeDeath;
     event Death OnDeath;
     event Kill OnKill;
     event StopAttack OnStoppedAttack;
@@ -68,8 +68,8 @@ public interface ICombatActor : IWalkableCreature
     event RemoveCondition OnRemovedCondition;
     event AddCondition OnAddedCondition;
     event Attacked OnAttacked;
-    event HealthChange OnHealthChange;
-    event ManaChange OnManaChange;
+    event HealthChange OnHealthChanged;
+    event ManaChange OnManaChanged;
 
     int DefendUsingArmor(int attack);
     Result Attack(ICombatActor enemy, ICombatAttack attack, CombatAttackValue value);

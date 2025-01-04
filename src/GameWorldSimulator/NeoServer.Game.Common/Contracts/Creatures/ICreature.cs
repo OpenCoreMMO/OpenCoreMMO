@@ -15,7 +15,7 @@ public delegate void RemoveCreature(ICreature creature);
 
 public delegate void StopWalk(IWalkableCreature creature);
 
-public delegate void PrepareDeath(ICombatActor creature, ICombatActor killer, int realDamage);
+public delegate void BeforeDeath(ICombatActor creature, ICombatActor killer, int realDamage);
 
 public delegate void Death(ICombatActor creature, IThing by, ILoot loot);
 
