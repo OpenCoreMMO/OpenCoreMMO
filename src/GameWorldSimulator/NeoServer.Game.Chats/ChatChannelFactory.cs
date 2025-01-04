@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Channels;
 using NeoServer.Game.Chats.Rules;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts;
@@ -56,16 +57,20 @@ public class ChatChannelFactory
         var channel = new ChatChannel(id, name);
 
         SubscribeEvents(channel);
-
         return channel;
     }
 
-    public IChatChannel Create(string name, string description, bool opened, SpeechType chatColor,
-        Dictionary<byte, SpeechType> chatColorByVocation, ChannelRule joinRule, ChannelRule writeRule,
+    public IChatChannel Create(
+        ushort id,
+        string name,
+        string description,
+        bool opened,
+        SpeechType chatColor,
+        Dictionary<byte, SpeechType> chatColorByVocation,
+        ChannelRule joinRule,
+        ChannelRule writeRule,
         MuteRule muteRule)
     {
-        var id = GenerateUniqueId();
-
         var channel = new ChatChannel(id, name)
         {
             Description = description,

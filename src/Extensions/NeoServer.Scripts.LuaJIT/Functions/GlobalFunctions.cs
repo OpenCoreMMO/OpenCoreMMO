@@ -1,10 +1,14 @@
 ﻿using LuaNET;
+using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts.Tasks;
 using NeoServer.Server.Tasks;
 using Serilog;
+using System.Threading.Channels;
+using System;
+using NeoServer.Game.Common.Chats;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -13,15 +17,18 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
     private static ILuaEnvironment _luaEnvironment;
     private static ILogger _logger;
     private static IScheduler _scheduler;
+    private static IChatChannelStore _chatChannelStore;
 
     public GlobalFunctions(
         ILuaEnvironment luaEnvironment,
         ILogger logger, 
-        IScheduler scheduler) : base(nameof(GlobalFunctions))
+        IScheduler scheduler,
+        IChatChannelStore chatChannelStore) : base(nameof(GlobalFunctions))
     {
         _luaEnvironment = luaEnvironment;
         _logger = logger;
         _scheduler = scheduler;
+        _chatChannelStore = chatChannelStore;
     }
 
     public void Init(LuaState L)
@@ -29,6 +36,7 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         RegisterGlobalMethod(L, "rawgetmetatable", LuaRawGetMetatable);
         RegisterGlobalMethod(L, "addEvent", LuaAddEvent);
         RegisterGlobalMethod(L, "stopEvent", LuaStopEvent);
+        RegisterGlobalMethod(L, "sendChannelMessage", LuaSendChannelMessage);
     }
 
     private static int LuaRawGetMetatable(LuaState L)
@@ -215,6 +223,26 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
             Lua.UnRef(globalState, LUA_REGISTRYINDEX, parameter);
         }
 
+        PushBoolean(L, true);
+        return 1;
+    }
+
+    private static int LuaSendChannelMessage(LuaState L)
+    {
+        // sendChannelMessage(channelId, type, message)
+        var globalState = _luaEnvironment.GetLuaState();
+
+        var channelId = GetNumber<ushort>(L, 1);
+        if (!_chatChannelStore.TryGetValue(channelId, out var channel) || channel is null)
+        {
+            PushBoolean(L, false);
+            return 1;
+        }
+
+        var type = GetNumber<SpeakClassesType>(L, 2);
+        var message = GetString(L, 3);
+
+        channel.WriteMessage(message, out var cancelMessage, (SpeechType)type);
         PushBoolean(L, true);
         return 1;
     }
