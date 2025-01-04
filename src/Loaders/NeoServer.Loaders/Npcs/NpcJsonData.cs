@@ -1,70 +1,65 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace NeoServer.Loaders.Npcs;
 
 [Serializable]
 public class NpcJsonData
 {
-    [JsonProperty("name")] public string Name { get; set; }
+        [JsonPropertyName("name")] public string Name { get; set; }
+        [JsonPropertyName("walk-interval")] public int WalkInterval { get; set; }
+        [JsonPropertyName("health")] public HealthData Health { get; set; }
+        [JsonPropertyName("look")] public LookData Look { get; set; }
 
-    [JsonProperty("walk-interval")] public int WalkInterval { get; set; }
+        [JsonPropertyName("marketings")] public string[] Marketings { get; set; }
+        [JsonPropertyName("dialog")]  public DialogData[] Dialog { get; set; }
+        [JsonPropertyName("script")] public string Script { get; set; }
+        [JsonPropertyName("shop")] public ShopData[] Shop { get; set; }
 
-    [JsonProperty("health")] public HealthData Health { get; set; }
+        [JsonPropertyName("custom-data")] public dynamic CustomData { get; set; }
 
-    [JsonProperty("look")] public LookData Look { get; set; }
+        [Serializable]
+        public class DialogData
+        {
+            [JsonPropertyName("words")] public string[] Words { get; set; }
 
-    public string[] Marketings { get; set; }
-    public DialogData[] Dialog { get; set; }
-    public string Script { get; set; }
-    public ShopData[] Shop { get; set; }
+            [JsonPropertyName("answers")] public string[] Answers { get; set; }
+            [JsonPropertyName("then")] public DialogData[] Then { get; set; }
+            [JsonPropertyName("action")] public string Action { get; set; }
+            [JsonPropertyName("end")] public bool End { get; set; }
 
-    [JsonProperty("custom-data")] public dynamic CustomData { get; set; }
+            [JsonPropertyName("store-at")] public string StoreAt { get; set; }
 
-    [Serializable]
-    public class DialogData
-    {
-        [JsonProperty("words")] public string[] Words { get; set; }
+            [JsonPropertyName("back")] public byte Back { get; set; }
+        }
 
-        public string[] Answers { get; set; }
-        public DialogData[] Then { get; set; }
-        public string Action { get; set; }
-        public bool End { get; set; }
+        public class HealthData
+        {
+            [JsonPropertyName("now")] public uint Now { get; set; }
+            [JsonPropertyName("max")] public uint Max { get; set; }
+        }
 
-        [JsonProperty("store-at")] public string StoreAt { get; set; }
+        public class LookData
+        {
+            [JsonPropertyName("type")] public ushort Type { get; set; }
+            [JsonPropertyName("corpse")] public ushort Corpse { get; set; }
+            [JsonPropertyName("body")] public ushort Body { get; set; }
+            [JsonPropertyName("legs")] public ushort Legs { get; set; }
+            [JsonPropertyName("feet")] public ushort Feet { get; set; }
+            [JsonPropertyName("head")] public ushort Head { get; set; }
+            [JsonPropertyName("addons")] public ushort Addons { get; set; }
+        }
 
-        public byte Back { get; set; }
-    }
-
-    public class HealthData
-    {
-        [JsonProperty("now")] public uint Now { get; set; }
-
-        [JsonProperty("max")] public uint Max { get; set; }
-    }
-
-    public class LookData
-    {
-        [JsonProperty("type")] public ushort Type { get; set; }
-
-        [JsonProperty("corpse")] public ushort Corpse { get; set; }
-
-        [JsonProperty("body")] public ushort Body { get; set; }
-
-        [JsonProperty("legs")] public ushort Legs { get; set; }
-
-        [JsonProperty("feet")] public ushort Feet { get; set; }
-
-        [JsonProperty("head")] public ushort Head { get; set; }
-
-        [JsonProperty("addons")] public ushort Addons { get; set; }
-    }
-
-    [Serializable]
-    public class ShopData
-    {
-        public ushort Item { get; set; }
-        public uint Sell { get; set; }
-        public uint Buy { get; set; }
-    }
+        [Serializable]
+        public class ShopData
+        {
+            [JsonPropertyName("item")]
+            public ushort Item { get; set; }
+            
+            [JsonPropertyName("sell")]
+            public uint Sell { get; set; }
+            
+            [JsonPropertyName("buy")]
+            public uint Buy { get; set; }
+        }
 }

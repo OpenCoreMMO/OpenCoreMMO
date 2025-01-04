@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.Json;
 using NeoServer.Game.Combat.Attacks;
 using NeoServer.Game.Common.Contracts.Combat.Attacks;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Parsers;
 using NeoServer.Server.Helpers.Extensions;
-using Newtonsoft.Json.Linq;
 using Serilog;
 
 namespace NeoServer.Loaders.Monsters.Converters;
@@ -17,31 +17,46 @@ internal class MonsterAttackConverter
 {
     public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)
     {
-        if (data.Attacks is null) return Array.Empty<IMonsterCombatAttack>();
+        if (data.Attacks is null) return [];
 
         var attacks = new List<IMonsterCombatAttack>();
 
         AdjustAttackChanceValue(data.Attacks);
-
+        
         foreach (var attack in data.Attacks)
         {
             attack.TryGetValue("name", out string attackName);
             attack.TryGetValue("attack", out ushort attackValue);
-            attack.TryGetValue("skill", out ushort skill);
+            attack.TryGetValue("skill", out int skill);
             attack.TryGetValue("min", out decimal min);
             attack.TryGetValue("max", out decimal max);
             attack.TryGetValue("interval", out ushort interval);
             attack.TryGetValue("length", out byte length);
             attack.TryGetValue("radius", out byte radius);
-            attack.TryGetValue("spread", out byte spread);
             attack.TryGetValue("target", out byte target);
             attack.TryGetValue("range", out byte range);
+            attack.TryGetValue("spread", out byte spread);
 
-            if (!attack.TryGetValue("chance", out byte chance)) chance = 100;
+            attack.TryGetValue("attributes", out JsonElement attributesElement);
 
-            attack.TryGetValue<JArray>("attributes", out var attributesArray);
-            var attributes = attributesArray?.ToDictionary(k => ((JObject)k).Properties().First().Name,
-                v => v.Values().First().Value<object>());
+            if (!attack.TryGetValue("chance", out byte chance))
+            {
+                chance = 100;
+            } 
+
+            var attributes = new Dictionary<string, object>();
+            
+            if (attributesElement.ValueKind == JsonValueKind.Array)
+            {
+                attributes = attributesElement
+                    .EnumerateArray()
+                    .Select(item =>
+                    {
+                        var property = item.EnumerateObject().First();
+                        return new KeyValuePair<string, object>(property.Name, property.Value.GetString());
+                    })
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
 
             attributes.TryGetValue("shootEffect", out string shootEffect);
             attributes.TryGetValue("areaEffect", out string areaEffect);
@@ -92,7 +107,6 @@ internal class MonsterAttackConverter
                 {
                     var damageType = DamageTypeParser.Parse(areaEffect);
 
-                    //damage type cannot be melee due to range being higher than 1
                     combatAttack.DamageType = damageType == DamageType.Melee ? combatAttack.DamageType : damageType;
                 }
 
@@ -172,5 +186,15 @@ internal class MonsterAttackConverter
 
             attack["chance"] = Math.Round(chance * 100d / maxChance).ToString(CultureInfo.InvariantCulture);
         }
+    }
+    
+    static decimal ParseDecimalSafely(string? input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+            return 0m;
+
+        var sanitizedInput = input.Replace("--", "-").Trim();
+
+        return decimal.TryParse(sanitizedInput, out var result) ? result : 0m;
     }
 }
