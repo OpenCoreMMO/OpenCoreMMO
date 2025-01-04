@@ -55,9 +55,9 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
         {
             actor.OnDeath += _creatureOnDeathEventHandler.Execute;
             actor.OnKill += _creatureOnKillEventHandler.Execute;
-            actor.OnPrepareDeath += _creatureOnPrepareDeathEventHandler.Execute;
-            actor.OnHealthChange += _creatureOnHealthChangeEventHandler.Execute;
-            actor.OnManaChange += _creatureOnManaChangeEventHandler.Execute;
+            actor.OnBeforeDeath += _creatureOnPrepareDeathEventHandler.Execute;
+            actor.OnHealthChanged += _creatureOnHealthChangeEventHandler.Execute;
+            actor.OnManaChanged += _creatureOnManaChangeEventHandler.Execute;
         }
 
         if (creature is IPlayer player)
@@ -78,9 +78,9 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
         {
             actor.OnDeath -= _creatureOnDeathEventHandler.Execute;
             actor.OnKill -= _creatureOnKillEventHandler.Execute;
-            actor.OnPrepareDeath -= _creatureOnPrepareDeathEventHandler.Execute;
-            actor.OnHealthChange -= _creatureOnHealthChangeEventHandler.Execute;
-            actor.OnManaChange -= _creatureOnManaChangeEventHandler.Execute;
+            actor.OnBeforeDeath -= _creatureOnPrepareDeathEventHandler.Execute;
+            actor.OnHealthChanged -= _creatureOnHealthChangeEventHandler.Execute;
+            actor.OnManaChanged -= _creatureOnManaChangeEventHandler.Execute;
         }
 
         if (creature is IPlayer player)
