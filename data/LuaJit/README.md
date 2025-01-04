@@ -76,7 +76,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (21) and Functions (154)
+### Tables (21) and Functions (155)
 
 **Action (7)**
 
@@ -151,11 +151,12 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - Game.reload(reloadType)
 - Game.getPlayers()
 
-**Global (3)**
+**Global (4)**
 
 - rawgetmetatable(metatableName)
 - addEvent(callback, delay, ...)
 - stopEvent(eventid)
+- sendChannelMessage(channelId, type, message)
 
 **GlobalEvent (12)**
 

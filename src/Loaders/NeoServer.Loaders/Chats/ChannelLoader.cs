@@ -62,7 +62,7 @@ public class ChannelLoader : IStartupLoader
                 }
                 else
                 {
-                    createdChannel = _chatChannelFactory.Create(channel.Name, channel.Description, channel.Opened,
+                    createdChannel = _chatChannelFactory.Create(channel.Id, channel.Name, channel.Description, channel.Opened,
                         ParseColor(channel.Color?.Default),
                         channel.Color?.ByVocation?.ToDictionary(x => (byte)x.Key, x => ParseColor(x.Value)) ??
                         default,

@@ -3,8 +3,11 @@
 function talkAction.onSay(player, words, param)
     logger.info('executing talkAction test from lua: ' .. words .. ' ' .. param)
 
-    -- logger.info(player:getName())
-    -- logger.info(player:getId())
+    local message = string.format("%s was KILLED at level %d by %s", player:getName(), 1, "test")
+    sendChannelMessage(9, TALKTYPE_CHANNEL_R1, message)
+
+    logger.info(player:getName())
+    logger.info(player:getId())
 
 	-- local loginStr = "TEST !!"
 	-- player:sendTextMessage(MESSAGE_STATUS_DEFAULT, loginStr)

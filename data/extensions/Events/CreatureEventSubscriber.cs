@@ -8,20 +8,16 @@ namespace NeoServer.Extensions.Events;
 public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubscriber
 {
     private readonly CreatureDroppedLootEventHandler creatureDroppedLootEventHandler;
-    private readonly CreatureKilledEventHandler creatureKilledEventHandler;
 
-    public CreatureEventSubscriber(CreatureDroppedLootEventHandler creatureDroppedLootEventHandler,
-        CreatureKilledEventHandler creatureKilledEventHandler)
+    public CreatureEventSubscriber(CreatureDroppedLootEventHandler creatureDroppedLootEventHandler)
     {
         this.creatureDroppedLootEventHandler = creatureDroppedLootEventHandler;
-        this.creatureKilledEventHandler = creatureKilledEventHandler;
     }
 
     public void Subscribe(ICreature creature)
     {
         if (creature is ICombatActor actor)
         {
-            actor.OnDeath += creatureKilledEventHandler.Execute;
             actor.OnDeath += creatureDroppedLootEventHandler.Execute;
         }
 
@@ -32,7 +28,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     {
         if (creature is ICombatActor actor)
         {
-            actor.OnDeath -= creatureKilledEventHandler.Execute;
             actor.OnDeath -= creatureDroppedLootEventHandler.Execute;
         }
 
