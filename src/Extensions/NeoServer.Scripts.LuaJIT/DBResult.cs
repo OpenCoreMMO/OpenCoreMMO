@@ -1,6 +1,6 @@
 ﻿using System.Data.Common;
 
-namespace NeoServer.Scripts.LuaJIT.Structs;
+namespace NeoServer.Scripts.LuaJIT;
 
 public class DBResult
 {

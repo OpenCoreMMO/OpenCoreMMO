@@ -2,7 +2,6 @@
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Item;
-using NeoServer.Scripts.LuaJIT.Structs;
 
 namespace NeoServer.Scripts.LuaJIT;
 
