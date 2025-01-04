@@ -3,6 +3,7 @@ using NeoServer.Data.Configurations;
 using NeoServer.Data.Configurations.ForSqLite;
 using NeoServer.Data.Entities;
 using Serilog;
+using System.Data.Common;
 
 namespace NeoServer.Data.Contexts;
 
@@ -67,6 +68,44 @@ public class NeoContext : DbContext
         modelBuilder.ApplyConfiguration(new GuildMembershipEntityConfiguration());
         modelBuilder.ApplyConfiguration(new PlayerStorageEntityConfiguration());
 
+        foreach (var entity in modelBuilder.Model.GetEntityTypes())
+        {
+            entity.SetTableName(entity.GetTableName().ToLower());
+
+            foreach (var property in entity.GetProperties())
+                property.SetColumnName(property.Name.ToLower());
+
+            foreach (var key in entity.GetKeys())
+                key.SetName(key.GetName().ToLower());
+
+            foreach (var fk in entity.GetForeignKeys())
+                fk.SetConstraintName(fk.GetConstraintName().ToLower());
+        }
+
         base.OnModelCreating(modelBuilder);
+    }
+
+    public bool ExistsTable(string tableName)
+    {
+        var sql = @"
+        SELECT EXISTS (
+            SELECT 1 
+            FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            AND table_name = {0}
+        )";
+
+        return Database.ExecuteSqlRaw(sql, tableName) == 1;
+    }
+
+    public DbCommand CreateDbCommand(string query)
+    {
+        var command = Database.GetDbConnection().CreateCommand();
+        command.CommandText = query;
+        command.CommandType = System.Data.CommandType.Text;
+
+        Database.OpenConnection();
+
+        return command;
     }
 }

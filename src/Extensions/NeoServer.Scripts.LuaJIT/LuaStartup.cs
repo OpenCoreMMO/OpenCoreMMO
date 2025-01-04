@@ -60,6 +60,11 @@ public class LuaStartup : ILuaStartup
     private readonly ICreatureEventFunctions _creatureEventFunctions;
 
     /// <summary>
+    /// A reference to the <see cref="IDBFunctions"/> instance in use.
+    /// </summary>
+    private readonly IDBFunctions _dbFunctions;
+
+    /// <summary>
     /// A reference to the <see cref="IEnumFunctions"/> instance in use.
     /// </summary>
     private readonly IEnumFunctions _enumFunctions;
@@ -120,6 +125,11 @@ public class LuaStartup : ILuaStartup
     private readonly IPositionFunctions _positionFunctions;
 
     /// <summary>
+    /// A reference to the <see cref="IResultFunctions"/> instance in use.
+    /// </summary>
+    private readonly IResultFunctions _resultFunctions;
+
+    /// <summary>
     /// A reference to the <see cref="ITalkActionFunctions"/> instance in use.
     /// </summary>
     private readonly ITalkActionFunctions _talkActionFunctions;
@@ -153,6 +163,7 @@ public class LuaStartup : ILuaStartup
         IContainerFunctions containerFunctions,
         ICreatureFunctions creatureFunctions,
         ICreatureEventFunctions creatureEventFunctions,
+        IDBFunctions dbFunctions,
         IEnumFunctions enumFunctions,
         IGameFunctions gameFunctions,
         IGlobalFunctions globalFunctions,
@@ -165,6 +176,7 @@ public class LuaStartup : ILuaStartup
         INpcFunctions npcFunctions,
         IPlayerFunctions playerFunctions,
         IPositionFunctions positionFunctions,
+        IResultFunctions resultFunctions,
         ITalkActionFunctions talkActionFunctions,
         ITeleportFunctions teleportFunctions,
         ITileFunctions tileFunctions,
@@ -180,6 +192,7 @@ public class LuaStartup : ILuaStartup
         _containerFunctions = containerFunctions;
         _creatureFunctions = creatureFunctions;
         _creatureEventFunctions = creatureEventFunctions;
+        _dbFunctions = dbFunctions;
         _enumFunctions = enumFunctions;
         _gameFunctions = gameFunctions;
         _globalFunctions = globalFunctions;
@@ -192,6 +205,7 @@ public class LuaStartup : ILuaStartup
         _monsterFunctions = monsterFunctions;
         _npcFunctions = npcFunctions;
         _positionFunctions = positionFunctions;
+        _resultFunctions = resultFunctions;
         _talkActionFunctions = talkActionFunctions;
         _teleportFunctions = teleportFunctions;
         _tileFunctions = tileFunctions;
@@ -223,6 +237,7 @@ public class LuaStartup : ILuaStartup
         _configFunctions.Init(luaState);
         _creatureFunctions.Init(luaState);
         _creatureEventFunctions.Init(luaState);
+        _dbFunctions.Init(luaState);
         _enumFunctions.Init(luaState);
         _gameFunctions.Init(luaState);
         _globalFunctions.Init(luaState);
@@ -231,6 +246,7 @@ public class LuaStartup : ILuaStartup
         _itemTypeFunctions.Init(luaState);
         _loggerFunctions.Init(luaState);
         _positionFunctions.Init(luaState);
+        _resultFunctions.Init(luaState);
         _talkActionFunctions.Init(luaState);
         _tileFunctions.Init(luaState);
 
