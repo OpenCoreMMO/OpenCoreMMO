@@ -70,8 +70,6 @@ public class PlayerLogInCommand : ICommand
         if (success)
             _scriptGameManager.GlobalEventExecuteRecord(current, old);
 
-        _scriptGameManager.CreatureEventExecuteOnPlayerLogin(player);
-
         return Result.Success;
     }
 }

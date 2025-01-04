@@ -258,6 +258,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         HealthPoints = HealthPoints + increasing >= MaxHealthPoints ? MaxHealthPoints : HealthPoints + increasing;
         OnHeal?.Invoke(this, healedBy, increasing);
+        OnHealthChange?.Invoke(this, healedBy, new CombatDamage(increasing, DamageType.None));
     }
 
     public virtual void TurnInvisible()
@@ -437,14 +438,27 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public abstract ILoot DropLoot();
 
-    public virtual void OnDeath(IThing by)
+    public virtual void Death(IThing by)
     {
+        if (by is ICombatActor combatActor)
+        {
+            //todo: implements real damage
+            OnPrepareDeath?.Invoke(this, combatActor, 0);
+            combatActor.Kill(this);
+        }
+
         StopAttack();
         StopFollowing();
         StopWalking();
         Conditions.Clear();
         var loot = DropLoot();
-        OnKilled?.Invoke(this, by, loot);
+        OnDeath?.Invoke(this, by, loot);
+    }
+
+    public virtual void Kill(ICombatActor enemy)
+    {
+        //todo: implement lastHit
+        OnKill?.Invoke(this, enemy, true);
     }
 
     public abstract void OnDamage(IThing enemy, CombatDamage damage);
@@ -452,8 +466,9 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     private void OnDamage(IThing enemy, ICombatActor actor, CombatDamage damage)
     {
         OnDamage(enemy, damage);
+        OnHealthChange?.Invoke(this, actor, damage);
         OnInjured?.Invoke(enemy, this, damage);
-        if (IsDead) OnDeath(enemy);
+        if (IsDead) Death(enemy);
     }
 
     public abstract CombatDamage OnImmunityDefense(CombatDamage damage);
@@ -471,7 +486,9 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public event BlockAttack OnBlockedAttack;
     public event Attack OnAttackEnemy;
     public event Damage OnInjured;
-    public event Die OnKilled;
+    public event PrepareDeath OnPrepareDeath;
+    public event Death OnDeath;
+    public event Kill OnKill;
     public event AttackTargetChange OnTargetChanged;
     public event ChangeVisibility OnChangedVisibility;
     public event PropagateAttack OnPropagateAttack;
@@ -480,6 +497,8 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public event AddCondition OnAddedCondition;
     public event RemoveCondition OnRemovedCondition;
     public event Attacked OnAttacked;
+    public event HealthChange OnHealthChange;
+    public event ManaChange OnManaChange;
 
     #endregion
 

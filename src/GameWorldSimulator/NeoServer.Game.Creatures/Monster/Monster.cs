@@ -400,7 +400,7 @@ public class Monster : WalkableMonster, IMonster
         Defending = false;
     }
 
-    public override void OnDeath(IThing by)
+    public override void Death(IThing by)
     {
         if (by is IPlayer player && ReferenceEquals(player.CurrentTarget, this))
             player.StopAttack();
@@ -408,7 +408,7 @@ public class Monster : WalkableMonster, IMonster
         Targets?.Clear();
 
         StopDefending();
-        base.OnDeath(by);
+        base.Death(by);
     }
 
     public override ILoot DropLoot()
@@ -463,12 +463,12 @@ public class Monster : WalkableMonster, IMonster
 
     private void AttachToSummonEvents(IMonster monster)
     {
-        monster.OnKilled += OnSummonDie;
+        monster.OnDeath += OnSummonDie;
     }
 
     private void OnSummonDie(ICombatActor creature, IThing by, ILoot loot)
     {
-        creature.OnKilled -= OnSummonDie;
+        creature.OnDeath -= OnSummonDie;
         if (!_aliveSummons.TryGetValue(creature.Name, out var count)) return;
 
         if (count == 1)

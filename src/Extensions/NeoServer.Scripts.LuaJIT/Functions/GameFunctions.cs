@@ -1,5 +1,4 @@
 ﻿using LuaNET;
-using NeoServer.Data.Entities;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
@@ -356,7 +355,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
                         _scripts.LoadScripts($"{dir}/scripts", false, true);
                         _scripts.LoadScripts($"{dir}/scripts/libs", true, true);
 
-                    Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
+                        Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
                 }
 
                     break;

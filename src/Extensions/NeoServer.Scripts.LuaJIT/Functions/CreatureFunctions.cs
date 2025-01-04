@@ -3,23 +3,33 @@ using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
+using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts;
+using System.Xml.Linq;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
 public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 {
     private static IGameCreatureManager _gameCreatureManager;
+    private static ICreatureEvents _creatureEvents;
 
-    public CreatureFunctions(IGameCreatureManager gameCreatureManager) : base(nameof(CreatureFunctions))
+    public CreatureFunctions(
+        IGameCreatureManager gameCreatureManager,
+        ICreatureEvents creatureEvents) : base(nameof(CreatureFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
+        _creatureEvents = creatureEvents;
     }
 
     public void Init(LuaState L)
     {
         RegisterSharedClass(L, "Creature", "", LuaCreatureCreate);
         RegisterMetaMethod(L, "Creature", "__eq", LuaUserdataCompare<ICreature>);
+
+        RegisterMethod(L, "Creature", "getEvents", LuaCreatureGetEvents);
+        RegisterMethod(L, "Creature", "registerEvent", LuaCreatureRegisterEvent);
+        RegisterMethod(L, "Creature", "unregisterEvent", LuaCreatureUnregisterEvent);
 
         RegisterMethod(L, "Creature", "isCreature", LuaCreatureIsCreature);
         RegisterMethod(L, "Creature", "isInGhostMode", LuaCreatureIsInGhostMode);
@@ -65,6 +75,83 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         {
             PushUserdata(L, creature);
             SetCreatureMetatable(L, -1, creature);
+        }
+        else
+        {
+            Lua.PushNil(L);
+        }
+
+        return 1;
+    }
+
+    private static int LuaCreatureGetEvents(LuaState L)
+    {
+        // creature:getEvents(type)
+        var creature = GetUserdata<ICreature>(L, 1);
+        if (!creature)
+        {
+            Lua.PushNil(L);
+            return 1;
+        }
+
+        var eventType = GetNumber<CreatureEventType>(L, 2);
+        //var eventList = creature.GetCreatureEvents(eventType);
+        var eventList = _creatureEvents.GetCreatureEvents(creature.CreatureId, eventType);
+
+        Lua.CreateTable(L, eventList.Count(), 0);
+
+        int index = 0;
+        foreach (var creatureEvent in eventList)
+        {
+            PushString(L, creatureEvent.Name);
+            Lua.RawSetI(L, -2, ++index);
+        }
+        return 1;
+    }
+
+    private static int LuaCreatureRegisterEvent(LuaState L)
+    {
+        // creature:registerEvent(name)
+        var creature = GetUserdata<ICreature>(L, 1);
+        if (creature is not null)
+        {
+            var eventName = GetString(L, 2);
+            var creatureEvent = _creatureEvents.GetEventByName(eventName);
+
+            if (creatureEvent is null)
+            {
+                Lua.PushNil(L);
+                return 1;
+            }
+
+            //PushBoolean(L, creature.RegisterCreatureEvent(creatureEvent));
+            PushBoolean(L, _creatureEvents.RegisterCreatureEvent(creature.CreatureId, creatureEvent));
+        }
+        else
+        {
+            Lua.PushNil(L);
+        }
+
+        return 1;
+    }
+
+    private static int LuaCreatureUnregisterEvent(LuaState L)
+    {
+        // creature:unregisterEvent(name)
+        var creature = GetUserdata<ICreature>(L, 1);
+        if (creature is not null)
+        {
+            var eventName = GetString(L, 2);
+            var creatureEvent = _creatureEvents.GetEventByName(eventName);
+
+            if (creatureEvent is null)
+            {
+                Lua.PushNil(L);
+                return 1;
+            }
+
+            //PushBoolean(L, creature.UnregisterCreatureEvent(creatureEvent));
+            PushBoolean(L, _creatureEvents.UnregisterCreatureEvent(creature.CreatureId, creatureEvent));
         }
         else
         {

@@ -16,6 +16,10 @@ public delegate void Damage(IThing enemy, ICombatActor victim, CombatDamage dama
 
 public delegate void Attacked(IThing enemy, ICombatActor victim, ref CombatDamage damage);
 
+public delegate void HealthChange(ICombatActor actor, ICreature attacker, CombatDamage damage);
+
+public delegate void ManaChange(ICombatActor actor, ICreature attacker, CombatDamage damage);
+
 public delegate void Heal(ICombatActor healedCreature, ICreature healingCreature, ushort amount);
 
 public delegate void StopAttack(ICombatActor actor);
@@ -48,11 +52,14 @@ public interface ICombatActor : IWalkableCreature
     bool CanBeAttacked { get; }
     IDictionary<ConditionType, ICondition> Conditions { get; set; }
     ICreature CurrentTarget { get; }
+
     event Attack OnAttackEnemy;
     event BlockAttack OnBlockedAttack;
     event Damage OnInjured;
     event Heal OnHeal;
-    event Die OnKilled;
+    event PrepareDeath OnPrepareDeath;
+    event Death OnDeath;
+    event Kill OnKill;
     event StopAttack OnStoppedAttack;
     event AttackTargetChange OnTargetChanged;
     event ChangeVisibility OnChangedVisibility;
@@ -61,6 +68,9 @@ public interface ICombatActor : IWalkableCreature
     event RemoveCondition OnRemovedCondition;
     event AddCondition OnAddedCondition;
     event Attacked OnAttacked;
+    event HealthChange OnHealthChange;
+    event ManaChange OnManaChange;
+
     int DefendUsingArmor(int attack);
     Result Attack(ICombatActor enemy, ICombatAttack attack, CombatAttackValue value);
     void Heal(ushort increasing, ICreature healedBy);
@@ -103,9 +113,11 @@ public interface ICombatActor : IWalkableCreature
     void OnEnemyAppears(ICombatActor enemy);
     bool IsHostileTo(ICombatActor enemy);
     Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks);
+
     event StopAttack OnAttackCanceled;
     void DisableShieldDefense();
     void EnableShieldDefense();
     void IncreaseDamageReceived(byte percentage);
     void DecreaseDamageReceived(byte percentage);
+    void Kill(ICombatActor enemy);
 }

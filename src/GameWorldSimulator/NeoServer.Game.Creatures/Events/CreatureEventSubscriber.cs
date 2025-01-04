@@ -46,7 +46,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     {
         if (creature is ICombatActor combatActor)
         {
-            combatActor.OnKilled += creatureKilledEventHandler.Execute;
+            combatActor.OnDeath += creatureKilledEventHandler.Execute;
             combatActor.OnInjured += creatureDamagedEventHandler.Execute;
             combatActor.OnPropagateAttack += creaturePropagatedAttackEventHandler.Execute;
         }
@@ -65,7 +65,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
             player.Containers.OnOpenedContainer += playerOpenedContainerEventHandler.Execute;
         }
 
-        if (creature is IMonster monster) monster.OnKilled += monsterKilledEventHandler.Execute;
+        if (creature is IMonster monster) monster.OnDeath += monsterKilledEventHandler.Execute;
 
         creature.OnSay += creatureSayEventHandler.Execute;
     }
@@ -74,7 +74,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     {
         if (creature is ICombatActor combatActor)
         {
-            combatActor.OnKilled -= creatureKilledEventHandler.Execute;
+            combatActor.OnDeath -= creatureKilledEventHandler.Execute;
             combatActor.OnInjured -= creatureDamagedEventHandler.Execute;
             combatActor.OnPropagateAttack -= creaturePropagatedAttackEventHandler.Execute;
         }
@@ -93,7 +93,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
             player.Containers.OnOpenedContainer -= playerOpenedContainerEventHandler.Execute;
         }
 
-        if (creature is IMonster monster) monster.OnKilled -= monsterKilledEventHandler.Execute;
+        if (creature is IMonster monster) monster.OnDeath -= monsterKilledEventHandler.Execute;
 
         creature.OnSay -= creatureSayEventHandler.Execute;
     }

@@ -3,6 +3,7 @@
 local extendedOpcode = CreatureEvent("ExtendedOpcode")
 
 function extendedOpcode.onExtendedOpcode(player, opcode, buffer)
+	logger.info('opcode: ' .. tostring(opcode))
 	if opcode == OPCODE_LANGUAGE then
 		-- otclient language
 		if buffer == "en" or buffer == "pt" then

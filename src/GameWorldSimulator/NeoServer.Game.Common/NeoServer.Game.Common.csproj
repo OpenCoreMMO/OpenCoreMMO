@@ -7,26 +7,26 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Serilog" Version="4.2.0"/>
+        <PackageReference Include="Serilog" Version="4.2.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Contracts\Creatures\Factories"/>
-        <Folder Include="Contracts\Creatures\Schedulers"/>
+        <Folder Include="Contracts\Creatures\Factories" />
+        <Folder Include="Contracts\Creatures\Schedulers" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Services\Movements\FromMap\**"/>
-        <Compile Remove="Enums\Sex.cs"/>
-        <Compile Remove="Item\ItemTypeAttribute.cs"/>
+        <Compile Remove="Services\Movements\FromMap\**" />
+        <Compile Remove="Enums\Sex.cs" />
+        <Compile Remove="Item\ItemTypeAttribute.cs" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Remove="Services\Movements\FromMap\**"/>
+        <EmbeddedResource Remove="Services\Movements\FromMap\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Services\Movements\FromMap\**"/>
+        <None Remove="Services\Movements\FromMap\**" />
     </ItemGroup>
 
 </Project>

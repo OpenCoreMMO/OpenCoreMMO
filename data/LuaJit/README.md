@@ -71,7 +71,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (18) and Functions (126)
+### Tables (19) and Functions (141)
 
 **Action (7)**
 
@@ -100,6 +100,24 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - creature:isCreature()
 - creature:isInGhostMode()
 - creature:say(text, type)
+
+**CreatureEvent (15)**
+
+- CreatureEvent()
+- creatureEvent:type(callback)
+- creatureEvent:register()
+- creatureEvent:onLogin(callback)
+- creatureEvent:onLogout(callback)
+- creatureEvent:onThink(callback)
+- creatureEvent:onPrepareDeath(callback)
+- creatureEvent:onDeath(callback)
+- creatureEvent:onKill(callback)
+- creatureEvent:onAdvance(callback)
+- creatureEvent:onModalWindow(callback)
+- creatureEvent:onTextEdit(callback)
+- creatureEvent:onHealthChange(callback)
+- creatureEvent:onManaChange(callback)
+- creatureEvent:onExtendedOpcode(callback)
 
 **Container (3)**
 
@@ -252,7 +270,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile:hasFlag(flag)
 - tile:queryAdd(thing, flags)
 
-### Enums (11) / Constants (200++)
+### Enums (12) / Constants (250++)
 
 **DirectionsType**
 
@@ -620,6 +638,27 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - CONST_PROP_IMMOVABLENOFIELDBLOCKPATH,
 - CONST_PROP_NOFIELDBLOCKPATH,
 - CONST_PROP_SUPPORTHANGABLE
+
+**SpeakClassesType**
+
+- TALKTYPE_SAY = 1,
+- TALKTYPE_WHISPER = 2,
+- TALKTYPE_YELL = 3,
+- TALKTYPE_PRIVATE_PN = 4,
+- TALKTYPE_PRIVATE_NP = 5,
+- TALKTYPE_PRIVATE = 6,
+- TALKTYPE_CHANNEL_Y = 7,
+- TALKTYPE_CHANNEL_W = 8,
+- TALKTYPE_RVR_CHANNEL = 9,
+- TALKTYPE_RVR_ANSWER = 10,
+- TALKTYPE_RVR_CONTINUE = 11,
+- TALKTYPE_BROADCAST = 12,
+- TALKTYPE_CHANNEL_R1 = 13,
+- TALKTYPE_PRIVATE_RED = 14,
+- TALKTYPE_CHANNEL_O = 15,
+- TALKTYPE_CHANNEL_R2 = 17,
+- TALKTYPE_MONSTER_SAY = 19,
+- TALKTYPE_MONSTER_YELL = 20,
 
 ### Demonstrations
 

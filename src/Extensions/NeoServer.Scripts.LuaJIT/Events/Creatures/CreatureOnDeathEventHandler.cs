@@ -17,10 +17,7 @@ public class CreatureOnDeathEventHandler : IGameEventHandler
 
     public void Execute(ICombatActor actor, IThing by, ILoot loot)
     {
-        var deathEvents = _creatureEvents
-            .GetCreatureEvents(CreatureEventType.CREATURE_EVENT_DEATH);
-
-        foreach (var deathEvent in deathEvents)
-            deathEvent.ExecuteOnDeath(actor, actor.Corpse as IItem, by as ICreature, null, false, false);
+        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(actor.CreatureId, CreatureEventType.CREATURE_EVENT_DEATH))
+            creatureEvent.ExecuteOnDeath(actor, actor.Corpse as IItem, by as ICreature, null, false, false);
     }
 }

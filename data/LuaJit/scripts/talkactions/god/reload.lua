@@ -46,9 +46,9 @@ local reloadTypes = {
     }
 
 function talkAction.onSay(player, words, param)
-    -- if not player:getGroup():getAccess() then
-	-- 	return true
-	-- end
+    if not player:getGroup():getAccess() then
+		return true
+	end
 
     --if not configManager.getBoolean(configKeys.ALLOW_RELOAD) then
     --	print("Reload command is disabled.")

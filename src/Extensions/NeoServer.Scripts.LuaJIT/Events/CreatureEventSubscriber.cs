@@ -1,32 +1,95 @@
 ﻿using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Events.Creatures;
+using NeoServer.Scripts.LuaJIT.Events.Players;
 
 namespace NeoServer.Scripts.LuaJIT;
 
 public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubscriber
 {
-    private readonly CreatureOnDeathEventHandler creatureKilledEventHandler;
+    private readonly CreatureOnDeathEventHandler _creatureOnDeathEventHandler;
+    private readonly CreatureOnThinkEventHandler _creatureOnThinkEventHandler;
+    private readonly CreatureOnKillEventHandler _creatureOnKillEventHandler;
+    private readonly CreatureOnPrepareDeathEventHandler _creatureOnPrepareDeathEventHandler;
+    private readonly CreatureOnHealthChangeEventHandler _creatureOnHealthChangeEventHandler;
+    private readonly CreatureOnManaChangeEventHandler _creatureOnManaChangeEventHandler;
+
+    private readonly PlayerOnLoginEventHandler _playerOnLoginEventHandler;
+    private readonly PlayerOnLogoutEventHandler _playerOnLogoutEventHandler;
+    private readonly PlayerOnAdvanceEventHandler _playerOnAdvanceEventHandler;
+    private readonly PlayerOnExtendedOpcodeEventHandler _playerOnExtendedOpcodeEventHandler;
+    private readonly PlayerOnTextEditEventHandler _playerOnTextEditEventHandler;
 
     public CreatureEventSubscriber(
-        CreatureOnDeathEventHandler creatureKilledEventHandler)
+        CreatureOnDeathEventHandler creatureOnDeathEventHandler,
+        CreatureOnThinkEventHandler creatureOnThinkEventHandler,
+        CreatureOnKillEventHandler creatureOnKillEventHandler,
+        CreatureOnPrepareDeathEventHandler creatureOnPrepareDeathEventHandler,
+        CreatureOnHealthChangeEventHandler creatureOnHealthChangeEventHandler,
+        CreatureOnManaChangeEventHandler creatureOnManaChangeEventHandler,
+        PlayerOnLoginEventHandler playerOnLoginEventHandler,
+        PlayerOnLogoutEventHandler playerOnLogoutEventHandler,
+        PlayerOnAdvanceEventHandler playerOnAdvanceEventHandler,
+        PlayerOnExtendedOpcodeEventHandler playerOnExtendedOpcodeEventHandler,
+        PlayerOnTextEditEventHandler playerOnTextEditEventHandler)
     {
-        this.creatureKilledEventHandler = creatureKilledEventHandler;
+        _creatureOnDeathEventHandler = creatureOnDeathEventHandler;
+        _creatureOnThinkEventHandler = creatureOnThinkEventHandler;
+        _creatureOnKillEventHandler = creatureOnKillEventHandler;
+        _creatureOnPrepareDeathEventHandler = creatureOnPrepareDeathEventHandler;
+        _creatureOnHealthChangeEventHandler = creatureOnHealthChangeEventHandler;
+        _creatureOnManaChangeEventHandler = creatureOnManaChangeEventHandler;
+
+        _playerOnLoginEventHandler = playerOnLoginEventHandler;
+        _playerOnLogoutEventHandler = playerOnLogoutEventHandler;
+        _playerOnAdvanceEventHandler = playerOnAdvanceEventHandler;
+        _playerOnExtendedOpcodeEventHandler = playerOnExtendedOpcodeEventHandler;
+        _playerOnTextEditEventHandler = playerOnTextEditEventHandler;
     }
 
     public void Subscribe(ICreature creature)
     {
+        creature.OnThink += _creatureOnThinkEventHandler.Execute;
+
         if (creature is ICombatActor actor)
         {
-            actor.OnKilled += creatureKilledEventHandler.Execute;
+            actor.OnDeath += _creatureOnDeathEventHandler.Execute;
+            actor.OnKill += _creatureOnKillEventHandler.Execute;
+            actor.OnPrepareDeath += _creatureOnPrepareDeathEventHandler.Execute;
+            actor.OnHealthChange += _creatureOnHealthChangeEventHandler.Execute;
+            actor.OnManaChange += _creatureOnManaChangeEventHandler.Execute;
+        }
+
+        if (creature is IPlayer player)
+        {
+            player.OnLoggedIn += _playerOnLoginEventHandler.Execute;
+            player.OnLoggedOut += _playerOnLogoutEventHandler.Execute;
+            player.OnLevelAdvanced += _playerOnAdvanceEventHandler.Execute;
+            player.OnWroteText += _playerOnTextEditEventHandler.Execute;
+            player.OnExtendedOpcode += _playerOnExtendedOpcodeEventHandler.Execute;
         }
     }
 
     public void Unsubscribe(ICreature creature)
     {
+        creature.OnThink -= _creatureOnThinkEventHandler.Execute;
+
         if (creature is ICombatActor actor)
         {
-            actor.OnKilled -= creatureKilledEventHandler.Execute;
+            actor.OnDeath -= _creatureOnDeathEventHandler.Execute;
+            actor.OnKill -= _creatureOnKillEventHandler.Execute;
+            actor.OnPrepareDeath -= _creatureOnPrepareDeathEventHandler.Execute;
+            actor.OnHealthChange -= _creatureOnHealthChangeEventHandler.Execute;
+            actor.OnManaChange -= _creatureOnManaChangeEventHandler.Execute;
+        }
+
+        if (creature is IPlayer player)
+        {
+            player.OnLoggedIn -= _playerOnLoginEventHandler.Execute;
+            player.OnLoggedOut -= _playerOnLogoutEventHandler.Execute;
+            player.OnLevelAdvanced -= _playerOnAdvanceEventHandler.Execute;
+            player.OnWroteText -= _playerOnTextEditEventHandler.Execute;
+            player.OnExtendedOpcode -= _playerOnExtendedOpcodeEventHandler.Execute;
         }
     }
 }

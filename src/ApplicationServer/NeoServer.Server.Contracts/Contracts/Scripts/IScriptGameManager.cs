@@ -17,6 +17,7 @@ public interface IScriptGameManager
     void GlobalEventExecuteSave();
     void GlobalEventExecuteShutdown();
 
-    void CreatureEventExecuteOnPlayerLogin(IPlayer player);
-    void CreatureEventExecuteOnPlayerLogout(IPlayer player);
+    //void CreatureEventExecuteOnPlayerLogin(IPlayer player);
+    //void CreatureEventExecuteOnPlayerLogout(IPlayer player);
+    //void CreatureEventExecuteOnThink(ICreature creature, int interval);
 }

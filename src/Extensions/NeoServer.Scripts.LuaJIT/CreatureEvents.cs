@@ -1,4 +1,6 @@
 ﻿using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Helpers;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
@@ -8,6 +10,7 @@ namespace NeoServer.Scripts.LuaJIT;
 public class CreatureEvents : ICreatureEvents
 {
     private readonly Dictionary<string, CreatureEvent> _creatureEvents = new Dictionary<string, CreatureEvent>();
+    private readonly Dictionary<uint, IList<CreatureEvent>> _mappedCreatureEvents = new Dictionary<uint, IList<CreatureEvent>>();
 
     private ILogger _logger;
 
@@ -45,7 +48,7 @@ public class CreatureEvents : ICreatureEvents
         return true;
     }
 
-    public bool PlayerAdvance(IPlayer player, ISkill skill, int oldLevel, int newLevel)
+    public bool PlayerAdvance(IPlayer player, SkillType skill, int oldLevel, int newLevel)
     {
         foreach (var creatureEvent in _creatureEvents.Values.Where(c => c.EventType == CreatureEventType.CREATURE_EVENT_LOGOUT))
             if (!creatureEvent.ExecuteOnAdvance(player, skill, oldLevel, newLevel))
@@ -96,5 +99,68 @@ public class CreatureEvents : ICreatureEvents
         {
             creatureEvent.ClearEvent();
         }
+    }
+
+    public IEnumerable<CreatureEvent> GetCreatureEvents(uint creatureId, CreatureEventType eventType)
+        => _mappedCreatureEvents.FirstOrDefault(c => c.Key == creatureId).Value?.Where(c => c.EventType == eventType) ?? new List<CreatureEvent>();
+
+    private int _scriptEventsBitField = 0;
+
+    public bool HasEventRegistered(CreatureEventType eventType)
+        => (0 != (_scriptEventsBitField & (1 << (int)eventType)));
+
+    public bool RegisterCreatureEvent(uint creatureId, CreatureEvent creatureEvent)
+    {
+        IList<CreatureEvent> mappedCreatureEvents = null;
+
+        if (HasEventRegistered(creatureEvent.EventType) &&
+            _mappedCreatureEvents.TryGetValue(creatureId, out mappedCreatureEvents) &&
+            mappedCreatureEvents.Any(v => v.Name.Equals(creatureEvent.Name)))
+            return false;
+        else
+            _scriptEventsBitField |= 1 << (int)creatureEvent.EventType;
+
+        if (mappedCreatureEvents == null)
+            mappedCreatureEvents = new List<CreatureEvent>();
+
+        mappedCreatureEvents.Add(creatureEvent);
+
+        _mappedCreatureEvents.AddOrUpdate(creatureId, mappedCreatureEvents);
+
+        return true;
+    }
+
+    public bool UnregisterCreatureEvent(uint creatureId, CreatureEvent creatureEvent)
+    {
+        IList<CreatureEvent> mappedCreatureEvents = null;
+
+        if (!HasEventRegistered(creatureEvent.EventType))
+            return false;
+
+        var resetTypeBit = true;
+
+        if (mappedCreatureEvents == null)
+            mappedCreatureEvents = new List<CreatureEvent>();
+
+        for (int i = 0; i < mappedCreatureEvents.Count(); i++)
+        {
+            var curEvent = mappedCreatureEvents.ElementAt(i);
+
+            if (curEvent == creatureEvent)
+            {
+                mappedCreatureEvents.Remove(curEvent);
+                continue;
+            }
+
+            if (curEvent.EventType == creatureEvent.EventType)
+                resetTypeBit = false;
+        }
+
+        if (resetTypeBit)
+            _scriptEventsBitField &= ~((1) << (int)creatureEvent.EventType);
+
+        _mappedCreatureEvents.AddOrUpdate(creatureId, mappedCreatureEvents);
+
+        return true;
     }
 }

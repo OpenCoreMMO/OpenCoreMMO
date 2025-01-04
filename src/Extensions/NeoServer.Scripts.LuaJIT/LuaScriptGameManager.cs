@@ -156,9 +156,15 @@ public class LuaScriptGameManager : IScriptGameManager
     public void GlobalEventExecuteSave()
         => _globalEvents.Save();
 
-    public void CreatureEventExecuteOnPlayerLogin(IPlayer player) => _creatureEvents.PlayerLogin(player);
+    //public void CreatureEventExecuteOnPlayerLogin(IPlayer player) => _creatureEvents.PlayerLogin(player);
     
-    public void CreatureEventExecuteOnPlayerLogout(IPlayer player) => _creatureEvents.PlayerLogout(player);
+    //public void CreatureEventExecuteOnPlayerLogout(IPlayer player) => _creatureEvents.PlayerLogout(player);
+
+    //public void CreatureEventExecuteOnThink(ICreature creature, int interval)
+    //{
+    //    foreach (var onThinkEvent in _creatureEvents.GetCreatureEvents(CreatureEventType.CREATURE_EVENT_THINK))
+    //        onThinkEvent.ExecuteOnThink(creature, interval);
+    //}
 
     #endregion
 }

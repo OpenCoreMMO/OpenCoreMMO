@@ -21,8 +21,8 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     {
         if (creature is ICombatActor actor)
         {
-            actor.OnKilled += creatureKilledEventHandler.Execute;
-            actor.OnKilled += creatureDroppedLootEventHandler.Execute;
+            actor.OnDeath += creatureKilledEventHandler.Execute;
+            actor.OnDeath += creatureDroppedLootEventHandler.Execute;
         }
 
         if (creature is INpc npc) npc.OnAnswer += NpcActionHandler.OnAnswer;
@@ -32,8 +32,8 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     {
         if (creature is ICombatActor actor)
         {
-            actor.OnKilled -= creatureKilledEventHandler.Execute;
-            actor.OnKilled -= creatureDroppedLootEventHandler.Execute;
+            actor.OnDeath -= creatureKilledEventHandler.Execute;
+            actor.OnDeath -= creatureDroppedLootEventHandler.Execute;
         }
 
         if (creature is INpc npc) npc.OnAnswer -= NpcActionHandler.OnAnswer;

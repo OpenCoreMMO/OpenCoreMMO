@@ -9,7 +9,30 @@ function talkAction.onSay(player, words, param)
 	local loginStr = "TEST !!"
 	player:sendTextMessage(MESSAGE_STATUS_DEFAULT, loginStr)
     
-    Game.createMonster("Troll", player:getPosition(), true, true, player)
+    local bossTroll = Game.createMonster("Troll", player:getPosition())
+
+    local onBossTrollThink = CreatureEvent("BossTrollOnThink")
+
+    function onBossTrollThink.onThink(creature)
+        if not creature then
+            return true
+        end
+    
+        local name = creature:getName()
+    
+        logger.info(name)
+
+        creature:say("WAAAUUUUUUU10000", TALKTYPE_MONSTER_SAY)
+        creature:getPosition():sendMagicEffect(CONST_ME_POFF)
+
+        return true
+    end
+    
+    onBossTrollThink:register()
+    
+	bossTroll:registerEvent("BossTrollOnThink")
+	bossTroll:registerEvent("PlayerDeath")
+	bossTroll:registerEvent("PlayerPrepareDeath")
 
     -- local creature = Creature("GOD")
 

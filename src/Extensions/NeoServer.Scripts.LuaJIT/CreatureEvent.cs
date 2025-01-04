@@ -1,6 +1,7 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Creatures;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
@@ -201,7 +202,7 @@ public class CreatureEvent : Script
         return scriptInterface.CallFunction(6);
     }
 
-    public bool ExecuteOnAdvance(IPlayer player, ISkill skill, int oldLevel, int newLevel)
+    public bool ExecuteOnAdvance(IPlayer player, SkillType skill, int oldLevel, int newLevel)
     {
         //onAdvance(player, skill, oldLevel, newLevel)
         if (!GetScriptInterface().InternalReserveScriptEnv())
@@ -223,7 +224,7 @@ public class CreatureEvent : Script
         LuaScriptInterface.PushUserdata(L, player);
         LuaScriptInterface.SetMetatable(L, -1, "Player");
 
-        Lua.PushNumber(L, (int)skill.Type);
+        Lua.PushNumber(L, (int)skill);
         Lua.PushNumber(L, oldLevel);
         Lua.PushNumber(L, newLevel);
 

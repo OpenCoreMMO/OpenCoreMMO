@@ -60,8 +60,36 @@ public delegate void ReadText(IPlayer player, IReadable readable, string text);
 
 public delegate void WroteText(IPlayer player, IReadable readable, string text);
 
+public delegate void ExtendedOpcode(IPlayer player, byte opcode, string buffer);
+
 public interface IPlayer : ICombatActor, ISociableCreature
 {
+    #region Events
+
+    public event PlayerLevelAdvance OnLevelAdvanced;
+    public event PlayerLevelRegress OnLevelRegressed;
+    public event PlayerGainSkillPoint OnGainedSkillPoint;
+    public event ReduceMana OnStatusChanged;
+    public event CannotUseSpell OnCannotUseSpell;
+    public event LookAt OnLookedAt;
+    public event UseSpell OnUsedSpell;
+    public event UseItem OnUsedItem;
+    public event LogIn OnLoggedIn;
+    public event LogOut OnLoggedOut;
+    public event ChangeOnlineStatus OnChangedOnlineStatus;
+    public event SendMessageTo OnSentMessage;
+
+    public event Exhaust OnExhausted;
+    public event Hear OnHear;
+    public event ChangeChaseMode OnChangedChaseMode;
+    public event AddSkillBonus OnAddedSkillBonus;
+    public event RemoveSkillBonus OnRemovedSkillBonus;
+    public event ReadText OnReadText;
+    public event WroteText OnWroteText;
+    public event ExtendedOpcode OnExtendedOpcode;
+
+    #endregion
+
     ushort Level { get; }
 
     byte LevelPercent { get; }
@@ -118,20 +146,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     bool CanSeeInspectionDetails { get; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
-    event UseSpell OnUsedSpell;
-    event SendMessageTo OnSentMessage;
 
-    event CannotUseSpell OnCannotUseSpell;
-    event LookAt OnLookedAt;
-    event PlayerGainSkillPoint OnGainedSkillPoint;
-    event UseItem OnUsedItem;
-    event ReduceMana OnStatusChanged;
-    event PlayerLevelAdvance OnLevelAdvanced;
-    event PlayerLevelRegress OnLevelRegressed;
-    event LogIn OnLoggedIn;
-    event LogOut OnLoggedOut;
-    event ChangeOnlineStatus OnChangedOnlineStatus;
-    event Exhaust OnExhausted;
     uint ChooseToRemoveFromKnownSet(); //todo: looks like implementation detail
 
     /// <summary>
@@ -225,14 +240,11 @@ public interface IPlayer : ICombatActor, ISociableCreature
     byte GetSkillTries(SkillType skillType);
     void AddSkillBonus(SkillType skillType, sbyte increase);
     void RemoveSkillBonus(SkillType skillType, sbyte decrease);
-    event AddSkillBonus OnAddedSkillBonus;
-    event RemoveSkillBonus OnRemovedSkillBonus;
     sbyte GetSkillBonus(SkillType skill);
     void IncreaseSkillCounter(SkillType skill, long value);
     void DecreaseSkillCounter(SkillType skill, long value);
     void AddInventory(IInventory inventory);
     void Read(IReadable readable);
-    event ReadText OnReadText;
     void Write(IReadable readable, string text);
     void StopAllActions();
     Result<OperationResultList<IItem>> PickItemFromGround(IItem item, ITile tile, byte amount = 1);
@@ -247,4 +259,5 @@ public interface IPlayer : ICombatActor, ISociableCreature
     ushort GetRawSkillLevel(SkillType skillType);
     int GetStorageValue(int key);
     void AddOrUpdateStorageValue(int key, int value);
+    void ExtendedOpcode(byte code, string text);
 }
