@@ -1,7 +1,7 @@
 ## Revscript support using native LuaJIT
 Simple documentation with all scripts and functions developed using LuaJIT to working with Revscript TFS and Canary retrocompatibility.
 
-### Implemented Scripts (34)
+### Implemented Scripts (39)
 
 **Actions (15)**
 
@@ -54,11 +54,16 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - example_think.lua
 - online_record.lua
 
-**Creature Scripts (3)**
+**Creature Scripts (8)**
 
+- advance.lua
 - death.lua
+- kill.lua
 - login.lua
 - logout.lua
+- prepare_death.lua
+- text_edit.lua
+- extended_opcode.lua
 
 ### Implemented Libs using lua (8)
 
@@ -71,7 +76,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (19) and Functions (141)
+### Tables (19) and Functions (144)
 
 **Action (7)**
 
@@ -90,7 +95,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - configManager:getBoolean(type)
 - configManager:getFloat(type)
 
-**Creature (8)**
+**Creature (11)**
 
 - Creature(id or name or userdata)
 - creature:getId()
@@ -99,6 +104,9 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - creature:getDirection()
 - creature:isCreature()
 - creature:isInGhostMode()
+- creature:getEvents(type)
+- creature:registerEvent(name)
+- creature:unregisterEvent(name)
 - creature:say(text, type)
 
 **CreatureEvent (15)**
