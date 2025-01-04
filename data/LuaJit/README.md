@@ -76,7 +76,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (19) and Functions (144)
+### Tables (21) and Functions (154)
 
 **Action (7)**
 
@@ -132,6 +132,15 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - Container(uid)
 - container:getSize()
 - container:getItem()
+
+**DB (6)**
+
+- db.query(query)
+- db.queryAsync(query)
+- db.storeQuery(query)
+- db.asyncStoreQueryAsync(query)
+- db.escapeString(value)
+- db.tableExists(name)
 
 **Game (6)**
 
@@ -251,6 +260,13 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - position:getDistance(positionEx)
 - position:getPathTo(positionEx, minTargetDist = 0, maxTargetDist = 1, fullPathSearch = true, clearSight = true, maxSearchDist = 0)
 - position:isSightClear(positionEx, sameFloor = true)
+
+**Result (4)**
+
+- Result.getNumber(id, column)
+- Result.getString(id, column)
+- Result.next(id)
+- Result.free(id)
 
 **TalkAction (5)**
 
