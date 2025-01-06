@@ -62,6 +62,10 @@ public delegate void WroteText(IPlayer player, IReadable readable, string text);
 
 public delegate void ExtendedOpcode(IPlayer player, byte opcode, string buffer);
 
+public delegate void EquipItem(IPlayer player, IItem item, bool isCheck);
+
+public delegate void DeEquipItem(IPlayer player, IItem item, bool isCheck);
+
 public interface IPlayer : ICombatActor, ISociableCreature
 {
     #region Events
@@ -87,12 +91,14 @@ public interface IPlayer : ICombatActor, ISociableCreature
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
     public event ExtendedOpcode OnExtendedOpcode;
+    public event EquipItem OnEquipItem;
+    public event DeEquipItem OnDeEquipItem;
 
     #endregion
 
     ushort Level { get; }
-
     byte LevelPercent { get; }
+    ushort MagicLevel { get; }
 
     uint Experience { get; }
     byte SoulPoints { get; }
@@ -260,4 +266,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
     int GetStorageValue(int key);
     void AddOrUpdateStorageValue(int key, int value);
     void ExtendedOpcode(byte code, string text);
+    void OnDressedItem(IItem item);
+    void OnUndressedItem(IItem item);
 }

@@ -180,6 +180,7 @@ public class Player : CombatActor, IPlayer
     public ChaseMode ChaseMode { get; private set; }
     public uint TotalCapacity { get; private set; }
     public ushort Level => (ushort)(Skills.TryGetValue(SkillType.Level, out var level) ? level?.Level ?? 1 : 1);
+    public ushort MagicLevel => (ushort)(Skills.TryGetValue(SkillType.Magic, out var level) ? level?.Level ?? 1 : 1);
     public ushort Mana { get; private set; }
     public ushort MaxMana { get; private set; }
     public FightMode FightMode { get; private set; }
@@ -1144,6 +1145,20 @@ public class Player : CombatActor, IPlayer
 
     #endregion
 
+    #region Equip/DeEquip
+
+    public void OnDressedItem(IItem item)
+    {
+        OnEquipItem?.Invoke(this, item, true);
+    }
+
+    public void OnUndressedItem(IItem item)
+    {
+        OnDeEquipItem?.Invoke(this, item, true);
+    }
+
+    #endregion
+
     #region Events
 
     public event PlayerLevelAdvance OnLevelAdvanced;
@@ -1167,6 +1182,8 @@ public class Player : CombatActor, IPlayer
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
     public event ExtendedOpcode OnExtendedOpcode;
+    public event EquipItem OnEquipItem;
+    public event DeEquipItem OnDeEquipItem;
 
     #endregion
 }

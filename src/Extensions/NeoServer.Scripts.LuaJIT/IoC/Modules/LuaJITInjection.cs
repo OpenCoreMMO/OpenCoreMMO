@@ -16,6 +16,7 @@ public static class LuaJITInjection
         builder.AddSingleton<IActions, Actions>();
         builder.AddSingleton<ICreatureEvents, CreatureEvents>();
         builder.AddSingleton<IGlobalEvents, GlobalEvents>();
+        builder.AddSingleton<IMoveEvents, MoveEvents>();
         builder.AddSingleton<ITalkActions, TalkActions>();
 
         builder.AddSingleton<IActionFunctions, ActionFunctions>();
@@ -33,6 +34,7 @@ public static class LuaJITInjection
         builder.AddSingleton<IItemTypeFunctions, ItemTypeFunctions>();
         builder.AddSingleton<ILoggerFunctions, LoggerFunctions>();
         builder.AddSingleton<IMonsterFunctions, MonsterFunctions>();
+        builder.AddSingleton<IMoveEventFunctions, MoveEventFunctions>();
         builder.AddSingleton<INpcFunctions, NpcFunctions>();
         builder.AddSingleton<IPlayerFunctions, PlayerFunctions>();
         builder.AddSingleton<IResultFunctions, ResultFunctions>();

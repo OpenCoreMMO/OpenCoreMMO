@@ -37,8 +37,9 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
     {
         RegisterSharedClass(L, "Player", "Creature", LuaPlayerCreate);
         RegisterMetaMethod(L, "Player", "__eq", LuaUserdataCompare<IPlayer>);
-        RegisterMethod(L, "Player", "teleportTo", LuaTeleportTo);
 
+        RegisterMethod(L, "Player", "isPlayer", LuaPlayerIsPlayer);
+        RegisterMethod(L, "Player", "teleportTo", LuaTeleportTo);
         RegisterMethod(L, "Player", "getFreeCapacity", LuaPlayerGetFreeCapacity);
 
         RegisterMethod(L, "Player", "getSkillLevel", LuaPlayerGetSkillLevel);
@@ -62,6 +63,14 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         RegisterMethod(L, "Player", "setGhostMode", LuaPlayerSetGhostMode);
         RegisterMethod(L, "Player", "feed", LuaPlayerFeed);
+        
+    }
+
+    private static int LuaPlayerIsPlayer(LuaState L)
+    {
+        // player:isPlayer()
+        Lua.PushBoolean(L, GetUserdata<IPlayer>(L, 1) is not null);
+        return 1;
     }
 
     private static int LuaPlayerCreate(LuaState L)

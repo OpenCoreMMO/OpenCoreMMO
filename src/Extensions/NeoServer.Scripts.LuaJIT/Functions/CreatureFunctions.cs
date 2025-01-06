@@ -5,7 +5,6 @@ using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts;
-using System.Xml.Linq;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 

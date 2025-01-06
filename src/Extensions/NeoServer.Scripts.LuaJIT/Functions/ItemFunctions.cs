@@ -16,19 +16,19 @@ namespace NeoServer.Scripts.LuaJIT.Functions;
 
 public class ItemFunctions : LuaScriptInterface, IItemFunctions
 {
-    private static IItemService _itemService;
+    private static IItemTransformService _itemTransformService;
     private static IItemTypeStore _itemTypeStore;
     private static IMap _map;
     private static IItemMovementService _itemMovementService;
 
     public ItemFunctions(
-        IItemService itemService,
+        IItemTransformService itemTransformService,
         IItemTypeStore itemTypeStore,
         IMap map,
         IItemMovementService itemMovementService) : base(nameof(ItemFunctions))
 
     {
-        _itemService = itemService;
+        _itemTransformService = itemTransformService;
         _itemTypeStore = itemTypeStore;
         _map = map;
         _itemMovementService = itemMovementService;
@@ -45,8 +45,9 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
 
         RegisterMethod(L, "Item", "remove", LuaItemRemove);
 
-        RegisterMethod(L, "Item", "getActionId", LuaItemGetActionId);
         RegisterMethod(L, "Item", "getUniqueId", LuaItemGetUniqueId);
+        RegisterMethod(L, "Item", "getActionId", LuaItemGetActionId);
+        RegisterMethod(L, "Item", "setActionId", LuaItemSetActionId);
 
         RegisterMethod(L, "Item", "getSubType", LuaItemGetSubType);
 
@@ -132,6 +133,18 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         return 1;
     }
 
+    public static int LuaItemGetUniqueId(LuaState L)
+    {
+        // item:getUniqueId()
+        var item = GetUserdata<IItem>(L, 1);
+        if (item != null)
+            Lua.PushNumber(L, item.UniqueId);
+        else
+            Lua.PushNil(L);
+
+        return 1;
+    }
+
     public static int LuaItemGetActionId(LuaState L)
     {
         // item:getActionId()
@@ -144,12 +157,16 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         return 1;
     }
 
-    public static int LuaItemGetUniqueId(LuaState L)
+    public static int LuaItemSetActionId(LuaState L)
     {
-        // item:getUniqueId()
+        // item:setActionId(id)
         var item = GetUserdata<IItem>(L, 1);
+        var actionId = GetNumber<ushort>(L, 2);
         if (item != null)
-            Lua.PushNumber(L, item.UniqueId);
+        {
+            item.Metadata.Attributes.SetAttribute(ItemAttribute.ActionId, actionId);
+            Lua.PushBoolean(L, true);
+        }
         else
             Lua.PushNil(L);
 
@@ -391,14 +408,14 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         var env = GetScriptEnv();
         var uid = env.AddThing(item);
 
-        var newItem = _itemService.Transform(item.Location, item.ServerId, itemId);
+        var result = _itemTransformService.Transform(item, itemId);
 
-        if (newItem != null && newItem != item)
+        if (result.Succeeded && result.Value != item)
         {
             env.RemoveItemByUID(uid);
-            env.InsertItem(uid, newItem);
+            env.InsertItem(uid, result.Value);
 
-            UpdateLuaUserdata(L, 1, newItem);
+            UpdateLuaUserdata(L, 1, result.Value);
         }
 
         Lua.PushBoolean(L, true);

@@ -42,6 +42,10 @@ public abstract class BaseTile : ITile
 
     public string Name { get; }
 
+    public abstract int ItemsCount { get; }
+
+    public abstract IItem[] AllItems { get; }
+
     public string GetLookText(bool isClose = false, bool showInternalDetails = false)
     {
         return string.Empty;

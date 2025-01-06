@@ -19,6 +19,7 @@ public class MonsterFunctions : LuaScriptInterface, IMonsterFunctions
     {
         RegisterSharedClass(L, "Monster", "Creature", LuaMonsterCreate);
         RegisterMetaMethod(L, "Monster", "__eq", LuaUserdataCompare<IMonster>);
+        RegisterMethod(L, "Monster", "isMonster", LuaMonsterIsMonster);
     }
 
     private static int LuaMonsterCreate(LuaState L)
@@ -65,6 +66,13 @@ public class MonsterFunctions : LuaScriptInterface, IMonsterFunctions
             Lua.PushNil(L);
         }
 
+        return 1;
+    }
+
+    private static int LuaMonsterIsMonster(LuaState L)
+    {
+        // monster:isMonster()
+        Lua.PushBoolean(L, GetUserdata<IMonster>(L, 1) is not null);
         return 1;
     }
 }

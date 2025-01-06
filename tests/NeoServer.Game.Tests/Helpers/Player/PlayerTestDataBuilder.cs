@@ -41,7 +41,7 @@ public static class PlayerTestDataBuilder
         {
             var vocation = new Vocation
             {
-                Id = vocationType.ToString(),
+                Id = vocationType,
                 Name = "Knight"
             };
 

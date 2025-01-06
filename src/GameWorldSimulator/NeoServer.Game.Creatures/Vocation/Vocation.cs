@@ -7,7 +7,7 @@ namespace NeoServer.Game.Creatures.Vocation;
 public class Vocation : IVocation
 {    
      public static float DefaultSkillMultiplier = 4;
-     public string Id { get; set; }
+     public byte Id { get; set; }
      public string Clientid { get; set; }
      public string Name { get; set; }
      public string Description { get; set; }
@@ -26,5 +26,5 @@ public class Vocation : IVocation
      public string FromVoc { get; set; }
      public IVocationFormula Formula { get; set; }
      public Dictionary<SkillType, float> Skills { get; set; }
-     public byte VocationType =>  string.IsNullOrEmpty(Id) ? (byte)Common.Creatures.Players.VocationType.None : byte.Parse(Id);
+    public byte VocationType => Id; //(byte)Common.Creatures.Players.VocationType.None;
 }

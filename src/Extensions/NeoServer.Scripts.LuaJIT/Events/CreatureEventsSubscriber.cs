@@ -5,7 +5,7 @@ using NeoServer.Scripts.LuaJIT.Events.Players;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubscriber
+public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubscriber
 {
     private readonly CreatureOnDeathEventHandler _creatureOnDeathEventHandler;
     private readonly CreatureOnThinkEventHandler _creatureOnThinkEventHandler;
@@ -19,8 +19,8 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     private readonly PlayerOnAdvanceEventHandler _playerOnAdvanceEventHandler;
     private readonly PlayerOnExtendedOpcodeEventHandler _playerOnExtendedOpcodeEventHandler;
     private readonly PlayerOnTextEditEventHandler _playerOnTextEditEventHandler;
-
-    public CreatureEventSubscriber(
+    
+    public CreatureEventsSubscriber(
         CreatureOnDeathEventHandler creatureOnDeathEventHandler,
         CreatureOnThinkEventHandler creatureOnThinkEventHandler,
         CreatureOnKillEventHandler creatureOnKillEventHandler,

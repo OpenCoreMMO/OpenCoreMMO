@@ -34,6 +34,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         RegisterMethod(L, "Tile", "getThingCount", LuaTileGetThingCount);
         RegisterMethod(L, "Tile", "getCreatureCount", LuaTileGetCreatureCount);
         RegisterMethod(L, "Tile", "getTopVisibleThing", LuaTileGetTopVisibleThing);
+        RegisterMethod(L, "Tile", "getTopCreature", LuaTileGetTopCreature);
 
         RegisterMethod(L, "Tile", "getItems", LuaTileGetItems);
         RegisterMethod(L, "Tile", "getItemCount", LuaTileGetItemCount);
@@ -162,6 +163,30 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         }
 
         Lua.PushNil(L);
+
+        return 1;
+    }
+
+    public static int LuaTileGetTopCreature(LuaState L)
+    {
+        // tile:getTopCreature(creature)
+        var tile = GetUserdata<ITile>(L, 1);
+
+        if (tile == null || tile is not IDynamicTile dynamicTile)
+        {
+            Lua.PushNil(L);
+            return 1;
+        }
+
+        var creature = dynamicTile.TopCreatureOnStack;
+        if (!creature)
+        {
+            Lua.PushNil(L);
+            return 1;
+        }
+
+        PushUserdata(L, creature);
+        SetCreatureMetatable(L, -1, creature);
 
         return 1;
     }
