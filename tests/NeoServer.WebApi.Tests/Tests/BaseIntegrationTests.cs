@@ -49,6 +49,19 @@ public class BaseIntegrationTests
             .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 
+
+    private static string GenerateRandomEmail(int usernameLength)
+    {
+        var username = GenerateRandomString(usernameLength, onlyLetters: false);
+
+        var domains = new[] { "example.com", "testmail.com", "demo.org", "sample.net" };
+
+        var random = new Random();
+        var domain = domains[random.Next(domains.Length)];
+
+        return $"{username.ToLower()}@{domain}";
+    }
+
     protected async Task<AccountEntity> CreateAccount()
     {
         var lastAccount = NeoContext.Accounts.OrderBy(c => c.Id).LastOrDefault();
@@ -61,8 +74,9 @@ public class BaseIntegrationTests
         var account = new AccountEntity
         {
             Id = ++lastId,
-            EmailAddress = GenerateRandomString(10),
-            Password = GenerateRandomString(10)
+            EmailAddress = GenerateRandomEmail(10),
+            Password = GenerateRandomString(10),
+            AccountName = GenerateRandomString(10),
         };
 
         await NeoContext.Accounts.AddAsync(account);

@@ -50,6 +50,7 @@ public class NeoContext : DbContext
             modelBuilder.ApplyConfiguration(new ForSqLiteGuildEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLiteGuildRankEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLiteWorldEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new ForSqLiteAccountPremiumHistoryEntityConfiguration());
         }
         else
         {
