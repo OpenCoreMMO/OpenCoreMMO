@@ -11,18 +11,24 @@ public class CreateAccountCommand(IAccountRepository accountRepository) : IReque
 {
     public async Task<OutputResponse> Handle(CreateAccountRequest request, CancellationToken cancellationToken)
     {
-        var anotherAccount = await accountRepository.GetByEmail(request.Email);
+        var anotherAccount = await accountRepository.GetByEmailOrAccountName(request.Email, request.AccountName);
         
-        if (anotherAccount is not null)
+        if (anotherAccount?.EmailAddress is not null)
             return new OutputResponse(ErrorMessage.AccountEmailAlreadyExist);
         
-        await accountRepository.Insert(new AccountEntity
+        if (anotherAccount?.AccountName is not null)
+            return new OutputResponse(ErrorMessage.AccountNameAlreadyExist);
+
+        var account = new AccountEntity
         {
             Password = request.Password,
             CreatedAt = DateTime.UtcNow,
             EmailAddress = request.Email,
-        });
+            AccountName = request.AccountName,
+        };
+        
+        await accountRepository.Insert(account);
 
-        return new();
+        return new OutputResponse(account.Id);
     }
 }

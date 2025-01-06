@@ -19,7 +19,8 @@ public class BanAccountCommand(IAccountRepository accountRepository) : IRequestH
             return new OutputResponse(ErrorMessage.AccountAlreadyBanished);
         
         anotherAccount.BanishmentReason = request.Reason;
-        anotherAccount.BanishedAt = DateTime.UtcNow;
+        anotherAccount.BanishedAt = anotherAccount.BanishedAt.HasValue ? anotherAccount.BanishedAt : DateTime.UtcNow;
+        anotherAccount.BanishedEndAt = anotherAccount.BanishedAt?.AddDays(request.Days);
         anotherAccount.BannedBy = 1; // TODO: Get the user id from the request with the token
         
         await accountRepository.Update(anotherAccount);

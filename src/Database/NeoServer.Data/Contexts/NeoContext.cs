@@ -29,6 +29,8 @@ public class NeoContext : DbContext
     public DbSet<PlayerOutfitAddonEntity> PlayerOutfitAddons { get; set; }
     public DbSet<PlayerStorageEntity> PlayerStorages { get; set; }
     public DbSet<WorldRecordEntity> WorldRecords { get; set; }
+    
+    public DbSet<AccountPremiumHistoryEntity> AccountPremiumHistories { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -59,6 +61,7 @@ public class NeoContext : DbContext
             modelBuilder.ApplyConfiguration(new GuildEntityConfiguration());
             modelBuilder.ApplyConfiguration(new GuildRankEntityConfiguration());
             modelBuilder.ApplyConfiguration(new WorldEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new AccountPremiumHistoryEntityConfiguration());
         }
 
         modelBuilder.ApplyConfiguration(new PlayerQuestEntityConfiguration());

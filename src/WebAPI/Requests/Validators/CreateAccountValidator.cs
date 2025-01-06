@@ -18,5 +18,10 @@ public class CreateAccountValidator : AbstractValidator<CreateAccountRequest>
             .Matches("[A-Z]").WithMessage("Password must contain at least one uppercase letter (A-Z).")
             .Matches("[0-9]").WithMessage("Password must contain at least one number (0-9).")
             .Matches("^[a-zA-Z0-9]*$").WithMessage("Password contains invalid characters. Only letters and numbers are allowed.");
+
+        RuleFor(x => x.AccountName)
+            .NotEmpty()
+            .Length(4, 29).WithMessage("Account name must be between 4 and 29 characters.")
+            .WithMessage("Account name is required.");
     }
 }

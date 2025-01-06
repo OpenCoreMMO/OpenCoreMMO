@@ -15,9 +15,6 @@ public class ChangePasswordAccountCommand(IAccountRepository accountRepository) 
         if (anotherAccount is null)
             return new OutputResponse(ErrorMessage.AccountDoesNotExist);
         
-        if (anotherAccount.BanishedAt is not null)
-            return new OutputResponse(ErrorMessage.AccountDoesNotExist);
-        
         if (anotherAccount.Password.Trim() != request.OldPassword) // TODO: Hash the password
             return new OutputResponse(ErrorMessage.AccountInvalidPassword);
         

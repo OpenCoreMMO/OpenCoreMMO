@@ -61,6 +61,15 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
             .Where(x => x.Account.EmailAddress.Equals(accountName) && x.Online)
             .FirstOrDefaultAsync();
     }
+    
+    public async Task<AccountEntity> GetByEmailOrAccountName(string email, string accountName)
+    {
+        await using var context = NewDbContext;
+
+        return await context.Accounts
+            .Where(x => x.EmailAddress.ToLower().Equals(email.ToLower()) || x.AccountName.ToLower().Equals(accountName.ToLower()))
+            .SingleOrDefaultAsync();
+    }
 
     #endregion
 
@@ -93,15 +102,6 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
                 => x.SetProperty(y => y.BannedBy, bannedByAccountId)
                     .SetProperty(y => y.BanishmentReason, reason)
                     .SetProperty(y => y.BanishedAt, DateTime.Now));
-    }
-
-    public async Task<AccountEntity> GetByEmail(string email)
-    {
-        await using var context = NewDbContext;
-        
-        return await context.Accounts
-            .Where(x => x.EmailAddress.ToLower().Equals(email.ToLower()))
-            .SingleOrDefaultAsync();
     }
 
     #endregion

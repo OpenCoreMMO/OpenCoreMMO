@@ -18,7 +18,7 @@ public class AccountController(IMediator mediator) : BaseController
         if (!result.IsSuccess)
             return UnprocessableEntity(result.ErrorMessage);
         
-        return Ok(SuccessMessage.AccountCreated);
+        return Ok(SuccessMessage.AccountCreated.Replace("{id}", result.Identifier.ToString()));
     }
     
     //todo: The permission to ban an account should be restricted to a specific role "admin"
@@ -48,7 +48,6 @@ public class AccountController(IMediator mediator) : BaseController
         
         return Ok(SuccessMessage.AccountBanned);
     }
-    
     
     //todo: The permission to ban an account should be restricted to a specific role "user by website"
     [HttpPatch("{accountId}/change-password")]
