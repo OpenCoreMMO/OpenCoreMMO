@@ -14,7 +14,7 @@ function playerLogin.onLogin(player)
 	player:registerEvent("PlayerKill")
 	-- player:registerEvent("DropLoot")
 
-	--player:registerEvent("onthinkExample")
+	--player:registerEvent("onThinkExample")
 	--player:registerEvent("PlayerOnThinkTest")
 
 	return true
