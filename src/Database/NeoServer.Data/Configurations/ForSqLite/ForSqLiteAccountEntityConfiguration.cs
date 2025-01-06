@@ -9,8 +9,6 @@ public class ForSqLiteAccountEntityConfiguration : IEntityTypeConfiguration<Acco
 {
     public void Configure(EntityTypeBuilder<AccountEntity> builder)
     {
-        builder.ToTable("Account");
-
         builder.HasKey(e => e.Id);
 
         builder.HasIndex(e => e.EmailAddress)

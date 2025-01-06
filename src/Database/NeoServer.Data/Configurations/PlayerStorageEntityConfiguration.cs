@@ -8,8 +8,6 @@ public class PlayerStorageEntityConfiguration : IEntityTypeConfiguration<PlayerS
 {
     public void Configure(EntityTypeBuilder<PlayerStorageEntity> builder)
     {
-        builder.ToTable("PlayerStorage");
-
         builder.HasKey(e => new { e.PlayerId, e.Key });
 
         builder.Property(e => e.PlayerId).IsRequired();

@@ -1,6 +1,9 @@
-﻿using System.Data.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Data.Helpers;
 
 public class DBResult
 {

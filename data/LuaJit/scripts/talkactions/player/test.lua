@@ -136,7 +136,7 @@ function talkAction.onSay(player, words, param)
 	if resultStoreId then
 		repeat
 			local id = Result.getNumber(resultStoreId, "id")
-			local townId = Result.getNumber(resultStoreId, "townId")
+			local townId = Result.getNumber(resultStoreId, "town_id")
 			local name = Result.getString(resultStoreId, "name")
             logger.info(string.format("id: %d, townId: %d, name: %s", id, townId, name))
 		until not Result.next(resultStoreId)
@@ -151,7 +151,7 @@ function talkAction.onSay(player, words, param)
 	if resultAsyncStoreId then
 		repeat
 			local id = Result.getNumber(resultAsyncStoreId, "id")
-			local townId = Result.getNumber(resultAsyncStoreId, "townId")
+			local townId = Result.getNumber(resultAsyncStoreId, "town_id")
 			local name = Result.getString(resultAsyncStoreId, "name")
             logger.info(string.format("id: %d, townId: %d, name: %s", id, townId, name))
 		until not Result.next(resultAsyncStoreId)
