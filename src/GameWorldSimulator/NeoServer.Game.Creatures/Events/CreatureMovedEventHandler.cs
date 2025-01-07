@@ -1,7 +1,6 @@
 ﻿using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Location.Structs;
 
 namespace NeoServer.Game.Creatures.Events;
@@ -11,8 +10,6 @@ public class CreatureMovedEventHandler : IGameEventHandler
     public void Execute(ICreature creature, Location fromLocation, Location toLocation,
         ICylinderSpectator[] spectators)
     {
-        if (creature is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters)) return;
-
         foreach (var cylinderSpectator in spectators)
         {
             var spectator = cylinderSpectator.Spectator;

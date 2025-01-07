@@ -55,6 +55,11 @@ public class LuaStartup : ILuaStartup
     private readonly ICreatureFunctions _creatureFunctions;
 
     /// <summary>
+    /// A reference to the <see cref="ICreatureEventFunctions"/> instance in use.
+    /// </summary>
+    private readonly ICreatureEventFunctions _creatureEventFunctions;
+
+    /// <summary>
     /// A reference to the <see cref="IEnumFunctions"/> instance in use.
     /// </summary>
     private readonly IEnumFunctions _enumFunctions;
@@ -147,6 +152,7 @@ public class LuaStartup : ILuaStartup
         IConfigFunctions configFunctions,
         IContainerFunctions containerFunctions,
         ICreatureFunctions creatureFunctions,
+        ICreatureEventFunctions creatureEventFunctions,
         IEnumFunctions enumFunctions,
         IGameFunctions gameFunctions,
         IGlobalFunctions globalFunctions,
@@ -173,6 +179,7 @@ public class LuaStartup : ILuaStartup
         _configFunctions = configFunctions;
         _containerFunctions = containerFunctions;
         _creatureFunctions = creatureFunctions;
+        _creatureEventFunctions = creatureEventFunctions;
         _enumFunctions = enumFunctions;
         _gameFunctions = gameFunctions;
         _globalFunctions = globalFunctions;
@@ -215,6 +222,7 @@ public class LuaStartup : ILuaStartup
         _actionFunctions.Init(luaState);
         _configFunctions.Init(luaState);
         _creatureFunctions.Init(luaState);
+        _creatureEventFunctions.Init(luaState);
         _enumFunctions.Init(luaState);
         _gameFunctions.Init(luaState);
         _globalFunctions.Init(luaState);

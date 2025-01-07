@@ -8,6 +8,7 @@ namespace NeoServer.Loaders.Chats;
 [Serializable]
 public class ChannelModel
 {
+    public ushort Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public bool Enabled { get; set; } = true;

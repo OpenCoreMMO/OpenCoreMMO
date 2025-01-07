@@ -29,6 +29,7 @@ public class StaticToDynamicTileService : IStaticToDynamicTileService
 
     public ITile TransformIntoDynamicTile(ITile tile)
     {
+        if (!tile.Location) return tile;
         if (tile is not IStaticTile staticTile) return tile;
 
         var itemsId = staticTile.AllClientIdItems;

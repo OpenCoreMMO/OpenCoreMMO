@@ -34,14 +34,19 @@ public class LuaScriptGameManager : IScriptGameManager
     private readonly IActions _actions;
 
     /// <summary>
-    /// A reference to the <see cref="ITalkActions"/> instance in use.
+    /// A reference to the <see cref="ICreatureEvents"/> instance in use.
     /// </summary>
-    private readonly ITalkActions _talkActions;
+    private readonly ICreatureEvents _creatureEvents;
 
     /// <summary>
     /// A reference to the <see cref="IGlobalEvents"/> instance in use.
     /// </summary>
     private readonly IGlobalEvents _globalEvents;
+
+    /// <summary>
+    /// A reference to the <see cref="ITalkActions"/> instance in use.
+    /// </summary>
+    private readonly ITalkActions _talkActions;
 
     #endregion
 
@@ -51,13 +56,16 @@ public class LuaScriptGameManager : IScriptGameManager
         ILuaStartup luaStartup,
         ILogger logger,
         IActions actions,
-        ITalkActions talkActions,
-        IGlobalEvents globalEvents)
+        ICreatureEvents creatureEvents,
+        IGlobalEvents globalEvents,
+        ITalkActions talkActions)
     {
         _luaStartup = luaStartup;
         _logger = logger;
 
         _actions = actions;
+        _creatureEvents = creatureEvents;
+        _globalEvents = globalEvents;
         _talkActions = talkActions;
         _globalEvents = globalEvents;
     }
@@ -112,7 +120,9 @@ public class LuaScriptGameManager : IScriptGameManager
         if (target != null)
         {
             if (target is ITile tile)
+            {
                 target = tile.TopItemOnStack;
+            }
             else if (target is ICreature creature)
             {
                 toPos = creature.Location;
@@ -124,7 +134,7 @@ public class LuaScriptGameManager : IScriptGameManager
             return action.ExecuteUse(
                 player,
                 item,
-                player.Location,
+                fromPos,
                 target,
                 toPos,
                 isHotkey);
@@ -145,6 +155,16 @@ public class LuaScriptGameManager : IScriptGameManager
 
     public void GlobalEventExecuteSave()
         => _globalEvents.Save();
+
+    //public void CreatureEventExecuteOnPlayerLogin(IPlayer player) => _creatureEvents.PlayerLogin(player);
+    
+    //public void CreatureEventExecuteOnPlayerLogout(IPlayer player) => _creatureEvents.PlayerLogout(player);
+
+    //public void CreatureEventExecuteOnThink(ICreature creature, int interval)
+    //{
+    //    foreach (var onThinkEvent in _creatureEvents.GetCreatureEvents(CreatureEventType.CREATURE_EVENT_THINK))
+    //        onThinkEvent.ExecuteOnThink(creature, interval);
+    //}
 
     #endregion
 }

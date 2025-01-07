@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
@@ -39,11 +41,14 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     protected virtual string InspectionText => $"{Name}.";
     protected virtual string CloseInspectionText => $"{Name}.";
     public Direction LastDirection { get; protected set; }
+
     public event RemoveCreature OnCreatureRemoved;
 
     public event ChangeOutfit OnChangedOutfit;
 
     public event Say OnSay;
+
+    public event Think OnThink;
 
     public IDynamicTile Tile
     {
@@ -153,6 +158,11 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         if (string.IsNullOrWhiteSpace(message) || talkType == SpeechType.None) return;
         OnSay?.Invoke(this, talkType, message, receiver);
+    }
+
+    public virtual void Think(int interval)
+    {
+        OnThink?.Invoke(this, interval);
     }
 
     public void OnMoved(IThing to)

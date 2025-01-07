@@ -38,6 +38,8 @@ public static class TileFunctions
 
         var staticToDynamicTileService = IoC.GetInstance<IStaticToDynamicTileService>();
 
+        tile = tile is IStaticTile staticTile ? staticTile.CreateClone(location) : tile;
+
         var dynamicTile = staticToDynamicTileService.TransformIntoDynamicTile(tile) as IDynamicTile;
 
         return dynamicTile?.RemoveTopItem(true).Succeeded ?? false;
@@ -49,6 +51,8 @@ public static class TileFunctions
         var tile = map.GetTile(location);
 
         var staticToDynamicTileService = IoC.GetInstance<IStaticToDynamicTileService>();
+
+        tile = tile is IStaticTile staticTile ? staticTile.CreateClone(location) : tile;
 
         var dynamicTile = staticToDynamicTileService.TransformIntoDynamicTile(tile) as IDynamicTile;
 

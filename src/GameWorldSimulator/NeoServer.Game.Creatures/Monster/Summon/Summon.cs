@@ -11,7 +11,7 @@ public class Summon : Monster
         Master = master;
         if (master is not ICombatActor actor) return;
 
-        actor.OnKilled += OnMasterKilled;
+        actor.OnDeath += OnMasterKilled;
         actor.OnTargetChanged += OnMasterTargetChange;
     }
 
@@ -31,21 +31,21 @@ public class Summon : Monster
     private void Die()
     {
         HealthPoints = 0;
-        OnDeath(this);
+        Death(this);
     }
 
-    public override void OnDeath(IThing by)
+    public override void Death(IThing by)
     {
-        base.OnDeath(by);
+        base.Death(by);
 
         if (Master is not ICombatActor actor) return;
-        actor.OnKilled -= OnMasterKilled;
+        actor.OnDeath -= OnMasterKilled;
         actor.OnTargetChanged -= OnMasterTargetChange;
     }
 
     private void OnMasterKilled(ICombatActor master, IThing by, ILoot loot)
     {
-        master.OnKilled -= OnMasterKilled;
+        master.OnDeath -= OnMasterKilled;
         master.OnTargetChanged -= OnMasterTargetChange;
         Die();
     }

@@ -30,6 +30,7 @@ using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
 using NeoServer.Game.Creatures.Models;
 using NeoServer.Game.Creatures.Models.Bases;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace NeoServer.Game.Creatures.Player;
 
@@ -711,11 +712,9 @@ public class Player : CombatActor, IPlayer
         return Result.Success;
     }
 
-    public bool Feed(IFood food)
+    public bool Feed(int duration)
     {
-        if (food is null) return false;
-
-        var regenerationMs = (uint)food.Duration * 1000;
+        var regenerationMs = (uint)duration * 1000;
         const uint maxRegenerationTime = (uint)1200 * 1000; //20 minutes
 
         if (Conditions.TryGetValue(ConditionType.Regeneration, out var condition))
@@ -736,6 +735,12 @@ public class Player : CombatActor, IPlayer
         }
 
         return true;
+    }
+
+    public bool Feed(IFood food)
+    {
+        if (food is null) return false;
+        return Feed(food.Duration);
     }
 
     public void SetAsHungry()
@@ -996,7 +1001,6 @@ public class Player : CombatActor, IPlayer
         Skills[skill].IncreaseCounter(value, rate);
     }
 
-
     public void DecreaseSkillCounter(SkillType skill, long value)
     {
         if (!Skills.ContainsKey(skill)) return;
@@ -1090,9 +1094,9 @@ public class Player : CombatActor, IPlayer
         return null;
     }
 
-    public override void OnDeath(IThing by)
+    public override void Death(IThing by)
     {
-        base.OnDeath(by);
+        base.Death(by);
         DecreaseExp();
         MoveToTemple();
     }
@@ -1115,6 +1119,11 @@ public class Player : CombatActor, IPlayer
         return (Level + 50) * .01 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
     }
 
+    public void ExtendedOpcode(byte code, string text)
+    {
+        OnExtendedOpcode?.Invoke(this, code, text ?? string.Empty);
+    }
+   
     #region Storage
 
     public IDictionary<int, int> Storages { get; }
@@ -1157,6 +1166,7 @@ public class Player : CombatActor, IPlayer
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
+    public event ExtendedOpcode OnExtendedOpcode;
 
     #endregion
 }

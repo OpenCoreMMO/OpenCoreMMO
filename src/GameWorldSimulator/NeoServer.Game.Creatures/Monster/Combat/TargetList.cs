@@ -89,7 +89,7 @@ public class TargetList : IEnumerable<CombatTarget>
 
     private void AttachToTargetEvents(ICombatActor creature)
     {
-        creature.OnKilled += OnTargetDie;
+        creature.OnDeath += OnTargetDie;
         creature.OnChangedVisibility += OnTargetDisappeared;
         creature.OnCreatureMoved += OnTargetMoved;
         if (creature is IPlayer player) player.OnLoggedOut += OnTargetRemoved;
@@ -97,7 +97,7 @@ public class TargetList : IEnumerable<CombatTarget>
 
     private void DettachFromTargetEvents(ICombatActor creature)
     {
-        creature.OnKilled -= OnTargetDie;
+        creature.OnDeath -= OnTargetDie;
         creature.OnChangedVisibility -= OnTargetDisappeared;
         creature.OnCreatureMoved -= OnTargetMoved;
         if (creature is IPlayer player) player.OnLoggedOut -= OnTargetRemoved;

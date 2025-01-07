@@ -8,12 +8,15 @@ using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public class Actions : Scripts, IActions
+public class Actions : IActions
 {
+    private ILogger _logger;
+
     #region Constructors
 
-    public Actions(ILogger logger) : base(logger)
+    public Actions(ILogger logger) 
     {
+        _logger = logger;
     }
 
     #endregion

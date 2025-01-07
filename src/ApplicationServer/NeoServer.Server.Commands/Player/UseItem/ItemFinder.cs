@@ -26,17 +26,12 @@ public class ItemFinderService
         var itemFound = itemLocation switch
         {
             _ when itemLocation.Type == LocationType.Ground => _gameServer.Map[itemLocation] is not { } tile ? null : tile.TopItemOnStack,
-            _ when itemLocation.Type == LocationType.Slot => player.Inventory[Slot.Backpack],
+            _ when itemLocation.Type == LocationType.Slot => player.Inventory[itemLocation.Slot],
             _ when itemLocation.Type == LocationType.Container => player.Containers[itemLocation.ContainerId][itemLocation.ContainerSlot],
             _ => null
         };
 
-        if (itemFound is not null)
-        {
-            itemFound.SetNewLocation(itemLocation, force: true);
-            return itemFound;
-        }
-
-        return itemLocation.Type == LocationType.Slot ? player.Inventory[itemLocation.Slot] : null;
+        itemFound?.SetNewLocation(itemLocation, force: true);
+        return itemFound;
     }
 }

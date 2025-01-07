@@ -10,13 +10,17 @@ namespace NeoServer.Server.Routines.Creatures;
 
 public class GameCreatureRoutine
 {
+    private const ushort EVENT_CREATURE_THINK_INTERVAL = 1000;
     private const ushort EVENT_CHECK_CREATURE_INTERVAL = 500;
     private readonly IGameServer _game;
     private readonly PlayerLogOutCommand _playerLogOutCommand;
     private readonly SpawnManager _spawnManager;
     private readonly ISummonService _summonService;
 
-    public GameCreatureRoutine(IGameServer game, SpawnManager spawnManager, PlayerLogOutCommand playerLogOutCommand,
+    public GameCreatureRoutine(
+        IGameServer game,
+        SpawnManager spawnManager,
+        PlayerLogOutCommand playerLogOutCommand,
         ISummonService summonService)
     {
         _game = game;
@@ -32,6 +36,8 @@ public class GameCreatureRoutine
         foreach (var creature in _game.CreatureManager.GetCreatures())
         {
             if (creature is null or ICombatActor { IsDead: true }) continue;
+
+            creature.Think(EVENT_CREATURE_THINK_INTERVAL);
 
             CheckPlayer(creature);
 

@@ -212,30 +212,27 @@ public enum ShootTypeType : byte
     CONST_ANI_WEAPONTYPE = 0xFE // 254
 }
 
-//public enum SpeakClassesType : byte
-//{
-//    TALKTYPE_SAY = 1,
-//    TALKTYPE_WHISPER = 2,
-//    TALKTYPE_YELL = 3,
-//    TALKTYPE_PRIVATE_FROM = 4,
-//    TALKTYPE_PRIVATE_TO = 5,
-//    TALKTYPE_CHANNEL_MANAGER = 6,
-//    TALKTYPE_CHANNEL_Y = 7,
-//    TALKTYPE_CHANNEL_O = 8,
-//    TALKTYPE_SPELL_USE = 9,
-//    TALKTYPE_PRIVATE_NP = 10,
-//    TALKTYPE_NPC_UNKOWN = 11, /* no effect (?)*/
-//    TALKTYPE_PRIVATE_PN = 12,
-//    TALKTYPE_BROADCAST = 13,
-//    TALKTYPE_CHANNEL_R1 = 14, // red - #c text
-//    TALKTYPE_PRIVATE_RED_FROM = 15, //@name@text
-//    TALKTYPE_PRIVATE_RED_TO = 16, //@name@text
-//    TALKTYPE_MONSTER_SAY = 36,
-//    TALKTYPE_MONSTER_YELL = 37,
-
-//    TALKTYPE_MONSTER_LAST_OLDPROTOCOL = 38, /* Dont forget about the CHANNEL_R2*/
-//    TALKTYPE_CHANNEL_R2 = 0xFF // #d
-//};
+public enum SpeakClassesType : byte
+{
+    TALKTYPE_SAY = 1,
+    TALKTYPE_WHISPER = 2,
+    TALKTYPE_YELL = 3,
+    TALKTYPE_PRIVATE_PN = 4,
+    TALKTYPE_PRIVATE_NP = 5,
+    TALKTYPE_PRIVATE = 6,
+    TALKTYPE_CHANNEL_Y = 7,
+    TALKTYPE_CHANNEL_W = 8,
+    TALKTYPE_RVR_CHANNEL = 9,
+    TALKTYPE_RVR_ANSWER = 10,
+    TALKTYPE_RVR_CONTINUE = 11,
+    TALKTYPE_BROADCAST = 12,
+    TALKTYPE_CHANNEL_R1 = 13, //red - #c text
+    TALKTYPE_PRIVATE_RED = 14, //@name@text
+    TALKTYPE_CHANNEL_O = 15, //@name@text
+    TALKTYPE_CHANNEL_R2 = 17, //#d
+    TALKTYPE_MONSTER_SAY = 19,
+    TALKTYPE_MONSTER_YELL = 20,
+};
 
 public enum MessageClassesType : byte
 {

@@ -15,7 +15,11 @@ public delegate void RemoveCreature(ICreature creature);
 
 public delegate void StopWalk(IWalkableCreature creature);
 
-public delegate void Die(ICombatActor creature, IThing by, ILoot loot);
+public delegate void BeforeDeath(ICombatActor creature, ICombatActor killer, int realDamage);
+
+public delegate void Death(ICombatActor creature, IThing by, ILoot loot);
+
+public delegate void Kill(ICombatActor creature, ICombatActor target, bool lastHit);
 
 public delegate void GainExperience(ICreature creature, long exp);
 
@@ -30,6 +34,8 @@ public delegate void AddCondition(ICreature creature, ICondition condition);
 public delegate void RemoveCondition(ICreature creature, ICondition condition);
 
 public delegate void ChangeOutfit(ICreature creature, IOutfit outfit);
+
+public delegate void Think(ICreature creature, int interval);
 
 public interface ICreature : IMovableThing
 {
@@ -141,6 +147,11 @@ public interface ICreature : IMovableThing
     event Say OnSay;
 
     /// <summary>
+    ///     Fires when creature thinks something
+    /// </summary>
+    event Think OnThink;
+
+    /// <summary>
     ///     Fires when creature changes outfit
     /// </summary>
     event ChangeOutfit OnChangedOutfit;
@@ -172,6 +183,12 @@ public interface ICreature : IMovableThing
     ///     Says a message
     /// </summary>
     void Say(string message, SpeechType talkType, ICreature receiver = null);
+
+    /// <summary>
+    ///     Thinks something
+    /// </summary>
+
+    void Think(int interval);
 
     /// <summary>
     ///     Sets new outfit and store current as last outfit

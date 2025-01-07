@@ -1,19 +1,18 @@
 ## Revscript support using native LuaJIT
 Simple documentation with all scripts and functions developed using LuaJIT to working with Revscript TFS and Canary retrocompatibility.
 
-### Implemented Scripts (26)
+### Implemented Scripts (39)
 
-**Actions Items (9)**
+**Actions (15)**
 
-- crowbar.lua
-- fishing.lua
-- kitchen_knife.lua
+**Actions Items (1)**
+
 - ladder_up.lua
-- machete.lua
-- pick.lua
-- rope.lua
-- shovel.lua
-- scythe.lua
+
+**Actions Others (2)**
+
+- blueberry_bush.lua
+- foods.lua
 
 **Actions Quests (4)**
 
@@ -21,6 +20,17 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - dwarven_shield.lua
 - spike_sword.lua
 - combat_knife_quest.lua
+
+**Actions Tools (8)**
+
+- crowbar.lua
+- fishing.lua
+- kitchen_knife.lua
+- machete.lua
+- pick.lua
+- rope.lua
+- shovel.lua
+- scythe.lua
 
 **Talk Actions (11)**
 
@@ -44,6 +54,17 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - example_think.lua
 - online_record.lua
 
+**Creature Scripts (8)**
+
+- advance.lua
+- death.lua
+- kill.lua
+- login.lua
+- logout.lua
+- prepare_death.lua
+- text_edit.lua
+- extended_opcode.lua
+
 ### Implemented Libs using lua (8)
 
 - creature.lua
@@ -55,7 +76,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (18) and Functions (124)
+### Tables (19) and Functions (145)
 
 **Action (7)**
 
@@ -74,7 +95,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - configManager:getBoolean(type)
 - configManager:getFloat(type)
 
-**Creature (7)**
+**Creature (11)**
 
 - Creature(id or name or userdata)
 - creature:getId()
@@ -83,6 +104,28 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - creature:getDirection()
 - creature:isCreature()
 - creature:isInGhostMode()
+- creature:getEvents(type)
+- creature:registerEvent(name)
+- creature:unregisterEvent(name)
+- creature:say(text, type)
+
+**CreatureEvent (15)**
+
+- CreatureEvent()
+- creatureEvent:type(callback)
+- creatureEvent:register()
+- creatureEvent:onLogin(callback)
+- creatureEvent:onLogout(callback)
+- creatureEvent:onThink(callback)
+- creatureEvent:onPrepareDeath(callback)
+- creatureEvent:onDeath(callback)
+- creatureEvent:onKill(callback)
+- creatureEvent:onAdvance(callback)
+- creatureEvent:onModalWindow(callback)
+- creatureEvent:onTextEdit(callback)
+- creatureEvent:onHealthChange(callback)
+- creatureEvent:onManaChange(callback)
+- creatureEvent:onExtendedOpcode(callback)
 
 **Container (3)**
 
@@ -99,11 +142,12 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - Game.reload(reloadType)
 - Game.getPlayers()
 
-**Global (3)**
+**Global (4)**
 
 - rawgetmetatable(metatableName)
 - addEvent(callback, delay, ...)
 - stopEvent(eventid)
+- sendChannelMessage(channelId, type, message)
 
 **GlobalEvent (12)**
 
@@ -179,7 +223,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 
 - Npc(id or userdata)
 
-**Player (15)**
+**Player (16)**
 
 - Player(id or guid or name or userdata)
 - player:teleportTo(position, pushMovement = false)
@@ -196,6 +240,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - player:sendTextMessage(type, text)
 - player:isPzLocked()
 - player:setGhostMode(positionEx)
+- player:feed(food)
 
 **Position (8)**
 
@@ -234,7 +279,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile:hasFlag(flag)
 - tile:queryAdd(thing, flags)
 
-### Enums (11) / Constants (200++)
+### Enums (12) / Constants (250++)
 
 **DirectionsType**
 
@@ -602,6 +647,27 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - CONST_PROP_IMMOVABLENOFIELDBLOCKPATH,
 - CONST_PROP_NOFIELDBLOCKPATH,
 - CONST_PROP_SUPPORTHANGABLE
+
+**SpeakClassesType**
+
+- TALKTYPE_SAY = 1,
+- TALKTYPE_WHISPER = 2,
+- TALKTYPE_YELL = 3,
+- TALKTYPE_PRIVATE_PN = 4,
+- TALKTYPE_PRIVATE_NP = 5,
+- TALKTYPE_PRIVATE = 6,
+- TALKTYPE_CHANNEL_Y = 7,
+- TALKTYPE_CHANNEL_W = 8,
+- TALKTYPE_RVR_CHANNEL = 9,
+- TALKTYPE_RVR_ANSWER = 10,
+- TALKTYPE_RVR_CONTINUE = 11,
+- TALKTYPE_BROADCAST = 12,
+- TALKTYPE_CHANNEL_R1 = 13,
+- TALKTYPE_PRIVATE_RED = 14,
+- TALKTYPE_CHANNEL_O = 15,
+- TALKTYPE_CHANNEL_R2 = 17,
+- TALKTYPE_MONSTER_SAY = 19,
+- TALKTYPE_MONSTER_YELL = 20,
 
 ### Demonstrations
 

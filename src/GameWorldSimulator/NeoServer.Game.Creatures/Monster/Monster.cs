@@ -14,6 +14,7 @@ using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
@@ -141,6 +142,10 @@ public class Monster : WalkableMonster, IMonster
         if (creature is Summon.Summon summon && summon.Master.CreatureId == CreatureId) return;
 
         if (!enemy.CanBeAttacked) return;
+        
+        if (creature is IPlayer player && (
+            player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters) ||
+            player.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))) return;
 
         var canSee = CanSee(creature.Location, (int)MapViewPort.MaxClientViewPortX + 1,
             (int)MapViewPort.MaxClientViewPortX + 1);
@@ -395,7 +400,7 @@ public class Monster : WalkableMonster, IMonster
         Defending = false;
     }
 
-    public override void OnDeath(IThing by)
+    public override void Death(IThing by)
     {
         if (by is IPlayer player && ReferenceEquals(player.CurrentTarget, this))
             player.StopAttack();
@@ -403,7 +408,7 @@ public class Monster : WalkableMonster, IMonster
         Targets?.Clear();
 
         StopDefending();
-        base.OnDeath(by);
+        base.Death(by);
     }
 
     public override ILoot DropLoot()
@@ -458,12 +463,12 @@ public class Monster : WalkableMonster, IMonster
 
     private void AttachToSummonEvents(IMonster monster)
     {
-        monster.OnKilled += OnSummonDie;
+        monster.OnDeath += OnSummonDie;
     }
 
     private void OnSummonDie(ICombatActor creature, IThing by, ILoot loot)
     {
-        creature.OnKilled -= OnSummonDie;
+        creature.OnDeath -= OnSummonDie;
         if (!_aliveSummons.TryGetValue(creature.Name, out var count)) return;
 
         if (count == 1)

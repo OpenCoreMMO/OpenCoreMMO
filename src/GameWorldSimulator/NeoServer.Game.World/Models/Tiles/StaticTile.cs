@@ -14,17 +14,23 @@ public class StaticTile : BaseTile, IStaticTile
 {
     private IItem _topItemOnStack;
 
-    public StaticTile(Coordinate coordinate, params IItem[] items)
+    public StaticTile(Coordinate coordinate, params IItem[] items) : this(new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z), items)
     {
-        SetNewLocation(new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z));
+    }
+
+    public StaticTile(Location location, params IItem[] items)
+    {
+        SetNewLocation(location);
         Raw = GetRaw(items);
         ThingsCount = items.Length;
+        Items = items;
     }
 
     public override int ThingsCount { get; }
     public byte[] Raw { get; }
     public override IItem TopItemOnStack => _topItemOnStack;
     public override ICreature TopCreatureOnStack => null;
+    public IItem[] Items { get; }
 
     public override bool TryGetStackPositionOfThing(IPlayer player, IThing thing, out byte stackPosition)
     {
@@ -94,5 +100,13 @@ public class StaticTile : BaseTile, IStaticTile
     {
         return HashHelper.START
             .CombineHashCode(Raw);
+    }
+
+    public IStaticTile CreateClone(Location location)
+    {
+        foreach (var item in Items)
+            item.SetNewLocation(location, force: true);
+
+        return new StaticTile(location, Items);
     }
 }

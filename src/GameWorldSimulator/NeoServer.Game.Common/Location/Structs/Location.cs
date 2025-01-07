@@ -331,7 +331,6 @@ public struct Location : IEquatable<Location>, IConvertible
         }
     }
 
-
     public static Location Zero => new(0, 0, 0);
 
     public static Location Inventory(Slot slot)
@@ -453,4 +452,7 @@ public struct Location : IEquatable<Location>, IConvertible
     {
         return Z == onItemLocation.Z;
     }
+
+    public static bool operator !(Location location)
+        => location == Zero;
 }

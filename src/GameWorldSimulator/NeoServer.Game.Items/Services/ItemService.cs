@@ -25,9 +25,8 @@ public class ItemService : IItemService
         _map = map;
     }
 
-    public IItem Transform(Location location, ushort fromItemId, ushort toItemId)
-    {
-        var tile = _map.GetTile(location);
+    public IItem Transform(ITile tile, ushort fromItemId, ushort toItemId)
+    { 
         if (tile is null) return null;
 
         tile = _staticToDynamicTileService.TransformIntoDynamicTile(tile);
@@ -41,11 +40,23 @@ public class ItemService : IItemService
         return newItem;
     }
 
+    public IItem Transform(Location location, ushort fromItemId, ushort toItemId)
+    {
+        var tile = _map.GetTile(location);
+        if (tile is null) return null;
+
+        tile = tile is IStaticTile staticTile ? staticTile.CreateClone(location) : tile;
+        
+        return Transform(tile, fromItemId, toItemId);
+    }
+
     public IItem Create(Location location, ushort id)
     {
         var tile = _map.GetTile(location);
 
         if (tile is null) return null;
+
+        tile = tile is IStaticTile staticTile ? staticTile.CreateClone(location) : tile;
 
         tile = _staticToDynamicTileService.TransformIntoDynamicTile(tile);
 

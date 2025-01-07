@@ -283,7 +283,7 @@ public class PlayerTest
             { SkillType.Level, new Skill(SkillType.Level, 9, 9100) }
         }) as Player.Player;
 
-        player.OnDeath(null);
+        player.Death(null);
 
         Assert.Equal(8190, (double)player.Experience);
         Assert.Equal(9, player.Level);
@@ -296,7 +296,7 @@ public class PlayerTest
         {
             { SkillType.Level, new Skill(SkillType.Level, 9, 6500) }
         }) as Player.Player;
-        player.OnDeath(null);
+        player.Death(null);
 
         Assert.Equal(5850, (double)player.Experience);
         Assert.Equal(8, player.Level);
@@ -314,7 +314,7 @@ public class PlayerTest
 
         Assert.NotEqual(player.Location, townCoordinate.Location);
 
-        player.OnDeath(null);
+        player.Death(null);
 
         Assert.Equal(player.Location, townCoordinate.Location);
     }

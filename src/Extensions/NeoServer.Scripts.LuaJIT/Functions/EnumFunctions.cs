@@ -25,6 +25,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         RegisterEnum<ItemIdType>(L);
         RegisterEnum<ItemPropertyType>(L);
         RegisterEnum<MagicEffectClassesType>(L);
+        RegisterEnum<SpeakClassesType>(L);
         RegisterEnum<MessageClassesType>(L);
         RegisterEnumCustom<PlayerFlag>(L, false);
         RegisterEnum<ReloadType>(L);

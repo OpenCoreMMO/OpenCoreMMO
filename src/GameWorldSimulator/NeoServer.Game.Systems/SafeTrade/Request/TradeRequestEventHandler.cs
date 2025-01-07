@@ -30,7 +30,7 @@ internal static class TradeRequestEventHandler
         {
             player.OnCreatureMoved += OnPlayerMoved;
             player.OnLoggedOut += OnPlayerLogout;
-            player.OnKilled += OnPlayerKilled;
+            player.OnDeath += OnPlayerDeath;
 
             // Add player ID to the HashSet to prevent multiple subscriptions
             PlayerEventSubscription.Add(player.CreatureId);
@@ -72,7 +72,7 @@ internal static class TradeRequestEventHandler
         {
             player.OnCreatureMoved -= OnPlayerMoved;
             player.OnLoggedOut -= OnPlayerLogout;
-            player.OnKilled -= OnPlayerKilled;
+            player.OnDeath -= OnPlayerDeath;
 
             // Remove player ID from the HashSet to allow future subscriptions
             PlayerEventSubscription.Remove(player.CreatureId);
@@ -121,7 +121,7 @@ internal static class TradeRequestEventHandler
         CancelTradeAction?.Invoke(tradeRequest);
     }
 
-    private static void OnPlayerKilled(ICombatActor creature, IThing by, ILoot loot)
+    private static void OnPlayerDeath(ICombatActor creature, IThing by, ILoot loot)
     {
         if (creature is not IPlayer player) return;
         var tradeRequest = TradeRequestTracker.GetTradeRequest(player);

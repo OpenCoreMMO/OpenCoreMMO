@@ -1,13 +1,16 @@
 ﻿using LuaNET;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
+using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
 public class TalkActionFunctions : LuaScriptInterface, ITalkActionFunctions
 {
-    public TalkActionFunctions() : base(nameof(TalkActionFunctions))
+    private static ILogger _logger;
+    public TalkActionFunctions(ILogger logger) : base(nameof(TalkActionFunctions))
     {
+        _logger = logger;
     }
 
     public void Init(LuaState L)
@@ -24,7 +27,7 @@ public class TalkActionFunctions : LuaScriptInterface, ITalkActionFunctions
         var wordsVector = new List<string>();
         for (var i = 2; i <= Lua.GetTop(L); i++) wordsVector.Add(GetString(L, i));
 
-        var talkActionSharedPtr = new TalkAction(GetScriptEnv().GetScriptInterface());
+        var talkActionSharedPtr = new TalkAction(GetScriptEnv().GetScriptInterface(), _logger);
         talkActionSharedPtr.SetWords(wordsVector);
 
         PushUserdata(L, talkActionSharedPtr);
