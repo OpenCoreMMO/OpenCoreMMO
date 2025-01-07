@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NeoServer.Data.Entities;
 
@@ -37,10 +38,7 @@ public class AccountEntityConfiguration : IEntityTypeConfiguration<AccountEntity
             .IsRequired()
             .HasMaxLength(20)
             .HasColumnType("char(20)");
-
-        builder.Property(e => e.PremiumTime)
-            .HasDefaultValueSql("0");
-
+        
         builder.Property(e => e.Secret)
             .HasColumnType("char(16)");
 
@@ -66,7 +64,7 @@ public class AccountEntityConfiguration : IEntityTypeConfiguration<AccountEntity
                 Id = 1,
                 EmailAddress = "1",
                 Password = "1",
-                PremiumTime = 30,
+                PremiumTimeEndAt = DateTime.Now.AddDays(30),
                 AllowManyOnline = true,
                 AccountName = "GOD"
             }

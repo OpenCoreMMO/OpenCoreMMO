@@ -78,6 +78,10 @@ public class PlayerLoader : IPlayerLoader
             new Location((ushort)playerEntity.PosX, (ushort)playerEntity.PosY, (byte)playerEntity.PosZ);
 
         var currentTile = GetCurrentTile(playerLocation);
+        
+        var premiumTimeDays = (ushort)(playerEntity.Account?.PremiumTimeEndAt is null
+            ? 0
+            : (playerEntity.Account.PremiumTimeEndAt.Value - DateTime.Now).TotalDays);
 
         var player = new Player(
             (uint)playerEntity.Id,
@@ -112,7 +116,7 @@ public class PlayerLoader : IPlayerLoader
             MapTool,
             town)
         {
-            PremiumTime = playerEntity.Account?.PremiumTime ?? 0,
+            PremiumTime = premiumTimeDays,
             AccountId = (uint)playerEntity.AccountId,
             WorldId = playerEntity.WorldId,
             Guild = GuildStore.Get((ushort)(playerEntity.GuildMember?.GuildId ?? 0)),
@@ -193,35 +197,35 @@ public class PlayerLoader : IPlayerLoader
         return new Dictionary<SkillType, ISkill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, (ushort)playerRecord.SkillAxe, playerRecord.SkillAxeTries)
-            { GetIncreaseRate = () => _gameConfiguration.SkillsRate["axe"] },
+                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["axe"] },
 
             [SkillType.Club] = new Skill(SkillType.Club, (ushort)playerRecord.SkillClub, playerRecord.SkillClubTries)
-            { GetIncreaseRate = () => _gameConfiguration.SkillsRate["club"] },
+                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["club"] },
 
             [SkillType.Distance] = new Skill(SkillType.Distance, (ushort)playerRecord.SkillDist,
                     playerRecord.SkillDistTries)
-            { GetIncreaseRate = () => _gameConfiguration.SkillsRate["distance"] },
+                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["distance"] },
 
             [SkillType.Fishing] = new Skill(SkillType.Fishing, (ushort)playerRecord.SkillFishing,
                     playerRecord.SkillFishingTries)
-            { GetIncreaseRate = () => _gameConfiguration.SkillsRate["fishing"] },
+                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["fishing"] },
 
             [SkillType.Fist] = new Skill(SkillType.Fist, (ushort)playerRecord.SkillFist, playerRecord.SkillFistTries)
-            { GetIncreaseRate = () => _gameConfiguration.SkillsRate["fist"] },
+                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["fist"] },
 
             [SkillType.Shielding] = new Skill(SkillType.Shielding, (ushort)playerRecord.SkillShielding,
                     playerRecord.SkillShieldingTries)
-            { GetIncreaseRate = () => _gameConfiguration.SkillsRate["shielding"] },
+                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["shielding"] },
 
             [SkillType.Level] = new Skill(SkillType.Level, playerRecord.Level, playerRecord.Experience),
 
             [SkillType.Magic] =
                 new Skill(SkillType.Magic, (ushort)playerRecord.MagicLevel, playerRecord.MagicLevelTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["magic"] },
+                    { GetIncreaseRate = () => _gameConfiguration.SkillsRate["magic"] },
 
             [SkillType.Sword] =
                 new Skill(SkillType.Sword, (ushort)playerRecord.SkillSword, playerRecord.SkillSwordTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["sword"] }
+                    { GetIncreaseRate = () => _gameConfiguration.SkillsRate["sword"] }
         };
     }
 

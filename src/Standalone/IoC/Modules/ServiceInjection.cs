@@ -41,7 +41,7 @@ public static class ServiceInjection
         builder.AddSingleton<IItemService, ItemService>();
         builder.AddSingleton<IStaticToDynamicTileService, StaticToDynamicTileService>();
         builder.AddSingleton<SafeTradeSystem>();
-
+        builder.AddSingleton<IItemRequirementService, ItemRequirementService>();
 
         //Operations
         builder.AddSingleton<TradeItemExchanger>();
