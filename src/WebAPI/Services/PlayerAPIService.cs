@@ -2,9 +2,9 @@
 using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
 using NeoServer.Game.Common.Creatures.Players;
+using NeoServer.Web.API.Response;
 using NeoServer.Web.API.Services.Interfaces;
 using NeoServer.Web.Shared.ViewModels.Request;
-using NeoServer.Web.Shared.ViewModels.Response;
 
 namespace NeoServer.Web.API.Services;
 

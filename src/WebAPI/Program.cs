@@ -1,8 +1,11 @@
 using System.Net;
+using FluentValidation;
 using Microsoft.OpenApi.Models;
 using NeoServer.Shared.IoC.Modules;
 using NeoServer.Web.API.HttpFilters;
 using NeoServer.Web.API.IoC.Modules;
+using NeoServer.Web.API.Middlewares;
+using NeoServer.Web.API.Requests.Validators;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.JsonMultipartFormDataSupport.Extensions;
 using Swashbuckle.AspNetCore.JsonMultipartFormDataSupport.Integrations;
@@ -22,9 +25,16 @@ builder.Configuration
 var services = builder.Services;
 
 services.AddHttpContextAccessor();
-services.AddBehaviours();
 services.AddServicesApi();
 services.AddAutoMapperProfiles();
+
+services.AddMediatR(config =>
+{
+    config.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+});
+
+services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
 services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -70,12 +80,13 @@ services.AddSwaggerGen(c =>
 
 services.AddJsonMultipartFormDataSupport(JsonSerializerChoice.Newtonsoft);
 
-services.AddControllersWithViews()
+services.AddControllers()
     .AddNewtonsoftJson(options =>
     {
         options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
         options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
     });
+
 
 services.AddLogger(configuration);
 services.AddDatabases(configuration);
@@ -83,6 +94,7 @@ services.AddRepositories();
 
 var app = builder.Build();
 
+app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
 // Configure the HTTP request pipeline
 app.UseSwagger();
 app.UseSwaggerUI();
