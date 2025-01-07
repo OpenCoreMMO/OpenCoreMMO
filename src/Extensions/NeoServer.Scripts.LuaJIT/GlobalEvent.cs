@@ -69,11 +69,11 @@ public class GlobalEvent : Script
         var scriptEnvironment = scriptInterface.InternalGetScriptEnv();
         scriptEnvironment.SetScriptId(GetScriptId(), GetScriptInterface());
 
-        var L = scriptInterface.GetLuaState();
+        var luaState = scriptInterface.GetLuaState();
         scriptInterface.PushFunction(GetScriptId());
 
-        Lua.PushNumber(L, lightState);
-        Lua.PushNumber(L, lightInfo.Level);
+        Lua.PushNumber(luaState, lightState);
+        Lua.PushNumber(luaState, lightInfo.Level);
         return scriptInterface.CallFunction(2);
     }
 
@@ -89,11 +89,11 @@ public class GlobalEvent : Script
         var scriptEnvironment = scriptInterface.InternalGetScriptEnv();
         scriptEnvironment.SetScriptId(GetScriptId(), GetScriptInterface());
 
-        var L = scriptInterface.GetLuaState();
+        var luaState = scriptInterface.GetLuaState();
         scriptInterface.PushFunction(GetScriptId());
 
-        Lua.PushNumber(L, current);
-        Lua.PushNumber(L, old);
+        Lua.PushNumber(luaState, current);
+        Lua.PushNumber(luaState, old);
         return scriptInterface.CallFunction(2);
     }
 
@@ -109,13 +109,13 @@ public class GlobalEvent : Script
         var scriptEnvironment = scriptInterface.InternalGetScriptEnv();
         scriptEnvironment.SetScriptId(GetScriptId(), GetScriptInterface());
 
-        var L = scriptInterface.GetLuaState();
+        var luaState = scriptInterface.GetLuaState();
         scriptInterface.PushFunction(GetScriptId());
 
         int paramsCount = 0;
         if (EventType == GlobalEventType.GLOBALEVENT_NONE || EventType == GlobalEventType.GLOBALEVENT_TIMER)
         {
-            Lua.PushNumber(L, Interval);
+            Lua.PushNumber(luaState, Interval);
             paramsCount = 1;
         }
 

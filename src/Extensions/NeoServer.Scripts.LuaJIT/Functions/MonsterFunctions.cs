@@ -15,19 +15,19 @@ public class MonsterFunctions : LuaScriptInterface, IMonsterFunctions
         _gameCreatureManager = gameCreatureManager;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterSharedClass(L, "Monster", "Creature", LuaMonsterCreate);
-        RegisterMetaMethod(L, "Monster", "__eq", LuaUserdataCompare<IMonster>);
+        RegisterSharedClass(luaState, "Monster", "Creature", LuaMonsterCreate);
+        RegisterMetaMethod(luaState, "Monster", "__eq", LuaUserdataCompare<IMonster>);
     }
 
-    private static int LuaMonsterCreate(LuaState L)
+    private static int LuaMonsterCreate(LuaState luaState)
     {
         // Monster(id or userdata)
         IMonster monster = null;
-        if (IsNumber(L, 2))
+        if (IsNumber(luaState, 2))
         {
-            var id = GetNumber<uint>(L, 2);
+            var id = GetNumber<uint>(luaState, 2);
             _gameCreatureManager.TryGetCreature(id, out var creature);
 
             if (creature != null && creature is IMonster)
@@ -36,19 +36,19 @@ public class MonsterFunctions : LuaScriptInterface, IMonsterFunctions
             }
             else
             {
-                Lua.PushNil(L);
+                Lua.PushNil(luaState);
                 return 1;
             }
         }
-        else if (IsUserdata(L, 2))
+        else if (IsUserdata(luaState, 2))
         {
-            if (GetUserdataType(L, 2) != LuaDataType.Monster)
+            if (GetUserdataType(luaState, 2) != LuaDataType.Monster)
             {
-                Lua.PushNil(L);
+                Lua.PushNil(luaState);
                 return 1;
             }
 
-            monster = GetUserdata<IMonster>(L, 2);
+            monster = GetUserdata<IMonster>(luaState, 2);
         }
         else
         {
@@ -57,12 +57,12 @@ public class MonsterFunctions : LuaScriptInterface, IMonsterFunctions
 
         if (monster is not null)
         {
-            PushUserdata(L, monster);
-            SetMetatable(L, -1, "Monster");
+            PushUserdata(luaState, monster);
+            SetMetatable(luaState, -1, "Monster");
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
 
         return 1;

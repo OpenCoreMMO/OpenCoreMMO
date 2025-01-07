@@ -33,15 +33,15 @@ public class TalkAction : Script, ITalkAction
         var scriptEnvironment = scriptInterface.InternalGetScriptEnv();
         scriptEnvironment.SetScriptId(GetScriptId(), GetScriptInterface());
 
-        var L = GetScriptInterface().GetLuaState();
+        var luaState = GetScriptInterface().GetLuaState();
         GetScriptInterface().PushFunction(GetScriptId());
 
-        LuaScriptInterface.PushUserdata(L, player);
-        LuaScriptInterface.SetMetatable(L, -1, "Player");
+        LuaScriptInterface.PushUserdata(luaState, player);
+        LuaScriptInterface.SetMetatable(luaState, -1, "Player");
 
-        LuaScriptInterface.PushString(L, words);
-        LuaScriptInterface.PushString(L, param);
-        //Lua.PushNumber(L, (double)type);
+        LuaScriptInterface.PushString(luaState, words);
+        LuaScriptInterface.PushString(luaState, param);
+        //Lua.PushNumber(luaState, (double)type);
 
         return GetScriptInterface().CallFunction(3);
     }

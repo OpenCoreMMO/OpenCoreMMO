@@ -14,153 +14,153 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
         _actions = actions;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterSharedClass(L, "Action", "", LuaCreateAction);
-        RegisterMethod(L, "Action", "onUse", LuaActionOnUse);
-        RegisterMethod(L, "Action", "register", LuaActionRegister);
-        RegisterMethod(L, "Action", "id", LuaActionItemId);
-        RegisterMethod(L, "Action", "aid", LuaActionItemActionId);
-        RegisterMethod(L, "Action", "uid", LuaActionItemUniqueId);
-        RegisterMethod(L, "Action", "allowFarUse", LuaActionAllowFarUse);
+        RegisterSharedClass(luaState, "Action", "", LuaCreateAction);
+        RegisterMethod(luaState, "Action", "onUse", LuaActionOnUse);
+        RegisterMethod(luaState, "Action", "register", LuaActionRegister);
+        RegisterMethod(luaState, "Action", "id", LuaActionItemId);
+        RegisterMethod(luaState, "Action", "aid", LuaActionItemActionId);
+        RegisterMethod(luaState, "Action", "uid", LuaActionItemUniqueId);
+        RegisterMethod(luaState, "Action", "allowFarUse", LuaActionAllowFarUse);
     }
 
-    public static int LuaCreateAction(LuaState L)
+    public static int LuaCreateAction(LuaState luaState)
     {
         // Action()
         var action = new Action(GetScriptEnv().GetScriptInterface());
-        PushUserdata(L, action);
-        SetMetatable(L, -1, "Action");
+        PushUserdata(luaState, action);
+        SetMetatable(luaState, -1, "Action");
         return 1;
     }
 
-    public static int LuaActionOnUse(LuaState L)
+    public static int LuaActionOnUse(LuaState luaState)
     {
         // action:onUse(callback)
-        var action = GetUserdata<Action>(L, 1);
+        var action = GetUserdata<Action>(luaState, 1);
         if (action != null)
         {
             if (!action.LoadCallback())
             {
-                PushBoolean(L, false);
+                PushBoolean(luaState, false);
                 return 1;
             }
 
             action.SetLoadedCallback(true);
-            PushBoolean(L, true);
+            PushBoolean(luaState, true);
         }
         else
         {
             ReportError(nameof(LuaActionOnUse), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
         }
 
         return 1;
     }
 
-    public static int LuaActionRegister(LuaState L)
+    public static int LuaActionRegister(LuaState luaState)
     {
         // action:register()
-        var action = GetUserdata<Action>(L, 1);
+        var action = GetUserdata<Action>(luaState, 1);
         if (action != null)
         {
             if (!action.IsLoadedCallback())
             {
-                PushBoolean(L, false);
+                PushBoolean(luaState, false);
                 return 1;
             }
 
-            PushBoolean(L, _actions.RegisterLuaEvent(action));
-            PushBoolean(L, true);
+            PushBoolean(luaState, _actions.RegisterLuaEvent(action));
+            PushBoolean(luaState, true);
         }
         else
         {
             ReportError(nameof(LuaActionRegister), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
         }
 
         return 1;
     }
 
-    public static int LuaActionItemId(LuaState L)
+    public static int LuaActionItemId(LuaState luaState)
     {
         // action:id(ids)
-        var action = GetUserdata<Action>(L, 1);
+        var action = GetUserdata<Action>(luaState, 1);
         if (action != null)
         {
-            var parameters = Lua.GetTop(L) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
+            var parameters = Lua.GetTop(luaState) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
             if (parameters > 1)
                 for (var i = 0; i < parameters; ++i)
-                    action.SetItemIdsVector(GetNumber<ushort>(L, 2 + i));
+                    action.SetItemIdsVector(GetNumber<ushort>(luaState, 2 + i));
             else
-                action.SetItemIdsVector(GetNumber<ushort>(L, 2));
-            PushBoolean(L, true);
+                action.SetItemIdsVector(GetNumber<ushort>(luaState, 2));
+            PushBoolean(luaState, true);
         }
         else
         {
             ReportError(nameof(LuaActionItemId), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
         }
         return 1;
     }
 
-    public static int LuaActionItemActionId(LuaState L)
+    public static int LuaActionItemActionId(LuaState luaState)
     {
         // action:aid(ids)
-        var action = GetUserdata<Action>(L, 1);
+        var action = GetUserdata<Action>(luaState, 1);
         if (action != null)
         {
-            var parameters = Lua.GetTop(L) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
+            var parameters = Lua.GetTop(luaState) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
             if (parameters > 1)
                 for (var i = 0; i < parameters; ++i)
-                    action.SetActionIdsVector(GetNumber<ushort>(L, 2 + i));
+                    action.SetActionIdsVector(GetNumber<ushort>(luaState, 2 + i));
             else
-                action.SetActionIdsVector(GetNumber<ushort>(L, 2));
-            PushBoolean(L, true);
+                action.SetActionIdsVector(GetNumber<ushort>(luaState, 2));
+            PushBoolean(luaState, true);
         }
         else
         {
             ReportError(nameof(LuaActionItemId), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
         }
         return 1;
     }
 
-    public static int LuaActionItemUniqueId(LuaState L)
+    public static int LuaActionItemUniqueId(LuaState luaState)
     {
         // action:uid(ids)
-        var action = GetUserdata<Action>(L, 1);
+        var action = GetUserdata<Action>(luaState, 1);
         if (action != null)
         {
-            var parameters = Lua.GetTop(L) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
+            var parameters = Lua.GetTop(luaState) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
             if (parameters > 1)
                 for (var i = 0; i < parameters; ++i)
-                    action.SetUniqueIdsVector(GetNumber<ushort>(L, 2 + i));
+                    action.SetUniqueIdsVector(GetNumber<ushort>(luaState, 2 + i));
             else
-                action.SetUniqueIdsVector(GetNumber<ushort>(L, 2));
-            PushBoolean(L, true);
+                action.SetUniqueIdsVector(GetNumber<ushort>(luaState, 2));
+            PushBoolean(luaState, true);
         }
         else
         {
             ReportError(nameof(LuaActionItemId), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
         }
         return 1;
     }
 
-    public static int LuaActionAllowFarUse(LuaState L)
+    public static int LuaActionAllowFarUse(LuaState luaState)
     {
         // action:allowFarUse(bool)
-        var action = GetUserdata<Action>(L, 1);
+        var action = GetUserdata<Action>(luaState, 1);
         if (action != null)
         {
-            action.AllowFarUse = GetBoolean(L, 2);
-            PushBoolean(L, true);
+            action.AllowFarUse = GetBoolean(luaState, 2);
+            PushBoolean(luaState, true);
         }
         else
         {
             ReportError(nameof(LuaActionItemId), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
         }
 
         return 1;

@@ -28,15 +28,15 @@ public class ConfigManager : IConfigManager
     public bool Load(string file)
     {
         configFileLua = file.Split("\\").LastOrDefault();
-        var L = Lua.NewState();
-        if (L.pointer == 0) throw new IOException("Failed to allocate memory");
+        var luaState = Lua.NewState();
+        if (luaState.pointer == 0) throw new IOException("Failed to allocate memory");
 
-        Lua.OpenLibs(L);
+        Lua.OpenLibs(luaState);
 
-        if (Lua.DoFile(L, file) > 0)
+        if (Lua.DoFile(luaState, file) > 0)
         {
-            _logger.Error("[ConfigManager::load] - {0}", Lua.ToString(L, -1));
-            Lua.Close(L);
+            _logger.Error("[ConfigManager::load] - {0}", Lua.ToString(luaState, -1));
+            Lua.Close(luaState);
             return false;
         }
 
@@ -44,27 +44,27 @@ public class ConfigManager : IConfigManager
         // Info that must be loaded one time (unless we reset the modules involved)
         if (!loaded)
         {
-            integerConfig[(int)IntegerConfigType.GAME_PORT] = GetGlobalNumber(L, "gameProtocolPort", 7172);
-            integerConfig[(int)IntegerConfigType.LOGIN_PORT] = GetGlobalNumber(L, "loginProtocolPort", 7171);
-            integerConfig[(int)IntegerConfigType.STATUS_PORT] = GetGlobalNumber(L, "statusProtocolPort", 7171);
+            integerConfig[(int)IntegerConfigType.GAME_PORT] = GetGlobalNumber(luaState, "gameProtocolPort", 7172);
+            integerConfig[(int)IntegerConfigType.LOGIN_PORT] = GetGlobalNumber(luaState, "loginProtocolPort", 7171);
+            integerConfig[(int)IntegerConfigType.STATUS_PORT] = GetGlobalNumber(luaState, "statusProtocolPort", 7171);
         }
 
         booleanConfig[(int)BooleanConfigType.SCRIPTS_CONSOLE_LOGS] =
-            GetGlobalBoolean(L, "showScriptsLogInConsole", true);
+            GetGlobalBoolean(luaState, "showScriptsLogInConsole", true);
 
-        booleanConfig[(int)BooleanConfigType.TOGGLE_SAVE_INTERVAL] = GetGlobalBoolean(L, "toggleSaveInterval", false);
+        booleanConfig[(int)BooleanConfigType.TOGGLE_SAVE_INTERVAL] = GetGlobalBoolean(luaState, "toggleSaveInterval", false);
         booleanConfig[(int)BooleanConfigType.TOGGLE_SAVE_INTERVAL_CLEAN_MAP] =
-            GetGlobalBoolean(L, "toggleSaveIntervalCleanMap", false);
-        booleanConfig[(int)BooleanConfigType.ALLOW_RELOAD] = GetGlobalBoolean(L, "allowReload", true);
+            GetGlobalBoolean(luaState, "toggleSaveIntervalCleanMap", false);
+        booleanConfig[(int)BooleanConfigType.ALLOW_RELOAD] = GetGlobalBoolean(luaState, "allowReload", true);
 
-        stringConfig[(int)StringConfigType.SAVE_INTERVAL_TYPE] = GetGlobalString(L, "saveIntervalType", "");
+        stringConfig[(int)StringConfigType.SAVE_INTERVAL_TYPE] = GetGlobalString(luaState, "saveIntervalType", "");
 
-        stringConfig[(int)StringConfigType.CORE_DIRECTORY] = GetGlobalString(L, "coreDirectory", "data");
+        stringConfig[(int)StringConfigType.CORE_DIRECTORY] = GetGlobalString(luaState, "coreDirectory", "data");
 
-        integerConfig[(int)IntegerConfigType.SAVE_INTERVAL_TIME] = GetGlobalNumber(L, "saveIntervalTime", 1);
+        integerConfig[(int)IntegerConfigType.SAVE_INTERVAL_TIME] = GetGlobalNumber(luaState, "saveIntervalTime", 1);
 
         loaded = true;
-        Lua.Close(L);
+        Lua.Close(luaState);
         return true;
     }
 
@@ -138,52 +138,52 @@ public class ConfigManager : IConfigManager
         return configFileLua;
     }
 
-    public string GetGlobalString(LuaState L, string identifier, string defaultValue)
+    public string GetGlobalString(LuaState luaState, string identifier, string defaultValue)
     {
-        Lua.GetGlobal(L, identifier);
-        if (Lua.IsString(L, -1)) return defaultValue;
+        Lua.GetGlobal(luaState, identifier);
+        if (Lua.IsString(luaState, -1)) return defaultValue;
 
         ulong len = 0;
-        var str = Lua.ToLString(L, -1, ref len);
-        Lua.Pop(L, 1);
+        var str = Lua.ToLString(luaState, -1, ref len);
+        Lua.Pop(luaState, 1);
         return str;
     }
 
-    public int GetGlobalNumber(LuaState L, string identifier, int defaultValue = 0)
+    public int GetGlobalNumber(LuaState luaState, string identifier, int defaultValue = 0)
     {
-        Lua.GetGlobal(L, identifier);
-        if (Lua.IsNumber(L, -1)) return defaultValue;
+        Lua.GetGlobal(luaState, identifier);
+        if (Lua.IsNumber(luaState, -1)) return defaultValue;
 
-        var val = (int)Lua.ToNumber(L, -1);
-        Lua.Pop(L, 1);
+        var val = (int)Lua.ToNumber(luaState, -1);
+        Lua.Pop(luaState, 1);
         return val;
     }
 
-    public bool GetGlobalBoolean(LuaState L, string identifier, bool defaultValue)
+    public bool GetGlobalBoolean(LuaState luaState, string identifier, bool defaultValue)
     {
-        Lua.GetGlobal(L, identifier);
-        if (Lua.IsBoolean(L, -1))
+        Lua.GetGlobal(luaState, identifier);
+        if (Lua.IsBoolean(luaState, -1))
         {
-            if (Lua.IsString(L, -1)) return defaultValue;
+            if (Lua.IsString(luaState, -1)) return defaultValue;
 
             ulong len = 0;
-            var str = Lua.ToLString(L, -1, ref len);
-            Lua.Pop(L, 1);
+            var str = Lua.ToLString(luaState, -1, ref len);
+            Lua.Pop(luaState, 1);
             return BooleanString(str);
         }
 
-        var val = Lua.ToBoolean(L, -1);
-        Lua.Pop(L, 1);
+        var val = Lua.ToBoolean(luaState, -1);
+        Lua.Pop(luaState, 1);
         return val;
     }
 
-    public float GetGlobalFloat(LuaState L, string identifier, float defaultValue = 0.0f)
+    public float GetGlobalFloat(LuaState luaState, string identifier, float defaultValue = 0.0f)
     {
-        Lua.GetGlobal(L, identifier);
-        if (Lua.IsNumber(L, -1)) return defaultValue;
+        Lua.GetGlobal(luaState, identifier);
+        if (Lua.IsNumber(luaState, -1)) return defaultValue;
 
-        var val = (float)Lua.ToNumber(L, -1);
-        Lua.Pop(L, 1);
+        var val = (float)Lua.ToNumber(luaState, -1);
+        Lua.Pop(luaState, 1);
         return val;
     }
 

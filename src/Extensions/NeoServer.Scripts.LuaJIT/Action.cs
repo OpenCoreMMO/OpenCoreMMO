@@ -45,19 +45,19 @@ public class Action : Script
         var scriptEnvironment = scriptInterface.InternalGetScriptEnv();
         scriptEnvironment.SetScriptId(GetScriptId(), GetScriptInterface());
 
-        var L = GetScriptInterface().GetLuaState();
+        var luaState = GetScriptInterface().GetLuaState();
         GetScriptInterface().PushFunction(GetScriptId());
 
-        LuaScriptInterface.PushUserdata(L, player);
-        LuaScriptInterface.SetMetatable(L, -1, "Player");
+        LuaScriptInterface.PushUserdata(luaState, player);
+        LuaScriptInterface.SetMetatable(luaState, -1, "Player");
 
-        LuaScriptInterface.PushThing(L, item);
-        LuaScriptInterface.PushPosition(L, fromPosition);
+        LuaScriptInterface.PushThing(luaState, item);
+        LuaScriptInterface.PushPosition(luaState, fromPosition);
 
-        LuaScriptInterface.PushThing(L, target);
-        LuaScriptInterface.PushPosition(L, toPosition);
+        LuaScriptInterface.PushThing(luaState, target);
+        LuaScriptInterface.PushPosition(luaState, toPosition);
 
-        LuaScriptInterface.PushBoolean(L, isHotkey);
+        LuaScriptInterface.PushBoolean(luaState, isHotkey);
 
         return GetScriptInterface().CallFunction(6);
     }

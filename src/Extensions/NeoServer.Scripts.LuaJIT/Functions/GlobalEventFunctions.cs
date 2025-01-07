@@ -24,39 +24,39 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
         _dispatcher = dispatcher;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterSharedClass(L, "GlobalEvent", "", LuaCreateGlobalEvent);
-        RegisterMethod(L, "GlobalEvent", "type", LuaGlobalEventType);
-        RegisterMethod(L, "GlobalEvent", "register", LuaGlobalEventRegister);
-        RegisterMethod(L, "GlobalEvent", "time", LuaGlobalEventTime);
-        RegisterMethod(L, "GlobalEvent", "interval", LuaGlobalEventInterval);
-        RegisterMethod(L, "GlobalEvent", "onThink", LuaGlobalEventOnCallback);
-        RegisterMethod(L, "GlobalEvent", "onTime", LuaGlobalEventOnCallback);
-        RegisterMethod(L, "GlobalEvent", "onStartup", LuaGlobalEventOnCallback);
-        RegisterMethod(L, "GlobalEvent", "onShutdown", LuaGlobalEventOnCallback);
-        RegisterMethod(L, "GlobalEvent", "onRecord", LuaGlobalEventOnCallback);
-        RegisterMethod(L, "GlobalEvent", "onPeriodChange", LuaGlobalEventOnCallback);
-        RegisterMethod(L, "GlobalEvent", "onSave", LuaGlobalEventOnCallback);
+        RegisterSharedClass(luaState, "GlobalEvent", "", LuaCreateGlobalEvent);
+        RegisterMethod(luaState, "GlobalEvent", "type", LuaGlobalEventType);
+        RegisterMethod(luaState, "GlobalEvent", "register", LuaGlobalEventRegister);
+        RegisterMethod(luaState, "GlobalEvent", "time", LuaGlobalEventTime);
+        RegisterMethod(luaState, "GlobalEvent", "interval", LuaGlobalEventInterval);
+        RegisterMethod(luaState, "GlobalEvent", "onThink", LuaGlobalEventOnCallback);
+        RegisterMethod(luaState, "GlobalEvent", "onTime", LuaGlobalEventOnCallback);
+        RegisterMethod(luaState, "GlobalEvent", "onStartup", LuaGlobalEventOnCallback);
+        RegisterMethod(luaState, "GlobalEvent", "onShutdown", LuaGlobalEventOnCallback);
+        RegisterMethod(luaState, "GlobalEvent", "onRecord", LuaGlobalEventOnCallback);
+        RegisterMethod(luaState, "GlobalEvent", "onPeriodChange", LuaGlobalEventOnCallback);
+        RegisterMethod(luaState, "GlobalEvent", "onSave", LuaGlobalEventOnCallback);
     }
 
-    private static int LuaCreateGlobalEvent(LuaState L)
+    private static int LuaCreateGlobalEvent(LuaState luaState)
     {
         var global = new GlobalEvent(GetScriptEnv().GetScriptInterface(), _logger);
-        global.Name = GetString(L, 2);
+        global.Name = GetString(luaState, 2);
         global.EventType = GlobalEventType.GLOBALEVENT_NONE;
-        PushUserdata(L, global);
-        SetMetatable(L, -1, "GlobalEvent");
+        PushUserdata(luaState, global);
+        SetMetatable(luaState, -1, "GlobalEvent");
         return 1;
     }
 
-    private static int LuaGlobalEventType(LuaState L)
+    private static int LuaGlobalEventType(LuaState luaState)
     {
         // globalevent:type(callback)
-        var global = GetUserdata<GlobalEvent>(L, 1);
+        var global = GetUserdata<GlobalEvent>(luaState, 1);
         if (global != null)
         {
-            string typeName = GetString(L, 2);
+            string typeName = GetString(luaState, 2);
             string tmpStr = typeName.ToLower();
             if (tmpStr == "startup")
             {
@@ -85,70 +85,70 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
             else
             {
                 _logger.Error("[GlobalEventFunctions::luaGlobalEventType] - Invalid type for global event: {}");
-                PushBoolean(L, false);
+                PushBoolean(luaState, false);
             }
-            PushBoolean(L, true);
+            PushBoolean(luaState, true);
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
         return 1;
     }
 
-    private static int LuaGlobalEventRegister(LuaState L)
+    private static int LuaGlobalEventRegister(LuaState luaState)
     {
         // globalevent:register() 
-        var globalevent = GetUserdata<GlobalEvent>(L, 1);
+        var globalevent = GetUserdata<GlobalEvent>(luaState, 1);
         if (globalevent != null)
         {
             if (!globalevent.IsLoadedCallback())
             {
-                PushBoolean(L, false);
+                PushBoolean(luaState, false);
                 return 1;
             }
             if (globalevent.EventType == GlobalEventType.GLOBALEVENT_NONE && globalevent.Interval == 0)
             {
                 _logger.Error("{} - No interval for globalevent with name {}", nameof(LuaGlobalEventRegister), globalevent.Name);
-                PushBoolean(L, false);
+                PushBoolean(luaState, false);
                 return 1;
             }
-            PushBoolean(L, _globalEvents.RegisterLuaEvent(globalevent));
+            PushBoolean(luaState, _globalEvents.RegisterLuaEvent(globalevent));
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
         return 1;
     }
 
-    private static int LuaGlobalEventOnCallback(LuaState L)
+    private static int LuaGlobalEventOnCallback(LuaState luaState)
     {
         // globalevent:onThink / record / etc. (callback)
-        var globalevent = GetUserdata<GlobalEvent>(L, 1);
+        var globalevent = GetUserdata<GlobalEvent>(luaState, 1);
         if (globalevent != null)
         {
             if (!globalevent.LoadCallback())
             {
-                PushBoolean(L, false);
+                PushBoolean(luaState, false);
                 return 1;
             }
-            PushBoolean(L, true);
+            PushBoolean(luaState, true);
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
         return 1;
     }
 
-    private static int LuaGlobalEventTime(LuaState L)
+    private static int LuaGlobalEventTime(LuaState luaState)
     {
         // globalevent:time(time)
-        var globalevent = GetUserdata<GlobalEvent>(L, 1);
+        var globalevent = GetUserdata<GlobalEvent>(luaState, 1);
         if (globalevent != null)
         {
-            string timer = GetString(L, 2);
+            string timer = GetString(luaState, 2);
 
             var parameters = new List<uint>(); // parameters = vectorAtoi(explodeString(timer, ":"));
 
@@ -160,7 +160,7 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
             {
                 _logger.Error("[GlobalEventFunctions::luaGlobalEventTime] - Invalid hour {} for globalevent with name: {}",
                                  timer, globalevent.Name);
-                PushBoolean(L, false);
+                PushBoolean(luaState, false);
                 return 1;
             }
 
@@ -175,7 +175,7 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
                 {
                     _logger.Error("[GlobalEventFunctions::luaGlobalEventTime] - Invalid minute: {} for globalevent with name: {}",
                                      timer, globalevent.Name);
-                    PushBoolean(L, false);
+                    PushBoolean(luaState, false);
                     return 1;
                 }
 
@@ -186,7 +186,7 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
                     {
                         _logger.Error("[GlobalEventFunctions::luaGlobalEventTime] - Invalid minute: {} for globalevent with name: {}",
                                          timer, globalevent.Name);
-                        PushBoolean(L, false);
+                        PushBoolean(luaState, false);
                         return 1;
                     }
                 }
@@ -221,28 +221,28 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
 
             globalevent.NextExecution = (long)test.TotalMilliseconds; ;
             globalevent.EventType = GlobalEventType.GLOBALEVENT_TIMER;
-            PushBoolean(L, true);
+            PushBoolean(luaState, true);
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
         return 1;
     }
 
-    private static int LuaGlobalEventInterval(LuaState L)
+    private static int LuaGlobalEventInterval(LuaState luaState)
     {
         // globalevent:interval(interval)
-        var globalevent = GetUserdata<GlobalEvent>(L, 1);
+        var globalevent = GetUserdata<GlobalEvent>(luaState, 1);
         if (globalevent != null)
         {
-            globalevent.Interval = GetNumber<uint>(L, 2);
-            globalevent.NextExecution = _dispatcher.GlobalTime + GetNumber<uint>(L, 2);
-            PushBoolean(L, true);
+            globalevent.Interval = GetNumber<uint>(luaState, 2);
+            globalevent.NextExecution = _dispatcher.GlobalTime + GetNumber<uint>(luaState, 2);
+            PushBoolean(luaState, true);
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
         return 1;
     }
