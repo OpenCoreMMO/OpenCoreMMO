@@ -19,6 +19,7 @@ public static class DatabaseInjection
     public static IServiceCollection AddRepositories(this IServiceCollection builder)
     {
         builder.AddSingleton<IAccountRepository, AccountRepository>();
+        builder.AddSingleton<IAccountPremiumHistoryRepository, AccountPremiumHistoryRepository>();
         builder.AddSingleton<IGuildRepository, GuildRepository>();
         builder.AddSingleton<IPlayerDepotItemRepository, PlayerDepotItemRepository>();
         builder.AddSingleton<IPlayerRepository, PlayerRepository>();

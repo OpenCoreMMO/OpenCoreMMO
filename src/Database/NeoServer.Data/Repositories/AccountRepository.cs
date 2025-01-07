@@ -61,6 +61,15 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
             .Where(x => x.Account.EmailAddress.Equals(accountName) && x.Online)
             .FirstOrDefaultAsync();
     }
+    
+    public async Task<AccountEntity> GetByEmailOrAccountName(string email, string accountName)
+    {
+        await using var context = NewDbContext;
+
+        return await context.Accounts
+            .Where(x => x.EmailAddress.ToLower().Equals(email.ToLower()) || x.AccountName.ToLower().Equals(accountName.ToLower()))
+            .SingleOrDefaultAsync();
+    }
 
     #endregion
 

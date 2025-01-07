@@ -10,6 +10,9 @@ public class AccountEntityConfiguration : IEntityTypeConfiguration<AccountEntity
     {
         builder.HasKey(e => e.Id);
 
+        builder.HasIndex(e => e.AccountName)
+            .IsUnique();
+        
         builder.HasIndex(e => e.EmailAddress)
             .IsUnique();
 
@@ -22,6 +25,10 @@ public class AccountEntityConfiguration : IEntityTypeConfiguration<AccountEntity
         builder.Property(e => e.EmailAddress)
             .IsRequired()
             .HasColumnType("varchar(320)");
+        
+        builder.Property(e => e.AccountName)
+            .IsRequired()
+            .HasColumnType("varchar(29)");
 
         builder.Property(e => e.AllowManyOnline)
             .HasDefaultValue(0);
@@ -60,7 +67,8 @@ public class AccountEntityConfiguration : IEntityTypeConfiguration<AccountEntity
                 EmailAddress = "1",
                 Password = "1",
                 PremiumTime = 30,
-                AllowManyOnline = true
+                AllowManyOnline = true,
+                AccountName = "GOD"
             }
         );
     }

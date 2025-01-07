@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using NeoServer.Web.API.Response;
 using NeoServer.Web.Shared.Exceptions;
-using NeoServer.Web.Shared.ViewModels.Response;
 
 namespace NeoServer.Web.API.Controllers;
 

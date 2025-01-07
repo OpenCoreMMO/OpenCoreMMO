@@ -1,4 +1,4 @@
-﻿namespace NeoServer.Web.Shared.ViewModels.Response;
+﻿namespace NeoServer.Web.API.Response;
 
 [Serializable]
 public class PlayerResponseViewModel
