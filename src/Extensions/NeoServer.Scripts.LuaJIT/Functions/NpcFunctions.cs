@@ -30,7 +30,7 @@ public class NpcFunctions : LuaScriptInterface, INpcFunctions
             var id = GetNumber<uint>(luaState, 2);
             _gameCreatureManager.TryGetCreature(id, out var creature);
 
-            if (creature != null && creature is IMonster)
+            if (creature is IMonster)
             {
                 npc = creature as INpc;
             }

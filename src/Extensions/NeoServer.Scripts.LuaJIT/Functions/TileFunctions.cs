@@ -125,7 +125,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
     {
         // tile:getCreatureCount()
         var tile = GetUserdata<ITile>(luaState, 1);
-        if (tile != null && tile is IDynamicTile dynamicTile)
+        if (tile is IDynamicTile dynamicTile)
             Lua.PushNumber(luaState, dynamicTile.CreaturesCount);
         else
             Lua.PushNil(luaState);
@@ -182,7 +182,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
     {
         // tile:getGround()
         var tile = GetUserdata<ITile>(luaState, 1);
-        if (tile != null && tile.TopItemOnStack != null)
+        if (tile is { TopItemOnStack: not null })
         {
             PushUserdata(luaState, tile.TopItemOnStack);
             SetItemMetatable(luaState, -1, tile.TopItemOnStack);

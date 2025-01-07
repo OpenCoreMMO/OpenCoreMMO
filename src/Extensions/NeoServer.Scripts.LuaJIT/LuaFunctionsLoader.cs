@@ -12,9 +12,9 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class LuaFunctionsLoader
 {
-    public const int LUA_REGISTRYINDEX = (-10000);
-    public const int LUA_ENVIRONINDEX = (-10001);
-    public const int LUA_GLOBALSINDEX = (-10002);
+    public const int LUA_REGISTRY_INDEX = (-10000);
+    public const int LUA_ENVIRONMENT_INDEX = (-10001);
+    public const int LUA_GLOBALS_INDEX = (-10002);
 
     public LuaFunctionsLoader()
     {
@@ -22,59 +22,38 @@ public class LuaFunctionsLoader
 
         //_logger.Information("Log from LuaFunctionsLoader");
 
-        for (int i = 0; i < scriptEnv.Length; i++)
+        for (var i = 0; i < ScriptEnv.Length; i++)
         {
-            scriptEnv[i] = new ScriptEnvironment();
+            ScriptEnv[i] = new ScriptEnvironment();
         }
     }
 
     public static string GetErrorDesc(ErrorCodeType code)
     {
-        switch (code)
+        return code switch
         {
-            case ErrorCodeType.LUA_ERROR_PLAYER_NOT_FOUND:
-                return "Player not found";
-            case ErrorCodeType.LUA_ERROR_CREATURE_NOT_FOUND:
-                return "Creature not found";
-            case ErrorCodeType.LUA_ERROR_NPC_NOT_FOUND:
-                return "Npc not found";
-            case ErrorCodeType.LUA_ERROR_NPC_TYPE_NOT_FOUND:
-                return "Npc type not found";
-            case ErrorCodeType.LUA_ERROR_MONSTER_NOT_FOUND:
-                return "Monster not found";
-            case ErrorCodeType.LUA_ERROR_MONSTER_TYPE_NOT_FOUND:
-                return "Monster type not found";
-            case ErrorCodeType.LUA_ERROR_ITEM_NOT_FOUND:
-                return "Item not found";
-            case ErrorCodeType.LUA_ERROR_THING_NOT_FOUND:
-                return "Thing not found";
-            case ErrorCodeType.LUA_ERROR_TILE_NOT_FOUND:
-                return "Tile not found";
-            case ErrorCodeType.LUA_ERROR_HOUSE_NOT_FOUND:
-                return "House not found";
-            case ErrorCodeType.LUA_ERROR_COMBAT_NOT_FOUND:
-                return "Combat not found";
-            case ErrorCodeType.LUA_ERROR_CONDITION_NOT_FOUND:
-                return "Condition not found";
-            case ErrorCodeType.LUA_ERROR_AREA_NOT_FOUND:
-                return "Area not found";
-            case ErrorCodeType.LUA_ERROR_CONTAINER_NOT_FOUND:
-                return "Container not found";
-            case ErrorCodeType.LUA_ERROR_VARIANT_NOT_FOUND:
-                return "Variant not found";
-            case ErrorCodeType.LUA_ERROR_VARIANT_UNKNOWN:
-                return "Unknown variant type";
-            case ErrorCodeType.LUA_ERROR_SPELL_NOT_FOUND:
-                return "Spell not found";
-            case ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND:
-                return "Action not found";
-            case ErrorCodeType.LUA_ERROR_TALK_ACTION_NOT_FOUND:
-                return "TalkAction not found";
-            case ErrorCodeType.LUA_ERROR_ZONE_NOT_FOUND:
-                return "Zone not found";
-            default:
-                return "Bad error code";
-        }
+            ErrorCodeType.LUA_ERROR_PLAYER_NOT_FOUND => "Player not found",
+            ErrorCodeType.LUA_ERROR_CREATURE_NOT_FOUND => "Creature not found",
+            ErrorCodeType.LUA_ERROR_NPC_NOT_FOUND => "Npc not found",
+            ErrorCodeType.LUA_ERROR_NPC_TYPE_NOT_FOUND => "Npc type not found",
+            ErrorCodeType.LUA_ERROR_MONSTER_NOT_FOUND => "Monster not found",
+            ErrorCodeType.LUA_ERROR_MONSTER_TYPE_NOT_FOUND => "Monster type not found",
+            ErrorCodeType.LUA_ERROR_ITEM_NOT_FOUND => "Item not found",
+            ErrorCodeType.LUA_ERROR_THING_NOT_FOUND => "Thing not found",
+            ErrorCodeType.LUA_ERROR_TILE_NOT_FOUND => "Tile not found",
+            ErrorCodeType.LUA_ERROR_HOUSE_NOT_FOUND => "House not found",
+            ErrorCodeType.LUA_ERROR_COMBAT_NOT_FOUND => "Combat not found",
+            ErrorCodeType.LUA_ERROR_CONDITION_NOT_FOUND => "Condition not found",
+            ErrorCodeType.LUA_ERROR_AREA_NOT_FOUND => "Area not found",
+            ErrorCodeType.LUA_ERROR_CONTAINER_NOT_FOUND => "Container not found",
+            ErrorCodeType.LUA_ERROR_VARIANT_NOT_FOUND => "Variant not found",
+            ErrorCodeType.LUA_ERROR_VARIANT_UNKNOWN => "Unknown variant type",
+            ErrorCodeType.LUA_ERROR_SPELL_NOT_FOUND => "Spell not found",
+            ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND => "Action not found",
+            ErrorCodeType.LUA_ERROR_TALK_ACTION_NOT_FOUND => "TalkAction not found",
+            ErrorCodeType.LUA_ERROR_ZONE_NOT_FOUND => "Zone not found",
+            _ => "Bad error code"
+        };
     }
 
     public static int ProtectedCall(LuaState luaState, int nargs, int nresults)
@@ -85,7 +64,7 @@ public class LuaFunctionsLoader
             return ret;
         }
 
-        int errorIndex = Lua.GetTop(luaState) - nargs;
+        var errorIndex = Lua.GetTop(luaState) - nargs;
         //int errorIndex = -1 - nargs - 1;
         Lua.PushCFunction(luaState, LuaErrorHandler);
         Lua.Insert(luaState, errorIndex);
@@ -97,32 +76,20 @@ public class LuaFunctionsLoader
         return ret;
     }
 
-    public void ReportError(string errorDesc)
-    {
-        ReportError("__FUNCTION__", errorDesc);
-    }
+    public static void ReportError(string errorDesc) => ReportError("__FUNCTION__", errorDesc);
 
     public static void ReportError(string function, string errorDesc, bool stackTrace = false)
     {
-        int scriptId, callbackId;
-        bool timerEvent;
-        LuaScriptInterface scriptInterface;
+        GetScriptEnv().GetEventInfo(out var scriptId, out var scriptInterface, out var callbackId, out var timerEvent);
 
-        GetScriptEnv().GetEventInfo(out scriptId, out scriptInterface, out callbackId, out timerEvent);
-
-        Console.WriteLine(string.Format("Lua script error: \nscriptInterface: [{0}]\nscriptId: [{1}]\ntimerEvent: [{2}]\n callbackId:[{3}]\nfunction: [{4}]\nerror [{5}]",
-                     scriptInterface != null ? scriptInterface.GetInterfaceName() : "",
-                     scriptId != 0 ? scriptInterface?.GetFileById(scriptId) : "",
-                     timerEvent ? "in a timer event called from:" : "",
-                     callbackId != 0 ? scriptInterface?.GetFileById(callbackId) : "",
-                     function ?? "",
-                     (stackTrace && scriptInterface != null) ? scriptInterface.GetStackTrace(errorDesc) : errorDesc));
+        Console.WriteLine(
+            $"Lua script error: \nscriptInterface: [{(scriptInterface != null ? scriptInterface.GetInterfaceName() : "")}]\nscriptId: [{(scriptId != 0 ? scriptInterface?.GetFileById(scriptId) : "")}]\ntimerEvent: [{(timerEvent ? "in a timer event called from:" : "")}]\n callbackId:[{(callbackId != 0 ? scriptInterface?.GetFileById(callbackId) : "")}]\nfunction: [{function ?? ""}]\nerror [{((stackTrace && scriptInterface != null) ? scriptInterface.GetStackTrace(errorDesc) : errorDesc)}]");
     }
 
     public static int LuaErrorHandler(LuaState luaState)
     {
-        string errorMessage = PopString(luaState);
-        LuaScriptInterface scriptInterface = GetScriptEnv().GetScriptInterface();
+        var errorMessage = PopString(luaState);
+        var scriptInterface = GetScriptEnv().GetScriptInterface();
         Debug.Assert(scriptInterface != null); // This fires if the ScriptEnvironment hasn't been set up
         PushString(luaState, scriptInterface.GetStackTrace(errorMessage));
         return 1;
@@ -153,8 +120,6 @@ public class LuaFunctionsLoader
                     Lua.SetField(luaState, -2, "pos");
                     break;
                 }
-            default:
-                break;
         }
 
         SetField(luaState, "instantName", var.InstantName);
@@ -169,29 +134,26 @@ public class LuaFunctionsLoader
             return;
         }
 
-        if (thing == null)
+        switch (thing)
         {
-            Lua.CreateTable(luaState, 0, 4);
-            SetField(luaState, "uid", 0);
-            SetField(luaState, "itemid", 0);
-            SetField(luaState, "actionid", 0);
-            SetField(luaState, "type", 0);
-            return;
-        }
-
-        if (thing is IItem item)
-        {
-            PushUserdata(luaState, item);
-            SetItemMetatable(luaState, -1, item);
-        }
-        else if (thing is ICreature creature)
-        {
-            PushUserdata(luaState, creature);
-            SetCreatureMetatable(luaState, -1, creature);
-        }
-        else
-        {
-            Lua.PushNil(luaState);
+            case null:
+                Lua.CreateTable(luaState, 0, 4);
+                SetField(luaState, "uid", 0);
+                SetField(luaState, "itemid", 0);
+                SetField(luaState, "actionid", 0);
+                SetField(luaState, "type", 0);
+                return;
+            case IItem item:
+                PushUserdata(luaState, item);
+                SetItemMetatable(luaState, -1, item);
+                break;
+            case ICreature creature:
+                PushUserdata(luaState, creature);
+                SetCreatureMetatable(luaState, -1, creature);
+                break;
+            default:
+                Lua.PushNil(luaState);
+                break;
         }
     }
 
@@ -212,7 +174,7 @@ public class LuaFunctionsLoader
             return;
         }
 
-        Lua.RawGetI(luaState, LUA_REGISTRYINDEX, callback);
+        Lua.RawGetI(luaState, LUA_REGISTRY_INDEX, callback);
     }
 
     public static string PopString(LuaState luaState)
@@ -222,15 +184,12 @@ public class LuaFunctionsLoader
             return string.Empty;
         }
 
-        string str = GetString(luaState, -1);
+        var str = GetString(luaState, -1);
         Lua.Pop(luaState, 1);
         return str;
     }
 
-    public static int PopCallback(LuaState luaState)
-    {
-        return Lua.Ref(luaState, LUA_REGISTRYINDEX);
-    }
+    public static int PopCallback(LuaState luaState) => Lua.Ref(luaState, LUA_REGISTRY_INDEX);
 
     // Metatables
     public static void SetMetatable(LuaState luaState, int index, string name)
@@ -246,32 +205,32 @@ public class LuaFunctionsLoader
 
     public static void SetWeakMetatable(LuaState luaState, int index, string name)
     {
-        HashSet<string> weakObjectTypes = new HashSet<string>();
+        var weakObjectTypes = new HashSet<string>();
 
         if (ValidateDispatcherContext(nameof(SetWeakMetatable)))
         {
             return;
         }
 
-        string weakName = name + "_weak";
+        var weakName = name + "_weak";
 
         if (weakObjectTypes.Add(name))
         {
             Lua.GetMetaTable(luaState, name);
-            int childMetatable = Lua.GetTop(luaState);
+            var childMetatable = Lua.GetTop(luaState);
 
             Lua.NewMetaTable(luaState, weakName);
-            int metatable = Lua.GetTop(luaState);
+            var metatable = Lua.GetTop(luaState);
 
-            List<string> methodKeys = new List<string> { "__index", "__metatable", "__eq" };
-            foreach (string metaKey in methodKeys)
+            var methodKeys = new List<string> { "__index", "__metatable", "__eq" };
+            foreach (var metaKey in methodKeys)
             {
                 Lua.GetField(luaState, childMetatable, metaKey);
                 Lua.SetField(luaState, metatable, metaKey);
             }
 
-            List<int> methodIndexes = new List<int> { 'h', 'p', 't' };
-            foreach (int metaIndex in methodIndexes)
+            var methodIndexes = new List<int> { 'h', 'p', 't' };
+            foreach (var metaIndex in methodIndexes)
             {
                 Lua.RawGetI(luaState, childMetatable, metaIndex);
                 Lua.RawSetI(luaState, metatable, metaIndex);
@@ -297,17 +256,17 @@ public class LuaFunctionsLoader
             return;
         }
 
-        if (item != null && item.IsContainer)
+        switch (item)
         {
-            Lua.GetMetaTable(luaState, "Container");
-        }
-        else if (item != null && item.IsTeleport)
-        {
-            Lua.GetMetaTable(luaState, "Teleport");
-        }
-        else
-        {
-            Lua.GetMetaTable(luaState, "Item");
+            case { IsContainer: true }:
+                Lua.GetMetaTable(luaState, "Container");
+                break;
+            case { IsTeleport: true }:
+                Lua.GetMetaTable(luaState, "Teleport");
+                break;
+            default:
+                Lua.GetMetaTable(luaState, "Item");
+                break;
         }
 
         Lua.SetMetaTable(luaState, index - 1);
@@ -320,17 +279,17 @@ public class LuaFunctionsLoader
             return;
         }
 
-        if (creature != null && creature is IPlayer)
+        switch (creature)
         {
-            Lua.GetMetaTable(luaState, "Player");
-        }
-        else if (creature != null && creature is IMonster)
-        {
-            Lua.GetMetaTable(luaState, "Monster");
-        }
-        else
-        {
-            Lua.GetMetaTable(luaState, "Npc");
+            case IPlayer:
+                Lua.GetMetaTable(luaState, "Player");
+                break;
+            case IMonster:
+                Lua.GetMetaTable(luaState, "Monster");
+                break;
+            default:
+                Lua.GetMetaTable(luaState, "Npc");
+                break;
         }
 
         Lua.SetMetaTable(luaState, index - 1);
@@ -338,11 +297,11 @@ public class LuaFunctionsLoader
 
     public static string GetFormatedLoggerMessage(LuaState luaState)
     {
-        string format = GetString(luaState, 1);
-        int n = Lua.GetTop(luaState);
+        var format = GetString(luaState, 1);
+        var n = Lua.GetTop(luaState);
         var args = new List<object>();
 
-        for (int i = 2; i <= n; i++)
+        for (var i = 2; i <= n; i++)
         {
             if (IsString(luaState, i))
             {
@@ -358,7 +317,7 @@ public class LuaFunctionsLoader
             }
             else if (IsUserdata(luaState, i))
             {
-                LuaDataType userType = GetUserdataType(luaState, i);
+                var userType = GetUserdataType(luaState, i);
                 args.Add(GetUserdataTypeName(userType));
             }
             else if (IsTable(luaState, i))
@@ -381,14 +340,14 @@ public class LuaFunctionsLoader
 
         try
         {
-            List<string> indexedArguments = args.Select((arg, index) => $"{{{index}}}").ToList();
-            string formattedMessage = string.Format(format, indexedArguments.ToArray());
+            var indexedArguments = args.Select((arg, index) => $"{{{index}}}").ToList();
+            var formattedMessage = string.Format(format, indexedArguments.ToArray());
             return formattedMessage;
             //return fmt.vformat(format, args);
         }
         catch (Exception e)
         {
-            Console.WriteLine("[{}] format error: {}", nameof(GetFormatedLoggerMessage), e.Message);
+            Console.WriteLine("[{0}] format error: {1}", nameof(GetFormatedLoggerMessage), e.Message);
         }
 
         return string.Empty;
@@ -397,17 +356,17 @@ public class LuaFunctionsLoader
     public static string GetString(LuaState luaState, int arg)
     {
         ulong len = 0;
-        var c_str = Lua.ToLString(luaState, arg, ref len);
-        if (c_str == null || len == 0)
+        var cStr = Lua.ToLString(luaState, arg, ref len);
+        if (cStr == null || len == 0)
         {
             return "";
         }
-        return c_str;
+        return cStr;
     }
 
     public static Location GetPosition(LuaState luaState, int arg, out int stackpos)
     {
-        Location position = new Location
+        var position = new Location
         {
             X = GetField<ushort>(luaState, arg, "x"),
             Y = GetField<ushort>(luaState, arg, "y"),
@@ -415,14 +374,7 @@ public class LuaFunctionsLoader
         };
 
         Lua.GetField(luaState, arg, "stackpos");
-        if (Lua.IsNil(luaState, -1))
-        {
-            stackpos = 0;
-        }
-        else
-        {
-            stackpos = GetNumber<int>(luaState, -1);
-        }
+        stackpos = Lua.IsNil(luaState, -1) ? 0 : GetNumber<int>(luaState, -1);
 
         Lua.Pop(luaState, 4);
         return position;
@@ -430,7 +382,7 @@ public class LuaFunctionsLoader
 
     public static Location GetPosition(LuaState luaState, int arg)
     {
-        Location position = new Location
+        var position = new Location
         {
             X = GetField<ushort>(luaState, arg, "x"),
             Y = GetField<ushort>(luaState, arg, "y"),
@@ -443,7 +395,7 @@ public class LuaFunctionsLoader
 
     public static LuaVariant GetVariant(LuaState luaState, int arg)
     {
-        LuaVariant var = new LuaVariant
+        var var = new LuaVariant
         {
             InstantName = GetFieldString(luaState, arg, "instantName"),
             RuneName = GetFieldString(luaState, arg, "runeName"),
@@ -491,7 +443,7 @@ public class LuaFunctionsLoader
         }
         Lua.RawGetI(luaState, -1, 't');
 
-        LuaDataType type = GetNumber<LuaDataType>(luaState, -1);
+        var type = GetNumber<LuaDataType>(luaState, -1);
         Lua.Pop(luaState, 2);
 
         return type;
@@ -537,11 +489,11 @@ public class LuaFunctionsLoader
         Lua.NewTable(luaState);
         Lua.PushValue(luaState, -1);
         Lua.SetGlobal(luaState, className);
-        int methods = Lua.GetTop(luaState);
+        var methods = Lua.GetTop(luaState);
 
         // methodsTable = {}
         Lua.NewTable(luaState);
-        int methodsTable = Lua.GetTop(luaState);
+        var methodsTable = Lua.GetTop(luaState);
 
         if (newFunction != null)
         {
@@ -565,7 +517,7 @@ public class LuaFunctionsLoader
 
         // className.metatable = {}
         Lua.NewMetaTable(luaState, className);
-        int metatable = Lua.GetTop(luaState);
+        var metatable = Lua.GetTop(luaState);
 
         // className.metatable.__metatable = className
         Lua.PushValue(luaState, methods);
@@ -759,8 +711,8 @@ public class LuaFunctionsLoader
         return false;
     }
 
-    private static int scriptEnvIndex = 0;
-    private static ScriptEnvironment[] scriptEnv = new ScriptEnvironment[16];
+    private static int _scriptEnvIndex;
+    private static readonly ScriptEnvironment[] ScriptEnv = new ScriptEnvironment[16];
 
     public static T GetNumber<T>(LuaState luaState, int arg) where T : struct
     {
@@ -780,7 +732,7 @@ public class LuaFunctionsLoader
 
     public static T GetNumber<T>(LuaState luaState, int arg, T defaultValue) where T : struct
     {
-        int parameters = Lua.GetTop(luaState);
+        var parameters = Lua.GetTop(luaState);
         if (parameters == 0 || arg > parameters)
         {
             return defaultValue;
@@ -790,15 +742,15 @@ public class LuaFunctionsLoader
 
     public static T GetUserdataShared<T>(LuaState luaState, int arg) where T : struct
     {
-        IntPtr userdata = (IntPtr)Lua.ToUserData(luaState, arg);
+        var userdata = (IntPtr)Lua.ToUserData(luaState, arg);
 
         if (userdata == IntPtr.Zero)
         {
             return default(T);
         }
 
-        IntPtr ptr = Marshal.ReadIntPtr(userdata);
-        return (T)Marshal.PtrToStructure(ptr, typeof(T));
+        var ptr = Marshal.ReadIntPtr(userdata);
+        return Marshal.PtrToStructure<T>(ptr)!;
     }
 
     public static T GetUserdata<T>(LuaState luaState, int arg) where T : class
@@ -809,11 +761,11 @@ public class LuaFunctionsLoader
             return null;
         }
 
-        var stru = (UserDataStruct)System.Runtime.InteropServices.Marshal.PtrToStructure(System.Runtime.InteropServices.Marshal.ReadIntPtr(userdata), typeof(UserDataStruct));
+        var structure = Marshal.PtrToStructure<UserDataStruct>(Marshal.ReadIntPtr(userdata))!;
 
-        lock (_objects)
+        lock (Objects)
         {
-            if (_objects.TryGetValue(stru.Index, out var value))
+            if (Objects.TryGetValue(structure.Index, out var value))
                 return (T)value;
         }
 
@@ -828,11 +780,11 @@ public class LuaFunctionsLoader
             return default;
         }
 
-        var stru = (UserDataStruct)System.Runtime.InteropServices.Marshal.PtrToStructure(System.Runtime.InteropServices.Marshal.ReadIntPtr(userdata), typeof(UserDataStruct));
+        var structure = Marshal.PtrToStructure<UserDataStruct>(Marshal.ReadIntPtr(userdata));
         
-        lock (_objects)
+        lock (Objects)
         {
-            if (_objects.TryGetValue(stru.Index, out var value))
+            if (Objects.TryGetValue(structure.Index, out var value))
                 return (T)value;
         }
 
@@ -856,7 +808,7 @@ public class LuaFunctionsLoader
 
     public static bool GetBoolean(LuaState luaState, int arg, bool defaultValue)
     {
-        int parameters = Lua.GetTop(luaState);
+        var parameters = Lua.GetTop(luaState);
         if (parameters == 0 || arg > parameters)
         {
             return defaultValue;
@@ -866,7 +818,7 @@ public class LuaFunctionsLoader
 
     public static string GetString(LuaState luaState, int arg, string defaultValue)
     {
-        int parameters = Lua.GetTop(luaState);
+        var parameters = Lua.GetTop(luaState);
         if (parameters == 0 || arg > parameters)
         {
             return defaultValue;
@@ -929,73 +881,69 @@ public class LuaFunctionsLoader
 
     public ScriptEnvironment InternalGetScriptEnv()
     {
-        if (scriptEnvIndex < 0 || scriptEnvIndex >= 16)
+        if (_scriptEnvIndex is < 0 or >= 16)
         {
             throw new IndexOutOfRangeException();
         }
-        return scriptEnv[scriptEnvIndex];
+        return ScriptEnv[_scriptEnvIndex];
     }
 
-    public bool InternalReserveScriptEnv()
-    {
-        return ++scriptEnvIndex < 16;
-    }
+    public bool InternalReserveScriptEnv() => ++_scriptEnvIndex < 16;
 
     public static ScriptEnvironment GetScriptEnv()
     {
-        if (scriptEnvIndex < 0 || scriptEnvIndex >= 16)
+        if (_scriptEnvIndex is < 0 or >= 16)
         {
             throw new IndexOutOfRangeException();
         }
-        return scriptEnv[scriptEnvIndex];
+        return ScriptEnv[_scriptEnvIndex];
     }
 
     public static bool ReserveScriptEnv()
     {
-        return ++scriptEnvIndex < 16;
+        return ++_scriptEnvIndex < 16;
     }
 
     public static void ResetScriptEnv()
     {
-        if (scriptEnvIndex < 0)
+        if (_scriptEnvIndex < 0)
         {
             throw new IndexOutOfRangeException();
         }
-        scriptEnv[scriptEnvIndex--].ResetEnv();
+        ScriptEnv[_scriptEnvIndex--].ResetEnv();
     }
 
     /// <summary>
     /// Compatibility NewIndexedUserData with constant parameter
     /// </summary>
-    /// <param name="size"></param>
     /// <returns></returns>
     public static IntPtr NewUserData(LuaState luaState, int size)
     {
-        return (IntPtr)Lua.NewUserData(luaState, (UIntPtr)size);
+        return Lua.NewUserData(luaState, (UIntPtr)size);
     }
 
     public static void NewUData(LuaState luaState, int val)
     {
-        IntPtr pointer = NewUserData(luaState, Marshal.SizeOf(typeof(int)));
+        var pointer = NewUserData(luaState, Marshal.SizeOf<int>());
         Marshal.WriteInt32(pointer, val);
     }
 
-    public static T ToObject<T>(LuaState luaState, int index, bool freeGCHandle = true)
+    public static T ToObject<T>(LuaState luaState, int index, bool freeGcHandle = true)
     {
         if (IsNil(luaState, index)/* || !IsLightUserData(index)*/)
-            return default(T);
+            return default;
 
-        IntPtr data = (IntPtr)Lua.ToUserData(luaState, index);
+        var data = Lua.ToUserData(luaState, index);
         if (data == IntPtr.Zero)
-            return default(T);
+            return default;
 
         var handle = GCHandle.FromIntPtr(data);
         if (!handle.IsAllocated)
-            return default(T);
+            return default;
 
         var reference = (T)handle.Target;
 
-        if (freeGCHandle)
+        if (freeGcHandle)
             handle.Free();
 
         return reference;
@@ -1018,31 +966,31 @@ public class LuaFunctionsLoader
     }
 
     // object to object #
-    static readonly ConcurrentDictionary<object, int> _objectsBackMap = new ConcurrentDictionary<object, int>(new ReferenceComparer());
+    private static readonly ConcurrentDictionary<object, int> ObjectsBackMap = new(new ReferenceComparer());
     // object # to object (FIXME - it should be possible to get object address as an object #)
-    static readonly ConcurrentDictionary<int, object> _objects = new ConcurrentDictionary<int, object>();
-    static readonly List<UserDataStruct> _structuresToReuse = new List<UserDataStruct>();
+    private static readonly ConcurrentDictionary<int, object> Objects = new();
+    private static readonly List<UserDataStruct> StructuresToReuse = [];
 
-    static readonly ConcurrentQueue<int> finalizedReferences = new ConcurrentQueue<int>();
+    private static readonly ConcurrentQueue<int> FinalizedReferences = new();
 
     //internal EventHandlerContainer PendingEvents = new EventHandlerContainer();
 
     /// <summary>
     /// We want to ensure that objects always have a unique ID
     /// </summary>
-    static int _nextObj;
+    private static int _nextObj;
 
     private static int AddObject(object obj)
     {
         // New object: inserts it in the list
-        int index = _nextObj++;
+        var index = _nextObj++;
 
-        lock (_objects)
+        lock (Objects)
         {
-            _objects[index] = obj;
+            Objects[index] = obj;
 
             if (!obj.GetType().IsValueType || obj.GetType().IsEnum)
-                _objectsBackMap[obj] = index;
+                ObjectsBackMap[obj] = index;
         }
        
         return index;
@@ -1050,8 +998,6 @@ public class LuaFunctionsLoader
 
     public static void PushUserdata(LuaState luaState, object o)
     {
-        int index = -1;
-
         // Pushes nil
         if (o == null)
         {
@@ -1060,29 +1006,29 @@ public class LuaFunctionsLoader
         }
 
         // Object already in the list of Lua objects? Push the stored reference.
-        bool found = (!o.GetType().IsValueType || o.GetType().IsEnum) && _objectsBackMap.TryGetValue(o, out index);
+        var found = (!o.GetType().IsValueType || o.GetType().IsEnum) && ObjectsBackMap.TryGetValue(o, out var index);
 
         index = AddObject(o);
 
         IntPtr userdata;
 
-        UserDataStruct stru;
+        UserDataStruct structure;
 
-        if (_structuresToReuse.Any())
+        if (StructuresToReuse.Count != 0)
         {
-            stru = _structuresToReuse.FirstOrDefault();
-            _structuresToReuse.Remove(stru);
+            structure = StructuresToReuse.FirstOrDefault();
+            StructuresToReuse.Remove(structure);
 
-            stru.Index = index;
-            userdata = stru.Ptr;
+            structure.Index = index;
+            userdata = structure.Ptr;
         }
         else
         {
-            userdata = (IntPtr)Lua.NewUserData(luaState, (ulong)IntPtr.Size);
-            stru = new UserDataStruct(index, userdata, 0);
+            userdata = Lua.NewUserData(luaState, (ulong)IntPtr.Size);
+            structure = new UserDataStruct(index, userdata, 0);
         }
 
-        GCHandle gch2 = GCHandle.Alloc(stru, GCHandleType.Pinned);
+        var gch2 = GCHandle.Alloc(structure, GCHandleType.Pinned);
 
         Marshal.WriteIntPtr(userdata, gch2.AddrOfPinnedObject());
         gch2.Free();
@@ -1094,13 +1040,10 @@ public class LuaFunctionsLoader
         if (userdata == IntPtr.Zero)
             throw new Exception("Failed to update userdata: userdata not found.");
 
-        var userDataStruct = (UserDataStruct)Marshal.PtrToStructure(
-            Marshal.ReadIntPtr(userdata),
-            typeof(UserDataStruct)
-        );
+        var userDataStruct = Marshal.PtrToStructure<UserDataStruct>(Marshal.ReadIntPtr(userdata))!;
 
-        lock (_objects)
-            if (_objects.ContainsKey(userDataStruct.Index))
-                _objects[userDataStruct.Index] = newItem;
+        lock (Objects)
+            if (Objects.ContainsKey(userDataStruct.Index))
+                Objects[userDataStruct.Index] = newItem;
     }
 }

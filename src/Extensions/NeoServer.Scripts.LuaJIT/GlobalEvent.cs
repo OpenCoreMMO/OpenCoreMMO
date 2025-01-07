@@ -4,21 +4,13 @@ using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public struct LightInfo
+public struct LightInfo(byte level, byte color)
 {
-    public byte Level;
-    public byte Color;
+    public byte Level = level;
+    public byte Color = color;
 
-    public LightInfo()
+    public LightInfo() : this(0, 255)
     {
-        Level = 0;
-        Color = 255;
-    }
-
-    public LightInfo(byte level, byte color)
-    {
-        Level = level;
-        Color = color;
     }
 }
 
@@ -36,32 +28,26 @@ public class GlobalEvent : Script
     public uint Interval { get; set; }
     public GlobalEventType EventType { get; set; }
 
-    public string GetScriptTypeName()
+    public override string GetScriptTypeName()
     {
-        switch (EventType)
+        return EventType switch
         {
-            case GlobalEventType.GLOBALEVENT_STARTUP:
-                return "onStartup";
-            case GlobalEventType.GLOBALEVENT_SHUTDOWN:
-                return "onShutdown";
-            case GlobalEventType.GLOBALEVENT_RECORD:
-                return "onRecord";
-            case GlobalEventType.GLOBALEVENT_TIMER:
-                return "onTime";
-            case GlobalEventType.GLOBALEVENT_PERIODCHANGE:
-                return "onPeriodChange";
-            case GlobalEventType.GLOBALEVENT_ON_THINK:
-                return "onThink";
-            default:
-                throw new InvalidOperationException("[GlobalEvent::GetScriptTypeName] - Invalid event type");
-        }
+            GlobalEventType.GLOBALEVENT_STARTUP => "onStartup",
+            GlobalEventType.GLOBALEVENT_SHUTDOWN => "onShutdown",
+            GlobalEventType.GLOBALEVENT_RECORD => "onRecord",
+            GlobalEventType.GLOBALEVENT_TIMER => "onTime",
+            GlobalEventType.GLOBALEVENT_PERIODCHANGE => "onPeriodChange",
+            GlobalEventType.GLOBALEVENT_ON_THINK => "onThink", 
+            GlobalEventType.GLOBALEVENT_SAVE => "onSave",
+            _ => throw new InvalidOperationException("[GlobalEvent::GetScriptTypeName] - Invalid event type")
+        };
     }
 
     public bool ExecutePeriodChange(int lightState, LightInfo lightInfo)
     {
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            _logger.Error($"[GlobalEvent::ExecutePeriodChange - {Name}] Call stack overflow. Too many Lua script calls being nested.");
+            _logger.Error("[GlobalEvent::ExecutePeriodChange - {Name}] Call stack overflow. Too many Lua script calls being nested", Name);
             return false;
         }
 
@@ -81,7 +67,7 @@ public class GlobalEvent : Script
     {
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            _logger.Error($"[GlobalEvent::ExecuteRecord - {Name}] Call stack overflow. Too many Lua script calls being nested.");
+            _logger.Error("[GlobalEvent::ExecuteRecord - {Name}] Call stack overflow. Too many Lua script calls being nested", Name);
             return false;
         }
 
@@ -101,7 +87,7 @@ public class GlobalEvent : Script
     {
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            _logger.Error($"[GlobalEvent::ExecuteEvent - {Name}] Call stack overflow. Too many Lua script calls being nested.");
+            _logger.Error("[GlobalEvent::ExecuteEvent - {Name}] Call stack overflow. Too many Lua script calls being nested", Name);
             return false;
         }
 
@@ -112,12 +98,13 @@ public class GlobalEvent : Script
         var luaState = scriptInterface.GetLuaState();
         scriptInterface.PushFunction(GetScriptId());
 
-        int paramsCount = 0;
-        if (EventType == GlobalEventType.GLOBALEVENT_NONE || EventType == GlobalEventType.GLOBALEVENT_TIMER)
-        {
-            Lua.PushNumber(luaState, Interval);
-            paramsCount = 1;
-        }
+        var paramsCount = 0;
+        
+        if (EventType is not (GlobalEventType.GLOBALEVENT_NONE or GlobalEventType.GLOBALEVENT_TIMER))
+            return scriptInterface.CallFunction(paramsCount);
+        
+        Lua.PushNumber(luaState, Interval);
+        paramsCount = 1;
 
         return scriptInterface.CallFunction(paramsCount);
     }

@@ -1,8 +1,8 @@
 ﻿namespace NeoServer.Scripts.LuaJIT.Structs;
 
-public struct UserDataStruct(int index, IntPtr ptr, int referenceIndex)
+public record struct UserDataStruct(int Index, IntPtr Ptr, int ReferenceIndex)
 {
-    public int Index { get; set; } = index;
-    public IntPtr Ptr { get; set; } = ptr;
-    public int ReferenceIndex { get; set; } = referenceIndex;
+    public int Index { get; set; } = Index;
+    public IntPtr Ptr { get; set; } = Ptr;
+    public int ReferenceIndex { get; set; } = ReferenceIndex;
 }

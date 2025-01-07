@@ -14,7 +14,7 @@ public class ArgManager
 
     public static ArgManager GetInstance()
     {
-        return _instance == null ? _instance = new ArgManager() : _instance;
+        return _instance ??= new ArgManager();
     }
 
     #endregion

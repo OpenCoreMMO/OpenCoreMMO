@@ -18,8 +18,11 @@ public class ExtendedOpcodeHandler : PacketHandler
 
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
+        var opcode = message.GetByte();
+        var buffer = message.GetString() ?? string.Empty;
+
         if (_game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player))
             _game.Dispatcher.AddEvent(new Event(() =>
-                _scriptGameManager.PlayerExtendedOpcodeHandle(player, message.GetByte(),message.GetString())));
+                _scriptGameManager.PlayerExtendedOpcodeHandle(player, opcode, buffer)));
     }
 }

@@ -171,13 +171,13 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         for (int i = 0; i < parameters - 2; ++i)
         { 
             // -2 because addEvent needs at least two parameters
-            eventDesc.Parameters.Add(Lua.Ref(globalState, LUA_REGISTRYINDEX));
+            eventDesc.Parameters.Add(Lua.Ref(globalState, LUA_REGISTRY_INDEX));
         }
 
         var delay = int.Max(100, GetNumber<int>(globalState, 2));
         Lua.Pop(globalState, 1);
 
-        eventDesc.Function = Lua.Ref(globalState, LUA_REGISTRYINDEX);
+        eventDesc.Function = Lua.Ref(globalState, LUA_REGISTRY_INDEX);
         eventDesc.ScriptId = GetScriptEnv().GetScriptId();
         eventDesc.ScriptName = GetScriptEnv().GetScriptInterface().GetLoadingScriptName();
 
@@ -217,10 +217,10 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
 
         _scheduler.CancelEvent(timerEventDesc.EventId);
 
-        Lua.UnRef(globalState, LUA_REGISTRYINDEX, timerEventDesc.Function);
+        Lua.UnRef(globalState, LUA_REGISTRY_INDEX, timerEventDesc.Function);
 
         foreach (var parameter in timerEventDesc.Parameters) {
-            Lua.UnRef(globalState, LUA_REGISTRYINDEX, parameter);
+            Lua.UnRef(globalState, LUA_REGISTRY_INDEX, parameter);
         }
 
         PushBoolean(luaState, true);

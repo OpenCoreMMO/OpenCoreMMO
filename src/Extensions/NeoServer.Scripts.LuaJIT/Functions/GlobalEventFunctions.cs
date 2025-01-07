@@ -156,7 +156,7 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
                 parameters.Add(uint.Parse(item));
 
             var hour = parameters.FirstOrDefault();
-            if (hour < 0 || hour > 23)
+            if (hour is < 0 or > 23)
             {
                 _logger.Error("[GlobalEventFunctions::luaGlobalEventTime] - Invalid hour {} for globalevent with name: {}",
                                  timer, globalevent.Name);
@@ -171,7 +171,7 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
             if (parameters.Count > 1)
             {
                 min = parameters[1];
-                if (min < 0 || min > 59)
+                if (min is < 0 or > 59)
                 {
                     _logger.Error("[GlobalEventFunctions::luaGlobalEventTime] - Invalid minute: {} for globalevent with name: {}",
                                      timer, globalevent.Name);
@@ -182,7 +182,7 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
                 if (parameters.Count > 2)
                 {
                     sec = parameters[2];
-                    if (sec < 0 || sec > 59)
+                    if (sec is < 0 or > 59)
                     {
                         _logger.Error("[GlobalEventFunctions::luaGlobalEventTime] - Invalid minute: {} for globalevent with name: {}",
                                          timer, globalevent.Name);

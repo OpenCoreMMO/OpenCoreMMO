@@ -60,7 +60,7 @@ public class ScriptEnvironment
         if (_callbackId != 0)
         {
             // nested callbacks are not allowed
-            if (_luaScriptInterface != null) _luaScriptInterface.ReportError("Nested callbacks!");
+            if (_luaScriptInterface != null) LuaFunctionsLoader.ReportError("Nested callbacks!");
             return false;
         }
 
@@ -147,7 +147,7 @@ public class ScriptEnvironment
     {
         var thing = GetThingByUID(uid);
 
-        if (thing != null && thing is IItem item)
+        if (thing is IItem item)
             return item;
 
         return null;
@@ -157,7 +157,7 @@ public class ScriptEnvironment
     {
         var thing = GetThingByUID(uid);
 
-        if (thing != null && thing is IContainer container)
+        if (thing is IContainer container)
             return container;
 
         return null;
