@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NeoServer.Common.Network.Packets.ClientToServer;
 using NeoServer.Data.Contexts;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Helpers;
@@ -44,6 +45,15 @@ public class Program
 
     public static async Task Main()
     {
+        var playerSayToChannelPacket = new PlayerSayToChannelPacket()
+        {
+            TalkType = NeoServer.Common.Network.Packets.Enums.SpeechType.Say,
+            ChannelId = 1,
+            Message = "test"
+        };
+
+        Console.WriteLine(playerSayToChannelPacket.Message);
+
         Console.Title = "OpenCoreMMO Server";
 
         var sw = new Stopwatch();

@@ -1,5 +1,6 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17 
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoServer.Server", "ApplicationServer\NeoServer.Server\NeoServer.Server.csproj", "{7E4B4211-CC8F-4465-9E51-ED75C63CD179}"
@@ -105,6 +106,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{EB46ABE5-1719-4A52-BACB-A05D6EACCAB5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoServer.Scripts.LuaJIT", "Extensions\NeoServer.Scripts.LuaJIT\NeoServer.Scripts.LuaJIT.csproj", "{79E18750-321E-4E02-897D-889A70530993}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{735536B4-B04E-41E5-A2BD-4A162E60054B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoServer.Common.Network.Packets", "NeoServer.Common.Network.Packets\NeoServer.Common.Network.Packets.csproj", "{9CF98AC6-123A-400D-9720-7F23716D3661}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -440,6 +445,14 @@ Global
 		{79E18750-321E-4E02-897D-889A70530993}.Release|Any CPU.Build.0 = Release|Any CPU
 		{79E18750-321E-4E02-897D-889A70530993}.Release|x64.ActiveCfg = Release|Any CPU
 		{79E18750-321E-4E02-897D-889A70530993}.Release|x64.Build.0 = Release|Any CPU
+		{9CF98AC6-123A-400D-9720-7F23716D3661}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CF98AC6-123A-400D-9720-7F23716D3661}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CF98AC6-123A-400D-9720-7F23716D3661}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9CF98AC6-123A-400D-9720-7F23716D3661}.Debug|x64.Build.0 = Debug|Any CPU
+		{9CF98AC6-123A-400D-9720-7F23716D3661}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CF98AC6-123A-400D-9720-7F23716D3661}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CF98AC6-123A-400D-9720-7F23716D3661}.Release|x64.ActiveCfg = Release|Any CPU
+		{9CF98AC6-123A-400D-9720-7F23716D3661}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -493,6 +506,7 @@ Global
 		{B0353BE8-6DE2-4D8F-A518-6123B0A34124} = {ABF0692C-9C53-472D-B960-E4444FE46B2C}
 		{BC61E4DA-D4F3-46DC-9B1D-E563BDF45E02} = {41D4D3B5-6FC6-48F5-9D05-EA8C293DB44B}
 		{79E18750-321E-4E02-897D-889A70530993} = {2D49C135-AE9B-4434-8CF3-2F3E43E2583A}
+		{9CF98AC6-123A-400D-9720-7F23716D3661} = {735536B4-B04E-41E5-A2BD-4A162E60054B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B3C7097-0071-4218-BE24-5EE9128763B6}
