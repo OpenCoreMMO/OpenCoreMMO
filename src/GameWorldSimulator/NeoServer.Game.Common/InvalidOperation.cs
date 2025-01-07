@@ -11,6 +11,7 @@ public enum InvalidOperation
     BothHandsNeedToBeFree,
     NotEnoughMana,
     VocationCannotUseSpell,
+    InvalidVocation,
     NotEnoughLevel,
     Exhausted,
     CannotDrink,
@@ -36,5 +37,7 @@ public enum InvalidOperation
     CannotMove,
     AttackTargetIsInvisible,
     InvalidPlayer,
-    PlayerLocationInvalid
+    PlayerLocationInvalid,
+    NotEnoughMagicLevel,
+    PremiumTimeIsRequired
 }

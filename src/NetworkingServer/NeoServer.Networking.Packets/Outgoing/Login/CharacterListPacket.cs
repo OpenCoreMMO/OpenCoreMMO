@@ -1,4 +1,5 @@
-﻿using NeoServer.Data.Entities;
+﻿using System;
+using NeoServer.Data.Entities;
 using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Login;
@@ -30,7 +31,6 @@ public class CharacterListPacket : OutgoingPacket
 
         var ipAddress = ParseIpAddress(_ipAddress);
 
-
         foreach (var player in _accountEntity.Players)
         {
             var port = player.World?.Port > 0 ? player.World.Port : _port;
@@ -47,7 +47,8 @@ public class CharacterListPacket : OutgoingPacket
             message.AddUInt16((ushort)port);
         }
 
-        message.AddUInt16((ushort)_accountEntity.PremiumTime);
+        var premiumTimeDays = (ushort) (_accountEntity.PremiumTimeEndAt is null ? 0 : (_accountEntity.PremiumTimeEndAt.Value- DateTime.Now).TotalDays);
+        message.AddUInt16(premiumTimeDays);
     }
 
     private static byte[] ParseIpAddress(string ip)
