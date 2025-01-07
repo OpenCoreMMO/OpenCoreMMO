@@ -3,7 +3,7 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Events.Creatures;
 using NeoServer.Scripts.LuaJIT.Events.Players;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Events;
 
 public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubscriber
 {
