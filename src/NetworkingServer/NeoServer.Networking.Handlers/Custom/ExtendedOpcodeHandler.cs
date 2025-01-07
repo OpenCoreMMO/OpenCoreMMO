@@ -1,21 +1,25 @@
 ﻿using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
+using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Tasks;
 
-namespace NeoServer.Networking.Handlers.Player;
+namespace NeoServer.Networking.Handlers.Custom;
 
 public class ExtendedOpcodeHandler : PacketHandler
 {
     private readonly IGameServer _game;
+    private readonly IScriptGameManager _scriptGameManager;
 
-    public ExtendedOpcodeHandler(IGameServer game)
+    public ExtendedOpcodeHandler(IGameServer game, IScriptGameManager scriptGameManager)
     {
         _game = game;
+        _scriptGameManager = scriptGameManager;
     }
 
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
         if (_game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player))
-            _game.Dispatcher.AddEvent(new Event(() => player.ExtendedOpcode(message.GetByte(), message.GetString())));
+            _game.Dispatcher.AddEvent(new Event(() =>
+                _scriptGameManager.PlayerExtendedOpcodeHandle(player, message.GetByte(),message.GetString())));
     }
 }
