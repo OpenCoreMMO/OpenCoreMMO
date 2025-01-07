@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using NeoServer.Data.Entities;
-using NeoServer.Web.Shared.ViewModels.Response;
+using NeoServer.Web.API.Response;
 
 namespace NeoServer.Web.API.AutoMapperProfiles;
 

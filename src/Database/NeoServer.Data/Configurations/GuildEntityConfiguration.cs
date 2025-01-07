@@ -9,8 +9,6 @@ public class GuildEntityConfiguration : IEntityTypeConfiguration<GuildEntity>
 {
     public void Configure(EntityTypeBuilder<GuildEntity> builder)
     {
-        builder.ToTable("Guild");
-
         builder.HasKey(e => new { e.Id });
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();

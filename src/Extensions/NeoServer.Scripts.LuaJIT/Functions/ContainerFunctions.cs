@@ -10,70 +10,70 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
     {
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterSharedClass(L, "Container", "Item", LuaContainerCreate);
-        RegisterMetaMethod(L, "Container", "__eq", LuaUserdataCompare<IContainer>);
+        RegisterSharedClass(luaState, "Container", "Item", LuaContainerCreate);
+        RegisterMetaMethod(luaState, "Container", "__eq", LuaUserdataCompare<IContainer>);
 
-        RegisterMethod(L, "Container", "getSize", LuaContainerGetSize);
+        RegisterMethod(luaState, "Container", "getSize", LuaContainerGetSize);
 
-        RegisterMethod(L, "Container", "getItem", LuaContainerGetItem);
+        RegisterMethod(luaState, "Container", "getItem", LuaContainerGetItem);
 
     }
 
-    private static int LuaContainerCreate(LuaState L)
+    private static int LuaContainerCreate(LuaState luaState)
     {
         // Container(uid)
-        var id = GetNumber<uint>(L, 2);
+        var id = GetNumber<uint>(luaState, 2);
 
         var container = GetScriptEnv().GetContainerByUID(id);
         if (container != null)
         {
-            PushUserdata(L, container);
-            SetMetatable(L, -1, "Container");
+            PushUserdata(luaState, container);
+            SetMetatable(luaState, -1, "Container");
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
 
         return 1;
     }
 
-    public static int LuaContainerGetSize(LuaState L)
+    public static int LuaContainerGetSize(LuaState luaState)
     {
         // container:getSize()
-        var container = GetUserdata<IContainer>(L, 1);
+        var container = GetUserdata<IContainer>(luaState, 1);
         if (container != null)
-            Lua.PushNumber(L, container.Items.Count);
+            Lua.PushNumber(luaState, container.Items.Count);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    public static int LuaContainerGetItem(LuaState L)
+    public static int LuaContainerGetItem(LuaState luaState)
     {
         // container:getItem(index)
-        var container = GetUserdata<IContainer>(L, 1);
+        var container = GetUserdata<IContainer>(luaState, 1);
 
         if (!container)
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
             return 1;
         }
 
-        var index = GetNumber<int>(L, 2);
+        var index = GetNumber<int>(luaState, 2);
         var item = container.Items.ElementAtOrDefault(index);
 
         if (item != null)
         {
-            PushUserdata(L, item);
-            SetItemMetatable(L, -1, item);
+            PushUserdata(luaState, item);
+            SetItemMetatable(luaState, -1, item);
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
 
         return 1;

@@ -143,6 +143,12 @@ public class LuaScriptGameManager : IScriptGameManager
 
         return false;
     }
+    
+    public void PlayerExtendedOpcodeHandle(IPlayer player, byte opcode, string buffer)
+    {
+        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(player.CreatureId, CreatureEventType.CREATURE_EVENT_EXTENDED_OPCODE))
+            creatureEvent.ExecuteOnExtendedOpcode(player, opcode, buffer);
+    }
 
     public void GlobalEventExecuteRecord(int current, int old)
     {

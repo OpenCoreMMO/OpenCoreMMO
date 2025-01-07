@@ -15,50 +15,50 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
         _logger = logger;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterTable(L, "logger");
-        RegisterMethod(L, "logger", "info", LuaLoggerInfo);
-        RegisterMethod(L, "logger", "warn", LuaLoggerWarn);
-        RegisterMethod(L, "logger", "error", LuaLoggerError);
-        RegisterMethod(L, "logger", "debug", LuaLoggerDebug);
+        RegisterTable(luaState, "logger");
+        RegisterMethod(luaState, "logger", "info", LuaLoggerInfo);
+        RegisterMethod(luaState, "logger", "warn", LuaLoggerWarn);
+        RegisterMethod(luaState, "logger", "error", LuaLoggerError);
+        RegisterMethod(luaState, "logger", "debug", LuaLoggerDebug);
     }
 
-    private static int LuaLoggerInfo(LuaState L)
+    private static int LuaLoggerInfo(LuaState luaState)
     {
         // logger.info(text)
-        if (IsString(L, 1))
-            _logger.Information(GetFormatedLoggerMessage(L));
+        if (IsString(luaState, 1))
+            _logger.Information(GetFormatedLoggerMessage(luaState));
         else
             ReportError(nameof(LuaLoggerWarn), "First parameter needs to be a string");
         return 1;
     }
 
-    private static int LuaLoggerWarn(LuaState L)
+    private static int LuaLoggerWarn(LuaState luaState)
     {
         // logger.info(text)
-        if (IsString(L, 1))
-            _logger.Warning(GetFormatedLoggerMessage(L));
+        if (IsString(luaState, 1))
+            _logger.Warning(GetFormatedLoggerMessage(luaState));
         else
             ReportError(nameof(LuaLoggerWarn), "First parameter needs to be a string");
         return 1;
     }
 
-    private static int LuaLoggerError(LuaState L)
+    private static int LuaLoggerError(LuaState luaState)
     {
         // logger.info(text)
-        if (IsString(L, 1))
-            _logger.Error(GetFormatedLoggerMessage(L));
+        if (IsString(luaState, 1))
+            _logger.Error(GetFormatedLoggerMessage(luaState));
         else
             ReportError(nameof(LuaLoggerError), "First parameter needs to be a string");
         return 1;
     }
 
-    private static int LuaLoggerDebug(LuaState L)
+    private static int LuaLoggerDebug(LuaState luaState)
     {
         // logger.info(text)
-        if (IsString(L, 1))
-            _logger.Debug(GetFormatedLoggerMessage(L));
+        if (IsString(luaState, 1))
+            _logger.Debug(GetFormatedLoggerMessage(luaState));
         else
             ReportError(nameof(LuaLoggerDebug), "First parameter needs to be a string");
         return 1;

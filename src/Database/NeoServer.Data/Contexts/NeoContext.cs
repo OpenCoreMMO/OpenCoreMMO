@@ -2,7 +2,10 @@
 using NeoServer.Data.Configurations;
 using NeoServer.Data.Configurations.ForSqLite;
 using NeoServer.Data.Entities;
+using NeoServer.Data.Extensions;
+using NeoServer.Data.Helpers;
 using Serilog;
+using System.Threading.Tasks;
 using System.Data.Common;
 
 namespace NeoServer.Data.Contexts;
@@ -30,6 +33,8 @@ public class NeoContext : DbContext
     public DbSet<PlayerOutfitAddonEntity> PlayerOutfitAddons { get; set; }
     public DbSet<PlayerStorageEntity> PlayerStorages { get; set; }
     public DbSet<WorldRecordEntity> WorldRecords { get; set; }
+    
+    public DbSet<AccountPremiumHistoryEntity> AccountPremiumHistories { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -49,6 +54,7 @@ public class NeoContext : DbContext
             modelBuilder.ApplyConfiguration(new ForSqLiteGuildEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLiteGuildRankEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLiteWorldEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new ForSqLiteAccountPremiumHistoryEntityConfiguration());
         }
         else
         {
@@ -60,6 +66,7 @@ public class NeoContext : DbContext
             modelBuilder.ApplyConfiguration(new GuildEntityConfiguration());
             modelBuilder.ApplyConfiguration(new GuildRankEntityConfiguration());
             modelBuilder.ApplyConfiguration(new WorldEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new AccountPremiumHistoryEntityConfiguration());
         }
 
         modelBuilder.ApplyConfiguration(new PlayerQuestEntityConfiguration());
@@ -70,22 +77,22 @@ public class NeoContext : DbContext
 
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {
-            entity.SetTableName(entity.GetTableName().ToLower());
+            entity.SetTableName(entity.GetTableName().RemoveEntitySuffix().ToSnakeCase());
 
             foreach (var property in entity.GetProperties())
-                property.SetColumnName(property.Name.ToLower());
+                property.SetColumnName(property.Name.ToSnakeCase());
 
             foreach (var key in entity.GetKeys())
-                key.SetName(key.GetName().ToLower());
+                key.SetName(key.GetName().ToSnakeCase());
 
             foreach (var fk in entity.GetForeignKeys())
-                fk.SetConstraintName(fk.GetConstraintName().ToLower());
+                fk.SetConstraintName(fk.GetConstraintName().ToSnakeCase());
         }
 
         base.OnModelCreating(modelBuilder);
     }
 
-    public bool ExistsTable(string tableName)
+    public bool TableExists(string tableName)
     {
         var sql = @"
         SELECT EXISTS (
@@ -98,14 +105,31 @@ public class NeoContext : DbContext
         return Database.ExecuteSqlRaw(sql, tableName) == 1;
     }
 
-    public DbCommand CreateDbCommand(string query)
+    public DBResult ExecuteQuery(string query)
     {
-        var command = Database.GetDbConnection().CreateCommand();
+        DBResult result = null;
+        Database.GetDbConnection().Open();
+        using var command = Database.GetDbConnection().CreateCommand();
         command.CommandText = query;
         command.CommandType = System.Data.CommandType.Text;
 
-        Database.OpenConnection();
+        using var reader = command.ExecuteReaderAsync().Result;
+        result = reader.HasRows ? new DBResult(reader) : null;
+        Database.GetDbConnection().Close();
+        return result;
+    }
 
-        return command;
+    public async Task<DBResult> ExecuteQueryAsync(string query)
+    {
+        DBResult result = null;
+        await Database.GetDbConnection().OpenAsync();
+        using var command = Database.GetDbConnection().CreateCommand();
+        command.CommandText = query;
+        command.CommandType = System.Data.CommandType.Text;
+
+        using var reader = await command.ExecuteReaderAsync();
+        result = reader.HasRows ? new DBResult(reader) : null;
+        await Database.GetDbConnection().CloseAsync();
+        return result;
     }
 }

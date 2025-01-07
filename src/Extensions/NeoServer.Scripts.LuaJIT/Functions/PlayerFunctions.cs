@@ -33,76 +33,76 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         _logger = logger;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterSharedClass(L, "Player", "Creature", LuaPlayerCreate);
-        RegisterMetaMethod(L, "Player", "__eq", LuaUserdataCompare<IPlayer>);
+        RegisterSharedClass(luaState, "Player", "Creature", LuaPlayerCreate);
+        RegisterMetaMethod(luaState, "Player", "__eq", LuaUserdataCompare<IPlayer>);
 
-        RegisterMethod(L, "Player", "isPlayer", LuaPlayerIsPlayer);
-        RegisterMethod(L, "Player", "teleportTo", LuaTeleportTo);
-        RegisterMethod(L, "Player", "getFreeCapacity", LuaPlayerGetFreeCapacity);
+        RegisterMethod(luaState, "Player", "isPlayer", LuaPlayerIsPlayer);
+        RegisterMethod(luaState, "Player", "teleportTo", LuaTeleportTo);
+        RegisterMethod(luaState, "Player", "getFreeCapacity", LuaPlayerGetFreeCapacity);
 
-        RegisterMethod(L, "Player", "getSkillLevel", LuaPlayerGetSkillLevel);
-        RegisterMethod(L, "Player", "getEffectiveSkillLevel", LuaPlayerGetEffectiveSkillLevel);
-        RegisterMethod(L, "Player", "getSkillPercent", LuaPlayerGetSkillPercent);
-        RegisterMethod(L, "Player", "getSkillTries", LuaPlayerGetSkillTries);
-        RegisterMethod(L, "Player", "addSkillTries", LuaPlayerAddSkillTries);
+        RegisterMethod(luaState, "Player", "getSkillLevel", LuaPlayerGetSkillLevel);
+        RegisterMethod(luaState, "Player", "getEffectiveSkillLevel", LuaPlayerGetEffectiveSkillLevel);
+        RegisterMethod(luaState, "Player", "getSkillPercent", LuaPlayerGetSkillPercent);
+        RegisterMethod(luaState, "Player", "getSkillTries", LuaPlayerGetSkillTries);
+        RegisterMethod(luaState, "Player", "addSkillTries", LuaPlayerAddSkillTries);
 
-        RegisterMethod(L, "Player", "getStorageValue", LuaPlayerGetStorageValue);
-        RegisterMethod(L, "Player", "setStorageValue", LuaPlayerSetStorageValue);
+        RegisterMethod(luaState, "Player", "getStorageValue", LuaPlayerGetStorageValue);
+        RegisterMethod(luaState, "Player", "setStorageValue", LuaPlayerSetStorageValue);
 
-        RegisterMethod(L, "Player", "getGroup", LuaPlayerGetGroup);
-        RegisterMethod(L, "Player", "setGroup", LuaPlayerSetGroup);
+        RegisterMethod(luaState, "Player", "getGroup", LuaPlayerGetGroup);
+        RegisterMethod(luaState, "Player", "setGroup", LuaPlayerSetGroup);
 
-        RegisterMethod(L, "Player", "addItem", LuaPlayerAddItem);
-        RegisterMethod(L, "Player", "removeItem", LuaPlayerRemoveItem);
+        RegisterMethod(luaState, "Player", "addItem", LuaPlayerAddItem);
+        RegisterMethod(luaState, "Player", "removeItem", LuaPlayerRemoveItem);
 
-        RegisterMethod(L, "Player", "sendTextMessage", LuaPlayerSendTextMessage);
+        RegisterMethod(luaState, "Player", "sendTextMessage", LuaPlayerSendTextMessage);
 
-        RegisterMethod(L, "Player", "isPzLocked", LuaPlayerIsPzLocked);
+        RegisterMethod(luaState, "Player", "isPzLocked", LuaPlayerIsPzLocked);
 
-        RegisterMethod(L, "Player", "setGhostMode", LuaPlayerSetGhostMode);
-        RegisterMethod(L, "Player", "feed", LuaPlayerFeed);
+        RegisterMethod(luaState, "Player", "setGhostMode", LuaPlayerSetGhostMode);
+        RegisterMethod(luaState, "Player", "feed", LuaPlayerFeed);
         
     }
 
-    private static int LuaPlayerIsPlayer(LuaState L)
+    private static int LuaPlayerIsPlayer(LuaState luaState)
     {
         // player:isPlayer()
-        Lua.PushBoolean(L, GetUserdata<IPlayer>(L, 1) is not null);
+        Lua.PushBoolean(luaState, GetUserdata<IPlayer>(luaState, 1) is not null);
         return 1;
     }
 
-    private static int LuaPlayerCreate(LuaState L)
+    private static int LuaPlayerCreate(LuaState luaState)
     {
         // Player(id or guid or name or userdata)
         IPlayer player = null;
-        if (IsNumber(L, 2))
+        if (IsNumber(luaState, 2))
         {
-            var id = GetNumber<uint>(L, 2);
+            var id = GetNumber<uint>(luaState, 2);
             _gameCreatureManager.TryGetPlayer(id, out player);
         }
-        else if (IsString(L, 2))
+        else if (IsString(luaState, 2))
         {
-            var name = GetString(L, 2);
+            var name = GetString(luaState, 2);
             _gameCreatureManager.TryGetPlayer(name, out player);
 
             if (player == null)
             {
-                Lua.PushNil(L);
-                Lua.PushNumber(L, (int)ReturnValueType.RETURNVALUE_PLAYERWITHTHISNAMEISNOTONLINE);
+                Lua.PushNil(luaState);
+                Lua.PushNumber(luaState, (int)ReturnValueType.RETURNVALUE_PLAYERWITHTHISNAMEISNOTONLINE);
                 return 2;
             }
         }
-        else if (IsUserdata(L, 2))
+        else if (IsUserdata(luaState, 2))
         {
-            if (GetUserdataType(L, 2) != LuaDataType.Player)
+            if (GetUserdataType(luaState, 2) != LuaDataType.Player)
             {
-                Lua.PushNil(L);
+                Lua.PushNil(luaState);
                 return 1;
             }
 
-            player = GetUserdata<IPlayer>(L, 2);
+            player = GetUserdata<IPlayer>(luaState, 2);
         }
         else
         {
@@ -111,163 +111,163 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         if (player != null)
         {
-            PushUserdata(L, player);
-            SetMetatable(L, -1, "Player");
+            PushUserdata(luaState, player);
+            SetMetatable(luaState, -1, "Player");
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
 
         return 1;
     }
 
-    private static int LuaTeleportTo(LuaState L)
+    private static int LuaTeleportTo(LuaState luaState)
     {
         // player:teleportTo(position[, pushMovement = false])
-        var pushMovement = GetBoolean(L, 3, false);
+        var pushMovement = GetBoolean(luaState, 3, false);
 
-        var position = GetPosition(L, 2);
+        var position = GetPosition(luaState, 2);
 
-        var creature = GetUserdata<IPlayer>(L, 1);
+        var creature = GetUserdata<IPlayer>(luaState, 1);
 
         if (creature == null)
         {
             ReportError(nameof(LuaTeleportTo), GetErrorDesc(ErrorCodeType.LUA_ERROR_CREATURE_NOT_FOUND));
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
 
         creature.TeleportTo(position);
 
-        PushBoolean(L, true);
+        PushBoolean(luaState, true);
         return 1;
     }
 
-    private static int LuaPlayerGetFreeCapacity(LuaState L)
+    private static int LuaPlayerGetFreeCapacity(LuaState luaState)
     {
         // player:getFreeCapacity()
-        var player = GetUserdata<IPlayer>(L, 1);
+        var player = GetUserdata<IPlayer>(luaState, 1);
 
         if (player is not null)
-            Lua.PushNumber(L, player.FreeCapacity);
+            Lua.PushNumber(luaState, player.FreeCapacity);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    private static int LuaPlayerGetSkillLevel(LuaState L)
+    private static int LuaPlayerGetSkillLevel(LuaState luaState)
     {
         // player:getSkillLevel(skillType)
-        var player = GetUserdata<IPlayer>(L, 1);
-        var skillType = GetNumber<SkillType>(L, 2);
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        var skillType = GetNumber<SkillType>(luaState, 2);
 
         if (player is not null)
-            Lua.PushNumber(L, player.GetRawSkillLevel(skillType));
+            Lua.PushNumber(luaState, player.GetRawSkillLevel(skillType));
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    private static int LuaPlayerGetEffectiveSkillLevel(LuaState L)
+    private static int LuaPlayerGetEffectiveSkillLevel(LuaState luaState)
     {
         // player:getEffectiveSkillLevel(skillType)
-        var player = GetUserdata<IPlayer>(L, 1);
-        var skillType = GetNumber<SkillType>(L, 2);
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        var skillType = GetNumber<SkillType>(luaState, 2);
 
         if (player is not null)
-            Lua.PushNumber(L, player.GetSkillLevel(skillType));
+            Lua.PushNumber(luaState, player.GetSkillLevel(skillType));
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    private static int LuaPlayerGetSkillPercent(LuaState L)
+    private static int LuaPlayerGetSkillPercent(LuaState luaState)
     {
         // player:getSkillPercent(skillType)
-        var player = GetUserdata<IPlayer>(L, 1);
-        var skillType = GetNumber<SkillType>(L, 2);
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        var skillType = GetNumber<SkillType>(luaState, 2);
 
         if (player is not null)
-            Lua.PushNumber(L, player.GetSkillPercent(skillType));
+            Lua.PushNumber(luaState, player.GetSkillPercent(skillType));
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    private static int LuaPlayerGetSkillTries(LuaState L)
+    private static int LuaPlayerGetSkillTries(LuaState luaState)
     {
         // player:getSkillTries(skillType)
-        var player = GetUserdata<IPlayer>(L, 1);
-        var skillType = GetNumber<SkillType>(L, 2);
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        var skillType = GetNumber<SkillType>(luaState, 2);
 
         if (player is not null)
-            Lua.PushNumber(L, player.GetSkillTries(skillType));
+            Lua.PushNumber(luaState, player.GetSkillTries(skillType));
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    private static int LuaPlayerAddSkillTries(LuaState L)
+    private static int LuaPlayerAddSkillTries(LuaState luaState)
     {
         // player:addSkillTries(skillType, tries)
-        var player = GetUserdata<IPlayer>(L, 1);
+        var player = GetUserdata<IPlayer>(luaState, 1);
         if (player is not null)
         {
-            var skillType = GetNumber<SkillType>(L, 2);
-            var tries = GetNumber<long>(L, 3);
+            var skillType = GetNumber<SkillType>(luaState, 2);
+            var tries = GetNumber<long>(luaState, 3);
             player.IncreaseSkillCounter(skillType, tries);
-            PushBoolean(L, true);
+            PushBoolean(luaState, true);
         }
         else
         {
-            Lua.PushBoolean(L, false);
+            Lua.PushBoolean(luaState, false);
         }
         return 1;
     }
 
-    private static int LuaPlayerAddItem(LuaState L)
+    private static int LuaPlayerAddItem(LuaState luaState)
     {
         // player:addItem(itemId, count = 1, canDropOnMap = true, subType = 1, slot = CONST_SLOT_BACKPACK)
 
-        var player = GetUserdata<IPlayer>(L, 1);
+        var player = GetUserdata<IPlayer>(luaState, 1);
         if (!player)
         {
-            Lua.PushBoolean(L, false);
+            Lua.PushBoolean(luaState, false);
             return 1;
         }
 
         ushort itemId = 0;
-        if (Lua.IsNumber(L, 2))
+        if (Lua.IsNumber(luaState, 2))
         {
-            itemId = GetNumber<ushort>(L, 2);
+            itemId = GetNumber<ushort>(luaState, 2);
         }
         else
         {
-            var itemName = GetString(L, 2);
+            var itemName = GetString(luaState, 2);
             var itemTypeByName = _itemTypeStore.GetByName(itemName);
 
             if (itemTypeByName == null || string.IsNullOrEmpty(itemTypeByName.Name) || itemTypeByName.ServerId == 0)
             {
-                Lua.PushNil(L);
+                Lua.PushNil(luaState);
                 return 1;
             }
 
             itemId = itemTypeByName.ServerId;
         }
 
-        var count = GetNumber(L, 3, 1);
-        var subType = GetNumber(L, 5, 1);
+        var count = GetNumber(luaState, 3, 1);
+        var subType = GetNumber(luaState, 5, 1);
 
         var it = _itemTypeStore.Get(itemId);
 
         var itemCount = 1;
-        var parameters = Lua.GetTop(L);
+        var parameters = Lua.GetTop(luaState);
         if (parameters >= 4)
         {
             itemCount = int.Max(1, count);
@@ -286,16 +286,16 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         var hasTable = itemCount > 1;
         if (hasTable)
         {
-            Lua.NewTable(L);
+            Lua.NewTable(luaState);
         }
         else if (itemCount == 0)
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
             return 1;
         }
 
-        var canDropOnMap = GetBoolean(L, 4, true);
-        var slot = GetNumber(L, 6, SlotsType.CONST_SLOT_BACKPACK);
+        var canDropOnMap = GetBoolean(luaState, 4, true);
+        var slot = GetNumber(luaState, 6, SlotsType.CONST_SLOT_BACKPACK);
 
         for (var i = 1; i <= itemCount; ++i)
         {
@@ -311,7 +311,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             if (!item)
             {
                 if (!hasTable)
-                    Lua.PushNil(L);
+                    Lua.PushNil(luaState);
 
                 return 1;
             }
@@ -338,119 +338,119 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             {
                 if (hasTable)
                 {
-                    Lua.PushNumber(L, i);
-                    PushUserdata(L, item);
-                    SetItemMetatable(L, -1, item);
-                    Lua.SetTable(L, -3);
+                    Lua.PushNumber(luaState, i);
+                    PushUserdata(luaState, item);
+                    SetItemMetatable(luaState, -1, item);
+                    Lua.SetTable(luaState, -3);
                 }
                 else
                 {
-                    PushUserdata(L, item);
-                    SetItemMetatable(L, -1, item);
+                    PushUserdata(luaState, item);
+                    SetItemMetatable(luaState, -1, item);
                 }
             }
             else if (hasTable)
             {
-                Lua.PushNil(L);
+                Lua.PushNil(luaState);
             }
         }
 
         return 1;
     }
 
-    private static int LuaPlayerRemoveItem(LuaState L)
+    private static int LuaPlayerRemoveItem(LuaState luaState)
     {
         // player:removeItem(itemId, count, subType = -1, ignoreEquipped = false)
 
-        var player = GetUserdata<IPlayer>(L, 1);
+        var player = GetUserdata<IPlayer>(luaState, 1);
         if (!player)
         {
-            Lua.PushBoolean(L, false);
+            Lua.PushBoolean(luaState, false);
             return 1;
         }
 
         ushort itemId = 0;
-        if (Lua.IsNumber(L, 2))
+        if (Lua.IsNumber(luaState, 2))
         {
-            itemId = GetNumber<ushort>(L, 2);
+            itemId = GetNumber<ushort>(luaState, 2);
         }
         else
         {
-            var itemName = GetString(L, 2);
+            var itemName = GetString(luaState, 2);
             var itemTypeByName = _itemTypeStore.GetByName(itemName);
 
             if (itemTypeByName == null || string.IsNullOrEmpty(itemTypeByName.Name) || itemTypeByName.ServerId == 0)
             {
-                Lua.PushNil(L);
+                Lua.PushNil(luaState);
                 return 1;
             }
 
             itemId = itemTypeByName.ServerId;
         }
 
-        var count = GetNumber(L, 3, 1);
-        var subType = GetNumber(L, 4, 1);
-        var ignoreEquipped = GetBoolean(L, 5);
+        var count = GetNumber(luaState, 3, 1);
+        var subType = GetNumber(luaState, 4, 1);
+        var ignoreEquipped = GetBoolean(luaState, 5);
 
         var result = player.Inventory.RemoveItem(itemId, (byte)count, ignoreEquipped);
 
-        PushBoolean(L, result.Succeeded);
+        PushBoolean(luaState, result.Succeeded);
         return 1;
     }
 
-    private static int LuaPlayerSendTextMessage(LuaState L)
+    private static int LuaPlayerSendTextMessage(LuaState luaState)
     {
         // player:sendTextMessage(type, text)
 
-        var player = GetUserdata<IPlayer>(L, 1);
+        var player = GetUserdata<IPlayer>(luaState, 1);
         if (player == null)
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
             return 1;
         }
 
-        int parameters = Lua.GetTop(L);
+        int parameters = Lua.GetTop(luaState);
 
-        var messageType = GetNumber<MessageClassesType>(L, 2);
-        var messageText = GetString(L, 3);
+        var messageType = GetNumber<MessageClassesType>(luaState, 2);
+        var messageText = GetString(luaState, 3);
 
         NotificationSenderService.Send(player, messageText, (TextMessageOutgoingType)messageType);
-        PushBoolean(L, true);
+        PushBoolean(luaState, true);
 
         return 1;
     }
 
-    private static int LuaPlayerIsPzLocked(LuaState L)
+    private static int LuaPlayerIsPzLocked(LuaState luaState)
     {
         // player:isPzLocked()
 
-        var player = GetUserdata<IPlayer>(L, 1);
+        var player = GetUserdata<IPlayer>(luaState, 1);
         if (player != null)
-            PushBoolean(L, player.IsProtectionZoneLocked);
+            PushBoolean(luaState, player.IsProtectionZoneLocked);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    private static int LuaPlayerGetStorageValue(LuaState L)
+    private static int LuaPlayerGetStorageValue(LuaState luaState)
     {
         // player:getStorageValue(key)
-        var player = GetUserdata<IPlayer>(L, 1);
+        var player = GetUserdata<IPlayer>(luaState, 1);
         if (player != null)
-            Lua.PushNumber(L, player.GetStorageValue(GetNumber<int>(L, 2)));
+            Lua.PushNumber(luaState, player.GetStorageValue(GetNumber<int>(luaState, 2)));
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    private static int LuaPlayerSetStorageValue(LuaState L)
+    private static int LuaPlayerSetStorageValue(LuaState luaState)
     {
         // player:setStorageValue(key, value)
-        var player = GetUserdata<IPlayer>(L, 1);
-        var key = GetNumber<int>(L, 2);
-        var value = GetNumber<int>(L, 3);
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        var key = GetNumber<int>(luaState, 2);
+        var value = GetNumber<int>(luaState, 3);
 
         var startReservedRange = 10000000;
         var endReservedRange = 20000000;
@@ -464,65 +464,65 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         if (key >= startReservedRange && key <= endReservedRange)
         {
             _logger.Error($"Accessing reserved storage key range: {key}");
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
 
         if (player != null)
         {
             player.AddOrUpdateStorageValue(key, value);
-            PushBoolean(L, true);
+            PushBoolean(luaState, true);
         }
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    private static int LuaPlayerGetGroup(LuaState L)
+    private static int LuaPlayerGetGroup(LuaState luaState)
     {
         // player:getGroup()
-        var player = GetUserdata<IPlayer>(L, 1);
+        var player = GetUserdata<IPlayer>(luaState, 1);
         if (player != null)
         {
-            PushUserdata(L, player.Group);
-            SetMetatable(L, -1, "Group");
+            PushUserdata(luaState, player.Group);
+            SetMetatable(luaState, -1, "Group");
         }
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    private static int LuaPlayerSetGroup(LuaState L)
+    private static int LuaPlayerSetGroup(LuaState luaState)
     {
         // player:setGroup(group)
-        var group = GetUserdata<IGroup>(L, 2);
+        var group = GetUserdata<IGroup>(luaState, 2);
 
         if (group is null)
         {
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
 
-        var player = GetUserdata<IPlayer>(L, 1);
+        var player = GetUserdata<IPlayer>(luaState, 1);
 
         if (player is not null)
         {
             player.Group = group;
-            PushBoolean(L, true);
+            PushBoolean(luaState, true);
         }
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    private static int LuaPlayerSetGhostMode(LuaState L)
+    private static int LuaPlayerSetGhostMode(LuaState luaState)
     {
         // player:setGhostMode(enabled)
-        var player = GetUserdata<IPlayer>(L, 1);
-        bool enabled = GetBoolean(L, 2);
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        bool enabled = GetBoolean(luaState, 2);
 
         if (player != null && player.IsInvisible != enabled)
         {
@@ -532,22 +532,22 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
                 player.TurnVisible();
         }
 
-        PushBoolean(L, true);
+        PushBoolean(luaState, true);
         return 1;
     }
 
-    private static int LuaPlayerFeed(LuaState L)
+    private static int LuaPlayerFeed(LuaState luaState)
     {
         // player:feed(food)
-        var player = GetUserdata<IPlayer>(L, 1);
-        var food = GetNumber(L, 2, 0);
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        var food = GetNumber(luaState, 2, 0);
 
         if (player != null && food > 0)
         {
             player.Feed(food);
         }
 
-        PushBoolean(L, true);
+        PushBoolean(luaState, true);
         return 1;
     }
 }

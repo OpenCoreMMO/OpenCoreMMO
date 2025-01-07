@@ -468,7 +468,17 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnDamage(enemy, damage);
         OnHealthChanged?.Invoke(this, actor, damage);
         OnInjured?.Invoke(enemy, this, damage);
-        if (IsDead) Death(enemy);
+        if (IsDead)
+        {
+            if (enemy is ICombatActor combatActor)
+            {
+                //todo: implements real damage
+                combatActor.Kill(this);
+                OnBeforeDeath?.Invoke(this, combatActor, 0);
+            }
+
+            Death(enemy);
+        }
     }
 
     public abstract CombatDamage OnImmunityDefense(CombatDamage damage);

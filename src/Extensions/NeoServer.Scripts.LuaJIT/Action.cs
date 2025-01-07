@@ -6,26 +6,22 @@ using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public class Action : Script
+public class Action(LuaScriptInterface scriptInterface) : Script(scriptInterface)
 {
     private ILogger _logger;
-
-    public Action(LuaScriptInterface scriptInterface) : base(scriptInterface)
-    {
-    }
 
     public bool AllowFarUse { get; set; }
     public bool CheckLineOfSight { get; set; }
 
     public bool CheckFloor { get; set; }
 
-    public List<ushort> ItemIdsVector { get; } = new();
+    public List<ushort> ItemIdsVector { get; } = [];
 
-    public List<uint> UniqueIdsVector { get; } = new();
+    public List<uint> UniqueIdsVector { get; } = [];
 
-    public List<ushort> ActionIdsVector { get; } = new();
+    public List<ushort> ActionIdsVector { get; } = [];
 
-    public List<Location> PositionsVector { get; } = new();
+    public List<Location> PositionsVector { get; } = [];
 
     public bool ExecuteUse(IPlayer player, IItem item, Location fromPosition, IThing? target, Location toPosition,
         bool isHotkey)
@@ -33,11 +29,10 @@ public class Action : Script
         // onUse(player, item, fromPosition, target, toPosition, isHotkey)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            if (_logger == null)
-                _logger = Server.Helpers.IoC.GetInstance<ILogger>();
+            _logger ??= Server.Helpers.IoC.GetInstance<ILogger>();
 
-            _logger.Error($"[Action::executeUse - Player {player.Name}, on item {item.Name}] " +
-                          $"Call stack overflow. Too many lua script calls being nested. Script name {GetScriptInterface().GetLoadingScriptName()}");
+            _logger.Error("[Action::executeUse - Player {PlayerName}, on item {ItemName}]. Call stack overflow. Too many lua script calls being nested. Script name {ScriptName}",
+                player.Name, item.Name, GetScriptInterface().GetLoadingScriptName());
             return false;
         }
 
@@ -45,57 +40,36 @@ public class Action : Script
         var scriptEnvironment = scriptInterface.InternalGetScriptEnv();
         scriptEnvironment.SetScriptId(GetScriptId(), GetScriptInterface());
 
-        var L = GetScriptInterface().GetLuaState();
+        var luaState = GetScriptInterface().GetLuaState();
         GetScriptInterface().PushFunction(GetScriptId());
 
-        LuaScriptInterface.PushUserdata(L, player);
-        LuaScriptInterface.SetMetatable(L, -1, "Player");
+        LuaScriptInterface.PushUserdata(luaState, player);
+        LuaScriptInterface.SetMetatable(luaState, -1, "Player");
 
-        LuaScriptInterface.PushThing(L, item);
-        LuaScriptInterface.PushPosition(L, fromPosition);
+        LuaScriptInterface.PushThing(luaState, item);
+        LuaScriptInterface.PushPosition(luaState, fromPosition);
 
-        LuaScriptInterface.PushThing(L, target);
-        LuaScriptInterface.PushPosition(L, toPosition);
+        LuaScriptInterface.PushThing(luaState, target);
+        LuaScriptInterface.PushPosition(luaState, toPosition);
 
-        LuaScriptInterface.PushBoolean(L, isHotkey);
+        LuaScriptInterface.PushBoolean(luaState, isHotkey);
 
         return GetScriptInterface().CallFunction(6);
     }
 
-    public void SetItemIdsVector(ushort id)
-    {
-        ItemIdsVector.Add(id);
-    }
+    public void SetItemIdsVector(ushort id) => ItemIdsVector.Add(id);
 
-    public void SetUniqueIdsVector(ushort id)
-    {
-        UniqueIdsVector.Add(id);
-    }
+    public void SetUniqueIdsVector(ushort id) => UniqueIdsVector.Add(id);
 
-    public void SetActionIdsVector(ushort id)
-    {
-        ActionIdsVector.Add(id);
-    }
+    public void SetActionIdsVector(ushort id) => ActionIdsVector.Add(id);
 
-    public void SetPositionsVector(Location pos)
-    {
-        PositionsVector.Add(pos);
-    }
+    public void SetPositionsVector(Location pos) => PositionsVector.Add(pos);
 
-    public bool HasPosition(Location position)
-    {
-        return PositionsVector.Exists(p => p.Equals(position));
-    }
+    public bool HasPosition(Location position) => PositionsVector.Exists(p => p.Equals(position));
 
-    public List<Location> GetPositions()
-    {
-        return PositionsVector;
-    }
+    public List<Location> GetPositions() => PositionsVector;
 
-    public void SetPositions(Location pos)
-    {
-        PositionsVector.Add(pos);
-    }
+    public void SetPositions(Location pos) => PositionsVector.Add(pos);
 
     public virtual ReturnValueType CanExecuteAction(IPlayer player, Location toPos)
     {

@@ -1,26 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Server.Common.Contracts;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public class AttachEventLoaders : IRunBeforeLoaders
+public class AttachEventLoaders(
+    ICreatureFactory creatureFactory,
+    IEnumerable<ICreatureEventSubscriber> creatureEventSubscribers)
+    : IRunBeforeLoaders
 {
-    private readonly IEnumerable<ICreatureEventSubscriber> _creatureEventSubscribers;
-    private readonly ICreatureFactory _creatureFactory;
-
-    public AttachEventLoaders(ICreatureFactory creatureFactory,
-        IEnumerable<ICreatureEventSubscriber> creatureEventSubscribers)
-    {
-        _creatureFactory = creatureFactory;
-        _creatureEventSubscribers = creatureEventSubscribers;
-    }
-
     public void Run()
     {
-        _creatureFactory.OnCreatureCreated += OnCreatureCreated;
+        creatureFactory.OnCreatureCreated += OnCreatureCreated;
     }
 
     private void OnCreatureCreated(ICreature creature)
@@ -37,7 +28,7 @@ public class AttachEventLoaders : IRunBeforeLoaders
                 .Select(x => x.FullName)
                 .ToHashSet();
 
-        _creatureEventSubscribers.AsParallel().ForAll(subscriber =>
+        creatureEventSubscribers.AsParallel().ForAll(subscriber =>
         {
             if (!gameEventSubscriberTypes.Contains(subscriber.GetType().FullName)) return;
 

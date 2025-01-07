@@ -21,49 +21,49 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         _creatureEvents = creatureEvents;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterSharedClass(L, "Creature", "", LuaCreatureCreate);
-        RegisterMetaMethod(L, "Creature", "__eq", LuaUserdataCompare<ICreature>);
+        RegisterSharedClass(luaState, "Creature", "", LuaCreatureCreate);
+        RegisterMetaMethod(luaState, "Creature", "__eq", LuaUserdataCompare<ICreature>);
 
-        RegisterMethod(L, "Creature", "getEvents", LuaCreatureGetEvents);
-        RegisterMethod(L, "Creature", "registerEvent", LuaCreatureRegisterEvent);
-        RegisterMethod(L, "Creature", "unregisterEvent", LuaCreatureUnregisterEvent);
+        RegisterMethod(luaState, "Creature", "getEvents", LuaCreatureGetEvents);
+        RegisterMethod(luaState, "Creature", "registerEvent", LuaCreatureRegisterEvent);
+        RegisterMethod(luaState, "Creature", "unregisterEvent", LuaCreatureUnregisterEvent);
 
-        RegisterMethod(L, "Creature", "isCreature", LuaCreatureIsCreature);
-        RegisterMethod(L, "Creature", "isInGhostMode", LuaCreatureIsInGhostMode);
-        RegisterMethod(L, "Creature", "getId", LuaGetId);
-        RegisterMethod(L, "Creature", "getName", LuaGetName);
-        RegisterMethod(L, "Creature", "getPosition", LuaCreatureGetPosition);
-        RegisterMethod(L, "Creature", "getDirection", LuaCreatureGetDirection);
-        RegisterMethod(L, "Creature", "say", LuaCreatureSay);
+        RegisterMethod(luaState, "Creature", "isCreature", LuaCreatureIsCreature);
+        RegisterMethod(luaState, "Creature", "isInGhostMode", LuaCreatureIsInGhostMode);
+        RegisterMethod(luaState, "Creature", "getId", LuaCreatureGetId);
+        RegisterMethod(luaState, "Creature", "getName", LuaCreatureGetName);
+        RegisterMethod(luaState, "Creature", "getPosition", LuaCreatureGetPosition);
+        RegisterMethod(luaState, "Creature", "getDirection", LuaCreatureGetDirection);
+        RegisterMethod(luaState, "Creature", "say", LuaCreatureSay);
     }
 
-    private static int LuaCreatureCreate(LuaState L)
+    private static int LuaCreatureCreate(LuaState luaState)
     {
         // Creature(id or name or userdata)
 
         ICreature creature = null;
-        if (IsNumber(L, 2))
+        if (IsNumber(luaState, 2))
         {
-            var id = GetNumber<int>(L, 2);
+            var id = GetNumber<int>(luaState, 2);
             creature = _gameCreatureManager.GetCreatures().FirstOrDefault(c => c.CreatureId == id);
         }
-        else if (IsString(L, 2))
+        else if (IsString(luaState, 2))
         {
-            var name = GetString(L, 2);
+            var name = GetString(luaState, 2);
             creature = _gameCreatureManager.GetCreatures().FirstOrDefault(c => c.Name.Equals(name));
         }
-        else if (IsUserdata(L, 2))
+        else if (IsUserdata(luaState, 2))
         {
-            var type = GetUserdataType(L, 2);
+            var type = GetUserdataType(luaState, 2);
             if (type != LuaDataType.Player && type != LuaDataType.Monster && type != LuaDataType.Npc)
             {
-                Lua.PushNil(L);
+                Lua.PushNil(luaState);
                 return 1;
             }
 
-            creature = GetUserdata<ICreature>(L, 2);
+            creature = GetUserdata<ICreature>(luaState, 2);
         }
         else
         {
@@ -72,172 +72,172 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 
         if (creature != null)
         {
-            PushUserdata(L, creature);
-            SetCreatureMetatable(L, -1, creature);
+            PushUserdata(luaState, creature);
+            SetCreatureMetatable(luaState, -1, creature);
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
 
         return 1;
     }
 
-    private static int LuaCreatureGetEvents(LuaState L)
+    private static int LuaCreatureGetEvents(LuaState luaState)
     {
         // creature:getEvents(type)
-        var creature = GetUserdata<ICreature>(L, 1);
+        var creature = GetUserdata<ICreature>(luaState, 1);
         if (!creature)
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
             return 1;
         }
 
-        var eventType = GetNumber<CreatureEventType>(L, 2);
+        var eventType = GetNumber<CreatureEventType>(luaState, 2);
         //var eventList = creature.GetCreatureEvents(eventType);
         var eventList = _creatureEvents.GetCreatureEvents(creature.CreatureId, eventType);
 
-        Lua.CreateTable(L, eventList.Count(), 0);
+        Lua.CreateTable(luaState, eventList.Count(), 0);
 
         int index = 0;
         foreach (var creatureEvent in eventList)
         {
-            PushString(L, creatureEvent.Name);
-            Lua.RawSetI(L, -2, ++index);
+            PushString(luaState, creatureEvent.Name);
+            Lua.RawSetI(luaState, -2, ++index);
         }
         return 1;
     }
 
-    private static int LuaCreatureRegisterEvent(LuaState L)
+    private static int LuaCreatureRegisterEvent(LuaState luaState)
     {
         // creature:registerEvent(name)
-        var creature = GetUserdata<ICreature>(L, 1);
+        var creature = GetUserdata<ICreature>(luaState, 1);
         if (creature is not null)
         {
-            var eventName = GetString(L, 2);
+            var eventName = GetString(luaState, 2);
             var creatureEvent = _creatureEvents.GetEventByName(eventName);
 
             if (creatureEvent is null)
             {
-                Lua.PushNil(L);
+                Lua.PushNil(luaState);
                 return 1;
             }
 
-            //PushBoolean(L, creature.RegisterCreatureEvent(creatureEvent));
-            PushBoolean(L, _creatureEvents.RegisterCreatureEvent(creature.CreatureId, creatureEvent));
+            //PushBoolean(luaState, creature.RegisterCreatureEvent(creatureEvent));
+            PushBoolean(luaState, _creatureEvents.RegisterCreatureEvent(creature.CreatureId, creatureEvent));
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
 
         return 1;
     }
 
-    private static int LuaCreatureUnregisterEvent(LuaState L)
+    private static int LuaCreatureUnregisterEvent(LuaState luaState)
     {
         // creature:unregisterEvent(name)
-        var creature = GetUserdata<ICreature>(L, 1);
+        var creature = GetUserdata<ICreature>(luaState, 1);
         if (creature is not null)
         {
-            var eventName = GetString(L, 2);
+            var eventName = GetString(luaState, 2);
             var creatureEvent = _creatureEvents.GetEventByName(eventName);
 
             if (creatureEvent is null)
             {
-                Lua.PushNil(L);
+                Lua.PushNil(luaState);
                 return 1;
             }
 
-            //PushBoolean(L, creature.UnregisterCreatureEvent(creatureEvent));
-            PushBoolean(L, _creatureEvents.UnregisterCreatureEvent(creature.CreatureId, creatureEvent));
+            //PushBoolean(luaState, creature.UnregisterCreatureEvent(creatureEvent));
+            PushBoolean(luaState, _creatureEvents.UnregisterCreatureEvent(creature.CreatureId, creatureEvent));
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
 
         return 1;
     }
 
-    private static int LuaCreatureIsCreature(LuaState L)
+    private static int LuaCreatureIsCreature(LuaState luaState)
     {
         // creature:isCreature()
-        Lua.PushBoolean(L, GetUserdata<ICreature>(L, 1) is not null);
+        Lua.PushBoolean(luaState, GetUserdata<ICreature>(luaState, 1) is not null);
         return 1;
     }
 
-    private static int LuaCreatureIsInGhostMode(LuaState L)
+    private static int LuaCreatureIsInGhostMode(LuaState luaState)
     {
         // creature:isInGhostMode()
-        var creature = GetUserdata<ICreature>(L, 1);
+        var creature = GetUserdata<ICreature>(luaState, 1);
         if (creature != null)
-            Lua.PushBoolean(L, creature.IsInvisible);
+            Lua.PushBoolean(luaState, creature.IsInvisible);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         return 1;
     }
 
-    private static int LuaGetId(LuaState L)
+    private static int LuaCreatureGetId(LuaState luaState)
     {
         // creature:getId()
-        var creature = GetUserdata<ICreature>(L, 1);
+        var creature = GetUserdata<ICreature>(luaState, 1);
         if (creature != null)
-            Lua.PushNumber(L, creature.CreatureId);
+            Lua.PushNumber(luaState, creature.CreatureId);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         return 1;
     }
 
-    private static int LuaGetName(LuaState L)
+    private static int LuaCreatureGetName(LuaState luaState)
     {
         // creature:getName()
-        var creature = GetUserdata<ICreature>(L, 1);
+        var creature = GetUserdata<ICreature>(luaState, 1);
 
         if (creature == null)
         {
-            ReportError(nameof(LuaGetName), GetErrorDesc(ErrorCodeType.LUA_ERROR_PLAYER_NOT_FOUND));
-            PushBoolean(L, false);
+            ReportError(nameof(LuaCreatureGetName), GetErrorDesc(ErrorCodeType.LUA_ERROR_PLAYER_NOT_FOUND));
+            PushBoolean(luaState, false);
             return 0;
         }
 
-        PushString(L, creature.Name);
+        PushString(luaState, creature.Name);
         return 1;
     }
 
-    private static int LuaCreatureGetPosition(LuaState L)
+    private static int LuaCreatureGetPosition(LuaState luaState)
     {
         // creature:getPosition()
-        var creature = GetUserdata<ICreature>(L, 1);
+        var creature = GetUserdata<ICreature>(luaState, 1);
         if (creature != null)
-            PushPosition(L, creature.Location);
+            PushPosition(luaState, creature.Location);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         return 1;
     }
 
-    private static int LuaCreatureGetDirection(LuaState L)
+    private static int LuaCreatureGetDirection(LuaState luaState)
     {
         // creature:getDirection()
-        var creature = GetUserdata<ICreature>(L, 1);
+        var creature = GetUserdata<ICreature>(luaState, 1);
         if (creature != null)
-            Lua.PushNumber(L, (byte)creature.Direction);
+            Lua.PushNumber(luaState, (byte)creature.Direction);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         return 1;
     }
 
-    private static int LuaCreatureSay(LuaState L)
+    private static int LuaCreatureSay(LuaState luaState)
     {
         // creature:say(text, type)
-        var creature = GetUserdata<ICreature>(L, 1);
-        var text = GetString(L, 2);
-        var type = GetNumber<SpeakClassesType>(L, 3);
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        var text = GetString(luaState, 2);
+        var type = GetNumber<SpeakClassesType>(luaState, 3);
 
         if (creature != null)
             creature.Say(text, (SpeechType)type);
 
-        PushBoolean(L, true);
+        PushBoolean(luaState, true);
         return 1;
     }
 }

@@ -30,7 +30,6 @@ using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
 using NeoServer.Game.Creatures.Models;
 using NeoServer.Game.Creatures.Models.Bases;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace NeoServer.Game.Creatures.Player;
 
@@ -1119,12 +1118,7 @@ public class Player : CombatActor, IPlayer
         if (Level <= 23) return 10 * 0.01 * Experience;
         return (Level + 50) * .01 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
     }
-
-    public void ExtendedOpcode(byte code, string text)
-    {
-        OnExtendedOpcode?.Invoke(this, code, text ?? string.Empty);
-    }
-   
+    
     #region Storage
 
     public IDictionary<int, int> Storages { get; }
@@ -1181,7 +1175,6 @@ public class Player : CombatActor, IPlayer
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
-    public event ExtendedOpcode OnExtendedOpcode;
     public event EquipItem OnEquipItem;
     public event DeEquipItem OnDeEquipItem;
 

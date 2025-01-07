@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using NeoServer.Web.Shared.Extensions;
-using NeoServer.Web.Shared.ViewModels.Response;
+using NeoServer.Web.API.Extensions;
+using NeoServer.Web.API.Response;
 using Xunit;
 
 namespace NeoServer.WebApi.Tests.Tests;

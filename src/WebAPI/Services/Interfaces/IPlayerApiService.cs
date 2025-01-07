@@ -1,5 +1,5 @@
-﻿using NeoServer.Web.Shared.ViewModels.Request;
-using NeoServer.Web.Shared.ViewModels.Response;
+﻿using NeoServer.Web.API.Response;
+using NeoServer.Web.Shared.ViewModels.Request;
 
 namespace NeoServer.Web.API.Services.Interfaces;
 
