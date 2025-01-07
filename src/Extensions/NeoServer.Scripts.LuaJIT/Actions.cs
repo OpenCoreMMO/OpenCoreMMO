@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Location.Structs;
@@ -35,7 +36,7 @@ public class Actions : IActions
     public bool RegisterLuaItemEvent(Action action)
     {
         var itemIdVector = action.ItemIdsVector;
-        if (!itemIdVector.Any()) return false;
+        if (itemIdVector.Count == 0) return false;
 
         var tmpVector = new List<ushort>(itemIdVector.Count);
 
@@ -45,8 +46,13 @@ public class Actions : IActions
             if (HasItemId(itemId))
             {
                 _logger.Warning(
-                    $"{nameof(RegisterLuaItemEvent)} - Duplicate registered item with id: {itemId} in range from id: {itemIdVector.First()}, to id: {itemIdVector.Last()}, for script: {action.GetScriptInterface().GetLoadingScriptName()}"
-                );
+                    "{RegisterLuaItemEvent} - Duplicate registered item with id: {ItemId} in range from id: {ItemIdVectorFirst}, to id: {ItemIdVectorLast}, for script: {LoadingScriptName}",
+                    nameof(RegisterLuaItemEvent),
+                    itemIdVector.First(),
+                    itemIdVector.Last(),
+                    action.GetScriptInterface().GetLoadingScriptName()
+                );                    
+                
                 continue;
             }
 
@@ -62,7 +68,7 @@ public class Actions : IActions
     public bool RegisterLuaUniqueEvent(Action action)
     {
         var uniqueIdVector = action.UniqueIdsVector;
-        if (!uniqueIdVector.Any()) return false;
+        if (uniqueIdVector.Count == 0) return false;
 
         var tmpVector = new List<uint>(uniqueIdVector.Count);
 
@@ -77,7 +83,12 @@ public class Actions : IActions
             else
             {
                 _logger.Warning(
-                    $"{nameof(RegisterLuaUniqueEvent)} - Duplicate registered item with uid: {uniqueId} in range from uid: {uniqueIdVector.First()}, to uid: {uniqueIdVector.Last()}, for script: {action.GetScriptInterface().GetLoadingScriptName()}"
+                    "{RegisterLuaUniqueEvent} - Duplicate registered item with uid: {UniqueId} in range from uid: {UniqueIdVectorFirst}, to uid: {UniqueIdVectorLast}, for script: {LoadingScriptName}",
+                    nameof(RegisterLuaUniqueEvent),
+                    uniqueId,
+                    uniqueIdVector.First(),
+                    uniqueIdVector.Last(),
+                    action.GetScriptInterface().GetLoadingScriptName()
                 );
             }
 
@@ -88,7 +99,7 @@ public class Actions : IActions
     public bool RegisterLuaActionEvent(Action action)
     {
         var actionIdVector = action.ActionIdsVector;
-        if (!actionIdVector.Any()) return false;
+        if (actionIdVector.Count == 0) return false;
 
         var tmpVector = new List<ushort>(actionIdVector.Count);
 
@@ -103,7 +114,12 @@ public class Actions : IActions
             else
             {
                 _logger.Warning(
-                    $"{nameof(RegisterLuaActionEvent)} - Duplicate registered item with aid: {actionId} in range from aid: {actionIdVector.First()}, to aid: {actionIdVector.Last()}, for script: {action.GetScriptInterface().GetLoadingScriptName()}"
+                    "{RegisterLuaActionEvent} - Duplicate registered item with aid: {ActionId} in range from aid: {ActionIdVectorFirst}, to aid: {ActionIdVectorLast}, for script: {LoadingScriptName}",
+                    nameof(RegisterLuaActionEvent),
+                    actionId,
+                    actionIdVector.First(),
+                    actionIdVector.Last(),
+                    action.GetScriptInterface().GetLoadingScriptName()
                 );
             }
 
@@ -114,7 +130,7 @@ public class Actions : IActions
     public bool RegisterLuaPositionEvent(Action action)
     {
         var positionVector = action.PositionsVector;
-        if (!positionVector.Any()) return false;
+        if (positionVector.Count == 0) return false;
 
         var tmpVector = new List<Location>(positionVector.Count);
 
@@ -129,7 +145,10 @@ public class Actions : IActions
             else
             {
                 _logger.Warning(
-                    $"{nameof(RegisterLuaPositionEvent)} - Duplicate registered script with range position: {position.ToString()}, for script: {action.GetScriptInterface().GetLoadingScriptName()}"
+                    "{RegisterLuaPositionEvent} - Duplicate registered script with range position: {Position}, for script: {LoadingScriptName}",
+                    nameof(RegisterLuaPositionEvent),
+                    position.ToString(CultureInfo.InvariantCulture),
+                    action.GetScriptInterface().GetLoadingScriptName()
                 );
             }
 
@@ -144,11 +163,10 @@ public class Actions : IActions
             RegisterLuaPositionEvent(action)) return true;
 
         _logger.Warning(
-            $"{nameof(RegisterLuaEvent)} - Missing id/aid/uid/position for one script event, for script: {action.GetScriptInterface().GetLoadingScriptName()}"
+            "{RegisterLuaEvent} - Missing id/aid/uid/position for one script event, for script: {LoadingScriptName}",
+            nameof(RegisterLuaEvent),
+            action.GetScriptInterface().GetLoadingScriptName()
         );
-        return false;
-        _logger.Information(
-            $"{nameof(RegisterLuaEvent)} - Missing or incorrect script: {action.GetScriptInterface().GetLoadingScriptName()}");
         return false;
     }
 
@@ -270,19 +288,18 @@ public class Actions : IActions
 
     public ReturnValueType CanUse(IPlayer player, Location pos)
     {
-        if (pos.X != 0xFFFF)
-        {
-            var playerPos = player.Location;
-            if (playerPos.Z != pos.Z)
-                return playerPos.Z > pos.Z
-                    ? ReturnValueType.RETURNVALUE_FIRSTGOUPSTAIRS
-                    : ReturnValueType.RETURNVALUE_FIRSTGODOWNSTAIRS;
+        if (pos.X == 0xFFFF) return ReturnValueType.RETURNVALUE_NOERROR;
+        
+        var playerPos = player.Location;
+        if (playerPos.Z != pos.Z)
+            return playerPos.Z > pos.Z
+                ? ReturnValueType.RETURNVALUE_FIRSTGOUPSTAIRS
+                : ReturnValueType.RETURNVALUE_FIRSTGODOWNSTAIRS;
 
-            //if (!Location.areInRange < 1, 1 > (playerPos, pos))
-            //{
-            //    return ReturnValueType.RETURNVALUE_TOOFARAWAY;
-            //}
-        }
+        //if (!Location.areInRange < 1, 1 > (playerPos, pos))
+        //{
+        //    return ReturnValueType.RETURNVALUE_TOOFARAWAY;
+        //}
 
         return ReturnValueType.RETURNVALUE_NOERROR;
     }
@@ -290,8 +307,7 @@ public class Actions : IActions
     public ReturnValueType CanUse(IPlayer player, Location pos, IItem item)
     {
         var action = GetAction(item);
-        if (action != null) return action.CanExecuteAction(player, pos);
-        return ReturnValueType.RETURNVALUE_NOERROR;
+        return action?.CanExecuteAction(player, pos) ?? ReturnValueType.RETURNVALUE_NOERROR;
     }
 
     public ReturnValueType CanUseFar(ICreature creature, Location toPos, bool checkLineOfSight, bool checkFloor)
@@ -321,7 +337,7 @@ public class Actions : IActions
         return ReturnValueType.RETURNVALUE_NOERROR;
     }
 
-    public Action? GetAction(IItem item)
+    public Action GetAction(IItem item)
     {
         if (_uniqueItemMap.TryGetValue(item.UniqueId, out var uniqueIdAction))
             return uniqueIdAction;
@@ -329,10 +345,7 @@ public class Actions : IActions
         if (_actionItemMap.TryGetValue(item.ActionId, out var actionIdAction))
             return actionIdAction;
 
-        if (_useItemMap.TryGetValue(item.ServerId, out var action))
-            return action;
-
-        return null;
+        return _useItemMap.TryGetValue(item.ServerId, out var action) ? action : null;
     }
 
     public ReturnValueType InternalUseItem(IPlayer player, Location pos, byte index, IItem item, bool isHotkey)

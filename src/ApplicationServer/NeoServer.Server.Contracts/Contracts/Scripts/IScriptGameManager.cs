@@ -20,4 +20,5 @@ public interface IScriptGameManager
     //void CreatureEventExecuteOnPlayerLogin(IPlayer player);
     //void CreatureEventExecuteOnPlayerLogout(IPlayer player);
     //void CreatureEventExecuteOnThink(ICreature creature, int interval);
+    void PlayerExtendedOpcodeHandle(IPlayer player, byte opcode, string buffer);
 }

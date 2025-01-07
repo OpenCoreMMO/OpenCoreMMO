@@ -17,21 +17,18 @@ public class PlayerUseItemOnCommand : ICommand
 {
     private readonly IPlayerUseService _playerUseService;
     private readonly IGameServer _game;
-    private readonly HotkeyService _hotkeyService;
     private readonly IScriptGameManager _scriptGameManager;
     private readonly IWalkToMechanism _walkToMechanism;
     private readonly ItemFinderService _itemFinder;
 
     public PlayerUseItemOnCommand(
         IGameServer game,
-        HotkeyService hotkeyService,
         IPlayerUseService playerUseService,
         IScriptGameManager scriptGameManager,
         IWalkToMechanism walkToMechanism,
         ItemFinderService itemFinder)
     {
         _game = game;
-        _hotkeyService = hotkeyService;
         _playerUseService = playerUseService;
         _scriptGameManager = scriptGameManager;
         _walkToMechanism = walkToMechanism;
@@ -66,17 +63,21 @@ public class PlayerUseItemOnCommand : ICommand
 
         var thingToUse = _itemFinder.Find(player, useItemPacket.Location, useItemPacket.ClientId);
 
-        if (thingToUse is not IUsableOn itemUsableOn) return;
-
-        Action action = null;
+        Action action;
 
         IThing onTarget = !onItem ? onTile : onItem;
 
-        if (_scriptGameManager.HasAction(itemUsableOn))
+        if (_scriptGameManager.HasAction(thingToUse))
+        {
             action = () => _scriptGameManager.PlayerUseItem(player, player.Location, useItemPacket.ToLocation,
-                useItemPacket.ToStackPosition, itemUsableOn, onTarget, useItemPacket.Location.IsHotkey);
+                useItemPacket.ToStackPosition, thingToUse, onTarget, useItemPacket.Location.IsHotkey);
+        }
         else
+        {
+            if (thingToUse is not IUsableOn itemUsableOn) return;
             action = () => _playerUseService.Use(player, itemUsableOn, onTarget);
+        }
+            
 
         if (!player.Location.IsNextTo(onTarget.Location == Location.Zero ? useItemPacket.ToLocation : onTarget.Location))
         {

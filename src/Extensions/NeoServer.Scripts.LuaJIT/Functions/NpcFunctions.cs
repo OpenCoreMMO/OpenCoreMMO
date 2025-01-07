@@ -15,40 +15,40 @@ public class NpcFunctions : LuaScriptInterface, INpcFunctions
         _gameCreatureManager = gameCreatureManager;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterSharedClass(L, "Npc", "Creature", LuaNpcCreate);
-        RegisterMetaMethod(L, "Npc", "__eq", LuaUserdataCompare<INpc>);
+        RegisterSharedClass(luaState, "Npc", "Creature", LuaNpcCreate);
+        RegisterMetaMethod(luaState, "Npc", "__eq", LuaUserdataCompare<INpc>);
     }
 
-    private static int LuaNpcCreate(LuaState L)
+    private static int LuaNpcCreate(LuaState luaState)
     {
         // Npc([id or name or userdata])
         INpc npc = null;
-        if (IsNumber(L, 2))
+        if (IsNumber(luaState, 2))
         {
-            var id = GetNumber<uint>(L, 2);
+            var id = GetNumber<uint>(luaState, 2);
             _gameCreatureManager.TryGetCreature(id, out var creature);
 
-            if (creature != null && creature is IMonster)
+            if (creature is IMonster)
             {
                 npc = creature as INpc;
             }
             else
             {
-                Lua.PushNil(L);
+                Lua.PushNil(luaState);
                 return 1;
             }
         }
-        else if (IsUserdata(L, 2))
+        else if (IsUserdata(luaState, 2))
         {
-            if (GetUserdataType(L, 2) != LuaDataType.Npc)
+            if (GetUserdataType(luaState, 2) != LuaDataType.Npc)
             {
-                Lua.PushNil(L);
+                Lua.PushNil(luaState);
                 return 1;
             }
 
-            npc = GetUserdata<INpc>(L, 2);
+            npc = GetUserdata<INpc>(luaState, 2);
         }
         else
         {
@@ -57,12 +57,12 @@ public class NpcFunctions : LuaScriptInterface, INpcFunctions
 
         if (npc is not null)
         {
-            PushUserdata(L, npc);
-            SetMetatable(L, -1, "Npc");
+            PushUserdata(luaState, npc);
+            SetMetatable(luaState, -1, "Npc");
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
 
         return 1;

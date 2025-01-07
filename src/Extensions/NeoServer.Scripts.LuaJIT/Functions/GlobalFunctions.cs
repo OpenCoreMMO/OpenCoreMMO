@@ -31,34 +31,34 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         _chatChannelStore = chatChannelStore;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterGlobalMethod(L, "rawgetmetatable", LuaRawGetMetatable);
-        RegisterGlobalMethod(L, "addEvent", LuaAddEvent);
-        RegisterGlobalMethod(L, "stopEvent", LuaStopEvent);
-        RegisterGlobalMethod(L, "sendChannelMessage", LuaSendChannelMessage);
+        RegisterGlobalMethod(luaState, "rawgetmetatable", LuaRawGetMetatable);
+        RegisterGlobalMethod(luaState, "addEvent", LuaAddEvent);
+        RegisterGlobalMethod(luaState, "stopEvent", LuaStopEvent);
+        RegisterGlobalMethod(luaState, "sendChannelMessage", LuaSendChannelMessage);
     }
 
-    private static int LuaRawGetMetatable(LuaState L)
+    private static int LuaRawGetMetatable(LuaState luaState)
     {
         // rawgetmetatable(metatableName)
-        Lua.GetMetaTable(L, GetString(L, 1));
+        Lua.GetMetaTable(luaState, GetString(luaState, 1));
         return 1;
     }
 
-    private static int LuaAddEvent(LuaState L)
+    private static int LuaAddEvent(LuaState luaState)
     {
         // addEvent(callback, delay, ...)
         var globalState = _luaEnvironment.GetLuaState();
         if (globalState.IsNull)
         {
             _logger.Error("No valid script interface!");
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
-        else if (globalState.pointer != L.pointer)
+        else if (globalState.pointer != luaState.pointer)
         {
-            Lua.XMove(L, globalState, Lua.GetTop(L));
+            Lua.XMove(luaState, globalState, Lua.GetTop(luaState));
         }
 
         int parameters = Lua.GetTop(globalState);
@@ -66,7 +66,7 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         { 
             // -parameters means the first parameter from left to right
             _logger.Error("callback parameter should be a function.");
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
 
@@ -81,9 +81,9 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         //        {
         //            continue;
         //        }
-        //        lua_rawgeti(L, -1, 't');
+        //        lua_rawgeti(luaState, -1, 't');
 
-        //        LuaData_t type = Lua::getNumber<LuaData_t>(L, -1);
+        //        LuaData_t type = Lua::getNumber<LuaData_t>(luaState, -1);
         //        if (type != LuaData_t::Unknown && type <= LuaData_t::Npc)
         //        {
         //            indexes.emplace_back(i, type);
@@ -171,13 +171,13 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         for (int i = 0; i < parameters - 2; ++i)
         { 
             // -2 because addEvent needs at least two parameters
-            eventDesc.Parameters.Add(Lua.Ref(globalState, LUA_REGISTRYINDEX));
+            eventDesc.Parameters.Add(Lua.Ref(globalState, LUA_REGISTRY_INDEX));
         }
 
         var delay = int.Max(100, GetNumber<int>(globalState, 2));
         Lua.Pop(globalState, 1);
 
-        eventDesc.Function = Lua.Ref(globalState, LUA_REGISTRYINDEX);
+        eventDesc.Function = Lua.Ref(globalState, LUA_REGISTRY_INDEX);
         eventDesc.ScriptId = GetScriptEnv().GetScriptId();
         eventDesc.ScriptName = GetScriptEnv().GetScriptInterface().GetLoadingScriptName();
 
@@ -190,26 +190,26 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
 
         _luaEnvironment.TimerEvents.Add(lastTimerEventId, eventDesc);
 
-        Lua.PushNumber(L, lastTimerEventId);
+        Lua.PushNumber(luaState, lastTimerEventId);
         return 1;
     }
 
-    private static int LuaStopEvent(LuaState L)
+    private static int LuaStopEvent(LuaState luaState)
     {
         // stopEvent(eventid)
         var globalState = _luaEnvironment.GetLuaState();
         if (globalState.IsNull)
         {
             _logger.Error("No valid script interface!");
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
 
-        var eventId = GetNumber<uint>(L, 1);
+        var eventId = GetNumber<uint>(luaState, 1);
 
         if (!_luaEnvironment.TimerEvents.TryGetValue(eventId, out var timerEventDesc))
         {
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
 
@@ -217,33 +217,33 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
 
         _scheduler.CancelEvent(timerEventDesc.EventId);
 
-        Lua.UnRef(globalState, LUA_REGISTRYINDEX, timerEventDesc.Function);
+        Lua.UnRef(globalState, LUA_REGISTRY_INDEX, timerEventDesc.Function);
 
         foreach (var parameter in timerEventDesc.Parameters) {
-            Lua.UnRef(globalState, LUA_REGISTRYINDEX, parameter);
+            Lua.UnRef(globalState, LUA_REGISTRY_INDEX, parameter);
         }
 
-        PushBoolean(L, true);
+        PushBoolean(luaState, true);
         return 1;
     }
 
-    private static int LuaSendChannelMessage(LuaState L)
+    private static int LuaSendChannelMessage(LuaState luaState)
     {
         // sendChannelMessage(channelId, type, message)
         var globalState = _luaEnvironment.GetLuaState();
 
-        var channelId = GetNumber<ushort>(L, 1);
+        var channelId = GetNumber<ushort>(luaState, 1);
         if (!_chatChannelStore.TryGetValue(channelId, out var channel) || channel is null)
         {
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
 
-        var type = GetNumber<SpeakClassesType>(L, 2);
-        var message = GetString(L, 3);
+        var type = GetNumber<SpeakClassesType>(luaState, 2);
+        var message = GetString(luaState, 3);
 
         channel.WriteMessage(message, out var cancelMessage, (SpeechType)type);
-        PushBoolean(L, true);
+        PushBoolean(luaState, true);
         return 1;
     }
 }

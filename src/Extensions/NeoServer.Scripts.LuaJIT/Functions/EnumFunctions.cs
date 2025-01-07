@@ -17,37 +17,37 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
     {
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterEnumCustom<Direction>(L);
-        //RegisterEnum<DirectionType>(L);
-        RegisterEnum<ItemAttributeType>(L);
-        RegisterEnum<ItemIdType>(L);
-        RegisterEnum<ItemPropertyType>(L);
-        RegisterEnum<MagicEffectClassesType>(L);
-        RegisterEnum<SpeakClassesType>(L);
-        RegisterEnum<MessageClassesType>(L);
-        RegisterEnumCustom<PlayerFlag>(L, false);
-        RegisterEnum<ReloadType>(L);
-        RegisterEnum<ReturnValueType>(L);
-        //RegisterEnum<SkillsType>(L);
-        RegisterEnumCustom<SkillType>(L);
-        RegisterEnum<TileFlagsType>(L);
+        RegisterEnumCustom<Direction>(luaState);
+        //RegisterEnum<DirectionType>(luaState);
+        RegisterEnum<ItemAttributeType>(luaState);
+        RegisterEnum<ItemIdType>(luaState);
+        RegisterEnum<ItemPropertyType>(luaState);
+        RegisterEnum<MagicEffectClassesType>(luaState);
+        RegisterEnum<SpeakClassesType>(luaState);
+        RegisterEnum<MessageClassesType>(luaState);
+        RegisterEnumCustom<PlayerFlag>(luaState, false);
+        RegisterEnum<ReloadType>(luaState);
+        RegisterEnum<ReturnValueType>(luaState);
+        //RegisterEnum<SkillsType>(luaState);
+        RegisterEnumCustom<SkillType>(luaState);
+        RegisterEnum<TileFlagsType>(luaState);
     }
 
-    private static void RegisterEnum(LuaState L, string name, Enum value)
+    private static void RegisterEnum(LuaState luaState, string name, Enum value)
     {
         var enumValue = (uint)Convert.ChangeType(value, Enum.GetUnderlyingType(value.GetType()));
-        RegisterGlobalVariable(L, name, enumValue);
+        RegisterGlobalVariable(luaState, name, enumValue);
     }
 
-    private static void RegisterEnum<T>(LuaState L) where T : Enum
+    private static void RegisterEnum<T>(LuaState luaState) where T : Enum
     {
         foreach (var item in Enum.GetValues(typeof(T)))
-            RegisterGlobalVariable(L, item.ToString(), Convert.ToUInt32(item));
+            RegisterGlobalVariable(luaState, item.ToString(), Convert.ToUInt32(item));
     }
 
-    private static void RegisterEnumCustom<T>(LuaState L, bool upperCase = true) where T : Enum
+    private static void RegisterEnumCustom<T>(LuaState luaState, bool upperCase = true) where T : Enum
     {
         var prefix = typeof(T).Name.Replace("Type", "") + "_";
 
@@ -58,7 +58,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
             if (upperCase)
                 name = name.ToUpperInvariant();
 
-            RegisterGlobalVariable(L, name, Convert. ToUInt64(item));
+            RegisterGlobalVariable(luaState, name, Convert. ToUInt64(item));
         }
     }
 }

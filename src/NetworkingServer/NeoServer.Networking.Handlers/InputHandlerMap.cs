@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NeoServer.Networking.Handlers.Chat;
+using NeoServer.Networking.Handlers.Custom;
 using NeoServer.Networking.Handlers.LogIn;
 using NeoServer.Networking.Handlers.Player;
 using NeoServer.Networking.Handlers.Player.Movement;

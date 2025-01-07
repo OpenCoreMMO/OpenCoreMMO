@@ -60,8 +60,6 @@ public delegate void ReadText(IPlayer player, IReadable readable, string text);
 
 public delegate void WroteText(IPlayer player, IReadable readable, string text);
 
-public delegate void ExtendedOpcode(IPlayer player, byte opcode, string buffer);
-
 public interface IPlayer : ICombatActor, ISociableCreature
 {
     #region Events
@@ -86,8 +84,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
-    public event ExtendedOpcode OnExtendedOpcode;
-
+    
     #endregion
 
     ushort Level { get; }
@@ -259,5 +256,4 @@ public interface IPlayer : ICombatActor, ISociableCreature
     ushort GetRawSkillLevel(SkillType skillType);
     int GetStorageValue(int key);
     void AddOrUpdateStorageValue(int key, int value);
-    void ExtendedOpcode(byte code, string text);
 }

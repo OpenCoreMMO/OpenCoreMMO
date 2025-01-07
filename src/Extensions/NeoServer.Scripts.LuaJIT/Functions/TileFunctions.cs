@@ -23,63 +23,63 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         _gameServer = gameServer;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterSharedClass(L, "Tile", "", LuaCreateTile);
-        RegisterMetaMethod(L, "Tile", "__eq", LuaUserdataCompare<ITile>);
+        RegisterSharedClass(luaState, "Tile", "", LuaCreateTile);
+        RegisterMetaMethod(luaState, "Tile", "__eq", LuaUserdataCompare<ITile>);
 
-        RegisterMethod(L, "Tile", "getPosition", LuaGetPosition);
-        RegisterMethod(L, "Tile", "getGround", LuaGetGround);
-        RegisterMethod(L, "Tile", "getThing", LuaTileGetThing);
-        RegisterMethod(L, "Tile", "getThingCount", LuaTileGetThingCount);
-        RegisterMethod(L, "Tile", "getCreatureCount", LuaTileGetCreatureCount);
-        RegisterMethod(L, "Tile", "getTopVisibleThing", LuaTileGetTopVisibleThing);
+        RegisterMethod(luaState, "Tile", "getPosition", LuaGetPosition);
+        RegisterMethod(luaState, "Tile", "getGround", LuaGetGround);
+        RegisterMethod(luaState, "Tile", "getThing", LuaTileGetThing);
+        RegisterMethod(luaState, "Tile", "getThingCount", LuaTileGetThingCount);
+        RegisterMethod(luaState, "Tile", "getCreatureCount", LuaTileGetCreatureCount);
+        RegisterMethod(luaState, "Tile", "getTopVisibleThing", LuaTileGetTopVisibleThing);
 
-        RegisterMethod(L, "Tile", "getItems", LuaTileGetItems);
-        RegisterMethod(L, "Tile", "getItemCount", LuaTileGetItemCount);
+        RegisterMethod(luaState, "Tile", "getItems", LuaTileGetItems);
+        RegisterMethod(luaState, "Tile", "getItemCount", LuaTileGetItemCount);
 
-        RegisterMethod(L, "Tile", "hasProperty", LuaTileHasProperty);
-        RegisterMethod(L, "Tile", "hasFlag", LuaTileHasFlag);
+        RegisterMethod(luaState, "Tile", "hasProperty", LuaTileHasProperty);
+        RegisterMethod(luaState, "Tile", "hasFlag", LuaTileHasFlag);
 
-        RegisterMethod(L, "Tile", "queryAdd", LuaTileQueryAdd);
+        RegisterMethod(luaState, "Tile", "queryAdd", LuaTileQueryAdd);
     }
 
-    public static int LuaCreateTile(LuaState L)
+    public static int LuaCreateTile(LuaState luaState)
     {
         // Tile(x, y, z)
         // Tile(position)
         ITile tile = null;
 
-        if (Lua.IsTable(L, 2))
+        if (Lua.IsTable(luaState, 2))
         {
-            var position = GetPosition(L, 2);
+            var position = GetPosition(luaState, 2);
             tile = _gameServer.Map.GetTile(position);
         }
         else
         {
-            var z = GetNumber<byte>(L, 4);
-            var y = GetNumber<ushort>(L, 3);
-            var x = GetNumber<ushort>(L, 2);
+            var z = GetNumber<byte>(luaState, 4);
+            var y = GetNumber<ushort>(luaState, 3);
+            var x = GetNumber<ushort>(luaState, 2);
 
             var position = new Location(x, y, z);
 
             tile = _gameServer.Map.GetTile(position);
         }
 
-        PushUserdata(L, tile);
-        SetMetatable(L, -1, "Tile");
+        PushUserdata(luaState, tile);
+        SetMetatable(luaState, -1, "Tile");
         return 1;
     }
 
-    public static int LuaTileGetThing(LuaState L)
+    public static int LuaTileGetThing(LuaState luaState)
     {
         // tile:getThing(index)
-        var tile = GetUserdata<ITile>(L, 1);
-        var index = GetNumber<int>(L, 2);
+        var tile = GetUserdata<ITile>(luaState, 1);
+        var index = GetNumber<int>(luaState, 2);
 
         if (tile == null || tile is not IDynamicTile dynamicTile)
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
             return 1;
         }
 
@@ -88,8 +88,8 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
             var creature = dynamicTile.Creatures[index];
             if (creature != null)
             {
-                PushUserdata(L, creature);
-                SetCreatureMetatable(L, -1, creature);
+                PushUserdata(luaState, creature);
+                SetCreatureMetatable(luaState, -1, creature);
                 return 1;
             }
         }
@@ -99,56 +99,56 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
 
             if (item != null)
             {
-                PushUserdata(L, item);
-                SetItemMetatable(L, -1, item);
+                PushUserdata(luaState, item);
+                SetItemMetatable(luaState, -1, item);
                 return 1;
             }
         }
 
-        Lua.PushNil(L);
+        Lua.PushNil(luaState);
 
         return 1;
     }
 
-    public static int LuaTileGetThingCount(LuaState L)
+    public static int LuaTileGetThingCount(LuaState luaState)
     {
         // tile:getThingCount()
-        var tile = GetUserdata<ITile>(L, 1);
+        var tile = GetUserdata<ITile>(luaState, 1);
         if (tile != null)
-            Lua.PushNumber(L, tile.ThingsCount);
+            Lua.PushNumber(luaState, tile.ThingsCount);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         return 1;
     }
 
-    public static int LuaTileGetCreatureCount(LuaState L)
+    public static int LuaTileGetCreatureCount(LuaState luaState)
     {
         // tile:getCreatureCount()
-        var tile = GetUserdata<ITile>(L, 1);
-        if (tile != null && tile is IDynamicTile dynamicTile)
-            Lua.PushNumber(L, dynamicTile.CreaturesCount);
+        var tile = GetUserdata<ITile>(luaState, 1);
+        if (tile is IDynamicTile dynamicTile)
+            Lua.PushNumber(luaState, dynamicTile.CreaturesCount);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         return 1;
     }
 
-    public static int LuaTileGetTopVisibleThing(LuaState L)
+    public static int LuaTileGetTopVisibleThing(LuaState luaState)
     {
         // tile:getTopVisibleThing(creature)
-        var creature = GetUserdata<ICreature>(L, 2);
-        var tile = GetUserdata<ITile>(L, 1);
+        var creature = GetUserdata<ICreature>(luaState, 2);
+        var tile = GetUserdata<ITile>(luaState, 1);
 
         if (tile == null || tile is not IDynamicTile dynamicTile)
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
             return 1;
         }
 
         var visibleCreature = dynamicTile.Creatures.FirstOrDefault(c => c.CreatureId == creature.CreatureId);
         if (visibleCreature != null)
         {
-            PushUserdata(L, visibleCreature);
-            SetCreatureMetatable(L, -1, visibleCreature);
+            PushUserdata(luaState, visibleCreature);
+            SetCreatureMetatable(luaState, -1, visibleCreature);
             return 1;
         }
 
@@ -156,101 +156,101 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
 
         if (visibleItem != null)
         {
-            PushUserdata(L, visibleItem);
-            SetItemMetatable(L, -1, visibleItem);
+            PushUserdata(luaState, visibleItem);
+            SetItemMetatable(luaState, -1, visibleItem);
             return 1;
         }
 
-        Lua.PushNil(L);
+        Lua.PushNil(luaState);
 
         return 1;
     }
 
-    public static int LuaGetPosition(LuaState L)
+    public static int LuaGetPosition(LuaState luaState)
     {
         // tile:getPosition()
-        var tile = GetUserdata<ITile>(L, 1);
+        var tile = GetUserdata<ITile>(luaState, 1);
         if (tile != null)
-            PushPosition(L, tile.Location);
+            PushPosition(luaState, tile.Location);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    public static int LuaGetGround(LuaState L)
+    public static int LuaGetGround(LuaState luaState)
     {
         // tile:getGround()
-        var tile = GetUserdata<ITile>(L, 1);
-        if (tile != null && tile.TopItemOnStack != null)
+        var tile = GetUserdata<ITile>(luaState, 1);
+        if (tile is { TopItemOnStack: not null })
         {
-            PushUserdata(L, tile.TopItemOnStack);
-            SetItemMetatable(L, -1, tile.TopItemOnStack);
+            PushUserdata(luaState, tile.TopItemOnStack);
+            SetItemMetatable(luaState, -1, tile.TopItemOnStack);
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
 
         return 1;
     }
 
-    public static int LuaTileGetItems(LuaState L)
+    public static int LuaTileGetItems(LuaState luaState)
     {
         // tile:getItems()
-        var tile = GetUserdata<ITile>(L, 1);
+        var tile = GetUserdata<ITile>(luaState, 1);
 
         if (!tile.HasThings || tile is not IDynamicTile dynamicTile)
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
             return 1;
         }
 
-        Lua.CreateTable(L, tile.ThingsCount, 0);
+        Lua.CreateTable(luaState, tile.ThingsCount, 0);
 
         var index = 0;
         foreach (var item in dynamicTile.AllItems)
         {
-            PushUserdata(L, item);
-            SetItemMetatable(L, -1, item);
-            Lua.RawSetI(L, -2, ++index);
+            PushUserdata(luaState, item);
+            SetItemMetatable(luaState, -1, item);
+            Lua.RawSetI(luaState, -2, ++index);
         }
 
         return 1;
     }
 
-    public static int LuaTileGetItemCount(LuaState L)
+    public static int LuaTileGetItemCount(LuaState luaState)
     {
         // tile:getItemCount()
-        var tile = GetUserdata<ITile>(L, 1);
+        var tile = GetUserdata<ITile>(luaState, 1);
         if (tile != null)
-            Lua.PushNumber(L, tile.ThingsCount);
+            Lua.PushNumber(luaState, tile.ThingsCount);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
 
-    public static int LuaTileHasProperty(LuaState L)
+    public static int LuaTileHasProperty(LuaState luaState)
     {
         // tile:hasProperty(property, item)
-        var tile = GetUserdata<ITile>(L, 1);
+        var tile = GetUserdata<ITile>(luaState, 1);
         if (!tile)
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
             return 1;
         }
 
         IItem itemToExclude = null;
-        if (Lua.GetTop(L) >= 3)
-            itemToExclude = GetUserdata<IItem>(L, 3);
+        if (Lua.GetTop(luaState) >= 3)
+            itemToExclude = GetUserdata<IItem>(luaState, 3);
 
-        var property = GetNumber<ItemPropertyType>(L, 2);
+        var property = GetNumber<ItemPropertyType>(luaState, 2);
 
         if (!itemToExclude)
         {
-            PushBoolean(L, tile.HasFlag(property.ToTileFlag()));
+            PushBoolean(luaState, tile.HasFlag(property.ToTileFlag()));
             return 1;
         }
 
@@ -264,7 +264,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
                     continue;
 
                 _itemTypeStore.TryGetValue(itemServerId, out var itemType);
-                PushBoolean(L, itemType.HasFlag(property.ToItemFlag()));
+                PushBoolean(luaState, itemType.HasFlag(property.ToItemFlag()));
                 return 1;
             }
         }
@@ -276,48 +276,48 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
                 if (itemToExclude.ServerId == tileItem.ServerId)
                     continue;
 
-                PushBoolean(L, tileItem.Metadata.HasFlag(property.ToItemFlag()));
+                PushBoolean(luaState, tileItem.Metadata.HasFlag(property.ToItemFlag()));
                 return 1;
             }
         }
 
-        PushBoolean(L, false);
+        PushBoolean(luaState, false);
         return 1;
     }
 
-    public static int LuaTileHasFlag(LuaState L)
+    public static int LuaTileHasFlag(LuaState luaState)
     {
         // tile:hasFlag(flag)
-        var tile = GetUserdata<ITile>(L, 1);
+        var tile = GetUserdata<ITile>(luaState, 1);
         if (tile != null)
         {
-            var flag = GetNumber<TileFlags>(L, 2);
-            Lua.PushBoolean(L, tile.HasFlag(flag));
+            var flag = GetNumber<TileFlags>(luaState, 2);
+            Lua.PushBoolean(luaState, tile.HasFlag(flag));
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
 
         return 1;
     }
 
-    public static int LuaTileQueryAdd(LuaState L)
+    public static int LuaTileQueryAdd(LuaState luaState)
     {
         // tile:queryAdd(thing, flags)
         //todo: implements flags
 
-        var tile = GetUserdata<ITile>(L, 1);
+        var tile = GetUserdata<ITile>(luaState, 1);
         if (!tile)
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
             return 1;
         }
 
-        var thing = GetUserdata<IThing>(L, 2);
+        var thing = GetUserdata<IThing>(luaState, 2);
         if (thing is not null && tile is IDynamicTile dynamicTile)
         {
-            var flags = GetNumber<TileFlags>(L, 3, 0);
+            var flags = GetNumber<TileFlags>(luaState, 3, 0);
 
             var returnValue = ReturnValueType.RETURNVALUE_NOTPOSSIBLE;
 
@@ -332,11 +332,11 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
                     returnValue = ReturnValueType.RETURNVALUE_NOERROR;
             }
 
-            Lua.PushNumber(L, (byte)returnValue);
+            Lua.PushNumber(luaState, (byte)returnValue);
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
 
         return 1;

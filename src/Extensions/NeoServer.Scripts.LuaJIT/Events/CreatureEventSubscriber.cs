@@ -3,7 +3,7 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Events.Creatures;
 using NeoServer.Scripts.LuaJIT.Events.Players;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Events;
 
 public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubscriber
 {
@@ -17,7 +17,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     private readonly PlayerOnLoginEventHandler _playerOnLoginEventHandler;
     private readonly PlayerOnLogoutEventHandler _playerOnLogoutEventHandler;
     private readonly PlayerOnAdvanceEventHandler _playerOnAdvanceEventHandler;
-    private readonly PlayerOnExtendedOpcodeEventHandler _playerOnExtendedOpcodeEventHandler;
     private readonly PlayerOnTextEditEventHandler _playerOnTextEditEventHandler;
 
     public CreatureEventSubscriber(
@@ -30,7 +29,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
         PlayerOnLoginEventHandler playerOnLoginEventHandler,
         PlayerOnLogoutEventHandler playerOnLogoutEventHandler,
         PlayerOnAdvanceEventHandler playerOnAdvanceEventHandler,
-        PlayerOnExtendedOpcodeEventHandler playerOnExtendedOpcodeEventHandler,
         PlayerOnTextEditEventHandler playerOnTextEditEventHandler)
     {
         _creatureOnDeathEventHandler = creatureOnDeathEventHandler;
@@ -43,7 +41,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
         _playerOnLoginEventHandler = playerOnLoginEventHandler;
         _playerOnLogoutEventHandler = playerOnLogoutEventHandler;
         _playerOnAdvanceEventHandler = playerOnAdvanceEventHandler;
-        _playerOnExtendedOpcodeEventHandler = playerOnExtendedOpcodeEventHandler;
         _playerOnTextEditEventHandler = playerOnTextEditEventHandler;
     }
 
@@ -66,7 +63,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
             player.OnLoggedOut += _playerOnLogoutEventHandler.Execute;
             player.OnLevelAdvanced += _playerOnAdvanceEventHandler.Execute;
             player.OnWroteText += _playerOnTextEditEventHandler.Execute;
-            player.OnExtendedOpcode += _playerOnExtendedOpcodeEventHandler.Execute;
         }
     }
 
@@ -89,7 +85,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
             player.OnLoggedOut -= _playerOnLogoutEventHandler.Execute;
             player.OnLevelAdvanced -= _playerOnAdvanceEventHandler.Execute;
             player.OnWroteText -= _playerOnTextEditEventHandler.Execute;
-            player.OnExtendedOpcode -= _playerOnExtendedOpcodeEventHandler.Execute;
         }
     }
 }

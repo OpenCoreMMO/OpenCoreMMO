@@ -6,27 +6,18 @@ using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public class GlobalEvents : IGlobalEvents
+public class GlobalEvents(
+    ILogger logger,
+    IScheduler dispatcher) : IGlobalEvents
 {
-    private int SchedulerMinTicks = 50;
+    private const int SCHEDULER_MIN_TICKS = 50;
 
-    private readonly Dictionary<string, GlobalEvent> _thinkMap = new Dictionary<string, GlobalEvent>();
-    private readonly Dictionary<string, GlobalEvent> _serverMap = new Dictionary<string, GlobalEvent>();
-    private readonly Dictionary<string, GlobalEvent> _timerMap = new Dictionary<string, GlobalEvent>();
+    private readonly Dictionary<string, GlobalEvent> _thinkMap = new();
+    private readonly Dictionary<string, GlobalEvent> _serverMap = new();
+    private readonly Dictionary<string, GlobalEvent> _timerMap = new();
 
-    private uint thinkEventId = 0;
-    private uint timerEventId = 0;
-
-    private ILogger _logger;
-    private IScheduler _scheduler;
-
-    public GlobalEvents(
-        ILogger logger,
-        IScheduler dispatcher)
-    {
-        _logger = logger;
-        _scheduler = dispatcher;
-    }
+    private uint _thinkEventId;
+    private uint _timerEventId;
 
     public void Startup()
     {
@@ -79,14 +70,14 @@ public class GlobalEvents : IGlobalEvents
         if (nextScheduledTime != long.MaxValue)
         {
             var delay = int.Max(1000, (int)nextScheduledTime * 1000);
-            thinkEventId = _scheduler.AddEvent(new SchedulerEvent(delay, Think));
+            _thinkEventId = dispatcher.AddEvent(new SchedulerEvent(delay, Think));
         }
     }
 
     public void Think()
     {
         //TotalMilliseconds
-        var now = _scheduler.GlobalTime;
+        var now = dispatcher.GlobalTime;
         var nextScheduledTime = long.MaxValue;
 
         foreach (var globalEvent in _thinkMap.Values.ToList())
@@ -102,11 +93,11 @@ public class GlobalEvents : IGlobalEvents
                 continue;
             }
 
-            _logger.Debug($"[GlobalEvents::think] - Executing event: {globalEvent.Name}");
+            logger.Debug("[GlobalEvents::think] - Executing event: {GlobalEventName}", globalEvent.Name);
 
             if (!globalEvent.ExecuteEvent())
             {
-                _logger.Information($"[GlobalEvents::think] - Failed to execute event: {globalEvent.Name}");
+                logger.Information("[GlobalEvents::think] - Failed to execute event: {GlobalEventName}", globalEvent.Name);
             }
 
             nextExecutionTime = globalEvent.Interval;
@@ -118,11 +109,10 @@ public class GlobalEvents : IGlobalEvents
             globalEvent.NextExecution += nextExecutionTime;
         }
 
-        if (nextScheduledTime != long.MaxValue)
-        {
-            var delay = (int)nextScheduledTime;
-            thinkEventId = _scheduler.AddEvent(new SchedulerEvent(delay, Think));
-        }
+        if (nextScheduledTime == long.MaxValue) return;
+        
+        var delay = (int)nextScheduledTime;
+        _thinkEventId = dispatcher.AddEvent(new SchedulerEvent(delay, Think));
     }
 
     public void Execute(GlobalEventType type)
@@ -169,9 +159,9 @@ public class GlobalEvents : IGlobalEvents
         {
             if (_timerMap.TryAdd(globalEvent.Name, globalEvent))
             {
-                if (timerEventId == 0)
+                if (_timerEventId == 0)
                 {
-                    timerEventId = _scheduler.AddEvent(new SchedulerEvent(SchedulerMinTicks, Timer));
+                    _timerEventId = dispatcher.AddEvent(new SchedulerEvent(SCHEDULER_MIN_TICKS, Timer));
                 }
                 return true;
             }
@@ -187,25 +177,25 @@ public class GlobalEvents : IGlobalEvents
         {
             if (_thinkMap.TryAdd(globalEvent.Name, globalEvent))
             {
-                if (thinkEventId == 0)
+                if (_thinkEventId == 0)
                 {
-                    thinkEventId = _scheduler.AddEvent(new SchedulerEvent(SchedulerMinTicks, Think));
+                    _thinkEventId = dispatcher.AddEvent(new SchedulerEvent(SCHEDULER_MIN_TICKS, Think));
                 }
                 return true;
             }
         }
 
-        _logger.Information($"Duplicate registered globalevent with name: {globalEvent.Name}");
+        logger.Information("Duplicate registered GlobalEvent with name: {GlobalEventName}", globalEvent.Name);
         return false;
     }
 
     public void Clear()
     {
         // Stop events
-        _scheduler.CancelEvent(thinkEventId);
-        thinkEventId = 0;
-        _scheduler.CancelEvent(timerEventId);
-        timerEventId = 0;
+        dispatcher.CancelEvent(_thinkEventId);
+        _thinkEventId = 0;
+        dispatcher.CancelEvent(_timerEventId);
+        _timerEventId = 0;
 
         // Clear maps
         _thinkMap.Clear();

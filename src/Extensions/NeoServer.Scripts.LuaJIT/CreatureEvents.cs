@@ -7,18 +7,10 @@ using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public class CreatureEvents : ICreatureEvents
+public class CreatureEvents(ILogger logger) : ICreatureEvents
 {
-    private readonly Dictionary<string, CreatureEvent> _creatureEvents = new Dictionary<string, CreatureEvent>();
-    private readonly Dictionary<uint, IList<CreatureEvent>> _mappedCreatureEvents = new Dictionary<uint, IList<CreatureEvent>>();
-
-    private ILogger _logger;
-
-    public CreatureEvents(
-        ILogger logger)
-    {
-        _logger = logger;
-    }
+    private readonly Dictionary<string, CreatureEvent> _creatureEvents = new();
+    private readonly Dictionary<uint, IList<CreatureEvent>> _mappedCreatureEvents = new();
 
     public CreatureEvent GetEventByName(string name, bool forceLoaded)
     {
@@ -61,7 +53,7 @@ public class CreatureEvents : ICreatureEvents
     {
         if (creatureEvent.EventType == CreatureEventType.CREATURE_EVENT_NONE)
         {
-            _logger.Information($"Duplicate registered globalevent with name: {creatureEvent.Name}");
+            logger.Information("Duplicate registered GlobalEvent with name: {CreatureEventName}", creatureEvent.Name);
             return false;
         }
 
@@ -69,7 +61,7 @@ public class CreatureEvents : ICreatureEvents
         if (oldEvent is not null)
         {
             // if there was an event with the same that is not loaded
-            //(happens when realoading), it is reused
+            //(happens when reloading), it is reused
             if (!oldEvent.Loaded && oldEvent.EventType == creatureEvent.EventType)
             {
                 oldEvent.CopyEvent(creatureEvent);
@@ -77,12 +69,10 @@ public class CreatureEvents : ICreatureEvents
 
             return false;
         }
-        else
-        {
-            // if not, register it normally
-            _creatureEvents.Add(creatureEvent.Name, creatureEvent);
-            return true;
-        }
+
+        // if not, register it normally
+        _creatureEvents.Add(creatureEvent.Name, creatureEvent);
+        return true;
     }
 
     public void RemoveInvalidEvents()
@@ -95,7 +85,7 @@ public class CreatureEvents : ICreatureEvents
 
     public void Clear()
     {
-        foreach (var (name, creatureEvent) in _creatureEvents)
+        foreach (var (_, creatureEvent) in _creatureEvents)
         {
             creatureEvent.ClearEvent();
         }
@@ -117,11 +107,10 @@ public class CreatureEvents : ICreatureEvents
             _mappedCreatureEvents.TryGetValue(creatureId, out mappedCreatureEvents) &&
             mappedCreatureEvents.Any(v => v.Name.Equals(creatureEvent.Name)))
             return false;
-        else
-            _scriptEventsBitField |= 1 << (int)creatureEvent.EventType;
+        
+        _scriptEventsBitField |= 1 << (int)creatureEvent.EventType;
 
-        if (mappedCreatureEvents == null)
-            mappedCreatureEvents = new List<CreatureEvent>();
+        mappedCreatureEvents ??= new List<CreatureEvent>();
 
         mappedCreatureEvents.Add(creatureEvent);
 
@@ -132,17 +121,14 @@ public class CreatureEvents : ICreatureEvents
 
     public bool UnregisterCreatureEvent(uint creatureId, CreatureEvent creatureEvent)
     {
-        IList<CreatureEvent> mappedCreatureEvents = null;
-
         if (!HasEventRegistered(creatureEvent.EventType))
             return false;
 
         var resetTypeBit = true;
 
-        if (mappedCreatureEvents == null)
-            mappedCreatureEvents = new List<CreatureEvent>();
+        var mappedCreatureEvents = new List<CreatureEvent>();
 
-        for (int i = 0; i < mappedCreatureEvents.Count(); i++)
+        for (var i = 0; i < mappedCreatureEvents.Count; i++)
         {
             var curEvent = mappedCreatureEvents.ElementAt(i);
 

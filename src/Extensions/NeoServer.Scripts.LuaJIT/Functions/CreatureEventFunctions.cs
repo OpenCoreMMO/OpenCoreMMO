@@ -23,41 +23,41 @@ public class CreatureEventFunctions : LuaScriptInterface, ICreatureEventFunction
         _scripts = scripts;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterSharedClass(L, "CreatureEvent", "", LuaCreateCreatureEvent);
-        RegisterMethod(L, "CreatureEvent", "type", LuaCreatureEventType);
-        RegisterMethod(L, "CreatureEvent", "register", LuaCreatureEventRegister);
-        RegisterMethod(L, "CreatureEvent", "onLogin", LuaCreatureEventOnCallback);
-        RegisterMethod(L, "CreatureEvent", "onLogout", LuaCreatureEventOnCallback);
-        RegisterMethod(L, "CreatureEvent", "onThink", LuaCreatureEventOnCallback);
-        RegisterMethod(L, "CreatureEvent", "onPrepareDeath", LuaCreatureEventOnCallback);
-        RegisterMethod(L, "CreatureEvent", "onDeath", LuaCreatureEventOnCallback);
-        RegisterMethod(L, "CreatureEvent", "onKill", LuaCreatureEventOnCallback);
-        RegisterMethod(L, "CreatureEvent", "onAdvance", LuaCreatureEventOnCallback);
-        RegisterMethod(L, "CreatureEvent", "onModalWindow", LuaCreatureEventOnCallback);
-        RegisterMethod(L, "CreatureEvent", "onTextEdit", LuaCreatureEventOnCallback);
-        RegisterMethod(L, "CreatureEvent", "onHealthChange", LuaCreatureEventOnCallback);
-        RegisterMethod(L, "CreatureEvent", "onManaChange", LuaCreatureEventOnCallback);
-        RegisterMethod(L, "CreatureEvent", "onExtendedOpcode", LuaCreatureEventOnCallback);
+        RegisterSharedClass(luaState, "CreatureEvent", "", LuaCreateCreatureEvent);
+        RegisterMethod(luaState, "CreatureEvent", "type", LuaCreatureEventType);
+        RegisterMethod(luaState, "CreatureEvent", "register", LuaCreatureEventRegister);
+        RegisterMethod(luaState, "CreatureEvent", "onLogin", LuaCreatureEventOnCallback);
+        RegisterMethod(luaState, "CreatureEvent", "onLogout", LuaCreatureEventOnCallback);
+        RegisterMethod(luaState, "CreatureEvent", "onThink", LuaCreatureEventOnCallback);
+        RegisterMethod(luaState, "CreatureEvent", "onPrepareDeath", LuaCreatureEventOnCallback);
+        RegisterMethod(luaState, "CreatureEvent", "onDeath", LuaCreatureEventOnCallback);
+        RegisterMethod(luaState, "CreatureEvent", "onKill", LuaCreatureEventOnCallback);
+        RegisterMethod(luaState, "CreatureEvent", "onAdvance", LuaCreatureEventOnCallback);
+        RegisterMethod(luaState, "CreatureEvent", "onModalWindow", LuaCreatureEventOnCallback);
+        RegisterMethod(luaState, "CreatureEvent", "onTextEdit", LuaCreatureEventOnCallback);
+        RegisterMethod(luaState, "CreatureEvent", "onHealthChange", LuaCreatureEventOnCallback);
+        RegisterMethod(luaState, "CreatureEvent", "onManaChange", LuaCreatureEventOnCallback);
+        RegisterMethod(luaState, "CreatureEvent", "onExtendedOpcode", LuaCreatureEventOnCallback);
     }
 
-    private static int LuaCreateCreatureEvent(LuaState L)
+    private static int LuaCreateCreatureEvent(LuaState luaState)
     {
         var creatureEvent = new CreatureEvent(GetScriptEnv().GetScriptInterface(), _logger, _scripts);
-        creatureEvent.Name = GetString(L, 2);
-        PushUserdata(L, creatureEvent);
-        SetMetatable(L, -1, "CreatureEvent");
+        creatureEvent.Name = GetString(luaState, 2);
+        PushUserdata(luaState, creatureEvent);
+        SetMetatable(luaState, -1, "CreatureEvent");
         return 1;
     }
 
-    private static int LuaCreatureEventType(LuaState L)
+    private static int LuaCreatureEventType(LuaState luaState)
     {
         // creatureEvent:type(callback)
-        var creatureEvent = GetUserdata<CreatureEvent>(L, 1);
+        var creatureEvent = GetUserdata<CreatureEvent>(luaState, 1);
         if (creatureEvent != null)
         {
-            string typeName = GetString(L, 2);
+            string typeName = GetString(luaState, 2);
             string tmpStr = typeName.ToLower();
             if (tmpStr == "login")
             {
@@ -110,55 +110,55 @@ public class CreatureEventFunctions : LuaScriptInterface, ICreatureEventFunction
             else
             {
                 _logger.Error("[CreatureEventFunctions::LuaCreatureEventType] - Invalid type for creature event: {}");
-                PushBoolean(L, false);
+                PushBoolean(luaState, false);
             }
             creatureEvent.Loaded = true;
-            PushBoolean(L, true);
+            PushBoolean(luaState, true);
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
         return 1;
     }
 
-    private static int LuaCreatureEventRegister(LuaState L)
+    private static int LuaCreatureEventRegister(LuaState luaState)
     {
         // creatureEvent:register() 
-        var creatureEvent = GetUserdata<CreatureEvent>(L, 1);
+        var creatureEvent = GetUserdata<CreatureEvent>(luaState, 1);
         if (creatureEvent != null)
         {
             if (!creatureEvent.IsLoadedScriptId())
             {
-                PushBoolean(L, false);
+                PushBoolean(luaState, false);
                 return 1;
             }
             
-            PushBoolean(L, _creatureEvents.RegisterLuaEvent(creatureEvent));
+            PushBoolean(luaState, _creatureEvents.RegisterLuaEvent(creatureEvent));
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
         return 1;
     }
 
-    private static int LuaCreatureEventOnCallback(LuaState L)
+    private static int LuaCreatureEventOnCallback(LuaState luaState)
     {
         // creatureevent:onLogin / logout / etc. (callback)
-        var creatureEvent = GetUserdata<CreatureEvent>(L, 1);
+        var creatureEvent = GetUserdata<CreatureEvent>(luaState, 1);
         if (creatureEvent != null)
         {
             if (!creatureEvent.LoadScriptId())
             {
-                PushBoolean(L, false);
+                PushBoolean(luaState, false);
                 return 1;
             }
-            PushBoolean(L, true);
+            PushBoolean(luaState, true);
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
         return 1;
     }
