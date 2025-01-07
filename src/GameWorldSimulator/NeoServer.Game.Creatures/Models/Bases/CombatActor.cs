@@ -440,6 +440,13 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public virtual void Death(IThing by)
     {
+        if (by is ICombatActor combatActor)
+        {
+            //todo: implements real damage
+            OnBeforeDeath?.Invoke(this, combatActor, 0);
+            combatActor.Kill(this);
+        }
+
         StopAttack();
         StopFollowing();
         StopWalking();
@@ -453,7 +460,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         //todo: implement lastHit
         OnKill?.Invoke(this, enemy, true);
     }
-
+    
     public abstract void OnDamage(IThing enemy, CombatDamage damage);
 
     private void OnDamage(IThing enemy, ICombatActor actor, CombatDamage damage)

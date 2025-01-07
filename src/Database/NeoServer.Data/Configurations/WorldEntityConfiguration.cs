@@ -9,8 +9,6 @@ public class WorldEntityConfiguration : IEntityTypeConfiguration<WorldEntity>
 {
     public void Configure(EntityTypeBuilder<WorldEntity> builder)
     {
-        builder.ToTable("World");
-
         builder.HasKey(e => new { e.Id });
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();

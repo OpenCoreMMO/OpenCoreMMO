@@ -8,8 +8,6 @@ public class AccountEntityConfiguration : IEntityTypeConfiguration<AccountEntity
 {
     public void Configure(EntityTypeBuilder<AccountEntity> builder)
     {
-        builder.ToTable("Account");
-
         builder.HasKey(e => e.Id);
 
         builder.HasIndex(e => e.AccountName)
