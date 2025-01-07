@@ -8,8 +8,6 @@ public class GuildMembershipEntityConfiguration : IEntityTypeConfiguration<Guild
 {
     public void Configure(EntityTypeBuilder<GuildMembershipEntity> builder)
     {
-        builder.ToTable("GuildMembership");
-
         builder.HasKey(e => new { e.PlayerId, e.GuildId });
 
         builder.Property(e => e.PlayerId);

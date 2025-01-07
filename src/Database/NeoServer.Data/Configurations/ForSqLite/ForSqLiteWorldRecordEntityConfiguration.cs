@@ -8,8 +8,6 @@ public class ForSqLiteWorldRecordEntityConfiguration : IEntityTypeConfiguration<
 {
     public void Configure(EntityTypeBuilder<WorldRecordEntity> builder)
     {
-        builder.ToTable("WorldRecord");
-
         builder.HasKey(e => new { e.Id });
 
         builder.Property(e => e.Id).HasAnnotation("Sqlite:Autoincrement", true);
