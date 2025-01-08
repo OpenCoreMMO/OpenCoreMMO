@@ -12,7 +12,7 @@ public enum ConditionType : uint
     Outfit = 1 << 6,
     Invisible = 1 << 7,
     Light = 1 << 8,
-    Manashield = 1 << 9,
+    ManaShield = 1 << 9,
     InFight = 1 << 10,
     Drunk = 1 << 11,
     ExhaustWeapon = 1 << 12, // unused

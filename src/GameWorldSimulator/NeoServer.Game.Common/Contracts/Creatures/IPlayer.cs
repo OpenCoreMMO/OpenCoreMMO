@@ -11,6 +11,7 @@ using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Creatures.Players;
+using NeoServer.Game.Common.Creatures.Structs;
 using NeoServer.Game.Common.Results;
 
 namespace NeoServer.Game.Common.Contracts.Creatures;
@@ -141,6 +142,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     IDictionary<int, int> Storages { get; }
 
     bool CanSeeInspectionDetails { get; }
+    bool IsManaShieldEnabled { get; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 
@@ -256,4 +258,23 @@ public interface IPlayer : ICombatActor, ISociableCreature
     ushort GetRawSkillLevel(SkillType skillType);
     int GetStorageValue(int key);
     void AddOrUpdateStorageValue(int key, int value);
+    
+    /// <summary>
+    /// Add infinite mana shield condition
+    /// </summary>
+    void EnableManaShield();
+    
+    /// <summary>
+    /// Remove mana shield condition
+    /// </summary>
+    void DisableManaShield();
+    
+    /// <summary>
+    /// Add mana shield condition 
+    /// </summary>
+    /// <param name="duration"></param>
+    void EnableManaShield(uint duration);
+
+    void AddRegenerationBonus(RegenerationBonus regenerationBonus);
+    void RemoveRegenerationBonus(RegenerationBonus regenerationBonus);
 }

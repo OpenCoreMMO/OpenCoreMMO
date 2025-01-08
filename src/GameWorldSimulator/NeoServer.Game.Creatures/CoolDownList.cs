@@ -10,7 +10,9 @@ public class CooldownList
     public IDictionary<CooldownType, CooldownTime> Cooldowns { get; } =
         new Dictionary<CooldownType, CooldownTime>();
 
-    public IDictionary<string, CooldownTime> Spells { get; } = new Dictionary<string, CooldownTime>();
+    private Dictionary<ulong, CooldownTime> CustomCooldowns { get; } = new();
+
+    private Dictionary<string, CooldownTime> Spells { get; } = new();
 
     /// <summary>
     ///     Add cooldown
@@ -29,6 +31,12 @@ public class CooldownList
         return Spells.TryAdd(spell, new CooldownTime(DateTime.Now, duration));
     }
 
+    public bool Start(ulong id, int duration)
+    {
+        if (Expired(id)) CustomCooldowns.Remove(id);
+        return CustomCooldowns.TryAdd(id, new CooldownTime(DateTime.Now, duration));
+    }
+
     public void Add(string spell, int duration)
     {
         Spells.TryAdd(spell, new CooldownTime(DateTime.Now, duration));
@@ -43,6 +51,12 @@ public class CooldownList
     public bool Expired(string spell)
     {
         if (Spells.TryGetValue(spell, out var cooldown)) return cooldown.Expired;
+        return true;
+    }
+
+    public bool Expired(ulong id)
+    {
+        if (CustomCooldowns.TryGetValue(id, out var cooldown)) return cooldown.Expired;
         return true;
     }
 
