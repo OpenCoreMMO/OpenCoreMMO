@@ -143,7 +143,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         return CanSee(pos, (int)MapViewPort.MaxViewPortX, (int)MapViewPort.MaxViewPortY);
     }
 
-    public byte Skull { get; protected set; } // TODO: implement.
 
     public virtual byte Emblem { get; } // TODO: implement.
     public bool IsHealthHidden { get; protected set; }

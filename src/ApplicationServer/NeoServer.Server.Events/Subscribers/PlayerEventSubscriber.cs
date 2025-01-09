@@ -42,7 +42,7 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         PlayerExhaustedEventHandler playerExhaustedEventHandler,
         PlayerReadTextEventHandler playerReadTextEventHandler,
         PlayerLoggedInEventHandler playerLoggedInEventHandler,
-        PlayerLoggedOutEventHandler playerLoggedOutEventHandler)
+        PlayerLoggedOutEventHandler playerLoggedOutEventHandler, PlayerSkullUpdatedEventHandler playerSkullUpdatedEventHandler)
     {
         _playerWalkCancelledEventHandler = playerWalkCancelledEventHandler;
         _playerClosedContainerEventHandler = playerClosedContainerEventHandler;
@@ -77,6 +77,7 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         _playerReadTextEventHandler = playerReadTextEventHandler;
         _playerLoggedInEventHandler = playerLoggedInEventHandler;
         _playerLoggedOutEventHandler = playerLoggedOutEventHandler;
+        _playerSkullUpdatedEventHandler = playerSkullUpdatedEventHandler;
     }
 
     public void Subscribe(ICreature creature)
@@ -122,6 +123,7 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         player.OnLookedAt += _playerLookedAtEventHandler.Execute;
         player.OnGainedSkillPoint += _playerUpdatedSkillPointsEventHandler.Execute;
         player.OnUsedItem += _playerUsedItemEventHandler.Execute;
+        player.OnSkullUpdated += _playerSkullUpdatedEventHandler.Execute;
 
         player.OnLoggedIn += _playerLoggedInEventHandler.Execute;
         player.OnLoggedOut += _playerLoggedOutEventHandler.Execute;
@@ -187,6 +189,7 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         player.OnLookedAt -= _playerLookedAtEventHandler.Execute;
         player.OnGainedSkillPoint -= _playerUpdatedSkillPointsEventHandler.Execute;
         player.OnUsedItem -= _playerUsedItemEventHandler.Execute;
+        player.OnSkullUpdated -= _playerSkullUpdatedEventHandler.Execute;
 
         player.OnLoggedIn -= _playerLoggedInEventHandler.Execute;
         player.OnLoggedOut -= _playerLoggedOutEventHandler.Execute;
@@ -245,6 +248,7 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
     private readonly PlayerReadTextEventHandler _playerReadTextEventHandler;
     private readonly PlayerLoggedInEventHandler _playerLoggedInEventHandler;
     private readonly PlayerLoggedOutEventHandler _playerLoggedOutEventHandler;
+    private readonly PlayerSkullUpdatedEventHandler _playerSkullUpdatedEventHandler;
 
     #endregion
 }

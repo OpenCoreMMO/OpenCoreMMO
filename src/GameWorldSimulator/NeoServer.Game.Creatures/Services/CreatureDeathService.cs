@@ -1,36 +1,33 @@
-﻿using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Item;
 
-namespace NeoServer.Game.Creatures.Events;
+namespace NeoServer.Game.Creatures.Services;
 
-public class CreatureKilledEventHandler : IGameEventHandler
+public class CreatureDeathService(
+    IItemFactory itemFactory,
+    IMap map,
+    ILiquidPoolFactory liquidPoolFactory,
+    IExperienceSharingService experienceSharingService): ICreatureDeathService
 {
-    private readonly IItemFactory itemFactory;
-    private readonly ILiquidPoolFactory liquidPoolFactory;
-    private readonly IMap map;
-
-    public CreatureKilledEventHandler(IItemFactory itemFactory, IMap map, ILiquidPoolFactory liquidPoolFactory)
+    public void Handle(ICombatActor deadCreature, IThing by, ILoot loot)
     {
-        this.itemFactory = itemFactory;
-        this.map = map;
-        this.liquidPoolFactory = liquidPoolFactory;
-    }
-
-    public void Execute(ICreature creature, IThing by, ILoot loot)
-    {
-        if (creature is IMonster { IsSummon: true } monster)
+        if (deadCreature is IMonster { IsSummon: true } summon)
         {
             //if summon just remove the creature from map
-            map.RemoveCreature(monster);
+            map.RemoveCreature(summon);
             return;
         }
 
-        ReplaceCreatureByCorpse(creature, by, loot);
-        CreateBlood(creature);
+        ReplaceCreatureByCorpse(deadCreature, by, loot);
+        CreateBlood(deadCreature);
+
+        experienceSharingService.Share(deadCreature);
+
+        if (by is ICombatActor aggressor) aggressor.Kill(deadCreature);
     }
 
     private void ReplaceCreatureByCorpse(ICreature creature, IThing by, ILoot loot)

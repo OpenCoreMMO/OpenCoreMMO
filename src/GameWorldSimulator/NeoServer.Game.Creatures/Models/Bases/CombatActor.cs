@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using NeoServer.Game.Combat.Validation;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat;
@@ -35,6 +36,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
     }
 
+    public DamageRecordList ReceivedDamages { get; } = new DamageRecordList();
     public bool IsShieldDefenseEnabled { get; private set; } = true;
     public byte DamageReceivedPercentage { get; private set; }
 
@@ -466,17 +468,13 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     private void OnDamage(IThing enemy, ICombatActor actor, CombatDamage damage)
     {
         OnDamage(enemy, damage);
+        
+        ReceivedDamages.AddOrUpdateDamage(enemy, damage.Damage);
+        
         OnHealthChanged?.Invoke(this, actor, damage);
         OnInjured?.Invoke(enemy, this, damage);
         if (IsDead)
         {
-            if (enemy is ICombatActor combatActor)
-            {
-                //todo: implements real damage
-                combatActor.Kill(this);
-                OnBeforeDeath?.Invoke(this, combatActor, 0);
-            }
-
             Death(enemy);
         }
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -5,12 +6,12 @@ namespace NeoServer.Game.Common.Helpers;
 
 public static class Validation
 {
-    public static bool IsNull(this object value)
+    public static bool IsNull<T>(this T value)
     {
         return value is null;
     }
 
-    public static bool IsNotNull(this object value)
+    public static bool IsNotNull<T>(this T value)
     {
         return value is not null;
     }
@@ -46,11 +47,11 @@ public class Guard
         return false;
     }
 
-    public static bool IsNull(object value)
+    public static bool IsNull<T>(T value)
     {
         return value is null;
     }
-
+    
     public static bool IsNullOrEmpty(ICollection value)
     {
         return value is null || value.Count == 0;

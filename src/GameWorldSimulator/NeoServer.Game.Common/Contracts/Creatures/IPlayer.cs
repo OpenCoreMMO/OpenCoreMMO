@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NeoServer.Game.Common.Chats;
+using NeoServer.Game.Common.Combat.Enums;
 using NeoServer.Game.Common.Contracts.Creatures.Players;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
@@ -59,6 +60,7 @@ public delegate void RemoveSkillBonus(IPlayer player, SkillType skillType, sbyte
 public delegate void ReadText(IPlayer player, IReadable readable, string text);
 
 public delegate void WroteText(IPlayer player, IReadable readable, string text);
+public delegate void SkullUpdated(IPlayer player);
 
 public interface IPlayer : ICombatActor, ISociableCreature
 {
@@ -141,6 +143,11 @@ public interface IPlayer : ICombatActor, ISociableCreature
     IDictionary<int, int> Storages { get; }
 
     bool CanSeeInspectionDetails { get; }
+
+    /// <summary>
+    ///     Indicates Skull showed on creature
+    /// </summary>
+    Skull Skull { get; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 
@@ -256,4 +263,11 @@ public interface IPlayer : ICombatActor, ISociableCreature
     ushort GetRawSkillLevel(SkillType skillType);
     int GetStorageValue(int key);
     void AddOrUpdateStorageValue(int key, int value);
+    bool HasSkull { get; }
+    event SkullUpdated OnSkullUpdated;
+    void AddPlayerToEnemyList(IPlayer player);
+    void AddPlayerToEnemyList(uint creatureId);
+    bool PlayerIsOnEnemyList(uint creatureId);
+    Skull GetSkull(IPlayer enemy);
+    void SetSkull(Skull skull);
 }

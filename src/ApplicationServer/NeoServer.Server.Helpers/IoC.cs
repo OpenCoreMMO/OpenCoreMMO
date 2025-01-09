@@ -16,4 +16,8 @@ public static class IoC
     {
         return _container.GetService<T>();
     }
+    public static T GetInstance<T>(Type type)
+    {
+        return (T) _container.GetService(type);
+    }
 }

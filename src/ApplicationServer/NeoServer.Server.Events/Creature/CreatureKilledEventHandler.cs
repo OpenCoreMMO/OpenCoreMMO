@@ -1,44 +1,29 @@
-﻿using NeoServer.Data.Interfaces;
+using NeoServer.Data.Interfaces;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Networking.Packets.Outgoing.Login;
+using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Server.Common.Contracts;
-using NeoServer.Server.Tasks;
 
 namespace NeoServer.Server.Events.Creature;
 
-public class CreatureKilledEventHandler
+public class CreatureKilledEventHandler(
+    IPlayerRepository playerRepository,
+    IGameCreatureManager creatureManager,
+    ICreatureDeathService creatureDeathService)
+    : IEventHandler
 {
-    private readonly IGameServer _game;
-    private readonly IPlayerRepository _playerRepository;
-
-    public CreatureKilledEventHandler(IGameServer game, IPlayerRepository playerRepository)
+    public void Execute(ICombatActor deadCreature, IThing by, ILoot loot)
     {
-        _game = game;
-        _playerRepository = playerRepository;
-    }
-
-    public void Execute(ICombatActor creature, IThing by, ILoot loot)
-    {
-        _game.Scheduler.AddEvent(new SchedulerEvent(200, () =>
+        creatureDeathService.Handle(deadCreature, by, loot);
+        
+        if (deadCreature is IMonster monster)
         {
-            //send packets to killed player
-            if (creature is not IPlayer player ||
-                !_game.CreatureManager.GetPlayerConnection(creature.CreatureId, out var connection)) return;
+            creatureManager.AddKilledMonsters(monster);
+        }
 
-            _playerRepository.SavePlayer(player);
-
-            connection.OutgoingPackets.Enqueue(new ReLoginWindowOutgoingPacket());
-            connection.Send();
-        }));
-
-        OnMonsterKilled(creature);
-    }
-
-    private void OnMonsterKilled(ICombatActor creature)
-    {
-        if (creature is not IMonster { IsSummon: false } monster) return;
-
-        _game.CreatureManager.AddKilledMonsters(monster);
+        if (deadCreature is IPlayer player)
+        {
+            playerRepository.SavePlayer(player);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using NeoServer.Game.Combat.Services;
 using NeoServer.Game.Common.Contracts.Inspection;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World;
@@ -42,7 +43,10 @@ public static class ServiceInjection
         builder.AddSingleton<IStaticToDynamicTileService, StaticToDynamicTileService>();
         builder.AddSingleton<SafeTradeSystem>();
         builder.AddSingleton<IItemRequirementService, ItemRequirementService>();
-
+        builder.AddSingleton<IPvpCombatService, PvPCombatService>();
+        builder.AddSingleton<IExperienceSharingService, ExperienceSharingService>();
+        builder.AddSingleton<ICreatureDeathService, CreatureDeathService>();
+        
         //Operations
         builder.AddSingleton<TradeItemExchanger>();
 

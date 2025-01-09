@@ -8,8 +8,8 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Creatures.Events.Monster;
 using NeoServer.Game.Creatures.Monster.Summon;
+using NeoServer.Game.Creatures.Services;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;
@@ -31,10 +31,10 @@ public class MonsterKilledEventHandlerTest
         monsterMock.Setup(x => x.Experience).Returns(100);
         monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
 
-        var eventHandler = new MonsterKilledEventHandler();
+        var experienceSharingService = new ExperienceSharingService();
 
         var before = player.Experience;
-        eventHandler.Execute(monsterMock.Object, player, null);
+        experienceSharingService.Share(monsterMock.Object);
         var after = player.Experience;
 
         Assert.Equal(before + 100, after);
@@ -55,11 +55,11 @@ public class MonsterKilledEventHandlerTest
         monsterMock.Setup(x => x.Experience).Returns(100);
         monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
 
-        var eventHandler = new MonsterKilledEventHandler();
+        var experienceSharingService = new ExperienceSharingService();
 
         var playerOneBefore = playerOne.Experience;
         var playerTwoBefore = playerTwo.Experience;
-        eventHandler.Execute(monsterMock.Object, playerOne, null);
+        experienceSharingService.Share(monsterMock.Object);
         var playerOneAfter = playerOne.Experience;
         var playerTwoAfter = playerTwo.Experience;
 
@@ -84,11 +84,11 @@ public class MonsterKilledEventHandlerTest
         monsterMock.Setup(x => x.Experience).Returns(100);
         monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
 
-        var eventHandler = new MonsterKilledEventHandler();
+        var experienceSharingService = new ExperienceSharingService();
 
         var playerOneBefore = playerOne.Experience;
         var playerTwoBefore = playerTwo.Experience;
-        eventHandler.Execute(monsterMock.Object, playerOne, null);
+        experienceSharingService.Share(monsterMock.Object);
         var playerOneAfter = playerOne.Experience;
         var playerTwoAfter = playerTwo.Experience;
 
@@ -112,11 +112,11 @@ public class MonsterKilledEventHandlerTest
         monsterMock.Setup(x => x.Experience).Returns(100);
         monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
 
-        var eventHandler = new MonsterKilledEventHandler();
+        var experienceSharingService = new ExperienceSharingService();
 
         var playerOneBefore = playerOne.Experience;
         var playerTwoBefore = playerTwo.Experience;
-        eventHandler.Execute(monsterMock.Object, playerOne, null);
+        experienceSharingService.Share(monsterMock.Object);
         var playerOneAfter = playerOne.Experience;
         var playerTwoAfter = playerTwo.Experience;
 
@@ -149,12 +149,12 @@ public class MonsterKilledEventHandlerTest
         monsterMock.Setup(x => x.Experience).Returns(100);
         monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
 
-        var eventHandler = new MonsterKilledEventHandler();
+        var experienceSharingService = new ExperienceSharingService();
 
         var playerOneBefore = playerOne.Experience;
         var playerTwoBefore = playerTwo.Experience;
         var playerThreeBefore = playerThree.Experience;
-        eventHandler.Execute(monsterMock.Object, playerOne, null);
+        experienceSharingService.Share(monsterMock.Object);
         var playerOneAfter = playerOne.Experience;
         var playerTwoAfter = playerTwo.Experience;
         var playerThreeAfter = playerThree.Experience;

@@ -6,6 +6,7 @@ using NeoServer.Game.Combat.Conditions;
 using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Chats;
+using NeoServer.Game.Common.Combat.Enums;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
@@ -161,6 +162,7 @@ public class Player : CombatActor, IPlayer
     public IPlayerChannel Channels { get; set; }
     public IPlayerParty PlayerParty { get; set; }
     public ulong BankAmount { get; private set; }
+    public HashSet<uint> PlayersEnemyList { get; set; } = new();
 
     public ulong GetTotalMoney(ICoinTypeStore coinTypeStore)
     {
@@ -183,6 +185,7 @@ public class Player : CombatActor, IPlayer
     public ushort Mana { get; private set; }
     public ushort MaxMana { get; private set; }
     public FightMode FightMode { get; private set; }
+    public Skull Skull { get; private set; }
 
     public bool Shopping => TradingWithNpc is not null;
 
@@ -234,6 +237,8 @@ public class Player : CombatActor, IPlayer
     public virtual bool CannotLogout => !(Tile?.ProtectionZone ?? false) && InFight;
 
     public virtual bool IsProtectionZoneLocked => false;
+
+    public bool HasSkull => Skull is not Skull.None;
 
     public SkillType SkillInUse
     {
@@ -1119,8 +1124,43 @@ public class Player : CombatActor, IPlayer
         return (Level + 50) * .01 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
     }
     
+
+    #region Skull
+
+    public void SetSkull(Skull skull)
+    {
+        var oldSkull = Skull;
+        Skull = skull;
+        
+        if (oldSkull != Skull)
+        {
+            OnSkullUpdated?.Invoke(this);
+        }
+    }
+
+    public void AddPlayerToEnemyList(IPlayer player) => AddPlayerToEnemyList(player.CreatureId);
+    public void AddPlayerToEnemyList(uint creatureId) => PlayersEnemyList.Add(creatureId);
+    public bool PlayerIsOnEnemyList(uint creatureId) => PlayersEnemyList.Contains(creatureId);
+
+    public Skull GetSkull(IPlayer enemy)
+    {
+        if (enemy.CreatureId == CreatureId)
+        {
+            return Skull;
+        }
+        if (PlayersEnemyList.Contains(enemy.CreatureId))
+        {
+            return Skull.Yellow;
+        }
+
+        return Skull is Skull.Yellow ? Skull.None : Skull;
+    }
+
+    #endregion
+   
     #region Storage
 
+    //TODO: rename this method to something more meaningful or take this from here if this is not game business rule
     public IDictionary<int, int> Storages { get; }
 
     public int GetStorageValue(int key)
@@ -1161,6 +1201,7 @@ public class Player : CombatActor, IPlayer
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
-    
+    public event SkullUpdated OnSkullUpdated;
+
     #endregion
 }

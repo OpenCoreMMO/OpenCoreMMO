@@ -11,8 +11,13 @@
         <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Systems\NeoServer.Game.Systems.csproj"/>
         <ProjectReference Include="..\..\NetworkingServer\NeoServer.Networking.Packets\NeoServer.Networking.Packets.csproj"/>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj"/>
+        <ProjectReference Include="..\..\NetworkingServer\NeoServer.Networking\NeoServer.Networking.csproj" />
         <ProjectReference Include="..\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj"/>
         <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Common\NeoServer.Game.Common.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Application\Creature\" />
     </ItemGroup>
 
     <PropertyGroup>

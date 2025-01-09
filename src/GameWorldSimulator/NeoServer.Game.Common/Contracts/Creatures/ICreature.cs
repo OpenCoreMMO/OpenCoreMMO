@@ -97,11 +97,6 @@ public interface ICreature : IMovableThing
     byte Emblem { get; }
 
     /// <summary>
-    ///     Indicates Skull showed on creature
-    /// </summary>
-    byte Skull { get; }
-
-    /// <summary>
     ///     HP
     /// </summary>
     uint HealthPoints { get; }
