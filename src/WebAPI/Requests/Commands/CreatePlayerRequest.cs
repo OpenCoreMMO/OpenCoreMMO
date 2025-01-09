@@ -1,6 +1,9 @@
-namespace NeoServer.Web.Shared.ViewModels.Request;
+using MediatR;
+using NeoServer.Web.API.Response;
 
-public class PlayerPostRequest
+namespace NeoServer.Web.API.Requests.Commands;
+
+public class CreatePlayerRequest : IRequest<OutputResponse>
 {
     public string Name { get; set; }
     public int Sex { get; set; }
