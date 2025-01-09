@@ -144,6 +144,8 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
                 ? condition.RemainingTime / TimeSpan.TicksPerMillisecond
                 : 0);
         playerEntity.Vocation = player.VocationType;
+        playerEntity.Skull = player.Skull;
+        playerEntity.SkullEndsAt = player.SkullEndsAt;
 
         neoContext.Update(playerEntity);
     }

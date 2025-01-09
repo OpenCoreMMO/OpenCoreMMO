@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using NeoServer.Game.Common;
+using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Services;
@@ -11,7 +14,9 @@ public class CreatureDeathService(
     IItemFactory itemFactory,
     IMap map,
     ILiquidPoolFactory liquidPoolFactory,
-    IExperienceSharingService experienceSharingService): ICreatureDeathService
+    IExperienceSharingService experienceSharingService,
+    IPlayerSkullService playerSkullService,
+    GameConfiguration gameConfiguration): ICreatureDeathService
 {
     public void Handle(ICombatActor deadCreature, IThing by, ILoot loot)
     {
@@ -22,15 +27,38 @@ public class CreatureDeathService(
             return;
         }
 
-        ReplaceCreatureByCorpse(deadCreature, by, loot);
+        ReplaceCreatureByCorpse(deadCreature, loot);
         CreateBlood(deadCreature);
 
         experienceSharingService.Share(deadCreature);
 
-        if (by is ICombatActor aggressor) aggressor.Kill(deadCreature);
+        var damageRecords = deadCreature.ReceivedDamages.GetDamageRecords(gameConfiguration.Death);
+        
+        ProcessDamageRecords(deadCreature, by, damageRecords);
+
+        if (by is IPlayer aggressor)
+        {
+            playerSkullService.UpdatePlayerSkull(aggressor);
+        }
     }
 
-    private void ReplaceCreatureByCorpse(ICreature creature, IThing by, ILoot loot)
+    private static void ProcessDamageRecords(ICombatActor deadCreature, IThing by, List<DamageRecord> damageRecords)
+    {
+        foreach (var damageRecord in damageRecords)
+        {
+            if (damageRecord.Aggressor is not ICombatActor damageOwner) return;
+
+            if (by is ICombatActor aggressor && damageOwner.CreatureId == aggressor.CreatureId)
+            {
+                aggressor.Kill(deadCreature, true);
+                continue;
+            }
+            
+            damageOwner.Kill(deadCreature);
+        }
+    }
+
+    private void ReplaceCreatureByCorpse(ICreature creature, ILoot loot)
     {
         var corpse = itemFactory.CreateLootCorpse(creature.CorpseType, creature.Location, loot);
         creature.Corpse = corpse;

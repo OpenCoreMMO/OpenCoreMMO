@@ -25,22 +25,36 @@ public class DamageRecordList
 
         if (DamageRecords.TryGetValue(key, out var record))
         {
-            record.IncreaseDamage(damage);
-            record.UpdateTime();
+            record.AddDamage(damage);
             return;
         }
 
         DamageRecords.Add(key, new DamageRecord(thing, damage));
     }
 
-    public Span<DamageRecord> GetLastDamageRecords(int count = int.MaxValue)
+    public List<DamageRecord> GetDamageRecords(DeathConfiguration deathConfiguration)
     {
-        if (count <= 0) return Span<DamageRecord>.Empty;
+        if (!deathConfiguration.IsDeathListEnabled) return DamageRecords.Values.ToList();
+
+        if (deathConfiguration.MaxDeathRecords <= 0) return [];
+
+        var damageList = new List<DamageRecord>();
 
         var records = DamageRecords.Values.ToArray();
         Array.Sort(records, (a, b) => b.Time.CompareTo(a.Time));
 
-        count = Math.Min(count, records.Length);
-        return new Span<DamageRecord>(records, 0, count);
+        var count = Math.Min(deathConfiguration.MaxDeathRecords, records.Length);
+
+        foreach (var record in records)
+        {
+            if (count >= deathConfiguration.MaxDeathRecords) break;
+            if (record.NumberOfHits < deathConfiguration.DeathAssistCount) continue;
+            if (record.Time >= DateTime.Now.Ticks - deathConfiguration.DeathListRequiredTime) continue;
+
+            damageList.Add(record);
+            count++;
+        }
+
+        return damageList;
     }
 }

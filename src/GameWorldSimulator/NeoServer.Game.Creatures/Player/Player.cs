@@ -31,7 +31,6 @@ using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
 using NeoServer.Game.Creatures.Models;
 using NeoServer.Game.Creatures.Models.Bases;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace NeoServer.Game.Creatures.Player;
 
@@ -162,7 +161,11 @@ public class Player : CombatActor, IPlayer
     public IPlayerChannel Channels { get; set; }
     public IPlayerParty PlayerParty { get; set; }
     public ulong BankAmount { get; private set; }
-    public HashSet<uint> PlayersEnemyList { get; set; } = new();
+    public HashSet<uint> PlayersEnemyList { get; } = new();
+
+    public int NumberOfUnjustifiedKillsLastDay { get; private set; }
+    public int NumberOfUnjustifiedKillsLastWeek { get; private set; }
+    public int NumberOfUnjustifiedKillsLastYear { get; private set; }
 
     public ulong GetTotalMoney(ICoinTypeStore coinTypeStore)
     {
@@ -186,7 +189,7 @@ public class Player : CombatActor, IPlayer
     public ushort MaxMana { get; private set; }
     public FightMode FightMode { get; private set; }
     public Skull Skull { get; private set; }
-
+    public DateTime? SkullEndsAt { get; private set; }
     public bool Shopping => TradingWithNpc is not null;
 
     public byte SoulPoints
@@ -1123,14 +1126,33 @@ public class Player : CombatActor, IPlayer
         if (Level <= 23) return 10 * 0.01 * Experience;
         return (Level + 50) * .01 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
     }
-    
+
 
     #region Skull
 
-    public void SetSkull(Skull skull)
+    public IPlayer AddSkull(Skull skull, DateTime? skullEndsAt)
+    {
+        Skull = skull;
+        SkullEndsAt = skullEndsAt;
+        return this;
+    }
+
+    public void SetSkull(Skull skull, DateTime? endingDate = null)
     {
         var oldSkull = Skull;
         Skull = skull;
+        SkullEndsAt = endingDate;
+        
+        if (oldSkull != Skull)
+        {
+            OnSkullUpdated?.Invoke(this);
+        }
+    }
+    public void RemoveSkull()
+    {
+        var oldSkull = Skull;
+        Skull = Skull.None;
+        SkullEndsAt = null;
         
         if (oldSkull != Skull)
         {
@@ -1148,6 +1170,7 @@ public class Player : CombatActor, IPlayer
         {
             return Skull;
         }
+
         if (PlayersEnemyList.Contains(enemy.CreatureId))
         {
             return Skull.Yellow;
@@ -1157,7 +1180,20 @@ public class Player : CombatActor, IPlayer
     }
 
     #endregion
-   
+
+    public override void Kill(ICombatActor enemy, bool lastHit = false)
+    {
+        if (enemy is IPlayer { HasSkull: false } deadPlayer)
+        {
+            NumberOfUnjustifiedKillsLastDay++;
+            NumberOfUnjustifiedKillsLastWeek++;
+            NumberOfUnjustifiedKillsLastYear++;
+        }
+
+        base.Kill(enemy, lastHit);
+    }
+
+
     #region Storage
 
     //TODO: rename this method to something more meaningful or take this from here if this is not game business rule

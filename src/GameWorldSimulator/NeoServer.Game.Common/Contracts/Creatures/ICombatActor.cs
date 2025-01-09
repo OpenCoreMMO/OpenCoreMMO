@@ -52,6 +52,7 @@ public interface ICombatActor : IWalkableCreature
     bool CanBeAttacked { get; }
     IDictionary<ConditionType, ICondition> Conditions { get; set; }
     ICreature CurrentTarget { get; }
+    DamageRecordList ReceivedDamages { get; }
 
     event Attack OnAttackEnemy;
     event BlockAttack OnBlockedAttack;
@@ -119,5 +120,5 @@ public interface ICombatActor : IWalkableCreature
     void EnableShieldDefense();
     void IncreaseDamageReceived(byte percentage);
     void DecreaseDamageReceived(byte percentage);
-    void Kill(ICombatActor enemy);
+    void Kill(ICombatActor enemy, bool lastHit = false);
 }

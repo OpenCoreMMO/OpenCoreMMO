@@ -36,7 +36,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
     }
 
-    public DamageRecordList ReceivedDamages { get; } = new DamageRecordList();
+    public DamageRecordList ReceivedDamages { get; } = new();
     public bool IsShieldDefenseEnabled { get; private set; } = true;
     public byte DamageReceivedPercentage { get; private set; }
 
@@ -446,7 +446,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         {
             //todo: implements real damage
             OnBeforeDeath?.Invoke(this, combatActor, 0);
-            combatActor.Kill(this);
         }
 
         StopAttack();
@@ -457,10 +456,9 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnDeath?.Invoke(this, by, loot);
     }
 
-    public virtual void Kill(ICombatActor enemy)
+    public virtual void Kill(ICombatActor enemy, bool lastHit = false)
     {
-        //todo: implement lastHit
-        OnKill?.Invoke(this, enemy, true);
+        OnKill?.Invoke(this, enemy, lastHit);
     }
     
     public abstract void OnDamage(IThing enemy, CombatDamage damage);

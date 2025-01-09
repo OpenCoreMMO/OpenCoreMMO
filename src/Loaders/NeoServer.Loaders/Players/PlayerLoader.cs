@@ -123,6 +123,8 @@ public class PlayerLoader : IPlayerLoader
             GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0)
         };
 
+        player.AddSkull(playerEntity.Skull, playerEntity.SkullEndsAt);
+
         player.SetCurrentTile(currentTile);
 
         AddRegenerationCondition(playerEntity, player);

@@ -46,6 +46,7 @@ public static class ServiceInjection
         builder.AddSingleton<IPvpCombatService, PvPCombatService>();
         builder.AddSingleton<IExperienceSharingService, ExperienceSharingService>();
         builder.AddSingleton<ICreatureDeathService, CreatureDeathService>();
+        builder.AddSingleton<IPlayerSkullService, PlayerSkullService>();
         
         //Operations
         builder.AddSingleton<TradeItemExchanger>();

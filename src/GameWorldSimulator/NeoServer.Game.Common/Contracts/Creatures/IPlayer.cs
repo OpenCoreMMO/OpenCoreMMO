@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Combat.Enums;
 using NeoServer.Game.Common.Contracts.Creatures.Players;
@@ -264,10 +265,15 @@ public interface IPlayer : ICombatActor, ISociableCreature
     int GetStorageValue(int key);
     void AddOrUpdateStorageValue(int key, int value);
     bool HasSkull { get; }
+    int NumberOfUnjustifiedKillsLastDay { get; }
+    int NumberOfUnjustifiedKillsLastWeek { get; }
+    int NumberOfUnjustifiedKillsLastYear { get; }
+    DateTime? SkullEndsAt { get; }
     event SkullUpdated OnSkullUpdated;
     void AddPlayerToEnemyList(IPlayer player);
     void AddPlayerToEnemyList(uint creatureId);
     bool PlayerIsOnEnemyList(uint creatureId);
     Skull GetSkull(IPlayer enemy);
-    void SetSkull(Skull skull);
+    void SetSkull(Skull skull, DateTime? skullEndingDate = null);
+    void RemoveSkull();
 }

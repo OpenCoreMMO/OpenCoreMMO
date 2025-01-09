@@ -76,5 +76,6 @@ public class GameCreatureRoutine
 
         PlayerPingRoutine.Execute(player, _playerLogOutCommand, _game);
         PlayerRecoveryRoutine.Execute(player);
+        PlayerSkullRoutine.Execute(player);
     }
 }
