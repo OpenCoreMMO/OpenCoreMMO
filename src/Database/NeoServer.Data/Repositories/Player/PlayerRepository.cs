@@ -54,7 +54,7 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
     public async Task<PlayerEntity> GetPlayer(string playerName)
     {
         await using var context = NewDbContext;
-        return await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower().Equals(playerName.ToLower()));
+        return await context.Players.FirstOrDefaultAsync(x => EF.Functions.Like(x.Name, playerName));
     }
 
     public async Task UpdatePlayers(IEnumerable<IPlayer> players)
