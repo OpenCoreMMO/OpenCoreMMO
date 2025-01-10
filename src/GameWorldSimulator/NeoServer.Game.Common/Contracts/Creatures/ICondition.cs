@@ -14,6 +14,8 @@ public interface ICondition
     /// </summary>
     long RemainingTime { get; }
 
+    bool IsDisabled { get; }
+
     bool Start(ICreature creature);
     void End();
 
@@ -23,4 +25,7 @@ public interface ICondition
     /// <param name="duration"></param>
     /// <param name="maxDuration"></param>
     void Extend(uint duration, uint maxDuration = uint.MaxValue);
+
+    void Disable();
+    void Enable();
 }
