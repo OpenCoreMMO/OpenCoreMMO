@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
@@ -97,6 +99,13 @@ public class BaseRepository<TEntity> : IBaseRepositoryNeo<TEntity>
         await using var context = NewDbContext;
         var entity = context.Set<TEntity>();
         return await entity.FindAsync(id);
+    }
+
+    public async Task<int> CountAllAsync(Expression<Func<TEntity, bool>> filter)
+    {
+        await using var context = NewDbContext;
+        var entity = context.Set<TEntity>();
+        return await entity.CountAsync(filter);
     }
 
     #endregion
