@@ -19,7 +19,6 @@ public class AddPremiumDaysAccountCommand(IAccountRepository accountRepository, 
         anotherAccount.PremiumTimeEndAt = anotherAccount.PremiumTimeEndAt.HasValue  ?
             anotherAccount.PremiumTimeEndAt.Value.AddDays(request.Days) :
             DateTime.UtcNow.AddDays(request.Days);
-        anotherAccount.PremiumTime += request.Days;
         
         var accountPremiumHistory = new AccountPremiumHistoryEntity()
         {

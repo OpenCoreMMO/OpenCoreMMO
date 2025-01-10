@@ -29,7 +29,7 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
         await using var context = NewDbContext;
 
         return await context.Accounts
-            .Where(x => x.EmailAddress.Equals(name) && x.Password.Equals(password))
+            .Where(x => x.EmailAddress.Equals(name) || x.AccountName.Equals(name) && x.Password.Equals(password))
             .Include(x => x.Players)
             .ThenInclude(x => x.World)
             .SingleOrDefaultAsync();
