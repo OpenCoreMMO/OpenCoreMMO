@@ -54,6 +54,7 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
     public async Task<PlayerEntity> GetPlayer(string playerName)
     {
         await using var context = NewDbContext;
+        //todo: find a way to use invariant culture. it currently doesn't work with sqlite
         return await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == playerName.ToLower());
     }
 
