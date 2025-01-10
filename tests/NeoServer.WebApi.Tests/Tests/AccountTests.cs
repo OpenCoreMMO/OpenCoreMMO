@@ -1,13 +1,7 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
-using NeoServer.Web.API.Application.UseCases.Commands;
-using NeoServer.Web.API.Extensions;
+﻿using Microsoft.EntityFrameworkCore;
 using NeoServer.Web.API.Requests.Commands;
-using NeoServer.Web.API.Response;
 using System.Net;
 using System.Net.Http.Json;
-using System.Security.Principal;
 using Xunit;
 
 namespace NeoServer.WebApi.Tests.Tests;
@@ -122,6 +116,7 @@ public class AccountTests : BaseIntegrationTests
         var response = await NeoHttpClient.PatchAsJsonAsync($"api/Account/{accountEntity.Id}/premium", requestModel);
         var result = await response.Content.ReadAsStringAsync();
         var premiumHistory = await NeoContext.AccountPremiumHistories.Where(item => item.AccountId == accountEntity.Id).LastOrDefaultAsync();
+        NeoContext.Accounts.Remove(accountEntity);
 
 
         //Assert
@@ -171,7 +166,7 @@ public class AccountTests : BaseIntegrationTests
         // Act
         var response = await NeoHttpClient.PatchAsJsonAsync($"api/Account/{accountEntity.Id}/change-password", requestModel);
         var result = await response.Content.ReadAsStringAsync();
-
+        NeoContext.Accounts.Remove(accountEntity);
 
         //Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -197,6 +192,7 @@ public class AccountTests : BaseIntegrationTests
         // Act
         var response = await NeoHttpClient.PatchAsJsonAsync($"api/Account/{accountEntity.Id}/change-password", requestModel);
         var result = await response.Content.ReadAsStringAsync();
+        NeoContext.Accounts.Remove(accountEntity);
 
 
         //Assert
@@ -215,6 +211,7 @@ public class AccountTests : BaseIntegrationTests
         // Act
         var response = await NeoHttpClient.PatchAsJsonAsync($"api/Account/{accountEntity.Id}/ban", requestModel);
         var result = await response.Content.ReadAsStringAsync();
+        NeoContext.Accounts.Remove(accountEntity);
 
 
         //Assert
