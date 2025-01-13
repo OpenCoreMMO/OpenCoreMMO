@@ -8,7 +8,19 @@ on:
 jobs:
   update-service:
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write  # Needed to publish into GHCR
+
     steps:
+      - uses: actions/checkout@v3
+      - name: Build and push the image
+        run: |
+          docker login --username ${{ github.actor }} --password  ${{ secrets.GH_REGISTRY_TOKEN }} ghcr.io
+          docker build -f src/Standalone/Dockerfile -t ghcr.io/opencoremmo/opencoremmo:baiak .
+          docker push ghcr.io/opencoremmo/opencoremmo:baiak
+
       - name: Update Service via Webhook
         uses: newarifrh/portainer-service-webhook@v1
         with:
