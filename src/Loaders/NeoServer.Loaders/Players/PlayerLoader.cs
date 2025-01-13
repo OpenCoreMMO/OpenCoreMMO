@@ -130,12 +130,37 @@ public class PlayerLoader : IPlayerLoader
         AddRegenerationCondition(playerEntity, player);
 
         player.AddInventory(ConvertToInventory(player, playerEntity));
+        
+        SetNumberOfKills(playerEntity, player);
 
         AddExistingPersonalChannels(player);
 
         return CreatureFactory.CreatePlayer(player);
     }
 
+    private static void SetNumberOfKills(PlayerEntity playerEntity, IPlayer player)
+    {
+        var killsLastDay = 0;
+        var killsLastWeek = 0;
+        var killsLastMonth = 0;
+        foreach (var kill in playerEntity.KillsLastMonth)
+        {
+            if (kill.DeathDateTime >= DateTime.Now.AddDays(-1))
+            {
+                killsLastDay++;
+            }
+            if (kill.DeathDateTime >= DateTime.Now.AddDays(-7))
+            {
+                killsLastWeek++;
+            }
+            if (kill.DeathDateTime >= DateTime.Now.AddMonths(-1))
+            {
+                killsLastMonth++;
+            }
+        }
+        
+        player.SetNumberOfKills(killsLastDay, killsLastWeek, killsLastMonth);
+    }
     protected ITown GetTown(PlayerEntity playerEntity)
     {
         if (!World.TryGetTown((ushort)playerEntity.TownId, out var town))

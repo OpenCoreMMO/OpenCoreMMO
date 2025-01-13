@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Buffers;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using NeoServer.Game.Combat;
 using NeoServer.Game.Common;
@@ -26,7 +25,6 @@ namespace NeoServer.Game.Creatures.Monster;
 
 public class Monster : WalkableMonster, IMonster
 {
-    private readonly Dictionary<ICreature, ushort> _damages;
     private Dictionary<string, byte> _aliveSummons;
     private MonsterState _state;
 
@@ -37,9 +35,7 @@ public class Monster : WalkableMonster, IMonster
         Spawn = spawn;
         Direction = spawn?.Direction ?? Direction.North;
 
-        _damages = new Dictionary<ICreature, ushort>();
         State = MonsterState.Sleeping;
-        OnInjured += (enemy, _, damage) => RecordDamage(enemy, damage.Damage);
         Targets = new TargetList(this);
     }
 
@@ -84,12 +80,9 @@ public class Monster : WalkableMonster, IMonster
             OnChangedState?.Invoke(this, oldState, value);
         }
     }
-
-    public ImmutableDictionary<ICreature, ushort> Damages => _damages.ToImmutableDictionary();
-
+    
     public void Born(Location location)
-    {
-        _damages.Clear();
+    { 
         ResetHealthPoints();
         SetNewLocation(location);
         State = MonsterState.Sleeping;
@@ -142,10 +135,10 @@ public class Monster : WalkableMonster, IMonster
         if (creature is Summon.Summon summon && summon.Master.CreatureId == CreatureId) return;
 
         if (!enemy.CanBeAttacked) return;
-        
+
         if (creature is IPlayer player && (
-            player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters) ||
-            player.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))) return;
+                player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters) ||
+                player.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))) return;
 
         var canSee = CanSee(creature.Location, (int)MapViewPort.MaxClientViewPortX + 1,
             (int)MapViewPort.MaxClientViewPortX + 1);
@@ -352,13 +345,7 @@ public class Monster : WalkableMonster, IMonster
         if (!Cooldowns.Expired(CooldownType.TargetChange)) return;
         Cooldowns.Start(CooldownType.TargetChange, Metadata.TargetChance.Interval);
     }
-
-    public void RecordDamage(IThing enemy, ushort damage)
-    {
-        if (enemy is not ICreature creature) return;
-        _damages.AddOrUpdate(creature, oldValue => (ushort)(oldValue + damage));
-    }
-
+    
     public void Awake()
     {
         State = MonsterState.Awake;
@@ -411,44 +398,6 @@ public class Monster : WalkableMonster, IMonster
         base.Death(by);
     }
 
-    public override ILoot DropLoot()
-    {
-        var lootItems = Metadata.Loot?.Drop();
-
-        var enemies = GetLootOwners();
-
-        var loot = new Loot.Loot(lootItems, enemies.ToHashSet());
-
-        return loot;
-    }
-
-    private List<ICreature> GetLootOwners()
-    {
-        var enemies = new HashSet<ICreature>();
-        var partyMembers = new List<ICreature>();
-
-        ushort maxDamage = 0;
-
-        foreach (var damage in _damages)
-        {
-            if (damage.Value > maxDamage)
-            {
-                enemies.Clear();
-                enemies.Add(damage.Key);
-                maxDamage = damage.Value;
-                continue;
-            }
-
-            if (damage.Value == maxDamage) enemies.Add(damage.Key);
-        }
-
-        foreach (var enemy in enemies)
-            if (enemy is IPlayer player && player.PlayerParty.Party is not null)
-                partyMembers.AddRange(player.PlayerParty.Party.Members);
-
-        return !partyMembers.Any() ? enemies.ToList() : enemies.Concat(partyMembers).ToList();
-    }
-
     public override CombatDamage OnImmunityDefense(CombatDamage damage)
     {
         return MonsterDefend.ImmunityDefend(this, damage);
@@ -466,7 +415,7 @@ public class Monster : WalkableMonster, IMonster
         monster.OnDeath += OnSummonDie;
     }
 
-    private void OnSummonDie(ICombatActor creature, IThing by, ILoot loot)
+    private void OnSummonDie(ICombatActor creature, IThing by)
     {
         creature.OnDeath -= OnSummonDie;
         if (!_aliveSummons.TryGetValue(creature.Name, out var count)) return;

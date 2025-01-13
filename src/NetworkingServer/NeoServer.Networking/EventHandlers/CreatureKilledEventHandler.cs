@@ -8,7 +8,7 @@ namespace NeoServer.Networking.EventHandlers;
 
 public class CreatureKilledEventHandler(IGameServer game) : INetworkEventHandler<ICreature>
 {
-    public void Execute(ICombatActor creature, IThing by, ILoot loot)
+    public void Execute(ICombatActor creature, IThing by)
     {
         game.Scheduler.AddEvent(new SchedulerEvent(200, () =>
         {

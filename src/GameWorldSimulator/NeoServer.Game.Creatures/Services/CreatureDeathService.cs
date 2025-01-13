@@ -14,8 +14,6 @@ public class CreatureDeathService(
     IItemFactory itemFactory,
     IMap map,
     ILiquidPoolFactory liquidPoolFactory,
-    IExperienceSharingService experienceSharingService,
-    IPlayerSkullService playerSkullService,
     GameConfiguration gameConfiguration): ICreatureDeathService
 {
     public void Handle(ICombatActor deadCreature, IThing by, ILoot loot)
@@ -30,16 +28,9 @@ public class CreatureDeathService(
         ReplaceCreatureByCorpse(deadCreature, loot);
         CreateBlood(deadCreature);
 
-        experienceSharingService.Share(deadCreature);
-
         var damageRecords = deadCreature.ReceivedDamages.GetDamageRecords(gameConfiguration.Death);
         
         ProcessDamageRecords(deadCreature, by, damageRecords);
-
-        if (by is IPlayer aggressor)
-        {
-            playerSkullService.UpdatePlayerSkull(aggressor);
-        }
     }
 
     private static void ProcessDamageRecords(ICombatActor deadCreature, IThing by, List<DamageRecord> damageRecords)

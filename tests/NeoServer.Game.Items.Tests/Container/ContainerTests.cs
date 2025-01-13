@@ -864,10 +864,10 @@ public class ContainerTests
 
         var loot = new Loot(new ILootItem[]
         {
-            new LootItem(() => ItemTestData.CreateWeaponItem(1, name: "sabre").Metadata, 1, 1, null),
-            new LootItem(() => ItemTestData.CreateContainer(2).Metadata, 1, 1,
-                new ILootItem[] { new LootItem(() => food.Metadata, 1, 1, null) }),
-            new LootItem(() => ItemTestData.CreateAttackRune(3, amount: 55).Metadata, 55, 1, null)
+            new LootItem(ItemTestData.CreateWeaponItem(1, name: "sabre").Metadata, 1, 1, null),
+            new LootItem(ItemTestData.CreateContainer(2).Metadata, 1, 1,
+                new ILootItem[] { new LootItem(food.Metadata, 1, 1, null) }),
+            new LootItem(ItemTestData.CreateAttackRune(3, amount: 55).Metadata, 55, 1, null)
         }, new HashSet<ICreature>(0));
 
         var sut = ItemTestData.CreateLootContainer(5, loot: loot);

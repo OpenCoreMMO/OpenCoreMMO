@@ -43,7 +43,7 @@ public class Summon : Monster
         actor.OnTargetChanged -= OnMasterTargetChange;
     }
 
-    private void OnMasterKilled(ICombatActor master, IThing by, ILoot loot)
+    private void OnMasterKilled(ICombatActor master, IThing by)
     {
         master.OnDeath -= OnMasterKilled;
         master.OnTargetChanged -= OnMasterTargetChange;

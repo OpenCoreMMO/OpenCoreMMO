@@ -1,5 +1,4 @@
 using NeoServer.Data.Interfaces;
-using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Services;
@@ -7,15 +6,23 @@ using NeoServer.Server.Common.Contracts;
 
 namespace NeoServer.Server.Events.Creature;
 
-public class CreatureKilledEventHandler(
+public class CreatureDeathEventHandler(
     IPlayerRepository playerRepository,
     IGameCreatureManager creatureManager,
-    ICreatureDeathService creatureDeathService)
+    ICreatureDeathService creatureDeathService,
+    IExperienceSharingService experienceSharingService,
+    IPlayerSkullService playerSkullService,
+    ILootService lootService)
     : IEventHandler
 {
-    public void Execute(ICombatActor deadCreature, IThing by, ILoot loot)
+    public void Execute(ICombatActor deadCreature, IThing by)
     {
+        //lua script can be added here to handle loot creation
+        var loot = lootService.DropLoot(deadCreature);
+        
         creatureDeathService.Handle(deadCreature, by, loot);
+        
+        experienceSharingService.Share(deadCreature);
         
         if (deadCreature is IMonster monster)
         {

@@ -5,20 +5,14 @@ using NeoServer.Game.Common.Contracts.Creatures;
 
 namespace NeoServer.Extensions.Events;
 
-public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubscriber
+public class CreatureEventSubscriber(CreatureDroppedLootEventHandler creatureDroppedLootEventHandler)
+    : ICreatureEventSubscriber, IGameEventSubscriber
 {
-    private readonly CreatureDroppedLootEventHandler creatureDroppedLootEventHandler;
-
-    public CreatureEventSubscriber(CreatureDroppedLootEventHandler creatureDroppedLootEventHandler)
-    {
-        this.creatureDroppedLootEventHandler = creatureDroppedLootEventHandler;
-    }
-
     public void Subscribe(ICreature creature)
     {
         if (creature is ICombatActor actor)
         {
-            actor.OnDeath += creatureDroppedLootEventHandler.Execute;
+            actor.OnDroppedLoot += creatureDroppedLootEventHandler.Execute;
         }
 
         if (creature is INpc npc) npc.OnAnswer += NpcActionHandler.OnAnswer;
@@ -28,7 +22,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     {
         if (creature is ICombatActor actor)
         {
-            actor.OnDeath -= creatureDroppedLootEventHandler.Execute;
+            actor.OnDroppedLoot -= creatureDroppedLootEventHandler.Execute;
         }
 
         if (creature is INpc npc) npc.OnAnswer -= NpcActionHandler.OnAnswer;

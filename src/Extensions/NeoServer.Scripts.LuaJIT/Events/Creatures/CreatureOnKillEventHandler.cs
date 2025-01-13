@@ -14,7 +14,7 @@ public class CreatureOnKillEventHandler : IGameEventHandler
         _creatureEvents = creatureEvents;
     }
 
-    public void Execute(ICombatActor creature, ICreature target, bool lastHit)
+    public void Execute(ICombatActor creature, ICreature target, bool lastHit, bool justified)
     {
         foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(creature.CreatureId, CreatureEventType.CREATURE_EVENT_KILL))
             creatureEvent.ExecuteOnKill(creature, target, lastHit);

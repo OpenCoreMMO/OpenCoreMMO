@@ -35,13 +35,14 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
             .SingleOrDefaultAsync();
     }
 
-    public async Task<PlayerEntity> GetPlayer(string accountName, string password, string charName)
+    public async Task<PlayerEntity> GetPlayer(string accountName, string password, string charName,
+        bool includeDeathList = false, bool includeKillsLastMonth = false)
     {
         await using var context = NewDbContext;
 
-        return await context.Players.Where(x => x.Account.EmailAddress.Equals(accountName) &&
-                                                x.Account.Password.Equals(password) &&
-                                                x.Name.Equals(charName))
+        var query = context.Players.Where(x => x.Account.EmailAddress.Equals(accountName) &&
+                                               x.Account.Password.Equals(password) &&
+                                               x.Name.Equals(charName))
             .Include(x => x.PlayerItems)
             .Include(x => x.PlayerInventoryItems)
             .Include(x => x.Account)
@@ -49,7 +50,30 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
             .ThenInclude(x => x.Player)
             .Include(x => x.GuildMember)
             .ThenInclude(x => x.Guild)
-            .Include(x => x.PlayerStorages).AsNoTracking().SingleOrDefaultAsync();
+            .Include(x => x.PlayerStorages);
+
+        if (includeDeathList)
+        {
+            query.Include(x => x.Deaths)
+                .ThenInclude(x => x.Killers);
+        }
+
+        var result = await query.AsNoTracking().SingleOrDefaultAsync();
+
+        if (result is null) return null;
+        
+        if (includeKillsLastMonth)
+        {
+            var lastMonth = DateTime.Now.AddMonths(-1);
+            result.KillsLastMonth = await context.PlayerDeathKillers
+                .Include(x => x.PlayerDeath)
+                .Where(x => x.PlayerId == result.Id && x.PlayerDeath.DeathDateTime >= lastMonth)
+                .Select(x => x.PlayerDeath)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        return result;
     }
 
     public async Task<PlayerEntity> GetOnlinePlayer(string accountName)
@@ -61,13 +85,14 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
             .Where(x => x.Account.EmailAddress.Equals(accountName) && x.Online)
             .FirstOrDefaultAsync();
     }
-    
+
     public async Task<AccountEntity> GetByEmailOrAccountName(string email, string accountName)
     {
         await using var context = NewDbContext;
 
         return await context.Accounts
-            .Where(x => x.EmailAddress.ToLower().Equals(email.ToLower()) || x.AccountName.ToLower().Equals(accountName.ToLower()))
+            .Where(x => x.EmailAddress.ToLower().Equals(email.ToLower()) ||
+                        x.AccountName.ToLower().Equals(accountName.ToLower()))
             .SingleOrDefaultAsync();
     }
 

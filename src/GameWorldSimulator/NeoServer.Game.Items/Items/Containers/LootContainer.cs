@@ -63,7 +63,7 @@ public class LootContainer : Container.Container, ILootContainer
 
         foreach (var item in items)
         {
-            var itemType = item.ItemType?.Invoke();
+            var itemType = item.ItemType;
 
             if (itemType is null) continue;
 

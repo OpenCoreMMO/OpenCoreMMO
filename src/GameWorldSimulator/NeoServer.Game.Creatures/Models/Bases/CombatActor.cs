@@ -20,6 +20,7 @@ using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Common.Results;
 using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
+using NeoServer.Game.Creatures.Services;
 
 namespace NeoServer.Game.Creatures.Models.Bases;
 
@@ -437,9 +438,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
         HealthPoints = damage.Damage > HealthPoints ? 0 : HealthPoints - damage.Damage;
     }
-
-    public abstract ILoot DropLoot();
-
+    
     public virtual void Death(IThing by)
     {
         if (by is ICombatActor combatActor)
@@ -452,13 +451,16 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         StopFollowing();
         StopWalking();
         Conditions.Clear();
-        var loot = DropLoot();
-        OnDeath?.Invoke(this, by, loot);
+
+        OnDeath?.Invoke(this, by);
+        ReceivedDamages.Clear();
     }
 
-    public virtual void Kill(ICombatActor enemy, bool lastHit = false)
+    public void RaiseDroppedLootEvent(ICombatActor actor, ILoot loot) => OnDroppedLoot?.Invoke(actor, loot);
+
+    public virtual void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true)
     {
-        OnKill?.Invoke(this, enemy, lastHit);
+        OnKill?.Invoke(this, enemy, lastHit, justified: justified);
     }
     
     public abstract void OnDamage(IThing enemy, CombatDamage damage);
@@ -505,6 +507,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public event Attacked OnAttacked;
     public event HealthChange OnHealthChanged;
     public event ManaChange OnManaChanged;
+    public event DropLoot OnDroppedLoot;
 
     #endregion
 

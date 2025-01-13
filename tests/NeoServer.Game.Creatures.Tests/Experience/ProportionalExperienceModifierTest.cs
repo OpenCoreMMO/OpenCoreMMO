@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using Moq;
+using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Creatures.Experience;
 using Xunit;
@@ -25,14 +26,13 @@ public class ProportionalExperienceModifierTest
     {
         var player = new Mock<IPlayer>().Object;
         var otherCreatures = new Mock<ICreature>().Object;
-        var damages = new Dictionary<ICreature, ushort>
-        {
-            { player, (ushort)playerDamage },
-            { otherCreatures, (ushort)(totalDamage - playerDamage) }
-        };
+   
+        var damages = new DamageRecordList();
+        damages.AddOrUpdateDamage(player, (ushort)playerDamage);
+        damages.AddOrUpdateDamage(otherCreatures, (ushort)(totalDamage - playerDamage));
 
         var monsterMock = new Mock<IMonster>();
-        monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
+        monsterMock.Setup(x => x.ReceivedDamages).Returns(damages);
         monsterMock.Setup(x => x.Experience).Returns(monsterExperience);
 
         var modifier = new ProportionalExperienceModifier();

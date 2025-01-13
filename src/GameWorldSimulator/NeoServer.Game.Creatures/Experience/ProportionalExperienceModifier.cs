@@ -24,20 +24,21 @@ public class ProportionalExperienceModifier : IBaseExperienceModifier
         return true;
     }
 
-    private int GetTotalMonsterDamage(IMonster monster)
+    private static int GetTotalMonsterDamage(IMonster monster)
     {
         var damage = 0;
-        foreach (var kvp in monster.Damages) damage += kvp.Value;
+        foreach (var damageRecord in monster.ReceivedDamages.All) damage += damageRecord.Damage;
         return damage;
     }
 
-    private int GetTotalPlayerDamage(IMonster monster, IPlayer player)
+    private static int GetTotalPlayerDamage(IMonster monster, IPlayer player)
     {
         var damage = 0;
-        foreach (var kvp in monster.Damages)
+        foreach (var damageRecord in monster.ReceivedDamages.All)
         {
-            if (kvp.Key != player && (kvp.Key as Summon)?.Master != player) continue;
-            damage += kvp.Value;
+            if (damageRecord.Aggressor is not IPlayer playerAggressor) continue;
+            if (playerAggressor.Id != player.Id || (damageRecord.Aggressor as Summon)?.Master.CreatureId != player.CreatureId) continue;
+            damage += damageRecord.Damage;
         }
 
         return damage;

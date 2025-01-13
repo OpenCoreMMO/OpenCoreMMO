@@ -13,7 +13,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
     private readonly CreatureChangedAttackTargetEventHandler _creatureChangedAttackTargetEventHandler;
     private readonly CreatureChangedSpeedEventHandler _creatureChangedSpeedEventHandler;
     private readonly CreatureHealedEventHandler _creatureHealedEventHandler;
-    private readonly CreatureKilledEventHandler _creatureKilledEventHandler;
+    private readonly CreatureDeathEventHandler _creatureDeathEventHandler;
     private readonly CreatureInjuredEventHandler _creatureReceiveDamageEventHandler;
     private readonly CreatureStartedFollowingEventHandler _creatureStartedFollowingEventHandler;
     private readonly CreatureStartedWalkingEventHandler _creatureStartedWalkingEventHandler;
@@ -22,9 +22,10 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
     private readonly CreatureHearEventHandler creatureHearEventHandler;
     private readonly CreatureChangedVisibilityEventHandler creatureTurnedInvisibleEventHandler;
     private readonly NpcShowShopEventHandler npcShowShopEventHandler;
+    private readonly CreatureKillEventHandler _creatureKillEventHandler;
 
     public CreatureEventSubscriber(CreatureInjuredEventHandler creatureReceiveDamageEventHandler,
-        CreatureKilledEventHandler creatureKilledEventHandler,
+        CreatureDeathEventHandler creatureDeathEventHandler,
         CreatureBlockedAttackEventHandler creatureBlockedAttackEventHandler,
         CreatureAttackEventHandler creatureAttackEventHandler,
         CreatureTurnedToDirectionEventHandler creatureTurnToDirectionEventHandler,
@@ -36,10 +37,10 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
         CreatureHearEventHandler creatureHearEventHandler,
         CreatureChangedVisibilityEventHandler creatureTurnedInvisibleEventHandler,
         CreatureChangedOutfitEventHandler creatureChangedOutfitEventHandler,
-        NpcShowShopEventHandler npcShowShopEventHandler)
+        NpcShowShopEventHandler npcShowShopEventHandler, CreatureKillEventHandler creatureKillEventHandler)
     {
         _creatureReceiveDamageEventHandler = creatureReceiveDamageEventHandler;
-        _creatureKilledEventHandler = creatureKilledEventHandler;
+        _creatureDeathEventHandler = creatureDeathEventHandler;
         _creatureBlockedAttackEventHandler = creatureBlockedAttackEventHandler;
         _creatureAttackEventHandler = creatureAttackEventHandler;
         _creatureTurnToDirectionEventHandler = creatureTurnToDirectionEventHandler;
@@ -52,6 +53,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
         this.creatureTurnedInvisibleEventHandler = creatureTurnedInvisibleEventHandler;
         this.creatureChangedOutfitEventHandler = creatureChangedOutfitEventHandler;
         this.npcShowShopEventHandler = npcShowShopEventHandler;
+        _creatureKillEventHandler = creatureKillEventHandler;
     }
 
     public void Subscribe(ICreature creature)
@@ -86,11 +88,12 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
         {
             combatActor.OnTargetChanged -= _creatureChangedAttackTargetEventHandler.Execute;
             combatActor.OnInjured -= _creatureReceiveDamageEventHandler.Execute;
-            combatActor.OnDeath -= _creatureKilledEventHandler.Execute;
+            combatActor.OnDeath -= _creatureDeathEventHandler.Execute;
             combatActor.OnBlockedAttack -= _creatureBlockedAttackEventHandler.Execute;
             combatActor.OnAttackEnemy -= _creatureAttackEventHandler.Execute;
             combatActor.OnHeal -= _creatureHealedEventHandler.Execute;
             combatActor.OnChangedVisibility -= creatureTurnedInvisibleEventHandler.Execute;
+            combatActor.OnKill -= _creatureKillEventHandler.Execute;
         }
 
         if (creature is IWalkableCreature walkableCreature)
@@ -112,10 +115,11 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
 
         combatActor.OnTargetChanged += _creatureChangedAttackTargetEventHandler.Execute;
         combatActor.OnInjured += _creatureReceiveDamageEventHandler.Execute;
-        combatActor.OnDeath += _creatureKilledEventHandler.Execute;
+        combatActor.OnDeath += _creatureDeathEventHandler.Execute;
         combatActor.OnBlockedAttack += _creatureBlockedAttackEventHandler.Execute;
         combatActor.OnAttackEnemy += _creatureAttackEventHandler.Execute;
         combatActor.OnHeal += _creatureHealedEventHandler.Execute;
         combatActor.OnChangedVisibility += creatureTurnedInvisibleEventHandler.Execute;
+        combatActor.OnKill += _creatureKillEventHandler.Execute;
     }
 }

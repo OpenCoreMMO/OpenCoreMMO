@@ -44,11 +44,6 @@ public interface IMonster : IWalkableMonster, ICombatActor
     bool Defending { get; }
 
     /// <summary>
-    ///     All damages that monster received since has born
-    /// </summary>
-    ImmutableDictionary<ICreature, ushort> Damages { get; }
-
-    /// <summary>
     ///     Indicates if monster is sleeping
     /// </summary>
     bool IsSleeping { get; }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Moq;
+using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Location.Structs;
@@ -185,14 +186,13 @@ public class SharedExperienceBonusTest
             { playerOne, DateTime.UtcNow },
             { playerTwo, DateTime.UtcNow }
         };
-        var damages = new Dictionary<ICreature, ushort>();
 
         var partyMock = new Mock<IParty>();
         partyMock.Setup(x => x.Members).Returns(members);
         partyMock.Setup(x => x.Heals).Returns(heals);
 
         var monsterMock = new Mock<IMonster>();
-        monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
+        monsterMock.Setup(x => x.ReceivedDamages).Returns(new DamageRecordList());
 
         var configMock = new Mock<ISharedExperienceConfiguration>();
         configMock.Setup(x => x.RequirePartyMemberParticipation).Returns(true);
@@ -218,17 +218,16 @@ public class SharedExperienceBonusTest
         {
             { playerOne, DateTime.UtcNow }
         };
-        var damages = new Dictionary<ICreature, ushort>
-        {
-            { playerTwo, 10 }
-        };
+        
+        var damages = new DamageRecordList();
+        damages.AddOrUpdateDamage(playerTwo, 10);
 
         var partyMock = new Mock<IParty>();
         partyMock.Setup(x => x.Members).Returns(members);
         partyMock.Setup(x => x.Heals).Returns(heals);
 
         var monsterMock = new Mock<IMonster>();
-        monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
+        monsterMock.Setup(x => x.ReceivedDamages).Returns(damages);
 
         var configMock = new Mock<ISharedExperienceConfiguration>();
         configMock.Setup(x => x.RequirePartyMemberParticipation).Returns(true);
@@ -251,18 +250,17 @@ public class SharedExperienceBonusTest
             playerTwo
         };
         var heals = new Dictionary<IPlayer, DateTime>();
-        var damages = new Dictionary<ICreature, ushort>
-        {
-            { playerOne, 10 },
-            { playerTwo, 10 }
-        };
+        
+        var damages = new DamageRecordList();
+        damages.AddOrUpdateDamage(playerOne, 10);
+        damages.AddOrUpdateDamage(playerTwo, 10);
 
         var partyMock = new Mock<IParty>();
         partyMock.Setup(x => x.Members).Returns(members);
         partyMock.Setup(x => x.Heals).Returns(heals);
 
         var monsterMock = new Mock<IMonster>();
-        monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
+        monsterMock.Setup(x => x.ReceivedDamages).Returns(damages);
 
         var configMock = new Mock<ISharedExperienceConfiguration>();
         configMock.Setup(x => x.RequirePartyMemberParticipation).Returns(true);

@@ -41,13 +41,13 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
             return;
         }
 
-        if (aggressor.NumberOfUnjustifiedKillsLastYear >= pvpConfiguration.MonthKillsToBlackSkull)
+        if (aggressor.NumberOfUnjustifiedKillsLastMonth >= pvpConfiguration.MonthKillsToBlackSkull)
         {
             aggressor.SetSkull(Skull.Black, backSkullEndingDate);
             return;
         }
 
-        if (aggressor.NumberOfUnjustifiedKillsLastYear >= pvpConfiguration.MonthKillsToRedSkull)
+        if (aggressor.NumberOfUnjustifiedKillsLastMonth >= pvpConfiguration.MonthKillsToRedSkull)
         {
             aggressor.SetSkull(Skull.Red, redSkullEndingDate);
         }

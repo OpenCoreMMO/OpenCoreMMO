@@ -134,7 +134,9 @@ public class SharedExperienceBonus : IExperienceBonus
             if (party.Heals.TryGetValue(member, out var lastHealedOn) &&
                 lastHealedOn.AddSeconds(Configuration.SecondsBetweenHealsToBeConsideredActive) >=
                 DateTime.UtcNow) continue;
-            if (monster.Damages.TryGetValue(member, out var damageDealt) && damageDealt > 0) continue;
+
+            var damageDealt = monster.ReceivedDamages.GetCreatureDamage(member)?.Damage ?? 0;
+            if (damageDealt > 0) continue;
             return false;
         }
 

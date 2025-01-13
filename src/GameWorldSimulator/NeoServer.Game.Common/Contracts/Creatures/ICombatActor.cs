@@ -120,5 +120,7 @@ public interface ICombatActor : IWalkableCreature
     void EnableShieldDefense();
     void IncreaseDamageReceived(byte percentage);
     void DecreaseDamageReceived(byte percentage);
-    void Kill(ICombatActor enemy, bool lastHit = false);
+    void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true);
+    void RaiseDroppedLootEvent(ICombatActor actor, ILoot loot);
+    event DropLoot OnDroppedLoot;
 }

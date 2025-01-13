@@ -32,6 +32,8 @@ public class NeoContext : DbContext
     public DbSet<PlayerOutfitAddonEntity> PlayerOutfitAddons { get; set; }
     public DbSet<PlayerStorageEntity> PlayerStorages { get; set; }
     public DbSet<WorldRecordEntity> WorldRecords { get; set; }
+    public DbSet<PlayerDeathEntity> PlayerDeaths { get; set; }
+    public DbSet<PlayerDeathKillerEntity> PlayerDeathKillers { get; set; }
     
     public DbSet<AccountPremiumHistoryEntity> AccountPremiumHistories { get; set; }
 

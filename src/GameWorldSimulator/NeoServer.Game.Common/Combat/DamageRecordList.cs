@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
@@ -10,6 +11,25 @@ namespace NeoServer.Game.Common.Combat;
 public class DamageRecordList
 {
     private Dictionary<uint, DamageRecord> DamageRecords { get; } = new();
+
+    public DamageRecord[] All => DamageRecords.Values.ToArray();
+
+    public ImmutableHashSet<ICreature> AllDamageParticipants
+    {
+        get
+        {
+            var participants = new HashSet<ICreature>();
+            foreach (var damageRecord in All)
+            {
+                if (damageRecord.Aggressor is not ICreature creature) continue;
+                participants.Add(creature);
+            }
+
+            return participants.ToImmutableHashSet();
+        }
+    }
+
+    public DamageRecord GetCreatureDamage(ICreature creature) => DamageRecords.GetValueOrDefault(creature.CreatureId);
 
     public void AddOrUpdateDamage(IThing thing, ushort damage)
     {
@@ -56,5 +76,10 @@ public class DamageRecordList
         }
 
         return damageList;
+    }
+
+    public void Clear()
+    {
+        DamageRecords.Clear();
     }
 }

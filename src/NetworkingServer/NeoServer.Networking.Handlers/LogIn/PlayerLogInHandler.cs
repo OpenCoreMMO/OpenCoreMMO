@@ -64,7 +64,7 @@ public class PlayerLogInHandler : PacketHandler
         if (ValidateOnlineStatus(connection, playerOnline, packet).Failed) return;
 
         var playerRecord =
-            await _accountRepository.GetPlayer(packet.Account, packet.Password, packet.CharacterName);
+            await _accountRepository.GetPlayer(packet.Account, packet.Password, packet.CharacterName, includeKillsLastMonth: true);
 
         if (playerRecord is null)
         {

@@ -165,7 +165,7 @@ public class Player : CombatActor, IPlayer
 
     public int NumberOfUnjustifiedKillsLastDay { get; private set; }
     public int NumberOfUnjustifiedKillsLastWeek { get; private set; }
-    public int NumberOfUnjustifiedKillsLastYear { get; private set; }
+    public int NumberOfUnjustifiedKillsLastMonth { get; private set; }
 
     public ulong GetTotalMoney(ICoinTypeStore coinTypeStore)
     {
@@ -1096,12 +1096,6 @@ public class Player : CombatActor, IPlayer
         else
             ReduceHealth(damage);
     }
-
-    public override ILoot DropLoot()
-    {
-        return null;
-    }
-
     public override void Death(IThing by)
     {
         base.Death(by);
@@ -1142,22 +1136,30 @@ public class Player : CombatActor, IPlayer
         var oldSkull = Skull;
         Skull = skull;
         SkullEndsAt = endingDate;
-        
+
         if (oldSkull != Skull)
         {
             OnSkullUpdated?.Invoke(this);
         }
     }
+
     public void RemoveSkull()
     {
         var oldSkull = Skull;
         Skull = Skull.None;
         SkullEndsAt = null;
-        
+
         if (oldSkull != Skull)
         {
             OnSkullUpdated?.Invoke(this);
         }
+    }
+
+    public void SetNumberOfKills(int killsInLastDay, int killsInLastWeek, int killsInLastMonth)
+    {
+        NumberOfUnjustifiedKillsLastDay = killsInLastDay;
+        NumberOfUnjustifiedKillsLastWeek = killsInLastWeek;
+        NumberOfUnjustifiedKillsLastMonth = killsInLastMonth;
     }
 
     public void AddPlayerToEnemyList(IPlayer player) => AddPlayerToEnemyList(player.CreatureId);
@@ -1181,16 +1183,17 @@ public class Player : CombatActor, IPlayer
 
     #endregion
 
-    public override void Kill(ICombatActor enemy, bool lastHit = false)
+    public override void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true)
     {
-        if (enemy is IPlayer { HasSkull: false } deadPlayer)
+        if (enemy is IPlayer { HasSkull: false })
         {
             NumberOfUnjustifiedKillsLastDay++;
             NumberOfUnjustifiedKillsLastWeek++;
-            NumberOfUnjustifiedKillsLastYear++;
+            NumberOfUnjustifiedKillsLastMonth++;
+            justified = false;
         }
 
-        base.Kill(enemy, lastHit);
+        base.Kill(enemy, lastHit, justified: justified);
     }
 
 
