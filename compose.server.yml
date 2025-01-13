@@ -18,9 +18,7 @@ services:
 # OpenCoreMMO
   standalone:
     container_name: standalone
-    build:
-      context: .
-      dockerfile: ./src/Standalone/Dockerfile
+    image: ghcr.io/opencoremmo/opencoremmo:baiak
     environment:
       ASPNETCORE_ENVIRONMENT: "Production"
       SQLITE_DATABASE: "${SQLITE_DATABASE}"
