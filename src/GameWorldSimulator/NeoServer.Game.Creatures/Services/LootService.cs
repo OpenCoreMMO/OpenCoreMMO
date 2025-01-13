@@ -3,17 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Creatures.Monster.Loot;
 
 namespace NeoServer.Game.Creatures.Services;
 
-public class LootService(GameConfiguration gameConfiguration) : ILootService
+public class LootService(GameConfiguration gameConfiguration, IItemFactory itemFactory) : ILootService
 {
-    public ILoot DropLoot(ICreature creature, decimal lootRate = 0) => creature is IMonster monster ? DropLoot(monster, lootRate) : null;
+    public ILootContainer CreateLootContainer(ICreature deadCreature, decimal lootRate = 0)
+    {
+        var loot = GenerateLoot(deadCreature, lootRate: lootRate);
+        var corpse = itemFactory.CreateLootCorpse(deadCreature.CorpseType, deadCreature.Location, loot);
+        deadCreature.Corpse = corpse;
 
-    public ILoot DropLoot(IMonster monster, decimal lootRate = 0)
+        return corpse as ILootContainer;
+    }
+
+    public ILoot GenerateLoot(ICreature creature, decimal lootRate = 0) =>
+        creature is IMonster monster ? GenerateLoot(monster, lootRate) : null;
+
+    public ILoot GenerateLoot(IMonster monster, decimal lootRate = 0)
     {
         lootRate = lootRate > 0 ? lootRate : gameConfiguration.LootRate;
 
@@ -22,7 +33,7 @@ public class LootService(GameConfiguration gameConfiguration) : ILootService
         var enemies = GetLootOwners(monster);
 
         var loot = new Loot(lootItems, Owners: enemies);
-        
+
         monster.RaiseDroppedLootEvent(monster, loot);
 
         return loot;
@@ -56,7 +67,7 @@ public class LootService(GameConfiguration gameConfiguration) : ILootService
         return partyMembers.Count == 0 ? enemies.ToHashSet() : enemies.Concat(partyMembers).ToHashSet();
     }
 
-    private ILootItem[] GetMonsterLoot(ILootItem[] items, decimal lootRate)
+    private static ILootItem[] GetMonsterLoot(ILootItem[] items, decimal lootRate)
     {
         var drop = new List<ILootItem>();
 

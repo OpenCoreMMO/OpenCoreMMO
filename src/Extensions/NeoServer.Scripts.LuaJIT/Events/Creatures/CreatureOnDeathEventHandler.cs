@@ -17,6 +17,7 @@ public class CreatureOnDeathEventHandler : IGameEventHandler
 
     public void Execute(ICombatActor actor, IThing by)
     {
+        //TODO: we need to move this to the CreatureDeathEventHandler in the Events project
         foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(actor.CreatureId, CreatureEventType.CREATURE_EVENT_DEATH))
             creatureEvent.ExecuteOnDeath(actor, actor.Corpse as IItem, by as ICreature, null, false, false);
     }

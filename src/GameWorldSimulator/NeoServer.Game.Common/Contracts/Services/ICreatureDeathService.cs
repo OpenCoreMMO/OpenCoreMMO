@@ -5,5 +5,5 @@ namespace NeoServer.Game.Common.Contracts.Services;
 
 public interface ICreatureDeathService
 {
-    void Handle(ICombatActor deadCreature, IThing by, ILoot loot);
+    void Handle(ICombatActor deadCreature, IThing by);
 }

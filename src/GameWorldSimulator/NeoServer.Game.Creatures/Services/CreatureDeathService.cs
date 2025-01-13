@@ -7,6 +7,7 @@ using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Item;
+using NeoServer.Game.Creatures.Monster.Loot;
 
 namespace NeoServer.Game.Creatures.Services;
 
@@ -14,9 +15,9 @@ public class CreatureDeathService(
     IItemFactory itemFactory,
     IMap map,
     ILiquidPoolFactory liquidPoolFactory,
-    GameConfiguration gameConfiguration): ICreatureDeathService
+    GameConfiguration gameConfiguration) : ICreatureDeathService
 {
-    public void Handle(ICombatActor deadCreature, IThing by, ILoot loot)
+    public void Handle(ICombatActor deadCreature, IThing by)
     {
         if (deadCreature is IMonster { IsSummon: true } summon)
         {
@@ -25,11 +26,11 @@ public class CreatureDeathService(
             return;
         }
 
-        ReplaceCreatureByCorpse(deadCreature, loot);
+        ReplaceCreatureByCorpse(deadCreature);
         CreateBlood(deadCreature);
 
         var damageRecords = deadCreature.ReceivedDamages.GetDamageRecords(gameConfiguration.Death);
-        
+
         ProcessDamageRecords(deadCreature, by, damageRecords);
     }
 
@@ -44,16 +45,17 @@ public class CreatureDeathService(
                 aggressor.Kill(deadCreature, true);
                 continue;
             }
-            
+
             damageOwner.Kill(deadCreature);
         }
     }
 
-    private void ReplaceCreatureByCorpse(ICreature creature, ILoot loot)
+    private void ReplaceCreatureByCorpse(ICreature creature)
     {
-        var corpse = itemFactory.CreateLootCorpse(creature.CorpseType, creature.Location, loot);
-        creature.Corpse = corpse;
+        creature.Corpse ??= itemFactory.CreateLootCorpse(creature.CorpseType, creature.Location, new Loot([]));
 
+        if (creature.Corpse is not IItem corpse) return;
+        
         if (creature is IWalkableCreature walkable)
         {
             walkable.Tile.AddItem(corpse);
