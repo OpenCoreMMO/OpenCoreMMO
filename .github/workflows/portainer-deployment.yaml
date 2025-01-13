@@ -9,10 +9,6 @@ jobs:
   update-service:
     runs-on: ubuntu-latest
     
-    permissions:
-      contents: read
-      packages: write  # Needed to publish into GHCR
-
     steps:
       - uses: actions/checkout@v3
       - name: Build and push the image
