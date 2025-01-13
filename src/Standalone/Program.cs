@@ -55,7 +55,7 @@ public class Program
 
         var (logger, _) = (container.Resolve<ILogger>(), container.Resolve<LoggerConfiguration>());
 
-        logger.Information("Welcome to OpenCoreMMO Server!");
+        logger.Information("Welcome to OpenCoreMMO Server [Baiak Version]!");
 
         logger.Information("Log set to: {Log}", logConfiguration.MinimumLevel);
         logger.Information("Environment: {Env}", Environment.GetEnvironmentVariable("ENVIRONMENT"));
