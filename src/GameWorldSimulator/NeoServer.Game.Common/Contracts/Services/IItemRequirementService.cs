@@ -13,9 +13,9 @@ public interface IItemRequirementService
 
 public readonly ref struct Requirement
 {
-    public int MinLevel { get; init; }
+    public uint MinLevel { get; init; }
     public byte[] RequiredVocations { get; init; }
     public Slot Slot { get; init; }
     public bool RequirePremiumTime { get; init; }
-    public int MinMagicLevel { get; init; }
+    public uint MinMagicLevel { get; init; }
 }

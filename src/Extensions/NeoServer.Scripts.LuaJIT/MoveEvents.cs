@@ -10,6 +10,7 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures.Players;
 using System;
+using NeoServer.Game.Common.Contracts.Services;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -40,9 +41,11 @@ public class MoveEventList
 
 public class MoveEvents : IMoveEvents
 {
-    private ILogger _logger;
-    private IItemTypeStore _itemTypeStore;
-    private IMap _map;
+    private readonly ILogger _logger;
+    private readonly IItemTypeStore _itemTypeStore;
+    private readonly IMap _map;
+    private readonly IItemRequirementService _itemRequirementService;
+    private readonly IItemAbilityApplierService _itemAbilityApplierService;
 
     #region Constructors
 
@@ -400,7 +403,6 @@ public class MoveEvents : IMoveEvents
         return true;
     }
 
-
     public bool AddItem(IItem item, Location position, IItem tileitem = null)
     {
         return true;
@@ -425,17 +427,29 @@ public class MoveEvents : IMoveEvents
             return false;
         }
 
-        if (!player.Group.FlagIsEnabled(PlayerFlag.IgnoreWeaponCheck) && moveEvent.WieldInfo != 0)
+        var requirement = new Requirement
         {
-            if (player.Level < moveEvent.RequiredMinLevel || player.MagicLevel < moveEvent.RequiredMinMagicLevel)
-                return false;
+            MinLevel = moveEvent.RequiredMinLevel,
+            MinMagicLevel = moveEvent.RequiredMinMagicLevel,
+            RequiredVocations = moveEvent.RequiredVocations.ToArray(),
+            RequirePremiumTime = moveEvent.RequirePremium,
+            Slot = moveEvent.Slot
+        };
 
-            if (moveEvent.RequirePremium && player.PremiumTime == 0)
-                return false;
+        var resultEquip = _itemRequirementService.PlayerCanEquipItem(player, item, requirement);
+        var resultAbilities = _itemAbilityApplierService.ApplyAbilities(player, item);
 
-            if (moveEvent.RequiredVocations.Any() && !moveEvent.RequiredVocations.Contains(player.VocationType))
-                return false;
-        }
+        //if (!player.Group.FlagIsEnabled(PlayerFlag.IgnoreWeaponCheck) && moveEvent.WieldInfo != 0)
+        //{
+        //    if (player.Level < moveEvent.RequiredMinLevel || player.MagicLevel < moveEvent.RequiredMinMagicLevel)
+        //        return false;
+
+        //    if (moveEvent.RequirePremium && player.PremiumTime == 0)
+        //        return false;
+
+        //    if (moveEvent.RequiredVocations.Any() && !moveEvent.RequiredVocations.Contains(player.VocationType))
+        //        return false;
+        //}
 
         if (isCheck)
         {
