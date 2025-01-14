@@ -24,6 +24,7 @@ builder.Configuration
 // Add services to the container
 var services = builder.Services;
 
+builder.AddDefaultValuesInjection();
 services.AddHttpContextAccessor();
 services.AddServicesApi();
 services.AddAutoMapperProfiles();

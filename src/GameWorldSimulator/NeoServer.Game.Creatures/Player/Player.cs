@@ -20,6 +20,7 @@ using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Creatures.Players;
+using NeoServer.Game.Common.Creatures.Structs;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location;
@@ -160,6 +161,8 @@ public class Player : CombatActor, IPlayer
     public IPlayerChannel Channels { get; set; }
     public IPlayerParty PlayerParty { get; set; }
     public ulong BankAmount { get; private set; }
+
+    public List<RegenerationBonus> RegenerationBonusList { get; private set; }
 
     public ulong GetTotalMoney(ICoinTypeStore coinTypeStore)
     {
@@ -610,10 +613,44 @@ public class Player : CombatActor, IPlayer
         if (Cooldowns.Expired(CooldownType.ManaRecovery)) HealMana(Vocation.GainManaAmount);
         if (Cooldowns.Expired(CooldownType.SoulRecovery)) HealSoul(1);
 
+        foreach (var regenerationBonus in RegenerationBonusList)
+        {
+            if (!Cooldowns.Expired(regenerationBonus.Id)) continue;
+
+            switch (regenerationBonus.Type)
+            {
+                case RegenerationType.Health:
+                    Heal(regenerationBonus.Gain, this);
+                    break;
+                case RegenerationType.Mana:
+                    HealMana(regenerationBonus.Gain);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         //todo: start these cooldowns when player logs in
         Cooldowns.Start(CooldownType.HealthRecovery, Vocation.GainHpTicks * 1000);
         Cooldowns.Start(CooldownType.ManaRecovery, Vocation.GainManaTicks * 1000);
         Cooldowns.Start(CooldownType.SoulRecovery, Vocation.GainSoulTicks * 1000);
+
+        foreach (var regenerationBonus in RegenerationBonusList)
+        {
+            Cooldowns.Start(regenerationBonus.Id, regenerationBonus.Ticks);
+        }
+    }
+
+    public void AddRegenerationBonus(RegenerationBonus regenerationBonus)
+    {
+        RegenerationBonusList ??= [];
+        RegenerationBonusList.Add(regenerationBonus);
+    }
+
+    public void RemoveRegenerationBonus(RegenerationBonus regenerationBonus)
+    {
+        RegenerationBonusList ??= [];
+        RegenerationBonusList.Remove(regenerationBonus);
     }
 
     public void Use(IThing item)
@@ -748,6 +785,16 @@ public class Player : CombatActor, IPlayer
         RemoveCondition(ConditionType.Regeneration);
         AddCondition(new Condition(ConditionType.Hungry, uint.MaxValue));
     }
+
+    public bool IsManaShieldEnabled => HasCondition(ConditionType.ManaShield);
+
+    public void EnableManaShield(uint duration) =>
+        AddCondition(new Condition(ConditionType.ManaShield, duration,
+            () => { RemoveCondition(ConditionType.ManaShield); }));
+
+    public void EnableManaShield() => AddCondition(new Condition(ConditionType.ManaShield));
+
+    public void DisableManaShield() => RemoveCondition(ConditionType.ManaShield);
 
     public Result<OperationResultList<IItem>> PickItemFromGround(IItem item, ITile tile, byte amount = 1)
     {
@@ -1084,9 +1131,14 @@ public class Player : CombatActor, IPlayer
     public override void OnDamage(IThing enemy, CombatDamage damage)
     {
         SetAsInFight();
-        if (damage.Type == DamageType.ManaDrain) ConsumeMana(damage.Damage);
-        else
-            ReduceHealth(damage);
+
+        if (damage.Type is DamageType.ManaDrain || IsManaShieldEnabled)
+        {
+            ConsumeMana(damage.Damage);
+            return;
+        }
+
+        ReduceHealth(damage);
     }
 
     public override ILoot DropLoot()
@@ -1118,7 +1170,7 @@ public class Player : CombatActor, IPlayer
         if (Level <= 23) return 10 * 0.01 * Experience;
         return (Level + 50) * .01 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
     }
-    
+
     #region Storage
 
     public IDictionary<int, int> Storages { get; }

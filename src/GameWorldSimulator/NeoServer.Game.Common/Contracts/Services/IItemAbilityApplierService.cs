@@ -7,4 +7,5 @@ namespace NeoServer.Game.Common.Contracts.Services;
 public interface IItemAbilityApplierService
 {
     Result ApplyAbilities(IPlayer player, IItem item);
+    Result RemoveAbilities(IPlayer player, IItem item);
 }

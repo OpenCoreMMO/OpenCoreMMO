@@ -56,6 +56,22 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnRemovedCondition?.Invoke(this, condition);
     }
 
+    public void DisableCondition(ConditionType type)
+    {
+        if (!Conditions.TryGetValue(type, out var condition)) return;
+
+        condition.Disable();
+        OnRemovedCondition?.Invoke(this, condition);
+    }
+
+    public void EnableCondition(ConditionType type)
+    {
+        if (!Conditions.TryGetValue(type, out var condition)) return;
+
+        condition.Enable();
+        OnAddedCondition?.Invoke(this, condition);
+    }
+
     public void RemoveCondition(ConditionType type)
     {
         if (Conditions.Remove(type, out var condition) is false) return;
@@ -64,12 +80,12 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public bool HasCondition(ConditionType type, out ICondition condition)
     {
-        return Conditions.TryGetValue(type, out condition);
+        return Conditions.TryGetValue(type, out condition) && !condition.IsDisabled;
     }
 
     public bool HasCondition(ConditionType type)
     {
-        return Conditions.ContainsKey(type);
+        return Conditions.TryGetValue(type, out var condition) && !condition.IsDisabled;
     }
 
     public void ResetHealthPoints()
@@ -199,7 +215,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
         foreach (var cylinderSpectator in spectators)
         {
-            var spectator = cylinderSpectator.Spectator; 
+            var spectator = cylinderSpectator.Spectator;
 
             if (spectator is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters)) return;
 
