@@ -39,7 +39,7 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '9.0.x'
-
+        
     - name: Autobuild
       uses: github/codeql-action/autobuild@v2
 
@@ -48,7 +48,13 @@ jobs:
       with:
         category: "/language:${{matrix.language}}"
 
+    - name: Setup .NET 5.0
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '5.0.x'
+
     - name: Install and configure Codecov
       run: |
         dotnet tool install --global Codecov.Tool
+
         codecov -t ${{ secrets.CODECOV_TOKEN }} -f "**/**/*.opencover.xml"
