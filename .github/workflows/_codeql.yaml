@@ -28,9 +28,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo add-apt-repository "deb http://security.ubuntu.com/ubuntu bionic-security main"
         sudo apt update
-        sudo apt install -y libssl1.1
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
