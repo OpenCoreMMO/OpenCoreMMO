@@ -402,10 +402,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
     private static void ReloadCore(string dir)
     {
         var coreLoaded = _luaEnvironment.LoadFile($"{dir}/core.lua", "core.lua");
-        if (!coreLoaded)
-        {
-            return;
-        }
+        if (!coreLoaded) return;
 
         _scripts.LoadScripts($"{dir}/scripts/libs", true, false);
     }
