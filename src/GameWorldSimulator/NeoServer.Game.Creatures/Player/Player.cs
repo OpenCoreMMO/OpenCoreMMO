@@ -4,6 +4,7 @@ using System.Linq;
 using NeoServer.Game.Combat.Attacks;
 using NeoServer.Game.Combat.Conditions;
 using NeoServer.Game.Combat.Spells;
+using NeoServer.Game.Combat.Validation;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Combat.Enums;
@@ -161,7 +162,7 @@ public class Player : CombatActor, IPlayer
     public IPlayerChannel Channels { get; set; }
     public IPlayerParty PlayerParty { get; set; }
     public ulong BankAmount { get; private set; }
-    public HashSet<uint> PlayersEnemyList { get; } = new();
+    public PlayerEnemyList PlayersAttackedList { get; } = new();
 
     public int NumberOfUnjustifiedKillsLastDay { get; private set; }
     public int NumberOfUnjustifiedKillsLastWeek { get; private set; }
@@ -242,7 +243,6 @@ public class Player : CombatActor, IPlayer
     public virtual bool IsProtectionZoneLocked => false;
 
     public bool HasSkull => Skull is not Skull.None;
-
     public SkillType SkillInUse
     {
         get
@@ -594,6 +594,7 @@ public class Player : CombatActor, IPlayer
         StopWalking();
         ChangeOnlineStatus(true);
         TogglePacifiedCondition(null, Tile);
+        PlayersAttackedList.Clear();
         KnownCreatures.Clear();
         OnLoggedIn?.Invoke(this);
 
@@ -882,10 +883,21 @@ public class Player : CombatActor, IPlayer
 
     public override Result Attack(ICombatActor enemy)
     {
+        var canAttackResult = AttackValidation.CanAttack(this, enemy);
+        if (canAttackResult.Failed)
+        {
+            return base.Attack(enemy);
+        }
+        
         if (enemy.IsInvisible)
         {
             StopAttack();
             return Result.Fail(InvalidOperation.AttackTargetIsInvisible);
+        }
+
+        if (enemy is IPlayer playerEnemy)
+        {
+            PlayersAttackedList.AddEnemy(playerEnemy);
         }
 
         return base.Attack(enemy);
@@ -1099,7 +1111,13 @@ public class Player : CombatActor, IPlayer
     public override void Death(IThing by)
     {
         base.Death(by);
+        
         DecreaseExp();
+        if (Skull is Skull.Yellow)
+        {
+            RemoveSkull();
+        }
+
         MoveToTemple();
     }
 
@@ -1126,6 +1144,8 @@ public class Player : CombatActor, IPlayer
 
     public IPlayer AddSkull(Skull skull, DateTime? skullEndsAt)
     {
+        if (skull is Skull.Yellow) return this; //cannot set yourself as yellow skull
+        
         Skull = skull;
         SkullEndsAt = skullEndsAt;
         return this;
@@ -1133,6 +1153,8 @@ public class Player : CombatActor, IPlayer
 
     public void SetSkull(Skull skull, DateTime? endingDate = null)
     {
+        if (skull is Skull.Yellow) return; //cannot set yourself as yellow skull
+        
         var oldSkull = Skull;
         Skull = skull;
         SkullEndsAt = endingDate;
@@ -1162,10 +1184,6 @@ public class Player : CombatActor, IPlayer
         NumberOfUnjustifiedKillsLastMonth = killsInLastMonth;
     }
 
-    public void AddPlayerToEnemyList(IPlayer player) => AddPlayerToEnemyList(player.CreatureId);
-    public void AddPlayerToEnemyList(uint creatureId) => PlayersEnemyList.Add(creatureId);
-    public bool PlayerIsOnEnemyList(uint creatureId) => PlayersEnemyList.Contains(creatureId);
-
     public Skull GetSkull(IPlayer enemy)
     {
         if (enemy.CreatureId == CreatureId)
@@ -1173,19 +1191,26 @@ public class Player : CombatActor, IPlayer
             return Skull;
         }
 
-        if (PlayersEnemyList.Contains(enemy.CreatureId))
+        if (!PlayersAttackedList.HasEnemy(enemy.CreatureId)) return Skull;
+        
+        var attackTime = PlayersAttackedList.GetAttackTime(enemy.CreatureId);
+        var enemyAttackedTime = enemy.GetAttackedTime(this);
+
+        if (HasSkull && attackTime > enemyAttackedTime && !enemy.HasSkull)
         {
             return Skull.Yellow;
         }
 
-        return Skull is Skull.Yellow ? Skull.None : Skull;
+        return Skull;
     }
 
     #endregion
 
+    public long GetAttackedTime(IPlayer byEnemy) => PlayersAttackedList.GetAttackTime(byEnemy.CreatureId);
+
     public override void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true)
     {
-        if (enemy is IPlayer { HasSkull: false })
+        if (enemy is IPlayer playerEnemy && playerEnemy.GetSkull(this) is Skull.None)
         {
             NumberOfUnjustifiedKillsLastDay++;
             NumberOfUnjustifiedKillsLastWeek++;

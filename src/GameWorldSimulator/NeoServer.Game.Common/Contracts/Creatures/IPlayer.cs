@@ -270,11 +270,9 @@ public interface IPlayer : ICombatActor, ISociableCreature
     int NumberOfUnjustifiedKillsLastMonth { get; }
     DateTime? SkullEndsAt { get; }
     event SkullUpdated OnSkullUpdated;
-    void AddPlayerToEnemyList(IPlayer player);
-    void AddPlayerToEnemyList(uint creatureId);
-    bool PlayerIsOnEnemyList(uint creatureId);
     Skull GetSkull(IPlayer enemy);
     void SetSkull(Skull skull, DateTime? skullEndingDate = null);
     void RemoveSkull();
     void SetNumberOfKills(int killsInLastDay, int killsInLastWeek, int killsInLastMonth);
+    long GetAttackedTime(IPlayer byEnemy);
 }

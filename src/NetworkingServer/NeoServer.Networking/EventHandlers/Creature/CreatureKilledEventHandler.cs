@@ -4,7 +4,7 @@ using NeoServer.Networking.Packets.Outgoing.Login;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Tasks;
 
-namespace NeoServer.Networking.EventHandlers;
+namespace NeoServer.Networking.EventHandlers.Creature;
 
 public class CreatureKilledEventHandler(IGameServer game) : INetworkEventHandler<ICreature>
 {

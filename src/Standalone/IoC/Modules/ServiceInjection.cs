@@ -43,7 +43,6 @@ public static class ServiceInjection
         builder.AddSingleton<IStaticToDynamicTileService, StaticToDynamicTileService>();
         builder.AddSingleton<SafeTradeSystem>();
         builder.AddSingleton<IItemRequirementService, ItemRequirementService>();
-        builder.AddSingleton<IPvpCombatService, PvPCombatService>();
         builder.AddSingleton<IExperienceSharingService, ExperienceSharingService>();
         builder.AddSingleton<ICreatureDeathService, CreatureDeathService>();
         builder.AddSingleton<IPlayerSkullService, PlayerSkullService>();

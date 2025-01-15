@@ -9,12 +9,10 @@ namespace NeoServer.Server.Events.Combat;
 public class CreatureChangedAttackTargetEventHandler
 {
     private readonly IGameServer game;
-    private readonly IPvpCombatService _pvpCombatService;
 
-    public CreatureChangedAttackTargetEventHandler(IGameServer game, IPvpCombatService pvpCombatService)
+    public CreatureChangedAttackTargetEventHandler(IGameServer game)
     {
         this.game = game;
-        _pvpCombatService = pvpCombatService;
     }
 
     public void Execute(ICombatActor actor, uint oldTarget, uint newTarget)
@@ -53,13 +51,5 @@ public class CreatureChangedAttackTargetEventHandler
         return result.Succeeded;
     }
 
-    private Result AttackEnemy(ICombatActor actor, ICreature creature)
-    {
-        if (actor is IPlayer playerAggressor && creature is IPlayer playerEnemy)
-        {
-            return _pvpCombatService.Attack(playerAggressor, playerEnemy);
-        }
-
-        return creature is not ICombatActor enemy ? Result.NotPossible : actor.Attack(enemy);
-    }
+    private static Result AttackEnemy(ICombatActor actor, ICreature creature) => creature is not ICombatActor enemy ? Result.NotPossible : actor.Attack(enemy);
 }

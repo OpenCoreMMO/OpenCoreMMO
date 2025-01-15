@@ -19,6 +19,7 @@ public record DeathConfiguration
 }
 
 public record PvPConfiguration(
+    bool SkullSystemEnabled,
     int DayKillsToRedSkull,
     int DayKillsToBlackSkull,
     int WeekKillsToRedSkull,

@@ -12,7 +12,6 @@ public class CreatureDeathEventHandler(
     IGameCreatureManager creatureManager,
     ICreatureDeathService creatureDeathService,
     IExperienceSharingService experienceSharingService,
-    IScriptGameManager scriptGameManager,
     ILootService lootService)
     : IEventHandler
 {
@@ -34,6 +33,5 @@ public class CreatureDeathEventHandler(
         {
             playerRepository.SavePlayer(player);
         }
-        
     }
 }
