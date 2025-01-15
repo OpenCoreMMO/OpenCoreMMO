@@ -516,7 +516,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public bool IsDead => HealthPoints <= 0;
     public virtual decimal AttackSpeed => 2000M;
     public decimal BaseDefenseSpeed { get; }
-    public bool InFight => HasCondition(ConditionType.InFight);
     public abstract ushort ArmorRating { get; }
     public uint AutoAttackTargetId => CurrentTarget?.CreatureId ?? default;
     public ICreature CurrentTarget { get; private set; }

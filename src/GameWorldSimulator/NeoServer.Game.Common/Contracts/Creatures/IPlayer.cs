@@ -100,12 +100,11 @@ public interface IPlayer : ICombatActor, ISociableCreature
     float FreeCapacity { get; }
 
     ushort StaminaMinutes { get; }
+    bool IsLogoutBlocked { get; }
 
     FightMode FightMode { get; }
     ChaseMode ChaseMode { get; }
     byte SecureMode { get; }
-
-    new bool InFight { get; }
     IPlayerContainerList Containers { get; }
 
     ITown Town { get; }
@@ -275,4 +274,5 @@ public interface IPlayer : ICombatActor, ISociableCreature
     void RemoveSkull();
     void SetNumberOfKills(int killsInLastDay, int killsInLastWeek, int killsInLastMonth);
     long GetAttackedTime(IPlayer byEnemy);
+    void RemoveLogoutBlock();
 }

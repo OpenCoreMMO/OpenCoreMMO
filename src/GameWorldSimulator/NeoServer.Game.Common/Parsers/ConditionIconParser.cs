@@ -10,7 +10,7 @@ public static class ConditionIconParser
         {
             ConditionType.Haste => ConditionIcon.Haste,
             ConditionType.Poison => ConditionIcon.Poison,
-            ConditionType.InFight => ConditionIcon.Swords,
+            ConditionType.LogoutBlock => ConditionIcon.Swords,
             ConditionType.Paralyze => ConditionIcon.Paralyze,
             ConditionType.Fire => ConditionIcon.Burn,
             ConditionType.Energy => ConditionIcon.Energy,

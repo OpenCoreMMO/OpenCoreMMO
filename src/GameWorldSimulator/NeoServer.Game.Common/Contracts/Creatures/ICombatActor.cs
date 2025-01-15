@@ -43,8 +43,6 @@ public interface ICombatActor : IWalkableCreature
     uint AutoAttackTargetId { get; }
     decimal AttackSpeed { get; }
     decimal BaseDefenseSpeed { get; }
-
-    bool InFight { get; }
     bool IsDead { get; }
     ushort MinimumAttackPower { get; }
     bool UsingDistanceWeapon { get; }

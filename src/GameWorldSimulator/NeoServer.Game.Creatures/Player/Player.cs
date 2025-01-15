@@ -238,7 +238,7 @@ public class Player : CombatActor, IPlayer
 
     public override decimal AttackSpeed => Vocation.AttackSpeed == default ? base.AttackSpeed : Vocation.AttackSpeed;
 
-    public virtual bool CannotLogout => !(Tile?.ProtectionZone ?? false) && InFight;
+    public virtual bool CannotLogout => !(Tile?.ProtectionZone ?? false) && IsLogoutBlocked;
 
     public virtual bool IsProtectionZoneLocked => false;
 
@@ -410,7 +410,7 @@ public class Player : CombatActor, IPlayer
     public override void SetAsEnemy(ICreature creature)
     {
         if (creature is not IMonster) return;
-        SetAsInFight();
+        SetLogoutBlock();
     }
 
     public void StopShopping()
@@ -876,7 +876,7 @@ public class Player : CombatActor, IPlayer
 
         combatAttacks[0] = combat;
 
-        SetAsInFight();
+        SetLogoutBlock();
 
         return canUse ? Result.Success : Result.Fail(InvalidOperation.CannotUseWeapon);
     }
@@ -1038,18 +1038,21 @@ public class Player : CombatActor, IPlayer
         //todo: add immunity check
     }
 
-    public virtual void SetAsInFight()
+    public virtual void SetLogoutBlock()
     {
         if (IsPacified) return;
 
-        if (HasCondition(ConditionType.InFight, out var condition))
+        if (HasCondition(ConditionType.LogoutBlock, out var condition))
         {
             condition.Start(this);
             return;
         }
 
-        AddCondition(new Condition(ConditionType.InFight, 60000));
+        //logout is persistent, this will be removed elsewhere
+        AddCondition(new Condition(ConditionType.LogoutBlock, 0));
     }
+    public virtual void RemoveLogoutBlock() => RemoveCondition(ConditionType.LogoutBlock);
+    public bool IsLogoutBlocked => HasCondition(ConditionType.LogoutBlock);
 
     private void TogglePacifiedCondition(IDynamicTile fromTile, IDynamicTile toTile)
     {
@@ -1059,7 +1062,7 @@ public class Player : CombatActor, IPlayer
                 AddCondition(new Condition(ConditionType.Pacified, 0));
                 break;
             case false when toTile.ProtectionZone:
-                RemoveCondition(ConditionType.InFight);
+                RemoveCondition(ConditionType.LogoutBlock);
                 AddCondition(new Condition(ConditionType.Pacified, 0));
                 break;
             case true when toTile.ProtectionZone is false:
@@ -1103,7 +1106,7 @@ public class Player : CombatActor, IPlayer
 
     public override void OnDamage(IThing enemy, CombatDamage damage)
     {
-        SetAsInFight();
+        SetLogoutBlock();
         if (damage.Type == DamageType.ManaDrain) ConsumeMana(damage.Damage);
         else
             ReduceHealth(damage);

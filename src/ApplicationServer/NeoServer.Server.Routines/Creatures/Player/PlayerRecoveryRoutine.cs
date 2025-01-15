@@ -1,6 +1,6 @@
 ﻿using NeoServer.Game.Common.Contracts.Creatures;
 
-namespace NeoServer.Server.Routines.Creatures;
+namespace NeoServer.Server.Routines.Creatures.Player;
 
 public static class PlayerRecoveryRoutine
 {

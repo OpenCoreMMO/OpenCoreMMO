@@ -3,7 +3,9 @@ using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.World.Models.Spawns;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
+using NeoServer.Server.Routines.Creatures.Monster;
 using NeoServer.Server.Routines.Creatures.Npc;
+using NeoServer.Server.Routines.Creatures.Player;
 using NeoServer.Server.Tasks;
 
 namespace NeoServer.Server.Routines.Creatures;
@@ -16,17 +18,19 @@ public class GameCreatureRoutine
     private readonly PlayerLogOutCommand _playerLogOutCommand;
     private readonly SpawnManager _spawnManager;
     private readonly ISummonService _summonService;
+    private readonly PlayerStatusRoutine _playerStatusRoutine;
 
     public GameCreatureRoutine(
         IGameServer game,
         SpawnManager spawnManager,
         PlayerLogOutCommand playerLogOutCommand,
-        ISummonService summonService)
+        ISummonService summonService, PlayerStatusRoutine playerStatusRoutine)
     {
         _game = game;
         _spawnManager = spawnManager;
         _playerLogOutCommand = playerLogOutCommand;
         _summonService = summonService;
+        _playerStatusRoutine = playerStatusRoutine;
     }
 
     public void StartChecking()
@@ -77,5 +81,6 @@ public class GameCreatureRoutine
         PlayerPingRoutine.Execute(player, _playerLogOutCommand, _game);
         PlayerRecoveryRoutine.Execute(player);
         PlayerSkullRoutine.Execute(player);
+        _playerStatusRoutine.Execute(player);
     }
 }

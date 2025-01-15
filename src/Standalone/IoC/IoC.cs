@@ -82,6 +82,7 @@ public static class Container
             .AddLuaJIT()
             .AddJobs()
             .AddCommands()
+            .AddRoutines()
             .AddDataStores();
 
         //creature

@@ -4,7 +4,7 @@ using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
 
-namespace NeoServer.Server.Routines.Creatures;
+namespace NeoServer.Server.Routines.Creatures.Player;
 
 public static class PlayerPingRoutine
 {

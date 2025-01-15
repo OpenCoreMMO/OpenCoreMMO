@@ -5,6 +5,8 @@ namespace NeoServer.Game.Common;
 public record GameConfiguration(
     decimal ExperienceRate = 1,
     decimal LootRate = 1,
+    int LogoutBlockDuration = 60 * 1000,
+    int ProtectionZoneBlockDuration = 60 * 1000,
     Dictionary<string, double> SkillsRate = null,
     DeathConfiguration Death = null,
     PvPConfiguration PvP = null

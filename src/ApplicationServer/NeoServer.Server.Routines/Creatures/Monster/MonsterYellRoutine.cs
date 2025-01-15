@@ -1,6 +1,6 @@
 ﻿using NeoServer.Game.Common.Contracts.Creatures;
 
-namespace NeoServer.Server.Routines.Creatures;
+namespace NeoServer.Server.Routines.Creatures.Monster;
 
 public static class MonsterYellRoutine
 {

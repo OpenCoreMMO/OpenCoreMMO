@@ -96,7 +96,7 @@ public class PlayerParty : IPlayerParty
     public Result LeaveParty()
     {
         if (Party is null) return Result.NotPossible;
-        if (_player.InFight)
+        if (_player.IsLogoutBlocked)
         {
             OperationFailService.Send(CreatureId, TextConstants.YOU_CANNOT_LEAVE_PARTY_WHEN_IN_FIGHT);
             return Result.Fail(InvalidOperation.CannotLeavePartyWhenInFight);

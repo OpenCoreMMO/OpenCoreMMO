@@ -22,6 +22,7 @@ public abstract class BaseCondition : ICondition
     public long EndTime { get; private set; }
 
     public bool IsPersistent => Duration == 0;
+    public long StartedAt { get; private set; }
 
     public ConditionIcon Icons => 0;
 
@@ -49,6 +50,7 @@ public abstract class BaseCondition : ICondition
 
     public virtual bool Start(ICreature creature)
     {
+        StartedAt = DateTime.Now.Ticks;
         EndTime = DateTime.Now.Ticks + Duration;
 
         return true;

@@ -2,7 +2,7 @@
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Creatures.Monster.Managers;
 
-namespace NeoServer.Server.Routines.Creatures;
+namespace NeoServer.Server.Routines.Creatures.Monster;
 
 public static class MonsterStateRoutine
 {
