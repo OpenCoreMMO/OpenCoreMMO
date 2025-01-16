@@ -105,6 +105,8 @@ public interface ICombatActor : IWalkableCreature
     void LoseExperience(long exp);
     void AddCondition(ICondition condition);
     void RemoveCondition(ICondition condition);
+    void DisableCondition(ConditionType type);
+    void EnableCondition(ConditionType type);
     void RemoveCondition(ConditionType type);
     bool HasCondition(ConditionType type, out ICondition condition);
     bool HasCondition(ConditionType type);
