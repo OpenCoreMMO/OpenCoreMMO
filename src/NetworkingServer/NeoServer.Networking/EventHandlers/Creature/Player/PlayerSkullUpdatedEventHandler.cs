@@ -26,11 +26,11 @@ public class PlayerSkullUpdatedEventHandler(IMap map, IGameCreatureManager creat
     public void Subscribe(ICreature entity)
     {
         if (entity is not IPlayer player) return;
-        player.OnSkullUpdated += Execute;
+        player.PlayerSkull.OnSkullUpdated += Execute;
     }
     public void Unsubscribe(ICreature entity)
     {
         if (entity is not IPlayer player) return;
-        player.OnSkullUpdated -= Execute;
+        player.PlayerSkull.OnSkullUpdated -= Execute;
     }
 }

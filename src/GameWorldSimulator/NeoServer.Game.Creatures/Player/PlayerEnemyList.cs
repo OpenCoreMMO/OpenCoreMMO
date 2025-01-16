@@ -6,24 +6,18 @@ namespace NeoServer.Game.Creatures.Player;
 
 public class PlayerEnemyList
 {
-    private Dictionary<uint, long> PlayersAttackedList { get; } = new();
-    
-    
+    private HashSet<uint> PlayersAttackedList { get; } = new();
     public void Remove(uint creatureId) => PlayersAttackedList.Remove(creatureId);
-
+    public bool Any() => PlayersAttackedList.Count > 0;
     public void AddEnemy(IPlayer player) => AddPlayerToEnemyList(player.CreatureId);
 
     public void AddPlayerToEnemyList(uint creatureId)
     {
         if (HasEnemy(creatureId)) return;
-        PlayersAttackedList.Add(creatureId, DateTime.Now.Ticks);   
+        PlayersAttackedList.Add(creatureId);
     }
-    public bool HasEnemy(uint creatureId) => PlayersAttackedList.ContainsKey(creatureId);
 
-    public long GetAttackTime(uint creatureId)
-    {
-        PlayersAttackedList.TryGetValue(creatureId, out var time);
-        return time;
-    }
+    public bool HasEnemy(uint creatureId) => PlayersAttackedList.Contains(creatureId);
+    public bool HasEnemy(IPlayer creature) => PlayersAttackedList.Contains(creature.CreatureId);
     public void Clear() => PlayersAttackedList.Clear();
 }

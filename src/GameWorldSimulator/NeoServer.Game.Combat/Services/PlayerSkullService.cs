@@ -32,17 +32,32 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
         }
 
         //when aggressor is yellow skull
-        if (aggressor.GetSkull(victim) is Skull.Yellow)
-        {
-            aggressor.SetSkull(Skull.Yellow);
-            return;
-        }
+        SetYellowSkullIfApplicable(aggressor, victim);
 
         //when both players don't have any skull
         if (aggressor.HasSkull is false && victim.HasSkull is false)
         {
             aggressor.SetSkull(Skull.White, whiteSkullEndingDate);
         }
+    }
+
+    public void SetYellowSkullIfApplicable(IPlayer aggressor, IPlayer victim)
+    {
+        if (aggressor.HasSkull || !victim.HasSkull) return;
+        
+        var logoutBlockDuration = gameConfiguration.LogoutBlockDuration;
+        var damageRecord = aggressor.ReceivedDamages.GetCreatureDamage(victim);
+
+        if (damageRecord is null)
+        {
+            aggressor.SetSkull(Skull.Yellow, DateTime.Now.AddMilliseconds(logoutBlockDuration), enemy: victim);
+            return;
+        }
+
+        if (damageRecord.LastDamageTime >=
+            DateTime.Now.Ticks - TimeSpan.FromMilliseconds(logoutBlockDuration).Ticks) return;
+
+        aggressor.SetSkull(Skull.Yellow, DateTime.Now.AddMilliseconds(logoutBlockDuration), victim);
     }
 
     /// <summary>

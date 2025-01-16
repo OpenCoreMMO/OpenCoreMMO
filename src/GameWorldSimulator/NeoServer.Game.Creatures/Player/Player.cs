@@ -108,6 +108,8 @@ public class Player : CombatActor, IPlayer
 
         Containers = new PlayerContainerList(this);
 
+        PlayerSkull ??= new PlayerSkull(this);
+
         KnownCreatures = new Dictionary<uint, long>(); //todo
 
         foreach (var skill in Skills.Values)
@@ -164,8 +166,6 @@ public class Player : CombatActor, IPlayer
     public IPlayerChannel Channels { get; set; }
     public IPlayerParty PlayerParty { get; set; }
     public ulong BankAmount { get; private set; }
-    public PlayerEnemyList PlayersAttackedList { get; } = new();
-
     public int NumberOfUnjustifiedKillsLastDay { get; private set; }
     public int NumberOfUnjustifiedKillsLastWeek { get; private set; }
     public int NumberOfUnjustifiedKillsLastMonth { get; private set; }
@@ -193,8 +193,10 @@ public class Player : CombatActor, IPlayer
     public ushort Mana { get; private set; }
     public ushort MaxMana { get; private set; }
     public FightMode FightMode { get; private set; }
-    public Skull Skull { get; private set; }
-    public DateTime? SkullEndsAt { get; private set; }
+    public IPlayerSkull PlayerSkull { get; set; }
+    public Skull Skull => PlayerSkull.Skull;
+    public DateTime? SkullEndsAt => PlayerSkull.SkullEndsAt;
+
     public bool Shopping => TradingWithNpc is not null;
 
     public byte SoulPoints
@@ -602,7 +604,7 @@ public class Player : CombatActor, IPlayer
         ChangeOnlineStatus(false);
         PlayerParty.LeaveParty();
         PlayerParty.RejectAllInvites();
-        PlayersAttackedList.Clear();
+        PlayerSkull.RemoveYellowSkull();
 
         OnLoggedOut?.Invoke(this);
         return true;
@@ -615,7 +617,6 @@ public class Player : CombatActor, IPlayer
         StopWalking();
         ChangeOnlineStatus(true);
         TogglePacifiedCondition(null, Tile);
-        PlayersAttackedList.Clear();
         KnownCreatures.Clear();
         OnLoggedIn?.Invoke(this);
 
@@ -823,10 +824,8 @@ public class Player : CombatActor, IPlayer
 
     public void DisableManaShield() => RemoveCondition(ConditionType.ManaShield);
 
-    public Result<OperationResultList<IItem>> PickItemFromGround(IItem item, ITile tile, byte amount = 1)
-    {
-        return PlayerHand.PickItemFromGround(item, tile, amount);
-    }
+    public Result<OperationResultList<IItem>> PickItemFromGround(IItem item, ITile tile, byte amount = 1) =>
+        PlayerHand.PickItemFromGround(item, tile, amount);
 
     public Result<OperationResultList<IItem>> MoveItem(IItem item, IHasItem source, IHasItem destination, byte amount,
         byte fromPosition,
@@ -920,10 +919,7 @@ public class Player : CombatActor, IPlayer
         }
     }
 
-    public override bool IsHostileTo(ICombatActor enemy)
-    {
-        return enemy is not IPlayer;
-    }
+    public override bool IsHostileTo(ICombatActor enemy) => enemy is not IPlayer;
 
     public override Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks)
     {
@@ -960,10 +956,9 @@ public class Player : CombatActor, IPlayer
             return Result.Fail(InvalidOperation.AttackTargetIsInvisible);
         }
 
-        if (enemy is IPlayer playerEnemy)
+        if (enemy is IPlayer)
         {
             SetProtectionZoneBlock();
-            PlayersAttackedList.AddEnemy(playerEnemy);
         }
 
         return base.Attack(enemy);
@@ -1023,16 +1018,10 @@ public class Player : CombatActor, IPlayer
         return Result.Success;
     }
 
-    public void RemoveHungry()
-    {
-        RemoveCondition(ConditionType.Hungry);
-    }
+    public void RemoveHungry() => RemoveCondition(ConditionType.Hungry);
 
 
-    public void ResetIdleTime()
-    {
-        _idleTime = 0;
-    }
+    public void ResetIdleTime() => _idleTime = 0;
 
     public bool CanMoveThing(Location location)
     {
@@ -1071,10 +1060,7 @@ public class Player : CombatActor, IPlayer
         OnLevelRegressed?.Invoke(this, type, fromLevel, toLevel);
     }
 
-    public void ResetMana()
-    {
-        HealMana(MaxMana);
-    }
+    public void ResetMana() => HealMana(MaxMana);
 
     public void IncreaseSkillCounter(SkillType skill, long value)
     {
@@ -1107,7 +1093,7 @@ public class Player : CombatActor, IPlayer
     public virtual void SetLogoutBlock()
     {
         if (Group.FlagIsEnabled(PlayerFlag.NotGainInFight)) return;
-        
+
         if (IsPacified) return;
 
         if (HasCondition(ConditionType.LogoutBlock, out var condition))
@@ -1127,6 +1113,7 @@ public class Player : CombatActor, IPlayer
     }
 
     public virtual void RemoveLogoutBlock() => RemoveCondition(ConditionType.LogoutBlock);
+
     public bool IsLogoutBlocked => HasCondition(ConditionType.LogoutBlock);
 
     private void TogglePacifiedCondition(IDynamicTile fromTile, IDynamicTile toTile)
@@ -1135,11 +1122,11 @@ public class Player : CombatActor, IPlayer
         {
             case null when toTile.ProtectionZone:
                 AddCondition(new Condition(ConditionType.Pacified, 0));
-                RemoveCondition(ConditionType.ProtectionZoneBlock);
+                RemoveProtectionZoneBlock();
                 break;
             case false when toTile.ProtectionZone:
-                RemoveCondition(ConditionType.LogoutBlock);
-                RemoveCondition(ConditionType.ProtectionZoneBlock);
+                RemoveLogoutBlock();
+                RemoveProtectionZoneBlock();
                 AddCondition(new Condition(ConditionType.Pacified, 0));
                 break;
             case true when toTile.ProtectionZone is false:
@@ -1161,10 +1148,7 @@ public class Player : CombatActor, IPlayer
         return damage;
     }
 
-    public void ChangeOnlineStatus(bool online)
-    {
-        OnChangedOnlineStatus?.Invoke(this, online);
-    }
+    public void ChangeOnlineStatus(bool online) => OnChangedOnlineStatus?.Invoke(this, online);
 
     public override bool CanBlock(DamageType damage)
     {
@@ -1198,12 +1182,8 @@ public class Player : CombatActor, IPlayer
     {
         base.Death(by);
 
+        PlayerSkull.RemoveYellowSkull();
         DecreaseExp();
-        if (Skull is Skull.Yellow)
-        {
-            RemoveSkull();
-        }
-
         MoveToTemple();
     }
 
@@ -1224,89 +1204,6 @@ public class Player : CombatActor, IPlayer
         if (Level <= 23) return 10 * 0.01 * Experience;
         return (Level + 50) * .01 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
     }
-
-
-    #region Skull
-
-    public IPlayer AddSkull(Skull skull, DateTime? skullEndsAt)
-    {
-        if (skull is Skull.Yellow) return this; //cannot set yourself as yellow skull
-
-        Skull = skull;
-        SkullEndsAt = skullEndsAt;
-        return this;
-    }
-
-    public void SetSkull(Skull skull, DateTime? endingDate = null)
-    {
-        if (skull is Skull.Yellow)
-        {
-            OnSkullUpdated?.Invoke(this);
-            return; //cannot set yourself as yellow skull
-        }
-
-        var oldSkull = Skull;
-        Skull = skull;
-        SkullEndsAt = endingDate;
-
-        if (oldSkull != Skull)
-        {
-            OnSkullUpdated?.Invoke(this);
-        }
-    }
-
-    public void RemoveSkull()
-    {
-        var oldSkull = Skull;
-        Skull = Skull.None;
-        SkullEndsAt = null;
-
-        if (oldSkull != Skull)
-        {
-            OnSkullUpdated?.Invoke(this);
-        }
-    }
-
-    public void SetNumberOfKills(int killsInLastDay, int killsInLastWeek, int killsInLastMonth)
-    {
-        NumberOfUnjustifiedKillsLastDay = killsInLastDay;
-        NumberOfUnjustifiedKillsLastWeek = killsInLastWeek;
-        NumberOfUnjustifiedKillsLastMonth = killsInLastMonth;
-    }
-
-    public bool IsYellowSkull(IPlayer enemy)
-    {
-        var damageRecord = ReceivedDamages.GetCreatureDamage(enemy);
-        //if (damageRecord.Time >= DateTime.Now.Ticks - TimeSpan.FromMinutes(15).Ticks) return false;
-
-        if (!PlayersAttackedList.HasEnemy(enemy.CreatureId)) return false;
-
-        //my attack time
-        var attackTime = PlayersAttackedList.GetAttackTime(enemy.CreatureId);
-
-        //enemy attack time
-        var damageRecordTime = damageRecord?.FirstDamageTime ?? long.MaxValue;
-
-        //if my attack time was before enemy attack time set yellow skull
-        if (!HasSkull && attackTime < damageRecordTime && enemy.HasSkull)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    public Skull GetSkull(IPlayer enemy)
-    {
-        if (enemy.CreatureId == CreatureId)
-        {
-            return Skull;
-        }
-
-        return IsYellowSkull(enemy) ? Skull.Yellow : Skull;
-    }
-
-    #endregion
 
     public override void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true)
     {
@@ -1333,6 +1230,18 @@ public class Player : CombatActor, IPlayer
         => Storages.AddOrUpdate(key, value);
 
     #endregion
+
+    public Skull GetSkull(IPlayer enemy) => PlayerSkull?.GetSkull(enemy) ?? Skull.None;
+    public void SetSkull(Skull skull, DateTime? skullEndingDate = null, IPlayer enemy = null) =>
+        PlayerSkull?.SetSkull(skull, skullEndingDate, enemy);
+    public void RemoveSkull() => PlayerSkull?.RemoveSkull();
+
+    public void SetNumberOfKills(int killsInLastDay, int killsInLastWeek, int killsInLastMonth)
+    {
+        NumberOfUnjustifiedKillsLastDay = killsInLastDay;
+        NumberOfUnjustifiedKillsLastWeek = killsInLastWeek;
+        NumberOfUnjustifiedKillsLastMonth = killsInLastMonth;
+    }
 
     #region Guild
 
@@ -1364,6 +1273,6 @@ public class Player : CombatActor, IPlayer
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
-public event SkullUpdated OnSkullUpdated;
+
     #endregion
 }

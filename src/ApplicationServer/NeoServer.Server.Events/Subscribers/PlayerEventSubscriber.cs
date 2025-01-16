@@ -118,14 +118,12 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         player.OnStatusChanged += _playerManaReducedEventHandler.Execute;
         player.OnUsedSpell += _playerUsedSpellEventHandler.Execute;
         player.OnCannotUseSpell += _playerCannotUseSpellEventHandler.Execute;
-        player.OnAddedCondition += _playerConditionChangedEventHandler.Execute;
-        player.OnRemovedCondition += _playerConditionChangedEventHandler.Execute;
         player.OnLevelAdvanced += _playerLevelAdvancedEventHandler.Execute;
         player.OnLevelRegressed += _playerLevelRegressedEventHandler.Execute;
         player.OnLookedAt += _playerLookedAtEventHandler.Execute;
         player.OnGainedSkillPoint += _playerUpdatedSkillPointsEventHandler.Execute;
         player.OnUsedItem += _playerUsedItemEventHandler.Execute;
-        player.OnSkullUpdated += _playerSkullUpdatedEventHandler.Execute;
+        player.PlayerSkull.OnSkullUpdated += _playerSkullUpdatedEventHandler.Execute;
 
         player.OnLoggedIn += _playerLoggedInEventHandler.Execute;
         player.OnLoggedOut += _playerLoggedOutEventHandler.Execute;
@@ -184,14 +182,12 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         player.OnStatusChanged -= _playerManaReducedEventHandler.Execute;
         player.OnUsedSpell -= _playerUsedSpellEventHandler.Execute;
         player.OnCannotUseSpell -= _playerCannotUseSpellEventHandler.Execute;
-        player.OnAddedCondition -= _playerConditionChangedEventHandler.Execute;
-        player.OnRemovedCondition -= _playerConditionChangedEventHandler.Execute;
         player.OnLevelAdvanced -= _playerLevelAdvancedEventHandler.Execute;
         player.OnLevelRegressed -= _playerLevelRegressedEventHandler.Execute;
         player.OnLookedAt -= _playerLookedAtEventHandler.Execute;
         player.OnGainedSkillPoint -= _playerUpdatedSkillPointsEventHandler.Execute;
         player.OnUsedItem -= _playerUsedItemEventHandler.Execute;
-        player.OnSkullUpdated -= _playerSkullUpdatedEventHandler.Execute;
+        player.PlayerSkull.OnSkullUpdated -= _playerSkullUpdatedEventHandler.Execute;
 
         player.OnLoggedIn -= _playerLoggedInEventHandler.Execute;
         player.OnLoggedOut -= _playerLoggedOutEventHandler.Execute;

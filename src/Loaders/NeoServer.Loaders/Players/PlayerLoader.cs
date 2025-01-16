@@ -120,10 +120,10 @@ public class PlayerLoader : IPlayerLoader
             AccountId = (uint)playerEntity.AccountId,
             WorldId = playerEntity.WorldId,
             Guild = GuildStore.Get((ushort)(playerEntity.GuildMember?.GuildId ?? 0)),
-            GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0)
+            GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0),
         };
-
-        player.AddSkull(playerEntity.Skull, playerEntity.SkullEndsAt);
+        
+        player.PlayerSkull = new PlayerSkull(player, playerEntity.Skull, playerEntity.SkullEndsAt);
 
         player.SetCurrentTile(currentTile);
 

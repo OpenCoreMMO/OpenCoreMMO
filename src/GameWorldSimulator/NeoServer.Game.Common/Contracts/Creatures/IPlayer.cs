@@ -62,7 +62,7 @@ public delegate void RemoveSkillBonus(IPlayer player, SkillType skillType, sbyte
 public delegate void ReadText(IPlayer player, IReadable readable, string text);
 
 public delegate void WroteText(IPlayer player, IReadable readable, string text);
-public delegate void SkullUpdated(IPlayer player);
+
 
 public interface IPlayer : ICombatActor, ISociableCreature
 {
@@ -88,7 +88,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
-    
+
     #endregion
 
     ushort Level { get; }
@@ -148,7 +148,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     /// <summary>
     ///     Indicates Skull showed on creature
     /// </summary>
-    Skull Skull { get; }
+    IPlayerSkull PlayerSkull { get; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 
@@ -270,25 +270,25 @@ public interface IPlayer : ICombatActor, ISociableCreature
     int NumberOfUnjustifiedKillsLastMonth { get; }
     DateTime? SkullEndsAt { get; }
     bool IsProtectionZoneBlocked { get; }
-    event SkullUpdated OnSkullUpdated;
+    Skull Skull { get; }
     Skull GetSkull(IPlayer enemy);
-    void SetSkull(Skull skull, DateTime? skullEndingDate = null);
+    void SetSkull(Skull skull, DateTime? skullEndingDate = null, IPlayer enemy = null);
     void RemoveSkull();
     void SetNumberOfKills(int killsInLastDay, int killsInLastWeek, int killsInLastMonth);
     void RemoveLogoutBlock();
     void SetProtectionZoneBlock();
     void RemoveProtectionZoneBlock();
-    
+
     /// <summary>
     /// Add infinite mana shield condition
     /// </summary>
     void EnableManaShield();
-    
+
     /// <summary>
     /// Remove mana shield condition
     /// </summary>
     void DisableManaShield();
-    
+
     /// <summary>
     /// Add mana shield condition 
     /// </summary>
