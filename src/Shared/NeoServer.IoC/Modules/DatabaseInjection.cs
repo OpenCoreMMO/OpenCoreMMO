@@ -20,6 +20,7 @@ public static class DatabaseInjection
     {
         builder.AddSingleton<IAccountRepository, AccountRepository>();
         builder.AddSingleton<IAccountPremiumHistoryRepository, AccountPremiumHistoryRepository>();
+        builder.AddSingleton<IIpBansRepository, IpBansRepository>();
         builder.AddSingleton<IGuildRepository, GuildRepository>();
         builder.AddSingleton<IPlayerDepotItemRepository, PlayerDepotItemRepository>();
         builder.AddSingleton<IPlayerRepository, PlayerRepository>();

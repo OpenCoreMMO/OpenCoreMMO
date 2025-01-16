@@ -19,6 +19,7 @@ namespace NeoServer.Scripts.LuaJIT.Functions;
 
 public class GameFunctions : LuaScriptInterface, IGameFunctions
 {
+    private static ILuaEnvironment _luaEnvironment;
     private static IScripts _scripts;
     private static IItemTypeStore _itemTypeStore;
     private static IItemFactory _itemFactory;
@@ -29,6 +30,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
     private static IStaticToDynamicTileService _staticToDynamicTileService;
 
     public GameFunctions(
+        ILuaEnvironment luaEnvironment,
         IScripts scripts,
         IItemTypeStore itemTypeStore,
         IItemFactory itemFactory,
@@ -38,6 +40,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         ServerConfiguration serverConfiguration,
         IStaticToDynamicTileService staticToDynamicTileService) : base(nameof(GameFunctions))
     {
+        _luaEnvironment = luaEnvironment;
         _scripts = scripts;
         _itemTypeStore = itemTypeStore;
         _itemFactory = itemFactory;
@@ -346,23 +349,27 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         try
         {
+            var dir = AppContext.BaseDirectory + _serverConfiguration.DataLuaJit;
             switch (reloadType)
             {
-                case ReloadType.RELOAD_TYPE_SCRIPTS:
-                    {
-                        var dir = AppContext.BaseDirectory + _serverConfiguration.DataLuaJit;
-                        _scripts.ClearAllScripts();
-                        _scripts.LoadScripts($"{dir}/scripts", false, true);
-                        _scripts.LoadScripts($"{dir}/scripts/libs", true, true);
-
-                        Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
+                case ReloadType.RELOAD_TYPE_CORE:
+                {
+                    ReloadCore(dir);
+                    break;
                 }
 
+                case ReloadType.RELOAD_TYPE_SCRIPTS:
+                {
+                    ReloadScripts(dir);
                     break;
+                }
+
                 default:
                     ReportError(nameof(LuaGameReload), "Reload type not implemented");
                     break;
             }
+
+            Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
         }
         catch (Exception e)
         {
@@ -382,11 +389,29 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         Lua.CreateTable(luaState, allPlayers.Count(), 0);
 
         int index = 0;
-        foreach (var player in allPlayers) {
+        foreach (var player in allPlayers)
+        {
             PushUserdata(luaState, player);
             SetMetatable(luaState, -1, "Player");
             Lua.RawSetI(luaState, -2, ++index);
         }
+
         return 1;
+    }
+
+    private static void ReloadCore(string dir)
+    {
+        var coreLoaded = _luaEnvironment.LoadFile($"{dir}/core.lua", "core.lua");
+        if (!coreLoaded) return;
+
+        _scripts.LoadScripts($"{dir}/scripts/libs", true, false);
+    }
+
+
+    private static void ReloadScripts(string dir)
+    {
+        _scripts.ClearAllScripts();
+        _scripts.LoadScripts($"{dir}/scripts", false, true);
+        _scripts.LoadScripts($"{dir}/scripts/libs", true, true);
     }
 }

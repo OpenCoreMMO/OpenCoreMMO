@@ -139,5 +139,32 @@ public class BaseIntegrationTests
         return player;
     }
 
+
+    protected async Task<IpBanEntity> CreateIpBan(string Ip)
+    {
+        var lastIpbans = NeoContext.IpBans.OrderBy(c => c.Id).LastOrDefault();
+
+        var lastId = 0;
+
+        if (lastIpbans != null)
+            lastId = lastIpbans.Id;
+
+
+        var entity = new IpBanEntity()
+        {
+            Id = ++lastId,
+            Ip = Ip,
+            Reason = GenerateRandomString(10),
+            BannedBy = 1,
+            BannedAt = DateTime.UtcNow,
+            ExpiresAt = DateTime.UtcNow.AddDays(2),
+        };
+
+        await NeoContext.IpBans.AddAsync(entity);
+        await NeoContext.SaveChangesAsync();
+
+        return entity;
+    }
+
     #endregion
 }

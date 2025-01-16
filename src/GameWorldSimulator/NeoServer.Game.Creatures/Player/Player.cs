@@ -1067,6 +1067,8 @@ public class Player : CombatActor, IPlayer
 
     public virtual void SetAsInFight()
     {
+        if (Group.FlagIsEnabled(PlayerFlag.NotGainInFight)) return;
+        
         if (IsPacified) return;
 
         if (HasCondition(ConditionType.InFight, out var condition))

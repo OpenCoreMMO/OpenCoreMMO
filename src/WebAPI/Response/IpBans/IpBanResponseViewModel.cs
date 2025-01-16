@@ -1,8 +1,7 @@
-﻿using System;
+﻿namespace NeoServer.Web.API.Response.IpBans;
 
-namespace NeoServer.Data.Entities;
-
-public class IpBanEntity
+[Serializable]
+public class IpBanResponseViewModel
 {
     public int Id { get; set; }
     public string Ip { get; set; }

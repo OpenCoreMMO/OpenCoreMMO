@@ -10,6 +10,7 @@ public static class ErrorMessage
     public static string PlayerAlreadyExist => "Player already exist.";
     public static string PlayerNameAlreadyExist => "Player name already exist.";
     public static string PlayerNotFound  => "Player not found.";
+    public static string IpBanished => "Ip already banished.";
 }
 
 public static class SuccessMessage
@@ -21,4 +22,5 @@ public static class SuccessMessage
     public static string PasswordChanged => "Password changed successfully.";
     public static string PlayerInfosUpdated => "Player infos updated successfully.";
     public static string PlayerSkillsUpdated => "Player skills updated successfully.";
+    public static string IpBanned => "Ip banned successfully.";
 }
