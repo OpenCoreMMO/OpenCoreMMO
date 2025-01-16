@@ -53,10 +53,9 @@ public class LuaTalkActionScripts : ITalkActionScripts
         if (talkAction == null)
             return false;
 
-        var parameter = "";
-
-        if (talkactionWords.Count() > 1)
-            parameter = talkactionWords[1];
+        var parameter = talkactionWords.Length > 1
+                    ? string.Join(wordsSeparator, talkactionWords.Skip(1))
+                    : "";
 
         return talkAction.ExecuteSay(player, talkactionWords[0], parameter, type);
     }
