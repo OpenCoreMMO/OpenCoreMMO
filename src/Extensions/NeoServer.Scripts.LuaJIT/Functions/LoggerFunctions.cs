@@ -28,7 +28,7 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
     {
         // logger.info(text)
         if (IsString(luaState, 1))
-            _logger.Information(GetFormatedLoggerMessage(luaState));
+            _logger.Information(GetString(luaState, 1), GetFormatedLoggerMessage(luaState));
         else
             ReportError(nameof(LuaLoggerWarn), "First parameter needs to be a string");
         return 1;
@@ -38,7 +38,7 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
     {
         // logger.info(text)
         if (IsString(luaState, 1))
-            _logger.Warning(GetFormatedLoggerMessage(luaState));
+            _logger.Warning(GetString(luaState, 1), GetFormatedLoggerMessage(luaState));
         else
             ReportError(nameof(LuaLoggerWarn), "First parameter needs to be a string");
         return 1;
@@ -48,7 +48,7 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
     {
         // logger.info(text)
         if (IsString(luaState, 1))
-            _logger.Error(GetFormatedLoggerMessage(luaState));
+            _logger.Error(GetString(luaState, 1), GetFormatedLoggerMessage(luaState));
         else
             ReportError(nameof(LuaLoggerError), "First parameter needs to be a string");
         return 1;
@@ -58,7 +58,7 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
     {
         // logger.info(text)
         if (IsString(luaState, 1))
-            _logger.Debug(GetFormatedLoggerMessage(luaState));
+            _logger.Debug(GetString(luaState, 1), "1", 1,3 ,4 ,5);
         else
             ReportError(nameof(LuaLoggerDebug), "First parameter needs to be a string");
         return 1;

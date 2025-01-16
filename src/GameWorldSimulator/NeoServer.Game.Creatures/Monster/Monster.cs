@@ -87,7 +87,7 @@ public class Monster : WalkableMonster, IMonster
 
     public ImmutableDictionary<ICreature, ushort> Damages => _damages.ToImmutableDictionary();
 
-    public void Born(Location location)
+    public virtual void Born(Location location)
     {
         _damages.Clear();
         ResetHealthPoints();
@@ -147,8 +147,7 @@ public class Monster : WalkableMonster, IMonster
             player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters) ||
             player.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))) return;
 
-        var canSee = CanSee(creature.Location, (int)MapViewPort.MaxClientViewPortX + 1,
-            (int)MapViewPort.MaxClientViewPortX + 1);
+        var canSee = CanSee(creature.Location, (int)MapViewPort.MaxClientViewPortX + 1, (int)MapViewPort.MaxClientViewPortX + 1);
 
         if (State == MonsterState.Sleeping)
             Awake();
@@ -165,7 +164,7 @@ public class Monster : WalkableMonster, IMonster
     public bool IsInCombat => State == MonsterState.InCombat;
     public bool IsSleeping => State == MonsterState.Sleeping;
 
-    public void UpdateState()
+    public virtual void UpdateState()
     {
         TargetDetector.UpdateTargets(this, MapTool);
 
@@ -215,10 +214,8 @@ public class Monster : WalkableMonster, IMonster
         var target = Targets.PossibleTargetToAttack;
 
         if (target is null) return;
+        ChangeAttackTarget(target.Creature);
 
-        Follow(target.Creature);
-        SetAttackTarget(target.Creature);
-        UpdateLastTargetChance();
     }
 
     public void Sleep()
@@ -456,7 +453,14 @@ public class Monster : WalkableMonster, IMonster
 
     public override void OnDamage(IThing enemy, CombatDamage damage)
     {
-        ReduceHealth(damage);
+        // ReduceHealth(damage); // TODO: NTN - uncomment
+    }
+
+    protected void ChangeAttackTarget(ICreature creature)
+    {
+        Follow(creature);
+        SetAttackTarget(creature);
+        UpdateLastTargetChance();
     }
 
     #region Summon Event Attachment

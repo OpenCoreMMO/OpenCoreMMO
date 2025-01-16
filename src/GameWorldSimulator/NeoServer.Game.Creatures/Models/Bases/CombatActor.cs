@@ -262,7 +262,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
             StopFollowing();
         }
 
-        OnTargetChanged?.Invoke(this, oldAttackTarget, target?.CreatureId ?? default);
+        OnTargetChanged?.Invoke(this, oldAttackTarget, (uint) target?.CreatureId);
         return Result.Success;
     }
 

@@ -25,6 +25,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
     private static IItemFactory _itemFactory;
     private static IMap _map;
     private static ICreatureFactory _creatureFactory;
+     private static ISummonService _summonService;
     private static IGameCreatureManager _gameCreatureManager;
     private static ServerConfiguration _serverConfiguration;
     private static IStaticToDynamicTileService _staticToDynamicTileService;
@@ -36,6 +37,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         IItemFactory itemFactory,
         IMap map,
         ICreatureFactory creatureFactory,
+        ISummonService summonService,
         IGameCreatureManager gameCreatureManager,
         ServerConfiguration serverConfiguration,
         IStaticToDynamicTileService staticToDynamicTileService) : base(nameof(GameFunctions))
@@ -46,6 +48,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         _itemFactory = itemFactory;
         _map = map;
         _creatureFactory = creatureFactory;
+        _summonService = summonService;
         _gameCreatureManager = gameCreatureManager;
         _serverConfiguration = serverConfiguration;
         _staticToDynamicTileService = staticToDynamicTileService;
@@ -216,6 +219,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         IMonster monster = null;
         if (isSummon && master != null)
+            // monster = _summonService.Summon(master, monsterName);
             monster = _creatureFactory.CreateSummon(monsterName, master);
         else
             monster = _creatureFactory.CreateMonster(monsterName);
@@ -238,8 +242,9 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
             if (isSummon)
             {
-                monster.SetNewLocation(tileToBorn.Location);
-                _map.PlaceCreature(monster);
+                // monster.SetNewLocation(tileToBorn.Location);
+                // _map.PlaceCreature(monster);
+                monster.Born(position);
             }
             else
             {
@@ -257,8 +262,9 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
             {
                 if (isSummon)
                 {
-                    monster.SetNewLocation(neighbour);
-                    _map.PlaceCreature(monster);
+                    // monster.SetNewLocation(neighbour);
+                    // _map.PlaceCreature(monster);
+                    monster.Born(neighbour);
                 }
                 else
                 {
