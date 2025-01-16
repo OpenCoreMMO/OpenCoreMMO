@@ -417,7 +417,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         var player = GetUserdata<IPlayer>(luaState, 1);
         if (player != null)
-            PushBoolean(luaState, player.IsProtectionZoneLocked);
+            PushBoolean(luaState, player.IsProtectionZoneBlocked);
         else
             Lua.PushNil(luaState);
 

@@ -114,7 +114,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
     ushort MaxMana { get; }
     SkillType SkillInUse { get; }
     bool CannotLogout { get; }
-    bool IsProtectionZoneLocked { get; }
     uint Id { get; }
     bool HasDepotOpened { get; }
     uint TotalCapacity { get; }
@@ -268,11 +267,13 @@ public interface IPlayer : ICombatActor, ISociableCreature
     int NumberOfUnjustifiedKillsLastWeek { get; }
     int NumberOfUnjustifiedKillsLastMonth { get; }
     DateTime? SkullEndsAt { get; }
+    bool IsProtectionZoneBlocked { get; }
     event SkullUpdated OnSkullUpdated;
     Skull GetSkull(IPlayer enemy);
     void SetSkull(Skull skull, DateTime? skullEndingDate = null);
     void RemoveSkull();
     void SetNumberOfKills(int killsInLastDay, int killsInLastWeek, int killsInLastMonth);
-    long GetAttackedTime(IPlayer byEnemy);
     void RemoveLogoutBlock();
+    void SetProtectionZoneBlock();
+    void RemoveProtectionZoneBlock();
 }

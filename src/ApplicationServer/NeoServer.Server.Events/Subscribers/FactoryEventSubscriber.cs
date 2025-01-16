@@ -51,7 +51,7 @@ public class FactoryEventSubscriber
         var networkEventHandlerTypes = typeof(INetworkEventHandler<>).Assembly
             .GetTypes()
             .Where(x => typeof(INetworkEventHandler<ICreature>).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
-
+        
         networkEventHandlerTypes.AsParallel().ForAll(eventHandler =>
         {
             var networkEventHandler = IoC.GetInstance<INetworkEventHandler<ICreature>>(eventHandler);

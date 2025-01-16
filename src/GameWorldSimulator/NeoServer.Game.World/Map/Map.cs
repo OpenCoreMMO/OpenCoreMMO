@@ -461,6 +461,14 @@ public class Map : IMap
                 nextTile = newDestinationTile;
         }
 
+
+        if (creature is IPlayer player && nextTile.ProtectionZone && player.IsProtectionZoneBlocked)
+        {
+            creature.CancelWalk();
+            OperationFailService.Send(creature.CreatureId, TextConstants.YOU_CANNOT_ENTER_PROTECTION_ZONE);
+            return;
+        }
+
         if (nextTile is IDynamicTile dynamicTile && !(dynamicTile.CanEnterFunction?.Invoke(creature) ?? true))
         {
             creature.CancelWalk();

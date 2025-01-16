@@ -17,9 +17,10 @@ public static class ConditionIconParser
             ConditionType.Drunk => ConditionIcon.Drunk,
             ConditionType.Cursed => ConditionIcon.Cursed,
             ConditionType.Freezing => ConditionIcon.Freezing,
-            ConditionType.Manashield => ConditionIcon.ManaShield,
+            ConditionType.ManaShield => ConditionIcon.ManaShield,
             ConditionType.Drown => ConditionIcon.Drowning,
             ConditionType.Pacified => ConditionIcon.Pigeon,
+            ConditionType.ProtectionZoneBlock => ConditionIcon.RedSwords,
             _ => ConditionIcon.None
         };
     }

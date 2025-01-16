@@ -3,9 +3,9 @@ using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Networking.Packets.Outgoing.Player;
 using NeoServer.Server.Common.Contracts;
 
-namespace NeoServer.Server.Events.Player;
+namespace NeoServer.Networking.EventHandlers.Creature.Player;
 
-public class PlayerSkullUpdatedEventHandler(IMap map, IGameCreatureManager creatureManager) : IEventHandler
+public class PlayerSkullUpdatedEventHandler(IMap map, IGameCreatureManager creatureManager) : INetworkEventHandler<ICreature>
 {
     public void Execute(IPlayer player)
     {
@@ -21,5 +21,16 @@ public class PlayerSkullUpdatedEventHandler(IMap map, IGameCreatureManager creat
                 Spectator = spectatorPlayer
             });
         }
+    }
+    
+    public void Subscribe(ICreature entity)
+    {
+        if (entity is not IPlayer player) return;
+        player.OnSkullUpdated += Execute;
+    }
+    public void Unsubscribe(ICreature entity)
+    {
+        if (entity is not IPlayer player) return;
+        player.OnSkullUpdated -= Execute;
     }
 }

@@ -61,7 +61,7 @@ public class DamageRecordList
         var damageList = new List<DamageRecord>();
 
         var records = DamageRecords.Values.ToArray();
-        Array.Sort(records, (a, b) => b.Time.CompareTo(a.Time));
+        Array.Sort(records, (a, b) => b.LastDamageTime.CompareTo(a.LastDamageTime));
 
         var count = Math.Min(deathConfiguration.MaxDeathRecords, records.Length);
 
@@ -69,7 +69,7 @@ public class DamageRecordList
         {
             if (count >= deathConfiguration.MaxDeathRecords) break;
             if (record.NumberOfHits < deathConfiguration.DeathAssistCount) continue;
-            if (record.Time >= DateTime.Now.Ticks - deathConfiguration.DeathListRequiredTime) continue;
+            if (record.LastDamageTime >= DateTime.Now.Ticks - deathConfiguration.DeathListRequiredTime) continue;
 
             damageList.Add(record);
             count++;

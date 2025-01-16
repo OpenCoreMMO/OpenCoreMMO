@@ -11,9 +11,10 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
     public void UpdateSkullOnAttack(IPlayer aggressor, IPlayer victim)
     {
         if (!(gameConfiguration.PvP?.SkullSystemEnabled ?? false)) return;
-        
+
         var whiteSkullEndingDate =
-            DateTime.Now.AddMinutes(gameConfiguration.PvP?.WhiteSkullDurationMinutes ?? 15);
+            DateTime.Now.AddMinutes(gameConfiguration.PvP?.WhiteSkullDurationMinutes ??
+                                    TimeSpan.FromMilliseconds(gameConfiguration.LogoutBlockDuration).TotalMinutes);
 
         //when aggressor has white skull
         if (aggressor.HasSkull && aggressor.Skull is Skull.White)
@@ -25,6 +26,7 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
         //when aggressor is yellow skull
         if (aggressor.GetSkull(victim) is Skull.Yellow)
         {
+            aggressor.SetSkull(Skull.Yellow);
             return;
         }
 

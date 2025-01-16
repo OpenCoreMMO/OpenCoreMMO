@@ -7,6 +7,7 @@ using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Combat.Validation;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Chats;
+using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Combat.Enums;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts;
@@ -236,13 +237,29 @@ public class Player : CombatActor, IPlayer
         base.LoseExperience(exp);
     }
 
-    public override decimal AttackSpeed => Vocation.AttackSpeed == default ? base.AttackSpeed : Vocation.AttackSpeed;
+    public override decimal AttackSpeed => Vocation.AttackSpeed == 0 ? base.AttackSpeed : Vocation.AttackSpeed;
 
     public virtual bool CannotLogout => !(Tile?.ProtectionZone ?? false) && IsLogoutBlocked;
 
-    public virtual bool IsProtectionZoneLocked => false;
+    public void SetProtectionZoneBlock()
+    {
+        if (IsPacified) return;
+
+        if (HasCondition(ConditionType.ProtectionZoneBlock, out var condition))
+        {
+            condition.Start(this);
+            return;
+        }
+
+        //protection zone block is persistent, this will be removed elsewhere
+        AddCondition(new Condition(ConditionType.ProtectionZoneBlock, 0));
+    }
+
+    public void RemoveProtectionZoneBlock() => RemoveCondition(ConditionType.ProtectionZoneBlock);
+    public virtual bool IsProtectionZoneBlocked => HasCondition(ConditionType.ProtectionZoneBlock);
 
     public bool HasSkull => Skull is not Skull.None;
+
     public SkillType SkillInUse
     {
         get
@@ -582,6 +599,7 @@ public class Player : CombatActor, IPlayer
         ChangeOnlineStatus(false);
         PlayerParty.LeaveParty();
         PlayerParty.RejectAllInvites();
+        PlayersAttackedList.Clear();
 
         OnLoggedOut?.Invoke(this);
         return true;
@@ -888,7 +906,7 @@ public class Player : CombatActor, IPlayer
         {
             return base.Attack(enemy);
         }
-        
+
         if (enemy.IsInvisible)
         {
             StopAttack();
@@ -897,6 +915,7 @@ public class Player : CombatActor, IPlayer
 
         if (enemy is IPlayer playerEnemy)
         {
+            SetProtectionZoneBlock();
             PlayersAttackedList.AddEnemy(playerEnemy);
         }
 
@@ -1048,9 +1067,16 @@ public class Player : CombatActor, IPlayer
             return;
         }
 
+        if (IsProtectionZoneBlocked)
+        {
+            //resets protection zone block time
+            SetProtectionZoneBlock();
+        }
+
         //logout is persistent, this will be removed elsewhere
         AddCondition(new Condition(ConditionType.LogoutBlock, 0));
     }
+
     public virtual void RemoveLogoutBlock() => RemoveCondition(ConditionType.LogoutBlock);
     public bool IsLogoutBlocked => HasCondition(ConditionType.LogoutBlock);
 
@@ -1060,9 +1086,11 @@ public class Player : CombatActor, IPlayer
         {
             case null when toTile.ProtectionZone:
                 AddCondition(new Condition(ConditionType.Pacified, 0));
+                RemoveCondition(ConditionType.ProtectionZoneBlock);
                 break;
             case false when toTile.ProtectionZone:
                 RemoveCondition(ConditionType.LogoutBlock);
+                RemoveCondition(ConditionType.ProtectionZoneBlock);
                 AddCondition(new Condition(ConditionType.Pacified, 0));
                 break;
             case true when toTile.ProtectionZone is false:
@@ -1111,10 +1139,11 @@ public class Player : CombatActor, IPlayer
         else
             ReduceHealth(damage);
     }
+
     public override void Death(IThing by)
     {
         base.Death(by);
-        
+
         DecreaseExp();
         if (Skull is Skull.Yellow)
         {
@@ -1148,7 +1177,7 @@ public class Player : CombatActor, IPlayer
     public IPlayer AddSkull(Skull skull, DateTime? skullEndsAt)
     {
         if (skull is Skull.Yellow) return this; //cannot set yourself as yellow skull
-        
+
         Skull = skull;
         SkullEndsAt = skullEndsAt;
         return this;
@@ -1156,8 +1185,12 @@ public class Player : CombatActor, IPlayer
 
     public void SetSkull(Skull skull, DateTime? endingDate = null)
     {
-        if (skull is Skull.Yellow) return; //cannot set yourself as yellow skull
-        
+        if (skull is Skull.Yellow)
+        {
+            OnSkullUpdated?.Invoke(this);
+            return; //cannot set yourself as yellow skull
+        }
+
         var oldSkull = Skull;
         Skull = skull;
         SkullEndsAt = endingDate;
@@ -1187,6 +1220,28 @@ public class Player : CombatActor, IPlayer
         NumberOfUnjustifiedKillsLastMonth = killsInLastMonth;
     }
 
+    public bool IsYellowSkull(IPlayer enemy)
+    {
+        var damageRecord = ReceivedDamages.GetCreatureDamage(enemy);
+        //if (damageRecord.Time >= DateTime.Now.Ticks - TimeSpan.FromMinutes(15).Ticks) return false;
+
+        if (!PlayersAttackedList.HasEnemy(enemy.CreatureId)) return false;
+
+        //my attack time
+        var attackTime = PlayersAttackedList.GetAttackTime(enemy.CreatureId);
+
+        //enemy attack time
+        var damageRecordTime = damageRecord?.FirstDamageTime ?? long.MaxValue;
+
+        //if my attack time was before enemy attack time set yellow skull
+        if (!HasSkull && attackTime < damageRecordTime && enemy.HasSkull)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public Skull GetSkull(IPlayer enemy)
     {
         if (enemy.CreatureId == CreatureId)
@@ -1194,22 +1249,10 @@ public class Player : CombatActor, IPlayer
             return Skull;
         }
 
-        if (!PlayersAttackedList.HasEnemy(enemy.CreatureId)) return Skull;
-        
-        var attackTime = PlayersAttackedList.GetAttackTime(enemy.CreatureId);
-        var enemyAttackedTime = enemy.GetAttackedTime(this);
-
-        if (HasSkull && attackTime > enemyAttackedTime && !enemy.HasSkull)
-        {
-            return Skull.Yellow;
-        }
-
-        return Skull;
+        return IsYellowSkull(enemy) ? Skull.Yellow : Skull;
     }
 
     #endregion
-
-    public long GetAttackedTime(IPlayer byEnemy) => PlayersAttackedList.GetAttackTime(byEnemy.CreatureId);
 
     public override void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true)
     {
