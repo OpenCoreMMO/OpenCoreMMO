@@ -1106,6 +1106,8 @@ public class Player : CombatActor, IPlayer
 
     public virtual void SetLogoutBlock()
     {
+        if (Group.FlagIsEnabled(PlayerFlag.NotGainInFight)) return;
+        
         if (IsPacified) return;
 
         if (HasCondition(ConditionType.LogoutBlock, out var condition))
