@@ -80,13 +80,8 @@ public class LuaScriptGameManager : IScriptGameManager
         _globalEvents.Startup();
     }
 
-    //public bool HasTalkAction(string text) => _talkActions.TryGetTalkAction(text, out var talkactionWords, out var talkAction);
-
     public bool PlayerSaySpell(IPlayer player, SpeechType type, string words)
     {
-        //if (!_talkActions.TryGetTalkAction(words, out var talkactionWords, out var talkAction))
-        //    return false;
-
         var wordsSeparator = " ";
         var talkactionWords = words.Contains(wordsSeparator) ? words.Split(" ") : [words];
 
@@ -98,10 +93,9 @@ public class LuaScriptGameManager : IScriptGameManager
         if (talkAction == null)
             return false;
 
-        var parameter = "";
-
-        if (talkactionWords.Count() > 1)
-            parameter = talkactionWords[1];
+        var parameter = talkactionWords.Length > 1
+                    ? string.Join(wordsSeparator, talkactionWords.Skip(1))
+                    : "";
 
         return talkAction.ExecuteSay(player, talkactionWords[0], parameter, type);
     }
@@ -129,7 +123,7 @@ public class LuaScriptGameManager : IScriptGameManager
                 toStackPos = creature.Tile.GetCreatureStackPositionIndex(player);
             }
         }
-        
+
         if (action != null)
             return action.ExecuteUse(
                 player,
@@ -143,7 +137,7 @@ public class LuaScriptGameManager : IScriptGameManager
 
         return false;
     }
-    
+
     public void PlayerExtendedOpcodeHandle(IPlayer player, byte opcode, string buffer)
     {
         foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(player.CreatureId, CreatureEventType.CREATURE_EVENT_EXTENDED_OPCODE))
@@ -161,16 +155,6 @@ public class LuaScriptGameManager : IScriptGameManager
 
     public void GlobalEventExecuteSave()
         => _globalEvents.Save();
-
-    //public void CreatureEventExecuteOnPlayerLogin(IPlayer player) => _creatureEvents.PlayerLogin(player);
-    
-    //public void CreatureEventExecuteOnPlayerLogout(IPlayer player) => _creatureEvents.PlayerLogout(player);
-
-    //public void CreatureEventExecuteOnThink(ICreature creature, int interval)
-    //{
-    //    foreach (var onThinkEvent in _creatureEvents.GetCreatureEvents(CreatureEventType.CREATURE_EVENT_THINK))
-    //        onThinkEvent.ExecuteOnThink(creature, interval);
-    //}
 
     #endregion
 }
