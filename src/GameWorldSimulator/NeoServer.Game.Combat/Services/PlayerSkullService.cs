@@ -6,8 +6,16 @@ using NeoServer.Game.Common.Contracts.Services;
 
 namespace NeoServer.Game.Combat.Services;
 
+/// <summary>
+/// Manage the player skull
+/// </summary>
 public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSkullService
 {
+    /// <summary>
+    /// Update player skull based on attack
+    /// </summary>
+    /// <param name="aggressor"></param>
+    /// <param name="victim"></param>
     public void UpdateSkullOnAttack(IPlayer aggressor, IPlayer victim)
     {
         if (!(gameConfiguration.PvP?.SkullSystemEnabled ?? false)) return;
@@ -37,30 +45,42 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
         }
     }
 
+    /// <summary>
+    /// Updates the player's skull based on number of kills
+    /// </summary>
+    /// <param name="aggressor">The player who has engaged in PvP activity.</param>
     public void UpdatePlayerSkull(IPlayer aggressor)
     {
+        // Check if the skull system is enabled in the game configuration
         if (!gameConfiguration.PvP?.SkullSystemEnabled ?? false) return;
 
+        // If the player already has a black skull, no further action is needed
         if (aggressor.Skull is Skull.Black) return;
 
+        // Get the PvP configuration
         var pvpConfiguration = gameConfiguration.PvP;
 
+        // Calculate the ending dates for each skull type
         var backSkullEndingDate = DateTime.Now.AddDays(pvpConfiguration.BlackSkullDurationDays);
         var redSkullEndingDate = DateTime.Now.AddDays(pvpConfiguration.RedSkullDurationDays);
         var whiteSkullEndingDate = DateTime.Now.AddDays(pvpConfiguration.WhiteSkullDurationMinutes);
 
+        // Check the player's unjustified kills and set their skull accordingly
         if (aggressor.NumberOfUnjustifiedKillsLastDay >= pvpConfiguration.DayKillsToBlackSkull)
         {
+            // Set black skull if daily unjustified kills exceed the threshold
             aggressor.SetSkull(Skull.Black, backSkullEndingDate);
             return;
         }
 
         if (aggressor.NumberOfUnjustifiedKillsLastDay >= pvpConfiguration.DayKillsToRedSkull)
         {
+            // Set red skull if daily unjustified kills exceed the threshold
             aggressor.SetSkull(Skull.Red, redSkullEndingDate);
             return;
         }
 
+        // Repeat the checks for weekly and monthly unjustified kills
         if (aggressor.NumberOfUnjustifiedKillsLastWeek >= pvpConfiguration.WeekKillsToBlackSkull)
         {
             aggressor.SetSkull(Skull.Black, backSkullEndingDate);
@@ -85,10 +105,10 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
             return;
         }
 
+        // If the player has any unjustified kills, set their skull to white
         if (aggressor.NumberOfUnjustifiedKillsLastDay > 0)
         {
             aggressor.SetSkull(Skull.White, whiteSkullEndingDate);
-            return;
         }
     }
 }
