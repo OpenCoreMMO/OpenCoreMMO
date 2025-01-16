@@ -44,6 +44,11 @@ public class LuaScriptGameManager : IScriptGameManager
     public IGlobalEventsScripts GlobalEvents { get; }
 
     /// <summary>
+    /// A reference to the <see cref="IMoveEventsScripts"/> instance in use.
+    /// </summary>
+    public IMoveEventsScripts MoveEvents { get; }
+
+    /// <summary>
     /// A reference to the <see cref="ITalkActionScripts"/> instance in use.
     /// </summary>
     public ITalkActionScripts TalkActions { get; }
@@ -59,6 +64,7 @@ public class LuaScriptGameManager : IScriptGameManager
         IActionScripts actionsScripts,
         ICreatureEventsScripts creatureEventsScripts,
         IGlobalEventsScripts globalEventsScripts,
+        IMoveEventsScripts moveEventsScripts,
         ITalkActionScripts talkActionsScripts)
     {
         _luaStartup = luaStartup;
@@ -67,15 +73,16 @@ public class LuaScriptGameManager : IScriptGameManager
 
         Actions = actionsScripts;
         CreatureEvents = creatureEventsScripts;
-        TalkActions = talkActionsScripts;
         GlobalEvents = globalEventsScripts;
+        MoveEvents = moveEventsScripts;
+        TalkActions = talkActionsScripts;
     }
 
     #endregion
 
     #region Public Methods 
 
-    public void Start()
+    public void Initialize()
     {
         _luaStartup.Start();
         _globalEvents.Startup();

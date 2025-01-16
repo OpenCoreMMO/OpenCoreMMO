@@ -52,11 +52,15 @@ public class MoveEvents : IMoveEvents
     public MoveEvents(
         ILogger logger,
         IItemTypeStore itemTypeStore,
-        IMap map) 
+        IItemRequirementService itemRequirementService,
+        IItemAbilityApplierService itemAbilityApplierService,
+        IMap map)
     {
         _logger = logger;
         _itemTypeStore = itemTypeStore;
         _map = map;
+        _itemRequirementService = itemRequirementService;
+        _itemAbilityApplierService = itemAbilityApplierService;
     }
 
     #endregion
@@ -347,7 +351,7 @@ public class MoveEvents : IMoveEvents
         if (moveEvent is not null)
             moveEvent.FireAddOrRemoveItem(item, tile.Location);
 
-        if(tile.ItemsCount == 0)
+        if (tile.ItemsCount == 0)
             return;
 
         foreach (var itemFromTile in tile.AllItems)
@@ -437,7 +441,14 @@ public class MoveEvents : IMoveEvents
         };
 
         var resultEquip = _itemRequirementService.PlayerCanEquipItem(player, item, requirement);
+
+        if (!resultEquip.Succeeded)
+            return false;
+
         var resultAbilities = _itemAbilityApplierService.ApplyAbilities(player, item);
+
+        if (!resultAbilities.Succeeded)
+            return false;
 
         //if (!player.Group.FlagIsEnabled(PlayerFlag.IgnoreWeaponCheck) && moveEvent.WieldInfo != 0)
         //{

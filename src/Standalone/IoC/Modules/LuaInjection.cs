@@ -20,6 +20,7 @@ public static class LuaInjection
         builder.AddSingleton<IActionScripts, LuaActionScripts>();
         builder.AddSingleton<ICreatureEventsScripts, LuaCreatureEventsScripts>();
         builder.AddSingleton<IGlobalEventsScripts, LuaGlobalEventsScripts>();
+        builder.AddSingleton<IMoveEventsScripts, LuaMoveEventsScripts>();
         builder.AddSingleton<ITalkActionScripts, LuaTalkActionScripts>();
 
         return builder;
