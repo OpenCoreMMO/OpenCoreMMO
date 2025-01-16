@@ -68,7 +68,7 @@ public class PlayerLogInCommand : ICommand
         (var success, var current, var old) = _game.CreatureManager.CheckPlayersRecord(player.WorldId).Result;
 
         if (success)
-            _scriptGameManager.GlobalEventExecuteRecord(current, old);
+            _scriptGameManager.GlobalEvents.GlobalEventExecuteRecord(current, old);
 
         return Result.Success;
     }

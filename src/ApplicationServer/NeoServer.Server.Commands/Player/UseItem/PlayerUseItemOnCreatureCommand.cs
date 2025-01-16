@@ -43,8 +43,8 @@ public class PlayerUseItemOnCreatureCommand : ICommand
 
         Action action = null;
 
-        if (_scriptGameManager.HasAction(useableOn))
-            action = () => _scriptGameManager.PlayerUseItem(player, player.Location, useItemPacket.FromStackPosition, 0,
+        if (_scriptGameManager.Actions.HasAction(useableOn))
+            action = () => _scriptGameManager.Actions.PlayerUseItem(player, player.Location, useItemPacket.FromStackPosition, 0,
                 useableOn, creature);
         else
             action = () => _playerUseService.Use(player, useableOn, creature);

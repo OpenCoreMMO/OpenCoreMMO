@@ -23,6 +23,6 @@ public class ExtendedOpcodeHandler : PacketHandler
 
         if (_game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player))
             _game.Dispatcher.AddEvent(new Event(() =>
-                _scriptGameManager.PlayerExtendedOpcodeHandle(player, opcode, buffer)));
+                _scriptGameManager.CreatureEvents.PlayerExtendedOpcodeHandle(player, opcode, buffer)));
     }
 }

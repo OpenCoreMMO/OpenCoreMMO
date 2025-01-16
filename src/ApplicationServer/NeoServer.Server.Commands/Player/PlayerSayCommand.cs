@@ -35,7 +35,7 @@ public class PlayerSayCommand : ICommand
 
         var message = playerSayPacket.Message?.Trim();
 
-        if (_luaGameManager.PlayerSaySpell(player, playerSayPacket.TalkType, message))
+        if (_luaGameManager.TalkActions.PlayerSaySpell(player, playerSayPacket.TalkType, message))
             return;
 
         if (player.CastSpell(message)) return;

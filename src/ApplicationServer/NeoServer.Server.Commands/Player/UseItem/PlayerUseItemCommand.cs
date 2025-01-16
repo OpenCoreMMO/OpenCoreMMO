@@ -55,8 +55,8 @@ public class PlayerUseItemCommand : ICommand
                 break;
         }
 
-        if (_scriptGameManager.HasAction(item))
-            action = () => _scriptGameManager.PlayerUseItem(player, useItemPacket.Location, useItemPacket.StackPosition,
+        if (_scriptGameManager.Actions.HasAction(item))
+            action = () => _scriptGameManager.Actions.PlayerUseItem(player, useItemPacket.Location, useItemPacket.StackPosition,
                 useItemPacket.Index, item);
 
         if (!player.Location.IsNextTo(item.Location))

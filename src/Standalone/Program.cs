@@ -160,7 +160,7 @@ public class Program
     private static async Task Shutdown(ILogger logger, IServiceProvider container)
     {
         logger.Warning("Server is in Shutdown...");
-        container.Resolve<IScriptGameManager>().GlobalEventExecuteShutdown();
+        container.Resolve<IScriptGameManager>().GlobalEvents.GlobalEventExecuteShutdown();
         await container.Resolve<PlayerPersistenceRoutine>().SavePlayers();
     }
 

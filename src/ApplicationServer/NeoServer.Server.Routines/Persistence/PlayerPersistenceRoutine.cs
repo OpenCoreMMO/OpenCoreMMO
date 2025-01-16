@@ -75,7 +75,7 @@ public class PlayerPersistenceRoutine
                 _stopwatch.ElapsedMilliseconds);
         }
 
-        _scriptGameManager.GlobalEventExecuteSave();
+        _scriptGameManager.GlobalEvents.GlobalEventExecuteSave();
     }
 
     private async Task SaveDepots(List<IPlayer> players)

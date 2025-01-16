@@ -67,9 +67,9 @@ public class PlayerUseItemOnCommand : ICommand
 
         IThing onTarget = !onItem ? onTile : onItem;
 
-        if (_scriptGameManager.HasAction(thingToUse))
+        if (_scriptGameManager.Actions.HasAction(thingToUse))
         {
-            action = () => _scriptGameManager.PlayerUseItem(player, player.Location, useItemPacket.ToLocation,
+            action = () => _scriptGameManager.Actions.PlayerUseItem(player, player.Location, useItemPacket.ToLocation,
                 useItemPacket.ToStackPosition, thingToUse, onTarget, useItemPacket.Location.IsHotkey);
         }
         else

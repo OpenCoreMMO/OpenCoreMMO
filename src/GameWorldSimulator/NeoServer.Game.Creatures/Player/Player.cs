@@ -613,6 +613,8 @@ public class Player : CombatActor, IPlayer
         if (Cooldowns.Expired(CooldownType.ManaRecovery)) HealMana(Vocation.GainManaAmount);
         if (Cooldowns.Expired(CooldownType.SoulRecovery)) HealSoul(1);
 
+        if (RegenerationBonusList == null) return;
+
         foreach (var regenerationBonus in RegenerationBonusList)
         {
             if (!Cooldowns.Expired(regenerationBonus.Id)) continue;
