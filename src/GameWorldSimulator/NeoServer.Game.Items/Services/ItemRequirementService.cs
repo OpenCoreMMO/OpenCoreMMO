@@ -47,7 +47,7 @@ public class ItemRequirementService : IItemRequirementService
 
     private static bool PlayerHasRequiredVocation(IPlayer player, Requirement requirement)
     {
-        if (requirement.RequiredVocations is null) return true;
+        if (requirement.RequiredVocations is null || requirement.RequiredVocations.Length == 0) return true;
 
         foreach (var requiredVocation in requirement.RequiredVocations)
         {

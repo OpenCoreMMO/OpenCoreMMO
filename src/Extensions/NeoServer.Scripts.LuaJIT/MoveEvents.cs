@@ -84,25 +84,8 @@ public class MoveEvents : IMoveEvents
         var tmpVector = new List<ushort>(itemIdVector.Count);
 
         foreach (var itemId in itemIdVector)
-        {
-            if (moveEvent.EventType == MoveEventType.MOVE_EVENT_EQUIP)
-            {
-                var it = _itemTypeStore.Get(itemId);
-                //it.Attributes.SetAttribute(ItemAttribute.wieldInfo, moveEvent.GetWieldInfo());
-                it.Attributes.SetAttribute(ItemAttribute.MinimumLevel, moveEvent.RequiredMinLevel);
-                //it.Attributes.SetAttribute(ItemAttribute.minReqMagicLevel, moveEvent.GetWieldInfo());
-                //it.Attributes.SetAttribute(ItemAttribute.VocationNames, moveEvent.GetWieldInfo());
-                //it.AmmoType = moveEvent->getWieldInfo();
-                //it.minReqLevel = moveEvent->getReqLevel();
-                //it.minReqMagicLevel = moveEvent->getReqMagLv();
-                //it.vocationString = moveEvent->getVocationString();
-
-            }
             if (RegisterEvent(moveEvent, itemId, _itemIdMap))
-            {
                 tmpVector.Add(itemId);
-            }
-        }
 
         itemIdVector = tmpVector;
         return itemIdVector.Count > 0;
@@ -445,27 +428,8 @@ public class MoveEvents : IMoveEvents
         if (!resultEquip.Succeeded)
             return false;
 
-        var resultAbilities = _itemAbilityApplierService.ApplyAbilities(player, item);
-
-        if (!resultAbilities.Succeeded)
-            return false;
-
-        //if (!player.Group.FlagIsEnabled(PlayerFlag.IgnoreWeaponCheck) && moveEvent.WieldInfo != 0)
-        //{
-        //    if (player.Level < moveEvent.RequiredMinLevel || player.MagicLevel < moveEvent.RequiredMinMagicLevel)
-        //        return false;
-
-        //    if (moveEvent.RequirePremium && player.PremiumTime == 0)
-        //        return false;
-
-        //    if (moveEvent.RequiredVocations.Any() && !moveEvent.RequiredVocations.Contains(player.VocationType))
-        //        return false;
-        //}
-
         if (isCheck)
-        {
             return true;
-        }
 
         return true;
     }
