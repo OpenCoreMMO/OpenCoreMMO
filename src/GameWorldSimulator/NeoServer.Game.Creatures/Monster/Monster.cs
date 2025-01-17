@@ -453,7 +453,7 @@ public class Monster : WalkableMonster, IMonster
 
     public override void OnDamage(IThing enemy, CombatDamage damage)
     {
-        // ReduceHealth(damage); // TODO: NTN - uncomment
+        ReduceHealth(damage);
     }
 
     protected void ChangeAttackTarget(ICreature creature)
