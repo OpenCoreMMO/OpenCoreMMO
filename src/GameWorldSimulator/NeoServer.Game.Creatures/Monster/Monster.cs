@@ -115,6 +115,11 @@ public class Monster : WalkableMonster, IMonster
 
     public override bool ReceiveAttack(IThing enemy, CombatDamage damage)
     {
+        if (this is Summon.Summon { Master: IPlayer })
+        {
+            return base.ReceiveAttack(enemy, damage);
+        }
+        
         return enemy is Summon.Summon { Master: IPlayer } or IPlayer && base.ReceiveAttack(enemy, damage);
     }
 
