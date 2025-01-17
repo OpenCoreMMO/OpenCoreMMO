@@ -14,8 +14,9 @@ public class MonsterChangedStateEventHandler
 
     public void Execute(IMonster monster, MonsterState oldState, MonsterState toState)
     {
-        if (toState == MonsterState.Sleeping)
-            creatureGameInstance.TryRemove(monster.CreatureId);
-        else if (oldState == MonsterState.Sleeping) creatureGameInstance.Add(monster);
+        // TODO: NTN - See with caiovidal and Muniz
+        // if (toState == MonsterState.Sleeping)
+        //     creatureGameInstance.TryRemove(monster.CreatureId);
+        // else if (oldState == MonsterState.Sleeping) creatureGameInstance.Add(monster);
     }
 }

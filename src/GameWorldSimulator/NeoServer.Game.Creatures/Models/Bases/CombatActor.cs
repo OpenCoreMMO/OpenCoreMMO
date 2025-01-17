@@ -217,8 +217,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         {
             var spectator = cylinderSpectator.Spectator;
 
-            if (spectator is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters)) return;
-
+            if (spectator is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters)) continue;
             if (spectator is not ICombatActor spectatorEnemy) continue;
             if (spectator.GetType() == GetType()) continue;
 

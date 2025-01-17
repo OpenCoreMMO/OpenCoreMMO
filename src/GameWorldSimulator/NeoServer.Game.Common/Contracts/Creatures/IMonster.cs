@@ -52,7 +52,6 @@ public interface IMonster : IWalkableMonster, ICombatActor
     ///     Indicates if monster is sleeping
     /// </summary>
     bool IsSleeping { get; }
-
     bool IsSummon { get; }
     bool IsHostile { get; }
     bool IsCurrentTargetUnreachable { get; }

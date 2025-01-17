@@ -134,14 +134,16 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         return !otherCreature.IsInvisible || CanSeeInvisible;
     }
-
-    public virtual void OnAppear(Location location, ICylinderSpectator[] spectators)
-    {
-    }
-
+    
     public virtual bool CanSee(Location pos)
     {
         return CanSee(pos, (int)MapViewPort.MaxViewPortX, (int)MapViewPort.MaxViewPortY);
+    }
+
+    public virtual bool IsThinking() => true;
+
+    public virtual void OnAppear(Location location, ICylinderSpectator[] spectators)
+    {
     }
 
     public byte Skull { get; protected set; } // TODO: implement.

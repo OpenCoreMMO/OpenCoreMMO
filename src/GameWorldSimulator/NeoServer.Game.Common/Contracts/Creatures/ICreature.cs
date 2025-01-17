@@ -143,8 +143,6 @@ public interface ICreature : IMovableThing
     /// </summary>
     IList<IMonster> Summons { get; }
 
-    
-
     /// <summary>
     ///     Fires when creature is removed from game
     /// </summary>
@@ -175,6 +173,12 @@ public interface ICreature : IMovableThing
     /// </summary>
     /// <returns></returns>
     bool CanSee(Location.Structs.Location pos);
+    
+    /// <summary>
+    ///     Checks if creature can execute think
+    /// </summary>
+    /// <returns></returns>
+    bool IsThinking();
 
     /// <summary>
     ///     Change creature outfit

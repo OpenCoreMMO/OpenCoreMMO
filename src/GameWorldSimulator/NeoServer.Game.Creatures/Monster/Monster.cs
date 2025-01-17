@@ -26,6 +26,7 @@ namespace NeoServer.Game.Creatures.Monster;
 
 public class Monster : WalkableMonster, IMonster
 {
+    // TODO: Organize the variables and properties
     private readonly Dictionary<ICreature, ushort> _damages;
     private Dictionary<string, byte> _aliveSummons;
     private MonsterState _state;
@@ -126,6 +127,14 @@ public class Monster : WalkableMonster, IMonster
     public bool IsHostile => Metadata.HasFlag(CreatureFlagAttribute.Hostile);
     public bool IsCurrentTargetUnreachable => Targets.IsCurrentTargetUnreachable;
 
+    public uint Experience => Metadata.Experience;
+    public bool IsInCombat => State == MonsterState.InCombat;
+    public bool IsSleeping => State == MonsterState.Sleeping;
+    public bool Defending { get; private set; }
+    public virtual bool IsSummon => false;
+    public override bool CanSeeInvisible => HasImmunity(Immunity.Invisibility); //todo: add invisibility flag
+    public override bool CanBeSeen => false;
+
     public override BloodType BloodType => Metadata.Race switch
     {
         Race.Bood => BloodType.Blood,
@@ -133,7 +142,6 @@ public class Monster : WalkableMonster, IMonster
         _ => BloodType.Blood
     };
 
-    public uint Experience => Metadata.Experience;
 
     public override void SetAsEnemy(ICreature creature)
     {
@@ -161,9 +169,6 @@ public class Monster : WalkableMonster, IMonster
         Targets.AddTarget(enemy);
     }
 
-    public bool IsInCombat => State == MonsterState.InCombat;
-    public bool IsSleeping => State == MonsterState.Sleeping;
-
     public virtual void UpdateState()
     {
         TargetDetector.UpdateTargets(this, MapTool);
@@ -190,12 +195,7 @@ public class Monster : WalkableMonster, IMonster
         State = MonsterState.InCombat;
     }
 
-    public bool Defending { get; private set; }
-    public virtual bool IsSummon => false;
-
-    public override bool CanSeeInvisible => HasImmunity(Immunity.Invisibility); //todo: add invisibility flag
-
-    public override bool CanBeSeen => false;
+    public override bool IsThinking() => !IsSleeping;
 
     public void MoveAroundEnemy()
     {
@@ -356,7 +356,7 @@ public class Monster : WalkableMonster, IMonster
         _damages.AddOrUpdate(creature, oldValue => (ushort)(oldValue + damage));
     }
 
-    public void Awake()
+    protected void Awake()
     {
         State = MonsterState.Awake;
         Cooldowns.Start(CooldownType.Awaken, 10000);

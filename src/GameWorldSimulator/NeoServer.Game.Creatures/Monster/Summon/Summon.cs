@@ -39,8 +39,7 @@ public class Summon : Monster
         base.Born(location);
         Awake();
     }
-
-
+    
     public override void UpdateState()
     {
         if (Master is not IPlayer player)
@@ -57,14 +56,7 @@ public class Summon : Monster
 
         Follow(Master);
     }
-
-
-    private void Die()
-    {
-        HealthPoints = 0;
-        Death(this);
-    }
-
+    
     public override void Death(IThing by)
     {
         base.Death(by);
@@ -79,6 +71,27 @@ public class Summon : Monster
         if (Master is not IPlayer player) return;
         player.OnLoggedOut -= OnMasterLoggedOut;
     }
+
+    public override bool IsHostileTo(ICombatActor enemy)
+    {
+        if (Master is IPlayer player)
+        {
+            if (enemy.Equals(this)) return false;
+            if (enemy.Equals(player)) return false;
+
+            return true; // TODO: Check PvP
+        }
+            
+            
+        return base.IsHostileTo(enemy);
+    }
+
+    private void Die()
+    {
+        HealthPoints = 0;
+        Death(this);
+    }
+    
 
     private void OnMasterKilled(ICombatActor master, IThing by, ILoot loot)
     {
