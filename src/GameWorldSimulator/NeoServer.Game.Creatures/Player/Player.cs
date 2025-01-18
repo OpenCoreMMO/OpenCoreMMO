@@ -162,7 +162,7 @@ public class Player : CombatActor, IPlayer
     public IPlayerParty PlayerParty { get; set; }
     public ulong BankAmount { get; private set; }
 
-    public List<RegenerationBonus> RegenerationBonusList { get; private set; }
+    public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
 
     public ulong GetTotalMoney(ICoinTypeStore coinTypeStore)
     {
@@ -612,8 +612,6 @@ public class Player : CombatActor, IPlayer
         if (Cooldowns.Expired(CooldownType.HealthRecovery)) Heal(Vocation.GainHpAmount, this);
         if (Cooldowns.Expired(CooldownType.ManaRecovery)) HealMana(Vocation.GainManaAmount);
         if (Cooldowns.Expired(CooldownType.SoulRecovery)) HealSoul(1);
-
-        if (RegenerationBonusList == null) return;
 
         foreach (var regenerationBonus in RegenerationBonusList)
         {
