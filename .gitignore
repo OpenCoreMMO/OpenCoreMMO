@@ -35,6 +35,9 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+/data/world/rookgaard.otbm
+/data/world/rookgaard-spawn.xml
+/data/world/rookgaard-spawn.json
 /data/world/realmap.otbm
 /data/world/realmap-spawn.xml
 /data/world/realmap-spawn.json
