@@ -1,4 +1,4 @@
-﻿namespace NeoServer.Web.API.Response.Constants;
+namespace NeoServer.Web.API.Response.Constants;
 
 public static class ErrorMessage
 {
@@ -28,5 +28,4 @@ public static class SuccessMessage
     public static string IpBanned => "Ip banned successfully.";
     public static string WorldDeleted => "World deleted successfully.";
     public static  string WorldCreated => "World created {id} successfully.";
-    
 }
