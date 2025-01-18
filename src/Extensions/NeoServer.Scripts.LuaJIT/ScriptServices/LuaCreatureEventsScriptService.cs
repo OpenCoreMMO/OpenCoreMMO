@@ -4,9 +4,9 @@ using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts.Scripts.Services;
 using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT.Services;
+namespace NeoServer.Scripts.LuaJIT.ScriptServices;
 
-public class LuaCreatureEventsScripts : ICreatureEventsScripts
+public class LuaCreatureEventsScriptService : ICreatureEventsScriptService
 {
     #region Members
 
@@ -28,7 +28,7 @@ public class LuaCreatureEventsScripts : ICreatureEventsScripts
 
     #region Constructors
 
-    public LuaCreatureEventsScripts(
+    public LuaCreatureEventsScriptService(
         ILuaStartup luaStartup,
         ILogger logger,
         IActions actions,
@@ -45,7 +45,7 @@ public class LuaCreatureEventsScripts : ICreatureEventsScripts
 
     #region Public Methods 
 
-    public void PlayerExtendedOpcodeHandle(IPlayer player, byte opcode, string buffer)
+    public void ExtendedOpcodeHandle(IPlayer player, byte opcode, string buffer)
     {
         foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(player.CreatureId, CreatureEventType.CREATURE_EVENT_EXTENDED_OPCODE))
             creatureEvent.ExecuteOnExtendedOpcode(player, opcode, buffer);

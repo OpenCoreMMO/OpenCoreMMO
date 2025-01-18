@@ -6,9 +6,9 @@ using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts.Scripts.Services;
 using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT.Services;
+namespace NeoServer.Scripts.LuaJIT.ScriptServices;
 
-public class LuaActionScripts : IActionScripts
+public class LuaActionScriptService : IActionScriptService
 {
     #region Members
 
@@ -30,7 +30,7 @@ public class LuaActionScripts : IActionScripts
 
     #region Constructors
 
-    public LuaActionScripts(
+    public LuaActionScriptService(
         ILogger logger,
         IActions actions)
     {
@@ -45,12 +45,12 @@ public class LuaActionScripts : IActionScripts
 
     public bool HasAction(IItem item) => _actions.GetAction(item) != null;
 
-    public bool PlayerUseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item, IThing target = null)
+    public bool UseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item, IThing target = null)
     {
-        return PlayerUseItem(player, pos, pos, stackpos, item, target, false);
+        return UseItem(player, pos, pos, stackpos, item, target, false);
     }
 
-    public bool PlayerUseItem(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, IThing target = null, bool isHotkey = false)
+    public bool UseItem(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, IThing target = null, bool isHotkey = false)
     {
         var action = _actions.GetAction(item);
 

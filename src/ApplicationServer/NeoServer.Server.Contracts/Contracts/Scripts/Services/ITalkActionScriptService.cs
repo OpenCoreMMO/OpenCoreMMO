@@ -3,7 +3,7 @@ using NeoServer.Game.Common.Contracts.Creatures;
 
 namespace NeoServer.Server.Common.Contracts.Scripts.Services;
 
-public interface ITalkActionScripts
+public interface ITalkActionScriptService
 {
-    bool PlayerSaySpell(IPlayer player, SpeechType type, string text);
+    bool Say(IPlayer player, SpeechType type, string text);
 }

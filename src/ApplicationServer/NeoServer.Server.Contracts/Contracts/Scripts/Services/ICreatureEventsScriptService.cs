@@ -2,9 +2,9 @@
 
 namespace NeoServer.Server.Common.Contracts.Scripts.Services;
 
-public interface ICreatureEventsScripts
+public interface ICreatureEventsScriptService
 {
-    void PlayerExtendedOpcodeHandle(IPlayer player, byte opcode, string buffer);
+    void ExtendedOpcodeHandle(IPlayer player, byte opcode, string buffer);
 
     //void CreatureEventExecuteOnPlayerLogin(IPlayer player);
 

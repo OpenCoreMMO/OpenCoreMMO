@@ -5,7 +5,7 @@ using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public class LuaScriptGameManager : IScriptGameManager
+public class LuaScriptManager : IScriptManager
 {
     #region Members
 
@@ -29,53 +29,53 @@ public class LuaScriptGameManager : IScriptGameManager
     private readonly ILogger _logger;
 
     /// <summary>
-    /// A reference to the <see cref="IActionScripts"/> instance in use.
+    /// A reference to the <see cref="IActionScriptService"/> instance in use.
     /// </summary>
-    public IActionScripts Actions { get; }
+    public IActionScriptService Actions { get; }
 
     /// <summary>
-    /// A reference to the <see cref="ICreatureEventsScripts"/> instance in use.
+    /// A reference to the <see cref="ICreatureEventsScriptService"/> instance in use.
     /// </summary>
-    public ICreatureEventsScripts CreatureEvents { get; }
+    public ICreatureEventsScriptService CreatureEvents { get; }
 
     /// <summary>
-    /// A reference to the <see cref="IGlobalEventsScripts"/> instance in use.
+    /// A reference to the <see cref="IGlobalEventsScriptService"/> instance in use.
     /// </summary>
-    public IGlobalEventsScripts GlobalEvents { get; }
+    public IGlobalEventsScriptService GlobalEvents { get; }
 
     /// <summary>
-    /// A reference to the <see cref="IMoveEventsScripts"/> instance in use.
+    /// A reference to the <see cref="IMoveEventsScriptService"/> instance in use.
     /// </summary>
-    public IMoveEventsScripts MoveEvents { get; }
+    public IMoveEventsScriptService MoveEvents { get; }
 
     /// <summary>
-    /// A reference to the <see cref="ITalkActionScripts"/> instance in use.
+    /// A reference to the <see cref="ITalkActionScriptService"/> instance in use.
     /// </summary>
-    public ITalkActionScripts TalkActions { get; }
+    public ITalkActionScriptService TalkActions { get; }
 
     #endregion
 
     #region Constructors
 
-    public LuaScriptGameManager(
+    public LuaScriptManager(
         ILuaStartup luaStartup,
         IGlobalEvents globalEvents,
         ILogger logger,
-        IActionScripts actionsScripts,
-        ICreatureEventsScripts creatureEventsScripts,
-        IGlobalEventsScripts globalEventsScripts,
-        IMoveEventsScripts moveEventsScripts,
-        ITalkActionScripts talkActionsScripts)
+        IActionScriptService actionsScriptService,
+        ICreatureEventsScriptService creatureEventsScriptService,
+        IGlobalEventsScriptService globalEventsScriptService,
+        IMoveEventsScriptService moveEventsScriptService,
+        ITalkActionScriptService talkActionsScriptService)
     {
         _luaStartup = luaStartup;
         _globalEvents = globalEvents;
         _logger = logger;
 
-        Actions = actionsScripts;
-        CreatureEvents = creatureEventsScripts;
-        GlobalEvents = globalEventsScripts;
-        MoveEvents = moveEventsScripts;
-        TalkActions = talkActionsScripts;
+        Actions = actionsScriptService;
+        CreatureEvents = creatureEventsScriptService;
+        GlobalEvents = globalEventsScriptService;
+        MoveEvents = moveEventsScriptService;
+        TalkActions = talkActionsScriptService;
     }
 
     #endregion

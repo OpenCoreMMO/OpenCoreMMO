@@ -3,9 +3,9 @@ using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts.Scripts.Services;
 using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT.Services;
+namespace NeoServer.Scripts.LuaJIT.ScriptServices;
 
-public class LuaGlobalEventsScripts : IGlobalEventsScripts
+public class LuaGlobalEventsScriptService : IGlobalEventsScriptService
 {
     #region Members
 
@@ -27,7 +27,7 @@ public class LuaGlobalEventsScripts : IGlobalEventsScripts
 
     #region Constructors
 
-    public LuaGlobalEventsScripts(
+    public LuaGlobalEventsScriptService(
         ILogger logger,
         IGlobalEvents globalEvents)
     {
@@ -39,16 +39,16 @@ public class LuaGlobalEventsScripts : IGlobalEventsScripts
 
     #region Public Methods 
 
-    public void GlobalEventExecuteRecord(int current, int old)
+    public void ExecuteRecord(int current, int old)
     {
         foreach (var (key, globalEvent) in _globalEvents.GetEventMap(GlobalEventType.GLOBALEVENT_RECORD))
             globalEvent.ExecuteRecord(current, old);
     }
 
-    public void GlobalEventExecuteShutdown()
+    public void ExecuteShutdown()
         => _globalEvents.Shutdown();
 
-    public void GlobalEventExecuteSave()
+    public void ExecuteSave()
         => _globalEvents.Save();
 
     #endregion

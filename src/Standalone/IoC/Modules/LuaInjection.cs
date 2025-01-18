@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Scripts.Lua;
 using NeoServer.Scripts.LuaJIT;
-using NeoServer.Scripts.LuaJIT.Services;
+using NeoServer.Scripts.LuaJIT.ScriptServices;
 using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Common.Contracts.Scripts.Services;
 using NLua;
@@ -16,12 +16,12 @@ public static class LuaInjection
         builder.AddSingleton<LuaGlobalRegister>();
 
         //LuaJIT
-        builder.AddSingleton<IScriptGameManager, LuaScriptGameManager>();
-        builder.AddSingleton<IActionScripts, LuaActionScripts>();
-        builder.AddSingleton<ICreatureEventsScripts, LuaCreatureEventsScripts>();
-        builder.AddSingleton<IGlobalEventsScripts, LuaGlobalEventsScripts>();
-        builder.AddSingleton<IMoveEventsScripts, LuaMoveEventsScripts>();
-        builder.AddSingleton<ITalkActionScripts, LuaTalkActionScripts>();
+        builder.AddSingleton<IScriptManager, LuaScriptManager>();
+        builder.AddSingleton<IActionScriptService, LuaActionScriptService>();
+        builder.AddSingleton<ICreatureEventsScriptService, LuaCreatureEventsScriptService>();
+        builder.AddSingleton<IGlobalEventsScriptService, LuaGlobalEventsScriptService>();
+        builder.AddSingleton<IMoveEventsScriptService, LuaMoveEventsScriptService>();
+        builder.AddSingleton<ITalkActionScriptService, LuaTalkActionScriptService>();
 
         return builder;
     }

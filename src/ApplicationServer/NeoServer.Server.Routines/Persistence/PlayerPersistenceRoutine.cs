@@ -20,7 +20,7 @@ public class PlayerPersistenceRoutine
     private readonly ILogger _logger;
     private readonly IPlayerDepotItemRepository _playerDepotItemRepository;
     private readonly IPlayerRepository _playerRepository;
-    private readonly IScriptGameManager _scriptGameManager;
+    private readonly IScriptManager _scriptManager;
     private readonly ServerConfiguration _serverConfiguration;
     private readonly Stopwatch _stopwatch = new();
 
@@ -31,7 +31,7 @@ public class PlayerPersistenceRoutine
         IPlayerRepository playerRepository,
         ILogger logger,
         IPlayerDepotItemRepository playerDepotItemRepository,
-        IScriptGameManager scriptGameManager,
+        IScriptManager scriptManager,
         ServerConfiguration serverConfiguration,
         DepotManager depotManager)
     {
@@ -39,7 +39,7 @@ public class PlayerPersistenceRoutine
         _playerRepository = playerRepository;
         _logger = logger;
         _playerDepotItemRepository = playerDepotItemRepository;
-        _scriptGameManager = scriptGameManager;
+        _scriptManager = scriptManager;
         _serverConfiguration = serverConfiguration;
         _depotManager = depotManager;
     }
@@ -75,7 +75,7 @@ public class PlayerPersistenceRoutine
                 _stopwatch.ElapsedMilliseconds);
         }
 
-        _scriptGameManager.GlobalEvents.GlobalEventExecuteSave();
+        _scriptManager.GlobalEvents.ExecuteSave();
     }
 
     private async Task SaveDepots(List<IPlayer> players)

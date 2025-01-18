@@ -8,12 +8,12 @@ namespace NeoServer.Networking.Handlers.Custom;
 public class ExtendedOpcodeHandler : PacketHandler
 {
     private readonly IGameServer _game;
-    private readonly IScriptGameManager _scriptGameManager;
+    private readonly IScriptManager _scriptManager;
 
-    public ExtendedOpcodeHandler(IGameServer game, IScriptGameManager scriptGameManager)
+    public ExtendedOpcodeHandler(IGameServer game, IScriptManager scriptManager)
     {
         _game = game;
-        _scriptGameManager = scriptGameManager;
+        _scriptManager = scriptManager;
     }
 
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
@@ -23,6 +23,6 @@ public class ExtendedOpcodeHandler : PacketHandler
 
         if (_game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player))
             _game.Dispatcher.AddEvent(new Event(() =>
-                _scriptGameManager.CreatureEvents.PlayerExtendedOpcodeHandle(player, opcode, buffer)));
+                _scriptManager.CreatureEvents.ExtendedOpcodeHandle(player, opcode, buffer)));
     }
 }

@@ -16,20 +16,20 @@ public class PlayerUseItemOnCreatureCommand : ICommand
     private readonly IPlayerUseService _playerUseService;
     private readonly IGameServer _game;
     private readonly HotkeyService _hotKeyService;
-    private readonly IScriptGameManager _scriptGameManager;
+    private readonly IScriptManager _scriptManager;
     private readonly IWalkToMechanism _walkToMechanism;
 
     public PlayerUseItemOnCreatureCommand(
         IGameServer game,
         HotkeyService hotKeyCache,
         IPlayerUseService playerUseService,
-        IScriptGameManager scriptGameManager,
+        IScriptManager scriptManager,
         IWalkToMechanism walkToMechanism)
     {
         _game = game;
         _hotKeyService = hotKeyCache;
         _playerUseService = playerUseService;
-        _scriptGameManager = scriptGameManager;
+        _scriptManager = scriptManager;
         _walkToMechanism = walkToMechanism;
     }
 
@@ -43,8 +43,8 @@ public class PlayerUseItemOnCreatureCommand : ICommand
 
         Action action = null;
 
-        if (_scriptGameManager.Actions.HasAction(useableOn))
-            action = () => _scriptGameManager.Actions.PlayerUseItem(player, player.Location, useItemPacket.FromStackPosition, 0,
+        if (_scriptManager.Actions.HasAction(useableOn))
+            action = () => _scriptManager.Actions.UseItem(player, player.Location, useItemPacket.FromStackPosition, 0,
                 useableOn, creature);
         else
             action = () => _playerUseService.Use(player, useableOn, creature);

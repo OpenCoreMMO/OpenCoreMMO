@@ -4,9 +4,9 @@ using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts.Scripts.Services;
 using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT.Services;
+namespace NeoServer.Scripts.LuaJIT.ScriptServices;
 
-public class LuaTalkActionScripts : ITalkActionScripts
+public class LuaTalkActionScriptService : ITalkActionScriptService
 {
     #region Members
 
@@ -28,7 +28,7 @@ public class LuaTalkActionScripts : ITalkActionScripts
 
     #region Constructors
 
-    public LuaTalkActionScripts(
+    public LuaTalkActionScriptService(
         ILogger logger,
         ITalkActions talkActions)
     {
@@ -40,7 +40,7 @@ public class LuaTalkActionScripts : ITalkActionScripts
 
     #region Public Methods 
 
-    public bool PlayerSaySpell(IPlayer player, SpeechType type, string words)
+    public bool Say(IPlayer player, SpeechType type, string words)
     {
         var wordsSeparator = " ";
         var talkactionWords = words.Contains(wordsSeparator) ? words.Split(" ") : [words];

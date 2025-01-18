@@ -1,13 +1,9 @@
-﻿using NeoServer.Game.Common.Contracts;
-using NeoServer.Game.Common.Contracts.Creatures;
+﻿using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.World.Models.Tiles;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NeoServer.Game.World.Services;
 
@@ -15,12 +11,9 @@ public class MapService : IMapService
 {
     private readonly IMap map;
 
-    public MapService(IMap map, IEnumerable<IMapEventSubscriber> mapEventSubscribers)
+    public MapService(IMap map)
     {
         this.map = map;
-        Instance = this;
-
-        SubscribeEvents(mapEventSubscribers);
     }
 
     public static IMapService Instance { get; private set; }
@@ -68,20 +61,5 @@ public class MapService : IMapService
         }
 
         return false;
-    }
-
-    private void SubscribeEvents(IEnumerable<IMapEventSubscriber> mapEventSubscribers)
-    {
-        if (Guard.IsNull(map)) return;
-
-        if (mapEventSubscribers is null || !mapEventSubscribers.Any()) return;
-
-        foreach (var gameSubscriber in mapEventSubscribers.Where(x =>
-                     x.GetType().IsAssignableTo(typeof(IGameEventSubscriber)))) //register game events first
-            gameSubscriber.Subscribe(map);
-
-        //foreach (var subscriber in mapEventSubscribers.Where(x =>
-        //             !x.GetType().IsAssignableTo(typeof(IGameEventSubscriber)))) //than register server events
-        //    subscriber.Subscribe(createdItem);
     }
 }

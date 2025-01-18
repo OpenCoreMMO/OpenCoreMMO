@@ -20,7 +20,7 @@ public class PlayerSayCommandTest
         var player = new Mock<IPlayer>();
         var connection = new Mock<IConnection>();
         var network = new Mock<IReadOnlyNetworkMessage>();
-        var scriptGameManager = new Mock<IScriptGameManager>();
+        var scriptManager = new Mock<IScriptManager>();
 
         var playerSayPacket = new Mock<PlayerSayPacket>(network.Object);
         playerSayPacket.SetupGet(x => x.TalkType).Returns(SpeechType.Private);
@@ -35,7 +35,7 @@ public class PlayerSayCommandTest
         var game = new Mock<IGameServer>();
         game.Setup(x => x.CreatureManager.TryGetPlayer("receiver", out receiver)).Returns(true);
 
-        var sut = new PlayerSayCommand(game.Object, chatChannelStore, scriptGameManager.Object);
+        var sut = new PlayerSayCommand(game.Object, chatChannelStore, scriptManager.Object);
 
         //act
         sut.Execute(player.Object, connection.Object, playerSayPacket.Object);

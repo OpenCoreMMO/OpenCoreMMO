@@ -11,6 +11,7 @@ using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures.Players;
 using System;
 using NeoServer.Game.Common.Contracts.Services;
+using NeoServer.Server.Common.Contracts.Scripts.Services;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -248,7 +249,13 @@ public class MoveEvents : IMoveEvents
         return null;
     }
 
-    public void OnCreatureMove(ICreature creature, Location fromLocation, Location toLocation, MoveEventType eventType)
+    public void OnCreatureMove(ICreature creature, Location fromLocation, Location toLocation)
+    {
+        OnCreatureMoveInternal(creature, fromLocation, toLocation, MoveEventType.MOVE_EVENT_STEP_OUT);
+        OnCreatureMoveInternal(creature, fromLocation, toLocation, MoveEventType.MOVE_EVENT_STEP_IN);
+    }
+
+    public void OnCreatureMoveInternal(ICreature creature, Location fromLocation, Location toLocation, MoveEventType eventType)
     {
         var pos = eventType == MoveEventType.MOVE_EVENT_STEP_IN ? toLocation : fromLocation;
         var tile = _map.GetTile(pos);
