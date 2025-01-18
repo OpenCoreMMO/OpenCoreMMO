@@ -2,11 +2,12 @@
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Networking.Packets.Outgoing.Login;
 using NeoServer.Server.Common.Contracts;
+using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Tasks;
 
 namespace NeoServer.Networking.EventHandlers.Creature;
 
-public class CreatureKilledEventHandler(IGameServer game) : INetworkEventHandler<ICreature>
+public class CreatureKilledEventHandler(IGameServer game, IScriptGameManager scriptGameManager) : INetworkEventHandler<ICreature>
 {
     public void Execute(ICombatActor creature, IThing by)
     {
@@ -18,6 +19,8 @@ public class CreatureKilledEventHandler(IGameServer game) : INetworkEventHandler
             
             connection.OutgoingPackets.Enqueue(new ReLoginWindowOutgoingPacket());
             connection.Send();
+
+            scriptGameManager.CreatureEventExecuteOnCreatureDeath(creature, by);
         }));
     }
 

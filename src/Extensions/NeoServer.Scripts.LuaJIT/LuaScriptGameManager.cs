@@ -3,10 +3,14 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Game.Creatures.Player;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts.Scripts;
 using Serilog;
+using System.Reflection.Emit;
+using System;
+using System.Reflection.Metadata;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -136,6 +140,12 @@ public class LuaScriptGameManager : IScriptGameManager
             _logger.Warning("Action with item id {ItemServerId} has not found into LuaJIT Scripts.", item.ServerId);
 
         return false;
+    }
+
+    public void CreatureEventExecuteOnCreatureDeath(ICombatActor actor, IThing by)
+    {
+        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(actor.CreatureId, CreatureEventType.CREATURE_EVENT_DEATH))
+            creatureEvent.ExecuteOnDeath(actor, actor.Corpse as IItem, by as ICreature, null, false, false);
     }
 
     public void PlayerExtendedOpcodeHandle(IPlayer player, byte opcode, string buffer)
