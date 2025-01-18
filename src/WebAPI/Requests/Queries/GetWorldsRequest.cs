@@ -14,7 +14,7 @@ public class GetWorldsRequest : IRequest<BasePagedResponseViewModel<IEnumerable<
     public bool? TransferEnabled { get; set; }
     public bool? AntiCheatEnabled { get; set; }
     [JsonConverter(typeof(StringEnumConverter))]
-    public Continent? Continent { get; set; }
+    public Region? Continent { get; set; }
     [JsonConverter(typeof(StringEnumConverter))]
     public PvpType? PvpType { get; set; }
     [JsonConverter(typeof(StringEnumConverter))]

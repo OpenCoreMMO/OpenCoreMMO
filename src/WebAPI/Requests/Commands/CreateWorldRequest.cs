@@ -10,7 +10,7 @@ public class CreateWorldRequest : IRequest<OutputResponse>
     public string Ip { get; set; }
     public int Port { get; set; }
     
-    public Continent Continent { get; set; }
+    public Region Region { get; set; }
     
     public PvpType PvpType { get; set; }
     

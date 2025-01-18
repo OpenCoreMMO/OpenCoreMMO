@@ -15,7 +15,7 @@ public class GetWorldsQuery(IMapper mapper, IWorldRepository worldRepository) : 
     {
         Expression<Func<WorldEntity, bool>> expression = item =>
             (request.Name == null || item.Name.ToLower().Contains(request.Name.ToLower())) &&
-            (request.Continent == null || item.Continent == request.Continent) &&
+            (request.Continent == null || item.Region == request.Continent) &&
             (request.PvpType == null || item.PvpType == request.PvpType) &&
             (request.Mode == null || item.Mode == request.Mode) && 
             (request.TransferEnabled == null || item.TransferEnabled == request.TransferEnabled) && 

@@ -21,7 +21,7 @@ public class WorldEntityConfiguration : IEntityTypeConfiguration<WorldEntity>
         builder.Property(w => w.AntiCheatEnabled).IsRequired();
         builder.Property(w => w.CreatedAt).IsRequired();
 
-        builder.Property(w => w.Continent)
+        builder.Property(w => w.Region)
             .HasConversion<string>()
             .HasMaxLength(50);
 

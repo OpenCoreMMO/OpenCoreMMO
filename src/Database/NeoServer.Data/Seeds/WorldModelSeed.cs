@@ -16,7 +16,7 @@ public class WorldModelSeed
                 Ip = Environment.GetEnvironmentVariable("SERVER_GAME_IP") ?? "127.0.0.1",
                 Port = int.TryParse(Environment.GetEnvironmentVariable("SERVER_GAME_PORT"), out var port) ? port : 7172,
                 Name = Environment.GetEnvironmentVariable("SERVER_GAME_NAME") ?? "OpenCore",
-                Continent = Continent.SouthAmerica,
+                Region = Region.SouthAmerica,
                 PvpType = PvpType.HardCore,
                 Mode = Mode.Experimental,
                 RequiresPremium = true,

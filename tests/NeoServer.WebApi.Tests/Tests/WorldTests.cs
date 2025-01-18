@@ -96,7 +96,7 @@ public class WorldTests : BaseIntegrationTests
             Name = "World of Tibia",
             Ip = "192.168.1.1",
             Port = 7171,
-            Continent = Continent.Europe,
+            Region = Region.Europe,
             PvpType = PvpType.HardCore,
             Mode = Mode.Regular,
             RequiresPremium = true,

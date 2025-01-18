@@ -21,7 +21,7 @@ public class CreateWorldCommand (IWorldRepository worldRepository) :  IRequestHa
             Name = request.Name,
             Ip = request.Ip,
             Port = request.Port,
-            Continent = request.Continent,
+            Region = request.Region,
             PvpType = request.PvpType,
             AntiCheatEnabled = request.AntiCheatEnabled,
             TransferEnabled = request.TransferEnabled,

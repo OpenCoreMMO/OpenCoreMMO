@@ -21,7 +21,7 @@ public class CreateWorldValidator : AbstractValidator<CreateWorldRequest>
         RuleFor(x => x.MaxCapacity)
             .GreaterThan(0).WithMessage("Max capacity must be greater than 0.");
 
-        RuleFor(x => x.Continent)
+        RuleFor(x => x.Region)
             .IsInEnum().WithMessage("Continent must be a valid value.");
 
         RuleFor(x => x.PvpType)
