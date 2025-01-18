@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
-using NeoServer.Scripts.LuaJIT.Structs;
 using NeoServer.Server.Common.Contracts.Tasks;
 using Serilog;
 
@@ -29,77 +28,78 @@ public class DBFunctions : LuaScriptInterface, IDBFunctions
         _dbContext = dbContext;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterTable(L, "db");
-        RegisterMethod(L, "db", "query", LuaDatabaseQuery);
-        RegisterMethod(L, "db", "asyncQuery", LuaDatabaseAsyncQuery);
-        RegisterMethod(L, "db", "storeQuery", LuaDatabaseStoreQuery);
-        RegisterMethod(L, "db", "asyncStoreQuery", LuaDatabaseAsyncStoreQuery);
-        RegisterMethod(L, "db", "escapeString", LuaDatabaseEscapeString);
-        RegisterMethod(L, "db", "tableExists", LuaDatabaseTableExists);
+        RegisterTable(luaState, "db");
+        RegisterMethod(luaState, "db", "query", LuaDatabaseQuery);
+        RegisterMethod(luaState, "db", "asyncQuery", LuaDatabaseAsyncQuery);
+        RegisterMethod(luaState, "db", "storeQuery", LuaDatabaseStoreQuery);
+        RegisterMethod(luaState, "db", "asyncStoreQuery", LuaDatabaseAsyncStoreQuery);
+        RegisterMethod(luaState, "db", "escapeString", LuaDatabaseEscapeString);
+        RegisterMethod(luaState, "db", "tableExists", LuaDatabaseTableExists);
     }
 
-    private static int LuaDatabaseQuery(LuaState L)
+    private static int LuaDatabaseQuery(LuaState luaState)
     {
         // db.query(query)
-        var query = GetString(L, -1);
+        var query = GetString(luaState, -1);
         var result = _dbContext.Database.ExecuteSqlRaw(query);
-        PushBoolean(L, result != 0);
+        PushBoolean(luaState, result != 0);
         return 1;
     }
 
-    private static int LuaDatabaseAsyncQuery(LuaState L)
+    private static int LuaDatabaseAsyncQuery(LuaState luaState)
     {
         // db.queryAsync(query)
-        var query = GetString(L, -1);
+        var query = GetString(luaState, -1);
         var result = _dbContext.Database.ExecuteSqlRawAsync(query).Result;
-        PushBoolean(L, result != 0);
+        PushBoolean(luaState, result != 0);
         return 1;
     }
 
-    private static int LuaDatabaseStoreQuery(LuaState L)
+    private static int LuaDatabaseStoreQuery(LuaState luaState)
     {
         // db.storeQuery(query)
-        var query = GetString(L, -1);
+        var query = GetString(luaState, -1);
 
-        using var command = _dbContext.CreateDbCommand(query);
-        using var reader = command.ExecuteReader();
-        if (reader.HasRows)
-            Lua.PushNumber(L, GetScriptEnv().AddResult(new DBResult(reader)));
+        var dbResult = _dbContext.ExecuteQuery(query);
+
+        if (dbResult != null)
+            Lua.PushNumber(luaState, GetScriptEnv().AddResult(dbResult));
         else
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
         return 1;
     }
 
-    private static int LuaDatabaseAsyncStoreQuery(LuaState L)
+    private static int LuaDatabaseAsyncStoreQuery(LuaState luaState)
     {
         // db.asyncStoreQueryAsync(query)
-        var query = GetString(L, -1);
+        var query = GetString(luaState, -1);
 
-        using var command = _dbContext.CreateDbCommand(query);
-        using var reader = command.ExecuteReaderAsync().Result;
-        if (reader.HasRows)
-            Lua.PushNumber(L, GetScriptEnv().AddResult(new DBResult(reader)));
+        var dbResult = _dbContext.ExecuteQueryAsync(query);
+        
+        if (dbResult != null)
+            Lua.PushNumber(luaState, GetScriptEnv().AddResult(dbResult.Result));
         else
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
+
         return 1;
     }
 
-    private static int LuaDatabaseEscapeString(LuaState L)
+    private static int LuaDatabaseEscapeString(LuaState luaState)
     {
         // db.escapeString(value)
-        var value = GetString(L, -1);
+        var value = GetString(luaState, -1);
         var result = EscapeString(value);
-        PushString(L, result);
+        PushString(luaState, result);
         return 1;
     }
 
-    private static int LuaDatabaseTableExists(LuaState L)
+    private static int LuaDatabaseTableExists(LuaState luaState)
     {
         // db.tableExists(name)
-        var name = GetString(L, -1);
-        PushBoolean(L, _dbContext.ExistsTable(name));
+        var name = GetString(luaState, -1);
+        PushBoolean(luaState, _dbContext.TableExists(name));
         return 1;
     }
 }

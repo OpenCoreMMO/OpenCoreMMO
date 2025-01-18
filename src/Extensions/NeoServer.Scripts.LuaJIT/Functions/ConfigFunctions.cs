@@ -19,58 +19,58 @@ public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
         _serverConfiguration = serverConfiguration;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterTable(L, "configManager");
-        RegisterMethod(L, "configManager", "getString", LuaConfigManagerGetString);
-        RegisterMethod(L, "configManager", "getNumber", LuaConfigManagerGetNumber);
-        RegisterMethod(L, "configManager", "getBoolean", LuaConfigManagerGetBoolean);
-        RegisterMethod(L, "configManager", "getFloat", LuaConfigManagerGetFloat);
+        RegisterTable(luaState, "configManager");
+        RegisterMethod(luaState, "configManager", "getString", LuaConfigManagerGetString);
+        RegisterMethod(luaState, "configManager", "getNumber", LuaConfigManagerGetNumber);
+        RegisterMethod(luaState, "configManager", "getBoolean", LuaConfigManagerGetBoolean);
+        RegisterMethod(luaState, "configManager", "getFloat", LuaConfigManagerGetFloat);
 
-        RegisterTable(L, "configKeys");
+        RegisterTable(luaState, "configKeys");
 
-        //RegisterVariable(L, "configKeys", "ALLOW_CHANGEOUTFIT", BooleanConfig.ALLOW_CHANGEOUTFIT);
+        //RegisterVariable(luaState, "configKeys", "ALLOW_CHANGEOUTFIT", BooleanConfig.ALLOW_CHANGEOUTFIT);
 
         foreach (var item in Enum.GetValues<BooleanConfigType>())
-            RegisterVariable(L, "configKeys", item.ToString(), item);
+            RegisterVariable(luaState, "configKeys", item.ToString(), item);
 
         foreach (var item in Enum.GetValues<StringConfigType>())
-            RegisterVariable(L, "configKeys", item.ToString(), item);
+            RegisterVariable(luaState, "configKeys", item.ToString(), item);
 
         foreach (var item in Enum.GetValues<IntegerConfigType>())
-            RegisterVariable(L, "configKeys", item.ToString(), item);
+            RegisterVariable(luaState, "configKeys", item.ToString(), item);
 
         foreach (var item in Enum.GetValues<FloatingConfigType>())
-            RegisterVariable(L, "configKeys", item.ToString(), item);
+            RegisterVariable(luaState, "configKeys", item.ToString(), item);
 
-        RegisterVariable(L, "configKeys", "BASE_DIRECTORY", AppContext.BaseDirectory + _serverConfiguration.DataLuaJit);
+        RegisterVariable(luaState, "configKeys", "BASE_DIRECTORY", AppContext.BaseDirectory + _serverConfiguration.DataLuaJit);
     }
 
-    private static int LuaConfigManagerGetString(LuaState L)
+    private static int LuaConfigManagerGetString(LuaState luaState)
     {
         // configManager:getString()
-        PushString(L, _configManager.GetString(GetNumber<StringConfigType>(L, -1)));
+        PushString(luaState, _configManager.GetString(GetNumber<StringConfigType>(luaState, -1)));
         return 1;
     }
 
-    private static int LuaConfigManagerGetNumber(LuaState L)
+    private static int LuaConfigManagerGetNumber(LuaState luaState)
     {
         // configManager:getNumber()
-        Lua.PushNumber(L, _configManager.GetNumber(GetNumber<IntegerConfigType>(L, -1)));
+        Lua.PushNumber(luaState, _configManager.GetNumber(GetNumber<IntegerConfigType>(luaState, -1)));
         return 1;
     }
 
-    private static int LuaConfigManagerGetBoolean(LuaState L)
+    private static int LuaConfigManagerGetBoolean(LuaState luaState)
     {
         // configManager:getBoolean()
-        PushBoolean(L, _configManager.GetBoolean(GetNumber<BooleanConfigType>(L, -1)));
+        PushBoolean(luaState, _configManager.GetBoolean(GetNumber<BooleanConfigType>(luaState, -1)));
         return 1;
     }
 
-    private static int LuaConfigManagerGetFloat(LuaState L)
+    private static int LuaConfigManagerGetFloat(LuaState luaState)
     {
         // configManager:getFloat()
-        Lua.PushNumber(L, _configManager.GetFloat(GetNumber<FloatingConfigType>(L, -1)));
+        Lua.PushNumber(luaState, _configManager.GetFloat(GetNumber<FloatingConfigType>(luaState, -1)));
         return 1;
     }
 }

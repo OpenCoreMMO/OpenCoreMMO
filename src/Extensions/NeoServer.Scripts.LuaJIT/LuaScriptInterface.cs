@@ -77,7 +77,7 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
 
     public int GetEvent(string eventName)
     {
-        Lua.RawGetI(luaState, LUA_REGISTRYINDEX, eventTableRef);
+        Lua.RawGetI(luaState, LUA_REGISTRY_INDEX, eventTableRef);
         if (!IsTable(luaState, -1))
         {
             Lua.Pop(luaState, 1);
@@ -106,7 +106,7 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
     {
         if (!IsFunction(luaState, -1)) return -1;
 
-        Lua.RawGetI(luaState, LUA_REGISTRYINDEX, eventTableRef);
+        Lua.RawGetI(luaState, LUA_REGISTRY_INDEX, eventTableRef);
         if (!IsTable(luaState, -1))
         {
             Lua.Pop(luaState, 1);
@@ -123,7 +123,7 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
 
     public int GetMetaEvent(string globalName, string eventName)
     {
-        Lua.RawGetI(luaState, LUA_REGISTRYINDEX, eventTableRef);
+        Lua.RawGetI(luaState, LUA_REGISTRY_INDEX, eventTableRef);
         if (!IsTable(luaState, -1))
         {
             Lua.Pop(luaState, 1);
@@ -183,7 +183,7 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
 
     public bool PushFunction(int functionId)
     {
-        Lua.RawGetI(luaState, LUA_REGISTRYINDEX, eventTableRef);
+        Lua.RawGetI(luaState, LUA_REGISTRY_INDEX, eventTableRef);
         if (!IsTable(luaState, -1)) return false;
 
         Lua.RawGetI(luaState, -1, functionId);
@@ -199,7 +199,7 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
         Lua.OpenLibs(luaState);
 
         Lua.NewTable(luaState);
-        eventTableRef = Lua.Ref(luaState, LUA_REGISTRYINDEX);
+        eventTableRef = Lua.Ref(luaState, LUA_REGISTRY_INDEX);
         runningEventId = EVENT_ID_USER;
 
         cacheFiles = new Dictionary<int, string>();
@@ -216,7 +216,7 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
         cacheFiles.Clear();
         if (eventTableRef != -1)
         {
-            Lua.UnRef(luaState, LUA_REGISTRYINDEX, eventTableRef);
+            Lua.UnRef(luaState, LUA_REGISTRY_INDEX, eventTableRef);
             eventTableRef = -1;
         }
 

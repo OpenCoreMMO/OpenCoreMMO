@@ -88,7 +88,7 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
             }
             else if (tmpStr == "additem")
             {
-                moveEvent.EventType = MoveEventType.MOVE_EVENT_DEEQUIP;
+                moveEvent.EventType = MoveEventType.MOVE_EVENT_ADD_ITEM_ITEMTILE;
                 moveEvent.OnMoveItemFunction = _moveEvents.AddItem;
             }
             else if (tmpStr == "removeitem")
@@ -261,11 +261,11 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
 
     public static int LuaMoveEventPremium(LuaState L)
     {
-        // moveEvent:premium(premium)
+        // moveEvent:premium(bool)
         var moveEvent = GetUserdata<MoveEvent>(L, 1);
         if (moveEvent != null)
         {
-            moveEvent.RequiredMinMagicLevel = GetNumber<uint>(L, 2);
+            moveEvent.RequirePremium = GetBoolean(L, 2);
             moveEvent.WieldInfo = WieldInfoType.WIELDINFO_PREMIUM;
             PushBoolean(L, true);
         }

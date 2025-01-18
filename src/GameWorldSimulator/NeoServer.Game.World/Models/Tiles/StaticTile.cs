@@ -31,6 +31,7 @@ public class StaticTile : BaseTile, IStaticTile
     public byte[] Raw { get; }
     public override IItem TopItemOnStack => _topItemOnStack;
     public override ICreature TopCreatureOnStack => null;
+    public IItem[] Items { get; }
 
     public override int ItemsCount => AllItems?.Length ?? 0;
     public override IItem[] AllItems { get; }

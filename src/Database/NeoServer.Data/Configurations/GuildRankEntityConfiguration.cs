@@ -8,8 +8,6 @@ public class GuildRankEntityConfiguration : IEntityTypeConfiguration<GuildRankEn
 {
     public void Configure(EntityTypeBuilder<GuildRankEntity> builder)
     {
-        builder.ToTable("GuildRank");
-
         builder.HasKey(e => new { e.Id });
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();

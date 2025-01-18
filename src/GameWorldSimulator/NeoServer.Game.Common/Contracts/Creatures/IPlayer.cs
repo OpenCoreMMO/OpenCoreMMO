@@ -11,6 +11,7 @@ using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Creatures.Players;
+using NeoServer.Game.Common.Creatures.Structs;
 using NeoServer.Game.Common.Results;
 
 namespace NeoServer.Game.Common.Contracts.Creatures;
@@ -60,8 +61,6 @@ public delegate void ReadText(IPlayer player, IReadable readable, string text);
 
 public delegate void WroteText(IPlayer player, IReadable readable, string text);
 
-public delegate void ExtendedOpcode(IPlayer player, byte opcode, string buffer);
-
 public delegate void EquipItem(IPlayer player, IItem item, bool isCheck);
 
 public delegate void DeEquipItem(IPlayer player, IItem item, bool isCheck);
@@ -90,7 +89,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
-    public event ExtendedOpcode OnExtendedOpcode;
     public event EquipItem OnEquipItem;
     public event DeEquipItem OnDeEquipItem;
 
@@ -150,6 +148,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     IDictionary<int, int> Storages { get; }
 
     bool CanSeeInspectionDetails { get; }
+    bool IsManaShieldEnabled { get; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 
@@ -265,7 +264,25 @@ public interface IPlayer : ICombatActor, ISociableCreature
     ushort GetRawSkillLevel(SkillType skillType);
     int GetStorageValue(int key);
     void AddOrUpdateStorageValue(int key, int value);
-    void ExtendedOpcode(byte code, string text);
+    
+    /// <summary>
+    /// Add infinite mana shield condition
+    /// </summary>
+    void EnableManaShield();
+    
+    /// <summary>
+    /// Remove mana shield condition
+    /// </summary>
+    void DisableManaShield();
+    
+    /// <summary>
+    /// Add mana shield condition 
+    /// </summary>
+    /// <param name="duration"></param>
+    void EnableManaShield(uint duration);
+
+    void AddRegenerationBonus(RegenerationBonus regenerationBonus);
+    void RemoveRegenerationBonus(RegenerationBonus regenerationBonus);
     void OnDressedItem(IItem item);
     void OnUndressedItem(IItem item);
 }

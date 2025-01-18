@@ -10,6 +10,8 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures.Players;
 using System;
+using NeoServer.Game.Common.Contracts.Services;
+using NeoServer.Server.Common.Contracts.Scripts.Services;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -40,20 +42,26 @@ public class MoveEventList
 
 public class MoveEvents : IMoveEvents
 {
-    private ILogger _logger;
-    private IItemTypeStore _itemTypeStore;
-    private IMap _map;
+    private readonly ILogger _logger;
+    private readonly IItemTypeStore _itemTypeStore;
+    private readonly IMap _map;
+    private readonly IItemRequirementService _itemRequirementService;
+    private readonly IItemAbilityApplierService _itemAbilityApplierService;
 
     #region Constructors
 
     public MoveEvents(
         ILogger logger,
         IItemTypeStore itemTypeStore,
-        IMap map) 
+        IItemRequirementService itemRequirementService,
+        IItemAbilityApplierService itemAbilityApplierService,
+        IMap map)
     {
         _logger = logger;
         _itemTypeStore = itemTypeStore;
         _map = map;
+        _itemRequirementService = itemRequirementService;
+        _itemAbilityApplierService = itemAbilityApplierService;
     }
 
     #endregion
@@ -77,25 +85,8 @@ public class MoveEvents : IMoveEvents
         var tmpVector = new List<ushort>(itemIdVector.Count);
 
         foreach (var itemId in itemIdVector)
-        {
-            if (moveEvent.EventType == MoveEventType.MOVE_EVENT_EQUIP)
-            {
-                var it = _itemTypeStore.Get(itemId);
-                //it.Attributes.SetAttribute(ItemAttribute.wieldInfo, moveEvent.GetWieldInfo());
-                it.Attributes.SetAttribute(ItemAttribute.MinimumLevel, moveEvent.RequiredMinLevel);
-                //it.Attributes.SetAttribute(ItemAttribute.minReqMagicLevel, moveEvent.GetWieldInfo());
-                //it.Attributes.SetAttribute(ItemAttribute.VocationNames, moveEvent.GetWieldInfo());
-                //it.AmmoType = moveEvent->getWieldInfo();
-                //it.minReqLevel = moveEvent->getReqLevel();
-                //it.minReqMagicLevel = moveEvent->getReqMagLv();
-                //it.vocationString = moveEvent->getVocationString();
-
-            }
             if (RegisterEvent(moveEvent, itemId, _itemIdMap))
-            {
                 tmpVector.Add(itemId);
-            }
-        }
 
         itemIdVector = tmpVector;
         return itemIdVector.Count > 0;
@@ -230,35 +221,22 @@ public class MoveEvents : IMoveEvents
 
     public MoveEvent GetEvent(IItem item, MoveEventType eventType)
     {
-        if (item.Metadata.Attributes.HasAttribute(ItemAttribute.UniqueId))
-        {
-            var uniqueId = item.Metadata.Attributes.GetAttribute<int>(ItemAttribute.UniqueId);
-            if (_uniqueIdMap.TryGetValue(uniqueId, out MoveEventList moveEventList))
-            {
-                var events = moveEventList[eventType];
-                if (events.Count > 0)
-                    return events[0];
-            }
-        }
+        if (item == null)
+            return null;
 
-        if (item.Metadata.Attributes.HasAttribute(ItemAttribute.ActionId))
-        {
-            var actionId = item.Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ActionId);
-            if (_actionIdMap.TryGetValue(actionId, out MoveEventList moveEventList))
-            {
-                var events = moveEventList[eventType];
-                if (events.Count > 0)
-                    return events[0];
-            }
-        }
+        if (item.UniqueId != 0 &&
+            _uniqueIdMap.TryGetValue((int)item.UniqueId, out MoveEventList moveEventListUniqueId) && 
+            moveEventListUniqueId[eventType].Count > 0)
+                return moveEventListUniqueId[eventType][0];
 
-        var itemId = item.ServerId;
-        if (_itemIdMap.TryGetValue(itemId, out MoveEventList finalMoveEventList))
-        {
-            var events = finalMoveEventList[eventType];
-            if (events.Count > 0)
-                return events[0];
-        }
+        if (item.ActionId != 0 &&
+            _actionIdMap.TryGetValue(item.ActionId, out MoveEventList moveEventListActionId) &&
+            moveEventListActionId[eventType].Count > 0)
+                return moveEventListActionId[eventType][0];
+
+        if (_itemIdMap.TryGetValue(item.ServerId, out MoveEventList moveEventListItemId) && 
+            moveEventListItemId[eventType].Count > 0)
+                return moveEventListItemId[eventType][0];
 
         return null;
     }
@@ -274,7 +252,13 @@ public class MoveEvents : IMoveEvents
         return null;
     }
 
-    public void OnCreatureMove(ICreature creature, Location fromLocation, Location toLocation, MoveEventType eventType)
+    public void OnCreatureMove(ICreature creature, Location fromLocation, Location toLocation)
+    {
+        OnCreatureMoveInternal(creature, fromLocation, toLocation, MoveEventType.MOVE_EVENT_STEP_OUT);
+        OnCreatureMoveInternal(creature, fromLocation, toLocation, MoveEventType.MOVE_EVENT_STEP_IN);
+    }
+
+    public void OnCreatureMoveInternal(ICreature creature, Location fromLocation, Location toLocation, MoveEventType eventType)
     {
         var pos = eventType == MoveEventType.MOVE_EVENT_STEP_IN ? toLocation : fromLocation;
         var tile = _map.GetTile(pos);
@@ -331,20 +315,25 @@ public class MoveEvents : IMoveEvents
         if (isAdd)
         {
             eventType1 = MoveEventType.MOVE_EVENT_ADD_ITEM;
-            eventType2 = MoveEventType.MOVE_EVENT_REMOVE_ITEM;
+            eventType2 = MoveEventType.MOVE_EVENT_ADD_ITEM_ITEMTILE;
         }
         else
         {
             eventType1 = MoveEventType.MOVE_EVENT_REMOVE_ITEM;
-            eventType2 = MoveEventType.MOVE_EVENT_ADD_ITEM;
+            eventType2 = MoveEventType.MOVE_EVENT_REMOVE_ITEM_ITEMTILE;
         }
 
-        var moveEvent = GetEvent(item, eventType1);
+        var moveEvent = GetEvent(tile.Location, eventType1);
 
         if (moveEvent is not null)
             moveEvent.FireAddOrRemoveItem(item, tile.Location);
 
-        if(tile.ItemsCount == 0)
+        moveEvent = GetEvent(item, eventType1);
+
+        if (moveEvent is not null)
+            moveEvent.FireAddOrRemoveItem(item, tile.Location);
+
+        if (tile.ItemsCount == 0)
             return;
 
         foreach (var itemFromTile in tile.AllItems)
@@ -383,15 +372,6 @@ public class MoveEvents : IMoveEvents
             return false;
         }
 
-        //todo: impelment this
-        //var field = item.GetMagicField();
-        //if (field)
-        //{
-        //    field->onStepInField(creature);
-        //    return true;
-        //}
-
-        //return LUA_ERROR_ITEM_NOT_FOUND;
         return false;
     }
 
@@ -399,7 +379,6 @@ public class MoveEvents : IMoveEvents
     {
         return true;
     }
-
 
     public bool AddItem(IItem item, Location position, IItem tileitem = null)
     {
@@ -425,22 +404,22 @@ public class MoveEvents : IMoveEvents
             return false;
         }
 
-        if (!player.Group.FlagIsEnabled(PlayerFlag.IgnoreWeaponCheck) && moveEvent.WieldInfo != 0)
+        var requirement = new Requirement
         {
-            if (player.Level < moveEvent.RequiredMinLevel || player.MagicLevel < moveEvent.RequiredMinMagicLevel)
-                return false;
+            MinLevel = moveEvent.RequiredMinLevel,
+            MinMagicLevel = moveEvent.RequiredMinMagicLevel,
+            RequiredVocations = moveEvent.RequiredVocations.ToArray(),
+            RequirePremiumTime = moveEvent.RequirePremium,
+            Slot = moveEvent.Slot
+        };
 
-            if (moveEvent.RequirePremium && player.PremiumTime == 0)
-                return false;
+        var resultEquip = _itemRequirementService.PlayerCanEquipItem(player, item, requirement);
 
-            if (moveEvent.RequiredVocations.Any() && !moveEvent.RequiredVocations.Contains(player.VocationType))
-                return false;
-        }
+        if (!resultEquip.Succeeded)
+            return false;
 
         if (isCheck)
-        {
             return true;
-        }
 
         return true;
     }

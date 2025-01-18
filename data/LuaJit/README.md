@@ -76,7 +76,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (21) and Functions (155)
+### Tables (22) and Functions (179)
 
 **Action (7)**
 
@@ -95,7 +95,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - configManager:getBoolean(type)
 - configManager:getFloat(type)
 
-**Creature (11)**
+**Creature (12)**
 
 - Creature(id or name or userdata)
 - creature:getId()
@@ -107,6 +107,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - creature:getEvents(type)
 - creature:registerEvent(name)
 - creature:unregisterEvent(name)
+- creature:getSummons()
 - creature:say(text, type)
 
 **CreatureEvent (15)**
@@ -224,15 +225,39 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - logger.info(text)
 - logger.info(text)
 
-**Monster (1)**
+**Monster (2)**
 
 - Monster(id or userdata)
+- monster:isMonster()
 
-**Npc (1)**
+**MoveEvent (19)**
+
+- MoveEvent()
+- moveEvent:type(callback)
+- moveEvent:register()
+- moveEvent:level(level)
+- moveEvent:magicLevel(magicLevel)
+- moveEvent:slot(slot)
+- moveEvent:id(ids)
+- moveEvent:idRange(fromId, toId)
+- moveEvent:aid(ids)
+- moveEvent:uid(ids)
+- moveEvent:position(positions)
+- moveEvent:premium(bool)
+- moveEvent:vocation(vocName, showInDescription = false, lastVoc = false)
+- moveEvent:onEquip(callback)
+- moveEvent:onDeEquip(callback)
+- moveEvent:onStepIn(callback)
+- moveEvent:onStepOut(callback)
+- moveEvent:onAddItem(callback)
+- moveEvent:onRemoveItem(callback)
+
+**Npc (2)**
 
 - Npc(id or userdata)
+- npc:isNpc()
 
-**Player (16)**
+**Player (17)**
 
 - Player(id or guid or name or userdata)
 - player:teleportTo(position, pushMovement = false)
@@ -250,6 +275,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - player:isPzLocked()
 - player:setGhostMode(positionEx)
 - player:feed(food)
+- player:isPlayer()
 
 **Position (8)**
 
@@ -281,12 +307,13 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 
 - Teleport(uid)
 
-**Tile (11)**
+**Tile (12)**
 
 - Tile(x, y, z) or Tile(position)
 - tile:getThing(index)
 - tile:getThingCount()
 - tile:getTopVisibleThing(creature)
+- tile:getTopCreature(creature)
 - tile:getPosition()
 - tile:getGround()
 - tile:getItems()

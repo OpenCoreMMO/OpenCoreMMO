@@ -172,10 +172,10 @@ public class MoveEvent : Script
 
     public bool FireEquipItem(IPlayer player, IItem item, Slot onSlot, bool isCheck)
     {
-        if (IsLoadedScriptId() && OnEquipItemFunction == null)
+        if (IsLoadedScriptId() && (OnEquipItemFunction?.Invoke(this, player, item, onSlot, isCheck) ?? false))
             return ExecuteEquip(player, item, onSlot, isCheck);
-        else
-            return OnEquipItemFunction?.Invoke(this, player, item, onSlot, isCheck) ?? false;
+
+        return false;
     }
 
     public bool ExecuteEquip(IPlayer player, IItem item, Slot onSlot, bool isCheck)

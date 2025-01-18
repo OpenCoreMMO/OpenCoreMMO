@@ -14,155 +14,155 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
         _itemTypeStore = itemTypeStore;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterSharedClass(L, "ItemType", "", LuaCreateItemType);
-        RegisterMetaMethod(L, "ItemType", "__eq", LuaUserdataCompare<IItemType>);
+        RegisterSharedClass(luaState, "ItemType", "", LuaCreateItemType);
+        RegisterMetaMethod(luaState, "ItemType", "__eq", LuaUserdataCompare<IItemType>);
 
-        RegisterMethod(L, "ItemType", "isMovable", LuaItemTypeIsMoveable);
-        RegisterMethod(L, "ItemType", "isStackable", LuaItemTypeIsStackable);
-        RegisterMethod(L, "ItemType", "isFluidContainer", LuaItemTypeIsFluidContainer);
-        RegisterMethod(L, "ItemType", "isKey", LuaItemTypeIsKey);
+        RegisterMethod(luaState, "ItemType", "isMovable", LuaItemTypeIsMoveable);
+        RegisterMethod(luaState, "ItemType", "isStackable", LuaItemTypeIsStackable);
+        RegisterMethod(luaState, "ItemType", "isFluidContainer", LuaItemTypeIsFluidContainer);
+        RegisterMethod(luaState, "ItemType", "isKey", LuaItemTypeIsKey);
 
-        RegisterMethod(L, "ItemType", "getType", LuaItemTypeGetType);
-        RegisterMethod(L, "ItemType", "getId", LuaItemTypeGetId);
-        RegisterMethod(L, "ItemType", "getName", LuaItemTypeGetName);
+        RegisterMethod(luaState, "ItemType", "getType", LuaItemTypeGetType);
+        RegisterMethod(luaState, "ItemType", "getId", LuaItemTypeGetId);
+        RegisterMethod(luaState, "ItemType", "getName", LuaItemTypeGetName);
 
-        RegisterMethod(L, "ItemType", "getWeight", LuaItemTypeGetWeight);
+        RegisterMethod(luaState, "ItemType", "getWeight", LuaItemTypeGetWeight);
 
-        RegisterMethod(L, "ItemType", "getDestroyId", LuaItemDestroyId);
+        RegisterMethod(luaState, "ItemType", "getDestroyId", LuaItemDestroyId);
     }
 
-    public static int LuaCreateItemType(LuaState L)
+    public static int LuaCreateItemType(LuaState luaState)
     {
         // ItemType(id or name)
         ushort id = 0;
         IItemType itemType = null;
-        if (Lua.IsNumber(L, 2))
+        if (Lua.IsNumber(luaState, 2))
         {
-            id = GetNumber<ushort>(L, 2);
+            id = GetNumber<ushort>(luaState, 2);
             itemType = _itemTypeStore.Get(id);
         }
         else
         {
-            var name = GetString(L, 2);
+            var name = GetString(luaState, 2);
             itemType = _itemTypeStore.GetByName(name);
         }
 
-        PushUserdata(L, itemType);
-        SetMetatable(L, -1, "ItemType");
+        PushUserdata(luaState, itemType);
+        SetMetatable(luaState, -1, "ItemType");
 
         return 1;
     }
 
-    public static int LuaItemTypeIsMoveable(LuaState L)
+    public static int LuaItemTypeIsMoveable(LuaState luaState)
     {
         // itemType:isMovable()
-        var itemType = GetUserdata<IItemType>(L, 1);
+        var itemType = GetUserdata<IItemType>(luaState, 1);
         if (itemType != null)
-            Lua.PushBoolean(L, itemType.IsMovable());
+            Lua.PushBoolean(luaState, itemType.IsMovable());
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    public static int LuaItemTypeIsStackable(LuaState L)
+    public static int LuaItemTypeIsStackable(LuaState luaState)
     {
         // itemType:isStackable()
-        var itemType = GetUserdata<IItemType>(L, 1);
+        var itemType = GetUserdata<IItemType>(luaState, 1);
         if (itemType != null)
-            Lua.PushBoolean(L, itemType.IsStackable());
+            Lua.PushBoolean(luaState, itemType.IsStackable());
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    public static int LuaItemTypeIsFluidContainer(LuaState L)
+    public static int LuaItemTypeIsFluidContainer(LuaState luaState)
     {
         // itemType:isFluidContainer()
-        var itemType = GetUserdata<IItemType>(L, 1);
+        var itemType = GetUserdata<IItemType>(luaState, 1);
         if (itemType != null)
-            Lua.PushBoolean(L, itemType.IsFluidContainer());
+            Lua.PushBoolean(luaState, itemType.IsFluidContainer());
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    public static int LuaItemTypeIsKey(LuaState L)
+    public static int LuaItemTypeIsKey(LuaState luaState)
     {
         // itemType:isKey()
-        var itemType = GetUserdata<IItemType>(L, 1);
+        var itemType = GetUserdata<IItemType>(luaState, 1);
         if (itemType != null)
-            Lua.PushBoolean(L, itemType.IsKey());
+            Lua.PushBoolean(luaState, itemType.IsKey());
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    public static int LuaItemTypeGetType(LuaState L)
+    public static int LuaItemTypeGetType(LuaState luaState)
     {
         // itemType:getType()
-        var itemType = GetUserdata<IItemType>(L, 1);
+        var itemType = GetUserdata<IItemType>(luaState, 1);
         if (itemType != null)
-            Lua.PushNumber(L, itemType.ServerId);
+            Lua.PushNumber(luaState, itemType.ServerId);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    public static int LuaItemTypeGetId(LuaState L)
+    public static int LuaItemTypeGetId(LuaState luaState)
     {
         // itemType:getId()
-        var itemType = GetUserdata<IItemType>(L, 1);
+        var itemType = GetUserdata<IItemType>(luaState, 1);
         if (itemType != null)
-            Lua.PushNumber(L, itemType.ServerId);
+            Lua.PushNumber(luaState, itemType.ServerId);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    public static int LuaItemTypeGetName(LuaState L)
+    public static int LuaItemTypeGetName(LuaState luaState)
     {
         // itemType:getName()
-        var itemType = GetUserdata<IItemType>(L, 1);
+        var itemType = GetUserdata<IItemType>(luaState, 1);
         if (itemType != null)
-            Lua.PushString(L, itemType.Name);
+            Lua.PushString(luaState, itemType.Name);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    public static int LuaItemTypeGetWeight(LuaState L)
+    public static int LuaItemTypeGetWeight(LuaState luaState)
     {
         // itemType:getWeight(count = 1)
-        var itemType = GetUserdata<IItemType>(L, 1);
+        var itemType = GetUserdata<IItemType>(luaState, 1);
         if (itemType != null)
         {
-            var count = GetNumber<ushort>(L, 2, 1);
+            var count = GetNumber<ushort>(luaState, 2, 1);
             var weight = itemType.Weight * float.Max(1, count);
-            Lua.PushNumber(L, weight);
+            Lua.PushNumber(luaState, weight);
         }
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }
 
-    public static int LuaItemDestroyId(LuaState L)
+    public static int LuaItemDestroyId(LuaState luaState)
     {
         // itemType:getDestroyId()
-        var itemType = GetUserdata<IItemType>(L, 1);
+        var itemType = GetUserdata<IItemType>(luaState, 1);
         if (itemType != null)
-            Lua.PushNumber(L, itemType.DestroyTo);
+            Lua.PushNumber(luaState, itemType.DestroyTo);
         else
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
 
         return 1;
     }

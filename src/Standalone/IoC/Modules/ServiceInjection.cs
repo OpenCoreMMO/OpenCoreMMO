@@ -41,7 +41,7 @@ public static class ServiceInjection
         builder.AddSingleton<IItemService, ItemService>();
         builder.AddSingleton<IStaticToDynamicTileService, StaticToDynamicTileService>();
         builder.AddSingleton<SafeTradeSystem>();
-
+        builder.AddSingleton<IItemRequirementService, ItemRequirementService>();
 
         //Operations
         builder.AddSingleton<TradeItemExchanger>();
@@ -50,7 +50,8 @@ public static class ServiceInjection
         builder.AddSingleton<IDecayService, DecayService>();
         builder.AddSingleton<IItemTransformService, ItemTransformService>();
         builder.AddSingleton<IItemRemoveService, ItemRemoveService>();
-
+        builder.AddSingleton<IItemAbilityApplierService, ItemAbilityApplierService>();
+        
         //game builders
         builder.RegisterAssemblyTypes<IInspectionTextBuilder>(Container.AssemblyCache);
 

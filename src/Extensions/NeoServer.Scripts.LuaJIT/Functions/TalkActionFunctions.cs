@@ -13,67 +13,67 @@ public class TalkActionFunctions : LuaScriptInterface, ITalkActionFunctions
         _logger = logger;
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterSharedClass(L, "TalkAction", "", LuaCreateTalkAction);
-        RegisterMethod(L, "TalkAction", "onSay", LuaTalkActionOnSay);
-        RegisterMethod(L, "TalkAction", "register", LuaTalkActionRegister);
-        RegisterMethod(L, "TalkAction", "separator", LuaTalkActionSeparator);
+        RegisterSharedClass(luaState, "TalkAction", "", LuaCreateTalkAction);
+        RegisterMethod(luaState, "TalkAction", "onSay", LuaTalkActionOnSay);
+        RegisterMethod(luaState, "TalkAction", "register", LuaTalkActionRegister);
+        RegisterMethod(luaState, "TalkAction", "separator", LuaTalkActionSeparator);
     }
 
-    private static int LuaCreateTalkAction(LuaState L)
+    private static int LuaCreateTalkAction(LuaState luaState)
     {
         // TalkAction(words) or TalkAction(word1, word2, word3)
         var wordsVector = new List<string>();
-        for (var i = 2; i <= Lua.GetTop(L); i++) wordsVector.Add(GetString(L, i));
+        for (var i = 2; i <= Lua.GetTop(luaState); i++) wordsVector.Add(GetString(luaState, i));
 
         var talkActionSharedPtr = new TalkAction(GetScriptEnv().GetScriptInterface(), _logger);
         talkActionSharedPtr.SetWords(wordsVector);
 
-        PushUserdata(L, talkActionSharedPtr);
-        SetMetatable(L, -1, "TalkAction");
+        PushUserdata(luaState, talkActionSharedPtr);
+        SetMetatable(luaState, -1, "TalkAction");
 
         return 1;
     }
 
-    private static int LuaTalkActionOnSay(LuaState L)
+    private static int LuaTalkActionOnSay(LuaState luaState)
     {
         // talkAction:onSay(callback)
 
-        var talkActionSharedPtr = GetUserdata<TalkAction>(L, 1);
+        var talkActionSharedPtr = GetUserdata<TalkAction>(luaState, 1);
 
         if (talkActionSharedPtr == null)
         {
             ReportError(nameof(LuaTalkActionOnSay), GetErrorDesc(ErrorCodeType.LUA_ERROR_TALK_ACTION_NOT_FOUND));
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
 
         if (!talkActionSharedPtr.LoadCallback())
         {
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
 
-        PushBoolean(L, true);
+        PushBoolean(luaState, true);
         return 1;
     }
 
 
-    private static int LuaTalkActionRegister(LuaState L)
+    private static int LuaTalkActionRegister(LuaState luaState)
     {
         // talkAction:register()
-        var talkAction = GetUserdata<TalkAction>(L, 1);
+        var talkAction = GetUserdata<TalkAction>(luaState, 1);
         if (talkAction == null)
         {
             ReportError(nameof(LuaTalkActionRegister), GetErrorDesc(ErrorCodeType.LUA_ERROR_TALK_ACTION_NOT_FOUND));
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
 
         if (!talkAction.IsLoadedCallback())
         {
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
 
@@ -82,43 +82,43 @@ public class TalkActionFunctions : LuaScriptInterface, ITalkActionFunctions
         //{
         //    var errorString = $"TalkAction with name {talkActionSharedPtr.Words} does not have groupType";
         //    ReportError(errorString);
-        //    PushBoolean(L, false);
+        //    PushBoolean(luaState, false);
         //    return 1;
         //}
 
-        PushBoolean(L, TalkActions.GetInstance().RegisterLuaEvent(talkAction));
+        PushBoolean(luaState, TalkActions.GetInstance().RegisterLuaEvent(talkAction));
 
         return 1;
     }
 
-    private static int LuaTalkActionSeparator(LuaState L)
+    private static int LuaTalkActionSeparator(LuaState luaState)
     {
         // talkAction:separator(sep)
-        var talkActionSharedPtr = GetUserdata<TalkAction>(L, 1);
+        var talkActionSharedPtr = GetUserdata<TalkAction>(luaState, 1);
         if (talkActionSharedPtr == null)
         {
             ReportError(nameof(LuaTalkActionSeparator), GetErrorDesc(ErrorCodeType.LUA_ERROR_TALK_ACTION_NOT_FOUND));
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
 
-        talkActionSharedPtr.SetSeparator(GetString(L, 2));
-        PushBoolean(L, true);
+        talkActionSharedPtr.SetSeparator(GetString(luaState, 2));
+        PushBoolean(luaState, true);
         return 1;
     }
 
-    private static int LuaTalkActionGetName(LuaState L)
+    private static int LuaTalkActionGetName(LuaState luaState)
     {
         // local name = talkAction:getName()
-        var talkActionSharedPtr = GetUserdata<TalkAction>(L, 1);
+        var talkActionSharedPtr = GetUserdata<TalkAction>(luaState, 1);
         if (talkActionSharedPtr == null)
         {
             ReportError(nameof(LuaTalkActionGetName), GetErrorDesc(ErrorCodeType.LUA_ERROR_TALK_ACTION_NOT_FOUND));
-            PushBoolean(L, false);
+            PushBoolean(luaState, false);
             return 1;
         }
 
-        PushString(L, talkActionSharedPtr.GetWords());
+        PushString(luaState, talkActionSharedPtr.GetWords());
         return 1;
     }
 }

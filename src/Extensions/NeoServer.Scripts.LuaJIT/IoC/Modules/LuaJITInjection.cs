@@ -2,6 +2,7 @@
 using NeoServer.Scripts.LuaJIT.Functions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Server.Common.Contracts.Scripts.Services;
 
 namespace NeoServer.Scripts.LuaJIT.IoC.Modules;
 

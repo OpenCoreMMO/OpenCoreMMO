@@ -29,7 +29,7 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
         await using var context = NewDbContext;
 
         return await context.Accounts
-            .Where(x => x.EmailAddress.Equals(name) && x.Password.Equals(password))
+            .Where(x => x.EmailAddress.Equals(name) || x.AccountName.Equals(name) && x.Password.Equals(password))
             .Include(x => x.Players)
             .ThenInclude(x => x.World)
             .SingleOrDefaultAsync();
@@ -60,6 +60,15 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
             .Include(x => x.Account)
             .Where(x => x.Account.EmailAddress.Equals(accountName) && x.Online)
             .FirstOrDefaultAsync();
+    }
+    
+    public async Task<AccountEntity> GetByEmailOrAccountName(string email, string accountName)
+    {
+        await using var context = NewDbContext;
+
+        return await context.Accounts
+            .Where(x => x.EmailAddress.ToLower().Equals(email.ToLower()) || x.AccountName.ToLower().Equals(accountName.ToLower()))
+            .SingleOrDefaultAsync();
     }
 
     #endregion

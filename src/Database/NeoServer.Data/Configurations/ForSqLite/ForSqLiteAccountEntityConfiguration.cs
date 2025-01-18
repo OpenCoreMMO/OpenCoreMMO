@@ -9,8 +9,6 @@ public class ForSqLiteAccountEntityConfiguration : IEntityTypeConfiguration<Acco
 {
     public void Configure(EntityTypeBuilder<AccountEntity> builder)
     {
-        builder.ToTable("Account");
-
         builder.HasKey(e => e.Id);
 
         builder.HasIndex(e => e.EmailAddress)
@@ -36,12 +34,7 @@ public class ForSqLiteAccountEntityConfiguration : IEntityTypeConfiguration<Acco
             .IsRequired()
             .HasMaxLength(20)
             .HasColumnType("char(20)");
-
-        builder.Property(e => e.PremiumTime)
-            .HasColumnType("int(11)")
-            .HasAnnotation("Sqlite:Autoincrement", false)
-            .HasDefaultValueSql("0");
-
+  
         builder.Property(e => e.Secret)
             .HasColumnType("char(16)");
 
@@ -71,7 +64,7 @@ public class ForSqLiteAccountEntityConfiguration : IEntityTypeConfiguration<Acco
                 Id = 1,
                 EmailAddress = "1",
                 Password = "1",
-                PremiumTime = 30,
+                PremiumTimeEndAt = DateTime.Now.AddDays(30),
                 AllowManyOnline = true
             }
         );

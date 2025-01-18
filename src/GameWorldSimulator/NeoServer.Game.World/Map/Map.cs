@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat.Structs;
+using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
+using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Common.Results;
@@ -508,16 +510,17 @@ public class Map : IMap
             switch (operation.Item2)
             {
                 case Operation.Removed:
-                    if (operation.Item1 is ICumulative cumulative) cumulative.OnReduced -= OnItemReduced;
+                    if (operation.Item1 is ICumulative cumulativeToRemove) cumulativeToRemove.OnReduced -= OnItemReduced;
                     OnThingRemovedFromTile?.Invoke(operation.Item1,
                         CylinderOperation.Removed(operation.Item1, operation.Item3));
                     break;
                 case Operation.Updated:
+                    if (operation.Item1 is ICumulative cumulativeToUpdate) cumulativeToUpdate.OnReduced += OnItemReduced;
                     OnThingUpdatedOnTile?.Invoke(operation.Item1,
                         CylinderOperation.Updated(operation.Item1, operation.Item1.Amount));
                     break;
                 case Operation.Added:
-                    if (operation.Item1 is ICumulative c) c.OnReduced += OnItemReduced;
+                    if (operation.Item1 is ICumulative cumulativeToAdd) cumulativeToAdd.OnReduced += OnItemReduced;
                     OnThingAddedToTile?.Invoke(operation.Item1, CylinderOperation.Added(operation.Item1));
                     break;
             }
