@@ -428,5 +428,4 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         }
         return 1;
     }
-
 }

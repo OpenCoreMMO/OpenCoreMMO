@@ -45,8 +45,7 @@ public class LuaTalkActionScriptService : ITalkActionScriptService
         var wordsSeparator = " ";
         var talkactionWords = words.Contains(wordsSeparator) ? words.Split(" ") : [words];
 
-        if (!talkactionWords.Any())
-            return false;
+        if (talkactionWords.Length == 0) return false;
 
         var talkAction = _talkActions.GetTalkAction(talkactionWords[0]);
 

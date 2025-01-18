@@ -300,5 +300,4 @@ public class MoveEvent : Script
     {
         PositionsVector.Add(pos);
     }
-
 }
