@@ -26,7 +26,6 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
 
     private static int LuaLoggerInfo(LuaState luaState)
     {
-        // logger.info(text)
         if (IsString(luaState, 1))
             _logger.Information(GetString(luaState, 1), GetFormatedLoggerMessage(luaState));
         else
@@ -36,7 +35,6 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
 
     private static int LuaLoggerWarn(LuaState luaState)
     {
-        // logger.info(text)
         if (IsString(luaState, 1))
             _logger.Warning(GetString(luaState, 1), GetFormatedLoggerMessage(luaState));
         else
@@ -46,7 +44,6 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
 
     private static int LuaLoggerError(LuaState luaState)
     {
-        // logger.info(text)
         if (IsString(luaState, 1))
             _logger.Error(GetString(luaState, 1), GetFormatedLoggerMessage(luaState));
         else
@@ -56,7 +53,6 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
 
     private static int LuaLoggerDebug(LuaState luaState)
     {
-        // logger.info(text)
         if (IsString(luaState, 1))
             _logger.Debug(GetString(luaState, 1), "1", 1,3 ,4 ,5);
         else
