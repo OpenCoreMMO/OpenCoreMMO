@@ -818,6 +818,12 @@ public class Player : CombatActor, IPlayer
             return new Result(InvalidOperation.AttackTargetIsInvisible);
         }
 
+        if (Summons.Contains(target))
+        {
+            InvokeAttackCanceled();
+            return Result.NotPossible;
+        }
+
         var result = base.SetAttackTarget(target);
         if (result.Failed) return result;
 

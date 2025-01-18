@@ -36,6 +36,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         RegisterMethod(luaState, "Creature", "getName", LuaCreatureGetName);
         RegisterMethod(luaState, "Creature", "getPosition", LuaCreatureGetPosition);
         RegisterMethod(luaState, "Creature", "getDirection", LuaCreatureGetDirection);
+        RegisterMethod(luaState, "Creature", "getSummons", LuaCreatureGetSummons);
         RegisterMethod(luaState, "Creature", "say", LuaCreatureSay);
     }
 
@@ -226,6 +227,31 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
             Lua.PushNil(luaState);
         return 1;
     }
+    
+    private static int LuaCreatureGetSummons(LuaState luaState)
+    {
+        // creature:getSummons()
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (!creature)
+        {
+            ReportError(nameof(LuaCreatureGetName), GetErrorDesc(ErrorCodeType.LUA_ERROR_PLAYER_NOT_FOUND));
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var summons = creature.Summons;
+        Lua.CreateTable(luaState, summons.Count, 0);
+
+        var index = 0;
+        foreach (var summon in summons)
+        {
+            PushThing(luaState, summon);
+            Lua.RawSetI(luaState, -2, ++index);
+        }
+        
+        return 1;
+    }
+    
 
     private static int LuaCreatureSay(LuaState luaState)
     {

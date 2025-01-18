@@ -295,62 +295,53 @@ public class LuaFunctionsLoader
         Lua.SetMetaTable(luaState, index - 1);
     }
 
-    public static string GetFormatedLoggerMessage(LuaState luaState)
+    public static object[] GetFormatedLoggerMessage(LuaState luaState)
     {
-        var format = GetString(luaState, 1);
         var n = Lua.GetTop(luaState);
-        var args = new List<object>();
+        var args = new object[n - 1];
+        var index = 0;
 
         for (var i = 2; i <= n; i++)
         {
             if (IsString(luaState, i))
             {
-                args.Add(Lua.ToString(luaState, i));
+                args[index] = Lua.ToString(luaState, i);
             }
             else if (IsNumber(luaState, i))
             {
-                args.Add(Lua.ToNumber(luaState, i));
+                args[index] = Lua.ToNumber(luaState, i);
             }
             else if (IsBoolean(luaState, i))
             {
-                args.Add(Lua.ToBoolean(luaState, i) ? "true" : "false");
+                args[index] = Lua.ToBoolean(luaState, i) ? "true" : "false";
+                
             }
             else if (IsUserdata(luaState, i))
             {
                 var userType = GetUserdataType(luaState, i);
-                args.Add(GetUserdataTypeName(userType));
+                args[index] = GetUserdataTypeName(userType);
             }
             else if (IsTable(luaState, i))
             {
-                args.Add("table");
+                args[index] = "table";
             }
             else if (IsNil(luaState, i))
             {
-                args.Add("nil");
+                args[index] = "nil";
             }
             else if (IsFunction(luaState, i))
             {
-                args.Add("function");
+                args[index] = "function";
             }
             else
             {
                 Console.WriteLine("[{0}] invalid param type", nameof(GetFormatedLoggerMessage));
             }
+            
+            index++;
         }
 
-        try
-        {
-            var indexedArguments = args.Select((arg, index) => $"{{{index}}}").ToList();
-            var formattedMessage = string.Format(format, indexedArguments.ToArray());
-            return formattedMessage;
-            //return fmt.vformat(format, args);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("[{0}] format error: {1}", nameof(GetFormatedLoggerMessage), e.Message);
-        }
-
-        return string.Empty;
+        return args;
     }
 
     public static string GetString(LuaState luaState, int arg)

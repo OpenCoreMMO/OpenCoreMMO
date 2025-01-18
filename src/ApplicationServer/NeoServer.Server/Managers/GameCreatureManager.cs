@@ -191,7 +191,7 @@ public class GameCreatureManager : IGameCreatureManager
     /// </summary>
     /// <param name="creature"></param>
     /// <returns></returns>
-    public bool AddCreature(ICreature creature)
+    private bool AddCreature(ICreature creature)
     {
         _creatureInstances.Add(creature);
         return true;
