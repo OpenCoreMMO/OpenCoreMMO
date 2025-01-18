@@ -50,7 +50,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
 
         if (creature is ICombatActor actor)
         {
-            actor.OnDeath += _creatureOnDeathEventHandler.Execute;
+            //actor.OnDeath += _creatureOnDeathEventHandler.Execute;
             actor.OnKill += _creatureOnKillEventHandler.Execute;
             actor.OnBeforeDeath += _creatureOnPrepareDeathEventHandler.Execute;
             actor.OnHealthChanged += _creatureOnHealthChangeEventHandler.Execute;
@@ -72,7 +72,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
 
         if (creature is ICombatActor actor)
         {
-            actor.OnDeath -= _creatureOnDeathEventHandler.Execute;
+            //actor.OnDeath -= _creatureOnDeathEventHandler.Execute;
             actor.OnKill -= _creatureOnKillEventHandler.Execute;
             actor.OnBeforeDeath -= _creatureOnPrepareDeathEventHandler.Execute;
             actor.OnHealthChanged -= _creatureOnHealthChangeEventHandler.Execute;

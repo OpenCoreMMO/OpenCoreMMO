@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NeoServer.Data.Contexts;
 using NeoServer.Game.Common;
+using NeoServer.Game.Common.Aggregator;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.World.Models.Spawns;
 using NeoServer.Loaders.Groups;
@@ -114,6 +115,7 @@ public class Program
 
         container.Resolve<LuaGlobalRegister>().Register();
         container.Resolve<IScriptGameManager>().Start();
+        EventAggregator.Instance.Initialize(container);
 
         StartListening(container, _cancellationToken);
 

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using NeoServer.Game.Combat.Validation;
 using NeoServer.Game.Common;
+using NeoServer.Game.Common.Aggregator;
+using NeoServer.Game.Common.Aggregator.Events;
 using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Combat.Attacks;
@@ -469,6 +471,11 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         Conditions.Clear();
         var loot = DropLoot();
         OnDeath?.Invoke(this, by, loot);
+        EventAggregator.Instance.Publish<CreatureDiedEvent>(e =>
+        {
+            e.Actor = this;
+            e.By = by;
+        });
     }
 
     public virtual void Kill(ICombatActor enemy)

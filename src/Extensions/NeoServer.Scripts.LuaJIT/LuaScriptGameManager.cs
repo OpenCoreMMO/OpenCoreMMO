@@ -138,6 +138,12 @@ public class LuaScriptGameManager : IScriptGameManager
         return false;
     }
 
+    public void CreatureEventExecuteOnCreatureDeath(ICombatActor actor, IThing by)
+    {
+        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(actor.CreatureId, CreatureEventType.CREATURE_EVENT_DEATH))
+            creatureEvent.ExecuteOnDeath(actor, actor.Corpse as IItem, by as ICreature, null, false, false);
+    }
+
     public void PlayerExtendedOpcodeHandle(IPlayer player, byte opcode, string buffer)
     {
         foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(player.CreatureId, CreatureEventType.CREATURE_EVENT_EXTENDED_OPCODE))
