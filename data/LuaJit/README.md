@@ -76,7 +76,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (21) and Functions (155)
+### Tables (22) and Functions (175)
 
 **Action (7)**
 
@@ -95,7 +95,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - configManager:getBoolean(type)
 - configManager:getFloat(type)
 
-**Creature (11)**
+**Creature (12)**
 
 - Creature(id or name or userdata)
 - creature:getId()
@@ -107,6 +107,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - creature:getEvents(type)
 - creature:registerEvent(name)
 - creature:unregisterEvent(name)
+- creature:getSummons()
 - creature:say(text, type)
 
 **CreatureEvent (15)**
@@ -227,6 +228,28 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 **Monster (1)**
 
 - Monster(id or userdata)
+
+**MoveEvent (19)**
+
+- MoveEvent()
+- moveEvent:type(callback)
+- moveEvent:register()
+- moveEvent:level(level)
+- moveEvent:magicLevel(magicLevel)
+- moveEvent:slot(slot)
+- moveEvent:id(ids)
+- moveEvent:idRange(fromId, toId)
+- moveEvent:aid(ids)
+- moveEvent:uid(ids)
+- moveEvent:position(positions)
+- moveEvent:premium(bool)
+- moveEvent:vocation(vocName, showInDescription = false, lastVoc = false)
+- moveEvent:onEquip(callback)
+- moveEvent:onDeEquip(callback)
+- moveEvent:onStepIn(callback)
+- moveEvent:onStepOut(callback)
+- moveEvent:onAddItem(callback)
+- moveEvent:onRemoveItem(callback)
 
 **Npc (1)**
 
