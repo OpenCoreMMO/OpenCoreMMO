@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Entities;
@@ -89,7 +89,6 @@ public class WorldTests : BaseIntegrationTests
     [Fact(DisplayName = "Create World")]
     public async Task Create_World()
     {
-    
         // Arrange
         var request = new CreateWorldRequest
         {
