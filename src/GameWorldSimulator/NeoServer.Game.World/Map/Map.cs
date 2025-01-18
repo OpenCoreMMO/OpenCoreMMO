@@ -77,8 +77,8 @@ public class Map : IMap
         var result = CylinderOperation.MoveCreature(creature, fromTile, toTile, 1, out var cylinder);
         if (result.Succeeded is false) return false;
 
-        walkableCreature.OnMoved(fromTile, toTile, cylinder.TileSpectators);
         OnCreatureMoved?.Invoke(walkableCreature, cylinder);
+        walkableCreature.OnMoved(fromTile, toTile, cylinder.TileSpectators);
 
         if (toTile.HasTeleport(out var teleport) && teleport.HasDestination)
         {

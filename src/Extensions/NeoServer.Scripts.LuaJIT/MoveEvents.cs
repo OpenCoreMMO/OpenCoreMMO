@@ -220,35 +220,19 @@ public class MoveEvents : IMoveEvents
 
     public MoveEvent GetEvent(IItem item, MoveEventType eventType)
     {
-        if (item.Metadata.Attributes.HasAttribute(ItemAttribute.UniqueId))
-        {
-            var uniqueId = item.Metadata.Attributes.GetAttribute<int>(ItemAttribute.UniqueId);
-            if (_uniqueIdMap.TryGetValue(uniqueId, out MoveEventList moveEventList))
-            {
-                var events = moveEventList[eventType];
-                if (events.Count > 0)
-                    return events[0];
-            }
-        }
+        if (item.UniqueId != 0 &&
+            _uniqueIdMap.TryGetValue((int)item.UniqueId, out MoveEventList moveEventListUniqueId) && 
+            moveEventListUniqueId[eventType].Count > 0)
+                return moveEventListUniqueId[eventType][0];
 
-        if (item.Metadata.Attributes.HasAttribute(ItemAttribute.ActionId))
-        {
-            var actionId = item.Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ActionId);
-            if (_actionIdMap.TryGetValue(actionId, out MoveEventList moveEventList))
-            {
-                var events = moveEventList[eventType];
-                if (events.Count > 0)
-                    return events[0];
-            }
-        }
+        if (item.ActionId != 0 &&
+            _actionIdMap.TryGetValue(item.ActionId, out MoveEventList moveEventListActionId) &&
+            moveEventListActionId[eventType].Count > 0)
+                return moveEventListActionId[eventType][0];
 
-        var itemId = item.ServerId;
-        if (_itemIdMap.TryGetValue(itemId, out MoveEventList finalMoveEventList))
-        {
-            var events = finalMoveEventList[eventType];
-            if (events.Count > 0)
-                return events[0];
-        }
+        if (_itemIdMap.TryGetValue(item.ServerId, out MoveEventList moveEventListItemId) && 
+            moveEventListItemId[eventType].Count > 0)
+                return moveEventListItemId[eventType][0];
 
         return null;
     }
