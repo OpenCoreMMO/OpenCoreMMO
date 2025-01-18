@@ -1,7 +1,7 @@
 ## Revscript support using native LuaJIT
 Simple documentation with all scripts and functions developed using LuaJIT to working with Revscript TFS and Canary retrocompatibility.
 
-### Implemented Scripts (39)
+### Implemented Scripts (44)
 
 **Actions (15)**
 
@@ -64,6 +64,14 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - prepare_death.lua
 - text_edit.lua
 - extended_opcode.lua
+
+**Move Events Scripts (5)**
+
+- decay.lua
+- dough.lua
+- haste.lua
+- snow.lua
+- yellow_pillow.lua
 
 ### Implemented Libs using lua (8)
 
