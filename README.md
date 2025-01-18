@@ -1,28 +1,28 @@
 <h1 align="center">
-  <img align="center" width="120px" src="https://github.com/opencoremmo/OpenCoreMMO/blob/develop/ocmsquare.png?raw=true" target="_blank"  />
+  <img align="center" width="120px" src="https://github.com/caioavidal/OpenCoreMMO/blob/develop/ocmsquare.png?raw=true" target="_blank"  />
   <br>
   OPENCOREMMO</h1>
 <p align="center">
-  <a href="https://codecov.io/gh/opencoremmo/OpenCoreMMO">
-  <img align="center" src="https://codecov.io/gh/opencoremmo/OpenCoreMMO/branch/develop/graph/badge.svg" />
+  <a href="https://codecov.io/gh/caioavidal/OpenCoreMMO">
+  <img align="center" src="https://codecov.io/gh/caioavidal/OpenCoreMMO/branch/develop/graph/badge.svg" />
 </a>
 <a href="https://www.codefactor.io/repository/github/opencoremmo/opencoremmo"><img src="https://www.codefactor.io/repository/github/opencoremmo/opencoremmo/badge" align="center" alt="CodeFactor" /></a><a href="https://discord.gg/Kazq9z2">
   <img align="center" src="https://badgen.net/badge/icon/discord?icon=discord&label" />
 </a>
-<a href="https://github.com/opencoremmo/opencoremmo/stargazers">
-  <img align="center" src="https://img.shields.io/github/stars/opencoremmo/opencoremmo?label=stargazers&logoColor=yellow&style=social" />
+<a href="https://github.com/caioavidal/opencoremmo/stargazers">
+  <img align="center" src="https://img.shields.io/github/stars/caioavidal/opencoremmo?label=stargazers&logoColor=yellow&style=social" />
   </a>
-  <a href="https://github.com/opencoremmo/OpenCoreMMO/blob/develop/LICENSE">
-  <img align="center" src="https://badgen.net/github/license/opencoremmo/opencoremmo" />
+  <a href="https://github.com/caioavidal/OpenCoreMMO/blob/develop/LICENSE">
+  <img align="center" src="https://badgen.net/github/license/caioavidal/opencoremmo" />
   </a>
 </p>
 
 <p align="center">
-  <img align="center" src="https://sonarcloud.io/api/project_badges/measure?project=opencoremmo_OpenCoreMMO&metric=sqale_index" />
-  <img align="center" src="https://sonarcloud.io/api/project_badges/measure?project=opencoremmo_OpenCoreMMO&metric=sqale_rating" />
-  <img align="center" src="https://sonarcloud.io/api/project_badges/measure?project=opencoremmo_OpenCoreMMO&metric=ncloc" />
-  <img align="center" src="https://sonarcloud.io/api/project_badges/measure?project=opencoremmo_OpenCoreMMO&metric=code_smells" />
-  <img align="center" src="https://sonarcloud.io/api/project_badges/measure?project=opencoremmo_OpenCoreMMO&metric=security_rating" />
+  <img align="center" src="https://sonarcloud.io/api/project_badges/measure?project=caioavidal_OpenCoreMMO&metric=sqale_index" />
+  <img align="center" src="https://sonarcloud.io/api/project_badges/measure?project=caioavidal_OpenCoreMMO&metric=sqale_rating" />
+  <img align="center" src="https://sonarcloud.io/api/project_badges/measure?project=caioavidal_OpenCoreMMO&metric=ncloc" />
+  <img align="center" src="https://sonarcloud.io/api/project_badges/measure?project=caioavidal_OpenCoreMMO&metric=code_smells" />
+  <img align="center" src="https://sonarcloud.io/api/project_badges/measure?project=caioavidal_OpenCoreMMO&metric=security_rating" />
 </p>
 
 > Modern, free, and open-source MMORPG server emulator written in C#.
@@ -34,15 +34,15 @@
 
 | Enviroment | Status |
 |------------|--------|
-|![win](https://badgen.net/badge/icon/Windows,.NET%209?icon=windows&label&list=1)|[![OpenCoreMMO](https://github.com/opencoremmo/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/opencoremmo/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)        |
-|![linux](https://badgen.net/badge/icon/Ubuntu%20Linux%2022.04%20x64?icon=terminal&label&color=orange)|[![OpenCoreMMO](https://github.com/opencoremmo/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/opencoremmo/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
-|![mac](https://badgen.net/badge/icon/macOS%20Latest?icon=apple&label&color=purple&list=1)|[![OpenCoreMMO](https://github.com/opencoremmo/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/opencoremmo/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
+|![win](https://badgen.net/badge/icon/Windows,.NET%209?icon=windows&label&list=1)|[![OpenCoreMMO](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)        |
+|![linux](https://badgen.net/badge/icon/Ubuntu%20Linux%2022.04%20x64?icon=terminal&label&color=orange)|[![OpenCoreMMO](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
+|![mac](https://badgen.net/badge/icon/macOS%20Latest?icon=apple&label&color=purple&list=1)|[![OpenCoreMMO](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
 
 ## Usage
 
 ```sh
 download and install .NET 9: https://dotnet.microsoft.com/download/dotnet/9.0
-git clone https://github.com/opencoremmo/OpenCoreMMO.git
+git clone https://github.com/caioavidal/OpenCoreMMO.git
 cd src
 dotnet run --project "Standalone"
 ```
@@ -95,7 +95,7 @@ To connect to the self-hosted server for development, please use the following c
 
 * Documentation: https://opencoremmo.gitbook.io/opencoremmo/
 * Discord Invite: https://discord.gg/Kazq9z2
-* Revscript (LuaJIT) Functions Readme: https://github.com/opencoremmo/OpenCoreMMO/tree/develop/data/LuaJit
+* Revscript (LuaJIT) Functions Readme: https://github.com/caioavidal/OpenCoreMMO/tree/develop/data/LuaJit
 
 ## Author
 
