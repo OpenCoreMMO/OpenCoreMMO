@@ -35,8 +35,7 @@ public static class MonsterStateManager
 
             if (monster.Metadata.TargetChance.Interval == 0) return;
 
-            if (monster.Attacking &&
-                monster.Metadata.TargetChance.Chance < GameRandom.Random.Next(1, maxValue: 100)) return;
+            if (monster.Attacking && monster.Metadata.TargetChance.Chance < GameRandom.Random.Next(1, maxValue: 100)) return;
             monster.SelectTargetToAttack();
         }
 

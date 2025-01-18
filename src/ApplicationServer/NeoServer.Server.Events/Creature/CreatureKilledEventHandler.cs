@@ -1,6 +1,7 @@
 ﻿using NeoServer.Data.Interfaces;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Creatures.Monster.Summon;
 using NeoServer.Networking.Packets.Outgoing.Login;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Tasks;
@@ -37,8 +38,13 @@ public class CreatureKilledEventHandler
 
     private void OnMonsterKilled(ICombatActor creature)
     {
-        if (creature is not IMonster { IsSummon: false } monster) return;
-
+        if (creature is Summon summon)
+        {
+            _game.CreatureManager.RemoveCreature(summon);
+            return;
+        }
+        
+        if (creature is not IMonster monster) return;
         _game.CreatureManager.AddKilledMonsters(monster);
     }
 }
