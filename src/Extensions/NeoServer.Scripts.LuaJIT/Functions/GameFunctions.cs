@@ -166,6 +166,28 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
 
         return 1;
     }
+    
+    // private static int LuaGameCreateMonster(LuaState luaState)
+    // {
+    //     // Game.createMonster(name, position, extended = false, force = false, master = nil)
+    //     var name = GetString(luaState, 1);
+    //     var position = GetPosition(luaState, 2);
+    //     var extended = GetBoolean(luaState, 3, false);
+    //     var force = GetBoolean(luaState, 4, false);
+    //     var master = (Lua.GetTop(luaState) >= 5) ? GetUserdata<ICreature>(luaState, 5) : null;
+    //     var monster = _createMonsterOrSummonUseCase.Invoke(name, position, extended, force, master);
+    //     
+    //     if (monster is null)
+    //     {
+    //         Lua.PushNil(luaState);
+    //         return 1;
+    //     }
+    //     
+    //     PushUserdata(luaState, monster);
+    //     SetMetatable(luaState, -1, "Monster");
+    //     return 1;
+    // }
+
 
     private static int LuaGameCreateMonster(LuaState luaState) {
         // Game.createMonster(monsterName, position, extended = false, force = false, master = nil)

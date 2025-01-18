@@ -12,15 +12,8 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Server.Events.Combat;
 
-public class CreatureAttackEventHandler
+public class CreatureAttackEventHandler(IGameServer game)
 {
-    private readonly IGameServer game;
-
-    public CreatureAttackEventHandler(IGameServer game)
-    {
-        this.game = game;
-    }
-
     public void Execute(ICreature creature, ICreature victim, CombatAttackResult[] attacks)
     {
         var spectators = game.Map.GetPlayersAtPositionZone(creature.Location);

@@ -68,6 +68,7 @@ public static class Container
         var configuration = ConfigurationInjection.GetConfiguration();
 
         builder.AddFactories()
+            .AddUseCase()
             .AddServices()
             .AddLoaders()
             .AddDatabases(configuration)

@@ -37,7 +37,7 @@ public class SpawnManager
                 if (_map.ArePlayersAround(monster.Location)) continue;
             }
 
-            if (_creatureGameInstance.TryRemoveFromKilledMonsters(monster.CreatureId)) monster.Reborn();
+            if (_creatureGameInstance.TryRemoveFromKilledMonsters(monster.CreatureId)) monster.Reborn(); // TODO: NTN - create RespawnMonsterUseCase
         }
     }
 
@@ -55,7 +55,7 @@ public class SpawnManager
 
         foreach (var monsterToSpawn in monsters)
         {
-            var monster = _creatureFactory.CreateMonster(monsterToSpawn.Name, monsterToSpawn.Spawn);
+            var monster = _creatureFactory.CreateMonster(monsterToSpawn.Name, monsterToSpawn.Spawn);  // TODO: NTN - create SpawnMonsterUseCase
 
             if (monster == null) continue;
             PlaceCreature(monsterToSpawn, monster);
