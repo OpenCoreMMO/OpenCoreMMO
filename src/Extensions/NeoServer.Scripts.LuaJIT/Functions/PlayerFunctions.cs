@@ -63,7 +63,6 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         RegisterMethod(luaState, "Player", "setGhostMode", LuaPlayerSetGhostMode);
         RegisterMethod(luaState, "Player", "feed", LuaPlayerFeed);
-        
     }
 
     private static int LuaPlayerIsPlayer(LuaState luaState)
