@@ -220,8 +220,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         {
             var spectator = cylinderSpectator.Spectator;
 
-            if (spectator is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters)) return;
-
+            if (spectator is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters)) continue;
             if (spectator is not ICombatActor spectatorEnemy) continue;
             if (spectator.GetType() == GetType()) continue;
 
@@ -265,7 +264,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
             StopFollowing();
         }
 
-        OnTargetChanged?.Invoke(this, oldAttackTarget, target?.CreatureId ?? default);
+        OnTargetChanged?.Invoke(this, oldAttackTarget, (uint) target?.CreatureId);
         return Result.Success;
     }
 

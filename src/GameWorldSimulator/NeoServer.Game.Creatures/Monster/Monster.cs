@@ -25,6 +25,8 @@ namespace NeoServer.Game.Creatures.Monster;
 
 public class Monster : WalkableMonster, IMonster
 {
+    // TODO: Organize the variables and properties
+    private readonly Dictionary<ICreature, ushort> _damages;
     private Dictionary<string, byte> _aliveSummons;
     private MonsterState _state;
 
@@ -81,7 +83,7 @@ public class Monster : WalkableMonster, IMonster
         }
     }
     
-    public void Born(Location location)
+    public virtual void Born(Location location)
     { 
         ResetHealthPoints();
         SetNewLocation(location);
@@ -107,6 +109,11 @@ public class Monster : WalkableMonster, IMonster
 
     public override bool ReceiveAttack(IThing enemy, CombatDamage damage)
     {
+        if (this is Summon.Summon { Master: IPlayer })
+        {
+            return base.ReceiveAttack(enemy, damage);
+        }
+        
         return enemy is Summon.Summon { Master: IPlayer } or IPlayer && base.ReceiveAttack(enemy, damage);
     }
 
@@ -119,6 +126,14 @@ public class Monster : WalkableMonster, IMonster
     public bool IsHostile => Metadata.HasFlag(CreatureFlagAttribute.Hostile);
     public bool IsCurrentTargetUnreachable => Targets.IsCurrentTargetUnreachable;
 
+    public uint Experience => Metadata.Experience;
+    public bool IsInCombat => State == MonsterState.InCombat;
+    public bool IsSleeping => State == MonsterState.Sleeping;
+    public bool Defending { get; private set; }
+    public virtual bool IsSummon => false;
+    public override bool CanSeeInvisible => HasImmunity(Immunity.Invisibility); //todo: add invisibility flag
+    public override bool CanBeSeen => false;
+
     public override BloodType BloodType => Metadata.Race switch
     {
         Race.Bood => BloodType.Blood,
@@ -126,7 +141,6 @@ public class Monster : WalkableMonster, IMonster
         _ => BloodType.Blood
     };
 
-    public uint Experience => Metadata.Experience;
 
     public override void SetAsEnemy(ICreature creature)
     {
@@ -140,8 +154,7 @@ public class Monster : WalkableMonster, IMonster
                 player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters) ||
                 player.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))) return;
 
-        var canSee = CanSee(creature.Location, (int)MapViewPort.MaxClientViewPortX + 1,
-            (int)MapViewPort.MaxClientViewPortX + 1);
+        var canSee = CanSee(creature.Location, (int)MapViewPort.MaxClientViewPortX + 1, (int)MapViewPort.MaxClientViewPortX + 1);
 
         if (State == MonsterState.Sleeping)
             Awake();
@@ -155,10 +168,7 @@ public class Monster : WalkableMonster, IMonster
         Targets.AddTarget(enemy);
     }
 
-    public bool IsInCombat => State == MonsterState.InCombat;
-    public bool IsSleeping => State == MonsterState.Sleeping;
-
-    public void UpdateState()
+    public virtual void UpdateState()
     {
         TargetDetector.UpdateTargets(this, MapTool);
 
@@ -184,12 +194,7 @@ public class Monster : WalkableMonster, IMonster
         State = MonsterState.InCombat;
     }
 
-    public bool Defending { get; private set; }
-    public virtual bool IsSummon => false;
-
-    public override bool CanSeeInvisible => HasImmunity(Immunity.Invisibility); //todo: add invisibility flag
-
-    public override bool CanBeSeen => false;
+    public override bool IsThinking() => !IsSleeping;
 
     public void MoveAroundEnemy()
     {
@@ -208,10 +213,8 @@ public class Monster : WalkableMonster, IMonster
         var target = Targets.PossibleTargetToAttack;
 
         if (target is null) return;
+        ChangeAttackTarget(target.Creature);
 
-        Follow(target.Creature);
-        SetAttackTarget(target.Creature);
-        UpdateLastTargetChance();
     }
 
     public void Sleep()
@@ -346,7 +349,7 @@ public class Monster : WalkableMonster, IMonster
         Cooldowns.Start(CooldownType.TargetChange, Metadata.TargetChance.Interval);
     }
     
-    public void Awake()
+    protected void Awake()
     {
         State = MonsterState.Awake;
         Cooldowns.Start(CooldownType.Awaken, 10000);
@@ -406,6 +409,13 @@ public class Monster : WalkableMonster, IMonster
     public override void OnDamage(IThing enemy, CombatDamage damage)
     {
         ReduceHealth(damage);
+    }
+
+    protected void ChangeAttackTarget(ICreature creature)
+    {
+        Follow(creature);
+        SetAttackTarget(creature);
+        UpdateLastTargetChance();
     }
 
     #region Summon Event Attachment

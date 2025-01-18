@@ -4,17 +4,11 @@ using NeoServer.Game.Common.Location.Structs;
 
 namespace NeoServer.Server.Events.Creature;
 
-public class CreatureWasBornEventHandler
+public class CreatureWasBornEventHandler(IMap map, ICreatureGameInstance creatureGameInstance)
 {
-    private readonly IMap map;
-
-    public CreatureWasBornEventHandler(IMap map)
+    public void Execute(IMonster monster, Location location)
     {
-        this.map = map;
-    }
-
-    public void Execute(IMonster creature, Location location)
-    {
-        map.PlaceCreature(creature);
+        creatureGameInstance.Add(monster);
+        map.PlaceCreature(monster);
     }
 }

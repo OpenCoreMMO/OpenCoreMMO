@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using NeoServer.Game.Common.Chats;
+using NeoServer.Game.Common.Contracts.Creatures.Monsters;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
@@ -130,6 +132,11 @@ public interface ICreature : IMovableThing
     ///     Checks if creature can be seen by others
     /// </summary>
     bool CanBeSeen { get; }
+    
+    /// <summary>
+    ///     Summons of creature
+    /// </summary>
+    IList<IMonster> Summons { get; }
 
     /// <summary>
     ///     Fires when creature is removed from game
@@ -161,6 +168,12 @@ public interface ICreature : IMovableThing
     /// </summary>
     /// <returns></returns>
     bool CanSee(Location.Structs.Location pos);
+    
+    /// <summary>
+    ///     Checks if creature can execute think
+    /// </summary>
+    /// <returns></returns>
+    bool IsThinking();
 
     /// <summary>
     ///     Change creature outfit
