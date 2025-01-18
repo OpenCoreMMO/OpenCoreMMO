@@ -510,16 +510,17 @@ public class Map : IMap
             switch (operation.Item2)
             {
                 case Operation.Removed:
-                    if (operation.Item1 is ICumulative cumulative) cumulative.OnReduced -= OnItemReduced;
+                    if (operation.Item1 is ICumulative cumulativeToRemove) cumulativeToRemove.OnReduced -= OnItemReduced;
                     OnThingRemovedFromTile?.Invoke(operation.Item1,
                         CylinderOperation.Removed(operation.Item1, operation.Item3));
                     break;
                 case Operation.Updated:
+                    if (operation.Item1 is ICumulative cumulativeToUpdate) cumulativeToUpdate.OnReduced += OnItemReduced;
                     OnThingUpdatedOnTile?.Invoke(operation.Item1,
                         CylinderOperation.Updated(operation.Item1, operation.Item1.Amount));
                     break;
                 case Operation.Added:
-                    if (operation.Item1 is ICumulative c) c.OnReduced += OnItemReduced;
+                    if (operation.Item1 is ICumulative cumulativeToAdd) cumulativeToAdd.OnReduced += OnItemReduced;
                     OnThingAddedToTile?.Invoke(operation.Item1, CylinderOperation.Added(operation.Item1));
                     break;
             }

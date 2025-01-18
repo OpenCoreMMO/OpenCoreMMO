@@ -128,8 +128,17 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         {
             var result = dynamictile.RemoveItem(item, (byte)count, 0, out var removedItem);
             Lua.PushBoolean(luaState, result.Succeeded);
+            return 1;
         }
 
+        if (item.Owner is not null && item.Owner is IPlayer player)
+        {
+            var result = player.Inventory.RemoveItem(item.ServerId, (byte)count, true);
+            Lua.PushBoolean(luaState, result.Succeeded);
+            return 1;
+        }
+
+        Lua.PushBoolean(luaState, false);
         return 1;
     }
 
