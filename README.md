@@ -6,8 +6,7 @@
   <a href="https://codecov.io/gh/caioavidal/OpenCoreMMO">
   <img align="center" src="https://codecov.io/gh/caioavidal/OpenCoreMMO/branch/develop/graph/badge.svg" />
 </a>
-<a href="https://www.codefactor.io/repository/github/caioavidal/opencoremmo"><img  align="center"  src="https://www.codefactor.io/repository/github/caioavidal/opencoremmo/badge" alt="CodeFactor" /></a>
-<a href="https://discord.gg/Kazq9z2">
+<a href="https://www.codefactor.io/repository/github/opencoremmo/opencoremmo"><img src="https://www.codefactor.io/repository/github/opencoremmo/opencoremmo/badge" align="center" alt="CodeFactor" /></a><a href="https://discord.gg/Kazq9z2">
   <img align="center" src="https://badgen.net/badge/icon/discord?icon=discord&label" />
 </a>
 <a href="https://github.com/caioavidal/opencoremmo/stargazers">
