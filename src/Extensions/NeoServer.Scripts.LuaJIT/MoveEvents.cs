@@ -221,6 +221,9 @@ public class MoveEvents : IMoveEvents
 
     public MoveEvent GetEvent(IItem item, MoveEventType eventType)
     {
+        if (item == null)
+            return null;
+
         if (item.UniqueId != 0 &&
             _uniqueIdMap.TryGetValue((int)item.UniqueId, out MoveEventList moveEventListUniqueId) && 
             moveEventListUniqueId[eventType].Count > 0)
