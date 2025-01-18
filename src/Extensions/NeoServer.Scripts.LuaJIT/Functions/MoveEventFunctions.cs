@@ -88,7 +88,7 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
             }
             else if (tmpStr == "additem")
             {
-                moveEvent.EventType = MoveEventType.MOVE_EVENT_DEEQUIP;
+                moveEvent.EventType = MoveEventType.MOVE_EVENT_ADD_ITEM_ITEMTILE;
                 moveEvent.OnMoveItemFunction = _moveEvents.AddItem;
             }
             else if (tmpStr == "removeitem")

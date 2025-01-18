@@ -305,15 +305,20 @@ public class MoveEvents : IMoveEvents
         if (isAdd)
         {
             eventType1 = MoveEventType.MOVE_EVENT_ADD_ITEM;
-            eventType2 = MoveEventType.MOVE_EVENT_REMOVE_ITEM;
+            eventType2 = MoveEventType.MOVE_EVENT_ADD_ITEM_ITEMTILE;
         }
         else
         {
             eventType1 = MoveEventType.MOVE_EVENT_REMOVE_ITEM;
-            eventType2 = MoveEventType.MOVE_EVENT_ADD_ITEM;
+            eventType2 = MoveEventType.MOVE_EVENT_REMOVE_ITEM_ITEMTILE;
         }
 
-        var moveEvent = GetEvent(item, eventType1);
+        var moveEvent = GetEvent(tile.Location, eventType1);
+
+        if (moveEvent is not null)
+            moveEvent.FireAddOrRemoveItem(item, tile.Location);
+
+        moveEvent = GetEvent(item, eventType1);
 
         if (moveEvent is not null)
             moveEvent.FireAddOrRemoveItem(item, tile.Location);
@@ -357,15 +362,6 @@ public class MoveEvents : IMoveEvents
             return false;
         }
 
-        //todo: impelment this
-        //var field = item.GetMagicField();
-        //if (field)
-        //{
-        //    field->onStepInField(creature);
-        //    return true;
-        //}
-
-        //return LUA_ERROR_ITEM_NOT_FOUND;
         return false;
     }
 

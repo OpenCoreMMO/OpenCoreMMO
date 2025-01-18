@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat.Structs;
+using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
+using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Common.Results;
@@ -77,8 +79,8 @@ public class Map : IMap
         var result = CylinderOperation.MoveCreature(creature, fromTile, toTile, 1, out var cylinder);
         if (result.Succeeded is false) return false;
 
-        OnCreatureMoved?.Invoke(walkableCreature, cylinder);
         walkableCreature.OnMoved(fromTile, toTile, cylinder.TileSpectators);
+        OnCreatureMoved?.Invoke(walkableCreature, cylinder);
 
         if (toTile.HasTeleport(out var teleport) && teleport.HasDestination)
         {

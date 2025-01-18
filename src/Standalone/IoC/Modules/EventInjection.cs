@@ -40,6 +40,7 @@ public static class EventInjection
         builder
             .RegisterAssemblyTypes<ICreatureEventSubscriber>(types)
             .RegisterAssemblyTypes<IItemEventSubscriber>(types)
-            .RegisterAssemblyTypes<IChatChannelEventSubscriber>(types);
+            .RegisterAssemblyTypes<IChatChannelEventSubscriber>(types)
+            .RegisterAssemblyTypes<IMapEventSubscriber>(types);
     }
 }

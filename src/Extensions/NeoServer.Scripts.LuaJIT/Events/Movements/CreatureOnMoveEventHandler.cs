@@ -1,7 +1,6 @@
 ﻿using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 
@@ -18,12 +17,9 @@ public class CreatureOnMoveEventHandler : IGameEventHandler
     }
 
     public void Execute(
-        IWalkableCreature creature,
-        Location fromLocation,
-        Location toLocation,
-        ICylinderSpectator[] spectators)
+        IWalkableCreature creature, ICylinder cylinder)
     {
-        _moveEvents.OnCreatureMove(creature, fromLocation, toLocation, MoveEventType.MOVE_EVENT_STEP_OUT);
-        _moveEvents.OnCreatureMove(creature, fromLocation, toLocation, MoveEventType.MOVE_EVENT_STEP_IN);
+        _moveEvents.OnCreatureMove(creature, cylinder.FromTile.Location, cylinder.ToTile.Location, MoveEventType.MOVE_EVENT_STEP_OUT);
+        _moveEvents.OnCreatureMove(creature, cylinder.FromTile.Location, cylinder.ToTile.Location, MoveEventType.MOVE_EVENT_STEP_IN);
     }
 }

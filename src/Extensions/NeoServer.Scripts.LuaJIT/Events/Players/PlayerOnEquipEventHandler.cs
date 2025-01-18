@@ -3,13 +3,13 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 
-namespace NeoServer.Scripts.LuaJIT.Events.MoveEvents;
+namespace NeoServer.Scripts.LuaJIT.Events.Players;
 
-public class CreatureOnEquipEventHandler : IGameEventHandler
+public class PlayerOnEquipEventHandler : IGameEventHandler
 {
     private readonly IMoveEvents _moveEvents;
 
-    public CreatureOnEquipEventHandler(
+    public PlayerOnEquipEventHandler(
         IMoveEvents creatureEvents)
     {
         _moveEvents = creatureEvents;
