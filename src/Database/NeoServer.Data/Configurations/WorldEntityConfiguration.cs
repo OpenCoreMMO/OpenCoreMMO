@@ -29,7 +29,7 @@ public class WorldEntityConfiguration : IEntityTypeConfiguration<WorldEntity>
             .HasConversion<string>()
             .HasMaxLength(50);
 
-        builder.Property(w => w.Mode)
+        builder.Property(w => w.Type)
             .HasConversion<string>()
             .HasMaxLength(50);
 

@@ -7,6 +7,7 @@ using NeoServer.Web.API.Response;
 using NeoServer.Web.API.Response.Player;
 using NeoServer.Web.API.Response.World;
 using Xunit;
+using Type = NeoServer.Data.Entities.Type;
 
 namespace NeoServer.WebApi.Tests.Tests;
 
@@ -97,7 +98,7 @@ public class WorldTests : BaseIntegrationTests
             Port = 7171,
             Region = Region.Europe,
             PvpType = PvpType.HardCore,
-            Mode = Mode.Regular,
+            Type = Type.Regular,
             RequiresPremium = true,
             TransferEnabled = true,
             AntiCheatEnabled = true,

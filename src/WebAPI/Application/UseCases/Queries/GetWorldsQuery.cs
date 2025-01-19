@@ -17,7 +17,7 @@ public class GetWorldsQuery(IMapper mapper, IWorldRepository worldRepository) : 
             (request.Name == null || item.Name.ToLower().Contains(request.Name.ToLower())) &&
             (request.Continent == null || item.Region == request.Continent) &&
             (request.PvpType == null || item.PvpType == request.PvpType) &&
-            (request.Mode == null || item.Mode == request.Mode) && 
+            (request.Type == null || item.Type == request.Type) && 
             (request.TransferEnabled == null || item.TransferEnabled == request.TransferEnabled) && 
             (request.AntiCheatEnabled == null || item.AntiCheatEnabled == request.AntiCheatEnabled) && 
             (request.RequiresPremium == null || item.RequiresPremium == request.RequiresPremium);

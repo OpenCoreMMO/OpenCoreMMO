@@ -26,7 +26,7 @@ public class CreateWorldCommand (IWorldRepository worldRepository) :  IRequestHa
             AntiCheatEnabled = request.AntiCheatEnabled,
             TransferEnabled = request.TransferEnabled,
             RequiresPremium = request.RequiresPremium,
-            Mode = request.Mode,
+            Type = request.Type,
             MaxCapacity = request.MaxCapacity,
             CreatedAt = DateTime.UtcNow,
         };

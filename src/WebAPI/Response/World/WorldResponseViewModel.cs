@@ -1,4 +1,5 @@
 ﻿using NeoServer.Data.Entities;
+using Type = NeoServer.Data.Entities.Type;
 
 namespace NeoServer.Web.API.Response.World;
 
@@ -14,7 +15,7 @@ public class WorldResponseViewModel
     
     public PvpType PvpType { get; set; }
     
-    public Mode Mode { get; set; }
+    public Type Type { get; set; }
     
     public bool RequiresPremium { get; set; }
     

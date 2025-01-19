@@ -1,6 +1,7 @@
 using MediatR;
 using NeoServer.Data.Entities;
 using NeoServer.Web.API.Response;
+using Type = NeoServer.Data.Entities.Type;
 
 namespace NeoServer.Web.API.Requests.Commands;
 
@@ -14,7 +15,7 @@ public class CreateWorldRequest : IRequest<OutputResponse>
     
     public PvpType PvpType { get; set; }
     
-    public Mode Mode { get; set; }
+    public Type Type { get; set; }
     
     public bool RequiresPremium { get; set; }
     

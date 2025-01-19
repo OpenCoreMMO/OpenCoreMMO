@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NeoServer.Data.Entities;
+using Type = NeoServer.Data.Entities.Type;
 
 namespace NeoServer.Data.Seeds;
 
@@ -18,7 +19,7 @@ public class WorldModelSeed
                 Name = Environment.GetEnvironmentVariable("SERVER_GAME_NAME") ?? "OpenCore",
                 Region = Region.SouthAmerica,
                 PvpType = PvpType.HardCore,
-                Mode = Mode.Experimental,
+                Type = Type.Experimental,
                 RequiresPremium = true,
                 TransferEnabled = false,
                 AntiCheatEnabled = true,

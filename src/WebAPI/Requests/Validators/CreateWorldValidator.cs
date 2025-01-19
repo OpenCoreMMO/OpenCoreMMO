@@ -27,8 +27,8 @@ public class CreateWorldValidator : AbstractValidator<CreateWorldRequest>
         RuleFor(x => x.PvpType)
             .IsInEnum().WithMessage("PvpType must be a valid value.");
 
-        RuleFor(x => x.Mode)
-            .IsInEnum().WithMessage("Mode must be a valid value.");
+        RuleFor(x => x.Type)
+            .IsInEnum().WithMessage("Type must be a valid value.");
 
         RuleFor(x => x.RequiresPremium)
             .NotNull().WithMessage("RequiresPremium is required.");

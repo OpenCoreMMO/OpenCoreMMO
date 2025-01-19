@@ -14,7 +14,7 @@ public class WorldEntity
     
     public PvpType PvpType { get; set; }
     
-    public Mode Mode { get; set; }
+    public Type Type { get; set; }
     
     public bool RequiresPremium { get; set; }
     
@@ -50,7 +50,7 @@ public enum PvpType
     RetroHardCore,
 }
 
-public enum Mode
+public enum Type
 {
     Regular,
     Experimental
