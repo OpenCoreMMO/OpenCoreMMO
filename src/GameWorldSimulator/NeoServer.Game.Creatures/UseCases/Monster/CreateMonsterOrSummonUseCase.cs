@@ -14,13 +14,19 @@ public class CreateMonsterOrSummonUseCase(
     IMap map,
     ICreatureGameInstance creatureGameInstance) : ICreateMonsterOrSummonUseCase
 {
-    public IMonster Execute(string name, Location location, bool extended = false, bool forced = false, ICreature master = null)
+    public IMonster Execute(string name, ISpawnPoint spawn, Location location, bool extended = false, bool forced = false, ICreature master = null)
     {
-        var monster = master is null ? creatureFactory.CreateMonster(name) : creatureFactory.CreateSummon(name, master);
+        var monster = master is null ? creatureFactory.CreateMonster(name, spawn) : creatureFactory.CreateSummon(name, master);
         if (!monster)
         {
             logger.Error("Monster {Name} does not exists.", name);
             return null;
+        }
+
+        if (spawn is not null)
+        {
+            BornMonster(monster, spawn.Location);
+            return monster;
         }
 
         var tileToBorn = map[location];

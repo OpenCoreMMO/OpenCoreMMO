@@ -58,8 +58,6 @@ public interface IMonster : IWalkableMonster, ICombatActor
     event Born OnWasBorn;
     event MonsterChangeState OnChangedState;
 
-    void Reborn();
-
     /// <summary>
     ///     Select a target to attack
     /// </summary>

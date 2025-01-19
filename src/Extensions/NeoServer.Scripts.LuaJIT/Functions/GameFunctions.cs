@@ -171,57 +171,6 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         return 1;
     }
     
-    // private static int LuaGameCreateMonster(LuaState luaState)
-    // {
-    //     // Game.createMonster(name, position, extended = false, force = false, master = nil)
-    //     var name = GetString(luaState, 1);
-    //     var position = GetPosition(luaState, 2);
-    //     var extended = GetBoolean(luaState, 3, false);
-    //     var force = GetBoolean(luaState, 4, false);
-    //     var master = (Lua.GetTop(luaState) >= 5) ? GetUserdata<ICreature>(luaState, 5) : null;
-    //     var monster = master is null ? _creatureFactory.CreateMonster(name) : _creatureFactory.CreateSummon(name, master);
-    //     if (!monster)
-    //     {
-    //         // logger.Error("Monster {Name} does not exists.", name);
-    //         Lua.PushNil(luaState);
-    //         return 1;
-    //     }
-    //
-    //     if (!monster) {
-    //         Lua.PushNil(luaState);
-    //         return 1;
-    //     }
-    //     
-    //     var tileToBorn = _map[position];
-    //     
-    //     if (tileToBorn is IDynamicTile { HasCreature: false }) {
-    //         if (tileToBorn.HasFlag(TileFlags.ProtectionZone)) {
-    //             Lua.PushNil(luaState);
-    //             return 1;
-    //         }
-    //     
-    //         monster.Born(position);
-    //     
-    //         PushUserdata(luaState, monster);
-    //         SetMetatable(luaState, -1, "Monster");
-    //     
-    //         return 1;
-    //     }
-    //     
-    //     foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
-    //         if (_map[neighbour] is IDynamicTile { HasCreature: false }) {
-    //             monster.Born(neighbour);
-    //     
-    //             PushUserdata(luaState, monster);
-    //             SetMetatable(luaState, -1, "Monster");
-    //     
-    //             return 1;
-    //         }
-    //     
-    //     Lua.PushNil(luaState);
-    //     return 1;
-    // }
-    
     private static int LuaGameCreateMonster(LuaState luaState)
     {
         // Game.createMonster(name, position, extended = false, force = false, master = nil)
@@ -230,7 +179,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         var extended = GetBoolean(luaState, 3, false);
         var force = GetBoolean(luaState, 4, false);
         var master = (Lua.GetTop(luaState) >= 5) ? GetUserdata<ICreature>(luaState, 5) : null;
-        var monster = _createMonsterOrSummonUseCase.Execute(name, position, extended, force, master);
+        var monster = _createMonsterOrSummonUseCase.Execute(name, null, position, extended, force, master);
         
         if (monster is null)
         {
@@ -243,65 +192,6 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         return 1;
     }
 
-
-    // private static int LuaGameCreateMonster(LuaState luaState) {
-    //     // Game.createMonster(monsterName, position, extended = false, force = false, master = nil)
-    //     //todo: implements force parameter
-    //
-    //     var monsterName = GetString(luaState, 1);
-    //
-    //     var position = GetPosition(luaState, 2);
-    //     var extended = GetBoolean(luaState, 3, false);
-    //     var force = GetBoolean(luaState, 4, false);
-    //
-    //     ICreature master = null;
-    //
-    //     var isSummon = false;
-    //     if (Lua.GetTop(luaState) >= 5) {
-    //         master = GetUserdata<ICreature>(luaState, 5);
-    //         if (master.IsNotNull()) isSummon = true;
-    //     }
-    //
-    //     IMonster monster = null;
-    //     if (isSummon && master != null)
-    //         monster = _creatureFactory.CreateSummon(monsterName, master);
-    //     else
-    //         monster = _creatureFactory.CreateMonster(monsterName);
-    //
-    //     if (!monster) {
-    //         Lua.PushNil(luaState);
-    //         return 1;
-    //     }
-    //
-    //     var tileToBorn = _map[position];
-    //
-    //     if (tileToBorn is IDynamicTile { HasCreature: false }) {
-    //         if (tileToBorn.HasFlag(TileFlags.ProtectionZone)) {
-    //             Lua.PushNil(luaState);
-    //             return 1;
-    //         }
-    //
-    //         monster.Born(position);
-    //
-    //         PushUserdata(luaState, monster);
-    //         SetMetatable(luaState, -1, "Monster");
-    //
-    //         return 1;
-    //     }
-    //
-    //     foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
-    //         if (_map[neighbour] is IDynamicTile { HasCreature: false }) {
-    //             monster.Born(neighbour);
-    //
-    //             PushUserdata(luaState, monster);
-    //             SetMetatable(luaState, -1, "Monster");
-    //
-    //             return 1;
-    //         }
-    //
-    //     Lua.PushNil(luaState);
-    //     return 1;
-    // }
 
     private static int LuaGameCreateNpc(LuaState luaState) {
         // Game.createNpc(npcName, position, extended = false, force = false)

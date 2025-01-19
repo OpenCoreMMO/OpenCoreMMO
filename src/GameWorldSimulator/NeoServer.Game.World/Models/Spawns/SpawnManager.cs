@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.UseCase.Monster;
 using NeoServer.Game.Common.Contracts.World;
 
 namespace NeoServer.Game.World.Models.Spawns;
@@ -9,7 +10,8 @@ public class SpawnManager(
     World world,
     IMap map,
     ICreatureGameInstance creatureGameInstance,
-    ICreatureFactory creatureFactory)
+    ICreatureFactory creatureFactory,
+    ICreateMonsterOrSummonUseCase createMonsterOrSummonUseCase)
 {
     public void Respawn()
     {
@@ -24,10 +26,7 @@ public class SpawnManager(
             }
 
             if (!creatureGameInstance.TryRemoveFromKilledMonsters(monster.CreatureId)) continue;
-            monster.Reborn();
-            creatureGameInstance.Add(monster);
-            map.PlaceCreature(monster);
-            // TODO: NTN - create RespawnMonsterUseCase?
+            createMonsterOrSummonUseCase.Execute(monster.Name, monster.Spawn);
         }
     }
 
@@ -45,13 +44,7 @@ public class SpawnManager(
 
         foreach (var monsterToSpawn in monsters)
         {
-            var monster = creatureFactory.CreateMonster(monsterToSpawn.Name, monsterToSpawn.Spawn); // TODO: NTN - create SpawnMonsterUseCase?
-
-            if (monster is null) continue;
-            
-            monster.Born(monsterToSpawn.Spawn.Location);
-            creatureGameInstance.Add(monster);
-            map.PlaceCreature(monster);
+            createMonsterOrSummonUseCase.Execute(monsterToSpawn.Name, monsterToSpawn.Spawn);
         }
 
         foreach (var npcToSpawn in npcs)

@@ -97,12 +97,6 @@ public class Monster : WalkableMonster, IMonster
         OnWasBorn?.Invoke(this, location);
     }
 
-    public void Reborn()
-    {
-        if (Spawn is null) return;
-        Born(Spawn.Location);
-    }
-
     public override int DefendUsingShield(int attack)
     {
         return MonsterDefend.DefendUsingShield(this, attack);
