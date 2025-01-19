@@ -3,6 +3,7 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Services;
+using NeoServer.Game.Common.Contracts.UseCase;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Helpers;
@@ -27,6 +28,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
     private static IGameCreatureManager _gameCreatureManager;
     private static ServerConfiguration _serverConfiguration;
     private static IStaticToDynamicTileService _staticToDynamicTileService;
+    private static ICreateMonsterOrSummonUseCase _createMonsterOrSummonUseCase;
 
     public GameFunctions(
         ILuaEnvironment luaEnvironment,
@@ -37,7 +39,9 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         ICreatureFactory creatureFactory,
         IGameCreatureManager gameCreatureManager,
         ServerConfiguration serverConfiguration,
-        IStaticToDynamicTileService staticToDynamicTileService) : base(nameof(GameFunctions)) {
+        IStaticToDynamicTileService staticToDynamicTileService,
+        ICreateMonsterOrSummonUseCase createMonsterOrSummonUseCase
+        ) : base(nameof(GameFunctions)) {
         _luaEnvironment = luaEnvironment;
         _scripts = scripts;
         _itemTypeStore = itemTypeStore;
@@ -47,6 +51,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         _gameCreatureManager = gameCreatureManager;
         _serverConfiguration = serverConfiguration;
         _staticToDynamicTileService = staticToDynamicTileService;
+        _createMonsterOrSummonUseCase = createMonsterOrSummonUseCase;
     }
 
     public void Init(LuaState luaState) {
@@ -175,78 +180,129 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
     //     var extended = GetBoolean(luaState, 3, false);
     //     var force = GetBoolean(luaState, 4, false);
     //     var master = (Lua.GetTop(luaState) >= 5) ? GetUserdata<ICreature>(luaState, 5) : null;
-    //     var monster = _createMonsterOrSummonUseCase.Invoke(name, position, extended, force, master);
-    //     
-    //     if (monster is null)
+    //     var monster = master is null ? _creatureFactory.CreateMonster(name) : _creatureFactory.CreateSummon(name, master);
+    //     if (!monster)
     //     {
+    //         // logger.Error("Monster {Name} does not exists.", name);
+    //         Lua.PushNil(luaState);
+    //         return 1;
+    //     }
+    //
+    //     if (!monster) {
     //         Lua.PushNil(luaState);
     //         return 1;
     //     }
     //     
-    //     PushUserdata(luaState, monster);
-    //     SetMetatable(luaState, -1, "Monster");
+    //     var tileToBorn = _map[position];
+    //     
+    //     if (tileToBorn is IDynamicTile { HasCreature: false }) {
+    //         if (tileToBorn.HasFlag(TileFlags.ProtectionZone)) {
+    //             Lua.PushNil(luaState);
+    //             return 1;
+    //         }
+    //     
+    //         monster.Born(position);
+    //     
+    //         PushUserdata(luaState, monster);
+    //         SetMetatable(luaState, -1, "Monster");
+    //     
+    //         return 1;
+    //     }
+    //     
+    //     foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
+    //         if (_map[neighbour] is IDynamicTile { HasCreature: false }) {
+    //             monster.Born(neighbour);
+    //     
+    //             PushUserdata(luaState, monster);
+    //             SetMetatable(luaState, -1, "Monster");
+    //     
+    //             return 1;
+    //         }
+    //     
+    //     Lua.PushNil(luaState);
     //     return 1;
     // }
-
-
-    private static int LuaGameCreateMonster(LuaState luaState) {
-        // Game.createMonster(monsterName, position, extended = false, force = false, master = nil)
-        //todo: implements force parameter
-
-        var monsterName = GetString(luaState, 1);
-
+    
+    private static int LuaGameCreateMonster(LuaState luaState)
+    {
+        // Game.createMonster(name, position, extended = false, force = false, master = nil)
+        var name = GetString(luaState, 1);
         var position = GetPosition(luaState, 2);
         var extended = GetBoolean(luaState, 3, false);
         var force = GetBoolean(luaState, 4, false);
-
-        ICreature master = null;
-
-        var isSummon = false;
-        if (Lua.GetTop(luaState) >= 5) {
-            master = GetUserdata<ICreature>(luaState, 5);
-            if (master.IsNotNull()) isSummon = true;
-        }
-
-        IMonster monster = null;
-        if (isSummon && master != null)
-            monster = _creatureFactory.CreateSummon(monsterName, master);
-        else
-            monster = _creatureFactory.CreateMonster(monsterName);
-
-        if (!monster) {
+        var master = (Lua.GetTop(luaState) >= 5) ? GetUserdata<ICreature>(luaState, 5) : null;
+        var monster = _createMonsterOrSummonUseCase.Invoke(name, position, extended, force, master);
+        
+        if (monster is null)
+        {
             Lua.PushNil(luaState);
             return 1;
         }
-
-        var tileToBorn = _map[position];
-
-        if (tileToBorn is IDynamicTile { HasCreature: false }) {
-            if (tileToBorn.HasFlag(TileFlags.ProtectionZone)) {
-                Lua.PushNil(luaState);
-                return 1;
-            }
-
-            monster.Born(position);
-
-            PushUserdata(luaState, monster);
-            SetMetatable(luaState, -1, "Monster");
-
-            return 1;
-        }
-
-        foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
-            if (_map[neighbour] is IDynamicTile { HasCreature: false }) {
-                monster.Born(neighbour);
-
-                PushUserdata(luaState, monster);
-                SetMetatable(luaState, -1, "Monster");
-
-                return 1;
-            }
-
-        Lua.PushNil(luaState);
+        
+        PushUserdata(luaState, monster);
+        SetMetatable(luaState, -1, "Monster");
         return 1;
     }
+
+
+    // private static int LuaGameCreateMonster(LuaState luaState) {
+    //     // Game.createMonster(monsterName, position, extended = false, force = false, master = nil)
+    //     //todo: implements force parameter
+    //
+    //     var monsterName = GetString(luaState, 1);
+    //
+    //     var position = GetPosition(luaState, 2);
+    //     var extended = GetBoolean(luaState, 3, false);
+    //     var force = GetBoolean(luaState, 4, false);
+    //
+    //     ICreature master = null;
+    //
+    //     var isSummon = false;
+    //     if (Lua.GetTop(luaState) >= 5) {
+    //         master = GetUserdata<ICreature>(luaState, 5);
+    //         if (master.IsNotNull()) isSummon = true;
+    //     }
+    //
+    //     IMonster monster = null;
+    //     if (isSummon && master != null)
+    //         monster = _creatureFactory.CreateSummon(monsterName, master);
+    //     else
+    //         monster = _creatureFactory.CreateMonster(monsterName);
+    //
+    //     if (!monster) {
+    //         Lua.PushNil(luaState);
+    //         return 1;
+    //     }
+    //
+    //     var tileToBorn = _map[position];
+    //
+    //     if (tileToBorn is IDynamicTile { HasCreature: false }) {
+    //         if (tileToBorn.HasFlag(TileFlags.ProtectionZone)) {
+    //             Lua.PushNil(luaState);
+    //             return 1;
+    //         }
+    //
+    //         monster.Born(position);
+    //
+    //         PushUserdata(luaState, monster);
+    //         SetMetatable(luaState, -1, "Monster");
+    //
+    //         return 1;
+    //     }
+    //
+    //     foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
+    //         if (_map[neighbour] is IDynamicTile { HasCreature: false }) {
+    //             monster.Born(neighbour);
+    //
+    //             PushUserdata(luaState, monster);
+    //             SetMetatable(luaState, -1, "Monster");
+    //
+    //             return 1;
+    //         }
+    //
+    //     Lua.PushNil(luaState);
+    //     return 1;
+    // }
 
     private static int LuaGameCreateNpc(LuaState luaState) {
         // Game.createNpc(npcName, position, extended = false, force = false)

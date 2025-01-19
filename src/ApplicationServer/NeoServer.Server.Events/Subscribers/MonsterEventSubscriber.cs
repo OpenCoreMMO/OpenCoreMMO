@@ -11,7 +11,7 @@ public class MonsterEventSubscriber(
     {
         if (creature is not IMonster monster) return;
 
-        monster.OnAttackEnemy += creatureAttackEventHandler.Execute;
+        monster.OnAttackEnemy += creatureAttackEventHandler.Execute; // TODO: NTN - Create a use case
     }
 
     public void Unsubscribe(ICreature creature)

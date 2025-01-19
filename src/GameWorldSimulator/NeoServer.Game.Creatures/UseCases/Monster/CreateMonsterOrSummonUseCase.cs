@@ -36,12 +36,11 @@ public class CreateMonsterOrSummonUseCase(
         }
 
         foreach (var neighbour in extended ? location.ExtendedNeighbours : location.Neighbours)
-        {
-            if (map[neighbour] is not IDynamicTile { HasCreature: false }) continue;
-
-            BornMonster(monster, location);
-            return monster;
-        }
+            if (map[neighbour] is IDynamicTile { HasCreature: false })
+            {
+                BornMonster(monster, neighbour);
+                return monster;
+            }
 
         if (!forced) return null;
         BornMonster(monster, location);
