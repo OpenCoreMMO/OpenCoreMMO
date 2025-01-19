@@ -3,10 +3,9 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Services;
-using NeoServer.Game.Common.Contracts.UseCase;
+using NeoServer.Game.Common.Contracts.UseCase.Monster;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
@@ -231,7 +230,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         var extended = GetBoolean(luaState, 3, false);
         var force = GetBoolean(luaState, 4, false);
         var master = (Lua.GetTop(luaState) >= 5) ? GetUserdata<ICreature>(luaState, 5) : null;
-        var monster = _createMonsterOrSummonUseCase.Invoke(name, position, extended, force, master);
+        var monster = _createMonsterOrSummonUseCase.Execute(name, position, extended, force, master);
         
         if (monster is null)
         {

@@ -1,5 +1,5 @@
 using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.UseCase;
+using NeoServer.Game.Common.Contracts.UseCase.Monster;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Location;
@@ -14,7 +14,7 @@ public class CreateMonsterOrSummonUseCase(
     IMap map,
     ICreatureGameInstance creatureGameInstance) : ICreateMonsterOrSummonUseCase
 {
-    public IMonster Invoke(string name, Location location, bool extended = false, bool forced = false, ICreature master = null)
+    public IMonster Execute(string name, Location location, bool extended = false, bool forced = false, ICreature master = null)
     {
         var monster = master is null ? creatureFactory.CreateMonster(name) : creatureFactory.CreateSummon(name, master);
         if (!monster)
