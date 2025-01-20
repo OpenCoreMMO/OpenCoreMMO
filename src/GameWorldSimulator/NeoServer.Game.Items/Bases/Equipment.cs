@@ -119,7 +119,6 @@ public abstract class Equipment : BaseItem, IEquipment
         AddSkillBonus(player);
         StartDecay();
         OnDressed?.Invoke(this);
-        player.OnDressedItem(this);
     }
 
     public void UndressFrom(IPlayer player)
@@ -134,7 +133,7 @@ public abstract class Equipment : BaseItem, IEquipment
         PlayerDressing = null;
         PauseDecay();
         OnUndressed?.Invoke(this);
-        player.OnUndressedItem(this);
+        //player.OnUndressedItem(this);
     }
 
     #endregion

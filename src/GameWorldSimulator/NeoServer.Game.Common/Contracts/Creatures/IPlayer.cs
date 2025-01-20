@@ -61,9 +61,9 @@ public delegate void ReadText(IPlayer player, IReadable readable, string text);
 
 public delegate void WroteText(IPlayer player, IReadable readable, string text);
 
-public delegate void EquipItem(IPlayer player, IItem item, bool isCheck);
+//public delegate void EquipItem(IPlayer player, IItem item, bool isCheck);
 
-public delegate void DeEquipItem(IPlayer player, IItem item, bool isCheck);
+//public delegate void DeEquipItem(IPlayer player, IItem item, bool isCheck);
 
 public interface IPlayer : ICombatActor, ISociableCreature
 {
@@ -89,8 +89,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
-    public event EquipItem OnEquipItem;
-    public event DeEquipItem OnDeEquipItem;
 
     #endregion
 
@@ -283,6 +281,4 @@ public interface IPlayer : ICombatActor, ISociableCreature
 
     void AddRegenerationBonus(RegenerationBonus regenerationBonus);
     void RemoveRegenerationBonus(RegenerationBonus regenerationBonus);
-    void OnDressedItem(IItem item);
-    void OnUndressedItem(IItem item);
 }

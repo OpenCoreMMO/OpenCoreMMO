@@ -1,7 +1,7 @@
 ## Revscript support using native LuaJIT
 Simple documentation with all scripts and functions developed using LuaJIT to working with Revscript TFS and Canary retrocompatibility.
 
-### Implemented Scripts (44)
+### Implemented Scripts (43)
 
 **Actions (15)**
 
@@ -65,11 +65,10 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - text_edit.lua
 - extended_opcode.lua
 
-**Move Events Scripts (5)**
+**Move Events Scripts (4)**
 
 - decay.lua
 - dough.lua
-- haste.lua
 - snow.lua
 - yellow_pillow.lua
 
@@ -84,7 +83,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (22) and Functions (179)
+### Tables (22) and Functions (176)
 
 **Action (7)**
 
@@ -238,14 +237,13 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - Monster(id or userdata)
 - monster:isMonster()
 
-**MoveEvent (19)**
+**MoveEvent (17)**
 
 - MoveEvent()
 - moveEvent:type(callback)
 - moveEvent:register()
 - moveEvent:level(level)
 - moveEvent:magicLevel(magicLevel)
-- moveEvent:slot(slot)
 - moveEvent:id(ids)
 - moveEvent:idRange(fromId, toId)
 - moveEvent:aid(ids)
@@ -253,8 +251,6 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - moveEvent:position(positions)
 - moveEvent:premium(bool)
 - moveEvent:vocation(vocName, showInDescription = false, lastVoc = false)
-- moveEvent:onEquip(callback)
-- moveEvent:onDeEquip(callback)
 - moveEvent:onStepIn(callback)
 - moveEvent:onStepOut(callback)
 - moveEvent:onAddItem(callback)

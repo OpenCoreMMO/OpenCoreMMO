@@ -19,9 +19,6 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
     private readonly PlayerOnAdvanceEventHandler _playerOnAdvanceEventHandler;
     private readonly PlayerOnTextEditEventHandler _playerOnTextEditEventHandler;
 
-    private readonly PlayerOnEquipEventHandler _creatureOnEquipEventHandler;
-    private readonly PlayerOnDeEquipEventHandler _creatureOnDeEquipEventHandler;
-
     public CreatureEventsSubscriber(
         CreatureOnDeathEventHandler creatureOnDeathEventHandler,
         CreatureOnThinkEventHandler creatureOnThinkEventHandler,
@@ -32,9 +29,7 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
         PlayerOnLoginEventHandler playerOnLoginEventHandler,
         PlayerOnLogoutEventHandler playerOnLogoutEventHandler,
         PlayerOnAdvanceEventHandler playerOnAdvanceEventHandler,
-        PlayerOnTextEditEventHandler playerOnTextEditEventHandler,
-        PlayerOnEquipEventHandler creatureOnEquipEventHandler,
-        PlayerOnDeEquipEventHandler creatureOnDeEquipEventHandler)
+        PlayerOnTextEditEventHandler playerOnTextEditEventHandler)
     {
         _creatureOnDeathEventHandler = creatureOnDeathEventHandler;
         _creatureOnThinkEventHandler = creatureOnThinkEventHandler;
@@ -47,9 +42,6 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
         _playerOnLogoutEventHandler = playerOnLogoutEventHandler;
         _playerOnAdvanceEventHandler = playerOnAdvanceEventHandler;
         _playerOnTextEditEventHandler = playerOnTextEditEventHandler;
-
-        _creatureOnEquipEventHandler = creatureOnEquipEventHandler;
-        _creatureOnDeEquipEventHandler = creatureOnDeEquipEventHandler;
     }
 
     public void Subscribe(ICreature creature)
@@ -72,8 +64,6 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
             player.OnLevelAdvanced += _playerOnAdvanceEventHandler.Execute;
             player.OnWroteText += _playerOnTextEditEventHandler.Execute;
 
-            player.OnEquipItem += _creatureOnEquipEventHandler.Execute;
-            player.OnDeEquipItem += _creatureOnDeEquipEventHandler.Execute;
         }
     }
 
@@ -96,9 +86,6 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
             player.OnLoggedOut -= _playerOnLogoutEventHandler.Execute;
             player.OnLevelAdvanced -= _playerOnAdvanceEventHandler.Execute;
             player.OnWroteText -= _playerOnTextEditEventHandler.Execute;
-
-            player.OnEquipItem -= _creatureOnEquipEventHandler.Execute;
-            player.OnDeEquipItem -= _creatureOnDeEquipEventHandler.Execute;
         }
     }
 }

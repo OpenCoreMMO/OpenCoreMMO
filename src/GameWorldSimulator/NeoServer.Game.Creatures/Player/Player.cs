@@ -1199,20 +1199,6 @@ public class Player : CombatActor, IPlayer
 
     #endregion
 
-    #region Equip/DeEquip
-
-    public void OnDressedItem(IItem item)
-    {
-        OnEquipItem?.Invoke(this, item, true);
-    }
-
-    public void OnUndressedItem(IItem item)
-    {
-        OnDeEquipItem?.Invoke(this, item, true);
-    }
-
-    #endregion
-
     #region Events
 
     public event PlayerLevelAdvance OnLevelAdvanced;
@@ -1235,8 +1221,6 @@ public class Player : CombatActor, IPlayer
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
-    public event EquipItem OnEquipItem;
-    public event DeEquipItem OnDeEquipItem;
 
     #endregion
 }
