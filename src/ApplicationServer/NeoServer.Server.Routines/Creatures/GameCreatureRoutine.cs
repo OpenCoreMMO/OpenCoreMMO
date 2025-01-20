@@ -36,15 +36,13 @@ public class GameCreatureRoutine
         foreach (var creature in _game.CreatureManager.GetCreatures())
         {
             if (creature is null or ICombatActor { IsDead: true }) continue;
+            if (!creature.IsThinking()) continue;
 
             creature.Think(EVENT_CREATURE_THINK_INTERVAL);
 
             CheckPlayer(creature);
-
             CheckCreature(creature);
-
             CheckMonster(creature);
-
             CheckNpc(creature);
 
             RespawnRoutine.Execute(_spawnManager);
@@ -53,6 +51,7 @@ public class GameCreatureRoutine
 
     private static void CheckCreature(ICreature creature)
     {
+        
         if (creature is ICombatActor combatActor) CreatureConditionRoutine.Execute(combatActor);
     }
 

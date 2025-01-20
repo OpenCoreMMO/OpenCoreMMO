@@ -21,7 +21,7 @@ public class SummonService : ISummonService
         _logger = logger;
     }
 
-    public IMonster Summon(IMonster master, string summonName)
+    public IMonster Summon(ICreature master, string summonName)
     {
         if (_creatureFactory.CreateSummon(summonName, master) is not Summon summon)
         {
