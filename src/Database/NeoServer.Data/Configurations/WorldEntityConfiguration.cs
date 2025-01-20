@@ -15,6 +15,23 @@ public class WorldEntityConfiguration : IEntityTypeConfiguration<WorldEntity>
         builder.Property(e => e.Name).IsRequired();
         builder.Property(e => e.Ip).IsRequired();
         builder.Property(e => e.Port).IsRequired();
+        builder.Property(e => e.MaxCapacity).HasDefaultValue(100).IsRequired();
+        builder.Property(w => w.RequiresPremium).IsRequired();
+        builder.Property(w => w.TransferEnabled).IsRequired();
+        builder.Property(w => w.AntiCheatEnabled).IsRequired();
+        builder.Property(w => w.CreatedAt).IsRequired();
+
+        builder.Property(w => w.Region)
+            .HasConversion<string>()
+            .HasMaxLength(50);
+
+        builder.Property(w => w.PvpType)
+            .HasConversion<string>()
+            .HasMaxLength(50);
+
+        builder.Property(w => w.Type)
+            .HasConversion<string>()
+            .HasMaxLength(50);
 
         WorldModelSeed.Seed(builder);
     }

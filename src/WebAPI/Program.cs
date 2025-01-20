@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using Microsoft.OpenApi.Models;
 using NeoServer.Shared.IoC.Modules;
@@ -6,7 +7,9 @@ using NeoServer.Web.API.HttpFilters;
 using NeoServer.Web.API.IoC.Modules;
 using NeoServer.Web.API.Middlewares;
 using NeoServer.Web.API.Requests.Validators;
+using NeoServer.Web.API.Swagger.SchemaFilters;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Swashbuckle.AspNetCore.JsonMultipartFormDataSupport.Extensions;
 using Swashbuckle.AspNetCore.JsonMultipartFormDataSupport.Integrations;
 
@@ -47,6 +50,7 @@ services.Configure<ForwardedHeadersOptions>(options =>
 
 services.AddSwaggerGen(c =>
 {
+    c.SchemaFilter<EnumSchemaFilter>();
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "NeoServer.API", Version = "v1" });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
