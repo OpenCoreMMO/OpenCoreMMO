@@ -7,7 +7,6 @@ using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Contracts.Services;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -41,23 +40,17 @@ public class MoveEvents : IMoveEvents
     private readonly ILogger _logger;
     private readonly IItemTypeStore _itemTypeStore;
     private readonly IMap _map;
-    private readonly IItemRequirementService _itemRequirementService;
-    private readonly IItemAbilityApplierService _itemAbilityApplierService;
 
     #region Constructors
 
     public MoveEvents(
         ILogger logger,
         IItemTypeStore itemTypeStore,
-        IItemRequirementService itemRequirementService,
-        IItemAbilityApplierService itemAbilityApplierService,
         IMap map)
     {
         _logger = logger;
         _itemTypeStore = itemTypeStore;
         _map = map;
-        _itemRequirementService = itemRequirementService;
-        _itemAbilityApplierService = itemAbilityApplierService;
     }
 
     #endregion
