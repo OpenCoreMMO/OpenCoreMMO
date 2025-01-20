@@ -159,7 +159,7 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         var moveEvent = GetUserdata<MoveEvent>(L, 1);
         if (moveEvent != null)
         {
-            moveEvent.RequiredMinLevel = GetNumber<uint>(L, 2);
+            moveEvent.RequiredMinLevel = GetNumber<ushort>(L, 2);
             moveEvent.WieldInfo = WieldInfoType.WIELDINFO_LEVEL;
             PushBoolean(L, true);
         }
@@ -176,7 +176,7 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         var moveEvent = GetUserdata<MoveEvent>(L, 1);
         if (moveEvent != null)
         {
-            moveEvent.RequiredMinMagicLevel = GetNumber<uint>(L, 2);
+            moveEvent.RequiredMinMagicLevel = GetNumber<ushort>(L, 2);
             moveEvent.WieldInfo = WieldInfoType.WIELDINFO_MAGLV;
             PushBoolean(L, true);
         }
