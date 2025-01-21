@@ -61,10 +61,6 @@ public delegate void ReadText(IPlayer player, IReadable readable, string text);
 
 public delegate void WroteText(IPlayer player, IReadable readable, string text);
 
-//public delegate void EquipItem(IPlayer player, IItem item, bool isCheck);
-
-//public delegate void DeEquipItem(IPlayer player, IItem item, bool isCheck);
-
 public interface IPlayer : ICombatActor, ISociableCreature
 {
     #region Events
