@@ -11,7 +11,6 @@ namespace NeoServer.Server.Commands.Movements.ToInventory;
 public sealed class MapToInventoryMovementOperation
 {
     private readonly IItemMovementService _itemMovementService;
-    //private readonly IItemMovementService _itemMovementService;
 
     public MapToInventoryMovementOperation(IItemMovementService itemMovementService)
     {
