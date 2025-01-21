@@ -4,5 +4,5 @@ function exampleThink.onThink(interval)
 	return true
 end
 
-exampleThink:interval(10000 * 60) -- 10 minutes interval
+exampleThink:interval(10000) -- 10 minutes interval
 exampleThink:register()

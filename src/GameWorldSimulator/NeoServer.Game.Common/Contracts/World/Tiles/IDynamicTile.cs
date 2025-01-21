@@ -25,8 +25,6 @@ public interface IDynamicTile : ITile, IHasItem
     bool HasHole { get; }
     List<IPlayer> Players { get; }
     Func<ICreature, bool> CanEnterFunction { get; set; }
-    IItem[] AllItems { get; }
-    int ItemsCount { get; }
     bool HasTeleport(out ITeleport teleport);
 
     byte[] GetRaw(IPlayer playerRequesting = null);

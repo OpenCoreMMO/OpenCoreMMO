@@ -85,12 +85,12 @@ public interface IPlayer : ICombatActor, ISociableCreature
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
-    
+
     #endregion
 
     ushort Level { get; }
-
     byte LevelPercent { get; }
+    ushort MagicLevel { get; }
 
     uint Experience { get; }
     byte SoulPoints { get; }

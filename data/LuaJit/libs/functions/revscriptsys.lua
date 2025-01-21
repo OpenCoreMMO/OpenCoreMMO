@@ -160,6 +160,30 @@ do
 	rawgetmetatable("CreatureEvent").__newindex = CreatureEventNewIndex
 end
 
+-- MoveEvent revscriptsys
+do
+	local function MoveEventNewIndex(self, key, value)
+		if key == "onAddItem" then
+			self:type("additem")
+			self:onAddItem(value)
+			return
+		elseif key == "onRemoveItem" then
+			self:type("removeitem")
+			self:onRemoveItem(value)
+			return
+		elseif key == "onStepIn" then
+			self:type("stepin")
+			self:onStepIn(value)
+			return
+		elseif key == "onStepOut" then
+			self:type("stepout")
+			self:onStepOut(value)
+			return
+		end
+		rawset(self, key, value)
+	end
+	rawgetmetatable("MoveEvent").__newindex = MoveEventNewIndex
+end
 
 -- -- GlobalEvent revscriptsys
 do

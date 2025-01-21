@@ -21,6 +21,7 @@ public class Scripts : IScripts
     private readonly IActions _actions;
     private readonly ICreatureEvents _creatureEvents;
     private readonly IGlobalEvents _globalEvents;
+    private readonly IMoveEvents _moveEvents;
 
     /// <summary>
     ///     A reference to the talk actions instance in use.
@@ -42,7 +43,8 @@ public class Scripts : IScripts
         ITalkActions talkActions,
         IActions actions,
         ICreatureEvents creatureEvents,
-        IGlobalEvents globalEvents)
+        IGlobalEvents globalEvents,
+        IMoveEvents moveEvents)
     {
         //_instance = this;
 
@@ -51,6 +53,7 @@ public class Scripts : IScripts
         _actions = actions;
         _creatureEvents = creatureEvents;
         _globalEvents = globalEvents;
+        _moveEvents = moveEvents;
         _talkActions = talkActions;
 
         _scriptInterface = new LuaScriptInterface("Scripts Interface");
@@ -62,6 +65,7 @@ public class Scripts : IScripts
         _actions.Clear();
         _creatureEvents.Clear();
         _globalEvents.Clear();
+        _moveEvents.Clear();
         _talkActions.Clear();
     }
 

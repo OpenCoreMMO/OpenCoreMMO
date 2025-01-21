@@ -31,7 +31,6 @@ using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
 using NeoServer.Game.Creatures.Models;
 using NeoServer.Game.Creatures.Models.Bases;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace NeoServer.Game.Creatures.Player;
 
@@ -163,7 +162,7 @@ public class Player : CombatActor, IPlayer
     public IPlayerParty PlayerParty { get; set; }
     public ulong BankAmount { get; private set; }
 
-    public List<RegenerationBonus> RegenerationBonusList { get; private set; }
+    public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
 
     public ulong GetTotalMoney(ICoinTypeStore coinTypeStore)
     {
@@ -183,6 +182,7 @@ public class Player : CombatActor, IPlayer
     public ChaseMode ChaseMode { get; private set; }
     public uint TotalCapacity { get; private set; }
     public ushort Level => (ushort)(Skills.TryGetValue(SkillType.Level, out var level) ? level?.Level ?? 1 : 1);
+    public ushort MagicLevel => (ushort)(Skills.TryGetValue(SkillType.Magic, out var level) ? level?.Level ?? 1 : 1);
     public ushort Mana { get; private set; }
     public ushort MaxMana { get; private set; }
     public FightMode FightMode { get; private set; }

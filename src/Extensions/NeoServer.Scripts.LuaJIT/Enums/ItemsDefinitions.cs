@@ -377,24 +377,6 @@ public enum ContainerCategoryType : byte
     Windows
 }
 
-public enum SlotPositionBits : uint
-{
-    SLOTP_WHEREEVER = 0xFFFFFFFF,
-    SLOTP_HEAD = 1 << 0,
-    SLOTP_NECKLACE = 1 << 1,
-    SLOTP_BACKPACK = 1 << 2,
-    SLOTP_ARMOR = 1 << 3,
-    SLOTP_RIGHT = 1 << 4,
-    SLOTP_LEFT = 1 << 5,
-    SLOTP_LEGS = 1 << 6,
-    SLOTP_FEET = 1 << 7,
-    SLOTP_RING = 1 << 8,
-    SLOTP_AMMO = 1 << 9,
-    SLOTP_DEPOT = 1 << 10,
-    SLOTPTypeWO_HAND = 1 << 11,
-    SLOTP_HAND = SLOTP_LEFT | SLOTP_RIGHT
-}
-
 public enum TileFlagsType : uint
 {
     TILESTATE_NONE = 0,

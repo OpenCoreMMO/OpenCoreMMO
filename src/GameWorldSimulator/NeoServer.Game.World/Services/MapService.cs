@@ -14,7 +14,6 @@ public class MapService : IMapService
     public MapService(IMap map)
     {
         this.map = map;
-        Instance = this;
     }
 
     public static IMapService Instance { get; private set; }

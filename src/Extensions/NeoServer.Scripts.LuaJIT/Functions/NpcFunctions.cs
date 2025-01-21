@@ -19,6 +19,7 @@ public class NpcFunctions : LuaScriptInterface, INpcFunctions
     {
         RegisterSharedClass(luaState, "Npc", "Creature", LuaNpcCreate);
         RegisterMetaMethod(luaState, "Npc", "__eq", LuaUserdataCompare<INpc>);
+        RegisterMethod(luaState, "Npc", "isNpc", LuaNpcIsNpc);
     }
 
     private static int LuaNpcCreate(LuaState luaState)
@@ -65,6 +66,13 @@ public class NpcFunctions : LuaScriptInterface, INpcFunctions
             Lua.PushNil(luaState);
         }
 
+        return 1;
+    }
+
+    private static int LuaNpcIsNpc(LuaState luaState)
+    {
+        // npc:isNpc()
+        Lua.PushBoolean(luaState, GetUserdata<INpc>(luaState, 1) is not null);
         return 1;
     }
 }

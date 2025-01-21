@@ -32,7 +32,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 
         RegisterMethod(luaState, "Creature", "isCreature", LuaCreatureIsCreature);
         RegisterMethod(luaState, "Creature", "isInGhostMode", LuaCreatureIsInGhostMode);
-        RegisterMethod(luaState, "Creature", "getId", LuaGetId);
+        RegisterMethod(luaState, "Creature", "getId", LuaCreatureGetId);
         RegisterMethod(luaState, "Creature", "getName", LuaCreatureGetName);
         RegisterMethod(luaState, "Creature", "getPosition", LuaCreatureGetPosition);
         RegisterMethod(luaState, "Creature", "getDirection", LuaCreatureGetDirection);
@@ -179,7 +179,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         return 1;
     }
 
-    private static int LuaGetId(LuaState luaState)
+    private static int LuaCreatureGetId(LuaState luaState)
     {
         // creature:getId()
         var creature = GetUserdata<ICreature>(luaState, 1);
