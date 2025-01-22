@@ -83,7 +83,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (22) and Functions (176)
+### Tables (22) and Functions (223)
 
 **Action (7)**
 
@@ -95,6 +95,10 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - action:uid(ids)
 - action:allowFarUse(bool)
 
+**Condition (1)**
+
+- Condition(conditionType, conditionId = CONDITIONID_COMBAT, subid = 0, isPersistent = false)
+
 **ConfigManager (4)**
 
 - configManager:getString(type)
@@ -102,20 +106,29 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - configManager:getBoolean(type)
 - configManager:getFloat(type)
 
-**Creature (12)**
+**Creature (22)**
 
-- Creature(id or name or userdata)
+- Creature(id or name or userdata)- creature:getEvents(type)
+- creature:registerEvent(name)
+- creature:unregisterEvent(name)
+- creature:isCreature()
+- creature:isInGhostMode()
 - creature:getId()
 - creature:getName()
 - creature:getPosition()
 - creature:getDirection()
-- creature:isCreature()
-- creature:isInGhostMode()
-- creature:getEvents(type)
-- creature:registerEvent(name)
-- creature:unregisterEvent(name)
-- creature:getSummons()
+- creature:getHealth()
+- creature:setHealth(health)
+- creature:addHealth(healthChange, combatType)
+- creature:getMaxHealth()
+- creature:setMaxHealth(maxHealth)
+- creature:setHiddenHealth(hide)
+- creature:getCondition(conditionType, conditionId = CONDITIONID_COMBAT, subId = 0)
+- creature:addCondition(conditionType)
+- creature:hasCondition(conditionType)
+- creature:removeCondition(conditionType)
 - creature:say(text, type)
+- creature:getSummons()
 
 **CreatureEvent (15)**
 
@@ -150,21 +163,24 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - db.escapeString(value)
 - db.tableExists(name)
 
-**Game (6)**
+**Game (7)**
 
 - Game.getReturnMessage(value)
 - Game.createItem(itemId or name, count, position)
 - Game.createMonster(monsterName, position, extended = false, force = false, master = nil)
 - Game.createNpc(monsterName, position, extended = false, force = false)
+- Game.createNpctype(name)
 - Game.reload(reloadType)
 - Game.getPlayers()
 
-**Global (4)**
+**Global (6)**
 
 - rawgetmetatable(metatableName)
 - addEvent(callback, delay, ...)
 - stopEvent(eventid)
 - sendChannelMessage(channelId, type, message)
+- getWorldTime()
+- getWorldLight()
 
 **GlobalEvent (12)**
 
@@ -256,23 +272,61 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - moveEvent:onAddItem(callback)
 - moveEvent:onRemoveItem(callback)
 
-**Npc (2)**
+**Npc (10)**
 
 - Npc(id or userdata)
 - npc:isNpc()
+- npc:setPlayerInteraction(player, topic = 0)
+- npc:removePlayerInteraction()
+- npc:isInteractingWithPlayer(player)
+- npc:isInTalkRange(position, range = 4)
+- npc:isPlayerInteractingOnTopic(player, topicId = 0)
+- npc:openShopWindow(player)
+- npc:closeShopWindow(player)
+- npc:isMerchant()
 
-**Player (17)**
+**NpcType (23)**
+
+- NpcType(name)
+- npcType:registerEvent(name)
+
+- npcType:onThink(callback)
+- npcType:onAppear(callback)
+- npcType:onDisappear(callback)
+- npcType:onMove(callback)
+- npcType:onSay(callback)
+- npcType:onCloseChannel(callback)
+- npcType:onBuyItem(callback)
+- npcType:onSellItem(callback)
+- npcType:onCheckItem(callback)
+
+- npcType:eventType(event)
+- get: npcType:name() set: npcType:name(name)
+- get: npcType:nameDescription() set: npcType:nameDescription(description)
+- get: npcType:health() set: npcType:health(health)
+- get: npcType:maxHealth() set: npcType:maxHealth(health)
+- npcType:getVoices()
+- npcType:addVoices(interval, chance, [yell, sentence])
+- get: npcType:outfit() set: npcType:outfit(outfit)
+- get: npcType:baseSpeed() set: npcType:baseSpeed(speed)
+- get: npcType:walkInterval() set: npcType:walkInterval(interval)
+- get: npcType:walkRadius() set: npcType:walkRadius(id)
+- npcType:addShopItem(itemId, buyPrice, sellPrice)
+
+**Player (19)**
 
 - Player(id or guid or name or userdata)
 - player:teleportTo(position, pushMovement = false)
 - player:getFreeCapacity()
-- player:getStorageValue(key)
-- player:setStorageValue(key, value)
 - player:getSkillLevel(skillType)
 - player:getEffectiveSkillLevel(skillType)
 - player:getSkillPercent(skillType)
 - player:getSkillTries(skillType)
 - player:addSkillTries(skillType, tries)
+- player:getStorageValue(key)
+- player:setStorageValue(key, value)
+- player:getSex()
+- player:setSex(newSex)
 - player:addItem(itemId, count = 1, canDropOnMap = true, subType = 1, slot = CONST_SLOT_BACKPACK)
 - player:removeItem(itemId, count, subType = -1, ignoreEquipped = false)
 - player:sendTextMessage(type, text)
