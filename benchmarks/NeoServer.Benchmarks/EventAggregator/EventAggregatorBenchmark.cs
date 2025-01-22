@@ -18,16 +18,16 @@ public class EventAggregatorBenchmark
         var serviceProvider = builder.BuildServiceProvider();
         
         _eventAggregatorUsingObjectPool = new EventAggregatorUsingObjectPool();
-        _eventAggregatorUsingObjectPool.Initialize(serviceProvider);
+        //_eventAggregatorUsingObjectPool.Initialize(serviceProvider);
         
         _eventAggregatorWithoutObjectPool = new EventAggregatorWithoutObjectPool(serviceProvider);
-        _eventAggregatorWithoutObjectPool.Initialize();
+        //_eventAggregatorWithoutObjectPool.Initialize();
     }
 
     [Benchmark]
     public void PublishToEventAggregatorUsingObjectPool()
     {
-        for (int i = 0; i < 1_000; i++)
+        for (int i = 0; i < 10_000; i++)
         {
             _eventAggregatorUsingObjectPool.Publish<PlayerChangedEvent>((e) =>
             {
