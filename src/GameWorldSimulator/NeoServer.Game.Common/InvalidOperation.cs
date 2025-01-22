@@ -39,5 +39,6 @@ public enum InvalidOperation
     InvalidPlayer,
     PlayerLocationInvalid,
     NotEnoughMagicLevel,
-    PremiumTimeIsRequired
+    PremiumTimeIsRequired,
+    AdjustCombatSettingsToAttackPlayer
 }

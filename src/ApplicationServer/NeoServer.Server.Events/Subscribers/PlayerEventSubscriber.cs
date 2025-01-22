@@ -23,7 +23,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         PlayerManaChangedEventHandler playerManaReducedEventHandler,
         SpellInvokedEventHandler playerUsedSpellEventHandler,
         PlayerCannotUseSpellEventHandler playerCannotUseSpellEventHandler,
-        PlayerConditionChangedEventHandler playerConditionChangedEventHandler,
         PlayerLevelAdvancedEventHandler playerLevelAdvancedEventHandler,
         PlayerLevelRegressedEventHandler playerLevelRegressedEventHandler,
         PlayerLookedAtEventHandler playerLookedAtEventHandler,
@@ -57,7 +56,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         _playerManaReducedEventHandler = playerManaReducedEventHandler;
         _playerUsedSpellEventHandler = playerUsedSpellEventHandler;
         _playerCannotUseSpellEventHandler = playerCannotUseSpellEventHandler;
-        _playerConditionChangedEventHandler = playerConditionChangedEventHandler;
         _playerLevelAdvancedEventHandler = playerLevelAdvancedEventHandler;
         _playerLevelRegressedEventHandler = playerLevelRegressedEventHandler;
         _playerLookedAtEventHandler = playerLookedAtEventHandler;

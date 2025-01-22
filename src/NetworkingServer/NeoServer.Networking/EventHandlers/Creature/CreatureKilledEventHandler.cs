@@ -7,9 +7,9 @@ using NeoServer.Server.Tasks;
 
 namespace NeoServer.Networking.EventHandlers.Creature;
 
-public class CreatureKilledEventHandler(IGameServer game, IScriptGameManager scriptGameManager) : INetworkEventHandler<ICreature>
+public class CreatureKilledEventHandler(IGameServer game) : INetworkEventHandler<ICreature>
 {
-    public void Execute(ICombatActor creature, IThing by)
+    private void Execute(ICombatActor creature, IThing by)
     {
         game.Scheduler.AddEvent(new SchedulerEvent(200, () =>
         {
@@ -19,8 +19,6 @@ public class CreatureKilledEventHandler(IGameServer game, IScriptGameManager scr
             
             connection.OutgoingPackets.Enqueue(new ReLoginWindowOutgoingPacket());
             connection.Send();
-
-            scriptGameManager.CreatureEventExecuteOnCreatureDeath(creature, by);
         }));
     }
 

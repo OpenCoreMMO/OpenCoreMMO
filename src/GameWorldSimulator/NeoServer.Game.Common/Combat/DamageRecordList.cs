@@ -14,6 +14,20 @@ public class DamageRecordList
 
     public DamageRecord[] All => DamageRecords.Values.ToArray();
 
+    public int TotalDamage
+    {
+        get
+        {
+            var damage = 0;
+            foreach (var damageRecord in All)
+            {
+                damage += damageRecord.Damage;
+            }
+
+            return damage;
+        }
+    }
+
     public ImmutableHashSet<ICreature> AllDamageParticipants
     {
         get

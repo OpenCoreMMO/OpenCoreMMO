@@ -79,7 +79,7 @@ public class MonsterKilledEventHandlerTest
         damages.AddOrUpdateDamage(playerOneSummon, 200);
 
         var monsterMock = new Mock<IMonster>();
-        monsterMock.Setup(x => x.Experience).Returns(100);
+        monsterMock.Setup(x => x.Experience).Returns(300);
         monsterMock.Setup(x => x.ReceivedDamages).Returns(damages);
 
         var experienceSharingService = new ExperienceSharingService();

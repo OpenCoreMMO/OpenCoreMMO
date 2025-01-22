@@ -152,9 +152,9 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return attack;
     }
 
-    public void StopAttack()
+    public void StopAttack(bool force = false)
     {
-        if (!Attacking) return;
+        if (force is false && !Attacking) return;
 
         StopFollowing();
         CurrentTarget = null;

@@ -299,7 +299,7 @@ public class Player : CombatActor, IPlayer
     public uint Id { get; }
     public override ushort MinimumAttackPower => (ushort)(Level / 5);
     public override ushort ArmorRating => Inventory.TotalArmor;
-    public byte SecureMode { get; private set; }
+    public PvpSecureMode SecureMode { get; private set; }
     public float FreeCapacity => TotalCapacity - Inventory.TotalWeight;
     public override bool UsingDistanceWeapon => Inventory.Weapon is IDistanceWeapon;
     public bool Recovering => HasCondition(ConditionType.Regeneration);
@@ -468,7 +468,7 @@ public class Player : CombatActor, IPlayer
         OnChangedChaseMode?.Invoke(this, oldChaseMode, mode);
     }
 
-    public void ChangeSecureMode(byte mode)
+    public void ChangeSecureMode(PvpSecureMode mode)
     {
         SecureMode = mode;
     }
@@ -837,6 +837,13 @@ public class Player : CombatActor, IPlayer
 
     public override Result SetAttackTarget(ICreature target)
     {
+        if (target is IPlayer && SecureMode is PvpSecureMode.PvPDisabled)
+        {
+            StopAttack(force: true);
+            OperationFailService.Send(this, InvalidOperation.AdjustCombatSettingsToAttackPlayer);
+            return Result.Fail(InvalidOperation.AdjustCombatSettingsToAttackPlayer);
+        }
+        
         if (target.IsInvisible)
         {
             StopAttack();

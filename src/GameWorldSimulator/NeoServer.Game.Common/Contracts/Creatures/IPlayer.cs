@@ -105,7 +105,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
 
     FightMode FightMode { get; }
     ChaseMode ChaseMode { get; }
-    byte SecureMode { get; }
+    PvpSecureMode SecureMode { get; }
     IPlayerContainerList Containers { get; }
 
     ITown Town { get; }
@@ -184,7 +184,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     ///     Toogle Secure Mode
     /// </summary>
     /// <param name="secureMode"></param>
-    void ChangeSecureMode(byte secureMode);
+    void ChangeSecureMode(PvpSecureMode secureMode);
 
     byte GetSkillPercent(SkillType type);
 

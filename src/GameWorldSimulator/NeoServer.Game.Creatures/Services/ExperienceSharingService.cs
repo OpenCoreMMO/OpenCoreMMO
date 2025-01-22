@@ -29,9 +29,10 @@ public class ExperienceSharingService: IExperienceSharingService
         //TODO: implement player experience sharing for pvp enforced
         if (creature is not IMonster monster || monster.IsSummon) return;
 
-        var players = monster.ReceivedDamages.All.Where(x => x.Aggressor is IPlayer).Select(x => x.Aggressor as IPlayer);
-        foreach (var player in players)
+        foreach (var damageRecord in monster.ReceivedDamages.All)
         {
+            if(damageRecord.Aggressor is not IPlayer player) continue;
+            
             // Apply all base experience modifiers (e.g. monster experience based on portion of damage dealt).
             var baseExperience = monster.Experience;
             foreach (var modifier in _baseExperienceModifiers)
@@ -55,7 +56,7 @@ public class ExperienceSharingService: IExperienceSharingService
             player?.GainExperience(experience);
         }
     }
-
+    
     private static double CalculateTotalExperienceBonus(IEnumerable<IExperienceBonus> bonuses, IPlayer player,
         IMonster monster)
     {

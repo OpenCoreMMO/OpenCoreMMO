@@ -1,20 +1,14 @@
 ﻿using NeoServer.Game.Combat.Services;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Results;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Tasks;
 
 namespace NeoServer.Server.Events.Combat;
 
-public class CreatureChangedAttackTargetEventHandler
+public class CreatureChangedAttackTargetEventHandler(IGameServer game, IPlayerSkullService skullService)
 {
-    private readonly IGameServer game;
-
-    public CreatureChangedAttackTargetEventHandler(IGameServer game)
-    {
-        this.game = game;
-    }
-
     public void Execute(ICombatActor actor, uint oldTarget, uint newTarget)
     {
         if (actor.AttackEvent != 0) return;
@@ -51,5 +45,13 @@ public class CreatureChangedAttackTargetEventHandler
         return result.Succeeded;
     }
 
-    private static Result AttackEnemy(ICombatActor actor, ICreature creature) => creature is not ICombatActor enemy ? Result.NotPossible : actor.Attack(enemy);
+    private  Result AttackEnemy(ICombatActor actor, ICreature victim)
+    {
+        if (actor is IPlayer playerAggressor && victim is IPlayer playerEnemy)
+        {
+            skullService.UpdateSkullOnAttack(playerAggressor, playerEnemy);
+        }
+        
+        return victim is not ICombatActor enemy ? Result.NotPossible : actor.Attack(enemy);
+    }
 }

@@ -161,10 +161,10 @@ public class PlayerTests
     {
         var sut = PlayerTestDataBuilder.Build();
 
-        sut.ChangeSecureMode(0);
-        sut.SecureMode.Should().Be(0);
-        sut.ChangeSecureMode(1);
-        sut.SecureMode.Should().Be(1);
+        sut.ChangeSecureMode(PvpSecureMode.PvPEnabled);
+        sut.SecureMode.Should().Be(PvpSecureMode.PvPEnabled);
+        sut.ChangeSecureMode(PvpSecureMode.PvPDisabled);
+        sut.SecureMode.Should().Be(PvpSecureMode.PvPDisabled);
     }
 
     [Fact]

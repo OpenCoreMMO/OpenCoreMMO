@@ -76,7 +76,7 @@ public interface ICombatActor : IWalkableCreature
     CombatDamage ReduceDamage(CombatDamage damage);
     Result SetAttackTarget(ICreature target);
     int DefendUsingShield(int attack);
-    void StopAttack();
+    void StopAttack(bool force = false);
     void ResetHealthPoints();
     void TurnInvisible();
     void TurnVisible();

@@ -24,6 +24,7 @@ public static class TextMessageOutgoingParser
             InvalidOperation.CannotAttackThatFast => "You cannot attack that fast.",
             InvalidOperation.NotPermittedInProtectionZone => TextConstants.NOT_PERMITTED_IN_PROTECTION_ZONE,
             InvalidOperation.PlayerLocationInvalid => "Player location is invalid.",
+            InvalidOperation.AdjustCombatSettingsToAttackPlayer => "Adjust your combat settings to attack this person.",
             _ => string.Empty
         };
     }

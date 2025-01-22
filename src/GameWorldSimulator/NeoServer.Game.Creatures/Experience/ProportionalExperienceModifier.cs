@@ -24,12 +24,7 @@ public class ProportionalExperienceModifier : IBaseExperienceModifier
         return true;
     }
 
-    private static int GetTotalMonsterDamage(IMonster monster)
-    {
-        var damage = 0;
-        foreach (var damageRecord in monster.ReceivedDamages.All) damage += damageRecord.Damage;
-        return damage;
-    }
+    private static int GetTotalMonsterDamage(IMonster monster) => monster.ReceivedDamages.TotalDamage;
 
     private static int GetTotalPlayerDamage(IMonster monster, IPlayer player)
     {
@@ -37,7 +32,8 @@ public class ProportionalExperienceModifier : IBaseExperienceModifier
         foreach (var damageRecord in monster.ReceivedDamages.All)
         {
             if (damageRecord.Aggressor is not IPlayer playerAggressor) continue;
-            if (playerAggressor.Id != player.Id || (damageRecord.Aggressor as Summon)?.Master.CreatureId != player.CreatureId) continue;
+            if (playerAggressor != player &&
+                (damageRecord.Aggressor as Summon)?.Master.CreatureId != player.CreatureId) continue;
             damage += damageRecord.Damage;
         }
 
