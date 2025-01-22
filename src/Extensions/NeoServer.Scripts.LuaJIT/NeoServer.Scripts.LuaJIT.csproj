@@ -7,13 +7,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="..\..\..\data\LuaJit\**">
-            <Link>Data\LuaJit\%(RecursiveDir)%(FileName)</Link>
-        </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Remove="..\..\..\data\LuaJit\scripts\movements\haste.lua" />
+      <Content Include="..\..\..\Data\*.lua">
+        <Link>Data\%(FileName)%(Extension)</Link>
+      </Content>
+      <Content Include="..\..\..\data\libs\**">
+        <Link>Data\libs\%(RecursiveDir)%(FileName)</Link>
+      </Content>
+      <Content Include="..\..\..\data\npclib\**">
+        <Link>Data\npclib\%(RecursiveDir)%(FileName)</Link>
+      </Content>
+      <Content Include="..\..\..\data\npcs\**">
+        <Link>Data\npcs\%(RecursiveDir)%(FileName)</Link>
+      </Content>
+      <Content Include="..\..\..\data\scripts\**">
+        <Link>Data\scripts\%(RecursiveDir)%(FileName)</Link>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>

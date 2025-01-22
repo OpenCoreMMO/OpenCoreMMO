@@ -1,5 +1,4 @@
 ﻿using LuaNET;
-using NeoServer.Scripts.LuaJIT.Functions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Configurations;
@@ -241,10 +240,10 @@ public class LuaStartup : ILuaStartup
 
     public void Start()
     {
-        var dir = AppContext.BaseDirectory;
+        var currentDir = AppContext.BaseDirectory;
 
         if (!string.IsNullOrEmpty(ArgManager.GetInstance().ExePath))
-            dir = ArgManager.GetInstance().ExePath;
+            currentDir = ArgManager.GetInstance().ExePath;
 
         ModulesLoadHelper(_luaEnviroment.InitState(), "luaEnviroment");
 
@@ -282,17 +281,15 @@ public class LuaStartup : ILuaStartup
         _teleportFunctions.Init(luaState);
         _groupFunctions.Init(luaState);
 
-        ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), $"config.lua");
+        ModulesLoadHelper(_configManager.Load($"{currentDir}/config.lua"), $"config.lua");
 
-        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/core.lua", "core.lua"), "/Data/LuaJit/core.lua");
+        ModulesLoadHelper(_luaEnviroment.LoadFile($"{_serverConfiguration.Data}/core.lua", "core.lua"), "/Data/core.lua");
 
-        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts/libs", true, false), "/Data/LuaJit/scripts/libs");
-        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts", false, false), "/Data/LuaJit/scripts");
-        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/npclib/load.lua", "load.lua"), "/Data/LuaJit/npclib");
+        ModulesLoadHelper(_scripts.LoadScripts($"{_serverConfiguration.Data}/scripts/libs", true, false), "/Data/scripts/libs");
+        ModulesLoadHelper(_scripts.LoadScripts($"{_serverConfiguration.Data}/scripts", false, false), "/Data/scripts");
+        ModulesLoadHelper(_luaEnviroment.LoadFile($"{_serverConfiguration.Data}/npclib/load.lua", "load.lua"), "/Data/npclib");
 
-        //todo:
-        //ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/monster", false, false), "/monster");
-        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/npc", false, false), "/Data/LuaJit/npc");
+        ModulesLoadHelper(_scripts.LoadScripts($"{_serverConfiguration.Data}/npcs", false, false), "/Data/npcs");
     }
 
     #endregion

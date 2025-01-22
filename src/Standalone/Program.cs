@@ -18,7 +18,6 @@ using NeoServer.Loaders.Spells;
 using NeoServer.Loaders.Vocations;
 using NeoServer.Loaders.World;
 using NeoServer.Networking.Listeners;
-using NeoServer.Scripts.Lua;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Common.Contracts.Tasks;
@@ -112,7 +111,6 @@ public class Program
         container.Resolve<EventSubscriber>().AttachEvents();
         container.Resolve<IEnumerable<IStartup>>().ToList().ForEach(x => x.Run());
 
-        container.Resolve<LuaGlobalRegister>().Register();
         container.Resolve<IScriptManager>().Initialize();
 
         StartListening(container, _cancellationToken);

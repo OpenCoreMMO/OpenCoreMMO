@@ -8,7 +8,6 @@ using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Creatures.Npcs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -297,7 +296,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         }
 
         try {
-            var dir = AppContext.BaseDirectory + _serverConfiguration.DataLuaJit;
+            var dir = _serverConfiguration.Data;
             switch (reloadType)
             {
                 case ReloadType.RELOAD_TYPE_ALL:
@@ -372,7 +371,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
     {
         _npcs.Clear();
         _luaEnvironment.LoadFile($"{dir}/npclib/load.lua", "load.lua");
-        _scripts.LoadScripts($"{dir}/npc", false, true);
+        _scripts.LoadScripts($"{dir}/npcs", false, true);
     }
 
     private static void ReloadScripts(string dir) {

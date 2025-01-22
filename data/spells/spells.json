@@ -155,26 +155,6 @@
 		"level": 60
 	},
   {
-    "name": "Create Npc",
-    "words": "/npc",
-    "script": "NpcCreator",
-    "description": "",
-    "mana": 0,
-    "cooldown": "0",
-    "level": 1,
-    "type": "command"
-  },
-  {
-    "name": "Reload",
-    "words": "/reload",
-    "script": "ReloadCommand",
-    "description": "",
-    "mana": 0,
-    "cooldown": "0",
-    "level": 1,
-    "type": "command"
-  },
-  {
     "name": "PullPlayer",
     "words": "/c",
     "script": "PullPlayerCommand",
