@@ -110,6 +110,11 @@ public class LuaStartup : ILuaStartup
     private readonly IMonsterFunctions _monsterFunctions;
 
     /// <summary>
+    /// A reference to the <see cref="IMoveEventFunctions"/> instance in use.
+    /// </summary>
+    private readonly IMoveEventFunctions _moveEventFunctions;
+
+    /// <summary>
     /// A reference to the <see cref="INpcFunctions"/> instance in use.
     /// </summary>
     private readonly INpcFunctions _npcFunctions;
@@ -173,6 +178,7 @@ public class LuaStartup : ILuaStartup
         IItemTypeFunctions itemTypeFunctions,
         ILoggerFunctions loggerFunctions,
         IMonsterFunctions monsterFunctions,
+        IMoveEventFunctions moveEventFunctions,
         INpcFunctions npcFunctions,
         IPlayerFunctions playerFunctions,
         IPositionFunctions positionFunctions,
@@ -203,6 +209,7 @@ public class LuaStartup : ILuaStartup
         _loggerFunctions = loggerFunctions;
         _playerFunctions = playerFunctions;
         _monsterFunctions = monsterFunctions;
+        _moveEventFunctions = moveEventFunctions;
         _npcFunctions = npcFunctions;
         _positionFunctions = positionFunctions;
         _resultFunctions = resultFunctions;
@@ -252,6 +259,7 @@ public class LuaStartup : ILuaStartup
 
         _containerFunctions.Init(luaState);
         _monsterFunctions.Init(luaState);
+        _moveEventFunctions.Init(luaState);
         _npcFunctions.Init(luaState);
         _playerFunctions.Init(luaState);
         _teleportFunctions.Init(luaState);

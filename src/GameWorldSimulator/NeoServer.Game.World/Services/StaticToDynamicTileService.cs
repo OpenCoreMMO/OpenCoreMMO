@@ -18,8 +18,11 @@ public class StaticToDynamicTileService : IStaticToDynamicTileService
     private readonly IMap _map;
     private readonly ITileFactory _tileFactory;
 
-    public StaticToDynamicTileService(IItemClientServerIdMapStore itemClientServerIdMapStore, IItemFactory itemFactory,
-        ITileFactory tileFactory, IMap map)
+    public StaticToDynamicTileService(
+        IItemClientServerIdMapStore itemClientServerIdMapStore,
+        IItemFactory itemFactory,
+        ITileFactory tileFactory,
+        IMap map)
     {
         _itemClientServerIdMapStore = itemClientServerIdMapStore;
         _itemFactory = itemFactory;

@@ -11,18 +11,12 @@ using NeoServer.Networking.Packets.Outgoing.Item;
 using NeoServer.Networking.Packets.Outgoing.Map;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
+using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Events.Creature;
 
-public class CreatureMovedEventHandler
+public class CreatureMovedEventHandler(IGameServer game, IScriptManager scriptManager)
 {
-    private readonly IGameServer game;
-
-    public CreatureMovedEventHandler(IGameServer game)
-    {
-        this.game = game;
-    }
-
     public void Execute(IWalkableCreature creature, ICylinder cylinder)
     {
         if (cylinder.IsNull()) return;
@@ -89,6 +83,8 @@ public class CreatureMovedEventHandler
 
             connection.Send();
         }
+
+        scriptManager.MoveEvents.CreatureMove(creature, cylinder.FromTile.Location, cylinder.ToTile.Location);
     }
 
     private static void MoveCreature(IWalkableCreature creature, Location fromLocation, Location toLocation,

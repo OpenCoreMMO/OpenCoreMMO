@@ -23,7 +23,7 @@ public class StaticTile : BaseTile, IStaticTile
         SetNewLocation(location);
         Raw = GetRaw(items);
         ThingsCount = items.Length;
-        Items = items;
+        AllItems = items;
     }
 
     public override int ThingsCount { get; }
@@ -31,6 +31,9 @@ public class StaticTile : BaseTile, IStaticTile
     public override IItem TopItemOnStack => _topItemOnStack;
     public override ICreature TopCreatureOnStack => null;
     public IItem[] Items { get; }
+
+    public override int ItemsCount => AllItems?.Length ?? 0;
+    public override IItem[] AllItems { get; }
 
     public override bool TryGetStackPositionOfThing(IPlayer player, IThing thing, out byte stackPosition)
     {
@@ -104,9 +107,9 @@ public class StaticTile : BaseTile, IStaticTile
 
     public IStaticTile CreateClone(Location location)
     {
-        foreach (var item in Items)
+        foreach (var item in AllItems)
             item.SetNewLocation(location, force: true);
 
-        return new StaticTile(location, Items);
+        return new StaticTile(location, AllItems);
     }
 }

@@ -113,7 +113,7 @@ public class Program
         container.Resolve<IEnumerable<IStartup>>().ToList().ForEach(x => x.Run());
 
         container.Resolve<LuaGlobalRegister>().Register();
-        container.Resolve<IScriptGameManager>().Start();
+        container.Resolve<IScriptManager>().Initialize();
 
         StartListening(container, _cancellationToken);
 
@@ -160,7 +160,7 @@ public class Program
     private static async Task Shutdown(ILogger logger, IServiceProvider container)
     {
         logger.Warning("Server is in Shutdown...");
-        container.Resolve<IScriptGameManager>().GlobalEventExecuteShutdown();
+        container.Resolve<IScriptManager>().GlobalEvents.ExecuteShutdown();
         await container.Resolve<PlayerPersistenceRoutine>().SavePlayers();
     }
 
