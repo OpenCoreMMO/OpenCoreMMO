@@ -1,5 +1,6 @@
 ﻿using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types;
+using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Location;
@@ -9,12 +10,26 @@ namespace NeoServer.Game.Items.Services.ItemTransform.Operations;
 
 internal static class ReplaceItemFromGroundOperation
 {
-    public static Result<IItem> Execute(IMap map, IItemFactory itemFactory, IItem fromItem, IItemType toItemType)
+    public static Result<IItem> Execute(
+        IMap map,
+        IStaticToDynamicTileService staticToDynamicTileService,
+        IItemFactory itemFactory,
+        IItem fromItem,
+        IItemType toItemType)
     {
         if (fromItem.Location.Type != LocationType.Ground) return Result<IItem>.NotApplicable;
-        if (map[fromItem.Location] is not IDynamicTile tile) return Result<IItem>.NotApplicable;
-        if (fromItem is IGround) return Result<IItem>.NotApplicable;
 
+        IDynamicTile tile = null;
+
+        if (map[fromItem.Location] is IStaticTile staticTile)
+        {
+            var clonnedTile = staticTile.CreateClone(fromItem.Location);
+            tile = staticToDynamicTileService.TransformIntoDynamicTile(clonnedTile) as IDynamicTile;
+        }
+        else
+            tile = map[fromItem.Location] as IDynamicTile;
+
+        if (fromItem is IGround) return Result<IItem>.NotApplicable;
         if (toItemType is null) fromItem.MarkAsDeleted();
 
         var result = tile.UpdateItemType(fromItem, toItemType);

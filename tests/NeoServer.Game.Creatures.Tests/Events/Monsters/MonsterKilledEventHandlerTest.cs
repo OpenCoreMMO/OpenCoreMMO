@@ -190,7 +190,7 @@ public class MonsterKilledEventHandlerTest
         var mockedVocations = vocations.Select(x =>
         {
             var mock = new Mock<IVocation>();
-            mock.Setup(x => x.Id).Returns(x.ToString());
+            mock.Setup(x => x.Id).Returns((byte)x);
             mock.Setup(x => x.Name).Returns(x.ToString());
             mock.Setup(x => x.VocationType).Returns((byte)x);
             return mock.Object;

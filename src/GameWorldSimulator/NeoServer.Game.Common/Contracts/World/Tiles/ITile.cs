@@ -6,6 +6,8 @@ namespace NeoServer.Game.Common.Contracts.World.Tiles;
 
 public interface ITile : IThing
 {
+    int ItemsCount { get; }
+    IItem[] AllItems { get; }
     IItem TopItemOnStack { get; }
     ICreature TopCreatureOnStack { get; }
     bool BlockMissile { get; }

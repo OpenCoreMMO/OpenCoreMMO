@@ -1,10 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Microsoft.EntityFrameworkCore;
 using NeoServer.Web.API.Requests.Commands;
-using NeoServer.Web.API.Response;
 using NeoServer.Web.API.Response.IpBans;
-using NeoServer.Web.API.Response.Player;
 using Xunit;
 
 namespace NeoServer.WebApi.Tests.Tests;
@@ -51,7 +48,6 @@ public class IpBansTests : BaseIntegrationTests
 
     #endregion
 
-
     #region Post Test
 
     [Fact]
@@ -73,5 +69,4 @@ public class IpBansTests : BaseIntegrationTests
     }
 
     #endregion
-    
 }

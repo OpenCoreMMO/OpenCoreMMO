@@ -21,7 +21,7 @@ public class PlayerLogInCommand : ICommand
     private readonly IGameServer _game;
     private readonly GuildLoader _guildLoader;
     private readonly IPlayerLoader _playerLoader;
-    private readonly IScriptGameManager _scriptGameManager;
+    private readonly IScriptManager _scriptManager;
 
     public PlayerLogInCommand(
         IGameServer game,
@@ -29,14 +29,14 @@ public class PlayerLogInCommand : ICommand
         GuildLoader guildLoader,
         PlayerLocationResolver playerLocationResolver,
         ILogger logger,
-        IScriptGameManager scriptGameManager)
+        IScriptManager scriptManager)
     {
         _game = game;
         _playerLoader = playerLoader;
         _guildLoader = guildLoader;
         _playerLocationResolver = playerLocationResolver;
         _logger = logger;
-        _scriptGameManager = scriptGameManager;
+        _scriptManager = scriptManager;
     }
 
     public Result Execute(PlayerEntity playerRecord, IConnection connection)
@@ -68,7 +68,7 @@ public class PlayerLogInCommand : ICommand
         (var success, var current, var old) = _game.CreatureManager.CheckPlayersRecord(player.WorldId).Result;
 
         if (success)
-            _scriptGameManager.GlobalEventExecuteRecord(current, old);
+            _scriptManager.GlobalEvents.ExecuteRecord(current, old);
 
         return Result.Success;
     }

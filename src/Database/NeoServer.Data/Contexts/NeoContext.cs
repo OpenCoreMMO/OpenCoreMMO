@@ -6,6 +6,7 @@ using NeoServer.Data.Extensions;
 using NeoServer.Data.Helpers;
 using Serilog;
 using System.Threading.Tasks;
+using System.Data.Common;
 
 namespace NeoServer.Data.Contexts;
 

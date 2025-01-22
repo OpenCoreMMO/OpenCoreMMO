@@ -15,16 +15,16 @@ public class PlayerSayCommand : ICommand
 {
     private readonly IChatChannelStore _chatChannelStore;
     private readonly IGameServer _game;
-    private readonly IScriptGameManager _luaGameManager;
+    private readonly IScriptManager _scriptManager;
 
     public PlayerSayCommand(
         IGameServer game,
         IChatChannelStore chatChannelStore,
-        IScriptGameManager luaGameManager)
+        IScriptManager scriptManager)
     {
         _game = game;
         _chatChannelStore = chatChannelStore;
-        _luaGameManager = luaGameManager;
+        _scriptManager = scriptManager;
     }
 
     public void Execute(IPlayer player, IConnection connection, PlayerSayPacket playerSayPacket)
@@ -35,7 +35,7 @@ public class PlayerSayCommand : ICommand
 
         var message = playerSayPacket.Message?.Trim();
 
-        if (_luaGameManager.PlayerSaySpell(player, playerSayPacket.TalkType, message))
+        if (_scriptManager.TalkActions.Say(player, playerSayPacket.TalkType, message))
             return;
 
         if (player.CastSpell(message)) return;

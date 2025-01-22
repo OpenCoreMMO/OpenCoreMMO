@@ -170,7 +170,7 @@ public class Player : CombatActor, IPlayer
     public int NumberOfUnjustifiedKillsLastWeek { get; private set; }
     public int NumberOfUnjustifiedKillsLastMonth { get; private set; }
 
-    public List<RegenerationBonus> RegenerationBonusList { get; private set; }
+    public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
 
     public ulong GetTotalMoney(ICoinTypeStore coinTypeStore)
     {
@@ -190,6 +190,7 @@ public class Player : CombatActor, IPlayer
     public ChaseMode ChaseMode { get; private set; }
     public uint TotalCapacity { get; private set; }
     public ushort Level => (ushort)(Skills.TryGetValue(SkillType.Level, out var level) ? level?.Level ?? 1 : 1);
+    public ushort MagicLevel => (ushort)(Skills.TryGetValue(SkillType.Magic, out var level) ? level?.Level ?? 1 : 1);
     public ushort Mana { get; private set; }
     public ushort MaxMana { get; private set; }
     public FightMode FightMode { get; private set; }

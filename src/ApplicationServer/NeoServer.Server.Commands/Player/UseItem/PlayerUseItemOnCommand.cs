@@ -17,20 +17,20 @@ public class PlayerUseItemOnCommand : ICommand
 {
     private readonly IPlayerUseService _playerUseService;
     private readonly IGameServer _game;
-    private readonly IScriptGameManager _scriptGameManager;
+    private readonly IScriptManager _scriptManager;
     private readonly IWalkToMechanism _walkToMechanism;
     private readonly ItemFinderService _itemFinder;
 
     public PlayerUseItemOnCommand(
         IGameServer game,
         IPlayerUseService playerUseService,
-        IScriptGameManager scriptGameManager,
+        IScriptManager scriptManager,
         IWalkToMechanism walkToMechanism,
         ItemFinderService itemFinder)
     {
         _game = game;
         _playerUseService = playerUseService;
-        _scriptGameManager = scriptGameManager;
+        _scriptManager = scriptManager;
         _walkToMechanism = walkToMechanism;
         _itemFinder = itemFinder;
     }
@@ -67,9 +67,9 @@ public class PlayerUseItemOnCommand : ICommand
 
         IThing onTarget = !onItem ? onTile : onItem;
 
-        if (_scriptGameManager.HasAction(thingToUse))
+        if (_scriptManager.Actions.HasAction(thingToUse))
         {
-            action = () => _scriptGameManager.PlayerUseItem(player, player.Location, useItemPacket.ToLocation,
+            action = () => _scriptManager.Actions.UseItem(player, player.Location, useItemPacket.ToLocation,
                 useItemPacket.ToStackPosition, thingToUse, onTarget, useItemPacket.Location.IsHotkey);
         }
         else

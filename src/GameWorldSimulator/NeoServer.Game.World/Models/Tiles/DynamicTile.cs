@@ -32,9 +32,9 @@ public class DynamicTile : BaseTile, IDynamicTile
     public TileStack<IItem> TopItems { get; private set; }
     public TileStack<IItem> DownItems { get; private set; }
 
-    public int ItemsCount => (DownItems?.Count ?? 0) + (TopItems?.Count ?? 0) + (Ground is null ? 0 : 1);
+    public override int ItemsCount => (DownItems?.Count ?? 0) + (TopItems?.Count ?? 0) + (Ground is null ? 0 : 1);
 
-    public IItem[] AllItems
+    public override IItem[] AllItems
     {
         get
         {
@@ -325,7 +325,7 @@ public class DynamicTile : BaseTile, IDynamicTile
     public IItem RemoveItem(IItem item)
     {
         foreach (var tileItem in AllItems)
-            if (item == tileItem)
+            if (item.ServerId == tileItem.ServerId)
             {
                 RemoveItem(item, item.Amount, 0, out var removedItem);
                 return removedItem;
@@ -426,8 +426,11 @@ public class DynamicTile : BaseTile, IDynamicTile
             return;
         }
 
-        var isRemoved = DownItems != null ? DownItems.Remove(fromItem) : false;
-        if (!isRemoved) isRemoved = TopItems != null ? TopItems.Remove(fromItem) : false;
+        var downItemToRemove = DownItems?.FirstOrDefault(c => c.ServerId == fromItem.ServerId);
+        var topItemToRemove = TopItems?.FirstOrDefault(c => c.ServerId == fromItem.ServerId);
+
+        var isRemoved = downItemToRemove != null ? DownItems.Remove(downItemToRemove) : false;
+        if (!isRemoved) isRemoved = topItemToRemove != null ? TopItems.Remove(topItemToRemove) : false;
 
         if (!isRemoved) return;
 

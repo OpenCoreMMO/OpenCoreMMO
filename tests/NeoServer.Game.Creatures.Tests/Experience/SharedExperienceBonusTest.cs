@@ -300,11 +300,11 @@ public class SharedExperienceBonusTest
     private List<IPlayer> MockPartyMembers(int count)
     {
         var players = new List<IPlayer>();
-        for (var i = 0; i < count; i++) players.Add(MockPartyMember(i.ToString()));
+        for (var i = 0; i < count; i++) players.Add(MockPartyMember((byte)i));
         return players;
     }
 
-    private IPlayer MockPartyMember(string vocation)
+    private IPlayer MockPartyMember(byte vocation)
     {
         var player = new Mock<IPlayer>();
         player.Setup(x => x.Vocation.Id).Returns(vocation);

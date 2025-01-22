@@ -18,6 +18,7 @@ public class PlayerLogInHandler : PacketHandler
 {
     private readonly IAccountRepository _accountRepository;
     private readonly ClientConfiguration _clientConfiguration;
+    private readonly IIpBansRepository _ipBansRepository;
     private readonly IGameServer _game;
     private readonly PlayerLogInCommand _playerLogInCommand;
     private readonly PlayerLogOutCommand _playerLogOutCommand;
@@ -25,7 +26,8 @@ public class PlayerLogInHandler : PacketHandler
 
     public PlayerLogInHandler(IAccountRepository repositoryNeo,
         IGameServer game, ServerConfiguration serverConfiguration, PlayerLogInCommand playerLogInCommand,
-        PlayerLogOutCommand playerLogOutCommand, ClientConfiguration clientConfiguration)
+        PlayerLogOutCommand playerLogOutCommand, ClientConfiguration clientConfiguration,
+        IIpBansRepository ipBansRepository)
     {
         _accountRepository = repositoryNeo;
         _game = game;
@@ -33,9 +35,10 @@ public class PlayerLogInHandler : PacketHandler
         _playerLogInCommand = playerLogInCommand;
         _playerLogOutCommand = playerLogOutCommand;
         _clientConfiguration = clientConfiguration;
+        _ipBansRepository = ipBansRepository;
     }
 
-    public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
+    public override async void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
         if (_game.State == GameState.Stopped) connection.Close();
 
@@ -47,7 +50,13 @@ public class PlayerLogInHandler : PacketHandler
 
         if (!Verify(connection, packet)) return;
 
-        //todo: ip ban validation
+        var existBan = await _ipBansRepository.ExistBan(connection.Ip.Split(":")[0]);
+
+        if (existBan is not null)
+        {
+            Disconnect(connection, $"Your IP address {existBan.Ip} has been banished until {existBan.ExpiresAt.ToString("MM/dd/yyyy")}.\nReason: {existBan.Reason}");
+            return;
+        }
 
         async void TryConnect()
         {

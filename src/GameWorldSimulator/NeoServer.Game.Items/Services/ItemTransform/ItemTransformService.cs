@@ -14,14 +14,20 @@ public class ItemTransformService : IItemTransformService
     private readonly IItemTypeStore _itemTypeStore;
     private readonly IMap _map;
     private readonly IMapService _mapService;
+    private readonly IStaticToDynamicTileService _staticToDynamicTileService;
 
-    public ItemTransformService(IItemFactory itemFactory, IMap map, IMapService mapService,
-        IItemTypeStore itemTypeStore)
+    public ItemTransformService(
+        IItemFactory itemFactory,
+        IMap map,
+        IMapService mapService,
+        IItemTypeStore itemTypeStore,
+        IStaticToDynamicTileService staticToDynamicTileService)
     {
         _itemFactory = itemFactory;
         _map = map;
         _mapService = mapService;
         _itemTypeStore = itemTypeStore;
+        _staticToDynamicTileService = staticToDynamicTileService;
     }
 
     public Result<IItem> Transform(IPlayer by, IItem fromItem, ushort toItem)
@@ -30,7 +36,7 @@ public class ItemTransformService : IItemTransformService
 
         _itemTypeStore.TryGetValue(toItem, out var toItemType);
 
-        var result = ReplaceItemFromGroundOperation.Execute(_map, _itemFactory, fromItem, toItemType);
+        var result = ReplaceItemFromGroundOperation.Execute(_map, _staticToDynamicTileService, _itemFactory, fromItem, toItemType);
         if (!result.IsNotApplicable) return result;
 
         result = ReplaceItemOnInventoryOperation.Execute(_itemFactory, fromItem, toItemType);
