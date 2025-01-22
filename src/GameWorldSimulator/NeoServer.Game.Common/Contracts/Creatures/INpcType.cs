@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NeoServer.Game.Common.Creatures;
+using System.Collections.Generic;
 
 namespace NeoServer.Game.Common.Contracts.Creatures;
 
@@ -10,7 +11,13 @@ public interface INpcType : ICreatureType
     bool IsLuaScript { get; }
     string[] Marketings { init; get; }
     uint WalkInterval { get; set; }
+    uint WalkRadius { get; set; }
     bool IsCSharpScript { get; }
+
+    IList<Voice> Voices { get; }
+
+    IIntervalChance VoiceConfig { get; set; }
+    IDictionary<ushort, IShopItem> ShopItems { get; }
 }
 
 public interface IDialog

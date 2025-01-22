@@ -22,11 +22,17 @@ public class ShopperNpc : Npc, IShopperNpc
     public Func<IDictionary<ushort, IItemType>> CoinTypeMapFunc { get; init; }
 
     public event ShowShop OnShowShop;
+    public event CloseShop OnCloseShop;
+
+    //public IDictionary<ushort, IShopItem> ShopItems => Metadata.ShopItems;
 
     public IDictionary<ushort, IShopItem> ShopItems
     {
         get
         {
+            if(Metadata.ShopItems.Count > 0)
+                return Metadata.ShopItems;
+
             if (!Metadata.CustomAttributes.TryGetValue("shop", out var shop)) return null;
 
             if (shop is not IDictionary<ushort, IShopItem> shopItems) return null;
@@ -35,9 +41,15 @@ public class ShopperNpc : Npc, IShopperNpc
         }
     }
 
+
     public virtual void StopSellingToCustomer(ISociableCreature creature)
     {
-        //todo: invoke event here
+        OnCloseShop?.Invoke(creature);
+    }
+
+    public virtual void StartSellingToCustomer(ISociableCreature creature)
+    {
+        ShowShopItems(creature);
     }
 
     public bool BuyFromCustomer(ISociableCreature creature, IItemType item, byte amount)
@@ -80,7 +92,6 @@ public class ShopperNpc : Npc, IShopperNpc
             if (item is null) continue;
             items[i++] = item;
         }
-
         player.ReceivePayment(items, value);
 
         return true;

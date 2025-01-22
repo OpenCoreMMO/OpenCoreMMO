@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Scripts.LuaJIT.Functions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Configurations;
@@ -38,6 +39,11 @@ public class LuaStartup : ILuaStartup
     /// A reference to the <see cref="IActionFunctions"/> instance in use.
     /// </summary>
     private readonly IActionFunctions _actionFunctions;
+
+    /// <summary>
+    /// A reference to the <see cref="IConditionFunctions"/> instance in use.
+    /// </summary>
+    private readonly IConditionFunctions _conditionFunctions;
 
     /// <summary>
     /// A reference to the <see cref="IConfigFunctions"/> instance in use.
@@ -120,6 +126,11 @@ public class LuaStartup : ILuaStartup
     private readonly INpcFunctions _npcFunctions;
 
     /// <summary>
+    /// A reference to the <see cref="INpcTypeFunctions"/> instance in use.
+    /// </summary>
+    private readonly INpcTypeFunctions _npcTypeFunctions;
+
+    /// <summary>
     /// A reference to the <see cref="IPlayerFunctions"/> instance in use.
     /// </summary>
     private readonly IPlayerFunctions _playerFunctions;
@@ -180,13 +191,15 @@ public class LuaStartup : ILuaStartup
         IMonsterFunctions monsterFunctions,
         IMoveEventFunctions moveEventFunctions,
         INpcFunctions npcFunctions,
+        INpcTypeFunctions npcTypeFunctions,
         IPlayerFunctions playerFunctions,
         IPositionFunctions positionFunctions,
         IResultFunctions resultFunctions,
         ITalkActionFunctions talkActionFunctions,
         ITeleportFunctions teleportFunctions,
         ITileFunctions tileFunctions,
-        ServerConfiguration serverConfiguration)
+        ServerConfiguration serverConfiguration,
+        IConditionFunctions conditionFunctions)
     {
         _logger = logger;
         _luaEnviroment = luaEnviroment;
@@ -211,6 +224,7 @@ public class LuaStartup : ILuaStartup
         _monsterFunctions = monsterFunctions;
         _moveEventFunctions = moveEventFunctions;
         _npcFunctions = npcFunctions;
+        _npcTypeFunctions = npcTypeFunctions;
         _positionFunctions = positionFunctions;
         _resultFunctions = resultFunctions;
         _talkActionFunctions = talkActionFunctions;
@@ -218,6 +232,7 @@ public class LuaStartup : ILuaStartup
         _tileFunctions = tileFunctions;
 
         _serverConfiguration = serverConfiguration;
+        _conditionFunctions = conditionFunctions;
     }
 
     #endregion
@@ -241,6 +256,7 @@ public class LuaStartup : ILuaStartup
         Lua.OpenLibs(luaState);
 
         _actionFunctions.Init(luaState);
+        _conditionFunctions.Init(luaState);
         _configFunctions.Init(luaState);
         _creatureFunctions.Init(luaState);
         _creatureEventFunctions.Init(luaState);
@@ -261,6 +277,7 @@ public class LuaStartup : ILuaStartup
         _monsterFunctions.Init(luaState);
         _moveEventFunctions.Init(luaState);
         _npcFunctions.Init(luaState);
+        _npcTypeFunctions.Init(luaState);
         _playerFunctions.Init(luaState);
         _teleportFunctions.Init(luaState);
         _groupFunctions.Init(luaState);
@@ -271,11 +288,11 @@ public class LuaStartup : ILuaStartup
 
         ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts/libs", true, false), "/Data/LuaJit/scripts/libs");
         ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts", false, false), "/Data/LuaJit/scripts");
-        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/npclib/load.lua", "load.lua"), "npclib");
+        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/npclib/load.lua", "load.lua"), "/Data/LuaJit/npclib");
 
         //todo:
         //ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/monster", false, false), "/monster");
-        //ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/npc", false, false), "/npc");
+        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/npc", false, false), "/Data/LuaJit/npc");
     }
 
     #endregion

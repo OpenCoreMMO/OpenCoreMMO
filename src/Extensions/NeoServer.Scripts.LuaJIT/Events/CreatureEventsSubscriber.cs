@@ -22,6 +22,11 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
     private readonly PlayerOnEquipEventHandler _creatureOnEquipEventHandler;
     private readonly PlayerOnDeEquipEventHandler _creatureOnDeEquipEventHandler;
 
+    private readonly NpcOnHearEventHandler _npcOnDeEquipEventHandler;
+    private readonly CreatureOnAppearEventHandler _creatureOnAppearEventHandler;
+    private readonly CreatureOnDisappearEventHandler _creatureOnDisappearEventHandler;
+    private readonly CreatureOnMoveEventHandler _creatureOnMoveEventHandler;
+
     public CreatureEventsSubscriber(
         CreatureOnDeathEventHandler creatureOnDeathEventHandler,
         CreatureOnThinkEventHandler creatureOnThinkEventHandler,
@@ -34,7 +39,11 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
         PlayerOnAdvanceEventHandler playerOnAdvanceEventHandler,
         PlayerOnTextEditEventHandler playerOnTextEditEventHandler,
         PlayerOnEquipEventHandler creatureOnEquipEventHandler,
-        PlayerOnDeEquipEventHandler creatureOnDeEquipEventHandler)
+        PlayerOnDeEquipEventHandler creatureOnDeEquipEventHandler,
+        NpcOnHearEventHandler npcOnDeEquipEventHandler,
+        CreatureOnAppearEventHandler creatureOnAppearEventHandler,
+        CreatureOnDisappearEventHandler creatureOnDisappearEventHandler,
+        CreatureOnMoveEventHandler creatureOnMoveEventHandler)
     {
         _creatureOnDeathEventHandler = creatureOnDeathEventHandler;
         _creatureOnThinkEventHandler = creatureOnThinkEventHandler;
@@ -50,6 +59,10 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
 
         _creatureOnEquipEventHandler = creatureOnEquipEventHandler;
         _creatureOnDeEquipEventHandler = creatureOnDeEquipEventHandler;
+        _npcOnDeEquipEventHandler = npcOnDeEquipEventHandler;
+        _creatureOnAppearEventHandler = creatureOnAppearEventHandler;
+        _creatureOnDisappearEventHandler = creatureOnDisappearEventHandler;
+        _creatureOnMoveEventHandler = creatureOnMoveEventHandler;
     }
 
     public void Subscribe(ICreature creature)
@@ -75,6 +88,14 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
             player.OnEquipItem += _creatureOnEquipEventHandler.Execute;
             player.OnDeEquipItem += _creatureOnDeEquipEventHandler.Execute;
         }
+
+        if (creature is INpc npc)
+        {
+            npc.OnHear += _npcOnDeEquipEventHandler.Execute;
+            npc.OnAppear += _creatureOnAppearEventHandler.Execute;
+            npc.OnDisappear += _creatureOnDisappearEventHandler.Execute;
+            npc.OnCreatureMove += _creatureOnMoveEventHandler.Execute;
+        }
     }
 
     public void Unsubscribe(ICreature creature)
@@ -99,6 +120,14 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
 
             player.OnEquipItem -= _creatureOnEquipEventHandler.Execute;
             player.OnDeEquipItem -= _creatureOnDeEquipEventHandler.Execute;
+        }
+
+        if (creature is INpc npc)
+        {
+            npc.OnHear -= _npcOnDeEquipEventHandler.Execute;
+            npc.OnAppear -= _creatureOnAppearEventHandler.Execute;
+            npc.OnDisappear -= _creatureOnDisappearEventHandler.Execute;
+            npc.OnCreatureMove -= _creatureOnMoveEventHandler.Execute;
         }
     }
 }

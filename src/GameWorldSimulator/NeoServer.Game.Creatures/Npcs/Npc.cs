@@ -69,7 +69,7 @@ public class Npc : WalkableCreature, INpc
 
     public override bool WalkRandomStep()
     {
-        if (!Cooldowns.Cooldowns[CooldownType.WalkAround].Expired) return false;
+        if (!Cooldowns.Cooldowns[CooldownType.WalkAround].Expired || SpawnPoint == null) return false;
 
         var result = base.WalkRandomStep(SpawnPoint.Location);
 
@@ -88,7 +88,8 @@ public class Npc : WalkableCreature, INpc
 
         OnHear?.Invoke(from, this, speechType, message);
 
-        Answer(from, speechType, message);
+        //todo: muniz commented thos, to tets only revscript npc system
+        //Answer(from, speechType, message);
     }
 
     public void StopTalkingToCustomer(IPlayer player)
@@ -161,6 +162,60 @@ public class Npc : WalkableCreature, INpc
 
             Say(bindedAnswer, SpeechType.PrivateNpcToPlayer, to);
         }
+    }
+
+    public bool CanInteract(Location location, int range)
+    {
+        return Location.Z == location.Z && base.CanSee(location, range, range);
+    }
+
+    private IList<IPlayer> _playerInteractionsOrder = new List<IPlayer>();
+    private IDictionary<IPlayer, ushort> _playerInteractions = new Dictionary<IPlayer, ushort>();
+
+    public void SetPlayerInteraction(IPlayer player, ushort topicId)
+    {
+        if (!_playerInteractionsOrder.Contains(player))
+        {
+            _playerInteractionsOrder.Add(player);
+            TurnTo(player);
+        }
+
+        _playerInteractions.AddOrUpdate(player, topicId);
+    }
+
+    public void RemovePlayerInteraction(IPlayer player)
+    {
+        _playerInteractionsOrder.Remove(player);
+
+        if (_playerInteractions.ContainsKey(player))
+        {
+            _playerInteractions.Remove(player);
+
+            if (this is IShopperNpc shopperNpc)
+                shopperNpc.StopSellingToCustomer(player);
+        }
+
+        if (_playerInteractionsOrder.Count > 0)
+            TurnTo(_playerInteractionsOrder.FirstOrDefault());
+    }
+
+    public bool IsInteractingWithPlayer(IPlayer player)
+    {
+        if (_playerInteractions.Count == 0)
+            return false;
+
+        return _playerInteractions.ContainsKey(player);
+    }
+
+    public bool IsPlayerInteractingOnTopic(IPlayer player, ushort topicId)
+    {
+        if (_playerInteractions.Count == 0)
+            return false;
+
+        if (!_playerInteractions.TryGetValue(player, out var currentTopicId))
+            return false;
+
+        return currentTopicId == topicId;
     }
 
     private void WatchCustomerEvents(ISociableCreature creature)

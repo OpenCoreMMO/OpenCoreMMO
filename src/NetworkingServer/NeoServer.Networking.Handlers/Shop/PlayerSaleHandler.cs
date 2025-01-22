@@ -7,27 +7,18 @@ using NeoServer.Server.Tasks;
 
 namespace NeoServer.Networking.Handlers.Shop;
 
-public class PlayerSaleHandler : PacketHandler
+public class PlayerSaleHandler(IGameServer game, IItemTypeStore itemTypeStore, IItemClientServerIdMapStore itemClientServerIdMapStore) : PacketHandler
 {
-    private readonly IGameServer _game;
-    private readonly IItemTypeStore _itemTypeStore;
-
-    public PlayerSaleHandler(IGameServer game, IItemTypeStore itemTypeStore)
-    {
-        _game = game;
-        _itemTypeStore = itemTypeStore;
-    }
-
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
         var playerSalePacket = new PlayerSalePacket(message);
-        if (!_game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player)) return;
+        if (!game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player)) return;
 
-        var serverId = ItemClientServerIdMapStore.Data.Get(playerSalePacket.ItemClientId);
+        var serverId = itemClientServerIdMapStore.Get(playerSalePacket.ItemClientId);
 
-        if (!_itemTypeStore.TryGetValue(serverId, out var itemType)) return;
+        if (!itemTypeStore.TryGetValue(serverId, out var itemType)) return;
 
-        _game.Dispatcher.AddEvent(new Event(() =>
+        game.Dispatcher.AddEvent(new Event(() =>
             player.Sell(itemType, playerSalePacket.Amount, playerSalePacket.IgnoreEquipped)));
     }
 }

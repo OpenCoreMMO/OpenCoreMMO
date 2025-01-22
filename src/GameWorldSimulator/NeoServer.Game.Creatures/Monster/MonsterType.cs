@@ -19,6 +19,7 @@ public sealed class MonsterType : IMonsterType
     public Race Race { get; set; }
     public uint Experience { get; set; }
     public ushort Speed { get; set; }
+    public uint Health { get; set; }
     public uint MaxHealth { get; set; }
     public IDictionary<LookType, ushort> Look { get; set; }
     public IIntervalChance TargetChance { get; set; }

@@ -48,11 +48,18 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(luaState, "Player", "getSkillTries", LuaPlayerGetSkillTries);
         RegisterMethod(luaState, "Player", "addSkillTries", LuaPlayerAddSkillTries);
 
-        RegisterMethod(luaState, "Player", "getStorageValue", LuaPlayerGetStorageValue);
-        RegisterMethod(luaState, "Player", "setStorageValue", LuaPlayerSetStorageValue);
+        RegisterMethod(luaState, "Player", "getSex", LuaPlayerGetSex);
+        RegisterMethod(luaState, "Player", "setSex", LuaPlayerSetSex);
+
+        //RegisterMethod(luaState, "Player", "getPronoun", LuaPlayerGetPronoun);
+
+        //RegisterMethod(luaState, "Player", "getTown", LuaPlayerGetTown);
 
         RegisterMethod(luaState, "Player", "getGroup", LuaPlayerGetGroup);
         RegisterMethod(luaState, "Player", "setGroup", LuaPlayerSetGroup);
+
+        RegisterMethod(luaState, "Player", "getStorageValue", LuaPlayerGetStorageValue);
+        RegisterMethod(luaState, "Player", "setStorageValue", LuaPlayerSetStorageValue);
 
         RegisterMethod(luaState, "Player", "addItem", LuaPlayerAddItem);
         RegisterMethod(luaState, "Player", "removeItem", LuaPlayerRemoveItem);
@@ -227,6 +234,147 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         {
             Lua.PushBoolean(luaState, false);
         }
+        return 1;
+    }
+
+    private static int LuaPlayerGetSex(LuaState luaState)
+    {
+        // player:getSex()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player != null)
+            Lua.PushNumber(luaState, (byte)player.Gender);
+        else
+            Lua.PushNil(luaState);
+
+        return 1;
+    }
+
+    private static int LuaPlayerSetSex(LuaState luaState)
+    {
+        // player:setSex(newSex)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player != null)
+        {
+            var newSex = GetNumber<Gender>(luaState, 2);
+            player.Gender = newSex;
+            Lua.PushBoolean(luaState, true);
+        }
+        else
+            Lua.PushNil(luaState);
+
+        return 1;
+    }
+
+    //private static int LuaPlayerGetPronoun(LuaState luaState)
+    //{
+    //    // player:getPronoun()
+    //    var player = GetUserdata<IPlayer>(luaState, 1);
+    //    if (player != null)
+    //        Lua.PushString(luaState, player.GenderPronoun);
+    //    else
+    //        Lua.PushNil(luaState);
+
+    //    return 1;
+    //}
+
+    //private static int LuaPlayerSetPronoun(LuaState luaState)
+    //{
+    //    // player:setPronoun(newPronoun)
+    //    var player = GetUserdata<IPlayer>(luaState, 1);
+    //    if (player != null)
+    //    {
+    //        var newPronoun = GetString(luaState, 2);
+    //        player.Gender = newPronoun;
+    //        Lua.PushBoolean(luaState, true);
+    //    }
+    //    else
+    //        Lua.PushNil(luaState);
+
+    //    return 1;
+    //}
+
+    private static int LuaPlayerGetGroup(LuaState luaState)
+    {
+        // player:getGroup()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player != null)
+        {
+            PushUserdata(luaState, player.Group);
+            SetMetatable(luaState, -1, "Group");
+        }
+        else
+            Lua.PushNil(luaState);
+
+        return 1;
+    }
+
+    private static int LuaPlayerSetGroup(LuaState luaState)
+    {
+        // player:setGroup(group)
+        var group = GetUserdata<IGroup>(luaState, 2);
+
+        if (group is null)
+        {
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var player = GetUserdata<IPlayer>(luaState, 1);
+
+        if (player is not null)
+        {
+            player.Group = group;
+            PushBoolean(luaState, true);
+        }
+        else
+            Lua.PushNil(luaState);
+
+        return 1;
+    }
+
+    private static int LuaPlayerGetStorageValue(LuaState luaState)
+    {
+        // player:getStorageValue(key)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player != null)
+            Lua.PushNumber(luaState, player.GetStorageValue(GetNumber<int>(luaState, 2)));
+        else
+            Lua.PushNil(luaState);
+
+        return 1;
+    }
+
+    private static int LuaPlayerSetStorageValue(LuaState luaState)
+    {
+        // player:setStorageValue(key, value)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        var key = GetNumber<int>(luaState, 2);
+        var value = GetNumber<int>(luaState, 3);
+
+        var startReservedRange = 10000000;
+        var endReservedRange = 20000000;
+
+        if (key == 0)
+        {
+            _logger.Error("Storage key is nil");
+            return 1;
+        }
+
+        if (key >= startReservedRange && key <= endReservedRange)
+        {
+            _logger.Error($"Accessing reserved storage key range: {key}");
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        if (player != null)
+        {
+            player.AddOrUpdateStorageValue(key, value);
+            PushBoolean(luaState, true);
+        }
+        else
+            Lua.PushNil(luaState);
+
         return 1;
     }
 
@@ -426,91 +574,6 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         var player = GetUserdata<IPlayer>(luaState, 1);
         if (player != null)
             PushBoolean(luaState, player.IsProtectionZoneLocked);
-        else
-            Lua.PushNil(luaState);
-
-        return 1;
-    }
-
-    private static int LuaPlayerGetStorageValue(LuaState luaState)
-    {
-        // player:getStorageValue(key)
-        var player = GetUserdata<IPlayer>(luaState, 1);
-        if (player != null)
-            Lua.PushNumber(luaState, player.GetStorageValue(GetNumber<int>(luaState, 2)));
-        else
-            Lua.PushNil(luaState);
-
-        return 1;
-    }
-
-    private static int LuaPlayerSetStorageValue(LuaState luaState)
-    {
-        // player:setStorageValue(key, value)
-        var player = GetUserdata<IPlayer>(luaState, 1);
-        var key = GetNumber<int>(luaState, 2);
-        var value = GetNumber<int>(luaState, 3);
-
-        var startReservedRange = 10000000;
-        var endReservedRange = 20000000;
-
-        if (key == 0)
-        {
-            _logger.Error("Storage key is nil");
-            return 1;
-        }
-
-        if (key >= startReservedRange && key <= endReservedRange)
-        {
-            _logger.Error($"Accessing reserved storage key range: {key}");
-            PushBoolean(luaState, false);
-            return 1;
-        }
-
-        if (player != null)
-        {
-            player.AddOrUpdateStorageValue(key, value);
-            PushBoolean(luaState, true);
-        }
-        else
-            Lua.PushNil(luaState);
-
-        return 1;
-    }
-
-    private static int LuaPlayerGetGroup(LuaState luaState)
-    {
-        // player:getGroup()
-        var player = GetUserdata<IPlayer>(luaState, 1);
-        if (player != null)
-        {
-            PushUserdata(luaState, player.Group);
-            SetMetatable(luaState, -1, "Group");
-        }
-        else
-            Lua.PushNil(luaState);
-
-        return 1;
-    }
-
-    private static int LuaPlayerSetGroup(LuaState luaState)
-    {
-        // player:setGroup(group)
-        var group = GetUserdata<IGroup>(luaState, 2);
-
-        if (group is null)
-        {
-            PushBoolean(luaState, false);
-            return 1;
-        }
-
-        var player = GetUserdata<IPlayer>(luaState, 1);
-
-        if (player is not null)
-        {
-            player.Group = group;
-            PushBoolean(luaState, true);
-        }
         else
             Lua.PushNil(luaState);
 

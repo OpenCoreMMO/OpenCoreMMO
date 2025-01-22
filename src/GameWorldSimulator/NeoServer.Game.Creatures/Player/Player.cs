@@ -68,6 +68,7 @@ public class Player : CombatActor, IPlayer
             new CreatureType(
                 characterName,
                 string.Empty,
+                healthPoints,
                 maxHealthPoints,
                 speed,
                 new Dictionary<LookType, ushort> { { LookType.Corpse, 3058 } }),
@@ -151,7 +152,7 @@ public class Player : CombatActor, IPlayer
     /// </summary>
     public string GenderPronoun => Gender == Gender.Male ? "He" : "She";
 
-    public Gender Gender { get; }
+    public Gender Gender { get; set; }
     public int PremiumTime { get; init; }
     public ITown Town { get; set; }
     public IVip Vip { get; }

@@ -188,6 +188,7 @@ if NpcHandler == nil then
 	-- If the player is not interacting with the npc, it set the npc's interaction with the player
 	-- It clean the eventDelayedSay and turn npc to the player
 	function NpcHandler:updateInteraction(npc, player)
+		print('updateInteraction')
 		local playerId = player:getId()
 		if not self:checkInteraction(npc, player) then
 			npc:setPlayerInteraction(player, 0)
@@ -202,6 +203,7 @@ if NpcHandler == nil then
 	-- This function is used to set an interaction between the npc and the player
 	-- Also set the default (0) topic and call "updateInteraction"
 	function NpcHandler:setInteraction(npc, player)
+		print('setInteraction')
 		local playerId = player:getId()
 		if self:checkInteraction(npc, player) then
 			return false
@@ -219,6 +221,7 @@ if NpcHandler == nil then
 	-- This function removes the npc interaction with the player and clear the objects
 	-- Also close the shop (if is opened) and clear eventDelayedSay
 	function NpcHandler:removeInteraction(npc, player)
+		print('removeInteraction1')
 		local playerId = player:getId()
 		if Player(player) == nil then
 			return logger.error("[{} NpcHandler:removeInteraction] - Player parameter for npc '{}' is missing or nil", npc:getName(), npc:getName())
@@ -238,15 +241,20 @@ if NpcHandler == nil then
 			self:processModuleCallback(CALLBACK_REMOVE_INTERACTION, npc, player)
 		end
 
+		print('removeInteraction2')
+
 		-- If it is an npc that has a shop and the shop is open, it will be closed
 		if npc:isMerchant() then
 			npc:closeShopWindow(player)
 		end
+		print('removeInteraction3')
+
 		npc:removePlayerInteraction(player)
 	end
 
 	-- Returns the callback function with the specified id or nil if no such callback function exists
 	function NpcHandler:getCallback(id)
+		--print('getCallback')
 		local ret = nil
 		if self.callbackFunctions ~= nil then
 			ret = self.callbackFunctions[id]
@@ -256,6 +264,7 @@ if NpcHandler == nil then
 
 	-- Changes the callback function for the given id to callback
 	function NpcHandler:setCallback(id, callback)
+		print('setCallback')
 		if self.callbackFunctions ~= nil then
 			self.callbackFunctions[id] = callback
 		end
@@ -264,6 +273,7 @@ if NpcHandler == nil then
 	-- Adds a module to this npc handler and inits it
 	-- Variables "greetCallback, farewellCallback and tradeCallback" are boolean value, true by default
 	function NpcHandler:addModule(module, initNpcName, greetCallback, farewellCallback, tradeCallback)
+		print('addModule')
 		if self.modules ~= nil then
 			self.modules[#self.modules + 1] = module
 			self.npcName = initNpcName
@@ -285,6 +295,7 @@ if NpcHandler == nil then
 
 	-- Calls the callback function represented by id for all modules added to this npc handler with the given arguments
 	function NpcHandler:processModuleCallback(id, ...)
+		--print('processModuleCallback')
 		local ret = true
 		for _, module in pairs(self.modules) do
 			local tmpRet = true
@@ -327,6 +338,7 @@ if NpcHandler == nil then
 
 	-- Returns the message represented by id
 	function NpcHandler:getMessage(id)
+		print('getMessage')
 		local ret = nil
 		if self.messages ~= nil then
 			ret = self.messages[id]
@@ -336,6 +348,7 @@ if NpcHandler == nil then
 
 	-- Changes the default response message with the specified id to newMessage
 	function NpcHandler:setMessage(id, newMessage, delay)
+		print('setMessage')
 		if self.messages ~= nil then
 			self.messages[id] = newMessage
 			if delay ~= nil and delay > 1 then
@@ -346,6 +359,7 @@ if NpcHandler == nil then
 
 	-- Translates all message tags found in msg using parseInfo
 	function NpcHandler:parseMessage(msg, parseInfo, player, message)
+		print('parseMessage')
 		local ret = msg
 		if type(ret) == "string" then
 			for search, replace in pairs(parseInfo) do
@@ -376,6 +390,7 @@ if NpcHandler == nil then
 
 	-- Undoes the action of talking to the player, thus resetting the direct interaction with the npc and the player
 	function NpcHandler:unGreet(npc, player)
+		print('unGreet')
 		if not self:checkInteraction(npc, player) then
 			return false
 		end
@@ -396,6 +411,7 @@ if NpcHandler == nil then
 
 	-- Greets the player, thus initiating the direct interaction between the npc and the player
 	function NpcHandler:greet(npc, player, message)
+		print('greet')
 		if self:checkInteraction(npc, player) then
 			return
 		end
@@ -415,6 +431,7 @@ if NpcHandler == nil then
 
 	-- Handles onAppear events. If you with to handle this yourself, please use the CALLBACK_ON_APPEAR callback.
 	function NpcHandler:onAppear(npc, player)
+		print('onAppearrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
 		local callback = self:getCallback(CALLBACK_ON_APPEAR)
 		if callback == nil or callback(npc, player) then
 			if self:processModuleCallback(CALLBACK_ON_APPEAR, npc, player) then
@@ -425,6 +442,7 @@ if NpcHandler == nil then
 
 	-- Handles onDisappear events. If you with to handle this yourself, please use the CALLBACK_ON_DISAPPEAR callback.
 	function NpcHandler:onDisappear(npc, player)
+		print('onDisappear')
 		local callback = self:getCallback(CALLBACK_ON_DISAPPEAR)
 		if callback == nil or callback(npc, player) then
 			if self:processModuleCallback(CALLBACK_ON_DISAPPEAR, npc, player) then
@@ -435,6 +453,7 @@ if NpcHandler == nil then
 
 	-- Handles onSay events. If you with to handle this yourself, please use the CALLBACK_ON_SAY callback.
 	function NpcHandler:onSay(npc, player, msgtype, msg)
+		print('onSay')
 		local playerId = player:getId()
 		local callback = self:getCallback(CALLBACK_ON_SAY)
 		if callback == nil or callback(npc, player, msgtype, msg) then
@@ -462,6 +481,7 @@ if NpcHandler == nil then
 
 	-- Handles onCloseChannel events. If you wish to handle this yourself, use the CALLBACK_CLOSE_CHANNEL callback.
 	function NpcHandler:onCloseChannel(npc, player)
+		print('onCloseChannel')
 		local callback = self:getCallback(CALLBACK_CLOSE_CHANNEL)
 		if callback == nil or callback(npc, player) then
 			if self:processModuleCallback(CALLBACK_CLOSE_CHANNEL, player) then
@@ -472,6 +492,7 @@ if NpcHandler == nil then
 
 	-- Handles tradeRequest events. If you wish to handle this yourself, use the CALLBACK_ON_TRADE_REQUEST callback.
 	function NpcHandler:tradeRequest(npc, player, message)
+		print('tradeRequest')
 		local callback = self:getCallback(CALLBACK_ON_TRADE_REQUEST)
 		if callback == nil or callback(npc, player, message) then
 			if self:processModuleCallback(CALLBACK_ON_TRADE_REQUEST, npc, player) then
@@ -490,6 +511,7 @@ if NpcHandler == nil then
 
 	-- Callback for requesting a trade window with the NPC.
 	function NpcHandler:onTradeRequest(npc, player, message)
+		print('onTradeRequest')
 		if self:checkInteraction(npc, player) then
 			self:tradeRequest(npc, player, message)
 			return true
@@ -498,6 +520,7 @@ if NpcHandler == nil then
 
 	-- Handles onThink events. If you wish to handle this yourself, please use the CALLBACK_ON_THINK callback.
 	function NpcHandler:onThink(npc, interval)
+		--print('onThink')
 		local callback = self:getCallback(CALLBACK_ON_THINK)
 		if callback == nil or callback(npc, interval) then
 			if self:processModuleCallback(CALLBACK_ON_THINK, npc, interval) then
@@ -508,6 +531,7 @@ if NpcHandler == nil then
 
 	-- Handles onMove events. If you wish to handle this yourself, please use the CALLBACK_ON_MOVE callback.
 	function NpcHandler:onMove(npc, player, fromPosition, toPosition)
+		print('onMove')
 		local callback = self:getCallback(CALLBACK_ON_MOVE)
 		if callback == nil or callback(npc, player, fromPosition, toPosition) then
 			if self:processModuleCallback(CALLBACK_ON_MOVE, npc, player, fromPosition, toPosition) then
@@ -518,6 +542,7 @@ if NpcHandler == nil then
 
 	-- Tries to greet the player with the given player.
 	function NpcHandler:onGreet(npc, player, message)
+		print('onGreet')
 		if npc:isInTalkRange(Player(player):getPosition(), self:getTalkRange()) then
 			if not self:checkInteraction(npc, player) then
 				self:greet(npc, player, message)
@@ -528,7 +553,10 @@ if NpcHandler == nil then
 
 	-- Simply calls the underlying unGreet function.
 	function NpcHandler:onFarewell(npc, player)
+		print('onFarewell')
+		print(self:checkInteraction(npc, player))
 		if self:checkInteraction(npc, player) then
+			print('if')
 			self:unGreet(npc, player)
 			return true
 		end
@@ -536,6 +564,7 @@ if NpcHandler == nil then
 
 	-- Should be called on this npc's player if the distance to player is greater then talkRadius.
 	function NpcHandler:onWalkAway(npc, player)
+		print('onWalkAway')
 		if not self:checkInteraction(npc, player) then
 			return false
 		end
@@ -577,12 +606,14 @@ if NpcHandler == nil then
 	-- Resets the npc into its initial state (in regard of the keywordhandler).
 	--	All modules are also receiving a reset call through their callbackOnModuleReset function.
 	function NpcHandler:resetNpc(player)
+		print('resetNpc')
 		if self:processModuleCallback(CALLBACK_MODULE_RESET) then
 			self.keywordHandler:reset(player)
 		end
 	end
 
 	function NpcHandler:cancelNPCTalk(events)
+		print('cancelNPCTalk')
 		for aux = 1, #events do
 			stopEvent(events[aux].event)
 		end
@@ -591,6 +622,7 @@ if NpcHandler == nil then
 
 	-- From now on, when you have several messages and inside brackets, use the tag |PLAYERNAME| recognition will be possible.
 	function NpcHandler:doNPCTalkALot(msgs, delay, npc, player)
+		print('doNPCTalkALot')
 		local playerId = player:getId()
 		if self:getEventDelayedSay(playerId) then
 			self:cancelNPCTalk(self:getEventDelayedSay(playerId))
@@ -629,6 +661,7 @@ if NpcHandler == nil then
 	-- This implements the currently set type of talkdelay.
 	-- The "delay" variable sets the delay for the interval between messages
 	function NpcHandler:say(message, npc, player, delay, textType)
+		print('say')
 		if not player then
 			return
 		end
@@ -648,6 +681,7 @@ if NpcHandler == nil then
 	-- sendMessages(msg, messagesTable, npc, player, useDelay(true or false), delay)
 	-- If not have useDelay = true and delay, then send npc:talk(), this function not have delay of one message to other
 	function NpcHandler:sendMessages(message, messageTable, npc, player, useDelay, delay)
+		print('sendMessages')
 		for index, value in pairs(messageTable) do
 			if MsgFind(message, index) then
 				if useDelay and useDelay == true then

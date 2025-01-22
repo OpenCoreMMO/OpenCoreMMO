@@ -1,5 +1,6 @@
 ﻿dofile(CORE_DIRECTORY .. "/libs/functions/constants.lua")
 dofile(CORE_DIRECTORY .. "/libs/functions/creature.lua")
+dofile(CORE_DIRECTORY .. "/libs/functions/functions.lua")
 dofile(CORE_DIRECTORY .. "/libs/functions/item.lua")
 dofile(CORE_DIRECTORY .. "/libs/functions/player.lua")
 dofile(CORE_DIRECTORY .. "/libs/functions/position.lua")

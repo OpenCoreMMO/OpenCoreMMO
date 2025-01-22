@@ -7,6 +7,8 @@ using NeoServer.Server.Common.Contracts.Tasks;
 using NeoServer.Server.Tasks;
 using Serilog;
 using NeoServer.Game.Common.Chats;
+using NeoServer.Server.Common.Contracts;
+using System;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -16,17 +18,20 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
     private static ILogger _logger;
     private static IScheduler _scheduler;
     private static IChatChannelStore _chatChannelStore;
+    private static IGameServer _gameServer;
 
     public GlobalFunctions(
         ILuaEnvironment luaEnvironment,
         ILogger logger, 
         IScheduler scheduler,
-        IChatChannelStore chatChannelStore) : base(nameof(GlobalFunctions))
+        IChatChannelStore chatChannelStore,
+        IGameServer gameServer) : base(nameof(GlobalFunctions))
     {
         _luaEnvironment = luaEnvironment;
         _logger = logger;
         _scheduler = scheduler;
         _chatChannelStore = chatChannelStore;
+        _gameServer = gameServer;
     }
 
     public void Init(LuaState luaState)
@@ -35,6 +40,8 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         RegisterGlobalMethod(luaState, "addEvent", LuaAddEvent);
         RegisterGlobalMethod(luaState, "stopEvent", LuaStopEvent);
         RegisterGlobalMethod(luaState, "sendChannelMessage", LuaSendChannelMessage);
+        RegisterGlobalMethod(luaState, "getWorldTime", LuaGetWorldTime);
+        RegisterGlobalMethod(luaState, "getWorldLight", LuaGetWorldLight);
     }
 
     private static int LuaRawGetMetatable(LuaState luaState)
@@ -146,5 +153,20 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         channel.WriteMessage(message, out var cancelMessage, (SpeechType)type);
         PushBoolean(luaState, true);
         return 1;
+    }
+
+    private static int LuaGetWorldTime(LuaState luaState)
+    {
+        // getWorldTime()
+        Lua.PushNumber(luaState, _gameServer.LightHour);
+        return 1;
+    }
+
+    private static int LuaGetWorldLight(LuaState luaState)
+    {
+        // getWorldLight()
+        Lua.PushNumber(luaState, _gameServer.LightLevel);
+        Lua.PushNumber(luaState, _gameServer.LightColor);
+        return 2;
     }
 }

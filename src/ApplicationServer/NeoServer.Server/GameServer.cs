@@ -21,6 +21,14 @@ public class GameServer : IGameServer
         Instance = this;
     }
 
+    private const int EVENT_LIGHTINTERVAL_MS = 10000;
+    private const int DAY_LENGTH_SECONDS = 3600;
+    private const int LIGHT_DAY_LENGTH = 1440;
+    private const int LIGHT_LEVEL_DAY = 250;
+    private const int LIGHT_LEVEL_NIGHT = 40;
+    private const int SUNSET = 1050;
+    private const int SUNRISE = 360;
+
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public static IGameServer Instance { get; private set; }
@@ -28,12 +36,22 @@ public class GameServer : IGameServer
     /// <summary>
     ///     Game's light level
     /// </summary>
-    public byte LightLevel => 250;
+    public byte LightLevel => LIGHT_LEVEL_DAY;
 
     /// <summary>
     ///     Indicates Game's light color
     /// </summary>
     public byte LightColor => 215;
+
+    /// <summary>
+    ///     Game's light hour
+    /// </summary>
+    public int LightHour => SUNRISE + (SUNSET - SUNRISE) / 2;
+
+    /// <summary>
+    ///     Game's light hour
+    /// </summary>
+    public int LightHourDelta => (LIGHT_DAY_LENGTH * (EVENT_LIGHTINTERVAL_MS / 1000)) / DAY_LENGTH_SECONDS;
 
     /// <summary>
     ///     Game state

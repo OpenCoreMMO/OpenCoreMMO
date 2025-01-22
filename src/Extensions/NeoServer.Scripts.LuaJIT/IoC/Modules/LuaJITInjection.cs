@@ -2,7 +2,6 @@
 using NeoServer.Scripts.LuaJIT.Functions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
-using NeoServer.Server.Common.Contracts.Scripts.Services;
 
 namespace NeoServer.Scripts.LuaJIT.IoC.Modules;
 
@@ -18,9 +17,11 @@ public static class LuaJITInjection
         builder.AddSingleton<ICreatureEvents, CreatureEvents>();
         builder.AddSingleton<IGlobalEvents, GlobalEvents>();
         builder.AddSingleton<IMoveEvents, MoveEvents>();
+        builder.AddSingleton<INpcs, Npcs>();
         builder.AddSingleton<ITalkActions, TalkActions>();
 
         builder.AddSingleton<IActionFunctions, ActionFunctions>();
+        builder.AddSingleton<IConditionFunctions, ConditionFunctions>();
         builder.AddSingleton<IConfigFunctions, ConfigFunctions>();
         builder.AddSingleton<IContainerFunctions, ContainerFunctions>();
         builder.AddSingleton<ICreatureFunctions, CreatureFunctions>();
@@ -37,6 +38,7 @@ public static class LuaJITInjection
         builder.AddSingleton<IMonsterFunctions, MonsterFunctions>();
         builder.AddSingleton<IMoveEventFunctions, MoveEventFunctions>();
         builder.AddSingleton<INpcFunctions, NpcFunctions>();
+        builder.AddSingleton<INpcTypeFunctions, NpcTypeFunctions>();
         builder.AddSingleton<IPlayerFunctions, PlayerFunctions>();
         builder.AddSingleton<IResultFunctions, ResultFunctions>();
         builder.AddSingleton<IPositionFunctions, PositionFunctions>();

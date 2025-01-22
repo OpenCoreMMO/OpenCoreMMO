@@ -8,6 +8,7 @@ using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Game.Creatures.Npcs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -27,6 +28,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
     private static IGameCreatureManager _gameCreatureManager;
     private static ServerConfiguration _serverConfiguration;
     private static IStaticToDynamicTileService _staticToDynamicTileService;
+    private static INpcs _npcs;
 
     public GameFunctions(
         ILuaEnvironment luaEnvironment,
@@ -37,7 +39,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         ICreatureFactory creatureFactory,
         IGameCreatureManager gameCreatureManager,
         ServerConfiguration serverConfiguration,
-        IStaticToDynamicTileService staticToDynamicTileService) : base(nameof(GameFunctions)) {
+        IStaticToDynamicTileService staticToDynamicTileService,
+        INpcs npcs) : base(nameof(GameFunctions)) {
         _luaEnvironment = luaEnvironment;
         _scripts = scripts;
         _itemTypeStore = itemTypeStore;
@@ -47,10 +50,13 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         _gameCreatureManager = gameCreatureManager;
         _serverConfiguration = serverConfiguration;
         _staticToDynamicTileService = staticToDynamicTileService;
+        _npcs = npcs;
     }
 
     public void Init(LuaState luaState) {
         RegisterTable(luaState, "Game");
+
+        RegisterMethod(luaState, "Game", "createNpcType", NpcTypeFunctions.LuaNpcTypeCreate);
 
         RegisterMethod(luaState, "Game", "getReturnMessage", LuaGameGetReturnMessage);
 
@@ -292,11 +298,31 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
 
         try {
             var dir = AppContext.BaseDirectory + _serverConfiguration.DataLuaJit;
-            switch (reloadType) {
+            switch (reloadType)
+            {
+                case ReloadType.RELOAD_TYPE_ALL:
+                    {
+                        ReloadCore(dir);
+                        ReloadScripts(dir);
+                        break;
+                    }
+
                 case ReloadType.RELOAD_TYPE_CORE: {
                     ReloadCore(dir);
                     break;
                 }
+
+                //case ReloadType.RELOAD_TYPE_MONSTERS:
+                //    {
+                //        ReloadMonsters(dir);
+                //        break;
+                //    }
+
+                case ReloadType.RELOAD_TYPE_NPCS:
+                    {
+                        ReloadNpcs(dir);
+                        break;
+                    }
 
                 case ReloadType.RELOAD_TYPE_SCRIPTS: {
                     ReloadScripts(dir);
@@ -342,10 +368,19 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         _scripts.LoadScripts($"{dir}/scripts/libs", true, false);
     }
 
+    private static void ReloadNpcs(string dir)
+    {
+        _npcs.Clear();
+        _luaEnvironment.LoadFile($"{dir}/npclib/load.lua", "load.lua");
+        _scripts.LoadScripts($"{dir}/npc", false, true);
+    }
 
     private static void ReloadScripts(string dir) {
         _scripts.ClearAllScripts();
         _scripts.LoadScripts($"{dir}/scripts", false, true);
         _scripts.LoadScripts($"{dir}/scripts/libs", true, true);
+
+        ReloadNpcs(dir);
+        //ReloadMonsters(dir);
     }
 }

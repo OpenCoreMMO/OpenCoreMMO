@@ -22,8 +22,11 @@ public class NpcFactory : INpcFactory
     private readonly INpcStore _npcStore;
 
     public NpcFactory(
-        ILogger logger, IItemFactory itemFactory,
-        INpcStore npcStore, ICoinTypeStore coinTypeStore, IMapTool mapTool)
+        ILogger logger,
+        IItemFactory itemFactory,
+        INpcStore npcStore,
+        ICoinTypeStore coinTypeStore,
+        IMapTool mapTool)
     {
         _logger = logger;
         _itemFactory = itemFactory;
@@ -46,7 +49,7 @@ public class NpcFactory : INpcFactory
 
         var outfit = BuildOutfit(npcType);
 
-        if (npcType.CustomAttributes?.ContainsKey("shop") ?? false)
+        if (npcType.ShopItems.Count > 0)
             return new ShopperNpc(npcType, _mapTool, spawn, outfit, npcType.MaxHealth)
             {
                 CreateNewItem = _itemFactory.Create,

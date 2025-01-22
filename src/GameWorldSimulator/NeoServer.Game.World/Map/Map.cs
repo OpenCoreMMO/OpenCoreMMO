@@ -376,7 +376,7 @@ public class Map : IMap
         var sector = world.GetSector(creature.Location.X, creature.Location.Y);
         sector.AddCreature(creature);
 
-        creature.OnAppear(tile.Location, cylinder.TileSpectators);
+        creature.Appear(tile.Location, cylinder.TileSpectators);
         if (creature is IWalkableCreature walkableCreature)
             OnCreatureAddedOnMap?.Invoke(walkableCreature, cylinder);
     }
@@ -388,6 +388,8 @@ public class Map : IMap
         CylinderOperation.RemoveCreature(creature, out var cylinder);
 
         world.GetSector(tile.Location.X, tile.Location.Y).RemoveCreature(creature);
+
+        creature.Disappear(tile.Location, cylinder.TileSpectators);
         if (creature is IWalkableCreature walkableCreature)
             OnThingRemovedFromTile?.Invoke(walkableCreature, cylinder);
     }

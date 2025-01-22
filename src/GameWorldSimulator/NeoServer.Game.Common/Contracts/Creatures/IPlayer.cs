@@ -112,7 +112,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     new bool InFight { get; }
     IPlayerContainerList Containers { get; }
 
-    ITown Town { get; }
+    ITown Town { get; set; }
 
     IInventory Inventory { get; }
     ushort Mana { get; }
@@ -142,7 +142,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     IPlayerChannel Channels { get; set; }
     IPlayerParty PlayerParty { get; set; }
     string GenderPronoun { get; }
-    Gender Gender { get; }
+    Gender Gender { get; set;  }
     int PremiumTime { get; }
     IDictionary<SkillType, ISkill> Skills { get; }
     IDictionary<int, int> Storages { get; }
