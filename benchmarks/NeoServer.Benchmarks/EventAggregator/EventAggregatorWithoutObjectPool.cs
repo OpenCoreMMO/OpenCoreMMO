@@ -34,7 +34,8 @@ public class EventAggregatorWithoutObjectPool(IServiceProvider serviceProvider) 
 
     public void Publish<TEvent>(TEvent @event) where TEvent : IIntegrationEvent
     {
-        var eventName = @event?.GetType().FullName;
+        //var eventName = @event?.GetType().FullName;
+        var eventName = @event?.FullName;
         if (string.IsNullOrWhiteSpace(eventName)) return;
 
         if (!_handlers.TryGetValue(eventName, out var handlers))
@@ -52,7 +53,10 @@ public class EventAggregatorWithoutObjectPool(IServiceProvider serviceProvider) 
     }
 }
 
-public interface IIntegrationEvent;
+public interface IIntegrationEvent
+{
+    string FullName { get; }
+};
 public interface IIntegrationEventHandler;
 public interface IIntegrationEventHandler<in T> : IIntegrationEventHandler where T : IIntegrationEvent
 {

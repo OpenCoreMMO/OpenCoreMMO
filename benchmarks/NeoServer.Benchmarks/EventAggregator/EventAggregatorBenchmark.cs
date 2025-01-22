@@ -1,6 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using Microsoft.Extensions.DependencyInjection;
+using NeoServer.Server.Tasks;
 
 namespace NeoServer.Benchmarks.EventAggregator;
 
@@ -16,10 +17,10 @@ public class EventAggregatorBenchmark
         var builder = new ServiceCollection();
         builder.AddSingleton<IBaseEventHandler<PlayerChangedEvent>, EventHandler>();
         var serviceProvider = builder.BuildServiceProvider();
-        
+
         _eventAggregatorUsingObjectPool = new EventAggregatorUsingObjectPool();
         //_eventAggregatorUsingObjectPool.Initialize(serviceProvider);
-        
+
         _eventAggregatorWithoutObjectPool = new EventAggregatorWithoutObjectPool(serviceProvider);
         //_eventAggregatorWithoutObjectPool.Initialize();
     }
@@ -36,7 +37,7 @@ public class EventAggregatorBenchmark
             });
         }
     }
-    
+
     [Benchmark]
     public void PublishToEventAggregatorWithoutObjectPool()
     {
@@ -57,7 +58,7 @@ public class EventAggregatorBenchmark
             Level = 100,
             Name = "Test"
         };
-            
+
         for (int i = 0; i < 10_000; i++)
         {
             @event.Level = 100;
@@ -69,13 +70,18 @@ public class EventAggregatorBenchmark
 
 public class PlayerChangedEvent : IBaseEvent, IIntegrationEvent
 {
+    public string FullName { get; }
     public string Name { get; set; }
     public int Level { get; set; }
     public void Reset()
     {
     }
+    public PlayerChangedEvent()
+    {
+        FullName = GetType().FullName;
+    }
 }
-public class EventHandler: IBaseEventHandler<PlayerChangedEvent>
+public class EventHandler : IBaseEventHandler<PlayerChangedEvent>
 {
     public void Handle(PlayerChangedEvent @event)
     {
