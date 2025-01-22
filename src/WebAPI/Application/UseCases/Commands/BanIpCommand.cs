@@ -11,7 +11,7 @@ public class BanIpCommand(IIpBansRepository ipBansRepository) : IRequestHandler<
 {
     public async Task<OutputResponse> Handle(BanIpRequest request, CancellationToken cancellationToken)
     {
-        var ipBan = await ipBansRepository.GetBan(request.Ip);
+        var ipBan = await ipBansRepository.ExistBan(request.Ip);
 
         if (ipBan is not null)
             return new OutputResponse(ErrorMessage.IpBanished);

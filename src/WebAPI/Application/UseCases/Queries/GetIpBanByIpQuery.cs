@@ -10,7 +10,7 @@ public class GetIpBanByIpQuery(IMapper mapper, IIpBansRepository ipBansRepositor
 {
     public async Task<IpBanResponseViewModel> Handle(GetIpBanByIpRequest request, CancellationToken cancellationToken)
     {
-        var ipban = await ipBansRepository.GetBan(request.ip);
+        var ipban = await ipBansRepository.ExistBan(request.ip);
         var response = mapper.Map<IpBanResponseViewModel>(ipban);
         return response;
     }
