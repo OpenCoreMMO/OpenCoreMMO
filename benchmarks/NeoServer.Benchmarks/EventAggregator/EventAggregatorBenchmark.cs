@@ -40,13 +40,29 @@ public class EventAggregatorBenchmark
     [Benchmark]
     public void PublishToEventAggregatorWithoutObjectPool()
     {
-        for (int i = 0; i < 1_000; i++)
+        for (int i = 0; i < 10_000; i++)
         {
             _eventAggregatorWithoutObjectPool.Publish(new PlayerChangedEvent
             {
                 Level = 100,
                 Name = "Test"
             });
+        }
+    }
+    [Benchmark]
+    public void PublishToEventAggregatorWithoutObjectPoolStaticEvent()
+    {
+        var @event = new PlayerChangedEvent
+        {
+            Level = 100,
+            Name = "Test"
+        };
+            
+        for (int i = 0; i < 10_000; i++)
+        {
+            @event.Level = 100;
+            @event.Name = "Test";
+            _eventAggregatorWithoutObjectPool.Publish(@event);
         }
     }
 }
