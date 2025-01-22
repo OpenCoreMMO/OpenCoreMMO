@@ -55,7 +55,9 @@ public class AccountLoginHandler : PacketHandler
 
         if (foundedAccount.BanishedAt is not null)
         {
-            connection.Disconnect("Your account has been banished. Reason: " + foundedAccount.BanishmentReason);
+            var untilMessage = foundedAccount.BanishedEndAt.HasValue ? $" until {foundedAccount.BanishedEndAt!.Value.ToString("MM/dd/yyyy")}." : ".";
+            
+            connection.Disconnect($"Your account has been banished{untilMessage}\nReason: {foundedAccount.BanishmentReason}");
             return;
         }
 

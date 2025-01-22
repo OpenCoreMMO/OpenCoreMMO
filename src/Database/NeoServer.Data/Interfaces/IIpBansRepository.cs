@@ -5,5 +5,5 @@ namespace NeoServer.Data.Interfaces;
 
 public interface IIpBansRepository : IBaseRepositoryNeo<IpBanEntity>
 {
-    Task<IpBanEntity> GetBan(string Ip);
+    Task<IpBanEntity> ExistBan(string Ip);
 }

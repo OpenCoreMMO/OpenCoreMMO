@@ -16,7 +16,7 @@ public class IpBansRepository : BaseRepository<IpBanEntity>, IIpBansRepository
     {
     }
 
-    public async Task<IpBanEntity> GetBan(string Ip)
+    public async Task<IpBanEntity> ExistBan(string Ip)
     {
         await using var context = NewDbContext;
 
