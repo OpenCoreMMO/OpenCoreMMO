@@ -19,9 +19,6 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
     private readonly PlayerOnAdvanceEventHandler _playerOnAdvanceEventHandler;
     private readonly PlayerOnTextEditEventHandler _playerOnTextEditEventHandler;
 
-    private readonly PlayerOnEquipEventHandler _creatureOnEquipEventHandler;
-    private readonly PlayerOnDeEquipEventHandler _creatureOnDeEquipEventHandler;
-
     private readonly NpcOnHearEventHandler _npcOnDeEquipEventHandler;
     private readonly CreatureOnAppearEventHandler _creatureOnAppearEventHandler;
     private readonly CreatureOnDisappearEventHandler _creatureOnDisappearEventHandler;
@@ -38,8 +35,6 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
         PlayerOnLogoutEventHandler playerOnLogoutEventHandler,
         PlayerOnAdvanceEventHandler playerOnAdvanceEventHandler,
         PlayerOnTextEditEventHandler playerOnTextEditEventHandler,
-        PlayerOnEquipEventHandler creatureOnEquipEventHandler,
-        PlayerOnDeEquipEventHandler creatureOnDeEquipEventHandler,
         NpcOnHearEventHandler npcOnDeEquipEventHandler,
         CreatureOnAppearEventHandler creatureOnAppearEventHandler,
         CreatureOnDisappearEventHandler creatureOnDisappearEventHandler,
@@ -57,8 +52,6 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
         _playerOnAdvanceEventHandler = playerOnAdvanceEventHandler;
         _playerOnTextEditEventHandler = playerOnTextEditEventHandler;
 
-        _creatureOnEquipEventHandler = creatureOnEquipEventHandler;
-        _creatureOnDeEquipEventHandler = creatureOnDeEquipEventHandler;
         _npcOnDeEquipEventHandler = npcOnDeEquipEventHandler;
         _creatureOnAppearEventHandler = creatureOnAppearEventHandler;
         _creatureOnDisappearEventHandler = creatureOnDisappearEventHandler;
@@ -84,9 +77,6 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
             player.OnLoggedOut += _playerOnLogoutEventHandler.Execute;
             player.OnLevelAdvanced += _playerOnAdvanceEventHandler.Execute;
             player.OnWroteText += _playerOnTextEditEventHandler.Execute;
-
-            player.OnEquipItem += _creatureOnEquipEventHandler.Execute;
-            player.OnDeEquipItem += _creatureOnDeEquipEventHandler.Execute;
         }
 
         if (creature is INpc npc)
@@ -117,9 +107,6 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
             player.OnLoggedOut -= _playerOnLogoutEventHandler.Execute;
             player.OnLevelAdvanced -= _playerOnAdvanceEventHandler.Execute;
             player.OnWroteText -= _playerOnTextEditEventHandler.Execute;
-
-            player.OnEquipItem -= _creatureOnEquipEventHandler.Execute;
-            player.OnDeEquipItem -= _creatureOnDeEquipEventHandler.Execute;
         }
 
         if (creature is INpc npc)

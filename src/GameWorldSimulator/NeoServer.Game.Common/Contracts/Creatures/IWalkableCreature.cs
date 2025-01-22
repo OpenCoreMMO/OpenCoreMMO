@@ -39,7 +39,7 @@ public interface IWalkableCreature : ICreature
     event ChangeSpeed OnChangedSpeed;
     event StopWalk OnCompleteWalking;
     event TeleportTo OnTeleported;
-    event Moved OnCreatureMoved;
+    public event Moved OnCreatureMoved;
 
     /// <summary>
     ///     Decreases creature speed

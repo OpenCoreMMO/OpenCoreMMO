@@ -1,17 +1,12 @@
 ﻿using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Item;
 using NeoServer.Scripts.LuaJIT.Enums;
 using Serilog;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Creatures.Players;
-using System;
-using NeoServer.Game.Common.Contracts.Services;
-using NeoServer.Server.Common.Contracts.Scripts.Services;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -45,23 +40,17 @@ public class MoveEvents : IMoveEvents
     private readonly ILogger _logger;
     private readonly IItemTypeStore _itemTypeStore;
     private readonly IMap _map;
-    private readonly IItemRequirementService _itemRequirementService;
-    private readonly IItemAbilityApplierService _itemAbilityApplierService;
 
     #region Constructors
 
     public MoveEvents(
         ILogger logger,
         IItemTypeStore itemTypeStore,
-        IItemRequirementService itemRequirementService,
-        IItemAbilityApplierService itemAbilityApplierService,
         IMap map)
     {
         _logger = logger;
         _itemTypeStore = itemTypeStore;
         _map = map;
-        _itemRequirementService = itemRequirementService;
-        _itemAbilityApplierService = itemAbilityApplierService;
     }
 
     #endregion
@@ -284,30 +273,6 @@ public class MoveEvents : IMoveEvents
         }
     }
 
-    public void OnPlayerEquip(IPlayer player, IItem item, Slot slot, bool isCheck)
-    {
-        var moveEvent = GetEvent(item, MoveEventType.MOVE_EVENT_EQUIP);
-
-        if (moveEvent is null)
-            return;
-
-        //_events.EventPlayerOnInventoryUpdate(player, item, slot, true);
-        //_callbacks.ExecuteCallback(EventCallback_t::playerOnInventoryUpdate, &EventCallback::playerOnInventoryUpdate, player, item, slot, true);
-        moveEvent.FireEquipItem(player, item, slot, isCheck);
-    }
-
-    public void OnPlayerDeEquip(IPlayer player, IItem item, Slot slot, bool isCheck)
-    {
-        var moveEvent = GetEvent(item, MoveEventType.MOVE_EVENT_DEEQUIP);
-
-        if (moveEvent is null)
-            return;
-
-        //_events.EventPlayerOnInventoryUpdate(player, item, slot, true);
-        //_callbacks.ExecuteCallback(EventCallback_t::playerOnInventoryUpdate, &EventCallback::playerOnInventoryUpdate, player, item, slot, false);
-        moveEvent.FireEquipItem(player, item, slot, isCheck);
-    }
-
     public void OnItemMove(IItem item, ITile tile, bool isAdd)
     {
         MoveEventType eventType1, eventType2;
@@ -386,45 +351,6 @@ public class MoveEvents : IMoveEvents
     }
 
     public bool RemoveItem(IItem item, Location position, IItem tileitem = null)
-    {
-        return true;
-    }
-
-    public bool EquipItem(MoveEvent moveEvent, IPlayer player, IItem item, Slot onSlot, bool isCheck)
-    {
-        if (!player)
-        {
-            _logger.Error("[MoveEvent::EquipItem] - Player is null");
-            return false;
-        }
-
-        if (!item)
-        {
-            _logger.Error("[MoveEvent::EquipItem] - Item is null");
-            return false;
-        }
-
-        var requirement = new Requirement
-        {
-            MinLevel = moveEvent.RequiredMinLevel,
-            MinMagicLevel = moveEvent.RequiredMinMagicLevel,
-            RequiredVocations = moveEvent.RequiredVocations.ToArray(),
-            RequirePremiumTime = moveEvent.RequirePremium,
-            Slot = moveEvent.Slot
-        };
-
-        var resultEquip = _itemRequirementService.PlayerCanEquipItem(player, item, requirement);
-
-        if (!resultEquip.Succeeded)
-            return false;
-
-        if (isCheck)
-            return true;
-
-        return true;
-    }
-
-    public bool DeEquipItem(MoveEvent moveEvent, IPlayer player, IItem item, Slot onSlot, bool isCheck)
     {
         return true;
     }

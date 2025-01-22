@@ -134,7 +134,6 @@ public abstract class Equipment : BaseItem, IEquipment
         PlayerDressing = null;
         PauseDecay();
         OnUndressed?.Invoke(this);
-        player.OnUndressedItem(this);
     }
 
     #endregion

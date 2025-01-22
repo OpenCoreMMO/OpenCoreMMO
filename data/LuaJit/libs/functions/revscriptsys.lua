@@ -163,15 +163,7 @@ end
 -- MoveEvent revscriptsys
 do
 	local function MoveEventNewIndex(self, key, value)
-		if key == "onEquip" then
-			self:type("equip")
-			self:onEquip(value)
-			return
-		elseif key == "onDeEquip" then
-			self:type("deequip")
-			self:onDeEquip(value)
-			return
-		elseif key == "onAddItem" then
+		if key == "onAddItem" then
 			self:type("additem")
 			self:onAddItem(value)
 			return

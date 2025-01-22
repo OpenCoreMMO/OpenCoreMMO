@@ -89,8 +89,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
-    public event EquipItem OnEquipItem;
-    public event DeEquipItem OnDeEquipItem;
 
     #endregion
 

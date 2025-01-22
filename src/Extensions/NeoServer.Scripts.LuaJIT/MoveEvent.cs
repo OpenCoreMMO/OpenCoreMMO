@@ -21,8 +21,8 @@ public class MoveEvent : Script
     }
 
     public MoveEventType EventType { get; set; }
-    public uint RequiredMinLevel { get; set; }
-    public uint RequiredMinMagicLevel { get; set; }
+    public ushort RequiredMinLevel { get; set; }
+    public ushort RequiredMinMagicLevel { get; set; }
     public bool RequirePremium { get; set; }
     public WieldInfoType WieldInfo { get; set; } = WieldInfoType.WIELDINFO_NONE;
     public Slot Slot { get; set; } = Slot.None;
