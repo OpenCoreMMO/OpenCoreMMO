@@ -6,6 +6,7 @@
         <Nullable>disable</Nullable>
         <IsTestProject>false</IsTestProject>
         <IsPublishable>false</IsPublishable>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
