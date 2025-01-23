@@ -12,6 +12,7 @@ using NeoServer.Networking.Handlers;
 using NeoServer.Scripts.LuaJIT.IoC.Modules;
 using NeoServer.Server.Commands.Movements;
 using NeoServer.Server.Commands.Player;
+using NeoServer.Server.Commands.WaitingInLine;
 using NeoServer.Server.Common.Contracts.Tasks;
 using NeoServer.Server.Standalone.IoC.Modules;
 using NeoServer.Server.Tasks;
@@ -87,6 +88,9 @@ public static class Container
 
         //creature
         builder.AddSingleton<ICreatureGameInstance, CreatureGameInstance>();
+
+        //Waiting Queue Manager
+        builder.AddSingleton<IWaitingQueueManager, WaitingQueueManager>();
 
         builder.AddSingleton(typeof(IMemoryCache), new MemoryCache(new MemoryCacheOptions()));
 

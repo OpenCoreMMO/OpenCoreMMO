@@ -45,6 +45,7 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
                                                x.Name.Equals(charName))
             .Include(x => x.PlayerItems)
             .Include(x => x.PlayerInventoryItems)
+            .Include(x => x.World)
             .Include(x => x.Account)
             .ThenInclude(x => x.VipList)
             .ThenInclude(x => x.Player)

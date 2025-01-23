@@ -23,7 +23,8 @@ public class WorldModelSeed
                 RequiresPremium = true,
                 TransferEnabled = false,
                 AntiCheatEnabled = true,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                MaxCapacity = 500
             }
         );
     }
