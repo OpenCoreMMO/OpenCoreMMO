@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Game.Combat.Services;
+using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Inspection;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World;
@@ -11,6 +13,7 @@ using NeoServer.Game.Systems.SafeTrade;
 using NeoServer.Game.Systems.SafeTrade.Operations;
 using NeoServer.Game.Systems.Services;
 using NeoServer.Game.World.Services;
+using NeoServer.Networking.EventHandlers.Creature;
 using NeoServer.Server.Commands.Player.UseItem;
 using NeoServer.Server.Services;
 
@@ -47,7 +50,7 @@ public static class ServiceInjection
         builder.AddSingleton<ICreatureDeathService, CreatureDeathService>();
         builder.AddSingleton<IPlayerSkullService, PlayerSkullService>();
         builder.AddSingleton<ILootService, LootService>();
-        
+
         //Operations
         builder.AddSingleton<TradeItemExchanger>();
 
@@ -56,7 +59,7 @@ public static class ServiceInjection
         builder.AddSingleton<IItemTransformService, ItemTransformService>();
         builder.AddSingleton<IItemRemoveService, ItemRemoveService>();
         builder.AddSingleton<IItemAbilityApplierService, ItemAbilityApplierService>();
-        
+
         //game builders
         builder.RegisterAssemblyTypes<IInspectionTextBuilder>(Container.AssemblyCache);
 
@@ -64,6 +67,11 @@ public static class ServiceInjection
         builder.AddSingleton<HotkeyService>();
         builder.AddSingleton<PlayerLocationResolver>();
 
+        builder.AddSingleton<IEventAggregator, EventAggregator>();
+        
+        Assembly.GetAssembly(typeof(PlayerConditionChangedEventHandler));
+        builder.RegisterAssembliesByInterface(typeof(IApplicationEventHandler<>));
+        
         return builder;
     }
 }

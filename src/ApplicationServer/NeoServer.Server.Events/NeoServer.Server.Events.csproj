@@ -20,6 +20,10 @@
       <Folder Include="Application\Creature\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="EventAggregator.cs" />
+    </ItemGroup>
+
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <Platforms>AnyCPU;x64</Platforms>

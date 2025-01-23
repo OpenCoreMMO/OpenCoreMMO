@@ -20,6 +20,7 @@ using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Common.Results;
 using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
+using NeoServer.Game.Creatures.Models.Bases.Events;
 using NeoServer.Game.Creatures.Services;
 
 namespace NeoServer.Game.Creatures.Models.Bases;
@@ -49,10 +50,9 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         var result = Conditions.TryAdd(condition.Type, condition);
         condition.Start(this);
         if (result == false) return;
-
-        OnAddedCondition?.Invoke(this, condition);
+        
+        EventAggregator.Publish(CreatureConditionAddedEvent.SetValues(this, condition));
     }
-
     public void RemoveCondition(ICondition condition)
     {
         Conditions.Remove(condition.Type);
@@ -72,7 +72,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         if (!Conditions.TryGetValue(type, out var condition)) return;
 
         condition.Enable();
-        OnAddedCondition?.Invoke(this, condition);
+        EventAggregator.Publish(CreatureConditionAddedEvent.SetValues(this, condition));
     }
 
     public void RemoveCondition(ConditionType type)
@@ -517,7 +517,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public event PropagateAttack OnPropagateAttack;
     public event GainExperience OnGainedExperience;
     public event LoseExperience OnLoseExperience;
-    public event AddCondition OnAddedCondition;
     public event RemoveCondition OnRemovedCondition;
     public event Attacked OnAttacked;
     public event HealthChange OnHealthChanged;

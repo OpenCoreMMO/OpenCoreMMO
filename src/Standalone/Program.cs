@@ -114,6 +114,7 @@ public class Program
 
         container.Resolve<LuaGlobalRegister>().Register();
         container.Resolve<IScriptManager>().Initialize();
+        container.Resolve<IEventAggregator>().Initialize();
 
         StartListening(container, _cancellationToken);
 

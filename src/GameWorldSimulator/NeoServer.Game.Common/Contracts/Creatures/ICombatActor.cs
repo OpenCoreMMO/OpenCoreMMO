@@ -65,7 +65,6 @@ public interface ICombatActor : IWalkableCreature
     event PropagateAttack OnPropagateAttack;
     event GainExperience OnGainedExperience;
     event RemoveCondition OnRemovedCondition;
-    event AddCondition OnAddedCondition;
     event Attacked OnAttacked;
     event HealthChange OnHealthChanged;
     event ManaChange OnManaChanged;

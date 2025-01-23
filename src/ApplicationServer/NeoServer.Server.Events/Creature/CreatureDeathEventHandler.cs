@@ -13,8 +13,8 @@ public class CreatureDeathEventHandler(
     IGameCreatureManager creatureManager,
     ICreatureDeathService creatureDeathService,
     IExperienceSharingService experienceSharingService,
-    ILootService lootService,
-    IScriptManager scriptManager)
+    ILootService lootService)
+    //IScriptManager scriptManager)
     : IEventHandler
 {
     public void Execute(ICombatActor deadCreature, IThing by)
@@ -36,7 +36,7 @@ public class CreatureDeathEventHandler(
                 break;
         }
         
-        scriptManager.CreatureEvents.ExecuteOnCreatureDeath(deadCreature, by);
+    //    scriptManager.CreatureEvents.ExecuteOnCreatureDeath(deadCreature, by);
     }
 
     private void OnMonsterKilled(ICombatActor creature)
