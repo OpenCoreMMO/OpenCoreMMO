@@ -17,7 +17,9 @@ internal static class PlayerModelSeed
             CreatePlayerEntity(4, "Druid Sample", 2, 1, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 130, 69, 95,
                 78, 58),
             CreatePlayerEntity(5, "Paladin Sample", 3, 1, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 137, 69, 95,
-                78, 58)
+                78, 58),
+            CreatePlayerEntity(6, "Lowpoc", 3, 1, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 137, 69, 95,
+                78, 58, 0, 2 )
         );
     }
 
@@ -25,13 +27,13 @@ internal static class PlayerModelSeed
         ushort level,
         ushort health, ushort maxHealth, ushort mana, ushort maxMana,
         int posX, int posY, int posZ, ushort staminaMinutes, int lookType, int lookBody = 0, int lookFeet = 0,
-        int lookHead = 0, int lookLegs = 0, int lookAddons = 0)
+        int lookHead = 0, int lookLegs = 0, int lookAddons = 0, int accountId = 1) 
     {
         return new PlayerEntity
         {
             Id = playerId,
             Group = group,
-            AccountId = 1,
+            AccountId = accountId,
             TownId = 1,
             Name = name,
             ChaseMode = ChaseMode.Follow,

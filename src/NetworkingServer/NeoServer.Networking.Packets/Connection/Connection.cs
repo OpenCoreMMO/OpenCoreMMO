@@ -53,6 +53,8 @@ public class Connection : IConnection
 
     public Queue<IOutgoingPacket> OutgoingPackets { get; private set; }
     public IReadOnlyNetworkMessage InMessage { get; }
+    
+    public IOutgoingPacket LastOutgoingPacket { get; private set; }
 
     public uint[] XteaKey { get; private set; }
     public uint CreatureId { get; private set; }
