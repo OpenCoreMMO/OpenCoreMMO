@@ -65,7 +65,7 @@ jobs:
       
       - name: Upload Artifact
         if: ${{ inputs.deploy == true }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: publish
           path: ${{ inputs.project }}/publish
