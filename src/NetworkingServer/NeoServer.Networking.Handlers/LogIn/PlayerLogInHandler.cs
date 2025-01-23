@@ -97,7 +97,7 @@ public class PlayerLogInHandler : PacketHandler
         if (!_waitingQueueManager.CanLogin(playerRecord, out uint currentSlot))
         {
             var retryTime = _waitingQueueManager.GetTime(currentSlot);
-            var message = $"Muitos jogadores online.\nVocê está no lugar {currentSlot} na lista de espera";
+            var message = $"There are too many players online.\nYour are at place {currentSlot} on waiting list.";
         
             var waitingInLinePacket = new WaitingInLinePacket(message, retryTime);
             connection.Send(waitingInLinePacket);

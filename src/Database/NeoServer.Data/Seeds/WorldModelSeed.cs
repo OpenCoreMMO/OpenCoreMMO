@@ -24,7 +24,7 @@ public class WorldModelSeed
                 TransferEnabled = false,
                 AntiCheatEnabled = true,
                 CreatedAt = DateTime.UtcNow,
-                MaxCapacity = 1
+                MaxCapacity = 500
             }
         );
     }

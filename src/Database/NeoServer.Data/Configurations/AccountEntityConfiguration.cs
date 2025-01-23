@@ -67,15 +67,6 @@ public class AccountEntityConfiguration : IEntityTypeConfiguration<AccountEntity
                 PremiumTimeEndAt = DateTime.UtcNow.AddDays(30),
                 AllowManyOnline = true,
                 AccountName = "GOD"
-            },
-            new AccountEntity
-            {
-                Id = 2,
-                EmailAddress = "2",
-                Password = "2",
-                PremiumTimeEndAt = DateTime.UtcNow.AddDays(30),
-                AllowManyOnline = true,
-                AccountName = "User"
             }
         );
     }

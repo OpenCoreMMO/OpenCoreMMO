@@ -17,9 +17,7 @@ internal static class PlayerModelSeed
             CreatePlayerEntity(4, "Druid Sample", 2, 1, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 130, 69, 95,
                 78, 58),
             CreatePlayerEntity(5, "Paladin Sample", 3, 1, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 137, 69, 95,
-                78, 58),
-            CreatePlayerEntity(6, "Lowpoc", 3, 1, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 137, 69, 95,
-                78, 58, 0, 2 )
+                78, 58)
         );
     }
 
