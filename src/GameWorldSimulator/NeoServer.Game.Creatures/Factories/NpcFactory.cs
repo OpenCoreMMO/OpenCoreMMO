@@ -49,7 +49,7 @@ public class NpcFactory : INpcFactory
 
         var outfit = BuildOutfit(npcType);
 
-        if (npcType.ShopItems.Count > 0)
+        if (npcType.ShopItems?.Count > 0)
             return new ShopperNpc(npcType, _mapTool, spawn, outfit, npcType.MaxHealth)
             {
                 CreateNewItem = _itemFactory.Create,
