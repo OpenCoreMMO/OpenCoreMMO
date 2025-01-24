@@ -48,6 +48,8 @@ public ref struct CombatDamage
 
     public EffectT Effect { get; set; }
 
+    public bool Unjustified { get; set; }
+
     /// <summary>
     ///     Sets a new damage
     /// </summary>

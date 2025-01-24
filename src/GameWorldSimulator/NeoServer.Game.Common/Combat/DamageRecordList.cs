@@ -12,6 +12,7 @@ public class DamageRecordList
 {
     private Dictionary<uint, DamageRecord> DamageRecords { get; } = new();
 
+    public bool HasAnyUnjustifiedDamage { get; private set; }
     public DamageRecord[] All => DamageRecords.Values.ToArray();
 
     public int TotalDamage
@@ -45,7 +46,7 @@ public class DamageRecordList
 
     public DamageRecord GetCreatureDamage(ICreature creature) => DamageRecords.GetValueOrDefault(creature.CreatureId);
 
-    public void AddOrUpdateDamage(IThing thing, ushort damage)
+    public void AddOrUpdateDamage(IThing thing, ushort damage, bool unjustified)
     {
         if (Guard.IsNull(thing))
             throw new ArgumentNullException(nameof(thing), $"[{nameof(DamageRecordList)}] Creature cannot be null.");
@@ -57,20 +58,23 @@ public class DamageRecordList
         if (thing is ICreature creature) key = creature.CreatureId;
         if (thing is IItem item) key = item.ServerId;
 
+        HasAnyUnjustifiedDamage = unjustified || HasAnyUnjustifiedDamage;
+
         if (DamageRecords.TryGetValue(key, out var record))
         {
-            record.AddDamage(damage);
+            record.AddDamage(damage, unjustified);
             return;
         }
 
-        DamageRecords.Add(key, new DamageRecord(thing, damage));
+        DamageRecords.Add(key, new DamageRecord(thing, damage, unjustified));
     }
 
-    public List<DamageRecord> GetDamageRecords(DeathConfiguration deathConfiguration)
+    public DamageRecordResult GetDamageRecords(DeathConfiguration deathConfiguration)
     {
-        if (!deathConfiguration.IsDeathListEnabled) return DamageRecords.Values.ToList();
+        if (!deathConfiguration.IsDeathListEnabled)
+            return new DamageRecordResult(DamageRecords.Values.ToList(), HasAnyUnjustifiedDamage);
 
-        if (deathConfiguration.MaxDeathRecords <= 0) return [];
+        if (deathConfiguration.MaxDeathRecords <= 0) return new DamageRecordResult([], false);
 
         var damageList = new List<DamageRecord>();
 
@@ -79,17 +83,21 @@ public class DamageRecordList
 
         var count = Math.Min(deathConfiguration.MaxDeathRecords, records.Length);
 
+        var hasAnyUnjustifiedDamage = false;
+
         foreach (var record in records)
         {
             if (count >= deathConfiguration.MaxDeathRecords) break;
             if (record.NumberOfHits < deathConfiguration.DeathAssistCount) continue;
             if (record.LastDamageTime >= DateTime.Now.Ticks - deathConfiguration.DeathListRequiredTime) continue;
+            
+            hasAnyUnjustifiedDamage = record.Unjustified || hasAnyUnjustifiedDamage;
 
             damageList.Add(record);
             count++;
         }
 
-        return damageList;
+        return new DamageRecordResult(damageList, hasAnyUnjustifiedDamage);
     }
 
     public void Clear()

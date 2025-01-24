@@ -1,22 +1,16 @@
-﻿using NeoServer.Game.Common.Contracts;
-using NeoServer.Game.Common.Contracts.Creatures;
+﻿using NeoServer.Game.Common;
+using NeoServer.Game.Creatures.Models.Bases.Events;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Events.Creatures;
 
-public class CreatureOnKillEventHandler : IGameEventHandler
+public class CreatureOnKillEventHandler(ICreatureEvents creatureEvents) : IApplicationEventHandler<CreatureKillEvent>
 {
-    private readonly ICreatureEvents _creatureEvents;
-
-    public CreatureOnKillEventHandler(ICreatureEvents creatureEvents)
+    public void Handle(CreatureKillEvent @event)
     {
-        _creatureEvents = creatureEvents;
-    }
-
-    public void Execute(ICombatActor creature, ICreature target, bool lastHit, bool justified)
-    {
-        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(creature.CreatureId, CreatureEventType.CREATURE_EVENT_KILL))
-            creatureEvent.ExecuteOnKill(creature, target, lastHit);
+        foreach (var creatureEvent in creatureEvents.GetCreatureEvents(@event.Killer.CreatureId,
+                     CreatureEventType.CREATURE_EVENT_KILL))
+            creatureEvent.ExecuteOnKill(@event.Killer, @event.Victim, @event.LastHit);
     }
 }

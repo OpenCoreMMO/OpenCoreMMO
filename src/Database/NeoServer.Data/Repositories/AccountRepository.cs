@@ -65,7 +65,7 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
         
         if (includeKillsLastMonth)
         {
-            var lastMonth = DateTime.Now.AddMonths(-1);
+            var lastMonth = DateTime.Now.AddMonths(-1).ToUniversalTime();
             result.KillsLastMonth = await context.PlayerDeathKillers
                 .Include(x => x.PlayerDeath)
                 .Where(x => x.PlayerId == result.Id && x.PlayerDeath.DeathDateTime >= lastMonth)

@@ -220,7 +220,7 @@ public class SharedExperienceBonusTest
         };
         
         var damages = new DamageRecordList();
-        damages.AddOrUpdateDamage(playerTwo, 10);
+        damages.AddOrUpdateDamage(playerTwo, 10, unjustified:false);
 
         var partyMock = new Mock<IParty>();
         partyMock.Setup(x => x.Members).Returns(members);
@@ -252,8 +252,8 @@ public class SharedExperienceBonusTest
         var heals = new Dictionary<IPlayer, DateTime>();
         
         var damages = new DamageRecordList();
-        damages.AddOrUpdateDamage(playerOne, 10);
-        damages.AddOrUpdateDamage(playerTwo, 10);
+        damages.AddOrUpdateDamage(playerOne, 10, unjustified:false);
+        damages.AddOrUpdateDamage(playerTwo, 10, unjustified:false);
 
         var partyMock = new Mock<IParty>();
         partyMock.Setup(x => x.Members).Returns(members);

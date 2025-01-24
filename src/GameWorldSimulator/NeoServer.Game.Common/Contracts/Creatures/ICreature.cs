@@ -21,8 +21,6 @@ public delegate void BeforeDeath(ICombatActor creature, ICombatActor killer, int
 
 public delegate void Death(ICombatActor creature, IThing by);
 
-public delegate void Kill(ICombatActor creature, ICombatActor target, bool lastHit, bool justified = true);
-
 public delegate void GainExperience(ICreature creature, long exp);
 
 public delegate void LoseExperience(ICreature creature, long exp);

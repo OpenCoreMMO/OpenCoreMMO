@@ -77,6 +77,7 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
             .HasForeignKey(d => d.WorldId);
 
         entity.HasOne(x => x.GuildMember).WithOne(x => x.Player);
+        entity.HasMany(x => x.Deaths).WithOne(x => x.Player);
 
         PlayerModelSeed.Seed(entity);
     }

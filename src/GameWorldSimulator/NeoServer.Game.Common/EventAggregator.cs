@@ -82,7 +82,7 @@ public class EventAggregator : IEventAggregator
     public static void Publish(IEvent @event) => Instance.Publish(@event);
     public void Publish<TEvent>(TEvent @event) where TEvent : IEvent => _eventQueue.Enqueue(@event);
 
-    public void ProcessEvents()
+    public void PropagateEvents()
     {
         if (_eventQueue.Count == 0) return;
 
@@ -97,7 +97,7 @@ public class EventAggregator : IEventAggregator
             {
                 foreach (var networkHandler in networkHandlers)
                 {
-                    networkHandler?.Invoke(@event);
+                     networkHandler?.Invoke(@event);
                 }
             }
 
@@ -139,5 +139,5 @@ public interface IEventAggregator
 {
     void Initialize();
     void Publish<TEvent>(TEvent @event) where TEvent : IEvent;
-    void ProcessEvents();
+    void PropagateEvents();
 }

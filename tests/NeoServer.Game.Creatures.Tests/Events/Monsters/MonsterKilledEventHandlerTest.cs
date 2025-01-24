@@ -23,9 +23,9 @@ public class MonsterKilledEventHandlerTest
     public void Execute_GrantsMonsterExperience_WhenMonsterKilledByOnePlayer()
     {
         var player = PlayerTestDataBuilder.Build();
-        
+
         var damages = new DamageRecordList();
-        damages.AddOrUpdateDamage(player, 100);
+        damages.AddOrUpdateDamage(player, 100, unjustified: false);
 
         var monsterMock = new Mock<IMonster>();
         monsterMock.Setup(x => x.Experience).Returns(100);
@@ -45,10 +45,10 @@ public class MonsterKilledEventHandlerTest
     {
         var playerOne = PlayerTestDataBuilder.Build();
         var playerTwo = PlayerTestDataBuilder.Build(2);
-        
+
         var damages = new DamageRecordList();
-        damages.AddOrUpdateDamage(playerOne, 100);
-        damages.AddOrUpdateDamage(playerTwo, 100);
+        damages.AddOrUpdateDamage(playerOne, 100, unjustified: false);
+        damages.AddOrUpdateDamage(playerTwo, 100, unjustified: false);
 
         var monsterMock = new Mock<IMonster>();
         monsterMock.Setup(x => x.Experience).Returns(100);
@@ -72,11 +72,11 @@ public class MonsterKilledEventHandlerTest
         var playerOne = PlayerTestDataBuilder.Build();
         var playerTwo = PlayerTestDataBuilder.Build(2);
         var playerOneSummon = MockSummon(playerOne);
- 
+
         var damages = new DamageRecordList();
-        damages.AddOrUpdateDamage(playerOne, 100);
-        damages.AddOrUpdateDamage(playerTwo, 100);
-        damages.AddOrUpdateDamage(playerOneSummon, 200);
+        damages.AddOrUpdateDamage(playerOne, 100, unjustified: false);
+        damages.AddOrUpdateDamage(playerTwo, 100, unjustified: false);
+        damages.AddOrUpdateDamage(playerOneSummon, 200, unjustified: false);
 
         var monsterMock = new Mock<IMonster>();
         monsterMock.Setup(x => x.Experience).Returns(300);
@@ -100,10 +100,10 @@ public class MonsterKilledEventHandlerTest
         var playerOne = PlayerTestDataBuilder.Build();
         var playerTwo = PlayerTestDataBuilder.Build(2);
         var party = PartyTestDataBuilder.Build(null, playerOne, playerTwo);
-        
+
         var damages = new DamageRecordList();
-        damages.AddOrUpdateDamage(playerOne, 300);
-        damages.AddOrUpdateDamage(playerTwo, 100);
+        damages.AddOrUpdateDamage(playerOne, 300, unjustified: false);
+        damages.AddOrUpdateDamage(playerTwo, 100, unjustified: false);
 
         var monsterMock = new Mock<IMonster>();
         monsterMock.Setup(x => x.Experience).Returns(100);
@@ -135,11 +135,11 @@ public class MonsterKilledEventHandlerTest
         party.IsSharedExperienceEnabled = true;
 
         var heals = new Dictionary<IPlayer, DateTime>();
-      
+
         var damages = new DamageRecordList();
-        damages.AddOrUpdateDamage(playerOne, 200);
-        damages.AddOrUpdateDamage(playerTwo, 100);
-        damages.AddOrUpdateDamage(playerThree, 100);
+        damages.AddOrUpdateDamage(playerOne, 200, unjustified: false);
+        damages.AddOrUpdateDamage(playerTwo, 100, unjustified: false);
+        damages.AddOrUpdateDamage(playerThree, 100, unjustified: false);
 
         var monsterMock = new Mock<IMonster>();
         monsterMock.Setup(x => x.Experience).Returns(100);

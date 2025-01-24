@@ -13,6 +13,7 @@ public sealed class PlayerEntity
         PlayerDepotItems = new List<PlayerDepotItemEntity>();
         PlayerItems = new List<PlayerItemEntity>();
         PlayerDepotItems = new List<PlayerDepotItemEntity>();
+        Deaths = new List<PlayerDeathEntity>();
     }
 
     public int Id { get; set; }

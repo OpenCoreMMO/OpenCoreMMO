@@ -14,10 +14,9 @@ namespace NeoServer.Game.Creatures.Services;
 public class CreatureDeathService(
     IItemFactory itemFactory,
     IMap map,
-    ILiquidPoolFactory liquidPoolFactory,
-    GameConfiguration gameConfiguration) : ICreatureDeathService
+    ILiquidPoolFactory liquidPoolFactory) : ICreatureDeathService
 {
-    public void Handle(ICombatActor deadCreature, IThing by)
+    public void Handle(ICombatActor deadCreature, IThing by, List<DamageRecord> damageRecords)
     {
         if (deadCreature is IMonster { IsSummon: true } summon)
         {
@@ -28,9 +27,7 @@ public class CreatureDeathService(
 
         ReplaceCreatureByCorpse(deadCreature);
         CreateBlood(deadCreature);
-
-        var damageRecords = deadCreature.ReceivedDamages.GetDamageRecords(gameConfiguration.Death);
-
+        
         ProcessDamageRecords(deadCreature, by, damageRecords);
     }
 

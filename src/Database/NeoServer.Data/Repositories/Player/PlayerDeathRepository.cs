@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
+using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using Serilog;
@@ -26,18 +27,34 @@ public class PlayerDeathRepository(DbContextOptions<NeoContext> contextOptions, 
             .Select(x => x.PlayerDeath);
     }
 
-    public void Save(IPlayer deadPlayer, IThing killedBy)
+    public void Save(IPlayer deadPlayer, DamageRecordResult damageRecordResult)
     {
         using var context = NewDbContext;
 
         var playerDeath = new PlayerDeathEntity
         {
-            PlayerId = (int) deadPlayer.Id,
+            PlayerId = (int)deadPlayer.Id,
             Level = deadPlayer.Level,
-            DeathDateTime = DateTime.Now,
+            DeathDateTime = DateTime.UtcNow,
             DeathLocation = deadPlayer.Location.ToString(CultureInfo.InvariantCulture),
-            Unjustified = true,
-            //Killers = 
+            Unjustified = damageRecordResult.HasUnjustifiedDamage
         };
+
+        playerDeath.Killers ??= new List<PlayerDeathKillerEntity>();
+        
+        foreach (var damageRecord in damageRecordResult.DamageRecords)
+        {
+            var playerKiller = damageRecord.Aggressor as IPlayer;
+
+            playerDeath.Killers.Add(new PlayerDeathKillerEntity
+            {
+                PlayerId = (int?)playerKiller?.Id,
+                KillerName = damageRecord.Aggressor?.Name,
+                Damage = damageRecord.Damage
+            });
+        }
+
+        context.PlayerDeaths.Add(playerDeath);
+        context.SaveChanges();
     }
 }

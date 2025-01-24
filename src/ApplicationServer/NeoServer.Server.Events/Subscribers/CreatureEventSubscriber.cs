@@ -93,7 +93,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
             combatActor.OnAttackEnemy -= _creatureAttackEventHandler.Execute;
             combatActor.OnHeal -= _creatureHealedEventHandler.Execute;
             combatActor.OnChangedVisibility -= creatureTurnedInvisibleEventHandler.Execute;
-            combatActor.OnKill -= _creatureKillEventHandler.Execute;
         }
 
         if (creature is IWalkableCreature walkableCreature)
@@ -120,6 +119,5 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
         combatActor.OnAttackEnemy += _creatureAttackEventHandler.Execute;
         combatActor.OnHeal += _creatureHealedEventHandler.Execute;
         combatActor.OnChangedVisibility += creatureTurnedInvisibleEventHandler.Execute;
-        combatActor.OnKill += _creatureKillEventHandler.Execute;
     }
 }

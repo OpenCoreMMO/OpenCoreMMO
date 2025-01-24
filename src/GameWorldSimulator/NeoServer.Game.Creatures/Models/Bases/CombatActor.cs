@@ -50,9 +50,10 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         var result = Conditions.TryAdd(condition.Type, condition);
         condition.Start(this);
         if (result == false) return;
-        
+
         EventAggregator.Publish(CreatureConditionAddedEvent.SetValues(this, condition));
     }
+
     public void RemoveCondition(ICondition condition)
     {
         Conditions.Remove(condition.Type);
@@ -264,7 +265,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
             StopFollowing();
         }
 
-        OnTargetChanged?.Invoke(this, oldAttackTarget, (uint) target?.CreatureId);
+        OnTargetChanged?.Invoke(this, oldAttackTarget, (uint)target?.CreatureId);
         return Result.Success;
     }
 
@@ -453,7 +454,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
         HealthPoints = damage.Damage > HealthPoints ? 0 : HealthPoints - damage.Damage;
     }
-    
+
     public virtual void Death(IThing by)
     {
         if (by is ICombatActor combatActor)
@@ -473,9 +474,9 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public void RaiseDroppedLootEvent(ICombatActor actor, ILoot loot) => OnDroppedLoot?.Invoke(actor, loot);
 
-    public virtual void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true)
+    public virtual void Kill(ICombatActor enemy, bool lastHit = false, bool unjustified = false)
     {
-        OnKill?.Invoke(this, enemy, lastHit, justified: justified);
+        EventAggregator.Publish(CreatureKillEvent.SetValues(this, enemy, lastHit, unjustified));
     }
 
     public abstract void OnDamage(IThing enemy, CombatDamage damage);
@@ -483,9 +484,9 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     private void OnDamage(IThing enemy, ICombatActor actor, CombatDamage damage)
     {
         OnDamage(enemy, damage);
-        
-        ReceivedDamages.AddOrUpdateDamage(enemy, damage.Damage);
-        
+
+        ReceivedDamages.AddOrUpdateDamage(enemy, damage.Damage, damage.Unjustified);
+
         OnHealthChanged?.Invoke(this, actor, damage);
         OnInjured?.Invoke(enemy, this, damage);
         if (IsDead)
@@ -511,7 +512,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public event Damage OnInjured;
     public event BeforeDeath OnBeforeDeath;
     public event Death OnDeath;
-    public event Kill OnKill;
     public event AttackTargetChange OnTargetChanged;
     public event ChangeVisibility OnChangedVisibility;
     public event PropagateAttack OnPropagateAttack;

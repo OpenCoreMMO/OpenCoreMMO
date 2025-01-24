@@ -60,7 +60,7 @@ public class Dispatcher : IDispatcher
                         try
                         {
                             evt.Action?.Invoke(); //execute event
-                            _eventAggregator.ProcessEvents(); //propagate events
+                            _eventAggregator.PropagateEvents(); //propagate events
                             
                             _logger.Verbose(evt.Action?.Target?.ToString());
                         }

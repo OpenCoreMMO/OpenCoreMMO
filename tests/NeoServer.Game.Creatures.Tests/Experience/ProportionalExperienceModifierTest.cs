@@ -29,8 +29,8 @@ public class ProportionalExperienceModifierTest
         var otherCreatures =  PlayerTestDataBuilder.Build(2);
    
         var damages = new DamageRecordList();
-        damages.AddOrUpdateDamage(player, (ushort)playerDamage);
-        damages.AddOrUpdateDamage(otherCreatures, (ushort)(totalDamage - playerDamage));
+        damages.AddOrUpdateDamage(player, (ushort)playerDamage, false);
+        damages.AddOrUpdateDamage(otherCreatures, (ushort)(totalDamage - playerDamage), false);
 
         var monsterMock = new Mock<IMonster>();
         monsterMock.Setup(x => x.ReceivedDamages).Returns(damages);

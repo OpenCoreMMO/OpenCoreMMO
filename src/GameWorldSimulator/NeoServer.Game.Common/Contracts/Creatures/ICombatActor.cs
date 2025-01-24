@@ -58,7 +58,6 @@ public interface ICombatActor : IWalkableCreature
     event Heal OnHeal;
     event BeforeDeath OnBeforeDeath;
     event Death OnDeath;
-    event Kill OnKill;
     event StopAttack OnStoppedAttack;
     event AttackTargetChange OnTargetChanged;
     event ChangeVisibility OnChangedVisibility;

@@ -1,19 +1,21 @@
 using NeoServer.Data.Interfaces;
+using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Creatures.Monster.Summon;
 using NeoServer.Server.Common.Contracts;
-using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Events.Creature;
 
 public class CreatureDeathEventHandler(
     IPlayerRepository playerRepository,
+    IPlayerDeathRepository playerDeathRepository,
     IGameCreatureManager creatureManager,
     ICreatureDeathService creatureDeathService,
     IExperienceSharingService experienceSharingService,
-    ILootService lootService)
+    ILootService lootService,
+    GameConfiguration gameConfiguration)
     //IScriptManager scriptManager)
     : IEventHandler
 {
@@ -21,8 +23,10 @@ public class CreatureDeathEventHandler(
     {
         //lua script can be added here to handle loot creation
         _ = lootService.CreateLootContainer(deadCreature);
+        
+        var damageRecordResult = deadCreature.ReceivedDamages.GetDamageRecords(gameConfiguration.Death);
 
-        creatureDeathService.Handle(deadCreature, by);
+        creatureDeathService.Handle(deadCreature, by, damageRecordResult.DamageRecords);
 
         experienceSharingService.Share(deadCreature);
 
@@ -33,6 +37,7 @@ public class CreatureDeathEventHandler(
                 break;
             case IPlayer player:
                 playerRepository.SavePlayer(player);
+                playerDeathRepository.Save(player, damageRecordResult);
                 break;
         }
         

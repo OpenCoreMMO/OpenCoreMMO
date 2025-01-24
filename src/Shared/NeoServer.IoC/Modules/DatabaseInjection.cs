@@ -27,6 +27,7 @@ public static class DatabaseInjection
         builder.AddSingleton<IPlayerRepository, PlayerRepository>();
         builder.AddSingleton<IWorldRecordRepository, WorldRecordRepository>();
         builder.AddSingleton<IWorldRepository, WorldRepository>();
+        builder.AddSingleton<IPlayerDeathRepository, PlayerDeathRepository>();
         builder.AddSingleton(typeof(BaseRepository<>));
 
         return builder;

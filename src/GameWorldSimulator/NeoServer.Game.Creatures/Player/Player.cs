@@ -843,7 +843,7 @@ public class Player : CombatActor, IPlayer
             OperationFailService.Send(this, InvalidOperation.AdjustCombatSettingsToAttackPlayer);
             return Result.Fail(InvalidOperation.AdjustCombatSettingsToAttackPlayer);
         }
-        
+
         if (target.IsInvisible)
         {
             StopAttack();
@@ -1219,17 +1219,17 @@ public class Player : CombatActor, IPlayer
         return (Level + 50) * .01 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
     }
 
-    public override void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true)
+    public override void Kill(ICombatActor enemy, bool lastHit = false, bool unjustified = false)
     {
         if (enemy is IPlayer playerEnemy && playerEnemy.GetSkull(this) is Skull.None)
         {
             NumberOfUnjustifiedKillsLastDay++;
             NumberOfUnjustifiedKillsLastWeek++;
             NumberOfUnjustifiedKillsLastMonth++;
-            justified = false;
+            unjustified = true;
         }
 
-        base.Kill(enemy, lastHit, justified: justified);
+        base.Kill(enemy, lastHit, unjustified: unjustified);
     }
 
     #region Storage
@@ -1246,8 +1246,10 @@ public class Player : CombatActor, IPlayer
     #endregion
 
     public Skull GetSkull(IPlayer enemy) => PlayerSkull?.GetSkull(enemy) ?? Skull.None;
+
     public void SetSkull(Skull skull, DateTime? skullEndingDate = null, IPlayer enemy = null) =>
         PlayerSkull?.SetSkull(skull, skullEndingDate, enemy);
+
     public void RemoveSkull() => PlayerSkull?.RemoveSkull();
 
     public void SetNumberOfKills(int killsInLastDay, int killsInLastWeek, int killsInLastMonth)
@@ -1255,6 +1257,16 @@ public class Player : CombatActor, IPlayer
         NumberOfUnjustifiedKillsLastDay = killsInLastDay;
         NumberOfUnjustifiedKillsLastWeek = killsInLastWeek;
         NumberOfUnjustifiedKillsLastMonth = killsInLastMonth;
+    }
+
+    public override bool ReceiveAttack(IThing enemy, CombatDamage damage)
+    {
+        if (enemy is IPlayer player && GetSkull(player) is Skull.None)
+        {
+            damage.Unjustified = true;
+        }
+
+        return base.ReceiveAttack(enemy, damage);
     }
 
     #region Guild
