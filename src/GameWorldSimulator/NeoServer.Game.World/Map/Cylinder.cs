@@ -198,5 +198,5 @@ public record Cylinder(
     Operation Operation,
     ICylinderSpectator[] TileSpectators) : ICylinder
 {
-    public bool IsTeleport => ToTile.Location.GetMaxSqmDistance(FromTile.Location) > 1;
+    public bool IsTeleport => !ToTile.Location.IsNotInRange(FromTile.Location, 1, 1, 0);
 }
