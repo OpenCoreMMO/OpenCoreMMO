@@ -256,9 +256,9 @@ public struct Location : IEquatable<Location>, IConvertible
         return (ushort)(Math.Abs(offset[0]) + Math.Abs(offset[1]));
     }
 
-    public bool IsNotInRange(Location p, int deltax, int deltay, int deltaz)
+    public bool IsNotInRange(Location from, int maxX, int maxY, int maxZ)
 	{
-		return GetSqmDistanceX(p) <= deltax && GetSqmDistanceY(p) <= deltay && GetSqmDistanceZ(p) <= deltaz;
+		return GetSqmDistanceX(from) <= maxX && GetSqmDistanceY(from) <= maxY && GetSqmDistanceZ(from) <= maxZ;
 	}
 
     public int GetMaxSqmDistance(Location dest)
