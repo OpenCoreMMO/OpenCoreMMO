@@ -257,9 +257,9 @@ public struct Location : IEquatable<Location>, IConvertible
     }
 
     public bool IsNotInRange(Location from, int maxX, int maxY, int maxZ)
-	{
-		return GetSqmDistanceX(from) <= maxX && GetSqmDistanceY(from) <= maxY && GetSqmDistanceZ(from) <= maxZ;
-	}
+    {
+        return GetSqmDistanceX(from) <= maxX && GetSqmDistanceY(from) <= maxY && GetSqmDistanceZ(from) <= maxZ;
+    }
 
     public int GetMaxSqmDistance(Location dest)
     {
