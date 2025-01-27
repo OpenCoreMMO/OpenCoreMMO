@@ -4,7 +4,6 @@ using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Text.Json;
-using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Item;
@@ -22,6 +21,7 @@ namespace NeoServer.Loaders.Items
         private readonly IItemClientServerIdMapStore _itemClientServerIdMapStore;
 
         private readonly IItemTypeStore _itemTypeStore;
+        private readonly ICoinTypeStore _coinTypeStore;
         private readonly ILogger _logger;
         private readonly ServerConfiguration _serverConfiguration;
         
@@ -33,13 +33,18 @@ namespace NeoServer.Loaders.Items
             ReadCommentHandling = JsonCommentHandling.Skip,
         };
 
-        public ItemTypeLoader(ILogger logger, ServerConfiguration serverConfiguration, IItemTypeStore itemTypeStore,
-            IItemClientServerIdMapStore itemClientServerIdMapStore)
+        public ItemTypeLoader(
+            ILogger logger,
+            ServerConfiguration serverConfiguration,
+            IItemTypeStore itemTypeStore,
+            IItemClientServerIdMapStore itemClientServerIdMapStore,
+            ICoinTypeStore coinTypeStore)
         {
             _logger = logger;
             _serverConfiguration = serverConfiguration;
             _itemTypeStore = itemTypeStore;
             _itemClientServerIdMapStore = itemClientServerIdMapStore;
+            _coinTypeStore = coinTypeStore;
         }
 
         /// <summary>
@@ -62,7 +67,7 @@ namespace NeoServer.Loaders.Items
                     if (item.Value.Attributes.GetAttribute(ItemAttribute.Type)
                             ?.Equals("coin", StringComparison.InvariantCultureIgnoreCase) ?? false)
                     {
-                        CoinTypeStore.Data.Add(item.Key, item.Value);
+                        _coinTypeStore.Add(item.Key, item.Value);
                     }
                 }
 

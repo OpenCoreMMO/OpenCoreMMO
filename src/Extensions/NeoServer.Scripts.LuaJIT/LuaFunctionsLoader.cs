@@ -4,7 +4,9 @@ using System.Runtime.InteropServices;
 using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Game.Creatures.Player;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Structs;
 
@@ -384,6 +386,40 @@ public class LuaFunctionsLoader
         return position;
     }
 
+    public static Outfit GetOutfit(LuaState luaState, int arg)
+    {
+        var outfit = new Outfit
+        {
+            Addon = GetField<byte>(luaState, arg, "lookAddons"),
+
+            Feet = GetField<byte>(luaState, arg, "lookFeet"),
+            Legs = GetField<byte>(luaState, arg, "lookLegs"),
+            Body = GetField<byte>(luaState, arg, "lookBody"),
+            Head = GetField<byte>(luaState, arg, "lookHead"),
+
+            LookType = GetField<byte>(luaState, arg, "lookType")
+        };
+
+        Lua.Pop(luaState, 6);
+        return outfit;
+    }
+
+    public static IDictionary<LookType, ushort> GetOutfitLook(LuaState luaState, int arg)
+    {
+        var look = new Dictionary<LookType, ushort>
+        {
+            { LookType.Addon, GetField<byte>(luaState, arg, "lookAddons") },
+            { LookType.Feet, GetField<byte>(luaState, arg, "lookFeet") },
+            { LookType.Legs, GetField<byte>(luaState, arg, "lookLegs") },
+            { LookType.Body, GetField<byte>(luaState, arg, "lookBody") },
+            { LookType.Head, GetField<byte>(luaState, arg, "lookHead") },
+            { LookType.Type, GetField<byte>(luaState, arg, "lookType") }
+        };
+       
+        Lua.Pop(luaState, 6);
+        return look;
+    }
+
     public static LuaVariant GetVariant(LuaState luaState, int arg)
     {
         var var = new LuaVariant
@@ -450,9 +486,7 @@ public class LuaFunctionsLoader
     public static void PushBoolean(LuaState luaState, bool value)
     {
         if (ValidateDispatcherContext(nameof(PushBoolean)))
-        {
             return;
-        }
 
         Lua.PushBoolean(luaState, value);
     }
@@ -460,9 +494,7 @@ public class LuaFunctionsLoader
     public static void PushPosition(LuaState luaState, Location position, int stackpos = 0)
     {
         if (ValidateDispatcherContext(nameof(PushPosition)))
-        {
             return;
-        }
 
         Lua.CreateTable(luaState, 0, 4);
 
@@ -472,6 +504,36 @@ public class LuaFunctionsLoader
         SetField(luaState, "stackpos", stackpos);
 
         SetMetatable(luaState, -1, "Position");
+    }
+
+    public static void PushOutfit(LuaState luaState, IOutfit outfit)
+    {
+        if (ValidateDispatcherContext(nameof(PushOutfit)))
+            return;
+
+        Lua.CreateTable(luaState, 0, 6);
+
+        SetField(luaState, "lookType", outfit.LookType);
+        SetField(luaState, "lookHead", outfit.Head);
+        SetField(luaState, "lookBody", outfit.Body);
+        SetField(luaState, "lookLegs", outfit.Legs);
+        SetField(luaState, "lookFeet", outfit.Feet);
+        SetField(luaState, "lookAddons", outfit.Addon);
+    }
+
+    public static void PushOutfitLook(LuaState luaState, IDictionary<LookType, ushort> Look)
+    {
+        if (ValidateDispatcherContext(nameof(PushOutfitLook)))
+            return;
+
+        Lua.CreateTable(luaState, 0, 6);
+
+        SetField(luaState, "lookType", Look[LookType.Type]);
+        SetField(luaState, "lookHead", Look[LookType.Head]);
+        SetField(luaState, "lookBody", Look[LookType.Body]);
+        SetField(luaState, "lookLegs", Look[LookType.Legs]);
+        SetField(luaState, "lookFeet", Look[LookType.Feet]);
+        SetField(luaState, "lookAddons", Look[LookType.Addon]);
     }
 
     public static void RegisterClass(LuaState luaState, string className, string baseClass, LuaFunction newFunction = null)
@@ -856,6 +918,11 @@ public class LuaFunctionsLoader
     public static bool IsUserdata(LuaState luaState, int arg)
     {
         return Lua.IsUserData(luaState, arg);
+    }
+
+    public static void SetField(LuaState luaState, string index, bool value)
+    {
+        SetField(luaState, index, value ? 1 : 0);
     }
 
     public static void SetField(LuaState luaState, string index, double value)

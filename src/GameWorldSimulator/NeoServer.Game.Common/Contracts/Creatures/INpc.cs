@@ -4,6 +4,7 @@ using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Item;
+using static NeoServer.Game.Common.Contracts.World.ISpawn;
 
 namespace NeoServer.Game.Common.Contracts.Creatures;
 
@@ -33,4 +34,9 @@ public interface INpc : ISociableCreature
     Dictionary<string, string> GetPlayerStoredValues(ISociableCreature sociableCreature);
     void StopTalkingToCustomer(IPlayer player);
     event CustomerLeft OnCustomerLeft;
+    bool CanInteract(NeoServer.Game.Common.Location.Structs.Location location, int range = 4);
+    void SetPlayerInteraction(IPlayer player, ushort topicId);
+    void RemovePlayerInteraction(IPlayer player);
+    bool IsInteractingWithPlayer(IPlayer player);
+    bool IsPlayerInteractingOnTopic(IPlayer player, ushort topicId);
 }

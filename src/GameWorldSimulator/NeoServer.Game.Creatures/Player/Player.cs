@@ -68,6 +68,7 @@ public class Player : CombatActor, IPlayer
             new CreatureType(
                 characterName,
                 string.Empty,
+                healthPoints,
                 maxHealthPoints,
                 speed,
                 new Dictionary<LookType, ushort> { { LookType.Corpse, 3058 } }),
@@ -151,7 +152,7 @@ public class Player : CombatActor, IPlayer
     /// </summary>
     public string GenderPronoun => Gender == Gender.Male ? "He" : "She";
 
-    public Gender Gender { get; }
+    public Gender Gender { get; set; }
     public int PremiumTime { get; init; }
     public ITown Town { get; set; }
     public IVip Vip { get; }
@@ -1199,6 +1200,20 @@ public class Player : CombatActor, IPlayer
 
     #endregion
 
+    #region Equip/DeEquip
+
+    public void OnDressedItem(IItem item)
+    {
+        OnEquipItem?.Invoke(this, item, true);
+    }
+
+    public void OnUndressedItem(IItem item)
+    {
+        OnDeEquipItem?.Invoke(this, item, true);
+    }
+
+    #endregion
+
     #region Events
 
     public event PlayerLevelAdvance OnLevelAdvanced;
@@ -1221,6 +1236,8 @@ public class Player : CombatActor, IPlayer
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
+    public event EquipItem OnEquipItem;
+    public event DeEquipItem OnDeEquipItem;
 
     #endregion
 }

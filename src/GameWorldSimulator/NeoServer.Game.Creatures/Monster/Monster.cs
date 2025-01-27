@@ -338,7 +338,7 @@ public class Monster : WalkableMonster, IMonster
             comboChance = Math.Max(0, comboChance - 30);
         }
 
-        if (attacked && enemy.Location != Location) TurnTo(Location.DirectionTo(enemy.Location));
+        if (attacked && enemy.Location != Location) TurnTo(enemy);
 
         if (enemy.IsDead) Targets.RemoveTarget(enemy);
 
@@ -391,7 +391,7 @@ public class Monster : WalkableMonster, IMonster
         return (Metadata.Immunities & (ushort)immunity) != 0;
     }
 
-    public override void OnCreatureDisappear(ICreature creature)
+    public override void OnWalkableCreatureDisappear(ICreature creature)
     {
         Targets.RemoveTarget(creature);
         SelectTargetToAttack();

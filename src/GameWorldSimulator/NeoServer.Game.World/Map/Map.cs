@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat.Structs;
+using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
+using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Common.Results;
@@ -374,7 +376,7 @@ public class Map : IMap
         var sector = world.GetSector(creature.Location.X, creature.Location.Y);
         sector.AddCreature(creature);
 
-        creature.OnAppear(tile.Location, cylinder.TileSpectators);
+        creature.Appear(tile.Location, cylinder.TileSpectators);
         if (creature is IWalkableCreature walkableCreature)
             OnCreatureAddedOnMap?.Invoke(walkableCreature, cylinder);
     }
@@ -386,6 +388,8 @@ public class Map : IMap
         CylinderOperation.RemoveCreature(creature, out var cylinder);
 
         world.GetSector(tile.Location.X, tile.Location.Y).RemoveCreature(creature);
+
+        creature.Disappear(tile.Location, cylinder.TileSpectators);
         if (creature is IWalkableCreature walkableCreature)
             OnThingRemovedFromTile?.Invoke(walkableCreature, cylinder);
     }

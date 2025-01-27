@@ -9,7 +9,7 @@ public class LuaScriptInterface : LuaFunctionsLoader, ILuaScriptInterface
     public static int EVENT_ID_USER = 1000;
     private readonly string interfaceName;
 
-    protected Dictionary<int, string> cacheFiles;
+    protected Dictionary<int, string> cacheFiles = new();
 
     protected int eventTableRef;
 

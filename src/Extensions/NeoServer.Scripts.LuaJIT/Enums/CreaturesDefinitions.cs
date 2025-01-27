@@ -1,0 +1,16 @@
+﻿namespace NeoServer.Scripts.LuaJIT.Enums;
+
+// Enums
+public enum NpcsEventType : byte
+{
+    NPCS_EVENT_NONE = 0,
+    NPCS_EVENT_THINK = 1,
+    NPCS_EVENT_APPEAR = 2,
+    NPCS_EVENT_DISAPPEAR = 3,
+    NPCS_EVENT_MOVE = 4,
+    NPCS_EVENT_SAY = 5,
+    NPCS_EVENT_PLAYER_BUY = 6,
+    NPCS_EVENT_PLAYER_SELL = 7,
+    NPCS_EVENT_PLAYER_CHECK_ITEM = 8,
+    NPCS_EVENT_PLAYER_CLOSE_CHANNEL = 9
+};
