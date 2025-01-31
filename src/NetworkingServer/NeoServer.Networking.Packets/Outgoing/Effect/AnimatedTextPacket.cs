@@ -4,22 +4,15 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Effect;
 
-public class AnimatedTextPacket : OutgoingPacket
+public class AnimatedTextPacket(Location location, TextColor color, string message) : OutgoingPacket
 {
-    private readonly TextColor color;
-    private readonly Location location;
-    private readonly string text;
+    private readonly string text = message;
 
-    public AnimatedTextPacket(Location location, TextColor color, string message)
-    {
-        this.location = location;
-        this.color = color;
-        text = message;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.AnimatedText;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.AnimatedText);
+        message.AddByte(PacketType);
         message.AddLocation(location);
         message.AddByte((byte)color);
         message.AddString(text);

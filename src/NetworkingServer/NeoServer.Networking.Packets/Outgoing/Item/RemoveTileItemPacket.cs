@@ -1,28 +1,17 @@
 ﻿using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Item;
 
-public class RemoveTileItemPacket : OutgoingPacket
+public class RemoveTileItemPacket(Location location, byte stackPosition, IItem item) : OutgoingPacket
 {
-    public readonly IItem item;
-    public readonly Location location;
-    public readonly byte stackPosition;
-
-    public RemoveTileItemPacket(Location location, byte stackPosition, IItem item)
-    {
-        if (item.IsNull()) return;
-
-        this.location = location;
-        this.stackPosition = stackPosition;
-        this.item = item;
-    }
+    //todo: muniz check this, same packet of AddTileItemPacket?
+    public override byte PacketType => (byte)GameOutgoingPacketType.AddAtStackPos;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.AddAtStackPos);
+        message.AddByte(PacketType);
         message.AddLocation(location);
         message.AddByte(stackPosition);
         message.AddItem(item);

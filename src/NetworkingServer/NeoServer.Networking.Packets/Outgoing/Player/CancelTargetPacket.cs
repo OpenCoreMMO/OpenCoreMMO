@@ -4,9 +4,11 @@ namespace NeoServer.Networking.Packets.Outgoing.Player;
 
 public class CancelTargetPacket : OutgoingPacket
 {
+    public override byte PacketType => (byte)GameOutgoingPacketType.CancelTarget;
+
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.CancelTarget);
+        message.AddByte(PacketType);
         message.AddUInt32(0x00);
     }
 }

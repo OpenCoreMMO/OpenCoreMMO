@@ -4,50 +4,41 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Login;
 
-public class CharacterListPacket : OutgoingPacket
+public class CharacterListPacket(AccountEntity account, string serverName, string ipAddress, int port) : OutgoingPacket
 {
-    private readonly AccountEntity _accountEntity;
-    private readonly string _ipAddress;
-    private readonly ushort _port;
-    private readonly string _serverName;
-
-    public CharacterListPacket(AccountEntity account, string serverName, string ipAddress, ushort port)
-    {
-        _accountEntity = account;
-        _serverName = serverName;
-        _ipAddress = ipAddress;
-        _port = port;
-    }
+    //todo: muniz refact this
+    public override byte PacketType => (byte)LoginOutgoingPacketType.CharacterList;
 
     public override void WriteToMessage(INetworkMessage message)
     {
+        message.AddByte(PacketType);
         AddCharList(message);
     }
 
     private void AddCharList(INetworkMessage message)
     {
-        message.AddByte(0x64); //todo charlist
-        message.AddByte((byte)_accountEntity.Players.Count);
+        message.AddByte((byte)account.Players.Count);
 
-        var ipAddress = ParseIpAddress(_ipAddress);
+        var parsedIpAddress = ParseIpAddress(ipAddress);
 
-        foreach (var player in _accountEntity.Players)
+        foreach (var player in account.Players)
         {
-            var port = player.World?.Port > 0 ? player.World.Port : _port;
-            if (!string.IsNullOrWhiteSpace(player.World?.Ip)) ipAddress = ParseIpAddress(player.World.Ip);
+            port = player.World?.Port > 0 ? player.World.Port : port;
+            if (!string.IsNullOrWhiteSpace(player.World?.Ip))
+                parsedIpAddress = ParseIpAddress(player.World.Ip);
 
             message.AddString(player.Name);
-            message.AddString(player.World?.Name ?? _serverName ?? string.Empty);
+            message.AddString(player.World?.Name ?? serverName ?? string.Empty);
 
-            message.AddByte(ipAddress[0]);
-            message.AddByte(ipAddress[1]);
-            message.AddByte(ipAddress[2]);
-            message.AddByte(ipAddress[3]);
+            message.AddByte(parsedIpAddress[0]);
+            message.AddByte(parsedIpAddress[1]);
+            message.AddByte(parsedIpAddress[2]);
+            message.AddByte(parsedIpAddress[3]);
 
             message.AddUInt16((ushort)port);
         }
 
-        var premiumTimeDays = (ushort) (_accountEntity.PremiumTimeEndAt is null ? 0 : (_accountEntity.PremiumTimeEndAt.Value- DateTime.Now).TotalDays);
+        var premiumTimeDays = (ushort) (account.PremiumTimeEndAt is null ? 0 : (account.PremiumTimeEndAt.Value- DateTime.Now).TotalDays);
         message.AddUInt16(premiumTimeDays);
     }
 

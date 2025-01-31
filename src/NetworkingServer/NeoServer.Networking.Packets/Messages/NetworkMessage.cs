@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.Text;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Server.Common.Contracts.Network;
 using NeoServer.Server.Security;
@@ -69,6 +70,15 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
         AddBytes(item.GetRaw().ToArray());
 
         if (showItemDescription) AddString(item.GetLookText(true));
+    }
+
+    /// <summary>
+    ///     Inserts item object into the buffer.
+    /// </summary>
+    /// <param name="slot"></param>
+    public void AddSlot(Slot slot)
+    {
+        AddByte((byte)slot);
     }
 
     /// <summary>

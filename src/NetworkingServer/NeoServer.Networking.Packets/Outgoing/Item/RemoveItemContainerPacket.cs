@@ -3,25 +3,14 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Item;
 
-public class RemoveItemContainerPacket : OutgoingPacket
+public class RemoveItemContainerPacket(byte containerId, byte slotIndex) : OutgoingPacket
 {
-    private readonly byte containerId;
-    private readonly IItem item;
-    private readonly byte slotIndex;
-
-    public RemoveItemContainerPacket(byte containerId, byte slotIndex, IItem item)
-    {
-        this.containerId = containerId;
-        this.slotIndex = slotIndex;
-        this.item = item;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.ContainerRemoveItem;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.ContainerRemoveItem);
-
+        message.AddByte(PacketType);
         message.AddByte(containerId);
-
         message.AddByte(slotIndex);
     }
 }

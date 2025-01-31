@@ -6,34 +6,24 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Npc;
 
-public class SaleItemListPacket : OutgoingPacket
+public class SaleItemListPacket(IPlayer player, IEnumerable<IShopItem> shopItems, ICoinTypeStore coinTypeStore) : OutgoingPacket
 {
-    private readonly ICoinTypeStore _coinTypeStore;
-
-    public SaleItemListPacket(IPlayer player, IEnumerable<IShopItem> shopItem, ICoinTypeStore coinTypeStore)
-    {
-        _coinTypeStore = coinTypeStore;
-        Player = player;
-        ShopItems = shopItem;
-    }
-
-    public IPlayer Player { get; }
-    public IEnumerable<IShopItem> ShopItems { get; }
+    public override byte PacketType => (byte)GameOutgoingPacketType.SaleItemList;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        if (Player is null || ShopItems is null) return;
+        if (player is null || shopItems is null) return;
 
-        var map = Player.Inventory.Map;
-        var totalMoney = Player.Inventory.GetTotalMoney(_coinTypeStore) + Player.BankAmount;
+        var map = player.Inventory.Map;
+        var totalMoney = player.Inventory.GetTotalMoney(coinTypeStore) + player.BankAmount;
 
-        message.AddByte((byte)GameOutgoingPacketType.SaleItemList);
+        message.AddByte(PacketType);
         message.AddUInt32((uint)Math.Min(totalMoney, uint.MaxValue));
 
         byte itemsToSend = 0;
 
         var temp = new List<byte>();
-        foreach (var shopItem in ShopItems)
+        foreach (var shopItem in shopItems)
         {
             if (shopItem.SellPrice == 0) continue;
 

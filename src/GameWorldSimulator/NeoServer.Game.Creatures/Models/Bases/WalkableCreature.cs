@@ -181,9 +181,9 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         OnTeleported?.Invoke(this, new Location(x, y, z));
     }
 
-    public byte[] GetRaw(IPlayer playerRequesting)
+    public byte[] GetRaw(IPlayer playerRequesting, bool known)
     {
-        return CreatureRaw.Convert(playerRequesting, this);
+        return CreatureRaw.Convert(playerRequesting, this, known);
     }
 
     public void IncreaseSpeed(ushort speed)

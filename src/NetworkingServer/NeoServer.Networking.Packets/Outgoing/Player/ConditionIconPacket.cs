@@ -2,18 +2,13 @@
 
 namespace NeoServer.Networking.Packets.Outgoing.Player;
 
-public class ConditionIconPacket : OutgoingPacket
+public class ConditionIconPacket(ushort icons) : OutgoingPacket
 {
-    private readonly ushort icons;
-
-    public ConditionIconPacket(ushort icons)
-    {
-        this.icons = icons;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.PlayerConditions;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.PlayerConditions);
+        message.AddByte(PacketType);
         message.AddUInt16(icons);
     }
 }

@@ -1,23 +1,15 @@
-﻿using System;
-using NeoServer.Server.Common.Contracts.Network;
+﻿using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Login;
 
-public class WaitingInLinePacket : OutgoingPacket
+public class WaitingInLinePacket(string textMessage, byte retryTime) : OutgoingPacket
 {
-    private readonly string _message;
-    private readonly long _retryTime;
+    public override byte PacketType => (byte)LoginOutgoingPacketType.Waiting;
 
-    public WaitingInLinePacket(string message, long retryTime)
-    {
-        _message = message;
-        _retryTime = retryTime;
-    }
-    
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte(0x16);
-        message.AddString(_message);
-        message.AddByte((byte)_retryTime);
+        message.AddByte(PacketType);
+        message.AddString(textMessage);
+        message.AddByte(retryTime);
     }
 }

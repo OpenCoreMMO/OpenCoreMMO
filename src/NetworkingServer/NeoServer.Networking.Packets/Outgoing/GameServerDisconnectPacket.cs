@@ -2,18 +2,13 @@
 
 namespace NeoServer.Networking.Packets.Outgoing;
 
-public sealed class GameServerDisconnectPacket : OutgoingPacket
+public sealed class GameServerDisconnectPacket(string reason) : OutgoingPacket
 {
-    private readonly string reason;
-
-    public GameServerDisconnectPacket(string reason)
-    {
-        this.reason = reason;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.Disconnect;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.Disconnect);
+        message.AddByte(PacketType);
         message.AddString(reason);
     }
 }

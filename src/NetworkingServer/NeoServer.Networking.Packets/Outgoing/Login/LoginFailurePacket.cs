@@ -2,18 +2,13 @@
 
 namespace NeoServer.Networking.Packets.Outgoing.Login;
 
-public class LoginFailurePacket : OutgoingPacket
+public class LoginFailurePacket(string text) : OutgoingPacket
 {
-    private readonly string _text;
-
-    public LoginFailurePacket(string text)
-    {
-        _text = text;
-    }
+    public override byte PacketType => (byte)LoginOutgoingPacketType.LoginFailed;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte(0x0A);
-        message.AddString(_text);
+        message.AddByte(PacketType);
+        message.AddString(text);
     }
 }

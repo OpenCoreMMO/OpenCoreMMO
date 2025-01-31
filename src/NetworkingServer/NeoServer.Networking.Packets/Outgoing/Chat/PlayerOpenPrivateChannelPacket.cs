@@ -2,19 +2,14 @@
 
 namespace NeoServer.Networking.Packets.Outgoing.Chat;
 
-public class PlayerOpenPrivateChannelPacket : OutgoingPacket
+public class PlayerOpenPrivateChannelPacket(string receiver) : OutgoingPacket
 {
-    private readonly string receiver;
-
-    public PlayerOpenPrivateChannelPacket(string receiver)
-    {
-        this.receiver = receiver;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.OpenPrivateChannel;
 
     //todo: this code is duplicated?
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.OpenPrivateChannel);
+        message.AddByte(PacketType);
         message.AddString(receiver);
     }
 }

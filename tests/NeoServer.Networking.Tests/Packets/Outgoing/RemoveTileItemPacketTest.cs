@@ -2,6 +2,7 @@
 using NeoServer.Game.Items;
 using NeoServer.Game.Items.Bases;
 using NeoServer.Networking.Packets.Messages;
+using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Networking.Packets.Outgoing.Item;
 using Xunit;
 
@@ -22,8 +23,7 @@ public class RemoveTileItemPacketTest
     public void Constructor_Item_Null_Returns()
     {
         var sut = new RemoveTileItemPacket(new Location(100, 100, 7), 1, null);
-        Assert.Equal(default, sut.location);
-        Assert.Equal(default, sut.stackPosition);
+        Assert.Equal((byte)GameOutgoingPacketType.AddAtStackPos, sut.PacketType);
     }
 
     [Fact]

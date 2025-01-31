@@ -4,18 +4,14 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Player;
 
-public class PlayerSkillsPacket : OutgoingPacket
+public class PlayerSkillsPacket(IPlayer player) : OutgoingPacket
 {
-    private readonly IPlayer player;
-
-    public PlayerSkillsPacket(IPlayer player)
-    {
-        this.player = player;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.PlayerSkills;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.PlayerSkills);
+        message.AddByte(PacketType);
+
         message.AddByte((byte)player.GetSkillLevel(SkillType.Fist));
         message.AddByte(player.GetSkillPercent(SkillType.Fist));
 

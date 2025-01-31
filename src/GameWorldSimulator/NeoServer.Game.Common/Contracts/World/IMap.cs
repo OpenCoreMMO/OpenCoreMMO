@@ -32,6 +32,7 @@ public interface IMap
     event FailedMoveThing OnThingMovedFailed;
     event AddThingToTile OnThingAddedToTile;
     event UpdateThingOnTile OnThingUpdatedOnTile;
+    IList<byte> GetDescriptionFromPlayer(IPlayer player);
 
     IList<byte> GetDescription(IThing thing, ushort fromX, ushort fromY, byte currentZ,
         byte windowSizeX = 18, byte windowSizeY = 14);

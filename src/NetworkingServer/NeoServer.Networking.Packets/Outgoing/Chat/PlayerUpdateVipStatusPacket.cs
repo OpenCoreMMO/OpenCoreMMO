@@ -13,6 +13,8 @@ public class PlayerUpdateVipStatusPacket : OutgoingPacket
         this.online = online;
     }
 
+    public override byte PacketType => (byte)GameOutgoingPacketType.CloseChannel;
+
     public override void WriteToMessage(INetworkMessage message)
     {
         message.AddByte((byte)(online

@@ -2,18 +2,13 @@
 
 namespace NeoServer.Networking.Packets.Outgoing.Chat;
 
-public class PlayerCloseChannelPacket : OutgoingPacket
+public class PlayerCloseChannelPacket(ushort channelId) : OutgoingPacket
 {
-    private readonly ushort channelId;
-
-    public PlayerCloseChannelPacket(ushort channelId)
-    {
-        this.channelId = channelId;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.CloseChannel;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.CloseChannel);
+        message.AddByte(PacketType);
         message.AddUInt16(channelId);
     }
 }

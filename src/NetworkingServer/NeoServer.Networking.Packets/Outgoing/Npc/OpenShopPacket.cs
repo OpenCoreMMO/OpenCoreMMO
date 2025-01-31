@@ -6,23 +6,18 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Npc;
 
-public class OpenShopPacket : OutgoingPacket
+public class OpenShopPacket(IEnumerable<IShopItem> items) : OutgoingPacket
 {
-    public OpenShopPacket(IEnumerable<IShopItem> items)
-    {
-        Items = items;
-    }
-
-    public IEnumerable<IShopItem> Items { get; }
+    public override byte PacketType => (byte)GameOutgoingPacketType.OpenShop;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.OpenShop);
+        var itemsCount = (ushort)Math.Min(items.Count(), ushort.MaxValue);
 
-        var itemsCount = (ushort)Math.Min(Items.Count(), ushort.MaxValue);
+        message.AddByte(PacketType);
         message.AddByte((byte)itemsCount);
 
-        foreach (var item in Items) SendShopItem(message, item);
+        foreach (var item in items) SendShopItem(message, item);
     }
 
     private void SendShopItem(INetworkMessage message, IShopItem shopItem)

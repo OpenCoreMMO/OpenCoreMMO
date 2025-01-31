@@ -31,19 +31,17 @@ public class ContentModifiedOnContainerEventHandler
         switch (operation)
         {
             case ContainerOperation.ItemRemoved:
-                connection.OutgoingPackets.Enqueue(new RemoveItemContainerPacket(containerId, slotIndex, item));
+                connection.OutgoingPackets.Enqueue(new RemoveItemContainerPacket(containerId, slotIndex));
                 break;
             case ContainerOperation.ItemAdded:
-                connection.OutgoingPackets.Enqueue(new AddItemContainerPacket(containerId, item)
-                {
-                    ShowItemDescription = connection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip
-                });
+                connection.OutgoingPackets.Enqueue(new AddItemContainerPacket(
+                    containerId, item,
+                    connection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip));
                 break;
             case ContainerOperation.ItemUpdated:
-                connection.OutgoingPackets.Enqueue(new UpdateItemContainerPacket(containerId, slotIndex, item)
-                {
-                    ShowItemDescription = connection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip
-                });
+                connection.OutgoingPackets.Enqueue(new UpdateItemContainerPacket(
+                    containerId, slotIndex, item, 
+                    connection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip));
                 break;
         }
 

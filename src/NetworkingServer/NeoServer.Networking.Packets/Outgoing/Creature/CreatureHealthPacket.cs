@@ -4,19 +4,13 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Creature;
 
-public class CreatureHealthPacket : OutgoingPacket
+public class CreatureHealthPacket(ICreature creature) : OutgoingPacket
 {
-    private readonly ICreature creature;
-
-    public CreatureHealthPacket(ICreature creature)
-    {
-        this.creature = creature;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.CreatureHealth;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.CreatureHealth);
-
+        message.AddByte(PacketType);
         message.AddUInt32(creature.CreatureId);
 
         if (creature.IsHealthHidden)

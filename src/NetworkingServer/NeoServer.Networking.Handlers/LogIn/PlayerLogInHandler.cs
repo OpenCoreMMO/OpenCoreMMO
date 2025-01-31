@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
@@ -99,7 +100,7 @@ public class PlayerLogInHandler : PacketHandler
             var retryTime = _waitingQueueManager.GetTime(currentSlot);
             var message = $"There are too many players online.\nYour are at place {currentSlot} on waiting list.";
         
-            var waitingInLinePacket = new WaitingInLinePacket(message, retryTime);
+            var waitingInLinePacket = new WaitingInLinePacket(message, (byte)retryTime);
             connection.Send(waitingInLinePacket);
             connection.Close();
             return;
@@ -109,13 +110,16 @@ public class PlayerLogInHandler : PacketHandler
         if (packet.OtcV8Version > 0 || packet.OperatingSystem >= OperatingSystem.OtcLinux)
         {
             if (packet.OtcV8Version > 0)
-                connection.Send(new FeaturesPacket
-                {
-                    GameEnvironmentEffect = _clientConfiguration.OtcV8.GameEnvironmentEffect,
-                    GameExtendedOpcode = _clientConfiguration.OtcV8.GameExtendedOpcode,
-                    GameExtendedClientPing = _clientConfiguration.OtcV8.GameExtendedClientPing,
-                    GameItemTooltip = _clientConfiguration.OtcV8.GameItemTooltip
-                });
+            {
+                var features = new List<FeaturesPacket.Feature>();
+
+                if (_clientConfiguration.OtcV8.GameEnvironmentEffect) features.Add(FeaturesPacket.Feature.GameEnvironmentEffect);
+                if (_clientConfiguration.OtcV8.GameExtendedOpcode) features.Add(FeaturesPacket.Feature.GameExtendedOpcode);
+                if (_clientConfiguration.OtcV8.GameExtendedClientPing) features.Add(FeaturesPacket.Feature.GameExtendedClientPing);
+                if (_clientConfiguration.OtcV8.GameItemTooltip) features.Add(FeaturesPacket.Feature.GameItemTooltip);
+
+                connection.Send(new FeaturesPacket(features.ToArray()));
+            }
             connection.Send(new OpcodeMessagePacket());
         }
 

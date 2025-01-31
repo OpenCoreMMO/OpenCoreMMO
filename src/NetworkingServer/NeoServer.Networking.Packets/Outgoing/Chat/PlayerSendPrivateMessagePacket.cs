@@ -4,32 +4,23 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Chat;
 
-public class PlayerSendPrivateMessagePacket : OutgoingPacket
+public class PlayerSendPrivateMessagePacket(ISociableCreature from, SpeechType talkType, string textMessage) : OutgoingPacket
 {
-    public PlayerSendPrivateMessagePacket(ISociableCreature from, SpeechType talkType, string message)
-    {
-        From = from;
-        TalkType = talkType;
-        Message = message;
-    }
-
-    public ISociableCreature From { get; }
-    public SpeechType TalkType { get; }
-    public string Message { get; }
+    public override byte PacketType => (byte)GameOutgoingPacketType.SendPrivateMessage;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        if (TalkType == SpeechType.None) return;
+        if (talkType == SpeechType.None) return;
 
-        message.AddByte((byte)GameOutgoingPacketType.SendPrivateMessage);
         uint statementId = 0;
 
+        message.AddByte(PacketType);
         message.AddUInt32(++statementId);
 
-        if (From is not null)
+        if (from is not null)
         {
-            message.AddString(From.Name);
-            if (From is IPlayer player) message.AddUInt16(player.Level);
+            message.AddString(from.Name);
+            if (from is IPlayer player) message.AddUInt16(player.Level);
             else message.AddUInt16(0x00);
         }
         else
@@ -37,7 +28,7 @@ public class PlayerSendPrivateMessagePacket : OutgoingPacket
             message.AddUInt16(0x00);
         }
 
-        message.AddByte((byte)TalkType);
-        message.AddString(Message);
+        message.AddByte((byte)talkType);
+        message.AddString(textMessage);
     }
 }

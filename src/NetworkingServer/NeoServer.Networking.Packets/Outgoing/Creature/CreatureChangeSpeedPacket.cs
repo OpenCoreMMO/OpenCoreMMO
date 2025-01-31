@@ -2,22 +2,14 @@
 
 namespace NeoServer.Networking.Packets.Outgoing.Creature;
 
-public class CreatureChangeSpeedPacket : OutgoingPacket
+public class CreatureChangeSpeedPacket(uint creaturedId, ushort speed) : OutgoingPacket
 {
-    private readonly uint _creaturedId;
-    private readonly ushort _speed;
-
-    public CreatureChangeSpeedPacket(uint creaturedId, ushort speed)
-    {
-        _creaturedId = creaturedId;
-        _speed = speed;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.ChangeSpeed;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.ChangeSpeed);
-
-        message.AddUInt32(_creaturedId);
-        message.AddUInt16(_speed);
+        message.AddByte(PacketType);
+        message.AddUInt32(creaturedId);
+        message.AddUInt16(speed);
     }
 }

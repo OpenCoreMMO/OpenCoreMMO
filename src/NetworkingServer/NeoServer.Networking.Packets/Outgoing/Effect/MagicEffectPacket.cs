@@ -4,20 +4,13 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Effect;
 
-public class MagicEffectPacket : OutgoingPacket
+public class MagicEffectPacket(Location location, EffectT effect) : OutgoingPacket
 {
-    private readonly EffectT effect;
-    private readonly Location location;
-
-    public MagicEffectPacket(Location location, EffectT effect)
-    {
-        this.location = location;
-        this.effect = effect;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.MagicEffect;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.MagicEffect);
+        message.AddByte(PacketType);
         message.AddLocation(location);
         message.AddByte((byte)effect);
     }

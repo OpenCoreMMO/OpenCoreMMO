@@ -1,5 +1,6 @@
 ﻿using System;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Location.Structs;
 
 namespace NeoServer.Server.Common.Contracts.Network;
@@ -17,4 +18,6 @@ public interface INetworkMessage : IReadOnlyNetworkMessage
     void AddItem(IItem item, bool showItemDescription = false);
     void AddLocation(Location location);
     void AddLength();
+    void AddSlot(Slot slot);
+    //void AddPacketType(GameOutgoingPacketType slot);
 }

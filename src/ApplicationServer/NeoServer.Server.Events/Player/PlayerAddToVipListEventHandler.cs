@@ -24,7 +24,7 @@ public class PlayerAddToVipListEventHandler
 
         var isOnline = game.CreatureManager.TryGetLoggedPlayer(vipPlayerId, out _);
 
-        connection.OutgoingPackets.Enqueue(new PlayerAddVipPacket(vipPlayerId, vipPlayerName, isOnline));
+        connection.OutgoingPackets.Enqueue(new PlayerAddOrRemoveVipPacket(vipPlayerId, vipPlayerName, isOnline));
         connection.Send();
     }
 }

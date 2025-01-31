@@ -59,9 +59,11 @@ public enum GameOutgoingPacketType : byte
     SendPrivateMessage = 0xAA,
     ChannelList = 0xAB,
     CloseChannel = 0xB3,
-    AddVip = 0xD2,
+    AddOrRemoveVip = 0xD2,
     OnlineStatusVip = 0xD3,
     OfflineStatusVip = 0xD4,
     TextWindow = 0x96,
-    NetworkPing = 0x40
+    NetworkPing = 0x40,
+    ExtendedFeature = 0x43,
+    ExtendedOpcode = 0x32,
 }

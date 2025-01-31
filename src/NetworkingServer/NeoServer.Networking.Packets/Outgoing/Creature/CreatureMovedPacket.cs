@@ -3,23 +3,13 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Creature;
 
-public class CreatureMovedPacket : OutgoingPacket
+public class CreatureMovedPacket(Location location, Location toLocation, byte stackPosition) : OutgoingPacket
 {
-    private readonly Location location;
-    private readonly byte stackPosition;
-    private readonly Location toLocation;
-
-    public CreatureMovedPacket(Location location, Location toLocation, byte stackPosition)
-    {
-        this.location = location;
-        this.toLocation = toLocation;
-        this.stackPosition = stackPosition;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.CreatureMoved;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.CreatureMoved);
-
+        message.AddByte(PacketType);
         message.AddLocation(location);
         message.AddByte(stackPosition);
         message.AddLocation(toLocation);

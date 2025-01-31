@@ -20,9 +20,11 @@ public class PlayerOutFitWindowPacket : OutgoingPacket
         _playerOutfitAddonModels = playerOutfitAddonModels;
     }
 
+    public override byte PacketType => (byte)GameOutgoingPacketType.OutfitWindow;
+
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.OutfitWindow);
+        message.AddByte(PacketType);
         message.AddUInt16(player.Outfit.LookType);
 
         if (player.Outfit.LookType != 0)

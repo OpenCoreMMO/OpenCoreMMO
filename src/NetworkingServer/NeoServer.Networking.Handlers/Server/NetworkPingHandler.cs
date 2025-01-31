@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using NeoServer.Networking.Packets.Incoming.Server;
 using NeoServer.Server.Common.Contracts.Network;
 using NeoServer.Server.Common.Contracts.Tasks;
@@ -18,10 +16,6 @@ public class NetworkPingHandler : PacketHandler
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
         var packet = new NetworkPingPacket(message);
-
-        _dispatcher.AddEvent(new Event(()=> connection.Send(new Packets.Outgoing.Custom.NetworkPingPacket
-        {
-            PingId = packet.PingId
-        })));
+        _dispatcher.AddEvent(new Event(()=> connection.Send(new Packets.Outgoing.Custom.NetworkPingPacket(packet.PingId))));
     }
 }

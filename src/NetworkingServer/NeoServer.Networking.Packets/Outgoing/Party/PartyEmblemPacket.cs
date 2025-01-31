@@ -4,20 +4,13 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Party;
 
-public class PartyEmblemPacket : OutgoingPacket
+public class PartyEmblemPacket(ICreature creature, PartyEmblem emblem) : OutgoingPacket
 {
-    private readonly ICreature creature;
-    private readonly PartyEmblem emblem;
-
-    public PartyEmblemPacket(ICreature creature, PartyEmblem emblem)
-    {
-        this.creature = creature;
-        this.emblem = emblem;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.CreatureEmblem;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.CreatureEmblem);
+        message.AddByte(PacketType);
         message.AddUInt32(creature.CreatureId);
         message.AddByte((byte)emblem);
     }

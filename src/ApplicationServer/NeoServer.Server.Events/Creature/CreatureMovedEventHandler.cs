@@ -12,6 +12,8 @@ using NeoServer.Networking.Packets.Outgoing.Map;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
 using NeoServer.Server.Common.Contracts.Scripts;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NeoServer.Server.Events.Creature;
 
@@ -66,7 +68,7 @@ public class CreatureMovedEventHandler(IGameServer game, IScriptManager scriptMa
                 player.CanSee(fromLocation)) //spectator can see old position but not the new
             {
                 //happens when player leaves spectator's view area
-                connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(fromTile,
+                connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(fromTile.Location,
                     cylinderSpectator.FromStackPosition));
                 connection.Send();
 
@@ -79,7 +81,10 @@ public class CreatureMovedEventHandler(IGameServer game, IScriptManager scriptMa
             connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(creature,
                 cylinderSpectator.ToStackPosition));
 
-            connection.OutgoingPackets.Enqueue(new AddCreaturePacket(player, creature));
+            connection.OutgoingPackets.Enqueue(
+                player.KnowsCreatureWithId(creature.CreatureId) ?
+                new AddKnownCreaturePacket(player, creature) :
+                new AddUnknownCreaturePacket(player, creature));
 
             connection.Send();
         }
@@ -92,12 +97,15 @@ public class CreatureMovedEventHandler(IGameServer game, IScriptManager scriptMa
     {
         if (fromLocation.Z != toLocation.Z)
         {
-            connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(fromTile,
+            connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(fromTile.Location,
                 cylinderSpectator.FromStackPosition));
             connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(creature,
                 cylinderSpectator.ToStackPosition));
 
-            connection.OutgoingPackets.Enqueue(new AddCreaturePacket(player, creature));
+            connection.OutgoingPackets.Enqueue(
+                player.KnowsCreatureWithId(creature.CreatureId) ?
+                new AddKnownCreaturePacket(player, creature) :
+                new AddUnknownCreaturePacket(player, creature));
 
             return;
         }
@@ -114,16 +122,16 @@ public class CreatureMovedEventHandler(IGameServer game, IScriptManager scriptMa
 
         if (cylinderSpectator.FromStackPosition >= 10)
         {
-            connection.OutgoingPackets.Enqueue(new MapDescriptionPacket(player, game.Map));
+            connection.OutgoingPackets.Enqueue(new MapDescriptionPacket(player.Location, game.Map.GetDescriptionFromPlayer(player).ToArray()));
             connection.Send();
             return true;
         }
 
         if (cylinder.IsTeleport)
         {
-            connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(fromTile,
+            connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(fromTile.Location,
                 cylinderSpectator.FromStackPosition));
-            connection.OutgoingPackets.Enqueue(new MapDescriptionPacket(player, game.Map));
+            connection.OutgoingPackets.Enqueue(new MapDescriptionPacket(player.Location, game.Map.GetDescriptionFromPlayer(player).ToArray()));
 
             if (fromTile is IDynamicTile fromDynamicTile && fromDynamicTile.HasTeleport(out _))
                 connection.OutgoingPackets.Enqueue(new MagicEffectPacket(toLocation, EffectT.BubbleBlue));
@@ -133,25 +141,128 @@ public class CreatureMovedEventHandler(IGameServer game, IScriptManager scriptMa
         }
 
         if (fromLocation.Z == 7 && toLocation.Z >= 8)
-            connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(fromTile,
+            connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(fromTile.Location,
                 cylinderSpectator.FromStackPosition));
         else
             connection.OutgoingPackets.Enqueue(new CreatureMovedPacket(fromLocation,
                 toLocation, cylinderSpectator.FromStackPosition));
 
         if (toLocation.Z > fromLocation.Z)
-            connection.OutgoingPackets.Enqueue(new CreatureMovedDownPacket(fromLocation, toLocation, game.Map,
-                creature));
-        if (toLocation.Z < fromLocation.Z)
-            connection.OutgoingPackets.Enqueue(new CreatureMovedUpPacket(fromLocation, toLocation, game.Map,
-                creature));
+            CreatureMovedDown(connection, fromLocation, toLocation, game.Map, creature);
+        else if (toLocation.Z < fromLocation.Z)
+            CreatureMovedUp(connection, fromLocation, toLocation, game.Map, creature);
 
-        if (fromLocation.GetSqmDistanceX(toLocation) != 0 || fromLocation.GetSqmDistanceY(toLocation) != 0)
-            connection.OutgoingPackets.Enqueue(new MapPartialDescriptionPacket(creature, fromLocation,
-                toLocation, Direction.None, game.Map));
+        if (toLocation.Y > fromLocation.Y)
+            connection.OutgoingPackets.Enqueue(
+                    new MapSliceSouthPacket(
+                        game.Map.GetDescription(creature, (ushort)(fromLocation.X - MapViewPort.MaxClientViewPortX),
+                            (ushort)(toLocation.Y + MapViewPort.MaxClientViewPortY + 1), toLocation.Z, windowSizeY: 1)
+                        .ToArray()));
+        else if (toLocation.Y < fromLocation.Y)
+            connection.OutgoingPackets.Enqueue(
+                new MapSliceNorthPacket(
+                    game.Map.GetDescription(creature, (ushort)(fromLocation.X - MapViewPort.MaxClientViewPortX),
+                        (ushort)(toLocation.Y - MapViewPort.MaxClientViewPortY), toLocation.Z, windowSizeY: 1)
+                    .ToArray()));
+
+        if (toLocation.X > fromLocation.X)
+            connection.OutgoingPackets.Enqueue(
+                new MapSliceEastPacket(
+                    game.Map.GetDescription(creature, (ushort)(toLocation.X + MapViewPort.MaxClientViewPortX + 1),
+                        (ushort)(toLocation.Y - MapViewPort.MaxClientViewPortY), toLocation.Z, windowSizeX: 1)
+                    .ToArray()));
+        else if (toLocation.X < fromLocation.X)
+            connection.OutgoingPackets.Enqueue(
+                new MapSliceWestPacket(
+                    game.Map.GetDescription(creature, (ushort)(toLocation.X - MapViewPort.MaxClientViewPortX),
+                        (ushort)(toLocation.Y - MapViewPort.MaxClientViewPortY), toLocation.Z, windowSizeX: 1)
+                    .ToArray()));
 
         connection.Send();
 
         return true;
+    }
+
+    public void CreatureMovedDown(IConnection connection, Location fromLocation, Location toLocation, IMap map, ICreature creature)
+    {
+        var skip = -1;
+        var x = (ushort)(fromLocation.X - MapViewPort.MaxClientViewPortX);
+        var y = (ushort)(fromLocation.Y - MapViewPort.MaxClientViewPortY);
+
+        var floorsDescription = new List<byte>();
+
+        //going from surface to underground
+        if (toLocation.Z == 8)
+            for (var i = 0; i < 3; ++i)
+                floorsDescription.AddRange(map
+                    .GetFloorDescription(creature, x, y, (byte)(toLocation.Z + i), 18, 14, -i - 1, ref skip));
+
+        //going further down
+        if (toLocation.Z > fromLocation.Z && toLocation.Z is > 8 and < 14)
+        {
+            skip = -1;
+            floorsDescription.AddRange(map
+                .GetFloorDescription(creature, x, y, (byte)(toLocation.Z + 2), 18, 14, -3, ref skip).ToArray());
+        }
+
+        if (skip >= 0)
+        {
+            floorsDescription.Add((byte)skip);
+            floorsDescription.Add(0xFF);
+        }
+
+        connection.OutgoingPackets.Enqueue(new CreatureMovedDownPacket(floorsDescription.ToArray()));
+
+        //east
+        connection.OutgoingPackets.Enqueue(
+                new MapSliceEastPacket(map.GetDescription(creature, (ushort)(fromLocation.X + MapViewPort.MaxClientViewPortX + 1),
+            (ushort)(y - 1), toLocation.Z, 1).ToArray()));
+
+        //south
+        connection.OutgoingPackets.Enqueue(
+                new MapSliceEastPacket(map.GetDescription(creature, x,
+            (ushort)(fromLocation.Y + MapViewPort.MaxClientViewPortY + 1), toLocation.Z, 18, 1).ToArray()));
+    }
+
+    public void CreatureMovedUp(IConnection connection, Location fromLocation, Location toLocation, IMap map, ICreature creature)
+    {
+        var floorsDescription = new List<byte>();
+
+        var skip = -1;
+        var x = (ushort)(fromLocation.X - MapViewPort.MaxClientViewPortX);
+        var y = (ushort)(fromLocation.Y - MapViewPort.MaxClientViewPortY);
+
+        //going from surface to underground
+        if (toLocation.Z == 7)
+            for (var i = 5; i >= 0; --i)
+                floorsDescription.AddRange(map
+                    .GetFloorDescription(
+                        creature, x, y, (byte)i, (byte)MapViewPort.MaxClientViewPortX * 2 + 2,
+                        (byte)MapViewPort.MaxClientViewPortY * 2 + 2, 8 - i, ref skip).ToArray());
+
+        if (toLocation.Z > 7)
+            floorsDescription.AddRange(map
+                .GetFloorDescription(
+                    creature, (ushort)(fromLocation.X - MapViewPort.MaxClientViewPortX),
+                    (ushort)(fromLocation.Y - MapViewPort.MaxClientViewPortY),
+                    (byte)(fromLocation.Z - 3), (byte)MapViewPort.MaxClientViewPortX * 2 + 2,
+                    (byte)MapViewPort.MaxClientViewPortY * 2 + 2, 3, ref skip).ToArray());
+
+        if (skip >= 0)
+        {
+            floorsDescription.Add((byte)skip);
+            floorsDescription.Add(0xFF);
+        }
+
+        connection.OutgoingPackets.Enqueue(new CreatureMovedUpPacket(floorsDescription.ToArray()));
+
+        //west
+        connection.OutgoingPackets.Enqueue(
+                new MapSliceWestPacket(map.GetDescription(creature, x, (ushort)(y + 1), toLocation.Z, 1).ToArray()));
+
+        //north
+        connection.OutgoingPackets.Enqueue(
+                new MapSliceNorthPacket(map
+            .GetDescription(creature, x, y, toLocation.Z, (byte)MapViewPort.MaxClientViewPortX * 2 + 2, 1).ToArray()));
     }
 }

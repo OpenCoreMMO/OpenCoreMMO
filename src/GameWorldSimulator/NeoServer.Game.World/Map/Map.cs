@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
@@ -264,6 +265,10 @@ public class Map : IMap
     {
         return GetSpectators(location, onlyPlayers);
     }
+
+    public IList<byte> GetDescriptionFromPlayer(IPlayer player)
+        => GetDescription(player, (ushort)(player.Location.X - MapViewPort.MaxClientViewPortX),
+            (ushort)(player.Location.Y - MapViewPort.MaxClientViewPortY), player.Location.Z);
 
     public IList<byte> GetDescription(IThing thing, ushort fromX, ushort fromY, byte currentZ,
         byte windowSizeX = MapConstants.DEFAULT_MAP_WINDOW_SIZE_X,

@@ -10,23 +10,19 @@ namespace NeoServer.Game.Creatures;
 
 public static class CreatureRaw
 {
-    public static byte[] Convert(IPlayer playerRequesting, IWalkableCreature creature)
+    public static byte[] Convert(IPlayer playerRequesting, IWalkableCreature creature, bool known)
     {
         //optimize this method
         var cache = new List<byte>();
 
-        var known = playerRequesting.KnowsCreatureWithId(creature.CreatureId);
-
         if (known)
         {
-            cache.AddRange(BitConverter.GetBytes((ushort)0x62));
             cache.AddRange(BitConverter.GetBytes(creature.CreatureId));
         }
         else
         {
             playerRequesting.AddKnownCreature(creature.CreatureId);
 
-            cache.AddRange(BitConverter.GetBytes((ushort)0x61));
             cache.AddRange(BitConverter.GetBytes(playerRequesting.ChooseToRemoveFromKnownSet()));
             cache.AddRange(BitConverter.GetBytes(creature.CreatureId));
 

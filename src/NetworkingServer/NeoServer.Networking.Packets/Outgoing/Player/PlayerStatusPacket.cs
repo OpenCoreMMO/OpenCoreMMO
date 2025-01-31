@@ -5,18 +5,13 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Player;
 
-public class PlayerStatusPacket : OutgoingPacket
+public class PlayerStatusPacket(IPlayer player) : OutgoingPacket
 {
-    private readonly IPlayer player;
-
-    public PlayerStatusPacket(IPlayer player)
-    {
-        this.player = player;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.PlayerStatus;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.PlayerStatus);
+        message.AddByte(PacketType);
         message.AddUInt16((ushort)Math.Min(ushort.MaxValue, player.HealthPoints));
         message.AddUInt16((ushort)Math.Min(ushort.MaxValue, player.MaxHealthPoints));
         message.AddUInt32((uint)player.FreeCapacity * 100);

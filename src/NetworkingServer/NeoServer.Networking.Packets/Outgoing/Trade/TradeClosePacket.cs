@@ -4,8 +4,14 @@ namespace NeoServer.Networking.Packets.Outgoing.Trade;
 
 public class TradeClosePacket : OutgoingPacket
 {
+    public TradeClosePacket() { }
+
+    public TradeClosePacket(IReadOnlyNetworkMessage message) { }
+
+    public override byte PacketType => (byte)GameOutgoingPacketType.TradeClose;
+
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.TradeClose);
+        message.AddByte(PacketType);
     }
 }

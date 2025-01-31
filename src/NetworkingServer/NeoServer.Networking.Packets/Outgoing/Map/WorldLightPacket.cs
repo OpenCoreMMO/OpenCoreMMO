@@ -2,22 +2,14 @@
 
 namespace NeoServer.Networking.Packets.Outgoing.Map;
 
-public class WorldLightPacket : OutgoingPacket
+public class WorldLightPacket(byte level, byte color) : OutgoingPacket
 {
-    private readonly byte Color;
-    private readonly byte Level;
-
-    public WorldLightPacket(byte level, byte color)
-    {
-        Level = level;
-        Color = color;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.WorldLight;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.WorldLight);
-
-        message.AddByte(Level);
-        message.AddByte(Color);
+        message.AddByte(PacketType);
+        message.AddByte(level);
+        message.AddByte(color);
     }
 }

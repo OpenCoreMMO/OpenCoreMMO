@@ -34,7 +34,8 @@ public class CreatureTurnedToDirectionEventHandler
 
             if (!creature.Tile.TryGetStackPositionOfThing(player, creature, out var stackPosition)) continue;
 
-            connection.OutgoingPackets.Enqueue(new TurnToDirectionPacket(creature, direction, stackPosition));
+            connection.OutgoingPackets.Enqueue(new TransformThingPacket(creature, stackPosition));
+            connection.OutgoingPackets.Enqueue(new TurnToDirectionPacket(creature, direction));
 
             connection.Send();
         }

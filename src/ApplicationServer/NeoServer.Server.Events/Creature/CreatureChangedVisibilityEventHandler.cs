@@ -32,12 +32,15 @@ public class CreatureChangedVisibilityEventHandler
 
             if (creature.IsInvisible)
             {
-                connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(creature.Tile, stackPosition));
+                connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(creature.Tile.Location, stackPosition));
             }
-            else
+            else if (spectator is IPlayer playerToSend)
             {
                 connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(creature, stackPosition));
-                connection.OutgoingPackets.Enqueue(new AddCreaturePacket((IPlayer)spectator, creature));
+                connection.OutgoingPackets.Enqueue(
+                    playerToSend.KnowsCreatureWithId(creature.CreatureId) ?
+                    new AddKnownCreaturePacket(playerToSend, creature) :
+                    new AddUnknownCreaturePacket(playerToSend, creature));
             }
 
             connection.Send();

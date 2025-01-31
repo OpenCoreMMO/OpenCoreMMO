@@ -2,19 +2,13 @@
 
 namespace NeoServer.Networking.Packets.Outgoing.Player;
 
-public class CloseContainerPacket : OutgoingPacket
+public class CloseContainerPacket(byte containerId) : OutgoingPacket
 {
-    private readonly byte containerId;
-
-    public CloseContainerPacket(byte containerId)
-    {
-        this.containerId = containerId;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.ContainerClose;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.ContainerClose);
-
+        message.AddByte(PacketType);
         message.AddByte(containerId);
     }
 }

@@ -3,18 +3,17 @@ using NeoServer.Server.Security;
 
 namespace NeoServer.Networking.Packets.Outgoing.Login;
 
-public class FirstConnectionPacket : OutgoingPacket
+public class FirstConnectionPacket(uint timeStamp, byte randomNumber) : OutgoingPacket
 {
-    public required long TimeStamp { get; set; }
-    public required byte RandomNumber { get; set; }
+    public override byte PacketType => (byte)LoginOutgoingPacketType.NoType;
 
     public override void WriteToMessage(INetworkMessage message)
     {
         message.AddUInt32(0);
         message.AddUInt16(0x0006);
         message.AddByte(0x1F);
-        message.AddUInt32((uint)TimeStamp);
-        message.AddByte(RandomNumber);
+        message.AddUInt32(timeStamp);
+        message.AddByte(randomNumber);
         message.WriteUint32(AdlerChecksum.Checksum(message.Buffer, 4, message.Length - 4), 0);
     }
 }

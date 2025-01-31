@@ -4,31 +4,18 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Chat;
 
-public class MessageToChannelPacket : OutgoingPacket
+public class MessageToChannelPacket(ICreature from, SpeechType speechType, string textMessage, ushort channelId) : OutgoingPacket
 {
-    public MessageToChannelPacket(ICreature from, SpeechType talkType, string message, ushort channelId)
-    {
-        From = from;
-        TalkType = talkType;
-        Message = message;
-        ChannelId = channelId;
-    }
-
-    public ICreature From { get; }
-    public SpeechType TalkType { get; }
-    public string Message { get; }
-    public ushort ChannelId { get; }
+    public override byte PacketType => (byte)GameOutgoingPacketType.SendPrivateMessage;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        if (TalkType == SpeechType.None) return;
-        if (string.IsNullOrWhiteSpace(Message)) return;
-        if (ChannelId == default) return;
+        if (speechType == SpeechType.None) return;
+        if (string.IsNullOrWhiteSpace(textMessage)) return;
+        if (channelId == default) return;
 
-        message.AddByte((byte)GameOutgoingPacketType.SendPrivateMessage);
+        message.AddByte(PacketType);
         message.AddUInt32(0x00);
-
-        var speechType = TalkType;
 
         if (speechType == SpeechType.ChannelRed2Text)
         {
@@ -37,19 +24,19 @@ public class MessageToChannelPacket : OutgoingPacket
         }
         else
         {
-            if (From is not null)
-                message.AddString(From.Name);
+            if (from is not null)
+                message.AddString(from.Name);
             else
                 message.AddString(string.Empty);
             //Add level only for players
-            if (From is IPlayer player)
+            if (from is IPlayer player)
                 message.AddUInt16(player.Level);
             else
                 message.AddUInt16(0x00);
         }
 
         message.AddByte((byte)speechType);
-        message.AddUInt16(ChannelId);
-        message.AddString(Message);
+        message.AddUInt16(channelId);
+        message.AddString(textMessage);
     }
 }

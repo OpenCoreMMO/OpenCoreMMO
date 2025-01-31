@@ -3,19 +3,13 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Creature;
 
-public class CreatureLightPacket : OutgoingPacket
+public class CreatureLightPacket(IPlayer player) : OutgoingPacket
 {
-    private readonly IPlayer player;
-
-    public CreatureLightPacket(IPlayer player)
-    {
-        this.player = player;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.CreatureLight;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.CreatureLight);
-
+        message.AddByte(PacketType);
         message.AddUInt32(player.CreatureId);
         message.AddByte(player.LightBrightness); // light level
         message.AddByte(player.LightColor); // color

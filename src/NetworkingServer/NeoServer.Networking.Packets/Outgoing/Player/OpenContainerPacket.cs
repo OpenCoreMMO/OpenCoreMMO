@@ -4,25 +4,15 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Player;
 
-public class OpenContainerPacket : OutgoingPacket
+public class OpenContainerPacket(IContainer container, byte containerId, bool withDescription) : OutgoingPacket
 {
-    private readonly IContainer container;
-    private readonly byte containerId;
-
-    public OpenContainerPacket(IContainer container, byte containerId)
-    {
-        this.container = container;
-        this.containerId = containerId;
-    }
-
-    public required bool WithDescription { get; init; }
+    public override byte PacketType => (byte)GameOutgoingPacketType.ContainerOpen;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.ContainerOpen);
-
+        message.AddByte(PacketType);
         message.AddByte(containerId);
-        message.AddItem(container, WithDescription);
+        message.AddItem(container, withDescription);
         message.AddString(container.Name);
         message.AddByte(container.Capacity);
 
@@ -30,6 +20,6 @@ public class OpenContainerPacket : OutgoingPacket
 
         message.AddByte(Math.Min((byte)0xFF, container.SlotsUsed));
 
-        for (byte i = 0; i < container.SlotsUsed; i++) message.AddItem(container.Items[i], WithDescription);
+        for (byte i = 0; i < container.SlotsUsed; i++) message.AddItem(container.Items[i], withDescription);
     }
 }

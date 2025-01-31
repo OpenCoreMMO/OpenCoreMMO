@@ -2,20 +2,13 @@
 
 namespace NeoServer.Networking.Packets.Outgoing.Chat;
 
-public class PlayerOpenChannelPacket : OutgoingPacket
+public class PlayerOpenChannelPacket(ushort channelId, string name) : OutgoingPacket
 {
-    private readonly ushort channelId;
-    private readonly string name;
-
-    public PlayerOpenChannelPacket(ushort channelId, string name)
-    {
-        this.channelId = channelId;
-        this.name = name;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.OpenChannel;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.OpenChannel);
+        message.AddByte(PacketType);
         message.AddUInt16(channelId);
         message.AddString(name);
     }

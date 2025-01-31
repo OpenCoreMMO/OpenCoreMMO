@@ -26,10 +26,12 @@ public class CreatureSayPacket : OutgoingPacket
         _textMessage = textMessage;
     }
 
+    public override byte PacketType => (byte)GameOutgoingPacketType.CreatureSpeech;
+
     //todo: this code is duplicated?
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte(0xAA);
+        message.AddByte(PacketType);
         message.AddUInt32(0x00);
 
         message.AddString(_creature?.Name ?? string.Empty);

@@ -52,7 +52,7 @@ public interface IWalkableCreature : ICreature
     /// <param name="speed"></param>
     void IncreaseSpeed(ushort speed);
 
-    byte[] GetRaw(IPlayer playerRequesting);
+    byte[] GetRaw(IPlayer playerRequesting, bool known);
     void OnMoved(IDynamicTile fromTile, IDynamicTile toTile, ICylinderSpectator[] spectators); //remove
 
     /// <summary>

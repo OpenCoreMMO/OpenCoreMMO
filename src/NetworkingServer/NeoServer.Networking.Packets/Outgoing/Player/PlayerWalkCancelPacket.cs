@@ -3,18 +3,13 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Player;
 
-public class PlayerWalkCancelPacket : OutgoingPacket
+public class PlayerWalkCancelPacket(IPlayer player) : OutgoingPacket
 {
-    private readonly IPlayer player;
-
-    public PlayerWalkCancelPacket(IPlayer player)
-    {
-        this.player = player;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.PlayerWalkCancel;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.PlayerWalkCancel);
+        message.AddByte(PacketType);
         message.AddByte((byte)player.Direction);
     }
 }

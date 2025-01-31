@@ -268,7 +268,14 @@ public class DynamicTile : BaseTile, IDynamicTile
                 if (!playerRequesting.CanSee(creature)) continue;
                 if (countThings == 9) break;
 
-                var raw = creature.GetRaw(playerRequesting);
+                var known = playerRequesting.KnowsCreatureWithId(creature.CreatureId);
+                var raw = creature.GetRaw(playerRequesting, known);
+
+                //todo: muniz refact this, the packet type need be get from enum...
+                var packetTypeBytes = known ? BitConverter.GetBytes((ushort)0x62) : BitConverter.GetBytes((ushort)0x61);
+
+                packetTypeBytes.CopyTo(stream.Slice(countBytes, packetTypeBytes.Length));
+                countBytes += packetTypeBytes.Length;
 
                 raw.CopyTo(stream.Slice(countBytes, raw.Length));
 

@@ -3,19 +3,13 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Creature;
 
-public class CreatureOutfitPacket : OutgoingPacket
+public class CreatureOutfitPacket(ICreature creature) : OutgoingPacket
 {
-    private readonly ICreature creature;
-
-    public CreatureOutfitPacket(ICreature creature)
-    {
-        this.creature = creature;
-    }
+    public override byte PacketType => (byte)GameOutgoingPacketType.CreatureOutfit;
 
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.CreatureOutfit);
-
+        message.AddByte(PacketType);
         message.AddUInt32(creature.CreatureId);
         message.AddUInt16(creature.Outfit.LookType);
 

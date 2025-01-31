@@ -46,11 +46,19 @@ public class CreatureAddedOnMapEventHandler : IEventHandler
         }
     }
 
-    private static void SendPacketsToSpectator(IPlayer playerToSend, IWalkableCreature creatureAdded,
-        IConnection connection, byte stackPosition)
+    private static void SendPacketsToSpectator(
+        IPlayer playerToSend,
+        IWalkableCreature creatureAdded,
+        IConnection connection,
+        byte stackPosition)
     {
         connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(creatureAdded, stackPosition));
-        connection.OutgoingPackets.Enqueue(new AddCreaturePacket(playerToSend, creatureAdded));
+
+        connection.OutgoingPackets.Enqueue(
+            playerToSend.KnowsCreatureWithId(creatureAdded.CreatureId) ? 
+            new AddKnownCreaturePacket(playerToSend, creatureAdded) :
+            new AddUnknownCreaturePacket(playerToSend, creatureAdded));
+
         connection.OutgoingPackets.Enqueue(new MagicEffectPacket(creatureAdded.Location, EffectT.BubbleBlue));
     }
 }

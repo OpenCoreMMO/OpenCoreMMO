@@ -122,24 +122,18 @@ public class Connection : IConnection
     {
         var message = new NetworkMessage();
 
-        new FirstConnectionPacket
-        {
-            RandomNumber = RandomNumber,
-            TimeStamp = TimeStamp
-        }.WriteToMessage(message);
+        new FirstConnectionPacket((uint)TimeStamp, RandomNumber).WriteToMessage(message);
 
         message.AddLength();
 
         SendMessage(message, false);
     }
 
-
     public void Send(IOutgoingPacket packet)
     {
         var message = new NetworkMessage();
 
         packet.WriteToMessage(message);
-
         message.AddLength();
 
         var encryptedMessage = Xtea.Encrypt(message, XteaKey);
@@ -159,7 +153,7 @@ public class Connection : IConnection
 
         while (OutgoingPackets.TryDequeue(out var packet))
         {
-            _logger.Debug("To {PlayerId}: {Name}", CreatureId, packet.GetType().Name);
+            _logger.Debug("To {PlayerId}: {Hex} - {Name}", CreatureId, $"0x{packet.PacketType:X2}", packet.GetType().Name);
             packet.WriteToMessage(message);
         }
 

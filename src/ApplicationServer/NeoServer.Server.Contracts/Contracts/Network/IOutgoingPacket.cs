@@ -2,5 +2,6 @@
 
 public interface IOutgoingPacket
 {
+    byte PacketType { get; }
     void WriteToMessage(INetworkMessage message);
 }
