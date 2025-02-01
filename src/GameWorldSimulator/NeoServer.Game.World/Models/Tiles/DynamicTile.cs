@@ -20,17 +20,20 @@ public class DynamicTile : BaseTile, IDynamicTile
 {
     private byte[] _cache;
 
-    public DynamicTile(Coordinate coordinate, TileFlag tileFlag, IGround ground, IItem[] topItems, IItem[] items)
+    public DynamicTile(Coordinate coordinate, TileFlag tileFlag, IGround ground, IItem[] topItems, IItem[] items, uint? houseId = null)
     {
         SetNewLocation(new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z));
         Flags |= (byte)tileFlag;
         AddContent(ground, topItems, items);
         TileOperationEvent.OnLoaded(this);
+        HouseId = houseId;
     }
 
     public byte MovementPenalty => Ground.MovementPenalty;
     public TileStack<IItem> TopItems { get; private set; }
     public TileStack<IItem> DownItems { get; private set; }
+    
+    public uint? HouseId { get; private set; }
 
     public override int ItemsCount => (DownItems?.Count ?? 0) + (TopItems?.Count ?? 0) + (Ground is null ? 0 : 1);
 

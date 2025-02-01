@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Moq;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location;
@@ -8,6 +9,7 @@ using NeoServer.Game.Tests.Helpers.Map;
 using NeoServer.Game.Tests.Helpers.Player;
 using NeoServer.Game.World.Factories;
 using NeoServer.Game.World.Models.Tiles;
+using Serilog;
 using Xunit;
 
 namespace NeoServer.Game.World.Tests;
@@ -18,7 +20,8 @@ public class TileHeightTests
     public void Tile_that_has_height_is_allowed_to_stack_items_on_it()
     {
         //arrange
-        var tileFactory = new TileFactory();
+        var mockLogger = new Mock<ILogger>();
+        var tileFactory = new TileFactory(mockLogger.Object);
 
         var hasHeightItem = ItemTestData.CreateUnpassableItem(1);
         hasHeightItem.Metadata.Flags.Add(ItemFlag.HasHeight);
@@ -45,7 +48,8 @@ public class TileHeightTests
     public void Tile_that_has_depot_is_allowed_to_stack_items_on_it()
     {
         //arrange
-        var tileFactory = new TileFactory();
+        var mockLogger = new Mock<ILogger>();
+        var tileFactory = new TileFactory(mockLogger.Object);
 
         var depot = ItemTestData.CreateRegularItem(1);
         depot.Metadata.Flags.Add(ItemFlag.HasHeight);
