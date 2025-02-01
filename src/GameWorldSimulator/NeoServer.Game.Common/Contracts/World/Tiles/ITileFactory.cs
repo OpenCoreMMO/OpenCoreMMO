@@ -7,7 +7,7 @@ namespace NeoServer.Game.Common.Contracts.World.Tiles;
 
 public interface ITileFactory
 {
-    ITile CreateTile(Coordinate coordinate, TileFlag flag, IItem[] items, bool useCache = true);
+    ITile CreateTile(Coordinate coordinate, TileFlag flag, IItem[] items, bool useCache = true, uint? houseId = null);
     ITile CreateDynamicTile(Coordinate coordinate, TileFlag flag, IItem[] items);
     ITile GetTileFromCache(Coordinate coordinate, ref Span<byte> clientIds);
 }
