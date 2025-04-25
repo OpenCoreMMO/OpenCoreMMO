@@ -70,6 +70,6 @@ public static class InputHandlerMap
             [GameIncomingPacketType.TradeCancel] = typeof(TradeCancelHandler),
             [GameIncomingPacketType.TradeAccept] = typeof(TradeAcceptHandler),
             [GameIncomingPacketType.NewPing] = typeof(NetworkPingHandler),
-            [GameIncomingPacketType.ExtendedOpcode] = typeof(ExtendedOpcodeHandler),
+            [GameIncomingPacketType.ExtendedOpcode] = typeof(ExtendedOpcodeHandler)
         };
 }

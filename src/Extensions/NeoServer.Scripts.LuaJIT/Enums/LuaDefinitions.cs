@@ -2,7 +2,7 @@
 
 namespace NeoServer.Scripts.LuaJIT.Enums;
 
-enum SkillsType : byte
+internal enum SkillsType : byte
 {
     SKILL_FIST = 0,
     SKILL_CLUB = 1,
@@ -17,7 +17,7 @@ enum SkillsType : byte
 
     SKILL_FIRST = SKILL_FIST,
     SKILL_LAST = SKILL_FISHING
-};
+}
 
 public enum ItemAttributeType : uint
 {
@@ -52,7 +52,7 @@ public enum ItemAttributeType : uint
     ITEM_ATTRIBUTE_ATTACK_SPEED = 1 << 26,
 
     ITEM_ATTRIBUTE_CUSTOM = 1U << 31
-};
+}
 
 public enum SlotsType : byte
 {

@@ -1,7 +1,6 @@
 ﻿using NeoServer.Extensions.Chat;
 using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Creatures.Monster.Summon;
 using NeoServer.Server.Services;
 

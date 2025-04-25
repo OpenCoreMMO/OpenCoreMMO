@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Creatures;
@@ -10,7 +11,6 @@ using NeoServer.Game.Creatures.Npcs.Shop;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
-using System.Text.Json;
 using Serilog;
 
 namespace NeoServer.Loaders.Npcs;

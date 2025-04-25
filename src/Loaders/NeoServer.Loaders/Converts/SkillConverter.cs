@@ -10,22 +10,17 @@ namespace NeoServer.Loaders.Converts;
 
 public class SkillConverter : JsonConverter<Dictionary<SkillType, float>>
 {
-    public override Dictionary<SkillType, float> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override Dictionary<SkillType, float> Read(ref Utf8JsonReader reader, Type typeToConvert,
+        JsonSerializerOptions options)
     {
-        if (reader.TokenType != JsonTokenType.StartArray)
-        {
-            throw new JsonException("Expected StartArray token.");
-        }
+        if (reader.TokenType != JsonTokenType.StartArray) throw new JsonException("Expected StartArray token.");
 
         var list = new List<Dictionary<string, string>>();
 
         while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
         {
             var item = JsonSerializer.Deserialize<Dictionary<string, string>>(ref reader, options);
-            if (item != null)
-            {
-                list.Add(item);
-            }
+            if (item != null) list.Add(item);
         }
 
         return list.ToDictionary(

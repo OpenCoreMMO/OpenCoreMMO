@@ -6,7 +6,7 @@ public interface IStaticTile : ITile
     ushort[] AllClientIdItems { get; }
 
     /// <summary>
-    /// Create new instance of StaticTile setting new location
+    ///     Create new instance of StaticTile setting new location
     /// </summary>
     /// <param name="location"></param>
     /// <returns></returns>

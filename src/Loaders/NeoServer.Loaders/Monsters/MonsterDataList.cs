@@ -70,23 +70,35 @@ public class MonsterData
 
     public class TargetchangeData
     {
-        [JsonPropertyName("interval")] [JsonConverter(typeof(NumberToStringConverter))] public string Interval { get; set; }
+        [JsonPropertyName("interval")]
+        [JsonConverter(typeof(NumberToStringConverter))]
+        public string Interval { get; set; }
 
-        [JsonPropertyName("chance")] [JsonConverter(typeof(NumberToStringConverter))] public string Chance { get; set; }
+        [JsonPropertyName("chance")]
+        [JsonConverter(typeof(NumberToStringConverter))]
+        public string Chance { get; set; }
     }
 
     public class StrategyData
     {
-        [JsonPropertyName("attack")]  [JsonConverter(typeof(NumberToStringConverter))] public string Attack { get; set; }
+        [JsonPropertyName("attack")]
+        [JsonConverter(typeof(NumberToStringConverter))]
+        public string Attack { get; set; }
 
-        [JsonPropertyName("defense")] [JsonConverter(typeof(NumberToStringConverter))] public string Defense { get; set; }
+        [JsonPropertyName("defense")]
+        [JsonConverter(typeof(NumberToStringConverter))]
+        public string Defense { get; set; }
     }
 
     public class DefenseData
     {
-        [JsonPropertyName("armor")] [JsonConverter(typeof(NumberToStringConverter))] public string Armor { get; set; }
+        [JsonPropertyName("armor")]
+        [JsonConverter(typeof(NumberToStringConverter))]
+        public string Armor { get; set; }
 
-        [JsonPropertyName("defense")] [JsonConverter(typeof(NumberToStringConverter))] public string Defense { get; set; }
+        [JsonPropertyName("defense")]
+        [JsonConverter(typeof(NumberToStringConverter))]
+        public string Defense { get; set; }
     }
 
     public class Voice
@@ -98,9 +110,13 @@ public class MonsterData
 
     public class VoicesData
     {
-        [JsonPropertyName("interval")] [JsonConverter(typeof(NumberToStringConverter))] public string Interval { get; set; }
+        [JsonPropertyName("interval")]
+        [JsonConverter(typeof(NumberToStringConverter))]
+        public string Interval { get; set; }
 
-        [JsonPropertyName("chance")] [JsonConverter(typeof(NumberToStringConverter))] public string Chance { get; set; }
+        [JsonPropertyName("chance")]
+        [JsonConverter(typeof(NumberToStringConverter))]
+        public string Chance { get; set; }
 
         [JsonPropertyName("sentences")] public List<Voice> Sentences { get; set; }
     }
@@ -118,11 +134,17 @@ public class MonsterData
 
     public class LootData
     {
-        [JsonPropertyName("id")] [JsonConverter(typeof(NumberToStringConverter))]  public string Id { get; set; }
+        [JsonPropertyName("id")]
+        [JsonConverter(typeof(NumberToStringConverter))]
+        public string Id { get; set; }
 
-        [JsonPropertyName("countmax")] [JsonConverter(typeof(NumberToStringConverter))]  public string Countmax { get; set; }
+        [JsonPropertyName("countmax")]
+        [JsonConverter(typeof(NumberToStringConverter))]
+        public string Countmax { get; set; }
 
-        [JsonPropertyName("chance")] [JsonConverter(typeof(NumberToStringConverter))]  public string Chance { get; set; }
+        [JsonPropertyName("chance")]
+        [JsonConverter(typeof(NumberToStringConverter))]
+        public string Chance { get; set; }
 
         [JsonPropertyName("items")] public List<LootData> Items { get; set; }
     }

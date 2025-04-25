@@ -18,12 +18,9 @@ public class TileFactory : ITileFactory
     public ITile CreateTile(Coordinate coordinate, TileFlag flag, IItem[] items, bool useCache = true)
     {
         var hash = GetTileHash(items);
-        
-        if (useCache && _tileCache.TryGetValue(hash, out var tile))
-        {
-            return tile;
-        }
-        
+
+        if (useCache && _tileCache.TryGetValue(hash, out var tile)) return tile;
+
         var hasUnpassableItem = false;
         var hasMoveableItem = false;
         var hasTransformableItem = false;

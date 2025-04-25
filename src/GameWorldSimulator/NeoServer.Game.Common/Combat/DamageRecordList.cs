@@ -20,10 +20,7 @@ public class DamageRecordList
         get
         {
             var damage = 0;
-            foreach (var damageRecord in All)
-            {
-                damage += damageRecord.Damage;
-            }
+            foreach (var damageRecord in All) damage += damageRecord.Damage;
 
             return damage;
         }
@@ -44,7 +41,10 @@ public class DamageRecordList
         }
     }
 
-    public DamageRecord GetCreatureDamage(ICreature creature) => DamageRecords.GetValueOrDefault(creature.CreatureId);
+    public DamageRecord GetCreatureDamage(ICreature creature)
+    {
+        return DamageRecords.GetValueOrDefault(creature.CreatureId);
+    }
 
     public void AddOrUpdateDamage(IThing thing, ushort damage, bool unjustified)
     {
@@ -90,7 +90,7 @@ public class DamageRecordList
             if (count >= deathConfiguration.MaxDeathRecords) break;
             if (record.NumberOfHits < deathConfiguration.DeathAssistCount) continue;
             if (record.LastDamageTime >= DateTime.Now.Ticks - deathConfiguration.DeathListRequiredTime) continue;
-            
+
             hasAnyUnjustifiedDamage = record.Unjustified || hasAnyUnjustifiedDamage;
 
             damageList.Add(record);

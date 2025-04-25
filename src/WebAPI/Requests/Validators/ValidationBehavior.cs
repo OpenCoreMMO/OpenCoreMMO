@@ -9,6 +9,7 @@ public sealed class ValidationBehavior<TRequest, TResponse>
     where TRequest : ICommandBase
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
+
     public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
     {
         _validators = validators;
@@ -30,10 +31,7 @@ public sealed class ValidationBehavior<TRequest, TResponse>
             .Select(validationFailure => validationFailure)
             .ToList();
 
-        if (errors.Count != 0)
-        { 
-            throw new ValidationException(errors);
-        }
+        if (errors.Count != 0) throw new ValidationException(errors);
 
         var response = await next();
 

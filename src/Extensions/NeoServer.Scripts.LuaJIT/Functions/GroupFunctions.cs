@@ -1,10 +1,10 @@
-﻿using LuaNET;
+﻿using System.Collections;
+using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
-using System.Collections;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -82,7 +82,7 @@ public class GroupFunctions : LuaScriptInterface, IGroupFunctions
             var flags = new BitArray(Enum.GetValues(typeof(PlayerFlag)).Length);
 
             foreach (var flag in group.Flags)
-                flags.Set((int)flag.Key, flag.Value); 
+                flags.Set((int)flag.Key, flag.Value);
 
             Lua.PushNumber(luaState, flags.ToULong());
         }
@@ -134,7 +134,7 @@ public class GroupFunctions : LuaScriptInterface, IGroupFunctions
     {
         // group:hasFlag(flag)
         var group = GetUserdata<IGroup>(luaState, 1);
-        if (group != null  && Lua.IsNumber(luaState, 2))
+        if (group != null && Lua.IsNumber(luaState, 2))
             Lua.PushBoolean(luaState, group.FlagIsEnabled(GetNumber<PlayerFlag>(luaState, 2)));
         else
             Lua.PushNil(luaState);

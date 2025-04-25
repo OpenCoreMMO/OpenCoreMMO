@@ -5,7 +5,7 @@ using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public partial class ResultFunctions : LuaScriptInterface, IResultFunctions
+public class ResultFunctions : LuaScriptInterface, IResultFunctions
 {
     private static ILogger _logger;
     private static NeoContext _dbContext;

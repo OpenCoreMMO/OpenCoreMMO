@@ -126,7 +126,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
     public LuaScriptInterface GetTestInterface()
     {
         if (_testInterface != null) return _testInterface;
-        
+
         _testInterface = new LuaScriptInterface("Test Interface");
         _testInterface.InitState();
 
@@ -141,7 +141,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
     public void ExecuteTimerEvent(uint eventIndex)
     {
         if (!TimerEvents.Remove(eventIndex, out var timerEventDesc)) return;
-        
+
         Lua.RawGetI(luaState, LUA_REGISTRY_INDEX, timerEventDesc.Function);
 
         var reverseList = timerEventDesc.Parameters.ToList();

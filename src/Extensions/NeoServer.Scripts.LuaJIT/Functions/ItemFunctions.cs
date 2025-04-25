@@ -177,7 +177,9 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             Lua.PushBoolean(luaState, true);
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
 
         return 1;
     }
@@ -253,7 +255,9 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             SetMetatable(luaState, -1, "Tile");
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
 
         return 1;
     }
@@ -285,7 +289,9 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             Lua.PushBoolean(luaState, item.Metadata.Attributes.HasAttribute(property.ToItemAttribute()));
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
 
         return 1;
     }

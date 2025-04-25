@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
@@ -41,6 +40,8 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     protected virtual string InspectionText => $"{Name}.";
     protected virtual string CloseInspectionText => $"{Name}.";
     public Direction LastDirection { get; protected set; }
+
+    public byte Skull { get; protected set; } // TODO: implement.
 
     public event RemoveCreature OnCreatureRemoved;
 
@@ -134,19 +135,20 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         return !otherCreature.IsInvisible || CanSeeInvisible;
     }
-    
+
     public virtual bool CanSee(Location pos)
     {
         return CanSee(pos, (int)MapViewPort.MaxViewPortX, (int)MapViewPort.MaxViewPortY);
     }
 
-    public virtual bool IsThinking() => true;
+    public virtual bool IsThinking()
+    {
+        return true;
+    }
 
     public virtual void OnAppear(Location location, ICylinderSpectator[] spectators)
     {
     }
-
-    public byte Skull { get; protected set; } // TODO: implement.
 
     public virtual byte Emblem { get; } // TODO: implement.
     public bool IsHealthHidden { get; protected set; }

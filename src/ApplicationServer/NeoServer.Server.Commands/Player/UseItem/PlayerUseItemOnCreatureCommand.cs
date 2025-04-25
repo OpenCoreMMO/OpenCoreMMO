@@ -1,4 +1,5 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
+﻿using System;
+using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Contracts.Services;
@@ -7,15 +8,14 @@ using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Commands;
 using NeoServer.Server.Common.Contracts.Scripts;
-using System;
 
 namespace NeoServer.Server.Commands.Player.UseItem;
 
 public class PlayerUseItemOnCreatureCommand : ICommand
 {
-    private readonly IPlayerUseService _playerUseService;
     private readonly IGameServer _game;
     private readonly HotkeyService _hotKeyService;
+    private readonly IPlayerUseService _playerUseService;
     private readonly IScriptManager _scriptManager;
     private readonly IWalkToMechanism _walkToMechanism;
 

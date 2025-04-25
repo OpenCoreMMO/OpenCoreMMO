@@ -127,7 +127,7 @@ public class VocationLoader
             Converters =
             {
                 new SkillConverter(),
-                new AbstractConverter<VocationFormula, IVocationFormula>(),
+                new AbstractConverter<VocationFormula, IVocationFormula>()
             }
         });
 

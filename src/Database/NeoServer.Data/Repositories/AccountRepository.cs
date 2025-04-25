@@ -29,7 +29,7 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
         await using var context = NewDbContext;
 
         return await context.Accounts
-            .Where(x => x.EmailAddress.Equals(name) || x.AccountName.Equals(name) && x.Password.Equals(password))
+            .Where(x => x.EmailAddress.Equals(name) || (x.AccountName.Equals(name) && x.Password.Equals(password)))
             .Include(x => x.Players)
             .ThenInclude(x => x.World)
             .SingleOrDefaultAsync();
@@ -54,15 +54,13 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
             .Include(x => x.PlayerStorages);
 
         if (includeDeathList)
-        {
             query.Include(x => x.Deaths)
                 .ThenInclude(x => x.Killers);
-        }
 
         var result = await query.AsNoTracking().SingleOrDefaultAsync();
 
         if (result is null) return null;
-        
+
         if (includeKillsLastMonth)
         {
             var lastMonth = DateTime.Now.AddMonths(-1).ToUniversalTime();

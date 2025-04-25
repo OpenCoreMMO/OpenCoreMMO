@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Immutable;
 using NeoServer.Game.Combat.Validation;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat;
@@ -21,7 +20,6 @@ using NeoServer.Game.Common.Results;
 using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
 using NeoServer.Game.Creatures.Models.Bases.Events;
-using NeoServer.Game.Creatures.Services;
 
 namespace NeoServer.Game.Creatures.Models.Bases;
 
@@ -38,9 +36,10 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
     }
 
-    public DamageRecordList ReceivedDamages { get; } = new();
     public bool IsShieldDefenseEnabled { get; private set; } = true;
     public byte DamageReceivedPercentage { get; private set; }
+
+    public DamageRecordList ReceivedDamages { get; } = new();
 
     public abstract int DefendUsingShield(int attack);
     public abstract int DefendUsingArmor(int attack);
@@ -393,6 +392,16 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         DamageReceivedPercentage -= percentage;
     }
 
+    public void RaiseDroppedLootEvent(ICombatActor actor, ILoot loot)
+    {
+        OnDroppedLoot?.Invoke(actor, loot);
+    }
+
+    public virtual void Kill(ICombatActor enemy, bool lastHit = false, bool unjustified = false)
+    {
+        EventAggregator.Publish(CreatureKillEvent.SetValues(this, enemy, lastHit, unjustified));
+    }
+
     public abstract bool HasImmunity(Immunity immunity);
 
     public virtual bool CanBlock(DamageType damage)
@@ -458,10 +467,8 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public virtual void Death(IThing by)
     {
         if (by is ICombatActor combatActor)
-        {
             //todo: implements real damage
             OnBeforeDeath?.Invoke(this, combatActor, 0);
-        }
 
         StopAttack();
         StopFollowing();
@@ -470,13 +477,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         OnDeath?.Invoke(this, by);
         ReceivedDamages.Clear();
-    }
-
-    public void RaiseDroppedLootEvent(ICombatActor actor, ILoot loot) => OnDroppedLoot?.Invoke(actor, loot);
-
-    public virtual void Kill(ICombatActor enemy, bool lastHit = false, bool unjustified = false)
-    {
-        EventAggregator.Publish(CreatureKillEvent.SetValues(this, enemy, lastHit, unjustified));
     }
 
     public abstract void OnDamage(IThing enemy, CombatDamage damage);
@@ -489,10 +489,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         OnHealthChanged?.Invoke(this, actor, damage);
         OnInjured?.Invoke(enemy, this, damage);
-        if (IsDead)
-        {
-            Death(enemy);
-        }
+        if (IsDead) Death(enemy);
     }
 
     public abstract CombatDamage OnImmunityDefense(CombatDamage damage);

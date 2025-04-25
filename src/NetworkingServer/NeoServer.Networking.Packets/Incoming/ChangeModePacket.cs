@@ -9,7 +9,7 @@ public class ChangeModePacket : IncomingPacket
     {
         FightMode = (FightMode)message.GetByte();
         ChaseMode = (ChaseMode)message.GetByte();
-        SecureMode = (PvpSecureMode) message.GetByte();
+        SecureMode = (PvpSecureMode)message.GetByte();
     }
 
     public FightMode FightMode { get; }

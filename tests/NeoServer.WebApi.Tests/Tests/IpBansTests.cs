@@ -6,12 +6,32 @@ using Xunit;
 
 namespace NeoServer.WebApi.Tests.Tests;
 
-
 [Collection("Non-Parallel IpBansTests")]
 public class IpBansTests : BaseIntegrationTests
 {
-    #region Get Tests
+    #region Post Test
 
+    [Fact]
+    public async Task Add_Ban_Ip()
+    {
+        // Arrange
+        var request = new BanIpRequest
+        {
+            Days = 1,
+            Reason = "using bot.",
+            Ip = "198.0.10.194"
+        };
+
+        //Act
+        var response = await NeoHttpClient.PostAsJsonAsync("api/IpBan", request);
+
+        //Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    #endregion
+
+    #region Get Tests
 
     [Fact(DisplayName = "Get Ban By IP")]
     public async Task Get_Ban_By_Ip()
@@ -44,28 +64,6 @@ public class IpBansTests : BaseIntegrationTests
 
         //Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    #endregion
-
-    #region Post Test
-
-    [Fact]
-    public async Task Add_Ban_Ip()
-    {
-        // Arrange
-        var request = new BanIpRequest()
-        {
-            Days = 1,
-            Reason = "using bot.",
-            Ip = "198.0.10.194",
-        };
-
-         //Act
-         var response = await NeoHttpClient.PostAsJsonAsync($"api/IpBan", request);
-
-        //Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     #endregion

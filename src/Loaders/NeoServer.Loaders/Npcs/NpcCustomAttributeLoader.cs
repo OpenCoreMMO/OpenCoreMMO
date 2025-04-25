@@ -16,18 +16,16 @@ public class NpcCustomAttributeLoader
 
         var map = new Dictionary<string, dynamic>();
 
-        foreach (CustomData item in list)
+        foreach (var item in list)
             map.TryAdd(item.Key, item.Value);
 
         type.CustomAttributes.Add("custom-data", map);
     }
-    
+
     public class CustomData
     {
-        [JsonPropertyName("key")]
-        public string Key { get; set; }
-        
-        [JsonPropertyName("value")]
-        public dynamic Value { get; set; }
+        [JsonPropertyName("key")] public string Key { get; set; }
+
+        [JsonPropertyName("value")] public dynamic Value { get; set; }
     }
 }

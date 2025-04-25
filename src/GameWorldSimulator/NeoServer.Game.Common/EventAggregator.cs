@@ -7,12 +7,12 @@ namespace NeoServer.Game.Common;
 
 public class EventAggregator : IEventAggregator
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly Dictionary<string, List<Action<IEvent>>> _handlers = new();
-    private readonly Dictionary<string, List<Action<IEvent>>> _networkHandlers = new();
     private static readonly List<(Action<IEvent> Handler, IEvent Event)> DeferredHandlersCache = new(100);
 
     private readonly Queue<IEvent> _eventQueue = new();
+    private readonly Dictionary<string, List<Action<IEvent>>> _handlers = new();
+    private readonly Dictionary<string, List<Action<IEvent>>> _networkHandlers = new();
+    private readonly IServiceProvider _serviceProvider;
 
     public EventAggregator(IServiceProvider serviceProvider)
     {
@@ -46,10 +46,9 @@ public class EventAggregator : IEventAggregator
                         IApplicationEventHandler<IEvent> handler;
 
                         if (x.GetInterfaces()
-                            .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(INetworkingEventHandler<>)))
-                        {
+                            .Any(i => i.IsGenericType &&
+                                      i.GetGenericTypeDefinition() == typeof(INetworkingEventHandler<>)))
                             return null;
-                        }
 
                         var handleMethod = x.GetMethod(nameof(handler.Handle));
                         Action<IEvent> handlerDelegate = @event => handleMethod.Invoke(handlerInstance, [@event]);
@@ -65,10 +64,9 @@ public class EventAggregator : IEventAggregator
                         IApplicationEventHandler<IEvent> handler;
 
                         if (!x.GetInterfaces()
-                            .Any(i => i.IsGenericType && i.GetGenericTypeDefinition().FullName == typeof(INetworkingEventHandler<>).FullName))
-                        {
+                                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition().FullName ==
+                                    typeof(INetworkingEventHandler<>).FullName))
                             return null;
-                        }
 
                         var handleMethod = x.GetMethod(nameof(handler.Handle));
                         Action<IEvent> handlerDelegate = @event => handleMethod.Invoke(handlerInstance, [@event]);
@@ -79,8 +77,10 @@ public class EventAggregator : IEventAggregator
         }
     }
 
-    public static void Publish(IEvent @event) => Instance.Publish(@event);
-    public void Publish<TEvent>(TEvent @event) where TEvent : IEvent => _eventQueue.Enqueue(@event);
+    public void Publish<TEvent>(TEvent @event) where TEvent : IEvent
+    {
+        _eventQueue.Enqueue(@event);
+    }
 
     public void PropagateEvents()
     {
@@ -94,32 +94,26 @@ public class EventAggregator : IEventAggregator
 
             // Process network handlers first
             if (_networkHandlers.TryGetValue(eventName, out var networkHandlers))
-            {
                 foreach (var networkHandler in networkHandlers)
-                {
-                     networkHandler?.Invoke(@event);
-                }
-            }
+                    networkHandler?.Invoke(@event);
 
             // Collect other handlers to execute later
             if (_handlers.TryGetValue(eventName, out var otherHandlers))
-            {
                 foreach (var otherHandler in otherHandlers)
-                {
                     DeferredHandlersCache.Add((otherHandler, @event));
-                }
-            }
         }
 
         if (DeferredHandlersCache.Count == 0) return;
-        
+
         // Execute deferred handlers
-        foreach (var (handler, @event) in DeferredHandlersCache)
-        {
-            handler?.Invoke(@event);
-        }
-        
+        foreach (var (handler, @event) in DeferredHandlersCache) handler?.Invoke(@event);
+
         DeferredHandlersCache.Clear();
+    }
+
+    public static void Publish(IEvent @event)
+    {
+        Instance.Publish(@event);
     }
 }
 

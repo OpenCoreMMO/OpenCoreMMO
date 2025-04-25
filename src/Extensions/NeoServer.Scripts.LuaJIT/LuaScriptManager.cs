@@ -7,54 +7,6 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class LuaScriptManager : IScriptManager
 {
-    #region Members
-
-    #endregion
-
-    #region Dependency Injections
-
-    /// <summary>
-    /// A reference to the <see cref="ILuaStartup"/> instance in use.
-    /// </summary>
-    private readonly ILuaStartup _luaStartup;
-
-    /// <summary>
-    /// A reference to the <see cref="ILuaStartup"/> instance in use.
-    /// </summary>
-    private readonly IGlobalEvents _globalEvents;
-
-    /// <summary>
-    /// A reference to the <see cref="ILogger"/> instance in use.
-    /// </summary>
-    private readonly ILogger _logger;
-
-    /// <summary>
-    /// A reference to the <see cref="IActionScriptService"/> instance in use.
-    /// </summary>
-    public IActionScriptService Actions { get; }
-
-    /// <summary>
-    /// A reference to the <see cref="ICreatureEventsScriptService"/> instance in use.
-    /// </summary>
-    public ICreatureEventsScriptService CreatureEvents { get; }
-
-    /// <summary>
-    /// A reference to the <see cref="IGlobalEventsScriptService"/> instance in use.
-    /// </summary>
-    public IGlobalEventsScriptService GlobalEvents { get; }
-
-    /// <summary>
-    /// A reference to the <see cref="IMoveEventsScriptService"/> instance in use.
-    /// </summary>
-    public IMoveEventsScriptService MoveEvents { get; }
-
-    /// <summary>
-    /// A reference to the <see cref="ITalkActionScriptService"/> instance in use.
-    /// </summary>
-    public ITalkActionScriptService TalkActions { get; }
-
-    #endregion
-
     #region Constructors
 
     public LuaScriptManager(
@@ -80,13 +32,57 @@ public class LuaScriptManager : IScriptManager
 
     #endregion
 
-    #region Public Methods 
+    #region Public Methods
 
     public void Initialize()
     {
         _luaStartup.Start();
         _globalEvents.Startup();
     }
+
+    #endregion
+
+    #region Dependency Injections
+
+    /// <summary>
+    ///     A reference to the <see cref="ILuaStartup" /> instance in use.
+    /// </summary>
+    private readonly ILuaStartup _luaStartup;
+
+    /// <summary>
+    ///     A reference to the <see cref="ILuaStartup" /> instance in use.
+    /// </summary>
+    private readonly IGlobalEvents _globalEvents;
+
+    /// <summary>
+    ///     A reference to the <see cref="ILogger" /> instance in use.
+    /// </summary>
+    private readonly ILogger _logger;
+
+    /// <summary>
+    ///     A reference to the <see cref="IActionScriptService" /> instance in use.
+    /// </summary>
+    public IActionScriptService Actions { get; }
+
+    /// <summary>
+    ///     A reference to the <see cref="ICreatureEventsScriptService" /> instance in use.
+    /// </summary>
+    public ICreatureEventsScriptService CreatureEvents { get; }
+
+    /// <summary>
+    ///     A reference to the <see cref="IGlobalEventsScriptService" /> instance in use.
+    /// </summary>
+    public IGlobalEventsScriptService GlobalEvents { get; }
+
+    /// <summary>
+    ///     A reference to the <see cref="IMoveEventsScriptService" /> instance in use.
+    /// </summary>
+    public IMoveEventsScriptService MoveEvents { get; }
+
+    /// <summary>
+    ///     A reference to the <see cref="ITalkActionScriptService" /> instance in use.
+    /// </summary>
+    public ITalkActionScriptService TalkActions { get; }
 
     #endregion
 }

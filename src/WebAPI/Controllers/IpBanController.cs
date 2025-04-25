@@ -14,20 +14,20 @@ public class IpBanController(IMediator mediator) : BaseController
     [HttpGet("{ip}")]
     public async Task<IActionResult> FindByIp([FromRoute] string ip)
     {
-        var result =  await mediator.Send(new GetIpBanByIpRequest(ip));
+        var result = await mediator.Send(new GetIpBanByIpRequest(ip));
         if (result is null) return NotFound();
-        
+
         return Ok(result);
     }
-    
+
     //todo: The permission to ban an account should be restricted to a specific role "admin"
     [HttpPost]
     public async Task<IActionResult> BanIp([FromBody] BanIpRequest request)
     {
-        var result =  await mediator.Send(request);
+        var result = await mediator.Send(request);
         if (!result.IsSuccess)
             return UnprocessableEntity(result.ErrorMessage);
-        
+
         return Ok(SuccessMessage.IpBanned);
     }
 }

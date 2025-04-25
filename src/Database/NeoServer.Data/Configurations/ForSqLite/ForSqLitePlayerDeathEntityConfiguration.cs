@@ -15,7 +15,7 @@ public class ForSqLitePlayerDeathEntityConfiguration : IEntityTypeConfiguration<
             .HasAnnotation("Sqlite:Autoincrement", true)
             .IsRequired()
             .ValueGeneratedOnAdd();
-        
+
         builder.Property(e => e.PlayerId).IsRequired();
         builder.Property(e => e.DeathDateTime).IsRequired();
         builder.Property(e => e.Level).IsRequired();

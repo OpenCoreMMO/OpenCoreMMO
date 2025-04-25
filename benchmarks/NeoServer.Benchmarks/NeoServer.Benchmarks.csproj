@@ -24,7 +24,7 @@
         <PackageReference Include="BenchmarkDotNet" Version="0.14.0"/>
         <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.14.0"/>
         <PackageReference Include="MoonSharp" Version="2.0.0"/>
-        <PackageReference Include="NLua" Version="1.7.5" />
+        <PackageReference Include="NLua" Version="1.7.5"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -17,13 +17,13 @@ namespace NeoServer.Loaders.Groups;
 public class GroupLoader
 {
     public static GroupLoader Instance;
+    private readonly IGroupStore _groupStore;
 
     private readonly ILogger _logger;
     private readonly ServerConfiguration _serverConfiguration;
-    private readonly IGroupStore _groupStore;
 
     public GroupLoader
-        (ILogger logger,
+    (ILogger logger,
         ServerConfiguration serverConfiguration,
         IGroupStore groupStore)
     {

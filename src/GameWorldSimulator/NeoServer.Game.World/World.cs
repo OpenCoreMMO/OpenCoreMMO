@@ -23,7 +23,7 @@ public class World
 
     public ImmutableList<ISpawn> Spawns { get; private set; }
 
-    
+
     public void AddTile(ITile newTile, Location location)
     {
         var sector = region.CreateSector(location.X, location.Y, out var created);

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
@@ -27,7 +26,7 @@ public class CreatureDeathService(
 
         ReplaceCreatureByCorpse(deadCreature);
         CreateBlood(deadCreature);
-        
+
         ProcessDamageRecords(deadCreature, by, damageRecords);
     }
 
@@ -52,7 +51,7 @@ public class CreatureDeathService(
         creature.Corpse ??= itemFactory.CreateLootCorpse(creature.CorpseType, creature.Location, new Loot([]));
 
         if (creature.Corpse is not IItem corpse) return;
-        
+
         if (creature is IWalkableCreature walkable)
         {
             walkable.Tile.AddItem(corpse);

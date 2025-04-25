@@ -8,7 +8,6 @@ using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
 using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
 using Serilog;
 
 namespace NeoServer.Data.Repositories.Player;
@@ -41,7 +40,7 @@ public class PlayerDeathRepository(DbContextOptions<NeoContext> contextOptions, 
         };
 
         playerDeath.Killers ??= new List<PlayerDeathKillerEntity>();
-        
+
         foreach (var damageRecord in damageRecordResult.DamageRecords)
         {
             var playerKiller = damageRecord.Aggressor as IPlayer;

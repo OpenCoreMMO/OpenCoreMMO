@@ -1,7 +1,5 @@
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Server.Common.Contracts;
@@ -25,13 +23,16 @@ public class ItemFinderService
 
         var itemFound = itemLocation switch
         {
-            _ when itemLocation.Type == LocationType.Ground => _gameServer.Map[itemLocation] is not { } tile ? null : tile.TopItemOnStack,
+            _ when itemLocation.Type == LocationType.Ground => _gameServer.Map[itemLocation] is not { } tile
+                ? null
+                : tile.TopItemOnStack,
             _ when itemLocation.Type == LocationType.Slot => player.Inventory[itemLocation.Slot],
-            _ when itemLocation.Type == LocationType.Container => player.Containers[itemLocation.ContainerId][itemLocation.ContainerSlot],
+            _ when itemLocation.Type == LocationType.Container => player.Containers[itemLocation.ContainerId][
+                itemLocation.ContainerSlot],
             _ => null
         };
 
-        itemFound?.SetNewLocation(itemLocation, force: true);
+        itemFound?.SetNewLocation(itemLocation, true);
         return itemFound;
     }
 }

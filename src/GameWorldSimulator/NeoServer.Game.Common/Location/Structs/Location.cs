@@ -465,5 +465,7 @@ public struct Location : IEquatable<Location>, IConvertible
     }
 
     public static bool operator !(Location location)
-        => location == Zero;
+    {
+        return location == Zero;
+    }
 }

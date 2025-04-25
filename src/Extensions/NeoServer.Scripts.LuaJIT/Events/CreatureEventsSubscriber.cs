@@ -8,15 +8,15 @@ namespace NeoServer.Scripts.LuaJIT;
 public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubscriber
 {
     private readonly CreatureOnDeathEventHandler _creatureOnDeathEventHandler;
-    private readonly CreatureOnThinkEventHandler _creatureOnThinkEventHandler;
-    private readonly CreatureOnKillEventHandler _creatureOnKillEventHandler;
-    private readonly CreatureOnPrepareDeathEventHandler _creatureOnPrepareDeathEventHandler;
     private readonly CreatureOnHealthChangeEventHandler _creatureOnHealthChangeEventHandler;
+    private readonly CreatureOnKillEventHandler _creatureOnKillEventHandler;
     private readonly CreatureOnManaChangeEventHandler _creatureOnManaChangeEventHandler;
+    private readonly CreatureOnPrepareDeathEventHandler _creatureOnPrepareDeathEventHandler;
+    private readonly CreatureOnThinkEventHandler _creatureOnThinkEventHandler;
+    private readonly PlayerOnAdvanceEventHandler _playerOnAdvanceEventHandler;
 
     private readonly PlayerOnLoginEventHandler _playerOnLoginEventHandler;
     private readonly PlayerOnLogoutEventHandler _playerOnLogoutEventHandler;
-    private readonly PlayerOnAdvanceEventHandler _playerOnAdvanceEventHandler;
     private readonly PlayerOnTextEditEventHandler _playerOnTextEditEventHandler;
 
     public CreatureEventsSubscriber(
@@ -62,7 +62,6 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
             player.OnLoggedOut += _playerOnLogoutEventHandler.Execute;
             player.OnLevelAdvanced += _playerOnAdvanceEventHandler.Execute;
             player.OnWroteText += _playerOnTextEditEventHandler.Execute;
-
         }
     }
 

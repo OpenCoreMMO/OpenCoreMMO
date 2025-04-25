@@ -95,10 +95,11 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
         await neoContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<PlayerEntity>> GetPaginatedPlayersAsync(Expression<Func<PlayerEntity, bool>> filter, int page, int limit)
+    public async Task<IEnumerable<PlayerEntity>> GetPaginatedPlayersAsync(Expression<Func<PlayerEntity, bool>> filter,
+        int page, int limit)
     {
         await using var neoContext = NewDbContext;
-        var skip = (page - 1)  * limit;
+        var skip = (page - 1) * limit;
         return await neoContext.Players.Where(filter).Skip(skip).Take(limit).ToListAsync();
     }
 

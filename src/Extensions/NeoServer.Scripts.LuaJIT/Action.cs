@@ -31,7 +31,8 @@ public class Action(LuaScriptInterface scriptInterface) : Script(scriptInterface
         {
             _logger ??= Server.Helpers.IoC.GetInstance<ILogger>();
 
-            _logger.Error("[Action::executeUse - Player {PlayerName}, on item {ItemName}]. Call stack overflow. Too many lua script calls being nested. Script name {ScriptName}",
+            _logger.Error(
+                "[Action::executeUse - Player {PlayerName}, on item {ItemName}]. Call stack overflow. Too many lua script calls being nested. Script name {ScriptName}",
                 player.Name, item.Name, GetScriptInterface().GetLoadingScriptName());
             return false;
         }
@@ -57,19 +58,40 @@ public class Action(LuaScriptInterface scriptInterface) : Script(scriptInterface
         return GetScriptInterface().CallFunction(6);
     }
 
-    public void SetItemIdsVector(ushort id) => ItemIdsVector.Add(id);
+    public void SetItemIdsVector(ushort id)
+    {
+        ItemIdsVector.Add(id);
+    }
 
-    public void SetUniqueIdsVector(ushort id) => UniqueIdsVector.Add(id);
+    public void SetUniqueIdsVector(ushort id)
+    {
+        UniqueIdsVector.Add(id);
+    }
 
-    public void SetActionIdsVector(ushort id) => ActionIdsVector.Add(id);
+    public void SetActionIdsVector(ushort id)
+    {
+        ActionIdsVector.Add(id);
+    }
 
-    public void SetPositionsVector(Location pos) => PositionsVector.Add(pos);
+    public void SetPositionsVector(Location pos)
+    {
+        PositionsVector.Add(pos);
+    }
 
-    public bool HasPosition(Location position) => PositionsVector.Exists(p => p.Equals(position));
+    public bool HasPosition(Location position)
+    {
+        return PositionsVector.Exists(p => p.Equals(position));
+    }
 
-    public List<Location> GetPositions() => PositionsVector;
+    public List<Location> GetPositions()
+    {
+        return PositionsVector;
+    }
 
-    public void SetPositions(Location pos) => PositionsVector.Add(pos);
+    public void SetPositions(Location pos)
+    {
+        PositionsVector.Add(pos);
+    }
 
     public virtual ReturnValueType CanExecuteAction(IPlayer player, Location toPos)
     {

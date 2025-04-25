@@ -1,5 +1,4 @@
-﻿using System;
-using NeoServer.Server.Common.Contracts.Network;
+﻿using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Login;
 
@@ -13,7 +12,7 @@ public class WaitingInLinePacket : OutgoingPacket
         _message = message;
         _retryTime = retryTime;
     }
-    
+
     public override void WriteToMessage(INetworkMessage message)
     {
         message.AddByte(0x16);

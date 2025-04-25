@@ -6,29 +6,6 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class Scripts : IScripts
 {
-    #region Injection
-
-    /// <summary>
-    ///     A reference to the logger in use.
-    /// </summary>
-    protected readonly ILogger _logger;
-
-    /// <summary>
-    ///     A reference to the config manager in use.
-    /// </summary>
-    private readonly IConfigManager _configManager;
-
-    private readonly IActions _actions;
-    private readonly ICreatureEvents _creatureEvents;
-    private readonly IGlobalEvents _globalEvents;
-    private readonly IMoveEvents _moveEvents;
-
-    /// <summary>
-    ///     A reference to the talk actions instance in use.
-    /// </summary>
-    private readonly ITalkActions _talkActions;
-
-    #endregion
     public Scripts(ILogger logger)
     {
         _logger = logger;
@@ -181,6 +158,30 @@ public class Scripts : IScripts
     {
         return _scriptId;
     }
+
+    #region Injection
+
+    /// <summary>
+    ///     A reference to the logger in use.
+    /// </summary>
+    protected readonly ILogger _logger;
+
+    /// <summary>
+    ///     A reference to the config manager in use.
+    /// </summary>
+    private readonly IConfigManager _configManager;
+
+    private readonly IActions _actions;
+    private readonly ICreatureEvents _creatureEvents;
+    private readonly IGlobalEvents _globalEvents;
+    private readonly IMoveEvents _moveEvents;
+
+    /// <summary>
+    ///     A reference to the talk actions instance in use.
+    /// </summary>
+    private readonly ITalkActions _talkActions;
+
+    #endregion
 
     #region Members
 

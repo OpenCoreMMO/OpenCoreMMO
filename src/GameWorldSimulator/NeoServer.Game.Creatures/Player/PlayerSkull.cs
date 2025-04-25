@@ -4,7 +4,7 @@ using NeoServer.Game.Common.Contracts.Creatures;
 
 namespace NeoServer.Game.Creatures.Player;
 
-public class PlayerSkull: IPlayerSkull
+public class PlayerSkull : IPlayerSkull
 {
     public PlayerSkull(IPlayer player, Skull skull = Skull.None, DateTime? skullEndsAt = null)
     {
@@ -12,12 +12,14 @@ public class PlayerSkull: IPlayerSkull
         Skull = skull;
         SkullEndsAt = skullEndsAt;
     }
+
     public IPlayer Player { get; }
+    public PlayerEnemyList PlayersAttackedList { get; } = new();
     public Skull Skull { get; private set; }
     public DateTime? SkullEndsAt { get; private set; }
-    
+
     public DateTime? YellowSkullEndsAt { get; private set; }
-    public PlayerEnemyList PlayersAttackedList { get; } = new();
+
     public void SetSkull(Skull skull, DateTime? endingDate = null, IPlayer enemy = null)
     {
         if (skull == Skull.Yellow)
@@ -30,29 +32,7 @@ public class PlayerSkull: IPlayerSkull
         Skull = skull;
         SkullEndsAt = endingDate;
 
-        if (oldSkull != Skull)
-        {
-            OnSkullUpdated?.Invoke(Player);
-        }
-    }
-
-    public void SetYellowSkull(IPlayer enemy, DateTime? endingDate)
-    {
-        if (enemy is null)
-        {
-            throw new ArgumentNullException(nameof(enemy), "Enemy must have a value when setting yellow skull");
-        }
-
-        if (PlayersAttackedList.HasEnemy(enemy))
-        {
-            return;
-        }
-
-        PlayersAttackedList.AddEnemy(enemy);
-
-        YellowSkullEndsAt = endingDate;
-
-        OnSkullUpdated?.Invoke(Player);
+        if (oldSkull != Skull) OnSkullUpdated?.Invoke(Player);
     }
 
     public void RemoveSkull()
@@ -63,10 +43,7 @@ public class PlayerSkull: IPlayerSkull
 
         PlayersAttackedList.Clear();
 
-        if (oldSkull != Skull)
-        {
-            OnSkullUpdated?.Invoke(Player);
-        }
+        if (oldSkull != Skull) OnSkullUpdated?.Invoke(Player);
     }
 
     public void RemoveYellowSkull()
@@ -78,16 +55,31 @@ public class PlayerSkull: IPlayerSkull
     }
 
 
-    public bool IsYellowSkull(IPlayer enemy) => PlayersAttackedList.HasEnemy(enemy);
+    public bool IsYellowSkull(IPlayer enemy)
+    {
+        return PlayersAttackedList.HasEnemy(enemy);
+    }
 
     public Skull GetSkull(IPlayer enemy)
     {
-        if (enemy.CreatureId == Player.CreatureId)
-        {
-            return Skull;
-        }
+        if (enemy.CreatureId == Player.CreatureId) return Skull;
 
         return IsYellowSkull(enemy) ? Skull.Yellow : Skull;
     }
+
     public event SkullUpdated OnSkullUpdated;
+
+    public void SetYellowSkull(IPlayer enemy, DateTime? endingDate)
+    {
+        if (enemy is null)
+            throw new ArgumentNullException(nameof(enemy), "Enemy must have a value when setting yellow skull");
+
+        if (PlayersAttackedList.HasEnemy(enemy)) return;
+
+        PlayersAttackedList.AddEnemy(enemy);
+
+        YellowSkullEndsAt = endingDate;
+
+        OnSkullUpdated?.Invoke(Player);
+    }
 }

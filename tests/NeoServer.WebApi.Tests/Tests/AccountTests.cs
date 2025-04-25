@@ -1,11 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NeoServer.Web.API.Requests.Commands;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
+using Microsoft.EntityFrameworkCore;
+using NeoServer.Web.API.Requests.Commands;
 using Xunit;
 
 namespace NeoServer.WebApi.Tests.Tests;
-
 
 [Collection("Non-Parallel AccountTests")]
 public class AccountTests : BaseIntegrationTests
@@ -16,15 +15,15 @@ public class AccountTests : BaseIntegrationTests
     public async Task Create_Account()
     {
         //Arrange
-        var requestModel = new CreateAccountRequest()
+        var requestModel = new CreateAccountRequest
         {
             AccountName = "marcusviniciusS",
             Email = "marcus@opencoremmo.com",
-            Password = "1234567890908mV",
+            Password = "1234567890908mV"
         };
 
         // Act
-        var response =  await NeoHttpClient.PostAsJsonAsync("api/Account", requestModel);
+        var response = await NeoHttpClient.PostAsJsonAsync("api/Account", requestModel);
 
         var result = await response.Content.ReadAsStringAsync();
 
@@ -37,11 +36,11 @@ public class AccountTests : BaseIntegrationTests
     public async Task Trying_Create_Account_With_Invalid_Inputs()
     {
         //Arrange
-        var requestModel = new CreateAccountRequest()
+        var requestModel = new CreateAccountRequest
         {
             AccountName = "11",
             Email = "1",
-            Password = "1",
+            Password = "1"
         };
 
         // Act
@@ -60,11 +59,11 @@ public class AccountTests : BaseIntegrationTests
         //Arrange
         var accountEntity = await CreateAccount();
 
-        var requestModel = new CreateAccountRequest()
+        var requestModel = new CreateAccountRequest
         {
             AccountName = accountEntity.AccountName,
             Email = accountEntity.EmailAddress,
-            Password = "1234567890908mV",
+            Password = "1234567890908mV"
         };
 
         // Act
@@ -84,11 +83,11 @@ public class AccountTests : BaseIntegrationTests
         //Arrange
         var accountEntity = await CreateAccount();
 
-        var requestModel = new CreateAccountRequest()
+        var requestModel = new CreateAccountRequest
         {
             AccountName = accountEntity.AccountName,
             Email = "marcus@opencoremmo.com",
-            Password = "1234567890908mV",
+            Password = "1234567890908mV"
         };
 
         // Act
@@ -100,6 +99,7 @@ public class AccountTests : BaseIntegrationTests
         Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
         Assert.NotEmpty(result);
     }
+
     #endregion
 
     #region Patch Tests
@@ -109,13 +109,14 @@ public class AccountTests : BaseIntegrationTests
     {
         //Arrange
         var accountEntity = await CreateAccount();
-        var requestModel = new AddPremioumDaysAccountRequest() { Days = 1, Description = "Promotion on OpenCoreMMO" };
+        var requestModel = new AddPremioumDaysAccountRequest { Days = 1, Description = "Promotion on OpenCoreMMO" };
 
 
         // Act
         var response = await NeoHttpClient.PatchAsJsonAsync($"api/Account/{accountEntity.Id}/premium", requestModel);
         var result = await response.Content.ReadAsStringAsync();
-        var premiumHistory = await NeoContext.AccountPremiumHistories.Where(item => item.AccountId == accountEntity.Id).LastOrDefaultAsync();
+        var premiumHistory = await NeoContext.AccountPremiumHistories.Where(item => item.AccountId == accountEntity.Id)
+            .LastOrDefaultAsync();
         NeoContext.Accounts.Remove(accountEntity);
 
 
@@ -132,13 +133,14 @@ public class AccountTests : BaseIntegrationTests
     public async Task Trying_Add_Premium_On_Account_When_NotFound()
     {
         //Arrange
-        var requestModel = new AddPremioumDaysAccountRequest() { Days = 1, Description = "Promotion on OpenCoreMMO" };
-        int notfoundId = 91232307;
+        var requestModel = new AddPremioumDaysAccountRequest { Days = 1, Description = "Promotion on OpenCoreMMO" };
+        var notfoundId = 91232307;
 
         // Act
         var response = await NeoHttpClient.PatchAsJsonAsync($"api/Account/{notfoundId}/premium", requestModel);
         var result = await response.Content.ReadAsStringAsync();
-        var premiumHistory = await NeoContext.AccountPremiumHistories.Where(item => item.AccountId == notfoundId).LastOrDefaultAsync();
+        var premiumHistory = await NeoContext.AccountPremiumHistories.Where(item => item.AccountId == notfoundId)
+            .LastOrDefaultAsync();
 
 
         //Assert
@@ -148,23 +150,22 @@ public class AccountTests : BaseIntegrationTests
     }
 
 
-
-
     [Fact(DisplayName = "Change Password on Account")]
     public async Task Change_Password_On_Account()
     {
         //Arrange
         var accountEntity = await CreateAccount();
-        var requestModel = new ChangePasswordRequest()
+        var requestModel = new ChangePasswordRequest
         {
             OldPassword = accountEntity.Password,
-            NewPassword =  "1234567890908mV",
-            ConfirmPassword = "1234567890908mV",
+            NewPassword = "1234567890908mV",
+            ConfirmPassword = "1234567890908mV"
         };
 
 
         // Act
-        var response = await NeoHttpClient.PatchAsJsonAsync($"api/Account/{accountEntity.Id}/change-password", requestModel);
+        var response =
+            await NeoHttpClient.PatchAsJsonAsync($"api/Account/{accountEntity.Id}/change-password", requestModel);
         var result = await response.Content.ReadAsStringAsync();
         NeoContext.Accounts.Remove(accountEntity);
 
@@ -174,23 +175,22 @@ public class AccountTests : BaseIntegrationTests
     }
 
 
-
-
     [Fact(DisplayName = "Change Password on with oldPasswordWrong Account")]
     public async Task Change_Password_With_WrongPassword_On_Account()
     {
         //Arrange
         var accountEntity = await CreateAccount();
-        var requestModel = new ChangePasswordRequest()
+        var requestModel = new ChangePasswordRequest
         {
             OldPassword = "wrongpassword",
             NewPassword = "1234567890908mV",
-            ConfirmPassword = "1234567890908mV",
+            ConfirmPassword = "1234567890908mV"
         };
 
 
         // Act
-        var response = await NeoHttpClient.PatchAsJsonAsync($"api/Account/{accountEntity.Id}/change-password", requestModel);
+        var response =
+            await NeoHttpClient.PatchAsJsonAsync($"api/Account/{accountEntity.Id}/change-password", requestModel);
         var result = await response.Content.ReadAsStringAsync();
         NeoContext.Accounts.Remove(accountEntity);
 
@@ -206,7 +206,7 @@ public class AccountTests : BaseIntegrationTests
     {
         //Arrange
         var accountEntity = await CreateAccount();
-        var requestModel = new BanAccountRequest() { Days = 1, Reason = "using ilegal software." };
+        var requestModel = new BanAccountRequest { Days = 1, Reason = "using ilegal software." };
 
         // Act
         var response = await NeoHttpClient.PatchAsJsonAsync($"api/Account/{accountEntity.Id}/ban", requestModel);

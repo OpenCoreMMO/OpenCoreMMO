@@ -68,10 +68,10 @@ public static class ServiceInjection
         builder.AddSingleton<PlayerLocationResolver>();
 
         builder.AddSingleton<IEventAggregator, EventAggregator>();
-        
+
         Assembly.GetAssembly(typeof(PlayerConditionChangedEventHandler));
         builder.RegisterAssembliesByInterface(typeof(IApplicationEventHandler<>));
-        
+
         return builder;
     }
 }

@@ -14,5 +14,7 @@ public class PlayerOnLoginEventHandler : IGameEventHandler
     }
 
     public void Execute(IPlayer player)
-        => _creatureEvents.PlayerLogin(player);
+    {
+        _creatureEvents.PlayerLogin(player);
+    }
 }

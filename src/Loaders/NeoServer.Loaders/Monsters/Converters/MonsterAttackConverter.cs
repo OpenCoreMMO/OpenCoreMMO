@@ -22,7 +22,7 @@ internal class MonsterAttackConverter
         var attacks = new List<IMonsterCombatAttack>();
 
         AdjustAttackChanceValue(data.Attacks);
-        
+
         foreach (var attack in data.Attacks)
         {
             attack.TryGetValue("name", out string attackName);
@@ -39,15 +39,11 @@ internal class MonsterAttackConverter
 
             attack.TryGetValue("attributes", out JsonElement attributesElement);
 
-            if (!attack.TryGetValue("chance", out byte chance))
-            {
-                chance = 100;
-            } 
+            if (!attack.TryGetValue("chance", out byte chance)) chance = 100;
 
             var attributes = new Dictionary<string, object>();
-            
+
             if (attributesElement.ValueKind == JsonValueKind.Array)
-            {
                 attributes = attributesElement
                     .EnumerateArray()
                     .Select(item =>
@@ -56,7 +52,6 @@ internal class MonsterAttackConverter
                         return new KeyValuePair<string, object>(property.Name, property.Value.GetString());
                     })
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            }
 
             attributes.TryGetValue("shootEffect", out string shootEffect);
             attributes.TryGetValue("areaEffect", out string areaEffect);
@@ -187,8 +182,8 @@ internal class MonsterAttackConverter
             attack["chance"] = Math.Round(chance * 100d / maxChance).ToString(CultureInfo.InvariantCulture);
         }
     }
-    
-    static decimal ParseDecimalSafely(string? input)
+
+    private static decimal ParseDecimalSafely(string? input)
     {
         if (string.IsNullOrWhiteSpace(input))
             return 0m;

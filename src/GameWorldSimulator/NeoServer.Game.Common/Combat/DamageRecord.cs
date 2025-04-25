@@ -12,6 +12,8 @@ public class DamageRecord(IThing aggressor, ushort damage, bool unjustified)
     public long FirstDamageTime { get; private set; }
     public bool Unjustified { get; private set; } = unjustified;
 
+    public IThing Aggressor { get; } = aggressor;
+
     public void AddDamage(ushort damage, bool unjustified)
     {
         if (FirstDamageTime is 0) FirstDamageTime = DateTime.Now.Ticks;
@@ -22,8 +24,6 @@ public class DamageRecord(IThing aggressor, ushort damage, bool unjustified)
         Unjustified = unjustified;
         NumberOfHits++;
     }
-
-    public IThing Aggressor { get; } = aggressor;
 }
 
 public record DamageRecordResult(List<DamageRecord> DamageRecords, bool HasUnjustifiedDamage);

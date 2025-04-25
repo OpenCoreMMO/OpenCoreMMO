@@ -8,24 +8,6 @@ namespace NeoServer.Scripts.LuaJIT.ScriptServices;
 
 public class LuaTalkActionScriptService : ITalkActionScriptService
 {
-    #region Members
-
-    #endregion
-
-    #region Dependency Injections
-
-    /// <summary>
-    /// A reference to the <see cref="ILogger"/> instance in use.
-    /// </summary>
-    private readonly ILogger _logger;
-
-    /// <summary>
-    /// A reference to the <see cref="ITalkActions"/> instance in use.
-    /// </summary>
-    private readonly ITalkActions _talkActions;
-
-    #endregion
-
     #region Constructors
 
     public LuaTalkActionScriptService(
@@ -38,7 +20,7 @@ public class LuaTalkActionScriptService : ITalkActionScriptService
 
     #endregion
 
-    #region Public Methods 
+    #region Public Methods
 
     public bool Say(IPlayer player, SpeechType type, string words)
     {
@@ -53,11 +35,25 @@ public class LuaTalkActionScriptService : ITalkActionScriptService
             return false;
 
         var parameter = talkactionWords.Length > 1
-                    ? string.Join(wordsSeparator, talkactionWords.Skip(1))
-                    : "";
+            ? string.Join(wordsSeparator, talkactionWords.Skip(1))
+            : "";
 
         return talkAction.ExecuteSay(player, talkactionWords[0], parameter, type);
     }
+
+    #endregion
+
+    #region Dependency Injections
+
+    /// <summary>
+    ///     A reference to the <see cref="ILogger" /> instance in use.
+    /// </summary>
+    private readonly ILogger _logger;
+
+    /// <summary>
+    ///     A reference to the <see cref="ITalkActions" /> instance in use.
+    /// </summary>
+    private readonly ITalkActions _talkActions;
 
     #endregion
 }

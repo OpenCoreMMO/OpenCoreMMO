@@ -60,8 +60,8 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         var moveEvent = GetUserdata<MoveEvent>(L, 1);
         if (moveEvent != null)
         {
-            string typeName = GetString(L, 2);
-            string tmpStr = typeName.ToLower();
+            var typeName = GetString(L, 2);
+            var tmpStr = typeName.ToLower();
             if (tmpStr == "stepin")
             {
                 moveEvent.EventType = MoveEventType.MOVE_EVENT_STEP_IN;
@@ -95,6 +95,7 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 
@@ -109,13 +110,14 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
                 PushBoolean(L, false);
                 return 1;
             }
-            
+
             PushBoolean(L, _moveEvents.RegisterLuaEvent(MoveEvent));
         }
         else
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 
@@ -130,12 +132,14 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
                 PushBoolean(L, false);
                 return 1;
             }
+
             PushBoolean(L, true);
         }
         else
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 
@@ -153,6 +157,7 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 
@@ -170,6 +175,7 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 
@@ -187,6 +193,7 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 
@@ -200,8 +207,8 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
             moveEvent.RequiredVocations.Add(vocation.Id);
             moveEvent.WieldInfo = WieldInfoType.WIELDINFO_VOCREQ;
 
-            bool showInDescription = false;
-            bool lastVoc = false;
+            var showInDescription = false;
+            var lastVoc = false;
 
             if (GetBoolean(L, 3))
                 showInDescription = GetBoolean(L, 3);
@@ -227,12 +234,14 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
                     moveEvent.VocationsDescription += "s";
                 }
             }
+
             PushBoolean(L, true);
         }
         else
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 
@@ -254,6 +263,7 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 
@@ -270,13 +280,14 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         {
             for (var id = fromId; id <= toId; ++id)
                 moveEvent.SetItemIdsVector(id);
-          
+
             PushBoolean(L, true);
         }
         else
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 
@@ -298,6 +309,7 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 
@@ -319,6 +331,7 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 
@@ -340,6 +353,7 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         {
             Lua.PushNil(L);
         }
+
         return 1;
     }
 }

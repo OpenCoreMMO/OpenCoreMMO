@@ -14,7 +14,7 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
     private static IDispatcher _dispatcher;
 
     public GlobalEventFunctions(
-        ILogger logger, 
+        ILogger logger,
         IGlobalEvents globalEvents,
         IDispatcher dispatcher) : base(nameof(GlobalEventFunctions))
 
@@ -56,8 +56,8 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
         var global = GetUserdata<GlobalEvent>(luaState, 1);
         if (global != null)
         {
-            string typeName = GetString(luaState, 2);
-            string tmpStr = typeName.ToLower();
+            var typeName = GetString(luaState, 2);
+            var tmpStr = typeName.ToLower();
             if (tmpStr == "startup")
             {
                 global.EventType = GlobalEventType.GLOBALEVENT_STARTUP;
@@ -87,12 +87,14 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
                 _logger.Error("[GlobalEventFunctions::luaGlobalEventType] - Invalid type for global event: {}");
                 PushBoolean(luaState, false);
             }
+
             PushBoolean(luaState, true);
         }
         else
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -107,18 +109,22 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
                 PushBoolean(luaState, false);
                 return 1;
             }
+
             if (globalevent.EventType == GlobalEventType.GLOBALEVENT_NONE && globalevent.Interval == 0)
             {
-                _logger.Error("{} - No interval for globalevent with name {}", nameof(LuaGlobalEventRegister), globalevent.Name);
+                _logger.Error("{} - No interval for globalevent with name {}", nameof(LuaGlobalEventRegister),
+                    globalevent.Name);
                 PushBoolean(luaState, false);
                 return 1;
             }
+
             PushBoolean(luaState, _globalEvents.RegisterLuaEvent(globalevent));
         }
         else
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -133,12 +139,14 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
                 PushBoolean(luaState, false);
                 return 1;
             }
+
             PushBoolean(luaState, true);
         }
         else
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -148,7 +156,7 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
         var globalevent = GetUserdata<GlobalEvent>(luaState, 1);
         if (globalevent != null)
         {
-            string timer = GetString(luaState, 2);
+            var timer = GetString(luaState, 2);
 
             var parameters = new List<uint>(); // parameters = vectorAtoi(explodeString(timer, ":"));
 
@@ -158,8 +166,9 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
             var hour = parameters.FirstOrDefault();
             if (hour is < 0 or > 23)
             {
-                _logger.Error("[GlobalEventFunctions::luaGlobalEventTime] - Invalid hour {} for globalevent with name: {}",
-                                 timer, globalevent.Name);
+                _logger.Error(
+                    "[GlobalEventFunctions::luaGlobalEventTime] - Invalid hour {} for globalevent with name: {}",
+                    timer, globalevent.Name);
                 PushBoolean(luaState, false);
                 return 1;
             }
@@ -173,8 +182,9 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
                 min = parameters[1];
                 if (min is < 0 or > 59)
                 {
-                    _logger.Error("[GlobalEventFunctions::luaGlobalEventTime] - Invalid minute: {} for globalevent with name: {}",
-                                     timer, globalevent.Name);
+                    _logger.Error(
+                        "[GlobalEventFunctions::luaGlobalEventTime] - Invalid minute: {} for globalevent with name: {}",
+                        timer, globalevent.Name);
                     PushBoolean(luaState, false);
                     return 1;
                 }
@@ -184,8 +194,9 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
                     sec = parameters[2];
                     if (sec is < 0 or > 59)
                     {
-                        _logger.Error("[GlobalEventFunctions::luaGlobalEventTime] - Invalid minute: {} for globalevent with name: {}",
-                                         timer, globalevent.Name);
+                        _logger.Error(
+                            "[GlobalEventFunctions::luaGlobalEventTime] - Invalid minute: {} for globalevent with name: {}",
+                            timer, globalevent.Name);
                         PushBoolean(luaState, false);
                         return 1;
                     }
@@ -205,21 +216,20 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
             //    difference += 86400;
             //}
 
-            DateTime currentTime = DateTime.Now;
-            DateTime modifiedTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, (int)hour, (int)min, (int)sec);
+            var currentTime = DateTime.Now;
+            var modifiedTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, (int)hour, (int)min,
+                (int)sec);
 
-            TimeSpan difference = modifiedTime - currentTime;
+            var difference = modifiedTime - currentTime;
 
-            if (difference < TimeSpan.Zero)
-            {
-                difference = difference.Add(TimeSpan.FromDays(1));
-            }
+            if (difference < TimeSpan.Zero) difference = difference.Add(TimeSpan.FromDays(1));
 
-            int differenceInSeconds = (int)difference.TotalSeconds;
+            var differenceInSeconds = (int)difference.TotalSeconds;
 
             var test = TimeSpan.FromTicks(currentTime.Ticks) + difference;
 
-            globalevent.NextExecution = (long)test.TotalMilliseconds; ;
+            globalevent.NextExecution = (long)test.TotalMilliseconds;
+            ;
             globalevent.EventType = GlobalEventType.GLOBALEVENT_TIMER;
             PushBoolean(luaState, true);
         }
@@ -227,6 +237,7 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -244,6 +255,7 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 }

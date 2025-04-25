@@ -135,10 +135,21 @@ public class Program
 
         SetupShutdownHandlers(logger, container);
 
-        try { await Task.Delay(Timeout.Infinite, _cancellationToken); }
-        catch (TaskCanceledException) { }
-        catch (Exception ex) { logger.Error(ex, "Unhandled exception occurred."); }
-        finally { await Shutdown(logger, container); }
+        try
+        {
+            await Task.Delay(Timeout.Infinite, _cancellationToken);
+        }
+        catch (TaskCanceledException)
+        {
+        }
+        catch (Exception ex)
+        {
+            logger.Error(ex, "Unhandled exception occurred.");
+        }
+        finally
+        {
+            await Shutdown(logger, container);
+        }
     }
 
     private static void SetupShutdownHandlers(ILogger logger, IServiceProvider container)
@@ -158,6 +169,7 @@ public class Program
             _cancellationTokenSource.Cancel();
         };
     }
+
     private static async Task Shutdown(ILogger logger, IServiceProvider container)
     {
         logger.Warning("Server is in Shutdown...");

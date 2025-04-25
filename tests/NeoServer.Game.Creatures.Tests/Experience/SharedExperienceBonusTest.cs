@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using Moq;
 using NeoServer.Game.Common.Combat;
@@ -218,9 +217,9 @@ public class SharedExperienceBonusTest
         {
             { playerOne, DateTime.UtcNow }
         };
-        
+
         var damages = new DamageRecordList();
-        damages.AddOrUpdateDamage(playerTwo, 10, unjustified:false);
+        damages.AddOrUpdateDamage(playerTwo, 10, false);
 
         var partyMock = new Mock<IParty>();
         partyMock.Setup(x => x.Members).Returns(members);
@@ -250,10 +249,10 @@ public class SharedExperienceBonusTest
             playerTwo
         };
         var heals = new Dictionary<IPlayer, DateTime>();
-        
+
         var damages = new DamageRecordList();
-        damages.AddOrUpdateDamage(playerOne, 10, unjustified:false);
-        damages.AddOrUpdateDamage(playerTwo, 10, unjustified:false);
+        damages.AddOrUpdateDamage(playerOne, 10, false);
+        damages.AddOrUpdateDamage(playerTwo, 10, false);
 
         var partyMock = new Mock<IParty>();
         partyMock.Setup(x => x.Members).Returns(members);

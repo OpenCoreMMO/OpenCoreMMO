@@ -7,12 +7,12 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class TalkAction : Script, ITalkAction
 {
+    //private account.GroupType groupType = account.GroupType.GROUP_TYPE_NONE;
+
+    private readonly ILogger _logger;
     private string separator = "\"";
 
     private string words;
-    //private account.GroupType groupType = account.GroupType.GROUP_TYPE_NONE;
-
-    private ILogger _logger;
 
     public TalkAction(LuaScriptInterface context, ILogger logger) : base(context)
     {
@@ -25,7 +25,7 @@ public class TalkAction : Script, ITalkAction
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
             _logger.Error($"[TalkAction::ExecuteSay - Player {player.Name} words {GetWords()}] " +
-                              $"Call stack overflow. Too many lua script calls being nested. Script name {GetScriptInterface().GetLoadingScriptName()}");
+                          $"Call stack overflow. Too many lua script calls being nested. Script name {GetScriptInterface().GetLoadingScriptName()}");
             return false;
         }
 

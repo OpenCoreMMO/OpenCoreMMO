@@ -63,34 +63,8 @@ public delegate void ReadText(IPlayer player, IReadable readable, string text);
 
 public delegate void WroteText(IPlayer player, IReadable readable, string text);
 
-
 public interface IPlayer : ICombatActor, ISociableCreature
 {
-    #region Events
-
-    public event PlayerLevelAdvance OnLevelAdvanced;
-    public event PlayerLevelRegress OnLevelRegressed;
-    public event PlayerGainSkillPoint OnGainedSkillPoint;
-    public event ReduceMana OnStatusChanged;
-    public event CannotUseSpell OnCannotUseSpell;
-    public event LookAt OnLookedAt;
-    public event UseSpell OnUsedSpell;
-    public event UseItem OnUsedItem;
-    public event LogIn OnLoggedIn;
-    public event LogOut OnLoggedOut;
-    public event ChangeOnlineStatus OnChangedOnlineStatus;
-    public event SendMessageTo OnSentMessage;
-
-    public event Exhaust OnExhausted;
-    public event Hear OnHear;
-    public event ChangeChaseMode OnChangedChaseMode;
-    public event AddSkillBonus OnAddedSkillBonus;
-    public event RemoveSkillBonus OnRemovedSkillBonus;
-    public event ReadText OnReadText;
-    public event WroteText OnWroteText;
-
-    #endregion
-
     ushort Level { get; }
     byte LevelPercent { get; }
     ushort MagicLevel { get; }
@@ -149,6 +123,14 @@ public interface IPlayer : ICombatActor, ISociableCreature
     ///     Indicates Skull showed on creature
     /// </summary>
     IPlayerSkull PlayerSkull { get; }
+
+    bool HasSkull { get; }
+    int NumberOfUnjustifiedKillsLastDay { get; }
+    int NumberOfUnjustifiedKillsLastWeek { get; }
+    int NumberOfUnjustifiedKillsLastMonth { get; }
+    DateTime? SkullEndsAt { get; }
+    bool IsProtectionZoneBlocked { get; }
+    Skull Skull { get; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 
@@ -264,13 +246,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
     ushort GetRawSkillLevel(SkillType skillType);
     int GetStorageValue(int key);
     void AddOrUpdateStorageValue(int key, int value);
-    bool HasSkull { get; }
-    int NumberOfUnjustifiedKillsLastDay { get; }
-    int NumberOfUnjustifiedKillsLastWeek { get; }
-    int NumberOfUnjustifiedKillsLastMonth { get; }
-    DateTime? SkullEndsAt { get; }
-    bool IsProtectionZoneBlocked { get; }
-    Skull Skull { get; }
     Skull GetSkull(IPlayer enemy);
     void SetSkull(Skull skull, DateTime? skullEndingDate = null, IPlayer enemy = null);
     void RemoveSkull();
@@ -280,21 +255,46 @@ public interface IPlayer : ICombatActor, ISociableCreature
     void RemoveProtectionZoneBlock();
 
     /// <summary>
-    /// Add infinite mana shield condition
+    ///     Add infinite mana shield condition
     /// </summary>
     void EnableManaShield();
 
     /// <summary>
-    /// Remove mana shield condition
+    ///     Remove mana shield condition
     /// </summary>
     void DisableManaShield();
 
     /// <summary>
-    /// Add mana shield condition 
+    ///     Add mana shield condition
     /// </summary>
     /// <param name="duration"></param>
     void EnableManaShield(uint duration);
 
     void AddRegenerationBonus(RegenerationBonus regenerationBonus);
     void RemoveRegenerationBonus(RegenerationBonus regenerationBonus);
+
+    #region Events
+
+    public event PlayerLevelAdvance OnLevelAdvanced;
+    public event PlayerLevelRegress OnLevelRegressed;
+    public event PlayerGainSkillPoint OnGainedSkillPoint;
+    public event ReduceMana OnStatusChanged;
+    public event CannotUseSpell OnCannotUseSpell;
+    public event LookAt OnLookedAt;
+    public event UseSpell OnUsedSpell;
+    public event UseItem OnUsedItem;
+    public event LogIn OnLoggedIn;
+    public event LogOut OnLoggedOut;
+    public event ChangeOnlineStatus OnChangedOnlineStatus;
+    public event SendMessageTo OnSentMessage;
+
+    public event Exhaust OnExhausted;
+    public event Hear OnHear;
+    public event ChangeChaseMode OnChangedChaseMode;
+    public event AddSkillBonus OnAddedSkillBonus;
+    public event RemoveSkillBonus OnRemovedSkillBonus;
+    public event ReadText OnReadText;
+    public event WroteText OnWroteText;
+
+    #endregion
 }

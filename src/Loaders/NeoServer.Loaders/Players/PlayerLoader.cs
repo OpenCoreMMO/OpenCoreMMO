@@ -30,12 +30,12 @@ public class PlayerLoader : IPlayerLoader
     private readonly GameConfiguration _gameConfiguration;
     protected readonly ChatChannelFactory ChatChannelFactory;
     protected readonly ICreatureFactory CreatureFactory;
+    protected readonly IGroupStore GroupStore;
     protected readonly IGuildStore GuildStore;
     protected readonly IItemFactory ItemFactory;
     protected readonly ILogger Logger;
     protected readonly IMapTool MapTool;
     protected readonly IVocationStore VocationStore;
-    protected readonly IGroupStore GroupStore;
     protected readonly Game.World.World World;
 
     [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
@@ -78,7 +78,7 @@ public class PlayerLoader : IPlayerLoader
             new Location((ushort)playerEntity.PosX, (ushort)playerEntity.PosY, (byte)playerEntity.PosZ);
 
         var currentTile = GetCurrentTile(playerLocation);
-        
+
         var premiumTimeDays = (ushort)(playerEntity.Account?.PremiumTimeEndAt is null
             ? 0
             : (playerEntity.Account.PremiumTimeEndAt.Value - DateTime.Now).TotalDays);
@@ -120,9 +120,9 @@ public class PlayerLoader : IPlayerLoader
             AccountId = (uint)playerEntity.AccountId,
             WorldId = playerEntity.WorldId,
             Guild = GuildStore.Get((ushort)(playerEntity.GuildMember?.GuildId ?? 0)),
-            GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0),
+            GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0)
         };
-        
+
         player.PlayerSkull = new PlayerSkull(player, playerEntity.Skull, playerEntity.SkullEndsAt);
 
         player.SetCurrentTile(currentTile);
@@ -130,7 +130,7 @@ public class PlayerLoader : IPlayerLoader
         AddRegenerationCondition(playerEntity, player);
 
         player.AddInventory(ConvertToInventory(player, playerEntity));
-        
+
         SetNumberOfKills(playerEntity, player);
 
         AddExistingPersonalChannels(player);
@@ -145,22 +145,14 @@ public class PlayerLoader : IPlayerLoader
         var killsLastMonth = 0;
         foreach (var kill in playerEntity.KillsLastMonth)
         {
-            if (kill.DeathDateTime >= DateTime.Now.AddDays(-1))
-            {
-                killsLastDay++;
-            }
-            if (kill.DeathDateTime >= DateTime.Now.AddDays(-7))
-            {
-                killsLastWeek++;
-            }
-            if (kill.DeathDateTime >= DateTime.Now.AddMonths(-1))
-            {
-                killsLastMonth++;
-            }
+            if (kill.DeathDateTime >= DateTime.Now.AddDays(-1)) killsLastDay++;
+            if (kill.DeathDateTime >= DateTime.Now.AddDays(-7)) killsLastWeek++;
+            if (kill.DeathDateTime >= DateTime.Now.AddMonths(-1)) killsLastMonth++;
         }
-        
+
         player.SetNumberOfKills(killsLastDay, killsLastWeek, killsLastMonth);
     }
+
     protected ITown GetTown(PlayerEntity playerEntity)
     {
         if (!World.TryGetTown((ushort)playerEntity.TownId, out var town))
@@ -257,7 +249,9 @@ public class PlayerLoader : IPlayerLoader
     }
 
     protected Dictionary<int, int> ConvertToStorages(PlayerEntity playerRecord)
-        => playerRecord.PlayerStorages?.ToDictionary(c => c.Key, c => c.Value);
+    {
+        return playerRecord.PlayerStorages?.ToDictionary(c => c.Key, c => c.Value);
+    }
 
     protected IInventory ConvertToInventory(IPlayer player, PlayerEntity playerRecord)
     {

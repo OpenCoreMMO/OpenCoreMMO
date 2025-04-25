@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using NeoServer.Game.Common.Contracts.Services;
+﻿using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
 
@@ -47,6 +46,7 @@ public interface IMonster : IWalkableMonster, ICombatActor
     ///     Indicates if monster is sleeping
     /// </summary>
     bool IsSleeping { get; }
+
     bool IsSummon { get; }
     bool IsHostile { get; }
     bool IsCurrentTargetUnreachable { get; }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -51,7 +50,7 @@ public class Guard
     {
         return value is null;
     }
-    
+
     public static bool IsNullOrEmpty(ICollection value)
     {
         return value is null || value.Count == 0;

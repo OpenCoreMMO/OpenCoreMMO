@@ -13,53 +13,54 @@ public class AccountController(IMediator mediator) : BaseController
     [HttpPost]
     public async Task<IActionResult> Post(CreateAccountRequest request)
     {
-        var result =  await mediator.Send(request);
+        var result = await mediator.Send(request);
 
         if (!result.IsSuccess)
             return UnprocessableEntity(result.ErrorMessage);
-        
+
         return Ok(SuccessMessage.AccountCreated.Replace("{id}", result.Identifier.ToString()));
     }
-    
+
     //todo: The permission to ban an account should be restricted to a specific role "admin"
     [HttpPatch("{accountId}/premium")]
-    public async Task<IActionResult>  AddPremium([FromRoute] int accountId, [FromBody] AddPremioumDaysAccountRequest request)
+    public async Task<IActionResult> AddPremium([FromRoute] int accountId,
+        [FromBody] AddPremioumDaysAccountRequest request)
     {
         request.SetAccountId(accountId);
 
-        var result =  await mediator.Send(request);
+        var result = await mediator.Send(request);
 
         if (!result.IsSuccess)
             return UnprocessableEntity(result.ErrorMessage);
-        
+
         return Ok(SuccessMessage.AddedPremiumDays);
     }
-    
+
     //todo: The permission to ban an account should be restricted to a specific role "admin"
     [HttpPatch("{accountId}/ban")]
     public async Task<IActionResult> Ban([FromRoute] int accountId, [FromBody] BanAccountRequest request)
     {
         request.SetAccountId(accountId);
 
-        var result =  await mediator.Send(request);
+        var result = await mediator.Send(request);
 
         if (!result.IsSuccess)
             return UnprocessableEntity(result.ErrorMessage);
-        
+
         return Ok(SuccessMessage.AccountBanned);
     }
-    
+
     //todo: The permission to ban an account should be restricted to a specific role "user by website"
     [HttpPatch("{accountId}/change-password")]
     public async Task<IActionResult> Ban([FromRoute] int accountId, [FromBody] ChangePasswordRequest request)
     {
         request.SetAccountId(accountId);
 
-        var result =  await mediator.Send(request);
+        var result = await mediator.Send(request);
 
         if (!result.IsSuccess)
             return UnprocessableEntity(result.ErrorMessage);
-        
+
         return Ok(SuccessMessage.PasswordChanged);
     }
 }

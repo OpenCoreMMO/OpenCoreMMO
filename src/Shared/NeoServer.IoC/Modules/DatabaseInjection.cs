@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Data.Contexts;
-using NeoServer.Data.Entities;
 using NeoServer.Data.Factory;
 using NeoServer.Data.Interfaces;
 using NeoServer.Data.Providers.InMemory;

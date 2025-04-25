@@ -12,8 +12,9 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
     private readonly CreatureBlockedAttackEventHandler _creatureBlockedAttackEventHandler;
     private readonly CreatureChangedAttackTargetEventHandler _creatureChangedAttackTargetEventHandler;
     private readonly CreatureChangedSpeedEventHandler _creatureChangedSpeedEventHandler;
-    private readonly CreatureHealedEventHandler _creatureHealedEventHandler;
     private readonly CreatureDeathEventHandler _creatureDeathEventHandler;
+    private readonly CreatureHealedEventHandler _creatureHealedEventHandler;
+    private readonly CreatureKillEventHandler _creatureKillEventHandler;
     private readonly CreatureInjuredEventHandler _creatureReceiveDamageEventHandler;
     private readonly CreatureStartedFollowingEventHandler _creatureStartedFollowingEventHandler;
     private readonly CreatureStartedWalkingEventHandler _creatureStartedWalkingEventHandler;
@@ -22,7 +23,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
     private readonly CreatureHearEventHandler creatureHearEventHandler;
     private readonly CreatureChangedVisibilityEventHandler creatureTurnedInvisibleEventHandler;
     private readonly NpcShowShopEventHandler npcShowShopEventHandler;
-    private readonly CreatureKillEventHandler _creatureKillEventHandler;
 
     public CreatureEventSubscriber(CreatureInjuredEventHandler creatureReceiveDamageEventHandler,
         CreatureDeathEventHandler creatureDeathEventHandler,

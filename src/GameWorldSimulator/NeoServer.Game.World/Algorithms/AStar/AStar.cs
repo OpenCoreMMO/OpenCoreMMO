@@ -66,8 +66,8 @@ public static class AStar
                 var neighborNode = nodeList.GetNodeByPosition(pos);
                 var tile = map[pos];
 
-                if (neighborNode is null && 
-                    tileEnterRule != null && 
+                if (neighborNode is null &&
+                    tileEnterRule != null &&
                     !tileEnterRule.ShouldIgnore(tile, creature)) continue;
 
                 var extraCost = CalculateExtraCost(creature, neighborNode, tile);

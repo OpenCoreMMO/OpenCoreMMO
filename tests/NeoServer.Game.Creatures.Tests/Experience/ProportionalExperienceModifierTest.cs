@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
-using Moq;
+﻿using Moq;
 using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Creatures.Experience;
@@ -25,9 +23,9 @@ public class ProportionalExperienceModifierTest
     public void GetModifiedBaseExperience(int playerDamage, int totalDamage, uint monsterExperience,
         uint expectedResult)
     {
-        var player = PlayerTestDataBuilder.Build(1);
-        var otherCreatures =  PlayerTestDataBuilder.Build(2);
-   
+        var player = PlayerTestDataBuilder.Build();
+        var otherCreatures = PlayerTestDataBuilder.Build(2);
+
         var damages = new DamageRecordList();
         damages.AddOrUpdateDamage(player, (ushort)playerDamage, false);
         damages.AddOrUpdateDamage(otherCreatures, (ushort)(totalDamage - playerDamage), false);

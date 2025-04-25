@@ -14,7 +14,8 @@ public class StaticTile : BaseTile, IStaticTile
 {
     private IItem _topItemOnStack;
 
-    public StaticTile(Coordinate coordinate, params IItem[] items) : this(new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z), items)
+    public StaticTile(Coordinate coordinate, params IItem[] items) : this(
+        new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z), items)
     {
     }
 
@@ -26,11 +27,12 @@ public class StaticTile : BaseTile, IStaticTile
         AllItems = items;
     }
 
+    public IItem[] Items { get; }
+
     public override int ThingsCount { get; }
     public byte[] Raw { get; }
     public override IItem TopItemOnStack => _topItemOnStack;
     public override ICreature TopCreatureOnStack => null;
-    public IItem[] Items { get; }
 
     public override int ItemsCount => AllItems?.Length ?? 0;
     public override IItem[] AllItems { get; }
@@ -62,7 +64,15 @@ public class StaticTile : BaseTile, IStaticTile
             return itemsId;
         }
     }
-    
+
+    public IStaticTile CreateClone(Location location)
+    {
+        foreach (var item in AllItems)
+            item.SetNewLocation(location, true);
+
+        return new StaticTile(location, AllItems);
+    }
+
     public byte[] GetRaw(IItem[] items)
     {
         var ground = new List<byte>();
@@ -103,13 +113,5 @@ public class StaticTile : BaseTile, IStaticTile
     {
         return HashHelper.START
             .CombineHashCode(Raw);
-    }
-
-    public IStaticTile CreateClone(Location location)
-    {
-        foreach (var item in AllItems)
-            item.SetNewLocation(location, force: true);
-
-        return new StaticTile(location, AllItems);
     }
 }

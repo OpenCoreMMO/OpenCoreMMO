@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace NeoServer.Loaders.Converts;
+
 public class UshortConverter : JsonConverter<ushort>
 {
     public override ushort Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

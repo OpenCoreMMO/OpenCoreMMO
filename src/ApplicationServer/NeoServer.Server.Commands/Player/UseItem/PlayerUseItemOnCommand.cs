@@ -15,11 +15,11 @@ namespace NeoServer.Server.Commands.Player.UseItem;
 
 public class PlayerUseItemOnCommand : ICommand
 {
-    private readonly IPlayerUseService _playerUseService;
     private readonly IGameServer _game;
+    private readonly ItemFinderService _itemFinder;
+    private readonly IPlayerUseService _playerUseService;
     private readonly IScriptManager _scriptManager;
     private readonly IWalkToMechanism _walkToMechanism;
-    private readonly ItemFinderService _itemFinder;
 
     public PlayerUseItemOnCommand(
         IGameServer game,
@@ -77,9 +77,11 @@ public class PlayerUseItemOnCommand : ICommand
             if (thingToUse is not IUsableOn itemUsableOn) return;
             action = () => _playerUseService.Use(player, itemUsableOn, onTarget);
         }
-            
 
-        if (!player.Location.IsNextTo(onTarget.Location == Location.Zero ? useItemPacket.ToLocation : onTarget.Location))
+
+        if (!player.Location.IsNextTo(onTarget.Location == Location.Zero
+                ? useItemPacket.ToLocation
+                : onTarget.Location))
         {
             _walkToMechanism.WalkTo(player, action, onTarget.Location);
             return;

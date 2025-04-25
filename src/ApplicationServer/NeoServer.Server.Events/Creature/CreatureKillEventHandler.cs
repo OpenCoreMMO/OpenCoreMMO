@@ -11,8 +11,6 @@ public class CreatureKillEventHandler(IPlayerSkullService playerSkullService)
     public void Handle(CreatureKillEvent @event)
     {
         if (@event.Unjustified && @event.Killer is IPlayer aggressor && @event.Victim is IPlayer)
-        {
             playerSkullService.UpdatePlayerSkull(aggressor);
-        }
     }
 }

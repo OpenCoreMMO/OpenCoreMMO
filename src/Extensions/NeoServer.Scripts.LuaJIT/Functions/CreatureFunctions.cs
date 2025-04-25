@@ -100,12 +100,13 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 
         Lua.CreateTable(luaState, eventList.Count(), 0);
 
-        int index = 0;
+        var index = 0;
         foreach (var creatureEvent in eventList)
         {
             PushString(luaState, creatureEvent.Name);
             Lua.RawSetI(luaState, -2, ++index);
         }
+
         return 1;
     }
 
@@ -227,7 +228,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
             Lua.PushNil(luaState);
         return 1;
     }
-    
+
     private static int LuaCreatureGetSummons(LuaState luaState)
     {
         // creature:getSummons()
@@ -248,10 +249,10 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
             PushThing(luaState, summon);
             Lua.RawSetI(luaState, -2, ++index);
         }
-        
+
         return 1;
     }
-    
+
 
     private static int LuaCreatureSay(LuaState luaState)
     {

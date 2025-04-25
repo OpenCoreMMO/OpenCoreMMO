@@ -21,31 +21,31 @@
 ]]
 
 Storage = {
-	Quest = {
-		ExampleQuest = {
-			Example = 9000,
-		},
-		SpikeSwordQuest = {
-			Key = 9001
-		},
-		DwarvenShieldQuest = {
-			Key = 9002
-		},
-		DarkHelmetQuest = {
-			Key = 9003
-		},
-		CombatKnifeQuest = {
-			Key = 9003
-		},
-	},
+    Quest = {
+        ExampleQuest = {
+            Example = 9000,
+        },
+        SpikeSwordQuest = {
+            Key = 9001
+        },
+        DwarvenShieldQuest = {
+            Key = 9002
+        },
+        DarkHelmetQuest = {
+            Key = 9003
+        },
+        CombatKnifeQuest = {
+            Key = 9003
+        },
+    },
 
-	Example = 30002,
+    Example = 30002,
 }
 
 GlobalStorage = {
-	ExampleQuest = {
-		Example = 60000,
-	},
+    ExampleQuest = {
+        Example = 60000,
+    },
 
-	Example = 60001,
+    Example = 60001,
 }

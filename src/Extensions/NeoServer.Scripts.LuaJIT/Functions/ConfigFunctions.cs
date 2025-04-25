@@ -43,7 +43,8 @@ public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
         foreach (var item in Enum.GetValues<FloatingConfigType>())
             RegisterVariable(luaState, "configKeys", item.ToString(), item);
 
-        RegisterVariable(luaState, "configKeys", "BASE_DIRECTORY", AppContext.BaseDirectory + _serverConfiguration.DataLuaJit);
+        RegisterVariable(luaState, "configKeys", "BASE_DIRECTORY",
+            AppContext.BaseDirectory + _serverConfiguration.DataLuaJit);
     }
 
     private static int LuaConfigManagerGetString(LuaState luaState)

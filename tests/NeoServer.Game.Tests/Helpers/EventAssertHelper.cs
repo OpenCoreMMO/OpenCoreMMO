@@ -67,10 +67,10 @@ public static class EventAssertHelper
                 .FailWith("Expected event with argument of type <{0}> that matches {1}, but found none.",
                     typeof(T),
                     predicate.Body);
-        
-            // Execute.Assertion
-            //     .FailWith("Expected event with argument of type <{0}> that matches {1}, but found none.",
-            //         typeof(T),
-            //         predicate.Body);
+
+        // Execute.Assertion
+        //     .FailWith("Expected event with argument of type <{0}> that matches {1}, but found none.",
+        //         typeof(T),
+        //         predicate.Body);
     }
 }

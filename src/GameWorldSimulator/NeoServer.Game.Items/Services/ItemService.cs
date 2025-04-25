@@ -26,7 +26,7 @@ public class ItemService : IItemService
     }
 
     public IItem Transform(ITile tile, ushort fromItemId, ushort toItemId)
-    { 
+    {
         if (tile is null) return null;
 
         tile = _staticToDynamicTileService.TransformIntoDynamicTile(tile);
@@ -46,7 +46,7 @@ public class ItemService : IItemService
         if (tile is null) return null;
 
         tile = tile is IStaticTile staticTile ? staticTile.CreateClone(location) : tile;
-        
+
         return Transform(tile, fromItemId, toItemId);
     }
 

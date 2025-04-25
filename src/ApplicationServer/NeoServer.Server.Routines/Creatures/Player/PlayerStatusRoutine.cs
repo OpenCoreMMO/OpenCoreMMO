@@ -15,27 +15,21 @@ public class PlayerStatusRoutine(GameConfiguration gameConfiguration) : IRoutine
 
     private void RemoveLogoutBlockIfExpired(IPlayer player)
     {
-        if(!player.HasCondition(ConditionType.LogoutBlock, out var logoutBlockCondition)) return;
-            
+        if (!player.HasCondition(ConditionType.LogoutBlock, out var logoutBlockCondition)) return;
+
         var passedTicks = DateTime.Now.Ticks - logoutBlockCondition.StartedAt;
         var milliseconds = new TimeSpan(passedTicks).TotalMilliseconds;
 
-        if (milliseconds >= gameConfiguration.LogoutBlockDuration)
-        {
-            player.RemoveLogoutBlock();
-        }
+        if (milliseconds >= gameConfiguration.LogoutBlockDuration) player.RemoveLogoutBlock();
     }
-    
+
     private void RemoveProtectionZoneBlockIfExpired(IPlayer player)
     {
-        if(!player.HasCondition(ConditionType.ProtectionZoneBlock, out var protectionZoneBlock)) return;
-            
+        if (!player.HasCondition(ConditionType.ProtectionZoneBlock, out var protectionZoneBlock)) return;
+
         var passedTicks = DateTime.Now.Ticks - protectionZoneBlock.StartedAt;
         var milliseconds = new TimeSpan(passedTicks).TotalMilliseconds;
 
-        if (milliseconds >= gameConfiguration.ProtectionZoneBlockDuration)
-        {
-            player.RemoveProtectionZoneBlock();
-        }
+        if (milliseconds >= gameConfiguration.ProtectionZoneBlockDuration) player.RemoveProtectionZoneBlock();
     }
 }

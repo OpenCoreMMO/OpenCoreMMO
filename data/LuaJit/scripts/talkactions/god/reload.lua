@@ -1,54 +1,54 @@
 ﻿local talkAction = TalkAction("/reload")
 
 local reloadTypes = {
-        ["all"] = RELOAD_TYPE_ALL,
+    ["all"] = RELOAD_TYPE_ALL,
 
-        ["chat"] = RELOAD_TYPE_CHAT,
-        ["channel"] = RELOAD_TYPE_CHAT,
-        ["chatchannels"] = RELOAD_TYPE_CHAT,
-        ["config"] = RELOAD_TYPE_CONFIG,
-        ["configuration"] = RELOAD_TYPE_CONFIG,
+    ["chat"] = RELOAD_TYPE_CHAT,
+    ["channel"] = RELOAD_TYPE_CHAT,
+    ["chatchannels"] = RELOAD_TYPE_CHAT,
+    ["config"] = RELOAD_TYPE_CONFIG,
+    ["configuration"] = RELOAD_TYPE_CONFIG,
 
-        ["events"] = RELOAD_TYPE_EVENTS,
+    ["events"] = RELOAD_TYPE_EVENTS,
 
-        ["items"] = RELOAD_TYPE_ITEMS,
-        ["module"] = RELOAD_TYPE_MODULES,
-        ["modules"] = RELOAD_TYPE_MODULES,
+    ["items"] = RELOAD_TYPE_ITEMS,
+    ["module"] = RELOAD_TYPE_MODULES,
+    ["modules"] = RELOAD_TYPE_MODULES,
 
-        ["monster"] = RELOAD_TYPE_MONSTERS,
-        ["monsters"] = RELOAD_TYPE_MONSTERS,
+    ["monster"] = RELOAD_TYPE_MONSTERS,
+    ["monsters"] = RELOAD_TYPE_MONSTERS,
 
-        ["mount"] = RELOAD_TYPE_MOUNTS,
-        ["mounts"] = RELOAD_TYPE_MOUNTS,
+    ["mount"] = RELOAD_TYPE_MOUNTS,
+    ["mounts"] = RELOAD_TYPE_MOUNTS,
 
-        ["npc"] = RELOAD_TYPE_NPCS,
-        ["npcs"] = RELOAD_TYPE_NPCS,
+    ["npc"] = RELOAD_TYPE_NPCS,
+    ["npcs"] = RELOAD_TYPE_NPCS,
 
-        ["raid"] = RELOAD_TYPE_RAIDS,
-        ["raids"] = RELOAD_TYPE_RAIDS,
+    ["raid"] = RELOAD_TYPE_RAIDS,
+    ["raids"] = RELOAD_TYPE_RAIDS,
 
-        ["scripts"] = RELOAD_TYPE_SCRIPTS,
-        ["script"] = RELOAD_TYPE_SCRIPTS,
+    ["scripts"] = RELOAD_TYPE_SCRIPTS,
+    ["script"] = RELOAD_TYPE_SCRIPTS,
 
-        ["rate"] = RELOAD_TYPE_CORE,
-        ["rates"] = RELOAD_TYPE_CORE,
-        ["stage"] = RELOAD_TYPE_CORE,
-        ["stages"] = RELOAD_TYPE_CORE,
-        ["global"] = RELOAD_TYPE_CORE,
-        ["core"] = RELOAD_TYPE_CORE,
-        ["lib"] = RELOAD_TYPE_CORE,
-        ["libs"] = RELOAD_TYPE_CORE,
+    ["rate"] = RELOAD_TYPE_CORE,
+    ["rates"] = RELOAD_TYPE_CORE,
+    ["stage"] = RELOAD_TYPE_CORE,
+    ["stages"] = RELOAD_TYPE_CORE,
+    ["global"] = RELOAD_TYPE_CORE,
+    ["core"] = RELOAD_TYPE_CORE,
+    ["lib"] = RELOAD_TYPE_CORE,
+    ["libs"] = RELOAD_TYPE_CORE,
 
-        ["imbuements"] = RELOAD_TYPE_IMBUEMENTS,
+    ["imbuements"] = RELOAD_TYPE_IMBUEMENTS,
 
-        ["group"] = RELOAD_TYPE_GROUPS,
-        ["groups"] = RELOAD_TYPE_GROUPS,
-    }
+    ["group"] = RELOAD_TYPE_GROUPS,
+    ["groups"] = RELOAD_TYPE_GROUPS,
+}
 
 function talkAction.onSay(player, words, param)
     if not player:getGroup():getAccess() then
-		return true
-	end
+        return true
+    end
 
     --if not configManager.getBoolean(configKeys.ALLOW_RELOAD) then
     --	print("Reload command is disabled.")

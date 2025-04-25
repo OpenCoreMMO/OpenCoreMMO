@@ -7,7 +7,7 @@ using NeoServer.Game.Creatures.Party;
 
 namespace NeoServer.Game.Creatures.Services;
 
-public class ExperienceSharingService: IExperienceSharingService
+public class ExperienceSharingService : IExperienceSharingService
 {
     // TODO: Find a better way to declare these, like dependency injection or something.
     // I'm not super familiar with how EventHandlers are created yet.
@@ -31,8 +31,8 @@ public class ExperienceSharingService: IExperienceSharingService
 
         foreach (var damageRecord in monster.ReceivedDamages.All)
         {
-            if(damageRecord.Aggressor is not IPlayer player) continue;
-            
+            if (damageRecord.Aggressor is not IPlayer player) continue;
+
             // Apply all base experience modifiers (e.g. monster experience based on portion of damage dealt).
             var baseExperience = monster.Experience;
             foreach (var modifier in _baseExperienceModifiers)
@@ -56,7 +56,7 @@ public class ExperienceSharingService: IExperienceSharingService
             player?.GainExperience(experience);
         }
     }
-    
+
     private static double CalculateTotalExperienceBonus(IEnumerable<IExperienceBonus> bonuses, IPlayer player,
         IMonster monster)
     {

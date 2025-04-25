@@ -10,7 +10,7 @@ public class UpdatePlayerSkillValidator : AbstractValidator<UpdatePlayerSkillsRe
         RuleFor(x => x.Id)
             .NotEmpty()
             .WithMessage("Id is required.");
-        
+
         RuleFor(x => x.SkillAxe)
             .NotEmpty()
             .InclusiveBetween(10, 120)

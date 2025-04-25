@@ -14,15 +14,17 @@ public class LootService(GameConfiguration gameConfiguration, IItemFactory itemF
 {
     public ILootContainer CreateLootContainer(ICreature deadCreature, decimal lootRate = 0)
     {
-        var loot = GenerateLoot(deadCreature, lootRate: lootRate);
+        var loot = GenerateLoot(deadCreature, lootRate);
         var corpse = itemFactory.CreateLootCorpse(deadCreature.CorpseType, deadCreature.Location, loot);
         deadCreature.Corpse = corpse;
 
         return corpse as ILootContainer;
     }
 
-    public ILoot GenerateLoot(ICreature creature, decimal lootRate = 0) =>
-        creature is IMonster monster ? GenerateLoot(monster, lootRate) : null;
+    public ILoot GenerateLoot(ICreature creature, decimal lootRate = 0)
+    {
+        return creature is IMonster monster ? GenerateLoot(monster, lootRate) : null;
+    }
 
     public ILoot GenerateLoot(IMonster monster, decimal lootRate = 0)
     {
@@ -32,7 +34,7 @@ public class LootService(GameConfiguration gameConfiguration, IItemFactory itemF
 
         var enemies = GetLootOwners(monster);
 
-        var loot = new Loot(lootItems, Owners: enemies);
+        var loot = new Loot(lootItems, enemies);
 
         monster.RaiseDroppedLootEvent(monster, loot);
 

@@ -16,9 +16,9 @@ public class GameCreatureRoutine
     private const ushort EVENT_CHECK_CREATURE_INTERVAL = 500;
     private readonly IGameServer _game;
     private readonly PlayerLogOutCommand _playerLogOutCommand;
+    private readonly PlayerStatusRoutine _playerStatusRoutine;
     private readonly SpawnManager _spawnManager;
     private readonly ISummonService _summonService;
-    private readonly PlayerStatusRoutine _playerStatusRoutine;
 
     public GameCreatureRoutine(
         IGameServer game,
@@ -55,7 +55,6 @@ public class GameCreatureRoutine
 
     private static void CheckCreature(ICreature creature)
     {
-        
         if (creature is ICombatActor combatActor) CreatureConditionRoutine.Execute(combatActor);
     }
 

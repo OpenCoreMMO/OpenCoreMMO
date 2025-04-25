@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.Json;
 using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Spells;
+using NeoServer.Loaders.Extensions;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
 using Serilog;
-using System.Text.Json;
-using NeoServer.Loaders.Extensions;
 
 namespace NeoServer.Loaders.Spells;
 
@@ -40,8 +40,8 @@ public class SpellLoader
         {
             var path = Path.Combine(serverConfiguration.Data, "spells", "spells.json");
             var jsonString = File.ReadAllText(path);
-            var spells =  JsonSerializer.Deserialize<List<IDictionary<string, JsonElement>>>(jsonString)?.ToList() ??
-                          [];
+            var spells = JsonSerializer.Deserialize<List<IDictionary<string, JsonElement>>>(jsonString)?.ToList() ??
+                         [];
             var types = ScriptSearch.All.Where(x => typeof(ISpell).IsAssignableFrom(x)).ToList();
 
             foreach (var spell in spells)
@@ -70,7 +70,7 @@ public class SpellLoader
         if (!spell.ContainsKey("vocations")) return null;
 
         var vocationArray = spell["vocations"].EnumerateArray();
-        
+
         return vocationArray.Select(vocationJToken =>
         {
             var vocationValue = vocationJToken.GetStringFromJson();

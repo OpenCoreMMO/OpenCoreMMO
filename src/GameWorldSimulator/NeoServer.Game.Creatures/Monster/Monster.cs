@@ -82,9 +82,9 @@ public class Monster : WalkableMonster, IMonster
             OnChangedState?.Invoke(this, oldState, value);
         }
     }
-    
+
     public virtual void Born(Location location)
-    { 
+    {
         ResetHealthPoints();
         SetNewLocation(location);
         State = MonsterState.Sleeping;
@@ -109,11 +109,8 @@ public class Monster : WalkableMonster, IMonster
 
     public override bool ReceiveAttack(IThing enemy, CombatDamage damage)
     {
-        if (this is Summon.Summon { Master: IPlayer })
-        {
-            return base.ReceiveAttack(enemy, damage);
-        }
-        
+        if (this is Summon.Summon { Master: IPlayer }) return base.ReceiveAttack(enemy, damage);
+
         return enemy is Summon.Summon { Master: IPlayer } or IPlayer && base.ReceiveAttack(enemy, damage);
     }
 
@@ -154,7 +151,8 @@ public class Monster : WalkableMonster, IMonster
                 player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters) ||
                 player.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))) return;
 
-        var canSee = CanSee(creature.Location, (int)MapViewPort.MaxClientViewPortX + 1, (int)MapViewPort.MaxClientViewPortX + 1);
+        var canSee = CanSee(creature.Location, (int)MapViewPort.MaxClientViewPortX + 1,
+            (int)MapViewPort.MaxClientViewPortX + 1);
 
         if (State == MonsterState.Sleeping)
             Awake();
@@ -194,7 +192,10 @@ public class Monster : WalkableMonster, IMonster
         State = MonsterState.InCombat;
     }
 
-    public override bool IsThinking() => !IsSleeping;
+    public override bool IsThinking()
+    {
+        return !IsSleeping;
+    }
 
     public void MoveAroundEnemy()
     {
@@ -214,7 +215,6 @@ public class Monster : WalkableMonster, IMonster
 
         if (target is null) return;
         ChangeAttackTarget(target.Creature);
-
     }
 
     public void Sleep()
@@ -348,7 +348,7 @@ public class Monster : WalkableMonster, IMonster
         if (!Cooldowns.Expired(CooldownType.TargetChange)) return;
         Cooldowns.Start(CooldownType.TargetChange, Metadata.TargetChance.Interval);
     }
-    
+
     protected void Awake()
     {
         State = MonsterState.Awake;

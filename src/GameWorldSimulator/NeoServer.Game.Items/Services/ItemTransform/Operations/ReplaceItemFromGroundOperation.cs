@@ -27,7 +27,9 @@ internal static class ReplaceItemFromGroundOperation
             tile = staticToDynamicTileService.TransformIntoDynamicTile(clonnedTile) as IDynamicTile;
         }
         else
+        {
             tile = map[fromItem.Location] as IDynamicTile;
+        }
 
         if (fromItem is IGround) return Result<IItem>.NotApplicable;
         if (toItemType is null) fromItem.MarkAsDeleted();

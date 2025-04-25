@@ -7,12 +7,12 @@ using NeoServer.Game.Common.Contracts.Services;
 namespace NeoServer.Game.Combat.Services;
 
 /// <summary>
-/// Manage the player skull
+///     Manage the player skull
 /// </summary>
 public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSkullService
 {
     /// <summary>
-    /// Update player skull based on attack
+    ///     Update player skull based on attack
     /// </summary>
     /// <param name="aggressor"></param>
     /// <param name="victim"></param>
@@ -36,32 +36,11 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
 
         //when both players don't have any skull
         if (aggressor.HasSkull is false && victim.HasSkull is false)
-        {
             aggressor.SetSkull(Skull.White, whiteSkullEndingDate);
-        }
-    }
-
-    public void SetYellowSkullIfApplicable(IPlayer aggressor, IPlayer victim)
-    {
-        if (aggressor.HasSkull || !victim.HasSkull) return;
-        
-        var logoutBlockDuration = gameConfiguration.LogoutBlockDuration;
-        var damageRecord = aggressor.ReceivedDamages.GetCreatureDamage(victim);
-
-        if (damageRecord is null)
-        {
-            aggressor.SetSkull(Skull.Yellow, DateTime.Now.AddMilliseconds(logoutBlockDuration), enemy: victim);
-            return;
-        }
-
-        if (damageRecord.LastDamageTime >=
-            DateTime.Now.Ticks - TimeSpan.FromMilliseconds(logoutBlockDuration).Ticks) return;
-
-        aggressor.SetSkull(Skull.Yellow, DateTime.Now.AddMilliseconds(logoutBlockDuration), victim);
     }
 
     /// <summary>
-    /// Updates the player's skull based on number of kills
+    ///     Updates the player's skull based on number of kills
     /// </summary>
     /// <param name="aggressor">The player who has engaged in PvP activity.</param>
     public void UpdatePlayerSkull(IPlayer aggressor)
@@ -121,9 +100,25 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
         }
 
         // If the player has any unjustified kills, set their skull to white
-        if (aggressor.NumberOfUnjustifiedKillsLastDay > 0)
+        if (aggressor.NumberOfUnjustifiedKillsLastDay > 0) aggressor.SetSkull(Skull.White, whiteSkullEndingDate);
+    }
+
+    public void SetYellowSkullIfApplicable(IPlayer aggressor, IPlayer victim)
+    {
+        if (aggressor.HasSkull || !victim.HasSkull) return;
+
+        var logoutBlockDuration = gameConfiguration.LogoutBlockDuration;
+        var damageRecord = aggressor.ReceivedDamages.GetCreatureDamage(victim);
+
+        if (damageRecord is null)
         {
-            aggressor.SetSkull(Skull.White, whiteSkullEndingDate);
+            aggressor.SetSkull(Skull.Yellow, DateTime.Now.AddMilliseconds(logoutBlockDuration), victim);
+            return;
         }
+
+        if (damageRecord.LastDamageTime >=
+            DateTime.Now.Ticks - TimeSpan.FromMilliseconds(logoutBlockDuration).Ticks) return;
+
+        aggressor.SetSkull(Skull.Yellow, DateTime.Now.AddMilliseconds(logoutBlockDuration), victim);
     }
 }

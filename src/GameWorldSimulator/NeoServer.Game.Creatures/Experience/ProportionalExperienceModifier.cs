@@ -24,7 +24,10 @@ public class ProportionalExperienceModifier : IBaseExperienceModifier
         return true;
     }
 
-    private static int GetTotalMonsterDamage(IMonster monster) => monster.ReceivedDamages.TotalDamage;
+    private static int GetTotalMonsterDamage(IMonster monster)
+    {
+        return monster.ReceivedDamages.TotalDamage;
+    }
 
     private static int GetTotalPlayerDamage(IMonster monster, IPlayer player)
     {

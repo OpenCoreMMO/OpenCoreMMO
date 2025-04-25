@@ -83,7 +83,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
             player.OnLoggedOut -= playerLoggedOutEventHandler.Execute;
             player.Containers.OnOpenedContainer -= playerOpenedContainerEventHandler.Execute;
         }
-        
+
         creature.OnSay -= creatureSayEventHandler.Execute;
     }
 }

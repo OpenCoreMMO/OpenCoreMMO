@@ -12,8 +12,20 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.EventHandlers.Creature;
 
-public class CreatureAttackEventHandler(IGameServer game):INetworkEventHandler<ICreature>
+public class CreatureAttackEventHandler(IGameServer game) : INetworkEventHandler<ICreature>
 {
+    public void Subscribe(ICreature entity)
+    {
+        if (entity is not ICombatActor combatActor) return;
+        combatActor.OnAttackEnemy += Execute;
+    }
+
+    public void Unsubscribe(ICreature creature)
+    {
+        if (creature is not ICombatActor combatActor) return;
+        combatActor.OnAttackEnemy -= Execute;
+    }
+
     public void Execute(ICreature creature, ICreature victim, CombatAttackResult[] attacks)
     {
         var spectators = game.Map.GetPlayersAtPositionZone(creature.Location);
@@ -87,16 +99,5 @@ public class CreatureAttackEventHandler(IGameServer game):INetworkEventHandler<I
             connection.OutgoingPackets.Enqueue(new DistanceEffectPacket(creature.Location, destLocation,
                 (byte)attack.ShootType));
         connection.OutgoingPackets.Enqueue(new MagicEffectPacket(destLocation, EffectT.Puff));
-    }
-    
-    public void Subscribe(ICreature entity)
-    {
-        if (entity is not ICombatActor combatActor) return;
-        combatActor.OnAttackEnemy += Execute;
-    }
-    public void Unsubscribe(ICreature creature)
-    {
-        if (creature is not ICombatActor combatActor) return;
-        combatActor.OnAttackEnemy -= Execute;
     }
 }

@@ -53,12 +53,12 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
 
         foreach (var item in Enum.GetValues(typeof(T)))
         {
-            var name = prefix + item.ToString();
+            var name = prefix + item;
 
             if (upperCase)
                 name = name.ToUpperInvariant();
 
-            RegisterGlobalVariable(luaState, name, Convert. ToUInt64(item));
+            RegisterGlobalVariable(luaState, name, Convert.ToUInt64(item));
         }
     }
 }

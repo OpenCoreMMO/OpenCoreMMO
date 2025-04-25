@@ -43,7 +43,8 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         PlayerExhaustedEventHandler playerExhaustedEventHandler,
         PlayerReadTextEventHandler playerReadTextEventHandler,
         PlayerLoggedInEventHandler playerLoggedInEventHandler,
-        PlayerLoggedOutEventHandler playerLoggedOutEventHandler, PlayerSkullUpdatedEventHandler playerSkullUpdatedEventHandler)
+        PlayerLoggedOutEventHandler playerLoggedOutEventHandler,
+        PlayerSkullUpdatedEventHandler playerSkullUpdatedEventHandler)
     {
         _playerWalkCancelledEventHandler = playerWalkCancelledEventHandler;
         _playerClosedContainerEventHandler = playerClosedContainerEventHandler;

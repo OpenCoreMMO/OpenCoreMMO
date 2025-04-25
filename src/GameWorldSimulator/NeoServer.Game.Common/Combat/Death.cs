@@ -1,6 +1,3 @@
-using System;
-using NeoServer.Game.Common.Contracts.Creatures;
-
 namespace NeoServer.Game.Common.Combat;
 
 // public class Death

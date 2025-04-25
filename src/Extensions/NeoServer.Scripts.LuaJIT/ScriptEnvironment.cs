@@ -8,11 +8,15 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class ScriptEnvironment
 {
+    // result map
+    private static uint _lastResultId;
+
     // local item map
     private readonly Dictionary<uint, IThing> _localMap = new();
 
     // temporary item list
     private readonly Dictionary<ScriptEnvironment, IItem> _tempItems = new();
+    private readonly Dictionary<uint, DBResult> _tempResults = new();
     private int _callbackId;
 
     // for npc scripts
@@ -24,10 +28,6 @@ public class ScriptEnvironment
     // script file id
     private int _scriptId;
     private bool _timerEvent;
-
-    // result map
-    static uint _lastResultId;
-    private readonly Dictionary<uint, DBResult> _tempResults = new();
 
     public ScriptEnvironment()
     {
@@ -198,7 +198,9 @@ public class ScriptEnvironment
     }
 
     public DBResult GetResultByID(uint id)
-        => _tempResults.GetValueOrDefault(id);
+    {
+        return _tempResults.GetValueOrDefault(id);
+    }
 
     public uint AddResult(DBResult res)
     {
@@ -207,5 +209,7 @@ public class ScriptEnvironment
     }
 
     public bool RemoveResult(uint id)
-        => _tempResults.Remove(id);
+    {
+        return _tempResults.Remove(id);
+    }
 }

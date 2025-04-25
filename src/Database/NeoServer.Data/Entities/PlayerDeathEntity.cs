@@ -19,7 +19,7 @@ public class PlayerDeathEntity
     public int SkillMagicLevelLost { get; set; }
     public int SkillFishingLost { get; set; }
     public bool Unjustified { get; set; }
-    
+
     //Navigations
     public PlayerEntity Player { get; set; }
     public ICollection<PlayerDeathKillerEntity> Killers { get; set; }

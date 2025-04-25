@@ -53,6 +53,7 @@ public abstract class BaseCondition : ICondition
     {
         IsDisabled = true;
     }
+
     public void Enable()
     {
         IsDisabled = false;

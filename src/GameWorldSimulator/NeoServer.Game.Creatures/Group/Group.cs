@@ -11,5 +11,5 @@ public class Group : IGroup
     public bool Access { get; set; }
     public int MaxDepotItems { get; set; }
     public int MaxVipEntries { get; set; }
-    public Dictionary<PlayerFlag, bool> Flags { get; set; } = new Dictionary<PlayerFlag, bool>();
+    public Dictionary<PlayerFlag, bool> Flags { get; set; } = new();
 }

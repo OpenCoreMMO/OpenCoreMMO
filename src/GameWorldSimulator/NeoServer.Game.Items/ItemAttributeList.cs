@@ -2,7 +2,6 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text.Json;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Helpers;
@@ -191,7 +190,7 @@ public sealed class ItemAttributeList : IItemAttributeList
 
         if (!_defaultAttributes.TryGetValue(attribute, out var value)) return default;
         if (value.Item1 is not Array) return new[] { value.Item1 };
-        
+
         var pool = ArrayPool<dynamic>.Shared;
         dynamic[] newArray = pool.Rent(value.Item1.Length);
 
@@ -229,7 +228,7 @@ public sealed class ItemAttributeList : IItemAttributeList
         if (_customAttributes.TryGetValue(attribute, out var value))
         {
             if (value.Item1 is not Array) return default;
-            
+
             var pool = ArrayPool<dynamic>.Shared;
             dynamic[] newArray = pool.Rent(value.Item1.Length);
 

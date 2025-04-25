@@ -16,7 +16,7 @@ public struct LightInfo(byte level, byte color)
 
 public class GlobalEvent : Script
 {
-    private ILogger _logger;
+    private readonly ILogger _logger;
 
     public GlobalEvent(LuaScriptInterface scriptInterface, ILogger logger) : base(scriptInterface)
     {
@@ -37,7 +37,7 @@ public class GlobalEvent : Script
             GlobalEventType.GLOBALEVENT_RECORD => "onRecord",
             GlobalEventType.GLOBALEVENT_TIMER => "onTime",
             GlobalEventType.GLOBALEVENT_PERIODCHANGE => "onPeriodChange",
-            GlobalEventType.GLOBALEVENT_ON_THINK => "onThink", 
+            GlobalEventType.GLOBALEVENT_ON_THINK => "onThink",
             GlobalEventType.GLOBALEVENT_SAVE => "onSave",
             _ => throw new InvalidOperationException("[GlobalEvent::GetScriptTypeName] - Invalid event type")
         };
@@ -47,7 +47,9 @@ public class GlobalEvent : Script
     {
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            _logger.Error("[GlobalEvent::ExecutePeriodChange - {Name}] Call stack overflow. Too many Lua script calls being nested", Name);
+            _logger.Error(
+                "[GlobalEvent::ExecutePeriodChange - {Name}] Call stack overflow. Too many Lua script calls being nested",
+                Name);
             return false;
         }
 
@@ -67,7 +69,9 @@ public class GlobalEvent : Script
     {
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            _logger.Error("[GlobalEvent::ExecuteRecord - {Name}] Call stack overflow. Too many Lua script calls being nested", Name);
+            _logger.Error(
+                "[GlobalEvent::ExecuteRecord - {Name}] Call stack overflow. Too many Lua script calls being nested",
+                Name);
             return false;
         }
 
@@ -87,7 +91,9 @@ public class GlobalEvent : Script
     {
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            _logger.Error("[GlobalEvent::ExecuteEvent - {Name}] Call stack overflow. Too many Lua script calls being nested", Name);
+            _logger.Error(
+                "[GlobalEvent::ExecuteEvent - {Name}] Call stack overflow. Too many Lua script calls being nested",
+                Name);
             return false;
         }
 
@@ -99,10 +105,10 @@ public class GlobalEvent : Script
         scriptInterface.PushFunction(GetScriptId());
 
         var paramsCount = 0;
-        
+
         if (EventType is not (GlobalEventType.GLOBALEVENT_NONE or GlobalEventType.GLOBALEVENT_TIMER))
             return scriptInterface.CallFunction(paramsCount);
-        
+
         Lua.PushNumber(luaState, Interval);
         paramsCount = 1;
 

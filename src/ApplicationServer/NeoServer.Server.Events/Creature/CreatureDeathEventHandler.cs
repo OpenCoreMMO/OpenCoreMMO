@@ -9,13 +9,13 @@ using NeoServer.Server.Common.Contracts;
 namespace NeoServer.Server.Events.Creature;
 
 public class CreatureDeathEventHandler(
-    IPlayerRepository playerRepository,
-    IPlayerDeathRepository playerDeathRepository,
-    IGameCreatureManager creatureManager,
-    ICreatureDeathService creatureDeathService,
-    IExperienceSharingService experienceSharingService,
-    ILootService lootService,
-    GameConfiguration gameConfiguration)
+        IPlayerRepository playerRepository,
+        IPlayerDeathRepository playerDeathRepository,
+        IGameCreatureManager creatureManager,
+        ICreatureDeathService creatureDeathService,
+        IExperienceSharingService experienceSharingService,
+        ILootService lootService,
+        GameConfiguration gameConfiguration)
     //IScriptManager scriptManager)
     : IEventHandler
 {
@@ -23,7 +23,7 @@ public class CreatureDeathEventHandler(
     {
         //lua script can be added here to handle loot creation
         _ = lootService.CreateLootContainer(deadCreature);
-        
+
         var damageRecordResult = deadCreature.ReceivedDamages.GetDamageRecords(gameConfiguration.Death);
 
         creatureDeathService.Handle(deadCreature, by, damageRecordResult.DamageRecords);
@@ -40,8 +40,8 @@ public class CreatureDeathEventHandler(
                 playerDeathRepository.Save(player, damageRecordResult);
                 break;
         }
-        
-    //    scriptManager.CreatureEvents.ExecuteOnCreatureDeath(deadCreature, by);
+
+        //    scriptManager.CreatureEvents.ExecuteOnCreatureDeath(deadCreature, by);
     }
 
     private void OnMonsterKilled(ICombatActor creature)

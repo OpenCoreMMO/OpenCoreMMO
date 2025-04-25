@@ -11,12 +11,10 @@ namespace NeoServer.Server.Tasks;
 
 public class Dispatcher : IDispatcher
 {
-    private readonly ILogger _logger;
     private readonly IEventAggregator _eventAggregator;
+    private readonly ILogger _logger;
     private readonly ChannelReader<IEvent> _reader;
     private readonly ChannelWriter<IEvent> _writer;
-
-    public long GlobalTime { get; private set; }
 
     /// <summary>
     ///     A queue responsible for process events
@@ -29,6 +27,8 @@ public class Dispatcher : IDispatcher
         _logger = logger;
         _eventAggregator = eventAggregator;
     }
+
+    public long GlobalTime { get; private set; }
 
     /// <summary>
     ///     Adds an event to dispatcher queue
@@ -55,20 +55,18 @@ public class Dispatcher : IDispatcher
                 if (token.IsCancellationRequested) _writer.Complete();
                 // Fast loop around available jobs
                 while (_reader.TryRead(out var evt))
-                {
                     if (!evt.HasExpired || evt.HasNoTimeout)
                         try
                         {
                             evt.Action?.Invoke(); //execute event
                             _eventAggregator.PropagateEvents(); //propagate events
-                            
+
                             _logger.Verbose(evt.Action?.Target?.ToString());
                         }
                         catch (Exception ex)
                         {
                             _logger.Error(ex, "Game event exception");
                         }
-                }
             }
         }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }

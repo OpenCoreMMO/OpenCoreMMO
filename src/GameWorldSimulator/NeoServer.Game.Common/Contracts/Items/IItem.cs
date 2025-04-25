@@ -60,8 +60,8 @@ public interface IItem : IThing, IHasDecay
     IThing Owner { get; }
     float Weight { get; }
     IThing Parent { get; }
-    string IThing.Name => Metadata.Name;
     string Article => Metadata.Article;
+    string IThing.Name => Metadata.Name;
     void UpdateMetadata(IItemType newMetadata);
     void MarkAsDeleted();
 
