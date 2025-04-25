@@ -66,6 +66,8 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         ConfigureProperty(entity, e => e.Skull, "int", "0");
         entity.Property(e => e.SkullEndsAt);
 
+        entity.Ignore(e => e.KillsLastMonth);
+
         entity.HasOne(d => d.Account)
             .WithMany(p => p.Players)
             .HasForeignKey(d => d.AccountId)
@@ -77,7 +79,9 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
 
         entity.HasOne(x => x.GuildMember).WithOne(x => x.Player);
 
-        entity.HasMany(x => x.Deaths).WithOne(x => x.Player);
+        entity.HasMany(x => x.Deaths)
+            .WithOne(x => x.Player)
+            .HasForeignKey(x => x.PlayerId);
 
         PlayerModelSeed.Seed(entity);
     }

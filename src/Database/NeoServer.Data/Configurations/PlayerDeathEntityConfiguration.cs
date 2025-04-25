@@ -12,7 +12,6 @@ public class PlayerDeathEntityConfiguration : IEntityTypeConfiguration<PlayerDea
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd().IsRequired();
 
-        builder.Property(e => e.PlayerId).IsRequired();
         builder.Property(e => e.DeathDateTime).IsRequired();
         builder.Property(e => e.Level).IsRequired();
         builder.Property(e => e.Unjustified).IsRequired();
@@ -28,6 +27,9 @@ public class PlayerDeathEntityConfiguration : IEntityTypeConfiguration<PlayerDea
 
         builder.HasMany(x => x.Killers);
 
-        builder.HasOne(x => x.Player).WithMany(x => x.Deaths).HasForeignKey(d => d.PlayerId);
+        builder.HasOne(x => x.Player)
+            .WithMany(x => x.Deaths)
+            .HasForeignKey(d => d.PlayerId)
+            .IsRequired();
     }
 }

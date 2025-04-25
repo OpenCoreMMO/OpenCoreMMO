@@ -59,6 +59,8 @@ public class NeoContext : DbContext
             modelBuilder.ApplyConfiguration(new ForSqLiteGuildRankEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLiteWorldEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLiteAccountPremiumHistoryEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new ForSqLitePlayerDeathEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new ForSqLitePlayerDeathKillerEntityConfiguration());
         }
         else
         {
@@ -71,6 +73,8 @@ public class NeoContext : DbContext
             modelBuilder.ApplyConfiguration(new GuildRankEntityConfiguration());
             modelBuilder.ApplyConfiguration(new WorldEntityConfiguration());
             modelBuilder.ApplyConfiguration(new AccountPremiumHistoryEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new PlayerDeathEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new PlayerDeathKillerEntityConfiguration());
         }
 
         modelBuilder.ApplyConfiguration(new PlayerQuestEntityConfiguration());

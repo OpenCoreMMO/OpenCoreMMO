@@ -8,15 +8,14 @@ public class WorldRecordEntityConfiguration : IEntityTypeConfiguration<WorldReco
 {
     public void Configure(EntityTypeBuilder<WorldRecordEntity> builder)
     {
-        builder.HasKey(e => new { e.Id });
+        builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
-        builder.Property(e => e.WordId).IsRequired();
         builder.Property(e => e.Record).IsRequired();
         builder.Property(e => e.CreatedAt);
 
         builder.HasOne(e => e.World)
             .WithMany(p => p.WorldRecords)
-            .HasForeignKey(x => x.World);
+            .HasForeignKey(x => x.WorldId).IsRequired();
     }
 }

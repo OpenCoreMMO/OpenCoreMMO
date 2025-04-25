@@ -217,7 +217,7 @@ public class GameCreatureManager : IGameCreatureManager
             {
                 CreatedAt = DateTime.UtcNow,
                 Record = actualCount,
-                WordId = worldId
+                WorldId = worldId
             });
 
             return (true, actualCount, lastWorldRecord is  null ? 0 : lastWorldRecord.Record);

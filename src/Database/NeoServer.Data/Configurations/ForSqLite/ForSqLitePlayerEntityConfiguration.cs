@@ -27,6 +27,7 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
             .ValueGeneratedOnAdd();
 
         entity.Property(e => e.Group);
+        entity.Ignore(e => e.KillsLastMonth);
 
         ConfigureProperty(entity, e => e.AccountId, "int(11)", "0");
         ConfigureProperty(entity, e => e.TownId, "int(11)", "1");
