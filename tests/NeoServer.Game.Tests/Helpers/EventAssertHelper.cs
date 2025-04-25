@@ -63,9 +63,14 @@ public static class EventAssertHelper
     private static void RunPredicate<T>(Expression<Func<T, bool>> predicate, T value)
     {
         if (predicate.Compile().Invoke(value) is false)
-            Execute.Assertion
+            AssertionChain.GetOrCreate()
                 .FailWith("Expected event with argument of type <{0}> that matches {1}, but found none.",
                     typeof(T),
                     predicate.Body);
+        
+            // Execute.Assertion
+            //     .FailWith("Expected event with argument of type <{0}> that matches {1}, but found none.",
+            //         typeof(T),
+            //         predicate.Body);
     }
 }
