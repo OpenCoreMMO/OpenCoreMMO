@@ -7,12 +7,17 @@ using NeoServer.Server.Common.Contracts;
 
 namespace NeoServer.Networking.EventHandlers.Creature;
 
-public class PlayerConditionChangedEventHandler(IGameServer game) : INetworkingEventHandler<CreatureConditionAddedEvent>
+public class PlayerConditionChangedEventHandler(IGameServer game)
+    : INetworkingEventHandler<CreatureConditionAddedEvent>, INetworkingEventHandler<CreatureConditionRemovedEvent>
 {
-    public void Handle(CreatureConditionAddedEvent @event)
+    public void Handle(CreatureConditionAddedEvent @event) => SendPackets(@event.Creature);
+
+    public void Handle(CreatureConditionRemovedEvent @event) => SendPackets(@event.Creature);
+
+    private void SendPackets(ICreature creature)
     {
-        if (@event.Creature is not IPlayer player) return;
-        if (!game.CreatureManager.GetPlayerConnection(@event.Creature.CreatureId, out var connection)) return;
+        if (creature is not IPlayer player) return;
+        if (!game.CreatureManager.GetPlayerConnection(creature.CreatureId, out var connection)) return;
 
         ushort icons = 0;
 

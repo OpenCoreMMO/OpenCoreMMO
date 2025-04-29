@@ -50,7 +50,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         condition.Start(this);
         if (result == false) return;
 
-        EventAggregator.Publish(CreatureConditionAddedEvent.SetValues(this, condition));
+        EventAggregator.Publish(new CreatureConditionAddedEvent(this, condition));
     }
 
     public void RemoveCondition(ICondition condition)
@@ -72,13 +72,13 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         if (!Conditions.TryGetValue(type, out var condition)) return;
 
         condition.Enable();
-        EventAggregator.Publish(CreatureConditionAddedEvent.SetValues(this, condition));
+        EventAggregator.Publish(new CreatureConditionAddedEvent(this, condition));
     }
 
     public void RemoveCondition(ConditionType type)
     {
         if (Conditions.Remove(type, out var condition) is false) return;
-        OnRemovedCondition?.Invoke(this, condition);
+        EventAggregator.Publish(new CreatureConditionRemovedEvent(this, condition));
     }
 
     public bool HasCondition(ConditionType type, out ICondition condition)
@@ -161,7 +161,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnStoppedAttack?.Invoke(this);
     }
 
-    public bool Attack(ICreature creature, IUsableAttackOnCreature item)
+    public virtual bool Attack(ICreature creature, IUsableAttackOnCreature item)
     {
         if (creature is not ICombatActor enemy || enemy.IsDead || IsDead || !CanSee(creature.Location) ||
             creature.Equals(this) || creature.IsInvisible)
@@ -399,7 +399,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public virtual void Kill(ICombatActor enemy, bool lastHit = false, bool unjustified = false)
     {
-        EventAggregator.Publish(CreatureKillEvent.SetValues(this, enemy, lastHit, unjustified));
+        EventAggregator.Publish(new CreatureKillEvent(this, enemy, lastHit, unjustified));
     }
 
     public abstract bool HasImmunity(Immunity immunity);

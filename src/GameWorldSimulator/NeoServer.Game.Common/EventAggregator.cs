@@ -28,9 +28,15 @@ public class EventAggregator : IEventAggregator
             .Cache
             .Where(type => typeof(IApplicationEventHandler).IsAssignableFrom(type))
             .Where(type => !type.IsAbstract && !type.IsEnum && !type.IsInterface)
-            .GroupBy(type => type.GetInterfaces()
-                .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IApplicationEventHandler<>))
-                .GetGenericArguments().First().FullName);
+            .SelectMany(type =>
+                type.GetInterfaces()
+                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IApplicationEventHandler<>))
+                    .Select(i => new
+                    {
+                        EventTypeFullName = i.GetGenericArguments().First().FullName,
+                        HandlerType = type
+                    }))
+            .GroupBy(x => x.EventTypeFullName, x => x.HandlerType);
 
         foreach (var group in handlersGroup)
         {
@@ -61,14 +67,18 @@ public class EventAggregator : IEventAggregator
                 handlers.Select(x =>
                     {
                         var handlerInstance = _serviceProvider.GetService(x);
-                        IApplicationEventHandler<IEvent> handler;
 
                         if (!x.GetInterfaces()
                                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition().FullName ==
                                     typeof(INetworkingEventHandler<>).FullName))
                             return null;
 
-                        var handleMethod = x.GetMethod(nameof(handler.Handle));
+                        var handleMethod = x.GetMethods()
+                            .FirstOrDefault(m =>
+                                m.Name == nameof(INetworkingEventHandler<IEvent>.Handle) &&
+                                m.GetParameters().Length == 1 &&
+                                m.GetParameters()[0].ParameterType.FullName == eventNane);
+                        
                         Action<IEvent> handlerDelegate = @event => handleMethod.Invoke(handlerInstance, [@event]);
                         return handlerDelegate;
                     })
@@ -113,7 +123,7 @@ public class EventAggregator : IEventAggregator
 
     public static void Publish(IEvent @event)
     {
-        Instance.Publish(@event);
+        Instance?.Publish(@event);
     }
 }
 

@@ -461,6 +461,11 @@ public class Map : IMap
                 nextTile = newDestinationTile;
         }
 
+        if (nextTile is null)
+        {
+            creature.CancelWalk();
+            return;
+        }
 
         if (creature is IPlayer player && nextTile.ProtectionZone && player.IsProtectionZoneBlocked)
         {

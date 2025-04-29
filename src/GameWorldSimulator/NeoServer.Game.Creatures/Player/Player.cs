@@ -986,6 +986,13 @@ public class Player : CombatActor, IPlayer
         return base.Attack(enemy);
     }
 
+    public override bool Attack(ICreature enemy, IUsableAttackOnCreature item)
+    {
+        SetLogoutBlock();
+        if (enemy is IPlayer) SetProtectionZoneBlock();
+        return base.Attack(enemy, item);
+    }
+
     public void StopAllActions()
     {
         StopWalking();
