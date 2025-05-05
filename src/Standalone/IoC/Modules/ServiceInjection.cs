@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Game.Combat.Services;
+using NeoServer.Game.Combat.Services.Attacks;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Inspection;
 using NeoServer.Game.Common.Contracts.Services;
@@ -72,6 +73,11 @@ public static class ServiceInjection
         Assembly.GetAssembly(typeof(PlayerConditionChangedEventHandler));
         builder.RegisterAssembliesByInterface(typeof(IApplicationEventHandler<>));
 
+        builder.AddSingleton<IAttackService, AttackService>();
+        builder.AddSingleton<AttackStrategy>();
+        builder.AddSingleton<AttackValidation>();
+        builder.AddSingleton<RegularAttackService>();
+        
         return builder;
     }
 }

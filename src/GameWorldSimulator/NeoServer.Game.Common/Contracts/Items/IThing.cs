@@ -15,6 +15,7 @@ public interface IThing : IUsable
 
     public bool IsCloseTo(IThing thing)
     {
+        if (thing is null) return false;
         if (Location.Type is not LocationType.Ground &&
             this is IItem { CanBeMoved: true } item)
             return item.Owner?.Location.IsNextTo(thing.Location) ?? false;

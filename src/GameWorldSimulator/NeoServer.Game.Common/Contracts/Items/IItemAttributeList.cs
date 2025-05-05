@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location;
@@ -21,7 +22,7 @@ public interface IItemAttributeList
     byte[] GetRequiredVocations();
     ushort GetTransformationItem();
     ushort GetDestructionItem();
-    Tuple<DamageType, byte> GetWeaponElementDamage();
+    ElementalDamage GetWeaponElementDamage();
     bool HasAttribute(ItemAttribute attribute);
     bool HasAttribute(string attribute);
     void SetAttribute(ItemAttribute attribute, IConvertible attributeValue);

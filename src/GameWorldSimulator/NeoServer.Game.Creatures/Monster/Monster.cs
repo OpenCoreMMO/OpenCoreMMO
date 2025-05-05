@@ -118,6 +118,8 @@ public class Monster : WalkableMonster, IMonster
     public override IOutfit Outfit { get; protected set; }
     public override ushort MinimumAttackPower => 0;
     public override bool UsingDistanceWeapon => TargetDistance > 1;
+    public override ushort MaximumAttackPower { get; } = 100;
+    public override ushort MaximumElementalAttackPower { get; }
     public ISpawnPoint Spawn { get; }
 
     public bool IsHostile => Metadata.HasFlag(CreatureFlagAttribute.Hostile);

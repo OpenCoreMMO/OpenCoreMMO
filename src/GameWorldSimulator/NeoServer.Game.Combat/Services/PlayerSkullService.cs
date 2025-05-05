@@ -3,6 +3,7 @@ using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat.Enums;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Services;
+using NeoServer.Game.Common.Helpers;
 
 namespace NeoServer.Game.Combat.Services;
 
@@ -18,6 +19,7 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
     /// <param name="victim"></param>
     public void UpdateSkullOnAttack(IPlayer aggressor, IPlayer victim)
     {
+        if(Guard.IsNull(aggressor) || Guard.IsNull(victim)) return;
         if (!(gameConfiguration.PvP?.SkullSystemEnabled ?? false)) return;
 
         var whiteSkullEndingDate =

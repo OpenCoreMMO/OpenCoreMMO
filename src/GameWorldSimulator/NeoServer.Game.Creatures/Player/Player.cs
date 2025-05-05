@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Game.Combat.Attacks;
 using NeoServer.Game.Combat.Conditions;
+using NeoServer.Game.Combat.Services;
 using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Combat.Validation;
 using NeoServer.Game.Common;
@@ -18,6 +19,8 @@ using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.Items.Types.Body;
 using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
+using NeoServer.Game.Common.Contracts.Items.Weapons;
+using NeoServer.Game.Common.Contracts.Items.Weapons.Attributes;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
@@ -300,7 +303,9 @@ public class Player : CombatActor, IPlayer
     }
 
     public uint Id { get; }
-    public override ushort MinimumAttackPower => (ushort)(Level / 5);
+    public override ushort MinimumAttackPower => Inventory.Weapon?.MinHitChance ?? (ushort)(Level / 5);
+    public override ushort MaximumAttackPower => CalculateTotalAttack(Inventory.TotalAttack);
+
     public override ushort ArmorRating => Inventory.TotalArmor;
     public PvpSecureMode SecureMode { get; private set; }
     public float FreeCapacity => TotalCapacity - Inventory.TotalWeight;
@@ -309,6 +314,43 @@ public class Player : CombatActor, IPlayer
     public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
     public override bool CanBeSeen => Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
     public virtual bool CanSeeInspectionDetails => false;
+    
+    public override ushort MaximumElementalAttackPower =>
+        CalculateTotalAttack(Inventory.TotalElementalAttack.AttackPower, isElemental: true);
+
+
+    private ushort CalculateTotalAttack(ushort attackPower, bool isElemental = false)
+    {
+        var damageMultiplier = SkillInUse switch
+        {
+            SkillType.Distance => Vocation.Formula?.DistDamage ?? 1f,
+            SkillType.Magic => 1f,
+            _ => Vocation.Formula?.MeleeDamage ?? 1f
+        };
+
+        var attackPercentage = 100;
+
+         if (Inventory.Weapon is IHasAttack weapon)
+         {
+             attackPercentage = isElemental
+                 ? weapon.WeaponAttack.ElementalAttackPowerPercentage
+                 : weapon.WeaponAttack.AttackPowerPercentage;
+         }
+        
+         if (Inventory.Weapon is IMagicalWeapon magicalWeapon) return magicalWeapon.MaxHitChance;
+        
+         if (Inventory.Weapon is IDistanceWeapon && Inventory.Ammo is { } ammo)
+         {
+             attackPercentage = isElemental
+                 ? ammo.WeaponAttack.ElementalAttackPowerPercentage
+                 : ammo.WeaponAttack.AttackPowerPercentage;
+         }
+        
+         var maximumAttack = (ushort)(Inventory.AttackRate * DamageFactor * attackPower * Skills[SkillInUse].Level +
+                                      Level / 5 * damageMultiplier);
+
+        return (ushort)(maximumAttack * attackPercentage / 100);
+    }
 
     public ushort GetRawSkillLevel(SkillType skillType)
     {
@@ -844,6 +886,13 @@ public class Player : CombatActor, IPlayer
         byte? toPosition)
     {
         return PlayerHand.Move(item, source, destination, amount, fromPosition, toPosition);
+    }
+
+    public override CalculatedAttackDamage CalculateAttackDamage()
+    {
+        CalculatedAttackDamage damage = new CalculatedAttackDamage();
+        
+        return base.CalculateAttackDamage();
     }
 
     public override Result SetAttackTarget(ICreature target)

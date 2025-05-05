@@ -6,20 +6,28 @@ using NeoServer.Game.Common.Location.Structs;
 
 namespace NeoServer.Game.Combat.Services;
 
-public readonly ref struct AttackInput(IThing aggressor, IThing target)
+public readonly struct AttackInput(IThing aggressor, IThing target)
 {
     public IThing Aggressor => aggressor;
     public IThing Target => target;
     public required AttackParameter Parameters { get; init; }
 }
 
-
+public enum AttackType
+{
+    None,
+    Regular,
+    Rune,
+    Spell,
+    Field
+}
 public struct AttackParameter
 {
     public readonly record struct AttackCondition(byte DamageCount, int Interval)
     {
         public bool None => DamageCount == 0;
     }
+    public required AttackType Type { get; set; }
     public byte Range { get; set; }
     public ushort MinDamage { get; set; }
     public ushort MaxDamage { get; set; }
@@ -31,7 +39,7 @@ public struct AttackParameter
     public byte Length { get; set; }
     public byte Spread { get; set; }
     public ShootType ShootType { get; set; }
-    public required string Name { get; set; }
+    //public required string Name { get; set; }
     public ExtraAttack ExtraAttack { get; set; }
     public CooldownType CooldownType { get; set; }
     public bool HasExtraAttack => ExtraAttack.MaxDamage > 0;
@@ -43,7 +51,7 @@ public struct AttackParameter
     public bool AmmoCanCauseMiss { get; set; }
     public ushort CreateItemId { get; set; }
     public AttackCondition Condition { get; set; }
-    public int Cooldown { get; set; }
+    public int CooldownDuration { get; set; }
 }
 
 public readonly struct ExtraAttack

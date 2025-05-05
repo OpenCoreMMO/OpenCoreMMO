@@ -49,8 +49,8 @@ public class WeaponFactory : IFactory
 
         if (ICumulative.IsApplicable(itemType))
         {
-            if (ThrowableDistanceWeapon.IsApplicable(itemType))
-                return new ThrowableDistanceWeapon(itemType, location, attributes);
+            if (ThrowableWeapon.IsApplicable(itemType))
+                return new ThrowableWeapon(itemType, location, attributes);
             if (Ammo.IsApplicable(itemType)) return new Ammo(itemType, location, attributes);
         }
 

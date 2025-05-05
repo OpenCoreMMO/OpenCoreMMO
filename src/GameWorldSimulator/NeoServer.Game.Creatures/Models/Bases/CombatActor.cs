@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using NeoServer.Game.Combat.Services;
 using NeoServer.Game.Combat.Validation;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat;
@@ -186,6 +188,23 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnAttackEnemy?.Invoke(this, enemy, new[] { combat });
 
         return true;
+    }
+
+    public virtual CalculatedAttackDamage CalculateAttackDamage()
+    {
+        return new CalculatedAttackDamage();
+    }
+    public Result CanAttack()
+    {
+        if (IsDead) return Result.Fail(InvalidOperation.CreatureIsDead);
+        
+        if (!Cooldowns.Expired(CooldownType.Combat)) 
+            return Result.Fail(InvalidOperation.CannotAttackThatFast);
+        
+        if (Tile?.ProtectionZone ?? false)
+            return Result.Fail(InvalidOperation.CannotAttackWhileInProtectionZone);
+
+        return Result.Success;
     }
 
     public virtual Result Attack(ICombatActor enemy)
@@ -499,6 +518,11 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnAttackCanceled?.Invoke(this);
     }
 
+    public virtual void PreAttack(AttackParameter attackParameter)
+    {
+        Cooldowns.Start(attackParameter.CooldownType, attackParameter.CooldownDuration);
+    }
+
     #region Events
 
     public event Heal OnHeal;
@@ -538,6 +562,9 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public IDictionary<ConditionType, ICondition> Conditions { get; set; } =
         new Dictionary<ConditionType, ICondition>();
+
+    public abstract ushort MaximumAttackPower { get; }
+    public abstract ushort MaximumElementalAttackPower { get; }
 
     #endregion
 }

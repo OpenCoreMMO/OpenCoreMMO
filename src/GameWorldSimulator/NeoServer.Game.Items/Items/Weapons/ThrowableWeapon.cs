@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NeoServer.Game.Combat.Attacks;
 using NeoServer.Game.Combat.Calculations;
+using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
@@ -15,21 +16,23 @@ using NeoServer.Game.Items.Bases;
 
 namespace NeoServer.Game.Items.Items.Weapons;
 
-public class ThrowableDistanceWeapon : CumulativeEquipment, IThrowableDistanceWeaponItem
+public class ThrowableWeapon : CumulativeEquipment, IThrowableWeapon
 {
-    public ThrowableDistanceWeapon(IItemType type, Location location,
+    public ThrowableWeapon(IItemType type, Location location,
         IDictionary<ItemAttribute, IConvertible> attributes) : base(type, location, attributes)
     {
+        WeaponAttack = new WeaponAttack(Metadata);
     }
 
-    public ThrowableDistanceWeapon(IItemType type, Location location, byte amount) : base(type, location, amount)
+    public ThrowableWeapon(IItemType type, Location location, byte amount) : base(type, location, amount)
     {
+        WeaponAttack = new WeaponAttack(Metadata);
     }
 
-    private byte ExtraHitChance => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.HitChance);
+    public byte ExtraHitChance => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.HitChance);
     private byte Defense => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Defense);
-    private Tuple<DamageType, byte> ElementalDamage => Metadata.Attributes.GetWeaponElementDamage();
     private decimal BreakChance => Metadata.Attributes.GetAttribute<decimal>("breakChance");
+    public WeaponAttack WeaponAttack { get; } //todo: rename to Attack
 
     protected override string PartialInspectionText
     {
@@ -37,15 +40,15 @@ public class ThrowableDistanceWeapon : CumulativeEquipment, IThrowableDistanceWe
         {
             var range = Range > 0 ? $"Range: {Range}" : string.Empty;
             var hit = ExtraHitChance > 0 ? $"Hit% +{ExtraHitChance}" : string.Empty;
-            var elementalDamageText = ElementalDamage is not null && ElementalDamage.Item2 > 0
-                ? $" + {ElementalDamage.Item2} {DamageTypeParser.Parse(ElementalDamage.Item1)},"
+            var elementalDamageText =  WeaponAttack.ElementalDamage.AttackPower > 0
+                ? $" + {WeaponAttack.ElementalDamage.AttackPower} {DamageTypeParser.Parse(WeaponAttack.ElementalDamage.DamageType)},"
                 : ",";
 
             var stringBuilder = new StringBuilder();
 
             if (!string.IsNullOrWhiteSpace(range)) stringBuilder.Append($"{range}, ");
 
-            stringBuilder.Append($"Atk: {AttackPower}{elementalDamageText} ");
+            stringBuilder.Append($"Atk: {WeaponAttack.AttackPower}{elementalDamageText} ");
             stringBuilder.Append($"Def: {Defense}, ");
 
             if (!string.IsNullOrWhiteSpace(hit)) stringBuilder.Append($"{hit}, ");
@@ -69,6 +72,9 @@ public class ThrowableDistanceWeapon : CumulativeEquipment, IThrowableDistanceWe
 
     public byte AttackPower => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Attack);
     public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Range);
+    public bool ShouldBreak => BreakChance > 0 && GameRandom.Random.Next(1, maxValue: 100) <= BreakChance;
+
+    public ushort? MinHitChance { get; }
 
     public bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combatResult)
     {

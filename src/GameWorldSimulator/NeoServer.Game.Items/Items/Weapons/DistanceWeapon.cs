@@ -5,6 +5,7 @@ using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Body;
+using NeoServer.Game.Common.Contracts.Items.Weapons.Attributes;
 using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Item;
@@ -13,12 +14,8 @@ using NeoServer.Game.Items.Bases;
 
 namespace NeoServer.Game.Items.Items.Weapons;
 
-public class DistanceWeapon : Equipment, IDistanceWeapon
+public class DistanceWeapon(IItemType type, Location location): Equipment(type, location), IDistanceWeapon, IHasAttackBonus, INeedsAmmo
 {
-    public DistanceWeapon(IItemType type, Location location) : base(type, location)
-    {
-    }
-
     protected override string PartialInspectionText
     {
         get
@@ -54,6 +51,10 @@ public class DistanceWeapon : Equipment, IDistanceWeapon
     public byte ExtraAttack => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Attack);
     public sbyte ExtraHitChance => Metadata.Attributes.GetAttribute<sbyte>(ItemAttribute.HitChance);
     public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Range);
+    public byte AttackBonus => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Attack);
+    public bool CanShootAmmunition(IAmmo ammo) => Metadata.AmmoType == (ammo?.AmmoType ?? AmmoType.None);
+
+    public ushort? MinHitChance { get; }
 
     public bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combatResult)
     {
@@ -62,7 +63,7 @@ public class DistanceWeapon : Equipment, IDistanceWeapon
 
         if (actor is not IPlayer player) return false;
 
-        if (player.Inventory[Slot.Ammo] is not IAmmoEquipment ammo) return false;
+        if (player.Inventory[Slot.Ammo] is not IAmmo ammo) return false;
 
         if (ammo.AmmoType != Metadata.AmmoType) return false;
 
@@ -114,18 +115,19 @@ public class DistanceWeapon : Equipment, IDistanceWeapon
     }
 
     private void UseElementalDamage(ICombatActor actor, ICombatActor enemy, ref CombatAttackResult combatResult,
-        ref bool result, IPlayer player, IAmmoEquipment ammo, ref ushort maxDamage, ref CombatAttackValue combat)
+        ref bool result, IPlayer player, IAmmo ammo, ref ushort maxDamage, ref CombatAttackValue combat)
     {
         if (!ammo.HasElementalDamage) return;
 
-        maxDamage = player.CalculateAttackPower(0.09f, (ushort)(ammo.ElementalDamage.Item2 + ExtraAttack));
-        combat = new CombatAttackValue(actor.MinimumAttackPower, maxDamage, Range, ammo.ElementalDamage.Item1);
+        maxDamage = 100; //player.CalculateAttackPower(0.09f, (ushort)(ammo.ElementalDamage.Item2 + ExtraAttack)); //TODO
+        combat = new CombatAttackValue(actor.MinimumAttackPower, maxDamage, Range,
+            ammo.WeaponAttack.ElementalDamage.DamageType);
 
         if (!DistanceCombatAttack.CalculateAttack(actor, enemy, combat, out var elementalDamage)) return;
 
-        combatResult.DamageType = ammo.ElementalDamage.Item1;
+        combatResult.DamageType = ammo.WeaponAttack.ElementalDamage.DamageType;
 
-        enemy.ReceiveAttack(actor, elementalDamage);
+        //enemy.ReceiveAttackFrom(actor, elementalDamage);
         result = true;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace NeoServer.Game.Common.Parsers;
 
-public class ShootTypeParser
+public static class ShootTypeParser
 {
     public static ShootType Parse(string shootType)
     {
@@ -48,7 +48,7 @@ public class ShootTypeParser
         };
     }
 
-    public static DamageType ToDamageType(ShootType shootType)
+    public static DamageType ToDamageType(this ShootType shootType)
     {
         return shootType switch
         {

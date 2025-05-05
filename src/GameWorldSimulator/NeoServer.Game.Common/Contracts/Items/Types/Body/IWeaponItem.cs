@@ -15,14 +15,6 @@ public interface IWeapon : IBodyEquipmentEquipment
 
     new Slot Slot => Slot.Left;
     public WeaponType Type => Metadata.WeaponType;
-
+    public ushort? MinHitChance { get; }
     bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combat);
-}
-
-public interface IWeaponItem : IWeapon
-{
-    ushort AttackPower { get; }
-    byte Defense => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Defense);
-
-    Tuple<DamageType, byte> ElementalDamage { get; }
 }

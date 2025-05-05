@@ -69,7 +69,7 @@
   },
   "immunities": {
 	  "physical":0,
-	  "energy": 1
+	  "energy": 0
   },
   "summon": {
     "maxSummons": 0,

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using NeoServer.Game.Combat.Services;
 using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Combat.Attacks;
@@ -45,6 +46,8 @@ public interface ICombatActor : IWalkableCreature
     decimal BaseDefenseSpeed { get; }
     bool IsDead { get; }
     ushort MinimumAttackPower { get; }
+    ushort MaximumAttackPower { get; }
+    ushort MaximumElementalAttackPower { get; }
     bool UsingDistanceWeapon { get; }
     uint AttackEvent { get; set; }
     bool CanBeAttacked { get; }
@@ -121,4 +124,6 @@ public interface ICombatActor : IWalkableCreature
     void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true);
     void RaiseDroppedLootEvent(ICombatActor actor, ILoot loot);
     event DropLoot OnDroppedLoot;
+    Result CanAttack();
+    void PreAttack(AttackParameter attackParameter);
 }

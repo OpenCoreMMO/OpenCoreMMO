@@ -16,7 +16,7 @@ using Xunit;
 
 namespace NeoServer.Game.Items.Tests.Items;
 
-public class ThrowableDistanceWeaponTests
+public class ThrowableWeaponTests
 {
     [Theory]
     [InlineData(6, 7, 10, 3, "(Range: 6, Atk: 7, Def: 10, Hit% +3)")]
@@ -68,7 +68,7 @@ public class ThrowableDistanceWeaponTests
         var tile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
         var enemyTile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(101, 100, 7));
 
-        var spear = (ThrowableDistanceWeapon)ItemTestData.CreateThrowableDistanceItem(1,
+        var spear = (ThrowableWeapon)ItemTestData.CreateThrowableDistanceItem(1,
             attributes: new (ItemAttribute, IConvertible)[]
             {
                 (ItemAttribute.Attack, 6),
@@ -104,7 +104,7 @@ public class ThrowableDistanceWeaponTests
         var tile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
         var enemyTile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(104, 100, 7));
 
-        var spear = (ThrowableDistanceWeapon)ItemTestData.CreateThrowableDistanceItem(1,
+        var spear = (ThrowableWeapon)ItemTestData.CreateThrowableDistanceItem(1,
             attributes: new (ItemAttribute, IConvertible)[]
             {
                 (ItemAttribute.Attack, 6),

@@ -3,6 +3,11 @@ using NeoServer.Game.Common.Item;
 
 namespace NeoServer.Game.Common.Combat.Structs;
 
+public ref struct CalculatedAttackDamage
+{
+    public CombatDamage MainDamage { get; set; }
+    public CombatDamage ExtraDamage { get; set; }
+}
 public ref struct CombatDamage
 {
     public CombatDamage(ushort damage, DamageType type)
@@ -58,7 +63,6 @@ public ref struct CombatDamage
     {
         Damage = newDamage;
     }
-
 
     /// <summary>
     ///     Sets a new damage

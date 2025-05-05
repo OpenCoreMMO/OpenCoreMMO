@@ -1,10 +1,10 @@
-﻿using NeoServer.Game.Common.Item;
+﻿using NeoServer.Game.Common.Contracts.Items.Weapons.Attributes;
+using NeoServer.Game.Common.Item;
 
 namespace NeoServer.Game.Common.Contracts.Items.Types.Body;
 
-public interface IDistanceWeapon : IWeapon
+public interface IDistanceWeapon : IWeapon, IHasRange
 {
-    byte ExtraAttack => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Attack);
     sbyte ExtraHitChance => Metadata.Attributes.GetAttribute<sbyte>(ItemAttribute.HitChance);
-    byte Range => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Range);
+    new byte Range => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Range);
 }

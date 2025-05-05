@@ -259,7 +259,7 @@ public class ItemTestData
         attributes ??= Array.Empty<(ItemAttribute, IConvertible)>();
         foreach (var (attributeType, value) in attributes) type.Attributes.SetAttribute(attributeType, value);
 
-        return new ThrowableDistanceWeapon(type, new Location(100, 100, 7), amount)
+        return new ThrowableWeapon(type, new Location(100, 100, 7), amount)
         {
             Chargeable = null,
             ItemTypeFinder = itemTypeFinder

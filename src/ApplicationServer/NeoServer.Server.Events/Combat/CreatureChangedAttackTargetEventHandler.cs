@@ -1,4 +1,8 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
+﻿using System;
+using System.Diagnostics;
+using NeoServer.Game.Combat.Services.Attacks;
+using NeoServer.Game.Combat.Services.Attacks.Builders;
+using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Results;
 using NeoServer.Server.Common.Contracts;
@@ -6,12 +10,13 @@ using NeoServer.Server.Tasks;
 
 namespace NeoServer.Server.Events.Combat;
 
-public class CreatureChangedAttackTargetEventHandler(IGameServer game, IPlayerSkullService skullService)
+public class CreatureChangedAttackTargetEventHandler(IGameServer game, IPlayerSkullService skullService, IAttackService attackService)
 {
     public void Execute(ICombatActor actor, uint oldTarget, uint newTarget)
     {
+        if (actor is IMonster) return;
         if (actor.AttackEvent != 0) return;
-
+        
         var result = Attack(actor);
         var attackSpeed = result ? actor.AttackSpeed : 300;
         actor.AttackEvent = game.Scheduler.AddEvent(new SchedulerEvent((int)attackSpeed, () => Attack(actor)));
@@ -46,9 +51,12 @@ public class CreatureChangedAttackTargetEventHandler(IGameServer game, IPlayerSk
 
     private Result AttackEnemy(ICombatActor actor, ICreature victim)
     {
-        if (actor is IPlayer playerAggressor && victim is IPlayer playerEnemy)
-            skullService.UpdateSkullOnAttack(playerAggressor, playerEnemy);
+        // if (actor is IPlayer playerAggressor && victim is IPlayer playerEnemy)
+        //     skullService.UpdateSkullOnAttack(playerAggressor, playerEnemy);
 
-        return victim is not ICombatActor enemy ? Result.NotPossible : actor.Attack(enemy);
+        var attackInput = AttackInputBuilder.Build(actor, victim);
+        return attackService.Execute(attackInput);
+
+        //return victim is not ICombatActor enemy ? Result.NotPossible : actor.Attack(enemy);
     }
 }
