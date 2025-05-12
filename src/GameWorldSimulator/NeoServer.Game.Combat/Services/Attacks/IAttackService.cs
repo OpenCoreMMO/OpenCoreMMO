@@ -1,3 +1,4 @@
+using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Results;
 
 namespace NeoServer.Game.Combat.Services.Attacks;

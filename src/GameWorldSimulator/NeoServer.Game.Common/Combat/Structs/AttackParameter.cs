@@ -1,16 +1,22 @@
-using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location.Structs;
 
-namespace NeoServer.Game.Combat.Services;
+namespace NeoServer.Game.Common.Combat.Structs;
 
 public readonly struct AttackInput(IThing aggressor, IThing target)
 {
     public IThing Aggressor => aggressor;
     public IThing Target => target;
     public required AttackParameter Parameters { get; init; }
+}
+
+public readonly struct CombatContext
+{
+    public bool InfiniteAmmo { get; init; }
+    public bool InfiniteThrowingWeapon { get; init; }
+    public AttackParameter AttackParameters { get; init; }
 }
 
 public enum AttackType
@@ -48,10 +54,10 @@ public struct AttackParameter
     public bool IsAttackInArea => !Area.IsEmpty;
     public bool BlockArmor { get; set; }
     //public DamageFormula Formula { get; set; }
-    public bool AmmoCanCauseMiss { get; set; }
     public ushort CreateItemId { get; set; }
     public AttackCondition Condition { get; set; }
     public int CooldownDuration { get; set; }
+    public byte HitChance { get; set; }
 }
 
 public readonly struct ExtraAttack

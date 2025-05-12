@@ -9,8 +9,11 @@ public record GameConfiguration(
     int ProtectionZoneBlockDuration = 60 * 1000,
     Dictionary<string, double> SkillsRate = null,
     DeathConfiguration Death = null,
-    PvPConfiguration PvP = null
+    PvPConfiguration PvP = null,
+    CombatConfiguration Combat = null
 );
+
+public record CombatConfiguration(bool InfiniteAmmo, bool InfiniteThrowingWeapon);
 
 public record DeathConfiguration
 {

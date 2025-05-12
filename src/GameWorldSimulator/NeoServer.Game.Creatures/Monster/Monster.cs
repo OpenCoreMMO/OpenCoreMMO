@@ -107,11 +107,11 @@ public class Monster : WalkableMonster, IMonster
         return MonsterDefend.DefendUsingArmor(this, attack);
     }
 
-    public override bool ReceiveAttack(IThing enemy, CombatDamage damage)
+    public override bool ReceiveAttack(IThing enemy, CombatDamageList damages)
     {
-        if (this is Summon.Summon { Master: IPlayer }) return base.ReceiveAttack(enemy, damage);
+        if (this is Summon.Summon { Master: IPlayer }) return base.ReceiveAttack(enemy, damages);
 
-        return enemy is Summon.Summon { Master: IPlayer } or IPlayer && base.ReceiveAttack(enemy, damage);
+        return enemy is Summon.Summon { Master: IPlayer } or IPlayer && base.ReceiveAttack(enemy, damages);
     }
 
     public override ushort ArmorRating => Metadata.Armor;
@@ -408,9 +408,9 @@ public class Monster : WalkableMonster, IMonster
         return MonsterDefend.ImmunityDefend(this, damage);
     }
 
-    public override void OnDamage(IThing enemy, CombatDamage damage)
+    public override void OnDamage(IThing enemy, CombatDamageList damages)
     {
-        ReduceHealth(damage);
+        ReduceHealth(damages.TotalDamage.HealthDamage);
     }
 
     protected void ChangeAttackTarget(ICreature creature)

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NeoServer.Game.Common.Combat;
+using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Body;
@@ -54,4 +55,6 @@ public interface IInventory : IHasItem
     event ChangeInventoryWeight OnWeightChanged;
 
     #endregion
+
+    void Protect(CombatDamage damage);
 }

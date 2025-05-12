@@ -1,4 +1,5 @@
 using System;
+using NeoServer.Game.Common.Combat.Structs;
 
 namespace NeoServer.Game.Combat.Services.Attacks;
 

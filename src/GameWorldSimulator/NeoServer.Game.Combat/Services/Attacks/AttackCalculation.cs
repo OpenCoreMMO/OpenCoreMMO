@@ -5,7 +5,7 @@ using NeoServer.Game.Common.Item;
 namespace NeoServer.Game.Combat.Services.Attacks;
 
 public class AttackCalculation
-{ 
+{
     public static CombatDamage Calculate(ushort minDamage, ushort maxDamage, DamageType damageType)
     {
         var damageValue = (ushort)GameRandom.Random.NextInRange(minDamage, maxDamage);

@@ -314,7 +314,7 @@ public class Player : CombatActor, IPlayer
     public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
     public override bool CanBeSeen => Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
     public virtual bool CanSeeInspectionDetails => false;
-    
+
     public override ushort MaximumElementalAttackPower =>
         CalculateTotalAttack(Inventory.TotalElementalAttack.AttackPower, isElemental: true);
 
@@ -330,26 +330,42 @@ public class Player : CombatActor, IPlayer
 
         var attackPercentage = 100;
 
-         if (Inventory.Weapon is IHasAttack weapon)
-         {
-             attackPercentage = isElemental
-                 ? weapon.WeaponAttack.ElementalAttackPowerPercentage
-                 : weapon.WeaponAttack.AttackPowerPercentage;
-         }
-        
-         if (Inventory.Weapon is IMagicalWeapon magicalWeapon) return magicalWeapon.MaxHitChance;
-        
-         if (Inventory.Weapon is IDistanceWeapon && Inventory.Ammo is { } ammo)
-         {
-             attackPercentage = isElemental
-                 ? ammo.WeaponAttack.ElementalAttackPowerPercentage
-                 : ammo.WeaponAttack.AttackPowerPercentage;
-         }
-        
-         var maximumAttack = (ushort)(Inventory.AttackRate * DamageFactor * attackPower * Skills[SkillInUse].Level +
-                                      Level / 5 * damageMultiplier);
+        if (Inventory.Weapon is IHasAttack weapon)
+        {
+            attackPercentage = isElemental
+                ? weapon.WeaponAttack.ElementalAttackPowerPercentage
+                : weapon.WeaponAttack.AttackPowerPercentage;
+        }
+
+        if (Inventory.Weapon is IMagicalWeapon magicalWeapon) return magicalWeapon.MaxHitChance;
+
+        if (Inventory.Weapon is IDistanceWeapon && Inventory.Ammo is { } ammo)
+        {
+            attackPercentage = isElemental
+                ? ammo.WeaponAttack.ElementalAttackPowerPercentage
+                : ammo.WeaponAttack.AttackPowerPercentage;
+        }
+
+        var maximumAttack = (ushort)(Inventory.AttackRate * DamageFactor * attackPower * Skills[SkillInUse].Level +
+                                     Level / 5 * damageMultiplier);
 
         return (ushort)(maximumAttack * attackPercentage / 100);
+    }
+
+    public override void PreAttack(CombatContext combatContext)
+    {
+        if (Inventory.Weapon is IDistanceWeapon && !combatContext.InfiniteAmmo)
+        {
+            Inventory.Ammo?.Reduce();
+        }
+
+        if (Inventory.Weapon is IThrowableWeapon { ShouldBreak: true } throwableDistanceWeapon &&
+            !combatContext.InfiniteThrowingWeapon)
+        {
+            throwableDistanceWeapon.Reduce();
+        }
+
+        base.PreAttack(combatContext);
     }
 
     public ushort GetRawSkillLevel(SkillType skillType)
@@ -891,7 +907,7 @@ public class Player : CombatActor, IPlayer
     public override CalculatedAttackDamage CalculateAttackDamage()
     {
         CalculatedAttackDamage damage = new CalculatedAttackDamage();
-        
+
         return base.CalculateAttackDamage();
     }
 
@@ -1019,6 +1035,21 @@ public class Player : CombatActor, IPlayer
         return canUse ? Result.Success : Result.Fail(InvalidOperation.CannotUseWeapon);
     }
 
+    public override Result CanAttack(AttackParameter attackParameter)
+    {
+        var result = base.CanAttack(attackParameter);
+        if (result.Failed) return result;
+
+        var hasEnoughAmmo = Inventory.Weapon is INeedsAmmo distanceWeapon && !distanceWeapon.CanShootAmmunition(Inventory.Ammo);
+
+        if (attackParameter.Type == AttackType.Regular && hasEnoughAmmo)
+        {
+            return Result.NotPossible;
+        }
+
+        return result;
+    }
+
     public override Result Attack(ICombatActor enemy)
     {
         var canAttackResult = AttackValidation.CanAttack(this, enemy);
@@ -1129,11 +1160,10 @@ public class Player : CombatActor, IPlayer
         NumberOfUnjustifiedKillsLastMonth = killsInLastMonth;
     }
 
-    public override bool ReceiveAttack(IThing enemy, CombatDamage damage)
+    public override CombatDamage ReduceDamage(CombatDamage attack)
     {
-        if (enemy is IPlayer player && GetSkull(player) is Skull.None) damage.Unjustified = true;
-
-        return base.ReceiveAttack(enemy, damage);
+        Inventory.Protect(attack);
+        return base.ReduceDamage(attack);
     }
 
     private Result CanUseItem(IUsableOn item, Location onLocation)
@@ -1298,17 +1328,25 @@ public class Player : CombatActor, IPlayer
         OnStatusChanged?.Invoke(this);
     }
 
-    public override void OnDamage(IThing enemy, CombatDamage damage)
+    public override void OnDamage(IThing enemy, CombatDamageList damages)
     {
         SetLogoutBlock();
 
-        if (damage.Type is DamageType.ManaDrain || IsManaShieldEnabled)
+        var totalDamage = damages.TotalDamage;
+        
+        if (totalDamage.ManaDamage > 0)
         {
-            ConsumeMana(damage.Damage);
+            ConsumeMana(totalDamage.ManaDamage);
+            return;
+        }
+        
+        if(IsManaShieldEnabled)
+        {
+            ConsumeMana(totalDamage.HealthDamage);
             return;
         }
 
-        ReduceHealth(damage);
+        ReduceHealth(totalDamage.HealthDamage);
     }
 
     public override void Death(IThing by)

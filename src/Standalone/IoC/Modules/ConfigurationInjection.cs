@@ -47,6 +47,7 @@ public static class ConfigurationInjection
         builder.AddSingleton(logConfiguration);
         builder.AddSingleton(clientConfiguration);
         builder.AddSingleton(gameConfiguration.PvP);
+        builder.AddSingleton(gameConfiguration.Combat);
 
         return builder;
     }

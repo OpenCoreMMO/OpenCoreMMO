@@ -41,7 +41,8 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     {
         if (creature is ICombatActor combatActor)
         {
-            combatActor.OnInjured += creatureDamagedEventHandler.Execute;
+            //todo: add this to RegularAttackService
+            //combatActor.OnInjured += creatureDamagedEventHandler.Execute;
             combatActor.OnPropagateAttack += creaturePropagatedAttackEventHandler.Execute;
         }
 
@@ -66,7 +67,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     {
         if (creature is ICombatActor combatActor)
         {
-            combatActor.OnInjured -= creatureDamagedEventHandler.Execute;
             combatActor.OnPropagateAttack -= creaturePropagatedAttackEventHandler.Execute;
         }
 

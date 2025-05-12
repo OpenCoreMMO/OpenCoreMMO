@@ -1,4 +1,5 @@
 using NeoServer.Game.Common;
+using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
@@ -10,9 +11,12 @@ namespace NeoServer.Game.Combat.Services.Attacks;
 
 public class AttackValidation(IMapTool mapTool, IMap map)
 {
-    public Result Validate(ICombatActor aggressor, IThing target)
+    public Result Validate(AttackInput attackInput)
     {
-        var attackValidationResult = aggressor.CanAttack();
+        var aggressor = attackInput.Aggressor as ICombatActor;
+        var target = attackInput.Target;
+        
+        var attackValidationResult = aggressor.CanAttack(attackInput.Parameters);
         if (attackValidationResult.Failed)
         {
             return attackValidationResult;

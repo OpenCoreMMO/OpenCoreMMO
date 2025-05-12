@@ -52,7 +52,7 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
         {
             //actor.OnDeath += _creatureOnDeathEventHandler.Execute;
             actor.OnBeforeDeath += _creatureOnPrepareDeathEventHandler.Execute;
-            actor.OnHealthChanged += _creatureOnHealthChangeEventHandler.Execute;
+          
             actor.OnManaChanged += _creatureOnManaChangeEventHandler.Execute;
         }
 
@@ -73,7 +73,6 @@ public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubs
         {
             //actor.OnDeath -= _creatureOnDeathEventHandler.Execute;
             actor.OnBeforeDeath -= _creatureOnPrepareDeathEventHandler.Execute;
-            actor.OnHealthChanged -= _creatureOnHealthChangeEventHandler.Execute;
             actor.OnManaChanged -= _creatureOnManaChangeEventHandler.Execute;
         }
 

@@ -74,11 +74,6 @@ public abstract class Equipment : BaseItem, IEquipment
     public byte[] Vocations => Metadata.Attributes.GetRequiredVocations();
     public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumLevel);
 
-    private void OnPlayerAttackedHandler(IThing enemy, ICombatActor victim, ref CombatDamage damage)
-    {
-        Protect(ref damage);
-    }
-
     #region Charges
 
     public ushort Charges => Chargeable?.Charges ?? 0;
@@ -114,7 +109,6 @@ public abstract class Equipment : BaseItem, IEquipment
         if (Guard.AnyNull(player)) return;
         TransformOnEquip();
 
-        player.OnAttacked += OnPlayerAttackedHandler;
         PlayerDressing = player;
         AddSkillBonus(player);
         StartDecay();
@@ -129,7 +123,6 @@ public abstract class Equipment : BaseItem, IEquipment
 
         TransformOnDequip();
 
-        player.OnAttacked -= OnPlayerAttackedHandler;
         PlayerDressing = null;
         PauseDecay();
         OnUndressed?.Invoke(this);

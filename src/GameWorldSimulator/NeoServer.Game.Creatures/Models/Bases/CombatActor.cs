@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NeoServer.Game.Combat.Services;
+using NeoServer.Game.Combat.Services.Attacks.Events;
 using NeoServer.Game.Combat.Validation;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat;
@@ -8,6 +9,7 @@ using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Combat.Attacks;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Contracts.Items.Types.Body;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Contracts.Spells;
 using NeoServer.Game.Common.Contracts.World;
@@ -22,6 +24,7 @@ using NeoServer.Game.Common.Results;
 using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
 using NeoServer.Game.Creatures.Models.Bases.Events;
+using NeoServer.Game.Creatures.Player.Inventory;
 
 namespace NeoServer.Game.Creatures.Models.Bases;
 
@@ -116,7 +119,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         if (AttackValidation.CanAttack(this, CurrentTarget as ICombatActor).Failed) StopAttack();
     }
 
-    public CombatDamage ReduceDamage(CombatDamage attack)
+    public virtual CombatDamage ReduceDamage(CombatDamage attack)
     {
         int damage = attack.Damage;
 
@@ -194,18 +197,21 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
         return new CalculatedAttackDamage();
     }
-    public Result CanAttack()
+
+    public virtual Result CanAttack(AttackParameter attackParameter)
     {
         if (IsDead) return Result.Fail(InvalidOperation.CreatureIsDead);
-        
-        if (!Cooldowns.Expired(CooldownType.Combat)) 
+
+        if (!Cooldowns.Expired(CooldownType.Combat))
             return Result.Fail(InvalidOperation.CannotAttackThatFast);
-        
+
         if (Tile?.ProtectionZone ?? false)
             return Result.Fail(InvalidOperation.CannotAttackWhileInProtectionZone);
 
         return Result.Success;
     }
+
+    public bool ReceiveAttack(IThing enemy, CombatDamage damages) => ReceiveAttack(enemy, new CombatDamageList(damages));
 
     public virtual Result Attack(ICombatActor enemy)
     {
@@ -293,9 +299,12 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         if (HealthPoints == MaxHealthPoints) return;
 
+        var oldHealthPoints = HealthPoints;
+
         HealthPoints = HealthPoints + increasing >= MaxHealthPoints ? MaxHealthPoints : HealthPoints + increasing;
+
         OnHeal?.Invoke(this, healedBy, increasing);
-        OnHealthChanged?.Invoke(this, healedBy, new CombatDamage(increasing, DamageType.None));
+        EventAggregator.Publish(new CreatureHealthChangedEvent(this, oldHealthPoints, HealthPoints));
     }
 
     public virtual void TurnInvisible()
@@ -331,26 +340,28 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return Cooldowns.Expired(type);
     }
 
-    public virtual bool ReceiveAttack(IThing enemy, CombatDamage damage)
+    public virtual bool ReceiveAttack(IThing enemy, CombatDamageList damages)
     {
         if (enemy?.Equals(this) ?? false) return false;
         if (!CanBeAttacked) return false;
         if (IsDead) return false;
 
-        OnAttacked?.Invoke(enemy, this, ref damage);
-
         if (enemy is ICreature c) SetAsEnemy(c);
 
-        damage = ReduceDamage(damage);
-        if (damage.Damage <= 0)
+        foreach (var damage in damages)
         {
-            WasDamagedOnLastAttack = false;
-            return false;
+            ReduceDamage(damage);
+            
+            if (damage.Damage <= 0)
+            {
+                WasDamagedOnLastAttack = false;
+                return false;
+            }
+
+            if (damage.Damage > HealthPoints) damage.SetNewDamage((ushort)HealthPoints);
         }
 
-        if (damage.Damage > HealthPoints) damage.SetNewDamage((ushort)HealthPoints);
-
-        OnDamage(enemy, this, damage);
+        OnDamage(enemy, this, damages);
 
         WasDamagedOnLastAttack = true;
         return true;
@@ -478,10 +489,8 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return true;
     }
 
-    protected void ReduceHealth(CombatDamage damage)
-    {
-        HealthPoints = damage.Damage > HealthPoints ? 0 : HealthPoints - damage.Damage;
-    }
+    protected void ReduceHealth(CombatDamage damage) => ReduceHealth(damage.Damage);
+    protected void ReduceHealth(ushort damage) => HealthPoints = damage > HealthPoints ? 0 : HealthPoints - damage;
 
     public virtual void Death(IThing by)
     {
@@ -498,16 +507,16 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         ReceivedDamages.Clear();
     }
 
-    public abstract void OnDamage(IThing enemy, CombatDamage damage);
+    public abstract void OnDamage(IThing enemy, CombatDamageList damages);
 
-    private void OnDamage(IThing enemy, ICombatActor actor, CombatDamage damage)
+    private void OnDamage(IThing enemy, ICombatActor actor, CombatDamageList damages)
     {
-        OnDamage(enemy, damage);
+        OnDamage(enemy, damages);
 
-        ReceivedDamages.AddOrUpdateDamage(enemy, damage.Damage, damage.Unjustified);
+        ReceivedDamages.AddOrUpdateDamage(enemy, damages.TotalDamage, damages.Unjustified);
 
-        OnHealthChanged?.Invoke(this, actor, damage);
-        OnInjured?.Invoke(enemy, this, damage);
+        EventAggregator.Publish(new CreatureInjuredEvent(enemy, this, damages));
+
         if (IsDead) Death(enemy);
     }
 
@@ -518,9 +527,9 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnAttackCanceled?.Invoke(this);
     }
 
-    public virtual void PreAttack(AttackParameter attackParameter)
+    public virtual void PreAttack(CombatContext combatContext)
     {
-        Cooldowns.Start(attackParameter.CooldownType, attackParameter.CooldownDuration);
+        Cooldowns.Start(combatContext.AttackParameters.CooldownType, combatContext.AttackParameters.CooldownDuration);
     }
 
     #region Events
@@ -530,7 +539,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public event StopAttack OnAttackCanceled;
     public event BlockAttack OnBlockedAttack;
     public event Attack OnAttackEnemy;
-    public event Damage OnInjured;
     public event BeforeDeath OnBeforeDeath;
     public event Death OnDeath;
     public event AttackTargetChange OnTargetChanged;
@@ -539,8 +547,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public event GainExperience OnGainedExperience;
     public event LoseExperience OnLoseExperience;
     public event RemoveCondition OnRemovedCondition;
-    public event Attacked OnAttacked;
-    public event HealthChange OnHealthChanged;
     public event ManaChange OnManaChanged;
     public event DropLoot OnDroppedLoot;
 

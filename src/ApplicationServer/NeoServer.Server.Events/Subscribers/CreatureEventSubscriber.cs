@@ -1,4 +1,5 @@
 ﻿using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Networking.EventHandlers.Creature;
 using NeoServer.Server.Events.Combat;
 using NeoServer.Server.Events.Creature;
 using NeoServer.Server.Events.Creature.Npcs;
@@ -14,8 +15,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
     private readonly CreatureChangedSpeedEventHandler _creatureChangedSpeedEventHandler;
     private readonly CreatureDeathEventHandler _creatureDeathEventHandler;
     private readonly CreatureHealedEventHandler _creatureHealedEventHandler;
-    private readonly CreatureKillEventHandler _creatureKillEventHandler;
-    private readonly CreatureInjuredEventHandler _creatureReceiveDamageEventHandler;
     private readonly CreatureStartedFollowingEventHandler _creatureStartedFollowingEventHandler;
     private readonly CreatureStartedWalkingEventHandler _creatureStartedWalkingEventHandler;
     private readonly CreatureTurnedToDirectionEventHandler _creatureTurnToDirectionEventHandler;
@@ -37,9 +36,8 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
         CreatureHearEventHandler creatureHearEventHandler,
         CreatureChangedVisibilityEventHandler creatureTurnedInvisibleEventHandler,
         CreatureChangedOutfitEventHandler creatureChangedOutfitEventHandler,
-        NpcShowShopEventHandler npcShowShopEventHandler, CreatureKillEventHandler creatureKillEventHandler)
+        NpcShowShopEventHandler npcShowShopEventHandler)
     {
-        _creatureReceiveDamageEventHandler = creatureReceiveDamageEventHandler;
         _creatureDeathEventHandler = creatureDeathEventHandler;
         _creatureBlockedAttackEventHandler = creatureBlockedAttackEventHandler;
         _creatureAttackEventHandler = creatureAttackEventHandler;
@@ -53,7 +51,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
         this.creatureTurnedInvisibleEventHandler = creatureTurnedInvisibleEventHandler;
         this.creatureChangedOutfitEventHandler = creatureChangedOutfitEventHandler;
         this.npcShowShopEventHandler = npcShowShopEventHandler;
-        _creatureKillEventHandler = creatureKillEventHandler;
     }
 
     public void Subscribe(ICreature creature)
@@ -87,7 +84,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
         if (creature is ICombatActor combatActor)
         {
             combatActor.OnTargetChanged -= _creatureChangedAttackTargetEventHandler.Execute;
-            combatActor.OnInjured -= _creatureReceiveDamageEventHandler.Execute;
             combatActor.OnDeath -= _creatureDeathEventHandler.Execute;
             combatActor.OnBlockedAttack -= _creatureBlockedAttackEventHandler.Execute;
             combatActor.OnAttackEnemy -= _creatureAttackEventHandler.Execute;
@@ -113,7 +109,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
         if (creature is not ICombatActor combatActor) return;
 
         combatActor.OnTargetChanged += _creatureChangedAttackTargetEventHandler.Execute;
-        combatActor.OnInjured += _creatureReceiveDamageEventHandler.Execute;
         combatActor.OnDeath += _creatureDeathEventHandler.Execute;
         combatActor.OnBlockedAttack += _creatureBlockedAttackEventHandler.Execute;
         combatActor.OnAttackEnemy += _creatureAttackEventHandler.Execute;

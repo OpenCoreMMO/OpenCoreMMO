@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using NeoServer.Game.Combat.Services;
 using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Combat.Attacks;
@@ -12,13 +11,6 @@ using NeoServer.Game.Common.Results;
 namespace NeoServer.Game.Common.Contracts.Creatures;
 
 public delegate void AttackTargetChange(ICombatActor actor, uint oldTargetId, uint newTargetId);
-
-public delegate void Damage(IThing enemy, ICombatActor victim, CombatDamage damage);
-
-public delegate void Attacked(IThing enemy, ICombatActor victim, ref CombatDamage damage);
-
-public delegate void HealthChange(ICombatActor actor, ICreature attacker, CombatDamage damage);
-
 public delegate void ManaChange(ICombatActor actor, ICreature attacker, CombatDamage damage);
 
 public delegate void Heal(ICombatActor healedCreature, ICreature healingCreature, ushort amount);
@@ -57,7 +49,6 @@ public interface ICombatActor : IWalkableCreature
 
     event Attack OnAttackEnemy;
     event BlockAttack OnBlockedAttack;
-    event Damage OnInjured;
     event Heal OnHeal;
     event BeforeDeath OnBeforeDeath;
     event Death OnDeath;
@@ -67,8 +58,6 @@ public interface ICombatActor : IWalkableCreature
     event PropagateAttack OnPropagateAttack;
     event GainExperience OnGainedExperience;
     event RemoveCondition OnRemovedCondition;
-    event Attacked OnAttacked;
-    event HealthChange OnHealthChanged;
     event ManaChange OnManaChanged;
 
     int DefendUsingArmor(int attack);
@@ -89,10 +78,10 @@ public interface ICombatActor : IWalkableCreature
     ///     Creature receive attack damage from enemy
     /// </summary>
     /// <param name="enemy"></param>
-    /// <param name="damage"></param>
+    /// <param name="damages"></param>
     /// <returns>Returns true when damage was bigger than 0</returns>
-    bool ReceiveAttack(IThing enemy, CombatDamage damage);
-
+    bool ReceiveAttack(IThing enemy, CombatDamageList damages);
+    bool ReceiveAttack(IThing enemy, CombatDamage damages);
     Result Attack(ICombatActor creature);
     void PropagateAttack(AffectedLocation[] area, CombatDamage damage);
     bool Attack(ICreature creature, IUsableAttackOnCreature item);
@@ -124,6 +113,6 @@ public interface ICombatActor : IWalkableCreature
     void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true);
     void RaiseDroppedLootEvent(ICombatActor actor, ILoot loot);
     event DropLoot OnDroppedLoot;
-    Result CanAttack();
-    void PreAttack(AttackParameter attackParameter);
+    void PreAttack(CombatContext combatContext);
+    Result CanAttack(AttackParameter attackParameter);
 }

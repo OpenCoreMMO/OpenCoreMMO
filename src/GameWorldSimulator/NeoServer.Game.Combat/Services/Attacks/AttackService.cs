@@ -1,5 +1,6 @@
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat.Enums;
+using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Creatures.Players;
@@ -21,7 +22,7 @@ public class AttackService(
     {
         if (!HasValidInput(attackInput)) return Result.NotPossible;
 
-        var attackValidationResult = attackValidation.Validate(attackInput.Aggressor as IPlayer, attackInput.Target);
+        var attackValidationResult = attackValidation.Validate(attackInput);
         if (attackValidationResult.Failed) return attackValidationResult;
 
         var pvpCombatValidationResult = ValidatePvpCombat(attackInput);
