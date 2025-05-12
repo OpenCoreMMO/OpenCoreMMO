@@ -321,6 +321,18 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         return null;
     }
+    
+    public IItem RemoveItem(ItemGroup group)
+    {
+        foreach (var item in AllItems)
+            if (item.Metadata.Group == group)
+            {
+                RemoveItem(item, 1, 0, out var removedItem);
+                return removedItem;
+            }
+
+        return null;
+    }
 
     public IItem RemoveItem(IItem item)
     {

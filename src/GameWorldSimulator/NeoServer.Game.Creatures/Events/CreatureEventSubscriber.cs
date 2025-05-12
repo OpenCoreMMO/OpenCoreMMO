@@ -6,7 +6,6 @@ namespace NeoServer.Game.Creatures.Events;
 
 public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubscriber
 {
-    private readonly CreatureDamagedEventHandler creatureDamagedEventHandler;
     private readonly CreatureMovedEventHandler creatureMovedEventHandler;
     private readonly CreaturePropagatedAttackEventHandler creaturePropagatedAttackEventHandler;
     private readonly CreatureSayEventHandler creatureSayEventHandler;
@@ -17,7 +16,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     private readonly PlayerOpenedContainerEventHandler playerOpenedContainerEventHandler;
 
     public CreatureEventSubscriber(
-        CreatureDamagedEventHandler creatureDamagedEventHandler,
         CreaturePropagatedAttackEventHandler creaturePropagatedAttackEventHandler,
         CreatureTeleportedEventHandler creatureTeleportedEventHandler,
         PlayerDisappearedEventHandler playerDisappearedEventHandler,
@@ -26,7 +24,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
         CreatureSayEventHandler creatureSayEventHandler,
         PlayerOpenedContainerEventHandler playerOpenedContainerEventHandler)
     {
-        this.creatureDamagedEventHandler = creatureDamagedEventHandler;
         this.creaturePropagatedAttackEventHandler = creaturePropagatedAttackEventHandler;
         this.creatureTeleportedEventHandler = creatureTeleportedEventHandler;
         this.playerDisappearedEventHandler = playerDisappearedEventHandler;
@@ -41,8 +38,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     {
         if (creature is ICombatActor combatActor)
         {
-            //todo: add this to RegularAttackService
-            //combatActor.OnInjured += creatureDamagedEventHandler.Execute;
             combatActor.OnPropagateAttack += creaturePropagatedAttackEventHandler.Execute;
         }
 

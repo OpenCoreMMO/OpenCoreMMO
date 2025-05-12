@@ -29,7 +29,7 @@ public class ExperienceSharingService : IExperienceSharingService
         //TODO: implement player experience sharing for pvp enforced
         if (creature is not IMonster monster || monster.IsSummon) return;
 
-        foreach (var damageRecord in monster.ReceivedDamages.All)
+        foreach (var damageRecord in monster.ReceivedDamages)
         {
             if (damageRecord.Aggressor is not IPlayer player) continue;
 

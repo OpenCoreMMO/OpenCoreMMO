@@ -77,7 +77,7 @@ public static class ServiceInjection
         builder.AddSingleton<AttackStrategy>();
         builder.AddSingleton<AttackValidation>();
         builder.AddSingleton<RegularAttackService>();
-        
+        builder.AddSingleton<CombatBloodPoolService>();
         return builder;
     }
 }

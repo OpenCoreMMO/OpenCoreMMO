@@ -137,6 +137,9 @@ public class Monster : WalkableMonster, IMonster
     {
         Race.Bood => BloodType.Blood,
         Race.Venom => BloodType.Slime,
+        Race.Undead => BloodType.None,
+        Race.Fire => BloodType.None,
+        Race.Energy => BloodType.None,
         _ => BloodType.Blood
     };
 

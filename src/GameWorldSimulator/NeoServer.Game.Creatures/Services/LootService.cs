@@ -48,7 +48,7 @@ public class LootService(GameConfiguration gameConfiguration, IItemFactory itemF
 
         ushort maxDamage = 0;
 
-        foreach (var damageRecord in monster.ReceivedDamages.All)
+        foreach (var damageRecord in monster.ReceivedDamages)
         {
             if (damageRecord.Aggressor is not ICreature aggressor) continue;
             if (damageRecord.Damage > maxDamage)

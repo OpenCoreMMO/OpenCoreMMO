@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Helpers;
@@ -13,14 +14,14 @@ public class DamageRecordList
     private Dictionary<uint, DamageRecord> DamageRecords { get; } = new();
 
     public bool HasAnyUnjustifiedDamage { get; private set; }
-    public DamageRecord[] All => DamageRecords.Values.ToArray();
+    public IEnumerator<DamageRecord> GetEnumerator() => DamageRecords.Values.GetEnumerator(); 
 
     public int TotalDamage
     {
         get
         {
             var damage = 0;
-            foreach (var damageRecord in All) damage += damageRecord.Damage;
+            foreach (var damageRecord in this) damage += damageRecord.Damage;
 
             return damage;
         }
@@ -31,7 +32,7 @@ public class DamageRecordList
         get
         {
             var participants = new HashSet<ICreature>();
-            foreach (var damageRecord in All)
+            foreach (var damageRecord in this)
             {
                 if (damageRecord.Aggressor is not ICreature creature) continue;
                 participants.Add(creature);

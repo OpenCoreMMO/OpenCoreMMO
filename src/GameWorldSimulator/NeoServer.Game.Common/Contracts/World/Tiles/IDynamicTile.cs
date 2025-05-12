@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types;
+using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Results;
 
@@ -44,4 +45,5 @@ public interface IDynamicTile : ITile, IHasItem
     void ReplaceItem(IItem fromItem, IItem toItem);
     bool UpdateItemType(IItem fromItem, IItemType toItemType);
     IItem RemoveItem(IItem item);
+    IItem RemoveItem(ItemGroup group);
 }

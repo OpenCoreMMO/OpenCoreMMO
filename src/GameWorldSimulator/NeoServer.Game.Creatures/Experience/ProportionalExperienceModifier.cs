@@ -32,7 +32,7 @@ public class ProportionalExperienceModifier : IBaseExperienceModifier
     private static int GetTotalPlayerDamage(IMonster monster, IPlayer player)
     {
         var damage = 0;
-        foreach (var damageRecord in monster.ReceivedDamages.All)
+        foreach (var damageRecord in monster.ReceivedDamages)
         {
             if (damageRecord.Aggressor is not IPlayer playerAggressor) continue;
             if (playerAggressor != player &&

@@ -489,13 +489,8 @@ public class Map : IMap
 
     public void CreateBloodPool(ILiquid pool, IDynamicTile tile)
     {
-        //if (tile?.TopItems != null && tile.TopItems.TryPeek(out var topItem) && topItem is ILiquid)
-        //{
-        //    tile.RemoveItem(topItem, 1, 0, out var removedThing);
-        //}
-
-        //if (pool is null) return;
-        //tile.AddItem(pool);
+        tile.RemoveItem(pool.Metadata.Group);
+        tile.AddItem(pool);
     }
 
     public bool CanGoToDirection(ICreature creature, Direction direction, ITileEnterRule rule)

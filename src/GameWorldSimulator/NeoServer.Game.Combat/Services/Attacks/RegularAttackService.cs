@@ -14,7 +14,10 @@ using NeoServer.Game.Common.Results;
 
 namespace NeoServer.Game.Combat.Services.Attacks;
 
-public class RegularAttackService(IEventAggregator eventAggregator, CombatConfiguration combatConfiguration)
+public class RegularAttackService(
+    IEventAggregator eventAggregator,
+    CombatConfiguration combatConfiguration,
+    CombatBloodPoolService combatBloodPoolService)
     : IAttackService
 {
     public Result Execute(AttackInput attackInput)
@@ -64,7 +67,23 @@ public class RegularAttackService(IEventAggregator eventAggregator, CombatConfig
 
         PerformAttack(target, damage, aggressor);
 
+        CreateBloodPool(damage, target);
+        
         return Result.Success;
+    }
+
+    private void CreateBloodPool(CalculatedAttackDamage damage, IThing target)
+    {
+        if (damage.MainDamage is { Damage: > 0, IsElementalDamage: false })
+        {
+            combatBloodPoolService.CreateSplash(target as ICombatActor, damage.MainDamage);
+            return;
+        } 
+        
+        if(damage.ExtraDamage is { Damage: > 0, IsElementalDamage: false })
+        {
+            combatBloodPoolService.CreateSplash(target as ICombatActor, damage.ExtraDamage);
+        }
     }
 
     private static void PerformAttack(IThing target, CalculatedAttackDamage damage, ICombatActor aggressor)
