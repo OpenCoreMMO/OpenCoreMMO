@@ -5,37 +5,36 @@ using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Spell;
 
-namespace NeoServer.Extensions.Spells.Attack.Mage.Druid;
+namespace NeoServer.Extensions.Spells.Attack.Mage.Sorcerer;
 
-public class IceWave : AttackSpell
+public class DeathStrike : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
         DamageFormula = (CombatFormula.MagicLevel, GetFormulaValues),
-        DamageType = DamageType.Ice,
-        Effect = EffectT.IceArea,
-        BlockArmor = true
+        DamageType = DamageType.Death,
+        Effect = EffectT.BubbleBlack,
+        ShootType = ShootType.Death
     };
 
-    public override string Name => "Ice Wave";
-    public override string Words => "exevo frigo hur";
-    public override ushort MinLevel => 18;
-    public override ushort Mana { get; set; } = 25;
+    public override string Name => "Death Strike";
+    public override string Words => "exori mort";
+    public override ushort MinLevel => 16;
+    public override ushort Mana { get; set; } = 20;
     public override bool Premium => true;
-    public override uint Cooldown => 4 * 1000;
+    public override uint Cooldown => 2 * 1000;
     public override SpellGroup[] Groups { get; } = [SpellGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];
     public override bool NeedLearn => false;
-    public override string[] Vocations { get; } = ["druid", "elder druid"];
-    public override bool NeedDirection => true;
-    protected override string AreaName => "AREA_WAVE4";
-
+    public override byte Range => 3;
+    public override string[] Vocations { get; } = ["sorcerer", "master sorcerer"];
+    public override bool CasterNeedsTargetOrDirection => true;
     private static MinMax GetFormulaValues(IPlayer player, int level, int magicLevel, decimal _)
     {
         if (player is null) return MinMax.Zero;
 
-        var min = (level / 5) + (magicLevel * 0.81) + 4;
-        var max = (level / 5) + (magicLevel * 2) + 12;
+        var min = (level / 5) + (magicLevel * 1.403) + 8;
+        var max = (level / 5) + (magicLevel * 2.203) + 13;
 
         return new MinMax(min, max);
     }

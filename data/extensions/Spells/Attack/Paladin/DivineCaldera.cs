@@ -2,43 +2,38 @@
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Effects.Magical;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Spell;
 
 namespace NeoServer.Extensions.Spells.Attack.Paladin;
 
-public class EtherealSpear : AttackSpell
+public class DivineCaldera : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
         DamageFormula = (CombatFormula.MagicLevel, GetFormulaValues),
-        DamageType = DamageType.Physical,
-        Effect = EffectT.XGray,
-        ShootType = ShootType.EtherealSpear,
-        BlockArmor = true
+        DamageType = DamageType.Holy,
+        Effect = EffectT.HolyArea,
+        Area = AreaEffect.Circle3X3,
     };
-
-    public override string Name => "Ethereal Spear";
-    public override string Words => "exori con";
-    public override ushort MinLevel => 23;
-    public override ushort Mana { get; set; } = 25;
+    public override string Name { get; set; } = "Divine Caldera";
+    public override string Words { get; set; } = "exevo mas san";
+    public override ushort MinLevel => 50;
+    public override ushort Mana { get; set; } = 160;
     public override bool Premium => true;
-    public override uint Cooldown => 2 * 1000;
-    public override bool NeedsTarget => true;
+    public override uint Cooldown => 4 * 1000;
     public override SpellGroup[] Groups { get; } = [SpellGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];
     public override bool NeedLearn => false;
-    public override byte Range => 7;
     public override string[] Vocations { get; } = ["paladin", "royal paladin"];
-
-    private static MinMax GetFormulaValues(IPlayer player, int skill, int attack, decimal factor)
+    protected override bool IsSelfTarget => true;
+    private static MinMax GetFormulaValues(IPlayer player, int level, int magicLevel, decimal _)
     {
         if (player is null) return MinMax.Zero;
 
-        var level = player.Level;
-
-        var min = (level / 5) + (skill * 25) / 3;
-        var max = (level / 5) + skill + 25;
+        var min = (level / 5) + (magicLevel * 4);
+        var max = (level / 5) + (magicLevel * 6);
 
         return new MinMax(min, max);
     }
