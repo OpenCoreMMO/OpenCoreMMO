@@ -30,7 +30,7 @@ public class PlayerFollowTests
         (map[100, 108, 7] as DynamicTile)?.AddCreature(enemy);
 
         sut.Follow(enemy, fpp);
-        enemy.ReceiveAttack(sut, new CombatDamage(200, DamageType.Melee));
+        enemy.TakeDamage(sut, new CombatDamage(200, DamageType.Melee));
 
         //act
         sut.Follow(enemy, fpp);
@@ -59,7 +59,7 @@ public class PlayerFollowTests
         (map[100, 101, 7] as DynamicTile)?.AddCreature(enemy);
 
         sut.Follow(enemy, fpp);
-        enemy.ReceiveAttack(sut, new CombatDamage(200, DamageType.Melee));
+        enemy.TakeDamage(sut, new CombatDamage(200, DamageType.Melee));
 
         //act
         sut.Follow(enemy, fpp);
@@ -88,7 +88,7 @@ public class PlayerFollowTests
         (map[100, 109, 7] as DynamicTile)?.AddCreature(enemy);
 
         sut.Follow(enemy, fpp);
-        enemy.ReceiveAttack(sut, new CombatDamage(200, DamageType.Melee));
+        enemy.TakeDamage(sut, new CombatDamage(200, DamageType.Melee));
 
         (map[100, 109, 7] as DynamicTile)?.RemoveCreature(enemy, out _);
         (map[100, 110, 7] as DynamicTile)?.AddCreature(enemy);

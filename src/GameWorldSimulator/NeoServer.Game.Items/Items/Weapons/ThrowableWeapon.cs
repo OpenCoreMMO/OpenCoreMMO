@@ -102,7 +102,7 @@ public class ThrowableWeapon : CumulativeEquipment, IThrowableWeapon
 
         if (!DistanceCombatAttack.CalculateAttack(actor, enemy, combat, out var damage)) return false;
 
-        enemy.ReceiveAttack(actor, damage);
+        enemy.TakeDamage(actor, damage);
 
         return true;
     }

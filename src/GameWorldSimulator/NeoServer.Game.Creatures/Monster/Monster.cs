@@ -107,11 +107,11 @@ public class Monster : WalkableMonster, IMonster
         return MonsterDefend.DefendUsingArmor(this, attack);
     }
 
-    public override bool ReceiveAttack(IThing enemy, CombatDamageList damages)
+    public override bool TakeDamage(IThing enemy, CombatDamageList damages)
     {
-        if (this is Summon.Summon { Master: IPlayer }) return base.ReceiveAttack(enemy, damages);
+        if (this is Summon.Summon { Master: IPlayer }) return base.TakeDamage(enemy, damages);
 
-        return enemy is Summon.Summon { Master: IPlayer } or IPlayer && base.ReceiveAttack(enemy, damages);
+        return enemy is Summon.Summon { Master: IPlayer } or IPlayer && base.TakeDamage(enemy, damages);
     }
 
     public override ushort ArmorRating => Metadata.Armor;
@@ -268,7 +268,7 @@ public class Monster : WalkableMonster, IMonster
 
         foreach (var summon in Metadata.Summons)
         {
-            if (!Cooldowns.Expired(summon.Name)) continue;
+            if (!Cooldowns.Expired(summon)) continue;
 
             if (summon.Chance < GameRandom.Random.Next(0, maxValue: 100))
                 continue;
@@ -281,7 +281,7 @@ public class Monster : WalkableMonster, IMonster
             var createdSummon = summonService.Summon(this, summon.Name);
             if (createdSummon is null) continue;
 
-            Cooldowns.Start(summon.Name, (int)summon.Interval);
+            Cooldowns.Start(summon);
 
             AttachToSummonEvents(createdSummon);
 

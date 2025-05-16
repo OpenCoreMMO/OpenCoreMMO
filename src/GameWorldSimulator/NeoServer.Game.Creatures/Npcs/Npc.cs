@@ -73,7 +73,7 @@ public class Npc : WalkableCreature, INpc
 
         var result = base.WalkRandomStep(SpawnPoint.Location);
 
-        Cooldowns.Start(CooldownType.WalkAround, (int)Metadata.WalkInterval);
+        Cooldowns.Start(CooldownType.WalkAround, Metadata.WalkInterval);
         return result;
     }
 

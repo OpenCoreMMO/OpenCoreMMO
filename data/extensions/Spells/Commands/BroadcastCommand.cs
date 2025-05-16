@@ -11,7 +11,7 @@ namespace NeoServer.Extensions.Spells.Commands;
 
 public class BroadcastCommand : CommandSpell
 {
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         var ctx = IoC.GetInstance<IGameCreatureManager>();
 

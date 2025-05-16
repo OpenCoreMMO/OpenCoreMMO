@@ -27,7 +27,7 @@ public enum TileFlags : uint
     TrashHolder = 1 << 14,
     Bed = 1 << 15,
     Depot = 1 << 16,
-    BLockSolid = 1 << 17,
+    Unpassable = 1 << 17,
     BlockPath = 1 << 18,
     ImmovableBlockSolid = 1 << 19,
     ImmovableBlockPath = 1 << 20,

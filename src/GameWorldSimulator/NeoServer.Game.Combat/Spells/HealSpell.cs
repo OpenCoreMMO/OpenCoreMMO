@@ -22,12 +22,12 @@ public class HealSpell : Spell<HealSpell>
     public virtual ushort Max { get; }
     public override uint Duration => 0;
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.None;
 
         var hpToIncrease = GameRandom.Random.NextInRange(Min, Max);
-        actor.Heal((ushort)hpToIncrease, actor);
+        caster.Heal((ushort)hpToIncrease, caster);
         return true;
     }
 

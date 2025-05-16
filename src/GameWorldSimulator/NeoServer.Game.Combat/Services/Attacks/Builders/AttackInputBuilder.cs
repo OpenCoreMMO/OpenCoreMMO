@@ -9,19 +9,16 @@ public static class AttackInputBuilder
 {
     public static AttackInput Build(IThing aggressor, IThing target)
     {
-        var attackParameter = new Common.Combat.Structs.AttackParameter
+        var combatParameter = new CombatParameter
         {
             Type = AttackType.None
         };
         
         if (aggressor is IPlayer player)
         {
-            attackParameter = PlayerAttackParameterBuilder.Build(player, target);    
+            combatParameter = PlayerAttackParameterBuilder.Build(player, target);    
         }
-        
-        return new AttackInput(aggressor, target)
-        {
-            Parameters = attackParameter
-        };
+
+        return new AttackInput(aggressor, target, combatParameter);
     }
 }

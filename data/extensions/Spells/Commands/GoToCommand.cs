@@ -8,12 +8,12 @@ namespace NeoServer.Extensions.Spells.Commands;
 
 public class GoToCommand : CommandSpell
 {
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.NotPossible;
         if (Params?.Length == 0) return false;
 
-        var actorPlayer = (IPlayer)actor;
+        var actorPlayer = (IPlayer)caster;
 
         // just only GOD can teleport to other players
         if (Params.Length == 1)
@@ -34,7 +34,7 @@ public class GoToCommand : CommandSpell
         ushort.TryParse(Params[1].ToString(), out var y);
         byte.TryParse(Params[2].ToString(), out var z);
 
-        actor.TeleportTo(x, y, z);
+        caster.TeleportTo(x, y, z);
 
         return true;
     }

@@ -294,6 +294,50 @@ public struct Location : IEquatable<Location>, IConvertible
         return new Location(X, Y, (byte)(Z + floor));
     }
 
+    /// <summary>
+    /// Add one step to X or Y based on the direction
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <param name="numberOfSteps"></param>
+    public Location AddDirectionStep(Direction direction, ushort numberOfSteps = 1)
+    {
+        switch (direction)
+        {
+            case Direction.East:
+                X += numberOfSteps;
+                break;
+            case Direction.West:
+                X -= numberOfSteps;
+                break;
+            case Direction.North:
+                Y -= numberOfSteps;
+                break;
+            case Direction.South:
+                Y += numberOfSteps;
+                break;
+            case Direction.NorthEast:
+                X += numberOfSteps;
+                Y -= numberOfSteps;
+                break;
+            case Direction.NorthWest:
+                X -= numberOfSteps;
+                Y -= numberOfSteps;
+                break;
+            case Direction.SouthEast:
+                X += numberOfSteps;
+                Y += numberOfSteps;
+                break;
+            case Direction.SouthWest:
+                X -= numberOfSteps;
+                Y += numberOfSteps;
+                break;
+            case Direction.None:
+                break;
+        }
+
+        return this;
+    }
+
     public Location[] Neighbours
     {
         get

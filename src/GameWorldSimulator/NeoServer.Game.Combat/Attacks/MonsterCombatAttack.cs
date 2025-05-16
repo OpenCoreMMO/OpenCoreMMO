@@ -10,7 +10,7 @@ public struct MonsterCombatAttack : IMonsterCombatAttack
 {
     public int Interval
     {
-        set => Cooldown = new CooldownTime(DateTime.Now, value);
+        set => Cooldown = new CooldownTime(DateTime.Now, (uint)value);
     }
 
     public byte Chance { get; set; }

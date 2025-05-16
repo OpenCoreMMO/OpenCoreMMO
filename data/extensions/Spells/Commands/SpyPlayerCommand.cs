@@ -12,7 +12,7 @@ namespace NeoServer.Extensions.Spells.Commands;
 
 public class SpyPlayerCommand : CommandSpell
 {
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.NotPossible;
 

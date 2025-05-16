@@ -9,7 +9,7 @@ namespace NeoServer.Extensions.Spells.Commands;
 
 public class KickPlayerCommand : CommandSpell
 {
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         var commands = words.Split("/kick");
 
@@ -27,7 +27,7 @@ public class KickPlayerCommand : CommandSpell
             return false;
         }
 
-        if (player is null || player.CreatureId == actor.CreatureId)
+        if (player is null || player.CreatureId == caster.CreatureId)
         {
             error = InvalidOperation.NotPossible;
             return false;

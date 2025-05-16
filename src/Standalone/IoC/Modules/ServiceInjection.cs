@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Game.Combat.Services;
 using NeoServer.Game.Combat.Services.Attacks;
+using NeoServer.Game.Combat.Services.Attacks.Validators;
+using NeoServer.Game.Combat.Services.Spells;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Inspection;
 using NeoServer.Game.Common.Contracts.Services;
@@ -76,8 +78,14 @@ public static class ServiceInjection
         builder.AddSingleton<IAttackService, AttackService>();
         builder.AddSingleton<AttackStrategy>();
         builder.AddSingleton<AttackValidation>();
-        builder.AddSingleton<RegularAttackService>();
+        builder.AddSingleton<SingleTargetAttackService>();
+        builder.AddSingleton<AreaAttackService>();
         builder.AddSingleton<CombatBloodPoolService>();
+        
+        //spells
+        builder.AddSingleton<SpellService>();
+        builder.AddSingleton<SpellCastValidation>();
+        
         return builder;
     }
 }

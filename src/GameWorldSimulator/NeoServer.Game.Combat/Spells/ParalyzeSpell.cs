@@ -18,14 +18,14 @@ public class ParalyzeSpell : Spell<ParalyzeSpell>
     public override ushort Mana => 60;
     public override ConditionType ConditionType => ConditionType.Paralyze;
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.None;
 
-        var min = actor.Speed * MinA + MinB;
-        var max = actor.Speed * MaxA + MaxB;
+        var min = caster.Speed * MinA + MinB;
+        var max = caster.Speed * MaxA + MaxB;
 
-        actor.DecreaseSpeed(SpeedChange);
+        caster.DecreaseSpeed(SpeedChange);
         return true;
     }
 

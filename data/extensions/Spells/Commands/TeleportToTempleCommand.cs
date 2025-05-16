@@ -11,11 +11,11 @@ namespace NeoServer.Extensions.Spells.Commands;
 
 public class TeleportToTempleCommand : CommandSpell
 {
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.NotEnoughRoom;
 
-        var playerName = Params?.Length > 0 ? Params[0].ToString() : actor.Name;
+        var playerName = Params?.Length > 0 ? Params[0].ToString() : caster.Name;
         var gameManager = IoC.GetInstance<IGameCreatureManager>();
 
         if (!gameManager.TryGetPlayer(playerName, out var player))

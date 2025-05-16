@@ -12,10 +12,10 @@ public class IntenseHealing : Spell<IntenseHealing>
 
     public override ConditionType ConditionType => ConditionType.None;
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.None;
-        actor.Heal(100, actor);
+        caster.Heal(100, caster);
         return true;
     }
 }

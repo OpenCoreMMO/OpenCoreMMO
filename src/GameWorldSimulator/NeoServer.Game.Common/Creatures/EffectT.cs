@@ -47,7 +47,7 @@ public enum EffectT : byte
     HolyDamage = 40,
     BigClouds = 41,
     IceArea = 42,
-    IceRornado = 43,
+    IceTornado = 43,
     IceAttack = 44,
     Stones = 45,
     SmallPlants = 46,

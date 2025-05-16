@@ -9,14 +9,14 @@ namespace NeoServer.Extensions.Spells.Commands;
 
 public class MassKickPlayersCommand : CommandSpell
 {
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         var ctx = IoC.GetInstance<IGameCreatureManager>();
         var playerLogOutCommand = IoC.GetInstance<PlayerLogOutCommand>();
 
         foreach (var player in ctx.GetAllLoggedPlayers())
         {
-            if (player is null || player.CreatureId == actor.CreatureId)
+            if (player is null || player.CreatureId == caster.CreatureId)
                 continue;
 
             playerLogOutCommand.Execute(player, true);

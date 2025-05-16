@@ -30,13 +30,13 @@ public class ReloadCommand : CommandSpell
         }
     };
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.NotPossible;
 
         if (Params is null || !Params.Any())
         {
-            OperationFailService.Send(actor.CreatureId, "Invalid module");
+            OperationFailService.Send(caster.CreatureId, "Invalid module");
             return false;
         }
 
@@ -46,7 +46,7 @@ public class ReloadCommand : CommandSpell
 
         if (!Modules.TryGetValue(module, out var action))
         {
-            OperationFailService.Send(actor.CreatureId, "Invalid module");
+            OperationFailService.Send(caster.CreatureId, "Invalid module");
             return false;
         }
 

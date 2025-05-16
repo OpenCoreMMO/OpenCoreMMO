@@ -25,6 +25,10 @@ public static class TextMessageOutgoingParser
             InvalidOperation.NotPermittedInProtectionZone => TextConstants.NOT_PERMITTED_IN_PROTECTION_ZONE,
             InvalidOperation.PlayerLocationInvalid => "Player location is invalid.",
             InvalidOperation.AdjustCombatSettingsToAttackPlayer => "Adjust your combat settings to attack this person.",
+            InvalidOperation.SpellNeedsWeapon => "You need to equip a weapon to use this spell.",
+            InvalidOperation.PremiumTimeIsRequired => "Premium time is required.",
+            InvalidOperation.SpellRequiresPremium => "Premium time is required to use this spell.",
+            InvalidOperation.CanOnlyUseOnCreatures => "You can only use this on creatures.",
             _ => string.Empty
         };
     }

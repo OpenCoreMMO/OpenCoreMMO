@@ -80,8 +80,8 @@ public interface ICombatActor : IWalkableCreature
     /// <param name="enemy"></param>
     /// <param name="damages"></param>
     /// <returns>Returns true when damage was bigger than 0</returns>
-    bool ReceiveAttack(IThing enemy, CombatDamageList damages);
-    bool ReceiveAttack(IThing enemy, CombatDamage damages);
+    bool TakeDamage(IThing enemy, CombatDamageList damages);
+    bool TakeDamage(IThing enemy, CombatDamage damages);
     Result Attack(ICombatActor creature);
     void PropagateAttack(AffectedLocation[] area, CombatDamage damage);
     bool Attack(ICreature creature, IUsableAttackOnCreature item);
@@ -114,5 +114,5 @@ public interface ICombatActor : IWalkableCreature
     void RaiseDroppedLootEvent(ICombatActor actor, ILoot loot);
     event DropLoot OnDroppedLoot;
     void PreAttack(CombatContext combatContext);
-    Result CanAttack(AttackParameter attackParameter);
+    Result CanAttack(CombatParameter combatParameter);
 }

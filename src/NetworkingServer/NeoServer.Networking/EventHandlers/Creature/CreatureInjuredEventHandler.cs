@@ -6,14 +6,12 @@ using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Effects.Parsers;
-using NeoServer.Game.Common.Item;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Networking.Packets.Outgoing.Creature;
 using NeoServer.Networking.Packets.Outgoing.Effect;
 using NeoServer.Networking.Packets.Outgoing.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
-using Damage = NeoServer.Game.Common.Combat.Structs.Damage;
 
 namespace NeoServer.Networking.EventHandlers.Creature;
 
@@ -83,6 +81,7 @@ public class CreatureInjuredEventHandler(IMap map, IGameCreatureManager gameCrea
                 : elementalDamage.Effect;
 
             connection.OutgoingPackets.Enqueue(new MagicEffectPacket(victim.Location, damageEffect));
+            return;
         }
         connection.OutgoingPackets.Enqueue(new MagicEffectPacket(victim.Location, EffectT.XBlood));
     }

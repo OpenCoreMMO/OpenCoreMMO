@@ -10,7 +10,7 @@ namespace NeoServer.Extensions.Spells.Commands;
 
 public class NpcCreator : CommandSpell
 {
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.NotPossible;
         if (Params?.Length == 0) return false;
@@ -20,7 +20,7 @@ public class NpcCreator : CommandSpell
 
         var map = Map.Instance;
 
-        var tileToBorn = map[actor.Location.GetNextLocation(actor.Direction)];
+        var tileToBorn = map[caster.Location.GetNextLocation(caster.Direction)];
 
         npc.SetNewLocation(tileToBorn.Location);
 
@@ -36,7 +36,7 @@ public class NpcCreator : CommandSpell
             return true;
         }
 
-        foreach (var neighbour in actor.Location.Neighbours)
+        foreach (var neighbour in caster.Location.Neighbours)
             if (map[neighbour] is IDynamicTile { HasCreature: false })
             {
                 map.PlaceCreature(npc);

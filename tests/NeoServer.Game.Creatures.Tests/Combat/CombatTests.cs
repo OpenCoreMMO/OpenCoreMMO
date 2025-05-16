@@ -18,21 +18,21 @@ public class CombatTests
         var attacker = PlayerTestDataBuilder.Build();
 
         //act
-        victim.ReceiveAttack(attacker, new CombatDamage(100, DamageType.Physical));
+        victim.TakeDamage(attacker, new CombatDamage(100, DamageType.Physical));
 
         //assert
         victim.HealthPoints.Should().Be(900);
 
         //act
         victim.IncreaseDamageReceived(100);
-        victim.ReceiveAttack(attacker, new CombatDamage(100, DamageType.Physical));
+        victim.TakeDamage(attacker, new CombatDamage(100, DamageType.Physical));
 
         //assert
         victim.HealthPoints.Should().Be(700);
 
         //act
         victim.DecreaseDamageReceived(100);
-        victim.ReceiveAttack(attacker, new CombatDamage(100, DamageType.Physical));
+        victim.TakeDamage(attacker, new CombatDamage(100, DamageType.Physical));
 
         //assert
         victim.HealthPoints.Should().Be(600);
@@ -54,21 +54,21 @@ public class CombatTests
         var attacker = PlayerTestDataBuilder.Build();
 
         //act
-        victim.ReceiveAttack(attacker, new CombatDamage(1, DamageType.Melee));
+        victim.TakeDamage(attacker, new CombatDamage(1, DamageType.Melee));
 
         //assert
         victim.HealthPoints.Should().Be(1000);
 
         //act
         victim.DisableShieldDefense();
-        victim.ReceiveAttack(attacker, new CombatDamage(1, DamageType.Melee));
+        victim.TakeDamage(attacker, new CombatDamage(1, DamageType.Melee));
 
         //assert
         victim.HealthPoints.Should().Be(999);
 
         //act
         victim.EnableShieldDefense();
-        victim.ReceiveAttack(attacker, new CombatDamage(1, DamageType.Melee));
+        victim.TakeDamage(attacker, new CombatDamage(1, DamageType.Melee));
 
         //assert
         victim.HealthPoints.Should().Be(999);

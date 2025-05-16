@@ -1,3 +1,5 @@
+using System;
+using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Item;
@@ -5,18 +7,32 @@ using NeoServer.Game.Common.Location.Structs;
 
 namespace NeoServer.Game.Common.Combat.Structs;
 
-public readonly struct AttackInput(IThing aggressor, IThing target)
+public class AttackInput
 {
-    public IThing Aggressor => aggressor;
-    public IThing Target => target;
-    public required AttackParameter Parameters { get; init; }
+    public AttackInput(IThing aggressor, IThing target, CombatParameter parameter)
+    {
+        Aggressor = aggressor;
+        Target = target;
+        Parameters = parameter;
+    }
+
+    public AttackInput(IThing aggressor, CombatParameter parameter)
+    {
+        Aggressor = aggressor;
+        Parameters = parameter;
+    }
+
+    public IThing Aggressor { get; }
+    public IThing Target { get; }
+    public CombatParameter Parameters { get; init; }
+    public bool HasTarget => Target is not null;
 }
 
 public readonly struct CombatContext
 {
     public bool InfiniteAmmo { get; init; }
     public bool InfiniteThrowingWeapon { get; init; }
-    public AttackParameter AttackParameters { get; init; }
+    public CombatParameter CombatParameters { get; init; }
 }
 
 public enum AttackType
@@ -27,37 +43,56 @@ public enum AttackType
     Spell,
     Field
 }
-public struct AttackParameter
+
+public class CombatParameter
 {
     public readonly record struct AttackCondition(byte DamageCount, int Interval)
     {
         public bool None => DamageCount == 0;
     }
+
     public required AttackType Type { get; set; }
     public byte Range { get; set; }
     public ushort MinDamage { get; set; }
     public ushort MaxDamage { get; set; }
-    public MinMax Damage => new(MinDamage, MaxDamage);
     public DamageType DamageType { get; set; }
     public EffectT Effect { get; set; }
+
     public byte Radius { get; set; }
-    public bool NeedTarget { get; set; }
     public byte Length { get; set; }
     public byte Spread { get; set; }
     public ShootType ShootType { get; set; }
+
     //public required string Name { get; set; }
     public ExtraAttack ExtraAttack { get; set; }
     public CooldownType CooldownType { get; set; }
     public bool HasExtraAttack => ExtraAttack.MaxDamage > 0;
     public bool IsMagicalAttack { get; set; }
-    public AreaAttackParameter Area { get; set; }
-    public bool IsAttackInArea => !Area.IsEmpty;
+    public bool IsAttackInArea => Area?.Length > 0;
     public bool BlockArmor { get; set; }
-    //public DamageFormula Formula { get; set; }
     public ushort CreateItemId { get; set; }
     public AttackCondition Condition { get; set; }
-    public int CooldownDuration { get; set; }
-    public byte HitChance { get; set; }
+    public uint CooldownDuration { get; set; }
+    public byte? HitChance { get; set; }
+    public byte[,] Area { get; set; }
+    public bool NeedDirection { get; set; }
+    public (CombatFormula Formula, Func<IPlayer, int, int, decimal, MinMax> Callback) DamageFormula { get; set; } =
+        (Formula: CombatFormula.None, null);
+    public void SetMinMaxDamage(MinMax minMaxDamage)
+    {
+        MinDamage = (ushort)minMaxDamage.Min;
+        MaxDamage = (ushort)minMaxDamage.Max;
+    }
+    
+    public void SetExtraAttack(ExtraAttack extraAttack) => ExtraAttack = extraAttack;
+}
+
+public enum CombatFormula
+{
+    None,
+    MagicLevel,
+    Skill,
+    Damage
 }
 
 public readonly struct ExtraAttack
@@ -67,6 +102,7 @@ public readonly struct ExtraAttack
     public DamageType DamageType { get; init; }
     public bool IsMagicalAttack { get; init; }
 }
+
 public struct AreaAttackParameter
 {
     public void SetArea(Coordinate[] coordinates, EffectT effect, bool excludeOrigin = false)
@@ -75,7 +111,7 @@ public struct AreaAttackParameter
         Effect = effect;
         ExcludeOrigin = false;
     }
-    
+
     public Coordinate[] Coordinates { get; private set; }
     public EffectT Effect { get; private set; }
     public bool ExcludeOrigin { get; private set; }

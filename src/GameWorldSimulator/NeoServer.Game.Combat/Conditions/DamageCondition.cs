@@ -50,7 +50,7 @@ public class DamageCondition : BaseCondition
 
     public int Interval
     {
-        set => _cooldown = new CooldownTime(DateTime.Now, value);
+        set => _cooldown = new CooldownTime(DateTime.Now, (uint)value);
     }
 
     public override bool HasExpired => _damageQueue.Count <= 0;
@@ -66,7 +66,7 @@ public class DamageCondition : BaseCondition
             return;
         }
 
-        creature.ReceiveAttack(null, new CombatDamage(damage, DamageType, DamageEffectParser.Parse(DamageType)));
+        creature.TakeDamage(null, new CombatDamage(damage, DamageType, DamageEffectParser.Parse(DamageType)));
     }
 
     public bool Start(ICreature creature, ushort minDamage, ushort maxDamage)

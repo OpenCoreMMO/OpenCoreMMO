@@ -52,7 +52,7 @@ public class MagicField : BaseItem, IMagicField
 
         if (damages.Max == 0) return;
         var conditionType = ConditionTypeParser.Parse(DamageType);
-        actor.ReceiveAttack(this,
+        actor.TakeDamage(this,
             new CombatDamage((ushort)damages.Max, DamageType) { Effect = DamageEffectParser.Parse(DamageType) });
 
         if (actor.HasCondition(conditionType, out var condition) && condition is DamageCondition damageCondition)

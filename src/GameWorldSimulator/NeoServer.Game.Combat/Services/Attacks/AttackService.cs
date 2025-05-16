@@ -1,10 +1,13 @@
+using NeoServer.Game.Combat.Services.Attacks.Validators;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat.Enums;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Services;
+using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Helpers;
+using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Results;
 using NeoServer.Game.Common.Services;
 using Serilog;
@@ -30,17 +33,55 @@ public class AttackService(
 
         playerSkullService.UpdateSkullOnAttack(attackInput.Aggressor as IPlayer, attackInput.Target as IPlayer);
 
-        return attackStrategy.GetAttackService(attackInput.Parameters.Type).Execute(attackInput);
+        if (DistanceAttackValidator.IsValid(attackInput) == false)
+        {
+            return Result.Fail(InvalidOperation.TooFar);
+        }
+
+        UpdateParameters(attackInput);
+        
+        return attackStrategy.GetAttackService(attackInput.Parameters).Execute(attackInput);
+    }
+
+    private static void UpdateParameters(AttackInput attackInput)
+    {
+        if (attackInput.Aggressor is not IPlayer playerAggressor) return;
+
+        if (attackInput.Parameters.DamageFormula.Formula is CombatFormula.MagicLevel)
+        {
+            var minMaxDamage = attackInput.Parameters.DamageFormula.Callback.Invoke(playerAggressor,
+                playerAggressor.Skills[playerAggressor.SkillInUse].Level,
+                playerAggressor.MagicLevel, 0);
+            
+            attackInput.Parameters.SetMinMaxDamage(minMaxDamage);
+        }
+
+        if (attackInput.Parameters.DamageFormula.Formula is CombatFormula.Skill)
+        {
+            var minMaxDamage = attackInput.Parameters.DamageFormula.Callback.Invoke(playerAggressor,
+                playerAggressor.Skills[playerAggressor.SkillInUse].Level,
+                playerAggressor.Inventory.TotalAttack, (decimal)playerAggressor.DamageFactor);
+
+            attackInput.Parameters.SetMinMaxDamage(minMaxDamage);
+
+            var extraAttack = CalculateElementalAttack(playerAggressor);
+            attackInput.Parameters.SetExtraAttack(extraAttack);
+        }
+
+        if (attackInput.Parameters.ShootType == ShootType.WeaponType)
+        {
+            attackInput.Parameters.ShootType = playerAggressor.SkillInUse switch
+            {
+                SkillType.Axe => ShootType.WhirlwindAxe,
+                SkillType.Club => ShootType.WhirlwindClub,
+                SkillType.Sword => ShootType.WhirlwindSword,
+                _ => ShootType.None
+            };
+        }
     }
 
     private bool HasValidInput(AttackInput attackInput)
     {
-        if (Guard.IsNull(attackInput.Target))
-        {
-            logger.Warning("Attack target is null");
-            return false;
-        }
-
         if (Guard.IsNull(attackInput.Aggressor))
         {
             logger.Warning("Attack aggressor is null");
@@ -58,6 +99,7 @@ public class AttackService(
 
     private Result ValidatePvpCombat(AttackInput attackInput)
     {
+        if (Equals(attackInput.Aggressor, attackInput.Target)) return Result.Success;
         if (attackInput.Aggressor is not IPlayer playerAggressor ||
             attackInput.Target is not IPlayer playerTarget)
         {
@@ -77,8 +119,9 @@ public class AttackService(
 
         var targetHasSkull = playerTarget?.GetSkull(playerAggressor) is not Skull.None;
 
-        if (!targetHasSkull && playerAggressor.SecureMode is PvpSecureMode.PvPDisabled &&
-            attackInput.Parameters.NeedTarget)
+        var tryingToAttackWithPvpDisabled = !targetHasSkull && playerAggressor.SecureMode is PvpSecureMode.PvPDisabled;
+        
+        if (tryingToAttackWithPvpDisabled)
         {
             playerAggressor.StopAttack(true);
             OperationFailService.Send(playerAggressor,
@@ -87,5 +130,23 @@ public class AttackService(
         }
 
         return Result.Success;
+    }
+    
+    private static ExtraAttack CalculateElementalAttack(ICombatActor aggressor)
+    {
+        if (aggressor.MaximumElementalAttackPower is 0) return default;
+
+        if (aggressor is not IPlayer player) return default;
+
+        var damageType = player.Inventory.TotalElementalAttack.DamageType;
+
+        if (damageType == DamageType.None) return default;
+
+        return new ExtraAttack
+        {
+            MinDamage = aggressor.MinimumAttackPower,
+            MaxDamage = aggressor.MaximumElementalAttackPower,
+            DamageType = damageType
+        };
     }
 }

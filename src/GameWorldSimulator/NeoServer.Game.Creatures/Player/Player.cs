@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Game.Combat.Attacks;
 using NeoServer.Game.Combat.Conditions;
-using NeoServer.Game.Combat.Services;
-using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Combat.Validation;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Chats;
@@ -21,6 +19,7 @@ using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Contracts.Items.Weapons;
 using NeoServer.Game.Common.Contracts.Items.Weapons.Attributes;
+using NeoServer.Game.Common.Contracts.Spells;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
@@ -574,24 +573,35 @@ public class Player : CombatActor, IPlayer
 
     public virtual bool CastSpell(string message)
     {
-        if (!SpellList.TryGet(message.Trim(), out var spell)) return false;
-        if (!spell.Invoke(this, message, out var error))
-        {
-            OnCannotUseSpell?.Invoke(this, spell, error);
-            return true;
-        }
+        // if (!SpellList.TryGet(message.Trim(), out var spell)) return false;
+        // if (!spell.Invoke(this, message, out var error))
+        // {
+        //     OnCannotUseSpell?.Invoke(this, spell, error);
+        //     return true;
+        // }
+        //
+        // var talkType = SpeechType.MonsterSay;
+        //
+        // Cooldowns.Start(CooldownType.Spell, 1000); //todo: 1000 should be a const
+        //
+        // if (spell.IncreaseSkill) IncreaseSkillCounter(SkillType.Magic, spell.Mana);
+        //
+        // if (!spell.ShouldSay) return true;
+        //
+        // base.Say(message, talkType);
 
+        return true;
+    }
+
+    public void PostSpellCast(ISpell spell)
+    {
         var talkType = SpeechType.MonsterSay;
-
-        Cooldowns.Start(CooldownType.Spell, 1000); //todo: 1000 should be a const
 
         if (spell.IncreaseSkill) IncreaseSkillCounter(SkillType.Magic, spell.Mana);
 
-        if (!spell.ShouldSay) return true;
+        if (!spell.ShouldSay) return;
 
-        base.Say(message, talkType);
-
-        return true;
+        base.Say(spell.Words, talkType);
     }
 
     public bool HasEnoughMana(ushort mana)
@@ -721,12 +731,12 @@ public class Player : CombatActor, IPlayer
         }
 
         //todo: start these cooldowns when player logs in
-        Cooldowns.Start(CooldownType.HealthRecovery, Vocation.GainHpTicks * 1000);
-        Cooldowns.Start(CooldownType.ManaRecovery, Vocation.GainManaTicks * 1000);
-        Cooldowns.Start(CooldownType.SoulRecovery, Vocation.GainSoulTicks * 1000);
+        Cooldowns.Start(CooldownType.HealthRecovery, (uint)Vocation.GainHpTicks * 1000);
+        Cooldowns.Start(CooldownType.ManaRecovery, (uint)Vocation.GainManaTicks * 1000);
+        Cooldowns.Start(CooldownType.SoulRecovery, (uint)Vocation.GainSoulTicks * 1000);
 
         foreach (var regenerationBonus in RegenerationBonusList)
-            Cooldowns.Start(regenerationBonus.Id, regenerationBonus.Ticks);
+            Cooldowns.Start(regenerationBonus.Id, (uint)regenerationBonus.Ticks);
     }
 
     public void AddRegenerationBonus(RegenerationBonus regenerationBonus)
@@ -783,7 +793,7 @@ public class Player : CombatActor, IPlayer
         if (itemUsed)
         {
             OnUsedItem?.Invoke(this, onCreature, item);
-            Cooldowns.Start(CooldownType.UseItem, item.CooldownTime);
+            Cooldowns.Start(CooldownType.UseItem, (uint)item.CooldownTime);
             return Result.Success;
         }
 
@@ -1035,14 +1045,15 @@ public class Player : CombatActor, IPlayer
         return canUse ? Result.Success : Result.Fail(InvalidOperation.CannotUseWeapon);
     }
 
-    public override Result CanAttack(AttackParameter attackParameter)
+    public override Result CanAttack(CombatParameter combatParameter)
     {
-        var result = base.CanAttack(attackParameter);
+        var result = base.CanAttack(combatParameter);
         if (result.Failed) return result;
 
-        var hasEnoughAmmo = Inventory.Weapon is INeedsAmmo distanceWeapon && !distanceWeapon.CanShootAmmunition(Inventory.Ammo);
+        var hasEnoughAmmo = Inventory.Weapon is INeedsAmmo distanceWeapon &&
+                            !distanceWeapon.CanShootAmmunition(Inventory.Ammo);
 
-        if (attackParameter.Type == AttackType.Regular && hasEnoughAmmo)
+        if (combatParameter.Type == AttackType.Regular && hasEnoughAmmo)
         {
             return Result.NotPossible;
         }
@@ -1333,14 +1344,14 @@ public class Player : CombatActor, IPlayer
         SetLogoutBlock();
 
         var totalDamage = damages.TotalDamage;
-        
+
         if (totalDamage.ManaDamage > 0)
         {
             ConsumeMana(totalDamage.ManaDamage);
             return;
         }
-        
-        if(IsManaShieldEnabled)
+
+        if (IsManaShieldEnabled)
         {
             ConsumeMana(totalDamage.HealthDamage);
             return;

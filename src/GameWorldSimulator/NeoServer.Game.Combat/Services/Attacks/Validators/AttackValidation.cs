@@ -7,7 +7,7 @@ using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Results;
 
-namespace NeoServer.Game.Combat.Services.Attacks;
+namespace NeoServer.Game.Combat.Services.Attacks.Validators;
 
 public class AttackValidation(IMapTool mapTool, IMap map)
 {
@@ -21,9 +21,11 @@ public class AttackValidation(IMapTool mapTool, IMap map)
         {
             return attackValidationResult;
         }
-
-        if (Guard.IsNull(target) || aggressor.Equals(target))
+        
+        if (Guard.IsNull(aggressor) )
             return Result.NotPossible;
+        
+        if(!attackInput.HasTarget) return Result.Success;
         
         if (!aggressor.CanSee(target.Location) || !aggressor.Location.SameFloorAs(target.Location))
             return Result.Fail(InvalidOperation.CreatureIsNotReachable);

@@ -42,7 +42,7 @@ public class AttackRune : Rune, IAttackRune
         var minMaxDamage = Formula(player, player.Level, player.GetSkillLevel(SkillType.Magic));
         var damage = (ushort)GameRandom.Random.Next(minMaxDamage.Min, maxValue: minMaxDamage.Max);
 
-        if (enemy.ReceiveAttack(player, new CombatDamage(damage, DamageType, HasNoInjureEffect)))
+        if (enemy.TakeDamage(player, new CombatDamage(damage, DamageType, HasNoInjureEffect)))
         {
             combatAttackResult.ShootType = ShootType;
             combatAttackResult.DamageType = DamageType;

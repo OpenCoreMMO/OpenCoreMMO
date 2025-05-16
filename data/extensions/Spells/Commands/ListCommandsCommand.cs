@@ -23,11 +23,11 @@ public class ListCommandsCommand : CommandSpell
 {
     private const string SPELL_TYPE = "command";
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.NotPossible;
 
-        if (actor is not IPlayer player) return false;
+        if (caster is not IPlayer player) return false;
 
         var spells = LoadSpells();
         var text = BuildTextFromSpells(spells, words);

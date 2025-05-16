@@ -23,11 +23,11 @@ public class InvisibleSpell : Spell<InvisibleSpell>
     public override ushort Mana => 60;
     public override ConditionType ConditionType => ConditionType.Invisible;
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.None;
 
-        actor.TurnInvisible();
+        caster.TurnInvisible();
         return true;
     }
 

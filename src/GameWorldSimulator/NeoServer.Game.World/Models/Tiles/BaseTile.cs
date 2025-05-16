@@ -101,7 +101,7 @@ public abstract class BaseTile : ITile
         //     setFlag(TILESTATE_TRASHHOLDER);
         // }
 
-        if (item.Metadata.HasFlag(ItemFlag.Unpassable)) SetFlag(TileFlags.BLockSolid);
+        if (item.Metadata.HasFlag(ItemFlag.Unpassable)) SetFlag(TileFlags.Unpassable);
 
         // if (item->getBed()) { //todo
         //     setFlag(TILESTATE_BED);
@@ -123,7 +123,7 @@ public abstract class BaseTile : ITile
         RemoveFlag(TileFlags.BlockProjecTile);
         RemoveFlag(TileFlags.Teleport);
         RemoveFlag(TileFlags.MagicField);
-        RemoveFlag(TileFlags.BLockSolid);
+        RemoveFlag(TileFlags.Unpassable);
         RemoveFlag(TileFlags.Depot);
         RemoveFlag(TileFlags.SupportsHangable);
         RemoveFlag(TileFlags.MailBox);

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using NeoServer.Game.Combat.Services.Attacks;
+﻿using NeoServer.Game.Combat.Services.Attacks;
 using NeoServer.Game.Combat.Services.Attacks.Builders;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Services;

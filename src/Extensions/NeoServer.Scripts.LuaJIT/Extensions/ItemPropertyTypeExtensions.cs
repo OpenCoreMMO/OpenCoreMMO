@@ -10,7 +10,7 @@ public static class ItemPropertyTypeExtensions
     {
         return value switch
         {
-            ItemPropertyType.CONST_PROP_BLOCKSOLID => TileFlags.BLockSolid,
+            ItemPropertyType.CONST_PROP_BLOCKSOLID => TileFlags.Unpassable,
             ItemPropertyType.CONST_PROP_HASHEIGHT => TileFlags.HasHeight,
             ItemPropertyType.CONST_PROP_BLOCKPROJECTILE => TileFlags.BlockProjecTile,
             ItemPropertyType.CONST_PROP_BLOCKPATH => TileFlags.BlockPath,
@@ -50,7 +50,7 @@ public static class ItemPropertyTypeExtensions
     {
         return value switch
         {
-            TileFlags.BLockSolid => ItemPropertyType.CONST_PROP_BLOCKSOLID,
+            TileFlags.Unpassable => ItemPropertyType.CONST_PROP_BLOCKSOLID,
             TileFlags.HasHeight => ItemPropertyType.CONST_PROP_HASHEIGHT,
             TileFlags.BlockProjecTile => ItemPropertyType.CONST_PROP_BLOCKPROJECTILE,
             TileFlags.BlockPath => ItemPropertyType.CONST_PROP_BLOCKPATH,

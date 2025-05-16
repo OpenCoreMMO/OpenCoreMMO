@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Immutable;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Combat.Structs;
@@ -10,7 +9,6 @@ using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.Items.Types.Body;
 using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Creatures.Players;
-using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Results;
 using NeoServer.Game.Creatures.Player.Inventory.Calculations;
 using NeoServer.Game.Creatures.Player.Inventory.Operations;

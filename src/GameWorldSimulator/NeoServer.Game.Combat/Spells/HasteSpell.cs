@@ -24,11 +24,11 @@ public class HasteSpell : Spell<HasteSpell>
     public override ushort Mana => 60;
     public override ConditionType ConditionType => ConditionType.Haste;
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.None;
 
-        actor.IncreaseSpeed(SpeedBoost);
+        caster.IncreaseSpeed(SpeedBoost);
         return true;
     }
 

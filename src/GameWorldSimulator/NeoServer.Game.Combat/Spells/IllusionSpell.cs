@@ -22,7 +22,7 @@ public class IllusionSpell : Spell<IllusionSpell>
     public virtual IMonsterDataManager Monsters { get; }
     public virtual string CreatureName { get; }
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.NotPossible;
 
@@ -37,7 +37,7 @@ public class IllusionSpell : Spell<IllusionSpell>
         look.TryGetValue(LookType.Legs, out var legs);
         look.TryGetValue(LookType.Head, out var head);
 
-        actor.SetTemporaryOutfit(lookType, (byte)head, (byte)body, (byte)legs, (byte)feet, (byte)addon);
+        caster.SetTemporaryOutfit(lookType, (byte)head, (byte)body, (byte)legs, (byte)feet, (byte)addon);
 
         return true;
     }

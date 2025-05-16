@@ -12,7 +12,7 @@ public class BanPlayerCommand : CommandSpell
 {
     private const string BANISH_REASON = "You have been banished by a gamemaster.";
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.NotPossible;
 
@@ -26,12 +26,12 @@ public class BanPlayerCommand : CommandSpell
         if (!ctx.TryGetPlayer(Params[0].ToString(), out var player))
             return false;
 
-        if (player is null || player.CreatureId == actor.CreatureId)
+        if (player is null || player.CreatureId == caster.CreatureId)
             return false;
 
         var reason = Params[1]?.ToString() ?? BANISH_REASON;
 
-        accountRepository.Ban(player.AccountId, reason, ((IPlayer)actor).AccountId).Wait();
+        accountRepository.Ban(player.AccountId, reason, ((IPlayer)caster).AccountId).Wait();
         playerLogOutCommand.Execute(player, true);
 
         return true;

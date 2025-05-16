@@ -94,7 +94,7 @@ public class DistanceWeapon(IItemType type, Location location): Equipment(type, 
 
         if (DistanceCombatAttack.CalculateAttack(actor, enemy, combat, out var damage))
         {
-            enemy.ReceiveAttack(actor, damage);
+            enemy.TakeDamage(actor, damage);
             result = true;
         }
 

@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using NeoServer.Game.Combat.Services.Spells;
+using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
@@ -11,22 +13,14 @@ using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Commands.Player;
 
-public class PlayerSayCommand : ICommand
+public class PlayerSayCommand(
+    IGameServer game,
+    IChatChannelStore chatChannelStore,
+    IScriptManager scriptManager,
+    SpellService spellService,
+    SpellListManager spellListManager)
+    : ICommand
 {
-    private readonly IChatChannelStore _chatChannelStore;
-    private readonly IGameServer _game;
-    private readonly IScriptManager _scriptManager;
-
-    public PlayerSayCommand(
-        IGameServer game,
-        IChatChannelStore chatChannelStore,
-        IScriptManager scriptManager)
-    {
-        _game = game;
-        _chatChannelStore = chatChannelStore;
-        _scriptManager = scriptManager;
-    }
-
     public void Execute(IPlayer player, IConnection connection, PlayerSayPacket playerSayPacket)
     {
         if (string.IsNullOrWhiteSpace(playerSayPacket.Message) ||
@@ -35,11 +29,18 @@ public class PlayerSayCommand : ICommand
 
         var message = playerSayPacket.Message?.Trim();
 
-        if (_scriptManager.TalkActions.Say(player, playerSayPacket.TalkType, message))
+        if (scriptManager.TalkActions.Say(player, playerSayPacket.TalkType, message))
             return;
 
-        if (player.CastSpell(message)) return;
+        //cast spell;
+        if (spellListManager.TryGet(message?.Trim(), out var spell))
+        {
+            spellService.Cast(player, spell);
+            return;
+        }
 
+        //if (player.CastSpell(message)) return;
+        
         switch (playerSayPacket.TalkType)
         {
             case SpeechType.None:
@@ -90,7 +91,7 @@ public class PlayerSayCommand : ICommand
         string message)
     {
         if (string.IsNullOrWhiteSpace(playerSayPacket.Receiver) ||
-            !_game.CreatureManager.TryGetPlayer(playerSayPacket.Receiver, out var receiver))
+            !game.CreatureManager.TryGetPlayer(playerSayPacket.Receiver, out var receiver))
         {
             connection.OutgoingPackets.Enqueue(new TextMessagePacket("A player with this name is not online.",
                 TextMessageOutgoingType.Small));
@@ -103,7 +104,7 @@ public class PlayerSayCommand : ICommand
 
     private void SendMessageToNpc(IPlayer player, PlayerSayPacket playerSayPacket, string message)
     {
-        foreach (var creature in _game.Map.GetCreaturesAtPositionZone(player.Location))
+        foreach (var creature in game.Map.GetCreaturesAtPositionZone(player.Location))
             if (creature is INpc npc)
             {
                 npc.Hear(player, playerSayPacket.TalkType, message);
@@ -113,7 +114,7 @@ public class PlayerSayCommand : ICommand
 
     private void SendMessageToChannel(IPlayer player, ushort channelId, string message)
     {
-        var channel = _chatChannelStore.Get(channelId);
+        var channel = chatChannelStore.Get(channelId);
 
         if (channel is null) channel = player.Channels.PrivateChannels.FirstOrDefault(x => x.Id == channelId);
 

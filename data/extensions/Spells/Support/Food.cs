@@ -13,7 +13,7 @@ public class Food : Spell<Food>
 
     public override ConditionType ConditionType => ConditionType.None;
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.None;
 

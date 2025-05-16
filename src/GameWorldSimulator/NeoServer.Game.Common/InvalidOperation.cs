@@ -40,5 +40,8 @@ public enum InvalidOperation
     PlayerLocationInvalid,
     NotEnoughMagicLevel,
     PremiumTimeIsRequired,
-    AdjustCombatSettingsToAttackPlayer
+    AdjustCombatSettingsToAttackPlayer,
+    SpellNeedsWeapon,
+    SpellRequiresPremium,
+    CanOnlyUseOnCreatures
 }

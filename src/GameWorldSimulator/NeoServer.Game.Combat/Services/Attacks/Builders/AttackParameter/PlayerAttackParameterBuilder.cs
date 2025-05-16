@@ -12,13 +12,13 @@ namespace NeoServer.Game.Combat.Services.Attacks.Builders.AttackParameter;
 
 public static class PlayerAttackParameterBuilder
 {
-    public static Common.Combat.Structs.AttackParameter Build(IPlayer player, IThing target)
+    public static Common.Combat.Structs.CombatParameter Build(IPlayer player, IThing target)
     {
         if (player is null) return default;
 
         var elementalDamage = CalculateElementalAttack(player);
 
-        return new Common.Combat.Structs.AttackParameter
+        return new Common.Combat.Structs.CombatParameter
         {
             Type = AttackType.Regular,
             MinDamage = player.MinimumAttackPower,
@@ -30,7 +30,7 @@ public static class PlayerAttackParameterBuilder
             ShootType = GetShootType(player),
             ExtraAttack = elementalDamage,
             CooldownType = CooldownType.Combat,
-            CooldownDuration = (int)player.AttackSpeed,
+            CooldownDuration = (uint)player.AttackSpeed,
             IsMagicalAttack = player.Inventory.Weapon is IMagicalWeapon,
             HitChance = HitChanceCalculation.GetHitChance(player.Inventory.Weapon,
                 player?.GetSkillLevel(player.SkillInUse) ?? 0,

@@ -112,7 +112,7 @@ public class MonsterStateTest
         monster.SetAsEnemy(player);
         monster.UpdateState();
 
-        player.ReceiveAttack(monster2, new CombatDamage(200, DamageType.Melee));
+        player.TakeDamage(monster2, new CombatDamage(200, DamageType.Melee));
 
         //act
         monster.UpdateState();

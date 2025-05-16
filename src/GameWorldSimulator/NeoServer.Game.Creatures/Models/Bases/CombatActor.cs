@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using NeoServer.Game.Combat.Services;
+﻿using System.Collections.Generic;
 using NeoServer.Game.Combat.Services.Attacks.Events;
 using NeoServer.Game.Combat.Validation;
 using NeoServer.Game.Common;
@@ -9,7 +7,6 @@ using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Combat.Attacks;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types.Body;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Contracts.Spells;
 using NeoServer.Game.Common.Contracts.World;
@@ -24,7 +21,6 @@ using NeoServer.Game.Common.Results;
 using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
 using NeoServer.Game.Creatures.Models.Bases.Events;
-using NeoServer.Game.Creatures.Player.Inventory;
 
 namespace NeoServer.Game.Creatures.Models.Bases;
 
@@ -198,11 +194,11 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return new CalculatedAttackDamage();
     }
 
-    public virtual Result CanAttack(AttackParameter attackParameter)
+    public virtual Result CanAttack(CombatParameter combatParameter)
     {
         if (IsDead) return Result.Fail(InvalidOperation.CreatureIsDead);
 
-        if (!Cooldowns.Expired(CooldownType.Combat))
+        if (combatParameter.CooldownType is not CooldownType.None && !Cooldowns.Expired(combatParameter.CooldownType))
             return Result.Fail(InvalidOperation.CannotAttackThatFast);
 
         if (Tile?.ProtectionZone ?? false)
@@ -211,7 +207,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return Result.Success;
     }
 
-    public bool ReceiveAttack(IThing enemy, CombatDamage damages) => ReceiveAttack(enemy, new CombatDamageList(damages));
+    public bool TakeDamage(IThing enemy, CombatDamage damages) => TakeDamage(enemy, new CombatDamageList(damages));
 
     public virtual Result Attack(ICombatActor enemy)
     {
@@ -234,7 +230,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         OnAttackEnemy?.Invoke(this, enemy, combat);
 
-        Cooldowns.Start(CooldownType.Combat, (int)AttackSpeed);
+        Cooldowns.Start(CooldownType.Combat, (uint)AttackSpeed);
 
         return Result.Success;
     }
@@ -327,20 +323,17 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public void StartSpellCooldown(ISpell spell)
     {
-        Cooldowns.Start(spell.Name, (int)spell.Cooldown);
+        Cooldowns.Start(spell);
     }
 
-    public bool SpellCooldownHasExpired(ISpell spell)
-    {
-        return Cooldowns.Expired(spell.Name);
-    }
+    public bool SpellCooldownHasExpired(ISpell spell) => Cooldowns.Expired(spell);
 
     public bool CooldownHasExpired(CooldownType type)
     {
         return Cooldowns.Expired(type);
     }
 
-    public virtual bool ReceiveAttack(IThing enemy, CombatDamageList damages)
+    public virtual bool TakeDamage(IThing enemy, CombatDamageList damages)
     {
         if (enemy?.Equals(this) ?? false) return false;
         if (!CanBeAttacked) return false;
@@ -529,7 +522,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public virtual void PreAttack(CombatContext combatContext)
     {
-        Cooldowns.Start(combatContext.AttackParameters.CooldownType, combatContext.AttackParameters.CooldownDuration);
+        Cooldowns.Start(combatContext.CombatParameters.CooldownType, (uint)combatContext.CombatParameters.CooldownDuration);
     }
 
     #region Events

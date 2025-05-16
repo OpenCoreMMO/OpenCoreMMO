@@ -12,19 +12,19 @@ public class BloodRage : Spell<Food>
     public override ConditionType ConditionType => ConditionType.Strengthened;
     public override EffectT Effect => EffectT.GlitterBlue;
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
     {
         error = InvalidOperation.None;
 
-        if (actor is not IPlayer player) return false;
+        if (caster is not IPlayer player) return false;
 
         player.AddSkillBonus(SkillType.Axe, (sbyte)Math.Abs(player.Skills[SkillType.Axe].Level * 0.35));
         player.AddSkillBonus(SkillType.Sword, (sbyte)Math.Abs(player.Skills[SkillType.Axe].Level * 0.35));
         player.AddSkillBonus(SkillType.Club, (sbyte)Math.Abs(player.Skills[SkillType.Axe].Level * 0.35));
         player.AddSkillBonus(SkillType.Fist, (sbyte)Math.Abs(player.Skills[SkillType.Axe].Level * 0.35));
 
-        actor.DisableShieldDefense();
-        actor.IncreaseDamageReceived(15);
+        caster.DisableShieldDefense();
+        caster.IncreaseDamageReceived(15);
         return true;
     }
 

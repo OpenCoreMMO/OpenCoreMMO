@@ -4,5 +4,5 @@ namespace NeoServer.Game.Combat.Services.Attacks.Builders.AttackParameter;
 
 public interface IAttackParameterBuilder
 {
-    Common.Combat.Structs.AttackParameter Build(IThing aggressor);
+    Common.Combat.Structs.CombatParameter Build(IThing aggressor);
 }

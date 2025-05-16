@@ -50,7 +50,7 @@ public class EffectParser
             "holydamage" => EffectT.HolyDamage,
             "bigclouds" => EffectT.BigClouds,
             "icearea" => EffectT.IceArea,
-            "icetornado" => EffectT.IceRornado,
+            "icetornado" => EffectT.IceTornado,
             "iceattack" => EffectT.IceAttack,
             "stones" => EffectT.Stones,
             "smallplants" => EffectT.SmallPlants,

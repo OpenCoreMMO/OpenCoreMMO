@@ -2,7 +2,6 @@
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types.Body;
 using NeoServer.Game.Common.Contracts.Items.Weapons;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Item;
@@ -45,7 +44,7 @@ public class MagicWeapon : Equipment, IMagicalWeapon
         if (DistanceCombatAttack.CalculateAttack(actor, enemy, combat, out var damage))
         {
             player.ConsumeMana(ManaConsumption);
-            enemy.ReceiveAttack(actor, damage);
+            enemy.TakeDamage(actor, damage);
             return true;
         }
 

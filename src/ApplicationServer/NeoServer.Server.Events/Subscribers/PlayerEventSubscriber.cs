@@ -22,7 +22,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         PlayerGainedExperienceEventHandler playerGainedExperienceEventHandler,
         PlayerManaChangedEventHandler playerManaReducedEventHandler,
         SpellInvokedEventHandler playerUsedSpellEventHandler,
-        PlayerCannotUseSpellEventHandler playerCannotUseSpellEventHandler,
         PlayerLevelAdvancedEventHandler playerLevelAdvancedEventHandler,
         PlayerLevelRegressedEventHandler playerLevelRegressedEventHandler,
         PlayerLookedAtEventHandler playerLookedAtEventHandler,
@@ -56,7 +55,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         _playerGainedExperienceEventHandler = playerGainedExperienceEventHandler;
         _playerManaReducedEventHandler = playerManaReducedEventHandler;
         _playerUsedSpellEventHandler = playerUsedSpellEventHandler;
-        _playerCannotUseSpellEventHandler = playerCannotUseSpellEventHandler;
         _playerLevelAdvancedEventHandler = playerLevelAdvancedEventHandler;
         _playerLevelRegressedEventHandler = playerLevelRegressedEventHandler;
         _playerLookedAtEventHandler = playerLookedAtEventHandler;
@@ -116,7 +114,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
 
         player.OnStatusChanged += _playerManaReducedEventHandler.Execute;
         player.OnUsedSpell += _playerUsedSpellEventHandler.Execute;
-        player.OnCannotUseSpell += _playerCannotUseSpellEventHandler.Execute;
         player.OnLevelAdvanced += _playerLevelAdvancedEventHandler.Execute;
         player.OnLevelRegressed += _playerLevelRegressedEventHandler.Execute;
         player.OnLookedAt += _playerLookedAtEventHandler.Execute;
@@ -180,7 +177,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
 
         player.OnStatusChanged -= _playerManaReducedEventHandler.Execute;
         player.OnUsedSpell -= _playerUsedSpellEventHandler.Execute;
-        player.OnCannotUseSpell -= _playerCannotUseSpellEventHandler.Execute;
         player.OnLevelAdvanced -= _playerLevelAdvancedEventHandler.Execute;
         player.OnLevelRegressed -= _playerLevelRegressedEventHandler.Execute;
         player.OnLookedAt -= _playerLookedAtEventHandler.Execute;
@@ -222,7 +218,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
     private readonly PlayerGainedExperienceEventHandler _playerGainedExperienceEventHandler;
     private readonly PlayerManaChangedEventHandler _playerManaReducedEventHandler;
     private readonly SpellInvokedEventHandler _playerUsedSpellEventHandler;
-    private readonly PlayerCannotUseSpellEventHandler _playerCannotUseSpellEventHandler;
     private readonly PlayerConditionChangedEventHandler _playerConditionChangedEventHandler;
     private readonly PlayerLevelAdvancedEventHandler _playerLevelAdvancedEventHandler;
     private readonly PlayerLevelRegressedEventHandler _playerLevelRegressedEventHandler;

@@ -19,7 +19,7 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
     /// <param name="victim"></param>
     public void UpdateSkullOnAttack(IPlayer aggressor, IPlayer victim)
     {
-        if(Guard.IsNull(aggressor) || Guard.IsNull(victim)) return;
+        if(Guard.IsNull(aggressor) || Guard.IsNull(victim) || aggressor.Equals(victim)) return;
         if (!(gameConfiguration.PvP?.SkullSystemEnabled ?? false)) return;
 
         var whiteSkullEndingDate =

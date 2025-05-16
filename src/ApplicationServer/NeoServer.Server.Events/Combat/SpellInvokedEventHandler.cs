@@ -5,15 +5,8 @@ using NeoServer.Server.Common.Contracts;
 
 namespace NeoServer.Server.Events.Combat;
 
-public class SpellInvokedEventHandler
+public class SpellInvokedEventHandler(IGameServer game)
 {
-    private readonly IGameServer game;
-
-    public SpellInvokedEventHandler(IGameServer game)
-    {
-        this.game = game;
-    }
-
     public void Execute(ICreature creature, ISpell spell)
     {
         foreach (var spectator in game.Map.GetPlayersAtPositionZone(creature.Location))

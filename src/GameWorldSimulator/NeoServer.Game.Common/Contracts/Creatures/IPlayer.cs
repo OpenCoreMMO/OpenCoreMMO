@@ -131,6 +131,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     DateTime? SkullEndsAt { get; }
     bool IsProtectionZoneBlocked { get; }
     Skull Skull { get; }
+    float DamageFactor { get; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 
@@ -297,4 +298,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
     public event WroteText OnWroteText;
 
     #endregion
+
+    void PostSpellCast(ISpell spell);
 }

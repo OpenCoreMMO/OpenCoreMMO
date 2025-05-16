@@ -51,7 +51,7 @@ public class MeleeCombatAttack : CombatAttack
 
         if (CalculateAttack(actor, enemy, option, out var damage))
         {
-            var wasDamaged = enemy.ReceiveAttack(actor, damage);
+            var wasDamaged = enemy.TakeDamage(actor, damage);
 
             if (!wasDamaged) return true;
 

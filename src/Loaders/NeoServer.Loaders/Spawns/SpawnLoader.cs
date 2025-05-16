@@ -30,7 +30,7 @@ public class SpawnLoader
             var spawns = spawnData.AsParallel().Select(SpawnConverter.Convert).ToList();
 
             _world.LoadSpawns(spawns);
-            return new object[] { spawns.Count };
+            return [spawns.Count];
         });
     }
 
