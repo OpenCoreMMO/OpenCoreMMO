@@ -11,7 +11,6 @@ public partial class IceWave : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        Type = AttackType.Spell,
         DamageFormula = (CombatFormula.MagicLevel, GetFormulaValues),
         DamageType = DamageType.Ice,
         Effect = EffectT.IceArea,

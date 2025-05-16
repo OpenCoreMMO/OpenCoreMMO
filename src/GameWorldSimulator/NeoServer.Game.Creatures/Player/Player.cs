@@ -1051,9 +1051,9 @@ public class Player : CombatActor, IPlayer
         if (result.Failed) return result;
 
         var hasEnoughAmmo = Inventory.Weapon is INeedsAmmo distanceWeapon &&
-                            !distanceWeapon.CanShootAmmunition(Inventory.Ammo);
+                            distanceWeapon.CanShootAmmunition(Inventory.Ammo);
 
-        if (combatParameter.Type == AttackType.Regular && hasEnoughAmmo)
+        if (combatParameter.UsingWeapon && !hasEnoughAmmo)
         {
             return Result.NotPossible;
         }

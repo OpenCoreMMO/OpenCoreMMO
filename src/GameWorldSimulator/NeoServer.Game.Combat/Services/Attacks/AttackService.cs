@@ -4,6 +4,7 @@ using NeoServer.Game.Common.Combat.Enums;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Services;
+using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Helpers;
@@ -18,11 +19,25 @@ public class AttackService(
     ILogger logger,
     PvPConfiguration pvpConfiguration,
     IPlayerSkullService playerSkullService,
-    AttackStrategy attackStrategy,
+    AreaAttackService areaAttackService,
+    SingleTargetAttackService singleTargetAttackService,
     AttackValidation attackValidation) : IAttackService
 {
     public Result Execute(AttackInput attackInput)
-    {
+    { 
+        
+        // Attack each combat actor on the target tile
+        if (!attackInput.Parameters.IsAttackInArea && attackInput.Target is IDynamicTile { Creatures.Count: > 0 } targetTile)
+        {
+            foreach (var target in targetTile.Creatures)
+            {
+                if (target is not ICombatActor) continue;
+                Execute(new AttackInput(attackInput.Aggressor, target, attackInput.Parameters));
+            }
+
+            return Result.Success;
+        }
+
         if (!HasValidInput(attackInput)) return Result.NotPossible;
 
         var attackValidationResult = attackValidation.Validate(attackInput);
@@ -40,7 +55,12 @@ public class AttackService(
 
         UpdateParameters(attackInput);
         
-        return attackStrategy.GetAttackService(attackInput.Parameters).Execute(attackInput);
+        if (attackInput.Parameters.IsAttackInArea)
+        {
+            return areaAttackService.Execute(attackInput);
+        }
+
+        return singleTargetAttackService.Execute(attackInput);
     }
 
     private static void UpdateParameters(AttackInput attackInput)
@@ -52,7 +72,7 @@ public class AttackService(
             var minMaxDamage = attackInput.Parameters.DamageFormula.Callback.Invoke(playerAggressor,
                 playerAggressor.Skills[playerAggressor.SkillInUse].Level,
                 playerAggressor.MagicLevel, 0);
-            
+
             attackInput.Parameters.SetMinMaxDamage(minMaxDamage);
         }
 
@@ -88,12 +108,6 @@ public class AttackService(
             return false;
         }
 
-        if (attackInput.Parameters.Type is AttackType.None)
-        {
-            logger.Warning("Attack type is none");
-            return false;
-        }
-
         return true;
     }
 
@@ -120,7 +134,7 @@ public class AttackService(
         var targetHasSkull = playerTarget?.GetSkull(playerAggressor) is not Skull.None;
 
         var tryingToAttackWithPvpDisabled = !targetHasSkull && playerAggressor.SecureMode is PvpSecureMode.PvPDisabled;
-        
+
         if (tryingToAttackWithPvpDisabled)
         {
             playerAggressor.StopAttack(true);
@@ -131,7 +145,7 @@ public class AttackService(
 
         return Result.Success;
     }
-    
+
     private static ExtraAttack CalculateElementalAttack(ICombatActor aggressor)
     {
         if (aggressor.MaximumElementalAttackPower is 0) return default;

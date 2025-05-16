@@ -12,7 +12,6 @@ public class FierceBerserk : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        Type = AttackType.Spell,
         DamageFormula = (CombatFormula.Skill, GetFormulaValues),
         DamageType = DamageType.Physical,
         Effect = EffectT.XGray,

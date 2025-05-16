@@ -11,16 +11,14 @@ public class IceStrike : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        Type = AttackType.Spell,
         DamageFormula = (CombatFormula.MagicLevel, GetFormulaValues),
         DamageType = DamageType.Ice,
         Effect = EffectT.IceAttack,
-        BlockArmor = true
+        ShootType = ShootType.SmallIce
     };
 
     public override string Name => "Ice Strike";
     public override string Words => "exori frigo";
-    protected override string AreaName => "AREA_SHORTWAVE3";
     public override ushort MinLevel => 15;
     public override ushort Mana { get; set; } = 20;
     public override bool Premium => true;

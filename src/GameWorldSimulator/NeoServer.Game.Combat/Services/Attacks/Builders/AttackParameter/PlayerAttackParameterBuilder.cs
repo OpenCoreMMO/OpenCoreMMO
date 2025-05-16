@@ -12,7 +12,7 @@ namespace NeoServer.Game.Combat.Services.Attacks.Builders.AttackParameter;
 
 public static class PlayerAttackParameterBuilder
 {
-    public static Common.Combat.Structs.CombatParameter Build(IPlayer player, IThing target)
+    public static CombatParameter Build(IPlayer player, IThing target)
     {
         if (player is null) return default;
 
@@ -20,7 +20,6 @@ public static class PlayerAttackParameterBuilder
 
         return new Common.Combat.Structs.CombatParameter
         {
-            Type = AttackType.Regular,
             MinDamage = player.MinimumAttackPower,
             MaxDamage = player.MaximumAttackPower,
             DamageType = GetDamageType(player),
@@ -32,6 +31,7 @@ public static class PlayerAttackParameterBuilder
             CooldownType = CooldownType.Combat,
             CooldownDuration = (uint)player.AttackSpeed,
             IsMagicalAttack = player.Inventory.Weapon is IMagicalWeapon,
+            UsingWeapon = true,
             HitChance = HitChanceCalculation.GetHitChance(player.Inventory.Weapon,
                 player?.GetSkillLevel(player.SkillInUse) ?? 0,
                 (byte)player.Location.GetSqmDistance(target.Location)),

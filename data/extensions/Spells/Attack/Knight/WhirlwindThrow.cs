@@ -11,7 +11,6 @@ public class WhirlwindThrow : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        Type = AttackType.Spell,
         DamageType = DamageType.Physical,
         ShootType = ShootType.WeaponType,
         Effect = EffectT.XGray,

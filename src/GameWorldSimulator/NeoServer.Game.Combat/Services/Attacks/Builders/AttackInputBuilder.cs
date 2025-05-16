@@ -9,10 +9,7 @@ public static class AttackInputBuilder
 {
     public static AttackInput Build(IThing aggressor, IThing target)
     {
-        var combatParameter = new CombatParameter
-        {
-            Type = AttackType.None
-        };
+        var combatParameter = new CombatParameter();
         
         if (aggressor is IPlayer player)
         {

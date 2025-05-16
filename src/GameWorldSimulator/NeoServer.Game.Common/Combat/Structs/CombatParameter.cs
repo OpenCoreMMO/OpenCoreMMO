@@ -51,7 +51,7 @@ public class CombatParameter
         public bool None => DamageCount == 0;
     }
 
-    public required AttackType Type { get; set; }
+    public bool UsingWeapon { get; set; }
     public byte Range { get; set; }
     public ushort MinDamage { get; set; }
     public ushort MaxDamage { get; set; }
