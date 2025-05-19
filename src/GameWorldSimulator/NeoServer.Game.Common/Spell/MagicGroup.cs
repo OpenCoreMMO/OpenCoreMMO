@@ -1,6 +1,6 @@
 namespace NeoServer.Game.Common.Spell;
 
-public enum SpellGroup
+public enum MagicGroup
 {
     None = 0,
     Attack = 1,

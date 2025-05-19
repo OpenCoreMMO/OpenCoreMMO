@@ -22,7 +22,7 @@ public class FireWave : AttackSpell
     public override ushort Mana { get; set; } = 25;
     public override bool Premium => true;
     public override uint Cooldown => 4 * 1000;
-    public override SpellGroup[] Groups { get; } = [SpellGroup.Attack];
+    public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];
     public override bool NeedLearn => false;
     public override string[] Vocations { get; } = ["sorcerer", "master sorcerer"];

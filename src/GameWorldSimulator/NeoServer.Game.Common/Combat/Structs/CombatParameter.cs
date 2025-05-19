@@ -35,15 +35,6 @@ public readonly struct CombatContext
     public CombatParameter CombatParameters { get; init; }
 }
 
-public enum AttackType
-{
-    None,
-    Regular,
-    Rune,
-    Spell,
-    Field
-}
-
 public class CombatParameter
 {
     public readonly record struct AttackCondition(byte DamageCount, int Interval)

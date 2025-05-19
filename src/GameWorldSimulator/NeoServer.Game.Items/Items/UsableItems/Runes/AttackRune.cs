@@ -10,12 +10,13 @@ using NeoServer.Game.Common.Effects.Magical;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Game.Common.Spell;
 
 namespace NeoServer.Game.Items.Items.UsableItems.Runes;
 
 public class AttackRune : Rune, IAttackRune
 {
-    internal AttackRune(IItemType type, Location location, IDictionary<ItemAttribute, IConvertible> attributes) :
+    public AttackRune(IItemType type, Location location, IDictionary<ItemAttribute, IConvertible> attributes) :
         base(type, location, attributes)
     {
     }
@@ -28,8 +29,9 @@ public class AttackRune : Rune, IAttackRune
     public virtual DamageType DamageType => Metadata.DamageType;
     public virtual EffectT Effect => Metadata.EffectT;
 
-    public bool NeedTarget => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedTarget);
-
+    public virtual bool NeedTarget => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedTarget);
+    public virtual MagicGroup[] Groups { get; }
+    
     public virtual bool Use(ICreature usedBy, ICreature creature, out CombatAttackResult combatAttackResult)
     {
         if (NeedTarget == false) return AttackArea(usedBy, creature.Tile, out combatAttackResult);

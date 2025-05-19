@@ -23,7 +23,7 @@ public class SpellCastValidation(IMapTool mapTool)
 
         var casterLocation = caster.Location;
 
-        var casterHasNoTarget = spell.Groups.Contains(SpellGroup.Attack) && caster.CurrentTarget is null;
+        var casterHasNoTarget = spell.Groups.Contains(MagicGroup.Attack) && caster.CurrentTarget is null;
         var casterNeedsDirection = spell.NeedDirection || spell.CasterNeedsTargetOrDirection;
         
         //check if the next tile is blocked

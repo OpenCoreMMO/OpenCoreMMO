@@ -22,7 +22,7 @@ public partial class TerraWave : AttackSpell
     public override ushort Mana { get; set; } = 170;
     public override bool Premium => true;
     public override uint Cooldown => 4 * 1000;
-    public override SpellGroup[] Groups { get; } = [SpellGroup.Attack];
+    public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];
     public override bool NeedLearn => false;
     public override string[] Vocations { get; } = ["druid", "elder druid"];

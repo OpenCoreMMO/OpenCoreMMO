@@ -24,7 +24,6 @@ public abstract class AttackSpell : Spell<AttackSpell>
     {
         error = InvalidOperation.NotPossible;
 
-
         IThing target = caster.CurrentTarget;
 
         if (IsSelfTarget)

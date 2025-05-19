@@ -25,7 +25,7 @@ public class EternalWinter : AttackSpell
     public override byte Range => 5;
     public override bool Premium => true;
     public override uint Cooldown => 40 * 1000;
-    public override SpellGroup[] Groups { get; } = [SpellGroup.Attack, SpellGroup.Focus];
+    public override MagicGroup[] Groups { get; } = [MagicGroup.Attack, MagicGroup.Focus];
     public override uint[] GroupCooldown => [2 * 1000, 40 * 1000];
     public override bool NeedLearn => false;
     public override string[] Vocations { get; } = ["druid", "elder druid"];

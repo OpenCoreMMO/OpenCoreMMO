@@ -25,7 +25,7 @@ public class WrathOfNature : AttackSpell
     public override bool Premium => true;
     public override uint Cooldown => 40 * 1000;
     protected override bool IsSelfTarget => true;
-    public override SpellGroup[] Groups { get; } = [SpellGroup.Attack];
+    public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [4 * 1000];
     public override bool NeedLearn => false;
     public override string[] Vocations { get; } = ["druid", "elder druid"];

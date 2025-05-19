@@ -23,7 +23,7 @@ public class StrongIceStrike : AttackSpell
     public override ushort Mana { get; set; } = 60;
     public override bool Premium => true;
     public override uint Cooldown => 8 * 1000;
-    public override SpellGroup[] Groups { get; } = [SpellGroup.Attack, SpellGroup.Special];
+    public override MagicGroup[] Groups { get; } = [MagicGroup.Attack, MagicGroup.Special];
     public override uint[] GroupCooldown => [2 * 1000, 8 * 1000];
     public override bool NeedLearn => false;
     public override byte Range => 3;

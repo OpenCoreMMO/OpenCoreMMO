@@ -16,7 +16,7 @@ public class CooldownList
     private Dictionary<ulong, CooldownTime> CustomCooldowns { get; } = new();
 
     private Dictionary<string, CooldownTime> SpellCooldowns { get; } = new();
-    private Dictionary<SpellGroup, CooldownTime> SpellGroupCooldowns { get; } = new();
+    private Dictionary<MagicGroup, CooldownTime> SpellGroupCooldowns { get; } = new();
     private Dictionary<string, CooldownTime> SummonCooldowns { get; set; }
 
     /// <summary>
@@ -96,9 +96,9 @@ public class CooldownList
         return groupsExpired;
     }
 
-    public bool Expired(SpellGroup spellGroup)
+    public bool Expired(MagicGroup magicGroup)
     {
-        if (SpellGroupCooldowns.TryGetValue(spellGroup, out var cooldown)) return cooldown.Expired;
+        if (SpellGroupCooldowns.TryGetValue(magicGroup, out var cooldown)) return cooldown.Expired;
         return true;
     }
 

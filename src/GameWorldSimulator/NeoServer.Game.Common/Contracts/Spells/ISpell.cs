@@ -16,7 +16,7 @@ public interface ISpell
     bool ShouldSay { get; }
     byte[] VocationIds { get; set; }
     string[] Vocations { get; }
-    SpellGroup[] Groups { get; }
+    MagicGroup[] Groups { get; }
     uint[] GroupCooldown { get; }
 
     /// <summary>

@@ -11,7 +11,7 @@ public class EtherealSpear : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        DamageFormula = (CombatFormula.MagicLevel, GetFormulaValues),
+        DamageFormula = (CombatFormula.Skill, GetFormulaValues),
         DamageType = DamageType.Physical,
         Effect = EffectT.XGray,
         ShootType = ShootType.EtherealSpear,
@@ -25,7 +25,7 @@ public class EtherealSpear : AttackSpell
     public override bool Premium => true;
     public override uint Cooldown => 2 * 1000;
     public override bool NeedsTarget => true;
-    public override SpellGroup[] Groups { get; } = [SpellGroup.Attack];
+    public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];
     public override bool NeedLearn => false;
     public override byte Range => 7;

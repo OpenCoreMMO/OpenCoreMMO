@@ -23,7 +23,7 @@ public abstract class BaseSpell : ISpell
     public virtual bool NeedLearn { get; }
     public virtual bool BlockWalls { get; }
     public virtual string[] Vocations { get; }
-    public virtual SpellGroup[] Groups { get; }
+    public virtual MagicGroup[] Groups { get; }
     public virtual uint[] GroupCooldown { get; }
     public virtual byte[] VocationIds { get; set; }
     public virtual uint Cooldown { get; set; }
