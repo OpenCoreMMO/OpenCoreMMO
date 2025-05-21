@@ -69,22 +69,30 @@ public class SpellLoader
     {
         if (!spell.ContainsKey("vocations")) return null;
 
-        var vocationArray = spell["vocations"].EnumerateArray();
-        
-        return vocationArray.Select(vocationJToken =>
+        return spell["vocations"].EnumerateArray()
+            .Select(vocationToken =>
+            {
+                if (vocationToken.ValueKind == JsonValueKind.Number && vocationToken.TryGetByte(out var vocation))
         {
-            var vocationValue = vocationJToken.GetStringFromJson();
-            if (vocationValue is null) return (byte)0;
+                    return vocation;
+                }
 
-            if (byte.TryParse(vocationValue, out var vocation)) return vocation;
+                if (vocationToken.ValueKind == JsonValueKind.String)
+                {
+                    var vocationValue = vocationToken.GetString();
 
-            return _vocationStore.All.FirstOrDefault(x =>
-                x.Name
-                    .Replace(" ", string.Empty)
-                    .Equals(vocationValue
-                            .Replace(" ", string.Empty),
-                        StringComparison.InvariantCultureIgnoreCase))?.VocationType ?? 0;
-        }).ToArray();
+                    if (byte.TryParse(vocationValue, out vocation))
+                        return vocation;
+
+                    return _vocationStore.All.FirstOrDefault(x =>
+                        x.Name.Replace(" ", string.Empty)
+                            .Equals(vocationValue.Replace(" ", string.Empty),
+                                StringComparison.InvariantCultureIgnoreCase))?.VocationType ?? (byte)0;
+                }
+
+                return (byte)0;
+            })
+            .ToArray();
     }
 
     private static object CreateSpell(Type type)
