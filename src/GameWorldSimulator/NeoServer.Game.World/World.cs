@@ -22,7 +22,8 @@ public class World
     public int LoadedWaypointsCount => waypoints.Count();
 
     public ImmutableList<ISpawn> Spawns { get; private set; }
-
+    
+    public WorldLight WorldLight { get; private set; } = new ();
 
     public void AddTile(ITile newTile, Location location)
     {

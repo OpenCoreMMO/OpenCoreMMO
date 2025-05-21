@@ -283,5 +283,16 @@
     "level": 1,
     "vocations": [11],
     "type": "command"
- }
+ },
+ {
+    "name": "WorldLight",
+    "words": "/light",
+    "description": "set world light: day/night",	
+    "script": "WorldLightCommand",
+    "mana": 0,
+    "cooldown": "0",
+    "level": 1,
+    "vocations": [11],
+    "type": "command"
+  }
 ]

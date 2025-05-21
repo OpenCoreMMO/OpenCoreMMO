@@ -20,7 +20,10 @@ public class SpellCastValidation(IMapTool mapTool)
                 return InvalidOperation.CannotThrowThere;
             }
         }
-
+        
+        if (spell.Groups is null)
+            return InvalidOperation.None;
+        
         var casterLocation = caster.Location;
 
         var casterHasNoTarget = spell.Groups.Contains(MagicGroup.Attack) && caster.CurrentTarget is null;
