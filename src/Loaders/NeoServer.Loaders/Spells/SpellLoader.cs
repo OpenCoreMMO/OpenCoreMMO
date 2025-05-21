@@ -62,22 +62,30 @@ public class SpellLoader(
     {
         if (!spell.ContainsKey("vocations")) return null;
 
-        var vocationArray = spell["vocations"].EnumerateArray();
+        return spell["vocations"].EnumerateArray()
+            .Select(vocationToken =>
+            {
+                if (vocationToken.ValueKind == JsonValueKind.Number && vocationToken.TryGetByte(out var vocation))
+                {
+                    return vocation;
+                }
 
-        return vocationArray.Select(vocationJToken =>
-        {
-            var vocationValue = vocationJToken.GetStringFromJson();
-            if (vocationValue is null) return (byte)0;
+                if (vocationToken.ValueKind == JsonValueKind.String)
+                {
+                    var vocationValue = vocationToken.GetString();
 
-            if (byte.TryParse(vocationValue, out var vocation)) return vocation;
+                    if (byte.TryParse(vocationValue, out vocation))
+                        return vocation;
 
-            return vocationStore.All.FirstOrDefault(x =>
-                x.Name
-                    .Replace(" ", string.Empty)
-                    .Equals(vocationValue
-                            .Replace(" ", string.Empty),
-                        StringComparison.InvariantCultureIgnoreCase))?.VocationType ?? 0;
-        }).ToArray();
+                    return vocationStore.All.FirstOrDefault(x =>
+                        x.Name.Replace(" ", string.Empty)
+                            .Equals(vocationValue.Replace(" ", string.Empty),
+                                StringComparison.InvariantCultureIgnoreCase))?.VocationType ?? (byte)0;
+                }
+
+                return (byte)0;
+            })
+            .ToArray();
     }
     
     private byte[] LoadVocations(string[] vocations)
