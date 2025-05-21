@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using NeoServer.Data.Contexts;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Helpers;
+using NeoServer.Game.World;
 using NeoServer.Game.World.Models.Spawns;
 using NeoServer.Loaders.Groups;
 using NeoServer.Loaders.Interfaces;
@@ -30,6 +31,7 @@ using NeoServer.Server.Routines.Channels;
 using NeoServer.Server.Routines.Creatures;
 using NeoServer.Server.Routines.Items;
 using NeoServer.Server.Routines.Persistence;
+using NeoServer.Server.Routines.World;
 using NeoServer.Server.Security;
 using NeoServer.Server.Standalone.IoC;
 using NeoServer.Server.Tasks;
@@ -107,6 +109,8 @@ public class Program
         scheduler.AddEvent(new SchedulerEvent(1000, container.Resolve<GameCreatureRoutine>().StartChecking));
         scheduler.AddEvent(new SchedulerEvent(1000, container.Resolve<GameItemRoutine>().StartChecking));
         scheduler.AddEvent(new SchedulerEvent(1000, container.Resolve<GameChatChannelRoutine>().StartChecking));
+        scheduler.AddEvent(new SchedulerEvent(WorldLight.EVENT_WORLD_LIGHT_INTERVAL, container.Resolve<GameWorldRoutine>().StartChecking));
+
         container.Resolve<PlayerPersistenceRoutine>().Start(_cancellationToken);
 
         container.Resolve<EventSubscriber>().AttachEvents();
