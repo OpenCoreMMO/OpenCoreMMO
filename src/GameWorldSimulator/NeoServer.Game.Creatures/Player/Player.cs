@@ -1053,7 +1053,7 @@ public class Player : CombatActor, IPlayer
         var hasEnoughAmmo = Inventory.Weapon is INeedsAmmo distanceWeapon &&
                             distanceWeapon.CanShootAmmunition(Inventory.Ammo);
 
-        if (combatParameter.UsingWeapon && !hasEnoughAmmo)
+        if (combatParameter.UsingWeapon && Inventory.Weapon is INeedsAmmo && !hasEnoughAmmo)
         {
             return Result.NotPossible;
         }

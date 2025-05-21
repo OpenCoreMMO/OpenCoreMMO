@@ -19,7 +19,7 @@ public class WorldLightCommand : CommandSpell
         if (world is null)
             return false;
 
-        if (!Enum.TryParse(input, out Period period))
+        if (!Enum.TryParse(input, true, out Period period))
             return false;
         
         world.WorldLight.SetWorldLight(period);

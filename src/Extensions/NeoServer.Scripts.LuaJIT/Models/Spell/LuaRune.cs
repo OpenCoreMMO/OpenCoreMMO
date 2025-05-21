@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items.Types.Runes;
 
