@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using NeoServer.Scripts.LuaJIT.DataManagers;
 using NeoServer.Scripts.LuaJIT.Functions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
@@ -42,7 +43,8 @@ public static class LuaJITInjection
         builder.AddSingleton<ITalkActionFunctions, TalkActionFunctions>();
         builder.AddSingleton<ITeleportFunctions, TeleportFunctions>();
         builder.AddSingleton<ITileFunctions, TileFunctions>();
-
+        builder.AddSingleton<ISpellFunctions, SpellFunctions>();
+        builder.AddSingleton<RuneManager>();
         return builder;
     }
 }

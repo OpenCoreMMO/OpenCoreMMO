@@ -219,3 +219,15 @@ do
     end
     rawgetmetatable("GlobalEvent").__newindex = GlobalEventNewIndex
 end
+
+-- Spells revscriptsys
+do
+	local function SpellNewIndex(self, key, value)
+		if key == "onCastSpell" then
+			self:onCastSpell(value)
+			return
+		end
+		rawset(self, key, value)
+	end
+	rawgetmetatable("Spell").__newindex = SpellNewIndex
+end

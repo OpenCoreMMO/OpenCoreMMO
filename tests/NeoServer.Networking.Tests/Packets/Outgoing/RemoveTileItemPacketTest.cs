@@ -13,7 +13,7 @@ public class RemoveTileItemPacketTest
     {
         var type = new ItemType();
         type.SetClientId(id);
-        type.SetName("item");
+        type.UpdateName("item");
 
         return new Item(type, new Location(100, 100, 7));
     }

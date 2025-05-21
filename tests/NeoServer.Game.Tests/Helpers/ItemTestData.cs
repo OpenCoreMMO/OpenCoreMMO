@@ -33,7 +33,7 @@ public class ItemTestData
 
         itemType.SetId(id);
         itemType.SetClientId(id);
-        itemType.SetName(name);
+        itemType.UpdateName(name);
         itemType.SetArticle("a");
         itemType.Attributes.SetAttribute(ItemAttribute.Capacity, capacity);
         itemType.Attributes.SetAttribute(ItemAttribute.Weight, weight);
@@ -45,7 +45,7 @@ public class ItemTestData
     public static Container CreateLootContainer(byte capacity = 6, string name = "bag", ILoot loot = null)
     {
         var itemType = new ItemType();
-        itemType.SetName(name);
+        itemType.UpdateName(name);
         itemType.SetArticle("a");
         itemType.Attributes.SetAttribute(ItemAttribute.Capacity, capacity);
         itemType.SetFlag(ItemFlag.Movable);
@@ -101,7 +101,7 @@ public class ItemTestData
         var type = new ItemType();
         type.SetClientId(id);
         type.SetId(id);
-        type.SetName(name);
+        type.UpdateName(name);
 
         type.Attributes.SetAttribute(ItemAttribute.BodyPosition, slot);
         type.Attributes.SetAttribute(ItemAttribute.Weight, weight);
@@ -118,7 +118,7 @@ public class ItemTestData
         var type = new ItemType();
         type.SetClientId(id);
         type.SetId(id);
-        type.SetName("item");
+        type.UpdateName("item");
 
         return new Item(type, new Location(100, 100, 7));
     }
@@ -129,7 +129,7 @@ public class ItemTestData
         type.SetClientId(id);
         type.SetId(id);
 
-        type.SetName("item");
+        type.UpdateName("item");
 
         type.Flags.Add(ItemFlag.Movable);
 
@@ -142,7 +142,7 @@ public class ItemTestData
         var type = new ItemType();
         type.SetClientId(id);
         type.SetId(id);
-        type.SetName("pot");
+        type.UpdateName("pot");
         type.Attributes.SetAttribute(ItemAttribute.Weight, 10);
         type.Flags.Add(ItemFlag.Pickupable);
         type.SetFlag(ItemFlag.Movable);
@@ -160,7 +160,7 @@ public class ItemTestData
         var type = new ItemType();
         type.SetClientId(id);
         type.SetId(id);
-        type.SetName("magic weapon");
+        type.UpdateName("magic weapon");
         type.Attributes.SetAttribute(ItemAttribute.Weight, 40);
 
         type.Attributes.SetAttribute(ItemAttribute.BodyPosition, twoHanded ? "two-handed" : "weapon");
@@ -189,7 +189,7 @@ public class ItemTestData
         type.SetClientId(id);
         type.SetId(id);
         type.SetArticle(article);
-        type.SetName(name);
+        type.UpdateName(name);
         type.Attributes.SetAttribute(ItemAttribute.WeaponType, weaponType);
         type.Attributes.SetAttribute(ItemAttribute.Weight, weight);
         type.Flags.Add(ItemFlag.Pickupable);
@@ -215,7 +215,7 @@ public class ItemTestData
         var type = new ItemType();
         type.SetClientId(id);
         type.SetId(id);
-        type.SetName("item");
+        type.UpdateName("item");
         type.Attributes.SetAttribute(ItemAttribute.WeaponType, "distance");
         type.Attributes.SetAttribute(ItemAttribute.Weight, 40);
 
@@ -244,7 +244,7 @@ public class ItemTestData
         var type = new ItemType();
         type.SetClientId(id);
         type.SetId(id);
-        type.SetName("item");
+        type.UpdateName("item");
 
         type.Attributes.SetAttribute(ItemAttribute.WeaponType, "distance");
         type.Attributes.SetAttribute(ItemAttribute.Weight, weight);
@@ -274,7 +274,7 @@ public class ItemTestData
         type.SetId(id);
         type.Attributes.SetAttribute(ItemAttribute.BodyPosition, slot);
         type.Attributes.SetAttribute(ItemAttribute.Charges, charges);
-        type.SetName("item");
+        type.UpdateName("item");
         type.Flags.Add(ItemFlag.Pickupable);
         type.Flags.Add(ItemFlag.Movable);
 
@@ -303,7 +303,7 @@ public class ItemTestData
         type.Flags.Add(ItemFlag.Pickupable);
         type.Flags.Add(ItemFlag.Movable);
 
-        type.SetName("item");
+        type.UpdateName("item");
 
         type.SetGroupIfNone();
 
@@ -316,7 +316,7 @@ public class ItemTestData
         var type = new ItemType();
         type.SetClientId(id);
         type.SetId(id);
-        type.SetName("item");
+        type.UpdateName("item");
         type.Attributes.SetAttribute(ItemAttribute.WeaponType, "ammunition");
         type.Attributes.SetAttribute(ItemAttribute.BodyPosition, "ammo");
         type.Attributes.SetAttribute(ItemAttribute.Weight, weight);
@@ -341,7 +341,7 @@ public class ItemTestData
         var type = new ItemType();
         type.SetClientId(id);
         type.SetId(id);
-        type.SetName("meat");
+        type.UpdateName("meat");
         type.Attributes.SetAttribute(ItemAttribute.Type, "food");
         type.Attributes.SetAttribute(ItemAttribute.Duration, 30);
         type.Attributes.SetAttribute(ItemAttribute.Sentence, "Munch.");
@@ -361,7 +361,7 @@ public class ItemTestData
         var type = new ItemType();
         type.SetClientId(id);
         type.SetId(id);
-        type.SetName("coin");
+        type.UpdateName("coin");
         type.Attributes.SetAttribute(ItemAttribute.Type, "coin");
         type.Attributes.SetAttribute(ItemAttribute.Worth, multiplier);
         type.Attributes.SetAttribute(ItemAttribute.Weight, 1);
@@ -382,7 +382,7 @@ public class ItemTestData
         var type = new ItemType();
         type.SetClientId(id);
         type.SetId(id);
-        type.SetName("hmm");
+        type.UpdateName("hmm");
         type.Attributes.SetAttribute(ItemAttribute.Damage, DamageTypeParser.Parse(damageType));
         type.Attributes.SetAttribute(ItemAttribute.Type, "rune");
         type.Attributes.SetAttribute(ItemAttribute.NeedTarget, needTarget);
@@ -411,7 +411,7 @@ public class ItemTestData
         var type = new ItemType();
         type.SetClientId(id);
         type.SetId(id);
-        type.SetName("item");
+        type.UpdateName("item");
 
         if (topOrder == 1)
             type.SetFlag(ItemFlag.AlwaysOnTop);
@@ -426,7 +426,7 @@ public class ItemTestData
         var type = new ItemType();
         type.SetClientId(id);
         type.SetId(id);
-        type.SetName("item");
+        type.UpdateName("item");
 
         type.SetFlag(ItemFlag.Unpassable);
 

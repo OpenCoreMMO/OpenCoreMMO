@@ -1,6 +1,7 @@
 ﻿using System;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Contracts.Items.Types.Runes;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World.Tiles;
@@ -40,6 +41,8 @@ public class PlayerUseItemOnCommand : ICommand
         IItem onItem = null;
         ITile onTile = null;
 
+        var isHotkey = useItemPacket.Location.IsHotkey;
+
         if (useItemPacket.ToLocation.Type == LocationType.Ground)
         {
             if (_game.Map[useItemPacket.ToLocation] is not { } tile) return;
@@ -66,17 +69,26 @@ public class PlayerUseItemOnCommand : ICommand
         Action action;
 
         IThing onTarget = !onItem ? onTile : onItem;
+        
+        if (thingToUse is IAttackRune rune)
+        {
+            rune.CanBeUsedBy(player);
+
+            _scriptManager.Runes.UseItem(player, rune, isHotkey);
+        }
 
         if (_scriptManager.Actions.HasAction(thingToUse))
         {
             action = () => _scriptManager.Actions.UseItem(player, player.Location, useItemPacket.ToLocation,
-                useItemPacket.ToStackPosition, thingToUse, onTarget, useItemPacket.Location.IsHotkey);
+                useItemPacket.ToStackPosition, thingToUse, onTarget, isHotkey);
         }
         else
         {
             if (thingToUse is not IUsableOn itemUsableOn) return;
             action = () => _playerUseService.Use(player, itemUsableOn, onTarget);
         }
+
+        
 
 
         if (!player.Location.IsNextTo(onTarget.Location == Location.Zero

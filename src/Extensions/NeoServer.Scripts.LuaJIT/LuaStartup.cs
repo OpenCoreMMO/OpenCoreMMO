@@ -38,6 +38,7 @@ public class LuaStartup : ILuaStartup
         ITalkActionFunctions talkActionFunctions,
         ITeleportFunctions teleportFunctions,
         ITileFunctions tileFunctions,
+        ISpellFunctions spellFunctions,
         ServerConfiguration serverConfiguration)
     {
         _logger = logger;
@@ -68,6 +69,7 @@ public class LuaStartup : ILuaStartup
         _talkActionFunctions = talkActionFunctions;
         _teleportFunctions = teleportFunctions;
         _tileFunctions = tileFunctions;
+        _spellFunctions = spellFunctions;
 
         _serverConfiguration = serverConfiguration;
     }
@@ -116,6 +118,7 @@ public class LuaStartup : ILuaStartup
         _playerFunctions.Init(luaState);
         _teleportFunctions.Init(luaState);
         _groupFunctions.Init(luaState);
+        _spellFunctions.Init(luaState);
 
         ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), "config.lua");
 
@@ -277,6 +280,8 @@ public class LuaStartup : ILuaStartup
     ///     A reference to the <see cref="ITileFunctions" /> instance in use.
     /// </summary>
     private readonly ITileFunctions _tileFunctions;
+
+    private readonly ISpellFunctions _spellFunctions;
 
     /// <summary>
     ///     A reference to the <see cref="ServerConfiguration" /> instance in use.

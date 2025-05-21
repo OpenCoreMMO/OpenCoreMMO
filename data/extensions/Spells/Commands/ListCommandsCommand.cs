@@ -43,7 +43,7 @@ public class ListCommandsCommand : CommandSpell
     private static IItemType CreateItemBook()
     {
         var item = new ItemType();
-        item.SetName("book");
+        item.UpdateName("book");
         item.SetClientId(2821);
         return item;
     }

@@ -124,6 +124,7 @@ internal class ItemAttributeTranslationMap
         ["blocking"] = ItemAttribute.Blocking,
         ["allowdistread"] = ItemAttribute.AllowDistRead,
         ["minlevel"] = ItemAttribute.MinimumLevel,
+        ["minmagiclevel"] = ItemAttribute.MinimumMagicLevel,
         ["teleport"] = ItemAttribute.TeleportDestination,
         ["useon"] = ItemAttribute.UseOn,
         ["healing"] = ItemAttribute.Healing,

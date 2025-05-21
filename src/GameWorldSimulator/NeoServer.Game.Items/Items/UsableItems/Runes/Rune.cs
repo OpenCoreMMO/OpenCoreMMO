@@ -23,6 +23,11 @@ public abstract class Rune : Cumulative, IRune
     }
 
     public abstract ushort Duration { get; }
+    public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumLevel);
+    public ushort MinMagicLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumMagicLevel);
+    public bool AllowFarUse => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.AllowFarUse);
+    public bool CheckFloor => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.CheckFloor);
+    public bool BlockWalls => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.BlockWalls);
 
     public Dictionary<string, (double, double)> Variables
     {
@@ -61,5 +66,12 @@ public abstract class Rune : Cumulative, IRune
     {
         return type.Attributes.GetAttribute(ItemAttribute.Type)
             ?.Equals("rune", StringComparison.InvariantCultureIgnoreCase) ?? false;
+    }
+
+    public bool CanBeUsedBy(IPlayer player)
+    {
+        if (player is null) return false;
+
+        return player.MagicLevel >= MinLevel && player.MagicLevel >= MinMagicLevel;
     }
 }
