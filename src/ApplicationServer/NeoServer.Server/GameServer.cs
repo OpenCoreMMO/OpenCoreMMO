@@ -26,16 +26,6 @@ public class GameServer : IGameServer
     public static IGameServer Instance { get; private set; }
 
     /// <summary>
-    ///     Game's light level
-    /// </summary>
-    public byte LightLevel => 200;
-
-    /// <summary>
-    ///     Indicates Game's light color
-    /// </summary>
-    public byte LightColor => 215;
-
-    /// <summary>
     ///     Game state
     /// </summary>
     /// <value></value>
