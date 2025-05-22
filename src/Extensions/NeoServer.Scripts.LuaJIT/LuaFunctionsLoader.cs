@@ -18,23 +18,6 @@ public class LuaFunctionsLoader
 
     private static int _scriptEnvIndex;
     private static readonly ScriptEnvironment[] ScriptEnv = new ScriptEnvironment[16];
-
-    // object to object #
-    private static readonly ConcurrentDictionary<object, int> ObjectsBackMap = new(new ReferenceComparer());
-
-    // object # to object (FIXME - it should be possible to get object address as an object #)
-    private static readonly ConcurrentDictionary<int, object> Objects = new();
-    private static readonly List<UserDataStruct> StructuresToReuse = [];
-
-    private static readonly ConcurrentQueue<int> FinalizedReferences = new();
-
-    //internal EventHandlerContainer PendingEvents = new EventHandlerContainer();
-
-    /// <summary>
-    ///     We want to ensure that objects always have a unique ID
-    /// </summary>
-    private static int _nextObj;
-
     public LuaFunctionsLoader()
     {
         //_logger = IoC.GetInstance<ILogger>();
@@ -718,28 +701,22 @@ public class LuaFunctionsLoader
         var userdata = GetRawUserdata<T>(luaState, arg);
         if (userdata == IntPtr.Zero) return null;
 
-        var structure = Marshal.PtrToStructure<UserDataStruct>(Marshal.ReadIntPtr(userdata))!;
-
-        lock (Objects)
-        {
-            if (Objects.TryGetValue(structure.Index, out var value))
-                return (T)value;
-        }
-
-        return null;
+        var handlePtr = Marshal.ReadIntPtr(userdata);
+        var handle = GCHandle.FromIntPtr(handlePtr);
+        return handle.Target as T;
     }
 
     public static T GetUserdataStruct<T>(LuaState luaState, int arg) where T : struct
     {
         var userdata = GetRawUserdataStruct<T>(luaState, arg);
         if (userdata == IntPtr.Zero) return default;
-
-        var structure = Marshal.PtrToStructure<UserDataStruct>(Marshal.ReadIntPtr(userdata));
-
-        lock (Objects)
+        
+        var handlePtr = Marshal.ReadIntPtr(userdata);
+        var handle = GCHandle.FromIntPtr(handlePtr);
+        
+        if (handle.Target != null)
         {
-            if (Objects.TryGetValue(structure.Index, out var value))
-                return (T)value;
+            return (T)handle.Target;
         }
 
         return default;
@@ -891,23 +868,7 @@ public class LuaFunctionsLoader
         return reference;
     }
 
-    private static int AddObject(object obj)
-    {
-        // New object: inserts it in the list
-        var index = _nextObj++;
-
-        lock (Objects)
-        {
-            Objects[index] = obj;
-
-            if (!obj.GetType().IsValueType || obj.GetType().IsEnum)
-                ObjectsBackMap[obj] = index;
-        }
-
-        return index;
-    }
-
-    public static void PushUserdata(LuaState luaState, object o)
+    public static void PushUserdata<T>(LuaState luaState, T o)
     {
         // Pushes nil
         if (o == null)
@@ -916,48 +877,23 @@ public class LuaFunctionsLoader
             return;
         }
 
-        // Object already in the list of Lua objects? Push the stored reference.
-        var found = (!o.GetType().IsValueType || o.GetType().IsEnum) && ObjectsBackMap.TryGetValue(o, out var index);
+        // Pin the managed object
+        var handle = GCHandle.Alloc(o, GCHandleType.Normal);
+        IntPtr handlePtr = GCHandle.ToIntPtr(handle);
 
-        index = AddObject(o);
-
-        IntPtr userdata;
-
-        UserDataStruct structure;
-
-        if (StructuresToReuse.Count != 0)
-        {
-            structure = StructuresToReuse.FirstOrDefault();
-            StructuresToReuse.Remove(structure);
-
-            structure.Index = index;
-            userdata = structure.Ptr;
-        }
-        else
-        {
-            userdata = Lua.NewUserData(luaState, (ulong)IntPtr.Size);
-            structure = new UserDataStruct(index, userdata, 0);
-        }
-
-        var gch2 = GCHandle.Alloc(structure, GCHandleType.Pinned);
-
-        Marshal.WriteIntPtr(userdata, gch2.AddrOfPinnedObject());
-        gch2.Free();
+        var userdata = Lua.NewUserData(luaState, (UIntPtr)IntPtr.Size);
+        Marshal.WriteIntPtr(userdata, handlePtr);
     }
 
-    public static void UpdateLuaUserdata(LuaState luaState, int index, IItem newItem)
+    public static void UpdateLuaUserdata<T>(LuaState luaState, int index, T newObj)
     {
         var userdata = Lua.ToUserData(luaState, index);
         if (userdata == IntPtr.Zero)
             throw new Exception("Failed to update userdata: userdata not found.");
-
-        var userDataStruct = Marshal.PtrToStructure<UserDataStruct>(Marshal.ReadIntPtr(userdata))!;
-
-        lock (Objects)
-        {
-            if (Objects.ContainsKey(userDataStruct.Index))
-                Objects[userDataStruct.Index] = newItem;
-        }
+        
+        var handle = GCHandle.Alloc(newObj, GCHandleType.Normal);
+        IntPtr handlePtr = GCHandle.ToIntPtr(handle);
+        Marshal.WriteIntPtr(userdata, handlePtr);
     }
 
     // Compare cache entries by exact reference to avoid unwanted aliases
@@ -977,7 +913,8 @@ public class LuaFunctionsLoader
         }
     }
 
-    public int GetArgsCount(LuaState lua) => Lua.GetTop(lua) - 1;
+    public static int GetArgsCount(LuaState lua) => Lua.GetTop(lua) - 1;
+
     public int HandleNotImplementedMethod(LuaState l)
     {
         Lua.PushNil(l);
