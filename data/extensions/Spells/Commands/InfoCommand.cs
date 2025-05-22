@@ -56,7 +56,7 @@ public class InfoCommand : CommandSpell
     private static IItemType CreateItemInfo()
     {
         var item = new ItemType();
-        item.SetName("Info Status");
+        item.UpdateName("Info Status");
         item.SetClientId(2821);
         return item;
     }

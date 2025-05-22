@@ -29,7 +29,7 @@ public class ItemTypeMetadataParser
 
         if (!itemTypes.TryGetValue(id, out var itemType)) return;
 
-        itemType.SetName(metadata.Name);
+        itemType.UpdateName(metadata.Name);
         itemType.SetArticle(metadata.Article);
         itemType.SetPlural(metadata.Plural);
 

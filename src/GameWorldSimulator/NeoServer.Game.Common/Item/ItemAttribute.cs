@@ -208,5 +208,9 @@ public enum ItemAttribute : byte
     CooldownTime,
     UseOn,
     DecayElapsed,
-    VocationNames
+    VocationNames,
+    MinimumMagicLevel,
+    AllowFarUse,
+    CheckFloor,
+    BlockWalls
 }

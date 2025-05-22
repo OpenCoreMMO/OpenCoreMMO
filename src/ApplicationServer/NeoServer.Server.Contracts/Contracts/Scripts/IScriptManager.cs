@@ -9,6 +9,7 @@ public interface IScriptManager
     IGlobalEventsScriptService GlobalEvents { get; }
     IMoveEventsScriptService MoveEvents { get; }
     ITalkActionScriptService TalkActions { get; }
+    IRuneScriptService Runes { get; }
 
     void Initialize();
 }

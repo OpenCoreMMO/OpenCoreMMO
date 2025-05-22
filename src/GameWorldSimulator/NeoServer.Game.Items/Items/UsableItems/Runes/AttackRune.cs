@@ -31,7 +31,7 @@ public class AttackRune : Rune, IAttackRune
 
     public virtual bool NeedTarget => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedTarget);
     public virtual MagicGroup[] Groups { get; }
-    
+
     public virtual bool Use(ICreature usedBy, ICreature creature, out CombatAttackResult combatAttackResult)
     {
         if (NeedTarget == false) return AttackArea(usedBy, creature.Tile, out combatAttackResult);

@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common;
+using NeoServer.Game.Common;
 using NeoServer.Game.World;
 using NeoServer.Networking.Packets.Outgoing.Map;
 using NeoServer.Server.Common.Contracts;

@@ -976,4 +976,11 @@ public class LuaFunctionsLoader
             return obj.GetHashCode();
         }
     }
+
+    public int GetArgsCount(LuaState lua) => Lua.GetTop(lua) - 1;
+    public int HandleNotImplementedMethod(LuaState l)
+    {
+        Lua.PushNil(l);
+        return 1;
+    }
 }

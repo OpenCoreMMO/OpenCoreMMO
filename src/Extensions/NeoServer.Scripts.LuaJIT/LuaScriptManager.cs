@@ -17,7 +17,8 @@ public class LuaScriptManager : IScriptManager
         ICreatureEventsScriptService creatureEventsScriptService,
         IGlobalEventsScriptService globalEventsScriptService,
         IMoveEventsScriptService moveEventsScriptService,
-        ITalkActionScriptService talkActionsScriptService)
+        ITalkActionScriptService talkActionsScriptService,
+        IRuneScriptService runeScriptService)
     {
         _luaStartup = luaStartup;
         _globalEvents = globalEvents;
@@ -28,6 +29,7 @@ public class LuaScriptManager : IScriptManager
         GlobalEvents = globalEventsScriptService;
         MoveEvents = moveEventsScriptService;
         TalkActions = talkActionsScriptService;
+        Runes = runeScriptService;
     }
 
     #endregion
@@ -58,7 +60,7 @@ public class LuaScriptManager : IScriptManager
     ///     A reference to the <see cref="ILogger" /> instance in use.
     /// </summary>
     private readonly ILogger _logger;
-
+    
     /// <summary>
     ///     A reference to the <see cref="IActionScriptService" /> instance in use.
     /// </summary>
@@ -83,6 +85,8 @@ public class LuaScriptManager : IScriptManager
     ///     A reference to the <see cref="ITalkActionScriptService" /> instance in use.
     /// </summary>
     public ITalkActionScriptService TalkActions { get; }
+
+    public IRuneScriptService Runes { get; }
 
     #endregion
 }

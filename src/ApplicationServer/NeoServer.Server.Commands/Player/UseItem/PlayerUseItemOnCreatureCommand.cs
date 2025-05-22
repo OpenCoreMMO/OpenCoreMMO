@@ -1,6 +1,7 @@
 ﻿using System;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Contracts.Items.Types.Runes;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Location;
@@ -42,6 +43,14 @@ public class PlayerUseItemOnCreatureCommand : ICommand
         if (itemToUse is not IUsableOn useableOn) return;
 
         Action action = null;
+        
+        if (useableOn is IAttackRune rune)
+        {
+            rune.CanBeUsedBy(player);
+
+            _scriptManager.Runes.UseItem(player, rune, useItemPacket.FromLocation.IsHotkey);
+            return;
+        }
 
         if (_scriptManager.Actions.HasAction(useableOn))
             action = () => _scriptManager.Actions.UseItem(player, player.Location, useItemPacket.FromStackPosition, 0,
