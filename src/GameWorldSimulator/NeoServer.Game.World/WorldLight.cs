@@ -23,6 +23,7 @@ public class WorldLight
     private byte _lightLevel = LIGHT_LEVEL_DAY;
     private int _currentMinute = SUNRISE_MINUTE + (SUNSET_MINUTE - SUNRISE_MINUTE) / 2;
     private Period _currentPeriod = Period.Day;
+    public byte LightLevel => _lightLevel;
 
     // Represents how many in-game minutes pass every update tick
     private readonly int _minuteIncrement = MINUTES_IN_DAY * UPDATE_INTERVAL_SECONDS / SECONDS_IN_GAME_DAY;

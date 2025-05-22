@@ -1,4 +1,3 @@
-﻿using System;
 using NeoServer.Game.Common;
 using NeoServer.Game.World;
 using NeoServer.Networking.Packets.Outgoing.Map;
@@ -16,7 +15,7 @@ public class WorldLightChangedEventHandler(IGameCreatureManager creatureManager)
         {
             if (!creatureManager.GetPlayerConnection(player.CreatureId, out var connection)) return;
             
-            connection.Send(new WorldLightPacket(@event.Level, 0xD7));
+            connection.Send(new WorldLightPacket(@event.Level));
         }
     }
 }
