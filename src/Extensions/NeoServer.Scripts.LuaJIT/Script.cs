@@ -1,4 +1,8 @@
-﻿namespace NeoServer.Scripts.LuaJIT;
+﻿using NeoServer.Scripts.LuaJIT.Models;
+using NeoServer.Scripts.LuaJIT.Models.Callbacks;
+using NeoServer.Scripts.LuaJIT.Models.Combat;
+
+namespace NeoServer.Scripts.LuaJIT;
 
 public class Script
 {
@@ -17,6 +21,10 @@ public class Script
     {
         _scriptInterface = scriptInterface;
     }
+
+    public Dictionary<CombatParam, int> Parameters { get; set; } = new();
+    public List<(CallBackType Type, Callback Callback)> Callbacks { get; set; } = new();
+    public CombatValues CombatValues { get; set; }
 
     /// <summary>
     ///     Check if script is loaded.
@@ -37,7 +45,7 @@ public class Script
     }
 
     // Load revscriptsys callback
-    public bool LoadCallback()
+    public bool LoadCallback(string name = null)
     {
         if (_scriptInterface == null)
             //Logger.GetInstance().Error($"[Script.LoadCallback] ScriptInterface is null, scriptId = {ScriptId}");
@@ -47,7 +55,7 @@ public class Script
             //Logger.GetInstance().Error($"[Script.LoadCallback] ScriptId is not zero, scriptId = {ScriptId}, scriptName {_scriptInterface.GetLoadingScriptName()}");
             return false;
 
-        var id = _scriptInterface.GetEvent();
+        var id = name is null ? _scriptInterface.GetEvent() : _scriptInterface.GetEvent(name);
         if (id == -1)
             //Logger.GetInstance().Error($"[Script.LoadCallback] Event {GetScriptTypeName()} not found for script with name {_scriptInterface.GetLoadingScriptName()}");
             return false;

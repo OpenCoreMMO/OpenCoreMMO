@@ -9,8 +9,19 @@ using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneManager runeManager) : LuaScriptInterface(nameof(SpellFunctions)), ISpellFunctions
+public class SpellFunctionMapper : LuaScriptInterface, ISpellFunctionMapper
 {
+    private static ILogger _logger;
+    private static IItemTypeStore _itemTypeStore;
+    private static RuneManager _runeManager;
+
+    public SpellFunctionMapper(ILogger logger, IItemTypeStore itemTypeStore, RuneManager runeManager) : base(nameof(SpellFunctionMapper))
+    {
+        _logger = logger;
+        _itemTypeStore = itemTypeStore;
+        _runeManager = runeManager;
+    }
+
     public void Init(LuaState lua)
     {
         RegisterSharedClass(lua, "Spell", "", HandleCreateSpellInstance);
@@ -38,7 +49,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         RegisterMethod(lua, "Spell", "impactSound", HandleNotImplementedMethod);
     }
 
-    private int HandleOnCastSpellMethod(LuaState lua)
+    public static int HandleOnCastSpellMethod(LuaState lua)
     {
         var spell = GetUserdata<LuaSpell>(lua, 1);
         if (spell is null)
@@ -64,7 +75,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         return 1;
     }
 
-    private int HandleRegisterMethod(LuaState lua)
+    public static int HandleRegisterMethod(LuaState lua)
     {
         var spell = GetUserdata<LuaSpell>(lua, 1);
         if (spell is null)
@@ -75,7 +86,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
 
         if (spell is LuaRune rune)
         {
-            var item = itemTypeStore.Get((ushort)rune.RuneId);
+            var item = _itemTypeStore.Get((ushort)rune.RuneId);
             
             if (string.IsNullOrWhiteSpace(item.Name))
             {
@@ -89,13 +100,13 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
             item.Attributes.SetAttribute(ItemAttribute.CheckFloor, rune.CheckFloor);
             item.Attributes.SetAttribute(ItemAttribute.BlockWalls, rune.BlockWalls);
             
-            runeManager.Register(rune);
+            _runeManager.Register(rune);
         }
         
         return 1;
     }
 
-    private int HandleIsBlockingMethod(LuaState lua)
+    public static int HandleIsBlockingMethod(LuaState lua)
     {
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
@@ -119,7 +130,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         return 1;
     }
 
-    private int HandleNeedTargetMethod(LuaState lua)
+    public static int HandleNeedTargetMethod(LuaState lua)
     {
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
@@ -142,7 +153,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         return 1;
     }
 
-    private int HandleGroupCooldownMethod(LuaState lua)
+    public static int HandleGroupCooldownMethod(LuaState lua)
     {
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
@@ -177,7 +188,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         return 1;
     }
 
-    private int HandleCooldownMethod(LuaState lua)
+    public static int HandleCooldownMethod(LuaState lua)
     {
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
@@ -200,7 +211,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         return 1;
     }
 
-    private int HandleMagicLevelMethod(LuaState lua)
+    public static int HandleMagicLevelMethod(LuaState lua)
     {
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
@@ -223,7 +234,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         return 1;
     }
 
-    private int HandleLevelMethod(LuaState lua)
+    public static int HandleLevelMethod(LuaState lua)
     {
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
@@ -246,7 +257,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         return 1;
     }
 
-    private int HandleChargesMethod(LuaState lua)
+    public static int HandleChargesMethod(LuaState lua)
     {
         var rune = GetUserdata<LuaRune>(lua, 1);
 
@@ -277,7 +288,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         return 1;
     }
 
-    private int HandleAllowFarUseMethod(LuaState lua)
+    public static int HandleAllowFarUseMethod(LuaState lua)
     {
         var rune = GetUserdata<LuaRune>(lua, 1);
 
@@ -308,7 +319,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         return 1;
     }
 
-    private int HandleRuneIdMethod(LuaState lua)
+    public static int HandleRuneIdMethod(LuaState lua)
     {
         var rune = GetUserdata<LuaRune>(lua, 1);
 
@@ -342,7 +353,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
     /// <summary>
     /// Register spell name method -> spell:name(name)
     /// </summary>
-    private static int HandleNameMethod(LuaState lua)
+    public static int HandleNameMethod(LuaState lua)
     {
         var spell = GetUserdata<LuaSpell>(lua, 1);
         if (spell is not null)
@@ -365,7 +376,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         return 1;
     }
 
-    private int HandleGroupMethod(LuaState lua)
+    public static int HandleGroupMethod(LuaState lua)
     {
         //todo: need to implement group spell name
 
@@ -423,7 +434,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         return 1;
     }
 
-    private int HandleIdMethod(LuaState lua)
+    public static int HandleIdMethod(LuaState lua)
     {
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
@@ -435,7 +446,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
 
         if (spell.SpellType == SpellType.Undefined)
         {
-            logger.Error("The method: 'spell:id(id)' is only for use of instant spells and rune spells");
+            _logger.Error("The method: 'spell:id(id)' is only for use of instant spells and rune spells");
             PushBoolean(lua, false);
             return 1;
         }
@@ -453,11 +464,11 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         return 1;
     }
 
-    private int HandleCreateSpellInstance(LuaState lua)
+    public static int HandleCreateSpellInstance(LuaState lua)
     {
         if (Lua.GetTop(lua) == 1)
         {
-            logger.Error("[SpellFunctions::luaSpellCreate] - There is no parameter set!");
+            _logger.Error("[SpellFunctions::luaSpellCreate] - There is no parameter set!");
             Lua.PushNil(lua);
             return 1;
         }
@@ -498,7 +509,7 @@ public class SpellFunctions(ILogger logger, IItemTypeStore itemTypeStore, RuneMa
         return 1;
     }
 
-    private static int HandleSpellUserdataCompare(LuaState luaState)
+    public static int HandleSpellUserdataCompare(LuaState luaState)
     {
         PushBoolean(luaState,
             EqualityComparer<object>.Default.Equals(GetUserdata<object>(luaState, 1),

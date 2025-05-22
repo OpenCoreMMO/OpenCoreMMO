@@ -5,6 +5,8 @@ using NeoServer.Game.Common.Location;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Scripts.LuaJIT.Models;
+using NeoServer.Scripts.LuaJIT.Models.Combat;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
@@ -33,6 +35,9 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         //RegisterEnum<SkillsType>(luaState);
         RegisterEnumCustom<SkillType>(luaState);
         RegisterEnum<TileFlagsType>(luaState);
+        RegisterEnum<CombatType>(luaState);
+        RegisterEnum<MagicEffect>(luaState);
+        RegisterEnum<ShootType>(luaState);
     }
 
     private static void RegisterEnum(LuaState luaState, string name, Enum value)

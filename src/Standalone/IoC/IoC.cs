@@ -80,7 +80,7 @@ public static class Container
             .AddLogger(configuration)
             .AddCommands()
             .AddLua()
-            .AddLuaJIT()
+            .Register()
             .AddJobs()
             .AddCommands()
             .AddRoutines()

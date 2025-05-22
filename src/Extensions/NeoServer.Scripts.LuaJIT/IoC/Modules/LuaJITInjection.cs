@@ -6,9 +6,9 @@ using NeoServer.Scripts.LuaJIT.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.IoC.Modules;
 
-public static class LuaJITInjection
+public static class LuaJitInjection
 {
-    public static IServiceCollection AddLuaJIT(this IServiceCollection builder)
+    public static IServiceCollection Register(this IServiceCollection builder)
     {
         builder.AddSingleton<ILuaStartup, LuaStartup>();
         builder.AddSingleton<IConfigManager, ConfigManager>();
@@ -43,7 +43,8 @@ public static class LuaJITInjection
         builder.AddSingleton<ITalkActionFunctions, TalkActionFunctions>();
         builder.AddSingleton<ITeleportFunctions, TeleportFunctions>();
         builder.AddSingleton<ITileFunctions, TileFunctions>();
-        builder.AddSingleton<ISpellFunctions, SpellFunctions>();
+        builder.AddSingleton<ISpellFunctionMapper, SpellFunctionMapper>();
+        builder.AddSingleton<ICombatFunctionMapper, CombatBinder>();
         builder.AddSingleton<RuneManager>();
         return builder;
     }

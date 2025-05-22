@@ -4,13 +4,15 @@ namespace NeoServer.Scripts.LuaJIT.DataManagers;
 
 public class RuneManager
 {
-    private Dictionary<int, LuaRune> AttackRunesIds { get; } = new(); 
+    private Dictionary<int, LuaRune> AttackRunes { get; } = new(); 
 
-    public void Register(LuaRune rune) => AttackRunesIds.Add(rune.RuneId, rune);
+    public void Register(LuaRune rune) => AttackRunes.TryAdd(rune.RuneId, rune);
 
     public LuaRune GetRegisteredRune(int clientId)
     {
-        AttackRunesIds.TryGetValue(clientId, out var rune);
+        AttackRunes.TryGetValue(clientId, out var rune);
         return rune;
     }
+
+    public void Clear() => AttackRunes.Clear();
 }

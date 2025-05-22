@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Scripts.LuaJIT.Functions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Configurations;
@@ -38,8 +39,10 @@ public class LuaStartup : ILuaStartup
         ITalkActionFunctions talkActionFunctions,
         ITeleportFunctions teleportFunctions,
         ITileFunctions tileFunctions,
-        ISpellFunctions spellFunctions,
-        ServerConfiguration serverConfiguration)
+        ISpellFunctionMapper spellFunctionMapper,
+        ICombatFunctionMapper combatFunctionMapper,
+        ServerConfiguration serverConfiguration
+        )
     {
         _logger = logger;
         _luaEnviroment = luaEnviroment;
@@ -69,7 +72,8 @@ public class LuaStartup : ILuaStartup
         _talkActionFunctions = talkActionFunctions;
         _teleportFunctions = teleportFunctions;
         _tileFunctions = tileFunctions;
-        _spellFunctions = spellFunctions;
+        _spellFunctionMapper = spellFunctionMapper;
+        _combatFunctionMapper = combatFunctionMapper;
 
         _serverConfiguration = serverConfiguration;
     }
@@ -118,7 +122,8 @@ public class LuaStartup : ILuaStartup
         _playerFunctions.Init(luaState);
         _teleportFunctions.Init(luaState);
         _groupFunctions.Init(luaState);
-        _spellFunctions.Init(luaState);
+        _spellFunctionMapper.Init(luaState);
+        _combatFunctionMapper.Init(luaState);
 
         ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), "config.lua");
 
@@ -281,7 +286,8 @@ public class LuaStartup : ILuaStartup
     /// </summary>
     private readonly ITileFunctions _tileFunctions;
 
-    private readonly ISpellFunctions _spellFunctions;
+    private readonly ISpellFunctionMapper _spellFunctionMapper;
+    private readonly ICombatFunctionMapper _combatFunctionMapper;
 
     /// <summary>
     ///     A reference to the <see cref="ServerConfiguration" /> instance in use.

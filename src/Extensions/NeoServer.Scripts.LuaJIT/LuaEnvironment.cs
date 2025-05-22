@@ -1,6 +1,7 @@
 ﻿using LuaNET;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Scripts.LuaJIT.Models.Combat;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
@@ -28,6 +29,8 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
     private static readonly List<string> CacheFiles = [];
 
     private static LuaScriptInterface _testInterface;
+    public List<LuaCombat> Combats { get; set; } = new List<LuaCombat>();
+    public List<LuaScriptInterface> CombatsMap { get; set; } = new();
 
     #endregion
 

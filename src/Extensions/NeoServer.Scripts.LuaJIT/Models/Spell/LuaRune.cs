@@ -1,5 +1,6 @@
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items.Types.Runes;
+using NeoServer.Scripts.LuaJIT.Enums;
 
 namespace NeoServer.Scripts.LuaJIT.Models.Spell;
 
@@ -11,7 +12,7 @@ public class LuaRune(LuaScriptInterface scriptInterface) : LuaSpell(scriptInterf
     public bool CheckFloor { get; set; }
     public bool BlockWalls { get; set; }
 
-    public bool OnUse(ICreature player, IAttackRune rune, bool isHotkey)
+    public bool OnUse(ICreature creature, IAttackRune rune, bool isHotkey)
     {
         // onUse(player, item, fromPosition, target, toPosition, isHotkey)
         if (!GetScriptInterface().InternalReserveScriptEnv())
@@ -26,20 +27,23 @@ public class LuaRune(LuaScriptInterface scriptInterface) : LuaSpell(scriptInterf
 
         var scriptInterface = GetScriptInterface();
         var scriptEnvironment = scriptInterface.InternalGetScriptEnv();
-        scriptEnvironment.SetScriptId(GetScriptId(), GetScriptInterface());
+        scriptEnvironment.SetScriptId(GetScriptId(), scriptInterface);
 
-        var luaState = GetScriptInterface().GetLuaState();
-        GetScriptInterface().PushFunction(GetScriptId());
+        var luaState = scriptInterface.GetLuaState();
+        scriptInterface.PushFunction(GetScriptId());
 
-        LuaScriptInterface.PushUserdata(luaState, player);
-        LuaScriptInterface.SetMetatable(luaState, -1, "Creature");
+        LuaScriptInterface.PushUserdata(luaState, creature); ;
+        LuaScriptInterface.SetCreatureMetatable(luaState, -1, creature);
 
-         LuaScriptInterface.PushThing(luaState, rune);
-        // LuaScriptInterface.PushPosition(luaState, fromPosition);
-        //
-        // LuaScriptInterface.PushThing(luaState, target);
-        // LuaScriptInterface.PushPosition(luaState, toPosition);
-        //
+        var variant = new LuaVariant
+        {
+            Type = LuaVariantType.VARIANT_NUMBER,
+            Number = creature.CreatureId,
+            InstantName = "",
+            RuneName = rune.Name
+        };
+        
+        LuaScriptInterface.PushVariant(luaState, variant);
         LuaScriptInterface.PushBoolean(luaState, isHotkey);
 
         return GetScriptInterface().CallFunction(3);
