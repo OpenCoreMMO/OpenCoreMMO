@@ -10,7 +10,8 @@ public record GameConfiguration(
     Dictionary<string, double> SkillsRate = null,
     DeathConfiguration Death = null,
     PvPConfiguration PvP = null,
-    CombatConfiguration Combat = null
+    CombatConfiguration Combat = null,
+    ReportConfiguration Report = null
 );
 
 public record CombatConfiguration(bool InfiniteAmmo, bool InfiniteThrowingWeapon);
@@ -37,3 +38,5 @@ public record PvPConfiguration(
     int BlackSkullDurationDays,
     int OrangeSkullDurationDays
 );
+
+public record ReportConfiguration(uint reportMaxTime);
