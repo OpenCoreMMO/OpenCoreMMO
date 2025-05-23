@@ -39,6 +39,8 @@ public class NeoContext : DbContext
     public DbSet<AccountPremiumHistoryEntity> AccountPremiumHistories { get; set; }
 
     public DbSet<IpBanEntity> IpBans { get; set; }
+    
+    public DbSet<ReportBugEntity> ReportBugs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -83,6 +85,7 @@ public class NeoContext : DbContext
         modelBuilder.ApplyConfiguration(new GuildMembershipEntityConfiguration());
         modelBuilder.ApplyConfiguration(new PlayerStorageEntityConfiguration());
         modelBuilder.ApplyConfiguration(new IpBanEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new ReportBugEntityConfiguration());
 
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {

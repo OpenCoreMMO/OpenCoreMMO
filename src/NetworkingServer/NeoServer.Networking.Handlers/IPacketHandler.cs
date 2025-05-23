@@ -1,4 +1,5 @@
-﻿using NeoServer.Server.Common.Contracts.Network;
+﻿using System.Threading.Tasks;
+using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Handlers;
 
