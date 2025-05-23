@@ -41,8 +41,6 @@ public class PlayerReportBugHandler(IReportBugRepository reportBugRepository, IG
             CreatedAt = DateTime.UtcNow
         });
         
-        
-        
         connection.Send(new TextMessagePacket("Thank you for your report. Your report will be processed by the team as soon as possible.",
             TextMessageOutgoingType.Small));
     }
