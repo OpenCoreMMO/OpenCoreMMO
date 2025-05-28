@@ -1,7 +1,7 @@
 ## Revscript support using native LuaJIT
 Simple documentation with all scripts and functions developed using LuaJIT to working with Revscript TFS and Canary retrocompatibility.
 
-### Implemented Scripts (43)
+### Implemented Scripts (46)
 
 **Actions (15)**
 
@@ -72,6 +72,12 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - snow.lua
 - yellow_pillow.lua
 
+**Npc Scripts (3)**
+
+- cipfried.lua
+- opencore.lua
+- tom.lua
+
 ### Implemented Libs using lua (8)
 
 - creature.lua
@@ -83,7 +89,17 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile.lua
 - actions.lua
 
-### Tables (22) and Functions (223)
+### Implemented NpcLibs using lua (7)
+
+- bank_system.lua
+- custom_modules.lua
+- keyword_handler.lua
+- modules.lua
+- npc_handler.lua
+- load.lua
+- npc.lua
+
+### Tables (24) and Functions (224)
 
 **Action (7)**
 
@@ -272,7 +288,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - moveEvent:onAddItem(callback)
 - moveEvent:onRemoveItem(callback)
 
-**Npc (10)**
+**Npc (11)**
 
 - Npc(id or userdata)
 - npc:isNpc()
@@ -282,6 +298,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - npc:isInTalkRange(position, range = 4)
 - npc:isPlayerInteractingOnTopic(player, topicId = 0)
 - npc:openShopWindow(player)
+- npc:openShopWindowTable(player, items)
 - npc:closeShopWindow(player)
 - npc:isMerchant()
 
@@ -380,9 +397,9 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - tile:hasFlag(flag)
 - tile:queryAdd(thing, flags)
 
-### Enums (12) / Constants (250++)
+### Enums (15) / Constants (378)
 
-**DirectionsType**
+**DirectionsType (9)**
 
 -  DIRECTION_NORTH,
 -  DIRECTION_EAST,
@@ -394,7 +411,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 -  DIRECTION_NORTHEAST,
 -  DIRECTION_NONE,
 
-**MagicEffectClassesType**
+**MagicEffectClassesType (71)**
 
 - CONST_ME_NONE,
 - CONST_ME_DRAWBLOOD = 1,
@@ -468,7 +485,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - CONST_ME_INSECTS = 69,
 - CONST_ME_DRAGONHEAD = 70
 
-**MessageClassesType**
+**MessageClassesType (10)**
 
 - MESSAGE_STATUS_CONSOLE_RED = 18, /*Red message in the console*/
 - MESSAGE_EVENT_ORANGE = 19, /*Orange message in the console*/
@@ -481,7 +498,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - MESSAGE_STATUS_SMALL = 26, /*White message at the bottom of the game window"*/
 - MESSAGE_STATUS_CONSOLE_BLUE = 27, /*FIXME Blue message in the console*/
 
-**ReloadType**
+**ReloadType (15)**
 
 - RELOAD_TYPE_NONE,
 - RELOAD_TYPE_ALL,
@@ -500,7 +517,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - RELOAD_TYPE_GROUPS,
 - RELOAD_TYPE_LAST
 
-**ReturnValueType**
+**ReturnValueType (75)**
 
 - RETURNVALUE_NOERROR,
 - RETURNVALUE_NOTPOSSIBLE,
@@ -577,7 +594,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - RETURNVALUE_ITEMCANNOTBEMOVEDTHERE,
 - RETURNVALUE_YOUCANNOTUSETHISBED,
 
-**TileFlagsType**
+**TileFlagsType (19)**
 
 -  TILESTATE_NONE = 0,
 -  TILESTATE_FLOORCHANGE_DOWN = 1 << 0,
@@ -606,7 +623,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 -  TILESTATE_SUPPORTS_HANGABLE = 1 << 23,
 -  TILESTATE_FLOORCHANGE = TILESTATE_FLOORCHANGE_DOWN | TILESTATE_FLOORCHANGE_NORTH | TILESTATE_FLOORCHANGE_SOUTH | TILESTATE_FLOORCHANGE_EAST | TILESTATE_FLOORCHANGE_WEST | TILESTATE_FLOORCHANGE_SOUTH_ALT | TILESTATE_FLOORCHANGE_EAST_ALT,
 
-**ItemAttributeType**
+**ItemAttributeType (27)**
 
 - ITEM_ATTRIBUTE_NONE,
 - ITEM_ATTRIBUTE_ACTIONID = 1 << 0,
@@ -638,7 +655,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - ITEM_ATTRIBUTE_ATTACK_SPEED = 1 << 26,
 - ITEM_ATTRIBUTE_CUSTOM = 1U << 31
 
-**ItemIdType**
+**ItemIdType (31)**
 
 - ITEM_FIREFIELD_PVP_FULL = 1487,
 - ITEM_FIREFIELD_PVP_MEDIUM = 1488,
@@ -677,7 +694,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - ITEM_AMULETOFLOSS = 2173,
 - ITEM_DOCUMENT_RO = 1968, //read-only
 
-**SkillType**
+**SkillType (9)**
 
 - SKILL_FIST = 0,
 - SKILL_CLUB = 1,
@@ -691,7 +708,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - SKILL_FIRST = SKILL_FIST,
 - SKILL_LAST = SKILL_FISHING
 
-**PlayerFlag**
+**PlayerFlag (41)**
 
 - PlayerFlag_CannotUseCombat 
 - PlayerFlag_CannotAttackPlayer
@@ -734,7 +751,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - PlayerFlag_IgnoreYellCheck
 - PlayerFlag_IgnoreSendPrivateCheck
 
-**ItemPropertyType**
+**ItemPropertyType (12)**
 
 - CONST_PROP_BLOCKSOLID = 0,
 - CONST_PROP_HASHEIGHT,
@@ -749,7 +766,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - CONST_PROP_NOFIELDBLOCKPATH,
 - CONST_PROP_SUPPORTHANGABLE
 
-**SpeakClassesType**
+**SpeakClassesType (18)**
 
 - TALKTYPE_SAY = 1,
 - TALKTYPE_WHISPER = 2,
@@ -769,6 +786,57 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - TALKTYPE_CHANNEL_R2 = 17,
 - TALKTYPE_MONSTER_SAY = 19,
 - TALKTYPE_MONSTER_YELL = 20,
+
+**ConditionType (29)**
+
+- CONDITION_NONE = 0,
+- CONDITION_POISON = 1 << 0,
+- CONDITION_FIRE = 1 << 1,
+- CONDITION_ENERGY = 1 << 2,
+- CONDITION_BLEEDING = 1 << 3,
+- CONDITION_HASTE = 1 << 4,
+- CONDITION_PARALYZE = 1 << 5,
+- CONDITION_OUTFIT = 1 << 6,
+- CONDITION_INVISIBLE = 1 << 7,
+- CONDITION_LIGHT = 1 << 8,
+- CONDITION_MANASHIELD = 1 << 9,
+- CONDITION_INFIGHT = 1 << 10,
+- CONDITION_DRUNK = 1 << 11,
+- CONDITION_EXHAUST_WEAPON = 1 << 12, // unused
+- CONDITION_REGENERATION = 1 << 13,
+- CONDITION_SOUL = 1 << 14,
+- CONDITION_DROWN = 1 << 15,
+- CONDITION_MUTED = 1 << 16,
+- CONDITION_CHANNEL_MUTED_TICKS = 1 << 17,
+- CONDITION_YELL_TICKS = 1 << 18,
+- CONDITION_ATTRIBUTES = 1 << 19,
+- CONDITION_FREEZING = 1 << 20,
+- CONDITION_DAZZLED = 1 << 21,
+- CONDITION_CURSED = 1 << 22,
+- CONDITION_EXHAUST_COMBAT = 1 << 23, // unused
+- CONDITION_EXHAUST_HEAL = 1 << 24,   // unused
+- CONDITION_PACIFIED = 1 << 25,
+- CONDITION_ILLUSION = 1 << 26,
+- CONDITION_HUNGRY = 1 << 27,
+- CONDITION_STRENGTHENED = 1 << 28
+
+**Gender (2)**
+
+- PLAYERSEX_FEMALE = 0,
+- PLAYERSEX_MALE = 1,
+
+**NpcsEventType (10)**
+
+- NPCS_EVENT_NONE = 0,
+- NPCS_EVENT_THINK = 1,
+- NPCS_EVENT_APPEAR = 2,
+- NPCS_EVENT_DISAPPEAR = 3,
+- NPCS_EVENT_MOVE = 4,
+- NPCS_EVENT_SAY = 5,
+- NPCS_EVENT_PLAYER_BUY = 6,
+- NPCS_EVENT_PLAYER_SELL = 7,
+- NPCS_EVENT_PLAYER_CHECK_ITEM = 8,
+- NPCS_EVENT_PLAYER_CLOSE_CHANNEL = 9
 
 ### Demonstrations
 

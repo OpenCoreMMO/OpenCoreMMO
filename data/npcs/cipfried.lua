@@ -1,4 +1,4 @@
-local internalNpcName = "Cipfried2"
+local internalNpcName = "Cipfried"
 local npcType = Game.createNpcType(internalNpcName)
 local npcConfig = {}
 
@@ -55,16 +55,17 @@ npcType.onCloseChannel = function(npc, creature)
 end
 
 local function greetCallback(npc, creature)
-	logger.info('cipfried.greetCallback')
 	local playerId = creature:getId()
 	local player = Player(creature)
 	local health = player:getHealth()
-	local lowHealth = health < 3000
+	--todo: changed from 65 to 3000 only to tests, change this back any day
+	local healthToChange = 3000
+	local lowHealth = health < healthToChange
 	local poisoned = player:getCondition(CONDITION_POISON)
 	if lowHealth or poisoned then
 		npcHandler:setMessage(MESSAGE_GREET, "Hello, |PLAYERNAME|! You are looking really bad. Let me heal your wounds. It's my job after all.")
 		if lowHealth then
-			player:addHealth(3000 - health)
+			player:addHealth(healthToChange - health)
 		end
 		if poisoned then
 			player:removeCondition(CONDITION_POISON)
