@@ -54,7 +54,8 @@ public abstract class BaseSpell : ISpell
         if (!actor.HasCondition(ConditionType))
         {
             var castResult = OnCast(actor, target, isHotkey);
-            if (castResult.Failed){
+            if (castResult.Failed)
+            {
                 return castResult;
             }
         }
@@ -101,82 +102,15 @@ public abstract class BaseSpell : ISpell
     {
         actor.StartSpellCooldown(this);
     }
-    
-    public Result CanBeCastBy(ICombatActor caster, IThing target)
+
+    public Result CanCast(ICombatActor caster, IThing target)
     {
         if (caster is IPlayer player)
         {
-            if (player.Group.FlagIsEnabled(PlayerFlag.CannotUseSpells))
+            var validationResult = player.CanCastSpell(this);
+            if (validationResult.Failed)
             {
-                return Result.Fail(InvalidOperation.CannotUseSpells);
-            }
-            
-            if (player.Group.FlagIsEnabled(PlayerFlag.IgnoreSpellCheck))
-            {
-                return Result.Success;
-            }
-            
-            if (!VocationIds?.Contains(player.VocationType) ?? false)
-            {
-               return Result.Fail(InvalidOperation.VocationCannotUseSpell);
-            }
-
-            if (NeedsPremium && player.PremiumTime <= 0)
-            {
-                return  Result.Fail(InvalidOperation.PremiumTimeIsRequired);
-            }
-            
-            if (IsAggressive && (Range < 1 || (Range > 0 && player.CurrentTarget is null)) &&
-                player.Skull == Skull.Black)
-            {
-                return Result.NotPossible;
-            }
-
-            if (!player.HasEnoughLevel(MinLevel))
-            {
-                return Result.Fail(InvalidOperation.NotEnoughLevel);
-            }
-            
-            if (player.MagicLevel < MinMagicLevel)
-            {
-                return Result.Fail(InvalidOperation.NotEnoughLevel);
-            }
-            
-            if (IsAggressive && player.IsPacified)
-            {
-                return Result.Fail(InvalidOperation.Exhausted);
-            }
-            
-            if (IsAggressive && !player.Group.FlagIsEnabled(PlayerFlag.IgnoreProtectionZone) && player.Tile.ProtectionZone)
-            {
-                return Result.Fail(InvalidOperation.NotPermittedInProtectionZone);
-            }
-
-            if (NeedWeapon && !player.Inventory.IsUsingWeapon)
-            {
-                return Result.Fail(InvalidOperation.SpellNeedsWeapon);
-            }
-            
-            if (!player.HasEnoughMana(ManaConsumption) && !player.Group.FlagIsEnabled(PlayerFlag.HasInfiniteMana))
-            {
-                return Result.Fail(InvalidOperation.NotEnoughMana);
-            }
-            
-            if (!player.HasEnoughSoul(SoulConsumption) && !player.Group.FlagIsEnabled(PlayerFlag.HasInfiniteSoul))
-            {
-                return Result.Fail(InvalidOperation.NotEnoughSoul);
-            }
-            
-            if (NeedLearn)
-            {
-                //todo: implement learn validation
-                throw new NotImplementedException();
-            }
-
-
-            if (!player.CooldownHasExpired((IHasCooldown)this))
-            {
-                return Result.Fail(InvalidOperation.Exhausted);
+                return validationResult;
             }
         }
 
@@ -190,7 +124,7 @@ public abstract class BaseSpell : ISpell
         {
             return Result.Fail(InvalidOperation.CreatureIsNotReachable);
         }
-        
+
         if (caster.Location.Z > target.Location.Z)
         {
             return Result.Fail(InvalidOperation.FirstGoUpStairs);
@@ -225,19 +159,22 @@ public abstract class BaseSpell : ISpell
             {
                 return Result.Fail(InvalidOperation.NotPermittedInProtectionZone);
             }
-            
+
             if (BlockingSolid && targetTile.HasFlag(TileFlags.Unpassable))
             {
                 return Result.Fail(InvalidOperation.NotEnoughRoom);
             }
         }
-        
+
         if (NeedsTarget && targetCreature is null)
         {
             return Result.Fail(InvalidOperation.CanOnlyUseOnCreatures);
         }
 
-        if (IsAggressive && NeedsTarget && targetCreature is not null && caster is IPlayer { SecureMode: PvpSecureMode.PvPDisabled } playerCaster)
+        if (IsAggressive && NeedsTarget && targetCreature is not null && caster is IPlayer
+            {
+                SecureMode: PvpSecureMode.PvPDisabled
+            } playerCaster)
         {
             if (targetCreature is IPlayer targetPlayer && !Equals(targetCreature, playerCaster) &&
                 playerCaster.GetSkull(targetPlayer) == Skull.None &&

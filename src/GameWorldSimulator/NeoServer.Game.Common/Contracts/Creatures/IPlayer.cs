@@ -215,9 +215,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     void Use(IThing item);
     Result Use(IUsableOn item, IItem onItem);
     bool Login();
-
-    bool CastSpell(string message);
-
+    
     void SendMessageTo(ISociableCreature creature, SpeechType type, string message);
     void StartShopping(IShopperNpc npc);
     void StopShopping();
@@ -303,4 +301,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
 
     void PostSpellCast(ISpell spell);
     bool HasEnoughSoul(ushort soul);
+    Result CanCastSpell(ISpell spell);
+    void ConsumeSoul(ushort soul);
 }

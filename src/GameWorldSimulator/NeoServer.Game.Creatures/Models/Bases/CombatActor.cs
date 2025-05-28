@@ -203,7 +203,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         if (this is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoreProtectionZone))
         {
-            return Result.NotPossible;
+            return Result.Success;
         }
 
         if (Tile?.ProtectionZone ?? false)

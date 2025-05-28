@@ -69,6 +69,9 @@ public class SingleTargetAttackService(
     private static void PerformAttack(ICombatActor aggressor, IThing target, CalculatedAttackDamage damage)
     {
         if (target is not ICombatActor combatActor) return;
+        
+        //cannot attack himself
+        if(Equals(target, aggressor)) return;
 
         var unjustifiedAttack =
             target is IPlayer targetPlayer && aggressor is IPlayer playerAggressor &&

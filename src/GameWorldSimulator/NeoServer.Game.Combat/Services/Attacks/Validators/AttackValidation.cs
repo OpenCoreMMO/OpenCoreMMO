@@ -26,11 +26,11 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
         {
             case IPlayer targetPlayer:
             {
-                if (targetPlayer.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))
+                if (targetPlayer.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked) && targetPlayer != aggressor)
                 {
                     return Result.Fail(InvalidOperation.YouMayNotAttackThisPlayer);
                 }
-            
+
                 if (targetPlayer.Tile.NoPvpZone)
                 {
                     return Result.Fail(InvalidOperation.NotPermittedInNoPvpZone);
@@ -39,19 +39,23 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
                 switch (aggressor)
                 {
                     //Player cannot attack a player
-                    case IPlayer aggressorPlayer when aggressorPlayer.Group.FlagIsEnabled(PlayerFlag.CannotAttackPlayer):
+                    case IPlayer aggressorPlayer
+                        when aggressorPlayer.Group.FlagIsEnabled(PlayerFlag.CannotAttackPlayer) && aggressorPlayer != targetPlayer:
                         return Result.Fail(InvalidOperation.YouMayNotAttackThisPlayer);
-                    
+
                     //Player cannot attack player in no pvp zone
                     case IPlayer aggressorPlayer when IsProtected(aggressorPlayer, targetPlayer):
                         return Result.Fail(InvalidOperation.YouMayNotAttackThisPlayer);
-                    
+
                     //Player cannot attack player in no pvp zone or protection zone
                     case IPlayer aggressorPlayer when aggressorPlayer.Tile.NoPvpZone &&
-                                                      targetPlayer.Tile.HasFlag(TileFlags.NoPvpZone | TileFlags.ProtectionZone):
+                                                      targetPlayer.Tile.HasFlag(TileFlags.NoPvpZone |
+                                                          TileFlags.ProtectionZone):
                         return Result.Fail(InvalidOperation.NotPermittedInNoPvpZone);
-                    
-                    case ISummon { Master: IPlayer masterPlayer } when masterPlayer.Group.FlagIsEnabled(PlayerFlag.CannotAttackPlayer) || IsProtected(masterPlayer, targetPlayer):
+
+                    case ISummon { Master: IPlayer masterPlayer }
+                        when masterPlayer.Group.FlagIsEnabled(PlayerFlag.CannotAttackPlayer) ||
+                             IsProtected(masterPlayer, targetPlayer):
                         return Result.Fail(InvalidOperation.YouMayNotAttackThisPlayer);
                 }
 
@@ -61,11 +65,12 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
                 switch (aggressor)
                 {
                     //Player cannot attack a monster
-                    case IPlayer playerAggressor when playerAggressor.Group.FlagIsEnabled(PlayerFlag.CannotAttackMonster):
+                    case IPlayer playerAggressor
+                        when playerAggressor.Group.FlagIsEnabled(PlayerFlag.CannotAttackMonster):
                         return Result.Fail(InvalidOperation.YouMayNotAttackThisCreature);
                     //Player cannot attack monster in no pvp zone
                     case IPlayer when monsterTarget is ISummon { Master: IPlayer } &&
-                                                      (monsterTarget.Tile?.NoPvpZone ?? false):
+                                      (monsterTarget.Tile?.NoPvpZone ?? false):
                         return Result.Fail(InvalidOperation.NotPermittedInNoPvpZone);
                     //Monster cannot attack another monster or summons monster
                     case IMonster monsterAggressor

@@ -21,14 +21,9 @@ public class SpellCastValidation(IMapTool mapTool)
             {
                 return Result.NotPossible;
             }
-
-            if (aggressorPlayer.Group.FlagIsEnabled(PlayerFlag.IgnoreSpellCheck))
-            {
-                return Result.Success;
-            }
         }
 
-        var result = spell.CanBeCastBy(caster, target);
+        var result = spell.CanCast(caster, target);
         if (result.Failed)
             return result;
 

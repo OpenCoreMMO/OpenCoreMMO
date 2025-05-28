@@ -6,7 +6,10 @@ using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Contracts.Services;
+using NeoServer.Game.Common.Contracts.World;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Location;
+using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Common.Results;
 using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
@@ -17,14 +20,13 @@ public class ItemMovementService : IItemMovementService
 {
     private readonly IWalkToMechanism _walkToMechanism;
 
-    public ItemMovementService(IWalkToMechanism walkToMechanism)
+    public ItemMovementService(IWalkToMechanism walkToMechanism, IMap map)
     {
         _walkToMechanism = walkToMechanism;
     }
-
     public Result<OperationResultList<IItem>> Move(IPlayer player, IItem item, IHasItem from, IHasItem destination,
         byte amount,
-        byte fromPosition, byte? toPosition)
+        byte fromPosition, byte? toPosition, bool walkTo = true)
     {
         if (player is null) return Result<OperationResultList<IItem>>.NotPossible;
 
@@ -42,8 +44,8 @@ public class ItemMovementService : IItemMovementService
                 return Result<OperationResultList<IItem>>.NotPossible;
             }
         }
-
-        if (!item.IsCloseTo(player))
+        
+        if (!item.IsCloseTo(player) && walkTo)
         {
             _walkToMechanism.WalkTo(player,
                 () => player.MoveItem(item, from, destination, amount, fromPosition, toPosition), item.Location);

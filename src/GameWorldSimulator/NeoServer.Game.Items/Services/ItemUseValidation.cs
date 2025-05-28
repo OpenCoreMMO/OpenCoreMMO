@@ -17,7 +17,7 @@ public class ItemUseValidation(IMapTool mapTool, IMap map)
         {
             return Result.NotPossible;
         }
-        
+
         if (item is IItem { AllowFarUse: true })
         {
             if (param.CheckFloor && player.Location.Z != target.Location.Z)
@@ -43,12 +43,25 @@ public class ItemUseValidation(IMapTool mapTool, IMap map)
             {
                 return Result.Fail(InvalidOperation.CannotThrowThere);
             }
+            
+            return Result.Success;
         }
-        else
+
+        if (target.Location.X != 0xFFFF)
         {
-            throw new NotImplementedException();
+            if (player.Location.Z != target.Location.Z)
+            {
+                return player.Location.Z > target.Location.Z
+                    ? Result.Fail(InvalidOperation.FirstGoUpStairs)
+                    : Result.Fail(InvalidOperation.FirstGoDownStairs);
+            }
+
+            if (!player.Location.IsNextTo(target.Location))
+            {
+                return Result.Fail(InvalidOperation.TooFar);
+            }
         }
-        
+
         return Result.Success;
     }
 }

@@ -12,10 +12,16 @@ public class SpellInvokedEventHandler(IGameServer game)
     {
         if (spell.Effect is EffectT.None) return;
         
+        if (spell.Effect == 0)
+        {
+            return;
+        }
+        
         foreach (var spectator in game.Map.GetPlayersAtPositionZone(creature.Location))
         {
             if (!game.CreatureManager.GetPlayerConnection(spectator.CreatureId, out var connection)) continue;
 
+            
             connection.OutgoingPackets.Enqueue(new MagicEffectPacket(creature.Location, spell.Effect));
             connection.Send();
         }

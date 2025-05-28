@@ -40,7 +40,7 @@ public interface ISpell : IHasCooldown
     ushort MinLevel { get; }
     ushort MinMagicLevel { get; }
     Result Invoke(ICombatActor actor, IThing target, bool isHotkey);
-    Result CanBeCastBy(ICombatActor caster, IThing target);
+    Result CanCast(ICombatActor caster, IThing target);
 }
 
 public interface ICommandSpell : ISpell

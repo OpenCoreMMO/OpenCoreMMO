@@ -571,40 +571,23 @@ public class Player : CombatActor, IPlayer
         OnSentMessage?.Invoke(this, to, speechType, message);
     }
 
-    public virtual bool CastSpell(string message)
-    {
-        // if (!SpellList.TryGet(message.Trim(), out var spell)) return false;
-        // if (!spell.Invoke(this, message, out var error))
-        // {
-        //     OnCannotUseSpell?.Invoke(this, spell, error);
-        //     return true;
-        // }
-        //
-        // var talkType = SpeechType.MonsterSay;
-        //
-        // Cooldowns.Start(CooldownType.Spell, 1000); //todo: 1000 should be a const
-        //
-        // if (spell.IncreaseSkill) IncreaseSkillCounter(SkillType.Magic, spell.Mana);
-        //
-        // if (!spell.ShouldSay) return true;
-        //
-        // base.Say(message, talkType);
-
-        return true;
-    }
-
     public void PostSpellCast(ISpell spell)
     {
-        var talkType = SpeechType.MonsterSay;
+        const SpeechType talkType = SpeechType.MonsterSay;
 
         ConsumeMana(spell.ManaConsumption);
+        ConsumeSoul(spell.SoulConsumption);
+
         if (spell.IncreaseSkill) IncreaseSkillCounter(SkillType.Magic, spell.ManaConsumption);
 
         if (!spell.ShouldSay) return;
 
-        base.Say(spell.Words, talkType);
+        if (!string.IsNullOrWhiteSpace(spell.Words))
+        {
+            base.Say(spell.Words, talkType);
+        }
     }
-    
+
     public bool HasEnoughSoul(ushort soul)
     {
         return SoulPoints >= soul;
@@ -621,6 +604,15 @@ public class Player : CombatActor, IPlayer
         if (!HasEnoughMana(mana)) return;
 
         Mana -= mana;
+        OnStatusChanged?.Invoke(this);
+    }
+
+    public void ConsumeSoul(ushort soul)
+    {
+        if (soul == 0) return;
+        if (!HasEnoughSoul(soul)) return;
+
+        Mana -= soul;
         OnStatusChanged?.Invoke(this);
     }
 
@@ -1391,6 +1383,84 @@ public class Player : CombatActor, IPlayer
     {
         if (Level <= 23) return 10 * 0.01 * Experience;
         return (Level + 50) * .01 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
+    }
+
+    public Result CanCastSpell(ISpell spell)
+    {
+        if (Group.FlagIsEnabled(PlayerFlag.CannotUseSpells))
+        {
+            return Result.Fail(InvalidOperation.CannotUseSpells);
+        }
+
+        if (Group.FlagIsEnabled(PlayerFlag.IgnoreSpellCheck))
+        {
+            return Result.Success;
+        }
+
+        if (!spell.VocationIds?.Contains(((IPlayer)this).VocationType) ?? false)
+        {
+            return Result.Fail(InvalidOperation.VocationCannotUseSpell);
+        }
+
+        if (spell.NeedsPremium && PremiumTime <= 0)
+        {
+            return Result.Fail(InvalidOperation.PremiumTimeIsRequired);
+        }
+
+        if (spell.IsAggressive && (spell.Range < 1 || (spell.Range > 0 && CurrentTarget is null)) &&
+            Skull is Skull.Black)
+        {
+            return Result.NotPossible;
+        }
+
+        if (!HasEnoughLevel(spell.MinLevel))
+        {
+            return Result.Fail(InvalidOperation.NotEnoughLevel);
+        }
+
+        if (MagicLevel < spell.MinMagicLevel)
+        {
+            return Result.Fail(InvalidOperation.NotEnoughLevel);
+        }
+
+        if (spell.IsAggressive && IsPacified)
+        {
+            return Result.Fail(InvalidOperation.Exhausted);
+        }
+
+        if (spell.IsAggressive && !Group.FlagIsEnabled(PlayerFlag.IgnoreProtectionZone) && Tile.ProtectionZone)
+        {
+            return Result.Fail(InvalidOperation.NotPermittedInProtectionZone);
+        }
+
+        if (spell.NeedWeapon && !Inventory.IsUsingWeapon)
+        {
+            return Result.Fail(InvalidOperation.SpellNeedsWeapon);
+        }
+
+        if (!HasEnoughMana(spell.ManaConsumption) && !Group.FlagIsEnabled(PlayerFlag.HasInfiniteMana))
+        {
+            return Result.Fail(InvalidOperation.NotEnoughMana);
+        }
+
+        if (!HasEnoughSoul(spell.SoulConsumption) && !Group.FlagIsEnabled(PlayerFlag.HasInfiniteSoul))
+        {
+            return Result.Fail(InvalidOperation.NotEnoughSoul);
+        }
+
+        if (spell.NeedLearn)
+        {
+            //todo: implement learn validation
+            throw new NotImplementedException();
+        }
+
+
+        if (!CooldownHasExpired(spell))
+        {
+            return Result.Fail(InvalidOperation.Exhausted);
+        }
+
+        return Result.Success;
     }
 
     #region Storage

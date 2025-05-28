@@ -41,14 +41,14 @@ public class CreatureAttackingEventHandler(IMap map, IGameCreatureManager gameCr
             SendMissedAttack(@event, connection);
         }
 
-        if (@event.ShootType != default && @event.Target?.Location is not null && !@event.AttackMissed)
+        if (@event.ShootType != default && @event.Target?.Location is not null && !@event.AttackMissed && @event.Target.Location != @event.Aggressor.Location)
         {
             connection.OutgoingPackets.Enqueue(new DistanceEffectPacket(@event.Aggressor.Location,
                 @event.Target.Location,
                 (byte)@event.ShootType));
         }
 
-        if (@event.Effect != EffectT.None && @event.Target != null)
+        if (@event.Effect != 0 && @event.Target != null)
         {
             connection.OutgoingPackets.Enqueue(new MagicEffectPacket(@event.Target.Location,
                 @event.Effect));
@@ -73,9 +73,12 @@ public class CreatureAttackingEventHandler(IMap map, IGameCreatureManager gameCr
             destLocation = @event.Target.Location.Neighbours[index];
         } while (destLocation == @event.Aggressor.Location);
 
-        if (@event.ShootType != default)
+        if (@event.ShootType != default && destLocation != @event.Aggressor.Location)
+        {
             connection.OutgoingPackets.Enqueue(new DistanceEffectPacket(@event.Aggressor.Location, destLocation,
                 (byte)@event.ShootType));
+        }
+
         connection.OutgoingPackets.Enqueue(new MagicEffectPacket(destLocation, EffectT.Puff));
     }
 }

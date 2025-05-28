@@ -17,7 +17,6 @@ namespace NeoServer.Game.Combat.Services.Attacks;
 
 public class AttackService(
     ILogger logger,
-    PvPConfiguration pvpConfiguration,
     IPlayerSkullService playerSkullService,
     AreaAttackService areaAttackService,
     SingleTargetAttackService singleTargetAttackService,
@@ -30,13 +29,7 @@ public class AttackService(
             logger.Warning("Attack aggressor is null");
             return Result.NotPossible;
         }
-
-        // Cannot attack himself
-        if (!attackInput.Parameters.IsAttackInArea && Equals(attackInput.Target, attackInput.Aggressor))
-        {
-            return Result.Fail(InvalidOperation.NotPossible);
-        }
-
+        
         // Attack each combat actor on the target tile
         if (!attackInput.Parameters.IsAttackInArea &&
             attackInput.Target is IDynamicTile { Creatures.Count: > 0 } targetTile)

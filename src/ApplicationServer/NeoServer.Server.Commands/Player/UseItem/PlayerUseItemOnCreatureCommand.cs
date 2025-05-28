@@ -6,8 +6,10 @@ using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Runes;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
 using NeoServer.Game.Common.Contracts.Services;
+using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Location;
+using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Common.Services;
 using NeoServer.Game.Items.Services;
 using NeoServer.Networking.Packets.Incoming;
@@ -28,6 +30,7 @@ public class PlayerUseItemOnCreatureCommand : ICommand
     private readonly ItemUseValidation _itemUseValidation;
     private readonly SpellService _spellService;
     private readonly ILogger _logger;
+    private readonly IItemMovementService _itemMovementService;
     private readonly GameConfiguration _gameConfiguration;
 
     public PlayerUseItemOnCreatureCommand(
@@ -39,6 +42,7 @@ public class PlayerUseItemOnCreatureCommand : ICommand
         ItemUseValidation itemUseValidation,
         SpellService spellService,
         ILogger logger,
+        IItemMovementService itemMovementService,
         GameConfiguration gameConfiguration)
     {
         _game = game;
@@ -49,6 +53,7 @@ public class PlayerUseItemOnCreatureCommand : ICommand
         _itemUseValidation = itemUseValidation;
         _spellService = spellService;
         _logger = logger;
+        _itemMovementService = itemMovementService;
         _gameConfiguration = gameConfiguration;
     }
 
@@ -56,48 +61,79 @@ public class PlayerUseItemOnCreatureCommand : ICommand
     {
         if (!_game.CreatureManager.TryGetCreature(useItemPacket.CreatureId, out var targetCreature)) return;
 
-        var itemToUse = GetItem(player, useItemPacket);
-        
-        Action action = null;
+        var itemToUse = GetItem(player, useItemPacket) as IItem;
 
+        if (itemToUse is null)
+        {
+            OperationFailService.Send(player, InvalidOperation.NotPossible);
+            return;
+        }
+
+        if (!itemToUse.IsCloseTo(player))
+        {
+            _walkToMechanism.WalkTo(player, () => UseItem(player, useItemPacket, itemToUse, targetCreature),
+                itemToUse.Location);
+            return;
+        }
+
+        if (!itemToUse.AllowFarUse && itemToUse.Location.Type == LocationType.Ground && itemToUse.IsCloseTo(player) &&
+            !targetCreature.IsCloseTo(player))
+        {
+            var fromTile = _game.Map[itemToUse.Location] as IDynamicTile;
+            var result = _itemMovementService.Move(player, itemToUse, fromTile, player.Inventory.BackpackSlot, 1, 0, 0,
+                walkTo: false);
+
+            if (result.Failed)
+            {
+                OperationFailService.Send(player, result.Error);
+                return;
+            }
+        }
+
+        if (!targetCreature.IsCloseTo(player) && !itemToUse.AllowFarUse)
+        {
+            _walkToMechanism.WalkTo(player, () => UseItem(player, useItemPacket, itemToUse, targetCreature),
+                targetCreature.Location);
+            return;
+        }
+
+        UseItem(player, useItemPacket, itemToUse, targetCreature);
+    }
+
+    private void UseItem(IPlayer player, UseItemOnCreaturePacket useItemPacket, IThing itemToUse,
+        ICreature targetCreature)
+    {
         var itemUseValidationResult =
             _itemUseValidation.CanUse(itemToUse, player, targetCreature, new ItemUseValidationParam(true, true));
 
         if (itemUseValidationResult.Failed)
         {
-            OperationFailService.Send(player, itemUseValidationResult.Reason, EffectT.Puff);
-            return;
+            if (itemUseValidationResult.Reason != InvalidOperation.TooFar)
+            {
+                OperationFailService.Send(player, itemUseValidationResult.Reason, EffectT.Puff);
+                return;
+            }
         }
 
         if (itemToUse is IRune rune)
         {
-            action = () => UseRune(player, useItemPacket, rune, targetCreature);
-        }
-
-        if (action is null)
-        {
-            if (itemToUse is not IUsableOn usable) return;
-
-            if (_scriptManager.Actions.HasAction(usable))
-            {
-                action = () => _scriptManager.Actions.UseItem(player, player.Location, useItemPacket.FromStackPosition,
-                    0,
-                    usable, targetCreature);
-            }
-            else
-                action = () => _playerUseService.Use(player, usable, targetCreature);
-        }
-
-        if (!player.Location.IsNextTo(itemToUse.Location))
-        {
-            _walkToMechanism.WalkTo(player, action, itemToUse.Location);
+            UseRune(rune, player, targetCreature, useItemPacket.FromLocation.IsHotkey);
             return;
         }
 
-        action?.Invoke();
+        if (_scriptManager.Actions.HasAction(itemToUse as IItem))
+        {
+            _scriptManager.Actions.UseItem(player, player.Location, useItemPacket.FromStackPosition,
+                0,
+                itemToUse as IItem, targetCreature);
+            return;
+        }
+
+        if (itemToUse is not IUsableOn usable) return;
+        _playerUseService.Use(player, usable, targetCreature);
     }
 
-    private void UseRune(IPlayer player, UseItemOnCreaturePacket useItemPacket, IRune rune, ICreature targetCreature)
+    private void UseRune(IRune rune, IPlayer player, ICreature targetCreature, bool isHotkey)
     {
         var result = rune.CanBeCastBy(player, targetCreature);
 
@@ -115,7 +151,7 @@ public class PlayerUseItemOnCreatureCommand : ICommand
             return;
         }
 
-        var castResult = _spellService.Cast(player, targetCreature, spell, useItemPacket.FromLocation.IsHotkey);
+        var castResult = _spellService.Cast(player, targetCreature, spell, isHotkey);
         if (!castResult)
         {
             return;
