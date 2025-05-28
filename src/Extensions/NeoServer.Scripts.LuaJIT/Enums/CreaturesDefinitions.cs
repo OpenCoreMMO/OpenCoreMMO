@@ -13,4 +13,4 @@ public enum NpcsEventType : byte
     NPCS_EVENT_PLAYER_SELL = 7,
     NPCS_EVENT_PLAYER_CHECK_ITEM = 8,
     NPCS_EVENT_PLAYER_CLOSE_CHANNEL = 9
-};
+}

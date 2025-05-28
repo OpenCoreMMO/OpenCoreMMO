@@ -95,7 +95,6 @@ public class CreatureOnMoveEventHandler : IGameEventHandler
 
     private void OnPlayerCloseChannel(INpc npc, IPlayer player, NpcEvents npcEvent)
     {
-
         if (!npcEvent.Events.TryGetValue(NpcsEventType.NPCS_EVENT_PLAYER_CLOSE_CHANNEL, out var onCloseChannelEvent) ||
             !onCloseChannelEvent.HasValue)
             return;
