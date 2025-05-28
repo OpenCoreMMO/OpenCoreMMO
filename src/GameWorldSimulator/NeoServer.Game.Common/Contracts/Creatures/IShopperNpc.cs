@@ -13,7 +13,7 @@ public interface IShopperNpc : INpc
     event ShowShop OnShowShop;
     event CloseShop OnCloseShop;
 
-    void StartSellingToCustomer(ISociableCreature creature);
+    void StartSellingToCustomer(ISociableCreature creature, IEnumerable<IShopItem> shopItems = null);
     void StopSellingToCustomer(ISociableCreature creature);
     bool BuyFromCustomer(ISociableCreature creature, IItemType item, byte amount);
     ulong CalculateCost(IItemType itemType, byte amount);

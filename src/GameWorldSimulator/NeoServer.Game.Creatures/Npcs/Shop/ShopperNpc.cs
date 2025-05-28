@@ -24,8 +24,6 @@ public class ShopperNpc : Npc, IShopperNpc
     public event ShowShop OnShowShop;
     public event CloseShop OnCloseShop;
 
-    //public IDictionary<ushort, IShopItem> ShopItems => Metadata.ShopItems;
-
     public IDictionary<ushort, IShopItem> ShopItems
     {
         get
@@ -47,9 +45,9 @@ public class ShopperNpc : Npc, IShopperNpc
         OnCloseShop?.Invoke(creature);
     }
 
-    public virtual void StartSellingToCustomer(ISociableCreature creature)
+    public virtual void StartSellingToCustomer(ISociableCreature creature, IEnumerable<IShopItem> shopItems)
     {
-        ShowShopItems(creature);
+        ShowShopItems(creature, shopItems);
     }
 
     public bool BuyFromCustomer(ISociableCreature creature, IItemType item, byte amount)
@@ -103,11 +101,14 @@ public class ShopperNpc : Npc, IShopperNpc
         if (dialog.Action == "shop") ShowShopItems(to);
     }
 
-    public virtual void ShowShopItems(ISociableCreature to)
+    public virtual void ShowShopItems(ISociableCreature to, IEnumerable<IShopItem> shopItems = null)
     {
         if (to is not IPlayer player) return;
 
-        if (ShopItems?.Values is not IEnumerable<IShopItem> shopItems) return;
+        if (ShopItems?.Values is IEnumerable<IShopItem>)
+            shopItems = shopItems ?? ShopItems.Values;
+
+        if (shopItems != null && !shopItems.Any()) return;
 
         player.StartShopping(this);
 

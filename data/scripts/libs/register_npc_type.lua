@@ -166,6 +166,7 @@ registerNpcType.shop = function(npcType, mask)
 	if type(mask.shop) == "table" then
 		for _, shopItems in pairs(mask.shop) do
 			npcType:addShopItem(
+				shopItems.itemName,
 				shopItems.id,
 				shopItems.buy,
 				shopItems.sell

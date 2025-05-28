@@ -87,9 +87,6 @@ public class Npc : WalkableCreature, INpc
         if (from is null || speechType == SpeechType.None || string.IsNullOrWhiteSpace(message)) return;
 
         OnHear?.Invoke(from, this, speechType, message);
-
-        //todo: muniz commented thos, to tets only revscript npc system
-        //Answer(from, speechType, message);
     }
 
     public void StopTalkingToCustomer(IPlayer player)
@@ -110,38 +107,6 @@ public class Npc : WalkableCreature, INpc
 
         if (!storedValues.TryGetValue(dialog.StoreAt, out var value)) return answer;
         return answer.Replace($"{{{{{dialog.StoreAt}}}}}", value);
-    }
-
-    public virtual void Answer(ICreature from, SpeechType speechType, string message)
-    {
-        if (from is null || string.IsNullOrWhiteSpace(message)) return;
-
-        if (from is not ISociableCreature sociableCreature) return;
-
-        var isTalkingWith = npcDialog.IsTalkingWith(from);
-
-        //if it is not the first message to npc and player sent it from any other channel
-        if (isTalkingWith && speechType != SpeechType.PrivatePlayerToNpc) return;
-
-        var dialog = npcDialog.GetNextAnswer(from.CreatureId, message);
-
-        if (dialog is null) return;
-
-        if (!isTalkingWith) WatchCustomerEvents(sociableCreature); //first interaction
-
-        npcDialog.StoreWords(sociableCreature, dialog.StoreAt, message);
-
-        if (dialog.Action is not null)
-            OnDialogAction?.Invoke(this, from, dialog, dialog.Action, GetPlayerStoredValues(sociableCreature));
-
-        if (dialog?.Answers is not null)
-        {
-            SendMessageTo(sociableCreature, speechType, dialog);
-
-            OnAnswer?.Invoke(this, from, dialog, message, speechType);
-        }
-
-        if (dialog.End) ForgetCustomer(sociableCreature);
     }
 
     public virtual void SendMessageTo(ISociableCreature to, SpeechType type, IDialog dialog)
@@ -198,6 +163,9 @@ public class Npc : WalkableCreature, INpc
         if (_playerInteractionsOrder.Count > 0)
             TurnTo(_playerInteractionsOrder.FirstOrDefault());
     }
+
+    public bool IsInteractingWithAnyPlayer()
+        => _playerInteractions.Count > 0;
 
     public bool IsInteractingWithPlayer(IPlayer player)
     {

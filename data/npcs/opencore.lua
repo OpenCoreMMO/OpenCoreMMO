@@ -32,34 +32,34 @@ npcConfig.voices = {
 
 -- Npc shop
 npcConfig.shop = {
-	{ id = 2392, buy = 10000, sell = 100956 }, --fire sword
-	{ id = 1989, buy = 6 }, --basket
-	{ id = 2007, buy = 3 }, --bottle
-	{ id = 7142, buy = 4 }, --bucket
-	{ id = 2041, buy = 8 }, --candelabrum
-	{ id = 2047, buy = 2 }, --candlestick
-	{ id = 2578, buy = 280, sell = 75 }, --closed trap
-	{ id = 2416, buy = 260, sell = 50 }, --crowbar
-	{ id = 3941, buy = 2 }, --cup
-	{ id = 1952, buy = 12 }, --document
-	{ id = 2580, buy = 150, sell = 40 }, --fishing rod
-	{ id = 1998, buy = 20 }, --green backpack
-	{ id = 1991, buy = 4 }, --green bag
-	{ id = 2420, buy = 35, sell = 6 }, --machete
-	{ id = 1948, buy = 8 }, --parchment
-	{ id = 2553, buy = 50, sell = 15 }, --pick
-	{ id = 2035, buy = 6 }, --plate
-	{ id = 2331, buy = 10 }, --present
-	{ id = 6981, buy = 50, sell = 15 }, --rope
-	{ id = 7724, buy = 5 }, --scroll
-	{ id = 2550, buy = 50, sell = 10 }, --scythe
-	{ id = 2554, buy = 50, sell = 8 }, --shovel
-	{ id = 2050, buy = 2 }, --torch
-	{ id = 2006, sell = 5 }, --vial
-	{ id = 2036, buy = 20, sell = 6 }, --watch
-	{ id = 2901, buy = 10, count = 1 }, --waterskin of water
-	{ id = 2556, sell = 15 }, --wooden hammer
-	{ id = 3976, buy = 1 }, --worm
+	{ itemName = "fire sword",  id = 2392, buy = 10000, sell = 100956 },
+	{ itemName = "basket",  id = 1989, buy = 6 },
+	{ itemName = "bottle",  id = 2007, buy = 3 },
+	{ itemName = "bucket",  id = 7142, buy = 4 },
+	{ itemName = "candelabrum",  id = 2041, buy = 8 },
+	{ itemName = "candlestick",  id = 2047, buy = 2 },
+	{ itemName = "closed trap",  id = 2578, buy = 280, sell = 75 },
+	{ itemName = "crowbar",  id = 2416, buy = 260, sell = 50 },
+	{ itemName = "cup",  id = 3941, buy = 2 },
+	{ itemName = "document",  id = 1952, buy = 12 },
+	{ itemName = "fishing rod",  id = 2580, buy = 150, sell = 40 },
+	{ itemName = "green backpack",  id = 1998, buy = 20 },
+	{ itemName = "green bag",  id = 1991, buy = 4 },
+	{ itemName = "machete",  id = 2420, buy = 35, sell = 6 },
+	{ itemName = "parchment",  id = 1948, buy = 8 },
+	{ itemName = "pick",  id = 2553, buy = 50, sell = 15 },
+	{ itemName = "plate",  id = 2035, buy = 6 },
+	{ itemName = "present",  id = 2331, buy = 10 },
+	{ itemName = "rope",  id = 6981, buy = 50, sell = 15 },
+	{ itemName = "scroll",  id = 7724, buy = 5 },
+	{ itemName = "scythe",  id = 2550, buy = 50, sell = 10 },
+	{ itemName = "shovel",  id = 2554, buy = 50, sell = 8 },
+	{ itemName = "torch",  id = 2050, buy = 2 },
+	{ itemName = "vial",  id = 2006, sell = 5 },
+	{ itemName = "watch",  id = 2036, buy = 20, sell = 6 },
+	{ itemName = "waterskin of water",  id = 2901, buy = 10, count = 1 },
+	{ itemName = "wooden hammer",  id = 2556, sell = 15 },
+	{ itemName = "worm",  id = 3976, buy = 1 },
 }
 
 -- Create keywordHandler and npcHandler
@@ -68,49 +68,41 @@ local npcHandler = NpcHandler:new(keywordHandler)
 
 -- onThink
 npcType.onThink = function(npc, interval)
-	--print('npcType.onThink')
 	npcHandler:onThink(npc, interval)
 end
 
 -- onAppear
 npcType.onAppear = function(npc, creature)
-	print('npcType.onAppear')
 	npcHandler:onAppear(npc, creature)
 end
 
 -- onDisappear
 npcType.onDisappear = function(npc, creature)
-	print('npcType.onDisappear')
 	npcHandler:onDisappear(npc, creature)
 end
 
 -- onMove
 npcType.onMove = function(npc, creature, fromPosition, toPosition)
-	print('npcType.onMove')
 	npcHandler:onMove(npc, creature, fromPosition, toPosition)
 end
 
 -- onSay
 npcType.onSay = function(npc, creature, type, message)
-	print('npcType.onSay')
 	npcHandler:onSay(npc, creature, type, message)
 end
 
 -- onPlayerCloseChannel
 npcType.onCloseChannel = function(npc, player)
-	print('npcType.onCloseChannel')
 	npcHandler:onCloseChannel(npc, player)
 end
 
 -- On buy npc shop message
 npcType.onBuyItem = function(npc, player, id, subType, amount, ignore, inBackpacks, totalCost)
-	print('npcType.onBuyItem')
 	npc:sellItem(player, id, amount, subType, 0, ignore, inBackpacks)
 end
 
 -- On sell npc shop message
 npcType.onSellItem = function(npc, player, id, subtype, amount, ignore, name, totalCost)
-	print('npcType.onSellItem')
 	player:sendTextMessage(MESSAGE_TRADE, string.format("Sold %ix %s for %i gold.", amount, name, totalCost))
 end
 

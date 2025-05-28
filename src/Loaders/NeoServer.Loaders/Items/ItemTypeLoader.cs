@@ -61,13 +61,13 @@ namespace NeoServer.Loaders.Items
 
                 foreach (var item in itemTypes.OrderBy(x => x.Key))
                 {
-                    _itemTypeStore.Add(item.Key, item.Value);
-                    _itemClientServerIdMapStore.Add(item.Value.ClientId, item.Key);
+                    _itemTypeStore.AddOrUpdate(item.Key, item.Value);
+                    _itemClientServerIdMapStore.AddOrUpdate(item.Value.ClientId, item.Key);
 
                     if (item.Value.Attributes.GetAttribute(ItemAttribute.Type)
                             ?.Equals("coin", StringComparison.InvariantCultureIgnoreCase) ?? false)
                     {
-                        _coinTypeStore.Add(item.Key, item.Value);
+                        _coinTypeStore.AddOrUpdate(item.Key, item.Value);
                     }
                 }
 

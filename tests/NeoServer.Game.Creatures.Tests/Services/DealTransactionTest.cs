@@ -77,7 +77,7 @@ public class DealTransactionTest
         var coin2 = ItemTestData.CreateCoin(1, 100, 1);
         var coin3 = ItemTestData.CreateCoin(1, 100, 1);
 
-        coinTypeStore.Add(1, coin1.Metadata);
+        coinTypeStore.AddOrUpdate(1, coin1.Metadata);
 
         var coinTransaction = new CoinTransaction(itemFactoryMock.Object, coinTypeStore);
 
@@ -384,8 +384,8 @@ public class DealTransactionTest
         var platinum = ItemTestData.CreateCoin(1, 2, 100);
         var gold = ItemTestData.CreateCoin(2, 1, 1);
 
-        coinTypeStore.Add(1, platinum.Metadata);
-        coinTypeStore.Add(2, gold.Metadata);
+        coinTypeStore.AddOrUpdate(1, platinum.Metadata);
+        coinTypeStore.AddOrUpdate(2, gold.Metadata);
 
         var sut = new DealTransaction(itemFactoryMock.Object, coinTransaction, coinTypeStore);
 

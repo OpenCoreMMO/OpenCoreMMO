@@ -1,6 +1,8 @@
 ﻿using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Creatures.Npcs;
+using NeoServer.Game.Creatures.Npcs.Shop;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Common.Contracts;
@@ -10,10 +12,12 @@ namespace NeoServer.Scripts.LuaJIT.Functions;
 public class NpcFunctions : LuaScriptInterface, INpcFunctions
 {
     private static IGameCreatureManager _gameCreatureManager;
+    private static IItemTypeStore _itemTypeStore;
 
-    public NpcFunctions(IGameCreatureManager gameCreatureManager) : base(nameof(NpcFunctions))
+    public NpcFunctions(IGameCreatureManager gameCreatureManager, IItemTypeStore itemTypeStore) : base(nameof(NpcFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
+        _itemTypeStore = itemTypeStore;
     }
 
     public void Init(LuaState luaState)
@@ -29,6 +33,7 @@ public class NpcFunctions : LuaScriptInterface, INpcFunctions
         RegisterMethod(luaState, "Npc", "isPlayerInteractingOnTopic", LuaNpcIsPlayerInteractingOnTopic);
 
         RegisterMethod(luaState, "Npc", "openShopWindow", LuaNpcOpenShopWindow);
+        RegisterMethod(luaState, "Npc", "openShopWindowTable", LuaNpcOpenShopWindowTable);
         RegisterMethod(luaState, "Npc", "closeShopWindow", LuaNpcCloseShopWindow);
 
         RegisterMethod(luaState, "Npc", "isMerchant", LuaNpcIsMerchant);
@@ -143,6 +148,13 @@ public class NpcFunctions : LuaScriptInterface, INpcFunctions
     {
         // npc:isInteractingWithPlayer(player)
         var npc = GetUserdata<INpc>(luaState, 1);
+
+        if (!npc.IsInteractingWithAnyPlayer())
+        {
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
         var player = GetUserdata<IPlayer>(luaState, 2);
 
         if (!npc)
@@ -231,6 +243,61 @@ public class NpcFunctions : LuaScriptInterface, INpcFunctions
 
         player.StopShopping();
         shopperNpc.StartSellingToCustomer(player);
+
+        Lua.PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaNpcOpenShopWindowTable(LuaState luaState)
+    {
+        // npc:openShopWindowTable(player, items)
+        var npc = GetUserdata<INpc>(luaState, 1);
+
+        if (!npc || npc is not IShopperNpc shopperNpc)
+        {
+            ReportError(GetErrorDesc(ErrorCodeType.LUA_ERROR_NPC_NOT_FOUND));
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var player = GetUserdata<IPlayer>(luaState, 2);
+
+        if (!player)
+        {
+            ReportError(GetErrorDesc(ErrorCodeType.LUA_ERROR_PLAYER_NOT_FOUND));
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        if (!Lua.IsTable(luaState, 3))
+        {
+            ReportError(nameof(LuaNpcOpenShopWindowTable), "Item list is not a table.");
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var items = new List<ShopItem>();
+
+        Lua.PushNil(luaState);
+
+        while(Lua.Next(luaState, 3) != 0)
+        {
+            var tableIndex = Lua.GetTop(luaState);
+
+            var itemId = GetField<ushort>(luaState, tableIndex, "id");
+            var buyPrice = GetField<uint>(luaState, tableIndex, "buy");
+            var sellPrice = GetField<uint>(luaState, tableIndex, "sell");
+            var itemName = GetFieldString(luaState, tableIndex, "itemName");
+
+            var item = new ShopItem(_itemTypeStore.Get(itemId), buyPrice, sellPrice, itemName);
+            items.Add(item);
+            Lua.Pop(luaState, 5);
+        }
+
+        Lua.Pop(luaState, 3);
+
+        player.StopShopping();
+        shopperNpc.StartSellingToCustomer(player, items);
 
         Lua.PushBoolean(luaState, true);
         return 1;

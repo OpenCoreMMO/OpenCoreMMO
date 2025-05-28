@@ -38,5 +38,6 @@ public interface INpc : ISociableCreature
     void SetPlayerInteraction(IPlayer player, ushort topicId);
     void RemovePlayerInteraction(IPlayer player);
     bool IsInteractingWithPlayer(IPlayer player);
+    bool IsInteractingWithAnyPlayer();
     bool IsPlayerInteractingOnTopic(IPlayer player, ushort topicId);
 }

@@ -11,6 +11,7 @@ using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts;
+using System.Reflection.Metadata.Ecma335;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -21,6 +22,7 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
     private static IItemTypeStore _itemTypeStore;
     private static IScripts _scripts;
     private static INpcs _npcs;
+    private static INpcFactory _npcFactory;
 
     public NpcTypeFunctions(
         IGameCreatureManager gameCreatureManager,
@@ -88,7 +90,7 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
                 Name = npcName,
             };
 
-            _npcStore.Add(npcName, npcType);
+            _npcStore.AddOrUpdate(npcName, npcType);
         }
 
         PushUserdata(luaState, npcType);
@@ -425,19 +427,23 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
     {
         // npcType:addShopItem(itemId, buyPrice, sellPrice)
         var npcType = GetUserdata<INpcType>(luaState, 1);
+
         if (npcType is not null)
         {
-            var itemId = GetNumber<ushort>(luaState, 2);
-            var buyPrice = GetNumber<uint>(luaState, 3);
-            var sellPrice = GetNumber<uint>(luaState, 4);
+            var itemName = GetString(luaState, 2);
+            var itemId = GetNumber<ushort>(luaState, 3);
+            var buyPrice = GetNumber<uint>(luaState, 4);
+            var sellPrice = GetNumber<uint>(luaState, 5);
 
             var itemType = _itemTypeStore.Get(itemId);
 
             if (itemType != null)
             {
-                var shopItem = new ShopItem(itemType, buyPrice, sellPrice);
+                var shopItem = new ShopItem(itemType, buyPrice, sellPrice, itemName);
 
                 npcType.ShopItems.Add(itemId, shopItem);
+
+                _npcStore.AddOrUpdate(npcType.Name, npcType);
 
                 Lua.PushBoolean(luaState, true);
 

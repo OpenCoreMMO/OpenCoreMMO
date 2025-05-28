@@ -46,23 +46,25 @@ if Modules == nil then
 			return false
 		end
 
-		local cost, costMessage = (IsTravelFree() and 0) or parameters.cost, "%d gold"
-		if cost and cost > 0 then
-			if parameters.discount then
-				cost = cost - StdModule.travelDiscount(npc, player, parameters.discount)
-			end
+		-- todo: implement this
+		-- local cost, costMessage = (IsTravelFree() and 0) or parameters.cost, "%d gold"
+		-- if cost and cost > 0 then
+		-- 	if parameters.discount then
+		--		cost = cost - StdModule.travelDiscount(npc, player, parameters.discount)
+		--	end
 
-			costMessage = cost > 0 and string.format(costMessage, cost) or "free"
-		else
-			costMessage = "free"
-		end
+		--	costMessage = cost > 0 and string.format(costMessage, cost) or "free"
+		-- else
+		-- 	costMessage = "free"
+		-- end
 
 		local parseInfo = {
 			[TAG_PLAYERNAME] = player:getName(),
-			[TAG_TIME] = getFormattedWorldTime(),
-			[TAG_BLESSCOST] = Blessings.getBlessingCost(player:getLevel(), false, (npc:getName() == "Kais" or npc:getName() == "Nomad") and true),
-			[TAG_PVPBLESSCOST] = Blessings.getPvpBlessingCost(player:getLevel(), false),
-			[TAG_TRAVELCOST] = costMessage,
+			-- todo: implement this
+			-- [TAG_TIME] = getFormattedWorldTime(),
+			-- [TAG_BLESSCOST] = Blessings.getBlessingCost(player:getLevel(), false, (npc:getName() == "Kais" or npc:getName() == "Nomad") and true),
+			-- [TAG_PVPBLESSCOST] = Blessings.getPvpBlessingCost(player:getLevel(), false),
+			-- [TAG_TRAVELCOST] = costMessage,
 		}
 		if parameters.replacements then
 			for k, v in pairs(parameters.replacements) do

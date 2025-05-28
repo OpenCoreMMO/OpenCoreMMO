@@ -6,12 +6,7 @@ local sayFunction = function(npcId, text, type, eventDelay, playerId)
 		return false
 	end
 
-	local player = Player(playerId)
-	if not player then
-		return logger.error("[{} NpcHandler:say] - Player parameter for npc '{}' is missing, nil or not found", npc:getName(), npc:getName())
-	end
-
-	npc:say(text, type, false, player, npc:getPosition())
+	npc:say(text, type, false, playerId, npc:getPosition())
 	eventDelay.done = true
 end
 
@@ -81,7 +76,6 @@ function Npc:sayWithDelay(npcId, text, messageType, delay, eventDelay, player)
 end
 
 function SayEvent(npcId, playerId, messageDelayed, npcHandler, textType)
-	print('SayEvent')
 	local npc = Npc(npcId)
 	if not npc then
 		return logger.error("[{} NpcHandler:say] - Npc parameter for npc '{}' is missing, nil or not found", npc:getName(), npc:getName())
@@ -92,7 +86,7 @@ function SayEvent(npcId, playerId, messageDelayed, npcHandler, textType)
 		return logger.error("[{} NpcHandler:say] - Player parameter for npc '{}' is missing, nil or not found", npc:getName(), npc:getName())
 	end
 
-	--todo: muniz
+	--todo: implement this
 	-- local parseInfo = {
 	-- 	[TAG_PLAYERNAME] = player:getName(),
 	-- 	[TAG_TIME] = getFormattedWorldTime(),

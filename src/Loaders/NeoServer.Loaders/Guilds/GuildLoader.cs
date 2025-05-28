@@ -40,7 +40,7 @@ public class GuildLoader : ICustomLoader
 
         if (shouldAddToStore)
         {
-            _guildStore.Add(guild.Id, guild);
+            _guildStore.AddOrUpdate(guild.Id, guild);
             return;
         }
 
