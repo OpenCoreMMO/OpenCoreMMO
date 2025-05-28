@@ -21,8 +21,8 @@ public class WrathOfNature : AttackSpell
     public override string Name => "Wrath of Nature";
     public override string Words => "exevo gran mas tera";
     public override ushort MinLevel => 55;
-    public override ushort Mana { get; set; } = 700;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 700;
+    public override bool NeedsPremium => true;
     public override uint Cooldown => 40 * 1000;
     protected override bool IsSelfTarget => true;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];

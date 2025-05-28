@@ -8,6 +8,8 @@ public class RuneManager
 
     public void Register(LuaRune rune) => AttackRunes.TryAdd(rune.RuneId, rune);
 
+    public bool IsRegistered(int clientId) => AttackRunes.ContainsKey(clientId);
+
     public LuaRune GetRegisteredRune(int clientId)
     {
         AttackRunes.TryGetValue(clientId, out var rune);

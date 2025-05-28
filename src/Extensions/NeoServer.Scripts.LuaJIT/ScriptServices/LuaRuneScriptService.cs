@@ -1,14 +1,16 @@
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Runes;
 using NeoServer.Scripts.LuaJIT.DataManagers;
 using NeoServer.Server.Common.Contracts.Scripts.Services;
-using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.ScriptServices;
 
-public class LuaRuneScriptService(ILogger logger, RuneManager runeManager) : IRuneScriptService
+public class LuaRuneScriptService(RuneManager runeManager) : IRuneScriptService
 {
-    public bool UseItem(IPlayer player, IAttackRune rune, bool isHotkey)
+    public bool HasScript(IAttackRune rune) => runeManager.IsRegistered(rune.ClientId);
+
+    public bool UseItem(IPlayer player, IThing target, IRune rune, bool isHotkey)
     {
         // if (!runeManager.IsRegistered(item.ClientId))
         // {
@@ -34,9 +36,8 @@ public class LuaRuneScriptService(ILogger logger, RuneManager runeManager) : IRu
         // }
 
         var luaRune = runeManager.GetRegisteredRune(rune.ClientId);
-        if (luaRune is null) return false;
 
-        luaRune.OnUse(player, rune, isHotkey);
+        luaRune?.OnUse(player, target, rune, isHotkey);
 
         return false;
     }

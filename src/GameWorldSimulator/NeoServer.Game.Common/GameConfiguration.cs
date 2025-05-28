@@ -7,6 +7,7 @@ public record GameConfiguration(
     decimal LootRate = 1,
     int LogoutBlockDuration = 60 * 1000,
     int ProtectionZoneBlockDuration = 60 * 1000,
+    bool InfiniteRuneCharges = false,
     Dictionary<string, double> SkillsRate = null,
     DeathConfiguration Death = null,
     PvPConfiguration PvP = null,
@@ -36,7 +37,7 @@ public record PvPConfiguration(
     int WhiteSkullDurationMinutes,
     int RedSkullDurationDays,
     int BlackSkullDurationDays,
-    int OrangeSkullDurationDays
+    int ProtectionLevel
 );
 
 public record ReportConfiguration(uint reportMaxTime);

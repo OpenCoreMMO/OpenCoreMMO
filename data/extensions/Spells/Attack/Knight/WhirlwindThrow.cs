@@ -20,9 +20,9 @@ public class WhirlwindThrow : AttackSpell
     public override string Name { get; set; } = "Whirlwind Throw";
     public override string Words { get; set; } = "exori hur";
     public override ushort MinLevel => 28;
-    public override ushort Mana { get; set; } = 40;
-    public override bool Premium => true;
-    public override byte Range => 5;
+    public override ushort ManaConsumption { get; set; } = 40;
+    public override bool NeedsPremium => true;
+    public override byte? Range => 5;
     public override bool BlockWalls => true;
     public override bool NeedWeapon => true;
     public override bool NeedsTarget => true;

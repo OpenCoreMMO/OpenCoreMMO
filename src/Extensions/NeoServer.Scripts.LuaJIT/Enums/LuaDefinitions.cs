@@ -181,7 +181,7 @@ public enum LuaVariantType
 {
     VARIANT_NONE,
 
-    VARIANT_NUMBER,
+    Number,
     VARIANT_POSITION,
     VARIANT_TARGETPOSITION,
     VARIANT_STRING

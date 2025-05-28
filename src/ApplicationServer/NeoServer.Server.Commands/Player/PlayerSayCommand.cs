@@ -35,7 +35,7 @@ public class PlayerSayCommand(
         //cast spell;
         if (spellListManager.TryGet(message?.Trim(), out var spell))
         {
-            spellService.Cast(player, spell);
+            spellService.Cast(player,null, spell, false);
             return;
         }
 

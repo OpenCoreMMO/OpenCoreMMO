@@ -7,6 +7,7 @@ using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Results;
 using NeoServer.Server.Helpers;
 
 namespace NeoServer.Extensions.Spells.Attack;
@@ -20,12 +21,8 @@ public abstract class AttackSpell : Spell<AttackSpell>
     protected virtual string AreaName { get; }
     protected virtual bool IsSelfTarget { get; }
 
-    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
+    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
-        error = InvalidOperation.NotPossible;
-
-        IThing target = caster.CurrentTarget;
-
         if (IsSelfTarget)
         {
             target = caster;
@@ -51,6 +48,6 @@ public abstract class AttackSpell : Spell<AttackSpell>
 
         IoC.GetInstance<IAttackService>().Execute(attackInput);
 
-        return true;
+        return Result.Success;
     }
 }

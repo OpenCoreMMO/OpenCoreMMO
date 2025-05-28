@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures.Monsters;
-using NeoServer.Game.Common.Contracts.Spells;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Creatures.Structs;
-using NeoServer.Game.Common.Spell;
 
 namespace NeoServer.Game.Creatures;
 
@@ -15,8 +14,8 @@ public class CooldownList
 
     private Dictionary<ulong, CooldownTime> CustomCooldowns { get; } = new();
 
-    private Dictionary<string, CooldownTime> SpellCooldowns { get; } = new();
-    private Dictionary<MagicGroup, CooldownTime> SpellGroupCooldowns { get; } = new();
+    private Dictionary<Guid, CooldownTime> SpellCooldowns { get; } = new();
+    private Dictionary<int, CooldownTime> SpellGroupCooldowns { get; } = new();
     private Dictionary<string, CooldownTime> SummonCooldowns { get; set; }
 
     /// <summary>
@@ -30,24 +29,32 @@ public class CooldownList
         return Cooldowns.TryAdd(type, new CooldownTime(DateTime.Now, duration));
     }
 
-    public bool Start(ISpell spell)
+    public bool Start(IHasCooldown spell)
     {
         // Start new cooldown only if previous has expired
         if (!Expired(spell)) return false;
 
-        SpellCooldowns.Remove(spell.Name);
-        SpellCooldowns.TryAdd(spell.Name, new CooldownTime(DateTime.Now, spell.Cooldown));
+        SpellCooldowns.Remove(spell.CooldownId);
+        SpellCooldowns.TryAdd(spell.CooldownId, new CooldownTime(DateTime.Now, spell.Cooldown));
 
-        if (spell.Groups is null) return true;
+        if (spell.HasAnyCooldownGroup) return true;
 
         // Handle group cooldowns
         var i = 0;
-        foreach (var group in spell.Groups)
-        {
-            if (!Expired(group)) continue;
 
-            SpellGroupCooldowns.Remove(group);
-            SpellGroupCooldowns.TryAdd(group, new CooldownTime(DateTime.Now, spell.GroupCooldown[i++]));
+
+        if (spell.PrimaryGroup.Id > 0 && GroupExpired(spell.PrimaryGroup.Id))
+        {
+            SpellGroupCooldowns.Remove(spell.PrimaryGroup.Id);
+            SpellGroupCooldowns.TryAdd(spell.PrimaryGroup.Id,
+                new CooldownTime(DateTime.Now, spell.PrimaryGroup.Cooldown));
+        }
+        
+        if (spell.SecondaryGroup.Id > 0 && GroupExpired(spell.SecondaryGroup.Id))
+        {
+            SpellGroupCooldowns.Remove(spell.SecondaryGroup.Id);
+            SpellGroupCooldowns.TryAdd(spell.SecondaryGroup.Id,
+                new CooldownTime(DateTime.Now, spell.SecondaryGroup.Cooldown));
         }
 
         return true;
@@ -76,29 +83,35 @@ public class CooldownList
         return !SummonCooldowns.TryGetValue(summon.Name, out var cooldown) || cooldown.Expired;
     }
 
-    public bool Expired(ISpell spell)
+    public bool Expired(IHasCooldown spell)
     {
         // Check individual spell cooldown first
-        var spellExpired = !SpellCooldowns.TryGetValue(spell.Name, out var cooldown) || cooldown.Expired;
+        var spellExpired = !SpellCooldowns.TryGetValue(spell.CooldownId, out var cooldown) || cooldown.Expired;
         if (!spellExpired) return false;
 
-        if (spell.Groups == null || spell.Groups.Length == 0) return true;
+        if (spell.HasAnyCooldownGroup) return true;
 
         // Check all spell group cooldowns
         var groupsExpired = true;
 
-        foreach (var group in spell.Groups)
+        if (spell.PrimaryGroup.Id > 0 && GroupExpired(spell.PrimaryGroup.Id))
         {
-            SpellGroupCooldowns.TryGetValue(group, out var cooldownTime);
+            SpellGroupCooldowns.TryGetValue(spell.PrimaryGroup.Id, out var cooldownTime);
+            groupsExpired &= cooldownTime.Expired;
+        }
+        
+        if (spell.SecondaryGroup.Id > 0 && GroupExpired(spell.SecondaryGroup.Id))
+        {
+            SpellGroupCooldowns.TryGetValue(spell.SecondaryGroup.Id, out var cooldownTime);
             groupsExpired &= cooldownTime.Expired;
         }
 
         return groupsExpired;
     }
 
-    public bool Expired(MagicGroup magicGroup)
+    public bool GroupExpired(int groupId)
     {
-        if (SpellGroupCooldowns.TryGetValue(magicGroup, out var cooldown)) return cooldown.Expired;
+        if (SpellGroupCooldowns.TryGetValue(groupId, out var cooldown)) return cooldown.Expired;
         return true;
     }
 

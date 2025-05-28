@@ -1,5 +1,7 @@
 using LuaNET;
+using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Common.Contracts.DataStores;
+using NeoServer.Game.Common.Contracts.Spells;
 using NeoServer.Game.Common.Item;
 using NeoServer.Scripts.LuaJIT.DataManagers;
 using NeoServer.Scripts.LuaJIT.Enums;
@@ -9,17 +11,25 @@ using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class SpellFunctionMapper : LuaScriptInterface, ISpellFunctionMapper
+public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
 {
     private static ILogger _logger;
     private static IItemTypeStore _itemTypeStore;
     private static RuneManager _runeManager;
+    private static IItemClientServerIdMapStore _itemClientServerIdMapStore;
+    private static SpellListManager _spellListManager;
 
-    public SpellFunctionMapper(ILogger logger, IItemTypeStore itemTypeStore, RuneManager runeManager) : base(nameof(SpellFunctionMapper))
+    public SpellBinder(ILogger logger,
+        IItemTypeStore itemTypeStore,
+        RuneManager runeManager,
+        IItemClientServerIdMapStore itemClientServerIdMapStore,
+        SpellListManager spellListManager) : base(nameof(SpellBinder))
     {
         _logger = logger;
         _itemTypeStore = itemTypeStore;
         _runeManager = runeManager;
+        _itemClientServerIdMapStore = itemClientServerIdMapStore;
+        _spellListManager = spellListManager;
     }
 
     public void Init(LuaState lua)
@@ -29,7 +39,7 @@ public class SpellFunctionMapper : LuaScriptInterface, ISpellFunctionMapper
         RegisterMethod(lua, "Spell", "id", HandleIdMethod);
         RegisterMethod(lua, "Spell", "group", HandleGroupMethod);
         RegisterMethod(lua, "Spell", "name", HandleNameMethod);
-      
+
         RegisterMethod(lua, "Spell", "level", HandleLevelMethod);
         RegisterMethod(lua, "Spell", "magicLevel", HandleMagicLevelMethod);
         RegisterMethod(lua, "Spell", "cooldown", HandleCooldownMethod);
@@ -38,7 +48,7 @@ public class SpellFunctionMapper : LuaScriptInterface, ISpellFunctionMapper
         RegisterMethod(lua, "Spell", "isBlocking", HandleIsBlockingMethod);
         RegisterMethod(lua, "Spell", "onCastSpell", HandleOnCastSpellMethod);
         RegisterMethod(lua, "Spell", "register", HandleRegisterMethod);
-        
+
         //only for rune spells
         RegisterMethod(lua, "Spell", "runeId", HandleRuneIdMethod);
         RegisterMethod(lua, "Spell", "allowFarUse", HandleAllowFarUseMethod);
@@ -49,7 +59,7 @@ public class SpellFunctionMapper : LuaScriptInterface, ISpellFunctionMapper
         RegisterMethod(lua, "Spell", "impactSound", HandleNotImplementedMethod);
     }
 
-    public static int HandleOnCastSpellMethod(LuaState lua)
+    private static int HandleOnCastSpellMethod(LuaState lua)
     {
         var spell = GetUserdata<LuaSpell>(lua, 1);
         if (spell is null)
@@ -57,7 +67,7 @@ public class SpellFunctionMapper : LuaScriptInterface, ISpellFunctionMapper
             Lua.PushNil(lua);
             return 1;
         }
-        
+
         //todo: implement instant
 
         if (spell is LuaRune rune)
@@ -87,22 +97,55 @@ public class SpellFunctionMapper : LuaScriptInterface, ISpellFunctionMapper
         if (spell is LuaRune rune)
         {
             var item = _itemTypeStore.Get((ushort)rune.RuneId);
-            
+
             if (string.IsNullOrWhiteSpace(item.Name))
             {
                 item.UpdateName(rune.Name);
             }
-            
+
             item.Attributes.SetAttribute(ItemAttribute.MinimumMagicLevel, rune.MagicLevel);
             item.Attributes.SetAttribute(ItemAttribute.MinimumLevel, rune.Level);
             item.Attributes.SetAttribute(ItemAttribute.Charges, rune.Charges);
             item.Attributes.SetAttribute(ItemAttribute.AllowFarUse, rune.AllowFarUse);
             item.Attributes.SetAttribute(ItemAttribute.CheckFloor, rune.CheckFloor);
-            item.Attributes.SetAttribute(ItemAttribute.BlockWalls, rune.BlockWalls);
-            
+
+            item.Attributes.SetAttribute(ItemAttribute.CooldownTime, rune.Cooldown);
+            item.Attributes.SetAttribute(ItemAttribute.PrimaryGroupCooldown, rune.PrimaryGroupCooldown);
+            item.Attributes.SetAttribute(ItemAttribute.PrimaryGroupCooldown, rune.SecondaryGroupCooldown);
+            item.Attributes.SetAttribute(ItemAttribute.PrimaryGroup, rune.PrimaryGroup);
+            item.Attributes.SetAttribute(ItemAttribute.SecondaryGroup, rune.SecondaryGroup);
+
+            ISpell runeSpell = null;
+            if (_spellListManager.TryGet(rune.Name, out runeSpell))
+            {
+                runeSpell.ManaConsumption = rune.ManaConsumption;
+                runeSpell.SoulConsumption = rune.SoulConsumption;
+                runeSpell.BlockWalls = rune.BlockWalls;
+                runeSpell.BlockingSolid = rune.BlockingSolid;
+                runeSpell.BlockingCreature = rune.BlockingCreature;
+                runeSpell.NeedsTarget = rune.NeedTarget;
+            }
+
+            if (runeSpell is null)
+            {
+                runeSpell = new RuneSpell
+                {
+                    ManaConsumption = rune.ManaConsumption,
+                    SoulConsumption = rune.SoulConsumption,
+                    BlockWalls = rune.BlockWalls,
+                    BlockingSolid = rune.BlockingSolid,
+                    BlockingCreature = rune.BlockingCreature,
+                    NeedsTarget = rune.NeedTarget,
+                };
+            }
+
+            ((RuneSpell)runeSpell).LuaRune = rune;
+
+            item.Attributes.SetCustomAttribute("spell", runeSpell);
+
             _runeManager.Register(rune);
         }
-        
+
         return 1;
     }
 
@@ -167,20 +210,20 @@ public class SpellFunctionMapper : LuaScriptInterface, ISpellFunctionMapper
 
         if (numberOfArgs == 0)
         {
-            Lua.PushNumber(lua, spell.GroupCooldown);
+            Lua.PushNumber(lua, spell.PrimaryGroupCooldown);
             Lua.PushNumber(lua, spell.SecondaryGroupCooldown);
             return 2;
         }
 
         if (numberOfArgs == 1)
         {
-            spell.GroupCooldown = GetNumber<uint>(lua, 2);
+            spell.PrimaryGroupCooldown = GetNumber<uint>(lua, 2);
             PushBoolean(lua, true);
         }
 
         if (numberOfArgs == 2)
         {
-            spell.GroupCooldown = GetNumber<uint>(lua, 2);
+            spell.PrimaryGroupCooldown = GetNumber<uint>(lua, 2);
             spell.SecondaryGroupCooldown = GetNumber<uint>(lua, 3);
             PushBoolean(lua, true);
         }
@@ -338,7 +381,11 @@ public class SpellFunctionMapper : LuaScriptInterface, ISpellFunctionMapper
             }
             else
             {
-                rune.RuneId = GetNumber<ushort>(lua, 2);
+                var runeId = GetNumber<ushort>(lua, 2);
+
+                _itemClientServerIdMapStore.TryGetValue(runeId, out var serverId);
+                rune.RuneId = serverId;
+
                 PushBoolean(lua, true);
             }
         }
@@ -392,7 +439,7 @@ public class SpellFunctionMapper : LuaScriptInterface, ISpellFunctionMapper
 
         if (numberOfArgs == 0)
         {
-            Lua.PushNumber(lua, (int)spell.Group);
+            Lua.PushNumber(lua, (int)spell.PrimaryGroup);
             Lua.PushNumber(lua, (int)spell.SecondaryGroup);
             return 2;
         }
@@ -402,7 +449,7 @@ public class SpellFunctionMapper : LuaScriptInterface, ISpellFunctionMapper
             if (IsNumber(lua, 2))
             {
                 var group = GetNumber<SpellGroup>(lua, 2);
-                spell.Group = group;
+                spell.PrimaryGroup = group;
                 PushBoolean(lua, true);
                 return 1;
             }
@@ -414,7 +461,7 @@ public class SpellFunctionMapper : LuaScriptInterface, ISpellFunctionMapper
                 //todo: handle other groups 
                 if (group == "attack")
                 {
-                    spell.Group = SpellGroup.Attack;
+                    spell.PrimaryGroup = SpellGroup.Attack;
                 }
 
                 PushBoolean(lua, true);
@@ -426,7 +473,7 @@ public class SpellFunctionMapper : LuaScriptInterface, ISpellFunctionMapper
         {
             var primaryGroup = GetNumber<SpellGroup>(lua, 2);
             var secondaryGroup = GetNumber<SpellGroup>(lua, 2);
-            spell.Group = primaryGroup;
+            spell.PrimaryGroup = primaryGroup;
             spell.SecondaryGroup = secondaryGroup;
             PushBoolean(lua, true);
         }

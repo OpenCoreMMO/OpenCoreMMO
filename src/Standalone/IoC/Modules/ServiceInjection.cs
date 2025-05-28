@@ -62,7 +62,8 @@ public static class ServiceInjection
         builder.AddSingleton<IItemTransformService, ItemTransformService>();
         builder.AddSingleton<IItemRemoveService, ItemRemoveService>();
         builder.AddSingleton<IItemAbilityApplierService, ItemAbilityApplierService>();
-
+        builder.AddSingleton<ItemUseValidation>();
+        
         //game builders
         builder.RegisterAssemblyTypes<IInspectionTextBuilder>(Container.AssemblyCache);
 

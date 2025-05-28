@@ -72,9 +72,9 @@ public class PlayerUseItemOnCommand : ICommand
         
         if (thingToUse is IAttackRune rune)
         {
-            rune.CanBeUsedBy(player);
+            rune.CanBeCastBy(player, onTarget);
 
-            _scriptManager.Runes.UseItem(player, rune, isHotkey);
+            _scriptManager.Rune.UseItem(player, onTarget, rune, isHotkey);
         }
 
         if (_scriptManager.Actions.HasAction(thingToUse))
@@ -87,10 +87,7 @@ public class PlayerUseItemOnCommand : ICommand
             if (thingToUse is not IUsableOn itemUsableOn) return;
             action = () => _playerUseService.Use(player, itemUsableOn, onTarget);
         }
-
         
-
-
         if (!player.Location.IsNextTo(onTarget.Location == Location.Zero
                 ? useItemPacket.ToLocation
                 : onTarget.Location))

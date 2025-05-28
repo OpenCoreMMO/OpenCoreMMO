@@ -1,5 +1,6 @@
-using System.Diagnostics;
+using NeoServer.Game.Common.Combat.Enums;
 using NeoServer.Game.Common.Combat.Structs;
+using NeoServer.Game.Common.Contracts.Creatures;
 
 namespace NeoServer.Game.Combat.Services.Attacks.Builders;
 
@@ -15,34 +16,32 @@ public class DamageBuilder
 
         var extraAttack = attackInput.Parameters.ExtraAttack;
 
-        var physicalDamage = AttackCalculation.Calculate(attackInput.Parameters.MinDamage,
-            attackInput.Parameters.MaxDamage,
-            attackInput.Parameters.DamageType);
+        ushort factor = 1;
 
-        damage.MainDamage = physicalDamage;
+        if (attackInput.Aggressor is IPlayer && attackInput.Target is IPlayer targetPlayer &&
+            targetPlayer.Skull != Skull.Black)
+        {
+            factor = 2;
+        }
+
+        var physicalDamage = AttackCalculation.Calculate(
+            (ushort)(attackInput.Parameters.MinDamage / factor),
+            (ushort)(attackInput.Parameters.MaxDamage / factor),
+            attackInput.Parameters.DamageType);
 
         // If there's an extra elemental attack, calculate and add it to the buffer
         if (attackInput.Parameters.HasExtraAttack)
         {
             //Adds an elemental attack to the damage buffer, using the extra attack parameters.
-            damage.ExtraDamage = AttackCalculation.Calculate(extraAttack.MinDamage,
-                extraAttack.MaxDamage, extraAttack.DamageType);
-
-            Debug.WriteLine(damage.ExtraDamage.Damage);
+            damage.ExtraDamage = AttackCalculation.Calculate(
+                (ushort)(extraAttack.MinDamage / factor),
+                (ushort)(extraAttack.MaxDamage / factor),
+                extraAttack.DamageType);
         }
 
-        //var combatDamageList = new CombatDamageList(damages);
+        damage.MainDamage = physicalDamage;
 
-        // Handle area attacks separately by propagating damage to all affected targets
 
-        // if (attackInput.Parameters.IsAttackInArea)
-        // {
-        //     areaAttackProcessor.Propagate(attackInput, combatDamageList);
-        //     return;
-        // }
-        //
-        // // Handle defense logic based on the type of target (player or monster)
-        // defenseHandler.Handle(attackInput.Aggressor,  attackInput.Target as ICombatActor, combatDamageList);
         return damage;
     }
 }

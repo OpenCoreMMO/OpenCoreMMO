@@ -27,7 +27,7 @@ public enum InvalidOperation
     CreatureIsNotReachable,
     CannotAttackThatFast,
     CannotThrowThere,
-    CannotUse,
+    CannotUseSpells,
     NotPermittedInProtectionZone,
     CannotAttackWhileInProtectionZone,
     CannotAttackPersonInProtectionZone,
@@ -43,5 +43,14 @@ public enum InvalidOperation
     AdjustCombatSettingsToAttackPlayer,
     SpellNeedsWeapon,
     SpellRequiresPremium,
-    CanOnlyUseOnCreatures
+    CanOnlyUseOnCreatures,
+    YouMayNotAttackThisCreature,
+    NotPermittedInNoPvpZone,
+    YouMayNotAttackThisPlayer,
+    FirstGoUpStairs,
+    FirstGoDownStairs,
+    CannotUseThisObject,
+    NotEnoughSoul,
+    DestinationOutOfReach,
+    TurnSecureModeToAttackUnmarkedPlayers
 }

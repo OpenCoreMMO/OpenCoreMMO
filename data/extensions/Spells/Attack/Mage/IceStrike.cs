@@ -20,13 +20,13 @@ public class IceStrike : AttackSpell
     public override string Name => "Ice Strike";
     public override string Words => "exori frigo";
     public override ushort MinLevel => 15;
-    public override ushort Mana { get; set; } = 20;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 20;
+    public override bool NeedsPremium => true;
     public override uint Cooldown => 8 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];
     public override bool NeedLearn => false;
-    public override byte Range => 3;
+    public override byte? Range => 3;
     public override string[] Vocations { get; } = ["druid", "elder druid", "sorcerer", "master sorcerer"];
     public override bool CasterNeedsTargetOrDirection => true;
     private static MinMax GetFormulaValues(IPlayer player, int level, int magicLevel, decimal _)

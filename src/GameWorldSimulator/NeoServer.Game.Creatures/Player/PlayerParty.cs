@@ -153,7 +153,7 @@ public class PlayerParty : IPlayerParty
             return Result.Success;
         }
 
-        switch (result.Error)
+        switch (result.Reason)
         {
             case InvalidOperation.NotAPartyMember:
                 OperationFailService.Send(CreatureId, TextConstants.PLAYER_IS_NOT_PARTY_MEMBER);

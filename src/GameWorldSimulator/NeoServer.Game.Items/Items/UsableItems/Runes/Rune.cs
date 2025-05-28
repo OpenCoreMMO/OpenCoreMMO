@@ -4,63 +4,87 @@ using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Runes;
-using NeoServer.Game.Common.Creatures.Structs;
+using NeoServer.Game.Common.Contracts.Spells;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Game.Common.Results;
 using NeoServer.Game.Items.Items.Cumulatives;
 
 namespace NeoServer.Game.Items.Items.UsableItems.Runes;
 
-public abstract class Rune : Cumulative, IRune
+public class Rune : Cumulative, IRune
 {
-    protected Rune(IItemType type, Location location, IDictionary<ItemAttribute, IConvertible> attributes) : base(type,
+    public Rune(IItemType type, Location location, IDictionary<ItemAttribute, IConvertible> attributes) : base(type,
         location, attributes)
     {
     }
 
-    protected Rune(IItemType type, Location location, byte amount) : base(type, location, amount)
+    public Rune(IItemType type, Location location, byte amount) : base(type, location, amount)
     {
     }
 
-    public abstract ushort Duration { get; }
+    public ISpell Spell => Metadata.Attributes.GetAttribute<ISpell>("spell");
     public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumLevel);
     public ushort MinMagicLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumMagicLevel);
-    public bool AllowFarUse => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.AllowFarUse);
     public bool CheckFloor => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.CheckFloor);
     public bool BlockWalls => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.BlockWalls);
+    public ushort ManaConsumption => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ManaUse);
+    public ushort SoulConsumption => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.SoulUse);
+    public bool NeedDirection => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedDirection);
 
-    public Dictionary<string, (double, double)> Variables
+    public bool CasterNeedsTargetOrDirection =>
+        Metadata.Attributes.GetAttribute<bool>(ItemAttribute.CasterNeedsTargetOrDirection);
+
+    public bool NeedsTarget => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedTarget);
+
+    public byte? Range => Metadata.Attributes.HasAttribute(ItemAttribute.Range)
+        ? Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Range)
+        : null;
+
+    public bool SelfTarget => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.SelfTarget);
+    public bool Enabled => true;
+
+    public bool IsAggressive => !Metadata.Attributes.HasAttribute(ItemAttribute.IsAggressive) ||
+                                Metadata.Attributes.GetAttribute<bool>(ItemAttribute.IsAggressive);
+
+    public bool BlockingCreature => Metadata.Attributes.HasAttribute(ItemAttribute.Blocking) &&
+                                    !Metadata.Attributes.GetAttribute<bool>(ItemAttribute.Blocking);
+
+    public bool BlockingSolid => Metadata.Attributes.HasAttribute(ItemAttribute.Blocking) &&
+                                 Metadata.Attributes.GetAttribute<bool>(ItemAttribute.Blocking);
+
+    //Cooldown
+    public Guid CooldownId
     {
         get
         {
-            var x = Metadata.Attributes.GetAttributeArray("x");
-            var y = Metadata.Attributes.GetAttributeArray("y");
-
-            x ??= new dynamic[] { "0", "0" };
-            y ??= new dynamic[] { "0", "0" };
-
-            var dictionary = new Dictionary<string, (double, double)>(2)
+            if (Metadata.Attributes.HasAttribute(ItemAttribute.CooldownId))
             {
-                { "x", (x[0], x[1]) },
-                { "y", (y[0], y[1]) }
-            };
-            return dictionary;
+                return Metadata.Attributes.GetAttribute<Guid>(ItemAttribute.CooldownId);
+            }
+
+            var id = Guid.NewGuid();
+            Metadata.Attributes.SetAttribute(ItemAttribute.CooldownId, id);
+
+            return id;
         }
     }
 
-    public CooldownTime Cooldown { get; protected set; }
+    public (int Id, uint Cooldown) PrimaryGroup =>
+        (Metadata.Attributes.GetAttribute<int>(ItemAttribute.PrimaryGroup),
+            Metadata.Attributes.GetAttribute<uint>(ItemAttribute.PrimaryGroupCooldown));
 
-    public virtual MinMax Formula(IPlayer player, int level, int magicLevel)
-    {
-        var variables = Variables;
-        variables.TryGetValue("x", out var x);
-        variables.TryGetValue("y", out var y);
+    public (int Id, uint Cooldown) SecondaryGroup =>
+        (Metadata.Attributes.GetAttribute<int>(ItemAttribute.SecondaryGroup),
+            Metadata.Attributes.GetAttribute<uint>(ItemAttribute.SecondaryGroupCooldown));
 
-        var min = (int)(level / 5 + magicLevel * Math.Min(x.Item1, x.Item2) + Math.Min(y.Item1, y.Item2));
-        var max = (int)(level / 5 + magicLevel * Math.Max(x.Item1, x.Item2) + Math.Min(y.Item1, y.Item2));
-
-        return new MinMax(min, max);
-    }
+    public uint Cooldown => Metadata.Attributes.GetAttribute<uint>(ItemAttribute.CooldownTime);
+    public bool NeedWeapon => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedWeapon);
+    public bool NeedLearn => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedLearn);
+    public byte[] VocationIds { get; set; }
+    public string[] Vocations { get; }
+    public bool NeedsPremium => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedsPremium);
 
     public static bool IsApplicable(IItemType type)
     {
@@ -68,10 +92,49 @@ public abstract class Rune : Cumulative, IRune
             ?.Equals("rune", StringComparison.InvariantCultureIgnoreCase) ?? false;
     }
 
-    public bool CanBeUsedBy(IPlayer player)
+    private Result CanBeUsedOn(Location target)
     {
-        if (player is null) return false;
+        if (target.X == 0xFFFF)
+        {
+            if (NeedsTarget)
+            {
+                return Result.Fail(InvalidOperation.CanOnlyUseOnCreatures);
+            }
 
-        return player.MagicLevel >= MinLevel && player.MagicLevel >= MinMagicLevel;
+            if (!SelfTarget)
+            {
+                return Result.Fail(InvalidOperation.NotEnoughRoom);
+            }
+        }
+
+        return Result.Success;
+    }
+
+    public Result CanBeCastBy(ICombatActor caster, IThing target)
+    {
+        if (caster is IPlayer player)
+        {
+            if (player.Group.FlagIsEnabled(PlayerFlag.CannotUseSpells))
+            {
+                return Result.Fail(InvalidOperation.CannotUseThisObject);
+            }
+
+            if (!player.Group.FlagIsEnabled(PlayerFlag.HasNoExhaustion) && !player.CooldownHasExpired(this))
+            {
+                return Result.Fail(InvalidOperation.Exhausted);
+            }
+        }
+
+        var result = CanBeUsedOn(target.Location);
+
+        return result;
+    }
+
+    public void PostUse(bool reduce = true)
+    {
+        if (reduce)
+        {
+            Reduce();
+        }
     }
 }

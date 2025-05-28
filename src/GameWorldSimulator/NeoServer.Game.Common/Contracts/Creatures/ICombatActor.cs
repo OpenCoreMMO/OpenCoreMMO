@@ -70,8 +70,8 @@ public interface ICombatActor : IWalkableCreature
     void ResetHealthPoints();
     void TurnInvisible();
     void TurnVisible();
-    void StartSpellCooldown(ISpell spell);
-    bool SpellCooldownHasExpired(ISpell spell);
+    void StartSpellCooldown(IHasCooldown spell);
+    bool CooldownHasExpired(IHasCooldown spell);
     bool CooldownHasExpired(CooldownType type);
 
     /// <summary>

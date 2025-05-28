@@ -212,7 +212,7 @@ public class PlayerPartyTests
         party2.IsInvited(sut).Should().BeFalse();
         party3.IsInvited(sut).Should().BeFalse();
 
-        result.Error.Should().Be(InvalidOperation.NotInvited);
+        result.Reason.Should().Be(InvalidOperation.NotInvited);
         monitor.Should().NotRaise(nameof(sut.PlayerParty.OnJoinedParty));
     }
 
@@ -360,7 +360,7 @@ public class PlayerPartyTests
 
         //assert
         party.IsInvited(sut).Should().BeTrue();
-        result.Error.Should().Be(InvalidOperation.NotPossible);
+        result.Reason.Should().Be(InvalidOperation.NotPossible);
         monitor.Should().NotRaise(nameof(leader.PlayerParty.OnLeftParty));
     }
 
@@ -387,7 +387,7 @@ public class PlayerPartyTests
 
         //assert
         party.IsInvited(sut).Should().BeFalse();
-        result.Error.Should().Be(InvalidOperation.CannotLeavePartyWhenInFight);
+        result.Reason.Should().Be(InvalidOperation.CannotLeavePartyWhenInFight);
         monitor.Should().NotRaise(nameof(leader.PlayerParty.OnLeftParty));
     }
 
@@ -497,7 +497,7 @@ public class PlayerPartyTests
         var result = sut.PlayerParty.JoinParty(null);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.NotPossible);
+        result.Reason.Should().Be(InvalidOperation.NotPossible);
         monitor.Should().NotRaise(nameof(sut.PlayerParty.OnJoinedParty));
     }
 
@@ -524,7 +524,7 @@ public class PlayerPartyTests
         var result = sut.PlayerParty.JoinParty(anotherParty);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.AlreadyInParty);
+        result.Reason.Should().Be(InvalidOperation.AlreadyInParty);
         party.IsInvited(sut).Should().BeFalse();
         monitor.Should().NotRaise(nameof(sut.PlayerParty.OnJoinedParty));
     }
@@ -549,7 +549,7 @@ public class PlayerPartyTests
         var result = sut.PlayerParty.JoinParty(party);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.AlreadyInParty);
+        result.Reason.Should().Be(InvalidOperation.AlreadyInParty);
         monitor.Should().NotRaise(nameof(sut.PlayerParty.OnJoinedParty));
     }
 
@@ -571,7 +571,7 @@ public class PlayerPartyTests
 
         //assert
         party.IsInvited(sut).Should().BeFalse();
-        result.Error.Should().Be(InvalidOperation.NotInvited);
+        result.Reason.Should().Be(InvalidOperation.NotInvited);
         monitor.Should().NotRaise(nameof(sut.PlayerParty.OnJoinedParty));
     }
 
@@ -615,7 +615,7 @@ public class PlayerPartyTests
         var result = sut.PlayerParty.PassPartyLeadership(friend);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.NotPossible);
+        result.Reason.Should().Be(InvalidOperation.NotPossible);
         monitor.Should().NotRaise(nameof(sut.PlayerParty.OnPassedPartyLeadership));
     }
 
@@ -639,7 +639,7 @@ public class PlayerPartyTests
         var result = sut.PlayerParty.PassPartyLeadership(nonMember);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.NotAPartyMember);
+        result.Reason.Should().Be(InvalidOperation.NotAPartyMember);
         monitor.Should().NotRaise(nameof(sut.PlayerParty.OnPassedPartyLeadership));
     }
 
@@ -666,7 +666,7 @@ public class PlayerPartyTests
         var result = sut.PlayerParty.PassPartyLeadership(member2);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.NotAPartyLeader);
+        result.Reason.Should().Be(InvalidOperation.NotAPartyLeader);
         monitor.Should().NotRaise(nameof(leader.PlayerParty.OnPassedPartyLeadership));
     }
 

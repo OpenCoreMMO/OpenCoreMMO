@@ -60,7 +60,7 @@ public class ItemMovementService : IItemMovementService
         if (!item.CanBeMoved) return Result<OperationResultList<IItem>>.NotPossible;
 
         var canAdd = destination.CanAddItem(item, amount, toPosition);
-        if (!canAdd.Succeeded) return new Result<OperationResultList<IItem>>(canAdd.Error);
+        if (!canAdd.Succeeded) return new Result<OperationResultList<IItem>>(canAdd.Reason);
 
         (destination, toPosition) = GetDestination(from, destination, toPosition);
 
@@ -92,7 +92,7 @@ public class ItemMovementService : IItemMovementService
         byte? toPosition)
     {
         var canAdd = destination.CanAddItem(thing, thing.Amount, toPosition);
-        if (!canAdd.Succeeded) return new Result<OperationResultList<IItem>>(canAdd.Error);
+        if (!canAdd.Succeeded) return new Result<OperationResultList<IItem>>(canAdd.Reason);
 
         var result = destination.AddItem(thing, toPosition);
 

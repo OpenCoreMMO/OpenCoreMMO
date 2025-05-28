@@ -212,5 +212,20 @@ public enum ItemAttribute : byte
     MinimumMagicLevel,
     AllowFarUse,
     CheckFloor,
-    BlockWalls
+    BlockWalls,
+    SelfTarget,
+    Enabled,
+    IsAggressive,
+    Id,
+    PrimaryGroup,
+    SecondaryGroup,
+    PrimaryGroupCooldown,
+    SecondaryGroupCooldown,
+    CooldownId,
+    NeedsPremium,
+    SoulUse,
+    NeedDirection,
+    CasterNeedsTargetOrDirection,
+    NeedWeapon,
+    NeedLearn
 }

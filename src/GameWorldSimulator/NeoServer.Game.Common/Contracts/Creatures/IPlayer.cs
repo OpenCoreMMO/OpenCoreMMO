@@ -113,6 +113,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     string GenderPronoun { get; }
     Gender Gender { get; }
     int PremiumTime { get; }
+    bool HasPremiumTime => PremiumTime > 0;
     IDictionary<SkillType, ISkill> Skills { get; }
     IDictionary<int, int> Storages { get; }
 
@@ -132,6 +133,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     bool IsProtectionZoneBlocked { get; }
     Skull Skull { get; }
     float DamageFactor { get; }
+    bool IsPacified { get; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 
@@ -300,4 +302,5 @@ public interface IPlayer : ICombatActor, ISociableCreature
     #endregion
 
     void PostSpellCast(ISpell spell);
+    bool HasEnoughSoul(ushort soul);
 }

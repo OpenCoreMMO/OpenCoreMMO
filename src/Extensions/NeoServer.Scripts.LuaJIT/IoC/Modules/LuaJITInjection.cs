@@ -43,7 +43,7 @@ public static class LuaJitInjection
         builder.AddSingleton<ITalkActionFunctions, TalkActionFunctions>();
         builder.AddSingleton<ITeleportFunctions, TeleportFunctions>();
         builder.AddSingleton<ITileFunctions, TileFunctions>();
-        builder.AddSingleton<ISpellFunctionMapper, SpellFunctionMapper>();
+        builder.AddSingleton<ISpellFunctionMapper, SpellBinder>();
         builder.AddSingleton<ICombatFunctionMapper, CombatBinder>();
         builder.AddSingleton<RuneManager>();
         return builder;

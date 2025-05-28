@@ -170,8 +170,16 @@ public sealed class ItemAttributeList : IItemAttributeList
     {
         if (_customAttributes is null) return default;
 
+
         if (_customAttributes.TryGetValue(attribute, out var value))
+        {
+            if (IsNullable(value.Item1))
+            {
+                return (T)value.Item1;
+            }
+            
             return (T)Convert.ChangeType(value.Item1, typeof(T), CultureInfo.InvariantCulture);
+        }
 
         return default;
     }
@@ -428,5 +436,14 @@ public sealed class ItemAttributeList : IItemAttributeList
 
             return dictionary;
         }
+    }
+    private static bool IsNullable(dynamic value)
+    {
+        if (value == null)
+            return true; // null itself is always nullable
+
+        Type type = ((object)value).GetType();
+
+        return !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
     }
 }

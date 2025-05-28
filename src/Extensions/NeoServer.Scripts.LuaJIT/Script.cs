@@ -1,8 +1,4 @@
-﻿using NeoServer.Scripts.LuaJIT.Models;
-using NeoServer.Scripts.LuaJIT.Models.Callbacks;
-using NeoServer.Scripts.LuaJIT.Models.Combat;
-
-namespace NeoServer.Scripts.LuaJIT;
+﻿namespace NeoServer.Scripts.LuaJIT;
 
 public class Script
 {
@@ -21,10 +17,6 @@ public class Script
     {
         _scriptInterface = scriptInterface;
     }
-
-    public Dictionary<CombatParam, int> Parameters { get; set; } = new();
-    public List<(CallBackType Type, Callback Callback)> Callbacks { get; set; } = new();
-    public CombatValues CombatValues { get; set; }
 
     /// <summary>
     ///     Check if script is loaded.
@@ -84,11 +76,7 @@ public class Script
     }
 
     // Method to access the ScriptId in derived classes
-    public virtual int GetScriptId()
-    {
-        return ScriptId;
-    }
-
+    public virtual int GetScriptId() => ScriptId;
     public virtual void SetScriptId(int newScriptId)
     {
         ScriptId = newScriptId;

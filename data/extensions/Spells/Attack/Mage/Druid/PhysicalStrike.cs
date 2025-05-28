@@ -20,13 +20,13 @@ public class PhysicalStrike : AttackSpell
     public override string Name => "Physical Strike";
     public override string Words => "exori moe ico";
     public override ushort MinLevel => 16;
-    public override ushort Mana { get; set; } = 20;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 20;
+    public override bool NeedsPremium => true;
     public override uint Cooldown => 2 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];
     public override bool NeedLearn => false;
-    public override byte Range => 3;
+    public override byte? Range => 3;
     public override string[] Vocations { get; } = ["druid", "elder druid"];
     public override bool CasterNeedsTargetOrDirection => true;
     private static MinMax GetFormulaValues(IPlayer player, int level, int magicLevel, decimal _)

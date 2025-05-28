@@ -3,6 +3,8 @@ using System.Text.RegularExpressions;
 using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Results;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Helpers;
@@ -11,7 +13,18 @@ namespace NeoServer.Extensions.Spells.Commands;
 
 public class BroadcastCommand : CommandSpell
 {
-    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
+    private TextMessageOutgoingType GetTextMessageOutgoingTypeFromColor(string color)
+    {
+        return color switch
+        {
+            "white" => TextMessageOutgoingType.MESSAGE_EVENT_LEVEL_CHANGE,
+            "red" => TextMessageOutgoingType.MESSAGE_STATUS_WARNING,
+            "green" => TextMessageOutgoingType.Description,
+            _ => TextMessageOutgoingType.Description
+        };
+    }
+
+    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
         var ctx = IoC.GetInstance<IGameCreatureManager>();
 
@@ -36,23 +49,10 @@ public class BroadcastCommand : CommandSpell
                     connection.Send();
                 }
 
-                error = InvalidOperation.None;
-                return true;
+                return Result.Success;
             }
         }
 
-        error = InvalidOperation.NotPossible;
-        return false;
-    }
-
-    private TextMessageOutgoingType GetTextMessageOutgoingTypeFromColor(string color)
-    {
-        return color switch
-        {
-            "white" => TextMessageOutgoingType.MESSAGE_EVENT_LEVEL_CHANGE,
-            "red" => TextMessageOutgoingType.MESSAGE_STATUS_WARNING,
-            "green" => TextMessageOutgoingType.Description,
-            _ => TextMessageOutgoingType.Description
-        };
+        return Result.NotPossible;
     }
 }

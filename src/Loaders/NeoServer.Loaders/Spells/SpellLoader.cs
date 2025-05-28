@@ -42,13 +42,13 @@ public class SpellLoader(
                 var spell = spells.FirstOrDefault(x => spellType.Name == x["script"].ToString());
                 //if (spell is null) continue;
 
-                if (CreateSpell(spellType) is not ISpell spellInstance) continue;
+                if (CreateSpell(spellType) is not BaseSpell spellInstance) continue;
 
                 if (spellInstance.Enabled is false) continue;
 
                 spellInstance.Name ??= spell["name"].GetStringFromJson();
                 spellInstance.Cooldown = spellInstance.Cooldown > 0 ? spellInstance.Cooldown : spell["cooldown"].GetUInt32FromJson();
-                spellInstance.Mana = spellInstance.Mana > 0 ? spellInstance.Mana : spell["mana"].GetUInt16FromJson();
+                spellInstance.ManaConsumption = spellInstance.ManaConsumption > 0 ? spellInstance.ManaConsumption : spell["mana"].GetUInt16FromJson();
                 spellInstance.MinLevel = spellInstance.MinLevel > 0 ? spellInstance.MinLevel : spell["level"].GetUInt16FromJson();
                 spellInstance.VocationIds = (spellInstance.Vocations?.Length ?? 0) > 0 ? LoadVocations(spellInstance.Vocations) : LoadVocations(spell);
                 spellListManager.Add(spellInstance.Words ?? spell["words"].GetStringFromJson(), spellInstance);

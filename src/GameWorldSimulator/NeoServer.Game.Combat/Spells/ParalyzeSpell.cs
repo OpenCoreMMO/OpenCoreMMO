@@ -1,6 +1,8 @@
 ﻿using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Results;
 
 namespace NeoServer.Game.Combat.Spells;
 
@@ -15,18 +17,16 @@ public class ParalyzeSpell : Spell<ParalyzeSpell>
     public override EffectT Effect => EffectT.GlitterRed;
     public virtual ushort SpeedChange => 200;
     public override uint Duration => 10000;
-    public override ushort Mana => 60;
+    public override ushort ManaConsumption => 60;
     public override ConditionType ConditionType => ConditionType.Paralyze;
 
-    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
+    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
-        error = InvalidOperation.None;
-
         var min = caster.Speed * MinA + MinB;
         var max = caster.Speed * MaxA + MaxB;
 
         caster.DecreaseSpeed(SpeedChange);
-        return true;
+        return Result.Success;
     }
 
     public override void OnEnd(ICombatActor actor)

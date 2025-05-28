@@ -2,22 +2,22 @@
 
 public readonly ref struct Result
 {
-    public Result(InvalidOperation error)
+    public Result(InvalidOperation reason)
     {
-        Error = error;
+        Reason = reason;
         IsNotApplicable = false;
     }
 
-    private Result(InvalidOperation error, bool notApplicable)
+    private Result(InvalidOperation reason, bool notApplicable)
     {
-        Error = error;
+        Reason = reason;
         IsNotApplicable = notApplicable;
     }
 
-    public InvalidOperation Error { get; }
+    public InvalidOperation Reason { get; }
     public bool IsNotApplicable { get; }
 
-    public bool Succeeded => Error == InvalidOperation.None;
+    public bool Succeeded => Reason == InvalidOperation.None;
     public bool Failed => !Succeeded;
 
     public static Result Success => new(InvalidOperation.None);

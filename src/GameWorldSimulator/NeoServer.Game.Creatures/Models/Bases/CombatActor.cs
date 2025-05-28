@@ -4,11 +4,11 @@ using NeoServer.Game.Combat.Validation;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Combat.Structs;
+using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Combat.Attacks;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
-using NeoServer.Game.Common.Contracts.Spells;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
@@ -201,6 +201,11 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         if (combatParameter.CooldownType is not CooldownType.None && !Cooldowns.Expired(combatParameter.CooldownType))
             return Result.Fail(InvalidOperation.CannotAttackThatFast);
 
+        if (this is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoreProtectionZone))
+        {
+            return Result.NotPossible;
+        }
+
         if (Tile?.ProtectionZone ?? false)
             return Result.Fail(InvalidOperation.CannotAttackWhileInProtectionZone);
 
@@ -321,13 +326,13 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnChangedVisibility?.Invoke(this);
     }
 
-    public void StartSpellCooldown(ISpell spell)
+    public void StartSpellCooldown(IHasCooldown spell)
     {
         Cooldowns.Start(spell);
     }
-
-    public bool SpellCooldownHasExpired(ISpell spell) => Cooldowns.Expired(spell);
-
+    
+    public bool CooldownHasExpired(IHasCooldown spell) => Cooldowns.Expired(spell);
+    
     public bool CooldownHasExpired(CooldownType type)
     {
         return Cooldowns.Expired(type);

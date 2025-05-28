@@ -3,6 +3,8 @@ using System.Text;
 using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Results;
 using NeoServer.Game.Items;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Configurations;
@@ -12,17 +14,15 @@ namespace NeoServer.Extensions.Spells.Commands;
 
 public class SpyPlayerCommand : CommandSpell
 {
-    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
+    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
-        error = InvalidOperation.NotPossible;
-
         if (Params.Length == 0)
-            return false;
+            return Result.NotApplicable;
 
         var ctx = IoC.GetInstance<IGameCreatureManager>();
 
         if (!ctx.TryGetPlayer(Params[0].ToString(), out var player))
-            return false;
+            return Result.NotApplicable;
 
         var stringBuilder = new StringBuilder(1000);
 
@@ -43,6 +43,6 @@ public class SpyPlayerCommand : CommandSpell
 
         player.Read(window);
 
-        return true;
+        return Result.Success;
     }
 }

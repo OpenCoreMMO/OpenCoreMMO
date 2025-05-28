@@ -24,10 +24,22 @@ public class AttackService(
     AttackValidation attackValidation) : IAttackService
 {
     public Result Execute(AttackInput attackInput)
-    { 
-        
+    {
+        if (Guard.IsNull(attackInput.Aggressor))
+        {
+            logger.Warning("Attack aggressor is null");
+            return Result.NotPossible;
+        }
+
+        // Cannot attack himself
+        if (!attackInput.Parameters.IsAttackInArea && Equals(attackInput.Target, attackInput.Aggressor))
+        {
+            return Result.Fail(InvalidOperation.NotPossible);
+        }
+
         // Attack each combat actor on the target tile
-        if (!attackInput.Parameters.IsAttackInArea && attackInput.Target is IDynamicTile { Creatures.Count: > 0 } targetTile)
+        if (!attackInput.Parameters.IsAttackInArea &&
+            attackInput.Target is IDynamicTile { Creatures.Count: > 0 } targetTile)
         {
             foreach (var target in targetTile.Creatures)
             {
@@ -37,8 +49,6 @@ public class AttackService(
 
             return Result.Success;
         }
-
-        if (!HasValidInput(attackInput)) return Result.NotPossible;
 
         var attackValidationResult = attackValidation.Validate(attackInput);
         if (attackValidationResult.Failed) return attackValidationResult;
@@ -54,7 +64,7 @@ public class AttackService(
         }
 
         UpdateParameters(attackInput);
-        
+
         if (attackInput.Parameters.IsAttackInArea)
         {
             return areaAttackService.Execute(attackInput);
@@ -100,17 +110,6 @@ public class AttackService(
         }
     }
 
-    private bool HasValidInput(AttackInput attackInput)
-    {
-        if (Guard.IsNull(attackInput.Aggressor))
-        {
-            logger.Warning("Attack aggressor is null");
-            return false;
-        }
-
-        return true;
-    }
-
     private Result ValidatePvpCombat(AttackInput attackInput)
     {
         if (Equals(attackInput.Aggressor, attackInput.Target)) return Result.Success;
@@ -122,14 +121,14 @@ public class AttackService(
         }
 
         //pvp combat is not allowed in optional pvp
-        if (pvpConfiguration.PvpMode == "Optional")
-        {
-            //todo: error message
-            playerAggressor.StopAttack();
-            OperationFailService.Send(playerAggressor,
-                "You cannot attack other person.");
-            return Result.NotPossible;
-        }
+        // if (pvpConfiguration.PvpMode == "Optional")
+        // {
+        //     //todo: error message
+        //     playerAggressor.StopAttack();
+        //     OperationFailService.Send(playerAggressor,
+        //         "You cannot attack other person.");
+        //     return Result.NotPossible;
+        // }
 
         var targetHasSkull = playerTarget?.GetSkull(playerAggressor) is not Skull.None;
 

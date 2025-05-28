@@ -19,6 +19,7 @@ public static class TextMessageOutgoingParser
             InvalidOperation.VocationCannotUseSpell => "Your vocation cannot use this spell.",
             InvalidOperation.NotEnoughMana => "You do not have enough mana.",
             InvalidOperation.NotEnoughLevel => "You do not have enough level.",
+            InvalidOperation.NotEnoughMagicLevel => "You do not have enough magic level.",
             InvalidOperation.Exhausted => "You are exhausted.",
             InvalidOperation.CreatureIsNotReachable => "Creature is not reachable.",
             InvalidOperation.CannotAttackThatFast => "You cannot attack that fast.",
@@ -29,6 +30,19 @@ public static class TextMessageOutgoingParser
             InvalidOperation.PremiumTimeIsRequired => "Premium time is required.",
             InvalidOperation.SpellRequiresPremium => "Premium time is required to use this spell.",
             InvalidOperation.CanOnlyUseOnCreatures => "You can only use this on creatures.",
+            InvalidOperation.CannotUseThisObject => "You cannot use this object.",
+            InvalidOperation.FirstGoDownStairs => "First go down the stairs.",
+            InvalidOperation.FirstGoUpStairs => "First go up the stairs.",
+            InvalidOperation.CannotThrowThere => "You cannot throw there.",
+            InvalidOperation.TooFar => "You are too far.",
+            InvalidOperation.DestinationOutOfReach => "Destination is out of reach.",
+            InvalidOperation.CannotAttackWhileInProtectionZone => "You cannot attack while in protection zone.",
+            InvalidOperation.CannotInvite => "You cannot invite.",
+            InvalidOperation.NotAPartyLeader => "You are not a party leader.",
+            InvalidOperation.NotAPartyMember => "You are not a party member.",
+            InvalidOperation.CannotLeavePartyWhenInFight => "You cannot leave party when in fight.",
+            InvalidOperation.NotInvited => "You are not invited.",
+            InvalidOperation.TurnSecureModeToAttackUnmarkedPlayers => "Turn secure mode to attack unmarked players.",
             _ => string.Empty
         };
     }

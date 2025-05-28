@@ -21,13 +21,13 @@ public class MudAttack : AttackSpell
     public override string Name => "Mud Attack";
     public override string Words => "exori infir tera";
     public override ushort MinLevel => 1;
-    public override ushort Mana { get; set; } = 6;
-    public override bool Premium => false;
+    public override ushort ManaConsumption { get; set; } = 6;
+    public override bool NeedsPremium => false;
     public override uint Cooldown => 2 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];
     public override bool NeedLearn => false;
-    public override byte Range => 3;
+    public override byte? Range => 3;
     public override string[] Vocations { get; } = ["druid", "elder druid"];
     public override bool CasterNeedsTargetOrDirection => true;
     private static MinMax GetFormulaValues(IPlayer player, int level, int magicLevel, decimal _)

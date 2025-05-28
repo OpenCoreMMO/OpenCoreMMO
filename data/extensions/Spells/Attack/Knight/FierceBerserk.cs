@@ -21,8 +21,8 @@ public class FierceBerserk : AttackSpell
     public override string Name { get; set; } = "Fierce Berserk";
     public override string Words { get; set; } = "exori gran";
     public override ushort MinLevel => 90;
-    public override ushort Mana { get; set; } = 340;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 340;
+    public override bool NeedsPremium => true;
     public override bool NeedWeapon => true;
     public override uint Cooldown => 6 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack]; 

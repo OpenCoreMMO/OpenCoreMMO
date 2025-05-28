@@ -1,9 +1,11 @@
 ﻿using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Effects.Magical;
 using NeoServer.Game.Common.Item;
+using NeoServer.Game.Common.Results;
 using NeoServer.Game.Common.Spell;
 
 namespace NeoServer.Extensions.Spells.Attack.Knight;
@@ -21,8 +23,8 @@ public class Berserk : AttackSpell
     public override string Name { get; set; } = "Berserk";
     public override string Words { get; set; } = "exori";
     public override ushort MinLevel => 35;
-    public override ushort Mana { get; set; } = 115;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 115;
+    public override bool NeedsPremium => true;
     public override bool NeedWeapon => true;
     public override uint Cooldown => 4 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];

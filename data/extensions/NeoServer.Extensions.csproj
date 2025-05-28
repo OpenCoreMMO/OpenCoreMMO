@@ -29,6 +29,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Remove="Items\Sign.cs"/>
+        <Compile Remove="Runes\HealingRune.cs" />
     </ItemGroup>
 
 </Project>

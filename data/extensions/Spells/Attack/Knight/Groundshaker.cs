@@ -21,8 +21,8 @@ public class Groundshaker : AttackSpell
     public override string Name { get; set; } = "Groundshaker";
     public override string Words { get; set; } = "exori mas";
     public override ushort MinLevel => 33;
-    public override ushort Mana { get; set; } = 160;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 160;
+    public override bool NeedsPremium => true;
     public override bool NeedWeapon => true;
     public override uint Cooldown => 8 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];

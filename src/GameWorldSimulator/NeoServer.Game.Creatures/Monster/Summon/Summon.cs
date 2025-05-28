@@ -5,7 +5,7 @@ using NeoServer.Game.Common.Location.Structs;
 
 namespace NeoServer.Game.Creatures.Monster.Summon;
 
-public class Summon : Monster
+public class Summon : Monster, ISummon
 {
     public Summon(IMonsterType type, IMapTool mapTool, ICreature master) : base(type, mapTool, null)
     {

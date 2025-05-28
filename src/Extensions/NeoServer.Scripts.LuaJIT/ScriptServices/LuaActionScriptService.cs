@@ -41,11 +41,14 @@ public class LuaActionScriptService : IActionScriptService
 
     public bool HasAction(IItem item)
     {
+        if (item is null) return false;
         return _actions.GetAction(item) != null;
     }
 
     public bool UseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item, IThing target = null)
     {
+        if(item is null) return false;
+        
         return UseItem(player, pos, pos, stackpos, item, target);
     }
 

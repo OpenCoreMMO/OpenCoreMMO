@@ -1,8 +1,10 @@
 ﻿using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Location;
+using NeoServer.Game.Common.Results;
 using NeoServer.Game.Creatures.Factories;
 using NeoServer.Game.World.Map;
 
@@ -10,13 +12,12 @@ namespace NeoServer.Extensions.Spells.Commands;
 
 public class NpcCreator : CommandSpell
 {
-    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
+    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
-        error = InvalidOperation.NotPossible;
-        if (Params?.Length == 0) return false;
+        if (Params?.Length == 0) return Result.NotApplicable;
 
         var npc = CreatureFactory.Instance.CreateNpc(Params[0].ToString());
-        if (npc is null) return false;
+        if (npc is null) return Result.NotApplicable;
 
         var map = Map.Instance;
 
@@ -28,22 +29,22 @@ public class NpcCreator : CommandSpell
         {
             if (tileToBorn.HasFlag(TileFlags.ProtectionZone))
             {
-                error = InvalidOperation.NotEnoughRoom;
-                return false;
+                return Result.Fail(InvalidOperation.NotEnoughRoom);
             }
 
             map.PlaceCreature(npc);
-            return true;
+            return Result.Success;
         }
 
         foreach (var neighbour in caster.Location.Neighbours)
+        {
             if (map[neighbour] is IDynamicTile { HasCreature: false })
             {
                 map.PlaceCreature(npc);
-                return true;
+                return Result.Success;
             }
+        }
 
-        error = InvalidOperation.NotEnoughRoom;
-        return false;
+        return Result.Fail(InvalidOperation.NotEnoughRoom);
     }
 }

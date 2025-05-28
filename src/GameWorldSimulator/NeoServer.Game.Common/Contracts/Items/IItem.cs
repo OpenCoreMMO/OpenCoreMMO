@@ -39,6 +39,8 @@ public interface IItem : IThing, IHasDecay
     bool IsContainer => Metadata.Group == ItemGroup.Container;
     bool IsTeleport => Metadata.Group == ItemGroup.Teleport;
 
+    bool AllowFarUse => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.AllowFarUse);
+
     FloorChangeDirection FloorDirection => Metadata.Attributes.GetFloorChangeDirection();
 
     bool HasDecayBehavior

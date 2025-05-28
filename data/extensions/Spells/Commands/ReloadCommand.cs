@@ -6,6 +6,7 @@ using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Item;
+using NeoServer.Game.Common.Results;
 using NeoServer.Game.Common.Services;
 using NeoServer.Game.Items.Factories;
 using NeoServer.Loaders.Quest;
@@ -30,30 +31,6 @@ public class ReloadCommand : CommandSpell
         }
     };
 
-    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
-    {
-        error = InvalidOperation.NotPossible;
-
-        if (Params is null || !Params.Any())
-        {
-            OperationFailService.Send(caster.CreatureId, "Invalid module");
-            return false;
-        }
-
-        Console.Write(Params.Length);
-
-        var module = Params[0].ToString();
-
-        if (!Modules.TryGetValue(module, out var action))
-        {
-            OperationFailService.Send(caster.CreatureId, "Invalid module");
-            return false;
-        }
-
-        action?.Invoke();
-        return true;
-    }
-
     private IItem Item(ICombatActor actor, int amount)
     {
         if (ushort.TryParse(Params[0].ToString(), out var typeId))
@@ -64,5 +41,27 @@ public class ReloadCommand : CommandSpell
             new Dictionary<ItemAttribute, IConvertible> { { ItemAttribute.Count, amount } });
 
         return item;
+    }
+
+    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
+    {
+        if (Params is null || !Params.Any())
+        {
+            OperationFailService.Send(caster.CreatureId, "Invalid module");
+            return Result.NotApplicable;
+        }
+
+        Console.Write(Params.Length);
+
+        var module = Params[0].ToString();
+
+        if (!Modules.TryGetValue(module, out var action))
+        {
+            OperationFailService.Send(caster.CreatureId, "Invalid module");
+            return Result.NotApplicable;
+        }
+
+        action?.Invoke();
+        return Result.Success;
     }
 }

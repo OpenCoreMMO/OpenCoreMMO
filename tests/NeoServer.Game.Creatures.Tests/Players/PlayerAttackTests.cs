@@ -34,7 +34,7 @@ public class PlayerAttackTests
         var result = player.SetAttackTarget(enemy);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.CannotAttackPersonInProtectionZone);
+        result.Reason.Should().Be(InvalidOperation.CannotAttackPersonInProtectionZone);
 
         monitor.Should().Raise(nameof(player.OnAttackCanceled));
         player.Attacking.Should().BeFalse();
@@ -66,7 +66,7 @@ public class PlayerAttackTests
         var result = player.SetAttackTarget(enemy);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.CannotAttackWhileInProtectionZone);
+        result.Reason.Should().Be(InvalidOperation.CannotAttackWhileInProtectionZone);
 
         monitor.Should().Raise(nameof(player.OnAttackCanceled));
         player.Attacking.Should().BeFalse();
@@ -106,7 +106,7 @@ public class PlayerAttackTests
         var result = player.Attack(enemy);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.CannotAttackPersonInProtectionZone);
+        result.Reason.Should().Be(InvalidOperation.CannotAttackPersonInProtectionZone);
 
         monitor.Should().Raise(nameof(player.OnStoppedAttack));
 
@@ -146,7 +146,7 @@ public class PlayerAttackTests
         var result = player.Attack(enemy);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.CannotAttackWhileInProtectionZone);
+        result.Reason.Should().Be(InvalidOperation.CannotAttackWhileInProtectionZone);
 
         monitor.Should().Raise(nameof(player.OnStoppedAttack));
 
@@ -169,7 +169,7 @@ public class PlayerAttackTests
 
         //assert
         monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
-        result.Error.Should().Be(InvalidOperation.CreatureIsDead);
+        result.Reason.Should().Be(InvalidOperation.CreatureIsDead);
     }
 
     [Fact]
@@ -184,7 +184,7 @@ public class PlayerAttackTests
 
         //assert
         monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
-        result.Error.Should().Be(InvalidOperation.NotPossible);
+        result.Reason.Should().Be(InvalidOperation.NotPossible);
     }
 
     [Fact]
@@ -209,7 +209,7 @@ public class PlayerAttackTests
         var result = player.Attack(enemy);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.CreatureIsNotReachable);
+        result.Reason.Should().Be(InvalidOperation.CreatureIsNotReachable);
 
         monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
 
@@ -248,7 +248,7 @@ public class PlayerAttackTests
         var result = player.Attack(enemy);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.CreatureIsNotReachable);
+        result.Reason.Should().Be(InvalidOperation.CreatureIsNotReachable);
 
         monitor.Should().Raise(nameof(player.OnStoppedAttack));
 
@@ -280,7 +280,7 @@ public class PlayerAttackTests
         var result = player.Attack(enemy);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.CreatureIsNotReachable);
+        result.Reason.Should().Be(InvalidOperation.CreatureIsNotReachable);
 
         monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
 
@@ -312,7 +312,7 @@ public class PlayerAttackTests
         var result = player.Attack(enemy);
 
         //assert
-        result.Error.Should().Be(InvalidOperation.CreatureIsNotReachable);
+        result.Reason.Should().Be(InvalidOperation.CreatureIsNotReachable);
 
         monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
 

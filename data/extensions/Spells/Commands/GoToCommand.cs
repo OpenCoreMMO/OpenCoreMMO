@@ -1,6 +1,8 @@
 ﻿using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Results;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Helpers;
 
@@ -8,10 +10,9 @@ namespace NeoServer.Extensions.Spells.Commands;
 
 public class GoToCommand : CommandSpell
 {
-    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
+    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
-        error = InvalidOperation.NotPossible;
-        if (Params?.Length == 0) return false;
+        if (Params?.Length == 0) return Result.NotApplicable;
 
         var actorPlayer = (IPlayer)caster;
 
@@ -19,16 +20,16 @@ public class GoToCommand : CommandSpell
         if (Params.Length == 1)
         {
             var creatureManager = IoC.GetInstance<IGameCreatureManager>();
-            creatureManager.TryGetPlayer(Params[0].ToString(), out var target);
+            creatureManager.TryGetPlayer(Params[0].ToString(), out var targetPlayer);
 
-            if (target is null || target.CreatureId == actorPlayer.CreatureId)
-                return false;
+            if (targetPlayer is null || targetPlayer.CreatureId == actorPlayer.CreatureId)
+                return Result.NotApplicable;
 
-            actorPlayer.TeleportTo(target.Location);
-            return true;
+            actorPlayer.TeleportTo(targetPlayer.Location);
+            return Result.Success;
         }
 
-        if (Params?.Length != 3) return false;
+        if (Params?.Length != 3) return Result.NotApplicable;
 
         ushort.TryParse(Params[0].ToString(), out var x);
         ushort.TryParse(Params[1].ToString(), out var y);
@@ -36,6 +37,6 @@ public class GoToCommand : CommandSpell
 
         caster.TeleportTo(x, y, z);
 
-        return true;
+        return Result.Success;
     }
 }

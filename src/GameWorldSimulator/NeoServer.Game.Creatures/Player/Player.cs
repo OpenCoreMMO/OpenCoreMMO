@@ -597,11 +597,17 @@ public class Player : CombatActor, IPlayer
     {
         var talkType = SpeechType.MonsterSay;
 
-        if (spell.IncreaseSkill) IncreaseSkillCounter(SkillType.Magic, spell.Mana);
+        ConsumeMana(spell.ManaConsumption);
+        if (spell.IncreaseSkill) IncreaseSkillCounter(SkillType.Magic, spell.ManaConsumption);
 
         if (!spell.ShouldSay) return;
 
         base.Say(spell.Words, talkType);
+    }
+    
+    public bool HasEnoughSoul(ushort soul)
+    {
+        return SoulPoints >= soul;
     }
 
     public bool HasEnoughMana(ushort mana)
@@ -806,7 +812,7 @@ public class Player : CombatActor, IPlayer
         var canUseItem = CanUseItem(item, onItem.Location);
         if (canUseItem.Failed) return canUseItem;
 
-        if (item is not IUsableOnItem usableOnItem) return Result.Fail(InvalidOperation.CannotUse);
+        if (item is not IUsableOnItem usableOnItem) return Result.Fail(InvalidOperation.CannotUseSpells);
 
         usableOnItem.Use(this, onItem);
         OnUsedItem?.Invoke(this, onItem, item);
@@ -1201,7 +1207,7 @@ public class Player : CombatActor, IPlayer
         {
             OperationFailService.Send(CreatureId, requirement.ValidationError);
             {
-                return Result.Fail(InvalidOperation.CannotUse);
+                return Result.Fail(InvalidOperation.CannotUseSpells);
             }
         }
 

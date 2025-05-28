@@ -20,13 +20,13 @@ public class DivineMissile : AttackSpell
     public override string Name => "Divine Missile";
     public override string Words => "exori san";
     public override ushort MinLevel => 40;
-    public override ushort Mana { get; set; } = 20;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 20;
+    public override bool NeedsPremium => true;
     public override uint Cooldown => 2 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];
     public override bool NeedLearn => false;
-    public override byte Range => 4;
+    public override byte? Range => 4;
     public override string[] Vocations { get; } = ["paladin", "royal paladin"];
     public override bool CasterNeedsTargetOrDirection => true;
 

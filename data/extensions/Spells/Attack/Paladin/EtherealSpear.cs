@@ -21,14 +21,14 @@ public class EtherealSpear : AttackSpell
     public override string Name => "Ethereal Spear";
     public override string Words => "exori con";
     public override ushort MinLevel => 23;
-    public override ushort Mana { get; set; } = 25;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 25;
+    public override bool NeedsPremium => true;
     public override uint Cooldown => 2 * 1000;
     public override bool NeedsTarget => true;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];
     public override bool NeedLearn => false;
-    public override byte Range => 7;
+    public override byte? Range => 7;
     public override string[] Vocations { get; } = ["paladin", "royal paladin"];
 
     private static MinMax GetFormulaValues(IPlayer player, int skill, int attack, decimal factor)

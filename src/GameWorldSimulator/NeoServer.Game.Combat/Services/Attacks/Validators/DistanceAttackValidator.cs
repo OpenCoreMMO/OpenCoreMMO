@@ -14,7 +14,7 @@ public static  class DistanceAttackValidator
 
         var sqmDistance = target.Location.GetMaxSqmDistance(aggressor.Location);
 
-        var maxRange = Math.Max(attackInput.Parameters.Range, (byte)1);
+        var maxRange = Math.Max(attackInput.Parameters.Range ?? 1, (byte)1);
 
         return maxRange >= sqmDistance;
     }

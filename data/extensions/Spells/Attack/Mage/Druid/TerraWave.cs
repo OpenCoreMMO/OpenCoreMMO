@@ -19,8 +19,8 @@ public partial class TerraWave : AttackSpell
     public override string Name => "Terra Wave";
     public override string Words => "exevo tera hur";
     public override ushort MinLevel => 38;
-    public override ushort Mana { get; set; } = 170;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 170;
+    public override bool NeedsPremium => true;
     public override uint Cooldown => 4 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];

@@ -19,8 +19,8 @@ public class GreatEnergyBeam : AttackSpell
     public override string Name => "Great Energy Beam";
     public override string Words => "exevo gran vis lux";
     public override ushort MinLevel => 29;
-    public override ushort Mana { get; set; } = 110;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 110;
+    public override bool NeedsPremium => true;
     public override uint Cooldown => 6 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];

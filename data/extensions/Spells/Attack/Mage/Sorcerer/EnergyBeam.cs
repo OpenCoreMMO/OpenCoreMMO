@@ -19,8 +19,8 @@ public partial class EnergyBeam : AttackSpell
     public override string Name => "Energy Beam";
     public override string Words => "exevo vis lux";
     public override ushort MinLevel => 23;
-    public override ushort Mana { get; set; } = 40;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 40;
+    public override bool NeedsPremium => true;
     public override uint Cooldown => 4 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];

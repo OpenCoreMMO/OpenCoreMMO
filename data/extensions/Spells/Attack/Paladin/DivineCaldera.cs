@@ -20,8 +20,8 @@ public class DivineCaldera : AttackSpell
     public override string Name { get; set; } = "Divine Caldera";
     public override string Words { get; set; } = "exevo mas san";
     public override ushort MinLevel => 50;
-    public override ushort Mana { get; set; } = 160;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 160;
+    public override bool NeedsPremium => true;
     public override uint Cooldown => 4 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];

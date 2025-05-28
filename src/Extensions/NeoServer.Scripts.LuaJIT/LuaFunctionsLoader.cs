@@ -1,12 +1,10 @@
-﻿using System.Collections.Concurrent;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using LuaNET;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
-using NeoServer.Scripts.LuaJIT.Structs;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -103,7 +101,7 @@ public class LuaFunctionsLoader
 
         switch (var.Type)
         {
-            case LuaVariantType.VARIANT_NUMBER:
+            case LuaVariantType.Number:
                 SetField(luaState, "number", var.Number);
                 break;
             case LuaVariantType.VARIANT_STRING:
@@ -366,7 +364,7 @@ public class LuaFunctionsLoader
 
         switch (var.Type)
         {
-            case LuaVariantType.VARIANT_NUMBER:
+            case LuaVariantType.Number:
                 var.Number = GetField<uint>(luaState, arg, "number");
                 Lua.Pop(luaState, 4);
                 break;
@@ -915,7 +913,7 @@ public class LuaFunctionsLoader
 
     public static int GetArgsCount(LuaState lua) => Lua.GetTop(lua) - 1;
 
-    public int HandleNotImplementedMethod(LuaState l)
+    public static int HandleNotImplementedMethod(LuaState l)
     {
         Lua.PushNil(l);
         return 1;

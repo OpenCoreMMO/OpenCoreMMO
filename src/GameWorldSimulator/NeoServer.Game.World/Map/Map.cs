@@ -95,6 +95,8 @@ public class Map : IMap
         return true;
     }
 
+
+
     public void SwapCreatureBetweenSectors(ICreature creature, Location fromLocation, Location toLocation)
     {
         var oldSector = world.GetSector(fromLocation.X, fromLocation.Y);

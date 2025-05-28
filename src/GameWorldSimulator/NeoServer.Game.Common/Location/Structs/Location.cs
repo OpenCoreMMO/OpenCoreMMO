@@ -258,7 +258,7 @@ public struct Location : IEquatable<Location>, IConvertible
 
     public bool IsNotInRange(Location from, int maxX, int maxY, int maxZ)
     {
-        return GetSqmDistanceX(from) <= maxX && GetSqmDistanceY(from) <= maxY && GetSqmDistanceZ(from) <= maxZ;
+        return GetSqmDistanceX(from) <= maxX && GetSqmDistanceY(from) <= maxY && GetFloorDistanceZ(from) <= maxZ;
     }
 
     public int GetMaxSqmDistance(Location dest)
@@ -283,7 +283,7 @@ public struct Location : IEquatable<Location>, IConvertible
         return (ushort)Math.Abs(Y - dest.Y);
     }
 
-    public readonly int GetSqmDistanceZ(Location dest, bool abs = true)
+    public readonly int GetFloorDistanceZ(Location dest, bool abs = true)
     {
         if (!abs) return Z - dest.Z;
         return (ushort)Math.Abs(Z - dest.Z);

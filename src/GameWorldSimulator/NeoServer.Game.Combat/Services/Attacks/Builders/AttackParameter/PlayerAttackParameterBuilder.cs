@@ -23,7 +23,7 @@ public static class PlayerAttackParameterBuilder
             MinDamage = player.MinimumAttackPower,
             MaxDamage = player.MaximumAttackPower,
             DamageType = GetDamageType(player),
-            Range = (byte)(player.Inventory.Weapon is IHasRange weapon ? weapon.Range : 0),
+            Range = player.Inventory.Weapon is IHasRange weapon ? weapon.Range : null,
             Effect = EffectT.None,
             Spread = 5,
             ShootType = GetShootType(player),

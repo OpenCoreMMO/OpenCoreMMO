@@ -20,8 +20,8 @@ public class StrongIceWave : AttackSpell
     public override string Name => "Strong Ice Wave";
     public override string Words => "exevo gran frigo hur";
     public override ushort MinLevel => 40;
-    public override ushort Mana { get; set; } = 170;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 170;
+    public override bool NeedsPremium => true;
     public override uint Cooldown => 8 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
     public override uint[] GroupCooldown => [2 * 1000];

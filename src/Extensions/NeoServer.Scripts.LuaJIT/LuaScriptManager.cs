@@ -29,7 +29,7 @@ public class LuaScriptManager : IScriptManager
         GlobalEvents = globalEventsScriptService;
         MoveEvents = moveEventsScriptService;
         TalkActions = talkActionsScriptService;
-        Runes = runeScriptService;
+        Rune = runeScriptService;
     }
 
     #endregion
@@ -86,7 +86,7 @@ public class LuaScriptManager : IScriptManager
     /// </summary>
     public ITalkActionScriptService TalkActions { get; }
 
-    public IRuneScriptService Runes { get; }
+    public IRuneScriptService Rune { get; }
 
     #endregion
 }

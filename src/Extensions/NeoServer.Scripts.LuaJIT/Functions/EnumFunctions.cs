@@ -35,9 +35,13 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         //RegisterEnum<SkillsType>(luaState);
         RegisterEnumCustom<SkillType>(luaState);
         RegisterEnum<TileFlagsType>(luaState);
+        
         RegisterEnum<CombatType>(luaState);
+        RegisterEnum<CombatParam>(luaState);
         RegisterEnum<MagicEffect>(luaState);
         RegisterEnum<ShootType>(luaState);
+        
+        RegisterEnumCustom<SoundEffect>(luaState, prefix: "SOUND_EFFECT_TYPE");
     }
 
     private static void RegisterEnum(LuaState luaState, string name, Enum value)
@@ -52,9 +56,10 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
             RegisterGlobalVariable(luaState, item.ToString(), Convert.ToUInt32(item));
     }
 
-    private static void RegisterEnumCustom<T>(LuaState luaState, bool upperCase = true) where T : Enum
+    private static void RegisterEnumCustom<T>(LuaState luaState, bool upperCase = true, string prefix = null) where T : Enum
     {
-        var prefix = typeof(T).Name.Replace("Type", "") + "_";
+        prefix ??= typeof(T).Name.Replace("Type", "");
+        prefix += "_";
 
         foreach (var item in Enum.GetValues(typeof(T)))
         {

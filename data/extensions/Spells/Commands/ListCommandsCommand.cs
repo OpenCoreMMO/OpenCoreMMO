@@ -22,24 +22,6 @@ namespace NeoServer.Extensions.Spells.Commands;
 public class ListCommandsCommand : CommandSpell
 {
     private const string SPELL_TYPE = "command";
-
-    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
-    {
-        error = InvalidOperation.NotPossible;
-
-        if (caster is not IPlayer player) return false;
-
-        var spells = LoadSpells();
-        var text = BuildTextFromSpells(spells, words);
-        var item = CreateItemBook();
-
-        var window = new TextWindow(item, player.Location, text);
-
-        player.Read(window);
-
-        return true;
-    }
-
     private static IItemType CreateItemBook()
     {
         var item = new ItemType();
@@ -115,5 +97,20 @@ public class ListCommandsCommand : CommandSpell
             Text = text;
             return Result.Success;
         }
+    }
+
+    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
+    {
+        if (caster is not IPlayer player) return Result.NotApplicable;
+
+        var spells = LoadSpells();
+        var text = BuildTextFromSpells(spells, Words);
+        var item = CreateItemBook();
+
+        var window = new TextWindow(item, player.Location, text);
+
+        player.Read(window);
+
+        return Result.Success;
     }
 }

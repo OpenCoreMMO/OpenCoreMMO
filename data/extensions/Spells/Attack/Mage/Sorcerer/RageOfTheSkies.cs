@@ -20,8 +20,8 @@ public class RageOfTheSkies : AttackSpell
     public override string Name { get; set; } = "Rage of the Skies";
     public override string Words { get; set; } = "exevo gran mas vis";
     public override ushort MinLevel => 55;
-    public override ushort Mana { get; set; } = 600;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 600;
+    public override bool NeedsPremium => true;
     public override uint Cooldown => 40 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack, MagicGroup.Focus];
     public override uint[] GroupCooldown => [2 * 1000, 40 * 1000];

@@ -1,6 +1,8 @@
 ﻿using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Results;
 
 namespace NeoServer.Game.Combat.Spells;
 
@@ -21,15 +23,13 @@ public class HasteSpell : Spell<HasteSpell>
     public override EffectT Effect { get; } = EffectT.GlitterBlue;
     public override uint Duration { get; } = 10000;
     public virtual ushort SpeedBoost { get; } = 200;
-    public override ushort Mana => 60;
+    public override ushort ManaConsumption => 60;
     public override ConditionType ConditionType => ConditionType.Haste;
-
-    public override bool OnCast(ICombatActor caster, string words, out InvalidOperation error)
+    
+    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
-        error = InvalidOperation.None;
-
         caster.IncreaseSpeed(SpeedBoost);
-        return true;
+        return Result.Success;
     }
 
     public override void OnEnd(ICombatActor actor)

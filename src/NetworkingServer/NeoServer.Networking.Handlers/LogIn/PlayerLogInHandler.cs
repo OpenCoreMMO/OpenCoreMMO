@@ -122,7 +122,7 @@ public class PlayerLogInHandler : PacketHandler
         _game.Dispatcher.AddEvent(new Event(() =>
         {
             var result = _playerLogInCommand.Execute(playerRecord, connection);
-            if (result.Failed) Disconnect(connection, TextMessageOutgoingParser.Parse(result.Error));
+            if (result.Failed) Disconnect(connection, TextMessageOutgoingParser.Parse(result.Reason));
         }));
     }
 

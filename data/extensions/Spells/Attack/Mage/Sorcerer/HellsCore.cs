@@ -20,8 +20,8 @@ public class HellsCore : AttackSpell
     public override string Name { get; set; } = "Hell`s Core";
     public override string Words { get; set; } = "exevo gran mas flam";
     public override ushort MinLevel => 60;
-    public override ushort Mana { get; set; } = 1100;
-    public override bool Premium => true;
+    public override ushort ManaConsumption { get; set; } = 1100;
+    public override bool NeedsPremium => true;
     public override uint Cooldown => 40 * 1000;
     public override MagicGroup[] Groups { get; } = [MagicGroup.Attack, MagicGroup.Focus];
     public override uint[] GroupCooldown => [2 * 1000, 40 * 1000];

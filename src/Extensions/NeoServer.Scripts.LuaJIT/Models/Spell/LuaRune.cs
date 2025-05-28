@@ -1,4 +1,5 @@
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Runes;
 using NeoServer.Scripts.LuaJIT.Enums;
 
@@ -11,8 +12,10 @@ public class LuaRune(LuaScriptInterface scriptInterface) : LuaSpell(scriptInterf
     public int Charges { get; set; }
     public bool CheckFloor { get; set; }
     public bool BlockWalls { get; set; }
+    public ushort ManaConsumption { get; set; }
+    public ushort SoulConsumption { get; set; }
 
-    public bool OnUse(ICreature creature, IAttackRune rune, bool isHotkey)
+    public bool OnUse(ICreature creature, IThing target, IRune rune, bool isHotkey)
     {
         // onUse(player, item, fromPosition, target, toPosition, isHotkey)
         if (!GetScriptInterface().InternalReserveScriptEnv())
@@ -32,19 +35,21 @@ public class LuaRune(LuaScriptInterface scriptInterface) : LuaSpell(scriptInterf
         var luaState = scriptInterface.GetLuaState();
         scriptInterface.PushFunction(GetScriptId());
 
-        LuaScriptInterface.PushUserdata(luaState, creature); ;
-        LuaScriptInterface.SetCreatureMetatable(luaState, -1, creature);
+        LuaFunctionsLoader.PushUserdata(luaState, creature); ;
+        LuaFunctionsLoader.SetCreatureMetatable(luaState, -1, creature);
+        
+        
 
         var variant = new LuaVariant
         {
-            Type = LuaVariantType.VARIANT_NUMBER,
-            Number = creature.CreatureId,
+            Type = LuaVariantType.Number,
+            Number = target is ICreature targetCreature ? targetCreature.CreatureId : 0,
             InstantName = "",
             RuneName = rune.Name
         };
         
-        LuaScriptInterface.PushVariant(luaState, variant);
-        LuaScriptInterface.PushBoolean(luaState, isHotkey);
+        LuaFunctionsLoader.PushVariant(luaState, variant);
+        LuaFunctionsLoader.PushBoolean(luaState, isHotkey);
 
         return GetScriptInterface().CallFunction(3);
     }
