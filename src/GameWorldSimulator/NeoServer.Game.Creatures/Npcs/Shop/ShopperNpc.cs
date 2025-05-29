@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
@@ -50,16 +49,6 @@ public class ShopperNpc : Npc, IShopperNpc
         ShowShopItems(creature, shopItems);
     }
 
-    public bool BuyFromCustomer(ISociableCreature creature, IItemType item, byte amount)
-    {
-        var shopItems = ShopItems;
-        if (shopItems is null) return false;
-
-        if (!shopItems.TryGetValue(item.ServerId, out var shopItem)) return false;
-
-        return Pay(creature, shopItem.SellPrice * amount);
-    }
-
     public ulong CalculateCost(IItemType itemType, byte amount)
     {
         var shopItems = ShopItems;
@@ -70,9 +59,8 @@ public class ShopperNpc : Npc, IShopperNpc
         return (shopItem?.BuyPrice ?? 0) * amount;
     }
 
-    public bool Pay(ISociableCreature to, uint value)
+    public bool Pay(IPlayer player, uint value)
     {
-        if (to is not IPlayer player) return false;
         if (value == 0) return false;
 
         var coins = CoinCalculator.Calculate(CoinTypeMapFunc?.Invoke(), value);
@@ -95,12 +83,6 @@ public class ShopperNpc : Npc, IShopperNpc
         return true;
     }
 
-    public override void SendMessageTo(ISociableCreature to, SpeechType type, IDialog dialog)
-    {
-        base.SendMessageTo(to, type, dialog);
-        if (dialog.Action == "shop") ShowShopItems(to);
-    }
-
     public virtual void ShowShopItems(ISociableCreature to, IEnumerable<IShopItem> shopItems = null)
     {
         if (to is not IPlayer player) return;
@@ -114,4 +96,18 @@ public class ShopperNpc : Npc, IShopperNpc
 
         OnShowShop?.Invoke(this, to, shopItems);
     }
+
+
+    public void OnPlayerBuyItem(IPlayer player, IItemType itemType, int count, uint totalCost, bool inBackpack, bool ignore = false)
+        => OnBuyItem?.Invoke(this, player, itemType, count, totalCost, inBackpack, ignore);
+
+    public void OnPlayerSellItem(IPlayer player, IItemType itemType, int count, uint totalCost, bool ignore = false)
+        => OnSellItem?.Invoke(this, player, itemType, count, totalCost, ignore);
+
+    #region Events
+
+    public event SellItem OnSellItem;
+    public event BuyItem OnBuyItem;
+
+    #endregion
 }

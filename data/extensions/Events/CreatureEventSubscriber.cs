@@ -1,5 +1,4 @@
 ﻿using NeoServer.Extensions.Events.Creatures;
-using NeoServer.Extensions.Npcs;
 using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
 
@@ -20,8 +19,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
         {
             actor.OnDeath += creatureDroppedLootEventHandler.Execute;
         }
-
-        if (creature is INpc npc) npc.OnAnswer += NpcActionHandler.OnAnswer;
     }
 
     public void Unsubscribe(ICreature creature)
@@ -30,7 +27,5 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
         {
             actor.OnDeath -= creatureDroppedLootEventHandler.Execute;
         }
-
-        if (creature is INpc npc) npc.OnAnswer -= NpcActionHandler.OnAnswer;
     }
 }

@@ -5,116 +5,98 @@ using NeoServer.Scripts.LuaJIT.Events.Players;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public class CreatureEventsSubscriber : ICreatureEventSubscriber, IGameEventSubscriber
+public class CreatureEventsSubscriber(
+    CreatureOnDeathEventHandler creatureOnDeathEventHandler,
+    CreatureOnThinkEventHandler creatureOnThinkEventHandler,
+    CreatureOnKillEventHandler creatureOnKillEventHandler,
+    CreatureOnPrepareDeathEventHandler creatureOnPrepareDeathEventHandler,
+    CreatureOnHealthChangeEventHandler creatureOnHealthChangeEventHandler,
+    CreatureOnManaChangeEventHandler creatureOnManaChangeEventHandler,
+    PlayerOnLoginEventHandler playerOnLoginEventHandler,
+    PlayerOnLogoutEventHandler playerOnLogoutEventHandler,
+    PlayerOnAdvanceEventHandler playerOnAdvanceEventHandler,
+    PlayerOnTextEditEventHandler playerOnTextEditEventHandler,
+    CreatureOnAppearEventHandler creatureOnAppearEventHandler,
+    CreatureOnDisappearEventHandler creatureOnDisappearEventHandler,
+    CreatureOnMoveEventHandler creatureOnMoveEventHandler,
+    NpcOnHearEventHandler npcOnDeEquipEventHandler,
+    NpcOnPlayerCloseChannelEventHandler npcOnPlayerCloseChannelEventHandler,
+    NpcOnSellItemEventHandler npcOnSellItemEventHandler,
+    NpcOnBuyItemEventHandler npcOnBuyItemEventHandler) : ICreatureEventSubscriber, IGameEventSubscriber
 {
-    private readonly CreatureOnDeathEventHandler _creatureOnDeathEventHandler;
-    private readonly CreatureOnThinkEventHandler _creatureOnThinkEventHandler;
-    private readonly CreatureOnKillEventHandler _creatureOnKillEventHandler;
-    private readonly CreatureOnPrepareDeathEventHandler _creatureOnPrepareDeathEventHandler;
-    private readonly CreatureOnHealthChangeEventHandler _creatureOnHealthChangeEventHandler;
-    private readonly CreatureOnManaChangeEventHandler _creatureOnManaChangeEventHandler;
-
-    private readonly PlayerOnLoginEventHandler _playerOnLoginEventHandler;
-    private readonly PlayerOnLogoutEventHandler _playerOnLogoutEventHandler;
-    private readonly PlayerOnAdvanceEventHandler _playerOnAdvanceEventHandler;
-    private readonly PlayerOnTextEditEventHandler _playerOnTextEditEventHandler;
-
-    private readonly NpcOnHearEventHandler _npcOnDeEquipEventHandler;
-    private readonly CreatureOnAppearEventHandler _creatureOnAppearEventHandler;
-    private readonly CreatureOnDisappearEventHandler _creatureOnDisappearEventHandler;
-    private readonly CreatureOnMoveEventHandler _creatureOnMoveEventHandler;
-
-    public CreatureEventsSubscriber(
-        CreatureOnDeathEventHandler creatureOnDeathEventHandler,
-        CreatureOnThinkEventHandler creatureOnThinkEventHandler,
-        CreatureOnKillEventHandler creatureOnKillEventHandler,
-        CreatureOnPrepareDeathEventHandler creatureOnPrepareDeathEventHandler,
-        CreatureOnHealthChangeEventHandler creatureOnHealthChangeEventHandler,
-        CreatureOnManaChangeEventHandler creatureOnManaChangeEventHandler,
-        PlayerOnLoginEventHandler playerOnLoginEventHandler,
-        PlayerOnLogoutEventHandler playerOnLogoutEventHandler,
-        PlayerOnAdvanceEventHandler playerOnAdvanceEventHandler,
-        PlayerOnTextEditEventHandler playerOnTextEditEventHandler,
-        NpcOnHearEventHandler npcOnDeEquipEventHandler,
-        CreatureOnAppearEventHandler creatureOnAppearEventHandler,
-        CreatureOnDisappearEventHandler creatureOnDisappearEventHandler,
-        CreatureOnMoveEventHandler creatureOnMoveEventHandler)
-    {
-        _creatureOnDeathEventHandler = creatureOnDeathEventHandler;
-        _creatureOnThinkEventHandler = creatureOnThinkEventHandler;
-        _creatureOnKillEventHandler = creatureOnKillEventHandler;
-        _creatureOnPrepareDeathEventHandler = creatureOnPrepareDeathEventHandler;
-        _creatureOnHealthChangeEventHandler = creatureOnHealthChangeEventHandler;
-        _creatureOnManaChangeEventHandler = creatureOnManaChangeEventHandler;
-
-        _playerOnLoginEventHandler = playerOnLoginEventHandler;
-        _playerOnLogoutEventHandler = playerOnLogoutEventHandler;
-        _playerOnAdvanceEventHandler = playerOnAdvanceEventHandler;
-        _playerOnTextEditEventHandler = playerOnTextEditEventHandler;
-
-        _npcOnDeEquipEventHandler = npcOnDeEquipEventHandler;
-        _creatureOnAppearEventHandler = creatureOnAppearEventHandler;
-        _creatureOnDisappearEventHandler = creatureOnDisappearEventHandler;
-        _creatureOnMoveEventHandler = creatureOnMoveEventHandler;
-    }
-
     public void Subscribe(ICreature creature)
     {
-        creature.OnThink += _creatureOnThinkEventHandler.Execute;
+        creature.OnThink += creatureOnThinkEventHandler.Execute;
 
         if (creature is ICombatActor actor)
         {
-            actor.OnDeath += _creatureOnDeathEventHandler.Execute;
-            actor.OnKill += _creatureOnKillEventHandler.Execute;
-            actor.OnBeforeDeath += _creatureOnPrepareDeathEventHandler.Execute;
-            actor.OnHealthChanged += _creatureOnHealthChangeEventHandler.Execute;
-            actor.OnManaChanged += _creatureOnManaChangeEventHandler.Execute;
+            actor.OnDeath += creatureOnDeathEventHandler.Execute;
+            actor.OnKill += creatureOnKillEventHandler.Execute;
+            actor.OnBeforeDeath += creatureOnPrepareDeathEventHandler.Execute;
+            actor.OnHealthChanged += creatureOnHealthChangeEventHandler.Execute;
+            actor.OnManaChanged += creatureOnManaChangeEventHandler.Execute;
         }
 
         if (creature is IPlayer player)
         {
-            player.OnLoggedIn += _playerOnLoginEventHandler.Execute;
-            player.OnLoggedOut += _playerOnLogoutEventHandler.Execute;
-            player.OnLevelAdvanced += _playerOnAdvanceEventHandler.Execute;
-            player.OnWroteText += _playerOnTextEditEventHandler.Execute;
+            player.OnLoggedIn += playerOnLoginEventHandler.Execute;
+            player.OnLoggedOut += playerOnLogoutEventHandler.Execute;
+            player.OnLevelAdvanced += playerOnAdvanceEventHandler.Execute;
+            player.OnWroteText += playerOnTextEditEventHandler.Execute;
         }
 
         if (creature is INpc npc)
         {
-            npc.OnHear += _npcOnDeEquipEventHandler.Execute;
-            npc.OnAppear += _creatureOnAppearEventHandler.Execute;
-            npc.OnDisappear += _creatureOnDisappearEventHandler.Execute;
-            npc.OnCreatureMove += _creatureOnMoveEventHandler.Execute;
+            npc.OnAppear += creatureOnAppearEventHandler.Execute;
+            npc.OnDisappear += creatureOnDisappearEventHandler.Execute;
+            npc.OnCreatureMove += creatureOnMoveEventHandler.Execute;
+
+            npc.OnHear += npcOnDeEquipEventHandler.Execute;
+            npc.OnPlayerCloseChannel += npcOnPlayerCloseChannelEventHandler.Execute;
+        }
+
+        if (creature is IShopperNpc npcShopper)
+        {
+            npcShopper.OnSellItem += npcOnSellItemEventHandler.Execute;
+            npcShopper.OnBuyItem += npcOnBuyItemEventHandler.Execute;
         }
     }
 
     public void Unsubscribe(ICreature creature)
     {
-        creature.OnThink -= _creatureOnThinkEventHandler.Execute;
+        creature.OnThink -= creatureOnThinkEventHandler.Execute;
 
         if (creature is ICombatActor actor)
         {
-            actor.OnDeath -= _creatureOnDeathEventHandler.Execute;
-            actor.OnKill -= _creatureOnKillEventHandler.Execute;
-            actor.OnBeforeDeath -= _creatureOnPrepareDeathEventHandler.Execute;
-            actor.OnHealthChanged -= _creatureOnHealthChangeEventHandler.Execute;
-            actor.OnManaChanged -= _creatureOnManaChangeEventHandler.Execute;
+            actor.OnDeath -= creatureOnDeathEventHandler.Execute;
+            actor.OnKill -= creatureOnKillEventHandler.Execute;
+            actor.OnBeforeDeath -= creatureOnPrepareDeathEventHandler.Execute;
+            actor.OnHealthChanged -= creatureOnHealthChangeEventHandler.Execute;
+            actor.OnManaChanged -= creatureOnManaChangeEventHandler.Execute;
         }
 
         if (creature is IPlayer player)
         {
-            player.OnLoggedIn -= _playerOnLoginEventHandler.Execute;
-            player.OnLoggedOut -= _playerOnLogoutEventHandler.Execute;
-            player.OnLevelAdvanced -= _playerOnAdvanceEventHandler.Execute;
-            player.OnWroteText -= _playerOnTextEditEventHandler.Execute;
+            player.OnLoggedIn -= playerOnLoginEventHandler.Execute;
+            player.OnLoggedOut -= playerOnLogoutEventHandler.Execute;
+            player.OnLevelAdvanced -= playerOnAdvanceEventHandler.Execute;
+            player.OnWroteText -= playerOnTextEditEventHandler.Execute;
         }
 
         if (creature is INpc npc)
         {
-            npc.OnHear -= _npcOnDeEquipEventHandler.Execute;
-            npc.OnAppear -= _creatureOnAppearEventHandler.Execute;
-            npc.OnDisappear -= _creatureOnDisappearEventHandler.Execute;
-            npc.OnCreatureMove -= _creatureOnMoveEventHandler.Execute;
+            npc.OnAppear -= creatureOnAppearEventHandler.Execute;
+            npc.OnDisappear -= creatureOnDisappearEventHandler.Execute;
+            npc.OnCreatureMove -= creatureOnMoveEventHandler.Execute;
+
+            npc.OnHear -= npcOnDeEquipEventHandler.Execute;
+            npc.OnPlayerCloseChannel -= npcOnPlayerCloseChannelEventHandler.Execute;
+        }
+
+        if (creature is IShopperNpc npcShopper)
+        {
+            npcShopper.OnSellItem -= npcOnSellItemEventHandler.Execute;
+            npcShopper.OnBuyItem -= npcOnBuyItemEventHandler.Execute;
         }
     }
 }

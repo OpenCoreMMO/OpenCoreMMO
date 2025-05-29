@@ -838,21 +838,6 @@ public class Player : CombatActor, IPlayer
         OnHear?.Invoke(from, this, speechType, message);
     }
 
-    public bool Sell(IItemType item, byte amount, bool ignoreEquipped)
-    {
-        if (!ignoreEquipped) return true;
-        if (Inventory.BackpackSlot?.Map is null) return false;
-        if (!Inventory.BackpackSlot.Map.TryGetValue(item.ServerId, out var itemTotalAmount)) return false;
-
-        if (itemTotalAmount < amount) return false;
-
-        Inventory.BackpackSlot.RemoveItem(item, amount);
-
-        TradingWithNpc.BuyFromCustomer(this, item, amount);
-
-        return true;
-    }
-
     public void ReceivePayment(IEnumerable<IItem> coins, ulong total)
     {
         if (CanReceiveInCashPayment(coins))

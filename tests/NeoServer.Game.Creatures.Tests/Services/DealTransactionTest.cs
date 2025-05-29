@@ -31,16 +31,16 @@ public class DealTransactionTest
         var shopperMock = new Mock<IShopperNpc>();
         var itemTypeMock = new Mock<IItemType>();
 
-        var result = sut.Buy(null, shopperMock.Object, itemTypeMock.Object, 1);
+        var result = sut.PlayerBuyItem(null, shopperMock.Object, itemTypeMock.Object, 1);
         Assert.False(result);
 
-        result = sut.Buy(playerMock.Object, null, itemTypeMock.Object, 1);
+        result = sut.PlayerBuyItem(playerMock.Object, null, itemTypeMock.Object, 1);
         Assert.False(result);
 
-        result = sut.Buy(playerMock.Object, shopperMock.Object, null, 1);
+        result = sut.PlayerBuyItem(playerMock.Object, shopperMock.Object, null, 1);
         Assert.False(result);
 
-        result = sut.Buy(playerMock.Object, shopperMock.Object, itemTypeMock.Object, 0);
+        result = sut.PlayerBuyItem(playerMock.Object, shopperMock.Object, itemTypeMock.Object, 0);
         Assert.False(result);
     }
 
@@ -61,7 +61,7 @@ public class DealTransactionTest
         var shopperMock = new Mock<IShopperNpc>();
         shopperMock.Setup(x => x.CalculateCost(itemTypeMock.Object, 10)).Returns(1100);
 
-        var result = sut.Buy(playerMock.Object, shopperMock.Object, itemTypeMock.Object, 10);
+        var result = sut.PlayerBuyItem(playerMock.Object, shopperMock.Object, itemTypeMock.Object, 10);
         Assert.False(result);
     }
 
@@ -103,7 +103,7 @@ public class DealTransactionTest
         player.AddInventory(inventory);
 
         //act
-        sut.Buy(player, shopperMock.Object, itemToBuy.Metadata, 3);
+        sut.PlayerBuyItem(player, shopperMock.Object, itemToBuy.Metadata, 3);
 
         //assert
         container.Items.Should().BeEmpty();
@@ -134,7 +134,7 @@ public class DealTransactionTest
         var shopperMock = new Mock<IShopperNpc>();
         shopperMock.Setup(x => x.CalculateCost(itemToBuy.Metadata, 3)).Returns(400);
 
-        var result = sut.Buy(player, shopperMock.Object, itemToBuy.Metadata, 3);
+        var result = sut.PlayerBuyItem(player, shopperMock.Object, itemToBuy.Metadata, 3);
 
         Assert.Empty(container.Items);
         Assert.Equal(400ul, player.BankAmount);
@@ -175,7 +175,7 @@ public class DealTransactionTest
         var shopperMock = new Mock<IShopperNpc>();
         shopperMock.Setup(x => x.CalculateCost(itemToBuy.Metadata, 1)).Returns(400);
 
-        var result = sut.Buy(player, shopperMock.Object, itemToBuy.Metadata, 1);
+        var result = sut.PlayerBuyItem(player, shopperMock.Object, itemToBuy.Metadata, 1);
 
         Assert.Equal(itemToBuy, player.Inventory[itemToBuy.Metadata.BodyPosition]);
     }
@@ -202,7 +202,7 @@ public class DealTransactionTest
         var shopperMock = new Mock<IShopperNpc>();
         shopperMock.Setup(x => x.CalculateCost(itemToBuy.Metadata, 1)).Returns(400);
 
-        var result = sut.Buy(player, shopperMock.Object, itemToBuy.Metadata, 1);
+        var result = sut.PlayerBuyItem(player, shopperMock.Object, itemToBuy.Metadata, 1);
 
         Assert.Equal(itemToBuy, player.Inventory[itemToBuy.Metadata.BodyPosition]);
     }
@@ -238,7 +238,7 @@ public class DealTransactionTest
         var shopperMock = new Mock<IShopperNpc>();
         shopperMock.Setup(x => x.CalculateCost(itemToBuy.Metadata, 1)).Returns(400);
 
-        var result = sut.Buy(player, shopperMock.Object, itemToBuy.Metadata, bought);
+        var result = sut.PlayerBuyItem(player, shopperMock.Object, itemToBuy.Metadata, bought);
 
         Assert.Equal(itemToBuy.ClientId, player.Inventory[itemToBuy.Metadata.BodyPosition].ClientId);
         Assert.Equal(expected, player.Inventory[itemToBuy.Metadata.BodyPosition].Amount);
@@ -282,7 +282,7 @@ public class DealTransactionTest
         var shopperMock = new Mock<IShopperNpc>();
         shopperMock.Setup(x => x.CalculateCost(itemToBuy.Metadata, 1)).Returns(400);
 
-        var result = sut.Buy(player, shopperMock.Object, itemToBuy.Metadata, 1);
+        var result = sut.PlayerBuyItem(player, shopperMock.Object, itemToBuy.Metadata, 1);
 
         Assert.Equal(itemToBuy, player.Inventory.BackpackSlot.Items[0]);
     }
@@ -319,7 +319,7 @@ public class DealTransactionTest
         var shopperMock = new Mock<IShopperNpc>();
         shopperMock.Setup(x => x.CalculateCost(It.IsAny<IItemType>(), It.IsAny<byte>())).Returns(400);
 
-        var result = sut.Buy(player, shopperMock.Object, itemToBuy.Metadata, 5);
+        var result = sut.PlayerBuyItem(player, shopperMock.Object, itemToBuy.Metadata, 5);
 
         Assert.Equal(itemToBuy, player.Inventory[itemToBuy.Metadata.BodyPosition]);
 
@@ -367,7 +367,7 @@ public class DealTransactionTest
         var shopperMock = new Mock<IShopperNpc>();
         shopperMock.Setup(x => x.CalculateCost(itemToBuy.Metadata, 1)).Returns(400);
 
-        var result = sut.Buy(player, shopperMock.Object, itemToBuy.Metadata, bought);
+        var result = sut.PlayerBuyItem(player, shopperMock.Object, itemToBuy.Metadata, bought);
 
         Assert.Equal(itemToBuy.ClientId, player.Inventory.BackpackSlot.Items[0].ClientId);
         Assert.Equal(expectedOnBackpack, player.Inventory.BackpackSlot.Items[0].Amount);
@@ -414,7 +414,7 @@ public class DealTransactionTest
         var shopperMock = new Mock<IShopperNpc>();
         shopperMock.Setup(x => x.CalculateCost(itemToBuy.Metadata, 1)).Returns(30);
 
-        var result = sut.Buy(player, shopperMock.Object, itemToBuy.Metadata, 1);
+        var result = sut.PlayerBuyItem(player, shopperMock.Object, itemToBuy.Metadata, 1);
 
         Assert.Single(player.Inventory.BackpackSlot.Items);
         Assert.Equal(5170ul, player.BankAmount);

@@ -7,7 +7,6 @@ namespace NeoServer.Game.Creatures.Npcs;
 public sealed class NpcType : INpcType
 {
     public string Description { get; set; }
-    public IDialog[] Dialogs { get; init; }
 
     public string Name { get; set; }
 
@@ -32,21 +31,4 @@ public sealed class NpcType : INpcType
     public IIntervalChance VoiceConfig { get; set; }
 
     public IDictionary<ushort, IShopItem> ShopItems { get; } = new Dictionary<ushort, IShopItem>();
-}
-
-public sealed class Dialog : IDialog
-{
-    public string[] OnWords { get; init; }
-    public string[] Answers { get; init; }
-    public string Action { get; init; }
-
-    /// <summary>
-    ///     Indicated how many times to back in dialog
-    /// </summary>
-    public byte Back { get; init; }
-
-    public string StoreAt { get; init; }
-
-    public bool End { get; init; }
-    public IDialog[] Then { get; init; }
 }

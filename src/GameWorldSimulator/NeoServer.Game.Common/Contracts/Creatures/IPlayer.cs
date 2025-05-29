@@ -234,7 +234,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
     void SendMessageTo(ISociableCreature creature, SpeechType type, string message);
     void StartShopping(IShopperNpc npc);
     void StopShopping();
-    bool Sell(IItemType item, byte amount, bool ignoreEquipped);
     void ReceivePayment(IEnumerable<IItem> coins, ulong total);
     bool CanReceiveInCashPayment(IEnumerable<IItem> coins);
     void ReceivePurchasedItems(INpc from, SaleContract saleContract, params IItem[] items);

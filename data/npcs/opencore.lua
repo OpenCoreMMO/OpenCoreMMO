@@ -98,12 +98,13 @@ end
 
 -- On buy npc shop message
 npcType.onBuyItem = function(npc, player, id, subType, amount, ignore, inBackpacks, totalCost)
-	npc:sellItem(player, id, amount, subType, 0, ignore, inBackpacks)
+	-- todo: this is call after in c#, but in c++ this is call before
+	-- npc:sellItem(player, id, amount, subType, 0, ignore, inBackpacks)
 end
 
 -- On sell npc shop message
 npcType.onSellItem = function(npc, player, id, subtype, amount, ignore, name, totalCost)
-	player:sendTextMessage(MESSAGE_TRADE, string.format("Sold %ix %s for %i gold.", amount, name, totalCost))
+	player:sendTextMessage(MESSAGE_INFO_DESCR, string.format("Sold %ix %s for %i gold.", amount, name, totalCost))
 end
 
 -- On check npc shop message (look item)
