@@ -12,7 +12,7 @@ public class AddMoneyCommand: CommandSpell
     {
         error = InvalidOperation.NotPossible;
 
-        if (Params.Length != 1)
+        if (Params.Length != 2)
             return false;
 
         var ctx = IoC.GetInstance<IGameCreatureManager>();

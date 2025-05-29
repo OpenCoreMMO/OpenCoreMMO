@@ -163,7 +163,7 @@ public class Player : CombatActor, IPlayer
     public IPlayerChannel Channels { get; set; }
     public IPlayerParty PlayerParty { get; set; }
     public IBank Bank { get; private set; }
-    public ulong BankAmount => Bank.Amount;
+    public ulong BankAmount => Bank?.Amount ?? 0;
 
     public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
 
