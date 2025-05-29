@@ -65,7 +65,7 @@ public delegate void EquipItem(IPlayer player, IItem item, bool isCheck);
 
 public delegate void DeEquipItem(IPlayer player, IItem item, bool isCheck);
 
-public interface IPlayer : ICombatActor, ISociableCreature
+public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 {
     #region Events
 

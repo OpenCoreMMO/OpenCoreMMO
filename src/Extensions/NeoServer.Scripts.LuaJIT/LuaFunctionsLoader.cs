@@ -20,6 +20,7 @@ public class LuaFunctionsLoader
 
     private static int _scriptEnvIndex;
     private static readonly ScriptEnvironment[] ScriptEnv = new ScriptEnvironment[16];
+
     public LuaFunctionsLoader()
     {
         //_logger = IoC.GetInstance<ILogger>();
@@ -119,11 +120,11 @@ public class LuaFunctionsLoader
                 break;
             case LuaVariantType.VARIANT_TARGETPOSITION:
             case LuaVariantType.VARIANT_POSITION:
-                {
-                    PushPosition(luaState, var.Pos);
-                    Lua.SetField(luaState, -2, "pos");
-                    break;
-                }
+            {
+                PushPosition(luaState, var.Pos);
+                Lua.SetField(luaState, -2, "pos");
+                break;
+            }
         }
 
         SetField(luaState, "instantName", var.InstantName);
@@ -318,7 +319,6 @@ public class LuaFunctionsLoader
             else if (IsBoolean(luaState, i))
             {
                 args[index] = Lua.ToBoolean(luaState, i) ? "true" : "false";
-                
             }
             else if (IsUserdata(luaState, i))
             {
@@ -341,7 +341,7 @@ public class LuaFunctionsLoader
             {
                 Console.WriteLine("[{0}] invalid param type", nameof(GetFormatedLoggerMessage));
             }
-            
+
             index++;
         }
 
@@ -356,6 +356,7 @@ public class LuaFunctionsLoader
         {
             return "";
         }
+
         return cStr;
     }
 
@@ -417,7 +418,7 @@ public class LuaFunctionsLoader
             { LookType.Head, GetField<byte>(luaState, arg, "lookHead") },
             { LookType.Type, GetField<byte>(luaState, arg, "lookType") }
         };
-       
+
         Lua.Pop(luaState, 6);
         return look;
     }
@@ -470,6 +471,7 @@ public class LuaFunctionsLoader
         {
             return LuaDataType.Unknown;
         }
+
         Lua.RawGetI(luaState, -1, 't');
 
         var type = GetNumber<LuaDataType>(luaState, -1);
@@ -538,7 +540,8 @@ public class LuaFunctionsLoader
         SetField(luaState, "lookAddons", Look[LookType.Addon]);
     }
 
-    public static void RegisterClass(LuaState luaState, string className, string baseClass, LuaFunction newFunction = null)
+    public static void RegisterClass(LuaState luaState, string className, string baseClass,
+        LuaFunction newFunction = null)
     {
         // className = {}
         Lua.NewTable(luaState);
@@ -649,6 +652,7 @@ public class LuaFunctionsLoader
         // pop tableName
         Lua.Pop(luaState, 1);
     }
+
     public static void RegisterVariable(LuaState luaState, string tableName, string name, BooleanConfigType value)
     {
         RegisterVariable(luaState, tableName, name, (double)value);
@@ -724,11 +728,13 @@ public class LuaFunctionsLoader
 
     public static int LuaUserdataCompareStruct<T>(LuaState luaState) where T : struct
     {
-        PushBoolean(luaState, EqualityComparer<T>.Default.Equals(GetUserdataStruct<T>(luaState, 1), GetUserdataStruct<T>(luaState, 2)));
+        PushBoolean(luaState,
+            EqualityComparer<T>.Default.Equals(GetUserdataStruct<T>(luaState, 1), GetUserdataStruct<T>(luaState, 2)));
         return 1;
     }
 
-    public static void RegisterSharedClass(LuaState luaState, string className, string baseClass, LuaFunction newFunction)
+    public static void RegisterSharedClass(LuaState luaState, string className, string baseClass,
+        LuaFunction newFunction)
     {
         RegisterClass(luaState, className, baseClass, newFunction);
         RegisterMetaMethod(luaState, className, "__gc", LuaGarbageCollection);
@@ -789,6 +795,7 @@ public class LuaFunctionsLoader
         {
             return defaultValue;
         }
+
         return GetNumber<T>(luaState, arg);
     }
 
@@ -818,6 +825,30 @@ public class LuaFunctionsLoader
         return handle.Target as T;
     }
 
+    private static T ParsePtrToInstance<T>(IntPtr ptr) where T : class
+    {
+        var handlePtr = Marshal.ReadIntPtr(ptr);
+        var handle = GCHandle.FromIntPtr(handlePtr);
+        return handle.Target as T;
+    }
+
+    public static T GetUserdata<T>(LuaState luaState, int arg, string expectedMetatableName) where T : class
+    {
+        var userdataPtr = Lua.TestUData(luaState, arg, expectedMetatableName);
+
+        if (userdataPtr != IntPtr.Zero)
+        {
+            return ParsePtrToInstance<T>(userdataPtr);
+        }
+
+        if (!CheckMetatableInheritance(luaState, arg, expectedMetatableName))
+        {
+            return null;
+        }
+
+        return GetUserdata<T>(luaState, arg);
+    }
+
     public static T GetUserdataStruct<T>(LuaState luaState, int arg) where T : struct
     {
         var userdata = GetRawUserdataStruct<T>(luaState, arg);
@@ -825,10 +856,10 @@ public class LuaFunctionsLoader
         {
             return default;
         }
-        
+
         var handlePtr = Marshal.ReadIntPtr(userdata);
         var handle = GCHandle.FromIntPtr(handlePtr);
-        
+
         if (handle.Target != null)
         {
             return (T)handle.Target;
@@ -859,6 +890,7 @@ public class LuaFunctionsLoader
         {
             return defaultValue;
         }
+
         return Lua.ToBoolean(luaState, arg);
     }
 
@@ -869,6 +901,7 @@ public class LuaFunctionsLoader
         {
             return defaultValue;
         }
+
         return GetString(luaState, arg);
     }
 
@@ -936,6 +969,7 @@ public class LuaFunctionsLoader
         {
             throw new IndexOutOfRangeException();
         }
+
         return ScriptEnv[_scriptEnvIndex];
     }
 
@@ -947,6 +981,7 @@ public class LuaFunctionsLoader
         {
             throw new IndexOutOfRangeException();
         }
+
         return ScriptEnv[_scriptEnvIndex];
     }
 
@@ -961,6 +996,7 @@ public class LuaFunctionsLoader
         {
             throw new IndexOutOfRangeException();
         }
+
         ScriptEnv[_scriptEnvIndex--].ResetEnv();
     }
 
@@ -981,7 +1017,7 @@ public class LuaFunctionsLoader
 
     public static T ToObject<T>(LuaState luaState, int index, bool freeGcHandle = true)
     {
-        if (IsNil(luaState, index)/* || !IsLightUserData(index)*/)
+        if (IsNil(luaState, index) /* || !IsLightUserData(index)*/)
             return default;
 
         var data = Lua.ToUserData(luaState, index);
@@ -1022,7 +1058,7 @@ public class LuaFunctionsLoader
         var userdata = Lua.ToUserData(luaState, index);
         if (userdata == IntPtr.Zero)
             throw new Exception("Failed to update userdata: userdata not found.");
-        
+
         var handle = GCHandle.Alloc(newObj, GCHandleType.Normal);
         IntPtr handlePtr = GCHandle.ToIntPtr(handle);
         Marshal.WriteIntPtr(userdata, handlePtr);
@@ -1051,5 +1087,67 @@ public class LuaFunctionsLoader
     {
         Lua.PushNil(l);
         return 1;
+    }
+
+    public static bool CheckMetatableInheritance(LuaState L, int index, string expectedName)
+    {
+        if (Lua.GetMetaTable(L, index) == 0)
+        {
+            return false;
+        }
+
+        // Traverse the inheritance chain.
+        bool found = false;
+        while (true)
+        {
+            // Check the "__name" field.
+            Lua.GetField(L, -1, "__name");
+            string currentName = Lua.ToString(L, -1);
+            Lua.Pop(L, 1); // Remove __name.
+            if (!string.IsNullOrWhiteSpace(currentName) && currentName == expectedName)
+            {
+                found = true;
+                break;
+            }
+
+            // Check for a "baseclass" field.
+            Lua.GetField(L, -1, "baseclass");
+            if (Lua.IsString(L, -1))
+            {
+                string baseName = Lua.ToString(L, -1);
+                Lua.Pop(L, 1); // Remove baseclass value.
+                if (!string.IsNullOrWhiteSpace(baseName) && baseName == expectedName)
+                {
+                    found = true;
+                    break;
+                }
+
+                // Move to the metatable of the base class.
+                Lua.GetMetaTable(L, baseName);
+                if (Lua.IsNil(L, -1))
+                {
+                    Lua.Pop(L, 1);
+                    break;
+                }
+
+                Lua.Remove(L, -2); // Remove current metatable.
+                continue;
+            }
+
+            Lua.Pop(L, 1); // Remove non-string baseclass.
+
+            // Fallback: try the "__index" table.
+            Lua.GetField(L, -1, "__index");
+            if (!Lua.IsTable(L, -1))
+            {
+                Lua.Pop(L, 1);
+                break;
+            }
+
+            Lua.Remove(L, -2); // Remove current metatable; keep __index.
+        }
+
+        Lua.Pop(L, 1); // Remove final metatable.
+        return found;
     }
 }

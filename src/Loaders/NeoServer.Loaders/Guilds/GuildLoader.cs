@@ -5,6 +5,7 @@ using NeoServer.Game.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Creatures.Guilds;
+using NeoServer.Game.Creatures.Common;
 using NeoServer.Game.Creatures.Guild;
 using NeoServer.Loaders.Interfaces;
 using Serilog;
@@ -24,9 +25,9 @@ public class GuildLoader : ICustomLoader
         _guildStore = guildStore;
     }
 
-    public void Load(GuildEntity guildEntity)
+    public IGuild Load(GuildEntity guildEntity)
     {
-        if (guildEntity is null) return;
+        if (guildEntity is null) return null;
 
         var guild = GetOrCreateGuild(guildEntity, out var shouldAddToStore);
 
@@ -41,10 +42,11 @@ public class GuildLoader : ICustomLoader
         if (shouldAddToStore)
         {
             _guildStore.AddOrUpdate(guild.Id, guild);
-            return;
+            return guild;
         }
 
         _logger.Debug("Guild {Guild} loaded", guildEntity.Name);
+        return guild;
     }
 
     private static void AddMembers(GuildEntity guildEntity, IGuild guild)
@@ -74,7 +76,8 @@ public class GuildLoader : ICustomLoader
         {
             Id = (ushort)guildEntity.Id,
             Channel = _chatChannelFactory.CreateGuildChannel($"{guildEntity.Name}'s Channel",
-                (ushort)guildEntity.Id)
+                (ushort)guildEntity.Id),
+            Bank = new Bank(guildEntity.BankAmount)
         };
 
         return guild;

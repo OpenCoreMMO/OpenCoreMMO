@@ -66,6 +66,21 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         RegisterMethod(luaState, "Game", "reload", LuaGameReload);
 
         RegisterMethod(luaState, "Game", "getPlayers", LuaGameGetPlayers);
+        RegisterMethod(luaState, "Game", "getNormalizedPlayerName", HandleGetNormalizedPlayerNameFunction);
+    }
+
+    private int HandleGetNormalizedPlayerNameFunction(LuaState l)
+    {
+        // Game.getNormalizedPlayerName(name[, isNewName = false])
+        // var name = GetString(l, 1);
+        // var isNewName = GetBoolean(L, 2, false);
+        // var player = g_game().getPlayerByName(name, true, isNewName);
+        // if (player) {
+        //     Lua::pushString(L, player->getName());
+        // } else {
+        //     lua_pushnil(L);
+        // }
+        return 1;
     }
 
     private static int LuaGameGetReturnMessage(LuaState luaState) {

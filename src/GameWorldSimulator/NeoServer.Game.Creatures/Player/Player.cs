@@ -29,6 +29,7 @@ using NeoServer.Game.Common.Parsers;
 using NeoServer.Game.Common.Results;
 using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
+using NeoServer.Game.Creatures.Common;
 using NeoServer.Game.Creatures.Models;
 using NeoServer.Game.Creatures.Models.Bases;
 
@@ -161,7 +162,8 @@ public class Player : CombatActor, IPlayer
     public IGroup Group { get; set; }
     public IPlayerChannel Channels { get; set; }
     public IPlayerParty PlayerParty { get; set; }
-    public ulong BankAmount { get; private set; }
+    public IBank Bank { get; private set; }
+    public ulong BankAmount => Bank.Amount;
 
     public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
 
@@ -170,10 +172,7 @@ public class Player : CombatActor, IPlayer
         return BankAmount + Inventory.GetTotalMoney(coinTypeStore);
     }
 
-    public void LoadBank(ulong amount)
-    {
-        BankAmount = amount;
-    }
+    public void LoadBank(ulong amount) => Bank ??= new Bank(amount);
 
     public uint AccountId { get; init; }
     public int WorldId { get; init; }
@@ -841,15 +840,21 @@ public class Player : CombatActor, IPlayer
     public void ReceivePayment(IEnumerable<IItem> coins, ulong total)
     {
         if (CanReceiveInCashPayment(coins))
+        {
             foreach (var coin in coins)
+            {
                 Inventory.BackpackSlot.AddItem(coin, true);
-        else
-            BankAmount += total;
+            }
+
+            return;
+        }
+
+        Bank?.Credit(total);
     }
 
     public virtual void WithdrawFromBank(ulong amount)
     {
-        if (BankAmount >= amount) BankAmount -= amount;
+        if (BankAmount >= amount) Bank?.Debit(amount);
     }
 
     public bool CanReceiveInCashPayment(IEnumerable<IItem> coins)
@@ -1060,7 +1065,7 @@ public class Player : CombatActor, IPlayer
     public virtual void SetAsInFight()
     {
         if (Group.FlagIsEnabled(PlayerFlag.NotGainInFight)) return;
-        
+
         if (IsPacified) return;
 
         if (HasCondition(ConditionType.InFight, out var condition))

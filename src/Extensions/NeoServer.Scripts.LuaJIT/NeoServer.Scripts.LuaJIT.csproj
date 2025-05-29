@@ -34,6 +34,7 @@
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj" />
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Events\NeoServer.Server.Events.csproj" />
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj" />
+        <ProjectReference Include="..\..\Loaders\NeoServer.Loaders\NeoServer.Loaders.csproj" />
     </ItemGroup>
 
     <ItemGroup>

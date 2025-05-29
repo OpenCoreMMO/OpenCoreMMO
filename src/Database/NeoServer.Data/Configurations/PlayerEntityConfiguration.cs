@@ -63,6 +63,7 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         ConfigureProperty(entity, e => e.SkillSwordTries, null, "0");
         ConfigureProperty(entity, e => e.Vocation, "int", "0");
         ConfigureProperty(entity, e => e.RemainingRecoverySeconds, "int", "0");
+        ConfigureProperty(entity, e => e.BankAmount, "numeric(20, 0)", "0");
 
         entity.HasOne(d => d.Account)
             .WithMany(p => p.Players)

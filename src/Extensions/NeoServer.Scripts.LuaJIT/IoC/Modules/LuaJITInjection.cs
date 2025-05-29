@@ -19,6 +19,7 @@ public static class LuaJITInjection
         builder.AddSingleton<IMoveEvents, MoveEvents>();
         builder.AddSingleton<INpcs, Npcs>();
         builder.AddSingleton<ITalkActions, TalkActions>();
+        builder.AddSingleton<LuaHelperService>();
 
         builder.AddSingleton<IActionFunctions, ActionFunctions>();
         builder.AddSingleton<IConditionFunctions, ConditionFunctions>();
@@ -45,6 +46,7 @@ public static class LuaJITInjection
         builder.AddSingleton<ITalkActionFunctions, TalkActionFunctions>();
         builder.AddSingleton<ITeleportFunctions, TeleportFunctions>();
         builder.AddSingleton<ITileFunctions, TileFunctions>();
+        builder.AddSingleton<IBankFunctionBinder, BankFunctionBinder>();
 
         return builder;
     }

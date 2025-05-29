@@ -4,7 +4,7 @@ using NeoServer.Game.Common.Creatures.Guilds;
 
 namespace NeoServer.Game.Common.Contracts.Creatures;
 
-public interface IGuild
+public interface IGuild: IBankable
 {
     ushort Id { get; init; }
     string Name { get; set; }
