@@ -55,8 +55,8 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
         RegisterMethod(lua, "Spell", "charges", HandleChargesMethod);
 
         //todo: not implemented in 8.60
-        RegisterMethod(lua, "Spell", "castSound", HandleNotImplementedMethod);
-        RegisterMethod(lua, "Spell", "impactSound", HandleNotImplementedMethod);
+        RegisterMethod(lua, "Spell", "castSound", HandleNotImplementedFunction);
+        RegisterMethod(lua, "Spell", "impactSound", HandleNotImplementedFunction);
     }
 
     private static int HandleOnCastSpellMethod(LuaState lua)

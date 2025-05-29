@@ -913,7 +913,7 @@ public class LuaFunctionsLoader
 
     public static int GetArgsCount(LuaState lua) => Lua.GetTop(lua) - 1;
 
-    public static int HandleNotImplementedMethod(LuaState l)
+    public static int HandleNotImplementedFunction(LuaState l)
     {
         Lua.PushNil(l);
         return 1;

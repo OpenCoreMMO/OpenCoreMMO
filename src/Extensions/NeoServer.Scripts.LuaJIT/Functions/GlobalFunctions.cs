@@ -35,6 +35,13 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         RegisterGlobalMethod(luaState, "addEvent", LuaAddEvent);
         RegisterGlobalMethod(luaState, "stopEvent", LuaStopEvent);
         RegisterGlobalMethod(luaState, "sendChannelMessage", LuaSendChannelMessage);
+        RegisterGlobalMethod(luaState, "createCombatArea", HandleNotImplementedFunction);
+
+    }
+
+    private static int HandleCreateCombatFunction(LuaState L)
+    {
+        return 1;
     }
 
     private static int LuaRawGetMetatable(LuaState luaState)

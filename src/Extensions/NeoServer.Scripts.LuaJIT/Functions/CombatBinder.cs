@@ -27,38 +27,50 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
         RegisterSharedClass(lua, "Combat", "", HandleCombatCreate);
         RegisterMetaMethod(lua, "Combat", "__eq", LuaUserdataCompare<LuaCombat>);
 
-        RegisterMethod(lua, "Combat", "setParameter", HandleSetParameterMethod);
-        RegisterMethod(lua, "Combat", "setFormula", HandleSetFormulaMethod);
+        RegisterMethod(lua, "Combat", "setParameter", HandleSetParameterFunction);
+        RegisterMethod(lua, "Combat", "setFormula", HandleSetFormulaFunction);
 
-        RegisterMethod(lua, "Combat", "setArea", HandleNotImplementedMethod);
-        RegisterMethod(lua, "Combat", "addCondition", HandleNotImplementedMethod);
-        RegisterMethod(lua, "Combat", "setCallback", HandleSetCallbackMethod);
-        RegisterMethod(lua, "Combat", "setOrigin", HandleNotImplementedMethod);
+        RegisterMethod(lua, "Combat", "setArea", HandleSetAreaFunction);
+        RegisterMethod(lua, "Combat", "addCondition", HandleNotImplementedFunction);
+        RegisterMethod(lua, "Combat", "setCallback", HandleSetCallbackFunction);
+        RegisterMethod(lua, "Combat", "setOrigin", HandleNotImplementedFunction);
 
-        RegisterMethod(lua, "Combat", "execute", HandleExecuteMethod);
+        RegisterMethod(lua, "Combat", "execute", HandleExecuteFunction);
     }
 
-    private static int HandleExecuteMethod(LuaState L)
+    private static int HandleSetAreaFunction(LuaState L)
     {
-        // combat:execute(creature, variant)
         var combat = GetUserdata<LuaCombat>(L, 1);
         if (combat is null)
         {
             Lua.PushNil(L);
             return 1;
         }
+        
+        return 1;
+    }
 
-        if (IsUserdata(L, 2))
+    private static int HandleExecuteFunction(LuaState lua)
+    {
+        // combat:execute(creature, variant)
+        var combat = GetUserdata<LuaCombat>(lua, 1);
+        if (combat is null)
         {
-            LuaDataType type = GetUserdataType(L, 2);
+            Lua.PushNil(lua);
+            return 1;
+        }
+
+        if (IsUserdata(lua, 2))
+        {
+            LuaDataType type = GetUserdataType(lua, 2);
             if (type != LuaDataType.Player && type != LuaDataType.Monster && type != LuaDataType.Npc)
             {
-                PushBoolean(L, false);
+                PushBoolean(lua, false);
                 return 1;
             }
 
-            var creature = GetUserdata<ICreature>(L, 2);
-            var variant = GetVariant(L, 3);
+            var creature = GetUserdata<ICreature>(lua, 2);
+            var variant = GetVariant(lua, 3);
 
             switch (variant.Type)
             {
@@ -68,7 +80,7 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
 
                     if (target is null)
                     {
-                        PushBoolean(L, false);
+                        PushBoolean(lua, false);
                         return 1;
                     }
 
@@ -88,11 +100,11 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
         }
 
 
-        Lua.PushNil(L);
+        Lua.PushNil(lua);
         return 1;
     }
 
-    private static int HandleSetCallbackMethod(LuaState lua)
+    private static int HandleSetCallbackFunction(LuaState lua)
     {
         // combat:setCallback(key, function)
         var combat = GetUserdata<LuaCombat>(lua, 1);
@@ -117,7 +129,7 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
         return 1;
     }
 
-    private static int HandleSetFormulaMethod(LuaState l)
+    private static int HandleSetFormulaFunction(LuaState l)
     {
         // combat:setFormula(type, mina, minb, maxa, maxb)
         var combat = GetUserdata<LuaCombat>(l, 1);
@@ -146,7 +158,7 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
         return 1;
     }
 
-    private static int HandleSetParameterMethod(LuaState l)
+    private static int HandleSetParameterFunction(LuaState l)
     {
         // combat:setParameter(key, value)
         var combat = GetUserdata<LuaCombat>(l, 1);

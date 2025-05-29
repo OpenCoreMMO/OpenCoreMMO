@@ -575,10 +575,17 @@ public class Player : CombatActor, IPlayer
     {
         const SpeechType talkType = SpeechType.MonsterSay;
 
-        ConsumeMana(spell.ManaConsumption);
-        ConsumeSoul(spell.SoulConsumption);
+        if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteMana))
+        {
+            ConsumeMana(spell.ManaConsumption);
+        }
 
-        if (spell.IncreaseSkill) IncreaseSkillCounter(SkillType.Magic, spell.ManaConsumption);
+        if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteSoul))
+        {
+            ConsumeSoul(spell.SoulConsumption);
+        }
+        
+        if (spell.IncreaseSkill && !Group.FlagIsEnabled(PlayerFlag.NotGainSkill)) IncreaseSkillCounter(SkillType.Magic, spell.ManaConsumption);
 
         if (!spell.ShouldSay) return;
 
@@ -1048,6 +1055,12 @@ public class Player : CombatActor, IPlayer
         var result = base.CanAttack(combatParameter);
         if (result.Failed) return result;
 
+        if (Group.FlagIsEnabled(PlayerFlag.CannotAttackMonster) && Group.FlagIsEnabled(PlayerFlag.CannotAttackPlayer))
+        {
+            StopAttack();
+            return Result.NotPossible;
+        }
+
         var hasEnoughAmmo = Inventory.Weapon is INeedsAmmo distanceWeapon &&
                             distanceWeapon.CanShootAmmunition(Inventory.Ammo);
 
@@ -1462,7 +1475,7 @@ public class Player : CombatActor, IPlayer
 
         return Result.Success;
     }
-
+    
     #region Storage
 
     //TODO: rename this method to something more meaningful or take this from here if this is not game business rule
