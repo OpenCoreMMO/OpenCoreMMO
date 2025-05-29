@@ -111,6 +111,7 @@ public interface ICombatActor : IWalkableCreature
     void RemoveCondition(ConditionType type);
     bool HasCondition(ConditionType type, out ICondition condition);
     bool HasCondition(ConditionType type);
+    ICondition GetCondition(ConditionType type);
     void PropagateAttack(AffectedLocation area, CombatDamage damage);
     void OnEnemyAppears(ICombatActor enemy);
     bool IsHostileTo(ICombatActor enemy);

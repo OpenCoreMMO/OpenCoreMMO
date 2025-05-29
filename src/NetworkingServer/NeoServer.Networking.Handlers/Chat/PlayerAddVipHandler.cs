@@ -78,7 +78,7 @@ public class PlayerAddVipHandler : PacketHandler
 
         try
         {
-            playerRecord = await _playerRepository.GetPlayer(addVipPacket.Name);
+            playerRecord = await _playerRepository.GetByName(addVipPacket.Name);
         }
         catch (Exception ex)
         {

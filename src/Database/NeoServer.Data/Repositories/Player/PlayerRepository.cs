@@ -51,13 +51,19 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
         return await context.PlayerOutfitAddons.Where(x => x.PlayerId == playerId).ToListAsync();
     }
 
-    public async Task<PlayerEntity> GetPlayer(string playerName)
+    public async Task<PlayerEntity> GetByName(string playerName)
     {
         await using var context = NewDbContext;
         //todo: find a way to use invariant culture. it currently doesn't work with sqlite
         return await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == playerName.ToLower());
     }
 
+    public async Task<PlayerEntity> GetById(int id)
+    {
+        await using var context = NewDbContext;
+        return await context.Players.FirstOrDefaultAsync(x => x.Id == id);
+    }
+    
     public async Task UpdatePlayers(IEnumerable<IPlayer> players)
     {
         var tasks = new List<Task>();

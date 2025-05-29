@@ -117,8 +117,10 @@ public interface IWalkableCreature : ICreature
     /// <param name="tile"></param>
     void SetCurrentTile(IDynamicTile tile);
 
+    void TurnTo(ICreature creature);
     void TurnTo(Direction direction);
     void Follow(ICreature creature);
     void CancelWalk();
+
     event StopWalk OnCancelledWalking;
 }

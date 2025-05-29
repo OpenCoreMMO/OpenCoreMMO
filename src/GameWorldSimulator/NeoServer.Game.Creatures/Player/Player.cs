@@ -29,6 +29,7 @@ using NeoServer.Game.Common.Parsers;
 using NeoServer.Game.Common.Results;
 using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
+using NeoServer.Game.Creatures.Common;
 using NeoServer.Game.Creatures.Models;
 using NeoServer.Game.Creatures.Models.Bases;
 
@@ -68,6 +69,7 @@ public class Player : CombatActor, IPlayer
             new CreatureType(
                 characterName,
                 string.Empty,
+                healthPoints,
                 maxHealthPoints,
                 speed,
                 new Dictionary<LookType, ushort> { { LookType.Corpse, 3058 } }),
@@ -151,7 +153,7 @@ public class Player : CombatActor, IPlayer
     /// </summary>
     public string GenderPronoun => Gender == Gender.Male ? "He" : "She";
 
-    public Gender Gender { get; }
+    public Gender Gender { get; set; }
     public int PremiumTime { get; init; }
     public ITown Town { get; set; }
     public IVip Vip { get; }
@@ -160,7 +162,8 @@ public class Player : CombatActor, IPlayer
     public IGroup Group { get; set; }
     public IPlayerChannel Channels { get; set; }
     public IPlayerParty PlayerParty { get; set; }
-    public ulong BankAmount { get; private set; }
+    public IBank Bank { get; private set; }
+    public ulong BankAmount => Bank?.Amount ?? 0;
 
     public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
 
@@ -169,10 +172,7 @@ public class Player : CombatActor, IPlayer
         return BankAmount + Inventory.GetTotalMoney(coinTypeStore);
     }
 
-    public void LoadBank(ulong amount)
-    {
-        BankAmount = amount;
-    }
+    public void LoadBank(ulong amount) => Bank ??= new Bank(amount);
 
     public uint AccountId { get; init; }
     public int WorldId { get; init; }
@@ -837,33 +837,24 @@ public class Player : CombatActor, IPlayer
         OnHear?.Invoke(from, this, speechType, message);
     }
 
-    public bool Sell(IItemType item, byte amount, bool ignoreEquipped)
-    {
-        if (!ignoreEquipped) return true;
-        if (Inventory.BackpackSlot?.Map is null) return false;
-        if (!Inventory.BackpackSlot.Map.TryGetValue(item.ServerId, out var itemTotalAmount)) return false;
-
-        if (itemTotalAmount < amount) return false;
-
-        Inventory.BackpackSlot.RemoveItem(item, amount);
-
-        TradingWithNpc.BuyFromCustomer(this, item, amount);
-
-        return true;
-    }
-
     public void ReceivePayment(IEnumerable<IItem> coins, ulong total)
     {
         if (CanReceiveInCashPayment(coins))
+        {
             foreach (var coin in coins)
+            {
                 Inventory.BackpackSlot.AddItem(coin, true);
-        else
-            BankAmount += total;
+            }
+
+            return;
+        }
+
+        Bank?.Credit(total);
     }
 
     public virtual void WithdrawFromBank(ulong amount)
     {
-        if (BankAmount >= amount) BankAmount -= amount;
+        if (BankAmount >= amount) Bank?.Debit(amount);
     }
 
     public bool CanReceiveInCashPayment(IEnumerable<IItem> coins)
@@ -1074,7 +1065,7 @@ public class Player : CombatActor, IPlayer
     public virtual void SetAsInFight()
     {
         if (Group.FlagIsEnabled(PlayerFlag.NotGainInFight)) return;
-        
+
         if (IsPacified) return;
 
         if (HasCondition(ConditionType.InFight, out var condition))
@@ -1199,6 +1190,20 @@ public class Player : CombatActor, IPlayer
 
     #endregion
 
+    #region Equip/DeEquip
+
+    public void OnDressedItem(IItem item)
+    {
+        OnEquipItem?.Invoke(this, item, true);
+    }
+
+    public void OnUndressedItem(IItem item)
+    {
+        OnDeEquipItem?.Invoke(this, item, true);
+    }
+
+    #endregion
+
     #region Events
 
     public event PlayerLevelAdvance OnLevelAdvanced;
@@ -1221,6 +1226,8 @@ public class Player : CombatActor, IPlayer
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event ReadText OnReadText;
     public event WroteText OnWroteText;
+    public event EquipItem OnEquipItem;
+    public event DeEquipItem OnDeEquipItem;
 
     #endregion
 }

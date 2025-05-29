@@ -8,7 +8,7 @@ public static class ItemTypeStoreTestBuilder
     public static ItemTypeStore Build(params IItem[] items)
     {
         var itemTypeStore = new ItemTypeStore();
-        foreach (var item in items) itemTypeStore.Add(item.ServerId, item.Metadata);
+        foreach (var item in items) itemTypeStore.AddOrUpdate(item.ServerId, item.Metadata);
 
         return itemTypeStore;
     }
@@ -16,7 +16,7 @@ public static class ItemTypeStoreTestBuilder
     public static ItemTypeStore Build(params IItemType[] itemsTypes)
     {
         var itemTypeStore = new ItemTypeStore();
-        foreach (var item in itemsTypes) itemTypeStore.Add(item.ServerId, item);
+        foreach (var item in itemsTypes) itemTypeStore.AddOrUpdate(item.ServerId, item);
 
         return itemTypeStore;
     }

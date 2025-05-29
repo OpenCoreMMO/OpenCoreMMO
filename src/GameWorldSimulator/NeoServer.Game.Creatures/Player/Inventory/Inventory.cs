@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
@@ -177,7 +178,7 @@ public class Inventory : IInventory
         var (slot, item) = InventoryMap.GetSlotAndItemFromItemId(itemId);
 
         if (slot != Slot.None && slot != Slot.Backpack && !ignoreEquipped)
-            return Result<IItem>.Fail(Common.InvalidOperation.NotPossible);
+            return Result<IItem>.Fail(InvalidOperation.NotPossible);
 
         if (slot == Slot.Backpack)
         {

@@ -37,7 +37,7 @@ public class PlayerOutfitLoader : IStartupLoader
         var jsonContent = File.ReadAllText(path);
         var outfitsData = JsonConvert.DeserializeObject<IEnumerable<PlayerOutFitData>>(jsonContent).ToList();
 
-        _playerOutFitStore.Add(Gender.Female, outfitsData.Where(item => item.Type == Gender.Female));
-        _playerOutFitStore.Add(Gender.Male, outfitsData.Where(item => item.Type == Gender.Male));
+        _playerOutFitStore.AddOrUpdate(Gender.Female, outfitsData.Where(item => item.Type == Gender.Female));
+        _playerOutFitStore.AddOrUpdate(Gender.Male, outfitsData.Where(item => item.Type == Gender.Male));
     }
 }

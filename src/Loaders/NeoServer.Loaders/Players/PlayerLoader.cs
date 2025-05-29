@@ -78,7 +78,7 @@ public class PlayerLoader : IPlayerLoader
             new Location((ushort)playerEntity.PosX, (ushort)playerEntity.PosY, (byte)playerEntity.PosZ);
 
         var currentTile = GetCurrentTile(playerLocation);
-        
+
         var premiumTimeDays = (ushort)(playerEntity.Account?.PremiumTimeEndAt is null
             ? 0
             : (playerEntity.Account.PremiumTimeEndAt.Value - DateTime.Now).TotalDays);
@@ -130,6 +130,8 @@ public class PlayerLoader : IPlayerLoader
         player.AddInventory(ConvertToInventory(player, playerEntity));
 
         AddExistingPersonalChannels(player);
+
+        player.LoadBank(playerEntity.BankAmount);
 
         return CreatureFactory.CreatePlayer(player);
     }

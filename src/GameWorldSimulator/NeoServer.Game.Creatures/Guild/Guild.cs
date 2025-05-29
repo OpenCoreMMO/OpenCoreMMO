@@ -27,6 +27,9 @@ public class Guild : IGuild
     {
         return $"{player.GenderPronoun} is member of the {Name}.";
     }
+
+    public required IBank Bank { get; init; }
+    public ulong BankAmount => Bank?.Amount ?? 0;
 }
 
 public class GuildLevel : IGuildLevel, IEquatable<GuildLevel>

@@ -1,1 +1,0 @@
-dofile('scripts/tiles/quest_tiles.lua')

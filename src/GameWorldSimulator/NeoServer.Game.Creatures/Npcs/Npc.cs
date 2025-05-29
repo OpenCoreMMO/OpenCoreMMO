@@ -9,21 +9,18 @@ using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Creatures.Models.Bases;
-using NeoServer.Game.Creatures.Npcs.Dialogs;
 
 namespace NeoServer.Game.Creatures.Npcs;
 
 public class Npc : WalkableCreature, INpc
 {
     public readonly Dictionary<string, Func<string, INpc, ISociableCreature, string>> KeywordReplacementMap;
-    private readonly NpcDialog npcDialog;
 
     public Npc(INpcType type, IMapTool mapTool, ISpawnPoint spawnPoint, IOutfit outfit = null,
         uint healthPoints = 0) : base(type,
         mapTool, outfit, healthPoints)
     {
         Metadata = type;
-        npcDialog = new NpcDialog(this);
         SpawnPoint = spawnPoint;
 
         Cooldowns.Start(CooldownType.Advertise, 10_000);
@@ -48,11 +45,6 @@ public class Npc : WalkableCreature, INpc
 
     public override bool CanBeSeen => true;
 
-    public Dictionary<string, string> GetPlayerStoredValues(ISociableCreature sociableCreature)
-    {
-        return npcDialog.GetDialogStoredValues(sociableCreature);
-    }
-
     public void Advertise()
     {
         if (!Metadata.Marketings?.Any() ?? true) return;
@@ -62,14 +54,9 @@ public class Npc : WalkableCreature, INpc
         Cooldowns.Start(CooldownType.Advertise, 10_000);
     }
 
-    public void BackInDialog(ISociableCreature creature, byte count)
-    {
-        npcDialog.Back(creature.CreatureId, count);
-    }
-
     public override bool WalkRandomStep()
     {
-        if (!Cooldowns.Cooldowns[CooldownType.WalkAround].Expired) return false;
+        if (!Cooldowns.Cooldowns[CooldownType.WalkAround].Expired || SpawnPoint == null) return false;
 
         var result = base.WalkRandomStep(SpawnPoint.Location);
 
@@ -85,116 +72,76 @@ public class Npc : WalkableCreature, INpc
     public void Hear(ICreature from, SpeechType speechType, string message)
     {
         if (from is null || speechType == SpeechType.None || string.IsNullOrWhiteSpace(message)) return;
-
         OnHear?.Invoke(from, this, speechType, message);
-
-        Answer(from, speechType, message);
     }
 
-    public void StopTalkingToCustomer(IPlayer player)
+    public void PlayerCloseChannel(IPlayer player)
     {
-        npcDialog.StopTalkingTo(player);
+        if (player is null) return;
+        OnPlayerCloseChannel?.Invoke(this, player);
     }
 
-    public void ForgetCustomer(ISociableCreature sociableCreature)
+    public bool CanInteract(Location location, int range)
     {
-        StopWatchCustomerMovements(sociableCreature);
-        npcDialog.EraseDialog(sociableCreature.CreatureId);
+        return Location.Z == location.Z && base.CanSee(location, range, range);
     }
 
-    private string BindAnswerVariables(ISociableCreature creature, IDialog dialog, string answer)
+    private IList<IPlayer> _playerInteractionsOrder = new List<IPlayer>();
+    private IDictionary<IPlayer, ushort> _playerInteractions = new Dictionary<IPlayer, ushort>();
+
+    public void SetPlayerInteraction(IPlayer player, ushort topicId)
     {
-        var storedValues = npcDialog.GetDialogStoredValues(creature);
-        if (string.IsNullOrWhiteSpace(dialog.StoreAt)) return answer;
-
-        if (!storedValues.TryGetValue(dialog.StoreAt, out var value)) return answer;
-        return answer.Replace($"{{{{{dialog.StoreAt}}}}}", value);
-    }
-
-    public virtual void Answer(ICreature from, SpeechType speechType, string message)
-    {
-        if (from is null || string.IsNullOrWhiteSpace(message)) return;
-
-        if (from is not ISociableCreature sociableCreature) return;
-
-        var isTalkingWith = npcDialog.IsTalkingWith(from);
-
-        //if it is not the first message to npc and player sent it from any other channel
-        if (isTalkingWith && speechType != SpeechType.PrivatePlayerToNpc) return;
-
-        var dialog = npcDialog.GetNextAnswer(from.CreatureId, message);
-
-        if (dialog is null) return;
-
-        if (!isTalkingWith) WatchCustomerEvents(sociableCreature); //first interaction
-
-        npcDialog.StoreWords(sociableCreature, dialog.StoreAt, message);
-
-        if (dialog.Action is not null)
-            OnDialogAction?.Invoke(this, from, dialog, dialog.Action, GetPlayerStoredValues(sociableCreature));
-
-        if (dialog?.Answers is not null)
+        if (!_playerInteractionsOrder.Contains(player))
         {
-            SendMessageTo(sociableCreature, speechType, dialog);
-
-            OnAnswer?.Invoke(this, from, dialog, message, speechType);
+            _playerInteractionsOrder.Add(player);
+            TurnTo(player);
         }
 
-        if (dialog.End) ForgetCustomer(sociableCreature);
+        _playerInteractions.AddOrUpdate(player, topicId);
     }
 
-    public virtual void SendMessageTo(ISociableCreature to, SpeechType type, IDialog dialog)
+    public void RemovePlayerInteraction(IPlayer player)
     {
-        if (dialog?.Answers is null || to is null) return;
+        _playerInteractionsOrder.Remove(player);
 
-        foreach (var answer in dialog.Answers)
+        if (_playerInteractions.ContainsKey(player))
         {
-            var replacedAnswer = ReplaceKeywords?.Invoke(answer, this, to) ?? answer;
+            _playerInteractions.Remove(player);
 
-            foreach (var keywordReplacement in KeywordReplacementMap)
-                replacedAnswer = replacedAnswer.Replace(keywordReplacement.Key,
-                    keywordReplacement.Value?.Invoke(null, this, to));
-
-            var bindedAnswer = BindAnswerVariables(to, dialog, replacedAnswer);
-
-            if (string.IsNullOrWhiteSpace(bindedAnswer) || to is not IPlayer) continue;
-
-            Say(bindedAnswer, SpeechType.PrivateNpcToPlayer, to);
+            if (this is IShopperNpc shopperNpc)
+                shopperNpc.StopSellingToCustomer(player);
         }
+
+        if (_playerInteractionsOrder.Count > 0)
+            TurnTo(_playerInteractionsOrder.FirstOrDefault());
     }
 
-    private void WatchCustomerEvents(ISociableCreature creature)
+    public bool IsInteractingWithAnyPlayer()
+        => _playerInteractions.Count > 0;
+
+    public bool IsInteractingWithPlayer(IPlayer player)
     {
-        creature.OnCreatureMoved += OnCustomerMoved;
-        if (creature is IPlayer player) player.OnLoggedOut += HandleWhenCustomerLeave;
+        if (_playerInteractions.Count == 0)
+            return false;
+
+        return _playerInteractions.ContainsKey(player);
     }
 
-    private void StopWatchCustomerMovements(ISociableCreature creature)
+    public bool IsPlayerInteractingOnTopic(IPlayer player, ushort topicId)
     {
-        creature.OnCreatureMoved -= OnCustomerMoved;
-        if (creature is IPlayer player) player.OnLoggedOut -= HandleWhenCustomerLeave;
-    }
+        if (_playerInteractions.Count == 0)
+            return false;
 
-    private void OnCustomerMoved(ICreature creature, Location fromLocation, Location toLocation,
-        ICylinderSpectator[] spectators)
-    {
-        if (CanSee(creature.Location)) return;
-        HandleWhenCustomerLeave(creature);
-    }
+        if (!_playerInteractions.TryGetValue(player, out var currentTopicId))
+            return false;
 
-    private void HandleWhenCustomerLeave(ICreature creature)
-    {
-        if (creature is not ISociableCreature sociableCreature) return;
-
-        ForgetCustomer(sociableCreature);
-        OnCustomerLeft?.Invoke(creature);
+        return currentTopicId == topicId;
     }
 
     #region Events
 
-    public event DialogAction OnDialogAction;
-    public event Answer OnAnswer;
     public event Hear OnHear;
+    public event PlayerCloseChannel OnPlayerCloseChannel;
     public event CustomerLeft OnCustomerLeft;
 
     #endregion

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using NeoServer.Game.Common.Chats;
-using NeoServer.Game.Common.Contracts.Creatures.Monsters;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
@@ -38,6 +37,15 @@ public delegate void RemoveCondition(ICreature creature, ICondition condition);
 public delegate void ChangeOutfit(ICreature creature, IOutfit outfit);
 
 public delegate void Think(ICreature creature, int interval);
+
+public delegate void Appear(ICreature self, ICreature creature);
+public delegate void Disappear(ICreature self, ICreature creature);
+
+public delegate void CreatureMove(
+    ICreature self,
+    ICreature creature,
+    Location.Structs.Location fromLocation,
+    Location.Structs.Location toLocation);
 
 public interface ICreature : IMovableThing
 {
@@ -106,17 +114,17 @@ public interface ICreature : IMovableThing
     /// <summary>
     ///     HP
     /// </summary>
-    uint HealthPoints { get; }
+    uint HealthPoints { get; set; }
 
     /// <summary>
     ///     Maximum HP
     /// </summary>
-    uint MaxHealthPoints { get; }
+    uint MaxHealthPoints { get; set; }
 
     /// <summary>
     ///     Indicates if HP is displayed
     /// </summary>
-    bool IsHealthHidden { get; }
+    bool IsHealthHidden { get; set; }
 
     /// <summary>
     ///     Corpse instance
@@ -159,9 +167,24 @@ public interface ICreature : IMovableThing
     event Think OnThink;
 
     /// <summary>
+    ///     Fires when creature appear
+    /// </summary>
+    event Appear OnAppear;
+
+    /// <summary>
+    ///     Fires when creature disappear
+    /// </summary>
+    event Disappear OnDisappear;
+
+    /// <summary>
     ///     Fires when creature changes outfit
     /// </summary>
     event ChangeOutfit OnChangedOutfit;
+
+    /// <summary>
+    ///     Fires when creature move
+    /// </summary>
+    event CreatureMove OnCreatureMove;
 
     /// <summary>
     ///     Checks if creature can see other creature
@@ -190,7 +213,9 @@ public interface ICreature : IMovableThing
     /// </summary>
     void BackToOldOutfit();
 
-    void OnAppear(Location.Structs.Location location, ICylinderSpectator[] spectators);
+    void Appear(Location.Structs.Location location, ICylinderSpectator[] spectators);
+
+    void Disappear(Location.Structs.Location location, ICylinderSpectator[] spectators);
 
     /// <summary>
     ///     Says a message
@@ -202,6 +227,12 @@ public interface ICreature : IMovableThing
     /// </summary>
 
     void Think(int interval);
+
+    void OnCreatureAppear(ICreature creature);
+
+    void OnCreatureDisappear(ICreature creature);
+
+    void OnMove(IWalkableCreature creature, IDynamicTile fromTile, IDynamicTile toTile);
 
     /// <summary>
     ///     Sets new outfit and store current as last outfit

@@ -436,14 +436,14 @@ public class ItemTestData
     public static IItemTypeStore GetItemTypeStore(params IItemType[] itemTypes)
     {
         var itemTypeStore = new ItemTypeStore();
-        foreach (var itemType in itemTypes) itemTypeStore.Add(itemType.ClientId, itemType);
+        foreach (var itemType in itemTypes) itemTypeStore.AddOrUpdate(itemType.ClientId, itemType);
 
         return itemTypeStore;
     }
 
     public static IItemTypeStore AddItemTypeStore(IItemTypeStore itemTypeStore, params IItemType[] itemTypes)
     {
-        foreach (var itemType in itemTypes) itemTypeStore.Add(itemType.ClientId, itemType);
+        foreach (var itemType in itemTypes) itemTypeStore.AddOrUpdate(itemType.ClientId, itemType);
 
         return itemTypeStore;
     }

@@ -91,7 +91,7 @@ public class ChannelLoader : IStartupLoader
 
                 if (createdChannel is null) continue;
 
-                _chatChannelStore.Add(createdChannel.Id, createdChannel);
+                _chatChannelStore.AddOrUpdate(createdChannel.Id, createdChannel);
             }
 
         _logger.Verbose("Channels loaded!");

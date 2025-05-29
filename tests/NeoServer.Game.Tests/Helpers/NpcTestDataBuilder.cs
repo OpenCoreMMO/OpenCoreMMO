@@ -20,7 +20,7 @@ public static class NpcTestDataBuilder
         var itemFactory = new ItemFactory(null, null, null, null, null, null, null, null, null, null);
 
         var npcStore = new NpcStore();
-        npcStore.Add(name, npcType);
+        npcStore.AddOrUpdate(name, npcType);
 
         var coinTypeStore = new CoinTypeStore();
 

@@ -39,7 +39,7 @@ public class GroupLoader
         {
             _groupStore.Clear();
             var groups = GetGroups();
-            foreach (var group in groups) _groupStore.Add(group.Id, group);
+            foreach (var group in groups) _groupStore.AddOrUpdate(group.Id, group);
 
             return new object[] { groups.Count };
         });
@@ -65,7 +65,7 @@ public class GroupLoader
                 continue;
             }
 
-            _groupStore.Add(group.Id, group);
+            _groupStore.AddOrUpdate(group.Id, group);
         }
     }
 

@@ -64,6 +64,7 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
         ConfigureProperty(entity, e => e.SkillSwordTries, null, "0");
         ConfigureProperty(entity, e => e.Vocation, "int(11)", "0");
         ConfigureProperty(entity, e => e.RemainingRecoverySeconds, "int(11)", "0");
+        ConfigureProperty(entity, e => e.BankAmount, "int(11)", "0");
 
         entity.HasOne(d => d.Account)
             .WithMany(p => p.Players)

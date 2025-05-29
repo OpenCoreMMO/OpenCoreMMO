@@ -17,7 +17,7 @@ public class UpdatePlayerInfosCommand (IPlayerRepository playerRepository) :  IR
         
         if (entity.Name != request.Name)
         {
-            var alreadyExistWithThisName = await playerRepository.GetPlayer(request.Name);
+            var alreadyExistWithThisName = await playerRepository.GetByName(request.Name);
         
             if (alreadyExistWithThisName is not null)
                 return new OutputResponse(ErrorMessage.PlayerNameAlreadyExist);

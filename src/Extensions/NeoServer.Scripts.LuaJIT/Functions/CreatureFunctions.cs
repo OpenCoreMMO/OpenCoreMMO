@@ -1,10 +1,16 @@
 ﻿using LuaNET;
+using NeoServer.Game.Combat.Conditions;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Game.Creatures.Player;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts;
+using NeoServer.Server.Events.Creature;
+using System;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -12,13 +18,16 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 {
     private static IGameCreatureManager _gameCreatureManager;
     private static ICreatureEvents _creatureEvents;
+    private static CreatureHealedEventHandler _creatureHealedEventHandler;
 
     public CreatureFunctions(
         IGameCreatureManager gameCreatureManager,
-        ICreatureEvents creatureEvents) : base(nameof(CreatureFunctions))
+        ICreatureEvents creatureEvents,
+        CreatureHealedEventHandler creatureHealedEventHandler) : base(nameof(CreatureFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
         _creatureEvents = creatureEvents;
+        _creatureHealedEventHandler = creatureHealedEventHandler;
     }
 
     public void Init(LuaState luaState)
@@ -36,8 +45,22 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         RegisterMethod(luaState, "Creature", "getName", LuaCreatureGetName);
         RegisterMethod(luaState, "Creature", "getPosition", LuaCreatureGetPosition);
         RegisterMethod(luaState, "Creature", "getDirection", LuaCreatureGetDirection);
-        RegisterMethod(luaState, "Creature", "getSummons", LuaCreatureGetSummons);
+
+        RegisterMethod(luaState, "Creature", "getHealth", LuaCreatureGetHealth);
+        RegisterMethod(luaState, "Creature", "setHealth", LuaCreatureSetHealth);
+        RegisterMethod(luaState, "Creature", "addHealth", LuaCreatureAddHealth);
+        RegisterMethod(luaState, "Creature", "getMaxHealth", LuaCreatureGetMaxHealth);
+        RegisterMethod(luaState, "Creature", "setMaxHealth", LuaCreatureSetMaxHealth);
+        RegisterMethod(luaState, "Creature", "setHiddenHealth", LuaCreatureSetHiddenHealth);
+
+        RegisterMethod(luaState, "Creature", "getCondition", LuaCreatureGetCondition);
+        RegisterMethod(luaState, "Creature", "addCondition", LuaCreatureAddCondition);
+        RegisterMethod(luaState, "Creature", "removeCondition", LuaCreatureRemoveCondition);
+        RegisterMethod(luaState, "Creature", "hasCondition", LuaCreatureHasCondition);
+
         RegisterMethod(luaState, "Creature", "say", LuaCreatureSay);
+
+        RegisterMethod(luaState, "Creature", "getSummons", LuaCreatureGetSummons);
     }
 
     private static int LuaCreatureCreate(LuaState luaState)
@@ -227,7 +250,194 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
             Lua.PushNil(luaState);
         return 1;
     }
-    
+
+    private static int LuaCreatureGetHealth(LuaState luaState)
+    {
+        // creature:getHealth()
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (creature != null)
+            Lua.PushNumber(luaState, creature.HealthPoints);
+        else
+            Lua.PushNil(luaState);
+        return 1;
+    }
+
+    private static int LuaCreatureSetHealth(LuaState luaState)
+    {
+        // creature:setHealth(health)
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (!creature)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var health = GetNumber<uint>(luaState, 2);
+        creature.HealthPoints = Math.Min(health, creature.MaxHealthPoints);
+
+        _creatureHealedEventHandler.Execute(creature, null, 0);
+
+        Lua.PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaCreatureAddHealth(LuaState luaState)
+    {
+        // creature:addHealth(healthChange, combatType)
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (!creature || creature is not ICombatActor combatActor)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var healthChange = GetNumber<ushort>(luaState, 2);
+        combatActor.Heal(healthChange, null);
+        Lua.PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaCreatureGetMaxHealth(LuaState luaState)
+    {
+        // creature:getMaxHealth()
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (creature != null)
+            Lua.PushNumber(luaState, creature.MaxHealthPoints);
+        else
+            Lua.PushNil(luaState);
+        return 1;
+    }
+
+    private static int LuaCreatureSetMaxHealth(LuaState luaState)
+    {
+        // creature:setMaxHealth(maxHealth)
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (!creature)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var maxHealth = GetNumber<uint>(luaState, 2);
+
+        creature.HealthPoints = maxHealth;
+        creature.HealthPoints = Math.Min(creature.HealthPoints, creature.MaxHealthPoints);
+
+        _creatureHealedEventHandler.Execute(creature, null, 0);
+
+        Lua.PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaCreatureSetHiddenHealth(LuaState luaState)
+    {
+        // creature:setHiddenHealth(hide)
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (creature is not null)
+        {
+            creature.IsHealthHidden = GetBoolean(luaState, 2);
+            _creatureHealedEventHandler.Execute(creature, null, 0);
+            Lua.PushBoolean(luaState, true);
+            return 1;
+        }
+
+        Lua.PushNil(luaState);
+        return 1;
+    }
+
+    private static int LuaCreatureGetCondition(LuaState luaState)
+    {
+        // creature:getCondition(conditionType, conditionId = CONDITIONID_COMBAT, subId = 0)
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (creature != null && creature is ICombatActor combatActor)
+        {
+            var conditionType = GetNumber<ConditionType>(luaState, 2);
+            var condition = combatActor.GetCondition(conditionType);
+            if (condition != null) 
+            {
+                PushUserdata(luaState, condition);
+                SetWeakMetatable(luaState, -1, "Condition");
+            }
+        }
+        else
+            Lua.PushNil(luaState);
+        return 1;
+    }
+
+    private static int LuaCreatureAddCondition(LuaState luaState)
+    {
+        // creature:addCondition(conditionType)
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (creature != null && creature is ICombatActor combatActor)
+        {
+            var condition = GetUserdata<ICondition>(luaState, 2);
+            combatActor.AddCondition(condition);
+            Lua.PushBoolean(luaState, true);
+        }
+        else
+            Lua.PushNil(luaState);
+        return 1;
+    }
+
+    private static int LuaCreatureHasCondition(LuaState luaState)
+    {
+        // creature:hasCondition(conditionType)
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (creature != null && creature is ICombatActor combatActor)
+        {
+            var conditionType = GetNumber<ConditionType>(luaState, 2);
+            Lua.PushBoolean(luaState, combatActor.HasCondition(conditionType));
+        }
+        else
+            Lua.PushNil(luaState);
+        return 1;
+    }
+
+    private static int LuaCreatureRemoveCondition(LuaState luaState)
+    {
+        // creature:removeCondition(conditionType)
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (creature != null && creature is ICombatActor combatActor)
+        {
+            var conditionType = GetNumber<ConditionType>(luaState, 2);
+            combatActor.RemoveCondition(conditionType);
+            Lua.PushBoolean(luaState, true);
+        }
+        else
+            Lua.PushNil(luaState);
+        return 1;
+    }
+
+    private static int LuaCreatureSay(LuaState luaState)
+    {
+        // creature:say(text, type, ghost = false, target = nullptr, position)
+
+        var parameters = Lua.GetTop(luaState);
+
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        var text = GetString(luaState, 2);
+        var type = GetNumber<SpeakClassesType>(luaState, 3);
+        var ghost = GetBoolean(luaState, 4, false);
+
+        ICreature target = null;
+        if(parameters >= 5)
+            target = GetUserdata<ICreature>(luaState, 5);
+
+        Location position;
+        if (parameters >= 6)
+            position = GetUserdataStruct<Location>(luaState, 6);
+
+        if (creature != null)
+        {
+            creature.Say(text, (SpeechType)type, target);
+            PushBoolean(luaState, true);
+            return 1;
+        }
+
+        PushBoolean(luaState, false);
+        return 1;
+    }
+
     private static int LuaCreatureGetSummons(LuaState luaState)
     {
         // creature:getSummons()
@@ -248,22 +458,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
             PushThing(luaState, summon);
             Lua.RawSetI(luaState, -2, ++index);
         }
-        
-        return 1;
-    }
-    
 
-    private static int LuaCreatureSay(LuaState luaState)
-    {
-        // creature:say(text, type)
-        var creature = GetUserdata<ICreature>(luaState, 1);
-        var text = GetString(luaState, 2);
-        var type = GetNumber<SpeakClassesType>(luaState, 3);
-
-        if (creature != null)
-            creature.Say(text, (SpeechType)type);
-
-        PushBoolean(luaState, true);
         return 1;
     }
 }
