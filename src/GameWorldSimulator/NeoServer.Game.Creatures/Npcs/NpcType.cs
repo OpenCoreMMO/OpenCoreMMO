@@ -6,11 +6,11 @@ namespace NeoServer.Game.Creatures.Npcs;
 
 public sealed class NpcType : INpcType
 {
-    public string Description { get; }
-    public IDialog[] Dialogs { get; init; }
+    public string Description { get; set; }
 
     public string Name { get; set; }
 
+    public uint Health { get; set; }
     public uint MaxHealth { get; set; }
 
     public ushort Speed { get; set; }
@@ -24,21 +24,11 @@ public sealed class NpcType : INpcType
     public IDictionary<string, dynamic> CustomAttributes { get; } = new Dictionary<string, dynamic>();
     public string[] Marketings { get; init; }
     public uint WalkInterval { get; set; }
-}
+    public uint WalkRadius { get; set; }
 
-public sealed class Dialog : IDialog
-{
-    public string[] OnWords { get; init; }
-    public string[] Answers { get; init; }
-    public string Action { get; init; }
+    public IList<Voice> Voices { get; } = new List<Voice>();
 
-    /// <summary>
-    ///     Indicated how many times to back in dialog
-    /// </summary>
-    public byte Back { get; init; }
+    public IIntervalChance VoiceConfig { get; set; }
 
-    public string StoreAt { get; init; }
-
-    public bool End { get; init; }
-    public IDialog[] Then { get; init; }
+    public IDictionary<ushort, IShopItem> ShopItems { get; } = new Dictionary<ushort, IShopItem>();
 }

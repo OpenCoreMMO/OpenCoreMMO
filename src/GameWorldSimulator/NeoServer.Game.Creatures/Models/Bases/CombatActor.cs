@@ -92,6 +92,12 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return Conditions.TryGetValue(type, out var condition) && !condition.IsDisabled;
     }
 
+    public ICondition GetCondition(ConditionType type)
+    {
+        Conditions.TryGetValue(type, out var condition);
+        return condition;
+    }
+
     public void ResetHealthPoints()
     {
         Heal((ushort)MaxHealthPoints, this);
@@ -240,8 +246,9 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return Result.Success;
     }
 
-    public override void OnAppear(Location location, ICylinderSpectator[] spectators)
+    public override void Appear(Location location, ICylinderSpectator[] spectators)
     {
+        base.Appear(location, spectators);
         foreach (var cylinderSpectator in spectators)
         {
             var spectator = cylinderSpectator.Spectator;
@@ -258,6 +265,11 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
             SetAsEnemy(spectatorEnemy);
         }
+    }
+
+    public override void Disappear(Location location, ICylinderSpectator[] spectators)
+    {
+        base.Disappear(location, spectators);
     }
 
     public abstract bool IsHostileTo(ICombatActor enemy);

@@ -68,7 +68,7 @@ public class StaticTile : BaseTile, IStaticTile
     public IStaticTile CreateClone(Location location)
     {
         foreach (var item in AllItems)
-            item.SetNewLocation(location, true);
+            item.SetNewLocation(location, force: true);
 
         return new StaticTile(location, AllItems);
     }

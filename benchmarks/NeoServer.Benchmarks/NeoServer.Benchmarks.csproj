@@ -13,11 +13,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Remove="C:\Users\Caio\.nuget\packages\microsoft.diagnostics.tracing.traceevent\2.0.49\build\..\lib\native\amd64\KernelTraceControl.dll"/>
-        <None Remove="C:\Users\Caio\.nuget\packages\microsoft.diagnostics.tracing.traceevent\2.0.49\build\..\lib\native\amd64\msdia140.dll"/>
-        <None Remove="C:\Users\Caio\.nuget\packages\microsoft.diagnostics.tracing.traceevent\2.0.49\build\..\lib\native\x86\KernelTraceControl.dll"/>
-        <None Remove="C:\Users\Caio\.nuget\packages\microsoft.diagnostics.tracing.traceevent\2.0.49\build\..\lib\native\x86\KernelTraceControl.Win61.dll"/>
-        <None Remove="C:\Users\Caio\.nuget\packages\microsoft.diagnostics.tracing.traceevent\2.0.49\build\..\lib\native\x86\msdia140.dll"/>
+        <None Remove="C:\Users\Caio\.nuget\packages\microsoft.diagnostics.tracing.traceevent\2.0.49\build\..\lib\native\amd64\KernelTraceControl.dll" />
+        <None Remove="C:\Users\Caio\.nuget\packages\microsoft.diagnostics.tracing.traceevent\2.0.49\build\..\lib\native\amd64\msdia140.dll" />
+        <None Remove="C:\Users\Caio\.nuget\packages\microsoft.diagnostics.tracing.traceevent\2.0.49\build\..\lib\native\x86\KernelTraceControl.dll" />
+        <None Remove="C:\Users\Caio\.nuget\packages\microsoft.diagnostics.tracing.traceevent\2.0.49\build\..\lib\native\x86\KernelTraceControl.Win61.dll" />
+        <None Remove="C:\Users\Caio\.nuget\packages\microsoft.diagnostics.tracing.traceevent\2.0.49\build\..\lib\native\x86\msdia140.dll" />
     </ItemGroup>
 
     <ItemGroup>
@@ -28,9 +28,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj"/>
-        <ProjectReference Include="..\..\src\NetworkingServer\NeoServer.Networking.Packets\NeoServer.Networking.Packets.csproj"/>
-        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj"/>
+        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj" />
+        <ProjectReference Include="..\..\src\NetworkingServer\NeoServer.Networking.Packets\NeoServer.Networking.Packets.csproj" />
+        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj" />
     </ItemGroup>
 
 </Project>

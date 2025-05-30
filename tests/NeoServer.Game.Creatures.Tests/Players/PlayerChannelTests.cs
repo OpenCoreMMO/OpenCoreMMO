@@ -5,6 +5,7 @@ using NeoServer.Game.Chats;
 using NeoServer.Game.Chats.Rules;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Creatures.Common;
 using NeoServer.Game.Creatures.Player;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;
@@ -139,7 +140,11 @@ public class PlayerChannelTests
     public void Private_channels_return_both_guild_and_party_channels()
     {
         //arrange
-        var guild = new Guild.Guild();
+        var guild = new Guild.Guild
+        {
+            Bank = new Bank(0)
+        };
+        
         guild.Channel = new GuildChatChannel(1, "guild channel, guild", guild);
 
         var sut = PlayerTestDataBuilder.Build(guild: guild);

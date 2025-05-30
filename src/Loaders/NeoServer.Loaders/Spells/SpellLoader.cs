@@ -66,7 +66,7 @@ public class SpellLoader(
             .Select(vocationToken =>
             {
                 if (vocationToken.ValueKind == JsonValueKind.Number && vocationToken.TryGetByte(out var vocation))
-                {
+        {
                     return vocation;
                 }
 
@@ -87,11 +87,11 @@ public class SpellLoader(
             })
             .ToArray();
     }
-    
+
     private byte[] LoadVocations(string[] vocations)
     {
         if (vocations == null || vocations.Length == 0) return [];
-    
+
         // Create a lookup dictionary for faster searching
         var vocationLookup = vocationStore.All.ToDictionary(
             x => x.Name.Replace(" ", string.Empty),
@@ -102,8 +102,8 @@ public class SpellLoader(
         return vocations.Select(vocation =>
         {
             var normalizedVocation = vocation.Replace(" ", string.Empty);
-            return vocationLookup.TryGetValue(normalizedVocation, out byte vocationType) 
-                ? vocationType 
+            return vocationLookup.TryGetValue(normalizedVocation, out byte vocationType)
+                ? vocationType
                 : (byte)0;
         }).ToArray();
     }

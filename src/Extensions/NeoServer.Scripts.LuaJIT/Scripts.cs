@@ -7,6 +7,31 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class Scripts : IScripts
 {
+    #region Injection
+
+    /// <summary>
+    ///     A reference to the logger in use.
+    /// </summary>
+    protected readonly ILogger _logger;
+
+    /// <summary>
+    ///     A reference to the config manager in use.
+    /// </summary>
+    private readonly IConfigManager _configManager;
+
+    private readonly IActions _actions;
+    private readonly ICreatureEvents _creatureEvents;
+    private readonly IGlobalEvents _globalEvents;
+    private readonly IMoveEvents _moveEvents;
+    private readonly INpcs _npcs;
+    private readonly RuneManager _runeManager;
+
+    /// <summary>
+    ///     A reference to the talk actions instance in use.
+    /// </summary>
+    private readonly ITalkActions _talkActions;
+
+    #endregion
     public Scripts(ILogger logger)
     {
         _logger = logger;
@@ -23,6 +48,7 @@ public class Scripts : IScripts
         ICreatureEvents creatureEvents,
         IGlobalEvents globalEvents,
         IMoveEvents moveEvents,
+        INpcs npcs,
         RuneManager runeManager)
     {
         //_instance = this;
@@ -33,6 +59,8 @@ public class Scripts : IScripts
         _creatureEvents = creatureEvents;
         _globalEvents = globalEvents;
         _moveEvents = moveEvents;
+        _runeManager = runeManager;
+        _npcs = npcs;
         _runeManager = runeManager;
         _talkActions = talkActions;
 
@@ -46,6 +74,7 @@ public class Scripts : IScripts
         _creatureEvents.Clear();
         _globalEvents.Clear();
         _moveEvents.Clear();
+        _npcs.Clear();
         _talkActions.Clear();
         _runeManager.Clear();
     }
@@ -162,31 +191,6 @@ public class Scripts : IScripts
     {
         return _scriptId;
     }
-
-    #region Injection
-
-    /// <summary>
-    ///     A reference to the logger in use.
-    /// </summary>
-    protected readonly ILogger _logger;
-
-    /// <summary>
-    ///     A reference to the config manager in use.
-    /// </summary>
-    private readonly IConfigManager _configManager;
-
-    private readonly IActions _actions;
-    private readonly ICreatureEvents _creatureEvents;
-    private readonly IGlobalEvents _globalEvents;
-    private readonly IMoveEvents _moveEvents;
-    private readonly RuneManager _runeManager;
-
-    /// <summary>
-    ///     A reference to the talk actions instance in use.
-    /// </summary>
-    private readonly ITalkActions _talkActions;
-
-    #endregion
 
     #region Members
 

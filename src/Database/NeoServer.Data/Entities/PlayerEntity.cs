@@ -67,6 +67,7 @@ public sealed class PlayerEntity
     public int MagicLevel { get; set; }
     public double MagicLevelTries { get; set; }
     public double Experience { get; set; }
+    public ulong BankAmount { get; set; }
 
     public ChaseMode ChaseMode { get; set; }
     public FightMode FightMode { get; set; }

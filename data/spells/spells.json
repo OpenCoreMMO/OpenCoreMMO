@@ -147,26 +147,6 @@
 		"level": 60
 	},
   {
-    "name": "Create Npc",
-    "words": "/npc",
-    "script": "NpcCreator",
-    "description": "",
-    "mana": 0,
-    "cooldown": "0",
-    "level": 1,
-    "type": "command"
-  },
-  {
-    "name": "Reload",
-    "words": "/reload",
-    "script": "ReloadCommand",
-    "description": "",
-    "mana": 0,
-    "cooldown": "0",
-    "level": 1,
-    "type": "command"
-  },
-  {
     "name": "PullPlayer",
     "words": "/c",
     "script": "PullPlayerCommand",
@@ -278,6 +258,17 @@
     "words": "/spy",
     "description": "Get informations of  Player inventory!",
     "script": "SpyPlayerCommand",
+    "mana": 0,
+    "cooldown": "0",
+    "level": 1,
+    "vocations": [11],
+    "type": "command"
+ },
+ {
+    "name": "AddMoney",
+    "words": "/addmoney",
+    "description": "Add money to player bank!",
+    "script": "AddMoneyCommand",
     "mana": 0,
     "cooldown": "0",
     "level": 1,

@@ -7,6 +7,7 @@ using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
@@ -24,15 +25,13 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         if (string.IsNullOrWhiteSpace(type.Name)) throw new ArgumentNullException(nameof(type.Name));
         MaxHealthPoints = type.MaxHealth;
-        HealthPoints = Math.Min(MaxHealthPoints, healthPoints == 0 ? MaxHealthPoints : healthPoints);
+        HealthPoints = type.Health > 0 ? Math.Min(type.Health, MaxHealthPoints) : Math.Min(MaxHealthPoints, healthPoints == 0 ? MaxHealthPoints : healthPoints);
 
         CreatureType = type;
 
         CreatureId = RandomCreatureIdGenerator.Generate(this);
 
         Outfit = outfit ?? BuildOutfit(type);
-
-        MaxHealthPoints = type.MaxHealth;
     }
 
     public Action<ICreature> NextAction { get; protected set; }
@@ -51,6 +50,10 @@ public abstract class Creature : IEquatable<Creature>, ICreature
 
     public event Think OnThink;
 
+    public event Appear OnAppear;
+    public event Disappear OnDisappear;
+    public event CreatureMove OnCreatureMove;
+
     public IDynamicTile Tile
     {
         get => tile;
@@ -61,8 +64,8 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         }
     }
 
-    public uint HealthPoints { get; protected set; }
-    public uint MaxHealthPoints { get; protected set; }
+    public uint HealthPoints { get; set; }
+    public uint MaxHealthPoints { get; set; }
     public string Name => CreatureType.Name;
 
     public string GetLookText(bool isClose = false, bool showInternalDetails = false)
@@ -146,12 +149,9 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         return true;
     }
 
-    public virtual void OnAppear(Location location, ICylinderSpectator[] spectators)
-    {
-    }
 
     public virtual byte Emblem { get; } // TODO: implement.
-    public bool IsHealthHidden { get; protected set; }
+    public bool IsHealthHidden { get; set; }
     public Location Location { get; private set; }
 
     public void SetNewLocation(Location location, bool force = false)
@@ -168,6 +168,33 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public virtual void Think(int interval)
     {
         OnThink?.Invoke(this, interval);
+    }
+
+    public virtual void Appear(Location location, ICylinderSpectator[] spectators)
+    {
+        foreach (var cylinderSpectator in spectators)
+            cylinderSpectator.Spectator.OnCreatureAppear(this);
+    }
+
+    public void OnCreatureAppear(ICreature creature)
+    {
+        OnAppear?.Invoke(this, creature);
+    }
+
+    public virtual void Disappear(Location location, ICylinderSpectator[] spectators)
+    {
+        foreach (var cylinderSpectator in spectators)
+            cylinderSpectator.Spectator.OnCreatureDisappear(this);
+    }
+
+    public virtual void OnCreatureDisappear(ICreature creature)
+    {
+        OnDisappear?.Invoke(this, creature);
+    }
+
+    public void OnMove(IWalkableCreature creature, IDynamicTile fromTile, IDynamicTile toTile)
+    {
+        OnCreatureMove?.Invoke(this, creature, fromTile.Location, toTile.Location);
     }
 
     public void OnMoved(IThing to)

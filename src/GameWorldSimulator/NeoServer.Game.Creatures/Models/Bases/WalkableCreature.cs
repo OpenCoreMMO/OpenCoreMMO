@@ -47,7 +47,13 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
         if (_walkingQueue.IsEmpty()) OnCompleteWalking?.Invoke(this);
         OnCreatureMoved?.Invoke(this, fromTile.Location, toTile.Location, spectators);
+
+        foreach (var spectator in spectators)
+            spectator.Spectator.OnMove(this, fromTile, toTile);
     }
+
+    public void TurnTo(ICreature creature)
+        => TurnTo(Location.DirectionTo(creature.Location));
 
     public void TurnTo(Direction direction)
     {
@@ -207,7 +213,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         return true;
     }
 
-    public virtual void OnCreatureDisappear(ICreature creature)
+    public virtual void OnWalkableCreatureDisappear(ICreature creature)
     {
         StopFollowing();
     }
@@ -216,7 +222,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     {
         if (!CanSee(creature.Location, 9, 9))
         {
-            OnCreatureDisappear(creature);
+            OnWalkableCreatureDisappear(creature);
             return;
         }
 

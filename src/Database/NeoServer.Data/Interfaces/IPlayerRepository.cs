@@ -14,7 +14,7 @@ public interface IPlayerRepository : IBaseRepositoryNeo<PlayerEntity>
     Task<List<PlayerOutfitAddonEntity>> GetOutfitAddons(int playerId);
     Task UpdatePlayers(IEnumerable<IPlayer> players);
     Task UpdatePlayerOnlineStatus(uint playerId, bool status);
-    Task<PlayerEntity> GetPlayer(string playerName);
+    Task<PlayerEntity> GetByName(string playerName);
 
     /// <summary>
     ///     Save player info, inventory, backpack and depot
@@ -22,7 +22,7 @@ public interface IPlayerRepository : IBaseRepositoryNeo<PlayerEntity>
     /// <param name="player"></param>
     /// <returns></returns>
     Task SavePlayer(IPlayer player);
-
-    Task<IEnumerable<PlayerEntity>> GetPaginatedPlayersAsync(Expression<Func<PlayerEntity, bool>> filter, int page,
-        int limit);
+    
+    Task<IEnumerable<PlayerEntity>> GetPaginatedPlayersAsync(Expression<Func<PlayerEntity, bool>> filter, int page, int limit);
+    Task<PlayerEntity> GetById(int id);
 }

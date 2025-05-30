@@ -15,8 +15,8 @@ public class CreatePlayerCommand(IPlayerRepository playerRepository, IOptions<Pl
 {
     public async Task<OutputResponse> Handle(CreatePlayerRequest request, CancellationToken cancellationToken)
     {
-        var playerAlreadyExist = await playerRepository.GetPlayer(request.Name);
-
+        var playerAlreadyExist = await playerRepository.GetByName(request.Name);
+        
         if (playerAlreadyExist is not null)
             return new OutputResponse(ErrorMessage.PlayerAlreadyExist);
 

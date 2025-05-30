@@ -195,7 +195,7 @@ public class MonsterKilledEventHandlerTest
             return mock.Object;
         });
 
-        foreach (var vocation in mockedVocations) vocationStore.Add(vocation.VocationType, vocation);
+        foreach (var vocation in mockedVocations) vocationStore.AddOrUpdate(vocation.VocationType, vocation);
 
         return vocationStore;
     }

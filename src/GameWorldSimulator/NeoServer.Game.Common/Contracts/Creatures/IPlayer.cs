@@ -63,7 +63,11 @@ public delegate void ReadText(IPlayer player, IReadable readable, string text);
 
 public delegate void WroteText(IPlayer player, IReadable readable, string text);
 
-public interface IPlayer : ICombatActor, ISociableCreature
+public delegate void EquipItem(IPlayer player, IItem item, bool isCheck);
+
+public delegate void DeEquipItem(IPlayer player, IItem item, bool isCheck);
+
+public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 {
     ushort Level { get; }
     byte LevelPercent { get; }
@@ -82,7 +86,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     PvpSecureMode SecureMode { get; }
     IPlayerContainerList Containers { get; }
 
-    ITown Town { get; }
+    ITown Town { get; set; }
 
     IInventory Inventory { get; }
     ushort Mana { get; }
@@ -111,7 +115,7 @@ public interface IPlayer : ICombatActor, ISociableCreature
     IPlayerChannel Channels { get; set; }
     IPlayerParty PlayerParty { get; set; }
     string GenderPronoun { get; }
-    Gender Gender { get; }
+    Gender Gender { get; set;  }
     int PremiumTime { get; }
     bool HasPremiumTime => PremiumTime > 0;
     IDictionary<SkillType, ISkill> Skills { get; }
@@ -219,7 +223,6 @@ public interface IPlayer : ICombatActor, ISociableCreature
     void SendMessageTo(ISociableCreature creature, SpeechType type, string message);
     void StartShopping(IShopperNpc npc);
     void StopShopping();
-    bool Sell(IItemType item, byte amount, bool ignoreEquipped);
     void ReceivePayment(IEnumerable<IItem> coins, ulong total);
     bool CanReceiveInCashPayment(IEnumerable<IItem> coins);
     void ReceivePurchasedItems(INpc from, SaleContract saleContract, params IItem[] items);
@@ -273,6 +276,12 @@ public interface IPlayer : ICombatActor, ISociableCreature
 
     void AddRegenerationBonus(RegenerationBonus regenerationBonus);
     void RemoveRegenerationBonus(RegenerationBonus regenerationBonus);
+    void OnDressedItem(IItem item);
+    void OnUndressedItem(IItem item);
+    void PostSpellCast(ISpell spell);
+    bool HasEnoughSoul(ushort soul);
+    Result CanCastSpell(ISpell spell);
+    void ConsumeSoul(ushort soul);
 
     #region Events
 
@@ -299,8 +308,4 @@ public interface IPlayer : ICombatActor, ISociableCreature
 
     #endregion
 
-    void PostSpellCast(ISpell spell);
-    bool HasEnoughSoul(ushort soul);
-    Result CanCastSpell(ISpell spell);
-    void ConsumeSoul(ushort soul);
 }

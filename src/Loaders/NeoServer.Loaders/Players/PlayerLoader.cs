@@ -135,6 +135,8 @@ public class PlayerLoader : IPlayerLoader
 
         AddExistingPersonalChannels(player);
 
+        player.LoadBank(playerEntity.BankAmount);
+
         return CreatureFactory.CreatePlayer(player);
     }
 

@@ -30,9 +30,9 @@ public class InventoryMoneyCalculationTests
         backpack.AddItem(bag);
 
         ICoinTypeStore coinTypeStore = new CoinTypeStore();
-        coinTypeStore.Add(1, platinum.Metadata);
-        coinTypeStore.Add(2, gold.Metadata);
-        coinTypeStore.Add(3, crystal.Metadata);
+        coinTypeStore.AddOrUpdate(1, platinum.Metadata);
+        coinTypeStore.AddOrUpdate(2, gold.Metadata);
+        coinTypeStore.AddOrUpdate(3, crystal.Metadata);
 
         //assert
         inventory.GetTotalMoney(coinTypeStore).Should().Be(25010);
