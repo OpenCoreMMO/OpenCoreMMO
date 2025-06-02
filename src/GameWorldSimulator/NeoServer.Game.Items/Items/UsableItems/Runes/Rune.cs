@@ -83,7 +83,6 @@ public class Rune : Cumulative, IRune
     public bool NeedWeapon => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedWeapon);
     public bool NeedLearn => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedLearn);
     public byte[] VocationIds { get; set; }
-    public string[] Vocations { get; }
     public bool NeedsPremium => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedsPremium);
 
     public static bool IsApplicable(IItemType type)

@@ -586,7 +586,7 @@ public class Player : CombatActor, IPlayer
             ConsumeSoul(spell.SoulConsumption);
         }
         
-        if (spell.IncreaseSkill && !Group.FlagIsEnabled(PlayerFlag.NotGainSkill)) IncreaseSkillCounter(SkillType.Magic, spell.ManaConsumption);
+        if (spell.ManaConsumption > 0 && !Group.FlagIsEnabled(PlayerFlag.NotGainSkill)) IncreaseSkillCounter(SkillType.Magic, spell.ManaConsumption);
 
         if (!spell.ShouldSay) return;
 

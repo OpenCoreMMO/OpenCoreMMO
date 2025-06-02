@@ -16,7 +16,6 @@ public static class LuaInjection
         builder.AddSingleton<IGlobalEventsScriptService, LuaGlobalEventsScriptService>();
         builder.AddSingleton<IMoveEventsScriptService, LuaMoveEventsScriptService>();
         builder.AddSingleton<ITalkActionScriptService, LuaTalkActionScriptService>();
-        builder.AddSingleton<IRuneScriptService, LuaRuneScriptService>();
 
         return builder;
     }

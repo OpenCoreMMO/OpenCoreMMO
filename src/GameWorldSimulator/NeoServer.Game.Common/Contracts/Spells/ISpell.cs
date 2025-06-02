@@ -13,12 +13,6 @@ public interface ISpell : IHasCooldown
 
     string Name { get; set; }
     bool ShouldSay { get; }
-
-    /// <summary>
-    ///     Indicates if should train magic level when spell is cast
-    /// </summary>
-    bool IncreaseSkill => true;
-
     string Words { get; set; }
     bool Enabled { get; }
     bool BlockWalls { get; set; }
@@ -46,5 +40,4 @@ public interface ISpell : IHasCooldown
 public interface ICommandSpell : ISpell
 {
     public object[] Params { get; set; }
-    bool ISpell.IncreaseSkill => false;
 }

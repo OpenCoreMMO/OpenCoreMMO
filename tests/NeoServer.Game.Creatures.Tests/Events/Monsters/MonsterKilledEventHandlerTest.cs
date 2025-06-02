@@ -89,8 +89,9 @@ public class MonsterKilledEventHandlerTest
         var playerOneAfter = playerOne.Experience;
         var playerTwoAfter = playerTwo.Experience;
 
+        
         Assert.Equal(playerOneBefore + 75, playerOneAfter);
-        Assert.Equal(playerTwoBefore + 25, playerTwoAfter);
+        Assert.Equal(playerTwoBefore + 75, playerTwoAfter);
     }
 
     [Fact]

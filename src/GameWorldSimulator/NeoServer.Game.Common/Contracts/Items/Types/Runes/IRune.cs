@@ -4,7 +4,7 @@ using NeoServer.Game.Common.Results;
 
 namespace NeoServer.Game.Common.Contracts.Items.Types.Runes;
 
-public interface IRune : IHasCooldown, ICumulative
+public interface IRune : IHasCooldown, ICumulative, IUsableRequirement
 {
     bool Enabled { get; }
     ISpell Spell { get; }

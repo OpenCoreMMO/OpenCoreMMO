@@ -8,13 +8,15 @@ using NeoServer.Server.Tasks;
 
 namespace NeoServer.Server.Events.Combat;
 
-public class CreatureChangedAttackTargetEventHandler(IGameServer game, IPlayerSkullService skullService, IAttackService attackService)
+public class CreatureChangedAttackTargetEventHandler(
+    IGameServer game,
+    IPlayerSkullService skullService,
+    IAttackService attackService)
 {
     public void Execute(ICombatActor actor, uint oldTarget, uint newTarget)
     {
-        if (actor is IMonster) return;
         if (actor.AttackEvent != 0) return;
-        
+
         var result = Attack(actor);
         var attackSpeed = result ? actor.AttackSpeed : 300;
         actor.AttackEvent = game.Scheduler.AddEvent(new SchedulerEvent((int)attackSpeed, () => Attack(actor)));
@@ -52,7 +54,14 @@ public class CreatureChangedAttackTargetEventHandler(IGameServer game, IPlayerSk
         // if (actor is IPlayer playerAggressor && victim is IPlayer playerEnemy)
         //     skullService.UpdateSkullOnAttack(playerAggressor, playerEnemy);
 
-        var attackInput = AttackInputBuilder.Build(actor, victim);
+        if (victim is not ICombatActor target) return Result.NotPossible;
+        
+        if (actor is IMonster)
+        {
+            actor.Attack(target);
+        }
+
+        var attackInput = AttackInputBuilder.Build(actor, target);
         return attackService.Execute(attackInput);
 
         //return victim is not ICombatActor enemy ? Result.NotPossible : actor.Attack(enemy);

@@ -22,8 +22,7 @@ public static class ScriptManagerTestBuilder
             new Mock<ICreatureEventsScriptService>().Object,
             new Mock<IGlobalEventsScriptService>().Object,
             new Mock<IMoveEventsScriptService>().Object,
-            new Mock<ITalkActionScriptService>().Object,
-            new LuaRuneScriptService(new RuneManager())
+            new Mock<ITalkActionScriptService>().Object
         );
     }
 }

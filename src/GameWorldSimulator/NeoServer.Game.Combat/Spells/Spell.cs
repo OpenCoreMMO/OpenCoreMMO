@@ -192,7 +192,6 @@ public abstract class Spell<T> : BaseSpell where T : ISpell
 {
     private static readonly Lazy<T> Lazy = new(() => (T)Activator.CreateInstance(typeof(T), true));
     public override bool ShouldSay => true;
-
     public override string Words { get; set; }
     public static T Instance => Lazy.Value;
 }

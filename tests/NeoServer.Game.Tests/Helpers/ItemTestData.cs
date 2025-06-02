@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
@@ -375,7 +376,7 @@ public class ItemTestData
         return new Coin(type, new Location(100, 100, 7), amount);
     }
 
-    public static IAttackRune CreateAttackRune(ushort id, DamageType damageType = DamageType.Energy,
+    public static IRune CreateAttackRune(ushort id, DamageType damageType = DamageType.Energy,
         byte amount = 100,
         bool needTarget = true, ushort min = 100, ushort max = 100, IAreaEffectStore areaEffectStore = null)
     {
@@ -397,13 +398,11 @@ public class ItemTestData
         {
             [ItemAttribute.Count] = amount
         };
-
-        areaEffectStore ??= new AreaEffectStore();
-
+        
         type.SetGroupIfNone();
 
         var factory = new RuneFactory();
-        return (IAttackRune)factory.Create(type, new Location(100, 100, 7), attributes);
+        return (IRune)factory.Create(type, new Location(100, 100, 7), attributes);
     }
 
     public static IItem CreateTopItem(ushort id, byte topOrder)

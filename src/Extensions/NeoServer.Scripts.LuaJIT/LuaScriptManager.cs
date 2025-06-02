@@ -17,8 +17,7 @@ public class LuaScriptManager : IScriptManager
         ICreatureEventsScriptService creatureEventsScriptService,
         IGlobalEventsScriptService globalEventsScriptService,
         IMoveEventsScriptService moveEventsScriptService,
-        ITalkActionScriptService talkActionsScriptService,
-        IRuneScriptService runeScriptService)
+        ITalkActionScriptService talkActionsScriptService)
     {
         _luaStartup = luaStartup;
         _globalEvents = globalEvents;
@@ -29,7 +28,6 @@ public class LuaScriptManager : IScriptManager
         GlobalEvents = globalEventsScriptService;
         MoveEvents = moveEventsScriptService;
         TalkActions = talkActionsScriptService;
-        Rune = runeScriptService;
     }
 
     #endregion
@@ -86,7 +84,6 @@ public class LuaScriptManager : IScriptManager
     /// </summary>
     public ITalkActionScriptService TalkActions { get; }
 
-    public IRuneScriptService Rune { get; }
 
     #endregion
 }
