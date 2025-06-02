@@ -17,8 +17,12 @@ public struct CalculatedAttackDamage
     public CombatDamage MainDamage { get; set; }
     public CombatDamage ExtraDamage { get; set; }
 }
-public struct CombatDamage
+public class CombatDamage
 {
+    public CombatDamage()
+    {
+        
+    }
     public CombatDamage(ushort damage, DamageType type)
     {
         Damage = damage;

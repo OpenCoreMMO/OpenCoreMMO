@@ -30,7 +30,7 @@ public readonly struct CombatDamageList
         }
     }
 
-    public bool IsSingle => _singleDamage.HasValue;
+    public bool IsSingle => _singleDamage?.Damage != 0;
     public int Count => IsSingle ? 1 : _multipleDamages.Length;
 
     public bool Unjustified { get; }
@@ -78,7 +78,7 @@ public readonly struct CombatDamageList
             get
             {
                 if (list.IsSingle)
-                    return list._singleDamage!.Value;
+                    return list._singleDamage;
                 return list._multipleDamages[_index];
             }
         }

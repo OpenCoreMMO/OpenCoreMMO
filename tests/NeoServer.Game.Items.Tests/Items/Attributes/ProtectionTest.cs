@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using FluentAssertions;
 using Moq;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Items.Items;
 using NeoServer.Game.Items.Items.Attributes;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Map;
@@ -19,372 +17,355 @@ namespace NeoServer.Game.Items.Tests.Items.Attributes;
 public class ProtectionTest
 {
     [Fact]
-    public void DressedIn_When_Has_Damage_Protection_Should_Reduce_Damage()
+    public void Player_with_fire_protection_equipment_takes_reduced_fire_damage()
     {
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
-        {
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes:
+        [
+            (ItemAttribute.BodyPosition, "body"),
             (ItemAttribute.AbsorbPercentFire, 20)
-        }, charges: 10);
+        ], charges: 10);
 
-        var player = PlayerTestDataBuilder.Build(hp: 200);
+        var player = PlayerTestDataBuilder.Build(hp: 400);
         var enemy = PlayerTestDataBuilder.Build();
+
+        player.Inventory.AddItem(sut, Slot.Body);
 
         sut.DressedIn(player);
 
-        var resultDamage = 0;
-        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damage; };
-
         var damage = new CombatDamage(200, DamageType.Fire);
         player.TakeDamage(enemy, damage);
-
-        Assert.Equal(160, resultDamage);
+        
+        damage.Damage.Should().Be(160);
     }
-
+    
+    
     [Fact]
-    public void DressedIn_When_Has_No_Damage_Protection_Should_Not_Reduce_Damage()
+    public void Player_with_no_fire_protection_equipment_takes_regular_fire_damage()
     {
-        var itemType = new Mock<IItemType>();
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes:
+        [
+            (ItemAttribute.BodyPosition, "body"),
+            (ItemAttribute.AbsorbPercentPoison, 20)
+        ], charges: 10);
 
-        itemType.SetupGet(x => x.Attributes).Returns(new ItemAttributeList());
-
-        itemType.SetupGet(x => x.Attributes.DamageProtection).Returns(new Dictionary<DamageType, sbyte>
-        {
-            { DamageType.Earth, 20 }
-        });
-
-        var sut = new BodyDefenseEquipment(itemType.Object, Location.Zero);
-
-        var player = PlayerTestDataBuilder.Build(hp: 200);
+        var player = PlayerTestDataBuilder.Build(hp: 400);
         var enemy = PlayerTestDataBuilder.Build();
+    
+        player.Inventory.AddItem(sut, Slot.Body);
 
         sut.DressedIn(player);
-
-        var resultDamage = 0;
-        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damage; };
-
+        
         var damage = new CombatDamage(200, DamageType.Fire);
         player.TakeDamage(enemy, damage);
-
-        Assert.Equal(200, resultDamage);
+        
+        damage.Damage.Should().Be(200);
     }
-
+    
     [Fact]
-    public void DressedIn_When_Has_100_Percent_Damage_Protection_Should_Reduce_Damage_To_0()
+    public void Player_with_100percent_fire_protection_equipment_takes_no_fire_damage()
     {
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
-        {
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes:
+        [
+            (ItemAttribute.BodyPosition, "body"),
             (ItemAttribute.AbsorbPercentFire, 100)
-        }, charges: 10);
-
+        ], charges: 10);
+    
         var player = PlayerTestDataBuilder.Build();
         var enemy = PlayerTestDataBuilder.Build();
-
+    
+        player.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(player);
-
-        var resultDamage = 0;
-        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damage; };
-
+    
         var damage = new CombatDamage(200, DamageType.Fire);
         player.TakeDamage(enemy, damage);
-
-        Assert.Equal(0, resultDamage);
+        
+        damage.Damage.Should().Be(0);
     }
-
-
+    
+    
     [Fact]
-    public void DressedIn_100PercentDamageProtection_From_Different_Attack_Should_Not_Reduce_Damage()
+    public void Player_with_fire_protection_equipment_takes_regular_energy_damage()
     {
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
-        {
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, slot:"body", attributes:
+        [
             (ItemAttribute.AbsorbPercentFire, 100)
-        }, charges: 10);
-
+        ], charges: 10);
+    
         var player = PlayerTestDataBuilder.Build();
         var enemy = PlayerTestDataBuilder.Build();
-
+    
+        player.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(player);
-
-        var resultDamage = 0;
-        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damage; };
-
-        var damage = new CombatDamage(200, DamageType.Energy);
+        
+        var damage = new CombatDamage(100, DamageType.Energy);
         player.TakeDamage(enemy, damage);
-
-        resultDamage.Should().BeGreaterThan(0);
+        
+        damage.Damage.Should().Be(100);
     }
-
+    
     [Fact]
-    public void UndressFrom_When_Receive_Damage_Should_Not_Reduce_Damage()
+    public void Player_takes_regular_damage_after_removing_protection_equipment()
     {
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
-        {
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes:
+        [
+            (ItemAttribute.BodyPosition, "body"),
             (ItemAttribute.AbsorbPercentFire, 100)
-        }, charges: 10);
-
-        var player = PlayerTestDataBuilder.Build(hp: 200);
+        ], charges: 10);
+    
+        var player = PlayerTestDataBuilder.Build(hp: 500);
         var enemy = PlayerTestDataBuilder.Build();
-
+    
+        player.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(player);
-
-        var resultDamage = 0;
-        player.OnInjured += (_, _, damage) => { resultDamage = damage.Damage; };
-
+        
         var damage = new CombatDamage(200, DamageType.Fire);
         player.TakeDamage(enemy, damage);
-
-        Assert.Equal(0, resultDamage);
-
+        
+        damage.Damage.Should().Be(0);
+    
+        player.Inventory.RemoveItem(Slot.Body, 1);
         sut.UndressFrom(player);
-
-        player.TakeDamage(enemy, damage);
-
-        Assert.Equal(200, resultDamage);
+        
+        var secondDamage = new CombatDamage(200, DamageType.Fire);
+        player.TakeDamage(enemy, secondDamage);
+        
+        secondDamage.Damage.Should().Be(200);
     }
-
+    
     [Fact]
-    public void Decrease_DefendedAttack_DecreaseCharges()
+    public void Player_equipment_loses_charge_when_absorbing_damage()
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
-
+    
+        var enemy = PlayerTestDataBuilder.Build();
         var defender = PlayerTestDataBuilder.Build();
-        var attacker = PlayerTestDataBuilder.Build();
-
-        (map[100, 100, 7] as DynamicTile)?.AddCreature(attacker);
+    
         (map[101, 100, 7] as DynamicTile)?.AddCreature(defender);
-
-        var hmm = ItemTestData.CreateAttackRune(1);
-
+    
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 50,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+            attributes:
+            [
+                (ItemAttribute.BodyPosition, "body"),
                 (ItemAttribute.AbsorbPercentEnergy, 10)
-            });
-
+            ]);
+        
+        defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);
-
+    
         //act
-        attacker.Attack(defender, hmm);
-
+        var damage = new CombatDamage(100, DamageType.Energy);
+        defender.TakeDamage(enemy, damage);
+    
         //assert
         sut.Charges.Should().Be(49);
     }
-
+    
     [Fact]
-    public void Decrease_DefendedDifferentAttack_DoNotDecreaseCharges()
+    public void Player_equipment_does_not_loses_charge_when_not_absorbing_damage()
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
-
+    
         var defender = PlayerTestDataBuilder.Build();
         var attacker = PlayerTestDataBuilder.Build();
-
+    
         (map[100, 100, 7] as DynamicTile)?.AddCreature(attacker);
         (map[101, 100, 7] as DynamicTile)?.AddCreature(defender);
-
-        var hmm = ItemTestData.CreateAttackRune(1);
-
+        
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 50,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+            attributes:
+            [
+                (ItemAttribute.BodyPosition, "body"),
                 (ItemAttribute.AbsorbPercentFire, 100)
-            });
-
+            ]);
+    
+        defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);
-
+    
         //act
-        attacker.Attack(defender, hmm);
-
+        var damage = new CombatDamage(100, DamageType.Energy);
+        defender.TakeDamage(attacker, damage);
+    
         //assert
         sut.Charges.Should().Be(50);
     }
-
+    
     [Fact]
-    public void Protect_InfiniteCharges_Protect()
+    public void Player_with_defense_equipment_with_infinite_charges_blocks_all_damage()
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
-
+    
         var defender = PlayerTestDataBuilder.Build();
         var attacker = PlayerTestDataBuilder.Build();
         var oldHp = defender.HealthPoints;
-
+    
         (map[100, 100, 7] as DynamicTile)?.AddCreature(attacker);
         (map[101, 100, 7] as DynamicTile)?.AddCreature(defender);
-
-        var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
-
-        var hmm = ItemTestData.CreateAttackRune(1);
-
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 0,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+    
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 0, slot: "body",
+            attributes:
+            [
                 (ItemAttribute.AbsorbPercentEnergy, 100),
                 (ItemAttribute.Duration, 100)
-            });
+            ]);
+        
+        defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);
-
+    
         //act
-        attacker.Attack(defender, hmm);
-
+        var damage = new CombatDamage(100, DamageType.Energy);
+        defender.TakeDamage(attacker, damage);
+    
         //assert
-        totalDamage.Should().Be(0);
+        damage.Damage.Should().Be(0);
         defender.HealthPoints.Should().Be(oldHp);
     }
-
+    
     [Fact]
     public void Player_wearing_protection_item_without_any_charges_will_not_protect_against_damages()
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
-
+    
         var defender = PlayerTestDataBuilder.Build(hp: 5000);
         var attacker = PlayerTestDataBuilder.Build();
         var oldHp = defender.HealthPoints;
-
+    
         (map[100, 100, 7] as DynamicTile)?.AddCreature(attacker);
         (map[101, 100, 7] as DynamicTile)?.AddCreature(defender);
-
-        var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
-
-        var hmm = ItemTestData.CreateAttackRune(1);
-
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1);
+        
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1, slot: "body");
         sut.Metadata.Attributes.SetAttribute(ItemAttribute.AbsorbPercentEnergy, 100);
+        
+        sut.DecreaseCharges();
+        
+        defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);
-
+    
         //act
-        attacker.Attack(defender, hmm);
-        attacker.Attack(defender, hmm);
-
+        var combatDamage = new CombatDamage(100, DamageType.Energy);
+        defender.TakeDamage(attacker, combatDamage);
+    
         //assert
-        totalDamage.Should().NotBe(0);
+        combatDamage.Damage.Should().NotBe(0);
         defender.HealthPoints.Should().BeLessThan(oldHp);
     }
-
+    
     [Fact]
-    public void Protect_1Charge_ProtectFromDamage()
+    public void Player_with_equipment_with_1_protection_charge_reduces_taken_damage()
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
-
+    
         var defender = PlayerTestDataBuilder.Build();
         var attacker = PlayerTestDataBuilder.Build();
-
+    
         (map[100, 100, 7] as DynamicTile)?.AddCreature(attacker);
         (map[101, 100, 7] as DynamicTile)?.AddCreature(defender);
-
+    
         var oldHp = defender.HealthPoints;
-
-        var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
-
-        var hmm = ItemTestData.CreateAttackRune(1);
-
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1, attributes: new (ItemAttribute, IConvertible)[]
-        {
+        
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1, slot:"body", attributes:
+        [
             (ItemAttribute.AbsorbPercentEnergy, 100),
             (ItemAttribute.Duration, 100)
-        });
+        ]);
+        
+        defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);
-
+    
         //act
-        attacker.Attack(defender, hmm);
-
+        var damage = new CombatDamage(100, DamageType.Energy);
+        defender.TakeDamage(attacker, damage);
+    
         //assert
-        totalDamage.Should().Be(0);
+        damage.Damage.Should().Be(0);
         defender.HealthPoints.Should().Be(oldHp);
     }
-
+    
     [Theory]
     [InlineData(-100, 400, 100)]
     [InlineData(-50, 300, 200)]
     [InlineData(-5, 210, 290)]
-    public void DressedIn_When_Player_Has_Negative_Damage_Protection_Should_Increase_Damage(sbyte protection,
+    public void Player_with_negative_damage_protection_equipment_increases_damage(sbyte protection,
         ushort expectedDamage, ushort remainingHp)
     {
         //arrange
         var defender = PlayerTestDataBuilder.Build(hp: 500);
         var attacker = PlayerTestDataBuilder.Build();
-
-        var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
-
-        var hmm = ItemTestData.CreateAttackRune(1);
-
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+        
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot:"body",
+            attributes:
+            [
                 (ItemAttribute.AbsorbPercentEnergy, protection)
-            });
+            ]);
+        
+        defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);
-
+    
         //act
         var damage = new CombatDamage(200, DamageType.Energy);
         defender.TakeDamage(attacker, damage);
-
+    
         //assert
-        totalDamage.Should().Be(expectedDamage);
+        damage.Damage.Should().Be(expectedDamage);
         defender.HealthPoints.Should().Be(remainingHp);
     }
-
+    
     [Fact]
-    public void DressedIn_ManaDrainDamageProtection_DecreaseDamage()
+    public void Player_with_mana_drain_protection_equipment_decreases_damage()
     {
         //arrange
         var defender = PlayerTestDataBuilder.Build(hp: 500, mana: 500);
         var attacker = PlayerTestDataBuilder.Build();
-        var oldHp = defender.HealthPoints;
-
-        var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
-
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+    
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot:"body",
+            attributes:
+            [
                 (ItemAttribute.AbsorbPercentManaDrain, 10)
-            });
+            ]);
+        
+        defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);
-
+    
         //act
         var damage = new CombatDamage(200, DamageType.ManaDrain);
         defender.TakeDamage(attacker, damage);
-
+    
         //assert
-        totalDamage.Should().Be(180);
+        damage.Damage.Should().Be(180);
         defender.HealthPoints.Should().Be(500);
         defender.Mana.Should().Be(320);
     }
-
+    
     [Fact]
-    public void DressedIn_LifeDrainDamageProtection_DecreaseDamage()
+    public void Player_with_life_drain_protection_equipment_decreases_damage()
     {
         //arrange
         var defender = PlayerTestDataBuilder.Build(hp: 500, mana: 500);
         var attacker = PlayerTestDataBuilder.Build();
         var oldHp = defender.HealthPoints;
-
-        var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
-
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+    
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot:"body",
+            attributes:
+            [
                 (ItemAttribute.AbsorbPercentLifeDrain, 10)
-            });
+            ]);
+        
+        defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);
-
+    
         //act
         var damage = new CombatDamage(200, DamageType.LifeDrain);
         defender.TakeDamage(attacker, damage);
-
+    
         //assert
-        totalDamage.Should().Be(180);
+        damage.Damage.Should().Be(180);
         defender.HealthPoints.Should().Be(320);
     }
-
+    
     [Theory]
     [InlineData(DamageType.Energy, ItemAttribute.AbsorbPercentEnergy)]
     [InlineData(DamageType.Fire, ItemAttribute.AbsorbPercentFire)]
@@ -397,30 +378,29 @@ public class ProtectionTest
     [InlineData(DamageType.LifeDrain, ItemAttribute.AbsorbPercentLifeDrain)]
     [InlineData(DamageType.Physical, ItemAttribute.AbsorbPercentPhysical)]
     [InlineData(DamageType.Melee, ItemAttribute.AbsorbPercentPhysical)]
-    public void DressedIn_DamageProtection_DecreaseDamage(DamageType damageType, ItemAttribute protectionAttribute)
+    public void Player_with_elemental_damage_protection_equipment_decreases_damage(DamageType damageType, ItemAttribute protectionAttribute)
     {
         //arrange
         var defender = PlayerTestDataBuilder.Build(hp: 500, mana: 500);
         var attacker = PlayerTestDataBuilder.Build();
-
-        var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
-
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+    
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,slot:"body",
+            attributes:
+            [
                 (protectionAttribute, 10)
-            });
+            ]);
+        
+        defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);
-
+    
         //act
         var damage = new CombatDamage(200, damageType);
         defender.TakeDamage(attacker, damage);
-
+    
         //assert
-        totalDamage.Should().Be(180);
+        damage.Damage.Should().Be(180);
     }
-
+    
     [Theory]
     [InlineData(DamageType.Energy, ItemAttribute.AbsorbPercentElements)]
     [InlineData(DamageType.Fire, ItemAttribute.AbsorbPercentElements)]
@@ -433,31 +413,30 @@ public class ProtectionTest
     [InlineData(DamageType.LifeDrain, ItemAttribute.AbsorbPercentElements)]
     [InlineData(DamageType.Physical, ItemAttribute.AbsorbPercentElements, 200)]
     [InlineData(DamageType.Melee, ItemAttribute.AbsorbPercentElements, 200)]
-    public void DressedIn_ElementalDamageProtection_DecreaseDamage(DamageType damageType,
+    public void Player_with_all_elemental_damage_protection_equipment_decreases_damage(DamageType damageType,
         ItemAttribute protectionAttribute, ushort expectedDamage = 180)
     {
         //arrange
         var defender = PlayerTestDataBuilder.Build(hp: 500, mana: 500);
         var attacker = PlayerTestDataBuilder.Build();
-
-        var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
-
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+        
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot:"body",
+            attributes:
+            [
                 (protectionAttribute, 10)
-            });
+            ]);
+        
+        defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);
-
+    
         //act
         var damage = new CombatDamage(200, damageType);
         defender.TakeDamage(attacker, damage);
-
+    
         //assert
-        totalDamage.Should().Be(expectedDamage);
+        damage.Damage.Should().Be(expectedDamage);
     }
-
+    
     [Theory]
     [InlineData(DamageType.Energy, ItemAttribute.AbsorbPercentAll)]
     [InlineData(DamageType.Fire, ItemAttribute.AbsorbPercentAll)]
@@ -470,111 +449,108 @@ public class ProtectionTest
     [InlineData(DamageType.LifeDrain, ItemAttribute.AbsorbPercentAll)]
     [InlineData(DamageType.Physical, ItemAttribute.AbsorbPercentAll)]
     [InlineData(DamageType.Melee, ItemAttribute.AbsorbPercentAll)]
-    public void DressedIn_AllDamageProtection_DecreaseDamage(DamageType damageType, ItemAttribute protectionAttribute)
+    public void Player_with_all_damage_protection_equipment_decreases_damage(DamageType damageType, ItemAttribute protectionAttribute)
     {
         //arrange
         var defender = PlayerTestDataBuilder.Build(hp: 500, mana: 500);
         var attacker = PlayerTestDataBuilder.Build();
-
-        var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
-
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+    
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot:"body",
+            attributes:
+            [
                 (protectionAttribute, 10)
-            });
+            ]);
+        
+        defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);
-
+    
         //act
         var damage = new CombatDamage(200, damageType);
         defender.TakeDamage(attacker, damage);
-
+    
         //assert
-        totalDamage.Should().Be(180);
+        damage.Damage.Should().Be(180);
     }
-
-
+    
+    
     [Fact]
-    public void DressedIn_HasAllAndDeathDamageProtection_DecreaseDamageAccordingly()
+    public void Player_with_all_and_death_damage_protection_equipment_decreases_damage()
     {
         //arrange
         var defender = PlayerTestDataBuilder.Build(hp: 500, mana: 500);
         var attacker = PlayerTestDataBuilder.Build();
-
-        var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
-
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+    
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot:"body",
+            attributes:
+            [
                 (ItemAttribute.AbsorbPercentAll, 10),
                 (ItemAttribute.AbsorbPercentDeath, 50)
-            });
+            ]);
+        
+        defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);
-
+    
         //act
         var damage = new CombatDamage(200, DamageType.Death);
         defender.TakeDamage(attacker, damage);
-
+    
         //assert
-        totalDamage.Should().Be(100);
-
+        damage.Damage.Should().Be(100);
+    
         //act
         var fireDamage = new CombatDamage(200, DamageType.Fire);
         defender.TakeDamage(attacker, fireDamage);
-
+    
         //assert
-        totalDamage.Should().Be(180);
+        fireDamage.Damage.Should().Be(180);
     }
-
+    
     [Fact]
-    public void DressedIn_HasElementsAndDeathDamageProtection_DecreaseDamageAccordingly()
+    public void Player_with_elements_and_death_damage_protection_equipment_decreases_damage()
     {
         //arrange
         var defender = PlayerTestDataBuilder.Build(hp: 500, mana: 500);
         var attacker = PlayerTestDataBuilder.Build();
-
-        var totalDamage = 0;
-        defender.OnInjured += (_, _, damage) => { totalDamage = damage.Damage; };
-
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+    
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot:"body",
+            attributes:
+            [
                 (ItemAttribute.AbsorbPercentElements, 10),
                 (ItemAttribute.AbsorbPercentDeath, 50)
-            });
+            ]);
+        
+        defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);
-
+    
         //act
         var damage = new CombatDamage(200, DamageType.Death);
         defender.TakeDamage(attacker, damage);
-
+    
         //assert
-        totalDamage.Should().Be(100);
-
+        damage.Damage.Should().Be(100);
+    
         //act
         var fireDamage = new CombatDamage(200, DamageType.Fire);
         defender.TakeDamage(attacker, fireDamage);
-
+    
         //assert
-        totalDamage.Should().Be(180);
-
+        fireDamage.Damage.Should().Be(180);
+    
         //act
         var meleeDamage = new CombatDamage(200, DamageType.Melee);
         defender.TakeDamage(attacker, meleeDamage);
-
+    
         //assert
-        totalDamage.Should().Be(200);
+        meleeDamage.Damage.Should().Be(200);
     }
-
+    
     [Fact]
-    public void ToString_ReturnsLookText()
+    public void Equipment_look_text_shows_correct_protection_text()
     {
         //arrange
-        var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+        var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot:"body",
+            attributes:
+            [
                 (ItemAttribute.AbsorbPercentEnergy, 10),
                 (ItemAttribute.AbsorbPercentFire, 20),
                 (ItemAttribute.AbsorbPercentDeath, -25),
@@ -585,78 +561,78 @@ public class ProtectionTest
                 (ItemAttribute.AbsorbPercentDrown, 80),
                 (ItemAttribute.AbsorbPercentPoison, 100),
                 (ItemAttribute.AbsorbPercentHoly, 50)
-            });
-
+            ]);
+    
         var sut = new Protection(item);
         //assert
         sut.ToString().Should()
             .Be(
                 "protection energy +10%, fire +20%, death -25%, mana drain +30%, life drain +45%, ice +50%, physical -65%, drown +80%, earth +100%, holy +50%");
     }
-
+    
     [Fact]
     public void ToString_AllProtection_ReturnsLookText()
     {
         //arrange
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+            attributes:
+            [
                 (ItemAttribute.AbsorbPercentAll, 10)
-            });
+            ]);
         var sut = new Protection(item);
-
+    
         //assert
         sut.ToString().Should().Be("protection all +10%");
     }
-
+    
     [Fact]
     public void ToString_ElementalProtection_ReturnsLookText()
     {
         //arrange
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+            attributes:
+            [
                 (ItemAttribute.AbsorbPercentElements, 10)
-            });
+            ]);
         var sut = new Protection(item);
-
+    
         //assert
         sut.ToString().Should().Be("protection elemental +10%");
     }
-
+    
     [Fact]
     public void ToString_0Protection_Ignores()
     {
         //arrange
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+            attributes:
+            [
                 (ItemAttribute.AbsorbPercentElements, 10),
                 (ItemAttribute.AbsorbPercentDeath, 0)
-            });
+            ]);
         var sut = new Protection(item);
-
+    
         //assert
         sut.ToString().Should().Be("protection elemental +10%");
     }
-
-
+    
+    
     [Fact]
     public void Protect_NoDamageProtection_DoNotProtect()
     {
         //arrange
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1);
         var combatDamage = new CombatDamage(100, DamageType.Energy);
-
+    
         var sut = new Protection(item);
-
+    
         //act
-        sut.Protect(ref combatDamage);
-
+        sut.Protect(combatDamage);
+    
         //assert
         combatDamage.Damage.Should().Be(100);
     }
-
+    
     [Fact]
     public void Protect_DamageProtectionsNull_DoNotProtect()
     {
@@ -664,40 +640,40 @@ public class ProtectionTest
         var item = new Mock<IItem>();
         var itemType = new Mock<IItemType>();
         var itemAttributeMock = new Mock<IItemAttributeList>();
-
+    
         itemAttributeMock.SetupGet(x => x.DamageProtection);
-
+    
         itemType.SetupGet(x => x.Attributes).Returns(itemAttributeMock.Object);
         item.Setup(x => x.Metadata).Returns(itemType.Object);
-
+    
         var combatDamage = new CombatDamage(100, DamageType.Energy);
-
+    
         var sut = new Protection(item.Object);
-
+    
         //act
-        sut.Protect(ref combatDamage);
-
+        sut.Protect(combatDamage);
+    
         //assert
         combatDamage.Damage.Should().Be(100);
     }
-
+    
     [Fact]
     public void Protect_DamageAsNone_DoNotProtect()
     {
         //arrange
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1,
-            attributes: new (ItemAttribute, IConvertible)[]
-            {
+            attributes:
+            [
                 (ItemAttribute.AbsorbPercentElements, 10),
                 (ItemAttribute.AbsorbPercentDeath, 0)
-            });
+            ]);
         var combatDamage = new CombatDamage(100, DamageType.None);
-
+    
         var sut = new Protection(item);
-
+    
         //act
-        sut.Protect(ref combatDamage);
-
+        sut.Protect(combatDamage);
+    
         //assert
         combatDamage.Damage.Should().Be(100);
     }

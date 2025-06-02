@@ -20,7 +20,7 @@ public class ItemMovementService : IItemMovementService
 {
     private readonly IWalkToMechanism _walkToMechanism;
 
-    public ItemMovementService(IWalkToMechanism walkToMechanism, IMap map)
+    public ItemMovementService(IWalkToMechanism walkToMechanism)
     {
         _walkToMechanism = walkToMechanism;
     }

@@ -60,10 +60,10 @@ public abstract class Equipment : BaseItem, IEquipment
 
     #region Protection
 
-    public bool Protect(ref CombatDamage damage)
+    public bool Protect(CombatDamage damage)
     {
         if (NoCharges) return false;
-        var @protected = Protection?.Protect(ref damage) ?? false;
+        var @protected = Protection?.Protect(damage) ?? false;
         if (@protected) DecreaseCharges();
         return true;
     }

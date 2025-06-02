@@ -34,7 +34,7 @@ public class Inventory : IInventory
     {
         foreach (var (item, _) in InventoryMap.Items)
         {
-            if (item is IEquipment equipment) equipment.Protect(ref damage);
+            if (item is IEquipment equipment) equipment.Protect(damage);
         }
     }
 

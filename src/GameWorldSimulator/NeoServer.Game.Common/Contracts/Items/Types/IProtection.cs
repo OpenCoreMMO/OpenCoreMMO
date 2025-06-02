@@ -4,5 +4,5 @@ namespace NeoServer.Game.Common.Contracts.Items.Types;
 
 public interface IProtection
 {
-    bool Protect(ref CombatDamage damage);
+    bool Protect(CombatDamage damage);
 }

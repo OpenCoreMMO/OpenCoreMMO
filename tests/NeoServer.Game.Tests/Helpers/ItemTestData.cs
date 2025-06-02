@@ -402,7 +402,7 @@ public class ItemTestData
 
         type.SetGroupIfNone();
 
-        var factory = new RuneFactory(areaEffectStore);
+        var factory = new RuneFactory();
         return (IAttackRune)factory.Create(type, new Location(100, 100, 7), attributes);
     }
 
