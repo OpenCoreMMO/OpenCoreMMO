@@ -102,7 +102,7 @@ public class AreaAttackService(
     private static void InflictDamage(CalculatedAttackDamage damage, CombatDamage mainDamage, ICombatActor target,
         IThing aggressor)
     {
-        if (damage.ExtraDamage.Damage > 0)
+        if (damage.ExtraDamage?.Damage > 0)
         {
             var damages = new CombatDamageList([mainDamage, damage.ExtraDamage]);
             target.TakeDamage(aggressor, damages);

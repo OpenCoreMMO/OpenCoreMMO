@@ -147,6 +147,7 @@ public class PlayerUseItemOnCreatureCommand : ICommand
 
         if (spell is null)
         {
+            OperationFailService.Send(player, InvalidOperation.NotPossible, EffectT.Puff);
             _logger.Warning("Rune {Name} has no spell implemented", rune.Name);
             return;
         }

@@ -10,7 +10,6 @@ namespace NeoServer.Server.Events.Combat;
 
 public class CreatureChangedAttackTargetEventHandler(
     IGameServer game,
-    IPlayerSkullService skullService,
     IAttackService attackService)
 {
     public void Execute(ICombatActor actor, uint oldTarget, uint newTarget)
@@ -59,6 +58,7 @@ public class CreatureChangedAttackTargetEventHandler(
         if (actor is IMonster)
         {
             actor.Attack(target);
+            return Result.Success;
         }
 
         var attackInput = AttackInputBuilder.Build(actor, target);

@@ -80,7 +80,7 @@ public class SingleTargetAttackService(
         var mainDamage = damage.MainDamage;
         mainDamage.Unjustified = unjustifiedAttack;
 
-        if (damage.ExtraDamage.Damage > 0)
+        if (damage.ExtraDamage?.Damage > 0)
         {
             var damages = new CombatDamageList([mainDamage, damage.ExtraDamage]);
             combatActor.TakeDamage(aggressor, damages);

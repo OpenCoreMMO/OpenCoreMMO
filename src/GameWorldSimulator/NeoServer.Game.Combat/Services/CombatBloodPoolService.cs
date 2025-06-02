@@ -30,8 +30,8 @@ public class CombatBloodPoolService(IMap map, ILiquidPoolFactory liquidPoolFacto
     {
         if (creature is not ICombatActor victim) return;
 
-        if (damage.IsElementalDamage) return;
-        if(damage.Damage <= 0) return;
+        if (damage?.IsElementalDamage ?? false) return;
+        if(damage?.Damage <= 0) return;
         if (victim.IsDead) return;
 
         CreateSplash(victim);

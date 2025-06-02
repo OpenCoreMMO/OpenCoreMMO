@@ -5,7 +5,7 @@ namespace NeoServer.Game.Common.Combat.Structs;
 
 public readonly struct CombatDamageList
 {
-    private readonly CombatDamage? _singleDamage;
+    private readonly CombatDamage _singleDamage;
     private readonly ImmutableArray<CombatDamage> _multipleDamages;
 
     public CombatDamageList(CombatDamage damage)
@@ -30,7 +30,7 @@ public readonly struct CombatDamageList
         }
     }
 
-    public bool IsSingle => _singleDamage?.Damage != 0;
+    public bool IsSingle => _multipleDamages.IsDefaultOrEmpty;
     public int Count => IsSingle ? 1 : _multipleDamages.Length;
 
     public bool Unjustified { get; }
@@ -86,7 +86,7 @@ public readonly struct CombatDamageList
         public bool MoveNext()
         {
             _index++;
-            return list.IsSingle ? _index == 0 : _index < list._multipleDamages.Length;
+            return list._multipleDamages.IsDefaultOrEmpty ? _index == 0 : _index < list._multipleDamages.Length;
         }
     }
 }
