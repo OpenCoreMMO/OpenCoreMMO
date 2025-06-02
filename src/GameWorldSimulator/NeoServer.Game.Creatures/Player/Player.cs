@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Game.Combat.Attacks;
 using NeoServer.Game.Combat.Conditions;
-using NeoServer.Game.Combat.Spells;
+using NeoServer.Game.Combat.Validation;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Chats;
+using NeoServer.Game.Common.Combat.Enums;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
@@ -16,6 +17,9 @@ using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.Items.Types.Body;
 using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Contracts.Items.Types.Usable;
+using NeoServer.Game.Common.Contracts.Items.Weapons;
+using NeoServer.Game.Common.Contracts.Items.Weapons.Attributes;
+using NeoServer.Game.Common.Contracts.Spells;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Creatures;
@@ -107,6 +111,8 @@ public class Player : CombatActor, IPlayer
 
         Containers = new PlayerContainerList(this);
 
+        PlayerSkull ??= new PlayerSkull(this);
+
         KnownCreatures = new Dictionary<uint, long>(); //todo
 
         foreach (var skill in Skills.Values)
@@ -146,6 +152,8 @@ public class Player : CombatActor, IPlayer
     public bool IsPacified => Conditions.ContainsKey(ConditionType.Pacified);
     public IPlayerHand PlayerHand { get; }
 
+    public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
+
     public IDictionary<SkillType, ISkill> Skills { get; }
 
     /// <summary>
@@ -165,7 +173,9 @@ public class Player : CombatActor, IPlayer
     public IBank Bank { get; private set; }
     public ulong BankAmount => Bank?.Amount ?? 0;
 
-    public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
+    public int NumberOfUnjustifiedKillsLastDay { get; private set; }
+    public int NumberOfUnjustifiedKillsLastWeek { get; private set; }
+    public int NumberOfUnjustifiedKillsLastMonth { get; private set; }
 
     public ulong GetTotalMoney(ICoinTypeStore coinTypeStore)
     {
@@ -186,6 +196,9 @@ public class Player : CombatActor, IPlayer
     public ushort Mana { get; private set; }
     public ushort MaxMana { get; private set; }
     public FightMode FightMode { get; private set; }
+    public IPlayerSkull PlayerSkull { get; set; }
+    public Skull Skull => PlayerSkull.Skull;
+    public DateTime? SkullEndsAt => PlayerSkull.SkullEndsAt;
 
     public bool Shopping => TradingWithNpc is not null;
 
@@ -232,11 +245,32 @@ public class Player : CombatActor, IPlayer
         base.LoseExperience(exp);
     }
 
-    public override decimal AttackSpeed => Vocation.AttackSpeed == default ? base.AttackSpeed : Vocation.AttackSpeed;
+    public override decimal AttackSpeed => Vocation.AttackSpeed == 0 ? base.AttackSpeed : Vocation.AttackSpeed;
 
-    public virtual bool CannotLogout => !(Tile?.ProtectionZone ?? false) && InFight;
+    public virtual bool CannotLogout => !(Tile?.ProtectionZone ?? false) && IsLogoutBlocked;
 
-    public virtual bool IsProtectionZoneLocked => false;
+    public void SetProtectionZoneBlock()
+    {
+        if (IsPacified) return;
+
+        if (HasCondition(ConditionType.ProtectionZoneBlock, out var condition))
+        {
+            condition.Start(this);
+            return;
+        }
+
+        //protection zone block is persistent, this will be removed elsewhere
+        AddCondition(new Condition(ConditionType.ProtectionZoneBlock, 0));
+    }
+
+    public void RemoveProtectionZoneBlock()
+    {
+        RemoveCondition(ConditionType.ProtectionZoneBlock);
+    }
+
+    public virtual bool IsProtectionZoneBlocked => HasCondition(ConditionType.ProtectionZoneBlock);
+
+    public bool HasSkull => Skull is not Skull.None;
 
     public SkillType SkillInUse
     {
@@ -269,15 +303,70 @@ public class Player : CombatActor, IPlayer
     }
 
     public uint Id { get; }
-    public override ushort MinimumAttackPower => (ushort)(Level / 5);
+    public override ushort MinimumAttackPower => Inventory.Weapon?.MinHitChance ?? (ushort)(Level / 5);
+    public override ushort MaximumAttackPower => CalculateTotalAttack(Inventory.TotalAttack);
+
     public override ushort ArmorRating => Inventory.TotalArmor;
-    public byte SecureMode { get; private set; }
+    public PvpSecureMode SecureMode { get; private set; }
     public float FreeCapacity => TotalCapacity - Inventory.TotalWeight;
     public override bool UsingDistanceWeapon => Inventory.Weapon is IDistanceWeapon;
     public bool Recovering => HasCondition(ConditionType.Regeneration);
     public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
     public override bool CanBeSeen => Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
     public virtual bool CanSeeInspectionDetails => false;
+
+    public override ushort MaximumElementalAttackPower =>
+        CalculateTotalAttack(Inventory.TotalElementalAttack.AttackPower, isElemental: true);
+
+
+    private ushort CalculateTotalAttack(ushort attackPower, bool isElemental = false)
+    {
+        var damageMultiplier = SkillInUse switch
+        {
+            SkillType.Distance => Vocation.Formula?.DistDamage ?? 1f,
+            SkillType.Magic => 1f,
+            _ => Vocation.Formula?.MeleeDamage ?? 1f
+        };
+
+        var attackPercentage = 100;
+
+        if (Inventory.Weapon is IHasAttack weapon)
+        {
+            attackPercentage = isElemental
+                ? weapon.WeaponAttack.ElementalAttackPowerPercentage
+                : weapon.WeaponAttack.AttackPowerPercentage;
+        }
+
+        if (Inventory.Weapon is IMagicalWeapon magicalWeapon) return magicalWeapon.MaxHitChance;
+
+        if (Inventory.Weapon is IDistanceWeapon && Inventory.Ammo is { } ammo)
+        {
+            attackPercentage = isElemental
+                ? ammo.WeaponAttack.ElementalAttackPowerPercentage
+                : ammo.WeaponAttack.AttackPowerPercentage;
+        }
+
+        var maximumAttack = (ushort)(Inventory.AttackRate * DamageFactor * attackPower * Skills[SkillInUse].Level +
+                                     Level / 5 * damageMultiplier);
+
+        return (ushort)(maximumAttack * attackPercentage / 100);
+    }
+
+    public override void PreAttack(CombatContext combatContext)
+    {
+        if (Inventory.Weapon is IDistanceWeapon && !combatContext.InfiniteAmmo)
+        {
+            Inventory.Ammo?.Reduce();
+        }
+
+        if (Inventory.Weapon is IThrowableWeapon { ShouldBreak: true } throwableDistanceWeapon &&
+            !combatContext.InfiniteThrowingWeapon)
+        {
+            throwableDistanceWeapon.Reduce();
+        }
+
+        base.PreAttack(combatContext);
+    }
 
     public ushort GetRawSkillLevel(SkillType skillType)
     {
@@ -405,7 +494,7 @@ public class Player : CombatActor, IPlayer
     public override void SetAsEnemy(ICreature creature)
     {
         if (creature is not IMonster) return;
-        SetAsInFight();
+        SetLogoutBlock();
     }
 
     public void StopShopping()
@@ -440,7 +529,7 @@ public class Player : CombatActor, IPlayer
         OnChangedChaseMode?.Invoke(this, oldChaseMode, mode);
     }
 
-    public void ChangeSecureMode(byte mode)
+    public void ChangeSecureMode(PvpSecureMode mode)
     {
         SecureMode = mode;
     }
@@ -483,26 +572,33 @@ public class Player : CombatActor, IPlayer
         OnSentMessage?.Invoke(this, to, speechType, message);
     }
 
-    public virtual bool CastSpell(string message)
+    public void PostSpellCast(ISpell spell)
     {
-        if (!SpellList.TryGet(message.Trim(), out var spell)) return false;
-        if (!spell.Invoke(this, message, out var error))
+        const SpeechType talkType = SpeechType.MonsterSay;
+
+        if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteMana))
         {
-            OnCannotUseSpell?.Invoke(this, spell, error);
-            return true;
+            ConsumeMana(spell.ManaConsumption);
         }
 
-        var talkType = SpeechType.MonsterSay;
+        if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteSoul))
+        {
+            ConsumeSoul(spell.SoulConsumption);
+        }
+        
+        if (spell.ManaConsumption > 0 && !Group.FlagIsEnabled(PlayerFlag.NotGainSkill)) IncreaseSkillCounter(SkillType.Magic, spell.ManaConsumption);
 
-        Cooldowns.Start(CooldownType.Spell, 1000); //todo: 1000 should be a const
+        if (!spell.ShouldSay) return;
 
-        if (spell.IncreaseSkill) IncreaseSkillCounter(SkillType.Magic, spell.Mana);
+        if (!string.IsNullOrWhiteSpace(spell.Words))
+        {
+            base.Say(spell.Words, talkType);
+        }
+    }
 
-        if (!spell.ShouldSay) return true;
-
-        base.Say(message, talkType);
-
-        return true;
+    public bool HasEnoughSoul(ushort soul)
+    {
+        return SoulPoints >= soul;
     }
 
     public bool HasEnoughMana(ushort mana)
@@ -516,6 +612,15 @@ public class Player : CombatActor, IPlayer
         if (!HasEnoughMana(mana)) return;
 
         Mana -= mana;
+        OnStatusChanged?.Invoke(this);
+    }
+
+    public void ConsumeSoul(ushort soul)
+    {
+        if (soul == 0) return;
+        if (!HasEnoughSoul(soul)) return;
+
+        Mana -= soul;
         OnStatusChanged?.Invoke(this);
     }
 
@@ -577,6 +682,7 @@ public class Player : CombatActor, IPlayer
         ChangeOnlineStatus(false);
         PlayerParty.LeaveParty();
         PlayerParty.RejectAllInvites();
+        PlayerSkull.RemoveYellowSkull();
 
         OnLoggedOut?.Invoke(this);
         return true;
@@ -631,14 +737,12 @@ public class Player : CombatActor, IPlayer
         }
 
         //todo: start these cooldowns when player logs in
-        Cooldowns.Start(CooldownType.HealthRecovery, Vocation.GainHpTicks * 1000);
-        Cooldowns.Start(CooldownType.ManaRecovery, Vocation.GainManaTicks * 1000);
-        Cooldowns.Start(CooldownType.SoulRecovery, Vocation.GainSoulTicks * 1000);
+        Cooldowns.Start(CooldownType.HealthRecovery, (uint)Vocation.GainHpTicks * 1000);
+        Cooldowns.Start(CooldownType.ManaRecovery, (uint)Vocation.GainManaTicks * 1000);
+        Cooldowns.Start(CooldownType.SoulRecovery, (uint)Vocation.GainSoulTicks * 1000);
 
         foreach (var regenerationBonus in RegenerationBonusList)
-        {
-            Cooldowns.Start(regenerationBonus.Id, regenerationBonus.Ticks);
-        }
+            Cooldowns.Start(regenerationBonus.Id, (uint)regenerationBonus.Ticks);
     }
 
     public void AddRegenerationBonus(RegenerationBonus regenerationBonus)
@@ -695,7 +799,7 @@ public class Player : CombatActor, IPlayer
         if (itemUsed)
         {
             OnUsedItem?.Invoke(this, onCreature, item);
-            Cooldowns.Start(CooldownType.UseItem, item.CooldownTime);
+            Cooldowns.Start(CooldownType.UseItem, (uint)item.CooldownTime);
             return Result.Success;
         }
 
@@ -708,7 +812,7 @@ public class Player : CombatActor, IPlayer
         var canUseItem = CanUseItem(item, onItem.Location);
         if (canUseItem.Failed) return canUseItem;
 
-        if (item is not IUsableOnItem usableOnItem) return Result.Fail(InvalidOperation.CannotUse);
+        if (item is not IUsableOnItem usableOnItem) return Result.Fail(InvalidOperation.CannotUseSpells);
 
         usableOnItem.Use(this, onItem);
         OnUsedItem?.Invoke(this, onItem, item);
@@ -788,13 +892,21 @@ public class Player : CombatActor, IPlayer
 
     public bool IsManaShieldEnabled => HasCondition(ConditionType.ManaShield);
 
-    public void EnableManaShield(uint duration) =>
+    public void EnableManaShield(uint duration)
+    {
         AddCondition(new Condition(ConditionType.ManaShield, duration,
             () => { RemoveCondition(ConditionType.ManaShield); }));
+    }
 
-    public void EnableManaShield() => AddCondition(new Condition(ConditionType.ManaShield));
+    public void EnableManaShield()
+    {
+        AddCondition(new Condition(ConditionType.ManaShield));
+    }
 
-    public void DisableManaShield() => RemoveCondition(ConditionType.ManaShield);
+    public void DisableManaShield()
+    {
+        RemoveCondition(ConditionType.ManaShield);
+    }
 
     public Result<OperationResultList<IItem>> PickItemFromGround(IItem item, ITile tile, byte amount = 1)
     {
@@ -808,8 +920,22 @@ public class Player : CombatActor, IPlayer
         return PlayerHand.Move(item, source, destination, amount, fromPosition, toPosition);
     }
 
+    public override CalculatedAttackDamage CalculateAttackDamage()
+    {
+        CalculatedAttackDamage damage = new CalculatedAttackDamage();
+
+        return base.CalculateAttackDamage();
+    }
+
     public override Result SetAttackTarget(ICreature target)
     {
+        if (target is IPlayer && SecureMode is PvpSecureMode.PvPDisabled)
+        {
+            StopAttack(true);
+            OperationFailService.Send(this, InvalidOperation.AdjustCombatSettingsToAttackPlayer);
+            return Result.Fail(InvalidOperation.AdjustCombatSettingsToAttackPlayer);
+        }
+
         if (target.IsInvisible)
         {
             StopAttack();
@@ -911,20 +1037,54 @@ public class Player : CombatActor, IPlayer
 
         combatAttacks[0] = combat;
 
-        SetAsInFight();
+        SetLogoutBlock();
 
         return canUse ? Result.Success : Result.Fail(InvalidOperation.CannotUseWeapon);
     }
 
+    public override Result CanAttack(CombatParameter combatParameter)
+    {
+        var result = base.CanAttack(combatParameter);
+        if (result.Failed) return result;
+
+        if (Group.FlagIsEnabled(PlayerFlag.CannotAttackMonster) && Group.FlagIsEnabled(PlayerFlag.CannotAttackPlayer))
+        {
+            StopAttack();
+            return Result.NotPossible;
+        }
+
+        var hasEnoughAmmo = Inventory.Weapon is INeedsAmmo distanceWeapon &&
+                            distanceWeapon.CanShootAmmunition(Inventory.Ammo);
+
+        if (combatParameter.UsingWeapon && Inventory.Weapon is INeedsAmmo && !hasEnoughAmmo)
+        {
+            return Result.NotPossible;
+        }
+
+        return result;
+    }
+
     public override Result Attack(ICombatActor enemy)
     {
+        var canAttackResult = AttackValidation.CanAttack(this, enemy);
+        if (canAttackResult.Failed) return base.Attack(enemy);
+
         if (enemy.IsInvisible)
         {
             StopAttack();
             return Result.Fail(InvalidOperation.AttackTargetIsInvisible);
         }
 
+        if (enemy is IPlayer) SetProtectionZoneBlock();
+
         return base.Attack(enemy);
+    }
+
+    public override bool Attack(ICreature enemy, IUsableAttackOnCreature item)
+    {
+        SetLogoutBlock();
+        if (enemy is IPlayer) SetProtectionZoneBlock();
+        return base.Attack(enemy, item);
     }
 
     public void StopAllActions()
@@ -948,6 +1108,76 @@ public class Player : CombatActor, IPlayer
         if (IsInvisible) return;
 
         base.ChangeOutfit(outfit);
+    }
+
+    public void IncreaseSkillCounter(SkillType skill, long value)
+    {
+        if (!Skills.ContainsKey(skill)) return;
+
+        var rate = Creatures.Vocation.Vocation.DefaultSkillMultiplier;
+
+        Vocation?.Skills?.TryGetValue(skill, out rate);
+
+        Skills[skill].IncreaseCounter(value, rate);
+    }
+
+    public void DecreaseSkillCounter(SkillType skill, long value)
+    {
+        if (!Skills.ContainsKey(skill)) return;
+
+        var rate = Creatures.Vocation.Vocation.DefaultSkillMultiplier;
+
+        Vocation?.Skills?.TryGetValue(skill, out rate);
+
+        Skills[skill].DecreaseCounter(value, rate);
+    }
+
+    public virtual void RemoveLogoutBlock()
+    {
+        RemoveCondition(ConditionType.LogoutBlock);
+    }
+
+    public bool IsLogoutBlocked => HasCondition(ConditionType.LogoutBlock);
+
+    public override void Kill(ICombatActor enemy, bool lastHit = false, bool unjustified = false)
+    {
+        if (enemy is IPlayer playerEnemy && playerEnemy.GetSkull(this) is Skull.None)
+        {
+            NumberOfUnjustifiedKillsLastDay++;
+            NumberOfUnjustifiedKillsLastWeek++;
+            NumberOfUnjustifiedKillsLastMonth++;
+            unjustified = true;
+        }
+
+        base.Kill(enemy, lastHit, unjustified);
+    }
+
+    public Skull GetSkull(IPlayer enemy)
+    {
+        return PlayerSkull?.GetSkull(enemy) ?? Skull.None;
+    }
+
+    public void SetSkull(Skull skull, DateTime? skullEndingDate = null, IPlayer enemy = null)
+    {
+        PlayerSkull?.SetSkull(skull, skullEndingDate, enemy);
+    }
+
+    public void RemoveSkull()
+    {
+        PlayerSkull?.RemoveSkull();
+    }
+
+    public void SetNumberOfKills(int killsInLastDay, int killsInLastWeek, int killsInLastMonth)
+    {
+        NumberOfUnjustifiedKillsLastDay = killsInLastDay;
+        NumberOfUnjustifiedKillsLastWeek = killsInLastWeek;
+        NumberOfUnjustifiedKillsLastMonth = killsInLastMonth;
+    }
+
+    public override CombatDamage ReduceDamage(CombatDamage attack)
+    {
+        Inventory.Protect(attack);
+        return base.ReduceDamage(attack);
     }
 
     private Result CanUseItem(IUsableOn item, Location onLocation)
@@ -974,7 +1204,7 @@ public class Player : CombatActor, IPlayer
         {
             OperationFailService.Send(CreatureId, requirement.ValidationError);
             {
-                return Result.Fail(InvalidOperation.CannotUse);
+                return Result.Fail(InvalidOperation.CannotUseSpells);
             }
         }
 
@@ -1034,47 +1264,30 @@ public class Player : CombatActor, IPlayer
         HealMana(MaxMana);
     }
 
-    public void IncreaseSkillCounter(SkillType skill, long value)
-    {
-        if (!Skills.ContainsKey(skill)) return;
-
-        var rate = Creatures.Vocation.Vocation.DefaultSkillMultiplier;
-
-        Vocation?.Skills?.TryGetValue(skill, out rate);
-
-        Skills[skill].IncreaseCounter(value, rate);
-    }
-
-    public void DecreaseSkillCounter(SkillType skill, long value)
-    {
-        if (!Skills.ContainsKey(skill)) return;
-
-        var rate = Creatures.Vocation.Vocation.DefaultSkillMultiplier;
-
-        Vocation?.Skills?.TryGetValue(skill, out rate);
-
-        Skills[skill].DecreaseCounter(value, rate);
-    }
-
     public override bool HasImmunity(Immunity immunity)
     {
         return false;
         //todo: add immunity check
     }
 
-    public virtual void SetAsInFight()
+    public virtual void SetLogoutBlock()
     {
         if (Group.FlagIsEnabled(PlayerFlag.NotGainInFight)) return;
 
         if (IsPacified) return;
 
-        if (HasCondition(ConditionType.InFight, out var condition))
+        if (HasCondition(ConditionType.LogoutBlock, out var condition))
         {
             condition.Start(this);
             return;
         }
 
-        AddCondition(new Condition(ConditionType.InFight, 60000));
+        if (IsProtectionZoneBlocked)
+            //resets protection zone block time
+            SetProtectionZoneBlock();
+
+        //logout is persistent, this will be removed elsewhere
+        AddCondition(new Condition(ConditionType.LogoutBlock, 0));
     }
 
     private void TogglePacifiedCondition(IDynamicTile fromTile, IDynamicTile toTile)
@@ -1083,9 +1296,11 @@ public class Player : CombatActor, IPlayer
         {
             case null when toTile.ProtectionZone:
                 AddCondition(new Condition(ConditionType.Pacified, 0));
+                RemoveProtectionZoneBlock();
                 break;
             case false when toTile.ProtectionZone:
-                RemoveCondition(ConditionType.InFight);
+                RemoveLogoutBlock();
+                RemoveProtectionZoneBlock();
                 AddCondition(new Condition(ConditionType.Pacified, 0));
                 break;
             case true when toTile.ProtectionZone is false:
@@ -1127,27 +1342,32 @@ public class Player : CombatActor, IPlayer
         OnStatusChanged?.Invoke(this);
     }
 
-    public override void OnDamage(IThing enemy, CombatDamage damage)
+    public override void OnDamage(IThing enemy, CombatDamageList damages)
     {
-        SetAsInFight();
+        SetLogoutBlock();
 
-        if (damage.Type is DamageType.ManaDrain || IsManaShieldEnabled)
+        var totalDamage = damages.TotalDamage;
+
+        if (totalDamage.ManaDamage > 0)
         {
-            ConsumeMana(damage.Damage);
+            ConsumeMana(totalDamage.ManaDamage);
             return;
         }
 
-        ReduceHealth(damage);
-    }
+        if (IsManaShieldEnabled)
+        {
+            ConsumeMana(totalDamage.HealthDamage);
+            return;
+        }
 
-    public override ILoot DropLoot()
-    {
-        return null;
+        ReduceHealth(totalDamage.HealthDamage);
     }
 
     public override void Death(IThing by)
     {
         base.Death(by);
+
+        PlayerSkull.RemoveYellowSkull();
         DecreaseExp();
         MoveToTemple();
     }
@@ -1170,15 +1390,98 @@ public class Player : CombatActor, IPlayer
         return (Level + 50) * .01 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
     }
 
+    public Result CanCastSpell(ISpell spell)
+    {
+        if (Group.FlagIsEnabled(PlayerFlag.CannotUseSpells))
+        {
+            return Result.Fail(InvalidOperation.CannotUseSpells);
+        }
+
+        if (Group.FlagIsEnabled(PlayerFlag.IgnoreSpellCheck))
+        {
+            return Result.Success;
+        }
+
+        if (!spell.VocationIds?.Contains(((IPlayer)this).VocationType) ?? false)
+        {
+            return Result.Fail(InvalidOperation.VocationCannotUseSpell);
+        }
+
+        if (spell.NeedsPremium && PremiumTime <= 0)
+        {
+            return Result.Fail(InvalidOperation.PremiumTimeIsRequired);
+        }
+
+        if (spell.IsAggressive && (spell.Range < 1 || (spell.Range > 0 && CurrentTarget is null)) &&
+            Skull is Skull.Black)
+        {
+            return Result.NotPossible;
+        }
+
+        if (!HasEnoughLevel(spell.MinLevel))
+        {
+            return Result.Fail(InvalidOperation.NotEnoughLevel);
+        }
+
+        if (MagicLevel < spell.MinMagicLevel)
+        {
+            return Result.Fail(InvalidOperation.NotEnoughLevel);
+        }
+
+        if (spell.IsAggressive && IsPacified)
+        {
+            return Result.Fail(InvalidOperation.Exhausted);
+        }
+
+        if (spell.IsAggressive && !Group.FlagIsEnabled(PlayerFlag.IgnoreProtectionZone) && Tile.ProtectionZone)
+        {
+            return Result.Fail(InvalidOperation.NotPermittedInProtectionZone);
+        }
+
+        if (spell.NeedWeapon && !Inventory.IsUsingWeapon)
+        {
+            return Result.Fail(InvalidOperation.SpellNeedsWeapon);
+        }
+
+        if (!HasEnoughMana(spell.ManaConsumption) && !Group.FlagIsEnabled(PlayerFlag.HasInfiniteMana))
+        {
+            return Result.Fail(InvalidOperation.NotEnoughMana);
+        }
+
+        if (!HasEnoughSoul(spell.SoulConsumption) && !Group.FlagIsEnabled(PlayerFlag.HasInfiniteSoul))
+        {
+            return Result.Fail(InvalidOperation.NotEnoughSoul);
+        }
+
+        if (spell.NeedLearn)
+        {
+            //todo: implement learn validation
+            throw new NotImplementedException();
+        }
+
+
+        if (!CooldownHasExpired(spell))
+        {
+            return Result.Fail(InvalidOperation.Exhausted);
+        }
+
+        return Result.Success;
+    }
+    
     #region Storage
 
+    //TODO: rename this method to something more meaningful or take this from here if this is not game business rule
     public IDictionary<int, int> Storages { get; }
 
     public int GetStorageValue(int key)
-        => Storages.TryGetValue(key, out var storage) ? storage : -1;
+    {
+        return Storages.TryGetValue(key, out var storage) ? storage : -1;
+    }
 
     public void AddOrUpdateStorageValue(int key, int value)
-        => Storages.AddOrUpdate(key, value);
+    {
+        Storages.AddOrUpdate(key, value);
+    }
 
     #endregion
 

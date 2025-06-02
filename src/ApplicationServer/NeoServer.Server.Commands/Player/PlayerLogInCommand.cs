@@ -16,11 +16,11 @@ namespace NeoServer.Server.Commands.Player;
 
 public class PlayerLogInCommand : ICommand
 {
-    private readonly ILogger _logger;
-    private readonly PlayerLocationResolver _playerLocationResolver;
     private readonly IGameServer _game;
     private readonly GuildLoader _guildLoader;
+    private readonly ILogger _logger;
     private readonly IPlayerLoader _playerLoader;
+    private readonly PlayerLocationResolver _playerLocationResolver;
     private readonly IScriptManager _scriptManager;
 
     public PlayerLogInCommand(
@@ -65,7 +65,7 @@ public class PlayerLogInCommand : ICommand
         player.Vip.LoadVipList(playerRecord.Account.VipList.Select(x => ((uint)x.PlayerId, x.Player?.Name)));
         _logger.Information("Player {PlayerName} logged in", player.Name);
 
-        (var success, var current, var old) = _game.CreatureManager.CheckPlayersRecord(player.WorldId).Result;
+        var (success, current, old) = _game.CreatureManager.CheckPlayersRecord(player.WorldId).Result;
 
         if (success)
             _scriptManager.GlobalEvents.ExecuteRecord(current, old);

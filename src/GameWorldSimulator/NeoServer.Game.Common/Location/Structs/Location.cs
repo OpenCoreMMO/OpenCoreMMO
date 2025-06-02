@@ -258,7 +258,7 @@ public struct Location : IEquatable<Location>, IConvertible
 
     public bool IsNotInRange(Location from, int maxX, int maxY, int maxZ)
     {
-        return GetSqmDistanceX(from) <= maxX && GetSqmDistanceY(from) <= maxY && GetSqmDistanceZ(from) <= maxZ;
+        return GetSqmDistanceX(from) <= maxX && GetSqmDistanceY(from) <= maxY && GetFloorDistanceZ(from) <= maxZ;
     }
 
     public int GetMaxSqmDistance(Location dest)
@@ -283,7 +283,7 @@ public struct Location : IEquatable<Location>, IConvertible
         return (ushort)Math.Abs(Y - dest.Y);
     }
 
-    public readonly int GetSqmDistanceZ(Location dest, bool abs = true)
+    public readonly int GetFloorDistanceZ(Location dest, bool abs = true)
     {
         if (!abs) return Z - dest.Z;
         return (ushort)Math.Abs(Z - dest.Z);
@@ -292,6 +292,50 @@ public struct Location : IEquatable<Location>, IConvertible
     public Location AddFloors(sbyte floor)
     {
         return new Location(X, Y, (byte)(Z + floor));
+    }
+
+    /// <summary>
+    /// Add one step to X or Y based on the direction
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <param name="numberOfSteps"></param>
+    public Location AddDirectionStep(Direction direction, ushort numberOfSteps = 1)
+    {
+        switch (direction)
+        {
+            case Direction.East:
+                X += numberOfSteps;
+                break;
+            case Direction.West:
+                X -= numberOfSteps;
+                break;
+            case Direction.North:
+                Y -= numberOfSteps;
+                break;
+            case Direction.South:
+                Y += numberOfSteps;
+                break;
+            case Direction.NorthEast:
+                X += numberOfSteps;
+                Y -= numberOfSteps;
+                break;
+            case Direction.NorthWest:
+                X -= numberOfSteps;
+                Y -= numberOfSteps;
+                break;
+            case Direction.SouthEast:
+                X += numberOfSteps;
+                Y += numberOfSteps;
+                break;
+            case Direction.SouthWest:
+                X -= numberOfSteps;
+                Y += numberOfSteps;
+                break;
+            case Direction.None:
+                break;
+        }
+
+        return this;
     }
 
     public Location[] Neighbours
@@ -465,5 +509,7 @@ public struct Location : IEquatable<Location>, IConvertible
     }
 
     public static bool operator !(Location location)
-        => location == Zero;
+    {
+        return location == Zero;
+    }
 }

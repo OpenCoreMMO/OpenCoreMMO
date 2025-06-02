@@ -24,7 +24,8 @@ public class CreatureOnThinkEventHandler : IGameEventHandler
 
     public void Execute(ICreature creature, int interval)
     {
-        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(creature.CreatureId, CreatureEventType.CREATURE_EVENT_THINK))
+        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(creature.CreatureId,
+                     CreatureEventType.CREATURE_EVENT_THINK))
             creatureEvent.ExecuteOnThink(creature, interval);
 
         if (creature is INpc npc)

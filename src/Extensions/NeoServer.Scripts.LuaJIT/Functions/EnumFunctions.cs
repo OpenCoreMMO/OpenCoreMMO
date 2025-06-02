@@ -6,6 +6,8 @@ using NeoServer.Game.Common.Location;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Scripts.LuaJIT.Models;
+using NeoServer.Scripts.LuaJIT.Models.Combat;
 using Serilog;
 using System.Text.RegularExpressions;
 
@@ -38,6 +40,13 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         //RegisterEnum<SkillsType>(luaState);
         RegisterEnumCustom<SkillType>(luaState);
         RegisterEnum<TileFlagsType>(luaState);
+        
+        RegisterEnum<CombatType>(luaState);
+        RegisterEnum<CombatParam>(luaState);
+        RegisterEnum<MagicEffect>(luaState);
+        RegisterEnum<ShootType>(luaState);
+        
+        RegisterEnumCustom<SoundEffect>(luaState, prefix: "SOUND_EFFECT_TYPE");
     }
 
     private static void RegisterEnum(LuaState luaState, string name, Enum value)
@@ -56,9 +65,11 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         LuaState luaState, 
         bool upperCase = true,
         bool addSeparationbewteenWords = false,
-        (string, string)? renameFromTo = null) where T : Enum
+        (string, string)? renameFromTo = null,
+        string prefix = null) where T : Enum
     {
-        var prefix = typeof(T).Name.Replace("Type", "") + "_";
+        prefix ??= typeof(T).Name.Replace("Type", "");
+        prefix += "_";
 
         if (renameFromTo.HasValue)
             prefix = prefix.Replace(renameFromTo.Value.Item1, renameFromTo.Value.Item2);
@@ -75,7 +86,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
             if (upperCase)
                 name = name.ToUpperInvariant();
 
-            RegisterGlobalVariable(luaState, name, Convert. ToUInt64(item));
+            RegisterGlobalVariable(luaState, name, Convert.ToUInt64(item));
         }
     }
 }

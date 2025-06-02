@@ -1,4 +1,5 @@
 ﻿using NeoServer.Game.Common.Contracts.Items.Types.Body;
+using NeoServer.Game.Common.Contracts.Items.Weapons.Attributes;
 using NeoServer.Game.Common.Creatures.Players;
 
 namespace NeoServer.Game.Creatures.Player.Inventory.Calculations;
@@ -8,7 +9,7 @@ internal static class InventoryDefenseCalculation
     internal static ushort CalculateTotalDefense(this InventoryMap inventory)
     {
         var totalDefense = 0;
-        totalDefense += inventory.GetItem<IWeaponItem>(Slot.Left)?.Defense ?? 0;
+        totalDefense += inventory.GetItem<IHasDefense>(Slot.Left)?.Defense ?? 0;
 
         totalDefense += inventory.GetItem<IDefenseEquipment>(Slot.Right)?.DefenseValue ?? 0;
 

@@ -1,6 +1,8 @@
 using NeoServer.Game.Combat.Spells;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Game.Common.Results;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Helpers;
 
@@ -8,23 +10,21 @@ namespace NeoServer.Extensions.Spells.Commands;
 
 public class AddMoneyCommand: CommandSpell
 {
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
-        error = InvalidOperation.NotPossible;
-
         if (Params.Length != 2)
-            return false;
+            return Result.NotPossible;
 
         var ctx = IoC.GetInstance<IGameCreatureManager>();
-        ctx.TryGetPlayer(Params[0].ToString(), out var target);
+        ctx.TryGetPlayer(Params[0].ToString(), out var targetPlayer);
 
-        if (target is null)
-            return false;
+        if (targetPlayer is null)
+            return Result.NotPossible;
         
         ulong.TryParse(Params[1].ToString(), out var amount);
 
-        target.Bank?.Credit(amount);
+        targetPlayer.Bank?.Credit(amount);
 
-        return true;
+        return Result.Success;
     }
 }

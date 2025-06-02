@@ -17,6 +17,21 @@ public abstract class BaseTile : ITile
     public bool CannotLogout => HasFlag(TileFlags.NoLogout);
     public FloorChangeDirection FloorDirection { get; protected set; } = FloorChangeDirection.None;
     public bool ProtectionZone => HasFlag(TileFlags.ProtectionZone);
+    public bool PvpZone => HasFlag(TileFlags.PvpZone);
+    public bool NoPvpZone => HasFlag(TileFlags.NoPvpZone);
+
+    public ZoneType Zone
+    {
+        get
+        {
+            if (HasFlag(TileFlags.PvpZone)) return ZoneType.Pvp;
+            if (HasFlag(TileFlags.ProtectionZone)) return ZoneType.Protection;
+            if (HasFlag(TileFlags.NoPvpZone)) return ZoneType.NoPvp;
+            if (HasFlag(TileFlags.NoLogout)) return ZoneType.NoLogout;
+            return ZoneType.Normal;
+        }
+    }
+
     public abstract IItem TopItemOnStack { get; }
     public abstract ICreature TopCreatureOnStack { get; }
     public abstract int ThingsCount { get; }
@@ -25,10 +40,7 @@ public abstract class BaseTile : ITile
 
     public abstract byte GetCreatureStackPositionIndex(IPlayer observer);
 
-    public bool HasFlag(TileFlags flag)
-    {
-        return ((uint)flag & Flags) != 0;
-    }
+    public bool HasFlag(TileFlags flag) => ((uint)flag & Flags) != 0;
 
     public bool BlockMissile => HasFlag(TileFlags.BlockProjecTile);
 
@@ -101,7 +113,7 @@ public abstract class BaseTile : ITile
         //     setFlag(TILESTATE_TRASHHOLDER);
         // }
 
-        if (item.Metadata.HasFlag(ItemFlag.Unpassable)) SetFlag(TileFlags.BLockSolid);
+        if (item.Metadata.HasFlag(ItemFlag.Unpassable)) SetFlag(TileFlags.Unpassable);
 
         // if (item->getBed()) { //todo
         //     setFlag(TILESTATE_BED);
@@ -123,7 +135,7 @@ public abstract class BaseTile : ITile
         RemoveFlag(TileFlags.BlockProjecTile);
         RemoveFlag(TileFlags.Teleport);
         RemoveFlag(TileFlags.MagicField);
-        RemoveFlag(TileFlags.BLockSolid);
+        RemoveFlag(TileFlags.Unpassable);
         RemoveFlag(TileFlags.Depot);
         RemoveFlag(TileFlags.SupportsHangable);
         RemoveFlag(TileFlags.MailBox);

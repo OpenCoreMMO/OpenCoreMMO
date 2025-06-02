@@ -63,7 +63,7 @@ public static class MonsterConverter
 
         monster.Defenses = MonsterDefenseConverter.Convert(monsterData, monsters);
 
-        monster.Loot = MonsterLootConverter.Convert(monsterData, configuration.LootRate, itemTypeStore);
+        monster.Loot = MonsterLootConverter.Convert(monsterData, itemTypeStore);
 
         var summons = MonsterSummonConverter.Convert(monsterData);
         monster.MaxSummons = (byte)summons.Item1;

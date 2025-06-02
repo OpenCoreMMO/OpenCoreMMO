@@ -14,116 +14,116 @@ using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
 using Serilog;
 
-namespace NeoServer.Loaders.Items
+namespace NeoServer.Loaders.Items;
+
+public class ItemTypeLoader
 {
-    public class ItemTypeLoader
+    private static readonly JsonSerializerOptions _jsonOptions = new()
     {
-        private readonly IItemClientServerIdMapStore _itemClientServerIdMapStore;
+        PropertyNameCaseInsensitive = true,
+        DefaultBufferSize = 4096,
+        AllowTrailingCommas = true,
+        ReadCommentHandling = JsonCommentHandling.Skip
+    };
 
-        private readonly IItemTypeStore _itemTypeStore;
-        private readonly ICoinTypeStore _coinTypeStore;
-        private readonly ILogger _logger;
-        private readonly ServerConfiguration _serverConfiguration;
-        
-        private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            DefaultBufferSize = 4096,
-            AllowTrailingCommas = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-        };
+    private readonly IItemClientServerIdMapStore _itemClientServerIdMapStore;
 
-        public ItemTypeLoader(
-            ILogger logger,
-            ServerConfiguration serverConfiguration,
-            IItemTypeStore itemTypeStore,
-            IItemClientServerIdMapStore itemClientServerIdMapStore,
-            ICoinTypeStore coinTypeStore)
-        {
-            _logger = logger;
-            _serverConfiguration = serverConfiguration;
-            _itemTypeStore = itemTypeStore;
-            _itemClientServerIdMapStore = itemClientServerIdMapStore;
-            _coinTypeStore = coinTypeStore;
-        }
+    private readonly IItemTypeStore _itemTypeStore;
+    private readonly ICoinTypeStore _coinTypeStore;
+    private readonly ILogger _logger;
+    private readonly ServerConfiguration _serverConfiguration;
 
-        /// <summary>
-        ///     Loads the OTB and XML files into a collection of ItemType objects
-        /// </summary>
-        public void Load()
+
+    public ItemTypeLoader(
+        ILogger logger,
+        ServerConfiguration serverConfiguration,
+        IItemTypeStore itemTypeStore,
+        IItemClientServerIdMapStore itemClientServerIdMapStore,
+        ICoinTypeStore coinTypeStore)
+    {
+        _logger = logger;
+        _serverConfiguration = serverConfiguration;
+        _itemTypeStore = itemTypeStore;
+        _itemClientServerIdMapStore = itemClientServerIdMapStore;
+        _coinTypeStore = coinTypeStore;
+    }
+
+    /// <summary>
+    ///     Loads the OTB and XML files into a collection of ItemType objects
+    /// </summary>
+    public void Load()
+    {
+        _logger.Step("Loading items", "{n} items loaded", () =>
         {
-            _logger.Step("Loading items", "{n} items loaded", () =>
+            var basePath = $"{_serverConfiguration.Data}/items/";
+            var itemTypes = LoadOtb(basePath);
+
+            LoadItemsJson(basePath, itemTypes);
+
+            foreach (var item in itemTypes.OrderBy(x => x.Key))
             {
-                var basePath = $"{_serverConfiguration.Data}/items/";
-                var itemTypes = LoadOtb(basePath);
+                _itemTypeStore.AddOrUpdate(item.Key, item.Value);
+                _itemClientServerIdMapStore.AddOrUpdate(item.Value.ClientId, item.Key);
 
-                LoadItemsJson(basePath, itemTypes);
-
-                foreach (var item in itemTypes.OrderBy(x => x.Key))
+                if (item.Value.Attributes.GetAttribute(ItemAttribute.Type)
+                        ?.Equals("coin", StringComparison.InvariantCultureIgnoreCase) ?? false)
                 {
-                    _itemTypeStore.AddOrUpdate(item.Key, item.Value);
-                    _itemClientServerIdMapStore.AddOrUpdate(item.Value.ClientId, item.Key);
-
-                    if (item.Value.Attributes.GetAttribute(ItemAttribute.Type)
-                            ?.Equals("coin", StringComparison.InvariantCultureIgnoreCase) ?? false)
-                    {
-                        _coinTypeStore.AddOrUpdate(item.Key, item.Value);
-                    }
+                    _coinTypeStore.AddOrUpdate(item.Key, item.Value);
                 }
+            }
 
-                return new object[] { itemTypes.Count };
-            });
-        }
+            return new object[] { itemTypes.Count };
+        });
+    }
 
-        private Dictionary<ushort, IItemType> LoadOtb(string basePath)
-        {
-            var fileStream = File.ReadAllBytes(Path.Combine(basePath, _serverConfiguration.OTB));
+    private Dictionary<ushort, IItemType> LoadOtb(string basePath)
+    {
+        var fileStream = File.ReadAllBytes(Path.Combine(basePath, _serverConfiguration.OTB));
 
-            var otbNode = OtbBinaryTreeBuilder.Deserialize(fileStream);
-            var otb = new Otb(otbNode);
+        var otbNode = OtbBinaryTreeBuilder.Deserialize(fileStream);
+        var otb = new Otb(otbNode);
 
         var itemTypes = otb.ItemNodes.AsParallel().Select(ItemNodeParser.Parse).ToDictionary(x => x.ServerId);
         return itemTypes;
     }
 
-        private static void LoadItemsJson(string basePath, IDictionary<ushort, IItemType> itemTypes)
+    private static void LoadItemsJson(string basePath, IDictionary<ushort, IItemType> itemTypes)
+    {
+        var itemTypeMetadata = GetItemTypeMetadataList(basePath);
+
+        var itemTypeMetadataParser = new ItemTypeMetadataParser(itemTypes);
+
+        (itemTypeMetadata ?? Array.Empty<ItemTypeMetadata>()).AsParallel().ForAll(metadata =>
         {
-            var itemTypeMetadata = GetItemTypeMetadataList(basePath);
-
-            var itemTypeMetadataParser = new ItemTypeMetadataParser(itemTypes);
-
-            (itemTypeMetadata ?? Array.Empty<ItemTypeMetadata>()).AsParallel().ForAll(metadata =>
+            if (metadata.Id.HasValue)
             {
-                if (metadata.Id.HasValue)
-                {
-                    itemTypeMetadataParser.AddMetadata(metadata, metadata.Id.Value);
-                    return;
-                }
+                itemTypeMetadataParser.AddMetadata(metadata, metadata.Id.Value);
+                return;
+            }
 
-                if (metadata.Fromid == null)
-                {
-                    Console.WriteLine("No item id found");
-                    return;
-                }
+            if (metadata.Fromid == null)
+            {
+                Console.WriteLine("No item id found");
+                return;
+            }
 
-                if (metadata.Toid == null)
-                {
-                    Console.WriteLine($"fromid ({metadata.Fromid}) without toid");
-                    return;
-                }
+            if (metadata.Toid == null)
+            {
+                Console.WriteLine($"fromid ({metadata.Fromid}) without toid");
+                return;
+            }
 
-                var id = metadata.Fromid.Value;
-                while (id <= metadata.Toid) itemTypeMetadataParser.AddMetadata(metadata, id++);
-            });
-        }
+            var id = metadata.Fromid.Value;
+            while (id <= metadata.Toid) itemTypeMetadataParser.AddMetadata(metadata, id++);
+        });
+    }
 
-        private static IEnumerable<ItemTypeMetadata> GetItemTypeMetadataList(string basePath)
-        {
-            using var memoryMappedFile = MemoryMappedFile.CreateFromFile(Path.Combine(basePath, "items.json"));
-            using var stream = memoryMappedFile.CreateViewStream();
-            using var reader = new StreamReader(stream);
+    private static IEnumerable<ItemTypeMetadata> GetItemTypeMetadataList(string basePath)
+    {
+        using var memoryMappedFile = MemoryMappedFile.CreateFromFile(Path.Combine(basePath, "items.json"));
+        using var stream = memoryMappedFile.CreateViewStream();
+        using var reader = new StreamReader(stream);
 
-            return JsonSerializer.Deserialize<IEnumerable<ItemTypeMetadata>>(reader.ReadToEnd().Trim('\0'), _jsonOptions);
-        }
+        return JsonSerializer.Deserialize<IEnumerable<ItemTypeMetadata>>(reader.ReadToEnd().Trim('\0'), _jsonOptions);
     }
 }

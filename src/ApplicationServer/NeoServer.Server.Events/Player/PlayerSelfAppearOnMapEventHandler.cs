@@ -3,6 +3,7 @@ using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Parsers;
+using NeoServer.Game.World;
 using NeoServer.Networking.Packets.Outgoing.Creature;
 using NeoServer.Networking.Packets.Outgoing.Effect;
 using NeoServer.Networking.Packets.Outgoing.Map;
@@ -16,14 +17,16 @@ namespace NeoServer.Server.Events.Player;
 public class PlayerSelfAppearOnMapEventHandler : IEventHandler
 {
     private readonly ClientConfiguration _clientConfiguration;
+    private readonly World _world;
     private readonly IGameServer _game;
     private readonly IMap _map;
 
-    public PlayerSelfAppearOnMapEventHandler(IMap map, IGameServer game, ClientConfiguration clientConfiguration)
+    public PlayerSelfAppearOnMapEventHandler(IMap map, IGameServer game, ClientConfiguration clientConfiguration, World world)
     {
         _map = map;
         _game = game;
         _clientConfiguration = clientConfiguration;
+        _world = world;
     }
 
     public void Execute(IWalkableCreature creature)
@@ -50,7 +53,7 @@ public class PlayerSelfAppearOnMapEventHandler : IEventHandler
         connection.OutgoingPackets.Enqueue(new PlayerStatusPacket(player));
         connection.OutgoingPackets.Enqueue(new PlayerSkillsPacket(player));
 
-        connection.OutgoingPackets.Enqueue(new WorldLightPacket(_game.LightLevel, _game.LightColor));
+        connection.OutgoingPackets.Enqueue(new WorldLightPacket(_world.WorldLight.LightLevel));
 
         connection.OutgoingPackets.Enqueue(new CreatureLightPacket(player));
 

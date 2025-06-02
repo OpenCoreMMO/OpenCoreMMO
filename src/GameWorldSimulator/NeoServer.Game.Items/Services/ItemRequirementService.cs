@@ -50,9 +50,8 @@ public class ItemRequirementService : IItemRequirementService
         if (requirement.RequiredVocations is null || requirement.RequiredVocations.Length == 0) return true;
 
         foreach (var requiredVocation in requirement.RequiredVocations)
-        {
-            if (player.VocationType == requiredVocation) return true;
-        }
+            if (player.VocationType == requiredVocation)
+                return true;
 
         return false;
     }

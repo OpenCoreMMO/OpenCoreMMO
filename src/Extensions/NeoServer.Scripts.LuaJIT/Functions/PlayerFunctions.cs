@@ -1,5 +1,4 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
@@ -556,7 +555,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             return 1;
         }
 
-        int parameters = Lua.GetTop(luaState);
+        var parameters = Lua.GetTop(luaState);
 
         var messageType = GetNumber<MessageClassesType>(luaState, 2);
         var messageText = GetString(luaState, 3);
@@ -573,7 +572,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         var player = GetUserdata<IPlayer>(luaState, 1);
         if (player != null)
-            PushBoolean(luaState, player.IsProtectionZoneLocked);
+            PushBoolean(luaState, player.IsProtectionZoneBlocked);
         else
             Lua.PushNil(luaState);
 
@@ -584,7 +583,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
     {
         // player:setGhostMode(enabled)
         var player = GetUserdata<IPlayer>(luaState, 1);
-        bool enabled = GetBoolean(luaState, 2);
+        var enabled = GetBoolean(luaState, 2);
 
         if (player != null && player.IsInvisible != enabled)
         {
@@ -604,10 +603,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         var player = GetUserdata<IPlayer>(luaState, 1);
         var food = GetNumber(luaState, 2, 0);
 
-        if (player != null && food > 0)
-        {
-            player.Feed(food);
-        }
+        if (player != null && food > 0) player.Feed(food);
 
         PushBoolean(luaState, true);
         return 1;

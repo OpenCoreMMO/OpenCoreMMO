@@ -10,7 +10,8 @@ using NeoServer.Web.API.Response.Constants;
 
 namespace NeoServer.Web.API.Application.UseCases.Commands;
 
-public class CreatePlayerCommand (IPlayerRepository playerRepository, IOptions<PlayerConfig> config) :  IRequestHandler<CreatePlayerRequest, OutputResponse>
+public class CreatePlayerCommand(IPlayerRepository playerRepository, IOptions<PlayerConfig> config)
+    : IRequestHandler<CreatePlayerRequest, OutputResponse>
 {
     public async Task<OutputResponse> Handle(CreatePlayerRequest request, CancellationToken cancellationToken)
     {
@@ -59,7 +60,7 @@ public class CreatePlayerCommand (IPlayerRepository playerRepository, IOptions<P
         };
 
         await playerRepository.Add(player);
-        
+
         return new OutputResponse(player.Id);
     }
 }

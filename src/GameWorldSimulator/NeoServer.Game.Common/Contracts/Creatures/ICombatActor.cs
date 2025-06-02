@@ -11,13 +11,6 @@ using NeoServer.Game.Common.Results;
 namespace NeoServer.Game.Common.Contracts.Creatures;
 
 public delegate void AttackTargetChange(ICombatActor actor, uint oldTargetId, uint newTargetId);
-
-public delegate void Damage(IThing enemy, ICombatActor victim, CombatDamage damage);
-
-public delegate void Attacked(IThing enemy, ICombatActor victim, ref CombatDamage damage);
-
-public delegate void HealthChange(ICombatActor actor, ICreature attacker, CombatDamage damage);
-
 public delegate void ManaChange(ICombatActor actor, ICreature attacker, CombatDamage damage);
 
 public delegate void Heal(ICombatActor healedCreature, ICreature healingCreature, ushort amount);
@@ -43,32 +36,28 @@ public interface ICombatActor : IWalkableCreature
     uint AutoAttackTargetId { get; }
     decimal AttackSpeed { get; }
     decimal BaseDefenseSpeed { get; }
-
-    bool InFight { get; }
     bool IsDead { get; }
     ushort MinimumAttackPower { get; }
+    ushort MaximumAttackPower { get; }
+    ushort MaximumElementalAttackPower { get; }
     bool UsingDistanceWeapon { get; }
     uint AttackEvent { get; set; }
     bool CanBeAttacked { get; }
     IDictionary<ConditionType, ICondition> Conditions { get; set; }
     ICreature CurrentTarget { get; }
+    DamageRecordList ReceivedDamages { get; }
 
     event Attack OnAttackEnemy;
     event BlockAttack OnBlockedAttack;
-    event Damage OnInjured;
     event Heal OnHeal;
     event BeforeDeath OnBeforeDeath;
     event Death OnDeath;
-    event Kill OnKill;
     event StopAttack OnStoppedAttack;
     event AttackTargetChange OnTargetChanged;
     event ChangeVisibility OnChangedVisibility;
     event PropagateAttack OnPropagateAttack;
     event GainExperience OnGainedExperience;
     event RemoveCondition OnRemovedCondition;
-    event AddCondition OnAddedCondition;
-    event Attacked OnAttacked;
-    event HealthChange OnHealthChanged;
     event ManaChange OnManaChanged;
 
     int DefendUsingArmor(int attack);
@@ -77,22 +66,22 @@ public interface ICombatActor : IWalkableCreature
     CombatDamage ReduceDamage(CombatDamage damage);
     Result SetAttackTarget(ICreature target);
     int DefendUsingShield(int attack);
-    void StopAttack();
+    void StopAttack(bool force = false);
     void ResetHealthPoints();
     void TurnInvisible();
     void TurnVisible();
-    void StartSpellCooldown(ISpell spell);
-    bool SpellCooldownHasExpired(ISpell spell);
+    void StartSpellCooldown(IHasCooldown spell);
+    bool CooldownHasExpired(IHasCooldown spell);
     bool CooldownHasExpired(CooldownType type);
 
     /// <summary>
     ///     Creature receive attack damage from enemy
     /// </summary>
     /// <param name="enemy"></param>
-    /// <param name="damage"></param>
+    /// <param name="damages"></param>
     /// <returns>Returns true when damage was bigger than 0</returns>
-    bool ReceiveAttack(IThing enemy, CombatDamage damage);
-
+    bool TakeDamage(IThing enemy, CombatDamageList damages);
+    bool TakeDamage(IThing enemy, CombatDamage damages);
     Result Attack(ICombatActor creature);
     void PropagateAttack(AffectedLocation[] area, CombatDamage damage);
     bool Attack(ICreature creature, IUsableAttackOnCreature item);
@@ -122,5 +111,9 @@ public interface ICombatActor : IWalkableCreature
     void EnableShieldDefense();
     void IncreaseDamageReceived(byte percentage);
     void DecreaseDamageReceived(byte percentage);
-    void Kill(ICombatActor enemy);
+    void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true);
+    void RaiseDroppedLootEvent(ICombatActor actor, ILoot loot);
+    event DropLoot OnDroppedLoot;
+    void PreAttack(CombatContext combatContext);
+    Result CanAttack(CombatParameter combatParameter);
 }

@@ -54,7 +54,7 @@ public class LoggerFunctions : LuaScriptInterface, ILoggerFunctions
     private static int LuaLoggerDebug(LuaState luaState)
     {
         if (IsString(luaState, 1))
-            _logger.Debug(GetString(luaState, 1), "1", 1,3 ,4 ,5);
+            _logger.Debug(GetString(luaState, 1), "1", 1, 3, 4, 5);
         else
             ReportError(nameof(LuaLoggerDebug), "First parameter needs to be a string");
         return 1;

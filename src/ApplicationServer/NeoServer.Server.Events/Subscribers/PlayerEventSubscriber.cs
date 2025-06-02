@@ -1,4 +1,6 @@
 ﻿using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Networking.EventHandlers.Creature;
+using NeoServer.Networking.EventHandlers.Creature.Player;
 using NeoServer.Server.Events.Chat;
 using NeoServer.Server.Events.Combat;
 using NeoServer.Server.Events.Items;
@@ -20,8 +22,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         PlayerGainedExperienceEventHandler playerGainedExperienceEventHandler,
         PlayerManaChangedEventHandler playerManaReducedEventHandler,
         SpellInvokedEventHandler playerUsedSpellEventHandler,
-        PlayerCannotUseSpellEventHandler playerCannotUseSpellEventHandler,
-        PlayerConditionChangedEventHandler playerConditionChangedEventHandler,
         PlayerLevelAdvancedEventHandler playerLevelAdvancedEventHandler,
         PlayerLevelRegressedEventHandler playerLevelRegressedEventHandler,
         PlayerLookedAtEventHandler playerLookedAtEventHandler,
@@ -42,7 +42,8 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         PlayerExhaustedEventHandler playerExhaustedEventHandler,
         PlayerReadTextEventHandler playerReadTextEventHandler,
         PlayerLoggedInEventHandler playerLoggedInEventHandler,
-        PlayerLoggedOutEventHandler playerLoggedOutEventHandler)
+        PlayerLoggedOutEventHandler playerLoggedOutEventHandler,
+        PlayerSkullUpdatedEventHandler playerSkullUpdatedEventHandler)
     {
         _playerWalkCancelledEventHandler = playerWalkCancelledEventHandler;
         _playerClosedContainerEventHandler = playerClosedContainerEventHandler;
@@ -54,8 +55,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         _playerGainedExperienceEventHandler = playerGainedExperienceEventHandler;
         _playerManaReducedEventHandler = playerManaReducedEventHandler;
         _playerUsedSpellEventHandler = playerUsedSpellEventHandler;
-        _playerCannotUseSpellEventHandler = playerCannotUseSpellEventHandler;
-        _playerConditionChangedEventHandler = playerConditionChangedEventHandler;
         _playerLevelAdvancedEventHandler = playerLevelAdvancedEventHandler;
         _playerLevelRegressedEventHandler = playerLevelRegressedEventHandler;
         _playerLookedAtEventHandler = playerLookedAtEventHandler;
@@ -77,6 +76,7 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         _playerReadTextEventHandler = playerReadTextEventHandler;
         _playerLoggedInEventHandler = playerLoggedInEventHandler;
         _playerLoggedOutEventHandler = playerLoggedOutEventHandler;
+        _playerSkullUpdatedEventHandler = playerSkullUpdatedEventHandler;
     }
 
     public void Subscribe(ICreature creature)
@@ -114,14 +114,12 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
 
         player.OnStatusChanged += _playerManaReducedEventHandler.Execute;
         player.OnUsedSpell += _playerUsedSpellEventHandler.Execute;
-        player.OnCannotUseSpell += _playerCannotUseSpellEventHandler.Execute;
-        player.OnAddedCondition += _playerConditionChangedEventHandler.Execute;
-        player.OnRemovedCondition += _playerConditionChangedEventHandler.Execute;
         player.OnLevelAdvanced += _playerLevelAdvancedEventHandler.Execute;
         player.OnLevelRegressed += _playerLevelRegressedEventHandler.Execute;
         player.OnLookedAt += _playerLookedAtEventHandler.Execute;
         player.OnGainedSkillPoint += _playerUpdatedSkillPointsEventHandler.Execute;
         player.OnUsedItem += _playerUsedItemEventHandler.Execute;
+        player.PlayerSkull.OnSkullUpdated += _playerSkullUpdatedEventHandler.Execute;
 
         player.OnLoggedIn += _playerLoggedInEventHandler.Execute;
         player.OnLoggedOut += _playerLoggedOutEventHandler.Execute;
@@ -179,14 +177,12 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
 
         player.OnStatusChanged -= _playerManaReducedEventHandler.Execute;
         player.OnUsedSpell -= _playerUsedSpellEventHandler.Execute;
-        player.OnCannotUseSpell -= _playerCannotUseSpellEventHandler.Execute;
-        player.OnAddedCondition -= _playerConditionChangedEventHandler.Execute;
-        player.OnRemovedCondition -= _playerConditionChangedEventHandler.Execute;
         player.OnLevelAdvanced -= _playerLevelAdvancedEventHandler.Execute;
         player.OnLevelRegressed -= _playerLevelRegressedEventHandler.Execute;
         player.OnLookedAt -= _playerLookedAtEventHandler.Execute;
         player.OnGainedSkillPoint -= _playerUpdatedSkillPointsEventHandler.Execute;
         player.OnUsedItem -= _playerUsedItemEventHandler.Execute;
+        player.PlayerSkull.OnSkullUpdated -= _playerSkullUpdatedEventHandler.Execute;
 
         player.OnLoggedIn -= _playerLoggedInEventHandler.Execute;
         player.OnLoggedOut -= _playerLoggedOutEventHandler.Execute;
@@ -222,7 +218,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
     private readonly PlayerGainedExperienceEventHandler _playerGainedExperienceEventHandler;
     private readonly PlayerManaChangedEventHandler _playerManaReducedEventHandler;
     private readonly SpellInvokedEventHandler _playerUsedSpellEventHandler;
-    private readonly PlayerCannotUseSpellEventHandler _playerCannotUseSpellEventHandler;
     private readonly PlayerConditionChangedEventHandler _playerConditionChangedEventHandler;
     private readonly PlayerLevelAdvancedEventHandler _playerLevelAdvancedEventHandler;
     private readonly PlayerLevelRegressedEventHandler _playerLevelRegressedEventHandler;
@@ -245,6 +240,7 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
     private readonly PlayerReadTextEventHandler _playerReadTextEventHandler;
     private readonly PlayerLoggedInEventHandler _playerLoggedInEventHandler;
     private readonly PlayerLoggedOutEventHandler _playerLoggedOutEventHandler;
+    private readonly PlayerSkullUpdatedEventHandler _playerSkullUpdatedEventHandler;
 
     #endregion
 }

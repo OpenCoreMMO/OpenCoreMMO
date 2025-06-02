@@ -14,5 +14,7 @@ public class PlayerOnLogoutEventHandler : IGameEventHandler
     }
 
     public void Execute(IPlayer player)
-        => _creatureEvents.PlayerLogout(player);
+    {
+        _creatureEvents.PlayerLogout(player);
+    }
 }

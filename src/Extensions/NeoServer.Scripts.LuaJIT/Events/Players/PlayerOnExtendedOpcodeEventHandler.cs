@@ -16,7 +16,8 @@ public class PlayerOnExtendedOpcodeEventHandler : IGameEventHandler
 
     public void Execute(IPlayer player, byte opcode, string buffer)
     {
-        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(player.CreatureId, CreatureEventType.CREATURE_EVENT_EXTENDED_OPCODE))
+        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(player.CreatureId,
+                     CreatureEventType.CREATURE_EVENT_EXTENDED_OPCODE))
             creatureEvent.ExecuteOnExtendedOpcode(player, opcode, buffer);
     }
 }

@@ -10,16 +10,16 @@ public class IpBanEntityConfiguration : IEntityTypeConfiguration<IpBanEntity>
     public void Configure(EntityTypeBuilder<IpBanEntity> builder)
     {
         builder.ToTable("IpBans");
-        
+
         builder.HasKey(b => b.Id);
-        
+
         builder.Property(b => b.Id)
             .ValueGeneratedOnAdd();
-        
+
         builder.Property(b => b.Ip)
             .IsRequired()
             .HasMaxLength(45);
-        
+
         builder.Property(b => b.Reason)
             .IsRequired()
             .HasMaxLength(500);
@@ -38,10 +38,10 @@ public class IpBanEntityConfiguration : IEntityTypeConfiguration<IpBanEntity>
 
         builder.HasIndex(b => b.ExpiresAt)
             .HasDatabaseName("IX_Bans_ExpiresAt");
-        
+
         Seed(builder);
     }
-    
+
     private static void Seed(EntityTypeBuilder<IpBanEntity> builder)
     {
         builder.HasData

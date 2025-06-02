@@ -97,6 +97,8 @@ public class Map : IMap
         return true;
     }
 
+
+
     public void SwapCreatureBetweenSectors(ICreature creature, Location fromLocation, Location toLocation)
     {
         var oldSector = world.GetSector(fromLocation.X, fromLocation.Y);
@@ -365,7 +367,7 @@ public class Map : IMap
         if (tile.HasCreature)
             foreach (var location in tile.Location.Neighbours)
                 if (this[location] is IDynamicTile { HasCreature: false } t
-                    && !t.HasFlag(TileFlags.BLockSolid))
+                    && !t.HasFlag(TileFlags.Unpassable))
                 {
                     tile = t;
                     break;
@@ -409,7 +411,7 @@ public class Map : IMap
             var location = coordinate.Point.Location;
             var tile = this[location];
 
-            if (tile is not IDynamicTile walkableTile || walkableTile.HasFlag(TileFlags.BLockSolid) ||
+            if (tile is not IDynamicTile walkableTile || walkableTile.HasFlag(TileFlags.Unpassable) ||
                 walkableTile.ProtectionZone)
             {
                 coordinate.MarkAsMissed();
@@ -436,7 +438,7 @@ public class Map : IMap
                     continue;
                 }
 
-                targetCreature.ReceiveAttack(actor, damage);
+                targetCreature.TakeDamage(actor, damage);
             }
         }
     }
@@ -465,6 +467,19 @@ public class Map : IMap
                 nextTile = newDestinationTile;
         }
 
+        if (nextTile is null)
+        {
+            creature.CancelWalk();
+            return;
+        }
+
+        if (creature is IPlayer player && nextTile.ProtectionZone && player.IsProtectionZoneBlocked)
+        {
+            creature.CancelWalk();
+            OperationFailService.Send(creature.CreatureId, TextConstants.YOU_CANNOT_ENTER_PROTECTION_ZONE);
+            return;
+        }
+
         if (nextTile is IDynamicTile dynamicTile && !(dynamicTile.CanEnterFunction?.Invoke(creature) ?? true))
         {
             creature.CancelWalk();
@@ -480,13 +495,8 @@ public class Map : IMap
 
     public void CreateBloodPool(ILiquid pool, IDynamicTile tile)
     {
-        //if (tile?.TopItems != null && tile.TopItems.TryPeek(out var topItem) && topItem is ILiquid)
-        //{
-        //    tile.RemoveItem(topItem, 1, 0, out var removedThing);
-        //}
-
-        //if (pool is null) return;
-        //tile.AddItem(pool);
+        tile.RemoveItem(pool.Metadata.Group);
+        tile.AddItem(pool);
     }
 
     public bool CanGoToDirection(ICreature creature, Direction direction, ITileEnterRule rule)
@@ -512,12 +522,14 @@ public class Map : IMap
             switch (operation.Item2)
             {
                 case Operation.Removed:
-                    if (operation.Item1 is ICumulative cumulativeToRemove) cumulativeToRemove.OnReduced -= OnItemReduced;
+                    if (operation.Item1 is ICumulative cumulativeToRemove)
+                        cumulativeToRemove.OnReduced -= OnItemReduced;
                     OnThingRemovedFromTile?.Invoke(operation.Item1,
                         CylinderOperation.Removed(operation.Item1, operation.Item3));
                     break;
                 case Operation.Updated:
-                    if (operation.Item1 is ICumulative cumulativeToUpdate) cumulativeToUpdate.OnReduced += OnItemReduced;
+                    if (operation.Item1 is ICumulative cumulativeToUpdate)
+                        cumulativeToUpdate.OnReduced += OnItemReduced;
                     OnThingUpdatedOnTile?.Invoke(operation.Item1,
                         CylinderOperation.Updated(operation.Item1, operation.Item1.Amount));
                     break;

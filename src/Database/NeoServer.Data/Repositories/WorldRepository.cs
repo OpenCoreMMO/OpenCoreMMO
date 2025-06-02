@@ -18,13 +18,14 @@ public class WorldRepository : BaseRepository<WorldEntity>, IWorldRepository
     {
     }
 
-    public async Task<IEnumerable<WorldEntity>> GetPaginatedWorldsAsync(Expression<Func<WorldEntity, bool>> filter, int page, int limit)
+    public async Task<IEnumerable<WorldEntity>> GetPaginatedWorldsAsync(Expression<Func<WorldEntity, bool>> filter,
+        int page, int limit)
     {
         await using var neoContext = NewDbContext;
-        var skip = (page - 1)  * limit;
+        var skip = (page - 1) * limit;
         return await neoContext.Worlds.Where(filter).Skip(skip).Take(limit).ToListAsync();
     }
-    
+
     public async Task<WorldEntity> GetByNameOrIpPort(string name, string ip, int port)
     {
         await using var context = NewDbContext;

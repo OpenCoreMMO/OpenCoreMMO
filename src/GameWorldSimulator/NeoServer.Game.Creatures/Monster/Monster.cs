@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Buffers;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using NeoServer.Game.Combat;
 using NeoServer.Game.Common;
@@ -38,9 +37,7 @@ public class Monster : WalkableMonster, IMonster
         Spawn = spawn;
         Direction = spawn?.Direction ?? Direction.North;
 
-        _damages = new Dictionary<ICreature, ushort>();
         State = MonsterState.Sleeping;
-        OnInjured += (enemy, _, damage) => RecordDamage(enemy, damage.Damage);
         Targets = new TargetList(this);
     }
 
@@ -86,11 +83,8 @@ public class Monster : WalkableMonster, IMonster
         }
     }
 
-    public ImmutableDictionary<ICreature, ushort> Damages => _damages.ToImmutableDictionary();
-
     public virtual void Born(Location location)
     {
-        _damages.Clear();
         ResetHealthPoints();
         SetNewLocation(location);
         State = MonsterState.Sleeping;
@@ -113,20 +107,19 @@ public class Monster : WalkableMonster, IMonster
         return MonsterDefend.DefendUsingArmor(this, attack);
     }
 
-    public override bool ReceiveAttack(IThing enemy, CombatDamage damage)
+    public override bool TakeDamage(IThing enemy, CombatDamageList damages)
     {
-        if (this is Summon.Summon { Master: IPlayer })
-        {
-            return base.ReceiveAttack(enemy, damage);
-        }
-        
-        return enemy is Summon.Summon { Master: IPlayer } or IPlayer && base.ReceiveAttack(enemy, damage);
+        if (this is Summon.Summon { Master: IPlayer }) return base.TakeDamage(enemy, damages);
+
+        return enemy is Summon.Summon { Master: IPlayer } or IPlayer && base.TakeDamage(enemy, damages);
     }
 
     public override ushort ArmorRating => Metadata.Armor;
     public override IOutfit Outfit { get; protected set; }
     public override ushort MinimumAttackPower => 0;
     public override bool UsingDistanceWeapon => TargetDistance > 1;
+    public override ushort MaximumAttackPower { get; } = 100;
+    public override ushort MaximumElementalAttackPower { get; }
     public ISpawnPoint Spawn { get; }
 
     public bool IsHostile => Metadata.HasFlag(CreatureFlagAttribute.Hostile);
@@ -144,6 +137,9 @@ public class Monster : WalkableMonster, IMonster
     {
         Race.Bood => BloodType.Blood,
         Race.Venom => BloodType.Slime,
+        Race.Undead => BloodType.None,
+        Race.Fire => BloodType.None,
+        Race.Energy => BloodType.None,
         _ => BloodType.Blood
     };
 
@@ -155,12 +151,13 @@ public class Monster : WalkableMonster, IMonster
         if (creature is Summon.Summon summon && summon.Master.CreatureId == CreatureId) return;
 
         if (!enemy.CanBeAttacked) return;
-        
-        if (creature is IPlayer player && (
-            player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters) ||
-            player.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))) return;
 
-        var canSee = CanSee(creature.Location, (int)MapViewPort.MaxClientViewPortX + 1, (int)MapViewPort.MaxClientViewPortX + 1);
+        if (creature is IPlayer player && (
+                player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters) ||
+                player.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))) return;
+
+        var canSee = CanSee(creature.Location, (int)MapViewPort.MaxClientViewPortX + 1,
+            (int)MapViewPort.MaxClientViewPortX + 1);
 
         if (State == MonsterState.Sleeping)
             Awake();
@@ -200,7 +197,10 @@ public class Monster : WalkableMonster, IMonster
         State = MonsterState.InCombat;
     }
 
-    public override bool IsThinking() => !IsSleeping;
+    public override bool IsThinking()
+    {
+        return !IsSleeping;
+    }
 
     public void MoveAroundEnemy()
     {
@@ -220,7 +220,6 @@ public class Monster : WalkableMonster, IMonster
 
         if (target is null) return;
         ChangeAttackTarget(target.Creature);
-
     }
 
     public void Sleep()
@@ -269,7 +268,7 @@ public class Monster : WalkableMonster, IMonster
 
         foreach (var summon in Metadata.Summons)
         {
-            if (!Cooldowns.Expired(summon.Name)) continue;
+            if (!Cooldowns.Expired(summon)) continue;
 
             if (summon.Chance < GameRandom.Random.Next(0, maxValue: 100))
                 continue;
@@ -282,7 +281,7 @@ public class Monster : WalkableMonster, IMonster
             var createdSummon = summonService.Summon(this, summon.Name);
             if (createdSummon is null) continue;
 
-            Cooldowns.Start(summon.Name, (int)summon.Interval);
+            Cooldowns.Start(summon);
 
             AttachToSummonEvents(createdSummon);
 
@@ -355,12 +354,6 @@ public class Monster : WalkableMonster, IMonster
         Cooldowns.Start(CooldownType.TargetChange, Metadata.TargetChance.Interval);
     }
 
-    public void RecordDamage(IThing enemy, ushort damage)
-    {
-        if (enemy is not ICreature creature) return;
-        _damages.AddOrUpdate(creature, oldValue => (ushort)(oldValue + damage));
-    }
-
     protected void Awake()
     {
         State = MonsterState.Awake;
@@ -413,52 +406,14 @@ public class Monster : WalkableMonster, IMonster
         base.Death(by);
     }
 
-    public override ILoot DropLoot()
-    {
-        var lootItems = Metadata.Loot?.Drop();
-
-        var enemies = GetLootOwners();
-
-        var loot = new Loot.Loot(lootItems, enemies.ToHashSet());
-
-        return loot;
-    }
-
-    private List<ICreature> GetLootOwners()
-    {
-        var enemies = new HashSet<ICreature>();
-        var partyMembers = new List<ICreature>();
-
-        ushort maxDamage = 0;
-
-        foreach (var damage in _damages)
-        {
-            if (damage.Value > maxDamage)
-            {
-                enemies.Clear();
-                enemies.Add(damage.Key);
-                maxDamage = damage.Value;
-                continue;
-            }
-
-            if (damage.Value == maxDamage) enemies.Add(damage.Key);
-        }
-
-        foreach (var enemy in enemies)
-            if (enemy is IPlayer player && player.PlayerParty.Party is not null)
-                partyMembers.AddRange(player.PlayerParty.Party.Members);
-
-        return !partyMembers.Any() ? enemies.ToList() : enemies.Concat(partyMembers).ToList();
-    }
-
     public override CombatDamage OnImmunityDefense(CombatDamage damage)
     {
         return MonsterDefend.ImmunityDefend(this, damage);
     }
 
-    public override void OnDamage(IThing enemy, CombatDamage damage)
+    public override void OnDamage(IThing enemy, CombatDamageList damages)
     {
-        ReduceHealth(damage);
+        ReduceHealth(damages.TotalDamage.HealthDamage);
     }
 
     protected void ChangeAttackTarget(ICreature creature)
@@ -475,7 +430,7 @@ public class Monster : WalkableMonster, IMonster
         monster.OnDeath += OnSummonDie;
     }
 
-    private void OnSummonDie(ICombatActor creature, IThing by, ILoot loot)
+    private void OnSummonDie(ICombatActor creature, IThing by)
     {
         creature.OnDeath -= OnSummonDie;
         if (!_aliveSummons.TryGetValue(creature.Name, out var count)) return;

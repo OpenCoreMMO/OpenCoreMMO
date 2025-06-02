@@ -1,5 +1,7 @@
 ## Revscript support using native LuaJIT
-Simple documentation with all scripts and functions developed using LuaJIT to working with Revscript TFS and Canary retrocompatibility.
+
+Simple documentation with all scripts and functions developed using LuaJIT to working with Revscript TFS and Canary
+retrocompatibility.
 
 ### Implemented Scripts (46)
 
@@ -34,16 +36,16 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 
 **Talk Actions (11)**
 
-- reload.lua `/reload scripts` 
-- up.lua `/up` 
-- down.lua `/down` 
-- create_monster.lua `/m scarab` 
-- create_summon.lua `/m rat` 
-- create_npc.lua `/n Eryn` 
-- create_item.lua `/i Rope` 
-- teleport_to_creature.lua `/goto` 
-- ghost.lua `/ghost` 
-- teleport_ntiles.lua `/n 5` 
+- reload.lua `/reload scripts`
+- up.lua `/up`
+- down.lua `/down`
+- create_monster.lua `/m scarab`
+- create_summon.lua `/m rat`
+- create_npc.lua `/n Eryn`
+- create_item.lua `/i Rope`
+- teleport_to_creature.lua `/goto`
+- ghost.lua `/ghost`
+- teleport_ntiles.lua `/n 5`
 - position.lua `!position`
 
 **Global Events (5)**
@@ -360,7 +362,8 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - position:sendMagicEffect(magicEffect, player = nullptr)
 - position:toString()
 - position:getDistance(positionEx)
-- position:getPathTo(positionEx, minTargetDist = 0, maxTargetDist = 1, fullPathSearch = true, clearSight = true, maxSearchDist = 0)
+- position:getPathTo(positionEx, minTargetDist = 0, maxTargetDist = 1, fullPathSearch = true, clearSight = true,
+  maxSearchDist = 0)
 - position:isSightClear(positionEx, sameFloor = true)
 
 **Result (4)**
@@ -401,15 +404,15 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 
 **DirectionsType (9)**
 
--  DIRECTION_NORTH,
--  DIRECTION_EAST,
--  DIRECTION_SOUTH,
--  DIRECTION_WEST,
--  DIRECTION_SOUTHWEST,
--  DIRECTION_SOUTHEAST,
--  DIRECTION_NORTHWEST,
--  DIRECTION_NORTHEAST,
--  DIRECTION_NONE,
+- DIRECTION_NORTH,
+- DIRECTION_EAST,
+- DIRECTION_SOUTH,
+- DIRECTION_WEST,
+- DIRECTION_SOUTHWEST,
+- DIRECTION_SOUTHEAST,
+- DIRECTION_NORTHWEST,
+- DIRECTION_NORTHEAST,
+- DIRECTION_NONE,
 
 **MagicEffectClassesType (71)**
 
@@ -489,7 +492,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 
 - MESSAGE_STATUS_CONSOLE_RED = 18, /*Red message in the console*/
 - MESSAGE_EVENT_ORANGE = 19, /*Orange message in the console*/
-- MESSAGE_STATUS_CONSOLE_ORANGE = 20,  /*Orange message in the console*/
+- MESSAGE_STATUS_CONSOLE_ORANGE = 20, /*Orange message in the console*/
 - MESSAGE_STATUS_WARNING = 21, /*Red message in game window and in the console*/
 - MESSAGE_EVENT_ADVANCE = 22, /*White message in game window and in the console*/
 - MESSAGE_EVENT_DEFAULT = 23, /*White message at the bottom of the game window and in the console*/
@@ -596,32 +599,34 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 
 **TileFlagsType (19)**
 
--  TILESTATE_NONE = 0,
--  TILESTATE_FLOORCHANGE_DOWN = 1 << 0,
--  TILESTATE_FLOORCHANGE_NORTH = 1 << 1,
--  TILESTATE_FLOORCHANGE_SOUTH = 1 << 2,
--  TILESTATE_FLOORCHANGE_EAST = 1 << 3,
--  TILESTATE_FLOORCHANGE_WEST = 1 << 4,
--  TILESTATE_FLOORCHANGE_SOUTH_ALT = 1 << 5,
--  TILESTATE_FLOORCHANGE_EAST_ALT = 1 << 6,
--  TILESTATE_PROTECTIONZONE = 1 << 7,
--  TILESTATE_NOPVPZONE = 1 << 8,
--  TILESTATE_NOLOGOUT = 1 << 9,
--  TILESTATE_PVPZONE = 1 << 10,
--  TILESTATE_TELEPORT = 1 << 11,
--  TILESTATE_MAGICFIELD = 1 << 12,
--  TILESTATE_MAILBOX = 1 << 13,
--  TILESTATE_TRASHHOLDER = 1 << 14,
--  TILESTATE_BED = 1 << 15,
--  TILESTATE_DEPOT = 1 << 16,
--  TILESTATE_BLOCKSOLID = 1 << 17,
--  TILESTATE_BLOCKPATH = 1 << 18,
--  TILESTATE_IMMOVABLEBLOCKSOLID = 1 << 19,
--  TILESTATE_IMMOVABLEBLOCKPATH = 1 << 20,
--  TILESTATE_IMMOVABLENOFIELDBLOCKPATH = 1 << 21,
--  TILESTATE_NOFIELDBLOCKPATH = 1 << 22,
--  TILESTATE_SUPPORTS_HANGABLE = 1 << 23,
--  TILESTATE_FLOORCHANGE = TILESTATE_FLOORCHANGE_DOWN | TILESTATE_FLOORCHANGE_NORTH | TILESTATE_FLOORCHANGE_SOUTH | TILESTATE_FLOORCHANGE_EAST | TILESTATE_FLOORCHANGE_WEST | TILESTATE_FLOORCHANGE_SOUTH_ALT | TILESTATE_FLOORCHANGE_EAST_ALT,
+- TILESTATE_NONE = 0,
+- TILESTATE_FLOORCHANGE_DOWN = 1 << 0,
+- TILESTATE_FLOORCHANGE_NORTH = 1 << 1,
+- TILESTATE_FLOORCHANGE_SOUTH = 1 << 2,
+- TILESTATE_FLOORCHANGE_EAST = 1 << 3,
+- TILESTATE_FLOORCHANGE_WEST = 1 << 4,
+- TILESTATE_FLOORCHANGE_SOUTH_ALT = 1 << 5,
+- TILESTATE_FLOORCHANGE_EAST_ALT = 1 << 6,
+- TILESTATE_PROTECTIONZONE = 1 << 7,
+- TILESTATE_NOPVPZONE = 1 << 8,
+- TILESTATE_NOLOGOUT = 1 << 9,
+- TILESTATE_PVPZONE = 1 << 10,
+- TILESTATE_TELEPORT = 1 << 11,
+- TILESTATE_MAGICFIELD = 1 << 12,
+- TILESTATE_MAILBOX = 1 << 13,
+- TILESTATE_TRASHHOLDER = 1 << 14,
+- TILESTATE_BED = 1 << 15,
+- TILESTATE_DEPOT = 1 << 16,
+- TILESTATE_BLOCKSOLID = 1 << 17,
+- TILESTATE_BLOCKPATH = 1 << 18,
+- TILESTATE_IMMOVABLEBLOCKSOLID = 1 << 19,
+- TILESTATE_IMMOVABLEBLOCKPATH = 1 << 20,
+- TILESTATE_IMMOVABLENOFIELDBLOCKPATH = 1 << 21,
+- TILESTATE_NOFIELDBLOCKPATH = 1 << 22,
+- TILESTATE_SUPPORTS_HANGABLE = 1 << 23,
+- TILESTATE_FLOORCHANGE = TILESTATE_FLOORCHANGE_DOWN | TILESTATE_FLOORCHANGE_NORTH | TILESTATE_FLOORCHANGE_SOUTH |
+  TILESTATE_FLOORCHANGE_EAST | TILESTATE_FLOORCHANGE_WEST | TILESTATE_FLOORCHANGE_SOUTH_ALT |
+  TILESTATE_FLOORCHANGE_EAST_ALT,
 
 **ItemAttributeType (27)**
 
@@ -710,7 +715,7 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 
 **PlayerFlag (41)**
 
-- PlayerFlag_CannotUseCombat 
+- PlayerFlag_CannotUseCombat
 - PlayerFlag_CannotAttackPlayer
 - PlayerFlag_CannotAttackMonster
 - PlayerFlag_CannotBeAttacked
@@ -718,14 +723,14 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - PlayerFlag_CanSummonAll
 - PlayerFlag_CanIllusionAll
 - PlayerFlag_CanSenseInvisibility
-- PlayerFlag_IgnoredByMonsters 
+- PlayerFlag_IgnoredByMonsters
 - PlayerFlag_NotGainInFight
 - PlayerFlag_HasInfiniteMana
-- PlayerFlag_HasInfiniteSoul 
-- PlayerFlag_HasNoExhaustion 
+- PlayerFlag_HasInfiniteSoul
+- PlayerFlag_HasNoExhaustion
 - PlayerFlag_CannotUseSpells
-- PlayerFlag_CannotPickupItem 
-- PlayerFlag_CanAlwaysLogin 
+- PlayerFlag_CannotPickupItem
+- PlayerFlag_CanAlwaysLogin
 - PlayerFlag_CanBroadcast
 - PlayerFlag_CanEditHouses
 - PlayerFlag_CannotBeBanned
@@ -738,15 +743,15 @@ Simple documentation with all scripts and functions developed using LuaJIT to wo
 - PlayerFlag_NotGainExperience
 - PlayerFlag_NotGainMana
 - PlayerFlag_NotGainHealth
-- PlayerFlag_NotGainSkill 
+- PlayerFlag_NotGainSkill
 - PlayerFlag_SetMaxSpeed
 - PlayerFlag_SpecialVIP
-- PlayerFlag_NotGenerateLoot 
+- PlayerFlag_NotGenerateLoot
 - PlayerFlag_CanTalkRedChannelAnonymous
 - PlayerFlag_IgnoreProtectionZone
 - PlayerFlag_IgnoreSpellCheck
 - PlayerFlag_IgnoreWeaponCheck
-- PlayerFlag_CannotBeMuted 
+- PlayerFlag_CannotBeMuted
 - PlayerFlag_IsAlwaysPremium
 - PlayerFlag_IgnoreYellCheck
 - PlayerFlag_IgnoreSendPrivateCheck

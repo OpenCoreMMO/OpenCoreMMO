@@ -1,4 +1,5 @@
-﻿using NeoServer.Scripts.LuaJIT.Enums;
+﻿using NeoServer.Scripts.LuaJIT.DataManagers;
+using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
@@ -23,6 +24,7 @@ public class Scripts : IScripts
     private readonly IGlobalEvents _globalEvents;
     private readonly IMoveEvents _moveEvents;
     private readonly INpcs _npcs;
+    private readonly RuneManager _runeManager;
 
     /// <summary>
     ///     A reference to the talk actions instance in use.
@@ -46,7 +48,8 @@ public class Scripts : IScripts
         ICreatureEvents creatureEvents,
         IGlobalEvents globalEvents,
         IMoveEvents moveEvents,
-        INpcs npcs)
+        INpcs npcs,
+        RuneManager runeManager)
     {
         //_instance = this;
 
@@ -56,7 +59,9 @@ public class Scripts : IScripts
         _creatureEvents = creatureEvents;
         _globalEvents = globalEvents;
         _moveEvents = moveEvents;
+        _runeManager = runeManager;
         _npcs = npcs;
+        _runeManager = runeManager;
         _talkActions = talkActions;
 
         _scriptInterface = new LuaScriptInterface("Scripts Interface");
@@ -71,6 +76,7 @@ public class Scripts : IScripts
         _moveEvents.Clear();
         _npcs.Clear();
         _talkActions.Clear();
+        _runeManager.Clear();
     }
 
     public bool LoadEventSchedulerScripts(string fileName)

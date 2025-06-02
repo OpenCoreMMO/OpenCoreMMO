@@ -59,7 +59,7 @@ public abstract class WalkableMonster : CombatActor, IWalkableMonster
         if (!Attacking) return;
 
         if (!Cooldowns.Expired(CooldownType.MoveAroundEnemy)) return;
-        Cooldowns.Start(CooldownType.MoveAroundEnemy, GameRandom.Random.Next(3000, maxValue: 5000));
+        Cooldowns.Start(CooldownType.MoveAroundEnemy, (uint)GameRandom.Random.Next(3000, maxValue: 5000));
 
         var direction = GetRandomStep();
         if (direction == Direction.None) return;

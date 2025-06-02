@@ -13,7 +13,7 @@ public class AccountEntityConfiguration : IEntityTypeConfiguration<AccountEntity
 
         builder.HasIndex(e => e.AccountName)
             .IsUnique();
-        
+
         builder.HasIndex(e => e.EmailAddress)
             .IsUnique();
 
@@ -26,7 +26,7 @@ public class AccountEntityConfiguration : IEntityTypeConfiguration<AccountEntity
         builder.Property(e => e.EmailAddress)
             .IsRequired()
             .HasColumnType("varchar(320)");
-        
+
         builder.Property(e => e.AccountName)
             .IsRequired()
             .HasColumnType("varchar(29)");
@@ -38,7 +38,7 @@ public class AccountEntityConfiguration : IEntityTypeConfiguration<AccountEntity
             .IsRequired()
             .HasMaxLength(20)
             .HasColumnType("char(20)");
-        
+
         builder.Property(e => e.Secret)
             .HasColumnType("char(16)");
 

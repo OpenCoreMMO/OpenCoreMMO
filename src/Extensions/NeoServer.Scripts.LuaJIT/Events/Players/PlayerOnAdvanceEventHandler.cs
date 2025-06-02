@@ -15,5 +15,7 @@ public class PlayerOnAdvanceEventHandler : IGameEventHandler
     }
 
     public void Execute(IPlayer player, SkillType skill, int oldValue, int newValue)
-        => _creatureEvents.PlayerAdvance(player, skill, oldValue, newValue);
+    {
+        _creatureEvents.PlayerAdvance(player, skill, oldValue, newValue);
+    }
 }

@@ -8,15 +8,8 @@ using NeoServer.Game.Common.Item;
 
 namespace NeoServer.Game.Creatures.Events.Player;
 
-public class PlayerOpenedContainerEventHandler : IGameEventHandler
+public class PlayerOpenedContainerEventHandler(IItemFactory itemFactory) : IGameEventHandler
 {
-    private readonly IItemFactory itemFactory;
-
-    public PlayerOpenedContainerEventHandler(IItemFactory itemFactory)
-    {
-        this.itemFactory = itemFactory;
-    }
-
     public void Execute(IPlayer player, byte containerId, IContainer container)
     {
         if (container is not ILootContainer lootContainer || lootContainer.Loot is null) return;
@@ -39,7 +32,7 @@ public class PlayerOpenedContainerEventHandler : IGameEventHandler
 
             if (item.Amount > 1) attributes.TryAdd(ItemAttribute.Count, item.Amount);
 
-            var itemToDrop = itemFactory.Create(item.ItemType?.Invoke(), container.Location, attributes);
+            var itemToDrop = itemFactory.Create(item.ItemType.ServerId, container.Location, attributes);
 
             if (itemToDrop is IContainer && item.Items?.Length == 0) continue;
 

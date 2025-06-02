@@ -16,7 +16,7 @@ public class BanIpCommand(IIpBansRepository ipBansRepository) : IRequestHandler<
         if (ipBan is not null)
             return new OutputResponse(ErrorMessage.IpBanished);
 
-        var entity = new IpBanEntity()
+        var entity = new IpBanEntity
         {
             Ip = request.Ip,
             BannedAt = DateTime.UtcNow,
@@ -26,6 +26,6 @@ public class BanIpCommand(IIpBansRepository ipBansRepository) : IRequestHandler<
         };
 
         await ipBansRepository.Insert(entity);
-        return new();
+        return new OutputResponse();
     }
 }

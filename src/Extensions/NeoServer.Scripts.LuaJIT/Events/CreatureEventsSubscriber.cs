@@ -3,14 +3,12 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Events.Creatures;
 using NeoServer.Scripts.LuaJIT.Events.Players;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Events;
 
 public class CreatureEventsSubscriber(
     CreatureOnDeathEventHandler creatureOnDeathEventHandler,
     CreatureOnThinkEventHandler creatureOnThinkEventHandler,
-    CreatureOnKillEventHandler creatureOnKillEventHandler,
     CreatureOnPrepareDeathEventHandler creatureOnPrepareDeathEventHandler,
-    CreatureOnHealthChangeEventHandler creatureOnHealthChangeEventHandler,
     CreatureOnManaChangeEventHandler creatureOnManaChangeEventHandler,
     PlayerOnLoginEventHandler playerOnLoginEventHandler,
     PlayerOnLogoutEventHandler playerOnLogoutEventHandler,
@@ -31,9 +29,7 @@ public class CreatureEventsSubscriber(
         if (creature is ICombatActor actor)
         {
             actor.OnDeath += creatureOnDeathEventHandler.Execute;
-            actor.OnKill += creatureOnKillEventHandler.Execute;
             actor.OnBeforeDeath += creatureOnPrepareDeathEventHandler.Execute;
-            actor.OnHealthChanged += creatureOnHealthChangeEventHandler.Execute;
             actor.OnManaChanged += creatureOnManaChangeEventHandler.Execute;
         }
 
@@ -69,9 +65,7 @@ public class CreatureEventsSubscriber(
         if (creature is ICombatActor actor)
         {
             actor.OnDeath -= creatureOnDeathEventHandler.Execute;
-            actor.OnKill -= creatureOnKillEventHandler.Execute;
             actor.OnBeforeDeath -= creatureOnPrepareDeathEventHandler.Execute;
-            actor.OnHealthChanged -= creatureOnHealthChangeEventHandler.Execute;
             actor.OnManaChanged -= creatureOnManaChangeEventHandler.Execute;
         }
 

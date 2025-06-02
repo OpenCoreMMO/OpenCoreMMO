@@ -40,6 +40,8 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     protected virtual string CloseInspectionText => $"{Name}.";
     public Direction LastDirection { get; protected set; }
 
+    public byte Skull { get; protected set; } // TODO: implement.
+
     public event RemoveCreature OnCreatureRemoved;
 
     public event ChangeOutfit OnChangedOutfit;
@@ -136,15 +138,17 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         return !otherCreature.IsInvisible || CanSeeInvisible;
     }
-    
+
     public virtual bool CanSee(Location pos)
     {
         return CanSee(pos, (int)MapViewPort.MaxViewPortX, (int)MapViewPort.MaxViewPortY);
     }
 
-    public virtual bool IsThinking() => true;
+    public virtual bool IsThinking()
+    {
+        return true;
+    }
 
-    public byte Skull { get; protected set; } // TODO: implement.
 
     public virtual byte Emblem { get; } // TODO: implement.
     public bool IsHealthHidden { get; set; }

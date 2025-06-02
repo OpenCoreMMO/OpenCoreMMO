@@ -8,7 +8,7 @@ namespace NeoServer.Data.Helpers;
 public class DBResult
 {
     private readonly List<Dictionary<string, object>> _rows;
-    private int _currentIndex = 0;
+    private int _currentIndex;
 
     public DBResult(DbDataReader dbReader)
     {
@@ -17,10 +17,8 @@ public class DBResult
         while (dbReader.Read())
         {
             var row = new Dictionary<string, object>();
-            for (int i = 0; i < dbReader.FieldCount; i++)
-            {
+            for (var i = 0; i < dbReader.FieldCount; i++)
                 row[dbReader.GetName(i).ToLowerInvariant()] = dbReader.GetValue(i);
-            }
             rows.Add(row);
         }
 
@@ -36,6 +34,7 @@ public class DBResult
             _currentIndex++;
             return true;
         }
+
         return false;
     }
 
@@ -54,4 +53,3 @@ public class DBResult
         return (T)Convert.ChangeType(value, typeof(T));
     }
 }
-

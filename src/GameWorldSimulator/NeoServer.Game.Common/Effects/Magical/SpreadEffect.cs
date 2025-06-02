@@ -1,5 +1,4 @@
-﻿using System;
-using System.Buffers;
+﻿using System.Buffers;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
 
@@ -19,7 +18,7 @@ public class SpreadEffect
         var pool = ArrayPool<Coordinate>.Shared;
         var points = pool.Rent(length * spread);
 
-        if (spread == 0) return Array.Empty<Coordinate>();
+        if (spread == 0) return [];
 
         var y = 0;
         var x = 0;

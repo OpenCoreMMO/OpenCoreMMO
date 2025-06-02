@@ -12,6 +12,8 @@ public class CreatureEvents(ILogger logger) : ICreatureEvents
     private readonly Dictionary<string, CreatureEvent> _creatureEvents = new();
     private readonly Dictionary<uint, IList<CreatureEvent>> _mappedCreatureEvents = new();
 
+    private int _scriptEventsBitField;
+
     public CreatureEvent GetEventByName(string name, bool forceLoaded)
     {
         if (_creatureEvents.TryGetValue(name, out var creatureEvent) && (!forceLoaded || creatureEvent.Loaded))
@@ -20,11 +22,14 @@ public class CreatureEvents(ILogger logger) : ICreatureEvents
     }
 
     public IEnumerable<CreatureEvent> GetCreatureEvents(CreatureEventType eventType)
-        => _creatureEvents.Values.Where(c => c.EventType == eventType);
+    {
+        return _creatureEvents.Values.Where(c => c.EventType == eventType);
+    }
 
     public bool PlayerLogin(IPlayer player)
     {
-        foreach (var creatureEvent in _creatureEvents.Values.Where(c => c.EventType == CreatureEventType.CREATURE_EVENT_LOGIN))
+        foreach (var creatureEvent in _creatureEvents.Values.Where(c =>
+                     c.EventType == CreatureEventType.CREATURE_EVENT_LOGIN))
             if (!creatureEvent.ExecuteOnLogin(player))
                 return false;
 
@@ -33,7 +38,8 @@ public class CreatureEvents(ILogger logger) : ICreatureEvents
 
     public bool PlayerLogout(IPlayer player)
     {
-        foreach (var creatureEvent in _creatureEvents.Values.Where(c => c.EventType == CreatureEventType.CREATURE_EVENT_LOGOUT))
+        foreach (var creatureEvent in _creatureEvents.Values.Where(c =>
+                     c.EventType == CreatureEventType.CREATURE_EVENT_LOGOUT))
             if (!creatureEvent.ExecuteOnLogout(player))
                 return false;
 
@@ -42,7 +48,8 @@ public class CreatureEvents(ILogger logger) : ICreatureEvents
 
     public bool PlayerAdvance(IPlayer player, SkillType skill, int oldLevel, int newLevel)
     {
-        foreach (var creatureEvent in _creatureEvents.Values.Where(c => c.EventType == CreatureEventType.CREATURE_EVENT_LOGOUT))
+        foreach (var creatureEvent in _creatureEvents.Values.Where(c =>
+                     c.EventType == CreatureEventType.CREATURE_EVENT_LOGOUT))
             if (!creatureEvent.ExecuteOnAdvance(player, skill, oldLevel, newLevel))
                 return false;
 
@@ -62,10 +69,7 @@ public class CreatureEvents(ILogger logger) : ICreatureEvents
         {
             // if there was an event with the same that is not loaded
             //(happens when reloading), it is reused
-            if (!oldEvent.Loaded && oldEvent.EventType == creatureEvent.EventType)
-            {
-                oldEvent.CopyEvent(creatureEvent);
-            }
+            if (!oldEvent.Loaded && oldEvent.EventType == creatureEvent.EventType) oldEvent.CopyEvent(creatureEvent);
 
             return false;
         }
@@ -85,19 +89,14 @@ public class CreatureEvents(ILogger logger) : ICreatureEvents
 
     public void Clear()
     {
-        foreach (var (_, creatureEvent) in _creatureEvents)
-        {
-            creatureEvent.ClearEvent();
-        }
+        foreach (var (_, creatureEvent) in _creatureEvents) creatureEvent.ClearEvent();
     }
 
     public IEnumerable<CreatureEvent> GetCreatureEvents(uint creatureId, CreatureEventType eventType)
-        => _mappedCreatureEvents.FirstOrDefault(c => c.Key == creatureId).Value?.Where(c => c.EventType == eventType) ?? new List<CreatureEvent>();
-
-    private int _scriptEventsBitField = 0;
-
-    public bool HasEventRegistered(CreatureEventType eventType)
-        => (0 != (_scriptEventsBitField & (1 << (int)eventType)));
+    {
+        return _mappedCreatureEvents.FirstOrDefault(c => c.Key == creatureId).Value
+            ?.Where(c => c.EventType == eventType) ?? new List<CreatureEvent>();
+    }
 
     public bool RegisterCreatureEvent(uint creatureId, CreatureEvent creatureEvent)
     {
@@ -107,7 +106,7 @@ public class CreatureEvents(ILogger logger) : ICreatureEvents
             _mappedCreatureEvents.TryGetValue(creatureId, out mappedCreatureEvents) &&
             mappedCreatureEvents.Any(v => v.Name.Equals(creatureEvent.Name)))
             return false;
-        
+
         _scriptEventsBitField |= 1 << (int)creatureEvent.EventType;
 
         mappedCreatureEvents ??= new List<CreatureEvent>();
@@ -143,10 +142,15 @@ public class CreatureEvents(ILogger logger) : ICreatureEvents
         }
 
         if (resetTypeBit)
-            _scriptEventsBitField &= ~((1) << (int)creatureEvent.EventType);
+            _scriptEventsBitField &= ~(1 << (int)creatureEvent.EventType);
 
         _mappedCreatureEvents.AddOrUpdate(creatureId, mappedCreatureEvents);
 
         return true;
+    }
+
+    public bool HasEventRegistered(CreatureEventType eventType)
+    {
+        return (0 != (_scriptEventsBitField & (1 << (int)eventType)));
     }
 }

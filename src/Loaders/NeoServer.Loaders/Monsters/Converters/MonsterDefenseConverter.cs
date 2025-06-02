@@ -20,14 +20,17 @@ public class MonsterDefenseConverter
         foreach (var defense in data.Defenses)
         {
             var defenseName = defense.TryGetValue("name", out JsonElement element) ? element.GetString() : string.Empty;
-            var chance = defense.TryGetValue("chance", out JsonElement chanceElement) ?  byte.Parse(chanceElement.GetString()!) : (byte)0;
-            var interval = defense.TryGetValue("interval", out JsonElement intervalElement) ?  ushort.Parse(intervalElement.GetString()!) : (ushort)0;
+            var chance = defense.TryGetValue("chance", out JsonElement chanceElement)
+                ? byte.Parse(chanceElement.GetString()!)
+                : (byte)0;
+            var interval = defense.TryGetValue("interval", out JsonElement intervalElement)
+                ? ushort.Parse(intervalElement.GetString()!)
+                : (ushort)0;
             defense.TryGetValue("attributes", out JsonElement attributesElement);
-            
+
             var attributes = new Dictionary<string, object>();
-            
+
             if (attributesElement.ValueKind == JsonValueKind.Array)
-            {
                 attributes = attributesElement
                     .EnumerateArray()
                     .Select(item =>
@@ -36,7 +39,6 @@ public class MonsterDefenseConverter
                         return new KeyValuePair<string, object>(property.Name, property.Value.GetString());
                     })
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            }
 
             attributes.TryGetValue("areaEffect", out string areaEffect);
 

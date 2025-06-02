@@ -1,6 +1,8 @@
 ﻿using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Results;
 
 namespace NeoServer.Game.Combat.Spells;
 
@@ -17,16 +19,14 @@ public class IllusionSpell : Spell<IllusionSpell>
     public override string Name => "Illusion";
     public override EffectT Effect { get; } = EffectT.GlitterGreen;
     public override uint Duration { get; } = 5000;
-    public override ushort Mana => 100;
+    public override ushort ManaConsumption => 100;
     public override ConditionType ConditionType => ConditionType.Illusion;
     public virtual IMonsterDataManager Monsters { get; }
     public virtual string CreatureName { get; }
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
-        error = InvalidOperation.NotPossible;
-
-        if (!Monsters.TryGetMonster(CreatureName, out var monster)) return false;
+        if (!Monsters.TryGetMonster(CreatureName, out var monster)) return Result.NotApplicable;
 
         var look = monster.Look;
 
@@ -37,9 +37,9 @@ public class IllusionSpell : Spell<IllusionSpell>
         look.TryGetValue(LookType.Legs, out var legs);
         look.TryGetValue(LookType.Head, out var head);
 
-        actor.SetTemporaryOutfit(lookType, (byte)head, (byte)body, (byte)legs, (byte)feet, (byte)addon);
+        caster.SetTemporaryOutfit(lookType, (byte)head, (byte)body, (byte)legs, (byte)feet, (byte)addon);
 
-        return true;
+        return Result.Success;
     }
 
     public override void OnEnd(ICombatActor actor)

@@ -6,7 +6,8 @@ using NeoServer.Web.API.Response.IpBans;
 
 namespace NeoServer.Web.API.Application.UseCases.Queries;
 
-public class GetIpBanByIpQuery(IMapper mapper, IIpBansRepository ipBansRepository) : IRequestHandler<GetIpBanByIpRequest, IpBanResponseViewModel>
+public class GetIpBanByIpQuery(IMapper mapper, IIpBansRepository ipBansRepository)
+    : IRequestHandler<GetIpBanByIpRequest, IpBanResponseViewModel>
 {
     public async Task<IpBanResponseViewModel> Handle(GetIpBanByIpRequest request, CancellationToken cancellationToken)
     {

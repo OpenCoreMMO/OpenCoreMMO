@@ -121,7 +121,7 @@ internal static class TradeRequestEventHandler
         CancelTradeAction?.Invoke(tradeRequest);
     }
 
-    private static void OnPlayerDeath(ICombatActor creature, IThing by, ILoot loot)
+    private static void OnPlayerDeath(ICombatActor creature, IThing by)
     {
         if (creature is not IPlayer player) return;
         var tradeRequest = TradeRequestTracker.GetTradeRequest(player);

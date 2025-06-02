@@ -23,20 +23,26 @@ public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, I
         var luaInterface = scripts.GetScriptInterface();
         SetScriptId(luaInterface.GetEvent());
         if (GetScriptId() != -1) return true;
-        
-        logger.Error("[CreatureEvent::LoadScriptId] Failed to load event. Script name: '{ScriptName}', Module: '{ModuleName}'", luaInterface.GetLoadingScriptName(), luaInterface.GetInterfaceName());
+
+        logger.Error(
+            "[CreatureEvent::LoadScriptId] Failed to load event. Script name: '{ScriptName}', Module: '{ModuleName}'",
+            luaInterface.GetLoadingScriptName(), luaInterface.GetInterfaceName());
         return false;
     }
 
-    public bool IsLoadedScriptId() => GetScriptId() != 0;
+    public bool IsLoadedScriptId()
+    {
+        return GetScriptId() != 0;
+    }
 
     public bool ExecuteOnLogin(IPlayer player)
     {
         //onLogin(player)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            logger.Error(@"[CreatureEvent::ExecuteOnLogin - Player {PlayerName} event {EventName}] Call stack overflow, too many lua script calls being nested",
-                            player.Name, Name);
+            logger.Error(
+                @"[CreatureEvent::ExecuteOnLogin - Player {PlayerName} event {EventName}] Call stack overflow, too many lua script calls being nested",
+                player.Name, Name);
 
             return false;
         }
@@ -60,8 +66,9 @@ public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, I
         //onLogout(player)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            logger.Error(@"[CreatureEvent::ExecuteOnLogout - Player {PlayerName} event {EventName}] Call stack overflow, too many lua script calls being nested",
-                            player.Name, Name);
+            logger.Error(
+                @"[CreatureEvent::ExecuteOnLogout - Player {PlayerName} event {EventName}] Call stack overflow, too many lua script calls being nested",
+                player.Name, Name);
 
             return false;
         }
@@ -84,8 +91,9 @@ public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, I
         //onThink(creature, interval)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            logger.Error(@"[CreatureEvent::ExecuteOnThink - Creature {CreatureName} event {EventName}] Call stack overflow, too many lua script calls being nested",
-                            creature.Name, Name);
+            logger.Error(
+                @"[CreatureEvent::ExecuteOnThink - Creature {CreatureName} event {EventName}] Call stack overflow, too many lua script calls being nested",
+                creature.Name, Name);
 
             return false;
         }
@@ -109,9 +117,10 @@ public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, I
         //onPrepareDeath(creature, killer)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            logger.Error(@"[CreatureEvent::ExecuteOnPrepareDeath - Creature {creatureName} killer {killerName} event {eventName}] Call stack overflow.
+            logger.Error(
+                @"[CreatureEvent::ExecuteOnPrepareDeath - Creature {creatureName} killer {killerName} event {eventName}] Call stack overflow.
                             Too many lua script calls being nested.",
-                            creature.Name, killer != null ? killer.Name : string.Empty, Name);
+                creature.Name, killer != null ? killer.Name : string.Empty, Name);
 
             return false;
         }
@@ -141,14 +150,16 @@ public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, I
         return scriptInterface.CallFunction(3);
     }
 
-    public bool ExecuteOnDeath(ICreature creature, IItem corpse, ICreature killer, ICreature mostDamageKiller, bool lastHitUnjustified, bool mostDamageUnjustified)
-    {	
+    public bool ExecuteOnDeath(ICreature creature, IItem corpse, ICreature killer, ICreature mostDamageKiller,
+        bool lastHitUnjustified, bool mostDamageUnjustified)
+    {
         //onDeath(creature, corpse, killer, mostDamageKiller, lastHitUnjustified, mostDamageUnjustified)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            logger.Error(@"[CreatureEvent::ExecuteOnDeath - Creature {creatureName} killer {killerName} event {eventName}] Call stack overflow.
+            logger.Error(
+                @"[CreatureEvent::ExecuteOnDeath - Creature {creatureName} killer {killerName} event {eventName}] Call stack overflow.
                             Too many lua script calls being nested.",
-                             creature.Name, killer != null ? killer.Name : string.Empty, Name);
+                creature.Name, killer != null ? killer.Name : string.Empty, Name);
 
             return false;
         }
@@ -196,8 +207,9 @@ public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, I
         //onAdvance(player, skill, oldLevel, newLevel)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            logger.Error(@"[CreatureEvent::ExecuteOnAdvance - Player {PlayerName} event {EventName}] Call stack overflow, too many lua script calls being nested",
-                             player.Name, Name);
+            logger.Error(
+                @"[CreatureEvent::ExecuteOnAdvance - Player {PlayerName} event {EventName}] Call stack overflow, too many lua script calls being nested",
+                player.Name, Name);
 
             return false;
         }
@@ -224,8 +236,9 @@ public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, I
         // onKill(creature, target, lastHit)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            logger.Error(@"[CreatureEvent::ExecuteOnKill - Creature {CreatureName} target {TargetName} event {EventName}] Call stack overflow, too many lua script calls being nested",
-                            creature.Name, target.Name, Name);
+            logger.Error(
+                @"[CreatureEvent::ExecuteOnKill - Creature {CreatureName} target {TargetName} event {EventName}] Call stack overflow, too many lua script calls being nested",
+                creature.Name, target.Name, Name);
 
             return false;
         }
@@ -242,7 +255,7 @@ public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, I
 
         LuaScriptInterface.PushUserdata(luaState, target);
         LuaScriptInterface.SetCreatureMetatable(luaState, -1, target);
-       
+
         Lua.PushBoolean(luaState, lastHit);
 
         return scriptInterface.CallFunction(3);
@@ -253,8 +266,9 @@ public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, I
         // onTextEdit(player, item, text)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            logger.Error(@"[CreatureEvent::ExecuteOnTextEdit - Player {PlayerName} event {EventName}] Call stack overflow, too many lua script calls being nested",
-                            player.Name, Name);
+            logger.Error(
+                @"[CreatureEvent::ExecuteOnTextEdit - Player {PlayerName} event {EventName}] Call stack overflow, too many lua script calls being nested",
+                player.Name, Name);
 
             return false;
         }
@@ -286,8 +300,9 @@ public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, I
         // onExtendedOpcode(player, opcode, buffer)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            logger.Error("[CreatureEvent::ExecuteOnTextEdit - Player {PlayerName} event {EventName}] Call stack overflow, too many lua script calls being nested",
-                            player.Name, Name);
+            logger.Error(
+                "[CreatureEvent::ExecuteOnTextEdit - Player {PlayerName} event {EventName}] Call stack overflow, too many lua script calls being nested",
+                player.Name, Name);
 
             return false;
         }

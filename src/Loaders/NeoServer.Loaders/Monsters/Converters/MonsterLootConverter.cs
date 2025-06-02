@@ -9,7 +9,7 @@ namespace NeoServer.Loaders.Monsters.Converters;
 
 public static class MonsterLootConverter
 {
-    public static ILoot Convert(MonsterData data, decimal lootRate, IItemTypeStore itemTypeStore)
+    public static ILoot Convert(MonsterData data, IItemTypeStore itemTypeStore)
     {
         if (data.Loot is null) return null;
 
@@ -17,7 +17,7 @@ public static class MonsterLootConverter
 
         foreach (var item in Normalize(data.Loot)) items.Add(ConvertToLootItem(item, itemTypeStore));
 
-        return new Loot(items.ToArray(), null, lootRate);
+        return new Loot(items.ToArray());
     }
 
     private static List<LootData> Normalize(List<LootData> lootData)
@@ -43,6 +43,6 @@ public static class MonsterLootConverter
             foreach (var child in item?.Items)
                 items.Add(ConvertToLootItem(child, itemTypeStore));
 
-        return new LootItem(() => itemTypeStore.Get(id), amount == 0 ? (byte)1 : amount, chance, items.ToArray());
+        return new LootItem(itemTypeStore.Get(id), amount == 0 ? (byte)1 : amount, chance, items.ToArray());
     }
 }

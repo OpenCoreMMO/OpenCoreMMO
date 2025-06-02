@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -22,7 +23,7 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
 
     public GlobalFunctions(
         ILuaEnvironment luaEnvironment,
-        ILogger logger, 
+        ILogger logger,
         IScheduler scheduler,
         IChatChannelStore chatChannelStore,
         IGameServer gameServer) : base(nameof(GlobalFunctions))
@@ -42,6 +43,13 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         RegisterGlobalMethod(luaState, "sendChannelMessage", LuaSendChannelMessage);
         RegisterGlobalMethod(luaState, "getWorldTime", LuaGetWorldTime);
         RegisterGlobalMethod(luaState, "getWorldLight", LuaGetWorldLight);
+        RegisterGlobalMethod(luaState, "createCombatArea", HandleNotImplementedFunction);
+
+    }
+
+    private static int HandleCreateCombatFunction(LuaState L)
+    {
+        return 1;
     }
 
     private static int LuaRawGetMetatable(LuaState luaState)
@@ -61,26 +69,22 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
             PushBoolean(luaState, false);
             return 1;
         }
-        else if (globalState.pointer != luaState.pointer)
-        {
-            Lua.XMove(luaState, globalState, Lua.GetTop(luaState));
-        }
 
-        int parameters = Lua.GetTop(globalState);
+        if (globalState.pointer != luaState.pointer) Lua.XMove(luaState, globalState, Lua.GetTop(luaState));
+
+        var parameters = Lua.GetTop(globalState);
         if (!Lua.IsFunction(globalState, -parameters))
-        { 
+        {
             // -parameters means the first parameter from left to right
             _logger.Error("callback parameter should be a function.");
             PushBoolean(luaState, false);
             return 1;
         }
 
-        LuaTimerEventDesc eventDesc = new LuaTimerEventDesc();
-        for (int i = 0; i < parameters - 2; ++i)
-        { 
+        var eventDesc = new LuaTimerEventDesc();
+        for (var i = 0; i < parameters - 2; ++i)
             // -2 because addEvent needs at least two parameters
             eventDesc.Parameters.Add(Lua.Ref(globalState, LUA_REGISTRY_INDEX));
-        }
 
         var delay = int.Max(100, GetNumber<int>(globalState, 2));
         Lua.Pop(globalState, 1);
@@ -91,10 +95,9 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
 
         var lastTimerEventId = _luaEnvironment.LastEventTimerId++;
 
-        eventDesc.EventId = _scheduler.AddEvent(new SchedulerEvent(delay, () =>
-        {
-            _luaEnvironment.ExecuteTimerEvent(lastTimerEventId);
-        }));
+        eventDesc.EventId =
+            _scheduler.AddEvent(new SchedulerEvent(delay,
+                () => { _luaEnvironment.ExecuteTimerEvent(lastTimerEventId); }));
 
         _luaEnvironment.TimerEvents.Add(lastTimerEventId, eventDesc);
 
@@ -127,9 +130,7 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
 
         Lua.UnRef(globalState, LUA_REGISTRY_INDEX, timerEventDesc.Function);
 
-        foreach (var parameter in timerEventDesc.Parameters) {
-            Lua.UnRef(globalState, LUA_REGISTRY_INDEX, parameter);
-        }
+        foreach (var parameter in timerEventDesc.Parameters) Lua.UnRef(globalState, LUA_REGISTRY_INDEX, parameter);
 
         PushBoolean(luaState, true);
         return 1;

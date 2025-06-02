@@ -14,7 +14,10 @@ public interface ITile : IThing
     int ThingsCount { get; }
     bool HasThings { get; }
     public bool ProtectionZone { get; }
-
+    bool PvpZone { get; }
+    bool NoPvpZone { get; }
+    ZoneType Zone { get; }
+    
     /// <summary>
     ///     check whether tile is 1 sqm distant to destination tile
     /// </summary>

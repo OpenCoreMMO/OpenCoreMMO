@@ -8,5 +8,7 @@ public interface IActionScriptService
 {
     bool HasAction(IItem item);
     bool UseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item, IThing target = null);
-    bool UseItem(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, IThing target = null, bool isHotkey = false);
+
+    bool UseItem(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, IThing target = null,
+        bool isHotkey = false);
 }

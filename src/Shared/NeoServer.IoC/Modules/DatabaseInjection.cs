@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Data.Contexts;
-using NeoServer.Data.Entities;
 using NeoServer.Data.Factory;
 using NeoServer.Data.Interfaces;
 using NeoServer.Data.Providers.InMemory;
@@ -27,6 +26,8 @@ public static class DatabaseInjection
         builder.AddSingleton<IPlayerRepository, PlayerRepository>();
         builder.AddSingleton<IWorldRecordRepository, WorldRecordRepository>();
         builder.AddSingleton<IWorldRepository, WorldRepository>();
+        builder.AddSingleton<IPlayerDeathRepository, PlayerDeathRepository>();
+        builder.AddSingleton<IReportBugRepository, ReportBugRepository>();
         builder.AddSingleton(typeof(BaseRepository<>));
 
         return builder;

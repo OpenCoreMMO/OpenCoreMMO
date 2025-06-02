@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using NeoServer.Game.Common;
+using NeoServer.Game.Common.Combat;
+using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
@@ -28,9 +30,17 @@ public class Inventory : IInventory
         AddItemsToInventory(items);
     }
 
+    public void Protect(CombatDamage damage)
+    {
+        foreach (var (item, _) in InventoryMap.Items)
+        {
+            if (item is IEquipment equipment) equipment.Protect(damage);
+        }
+    }
+
     internal InventoryMap InventoryMap { get; }
 
-    internal IAmmoEquipment Ammo => InventoryMap.GetItem<IAmmoEquipment>(Slot.Ammo);
+    public IAmmo Ammo => InventoryMap.GetItem<IAmmo>(Slot.Ammo);
     internal IDefenseEquipment Shield => InventoryMap.GetItem<IDefenseEquipment>(Slot.Right);
     public IWeapon Weapon => InventoryMap.GetItem<IWeapon>(Slot.Left);
     public bool IsUsingWeapon => InventoryMap.HasItemOnSlot(Slot.Left);
@@ -39,6 +49,8 @@ public class Inventory : IInventory
     public ushort TotalDefense => InventoryMap.CalculateTotalDefense();
     public ushort TotalArmor => InventoryMap.CalculateTotalArmor();
     public byte AttackRange => InventoryMap.CalculateAttackRange();
+    public ElementalDamage TotalElementalAttack => this.CalculateTotalElementalAttack();
+    public float AttackRate => Weapon is IDistanceWeapon or IThrowableWeapon ? 0.09f : 0.085f;
 
     public ulong GetTotalMoney(ICoinTypeStore coinTypeStore)
     {

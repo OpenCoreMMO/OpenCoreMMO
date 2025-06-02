@@ -13,7 +13,7 @@ public abstract class AddToSlotOperation
     {
         var result = inventory.CanAddItem(slot, item, item.Amount);
 
-        if (result.Failed) return Result<IItem>.Fail(result.Error);
+        if (result.Failed) return Result<IItem>.Fail(result.Reason);
 
         if (SwapRule.ShouldSwap(inventory, item, slot)) return SwapOperation.SwapItem(inventory, slot, item);
 
@@ -23,7 +23,7 @@ public abstract class AddToSlotOperation
         {
             var addCumulativeResult = AddCumulativeItemOperation.Add(inventory, cumulative, slot);
 
-            if (result.Failed) return Result<IItem>.Fail(addCumulativeResult.Error);
+            if (result.Failed) return Result<IItem>.Fail(addCumulativeResult.Reason);
         }
 
         inventory.InventoryMap.Add(slot, item, item.ClientId);

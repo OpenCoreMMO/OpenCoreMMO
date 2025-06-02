@@ -9,7 +9,7 @@ public class ChatUserCleanupRoutine
         foreach (var user in channel.Users)
         {
             if (!user.Removed || user.IsMuted) continue;
-        
+
             channel.RemoveUser(user.Player);
         }
     }

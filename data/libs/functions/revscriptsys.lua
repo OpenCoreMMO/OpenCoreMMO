@@ -105,84 +105,84 @@ end
 
 -- CreatureEvent revscriptsys
 do
-	local function CreatureEventNewIndex(self, key, value)
-		if key == "onLogin" then
-			self:type("login")
-			self:onLogin(value)
-			return
-		elseif key == "onLogout" then
-			self:type("logout")
-			self:onLogout(value)
-			return
-		elseif key == "onThink" then
-			self:type("think")
-			self:onThink(value)
-			return
-		elseif key == "onPrepareDeath" then
-			self:type("preparedeath")
-			self:onPrepareDeath(value)
-			return
-		elseif key == "onDeath" then
-			self:type("death")
-			self:onDeath(value)
-			return
-		elseif key == "onKill" then
-			self:type("kill")
-			self:onKill(value)
-			return
-		elseif key == "onAdvance" then
-			self:type("advance")
-			self:onAdvance(value)
-			return
-		elseif key == "onModalWindow" then
-			self:type("modalwindow")
-			self:onModalWindow(value)
-			return
-		elseif key == "onTextEdit" then
-			self:type("textedit")
-			self:onTextEdit(value)
-			return
-		elseif key == "onHealthChange" then
-			self:type("healthchange")
-			self:onHealthChange(value)
-			return
-		elseif key == "onManaChange" then
-			self:type("manachange")
-			self:onManaChange(value)
-			return
-		elseif key == "onExtendedOpcode" then
-			self:type("extendedopcode")
-			self:onExtendedOpcode(value)
-			return
-		end
-		rawset(self, key, value)
-	end
-	rawgetmetatable("CreatureEvent").__newindex = CreatureEventNewIndex
+    local function CreatureEventNewIndex(self, key, value)
+        if key == "onLogin" then
+            self:type("login")
+            self:onLogin(value)
+            return
+        elseif key == "onLogout" then
+            self:type("logout")
+            self:onLogout(value)
+            return
+        elseif key == "onThink" then
+            self:type("think")
+            self:onThink(value)
+            return
+        elseif key == "onPrepareDeath" then
+            self:type("preparedeath")
+            self:onPrepareDeath(value)
+            return
+        elseif key == "onDeath" then
+            self:type("death")
+            self:onDeath(value)
+            return
+        elseif key == "onKill" then
+            self:type("kill")
+            self:onKill(value)
+            return
+        elseif key == "onAdvance" then
+            self:type("advance")
+            self:onAdvance(value)
+            return
+        elseif key == "onModalWindow" then
+            self:type("modalwindow")
+            self:onModalWindow(value)
+            return
+        elseif key == "onTextEdit" then
+            self:type("textedit")
+            self:onTextEdit(value)
+            return
+        elseif key == "onHealthChange" then
+            self:type("healthchange")
+            self:onHealthChange(value)
+            return
+        elseif key == "onManaChange" then
+            self:type("manachange")
+            self:onManaChange(value)
+            return
+        elseif key == "onExtendedOpcode" then
+            self:type("extendedopcode")
+            self:onExtendedOpcode(value)
+            return
+        end
+        rawset(self, key, value)
+    end
+    rawgetmetatable("CreatureEvent").__newindex = CreatureEventNewIndex
 end
 
 -- MoveEvent revscriptsys
 do
-	local function MoveEventNewIndex(self, key, value)
-		if key == "onAddItem" then
-			self:type("additem")
-			self:onAddItem(value)
-			return
-		elseif key == "onRemoveItem" then
-			self:type("removeitem")
-			self:onRemoveItem(value)
-			return
-		elseif key == "onStepIn" then
-			self:type("stepin")
-			self:onStepIn(value)
-			return
-		elseif key == "onStepOut" then
-			self:type("stepout")
-			self:onStepOut(value)
-			return
-		end
-		rawset(self, key, value)
-	end
-	rawgetmetatable("MoveEvent").__newindex = MoveEventNewIndex
+    local function MoveEventNewIndex(self, key, value)
+        if key == "onAddItem" then
+            self:type("additem")
+            self:onAddItem(value)
+            return
+        elseif key == "onRemoveItem" then
+            self:type("removeitem")
+            self:onRemoveItem(value)
+            return
+        elseif key == "onStepIn" then
+            self:type("stepin")
+            self:onStepIn(value)
+            return
+        elseif key == "onStepOut" then
+            self:type("stepout")
+            self:onStepOut(value)
+            return
+        end
+        rawset(self, key, value)
+    end
+    rawgetmetatable("MoveEvent").__newindex = MoveEventNewIndex
 end
 
 -- -- GlobalEvent revscriptsys
@@ -264,4 +264,16 @@ do
 		rawset(self, key, value)
 	end
 	rawgetmetatable("NpcType").__newindex = NpcTypeNewIndex
+end
+
+-- Spells revscriptsys
+do
+	local function SpellNewIndex(self, key, value)
+		if key == "onCastSpell" then
+			self:onCastSpell(value)
+			return
+		end
+		rawset(self, key, value)
+	end
+	rawgetmetatable("Spell").__newindex = SpellNewIndex
 end

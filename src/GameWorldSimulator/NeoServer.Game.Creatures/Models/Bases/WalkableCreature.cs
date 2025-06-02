@@ -286,7 +286,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         if (_walkingQueue.TryDequeue(out direction))
         {
             FirstStep = false;
-            Cooldowns.Start(CooldownType.Move, StepDelay);
+            Cooldowns.Start(CooldownType.Move, (uint)StepDelay);
 
             return true;
         }

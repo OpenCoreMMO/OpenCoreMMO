@@ -11,11 +11,11 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class Actions : IActions
 {
-    private ILogger _logger;
+    private readonly ILogger _logger;
 
     #region Constructors
 
-    public Actions(ILogger logger) 
+    public Actions(ILogger logger)
     {
         _logger = logger;
     }
@@ -51,8 +51,8 @@ public class Actions : IActions
                     itemIdVector.First(),
                     itemIdVector.Last(),
                     action.GetScriptInterface().GetLoadingScriptName()
-                );                    
-                
+                );
+
                 continue;
             }
 
@@ -289,7 +289,7 @@ public class Actions : IActions
     public ReturnValueType CanUse(IPlayer player, Location pos)
     {
         if (pos.X == 0xFFFF) return ReturnValueType.RETURNVALUE_NOERROR;
-        
+
         var playerPos = player.Location;
         if (playerPos.Z != pos.Z)
             return playerPos.Z > pos.Z

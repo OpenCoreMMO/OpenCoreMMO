@@ -2,8 +2,8 @@
 
 function talkAction.onSay(player, words, param)
     if not player:getGroup():getAccess() then
-		return true
-	end
+        return true
+    end
 
     local position = player:getPosition()
     position.z = position.z + 1

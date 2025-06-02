@@ -1,6 +1,6 @@
 local pastries = {
-	[2693] = 2689,
-	[6277] = 2687,
+    [2693] = 2689,
+    [6277] = 2687,
 }
 
 local dough = MoveEvent()
@@ -8,14 +8,14 @@ local dough = MoveEvent()
 function dough.onAddItem(moveitem, tileitem, position)
     logger.info("dough.onAddItem")
     logger.info(moveitem.itemid)
-	local pastryId = pastries[moveitem.itemid]
-	if not pastryId then
-		return true
-	end
+    local pastryId = pastries[moveitem.itemid]
+    if not pastryId then
+        return true
+    end
 
-	moveitem:transform(pastryId)
-	position:sendMagicEffect(CONST_ME_HITBYFIRE)
-	return true
+    moveitem:transform(pastryId)
+    position:sendMagicEffect(CONST_ME_HITBYFIRE)
+    return true
 end
 
 dough:type("additem")

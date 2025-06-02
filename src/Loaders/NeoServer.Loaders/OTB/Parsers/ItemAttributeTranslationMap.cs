@@ -124,6 +124,7 @@ internal class ItemAttributeTranslationMap
         ["blocking"] = ItemAttribute.Blocking,
         ["allowdistread"] = ItemAttribute.AllowDistRead,
         ["minlevel"] = ItemAttribute.MinimumLevel,
+        ["minmagiclevel"] = ItemAttribute.MinimumMagicLevel,
         ["teleport"] = ItemAttribute.TeleportDestination,
         ["useon"] = ItemAttribute.UseOn,
         ["healing"] = ItemAttribute.Healing,
@@ -143,6 +144,7 @@ internal class ItemAttributeTranslationMap
         ["manause"] = ItemAttribute.ManaUse,
         ["cooldown"] = ItemAttribute.CooldownTime,
         ["actionid"] = ItemAttribute.ActionId,
-        ["decayElapsed"] = ItemAttribute.DecayElapsed
+        ["decayElapsed"] = ItemAttribute.DecayElapsed,
+        ["souluse"] = ItemAttribute.SoulUse
     };
 }

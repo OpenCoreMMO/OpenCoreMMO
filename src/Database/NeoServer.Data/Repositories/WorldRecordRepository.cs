@@ -24,6 +24,6 @@ public class WorldRecordRepository : BaseRepository<WorldRecordEntity>, IWorldRe
         await using var context = NewDbContext;
         return await context.WorldRecords
             .OrderBy(c => c.CreatedAt)
-            .LastOrDefaultAsync(c => c.WordId == worldId);
+            .LastOrDefaultAsync(c => c.WorldId == worldId);
     }
 }

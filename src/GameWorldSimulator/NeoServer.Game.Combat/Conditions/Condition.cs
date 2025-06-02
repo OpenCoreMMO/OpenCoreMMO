@@ -15,9 +15,9 @@ public class Condition : BaseCondition
     {
         Type = type;
     }
-    
+
     /// <summary>
-    /// Create infinite condition
+    ///     Create infinite condition
     /// </summary>
     public Condition(ConditionType type) : base(0)
     {

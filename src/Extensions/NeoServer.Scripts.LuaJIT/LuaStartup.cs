@@ -46,6 +46,8 @@ public class LuaStartup : ILuaStartup
     private readonly IConditionFunctions _conditionFunctions;
 
     private readonly IBankFunctionBinder _bankFunctionBinder;
+    private readonly ISpellFunctionMapper _spellFunctionMapper;
+    private readonly ICombatFunctionMapper _combatFunctionMapper;
 
     /// <summary>
     /// A reference to the <see cref="IConfigFunctions"/> instance in use.
@@ -202,7 +204,10 @@ public class LuaStartup : ILuaStartup
         ITileFunctions tileFunctions,
         ServerConfiguration serverConfiguration,
         IConditionFunctions conditionFunctions,
-        IBankFunctionBinder bankFunctionBinder)
+        IBankFunctionBinder bankFunctionBinder,
+        ISpellFunctionMapper spellFunctionMapper,
+        ICombatFunctionMapper combatFunctionMapper
+        )
     {
         _logger = logger;
         _luaEnviroment = luaEnviroment;
@@ -233,10 +238,14 @@ public class LuaStartup : ILuaStartup
         _talkActionFunctions = talkActionFunctions;
         _teleportFunctions = teleportFunctions;
         _tileFunctions = tileFunctions;
+        _spellFunctionMapper = spellFunctionMapper;
+        _combatFunctionMapper = combatFunctionMapper;
+        _combatFunctionMapper = combatFunctionMapper;
 
         _serverConfiguration = serverConfiguration;
         _conditionFunctions = conditionFunctions;
         _bankFunctionBinder = bankFunctionBinder;
+        _spellFunctionMapper = spellFunctionMapper;
     }
 
     #endregion
@@ -285,6 +294,8 @@ public class LuaStartup : ILuaStartup
         _playerFunctions.Init(luaState);
         _teleportFunctions.Init(luaState);
         _groupFunctions.Init(luaState);
+        _spellFunctionMapper.Init(luaState);
+        _combatFunctionMapper.Init(luaState);
         _bankFunctionBinder.Init(luaState);
 
         ModulesLoadHelper(_configManager.Load($"{currentDir}/config.lua"), $"config.lua");

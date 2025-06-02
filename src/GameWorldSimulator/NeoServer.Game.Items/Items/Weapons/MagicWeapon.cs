@@ -2,7 +2,7 @@
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types.Body;
+using NeoServer.Game.Common.Contracts.Items.Weapons;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location.Structs;
@@ -11,7 +11,7 @@ using NeoServer.Game.Items.Bases;
 
 namespace NeoServer.Game.Items.Items.Weapons;
 
-public class MagicWeapon : Equipment, IDistanceWeapon
+public class MagicWeapon : Equipment, IMagicalWeapon
 {
     public MagicWeapon(IItemType type, Location location) : base(type, location)
     {
@@ -24,8 +24,9 @@ public class MagicWeapon : Equipment, IDistanceWeapon
         : ShootTypeParser.ToDamageType(ShootType);
 
     private ushort MaxDamage => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.MaxHitChance);
-    public ushort MinHitChance => (ushort)(MaxDamage / 2);
-    private ushort ManaConsumption => Metadata.Attributes?.GetAttribute<ushort>(ItemAttribute.ManaUse) ?? 0;
+    public ushort MaxHitChance => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.MaxHitChance);
+    public ushort? MinHitChance => (ushort)(MaxHitChance / 2);
+    public ushort ManaConsumption => Metadata.Attributes?.GetAttribute<ushort>(ItemAttribute.ManaUse) ?? 0;
 
     protected override string PartialInspectionText => string.Empty;
     public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Range);
@@ -43,7 +44,7 @@ public class MagicWeapon : Equipment, IDistanceWeapon
         if (DistanceCombatAttack.CalculateAttack(actor, enemy, combat, out var damage))
         {
             player.ConsumeMana(ManaConsumption);
-            enemy.ReceiveAttack(actor, damage);
+            enemy.TakeDamage(actor, damage);
             return true;
         }
 

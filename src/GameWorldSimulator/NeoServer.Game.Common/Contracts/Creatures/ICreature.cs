@@ -18,9 +18,7 @@ public delegate void StopWalk(IWalkableCreature creature);
 
 public delegate void BeforeDeath(ICombatActor creature, ICombatActor killer, int realDamage);
 
-public delegate void Death(ICombatActor creature, IThing by, ILoot loot);
-
-public delegate void Kill(ICombatActor creature, ICombatActor target, bool lastHit);
+public delegate void Death(ICombatActor creature, IThing by);
 
 public delegate void GainExperience(ICreature creature, long exp);
 
@@ -107,11 +105,6 @@ public interface ICreature : IMovableThing
     byte Emblem { get; }
 
     /// <summary>
-    ///     Indicates Skull showed on creature
-    /// </summary>
-    byte Skull { get; }
-
-    /// <summary>
     ///     HP
     /// </summary>
     uint HealthPoints { get; set; }
@@ -145,7 +138,7 @@ public interface ICreature : IMovableThing
     ///     Checks if creature can be seen by others
     /// </summary>
     bool CanBeSeen { get; }
-    
+
     /// <summary>
     ///     Summons of creature
     /// </summary>
@@ -196,7 +189,7 @@ public interface ICreature : IMovableThing
     /// </summary>
     /// <returns></returns>
     bool CanSee(Location.Structs.Location pos);
-    
+
     /// <summary>
     ///     Checks if creature can execute think
     /// </summary>
@@ -225,7 +218,6 @@ public interface ICreature : IMovableThing
     /// <summary>
     ///     Thinks something
     /// </summary>
-
     void Think(int interval);
 
     void OnCreatureAppear(ICreature creature);

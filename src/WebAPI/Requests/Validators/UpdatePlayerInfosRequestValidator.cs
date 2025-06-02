@@ -5,7 +5,7 @@ namespace NeoServer.Web.API.Requests.Validators;
 
 public class UpdatePlayerInfosRequestValidator : AbstractValidator<UpdatePlayerInfosRequest>
 {
-    public UpdatePlayerInfosRequestValidator() 
+    public UpdatePlayerInfosRequestValidator()
     {
         RuleFor(x => x.Id)
             .GreaterThan(0)
@@ -61,7 +61,7 @@ public class UpdatePlayerInfosRequestValidator : AbstractValidator<UpdatePlayerI
             .WithMessage("MaxSoul must be at least 0.");
 
         RuleFor(x => x.Speed)
-            .InclusiveBetween((ushort)200,(ushort)2500)
+            .InclusiveBetween((ushort)200, (ushort)2500)
             .WithMessage("Speed must be between 200 and 2500.");
 
         RuleFor(x => x.ChaseMode)

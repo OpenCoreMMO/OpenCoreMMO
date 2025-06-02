@@ -59,7 +59,7 @@ public class PlayerTests
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100) as Player.Player;
         var enemy = PlayerTestDataBuilder.Build() as Player.Player;
-        sut.OnDamage(enemy, new CombatDamage(5, DamageType.Melee));
+        sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(5, DamageType.Melee)));
 
         Assert.Equal((uint)95, sut.HealthPoints);
     }
@@ -69,7 +69,7 @@ public class PlayerTests
     {
         var sut = PlayerTestDataBuilder.Build(mana: 30) as Player.Player;
         var enemy = PlayerTestDataBuilder.Build() as Player.Player;
-        sut.OnDamage(enemy, new CombatDamage(5, DamageType.ManaDrain));
+        sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(5, DamageType.ManaDrain)));
 
         Assert.Equal((uint)25, sut.Mana);
     }
@@ -161,10 +161,10 @@ public class PlayerTests
     {
         var sut = PlayerTestDataBuilder.Build();
 
-        sut.ChangeSecureMode(0);
-        sut.SecureMode.Should().Be(0);
-        sut.ChangeSecureMode(1);
-        sut.SecureMode.Should().Be(1);
+        sut.ChangeSecureMode(PvpSecureMode.PvPEnabled);
+        sut.SecureMode.Should().Be(PvpSecureMode.PvPEnabled);
+        sut.ChangeSecureMode(PvpSecureMode.PvPDisabled);
+        sut.SecureMode.Should().Be(PvpSecureMode.PvPDisabled);
     }
 
     [Fact]

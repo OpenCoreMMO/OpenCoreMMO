@@ -1,12 +1,11 @@
 ﻿using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Location.Structs;
 
 namespace NeoServer.Game.Creatures.Monster.Summon;
 
-public class Summon : Monster
+public class Summon : Monster, ISummon
 {
     public Summon(IMonsterType type, IMapTool mapTool, ICreature master) : base(type, mapTool, null)
     {
@@ -39,7 +38,7 @@ public class Summon : Monster
         base.Born(location);
         Awake();
     }
-    
+
     public override void UpdateState()
     {
         if (Master is not IPlayer player)
@@ -56,7 +55,7 @@ public class Summon : Monster
 
         Follow(Master);
     }
-    
+
     public override void Death(IThing by)
     {
         base.Death(by);
@@ -81,8 +80,8 @@ public class Summon : Monster
 
             return true; // TODO: Check PvP
         }
-            
-            
+
+
         return base.IsHostileTo(enemy);
     }
 
@@ -91,9 +90,9 @@ public class Summon : Monster
         HealthPoints = 0;
         Death(this);
     }
-    
 
-    private void OnMasterKilled(ICombatActor master, IThing by, ILoot loot)
+
+    private void OnMasterKilled(ICombatActor master, IThing by)
     {
         Die();
     }

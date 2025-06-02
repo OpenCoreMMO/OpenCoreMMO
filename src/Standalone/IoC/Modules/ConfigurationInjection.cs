@@ -45,6 +45,8 @@ public static class ConfigurationInjection
         builder.AddSingleton(gameConfiguration);
         builder.AddSingleton(logConfiguration);
         builder.AddSingleton(clientConfiguration);
+        builder.AddSingleton(gameConfiguration.PvP);
+        builder.AddSingleton(gameConfiguration.Combat);
 
         return builder;
     }
@@ -56,7 +58,7 @@ public static class ConfigurationInjection
         var serverGameName = Environment.GetEnvironmentVariable("SERVER_GAME_NAME");
         var serverGameIP = Environment.GetEnvironmentVariable("SERVER_GAME_IP");
 
-        serverConfiguration = new(
+        serverConfiguration = new ServerConfiguration(
             serverConfiguration.Version,
             serverConfiguration.OTBM,
             serverConfiguration.OTB,

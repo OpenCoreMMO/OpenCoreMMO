@@ -6,7 +6,10 @@ using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.Items.Types.Containers;
 using NeoServer.Game.Common.Contracts.Services;
+using NeoServer.Game.Common.Contracts.World;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Location;
+using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Common.Results;
 using NeoServer.Game.Common.Services;
 using NeoServer.Game.Common.Texts;
@@ -21,10 +24,9 @@ public class ItemMovementService : IItemMovementService
     {
         _walkToMechanism = walkToMechanism;
     }
-
     public Result<OperationResultList<IItem>> Move(IPlayer player, IItem item, IHasItem from, IHasItem destination,
         byte amount,
-        byte fromPosition, byte? toPosition)
+        byte fromPosition, byte? toPosition, bool walkTo = true)
     {
         if (player is null) return Result<OperationResultList<IItem>>.NotPossible;
 
@@ -42,8 +44,8 @@ public class ItemMovementService : IItemMovementService
                 return Result<OperationResultList<IItem>>.NotPossible;
             }
         }
-
-        if (!item.IsCloseTo(player))
+        
+        if (!item.IsCloseTo(player) && walkTo)
         {
             _walkToMechanism.WalkTo(player,
                 () => player.MoveItem(item, from, destination, amount, fromPosition, toPosition), item.Location);
@@ -60,7 +62,7 @@ public class ItemMovementService : IItemMovementService
         if (!item.CanBeMoved) return Result<OperationResultList<IItem>>.NotPossible;
 
         var canAdd = destination.CanAddItem(item, amount, toPosition);
-        if (!canAdd.Succeeded) return new Result<OperationResultList<IItem>>(canAdd.Error);
+        if (!canAdd.Succeeded) return new Result<OperationResultList<IItem>>(canAdd.Reason);
 
         (destination, toPosition) = GetDestination(from, destination, toPosition);
 
@@ -92,7 +94,7 @@ public class ItemMovementService : IItemMovementService
         byte? toPosition)
     {
         var canAdd = destination.CanAddItem(thing, thing.Amount, toPosition);
-        if (!canAdd.Succeeded) return new Result<OperationResultList<IItem>>(canAdd.Error);
+        if (!canAdd.Succeeded) return new Result<OperationResultList<IItem>>(canAdd.Reason);
 
         var result = destination.AddItem(thing, toPosition);
 

@@ -28,9 +28,14 @@ public class SpeedCombatAttack : DistanceCombatAttack
         combatResult = new CombatAttackResult(option.DamageType);
 
         if (CalculateAttack(actor, enemy, option, out var damage))
-            return SpeedChange > 0
-                ? HasteSpell.Instance.InvokeOn(actor, enemy, null, out var error)
-                : ParalyzeSpell.Instance.InvokeOn(actor, enemy, null, out error);
+        {
+            var invokeResult = SpeedChange > 0
+                ? HasteSpell.Instance.Invoke(actor, enemy, false)
+                : ParalyzeSpell.Instance.Invoke(actor, enemy, false);
+            
+            if (invokeResult.Succeeded) return true;
+        }
+
         return false;
     }
 }

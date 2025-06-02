@@ -60,10 +60,10 @@ public abstract class Equipment : BaseItem, IEquipment
 
     #region Protection
 
-    public bool Protect(ref CombatDamage damage)
+    public bool Protect(CombatDamage damage)
     {
         if (NoCharges) return false;
-        var @protected = Protection?.Protect(ref damage) ?? false;
+        var @protected = Protection?.Protect(damage) ?? false;
         if (@protected) DecreaseCharges();
         return true;
     }
@@ -73,11 +73,6 @@ public abstract class Equipment : BaseItem, IEquipment
     public abstract bool CanBeDressed(IPlayer player);
     public byte[] Vocations => Metadata.Attributes.GetRequiredVocations();
     public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumLevel);
-
-    private void OnPlayerAttackedHandler(IThing enemy, ICombatActor victim, ref CombatDamage damage)
-    {
-        Protect(ref damage);
-    }
 
     #region Charges
 
@@ -114,7 +109,6 @@ public abstract class Equipment : BaseItem, IEquipment
         if (Guard.AnyNull(player)) return;
         TransformOnEquip();
 
-        player.OnAttacked += OnPlayerAttackedHandler;
         PlayerDressing = player;
         AddSkillBonus(player);
         StartDecay();
@@ -130,7 +124,6 @@ public abstract class Equipment : BaseItem, IEquipment
 
         TransformOnDequip();
 
-        player.OnAttacked -= OnPlayerAttackedHandler;
         PlayerDressing = null;
         PauseDecay();
         OnUndressed?.Invoke(this);

@@ -27,6 +27,7 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
             .ValueGeneratedOnAdd();
 
         entity.Property(e => e.Group);
+        entity.Ignore(e => e.KillsLastMonth);
 
         ConfigureProperty(entity, e => e.AccountId, "int(11)", "0");
         ConfigureProperty(entity, e => e.TownId, "int(11)", "1");
@@ -65,6 +66,8 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
         ConfigureProperty(entity, e => e.Vocation, "int(11)", "0");
         ConfigureProperty(entity, e => e.RemainingRecoverySeconds, "int(11)", "0");
         ConfigureProperty(entity, e => e.BankAmount, "int(11)", "0");
+        ConfigureProperty(entity, e => e.Skull, "int(11)", "0");
+        entity.Property(e => e.SkullEndsAt);
 
         entity.HasOne(d => d.Account)
             .WithMany(p => p.Players)
@@ -76,6 +79,7 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
             .HasForeignKey(d => d.WorldId);
 
         entity.HasOne(x => x.GuildMember).WithOne(x => x.Player);
+        entity.HasMany(x => x.Deaths).WithOne(x => x.Player);
 
         PlayerModelSeed.Seed(entity);
     }

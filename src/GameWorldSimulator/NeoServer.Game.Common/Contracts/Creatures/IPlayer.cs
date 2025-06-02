@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NeoServer.Game.Common.Chats;
+using NeoServer.Game.Common.Combat.Enums;
 using NeoServer.Game.Common.Contracts.Creatures.Players;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
@@ -67,31 +69,6 @@ public delegate void DeEquipItem(IPlayer player, IItem item, bool isCheck);
 
 public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 {
-    #region Events
-
-    public event PlayerLevelAdvance OnLevelAdvanced;
-    public event PlayerLevelRegress OnLevelRegressed;
-    public event PlayerGainSkillPoint OnGainedSkillPoint;
-    public event ReduceMana OnStatusChanged;
-    public event CannotUseSpell OnCannotUseSpell;
-    public event LookAt OnLookedAt;
-    public event UseSpell OnUsedSpell;
-    public event UseItem OnUsedItem;
-    public event LogIn OnLoggedIn;
-    public event LogOut OnLoggedOut;
-    public event ChangeOnlineStatus OnChangedOnlineStatus;
-    public event SendMessageTo OnSentMessage;
-
-    public event Exhaust OnExhausted;
-    public event Hear OnHear;
-    public event ChangeChaseMode OnChangedChaseMode;
-    public event AddSkillBonus OnAddedSkillBonus;
-    public event RemoveSkillBonus OnRemovedSkillBonus;
-    public event ReadText OnReadText;
-    public event WroteText OnWroteText;
-
-    #endregion
-
     ushort Level { get; }
     byte LevelPercent { get; }
     ushort MagicLevel { get; }
@@ -102,12 +79,11 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     float FreeCapacity { get; }
 
     ushort StaminaMinutes { get; }
+    bool IsLogoutBlocked { get; }
 
     FightMode FightMode { get; }
     ChaseMode ChaseMode { get; }
-    byte SecureMode { get; }
-
-    new bool InFight { get; }
+    PvpSecureMode SecureMode { get; }
     IPlayerContainerList Containers { get; }
 
     ITown Town { get; set; }
@@ -117,7 +93,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     ushort MaxMana { get; }
     SkillType SkillInUse { get; }
     bool CannotLogout { get; }
-    bool IsProtectionZoneLocked { get; }
     uint Id { get; }
     bool HasDepotOpened { get; }
     uint TotalCapacity { get; }
@@ -142,11 +117,27 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     string GenderPronoun { get; }
     Gender Gender { get; set;  }
     int PremiumTime { get; }
+    bool HasPremiumTime => PremiumTime > 0;
     IDictionary<SkillType, ISkill> Skills { get; }
     IDictionary<int, int> Storages { get; }
 
     bool CanSeeInspectionDetails { get; }
     bool IsManaShieldEnabled { get; }
+
+    /// <summary>
+    ///     Indicates Skull showed on creature
+    /// </summary>
+    IPlayerSkull PlayerSkull { get; }
+
+    bool HasSkull { get; }
+    int NumberOfUnjustifiedKillsLastDay { get; }
+    int NumberOfUnjustifiedKillsLastWeek { get; }
+    int NumberOfUnjustifiedKillsLastMonth { get; }
+    DateTime? SkullEndsAt { get; }
+    bool IsProtectionZoneBlocked { get; }
+    Skull Skull { get; }
+    float DamageFactor { get; }
+    bool IsPacified { get; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 
@@ -182,7 +173,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     ///     Toogle Secure Mode
     /// </summary>
     /// <param name="secureMode"></param>
-    void ChangeSecureMode(byte secureMode);
+    void ChangeSecureMode(PvpSecureMode secureMode);
 
     byte GetSkillPercent(SkillType type);
 
@@ -228,9 +219,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     void Use(IThing item);
     Result Use(IUsableOn item, IItem onItem);
     bool Login();
-
-    bool CastSpell(string message);
-
+    
     void SendMessageTo(ISociableCreature creature, SpeechType type, string message);
     void StartShopping(IShopperNpc npc);
     void StopShopping();
@@ -261,19 +250,26 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     ushort GetRawSkillLevel(SkillType skillType);
     int GetStorageValue(int key);
     void AddOrUpdateStorageValue(int key, int value);
-    
+    Skull GetSkull(IPlayer enemy);
+    void SetSkull(Skull skull, DateTime? skullEndingDate = null, IPlayer enemy = null);
+    void RemoveSkull();
+    void SetNumberOfKills(int killsInLastDay, int killsInLastWeek, int killsInLastMonth);
+    void RemoveLogoutBlock();
+    void SetProtectionZoneBlock();
+    void RemoveProtectionZoneBlock();
+
     /// <summary>
-    /// Add infinite mana shield condition
+    ///     Add infinite mana shield condition
     /// </summary>
     void EnableManaShield();
-    
+
     /// <summary>
-    /// Remove mana shield condition
+    ///     Remove mana shield condition
     /// </summary>
     void DisableManaShield();
-    
+
     /// <summary>
-    /// Add mana shield condition 
+    ///     Add mana shield condition
     /// </summary>
     /// <param name="duration"></param>
     void EnableManaShield(uint duration);
@@ -282,4 +278,34 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     void RemoveRegenerationBonus(RegenerationBonus regenerationBonus);
     void OnDressedItem(IItem item);
     void OnUndressedItem(IItem item);
+    void PostSpellCast(ISpell spell);
+    bool HasEnoughSoul(ushort soul);
+    Result CanCastSpell(ISpell spell);
+    void ConsumeSoul(ushort soul);
+
+    #region Events
+
+    public event PlayerLevelAdvance OnLevelAdvanced;
+    public event PlayerLevelRegress OnLevelRegressed;
+    public event PlayerGainSkillPoint OnGainedSkillPoint;
+    public event ReduceMana OnStatusChanged;
+    public event CannotUseSpell OnCannotUseSpell;
+    public event LookAt OnLookedAt;
+    public event UseSpell OnUsedSpell;
+    public event UseItem OnUsedItem;
+    public event LogIn OnLoggedIn;
+    public event LogOut OnLoggedOut;
+    public event ChangeOnlineStatus OnChangedOnlineStatus;
+    public event SendMessageTo OnSentMessage;
+
+    public event Exhaust OnExhausted;
+    public event Hear OnHear;
+    public event ChangeChaseMode OnChangedChaseMode;
+    public event AddSkillBonus OnAddedSkillBonus;
+    public event RemoveSkillBonus OnRemovedSkillBonus;
+    public event ReadText OnReadText;
+    public event WroteText OnWroteText;
+
+    #endregion
+
 }

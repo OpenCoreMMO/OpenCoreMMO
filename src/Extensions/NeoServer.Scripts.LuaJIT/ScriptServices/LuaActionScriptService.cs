@@ -10,24 +10,6 @@ namespace NeoServer.Scripts.LuaJIT.ScriptServices;
 
 public class LuaActionScriptService : IActionScriptService
 {
-    #region Members
-
-    #endregion
-
-    #region Dependency Injections
-
-    /// <summary>
-    /// A reference to the <see cref="ILogger"/> instance in use.
-    /// </summary>
-    private readonly ILogger _logger;
-
-    /// <summary>
-    /// A reference to the <see cref="IActions"/> instance in use.
-    /// </summary>
-    private readonly IActions _actions;
-
-    #endregion
-
     #region Constructors
 
     public LuaActionScriptService(
@@ -41,16 +23,37 @@ public class LuaActionScriptService : IActionScriptService
 
     #endregion
 
-    #region Public Methods 
+    #region Dependency Injections
 
-    public bool HasAction(IItem item) => _actions.GetAction(item) != null;
+    /// <summary>
+    ///     A reference to the <see cref="ILogger" /> instance in use.
+    /// </summary>
+    private readonly ILogger _logger;
+
+    /// <summary>
+    ///     A reference to the <see cref="IActions" /> instance in use.
+    /// </summary>
+    private readonly IActions _actions;
+
+    #endregion
+
+    #region Public Methods
+
+    public bool HasAction(IItem item)
+    {
+        if (item is null) return false;
+        return _actions.GetAction(item) != null;
+    }
 
     public bool UseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item, IThing target = null)
     {
-        return UseItem(player, pos, pos, stackpos, item, target, false);
+        if(item is null) return false;
+        
+        return UseItem(player, pos, pos, stackpos, item, target);
     }
 
-    public bool UseItem(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item, IThing target = null, bool isHotkey = false)
+    public bool UseItem(IPlayer player, Location fromPos, Location toPos, byte toStackPos, IItem item,
+        IThing target = null, bool isHotkey = false)
     {
         var action = _actions.GetAction(item);
 
@@ -75,8 +78,7 @@ public class LuaActionScriptService : IActionScriptService
                 target,
                 toPos,
                 isHotkey);
-        else
-            _logger.Warning("Action with item id {ItemServerId} has not found into LuaJIT Scripts.", item.ServerId);
+        _logger.Warning("Action with item id {ItemServerId} has not found into LuaJIT Scripts.", item.ServerId);
 
         return false;
     }

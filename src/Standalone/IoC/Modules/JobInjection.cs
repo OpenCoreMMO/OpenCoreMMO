@@ -3,6 +3,7 @@ using NeoServer.Server.Routines.Channels;
 using NeoServer.Server.Routines.Creatures;
 using NeoServer.Server.Routines.Items;
 using NeoServer.Server.Routines.Persistence;
+using NeoServer.Server.Routines.World;
 
 namespace NeoServer.Server.Standalone.IoC.Modules;
 
@@ -15,6 +16,7 @@ public static class JobInjection
         builder.AddSingleton<GameItemRoutine>();
         builder.AddSingleton<GameChatChannelRoutine>();
         builder.AddSingleton<PlayerPersistenceRoutine>();
+        builder.AddSingleton<GameWorldRoutine>();
         return builder;
     }
 }

@@ -123,12 +123,13 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 
         Lua.CreateTable(luaState, eventList.Count(), 0);
 
-        int index = 0;
+        var index = 0;
         foreach (var creatureEvent in eventList)
         {
             PushString(luaState, creatureEvent.Name);
             Lua.RawSetI(luaState, -2, ++index);
         }
+
         return 1;
     }
 

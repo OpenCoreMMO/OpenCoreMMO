@@ -76,7 +76,7 @@ public class BaseIntegrationTests
             Id = ++lastId,
             EmailAddress = GenerateRandomEmail(10),
             Password = GenerateRandomString(10),
-            AccountName = GenerateRandomString(10),
+            AccountName = GenerateRandomString(10)
         };
 
         await NeoContext.Accounts.AddAsync(account);
@@ -150,14 +150,14 @@ public class BaseIntegrationTests
             lastId = lastIpbans.Id;
 
 
-        var entity = new IpBanEntity()
+        var entity = new IpBanEntity
         {
             Id = ++lastId,
             Ip = Ip,
             Reason = GenerateRandomString(10),
             BannedBy = 1,
             BannedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddDays(2),
+            ExpiresAt = DateTime.UtcNow.AddDays(2)
         };
 
         await NeoContext.IpBans.AddAsync(entity);

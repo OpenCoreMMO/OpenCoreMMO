@@ -15,5 +15,5 @@ public enum Slot : byte
     Ammo = 0x0A,
     Depot = 0x0B,
     TwoHanded = 0x0C,
-    Hand = (Left | Right),
+    Hand = Left | Right
 }

@@ -10,24 +10,6 @@ namespace NeoServer.Scripts.LuaJIT.ScriptServices;
 
 public class LuaMoveEventsScriptService : IMoveEventsScriptService
 {
-    #region Members
-
-    #endregion
-
-    #region Dependency Injections
-
-    /// <summary>
-    /// A reference to the <see cref="ILogger"/> instance in use.
-    /// </summary>
-    private readonly ILogger _logger;
-
-    /// <summary>
-    /// A reference to the <see cref="IMoveEvents"/> instance in use.
-    /// </summary>
-    private readonly IMoveEvents _moveEvents;
-
-    #endregion
-
     #region Constructors
 
     public LuaMoveEventsScriptService(
@@ -41,7 +23,21 @@ public class LuaMoveEventsScriptService : IMoveEventsScriptService
 
     #endregion
 
-    #region Public Methods 
+    #region Dependency Injections
+
+    /// <summary>
+    ///     A reference to the <see cref="ILogger" /> instance in use.
+    /// </summary>
+    private readonly ILogger _logger;
+
+    /// <summary>
+    ///     A reference to the <see cref="IMoveEvents" /> instance in use.
+    /// </summary>
+    private readonly IMoveEvents _moveEvents;
+
+    #endregion
+
+    #region Public Methods
 
     public void CreatureMove(ICreature creature, Location fromLocation, Location toLocation)
     {

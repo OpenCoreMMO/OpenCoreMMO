@@ -88,7 +88,8 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
         var action = GetUserdata<Action>(luaState, 1);
         if (action != null)
         {
-            var parameters = Lua.GetTop(luaState) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
+            var parameters =
+                Lua.GetTop(luaState) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
             if (parameters > 1)
                 for (var i = 0; i < parameters; ++i)
                     action.SetItemIdsVector(GetNumber<ushort>(luaState, 2 + i));
@@ -101,6 +102,7 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
             ReportError(nameof(LuaActionItemId), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
             PushBoolean(luaState, false);
         }
+
         return 1;
     }
 
@@ -110,7 +112,8 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
         var action = GetUserdata<Action>(luaState, 1);
         if (action != null)
         {
-            var parameters = Lua.GetTop(luaState) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
+            var parameters =
+                Lua.GetTop(luaState) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
             if (parameters > 1)
                 for (var i = 0; i < parameters; ++i)
                     action.SetActionIdsVector(GetNumber<ushort>(luaState, 2 + i));
@@ -123,6 +126,7 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
             ReportError(nameof(LuaActionItemId), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
             PushBoolean(luaState, false);
         }
+
         return 1;
     }
 
@@ -132,7 +136,8 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
         var action = GetUserdata<Action>(luaState, 1);
         if (action != null)
         {
-            var parameters = Lua.GetTop(luaState) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
+            var parameters =
+                Lua.GetTop(luaState) - 1; // - 1 because self is a parameter aswell, which we want to skip ofc
             if (parameters > 1)
                 for (var i = 0; i < parameters; ++i)
                     action.SetUniqueIdsVector(GetNumber<ushort>(luaState, 2 + i));
@@ -145,6 +150,7 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
             ReportError(nameof(LuaActionItemId), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
             PushBoolean(luaState, false);
         }
+
         return 1;
     }
 

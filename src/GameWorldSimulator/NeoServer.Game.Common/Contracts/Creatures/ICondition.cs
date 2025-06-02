@@ -14,6 +14,8 @@ public interface ICondition
     /// </summary>
     long RemainingTime { get; }
 
+    long StartedAt { get; }
+
     bool IsDisabled { get; }
 
     bool Start(ICreature creature);

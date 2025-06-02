@@ -25,7 +25,7 @@ internal static class PlayerModelSeed
         ushort level,
         ushort health, ushort maxHealth, ushort mana, ushort maxMana,
         int posX, int posY, int posZ, ushort staminaMinutes, int lookType, int lookBody = 0, int lookFeet = 0,
-        int lookHead = 0, int lookLegs = 0, int lookAddons = 0, int accountId = 1) 
+        int lookHead = 0, int lookLegs = 0, int lookAddons = 0, int accountId = 1)
     {
         return new PlayerEntity
         {

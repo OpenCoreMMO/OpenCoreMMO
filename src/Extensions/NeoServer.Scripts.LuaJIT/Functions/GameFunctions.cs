@@ -17,7 +17,8 @@ using NeoServer.Server.Configurations;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class GameFunctions : LuaScriptInterface, IGameFunctions {
+public class GameFunctions : LuaScriptInterface, IGameFunctions
+{
     private static ILuaEnvironment _luaEnvironment;
     private static IScripts _scripts;
     private static IItemTypeStore _itemTypeStore;
@@ -52,7 +53,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         _npcs = npcs;
     }
 
-    public void Init(LuaState luaState) {
+    public void Init(LuaState luaState)
+    {
         RegisterTable(luaState, "Game");
 
         RegisterMethod(luaState, "Game", "createNpcType", NpcTypeFunctions.LuaNpcTypeCreate);
@@ -90,18 +92,23 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         return 1;
     }
 
-    private static int LuaGameCreateItem(LuaState luaState) {
+    private static int LuaGameCreateItem(LuaState luaState)
+    {
         // Game.createItem(itemId or name, count, position)
 
         ushort itemId;
-        if (Lua.IsNumber(luaState, 1)) {
+        if (Lua.IsNumber(luaState, 1))
+        {
             itemId = GetNumber<ushort>(luaState, 1);
-        } else {
+        }
+        else
+        {
             var itemName = GetString(luaState, 1);
 
             var itemTypeByName = _itemTypeStore.GetByName(itemName);
 
-            if (itemTypeByName == null) {
+            if (itemTypeByName == null)
+            {
                 Lua.PushNil(luaState);
                 return 1;
             }
@@ -114,11 +121,14 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         var subType = 1;
 
         var it = _itemTypeStore.Get(itemId);
-        if (it.HasSubType()) {
+        if (it.HasSubType())
+        {
             if (it.IsStackable()) itemCount = (int)Math.Ceiling(count / (float)it.Count);
 
             subType = count;
-        } else {
+        }
+        else
+        {
             itemCount = int.Max(1, count);
         }
 
@@ -126,34 +136,43 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         if (Lua.GetTop(luaState) >= 3) position = GetPosition(luaState, 3);
 
         var hasTable = itemCount > 1;
-        if (hasTable) {
+        if (hasTable)
+        {
             Lua.NewTable(luaState);
-        } else if (itemCount == 0) {
+        }
+        else if (itemCount == 0)
+        {
             Lua.PushNil(luaState);
             return 1;
         }
 
-        for (int i = 1; i <= itemCount; ++i) {
+        for (var i = 1; i <= itemCount; ++i)
+        {
             var stackCount = subType;
-            if (it.IsStackable()) {
+            if (it.IsStackable())
+            {
                 stackCount = int.Max(stackCount, it.Count);
                 subType -= stackCount;
             }
 
             var item = _itemFactory.Create(itemId, position, stackCount);
-            if (item == null) {
+            if (item == null)
+            {
                 if (!hasTable) Lua.PushNil(luaState);
                 continue;
             }
 
-            if (position.X != 0) {
+            if (position.X != 0)
+            {
                 var tile = _map.GetTile(position);
-                if (tile == null) {
+                if (tile == null)
+                {
                     if (!hasTable) Lua.PushNil(luaState);
                     continue;
                 }
 
-                if (tile is IStaticTile) {
+                if (tile is IStaticTile)
+                {
                     tile = tile is IStaticTile staticTile ? staticTile.CreateClone(position) : tile;
                     tile = _staticToDynamicTileService.TransformIntoDynamicTile(tile);
                 }
@@ -163,22 +182,28 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
                 if (tile is IDynamicTile dynamicTile)
                     result = dynamicTile.AddItem(item).Succeeded;
 
-                if (result) {
+                if (result)
+                {
                     if (!hasTable) Lua.PushNil(luaState);
                     continue;
                 }
-            } else {
+            }
+            else
+            {
                 GetScriptEnv().AddTempItem(item);
                 //todo: check if need this
                 //item->setParent(VirtualCylinder::virtualCylinder);
             }
 
-            if (hasTable) {
+            if (hasTable)
+            {
                 Lua.PushNumber(luaState, i);
                 PushUserdata(luaState, item);
                 SetItemMetatable(luaState, -1, item);
                 Lua.SetTable(luaState, -3);
-            } else {
+            }
+            else
+            {
                 PushUserdata(luaState, item);
                 SetItemMetatable(luaState, -1, item);
             }
@@ -187,7 +212,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         return 1;
     }
 
-    private static int LuaGameCreateMonster(LuaState luaState) {
+    private static int LuaGameCreateMonster(LuaState luaState)
+    {
         // Game.createMonster(monsterName, position, extended = false, force = false, master = nil)
         //todo: implements force parameter
 
@@ -200,7 +226,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         ICreature master = null;
 
         var isSummon = false;
-        if (Lua.GetTop(luaState) >= 5) {
+        if (Lua.GetTop(luaState) >= 5)
+        {
             master = GetUserdata<ICreature>(luaState, 5);
             if (master.IsNotNull()) isSummon = true;
         }
@@ -211,15 +238,18 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         else
             monster = _creatureFactory.CreateMonster(monsterName);
 
-        if (!monster) {
+        if (!monster)
+        {
             Lua.PushNil(luaState);
             return 1;
         }
 
         var tileToBorn = _map[position];
 
-        if (tileToBorn is IDynamicTile { HasCreature: false }) {
-            if (tileToBorn.HasFlag(TileFlags.ProtectionZone)) {
+        if (tileToBorn is IDynamicTile { HasCreature: false })
+        {
+            if (tileToBorn.HasFlag(TileFlags.ProtectionZone))
+            {
                 Lua.PushNil(luaState);
                 return 1;
             }
@@ -233,7 +263,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         }
 
         foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
-            if (_map[neighbour] is IDynamicTile { HasCreature: false }) {
+            if (_map[neighbour] is IDynamicTile { HasCreature: false })
+            {
                 monster.Born(neighbour);
 
                 PushUserdata(luaState, monster);
@@ -246,7 +277,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         return 1;
     }
 
-    private static int LuaGameCreateNpc(LuaState luaState) {
+    private static int LuaGameCreateNpc(LuaState luaState)
+    {
         // Game.createNpc(npcName, position, extended = false, force = false)
         //todo: implements force parameter
 
@@ -258,15 +290,18 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
 
         var npc = _creatureFactory.CreateNpc(ncpName);
 
-        if (!npc) {
+        if (!npc)
+        {
             Lua.PushNil(luaState);
             return 1;
         }
 
         var tileToBorn = _map[position];
 
-        if (tileToBorn is IDynamicTile { HasCreature: false }) {
-            if (tileToBorn.HasFlag(TileFlags.ProtectionZone)) {
+        if (tileToBorn is IDynamicTile { HasCreature: false })
+        {
+            if (tileToBorn.HasFlag(TileFlags.ProtectionZone))
+            {
                 Lua.PushNil(luaState);
                 return 1;
             }
@@ -281,7 +316,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         }
 
         foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
-            if (_map[neighbour] is IDynamicTile { HasCreature: false }) {
+            if (_map[neighbour] is IDynamicTile { HasCreature: false })
+            {
                 npc.SetNewLocation(neighbour);
                 _map.PlaceCreature(npc);
 
@@ -295,16 +331,19 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         return 1;
     }
 
-    private static int LuaGameReload(LuaState luaState) {
+    private static int LuaGameReload(LuaState luaState)
+    {
         // Game.reload(reloadType)
         var reloadType = GetNumber<ReloadType>(luaState, 1);
-        if (reloadType == ReloadType.RELOAD_TYPE_NONE) {
+        if (reloadType == ReloadType.RELOAD_TYPE_NONE)
+        {
             ReportError(nameof(LuaGameReload), "Reload type is none");
             PushBoolean(luaState, false);
             return 0;
         }
 
-        if (reloadType >= ReloadType.RELOAD_TYPE_LAST) {
+        if (reloadType >= ReloadType.RELOAD_TYPE_LAST)
+        {
             ReportError(nameof(LuaGameReload), "Reload type not exist");
             PushBoolean(luaState, false);
             return 0;
@@ -350,7 +389,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
 
             Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             PushBoolean(luaState, false);
             return 0;
         }
@@ -359,14 +399,16 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         return 1;
     }
 
-    private static int LuaGameGetPlayers(LuaState luaState) {
+    private static int LuaGameGetPlayers(LuaState luaState)
+    {
         // Game.getPlayers()
         var allPlayers = _gameCreatureManager.GetAllLoggedPlayers();
 
         Lua.CreateTable(luaState, allPlayers.Count(), 0);
 
-        int index = 0;
-        foreach (var player in allPlayers) {
+        var index = 0;
+        foreach (var player in allPlayers)
+        {
             PushUserdata(luaState, player);
             SetMetatable(luaState, -1, "Player");
             Lua.RawSetI(luaState, -2, ++index);
@@ -375,7 +417,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         return 1;
     }
 
-    private static void ReloadCore(string dir) {
+    private static void ReloadCore(string dir)
+    {
         var coreLoaded = _luaEnvironment.LoadFile($"{dir}/core.lua", "core.lua");
         if (!coreLoaded) return;
 
@@ -389,7 +432,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions {
         _scripts.LoadScripts($"{dir}/npcs", false, true);
     }
 
-    private static void ReloadScripts(string dir) {
+    private static void ReloadScripts(string dir)
+    {
         _scripts.ClearAllScripts();
         _scripts.LoadScripts($"{dir}/scripts", false, true);
         _scripts.LoadScripts($"{dir}/scripts/libs", true, true);

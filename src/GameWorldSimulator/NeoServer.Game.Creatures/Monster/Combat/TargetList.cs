@@ -103,7 +103,7 @@ public class TargetList : IEnumerable<CombatTarget>
         if (creature is IPlayer player) player.OnLoggedOut -= OnTargetRemoved;
     }
 
-    private void OnTargetDie(ICreature creature, IThing by, ILoot loot)
+    private void OnTargetDie(ICreature creature, IThing by)
     {
         RemoveTarget(creature);
     }

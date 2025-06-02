@@ -150,7 +150,9 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
             Lua.PushNumber(luaState, weight);
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
 
         return 1;
     }

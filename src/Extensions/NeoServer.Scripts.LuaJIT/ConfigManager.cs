@@ -50,7 +50,8 @@ public class ConfigManager : IConfigManager
         _booleanConfig[(int)BooleanConfigType.SCRIPTS_CONSOLE_LOGS] =
             GetGlobalBoolean(luaState, "showScriptsLogInConsole", true);
 
-        _booleanConfig[(int)BooleanConfigType.TOGGLE_SAVE_INTERVAL] = GetGlobalBoolean(luaState, "toggleSaveInterval", false);
+        _booleanConfig[(int)BooleanConfigType.TOGGLE_SAVE_INTERVAL] =
+            GetGlobalBoolean(luaState, "toggleSaveInterval", false);
         _booleanConfig[(int)BooleanConfigType.TOGGLE_SAVE_INTERVAL_CLEAN_MAP] =
             GetGlobalBoolean(luaState, "toggleSaveIntervalCleanMap", false);
         _booleanConfig[(int)BooleanConfigType.ALLOW_RELOAD] = GetGlobalBoolean(luaState, "allowReload", true);
@@ -69,31 +70,31 @@ public class ConfigManager : IConfigManager
     public string GetString(StringConfigType what)
     {
         if (what < StringConfigType.LAST_STRING_CONFIG) return _stringConfig[(int)what];
-        
+
         _logger.Warning("[ConfigManager.GetString] - Accessing invalid index: {What}", what);
         return string.Empty;
-
     }
 
     public int GetNumber(IntegerConfigType what)
     {
         if (what < IntegerConfigType.LAST_INTEGER_CONFIG) return _integerConfig[(int)what];
-        
+
         _logger.Warning("[ConfigManager.GetNumber] - Accessing invalid index: {What}", what);
         return 0;
-
     }
 
     public short GetShortNumber(IntegerConfigType what)
     {
         if (what < IntegerConfigType.LAST_INTEGER_CONFIG) return (short)_integerConfig[(int)what];
-        
+
         _logger.Warning("[ConfigManager.GetShortNumber] - Accessing invalid index: {What}", what);
         return 0;
-
     }
 
-    public ushort GetUShortNumber(IntegerConfigType what) => (ushort)_integerConfig[(int)what];
+    public ushort GetUShortNumber(IntegerConfigType what)
+    {
+        return (ushort)_integerConfig[(int)what];
+    }
 
     public bool GetBoolean(BooleanConfigType what)
     {
@@ -105,14 +106,20 @@ public class ConfigManager : IConfigManager
     public float GetFloat(FloatingConfigType what)
     {
         if (what < FloatingConfigType.LAST_FLOATING_CONFIG) return _floatingConfig[(int)what];
-        
+
         _logger.Warning("[ConfigManager.GetFloat] - Accessing invalid index: {What}", what);
         return 0;
     }
 
-    public string SetConfigFileLua(string what) => _configFileLua = what;
+    public string SetConfigFileLua(string what)
+    {
+        return _configFileLua = what;
+    }
 
-    public string GetConfigFileLua() => _configFileLua;
+    public string GetConfigFileLua()
+    {
+        return _configFileLua;
+    }
 
     public string GetGlobalString(LuaState luaState, string identifier, string defaultValue)
     {
