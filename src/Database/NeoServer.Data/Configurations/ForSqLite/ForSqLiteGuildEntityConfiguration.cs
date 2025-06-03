@@ -8,8 +8,6 @@ public class ForSqLiteGuildEntityConfiguration : IEntityTypeConfiguration<GuildE
 {
     public void Configure(EntityTypeBuilder<GuildEntity> builder)
     {
-        builder.ToTable("Guild");
-
         builder.HasKey(e => new { e.Id });
 
         builder.Property(e => e.Id).HasAnnotation("Sqlite:Autoincrement", true);

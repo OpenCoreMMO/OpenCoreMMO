@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using NeoServer.Loaders.Groups;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Loaders.Items;
 using NeoServer.Loaders.Monsters;
@@ -24,6 +25,7 @@ public static class LoaderInjection
         builder.RegisterStartupLoaders();
         builder.AddSingleton<SpellLoader>();
         builder.AddSingleton<QuestDataLoader>();
+        builder.AddSingleton<GroupLoader>();
 
         builder.RegisterCustomLoaders();
 

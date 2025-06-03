@@ -6,28 +6,11 @@ using NeoServer.Game.Common.Item;
 
 namespace NeoServer.Game.Combat.Attacks;
 
-public struct MonsterCombatAttack : IMonsterCombatAttack
+public class MonsterCombatAttack : IMonsterCombatAttack
 {
-    public int Interval
-    {
-        set => Cooldown = new CooldownTime(DateTime.Now, value);
-    }
-
-    public byte Chance { get; set; }
-    public byte Target { get; set; }
-    public DamageType DamageType { get; set; }
-    public ushort MinDamage { get; set; }
-    public ushort MaxDamage { get; set; }
-    public bool IsMelee => DamageType == DamageType.Melee;
-    public ICombatAttack CombatAttack { get; set; }
-
-    public CooldownTime Cooldown { get; private set; }
-
-    public CombatAttackValue Translate()
-    {
-        if (CombatAttack is DistanceCombatAttack distance)
-            return new CombatAttackValue(MinDamage, MaxDamage, distance.Range, DamageType);
-
-        return new CombatAttackValue(MinDamage, MaxDamage, DamageType);
-    }
+    public Guid Id { get; } = Guid.NewGuid();
+    public byte AttackChance { get; set; }
+    public uint Interval { get; set; }
+    public CombatParameter CombatParameter { get; set; }
+    public bool HasTarget { get; set; }
 }

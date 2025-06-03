@@ -25,11 +25,11 @@ public interface IConfigManager
 
     public string GetConfigFileLua();
 
-    public string GetGlobalString(LuaState L, string identifier, string defaultValue);
+    public string GetGlobalString(LuaState luaState, string identifier, string defaultValue);
 
-    public int GetGlobalNumber(LuaState L, string identifier, int defaultValue = 0);
+    public int GetGlobalNumber(LuaState luaState, string identifier, int defaultValue = 0);
 
-    public bool GetGlobalBoolean(LuaState L, string identifier, bool defaultValue);
+    public bool GetGlobalBoolean(LuaState luaState, string identifier, bool defaultValue);
 
-    public float GetGlobalFloat(LuaState L, string identifier, float defaultValue = 0.0f);
+    public float GetGlobalFloat(LuaState luaState, string identifier, float defaultValue = 0.0f);
 }

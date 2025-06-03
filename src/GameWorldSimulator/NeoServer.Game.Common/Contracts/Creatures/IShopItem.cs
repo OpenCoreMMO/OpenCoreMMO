@@ -7,4 +7,5 @@ public interface IShopItem
     IItemType Item { get; }
     uint BuyPrice { get; }
     uint SellPrice { get; }
+    string CustomName { get; }
 }

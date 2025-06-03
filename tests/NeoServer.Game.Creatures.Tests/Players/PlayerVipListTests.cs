@@ -218,7 +218,7 @@ public class PlayerVipListTests
         var sut = PlayerTestDataBuilder.Build();
 
         var newFriend = PlayerTestDataBuilder.Build(name: "Player 1");
-        newFriend.SetFlag(PlayerFlag.SpecialVip);
+        newFriend.Group.EnableFlag(PlayerFlag.SpecialVip);
 
         //acct
         var result = sut.Vip.AddToVip(newFriend);
@@ -233,10 +233,10 @@ public class PlayerVipListTests
     {
         //arrange
         var sut = PlayerTestDataBuilder.Build();
-        sut.SetFlag(PlayerFlag.SpecialVip);
+        sut.Group.EnableFlag(PlayerFlag.SpecialVip);
 
         var newFriend = PlayerTestDataBuilder.Build(name: "Player 1");
-        newFriend.SetFlag(PlayerFlag.SpecialVip);
+        newFriend.Group.EnableFlag(PlayerFlag.SpecialVip);
 
         //acct
         var result = sut.Vip.AddToVip(newFriend);
@@ -251,7 +251,7 @@ public class PlayerVipListTests
     {
         //arrange
         var sut = PlayerTestDataBuilder.Build();
-        sut.SetFlag(PlayerFlag.SpecialVip);
+        sut.Group.EnableFlag(PlayerFlag.SpecialVip);
 
         var newFriend = PlayerTestDataBuilder.Build(name: "Player 1");
 

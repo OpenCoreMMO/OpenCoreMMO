@@ -8,14 +8,22 @@ using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Common.Location.Structs.Helpers;
 using NeoServer.Game.World.Models.Tiles;
+using Serilog;
+using Serilog.Core;
 
 namespace NeoServer.Game.World.Factories;
 
 public class TileFactory : ITileFactory
 {
     private readonly IDictionary<string, IStaticTile> _tileCache = new Dictionary<string, IStaticTile>();
+    private readonly ILogger _logger;
 
-    public ITile CreateTile(Coordinate coordinate, TileFlag flag, IItem[] items, bool useCache = true)
+    public TileFactory(ILogger logger)
+    {
+        _logger = logger;
+    }
+
+    public ITile CreateTile(Coordinate coordinate, TileFlag flag, IItem[] items, bool useCache = true, uint? houseId = null)
     {
         var hash = GetTileHash(items);
         
@@ -23,6 +31,8 @@ public class TileFactory : ITileFactory
         {
             return tile;
         }
+        
+        var isHouseTile = houseId is > 0;        
         
         var hasUnpassableItem = false;
         var hasMoveableItem = false;
@@ -39,7 +49,12 @@ public class TileFactory : ITileFactory
 
             if (item.IsBlockeable) hasUnpassableItem = true;
 
-            if (item.CanBeMoved) hasMoveableItem = true;
+            if (item.CanBeMoved && isHouseTile) { 
+                _logger.Warning($"Item {item.ClientId} is moveable and is on a house tile. This is not allowed."); 
+                continue;
+            }
+            
+            if (item.CanBeMoved && !isHouseTile) hasMoveableItem = true;
 
             if (item.IsTransformable) hasTransformableItem = true;
 
@@ -69,7 +84,7 @@ public class TileFactory : ITileFactory
             return staticTile;
         }
 
-        return new DynamicTile(coordinate, flag, ground, topItems.ToArray(), downItems.ToArray());
+        return new DynamicTile(coordinate, flag, ground, topItems.ToArray(), downItems.ToArray(), houseId);
     }
 
     public ITile GetTileFromCache(Coordinate coordinate, ref Span<byte> clientIds)

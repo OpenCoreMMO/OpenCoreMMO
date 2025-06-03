@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
-using NeoServer.Data.InMemory.DataStores;
+using System.Text.Json;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Item;
@@ -12,26 +12,40 @@ using NeoServer.Loaders.OTB.Parsers;
 using NeoServer.Loaders.OTB.Structure;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
-using Newtonsoft.Json;
 using Serilog;
 
 namespace NeoServer.Loaders.Items;
 
 public class ItemTypeLoader
 {
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        DefaultBufferSize = 4096,
+        AllowTrailingCommas = true,
+        ReadCommentHandling = JsonCommentHandling.Skip
+    };
+
     private readonly IItemClientServerIdMapStore _itemClientServerIdMapStore;
 
     private readonly IItemTypeStore _itemTypeStore;
+    private readonly ICoinTypeStore _coinTypeStore;
     private readonly ILogger _logger;
     private readonly ServerConfiguration _serverConfiguration;
 
-    public ItemTypeLoader(ILogger logger, ServerConfiguration serverConfiguration, IItemTypeStore itemTypeStore,
-        IItemClientServerIdMapStore itemClientServerIdMapStore)
+
+    public ItemTypeLoader(
+        ILogger logger,
+        ServerConfiguration serverConfiguration,
+        IItemTypeStore itemTypeStore,
+        IItemClientServerIdMapStore itemClientServerIdMapStore,
+        ICoinTypeStore coinTypeStore)
     {
         _logger = logger;
         _serverConfiguration = serverConfiguration;
         _itemTypeStore = itemTypeStore;
         _itemClientServerIdMapStore = itemClientServerIdMapStore;
+        _coinTypeStore = coinTypeStore;
     }
 
     /// <summary>
@@ -48,12 +62,14 @@ public class ItemTypeLoader
 
             foreach (var item in itemTypes.OrderBy(x => x.Key))
             {
-                _itemTypeStore.Add(item.Key, item.Value);
-                _itemClientServerIdMapStore.Add(item.Value.ClientId, item.Key);
+                _itemTypeStore.AddOrUpdate(item.Key, item.Value);
+                _itemClientServerIdMapStore.AddOrUpdate(item.Value.ClientId, item.Key);
 
                 if (item.Value.Attributes.GetAttribute(ItemAttribute.Type)
-                        ?.Equals("coin", StringComparison.InvariantCultureIgnoreCase) ??
-                    false) CoinTypeStore.Data.Add(item.Key, item.Value);
+                        ?.Equals("coin", StringComparison.InvariantCultureIgnoreCase) ?? false)
+                {
+                    _coinTypeStore.AddOrUpdate(item.Key, item.Value);
+                }
             }
 
             return new object[] { itemTypes.Count };
@@ -107,9 +123,7 @@ public class ItemTypeLoader
         using var memoryMappedFile = MemoryMappedFile.CreateFromFile(Path.Combine(basePath, "items.json"));
         using var stream = memoryMappedFile.CreateViewStream();
         using var reader = new StreamReader(stream);
-        using var jsonReader = new JsonTextReader(reader) { CloseInput = false };
 
-        var serializer = JsonSerializer.Create();
-        return serializer.Deserialize<IEnumerable<ItemTypeMetadata>>(jsonReader);
+        return JsonSerializer.Deserialize<IEnumerable<ItemTypeMetadata>>(reader.ReadToEnd().Trim('\0'), _jsonOptions);
     }
 }

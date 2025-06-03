@@ -25,7 +25,7 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         entity.Property(e => e.Id)
             .ValueGeneratedOnAdd();
 
-        entity.Property(e => e.PlayerType);
+        entity.Property(e => e.Group);
 
         ConfigureProperty(entity, e => e.AccountId, "int", "0");
         ConfigureProperty(entity, e => e.TownId, "int", "1");
@@ -63,6 +63,11 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         ConfigureProperty(entity, e => e.SkillSwordTries, null, "0");
         ConfigureProperty(entity, e => e.Vocation, "int", "0");
         ConfigureProperty(entity, e => e.RemainingRecoverySeconds, "int", "0");
+        ConfigureProperty(entity, e => e.BankAmount, "numeric(20, 0)", "0");
+        ConfigureProperty(entity, e => e.Skull, "int", "0");
+        entity.Property(e => e.SkullEndsAt);
+
+        entity.Ignore(e => e.KillsLastMonth);
 
         entity.HasOne(d => d.Account)
             .WithMany(p => p.Players)
@@ -74,6 +79,10 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
             .HasForeignKey(d => d.WorldId);
 
         entity.HasOne(x => x.GuildMember).WithOne(x => x.Player);
+
+        entity.HasMany(x => x.Deaths)
+            .WithOne(x => x.Player)
+            .HasForeignKey(x => x.PlayerId);
 
         PlayerModelSeed.Seed(entity);
     }

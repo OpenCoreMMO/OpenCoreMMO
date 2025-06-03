@@ -3,26 +3,34 @@ using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.World.Models.Spawns;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
+using NeoServer.Server.Routines.Creatures.Monster;
 using NeoServer.Server.Routines.Creatures.Npc;
+using NeoServer.Server.Routines.Creatures.Player;
 using NeoServer.Server.Tasks;
 
 namespace NeoServer.Server.Routines.Creatures;
 
 public class GameCreatureRoutine
 {
+    private const ushort EVENT_CREATURE_THINK_INTERVAL = 1000;
     private const ushort EVENT_CHECK_CREATURE_INTERVAL = 500;
     private readonly IGameServer _game;
     private readonly PlayerLogOutCommand _playerLogOutCommand;
+    private readonly PlayerStatusRoutine _playerStatusRoutine;
     private readonly SpawnManager _spawnManager;
     private readonly ISummonService _summonService;
 
-    public GameCreatureRoutine(IGameServer game, SpawnManager spawnManager, PlayerLogOutCommand playerLogOutCommand,
-        ISummonService summonService)
+    public GameCreatureRoutine(
+        IGameServer game,
+        SpawnManager spawnManager,
+        PlayerLogOutCommand playerLogOutCommand,
+        ISummonService summonService, PlayerStatusRoutine playerStatusRoutine)
     {
         _game = game;
         _spawnManager = spawnManager;
         _playerLogOutCommand = playerLogOutCommand;
         _summonService = summonService;
+        _playerStatusRoutine = playerStatusRoutine;
     }
 
     public void StartChecking()
@@ -32,13 +40,13 @@ public class GameCreatureRoutine
         foreach (var creature in _game.CreatureManager.GetCreatures())
         {
             if (creature is null or ICombatActor { IsDead: true }) continue;
+            if (!creature.IsThinking()) continue;
+
+            creature.Think(EVENT_CREATURE_THINK_INTERVAL);
 
             CheckPlayer(creature);
-
             CheckCreature(creature);
-
             CheckMonster(creature);
-
             CheckNpc(creature);
 
             RespawnRoutine.Execute(_spawnManager);
@@ -70,5 +78,7 @@ public class GameCreatureRoutine
 
         PlayerPingRoutine.Execute(player, _playerLogOutCommand, _game);
         PlayerRecoveryRoutine.Execute(player);
+        PlayerSkullRoutine.Execute(player);
+        _playerStatusRoutine.Execute(player);
     }
 }

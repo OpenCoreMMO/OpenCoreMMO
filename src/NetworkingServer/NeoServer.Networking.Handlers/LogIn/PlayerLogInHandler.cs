@@ -5,12 +5,15 @@ using NeoServer.Game.Common.Results;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Networking.Packets.Outgoing.Custom;
+using NeoServer.Networking.Packets.Outgoing.Login;
 using NeoServer.Server.Commands.Player;
+using NeoServer.Server.Commands.WaitingInLine;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
 using NeoServer.Server.Common.Enums;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Tasks;
+using OperatingSystem = NeoServer.Server.Common.Enums.OperatingSystem;
 
 namespace NeoServer.Networking.Handlers.LogIn;
 
@@ -19,13 +22,16 @@ public class PlayerLogInHandler : PacketHandler
     private readonly IAccountRepository _accountRepository;
     private readonly ClientConfiguration _clientConfiguration;
     private readonly IGameServer _game;
+    private readonly IIpBansRepository _ipBansRepository;
     private readonly PlayerLogInCommand _playerLogInCommand;
     private readonly PlayerLogOutCommand _playerLogOutCommand;
     private readonly ServerConfiguration _serverConfiguration;
+    private readonly IWaitingQueueManager _waitingQueueManager;
 
     public PlayerLogInHandler(IAccountRepository repositoryNeo,
         IGameServer game, ServerConfiguration serverConfiguration, PlayerLogInCommand playerLogInCommand,
-        PlayerLogOutCommand playerLogOutCommand, ClientConfiguration clientConfiguration)
+        PlayerLogOutCommand playerLogOutCommand, ClientConfiguration clientConfiguration,
+        IIpBansRepository ipBansRepository, IWaitingQueueManager waitingQueueManager)
     {
         _accountRepository = repositoryNeo;
         _game = game;
@@ -33,9 +39,11 @@ public class PlayerLogInHandler : PacketHandler
         _playerLogInCommand = playerLogInCommand;
         _playerLogOutCommand = playerLogOutCommand;
         _clientConfiguration = clientConfiguration;
+        _ipBansRepository = ipBansRepository;
+        _waitingQueueManager = waitingQueueManager;
     }
 
-    public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
+    public override async void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
         if (_game.State == GameState.Stopped) connection.Close();
 
@@ -47,7 +55,14 @@ public class PlayerLogInHandler : PacketHandler
 
         if (!Verify(connection, packet)) return;
 
-        //todo: ip ban validation
+        var existBan = await _ipBansRepository.ExistBan(connection.Ip.Split(":")[0]);
+
+        if (existBan is not null)
+        {
+            Disconnect(connection,
+                $"Your IP address {existBan.Ip} has been banished until {existBan.ExpiresAt.ToString("MM/dd/yyyy")}.\nReason: {existBan.Reason}");
+            return;
+        }
 
         async void TryConnect()
         {
@@ -64,7 +79,8 @@ public class PlayerLogInHandler : PacketHandler
         if (ValidateOnlineStatus(connection, playerOnline, packet).Failed) return;
 
         var playerRecord =
-            await _accountRepository.GetPlayer(packet.Account, packet.Password, packet.CharacterName);
+            await _accountRepository.GetPlayer(packet.Account, packet.Password, packet.CharacterName,
+                includeKillsLastMonth: true);
 
         if (playerRecord is null)
         {
@@ -75,6 +91,17 @@ public class PlayerLogInHandler : PacketHandler
         if (playerRecord.Account.BanishedAt is not null)
         {
             Disconnect(connection, "Your account is banned.");
+            return;
+        }
+
+        if (!_waitingQueueManager.CanLogin(playerRecord, out var currentSlot))
+        {
+            var retryTime = _waitingQueueManager.GetTime(currentSlot);
+            var message = $"There are too many players online.\nYour are at place {currentSlot} on waiting list.";
+
+            var waitingInLinePacket = new WaitingInLinePacket(message, retryTime);
+            connection.Send(waitingInLinePacket);
+            connection.Close();
             return;
         }
 
@@ -95,7 +122,7 @@ public class PlayerLogInHandler : PacketHandler
         _game.Dispatcher.AddEvent(new Event(() =>
         {
             var result = _playerLogInCommand.Execute(playerRecord, connection);
-            if (result.Failed) Disconnect(connection, TextMessageOutgoingParser.Parse(result.Error));
+            if (result.Failed) Disconnect(connection, TextMessageOutgoingParser.Parse(result.Reason));
         }));
     }
 

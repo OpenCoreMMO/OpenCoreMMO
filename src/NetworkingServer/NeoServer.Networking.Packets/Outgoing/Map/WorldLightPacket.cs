@@ -7,7 +7,7 @@ public class WorldLightPacket : OutgoingPacket
     private readonly byte Color;
     private readonly byte Level;
 
-    public WorldLightPacket(byte level, byte color)
+    public WorldLightPacket(byte level, byte color = 0xD7)
     {
         Level = level;
         Color = color;

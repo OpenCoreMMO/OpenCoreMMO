@@ -4,18 +4,12 @@ using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Networking.Packets.Outgoing.Item;
 using NeoServer.Server.Common.Contracts;
+using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Events.Tiles;
 
-public class ThingAddedToTileEventHandler
+public class ThingAddedToTileEventHandler(IGameServer game, IScriptManager scriptManager)
 {
-    private readonly IGameServer game;
-
-    public ThingAddedToTileEventHandler(IGameServer game)
-    {
-        this.game = game;
-    }
-
     public void Execute(IThing thing, ICylinder cylinder)
     {
         if (Guard.AnyNull(cylinder, cylinder.TileSpectators, thing)) return;
@@ -37,5 +31,7 @@ public class ThingAddedToTileEventHandler
 
             connection.Send();
         }
+
+        scriptManager.MoveEvents.ItemMove(thing as IItem, cylinder.ToTile, true);
     }
 }

@@ -6,13 +6,18 @@ namespace NeoServer.Game.Common.Contracts.World.Tiles;
 
 public interface ITile : IThing
 {
+    int ItemsCount { get; }
+    IItem[] AllItems { get; }
     IItem TopItemOnStack { get; }
     ICreature TopCreatureOnStack { get; }
     bool BlockMissile { get; }
     int ThingsCount { get; }
     bool HasThings { get; }
     public bool ProtectionZone { get; }
-
+    bool PvpZone { get; }
+    bool NoPvpZone { get; }
+    ZoneType Zone { get; }
+    
     /// <summary>
     ///     check whether tile is 1 sqm distant to destination tile
     /// </summary>

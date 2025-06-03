@@ -833,7 +833,7 @@ public class EquipmentTests : IAsyncLifetime
         //assert
 
         player.Inventory[Slot.Ring].Metadata.Should().Be(transformOnEquip.Metadata);
-        sut.Protect(ref combatDamage);
+        sut.Protect(combatDamage);
         combatDamage.Damage.Should().Be(95);
     }
 

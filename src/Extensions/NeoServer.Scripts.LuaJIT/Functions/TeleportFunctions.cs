@@ -10,26 +10,26 @@ public class TeleportFunctions : LuaScriptInterface, ITeleportFunctions
     {
     }
 
-    public void Init(LuaState L)
+    public void Init(LuaState luaState)
     {
-        RegisterSharedClass(L, "Teleport", "Item", LuaTeleportCreate);
-        RegisterMetaMethod(L, "Teleport", "__eq", LuaUserdataCompare<ITeleport>);
+        RegisterSharedClass(luaState, "Teleport", "Item", LuaTeleportCreate);
+        RegisterMetaMethod(luaState, "Teleport", "__eq", LuaUserdataCompare<ITeleport>);
     }
 
-    private static int LuaTeleportCreate(LuaState L)
+    private static int LuaTeleportCreate(LuaState luaState)
     {
         // Teleport(uid)
-        var id = GetNumber<uint>(L, 2);
+        var id = GetNumber<uint>(luaState, 2);
 
         var item = GetScriptEnv().GetItemByUID(id);
         if (item != null)
         {
-            PushUserdata(L, item);
-            SetMetatable(L, -1, "Teleport");
+            PushUserdata(luaState, item);
+            SetMetatable(luaState, -1, "Teleport");
         }
         else
         {
-            Lua.PushNil(L);
+            Lua.PushNil(luaState);
         }
 
         return 1;

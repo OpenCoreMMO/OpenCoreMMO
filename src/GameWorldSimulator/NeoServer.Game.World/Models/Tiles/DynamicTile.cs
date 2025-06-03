@@ -20,21 +20,24 @@ public class DynamicTile : BaseTile, IDynamicTile
 {
     private byte[] _cache;
 
-    public DynamicTile(Coordinate coordinate, TileFlag tileFlag, IGround ground, IItem[] topItems, IItem[] items)
+    public DynamicTile(Coordinate coordinate, TileFlag tileFlag, IGround ground, IItem[] topItems, IItem[] items, uint? houseId = null)
     {
         SetNewLocation(new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z));
         Flags |= (byte)tileFlag;
         AddContent(ground, topItems, items);
         TileOperationEvent.OnLoaded(this);
+        HouseId = houseId;
     }
 
     public byte MovementPenalty => Ground.MovementPenalty;
     public TileStack<IItem> TopItems { get; private set; }
     public TileStack<IItem> DownItems { get; private set; }
+    
+    public uint? HouseId { get; private set; }
 
-    public int ItemsCount => (DownItems?.Count ?? 0) + (TopItems?.Count ?? 0) + (Ground is null ? 0 : 1);
+    public override int ItemsCount => (DownItems?.Count ?? 0) + (TopItems?.Count ?? 0) + (Ground is null ? 0 : 1);
 
-    public IItem[] AllItems
+    public override IItem[] AllItems
     {
         get
         {
@@ -321,11 +324,23 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         return null;
     }
+    
+    public IItem RemoveItem(ItemGroup group)
+    {
+        foreach (var item in AllItems)
+            if (item.Metadata.Group == group)
+            {
+                RemoveItem(item, 1, 0, out var removedItem);
+                return removedItem;
+            }
+
+        return null;
+    }
 
     public IItem RemoveItem(IItem item)
     {
         foreach (var tileItem in AllItems)
-            if (item == tileItem)
+            if (item.ServerId == tileItem.ServerId)
             {
                 RemoveItem(item, item.Amount, 0, out var removedItem);
                 return removedItem;
@@ -426,8 +441,11 @@ public class DynamicTile : BaseTile, IDynamicTile
             return;
         }
 
-        var isRemoved = DownItems != null ? DownItems.Remove(fromItem) : false;
-        if (!isRemoved) isRemoved = TopItems != null ? TopItems.Remove(fromItem) : false;
+        var downItemToRemove = DownItems?.FirstOrDefault(c => c.ServerId == fromItem.ServerId);
+        var topItemToRemove = TopItems?.FirstOrDefault(c => c.ServerId == fromItem.ServerId);
+
+        var isRemoved = downItemToRemove != null ? DownItems.Remove(downItemToRemove) : false;
+        if (!isRemoved) isRemoved = topItemToRemove != null ? TopItems.Remove(topItemToRemove) : false;
 
         if (!isRemoved) return;
 
@@ -447,7 +465,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
     public void ReplaceItem(ushort fromId, IItem toItem)
     {
-        IItem removed;
+        IItem removed = null;
 
         var topItemOnStack = TopItemOnStack;
 
@@ -461,7 +479,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         if (topItemOnStack.IsAlwaysOnTop) TopItems.TryPop(out removed);
 
-        DownItems.TryPop(out removed);
+        DownItems?.TryPop(out removed);
 
         if (removed is null) return;
 

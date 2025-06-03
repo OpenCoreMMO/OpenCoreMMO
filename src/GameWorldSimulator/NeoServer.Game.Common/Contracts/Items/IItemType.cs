@@ -45,7 +45,7 @@ public interface IItemType
     void SetArticle(string article);
     void SetPlural(string plural);
 
-    void SetName(string value);
+    void UpdateName(string value);
     bool HasFlag(ItemFlag flag);
     void SetOnUse();
     bool HasAtLeastOneFlag(params ItemFlag[] flags);

@@ -39,6 +39,8 @@ public interface IItem : IThing, IHasDecay
     bool IsContainer => Metadata.Group == ItemGroup.Container;
     bool IsTeleport => Metadata.Group == ItemGroup.Teleport;
 
+    bool AllowFarUse => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.AllowFarUse);
+
     FloorChangeDirection FloorDirection => Metadata.Attributes.GetFloorChangeDirection();
 
     bool HasDecayBehavior
@@ -60,8 +62,8 @@ public interface IItem : IThing, IHasDecay
     IThing Owner { get; }
     float Weight { get; }
     IThing Parent { get; }
-    string IThing.Name => Metadata.Name;
     string Article => Metadata.Article;
+    string IThing.Name => Metadata.Name;
     void UpdateMetadata(IItemType newMetadata);
     void MarkAsDeleted();
 

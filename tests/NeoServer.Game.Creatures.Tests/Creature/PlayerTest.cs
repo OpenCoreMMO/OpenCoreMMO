@@ -125,7 +125,7 @@ public class PlayerTest
 
         Assert.False(sut.CanSeeInvisible);
 
-        sut.SetFlag(PlayerFlag.CanSeeInvisibility);
+        sut.Group.EnableFlag(PlayerFlag.CanSenseInvisibility);
 
         Assert.True(sut.CanSeeInvisible);
     }
@@ -148,7 +148,7 @@ public class PlayerTest
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
 
-        sut.SetFlag(PlayerFlag.CanSeeInvisibility);
+        sut.Group.EnableFlag(PlayerFlag.CanSenseInvisibility);
 
         var creature = new Mock<ICreature>();
         creature.Setup(x => x.IsInvisible).Returns(true);
@@ -234,10 +234,10 @@ public class PlayerTest
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
 
-        sut.SetFlag(PlayerFlag.CanBeSeen);
+        sut.Group.EnableFlag(PlayerFlag.IgnoreYellCheck);
         Assert.True(sut.CanBeSeen);
 
-        sut.UnsetFlag(PlayerFlag.CanBeSeen);
+        sut.Group.DisableFlag(PlayerFlag.IgnoreYellCheck);
         Assert.False(sut.CanBeSeen);
     }
 
@@ -283,7 +283,7 @@ public class PlayerTest
             { SkillType.Level, new Skill(SkillType.Level, 9, 9100) }
         }) as Player.Player;
 
-        player.OnDeath(null);
+        player.Death(null);
 
         Assert.Equal(8190, (double)player.Experience);
         Assert.Equal(9, player.Level);
@@ -296,7 +296,7 @@ public class PlayerTest
         {
             { SkillType.Level, new Skill(SkillType.Level, 9, 6500) }
         }) as Player.Player;
-        player.OnDeath(null);
+        player.Death(null);
 
         Assert.Equal(5850, (double)player.Experience);
         Assert.Equal(8, player.Level);
@@ -314,7 +314,7 @@ public class PlayerTest
 
         Assert.NotEqual(player.Location, townCoordinate.Location);
 
-        player.OnDeath(null);
+        player.Death(null);
 
         Assert.Equal(player.Location, townCoordinate.Location);
     }

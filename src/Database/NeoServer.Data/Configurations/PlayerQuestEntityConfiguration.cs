@@ -8,8 +8,6 @@ public class PlayerQuestEntityConfiguration : IEntityTypeConfiguration<PlayerQue
 {
     public void Configure(EntityTypeBuilder<PlayerQuestEntity> builder)
     {
-        builder.ToTable("PlayerQuest");
-
         builder.HasKey(e => new { e.ActionId, e.UniqueId });
 
         builder.Property(e => e.ActionId).IsRequired();

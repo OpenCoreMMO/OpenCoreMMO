@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
@@ -22,11 +21,15 @@ public class ShopperNpc : Npc, IShopperNpc
     public Func<IDictionary<ushort, IItemType>> CoinTypeMapFunc { get; init; }
 
     public event ShowShop OnShowShop;
+    public event CloseShop OnCloseShop;
 
     public IDictionary<ushort, IShopItem> ShopItems
     {
         get
         {
+            if(Metadata.ShopItems.Count > 0)
+                return Metadata.ShopItems;
+
             if (!Metadata.CustomAttributes.TryGetValue("shop", out var shop)) return null;
 
             if (shop is not IDictionary<ushort, IShopItem> shopItems) return null;
@@ -35,19 +38,15 @@ public class ShopperNpc : Npc, IShopperNpc
         }
     }
 
+
     public virtual void StopSellingToCustomer(ISociableCreature creature)
     {
-        //todo: invoke event here
+        OnCloseShop?.Invoke(creature);
     }
 
-    public bool BuyFromCustomer(ISociableCreature creature, IItemType item, byte amount)
+    public virtual void StartSellingToCustomer(ISociableCreature creature, IEnumerable<IShopItem> shopItems)
     {
-        var shopItems = ShopItems;
-        if (shopItems is null) return false;
-
-        if (!shopItems.TryGetValue(item.ServerId, out var shopItem)) return false;
-
-        return Pay(creature, shopItem.SellPrice * amount);
+        ShowShopItems(creature, shopItems);
     }
 
     public ulong CalculateCost(IItemType itemType, byte amount)
@@ -60,9 +59,8 @@ public class ShopperNpc : Npc, IShopperNpc
         return (shopItem?.BuyPrice ?? 0) * amount;
     }
 
-    public bool Pay(ISociableCreature to, uint value)
+    public bool Pay(IPlayer player, uint value)
     {
-        if (to is not IPlayer player) return false;
         if (value == 0) return false;
 
         var coins = CoinCalculator.Calculate(CoinTypeMapFunc?.Invoke(), value);
@@ -80,26 +78,36 @@ public class ShopperNpc : Npc, IShopperNpc
             if (item is null) continue;
             items[i++] = item;
         }
-
         player.ReceivePayment(items, value);
 
         return true;
     }
 
-    public override void SendMessageTo(ISociableCreature to, SpeechType type, IDialog dialog)
-    {
-        base.SendMessageTo(to, type, dialog);
-        if (dialog.Action == "shop") ShowShopItems(to);
-    }
-
-    public virtual void ShowShopItems(ISociableCreature to)
+    public virtual void ShowShopItems(ISociableCreature to, IEnumerable<IShopItem> shopItems = null)
     {
         if (to is not IPlayer player) return;
 
-        if (ShopItems?.Values is not IEnumerable<IShopItem> shopItems) return;
+        if (ShopItems?.Values is IEnumerable<IShopItem>)
+            shopItems = shopItems ?? ShopItems.Values;
+
+        if (shopItems != null && !shopItems.Any()) return;
 
         player.StartShopping(this);
 
         OnShowShop?.Invoke(this, to, shopItems);
     }
+
+
+    public void OnPlayerBuyItem(IPlayer player, IItemType itemType, int count, uint totalCost, bool inBackpack, bool ignore = false)
+        => OnBuyItem?.Invoke(this, player, itemType, count, totalCost, inBackpack, ignore);
+
+    public void OnPlayerSellItem(IPlayer player, IItemType itemType, int count, uint totalCost, bool ignore = false)
+        => OnSellItem?.Invoke(this, player, itemType, count, totalCost, ignore);
+
+    #region Events
+
+    public event SellItem OnSellItem;
+    public event BuyItem OnBuyItem;
+
+    #endregion
 }

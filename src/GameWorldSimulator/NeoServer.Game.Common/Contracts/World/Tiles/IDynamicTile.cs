@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types;
+using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Results;
 
@@ -14,6 +15,7 @@ public interface IDynamicTile : ITile, IHasItem
 {
     IGround Ground { get; }
     List<IWalkableCreature> Creatures { get; }
+    int CreaturesCount => Creatures != null ? Creatures.Count : 0;
     ushort StepSpeed { get; }
 
     FloorChangeDirection FloorDirection { get; }
@@ -24,8 +26,6 @@ public interface IDynamicTile : ITile, IHasItem
     bool HasHole { get; }
     List<IPlayer> Players { get; }
     Func<ICreature, bool> CanEnterFunction { get; set; }
-    IItem[] AllItems { get; }
-    int ItemsCount { get; }
     bool HasTeleport(out ITeleport teleport);
 
     byte[] GetRaw(IPlayer playerRequesting = null);
@@ -45,4 +45,5 @@ public interface IDynamicTile : ITile, IHasItem
     void ReplaceItem(IItem fromItem, IItem toItem);
     bool UpdateItemType(IItem fromItem, IItemType toItemType);
     IItem RemoveItem(IItem item);
+    IItem RemoveItem(ItemGroup group);
 }

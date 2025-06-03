@@ -16,5 +16,13 @@ public class Condition : BaseCondition
         Type = type;
     }
 
+    /// <summary>
+    ///     Create infinite condition
+    /// </summary>
+    public Condition(ConditionType type) : base(0)
+    {
+        Type = type;
+    }
+
     public override ConditionType Type { get; }
 }

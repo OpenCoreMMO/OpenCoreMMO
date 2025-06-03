@@ -17,6 +17,6 @@ public class IllusionCombatDefense : BaseCombatDefense
 
     public override void Defend(ICombatActor actor)
     {
-        Spell?.Invoke(actor, null, out var error);
+        Spell?.Invoke(actor, null, false);
     }
 }

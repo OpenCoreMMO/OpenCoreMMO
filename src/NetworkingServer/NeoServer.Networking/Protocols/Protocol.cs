@@ -9,8 +9,6 @@ public abstract class Protocol : IProtocol
     public virtual void OnAccept(IConnection connection)
     {
         connection.BeginStreamRead();
-
-        //todo ip ban validation
     }
 
     public void PostProcessMessage(object sender, IConnectionEventArgs args)

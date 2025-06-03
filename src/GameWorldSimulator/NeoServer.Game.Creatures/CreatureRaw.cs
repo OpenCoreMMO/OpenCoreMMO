@@ -67,7 +67,7 @@ public static class CreatureRaw
 
         cache.AddRange(BitConverter.GetBytes(creature.Speed));
 
-        cache.Add(creature.Skull);
+        cache.Add((byte)((creature as IPlayer)?.Skull ?? 0x00));
         cache.Add((byte)GetPartyEmblem(playerRequesting, creature));
 
         if (!known)

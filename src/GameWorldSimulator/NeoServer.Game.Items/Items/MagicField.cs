@@ -24,8 +24,8 @@ public class MagicField : BaseItem, IMagicField
 
     private DamageType DamageType => DamageTypeParser.Parse(Metadata.Attributes.GetAttribute(ItemAttribute.Field));
 
-    private int Interval =>
-        Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field)?.GetAttribute<int>(ItemAttribute.Ticks) ??
+    private uint Interval =>
+        Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field)?.GetAttribute<uint>(ItemAttribute.Ticks) ??
         10000;
 
     private MinMax Damage
@@ -39,10 +39,8 @@ public class MagicField : BaseItem, IMagicField
 
             if ((values?.Length ?? 0) < 2) return new MinMax(0, 0);
 
-            int.TryParse((string)values[0], out var value1);
-            int.TryParse((string)values[1], out var value2);
-
-            return new MinMax(Math.Min(value1, value2), Math.Max(value1, value2));
+            return new MinMax(Math.Min((ushort)values[0], (ushort)values[1]),
+                Math.Max((ushort)values[0], (ushort)values[1]));
         }
     }
 
@@ -54,7 +52,7 @@ public class MagicField : BaseItem, IMagicField
 
         if (damages.Max == 0) return;
         var conditionType = ConditionTypeParser.Parse(DamageType);
-        actor.ReceiveAttack(this,
+        actor.TakeDamage(this,
             new CombatDamage((ushort)damages.Max, DamageType) { Effect = DamageEffectParser.Parse(DamageType) });
 
         if (actor.HasCondition(conditionType, out var condition) && condition is DamageCondition damageCondition)
@@ -65,10 +63,11 @@ public class MagicField : BaseItem, IMagicField
         else
         {
             if (DamageCount == 0)
-                actor.AddCondition(new DamageCondition(conditionType, Interval, (ushort)damages.Min,
+                actor.AddCondition(new DamageCondition(this, conditionType, Interval, (ushort)damages.Min,
                     (ushort)damages.Max));
             else
-                actor.AddCondition(new DamageCondition(conditionType, Interval, DamageCount, (ushort)damages.Min));
+                actor.AddCondition(new DamageCondition(this, conditionType, Interval, DamageCount,
+                    (ushort)damages.Min));
         }
     }
 

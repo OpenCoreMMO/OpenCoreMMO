@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using NeoServer.Game.Common.Combat.Enums;
 using NeoServer.Game.Common.Creatures.Players;
 
 namespace NeoServer.Data.Entities;
@@ -11,13 +13,14 @@ public sealed class PlayerEntity
         PlayerDepotItems = new List<PlayerDepotItemEntity>();
         PlayerItems = new List<PlayerItemEntity>();
         PlayerDepotItems = new List<PlayerDepotItemEntity>();
+        Deaths = new List<PlayerDeathEntity>();
     }
 
     public int Id { get; set; }
     public int AccountId { get; set; }
     public int TownId { get; set; }
     public string Name { get; set; }
-    public int PlayerType { get; set; } //1 = player
+    public byte Group { get; set; } //1 = player
     public uint Capacity { get; set; }
     public ushort Level { get; set; }
     public ushort Mana { get; set; }
@@ -64,13 +67,19 @@ public sealed class PlayerEntity
     public int MagicLevel { get; set; }
     public double MagicLevelTries { get; set; }
     public double Experience { get; set; }
+    public ulong BankAmount { get; set; }
 
     public ChaseMode ChaseMode { get; set; }
     public FightMode FightMode { get; set; }
     public Gender Gender { get; set; }
     public byte Vocation { get; set; }
     public int RemainingRecoverySeconds { get; set; }
+
+    public Skull Skull { get; set; }
+    public DateTime? SkullEndsAt { get; set; }
     public AccountEntity Account { get; set; }
+    public ICollection<PlayerDeathEntity> Deaths { get; set; }
+    public ICollection<PlayerDeathEntity> KillsLastMonth { get; set; }
 
     public ICollection<PlayerItemEntity> PlayerItems { get; set; }
     public ICollection<PlayerDepotItemEntity> PlayerDepotItems { get; set; }

@@ -15,13 +15,17 @@ public interface IThing : IUsable
 
     public bool IsCloseTo(IThing thing)
     {
+        if (thing is null) return false;
         if (Location.Type is not LocationType.Ground &&
             this is IItem { CanBeMoved: true } item)
+        {
             return item.Owner?.Location.IsNextTo(thing.Location) ?? false;
+        }
+
         return Location.IsNextTo(thing.Location);
     }
 
-    void SetNewLocation(Location.Structs.Location location);
+    void SetNewLocation(Location.Structs.Location location, bool force = false);
 
     static bool operator !(IThing thing)
     {

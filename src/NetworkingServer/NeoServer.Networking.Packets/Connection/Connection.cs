@@ -53,7 +53,6 @@ public class Connection : IConnection
 
     public Queue<IOutgoingPacket> OutgoingPackets { get; private set; }
     public IReadOnlyNetworkMessage InMessage { get; }
-
     public uint[] XteaKey { get; private set; }
     public uint CreatureId { get; private set; }
     public bool IsAuthenticated { get; private set; }

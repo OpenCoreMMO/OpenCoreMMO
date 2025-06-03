@@ -33,6 +33,7 @@ public class PlayerTests
             100,
             100,
             new Vocation.Vocation(),
+            new Group.Group(),
             Gender.Male,
             true, 30, 30,
             FightMode.Attack,
@@ -58,7 +59,7 @@ public class PlayerTests
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100) as Player.Player;
         var enemy = PlayerTestDataBuilder.Build() as Player.Player;
-        sut.OnDamage(enemy, new CombatDamage(5, DamageType.Melee));
+        sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(5, DamageType.Melee)));
 
         Assert.Equal((uint)95, sut.HealthPoints);
     }
@@ -68,7 +69,7 @@ public class PlayerTests
     {
         var sut = PlayerTestDataBuilder.Build(mana: 30) as Player.Player;
         var enemy = PlayerTestDataBuilder.Build() as Player.Player;
-        sut.OnDamage(enemy, new CombatDamage(5, DamageType.ManaDrain));
+        sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(5, DamageType.ManaDrain)));
 
         Assert.Equal((uint)25, sut.Mana);
     }
@@ -77,8 +78,8 @@ public class PlayerTests
     public void FlagIsEnabled_Enabled_ReturnsTrue()
     {
         var sut = PlayerTestDataBuilder.Build();
-        sut.SetFlag(PlayerFlag.CanBeSeen);
-        var result = sut.FlagIsEnabled(PlayerFlag.CanBeSeen);
+        sut.Group.EnableFlag(PlayerFlag.IgnoreYellCheck);
+        var result = sut.Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
 
         result.Should().BeTrue();
     }
@@ -87,7 +88,7 @@ public class PlayerTests
     public void FlagIsEnabled_Disabled_ReturnsTrue()
     {
         var sut = PlayerTestDataBuilder.Build();
-        var result = sut.FlagIsEnabled(PlayerFlag.CanBeSeen);
+        var result = sut.Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
 
         result.Should().BeFalse();
     }
@@ -160,10 +161,10 @@ public class PlayerTests
     {
         var sut = PlayerTestDataBuilder.Build();
 
-        sut.ChangeSecureMode(0);
-        sut.SecureMode.Should().Be(0);
-        sut.ChangeSecureMode(1);
-        sut.SecureMode.Should().Be(1);
+        sut.ChangeSecureMode(PvpSecureMode.PvPEnabled);
+        sut.SecureMode.Should().Be(PvpSecureMode.PvPEnabled);
+        sut.ChangeSecureMode(PvpSecureMode.PvPDisabled);
+        sut.SecureMode.Should().Be(PvpSecureMode.PvPDisabled);
     }
 
     [Fact]

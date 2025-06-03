@@ -23,12 +23,12 @@ namespace NeoServer.Loaders.World;
 
 public class WorldLoader
 {
+    private readonly IItemTypeStore _itemTypeStore;
     private readonly ITileFactory _tileFactory;
     private readonly IItemFactory itemFactory;
     private readonly ILogger logger;
     private readonly ServerConfiguration serverConfiguration;
     private readonly Game.World.World world;
-    private readonly IItemTypeStore _itemTypeStore;
 
     public WorldLoader(Game.World.World world, ILogger logger, IItemFactory itemFactory,
         ServerConfiguration serverConfiguration, ITileFactory tileFactory, IItemTypeStore itemTypeStore)
@@ -45,15 +45,14 @@ public class WorldLoader
     {
         logger.Step("Loading world...", "{tiles} tiles, {towns} towns and {waypoints} waypoints loaded", () =>
         {
-            
             using var fileStream = new FileStream($"{serverConfiguration.Data}/world/{serverConfiguration.OTBM}",
                 FileMode.Open, FileAccess.Read);
-            
+
             var fileBytes = new byte[fileStream.Length];
             fileStream.ReadExactly(fileBytes, 0, fileBytes.Length);
-            
+
             var otbmNode = OtbBinaryTreeBuilder.Deserialize(fileBytes);
-            
+
             var otbm = new OTBMNodeParser().Parse(otbmNode);
 
             LoadTiles(otbm);
@@ -79,10 +78,7 @@ public class WorldLoader
 
     private void LoadTiles(Otbm otbm)
     {
-        foreach (var tileNode in otbm.TileAreas.SelectMany(t => t.Tiles))
-        {
-            LoadTile(tileNode);
-        }
+        foreach (var tileNode in otbm.TileAreas.SelectMany(t => t.Tiles)) LoadTile(tileNode);
     }
 
     private void LoadTile(TileNode tileNode)
@@ -100,7 +96,7 @@ public class WorldLoader
 
         var items = GetItemsOnTile(tileNode).ToArray();
 
-        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items, useCache: false);
+        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items, false, tileNode.HouseId);
 
         if (tile is IStaticTile)
         {

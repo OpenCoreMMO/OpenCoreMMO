@@ -9,7 +9,7 @@ public enum PlayerFlag : ulong
     CanConvinceAll = 1 << 4,
     CanSummonAll = 1 << 5,
     CanIllusionAll = 1 << 6,
-    CanSeeInvisibility = 1 << 7,
+    CanSenseInvisibility = 1 << 7,
     IgnoredByMonsters = 1 << 8,
     NotGainInFight = 1 << 9,
     HasInfiniteMana = 1 << 10,
@@ -34,11 +34,12 @@ public enum PlayerFlag : ulong
     SetMaxSpeed = 1 << 29,
     SpecialVip = 1 << 30,
     NotGenerateLoot = (ulong)1 << 31,
-    CanTalkRedChannelAnonymous = 1 << 32,
-    IgnoreProtectionZone = 1 << 33,
-    IgnoreSpellCheck = 1 << 34,
-    IgnoreWeaponCheck = 1 << 35,
-    CannotBeMuted = 1 << 36,
-    IsAlwaysPremium = 1 << 37,
-    CanBeSeen = 1 << 38
+    CanTalkRedChannelAnonymous = (ulong)1 << 32,
+    IgnoreProtectionZone = (ulong)1 << 33,
+    IgnoreSpellCheck = (ulong)1 << 34,
+    IgnoreWeaponCheck = (ulong)1 << 35,
+    CannotBeMuted = (ulong)1 << 36,
+    IsAlwaysPremium = (ulong)1 << 37,
+    IgnoreYellCheck = (ulong)1 << 38,
+    IgnoreSendPrivateCheck = (ulong)1 << 39
 }

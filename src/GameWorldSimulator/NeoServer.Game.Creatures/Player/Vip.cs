@@ -47,8 +47,8 @@ public class Vip : IVip
             return false;
         }
 
-        if (player.FlagIsEnabled(PlayerFlag.SpecialVip))
-            if (!_owner.FlagIsEnabled(PlayerFlag.SpecialVip))
+        if (player.Group.FlagIsEnabled(PlayerFlag.SpecialVip))
+            if (!_owner.Group.FlagIsEnabled(PlayerFlag.SpecialVip))
             {
                 OperationFailService.Send(_owner.CreatureId, TextConstants.CANNOT_ADD_PLAYER_TO_VIP_LIST);
                 return false;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +24,7 @@ public abstract class Listener : TcpListener, IListener
 
     public void BeginListening(CancellationToken cancellationToken)
     {
-        Task.Run(async () =>
+        Task.Factory.StartNew(async () =>
         {
             try
             {
@@ -47,7 +46,7 @@ public abstract class Listener : TcpListener, IListener
 
                 _protocol.OnAccept(connection);
             }
-        }, cancellationToken);
+        }, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
 
     public void EndListening()

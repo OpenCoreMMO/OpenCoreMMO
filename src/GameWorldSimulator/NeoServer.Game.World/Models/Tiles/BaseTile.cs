@@ -17,6 +17,21 @@ public abstract class BaseTile : ITile
     public bool CannotLogout => HasFlag(TileFlags.NoLogout);
     public FloorChangeDirection FloorDirection { get; protected set; } = FloorChangeDirection.None;
     public bool ProtectionZone => HasFlag(TileFlags.ProtectionZone);
+    public bool PvpZone => HasFlag(TileFlags.PvpZone);
+    public bool NoPvpZone => HasFlag(TileFlags.NoPvpZone);
+
+    public ZoneType Zone
+    {
+        get
+        {
+            if (HasFlag(TileFlags.PvpZone)) return ZoneType.Pvp;
+            if (HasFlag(TileFlags.ProtectionZone)) return ZoneType.Protection;
+            if (HasFlag(TileFlags.NoPvpZone)) return ZoneType.NoPvp;
+            if (HasFlag(TileFlags.NoLogout)) return ZoneType.NoLogout;
+            return ZoneType.Normal;
+        }
+    }
+
     public abstract IItem TopItemOnStack { get; }
     public abstract ICreature TopCreatureOnStack { get; }
     public abstract int ThingsCount { get; }
@@ -25,22 +40,23 @@ public abstract class BaseTile : ITile
 
     public abstract byte GetCreatureStackPositionIndex(IPlayer observer);
 
-    public bool HasFlag(TileFlags flag)
-    {
-        return ((uint)flag & Flags) != 0;
-    }
+    public bool HasFlag(TileFlags flag) => ((uint)flag & Flags) != 0;
 
-    public bool BlockMissile => HasFlag(TileFlags.BlockMissile);
+    public bool BlockMissile => HasFlag(TileFlags.BlockProjecTile);
 
     public Location Location { get; private set; }
 
-    public void SetNewLocation(Location location)
+    public void SetNewLocation(Location location, bool force = false)
     {
         if (Location != default) throw new InvalidOperationException();
         Location = location;
     }
 
     public string Name { get; }
+
+    public abstract int ItemsCount { get; }
+
+    public abstract IItem[] AllItems { get; }
 
     public string GetLookText(bool isClose = false, bool showInternalDetails = false)
     {
@@ -80,10 +96,10 @@ public abstract class BaseTile : ITile
             if (!item.CanBeMoved) SetFlag(TileFlags.ImmovableNoFieldBlockPath);
         }
 
-        if (item.Metadata.HasFlag(ItemFlag.BlockProjectTile)) SetFlag(TileFlags.BlockMissile);
+        if (item.Metadata.HasFlag(ItemFlag.BlockProjectTile)) SetFlag(TileFlags.BlockProjecTile);
 
         if (item.Metadata.Attributes.TryGetAttribute(ItemAttribute.BlockProjectTile, out int value) && value == 1)
-            SetFlag(TileFlags.BlockMissile);
+            SetFlag(TileFlags.BlockProjecTile);
 
         if (item is ITeleport) SetFlag(TileFlags.Teleport);
 
@@ -116,7 +132,7 @@ public abstract class BaseTile : ITile
         RemoveFlag(TileFlags.ImmovableBlockSolid);
         RemoveFlag(TileFlags.BlockPath);
         RemoveFlag(TileFlags.ImmovableNoFieldBlockPath);
-        RemoveFlag(TileFlags.BlockMissile);
+        RemoveFlag(TileFlags.BlockProjecTile);
         RemoveFlag(TileFlags.Teleport);
         RemoveFlag(TileFlags.MagicField);
         RemoveFlag(TileFlags.Unpassable);

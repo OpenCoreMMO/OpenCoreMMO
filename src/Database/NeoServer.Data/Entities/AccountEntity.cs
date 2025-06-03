@@ -11,12 +11,14 @@ public sealed class AccountEntity
     }
 
     public int Id { get; set; }
+    public string AccountName { get; set; }
     public string EmailAddress { get; set; }
     public string Password { get; set; }
-    public int PremiumTime { get; set; }
+    public DateTime? PremiumTimeEndAt { get; set; }
     public string Secret { get; set; }
     public bool AllowManyOnline { get; set; }
     public DateTime? BanishedAt { get; set; }
+    public DateTime? BanishedEndAt { get; set; }
     public string BanishmentReason { get; set; }
     public uint? BannedBy { get; set; }
 

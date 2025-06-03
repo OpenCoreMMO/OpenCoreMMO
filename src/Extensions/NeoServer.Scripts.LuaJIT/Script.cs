@@ -37,7 +37,7 @@ public class Script
     }
 
     // Load revscriptsys callback
-    public bool LoadCallback()
+    public bool LoadCallback(string name = null)
     {
         if (_scriptInterface == null)
             //Logger.GetInstance().Error($"[Script.LoadCallback] ScriptInterface is null, scriptId = {ScriptId}");
@@ -47,7 +47,7 @@ public class Script
             //Logger.GetInstance().Error($"[Script.LoadCallback] ScriptId is not zero, scriptId = {ScriptId}, scriptName {_scriptInterface.GetLoadingScriptName()}");
             return false;
 
-        var id = _scriptInterface.GetEvent();
+        var id = name is null ? _scriptInterface.GetEvent() : _scriptInterface.GetEvent(name);
         if (id == -1)
             //Logger.GetInstance().Error($"[Script.LoadCallback] Event {GetScriptTypeName()} not found for script with name {_scriptInterface.GetLoadingScriptName()}");
             return false;
@@ -76,11 +76,7 @@ public class Script
     }
 
     // Method to access the ScriptId in derived classes
-    public virtual int GetScriptId()
-    {
-        return ScriptId;
-    }
-
+    public virtual int GetScriptId() => ScriptId;
     public virtual void SetScriptId(int newScriptId)
     {
         ScriptId = newScriptId;

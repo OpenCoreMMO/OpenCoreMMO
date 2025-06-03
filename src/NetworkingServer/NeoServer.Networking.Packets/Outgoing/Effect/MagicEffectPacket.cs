@@ -17,6 +17,8 @@ public class MagicEffectPacket : OutgoingPacket
 
     public override void WriteToMessage(INetworkMessage message)
     {
+        if (effect is 0 or (EffectT) byte.MaxValue) return;
+        
         message.AddByte((byte)GameOutgoingPacketType.MagicEffect);
         message.AddLocation(location);
         message.AddByte((byte)effect);

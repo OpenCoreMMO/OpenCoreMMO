@@ -17,7 +17,7 @@ public static class Rsa
 
     public static void LoadPem(string basePath)
     {
-        using var reader = File.OpenText(@$"{basePath}/key.pem");
+        using var reader = File.OpenText($"{basePath}/key.pem");
         var keyPair = (AsymmetricCipherKeyPair)new PemReader(reader).ReadObject();
 
         RsaEngine = new RsaEngine();

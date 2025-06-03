@@ -50,6 +50,11 @@ public class CreatureGameInstance : ICreatureGameInstance
         return _playersLogged.Values;
     }
 
+    public int CountOnlinePlayers()
+    {
+        return _playersLogged.Count;
+    }
+
     public ImmutableList<Tuple<IMonster, TimeSpan>> AllKilledMonsters()
     {
         return _killedMonsters.Values.ToImmutableList();

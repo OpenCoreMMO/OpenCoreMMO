@@ -28,6 +28,8 @@ public static class DataStoreInjection
 
         builder.AddSingleton<IItemClientServerIdMapStore, ItemClientServerIdMapStore>();
 
+        builder.AddSingleton<IGroupStore, GroupStore>();
+
         return builder;
     }
 }

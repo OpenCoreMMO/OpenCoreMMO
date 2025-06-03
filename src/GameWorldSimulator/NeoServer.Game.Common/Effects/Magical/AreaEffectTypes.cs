@@ -9,6 +9,13 @@ public static partial class AreaEffect
         { 0, 1, 0 },
         { 0, 3, 0 }
     };
+    
+    [AreaEffect("AREA_SHORTWAVE3", true)] public static byte[,] ShortWave3 =
+    {
+        { 1, 1, 1 },
+        { 1, 1, 1 },
+        { 0, 3, 0 }
+    };
 
     [AreaEffect("AREA_WAVE4", true)] public static byte[,] Wave4 =
     {

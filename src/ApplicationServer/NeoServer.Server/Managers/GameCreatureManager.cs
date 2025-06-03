@@ -3,6 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading.Tasks;
+using NeoServer.Data.Entities;
+using NeoServer.Data.Interfaces;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Server.Common.Contracts;
@@ -21,13 +24,19 @@ public class GameCreatureManager : IGameCreatureManager
     private readonly IMap _map;
 
     private readonly ConcurrentDictionary<uint, IConnection> _playersConnection;
+    private readonly IWorldRecordRepository _worldRecordRepository;
 
-    public GameCreatureManager(ICreatureGameInstance creatureInstances, IMap map, ILogger logger)
+    public GameCreatureManager(
+        ICreatureGameInstance creatureInstances,
+        IMap map,
+        ILogger logger,
+        IWorldRecordRepository worldRecordRepository)
     {
         _creatureInstances = creatureInstances;
         _map = map;
         _playersConnection = new ConcurrentDictionary<uint, IConnection>();
         _logger = logger;
+        _worldRecordRepository = worldRecordRepository;
     }
 
     /// <summary>
@@ -178,12 +187,32 @@ public class GameCreatureManager : IGameCreatureManager
         return _playersConnection.TryGetValue(playerId, out connection);
     }
 
+    public async Task<(bool, int, int)> CheckPlayersRecord(int worldId)
+    {
+        var actualCount = _creatureInstances.AllLoggedPlayers().Count();
+        var lastWorldRecord = await _worldRecordRepository.GetLastFromWord(worldId);
+
+        if (lastWorldRecord is null || actualCount > lastWorldRecord.Record)
+        {
+            await _worldRecordRepository.Insert(new WorldRecordEntity
+            {
+                CreatedAt = DateTime.UtcNow,
+                Record = actualCount,
+                WorldId = worldId
+            });
+
+            return (true, actualCount, lastWorldRecord is null ? 0 : lastWorldRecord.Record);
+        }
+
+        return (false, 0, 0);
+    }
+
     /// <summary>
     ///     Adds creature to game and to map
     /// </summary>
     /// <param name="creature"></param>
     /// <returns></returns>
-    public bool AddCreature(ICreature creature)
+    private bool AddCreature(ICreature creature)
     {
         _creatureInstances.Add(creature);
         return true;

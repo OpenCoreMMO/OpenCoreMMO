@@ -10,16 +10,17 @@ public static class ConditionIconParser
         {
             ConditionType.Haste => ConditionIcon.Haste,
             ConditionType.Poison => ConditionIcon.Poison,
-            ConditionType.InFight => ConditionIcon.Swords,
+            ConditionType.LogoutBlock => ConditionIcon.Swords,
             ConditionType.Paralyze => ConditionIcon.Paralyze,
             ConditionType.Fire => ConditionIcon.Burn,
             ConditionType.Energy => ConditionIcon.Energy,
             ConditionType.Drunk => ConditionIcon.Drunk,
             ConditionType.Cursed => ConditionIcon.Cursed,
             ConditionType.Freezing => ConditionIcon.Freezing,
-            ConditionType.Manashield => ConditionIcon.ManaShield,
+            ConditionType.ManaShield => ConditionIcon.ManaShield,
             ConditionType.Drown => ConditionIcon.Drowning,
             ConditionType.Pacified => ConditionIcon.Pigeon,
+            ConditionType.ProtectionZoneBlock => ConditionIcon.RedSwords,
             _ => ConditionIcon.None
         };
     }

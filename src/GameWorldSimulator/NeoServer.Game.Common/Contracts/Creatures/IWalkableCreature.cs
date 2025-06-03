@@ -31,6 +31,7 @@ public interface IWalkableCreature : ICreature
     int StepDelay { get; }
     bool FirstStep { get; } //remove
     ITileEnterRule TileEnterRule { get; }
+
     event StartWalk OnStartedWalking;
     event StopWalk OnStoppedWalking;
     event TurnedToDirection OnTurnedToDirection;
@@ -38,7 +39,7 @@ public interface IWalkableCreature : ICreature
     event ChangeSpeed OnChangedSpeed;
     event StopWalk OnCompleteWalking;
     event TeleportTo OnTeleported;
-    event Moved OnCreatureMoved;
+    public event Moved OnCreatureMoved;
 
     /// <summary>
     ///     Decreases creature speed
@@ -116,8 +117,10 @@ public interface IWalkableCreature : ICreature
     /// <param name="tile"></param>
     void SetCurrentTile(IDynamicTile tile);
 
+    void TurnTo(ICreature creature);
     void TurnTo(Direction direction);
     void Follow(ICreature creature);
     void CancelWalk();
+
     event StopWalk OnCancelledWalking;
 }

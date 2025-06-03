@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat.Structs;
+using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
+using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Common.Results;
@@ -94,6 +96,8 @@ public class Map : IMap
 
         return true;
     }
+
+
 
     public void SwapCreatureBetweenSectors(ICreature creature, Location fromLocation, Location toLocation)
     {
@@ -374,7 +378,7 @@ public class Map : IMap
         var sector = world.GetSector(creature.Location.X, creature.Location.Y);
         sector.AddCreature(creature);
 
-        creature.OnAppear(tile.Location, cylinder.TileSpectators);
+        creature.Appear(tile.Location, cylinder.TileSpectators);
         if (creature is IWalkableCreature walkableCreature)
             OnCreatureAddedOnMap?.Invoke(walkableCreature, cylinder);
     }
@@ -386,6 +390,8 @@ public class Map : IMap
         CylinderOperation.RemoveCreature(creature, out var cylinder);
 
         world.GetSector(tile.Location.X, tile.Location.Y).RemoveCreature(creature);
+
+        creature.Disappear(tile.Location, cylinder.TileSpectators);
         if (creature is IWalkableCreature walkableCreature)
             OnThingRemovedFromTile?.Invoke(walkableCreature, cylinder);
     }
@@ -432,7 +438,7 @@ public class Map : IMap
                     continue;
                 }
 
-                targetCreature.ReceiveAttack(actor, damage);
+                targetCreature.TakeDamage(actor, damage);
             }
         }
     }
@@ -461,6 +467,19 @@ public class Map : IMap
                 nextTile = newDestinationTile;
         }
 
+        if (nextTile is null)
+        {
+            creature.CancelWalk();
+            return;
+        }
+
+        if (creature is IPlayer player && nextTile.ProtectionZone && player.IsProtectionZoneBlocked)
+        {
+            creature.CancelWalk();
+            OperationFailService.Send(creature.CreatureId, TextConstants.YOU_CANNOT_ENTER_PROTECTION_ZONE);
+            return;
+        }
+
         if (nextTile is IDynamicTile dynamicTile && !(dynamicTile.CanEnterFunction?.Invoke(creature) ?? true))
         {
             creature.CancelWalk();
@@ -476,13 +495,8 @@ public class Map : IMap
 
     public void CreateBloodPool(ILiquid pool, IDynamicTile tile)
     {
-        //if (tile?.TopItems != null && tile.TopItems.TryPeek(out var topItem) && topItem is ILiquid)
-        //{
-        //    tile.RemoveItem(topItem, 1, 0, out var removedThing);
-        //}
-
-        //if (pool is null) return;
-        //tile.AddItem(pool);
+        tile.RemoveItem(pool.Metadata.Group);
+        tile.AddItem(pool);
     }
 
     public bool CanGoToDirection(ICreature creature, Direction direction, ITileEnterRule rule)
@@ -508,16 +522,19 @@ public class Map : IMap
             switch (operation.Item2)
             {
                 case Operation.Removed:
-                    if (operation.Item1 is ICumulative cumulative) cumulative.OnReduced -= OnItemReduced;
+                    if (operation.Item1 is ICumulative cumulativeToRemove)
+                        cumulativeToRemove.OnReduced -= OnItemReduced;
                     OnThingRemovedFromTile?.Invoke(operation.Item1,
                         CylinderOperation.Removed(operation.Item1, operation.Item3));
                     break;
                 case Operation.Updated:
+                    if (operation.Item1 is ICumulative cumulativeToUpdate)
+                        cumulativeToUpdate.OnReduced += OnItemReduced;
                     OnThingUpdatedOnTile?.Invoke(operation.Item1,
                         CylinderOperation.Updated(operation.Item1, operation.Item1.Amount));
                     break;
                 case Operation.Added:
-                    if (operation.Item1 is ICumulative c) c.OnReduced += OnItemReduced;
+                    if (operation.Item1 is ICumulative cumulativeToAdd) cumulativeToAdd.OnReduced += OnItemReduced;
                     OnThingAddedToTile?.Invoke(operation.Item1, CylinderOperation.Added(operation.Item1));
                     break;
             }

@@ -34,8 +34,11 @@ public enum TileFlags : uint
     ImmovableNoFieldBlockPath = 1 << 21,
     NoFieldBlockPath = 1 << 22,
     SupportsHangable = 1 << 23,
-    BlockMissile = 1 << 24,
-    HasHeight = 1 << 25,
+    Moveable = 1 << 24,
+    IsHorizontal = 1 << 25,
+    IsVertical = 1 << 26,
+    BlockProjecTile = 1 << 27,
+    HasHeight = 1 << 28,
 
     FloorChange = FloorChangeNorth | FloorChangeDown | FloorChangeSouth | FloorChangeEast | FloorChangeWest |
                   FloorChangeEastAlternative | FloorChangeSouthAlternative

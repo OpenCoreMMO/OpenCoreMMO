@@ -20,7 +20,7 @@ public interface IVocation
     ushort GainMana { get; set; }
     byte GainManaTicks { get; set; }
     byte GainSoulTicks { get; set; }
-    string Id { get; set; }
+    byte Id { get; set; }
     string Name { get; set; }
     public Dictionary<SkillType, float> Skills { get; set; }
     byte SoulMax { get; set; }

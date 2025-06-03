@@ -2,7 +2,7 @@
 
 namespace NeoServer.Scripts.LuaJIT.Enums;
 
-enum SkillsType : byte
+internal enum SkillsType : byte
 {
     SKILL_FIST = 0,
     SKILL_CLUB = 1,
@@ -17,7 +17,7 @@ enum SkillsType : byte
 
     SKILL_FIRST = SKILL_FIST,
     SKILL_LAST = SKILL_FISHING
-};
+}
 
 public enum ItemAttributeType : uint
 {
@@ -52,7 +52,7 @@ public enum ItemAttributeType : uint
     ITEM_ATTRIBUTE_ATTACK_SPEED = 1 << 26,
 
     ITEM_ATTRIBUTE_CUSTOM = 1U << 31
-};
+}
 
 public enum SlotsType : byte
 {
@@ -136,8 +136,6 @@ public enum MoveEventType
 {
     MOVE_EVENT_STEP_IN,
     MOVE_EVENT_STEP_OUT,
-    MOVE_EVENT_EQUIP,
-    MOVE_EVENT_DEEQUIP,
     MOVE_EVENT_ADD_ITEM,
     MOVE_EVENT_REMOVE_ITEM,
     MOVE_EVENT_ADD_ITEM_ITEMTILE,
@@ -169,7 +167,8 @@ public enum GlobalEventType
     GLOBALEVENT_SHUTDOWN,
     GLOBALEVENT_RECORD,
     GLOBALEVENT_PERIODCHANGE,
-    GLOBALEVENT_ON_THINK
+    GLOBALEVENT_ON_THINK,
+    GLOBALEVENT_SAVE
 }
 
 public enum ModuleTypeType
@@ -182,7 +181,7 @@ public enum LuaVariantType
 {
     VARIANT_NONE,
 
-    VARIANT_NUMBER,
+    Number,
     VARIANT_POSITION,
     VARIANT_TARGETPOSITION,
     VARIANT_STRING
@@ -306,14 +305,14 @@ public struct LuaTimerEventDesc
     public string ScriptName;
     public int Function = -1;
     public List<int> Parameters;
-    public string EventId = string.Empty;
+    public uint EventId = 0;
 
     public LuaTimerEventDesc()
     {
         Parameters = new List<int>();
     }
 
-    public LuaTimerEventDesc(int scriptId, string scriptName, int function, List<int> parameters, string eventId)
+    public LuaTimerEventDesc(int scriptId, string scriptName, int function, List<int> parameters, uint eventId)
     {
         ScriptId = scriptId;
         ScriptName = scriptName;

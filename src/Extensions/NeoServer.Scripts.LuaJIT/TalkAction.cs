@@ -1,18 +1,22 @@
 ﻿using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Interfaces;
+using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
 public class TalkAction : Script, ITalkAction
 {
+    //private account.GroupType groupType = account.GroupType.GROUP_TYPE_NONE;
+
+    private readonly ILogger _logger;
     private string separator = "\"";
 
     private string words;
-    //private account.GroupType groupType = account.GroupType.GROUP_TYPE_NONE;
 
-    public TalkAction(LuaScriptInterface context) : base(context)
+    public TalkAction(LuaScriptInterface context, ILogger logger) : base(context)
     {
+        _logger = logger;
     }
 
     public bool ExecuteSay(IPlayer player, string words, string param, SpeechType type)
@@ -20,8 +24,8 @@ public class TalkAction : Script, ITalkAction
         // onSay(player, words, param, type)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            Console.WriteLine($"[TalkAction::ExecuteSay - Player {player.Name} words {GetWords()}] " +
-                              $"Call stack overflow. Too many lua script calls being nested. Script name {GetScriptInterface().GetLoadingScriptName()}");
+            _logger.Error($"[TalkAction::ExecuteSay - Player {player.Name} words {GetWords()}] " +
+                          $"Call stack overflow. Too many lua script calls being nested. Script name {GetScriptInterface().GetLoadingScriptName()}");
             return false;
         }
 
@@ -29,15 +33,15 @@ public class TalkAction : Script, ITalkAction
         var scriptEnvironment = scriptInterface.InternalGetScriptEnv();
         scriptEnvironment.SetScriptId(GetScriptId(), GetScriptInterface());
 
-        var L = GetScriptInterface().GetLuaState();
+        var luaState = GetScriptInterface().GetLuaState();
         GetScriptInterface().PushFunction(GetScriptId());
 
-        LuaScriptInterface.PushUserdata(L, player);
-        LuaScriptInterface.SetMetatable(L, -1, "Player");
+        LuaScriptInterface.PushUserdata(luaState, player);
+        LuaScriptInterface.SetMetatable(luaState, -1, "Player");
 
-        LuaScriptInterface.PushString(L, words);
-        LuaScriptInterface.PushString(L, param);
-        //lua_pushnumber(L, (double)type);
+        LuaScriptInterface.PushString(luaState, words);
+        LuaScriptInterface.PushString(luaState, param);
+        //Lua.PushNumber(luaState, (double)type);
 
         return GetScriptInterface().CallFunction(3);
     }

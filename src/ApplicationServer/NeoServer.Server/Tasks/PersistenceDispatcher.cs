@@ -40,7 +40,7 @@ public class PersistenceDispatcher : IPersistenceDispatcher
     /// <param name="token"></param>
     public void Start(CancellationToken token)
     {
-        Task.Run(async () =>
+        Task.Factory.StartNew(async () =>
         {
             while (await _reader.WaitToReadAsync(token))
             {
@@ -57,6 +57,6 @@ public class PersistenceDispatcher : IPersistenceDispatcher
                         _logger.Error(ex, "Error found during persistence operation");
                     }
             }
-        }, token);
+        }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
 }

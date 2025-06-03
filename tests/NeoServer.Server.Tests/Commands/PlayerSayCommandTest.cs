@@ -1,13 +1,20 @@
 ﻿using Moq;
 using NeoServer.Data.InMemory.DataStores;
+using NeoServer.Game.Combat.Services.Spells;
+using NeoServer.Game.Combat.Spells;
+using NeoServer.Game.Common;
 using NeoServer.Game.Common.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Tests.Helpers.Map;
+using NeoServer.Game.Tests.Server;
+using NeoServer.Game.World.Services;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
-using NeoServer.Server.Common.Contracts.Scripts;
+using Serilog;
 using Xunit;
+using PathFinder = NeoServer.Game.World.Map.PathFinder;
 
 namespace NeoServer.Server.Tests.Commands;
 
@@ -20,7 +27,14 @@ public class PlayerSayCommandTest
         var player = new Mock<IPlayer>();
         var connection = new Mock<IConnection>();
         var network = new Mock<IReadOnlyNetworkMessage>();
-        var luaGameManager = new Mock<IScriptGameManager>();
+        var scriptManager = ScriptManagerTestBuilder.Build();
+        var logger = new Mock<ILogger>(); 
+        var spellListManager = new SpellListManager();
+
+        var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
+        var mapTool = new MapTool(map, new PathFinder(map));
+        
+        var spellService = new SpellService(new SpellCastValidation(mapTool), new Mock<IEventAggregator>().Object, logger.Object, map);
 
         var playerSayPacket = new Mock<PlayerSayPacket>(network.Object);
         playerSayPacket.SetupGet(x => x.TalkType).Returns(SpeechType.Private);
@@ -35,7 +49,7 @@ public class PlayerSayCommandTest
         var game = new Mock<IGameServer>();
         game.Setup(x => x.CreatureManager.TryGetPlayer("receiver", out receiver)).Returns(true);
 
-        var sut = new PlayerSayCommand(game.Object, chatChannelStore, luaGameManager.Object);
+        var sut = new PlayerSayCommand(game.Object, chatChannelStore, scriptManager, spellService, spellListManager);
 
         //act
         sut.Execute(player.Object, connection.Object, playerSayPacket.Object);

@@ -6,7 +6,6 @@ using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
 using NeoServer.Game.Common.Helpers;
-using NeoServer.Game.Common.Location;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.World.Models;
 
@@ -23,8 +22,9 @@ public class World
     public int LoadedWaypointsCount => waypoints.Count();
 
     public ImmutableList<ISpawn> Spawns { get; private set; }
-
     
+    public WorldLight WorldLight { get; private set; } = new ();
+
     public void AddTile(ITile newTile, Location location)
     {
         var sector = region.CreateSector(location.X, location.Y, out var created);

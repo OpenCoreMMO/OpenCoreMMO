@@ -8,8 +8,6 @@ public class PlayerOutfitAddonEntityConfiguration : IEntityTypeConfiguration<Pla
 {
     public void Configure(EntityTypeBuilder<PlayerOutfitAddonEntity> builder)
     {
-        builder.ToTable("PlayerOutfitAddon");
-
         builder.HasKey(e => new { e.PlayerId, e.LookType, e.AddonLevel });
 
         builder.Property(e => e.LookType).IsRequired();

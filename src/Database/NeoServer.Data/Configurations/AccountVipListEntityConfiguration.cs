@@ -8,8 +8,6 @@ public class AccountVipListEntityConfiguration : IEntityTypeConfiguration<Accoun
 {
     public void Configure(EntityTypeBuilder<AccountVipListEntity> builder)
     {
-        builder.ToTable("AccountVipList");
-
         builder.HasKey(e => new { e.AccountId, e.PlayerId });
 
         builder.Property(e => e.AccountId);

@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Location.Structs;
 using NeoServer.Game.Common.Services;
@@ -238,7 +239,7 @@ public class PreTradeValidationTests
         var item = ItemTestData.CreateUnpassableItem(1);
 
         var error = string.Empty;
-        OperationFailService.OnOperationFailed += (_, message) => error = message;
+        OperationFailService.OnOperationFailed += (_, message, _) => error = message;
 
         //act
         var result = tradeSystem.Request(player, secondPlayer, item);

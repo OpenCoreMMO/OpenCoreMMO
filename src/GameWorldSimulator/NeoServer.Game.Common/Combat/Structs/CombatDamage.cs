@@ -3,8 +3,26 @@ using NeoServer.Game.Common.Item;
 
 namespace NeoServer.Game.Common.Combat.Structs;
 
-public ref struct CombatDamage
+public readonly ref struct Damage(ushort healthDamage, ushort manaDamage)
 {
+    public ushort HealthDamage { get; } = healthDamage;
+    public ushort ManaDamage { get; } = manaDamage;
+    private ushort Total => (ushort)(HealthDamage + ManaDamage);
+    public static implicit operator ushort(Damage damage) => damage.Total;
+
+}
+
+public struct CalculatedAttackDamage
+{
+    public CombatDamage MainDamage { get; set; }
+    public CombatDamage ExtraDamage { get; set; }
+}
+public class CombatDamage
+{
+    public CombatDamage()
+    {
+        
+    }
     public CombatDamage(ushort damage, DamageType type)
     {
         Damage = damage;
@@ -48,6 +66,8 @@ public ref struct CombatDamage
 
     public EffectT Effect { get; set; }
 
+    public bool Unjustified { get; set; }
+
     /// <summary>
     ///     Sets a new damage
     /// </summary>
@@ -56,7 +76,6 @@ public ref struct CombatDamage
     {
         Damage = newDamage;
     }
-
 
     /// <summary>
     ///     Sets a new damage

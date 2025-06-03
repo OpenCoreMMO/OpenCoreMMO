@@ -220,7 +220,7 @@ public class Container : BaseItem, IContainer
     {
         if (item is null) return Result<OperationResultList<IItem>>.NotPossible;
 
-        Result<OperationResultList<IItem>> result = new(AddItemOperation.TryAddItem(this, item).Error);
+        Result<OperationResultList<IItem>> result = new(AddItemOperation.TryAddItem(this, item).Reason);
         if (result.Succeeded) return result;
 
         if (!includeChildren) return result;
@@ -240,7 +240,7 @@ public class Container : BaseItem, IContainer
     {
         if (item is null) return Result<OperationResultList<IItem>>.NotPossible;
 
-        return new Result<OperationResultList<IItem>>(AddItemOperation.TryAddItem(this, item, position).Error);
+        return new Result<OperationResultList<IItem>>(AddItemOperation.TryAddItem(this, item, position).Reason);
     }
 
     #endregion

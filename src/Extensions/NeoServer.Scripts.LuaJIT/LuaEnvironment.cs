@@ -1,6 +1,7 @@
 ﻿using LuaNET;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Scripts.LuaJIT.Models.Combat;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
@@ -22,12 +23,14 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
     private static bool _shuttingDown;
 
-    private readonly Dictionary<uint, LuaTimerEventDesc> _timerEvents = new();
-    public uint LastEventTimerId = 1;
+    public Dictionary<uint, LuaTimerEventDesc> TimerEvents { get; } = new();
+    public uint LastEventTimerId { get; set; } = 1;
 
-    private static readonly List<string> _cacheFiles = new();
+    private static readonly List<string> CacheFiles = [];
 
     private static LuaScriptInterface _testInterface;
+    public List<LuaCombat> Combats { get; set; } = new List<LuaCombat>();
+    public List<LuaScriptInterface> CombatsMap { get; set; } = new();
 
     #endregion
 
@@ -67,7 +70,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
     #region Public Methods
 
-    public LuaState GetLuaState()
+    public override LuaState GetLuaState()
     {
         if (_shuttingDown) return luaState;
 
@@ -76,7 +79,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
         return luaState;
     }
 
-    public bool InitState()
+    public new bool InitState()
     {
         luaState = Lua.NewState();
         //LuaFunctionsLoader.Load(luaState);
@@ -85,14 +88,14 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
         return true;
     }
 
-    public bool ReInitState()
+    public new bool ReInitState()
     {
         // TODO: get children, reload children
         CloseState();
         return InitState();
     }
 
-    public bool CloseState()
+    public new bool CloseState()
     {
         if (luaState.IsNull) return false;
 
@@ -106,17 +109,17 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
         //    ClearAreaObjects(areaEntry.Key);
         //}
 
-        foreach (var timerEntry in _timerEvents)
+        foreach (var timerEntry in TimerEvents)
         {
             var timerEventDesc = timerEntry.Value;
-            foreach (var parameter in timerEventDesc.Parameters) Lua.UnRef(luaState, LUA_REGISTRYINDEX, parameter);
-            Lua.UnRef(luaState, LUA_REGISTRYINDEX, timerEventDesc.Function);
+            foreach (var parameter in timerEventDesc.Parameters) Lua.UnRef(luaState, LUA_REGISTRY_INDEX, parameter);
+            Lua.UnRef(luaState, LUA_REGISTRY_INDEX, timerEventDesc.Function);
         }
 
         //combatIdMap.Clear();
         //areaIdMap.Clear();
-        _timerEvents.Clear();
-        _cacheFiles.Clear();
+        TimerEvents.Clear();
+        CacheFiles.Clear();
 
         Lua.Close(luaState);
         luaState.pointer = 0;
@@ -125,11 +128,10 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
     public LuaScriptInterface GetTestInterface()
     {
-        if (_testInterface == null)
-        {
-            _testInterface = new LuaScriptInterface("Test Interface");
-            _testInterface.InitState();
-        }
+        if (_testInterface != null) return _testInterface;
+
+        _testInterface = new LuaScriptInterface("Test Interface");
+        _testInterface.InitState();
 
         return _testInterface;
     }
@@ -141,47 +143,36 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
 
     public void ExecuteTimerEvent(uint eventIndex)
     {
-        if (_timerEvents.TryGetValue(eventIndex, out var timerEventDesc))
+        if (!TimerEvents.Remove(eventIndex, out var timerEventDesc)) return;
+
+        Lua.RawGetI(luaState, LUA_REGISTRY_INDEX, timerEventDesc.Function);
+
+        var reverseList = timerEventDesc.Parameters.ToList();
+        reverseList.Reverse();
+
+        foreach (var parameter in reverseList) Lua.RawGetI(luaState, LUA_REGISTRY_INDEX, parameter);
+
+        if (ReserveScriptEnv())
         {
-            _timerEvents.Remove(eventIndex);
-
-            Lua.RawGetI(luaState, LUA_REGISTRYINDEX, timerEventDesc.Function);
-
-            var reverseList = timerEventDesc.Parameters.ToList();
-            reverseList.Reverse();
-
-            foreach (var parameter in reverseList) Lua.RawGetI(luaState, LUA_REGISTRYINDEX, parameter);
-
-            if (ReserveScriptEnv())
-            {
-                var env = GetScriptEnv();
-                env.SetTimerEvent();
-                env.SetScriptId(timerEventDesc.ScriptId, this);
-                CallFunction(timerEventDesc.Parameters.Count);
-            }
-            else
-            {
-                _logger.Error(
-                    $"[LuaEnvironment::executeTimerEvent - Lua file {GetLoadingFile()}] Call stack overflow. Too many lua script calls being nested");
-            }
-
-            Lua.UnRef(luaState, LUA_REGISTRYINDEX, timerEventDesc.Function);
-            foreach (var parameter in timerEventDesc.Parameters) Lua.UnRef(luaState, LUA_REGISTRYINDEX, parameter);
+            var env = GetScriptEnv();
+            env.SetTimerEvent();
+            env.SetScriptId(timerEventDesc.ScriptId, this);
+            CallFunction(timerEventDesc.Parameters.Count);
         }
+        else
+        {
+            _logger.Error(
+                "[LuaEnvironment::executeTimerEvent - Lua file {LoadingFile}] Call stack overflow. Too many lua script calls being nested",
+                GetLoadingFile());
+        }
+
+        Lua.UnRef(luaState, LUA_REGISTRY_INDEX, timerEventDesc.Function);
+        foreach (var parameter in timerEventDesc.Parameters) Lua.UnRef(luaState, LUA_REGISTRY_INDEX, parameter);
     }
 
     public void CollectGarbage()
     {
-        var collecting = false;
-
-        if (!collecting)
-        {
-            collecting = true;
-
-            for (var i = -1; ++i < 2;) Lua.GC(luaState, LuaGCParam.Collect, 0);
-
-            collecting = false;
-        }
+        for (var i = -1; ++i < 2;) Lua.GC(luaState, LuaGCParam.Collect, 0);
     }
 
     #endregion

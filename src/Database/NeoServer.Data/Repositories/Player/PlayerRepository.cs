@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,7 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
 
     public async Task UpdateAllPlayersToOffline()
     {
-        const string sql = @"UPDATE Player SET Online = 0";
+        const string sql = "UPDATE Player SET Online = 0";
 
         await using var context = NewDbContext;
 
@@ -50,12 +51,19 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
         return await context.PlayerOutfitAddons.Where(x => x.PlayerId == playerId).ToListAsync();
     }
 
-    public async Task<PlayerEntity> GetPlayer(string playerName)
+    public async Task<PlayerEntity> GetByName(string playerName)
     {
         await using var context = NewDbContext;
-        return await context.Players.FirstOrDefaultAsync(x => x.Name.Equals(playerName));
+        //todo: find a way to use invariant culture. it currently doesn't work with sqlite
+        return await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == playerName.ToLower());
     }
 
+    public async Task<PlayerEntity> GetById(int id)
+    {
+        await using var context = NewDbContext;
+        return await context.Players.FirstOrDefaultAsync(x => x.Id == id);
+    }
+    
     public async Task UpdatePlayers(IEnumerable<IPlayer> players)
     {
         var tasks = new List<Task>();
@@ -91,6 +99,14 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
         await StorageManager.SaveStorages(player, neoContext);
 
         await neoContext.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<PlayerEntity>> GetPaginatedPlayersAsync(Expression<Func<PlayerEntity, bool>> filter,
+        int page, int limit)
+    {
+        await using var neoContext = NewDbContext;
+        var skip = (page - 1) * limit;
+        return await neoContext.Players.Where(filter).Skip(skip).Take(limit).ToListAsync();
     }
 
     private static async Task UpdatePlayer(IPlayer player, NeoContext neoContext)
@@ -144,6 +160,8 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
                 ? condition.RemainingTime / TimeSpan.TicksPerMillisecond
                 : 0);
         playerEntity.Vocation = player.VocationType;
+        playerEntity.Skull = player.Skull;
+        playerEntity.SkullEndsAt = player.SkullEndsAt;
 
         neoContext.Update(playerEntity);
     }

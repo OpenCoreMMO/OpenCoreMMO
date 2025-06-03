@@ -1,15 +1,10 @@
 ﻿[
-	{ "name": "Combat Knife Quest", "aid": 2404, "uid": 60047 },
 	{ "name": "Chain Armor Quest", "aid": 2464, "uid": 60025 },
 	{ "name": "Brass Armor Quest", "aid": 2465, "uid": 60030 },
 	{ "name": null, "aid": 1990, "uid": 60023 },
 	{ "name": null, "aid": 0, "uid": 60027, "rewards": [{"id":1987, "items":[{"id":2148, "amount": 40 },{"id":2544, "amount": 12 }]}] },
 	{ "name": "Key 4601 Quest", "aid": 2089, "uid": 60026 },
-	{ "name": "Test Quest", "aid": 2090, "uid": 60031, "auto-load": false },
-	
-	{ "group-key": "newbie_quest", "group":"The Newbie Quest", "name": "Spike Sword Quest", "aid": 2383, "uid": 60050},
-	{ "group-key": "newbie_quest", "group":"The Newbie Quest", "name": "Dwarven Shield Quest", "aid": 2490, "uid": 60051 },
-	{ "group-key": "newbie_quest", "group":"The Newbie Quest", "name": "Dark Helmet Quest", "aid": 2525, "uid": 60052 }
+	{ "name": "Test Quest", "aid": 2090, "uid": 60031, "auto-load": false }
 ]
 
 //auto-load: when true the quest aid,uid will be automatically registered

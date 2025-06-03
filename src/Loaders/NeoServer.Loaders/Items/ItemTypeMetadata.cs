@@ -1,19 +1,27 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
+using NeoServer.Loaders.Converts;
 
 namespace NeoServer.Loaders.Items;
 
 [Serializable]
 public struct ItemTypeMetadata
 {
+    [JsonConverter(typeof(UshortNullableConverter))]
     public ushort? Id { get; set; }
+
     public string Name { get; set; }
+
+    [JsonConverter(typeof(UshortNullableConverter))]
     public ushort? Fromid { get; set; }
+
+    [JsonConverter(typeof(UshortNullableConverter))]
     public ushort? Toid { get; set; }
+
     public IEnumerable<Attribute> Attributes { get; set; }
 
-    [JsonProperty("onUse")] public IEnumerable<Attribute> OnUseEvent { get; set; }
+    [JsonPropertyName("onUse")] public IEnumerable<Attribute> OnUseEvent { get; set; }
 
     public string Article { get; set; }
     public string Plural { get; set; }

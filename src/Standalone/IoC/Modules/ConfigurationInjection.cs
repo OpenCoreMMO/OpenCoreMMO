@@ -29,8 +29,7 @@ public static class ConfigurationInjection
         IConfigurationRoot configuration)
     {
         ServerConfiguration serverConfiguration =
-            new(0, null, null, null, string.Empty, string.Empty, string.Empty, 7171, 7172, new SaveConfiguration(3600),
-                string.Empty);
+            new(0, null, null, null, string.Empty, string.Empty, string.Empty, 7171, 7172, new SaveConfiguration(3600));
         GameConfiguration gameConfiguration = new();
         LogConfiguration logConfiguration = new(null);
         ClientConfiguration clientConfiguration = new(null);
@@ -46,6 +45,8 @@ public static class ConfigurationInjection
         builder.AddSingleton(gameConfiguration);
         builder.AddSingleton(logConfiguration);
         builder.AddSingleton(clientConfiguration);
+        builder.AddSingleton(gameConfiguration.PvP);
+        builder.AddSingleton(gameConfiguration.Combat);
 
         return builder;
     }
@@ -57,7 +58,7 @@ public static class ConfigurationInjection
         var serverGameName = Environment.GetEnvironmentVariable("SERVER_GAME_NAME");
         var serverGameIP = Environment.GetEnvironmentVariable("SERVER_GAME_IP");
 
-        serverConfiguration = new(
+        serverConfiguration = new ServerConfiguration(
             serverConfiguration.Version,
             serverConfiguration.OTBM,
             serverConfiguration.OTB,
@@ -67,7 +68,6 @@ public static class ConfigurationInjection
             serverConfiguration.Extensions,
             string.IsNullOrEmpty(serverLoginPort) ? serverConfiguration.ServerLoginPort : int.Parse(serverLoginPort),
             string.IsNullOrEmpty(serverGamePort) ? serverConfiguration.ServerGamePort : int.Parse(serverGamePort),
-            serverConfiguration.Save,
-            serverConfiguration.DataLuaJit);
+            serverConfiguration.Save);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Contracts.World.Tiles;
@@ -9,7 +10,6 @@ using NeoServer.Loaders.Interfaces;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
 using NeoServer.Server.Services;
-using Newtonsoft.Json;
 using Serilog;
 
 namespace NeoServer.Loaders.TileRule;
@@ -42,30 +42,35 @@ public class TileRuleLoader : IStartupLoader
         var file = $"{_serverConfiguration.Data}/tiles.json";
 
         var jsonContent = File.ReadAllText(file);
-        var tilesData = JsonConvert.DeserializeObject<List<TileJsonData>>(jsonContent, new JsonSerializerSettings
+        try
         {
-            Error = (_, ev) =>
+            var tilesData = JsonSerializer.Deserialize<List<TileJsonData>>(jsonContent, new JsonSerializerOptions
             {
-                ev.ErrorContext.Handled = true;
-                Console.WriteLine(ev.ErrorContext.Error);
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (tilesData is null) return 0;
+
+            foreach (var tileRule in tilesData)
+            foreach (var location in tileRule.Locations)
+            {
+                tileRule.MaxLevel = tileRule.MaxLevel == 0 ? ushort.MaxValue : tileRule.MaxLevel;
+
+                var tileLocation = new Location(location[0], location[1], (byte)location[2]);
+
+                if (_map[tileLocation] is not IDynamicTile dynamicTile) continue;
+
+                dynamicTile.CanEnterFunction = creature => CanEnter(creature, tileRule);
             }
-        });
 
-        if (tilesData is null) return 0;
-
-        foreach (var tileRule in tilesData)
-        foreach (var location in tileRule.Locations)
+            return tilesData.Count;
+        }
+        catch (Exception e)
         {
-            tileRule.MaxLevel = tileRule.MaxLevel == 0 ? ushort.MaxValue : tileRule.MaxLevel;
-
-            var tileLocation = new Location(location[0], location[1], (byte)location[2]);
-
-            if (_map[tileLocation] is not IDynamicTile dynamicTile) continue;
-
-            dynamicTile.CanEnterFunction = creature => CanEnter(creature, tileRule);
+            Console.WriteLine(e);
         }
 
-        return tilesData.Count;
+        return 0;
     }
 
     private static bool CanEnter(ICreature creature, TileJsonData tileRule)

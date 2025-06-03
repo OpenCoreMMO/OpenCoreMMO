@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Items;
+using NeoServer.Loaders.Extensions;
 using NeoServer.Loaders.OTB.Parsers;
-using Newtonsoft.Json.Linq;
 
 namespace NeoServer.Loaders.Items.Parsers;
 
@@ -30,12 +29,11 @@ public class ItemTypeMetadataParser
 
         if (!itemTypes.TryGetValue(id, out var itemType)) return;
 
-        itemType.SetName(metadata.Name);
+        itemType.UpdateName(metadata.Name);
         itemType.SetArticle(metadata.Article);
-
         itemType.SetPlural(metadata.Plural);
 
-        if (metadata.Flags is not null)
+        if (metadata.Flags != null)
             foreach (var flagName in metadata.Flags)
             {
                 if (!ItemAttributeTranslation.TranslateFlagName(flagName, out var flag)) continue;
@@ -61,7 +59,7 @@ public class ItemTypeMetadataParser
             var itemAttribute = ItemAttributeTranslation.Translate(attribute.Key, out _);
             itemType.SetOnUse();
 
-            var value = AttributeValueParser.Parse(attribute.Value);
+            var value = JsonTextExtensions.ParseFromJson(attribute.Value);
 
             if (itemAttribute == ItemAttribute.None)
                 itemType.OnUse.SetCustomAttribute(attribute.Key, value);
@@ -79,20 +77,22 @@ public class ItemTypeMetadataParser
         {
             var itemAttribute = ItemAttributeTranslation.Translate(attribute.Key, out _);
 
-            var value = itemAttribute == ItemAttribute.Weight
-                ? (int.Parse(attribute.Value) / 100f).ToString(CultureInfo.InvariantCulture)
-                : attribute.Value; //todo place this code in another place
+            var originalValue = JsonTextExtensions.ParseFromJson(attribute.Value);
 
-            if (attribute.Attributes is null || !attribute.Attributes.Any())
+            var value = itemAttribute == ItemAttribute.Weight
+                ? int.Parse(originalValue) / 100f
+                : originalValue;
+
+            if (attribute.Attributes == null || !attribute.Attributes.Any())
             {
-                if (value is JArray jArray)
+                if (JsonTextExtensions.IsJsonArray(attribute.Value))
                 {
-                    value = jArray.ToObject<string[]>();
+                    var arrayValues = value;
 
                     if (itemAttribute == ItemAttribute.None)
-                        attributes.SetCustomAttribute(attribute.Key, values: value);
+                        attributes.SetCustomAttribute(attribute.Key, values: arrayValues);
                     else
-                        attributes.SetAttribute(itemAttribute, values: value);
+                        attributes.SetAttribute(itemAttribute, values: arrayValues);
                 }
                 else
                 {
@@ -105,7 +105,6 @@ public class ItemTypeMetadataParser
             else
             {
                 var innerAttributes = new ItemAttributeList();
-
                 SetAttributes(attribute.Attributes, innerAttributes);
 
                 if (itemAttribute == ItemAttribute.None)

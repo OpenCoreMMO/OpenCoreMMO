@@ -12,8 +12,8 @@ public enum ConditionType : uint
     Outfit = 1 << 6,
     Invisible = 1 << 7,
     Light = 1 << 8,
-    Manashield = 1 << 9,
-    InFight = 1 << 10,
+    ManaShield = 1 << 9,
+    LogoutBlock = 1 << 10,
     Drunk = 1 << 11,
     ExhaustWeapon = 1 << 12, // unused
     Regeneration = 1 << 13,
@@ -31,5 +31,6 @@ public enum ConditionType : uint
     Pacified = 1 << 25,
     Illusion = 1 << 26,
     Hungry = 1 << 27,
-    Strengthened = 1 << 28
+    Strengthened = 1 << 28,
+    ProtectionZoneBlock
 }

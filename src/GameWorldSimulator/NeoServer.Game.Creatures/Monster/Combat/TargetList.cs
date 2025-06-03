@@ -11,12 +11,12 @@ namespace NeoServer.Game.Creatures.Monster.Combat;
 
 public class TargetList : IEnumerable<CombatTarget>
 {
-    private readonly IMonster monster;
-    private IDictionary<uint, CombatTarget> targets = new Dictionary<uint, CombatTarget>();
+    private readonly IMonster _monster;
+    private IDictionary<uint, CombatTarget> _targets = new Dictionary<uint, CombatTarget>();
 
     public TargetList(IMonster monster)
     {
-        this.monster = monster;
+        _monster = monster;
     }
 
     public CombatTarget NearestTarget { private get; set; }
@@ -27,7 +27,8 @@ public class TargetList : IEnumerable<CombatTarget>
         get
         {
             var target = NearestTarget ?? NearestSightClearTarget;
-            return target is not null && target.CanReachCreature;
+            return target is not null &&
+                   (target.CanReachCreature || (target.HasSightClear && target.IsInRange(_monster)));
         }
     }
 
@@ -36,26 +37,26 @@ public class TargetList : IEnumerable<CombatTarget>
         get
         {
             if (NearestTarget is not null) return NearestTarget;
-            if (!monster.Metadata.HasDistanceAttack) return NearestTarget;
+            if (!_monster.Metadata.HasDistanceAttack) return NearestTarget;
 
             if (NearestSightClearTarget is null) return null;
 
-            if (!NearestSightClearTarget.IsInRange(monster)) return null;
+            if (!NearestSightClearTarget.IsInRange(_monster)) return null;
 
             return NearestSightClearTarget;
         }
     }
 
     public bool IsCurrentTargetUnreachable =>
-        TryGetTarget(monster.CurrentTarget?.CreatureId ?? 0, out var target) && !target.CanReachCreature &&
+        TryGetTarget(_monster.CurrentTarget?.CreatureId ?? 0, out var target) && !target.CanReachCreature &&
         target.Creature.Tile.ProtectionZone &&
         !target.HasSightClear;
 
     public void AddTarget(ICombatActor creature)
     {
-        targets ??= new Dictionary<uint, CombatTarget>(150);
+        _targets ??= new Dictionary<uint, CombatTarget>(150);
 
-        if (!targets.TryAdd(creature.CreatureId, new CombatTarget(creature))) return;
+        if (!_targets.TryAdd(creature.CreatureId, new CombatTarget(creature))) return;
         AttachToTargetEvents(creature);
     }
 
@@ -63,33 +64,33 @@ public class TargetList : IEnumerable<CombatTarget>
     {
         if (creature is ICombatActor actor) DettachFromTargetEvents(actor);
 
-        targets?.Remove(creature.CreatureId);
+        _targets?.Remove(creature.CreatureId);
 
-        if (monster.AutoAttackTargetId == creature.CreatureId) monster.StopAttack();
+        if (_monster.AutoAttackTargetId == creature.CreatureId) _monster.StopAttack();
     }
 
     public void Clear()
     {
-        if (targets is null) return;
-        foreach (var target in targets) RemoveTarget(target.Value.Creature);
+        if (_targets is null) return;
+        foreach (var target in _targets) RemoveTarget(target.Value.Creature);
     }
 
     public bool Any()
     {
-        return targets?.Any() ?? false;
+        return _targets?.Any() ?? false;
     }
 
     public bool TryGetTarget(uint id, out CombatTarget target)
     {
         target = null;
-        return targets?.TryGetValue(id, out target) ?? false;
+        return _targets?.TryGetValue(id, out target) ?? false;
     }
 
     #region Target Event Handlers
 
     private void AttachToTargetEvents(ICombatActor creature)
     {
-        creature.OnKilled += OnTargetDie;
+        creature.OnDeath += OnTargetDie;
         creature.OnChangedVisibility += OnTargetDisappeared;
         creature.OnCreatureMoved += OnTargetMoved;
         if (creature is IPlayer player) player.OnLoggedOut += OnTargetRemoved;
@@ -97,26 +98,26 @@ public class TargetList : IEnumerable<CombatTarget>
 
     private void DettachFromTargetEvents(ICombatActor creature)
     {
-        creature.OnKilled -= OnTargetDie;
+        creature.OnDeath -= OnTargetDie;
         creature.OnChangedVisibility -= OnTargetDisappeared;
         creature.OnCreatureMoved -= OnTargetMoved;
         if (creature is IPlayer player) player.OnLoggedOut -= OnTargetRemoved;
     }
 
-    private void OnTargetDie(ICreature creature, IThing by, ILoot loot)
+    private void OnTargetDie(ICreature creature, IThing by)
     {
         RemoveTarget(creature);
     }
 
     private void OnTargetDisappeared(ICreature creature)
     {
-        if (monster.CanSee(creature)) return;
+        if (_monster.CanSee(creature)) return;
         RemoveTarget(creature);
     }
 
     private void HandleTargetMoved(IWalkableCreature creature, bool lastStep = false)
     {
-        if (!monster.CanSee(creature.Location)) RemoveTarget(creature);
+        if (!_monster.CanSee(creature.Location)) RemoveTarget(creature);
     }
 
     private void OnTargetMoved(IWalkableCreature creature, Location fromLocation, Location toLocation,
@@ -136,12 +137,12 @@ public class TargetList : IEnumerable<CombatTarget>
 
     public IEnumerator GetEnumerator()
     {
-        return targets.Values.GetEnumerator();
+        return _targets.Values.GetEnumerator();
     }
 
     IEnumerator<CombatTarget> IEnumerable<CombatTarget>.GetEnumerator()
     {
-        return targets.Values.GetEnumerator();
+        return _targets.Values.GetEnumerator();
     }
 
     #endregion

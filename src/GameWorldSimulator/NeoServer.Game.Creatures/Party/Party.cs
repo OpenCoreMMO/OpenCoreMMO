@@ -136,7 +136,7 @@ public class Party : IParty
     public void RemoveMember(IPlayer player)
     {
         if (player.IsNull()) return;
-        if (player.InFight) return;
+        if (player.IsLogoutBlocked) return;
 
         members.Remove(player.CreatureId);
         player.Channels.ExitChannel(Channel);
