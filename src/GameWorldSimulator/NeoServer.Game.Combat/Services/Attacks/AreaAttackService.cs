@@ -122,7 +122,6 @@ public class AreaAttackService(
         {
             var damages = new CombatDamageList([mainDamage, damage.ExtraDamage]);
             return target.TakeDamage(aggressor, damages);
-            
         }
 
         return target.TakeDamage(aggressor, damage.MainDamage);
