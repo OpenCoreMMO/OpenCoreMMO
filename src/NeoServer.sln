@@ -77,9 +77,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{EB46ABE5-1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoServer.Scripts.LuaJIT", "Extensions\NeoServer.Scripts.LuaJIT\NeoServer.Scripts.LuaJIT.csproj", "{79E18750-321E-4E02-897D-889A70530993}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoServer.Domain", "NeoServer.Domain\NeoServer.Domain.csproj", "{FF09B073-3940-4119-B06B-5E6A7802896B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoServer.Domain", "Core\NeoServer.Domain\NeoServer.Domain.csproj", "{FF09B073-3940-4119-B06B-5E6A7802896B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoServer.Domain.Tests", "NeoServer.Domain.Tests\NeoServer.Domain.Tests.csproj", "{BE223B55-CE32-4217-BF78-CADFA855C966}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoServer.Domain.Tests", "..\tests\NeoServer.Domain.Tests\NeoServer.Domain.Tests.csproj", "{BE223B55-CE32-4217-BF78-CADFA855C966}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -351,6 +351,7 @@ Global
 		{79E18750-321E-4E02-897D-889A70530993} = {2D49C135-AE9B-4434-8CF3-2F3E43E2583A}
 		{FF09B073-3940-4119-B06B-5E6A7802896B} = {EB46ABE5-1719-4A52-BACB-A05D6EACCAB5}
 		{BE223B55-CE32-4217-BF78-CADFA855C966} = {4733614A-98B6-48C5-A449-046601727458}
+		{EB46ABE5-1719-4A52-BACB-A05D6EACCAB5} = {41D4D3B5-6FC6-48F5-9D05-EA8C293DB44B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B3C7097-0071-4218-BE24-5EE9128763B6}

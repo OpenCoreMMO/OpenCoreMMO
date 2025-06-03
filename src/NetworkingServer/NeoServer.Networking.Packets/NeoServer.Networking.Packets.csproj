@@ -34,6 +34,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj"/>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Security\NeoServer.Server.Security.csproj"/>
+        <ProjectReference Include="..\..\Core\NeoServer.Domain\NeoServer.Domain.csproj" />
     </ItemGroup>
 
 </Project>

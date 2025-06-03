@@ -10,6 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Core\NeoServer.Domain\NeoServer.Domain.csproj" />
         <ProjectReference Include="..\..\NeoServer.Domain\NeoServer.Domain.csproj"/>
     </ItemGroup>
 

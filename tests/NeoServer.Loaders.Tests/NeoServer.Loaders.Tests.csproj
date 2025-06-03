@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Core\NeoServer.Domain\NeoServer.Domain.csproj" />
         <ProjectReference Include="..\..\src\Loaders\NeoServer.Loaders\NeoServer.Loaders.csproj"/>
     </ItemGroup>
 

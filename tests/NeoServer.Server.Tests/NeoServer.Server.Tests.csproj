@@ -25,12 +25,14 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Core\NeoServer.Domain\NeoServer.Domain.csproj" />
         <ProjectReference Include="..\..\src\Database\NeoServer.Data.InMemory.DataStores\NeoServer.Data.InMemory.DataStores.csproj"/>
         <ProjectReference Include="..\..\src\NeoServer.Domain.Tests\NeoServer.Domain.Tests.csproj" />
         <ProjectReference Include="..\..\src\NetworkingServer\NeoServer.Networking.Packets\NeoServer.Networking.Packets.csproj"/>
         <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Commands\NeoServer.Server.Commands.csproj"/>
         <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Events\NeoServer.Server.Events.csproj"/>
         <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj"/>
+        <ProjectReference Include="..\NeoServer.Domain.Tests\NeoServer.Domain.Tests.csproj" />
     </ItemGroup>
 
 </Project>
