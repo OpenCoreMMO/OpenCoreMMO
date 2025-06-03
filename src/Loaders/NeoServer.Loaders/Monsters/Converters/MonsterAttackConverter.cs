@@ -18,6 +18,10 @@ namespace NeoServer.Loaders.Monsters.Converters;
 
 internal class MonsterAttackConverter
 {
+    private static HashSet<string> SupportedAttributes = new()
+    {
+        "name", "attack", "skill", "min", "max", "interval", "length", "radius", "target", "range", "spread", "chance", "attributes"
+    };
     public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)
     {
         if (data.Attacks is null) return [];
@@ -61,7 +65,7 @@ internal class MonsterAttackConverter
 
             var combatAttack = new MonsterCombatAttack()
             {
-                NeedTarget = target != 0,
+                HasTarget = target != 0,
                 AttackChance = chance >= 100 ? (byte)100 : chance,
                 Interval = interval,
             };
@@ -71,7 +75,8 @@ internal class MonsterAttackConverter
                 MaxDamage = (ushort)Math.Abs(max),
                 MinDamage = (ushort)Math.Abs(min),
                 DamageType = DamageTypeParser.Parse(attackName),
-                CooldownId = combatAttack.Id
+                CooldownId = combatAttack.Id,
+                Effect = EffectParser.Parse(areaEffect)
             };
 
             if (combatAttack.CombatParameter.DamageType is DamageType.Melee)

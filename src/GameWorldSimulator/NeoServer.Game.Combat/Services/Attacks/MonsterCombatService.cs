@@ -1,7 +1,11 @@
 using System;
+using System.Linq;
 using NeoServer.Game.Common.Combat.Structs;
+using NeoServer.Game.Common.Contracts.Combat.Attacks;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Effects.Magical;
 using NeoServer.Game.Common.Helpers;
+using NeoServer.Game.Common.Location.Structs;
 
 namespace NeoServer.Game.Combat.Services.Attacks;
 
@@ -13,13 +17,13 @@ public class MonsterCombatService(IAttackService attackService)
         if (monster.Metadata.Attacks.Length == 0) return;
 
         var maxNumberOfAttacks = (int)Math.Min(2, Math.Ceiling(monster.Metadata.Attacks.Length / 1.5));
-        const int comboChance = 30;
+        const int comboChance = 50;
 
         var numberOfAttacks = 0;
         foreach (var attack in monster.Metadata.Attacks)
         {
             if (numberOfAttacks > maxNumberOfAttacks) break;
-            
+
             if (attack.AttackChance < GameRandom.Random.Next(0, maxValue: 100))
                 continue;
 
@@ -30,6 +34,8 @@ public class MonsterCombatService(IAttackService attackService)
             }
 
             var combatParameter = attack.CombatParameter;
+
+            combatParameter.CoordinateArea = CreateArea(attack, monster, target);
 
             var result = attackService.Execute(new AttackInput(monster, target, combatParameter));
 
@@ -45,5 +51,25 @@ public class MonsterCombatService(IAttackService attackService)
                 break;
             }
         }
+    }
+
+    private static Coordinate[] CreateArea(IMonsterCombatAttack attack, IMonster monster, ICombatActor target)
+    {
+        if (attack.CombatParameter.Radius == 0 && attack.CombatParameter.Length == 0 &&
+            attack.CombatParameter.Spread == 0)
+        {
+            return null;
+        }
+
+        var origin = attack.HasTarget ? target.Location : monster.Location;
+
+        if (attack.CombatParameter.Radius > 0)
+        {
+            return attack.CombatParameter.CoordinateArea =
+                ExplosionEffect.Create(origin, attack.CombatParameter.Radius).ToArray();
+        }
+
+        return attack.CombatParameter.CoordinateArea = SpreadEffect.Create(origin, monster.Direction,
+            attack.CombatParameter.Length, attack.CombatParameter.Spread);
     }
 }

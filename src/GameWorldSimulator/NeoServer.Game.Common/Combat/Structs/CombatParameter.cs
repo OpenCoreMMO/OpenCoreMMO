@@ -62,13 +62,14 @@ public class CombatParameter
     public Guid CooldownId { get; set; }
     public bool HasExtraAttack => ExtraAttack.MaxDamage > 0;
     public bool IsMagicalAttack { get; set; }
-    public bool IsAttackInArea => Area?.Length > 0;
+    public bool IsAttackInArea => CoordinateArea?.Length > 0 || Area?.Length > 0;
     public bool BlockArmor { get; set; }
     public ushort CreateItemId { get; set; }
     public AttackCondition Condition { get; set; }
     public uint CooldownDuration { get; set; }
     public byte? HitChance { get; set; }
     public byte[,] Area { get; set; }
+    public Coordinate[] CoordinateArea { get; set; }
     public bool NeedDirection { get; set; }
     public (CombatFormula Formula, Func<IPlayer, int, int, decimal, MinMax> Callback) DamageFormula { get; set; } =
         (Formula: CombatFormula.None, null);
