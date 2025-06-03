@@ -1,5 +1,6 @@
 ﻿using NeoServer.Game.Combat.Services.Attacks;
 using NeoServer.Game.Combat.Services.Attacks.Builders;
+using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Results;
@@ -10,7 +11,8 @@ namespace NeoServer.Server.Events.Combat;
 
 public class CreatureChangedAttackTargetEventHandler(
     IGameServer game,
-    IAttackService attackService)
+    IAttackService attackService,
+    MonsterCombatService monsterCombatService)
 {
     public void Execute(ICombatActor actor, uint oldTarget, uint newTarget)
     {
@@ -54,10 +56,10 @@ public class CreatureChangedAttackTargetEventHandler(
         //     skullService.UpdateSkullOnAttack(playerAggressor, playerEnemy);
 
         if (victim is not ICombatActor target) return Result.NotPossible;
-        
-        if (actor is IMonster)
+
+        if (actor is IMonster monster)
         {
-            actor.Attack(target);
+            monsterCombatService.Attack(monster, target);
             return Result.Success;
         }
 

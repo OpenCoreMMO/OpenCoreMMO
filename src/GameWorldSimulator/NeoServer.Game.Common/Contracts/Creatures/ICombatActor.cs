@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Combat.Attacks;
@@ -70,8 +71,8 @@ public interface ICombatActor : IWalkableCreature
     void ResetHealthPoints();
     void TurnInvisible();
     void TurnVisible();
-    void StartSpellCooldown(IHasCooldown spell);
-    bool CooldownHasExpired(IHasCooldown spell);
+    void StartCooldown(IHasCooldown cooldown);
+    bool CooldownHasExpired(IHasCooldown cooldown);
     bool CooldownHasExpired(CooldownType type);
 
     /// <summary>
@@ -116,4 +117,5 @@ public interface ICombatActor : IWalkableCreature
     event DropLoot OnDroppedLoot;
     void PreAttack(CombatContext combatContext);
     Result CanAttack(CombatParameter combatParameter);
+    void StartCooldown(Guid cooldownId, uint duration);
 }

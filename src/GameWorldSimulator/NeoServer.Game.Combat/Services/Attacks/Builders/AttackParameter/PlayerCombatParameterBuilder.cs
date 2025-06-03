@@ -10,7 +10,7 @@ using NeoServer.Game.Common.Parsers;
 
 namespace NeoServer.Game.Combat.Services.Attacks.Builders.AttackParameter;
 
-public static class PlayerAttackParameterBuilder
+public static class PlayerCombatParameterBuilder
 {
     public static CombatParameter Build(IPlayer player, IThing target)
     {
@@ -18,7 +18,7 @@ public static class PlayerAttackParameterBuilder
 
         var elementalDamage = CalculateElementalAttack(player);
 
-        return new Common.Combat.Structs.CombatParameter
+        return new CombatParameter
         {
             MinDamage = player.MinimumAttackPower,
             MaxDamage = player.MaximumAttackPower,
@@ -38,37 +38,7 @@ public static class PlayerAttackParameterBuilder
         };
     }
 
-    // public static AttackParameter Build(IPlayer player, IAttackRune rune, IThing target)
-    // {
-    //     var area = new AreaAttackParameter();
-    //     if (!string.IsNullOrWhiteSpace(rune.Area))
-    //     {
-    //         var areaEffectStore = IoC.GetInstance<IAreaEffectStore>();
-    //         var areaTemplate = areaEffectStore.Get(rune.Area);
-    //
-    //         area.SetArea(AreaEffect.Create(target.Location, areaTemplate), rune.Effect);
-    //     }
-    //
-    //     if (player is null) return default;
-    //
-    //     var minMaxDamage = RuneAttackCalculation.Calculate(player, rune);
-    //
-    //     return new AttackParameter
-    //     {
-    //         MinDamage = (ushort)minMaxDamage.Min,
-    //         MaxDamage = (ushort)minMaxDamage.Max,
-    //         DamageType = rune.DamageType,
-    //         ShootType = rune.Metadata.ShootType,
-    //         ExtraAttack = default,
-    //         Cooldown = rune.CooldownTime,
-    //         CooldownType = CooldownType.Rune,
-    //         IsMagicalAttack = true,
-    //         NeedTarget = rune.NeedTarget,
-    //         Area = area,
-    //         Effect = rune.Effect
-    //     };
-    // }
-    //
+  
     private static DamageType GetDamageType(IPlayer player)
     {
         if (player.Inventory.Weapon is null) return DamageType.Physical;
@@ -97,14 +67,7 @@ public static class PlayerAttackParameterBuilder
         };
     }
 
-    //
-    // private static string GetAttackName(IPlayer player)
-    // {
-    //     return player.Inventory.IsUsingDistanceWeapon
-    //         ? nameof(DistanceAttackStrategy)
-    //         : nameof(MeleeAttackStrategy);
-    // }
-    //
+  
     private static ExtraAttack CalculateElementalAttack(ICombatActor aggressor)
     {
         if (aggressor.MaximumElementalAttackPower is 0) return default;

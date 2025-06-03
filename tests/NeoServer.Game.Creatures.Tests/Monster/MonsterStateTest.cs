@@ -132,14 +132,13 @@ public class MonsterStateTest
         var monster = MonsterTestDataBuilder.Build(map: map);
         var player = PlayerTestDataBuilder.Build(hp: 100);
 
-        monster.Metadata.Attacks = new IMonsterCombatAttack[]
-        {
+        monster.Metadata.Attacks =
+        [
             new MonsterCombatAttack
             {
-                Chance = 100,
-                CombatAttack = new DistanceCombatAttack(6, ShootType.Arrow)
+                AttackChance = 100
             }
-        };
+        ];
         monster.Metadata.MaxRangeDistanceAttack = 6;
 
         monsterTile.AddCreature(monster);

@@ -13,9 +13,9 @@ public static class AttackInputBuilder
         
         if (aggressor is IPlayer player)
         {
-            combatParameter = PlayerAttackParameterBuilder.Build(player, target);    
+            combatParameter = PlayerCombatParameterBuilder.Build(player, target);    
         }
-
+        
         return new AttackInput(aggressor, target, combatParameter);
     }
 }
