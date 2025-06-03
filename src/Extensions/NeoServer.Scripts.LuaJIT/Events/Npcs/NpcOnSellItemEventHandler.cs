@@ -1,11 +1,11 @@
-﻿using NeoServer.Game.Common.Contracts;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
+﻿using NeoServer.Domain.Common.Contracts;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT.Events.Creatures;
+namespace NeoServer.Scripts.LuaJIT.Events.Npcs;
 
 public class NpcOnSellItemEventHandler(INpcs npcs, ILogger logger) : IGameEventHandler
 {

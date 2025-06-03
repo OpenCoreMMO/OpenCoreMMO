@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Server.Common.Contracts;
 
 namespace NeoServer.Scripts.LuaJIT;

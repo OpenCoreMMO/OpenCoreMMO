@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Game.Chats;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Creatures.Factories;
-using NeoServer.Game.Items.Factories;
-using NeoServer.Game.Items.Factories.AttributeFactory;
-using NeoServer.Game.World.Factories;
+using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Creatures.Factories;
+using NeoServer.Domain.Items.Factories;
+using NeoServer.Domain.Items.Factories.AttributeFactory;
+using NeoServer.Domain.World.Factories;
 using NeoServer.Networking.Handlers;
 
 namespace NeoServer.Server.Standalone.IoC.Modules;

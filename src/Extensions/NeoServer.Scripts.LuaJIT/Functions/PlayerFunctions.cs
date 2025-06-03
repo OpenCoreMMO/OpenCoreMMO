@@ -1,9 +1,9 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Creatures.Players;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -233,6 +233,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         {
             Lua.PushBoolean(luaState, false);
         }
+
         return 1;
     }
 
@@ -259,7 +260,9 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             Lua.PushBoolean(luaState, true);
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
 
         return 1;
     }
@@ -302,7 +305,9 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             SetMetatable(luaState, -1, "Group");
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
 
         return 1;
     }
@@ -326,7 +331,9 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             PushBoolean(luaState, true);
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
 
         return 1;
     }
@@ -372,7 +379,9 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             PushBoolean(luaState, true);
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
 
         return 1;
     }

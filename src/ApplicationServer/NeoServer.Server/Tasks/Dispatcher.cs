@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using NeoServer.Game.Common;
+using NeoServer.Domain.Common;
 using NeoServer.Server.Common.Contracts.Tasks;
 using Serilog;
 using IEvent = NeoServer.Server.Common.Contracts.Tasks.IEvent;

@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Contracts.Services;
+﻿using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;

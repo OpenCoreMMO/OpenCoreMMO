@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Contracts.Items.Types;
+﻿using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Window;

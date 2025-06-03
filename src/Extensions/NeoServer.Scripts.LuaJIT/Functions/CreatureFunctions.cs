@@ -1,16 +1,13 @@
 ﻿using LuaNET;
-using NeoServer.Game.Combat.Conditions;
-using NeoServer.Game.Common.Chats;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Creatures.Player;
+using NeoServer.Domain.Common.Chats;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Events.Creature;
-using System;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -354,14 +351,17 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         {
             var conditionType = GetNumber<ConditionType>(luaState, 2);
             var condition = combatActor.GetCondition(conditionType);
-            if (condition != null) 
+            if (condition != null)
             {
                 PushUserdata(luaState, condition);
                 SetWeakMetatable(luaState, -1, "Condition");
             }
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
+
         return 1;
     }
 
@@ -376,7 +376,10 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
             Lua.PushBoolean(luaState, true);
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
+
         return 1;
     }
 
@@ -390,7 +393,10 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
             Lua.PushBoolean(luaState, combatActor.HasCondition(conditionType));
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
+
         return 1;
     }
 
@@ -405,7 +411,10 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
             Lua.PushBoolean(luaState, true);
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
+
         return 1;
     }
 
@@ -421,7 +430,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         var ghost = GetBoolean(luaState, 4, false);
 
         ICreature target = null;
-        if(parameters >= 5)
+        if (parameters >= 5)
             target = GetUserdata<ICreature>(luaState, 5);
 
         Location position;

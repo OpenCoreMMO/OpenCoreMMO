@@ -1,7 +1,7 @@
-﻿using NeoServer.Extensions.Chat;
-using NeoServer.Game.Common.Contracts;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Creatures.Monster.Summon;
+﻿using NeoServer.Domain.Common.Contracts;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Monster.Summon;
+using NeoServer.Extensions.Chat;
 using NeoServer.Server.Services;
 
 namespace NeoServer.Extensions.Events.Creatures;

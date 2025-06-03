@@ -1,8 +1,8 @@
 using System.Linq;
 using NeoServer.Data.Entities;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Common.Results;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Results;
 using NeoServer.Loaders.Guilds;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Server.Common.Contracts;

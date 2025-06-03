@@ -1,7 +1,7 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Services;
-using NeoServer.Game.Common.Creatures.Structs;
-using NeoServer.Game.Common.Location;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Common.Creatures.Structs;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Networking.Packets.Incoming;
 
 namespace NeoServer.Server.Commands.Movements;

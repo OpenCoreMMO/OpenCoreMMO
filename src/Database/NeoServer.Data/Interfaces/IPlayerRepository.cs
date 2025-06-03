@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using NeoServer.Data.Entities;
-using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Creatures;
 
 namespace NeoServer.Data.Interfaces;
 
@@ -22,7 +22,9 @@ public interface IPlayerRepository : IBaseRepositoryNeo<PlayerEntity>
     /// <param name="player"></param>
     /// <returns></returns>
     Task SavePlayer(IPlayer player);
-    
-    Task<IEnumerable<PlayerEntity>> GetPaginatedPlayersAsync(Expression<Func<PlayerEntity, bool>> filter, int page, int limit);
+
+    Task<IEnumerable<PlayerEntity>> GetPaginatedPlayersAsync(Expression<Func<PlayerEntity, bool>> filter, int page,
+        int limit);
+
     Task<PlayerEntity> GetById(int id);
 }

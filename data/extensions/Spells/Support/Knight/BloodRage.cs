@@ -1,10 +1,9 @@
 using System;
-using NeoServer.Game.Combat.Spells;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Results;
+using NeoServer.Domain.Combat.Spells;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Results;
 
 namespace NeoServer.Extensions.Spells.Support.Knight;
 
@@ -13,6 +12,7 @@ public class BloodRage : Spell<Food>
     public override uint Duration => 10_000;
     public override ConditionType ConditionType => ConditionType.Strengthened;
     public override EffectT Effect => EffectT.GlitterBlue;
+
     public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
         if (caster is not IPlayer player) return Result.NotApplicable;

@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Helpers;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.World.Models;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.World.Models;
 using NeoServer.Loaders.OTB.Enums;
 using NeoServer.Loaders.OTB.Parsers;
 using NeoServer.Loaders.OTBM.Loaders;
@@ -28,9 +28,9 @@ public class WorldLoader
     private readonly IItemFactory itemFactory;
     private readonly ILogger logger;
     private readonly ServerConfiguration serverConfiguration;
-    private readonly Game.World.World world;
+    private readonly Domain.World.World world;
 
-    public WorldLoader(Game.World.World world, ILogger logger, IItemFactory itemFactory,
+    public WorldLoader(Domain.World.World world, ILogger logger, IItemFactory itemFactory,
         ServerConfiguration serverConfiguration, ITileFactory tileFactory, IItemTypeStore itemTypeStore)
     {
         this.world = world;
@@ -96,7 +96,8 @@ public class WorldLoader
 
         var items = GetItemsOnTile(tileNode).ToArray();
 
-        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items, false, tileNode.HouseId);
+        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items, false,
+            tileNode.HouseId);
 
         if (tile is IStaticTile)
         {

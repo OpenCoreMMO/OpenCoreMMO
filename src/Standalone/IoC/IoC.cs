@@ -3,11 +3,11 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Creatures;
-using NeoServer.Game.World;
-using NeoServer.Game.World.Map;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Creatures;
+using NeoServer.Domain.World;
+using NeoServer.Domain.World.Map;
 using NeoServer.Networking.Handlers;
 using NeoServer.Scripts.LuaJIT.IoC.Modules;
 using NeoServer.Server.Commands.Movements;
@@ -17,7 +17,7 @@ using NeoServer.Server.Common.Contracts.Tasks;
 using NeoServer.Server.Standalone.IoC.Modules;
 using NeoServer.Server.Tasks;
 using NeoServer.Shared.IoC.Modules;
-using PathFinder = NeoServer.Game.World.Map.PathFinder;
+using PathFinder = NeoServer.Domain.World.Map.PathFinder;
 
 namespace NeoServer.Server.Standalone.IoC;
 

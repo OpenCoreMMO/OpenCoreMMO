@@ -1,9 +1,7 @@
-﻿using NeoServer.Game.Combat.Services.Attacks;
-using NeoServer.Game.Combat.Services.Attacks.Builders;
-using NeoServer.Game.Common.Combat.Structs;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Services;
-using NeoServer.Game.Common.Results;
+﻿using NeoServer.Domain.Combat.Services.Attacks;
+using NeoServer.Domain.Combat.Services.Attacks.Builders;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Results;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Tasks;
 

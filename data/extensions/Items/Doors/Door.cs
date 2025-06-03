@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Common.Services;
-using NeoServer.Game.Common.Texts;
-using NeoServer.Game.Items.Bases;
-using NeoServer.Game.Items.Factories;
-using NeoServer.Game.World.Map;
-using NeoServer.Game.World.Models.Tiles;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Services;
+using NeoServer.Domain.Common.Texts;
+using NeoServer.Domain.Items.Bases;
+using NeoServer.Domain.Items.Factories;
+using NeoServer.Domain.World.Map;
+using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Extensions.Items.Doors;
 

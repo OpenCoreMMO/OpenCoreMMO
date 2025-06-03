@@ -1,6 +1,6 @@
-using NeoServer.Game.Common.Combat.Structs;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Creatures;
+using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Creatures;
 using NeoServer.Scripts.LuaJIT.Models.Callbacks;
 using NeoServer.Scripts.LuaJIT.Parsers;
 
@@ -13,10 +13,13 @@ public class LuaCombat : Script
     }
 
     public Dictionary<CombatParam, int> Parameters { get; set; } = new();
-    public (CallBackType Type, Callback Callback) Callback { get; set; } = new();
+    public (CallBackType Type, Callbacks.Callback Callback) Callback { get; set; }
     public CombatValues CombatValues { get; set; }
 
-    public void SetParameter(CombatParam combatParam, int value) => Parameters.TryAdd(combatParam, value);
+    public void SetParameter(CombatParam combatParam, int value)
+    {
+        Parameters.TryAdd(combatParam, value);
+    }
 
     public Callback SetCallback(CallBackType callBackType)
     {
@@ -24,7 +27,7 @@ public class LuaCombat : Script
         {
             CallBackType.LevelMagicValue or CallBackType.SkillValue => new ValueCallback(_scriptInterface)
             {
-                Formula = callBackType,
+                Formula = callBackType
             },
             _ => throw new ArgumentOutOfRangeException(nameof(callBackType), callBackType, null)
         };
@@ -56,7 +59,7 @@ public class LuaCombat : Script
         {
             DamageType = ((CombatType)combatType).ToDamageType(),
             Effect = (EffectT)effect,
-            ShootType = (Game.Common.Item.ShootType)shootType,
+            ShootType = (Domain.Common.Item.ShootType)shootType,
             MinDamage = (ushort)damageValues.Min,
             MaxDamage = (ushort)damageValues.Max,
             Range = 7

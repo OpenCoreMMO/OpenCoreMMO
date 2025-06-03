@@ -39,9 +39,9 @@ public class NeoContext : DbContext
     public DbSet<AccountPremiumHistoryEntity> AccountPremiumHistories { get; set; }
 
     public DbSet<IpBanEntity> IpBans { get; set; }
-    
+
     public DbSet<ReportBugEntity> ReportBugs { get; set; }
-    
+
     public DbSet<HouseEntity> Houses { get; set; }
     public DbSet<HouseListEntity> HouseList { get; set; }
 

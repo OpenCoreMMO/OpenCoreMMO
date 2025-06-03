@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
-using NeoServer.Game.Common.Location.Structs.Helpers;
+using NeoServer.Domain.Common.Location.Structs.Helpers;
 
 namespace NeoServer.Benchmarks.Collections;
 

@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using NeoServer.Game.Common.Contracts.World;
+using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Tasks;
 using NeoServer.Server.Common.Enums;
@@ -8,6 +8,14 @@ namespace NeoServer.Server;
 
 public class GameServer : IGameServer
 {
+    private const int EVENT_LIGHTINTERVAL_MS = 10000;
+    private const int DAY_LENGTH_SECONDS = 3600;
+    private const int LIGHT_DAY_LENGTH = 1440;
+    private const int LIGHT_LEVEL_DAY = 250;
+    private const int LIGHT_LEVEL_NIGHT = 40;
+    private const int SUNSET = 1050;
+    private const int SUNRISE = 360;
+
     public GameServer(IMap map,
         IDispatcher dispatcher, IScheduler scheduler, IGameCreatureManager creatureManager,
         IDecayableItemManager decayableBag, IPersistenceDispatcher persistenceDispatcher)
@@ -20,14 +28,6 @@ public class GameServer : IGameServer
         PersistenceDispatcher = persistenceDispatcher;
         Instance = this;
     }
-
-    private const int EVENT_LIGHTINTERVAL_MS = 10000;
-    private const int DAY_LENGTH_SECONDS = 3600;
-    private const int LIGHT_DAY_LENGTH = 1440;
-    private const int LIGHT_LEVEL_DAY = 250;
-    private const int LIGHT_LEVEL_NIGHT = 40;
-    private const int SUNSET = 1050;
-    private const int SUNRISE = 360;
 
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
@@ -51,7 +51,7 @@ public class GameServer : IGameServer
     /// <summary>
     ///     Game's light hour
     /// </summary>
-    public int LightHourDelta => (LIGHT_DAY_LENGTH * (EVENT_LIGHTINTERVAL_MS / 1000)) / DAY_LENGTH_SECONDS;
+    public int LightHourDelta => LIGHT_DAY_LENGTH * (EVENT_LIGHTINTERVAL_MS / 1000) / DAY_LENGTH_SECONDS;
 
     /// <summary>
     ///     Game state

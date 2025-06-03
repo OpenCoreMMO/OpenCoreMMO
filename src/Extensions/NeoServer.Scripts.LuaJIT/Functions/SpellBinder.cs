@@ -1,8 +1,8 @@
 using LuaNET;
-using NeoServer.Game.Combat.Spells;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Spells;
-using NeoServer.Game.Common.Item;
+using NeoServer.Domain.Combat.Spells;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Spells;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Scripts.LuaJIT.DataManagers;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -98,10 +98,7 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
         {
             var item = _itemTypeStore.Get((ushort)rune.RuneId);
 
-            if (string.IsNullOrWhiteSpace(item.Name))
-            {
-                item.UpdateName(rune.Name);
-            }
+            if (string.IsNullOrWhiteSpace(item.Name)) item.UpdateName(rune.Name);
 
             item.Attributes.SetAttribute(ItemAttribute.MinimumMagicLevel, rune.MagicLevel);
             item.Attributes.SetAttribute(ItemAttribute.MinimumLevel, rune.Level);
@@ -127,7 +124,6 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
             }
 
             if (runeSpell is null)
-            {
                 runeSpell = new RuneSpell
                 {
                     ManaConsumption = rune.ManaConsumption,
@@ -135,9 +131,8 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
                     BlockWalls = rune.BlockWalls,
                     BlockingSolid = rune.BlockingSolid,
                     BlockingCreature = rune.BlockingCreature,
-                    NeedsTarget = rune.NeedTarget,
+                    NeedsTarget = rune.NeedTarget
                 };
-            }
 
             ((RuneSpell)runeSpell).LuaRune = rune;
 
@@ -398,7 +393,7 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
     }
 
     /// <summary>
-    /// Register spell name method -> spell:name(name)
+    ///     Register spell name method -> spell:name(name)
     /// </summary>
     public static int HandleNameMethod(LuaState lua)
     {
@@ -459,10 +454,7 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
                 var group = GetString(lua, 2);
 
                 //todo: handle other groups 
-                if (group == "attack")
-                {
-                    spell.PrimaryGroup = SpellGroup.Attack;
-                }
+                if (group == "attack") spell.PrimaryGroup = SpellGroup.Attack;
 
                 PushBoolean(lua, true);
                 return 1;
@@ -524,23 +516,17 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
 
         if (IsNumber(lua, 2))
         {
-            ushort id = GetNumber<ushort>(lua, 2);
+            var id = GetNumber<ushort>(lua, 2);
             //todo
         }
 
         if (IsString(lua, 2))
         {
-            string arg = GetString(lua, 2);
+            var arg = GetString(lua, 2);
 
-            if (arg.Equals("instant", StringComparison.InvariantCultureIgnoreCase))
-            {
-                spellType = SpellType.Instant;
-            }
+            if (arg.Equals("instant", StringComparison.InvariantCultureIgnoreCase)) spellType = SpellType.Instant;
 
-            if (arg.Equals("rune", StringComparison.InvariantCultureIgnoreCase))
-            {
-                spellType = SpellType.Rune;
-            }
+            if (arg.Equals("rune", StringComparison.InvariantCultureIgnoreCase)) spellType = SpellType.Rune;
         }
 
         if (spellType == SpellType.Rune)

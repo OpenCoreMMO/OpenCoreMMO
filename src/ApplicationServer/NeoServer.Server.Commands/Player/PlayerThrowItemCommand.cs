@@ -1,5 +1,5 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Services;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Commands.Movements;
 using NeoServer.Server.Commands.Movements.ToContainer;

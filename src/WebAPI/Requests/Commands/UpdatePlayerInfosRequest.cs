@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using NeoServer.Game.Common.Creatures.Players;
+using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Web.API.Response;
 
 namespace NeoServer.Web.API.Requests.Commands;

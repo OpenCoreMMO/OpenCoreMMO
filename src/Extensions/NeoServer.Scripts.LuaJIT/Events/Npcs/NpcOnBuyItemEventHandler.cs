@@ -1,15 +1,16 @@
-﻿using NeoServer.Game.Common.Contracts;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
+﻿using NeoServer.Domain.Common.Contracts;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT.Events.Creatures;
+namespace NeoServer.Scripts.LuaJIT.Events.Npcs;
 
 public class NpcOnBuyItemEventHandler(INpcs npcs, ILogger logger) : IGameEventHandler
 {
-    public void Execute(INpc npc, IPlayer player, IItemType itemType, int amount, uint totalCost, bool inBackpacks, bool ignore)
+    public void Execute(INpc npc, IPlayer player, IItemType itemType, int amount, uint totalCost, bool inBackpacks,
+        bool ignore)
     {
         var npcEvent = npcs.GetEvents(npc.Name);
         if (npcEvent == null ||

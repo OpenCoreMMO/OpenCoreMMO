@@ -1,6 +1,6 @@
 ﻿using NeoServer.Data.Interfaces;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Systems.Depot;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Systems.Depot;
 using NeoServer.Server.Common.Contracts;
 
 namespace NeoServer.Server.Events.Player;

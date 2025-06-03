@@ -1,8 +1,8 @@
-﻿using NeoServer.Game.Combat.Spells;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Results;
+﻿using NeoServer.Domain.Combat.Spells;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Results;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Helpers;
 
@@ -17,9 +17,7 @@ public class PullPlayerCommand : CommandSpell
         var gameManager = IoC.GetInstance<IGameCreatureManager>();
 
         if (!gameManager.TryGetPlayer(Params[0].ToString(), out var player))
-        {
             return Result.Fail(InvalidOperation.PlayerNotFound);
-        }
 
         var newLocation = caster.Location.GetNextLocation(caster.Direction);
 

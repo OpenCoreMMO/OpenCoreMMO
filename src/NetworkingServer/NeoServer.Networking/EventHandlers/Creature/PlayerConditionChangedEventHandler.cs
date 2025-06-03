@@ -1,7 +1,7 @@
-﻿using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Parsers;
-using NeoServer.Game.Creatures.Models.Bases.Events;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Parsers;
+using NeoServer.Domain.Creatures.Models.Bases.Events;
 using NeoServer.Networking.Packets.Outgoing.Player;
 using NeoServer.Server.Common.Contracts;
 
@@ -10,9 +10,15 @@ namespace NeoServer.Networking.EventHandlers.Creature;
 public class PlayerConditionChangedEventHandler(IGameServer game)
     : INetworkingEventHandler<CreatureConditionAddedEvent>, INetworkingEventHandler<CreatureConditionRemovedEvent>
 {
-    public void Handle(CreatureConditionAddedEvent @event) => SendPackets(@event.Creature);
+    public void Handle(CreatureConditionAddedEvent @event)
+    {
+        SendPackets(@event.Creature);
+    }
 
-    public void Handle(CreatureConditionRemovedEvent @event) => SendPackets(@event.Creature);
+    public void Handle(CreatureConditionRemovedEvent @event)
+    {
+        SendPackets(@event.Creature);
+    }
 
     private void SendPackets(ICreature creature)
     {

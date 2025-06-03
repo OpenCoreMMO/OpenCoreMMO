@@ -1,6 +1,6 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Helpers;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Helpers;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
@@ -151,6 +151,6 @@ public class CreatureEvents(ILogger logger) : ICreatureEvents
 
     public bool HasEventRegistered(CreatureEventType eventType)
     {
-        return (0 != (_scriptEventsBitField & (1 << (int)eventType)));
+        return 0 != (_scriptEventsBitField & (1 << (int)eventType));
     }
 }

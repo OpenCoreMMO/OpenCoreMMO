@@ -1,6 +1,7 @@
 namespace NeoServer.Scripts.LuaJIT.Models;
 
-public enum CallBackType {
+public enum CallBackType
+{
     LevelMagicValue,
     SkillValue,
     TargetTile,

@@ -1,7 +1,6 @@
-﻿using NeoServer.Game.Common.Contracts;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Location.Structs;
+﻿using NeoServer.Domain.Common.Contracts;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
@@ -11,8 +10,8 @@ namespace NeoServer.Scripts.LuaJIT.Events.Creatures;
 public class CreatureOnMoveEventHandler : IGameEventHandler
 {
     private readonly ICreatureEvents _creatureEvents;
-    private readonly INpcs _npcs;
     private readonly ILogger _logger;
+    private readonly INpcs _npcs;
 
     public CreatureOnMoveEventHandler(
         ICreatureEvents creatureEvents,

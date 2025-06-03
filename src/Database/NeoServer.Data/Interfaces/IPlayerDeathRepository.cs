@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using NeoServer.Data.Entities;
-using NeoServer.Game.Common.Combat;
-using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Combat;
+using NeoServer.Domain.Common.Contracts.Creatures;
 
 namespace NeoServer.Data.Interfaces;
 

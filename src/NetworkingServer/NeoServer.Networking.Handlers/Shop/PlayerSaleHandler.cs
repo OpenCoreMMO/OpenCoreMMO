@@ -1,5 +1,5 @@
-﻿using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Services;
+﻿using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Networking.Packets.Incoming.Shop;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
@@ -25,6 +25,7 @@ public class PlayerSaleHandler(
         if (!itemTypeStore.TryGetValue(serverId, out var itemType)) return;
 
         dispatcher.AddEvent(new Event(() =>
-            dealTransaction?.PlayerSellItem(player, player.TradingWithNpc, itemType, playerSalePacket.Amount, playerSalePacket.IgnoreEquipped)));
+            dealTransaction?.PlayerSellItem(player, player.TradingWithNpc, itemType, playerSalePacket.Amount,
+                playerSalePacket.IgnoreEquipped)));
     }
 }

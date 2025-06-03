@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using NeoServer.Game.Combat.Attacks;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Chats;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Creatures.Monster;
-using NeoServer.Game.Creatures.Monster.Combat;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Chats;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Creatures.Monster;
+using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Loaders.Monsters.Converters;
 using Serilog;
 
@@ -48,12 +47,13 @@ public static class MonsterConverter
                     new Voice(x.Sentence, x.Yell ? SpeechType.MonsterYell : SpeechType.MonsterSay)).ToArray();
         }
 
-        monster.Attacks = MonsterAttackConverter.Convert(monsterData, logger)?.OrderByDescending(x=>x.AttackChance).ToArray();
+        monster.Attacks = MonsterAttackConverter.Convert(monsterData, logger)?.OrderByDescending(x => x.AttackChance)
+            .ToArray();
 
         monster.HasDistanceAttack = monster.Attacks.Any(x => x.CombatParameter.Range > 0);
 
         monster.MaxRangeDistanceAttack = monster.Attacks.Max(x => x.CombatParameter.Range) ?? 0;
-                
+
         monster.ElementResistance = MonsterResistanceConverter.Convert(monsterData).ToImmutableDictionary();
         monster.Immunities = MonsterImmunityConverter.Convert(monsterData);
 

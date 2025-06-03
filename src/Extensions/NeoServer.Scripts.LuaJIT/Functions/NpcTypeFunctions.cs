@@ -1,17 +1,15 @@
 ﻿using LuaNET;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using NeoServer.Game.Common.Chats;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Creatures.Monster.Combat;
-using NeoServer.Game.Creatures.Npcs;
-using NeoServer.Game.Creatures.Npcs.Shop;
+using NeoServer.Domain.Common.Chats;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Creatures.Monster.Combat;
+using NeoServer.Domain.Creatures.Npcs;
+using NeoServer.Domain.Creatures.Npcs.Shop;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts;
-using System.Reflection.Metadata.Ecma335;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -87,7 +85,7 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
         {
             npcType = new NpcType
             {
-                Name = npcName,
+                Name = npcName
             };
 
             _npcStore.AddOrUpdate(npcName, npcType);
@@ -112,6 +110,7 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -135,12 +134,14 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
                 Lua.PushBoolean(luaState, true);
                 return 1;
             }
+
             Lua.PushBoolean(luaState, false);
         }
         else
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -160,6 +161,7 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -206,6 +208,7 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -229,6 +232,7 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -252,6 +256,7 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -275,6 +280,7 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 

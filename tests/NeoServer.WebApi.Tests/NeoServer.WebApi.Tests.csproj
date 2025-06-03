@@ -25,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Core\NeoServer.Domain\NeoServer.Domain.csproj" />
         <ProjectReference Include="..\..\src\Database\NeoServer.Data\NeoServer.Data.csproj"/>
         <ProjectReference Include="..\..\src\Shared\NeoServer.Web.Shared\NeoServer.Web.Shared.csproj"/>
         <ProjectReference Include="..\..\src\WebAPI\NeoServer.Web.API.csproj"/>

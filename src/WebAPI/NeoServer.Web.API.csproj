@@ -32,6 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Core\NeoServer.Domain\NeoServer.Domain.csproj" />
         <ProjectReference Include="..\Shared\NeoServer.IoC\NeoServer.Shared.IoC.csproj"/>
         <ProjectReference Include="..\Shared\NeoServer.Web.Shared\NeoServer.Web.Shared.csproj"/>
     </ItemGroup>

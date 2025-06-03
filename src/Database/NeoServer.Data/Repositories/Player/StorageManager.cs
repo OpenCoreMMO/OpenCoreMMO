@@ -2,8 +2,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Helpers;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Helpers;
 
 namespace NeoServer.Data.Repositories.Player;
 

@@ -1,7 +1,7 @@
 ﻿using LuaNET;
-using NeoServer.Game.Combat.Conditions;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Creatures;
+using NeoServer.Domain.Combat.Conditions;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Creatures;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
@@ -23,7 +23,7 @@ public class ConditionFunctions : LuaScriptInterface, IConditionFunctions
         // Condition(conditionType, conditionId = CONDITIONID_COMBAT, subid = 0, isPersistent = false)
         var conditionType = GetNumber<ConditionType>(luaState, 2);
 
-        if(conditionType == ConditionType.None)
+        if (conditionType == ConditionType.None)
         {
             ReportError("Invalid condition type");
             return 1;

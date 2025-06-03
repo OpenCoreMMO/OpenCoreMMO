@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Networking.EventHandlers.Creature;
 using NeoServer.Server.Events.Combat;
 using NeoServer.Server.Events.Creature;
@@ -12,17 +12,17 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
     private readonly CreatureAttackEventHandler _creatureAttackEventHandler;
     private readonly CreatureBlockedAttackEventHandler _creatureBlockedAttackEventHandler;
     private readonly CreatureChangedAttackTargetEventHandler _creatureChangedAttackTargetEventHandler;
+    private readonly CreatureChangedOutfitEventHandler _creatureChangedOutfitEventHandler;
     private readonly CreatureChangedSpeedEventHandler _creatureChangedSpeedEventHandler;
     private readonly CreatureDeathEventHandler _creatureDeathEventHandler;
     private readonly CreatureHealedEventHandler _creatureHealedEventHandler;
+    private readonly CreatureHearEventHandler _creatureHearEventHandler;
     private readonly CreatureStartedFollowingEventHandler _creatureStartedFollowingEventHandler;
     private readonly CreatureStartedWalkingEventHandler _creatureStartedWalkingEventHandler;
-    private readonly CreatureTurnedToDirectionEventHandler _creatureTurnToDirectionEventHandler;
-    private readonly CreatureChangedOutfitEventHandler _creatureChangedOutfitEventHandler;
-    private readonly CreatureHearEventHandler _creatureHearEventHandler;
     private readonly CreatureChangedVisibilityEventHandler _creatureTurnedInvisibleEventHandler;
-    private readonly NpcShowShopEventHandler _npcShowShopEventHandler;
+    private readonly CreatureTurnedToDirectionEventHandler _creatureTurnToDirectionEventHandler;
     private readonly NpcCloseShopEventHandler _npcCloseShopEventHandler;
+    private readonly NpcShowShopEventHandler _npcShowShopEventHandler;
 
     public CreatureEventSubscriber(CreatureInjuredEventHandler creatureReceiveDamageEventHandler,
         CreatureDeathEventHandler creatureDeathEventHandler,

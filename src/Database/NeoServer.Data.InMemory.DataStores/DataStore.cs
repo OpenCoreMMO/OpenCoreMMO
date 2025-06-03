@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Helpers;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Helpers;
 
 namespace NeoServer.Data.InMemory.DataStores;
 
