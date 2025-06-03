@@ -20,7 +20,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Core\NeoServer.Domain\NeoServer.Domain.csproj" />
-        <ProjectReference Include="..\..\NeoServer.Domain\NeoServer.Domain.csproj"/>
         <ProjectReference Include="..\..\NetworkingServer\NeoServer.Networking.Packets\NeoServer.Networking.Packets.csproj"/>
         <ProjectReference Include="..\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj"/>
     </ItemGroup>
