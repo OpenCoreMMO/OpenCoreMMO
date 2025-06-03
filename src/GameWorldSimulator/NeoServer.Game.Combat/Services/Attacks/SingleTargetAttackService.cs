@@ -1,3 +1,4 @@
+using NeoServer.Game.Combat.Conditions;
 using NeoServer.Game.Combat.Services.Attacks.Builders;
 using NeoServer.Game.Combat.Services.Attacks.Events;
 using NeoServer.Game.Common;
@@ -6,6 +7,7 @@ using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
+using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Helpers;
 using NeoServer.Game.Common.Results;
 
@@ -30,7 +32,7 @@ public class SingleTargetAttackService(
             var value = GameRandom.Random.Next(1, maxValue: 100);
             attackMissed = value > attackInput.Parameters.HitChance;
         }
-        
+
         eventAggregator.Publish(new CreatureAttackingEvent(aggressor, target, attackInput.Parameters.ShootType,
             attackInput.Parameters.Effect, attackMissed));
 
@@ -45,7 +47,7 @@ public class SingleTargetAttackService(
 
         var damage = DamageBuilder.Build(attackInput);
 
-        PerformAttack(aggressor, target, damage);
+        PerformAttack(aggressor, target, damage, attackInput.Parameters);
 
         CreateBloodPool(damage, target);
 
@@ -66,12 +68,13 @@ public class SingleTargetAttackService(
         }
     }
 
-    private static void PerformAttack(ICombatActor aggressor, IThing target, CalculatedAttackDamage damage)
+    private static void PerformAttack(ICombatActor aggressor, IThing target, CalculatedAttackDamage damage,
+        CombatParameter combatParameter)
     {
-        if (target is not ICombatActor combatActor) return;
-        
+        if (target is not ICombatActor targetCreature) return;
+
         //cannot attack himself
-        if(Equals(target, aggressor)) return;
+        if (Equals(target, aggressor)) return;
 
         var unjustifiedAttack =
             target is IPlayer targetPlayer && aggressor is IPlayer playerAggressor &&
@@ -83,12 +86,38 @@ public class SingleTargetAttackService(
         if (damage.ExtraDamage?.Damage > 0)
         {
             var damages = new CombatDamageList([mainDamage, damage.ExtraDamage]);
-            combatActor.TakeDamage(aggressor, damages);
+            targetCreature.TakeDamage(aggressor, damages);
             return;
         }
 
-        combatActor.TakeDamage(aggressor, damage.MainDamage);
+        var wasDamage = targetCreature.TakeDamage(aggressor, damage.MainDamage);
+
+        if (!wasDamage) return;
+
+        PerformConditionDamage(aggressor, combatParameter, targetCreature);
     }
 
-   
+    private static void PerformConditionDamage(ICombatActor aggressor, CombatParameter combatParameter, ICombatActor targetCreature)
+    {
+        if (combatParameter.Condition.Type == ConditionType.None) return;
+        
+        var conditionType = combatParameter.Condition.Type;
+        var interval = combatParameter.Condition.Interval;
+
+        if (!targetCreature.HasCondition(combatParameter.Condition.Type, out var condition))
+        {
+            targetCreature.AddCondition(new DamageCondition(aggressor,conditionType, interval, combatParameter.MinDamage,
+                combatParameter.MaxDamage));
+            
+            return;
+        }
+
+        if (condition is DamageCondition damageCondition)
+        {
+            damageCondition.Start(targetCreature, combatParameter.MinDamage, combatParameter.MaxDamage);
+            return;
+        }
+
+        condition.Start(targetCreature);
+    }
 }

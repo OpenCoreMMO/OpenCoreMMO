@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using NeoServer.Game.Combat.Attacks;
+using NeoServer.Game.Common;
+using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Combat.Attacks;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Item;
@@ -56,44 +58,89 @@ internal class MonsterAttackConverter
             attributes.TryGetValue("shootEffect", out string shootEffect);
             attributes.TryGetValue("areaEffect", out string areaEffect);
 
-            var combatAttack = new MonsterCombatAttack
+            var combatAttack = new MonsterCombatAttack()
             {
-                Chance = chance >= 100 ? (byte)100 : chance,
+                NeedTarget = target != 0,
+                AttackChance = chance >= 100 ? (byte)100 : chance,
                 Interval = interval,
-                MaxDamage = (ushort)Math.Abs(max),
-                MinDamage = (ushort)Math.Abs(min),
-                Target = target,
-                DamageType = DamageTypeParser.Parse(attackName)
             };
 
-            if (combatAttack.IsMelee)
+            combatAttack.CombatParameter = new CombatParameter()
             {
-                combatAttack.MinDamage = (ushort)Math.Abs(min);
-                combatAttack.MaxDamage = Math.Abs(max) > 0
+                MaxDamage = (ushort)Math.Abs(max),
+                MinDamage = (ushort)Math.Abs(min),
+                DamageType = DamageTypeParser.Parse(attackName),
+                CooldownId = combatAttack.Id
+            };
+
+            if (combatAttack.CombatParameter.DamageType is DamageType.Melee)
+            {
+                combatAttack.CombatParameter.MinDamage = (ushort)Math.Abs(min);
+                combatAttack.CombatParameter.MaxDamage = Math.Abs(max) > 0
                     ? (ushort)Math.Abs(max)
                     : MeleeCombatAttack.CalculateMaxDamage(skill, attackValue);
 
-                combatAttack.CombatAttack = new MeleeCombatAttack();
-
                 if (attack.TryGetValue("fire", out ushort value))
-                    combatAttack.CombatAttack = new MeleeCombatAttack(value, value, ConditionType.Fire, 9000);
-                else if (attack.TryGetValue("poison", out value))
-                    combatAttack.CombatAttack = new MeleeCombatAttack(value, value, ConditionType.Poison, 4000);
-                else if (attack.TryGetValue("energy", out value))
-                    combatAttack.CombatAttack = new MeleeCombatAttack(value, value, ConditionType.Energy, 10000);
-                else if (attack.TryGetValue("drown", out value))
-                    combatAttack.CombatAttack = new MeleeCombatAttack(value, value, ConditionType.Drown, 5000);
-                else if (attack.TryGetValue("freeze", out value))
-                    combatAttack.CombatAttack = new MeleeCombatAttack(value, value, ConditionType.Freezing, 8000);
-                else if (attack.TryGetValue("dazzle", out value))
-                    combatAttack.CombatAttack = new MeleeCombatAttack(value, value, ConditionType.Dazzled, 10000);
-                else if (attack.TryGetValue("curse", out value))
-                    combatAttack.CombatAttack = new MeleeCombatAttack(value, value, ConditionType.Cursed, 4000);
-                else if (attack.TryGetValue("bleed", out value) || attack.TryGetValue("physical", out value))
-                    combatAttack.CombatAttack = new MeleeCombatAttack(value, value, ConditionType.Bleeding, 4000);
+                {
+                    combatAttack.CombatParameter.SetMinMaxDamage(new MinMax(value, value));
+                    combatAttack.CombatParameter.Condition =
+                        new CombatParameter.AttackCondition(ConditionType.Fire, 9000);
+                }
+
+                if (attack.TryGetValue("poison", out value))
+                {
+                    combatAttack.CombatParameter.SetMinMaxDamage(new MinMax(value, value));
+                    combatAttack.CombatParameter.Condition =
+                        new CombatParameter.AttackCondition(ConditionType.Poison, 4000);
+                }
+
+                if (attack.TryGetValue("energy", out value))
+                {
+                    combatAttack.CombatParameter.SetMinMaxDamage(new MinMax(value, value));
+                    combatAttack.CombatParameter.Condition =
+                        new CombatParameter.AttackCondition(ConditionType.Energy, 10_000);
+                }
+
+                if (attack.TryGetValue("drown", out value))
+                {
+                    combatAttack.CombatParameter.SetMinMaxDamage(new MinMax(value, value));
+                    combatAttack.CombatParameter.Condition =
+                        new CombatParameter.AttackCondition(ConditionType.Drown, 5_000);
+                }
+
+                if (attack.TryGetValue("freeze", out value))
+                {
+                    combatAttack.CombatParameter.SetMinMaxDamage(new MinMax(value, value));
+                    combatAttack.CombatParameter.Condition =
+                        new CombatParameter.AttackCondition(ConditionType.Freezing, 8_000);
+                }
+
+                if (attack.TryGetValue("dazzle", out value))
+                {
+                    combatAttack.CombatParameter.SetMinMaxDamage(new MinMax(value, value));
+                    combatAttack.CombatParameter.Condition =
+                        new CombatParameter.AttackCondition(ConditionType.Dazzled, 10000);
+                }
+
+                if (attack.TryGetValue("curse", out value))
+                {
+                    combatAttack.CombatParameter.SetMinMaxDamage(new MinMax(value, value));
+                    combatAttack.CombatParameter.Condition =
+                        new CombatParameter.AttackCondition(ConditionType.Cursed, 4000);
+                }
+
+                if (attack.TryGetValue("bleed", out value) || attack.TryGetValue("physical", out value))
+                {
+                    combatAttack.CombatParameter.SetMinMaxDamage(new MinMax(value, value));
+                    combatAttack.CombatParameter.Condition =
+                        new CombatParameter.AttackCondition(ConditionType.Bleeding, 4000);
+                }
 
                 if (attack.TryGetValue("tick", out ushort tick) &&
-                    combatAttack.CombatAttack is MeleeCombatAttack melee) melee.ConditionInterval = tick;
+                    combatAttack.CombatParameter.DamageType == DamageType.Melee)
+                {
+                    combatAttack.CombatParameter.Condition.Interval = tick;
+                }
             }
 
             if (range > 1 || radius == 1)
@@ -102,37 +149,40 @@ internal class MonsterAttackConverter
                 {
                     var damageType = DamageTypeParser.Parse(areaEffect);
 
-                    combatAttack.DamageType = damageType == DamageType.Melee ? combatAttack.DamageType : damageType;
+                    combatAttack.CombatParameter.DamageType = damageType == DamageType.Melee
+                        ? combatAttack.CombatParameter.DamageType
+                        : damageType;
                 }
 
-                combatAttack.CombatAttack = new DistanceCombatAttack(range, ShootTypeParser.Parse(shootEffect));
+                combatAttack.CombatParameter.Range = range;
+                combatAttack.CombatParameter.ShootType = ShootTypeParser.Parse(shootEffect);
             }
 
             if (radius > 1)
             {
-                combatAttack.DamageType = DamageTypeParser.Parse(areaEffect);
-                combatAttack.CombatAttack =
-                    new DistanceAreaCombatAttack(range, radius, ShootTypeParser.Parse(shootEffect));
+                combatAttack.CombatParameter.DamageType = DamageTypeParser.Parse(areaEffect);
+                combatAttack.CombatParameter.Range = range;
+                combatAttack.CombatParameter.Radius = radius;
+                combatAttack.CombatParameter.ShootType = ShootTypeParser.Parse(shootEffect);
             }
 
             if (length > 0)
             {
-                combatAttack.DamageType = DamageTypeParser.Parse(areaEffect);
-                combatAttack.CombatAttack = new SpreadCombatAttack(length, spread);
+                combatAttack.CombatParameter.DamageType = DamageTypeParser.Parse(areaEffect);
+                combatAttack.CombatParameter.Length = length;
+                combatAttack.CombatParameter.Spread = spread;
             }
 
-            if (attackName == "lifedrain")
+            if (attackName is "lifedrain" or "manadrain")
             {
                 var shootType = ShootTypeParser.Parse(shootEffect);
 
-                combatAttack.CombatAttack = new DrainCombatAttack(range, radius, shootType);
-            }
-
-            if (attackName == "manadrain")
-            {
-                var shootType = ShootTypeParser.Parse(shootEffect);
-
-                combatAttack.CombatAttack = new DrainCombatAttack(range, radius, shootType);
+                combatAttack.CombatParameter.DamageType =
+                    attackName is "lifedrain" ? DamageType.LifeDrain : DamageType.ManaDrain;
+                
+                combatAttack.CombatParameter.Range = range;
+                combatAttack.CombatParameter.Radius = radius;
+                combatAttack.CombatParameter.ShootType = shootType;
             }
 
             if (attackName == "speed")
@@ -140,13 +190,13 @@ internal class MonsterAttackConverter
                 attack.TryGetValue("duration", out uint duration);
                 attack.TryGetValue("speedchange", out short speedChange);
 
-                combatAttack.DamageType = default;
-                combatAttack.CombatAttack = new SpeedCombatAttack(duration, speedChange, range,
-                    ShootTypeParser.Parse(shootEffect));
+                combatAttack.CombatParameter.DamageType = default;
+                combatAttack.CombatParameter.Duration = duration;
+                combatAttack.CombatParameter.SpeedChange = (ushort) speedChange;
+                combatAttack.CombatParameter.Range = range;
+                combatAttack.CombatParameter.Range = range;
+                combatAttack.CombatParameter.ShootType = ShootTypeParser.Parse(shootEffect);
             }
-
-            if (combatAttack.CombatAttack is null)
-                logger.Warning("{attackName} attack was not created on monster: {name}", attackName, data.Name);
 
             attacks.Add(combatAttack);
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NeoServer.Game.Combat.Services.Attacks.Events;
 using NeoServer.Game.Combat.Validation;
 using NeoServer.Game.Common;
@@ -337,13 +338,18 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         IsInvisible = false;
         OnChangedVisibility?.Invoke(this);
     }
-
-    public void StartSpellCooldown(IHasCooldown spell)
+    
+    public void StartCooldown(Guid cooldownId, uint duration)
     {
-        Cooldowns.Start(spell);
+        Cooldowns.Start(cooldownId, duration);
+    }
+
+    public void StartCooldown(IHasCooldown cooldown)
+    {
+        Cooldowns.Start(cooldown);
     }
     
-    public bool CooldownHasExpired(IHasCooldown spell) => Cooldowns.Expired(spell);
+    public bool CooldownHasExpired(IHasCooldown cooldown) => Cooldowns.Expired(cooldown);
     
     public bool CooldownHasExpired(CooldownType type)
     {

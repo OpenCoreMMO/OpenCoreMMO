@@ -24,8 +24,8 @@ public class MagicField : BaseItem, IMagicField
 
     private DamageType DamageType => DamageTypeParser.Parse(Metadata.Attributes.GetAttribute(ItemAttribute.Field));
 
-    private int Interval =>
-        Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field)?.GetAttribute<int>(ItemAttribute.Ticks) ??
+    private uint Interval =>
+        Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field)?.GetAttribute<uint>(ItemAttribute.Ticks) ??
         10000;
 
     private MinMax Damage
@@ -63,10 +63,11 @@ public class MagicField : BaseItem, IMagicField
         else
         {
             if (DamageCount == 0)
-                actor.AddCondition(new DamageCondition(conditionType, Interval, (ushort)damages.Min,
+                actor.AddCondition(new DamageCondition(this, conditionType, Interval, (ushort)damages.Min,
                     (ushort)damages.Max));
             else
-                actor.AddCondition(new DamageCondition(conditionType, Interval, DamageCount, (ushort)damages.Min));
+                actor.AddCondition(new DamageCondition(this, conditionType, Interval, DamageCount,
+                    (ushort)damages.Min));
         }
     }
 

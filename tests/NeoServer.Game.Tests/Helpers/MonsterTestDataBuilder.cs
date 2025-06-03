@@ -1,4 +1,5 @@
 ﻿using NeoServer.Game.Combat.Attacks;
+using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Combat.Attacks;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World;
@@ -29,22 +30,20 @@ public static class MonsterTestDataBuilder
             Name = "Monster X",
             MaxHealth = maxHealth,
             Speed = speed,
-            Attacks = new IMonsterCombatAttack[]
-            {
+            Attacks =
+            [
                 new MonsterCombatAttack
                 {
-                    MinDamage = 10,
-                    MaxDamage = 100,
                     Interval = 0,
-                    DamageType = DamageType.Melee,
-                    Chance = 100,
-                    CombatAttack = new MeleeCombatAttack
+                    AttackChance = 100,
+                    CombatParameter = new CombatParameter
                     {
-                        Min = 10,
-                        Max = 100
+                        MinDamage = 10,
+                        MaxDamage = 100,
+                        DamageType = DamageType.Melee
                     }
                 }
-            }
+            ]
         };
         return new Monster(monsterType, mapTool, spawnPoint);
     }
@@ -60,22 +59,20 @@ public static class MonsterTestDataBuilder
         {
             Name = "Monster X",
             MaxHealth = 100,
-            Attacks = new IMonsterCombatAttack[]
-            {
+            Attacks =
+            [
                 new MonsterCombatAttack
                 {
-                    MinDamage = minDamage,
-                    MaxDamage = maxDamage,
                     Interval = 0,
-                    DamageType = DamageType.Melee,
-                    Chance = 100,
-                    CombatAttack = new MeleeCombatAttack
+                    AttackChance = 100,
+                    CombatParameter = new CombatParameter
                     {
-                        Min = minDamage,
-                        Max = maxDamage
+                        MinDamage = minDamage,
+                        MaxDamage = maxDamage,
+                        DamageType = DamageType.Melee
                     }
                 }
-            }
+            ]
         };
 
         monsterType.Flags.Add(CreatureFlagAttribute.Hostile, 1);

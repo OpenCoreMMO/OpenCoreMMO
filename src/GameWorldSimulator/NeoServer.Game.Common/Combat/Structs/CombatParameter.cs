@@ -37,9 +37,10 @@ public readonly struct CombatContext
 
 public class CombatParameter
 {
-    public readonly record struct AttackCondition(byte DamageCount, int Interval)
+    public class AttackCondition(ConditionType type, uint interval)
     {
-        public bool None => DamageCount == 0;
+        public ConditionType Type { get; } = type;
+        public uint Interval { get; set; } = interval;
     }
 
     public bool UsingWeapon { get; set; }
@@ -57,6 +58,7 @@ public class CombatParameter
     //public required string Name { get; set; }
     public ExtraAttack ExtraAttack { get; set; }
     public CooldownType CooldownType { get; set; }
+    public Guid CooldownId { get; set; }
     public bool HasExtraAttack => ExtraAttack.MaxDamage > 0;
     public bool IsMagicalAttack { get; set; }
     public bool IsAttackInArea => Area?.Length > 0;
@@ -69,6 +71,10 @@ public class CombatParameter
     public bool NeedDirection { get; set; }
     public (CombatFormula Formula, Func<IPlayer, int, int, decimal, MinMax> Callback) DamageFormula { get; set; } =
         (Formula: CombatFormula.None, null);
+
+    public uint Duration { get; set; }
+    public ushort SpeedChange { get; set; }
+
     public void SetMinMaxDamage(MinMax minMaxDamage)
     {
         MinDamage = (ushort)minMaxDamage.Min;

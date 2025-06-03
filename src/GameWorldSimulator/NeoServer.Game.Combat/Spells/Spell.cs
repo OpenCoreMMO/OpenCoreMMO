@@ -100,7 +100,7 @@ public abstract class BaseSpell : ISpell
 
     private void AddCooldown(ICombatActor actor)
     {
-        actor.StartSpellCooldown(this);
+        actor.StartCooldown(this);
     }
 
     public Result CanCast(ICombatActor caster, IThing target)

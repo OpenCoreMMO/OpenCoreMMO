@@ -313,28 +313,28 @@ public class Monster : WalkableMonster, IMonster
 
         foreach (var attack in Attacks)
         {
-            if (!attack.Cooldown.Expired) continue;
+            if (!Cooldowns.Expired(attack.Id)) continue;
 
-            if (attack.Chance < GameRandom.Random.Next(0, maxValue: 100))
+            if (attack.AttackChance < GameRandom.Random.Next(0, maxValue: 100))
                 continue;
 
-            if (attack.CombatAttack is null)
+            if (attack.CombatParameter is null)
             {
                 Console.WriteLine($"Combat attack not found for monster: {Name}");
                 continue;
             }
 
-            if (attack.CombatAttack.TryAttack(this, enemy, attack.Translate(), out var combatAttack) is false) continue;
-
-            combatAttacks[numberOfSuccessfulAttacks++] = combatAttack;
-
-            attacked = true;
-
-            if (comboChance < GameRandom.Random.Next(0, maxValue: 100) ||
-                numberOfSuccessfulAttacks >= maxNumberOfAttacks)
-                break; //chance to combo next attack
-
-            comboChance = Math.Max(0, comboChance - 30);
+            // if (attack.CombatAttack.TryAttack(this, enemy, attack.Translate(), out var combatAttack) is false) continue;
+            //
+            // combatAttacks[numberOfSuccessfulAttacks++] = combatAttack;
+            //
+            // attacked = true;
+            //
+            // if (comboChance < GameRandom.Random.Next(0, maxValue: 100) ||
+            //     numberOfSuccessfulAttacks >= maxNumberOfAttacks)
+            //     break; //chance to combo next attack
+            //
+            // comboChance = Math.Max(0, comboChance - 30);
         }
 
         if (attacked && enemy.Location != Location) TurnTo(enemy);
@@ -346,6 +346,42 @@ public class Monster : WalkableMonster, IMonster
 
 
         return attacked ? Result.Success : Result.NotPossible;
+    }
+
+    public IMonsterCombatAttack[] SelectAttacks()
+    {
+        if (!IsHostile) return [];
+        if (Attacks.Length == 0) return [];
+        var maxNumberOfAttacks = (int)Math.Min(2, Math.Ceiling(Attacks.Length / 1.5));
+        var comboChance = 30;
+
+        Span<IMonsterCombatAttack> selectedAttacks = new IMonsterCombatAttack[2];
+
+        var numberOfAttacks = 0;
+        foreach (var attack in Attacks)
+        {
+            if (numberOfAttacks > maxNumberOfAttacks) break;
+
+            if (!Cooldowns.Expired(attack.Id)) continue;
+
+            if (attack.AttackChance < GameRandom.Random.Next(0, maxValue: 100))
+                continue;
+
+            if (attack.CombatParameter is null)
+            {
+                Console.WriteLine($"Combat attack not found for monster: {Name}");
+                continue;
+            }
+
+            selectedAttacks[numberOfAttacks++] = attack;
+
+            if (comboChance < GameRandom.Random.Next(0, maxValue: 100))
+            {
+                break;
+            }
+        }
+
+        return selectedAttacks[..numberOfAttacks].ToArray();
     }
 
     public void UpdateLastTargetChance()
@@ -421,6 +457,16 @@ public class Monster : WalkableMonster, IMonster
         Follow(creature);
         SetAttackTarget(creature);
         UpdateLastTargetChance();
+    }
+
+    public override Result CanAttack(CombatParameter combatParameter)
+    {
+        if (!Cooldowns.Expired(combatParameter.CooldownId))
+        {
+            return Result.Fail(InvalidOperation.CannotAttackThatFast);
+        }
+
+        return base.CanAttack(combatParameter);
     }
 
     #region Summon Event Attachment

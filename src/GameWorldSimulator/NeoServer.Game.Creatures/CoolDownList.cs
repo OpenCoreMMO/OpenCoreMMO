@@ -14,7 +14,7 @@ public class CooldownList
 
     private Dictionary<ulong, CooldownTime> CustomCooldowns { get; } = new();
 
-    private Dictionary<Guid, CooldownTime> SpellCooldowns { get; } = new();
+    private Dictionary<Guid, CooldownTime> GuidCooldowns { get; } = new();
     private Dictionary<int, CooldownTime> SpellGroupCooldowns { get; } = new();
     private Dictionary<string, CooldownTime> SummonCooldowns { get; set; }
 
@@ -29,19 +29,28 @@ public class CooldownList
         return Cooldowns.TryAdd(type, new CooldownTime(DateTime.Now, duration));
     }
 
+    public bool Start(Guid id, uint duration)
+    {
+        // Start new cooldown only if previous has expired
+        if (!Expired(id)) return false;
+
+        GuidCooldowns.Remove(id);
+        GuidCooldowns.TryAdd(id, new CooldownTime(DateTime.Now, duration));
+
+        return true;
+    }
+
     public bool Start(IHasCooldown spell)
     {
         // Start new cooldown only if previous has expired
         if (!Expired(spell)) return false;
 
-        SpellCooldowns.Remove(spell.CooldownId);
-        SpellCooldowns.TryAdd(spell.CooldownId, new CooldownTime(DateTime.Now, spell.Cooldown));
+        GuidCooldowns.Remove(spell.CooldownId);
+        GuidCooldowns.TryAdd(spell.CooldownId, new CooldownTime(DateTime.Now, spell.Cooldown));
 
         if (spell.HasAnyCooldownGroup) return true;
 
         // Handle group cooldowns
-        var i = 0;
-
 
         if (spell.PrimaryGroup.Id > 0 && GroupExpired(spell.PrimaryGroup.Id))
         {
@@ -83,10 +92,17 @@ public class CooldownList
         return !SummonCooldowns.TryGetValue(summon.Name, out var cooldown) || cooldown.Expired;
     }
 
+    
+    public bool Expired(Guid id)
+    {
+        // Check individual spell cooldown first
+        var spellExpired = !GuidCooldowns.TryGetValue(id, out var cooldown) || cooldown.Expired;
+        return spellExpired;
+    }
     public bool Expired(IHasCooldown spell)
     {
         // Check individual spell cooldown first
-        var spellExpired = !SpellCooldowns.TryGetValue(spell.CooldownId, out var cooldown) || cooldown.Expired;
+        var spellExpired = !GuidCooldowns.TryGetValue(spell.CooldownId, out var cooldown) || cooldown.Expired;
         if (!spellExpired) return false;
 
         if (spell.HasAnyCooldownGroup) return true;

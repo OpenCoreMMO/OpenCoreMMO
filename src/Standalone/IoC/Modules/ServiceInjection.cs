@@ -8,6 +8,7 @@ using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Inspection;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World;
+using NeoServer.Game.Creatures.Monster;
 using NeoServer.Game.Creatures.Party;
 using NeoServer.Game.Creatures.Services;
 using NeoServer.Game.Items.Services;
@@ -82,7 +83,8 @@ public static class ServiceInjection
         builder.AddSingleton<SingleTargetAttackService>();
         builder.AddSingleton<AreaAttackService>();
         builder.AddSingleton<CombatBloodPoolService>();
-        
+        builder.AddSingleton<MonsterCombatService>();
+
         //spells
         builder.AddSingleton<SpellService>();
         builder.AddSingleton<SpellCastValidation>();
