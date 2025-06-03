@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NeoServer.Data.Entities;
 
-namespace NeoServer.Data.Configurations;
+namespace NeoServer.Data.Configurations.ForSqLite;
 
 public class ForSqLiteWorldRecordEntityConfiguration : IEntityTypeConfiguration<WorldRecordEntity>
 {

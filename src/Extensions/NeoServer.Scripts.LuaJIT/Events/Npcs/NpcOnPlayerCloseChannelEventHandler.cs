@@ -4,7 +4,7 @@ using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT.Events.Creatures;
+namespace NeoServer.Scripts.LuaJIT.Events.Npcs;
 
 public class NpcOnPlayerCloseChannelEventHandler(INpcs npcs, ILogger logger) : IGameEventHandler
 {
