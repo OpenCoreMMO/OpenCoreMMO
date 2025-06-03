@@ -1,6 +1,7 @@
 using NeoServer.Game.Common.Combat.Enums;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Item;
 
 namespace NeoServer.Game.Combat.Services.Attacks.Builders;
 
@@ -22,6 +23,11 @@ public class DamageBuilder
             targetPlayer.Skull != Skull.Black)
         {
             factor = 2;
+        }
+
+        if (attackInput.Parameters.DamageType is DamageType.None)
+        {
+            return damage;
         }
 
         var physicalDamage = AttackCalculation.Calculate(

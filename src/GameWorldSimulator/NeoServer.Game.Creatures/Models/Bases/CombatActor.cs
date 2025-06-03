@@ -48,6 +48,18 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public void AddCondition(ICondition condition)
     {
+        switch (condition.Type)
+        {
+            case ConditionType.Haste:
+                Conditions.TryGetValue(ConditionType.Paralyze, out var paralyzeCondition);
+                paralyzeCondition?.End();
+                break;
+            case ConditionType.Paralyze:
+                Conditions.TryGetValue(ConditionType.Haste, out var hasteCondition);
+                hasteCondition?.End();
+                break;
+        }
+
         var result = Conditions.TryAdd(condition.Type, condition);
         condition.Start(this);
         if (result == false) return;
