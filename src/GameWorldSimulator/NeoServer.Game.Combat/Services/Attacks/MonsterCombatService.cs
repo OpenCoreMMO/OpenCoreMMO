@@ -40,7 +40,7 @@ public class MonsterCombatService(IAttackService attackService)
 
             numberOfAttacks++;
 
-            if (comboChance < GameRandom.Random.Next(0, maxValue: 100))
+            if (GameRandom.Random.Next(0, maxValue: 100) > comboChance)
             {
                 break;
             }
