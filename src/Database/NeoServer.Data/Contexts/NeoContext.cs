@@ -41,6 +41,9 @@ public class NeoContext : DbContext
     public DbSet<IpBanEntity> IpBans { get; set; }
     
     public DbSet<ReportBugEntity> ReportBugs { get; set; }
+    
+    public DbSet<HouseEntity> Houses { get; set; }
+    public DbSet<HouseListEntity> HouseList { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -86,6 +89,8 @@ public class NeoContext : DbContext
         modelBuilder.ApplyConfiguration(new PlayerStorageEntityConfiguration());
         modelBuilder.ApplyConfiguration(new IpBanEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ReportBugEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new HouseEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new HouseListEntityConfiguration());
 
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {

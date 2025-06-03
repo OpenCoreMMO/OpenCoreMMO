@@ -96,7 +96,7 @@ public class WorldLoader
 
         var items = GetItemsOnTile(tileNode).ToArray();
 
-        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items, false);
+        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items, false, tileNode.HouseId);
 
         if (tile is IStaticTile)
         {
