@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Creatures.Structs;
 using NeoServer.Game.Common.Effects.Parsers;
@@ -18,9 +19,10 @@ public class DamageCondition : BaseCondition
     private ushort _maxDamage;
     private ushort _minDamage;
 
-    public DamageCondition(ConditionType type, int interval, ushort minDamage, ushort maxDamage,
+    public DamageCondition(IThing cause, ConditionType type, uint interval, ushort minDamage, ushort maxDamage,
         EffectT effect = EffectT.None) : base(0)
     {
+        Cause = cause;
         Type = type;
         Interval = interval;
         DamageType = ConditionTypeParser.Parse(type);
@@ -29,11 +31,12 @@ public class DamageCondition : BaseCondition
         Effect = effect;
     }
 
-    public DamageCondition(ConditionType type, int interval, byte amount, ushort damage,
+    public DamageCondition(IThing cause, ConditionType type, uint interval, byte amount, ushort damage,
         EffectT effect = EffectT.None) : base(0)
     {
         if (amount == 0) return;
 
+        Cause = cause;
         Type = type;
         Interval = interval;
         DamageType = ConditionTypeParser.Parse(type);
@@ -43,14 +46,15 @@ public class DamageCondition : BaseCondition
         Amount = amount;
     }
 
+    public IThing Cause { get; } 
     public byte Amount { get; }
     public override ConditionType Type { get; }
     public DamageType DamageType { get; set; }
     public EffectT Effect { get; }
 
-    public int Interval
+    public uint Interval
     {
-        set => _cooldown = new CooldownTime(DateTime.Now, (uint)value);
+        set => _cooldown = new CooldownTime(DateTime.Now, value);
     }
 
     public override bool HasExpired => _damageQueue.Count <= 0;
@@ -66,7 +70,7 @@ public class DamageCondition : BaseCondition
             return;
         }
 
-        creature.TakeDamage(null, new CombatDamage(damage, DamageType, DamageEffectParser.Parse(DamageType)));
+        creature.TakeDamage(Cause, new CombatDamage(damage, DamageType, DamageEffectParser.Parse(DamageType)));
     }
 
     public bool Start(ICreature creature, ushort minDamage, ushort maxDamage)

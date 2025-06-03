@@ -58,7 +58,7 @@ public class MeleeCombatAttack : CombatAttack
             if (ConditionType != ConditionType.None)
             {
                 if (!enemy.HasCondition(ConditionType, out var condition))
-                    enemy.AddCondition(new DamageCondition(ConditionType, ConditionInterval, Min, Max));
+                    enemy.AddCondition(new DamageCondition(actor, ConditionType, ConditionInterval, Min, Max));
                 else if (condition is DamageCondition damageCondition) damageCondition.Start(enemy, Min, Max);
                 else condition.Start(enemy);
             }
