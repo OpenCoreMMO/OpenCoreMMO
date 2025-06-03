@@ -4,16 +4,25 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="..\..\..\data\LuaJit\**">
-            <Link>Data\LuaJit\%(RecursiveDir)%(FileName)</Link>
-        </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Remove="..\..\..\data\LuaJit\scripts\movements\haste.lua" />
+      <Content Include="..\..\..\Data\*.lua">
+        <Link>Data\%(FileName)%(Extension)</Link>
+      </Content>
+      <Content Include="..\..\..\data\libs\**">
+        <Link>Data\libs\%(RecursiveDir)%(FileName)</Link>
+      </Content>
+      <Content Include="..\..\..\data\npclib\**">
+        <Link>Data\npclib\%(RecursiveDir)%(FileName)</Link>
+      </Content>
+      <Content Include="..\..\..\data\npcs\**">
+        <Link>Data\npcs\%(RecursiveDir)%(FileName)</Link>
+      </Content>
+      <Content Include="..\..\..\data\scripts\**">
+        <Link>Data\scripts\%(RecursiveDir)%(FileName)</Link>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
@@ -26,6 +35,7 @@
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj" />
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Events\NeoServer.Server.Events.csproj" />
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj" />
+        <ProjectReference Include="..\..\Loaders\NeoServer.Loaders\NeoServer.Loaders.csproj" />
     </ItemGroup>
 
     <ItemGroup>

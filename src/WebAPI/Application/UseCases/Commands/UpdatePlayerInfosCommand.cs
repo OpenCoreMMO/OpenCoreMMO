@@ -6,7 +6,8 @@ using NeoServer.Web.API.Response.Constants;
 
 namespace NeoServer.Web.API.Application.UseCases.Commands;
 
-public class UpdatePlayerInfosCommand (IPlayerRepository playerRepository) :  IRequestHandler<UpdatePlayerInfosRequest, OutputResponse>
+public class UpdatePlayerInfosCommand(IPlayerRepository playerRepository)
+    : IRequestHandler<UpdatePlayerInfosRequest, OutputResponse>
 {
     public async Task<OutputResponse> Handle(UpdatePlayerInfosRequest request, CancellationToken cancellationToken)
     {
@@ -14,15 +15,15 @@ public class UpdatePlayerInfosCommand (IPlayerRepository playerRepository) :  IR
 
         if (entity is null)
             return new OutputResponse(ErrorMessage.PlayerNotFound);
-        
+
         if (entity.Name != request.Name)
         {
-            var alreadyExistWithThisName = await playerRepository.GetPlayer(request.Name);
+            var alreadyExistWithThisName = await playerRepository.GetByName(request.Name);
         
             if (alreadyExistWithThisName is not null)
                 return new OutputResponse(ErrorMessage.PlayerNameAlreadyExist);
         }
-        
+
         entity.Soul = request.Soul;
         entity.Health = request.Health;
         entity.MaxHealth = request.MaxHealth;
@@ -37,8 +38,8 @@ public class UpdatePlayerInfosCommand (IPlayerRepository playerRepository) :  IR
         entity.Level = request.Level;
         entity.MaxSoul = request.MaxSoul;
         entity.Group = request.Group;
-        entity.Name = request.Name; 
-        
+        entity.Name = request.Name;
+
         await playerRepository.Update(entity);
         return new OutputResponse();
     }

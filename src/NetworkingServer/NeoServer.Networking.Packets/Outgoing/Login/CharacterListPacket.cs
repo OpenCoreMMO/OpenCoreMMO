@@ -47,7 +47,9 @@ public class CharacterListPacket : OutgoingPacket
             message.AddUInt16((ushort)port);
         }
 
-        var premiumTimeDays = (ushort) (_accountEntity.PremiumTimeEndAt is null ? 0 : (_accountEntity.PremiumTimeEndAt.Value- DateTime.Now).TotalDays);
+        var premiumTimeDays = (ushort)(_accountEntity.PremiumTimeEndAt is null
+            ? 0
+            : (_accountEntity.PremiumTimeEndAt.Value - DateTime.Now).TotalDays);
         message.AddUInt16(premiumTimeDays);
     }
 

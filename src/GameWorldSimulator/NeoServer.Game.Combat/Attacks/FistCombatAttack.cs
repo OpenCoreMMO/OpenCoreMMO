@@ -18,7 +18,7 @@ public static class FistCombatAttack
 
         if (!MeleeCombatAttack.CalculateAttack(actor, enemy, combat, out var damage)) return false;
 
-        enemy.ReceiveAttack(actor, damage);
+        enemy.TakeDamage(actor, damage);
 
         return true;
     }

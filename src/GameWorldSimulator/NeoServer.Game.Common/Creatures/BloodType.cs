@@ -2,6 +2,7 @@
 
 public enum BloodType : byte
 {
+    None = 0,
     Blood,
     Fire,
     Slime,

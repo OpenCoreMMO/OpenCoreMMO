@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using Moq;
 using NeoServer.Data.InMemory.DataStores;
+using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Creatures.Events.Monster;
 using NeoServer.Game.Creatures.Monster.Summon;
+using NeoServer.Game.Creatures.Services;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;
@@ -22,19 +22,18 @@ public class MonsterKilledEventHandlerTest
     public void Execute_GrantsMonsterExperience_WhenMonsterKilledByOnePlayer()
     {
         var player = PlayerTestDataBuilder.Build();
-        var damages = new Dictionary<ICreature, ushort>
-        {
-            { player, 100 }
-        };
+
+        var damages = new DamageRecordList();
+        damages.AddOrUpdateDamage(player, 100, false);
 
         var monsterMock = new Mock<IMonster>();
         monsterMock.Setup(x => x.Experience).Returns(100);
-        monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
+        monsterMock.Setup(x => x.ReceivedDamages).Returns(damages);
 
-        var eventHandler = new MonsterKilledEventHandler();
+        var experienceSharingService = new ExperienceSharingService();
 
         var before = player.Experience;
-        eventHandler.Execute(monsterMock.Object, player, null);
+        experienceSharingService.Share(monsterMock.Object);
         var after = player.Experience;
 
         Assert.Equal(before + 100, after);
@@ -45,21 +44,20 @@ public class MonsterKilledEventHandlerTest
     {
         var playerOne = PlayerTestDataBuilder.Build();
         var playerTwo = PlayerTestDataBuilder.Build(2);
-        var damages = new Dictionary<ICreature, ushort>
-        {
-            { playerOne, 100 },
-            { playerTwo, 100 }
-        };
+
+        var damages = new DamageRecordList();
+        damages.AddOrUpdateDamage(playerOne, 100, false);
+        damages.AddOrUpdateDamage(playerTwo, 100, false);
 
         var monsterMock = new Mock<IMonster>();
         monsterMock.Setup(x => x.Experience).Returns(100);
-        monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
+        monsterMock.Setup(x => x.ReceivedDamages).Returns(damages);
 
-        var eventHandler = new MonsterKilledEventHandler();
+        var experienceSharingService = new ExperienceSharingService();
 
         var playerOneBefore = playerOne.Experience;
         var playerTwoBefore = playerTwo.Experience;
-        eventHandler.Execute(monsterMock.Object, playerOne, null);
+        experienceSharingService.Share(monsterMock.Object);
         var playerOneAfter = playerOne.Experience;
         var playerTwoAfter = playerTwo.Experience;
 
@@ -73,27 +71,27 @@ public class MonsterKilledEventHandlerTest
         var playerOne = PlayerTestDataBuilder.Build();
         var playerTwo = PlayerTestDataBuilder.Build(2);
         var playerOneSummon = MockSummon(playerOne);
-        var damages = new Dictionary<ICreature, ushort>
-        {
-            { playerOne, 100 },
-            { playerTwo, 100 },
-            { playerOneSummon, 200 } // This should be considered playerOne's damage.
-        };
+
+        var damages = new DamageRecordList();
+        damages.AddOrUpdateDamage(playerOne, 100, false);
+        damages.AddOrUpdateDamage(playerTwo, 100, false);
+        damages.AddOrUpdateDamage(playerOneSummon, 200, false);
 
         var monsterMock = new Mock<IMonster>();
-        monsterMock.Setup(x => x.Experience).Returns(100);
-        monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
+        monsterMock.Setup(x => x.Experience).Returns(300);
+        monsterMock.Setup(x => x.ReceivedDamages).Returns(damages);
 
-        var eventHandler = new MonsterKilledEventHandler();
+        var experienceSharingService = new ExperienceSharingService();
 
         var playerOneBefore = playerOne.Experience;
         var playerTwoBefore = playerTwo.Experience;
-        eventHandler.Execute(monsterMock.Object, playerOne, null);
+        experienceSharingService.Share(monsterMock.Object);
         var playerOneAfter = playerOne.Experience;
         var playerTwoAfter = playerTwo.Experience;
 
+        
         Assert.Equal(playerOneBefore + 75, playerOneAfter);
-        Assert.Equal(playerTwoBefore + 25, playerTwoAfter);
+        Assert.Equal(playerTwoBefore + 75, playerTwoAfter);
     }
 
     [Fact]
@@ -102,21 +100,20 @@ public class MonsterKilledEventHandlerTest
         var playerOne = PlayerTestDataBuilder.Build();
         var playerTwo = PlayerTestDataBuilder.Build(2);
         var party = PartyTestDataBuilder.Build(null, playerOne, playerTwo);
-        var damages = new Dictionary<ICreature, ushort>
-        {
-            { playerOne, 300 },
-            { playerTwo, 100 }
-        };
+
+        var damages = new DamageRecordList();
+        damages.AddOrUpdateDamage(playerOne, 300, false);
+        damages.AddOrUpdateDamage(playerTwo, 100, false);
 
         var monsterMock = new Mock<IMonster>();
         monsterMock.Setup(x => x.Experience).Returns(100);
-        monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
+        monsterMock.Setup(x => x.ReceivedDamages).Returns(damages);
 
-        var eventHandler = new MonsterKilledEventHandler();
+        var experienceSharingService = new ExperienceSharingService();
 
         var playerOneBefore = playerOne.Experience;
         var playerTwoBefore = playerTwo.Experience;
-        eventHandler.Execute(monsterMock.Object, playerOne, null);
+        experienceSharingService.Share(monsterMock.Object);
         var playerOneAfter = playerOne.Experience;
         var playerTwoAfter = playerTwo.Experience;
 
@@ -138,23 +135,22 @@ public class MonsterKilledEventHandlerTest
         party.IsSharedExperienceEnabled = true;
 
         var heals = new Dictionary<IPlayer, DateTime>();
-        var damages = new Dictionary<ICreature, ushort>
-        {
-            { playerOne, 200 }, // 100 * 0.5 * (1 + 0.2) = 60
-            { playerTwo, 100 }, // 100 * 0.25 * (1 + 0.2) = 30
-            { playerThree, 100 } // 100 * 0.25 = 25
-        };
+
+        var damages = new DamageRecordList();
+        damages.AddOrUpdateDamage(playerOne, 200, false);
+        damages.AddOrUpdateDamage(playerTwo, 100, false);
+        damages.AddOrUpdateDamage(playerThree, 100, false);
 
         var monsterMock = new Mock<IMonster>();
         monsterMock.Setup(x => x.Experience).Returns(100);
-        monsterMock.Setup(x => x.Damages).Returns(damages.ToImmutableDictionary());
+        monsterMock.Setup(x => x.ReceivedDamages).Returns(damages);
 
-        var eventHandler = new MonsterKilledEventHandler();
+        var experienceSharingService = new ExperienceSharingService();
 
         var playerOneBefore = playerOne.Experience;
         var playerTwoBefore = playerTwo.Experience;
         var playerThreeBefore = playerThree.Experience;
-        eventHandler.Execute(monsterMock.Object, playerOne, null);
+        experienceSharingService.Share(monsterMock.Object);
         var playerOneAfter = playerOne.Experience;
         var playerTwoAfter = playerTwo.Experience;
         var playerThreeAfter = playerThree.Experience;
@@ -200,7 +196,7 @@ public class MonsterKilledEventHandlerTest
             return mock.Object;
         });
 
-        foreach (var vocation in mockedVocations) vocationStore.Add(vocation.VocationType, vocation);
+        foreach (var vocation in mockedVocations) vocationStore.AddOrUpdate(vocation.VocationType, vocation);
 
         return vocationStore;
     }

@@ -8,42 +8,42 @@
 
     <ItemGroup>
         <PackageReference Include="AutoFixture.AutoMoq" Version="4.18.1"/>
-        <PackageReference Include="coverlet.msbuild" Version="6.0.2">
+        <PackageReference Include="coverlet.msbuild" Version="6.0.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="FluentAssertions" Version="7.0.0"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
+        <PackageReference Include="FluentAssertions" Version="8.2.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0"/>
         <PackageReference Include="Moq" Version="4.20.72"/>
         <PackageReference Include="xRetry" Version="1.9.0"/>
-        <PackageReference Include="xunit" Version="2.9.2"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+        <PackageReference Include="xunit" Version="2.9.3"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="6.0.2">
+        <PackageReference Include="coverlet.collector" Version="6.0.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Database\NeoServer.Data.InMemory.DataStores\NeoServer.Data.InMemory.DataStores.csproj"/>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Common\NeoServer.Game.Common.csproj"/>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj"/>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Items\NeoServer.Game.Items.csproj"/>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj"/>
-        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Commands\NeoServer.Server.Commands.csproj"/>
-        <ProjectReference Include="..\NeoServer.Game.Items.Tests\NeoServer.Game.Items.Tests.csproj"/>
-        <ProjectReference Include="..\NeoServer.Game.Tests\NeoServer.Game.Tests.csproj"/>
+        <ProjectReference Include="..\..\src\Database\NeoServer.Data.InMemory.DataStores\NeoServer.Data.InMemory.DataStores.csproj" />
+        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Common\NeoServer.Game.Common.csproj" />
+        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj" />
+        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Items\NeoServer.Game.Items.csproj" />
+        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj" />
+        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Commands\NeoServer.Server.Commands.csproj" />
+        <ProjectReference Include="..\NeoServer.Game.Items.Tests\NeoServer.Game.Items.Tests.csproj" />
+        <ProjectReference Include="..\NeoServer.Game.Tests\NeoServer.Game.Tests.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Players\InventoryTests.cs"/>
+        <Compile Remove="Players\InventoryTests.cs" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Trade"/>
+        <Folder Include="Trade" />
     </ItemGroup>
 
 </Project>

@@ -1,7 +1,6 @@
 ﻿using NeoServer.Extensions.Chat;
 using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Creatures.Monster.Summon;
 using NeoServer.Server.Services;
 
@@ -9,9 +8,9 @@ namespace NeoServer.Extensions.Events.Creatures;
 
 public class CreatureDroppedLootEventHandler : IGameEventHandler
 {
-    public void Execute(ICombatActor killed, IThing by, ILoot loot)
+    public void Execute(ICombatActor deadCreature, ILoot loot)
     {
-        if (killed is Summon) return;
+        if (deadCreature is Summon) return;
         if (loot?.Owners is null) return;
 
         foreach (var owner in loot.Owners)
@@ -20,16 +19,16 @@ public class CreatureDroppedLootEventHandler : IGameEventHandler
 
             if (player.Channels.PersonalChannels is null) continue;
 
-            var lootContentText = killed?.Corpse?.ToString() ?? "nothing";
+            var lootContentText = deadCreature?.Corpse?.ToString() ?? "nothing";
 
-            var lootText = $"Loot of a {killed?.Name.ToLower()}: {lootContentText}.";
+            var lootText = $"Loot of a {deadCreature?.Name.ToLower()}: {lootContentText}.";
 
-            SendToLootChannel(killed, player, lootText);
+            SendToLootChannel(player, lootText);
             NotificationSenderService.Send(player, lootText);
         }
     }
 
-    private static void SendToLootChannel(ICombatActor killed, IPlayer player, string lootText)
+    private static void SendToLootChannel(IPlayer player, string lootText)
     {
         foreach (var channel in player.Channels.PersonalChannels)
         {

@@ -1,5 +1,4 @@
-﻿using System;
-using NeoServer.Game.Common.Combat.Structs;
+﻿using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Game.Common.Item;
@@ -15,14 +14,6 @@ public interface IWeapon : IBodyEquipmentEquipment
 
     new Slot Slot => Slot.Left;
     public WeaponType Type => Metadata.WeaponType;
-
+    public ushort? MinHitChance { get; }
     bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combat);
-}
-
-public interface IWeaponItem : IWeapon
-{
-    ushort AttackPower { get; }
-    byte Defense => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Defense);
-
-    Tuple<DamageType, byte> ElementalDamage { get; }
 }

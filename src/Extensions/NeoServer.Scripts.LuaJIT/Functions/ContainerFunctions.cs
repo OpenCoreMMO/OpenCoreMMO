@@ -18,7 +18,6 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
         RegisterMethod(luaState, "Container", "getSize", LuaContainerGetSize);
 
         RegisterMethod(luaState, "Container", "getItem", LuaContainerGetItem);
-
     }
 
     private static int LuaContainerCreate(LuaState luaState)
@@ -78,5 +77,4 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
 
         return 1;
     }
-
 }

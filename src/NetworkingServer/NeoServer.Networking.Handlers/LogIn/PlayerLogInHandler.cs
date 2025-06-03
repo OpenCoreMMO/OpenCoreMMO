@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
-using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Results;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Networking.Packets.Outgoing;
@@ -23,12 +21,12 @@ public class PlayerLogInHandler : PacketHandler
 {
     private readonly IAccountRepository _accountRepository;
     private readonly ClientConfiguration _clientConfiguration;
-    private readonly IIpBansRepository _ipBansRepository;
-    private readonly IWaitingQueueManager _waitingQueueManager;
     private readonly IGameServer _game;
+    private readonly IIpBansRepository _ipBansRepository;
     private readonly PlayerLogInCommand _playerLogInCommand;
     private readonly PlayerLogOutCommand _playerLogOutCommand;
     private readonly ServerConfiguration _serverConfiguration;
+    private readonly IWaitingQueueManager _waitingQueueManager;
 
     public PlayerLogInHandler(IAccountRepository repositoryNeo,
         IGameServer game, ServerConfiguration serverConfiguration, PlayerLogInCommand playerLogInCommand,
@@ -61,10 +59,11 @@ public class PlayerLogInHandler : PacketHandler
 
         if (existBan is not null)
         {
-            Disconnect(connection, $"Your IP address {existBan.Ip} has been banished until {existBan.ExpiresAt.ToString("MM/dd/yyyy")}.\nReason: {existBan.Reason}");
+            Disconnect(connection,
+                $"Your IP address {existBan.Ip} has been banished until {existBan.ExpiresAt.ToString("MM/dd/yyyy")}.\nReason: {existBan.Reason}");
             return;
         }
-        
+
         async void TryConnect()
         {
             await Connect(connection, packet);
@@ -80,7 +79,8 @@ public class PlayerLogInHandler : PacketHandler
         if (ValidateOnlineStatus(connection, playerOnline, packet).Failed) return;
 
         var playerRecord =
-            await _accountRepository.GetPlayer(packet.Account, packet.Password, packet.CharacterName);
+            await _accountRepository.GetPlayer(packet.Account, packet.Password, packet.CharacterName,
+                includeKillsLastMonth: true);
 
         if (playerRecord is null)
         {
@@ -93,17 +93,17 @@ public class PlayerLogInHandler : PacketHandler
             Disconnect(connection, "Your account is banned.");
             return;
         }
-        
-        if (!_waitingQueueManager.CanLogin(playerRecord, out uint currentSlot))
+
+        if (!_waitingQueueManager.CanLogin(playerRecord, out var currentSlot))
         {
             var retryTime = _waitingQueueManager.GetTime(currentSlot);
             var message = $"There are too many players online.\nYour are at place {currentSlot} on waiting list.";
-        
+
             var waitingInLinePacket = new WaitingInLinePacket(message, retryTime);
             connection.Send(waitingInLinePacket);
             connection.Close();
             return;
-        } 
+        }
 
         connection.OtcV8Version = packet.OtcV8Version;
         if (packet.OtcV8Version > 0 || packet.OperatingSystem >= OperatingSystem.OtcLinux)
@@ -122,7 +122,7 @@ public class PlayerLogInHandler : PacketHandler
         _game.Dispatcher.AddEvent(new Event(() =>
         {
             var result = _playerLogInCommand.Execute(playerRecord, connection);
-            if (result.Failed) Disconnect(connection, TextMessageOutgoingParser.Parse(result.Error));
+            if (result.Failed) Disconnect(connection, TextMessageOutgoingParser.Parse(result.Reason));
         }));
     }
 

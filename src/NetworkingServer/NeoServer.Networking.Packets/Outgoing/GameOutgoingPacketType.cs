@@ -29,6 +29,7 @@ public enum GameOutgoingPacketType : byte
     InventoryEmpty = 0x79,
     OpenShop = 0x7A,
     SaleItemList = 0x7B,
+    CloseShop = 0x7C,
     TradeRequest = 0x7D,
     AcknowlegdeTradeRequest = 0x7E,
     TradeClose = 0x7F,

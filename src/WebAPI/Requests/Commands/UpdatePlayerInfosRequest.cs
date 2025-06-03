@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using NeoServer.Data.Entities;
 using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Web.API.Response;
 
@@ -25,7 +24,7 @@ public class UpdatePlayerInfosRequest : IRequest<OutputResponse>, ICommandBase
     public Gender Gender { get; set; }
     public byte Vocation { get; set; }
     public int WorldId { get; set; }
-    
+
     public void SetPlayerId(int id)
     {
         Id = id;

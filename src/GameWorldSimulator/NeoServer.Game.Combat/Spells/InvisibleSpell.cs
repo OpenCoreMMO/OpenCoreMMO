@@ -1,6 +1,8 @@
 ﻿using NeoServer.Game.Common;
 using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Results;
 
 namespace NeoServer.Game.Combat.Spells;
 
@@ -20,15 +22,13 @@ public class InvisibleSpell : Spell<InvisibleSpell>
     public override string Name => "Invisible";
     public override EffectT Effect { get; } = EffectT.GlitterBlue;
     public override uint Duration { get; } = 10000;
-    public override ushort Mana => 60;
+    public override ushort ManaConsumption => 60;
     public override ConditionType ConditionType => ConditionType.Invisible;
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
+    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
-        error = InvalidOperation.None;
-
-        actor.TurnInvisible();
-        return true;
+        caster.TurnInvisible();
+        return Result.Success;
     }
 
     public override void OnEnd(ICombatActor actor)

@@ -1,42 +1,45 @@
-﻿using NeoServer.Game.Combat.Attacks;
-using NeoServer.Game.Combat.Spells;
-using NeoServer.Game.Common;
+﻿using NeoServer.Game.Common;
+using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Item;
+using NeoServer.Game.Common.Spell;
 
 namespace NeoServer.Extensions.Spells.Attack.Knight;
 
 public class WhirlwindThrow : AttackSpell
 {
-    private CombatAttack _distanceAttack;
-    public override DamageType DamageType => DamageType.MagicalPhysical;
-    public override CombatAttack CombatAttack => _distanceAttack;
-    public override byte Range => 5;
+    protected override CombatParameter CombatSettings { get; } = new()
+    {
+        DamageType = DamageType.Physical,
+        ShootType = ShootType.WeaponType,
+        Effect = EffectT.XGray,
+        BlockArmor = true,
+        DamageFormula = (CombatFormula.Skill, GetFormulaValues)
+    };
+    public override string Name { get; set; } = "Whirlwind Throw";
+    public override string Words { get; set; } = "exori hur";
+    public override ushort MinLevel => 28;
+    public override ushort ManaConsumption { get; set; } = 40;
+    public override bool NeedsPremium => true;
+    public override byte? Range => 5;
+    public override bool BlockWalls => true;
+    public override bool NeedWeapon => true;
     public override bool NeedsTarget => true;
-
-    public override MinMax CalculateDamage(ICombatActor actor)
+    public override uint Cooldown => 6 * 1000;
+    public override MagicGroup[] Groups { get; } = [MagicGroup.Attack];
+    public override uint[] GroupCooldown => [2 * 1000];
+    public override bool NeedLearn => false;
+    public override string[] Vocations { get; } = ["Knight", "Elite Knight"];
+    private static MinMax GetFormulaValues(IPlayer player, int skill, int attack, decimal factor)
     {
-        return new MinMax(5, 100);
-    }
+        if (player is null) return MinMax.Zero;
 
-    public override bool OnCast(ICombatActor actor, string words, out InvalidOperation error)
-    {
-        error = InvalidOperation.NotPossible;
-        if (actor is not IPlayer player) return false;
+        var level = player.Level;
 
-        var shootType = player.SkillInUse switch
-        {
-            SkillType.Axe => ShootType.WhirlwindAxe,
-            SkillType.Club => ShootType.WhirlwindClub,
-            SkillType.Sword => ShootType.WhirlwindSword,
-            _ => ShootType.None
-        };
+        var min = (level / 5) + (skill + attack) / 3;
+        var max = (level / 5) + (skill + attack);
 
-        if (shootType is ShootType.None) return false;
-
-        _distanceAttack = new DistanceCombatAttack(Range, shootType);
-
-        return base.OnCast(actor, words, out error);
+        return new MinMax(min * 1.28f, max * 1.28);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using LuaNET;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Scripts.LuaJIT.Models.Combat;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
@@ -28,6 +29,8 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
     private static readonly List<string> CacheFiles = [];
 
     private static LuaScriptInterface _testInterface;
+    public List<LuaCombat> Combats { get; set; } = new List<LuaCombat>();
+    public List<LuaScriptInterface> CombatsMap { get; set; } = new();
 
     #endregion
 
@@ -126,7 +129,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
     public LuaScriptInterface GetTestInterface()
     {
         if (_testInterface != null) return _testInterface;
-        
+
         _testInterface = new LuaScriptInterface("Test Interface");
         _testInterface.InitState();
 
@@ -141,7 +144,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
     public void ExecuteTimerEvent(uint eventIndex)
     {
         if (!TimerEvents.Remove(eventIndex, out var timerEventDesc)) return;
-        
+
         Lua.RawGetI(luaState, LUA_REGISTRY_INDEX, timerEventDesc.Function);
 
         var reverseList = timerEventDesc.Parameters.ToList();

@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+﻿using NeoServer.Game.Common.Contracts.Combat.Attacks;
 using NeoServer.Game.Common.Contracts.Services;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
@@ -44,14 +44,10 @@ public interface IMonster : IWalkableMonster, ICombatActor
     bool Defending { get; }
 
     /// <summary>
-    ///     All damages that monster received since has born
-    /// </summary>
-    ImmutableDictionary<ICreature, ushort> Damages { get; }
-
-    /// <summary>
     ///     Indicates if monster is sleeping
     /// </summary>
     bool IsSleeping { get; }
+
     bool IsSummon { get; }
     bool IsHostile { get; }
     bool IsCurrentTargetUnreachable { get; }
@@ -87,4 +83,5 @@ public interface IMonster : IWalkableMonster, ICombatActor
     void Escape();
     void Born(Location.Structs.Location location);
     void Summon(ISummonService summonService);
+    IMonsterCombatAttack[] SelectAttacks();
 }

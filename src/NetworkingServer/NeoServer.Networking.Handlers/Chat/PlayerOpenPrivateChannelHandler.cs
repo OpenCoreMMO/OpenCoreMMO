@@ -25,7 +25,7 @@ public class PlayerOpenPrivateChannelHandler : PacketHandler
         if (!_game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player)) return;
 
         if (string.IsNullOrWhiteSpace(channel.Receiver) ||
-            await _playerRepository.GetPlayer(channel.Receiver) is null)
+            await _playerRepository.GetByName(channel.Receiver) is null)
         {
             connection.Send(new TextMessagePacket("A player with this name does not exist.",
                 TextMessageOutgoingType.Small));

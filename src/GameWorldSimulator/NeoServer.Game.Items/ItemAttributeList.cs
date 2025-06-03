@@ -2,7 +2,7 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text.Json;
+using NeoServer.Game.Common.Combat;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Helpers;
@@ -170,8 +170,16 @@ public sealed class ItemAttributeList : IItemAttributeList
     {
         if (_customAttributes is null) return default;
 
+
         if (_customAttributes.TryGetValue(attribute, out var value))
+        {
+            if (IsNullable(value.Item1))
+            {
+                return (T)value.Item1;
+            }
+            
             return (T)Convert.ChangeType(value.Item1, typeof(T), CultureInfo.InvariantCulture);
+        }
 
         return default;
     }
@@ -191,7 +199,7 @@ public sealed class ItemAttributeList : IItemAttributeList
 
         if (!_defaultAttributes.TryGetValue(attribute, out var value)) return default;
         if (value.Item1 is not Array) return new[] { value.Item1 };
-        
+
         var pool = ArrayPool<dynamic>.Shared;
         dynamic[] newArray = pool.Rent(value.Item1.Length);
 
@@ -229,7 +237,7 @@ public sealed class ItemAttributeList : IItemAttributeList
         if (_customAttributes.TryGetValue(attribute, out var value))
         {
             if (value.Item1 is not Array) return default;
-            
+
             var pool = ArrayPool<dynamic>.Shared;
             dynamic[] newArray = pool.Rent(value.Item1.Length);
 
@@ -346,22 +354,21 @@ public sealed class ItemAttributeList : IItemAttributeList
         return 0;
     }
 
-    public Tuple<DamageType, byte> GetWeaponElementDamage()
+    public ElementalDamage GetWeaponElementDamage()
     {
         if (_defaultAttributes?.ContainsKey(ItemAttribute.ElementEarth) ?? false)
-            return new Tuple<DamageType, byte>(DamageType.Earth, GetAttribute<byte>(ItemAttribute.ElementEarth));
+            return new(DamageType.Earth, GetAttribute<byte>(ItemAttribute.ElementEarth));
 
         if (_defaultAttributes?.ContainsKey(ItemAttribute.ElementEnergy) ?? false)
-            return new Tuple<DamageType, byte>(DamageType.Energy, GetAttribute<byte>(ItemAttribute.ElementEnergy));
+            return new(DamageType.Energy, GetAttribute<byte>(ItemAttribute.ElementEnergy));
 
         if (_defaultAttributes?.ContainsKey(ItemAttribute.ElementFire) ?? false)
-            return new Tuple<DamageType, byte>(DamageType.FireField,
-                GetAttribute<byte>(ItemAttribute.ElementFire)); //todo
+            return new(DamageType.Fire, GetAttribute<byte>(ItemAttribute.ElementFire)); //todo
 
         if (_defaultAttributes?.ContainsKey(ItemAttribute.ElementIce) ?? false)
-            return new Tuple<DamageType, byte>(DamageType.Ice, GetAttribute<byte>(ItemAttribute.ElementIce));
+            return new(DamageType.Ice, GetAttribute<byte>(ItemAttribute.ElementIce));
 
-        return null;
+        return default;
     }
 
     public Dictionary<SkillType, sbyte> SkillBonuses
@@ -429,5 +436,14 @@ public sealed class ItemAttributeList : IItemAttributeList
 
             return dictionary;
         }
+    }
+    private static bool IsNullable(dynamic value)
+    {
+        if (value == null)
+            return true; // null itself is always nullable
+
+        Type type = ((object)value).GetType();
+
+        return !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
     }
 }

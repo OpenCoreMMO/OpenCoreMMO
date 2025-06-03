@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Scripts.LuaJIT.Functions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Configurations;
@@ -38,6 +39,15 @@ public class LuaStartup : ILuaStartup
     /// A reference to the <see cref="IActionFunctions"/> instance in use.
     /// </summary>
     private readonly IActionFunctions _actionFunctions;
+
+    /// <summary>
+    /// A reference to the <see cref="IConditionFunctions"/> instance in use.
+    /// </summary>
+    private readonly IConditionFunctions _conditionFunctions;
+
+    private readonly IBankFunctionBinder _bankFunctionBinder;
+    private readonly ISpellFunctionMapper _spellFunctionMapper;
+    private readonly ICombatFunctionMapper _combatFunctionMapper;
 
     /// <summary>
     /// A reference to the <see cref="IConfigFunctions"/> instance in use.
@@ -120,6 +130,11 @@ public class LuaStartup : ILuaStartup
     private readonly INpcFunctions _npcFunctions;
 
     /// <summary>
+    /// A reference to the <see cref="INpcTypeFunctions"/> instance in use.
+    /// </summary>
+    private readonly INpcTypeFunctions _npcTypeFunctions;
+
+    /// <summary>
     /// A reference to the <see cref="IPlayerFunctions"/> instance in use.
     /// </summary>
     private readonly IPlayerFunctions _playerFunctions;
@@ -180,13 +195,19 @@ public class LuaStartup : ILuaStartup
         IMonsterFunctions monsterFunctions,
         IMoveEventFunctions moveEventFunctions,
         INpcFunctions npcFunctions,
+        INpcTypeFunctions npcTypeFunctions,
         IPlayerFunctions playerFunctions,
         IPositionFunctions positionFunctions,
         IResultFunctions resultFunctions,
         ITalkActionFunctions talkActionFunctions,
         ITeleportFunctions teleportFunctions,
         ITileFunctions tileFunctions,
-        ServerConfiguration serverConfiguration)
+        ServerConfiguration serverConfiguration,
+        IConditionFunctions conditionFunctions,
+        IBankFunctionBinder bankFunctionBinder,
+        ISpellFunctionMapper spellFunctionMapper,
+        ICombatFunctionMapper combatFunctionMapper
+        )
     {
         _logger = logger;
         _luaEnviroment = luaEnviroment;
@@ -211,36 +232,44 @@ public class LuaStartup : ILuaStartup
         _monsterFunctions = monsterFunctions;
         _moveEventFunctions = moveEventFunctions;
         _npcFunctions = npcFunctions;
+        _npcTypeFunctions = npcTypeFunctions;
         _positionFunctions = positionFunctions;
         _resultFunctions = resultFunctions;
         _talkActionFunctions = talkActionFunctions;
         _teleportFunctions = teleportFunctions;
         _tileFunctions = tileFunctions;
+        _spellFunctionMapper = spellFunctionMapper;
+        _combatFunctionMapper = combatFunctionMapper;
+        _combatFunctionMapper = combatFunctionMapper;
 
         _serverConfiguration = serverConfiguration;
+        _conditionFunctions = conditionFunctions;
+        _bankFunctionBinder = bankFunctionBinder;
+        _spellFunctionMapper = spellFunctionMapper;
     }
 
     #endregion
 
-    #region Public Methods 
+    #region Public Methods
 
     public void Start()
     {
-        var dir = AppContext.BaseDirectory;
+        var currentDir = AppContext.BaseDirectory;
 
         if (!string.IsNullOrEmpty(ArgManager.GetInstance().ExePath))
-            dir = ArgManager.GetInstance().ExePath;
+            currentDir = ArgManager.GetInstance().ExePath;
 
-        ModulesLoadHelper(_luaEnviroment.InitState(), "luaEnviroment");
+        ModulesLoadHelper(_luaEnviroment.InitState(), "luaEnvironment");
 
         var luaState = _luaEnviroment.GetLuaState();
 
         if (luaState.IsNull)
-            _logger.Error("Invalid lua state, cannot load lua Functions.");
+            _logger.Error("Invalid lua state, cannot load lua Functions");
 
         Lua.OpenLibs(luaState);
 
         _actionFunctions.Init(luaState);
+        _conditionFunctions.Init(luaState);
         _configFunctions.Init(luaState);
         _creatureFunctions.Init(luaState);
         _creatureEventFunctions.Init(luaState);
@@ -261,16 +290,26 @@ public class LuaStartup : ILuaStartup
         _monsterFunctions.Init(luaState);
         _moveEventFunctions.Init(luaState);
         _npcFunctions.Init(luaState);
+        _npcTypeFunctions.Init(luaState);
         _playerFunctions.Init(luaState);
         _teleportFunctions.Init(luaState);
         _groupFunctions.Init(luaState);
+        _spellFunctionMapper.Init(luaState);
+        _combatFunctionMapper.Init(luaState);
+        _bankFunctionBinder.Init(luaState);
 
-        ModulesLoadHelper(_configManager.Load($"{dir}/config.lua"), $"config.lua");
+        ModulesLoadHelper(_configManager.Load($"{currentDir}/config.lua"), $"config.lua");
 
-        ModulesLoadHelper(_luaEnviroment.LoadFile($"{dir}{_serverConfiguration.DataLuaJit}/core.lua", "core.lua"), "/Data/LuaJit/core.lua");
+        ModulesLoadHelper(_luaEnviroment.LoadFile($"{_serverConfiguration.Data}/core.lua", "core.lua"),
+            "/Data/core.lua");
 
-        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts", false, false), "/Data/LuaJit/scripts");
-        ModulesLoadHelper(_scripts.LoadScripts($"{dir}{_serverConfiguration.DataLuaJit}/scripts/libs", true, false), "/Data/LuaJit/scripts/libs");
+        ModulesLoadHelper(_scripts.LoadScripts($"{_serverConfiguration.Data}/scripts/libs", true, false),
+            "/Data/scripts/libs");
+        ModulesLoadHelper(_scripts.LoadScripts($"{_serverConfiguration.Data}/scripts", false, false), "/Data/scripts");
+        ModulesLoadHelper(_luaEnviroment.LoadFile($"{_serverConfiguration.Data}/npclib/load.lua", "load.lua"),
+            "/Data/npclib");
+
+        ModulesLoadHelper(_scripts.LoadScripts($"{_serverConfiguration.Data}/npcs", false, false), "/Data/npcs");
     }
 
     #endregion

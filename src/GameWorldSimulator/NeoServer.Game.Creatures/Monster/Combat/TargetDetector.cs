@@ -64,12 +64,12 @@ internal static class TargetDetector
         var result = mapTool.PathFinder.Find(monster, target.Creature.Location, monster.PathSearchParams,
             monster.TileEnterRule);
 
-        if (!result.Founded) return (true, Array.Empty<Direction>());
+        if (!result.Founded) return (true, []);
 
         if (AttackValidation.CanAttack(monster, target.Creature).Failed) return result;
 
         if (target.Creature.IsInvisible && !monster.CanSeeInvisible) return result;
 
-        return (false, Array.Empty<Direction>());
+        return (false, []);
     }
 }

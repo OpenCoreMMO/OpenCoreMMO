@@ -32,7 +32,7 @@ public class QuestDataLoader
         {
             _questDataStore.Clear();
             var actions = GetQuests();
-            actions.ForEach(x => _questDataStore.Add(x.Key, x));
+            actions.ForEach(x => _questDataStore.AddOrUpdate(x.Key, x));
 
             return new object[] { actions.Count };
         });

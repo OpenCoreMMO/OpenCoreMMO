@@ -20,6 +20,6 @@ public class PlayerCloseNpcChannelHandler : PacketHandler
 
         foreach (var creature in _game.Map.GetCreaturesAtPositionZone(player.Location))
             if (creature is INpc npc)
-                _game.Dispatcher.AddEvent(new Event(() => npc.StopTalkingToCustomer(player)));
+                _game.Dispatcher.AddEvent(new Event(() => npc.PlayerCloseChannel(player)));
     }
 }

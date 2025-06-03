@@ -13,11 +13,18 @@ public interface IGroup
     int MaxVipEntries { get; set; }
     Dictionary<PlayerFlag, bool> Flags { get; }
 
-    bool FlagIsEnabled(PlayerFlag flag) => Flags.TryGetValue(flag, out var value) ? value : false;
+    bool FlagIsEnabled(PlayerFlag flag)
+    {
+        return Flags.TryGetValue(flag, out var value) ? value : false;
+    }
 
     void EnableFlag(PlayerFlag flag)
-        => Flags.AddOrUpdate(flag, true);
+    {
+        Flags.AddOrUpdate(flag, true);
+    }
 
     void DisableFlag(PlayerFlag flag)
-        => Flags.AddOrUpdate(flag, false);
+    {
+        Flags.AddOrUpdate(flag, false);
+    }
 }

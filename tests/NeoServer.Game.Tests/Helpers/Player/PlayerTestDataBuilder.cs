@@ -46,7 +46,7 @@ public static class PlayerTestDataBuilder
             };
 
             vocationStore = new VocationStore();
-            vocationStore.Add(vocationType, vocation);
+            vocationStore.AddOrUpdate(vocationType, vocation);
         }
 
         if (groupStore is null)
@@ -58,7 +58,7 @@ public static class PlayerTestDataBuilder
             };
 
             groupStore = new GroupStore();
-            groupStore.Add(groupId, group);
+            groupStore.AddOrUpdate(groupId, group);
         }
 
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);

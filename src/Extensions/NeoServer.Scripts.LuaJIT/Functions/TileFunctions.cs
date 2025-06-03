@@ -15,7 +15,7 @@ namespace NeoServer.Scripts.LuaJIT.Functions;
 public class TileFunctions : LuaScriptInterface, ITileFunctions
 {
     private static IGameServer _gameServer;
-    private static IItemTypeStore _itemTypeStore; 
+    private static IItemTypeStore _itemTypeStore;
     private static IItemClientServerIdMapStore _itemClientServerIdMapStore;
 
     public TileFunctions(IGameServer gameServer) : base(nameof(TileFunctions))
@@ -280,7 +280,6 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         }
 
         if (tile is IStaticTile staticTile)
-        {
             foreach (var itemClientId in staticTile.AllClientIdItems)
             {
                 _itemClientServerIdMapStore.TryGetValue(itemClientId, out var itemServerId);
@@ -292,10 +291,8 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
                 PushBoolean(luaState, itemType.HasFlag(property.ToItemFlag()));
                 return 1;
             }
-        }
 
         if (tile is IDynamicTile dynamicTile)
-        {
             foreach (var tileItem in dynamicTile.AllItems)
             {
                 if (itemToExclude.ServerId == tileItem.ServerId)
@@ -304,7 +301,6 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
                 PushBoolean(luaState, tileItem.Metadata.HasFlag(property.ToItemFlag()));
                 return 1;
             }
-        }
 
         PushBoolean(luaState, false);
         return 1;

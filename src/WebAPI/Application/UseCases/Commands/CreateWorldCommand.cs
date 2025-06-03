@@ -7,12 +7,12 @@ using NeoServer.Web.API.Response.Constants;
 
 namespace NeoServer.Web.API.Application.UseCases.Commands;
 
-public class CreateWorldCommand (IWorldRepository worldRepository) :  IRequestHandler<CreateWorldRequest, OutputResponse>
+public class CreateWorldCommand(IWorldRepository worldRepository) : IRequestHandler<CreateWorldRequest, OutputResponse>
 {
     public async Task<OutputResponse> Handle(CreateWorldRequest request, CancellationToken cancellationToken)
     {
         var worldAlreadyExist = await worldRepository.GetByNameOrIpPort(request.Name, request.Ip, request.Port);
-        
+
         if (worldAlreadyExist is not null)
             return new OutputResponse(ErrorMessage.WorldAlreadyExist);
 
@@ -28,11 +28,11 @@ public class CreateWorldCommand (IWorldRepository worldRepository) :  IRequestHa
             RequiresPremium = request.RequiresPremium,
             Type = request.Type,
             MaxCapacity = request.MaxCapacity,
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow
         };
 
         await worldRepository.Insert(world);
-        
+
         return new OutputResponse(world.Id);
     }
 }

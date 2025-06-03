@@ -231,8 +231,8 @@ public enum SpeakClassesType : byte
     TALKTYPE_CHANNEL_O = 15, //@name@text
     TALKTYPE_CHANNEL_R2 = 17, //#d
     TALKTYPE_MONSTER_SAY = 19,
-    TALKTYPE_MONSTER_YELL = 20,
-};
+    TALKTYPE_MONSTER_YELL = 20
+}
 
 public enum MessageClassesType : byte
 {
@@ -428,7 +428,7 @@ public enum ItemIdType : ushort
     ITEM_AMULETOFLOSS = 2173,
 
     ITEM_DOCUMENT_RO = 1968
-};
+}
 
 public enum BlessingsType : byte
 {

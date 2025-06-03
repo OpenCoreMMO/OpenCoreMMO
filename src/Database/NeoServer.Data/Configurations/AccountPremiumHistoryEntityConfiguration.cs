@@ -31,11 +31,11 @@ public class AccountPremiumHistoryEntityConfiguration : IEntityTypeConfiguration
             .IsRequired();
 
         builder.HasOne(e => e.Account)
-            .WithMany() 
+            .WithMany()
             .HasForeignKey(e => e.AccountId)
             .OnDelete(DeleteBehavior.Cascade);
     }
-    
+
     private static void Seed(EntityTypeBuilder<AccountPremiumHistoryEntity> builder)
     {
         builder.HasData
@@ -46,7 +46,7 @@ public class AccountPremiumHistoryEntityConfiguration : IEntityTypeConfiguration
                 AccountId = 1,
                 Description = "VIP do GOD",
                 CreatedAt = DateTime.UtcNow,
-                EndAt = DateTime.UtcNow.AddDays(30),
+                EndAt = DateTime.UtcNow.AddDays(30)
             }
         );
     }

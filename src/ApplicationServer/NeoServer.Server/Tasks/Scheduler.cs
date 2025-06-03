@@ -27,11 +27,11 @@ public class Scheduler : IScheduler
         _writer = channel.Writer;
     }
 
-    public long GlobalTime => _dispatcher.GlobalTime;
-
     public ulong Count => EventLength;
 
     public bool Empty => ActiveEventIds.IsEmpty;
+
+    public long GlobalTime => _dispatcher.GlobalTime;
 
     /// <summary>
     ///     Adds event to be scheduled on the queue

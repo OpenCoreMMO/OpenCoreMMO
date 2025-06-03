@@ -10,10 +10,7 @@ public class UshortNullableConverter : JsonConverter<ushort?>
     {
         if (reader.TokenType == JsonTokenType.String)
         {
-            if (ushort.TryParse(reader.GetString(), out var value))
-            {
-                return value;
-            }
+            if (ushort.TryParse(reader.GetString(), out var value)) return value;
         }
         else if (reader.TokenType == JsonTokenType.Number)
         {
@@ -26,12 +23,8 @@ public class UshortNullableConverter : JsonConverter<ushort?>
     public override void Write(Utf8JsonWriter writer, ushort? value, JsonSerializerOptions options)
     {
         if (value.HasValue)
-        {
             writer.WriteNumberValue(value.Value);
-        }
         else
-        {
             writer.WriteNullValue();
-        }
     }
 }

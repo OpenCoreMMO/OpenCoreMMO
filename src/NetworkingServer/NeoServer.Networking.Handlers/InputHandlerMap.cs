@@ -6,6 +6,7 @@ using NeoServer.Networking.Handlers.LogIn;
 using NeoServer.Networking.Handlers.Player;
 using NeoServer.Networking.Handlers.Player.Movement;
 using NeoServer.Networking.Handlers.Player.Party;
+using NeoServer.Networking.Handlers.Reports;
 using NeoServer.Networking.Handlers.Server;
 using NeoServer.Networking.Handlers.Shop;
 using NeoServer.Networking.Handlers.Trade;
@@ -71,5 +72,6 @@ public static class InputHandlerMap
             [GameIncomingPacketType.TradeAccept] = typeof(TradeAcceptHandler),
             [GameIncomingPacketType.NewPing] = typeof(NetworkPingHandler),
             [GameIncomingPacketType.ExtendedOpcode] = typeof(ExtendedOpcodeHandler),
+            [GameIncomingPacketType.ReportBug] = typeof(PlayerReportBugHandler)
         };
 }

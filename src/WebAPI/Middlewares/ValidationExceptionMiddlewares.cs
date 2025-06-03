@@ -21,10 +21,7 @@ public sealed class ValidationExceptionHandlingMiddleware(RequestDelegate next)
                 Detail = "One or more validation errors has occurred"
             };
 
-            if (exception.Errors is not null)
-            {
-                problemDetails.Extensions["errors"] = exception.Errors;
-            }
+            if (exception.Errors is not null) problemDetails.Extensions["errors"] = exception.Errors;
 
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
 

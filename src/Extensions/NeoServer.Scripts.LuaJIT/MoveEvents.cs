@@ -1,12 +1,12 @@
-﻿using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Location.Structs;
+﻿using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Scripts.LuaJIT.Enums;
-using Serilog;
-using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.World.Tiles;
+using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.Interfaces;
+using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -18,10 +18,7 @@ public class MoveEventList
     {
         _moveEvents = new List<MoveEvent>[(int)MoveEventType.MOVE_EVENT_LAST];
 
-        for (int i = 0; i < _moveEvents.Length; i++)
-        {
-            _moveEvents[i] = new List<MoveEvent>();
-        }
+        for (var i = 0; i < _moveEvents.Length; i++) _moveEvents[i] = new List<MoveEvent>();
     }
 
     public List<MoveEvent> this[MoveEventType eventType]
@@ -37,8 +34,8 @@ public class MoveEventList
 
 public class MoveEvents : IMoveEvents
 {
-    private readonly ILogger _logger;
     private readonly IItemTypeStore _itemTypeStore;
+    private readonly ILogger _logger;
     private readonly IMap _map;
 
     #region Constructors
@@ -90,9 +87,7 @@ public class MoveEvents : IMoveEvents
 
         foreach (var uniqueId in uniqueIdVector)
             if (RegisterEvent(moveEvent, uniqueId, _uniqueIdMap))
-            {
                 tmpVector.Add(uniqueId);
-            }
 
         uniqueIdVector = tmpVector;
         return uniqueIdVector.Count > 0;
@@ -107,9 +102,7 @@ public class MoveEvents : IMoveEvents
 
         foreach (var actionId in actionIdVector)
             if (RegisterEvent(moveEvent, actionId, _actionIdMap))
-            {
                 tmpVector.Add(actionId);
-            }
 
         actionIdVector = tmpVector;
         return actionIdVector.Count > 0;
@@ -124,9 +117,7 @@ public class MoveEvents : IMoveEvents
 
         foreach (var position in positionVector)
             if (RegisterEvent(moveEvent, position, _positionMap))
-            {
                 tmpVector.Add(position);
-            }
 
         positionVector = tmpVector;
         return positionVector.Count > 0;
@@ -139,45 +130,38 @@ public class MoveEvents : IMoveEvents
             || RegisterLuaUniqueEvent(moveEvent)
             || RegisterLuaActionEvent(moveEvent)
             || RegisterLuaPositionEvent(moveEvent))
-        {
             return true;
-        }
-        else
-        {
-            _logger.Warning(
-                "[{}] missing id, aid, uid or position for script: {}",
-                nameof(RegisterLuaEvent),
-                moveEvent.GetScriptInterface().GetLoadingScriptName()
-            );
-            return false;
-        }
+
+        _logger.Warning(
+            "[{}] missing id, aid, uid or position for script: {}",
+            nameof(RegisterLuaEvent),
+            moveEvent.GetScriptInterface().GetLoadingScriptName()
+        );
+        return false;
     }
 
     public bool RegisterEvent(MoveEvent moveEvent, int id, Dictionary<int, MoveEventList> moveListMap)
     {
-        if (!moveListMap.TryGetValue(id, out MoveEventList moveEventList))
+        if (!moveListMap.TryGetValue(id, out var moveEventList))
         {
             moveEventList = new MoveEventList();
             moveEventList[moveEvent.EventType].Add(moveEvent);
             moveListMap[id] = moveEventList;
             return true;
         }
-        else
-        {
-            var eventList = moveEventList[moveEvent.EventType];
-            foreach (var existingMoveEvent in eventList)
+
+        var eventList = moveEventList[moveEvent.EventType];
+        foreach (var existingMoveEvent in eventList)
+            if (existingMoveEvent.Slot == moveEvent.Slot)
             {
-                if (existingMoveEvent.Slot == moveEvent.Slot)
-                {
-                    _logger.Warning(
-                        $"[RegisterEvent] Duplicate move event found: {id}, for script: {moveEvent.GetScriptInterface().GetLoadingScriptName()}"
-                    );
-                    return false;
-                }
+                _logger.Warning(
+                    $"[RegisterEvent] Duplicate move event found: {id}, for script: {moveEvent.GetScriptInterface().GetLoadingScriptName()}"
+                );
+                return false;
             }
-            eventList.Add(moveEvent);
-            return true;
-        }
+
+        eventList.Add(moveEvent);
+        return true;
     }
 
     public bool RegisterEvent(
@@ -192,20 +176,18 @@ public class MoveEvents : IMoveEvents
             moveListMap[position] = moveEventList;
             return true;
         }
-        else
-        {
-            var eventListForType = moveEventList[moveEvent.EventType];
-            if (eventListForType.Count > 0)
-            {
-                _logger.Warning(
-                    $"[RegisterEvent] Duplicate move event found: {position}, for script {moveEvent.GetScriptInterface().GetLoadingScriptName()}"
-                );
-                return false;
-            }
 
-            eventListForType.Add(moveEvent);
-            return true;
+        var eventListForType = moveEventList[moveEvent.EventType];
+        if (eventListForType.Count > 0)
+        {
+            _logger.Warning(
+                $"[RegisterEvent] Duplicate move event found: {position}, for script {moveEvent.GetScriptInterface().GetLoadingScriptName()}"
+            );
+            return false;
         }
+
+        eventListForType.Add(moveEvent);
+        return true;
     }
 
     public MoveEvent GetEvent(IItem item, MoveEventType eventType)
@@ -214,30 +196,31 @@ public class MoveEvents : IMoveEvents
             return null;
 
         if (item.UniqueId != 0 &&
-            _uniqueIdMap.TryGetValue((int)item.UniqueId, out MoveEventList moveEventListUniqueId) && 
+            _uniqueIdMap.TryGetValue((int)item.UniqueId, out var moveEventListUniqueId) &&
             moveEventListUniqueId[eventType].Count > 0)
-                return moveEventListUniqueId[eventType][0];
+            return moveEventListUniqueId[eventType][0];
 
         if (item.ActionId != 0 &&
-            _actionIdMap.TryGetValue(item.ActionId, out MoveEventList moveEventListActionId) &&
+            _actionIdMap.TryGetValue(item.ActionId, out var moveEventListActionId) &&
             moveEventListActionId[eventType].Count > 0)
-                return moveEventListActionId[eventType][0];
+            return moveEventListActionId[eventType][0];
 
-        if (_itemIdMap.TryGetValue(item.ServerId, out MoveEventList moveEventListItemId) && 
+        if (_itemIdMap.TryGetValue(item.ServerId, out var moveEventListItemId) &&
             moveEventListItemId[eventType].Count > 0)
-                return moveEventListItemId[eventType][0];
+            return moveEventListItemId[eventType][0];
 
         return null;
     }
 
     public MoveEvent GetEvent(Location location, MoveEventType eventType)
     {
-        if (_positionMap.TryGetValue(location, out MoveEventList moveEventList))
+        if (_positionMap.TryGetValue(location, out var moveEventList))
         {
             var events = moveEventList[eventType];
             if (events.Count > 0)
                 return events[0];
         }
+
         return null;
     }
 
@@ -247,16 +230,14 @@ public class MoveEvents : IMoveEvents
         OnCreatureMoveInternal(creature, fromLocation, toLocation, MoveEventType.MOVE_EVENT_STEP_IN);
     }
 
-    public void OnCreatureMoveInternal(ICreature creature, Location fromLocation, Location toLocation, MoveEventType eventType)
+    public void OnCreatureMoveInternal(ICreature creature, Location fromLocation, Location toLocation,
+        MoveEventType eventType)
     {
         var pos = eventType == MoveEventType.MOVE_EVENT_STEP_IN ? toLocation : fromLocation;
         var tile = _map.GetTile(pos);
 
         var moveEvent = GetEvent(pos, eventType);
-        if (moveEvent is not null)
-        {
-            moveEvent.FireStepEvent(creature, null, fromLocation, toLocation);
-        }
+        if (moveEvent is not null) moveEvent.FireStepEvent(creature, null, fromLocation, toLocation);
 
         if (tile.ItemsCount == 0)
             return;

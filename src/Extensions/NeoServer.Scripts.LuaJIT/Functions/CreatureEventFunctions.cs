@@ -57,8 +57,8 @@ public class CreatureEventFunctions : LuaScriptInterface, ICreatureEventFunction
         var creatureEvent = GetUserdata<CreatureEvent>(luaState, 1);
         if (creatureEvent != null)
         {
-            string typeName = GetString(luaState, 2);
-            string tmpStr = typeName.ToLower();
+            var typeName = GetString(luaState, 2);
+            var tmpStr = typeName.ToLower();
             if (tmpStr == "login")
             {
                 creatureEvent.EventType = CreatureEventType.CREATURE_EVENT_LOGIN;
@@ -112,6 +112,7 @@ public class CreatureEventFunctions : LuaScriptInterface, ICreatureEventFunction
                 _logger.Error("[CreatureEventFunctions::LuaCreatureEventType] - Invalid type for creature event: {}");
                 PushBoolean(luaState, false);
             }
+
             creatureEvent.Loaded = true;
             PushBoolean(luaState, true);
         }
@@ -119,6 +120,7 @@ public class CreatureEventFunctions : LuaScriptInterface, ICreatureEventFunction
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -133,13 +135,14 @@ public class CreatureEventFunctions : LuaScriptInterface, ICreatureEventFunction
                 PushBoolean(luaState, false);
                 return 1;
             }
-            
+
             PushBoolean(luaState, _creatureEvents.RegisterLuaEvent(creatureEvent));
         }
         else
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -154,12 +157,14 @@ public class CreatureEventFunctions : LuaScriptInterface, ICreatureEventFunction
                 PushBoolean(luaState, false);
                 return 1;
             }
+
             PushBoolean(luaState, true);
         }
         else
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 }

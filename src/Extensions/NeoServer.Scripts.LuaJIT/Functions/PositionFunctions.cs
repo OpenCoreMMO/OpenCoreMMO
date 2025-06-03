@@ -131,19 +131,19 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
 
         var fpp = new FindPathParams(true);
 
-        fpp.MinTargetDist = GetNumber<int>(luaState, 3, 0);
-        fpp.MaxTargetDist = GetNumber<int>(luaState, 4, 1);
+        fpp.MinTargetDist = GetNumber(luaState, 3, 0);
+        fpp.MaxTargetDist = GetNumber(luaState, 4, 1);
         fpp.FullPathSearch = GetBoolean(luaState, 5, fpp.FullPathSearch);
         fpp.ClearSight = GetBoolean(luaState, 6, fpp.ClearSight);
-        fpp.MaxSearchDist = GetNumber<int>(luaState, 7, fpp.MaxSearchDist);
+        fpp.MaxSearchDist = GetNumber(luaState, 7, fpp.MaxSearchDist);
 
-        (bool hasPath, Direction[] directions) = _mapTool.PathFinder.Find(position, positionEx, fpp);
+        var (hasPath, directions) = _mapTool.PathFinder.Find(position, positionEx, fpp);
 
         if (hasPath)
         {
             Lua.NewTable(luaState);
 
-            for (int i = 0; i < directions.Length; i++)
+            for (var i = 0; i < directions.Length; i++)
             {
                 Lua.PushNumber(luaState, (byte)directions[i]);
                 Lua.RawSetI(luaState, -2, ++i);

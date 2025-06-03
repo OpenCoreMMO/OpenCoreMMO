@@ -8,7 +8,7 @@ public class AddPremioumDaysAccountRequest : IRequest<OutputResponse>, ICommandB
     public int Days { get; set; }
     public string Description { get; set; }
     public int AccountId { get; private set; }
-    
+
 
     public void SetAccountId(int accountId)
     {

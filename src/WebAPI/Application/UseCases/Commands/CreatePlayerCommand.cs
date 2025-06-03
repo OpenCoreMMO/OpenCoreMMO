@@ -10,11 +10,12 @@ using NeoServer.Web.API.Response.Constants;
 
 namespace NeoServer.Web.API.Application.UseCases.Commands;
 
-public class CreatePlayerCommand (IPlayerRepository playerRepository, IOptions<PlayerConfig> config) :  IRequestHandler<CreatePlayerRequest, OutputResponse>
+public class CreatePlayerCommand(IPlayerRepository playerRepository, IOptions<PlayerConfig> config)
+    : IRequestHandler<CreatePlayerRequest, OutputResponse>
 {
     public async Task<OutputResponse> Handle(CreatePlayerRequest request, CancellationToken cancellationToken)
     {
-        var playerAlreadyExist = await playerRepository.GetPlayer(request.Name);
+        var playerAlreadyExist = await playerRepository.GetByName(request.Name);
         
         if (playerAlreadyExist is not null)
             return new OutputResponse(ErrorMessage.PlayerAlreadyExist);
@@ -59,7 +60,7 @@ public class CreatePlayerCommand (IPlayerRepository playerRepository, IOptions<P
         };
 
         await playerRepository.Add(player);
-        
+
         return new OutputResponse(player.Id);
     }
 }

@@ -14,15 +14,17 @@ public class CreatureFactory : ICreatureFactory
     //factories
     private readonly IMonsterFactory _monsterFactory;
     private readonly INpcFactory _npcFactory;
+    private readonly ICreatureGameInstance _creatureGameInstance;
 
     public CreatureFactory(
         IMonsterFactory monsterFactory,
-        IEnumerable<ICreatureEventSubscriber> creatureEventSubscribers, INpcFactory npcFactory)
+        IEnumerable<ICreatureEventSubscriber> creatureEventSubscribers, INpcFactory npcFactory, ICreatureGameInstance creatureGameInstance)
     {
         _monsterFactory = monsterFactory;
         _creatureEventSubscribers = creatureEventSubscribers;
         Instance = this;
         _npcFactory = npcFactory;
+        _creatureGameInstance = creatureGameInstance;
     }
 
     public static ICreatureFactory Instance { get; private set; }
@@ -57,6 +59,8 @@ public class CreatureFactory : ICreatureFactory
 
         AttachEvents(npc);
         OnCreatureCreated?.Invoke(npc);
+
+        _creatureGameInstance.Add(npc);
 
         return npc;
     }

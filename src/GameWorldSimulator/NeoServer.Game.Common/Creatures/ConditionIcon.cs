@@ -16,6 +16,6 @@ public enum ConditionIcon : uint
     Dazzled = 1 << 10,
     Cursed = 1 << 11,
     PartyBuff = 1 << 12,
-    Redswords = 1 << 13,
+    RedSwords = 1 << 13,
     Pigeon = 1 << 14
 }

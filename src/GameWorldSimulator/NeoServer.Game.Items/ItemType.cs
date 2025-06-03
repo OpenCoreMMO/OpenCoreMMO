@@ -62,9 +62,8 @@ public class ItemType : IItemType
 
     public float Weight => Attributes.GetAttribute<float>(ItemAttribute.Weight);
 
-    public void SetName(string name)
+    public void UpdateName(string name)
     {
-        ThrowIfLocked();
         Name = name;
     }
 

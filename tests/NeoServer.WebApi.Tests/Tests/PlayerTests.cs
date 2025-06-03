@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using NeoServer.Game.Common.Creatures.Players;
 using NeoServer.Web.API.Requests.Commands;
 using NeoServer.Web.API.Response;
 using NeoServer.Web.API.Response.Player;
@@ -8,10 +9,40 @@ using Xunit;
 
 namespace NeoServer.WebApi.Tests.Tests;
 
-
 [Collection("Non-Parallel PlayerTests")]
 public class PlayerTests : BaseIntegrationTests
 {
+    #region Post Test
+
+    [Fact]
+    public async Task Create_Player()
+    {
+        // Arrange
+        var account = CreateAccount();
+
+
+        var request = new CreatePlayerRequest
+        {
+            AccountId = account.Id,
+            Name = "new player",
+            PosX = 0,
+            PosY = 0,
+            PosZ = 0,
+            Sex = 0,
+            Town = 1,
+            WorldId = account.Id,
+            Vocation = 1
+        };
+
+        //Act
+        var response = await NeoHttpClient.PostAsJsonAsync("api/Player", request);
+
+        //Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    #endregion
+
     #region Get Tests
 
     [Fact(DisplayName = "Get All Players")]
@@ -23,7 +54,9 @@ public class PlayerTests : BaseIntegrationTests
         var playerCount = await NeoContext.Players.CountAsync();
 
         //Act
-        var response = await NeoHttpClient.GetFromJsonAsync<BasePagedResponseViewModel<IEnumerable<PlayerResponseViewModel>>>("api/Player");
+        var response =
+            await NeoHttpClient.GetFromJsonAsync<BasePagedResponseViewModel<IEnumerable<PlayerResponseViewModel>>>(
+                "api/Player");
         NeoContext.Players.Remove(player);
 
         //Assert
@@ -39,11 +72,13 @@ public class PlayerTests : BaseIntegrationTests
     {
         // Arrange
         var player = await CreatePlayer();
-        var player2 =await CreatePlayer();
+        var player2 = await CreatePlayer();
         var playerCount = await NeoContext.Players.CountAsync();
 
         //Act
-        var response = await NeoHttpClient.GetFromJsonAsync<BasePagedResponseViewModel<IEnumerable<PlayerResponseViewModel>>>($"api/Player?name={player.Name}");
+        var response =
+            await NeoHttpClient.GetFromJsonAsync<BasePagedResponseViewModel<IEnumerable<PlayerResponseViewModel>>>(
+                $"api/Player?name={player.Name}");
         NeoContext.Players.Remove(player);
         NeoContext.Players.Remove(player2);
 
@@ -85,43 +120,10 @@ public class PlayerTests : BaseIntegrationTests
     public async Task Get_Player_By_Id_NotFound()
     {
         //Act
-        var response = await NeoHttpClient.GetAsync($"api/Player/9999");
+        var response = await NeoHttpClient.GetAsync("api/Player/9999");
 
         //Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    #endregion
-
-
-    #region Post Test
-
-    [Fact]
-    public async Task Create_Player()
-    {
-
-        // Arrange
-        var account = CreateAccount();
-
-
-        var request = new CreatePlayerRequest
-        {
-            AccountId = account.Id,
-            Name = "new player",
-            PosX = 0,
-            PosY = 0,
-            PosZ = 0,
-            Sex = 0,
-            Town = 1,
-            WorldId = account.Id,
-            Vocation = 1,
-        };
-
-         //Act
-         var response = await NeoHttpClient.PostAsJsonAsync($"api/Player", request);
-
-        //Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     #endregion
@@ -132,7 +134,6 @@ public class PlayerTests : BaseIntegrationTests
     [Fact]
     public async Task Edit_Skills_Player()
     {
-
         // Arrange
         var player = await CreatePlayer();
 
@@ -145,7 +146,7 @@ public class PlayerTests : BaseIntegrationTests
             SkillFishing = 10,
             SkillShielding = 19,
             SkillSword = 16,
-            SkillFist = 17,
+            SkillFist = 17
         };
 
         //Act
@@ -160,7 +161,6 @@ public class PlayerTests : BaseIntegrationTests
     [Fact]
     public async Task Edit_Infos_Player()
     {
-
         // Arrange
         var player = await CreatePlayer();
 
@@ -168,10 +168,10 @@ public class PlayerTests : BaseIntegrationTests
         var request = new UpdatePlayerInfosRequest
         {
             Capacity = 500,
-            ChaseMode = Game.Common.Creatures.Players.ChaseMode.Stand,
-            FightMode = Game.Common.Creatures.Players.FightMode.Attack,
+            ChaseMode = ChaseMode.Stand,
+            FightMode = FightMode.Attack,
             Group = 1,
-            Gender = Game.Common.Creatures.Players.Gender.Male,
+            Gender = Gender.Male,
             Health = 200,
             Level = 100,
             Mana = 200,
@@ -183,7 +183,7 @@ public class PlayerTests : BaseIntegrationTests
             WorldId = 1,
             MaxHealth = 200,
             Name = "PlayerNNameNew",
-            Speed = 250,
+            Speed = 250
         };
 
         //Act
@@ -194,5 +194,6 @@ public class PlayerTests : BaseIntegrationTests
         //Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
+
     #endregion
 }

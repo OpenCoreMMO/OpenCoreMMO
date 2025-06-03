@@ -48,22 +48,18 @@ public static class MonsterConverter
                     new Voice(x.Sentence, x.Yell ? SpeechType.MonsterYell : SpeechType.MonsterSay)).ToArray();
         }
 
-        monster.Attacks = MonsterAttackConverter.Convert(monsterData, logger);
+        monster.Attacks = MonsterAttackConverter.Convert(monsterData, logger)?.OrderByDescending(x=>x.AttackChance).ToArray();
 
-        var distanceAttacks = monster.Attacks.Where(x => x.CombatAttack is DistanceCombatAttack).ToList();
-        monster.HasDistanceAttack = distanceAttacks.Any();
+        monster.HasDistanceAttack = monster.Attacks.Any(x => x.CombatParameter.Range > 0);
 
-        monster.MaxRangeDistanceAttack = distanceAttacks.Any()
-            ? distanceAttacks.Select(x => x.CombatAttack as DistanceCombatAttack)
-                .Max(d => d?.Range ?? 0)
-            : (byte)0;
-
+        monster.MaxRangeDistanceAttack = monster.Attacks.Max(x => x.CombatParameter.Range) ?? 0;
+                
         monster.ElementResistance = MonsterResistanceConverter.Convert(monsterData).ToImmutableDictionary();
         monster.Immunities = MonsterImmunityConverter.Convert(monsterData);
 
         monster.Defenses = MonsterDefenseConverter.Convert(monsterData, monsters);
 
-        monster.Loot = MonsterLootConverter.Convert(monsterData, configuration.LootRate, itemTypeStore);
+        monster.Loot = MonsterLootConverter.Convert(monsterData, itemTypeStore);
 
         var summons = MonsterSummonConverter.Convert(monsterData);
         monster.MaxSummons = (byte)summons.Item1;

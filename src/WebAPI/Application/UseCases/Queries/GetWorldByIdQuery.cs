@@ -6,7 +6,8 @@ using NeoServer.Web.API.Response.World;
 
 namespace NeoServer.Web.API.Application.UseCases.Queries;
 
-public class GetWorldByIdQuery(IMapper mapper, IWorldRepository worldRepository) : IRequestHandler<GetWorldByIdRequest, WorldResponseViewModel>
+public class GetWorldByIdQuery(IMapper mapper, IWorldRepository worldRepository)
+    : IRequestHandler<GetWorldByIdRequest, WorldResponseViewModel>
 {
     public async Task<WorldResponseViewModel> Handle(GetWorldByIdRequest request, CancellationToken cancellationToken)
     {

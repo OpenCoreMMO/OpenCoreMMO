@@ -8,6 +8,7 @@ namespace NeoServer.Scripts.LuaJIT.Functions;
 public class TalkActionFunctions : LuaScriptInterface, ITalkActionFunctions
 {
     private static ILogger _logger;
+
     public TalkActionFunctions(ILogger logger) : base(nameof(TalkActionFunctions))
     {
         _logger = logger;

@@ -8,11 +8,15 @@ public class GuildRankEntityConfiguration : IEntityTypeConfiguration<GuildRankEn
 {
     public void Configure(EntityTypeBuilder<GuildRankEntity> builder)
     {
-        builder.HasKey(e => new { e.Id });
+        builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(e => e.GuildId);
         builder.Property(e => e.Name);
         builder.Property(e => e.Level);
+
+        builder.HasOne(x => x.Guild)
+            .WithMany(x => x.Ranks)
+            .HasForeignKey(x => x.GuildId);
     }
 }

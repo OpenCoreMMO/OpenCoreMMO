@@ -13,6 +13,8 @@ public class PlayerInventoryItemEntityConfiguration : IEntityTypeConfiguration<P
 
         entity.ToTable("PlayerInventoryItem");
 
+        entity.HasIndex(e => new { e.PlayerId, e.SlotId }).IsUnique();
+
         entity.Property(e => e.PlayerId)
             .IsRequired()
             .HasColumnType("int");

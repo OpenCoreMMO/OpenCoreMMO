@@ -17,7 +17,8 @@ public class PlayerOnTextEditEventHandler : IGameEventHandler
 
     public void Execute(IPlayer player, IItem item, string text)
     {
-        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(player.CreatureId, CreatureEventType.CREATURE_EVENT_TEXTEDIT))
+        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(player.CreatureId,
+                     CreatureEventType.CREATURE_EVENT_TEXTEDIT))
             creatureEvent.ExecuteOnTextEdit(player, item, text);
     }
 }

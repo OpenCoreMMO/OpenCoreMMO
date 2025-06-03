@@ -2,12 +2,13 @@
 
 internal record Wait
 {
+    public int PlayerId;
+
+    public long Timeout;
+
     public Wait(long timeout, int playerId)
     {
         Timeout = timeout;
         PlayerId = playerId;
     }
-
-    public long Timeout;
-    public int PlayerId;
 }

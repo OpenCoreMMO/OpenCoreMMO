@@ -1,20 +1,13 @@
-﻿using NeoServer.Game.Common.Combat.Structs;
-using NeoServer.Game.Common.Contracts;
-using NeoServer.Game.Common.Contracts.Creatures;
+﻿using NeoServer.Game.Common;
+using NeoServer.Game.Creatures.Models.Bases.Events;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Events.Creatures;
 
-public class CreatureOnHealthChangeEventHandler : IGameEventHandler
+public class CreatureOnHealthChangeEventHandler(ICreatureEvents creatureEvents)
+    : IApplicationEventHandler<CreatureHealthChangedEvent>
 {
-    private readonly ICreatureEvents _creatureEvents;
-
-    public CreatureOnHealthChangeEventHandler(ICreatureEvents creatureEvents)
-    {
-        _creatureEvents = creatureEvents;
-    }
-
-    public void Execute(ICombatActor actor, ICreature attacker, CombatDamage damage)
+    public void Handle(CreatureHealthChangedEvent @event)
     {
         //todo: implement this
         //foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(actor.CreatureId, CreatureEventType.CREATURE_EVENT_HEALTHCHANGE))

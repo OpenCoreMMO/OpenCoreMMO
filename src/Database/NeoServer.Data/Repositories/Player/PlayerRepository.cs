@@ -51,13 +51,19 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
         return await context.PlayerOutfitAddons.Where(x => x.PlayerId == playerId).ToListAsync();
     }
 
-    public async Task<PlayerEntity> GetPlayer(string playerName)
+    public async Task<PlayerEntity> GetByName(string playerName)
     {
         await using var context = NewDbContext;
         //todo: find a way to use invariant culture. it currently doesn't work with sqlite
         return await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == playerName.ToLower());
     }
 
+    public async Task<PlayerEntity> GetById(int id)
+    {
+        await using var context = NewDbContext;
+        return await context.Players.FirstOrDefaultAsync(x => x.Id == id);
+    }
+    
     public async Task UpdatePlayers(IEnumerable<IPlayer> players)
     {
         var tasks = new List<Task>();
@@ -95,10 +101,11 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
         await neoContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<PlayerEntity>> GetPaginatedPlayersAsync(Expression<Func<PlayerEntity, bool>> filter, int page, int limit)
+    public async Task<IEnumerable<PlayerEntity>> GetPaginatedPlayersAsync(Expression<Func<PlayerEntity, bool>> filter,
+        int page, int limit)
     {
         await using var neoContext = NewDbContext;
-        var skip = (page - 1)  * limit;
+        var skip = (page - 1) * limit;
         return await neoContext.Players.Where(filter).Skip(skip).Take(limit).ToListAsync();
     }
 
@@ -153,6 +160,8 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
                 ? condition.RemainingTime / TimeSpan.TicksPerMillisecond
                 : 0);
         playerEntity.Vocation = player.VocationType;
+        playerEntity.Skull = player.Skull;
+        playerEntity.SkullEndsAt = player.SkullEndsAt;
 
         neoContext.Update(playerEntity);
     }

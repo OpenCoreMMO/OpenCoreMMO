@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NeoServer.Game.Common.Contracts.DataStores;
+using NeoServer.Game.Common.Helpers;
 
 namespace NeoServer.Data.InMemory.DataStores;
 
@@ -26,9 +27,9 @@ public class DataStore<TStore, TKey, TValue> : IDataStore<TKey, TValue> where TS
         _values.Clear();
     }
 
-    public virtual void Add(TKey key, TValue value)
+    public virtual void AddOrUpdate(TKey key, TValue value)
     {
-        _values.TryAdd(key, value);
+        _values.AddOrUpdate(key, value);
     }
 
     public virtual TValue Get(TKey key)

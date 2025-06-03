@@ -27,5 +27,4 @@ public interface IMoveEvents
     bool RemoveItem(IItem item, Location position, IItem tileitem = null);
 
     #endregion
-
 }

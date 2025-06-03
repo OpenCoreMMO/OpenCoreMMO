@@ -77,7 +77,7 @@ public class DBFunctions : LuaScriptInterface, IDBFunctions
         var query = GetString(luaState, -1);
 
         var dbResult = _dbContext.ExecuteQueryAsync(query);
-        
+
         if (dbResult != null)
             Lua.PushNumber(luaState, GetScriptEnv().AddResult(dbResult.Result));
         else

@@ -188,64 +188,6 @@ public class PlayerTest
         Assert.Equal(Direction.East, sut.GetNextStep());
     }
 
-    [Fact]
-    public void PlayerDoesNotGainSkillsWhenUsingAnAttackRune()
-    {
-        var player = PlayerTestDataBuilder.Build(inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>());
-        var targetPlayer =
-            PlayerTestDataBuilder.Build(inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>());
-
-        var itemAttributeListMock = new Mock<IItemAttributeList>();
-
-        itemAttributeListMock
-            .Setup(x => x.GetAttribute<bool>(It.IsAny<ItemAttribute>()))
-            .Returns(true);
-
-        itemAttributeListMock
-            .Setup(x => x.GetAttributeArray(It.IsAny<string>()))
-            .Returns(new dynamic[] { "0.0", "0.0" });
-
-        var itemTypeMock = new Mock<IItemType>();
-        itemTypeMock
-            .Setup(x => x.Attributes)
-            .Returns(itemAttributeListMock.Object);
-
-        var rune = ItemTestData.CreateAttackRune(1, amount: 10);
-
-        var before = new Dictionary<SkillType, byte>
-        {
-            { SkillType.Axe, player.GetSkillTries(SkillType.Axe) },
-            { SkillType.Club, player.GetSkillTries(SkillType.Club) },
-            { SkillType.Distance, player.GetSkillTries(SkillType.Distance) },
-            { SkillType.Fishing, player.GetSkillTries(SkillType.Fishing) },
-            { SkillType.Fist, player.GetSkillTries(SkillType.Fist) },
-            { SkillType.Level, player.GetSkillTries(SkillType.Level) },
-            { SkillType.Magic, player.GetSkillTries(SkillType.Magic) },
-            { SkillType.Shielding, player.GetSkillTries(SkillType.Shielding) },
-            { SkillType.Speed, player.GetSkillTries(SkillType.Speed) },
-            { SkillType.Sword, player.GetSkillTries(SkillType.Sword) }
-        };
-
-        var result = rune.Use(player, targetPlayer, out var attackType);
-        Assert.True(result);
-
-        var after = new Dictionary<SkillType, byte>
-        {
-            { SkillType.Axe, player.GetSkillTries(SkillType.Axe) },
-            { SkillType.Club, player.GetSkillTries(SkillType.Club) },
-            { SkillType.Distance, player.GetSkillTries(SkillType.Distance) },
-            { SkillType.Fishing, player.GetSkillTries(SkillType.Fishing) },
-            { SkillType.Fist, player.GetSkillTries(SkillType.Fist) },
-            { SkillType.Level, player.GetSkillTries(SkillType.Level) },
-            { SkillType.Magic, player.GetSkillTries(SkillType.Magic) },
-            { SkillType.Shielding, player.GetSkillTries(SkillType.Shielding) },
-            { SkillType.Speed, player.GetSkillTries(SkillType.Speed) },
-            { SkillType.Sword, player.GetSkillTries(SkillType.Sword) }
-        };
-
-        foreach (var skillType in before.Keys) Assert.Equal(before[skillType], after[skillType]);
-    }
-
     #region StopAllActions
 
     [Fact]

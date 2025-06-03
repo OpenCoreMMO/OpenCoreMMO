@@ -4,6 +4,7 @@ using NeoServer.Game.Common.Contracts;
 using NeoServer.Game.Common.Contracts.Chats;
 using NeoServer.Game.Common.Contracts.Creatures;
 using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Networking.EventHandlers;
 using NeoServer.Server.Events.Creature;
 using NeoServer.Server.Events.Subscribers;
 
@@ -15,6 +16,7 @@ public static class EventInjection
     {
         builder.RegisterServerEvents();
         builder.RegisterGameEvents();
+        builder.RegisterNetworkEvents();
         builder.RegisterEventSubscribers();
         builder.AddSingleton<EventSubscriber>();
         builder.AddSingleton<FactoryEventSubscriber>();
@@ -26,6 +28,11 @@ public static class EventInjection
     {
         var assembly = Assembly.GetAssembly(typeof(CreatureAddedOnMapEventHandler));
         builder.RegisterAssemblyTypes(assembly);
+    }
+
+    private static void RegisterNetworkEvents(this IServiceCollection builder)
+    {
+        builder.RegisterAssembliesByInterface(typeof(INetworkEventHandler<>));
     }
 
     private static void RegisterGameEvents(this IServiceCollection builder)

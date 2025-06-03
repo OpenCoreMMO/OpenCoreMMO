@@ -16,6 +16,8 @@ public interface IGameServer
     GameState State { get; }
     byte LightLevel { get; }
     byte LightColor { get; }
+    int LightHour { get; }
+    int LightHourDelta { get; }
     IPersistenceDispatcher PersistenceDispatcher { get; }
     void Close();
     void Open();

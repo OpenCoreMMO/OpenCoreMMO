@@ -40,6 +40,7 @@ public class Sector
 
         Tiles[z, x & SECTOR_MASK, y & SECTOR_MASK] = tile;
     }
+
     public void AddTile(ITile tile)
     {
         var z = tile.Location.Z;

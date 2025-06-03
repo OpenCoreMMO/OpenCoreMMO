@@ -34,7 +34,7 @@ public class ForSqLiteAccountEntityConfiguration : IEntityTypeConfiguration<Acco
             .IsRequired()
             .HasMaxLength(20)
             .HasColumnType("char(20)");
-  
+
         builder.Property(e => e.Secret)
             .HasColumnType("char(16)");
 

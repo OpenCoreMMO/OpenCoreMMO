@@ -39,7 +39,7 @@ public class VocationLoader
             var vocations = GetVocations();
 
             foreach (var vocation in vocations)
-                _vocationStore.Add(vocation.VocationType, vocation);
+                _vocationStore.AddOrUpdate(vocation.VocationType, vocation);
 
             return new object[] { vocations.Count };
         });
@@ -66,7 +66,7 @@ public class VocationLoader
                 continue;
             }
 
-            _vocationStore.Add(vocation.VocationType, vocation);
+            _vocationStore.AddOrUpdate(vocation.VocationType, vocation);
         }
     }
 
@@ -127,7 +127,7 @@ public class VocationLoader
             Converters =
             {
                 new SkillConverter(),
-                new AbstractConverter<VocationFormula, IVocationFormula>(),
+                new AbstractConverter<VocationFormula, IVocationFormula>()
             }
         });
 

@@ -17,18 +17,16 @@ public static class DictionaryExtensions
         try
         {
             if (val is JsonElement jsonElement && typeof(T).FullName != typeof(JsonElement).FullName)
-            {
                 val = jsonElement.ValueKind switch
                 {
-                    JsonValueKind.String=> jsonElement.GetString(),
+                    JsonValueKind.String => jsonElement.GetString(),
                     JsonValueKind.False => false,
                     JsonValueKind.True => true,
                     JsonValueKind.Number => jsonElement.GetDecimal(),
                     //JsonValueKind.Object=> throw new Exception("Object not supported"),
                     _ => throw new Exception("Type not supported")
                 };
-            }
-            
+
             value = (T)Convert.ChangeType(val, typeof(T));
             return true;
         }

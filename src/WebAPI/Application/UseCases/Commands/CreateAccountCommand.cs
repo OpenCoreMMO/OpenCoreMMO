@@ -7,15 +7,16 @@ using NeoServer.Web.API.Response.Constants;
 
 namespace NeoServer.Web.API.Application.UseCases.Commands;
 
-public class CreateAccountCommand(IAccountRepository accountRepository) : IRequestHandler<CreateAccountRequest, OutputResponse>
+public class CreateAccountCommand(IAccountRepository accountRepository)
+    : IRequestHandler<CreateAccountRequest, OutputResponse>
 {
     public async Task<OutputResponse> Handle(CreateAccountRequest request, CancellationToken cancellationToken)
     {
         var anotherAccount = await accountRepository.GetByEmailOrAccountName(request.Email, request.AccountName);
-        
+
         if (anotherAccount?.EmailAddress is not null)
             return new OutputResponse(ErrorMessage.AccountEmailAlreadyExist);
-        
+
         if (anotherAccount?.AccountName is not null)
             return new OutputResponse(ErrorMessage.AccountNameAlreadyExist);
 
@@ -24,9 +25,9 @@ public class CreateAccountCommand(IAccountRepository accountRepository) : IReque
             Password = request.Password,
             CreatedAt = DateTime.UtcNow,
             EmailAddress = request.Email,
-            AccountName = request.AccountName,
+            AccountName = request.AccountName
         };
-        
+
         await accountRepository.Insert(account);
 
         return new OutputResponse(account.Id);

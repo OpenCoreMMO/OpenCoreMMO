@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using NeoServer.Game.Common.Combat;
+using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.DataStores;
 using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.Items.Types.Body;
@@ -33,6 +35,9 @@ public interface IInventory : IHasItem
     IDictionary<ushort, uint> Map { get; }
     IEnumerable<IItem> DressingItems { get; }
     bool IsUsingWeapon { get; }
+    IAmmo Ammo { get; }
+    float AttackRate { get; }
+    ElementalDamage TotalElementalAttack { get; }
     IItem this[Slot slot] { get; }
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
     Result<IItem> RemoveItem(Slot slot, byte amount);
@@ -50,4 +55,6 @@ public interface IInventory : IHasItem
     event ChangeInventoryWeight OnWeightChanged;
 
     #endregion
+
+    void Protect(CombatDamage damage);
 }

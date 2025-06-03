@@ -62,7 +62,8 @@ public class ChannelLoader : IStartupLoader
                 }
                 else
                 {
-                    createdChannel = _chatChannelFactory.Create(channel.Id, channel.Name, channel.Description, channel.Opened,
+                    createdChannel = _chatChannelFactory.Create(channel.Id, channel.Name, channel.Description,
+                        channel.Opened,
                         ParseColor(channel.Color?.Default),
                         channel.Color?.ByVocation?.ToDictionary(x => (byte)x.Key, x => ParseColor(x.Value)) ??
                         default,
@@ -91,7 +92,7 @@ public class ChannelLoader : IStartupLoader
 
                 if (createdChannel is null) continue;
 
-                _chatChannelStore.Add(createdChannel.Id, createdChannel);
+                _chatChannelStore.AddOrUpdate(createdChannel.Id, createdChannel);
             }
 
         _logger.Verbose("Channels loaded!");

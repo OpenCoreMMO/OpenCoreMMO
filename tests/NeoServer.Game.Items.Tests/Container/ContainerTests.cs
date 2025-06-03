@@ -23,7 +23,7 @@ public class ContainerTests
     {
         var itemType = new ItemType();
         itemType.Attributes.SetAttribute(ItemAttribute.Capacity, capacity);
-        itemType.SetName(name);
+        itemType.UpdateName(name);
         itemType.SetFlag(ItemFlag.Pickupable);
         itemType.SetFlag(ItemFlag.Movable);
 
@@ -34,7 +34,7 @@ public class ContainerTests
     {
         var type = new ItemType();
         type.SetClientId(id);
-        type.SetName("item");
+        type.UpdateName("item");
 
         return new Cumulative(type, new Location(100, 100, 7), amount);
     }
@@ -43,7 +43,7 @@ public class ContainerTests
     {
         var type = new ItemType();
         type.SetClientId(id);
-        type.SetName(name);
+        type.UpdateName(name);
         type.SetFlag(ItemFlag.Pickupable);
 
         return new Item(type, new Location(100, 100, 7));
@@ -864,10 +864,10 @@ public class ContainerTests
 
         var loot = new Loot(new ILootItem[]
         {
-            new LootItem(() => ItemTestData.CreateWeaponItem(1, name: "sabre").Metadata, 1, 1, null),
-            new LootItem(() => ItemTestData.CreateContainer(2).Metadata, 1, 1,
-                new ILootItem[] { new LootItem(() => food.Metadata, 1, 1, null) }),
-            new LootItem(() => ItemTestData.CreateAttackRune(3, amount: 55).Metadata, 55, 1, null)
+            new LootItem(ItemTestData.CreateWeaponItem(1, name: "sabre").Metadata, 1, 1, null),
+            new LootItem(ItemTestData.CreateContainer(2).Metadata, 1, 1,
+                new ILootItem[] { new LootItem(food.Metadata, 1, 1, null) }),
+            new LootItem(ItemTestData.CreateAttackRune(3, amount: 55).Metadata, 55, 1, null)
         }, new HashSet<ICreature>(0));
 
         var sut = ItemTestData.CreateLootContainer(5, loot: loot);

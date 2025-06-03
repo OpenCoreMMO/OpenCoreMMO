@@ -58,7 +58,8 @@ public class SpawnManager
             var monster = _creatureFactory.CreateMonster(monsterToSpawn.Name, monsterToSpawn.Spawn);
 
             if (monster == null) continue;
-            PlaceCreature(monsterToSpawn, monster);
+           // PlaceCreature(monsterToSpawn, monster);
+           monster.Born(monsterToSpawn.Spawn.Location);
         }
 
         foreach (var npcToSpawn in npcs)

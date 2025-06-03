@@ -16,7 +16,8 @@ public class CreatureOnPrepareDeathEventHandler : IGameEventHandler
 
     public void Execute(ICombatActor actor, ICombatActor killer, int realDamage)
     {
-        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(actor.CreatureId, CreatureEventType.CREATURE_EVENT_PREPAREDEATH))
+        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(actor.CreatureId,
+                     CreatureEventType.CREATURE_EVENT_PREPAREDEATH))
             creatureEvent.ExecuteOnPrepareDeath(actor, killer, realDamage);
     }
 }

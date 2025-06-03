@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using NeoServer.Web.API.Response;
 using NeoServer.Web.API.Response.Player;
 
 namespace NeoServer.Web.API.Requests.Queries;

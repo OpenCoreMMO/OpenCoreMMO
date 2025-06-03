@@ -36,7 +36,9 @@ public class ItemTransformService : IItemTransformService
 
         _itemTypeStore.TryGetValue(toItem, out var toItemType);
 
-        var result = ReplaceItemFromGroundOperation.Execute(_map, _staticToDynamicTileService, _itemFactory, fromItem, toItemType);
+        var result =
+            ReplaceItemFromGroundOperation.Execute(_map, _staticToDynamicTileService, _itemFactory, fromItem,
+                toItemType);
         if (!result.IsNotApplicable) return result;
 
         result = ReplaceItemOnInventoryOperation.Execute(_itemFactory, fromItem, toItemType);

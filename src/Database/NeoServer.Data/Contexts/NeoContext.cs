@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Configurations;
 using NeoServer.Data.Configurations.ForSqLite;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Extensions;
 using NeoServer.Data.Helpers;
 using Serilog;
-using System.Threading.Tasks;
-using System.Data.Common;
 
 namespace NeoServer.Data.Contexts;
 
@@ -33,10 +33,14 @@ public class NeoContext : DbContext
     public DbSet<PlayerOutfitAddonEntity> PlayerOutfitAddons { get; set; }
     public DbSet<PlayerStorageEntity> PlayerStorages { get; set; }
     public DbSet<WorldRecordEntity> WorldRecords { get; set; }
-    
+    public DbSet<PlayerDeathEntity> PlayerDeaths { get; set; }
+    public DbSet<PlayerDeathKillerEntity> PlayerDeathKillers { get; set; }
+
     public DbSet<AccountPremiumHistoryEntity> AccountPremiumHistories { get; set; }
-    
+
     public DbSet<IpBanEntity> IpBans { get; set; }
+    
+    public DbSet<ReportBugEntity> ReportBugs { get; set; }
     
     public DbSet<HouseEntity> Houses { get; set; }
     public DbSet<HouseListEntity> HouseList { get; set; }
@@ -60,6 +64,8 @@ public class NeoContext : DbContext
             modelBuilder.ApplyConfiguration(new ForSqLiteGuildRankEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLiteWorldEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLiteAccountPremiumHistoryEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new ForSqLitePlayerDeathEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new ForSqLitePlayerDeathKillerEntityConfiguration());
         }
         else
         {
@@ -72,6 +78,8 @@ public class NeoContext : DbContext
             modelBuilder.ApplyConfiguration(new GuildRankEntityConfiguration());
             modelBuilder.ApplyConfiguration(new WorldEntityConfiguration());
             modelBuilder.ApplyConfiguration(new AccountPremiumHistoryEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new PlayerDeathEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new PlayerDeathKillerEntityConfiguration());
         }
 
         modelBuilder.ApplyConfiguration(new PlayerQuestEntityConfiguration());
@@ -80,6 +88,7 @@ public class NeoContext : DbContext
         modelBuilder.ApplyConfiguration(new GuildMembershipEntityConfiguration());
         modelBuilder.ApplyConfiguration(new PlayerStorageEntityConfiguration());
         modelBuilder.ApplyConfiguration(new IpBanEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new ReportBugEntityConfiguration());
         modelBuilder.ApplyConfiguration(new HouseEntityConfiguration());
         modelBuilder.ApplyConfiguration(new HouseListEntityConfiguration());
 
@@ -119,7 +128,7 @@ public class NeoContext : DbContext
         Database.GetDbConnection().Open();
         using var command = Database.GetDbConnection().CreateCommand();
         command.CommandText = query;
-        command.CommandType = System.Data.CommandType.Text;
+        command.CommandType = CommandType.Text;
 
         using var reader = command.ExecuteReaderAsync().Result;
         result = reader.HasRows ? new DBResult(reader) : null;
@@ -133,7 +142,7 @@ public class NeoContext : DbContext
         await Database.GetDbConnection().OpenAsync();
         using var command = Database.GetDbConnection().CreateCommand();
         command.CommandText = query;
-        command.CommandType = System.Data.CommandType.Text;
+        command.CommandType = CommandType.Text;
 
         using var reader = await command.ExecuteReaderAsync();
         result = reader.HasRows ? new DBResult(reader) : null;

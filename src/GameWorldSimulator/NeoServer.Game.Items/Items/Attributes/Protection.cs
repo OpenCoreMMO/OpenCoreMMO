@@ -22,7 +22,7 @@ public sealed class Protection : IProtection
     private Dictionary<DamageType, sbyte> DamageProtection => _item.Metadata.Attributes.DamageProtection;
 
 
-    public bool Protect(ref CombatDamage damage)
+    public bool Protect(CombatDamage damage)
     {
         var protection = GetProtection(damage);
         if (protection == 0) return false;
