@@ -1,8 +1,8 @@
-﻿using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Items.Factories;
-using NeoServer.Game.Items.Factories.AttributeFactory;
+﻿using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Items.Factories;
+using NeoServer.Domain.Items.Factories.AttributeFactory;
 
 namespace NeoServer.Game.Tests.Server;
 

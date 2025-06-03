@@ -1,9 +1,8 @@
 ﻿using NeoServer.Data.Interfaces;
-using NeoServer.Game.Combat.Spells;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Results;
+using NeoServer.Domain.Combat.Spells;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Results;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Helpers;
@@ -13,9 +12,9 @@ namespace NeoServer.Extensions.Spells.Commands;
 public class BanPlayerCommand : CommandSpell
 {
     private const string BANISH_REASON = "You have been banished by a gamemaster.";
+
     public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
-        
         if (Params.Length == 0)
             return Result.NotApplicable;
 

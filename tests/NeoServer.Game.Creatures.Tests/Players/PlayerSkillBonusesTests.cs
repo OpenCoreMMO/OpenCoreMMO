@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Creatures.Player;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;
 

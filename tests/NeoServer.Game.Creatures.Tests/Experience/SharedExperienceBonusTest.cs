@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Moq;
-using NeoServer.Game.Common.Combat;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Services;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Creatures.Experience;
-using NeoServer.Game.Creatures.Player;
+using NeoServer.Domain.Common.Combat;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Experience;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;
 

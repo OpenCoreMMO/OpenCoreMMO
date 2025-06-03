@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Reflection;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Effects;
-using NeoServer.Game.Common.Helpers;
-using NeoServer.Game.Common.Location;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Effects;
+using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Loaders.Interfaces;
 
 namespace NeoServer.Loaders.Effects;

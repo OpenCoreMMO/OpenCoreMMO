@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Networking.Packets.Messages;
 using NeoServer.Server.Common.Contracts.Network.Enums;
 using Xunit;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
-using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Game.Tests.Helpers;
 using Xunit;
 

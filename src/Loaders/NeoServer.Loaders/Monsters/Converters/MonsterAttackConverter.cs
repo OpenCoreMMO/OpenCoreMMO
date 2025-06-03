@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
-using NeoServer.Game.Combat.Attacks;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Combat.Structs;
-using NeoServer.Game.Common.Contracts.Combat.Attacks;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Effects.Parsers;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Parsers;
+using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Combat.Attacks;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Effects.Parsers;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Parsers;
 using NeoServer.Server.Helpers.Extensions;
 using Serilog;
 
@@ -20,8 +20,10 @@ internal class MonsterAttackConverter
 {
     private static HashSet<string> SupportedAttributes = new()
     {
-        "name", "attack", "skill", "min", "max", "interval", "length", "radius", "target", "range", "spread", "chance", "attributes"
+        "name", "attack", "skill", "min", "max", "interval", "length", "radius", "target", "range", "spread", "chance",
+        "attributes"
     };
+
     public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)
     {
         if (data.Attacks is null) return [];
@@ -63,14 +65,14 @@ internal class MonsterAttackConverter
             attributes.TryGetValue("shootEffect", out string shootEffect);
             attributes.TryGetValue("areaEffect", out string areaEffect);
 
-            var combatAttack = new MonsterCombatAttack()
+            var combatAttack = new MonsterCombatAttack
             {
                 HasTarget = target != 0,
                 AttackChance = chance >= 100 ? (byte)100 : chance,
-                Interval = interval,
+                Interval = interval
             };
 
-            combatAttack.CombatParameter = new CombatParameter()
+            combatAttack.CombatParameter = new CombatParameter
             {
                 MaxDamage = (ushort)Math.Abs(max),
                 MinDamage = (ushort)Math.Abs(min),
@@ -144,9 +146,7 @@ internal class MonsterAttackConverter
 
                 if (attack.TryGetValue("tick", out ushort tick) &&
                     combatAttack.CombatParameter.DamageType == DamageType.Melee)
-                {
                     combatAttack.CombatParameter.Condition.Duration = tick;
-                }
             }
 
             if (range > 1 || radius == 1)
@@ -185,7 +185,7 @@ internal class MonsterAttackConverter
 
                 combatAttack.CombatParameter.DamageType =
                     attackName is "lifedrain" ? DamageType.LifeDrain : DamageType.ManaDrain;
-                
+
                 combatAttack.CombatParameter.Range = range;
                 combatAttack.CombatParameter.Radius = radius;
                 combatAttack.CombatParameter.ShootType = shootType;

@@ -1,5 +1,5 @@
 ﻿using System;
-using NeoServer.Game.Common.Contracts.Chats;
+using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Server.Events.Chat;
 
 namespace NeoServer.Server.Events.Subscribers;

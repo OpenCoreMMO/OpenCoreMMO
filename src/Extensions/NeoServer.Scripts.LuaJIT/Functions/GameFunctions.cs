@@ -1,13 +1,13 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Services;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Helpers;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -40,7 +40,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         IGameCreatureManager gameCreatureManager,
         ServerConfiguration serverConfiguration,
         IStaticToDynamicTileService staticToDynamicTileService,
-        INpcs npcs) : base(nameof(GameFunctions)) {
+        INpcs npcs) : base(nameof(GameFunctions))
+    {
         _luaEnvironment = luaEnvironment;
         _scripts = scripts;
         _itemTypeStore = itemTypeStore;
@@ -85,7 +86,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         return 1;
     }
 
-    private static int LuaGameGetReturnMessage(LuaState luaState) {
+    private static int LuaGameGetReturnMessage(LuaState luaState)
+    {
         // Game.getReturnMessage(value)
         var returnValue = GetNumber<ReturnValueType>(luaState, 1);
         PushString(luaState, returnValue.GetReturnMessage());
@@ -349,18 +351,20 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
             return 0;
         }
 
-        try {
+        try
+        {
             var dir = _serverConfiguration.Data;
             switch (reloadType)
             {
                 case ReloadType.RELOAD_TYPE_ALL:
-                    {
-                        ReloadCore(dir);
-                        ReloadScripts(dir);
-                        break;
-                    }
+                {
+                    ReloadCore(dir);
+                    ReloadScripts(dir);
+                    break;
+                }
 
-                case ReloadType.RELOAD_TYPE_CORE: {
+                case ReloadType.RELOAD_TYPE_CORE:
+                {
                     ReloadCore(dir);
                     break;
                 }
@@ -372,12 +376,13 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
                 //    }
 
                 case ReloadType.RELOAD_TYPE_NPCS:
-                    {
-                        ReloadNpcs(dir);
-                        break;
-                    }
+                {
+                    ReloadNpcs(dir);
+                    break;
+                }
 
-                case ReloadType.RELOAD_TYPE_SCRIPTS: {
+                case ReloadType.RELOAD_TYPE_SCRIPTS:
+                {
                     ReloadScripts(dir);
                     break;
                 }

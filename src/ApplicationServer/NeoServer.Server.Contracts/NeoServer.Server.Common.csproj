@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Database\NeoServer.Data\NeoServer.Data.csproj"/>
+        <ProjectReference Include="..\..\NeoServer.Domain\NeoServer.Domain.csproj"/>
     </ItemGroup>
 
     <PropertyGroup>

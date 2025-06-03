@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.World.Map;
+using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Game.Tests.Helpers;
-using NeoServer.Game.World.Models.Tiles;
 
 namespace NeoServer.Game.World.Tests;
 
 public class MapTest
 {
-    public Map.Map CreateMap(IItem item)
+    public Map CreateMap(IItem item)
     {
-        var world = new World();
+        var world = new Domain.World.World();
 
         for (var x = 100; x < 120; x++)
         for (var y = 100; y < 120; y++)
@@ -28,6 +29,6 @@ public class MapTest
                 items.ToArray()));
         }
 
-        return new Map.Map(world);
+        return new Map(world);
     }
 }

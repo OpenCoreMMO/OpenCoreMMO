@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj"/>
+        <ProjectReference Include="..\..\NeoServer.Domain\NeoServer.Domain.csproj"/>
         <ProjectReference Include="..\..\NetworkingServer\NeoServer.Networking.Packets\NeoServer.Networking.Packets.csproj"/>
         <ProjectReference Include="..\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj"/>
     </ItemGroup>

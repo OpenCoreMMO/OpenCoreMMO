@@ -1,5 +1,5 @@
-﻿using NeoServer.Game.Common.Chats;
-using NeoServer.Game.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common.Chats;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Enums;
 
 namespace NeoServer.Scripts.LuaJIT.Interfaces;

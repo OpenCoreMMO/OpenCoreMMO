@@ -3,13 +3,8 @@
     <ItemGroup>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj"/>
         <ProjectReference Include="..\..\Database\NeoServer.Data.InMemory.DataStores\NeoServer.Data.InMemory.DataStores.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Chats\NeoServer.Game.Chats.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Combat\NeoServer.Game.Combat.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Common\NeoServer.Game.Common.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Items\NeoServer.Game.Items.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj"/>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj"/>
+        <ProjectReference Include="..\..\NeoServer.Domain\NeoServer.Domain.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

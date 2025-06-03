@@ -1,6 +1,6 @@
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types.Runes;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types.Runes;
 using NeoServer.Scripts.LuaJIT.Enums;
 
 namespace NeoServer.Scripts.LuaJIT.Models.Spell;
@@ -19,14 +19,12 @@ public class LuaRune(LuaScriptInterface scriptInterface) : LuaSpell(scriptInterf
     {
         // onUse(player, item, fromPosition, target, toPosition, isHotkey)
         if (!GetScriptInterface().InternalReserveScriptEnv())
-        {
             // var logger ??= Server.Helpers.IoC.GetInstance<ILogger>();
             //
             // logger.Error(
             //     "[Action::executeUse - Player {PlayerName}, on item {ItemName}]. Call stack overflow. Too many lua script calls being nested. Script name {ScriptName}",
             //     player.Name, item.Name, GetScriptInterface().GetLoadingScriptName());
             return false;
-        }
 
         var scriptInterface = GetScriptInterface();
         var scriptEnvironment = scriptInterface.InternalGetScriptEnv();
@@ -35,10 +33,10 @@ public class LuaRune(LuaScriptInterface scriptInterface) : LuaSpell(scriptInterf
         var luaState = scriptInterface.GetLuaState();
         scriptInterface.PushFunction(GetScriptId());
 
-        LuaFunctionsLoader.PushUserdata(luaState, creature); ;
+        LuaFunctionsLoader.PushUserdata(luaState, creature);
+        ;
         LuaFunctionsLoader.SetCreatureMetatable(luaState, -1, creature);
-        
-        
+
 
         var variant = new LuaVariant
         {
@@ -47,7 +45,7 @@ public class LuaRune(LuaScriptInterface scriptInterface) : LuaSpell(scriptInterf
             InstantName = "",
             RuneName = rune.Name
         };
-        
+
         LuaFunctionsLoader.PushVariant(luaState, variant);
         LuaFunctionsLoader.PushBoolean(luaState, isHotkey);
 

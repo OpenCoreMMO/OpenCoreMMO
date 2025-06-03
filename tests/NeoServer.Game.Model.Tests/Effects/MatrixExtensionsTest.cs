@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using NeoServer.Game.Common.Helpers;
+using NeoServer.Domain.Common.Helpers;
 using Xunit;
 
 namespace NeoServer.Game.Common.Tests.Effects;

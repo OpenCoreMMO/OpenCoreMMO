@@ -2,10 +2,10 @@
 using System.Linq;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Extensions;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types;
-using NeoServer.Game.Common.Contracts.Items.Types.Containers;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
+using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Data.Parsers;
 

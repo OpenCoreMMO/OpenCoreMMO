@@ -34,9 +34,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj"/>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Security\NeoServer.Server.Security.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Items\NeoServer.Game.Items.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj"/>
     </ItemGroup>
 
 </Project>

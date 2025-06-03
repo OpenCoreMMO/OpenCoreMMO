@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Creatures.Players;
+﻿using NeoServer.Domain.Common.Creatures.Players;
 
 namespace NeoServer.Web.API.Response.Player;
 

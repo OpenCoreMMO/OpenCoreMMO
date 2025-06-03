@@ -2,10 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Items.Items.Attributes;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Items.Items.Attributes;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Map;
 using NeoServer.Game.Tests.Server;

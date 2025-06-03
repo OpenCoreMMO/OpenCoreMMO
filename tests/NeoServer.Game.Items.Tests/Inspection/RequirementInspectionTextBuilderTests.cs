@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Items.Inspection;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Items.Inspection;
 using NeoServer.Game.Tests.Helpers;
 using Xunit;
 

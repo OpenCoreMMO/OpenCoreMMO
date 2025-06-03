@@ -1,17 +1,16 @@
-﻿using NeoServer.Game.Combat.Attacks;
-using NeoServer.Game.Common.Combat.Structs;
-using NeoServer.Game.Common.Contracts.Combat.Attacks;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Creatures.Monster;
-using NeoServer.Game.Creatures.Monster.Summon;
+﻿using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Monster;
+using NeoServer.Domain.Creatures.Monster.Summon;
+using NeoServer.Domain.World.Models.Spawns;
+using NeoServer.Domain.World.Services;
 using NeoServer.Game.Tests.Helpers.Map;
-using NeoServer.Game.World.Models.Spawns;
-using NeoServer.Game.World.Services;
-using PathFinder = NeoServer.Game.World.Map.PathFinder;
+using PathFinder = NeoServer.Domain.World.Map.PathFinder;
 
 namespace NeoServer.Game.Tests.Helpers;
 

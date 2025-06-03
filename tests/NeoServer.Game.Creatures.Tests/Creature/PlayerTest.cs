@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using Moq;
-using NeoServer.Game.Common.Chats;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items.Types.Usable;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Creatures.Players;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Creatures.Player;
-using NeoServer.Game.Systems.Services;
+using NeoServer.Domain.Common.Chats;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Systems.Services;
+using NeoServer.Domain.World.Models;
 using NeoServer.Game.Tests.Helpers.Map;
 using NeoServer.Game.Tests.Helpers.Player;
-using NeoServer.Game.World.Models;
 using Xunit;
 
 namespace NeoServer.Game.Creatures.Tests.Creature;
@@ -281,7 +281,7 @@ public class PlayerTest
         var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, ISkill>
         {
             { SkillType.Level, new Skill(SkillType.Level, 9, 9100) }
-        }) as Player.Player;
+        }) as Player;
 
         player.Death(null);
 
@@ -295,7 +295,7 @@ public class PlayerTest
         var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, ISkill>
         {
             { SkillType.Level, new Skill(SkillType.Level, 9, 6500) }
-        }) as Player.Player;
+        }) as Player;
         player.Death(null);
 
         Assert.Equal(5850, (double)player.Experience);
@@ -308,7 +308,7 @@ public class PlayerTest
         var townCoordinate = new Coordinate(1000, 2033, 8);
 
         var player =
-            PlayerTestDataBuilder.Build(hp: 100, town: new Town { Coordinate = townCoordinate }) as Player.Player;
+            PlayerTestDataBuilder.Build(hp: 100, town: new Town { Coordinate = townCoordinate }) as Player;
 
         player.SetNewLocation(new Location(1234, 1341, 3));
 

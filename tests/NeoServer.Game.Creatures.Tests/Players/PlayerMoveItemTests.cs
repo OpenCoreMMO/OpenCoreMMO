@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types;
-using NeoServer.Game.Common.Contracts.Items.Types.Containers;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Creatures.Players;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Player;
-using NeoServer.Game.World.Models.Tiles;
 using Xunit;
 
 namespace NeoServer.Game.Creatures.Tests.Players;

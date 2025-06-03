@@ -1,9 +1,7 @@
 ﻿using Moq;
-using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Scripts.LuaJIT;
-using NeoServer.Scripts.LuaJIT.DataManagers;
 using NeoServer.Scripts.LuaJIT.Interfaces;
-using NeoServer.Scripts.LuaJIT.ScriptServices;
 using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Common.Contracts.Scripts.Services;
 using Serilog;

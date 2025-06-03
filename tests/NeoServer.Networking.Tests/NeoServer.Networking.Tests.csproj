@@ -28,7 +28,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Items\NeoServer.Game.Items.csproj"/>
         <ProjectReference Include="..\..\src\NetworkingServer\NeoServer.Networking.Packets\NeoServer.Networking.Packets.csproj"/>
         <ProjectReference Include="..\..\src\NetworkingServer\NeoServer.Networking\NeoServer.Networking.csproj"/>
     </ItemGroup>

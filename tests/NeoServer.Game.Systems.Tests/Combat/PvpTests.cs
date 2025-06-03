@@ -1,7 +1,7 @@
 using FluentAssertions;
-using NeoServer.Game.Combat.Services;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Combat.Enums;
+using NeoServer.Domain.Combat.Services;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Game.Tests.Helpers.Player;
 using NeoServer.Server.Events.Combat;
 
@@ -17,11 +17,11 @@ public class PvpTests
         var victim = PlayerTestDataBuilder.Build();
         var spectator = PlayerTestDataBuilder.Build();
 
-        var handler = new CreatureAttackEventHandler(new PlayerSkullService(new GameConfiguration()
+        var handler = new CreatureAttackEventHandler(new PlayerSkullService(new GameConfiguration
         {
             PvP = new PvPConfiguration("Open", true, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5)
         }));
-        
+
         aggressor.OnAttackEnemy += handler.Execute;
 
         //act

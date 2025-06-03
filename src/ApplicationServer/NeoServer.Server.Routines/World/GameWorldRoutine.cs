@@ -1,10 +1,10 @@
-﻿using NeoServer.Game.World;
+﻿using NeoServer.Domain.World;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Tasks;
 
 namespace NeoServer.Server.Routines.World;
 
-public class GameWorldRoutine(IGameServer game, Game.World.World world)
+public class GameWorldRoutine(IGameServer game, Domain.World.World world)
 {
     public void StartChecking()
     {

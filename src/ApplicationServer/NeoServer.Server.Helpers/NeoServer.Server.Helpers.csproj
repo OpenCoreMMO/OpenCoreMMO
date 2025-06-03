@@ -13,10 +13,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Common\NeoServer.Game.Common.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
     </ItemGroup>
 

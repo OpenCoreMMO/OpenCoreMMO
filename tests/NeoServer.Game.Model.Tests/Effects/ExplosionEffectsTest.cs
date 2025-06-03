@@ -1,4 +1,4 @@
-using NeoServer.Game.Common.Effects.Magical;
+using NeoServer.Domain.Common.Effects.Magical;
 using Xunit;
 
 namespace NeoServer.Game.Common.Tests.Effects;

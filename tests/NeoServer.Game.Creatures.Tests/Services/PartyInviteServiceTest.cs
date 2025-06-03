@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Data.InMemory.DataStores;
-using NeoServer.Game.Chats;
-using NeoServer.Game.Common.Contracts.Chats;
-using NeoServer.Game.Creatures.Services;
+using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common.Contracts.Chats;
+using NeoServer.Domain.Creatures.Services;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;
 

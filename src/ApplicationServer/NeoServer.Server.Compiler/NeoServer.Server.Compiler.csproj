@@ -14,12 +14,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Chats\NeoServer.Game.Chats.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Combat\NeoServer.Game.Combat.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Common\NeoServer.Game.Common.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Items\NeoServer.Game.Items.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj"/>
         <ProjectReference Include="..\..\Loaders\NeoServer.Loaders\NeoServer.Loaders.csproj"/>
         <ProjectReference Include="..\..\NetworkingServer\NeoServer.Networking.Packets\NeoServer.Networking.Packets.csproj"/>
     </ItemGroup>

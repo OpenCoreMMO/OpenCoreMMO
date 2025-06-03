@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Server.Events.Combat;
 using NeoServer.Server.Events.Creature;
 

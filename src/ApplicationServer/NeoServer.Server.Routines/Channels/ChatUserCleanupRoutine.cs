@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Contracts.Chats;
+﻿using NeoServer.Domain.Common.Contracts.Chats;
 
 namespace NeoServer.Server.Routines.Channels;
 

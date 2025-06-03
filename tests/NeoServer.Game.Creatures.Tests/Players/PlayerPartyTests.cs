@@ -1,9 +1,10 @@
 ﻿using FluentAssertions;
 using Moq;
-using NeoServer.Game.Chats;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Chats;
-using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Chats;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Party;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;
@@ -12,10 +13,10 @@ namespace NeoServer.Game.Creatures.Tests.Players;
 
 public class PlayerPartyTests
 {
-    private static Party.Party BuildParty(IPlayer leader, params IPlayer[] players)
+    private static Party BuildParty(IPlayer leader, params IPlayer[] players)
     {
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(leader, partyChannel);
+        var party = new Party(leader, partyChannel);
 
         foreach (var player in players)
         {
@@ -36,7 +37,7 @@ public class PlayerPartyTests
         var friend = PlayerTestDataBuilder.Build(hp: 100);
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(sut, partyChannel);
+        var party = new Party(sut, partyChannel);
 
         sut.PlayerParty.InviteToParty(friend, party);
         friend.PlayerParty.JoinParty(party);
@@ -61,7 +62,7 @@ public class PlayerPartyTests
         var invitedPlayer = PlayerTestDataBuilder.Build(hp: 100);
         var invited = false;
 
-        var party = new Party.Party(leader, new Mock<IChatChannel>().Object);
+        var party = new Party(leader, new Mock<IChatChannel>().Object);
 
         leader.PlayerParty.InviteToParty(sut, party);
 
@@ -83,7 +84,7 @@ public class PlayerPartyTests
     {
         //arrange
         var sut = PlayerTestDataBuilder.Build(hp: 100);
-        var party = new Party.Party(sut, new Mock<IChatChannel>().Object);
+        var party = new Party(sut, new Mock<IChatChannel>().Object);
         using var monitor = sut.PlayerParty.Monitor();
         //act
         sut.PlayerParty.InviteToParty(sut, party);
@@ -106,7 +107,7 @@ public class PlayerPartyTests
         {
             if (playerInvited == invitedPlayer) invited = true;
         };
-        var party = new Party.Party(sut, new Mock<IChatChannel>().Object);
+        var party = new Party(sut, new Mock<IChatChannel>().Object);
 
         //act
         sut.PlayerParty.InviteToParty(invitedPlayer, party);
@@ -228,7 +229,7 @@ public class PlayerPartyTests
         using var monitor = sut.PlayerParty.Monitor();
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(sut, partyChannel);
+        var party = new Party(sut, partyChannel);
 
         //act
         sut.PlayerParty.RejectInvite(party);
@@ -248,7 +249,7 @@ public class PlayerPartyTests
         using var monitor = sut.PlayerParty.Monitor();
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(leader, partyChannel);
+        var party = new Party(leader, partyChannel);
         leader.PlayerParty.InviteToParty(sut, party);
 
         //act
@@ -271,7 +272,7 @@ public class PlayerPartyTests
         using var monitor = friend.PlayerParty.Monitor();
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(sut, partyChannel);
+        var party = new Party(sut, partyChannel);
 
         sut.PlayerParty.InviteToParty(friend2, party);
         friend.PlayerParty.JoinParty(party);
@@ -297,7 +298,7 @@ public class PlayerPartyTests
         using var monitor = friend.PlayerParty.Monitor();
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(sut, partyChannel);
+        var party = new Party(sut, partyChannel);
 
         sut.PlayerParty.InviteToParty(friend, party);
         friend.PlayerParty.JoinParty(party);
@@ -320,7 +321,7 @@ public class PlayerPartyTests
         using var monitor = friend.PlayerParty.Monitor();
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(sut, partyChannel);
+        var party = new Party(sut, partyChannel);
 
         sut.PlayerParty.InviteToParty(friend, party);
         friend.PlayerParty.JoinParty(party);
@@ -348,7 +349,7 @@ public class PlayerPartyTests
         using var monitor = leader.PlayerParty.Monitor();
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(leader, partyChannel);
+        var party = new Party(leader, partyChannel);
 
         leader.PlayerParty.InviteToParty(sut, party);
 
@@ -374,7 +375,7 @@ public class PlayerPartyTests
         using var monitor = leader.PlayerParty.Monitor();
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(leader, partyChannel);
+        var party = new Party(leader, partyChannel);
 
         leader.PlayerParty.InviteToParty(sut, party);
         sut.PlayerParty.JoinParty(party);
@@ -402,7 +403,7 @@ public class PlayerPartyTests
         using var monitor = sut.PlayerParty.Monitor();
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(leader, partyChannel);
+        var party = new Party(leader, partyChannel);
 
         leader.PlayerParty.InviteToParty(sut, party);
         leader.PlayerParty.InviteToParty(friend, party);
@@ -431,7 +432,7 @@ public class PlayerPartyTests
         var secondFriend = PlayerTestDataBuilder.Build(hp: 100);
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(sut, partyChannel);
+        var party = new Party(sut, partyChannel);
 
         sut.PlayerParty.InviteToParty(secondFriend, party);
         sut.PlayerParty.InviteToParty(friend, party);
@@ -462,7 +463,7 @@ public class PlayerPartyTests
         var friend = PlayerTestDataBuilder.Build(hp: 100);
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(sut, partyChannel);
+        var party = new Party(sut, partyChannel);
 
         sut.PlayerParty.InviteToParty(friend, party);
         friend.PlayerParty.JoinParty(party);
@@ -508,10 +509,10 @@ public class PlayerPartyTests
         var leader = PlayerTestDataBuilder.Build(hp: 100);
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(leader, partyChannel);
+        var party = new Party(leader, partyChannel);
 
         var anotherPartyChannel = new ChatChannel(2, "party channel");
-        var anotherParty = new Party.Party(leader, anotherPartyChannel);
+        var anotherParty = new Party(leader, anotherPartyChannel);
 
         var sut = PlayerTestDataBuilder.Build(hp: 100);
 
@@ -536,7 +537,7 @@ public class PlayerPartyTests
         var leader = PlayerTestDataBuilder.Build(hp: 100);
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(leader, partyChannel);
+        var party = new Party(leader, partyChannel);
 
         var sut = PlayerTestDataBuilder.Build(hp: 100);
 
@@ -560,7 +561,7 @@ public class PlayerPartyTests
         var leader = PlayerTestDataBuilder.Build(hp: 100);
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(leader, partyChannel);
+        var party = new Party(leader, partyChannel);
 
         var sut = PlayerTestDataBuilder.Build(hp: 100);
 
@@ -582,7 +583,7 @@ public class PlayerPartyTests
         var leader = PlayerTestDataBuilder.Build(hp: 100);
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(leader, partyChannel);
+        var party = new Party(leader, partyChannel);
 
         var sut = PlayerTestDataBuilder.Build(hp: 100);
         leader.PlayerParty.InviteToParty(sut, party);
@@ -628,7 +629,7 @@ public class PlayerPartyTests
         var member = PlayerTestDataBuilder.Build(hp: 100);
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(sut, partyChannel);
+        var party = new Party(sut, partyChannel);
 
         sut.PlayerParty.InviteToParty(member, party);
         member.PlayerParty.JoinParty(party);
@@ -652,7 +653,7 @@ public class PlayerPartyTests
         var member2 = PlayerTestDataBuilder.Build(hp: 100);
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(leader, partyChannel);
+        var party = new Party(leader, partyChannel);
 
         leader.PlayerParty.InviteToParty(sut, party);
         sut.PlayerParty.JoinParty(party);
@@ -679,7 +680,7 @@ public class PlayerPartyTests
 
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party.Party(sut, partyChannel);
+        var party = new Party(sut, partyChannel);
 
         sut.PlayerParty.InviteToParty(member, party);
         member.PlayerParty.JoinParty(party);

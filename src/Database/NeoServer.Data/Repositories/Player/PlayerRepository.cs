@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Creatures;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Creatures;
 using Serilog;
 
 namespace NeoServer.Data.Repositories.Player;
@@ -63,7 +63,7 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
         await using var context = NewDbContext;
         return await context.Players.FirstOrDefaultAsync(x => x.Id == id);
     }
-    
+
     public async Task UpdatePlayers(IEnumerable<IPlayer> players)
     {
         var tasks = new List<Task>();

@@ -24,8 +24,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\NeoServer.Game.Tests\NeoServer.Game.Tests.csproj"/>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Chats\NeoServer.Game.Chats.csproj"/>
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj"/>
     </ItemGroup>
 
 </Project>

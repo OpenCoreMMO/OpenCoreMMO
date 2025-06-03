@@ -1,6 +1,6 @@
-﻿using NeoServer.Extensions.Events.Creatures;
-using NeoServer.Game.Common.Contracts;
-using NeoServer.Game.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common.Contracts;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Extensions.Events.Creatures;
 
 namespace NeoServer.Extensions.Events;
 

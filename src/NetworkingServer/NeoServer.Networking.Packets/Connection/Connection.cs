@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
-using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Networking.Packets.Messages;
 using NeoServer.Networking.Packets.Outgoing.Login;
 using NeoServer.Networking.Packets.Security;

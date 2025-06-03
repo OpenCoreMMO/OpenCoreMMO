@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using NeoServer.Game.Combat.Services.Spells;
-using NeoServer.Game.Combat.Spells;
-using NeoServer.Game.Common.Chats;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
+using NeoServer.Domain.Combat.Services.Spells;
+using NeoServer.Domain.Combat.Spells;
+using NeoServer.Domain.Common.Chats;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Server.Common.Contracts;
@@ -35,12 +35,12 @@ public class PlayerSayCommand(
         //cast spell;
         if (spellListManager.TryGet(message?.Trim(), out var spell))
         {
-            spellService.Cast(player,null, spell, false);
+            spellService.Cast(player, null, spell, false);
             return;
         }
 
         //if (player.CastSpell(message)) return;
-        
+
         switch (playerSayPacket.TalkType)
         {
             case SpeechType.None:

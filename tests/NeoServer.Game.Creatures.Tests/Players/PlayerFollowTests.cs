@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
-using NeoServer.Game.Common.Combat.Structs;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Map;
 using NeoServer.Game.Tests.Helpers.Player;
-using NeoServer.Game.World.Models.Tiles;
 using Xunit;
 
 namespace NeoServer.Game.Creatures.Tests.Players;

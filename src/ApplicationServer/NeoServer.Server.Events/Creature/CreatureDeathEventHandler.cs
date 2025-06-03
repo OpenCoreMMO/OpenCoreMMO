@@ -1,9 +1,9 @@
 using NeoServer.Data.Interfaces;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Services;
-using NeoServer.Game.Creatures.Monster.Summon;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Server.Common.Contracts;
 
 namespace NeoServer.Server.Events.Creature;

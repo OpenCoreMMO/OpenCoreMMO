@@ -1,4 +1,4 @@
-using NeoServer.Game.Common.Item;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Scripts.LuaJIT.Models.Combat;
 
 namespace NeoServer.Scripts.LuaJIT.Parsers;
@@ -26,7 +26,7 @@ public static class CombatTypeParser
 
             CombatType.COMBAT_NONE => DamageType.None,
 
-            _ => DamageType.None,
+            _ => DamageType.None
         };
     }
 }

@@ -1,6 +1,6 @@
-﻿using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Helpers;
-using NeoServer.Game.Common.Location.Structs;
+﻿using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Item;

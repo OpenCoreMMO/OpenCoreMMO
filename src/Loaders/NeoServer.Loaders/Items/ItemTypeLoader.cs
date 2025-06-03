@@ -4,9 +4,9 @@ using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Text.Json;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Item;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Loaders.Items.Parsers;
 using NeoServer.Loaders.OTB.Parsers;
 using NeoServer.Loaders.OTB.Structure;
@@ -26,10 +26,11 @@ public class ItemTypeLoader
         ReadCommentHandling = JsonCommentHandling.Skip
     };
 
+    private readonly ICoinTypeStore _coinTypeStore;
+
     private readonly IItemClientServerIdMapStore _itemClientServerIdMapStore;
 
     private readonly IItemTypeStore _itemTypeStore;
-    private readonly ICoinTypeStore _coinTypeStore;
     private readonly ILogger _logger;
     private readonly ServerConfiguration _serverConfiguration;
 
@@ -67,9 +68,7 @@ public class ItemTypeLoader
 
                 if (item.Value.Attributes.GetAttribute(ItemAttribute.Type)
                         ?.Equals("coin", StringComparison.InvariantCultureIgnoreCase) ?? false)
-                {
                     _coinTypeStore.AddOrUpdate(item.Key, item.Value);
-                }
             }
 
             return new object[] { itemTypes.Count };

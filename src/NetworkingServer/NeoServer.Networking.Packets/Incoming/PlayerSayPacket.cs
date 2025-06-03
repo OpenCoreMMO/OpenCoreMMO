@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Chats;
+﻿using NeoServer.Domain.Common.Chats;
 using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Incoming;

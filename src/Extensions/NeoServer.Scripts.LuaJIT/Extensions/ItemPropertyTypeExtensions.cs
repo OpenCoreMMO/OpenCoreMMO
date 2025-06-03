@@ -1,5 +1,5 @@
-﻿using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Location;
+﻿using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Scripts.LuaJIT.Enums;
 
 namespace NeoServer.Scripts.LuaJIT.Extensions;

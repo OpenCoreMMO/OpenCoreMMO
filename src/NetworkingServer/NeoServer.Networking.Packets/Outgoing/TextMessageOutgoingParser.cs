@@ -1,5 +1,5 @@
-﻿using NeoServer.Game.Common;
-using NeoServer.Game.Common.Texts;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Texts;
 
 namespace NeoServer.Networking.Packets.Outgoing;
 

@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
 using NeoServer.Data.InMemory.DataStores;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Creatures.Players;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Creatures.Group;
-using NeoServer.Game.Creatures.Player;
-using NeoServer.Game.Creatures.Vocation;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Group;
+using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Vocation;
+using NeoServer.Domain.World.Models;
+using NeoServer.Domain.World.Services;
 using NeoServer.Game.Tests.Helpers.Map;
-using NeoServer.Game.World.Models;
-using NeoServer.Game.World.Services;
-using PathFinder = NeoServer.Game.World.Map.PathFinder;
+using PathFinder = NeoServer.Domain.World.Map.PathFinder;
 
 namespace NeoServer.Game.Tests.Helpers.Player;
 
@@ -65,7 +65,7 @@ public static class PlayerTestDataBuilder
         pathFinder ??= new PathFinder(map);
         var mapTool = new MapTool(map, pathFinder);
 
-        var player = new Creatures.Player.Player(
+        var player = new Domain.Creatures.Player.Player(
             id,
             name,
             ChaseMode.Stand,

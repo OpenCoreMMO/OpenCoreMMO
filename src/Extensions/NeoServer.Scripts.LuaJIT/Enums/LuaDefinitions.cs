@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Location.Structs;
+﻿using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Scripts.LuaJIT.Enums;
 

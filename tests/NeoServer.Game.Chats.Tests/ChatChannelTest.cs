@@ -1,5 +1,6 @@
 ﻿using System.Threading;
-using NeoServer.Game.Chats.Rules;
+using NeoServer.Domain.Chat;
+using NeoServer.Domain.Chat.Rules;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;
 

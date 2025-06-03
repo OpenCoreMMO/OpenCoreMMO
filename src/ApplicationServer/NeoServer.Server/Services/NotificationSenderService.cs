@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Networking.Packets.Outgoing;
 
 namespace NeoServer.Server.Services;

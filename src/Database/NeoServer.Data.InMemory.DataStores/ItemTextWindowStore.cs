@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
 
 namespace NeoServer.Data.InMemory.DataStores;
 

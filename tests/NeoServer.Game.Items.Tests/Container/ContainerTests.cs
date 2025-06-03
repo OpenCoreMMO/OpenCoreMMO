@@ -1,16 +1,17 @@
 using System.Collections.Generic;
 using FluentAssertions;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types;
-using NeoServer.Game.Common.Contracts.Items.Types.Containers;
-using NeoServer.Game.Common.Creatures.Players;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Creatures.Monster.Loot;
-using NeoServer.Game.Items.Bases;
-using NeoServer.Game.Items.Items.Cumulatives;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
+using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Monster.Loot;
+using NeoServer.Domain.Items;
+using NeoServer.Domain.Items.Bases;
+using NeoServer.Domain.Items.Items.Cumulatives;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;
@@ -27,7 +28,7 @@ public class ContainerTests
         itemType.SetFlag(ItemFlag.Pickupable);
         itemType.SetFlag(ItemFlag.Movable);
 
-        return new Game.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
+        return new Domain.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
     }
 
     private ICumulative CreateCumulativeItem(ushort id, byte amount)
@@ -55,7 +56,7 @@ public class ContainerTests
         var itemType = new ItemType();
         itemType.Attributes.SetAttribute(ItemAttribute.Capacity, 20);
 
-        var sut = new Game.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
+        var sut = new Domain.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
 
         Assert.Equal(20, sut.Capacity);
         Assert.NotNull(sut.Items);
@@ -68,8 +69,9 @@ public class ContainerTests
         var itemType = new ItemType();
         itemType.Attributes.SetAttribute(ItemAttribute.Capacity, 20);
 
-        var parentContainer = new Game.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
-        var sut = new Game.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
+        var parentContainer =
+            new Domain.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
+        var sut = new Domain.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
 
         sut.SetParent(parentContainer);
         Assert.Equal(parentContainer, sut.Parent);
@@ -87,24 +89,24 @@ public class ContainerTests
         type.Attributes.SetAttribute(ItemAttribute.Type, "container");
         type.SetGroupIfNone();
 
-        Assert.True(Game.Items.Items.Containers.Container.Container.IsApplicable(type));
+        Assert.True(Domain.Items.Items.Containers.Container.Container.IsApplicable(type));
 
         type = new ItemType();
         type.SetGroup((byte)ItemGroup.Container);
         type.SetGroupIfNone();
 
-        Assert.True(Game.Items.Items.Containers.Container.Container.IsApplicable(type));
+        Assert.True(Domain.Items.Items.Containers.Container.Container.IsApplicable(type));
 
         type = new ItemType();
         type.Attributes.SetAttribute(ItemAttribute.Type, "container");
         type.SetGroup((byte)ItemGroup.Container);
         type.SetGroupIfNone();
 
-        Assert.True(Game.Items.Items.Containers.Container.Container.IsApplicable(type));
+        Assert.True(Domain.Items.Items.Containers.Container.Container.IsApplicable(type));
 
         type = new ItemType();
         type.SetGroupIfNone();
-        Assert.False(Game.Items.Items.Containers.Container.Container.IsApplicable(type));
+        Assert.False(Domain.Items.Items.Containers.Container.Container.IsApplicable(type));
     }
 
     [Fact]
@@ -646,7 +648,7 @@ public class ContainerTests
         var itemType = new ItemType();
         itemType.Attributes.SetAttribute(ItemAttribute.Capacity, 20);
 
-        var sut = new Game.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
+        var sut = new Domain.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
 
         Assert.Equal("nothing", sut.ToString());
     }
@@ -657,7 +659,7 @@ public class ContainerTests
         var itemType = new ItemType();
         itemType.Attributes.SetAttribute(ItemAttribute.Capacity, 20);
 
-        var sut = new Game.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
+        var sut = new Domain.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
 
         var item = CreateRegularItem(100, "item 1");
         sut.AddItem(item);

@@ -1,5 +1,5 @@
 ﻿using System;
-using NeoServer.Game.World.Models.Spawns;
+using NeoServer.Domain.World.Models.Spawns;
 
 namespace NeoServer.Server.Routines.Creatures;
 

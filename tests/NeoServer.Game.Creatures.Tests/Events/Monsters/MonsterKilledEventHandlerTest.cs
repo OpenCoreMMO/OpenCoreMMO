@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NeoServer.Data.InMemory.DataStores;
-using NeoServer.Game.Common.Combat;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Creatures.Monster.Summon;
-using NeoServer.Game.Creatures.Services;
+using NeoServer.Domain.Common.Combat;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Creatures.Monster.Summon;
+using NeoServer.Domain.Creatures.Services;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;
@@ -89,7 +89,7 @@ public class MonsterKilledEventHandlerTest
         var playerOneAfter = playerOne.Experience;
         var playerTwoAfter = playerTwo.Experience;
 
-        
+
         Assert.Equal(playerOneBefore + 75, playerOneAfter);
         Assert.Equal(playerTwoBefore + 75, playerTwoAfter);
     }

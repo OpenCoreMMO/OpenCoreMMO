@@ -1,6 +1,6 @@
-﻿using NeoServer.Game.Common.Contracts;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Creatures;
+﻿using NeoServer.Domain.Common.Contracts;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Creatures;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Events.Players;

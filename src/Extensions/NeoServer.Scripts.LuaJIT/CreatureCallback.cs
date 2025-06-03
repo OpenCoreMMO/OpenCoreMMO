@@ -1,6 +1,6 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Location.Structs;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
@@ -8,7 +8,7 @@ namespace NeoServer.Scripts.LuaJIT;
 public class CreatureCallback(LuaScriptInterface scriptInterface, ICreature targetCreature, ILogger logger)
 {
     private LuaState _luaState;
-    private int _params = 0;
+    private int _params;
 
     public bool StartScriptInterface(int scriptId)
     {
@@ -51,7 +51,9 @@ public class CreatureCallback(LuaScriptInterface scriptInterface, ICreature targ
     }
 
     public bool PersistLuaState()
-        => _params > 0 && scriptInterface.CallFunction(_params);
+    {
+        return _params > 0 && scriptInterface.CallFunction(_params);
+    }
 
     public void PushCreature(ICreature creature)
     {
@@ -80,7 +82,7 @@ public class CreatureCallback(LuaScriptInterface scriptInterface, ICreature targ
 
     public void PushBoolean(bool value)
     {
-	    _params++;
+        _params++;
         LuaScriptInterface.PushBoolean(_luaState, value);
     }
 
@@ -88,9 +90,9 @@ public class CreatureCallback(LuaScriptInterface scriptInterface, ICreature targ
     {
         if (creature is INpc npc)
             return "Npc";
-        else if (creature is IMonster monster)
+        if (creature is IMonster monster)
             return "Monster";
-        else if (creature is IPlayer player)
+        if (creature is IPlayer player)
             return "Player";
 
         return string.Empty;

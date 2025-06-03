@@ -1,5 +1,5 @@
 ﻿using NeoServer.Data.InMemory.DataStores;
-using NeoServer.Game.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;

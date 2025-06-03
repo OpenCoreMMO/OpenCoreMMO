@@ -1,7 +1,7 @@
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Services;
-using NeoServer.Game.Creatures.Models.Bases.Events;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Creatures.Models.Bases.Events;
 
 namespace NeoServer.Server.Events.Creature;
 

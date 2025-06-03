@@ -1,15 +1,13 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common.Chats;
-using NeoServer.Game.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Chats;
+using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Tasks;
 using NeoServer.Server.Tasks;
 using Serilog;
-using NeoServer.Game.Common.Chats;
-using NeoServer.Server.Common.Contracts;
-using System;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -44,7 +42,6 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         RegisterGlobalMethod(luaState, "getWorldTime", LuaGetWorldTime);
         RegisterGlobalMethod(luaState, "getWorldLight", LuaGetWorldLight);
         RegisterGlobalMethod(luaState, "createCombatArea", HandleNotImplementedFunction);
-
     }
 
     private static int HandleCreateCombatFunction(LuaState L)

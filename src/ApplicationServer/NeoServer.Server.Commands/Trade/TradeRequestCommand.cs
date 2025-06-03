@@ -1,10 +1,10 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Creatures.Players;
-using NeoServer.Game.Common.Helpers;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Systems.SafeTrade;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Systems.SafeTrade;
 using NeoServer.Networking.Packets.Incoming.Trade;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Commands;

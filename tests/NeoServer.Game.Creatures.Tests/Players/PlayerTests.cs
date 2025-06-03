@@ -2,14 +2,16 @@ using System.Collections.Generic;
 using AutoFixture;
 using FluentAssertions;
 using Moq;
-using NeoServer.Game.Common.Combat.Structs;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Creatures.Players;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Creatures.Player;
+using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Group;
+using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Vocation;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;
 
@@ -25,15 +27,15 @@ public class PlayerTests
     [InlineData(94, 94, false)]
     public void CanMoveThing_Given_Distance_Bigger_Than_11_Returns_False(ushort toX, ushort toY, bool expected)
     {
-        var sut = new Player.Player(
+        var sut = new Player(
             1,
             "PlayerA",
             ChaseMode.Stand,
             100,
             100,
             100,
-            new Vocation.Vocation(),
-            new Group.Group(),
+            new Vocation(),
+            new Group(),
             Gender.Male,
             true, 30, 30,
             FightMode.Attack,
@@ -57,8 +59,8 @@ public class PlayerTests
     [Fact]
     public void OnDamage_When_Receives_Melee_Attack_Reduce_Health()
     {
-        var sut = PlayerTestDataBuilder.Build(hp: 100) as Player.Player;
-        var enemy = PlayerTestDataBuilder.Build() as Player.Player;
+        var sut = PlayerTestDataBuilder.Build(hp: 100) as Player;
+        var enemy = PlayerTestDataBuilder.Build() as Player;
         sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(5, DamageType.Melee)));
 
         Assert.Equal((uint)95, sut.HealthPoints);
@@ -67,8 +69,8 @@ public class PlayerTests
     [Fact]
     public void OnDamage_When_Receives_Mana_Attack_Reduce_Mana()
     {
-        var sut = PlayerTestDataBuilder.Build(mana: 30) as Player.Player;
-        var enemy = PlayerTestDataBuilder.Build() as Player.Player;
+        var sut = PlayerTestDataBuilder.Build(mana: 30) as Player;
+        var enemy = PlayerTestDataBuilder.Build() as Player;
         sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(5, DamageType.ManaDrain)));
 
         Assert.Equal((uint)25, sut.Mana);

@@ -4,8 +4,8 @@ using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using Moq;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Creatures.Players;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;
 

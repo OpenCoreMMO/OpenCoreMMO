@@ -1,7 +1,7 @@
 ﻿using Moq;
-using NeoServer.Game.Common.Combat;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Creatures.Experience;
+using NeoServer.Domain.Common.Combat;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Experience;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;
 

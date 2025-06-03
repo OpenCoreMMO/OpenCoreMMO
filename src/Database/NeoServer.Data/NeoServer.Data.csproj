@@ -16,9 +16,9 @@
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
         <PackageReference Include="Serilog" Version="4.2.0"/>
     </ItemGroup>
+
     <ItemGroup>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Common\NeoServer.Game.Common.csproj"/>
+        <ProjectReference Include="..\..\NeoServer.Domain\NeoServer.Domain.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -1,10 +1,10 @@
-﻿using NeoServer.Game.Combat.Spells;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Common.Results;
+﻿using NeoServer.Domain.Combat.Spells;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Results;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Helpers;
 using NeoServer.Server.Services;
@@ -18,10 +18,7 @@ public class TeleportToTempleCommand : CommandSpell
         var playerName = Params?.Length > 0 ? Params[0].ToString() : caster.Name;
         var gameManager = IoC.GetInstance<IGameCreatureManager>();
 
-        if (!gameManager.TryGetPlayer(playerName, out var player))
-        {
-            return Result.Fail(InvalidOperation.PlayerNotFound);
-        }
+        if (!gameManager.TryGetPlayer(playerName, out var player)) return Result.Fail(InvalidOperation.PlayerNotFound);
 
         var location = new Location(player.Town.Coordinate);
         player.TeleportTo(location);

@@ -17,6 +17,6 @@ public sealed class HouseEntity
     public int HighestBidder { get; set; }
     public int Size { get; set; }
     public int Beds { get; set; }
-    
+
     public ICollection<HouseListEntity> HouseLists { get; set; }
 }

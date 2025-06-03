@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
-using NeoServer.Game.Common.Creatures.Players;
+using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Web.API.IoC.Configs;
 using NeoServer.Web.API.Requests.Commands;
 using NeoServer.Web.API.Response;
@@ -16,7 +16,7 @@ public class CreatePlayerCommand(IPlayerRepository playerRepository, IOptions<Pl
     public async Task<OutputResponse> Handle(CreatePlayerRequest request, CancellationToken cancellationToken)
     {
         var playerAlreadyExist = await playerRepository.GetByName(request.Name);
-        
+
         if (playerAlreadyExist is not null)
             return new OutputResponse(ErrorMessage.PlayerAlreadyExist);
 

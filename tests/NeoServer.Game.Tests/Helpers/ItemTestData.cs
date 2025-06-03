@@ -1,27 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NeoServer.Data.InMemory.DataStores;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types;
-using NeoServer.Game.Common.Contracts.Items.Types.Body;
-using NeoServer.Game.Common.Contracts.Items.Types.Runes;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Common.Parsers;
-using NeoServer.Game.Items;
-using NeoServer.Game.Items.Bases;
-using NeoServer.Game.Items.Factories;
-using NeoServer.Game.Items.Items;
-using NeoServer.Game.Items.Items.Attributes;
-using NeoServer.Game.Items.Items.Containers;
-using NeoServer.Game.Items.Items.Containers.Container;
-using NeoServer.Game.Items.Items.Cumulatives;
-using NeoServer.Game.Items.Items.UsableItems;
-using NeoServer.Game.Items.Items.Weapons;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Contracts.Items.Types.Body;
+using NeoServer.Domain.Common.Contracts.Items.Types.Runes;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Parsers;
+using NeoServer.Domain.Items;
+using NeoServer.Domain.Items.Bases;
+using NeoServer.Domain.Items.Factories;
+using NeoServer.Domain.Items.Items;
+using NeoServer.Domain.Items.Items.Attributes;
+using NeoServer.Domain.Items.Items.Containers;
+using NeoServer.Domain.Items.Items.Containers.Container;
+using NeoServer.Domain.Items.Items.Cumulatives;
+using NeoServer.Domain.Items.Items.UsableItems;
+using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Game.Tests.Helpers;
 
@@ -398,7 +397,7 @@ public class ItemTestData
         {
             [ItemAttribute.Count] = amount
         };
-        
+
         type.SetGroupIfNone();
 
         var factory = new RuneFactory();

@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Items;
-using NeoServer.Game.Items.Items;
-using NeoServer.Game.World.Models.Tiles;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Items;
+using NeoServer.Domain.Items.Items;
+using NeoServer.Domain.World;
+using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Game.Tests.Helpers.Map;
 
@@ -17,8 +18,8 @@ public static class MapTestDataBuilder
 {
     public static IMap Build(params ITile[] tiles)
     {
-        var world = new World.World();
-        var map = new World.Map.Map(world);
+        var world = new World();
+        var map = new Domain.World.Map.Map(world);
 
         foreach (var tile in tiles) world.AddTile(tile);
 
@@ -27,8 +28,8 @@ public static class MapTestDataBuilder
 
     public static IMap Build(params Func<ITile>[] tiles)
     {
-        var world = new World.World();
-        var map = new World.Map.Map(world);
+        var world = new World();
+        var map = new Domain.World.Map.Map(world);
 
         foreach (var tile in tiles) world.AddTile(tile?.Invoke());
 
@@ -42,8 +43,8 @@ public static class MapTestDataBuilder
         topItems ??= new Dictionary<Location, IItem[]>();
         staticTiles ??= new List<Location>();
 
-        var world = new World.World();
-        var map = new World.Map.Map(world);
+        var world = new World();
+        var map = new Domain.World.Map.Map(world);
 
         for (var x = fromX; x <= toX; x++)
         for (var y = fromY; y <= toY; y++)

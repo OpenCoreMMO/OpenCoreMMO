@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
-using NeoServer.Game.Common.Creatures.Players;
+using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Web.API.Requests.Commands;
 using NeoServer.Web.API.Response;
 using NeoServer.Web.API.Response.Player;

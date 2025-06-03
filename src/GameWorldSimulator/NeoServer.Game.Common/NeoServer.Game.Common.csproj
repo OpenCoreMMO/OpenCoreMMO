@@ -11,11 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Contracts\Creatures\Factories"/>
-        <Folder Include="Contracts\Creatures\Schedulers"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <Compile Remove="Services\Movements\FromMap\**"/>
         <Compile Remove="Enums\Sex.cs"/>
         <Compile Remove="Item\ItemTypeAttribute.cs"/>

@@ -1,5 +1,6 @@
-﻿using NeoServer.Game.Common.Creatures.Players;
-using NeoServer.Game.Common.Location;
+﻿using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
 using Xunit;
 
 namespace NeoServer.Game.Common.Tests.Structs;
@@ -12,8 +13,8 @@ public class LocationTest
     [InlineData(100, 0, 0, 100, 200)]
     public void GetSqmDistance_Returns_Sum_Of_Sqm_Distance(int fromX, int fromY, int toX, int toY, ushort total)
     {
-        var fromLocation = new Location.Structs.Location((ushort)fromX, (ushort)fromY, 7);
-        var toLocation = new Location.Structs.Location((ushort)toX, (ushort)toY, 7);
+        var fromLocation = new Location((ushort)fromX, (ushort)fromY, 7);
+        var toLocation = new Location((ushort)toX, (ushort)toY, 7);
 
         Assert.Equal(total, fromLocation.GetSqmDistance(toLocation));
     }
@@ -32,8 +33,8 @@ public class LocationTest
     [InlineData(100, 100, 102, 97, Direction.North)]
     public void DirectionTo_Returns_TargetDirection(int fromX, int fromY, int toX, int toY, Direction direction)
     {
-        var fromLocation = new Location.Structs.Location((ushort)fromX, (ushort)fromY, 7);
-        var toLocation = new Location.Structs.Location((ushort)toX, (ushort)toY, 7);
+        var fromLocation = new Location((ushort)fromX, (ushort)fromY, 7);
+        var toLocation = new Location((ushort)toX, (ushort)toY, 7);
 
         Assert.Equal(direction, fromLocation.DirectionTo(toLocation));
     }
@@ -51,7 +52,7 @@ public class LocationTest
     [InlineData(Slot.Ring)]
     public void Inventory_Returns_Location_As_Slot(Slot slot)
     {
-        var location = Location.Structs.Location.Inventory(slot);
+        var location = Location.Inventory(slot);
 
         Assert.Equal(LocationType.Slot, location.Type);
         Assert.Equal(slot, location.Slot);
@@ -72,7 +73,7 @@ public class LocationTest
     [InlineData(15, 6)]
     public void Container_Returns_Type_As_Container(int id, int slot)
     {
-        var location = Location.Structs.Location.Container(id, (byte)slot);
+        var location = Location.Container(id, (byte)slot);
 
         Assert.Equal(LocationType.Container, location.Type);
         Assert.Equal(id, location.ContainerId);
@@ -91,8 +92,8 @@ public class LocationTest
     public void GetDirectionTo_Should_Return_Correct_Direction(ushort fromX, ushort fromY, ushort toX, ushort toY,
         Direction expected)
     {
-        var fromLocation = new Location.Structs.Location(fromX, fromY, 7);
-        var toLocation = new Location.Structs.Location(toX, toY, 7);
+        var fromLocation = new Location(fromX, fromY, 7);
+        var toLocation = new Location(toX, toY, 7);
 
         var result = fromLocation.DirectionTo(toLocation);
 

@@ -1,14 +1,14 @@
 ﻿using Moq;
 using NeoServer.Data.InMemory.DataStores;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Creatures.Factories;
-using NeoServer.Game.Items.Factories;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Factories;
+using NeoServer.Domain.Items.Factories;
+using NeoServer.Domain.World.Models.Spawns;
+using NeoServer.Domain.World.Services;
 using NeoServer.Game.Tests.Helpers.Map;
-using NeoServer.Game.World.Models.Spawns;
-using NeoServer.Game.World.Services;
 using Serilog;
-using PathFinder = NeoServer.Game.World.Map.PathFinder;
+using PathFinder = NeoServer.Domain.World.Map.PathFinder;
 
 namespace NeoServer.Game.Tests.Helpers;
 

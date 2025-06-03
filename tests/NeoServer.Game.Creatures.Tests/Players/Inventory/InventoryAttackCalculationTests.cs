@@ -1,6 +1,6 @@
 ﻿using System;
 using FluentAssertions;
-using NeoServer.Game.Common.Item;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;

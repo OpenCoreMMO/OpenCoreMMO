@@ -1,6 +1,6 @@
-﻿using NeoServer.Game.Common.Effects.Magical;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
+﻿using NeoServer.Domain.Common.Effects.Magical;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
 using Xunit;
 
 namespace NeoServer.Game.Common.Tests.Effects;

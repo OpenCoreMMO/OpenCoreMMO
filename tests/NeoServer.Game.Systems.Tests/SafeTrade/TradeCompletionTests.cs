@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
-using NeoServer.Game.Common.Creatures.Players;
-using NeoServer.Game.Items.Services;
-using NeoServer.Game.Systems.SafeTrade;
-using NeoServer.Game.Systems.SafeTrade.Operations;
-using NeoServer.Game.Systems.SafeTrade.Validations;
+using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Items.Services;
+using NeoServer.Domain.Systems.SafeTrade;
+using NeoServer.Domain.Systems.SafeTrade.Operations;
+using NeoServer.Domain.Systems.SafeTrade.Validations;
+using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Map;
 using NeoServer.Game.Tests.Helpers.Player;
-using NeoServer.Game.World.Models.Tiles;
 
 namespace NeoServer.Game.Systems.Tests.SafeTrade;
 

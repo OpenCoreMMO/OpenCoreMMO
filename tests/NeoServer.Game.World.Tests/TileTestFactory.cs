@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Game.Tests.Helpers;
-using NeoServer.Game.World.Models.Tiles;
 
 namespace NeoServer.Game.World.Tests;
 

@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Systems.Services;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Systems.Services;
+using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Map;
 using NeoServer.Game.Tests.Helpers.Player;
 using NeoServer.Game.Tests.Server;
-using NeoServer.Game.World.Models.Tiles;
 using NeoServer.Server.Commands.Movements;
 using Xunit;
 

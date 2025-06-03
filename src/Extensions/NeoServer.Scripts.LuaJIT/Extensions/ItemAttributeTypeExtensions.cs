@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Item;
+﻿using NeoServer.Domain.Common.Item;
 using NeoServer.Scripts.LuaJIT.Enums;
 
 namespace NeoServer.Scripts.LuaJIT.Extensions;

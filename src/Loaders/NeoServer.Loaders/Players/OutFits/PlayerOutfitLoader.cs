@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Creatures.Players;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Server.Configurations;
 using Newtonsoft.Json;

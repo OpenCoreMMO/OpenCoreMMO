@@ -29,7 +29,7 @@ public class LuaEnvironment : LuaScriptInterface, ILuaEnvironment
     private static readonly List<string> CacheFiles = [];
 
     private static LuaScriptInterface _testInterface;
-    public List<LuaCombat> Combats { get; set; } = new List<LuaCombat>();
+    public List<LuaCombat> Combats { get; set; } = new();
     public List<LuaScriptInterface> CombatsMap { get; set; } = new();
 
     #endregion

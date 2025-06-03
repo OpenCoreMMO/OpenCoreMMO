@@ -28,22 +28,18 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Database\NeoServer.Data.InMemory.DataStores\NeoServer.Data.InMemory.DataStores.csproj" />
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Common\NeoServer.Game.Common.csproj" />
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj" />
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.Items\NeoServer.Game.Items.csproj" />
-        <ProjectReference Include="..\..\src\GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj" />
-        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Commands\NeoServer.Server.Commands.csproj" />
-        <ProjectReference Include="..\NeoServer.Game.Items.Tests\NeoServer.Game.Items.Tests.csproj" />
-        <ProjectReference Include="..\NeoServer.Game.Tests\NeoServer.Game.Tests.csproj" />
+        <ProjectReference Include="..\..\src\Database\NeoServer.Data.InMemory.DataStores\NeoServer.Data.InMemory.DataStores.csproj"/>
+        <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Commands\NeoServer.Server.Commands.csproj"/>
+        <ProjectReference Include="..\NeoServer.Game.Items.Tests\NeoServer.Game.Items.Tests.csproj"/>
+        <ProjectReference Include="..\NeoServer.Game.Tests\NeoServer.Game.Tests.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Players\InventoryTests.cs" />
+        <Compile Remove="Players\InventoryTests.cs"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Trade" />
+        <Folder Include="Trade"/>
     </ItemGroup>
 
 </Project>

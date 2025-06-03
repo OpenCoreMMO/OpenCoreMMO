@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Loaders.OTB.Parsers;
 using NeoServer.Loaders.OTBM.Enums;
 

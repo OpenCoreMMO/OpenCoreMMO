@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using NeoServer.Data.InMemory.DataStores;
-using NeoServer.Game.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Player;
 using Xunit;

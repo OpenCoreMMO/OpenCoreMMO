@@ -58,7 +58,7 @@ public class LuaScriptManager : IScriptManager
     ///     A reference to the <see cref="ILogger" /> instance in use.
     /// </summary>
     private readonly ILogger _logger;
-    
+
     /// <summary>
     ///     A reference to the <see cref="IActionScriptService" /> instance in use.
     /// </summary>
@@ -83,7 +83,6 @@ public class LuaScriptManager : IScriptManager
     ///     A reference to the <see cref="ITalkActionScriptService" /> instance in use.
     /// </summary>
     public ITalkActionScriptService TalkActions { get; }
-
 
     #endregion
 }

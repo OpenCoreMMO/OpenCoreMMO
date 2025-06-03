@@ -1,6 +1,6 @@
 ﻿using NeoServer.Data.Interfaces;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Helpers;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Helpers;
 using NeoServer.Networking.Packets.Outgoing.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;

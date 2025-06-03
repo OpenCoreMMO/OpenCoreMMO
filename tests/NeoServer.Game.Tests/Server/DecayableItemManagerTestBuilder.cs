@@ -1,10 +1,10 @@
 ﻿using Moq;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Items.Services;
-using NeoServer.Game.Items.Services.ItemTransform;
-using NeoServer.Game.World.Factories;
-using NeoServer.Game.World.Services;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Items.Services;
+using NeoServer.Domain.Items.Services.ItemTransform;
+using NeoServer.Domain.World.Factories;
+using NeoServer.Domain.World.Services;
 using NeoServer.Server.Managers;
 using Serilog;
 

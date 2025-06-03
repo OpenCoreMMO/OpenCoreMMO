@@ -1,9 +1,9 @@
 ﻿using System;
 using AutoFixture;
 using FluentAssertions;
-using NeoServer.Game.Common.Chats;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Creatures.Monster.Combat;
+using NeoServer.Domain.Common.Chats;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Game.Tests.Helpers;
 using Xunit;
 

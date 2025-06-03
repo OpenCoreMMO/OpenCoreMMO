@@ -1,14 +1,14 @@
 ﻿using FluentAssertions;
 using Moq;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.World.Factories;
+using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Map;
 using NeoServer.Game.Tests.Helpers.Player;
-using NeoServer.Game.World.Factories;
-using NeoServer.Game.World.Models.Tiles;
 using Serilog;
 using Xunit;
 

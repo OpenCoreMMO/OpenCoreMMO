@@ -1,22 +1,22 @@
 ﻿using FluentAssertions;
 using NeoServer.Data.InMemory.DataStores;
-using NeoServer.Game.Common.Combat.Structs;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items.Types.Containers;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Creatures.Players;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Items.Services;
-using NeoServer.Game.Systems.SafeTrade;
-using NeoServer.Game.Systems.SafeTrade.Operations;
-using NeoServer.Game.Systems.SafeTrade.Validations;
+using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Items.Services;
+using NeoServer.Domain.Systems.SafeTrade;
+using NeoServer.Domain.Systems.SafeTrade.Operations;
+using NeoServer.Domain.Systems.SafeTrade.Validations;
+using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Game.Tests.Helpers;
 using NeoServer.Game.Tests.Helpers.Map;
 using NeoServer.Game.Tests.Helpers.Player;
 using NeoServer.Game.Tests.Server;
-using NeoServer.Game.World.Models.Tiles;
 
 namespace NeoServer.Game.Systems.Tests.SafeTrade;
 

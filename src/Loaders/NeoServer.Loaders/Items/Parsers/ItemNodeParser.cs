@@ -1,6 +1,6 @@
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Item.Structs;
-using NeoServer.Game.Items;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Item.Structs;
+using NeoServer.Domain.Items;
 using NeoServer.Loaders.OTB.Structure;
 
 namespace NeoServer.Loaders.Items.Parsers;

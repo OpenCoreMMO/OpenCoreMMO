@@ -1,6 +1,6 @@
 using LuaNET;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
 
 namespace NeoServer.Scripts.LuaJIT.Models.Callbacks;
 
@@ -11,11 +11,8 @@ public class ValueCallback(LuaScriptInterface scriptInterface) : Callback(script
     public MinMax GetMinMaxValues(IPlayer player)
     {
         //onGetPlayerMinMaxValues(...)
-        
-        if (!GetScriptInterface().InternalReserveScriptEnv())
-        {
-            return MinMax.Zero;
-        }
+
+        if (!GetScriptInterface().InternalReserveScriptEnv()) return MinMax.Zero;
 
         var scriptInterface = GetScriptInterface();
         var scriptEnvironment = scriptInterface.InternalGetScriptEnv();
@@ -41,8 +38,8 @@ public class ValueCallback(LuaScriptInterface scriptInterface) : Callback(script
                 LuaFunctionsLoader.ResetScriptEnv();
                 throw new ArgumentOutOfRangeException();
         }
-        
-        int size0 = Lua.GetTop(luaState);
+
+        var size0 = Lua.GetTop(luaState);
 
         if (Lua.PCall(luaState, numberOfParameters, 2, 0) != 0)
         {
@@ -50,13 +47,13 @@ public class ValueCallback(LuaScriptInterface scriptInterface) : Callback(script
             LuaFunctionsLoader.ResetScriptEnv();
             return MinMax.Zero;
         }
-        
-        var damage = new MinMax(Math.Abs(LuaFunctionsLoader.GetNumber<int>(luaState, -2)), Math.Abs(LuaFunctionsLoader.GetNumber<int>(luaState, -1)));
+
+        var damage = new MinMax(Math.Abs(LuaFunctionsLoader.GetNumber<int>(luaState, -2)),
+            Math.Abs(LuaFunctionsLoader.GetNumber<int>(luaState, -1)));
         Lua.Pop(luaState, 2);
-        
-        if ((Lua.GetTop(luaState) + numberOfParameters + 1) != size0) {
+
+        if (Lua.GetTop(luaState) + numberOfParameters + 1 != size0)
             LuaFunctionsLoader.ReportError(null, "Stack size changed!");
-        }
 
         LuaFunctionsLoader.ResetScriptEnv();
         return damage;
