@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using NeoServer.Game.Combat.Conditions;
 using NeoServer.Game.Combat.Services;
 using NeoServer.Game.Combat.Services.Attacks;
 using NeoServer.Game.Combat.Services.Attacks.Validators;
@@ -84,6 +85,7 @@ public static class ServiceInjection
         builder.AddSingleton<AreaAttackService>();
         builder.AddSingleton<CombatBloodPoolService>();
         builder.AddSingleton<MonsterCombatService>();
+        builder.AddSingleton<ConditionAttackService>();
 
         //spells
         builder.AddSingleton<SpellService>();

@@ -24,6 +24,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     {
         MapTool = mapTool;
         Speed = type.Speed;
+        RawSpeed = type.Speed;
         OnCompleteWalking += ExecuteNextAction;
     }
 
@@ -33,6 +34,8 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
     public virtual ITileEnterRule TileEnterRule => PlayerEnterTileRule.Rule;
     public virtual ushort Speed { get; protected set; }
+    public virtual ushort RawSpeed { get; protected set; }
+
     public ICreature Following { get; private set; }
     public bool IsFollowing => Following is not null;
     public bool HasNextStep => _walkingQueue.Count > 0;
@@ -192,16 +195,10 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         return CreatureRaw.Convert(playerRequesting, this);
     }
 
-    public void IncreaseSpeed(ushort speed)
-    {
-        ChangeSpeedLevel(speed + Speed);
-    }
+    public void IncreaseSpeed(ushort speed) => ChangeSpeedLevel(speed + Speed);
 
-    public void DecreaseSpeed(ushort speedBoost)
-    {
-        ChangeSpeedLevel(Math.Max(0, Speed - speedBoost));
-    }
-
+    public void DecreaseSpeed(ushort speedBoost) => ChangeSpeedLevel(Math.Max(0, Speed - speedBoost));
+    
     protected bool WalkRandomStep(Location origin, int maxStepsFromOrigin = 1)
     {
         var direction = GetRandomStep(origin, maxStepsFromOrigin);

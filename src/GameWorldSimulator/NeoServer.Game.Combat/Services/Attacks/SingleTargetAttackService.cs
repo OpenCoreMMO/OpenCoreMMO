@@ -1,3 +1,4 @@
+using System;
 using NeoServer.Game.Combat.Conditions;
 using NeoServer.Game.Combat.Services.Attacks.Builders;
 using NeoServer.Game.Combat.Services.Attacks.Events;
@@ -9,6 +10,7 @@ using NeoServer.Game.Common.Contracts.Items;
 using NeoServer.Game.Common.Contracts.World;
 using NeoServer.Game.Common.Creatures;
 using NeoServer.Game.Common.Helpers;
+using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Results;
 
 namespace NeoServer.Game.Combat.Services.Attacks;
@@ -17,7 +19,7 @@ public class SingleTargetAttackService(
     IEventAggregator eventAggregator,
     CombatConfiguration combatConfiguration,
     CombatBloodPoolService combatBloodPoolService,
-    IMap map)
+    ConditionAttackService conditionAttackService)
     : IAttackService
 {
     public Result Execute(AttackInput attackInput)
@@ -47,9 +49,20 @@ public class SingleTargetAttackService(
 
         var damage = DamageBuilder.Build(attackInput);
 
-        PerformAttack(aggressor, target, damage, attackInput.Parameters);
+        var wasDamaged = PerformAttack(aggressor, target, damage);
 
         CreateBloodPool(damage, target);
+
+        if (wasDamaged)
+        {
+            conditionAttackService.Execute(attackInput);
+            return Result.Success;
+        }
+
+        if (damage.MainDamage is null)
+        {
+            conditionAttackService.Execute(attackInput);
+        }
 
         return Result.Success;
     }
@@ -68,13 +81,14 @@ public class SingleTargetAttackService(
         }
     }
 
-    private static void PerformAttack(ICombatActor aggressor, IThing target, CalculatedAttackDamage damage,
-        CombatParameter combatParameter)
+    private static bool PerformAttack(ICombatActor aggressor, IThing target, CalculatedAttackDamage damage)
     {
-        if (target is not ICombatActor targetCreature) return;
+        if (target is not ICombatActor targetCreature) return false;
+
+        if (damage.MainDamage == null) return false;
 
         //cannot attack himself
-        if (Equals(target, aggressor)) return;
+        if (Equals(target, aggressor)) return false;
 
         var unjustifiedAttack =
             target is IPlayer targetPlayer && aggressor is IPlayer playerAggressor &&
@@ -83,41 +97,14 @@ public class SingleTargetAttackService(
         var mainDamage = damage.MainDamage;
         mainDamage.Unjustified = unjustifiedAttack;
 
+        bool wasDamaged;
+
         if (damage.ExtraDamage?.Damage > 0)
         {
             var damages = new CombatDamageList([mainDamage, damage.ExtraDamage]);
-            targetCreature.TakeDamage(aggressor, damages);
-            return;
+            return targetCreature.TakeDamage(aggressor, damages);
         }
 
-        var wasDamage = targetCreature.TakeDamage(aggressor, damage.MainDamage);
-
-        if (!wasDamage) return;
-
-        PerformConditionDamage(aggressor, combatParameter, targetCreature);
-    }
-
-    private static void PerformConditionDamage(ICombatActor aggressor, CombatParameter combatParameter, ICombatActor targetCreature)
-    {
-        if (combatParameter.Condition.Type == ConditionType.None) return;
-        
-        var conditionType = combatParameter.Condition.Type;
-        var interval = combatParameter.Condition.Interval;
-
-        if (!targetCreature.HasCondition(combatParameter.Condition.Type, out var condition))
-        {
-            targetCreature.AddCondition(new DamageCondition(aggressor,conditionType, interval, combatParameter.MinDamage,
-                combatParameter.MaxDamage));
-            
-            return;
-        }
-
-        if (condition is DamageCondition damageCondition)
-        {
-            damageCondition.Start(targetCreature, combatParameter.MinDamage, combatParameter.MaxDamage);
-            return;
-        }
-
-        condition.Start(targetCreature);
+        return targetCreature.TakeDamage(aggressor, damage.MainDamage);
     }
 }

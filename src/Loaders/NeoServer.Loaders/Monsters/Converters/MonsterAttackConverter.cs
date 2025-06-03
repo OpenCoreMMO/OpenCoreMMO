@@ -8,6 +8,7 @@ using NeoServer.Game.Common;
 using NeoServer.Game.Common.Combat.Structs;
 using NeoServer.Game.Common.Contracts.Combat.Attacks;
 using NeoServer.Game.Common.Creatures;
+using NeoServer.Game.Common.Effects.Parsers;
 using NeoServer.Game.Common.Item;
 using NeoServer.Game.Common.Parsers;
 using NeoServer.Server.Helpers.Extensions;
@@ -17,6 +18,10 @@ namespace NeoServer.Loaders.Monsters.Converters;
 
 internal class MonsterAttackConverter
 {
+    private static HashSet<string> SupportedAttributes = new()
+    {
+        "name", "attack", "skill", "min", "max", "interval", "length", "radius", "target", "range", "spread", "chance", "attributes"
+    };
     public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)
     {
         if (data.Attacks is null) return [];
@@ -60,7 +65,7 @@ internal class MonsterAttackConverter
 
             var combatAttack = new MonsterCombatAttack()
             {
-                NeedTarget = target != 0,
+                HasTarget = target != 0,
                 AttackChance = chance >= 100 ? (byte)100 : chance,
                 Interval = interval,
             };
@@ -70,7 +75,8 @@ internal class MonsterAttackConverter
                 MaxDamage = (ushort)Math.Abs(max),
                 MinDamage = (ushort)Math.Abs(min),
                 DamageType = DamageTypeParser.Parse(attackName),
-                CooldownId = combatAttack.Id
+                CooldownId = combatAttack.Id,
+                Effect = EffectParser.Parse(areaEffect)
             };
 
             if (combatAttack.CombatParameter.DamageType is DamageType.Melee)
@@ -139,7 +145,7 @@ internal class MonsterAttackConverter
                 if (attack.TryGetValue("tick", out ushort tick) &&
                     combatAttack.CombatParameter.DamageType == DamageType.Melee)
                 {
-                    combatAttack.CombatParameter.Condition.Interval = tick;
+                    combatAttack.CombatParameter.Condition.Duration = tick;
                 }
             }
 
@@ -187,15 +193,20 @@ internal class MonsterAttackConverter
 
             if (attackName == "speed")
             {
-                attack.TryGetValue("duration", out uint duration);
+                attack.TryGetValue("duration", out int duration);
                 attack.TryGetValue("speedchange", out short speedChange);
 
-                combatAttack.CombatParameter.DamageType = default;
-                combatAttack.CombatParameter.Duration = duration;
-                combatAttack.CombatParameter.SpeedChange = (ushort) speedChange;
+                combatAttack.CombatParameter.Condition =
+                    new CombatParameter.AttackCondition(ConditionType.Paralyze, (uint)Math.Abs(duration))
+                    {
+                        Value = speedChange
+                    };
+
+                combatAttack.CombatParameter.DamageType = DamageType.None;
                 combatAttack.CombatParameter.Range = range;
                 combatAttack.CombatParameter.Range = range;
                 combatAttack.CombatParameter.ShootType = ShootTypeParser.Parse(shootEffect);
+                combatAttack.CombatParameter.Effect = EffectParser.Parse(areaEffect);
             }
 
             attacks.Add(combatAttack);

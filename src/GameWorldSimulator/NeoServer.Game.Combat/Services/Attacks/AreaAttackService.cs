@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NeoServer.Game.Combat.Conditions;
 using NeoServer.Game.Combat.Services.Attacks.Builders;
 using NeoServer.Game.Combat.Services.Attacks.Events;
 using NeoServer.Game.Common;
@@ -19,7 +20,8 @@ namespace NeoServer.Game.Combat.Services.Attacks;
 public class AreaAttackService(
     IEventAggregator eventAggregator,
     IMap map,
-    CombatBloodPoolService combatBloodPoolService) : IAttackService
+    CombatBloodPoolService combatBloodPoolService,
+    ConditionAttackService conditionAttackService) : IAttackService
 {
     public Result Execute(AttackInput attackInput)
     {
@@ -43,7 +45,8 @@ public class AreaAttackService(
                 ? aggressor.Direction
                 : Direction.None);
 
-        var area = AreaEffect.Create(areaLocation, attackInput.Parameters.Area);
+        
+        var area = attackInput.Parameters.CoordinateArea ?? AreaEffect.Create(areaLocation, attackInput.Parameters.Area);
 
         var affectedArea = new List<Location>(area.Length);
         var affectedCreatures = new List<ICreature>();
@@ -91,25 +94,37 @@ public class AreaAttackService(
                 playerAggressor.GetSkull(targetPlayer) is Skull.None;
 
             var mainDamage = damage.MainDamage;
-            mainDamage.Unjustified = unjustifiedAttack;
 
-            InflictDamage(damage, mainDamage, target, aggressor);
+            if (mainDamage is not null)
+            {
+                mainDamage.Unjustified = unjustifiedAttack;
 
-            CreateBloodPool(damage, target);
+                var wasDamaged = InflictDamage(damage, mainDamage, target, aggressor);
+
+                if (wasDamaged)
+                {
+                    conditionAttackService.Execute(attackInput);
+                }
+                
+                CreateBloodPool(damage, target);
+            }
+            else
+            {
+                conditionAttackService.Execute(attackInput);
+            }
         }
     }
 
-    private static void InflictDamage(CalculatedAttackDamage damage, CombatDamage mainDamage, ICombatActor target,
+    private static bool InflictDamage(CalculatedAttackDamage damage, CombatDamage mainDamage, ICombatActor target,
         IThing aggressor)
     {
         if (damage.ExtraDamage?.Damage > 0)
         {
             var damages = new CombatDamageList([mainDamage, damage.ExtraDamage]);
-            target.TakeDamage(aggressor, damages);
-            return;
+            return target.TakeDamage(aggressor, damages);
         }
 
-        target.TakeDamage(aggressor, damage.MainDamage);
+        return target.TakeDamage(aggressor, damage.MainDamage);
     }
 
     private void CreateBloodPool(CalculatedAttackDamage damage, IThing target)

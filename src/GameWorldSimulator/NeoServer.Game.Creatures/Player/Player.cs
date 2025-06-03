@@ -98,7 +98,7 @@ public class Player : CombatActor, IPlayer
         SoulPoints = soulPoints;
         StaminaMinutes = staminaMinutes;
         Outfit = outfit;
-        Speed = speed == 0 ? LevelBasesSpeed : speed;
+        Speed = speed == 0 ? RawSpeed : speed;
         Inventory = new Inventory.Inventory(this, new Dictionary<Slot, (IItem Item, ushort Id)>());
 
         Vip = new Vip(this);
@@ -128,7 +128,7 @@ public class Player : CombatActor, IPlayer
     protected override string InspectionText =>
         $"{Name} (Level {Level}). {GenderPronoun} {Vocation.InspectText}. {Guild?.InspectionText(this)} {PlayerParty?.Party?.InspectionText(this)}";
 
-    private ushort LevelBasesSpeed => (ushort)(220 + 2 * (Level - 1));
+    public override ushort RawSpeed => (ushort)(220 + 2 * (Level - 1));
     public string CharacterName { get; }
     public Dictionary<uint, long> KnownCreatures { get; }
     public bool Online { get; }
@@ -1237,7 +1237,7 @@ public class Player : CombatActor, IPlayer
             TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
             ResetHealthPoints();
             ResetMana();
-            ChangeSpeedLevel(LevelBasesSpeed);
+            ChangeSpeedLevel(RawSpeed);
         }
 
         OnLevelAdvanced?.Invoke(this, type, fromLevel, toLevel);
@@ -1253,7 +1253,7 @@ public class Player : CombatActor, IPlayer
             TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
             ResetHealthPoints();
             ResetMana();
-            ChangeSpeedLevel(LevelBasesSpeed);
+            ChangeSpeedLevel(RawSpeed);
         }
 
         OnLevelRegressed?.Invoke(this, type, fromLevel, toLevel);
