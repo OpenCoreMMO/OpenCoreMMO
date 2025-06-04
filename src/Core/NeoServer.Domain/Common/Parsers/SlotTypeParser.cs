@@ -1,12 +1,13 @@
 ﻿using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Items;
 
 namespace NeoServer.Domain.Common.Parsers;
 
 public class SlotTypeParser
 {
-    public static Slot Parse(IItemAttributeList itemAttributes)
+    public static Slot Parse(ItemAttributeList itemAttributes)
     {
         if (itemAttributes is null) return Slot.None;
 

@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Items.Attributes;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -638,7 +639,7 @@ public class ProtectionTest
         //arrange
         var item = new Mock<IItem>();
         var itemType = new Mock<IItemType>();
-        var itemAttributeMock = new Mock<IItemAttributeList>();
+        var itemAttributeMock = new Mock<ItemAttributeList>();
 
         itemAttributeMock.SetupGet(x => x.DamageProtection);
 
