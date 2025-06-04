@@ -639,11 +639,9 @@ public class ProtectionTest
         //arrange
         var item = new Mock<IItem>();
         var itemType = new Mock<IItemType>();
-        var itemAttributeMock = new Mock<ItemAttributeList>();
+        var itemAttribute = new ItemAttributeList();
 
-        itemAttributeMock.SetupGet(x => x.DamageProtection);
-
-        itemType.SetupGet(x => x.Attributes).Returns(itemAttributeMock.Object);
+        itemType.SetupGet(x => x.Attributes).Returns(itemAttribute);
         item.Setup(x => x.Metadata).Returns(itemType.Object);
 
         var combatDamage = new CombatDamage(100, DamageType.Energy);
