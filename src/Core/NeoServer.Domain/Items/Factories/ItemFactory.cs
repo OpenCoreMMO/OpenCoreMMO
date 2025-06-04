@@ -9,6 +9,7 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Monster.Loot;
 using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Items.Items.Containers;
+using NeoServer.Domain.Items.Items.Cumulatives;
 using NeoServer.Domain.Items.Items.UsableItems;
 using CreateItem = NeoServer.Domain.Common.Contracts.Items.CreateItem;
 
@@ -105,14 +106,14 @@ public class ItemFactory : IItemFactory
     }
 
 
-    public IEnumerable<ICoin> CreateCoins(ulong amount)
+    public IEnumerable<Coin> CreateCoins(ulong amount)
     {
         var coinsToAdd = CoinCalculator.Calculate(CoinTypeStore.Map, amount);
 
         foreach (var coinToAdd in coinsToAdd)
         {
             var createdCoin = Create(coinToAdd.Item1, Location.Inventory(Slot.Backpack), null);
-            if (createdCoin is not ICoin newCoin) continue;
+            if (createdCoin is not Coin newCoin) continue;
             newCoin.Amount = coinToAdd.Item2;
 
             OnItemCreated?.Invoke(newCoin);
