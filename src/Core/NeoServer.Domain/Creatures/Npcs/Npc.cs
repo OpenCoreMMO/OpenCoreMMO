@@ -101,10 +101,8 @@ public class Npc : WalkableCreature, INpc
     {
         _playerInteractionsOrder.Remove(player);
 
-        if (_playerInteractions.ContainsKey(player))
+        if (_playerInteractions.Remove(player))
         {
-            _playerInteractions.Remove(player);
-
             if (this is IShopperNpc shopperNpc)
                 shopperNpc.StopSellingToCustomer(player);
         }

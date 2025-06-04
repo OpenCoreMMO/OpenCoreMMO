@@ -70,7 +70,7 @@ public class MonsterWalkTest
     }
 
     [Fact]
-    public void Monster_without_can_push_items_flag_do_not_walk()
+    public async Task Monster_without_can_push_items_flag_do_not_walk()
     {
         //arrange
 
@@ -114,7 +114,7 @@ public class MonsterWalkTest
         //act
         sut.WalkTo(new Location(104, 100, 7));
 
-        Task.Delay(1_000, cancellationToken).Wait(cancellationToken);
+        await Task.Delay(1_000, cancellationToken);
 
         //assert
         sut.Tile.Should().Be(sourceTile);

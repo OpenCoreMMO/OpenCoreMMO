@@ -55,7 +55,7 @@ public class StaticTile : BaseTile, IStaticTile
             for (var i = 0; i < Raw.Length; i += 2)
             {
                 var final = i + 2;
-                itemsId[index++] = BitConverter.ToUInt16(Raw[i..final]);
+                itemsId[index++] = BitConverter.ToUInt16(Raw.AsSpan()[i..final]);
             }
 
             return itemsId;

@@ -133,7 +133,8 @@ public class TileTest
             ItemTestData.CreateTopItem(2, 1)
         };
 
-        Assert.Collection(tile.TopItems, item => Assert.Equal(top1Expected[0].ClientId, item.ClientId));
+        var item = Assert.Single(tile.TopItems);
+        Assert.Equal(top1Expected[0].ClientId, item.ClientId);
 
         Assert.Collection(tile.DownItems, item =>
             {
