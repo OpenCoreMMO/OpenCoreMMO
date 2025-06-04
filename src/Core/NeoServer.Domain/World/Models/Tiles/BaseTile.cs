@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Items.Items.Containers;
 
 namespace NeoServer.Domain.World.Models.Tiles;
@@ -92,7 +93,7 @@ public abstract class BaseTile : ITile
 
         if (item.Metadata.HasFlag(ItemFlag.HasHeight)) SetFlag(TileFlags.HasHeight);
 
-        if (item.Metadata.HasFlag(ItemFlag.Unpassable) && item is not IMagicField)
+        if (item.Metadata.HasFlag(ItemFlag.Unpassable) && item is not MagicField)
         {
             SetFlag(TileFlags.NoFieldBlockPath);
 
@@ -106,7 +107,7 @@ public abstract class BaseTile : ITile
 
         if (item is ITeleport) SetFlag(TileFlags.Teleport);
 
-        if (item is IMagicField) SetFlag(TileFlags.MagicField);
+        if (item is MagicField) SetFlag(TileFlags.MagicField);
 
         // if (item->getMailbox()) { //todo
         //     setFlag(TILESTATE_MAILBOX);

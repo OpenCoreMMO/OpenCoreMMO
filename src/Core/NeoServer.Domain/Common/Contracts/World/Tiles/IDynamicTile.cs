@@ -19,7 +19,7 @@ public interface IDynamicTile : ITile, IHasItem
 
     FloorChangeDirection FloorDirection { get; }
     bool HasCreature { get; }
-    IMagicField MagicField { get; }
+    MagicField MagicField { get; }
 
     bool HasBlockPathFinding { get; }
     bool HasHole { get; }

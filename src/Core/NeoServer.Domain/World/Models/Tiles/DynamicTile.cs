@@ -122,14 +122,14 @@ public class DynamicTile : BaseTile, IDynamicTile
     public override IItem TopItemOnStack => DownItems != null && DownItems.TryPeek(out var item) ? item :
         TopItems is not null && TopItems.TryPeek(out item) ? item : Ground;
 
-    public IMagicField MagicField
+    public MagicField MagicField
     {
         get
         {
             if (!HasFlag(TileFlags.MagicField)) return null;
 
             foreach (var downItem in DownItems)
-                if (downItem is IMagicField magicField)
+                if (downItem is MagicField magicField)
                     return magicField;
 
             RemoveFlag(TileFlags.MagicField);

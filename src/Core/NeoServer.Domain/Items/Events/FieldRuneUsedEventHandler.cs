@@ -7,6 +7,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Effects.Magical;
+using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Items.Items.UsableItems.Runes;
 
 namespace NeoServer.Domain.Items.Events;
@@ -54,7 +55,7 @@ public class FieldRuneUsedEventHandler : IGameEventHandler
 
     public void CauseDamageToCreaturesOnTile(IItem item, ITile tile)
     {
-        if (item is not IMagicField field) return;
+        if (item is not MagicField field) return;
         if (tile is not IDynamicTile onTile) return;
 
         if (!onTile.HasCreature) return;

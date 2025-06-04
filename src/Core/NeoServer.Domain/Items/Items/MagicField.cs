@@ -12,7 +12,7 @@ using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items;
 
-public class MagicField : BaseItem, IMagicField
+public class MagicField : BaseItem
 {
     public MagicField(IItemType type, Location location) : base(type, location)
     {
