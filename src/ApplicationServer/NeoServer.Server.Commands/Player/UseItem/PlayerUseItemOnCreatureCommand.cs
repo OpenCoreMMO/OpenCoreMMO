@@ -2,13 +2,13 @@
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types.Runes;
 using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Services;
+using NeoServer.Domain.Items.Items.UsableItems.Runes;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts;
@@ -113,7 +113,7 @@ public class PlayerUseItemOnCreatureCommand : ICommand
                 return;
             }
 
-        if (itemToUse is IRune rune)
+        if (itemToUse is Rune rune)
         {
             UseRune(rune, player, targetCreature, useItemPacket.FromLocation.IsHotkey);
             return;
@@ -131,7 +131,7 @@ public class PlayerUseItemOnCreatureCommand : ICommand
         _playerUseService.Use(player, usable, targetCreature);
     }
 
-    private void UseRune(IRune rune, IPlayer player, ICreature targetCreature, bool isHotkey)
+    private void UseRune(Rune rune, IPlayer player, ICreature targetCreature, bool isHotkey)
     {
         var result = rune.CanBeCastBy(player, targetCreature);
 

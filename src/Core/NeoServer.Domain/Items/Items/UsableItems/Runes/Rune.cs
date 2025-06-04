@@ -1,7 +1,8 @@
 ﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types.Runes;
+using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Item;
@@ -11,7 +12,7 @@ using NeoServer.Domain.Items.Items.Cumulatives;
 
 namespace NeoServer.Domain.Items.Items.UsableItems.Runes;
 
-public class Rune : Cumulative, IRune
+public class Rune : Cumulative, IHasCooldown, IUsableRequirement
 {
     public Rune(IItemType type, Location location, IDictionary<ItemAttribute, IConvertible> attributes) : base(type,
         location, attributes)
@@ -21,7 +22,8 @@ public class Rune : Cumulative, IRune
     public Rune(IItemType type, Location location, byte amount) : base(type, location, amount)
     {
     }
-
+    
+    public string Name => Metadata.Name;
     public bool CheckFloor => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.CheckFloor);
     public bool BlockWalls => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.BlockWalls);
     public ushort ManaConsumption => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ManaUse);

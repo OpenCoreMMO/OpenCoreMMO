@@ -1,6 +1,6 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types.Runes;
+using NeoServer.Domain.Items.Items.UsableItems.Runes;
 using NeoServer.Scripts.LuaJIT.Enums;
 
 namespace NeoServer.Scripts.LuaJIT.Models.Spell;
@@ -15,7 +15,7 @@ public class LuaRune(LuaScriptInterface scriptInterface) : LuaSpell(scriptInterf
     public ushort ManaConsumption { get; set; }
     public ushort SoulConsumption { get; set; }
 
-    public bool OnUse(ICreature creature, IThing target, IRune rune, bool isHotkey)
+    public bool OnUse(ICreature creature, IThing target, Rune rune, bool isHotkey)
     {
         // onUse(player, item, fromPosition, target, toPosition, isHotkey)
         if (!GetScriptInterface().InternalReserveScriptEnv())

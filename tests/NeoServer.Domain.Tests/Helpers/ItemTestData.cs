@@ -3,7 +3,6 @@ using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
-using NeoServer.Domain.Common.Contracts.Items.Types.Runes;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Parsers;
@@ -17,6 +16,7 @@ using NeoServer.Domain.Items.Items.Containers;
 using NeoServer.Domain.Items.Items.Containers.Container;
 using NeoServer.Domain.Items.Items.Cumulatives;
 using NeoServer.Domain.Items.Items.UsableItems;
+using NeoServer.Domain.Items.Items.UsableItems.Runes;
 using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Tests.Helpers;
@@ -372,7 +372,7 @@ public class ItemTestData
         return new Coin(type, new Location(100, 100, 7), amount);
     }
 
-    public static IRune CreateAttackRune(ushort id, DamageType damageType = DamageType.Energy,
+    public static Rune CreateAttackRune(ushort id, DamageType damageType = DamageType.Energy,
         byte amount = 100,
         bool needTarget = true, ushort min = 100, ushort max = 100, IAreaEffectStore areaEffectStore = null)
     {
@@ -398,7 +398,7 @@ public class ItemTestData
         type.SetGroupIfNone();
 
         var factory = new RuneFactory();
-        return (IRune)factory.Create(type, new Location(100, 100, 7), attributes);
+        return (Rune)factory.Create(type, new Location(100, 100, 7), attributes);
     }
 
     public static IItem CreateTopItem(ushort id, byte topOrder)
