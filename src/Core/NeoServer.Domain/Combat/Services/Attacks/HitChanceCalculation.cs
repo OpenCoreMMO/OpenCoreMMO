@@ -1,4 +1,5 @@
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
+using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Combat.Services.Attacks;
 
@@ -13,7 +14,7 @@ public static class HitChanceCalculation
                 (byte)(DistanceHitChanceCalculation.CalculateFor2Hands(skill, distance) +
                        distanceWeapon.ExtraHitChance);
 
-        if (weapon is IThrowableWeapon throwableDistanceWeapon)
+        if (weapon is ThrowableWeapon throwableDistanceWeapon)
             hitChance =
                 (byte)(DistanceHitChanceCalculation.CalculateFor1Hand(skill, distance) +
                        throwableDistanceWeapon.ExtraHitChance);
