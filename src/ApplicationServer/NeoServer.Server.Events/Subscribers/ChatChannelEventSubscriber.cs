@@ -1,4 +1,5 @@
 ﻿using System;
+using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Server.Events.Chat;
 
@@ -13,12 +14,12 @@ public class ChatChannelEventSubscriber : IChatChannelEventSubscriber
         this.chatMessageAddedEventHandler = chatMessageAddedEventHandler;
     }
 
-    public void Subscribe(IChatChannel chatChannel)
+    public void Subscribe(ChatChannel chatChannel)
     {
         chatChannel.OnMessageAdded += chatMessageAddedEventHandler.Execute;
     }
 
-    public void Unsubscribe(IChatChannel chatChannel)
+    public void Unsubscribe(ChatChannel chatChannel)
     {
         throw new NotImplementedException();
     }

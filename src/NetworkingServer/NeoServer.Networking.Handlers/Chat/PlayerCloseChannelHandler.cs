@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Networking.Packets.Incoming.Chat;
@@ -24,7 +25,7 @@ public class PlayerCloseChannelHandler : PacketHandler
         var channelPacket = new OpenChannelPacket(message);
         if (!_game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player)) return;
 
-        IChatChannel channel = null;
+        ChatChannel channel = null;
 
         if (_chatChannelStore.Get(channelPacket.ChannelId) is { } publicChannel)
             channel = publicChannel;

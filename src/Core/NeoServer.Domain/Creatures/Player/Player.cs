@@ -51,7 +51,7 @@ public class Player : CombatActor, IPlayer
         uint healthPoints,
         uint maxHealthPoints,
         IVocation vocation,
-        IGroup group,
+        Group.Group group,
         Gender gender,
         bool online,
         ushort mana,
@@ -165,7 +165,7 @@ public class Player : CombatActor, IPlayer
     public IVip Vip { get; }
     public override IOutfit Outfit { get; protected set; }
     public IVocation Vocation { get; }
-    public IGroup Group { get; set; }
+    public Group.Group Group { get; set; }
     public IPlayerChannel Channels { get; set; }
     public IPlayerParty PlayerParty { get; set; }
     public IBank Bank { get; private set; }
@@ -1431,7 +1431,7 @@ public class Player : CombatActor, IPlayer
 
     public ushort GuildLevel { get; set; }
     public bool HasGuild => Guild is not null;
-    public IGuild Guild { get; init; }
+    public Guild.Guild Guild { get; init; }
 
     #endregion
 

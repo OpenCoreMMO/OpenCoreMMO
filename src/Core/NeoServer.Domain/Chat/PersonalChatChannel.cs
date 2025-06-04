@@ -3,7 +3,7 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 
 namespace NeoServer.Domain.Chat;
 
-public abstract class PersonalChatChannel : ChatChannel, IChatChannel
+public abstract class PersonalChatChannel : ChatChannel
 {
     public PersonalChatChannel(ushort id, string name) : base(id, name)
     {

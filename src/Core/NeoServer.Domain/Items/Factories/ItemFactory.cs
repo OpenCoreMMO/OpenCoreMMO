@@ -7,6 +7,7 @@ using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Monster.Loot;
 using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Items.Items.Containers;
 using NeoServer.Domain.Items.Items.UsableItems;
@@ -54,7 +55,7 @@ public class ItemFactory : IItemFactory
     public ICoinTypeStore CoinTypeStore { get; set; }
     public event CreateItem OnItemCreated;
 
-    public IItem CreateLootCorpse(ushort typeId, Location location, ILoot loot)
+    public IItem CreateLootCorpse(ushort typeId, Location location, Loot loot)
     {
         if (!ItemTypeStore.TryGetValue(typeId, out var itemType)) return null;
 

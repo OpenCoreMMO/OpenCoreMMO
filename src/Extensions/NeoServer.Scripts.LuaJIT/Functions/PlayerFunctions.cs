@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Creatures.Group;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -315,7 +316,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
     private static int LuaPlayerSetGroup(LuaState luaState)
     {
         // player:setGroup(group)
-        var group = GetUserdata<IGroup>(luaState, 2);
+        var group = GetUserdata<Group>(luaState, 2);
 
         if (group is null)
         {

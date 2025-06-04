@@ -22,22 +22,22 @@ public class ChatChannelFactory
         _guildStore = guildStore;
     }
 
-    public IChatChannel Create(Type type, string name, IPlayer player = null)
+    public ChatChannel Create(Type type, string name, IPlayer player = null)
     {
-        if (!typeof(IChatChannel).IsAssignableFrom(type)) return default;
+        if (!typeof(ChatChannel).IsAssignableFrom(type)) return default;
 
         var id = typeof(PersonalChatChannel).IsAssignableTo(type) && player is not null
             ? GeneratePlayerUniqueId(player)
             : GenerateUniqueId();
 
-        var channel = (IChatChannel)Activator.CreateInstance(type, id, name);
+        var channel = (ChatChannel)Activator.CreateInstance(type, id, name);
 
         SubscribeEvents(channel);
 
         return channel;
     }
 
-    public IChatChannel CreateGuildChannel(string name, ushort guildId)
+    public ChatChannel CreateGuildChannel(string name, ushort guildId)
     {
         var id = GenerateUniqueId();
         var guid = _guildStore.Get(guildId);
@@ -46,7 +46,7 @@ public class ChatChannelFactory
         return channel;
     }
 
-    public IChatChannel CreatePartyChannel(string name = "Party")
+    public ChatChannel CreatePartyChannel(string name = "Party")
     {
         var id = GenerateUniqueId();
 
@@ -56,7 +56,7 @@ public class ChatChannelFactory
         return channel;
     }
 
-    public IChatChannel Create(
+    public ChatChannel Create(
         ushort id,
         string name,
         string description,
@@ -107,7 +107,7 @@ public class ChatChannelFactory
     }
 
     //todo: move this method to a base factory to be used in other factories
-    private void SubscribeEvents(IChatChannel createdChannel)
+    private void SubscribeEvents(ChatChannel createdChannel)
     {
         foreach (var gameSubscriber in _channelEventSubscribers.Where(x =>
                      x.GetType().IsAssignableTo(typeof(IGameEventSubscriber)))) //register game events first

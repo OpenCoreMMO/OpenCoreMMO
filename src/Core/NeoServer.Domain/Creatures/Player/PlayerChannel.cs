@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Contracts.Chats;
+﻿using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Creatures.Players;
 using NeoServer.Domain.Common.Contracts.DataStores;
@@ -11,7 +12,7 @@ public class PlayerChannel : IPlayerChannel
 {
     private readonly IPlayer _owner;
 
-    private IDictionary<ushort, IChatChannel> _personalChannels;
+    private IDictionary<ushort, ChatChannel> _personalChannels;
 
     public PlayerChannel(IPlayer owner)
     {
@@ -20,7 +21,7 @@ public class PlayerChannel : IPlayerChannel
 
     private uint CreatureId => _owner.CreatureId;
 
-    public IEnumerable<IChatChannel> PersonalChannels => _personalChannels?.Values;
+    public IEnumerable<ChatChannel> PersonalChannels => _personalChannels?.Values;
 
     public bool CanEnterOnChannel(ushort channelId, IChatChannelStore chatChannelStore)
     {
@@ -28,7 +29,7 @@ public class PlayerChannel : IPlayerChannel
         return channel?.PlayerCanJoin(_owner) ?? false;
     }
 
-    public IEnumerable<IChatChannel> PrivateChannels
+    public IEnumerable<ChatChannel> PrivateChannels
     {
         get
         {
@@ -37,15 +38,15 @@ public class PlayerChannel : IPlayerChannel
         }
     }
 
-    public void AddPersonalChannel(IChatChannel channel)
+    public void AddPersonalChannel(ChatChannel channel)
     {
         if (Guard.IsNull(channel)) return;
 
-        _personalChannels ??= new Dictionary<ushort, IChatChannel>();
+        _personalChannels ??= new Dictionary<ushort, ChatChannel>();
         _personalChannels.Add(channel.Id, channel);
     }
 
-    public bool JoinChannel(IChatChannel channel)
+    public bool JoinChannel(ChatChannel channel)
     {
         if (channel is null) return false;
 
@@ -65,7 +66,7 @@ public class PlayerChannel : IPlayerChannel
         return true;
     }
 
-    public bool ExitChannel(IChatChannel channel)
+    public bool ExitChannel(ChatChannel channel)
     {
         if (channel is null) return false;
 
@@ -80,7 +81,7 @@ public class PlayerChannel : IPlayerChannel
         return true;
     }
 
-    public bool SendMessage(IChatChannel channel, string message)
+    public bool SendMessage(ChatChannel channel, string message)
     {
         if (!channel.WriteMessage(_owner, message, out var cancelMessage))
         {

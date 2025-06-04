@@ -1,13 +1,14 @@
-﻿using NeoServer.Domain.Common.Contracts.Chats;
+﻿using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Chat;
 
 public class PlayerChannelListPacket : OutgoingPacket
 {
-    private readonly IChatChannel[] chatChannels;
+    private readonly ChatChannel[] chatChannels;
 
-    public PlayerChannelListPacket(IChatChannel[] chatChannels)
+    public PlayerChannelListPacket(ChatChannel[] chatChannels)
     {
         this.chatChannels = chatChannels;
     }

@@ -54,7 +54,7 @@ public class ChannelLoader : IStartupLoader
         if (channels != null)
             foreach (var channel in channels.Where(x => x.Enabled))
             {
-                IChatChannel createdChannel;
+                ChatChannel createdChannel;
                 if (!string.IsNullOrWhiteSpace(channel.Script))
                 {
                     var type = ScriptSearch.Get(channel.Script);

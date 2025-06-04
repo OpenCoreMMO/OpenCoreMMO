@@ -7,6 +7,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Group;
+using NeoServer.Domain.Creatures.Guild;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Vocation;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -33,7 +34,7 @@ public static class PlayerTestDataBuilder
         IPathFinder pathFinder = null,
         IVocationStore vocationStore = null,
         IGroupStore groupStore = null,
-        IGuild guild = null,
+        Guild guild = null,
         ITown town = null)
     {
         if (vocationStore is null)

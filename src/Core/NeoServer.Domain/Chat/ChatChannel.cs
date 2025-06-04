@@ -5,7 +5,9 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 
 namespace NeoServer.Domain.Chat;
 
-public class ChatChannel : IChatChannel
+public delegate void AddMessage(ISociableCreature creature, ChatChannel channel, SpeechType speechType,
+    string message);
+public class ChatChannel
 {
     protected IDictionary<uint, UserChat> users = new Dictionary<uint, UserChat>();
 
@@ -27,7 +29,7 @@ public class ChatChannel : IChatChannel
     public virtual string Name { get; }
     public string Description { get; init; }
     public virtual bool Opened { get; init; }
-    public virtual IEnumerable<IUserChat> Users => users.Values;
+    public virtual IEnumerable<UserChat> Users => users.Values;
 
     public virtual SpeechType GetTextColor(IPlayer player)
     {

@@ -2,6 +2,7 @@ using LuaNET;
 using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Creatures.Guild;
 using NeoServer.Loaders.Guilds;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Scripts.LuaJIT.Functions;
@@ -18,9 +19,9 @@ public class LuaHelperService(
     IPlayerLoader playerLoader,
     ILogger logger) : LuaScriptInterface(nameof(BankFunctionBinder))
 {
-    public IGuild GetGuild(LuaState lua, int arg, bool allowOffline = false)
+    public Guild GetGuild(LuaState lua, int arg, bool allowOffline = false)
     {
-        if (IsUserdata(lua, arg)) return GetUserdata<IGuild>(lua, arg, "Guild");
+        if (IsUserdata(lua, arg)) return GetUserdata<Guild>(lua, arg, "Guild");
 
         if (IsNumber(lua, arg))
         {
@@ -50,7 +51,7 @@ public class LuaHelperService(
         logger.Warning("Lua::{MethodName}: Invalid argument", "getGuild");
         return null;
 
-        IGuild LoadGuild(int id)
+        Guild LoadGuild(int id)
         {
             var guildRecord = guildRepository.GetById(id).Result;
             if (guildRecord is null) return null;

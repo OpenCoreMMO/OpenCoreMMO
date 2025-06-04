@@ -13,6 +13,8 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Group;
+using NeoServer.Domain.Creatures.Guild;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
@@ -97,11 +99,11 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     bool Recovering { get; }
     IVocation Vocation { get; }
     byte VocationType => Vocation?.VocationType ?? default;
-    IGroup Group { get; set; }
+    Group Group { get; set; }
     byte GroupId => Group?.Id ?? default;
     uint AccountId { get; init; }
     int WorldId { get; init; }
-    IGuild Guild { get; }
+    Guild Guild { get; }
     ushort GuildId => Guild?.Id ?? default;
     bool HasGuild { get; }
     bool Shopping { get; }

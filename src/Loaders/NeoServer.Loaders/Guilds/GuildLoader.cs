@@ -25,7 +25,7 @@ public class GuildLoader : ICustomLoader
         _guildStore = guildStore;
     }
 
-    public IGuild Load(GuildEntity guildEntity)
+    public Guild Load(GuildEntity guildEntity)
     {
         if (guildEntity is null) return null;
 
@@ -35,7 +35,7 @@ public class GuildLoader : ICustomLoader
         guild.GuildLevels?.Clear();
 
         if ((guildEntity.Ranks?.Count ?? 0) > 0)
-            guild.GuildLevels = new Dictionary<ushort, IGuildLevel>();
+            guild.GuildLevels = new Dictionary<ushort, GuildLevel>();
 
         AddMembers(guildEntity, guild);
 
@@ -49,7 +49,7 @@ public class GuildLoader : ICustomLoader
         return guild;
     }
 
-    private static void AddMembers(GuildEntity guildEntity, IGuild guild)
+    private static void AddMembers(GuildEntity guildEntity, Guild guild)
     {
         foreach (var memberRank in guildEntity.Members.Select(x => x.Rank))
         {
@@ -62,7 +62,7 @@ public class GuildLoader : ICustomLoader
         }
     }
 
-    private IGuild GetOrCreateGuild(GuildEntity guildEntity, out bool shouldAddToStore)
+    private Guild GetOrCreateGuild(GuildEntity guildEntity, out bool shouldAddToStore)
     {
         var guild = _guildStore.Get((ushort)guildEntity.Id);
 

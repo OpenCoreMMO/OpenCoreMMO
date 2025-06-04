@@ -61,7 +61,7 @@ public class PlayerPartyTests
         var invitedPlayer = PlayerTestDataBuilder.Build(hp: 100);
         var invited = false;
 
-        var party = new Party(leader, new Mock<IChatChannel>().Object);
+        var party = new Party(leader, new Mock<ChatChannel>().Object);
 
         leader.PlayerParty.InviteToParty(sut, party);
 
@@ -83,7 +83,7 @@ public class PlayerPartyTests
     {
         //arrange
         var sut = PlayerTestDataBuilder.Build(hp: 100);
-        var party = new Party(sut, new Mock<IChatChannel>().Object);
+        var party = new Party(sut, new Mock<ChatChannel>().Object);
         using var monitor = sut.PlayerParty.Monitor();
         //act
         sut.PlayerParty.InviteToParty(sut, party);
@@ -106,7 +106,7 @@ public class PlayerPartyTests
         {
             if (playerInvited == invitedPlayer) invited = true;
         };
-        var party = new Party(sut, new Mock<IChatChannel>().Object);
+        var party = new Party(sut, new Mock<ChatChannel>().Object);
 
         //act
         sut.PlayerParty.InviteToParty(invitedPlayer, party);

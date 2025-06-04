@@ -2,6 +2,7 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Monster.Loot;
 
 namespace NeoServer.Domain.Items.Items.Containers;
 
@@ -9,13 +10,13 @@ public class LootContainer : Container.Container, ILootContainer
 {
     private readonly DateTime _createdAt;
 
-    public LootContainer(IItemType type, Location location, ILoot loot) : base(type, location)
+    public LootContainer(IItemType type, Location location, Loot loot) : base(type, location)
     {
         Loot = loot;
         _createdAt = DateTime.Now;
     }
 
-    public ILoot Loot { get; }
+    public Loot Loot { get; }
     public bool LootCreated { get; private set; }
 
     public bool CanBeOpenedBy(IPlayer player)
@@ -52,7 +53,7 @@ public class LootContainer : Container.Container, ILootContainer
         return string.IsNullOrWhiteSpace(content) ? "nothing" : content;
     }
 
-    private string GetStringContent(ILootItem[] items)
+    private string GetStringContent(LootItem[] items)
     {
         if (Loot is null) return null;
         if (!items.Any()) return null;

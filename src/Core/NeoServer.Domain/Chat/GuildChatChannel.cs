@@ -2,17 +2,18 @@
 using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures.Guilds;
+using NeoServer.Domain.Creatures.Guild;
 
 namespace NeoServer.Domain.Chat;
 
-public class GuildChatChannel : ChatChannel, IChatChannel
+public class GuildChatChannel : ChatChannel
 {
-    public GuildChatChannel(ushort id, string name, IGuild guild) : base(id, name)
+    public GuildChatChannel(ushort id, string name, Guild guild) : base(id, name)
     {
         Guild = guild;
     }
 
-    private IGuild Guild { get; }
+    private Guild Guild { get; }
 
     public override bool Opened
     {

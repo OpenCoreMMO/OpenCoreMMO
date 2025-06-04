@@ -4,7 +4,7 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 
 namespace NeoServer.Domain.Chat;
 
-public class UserChat : IUserChat
+public class UserChat
 {
     private const byte MAX_MUTED_TIMES = 36;
     private long firstMessageBeforeMuted;

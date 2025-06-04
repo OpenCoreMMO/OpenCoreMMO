@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common;
+﻿using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Helpers;
@@ -13,7 +14,7 @@ public class Party : IParty
     private readonly Dictionary<uint, PartyMember> members = new();
     private ushort memberCount;
 
-    public Party(IPlayer player, IChatChannel channel)
+    public Party(IPlayer player, ChatChannel channel)
     {
         Leader = player;
         Channel = channel;
@@ -56,7 +57,7 @@ public class Party : IParty
     }
 
     public IReadOnlyCollection<uint> Invites => invites.ToList();
-    public IChatChannel Channel { get; }
+    public ChatChannel Channel { get; }
     public bool IsOver => !members.Any();
 
     public bool IsSharedExperienceEnabled { get; set; }
