@@ -3,8 +3,8 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Player.Inventory;
 
 namespace NeoServer.Domain.Items.Services;
 

@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Tests.Helpers;

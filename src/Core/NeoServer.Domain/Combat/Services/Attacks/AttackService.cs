@@ -6,11 +6,11 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
+using NeoServer.Domain.Creatures.Player.Modes;
 using Serilog;
 
 namespace NeoServer.Domain.Combat.Services.Attacks;

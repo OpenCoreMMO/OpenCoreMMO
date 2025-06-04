@@ -1,7 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Items.Items.Containers;
 using NeoServer.Domain.Items.Items.Containers.Container;
 
 namespace NeoServer.Domain.Items.Factories;

@@ -1,5 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Creatures.Condition;
 
 namespace NeoServer.Domain.Spells;
 

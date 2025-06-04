@@ -3,7 +3,6 @@ using System.Linq;
 using NeoServer.Data.Entities;
 using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Common.Contracts.DataStores;
-using NeoServer.Domain.Common.Creatures.Guilds;
 using NeoServer.Domain.Creatures.Common;
 using NeoServer.Domain.Guild;
 using NeoServer.Loaders.Interfaces;

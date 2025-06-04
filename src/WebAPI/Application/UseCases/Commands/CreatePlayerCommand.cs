@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
-using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Web.API.IoC.Configs;
 using NeoServer.Web.API.Requests.Commands;
 using NeoServer.Web.API.Response;

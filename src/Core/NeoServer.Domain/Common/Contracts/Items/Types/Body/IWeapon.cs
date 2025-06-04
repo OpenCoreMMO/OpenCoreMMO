@@ -1,7 +1,7 @@
 ﻿using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Creatures.Player.Inventory;
 
 namespace NeoServer.Domain.Common.Contracts.Items.Types.Body;
 

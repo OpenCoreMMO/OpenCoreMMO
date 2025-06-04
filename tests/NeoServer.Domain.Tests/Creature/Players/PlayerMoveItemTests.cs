@@ -1,11 +1,10 @@
 ﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
-using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Models.Tiles;

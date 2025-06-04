@@ -1,5 +1,5 @@
-﻿using NeoServer.Domain.Common.Creatures.Players;
-using NeoServer.Domain.Common.Helpers;
+﻿using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Creatures.Group;
 

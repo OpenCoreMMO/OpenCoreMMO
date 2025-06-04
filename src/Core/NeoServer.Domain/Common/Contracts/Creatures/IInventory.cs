@@ -2,10 +2,10 @@
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
-using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;

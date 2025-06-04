@@ -2,7 +2,7 @@
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Results;
 
-namespace NeoServer.Domain.Common.Contracts.Items.Types.Containers;
+namespace NeoServer.Domain.Common.Contracts.Items.Types;
 
 public delegate void RemoveItem(IContainer fromContainer, byte slotIndex, IItem item, byte amountRemoved);
 

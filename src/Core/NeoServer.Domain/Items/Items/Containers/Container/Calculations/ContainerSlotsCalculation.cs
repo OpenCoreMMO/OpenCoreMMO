@@ -1,4 +1,4 @@
-﻿using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
+﻿using NeoServer.Domain.Common.Contracts.Items.Types;
 
 namespace NeoServer.Domain.Items.Items.Containers.Container.Calculations;
 

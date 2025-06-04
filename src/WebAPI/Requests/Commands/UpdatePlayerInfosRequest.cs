@@ -1,5 +1,6 @@
 ﻿using MediatR;
-using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Web.API.Response;
 
 namespace NeoServer.Web.API.Requests.Commands;

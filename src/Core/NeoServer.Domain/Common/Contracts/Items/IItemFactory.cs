@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Common.Contracts.Items.Types;
-using NeoServer.Domain.Common.Item;
+﻿using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Monster.Loot;
 using NeoServer.Domain.Items.Items.Cumulatives;
 

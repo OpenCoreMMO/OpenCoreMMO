@@ -1,4 +1,3 @@
-using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Common.Contracts.Items.Weapons.Attributes;

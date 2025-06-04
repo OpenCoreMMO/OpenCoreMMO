@@ -2,8 +2,8 @@
 using LuaNET;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;

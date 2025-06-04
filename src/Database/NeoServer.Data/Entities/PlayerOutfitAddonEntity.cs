@@ -1,4 +1,4 @@
-﻿using NeoServer.Domain.Common.Creatures.Players;
+﻿using NeoServer.Domain.Creatures.Player.Outfit;
 
 namespace NeoServer.Data.Entities;
 

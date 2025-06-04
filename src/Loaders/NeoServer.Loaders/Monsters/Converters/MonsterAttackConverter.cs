@@ -11,6 +11,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Effects.Parsers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Parsers;
+using NeoServer.Domain.Creatures.Condition;
 using NeoServer.Server.Helpers.Extensions;
 using Serilog;
 

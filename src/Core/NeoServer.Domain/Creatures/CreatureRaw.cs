@@ -1,8 +1,8 @@
 ﻿#define GAME_FEATURE_MESSAGE_LEVEL
 using System.Text;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Creatures.Party;
+using NeoServer.Domain.Guild;
+using NeoServer.Domain.Party;
 
 namespace NeoServer.Domain.Creatures;
 

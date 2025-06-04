@@ -1,7 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Creatures.Player.Inventory;
 
 namespace NeoServer.Domain.Tests.Helpers.Player;

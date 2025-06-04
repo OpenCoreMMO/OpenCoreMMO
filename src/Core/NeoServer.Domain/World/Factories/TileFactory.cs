@@ -46,7 +46,8 @@ public class TileFactory : ITileFactory
 
             if (item.CanBeMoved && isHouseTile)
             {
-                _logger.Warning("Item {ItemClientId} is moveable and is on a house tile. This is not allowed", item.ClientId);
+                _logger.Warning("Item {ItemClientId} is moveable and is on a house tile. This is not allowed",
+                    item.ClientId);
                 continue;
             }
 
