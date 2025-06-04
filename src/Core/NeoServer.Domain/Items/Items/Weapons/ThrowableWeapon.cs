@@ -5,7 +5,9 @@ using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
+using NeoServer.Domain.Common.Contracts.Items.Weapons.Attributes;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
@@ -14,7 +16,7 @@ using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items.Weapons;
 
-public class ThrowableWeapon : CumulativeEquipment, IThrowableWeapon
+public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRange
 {
     public ThrowableWeapon(IItemType type, Location location,
         IDictionary<ItemAttribute, IConvertible> attributes) : base(type, location, attributes)

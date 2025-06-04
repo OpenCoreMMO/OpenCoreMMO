@@ -63,7 +63,7 @@ public class DistanceWeapon(IItemType type, Location location)
 
         if (actor is not IPlayer player) return false;
 
-        if (player.Inventory[Slot.Ammo] is not IAmmo ammo) return false;
+        if (player.Inventory[Slot.Ammo] is not Ammo ammo) return false;
 
         if (ammo.AmmoType != Metadata.AmmoType) return false;
 
@@ -111,7 +111,7 @@ public class DistanceWeapon(IItemType type, Location location)
 
     public byte AttackBonus => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Attack);
 
-    public bool CanShootAmmunition(IAmmo ammo)
+    public bool CanShootAmmunition(Ammo ammo)
     {
         return Metadata.AmmoType == (ammo?.AmmoType ?? AmmoType.None);
     }
@@ -122,7 +122,7 @@ public class DistanceWeapon(IItemType type, Location location)
     }
 
     private void UseElementalDamage(ICombatActor actor, ICombatActor enemy, ref CombatAttackResult combatResult,
-        ref bool result, IPlayer player, IAmmo ammo, ref ushort maxDamage, ref CombatAttackValue combat)
+        ref bool result, IPlayer player, Ammo ammo, ref ushort maxDamage, ref CombatAttackValue combat)
     {
         if (!ammo.HasElementalDamage) return;
 

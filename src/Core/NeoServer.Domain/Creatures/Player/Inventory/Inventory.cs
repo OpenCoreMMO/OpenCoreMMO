@@ -12,6 +12,7 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Player.Inventory.Calculations;
 using NeoServer.Domain.Creatures.Player.Inventory.Operations;
 using NeoServer.Domain.Creatures.Player.Inventory.Rules;
+using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Creatures.Player.Inventory;
 
@@ -39,7 +40,7 @@ public class Inventory : IInventory
                 equipment.Protect(damage);
     }
 
-    public IAmmo Ammo => InventoryMap.GetItem<IAmmo>(Slot.Ammo);
+    public Ammo Ammo => InventoryMap.GetItem<Ammo>(Slot.Ammo);
     public IWeapon Weapon => InventoryMap.GetItem<IWeapon>(Slot.Left);
     public bool IsUsingWeapon => InventoryMap.HasItemOnSlot(Slot.Left);
     public bool HasShield => InventoryMap.HasItemOnSlot(Slot.Right);

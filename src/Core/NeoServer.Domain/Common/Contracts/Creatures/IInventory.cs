@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
 using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
@@ -34,7 +35,7 @@ public interface IInventory : IHasItem
     IDictionary<ushort, uint> Map { get; }
     IEnumerable<IItem> DressingItems { get; }
     bool IsUsingWeapon { get; }
-    IAmmo Ammo { get; }
+    Ammo Ammo { get; }
     float AttackRate { get; }
     ElementalDamage TotalElementalAttack { get; }
     IItem this[Slot slot] { get; }
