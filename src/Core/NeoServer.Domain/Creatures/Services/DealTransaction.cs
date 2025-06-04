@@ -7,6 +7,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Items.Items.Cumulatives;
 
 namespace NeoServer.Domain.Creatures.Services;
 
@@ -94,7 +95,7 @@ public class DealTransaction(IItemFactory itemFactory, ICoinTransaction coinTran
         foreach (var coinToAdd in coinsToAdd)
         {
             var createdCoin = itemFactory.Create(coinToAdd.Item1, Location.Inventory(Slot.Backpack), null);
-            if (createdCoin is not ICoin newCoin) continue;
+            if (createdCoin is not Coin newCoin) continue;
             newCoin.Amount = coinToAdd.Item2;
 
             yield return newCoin;

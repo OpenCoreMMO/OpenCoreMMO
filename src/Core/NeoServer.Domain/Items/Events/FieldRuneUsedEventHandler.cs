@@ -3,11 +3,11 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
-using NeoServer.Domain.Common.Contracts.Items.Types.Runes;
 using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Effects.Magical;
+using NeoServer.Domain.Items.Items.UsableItems.Runes;
 
 namespace NeoServer.Domain.Items.Events;
 
@@ -26,7 +26,7 @@ public class FieldRuneUsedEventHandler : IGameEventHandler
 
     public void Execute(ICreature usedBy, IDynamicTile onTile, IUsableOnTile item)
     {
-        if (item is not IFieldRune rune) return;
+        if (item is not FieldRune rune) return;
 
         if (!string.IsNullOrWhiteSpace(rune.Area))
         {

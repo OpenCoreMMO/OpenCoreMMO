@@ -7,7 +7,7 @@ using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items;
 
-public class Sign : BaseItem, ISign
+public class Sign : BaseItem
 {
     public Sign(IItemType metadata, Location location, IDictionary<ItemAttribute, IConvertible> attributes) : base(
         metadata, location)

@@ -12,6 +12,8 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Player.Inventory.Calculations;
 using NeoServer.Domain.Creatures.Player.Inventory.Operations;
 using NeoServer.Domain.Creatures.Player.Inventory.Rules;
+using NeoServer.Domain.Items.Items;
+using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Creatures.Player.Inventory;
 
@@ -30,7 +32,7 @@ public class Inventory : IInventory
     }
 
     internal InventoryMap InventoryMap { get; }
-    internal IDefenseEquipment Shield => InventoryMap.GetItem<IDefenseEquipment>(Slot.Right);
+    internal BodyDefenseEquipment Shield => InventoryMap.GetItem<BodyDefenseEquipment>(Slot.Right);
 
     public void Protect(CombatDamage damage)
     {
@@ -39,7 +41,7 @@ public class Inventory : IInventory
                 equipment.Protect(damage);
     }
 
-    public IAmmo Ammo => InventoryMap.GetItem<IAmmo>(Slot.Ammo);
+    public Ammo Ammo => InventoryMap.GetItem<Ammo>(Slot.Ammo);
     public IWeapon Weapon => InventoryMap.GetItem<IWeapon>(Slot.Left);
     public bool IsUsingWeapon => InventoryMap.HasItemOnSlot(Slot.Left);
     public bool HasShield => InventoryMap.HasItemOnSlot(Slot.Right);
@@ -48,7 +50,7 @@ public class Inventory : IInventory
     public ushort TotalArmor => InventoryMap.CalculateTotalArmor();
     public byte AttackRange => InventoryMap.CalculateAttackRange();
     public ElementalDamage TotalElementalAttack => this.CalculateTotalElementalAttack();
-    public float AttackRate => Weapon is IDistanceWeapon or IThrowableWeapon ? 0.09f : 0.085f;
+    public float AttackRate => Weapon is IDistanceWeapon or ThrowableWeapon ? 0.09f : 0.085f;
 
     public ulong GetTotalMoney(ICoinTypeStore coinTypeStore)
     {

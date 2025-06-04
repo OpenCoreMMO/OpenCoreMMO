@@ -7,6 +7,7 @@ using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Services;
+using NeoServer.Domain.Items.Items.Cumulatives;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Player;
 
@@ -390,8 +391,8 @@ public class DealTransactionTest
 
         itemFactoryMock.Setup(x => x.Create(10, It.IsAny<Location>(), null, null)).Returns(itemToBuy);
 
-        itemFactoryMock.Setup(x => x.CreateCoins(It.IsAny<ulong>())).Returns(new List<ICoin>
-            { (ICoin)ItemTestData.CreateCoin(1, 1, 100), (ICoin)ItemTestData.CreateCoin(2, 70, 1) });
+        itemFactoryMock.Setup(x => x.CreateCoins(It.IsAny<ulong>())).Returns(new List<Coin>
+            { (Coin)ItemTestData.CreateCoin(1, 1, 100), (Coin)ItemTestData.CreateCoin(2, 70, 1) });
 
         itemFactoryMock.Setup(x => x.Create(1, It.IsAny<Location>(), null, null)).Returns(platinum);
         itemFactoryMock.Setup(x => x.Create(2, It.IsAny<Location>(), null, null)).Returns(gold);

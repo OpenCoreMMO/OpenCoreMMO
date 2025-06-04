@@ -1,8 +1,9 @@
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
+using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Common.Contracts.Items.Weapons.Attributes;
 
 public interface INeedsAmmo
 {
-    bool CanShootAmmunition(IAmmo ammo);
+    bool CanShootAmmunition(Ammo ammo);
 }

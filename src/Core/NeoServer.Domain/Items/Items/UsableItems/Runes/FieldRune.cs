@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types.Runes;
 using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Item;
@@ -8,7 +7,7 @@ using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Items.Items.UsableItems.Runes;
 
-public class FieldRune : Rune, IFieldRune
+public class FieldRune : Rune, IUsableOnTile
 {
     public FieldRune(IItemType type, Location location, IDictionary<ItemAttribute, IConvertible> attributes) : base(
         type, location, attributes)

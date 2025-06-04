@@ -7,6 +7,7 @@ using NeoServer.Domain.Common.Contracts.Items.Weapons.Attributes;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Parsers;
+using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Combat.Services.Attacks.Builders.AttackParameter;
 
@@ -61,7 +62,7 @@ public static class PlayerCombatParameterBuilder
         {
             INeedsAmmo distanceWeapon when distanceWeapon.CanShootAmmunition(player.Inventory.Ammo) =>
                 ammo?.ShootType ?? ShootType.None,
-            IThrowableWeapon throwableDistanceWeapon => throwableDistanceWeapon.Metadata.ShootType,
+            ThrowableWeapon throwableDistanceWeapon => throwableDistanceWeapon.Metadata.ShootType,
             IMagicalWeapon magicWeapon => magicWeapon.Metadata.ShootType,
             _ => ShootType.None
         };

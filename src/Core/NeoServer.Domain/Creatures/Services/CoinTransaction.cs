@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
 using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Items.Items.Cumulatives;
 
 namespace NeoServer.Domain.Creatures.Services;
 
@@ -62,7 +63,7 @@ public class CoinTransaction : ICoinTransaction
 
         if (backpackSlot is null) return removedAmount;
 
-        var moneyMap = new SortedList<uint, List<ICoin>>(); //slot and item
+        var moneyMap = new SortedList<uint, List<Coin>>(); //slot and item
 
         var containers = new Queue<IContainer>();
         containers.Enqueue(backpackSlot);
@@ -77,7 +78,7 @@ public class CoinTransaction : ICoinTransaction
                     continue;
                 }
 
-                if (item is not ICoin coin) continue;
+                if (item is not Coin coin) continue;
 
                 if (moneyMap.TryGetValue(coin.Worth, out var coinSlots))
                 {
@@ -85,7 +86,7 @@ public class CoinTransaction : ICoinTransaction
                     continue;
                 }
 
-                coinSlots = new List<ICoin> { coin };
+                coinSlots = [coin];
                 moneyMap.Add(coin.Worth, coinSlots);
             }
 

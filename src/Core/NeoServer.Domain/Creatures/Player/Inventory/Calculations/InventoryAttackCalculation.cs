@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Contracts.Items.Weapons.Attributes;
 using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Creatures.Player.Inventory.Calculations;
 
@@ -52,7 +53,7 @@ internal static class InventoryAttackCalculation
         if (inventoryMap.GetItem<IDistanceWeapon>(Slot.Left) is { } leftWeapon)
             return leftWeapon.Range;
 
-        if (inventoryMap.GetItem<IThrowableWeapon>(Slot.Left) is { } rightWeapon)
+        if (inventoryMap.GetItem<ThrowableWeapon>(Slot.Left) is { } rightWeapon)
             return rightWeapon.Range;
 
         return 0;

@@ -33,6 +33,7 @@ using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Common;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
+using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Creatures.Player;
 
@@ -323,7 +324,7 @@ public class Player : CombatActor, IPlayer
     {
         if (Inventory.Weapon is IDistanceWeapon && !combatContext.InfiniteAmmo) Inventory.Ammo?.Reduce();
 
-        if (Inventory.Weapon is IThrowableWeapon { ShouldBreak: true } throwableDistanceWeapon &&
+        if (Inventory.Weapon is ThrowableWeapon { ShouldBreak: true } throwableDistanceWeapon &&
             !combatContext.InfiniteThrowingWeapon)
             throwableDistanceWeapon.Reduce();
 

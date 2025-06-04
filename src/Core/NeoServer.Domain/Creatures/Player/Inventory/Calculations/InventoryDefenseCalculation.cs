@@ -1,6 +1,7 @@
 ﻿using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Contracts.Items.Weapons.Attributes;
 using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Items.Items;
 
 namespace NeoServer.Domain.Creatures.Player.Inventory.Calculations;
 
@@ -11,7 +12,7 @@ internal static class InventoryDefenseCalculation
         var totalDefense = 0;
         totalDefense += inventory.GetItem<IHasDefense>(Slot.Left)?.Defense ?? 0;
 
-        totalDefense += inventory.GetItem<IDefenseEquipment>(Slot.Right)?.DefenseValue ?? 0;
+        totalDefense += inventory.GetItem<BodyDefenseEquipment>(Slot.Right)?.DefenseValue ?? 0;
 
         return (ushort)totalDefense;
     }
@@ -22,7 +23,7 @@ internal static class InventoryDefenseCalculation
 
         byte GetDefenseValue(Slot slot)
         {
-            return (byte)(inventoryMap.GetItem<IDefenseEquipment>(slot)?.DefenseValue ?? default);
+            return (byte)(inventoryMap.GetItem<BodyDefenseEquipment>(slot)?.DefenseValue ?? default);
         }
 
         totalArmor += GetDefenseValue(Slot.Necklace);
