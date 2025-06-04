@@ -9,13 +9,18 @@ using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items;
 
-public class BodyDefenseEquipment : Equipment, IDefenseEquipment
+public class BodyDefenseEquipment : Equipment, IBodyEquipmentEquipment
 {
     public BodyDefenseEquipment(IItemType itemType, Location location)
         : base(itemType, location)
     {
     }
 
+    public ushort DefenseValue => Metadata.Attributes.HasAttribute(ItemAttribute.Defense)
+        ? Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Defense)
+        : Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Armor);
+
+    public ushort ArmorValue => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Armor);
     protected override string PartialInspectionText
     {
         get

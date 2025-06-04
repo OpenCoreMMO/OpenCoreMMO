@@ -263,7 +263,7 @@ public class ItemTestData
         };
     }
 
-    public static IDefenseEquipment CreateDefenseEquipmentItem(ushort id, string slot = "", ushort charges = 10,
+    public static BodyDefenseEquipment CreateDefenseEquipmentItem(ushort id, string slot = "", ushort charges = 10,
         (ItemAttribute, IConvertible)[] attributes = null, Func<ushort, IItemType> itemTypeFinder = null)
     {
         var type = new ItemType();

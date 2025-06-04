@@ -12,6 +12,7 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Player.Inventory.Calculations;
 using NeoServer.Domain.Creatures.Player.Inventory.Operations;
 using NeoServer.Domain.Creatures.Player.Inventory.Rules;
+using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Creatures.Player.Inventory;
@@ -31,7 +32,7 @@ public class Inventory : IInventory
     }
 
     internal InventoryMap InventoryMap { get; }
-    internal IDefenseEquipment Shield => InventoryMap.GetItem<IDefenseEquipment>(Slot.Right);
+    internal BodyDefenseEquipment Shield => InventoryMap.GetItem<BodyDefenseEquipment>(Slot.Right);
 
     public void Protect(CombatDamage damage)
     {
