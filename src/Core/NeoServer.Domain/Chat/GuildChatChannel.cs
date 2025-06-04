@@ -1,5 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Creatures.Guilds;
+using NeoServer.Domain.Guild;
 
 namespace NeoServer.Domain.Chat;
 

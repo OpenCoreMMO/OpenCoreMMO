@@ -1,6 +1,5 @@
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat.Attacks;
-using NeoServer.Domain.Combat.Conditions;
 using NeoServer.Domain.Combat.Validation;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
@@ -12,15 +11,12 @@ using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
-using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
 using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
-using NeoServer.Domain.Common.Contracts.Items.Weapons;
 using NeoServer.Domain.Common.Contracts.Items.Weapons.Attributes;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
@@ -31,8 +27,13 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Common;
+using NeoServer.Domain.Creatures.Condition;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
+using NeoServer.Domain.Creatures.Npcs;
+using NeoServer.Domain.Creatures.Player.Container;
+using NeoServer.Domain.Creatures.Player.Inventory;
+using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Items.Items.UsableItems;
 using NeoServer.Domain.Items.Items.Weapons;
 
@@ -263,7 +264,7 @@ public class Player : CombatActor, IPlayer
         }
 
         //protection zone block is persistent, this will be removed elsewhere
-        AddCondition(new Condition(ConditionType.ProtectionZoneBlock, 0));
+        AddCondition(new Condition.Condition(ConditionType.ProtectionZoneBlock, 0));
     }
 
     public void RemoveProtectionZoneBlock()
@@ -828,7 +829,7 @@ public class Player : CombatActor, IPlayer
         else
         {
             RemoveHungry();
-            AddCondition(new Condition(ConditionType.Regeneration, regenerationMs, SetAsHungry));
+            AddCondition(new Condition.Condition(ConditionType.Regeneration, regenerationMs, SetAsHungry));
         }
 
         return true;
@@ -843,20 +844,20 @@ public class Player : CombatActor, IPlayer
     public void SetAsHungry()
     {
         RemoveCondition(ConditionType.Regeneration);
-        AddCondition(new Condition(ConditionType.Hungry, uint.MaxValue));
+        AddCondition(new Condition.Condition(ConditionType.Hungry, uint.MaxValue));
     }
 
     public bool IsManaShieldEnabled => HasCondition(ConditionType.ManaShield);
 
     public void EnableManaShield(uint duration)
     {
-        AddCondition(new Condition(ConditionType.ManaShield, duration,
+        AddCondition(new Condition.Condition(ConditionType.ManaShield, duration,
             () => { RemoveCondition(ConditionType.ManaShield); }));
     }
 
     public void EnableManaShield()
     {
-        AddCondition(new Condition(ConditionType.ManaShield));
+        AddCondition(new Condition.Condition(ConditionType.ManaShield));
     }
 
     public void DisableManaShield()
@@ -1309,7 +1310,7 @@ public class Player : CombatActor, IPlayer
             SetProtectionZoneBlock();
 
         //logout is persistent, this will be removed elsewhere
-        AddCondition(new Condition(ConditionType.LogoutBlock, 0));
+        AddCondition(new Condition.Condition(ConditionType.LogoutBlock, 0));
     }
 
     private void TogglePacifiedCondition(IDynamicTile fromTile, IDynamicTile toTile)
@@ -1317,13 +1318,13 @@ public class Player : CombatActor, IPlayer
         switch (fromTile?.ProtectionZone)
         {
             case null when toTile.ProtectionZone:
-                AddCondition(new Condition(ConditionType.Pacified, 0));
+                AddCondition(new Condition.Condition(ConditionType.Pacified, 0));
                 RemoveProtectionZoneBlock();
                 break;
             case false when toTile.ProtectionZone:
                 RemoveLogoutBlock();
                 RemoveProtectionZoneBlock();
-                AddCondition(new Condition(ConditionType.Pacified, 0));
+                AddCondition(new Condition.Condition(ConditionType.Pacified, 0));
                 break;
             case true when toTile.ProtectionZone is false:
                 RemoveCondition(ConditionType.Pacified);

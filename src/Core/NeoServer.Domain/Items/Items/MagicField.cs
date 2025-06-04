@@ -1,13 +1,12 @@
-﻿using NeoServer.Domain.Combat.Conditions;
-using NeoServer.Domain.Common;
+﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Effects.Parsers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Parsers;
+using NeoServer.Domain.Creatures.Condition;
 using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items;

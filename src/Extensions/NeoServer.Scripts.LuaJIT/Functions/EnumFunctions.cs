@@ -1,8 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 using LuaNET;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;

@@ -1,6 +1,6 @@
 ﻿using System;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Creatures.Player;
 using Newtonsoft.Json;
 
 namespace NeoServer.Loaders.Players.OutFits;

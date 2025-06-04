@@ -1,5 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Incoming.Player;

@@ -3,7 +3,6 @@ using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
-using NeoServer.Domain.Common.Contracts.Items.Weapons;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
@@ -12,7 +11,7 @@ using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items.Weapons;
 
-public class MagicWeapon : Equipment,  IDistanceWeapon
+public class MagicWeapon : Equipment, IDistanceWeapon
 {
     public MagicWeapon(IItemType type, Location location) : base(type, location)
     {
@@ -28,8 +27,8 @@ public class MagicWeapon : Equipment,  IDistanceWeapon
 
     protected override string PartialInspectionText => string.Empty;
     public ushort MaxHitChance => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.MaxHitChance);
-    public ushort? MinHitChance => (ushort)(MaxHitChance / 2);
     public ushort ManaConsumption => Metadata.Attributes?.GetAttribute<ushort>(ItemAttribute.ManaUse) ?? 0;
+    public ushort? MinHitChance => (ushort)(MaxHitChance / 2);
     public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Range);
     public WeaponType WeaponType => WeaponType.Magical;
 

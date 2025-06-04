@@ -1,8 +1,8 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Creatures.Player.Inventory;
 
 namespace NeoServer.Domain.Common.Contracts.Items.Types.Body;
 

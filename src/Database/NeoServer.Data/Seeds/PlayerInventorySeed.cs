@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NeoServer.Data.Entities;
-using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Creatures.Player.Inventory;
 
 namespace NeoServer.Data.Seeds;
 

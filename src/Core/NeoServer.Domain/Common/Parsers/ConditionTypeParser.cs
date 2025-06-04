@@ -1,5 +1,5 @@
-﻿using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Item;
+﻿using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Creatures.Condition;
 
 namespace NeoServer.Domain.Common.Parsers;
 

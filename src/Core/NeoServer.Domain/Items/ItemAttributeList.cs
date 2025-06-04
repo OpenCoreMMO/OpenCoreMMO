@@ -1,7 +1,6 @@
 ﻿using System.Buffers;
 using System.Globalization;
 using NeoServer.Domain.Common.Combat;
-using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
@@ -26,6 +25,73 @@ public sealed class ItemAttributeList
             customAttributes ??= new Dictionary<string, (dynamic, ItemAttributeList)>(StringComparer
                 .InvariantCultureIgnoreCase);
             return customAttributes;
+        }
+    }
+
+    public Dictionary<SkillType, sbyte> SkillBonuses
+    {
+        get
+        {
+            var dictionary = new Dictionary<SkillType, sbyte>();
+
+            foreach (var (attr, (value, list)) in _defaultAttributes)
+            {
+                var type = typeof(sbyte);
+                var (skillType, bonus) = attr switch
+                {
+                    ItemAttribute.SkillAxe => (SkillType.Axe, Convert.ChangeType(value, type)),
+                    ItemAttribute.SkillClub => (SkillType.Club, Convert.ChangeType(value, type)),
+                    ItemAttribute.SkillDistance => (SkillType.Distance, Convert.ChangeType(value, type)),
+                    ItemAttribute.SkillFishing => (SkillType.Fishing, Convert.ChangeType(value, type)),
+                    ItemAttribute.SkillFist => (SkillType.Fist, Convert.ChangeType(value, type)),
+                    ItemAttribute.SkillShield => (SkillType.Shielding, Convert.ChangeType(value, type)),
+                    ItemAttribute.SkillSword => (SkillType.Sword, Convert.ChangeType(value, type)),
+                    ItemAttribute.Speed => (SkillType.Speed, Convert.ChangeType(value, type)),
+                    ItemAttribute.MagicPoints => (SkillType.Magic, Convert.ChangeType(value, type)),
+                    _ => (SkillType.None, (byte)0)
+                };
+
+                if (skillType == SkillType.None || bonus == 0) continue;
+                dictionary.TryAdd(skillType, bonus);
+            }
+
+            return dictionary;
+        }
+    }
+
+    public Dictionary<DamageType, sbyte> DamageProtection
+    {
+        get
+        {
+            var dictionary = new Dictionary<DamageType, sbyte>();
+
+            foreach (var (attr, (value, _)) in _defaultAttributes)
+            {
+                var type = typeof(sbyte);
+                var (damage, protection) = attr switch
+                {
+                    ItemAttribute.AbsorbPercentDeath => (DamageType.Death, Convert.ChangeType(value, type)),
+                    ItemAttribute.AbsorbPercentEnergy => (DamageType.Energy, Convert.ChangeType(value, type)),
+                    ItemAttribute.AbsorbPercentPhysical => (DamageType.Physical, Convert.ChangeType(value, type)),
+                    ItemAttribute.AbsorbPercentPoison => (DamageType.Earth, Convert.ChangeType(value, type)),
+                    ItemAttribute.AbsorbPercentFire => (DamageType.Fire, Convert.ChangeType(value, type)),
+                    ItemAttribute.FieldAbsorbEercentFire => (DamageType.FireField, Convert.ChangeType(value, type)),
+                    ItemAttribute.AbsorbPercentDrown => (DamageType.Drown, Convert.ChangeType(value, type)),
+                    ItemAttribute.AbsorbPercentHoly => (DamageType.Holy, Convert.ChangeType(value, type)),
+                    ItemAttribute.AbsorbPercentIce => (DamageType.Ice, Convert.ChangeType(value, type)),
+                    ItemAttribute.AbsorbPercentManaDrain => (DamageType.ManaDrain, Convert.ChangeType(value, type)),
+                    ItemAttribute.AbsorbPercentLifeDrain => (DamageType.LifeDrain, Convert.ChangeType(value, type)),
+                    ItemAttribute.AbsorbPercentMagic => (DamageType.Elemental, Convert.ChangeType(value, type)),
+                    ItemAttribute.AbsorbPercentAll => (DamageType.All, Convert.ChangeType(value, type)),
+                    ItemAttribute.AbsorbPercentElements => (DamageType.Elemental, Convert.ChangeType(value, type)),
+                    _ => (DamageType.None, (sbyte)0)
+                };
+
+                if (damage == DamageType.None) continue;
+                dictionary.TryAdd(damage, protection);
+            }
+
+            return dictionary;
         }
     }
 
@@ -364,73 +430,6 @@ public sealed class ItemAttributeList
             return new ElementalDamage(DamageType.Ice, GetAttribute<byte>(ItemAttribute.ElementIce));
 
         return default;
-    }
-
-    public Dictionary<SkillType, sbyte> SkillBonuses
-    {
-        get
-        {
-            var dictionary = new Dictionary<SkillType, sbyte>();
-
-            foreach (var (attr, (value, list)) in _defaultAttributes)
-            {
-                var type = typeof(sbyte);
-                var (skillType, bonus) = attr switch
-                {
-                    ItemAttribute.SkillAxe => (SkillType.Axe, Convert.ChangeType(value, type)),
-                    ItemAttribute.SkillClub => (SkillType.Club, Convert.ChangeType(value, type)),
-                    ItemAttribute.SkillDistance => (SkillType.Distance, Convert.ChangeType(value, type)),
-                    ItemAttribute.SkillFishing => (SkillType.Fishing, Convert.ChangeType(value, type)),
-                    ItemAttribute.SkillFist => (SkillType.Fist, Convert.ChangeType(value, type)),
-                    ItemAttribute.SkillShield => (SkillType.Shielding, Convert.ChangeType(value, type)),
-                    ItemAttribute.SkillSword => (SkillType.Sword, Convert.ChangeType(value, type)),
-                    ItemAttribute.Speed => (SkillType.Speed, Convert.ChangeType(value, type)),
-                    ItemAttribute.MagicPoints => (SkillType.Magic, Convert.ChangeType(value, type)),
-                    _ => (SkillType.None, (byte)0)
-                };
-
-                if (skillType == SkillType.None || bonus == 0) continue;
-                dictionary.TryAdd(skillType, bonus);
-            }
-
-            return dictionary;
-        }
-    }
-
-    public Dictionary<DamageType, sbyte> DamageProtection
-    {
-        get
-        {
-            var dictionary = new Dictionary<DamageType, sbyte>();
-
-            foreach (var (attr, (value, _)) in _defaultAttributes)
-            {
-                var type = typeof(sbyte);
-                var (damage, protection) = attr switch
-                {
-                    ItemAttribute.AbsorbPercentDeath => (DamageType.Death, Convert.ChangeType(value, type)),
-                    ItemAttribute.AbsorbPercentEnergy => (DamageType.Energy, Convert.ChangeType(value, type)),
-                    ItemAttribute.AbsorbPercentPhysical => (DamageType.Physical, Convert.ChangeType(value, type)),
-                    ItemAttribute.AbsorbPercentPoison => (DamageType.Earth, Convert.ChangeType(value, type)),
-                    ItemAttribute.AbsorbPercentFire => (DamageType.Fire, Convert.ChangeType(value, type)),
-                    ItemAttribute.FieldAbsorbEercentFire => (DamageType.FireField, Convert.ChangeType(value, type)),
-                    ItemAttribute.AbsorbPercentDrown => (DamageType.Drown, Convert.ChangeType(value, type)),
-                    ItemAttribute.AbsorbPercentHoly => (DamageType.Holy, Convert.ChangeType(value, type)),
-                    ItemAttribute.AbsorbPercentIce => (DamageType.Ice, Convert.ChangeType(value, type)),
-                    ItemAttribute.AbsorbPercentManaDrain => (DamageType.ManaDrain, Convert.ChangeType(value, type)),
-                    ItemAttribute.AbsorbPercentLifeDrain => (DamageType.LifeDrain, Convert.ChangeType(value, type)),
-                    ItemAttribute.AbsorbPercentMagic => (DamageType.Elemental, Convert.ChangeType(value, type)),
-                    ItemAttribute.AbsorbPercentAll => (DamageType.All, Convert.ChangeType(value, type)),
-                    ItemAttribute.AbsorbPercentElements => (DamageType.Elemental, Convert.ChangeType(value, type)),
-                    _ => (DamageType.None, (sbyte)0)
-                };
-
-                if (damage == DamageType.None) continue;
-                dictionary.TryAdd(damage, protection);
-            }
-
-            return dictionary;
-        }
     }
 
     private static bool IsNullable(dynamic value)

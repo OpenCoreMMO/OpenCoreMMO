@@ -1,4 +1,4 @@
-﻿using NeoServer.Domain.Common.Creatures;
+﻿using NeoServer.Domain.Creatures;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 

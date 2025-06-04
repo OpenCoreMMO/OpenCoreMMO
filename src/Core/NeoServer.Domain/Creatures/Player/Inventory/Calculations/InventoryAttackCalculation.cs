@@ -1,7 +1,6 @@
 ﻿using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Contracts.Items.Weapons.Attributes;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Items.Items.Weapons;
 

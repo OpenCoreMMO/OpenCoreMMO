@@ -1,7 +1,7 @@
 ﻿using NeoServer.Domain.Common.Contracts.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Creatures.Monster;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 

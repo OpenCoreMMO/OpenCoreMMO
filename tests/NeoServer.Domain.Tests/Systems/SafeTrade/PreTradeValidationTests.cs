@@ -2,9 +2,9 @@
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Items.Services;
-using NeoServer.Domain.Systems.SafeTrade;
-using NeoServer.Domain.Systems.SafeTrade.Operations;
-using NeoServer.Domain.Systems.SafeTrade.Validations;
+using NeoServer.Domain.SafeTrade;
+using NeoServer.Domain.SafeTrade.Operations;
+using NeoServer.Domain.SafeTrade.Validations;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;

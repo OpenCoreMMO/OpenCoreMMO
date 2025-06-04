@@ -1,5 +1,5 @@
 using System.Buffers;
-using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Creatures.Player.Inventory;
 
 namespace NeoServer.Domain.Common.Location.Structs;
 

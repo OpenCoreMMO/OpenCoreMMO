@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Creatures.Monsters;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Loot;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;

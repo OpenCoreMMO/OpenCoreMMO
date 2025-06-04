@@ -1,7 +1,7 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Texts;
+using NeoServer.Domain.Creatures.Monster;
 
 namespace NeoServer.Domain.Common.Effects.Parsers;
 

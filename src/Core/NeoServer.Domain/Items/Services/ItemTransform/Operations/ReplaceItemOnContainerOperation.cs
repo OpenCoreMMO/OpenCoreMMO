@@ -1,6 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
+using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
 

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using NeoServer.Data.Entities;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
 using NeoServer.Domain.Depot;
 using NeoServer.Domain.Items.Items.Containers;
 

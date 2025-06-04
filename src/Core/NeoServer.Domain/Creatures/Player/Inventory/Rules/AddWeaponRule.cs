@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Results;
 
 namespace NeoServer.Domain.Creatures.Player.Inventory.Rules;

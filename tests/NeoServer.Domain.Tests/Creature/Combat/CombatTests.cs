@@ -1,6 +1,6 @@
 using NeoServer.Domain.Common.Combat.Structs;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Player;
 

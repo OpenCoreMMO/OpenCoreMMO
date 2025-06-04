@@ -5,10 +5,10 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Combat.Services.Attacks.Validators;
 
