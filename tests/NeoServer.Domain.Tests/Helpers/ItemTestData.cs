@@ -1,5 +1,4 @@
 ﻿using NeoServer.Data.InMemory.DataStores;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
@@ -8,6 +7,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types.Runes;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Parsers;
+using NeoServer.Domain.Creatures.Monster.Loot;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Bases;
 using NeoServer.Domain.Items.Factories;
@@ -39,7 +39,7 @@ public class ItemTestData
         return new Container(itemType, new Location(100, 100, 7), children);
     }
 
-    public static Container CreateLootContainer(byte capacity = 6, string name = "bag", ILoot loot = null)
+    public static Container CreateLootContainer(byte capacity = 6, string name = "bag", Loot loot = null)
     {
         var itemType = new ItemType();
         itemType.UpdateName(name);

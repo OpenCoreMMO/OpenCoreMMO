@@ -5,6 +5,7 @@ using System.Linq;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Parsers;
 using NeoServer.Domain.Chat;
+using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Combat.Conditions;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -18,6 +19,7 @@ using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Group;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Loaders.Interfaces;
@@ -169,7 +171,7 @@ public class PlayerLoader : IPlayerLoader
         return vocation;
     }
 
-    protected IGroup GetGroup(PlayerEntity playerEntity)
+    protected Group GetGroup(PlayerEntity playerEntity)
     {
         if (!GroupStore.TryGetValue(playerEntity.Group, out var group))
             Logger.Error("Player group not found: {PlayerModelGroup}", playerEntity.Group);

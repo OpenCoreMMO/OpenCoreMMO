@@ -2,14 +2,14 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj"/>
-        <ProjectReference Include="..\..\Core\NeoServer.Domain\NeoServer.Domain.csproj" />
+        <ProjectReference Include="..\..\Core\NeoServer.Domain\NeoServer.Domain.csproj"/>
         <ProjectReference Include="..\..\Database\NeoServer.Data.InMemory.DataStores\NeoServer.Data.InMemory.DataStores.csproj"/>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="serilog" Version="4.3.0" />
-        <PackageReference Include="System.Text.Json" Version="9.0.5" />
+        <PackageReference Include="serilog" Version="4.3.0"/>
+        <PackageReference Include="System.Text.Json" Version="9.0.5"/>
     </ItemGroup>
 
     <ItemGroup>

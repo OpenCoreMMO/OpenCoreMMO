@@ -1,5 +1,5 @@
-﻿using NeoServer.Domain.Common.Contracts;
-using NeoServer.Domain.Common.Contracts.Chats;
+﻿using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.World;
@@ -32,7 +32,7 @@ public class PlayerLoggedInEventHandler : IGameEventHandler
 
         channels = player.Channels.PersonalChannels is null
             ? channels
-            : channels.Concat(player.Channels.PersonalChannels?.Where(x => x.Opened) ?? Array.Empty<IChatChannel>());
+            : channels.Concat(player.Channels.PersonalChannels?.Where(x => x.Opened) ?? Array.Empty<ChatChannel>());
 
         channels = player.Channels.PrivateChannels is not { } privateChannels
             ? channels

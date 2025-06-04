@@ -39,7 +39,7 @@ public sealed class MonsterType : IMonsterType
     public Voice[] Voices { get; set; }
     public ImmutableDictionary<DamageType, sbyte> ElementResistance { get; set; }
     public ushort Immunities { get; set; }
-    public ILoot Loot { get; set; }
+    public Loot.Loot Loot { get; set; }
     public byte MaxSummons { get; set; }
     public IMonsterSummon[] Summons { get; set; }
     public bool HasDistanceAttack { get; set; }

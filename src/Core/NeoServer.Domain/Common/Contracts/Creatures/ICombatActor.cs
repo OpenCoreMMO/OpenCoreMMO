@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Monster.Loot;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
@@ -27,7 +28,7 @@ public delegate void ChangeVisibility(ICombatActor actor);
 
 public delegate void PropagateAttack(ICombatActor actor, CombatDamage damage, AffectedLocation[] area);
 
-public delegate void DropLoot(ICombatActor actor, ILoot loot);
+public delegate void DropLoot(ICombatActor actor, Loot loot);
 
 public interface ICombatActor : IWalkableCreature
 {
@@ -113,7 +114,7 @@ public interface ICombatActor : IWalkableCreature
     void IncreaseDamageReceived(byte percentage);
     void DecreaseDamageReceived(byte percentage);
     void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true);
-    void RaiseDroppedLootEvent(ICombatActor actor, ILoot loot);
+    void RaiseDroppedLootEvent(ICombatActor actor, Loot loot);
     event DropLoot OnDroppedLoot;
     void PreAttack(CombatContext combatContext);
     Result CanAttack(CombatParameter combatParameter);

@@ -20,6 +20,7 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Models.Bases.Events;
+using NeoServer.Domain.Creatures.Monster.Loot;
 
 namespace NeoServer.Domain.Creatures.Models.Bases;
 
@@ -447,7 +448,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         DamageReceivedPercentage -= percentage;
     }
 
-    public void RaiseDroppedLootEvent(ICombatActor actor, ILoot loot)
+    public void RaiseDroppedLootEvent(ICombatActor actor, Loot loot)
     {
         OnDroppedLoot?.Invoke(actor, loot);
     }

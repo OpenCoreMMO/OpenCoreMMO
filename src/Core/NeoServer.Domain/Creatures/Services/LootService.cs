@@ -18,12 +18,12 @@ public class LootService(GameConfiguration gameConfiguration, IItemFactory itemF
         return corpse as ILootContainer;
     }
 
-    public ILoot GenerateLoot(ICreature creature, decimal lootRate = 0)
+    public Loot GenerateLoot(ICreature creature, decimal lootRate = 0)
     {
         return creature is IMonster monster ? GenerateLoot(monster, lootRate) : null;
     }
 
-    public ILoot GenerateLoot(IMonster monster, decimal lootRate = 0)
+    public Loot GenerateLoot(IMonster monster, decimal lootRate = 0)
     {
         lootRate = lootRate > 0 ? lootRate : gameConfiguration.LootRate;
 
@@ -66,9 +66,9 @@ public class LootService(GameConfiguration gameConfiguration, IItemFactory itemF
         return partyMembers.Count == 0 ? enemies.ToHashSet() : enemies.Concat(partyMembers).ToHashSet();
     }
 
-    private static ILootItem[] GetMonsterLoot(ILootItem[] items, decimal lootRate)
+    private static LootItem[] GetMonsterLoot(LootItem[] items, decimal lootRate)
     {
-        var drop = new List<ILootItem>();
+        var drop = new List<LootItem>();
 
         foreach (var item in items)
         {
@@ -78,7 +78,7 @@ public class LootService(GameConfiguration gameConfiguration, IItemFactory itemF
 
             var itemToDrop = item;
 
-            ILootItem[] childrenItems = null;
+            LootItem[] childrenItems = null;
             if (item?.Items?.Length > 0) childrenItems = GetMonsterLoot(item.Items, lootRate);
 
             if (item?.Items?.Length > 0 && childrenItems?.Length == 0) continue;

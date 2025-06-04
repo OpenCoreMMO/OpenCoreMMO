@@ -1,4 +1,4 @@
-﻿using NeoServer.Domain.Common.Contracts.Chats;
+﻿using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Results;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
@@ -13,7 +13,7 @@ public interface IParty
     bool IsOver { get; }
     IPlayer Leader { get; }
     IReadOnlyCollection<uint> Invites { get; }
-    IChatChannel Channel { get; }
+    ChatChannel Channel { get; }
     bool IsSharedExperienceEnabled { get; set; }
     IDictionary<IPlayer, DateTime> Heals { get; }
 

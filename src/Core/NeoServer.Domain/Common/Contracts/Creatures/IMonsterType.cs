@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Creatures.Monsters;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Creatures.Monster.Loot;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
@@ -31,7 +32,7 @@ public interface IMonsterType : ICreatureType
 
     ImmutableDictionary<DamageType, sbyte> ElementResistance { get; set; }
     Race Race { get; set; }
-    ILoot Loot { get; set; }
+    Loot Loot { get; set; }
     IMonsterSummon[] Summons { get; set; }
     byte MaxSummons { get; set; }
     ushort Immunities { get; set; }

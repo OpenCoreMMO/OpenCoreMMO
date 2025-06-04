@@ -3,9 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using NeoServer.Domain.Chat;
+using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Chat.Rules;
-using NeoServer.Domain.Common.Chats;
-using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Loaders.Helpers;
@@ -54,7 +53,7 @@ public class ChannelLoader : IStartupLoader
         if (channels != null)
             foreach (var channel in channels.Where(x => x.Enabled))
             {
-                IChatChannel createdChannel;
+                ChatChannel createdChannel;
                 if (!string.IsNullOrWhiteSpace(channel.Script))
                 {
                     var type = ScriptSearch.Get(channel.Script);

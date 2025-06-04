@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Creatures.Monster.Loot;
 
 namespace NeoServer.Domain.Creatures.Events.Player;
 
@@ -22,7 +23,7 @@ public class PlayerOpenedContainerEventHandler(IItemFactory itemFactory) : IGame
         CreateLootItems(lootContainer.Loot.Items, lootContainer);
     }
 
-    private void CreateLootItems(ILootItem[] items, IContainer container)
+    private void CreateLootItems(LootItem[] items, IContainer container)
     {
         foreach (var item in items)
         {

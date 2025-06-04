@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using NeoServer.Data.InMemory.DataStores;
+﻿using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Player;

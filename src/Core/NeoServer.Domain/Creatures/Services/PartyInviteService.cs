@@ -1,4 +1,4 @@
-﻿using NeoServer.Domain.Chat;
+﻿using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Services;

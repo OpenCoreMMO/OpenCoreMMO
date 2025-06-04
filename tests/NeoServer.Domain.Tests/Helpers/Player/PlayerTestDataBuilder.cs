@@ -33,7 +33,7 @@ public static class PlayerTestDataBuilder
         IPathFinder pathFinder = null,
         IVocationStore vocationStore = null,
         IGroupStore groupStore = null,
-        IGuild guild = null,
+        Guild.Guild guild = null,
         ITown town = null)
     {
         if (vocationStore is null)
@@ -64,7 +64,7 @@ public static class PlayerTestDataBuilder
         pathFinder ??= new PathFinder(map);
         var mapTool = new MapTool(map, pathFinder);
 
-        var player = new Domain.Creatures.Player.Player(
+        var player = new Creatures.Player.Player(
             id,
             name,
             ChaseMode.Stand,

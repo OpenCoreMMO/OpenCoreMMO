@@ -1,5 +1,3 @@
-using NeoServer.Scripts.LuaJIT.Enums;
-
 namespace NeoServer.Scripts.LuaJIT.Models.Spell;
 
 public class LuaSpell(LuaScriptInterface scriptInterface) : Script(scriptInterface)

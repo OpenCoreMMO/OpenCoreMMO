@@ -1,4 +1,4 @@
-﻿namespace NeoServer.Domain.Common.Chats.Chat;
+﻿namespace NeoServer.Domain.Chat;
 
 public enum ChatChannelType : ushort
 {

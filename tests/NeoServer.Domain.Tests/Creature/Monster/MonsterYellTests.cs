@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
-using FluentAssertions;
-using NeoServer.Domain.Common.Chats;
+using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Tests.Helpers;

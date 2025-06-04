@@ -1,4 +1,3 @@
-using FluentAssertions;
 using NeoServer.Domain.Combat.Services;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;

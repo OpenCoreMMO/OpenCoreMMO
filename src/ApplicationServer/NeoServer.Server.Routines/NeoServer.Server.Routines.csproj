@@ -9,7 +9,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Commands\NeoServer.Server.Commands.csproj"/>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj"/>
-        <ProjectReference Include="..\..\Core\NeoServer.Domain\NeoServer.Domain.csproj" />
+        <ProjectReference Include="..\..\Core\NeoServer.Domain\NeoServer.Domain.csproj"/>
     </ItemGroup>
 
 </Project>

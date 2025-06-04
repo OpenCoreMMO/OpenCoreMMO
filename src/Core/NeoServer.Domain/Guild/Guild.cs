@@ -1,22 +1,25 @@
-﻿using NeoServer.Domain.Common.Contracts.Chats;
+﻿using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures.Guilds;
 
-namespace NeoServer.Domain.Creatures.Guild;
+namespace NeoServer.Domain.Guild;
 
-public class Guild : IGuild
+public class Guild : IBankable
 {
     public ushort Id { get; init; }
     public string Name { get; set; }
-    public IDictionary<ushort, IGuildLevel> GuildLevels { get; set; }
-    public IChatChannel Channel { get; set; }
+    public IDictionary<ushort, GuildLevel> GuildLevels { get; set; }
+    public ChatChannel Channel { get; set; }
+
+    public required IBank Bank { get; init; }
+    public ulong BankAmount => Bank?.Amount ?? 0;
 
     public bool HasMember(IPlayer player)
     {
         return player.GuildId == Id;
     }
 
-    public IGuildLevel GetMemberLevel(IPlayer player)
+    public GuildLevel GetMemberLevel(IPlayer player)
     {
         return GuildLevels is null ? null : GuildLevels.TryGetValue(player.Level, out var level) ? level : null;
     }
@@ -25,12 +28,9 @@ public class Guild : IGuild
     {
         return $"{player.GenderPronoun} is member of the {Name}.";
     }
-
-    public required IBank Bank { get; init; }
-    public ulong BankAmount => Bank?.Amount ?? 0;
 }
 
-public class GuildLevel : IGuildLevel, IEquatable<GuildLevel>
+public class GuildLevel : IEquatable<GuildLevel>
 {
     private string levelName;
 
@@ -61,12 +61,12 @@ public class GuildLevel : IGuildLevel, IEquatable<GuildLevel>
         }
     }
 
+    public GuildRank Level { get; }
+
     public bool Equals(GuildLevel other)
     {
         return other.Id == Id;
     }
-
-    public GuildRank Level { get; }
 
     public override int GetHashCode()
     {

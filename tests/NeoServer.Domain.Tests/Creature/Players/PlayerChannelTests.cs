@@ -1,12 +1,9 @@
 ﻿using AutoFixture;
-using FluentAssertions;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Chat.Rules;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Creatures.Common;
-using NeoServer.Domain.Creatures.Guild;
-using NeoServer.Domain.Creatures.Party;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers.Player;
 
@@ -140,7 +137,7 @@ public class PlayerChannelTests
     public void Private_channels_return_both_guild_and_party_channels()
     {
         //arrange
-        var guild = new Guild
+        var guild = new Guild.Guild
         {
             Bank = new Bank(0)
         };
@@ -151,7 +148,7 @@ public class PlayerChannelTests
         var partyFriend = PlayerTestDataBuilder.Build();
 
         var partyChannel = new ChatChannel(1, "party channel");
-        var party = new Party(partyFriend, partyChannel);
+        var party = new Party.Party(partyFriend, partyChannel);
         partyFriend.PlayerParty.InviteToParty(sut, party);
 
         sut.PlayerParty.JoinParty(party);

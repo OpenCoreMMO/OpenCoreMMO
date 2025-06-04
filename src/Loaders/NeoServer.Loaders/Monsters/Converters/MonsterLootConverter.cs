@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Creatures.Monster.Loot;
 using static NeoServer.Loaders.Monsters.MonsterData;
@@ -9,11 +8,11 @@ namespace NeoServer.Loaders.Monsters.Converters;
 
 public static class MonsterLootConverter
 {
-    public static ILoot Convert(MonsterData data, IItemTypeStore itemTypeStore)
+    public static Loot Convert(MonsterData data, IItemTypeStore itemTypeStore)
     {
         if (data.Loot is null) return null;
 
-        var items = new List<ILootItem>();
+        var items = new List<LootItem>();
 
         foreach (var item in Normalize(data.Loot)) items.Add(ConvertToLootItem(item, itemTypeStore));
 
@@ -31,13 +30,13 @@ public static class MonsterLootConverter
         })?.ToList();
     }
 
-    private static ILootItem ConvertToLootItem(LootData item, IItemTypeStore itemTypeStore)
+    private static LootItem ConvertToLootItem(LootData item, IItemTypeStore itemTypeStore)
     {
         byte.TryParse(item.Countmax, out var amount);
         ushort.TryParse(item.Id, out var id);
         uint.TryParse(item.Chance, out var chance);
 
-        var items = new List<ILootItem>();
+        var items = new List<LootItem>();
 
         if (item?.Items?.Count > 0)
             foreach (var child in item?.Items)

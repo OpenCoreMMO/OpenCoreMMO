@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using NeoServer.Domain.Common.Location.Structs;
+﻿using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Systems.Services;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;

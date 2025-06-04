@@ -1,5 +1,5 @@
 ﻿using LuaNET;
-using NeoServer.Domain.Common.Chats;
+using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;

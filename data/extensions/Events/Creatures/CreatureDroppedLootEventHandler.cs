@@ -1,5 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Monster.Loot;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Extensions.Chat;
 using NeoServer.Server.Services;
@@ -8,7 +9,7 @@ namespace NeoServer.Extensions.Events.Creatures;
 
 public class CreatureDroppedLootEventHandler : IGameEventHandler
 {
-    public void Execute(ICombatActor deadCreature, ILoot loot)
+    public void Execute(ICombatActor deadCreature, Loot loot)
     {
         if (deadCreature is Summon) return;
         if (loot?.Owners is null) return;

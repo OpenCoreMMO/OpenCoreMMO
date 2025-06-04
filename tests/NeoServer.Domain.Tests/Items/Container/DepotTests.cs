@@ -1,4 +1,3 @@
-using FluentAssertions;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Player;
 

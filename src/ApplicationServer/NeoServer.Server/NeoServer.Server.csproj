@@ -14,12 +14,12 @@
 
     <ItemGroup>
         <PackageReference Include="BouncyCastle.NetCore" Version="2.2.1"/>
-        <PackageReference Include="Serilog" Version="4.3.0" />
+        <PackageReference Include="Serilog" Version="4.3.0"/>
 
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Core\NeoServer.Domain\NeoServer.Domain.csproj" />
+        <ProjectReference Include="..\..\Core\NeoServer.Domain\NeoServer.Domain.csproj"/>
         <ProjectReference Include="..\..\NetworkingServer\NeoServer.Networking.Packets\NeoServer.Networking.Packets.csproj"/>
         <ProjectReference Include="..\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj"/>
     </ItemGroup>
