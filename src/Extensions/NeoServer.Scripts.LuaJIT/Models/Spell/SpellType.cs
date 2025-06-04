@@ -1,8 +1,8 @@
-namespace NeoServer.Scripts.LuaJIT.Enums;
+namespace NeoServer.Scripts.LuaJIT.Models.Spell;
 
 public enum SpellType
 {
     Undefined = 0,
     Instant = 1,
-    Rune = 2,
+    Rune = 2
 }

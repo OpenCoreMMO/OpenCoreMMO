@@ -1,9 +1,9 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
@@ -190,7 +190,7 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
             /*!g_game().isMagicEffectRegistered(magicEffect)*/)
         {
             _logger.Warning(
-                "[PositionFunctions::luaPositionSendMagicEffect] An unregistered magic effect type with id '{}' was blocked to prevent client crash.",
+                "[PositionFunctions::luaPositionSendMagicEffect] An unregistered magic effect type with id '{MagicEffect}' was blocked to prevent client crash",
                 magicEffect);
             Lua.PushBoolean(luaState, false);
             return 1;

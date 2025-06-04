@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using NeoServer.Game.Common.Helpers;
+using NeoServer.Domain.Common.Helpers;
 
 namespace NeoServer.Loaders.OTB.DataStructures;
 

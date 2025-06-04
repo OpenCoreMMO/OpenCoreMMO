@@ -7,31 +7,6 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class Scripts : IScripts
 {
-    #region Injection
-
-    /// <summary>
-    ///     A reference to the logger in use.
-    /// </summary>
-    protected readonly ILogger _logger;
-
-    /// <summary>
-    ///     A reference to the config manager in use.
-    /// </summary>
-    private readonly IConfigManager _configManager;
-
-    private readonly IActions _actions;
-    private readonly ICreatureEvents _creatureEvents;
-    private readonly IGlobalEvents _globalEvents;
-    private readonly IMoveEvents _moveEvents;
-    private readonly INpcs _npcs;
-    private readonly RuneManager _runeManager;
-
-    /// <summary>
-    ///     A reference to the talk actions instance in use.
-    /// </summary>
-    private readonly ITalkActions _talkActions;
-
-    #endregion
     public Scripts(ILogger logger)
     {
         _logger = logger;
@@ -92,8 +67,7 @@ public class Scripts : IScripts
 
         if (!Directory.Exists(dir) || !Directory.GetDirectories(dir).Any())
         {
-            _logger.Warning(
-                $"{nameof(LoadEventSchedulerScripts)} - Can not load folder 'scheduler' on {coreFolder}/events/scripts'");
+            _logger.Warning("{LoadEventSchedulerScriptsName} - Can not load folder \'scheduler\' on {CoreFolder}/events/scripts\'", nameof(LoadEventSchedulerScripts), coreFolder);
             return false;
         }
 
@@ -105,8 +79,7 @@ public class Scripts : IScripts
             {
                 if (!_scriptInterface.LoadFile(fileInfo.FullName, fileInfo.Name))
                 {
-                    _logger.Error(fileInfo.FullName);
-                    _logger.Error(_scriptInterface.GetLastLuaError());
+                    _logger.Error("File: {FullName} - Error: {Error}",fileInfo.FullName, _scriptInterface.GetLastLuaError());
                     continue;
                 }
 
@@ -124,7 +97,7 @@ public class Scripts : IScripts
 
         if (!Directory.Exists(loadPath))
         {
-            _logger.Error($"Can not load folder {loadPath}");
+            _logger.Error("Can not load folder {LoadPath}", loadPath);
             return false;
         }
 
@@ -156,16 +129,14 @@ public class Scripts : IScripts
                 if (_configManager.GetBoolean(BooleanConfigType.SCRIPTS_CONSOLE_LOGS))
                 {
                     if (string.IsNullOrEmpty(lastDirectory) || lastDirectory != scriptFolder)
-                        _logger.Information(
-                            $"Loading folder: [{fileInfo.DirectoryName.Split(Path.DirectorySeparatorChar).LastOrDefault()}]");
+                        _logger.Information("Loading folder: [{LastOrDefault}]", fileInfo.DirectoryName?.Split(Path.DirectorySeparatorChar).LastOrDefault());
 
                     lastDirectory = fileInfo.DirectoryName;
                 }
 
                 if (!_scriptInterface.LoadFile(fileInfo.FullName, fileInfo.Name))
                 {
-                    _logger.Error(fileInfo.FullName);
-                    _logger.Error(_scriptInterface.GetLastLuaError());
+                    _logger.Error("File: {FullName} - Error: {Error}",fileInfo.FullName, _scriptInterface.GetLastLuaError());
                     continue;
                 }
             }
@@ -173,9 +144,9 @@ public class Scripts : IScripts
             if (_configManager.GetBoolean(BooleanConfigType.SCRIPTS_CONSOLE_LOGS))
             {
                 if (!reload)
-                    _logger.Information("[script loaded]: {0}", fileInfo.Name);
+                    _logger.Information("[script loaded]: {Name}", fileInfo.Name);
                 else
-                    _logger.Information("[script reloaded]: {0}", fileInfo.Name);
+                    _logger.Information("[script reloaded]: {Name}", fileInfo.Name);
             }
         }
 
@@ -191,6 +162,32 @@ public class Scripts : IScripts
     {
         return _scriptId;
     }
+
+    #region Injection
+
+    /// <summary>
+    ///     A reference to the logger in use.
+    /// </summary>
+    protected readonly ILogger _logger;
+
+    /// <summary>
+    ///     A reference to the config manager in use.
+    /// </summary>
+    private readonly IConfigManager _configManager;
+
+    private readonly IActions _actions;
+    private readonly ICreatureEvents _creatureEvents;
+    private readonly IGlobalEvents _globalEvents;
+    private readonly IMoveEvents _moveEvents;
+    private readonly INpcs _npcs;
+    private readonly RuneManager _runeManager;
+
+    /// <summary>
+    ///     A reference to the talk actions instance in use.
+    /// </summary>
+    private readonly ITalkActions _talkActions;
+
+    #endregion
 
     #region Members
 

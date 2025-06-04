@@ -1,5 +1,5 @@
 ﻿using System;
-using NeoServer.Game.Common.Location;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Incoming;

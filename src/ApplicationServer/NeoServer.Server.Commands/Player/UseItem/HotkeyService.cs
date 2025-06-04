@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.Caching.Memory;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types.Containers;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
 
 namespace NeoServer.Server.Commands.Player.UseItem;
 

@@ -12,9 +12,9 @@ public class SpawnLoader
 {
     private readonly ILogger _logger;
     private readonly ServerConfiguration _serverConfiguration;
-    private readonly Game.World.World _world;
+    private readonly Domain.World.World _world;
 
-    public SpawnLoader(Game.World.World world, ServerConfiguration serverConfiguration, ILogger logger)
+    public SpawnLoader(Domain.World.World world, ServerConfiguration serverConfiguration, ILogger logger)
     {
         _world = world;
         _serverConfiguration = serverConfiguration;

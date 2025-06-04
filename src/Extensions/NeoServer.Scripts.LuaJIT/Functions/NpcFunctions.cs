@@ -1,8 +1,7 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Creatures.Npcs;
-using NeoServer.Game.Creatures.Npcs.Shop;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Creatures.Npcs.Shop;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Common.Contracts;
@@ -14,7 +13,8 @@ public class NpcFunctions : LuaScriptInterface, INpcFunctions
     private static IGameCreatureManager _gameCreatureManager;
     private static IItemTypeStore _itemTypeStore;
 
-    public NpcFunctions(IGameCreatureManager gameCreatureManager, IItemTypeStore itemTypeStore) : base(nameof(NpcFunctions))
+    public NpcFunctions(IGameCreatureManager gameCreatureManager, IItemTypeStore itemTypeStore) : base(
+        nameof(NpcFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
         _itemTypeStore = itemTypeStore;
@@ -280,7 +280,7 @@ public class NpcFunctions : LuaScriptInterface, INpcFunctions
 
         Lua.PushNil(luaState);
 
-        while(Lua.Next(luaState, 3) != 0)
+        while (Lua.Next(luaState, 3) != 0)
         {
             var tableIndex = Lua.GetTop(luaState);
 

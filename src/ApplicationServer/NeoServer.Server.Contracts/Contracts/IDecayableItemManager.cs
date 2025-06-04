@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Contracts.Items;
+﻿using NeoServer.Domain.Common.Contracts.Items;
 
 namespace NeoServer.Server.Common.Contracts;
 

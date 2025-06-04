@@ -1,5 +1,5 @@
 ﻿using System;
-using NeoServer.Game.Common.Contracts.Items.Types.Containers;
+using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
 using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Player;

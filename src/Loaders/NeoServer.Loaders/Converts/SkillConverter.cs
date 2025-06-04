@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using NeoServer.Game.Common.Creatures;
+using NeoServer.Domain.Common.Creatures;
 
 namespace NeoServer.Loaders.Converts;
 

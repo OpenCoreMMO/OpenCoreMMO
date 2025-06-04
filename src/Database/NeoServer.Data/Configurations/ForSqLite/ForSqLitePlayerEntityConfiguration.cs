@@ -43,7 +43,7 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
         ConfigureProperty(entity, e => e.LookType, "int(11)", "136");
         ConfigureProperty(entity, e => e.Mana, "int(11)", "0");
         ConfigureProperty(entity, e => e.MaxMana, "int(11)", "0");
-        ConfigureProperty(entity, e => e.Name, "varchar(255)");
+        ConfigureProperty(entity, e => e.Name, "varchar(255)").HasMaxLength(255);
         ConfigureProperty(entity, e => e.PosX, "int(11)", "0");
         ConfigureProperty(entity, e => e.PosY, "int(11)", "0");
         ConfigureProperty(entity, e => e.PosZ, "int(11)", "0");
@@ -84,13 +84,13 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
         PlayerModelSeed.Seed(entity);
     }
 
-    private static void ConfigureProperty<TProperty>(
+    private static PropertyBuilder<TProperty> ConfigureProperty<TProperty>(
         EntityTypeBuilder<PlayerEntity> entity,
         Expression<Func<PlayerEntity, TProperty>> property,
         string columnType,
         string defaultValueSql = null)
     {
-        entity.Property(property)
+        return entity.Property(property)
             .HasColumnType(columnType)
             .HasDefaultValueSql(defaultValueSql);
     }

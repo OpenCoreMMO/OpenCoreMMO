@@ -1,8 +1,7 @@
-﻿using NeoServer.Game.Combat.Spells;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Results;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Spells;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Helpers;
@@ -15,26 +14,17 @@ public class KickPlayerCommand : CommandSpell
     {
         var commands = Words.Split("/kick");
 
-        if (string.IsNullOrWhiteSpace(commands[1]))
-        {
-            return Result.NotPossible;
-        }
+        if (string.IsNullOrWhiteSpace(commands[1])) return Result.NotPossible;
 
         var ctx = IoC.GetInstance<IGameCreatureManager>();
 
-        if (!ctx.TryGetPlayer(commands[1], out var player))
-        {
-            return Result.NotPossible;
-        }
+        if (!ctx.TryGetPlayer(commands[1], out var player)) return Result.NotPossible;
 
-        if (player is null || player.CreatureId == caster.CreatureId)
-        {
-            return Result.NotPossible;
-        }
+        if (player is null || player.CreatureId == caster.CreatureId) return Result.NotPossible;
 
         var playerLogOutCommand = IoC.GetInstance<PlayerLogOutCommand>();
         playerLogOutCommand.Execute(player, true);
-        
+
         return Result.Success;
     }
 }

@@ -1,5 +1,5 @@
-﻿using NeoServer.Game.Combat.Spells;
-using NeoServer.Game.Common.Creatures;
+﻿using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Spells;
 
 namespace NeoServer.Extensions.Spells.Support;
 

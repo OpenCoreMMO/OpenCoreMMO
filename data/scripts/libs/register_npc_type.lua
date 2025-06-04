@@ -1,44 +1,44 @@
 registerNpcType = {}
 setmetatable(registerNpcType, {
-	__call = function(self, npcType, mask)
-		for _, parse in pairs(self) do
-			parse(npcType, mask)
-		end
-	end,
+    __call = function(self, npcType, mask)
+        for _, parse in pairs(self) do
+            parse(npcType, mask)
+        end
+    end,
 })
 
 NpcType.register = function(self, mask)
-	return registerNpcType(self, mask)
+    return registerNpcType(self, mask)
 end
 
 registerNpcType.name = function(npcType, mask)
-	if mask.name then
-		npcType:name(mask.name)
-	end
+    if mask.name then
+        npcType:name(mask.name)
+    end
 end
 
 registerNpcType.description = function(npcType, mask)
-	if mask.description then
-		npcType:nameDescription(mask.description)
-	end
+    if mask.description then
+        npcType:nameDescription(mask.description)
+    end
 end
 
 registerNpcType.outfit = function(npcType, mask)
-	if mask.outfit then
-		npcType:outfit(mask.outfit)
-	end
+    if mask.outfit then
+        npcType:outfit(mask.outfit)
+    end
 end
 
 registerNpcType.maxHealth = function(npcType, mask)
-	if mask.maxHealth then
-		npcType:maxHealth(mask.maxHealth)
-	end
+    if mask.maxHealth then
+        npcType:maxHealth(mask.maxHealth)
+    end
 end
 
 registerNpcType.health = function(npcType, mask)
-	if mask.health then
-		npcType:health(mask.health)
-	end
+    if mask.health then
+        npcType:health(mask.health)
+    end
 end
 
 -- registerNpcType.race = function(npcType, mask)
@@ -48,21 +48,21 @@ end
 -- end
 
 registerNpcType.walkInterval = function(npcType, mask)
-	if mask.walkInterval then
-		npcType:walkInterval(mask.walkInterval)
-	end
+    if mask.walkInterval then
+        npcType:walkInterval(mask.walkInterval)
+    end
 end
 
 registerNpcType.walkRadius = function(npcType, mask)
-	if mask.walkRadius then
-		npcType:walkRadius(mask.walkRadius)
-	end
+    if mask.walkRadius then
+        npcType:walkRadius(mask.walkRadius)
+    end
 end
 
 registerNpcType.speed = function(npcType, mask)
-	if mask.speed then
-		npcType:baseSpeed(mask.speed)
-	end
+    if mask.speed then
+        npcType:baseSpeed(mask.speed)
+    end
 end
 
 -- registerNpcType.flags = function(npcType, mask)
@@ -138,16 +138,16 @@ registerNpcType.voices = function(npcType, mask)
         local interval = mask.voices.interval or 15000
         local chance = mask.voices.chance or 50
 
-		 local args = { interval, chance }
+        local args = { interval, chance }
 
-		 for _, v in ipairs(mask.voices) do
-			 if type(v) == "table" and v.text then
-				 table.insert(args, v.yell or false)
-				 table.insert(args, v.text)
-			 end
-		 end
- 
-		 npcType:addVoices(table.unpack(args))
+        for _, v in ipairs(mask.voices) do
+            if type(v) == "table" and v.text then
+                table.insert(args, v.yell or false)
+                table.insert(args, v.text)
+            end
+        end
+
+        npcType:addVoices(table.unpack(args))
     end
 end
 
@@ -163,16 +163,16 @@ end
 NpcPriceChecker = NpcPriceChecker or {}
 
 registerNpcType.shop = function(npcType, mask)
-	if type(mask.shop) == "table" then
-		for _, shopItems in pairs(mask.shop) do
-			npcType:addShopItem(
-				shopItems.itemName,
-				shopItems.id,
-				shopItems.buy,
-				shopItems.sell
-			)
-		end
-	end
+    if type(mask.shop) == "table" then
+        for _, shopItems in pairs(mask.shop) do
+            npcType:addShopItem(
+                    shopItems.itemName,
+                    shopItems.id,
+                    shopItems.buy,
+                    shopItems.sell
+            )
+        end
+    end
 end
 
 -- registerNpcType.currency = function(npcType, mask)

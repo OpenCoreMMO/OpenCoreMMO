@@ -4,22 +4,24 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Parsers;
-using NeoServer.Game.Chats;
-using NeoServer.Game.Combat.Conditions;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types.Containers;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Creatures.Players;
-using NeoServer.Game.Common.Helpers;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Creatures.Player;
-using NeoServer.Game.Creatures.Player.Inventory;
+using NeoServer.Domain.Chat;
+using NeoServer.Domain.Chat.Factory;
+using NeoServer.Domain.Combat.Conditions;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Group;
+using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Loaders.Interfaces;
 using Serilog;
 
@@ -36,7 +38,7 @@ public class PlayerLoader : IPlayerLoader
     protected readonly ILogger Logger;
     protected readonly IMapTool MapTool;
     protected readonly IVocationStore VocationStore;
-    protected readonly Game.World.World World;
+    protected readonly Domain.World.World World;
 
     [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
     public PlayerLoader(IItemFactory itemFactory, ICreatureFactory creatureFactory,
@@ -45,7 +47,7 @@ public class PlayerLoader : IPlayerLoader
         IVocationStore vocationStore,
         IGroupStore groupStore,
         IMapTool mapTool,
-        Game.World.World world,
+        Domain.World.World world,
         ILogger logger,
         GameConfiguration gameConfiguration)
     {
@@ -169,7 +171,7 @@ public class PlayerLoader : IPlayerLoader
         return vocation;
     }
 
-    protected IGroup GetGroup(PlayerEntity playerEntity)
+    protected Group GetGroup(PlayerEntity playerEntity)
     {
         if (!GroupStore.TryGetValue(playerEntity.Group, out var group))
             Logger.Error("Player group not found: {PlayerModelGroup}", playerEntity.Group);

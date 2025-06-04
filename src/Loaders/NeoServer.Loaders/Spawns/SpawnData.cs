@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using NeoServer.Game.Common.Location;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Loaders.Helpers;
 using Newtonsoft.Json;
 

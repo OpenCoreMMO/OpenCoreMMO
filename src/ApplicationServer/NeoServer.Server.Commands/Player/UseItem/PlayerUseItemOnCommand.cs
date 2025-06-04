@@ -1,19 +1,15 @@
-﻿using System;
-using NeoServer.Game.Combat.Services.Spells;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types.Runes;
-using NeoServer.Game.Common.Contracts.Items.Types.Usable;
-using NeoServer.Game.Common.Contracts.Services;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Creatures.Players;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Common.Services;
-using NeoServer.Game.Creatures.Services;
-using NeoServer.Game.Items.Services;
+﻿using NeoServer.Domain.Combat.Services.Spells;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
+using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Services;
+using NeoServer.Domain.Items.Items.UsableItems.Runes;
+using NeoServer.Domain.Items.Services;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Commands;
@@ -25,14 +21,14 @@ namespace NeoServer.Server.Commands.Player.UseItem;
 public class PlayerUseItemOnCommand : ICommand
 {
     private readonly IGameServer _game;
-    private readonly ItemFinderService _itemFinder;
-    private readonly SpellService _spellService;
     private readonly GameConfiguration _gameConfiguration;
-    private readonly ItemUseValidation _itemUseValidation;
+    private readonly ItemFinderService _itemFinder;
     private readonly IItemMovementService _itemMovementService;
+    private readonly ItemUseValidation _itemUseValidation;
     private readonly ILogger _logger;
     private readonly IPlayerUseService _playerUseService;
     private readonly IScriptManager _scriptManager;
+    private readonly SpellService _spellService;
     private readonly IWalkToMechanism _walkToMechanism;
 
     public PlayerUseItemOnCommand(
@@ -104,18 +100,20 @@ public class PlayerUseItemOnCommand : ICommand
             return;
         }
 
-        if (!thingToUse.AllowFarUse && thingToUse.Location.Type == LocationType.Ground && thingToUse.IsCloseTo(player) && !onTarget.IsCloseTo(player))
+        if (!thingToUse.AllowFarUse && thingToUse.Location.Type == LocationType.Ground &&
+            thingToUse.IsCloseTo(player) && !onTarget.IsCloseTo(player))
         {
             var fromTile = _game.Map[thingToUse.Location] as IDynamicTile;
-            var result = _itemMovementService.Move(player, thingToUse, fromTile, player.Inventory.BackpackSlot, 1, 0, 0, walkTo: false);
-            
+            var result = _itemMovementService.Move(player, thingToUse, fromTile, player.Inventory.BackpackSlot, 1, 0, 0,
+                false);
+
             if (result.Failed)
             {
                 OperationFailService.Send(player, result.Error);
                 return;
             }
         }
-        
+
         if (!onTarget.IsCloseTo(player) && !thingToUse.AllowFarUse)
         {
             _walkToMechanism.WalkTo(player, () => UseItem(player, useItemPacket, thingToUse, onTarget, isHotkey),
@@ -127,15 +125,13 @@ public class PlayerUseItemOnCommand : ICommand
             _itemUseValidation.CanUse(thingToUse, player, onTarget, new ItemUseValidationParam(true, true));
 
         if (itemUseValidationResult.Failed)
-        {
             if (itemUseValidationResult.Reason != InvalidOperation.TooFar)
             {
                 OperationFailService.Send(player, itemUseValidationResult.Reason, EffectT.Puff);
                 return;
             }
-        }
 
-        if (thingToUse is IRune rune)
+        if (thingToUse is Rune rune)
         {
             UseRune(rune, player, onTarget, isHotkey);
         }
@@ -152,10 +148,9 @@ public class PlayerUseItemOnCommand : ICommand
                 _playerUseService.Use(player, itemUsableOn, onTarget);
             }
         }
-
     }
-    
-    private void UseRune(IRune rune, IPlayer player, IThing target, bool isHotkey)
+
+    private void UseRune(Rune rune, IPlayer player, IThing target, bool isHotkey)
     {
         var result = rune.CanBeCastBy(player, target);
 
@@ -174,10 +169,7 @@ public class PlayerUseItemOnCommand : ICommand
         }
 
         var castResult = _spellService.Cast(player, target, spell, isHotkey);
-        if (!castResult)
-        {
-            return;
-        }
+        if (!castResult) return;
 
         rune.PostUse(!_gameConfiguration.InfiniteRuneCharges);
     }

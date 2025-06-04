@@ -28,15 +28,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Serilog" Version="4.2.0"/>
+        <PackageReference Include="Serilog" Version="4.3.0"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj"/>
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Security\NeoServer.Server.Security.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Creatures\NeoServer.Game.Creatures.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.Items\NeoServer.Game.Items.csproj"/>
-        <ProjectReference Include="..\..\GameWorldSimulator\NeoServer.Game.World\NeoServer.Game.World.csproj"/>
+        <ProjectReference Include="..\..\Core\NeoServer.Domain\NeoServer.Domain.csproj"/>
     </ItemGroup>
 
 </Project>

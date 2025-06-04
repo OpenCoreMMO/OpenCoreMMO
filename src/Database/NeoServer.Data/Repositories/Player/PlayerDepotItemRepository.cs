@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items.Types.Containers;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
+using NeoServer.Domain.Depot;
+using NeoServer.Domain.Items.Items.Containers;
 using Serilog;
 
 namespace NeoServer.Data.Repositories.Player;
@@ -42,7 +44,7 @@ public class PlayerDepotItemRepository : BaseRepository<PlayerDepotItemEntity>,
         neoContext.PlayerDepotItems.RemoveRange(items);
     }
 
-    public async Task Save(IPlayer player, IDepot depot)
+    public async Task Save(IPlayer player, Depot depot)
     {
         await using var context = NewDbContext;
 

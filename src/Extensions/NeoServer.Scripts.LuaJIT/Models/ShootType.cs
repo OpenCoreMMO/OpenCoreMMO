@@ -1,6 +1,6 @@
 namespace NeoServer.Scripts.LuaJIT.Models;
 
-public enum ShootType: byte
+public enum ShootType : byte
 {
     CONST_ANI_NONE,
 
@@ -66,5 +66,5 @@ public enum ShootType: byte
     CONST_ANI_LAST = CONST_ANI_ROYALSTAR,
 
 // for internal use, don't send to client
-    CONST_ANI_WEAPONTYPE = 0xFE, // 254
+    CONST_ANI_WEAPONTYPE = 0xFE // 254
 }

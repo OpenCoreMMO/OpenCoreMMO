@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using NeoServer.Game.Common.Item;
+using NeoServer.Domain.Common.Item;
 
 namespace NeoServer.Loaders.Monsters.Converters;
 

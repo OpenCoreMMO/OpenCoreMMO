@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Items;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Items;
 using NeoServer.Loaders.Extensions;
 using NeoServer.Loaders.OTB.Parsers;
 
@@ -71,7 +71,7 @@ public class ItemTypeMetadataParser
     }
 
     private static void SetAttributes(IEnumerable<ItemTypeMetadata.Attribute> metaAttributes,
-        IItemAttributeList attributes)
+        ItemAttributeList attributes)
     {
         foreach (var attribute in metaAttributes)
         {

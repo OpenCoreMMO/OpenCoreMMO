@@ -41,7 +41,7 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         ConfigureProperty(entity, e => e.LookType, "int", "136");
         ConfigureProperty(entity, e => e.Mana, "int", "0");
         ConfigureProperty(entity, e => e.MaxMana, "int", "0");
-        ConfigureProperty(entity, e => e.Name, "varchar(255)");
+        ConfigureProperty(entity, e => e.Name, "varchar(255)").HasMaxLength(255);
         ConfigureProperty(entity, e => e.PosX, "int", "0");
         ConfigureProperty(entity, e => e.PosY, "int", "0");
         ConfigureProperty(entity, e => e.PosZ, "int", "0");
@@ -87,13 +87,13 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         PlayerModelSeed.Seed(entity);
     }
 
-    private static void ConfigureProperty<TProperty>(
+    private static PropertyBuilder<TProperty> ConfigureProperty<TProperty>(
         EntityTypeBuilder<PlayerEntity> entity,
         Expression<Func<PlayerEntity, TProperty>> property,
         string columnType,
         string defaultValueSql = null)
     {
-        entity.Property(property)
+       return entity.Property(property)
             .HasColumnType(columnType)
             .HasDefaultValueSql(defaultValueSql);
     }

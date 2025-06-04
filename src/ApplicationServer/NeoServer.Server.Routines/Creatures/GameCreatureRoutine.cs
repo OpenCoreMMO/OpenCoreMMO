@@ -1,6 +1,6 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Services;
-using NeoServer.Game.World.Models.Spawns;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.World.Models.Spawns;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Routines.Creatures.Monster;

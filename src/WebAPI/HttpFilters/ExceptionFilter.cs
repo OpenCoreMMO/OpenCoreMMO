@@ -16,7 +16,7 @@ public class ExceptionFilter : IExceptionFilter
 
     public void OnException(ExceptionContext context)
     {
-        _logger.LogError(context.Exception, context.Exception.Message);
+        _logger.LogError(context.Exception, "{Message}", context.Exception.Message);
 
         if (context.Exception is NeoException ex)
         {

@@ -1,7 +1,7 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types.Usable;
-using NeoServer.Game.Common.Creatures;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
+using NeoServer.Domain.Common.Creatures;
 using NeoServer.Networking.Packets.Outgoing.Effect;
 using NeoServer.Server.Common.Contracts;
 

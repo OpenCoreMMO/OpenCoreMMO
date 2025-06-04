@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Loaders.OTB.DataStructures;
 using NeoServer.Loaders.OTB.Enums;
 

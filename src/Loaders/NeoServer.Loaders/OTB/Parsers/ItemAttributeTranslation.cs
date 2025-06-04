@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Item;
+﻿using NeoServer.Domain.Common.Item;
 
 namespace NeoServer.Loaders.OTB.Parsers;
 

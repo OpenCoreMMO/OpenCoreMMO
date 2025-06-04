@@ -1,5 +1,5 @@
-﻿using NeoServer.Game.Common.Contracts.Items.Types;
-using NeoServer.Game.Common.Contracts.World.Tiles;
+﻿using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Server.Common.Contracts;
 
 namespace NeoServer.Server.Routines.Items;

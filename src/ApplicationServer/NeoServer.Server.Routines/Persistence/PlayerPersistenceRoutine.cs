@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NeoServer.Data.Interfaces;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Systems.Depot;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Depot;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Configurations;
@@ -62,7 +62,7 @@ public class PlayerPersistenceRoutine
     {
         var players = _gameServer.CreatureManager.GetAllLoggedPlayers().ToList();
 
-        if (players.Any())
+        if (players.Count != 0)
         {
             _logger.Information("Saving {NumPlayers} players...", players.Count);
             _stopwatch.Restart();

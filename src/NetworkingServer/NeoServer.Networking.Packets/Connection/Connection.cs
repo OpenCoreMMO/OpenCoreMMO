@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
-using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Networking.Packets.Messages;
 using NeoServer.Networking.Packets.Outgoing.Login;
 using NeoServer.Networking.Packets.Security;
@@ -106,7 +106,7 @@ public class Connection : IConnection
                     return;
                 }
 
-                if (OutgoingPackets == null || !OutgoingPackets.Any() || force) CloseSocket();
+                if (OutgoingPackets == null || OutgoingPackets.Count == 0 || force) CloseSocket();
             }
 
             // Tells the subscribers of this event that this connection has been closed.
@@ -153,7 +153,7 @@ public class Connection : IConnection
     /// </summary>
     public void Send()
     {
-        if (!OutgoingPackets.Any()) return;
+        if (OutgoingPackets.Count == 0) return;
 
         var message = new NetworkMessage();
 

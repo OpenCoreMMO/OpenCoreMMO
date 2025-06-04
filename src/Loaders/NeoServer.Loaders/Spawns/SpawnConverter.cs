@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.World.Models.Spawns;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.World.Models.Spawns;
 
 namespace NeoServer.Loaders.Spawns;
 

@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Location;
+﻿using NeoServer.Domain.Common.Location;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
 using NeoServer.Server.Common.Contracts.Network.Enums;

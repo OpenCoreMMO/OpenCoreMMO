@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using NeoServer.Game.Common.Helpers;
+using NeoServer.Domain.Common.Helpers;
 using NeoServer.Loaders.OTB.Enums;
 
 namespace NeoServer.Loaders.OTB.Parsers;

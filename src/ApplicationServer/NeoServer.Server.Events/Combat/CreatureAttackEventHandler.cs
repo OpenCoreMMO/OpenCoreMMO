@@ -1,6 +1,6 @@
-﻿using NeoServer.Game.Common.Combat.Structs;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Services;
+﻿using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Services;
 
 namespace NeoServer.Server.Events.Combat;
 

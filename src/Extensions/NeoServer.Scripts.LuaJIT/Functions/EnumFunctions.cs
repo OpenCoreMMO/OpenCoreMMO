@@ -1,15 +1,14 @@
-﻿using LuaNET;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Creatures.Players;
-using NeoServer.Game.Common.Location;
+﻿using System.Text.RegularExpressions;
+using LuaNET;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Scripts.LuaJIT.Models;
 using NeoServer.Scripts.LuaJIT.Models.Combat;
 using Serilog;
-using System.Text.RegularExpressions;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -40,12 +39,12 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         //RegisterEnum<SkillsType>(luaState);
         RegisterEnumCustom<SkillType>(luaState);
         RegisterEnum<TileFlagsType>(luaState);
-        
+
         RegisterEnum<CombatType>(luaState);
         RegisterEnum<CombatParam>(luaState);
         RegisterEnum<MagicEffect>(luaState);
         RegisterEnum<ShootType>(luaState);
-        
+
         RegisterEnumCustom<SoundEffect>(luaState, prefix: "SOUND_EFFECT_TYPE");
     }
 
@@ -62,7 +61,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
     }
 
     private static void RegisterEnumCustom<T>(
-        LuaState luaState, 
+        LuaState luaState,
         bool upperCase = true,
         bool addSeparationbewteenWords = false,
         (string, string)? renameFromTo = null,

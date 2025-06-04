@@ -1,10 +1,10 @@
-﻿using NeoServer.Game.Common;
-using NeoServer.Game.Common.Combat.Structs;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Effects.Magical;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Spell;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Effects.Magical;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Spells;
 
 namespace NeoServer.Extensions.Spells.Attack.Knight;
 
@@ -16,8 +16,9 @@ public class Groundshaker : AttackSpell
         DamageType = DamageType.Physical,
         Effect = EffectT.GroundShaker,
         Area = AreaEffect.Circle3X3,
-        BlockArmor = true,
+        BlockArmor = true
     };
+
     public override string Name { get; set; } = "Groundshaker";
     public override string Words { get; set; } = "exori mas";
     public override ushort MinLevel => 33;
@@ -30,14 +31,15 @@ public class Groundshaker : AttackSpell
     public override bool NeedLearn => false;
     public override string[] Vocations { get; } = ["Knight", "Elite Knight"];
     protected override bool IsSelfTarget => true;
+
     private static MinMax GetFormulaValues(IPlayer player, int skill, int attack, decimal factor)
     {
         if (player is null) return MinMax.Zero;
 
         var level = player.Level;
 
-        var min = (level / 5) + (skill + attack) * 0.5;
-        var max = (level / 5) + (skill + attack) * 1.1;
+        var min = level / 5 + (skill + attack) * 0.5;
+        var max = level / 5 + (skill + attack) * 1.1;
 
         return new MinMax(min * 1.28f, max * 1.28);
     }

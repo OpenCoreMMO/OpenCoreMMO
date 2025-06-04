@@ -1,6 +1,5 @@
-﻿using NeoServer.Game.Common.Chats;
-using NeoServer.Game.Common.Contracts.Chats;
-using NeoServer.Game.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Networking.Packets.Outgoing.Chat;
 using NeoServer.Server.Common.Contracts;
 
@@ -15,7 +14,7 @@ public class PlayerJoinedChannelEventHandler
         this.game = game;
     }
 
-    public void Execute(IPlayer player, IChatChannel channel)
+    public void Execute(IPlayer player, ChatChannel channel)
     {
         if (channel is null) return;
         if (player is null) return;

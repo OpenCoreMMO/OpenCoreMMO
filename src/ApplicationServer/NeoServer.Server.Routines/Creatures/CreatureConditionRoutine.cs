@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using NeoServer.Game.Combat.Conditions;
-using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Domain.Combat.Conditions;
+using NeoServer.Domain.Common.Contracts.Creatures;
 
 namespace NeoServer.Server.Routines.Creatures;
 

@@ -11,7 +11,7 @@ npcConfig.walkInterval = 1000
 npcConfig.walkRadius = 2
 
 npcConfig.outfit = {
-	lookType = 57,
+    lookType = 57,
 }
 
 -- npcConfig.flags = {
@@ -19,62 +19,62 @@ npcConfig.outfit = {
 -- }
 
 npcConfig.voices = {
-	interval = 15000,
-	chance = 50,
-	{ text = "Feeling lost, my child? Ask me for hints or help!" },
-	{ text = "Come to me if you need healing!" },
-	{ text = "Welcome to the temple of Rookgaard!" },
-	{ text = "Don't despair! Help is near!" },
+    interval = 15000,
+    chance = 50,
+    { text = "Feeling lost, my child? Ask me for hints or help!" },
+    { text = "Come to me if you need healing!" },
+    { text = "Welcome to the temple of Rookgaard!" },
+    { text = "Don't despair! Help is near!" },
 }
 
 local keywordHandler = KeywordHandler:new()
 local npcHandler = NpcHandler:new(keywordHandler)
 
 npcType.onThink = function(npc, interval)
-	npcHandler:onThink(npc, interval)
+    npcHandler:onThink(npc, interval)
 end
 
 npcType.onAppear = function(npc, creature)
-	npcHandler:onAppear(npc, creature)
+    npcHandler:onAppear(npc, creature)
 end
 
 npcType.onDisappear = function(npc, creature)
-	npcHandler:onDisappear(npc, creature)
+    npcHandler:onDisappear(npc, creature)
 end
 
 npcType.onMove = function(npc, creature, fromPosition, toPosition)
-	npcHandler:onMove(npc, creature, fromPosition, toPosition)
+    npcHandler:onMove(npc, creature, fromPosition, toPosition)
 end
 
 npcType.onSay = function(npc, creature, type, message)
-	npcHandler:onSay(npc, creature, type, message)
+    npcHandler:onSay(npc, creature, type, message)
 end
 
 npcType.onCloseChannel = function(npc, creature)
-	npcHandler:onCloseChannel(npc, creature)
+    npcHandler:onCloseChannel(npc, creature)
 end
 
 local function greetCallback(npc, creature)
-	local playerId = creature:getId()
-	local player = Player(creature)
-	local health = player:getHealth()
-	--todo: changed from 65 to 3000 only to tests, change this back any day
-	local healthToChange = 3000
-	local lowHealth = health < healthToChange
-	local poisoned = player:getCondition(CONDITION_POISON)
-	if lowHealth or poisoned then
-		npcHandler:setMessage(MESSAGE_GREET, "Hello, |PLAYERNAME|! You are looking really bad. Let me heal your wounds. It's my job after all.")
-		if lowHealth then
-			player:addHealth(healthToChange - health)
-		end
-		if poisoned then
-			player:removeCondition(CONDITION_POISON)
-		end
-		player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
-	else
-		npcHandler:setMessage(MESSAGE_GREET, "Hello, |PLAYERNAME|! I'll {heal} you if you are injured or poisoned. Feel free to ask me for {help} or general {hints}.")
-	end
-	return true
+    local playerId = creature:getId()
+    local player = Player(creature)
+    local health = player:getHealth()
+    --todo: changed from 65 to 3000 only to tests, change this back any day
+    local healthToChange = 3000
+    local lowHealth = health < healthToChange
+    local poisoned = player:getCondition(CONDITION_POISON)
+    if lowHealth or poisoned then
+        npcHandler:setMessage(MESSAGE_GREET, "Hello, |PLAYERNAME|! You are looking really bad. Let me heal your wounds. It's my job after all.")
+        if lowHealth then
+            player:addHealth(healthToChange - health)
+        end
+        if poisoned then
+            player:removeCondition(CONDITION_POISON)
+        end
+        player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
+    else
+        npcHandler:setMessage(MESSAGE_GREET, "Hello, |PLAYERNAME|! I'll {heal} you if you are injured or poisoned. Feel free to ask me for {help} or general {hints}.")
+    end
+    return true
 end
 
 -- Basic keywords
@@ -134,21 +134,21 @@ keywordHandler:addKeyword({ "adventure" }, StdModule.say, { npcHandler = npcHand
 keywordHandler:addAliasKeyword({ "explore" })
 
 keywordHandler:addKeyword({ "heal" }, StdModule.say, { npcHandler = npcHandler, text = "You are poisoned. I will help you." }, function(player)
-	return player:getCondition(CONDITION_POISON)
+    return player:getCondition(CONDITION_POISON)
 end, function(player)
-	local health = player:getHealth()
-	if health < 65 then
-		player:addHealth(65 - health)
-	end
-	player:removeCondition(CONDITION_POISON)
-	player:getPosition():sendMagicEffect(CONST_ME_MAGIC_RED)
+    local health = player:getHealth()
+    if health < 65 then
+        player:addHealth(65 - health)
+    end
+    player:removeCondition(CONDITION_POISON)
+    player:getPosition():sendMagicEffect(CONST_ME_MAGIC_RED)
 end)
 keywordHandler:addKeyword({ "heal" }, StdModule.say, { npcHandler = npcHandler, text = "Let me heal your wounds." }, function(player)
-	return player:getHealth() < 185 and player:getHealth() < player:getBaseMaxHealth()
+    return player:getHealth() < 185 and player:getHealth() < player:getBaseMaxHealth()
 end, function(player)
-	local health = player:getHealth()
-	player:addHealth(185 - health)
-	player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
+    local health = player:getHealth()
+    player:addHealth(185 - health)
+    player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
 end)
 keywordHandler:addKeyword({ "heal" }, StdModule.say, { npcHandler = npcHandler, text = "You aren't looking really bad, |PLAYERNAME|. I can only help in cases of real emergencies. Raise your health simply by eating {food}." })
 

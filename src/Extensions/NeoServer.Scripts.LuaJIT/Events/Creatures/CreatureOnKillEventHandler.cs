@@ -1,5 +1,5 @@
-﻿using NeoServer.Game.Common;
-using NeoServer.Game.Creatures.Models.Bases.Events;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Creatures.Models.Bases.Events;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 

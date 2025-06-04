@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using NeoServer.Game.Common.Contracts.Chats;
-using NeoServer.Game.Common.Contracts.DataStores;
+using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Networking.Packets.Incoming.Chat;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
@@ -24,7 +24,7 @@ public class PlayerOpenChannelHandler : PacketHandler
         var channelPacket = new OpenChannelPacket(message);
         if (!_game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player)) return;
 
-        IChatChannel channel = null;
+        ChatChannel channel = null;
         if (_chatChannelStore.Get(channelPacket.ChannelId) is { } publicChannel)
             channel = publicChannel;
         if (player.Channels.PersonalChannels?.FirstOrDefault(x => x.Id == channelPacket.ChannelId) is

@@ -1,11 +1,10 @@
 using LuaNET;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Creatures.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Enums;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class BankFunctionBinder : LuaScriptInterface,IBankFunctionBinder
+public class BankFunctionBinder : LuaScriptInterface, IBankFunctionBinder
 {
     private static LuaHelperService _luaHelper;
 
@@ -29,7 +28,7 @@ public class BankFunctionBinder : LuaScriptInterface,IBankFunctionBinder
             return 1;
         }
 
-        ulong amount = GetNumber<ulong>(l, 2);
+        var amount = GetNumber<ulong>(l, 2);
 
         bank.Credit(amount);
         PushBoolean(l, true);
@@ -47,19 +46,13 @@ public class BankFunctionBinder : LuaScriptInterface,IBankFunctionBinder
         if (isGuild)
         {
             var guild = _luaHelper.GetGuild(l, arg, true);
-            if (guild is null)
-            {
-                return null;
-            }
+            if (guild is null) return null;
 
             return guild.Bank;
         }
 
         var player = _luaHelper.GetPlayer(l, arg, true);
-        if (player is null)
-        {
-            return null;
-        }
+        if (player is null) return null;
 
         return player.Bank;
     }

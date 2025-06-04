@@ -1,7 +1,8 @@
 using LuaNET;
 using NeoServer.Data.Interfaces;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Guild;
 using NeoServer.Loaders.Guilds;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Scripts.LuaJIT.Functions;
@@ -18,12 +19,9 @@ public class LuaHelperService(
     IPlayerLoader playerLoader,
     ILogger logger) : LuaScriptInterface(nameof(BankFunctionBinder))
 {
-    public IGuild GetGuild(LuaState lua, int arg, bool allowOffline = false)
+    public Guild GetGuild(LuaState lua, int arg, bool allowOffline = false)
     {
-        if (IsUserdata(lua, arg))
-        {
-            return GetUserdata<IGuild>(lua, arg, "Guild");
-        }
+        if (IsUserdata(lua, arg)) return GetUserdata<Guild>(lua, arg, "Guild");
 
         if (IsNumber(lua, arg))
         {
@@ -31,10 +29,7 @@ public class LuaHelperService(
             var guild = guildStore.Get(GetNumber<ushort>(lua, arg));
             if (guild is not null) return guild;
 
-            if (allowOffline)
-            {
-                return LoadGuild(GetNumber<int>(lua, arg));
-            }
+            if (allowOffline) return LoadGuild(GetNumber<int>(lua, arg));
 
             return null;
         }
@@ -48,10 +43,7 @@ public class LuaHelperService(
 
             if (guild is not null) return guild;
 
-            if (allowOffline)
-            {
-                return LoadGuild(guildRecord.Id);
-            }
+            if (allowOffline) return LoadGuild(guildRecord.Id);
 
             return null;
         }
@@ -59,7 +51,7 @@ public class LuaHelperService(
         logger.Warning("Lua::{MethodName}: Invalid argument", "getGuild");
         return null;
 
-        IGuild LoadGuild(int id)
+        Guild LoadGuild(int id)
         {
             var guildRecord = guildRepository.GetById(id).Result;
             if (guildRecord is null) return null;
@@ -70,10 +62,7 @@ public class LuaHelperService(
 
     public IPlayer GetPlayer(LuaState lua, int arg, bool allowOffline = false)
     {
-        if (IsUserdata(lua, arg))
-        {
-            return GetUserdata<IPlayer>(lua, arg, "Player");
-        }
+        if (IsUserdata(lua, arg)) return GetUserdata<IPlayer>(lua, arg, "Player");
 
         if (IsNumber(lua, arg))
         {
@@ -81,10 +70,7 @@ public class LuaHelperService(
 
             if (player is not null) return player;
 
-            if (allowOffline)
-            {
-                return LoadPlayer(GetNumber<int>(lua, arg));
-            }
+            if (allowOffline) return LoadPlayer(GetNumber<int>(lua, arg));
 
             return null;
         }
@@ -94,15 +80,12 @@ public class LuaHelperService(
             var playerEntity = playerRepository.GetByName(GetString(lua, arg)).Result;
 
             if (playerEntity is null) return null;
-            
+
             creatureGameInstance.TryGetPlayer(GetNumber<uint>(lua, arg), out var player);
 
             if (player is not null) return player;
 
-            if (allowOffline)
-            {
-                return LoadPlayer(playerEntity.Id);
-            }
+            if (allowOffline) return LoadPlayer(playerEntity.Id);
 
             return null;
         }
@@ -113,7 +96,7 @@ public class LuaHelperService(
         IPlayer LoadPlayer(int id)
         {
             var playerRecord = playerRepository.GetById(id).Result;
-            if(playerRecord is null) return null;
+            if (playerRecord is null) return null;
 
             return playerLoader.Load(playerRecord);
         }

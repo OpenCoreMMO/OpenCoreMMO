@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.Json;
-using NeoServer.Game.Combat.Spells;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Spells;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Spells;
+using NeoServer.Domain.Spells;
 using NeoServer.Loaders.Extensions;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
@@ -33,7 +33,8 @@ public class SpellLoader(
             var jsonString = File.ReadAllText(path);
             var spells = JsonSerializer.Deserialize<List<IDictionary<string, JsonElement>>>(jsonString)?.ToList() ??
                          [];
-            var types = ScriptSearch.All.Where(x => typeof(ISpell).IsAssignableFrom(x) && !x.IsAbstract && !x.IsInterface).ToList();
+            var types = ScriptSearch.All
+                .Where(x => typeof(ISpell).IsAssignableFrom(x) && !x.IsAbstract && !x.IsInterface).ToList();
 
             foreach (var spellType in types)
             {
@@ -47,10 +48,18 @@ public class SpellLoader(
                 if (spellInstance.Enabled is false) continue;
 
                 spellInstance.Name ??= spell["name"].GetStringFromJson();
-                spellInstance.Cooldown = spellInstance.Cooldown > 0 ? spellInstance.Cooldown : spell["cooldown"].GetUInt32FromJson();
-                spellInstance.ManaConsumption = spellInstance.ManaConsumption > 0 ? spellInstance.ManaConsumption : spell["mana"].GetUInt16FromJson();
-                spellInstance.MinLevel = spellInstance.MinLevel > 0 ? spellInstance.MinLevel : spell["level"].GetUInt16FromJson();
-                spellInstance.VocationIds = (spellInstance.Vocations?.Length ?? 0) > 0 ? LoadVocations(spellInstance.Vocations) : LoadVocations(spell);
+                spellInstance.Cooldown = spellInstance.Cooldown > 0
+                    ? spellInstance.Cooldown
+                    : spell["cooldown"].GetUInt32FromJson();
+                spellInstance.ManaConsumption = spellInstance.ManaConsumption > 0
+                    ? spellInstance.ManaConsumption
+                    : spell["mana"].GetUInt16FromJson();
+                spellInstance.MinLevel = spellInstance.MinLevel > 0
+                    ? spellInstance.MinLevel
+                    : spell["level"].GetUInt16FromJson();
+                spellInstance.VocationIds = (spellInstance.Vocations?.Length ?? 0) > 0
+                    ? LoadVocations(spellInstance.Vocations)
+                    : LoadVocations(spell);
                 spellListManager.Add(spellInstance.Words ?? spell["words"].GetStringFromJson(), spellInstance);
             }
 
@@ -66,9 +75,7 @@ public class SpellLoader(
             .Select(vocationToken =>
             {
                 if (vocationToken.ValueKind == JsonValueKind.Number && vocationToken.TryGetByte(out var vocation))
-        {
                     return vocation;
-                }
 
                 if (vocationToken.ValueKind == JsonValueKind.String)
                 {
@@ -80,7 +87,7 @@ public class SpellLoader(
                     return vocationStore.All.FirstOrDefault(x =>
                         x.Name.Replace(" ", string.Empty)
                             .Equals(vocationValue.Replace(" ", string.Empty),
-                                StringComparison.InvariantCultureIgnoreCase))?.VocationType ?? (byte)0;
+                                StringComparison.InvariantCultureIgnoreCase))?.VocationType ?? 0;
                 }
 
                 return (byte)0;
@@ -102,7 +109,7 @@ public class SpellLoader(
         return vocations.Select(vocation =>
         {
             var normalizedVocation = vocation.Replace(" ", string.Empty);
-            return vocationLookup.TryGetValue(normalizedVocation, out byte vocationType)
+            return vocationLookup.TryGetValue(normalizedVocation, out var vocationType)
                 ? vocationType
                 : (byte)0;
         }).ToArray();

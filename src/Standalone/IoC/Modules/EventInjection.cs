@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Game.Common.Contracts;
-using NeoServer.Game.Common.Contracts.Chats;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts;
+using NeoServer.Domain.Common.Contracts.Chats;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Networking.EventHandlers;
 using NeoServer.Server.Events.Creature;
 using NeoServer.Server.Events.Subscribers;

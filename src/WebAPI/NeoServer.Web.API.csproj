@@ -13,13 +13,13 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="14.0.0"/>
-        <PackageReference Include="FluentValidation" Version="11.11.0"/>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0"/>
+        <PackageReference Include="FluentValidation" Version="12.0.0"/>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0"/>
         <PackageReference Include="MediatR" Version="12.5.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.4"/>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.5"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5"/>
         <PackageReference Include="Serilog.AspNetCore" Version="9.0.0"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.3"/>
         <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0"/>
         <PackageReference Include="Asp.Versioning.Http" Version="8.1.0"/>
         <PackageReference Include="Swashbuckle.AspNetCore.JsonMultipartFormDataSupport" Version="2.0.0"/>
@@ -32,6 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Core\NeoServer.Domain\NeoServer.Domain.csproj"/>
         <ProjectReference Include="..\Shared\NeoServer.IoC\NeoServer.Shared.IoC.csproj"/>
         <ProjectReference Include="..\Shared\NeoServer.Web.Shared\NeoServer.Web.Shared.csproj"/>
     </ItemGroup>

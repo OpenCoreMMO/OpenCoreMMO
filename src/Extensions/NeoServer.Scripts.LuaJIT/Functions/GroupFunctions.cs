@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using LuaNET;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Creatures.Players;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Creatures.Group;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
@@ -20,7 +20,7 @@ public class GroupFunctions : LuaScriptInterface, IGroupFunctions
     public void Init(LuaState luaState)
     {
         RegisterSharedClass(luaState, "Group", "", LuaGroupCreate);
-        RegisterMetaMethod(luaState, "Group", "__eq", LuaUserdataCompare<IGroup>);
+        RegisterMetaMethod(luaState, "Group", "__eq", LuaUserdataCompare<Group>);
 
         RegisterMethod(luaState, "Group", "getId", LuaGroupGetId);
         RegisterMethod(luaState, "Group", "getName", LuaGroupGetName);
@@ -52,7 +52,7 @@ public class GroupFunctions : LuaScriptInterface, IGroupFunctions
     public static int LuaGroupGetId(LuaState luaState)
     {
         // group:getId()
-        var group = GetUserdata<IGroup>(luaState, 1);
+        var group = GetUserdata<Group>(luaState, 1);
         if (group != null)
             Lua.PushNumber(luaState, group.Id);
         else
@@ -64,7 +64,7 @@ public class GroupFunctions : LuaScriptInterface, IGroupFunctions
     public static int LuaGroupGetName(LuaState luaState)
     {
         // group:getName()
-        var group = GetUserdata<IGroup>(luaState, 1);
+        var group = GetUserdata<Group>(luaState, 1);
         if (group != null)
             Lua.PushString(luaState, group.Name);
         else
@@ -76,7 +76,7 @@ public class GroupFunctions : LuaScriptInterface, IGroupFunctions
     public static int LuaGroupGetFlags(LuaState luaState)
     {
         // group:getFlags()
-        var group = GetUserdata<IGroup>(luaState, 1);
+        var group = GetUserdata<Group>(luaState, 1);
         if (group != null)
         {
             var flags = new BitArray(Enum.GetValues(typeof(PlayerFlag)).Length);
@@ -97,7 +97,7 @@ public class GroupFunctions : LuaScriptInterface, IGroupFunctions
     public static int LuaGroupGetAccess(LuaState luaState)
     {
         // group:getAccess()
-        var group = GetUserdata<IGroup>(luaState, 1);
+        var group = GetUserdata<Group>(luaState, 1);
         if (group != null)
             Lua.PushBoolean(luaState, group.Access);
         else
@@ -109,7 +109,7 @@ public class GroupFunctions : LuaScriptInterface, IGroupFunctions
     public static int LuaGroupGetMaxDepotItems(LuaState luaState)
     {
         // group:getMaxDepotItems()
-        var group = GetUserdata<IGroup>(luaState, 1);
+        var group = GetUserdata<Group>(luaState, 1);
         if (group != null)
             Lua.PushNumber(luaState, group.MaxDepotItems);
         else
@@ -121,7 +121,7 @@ public class GroupFunctions : LuaScriptInterface, IGroupFunctions
     public static int LuaGroupGetMaxVipEntries(LuaState luaState)
     {
         // group:getMaxVipEntries()
-        var group = GetUserdata<IGroup>(luaState, 1);
+        var group = GetUserdata<Group>(luaState, 1);
         if (group != null)
             Lua.PushNumber(luaState, group.MaxVipEntries);
         else
@@ -133,7 +133,7 @@ public class GroupFunctions : LuaScriptInterface, IGroupFunctions
     public static int LuaGroupHasFlag(LuaState luaState)
     {
         // group:hasFlag(flag)
-        var group = GetUserdata<IGroup>(luaState, 1);
+        var group = GetUserdata<Group>(luaState, 1);
         if (group != null && Lua.IsNumber(luaState, 2))
             Lua.PushBoolean(luaState, group.FlagIsEnabled(GetNumber<PlayerFlag>(luaState, 2)));
         else

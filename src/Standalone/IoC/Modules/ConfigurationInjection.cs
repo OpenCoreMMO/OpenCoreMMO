@@ -2,7 +2,7 @@
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Game.Common;
+using NeoServer.Domain.Common;
 using NeoServer.Server.Configurations;
 
 namespace NeoServer.Server.Standalone.IoC.Modules;

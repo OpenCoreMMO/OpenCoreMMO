@@ -1,5 +1,5 @@
 ﻿using System;
-using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;

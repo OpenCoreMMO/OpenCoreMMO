@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Helpers;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Helpers;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Tasks;
 

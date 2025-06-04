@@ -1,6 +1,6 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Helpers;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Helpers;
 using NeoServer.Networking.Packets.Outgoing.Player;
 using NeoServer.Server.Common.Contracts;
 

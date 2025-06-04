@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 using NeoServer.Data.Helpers;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Item;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Item;
 
 namespace NeoServer.Scripts.LuaJIT;
 

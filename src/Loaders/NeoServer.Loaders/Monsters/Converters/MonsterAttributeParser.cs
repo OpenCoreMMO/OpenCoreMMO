@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Creatures;
+﻿using NeoServer.Domain.Common.Creatures;
 
 namespace NeoServer.Loaders.Monsters.Converters;
 

@@ -20,7 +20,7 @@ public class ForSqLitePlayerDeathEntityConfiguration : IEntityTypeConfiguration<
         builder.Property(e => e.DeathDateTime).IsRequired();
         builder.Property(e => e.Level).IsRequired();
         builder.Property(e => e.Unjustified).IsRequired();
-        builder.Property(e => e.DeathLocation).IsRequired();
+        builder.Property(e => e.DeathLocation).HasMaxLength(50).IsRequired();
         builder.Property(e => e.ExperienceLost);
         builder.Property(e => e.SkillAxeLost);
         builder.Property(e => e.SkillClubLost);

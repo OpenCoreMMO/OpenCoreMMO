@@ -1,9 +1,9 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Location.Structs;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
@@ -66,7 +66,7 @@ public class MoveEvents : IMoveEvents
     public bool RegisterLuaItemEvent(MoveEvent moveEvent)
     {
         var itemIdVector = moveEvent.ItemIdsVector;
-        if (!itemIdVector.Any()) return false;
+        if (itemIdVector.Count == 0) return false;
 
         var tmpVector = new List<ushort>(itemIdVector.Count);
 
@@ -81,7 +81,7 @@ public class MoveEvents : IMoveEvents
     public bool RegisterLuaUniqueEvent(MoveEvent moveEvent)
     {
         var uniqueIdVector = moveEvent.UniqueIdsVector;
-        if (!uniqueIdVector.Any()) return false;
+        if (uniqueIdVector.Count == 0) return false;
 
         var tmpVector = new List<int>(uniqueIdVector.Count);
 
@@ -96,7 +96,7 @@ public class MoveEvents : IMoveEvents
     public bool RegisterLuaActionEvent(MoveEvent moveEvent)
     {
         var actionIdVector = moveEvent.ActionIdsVector;
-        if (!actionIdVector.Any()) return false;
+        if (actionIdVector.Count == 0) return false;
 
         var tmpVector = new List<ushort>(actionIdVector.Count);
 
@@ -111,7 +111,7 @@ public class MoveEvents : IMoveEvents
     public bool RegisterLuaPositionEvent(MoveEvent moveEvent)
     {
         var positionVector = moveEvent.PositionsVector;
-        if (!positionVector.Any()) return false;
+        if (positionVector.Count == 0) return false;
 
         var tmpVector = new List<Location>(positionVector.Count);
 
@@ -155,7 +155,7 @@ public class MoveEvents : IMoveEvents
             if (existingMoveEvent.Slot == moveEvent.Slot)
             {
                 _logger.Warning(
-                    $"[RegisterEvent] Duplicate move event found: {id}, for script: {moveEvent.GetScriptInterface().GetLoadingScriptName()}"
+                    "[RegisterEvent] Duplicate move event found: {Id}, for script: {GetLoadingScriptName}", id, moveEvent.GetScriptInterface().GetLoadingScriptName()
                 );
                 return false;
             }
@@ -181,7 +181,7 @@ public class MoveEvents : IMoveEvents
         if (eventListForType.Count > 0)
         {
             _logger.Warning(
-                $"[RegisterEvent] Duplicate move event found: {position}, for script {moveEvent.GetScriptInterface().GetLoadingScriptName()}"
+                "[RegisterEvent] Duplicate move event found: {Position}, for script {GetLoadingScriptName}", position, moveEvent.GetScriptInterface().GetLoadingScriptName()
             );
             return false;
         }

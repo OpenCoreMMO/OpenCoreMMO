@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using NeoServer.Game.Common;
+using NeoServer.Domain.Common;
 using NeoServer.Server.Common.Contracts.Tasks;
 using Serilog;
 using IEvent = NeoServer.Server.Common.Contracts.Tasks.IEvent;
@@ -61,7 +61,7 @@ public class Dispatcher : IDispatcher
                             evt.Action?.Invoke(); //execute event
                             _eventAggregator.PropagateEvents(); //propagate events
 
-                            _logger.Verbose(evt.Action?.Target?.ToString());
+                            _logger.Verbose("Action: {Action}",evt.Action?.Target?.ToString());
                         }
                         catch (Exception ex)
                         {

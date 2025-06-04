@@ -1,5 +1,5 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;

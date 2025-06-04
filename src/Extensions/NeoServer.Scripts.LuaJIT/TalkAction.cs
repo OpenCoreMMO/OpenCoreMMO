@@ -1,5 +1,5 @@
-﻿using NeoServer.Game.Common.Chats;
-using NeoServer.Game.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
@@ -24,8 +24,7 @@ public class TalkAction : Script, ITalkAction
         // onSay(player, words, param, type)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            _logger.Error($"[TalkAction::ExecuteSay - Player {player.Name} words {GetWords()}] " +
-                          $"Call stack overflow. Too many lua script calls being nested. Script name {GetScriptInterface().GetLoadingScriptName()}");
+            _logger.Error("[TalkAction::ExecuteSay - Player {PlayerName} words {Words}] Call stack overflow. Too many lua script calls being nested. Script name {LoadingScriptName}", player.Name, GetWords(), GetScriptInterface().GetLoadingScriptName());
             return false;
         }
 

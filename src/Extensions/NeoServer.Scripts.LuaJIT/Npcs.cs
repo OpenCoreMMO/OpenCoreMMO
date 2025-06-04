@@ -1,24 +1,30 @@
-﻿using NeoServer.Scripts.LuaJIT.Enums;
-using Serilog;
+﻿using NeoServer.Domain.Common.Helpers;
+using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
-using NeoServer.Game.Common.Helpers;
+using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
 public class NpcEvents
 {
-    public LuaScriptInterface LuaScriptInterface { get; set; }
-    public Dictionary<NpcsEventType, int?> Events { get; set; }
-
     public NpcEvents()
     {
         Events = new Dictionary<NpcsEventType, int?>();
     }
+
+    public LuaScriptInterface LuaScriptInterface { get; set; }
+    public Dictionary<NpcsEventType, int?> Events { get; set; }
 }
 
 public class Npcs : INpcs
 {
     private readonly ILogger _logger;
+
+    #region Members
+
+    private readonly Dictionary<string, NpcEvents> _npcEventsMap = new();
+
+    #endregion
 
     #region Constructors
 
@@ -30,19 +36,13 @@ public class Npcs : INpcs
 
     #endregion
 
-    #region Members
-
-    private readonly Dictionary<string, NpcEvents> _npcEventsMap = new();
-
-    #endregion
-
     #region Public Methods
 
     public void Add(string npcName, NpcsEventType eventType, LuaScriptInterface luaScriptInterface)
     {
         if (!_npcEventsMap.TryGetValue(npcName, out var npcEvents))
             npcEvents = new NpcEvents { LuaScriptInterface = luaScriptInterface };
-        
+
         npcEvents.Events.Add(eventType, null);
         _npcEventsMap.AddOrUpdate(npcName, npcEvents);
     }

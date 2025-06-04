@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Buffers.Binary;
-using NeoServer.Game.Common.Helpers;
+using NeoServer.Domain.Common.Helpers;
 
 namespace NeoServer.Loaders.OTB.DataStructures;
 

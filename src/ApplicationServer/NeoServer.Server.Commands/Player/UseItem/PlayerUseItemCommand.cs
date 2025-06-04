@@ -1,8 +1,10 @@
 ﻿using System;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items.Types.Containers;
-using NeoServer.Game.Common.Contracts.Items.Types.Usable;
-using NeoServer.Game.Common.Contracts.Services;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
+using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
+using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Depot;
+using NeoServer.Domain.Items.Items.Containers;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts.Commands;
 using NeoServer.Server.Common.Contracts.Scripts;
@@ -41,7 +43,7 @@ public class PlayerUseItemCommand : ICommand
         {
             case null:
                 return;
-            case IDepot depot:
+            case Depot depot:
                 action = () => _playerOpenDepotCommand.Execute(player, depot, useItemPacket);
                 break;
             case IContainer container:

@@ -12,6 +12,6 @@ public class AccountVipListEntityConfiguration : IEntityTypeConfiguration<Accoun
 
         builder.Property(e => e.AccountId);
         builder.Property(e => e.PlayerId);
-        builder.Property(e => e.Description);
+        builder.Property(e => e.Description).HasMaxLength(100);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Items.Items;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
@@ -13,7 +14,7 @@ public class TeleportFunctions : LuaScriptInterface, ITeleportFunctions
     public void Init(LuaState luaState)
     {
         RegisterSharedClass(luaState, "Teleport", "Item", LuaTeleportCreate);
-        RegisterMetaMethod(luaState, "Teleport", "__eq", LuaUserdataCompare<ITeleport>);
+        RegisterMetaMethod(luaState, "Teleport", "__eq", LuaUserdataCompare<TeleportItem>);
     }
 
     private static int LuaTeleportCreate(LuaState luaState)

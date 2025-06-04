@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Parsers;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items.Types.Containers;
-using NeoServer.Game.Common.Helpers;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
+using NeoServer.Domain.Common.Helpers;
 
 namespace NeoServer.Data.Repositories.Player;
 
@@ -26,7 +26,7 @@ public static class ContainerManager
         while (containers.TryDequeue(out var dequeuedContainer))
         {
             var items = dequeuedContainer.Container.Items;
-            if (!items.Any()) continue;
+            if (items.Count == 0) continue;
 
             foreach (var item in items)
             {

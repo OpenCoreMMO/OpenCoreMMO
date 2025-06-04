@@ -1,4 +1,4 @@
-﻿using NeoServer.Game.Common.Contracts.DataStores;
+﻿using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Tasks;
 

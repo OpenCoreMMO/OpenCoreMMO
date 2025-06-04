@@ -18,7 +18,7 @@ public class ForSqLitePlayerDeathKillerEntityConfiguration : IEntityTypeConfigur
 
         builder.Property(e => e.PlayerId);
         builder.Property(e => e.Damage).IsRequired();
-        builder.Property(e => e.KillerName).IsRequired();
+        builder.Property(e => e.KillerName).HasMaxLength(200).IsRequired();
         builder.Property(e => e.PlayerDeathId).IsRequired();
 
         builder.HasOne(x => x.PlayerDeath)

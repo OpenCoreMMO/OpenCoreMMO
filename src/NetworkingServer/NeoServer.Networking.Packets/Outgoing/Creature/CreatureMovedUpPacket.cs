@@ -1,8 +1,8 @@
 using System.Linq;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Creature;

@@ -1,5 +1,5 @@
-﻿using NeoServer.Game.Common;
-using NeoServer.Game.Common.Creatures;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Creatures;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Networking.Packets.Outgoing.Effect;
 using NeoServer.Server.Common.Contracts;
@@ -11,14 +11,12 @@ public class PlayerOperationFailedEventHandler(IGameServer game)
     public void Execute(uint playerId, string message, EffectT effect = EffectT.None)
     {
         if (!game.CreatureManager.GetPlayerConnection(playerId, out var connection)) return;
-        
+
         connection.OutgoingPackets.Enqueue(new TextMessagePacket(message,
             TextMessageOutgoingType.MESSAGE_STATUS_DEFAULT));
 
         if (effect != EffectT.None && game.CreatureManager.TryGetPlayer(playerId, out var player))
-        {
             connection.OutgoingPackets.Enqueue(new MagicEffectPacket(player.Location, effect));
-        }
 
         connection.Send();
     }
@@ -29,12 +27,10 @@ public class PlayerOperationFailedEventHandler(IGameServer game)
 
         connection.OutgoingPackets.Enqueue(new TextMessagePacket(TextMessageOutgoingParser.Parse(invalidOperation),
             TextMessageOutgoingType.MESSAGE_STATUS_DEFAULT));
-        
+
         if (effect != EffectT.None && game.CreatureManager.TryGetPlayer(playerId, out var player))
-        {
             connection.OutgoingPackets.Enqueue(new MagicEffectPacket(player.Location, effect));
-        }
-        
+
         connection.Send();
     }
 }

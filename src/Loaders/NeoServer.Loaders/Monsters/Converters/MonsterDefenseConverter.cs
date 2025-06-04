@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using NeoServer.Game.Combat.Defenses;
-using NeoServer.Game.Common.Contracts.Combat;
-using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Domain.Combat.Defenses;
+using NeoServer.Domain.Common.Contracts.Combat;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Server.Helpers.Extensions;
 
 namespace NeoServer.Loaders.Monsters.Converters;

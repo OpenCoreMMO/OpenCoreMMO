@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using NeoServer.Game.Combat.Spells;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.Items.Types;
-using NeoServer.Game.Common.Helpers;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Common.Results;
-using NeoServer.Game.Items;
-using NeoServer.Game.Items.Bases;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Items;
+using NeoServer.Domain.Items.Bases;
+using NeoServer.Domain.Spells;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers;
 using Newtonsoft.Json;
@@ -22,6 +22,7 @@ namespace NeoServer.Extensions.Spells.Commands;
 public class ListCommandsCommand : CommandSpell
 {
     private const string SPELL_TYPE = "command";
+
     private static IItemType CreateItemBook()
     {
         var item = new ItemType();
@@ -73,6 +74,21 @@ public class ListCommandsCommand : CommandSpell
                new List<IDictionary<string, object>>(0);
     }
 
+    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
+    {
+        if (caster is not IPlayer player) return Result.NotApplicable;
+
+        var spells = LoadSpells();
+        var text = BuildTextFromSpells(spells, Words);
+        var item = CreateItemBook();
+
+        var window = new TextWindow(item, player.Location, text);
+
+        player.Read(window);
+
+        return Result.Success;
+    }
+
     public sealed class TextWindow : BaseItem, IReadable
     {
         public TextWindow(IItemType metadata, Location location, string text) : base(metadata, location)
@@ -97,20 +113,5 @@ public class ListCommandsCommand : CommandSpell
             Text = text;
             return Result.Success;
         }
-    }
-
-    public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
-    {
-        if (caster is not IPlayer player) return Result.NotApplicable;
-
-        var spells = LoadSpells();
-        var text = BuildTextFromSpells(spells, Words);
-        var item = CreateItemBook();
-
-        var window = new TextWindow(item, player.Location, text);
-
-        player.Read(window);
-
-        return Result.Success;
     }
 }

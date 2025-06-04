@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Creatures;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Creatures;
 using NeoServer.Loaders.Converts;
 
 namespace NeoServer.Loaders.Vocations;

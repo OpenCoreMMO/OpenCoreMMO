@@ -1,13 +1,12 @@
-﻿using NeoServer.Game.Combat.Services.Attacks;
-using NeoServer.Game.Combat.Spells;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Combat.Structs;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Results;
+﻿using NeoServer.Domain.Combat.Services.Attacks;
+using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Spells;
 using NeoServer.Server.Helpers;
 
 namespace NeoServer.Extensions.Spells.Attack;
@@ -23,10 +22,7 @@ public abstract class AttackSpell : Spell<AttackSpell>
 
     public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
-        if (IsSelfTarget)
-        {
-            target = caster;
-        }
+        if (IsSelfTarget) target = caster;
 
         if (CasterNeedsTargetOrDirection && target is null)
         {
@@ -34,7 +30,7 @@ public abstract class AttackSpell : Spell<AttackSpell>
             target = map.GetNextTile(caster.Location, caster.Direction);
         }
 
-        var attackInput = new AttackInput(caster,target, CombatSettings);
+        var attackInput = new AttackInput(caster, target, CombatSettings);
         CombatSettings.Range = Range;
 
         if (NeedDirection)

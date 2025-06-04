@@ -1,6 +1,5 @@
-﻿using NeoServer.Game.Common.Chats;
-using NeoServer.Game.Common.Contracts.Chats;
-using NeoServer.Game.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Networking.Packets.Outgoing.Chat;
 using NeoServer.Server.Common.Contracts;
 
@@ -15,7 +14,7 @@ public class ChatMessageAddedEventHandler
         this.game = game;
     }
 
-    public void Execute(ISociableCreature player, IChatChannel chatChannel, SpeechType speechType, string message)
+    public void Execute(ISociableCreature player, ChatChannel chatChannel, SpeechType speechType, string message)
     {
         if (chatChannel is null) return;
         if (string.IsNullOrWhiteSpace(message)) return;

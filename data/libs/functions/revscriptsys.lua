@@ -187,93 +187,93 @@ end
 
 -- -- GlobalEvent revscriptsys
 do
-	local function GlobalEventNewIndex(self, key, value)
-		if key == "onThink" then
-			self:onThink(value)
-			return
-		elseif key == "onTime" then
-			self:onTime(value)
-			return
-		elseif key == "onStartup" then
-			self:type("startup")
-			self:onStartup(value)
-			return
-		elseif key == "onShutdown" then
-			self:type("shutdown")
-			self:onShutdown(value)
-			return
-		elseif key == "onRecord" then
-			self:type("record")
-			self:onRecord(value)
-			return
-		elseif key == "onPeriodChange" then
-			self:type("periodchange")
-			self:onPeriodChange(value)
-			return
-		elseif key == "onSave" then
-			self:type("save")
-			self:onSave(value)
-			return
-		end
-		rawset(self, key, value)
-	end
-	rawgetmetatable("GlobalEvent").__newindex = GlobalEventNewIndex
+    local function GlobalEventNewIndex(self, key, value)
+        if key == "onThink" then
+            self:onThink(value)
+            return
+        elseif key == "onTime" then
+            self:onTime(value)
+            return
+        elseif key == "onStartup" then
+            self:type("startup")
+            self:onStartup(value)
+            return
+        elseif key == "onShutdown" then
+            self:type("shutdown")
+            self:onShutdown(value)
+            return
+        elseif key == "onRecord" then
+            self:type("record")
+            self:onRecord(value)
+            return
+        elseif key == "onPeriodChange" then
+            self:type("periodchange")
+            self:onPeriodChange(value)
+            return
+        elseif key == "onSave" then
+            self:type("save")
+            self:onSave(value)
+            return
+        end
+        rawset(self, key, value)
+    end
+    rawgetmetatable("GlobalEvent").__newindex = GlobalEventNewIndex
 end
 
 
 -- Npcs revscriptsys
 do
-	local function NpcTypeNewIndex(self, key, value)
-		if key == "onThink" then
-			self:eventType(NPCS_EVENT_THINK)
-			self:onThink(value)
-			return
-		elseif key == "onAppear" then
-			self:eventType(NPCS_EVENT_APPEAR)
-			self:onAppear(value)
-			return
-		elseif key == "onDisappear" then
-			self:eventType(NPCS_EVENT_DISAPPEAR)
-			self:onDisappear(value)
-			return
-		elseif key == "onMove" then
-			self:eventType(NPCS_EVENT_MOVE)
-			self:onMove(value)
-			return
-		elseif key == "onSay" then
-			self:eventType(NPCS_EVENT_SAY)
-			self:onSay(value)
-			return
-		elseif key == "onBuyItem" then
-			self:eventType(NPCS_EVENT_PLAYER_BUY)
-			self:onBuyItem(value)
-			return
-		elseif key == "onSellItem" then
-			self:eventType(NPCS_EVENT_PLAYER_SELL)
-			self:onSellItem(value)
-			return
-		elseif key == "onCheckItem" then
-			self:eventType(NPCS_EVENT_PLAYER_CHECK_ITEM)
-			self:onCheckItem(value)
-			return
-		elseif key == "onCloseChannel" then
-			self:eventType(NPCS_EVENT_PLAYER_CLOSE_CHANNEL)
-			self:onBuyItem(value)
-			return
-		end
-		rawset(self, key, value)
-	end
-	rawgetmetatable("NpcType").__newindex = NpcTypeNewIndex
+    local function NpcTypeNewIndex(self, key, value)
+        if key == "onThink" then
+            self:eventType(NPCS_EVENT_THINK)
+            self:onThink(value)
+            return
+        elseif key == "onAppear" then
+            self:eventType(NPCS_EVENT_APPEAR)
+            self:onAppear(value)
+            return
+        elseif key == "onDisappear" then
+            self:eventType(NPCS_EVENT_DISAPPEAR)
+            self:onDisappear(value)
+            return
+        elseif key == "onMove" then
+            self:eventType(NPCS_EVENT_MOVE)
+            self:onMove(value)
+            return
+        elseif key == "onSay" then
+            self:eventType(NPCS_EVENT_SAY)
+            self:onSay(value)
+            return
+        elseif key == "onBuyItem" then
+            self:eventType(NPCS_EVENT_PLAYER_BUY)
+            self:onBuyItem(value)
+            return
+        elseif key == "onSellItem" then
+            self:eventType(NPCS_EVENT_PLAYER_SELL)
+            self:onSellItem(value)
+            return
+        elseif key == "onCheckItem" then
+            self:eventType(NPCS_EVENT_PLAYER_CHECK_ITEM)
+            self:onCheckItem(value)
+            return
+        elseif key == "onCloseChannel" then
+            self:eventType(NPCS_EVENT_PLAYER_CLOSE_CHANNEL)
+            self:onBuyItem(value)
+            return
+        end
+        rawset(self, key, value)
+    end
+    rawgetmetatable("NpcType").__newindex = NpcTypeNewIndex
 end
 
 -- Spells revscriptsys
 do
-	local function SpellNewIndex(self, key, value)
-		if key == "onCastSpell" then
-			self:onCastSpell(value)
-			return
-		end
-		rawset(self, key, value)
-	end
-	rawgetmetatable("Spell").__newindex = SpellNewIndex
+    local function SpellNewIndex(self, key, value)
+        if key == "onCastSpell" then
+            self:onCastSpell(value)
+            return
+        end
+        rawset(self, key, value)
+    end
+    rawgetmetatable("Spell").__newindex = SpellNewIndex
 end

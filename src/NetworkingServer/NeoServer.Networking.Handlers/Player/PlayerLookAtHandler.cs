@@ -1,5 +1,5 @@
-﻿using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Location;
+﻿using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;

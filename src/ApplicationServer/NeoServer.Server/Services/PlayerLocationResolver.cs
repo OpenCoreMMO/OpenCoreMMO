@@ -1,9 +1,9 @@
 using NeoServer.Data.Entities;
-using NeoServer.Game.Common.Contracts.World;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Location.Structs;
-using NeoServer.Game.Creatures;
-using NeoServer.Game.World;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures;
+using NeoServer.Domain.World;
 using Serilog;
 
 namespace NeoServer.Server.Services;

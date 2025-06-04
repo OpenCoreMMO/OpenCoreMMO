@@ -1,7 +1,7 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Location.Structs;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts.Scripts.Services;
 using Serilog;
@@ -47,8 +47,8 @@ public class LuaActionScriptService : IActionScriptService
 
     public bool UseItem(IPlayer player, Location pos, byte stackpos, byte index, IItem item, IThing target = null)
     {
-        if(item is null) return false;
-        
+        if (item is null) return false;
+
         return UseItem(player, pos, pos, stackpos, item, target);
     }
 
@@ -78,7 +78,7 @@ public class LuaActionScriptService : IActionScriptService
                 target,
                 toPos,
                 isHotkey);
-        _logger.Warning("Action with item id {ItemServerId} has not found into LuaJIT Scripts.", item.ServerId);
+        _logger.Warning("Action with item id {ItemServerId} has not found into LuaJIT Scripts", item.ServerId);
 
         return false;
     }

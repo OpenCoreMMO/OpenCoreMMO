@@ -1,10 +1,10 @@
 ﻿using LuaNET;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Contracts.World.Tiles;
-using NeoServer.Game.Common.Location;
-using NeoServer.Game.Common.Location.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;

@@ -1,10 +1,10 @@
 ﻿using System;
-using NeoServer.Game.Common;
-using NeoServer.Game.Common.Combat.Structs;
-using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Creatures;
-using NeoServer.Game.Common.Item;
-using NeoServer.Game.Common.Spell;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Spells;
 
 namespace NeoServer.Extensions.Spells.Attack.Mage.Druid;
 
@@ -30,6 +30,7 @@ public class MudAttack : AttackSpell
     public override byte? Range => 3;
     public override string[] Vocations { get; } = ["druid", "elder druid"];
     public override bool CasterNeedsTargetOrDirection => true;
+
     private static MinMax GetFormulaValues(IPlayer player, int level, int magicLevel, decimal _)
     {
         if (player is null) return MinMax.Zero;
@@ -37,8 +38,8 @@ public class MudAttack : AttackSpell
         level = Math.Min(level, 20);
         magicLevel = Math.Min(magicLevel, 20);
 
-        var min = (level / 5) + +(magicLevel * 0.4) + 2;
-        var max = (level / 5) +  + (magicLevel * 0.8) + 5;
+        var min = level / 5 + +(magicLevel * 0.4) + 2;
+        var max = level / 5 + +(magicLevel * 0.8) + 5;
 
         return new MinMax(min, max);
     }

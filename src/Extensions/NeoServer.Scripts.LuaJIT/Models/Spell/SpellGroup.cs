@@ -10,5 +10,5 @@ public enum SpellGroup
     Conjure = 5, // Deprecated
     Crippling = 6,
     Focus = 7,
-    UltimateStrikes = 8,
+    UltimateStrikes = 8
 }

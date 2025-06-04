@@ -1,7 +1,7 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
-using NeoServer.Game.Common.Contracts.Items;
-using NeoServer.Game.Common.Helpers;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Helpers;
 using NeoServer.Networking.Packets.Outgoing.Item;
 using NeoServer.Networking.Packets.Outgoing.Npc;
 using NeoServer.Server.Common.Contracts;

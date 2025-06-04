@@ -1,7 +1,7 @@
 using LuaNET;
-using NeoServer.Game.Combat.Services.Attacks;
-using NeoServer.Game.Common.Combat.Structs;
-using NeoServer.Game.Common.Contracts.Creatures;
+using NeoServer.Domain.Combat.Services.Attacks;
+using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Models;
@@ -46,7 +46,7 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
             Lua.PushNil(L);
             return 1;
         }
-        
+
         return 1;
     }
 
@@ -62,7 +62,7 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
 
         if (IsUserdata(lua, 2))
         {
-            LuaDataType type = GetUserdataType(lua, 2);
+            var type = GetUserdataType(lua, 2);
             if (type != LuaDataType.Player && type != LuaDataType.Monster && type != LuaDataType.Npc)
             {
                 PushBoolean(lua, false);
@@ -114,9 +114,9 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
             return 1;
         }
 
-        CallBackType key = GetNumber<CallBackType>(lua, 2);
-        string callbackName = GetString(lua, 3);
-        
+        var key = GetNumber<CallBackType>(lua, 2);
+        var callbackName = GetString(lua, 3);
+
         var callback = combat.SetCallback(key);
 
         if (callback is null)
@@ -145,7 +145,7 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
         var maxA = GetNumber<double>(l, 5);
         var maxB = GetNumber<double>(l, 6);
 
-        combat.SetPlayerCombatValues(new CombatValues()
+        combat.SetPlayerCombatValues(new CombatValues
         {
             CombatFormula = type,
             MinA = minA,
@@ -168,16 +168,12 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
             return 1;
         }
 
-        CombatParam key = GetNumber<CombatParam>(l, 2);
+        var key = GetNumber<CombatParam>(l, 2);
         int value;
         if (IsBoolean(l, 3))
-        {
             value = GetBoolean(l, 3) ? 1 : 0;
-        }
         else
-        {
             value = GetNumber<int>(l, 3);
-        }
 
         combat.SetParameter(key, value);
         PushBoolean(l, true);

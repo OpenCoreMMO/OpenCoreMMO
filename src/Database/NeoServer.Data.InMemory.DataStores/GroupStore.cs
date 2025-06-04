@@ -1,8 +1,8 @@
-﻿using NeoServer.Game.Common.Contracts.Creatures;
-using NeoServer.Game.Common.Contracts.DataStores;
+﻿using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Creatures.Group;
 
 namespace NeoServer.Data.InMemory.DataStores;
 
-public class GroupStore : DataStore<GroupStore, byte, IGroup>, IGroupStore
+public class GroupStore : DataStore<GroupStore, byte, Group>, IGroupStore
 {
 }

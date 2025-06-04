@@ -76,7 +76,11 @@ public class Script
     }
 
     // Method to access the ScriptId in derived classes
-    public virtual int GetScriptId() => ScriptId;
+    public virtual int GetScriptId()
+    {
+        return ScriptId;
+    }
+
     public virtual void SetScriptId(int newScriptId)
     {
         ScriptId = newScriptId;

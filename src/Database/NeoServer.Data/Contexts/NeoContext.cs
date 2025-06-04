@@ -39,15 +39,15 @@ public class NeoContext : DbContext
     public DbSet<AccountPremiumHistoryEntity> AccountPremiumHistories { get; set; }
 
     public DbSet<IpBanEntity> IpBans { get; set; }
-    
+
     public DbSet<ReportBugEntity> ReportBugs { get; set; }
-    
+
     public DbSet<HouseEntity> Houses { get; set; }
     public DbSet<HouseListEntity> HouseList { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.LogTo(m => _logger.Verbose(m),
+        optionsBuilder.LogTo(m => _logger.Verbose("{Message}",m),
             (eventId, _) => eventId.Name == $"{DbLoggerCategory.Database.Command.Name}.CommandExecuted");
     }
 
