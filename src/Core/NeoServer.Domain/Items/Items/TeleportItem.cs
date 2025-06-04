@@ -7,7 +7,7 @@ using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items;
 
-public class TeleportItem : BaseItem, ITeleport
+public class TeleportItem : BaseItem
 {
     public TeleportItem(IItemType metadata, Location location,
         IDictionary<ItemAttribute, IConvertible> attributes) : base(metadata, location)

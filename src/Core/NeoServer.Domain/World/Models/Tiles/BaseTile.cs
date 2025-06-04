@@ -105,7 +105,7 @@ public abstract class BaseTile : ITile
         if (item.Metadata.Attributes.TryGetAttribute(ItemAttribute.BlockProjectTile, out int value) && value == 1)
             SetFlag(TileFlags.BlockProjecTile);
 
-        if (item is ITeleport) SetFlag(TileFlags.Teleport);
+        if (item is TeleportItem) SetFlag(TileFlags.Teleport);
 
         if (item is MagicField) SetFlag(TileFlags.MagicField);
 

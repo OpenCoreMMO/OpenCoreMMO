@@ -101,13 +101,13 @@ public class DynamicTile : BaseTile, IDynamicTile
         }
     }
 
-    public bool HasTeleport(out ITeleport teleport)
+    public bool HasTeleport(out TeleportItem teleport)
     {
         teleport = null;
         if (TopItems is null) return false;
 
         foreach (var topItem in TopItems)
-            if (topItem is ITeleport teleportItem)
+            if (topItem is TeleportItem teleportItem)
             {
                 teleport = teleportItem;
                 return true;

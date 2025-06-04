@@ -1182,7 +1182,7 @@ public class Player : CombatActor, IPlayer
                 ? weapon.WeaponAttack.ElementalAttackPowerPercentage
                 : weapon.WeaponAttack.AttackPowerPercentage;
 
-        if (Inventory.Weapon is IMagicalWeapon magicalWeapon) return magicalWeapon.MaxHitChance;
+        if (Inventory.Weapon is MagicWeapon magicalWeapon) return magicalWeapon.MaxHitChance;
 
         if (Inventory.Weapon is IDistanceWeapon && Inventory.Ammo is { } ammo)
             attackPercentage = isElemental

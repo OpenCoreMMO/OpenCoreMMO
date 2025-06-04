@@ -31,7 +31,7 @@ public static class PlayerCombatParameterBuilder
             ExtraAttack = elementalDamage,
             CooldownType = CooldownType.Combat,
             CooldownDuration = (uint)player.AttackSpeed,
-            IsMagicalAttack = player.Inventory.Weapon is IMagicalWeapon,
+            IsMagicalAttack = player.Inventory.Weapon is MagicWeapon,
             UsingWeapon = true,
             HitChance = HitChanceCalculation.GetHitChance(player.Inventory.Weapon,
                 player?.GetSkillLevel(player.SkillInUse) ?? 0,
@@ -44,7 +44,7 @@ public static class PlayerCombatParameterBuilder
     {
         if (player.Inventory.Weapon is null) return DamageType.Physical;
 
-        if (player.Inventory.Weapon is IMagicalWeapon) return player.Inventory.Weapon.Metadata.ShootType.ToDamageType();
+        if (player.Inventory.Weapon is MagicWeapon) return player.Inventory.Weapon.Metadata.ShootType.ToDamageType();
 
         if (player.Inventory.Weapon is IDistanceWeapon)
             return player.Inventory.Ammo?.Metadata?.DamageType ?? DamageType.Physical;
@@ -63,7 +63,7 @@ public static class PlayerCombatParameterBuilder
             INeedsAmmo distanceWeapon when distanceWeapon.CanShootAmmunition(player.Inventory.Ammo) =>
                 ammo?.ShootType ?? ShootType.None,
             ThrowableWeapon throwableDistanceWeapon => throwableDistanceWeapon.Metadata.ShootType,
-            IMagicalWeapon magicWeapon => magicWeapon.Metadata.ShootType,
+            MagicWeapon magicWeapon => magicWeapon.Metadata.ShootType,
             _ => ShootType.None
         };
     }
