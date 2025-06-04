@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat.Services.Spells;
-using NeoServer.Domain.Combat.Spells;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Spells;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Server.Common.Contracts;

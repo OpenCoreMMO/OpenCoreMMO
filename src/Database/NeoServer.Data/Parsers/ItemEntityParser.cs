@@ -29,7 +29,7 @@ public static class ItemEntityParser
     public static IItem BuildContainer<T>(IContainer container, List<T> items, Location location,
         IItemFactory itemFactory) where T : PlayerItemBaseEntity
     {
-        if (items == null || !items.Any())
+        if (items == null || items.Count == 0)
             return container;
 
         // Queue to hold the child containers and their corresponding container IDs

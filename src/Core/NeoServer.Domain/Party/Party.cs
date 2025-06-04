@@ -57,7 +57,7 @@ public class Party : IParty
 
     public IReadOnlyCollection<uint> Invites => _invites.ToList();
     public ChatChannel Channel { get; }
-    public bool IsOver => !_members.Any();
+    public bool IsOver => _members.Count == 0;
 
     public bool IsSharedExperienceEnabled { get; set; }
 
@@ -127,7 +127,7 @@ public class Party : IParty
         if (!IsLeader(by)) return;
         if (!_invites.Remove(invitedPlayer.CreatureId)) return;
 
-        if (IsOver && !_invites.Any()) OnPartyOver?.Invoke(this);
+        if (IsOver && _invites.Count == 0) OnPartyOver?.Invoke(this);
     }
 
     public void RemoveMember(IPlayer player)

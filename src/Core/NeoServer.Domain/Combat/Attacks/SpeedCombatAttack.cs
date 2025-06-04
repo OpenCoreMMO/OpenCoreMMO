@@ -1,7 +1,7 @@
-﻿using NeoServer.Domain.Combat.Spells;
-using NeoServer.Domain.Common.Combat.Structs;
+﻿using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Spells;
 
 namespace NeoServer.Domain.Combat.Attacks;
 

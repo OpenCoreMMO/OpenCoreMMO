@@ -89,7 +89,7 @@ internal static class CSharpCompiler
 
         assembliesToCheck.Enqueue(Assembly.GetEntryAssembly());
 
-        while (assembliesToCheck.Any())
+        while (assembliesToCheck.Count != 0)
         {
             var assemblyToCheck = assembliesToCheck.Dequeue();
 

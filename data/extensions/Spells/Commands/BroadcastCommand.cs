@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using NeoServer.Domain.Combat.Spells;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Spells;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Helpers;

@@ -31,7 +31,7 @@ public class LootContainer : Container.Container, ILootContainer
 
     private bool Allowed(IPlayer player)
     {
-        if (Loot?.Owners is null || !Loot.Owners.Any()) return true;
+        if (Loot?.Owners is null || Loot.Owners.Count == 0) return true;
 
         if (Loot.Owners.Contains(player)) return true;
 

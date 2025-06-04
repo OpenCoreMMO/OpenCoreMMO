@@ -14,7 +14,7 @@ public class SwaggerJsonIgnoreFilter : IOperationFilter
                 .Where(prop => prop.GetCustomAttribute<JsonIgnoreAttribute>() != null))
             .ToList();
 
-        if (!ignoredProperties.Any()) return;
+        if (ignoredProperties.Count == 0) return;
 
         foreach (var property in ignoredProperties)
             operation.Parameters = operation.Parameters

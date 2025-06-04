@@ -66,7 +66,7 @@ public class MoveEvents : IMoveEvents
     public bool RegisterLuaItemEvent(MoveEvent moveEvent)
     {
         var itemIdVector = moveEvent.ItemIdsVector;
-        if (!itemIdVector.Any()) return false;
+        if (itemIdVector.Count == 0) return false;
 
         var tmpVector = new List<ushort>(itemIdVector.Count);
 
@@ -81,7 +81,7 @@ public class MoveEvents : IMoveEvents
     public bool RegisterLuaUniqueEvent(MoveEvent moveEvent)
     {
         var uniqueIdVector = moveEvent.UniqueIdsVector;
-        if (!uniqueIdVector.Any()) return false;
+        if (uniqueIdVector.Count == 0) return false;
 
         var tmpVector = new List<int>(uniqueIdVector.Count);
 
@@ -96,7 +96,7 @@ public class MoveEvents : IMoveEvents
     public bool RegisterLuaActionEvent(MoveEvent moveEvent)
     {
         var actionIdVector = moveEvent.ActionIdsVector;
-        if (!actionIdVector.Any()) return false;
+        if (actionIdVector.Count == 0) return false;
 
         var tmpVector = new List<ushort>(actionIdVector.Count);
 
@@ -111,7 +111,7 @@ public class MoveEvents : IMoveEvents
     public bool RegisterLuaPositionEvent(MoveEvent moveEvent)
     {
         var positionVector = moveEvent.PositionsVector;
-        if (!positionVector.Any()) return false;
+        if (positionVector.Count == 0) return false;
 
         var tmpVector = new List<Location>(positionVector.Count);
 

@@ -62,7 +62,7 @@ public class PlayerPersistenceRoutine
     {
         var players = _gameServer.CreatureManager.GetAllLoggedPlayers().ToList();
 
-        if (players.Any())
+        if (players.Count != 0)
         {
             _logger.Information("Saving {NumPlayers} players...", players.Count);
             _stopwatch.Restart();

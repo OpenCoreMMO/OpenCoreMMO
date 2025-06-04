@@ -1,7 +1,7 @@
 ﻿using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Creatures;
 
-namespace NeoServer.Domain.Combat.Spells;
+namespace NeoServer.Domain.Spells;
 
 public abstract class CommandSpell : Spell<CommandSpell>, ICommandSpell
 {

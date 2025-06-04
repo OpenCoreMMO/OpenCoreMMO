@@ -3,7 +3,7 @@ using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
-using NeoServer.Domain.Common.Spell;
+using NeoServer.Domain.Spells;
 
 namespace NeoServer.Extensions.Spells.Attack.Paladin;
 

@@ -1,8 +1,8 @@
 using LuaNET;
-using NeoServer.Domain.Combat.Spells;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Spells;
 using NeoServer.Scripts.LuaJIT.DataManagers;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Models.Spell;

@@ -64,7 +64,7 @@ public class PlayerParty : IPlayerParty
 
     public void RejectInvite(IParty party)
     {
-        if (_partyInvites is null || !_partyInvites.Any()) return;
+        if (_partyInvites is null || _partyInvites.Count == 0) return;
 
         if (!_partyInvites.TryGetValue(party, out var invitedParty)) return;
 
