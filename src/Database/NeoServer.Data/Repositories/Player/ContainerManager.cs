@@ -26,7 +26,7 @@ public static class ContainerManager
         while (containers.TryDequeue(out var dequeuedContainer))
         {
             var items = dequeuedContainer.Container.Items;
-            if (!items.Any()) continue;
+            if (items.Count == 0) continue;
 
             foreach (var item in items)
             {

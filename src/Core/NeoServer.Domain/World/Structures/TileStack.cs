@@ -31,7 +31,7 @@ public class TileStack<T> : IEnumerable<T> where T : IThing
 
     public T Pop()
     {
-        if (!items.Any()) return default;
+        if (items.Count == 0) return default;
 
         var temp = items[^1];
         items.RemoveAt(items.Count - 1);
@@ -48,7 +48,7 @@ public class TileStack<T> : IEnumerable<T> where T : IThing
     {
         item = default;
 
-        if (!items.Any()) return false;
+        if (items.Count == 0) return false;
         item = items[^1];
         return true;
     }
@@ -57,7 +57,7 @@ public class TileStack<T> : IEnumerable<T> where T : IThing
     {
         item = default;
 
-        if (!items.Any()) return false;
+        if (items.Count == 0) return false;
         item = Pop();
         return true;
     }

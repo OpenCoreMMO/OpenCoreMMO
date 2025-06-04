@@ -1,5 +1,4 @@
 ﻿using NeoServer.Domain.Combat.Services.Attacks;
-using NeoServer.Domain.Combat.Spells;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
@@ -7,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Spells;
 using NeoServer.Server.Helpers;
 
 namespace NeoServer.Extensions.Spells.Attack;

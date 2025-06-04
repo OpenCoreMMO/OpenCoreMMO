@@ -37,7 +37,7 @@ public static class AssemblyHelper
             _assemblies.Add(assembly);
         }
 
-        if (!_assemblies.Any()) return _assemblies;
+        if (_assemblies.Count == 0) return _assemblies;
 
         var name = Assembly.GetExecutingAssembly().GetName().Name;
         if (name == null) return _assemblies;

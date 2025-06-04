@@ -5,7 +5,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Results;
 
-namespace NeoServer.Domain.Combat.Spells;
+namespace NeoServer.Domain.Spells;
 
 public class HealSpell : Spell<HealSpell>
 {

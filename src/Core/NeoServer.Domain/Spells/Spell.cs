@@ -9,9 +9,8 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Common.Spell;
 
-namespace NeoServer.Domain.Combat.Spells;
+namespace NeoServer.Domain.Spells;
 
 public abstract class BaseSpell : ISpell
 {

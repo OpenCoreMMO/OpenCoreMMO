@@ -2,9 +2,9 @@
 using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat.Services.Spells;
-using NeoServer.Domain.Combat.Spells;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Spells;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Server;
 using NeoServer.Domain.World.Services;

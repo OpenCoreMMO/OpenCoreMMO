@@ -1,12 +1,12 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Domain.Combat.Spells;
 using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Items.Events;
 using NeoServer.Domain.Items.Items.Attributes;
 using NeoServer.Domain.Items.Items.UsableItems.Runes;
+using NeoServer.Domain.Spells;
 using NeoServer.Domain.Systems.SafeTrade;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Events.Combat;

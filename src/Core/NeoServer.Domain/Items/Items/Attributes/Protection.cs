@@ -32,7 +32,7 @@ public sealed class Protection : IProtection
     private sbyte GetProtection(CombatDamage combatDamage)
     {
         var damageType = combatDamage.Type;
-        if (DamageProtection is null || !DamageProtection.Any() || damageType == DamageType.None) return 0;
+        if (DamageProtection is null || DamageProtection.Count == 0 || damageType == DamageType.None) return 0;
 
         if (DamageProtection.TryGetValue(damageType, out var value)) return value;
 

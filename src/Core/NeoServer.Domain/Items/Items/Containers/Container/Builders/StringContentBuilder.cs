@@ -15,7 +15,7 @@ internal static class StringContentBuilder
 
     private static string GetStringContent(IContainer container)
     {
-        if (!container.Items.Any()) return null;
+        if (container.Items.Count == 0) return null;
 
         var stringBuilder = new StringBuilder();
 

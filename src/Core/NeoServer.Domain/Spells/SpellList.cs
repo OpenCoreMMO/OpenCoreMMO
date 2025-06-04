@@ -1,6 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.Spells;
 
-namespace NeoServer.Domain.Combat.Spells;
+namespace NeoServer.Domain.Spells;
 
 public class SpellListManager
 {

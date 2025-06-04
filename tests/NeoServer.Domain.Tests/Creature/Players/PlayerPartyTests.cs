@@ -1,5 +1,4 @@
-﻿using Moq;
-using NeoServer.Domain.Chat;
+﻿using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Tests.Helpers;

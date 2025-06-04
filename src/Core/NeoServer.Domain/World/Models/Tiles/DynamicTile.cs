@@ -370,7 +370,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         var removedCreatures = new ICreature[Creatures.Count];
 
         var i = 0;
-        while (Creatures.Any())
+        while (Creatures.Count != 0)
         {
             var creature = Creatures.First();
             RemoveCreature(creature, out var removedCreature);
@@ -741,7 +741,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         Creatures ??= new List<IWalkableCreature>();
         removedCreature = null;
 
-        if (!Creatures.Any())
+        if (Creatures.Count == 0)
             return new Result<OperationResultList<ICreature>>(
                 new OperationResultList<ICreature>(Operation.None, creatureToRemove));
 
