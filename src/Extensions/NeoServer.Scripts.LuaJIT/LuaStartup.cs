@@ -156,9 +156,9 @@ public class LuaStartup : ILuaStartup
 
     private void ModulesLoadHelper(bool loaded, string moduleName)
     {
-        _logger.Information($"Loaded {moduleName}");
+        _logger.Information("Loaded {ModuleName}", moduleName);
         if (!loaded)
-            _logger.Error(string.Format("Cannot load: {0}", moduleName));
+            _logger.Error("Cannot load: {ModuleName}", moduleName);
     }
 
     #endregion
