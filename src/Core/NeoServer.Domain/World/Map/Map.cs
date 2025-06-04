@@ -10,6 +10,7 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
+using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.World.Algorithms;
 using NeoServer.Domain.World.Models;
 using NeoServer.Domain.World.Models.Tiles;
@@ -487,7 +488,7 @@ public class Map : IMap
         OperationFailService.Send(creature.CreatureId, TextConstants.NOT_POSSIBLE);
     }
 
-    public void CreateBloodPool(ILiquid pool, IDynamicTile tile)
+    public void CreateBloodPool(LiquidPool pool, IDynamicTile tile)
     {
         tile.RemoveItem(pool.Metadata.Group);
         tile.AddItem(pool);

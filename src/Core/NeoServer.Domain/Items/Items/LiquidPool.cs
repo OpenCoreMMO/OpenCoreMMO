@@ -7,7 +7,7 @@ using NeoServer.Domain.Items.Mappers;
 
 namespace NeoServer.Domain.Items.Items;
 
-public class LiquidPool : BaseItem, ILiquid
+public class LiquidPool : BaseItem
 {
     public LiquidPool(IItemType type, Location location, LiquidColor color) : base(type, location)
     {
