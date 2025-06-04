@@ -1,12 +1,12 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Items.Items.Containers.Container;
 
-namespace NeoServer.Domain.Items.Items.Containers;
+namespace NeoServer.Domain.Depot;
 
-public class Depot : Container.Container, IDepot
+public class Depot : Container
 {
     public Depot(IItemType type, Location location, IEnumerable<IItem> children) : base(type, location, children)
     {
@@ -17,7 +17,7 @@ public class Depot : Container.Container, IDepot
 
     public override void ClosedBy(IPlayer player)
     {
-        if (RootParent is not IDepot || player.HasDepotOpened) return;
+        if (RootParent is not Depot || player.HasDepotOpened) return;
         SetAsClosed();
         base.ClosedBy(player);
     }

@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Items.Items.Containers;
 
 namespace NeoServer.Domain.World.Models.Tiles;
 
@@ -122,7 +123,7 @@ public abstract class BaseTile : ITile
         // }
 
 
-        if (item is IDepot) SetFlag(TileFlags.Depot);
+        if (item is Depot.Depot) SetFlag(TileFlags.Depot);
 
         if (item.Metadata.HasFlag(ItemFlag.Hangable)) //todo: might be wrong
             SetFlag(TileFlags.SupportsHangable);

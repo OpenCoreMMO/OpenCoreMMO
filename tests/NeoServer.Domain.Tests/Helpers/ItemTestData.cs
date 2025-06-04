@@ -81,7 +81,7 @@ public class ItemTestData
         return new Container(itemType, new Location(100, 100, 7), items);
     }
 
-    public static Depot CreateDepot(ushort id = 1, float weight = 20, List<IItem> items = null)
+    public static Depot.Depot CreateDepot(ushort id = 1, float weight = 20, List<IItem> items = null)
     {
         var itemType = new ItemType();
         itemType.SetClientId(id);
@@ -89,7 +89,7 @@ public class ItemTestData
         itemType.Attributes.SetAttribute(ItemAttribute.Capacity, 20);
         itemType.Attributes.SetAttribute(ItemAttribute.Weight, weight);
 
-        return new Depot(itemType, new Location(100, 100, 7), items);
+        return new Depot.Depot(itemType, new Location(100, 100, 7), items);
     }
 
     public static ICumulative CreateCumulativeItem(ushort id, byte amount, string name = "item", string slot = null,

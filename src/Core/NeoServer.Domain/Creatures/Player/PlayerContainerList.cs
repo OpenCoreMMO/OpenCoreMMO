@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
+using NeoServer.Domain.Items.Items.Containers;
 
 namespace NeoServer.Domain.Creatures.Player;
 
@@ -33,7 +34,7 @@ public class PlayerContainerList : IPlayerContainerList
         get
         {
             foreach (var container in openedContainers.Values)
-                if (container.Container.RootParent is IDepot)
+                if (container.Container.RootParent is Depot.Depot)
                     return true;
             return false;
         }
@@ -82,7 +83,7 @@ public class PlayerContainerList : IPlayerContainerList
         PlayerContainer playerContainer = null;
         var location = containerToOpen.Location;
 
-        if (containerToOpen is IDepot depot && !depot.CanBeOpenedBy(player))
+        if (containerToOpen is Depot.Depot depot && !depot.CanBeOpenedBy(player))
         {
             OperationFailService.Send(player.CreatureId, TextConstants.DEPOT_ALREADY_OPENED);
             return;
@@ -126,7 +127,7 @@ public class PlayerContainerList : IPlayerContainerList
 
         InsertOrOverrideOpenedContainer(containerLevel, playerContainer);
 
-        if (containerToOpen is IDepot toOpen) toOpen.SetAsOpened(player);
+        if (containerToOpen is Depot.Depot toOpen) toOpen.SetAsOpened(player);
 
         OnOpenedContainer?.Invoke(player, playerContainer.Id, playerContainer.Container);
         playerContainer.Container.UpdateId(playerContainer.Id);
@@ -152,14 +153,14 @@ public class PlayerContainerList : IPlayerContainerList
         playerContainer.DetachContainerEvents();
         OnClosedContainer?.Invoke(player, containerId, playerContainer.Container);
 
-        if (playerContainer.Container is IDepot depot)
+        if (playerContainer.Container is Depot.Depot depot)
             //call depot event if container is a depot
             OnClosedDepot?.Invoke(player, containerId, depot);
 
         playerContainer.Container.ClosedBy(player);
 
         //check if container is within a depot
-        if (playerContainer.Container.RootParent is IDepot rootDepot && playerContainer.Container != rootDepot)
+        if (playerContainer.Container.RootParent is Depot.Depot rootDepot && playerContainer.Container != rootDepot)
         {
             //if so emit event and call ClosedBy method
             OnClosedDepot?.Invoke(player, containerId, rootDepot);
