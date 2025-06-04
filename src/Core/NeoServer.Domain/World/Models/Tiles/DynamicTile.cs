@@ -9,6 +9,7 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.World.Structures;
 
 namespace NeoServer.Domain.World.Models.Tiles;
@@ -17,7 +18,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 {
     private byte[] _cache;
 
-    public DynamicTile(Coordinate coordinate, TileFlag tileFlag, IGround ground, IItem[] topItems, IItem[] items,
+    public DynamicTile(Coordinate coordinate, TileFlag tileFlag, Ground ground, IItem[] topItems, IItem[] items,
         uint? houseId = null)
     {
         SetNewLocation(new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z));
@@ -68,7 +69,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         Ground.Metadata.Attributes.TryGetAttribute(ItemAttribute.FloorChange, out var floorChange) &&
         floorChange == "down";
 
-    public IGround Ground { get; private set; }
+    public Ground Ground { get; private set; }
     public List<IWalkableCreature> Creatures { get; private set; }
 
     public bool HasCreature => (Creatures?.Count ?? 0) > 0;
@@ -399,7 +400,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         if (thing is null) return new Result(InvalidOperation.NotPossible);
 
-        if (thing is IGround) return Result.Success;
+        if (thing is Ground) return Result.Success;
 
         if (thing is { IsAlwaysOnTop: true } && TopItems?.Count >= 10)
             return new Result(InvalidOperation.NotEnoughRoom);
@@ -433,7 +434,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
     public void ReplaceItem(IItem fromItem, IItem toItem)
     {
-        if (fromItem is IGround && toItem is IGround ground)
+        if (fromItem is Ground && toItem is Ground ground)
         {
             ReplaceGround(ground);
             return;
@@ -469,7 +470,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         if (topItemOnStack.ServerId != fromId) return;
 
-        if (topItemOnStack is IGround && toItem is IGround ground)
+        if (topItemOnStack is Ground && toItem is Ground ground)
         {
             ReplaceGround(ground);
             return;
@@ -537,7 +538,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         throw new NotImplementedException();
     }
 
-    public void ReplaceGround(IGround ground)
+    public void ReplaceGround(Ground ground)
     {
         AddItem(ground);
     }
@@ -569,7 +570,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         if (stackPosition >= 10) return false;
 
         stackPosition = (byte)(stackPosition +
-                               (item.IsAlwaysOnTop || item is IGround
+                               (item.IsAlwaysOnTop || item is Ground
                                    ? 0
                                    : GetCreatureStackPositionIndex(observer)));
 
@@ -601,7 +602,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         return false;
     }
 
-    private void SetGround(IGround ground)
+    private void SetGround(Ground ground)
     {
         var operations = new OperationResultList<IItem>();
 
@@ -644,7 +645,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         if (Guard.IsNull(item)) return operations;
 
-        if (item is IGround ground)
+        if (item is Ground ground)
         {
             SetGround(ground);
         }
@@ -696,7 +697,7 @@ public class DynamicTile : BaseTile, IDynamicTile
             }
         }
 
-        if (item is IGround) ResetTileFlags();
+        if (item is Ground) ResetTileFlags();
 
         SetTileFlags(item);
 
@@ -704,7 +705,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         return operations;
     }
 
-    private void AddContent(IGround ground, IItem[] topItems, IItem[] items)
+    private void AddContent(Ground ground, IItem[] topItems, IItem[] items)
     {
         if (topItems?.Length > 0) TopItems = new TileStack<IItem>();
         if (items?.Length > 0) DownItems = new TileStack<IItem>();

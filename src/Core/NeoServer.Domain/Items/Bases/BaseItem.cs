@@ -70,6 +70,7 @@ public abstract class BaseItem : IItem
             : $"You see {Metadata.Article} {Metadata.Name}.";
     }
 
+    public ushort ClientId => Metadata.ClientId;
     public string FullName => Metadata.FullName;
     public byte Amount { get; set; } = 1;
 

@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Items.Items;
 
 namespace NeoServer.Domain.Items.Services.ItemTransform.Operations;
 
@@ -31,7 +32,7 @@ internal static class ReplaceItemFromGroundOperation
             tile = map[fromItem.Location] as IDynamicTile;
         }
 
-        if (fromItem is IGround) return Result<IItem>.NotApplicable;
+        if (fromItem is Ground) return Result<IItem>.NotApplicable;
         if (toItemType is null) fromItem.MarkAsDeleted();
 
         var result = tile.UpdateItemType(fromItem, toItemType);

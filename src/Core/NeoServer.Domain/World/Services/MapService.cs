@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.World.Services;
@@ -19,7 +20,7 @@ public class MapService : IMapService
     public static IMapService Instance { get; private set; }
 
 
-    public void ReplaceGround(Location location, IGround ground)
+    public void ReplaceGround(Location location, Ground ground)
     {
         if (map[location] is not DynamicTile tile) return;
         tile.ReplaceGround(ground);

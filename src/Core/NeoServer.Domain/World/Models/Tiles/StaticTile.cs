@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Location.Structs.Helpers;
+using NeoServer.Domain.Items.Items;
 
 namespace NeoServer.Domain.World.Models.Tiles;
 
@@ -80,7 +81,7 @@ public class StaticTile : BaseTile, IStaticTile
         {
             if (item is null) continue;
 
-            if (item is IGround groundItem)
+            if (item is Ground groundItem)
             {
                 _topItemOnStack = groundItem;
                 ground.AddRange(BitConverter.GetBytes(item.ClientId));

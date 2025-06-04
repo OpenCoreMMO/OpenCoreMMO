@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.World.Map;
@@ -38,7 +39,7 @@ public class CylinderOperation
             var fromStackPosition = stackPosition;
 
             if (spectator is IPlayer player)
-                if (thing is IItem { IsAlwaysOnTop: false } and not IGround)
+                if (thing is IItem { IsAlwaysOnTop: false } and not Ground)
                     fromStackPosition = (byte)(tile.GetCreatureStackPositionIndex(player) + stackPosition);
 
             tileSpectators[index++] = new CylinderSpectator(spectator, fromStackPosition, fromStackPosition);

@@ -2,16 +2,21 @@
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items;
 
-public class Ground : Item, IGround
+public delegate void CreatureWalkedThroughGround(ICreature creature, Ground ground);
+
+public class Ground : Item
 {
     public Ground(IItemType type, Location location) : base(type, location)
     {
     }
+
+    public FloorChangeDirection FloorDirection => Metadata.Attributes.GetFloorChangeDirection();
 
     public event CreatureWalkedThroughGround OnCreatureWalkedThrough;
     public ushort StepSpeed => (Metadata?.Speed ?? 0) != 0 ? Metadata.Speed : (ushort)150;
