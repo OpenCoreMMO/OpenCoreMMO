@@ -6,7 +6,7 @@ namespace NeoServer.Domain.Items.Factories.AttributeFactory;
 
 public class DecayableFactory
 {
-    public static IDecayable CreateIfItemIsDecayable(IItem item)
+    public static Decayable CreateIfItemIsDecayable(IItem item)
     {
         if (Guard.AnyNull(item)) return null;
 
