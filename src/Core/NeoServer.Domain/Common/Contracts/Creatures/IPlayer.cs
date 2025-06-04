@@ -14,6 +14,8 @@ using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Group;
+using NeoServer.Domain.Items.Items.Containers;
+using NeoServer.Domain.Items.Items.UsableItems;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
@@ -21,7 +23,7 @@ public delegate void ChangeChaseMode(IPlayer player, ChaseMode oldChaseMode, Cha
 
 public delegate void ClosedContainer(IPlayer player, byte containerId, IContainer container);
 
-public delegate void ClosedDepot(IPlayer player, byte containerId, IDepot container);
+public delegate void ClosedDepot(IPlayer player, byte containerId, Depot.Depot container);
 
 public delegate void OpenedContainer(IPlayer player, byte containerId, IContainer container);
 
@@ -210,7 +212,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     void HealMana(ushort increasing);
 
-    bool Feed(IFood food);
+    bool Feed(Food food);
     bool Feed(int duration);
 
     Result Use(IUsableOn item, ITile tile);

@@ -33,6 +33,7 @@ using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Common;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
+using NeoServer.Domain.Items.Items.UsableItems;
 using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Creatures.Player;
@@ -833,7 +834,7 @@ public class Player : CombatActor, IPlayer
         return true;
     }
 
-    public bool Feed(IFood food)
+    public bool Feed(Food food)
     {
         if (food is null) return false;
         return Feed(food.Duration);
@@ -1181,7 +1182,7 @@ public class Player : CombatActor, IPlayer
                 ? weapon.WeaponAttack.ElementalAttackPowerPercentage
                 : weapon.WeaponAttack.AttackPowerPercentage;
 
-        if (Inventory.Weapon is IMagicalWeapon magicalWeapon) return magicalWeapon.MaxHitChance;
+        if (Inventory.Weapon is MagicWeapon magicalWeapon) return magicalWeapon.MaxHitChance;
 
         if (Inventory.Weapon is IDistanceWeapon && Inventory.Ammo is { } ammo)
             attackPercentage = isElemental

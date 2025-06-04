@@ -75,7 +75,7 @@ public class MoveEvent : Script
     //    }
 
     //    //todo: implement his
-    //    //var field = item as IMagicField;
+    //    //var field = item as MagicField;
     //    //if (field is not null)
     //    //{
     //    //    field.onStepInField(creature);

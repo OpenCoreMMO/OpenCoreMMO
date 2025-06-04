@@ -5,7 +5,8 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
 using NeoServer.Domain.Common.Contracts.Services;
-using NeoServer.Domain.Systems.Depot;
+using NeoServer.Domain.Depot;
+using NeoServer.Domain.Items.Items.Containers;
 using NeoServer.Networking.Packets.Incoming;
 
 namespace NeoServer.Server.Commands.Player.UseItem;
@@ -26,7 +27,7 @@ public class PlayerOpenDepotCommand
         _depotManager = depotManager;
     }
 
-    public void Execute(IPlayer player, IDepot depot, UseItemPacket useItemPacket)
+    public void Execute(IPlayer player, Depot depot, UseItemPacket useItemPacket)
     {
         var playerDepot = LoadDepot(player, depot);
 
@@ -35,14 +36,14 @@ public class PlayerOpenDepotCommand
         _playerUseService.Use(player, playerDepot, useItemPacket.Index);
     }
 
-    private IDepot LoadDepot(IPlayer player, IItem container)
+    private Depot LoadDepot(IPlayer player, IItem container)
     {
         var depot = _depotManager.Get(player.Id);
         if (depot is not null) return depot;
 
         var depotRecordsTask = _playerDepotItemRepository.GetByPlayerId(player.Id);
 
-        depot = (IDepot)_itemFactory.Create(container.Metadata, container.Location, null);
+        depot = (Depot)_itemFactory.Create(container.Metadata, container.Location, null);
 
         var depotRecords = depotRecordsTask.Result.ToList();
 

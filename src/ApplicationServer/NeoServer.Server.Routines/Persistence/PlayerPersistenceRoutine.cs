@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Systems.Depot;
+using NeoServer.Domain.Depot;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Configurations;

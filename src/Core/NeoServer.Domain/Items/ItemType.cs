@@ -45,8 +45,8 @@ public class ItemType : IItemType
 
     public ISet<ItemFlag> Flags { get; }
 
-    public IItemAttributeList Attributes { get; }
-    public IItemAttributeList OnUse { get; private set; }
+    public ItemAttributeList Attributes { get; }
+    public ItemAttributeList OnUse { get; private set; }
 
     public ushort ClientId { get; private set; }
     public ushort TransformTo => Attributes.GetTransformationItem();

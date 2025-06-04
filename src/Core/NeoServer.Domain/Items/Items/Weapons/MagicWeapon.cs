@@ -2,6 +2,7 @@
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Contracts.Items.Weapons;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
@@ -11,7 +12,7 @@ using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items.Weapons;
 
-public class MagicWeapon : Equipment, IMagicalWeapon
+public class MagicWeapon : Equipment,  IDistanceWeapon
 {
     public MagicWeapon(IItemType type, Location location) : base(type, location)
     {

@@ -1,6 +1,7 @@
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Items;
 
 namespace NeoServer.Domain.Common.Contracts.Items;
 
@@ -22,7 +23,7 @@ public interface IItemType
 
     ushort Speed { get; }
     string Article { get; }
-    IItemAttributeList Attributes { get; }
+    ItemAttributeList Attributes { get; }
     ShootType ShootType { get; }
     AmmoType AmmoType { get; }
     WeaponType WeaponType { get; }
@@ -31,7 +32,7 @@ public interface IItemType
     ushort TransformTo { get; }
     ushort DestroyTo { get; }
     string Plural { get; }
-    IItemAttributeList OnUse { get; }
+    ItemAttributeList OnUse { get; }
     DamageType DamageType { get; }
     EffectT EffectT { get; }
 

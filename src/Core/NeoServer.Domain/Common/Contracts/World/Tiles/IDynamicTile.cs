@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Items.Items;
 
 namespace NeoServer.Domain.Common.Contracts.World.Tiles;
 
@@ -18,13 +19,13 @@ public interface IDynamicTile : ITile, IHasItem
 
     FloorChangeDirection FloorDirection { get; }
     bool HasCreature { get; }
-    IMagicField MagicField { get; }
+    MagicField MagicField { get; }
 
     bool HasBlockPathFinding { get; }
     bool HasHole { get; }
     List<IPlayer> Players { get; }
     Func<ICreature, bool> CanEnterFunction { get; set; }
-    bool HasTeleport(out ITeleport teleport);
+    bool HasTeleport(out TeleportItem teleport);
 
     byte[] GetRaw(IPlayer playerRequesting = null);
     ICreature GetTopVisibleCreature(ICreature creature);

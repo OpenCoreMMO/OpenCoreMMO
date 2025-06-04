@@ -9,6 +9,7 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.World.Structures;
 
 namespace NeoServer.Domain.World.Models.Tiles;
@@ -100,13 +101,13 @@ public class DynamicTile : BaseTile, IDynamicTile
         }
     }
 
-    public bool HasTeleport(out ITeleport teleport)
+    public bool HasTeleport(out TeleportItem teleport)
     {
         teleport = null;
         if (TopItems is null) return false;
 
         foreach (var topItem in TopItems)
-            if (topItem is ITeleport teleportItem)
+            if (topItem is TeleportItem teleportItem)
             {
                 teleport = teleportItem;
                 return true;
@@ -121,14 +122,14 @@ public class DynamicTile : BaseTile, IDynamicTile
     public override IItem TopItemOnStack => DownItems != null && DownItems.TryPeek(out var item) ? item :
         TopItems is not null && TopItems.TryPeek(out item) ? item : Ground;
 
-    public IMagicField MagicField
+    public MagicField MagicField
     {
         get
         {
             if (!HasFlag(TileFlags.MagicField)) return null;
 
             foreach (var downItem in DownItems)
-                if (downItem is IMagicField magicField)
+                if (downItem is MagicField magicField)
                     return magicField;
 
             RemoveFlag(TileFlags.MagicField);

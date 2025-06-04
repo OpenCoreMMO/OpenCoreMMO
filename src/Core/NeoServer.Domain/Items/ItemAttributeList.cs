@@ -9,21 +9,21 @@ using NeoServer.Domain.Common.Location;
 
 namespace NeoServer.Domain.Items;
 
-public sealed class ItemAttributeList : IItemAttributeList
+public sealed class ItemAttributeList
 {
-    private readonly IDictionary<ItemAttribute, (dynamic, IItemAttributeList)> _defaultAttributes;
-    private IDictionary<string, (dynamic, IItemAttributeList)> customAttributes;
+    private readonly IDictionary<ItemAttribute, (dynamic, ItemAttributeList)> _defaultAttributes;
+    private IDictionary<string, (dynamic, ItemAttributeList)> customAttributes;
 
     public ItemAttributeList()
     {
-        _defaultAttributes = new Dictionary<ItemAttribute, (dynamic, IItemAttributeList)>();
+        _defaultAttributes = new Dictionary<ItemAttribute, (dynamic, ItemAttributeList)>();
     }
 
-    private IDictionary<string, (dynamic, IItemAttributeList)> _customAttributes
+    private IDictionary<string, (dynamic, ItemAttributeList)> _customAttributes
     {
         get
         {
-            customAttributes ??= new Dictionary<string, (dynamic, IItemAttributeList)>(StringComparer
+            customAttributes ??= new Dictionary<string, (dynamic, ItemAttributeList)>(StringComparer
                 .InvariantCultureIgnoreCase);
             return customAttributes;
         }
@@ -44,7 +44,7 @@ public sealed class ItemAttributeList : IItemAttributeList
         _customAttributes[attribute] = (values, null);
     }
 
-    public void SetCustomAttribute(string attribute, IConvertible attributeValue, IItemAttributeList attrs)
+    public void SetCustomAttribute(string attribute, IConvertible attributeValue, ItemAttributeList attrs)
     {
         _customAttributes[attribute] = (attributeValue, attrs);
     }
@@ -69,7 +69,7 @@ public sealed class ItemAttributeList : IItemAttributeList
         _defaultAttributes[attribute] = (values, null);
     }
 
-    public void SetAttribute(ItemAttribute attribute, IConvertible attributeValue, IItemAttributeList attrs)
+    public void SetAttribute(ItemAttribute attribute, IConvertible attributeValue, ItemAttributeList attrs)
     {
         if (attribute is ItemAttribute.ActionId or ItemAttribute.UniqueId) return;
         _defaultAttributes[attribute] = (attributeValue, attrs);
@@ -264,7 +264,7 @@ public sealed class ItemAttributeList : IItemAttributeList
         return dictionary;
     }
 
-    public IItemAttributeList GetInnerAttributes(ItemAttribute attribute)
+    public ItemAttributeList GetInnerAttributes(ItemAttribute attribute)
     {
         if (_defaultAttributes is null) return default;
 

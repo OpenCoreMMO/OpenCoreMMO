@@ -3,7 +3,9 @@ using NeoServer.Domain.Common.Item;
 
 namespace NeoServer.Domain.Items.Items.Attributes;
 
-public class Decayable : IDecayable
+public delegate void PauseDecay(Decayable item);
+public delegate void StartDecay(IItem item);
+public class Decayable : IDecay
 {
     private readonly IItem _item;
 

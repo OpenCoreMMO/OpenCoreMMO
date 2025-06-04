@@ -71,7 +71,7 @@ public class ItemTypeMetadataParser
     }
 
     private static void SetAttributes(IEnumerable<ItemTypeMetadata.Attribute> metaAttributes,
-        IItemAttributeList attributes)
+        ItemAttributeList attributes)
     {
         foreach (var attribute in metaAttributes)
         {

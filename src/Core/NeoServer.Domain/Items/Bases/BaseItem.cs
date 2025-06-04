@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Items.Factories.AttributeFactory;
 using NeoServer.Domain.Items.Inspection;
+using NeoServer.Domain.Items.Items.Attributes;
 
 namespace NeoServer.Domain.Items.Bases;
 
@@ -100,7 +101,7 @@ public abstract class BaseItem : IItem
 
     #region Decay
 
-    public IDecayable Decay { get; protected set; }
+    public Decayable Decay { get; protected set; }
 
     #endregion
 

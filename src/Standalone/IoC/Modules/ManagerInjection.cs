@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Creatures.Monster.Managers;
+using NeoServer.Domain.Depot;
 using NeoServer.Domain.Spells;
-using NeoServer.Domain.Systems.Depot;
 using NeoServer.Domain.World.Models.Spawns;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Managers;

@@ -13,7 +13,7 @@ public class ContainerFactory : IFactory
 
     public IItem Create(IItemType itemType, Location location, IEnumerable<IItem> children)
     {
-        if (Depot.IsApplicable(itemType)) return new Depot(itemType, location, children);
+        if (Depot.Depot.IsApplicable(itemType)) return new Depot.Depot(itemType, location, children);
         if (Container.IsApplicable(itemType)) return new Container(itemType, location, children);
 
         return null;
