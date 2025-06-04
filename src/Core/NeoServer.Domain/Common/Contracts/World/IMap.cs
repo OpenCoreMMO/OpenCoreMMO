@@ -5,7 +5,6 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Items.Items;
 
 namespace NeoServer.Domain.Common.Contracts.World;
 
@@ -53,7 +52,7 @@ public interface IMap
 
     void PropagateAttack(ICombatActor actor, CombatDamage damage, AffectedLocation[] area);
     void MoveCreature(IWalkableCreature creature);
-    void CreateBloodPool(LiquidPool liquid, IDynamicTile tile);
+    void CreateBloodPool(ILiquid liquid, IDynamicTile tile);
     ITile GetTileDestination(ITile tile);
     bool TryMoveCreature(ICreature creature, Location.Structs.Location toLocation);
     void RemoveCreature(ICreature creature);
