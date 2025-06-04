@@ -47,7 +47,7 @@ public static class MapTestDataBuilder
         for (var y = fromY; y <= toY; y++)
         for (var z = fromZ; z <= toZ; z++)
         {
-            Ground ground = null;
+            IGround ground = null;
 
             var location = new Location((ushort)x, (ushort)y, (byte)z);
 

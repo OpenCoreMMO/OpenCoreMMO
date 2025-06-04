@@ -5,7 +5,6 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Location.Structs.Helpers;
-using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.World.Models.Tiles;
 using Serilog;
 
@@ -34,7 +33,7 @@ public class TileFactory : ITileFactory
         var hasMoveableItem = false;
         var hasTransformableItem = false;
         var hasHeight = false;
-        Ground ground = null;
+        IGround ground = null;
 
         var topItems = new List<IItem>();
         var downItems = new List<IItem>();
@@ -63,7 +62,7 @@ public class TileFactory : ITileFactory
                 continue;
             }
 
-            if (item is Ground groundItem)
+            if (item is IGround groundItem)
             {
                 ground = groundItem;
                 continue;
@@ -93,7 +92,7 @@ public class TileFactory : ITileFactory
 
     public ITile CreateDynamicTile(Coordinate coordinate, TileFlag flag, IItem[] items)
     {
-        Ground ground = null;
+        IGround ground = null;
 
         var topItems = new List<IItem>();
         var downItems = new List<IItem>();
@@ -108,7 +107,7 @@ public class TileFactory : ITileFactory
                 continue;
             }
 
-            if (item is Ground groundItem)
+            if (item is IGround groundItem)
             {
                 ground = groundItem;
                 continue;

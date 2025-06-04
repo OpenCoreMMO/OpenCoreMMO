@@ -4,7 +4,6 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Items.Items;
 
 namespace NeoServer.Domain.Common.Contracts.World.Tiles;
 
@@ -12,7 +11,7 @@ public delegate void AddCreatureToTile(ICreature creature, ITile tile);
 
 public interface IDynamicTile : ITile, IHasItem
 {
-    Ground Ground { get; }
+    IGround Ground { get; }
     List<IWalkableCreature> Creatures { get; }
     int CreaturesCount => Creatures != null ? Creatures.Count : 0;
     ushort StepSpeed { get; }
@@ -35,7 +34,7 @@ public interface IDynamicTile : ITile, IHasItem
     IItem[] RemoveAllItems();
     ICreature[] RemoveAllCreatures();
     bool HasCreatureOfType<T>() where T : ICreature;
-    void ReplaceGround(Ground ground);
+    void ReplaceGround(IGround ground);
     IItem[] RemoveStaticItems();
     IItem RemoveItem(ushort id);
     void ReplaceItem(ushort fromId, IItem toItem);
