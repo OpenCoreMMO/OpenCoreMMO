@@ -25,7 +25,7 @@ public class SummonService : ISummonService
     {
         if (_creatureFactory.CreateSummon(summonName, master) is not Summon summon)
         {
-            _logger.Error($"Summon with name: {summonName} does not exists");
+            _logger.Error("Summon with name: {SummonName} does not exists", summonName);
             return null;
         }
 

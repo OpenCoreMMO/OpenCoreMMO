@@ -61,7 +61,7 @@ public class Dispatcher : IDispatcher
                             evt.Action?.Invoke(); //execute event
                             _eventAggregator.PropagateEvents(); //propagate events
 
-                            _logger.Verbose(evt.Action?.Target?.ToString());
+                            _logger.Verbose("Action: {Action}",evt.Action?.Target?.ToString());
                         }
                         catch (Exception ex)
                         {

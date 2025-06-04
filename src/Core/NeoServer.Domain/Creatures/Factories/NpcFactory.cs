@@ -41,7 +41,7 @@ public class NpcFactory : INpcFactory
         var npcType = _npcStore.Get(name);
         if (npcType is null)
         {
-            _logger.Warning($"Given npc name: {name} is not loaded");
+            _logger.Warning("Given npc name: {Name} is not loaded", name);
             return null;
         }
 

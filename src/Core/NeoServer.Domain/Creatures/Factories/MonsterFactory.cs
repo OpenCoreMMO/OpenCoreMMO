@@ -29,7 +29,7 @@ public class MonsterFactory : IMonsterFactory
         var result = _monsterManager.TryGetMonster(name, out var monsterType);
         if (result == false)
         {
-            logger.Warning($"Given monster name: {name} is not loaded");
+            logger.Warning("Given monster name: {Name} is not loaded", name);
             return null;
         }
 
@@ -43,7 +43,7 @@ public class MonsterFactory : IMonsterFactory
         var result = _monsterManager.TryGetMonster(name, out var monsterType);
         if (result == false)
         {
-            logger.Warning($"Given monster name: {name} is not loaded");
+            logger.Warning("Given monster name: {Name} is not loaded", name);
             return null;
         }
 

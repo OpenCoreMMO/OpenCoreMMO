@@ -18,7 +18,7 @@ public class CreatureCallback(LuaScriptInterface scriptInterface, ICreature targ
         if (!LuaScriptInterface.ReserveScriptEnv())
         {
             logger.Error(
-                "[CreatureCallback::startScriptInterface] - {} {} Call stack overflow. Too many lua script calls being nested.",
+                "[CreatureCallback::startScriptInterface] - {TypeName} {CreatureName} Call stack overflow. Too many lua script calls being nested",
                 targetCreature.GetType().Name,
                 targetCreature.Name
             );

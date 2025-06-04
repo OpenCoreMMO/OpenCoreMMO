@@ -147,7 +147,7 @@ public class Program
         }
         catch (Exception ex)
         {
-            logger.Error(ex, "Unhandled exception occurred.");
+            logger.Error(ex, "Unhandled exception occurred");
         }
         finally
         {

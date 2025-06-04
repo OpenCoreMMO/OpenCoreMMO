@@ -155,7 +155,7 @@ public class MoveEvents : IMoveEvents
             if (existingMoveEvent.Slot == moveEvent.Slot)
             {
                 _logger.Warning(
-                    $"[RegisterEvent] Duplicate move event found: {id}, for script: {moveEvent.GetScriptInterface().GetLoadingScriptName()}"
+                    "[RegisterEvent] Duplicate move event found: {Id}, for script: {GetLoadingScriptName}", id, moveEvent.GetScriptInterface().GetLoadingScriptName()
                 );
                 return false;
             }
@@ -181,7 +181,7 @@ public class MoveEvents : IMoveEvents
         if (eventListForType.Count > 0)
         {
             _logger.Warning(
-                $"[RegisterEvent] Duplicate move event found: {position}, for script {moveEvent.GetScriptInterface().GetLoadingScriptName()}"
+                "[RegisterEvent] Duplicate move event found: {Position}, for script {GetLoadingScriptName}", position, moveEvent.GetScriptInterface().GetLoadingScriptName()
             );
             return false;
         }

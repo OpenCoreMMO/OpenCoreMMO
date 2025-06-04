@@ -78,7 +78,7 @@ public class LuaActionScriptService : IActionScriptService
                 target,
                 toPos,
                 isHotkey);
-        _logger.Warning("Action with item id {ItemServerId} has not found into LuaJIT Scripts.", item.ServerId);
+        _logger.Warning("Action with item id {ItemServerId} has not found into LuaJIT Scripts", item.ServerId);
 
         return false;
     }

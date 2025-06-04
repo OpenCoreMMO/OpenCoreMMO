@@ -190,7 +190,7 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
             /*!g_game().isMagicEffectRegistered(magicEffect)*/)
         {
             _logger.Warning(
-                "[PositionFunctions::luaPositionSendMagicEffect] An unregistered magic effect type with id '{}' was blocked to prevent client crash.",
+                "[PositionFunctions::luaPositionSendMagicEffect] An unregistered magic effect type with id '{MagicEffect}' was blocked to prevent client crash",
                 magicEffect);
             Lua.PushBoolean(luaState, false);
             return 1;

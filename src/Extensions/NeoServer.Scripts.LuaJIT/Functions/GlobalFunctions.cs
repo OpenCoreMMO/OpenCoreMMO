@@ -73,7 +73,7 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         if (!Lua.IsFunction(globalState, -parameters))
         {
             // -parameters means the first parameter from left to right
-            _logger.Error("callback parameter should be a function.");
+            _logger.Error("callback parameter should be a function");
             PushBoolean(luaState, false);
             return 1;
         }

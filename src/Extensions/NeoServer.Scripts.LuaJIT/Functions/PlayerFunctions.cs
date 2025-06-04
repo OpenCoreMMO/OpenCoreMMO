@@ -369,7 +369,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         if (key >= startReservedRange && key <= endReservedRange)
         {
-            _logger.Error($"Accessing reserved storage key range: {key}");
+            _logger.Error("Accessing reserved storage key range: {Key}", key);
             PushBoolean(luaState, false);
             return 1;
         }
