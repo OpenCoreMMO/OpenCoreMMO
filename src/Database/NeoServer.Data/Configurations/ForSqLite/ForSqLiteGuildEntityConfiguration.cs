@@ -11,7 +11,7 @@ public class ForSqLiteGuildEntityConfiguration : IEntityTypeConfiguration<GuildE
         builder.HasKey(e => new { e.Id });
 
         builder.Property(e => e.Id).HasAnnotation("Sqlite:Autoincrement", true);
-        builder.Property(e => e.Name).IsRequired();
+        builder.Property(e => e.Name).HasMaxLength(100).IsRequired();
         builder.Property(e => e.OwnerId).IsRequired();
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.Modt);

@@ -12,8 +12,8 @@ public class WorldEntityConfiguration : IEntityTypeConfiguration<WorldEntity>
         builder.HasKey(e => new { e.Id });
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
-        builder.Property(e => e.Name).IsRequired();
-        builder.Property(e => e.Ip).IsRequired();
+        builder.Property(e => e.Name).HasMaxLength(100).IsRequired();
+        builder.Property(e => e.Ip).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Port).IsRequired();
         builder.Property(e => e.MaxCapacity).HasDefaultValue(100).IsRequired();
         builder.Property(w => w.RequiresPremium).IsRequired();

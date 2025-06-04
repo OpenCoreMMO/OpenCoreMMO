@@ -12,7 +12,7 @@ public class GuildEntityConfiguration : IEntityTypeConfiguration<GuildEntity>
         builder.HasKey(e => new { e.Id });
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
-        builder.Property(e => e.Name);
+        builder.Property(e => e.Name).HasMaxLength(100);
         builder.Property(e => e.OwnerId);
         builder.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);
         builder.Property(e => e.Modt);
