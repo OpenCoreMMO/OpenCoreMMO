@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Items.Items;
 
 namespace NeoServer.Domain.Common.Contracts.World.Tiles;
 

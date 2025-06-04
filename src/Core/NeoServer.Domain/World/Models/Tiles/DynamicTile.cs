@@ -9,6 +9,7 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.World.Structures;
 
 namespace NeoServer.Domain.World.Models.Tiles;
