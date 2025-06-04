@@ -13,7 +13,7 @@ public class PlayerDeathKillerEntityConfiguration : IEntityTypeConfiguration<Pla
         builder.Property(e => e.Id).ValueGeneratedOnAdd().IsRequired();
         builder.Property(e => e.PlayerId);
         builder.Property(e => e.Damage).IsRequired();
-        builder.Property(e => e.KillerName).IsRequired();
+        builder.Property(e => e.KillerName).HasMaxLength(200).IsRequired();
         builder.Property(e => e.PlayerDeathId).IsRequired();
 
         builder.HasOne(x => x.PlayerDeath).WithMany(x => x.Killers);

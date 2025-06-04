@@ -47,6 +47,7 @@ public class ForSqLiteAccountEntityConfiguration : IEntityTypeConfiguration<Acco
             .HasConversion<DateTime>();
 
         builder.Property(e => e.BanishmentReason)
+            .HasMaxLength(500)
             .HasColumnType("TEXT");
 
         builder.Property(e => e.BannedBy)

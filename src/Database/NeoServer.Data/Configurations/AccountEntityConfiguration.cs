@@ -48,7 +48,7 @@ public class AccountEntityConfiguration : IEntityTypeConfiguration<AccountEntity
 
         builder.Property(e => e.BanishedAt);
 
-        builder.Property(e => e.BanishmentReason);
+        builder.Property(e => e.BanishmentReason).HasMaxLength(500);
 
         builder.Property(e => e.BannedBy);
 

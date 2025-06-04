@@ -13,7 +13,7 @@ public class GuildMembershipEntityConfiguration : IEntityTypeConfiguration<Guild
         builder.Property(e => e.PlayerId);
         builder.Property(e => e.GuildId);
         builder.Property(e => e.RankId);
-        builder.Property(e => e.Nick);
+        builder.Property(e => e.Nick).HasMaxLength(100);
 
         builder.HasOne(x => x.Guild)
             .WithMany(x => x.Members)

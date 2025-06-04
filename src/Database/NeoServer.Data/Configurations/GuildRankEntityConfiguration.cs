@@ -12,7 +12,7 @@ public class GuildRankEntityConfiguration : IEntityTypeConfiguration<GuildRankEn
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(e => e.GuildId);
-        builder.Property(e => e.Name);
+        builder.Property(e => e.Name).HasMaxLength(100);;
         builder.Property(e => e.Level);
 
         builder.HasOne(x => x.Guild)
