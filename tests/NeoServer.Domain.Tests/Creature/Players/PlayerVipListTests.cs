@@ -1,5 +1,4 @@
 ﻿using AutoFixture;
-using FluentAssertions;
 using Moq;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures.Players;

@@ -2,7 +2,7 @@ using LuaNET;
 using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
-using NeoServer.Domain.Creatures.Guild;
+using NeoServer.Domain.Guild;
 using NeoServer.Loaders.Guilds;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Scripts.LuaJIT.Functions;

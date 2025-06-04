@@ -5,6 +5,7 @@ using System.Linq;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Parsers;
 using NeoServer.Domain.Chat;
+using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Combat.Conditions;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;

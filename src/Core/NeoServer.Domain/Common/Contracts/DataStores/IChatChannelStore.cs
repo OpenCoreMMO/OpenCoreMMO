@@ -1,5 +1,4 @@
 ﻿using NeoServer.Domain.Chat;
-using NeoServer.Domain.Common.Contracts.Chats;
 
 namespace NeoServer.Domain.Common.Contracts.DataStores;
 

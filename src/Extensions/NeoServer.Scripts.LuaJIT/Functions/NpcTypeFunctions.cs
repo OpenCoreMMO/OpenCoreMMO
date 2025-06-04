@@ -1,5 +1,5 @@
 ﻿using LuaNET;
-using NeoServer.Domain.Common.Chats;
+using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Creatures;

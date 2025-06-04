@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using NeoServer.Data.InMemory.DataStores;
+﻿using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items.Types.Containers;

@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;

@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Data.Entities;
-using NeoServer.Domain.Chat;
-using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Creatures.Guilds;
 using NeoServer.Domain.Creatures.Common;
-using NeoServer.Domain.Creatures.Guild;
+using NeoServer.Domain.Guild;
 using NeoServer.Loaders.Interfaces;
 using Serilog;
 

@@ -1,7 +1,7 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Creatures.Experience;
-using NeoServer.Domain.Creatures.Party;
+using NeoServer.Domain.Party;
 
 namespace NeoServer.Domain.Creatures.Services;
 

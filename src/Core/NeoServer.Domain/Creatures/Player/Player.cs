@@ -1,8 +1,8 @@
+using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Combat.Conditions;
 using NeoServer.Domain.Combat.Validation;
 using NeoServer.Domain.Common;
-using NeoServer.Domain.Common.Chats;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts;

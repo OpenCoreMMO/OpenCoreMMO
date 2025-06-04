@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using NeoServer.Domain.Common.Chats;
+using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;

@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using NeoServer.Domain.Common.Contracts.Items;
+﻿using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Tests.Helpers;
 
 namespace NeoServer.Domain.Tests.Items.Container;

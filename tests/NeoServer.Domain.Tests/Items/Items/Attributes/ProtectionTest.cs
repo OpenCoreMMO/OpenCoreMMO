@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Moq;
+﻿using Moq;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures.Players;

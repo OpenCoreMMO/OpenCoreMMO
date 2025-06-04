@@ -1,12 +1,11 @@
 ﻿using NeoServer.Domain.Chat.Rules;
-using NeoServer.Domain.Common.Chats;
 using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Helpers;
 
-namespace NeoServer.Domain.Chat;
+namespace NeoServer.Domain.Chat.Factory;
 
 public class ChatChannelFactory
 {

@@ -1,6 +1,5 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.DataStores;
-using NeoServer.Domain.Creatures.Guild;
+﻿using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Guild;
 
 namespace NeoServer.Data.InMemory.DataStores;
 

@@ -1,5 +1,4 @@
 ﻿using NeoServer.Data.InMemory.DataStores;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;

@@ -1,4 +1,4 @@
-﻿using NeoServer.Domain.Common.Chats;
+﻿using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Contracts.Creatures.Players;
 using NeoServer.Domain.Common.Contracts.DataStores;
@@ -14,7 +14,6 @@ using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Group;
-using NeoServer.Domain.Creatures.Guild;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
@@ -103,7 +102,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     byte GroupId => Group?.Id ?? default;
     uint AccountId { get; init; }
     int WorldId { get; init; }
-    Guild Guild { get; }
+    Guild.Guild Guild { get; }
     ushort GuildId => Guild?.Id ?? default;
     bool HasGuild { get; }
     bool Shopping { get; }

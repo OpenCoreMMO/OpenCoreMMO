@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using NeoServer.Domain.Common.Creatures.Players;
+﻿using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.Systems.SafeTrade;
 using NeoServer.Domain.Systems.SafeTrade.Operations;

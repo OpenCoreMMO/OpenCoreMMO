@@ -4,7 +4,6 @@ using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Scripts.LuaJIT.DataManagers;
-using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Models.Spell;
 using Serilog;

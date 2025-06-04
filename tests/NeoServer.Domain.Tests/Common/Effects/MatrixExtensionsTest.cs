@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using NeoServer.Domain.Common.Helpers;
+﻿using NeoServer.Domain.Common.Helpers;
 
 namespace NeoServer.Domain.Tests.Common.Effects;
 

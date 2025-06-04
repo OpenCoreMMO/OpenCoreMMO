@@ -1,5 +1,4 @@
 ﻿using NeoServer.Domain.Chat.Rules;
-using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Domain.Common.Contracts.Creatures;
 
 namespace NeoServer.Domain.Chat;

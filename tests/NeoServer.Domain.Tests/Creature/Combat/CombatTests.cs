@@ -1,4 +1,3 @@
-using FluentAssertions;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Item;

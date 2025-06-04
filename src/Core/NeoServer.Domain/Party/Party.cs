@@ -1,18 +1,17 @@
 ﻿using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common;
-using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Results;
 
-namespace NeoServer.Domain.Creatures.Party;
+namespace NeoServer.Domain.Party;
 
 public class Party : IParty
 {
-    private readonly HashSet<uint> invites = new();
+    private readonly HashSet<uint> _invites = new();
 
-    private readonly Dictionary<uint, PartyMember> members = new();
-    private ushort memberCount;
+    private readonly Dictionary<uint, PartyMember> _members = new();
+    private ushort _memberCount;
 
     public Party(IPlayer player, ChatChannel channel)
     {
@@ -28,7 +27,7 @@ public class Party : IParty
         {
             PartyMember partyMember = new();
             var min = uint.MaxValue;
-            foreach (var member in members)
+            foreach (var member in _members)
                 if (member.Value.Order < min)
                 {
                     min = member.Value.Order;
@@ -49,16 +48,16 @@ public class Party : IParty
     {
         get
         {
-            var membersList = new List<IPlayer>(members.Count + 1);
-            foreach (var member in members.Values) membersList.Add(member.Player);
+            var membersList = new List<IPlayer>(_members.Count + 1);
+            foreach (var member in _members.Values) membersList.Add(member.Player);
             membersList.Add(Leader);
             return membersList;
         }
     }
 
-    public IReadOnlyCollection<uint> Invites => invites.ToList();
+    public IReadOnlyCollection<uint> Invites => _invites.ToList();
     public ChatChannel Channel { get; }
-    public bool IsOver => !members.Any();
+    public bool IsOver => !_members.Any();
 
     public bool IsSharedExperienceEnabled { get; set; }
 
@@ -70,17 +69,17 @@ public class Party : IParty
 
     public bool IsMember(IPlayer player)
     {
-        return members.ContainsKey(player.CreatureId);
+        return _members.ContainsKey(player.CreatureId);
     }
 
     public bool IsMember(uint creatureId)
     {
-        return members.ContainsKey(creatureId);
+        return _members.ContainsKey(creatureId);
     }
 
     public bool IsInvited(IPlayer player)
     {
-        return invites.Contains(player.CreatureId);
+        return _invites.Contains(player.CreatureId);
     }
 
     public bool IsLeader(IPlayer player)
@@ -99,8 +98,8 @@ public class Party : IParty
 
         if (!IsInvited(player)) return Result.Fail(InvalidOperation.NotInvited);
 
-        invites.Remove(player.CreatureId);
-        members.Add(player.CreatureId, new PartyMember(player, ++memberCount));
+        _invites.Remove(player.CreatureId);
+        _members.Add(player.CreatureId, new PartyMember(player, ++_memberCount));
 
         player.Channels.JoinChannel(Channel);
         OnPlayerJoin?.Invoke(this, player);
@@ -110,7 +109,7 @@ public class Party : IParty
 
     public void RemoveInvite(IPlayer invitedPlayer)
     {
-        invites.Remove(invitedPlayer.CreatureId);
+        _invites.Remove(invitedPlayer.CreatureId);
     }
 
     public Result Invite(IPlayer by, IPlayer invitedPlayer)
@@ -118,7 +117,7 @@ public class Party : IParty
         if (invitedPlayer.PlayerParty.IsInParty) return new Result(InvalidOperation.CannotInvite);
         if (!IsLeader(by)) return new Result(InvalidOperation.CannotInvite);
 
-        invites.Add(invitedPlayer.CreatureId);
+        _invites.Add(invitedPlayer.CreatureId);
 
         return Result.Success;
     }
@@ -126,9 +125,9 @@ public class Party : IParty
     public void RevokeInvite(IPlayer by, IPlayer invitedPlayer)
     {
         if (!IsLeader(by)) return;
-        if (!invites.Remove(invitedPlayer.CreatureId)) return;
+        if (!_invites.Remove(invitedPlayer.CreatureId)) return;
 
-        if (IsOver && !invites.Any()) OnPartyOver?.Invoke(this);
+        if (IsOver && !_invites.Any()) OnPartyOver?.Invoke(this);
     }
 
     public void RemoveMember(IPlayer player)
@@ -136,7 +135,7 @@ public class Party : IParty
         if (player.IsNull()) return;
         if (player.IsLogoutBlocked) return;
 
-        members.Remove(player.CreatureId);
+        _members.Remove(player.CreatureId);
         player.Channels.ExitChannel(Channel);
 
         player.OnHeal -= TrackPlayerHeal;
@@ -152,8 +151,8 @@ public class Party : IParty
         if (!IsLeader(from)) return new Result(InvalidOperation.NotAPartyLeader);
 
         Leader = to;
-        members.Add(from.CreatureId, new PartyMember(from, ++memberCount));
-        members.Remove(to.CreatureId);
+        _members.Add(from.CreatureId, new PartyMember(from, ++_memberCount));
+        _members.Remove(to.CreatureId);
 
         return Result.Success;
     }
@@ -172,7 +171,7 @@ public class Party : IParty
     public string InspectionText(IPlayer player)
     {
         return
-            $"{player.GenderPronoun} is in a party with {memberCount} members and {invites.Count} pending invitations.";
+            $"{player.GenderPronoun} is in a party with {_memberCount} members and {_invites.Count} pending invitations.";
     }
 
     /// <summary>

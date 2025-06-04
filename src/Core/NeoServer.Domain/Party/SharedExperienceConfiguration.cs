@@ -1,6 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.Services;
 
-namespace NeoServer.Domain.Creatures.Party;
+namespace NeoServer.Domain.Party;
 
 public class SharedExperienceConfiguration : ISharedExperienceConfiguration
 {

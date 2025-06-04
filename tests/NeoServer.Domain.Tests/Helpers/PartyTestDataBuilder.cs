@@ -1,5 +1,5 @@
 ﻿using NeoServer.Data.InMemory.DataStores;
-using NeoServer.Domain.Chat;
+using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;

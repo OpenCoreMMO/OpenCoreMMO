@@ -1,16 +1,18 @@
 ﻿using NeoServer.Domain.Chat;
-using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures.Guilds;
 
-namespace NeoServer.Domain.Creatures.Guild;
+namespace NeoServer.Domain.Guild;
 
-public class Guild: IBankable
+public class Guild : IBankable
 {
     public ushort Id { get; init; }
     public string Name { get; set; }
     public IDictionary<ushort, GuildLevel> GuildLevels { get; set; }
     public ChatChannel Channel { get; set; }
+
+    public required IBank Bank { get; init; }
+    public ulong BankAmount => Bank?.Amount ?? 0;
 
     public bool HasMember(IPlayer player)
     {
@@ -26,9 +28,6 @@ public class Guild: IBankable
     {
         return $"{player.GenderPronoun} is member of the {Name}.";
     }
-
-    public required IBank Bank { get; init; }
-    public ulong BankAmount => Bank?.Amount ?? 0;
 }
 
 public class GuildLevel : IEquatable<GuildLevel>
@@ -62,12 +61,12 @@ public class GuildLevel : IEquatable<GuildLevel>
         }
     }
 
+    public GuildRank Level { get; }
+
     public bool Equals(GuildLevel other)
     {
         return other.Id == Id;
     }
-
-    public GuildRank Level { get; }
 
     public override int GetHashCode()
     {
