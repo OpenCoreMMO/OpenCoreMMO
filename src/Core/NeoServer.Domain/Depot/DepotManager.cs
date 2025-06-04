@@ -2,7 +2,7 @@ namespace NeoServer.Domain.Depot;
 
 public class DepotManager
 {
-    private readonly IDictionary<uint, Depot> _depotMap = new Dictionary<uint, Depot>();
+    private readonly Dictionary<uint, Depot> _depotMap = new();
 
     public void Load(uint playerId, Depot depot)
     {

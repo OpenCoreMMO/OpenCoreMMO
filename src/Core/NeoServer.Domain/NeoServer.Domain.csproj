@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Common\Contracts\Items\Types\Runes\" />
         <Folder Include="Common\Spell\" />
         <Folder Include="Systems\"/>
     </ItemGroup>

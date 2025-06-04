@@ -8,7 +8,7 @@ using NeoServer.Domain.Items.Items.Cumulatives;
 
 namespace NeoServer.Domain.Items.Items.UsableItems;
 
-public class Food : Cumulative, IConsumable, IFood
+public class Food : Cumulative, IConsumable
 {
     public Food(IItemType type, Location location, IDictionary<ItemAttribute, IConvertible> attributes) : base(type,
         location, attributes)
@@ -19,6 +19,7 @@ public class Food : Cumulative, IConsumable, IFood
         location, amount)
     {
     }
+    public ushort Duration => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.Duration);
 
     public int CooldownTime => 0;
 

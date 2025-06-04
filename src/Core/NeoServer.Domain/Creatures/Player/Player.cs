@@ -33,6 +33,7 @@ using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Common;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
+using NeoServer.Domain.Items.Items.UsableItems;
 using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Creatures.Player;
@@ -833,7 +834,7 @@ public class Player : CombatActor, IPlayer
         return true;
     }
 
-    public bool Feed(IFood food)
+    public bool Feed(Food food)
     {
         if (food is null) return false;
         return Feed(food.Duration);
