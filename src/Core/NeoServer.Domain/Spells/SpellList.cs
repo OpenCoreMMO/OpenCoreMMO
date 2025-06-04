@@ -48,7 +48,7 @@ public class SpellListManager
         if (firstWhiteSpace == -1) return (words, null);
 
         var command = words.Substring(0, firstWhiteSpace);
-        var @params = words.Substring(firstWhiteSpace, words.Length - firstWhiteSpace).Trim().Split(",");
+        var @params = words.Substring(firstWhiteSpace).Trim().Split(",");
 
         return (command, @params);
     }

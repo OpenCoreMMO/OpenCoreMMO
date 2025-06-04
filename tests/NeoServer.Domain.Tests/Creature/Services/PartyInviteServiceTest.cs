@@ -31,9 +31,7 @@ public class PartyInviteServiceTest
             .IsInParty); // invited player has not yet accepted party invitation, therefore they are not in a party.
         Assert.True(
             partyLeader.PlayerParty.Party.IsInvited(invitedPlayer)); // invited player should be listed as invited.
-        Assert.Equal(1,
-            partyLeader.PlayerParty.Party.Members
-                .Count); // party leader should be added to the list of members upon creation.
+        Assert.Single(partyLeader.PlayerParty.Party.Members); // party leader should be added to the list of members upon creation.
         Assert.Equal(partyLeader,
             partyLeader.PlayerParty.Party.Members.First()); // The party leader should be the only member at this point.
         Assert.True(
