@@ -95,7 +95,7 @@ public class AreaAttackService(
 
             var mainDamage = damage.MainDamage;
 
-            if (mainDamage is not null)
+            if (mainDamage is { Damage: > 0 })
             {
                 mainDamage.Unjustified = unjustifiedAttack;
 
