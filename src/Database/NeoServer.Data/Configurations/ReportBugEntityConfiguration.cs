@@ -18,6 +18,6 @@ public class ReportBugEntityConfiguration : IEntityTypeConfiguration<ReportBugEn
         builder.Property(e => e.PosY).IsRequired();
         builder.Property(e => e.PosZ).IsRequired();
         builder.Property(e => e.ClosedAt);
-        builder.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        builder.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
     }
 }

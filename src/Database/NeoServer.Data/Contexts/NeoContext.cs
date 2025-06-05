@@ -138,14 +138,13 @@ public class NeoContext : DbContext
 
     public async Task<DBResult> ExecuteQueryAsync(string query)
     {
-        DBResult result = null;
         await Database.GetDbConnection().OpenAsync();
-        using var command = Database.GetDbConnection().CreateCommand();
+        await using var command = Database.GetDbConnection().CreateCommand();
         command.CommandText = query;
         command.CommandType = CommandType.Text;
 
-        using var reader = await command.ExecuteReaderAsync();
-        result = reader.HasRows ? new DBResult(reader) : null;
+        await using var reader = await command.ExecuteReaderAsync();
+        var result = reader.HasRows ? new DBResult(reader) : null;
         await Database.GetDbConnection().CloseAsync();
         return result;
     }
