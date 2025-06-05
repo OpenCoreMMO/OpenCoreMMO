@@ -38,23 +38,5 @@ public class IpBanEntityConfiguration : IEntityTypeConfiguration<IpBanEntity>
 
         builder.HasIndex(b => b.ExpiresAt)
             .HasDatabaseName("IX_Bans_ExpiresAt");
-
-        Seed(builder);
-    }
-
-    private static void Seed(EntityTypeBuilder<IpBanEntity> builder)
-    {
-        builder.HasData
-        (
-            new IpBanEntity
-            {
-                Id = 1,
-                Ip = "172.0.0.195",
-                BannedAt = DateTime.UtcNow,
-                ExpiresAt = DateTime.UtcNow.AddDays(100),
-                BannedBy = 1,
-                Reason = "Using bot."
-            }
-        );
     }
 }
