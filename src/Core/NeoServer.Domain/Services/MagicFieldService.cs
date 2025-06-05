@@ -33,6 +33,8 @@ public class MagicFieldService(IMap map, IItemFactory itemFactory)
         {
             return null;
         }
+        
+        dynamicTile.RemoveItem(magicField.Metadata.Group);
 
         dynamicTile.AddItem(magicField);
 

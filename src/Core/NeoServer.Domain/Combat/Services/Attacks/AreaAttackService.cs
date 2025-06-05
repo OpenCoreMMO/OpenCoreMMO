@@ -21,8 +21,7 @@ namespace NeoServer.Domain.Combat.Services.Attacks;
 public class AreaAttackService(
     IEventAggregator eventAggregator,
     IMap map,
-    CombatBloodPoolService combatBloodPoolService,
-    IItemFactory itemFactory,
+    BloodPoolService bloodPoolService,
     MagicFieldService magicFieldService,
     ConditionAttackService conditionAttackService) : IAttackService
 {
@@ -142,11 +141,11 @@ public class AreaAttackService(
     {
         if (damage.MainDamage is { Damage: > 0, IsElementalDamage: false })
         {
-            combatBloodPoolService.CreateSplash(target as ICombatActor, damage.MainDamage);
+            bloodPoolService.CreateSplash(target as ICombatActor, damage.MainDamage);
             return;
         }
 
         if (damage.ExtraDamage is { Damage: > 0, IsElementalDamage: false })
-            combatBloodPoolService.CreateSplash(target as ICombatActor, damage.ExtraDamage);
+            bloodPoolService.CreateSplash(target as ICombatActor, damage.ExtraDamage);
     }
 }

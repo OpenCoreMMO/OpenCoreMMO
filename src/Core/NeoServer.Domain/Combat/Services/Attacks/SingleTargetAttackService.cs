@@ -7,13 +7,14 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Services;
 
 namespace NeoServer.Domain.Combat.Services.Attacks;
 
 public class SingleTargetAttackService(
     IEventAggregator eventAggregator,
     CombatConfiguration combatConfiguration,
-    CombatBloodPoolService combatBloodPoolService,
+    BloodPoolService bloodPoolService,
     ConditionAttackService conditionAttackService)
     : IAttackService
 {
@@ -63,12 +64,12 @@ public class SingleTargetAttackService(
     {
         if (damage.MainDamage is { Damage: > 0, IsElementalDamage: false })
         {
-            combatBloodPoolService.CreateSplash(target as ICombatActor, damage.MainDamage);
+            bloodPoolService.CreateSplash(target as ICombatActor, damage.MainDamage);
             return;
         }
 
         if (damage.ExtraDamage is { Damage: > 0, IsElementalDamage: false })
-            combatBloodPoolService.CreateSplash(target as ICombatActor, damage.ExtraDamage);
+            bloodPoolService.CreateSplash(target as ICombatActor, damage.ExtraDamage);
     }
 
     private static bool PerformAttack(ICombatActor aggressor, IThing target, CalculatedAttackDamage damage)

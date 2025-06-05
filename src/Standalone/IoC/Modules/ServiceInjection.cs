@@ -83,7 +83,7 @@ public static class ServiceInjection
         builder.AddSingleton<AttackValidation>();
         builder.AddSingleton<SingleTargetAttackService>();
         builder.AddSingleton<AreaAttackService>();
-        builder.AddSingleton<CombatBloodPoolService>();
+        builder.AddSingleton<BloodPoolService>();
         builder.AddSingleton<MonsterCombatService>();
         builder.AddSingleton<ConditionAttackService>();
 
