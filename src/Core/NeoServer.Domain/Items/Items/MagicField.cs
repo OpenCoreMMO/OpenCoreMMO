@@ -16,6 +16,8 @@ public class MagicField : BaseItem
     public MagicField(IItemType type, Location location) : base(type, location)
     {
     }
+    
+    public IThing Creator { get; set; }
 
     private byte DamageCount => Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field)
         ?.GetAttribute<byte>(ItemAttribute.Count) ?? 0;

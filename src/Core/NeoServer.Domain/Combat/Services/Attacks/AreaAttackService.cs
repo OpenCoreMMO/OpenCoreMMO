@@ -122,7 +122,7 @@ public class AreaAttackService(
             _ => MagicFieldType.None
         };
 
-        magicFieldService.AddToGround(tile, magicFieldType);
+        magicFieldService.AddToGround(attackInput.Aggressor as ICreature, tile, magicFieldType);
     }
 
     private static bool InflictDamage(CalculatedAttackDamage damage, CombatDamage mainDamage, ICombatActor target,

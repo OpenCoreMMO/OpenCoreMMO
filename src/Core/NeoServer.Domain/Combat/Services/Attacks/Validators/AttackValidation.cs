@@ -77,10 +77,16 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
                 break;
         }
 
-        if (pvpConfiguration.PvpMode == "Optional")
+        if (pvpConfiguration.PvpType == PvpType.OptionalPvP)
+        {
             if (aggressor is IPlayer or ISummon { Master: IPlayer } && target is IPlayer or ISummon { Master: IPlayer })
+            {
                 if (!aggressor.Tile.PvpZone || !((ICreature)target).Tile.PvpZone)
+                {
                     return Result.Fail(InvalidOperation.YouMayNotAttackThisCreature);
+                }
+            }
+        }
 
         var attackValidationResult = aggressor.CanAttack(attackInput.Parameters);
         if (attackValidationResult.Failed) return attackValidationResult;

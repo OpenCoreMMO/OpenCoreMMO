@@ -117,6 +117,6 @@ public class SingleTargetAttackService(
             _ => MagicFieldType.None
         };
 
-        magicFieldService.AddToGround(attackInput.Target.Location, magicFieldType);
+        magicFieldService.AddToGround(attackInput.Aggressor as ICreature, attackInput.Target.Location, magicFieldType);
     }
 }
