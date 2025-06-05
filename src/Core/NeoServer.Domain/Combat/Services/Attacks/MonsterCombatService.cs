@@ -38,6 +38,8 @@ public class MonsterCombatService(IAttackService attackService)
 
             var result = attackService.Execute(new AttackInput(monster, target, combatParameter));
 
+            monster.PostAttack(attack);
+
             if (result.Failed) continue;
 
             numberOfAttacks++;

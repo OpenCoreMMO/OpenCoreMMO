@@ -374,6 +374,11 @@ public class Monster : WalkableMonster, IMonster
         return selectedAttacks[..numberOfAttacks].ToArray();
     }
 
+    public void PostAttack(IMonsterCombatAttack attack)
+    {
+        Cooldowns.Start(attack.Id, attack.Interval);
+    }
+
     public override Result CanAttack(CombatParameter combatParameter)
     {
         if (!Cooldowns.Expired(combatParameter.CooldownId)) return Result.Fail(InvalidOperation.CannotAttackThatFast);
