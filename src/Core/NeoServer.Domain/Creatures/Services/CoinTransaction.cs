@@ -2,7 +2,6 @@
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
-using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Items.Items.Cumulatives;
 
@@ -31,8 +30,6 @@ public class CoinTransaction : ICoinTransaction
     /// <summary>
     ///     Removes coins from player and adds change to the bag
     /// </summary>
-    /// <param name="player"></param>
-    /// <param name="amount"></param>
     /// <returns></returns>
     public bool RemoveCoins(IPlayer player, ulong amount, bool useBank = false)
     {

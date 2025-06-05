@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using Moq;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers.Player;
 
 namespace NeoServer.Domain.Tests.Creature.Players;

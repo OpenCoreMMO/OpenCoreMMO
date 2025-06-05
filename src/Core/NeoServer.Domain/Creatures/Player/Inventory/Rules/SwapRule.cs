@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
-using NeoServer.Domain.Common.Creatures.Players;
 
 namespace NeoServer.Domain.Creatures.Player.Inventory.Rules;
 

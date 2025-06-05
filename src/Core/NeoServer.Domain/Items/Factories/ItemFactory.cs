@@ -1,12 +1,11 @@
 ﻿using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Monster.Loot;
+using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Items.Items.Containers;
 using NeoServer.Domain.Items.Items.Cumulatives;

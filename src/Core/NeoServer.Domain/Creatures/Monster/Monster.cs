@@ -10,13 +10,13 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Monster.Actions;
 using NeoServer.Domain.Creatures.Monster.Combat;
+using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Creatures.Monster;
 
@@ -372,6 +372,11 @@ public class Monster : WalkableMonster, IMonster
         }
 
         return selectedAttacks[..numberOfAttacks].ToArray();
+    }
+
+    public void PostAttack(IMonsterCombatAttack attack)
+    {
+        Cooldowns.Start(attack.Id, attack.Interval);
     }
 
     public override Result CanAttack(CombatParameter combatParameter)

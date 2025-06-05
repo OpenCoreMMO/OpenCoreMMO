@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using NeoServer.Domain.Common.Combat.Enums;
-using NeoServer.Domain.Common.Creatures.Players;
+using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Player.Modes;
 
 namespace NeoServer.Data.Entities;
 

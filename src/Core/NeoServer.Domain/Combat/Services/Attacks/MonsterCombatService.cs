@@ -9,6 +9,7 @@ namespace NeoServer.Domain.Combat.Services.Attacks;
 
 public class MonsterCombatService(IAttackService attackService)
 {
+    private static Random _random = new();
     public void Attack(IMonster monster, ICombatActor target)
     {
         if (!monster.IsHostile) return;
@@ -37,6 +38,8 @@ public class MonsterCombatService(IAttackService attackService)
 
             var result = attackService.Execute(new AttackInput(monster, target, combatParameter));
 
+            monster.PostAttack(attack);
+
             if (result.Failed) continue;
 
             numberOfAttacks++;
@@ -51,7 +54,17 @@ public class MonsterCombatService(IAttackService attackService)
             attack.CombatParameter.Spread == 0)
             return null;
 
-        var origin = attack.HasTarget ? target.Location : monster.Location;
+        var range = attack.CombatParameter.Range;
+
+        var origin = attack.NeedTarget ? target.Location : monster.Location;
+
+        if (range > 0 && !attack.NeedTarget && target is null)
+        {
+            var x = (ushort)_random.Next(-range.Value, range.Value);
+            var y = (ushort)_random.Next(-range.Value, range.Value);
+            
+            origin = new Location((ushort)(origin.X + x),(ushort)(origin.Y + y), origin.Z);
+        }
 
         if (attack.CombatParameter.Radius > 0)
             return attack.CombatParameter.CoordinateArea =

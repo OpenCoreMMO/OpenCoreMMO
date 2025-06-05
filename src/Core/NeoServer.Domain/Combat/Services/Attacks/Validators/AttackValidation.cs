@@ -5,10 +5,10 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Combat.Services.Attacks.Validators;
 
@@ -77,10 +77,16 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
                 break;
         }
 
-        if (pvpConfiguration.PvpMode == "Optional")
+        if (pvpConfiguration.PvpType == PvpType.OptionalPvP)
+        {
             if (aggressor is IPlayer or ISummon { Master: IPlayer } && target is IPlayer or ISummon { Master: IPlayer })
+            {
                 if (!aggressor.Tile.PvpZone || !((ICreature)target).Tile.PvpZone)
+                {
                     return Result.Fail(InvalidOperation.YouMayNotAttackThisCreature);
+                }
+            }
+        }
 
         var attackValidationResult = aggressor.CanAttack(attackInput.Parameters);
         if (attackValidationResult.Failed) return attackValidationResult;

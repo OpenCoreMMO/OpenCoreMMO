@@ -1,4 +1,6 @@
-﻿namespace NeoServer.Domain.Common;
+﻿using NeoServer.Domain.Combat;
+
+namespace NeoServer.Domain.Common;
 
 public record GameConfiguration(
     decimal ExperienceRate = 1,
@@ -24,7 +26,7 @@ public record DeathConfiguration
 }
 
 public record PvPConfiguration(
-    string PvpMode,
+    PvpType PvpType,
     bool SkullSystemEnabled,
     int DayKillsToRedSkull,
     int DayKillsToBlackSkull,

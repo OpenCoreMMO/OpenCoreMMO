@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Condition;
 
 namespace NeoServer.Domain.Common.Combat.Structs;
 
@@ -66,6 +67,8 @@ public class CombatParameter
 
     public (CombatFormula Formula, Func<IPlayer, int, int, decimal, MinMax> Callback) DamageFormula { get; set; } =
         (Formula: CombatFormula.None, null);
+
+    public bool FieldAttack { get; set; }
 
     public void SetMinMaxDamage(MinMax minMaxDamage)
     {

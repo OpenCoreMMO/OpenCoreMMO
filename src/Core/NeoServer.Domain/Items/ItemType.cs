@@ -1,10 +1,10 @@
 ﻿using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Effects.Parsers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Item.Structs;
 using NeoServer.Domain.Common.Parsers;
+using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Items.Helpers;
 
 namespace NeoServer.Domain.Items;

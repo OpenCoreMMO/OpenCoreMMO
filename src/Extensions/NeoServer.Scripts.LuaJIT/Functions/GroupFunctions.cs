@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using LuaNET;
 using NeoServer.Domain.Common.Contracts.DataStores;
-using NeoServer.Domain.Common.Creatures.Players;
-using NeoServer.Domain.Creatures.Group;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 

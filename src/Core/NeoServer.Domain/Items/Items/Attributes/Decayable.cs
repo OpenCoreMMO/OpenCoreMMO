@@ -4,7 +4,9 @@ using NeoServer.Domain.Common.Item;
 namespace NeoServer.Domain.Items.Items.Attributes;
 
 public delegate void PauseDecay(Decayable item);
+
 public delegate void StartDecay(IItem item);
+
 public class Decayable : IDecay
 {
     private readonly IItem _item;
@@ -26,7 +28,6 @@ public class Decayable : IDecay
 
     public bool StartedToDecay => _startedToDecayTime != default;
     public bool IsPaused { get; private set; } = true;
-    public event PauseDecay OnPaused;
     public ushort DecaysTo => _item.Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ExpireTarget);
 
     public uint Duration => _duration = _item.Metadata.Attributes.GetAttribute<uint>(ItemAttribute.Duration) == 0
@@ -68,6 +69,8 @@ public class Decayable : IDecay
         _lastElapsed += (uint)(((ulong)DateTime.Now.Ticks - _startedToDecayTime) / TimeSpan.TicksPerSecond);
         OnPaused?.Invoke(this);
     }
+
+    public event PauseDecay OnPaused;
 
     public bool TryDecay()
     {

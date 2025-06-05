@@ -11,7 +11,6 @@ using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
@@ -19,8 +18,10 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
+using NeoServer.Domain.Creatures.Condition;
 using NeoServer.Domain.Creatures.Models.Bases.Events;
 using NeoServer.Domain.Creatures.Monster.Loot;
+using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Creatures.Models.Bases;
 
@@ -28,8 +29,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 {
     private const byte BLOCK_LIMIT = 2;
 
-    private byte blockCount;
-    private bool WasDamagedOnLastAttack = true;
+    private byte _blockCount;
 
     protected CombatActor(ICreatureType type, IMapTool mapTool, IOutfit outfit = null, uint healthPoints = 0) : base(
         type, mapTool, outfit,
@@ -374,23 +374,30 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         if (enemy is ICreature c) SetAsEnemy(c);
 
+        var wasDamaged = false;
+
         foreach (var damage in damages)
         {
+            if (damage.Damage <= 0) continue;
+            
             ReduceDamage(damage);
 
             if (damage.Damage <= 0)
             {
-                WasDamagedOnLastAttack = false;
-                return false;
+                continue;
             }
 
-            if (damage.Damage > HealthPoints) damage.SetNewDamage((ushort)HealthPoints);
+            if (damage.Damage > HealthPoints)
+            {
+                damage.SetNewDamage((ushort)HealthPoints);
+            }
+
+            wasDamaged = true;
         }
 
         OnDamage(enemy, this, damages);
 
-        WasDamagedOnLastAttack = true;
-        return true;
+        return wasDamaged;
     }
 
     public void PropagateAttack(AffectedLocation[] area, CombatDamage damage)
@@ -476,7 +483,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         if (!IsShieldDefenseEnabled) return false;
         var hasCoolDownExpired = Cooldowns.Expired(CooldownType.Block);
 
-        if (!hasCoolDownExpired && blockCount >= BLOCK_LIMIT) return false;
+        if (!hasCoolDownExpired && _blockCount >= BLOCK_LIMIT) return false;
         return true;
     }
 
@@ -485,10 +492,10 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         if (Cooldowns.Expired(CooldownType.Block))
         {
             Cooldowns.Start(CooldownType.Block, 2000);
-            blockCount = 0;
+            _blockCount = 0;
         }
 
-        blockCount++;
+        _blockCount++;
     }
 
     public bool Attack(ITile tile, IUsableAttackOnTile item)

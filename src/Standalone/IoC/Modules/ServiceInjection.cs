@@ -12,9 +12,9 @@ using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.Items.Services.ItemTransform;
 using NeoServer.Domain.Party;
-using NeoServer.Domain.Systems.SafeTrade;
-using NeoServer.Domain.Systems.SafeTrade.Operations;
-using NeoServer.Domain.Systems.Services;
+using NeoServer.Domain.SafeTrade;
+using NeoServer.Domain.SafeTrade.Operations;
+using NeoServer.Domain.Services;
 using NeoServer.Domain.World.Services;
 using NeoServer.Networking.EventHandlers.Creature;
 using NeoServer.Server.Commands.Player.UseItem;
@@ -63,6 +63,8 @@ public static class ServiceInjection
         builder.AddSingleton<IItemRemoveService, ItemRemoveService>();
         builder.AddSingleton<IItemAbilityApplierService, ItemAbilityApplierService>();
         builder.AddSingleton<ItemUseValidation>();
+        
+        builder.AddSingleton<MagicFieldService>();
 
         //game builders
         builder.RegisterAssemblyTypes<IInspectionTextBuilder>(Container.AssemblyCache);
@@ -81,7 +83,7 @@ public static class ServiceInjection
         builder.AddSingleton<AttackValidation>();
         builder.AddSingleton<SingleTargetAttackService>();
         builder.AddSingleton<AreaAttackService>();
-        builder.AddSingleton<CombatBloodPoolService>();
+        builder.AddSingleton<BloodPoolService>();
         builder.AddSingleton<MonsterCombatService>();
         builder.AddSingleton<ConditionAttackService>();
 

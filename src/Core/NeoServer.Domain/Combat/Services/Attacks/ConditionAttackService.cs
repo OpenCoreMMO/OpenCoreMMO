@@ -1,9 +1,8 @@
-using NeoServer.Domain.Combat.Conditions;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Condition;
 
 namespace NeoServer.Domain.Combat.Services.Attacks;
 

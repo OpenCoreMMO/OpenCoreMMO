@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Common\Spell\" />
-        <Folder Include="Systems\"/>
+        <Folder Include="Common\Spell\"/>
+        <Folder Include="Creatures\Group\" />
     </ItemGroup>
 
     <ItemGroup>

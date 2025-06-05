@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Creatures.Players;
+﻿using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Player.Modes;
 
 namespace NeoServer.Web.API.IoC.Configs;
 

@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
-using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 
 namespace NeoServer.Domain.Creatures.Monster.Managers;

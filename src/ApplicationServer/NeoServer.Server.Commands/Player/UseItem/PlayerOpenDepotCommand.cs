@@ -3,7 +3,6 @@ using NeoServer.Data.Interfaces;
 using NeoServer.Data.Parsers;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types.Containers;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Depot;
 using NeoServer.Domain.Items.Items.Containers;

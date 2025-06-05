@@ -5,7 +5,6 @@ using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Contracts.Items.Weapons.Attributes;
 using NeoServer.Domain.Common.Helpers;
@@ -61,7 +60,11 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
     }
 
     public byte ExtraHitChance => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.HitChance);
+
+    public byte AttackPower => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Attack);
+    public bool ShouldBreak => BreakChance > 0 && GameRandom.Random.Next(1, maxValue: 100) <= BreakChance;
     public WeaponAttack WeaponAttack { get; } //todo: rename to Attack
+    public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Range);
 
     public override bool CanBeDressed(IPlayer player)
     {
@@ -73,10 +76,6 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
 
         return false;
     }
-
-    public byte AttackPower => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Attack);
-    public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Range);
-    public bool ShouldBreak => BreakChance > 0 && GameRandom.Random.Next(1, maxValue: 100) <= BreakChance;
 
     public ushort? MinHitChance { get; }
 
@@ -111,12 +110,12 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
         return true;
     }
 
+    public void OnMoved(IThing to)
+    {
+    }
+
     public static bool IsApplicable(IItemType type)
     {
         return type.Group is ItemGroup.ThrowableDistanceWeapon;
-    }
-
-    public void OnMoved(IThing to)
-    {
     }
 }

@@ -14,6 +14,8 @@ public class Depot : Container
 
     private uint OpenedBy { get; set; }
 
+    public bool IsAlreadyOpened { get; private set; }
+
 
     public override void ClosedBy(IPlayer player)
     {
@@ -21,8 +23,6 @@ public class Depot : Container
         SetAsClosed();
         base.ClosedBy(player);
     }
-
-    public bool IsAlreadyOpened { get; private set; }
 
     public void SetAsOpened(IPlayer openedBy)
     {

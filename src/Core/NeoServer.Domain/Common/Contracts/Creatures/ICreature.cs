@@ -2,8 +2,8 @@ using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
-using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Creatures;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 

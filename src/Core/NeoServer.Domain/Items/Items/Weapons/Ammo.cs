@@ -1,7 +1,6 @@
 ﻿using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Contracts.Items.Weapons.Attributes;
 using NeoServer.Domain.Common.Helpers;
@@ -39,6 +38,11 @@ public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
 
     public byte Attack => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Attack);
 
+    public byte ExtraHitChance => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.HitChance);
+    public AmmoType AmmoType => Metadata.AmmoType;
+    public ShootType ShootType => Metadata.ShootType;
+    public bool HasElementalDamage => WeaponAttack.ElementalDamage.AttackPower is not 0;
+
     public override bool CanBeDressed(IPlayer player)
     {
         if (Guard.IsNullOrEmpty(Vocations)) return true;
@@ -50,10 +54,11 @@ public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
         return false;
     }
 
-    public byte ExtraHitChance => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.HitChance);
-    public AmmoType AmmoType => Metadata.AmmoType;
-    public ShootType ShootType => Metadata.ShootType;
-    public bool HasElementalDamage => WeaponAttack.ElementalDamage.AttackPower is not 0;
+    public void OnMoved(IThing to)
+    {
+    }
+
+    public WeaponAttack WeaponAttack { get; }
 
     public void Throw()
     {
@@ -64,10 +69,4 @@ public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
     {
         return type.Group is ItemGroup.Ammo;
     }
-
-    public void OnMoved(IThing to)
-    {
-    }
-
-    public WeaponAttack WeaponAttack { get; }
 }

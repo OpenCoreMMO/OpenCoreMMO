@@ -1,4 +1,4 @@
-﻿using NeoServer.Domain.Systems.SafeTrade.Request;
+﻿using NeoServer.Domain.SafeTrade.Request;
 using NeoServer.Networking.Packets.Outgoing.Trade;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;

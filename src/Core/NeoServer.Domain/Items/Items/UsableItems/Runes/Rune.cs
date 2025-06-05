@@ -2,12 +2,11 @@
 using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Spells;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Items.Items.Cumulatives;
 
 namespace NeoServer.Domain.Items.Items.UsableItems.Runes;
@@ -22,8 +21,7 @@ public class Rune : Cumulative, IHasCooldown, IUsableRequirement
     public Rune(IItemType type, Location location, byte amount) : base(type, location, amount)
     {
     }
-    
-    public string Name => Metadata.Name;
+
     public bool CheckFloor => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.CheckFloor);
     public bool BlockWalls => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.BlockWalls);
     public ushort ManaConsumption => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ManaUse);
@@ -56,8 +54,6 @@ public class Rune : Cumulative, IHasCooldown, IUsableRequirement
     public bool NeedsPremium => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedsPremium);
 
     public ISpell Spell => Metadata.Attributes.GetAttribute<ISpell>("spell");
-    public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumLevel);
-    public ushort MinMagicLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumMagicLevel);
     public bool Enabled => true;
 
     //Cooldown
@@ -84,6 +80,10 @@ public class Rune : Cumulative, IHasCooldown, IUsableRequirement
             Metadata.Attributes.GetAttribute<uint>(ItemAttribute.SecondaryGroupCooldown));
 
     public uint Cooldown => Metadata.Attributes.GetAttribute<uint>(ItemAttribute.CooldownTime);
+
+    public string Name => Metadata.Name;
+    public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumLevel);
+    public ushort MinMagicLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumMagicLevel);
 
     public static bool IsApplicable(IItemType type)
     {

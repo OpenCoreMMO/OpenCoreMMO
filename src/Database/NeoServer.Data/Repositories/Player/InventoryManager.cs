@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Creatures.Player.Inventory;
 
 namespace NeoServer.Data.Repositories.Player;
 

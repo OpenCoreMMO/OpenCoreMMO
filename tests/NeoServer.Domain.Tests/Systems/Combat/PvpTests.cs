@@ -1,3 +1,4 @@
+using NeoServer.Domain.Combat;
 using NeoServer.Domain.Combat.Services;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
@@ -18,7 +19,7 @@ public class PvpTests
 
         var handler = new CreatureAttackEventHandler(new PlayerSkullService(new GameConfiguration
         {
-            PvP = new PvPConfiguration("Open", true, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5)
+            PvP = new PvPConfiguration(PvpType.OpenPvP, true, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5)
         }));
 
         aggressor.OnAttackEnemy += handler.Execute;

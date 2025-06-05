@@ -1,10 +1,10 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
-using NeoServer.Domain.Common.Creatures.Players;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items;
@@ -21,6 +21,7 @@ public class BodyDefenseEquipment : Equipment, IBodyEquipmentEquipment
         : Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Armor);
 
     public ushort ArmorValue => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Armor);
+
     protected override string PartialInspectionText
     {
         get
