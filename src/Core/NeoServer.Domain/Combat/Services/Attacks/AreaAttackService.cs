@@ -8,9 +8,12 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Effects.Magical;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Items.Items;
+using NeoServer.Domain.Services;
 using NeoServer.Domain.World.Algorithms;
 
 namespace NeoServer.Domain.Combat.Services.Attacks;
@@ -18,7 +21,8 @@ namespace NeoServer.Domain.Combat.Services.Attacks;
 public class AreaAttackService(
     IEventAggregator eventAggregator,
     IMap map,
-    CombatBloodPoolService combatBloodPoolService,
+    BloodPoolService bloodPoolService,
+    MagicFieldService magicFieldService,
     ConditionAttackService conditionAttackService) : IAttackService
 {
     public Result Execute(AttackInput attackInput)
@@ -65,6 +69,11 @@ public class AreaAttackService(
 
             affectedArea.Add(location);
 
+            if (attackInput.Parameters.FieldAttack)
+            {
+                CreateMagicField(attackInput, tile);
+            }
+
             var targetCreatures = walkableTile.Creatures?.ToArray();
             if (targetCreatures is null) continue;
 
@@ -86,7 +95,7 @@ public class AreaAttackService(
 
             var mainDamage = damage.MainDamage;
 
-            if (mainDamage is not null)
+            if (mainDamage is { Damage: > 0 })
             {
                 mainDamage.Unjustified = unjustifiedAttack;
 
@@ -101,6 +110,19 @@ public class AreaAttackService(
                 conditionAttackService.Execute(attackInput);
             }
         }
+    }
+
+    private void CreateMagicField(AttackInput attackInput, ITile tile)
+    {
+        var magicFieldType = attackInput.Parameters.DamageType switch
+        {
+            DamageType.Earth => MagicFieldType.Poison,
+            DamageType.Energy => MagicFieldType.Energy,
+            DamageType.Fire => MagicFieldType.Fire,
+            _ => MagicFieldType.None
+        };
+
+        magicFieldService.AddToGround(tile, magicFieldType);
     }
 
     private static bool InflictDamage(CalculatedAttackDamage damage, CombatDamage mainDamage, ICombatActor target,
@@ -119,11 +141,11 @@ public class AreaAttackService(
     {
         if (damage.MainDamage is { Damage: > 0, IsElementalDamage: false })
         {
-            combatBloodPoolService.CreateSplash(target as ICombatActor, damage.MainDamage);
+            bloodPoolService.CreateSplash(target as ICombatActor, damage.MainDamage);
             return;
         }
 
         if (damage.ExtraDamage is { Damage: > 0, IsElementalDamage: false })
-            combatBloodPoolService.CreateSplash(target as ICombatActor, damage.ExtraDamage);
+            bloodPoolService.CreateSplash(target as ICombatActor, damage.ExtraDamage);
     }
 }

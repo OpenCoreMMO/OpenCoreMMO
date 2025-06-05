@@ -5,16 +5,20 @@ using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Services;
 
 namespace NeoServer.Domain.Combat.Services.Attacks;
 
 public class SingleTargetAttackService(
     IEventAggregator eventAggregator,
     CombatConfiguration combatConfiguration,
-    CombatBloodPoolService combatBloodPoolService,
-    ConditionAttackService conditionAttackService)
+    BloodPoolService bloodPoolService,
+    ConditionAttackService conditionAttackService,
+    MagicFieldService magicFieldService)
     : IAttackService
 {
     public Result Execute(AttackInput attackInput)
@@ -56,6 +60,11 @@ public class SingleTargetAttackService(
 
         if (damage.MainDamage is null) conditionAttackService.Execute(attackInput);
 
+        if (attackInput.Parameters.FieldAttack)
+        {
+            CreateMagicField(attackInput);
+        }
+
         return Result.Success;
     }
 
@@ -63,12 +72,12 @@ public class SingleTargetAttackService(
     {
         if (damage.MainDamage is { Damage: > 0, IsElementalDamage: false })
         {
-            combatBloodPoolService.CreateSplash(target as ICombatActor, damage.MainDamage);
+            bloodPoolService.CreateSplash(target as ICombatActor, damage.MainDamage);
             return;
         }
 
         if (damage.ExtraDamage is { Damage: > 0, IsElementalDamage: false })
-            combatBloodPoolService.CreateSplash(target as ICombatActor, damage.ExtraDamage);
+            bloodPoolService.CreateSplash(target as ICombatActor, damage.ExtraDamage);
     }
 
     private static bool PerformAttack(ICombatActor aggressor, IThing target, CalculatedAttackDamage damage)
@@ -96,5 +105,18 @@ public class SingleTargetAttackService(
         }
 
         return targetCreature.TakeDamage(aggressor, damage.MainDamage);
+    }
+    
+    private void CreateMagicField(AttackInput attackInput)
+    {
+        var magicFieldType = attackInput.Parameters.DamageType switch
+        {
+            DamageType.Earth => MagicFieldType.Poison,
+            DamageType.Energy => MagicFieldType.Energy,
+            DamageType.Fire => MagicFieldType.Fire,
+            _ => MagicFieldType.None
+        };
+
+        magicFieldService.AddToGround(attackInput.Target.Location, magicFieldType);
     }
 }

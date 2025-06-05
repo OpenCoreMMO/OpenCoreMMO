@@ -63,6 +63,8 @@ public static class ServiceInjection
         builder.AddSingleton<IItemRemoveService, ItemRemoveService>();
         builder.AddSingleton<IItemAbilityApplierService, ItemAbilityApplierService>();
         builder.AddSingleton<ItemUseValidation>();
+        
+        builder.AddSingleton<MagicFieldService>();
 
         //game builders
         builder.RegisterAssemblyTypes<IInspectionTextBuilder>(Container.AssemblyCache);
@@ -81,7 +83,7 @@ public static class ServiceInjection
         builder.AddSingleton<AttackValidation>();
         builder.AddSingleton<SingleTargetAttackService>();
         builder.AddSingleton<AreaAttackService>();
-        builder.AddSingleton<CombatBloodPoolService>();
+        builder.AddSingleton<BloodPoolService>();
         builder.AddSingleton<MonsterCombatService>();
         builder.AddSingleton<ConditionAttackService>();
 

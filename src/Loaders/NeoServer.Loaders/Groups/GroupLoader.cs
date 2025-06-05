@@ -5,7 +5,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using NeoServer.Domain.Common.Contracts.DataStores;
-using NeoServer.Domain.Creatures.Group;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;

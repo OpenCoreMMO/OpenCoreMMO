@@ -1,5 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.DataStores;
-using NeoServer.Domain.Creatures.Group;
+using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Data.InMemory.DataStores;
 

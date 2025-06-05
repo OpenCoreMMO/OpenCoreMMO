@@ -30,8 +30,6 @@ public class CoinTransaction : ICoinTransaction
     /// <summary>
     ///     Removes coins from player and adds change to the bag
     /// </summary>
-    /// <param name="player"></param>
-    /// <param name="amount"></param>
     /// <returns></returns>
     public bool RemoveCoins(IPlayer player, ulong amount, bool useBank = false)
     {

@@ -5,9 +5,9 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures;
 
-namespace NeoServer.Domain.Combat.Services;
+namespace NeoServer.Domain.Services;
 
-public class CombatBloodPoolService(IMap map, ILiquidPoolFactory liquidPoolFactory)
+public class BloodPoolService(IMap map, ILiquidPoolFactory liquidPoolFactory)
 {
     public void CreateSplash(ICreature creature)
     {

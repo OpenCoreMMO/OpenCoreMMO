@@ -68,6 +68,8 @@ public class CombatParameter
     public (CombatFormula Formula, Func<IPlayer, int, int, decimal, MinMax> Callback) DamageFormula { get; set; } =
         (Formula: CombatFormula.None, null);
 
+    public bool FieldAttack { get; set; }
+
     public void SetMinMaxDamage(MinMax minMaxDamage)
     {
         MinDamage = (ushort)minMaxDamage.Min;
