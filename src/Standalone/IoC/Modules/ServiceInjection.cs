@@ -63,6 +63,8 @@ public static class ServiceInjection
         builder.AddSingleton<IItemRemoveService, ItemRemoveService>();
         builder.AddSingleton<IItemAbilityApplierService, ItemAbilityApplierService>();
         builder.AddSingleton<ItemUseValidation>();
+        
+        builder.AddSingleton<MagicFieldService>();
 
         //game builders
         builder.RegisterAssemblyTypes<IInspectionTextBuilder>(Container.AssemblyCache);

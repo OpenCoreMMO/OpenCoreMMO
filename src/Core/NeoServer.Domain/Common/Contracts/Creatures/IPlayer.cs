@@ -11,7 +11,6 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Creatures.Group;
 using NeoServer.Domain.Creatures.Npcs;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;

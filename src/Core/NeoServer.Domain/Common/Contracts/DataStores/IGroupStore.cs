@@ -1,4 +1,4 @@
-﻿using NeoServer.Domain.Creatures.Group;
+﻿using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Common.Contracts.DataStores;
 

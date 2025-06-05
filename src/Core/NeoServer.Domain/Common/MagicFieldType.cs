@@ -2,6 +2,8 @@
 
 public enum MagicFieldType : byte
 {
+    None,
     Fire,
-    None
+    Poison,
+    Energy
 }

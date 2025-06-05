@@ -54,7 +54,7 @@ public class Player : CombatActor, IPlayer
         uint healthPoints,
         uint maxHealthPoints,
         IVocation vocation,
-        Group.Group group,
+        Group group,
         Gender gender,
         bool online,
         ushort mana,
@@ -168,7 +168,7 @@ public class Player : CombatActor, IPlayer
     public IVip Vip { get; }
     public override IOutfit Outfit { get; protected set; }
     public IVocation Vocation { get; }
-    public Group.Group Group { get; set; }
+    public Group Group { get; set; }
     public IPlayerChannel Channels { get; set; }
     public IPlayerParty PlayerParty { get; set; }
     public IBank Bank { get; private set; }

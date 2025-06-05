@@ -25,6 +25,9 @@ internal class MonsterAttackConverter
         "attributes"
     };
 
+    private static HashSet<string> _fieldAttacks = new(StringComparer.InvariantCultureIgnoreCase)
+        { "field", "fireField", "poisonField", "energyField" };
+
     public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)
     {
         if (data.Attacks is null) return [];
@@ -46,6 +49,12 @@ internal class MonsterAttackConverter
             attack.TryGetValue("target", out byte target);
             attack.TryGetValue("range", out byte range);
             attack.TryGetValue("spread", out byte spread);
+            attack.TryGetValue("needTarget", out byte needTarget);
+
+            if (attack.ContainsKey("needTarget"))
+            {
+                target = needTarget;
+            }
 
             attack.TryGetValue("attributes", out JsonElement attributesElement);
 
@@ -79,7 +88,12 @@ internal class MonsterAttackConverter
                 MinDamage = (ushort)Math.Abs(min),
                 DamageType = DamageTypeParser.Parse(attackName),
                 CooldownId = combatAttack.Id,
-                Effect = EffectParser.Parse(areaEffect)
+                Effect = EffectParser.Parse(areaEffect),
+                Range = range,
+                Spread = spread,
+                Length = length,
+                Radius = radius,
+                ShootType = ShootTypeParser.Parse(shootEffect)
             };
 
             if (combatAttack.CombatParameter.DamageType is DamageType.Melee)
@@ -160,36 +174,22 @@ internal class MonsterAttackConverter
                         ? combatAttack.CombatParameter.DamageType
                         : damageType;
                 }
-
-                combatAttack.CombatParameter.Range = range;
-                combatAttack.CombatParameter.ShootType = ShootTypeParser.Parse(shootEffect);
             }
 
             if (radius > 1)
             {
                 combatAttack.CombatParameter.DamageType = DamageTypeParser.Parse(areaEffect);
-                combatAttack.CombatParameter.Range = range;
-                combatAttack.CombatParameter.Radius = radius;
-                combatAttack.CombatParameter.ShootType = ShootTypeParser.Parse(shootEffect);
             }
 
             if (length > 0)
             {
                 combatAttack.CombatParameter.DamageType = DamageTypeParser.Parse(areaEffect);
-                combatAttack.CombatParameter.Length = length;
-                combatAttack.CombatParameter.Spread = spread;
             }
 
             if (attackName is "lifedrain" or "manadrain")
             {
-                var shootType = ShootTypeParser.Parse(shootEffect);
-
                 combatAttack.CombatParameter.DamageType =
                     attackName is "lifedrain" ? DamageType.LifeDrain : DamageType.ManaDrain;
-
-                combatAttack.CombatParameter.Range = range;
-                combatAttack.CombatParameter.Radius = radius;
-                combatAttack.CombatParameter.ShootType = shootType;
             }
 
             if (attackName == "speed")
@@ -204,10 +204,21 @@ internal class MonsterAttackConverter
                     };
 
                 combatAttack.CombatParameter.DamageType = DamageType.None;
-                combatAttack.CombatParameter.Range = range;
-                combatAttack.CombatParameter.Range = range;
-                combatAttack.CombatParameter.ShootType = ShootTypeParser.Parse(shootEffect);
                 combatAttack.CombatParameter.Effect = EffectParser.Parse(areaEffect);
+            }
+
+
+            if (_fieldAttacks.Contains(attackName))
+            {
+                combatAttack.CombatParameter.FieldAttack = true;
+
+                attack.TryGetValue("damageType", out string damageType);
+
+                damageType = string.IsNullOrEmpty(damageType)
+                    ? attackName.Replace("field", string.Empty)
+                    : damageType;
+
+                combatAttack.CombatParameter.DamageType = DamageTypeParser.Parse(damageType);
             }
 
             attacks.Add(combatAttack);

@@ -1,7 +1,6 @@
 ﻿using NeoServer.Domain.Common.Helpers;
-using NeoServer.Domain.Creatures.Player;
 
-namespace NeoServer.Domain.Creatures.Group;
+namespace NeoServer.Domain.Creatures.Player;
 
 public class Group
 {
