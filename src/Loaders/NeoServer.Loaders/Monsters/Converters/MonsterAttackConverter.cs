@@ -25,8 +25,24 @@ internal class MonsterAttackConverter
         "attributes"
     };
 
+    private static HashSet<string> _supportedAttackNames = new(StringComparer.InvariantCultureIgnoreCase)
+    {
+        "lifedrain", "manadrain", "field", "firefield", "energyfield", "poisonField", "speed",
+        "melee",
+        "physical",
+        "energy",
+        "fire",
+        "poison",
+        "earth",
+        "ice",
+        "holy",
+        "death"
+    };
+
     private static HashSet<string> _fieldAttacks = new(StringComparer.InvariantCultureIgnoreCase)
-        { "field", "fireField", "poisonField", "energyField" };
+    {
+        "field", "fireField", "poisonField", "energyField"
+    };
 
     public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)
     {
@@ -38,6 +54,7 @@ internal class MonsterAttackConverter
 
         foreach (var attack in data.Attacks)
         {
+            
             attack.TryGetValue("name", out string attackName);
             attack.TryGetValue("attack", out ushort attackValue);
             attack.TryGetValue("skill", out int skill);
@@ -54,6 +71,11 @@ internal class MonsterAttackConverter
             if (attack.ContainsKey("needTarget"))
             {
                 target = needTarget;
+            }
+
+            if (!_supportedAttackNames.Contains(attackName))
+            {
+                logger.Warning("{Monster} Attack: {AttackName} is not implemented", data.Name, attackName);
             }
 
             attack.TryGetValue("attributes", out JsonElement attributesElement);
@@ -77,7 +99,7 @@ internal class MonsterAttackConverter
 
             var combatAttack = new MonsterCombatAttack
             {
-                HasTarget = target != 0,
+                NeedTarget = target != 0,
                 AttackChance = chance >= 100 ? (byte)100 : chance,
                 Interval = interval
             };

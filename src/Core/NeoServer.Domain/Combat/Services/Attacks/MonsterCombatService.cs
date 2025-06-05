@@ -54,9 +54,9 @@ public class MonsterCombatService(IAttackService attackService)
 
         var range = attack.CombatParameter.Range;
 
-        var origin = attack.HasTarget ? target.Location : monster.Location;
+        var origin = attack.NeedTarget ? target.Location : monster.Location;
 
-        if (range > 0 && !attack.HasTarget)
+        if (range > 0 && !attack.NeedTarget && target is null)
         {
             var x = (ushort)_random.Next(-range.Value, range.Value);
             var y = (ushort)_random.Next(-range.Value, range.Value);
