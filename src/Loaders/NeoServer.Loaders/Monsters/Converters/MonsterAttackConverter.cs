@@ -53,7 +53,6 @@ internal class MonsterAttackConverter
         AdjustAttackChanceValue(data.Attacks);
 
         foreach (var attack in data.Attacks)
-        {
             
             attack.TryGetValue("name", out string attackName);
             attack.TryGetValue("attack", out ushort attackValue);
