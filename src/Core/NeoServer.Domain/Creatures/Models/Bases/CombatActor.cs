@@ -45,7 +45,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public abstract int DefendUsingShield(int attack);
     public abstract int DefendUsingArmor(int attack);
 
-    public void AddCondition(ICondition condition)
+    public virtual void AddCondition(ICondition condition)
     {
         switch (condition.Type)
         {
