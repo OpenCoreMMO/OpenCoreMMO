@@ -43,7 +43,7 @@ public class PathFinderTest
             tileEnterRule);
 
         //assert
-        result.Founded.Should().BeTrue();
+        result.Found.Should().BeTrue();
         result.Directions.Should().BeEquivalentTo(new[]
         {
             Direction.East, Direction.South, Direction.East, Direction.South, Direction.East
@@ -82,7 +82,7 @@ public class PathFinderTest
             tileEnterRule);
 
         //assert
-        result.Founded.Should().BeTrue();
+        result.Found.Should().BeTrue();
         result.Directions.Should().BeEmpty();
     }
 }

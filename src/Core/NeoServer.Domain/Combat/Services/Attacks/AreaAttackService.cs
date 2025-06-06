@@ -61,7 +61,7 @@ public class AreaAttackService(
 
             // Check if the tile is walkable and clear of obstacles
             if (tile is not IDynamicTile walkableTile || walkableTile.HasFlag(TileFlags.Unpassable) ||
-                walkableTile.ProtectionZone)
+                walkableTile.ProtectionZone || walkableTile.HasHole)
                 continue;
 
             // Check if the line of sight is clear between aggressor and target location
