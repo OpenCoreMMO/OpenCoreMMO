@@ -69,4 +69,5 @@ public interface IMap
     ITile GetTile(Location.Structs.Location location);
     ITile GetFinalTile(ITile toTile);
     void ReplaceTile(ITile newTile);
+    void MoveCreature(IWalkableCreature creature, Direction nextDirection);
 }

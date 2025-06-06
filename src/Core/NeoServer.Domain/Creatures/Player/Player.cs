@@ -1293,6 +1293,19 @@ public class Player : CombatActor, IPlayer
         //todo: add immunity check
     }
 
+    public override void AddCondition(ICondition condition)
+    {
+        switch (condition.Type)
+        {
+            case ConditionType.Drunk when Inventory.HasEquippedItemWithImmunity(Immunity.Drunkenness):
+            case ConditionType.Drowning when Inventory.HasEquippedItemWithImmunity(Immunity.Drown):
+                return;
+            default:
+                base.AddCondition(condition);
+                break;
+        }
+    }
+
     public virtual void SetLogoutBlock()
     {
         if (Group.FlagIsEnabled(PlayerFlag.NotGainInFight)) return;
@@ -1334,6 +1347,28 @@ public class Player : CombatActor, IPlayer
 
     public override bool TryWalkTo(params Direction[] directions)
     {
+        if (directions is null or { Length: 0 }) return false;
+        
+        if (HasCondition(ConditionType.Drunk))
+        {
+            // Only allow North, East, South, West (no diagonals)
+            Direction[] nonDiagonalDirections = [Direction.North, Direction.East, Direction.South, Direction.West];
+            
+            for (var i = 0; i < directions.Length; i++)
+            {
+                // Replace the direction every 2 steps
+                if (i % 3 == 0)
+                {
+                    var oldDirection = directions[i];
+                    var newDirection = nonDiagonalDirections[GameRandom.Random.Next(maxValue: nonDiagonalDirections.Length)];
+                    if (oldDirection == newDirection) continue;
+                    
+                    directions[i] =
+                        nonDiagonalDirections[GameRandom.Random.Next(maxValue: nonDiagonalDirections.Length)].MakeDrunk();
+                }
+            }
+        }
+
         ResetIdleTime();
         return base.TryWalkTo(directions);
     }

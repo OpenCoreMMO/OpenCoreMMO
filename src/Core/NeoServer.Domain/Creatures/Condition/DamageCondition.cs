@@ -104,9 +104,12 @@ public class DamageCondition : BaseCondition
     {
         var startDamage = 0;
         if (startDamage > maxDamage)
+        {
             startDamage = maxDamage;
-        else if (startDamage == 0) startDamage = (int)Math.Max(1, Math.Ceiling(amount / 20.0));
-        return startDamage;
+            return startDamage;
+        }
+        
+        return (int)Math.Max(1, Math.Ceiling(amount / 20.0));
     }
 
     private void GenerateDamageList(byte amount)
@@ -117,7 +120,7 @@ public class DamageCondition : BaseCondition
 
     private void GenerateDamageList()
     {
-        if (_damageQueue is null) _damageQueue = new Queue<ushort>();
+        _damageQueue ??= new Queue<ushort>();
 
         int amount = (ushort)GameRandom.Random.Next(_minDamage, maxValue: _maxDamage);
         var start = GetStartDamage(_maxDamage, amount);

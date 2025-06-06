@@ -168,6 +168,8 @@ public class Monster : WalkableMonster, IMonster
 
         Targets.AddTarget(enemy);
     }
+    
+    public override bool CanSee(Location pos) => base.CanSee(pos, (int)MapViewPort.MaxClientViewPortX, (int)MapViewPort.MaxClientViewPortY, 1);
 
     public virtual void UpdateState()
     {
@@ -467,11 +469,12 @@ public class Monster : WalkableMonster, IMonster
         switch (condition.Type)
         {
             case ConditionType.Paralyze when HasImmunity(Immunity.Paralysis):
-            case ConditionType.Drown when HasImmunity(Immunity.Drown):
-            case ConditionType.Energy when HasImmunity(Immunity.Energy):
-            case ConditionType.Fire when HasImmunity(Immunity.Fire):
+            case ConditionType.Drowning when HasImmunity(Immunity.Drown):
+            case ConditionType.Electrified when HasImmunity(Immunity.Energy):
+            case ConditionType.Burning when HasImmunity(Immunity.Fire):
             case ConditionType.Drunk when HasImmunity(Immunity.Drunkenness):
-            case ConditionType.Poison when HasImmunity(Immunity.Earth):
+            case ConditionType.Poisoned when HasImmunity(Immunity.Earth):
+            case ConditionType.Bleeding when HasImmunity(Immunity.Physical):
                 return;
             default:
                 base.AddCondition(condition);

@@ -51,7 +51,7 @@ public class SingleTargetAttackService(
             return Result.Success;
         }
 
-        if (damage.MainDamage is null)
+        if (damage.MainDamage is null or { Damage: <= 0 })
         {
             conditionAttackService.Execute(attackInput);
         }
@@ -119,7 +119,7 @@ public class SingleTargetAttackService(
 
         var mainDamage = damage.MainDamage;
 
-        if (mainDamage is null || mainDamage.Damage <= 0) return false;
+        if (mainDamage is null || mainDamage.Damage <= 0 || mainDamage.Type is DamageType.None) return false;
 
         mainDamage.Unjustified = unjustifiedAttack;
 
