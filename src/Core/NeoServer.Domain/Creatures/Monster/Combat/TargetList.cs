@@ -26,7 +26,7 @@ public class TargetList : IEnumerable<CombatTarget>
         {
             var target = NearestTarget ?? NearestSightClearTarget;
             return target is not null &&
-                   (target.CanReachCreature || (target.HasSightClear && target.IsInRange(_monster)));
+                   (target.CanReachCreature);
         }
     }
 

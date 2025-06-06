@@ -37,10 +37,10 @@ public class MonsterCombatService(IAttackService attackService)
             combatParameter.CoordinateArea = CreateArea(attack, monster, target);
 
             var result = attackService.Execute(new AttackInput(monster, target, combatParameter));
-
-            monster.PostAttack(attack);
-
+            
             if (result.Failed) continue;
+            
+            monster.PostAttack(attack);
 
             numberOfAttacks++;
 

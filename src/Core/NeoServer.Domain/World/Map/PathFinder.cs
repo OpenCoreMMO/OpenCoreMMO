@@ -10,10 +10,10 @@ namespace NeoServer.Domain.World.Map;
 
 public class PathFinder : IPathFinder
 {
-    public static readonly (bool Founded, Direction[] Directions) FoundedButEmptyDirections =
+    public static readonly (bool Found, Direction[] Directions) FoundedButEmptyDirections =
         (true, Array.Empty<Direction>());
 
-    public static readonly (bool Founded, Direction[] Directions) NotFound = (false, Array.Empty<Direction>());
+    public static readonly (bool Found, Direction[] Directions) NotFound = (false, Array.Empty<Direction>());
 
     public PathFinder(IMap map)
     {
@@ -22,19 +22,19 @@ public class PathFinder : IPathFinder
 
     public IMap Map { get; set; }
 
-    public (bool Founded, Direction[] Directions) Find(Location startPosition, Location targetPosition,
+    public (bool Found, Direction[] Directions) Find(Location startPosition, Location targetPosition,
         FindPathParams fpp)
     {
         return AStar.GetPathMatching(Map, null, startPosition, targetPosition, fpp, null);
     }
 
-    public (bool Founded, Direction[] Directions) Find(ICreature creature, Location target,
+    public (bool Found, Direction[] Directions) Find(ICreature creature, Location target,
         ITileEnterRule tileEnterRule)
     {
         return AStar.GetPathMatching(Map, creature, creature.Location, target, new FindPathParams(true), tileEnterRule);
     }
 
-    public (bool Founded, Direction[] Directions) Find(ICreature creature, Location target, FindPathParams fpp,
+    public (bool Found, Direction[] Directions) Find(ICreature creature, Location target, FindPathParams fpp,
         ITileEnterRule tileEnterRule)
     {
         if (creature is not IWalkableCreature walkableCreature) return NotFound;
@@ -51,7 +51,7 @@ public class PathFinder : IPathFinder
         {
             var pathToKeepDistance = FindPathToKeepDistance(creature, target, fpp, tileEnterRule);
 
-            return pathToKeepDistance.Founded
+            return pathToKeepDistance.Found
                 ? (true, pathToKeepDistance.Directions)
                 : AStar.GetPathMatching(Map, creature, creature.Location, target, fpp, tileEnterRule);
         }
@@ -100,7 +100,7 @@ public class PathFinder : IPathFinder
         return Direction.None;
     }
 
-    public (bool Founded, Direction[] Directions) FindStep(ICreature creature, Location target, FindPathParams fpp,
+    public (bool Found, Direction[] Directions) FindStep(ICreature creature, Location target, FindPathParams fpp,
         ITileEnterRule tileEnterRule)
     {
         var startLocation = creature.Location;
@@ -115,67 +115,81 @@ public class PathFinder : IPathFinder
         return NotFound;
     }
 
-    public (bool Founded, Direction[] Directions) FindPathToKeepDistance(ICreature creature, Location target,
-        FindPathParams fpp, ITileEnterRule tileEnterRule)
+    public (bool Found, Direction[] Directions) FindPathToKeepDistance(
+        ICreature creature,
+        Location target,
+        FindPathParams fpp,
+        ITileEnterRule tileEnterRule)
     {
-        if (fpp.MaxTargetDist <= 1) return FoundedButEmptyDirections;
-        var startLocation = creature.Location;
+        var start = creature.Location;
+        var currentDistance = start.GetMaxSqmDistance(target);
 
-        var currentDistance = startLocation.GetMaxSqmDistance(target);
+        // Already at the desired distance — no need to move
+        if (currentDistance == fpp.MaxTargetDist)
+            return FoundedButEmptyDirections;
 
-        if (currentDistance > fpp.MaxTargetDist) return NotFound;
+        bool shouldMoveCloser = currentDistance > fpp.MaxTargetDist;
+        bool shouldMoveFarther = !shouldMoveCloser;
 
-        if (currentDistance == fpp.MaxTargetDist) return FoundedButEmptyDirections;
-
-        var possibleDirections = new[]
+        var allDirections = new[]
         {
-            Direction.East, Direction.South, Direction.West, Direction.North, Direction.NorthEast,
-            Direction.NorthEast, Direction.SouthEast, Direction.SouthWest
+            // Cardinal directions first
+            Direction.East, Direction.South, Direction.West, Direction.North,
+            // Diagonal directions (lower preference)
+            Direction.NorthEast, Direction.NorthWest, Direction.SouthEast, Direction.SouthWest
         };
 
-        (Direction, int) directionWeight = (Direction.None, 0);
+        (Direction BestDirection, int Score) best = (Direction.None, int.MinValue);
+        var fallbackOptions = new List<Direction>();
 
-        var canGoToDirections = new Direction[8];
-        var canGoIndex = 0;
-
-        var cannotGoDirectionCount = 0;
-        foreach (var direction in possibleDirections)
+        foreach (var direction in allDirections)
         {
-            var nextLocation = startLocation.GetNextLocation(direction);
-            var nextDistance = nextLocation.GetMaxSqmDistance(target);
-
-            var canGoToDirection = Map.CanGoToDirection(creature, direction, tileEnterRule);
-            var isDiagonalMovement = startLocation.IsDiagonalMovement(nextLocation);
-
-            if (!canGoToDirection)
-            {
-                if (!isDiagonalMovement) cannotGoDirectionCount++;
-                continue;
-            }
-
-            var weight = 0;
-
-            if (isDiagonalMovement && cannotGoDirectionCount < 4)
+            var next = start.GetNextLocation(direction);
+            if (!Map.CanGoToDirection(creature, direction, tileEnterRule))
                 continue;
 
-            canGoToDirections[canGoIndex++] = direction;
+            var nextDistance = next.GetMaxSqmDistance(target);
+            var isDiagonal = start.IsDiagonalMovement(next);
 
-            if (nextDistance > currentDistance) weight++;
-            if (nextLocation.GetSumSqmDistance(target) > startLocation.GetSumSqmDistance(target)) weight++;
+            // Calculate a score based on how well the move matches the goal
+            int score = 0;
 
-            if (weight > directionWeight.Item2)
-            {
-                directionWeight.Item1 = direction;
-                directionWeight.Item2 = weight;
-            }
+            if (shouldMoveCloser && nextDistance < currentDistance)
+                score++;
+
+            if (shouldMoveFarther && nextDistance > currentDistance)
+                score++;
+
+            // Add an extra point if the Manhattan distance also improves
+            int currentManhattan = start.GetSumSqmDistance(target);
+            int nextManhattan = next.GetSumSqmDistance(target);
+
+            if (shouldMoveCloser && nextManhattan < currentManhattan)
+                score++;
+
+            if (shouldMoveFarther && nextManhattan > currentManhattan)
+                score++;
+
+            // Penalize diagonal moves to favor cardinal movement
+            if (isDiagonal)
+                score--;
+
+            // Track best direction so far
+            if (score > best.Score)
+                best = (direction, score);
+
+            if (score >= 0)
+                fallbackOptions.Add(direction);
         }
 
-        if (directionWeight.Item1 != Direction.None) return (true, new[] { directionWeight.Item1 });
+        // Return best move, or fallback, or nothing
+        if (best.BestDirection != Direction.None)
+            return (true, [best.BestDirection]);
 
-        if (canGoIndex > 0)
+        if (fallbackOptions.Count > 0)
         {
-            var randonIndex = GameRandom.Random.Next(0, maxValue: canGoIndex);
-            return (true, new[] { canGoToDirections[randonIndex] });
+            var randomDirection = fallbackOptions[GameRandom.Random.Next(0, maxValue: fallbackOptions.Count)];
+            return (true, [randomDirection]);
         }
 
         return FoundedButEmptyDirections;
