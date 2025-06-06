@@ -36,7 +36,7 @@ internal static class MonsterAttackConverter
         "earth",
         "ice",
         "holy",
-        "death"
+        "death", "drunk"
     };
 
     public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)
@@ -284,7 +284,19 @@ internal static class MonsterAttackConverter
 
                 combatAttack.CombatParameter.Condition =
                     new CombatParameter.AttackCondition(condition,
-                        (uint)duration == 0 ? 5000 : ConditionIntervalMap.Get(condition));
+                        duration == 0 ? ConditionIntervalMap.Get(condition) : (uint)duration);
+            }
+
+            if (attackName.Equals("outfit", StringComparison.InvariantCultureIgnoreCase))
+            {
+                attack.TryGetValue("monster", out string monsterName);
+
+                combatAttack.CombatParameter.Condition =
+                    new CombatParameter.AttackCondition(ConditionType.Outfit,
+                        duration == 0 ? 5000 : (uint)duration)
+                    {
+                        Value = monsterName
+                    };
             }
 
             attacks.Add(combatAttack);
@@ -320,15 +332,5 @@ internal static class MonsterAttackConverter
 
             attack["chance"] = Math.Round(chance * 100d / maxChance).ToString(CultureInfo.InvariantCulture);
         }
-    }
-
-    private static decimal ParseDecimalSafely(string? input)
-    {
-        if (string.IsNullOrWhiteSpace(input))
-            return 0m;
-
-        var sanitizedInput = input.Replace("--", "-").Trim();
-
-        return decimal.TryParse(sanitizedInput, out var result) ? result : 0m;
     }
 }

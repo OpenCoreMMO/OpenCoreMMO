@@ -91,7 +91,7 @@ public class CombatParameter
 
         public ConditionType Type { get; }
         public uint Duration { get; set; }
-        public int Value { get; set; }
+        public object Value { get; set; }
     }
 }
 
