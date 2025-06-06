@@ -14,6 +14,7 @@ using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Condition;
 using NeoServer.Domain.Creatures.Monster.Actions;
 using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Player;
@@ -167,6 +168,8 @@ public class Monster : WalkableMonster, IMonster
 
         Targets.AddTarget(enemy);
     }
+    
+    public override bool CanSee(Location pos) => base.CanSee(pos, (int)MapViewPort.MaxClientViewPortX, (int)MapViewPort.MaxClientViewPortY, 1);
 
     public virtual void UpdateState()
     {
@@ -459,6 +462,24 @@ public class Monster : WalkableMonster, IMonster
         Follow(creature);
         SetAttackTarget(creature);
         UpdateLastTargetChance();
+    }
+
+    public override void AddCondition(ICondition condition)
+    {
+        switch (condition.Type)
+        {
+            case ConditionType.Paralyze when HasImmunity(Immunity.Paralysis):
+            case ConditionType.Drowning when HasImmunity(Immunity.Drown):
+            case ConditionType.Electrified when HasImmunity(Immunity.Energy):
+            case ConditionType.Burning when HasImmunity(Immunity.Fire):
+            case ConditionType.Drunk when HasImmunity(Immunity.Drunkenness):
+            case ConditionType.Poisoned when HasImmunity(Immunity.Earth):
+            case ConditionType.Bleeding when HasImmunity(Immunity.Physical):
+                return;
+            default:
+                base.AddCondition(condition);
+                break;
+        }
     }
 
     #region Summon Event Attachment

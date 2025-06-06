@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Player.Inventory.Calculations;
 using NeoServer.Domain.Creatures.Player.Inventory.Operations;
@@ -101,9 +102,18 @@ public class Inventory : IInventory
         return PossibleAmountToAddCalculation.Calculate(this, item, toPosition);
     }
 
-    public bool CanRemoveItem(IItem item)
+    public bool HasEquippedItemWithImmunity(Immunity immunity)
     {
-        return true;
+        foreach (var (item, _) in InventoryMap.Items)
+        {
+            if (immunity is Immunity.Drunkenness && item.Metadata.Attributes.TryGetAttribute(ItemAttribute.SuppressDrunk, out byte suppressDrunk) && suppressDrunk == 1)
+            {
+                return true;
+            }
+            
+        }
+
+        return false;
     }
 
     private void AddItemsToInventory(IDictionary<Slot, (IItem Item, ushort Id)> items)

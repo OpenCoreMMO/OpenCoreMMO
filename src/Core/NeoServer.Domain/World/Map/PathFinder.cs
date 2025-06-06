@@ -43,7 +43,7 @@ public class PathFinder : IPathFinder
 
         if (!fpp.KeepDistance && creature.Location.IsNextTo(target)) return FoundedButEmptyDirections;
 
-        if (walkableCreature.Speed == 0) return NotFound;
+        //if (walkableCreature.Speed == 0) return NotFound;
 
         if (fpp.OneStep) return FindStep(creature, target, fpp, tileEnterRule);
 

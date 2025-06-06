@@ -83,6 +83,5 @@ public interface IMonster : IWalkableMonster, ICombatActor
     void Escape();
     void Born(Location.Structs.Location location);
     void Summon(ISummonService summonService);
-    IMonsterCombatAttack[] SelectAttacks();
     void PostAttack(IMonsterCombatAttack attack);
 }

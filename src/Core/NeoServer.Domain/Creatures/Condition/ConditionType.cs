@@ -3,9 +3,9 @@
 public enum ConditionType : uint
 {
     None,
-    Poison = 1 << 0,
-    Fire = 1 << 1,
-    Energy = 1 << 2,
+    Poisoned = 1 << 0,
+    Burning = 1 << 1,
+    Electrified = 1 << 2,
     Bleeding = 1 << 3,
     Haste = 1 << 4,
     Paralyze = 1 << 5,
@@ -18,7 +18,7 @@ public enum ConditionType : uint
     ExhaustWeapon = 1 << 12, // unused
     Regeneration = 1 << 13,
     Soul = 1 << 14,
-    Drown = 1 << 15,
+    Drowning = 1 << 15,
     Muted = 1 << 16,
     ChannelMutedTicks = 1 << 17,
     YellTicks = 1 << 18,

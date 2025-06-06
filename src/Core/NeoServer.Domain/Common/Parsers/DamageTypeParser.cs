@@ -47,7 +47,7 @@ public static class DamageTypeParser
             "death" => DamageType.Death,
             "lifedrain" => DamageType.LifeDrain,
             "mortarea" => DamageType.Death,
-            _ => DamageType.Melee
+            _ => DamageType.None
         };
     }
 

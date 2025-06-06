@@ -9,9 +9,9 @@ public class ConditionTypeParser
     {
         return type switch
         {
-            ConditionType.Poison => DamageType.Earth,
-            ConditionType.Fire => DamageType.FireField,
-            ConditionType.Energy => DamageType.Energy,
+            ConditionType.Poisoned => DamageType.Earth,
+            ConditionType.Burning => DamageType.FireField,
+            ConditionType.Electrified => DamageType.Energy,
             _ => DamageType.None
         };
     }
@@ -20,10 +20,26 @@ public class ConditionTypeParser
     {
         return type switch
         {
-            DamageType.Earth => ConditionType.Poison,
-            DamageType.FireField => ConditionType.Fire,
-            DamageType.Fire => ConditionType.Fire,
-            DamageType.Energy => ConditionType.Energy,
+            DamageType.Earth => ConditionType.Poisoned,
+            DamageType.FireField => ConditionType.Burning,
+            DamageType.Fire => ConditionType.Burning,
+            DamageType.Energy => ConditionType.Electrified,
+            _ => ConditionType.None
+        };
+    }
+    
+    public static ConditionType Parse(string type)
+    {
+        return type switch
+        {
+            "poison" => ConditionType.Poisoned,
+            "fire" => ConditionType.Burning,
+            "energy" => ConditionType.Electrified,
+            "drunk" => ConditionType.Drunk,
+            "drown" => ConditionType.Drowning,
+            "curse" => ConditionType.Cursed,
+            "freeze" => ConditionType.Freezing,
+            "bleed" => ConditionType.Bleeding,
             _ => ConditionType.None
         };
     }

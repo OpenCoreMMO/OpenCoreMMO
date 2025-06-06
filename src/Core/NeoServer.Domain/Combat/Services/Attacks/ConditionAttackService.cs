@@ -17,10 +17,14 @@ public class ConditionAttackService : IAttackService
         if (target is not ICombatActor targetCreature || combatParameter.Condition is null ||
             combatParameter.Condition.Type is ConditionType.None) return Result.NotApplicable;
 
-        if (attackInput.Parameters.DamageType is DamageType.None)
-            return PerformCondition(combatParameter, targetCreature);
+        var isDamageCondition = combatParameter.MinDamage > 0 || combatParameter.MaxDamage > 0;
 
-        return PerformDamageCondition(combatParameter, targetCreature, aggressor);
+        if (isDamageCondition)
+        {
+            return PerformDamageCondition(combatParameter, targetCreature, aggressor);
+        }
+
+        return PerformCondition(combatParameter, targetCreature);
     }
 
     private static Result PerformDamageCondition(CombatParameter combatParameter, ICombatActor targetCreature,
@@ -38,13 +42,7 @@ public class ConditionAttackService : IAttackService
             return Result.Success;
         }
 
-        if (condition is DamageCondition damageCondition)
-        {
-            damageCondition.Start(targetCreature, combatParameter.MinDamage, combatParameter.MaxDamage);
-            return Result.Success;
-        }
-
-        condition.Start(targetCreature);
+        (condition as DamageCondition)?.Start(targetCreature, combatParameter.MinDamage, combatParameter.MaxDamage);
         return Result.Success;
     }
 

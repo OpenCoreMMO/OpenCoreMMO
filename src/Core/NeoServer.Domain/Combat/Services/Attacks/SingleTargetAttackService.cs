@@ -5,7 +5,6 @@ using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Results;
@@ -26,31 +25,25 @@ public class SingleTargetAttackService(
         var aggressor = attackInput.Aggressor as ICombatActor;
         var target = attackInput.Target ?? aggressor?.CurrentTarget;
 
-        var attackMissed = false;
-
-        if (attackInput.Parameters.HitChance.HasValue)
+        if (IsAttackMissed(attackInput))
         {
-            var value = GameRandom.Random.Next(1, maxValue: 100);
-            attackMissed = value > attackInput.Parameters.HitChance;
+            PublishAttackEvent(attackInput, attackMissed: true);
+            aggressor?.PreAttack(CreateCombatContext(attackInput));
+            return Result.Success;
         }
 
-        eventAggregator.Publish(new CreatureAttackingEvent(aggressor, target, attackInput.Parameters.ShootType,
-            attackInput.Parameters.Effect, attackMissed));
-
-        aggressor?.PreAttack(new CombatContext
-        {
-            CombatParameters = attackInput.Parameters,
-            InfiniteAmmo = combatConfiguration.InfiniteAmmo,
-            InfiniteThrowingWeapon = combatConfiguration.InfiniteThrowingWeapon
-        });
-
-        if (attackMissed) return Result.Success;
+        PublishAttackEvent(attackInput, attackMissed: false);
+        aggressor?.PreAttack(CreateCombatContext(attackInput));
 
         var damage = DamageBuilder.Build(attackInput);
-
         var wasDamaged = PerformAttack(aggressor, target, damage);
 
-        CreateBloodPool(damage, target);
+        TryCreateBloodPool(damage, target);
+
+        if (attackInput.Parameters.FieldAttack)
+        {
+            CreateMagicField(attackInput);
+        }
 
         if (wasDamaged)
         {
@@ -58,17 +51,46 @@ public class SingleTargetAttackService(
             return Result.Success;
         }
 
-        if (damage.MainDamage is null) conditionAttackService.Execute(attackInput);
-
-        if (attackInput.Parameters.FieldAttack)
+        if (damage.MainDamage is null or { Damage: <= 0 })
         {
-            CreateMagicField(attackInput);
+            conditionAttackService.Execute(attackInput);
         }
 
         return Result.Success;
     }
 
-    private void CreateBloodPool(CalculatedAttackDamage damage, IThing target)
+    private static bool IsAttackMissed(AttackInput attackInput)
+    {
+        if (!attackInput.Parameters.HitChance.HasValue)
+            return false;
+
+        var value = GameRandom.Random.Next(1, maxValue: 100);
+        return value > attackInput.Parameters.HitChance;
+    }
+
+    private void PublishAttackEvent(
+        AttackInput attackInput,
+        bool attackMissed)
+    {
+        eventAggregator.Publish(new CreatureAttackingEvent(
+            attackInput.Aggressor,
+            attackInput.Target,
+            attackInput.Parameters.ShootType,
+            attackInput.Parameters.Effect,
+            attackMissed));
+    }
+
+    private CombatContext CreateCombatContext(AttackInput attackInput)
+    {
+        return new CombatContext
+        {
+            CombatParameters = attackInput.Parameters,
+            InfiniteAmmo = combatConfiguration.InfiniteAmmo,
+            InfiniteThrowingWeapon = combatConfiguration.InfiniteThrowingWeapon
+        };
+    }
+
+    private void TryCreateBloodPool(CalculatedAttackDamage damage, IThing target)
     {
         if (damage.MainDamage is { Damage: > 0, IsElementalDamage: false })
         {
@@ -82,21 +104,24 @@ public class SingleTargetAttackService(
 
     private static bool PerformAttack(ICombatActor aggressor, IThing target, CalculatedAttackDamage damage)
     {
-        if (target is not ICombatActor targetCreature) return false;
+        if (target is not ICombatActor targetCreature)
+            return false;
 
-        if (damage.MainDamage == null) return false;
+        if (damage.MainDamage == null)
+            return false;
 
-        //cannot attack himself
-        if (Equals(target, aggressor)) return false;
+        if (Equals(target, aggressor))
+            return false;
 
         var unjustifiedAttack =
             target is IPlayer targetPlayer && aggressor is IPlayer playerAggressor &&
             playerAggressor.GetSkull(targetPlayer) is Skull.None;
 
         var mainDamage = damage.MainDamage;
-        mainDamage.Unjustified = unjustifiedAttack;
 
-        bool wasDamaged;
+        if (mainDamage is null || mainDamage.Damage <= 0 || mainDamage.Type is DamageType.None) return false;
+
+        mainDamage.Unjustified = unjustifiedAttack;
 
         if (damage.ExtraDamage?.Damage > 0)
         {
@@ -104,9 +129,9 @@ public class SingleTargetAttackService(
             return targetCreature.TakeDamage(aggressor, damages);
         }
 
-        return targetCreature.TakeDamage(aggressor, damage.MainDamage);
+        return targetCreature.TakeDamage(aggressor, mainDamage);
     }
-    
+
     private void CreateMagicField(AttackInput attackInput)
     {
         var magicFieldType = attackInput.Parameters.DamageType switch
@@ -117,6 +142,9 @@ public class SingleTargetAttackService(
             _ => MagicFieldType.None
         };
 
-        magicFieldService.AddToGround(attackInput.Aggressor as ICreature, attackInput.Target.Location, magicFieldType);
+        magicFieldService.AddToGround(
+            attackInput.Aggressor as ICreature,
+            attackInput.Target.Location,
+            magicFieldType);
     }
 }

@@ -45,7 +45,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public abstract int DefendUsingShield(int attack);
     public abstract int DefendUsingArmor(int attack);
 
-    public void AddCondition(ICondition condition)
+    public virtual void AddCondition(ICondition condition)
     {
         switch (condition.Type)
         {
@@ -378,7 +378,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         foreach (var damage in damages)
         {
-            if (damage.Damage <= 0) continue;
+            if (damage.Damage <= 0 || damage.Type is DamageType.None) continue;
             
             ReduceDamage(damage);
 

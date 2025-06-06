@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Items.Items.Weapons;
 
@@ -57,4 +58,6 @@ public interface IInventory : IHasItem
     event ChangeInventoryWeight OnWeightChanged;
 
     #endregion
+
+    bool HasEquippedItemWithImmunity(Immunity immunity);
 }
