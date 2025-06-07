@@ -15,13 +15,11 @@ public class SpreadEffect
     /// <returns></returns>
     public static Coordinate[] Create(Direction direction, int length, int spread)
     {
-        var pool = ArrayPool<Coordinate>.Shared;
-        var points = pool.Rent(length * spread);
+        spread = Math.Max(spread, 1);
+        var points = new Coordinate[length * spread];
 
-        if (spread == 0) return [];
-
-        var y = 0;
-        var x = 0;
+        const int y = 0;
+        const int x = 0;
 
         var count = 0;
         for (var i = 0; i < length; i++)
@@ -29,6 +27,7 @@ public class SpreadEffect
             var row = i + 1;
             var cols = i < length / spread ? 0 : (i + 1) / (length / spread + 1);
             for (var c = 0 - cols; c <= 0 + cols; c++)
+            {
                 switch (direction)
                 {
                     case Direction.North:
@@ -46,9 +45,8 @@ public class SpreadEffect
                     case Direction.None:
                         break;
                 }
+            }
         }
-
-        pool.Return(points);
 
         return points[..count];
     }

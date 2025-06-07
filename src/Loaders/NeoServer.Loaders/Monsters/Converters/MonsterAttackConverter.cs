@@ -36,15 +36,11 @@ internal static class MonsterAttackConverter
         "earth",
         "ice",
         "holy",
-        "death", "drunk"
+        "death", "drunk", "outfit"
     };
 
     public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)
     {
-        if (data.Name == "Training Monk")
-        {
-        }
-
         if (data.Attacks is null) return [];
 
         var attacks = new List<IMonsterCombatAttack>();
@@ -206,28 +202,6 @@ internal static class MonsterAttackConverter
                     combatAttack.CombatParameter.Condition.Duration = tick;
 
                 continue;
-            }
-
-            if (range > 1 || radius == 1)
-            {
-                if (areaEffect != null)
-                {
-                    var damageType = DamageTypeParser.Parse(areaEffect);
-
-                    combatAttack.CombatParameter.DamageType = damageType == DamageType.Melee
-                        ? combatAttack.CombatParameter.DamageType
-                        : damageType;
-                }
-            }
-
-            if (radius > 1)
-            {
-                combatAttack.CombatParameter.DamageType = DamageTypeParser.Parse(areaEffect);
-            }
-
-            if (length > 0)
-            {
-                combatAttack.CombatParameter.DamageType = DamageTypeParser.Parse(areaEffect);
             }
 
             if (attackName.Equals("lifeDrain", StringComparison.InvariantCultureIgnoreCase))

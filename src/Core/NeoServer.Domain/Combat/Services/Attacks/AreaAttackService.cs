@@ -75,7 +75,7 @@ public class AreaAttackService(
             }
 
             var targetCreatures = walkableTile.Creatures?.ToArray();
-            if (targetCreatures is null) continue;
+            if (targetCreatures is null or {Length: 0}) continue;
 
             affectedCreatures.AddRange(targetCreatures);
         }
@@ -95,7 +95,7 @@ public class AreaAttackService(
 
             var mainDamage = damage.MainDamage;
 
-            if (mainDamage is { Damage: > 0 })
+            if (mainDamage is { Damage: > 0, Type: not DamageType.None })
             {
                 mainDamage.Unjustified = unjustifiedAttack;
 
@@ -128,7 +128,7 @@ public class AreaAttackService(
     private static bool InflictDamage(CalculatedAttackDamage damage, CombatDamage mainDamage, ICombatActor target,
         IThing aggressor)
     {
-        if (damage.ExtraDamage?.Damage > 0)
+        if (damage.ExtraDamage is { Damage: > 0, Type: not DamageType.None })
         {
             var damages = new CombatDamageList([mainDamage, damage.ExtraDamage]);
             return target.TakeDamage(aggressor, damages);

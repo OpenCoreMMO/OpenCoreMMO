@@ -42,17 +42,25 @@ public class CreatureAttackingEventHandler(IMap map, IGameCreatureManager gameCr
 
         if (@event.ShootType != default && @event.Target?.Location is not null && !@event.AttackMissed &&
             @event.Target.Location != @event.Aggressor.Location)
+        {
             connection.OutgoingPackets.Enqueue(new DistanceEffectPacket(@event.Aggressor.Location,
                 @event.Target.Location,
                 (byte)@event.ShootType));
+        }
 
         if (@event.Effect != 0 && @event.Target != null)
+        {
             connection.OutgoingPackets.Enqueue(new MagicEffectPacket(@event.Target.Location,
                 @event.Effect));
+        }
 
         if (@event.Area?.Length > 0)
+        {
             foreach (var location in @event.Area)
+            {
                 connection.OutgoingPackets.Enqueue(new MagicEffectPacket(location, @event.Effect));
+            }
+        }
     }
 
     private static void SendMissedAttack(CreatureAttackingEvent @event,

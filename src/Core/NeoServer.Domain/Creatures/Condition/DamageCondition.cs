@@ -23,7 +23,7 @@ public class DamageCondition : BaseCondition
         Cause = cause;
         Type = type;
         Interval = interval;
-        DamageType = ConditionTypeParser.Parse(type);
+        DamageType = type.ToDamageType();
         _maxDamage = maxDamage;
         _minDamage = minDamage;
         Effect = effect;
@@ -37,7 +37,7 @@ public class DamageCondition : BaseCondition
         Cause = cause;
         Type = type;
         Interval = interval;
-        DamageType = ConditionTypeParser.Parse(type);
+        DamageType = ConditionTypeParser.ToDamageType(type);
         _maxDamage = damage;
         _minDamage = damage;
         Effect = effect;
