@@ -1,12 +1,12 @@
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Condition;
 
 namespace NeoServer.Domain.Combat.Services.Attacks;
 
-public class ConditionAttackService : IAttackService
+public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IAttackService
 {
     public Result Execute(AttackInput attackInput)
     {
@@ -46,7 +46,7 @@ public class ConditionAttackService : IAttackService
         return Result.Success;
     }
 
-    private static Result PerformCondition(CombatParameter combatParameter, ICombatActor targetCreature)
+    private Result PerformCondition(CombatParameter combatParameter, ICombatActor targetCreature)
     {
         var conditionType = combatParameter.Condition.Type;
         var duration = combatParameter.Condition.Duration;
@@ -56,6 +56,12 @@ public class ConditionAttackService : IAttackService
             if (conditionType is ConditionType.Paralyze)
             {
                 AddParalyzeCondition(combatParameter, targetCreature, conditionType, duration);
+                return Result.Success;
+            }
+
+            if (conditionType is ConditionType.Outfit)
+            {
+                AddOutfitCondition(combatParameter, targetCreature, conditionType, duration);
                 return Result.Success;
             }
 
@@ -71,11 +77,31 @@ public class ConditionAttackService : IAttackService
     private static void AddParalyzeCondition(CombatParameter combatParameter, ICombatActor targetCreature,
         ConditionType conditionType, uint duration)
     {
-        targetCreature.DecreaseSpeed((ushort)Math.Abs(combatParameter.Condition.Value));
+        targetCreature.DecreaseSpeed((ushort)Math.Abs((int)combatParameter.Condition.Value));
 
         targetCreature.AddCondition(new Condition(conditionType, duration)
         {
-            EndAction = () => targetCreature.IncreaseSpeed((ushort)Math.Abs(combatParameter.Condition.Value))
+            EndAction = () => targetCreature.IncreaseSpeed((ushort)Math.Abs((int)combatParameter.Condition.Value))
+        });
+    }
+
+    private void AddOutfitCondition(CombatParameter combatParameter, ICombatActor targetCreature,
+        ConditionType conditionType, uint duration)
+    {
+        monsterDataManager.TryGetMonster((string)combatParameter.Condition.Value, out var monster);
+
+        monster.Look.TryGetValue(LookType.Type, out var lookType);
+        monster.Look.TryGetValue(LookType.Addon, out var addon);
+        monster.Look.TryGetValue(LookType.Head, out var head);
+        monster.Look.TryGetValue(LookType.Body, out var body);
+        monster.Look.TryGetValue(LookType.Legs, out var legs);
+        monster.Look.TryGetValue(LookType.Feet, out var feet);
+
+        targetCreature.SetTemporaryOutfit(lookType, (byte)head, (byte)body, (byte)legs, (byte)feet, (byte)addon);
+
+        targetCreature.AddCondition(new Condition(conditionType, duration)
+        {
+            EndAction = targetCreature.BackToOldOutfit
         });
     }
 }
