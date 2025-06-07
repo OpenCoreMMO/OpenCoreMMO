@@ -28,9 +28,6 @@ public delegate void StartWalk(IWalkableCreature creature);
 public delegate void Say(ICreature creature, SpeechType type, string message, ICreature receiver = null);
 
 public delegate void AddCondition(ICreature creature, ICondition condition);
-
-public delegate void RemoveCondition(ICreature creature, ICondition condition);
-
 public delegate void ChangeOutfit(ICreature creature, IOutfit outfit);
 
 public delegate void Think(ICreature creature, int interval);
