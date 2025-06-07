@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Combat;
+﻿using System.Reflection.Metadata.Ecma335;
+using NeoServer.Domain.Combat;
 using NeoServer.Domain.Combat.Validation;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Helpers;
@@ -44,7 +45,7 @@ internal static class TargetDetector
             }
 
             var targetIsUnreachable = IsTargetUnreachable(monster, target, mapTool);
-            if (targetIsUnreachable.Founded) continue;
+            if (targetIsUnreachable.Unreachable) continue;
 
             target.SetAsReachable(targetIsUnreachable.Directions);
 
@@ -57,18 +58,18 @@ internal static class TargetDetector
         }
     }
 
-    private static (bool Founded, Direction[] Directions) IsTargetUnreachable(Monster monster, CombatTarget target,
+    private static (bool Unreachable, Direction[] Directions) IsTargetUnreachable(Monster monster, CombatTarget target,
         IMapTool mapTool)
     {
         var result = mapTool.PathFinder.Find(monster, target.Creature.Location, monster.PathSearchParams,
             monster.TileEnterRule);
 
-        if (!result.Founded) return (true, []);
+        if (!result.Found) return (true, []);
 
-        if (AttackValidation.CanAttack(monster, target.Creature).Failed) return result;
+        if (AttackValidation.CanAttack(monster, target.Creature).Failed) return (true, []);
 
-        if (target.Creature.IsInvisible && !monster.CanSeeInvisible) return result;
+        if (target.Creature.IsInvisible && !monster.CanSeeInvisible) return (true, []);
 
-        return (false, []);
+        return (false, result.Directions);
     }
 }

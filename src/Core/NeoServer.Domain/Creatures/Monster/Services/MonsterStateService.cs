@@ -2,9 +2,9 @@
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Helpers;
 
-namespace NeoServer.Domain.Creatures.Monster.Managers;
+namespace NeoServer.Domain.Creatures.Monster.Services;
 
-public static class MonsterStateManager
+public static class MonsterStateService
 {
     public static void Run(IMonster monster, ISummonService summonService)
     {

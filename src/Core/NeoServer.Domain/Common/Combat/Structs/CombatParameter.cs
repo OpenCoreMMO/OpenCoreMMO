@@ -81,11 +81,17 @@ public class CombatParameter
         ExtraAttack = extraAttack;
     }
 
-    public class AttackCondition(ConditionType type, uint duration)
+    public class AttackCondition
     {
-        public ConditionType Type { get; } = type;
-        public uint Duration { get; set; } = duration;
-        public int Value { get; set; }
+        public AttackCondition(ConditionType type, uint duration)
+        {
+            Type = type;
+            Duration = duration;
+        }
+
+        public ConditionType Type { get; }
+        public uint Duration { get; set; }
+        public object Value { get; set; }
     }
 }
 

@@ -9,7 +9,7 @@ namespace NeoServer.Domain.World.Algorithms.AStar;
 
 public static class AStar
 {
-    public static (bool Founded, Direction[] Directions) GetPathMatching(
+    public static (bool Found, Direction[] Directions) GetPathMatching(
         IMap map,
         ICreature creature,
         Location startpos,

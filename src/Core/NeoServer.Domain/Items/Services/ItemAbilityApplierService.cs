@@ -117,15 +117,15 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
 
             var condition = suppressAttribute switch
             {
-                ItemAttribute.SuppressDrown => ConditionType.Drown,
+                ItemAttribute.SuppressDrown => ConditionType.Drowning,
                 ItemAttribute.SuppressDrunk => ConditionType.Drunk,
                 ItemAttribute.SuppressCurse => ConditionType.Cursed,
                 ItemAttribute.SuppressDazzle => ConditionType.Dazzled,
-                ItemAttribute.SuppressEnergy => ConditionType.Energy,
-                ItemAttribute.SuppressFire => ConditionType.Fire,
+                ItemAttribute.SuppressEnergy => ConditionType.Electrified,
+                ItemAttribute.SuppressFire => ConditionType.Burning,
                 ItemAttribute.SuppressFreeze => ConditionType.Freezing,
                 ItemAttribute.SuppressPhysical => ConditionType.None,
-                ItemAttribute.SuppressPoison => ConditionType.Poison,
+                ItemAttribute.SuppressPoison => ConditionType.Poisoned,
                 _ => ConditionType.None
             };
 

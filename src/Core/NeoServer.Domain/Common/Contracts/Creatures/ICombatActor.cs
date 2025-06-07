@@ -59,7 +59,6 @@ public interface ICombatActor : IWalkableCreature
     event ChangeVisibility OnChangedVisibility;
     event PropagateAttack OnPropagateAttack;
     event GainExperience OnGainedExperience;
-    event RemoveCondition OnRemovedCondition;
     event ManaChange OnManaChanged;
 
     int DefendUsingArmor(int attack);

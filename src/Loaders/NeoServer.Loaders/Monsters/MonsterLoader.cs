@@ -45,19 +45,23 @@ public class MonsterLoader
         {
             var monsters = GetMonsterDataListAsync().GetAwaiter().GetResult().ToList();
             _monsterManager.Load(monsters);
-            return new object[] { monsters.Count };
+            return [monsters.Count];
         });
     }
 
     private async Task<IEnumerable<(string, IMonsterType)>> GetMonsterDataListAsync()
     {
         var basePath = $"{_serverConfiguration.Data}/monsters";
+        
         await using var fileStream =
             new FileStream(Path.Combine(basePath, "monsters.json"), FileMode.Open, FileAccess.Read);
+        
         var monstersPath =
             await JsonSerializer.DeserializeAsync<List<IDictionary<string, string>>>(fileStream, _jsonOptions);
 
-        var tasks = monstersPath.Select(async x => (x["name"], await ConvertMonsterAsync(basePath, x)));
+        var tasks = monstersPath
+            .OrderBy(x => x["name"])
+            .Select(async x => (x["name"], await ConvertMonsterAsync(basePath, x)));
 
         return await Task.WhenAll(tasks);
     }

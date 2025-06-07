@@ -45,7 +45,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public abstract int DefendUsingShield(int attack);
     public abstract int DefendUsingArmor(int attack);
 
-    public void AddCondition(ICondition condition)
+    public virtual void AddCondition(ICondition condition)
     {
         switch (condition.Type)
         {
@@ -69,7 +69,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public void RemoveCondition(ICondition condition)
     {
         Conditions.Remove(condition.Type);
-        OnRemovedCondition?.Invoke(this, condition);
+        EventAggregator.Publish(new CreatureConditionRemovedEvent(this, condition));
     }
 
     public void DisableCondition(ConditionType type)
@@ -77,7 +77,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         if (!Conditions.TryGetValue(type, out var condition)) return;
 
         condition.Disable();
-        OnRemovedCondition?.Invoke(this, condition);
+        EventAggregator.Publish(new CreatureConditionRemovedEvent(this, condition));
     }
 
     public void EnableCondition(ConditionType type)
@@ -378,7 +378,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         foreach (var damage in damages)
         {
-            if (damage.Damage <= 0) continue;
+            if (damage.Damage <= 0 || damage.Type is DamageType.None) continue;
             
             ReduceDamage(damage);
 
@@ -591,7 +591,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public event PropagateAttack OnPropagateAttack;
     public event GainExperience OnGainedExperience;
     public event LoseExperience OnLoseExperience;
-    public event RemoveCondition OnRemovedCondition;
     public event ManaChange OnManaChanged;
     public event DropLoot OnDroppedLoot;
 

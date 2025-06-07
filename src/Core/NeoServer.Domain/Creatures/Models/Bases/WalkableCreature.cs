@@ -151,7 +151,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
         var result = MapTool.PathFinder.Find(this, location, PathSearchParams, TileEnterRule);
 
-        if (!result.Founded) return false;
+        if (!result.Found) return false;
 
         NextAction = callbackAction;
         return TryWalkTo(result.Directions);
@@ -231,7 +231,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
         var result = MapTool.PathFinder.Find(this, creature.Location, PathSearchParams, TileEnterRule);
 
-        if (!result.Founded)
+        if (!result.Found)
         {
             HasFollowPath = false;
             return;

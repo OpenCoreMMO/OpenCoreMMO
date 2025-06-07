@@ -56,7 +56,7 @@ public class AccountLoginHandler : PacketHandler
         if (foundedAccount.BanishedAt is not null)
         {
             var untilMessage = foundedAccount.BanishedEndAt.HasValue
-                ? $" until {foundedAccount.BanishedEndAt!.Value.ToString("MM/dd/yyyy")}."
+                ? $" until {foundedAccount.BanishedEndAt!.Value:MM/dd/yyyy}."
                 : ".";
 
             connection.Disconnect(
