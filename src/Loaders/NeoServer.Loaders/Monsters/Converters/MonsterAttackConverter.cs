@@ -36,7 +36,8 @@ internal static class MonsterAttackConverter
         "earth",
         "ice",
         "holy",
-        "death", "drunk", "outfit"
+        "drown",
+        "death", "drunk", "outfit", "poisoncondition", "energycondition", "firecondition", "drowncondition","cursecondition"
     };
 
     public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)

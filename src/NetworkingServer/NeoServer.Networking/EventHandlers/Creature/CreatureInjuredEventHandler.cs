@@ -73,7 +73,7 @@ public class CreatureInjuredEventHandler(IMap map, IGameCreatureManager gameCrea
 
         if (elementalDamage.Damage > 0)
         {
-            var damageEffect = elementalDamage.Effect == 0
+            var damageEffect = elementalDamage.Effect == EffectT.None
                 ? DamageEffectParser.Parse(elementalDamage.Type, victim)
                 : elementalDamage.Effect;
 
