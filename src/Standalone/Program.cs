@@ -87,10 +87,11 @@ public class Program
         container.Resolve<WorldLoader>().Load();
 
         container.Resolve<SpawnLoader>().Load();
+        
+        container.Resolve<SpellLoader>().Load();
 
         container.Resolve<MonsterLoader>().Load();
         container.Resolve<VocationLoader>().Load();
-        container.Resolve<SpellLoader>().Load();
         container.Resolve<GroupLoader>().Load();
 
         container.Resolve<IEnumerable<IStartupLoader>>().ToList().ForEach(x => x.Load());

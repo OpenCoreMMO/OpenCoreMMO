@@ -12,7 +12,7 @@ public class SpellService(
     IEventAggregator eventAggregator,
     IMap map)
 {
-    public bool Cast(IPlayer caster, IThing target, ISpell spell, bool isHotkey)
+    public bool Cast(ICombatActor caster, IThing target, ISpell spell, bool isHotkey)
     {
         if (spell is null) return false;
 
@@ -31,20 +31,24 @@ public class SpellService(
 
         var result = spellCastValidation.CanBeCastBy(caster, target, spell);
 
-        if (result.Failed)
+        if (result.Failed && caster is IPlayer)
         {
             eventAggregator.Publish(new SpellFailedToCastEvent(caster, spell, result.Reason));
             return false;
         }
 
         var invokeResult = spell.Invoke(caster, target, isHotkey);
-        if (invokeResult.Failed)
+        
+        if (invokeResult.Failed && caster is IPlayer)
         {
             eventAggregator.Publish(new SpellFailedToCastEvent(caster, spell, invokeResult.Reason));
             return true;
         }
 
-        caster.PostSpellCast(spell);
+        if (caster is IPlayer player)
+        {
+            player.PostSpellCast(spell);
+        }
 
         return true;
     }

@@ -4,20 +4,24 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Combat.Services.Spells;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Combat.Attacks;
+using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Effects.Parsers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Parsers;
 using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Spells;
+using NeoServer.Server.Helpers;
 using NeoServer.Server.Helpers.Extensions;
 using Serilog;
 
 namespace NeoServer.Loaders.Monsters.Converters;
 
-internal static class MonsterAttackConverter
+public class MonsterAttackConverter(ILogger logger, SpellListManager spellListManager)
 {
     private static HashSet<string> SupportedAttributes = new()
     {
@@ -41,7 +45,7 @@ internal static class MonsterAttackConverter
         "cursecondition"
     };
 
-    public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)
+    public IMonsterCombatAttack[] Convert(MonsterData data)
     {
         if (data.Attacks is null) return [];
 
@@ -73,11 +77,6 @@ internal static class MonsterAttackConverter
             if (!attack.ContainsKey("target") && !attack.ContainsKey("needTarget"))
             {
                 target = 1; // Default to no target if not specified
-            }
-
-            if (!_supportedAttackNames.Contains(attackName))
-            {
-                logger.Warning("{Monster} Attack: {AttackName} is not implemented", data.Name, attackName);
             }
 
             attack.TryGetValue("attributes", out JsonElement attributesElement);
@@ -280,7 +279,22 @@ internal static class MonsterAttackConverter
                     };
             }
 
+            var spell = spellListManager.GetByName(attackName);
+            combatAttack.Spell = spell;
+            
+            
+
             attacks.Add(combatAttack);
+
+            if (spell is not null)
+            {
+                _supportedAttackNames.Add(attackName);
+            }
+            
+            if (!_supportedAttackNames.Contains(attackName))
+            {
+                logger.Warning("{Monster} Attack: {AttackName} is not implemented", data.Name, attackName);
+            }
         }
 
         return attacks.ToArray();

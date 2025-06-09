@@ -5,7 +5,7 @@ using NeoServer.Domain.Common.Item;
 
 namespace NeoServer.Domain.Combat.Services.Attacks.Builders;
 
-public class DamageBuilder
+public static class DamageBuilder
 {
     /// <summary>
     ///     Calculates damage to the target
@@ -25,21 +25,23 @@ public class DamageBuilder
 
         if (attackInput.Parameters.DamageType is DamageType.None) return damage;
 
-        var physicalDamage = AttackCalculation.Calculate(
+        var mainDamage = AttackCalculation.Calculate(
             (ushort)(attackInput.Parameters.MinDamage / factor),
             (ushort)(attackInput.Parameters.MaxDamage / factor),
             attackInput.Parameters.DamageType);
 
+        mainDamage.Effect = attackInput.Parameters.Effect;
+        damage.MainDamage = mainDamage;
+
         // If there's an extra elemental attack, calculate and add it to the buffer
         if (attackInput.Parameters.HasExtraAttack)
+        {
             //Adds an elemental attack to the damage buffer, using the extra attack parameters.
             damage.ExtraDamage = AttackCalculation.Calculate(
                 (ushort)(extraAttack.MinDamage / factor),
                 (ushort)(extraAttack.MaxDamage / factor),
                 extraAttack.DamageType);
-
-        damage.MainDamage = physicalDamage;
-
+        }
 
         return damage;
     }

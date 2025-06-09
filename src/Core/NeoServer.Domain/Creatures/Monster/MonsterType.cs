@@ -32,6 +32,7 @@ public sealed class MonsterType : IMonsterType
     }
 
     public IMonsterCombatAttack[] Attacks { get; set; }
+    public Dictionary<string, IMonsterCombatAttack> Spells { get; set; }
     public ushort Armor { get; set; }
     public ushort Defense { get; set; }
     public ICombatDefense[] Defenses { get; set; }

@@ -1,4 +1,5 @@
 ﻿using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Spells;
 
 namespace NeoServer.Domain.Common.Contracts.Combat.Attacks;
 
@@ -9,4 +10,5 @@ public interface IMonsterCombatAttack
     public CombatParameter CombatParameter { get; set; }
     public bool NeedTarget { get; set; }
     Guid Id { get; }
+    ISpell Spell { get; set; }
 }
