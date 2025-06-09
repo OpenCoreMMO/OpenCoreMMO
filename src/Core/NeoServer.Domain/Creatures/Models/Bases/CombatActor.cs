@@ -554,7 +554,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         Conditions.Clear();
 
         OnDeath?.Invoke(this, by);
-        EventAggregator.Instance.Publish(new CreatureDeathEvent(this, by));
+        EventAggregator.Publish(new CreatureDeathEvent(this, by));
         
         ReceivedDamages.Clear();
     }
