@@ -15,7 +15,6 @@ namespace NeoServer.Domain.Combat.Services.Attacks;
 public class SingleTargetAttackService(
     IEventAggregator eventAggregator,
     CombatConfiguration combatConfiguration,
-    BloodPoolService bloodPoolService,
     ConditionAttackService conditionAttackService,
     MagicFieldService magicFieldService)
     : IAttackService
@@ -37,9 +36,7 @@ public class SingleTargetAttackService(
 
         var damage = DamageBuilder.Build(attackInput);
         var wasDamaged = PerformAttack(aggressor, target, damage);
-
-        TryCreateBloodPool(damage, target);
-
+        
         if (attackInput.Parameters.FieldAttack)
         {
             CreateMagicField(attackInput);
@@ -89,19 +86,7 @@ public class SingleTargetAttackService(
             InfiniteThrowingWeapon = combatConfiguration.InfiniteThrowingWeapon
         };
     }
-
-    private void TryCreateBloodPool(CalculatedAttackDamage damage, IThing target)
-    {
-        if (damage.MainDamage is { Damage: > 0, IsElementalDamage: false })
-        {
-            bloodPoolService.CreateSplash(target as ICombatActor, damage.MainDamage);
-            return;
-        }
-
-        if (damage.ExtraDamage is { Damage: > 0, IsElementalDamage: false })
-            bloodPoolService.CreateSplash(target as ICombatActor, damage.ExtraDamage);
-    }
-
+    
     private static bool PerformAttack(ICombatActor aggressor, IThing target, CalculatedAttackDamage damage)
     {
         if (target is not ICombatActor targetCreature)
@@ -119,7 +104,7 @@ public class SingleTargetAttackService(
 
         var mainDamage = damage.MainDamage;
 
-        if (mainDamage is null || mainDamage.Damage <= 0 || mainDamage.Type is DamageType.None) return false;
+        if (mainDamage is null || mainDamage.Type is DamageType.None) return false;
 
         mainDamage.Unjustified = unjustifiedAttack;
 

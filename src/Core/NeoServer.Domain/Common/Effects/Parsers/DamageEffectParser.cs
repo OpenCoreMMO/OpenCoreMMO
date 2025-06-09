@@ -23,6 +23,7 @@ public static class DamageEffectParser
             DamageType.Death => EffectT.BubbleBlack,
             DamageType.Holy => EffectT.HolyDamage,
             DamageType.Ice => EffectT.IceAttack,
+            DamageType.Drown => EffectT.RingsBlue,
             _ => EffectT.None
         };
     }

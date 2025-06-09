@@ -3,20 +3,25 @@ using NeoServer.Domain.Creatures.Condition;
 
 namespace NeoServer.Domain.Common.Parsers;
 
-public class ConditionTypeParser
+public static class ConditionTypeParser
 {
-    public static DamageType Parse(ConditionType type)
+    public static DamageType ToDamageType(this ConditionType type)
     {
         return type switch
         {
             ConditionType.Poisoned => DamageType.Earth,
             ConditionType.Burning => DamageType.FireField,
             ConditionType.Electrified => DamageType.Energy,
+            ConditionType.Freezing => DamageType.Ice,
+            ConditionType.Bleeding => DamageType.Physical,
+            ConditionType.Drowning => DamageType.Drown,
+            ConditionType.Cursed => DamageType.Death,
+            ConditionType.Dazzled => DamageType.Holy,
             _ => DamageType.None
         };
     }
 
-    public static ConditionType Parse(DamageType type)
+    public static ConditionType ToConditionType(this DamageType type)
     {
         return type switch
         {
@@ -40,6 +45,7 @@ public class ConditionTypeParser
             "curse" => ConditionType.Cursed,
             "freeze" => ConditionType.Freezing,
             "bleed" => ConditionType.Bleeding,
+            "dazzle" => ConditionType.Dazzled,
             _ => ConditionType.None
         };
     }

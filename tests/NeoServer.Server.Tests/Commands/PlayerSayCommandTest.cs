@@ -34,8 +34,7 @@ public class PlayerSayCommandTest
         var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
         var mapTool = new MapTool(map, new PathFinder(map));
 
-        var spellService = new SpellService(new SpellCastValidation(mapTool), new Mock<IEventAggregator>().Object,
-            logger.Object, map);
+        var spellService = new SpellService(new SpellCastValidation(mapTool), new Mock<IEventAggregator>().Object, map);
 
         var playerSayPacket = new Mock<PlayerSayPacket>(network.Object);
         playerSayPacket.SetupGet(x => x.TalkType).Returns(SpeechType.Private);

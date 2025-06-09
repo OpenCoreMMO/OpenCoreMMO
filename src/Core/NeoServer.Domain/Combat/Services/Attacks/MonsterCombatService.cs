@@ -35,10 +35,11 @@ public class MonsterCombatService(IAttackService attackService)
 
             combatParameter.CoordinateArea = CreateArea(attack, monster, target);
 
-            var result = attackService.Execute(new AttackInput(monster, target, combatParameter));
-            
+            var result =
+                attackService.Execute(new AttackInput(monster, attack.NeedTarget ? target : null, combatParameter));
+
             if (result.Failed) continue;
-            
+
             monster.PostAttack(attack);
 
             numberOfAttacks++;
@@ -59,10 +60,10 @@ public class MonsterCombatService(IAttackService attackService)
 
         if (range > 0 && !attack.NeedTarget && target is null)
         {
-            var x = (ushort)GameRandom.Random.Next(-range.Value, maxValue:range.Value);
+            var x = (ushort)GameRandom.Random.Next(-range.Value, maxValue: range.Value);
             var y = (ushort)GameRandom.Random.Next(-range.Value, maxValue: range.Value);
-            
-            origin = new Location((ushort)(origin.X + x),(ushort)(origin.Y + y), origin.Z);
+
+            origin = new Location((ushort)(origin.X + x), (ushort)(origin.Y + y), origin.Z);
         }
 
         if (attack.CombatParameter.Radius > 0)

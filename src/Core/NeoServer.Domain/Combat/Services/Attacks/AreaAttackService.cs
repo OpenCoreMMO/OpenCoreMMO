@@ -12,7 +12,6 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Services;
 using NeoServer.Domain.World.Algorithms;
 
@@ -21,7 +20,6 @@ namespace NeoServer.Domain.Combat.Services.Attacks;
 public class AreaAttackService(
     IEventAggregator eventAggregator,
     IMap map,
-    BloodPoolService bloodPoolService,
     MagicFieldService magicFieldService,
     ConditionAttackService conditionAttackService) : IAttackService
 {
@@ -75,7 +73,7 @@ public class AreaAttackService(
             }
 
             var targetCreatures = walkableTile.Creatures?.ToArray();
-            if (targetCreatures is null) continue;
+            if (targetCreatures is null or {Length: 0}) continue;
 
             affectedCreatures.AddRange(targetCreatures);
         }
@@ -95,15 +93,13 @@ public class AreaAttackService(
 
             var mainDamage = damage.MainDamage;
 
-            if (mainDamage is { Damage: > 0 })
+            if (mainDamage is { Damage: > 0, Type: not DamageType.None })
             {
                 mainDamage.Unjustified = unjustifiedAttack;
 
                 var wasDamaged = InflictDamage(damage, mainDamage, target, aggressor);
 
                 if (wasDamaged) conditionAttackService.Execute(attackInput);
-
-                CreateBloodPool(damage, target);
             }
             else
             {
@@ -128,24 +124,12 @@ public class AreaAttackService(
     private static bool InflictDamage(CalculatedAttackDamage damage, CombatDamage mainDamage, ICombatActor target,
         IThing aggressor)
     {
-        if (damage.ExtraDamage?.Damage > 0)
+        if (damage.ExtraDamage is { Damage: > 0, Type: not DamageType.None })
         {
             var damages = new CombatDamageList([mainDamage, damage.ExtraDamage]);
             return target.TakeDamage(aggressor, damages);
         }
 
         return target.TakeDamage(aggressor, damage.MainDamage);
-    }
-
-    private void CreateBloodPool(CalculatedAttackDamage damage, IThing target)
-    {
-        if (damage.MainDamage is { Damage: > 0, IsElementalDamage: false })
-        {
-            bloodPoolService.CreateSplash(target as ICombatActor, damage.MainDamage);
-            return;
-        }
-
-        if (damage.ExtraDamage is { Damage: > 0, IsElementalDamage: false })
-            bloodPoolService.CreateSplash(target as ICombatActor, damage.ExtraDamage);
     }
 }

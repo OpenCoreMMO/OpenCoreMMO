@@ -18,11 +18,14 @@ public static class PlayerCombatParameterBuilder
 
         var elementalDamage = CalculateElementalAttack(player);
 
+        var damageType = GetDamageType(player);
+        damageType = damageType is DamageType.None ? DamageType.Melee : damageType;
+        
         return new CombatParameter
         {
             MinDamage = player.MinimumAttackPower,
             MaxDamage = player.MaximumAttackPower,
-            DamageType = GetDamageType(player),
+            DamageType = damageType,
             Range = player.Inventory.Weapon is IHasRange weapon ? weapon.Range : null,
             Effect = EffectT.None,
             Spread = 5,

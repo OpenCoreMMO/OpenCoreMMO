@@ -293,90 +293,12 @@ public class Monster : WalkableMonster, IMonster
         }
     }
 
+    [Obsolete]
     public override Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks)
     {
-        combatAttacks = Array.Empty<CombatAttackResult>();
-        if (!IsHostile) return Result.Fail(InvalidOperation.AggressorIsNotHostile);
-
-        var arrayPool = ArrayPool<CombatAttackResult>.Shared;
-
-        combatAttacks = arrayPool.Rent(Attacks.Length);
-
-        if (!Attacks.Any()) return Result.NotPossible;
-
-        var attacked = false;
-
-        var maxNumberOfAttacks = (int)Math.Min(3.0, Math.Ceiling(Attacks.Length / 1.5));
-        var numberOfSuccessfulAttacks = 0;
-
-        var comboChance = 70;
-
-        foreach (var attack in Attacks)
-        {
-            if (!Cooldowns.Expired(attack.Id)) continue;
-
-            if (attack.AttackChance < GameRandom.Random.Next(0, maxValue: 100))
-                continue;
-
-            if (attack.CombatParameter is null) Console.WriteLine($"Combat attack not found for monster: {Name}");
-
-            // if (attack.CombatAttack.TryAttack(this, enemy, attack.Translate(), out var combatAttack) is false) continue;
-            //
-            // combatAttacks[numberOfSuccessfulAttacks++] = combatAttack;
-            //
-            // attacked = true;
-            //
-            // if (comboChance < GameRandom.Random.Next(0, maxValue: 100) ||
-            //     numberOfSuccessfulAttacks >= maxNumberOfAttacks)
-            //     break; //chance to combo next attack
-            //
-            // comboChance = Math.Max(0, comboChance - 30);
-        }
-
-        if (attacked && enemy.Location != Location) TurnTo(enemy);
-
-        if (enemy.IsDead) Targets.RemoveTarget(enemy);
-
-        arrayPool.Return(combatAttacks);
-        combatAttacks = combatAttacks[..numberOfSuccessfulAttacks];
-
-
-        return attacked ? Result.Success : Result.NotPossible;
+        throw new NotSupportedException("Monsters cannot attack directly. Use the MonsterCombatService to handle attacks.");
     }
-
-    public IMonsterCombatAttack[] SelectAttacks()
-    {
-        if (!IsHostile) return [];
-        if (Attacks.Length == 0) return [];
-        var maxNumberOfAttacks = (int)Math.Min(2, Math.Ceiling(Attacks.Length / 1.5));
-        var comboChance = 30;
-
-        Span<IMonsterCombatAttack> selectedAttacks = new IMonsterCombatAttack[2];
-
-        var numberOfAttacks = 0;
-        foreach (var attack in Attacks)
-        {
-            if (numberOfAttacks > maxNumberOfAttacks) break;
-
-            if (!Cooldowns.Expired(attack.Id)) continue;
-
-            if (attack.AttackChance < GameRandom.Random.Next(0, maxValue: 100))
-                continue;
-
-            if (attack.CombatParameter is null)
-            {
-                Console.WriteLine($"Combat attack not found for monster: {Name}");
-                continue;
-            }
-
-            selectedAttacks[numberOfAttacks++] = attack;
-
-            if (comboChance < GameRandom.Random.Next(0, maxValue: 100)) break;
-        }
-
-        return selectedAttacks[..numberOfAttacks].ToArray();
-    }
-
+    
     public void PostAttack(IMonsterCombatAttack attack)
     {
         Cooldowns.Start(attack.Id, attack.Interval);
