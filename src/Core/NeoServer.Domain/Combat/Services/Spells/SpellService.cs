@@ -4,14 +4,12 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Contracts.World;
-using Serilog;
 
 namespace NeoServer.Domain.Combat.Services.Spells;
 
 public class SpellService(
     SpellCastValidation spellCastValidation,
     IEventAggregator eventAggregator,
-    ILogger logger,
     IMap map)
 {
     public bool Cast(IPlayer caster, IThing target, ISpell spell, bool isHotkey)
