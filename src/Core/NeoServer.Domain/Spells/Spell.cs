@@ -79,9 +79,9 @@ public abstract class BaseSpell : ISpell
             caster.Location.GetMaxSqmDistance(caster.CurrentTarget.Location) > Range)
             return Result.Fail(InvalidOperation.CreatureIsNotReachable);
 
-        if (caster.Location.Z > target.Location.Z) return Result.Fail(InvalidOperation.FirstGoUpStairs);
+        if (NeedsTarget && caster.Location.Z > target.Location.Z) return Result.Fail(InvalidOperation.FirstGoUpStairs);
 
-        if (caster.Location.Z < target.Location.Z) return Result.Fail(InvalidOperation.FirstGoDownStairs);
+        if (NeedsTarget && caster.Location.Z < target.Location.Z) return Result.Fail(InvalidOperation.FirstGoDownStairs);
 
         var targetCreature = target switch
         {
