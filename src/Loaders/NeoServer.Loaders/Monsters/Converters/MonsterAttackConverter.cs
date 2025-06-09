@@ -37,7 +37,8 @@ internal static class MonsterAttackConverter
         "ice",
         "holy",
         "drown",
-        "death", "drunk", "outfit", "poisoncondition", "energycondition", "firecondition", "drowncondition","cursecondition"
+        "death", "drunk", "outfit", "poisoncondition", "energycondition", "firecondition", "drowncondition",
+        "cursecondition"
     };
 
     public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)
@@ -67,6 +68,11 @@ internal static class MonsterAttackConverter
             if (attack.ContainsKey("needTarget"))
             {
                 target = needTarget;
+            }
+
+            if (!attack.ContainsKey("target") && !attack.ContainsKey("needTarget"))
+            {
+                target = 1; // Default to no target if not specified
             }
 
             if (!_supportedAttackNames.Contains(attackName))
@@ -200,9 +206,9 @@ internal static class MonsterAttackConverter
 
                 if (attack.TryGetValue("tick", out ushort tick) &&
                     combatAttack.CombatParameter.DamageType == DamageType.Melee)
+                {
                     combatAttack.CombatParameter.Condition.Duration = tick;
-
-                continue;
+                }
             }
 
             if (attackName.Equals("lifeDrain", StringComparison.InvariantCultureIgnoreCase))

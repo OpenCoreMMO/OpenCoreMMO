@@ -12,7 +12,6 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Services;
 using NeoServer.Domain.World.Algorithms;
 
@@ -21,7 +20,6 @@ namespace NeoServer.Domain.Combat.Services.Attacks;
 public class AreaAttackService(
     IEventAggregator eventAggregator,
     IMap map,
-    BloodPoolService bloodPoolService,
     MagicFieldService magicFieldService,
     ConditionAttackService conditionAttackService) : IAttackService
 {
@@ -102,8 +100,6 @@ public class AreaAttackService(
                 var wasDamaged = InflictDamage(damage, mainDamage, target, aggressor);
 
                 if (wasDamaged) conditionAttackService.Execute(attackInput);
-
-                CreateBloodPool(damage, target);
             }
             else
             {
@@ -135,17 +131,5 @@ public class AreaAttackService(
         }
 
         return target.TakeDamage(aggressor, damage.MainDamage);
-    }
-
-    private void CreateBloodPool(CalculatedAttackDamage damage, IThing target)
-    {
-        if (damage.MainDamage is { Damage: > 0, IsElementalDamage: false })
-        {
-            bloodPoolService.CreateSplash(target as ICombatActor, damage.MainDamage);
-            return;
-        }
-
-        if (damage.ExtraDamage is { Damage: > 0, IsElementalDamage: false })
-            bloodPoolService.CreateSplash(target as ICombatActor, damage.ExtraDamage);
     }
 }

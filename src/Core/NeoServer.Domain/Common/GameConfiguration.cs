@@ -26,18 +26,18 @@ public record DeathConfiguration
 }
 
 public record PvPConfiguration(
-    PvpType PvpType,
-    bool SkullSystemEnabled,
-    int DayKillsToRedSkull,
-    int DayKillsToBlackSkull,
-    int WeekKillsToRedSkull,
-    int WeekKillsToBlackSkull,
-    int MonthKillsToRedSkull,
-    int MonthKillsToBlackSkull,
-    int WhiteSkullDurationMinutes,
-    int RedSkullDurationDays,
-    int BlackSkullDurationDays,
-    int ProtectionLevel
+    PvpType PvpType = PvpType.OpenPvP,
+    bool SkullSystemEnabled = true,
+    int DayKillsToRedSkull = 1,
+    int DayKillsToBlackSkull = 2,
+    int WeekKillsToRedSkull = 5,
+    int WeekKillsToBlackSkull = 10,
+    int MonthKillsToRedSkull = 10,
+    int MonthKillsToBlackSkull = 20,
+    int WhiteSkullDurationMinutes = 1,
+    int RedSkullDurationDays = 30,
+    int BlackSkullDurationDays = 45,
+    int ProtectionLevel = 20
 );
 
 public record ReportConfiguration(uint reportMaxTime);
