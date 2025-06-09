@@ -1,6 +1,8 @@
-﻿using NeoServer.Domain.Tests.Helpers;
+﻿using NeoServer.Domain.Combat.Services.Attacks;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Domain.Tests.Helpers.Services;
 using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Tests.Creature.Monster;
@@ -19,9 +21,11 @@ public class MonsterTest
         (map[100, 100, 7] as DynamicTile)?.AddCreature(sut);
         (map[101, 100, 7] as DynamicTile)?.AddCreature(attacker);
 
+        var attackService = AttackServiceTestBuilder.Build(map);
+        var monsterCombatService = new MonsterCombatService(attackService);
 
         //act
-        attacker.Attack(sut);
+        monsterCombatService.Attack(attacker, sut);
 
         //assert
         sut.HealthPoints.Should().Be(sut.MaxHealthPoints);
@@ -41,16 +45,18 @@ public class MonsterTest
         (map[100, 100, 7] as DynamicTile)?.AddCreature(sut);
         (map[101, 100, 7] as DynamicTile)?.AddCreature(master);
         (map[100, 101, 7] as DynamicTile)?.AddCreature(summon);
+        
+        var attackService = AttackServiceTestBuilder.Build(map);
+        var monsterCombatService = new MonsterCombatService(attackService);
 
         //act
-        summon.Attack(sut);
+        monsterCombatService.Attack(summon, sut);
 
         //assert
         sut.HealthPoints.Should().Be(sut.MaxHealthPoints);
     }
 
-    [Fact(Skip = "TODO: Fix later")]
-    [Trait("Category", "FixLater")]
+    [Fact]
     public void Monster_is_injured_when_attacked_by_a_summon_of_a_player()
     {
         //arrange
@@ -66,8 +72,13 @@ public class MonsterTest
         (map[101, 100, 7] as DynamicTile)?.AddCreature(master);
         (map[100, 101, 7] as DynamicTile)?.AddCreature(summon);
 
+        var attackService = AttackServiceTestBuilder.Build(map);
+        var monsterCombatService = new MonsterCombatService(attackService);
+
         //act
-        summon.Attack(sut);
+        monsterCombatService.Attack(summon, sut);
+        
+        //summon.Attack(sut);
 
         //assert
         sut.HealthPoints.Should().BeLessThan(sut.MaxHealthPoints);

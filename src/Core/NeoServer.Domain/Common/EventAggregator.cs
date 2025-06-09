@@ -17,7 +17,7 @@ public class EventAggregator : IEventAggregator
         Instance = this;
     }
 
-    public static IEventAggregator Instance { get; private set; }
+    private static EventAggregator Instance { get; set; }
 
     public void Initialize()
     {
@@ -46,16 +46,15 @@ public class EventAggregator : IEventAggregator
                 handlers.Select(x =>
                     {
                         var handlerInstance = _serviceProvider.GetService(x);
-                        IApplicationEventHandler<IEvent> handler;
 
                         if (x.GetInterfaces()
                             .Any(i => i.IsGenericType &&
                                       i.GetGenericTypeDefinition() == typeof(INetworkingEventHandler<>)))
                             return null;
 
-                        var handleMethod = x.GetMethod(nameof(handler.Handle));
-                        Action<IEvent> handlerDelegate = @event => handleMethod.Invoke(handlerInstance, [@event]);
-                        return handlerDelegate;
+                        var handleMethod = x.GetMethod(nameof(IApplicationEventHandler<IEvent>.Handle));
+                        return (Action<IEvent>)HandlerDelegate;
+                        void HandlerDelegate(IEvent @event) => handleMethod?.Invoke(handlerInstance, [@event]);
                     })
                     .Where(x => x is not null)
                     .ToList();
@@ -76,8 +75,9 @@ public class EventAggregator : IEventAggregator
                                 m.GetParameters().Length == 1 &&
                                 m.GetParameters()[0].ParameterType.FullName == eventNane);
 
-                        Action<IEvent> handlerDelegate = @event => handleMethod.Invoke(handlerInstance, [@event]);
-                        return handlerDelegate;
+                        return (Action<IEvent>)HandlerDelegate;
+
+                        void HandlerDelegate(IEvent @event) => handleMethod?.Invoke(handlerInstance, [@event]);
                     })
                     .Where(x => x is not null)
                     .ToList();

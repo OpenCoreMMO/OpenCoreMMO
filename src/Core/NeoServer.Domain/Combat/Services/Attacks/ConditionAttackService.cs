@@ -8,6 +8,17 @@ namespace NeoServer.Domain.Combat.Services.Attacks;
 
 public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IAttackService
 {
+    private static readonly HashSet<ConditionType> HarmfulConditions =
+    [
+        ConditionType.Bleeding,
+        ConditionType.Freezing,
+        ConditionType.Burning,
+        ConditionType.Poisoned,
+        ConditionType.Electrified,
+        ConditionType.Drowning,
+        ConditionType.Cursed,
+        ConditionType.Dazzled
+    ];
     public Result Execute(AttackInput attackInput)
     {
         var combatParameter = attackInput.Parameters;
@@ -17,8 +28,7 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
         if (target is not ICombatActor targetCreature || combatParameter.Condition is null ||
             combatParameter.Condition.Type is ConditionType.None) return Result.NotApplicable;
 
-        var isDamageCondition = combatParameter.MinDamage > 0 || combatParameter.MaxDamage > 0;
-
+        var isDamageCondition = HarmfulConditions.Contains(combatParameter.Condition.Type);
         if (isDamageCondition)
         {
             return PerformDamageCondition(combatParameter, targetCreature, aggressor);
@@ -32,6 +42,8 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
     {
         var conditionType = combatParameter.Condition.Type;
         var interval = combatParameter.Condition.Duration;
+
+        if (combatParameter.MinDamage is 0 || combatParameter.MaxDamage is 0) return Result.NotPossible;
 
         if (!targetCreature.HasCondition(combatParameter.Condition.Type, out var condition))
         {

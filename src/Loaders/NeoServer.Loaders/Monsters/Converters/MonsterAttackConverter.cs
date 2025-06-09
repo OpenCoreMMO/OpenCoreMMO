@@ -36,15 +36,13 @@ internal static class MonsterAttackConverter
         "earth",
         "ice",
         "holy",
-        "death", "drunk"
+        "drown",
+        "death", "drunk", "outfit", "poisoncondition", "energycondition", "firecondition", "drowncondition",
+        "cursecondition"
     };
 
     public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)
     {
-        if (data.Name == "Training Monk")
-        {
-        }
-
         if (data.Attacks is null) return [];
 
         var attacks = new List<IMonsterCombatAttack>();
@@ -70,6 +68,11 @@ internal static class MonsterAttackConverter
             if (attack.ContainsKey("needTarget"))
             {
                 target = needTarget;
+            }
+
+            if (!attack.ContainsKey("target") && !attack.ContainsKey("needTarget"))
+            {
+                target = 1; // Default to no target if not specified
             }
 
             if (!_supportedAttackNames.Contains(attackName))
@@ -203,31 +206,9 @@ internal static class MonsterAttackConverter
 
                 if (attack.TryGetValue("tick", out ushort tick) &&
                     combatAttack.CombatParameter.DamageType == DamageType.Melee)
-                    combatAttack.CombatParameter.Condition.Duration = tick;
-
-                continue;
-            }
-
-            if (range > 1 || radius == 1)
-            {
-                if (areaEffect != null)
                 {
-                    var damageType = DamageTypeParser.Parse(areaEffect);
-
-                    combatAttack.CombatParameter.DamageType = damageType == DamageType.Melee
-                        ? combatAttack.CombatParameter.DamageType
-                        : damageType;
+                    combatAttack.CombatParameter.Condition.Duration = tick;
                 }
-            }
-
-            if (radius > 1)
-            {
-                combatAttack.CombatParameter.DamageType = DamageTypeParser.Parse(areaEffect);
-            }
-
-            if (length > 0)
-            {
-                combatAttack.CombatParameter.DamageType = DamageTypeParser.Parse(areaEffect);
             }
 
             if (attackName.Equals("lifeDrain", StringComparison.InvariantCultureIgnoreCase))

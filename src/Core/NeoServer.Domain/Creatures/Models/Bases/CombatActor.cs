@@ -378,7 +378,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         foreach (var damage in damages)
         {
-            if (damage.Damage <= 0 || damage.Type is DamageType.None) continue;
+            if (damage.Type is DamageType.None) continue;
             
             ReduceDamage(damage);
 
@@ -554,6 +554,8 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         Conditions.Clear();
 
         OnDeath?.Invoke(this, by);
+        EventAggregator.Publish(new CreatureDeathEvent(this, by));
+        
         ReceivedDamages.Clear();
     }
 

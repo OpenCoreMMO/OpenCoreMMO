@@ -55,6 +55,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
     public void TurnTo(ICreature creature)
     {
+        if (creature is null) return;
         TurnTo(Location.DirectionTo(creature.Location));
     }
 

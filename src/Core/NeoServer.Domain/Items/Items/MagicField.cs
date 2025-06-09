@@ -51,7 +51,7 @@ public class MagicField : BaseItem
         var damages = Damage;
 
         if (damages.Max == 0) return;
-        var conditionType = ConditionTypeParser.Parse(DamageType);
+        var conditionType = DamageType.ToConditionType();
         actor.TakeDamage(this,
             new CombatDamage((ushort)damages.Max, DamageType) { Effect = DamageEffectParser.Parse(DamageType) });
 
