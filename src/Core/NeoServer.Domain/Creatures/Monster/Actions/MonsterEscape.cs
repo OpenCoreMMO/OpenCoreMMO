@@ -9,7 +9,6 @@ internal static class MonsterEscape
     public static void Escape(Monster monster)
     {
         monster.StopFollowing();
-        monster.StopAttack();
 
         var targets = monster.Targets;
 
