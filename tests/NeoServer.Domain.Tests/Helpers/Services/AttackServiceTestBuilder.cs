@@ -1,14 +1,18 @@
 using Moq;
 using NeoServer.Domain.Combat;
+using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Combat.Monster;
+using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Combat.Services;
 using NeoServer.Domain.Combat.Services.Attacks;
-using NeoServer.Domain.Combat.Services.Attacks.Validators;
-using NeoServer.Domain.Combat.Services.Spells;
+using NeoServer.Domain.Combat.Validations;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Monster.Managers;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Services;
+using NeoServer.Domain.Spells;
 using NeoServer.Domain.Tests.Server;
 using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Services;
@@ -59,6 +63,7 @@ public static class MonsterCombatServiceTestBuilder
         var attackService = AttackServiceTestBuilder.Build(map, pvpType);
         var mapTool = new MapTool(map, new PathFinder(map));
         var spellService = new SpellService(new SpellCastValidation(mapTool), new Mock<IEventAggregator>().Object, map);
-        return new MonsterCombatService(attackService, spellService);
+        var logger = new Mock<ILogger>();
+        return new MonsterCombatService(attackService, spellService, logger.Object);
     }
 }

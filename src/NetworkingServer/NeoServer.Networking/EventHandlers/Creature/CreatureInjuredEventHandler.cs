@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Effects.Parsers;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Networking.Packets.Outgoing.Creature;
 using NeoServer.Networking.Packets.Outgoing.Effect;

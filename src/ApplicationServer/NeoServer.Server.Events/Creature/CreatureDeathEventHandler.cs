@@ -3,6 +3,7 @@ using NeoServer.Domain.Combat.Services.Attacks.Events;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Services;
 using NeoServer.Server.Common.Contracts;

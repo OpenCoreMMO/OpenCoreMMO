@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Networking.Packets.Outgoing.Effect;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;

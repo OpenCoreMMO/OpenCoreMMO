@@ -132,7 +132,7 @@ public class MonsterStateTest
 
         monster.Metadata.Attacks =
         [
-            new MonsterCombatAttack
+            new MonsterCombatType
             {
                 AttackChance = 100
             }

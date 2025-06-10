@@ -1,5 +1,6 @@
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Combat.Validation;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
@@ -380,7 +381,7 @@ public class Player : CombatActor, IPlayer
 
     public byte GetSkillPercent(SkillType skill)
     {
-        var rate = Creatures.Vocation.Vocation.DefaultSkillMultiplier;
+        var rate = Creatures.Player.Vocation.Vocation.DefaultSkillMultiplier;
         Vocation.Skills?.TryGetValue(skill, out rate);
         return (byte)Skills[skill].GetPercentage(rate);
     }
@@ -1058,7 +1059,7 @@ public class Player : CombatActor, IPlayer
     {
         if (!Skills.ContainsKey(skill)) return;
 
-        var rate = Creatures.Vocation.Vocation.DefaultSkillMultiplier;
+        var rate = Creatures.Player.Vocation.Vocation.DefaultSkillMultiplier;
 
         Vocation?.Skills?.TryGetValue(skill, out rate);
 
@@ -1069,7 +1070,7 @@ public class Player : CombatActor, IPlayer
     {
         if (!Skills.ContainsKey(skill)) return;
 
-        var rate = Creatures.Vocation.Vocation.DefaultSkillMultiplier;
+        var rate = Creatures.Player.Vocation.Vocation.DefaultSkillMultiplier;
 
         Vocation?.Skills?.TryGetValue(skill, out rate);
 

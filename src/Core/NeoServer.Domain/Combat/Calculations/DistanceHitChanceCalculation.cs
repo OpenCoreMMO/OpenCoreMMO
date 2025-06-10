@@ -1,6 +1,6 @@
 ﻿namespace NeoServer.Domain.Combat.Calculations;
 
-public class DistanceHitChanceCalculation
+public static class DistanceHitChanceCalculation
 {
     public static byte CalculateFor2Hands(ushort skill, byte range)
     {

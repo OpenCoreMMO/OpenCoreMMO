@@ -9,7 +9,7 @@ using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Creatures.Player.Outfit;
-using NeoServer.Domain.Creatures.Vocation;
+using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.World.Models;
 using NeoServer.Domain.World.Services;

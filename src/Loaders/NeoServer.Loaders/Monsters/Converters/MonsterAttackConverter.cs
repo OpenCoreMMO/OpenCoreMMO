@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Combat.Attacks;
@@ -12,6 +13,7 @@ using NeoServer.Domain.Common.Effects.Parsers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Parsers;
 using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Spells;
 using NeoServer.Server.Helpers.Extensions;
 using Serilog;
@@ -36,11 +38,11 @@ public class MonsterAttackConverter(ILogger logger, SpellListManager spellListMa
         "effect"
     };
 
-    public IMonsterCombatAttack[] Convert(MonsterData data)
+    public MonsterCombatType[] Convert(MonsterData data)
     {
         if (data.Attacks is null) return [];
 
-        var attacks = new List<IMonsterCombatAttack>();
+        var attacks = new List<MonsterCombatType>();
 
         AdjustAttackChanceValue(data.Attacks);
 
@@ -84,7 +86,7 @@ public class MonsterAttackConverter(ILogger logger, SpellListManager spellListMa
             attributes.TryGetValue("shootEffect", out string shootEffect);
             attributes.TryGetValue("areaEffect", out string areaEffect);
 
-            var combatAttack = new MonsterCombatAttack
+            var combatAttack = new MonsterCombatType
             {
                 NeedTarget = target != 0,
                 AttackChance = Math.Min(chance, (byte)100),
