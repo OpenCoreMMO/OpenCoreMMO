@@ -35,13 +35,11 @@ public static class DamageBuilder
 
         // If there's an extra elemental attack, calculate and add it to the buffer
         if (attackInput.Parameters.HasExtraAttack)
-        {
             //Adds an elemental attack to the damage buffer, using the extra attack parameters.
             damage.ExtraDamage = AttackCalculation.Calculate(
                 (ushort)(extraAttack.MinDamage / factor),
                 (ushort)(extraAttack.MaxDamage / factor),
                 extraAttack.DamageType);
-        }
 
         return damage;
     }

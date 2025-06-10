@@ -37,10 +37,10 @@ public class MonsterLoader(
     private async Task<IEnumerable<(string, IMonsterType)>> GetMonsterDataListAsync()
     {
         var basePath = $"{serverConfiguration.Data}/monsters";
-        
+
         await using var fileStream =
             new FileStream(Path.Combine(basePath, "monsters.json"), FileMode.Open, FileAccess.Read);
-        
+
         var monstersPath =
             await JsonSerializer.DeserializeAsync<List<IDictionary<string, string>>>(fileStream, _jsonOptions);
 

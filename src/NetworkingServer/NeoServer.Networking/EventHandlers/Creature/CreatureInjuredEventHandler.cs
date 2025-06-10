@@ -82,9 +82,7 @@ public class CreatureInjuredEventHandler(IMap map, IGameCreatureManager gameCrea
         }
 
         if (damages.TotalDamage > 0)
-        {
             connection.OutgoingPackets.Enqueue(new MagicEffectPacket(victim.Location, EffectT.XBlood));
-        }
     }
 
     private static void SendDamageNumbers(CombatDamageList damages, ICreature victim, IConnection connection)

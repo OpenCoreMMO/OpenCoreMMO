@@ -20,7 +20,7 @@ public static class PlayerCombatParameterBuilder
 
         var damageType = GetDamageType(player);
         damageType = damageType is DamageType.None ? DamageType.Melee : damageType;
-        
+
         return new CombatParameter
         {
             MinDamage = player.MinimumAttackPower,

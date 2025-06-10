@@ -19,6 +19,7 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
         ConditionType.Cursed,
         ConditionType.Dazzled
     ];
+
     public Result Execute(AttackInput attackInput)
     {
         var combatParameter = attackInput.Parameters;
@@ -29,10 +30,7 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
             combatParameter.Condition.Type is ConditionType.None) return Result.NotApplicable;
 
         var isDamageCondition = HarmfulConditions.Contains(combatParameter.Condition.Type);
-        if (isDamageCondition)
-        {
-            return PerformDamageCondition(combatParameter, targetCreature, aggressor);
-        }
+        if (isDamageCondition) return PerformDamageCondition(combatParameter, targetCreature, aggressor);
 
         return PerformCondition(combatParameter, targetCreature);
     }

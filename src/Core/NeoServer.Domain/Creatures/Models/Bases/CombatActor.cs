@@ -171,10 +171,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         attack = OnImmunityDefense(attack);
 
-        if (attack.Damage <= 0)
-        {
-            OnBlockedAttack?.Invoke(this, BlockType.Armor);
-        }
+        if (attack.Damage <= 0) OnBlockedAttack?.Invoke(this, BlockType.Armor);
 
         return attack;
     }
@@ -387,18 +384,12 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         foreach (var damage in damages)
         {
             if (damage.Type is DamageType.None) continue;
-            
+
             ReduceDamage(damage);
 
-            if (damage.Damage <= 0)
-            {
-                continue;
-            }
+            if (damage.Damage <= 0) continue;
 
-            if (damage.Damage > HealthPoints)
-            {
-                damage.SetNewDamage((ushort)HealthPoints);
-            }
+            if (damage.Damage > HealthPoints) damage.SetNewDamage((ushort)HealthPoints);
 
             wasDamaged = true;
         }
@@ -563,7 +554,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         OnDeath?.Invoke(this, by);
         EventAggregator.Publish(new CreatureDeathEvent(this, by));
-        
+
         ReceivedDamages.Clear();
     }
 

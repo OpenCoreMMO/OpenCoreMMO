@@ -7,7 +7,6 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Condition;
-using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Spells;
 using NeoServer.Server.Helpers;
 
@@ -31,7 +30,7 @@ public abstract class AttackSpell : Spell<AttackSpell>
             var map = IoC.GetInstance<IMap>();
             target = map.GetNextTile(caster.Location, caster.Direction);
         }
-        
+
         var combatParameter = new CombatParameter
         {
             Effect = CombatSettings.Effect,
@@ -57,21 +56,19 @@ public abstract class AttackSpell : Spell<AttackSpell>
             CooldownDuration = CombatSettings.CooldownDuration,
             HitChance = CombatSettings.HitChance,
             CoordinateArea = CombatSettings.CoordinateArea,
-            UsingWeapon = CombatSettings.UsingWeapon,
+            UsingWeapon = CombatSettings.UsingWeapon
         };
 
         var attackInput = new AttackInput(caster, target, combatParameter);
-        
+
         if (caster is IMonster monster)
-        {
             if (monster.Metadata.Spells.TryGetValue(Name, out var attack))
             {
                 combatParameter.MinDamage = attack.CombatParameter.MinDamage;
                 combatParameter.MaxDamage = attack.CombatParameter.MaxDamage;
                 combatParameter.CooldownId = attack.Id;
             }
-        }
-        
+
         if (NeedDirection)
         {
             var effectStore = IoC.GetInstance<IAreaEffectStore>();

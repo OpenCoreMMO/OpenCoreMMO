@@ -13,9 +13,9 @@ public class SpellListManager
         {
             var command = GetCommand(words);
             commandSpell.Params = command.Params;
-            
+
             Spells.Add(command.Words, commandSpell);
-            SpellNameWordMap.Add( commandSpell.Name, command.Words);
+            SpellNameWordMap.Add(commandSpell.Name, command.Words);
             return;
         }
 
@@ -47,7 +47,7 @@ public class SpellListManager
     public ISpell GetByName(string name)
     {
         if (!SpellNameWordMap.TryGetValue(name, out var words)) return null;
-        
+
         Spells.TryGetValue(words, out var spell);
         return spell;
     }

@@ -67,7 +67,9 @@ public class Scripts : IScripts
 
         if (!Directory.Exists(dir) || !Directory.GetDirectories(dir).Any())
         {
-            _logger.Warning("{LoadEventSchedulerScriptsName} - Can not load folder \'scheduler\' on {CoreFolder}/events/scripts\'", nameof(LoadEventSchedulerScripts), coreFolder);
+            _logger.Warning(
+                "{LoadEventSchedulerScriptsName} - Can not load folder \'scheduler\' on {CoreFolder}/events/scripts\'",
+                nameof(LoadEventSchedulerScripts), coreFolder);
             return false;
         }
 
@@ -79,7 +81,8 @@ public class Scripts : IScripts
             {
                 if (!_scriptInterface.LoadFile(fileInfo.FullName, fileInfo.Name))
                 {
-                    _logger.Error("File: {FullName} - Error: {Error}",fileInfo.FullName, _scriptInterface.GetLastLuaError());
+                    _logger.Error("File: {FullName} - Error: {Error}", fileInfo.FullName,
+                        _scriptInterface.GetLastLuaError());
                     continue;
                 }
 
@@ -129,14 +132,16 @@ public class Scripts : IScripts
                 if (_configManager.GetBoolean(BooleanConfigType.SCRIPTS_CONSOLE_LOGS))
                 {
                     if (string.IsNullOrEmpty(lastDirectory) || lastDirectory != scriptFolder)
-                        _logger.Information("Loading folder: [{LastOrDefault}]", fileInfo.DirectoryName?.Split(Path.DirectorySeparatorChar).LastOrDefault());
+                        _logger.Information("Loading folder: [{LastOrDefault}]",
+                            fileInfo.DirectoryName?.Split(Path.DirectorySeparatorChar).LastOrDefault());
 
                     lastDirectory = fileInfo.DirectoryName;
                 }
 
                 if (!_scriptInterface.LoadFile(fileInfo.FullName, fileInfo.Name))
                 {
-                    _logger.Error("File: {FullName} - Error: {Error}",fileInfo.FullName, _scriptInterface.GetLastLuaError());
+                    _logger.Error("File: {FullName} - Error: {Error}", fileInfo.FullName,
+                        _scriptInterface.GetLastLuaError());
                     continue;
                 }
             }

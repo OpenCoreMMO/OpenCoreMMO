@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Networking.Packets.Messages;
