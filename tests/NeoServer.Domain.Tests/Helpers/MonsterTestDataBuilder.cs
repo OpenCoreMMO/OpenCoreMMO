@@ -31,7 +31,7 @@ public static class MonsterTestDataBuilder
             Speed = speed,
             Attacks =
             [
-                new MonsterCombatAttack
+                new MonsterCombatType
                 {
                     Interval = 0,
                     AttackChance = 100,
@@ -60,7 +60,7 @@ public static class MonsterTestDataBuilder
             MaxHealth = 100,
             Attacks =
             [
-                new MonsterCombatAttack
+                new MonsterCombatType
                 {
                     Interval = 0,
                     AttackChance = 100,

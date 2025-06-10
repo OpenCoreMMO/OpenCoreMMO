@@ -31,8 +31,8 @@ public sealed class MonsterType : IMonsterType
         return Flags.TryGetValue(flag, out var value) && value > 0;
     }
 
-    public IMonsterCombatAttack[] Attacks { get; set; }
-    public Dictionary<string, IMonsterCombatAttack> Spells { get; set; }
+    public MonsterCombatType[] Attacks { get; set; }
+    public Dictionary<string, MonsterCombatType> Spells { get; set; }
     public ushort Armor { get; set; }
     public ushort Defense { get; set; }
     public ICombatDefense[] Defenses { get; set; }

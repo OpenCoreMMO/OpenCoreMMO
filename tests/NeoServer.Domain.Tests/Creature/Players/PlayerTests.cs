@@ -9,7 +9,7 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Creatures.Player.Outfit;
-using NeoServer.Domain.Creatures.Vocation;
+using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Domain.Tests.Helpers.Player;
 
 namespace NeoServer.Domain.Tests.Creature.Players;

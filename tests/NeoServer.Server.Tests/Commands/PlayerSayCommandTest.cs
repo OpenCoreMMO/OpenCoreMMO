@@ -1,7 +1,6 @@
 ﻿using Moq;
 using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Domain.Chat;
-using NeoServer.Domain.Combat.Services.Spells;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Spells;

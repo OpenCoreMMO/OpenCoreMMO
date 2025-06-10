@@ -47,7 +47,7 @@ public class Monster : WalkableMonster, IMonster
     protected override string CloseInspectionText => InspectionText;
 
     private bool KeepDistance => TargetDistance > 1;
-    private IMonsterCombatAttack[] Attacks => Metadata.Attacks;
+    private MonsterCombatType[] Attacks => Metadata.Attacks;
     internal ICombatDefense[] Defenses => Metadata.Defenses;
     internal TargetList Targets { get; }
     public override bool CanAttackAnyTarget => Targets.CanAttackAnyTarget;
@@ -302,9 +302,9 @@ public class Monster : WalkableMonster, IMonster
             "Monsters cannot attack directly. Use the MonsterCombatService to handle attacks.");
     }
 
-    public void PostAttack(IMonsterCombatAttack attack)
+    public void PostAttack(MonsterCombatType type)
     {
-        Cooldowns.Start(attack.Id, attack.Interval);
+        Cooldowns.Start(type.Id, type.Interval);
     }
 
     public override Result CanAttack(CombatParameter combatParameter)
