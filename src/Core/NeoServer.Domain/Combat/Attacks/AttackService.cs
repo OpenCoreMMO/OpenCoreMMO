@@ -104,16 +104,6 @@ public class AttackService(
             //not pvp combat
             return Result.Success;
 
-        //pvp combat is not allowed in optional pvp
-        // if (pvpConfiguration.PvpMode == "Optional")
-        // {
-        //     //todo: error message
-        //     playerAggressor.StopAttack();
-        //     OperationFailService.Send(playerAggressor,
-        //         "You cannot attack other person.");
-        //     return Result.NotPossible;
-        // }
-
         var targetHasSkull = playerTarget?.GetSkull(playerAggressor) is not Skull.None;
 
         var tryingToAttackWithPvpDisabled = !targetHasSkull && playerAggressor.SecureMode is PvpSecureMode.PvPDisabled;
@@ -121,8 +111,10 @@ public class AttackService(
         if (tryingToAttackWithPvpDisabled)
         {
             playerAggressor.StopAttack(true);
+            
             OperationFailService.Send(playerAggressor,
                 InvalidOperation.AdjustCombatSettingsToAttackPlayer);
+            
             return Result.Fail(InvalidOperation.AdjustCombatSettingsToAttackPlayer);
         }
 

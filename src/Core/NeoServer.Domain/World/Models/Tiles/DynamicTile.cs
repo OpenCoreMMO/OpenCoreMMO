@@ -199,12 +199,13 @@ public class DynamicTile : BaseTile, IDynamicTile
         if (Ground?.ClientId == id) return true;
         if (Ground?.ClientId != 0) ++stackPosition;
 
-        if (item.IsAlwaysOnTop)
+        if (item.IsAlwaysOnTop && TopItems is not null)
         {
             foreach (var topItem in TopItems)
-                if (id == topItem.ClientId)
-                    return true;
-                else if (++stackPosition == 10) return false;
+            {
+                if (id == topItem.ClientId) return true;
+                if (++stackPosition == 10) return false;
+            }
         }
         else
         {

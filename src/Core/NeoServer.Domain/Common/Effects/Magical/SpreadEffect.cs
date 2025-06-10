@@ -14,6 +14,7 @@ public class SpreadEffect
     /// <returns></returns>
     public static Coordinate[] Create(Direction direction, int length, int spread)
     {
+        spread = Math.Max(spread, 1);
         var maxCols = (length - length % spread) / spread * 2 + 1;
         var maxSize = length * maxCols;
 
