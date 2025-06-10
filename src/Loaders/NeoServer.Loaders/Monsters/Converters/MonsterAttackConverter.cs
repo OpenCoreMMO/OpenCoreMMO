@@ -65,7 +65,10 @@ public class MonsterAttackConverter(ILogger logger, SpellListManager spellListMa
             if (attack.ContainsKey("needTarget")) target = needTarget;
 
             if (!attack.ContainsKey("target") &&
-                !attack.ContainsKey("needTarget")) target = 1; // Default to no target if not specified
+                !attack.ContainsKey("needTarget") && radius == 0 && length == 0 && spread == 0)
+            {
+                target = 1; // Default to no target if not specified
+            }
 
             attack.TryGetValue("attributes", out JsonElement attributesElement);
 
