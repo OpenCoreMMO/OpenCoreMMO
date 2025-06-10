@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using NeoServer.Domain.Combat;
+﻿using NeoServer.Domain.Combat;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Combat;
@@ -48,7 +47,7 @@ public class Monster : WalkableMonster, IMonster
     protected override string CloseInspectionText => InspectionText;
 
     private bool KeepDistance => TargetDistance > 1;
-    private IMonsterCombatAttack[] Attacks => Metadata.Attacks;
+    private MonsterCombatType[] Attacks => Metadata.Attacks;
     internal ICombatDefense[] Defenses => Metadata.Defenses;
     internal TargetList Targets { get; }
     public override bool CanAttackAnyTarget => Targets.CanAttackAnyTarget;
@@ -168,8 +167,11 @@ public class Monster : WalkableMonster, IMonster
 
         Targets.AddTarget(enemy);
     }
-    
-    public override bool CanSee(Location pos) => base.CanSee(pos, (int)MapViewPort.MaxClientViewPortX, (int)MapViewPort.MaxClientViewPortY, 1);
+
+    public override bool CanSee(Location pos)
+    {
+        return base.CanSee(pos, (int)MapViewPort.MaxClientViewPortX, (int)MapViewPort.MaxClientViewPortY, 1);
+    }
 
     public virtual void UpdateState()
     {
@@ -296,12 +298,13 @@ public class Monster : WalkableMonster, IMonster
     [Obsolete]
     public override Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks)
     {
-        throw new NotSupportedException("Monsters cannot attack directly. Use the MonsterCombatService to handle attacks.");
+        throw new NotSupportedException(
+            "Monsters cannot attack directly. Use the MonsterCombatService to handle attacks.");
     }
-    
-    public void PostAttack(IMonsterCombatAttack attack)
+
+    public void PostAttack(MonsterCombatType type)
     {
-        Cooldowns.Start(attack.Id, attack.Interval);
+        Cooldowns.Start(type.Id, type.Interval);
     }
 
     public override Result CanAttack(CombatParameter combatParameter)
@@ -309,6 +312,24 @@ public class Monster : WalkableMonster, IMonster
         if (!Cooldowns.Expired(combatParameter.CooldownId)) return Result.Fail(InvalidOperation.CannotAttackThatFast);
 
         return base.CanAttack(combatParameter);
+    }
+
+    public override void AddCondition(ICondition condition)
+    {
+        switch (condition.Type)
+        {
+            case ConditionType.Paralyze when HasImmunity(Immunity.Paralysis):
+            case ConditionType.Drowning when HasImmunity(Immunity.Drown):
+            case ConditionType.Electrified when HasImmunity(Immunity.Energy):
+            case ConditionType.Burning when HasImmunity(Immunity.Fire):
+            case ConditionType.Drunk when HasImmunity(Immunity.Drunkenness):
+            case ConditionType.Poisoned when HasImmunity(Immunity.Earth):
+            case ConditionType.Bleeding when HasImmunity(Immunity.Physical):
+                return;
+            default:
+                base.AddCondition(condition);
+                break;
+        }
     }
 
     public void UpdateLastTargetChance()
@@ -384,24 +405,6 @@ public class Monster : WalkableMonster, IMonster
         Follow(creature);
         SetAttackTarget(creature);
         UpdateLastTargetChance();
-    }
-
-    public override void AddCondition(ICondition condition)
-    {
-        switch (condition.Type)
-        {
-            case ConditionType.Paralyze when HasImmunity(Immunity.Paralysis):
-            case ConditionType.Drowning when HasImmunity(Immunity.Drown):
-            case ConditionType.Electrified when HasImmunity(Immunity.Energy):
-            case ConditionType.Burning when HasImmunity(Immunity.Fire):
-            case ConditionType.Drunk when HasImmunity(Immunity.Drunkenness):
-            case ConditionType.Poisoned when HasImmunity(Immunity.Earth):
-            case ConditionType.Bleeding when HasImmunity(Immunity.Physical):
-                return;
-            default:
-                base.AddCondition(condition);
-                break;
-        }
     }
 
     #region Summon Event Attachment

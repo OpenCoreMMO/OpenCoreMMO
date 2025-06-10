@@ -47,7 +47,7 @@ public class NeoContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.LogTo(m => _logger.Verbose("{Message}",m),
+        optionsBuilder.LogTo(m => _logger.Verbose("{Message}", m),
             (eventId, _) => eventId.Name == $"{DbLoggerCategory.Database.Command.Name}.CommandExecuted");
     }
 

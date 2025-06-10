@@ -32,7 +32,7 @@ public static class ConditionTypeParser
             _ => ConditionType.None
         };
     }
-    
+
     public static ConditionType Parse(string type)
     {
         return type switch

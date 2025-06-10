@@ -1,7 +1,7 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 
-namespace NeoServer.Domain.Creatures.Vocation;
+namespace NeoServer.Domain.Creatures.Player.Vocation;
 
 public class Vocation : IVocation
 {

@@ -1,5 +1,6 @@
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Combat.Validation;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
@@ -380,7 +381,7 @@ public class Player : CombatActor, IPlayer
 
     public byte GetSkillPercent(SkillType skill)
     {
-        var rate = Creatures.Vocation.Vocation.DefaultSkillMultiplier;
+        var rate = Creatures.Player.Vocation.Vocation.DefaultSkillMultiplier;
         Vocation.Skills?.TryGetValue(skill, out rate);
         return (byte)Skills[skill].GetPercentage(rate);
     }
@@ -1058,7 +1059,7 @@ public class Player : CombatActor, IPlayer
     {
         if (!Skills.ContainsKey(skill)) return;
 
-        var rate = Creatures.Vocation.Vocation.DefaultSkillMultiplier;
+        var rate = Creatures.Player.Vocation.Vocation.DefaultSkillMultiplier;
 
         Vocation?.Skills?.TryGetValue(skill, out rate);
 
@@ -1069,7 +1070,7 @@ public class Player : CombatActor, IPlayer
     {
         if (!Skills.ContainsKey(skill)) return;
 
-        var rate = Creatures.Vocation.Vocation.DefaultSkillMultiplier;
+        var rate = Creatures.Player.Vocation.Vocation.DefaultSkillMultiplier;
 
         Vocation?.Skills?.TryGetValue(skill, out rate);
 
@@ -1164,6 +1165,19 @@ public class Player : CombatActor, IPlayer
         if (!CooldownHasExpired(spell)) return Result.Fail(InvalidOperation.Exhausted);
 
         return Result.Success;
+    }
+
+    public override void AddCondition(ICondition condition)
+    {
+        switch (condition.Type)
+        {
+            case ConditionType.Drunk when Inventory.HasEquippedItemWithImmunity(Immunity.Drunkenness):
+            case ConditionType.Drowning when Inventory.HasEquippedItemWithImmunity(Immunity.Drown):
+                return;
+            default:
+                base.AddCondition(condition);
+                break;
+        }
     }
 
 
@@ -1293,19 +1307,6 @@ public class Player : CombatActor, IPlayer
         //todo: add immunity check
     }
 
-    public override void AddCondition(ICondition condition)
-    {
-        switch (condition.Type)
-        {
-            case ConditionType.Drunk when Inventory.HasEquippedItemWithImmunity(Immunity.Drunkenness):
-            case ConditionType.Drowning when Inventory.HasEquippedItemWithImmunity(Immunity.Drown):
-                return;
-            default:
-                base.AddCondition(condition);
-                break;
-        }
-    }
-
     public virtual void SetLogoutBlock()
     {
         if (Group.FlagIsEnabled(PlayerFlag.NotGainInFight)) return;
@@ -1348,25 +1349,25 @@ public class Player : CombatActor, IPlayer
     public override bool TryWalkTo(params Direction[] directions)
     {
         if (directions is null or { Length: 0 }) return false;
-        
+
         if (HasCondition(ConditionType.Drunk))
         {
             // Only allow North, East, South, West (no diagonals)
             Direction[] nonDiagonalDirections = [Direction.North, Direction.East, Direction.South, Direction.West];
-            
+
             for (var i = 0; i < directions.Length; i++)
-            {
                 // Replace the direction every 2 steps
                 if (i % 3 == 0)
                 {
                     var oldDirection = directions[i];
-                    var newDirection = nonDiagonalDirections[GameRandom.Random.Next(maxValue: nonDiagonalDirections.Length)];
+                    var newDirection =
+                        nonDiagonalDirections[GameRandom.Random.Next(maxValue: nonDiagonalDirections.Length)];
                     if (oldDirection == newDirection) continue;
-                    
+
                     directions[i] =
-                        nonDiagonalDirections[GameRandom.Random.Next(maxValue: nonDiagonalDirections.Length)].MakeDrunk();
+                        nonDiagonalDirections[GameRandom.Random.Next(maxValue: nonDiagonalDirections.Length)]
+                            .MakeDrunk();
                 }
-            }
         }
 
         ResetIdleTime();

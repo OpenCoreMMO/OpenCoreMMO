@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Combat.Services.Attacks;
-using NeoServer.Domain.Tests.Helpers;
+﻿using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.Tests.Helpers.Services;
@@ -21,8 +20,7 @@ public class MonsterTest
         (map[100, 100, 7] as DynamicTile)?.AddCreature(sut);
         (map[101, 100, 7] as DynamicTile)?.AddCreature(attacker);
 
-        var attackService = AttackServiceTestBuilder.Build(map);
-        var monsterCombatService = new MonsterCombatService(attackService);
+        var monsterCombatService = MonsterCombatServiceTestBuilder.Build(map);
 
         //act
         monsterCombatService.Attack(attacker, sut);
@@ -45,9 +43,8 @@ public class MonsterTest
         (map[100, 100, 7] as DynamicTile)?.AddCreature(sut);
         (map[101, 100, 7] as DynamicTile)?.AddCreature(master);
         (map[100, 101, 7] as DynamicTile)?.AddCreature(summon);
-        
-        var attackService = AttackServiceTestBuilder.Build(map);
-        var monsterCombatService = new MonsterCombatService(attackService);
+
+        var monsterCombatService = MonsterCombatServiceTestBuilder.Build(map);
 
         //act
         monsterCombatService.Attack(summon, sut);
@@ -72,12 +69,11 @@ public class MonsterTest
         (map[101, 100, 7] as DynamicTile)?.AddCreature(master);
         (map[100, 101, 7] as DynamicTile)?.AddCreature(summon);
 
-        var attackService = AttackServiceTestBuilder.Build(map);
-        var monsterCombatService = new MonsterCombatService(attackService);
+        var monsterCombatService = MonsterCombatServiceTestBuilder.Build(map);
 
         //act
         monsterCombatService.Attack(summon, sut);
-        
+
         //summon.Attack(sut);
 
         //assert

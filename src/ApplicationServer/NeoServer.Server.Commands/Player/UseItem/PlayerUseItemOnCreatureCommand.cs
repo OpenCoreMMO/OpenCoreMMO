@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Combat.Services.Spells;
-using NeoServer.Domain.Common;
+﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
@@ -10,6 +9,7 @@ using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Items.Items.UsableItems.Runes;
 using NeoServer.Domain.Items.Services;
+using NeoServer.Domain.Spells;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Commands;

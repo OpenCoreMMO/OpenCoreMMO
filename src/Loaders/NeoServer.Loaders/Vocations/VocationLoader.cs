@@ -5,7 +5,7 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
-using NeoServer.Domain.Creatures.Vocation;
+using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Loaders.Converts;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;

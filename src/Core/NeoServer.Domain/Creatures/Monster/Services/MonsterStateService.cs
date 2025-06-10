@@ -29,7 +29,7 @@ public static class MonsterStateService
                 monster.SelectTargetToAttack();
                 return;
             }
-            
+
             monster.TurnTo(monster.CurrentTarget);
 
             monster.Summon(summonService);
@@ -38,9 +38,8 @@ public static class MonsterStateService
 
             if (monster.Attacking &&
                 monster.Metadata.TargetChance.Chance < GameRandom.Random.Next(1, maxValue: 100)) return;
-            
+
             monster.SelectTargetToAttack();
-            
         }
 
         if (monster.State == MonsterState.Sleeping) monster.Sleep();

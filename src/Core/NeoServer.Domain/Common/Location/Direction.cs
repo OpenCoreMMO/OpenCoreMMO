@@ -32,4 +32,4 @@ public static class DirectionExtensions
     {
         return (Direction)((byte)dir & DIRECTION_MASK);
     }
-} 
+}

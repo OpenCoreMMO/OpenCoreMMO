@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using NeoServer.Domain.Common.Location;
+﻿using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Common.Effects.Magical;
@@ -15,9 +14,10 @@ public class SpreadEffect
     /// <returns></returns>
     public static Coordinate[] Create(Direction direction, int length, int spread)
     {
-        int maxCols = ((length - (length % spread)) / spread) * 2 + 1;
-        int maxSize = length * maxCols;
-        
+        spread = Math.Max(spread, 1);
+        var maxCols = (length - length % spread) / spread * 2 + 1;
+        var maxSize = length * maxCols;
+
         var points = new Coordinate[maxSize];
 
         var y = 0;
@@ -47,7 +47,7 @@ public class SpreadEffect
                         break;
                 }
         }
-        
+
         return points[..count];
     }
 

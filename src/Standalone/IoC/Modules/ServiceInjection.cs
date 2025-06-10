@@ -1,13 +1,16 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Combat.Monster;
+using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Combat.Services;
 using NeoServer.Domain.Combat.Services.Attacks;
-using NeoServer.Domain.Combat.Services.Attacks.Validators;
-using NeoServer.Domain.Combat.Services.Spells;
+using NeoServer.Domain.Combat.Validations;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Inspection;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.Items.Services.ItemTransform;
@@ -15,6 +18,7 @@ using NeoServer.Domain.Party;
 using NeoServer.Domain.SafeTrade;
 using NeoServer.Domain.SafeTrade.Operations;
 using NeoServer.Domain.Services;
+using NeoServer.Domain.Spells;
 using NeoServer.Domain.World.Services;
 using NeoServer.Networking.EventHandlers.Creature;
 using NeoServer.Server.Commands.Player.UseItem;
@@ -63,7 +67,7 @@ public static class ServiceInjection
         builder.AddSingleton<IItemRemoveService, ItemRemoveService>();
         builder.AddSingleton<IItemAbilityApplierService, ItemAbilityApplierService>();
         builder.AddSingleton<ItemUseValidation>();
-        
+
         builder.AddSingleton<MagicFieldService>();
 
         //game builders
@@ -79,13 +83,14 @@ public static class ServiceInjection
         builder.RegisterAssembliesByInterface(typeof(IApplicationEventHandler<>));
 
         builder.AddSingleton<IAttackService, AttackService>();
-        builder.AddSingleton<AttackStrategy>();
         builder.AddSingleton<AttackValidation>();
         builder.AddSingleton<SingleTargetAttackService>();
         builder.AddSingleton<AreaAttackService>();
         builder.AddSingleton<BloodPoolService>();
-        builder.AddSingleton<MonsterCombatService>();
         builder.AddSingleton<ConditionAttackService>();
+        
+        builder.AddSingleton<MonsterCombatService>();
+        builder.AddSingleton<PlayerCombatService>();
 
         //spells
         builder.AddSingleton<SpellService>();

@@ -4,7 +4,6 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Depot;
-using NeoServer.Domain.Items.Items.Containers;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Common.Contracts.Commands;
 using NeoServer.Server.Common.Contracts.Scripts;

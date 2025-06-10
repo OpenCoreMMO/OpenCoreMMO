@@ -2,8 +2,9 @@ namespace NeoServer.Domain.Creatures.Condition;
 
 public static class ConditionIntervalMap
 {
-    public static uint Get(ConditionType condition) =>
-        condition switch
+    public static uint Get(ConditionType condition)
+    {
+        return condition switch
         {
             ConditionType.Poisoned => 4_000,
             ConditionType.Burning => 9_000,
@@ -15,4 +16,5 @@ public static class ConditionIntervalMap
             ConditionType.Dazzled => 4_000,
             _ => 0
         };
+    }
 }

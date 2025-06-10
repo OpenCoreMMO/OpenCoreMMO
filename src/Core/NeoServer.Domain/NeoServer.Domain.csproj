@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <Folder Include="Common\Spell\"/>
-        <Folder Include="Creatures\Group\" />
+        <Folder Include="Creatures\Group\"/>
     </ItemGroup>
 
     <ItemGroup>
