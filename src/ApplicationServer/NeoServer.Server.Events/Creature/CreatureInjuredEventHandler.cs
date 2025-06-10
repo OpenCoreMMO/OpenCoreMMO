@@ -15,7 +15,7 @@ public class CreatureInjuredEventHandler(BloodPoolService bloodPoolService)
         foreach (var combatDamage in @event.DamageList)
         {
             if (combatDamage is not { Damage: > 0, IsElementalDamage: false }) continue;
-            
+
             bloodPoolService.CreateSplash(target as ICombatActor, combatDamage);
             return;
         }

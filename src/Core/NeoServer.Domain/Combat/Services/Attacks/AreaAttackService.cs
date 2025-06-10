@@ -67,13 +67,10 @@ public class AreaAttackService(
 
             affectedArea.Add(location);
 
-            if (attackInput.Parameters.FieldAttack)
-            {
-                CreateMagicField(attackInput, tile);
-            }
+            if (attackInput.Parameters.FieldAttack) CreateMagicField(attackInput, tile);
 
             var targetCreatures = walkableTile.Creatures?.ToArray();
-            if (targetCreatures is null or {Length: 0}) continue;
+            if (targetCreatures is null or { Length: 0 }) continue;
 
             affectedCreatures.AddRange(targetCreatures);
         }

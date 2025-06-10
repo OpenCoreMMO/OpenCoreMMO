@@ -106,7 +106,7 @@ public class PlayerPartyTests
         {
             if (playerInvited == invitedPlayer) invited = true;
         };
-        
+
         var channel = new ChatChannel(1, "party channel");
         var party = new Party.Party(sut, channel);
 

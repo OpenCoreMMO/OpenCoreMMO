@@ -5,7 +5,6 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Creatures.Npcs;
 using NeoServer.Domain.Creatures.Npcs.Shop;
-using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using Serilog;
 

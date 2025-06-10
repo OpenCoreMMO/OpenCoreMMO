@@ -37,7 +37,7 @@ public class DamageCondition : BaseCondition
         Cause = cause;
         Type = type;
         Interval = interval;
-        DamageType = ConditionTypeParser.ToDamageType(type);
+        DamageType = type.ToDamageType();
         _maxDamage = damage;
         _minDamage = damage;
         Effect = effect;
@@ -108,7 +108,7 @@ public class DamageCondition : BaseCondition
             startDamage = maxDamage;
             return startDamage;
         }
-        
+
         return (int)Math.Max(1, Math.Ceiling(amount / 20.0));
     }
 

@@ -26,21 +26,18 @@ public class SingleTargetAttackService(
 
         if (IsAttackMissed(attackInput))
         {
-            PublishAttackEvent(attackInput, attackMissed: true);
+            PublishAttackEvent(attackInput, true);
             aggressor?.PreAttack(CreateCombatContext(attackInput));
             return Result.Success;
         }
 
-        PublishAttackEvent(attackInput, attackMissed: false);
+        PublishAttackEvent(attackInput, false);
         aggressor?.PreAttack(CreateCombatContext(attackInput));
 
         var damage = DamageBuilder.Build(attackInput);
         var wasDamaged = PerformAttack(aggressor, target, damage);
-        
-        if (attackInput.Parameters.FieldAttack)
-        {
-            CreateMagicField(attackInput);
-        }
+
+        if (attackInput.Parameters.FieldAttack) CreateMagicField(attackInput);
 
         if (wasDamaged)
         {
@@ -48,10 +45,7 @@ public class SingleTargetAttackService(
             return Result.Success;
         }
 
-        if (damage.MainDamage is null or { Damage: <= 0 })
-        {
-            conditionAttackService.Execute(attackInput);
-        }
+        if (damage.MainDamage is null or { Damage: <= 0 }) conditionAttackService.Execute(attackInput);
 
         return Result.Success;
     }
@@ -86,7 +80,7 @@ public class SingleTargetAttackService(
             InfiniteThrowingWeapon = combatConfiguration.InfiniteThrowingWeapon
         };
     }
-    
+
     private static bool PerformAttack(ICombatActor aggressor, IThing target, CalculatedAttackDamage damage)
     {
         if (target is not ICombatActor targetCreature)

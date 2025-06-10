@@ -12,10 +12,7 @@ public static class DistanceAttackValidator
         var aggressor = attackInput.Aggressor;
         var target = attackInput.Target;
 
-        if (aggressor is ICreature creature && !creature.CanSee(target.Location))
-        {
-            return false;
-        }
+        if (aggressor is ICreature creature && !creature.CanSee(target.Location)) return false;
 
         var sqmDistance = target.Location.GetMaxSqmDistance(aggressor.Location);
 

@@ -54,7 +54,11 @@ public class EventAggregator : IEventAggregator
 
                         var handleMethod = x.GetMethod(nameof(IApplicationEventHandler<IEvent>.Handle));
                         return (Action<IEvent>)HandlerDelegate;
-                        void HandlerDelegate(IEvent @event) => handleMethod?.Invoke(handlerInstance, [@event]);
+
+                        void HandlerDelegate(IEvent @event)
+                        {
+                            handleMethod?.Invoke(handlerInstance, [@event]);
+                        }
                     })
                     .Where(x => x is not null)
                     .ToList();
@@ -77,7 +81,10 @@ public class EventAggregator : IEventAggregator
 
                         return (Action<IEvent>)HandlerDelegate;
 
-                        void HandlerDelegate(IEvent @event) => handleMethod?.Invoke(handlerInstance, [@event]);
+                        void HandlerDelegate(IEvent @event)
+                        {
+                            handleMethod?.Invoke(handlerInstance, [@event]);
+                        }
                     })
                     .Where(x => x is not null)
                     .ToList();

@@ -81,7 +81,8 @@ public abstract class BaseSpell : ISpell
 
         if (NeedsTarget && caster.Location.Z > target.Location.Z) return Result.Fail(InvalidOperation.FirstGoUpStairs);
 
-        if (NeedsTarget && caster.Location.Z < target.Location.Z) return Result.Fail(InvalidOperation.FirstGoDownStairs);
+        if (NeedsTarget && caster.Location.Z < target.Location.Z)
+            return Result.Fail(InvalidOperation.FirstGoDownStairs);
 
         var targetCreature = target switch
         {

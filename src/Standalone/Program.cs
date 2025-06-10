@@ -87,7 +87,7 @@ public class Program
         container.Resolve<WorldLoader>().Load();
 
         container.Resolve<SpawnLoader>().Load();
-        
+
         container.Resolve<SpellLoader>().Load();
 
         container.Resolve<MonsterLoader>().Load();

@@ -8,7 +8,6 @@ using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Monster.Managers;
 using NeoServer.Domain.Items;
-using NeoServer.Domain.Items.Factories;
 using NeoServer.Domain.Services;
 using NeoServer.Domain.Tests.Server;
 using NeoServer.Domain.World.Map;
@@ -21,7 +20,7 @@ public class AttackServiceTestBuilder
 {
     public static IAttackService Build(IMap map, PvpType pvpType = PvpType.OpenPvP)
     {
-        var gameConfiguration = new GameConfiguration()
+        var gameConfiguration = new GameConfiguration
         {
             PvP = new PvPConfiguration(pvpType),
             Combat = new CombatConfiguration(true, true)

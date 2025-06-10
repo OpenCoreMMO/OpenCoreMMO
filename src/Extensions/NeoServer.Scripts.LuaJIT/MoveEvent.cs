@@ -185,10 +185,12 @@ public class MoveEvent : Script
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
             if (item is not null)
-                _logger.Error("[MoveEvent::ExecuteStep - Creature {CreatureName}, item {ItemName}, position {Pos}] Call stack overflow. Too many lua script calls being nested",
+                _logger.Error(
+                    "[MoveEvent::ExecuteStep - Creature {CreatureName}, item {ItemName}, position {Pos}] Call stack overflow. Too many lua script calls being nested",
                     creature.Name, item.Name, toPos.ToString(CultureInfo.InvariantCulture));
             else
-                _logger.Error("[MoveEvent::ExecuteStep - Creature {CreatureName}, position {Pos}] Call stack overflow. Too many lua script calls being nested",
+                _logger.Error(
+                    "[MoveEvent::ExecuteStep - Creature {CreatureName}, position {Pos}] Call stack overflow. Too many lua script calls being nested",
                     creature.Name, toPos.ToString(CultureInfo.InvariantCulture));
             return false;
         }
@@ -278,7 +280,8 @@ public class MoveEvent : Script
 
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            _logger.Error("[MoveEvent::ExecuteEquip - Player {PlayerName}, item {ItemName}] Call stack overflow. Too many lua script calls being nested",
+            _logger.Error(
+                "[MoveEvent::ExecuteEquip - Player {PlayerName}, item {ItemName}] Call stack overflow. Too many lua script calls being nested",
                 player.Name, item.Name);
             return false;
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Creatures;
 
 namespace NeoServer.Loaders.Monsters.Converters;

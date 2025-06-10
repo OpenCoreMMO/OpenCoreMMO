@@ -45,15 +45,14 @@ public class MonsterCombatService(IAttackService attackService, SpellService spe
     private bool PerformAttack(IMonster monster, ICombatActor target, IMonsterCombatAttack attack)
     {
         if (attack.Spell is not null)
-        {
             return spellService.Cast(monster, attack.NeedTarget ? target : null, attack.Spell, false);
-        }
 
         var combatParameter = attack.CombatParameter;
 
         combatParameter.CoordinateArea = CreateArea(attack, monster, target);
 
-        return attackService.Execute(new AttackInput(monster, attack.NeedTarget ? target : null, combatParameter)).Succeeded;
+        return attackService.Execute(new AttackInput(monster, attack.NeedTarget ? target : null, combatParameter))
+            .Succeeded;
     }
 
     private static Coordinate[] CreateArea(IMonsterCombatAttack attack, IMonster monster, ICombatActor target)

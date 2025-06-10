@@ -38,17 +38,14 @@ public class SpellService(
         }
 
         var invokeResult = spell.Invoke(caster, target, isHotkey);
-        
+
         if (invokeResult.Failed && caster is IPlayer)
         {
             eventAggregator.Publish(new SpellFailedToCastEvent(caster, spell, invokeResult.Reason));
             return true;
         }
 
-        if (caster is IPlayer player)
-        {
-            player.PostSpellCast(spell);
-        }
+        if (caster is IPlayer player) player.PostSpellCast(spell);
 
         return true;
     }

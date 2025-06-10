@@ -128,8 +128,8 @@ public class PathFinder : IPathFinder
         if (currentDistance == fpp.MaxTargetDist)
             return FoundedButEmptyDirections;
 
-        bool shouldMoveCloser = currentDistance > fpp.MaxTargetDist;
-        bool shouldMoveFarther = !shouldMoveCloser;
+        var shouldMoveCloser = currentDistance > fpp.MaxTargetDist;
+        var shouldMoveFarther = !shouldMoveCloser;
 
         var allDirections = new[]
         {
@@ -152,7 +152,7 @@ public class PathFinder : IPathFinder
             var isDiagonal = start.IsDiagonalMovement(next);
 
             // Calculate a score based on how well the move matches the goal
-            int score = 0;
+            var score = 0;
 
             if (shouldMoveCloser && nextDistance < currentDistance)
                 score++;
@@ -161,8 +161,8 @@ public class PathFinder : IPathFinder
                 score++;
 
             // Add an extra point if the Manhattan distance also improves
-            int currentManhattan = start.GetSumSqmDistance(target);
-            int nextManhattan = next.GetSumSqmDistance(target);
+            var currentManhattan = start.GetSumSqmDistance(target);
+            var nextManhattan = next.GetSumSqmDistance(target);
 
             if (shouldMoveCloser && nextManhattan < currentManhattan)
                 score++;
