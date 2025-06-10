@@ -5,19 +5,22 @@ namespace NeoServer.Domain.Spells;
 public class SpellListManager
 {
     private Dictionary<string, ISpell> Spells { get; } = new(StringComparer.InvariantCultureIgnoreCase);
+    private Dictionary<string, string> SpellNameWordMap { get; } = new(StringComparer.InvariantCultureIgnoreCase);
 
     public void Add(string words, ISpell spell)
     {
         if (spell is ICommandSpell commandSpell)
         {
             var command = GetCommand(words);
-            commandSpell.Params = command.Item2;
-            Spells.Add(command.Item1, commandSpell);
+            commandSpell.Params = command.Params;
+            
+            Spells.Add(command.Words, commandSpell);
+            SpellNameWordMap.Add( commandSpell.Name, command.Words);
+            return;
         }
-        else
-        {
-            Spells.Add(words, spell);
-        }
+
+        Spells.Add(words, spell);
+        SpellNameWordMap.TryAdd(spell.Name, words);
     }
 
     public bool TryGet(string words, out ISpell spell)
@@ -41,14 +44,22 @@ public class SpellListManager
         return Spells.TryGetValue(words, out spell);
     }
 
-    private (string, object[]) GetCommand(string words)
+    public ISpell GetByName(string name)
     {
-        var firstWhiteSpace = words.IndexOf(" ");
+        if (!SpellNameWordMap.TryGetValue(name, out var words)) return null;
+        
+        Spells.TryGetValue(words, out var spell);
+        return spell;
+    }
+
+    private (string Words, object[] Params) GetCommand(string words)
+    {
+        var firstWhiteSpace = words.IndexOf(' ');
 
         if (firstWhiteSpace == -1) return (words, null);
 
-        var command = words.Substring(0, firstWhiteSpace);
-        var @params = words.Substring(firstWhiteSpace).Trim().Split(",");
+        var command = words[..firstWhiteSpace];
+        var @params = words[firstWhiteSpace..].Trim().Split(",");
 
         return (command, @params);
     }

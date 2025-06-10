@@ -3,6 +3,7 @@ using NeoServer.Domain.Combat;
 using NeoServer.Domain.Combat.Services;
 using NeoServer.Domain.Combat.Services.Attacks;
 using NeoServer.Domain.Combat.Services.Attacks.Validators;
+using NeoServer.Domain.Combat.Services.Spells;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Monster.Managers;
@@ -32,8 +33,6 @@ public class AttackServiceTestBuilder
 
         var itemTypeStore = ItemTypeStoreTestBuilder.Build(new ItemType().SetId(2019));
 
-        var bloodPoolService = new BloodPoolService(map, new LiquidPoolFactory(itemTypeStore));
-
         var magicFieldService =
             new MagicFieldService(map, ItemFactoryTestBuilder.Build(itemTypeStore), gameConfiguration.PvP);
 
@@ -43,12 +42,24 @@ public class AttackServiceTestBuilder
 
         var areaAttackService =
             new AreaAttackService(mockEventAggregator.Object, map, magicFieldService, conditionAttackService);
-        
+
         var singleTargetCombat =
-            new SingleTargetAttackService(mockEventAggregator.Object, gameConfiguration.Combat, conditionAttackService, magicFieldService);
+            new SingleTargetAttackService(mockEventAggregator.Object, gameConfiguration.Combat, conditionAttackService,
+                magicFieldService);
 
         var attackValidation = new AttackValidation(new MapTool(map, new PathFinder(map)), map, gameConfiguration.PvP);
 
         return new AttackService(logger.Object, skullService, areaAttackService, singleTargetCombat, attackValidation);
+    }
+}
+
+public static class MonsterCombatServiceTestBuilder
+{
+    public static MonsterCombatService Build(IMap map, PvpType pvpType = PvpType.OpenPvP)
+    {
+        var attackService = AttackServiceTestBuilder.Build(map, pvpType);
+        var mapTool = new MapTool(map, new PathFinder(map));
+        var spellService = new SpellService(new SpellCastValidation(mapTool), new Mock<IEventAggregator>().Object, map);
+        return new MonsterCombatService(attackService, spellService);
     }
 }

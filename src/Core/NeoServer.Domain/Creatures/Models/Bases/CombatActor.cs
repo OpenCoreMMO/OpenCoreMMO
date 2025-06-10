@@ -154,19 +154,27 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
             }
         }
 
-        if (!attack.IsElementalDamage) damage = DefendUsingArmor(damage);
-
-        if (damage <= 0)
+        if (!attack.IsElementalDamage)
         {
-            damage = 0;
-            OnBlockedAttack?.Invoke(this, BlockType.Armor);
+            damage = DefendUsingArmor(damage);
+
+            if (damage <= 0)
+            {
+                damage = 0;
+                OnBlockedAttack?.Invoke(this, BlockType.Armor);
+            }
         }
 
         attack.SetNewDamage((ushort)damage);
 
+        if (attack.Damage <= 0) return attack;
+
         attack = OnImmunityDefense(attack);
 
-        if (attack.Damage <= 0) OnBlockedAttack?.Invoke(this, BlockType.Armor);
+        if (attack.Damage <= 0)
+        {
+            OnBlockedAttack?.Invoke(this, BlockType.Armor);
+        }
 
         return attack;
     }

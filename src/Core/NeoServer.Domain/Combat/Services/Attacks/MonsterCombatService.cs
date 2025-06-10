@@ -1,3 +1,4 @@
+using NeoServer.Domain.Combat.Services.Spells;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -7,7 +8,7 @@ using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Combat.Services.Attacks;
 
-public class MonsterCombatService(IAttackService attackService)
+public class MonsterCombatService(IAttackService attackService, SpellService spellService)
 {
     public void Attack(IMonster monster, ICombatActor target)
     {
@@ -31,14 +32,7 @@ public class MonsterCombatService(IAttackService attackService)
                 continue;
             }
 
-            var combatParameter = attack.CombatParameter;
-
-            combatParameter.CoordinateArea = CreateArea(attack, monster, target);
-
-            var result =
-                attackService.Execute(new AttackInput(monster, attack.NeedTarget ? target : null, combatParameter));
-
-            if (result.Failed) continue;
+            if (!PerformAttack(monster, target, attack)) continue;
 
             monster.PostAttack(attack);
 
@@ -46,6 +40,20 @@ public class MonsterCombatService(IAttackService attackService)
 
             if (GameRandom.Random.Next(0, maxValue: 100) > comboChance) break;
         }
+    }
+
+    private bool PerformAttack(IMonster monster, ICombatActor target, IMonsterCombatAttack attack)
+    {
+        if (attack.Spell is not null)
+        {
+            return spellService.Cast(monster, attack.NeedTarget ? target : null, attack.Spell, false);
+        }
+
+        var combatParameter = attack.CombatParameter;
+
+        combatParameter.CoordinateArea = CreateArea(attack, monster, target);
+
+        return attackService.Execute(new AttackInput(monster, attack.NeedTarget ? target : null, combatParameter)).Succeeded;
     }
 
     private static Coordinate[] CreateArea(IMonsterCombatAttack attack, IMonster monster, ICombatActor target)

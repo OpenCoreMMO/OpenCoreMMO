@@ -16,6 +16,7 @@ public interface IMonsterType : ICreatureType
 
     public uint Experience { get; set; }
     public IMonsterCombatAttack[] Attacks { get; set; }
+    public Dictionary<string, IMonsterCombatAttack> Spells { get; set; }
     public ICombatDefense[] Defenses { get; set; }
 
     IDictionary<CreatureFlagAttribute, ushort> Flags { get; set; }
