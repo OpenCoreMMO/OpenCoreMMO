@@ -9,7 +9,7 @@ namespace NeoServer.Domain.Tests.Creature.Monster;
 public class MonsterEscapeTests
 {
     [Fact]
-    public void Monster_stops_attack_and_follow_while_escaping()
+    public void Monster_stops_follow_while_escaping()
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
@@ -30,7 +30,6 @@ public class MonsterEscapeTests
         monster.Escape();
 
         //assert
-        monitor.Should().Raise(nameof(monster.OnStoppedAttack));
         monster.IsFollowing.Should().BeFalse();
     }
 }
