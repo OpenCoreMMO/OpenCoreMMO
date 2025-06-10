@@ -10,6 +10,7 @@ using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
@@ -309,6 +310,8 @@ public class Monster : WalkableMonster, IMonster
 
     public override Result CanAttack(CombatParameter combatParameter)
     {
+        if (combatParameter.DamageType == DamageType.Melee && State == MonsterState.Escaping) return Result.Fail(InvalidOperation.NotPossible);
+        
         if (!Cooldowns.Expired(combatParameter.CooldownId)) return Result.Fail(InvalidOperation.CannotAttackThatFast);
 
         return base.CanAttack(combatParameter);
