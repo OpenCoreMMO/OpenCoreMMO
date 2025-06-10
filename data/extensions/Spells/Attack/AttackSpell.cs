@@ -63,12 +63,14 @@ public abstract class AttackSpell : Spell<AttackSpell>
         var attackInput = new AttackInput(caster, target, combatParameter);
 
         if (caster is IMonster monster)
+        {
             if (monster.Metadata.Spells.TryGetValue(Name, out var attack))
             {
                 combatParameter.MinDamage = attack.CombatParameter.MinDamage;
                 combatParameter.MaxDamage = attack.CombatParameter.MaxDamage;
                 combatParameter.CooldownId = attack.Id;
             }
+        }
 
         if (NeedDirection)
         {
