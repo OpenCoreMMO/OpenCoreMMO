@@ -32,12 +32,12 @@ public static class PlayerCombatParameterBuilder
             Spread = 5,
             ShootType = GetShootType(player),
             ExtraAttack = elementalDamage,
-            CooldownType = CooldownType.Combat,
+            CooldownType = CooldownType.WeaponAttack,
             CooldownDuration = (uint)player.AttackSpeed,
             IsMagicalAttack = player.Inventory.Weapon is MagicWeapon,
             UsingWeapon = true,
             HitChance = HitChanceCalculation.GetHitChance(player.Inventory.Weapon,
-                player?.GetSkillLevel(player.SkillInUse) ?? 0,
+                player.GetSkillLevel(player.SkillInUse),
                 (byte)player.Location.GetSqmDistance(target.Location))
         };
     }

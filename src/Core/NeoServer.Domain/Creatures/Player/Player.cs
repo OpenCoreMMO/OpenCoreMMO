@@ -1,4 +1,5 @@
 using NeoServer.Domain.Chat;
+using NeoServer.Domain.Combat;
 using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Combat.Validation;
@@ -988,6 +989,19 @@ public class Player : CombatActor, IPlayer
         SetLogoutBlock();
 
         return canUse ? Result.Success : Result.Fail(InvalidOperation.CannotUseWeapon);
+    }
+
+    public void PostAttack(CombatParameter combatParameter, CombatResult combatResult)
+    {
+        SetLogoutBlock();
+        if (!combatParameter.UsingWeapon) return;
+        
+        Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
+
+        if (combatResult.TotalDamage > 0)
+        {
+            IncreaseSkillCounter(SkillInUse, 1);
+        }
     }
 
     public override Result CanAttack(CombatParameter combatParameter)

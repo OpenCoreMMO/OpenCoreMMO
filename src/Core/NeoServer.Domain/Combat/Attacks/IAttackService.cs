@@ -5,5 +5,5 @@ namespace NeoServer.Domain.Combat.Attacks;
 
 public interface IAttackService
 {
-    Result Execute(AttackInput attackInput);
+    CombatResult Execute(AttackInput attackInput);
 }

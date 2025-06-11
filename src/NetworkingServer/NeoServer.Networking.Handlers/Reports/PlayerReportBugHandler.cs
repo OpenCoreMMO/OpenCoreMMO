@@ -25,10 +25,10 @@ public class PlayerReportBugHandler(
         if (reportBugEntity != null)
         {
             var timeSinceLastReport = DateTime.UtcNow - reportBugEntity.CreatedAt;
-            if (timeSinceLastReport.TotalMinutes < gameConfiguration.Report.reportMaxTime)
+            if (timeSinceLastReport.TotalMinutes < gameConfiguration.Report.ReportMaxTime)
             {
                 connection.Send(new TextMessagePacket(
-                    $"You can only report a bug every {gameConfiguration.Report.reportMaxTime} minutes.",
+                    $"You can only report a bug every {gameConfiguration.Report.ReportMaxTime} minutes.",
                     TextMessageOutgoingType.Small));
                 return;
             }

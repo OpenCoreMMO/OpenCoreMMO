@@ -1,3 +1,5 @@
+local unpack = unpack or table.unpack
+
 registerNpcType = {}
 setmetatable(registerNpcType, {
     __call = function(self, npcType, mask)
@@ -147,7 +149,7 @@ registerNpcType.voices = function(npcType, mask)
             end
         end
 
-        npcType:addVoices(table.unpack(args))
+        npcType:addVoices(unpack(args))
     end
 end
 

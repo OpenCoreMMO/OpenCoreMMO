@@ -27,7 +27,7 @@ public class AttackServiceTestBuilder
         var gameConfiguration = new GameConfiguration
         {
             PvP = new PvPConfiguration(pvpType),
-            Combat = new CombatConfiguration(true, true)
+            Combat = new CombatConfiguration(true, true, 1)
         };
 
         var skullService = new PlayerSkullService(gameConfiguration);
