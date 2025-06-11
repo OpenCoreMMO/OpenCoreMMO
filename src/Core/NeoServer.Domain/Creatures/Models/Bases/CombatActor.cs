@@ -373,8 +373,8 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public virtual DamageResult TakeDamage(IThing enemy, CombatDamageList damages)
     {
         if (enemy?.Equals(this) ?? false) return new DamageResult(damages, false);
-        if (!CanBeAttacked) return new DamageResult(damages, false);;
-        if (IsDead) return new DamageResult(damages, false);;
+        if (!CanBeAttacked) return new DamageResult(damages, false);
+        if (IsDead) return new DamageResult(damages, false);
 
         if (enemy is ICreature c) SetAsEnemy(c);
 
