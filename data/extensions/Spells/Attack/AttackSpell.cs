@@ -81,6 +81,6 @@ public abstract class AttackSpell : Spell<AttackSpell>
             attackInput.Parameters.NeedDirection = NeedDirection;
         }
 
-        return IoC.GetInstance<IAttackService>().Execute(attackInput);
+        return IoC.GetInstance<IAttackService>().Execute(attackInput).Result;
     }
 }

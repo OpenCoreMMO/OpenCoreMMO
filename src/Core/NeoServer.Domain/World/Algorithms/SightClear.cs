@@ -20,8 +20,11 @@ public static class SightClear
     private static bool CheckSightLine(IMap map, Location fromPosition, Location toPosition)
     {
         if (toPosition.Type == LocationType.Ground)
+        {
             if (fromPosition == toPosition)
                 return true;
+        }
+
         if (fromPosition.IsNextTo(toPosition)) return true;
 
         var start = fromPosition.Z > toPosition.Z ? toPosition : fromPosition;
