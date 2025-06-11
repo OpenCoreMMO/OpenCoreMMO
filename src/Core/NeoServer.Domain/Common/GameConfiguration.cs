@@ -15,7 +15,7 @@ public record GameConfiguration(
     ReportConfiguration Report = null
 );
 
-public record CombatConfiguration(bool InfiniteAmmo, bool InfiniteThrowingWeapon);
+public record CombatConfiguration(bool InfiniteAmmo, bool InfiniteThrowingWeapon, decimal AttackSpeedMultiplier);
 
 public record DeathConfiguration
 {

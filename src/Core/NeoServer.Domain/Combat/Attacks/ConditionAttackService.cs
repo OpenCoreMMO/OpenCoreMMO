@@ -21,14 +21,14 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
         ConditionType.Dazzled
     ];
 
-    public Result Execute(AttackInput attackInput)
+    public CombatResult Execute(AttackInput attackInput)
     {
         var combatParameter = attackInput.Parameters;
         var aggressor = attackInput.Aggressor as ICombatActor;
         var target = attackInput.Target ?? aggressor?.CurrentTarget;
 
         if (target is not ICombatActor targetCreature || combatParameter.Condition is null ||
-            combatParameter.Condition.Type is ConditionType.None) return Result.NotApplicable;
+            combatParameter.Condition.Type is ConditionType.None) return CombatResult.Fail(Result.NotApplicable);
 
         var isDamageCondition = HarmfulConditions.Contains(combatParameter.Condition.Type);
         if (isDamageCondition) return PerformDamageCondition(combatParameter, targetCreature, aggressor);
@@ -36,13 +36,13 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
         return PerformCondition(combatParameter, targetCreature);
     }
 
-    private static Result PerformDamageCondition(CombatParameter combatParameter, ICombatActor targetCreature,
+    private static CombatResult PerformDamageCondition(CombatParameter combatParameter, ICombatActor targetCreature,
         ICombatActor aggressor)
     {
         var conditionType = combatParameter.Condition.Type;
         var interval = combatParameter.Condition.Duration;
 
-        if (combatParameter.MinDamage is 0 || combatParameter.MaxDamage is 0) return Result.NotPossible;
+        if (combatParameter.MinDamage is 0 || combatParameter.MaxDamage is 0) return CombatResult.Fail(Result.NotPossible);
 
         if (!targetCreature.HasCondition(combatParameter.Condition.Type, out var condition))
         {
@@ -50,14 +50,14 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
                 combatParameter.MinDamage,
                 combatParameter.MaxDamage));
 
-            return Result.Success;
+            return new CombatResult(0, Result.Success);
         }
 
         (condition as DamageCondition)?.Start(targetCreature, combatParameter.MinDamage, combatParameter.MaxDamage);
-        return Result.Success;
+        return new CombatResult(0, Result.Success);
     }
 
-    private Result PerformCondition(CombatParameter combatParameter, ICombatActor targetCreature)
+    private CombatResult PerformCondition(CombatParameter combatParameter, ICombatActor targetCreature)
     {
         var conditionType = combatParameter.Condition.Type;
         var duration = combatParameter.Condition.Duration;
@@ -67,22 +67,22 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
             if (conditionType is ConditionType.Paralyze)
             {
                 AddParalyzeCondition(combatParameter, targetCreature, conditionType, duration);
-                return Result.Success;
+                return new CombatResult(0, Result.Success);
             }
 
             if (conditionType is ConditionType.Outfit)
             {
                 AddOutfitCondition(combatParameter, targetCreature, conditionType, duration);
-                return Result.Success;
+                return new CombatResult(0, Result.Success);
             }
 
             targetCreature.AddCondition(new Condition(conditionType, duration));
 
-            return Result.Success;
+            return new CombatResult(0, Result.Success);
         }
 
         condition.Start(targetCreature);
-        return Result.Success;
+        return new CombatResult(0, Result.Success);
     }
 
     private static void AddParalyzeCondition(CombatParameter combatParameter, ICombatActor targetCreature,

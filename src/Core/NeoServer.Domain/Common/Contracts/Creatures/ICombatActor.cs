@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Combat;
+﻿using NeoServer.Domain.Combat;
+using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Items;
@@ -81,9 +82,9 @@ public interface ICombatActor : IWalkableCreature
     /// <param name="enemy"></param>
     /// <param name="damages"></param>
     /// <returns>Returns true when damage was bigger than 0</returns>
-    bool TakeDamage(IThing enemy, CombatDamageList damages);
+    DamageResult TakeDamage(IThing enemy, CombatDamageList damages);
 
-    bool TakeDamage(IThing enemy, CombatDamage damages);
+    DamageResult TakeDamage(IThing enemy, CombatDamage damages);
     Result Attack(ICombatActor creature);
     void PropagateAttack(AffectedLocation[] area, CombatDamage damage);
     bool Attack(ICreature creature, IUsableAttackOnCreature item);

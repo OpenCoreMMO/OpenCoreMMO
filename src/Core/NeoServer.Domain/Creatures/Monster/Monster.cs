@@ -105,11 +105,17 @@ public class Monster : WalkableMonster, IMonster
         return MonsterDefend.DefendUsingArmor(this, attack);
     }
 
-    public override bool TakeDamage(IThing enemy, CombatDamageList damages)
+    public override DamageResult TakeDamage(IThing enemy, CombatDamageList damages)
     {
         if (this is Summon.Summon { Master: IPlayer }) return base.TakeDamage(enemy, damages);
 
-        return enemy is Summon.Summon { Master: IPlayer } or IPlayer && base.TakeDamage(enemy, damages);
+        if (enemy is Summon.Summon { Master: IPlayer } or IPlayer)
+        {
+            var damageResult = base.TakeDamage(enemy, damages);
+            return damageResult;
+        }
+
+        return new DamageResult(damages, false);
     }
 
     public override ushort ArmorRating => Metadata.Armor;

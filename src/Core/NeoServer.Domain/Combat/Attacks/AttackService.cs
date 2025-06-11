@@ -23,36 +23,48 @@ public class AttackService(
     SingleTargetAttackService singleTargetAttackService,
     AttackValidation attackValidation) : IAttackService
 {
-    public Result Execute(AttackInput attackInput)
+    public CombatResult Execute(AttackInput attackInput)
     {
         if (Guard.IsNull(attackInput.Aggressor))
         {
             logger.Warning("Attack aggressor is null");
-            return Result.NotPossible;
+            return CombatResult.Fail(Result.NotPossible);
         }
 
         // Attack each combat actor on the target tile
         if (!attackInput.Parameters.IsAttackInArea &&
             attackInput.Target is IDynamicTile { Creatures.Count: > 0 } targetTile)
         {
+            uint totalDamage = 0;
+            var result = Result.NotPossible;
+            
             foreach (var target in targetTile.Creatures)
             {
                 if (target is not ICombatActor) continue;
-                Execute(new AttackInput(attackInput.Aggressor, target, attackInput.Parameters));
+                var combatResult = Execute(new AttackInput(attackInput.Aggressor, target, attackInput.Parameters));
+
+                totalDamage += combatResult.TotalDamage;
+                
+                if (result.Succeeded)
+                {
+                    continue;
+                }
+
+                result = combatResult.Result;
             }
 
-            return Result.Success;
+            return new CombatResult(totalDamage, result);
         }
 
         var attackValidationResult = attackValidation.Validate(attackInput);
-        if (attackValidationResult.Failed) return attackValidationResult;
+        if (attackValidationResult.Failed) return CombatResult.Fail(attackValidationResult);
 
         var pvpCombatValidationResult = ValidatePvpCombat(attackInput);
-        if (pvpCombatValidationResult.Failed) return pvpCombatValidationResult;
+        if (pvpCombatValidationResult.Failed) return CombatResult.Fail(pvpCombatValidationResult);
 
         playerSkullService.UpdateSkullOnAttack(attackInput.Aggressor as IPlayer, attackInput.Target as IPlayer);
 
-        if (DistanceAttackValidator.IsValid(attackInput) == false) return Result.Fail(InvalidOperation.TooFar);
+        if (DistanceAttackValidator.IsValid(attackInput) == false) return CombatResult.Fail(Result.Fail(InvalidOperation.TooFar));
 
         UpdateParameters(attackInput);
 

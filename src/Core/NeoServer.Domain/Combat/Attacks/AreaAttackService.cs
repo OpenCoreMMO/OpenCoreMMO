@@ -25,18 +25,18 @@ public class AreaAttackService(
     MagicFieldService magicFieldService,
     ConditionAttackService conditionAttackService) : IAttackService
 {
-    public Result Execute(AttackInput attackInput)
+    public CombatResult Execute(AttackInput attackInput)
     {
         var damage = DamageCalculation.Calculate(attackInput);
 
         PerformAreaAttack(attackInput, damage);
 
-        return Result.Success;
+        return new CombatResult(0, Result.Success);
     }
 
-    private void PerformAreaAttack(AttackInput attackInput, CalculatedAttackDamage damage)
+    private int PerformAreaAttack(AttackInput attackInput, CalculatedAttackDamage damage)
     {
-        if (!attackInput.Parameters.IsAttackInArea) return;
+        if (!attackInput.Parameters.IsAttackInArea) return 0;
 
         var aggressor = attackInput.Aggressor as ICombatActor;
 
@@ -81,6 +81,8 @@ public class AreaAttackService(
             attackInput.Parameters.ShootType,
             attackInput.Parameters.Effect, false, affectedArea.ToArray()));
 
+        var totalDamage = 0;
+
         foreach (var affectedCreature in affectedCreatures)
         {
             if (affectedCreature is not ICombatActor target) continue;
@@ -96,15 +98,19 @@ public class AreaAttackService(
             {
                 mainDamage.Unjustified = unjustifiedAttack;
 
-                var wasDamaged = InflictDamage(damage, mainDamage, target, aggressor);
+                var damageResult = InflictDamage(damage, mainDamage, target, aggressor);
 
-                if (wasDamaged) conditionAttackService.Execute(attackInput);
+                totalDamage += damageResult.DamageList.TotalDamage;
+                
+                if (damageResult.WasDamaged) conditionAttackService.Execute(attackInput);
             }
             else
             {
                 conditionAttackService.Execute(attackInput);
             }
         }
+
+        return totalDamage;
     }
 
     private void CreateMagicField(AttackInput attackInput, ITile tile)
@@ -120,7 +126,7 @@ public class AreaAttackService(
         magicFieldService.AddToGround(attackInput.Aggressor as ICreature, tile, magicFieldType);
     }
 
-    private static bool InflictDamage(CalculatedAttackDamage damage, CombatDamage mainDamage, ICombatActor target,
+    private static DamageResult InflictDamage(CalculatedAttackDamage damage, CombatDamage mainDamage, ICombatActor target,
         IThing aggressor)
     {
         if (damage.ExtraDamage is { Damage: > 0, Type: not DamageType.None })

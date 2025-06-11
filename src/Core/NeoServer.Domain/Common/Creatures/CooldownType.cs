@@ -6,7 +6,7 @@ public enum CooldownType
     Move,
     UpdatePath,
     Action,
-    Combat,
+    WeaponAttack,
     Talk,
     Block,
     LookForNewEnemy,

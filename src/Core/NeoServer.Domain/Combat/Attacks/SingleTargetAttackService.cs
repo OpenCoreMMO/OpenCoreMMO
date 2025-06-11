@@ -21,7 +21,7 @@ public class SingleTargetAttackService(
     MagicFieldService magicFieldService)
     : IAttackService
 {
-    public Result Execute(AttackInput attackInput)
+    public CombatResult Execute(AttackInput attackInput)
     {
         var aggressor = attackInput.Aggressor as ICombatActor;
         var target = attackInput.Target ?? aggressor?.CurrentTarget;
@@ -30,26 +30,29 @@ public class SingleTargetAttackService(
         {
             PublishAttackEvent(attackInput, true);
             aggressor?.PreAttack(CreateCombatContext(attackInput));
-            return Result.Success;
+            return new CombatResult(0, Result.Success); //returns success because even if the attack missed, it was still a valid action
         }
 
         PublishAttackEvent(attackInput, false);
         aggressor?.PreAttack(CreateCombatContext(attackInput));
 
         var damage = DamageCalculation.Calculate(attackInput);
-        var wasDamaged = PerformAttack(aggressor, target, damage);
+        var damageResult = PerformAttack(aggressor, target, damage);
 
-        if (attackInput.Parameters.FieldAttack) CreateMagicField(attackInput);
+        if (attackInput.Parameters.FieldAttack)
+        {
+            CreateMagicField(attackInput);
+        }
 
-        if (wasDamaged)
+        if (damageResult.WasDamaged)
         {
             conditionAttackService.Execute(attackInput);
-            return Result.Success;
+            return new CombatResult(damageResult.DamageList.TotalDamage, Result.Success);
         }
 
         if (damage.MainDamage is null or { Damage: <= 0 }) conditionAttackService.Execute(attackInput);
 
-        return Result.Success;
+        return new CombatResult(damageResult.DamageList.TotalDamage, Result.Success);
     }
 
     private static bool IsAttackMissed(AttackInput attackInput)
@@ -83,16 +86,12 @@ public class SingleTargetAttackService(
         };
     }
 
-    private static bool PerformAttack(ICombatActor aggressor, IThing target, CalculatedAttackDamage damage)
+    private static DamageResult PerformAttack(ICombatActor aggressor, IThing target, CalculatedAttackDamage damage)
     {
-        if (target is not ICombatActor targetCreature)
-            return false;
-
-        if (damage.MainDamage == null)
-            return false;
-
-        if (Equals(target, aggressor))
-            return false;
+        if (target is not ICombatActor targetCreature || damage.MainDamage == null || Equals(target, aggressor))
+        {
+            return new DamageResult(new CombatDamageList(), false);
+        }
 
         var unjustifiedAttack =
             target is IPlayer targetPlayer && aggressor is IPlayer playerAggressor &&
@@ -100,7 +99,10 @@ public class SingleTargetAttackService(
 
         var mainDamage = damage.MainDamage;
 
-        if (mainDamage is null || mainDamage.Type is DamageType.None) return false;
+        if (mainDamage is null || mainDamage.Type is DamageType.None)
+        {
+            return new DamageResult(new CombatDamageList(), false);
+        }
 
         mainDamage.Unjustified = unjustifiedAttack;
 
