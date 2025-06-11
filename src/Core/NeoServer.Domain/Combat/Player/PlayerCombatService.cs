@@ -9,7 +9,11 @@ public class PlayerCombatService(IAttackService attackService)
     public void Attack(IPlayer player, ICombatActor target)
     {
         var combatParameter = PlayerCombatParameterBuilder.Build(player, target);
-        
-        attackService.Execute(new AttackInput(player, target, combatParameter));
+
+        var combatResult = attackService.Execute(new AttackInput(player, target, combatParameter));
+
+        if (combatResult.Result.Failed) return;
+
+        player.PostAttack(combatParameter, combatResult);
     }
 }

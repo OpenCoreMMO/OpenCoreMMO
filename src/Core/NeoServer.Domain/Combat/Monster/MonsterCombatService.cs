@@ -55,7 +55,7 @@ public class MonsterCombatService(IAttackService attackService, SpellService spe
         combatParameter.CoordinateArea = CreateArea(type, monster, target);
 
         return attackService.Execute(new AttackInput(monster, type.NeedTarget ? target : null, combatParameter))
-            .Succeeded;
+            .Result.Succeeded;
     }
 
     private static Coordinate[] CreateArea(MonsterCombatType type, IMonster monster, ICombatActor target)

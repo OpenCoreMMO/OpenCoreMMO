@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Creatures;
@@ -21,13 +23,15 @@ public class VocationLoader
     private readonly ILogger _logger;
     private readonly ServerConfiguration _serverConfiguration;
     private readonly IVocationStore _vocationStore;
+    private readonly GameConfiguration _gameConfiguration;
 
     public VocationLoader(ILogger logger,
-        ServerConfiguration serverConfiguration, IVocationStore vocationStore)
+        ServerConfiguration serverConfiguration, IVocationStore vocationStore, GameConfiguration gameConfiguration)
     {
         _logger = logger;
         _serverConfiguration = serverConfiguration;
         _vocationStore = vocationStore;
+        _gameConfiguration = gameConfiguration;
         Instance = this;
     }
 
@@ -39,9 +43,12 @@ public class VocationLoader
             var vocations = GetVocations();
 
             foreach (var vocation in vocations)
+            {
+                vocation.AttackSpeed = (ushort)Math.Round(vocation.AttackSpeed / Math.Max(_gameConfiguration.Combat.AttackSpeedMultiplier, 1));
                 _vocationStore.AddOrUpdate(vocation.VocationType, vocation);
+            }
 
-            return new object[] { vocations.Count };
+            return [vocations.Count];
         });
     }
 
@@ -70,11 +77,10 @@ public class VocationLoader
         }
     }
 
-    private static void UpdateVocation(IVocation existingVocation, IVocation vocation)
+    private void UpdateVocation(IVocation existingVocation, IVocation vocation)
     {
         existingVocation.Clientid = vocation.Clientid;
         existingVocation.Description = vocation.Description;
-
 
         UpdateFormula(existingVocation, vocation);
 
@@ -83,7 +89,7 @@ public class VocationLoader
 
         UpdateSkills(existingVocation, vocation);
 
-        existingVocation.AttackSpeed = vocation.AttackSpeed;
+        existingVocation.AttackSpeed = (ushort) Math.Round(vocation.AttackSpeed / Math.Max(_gameConfiguration.Combat.AttackSpeedMultiplier, 1));
         existingVocation.BaseSpeed = vocation.BaseSpeed;
         existingVocation.FromVoc = vocation.FromVoc;
         existingVocation.GainCap = vocation.GainCap;

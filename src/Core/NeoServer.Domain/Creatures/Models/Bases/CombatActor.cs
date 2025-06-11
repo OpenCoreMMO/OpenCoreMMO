@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Combat.Services.Attacks.Events;
+﻿using NeoServer.Domain.Combat;
+using NeoServer.Domain.Combat.Services.Attacks.Events;
 using NeoServer.Domain.Combat.Validation;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat;
@@ -229,10 +230,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return Result.Success;
     }
 
-    public bool TakeDamage(IThing enemy, CombatDamage damages)
-    {
-        return TakeDamage(enemy, new CombatDamageList(damages));
-    }
+    public DamageResult TakeDamage(IThing enemy, CombatDamage damages) => TakeDamage(enemy, new CombatDamageList(damages));
 
     public virtual Result Attack(ICombatActor enemy)
     {
@@ -243,7 +241,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
             return canAttackResult;
         }
 
-        if (!Cooldowns.Expired(CooldownType.Combat)) return Result.Fail(InvalidOperation.CannotAttackThatFast);
+        if (!Cooldowns.Expired(CooldownType.WeaponAttack)) return Result.Fail(InvalidOperation.CannotAttackThatFast);
 
         SetAttackTarget(enemy);
 
@@ -255,7 +253,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         OnAttackEnemy?.Invoke(this, enemy, combat);
 
-        Cooldowns.Start(CooldownType.Combat, (uint)AttackSpeed);
+        Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
 
         return Result.Success;
     }
@@ -372,11 +370,11 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return Cooldowns.Expired(type);
     }
 
-    public virtual bool TakeDamage(IThing enemy, CombatDamageList damages)
+    public virtual DamageResult TakeDamage(IThing enemy, CombatDamageList damages)
     {
-        if (enemy?.Equals(this) ?? false) return false;
-        if (!CanBeAttacked) return false;
-        if (IsDead) return false;
+        if (enemy?.Equals(this) ?? false) return new DamageResult(damages, false);
+        if (!CanBeAttacked) return new DamageResult(damages, false);
+        if (IsDead) return new DamageResult(damages, false);
 
         if (enemy is ICreature c) SetAsEnemy(c);
 
@@ -397,7 +395,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         OnDamage(enemy, this, damages);
 
-        return wasDamaged;
+        return new DamageResult(damages, wasDamaged);
     }
 
     public void PropagateAttack(AffectedLocation[] area, CombatDamage damage)

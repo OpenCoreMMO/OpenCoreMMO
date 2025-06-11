@@ -15,15 +15,13 @@ public record GameConfiguration(
     ReportConfiguration Report = null
 );
 
-public record CombatConfiguration(bool InfiniteAmmo, bool InfiniteThrowingWeapon);
+public record CombatConfiguration(bool InfiniteAmmo = false, bool InfiniteThrowingWeapon = false, decimal AttackSpeedMultiplier = 1);
 
-public record DeathConfiguration
-{
-    public required bool IsDeathListEnabled { get; init; }
-    public required int DeathListRequiredTime { get; init; }
-    public required int DeathAssistCount { get; init; }
-    public required int MaxDeathRecords { get; init; }
-}
+public record DeathConfiguration(
+    bool IsDeathListEnabled = true,
+    int DeathListRequiredTime = 60_000,
+    int DeathAssistCount = 4,
+    int MaxDeathRecords = 5);
 
 public record PvPConfiguration(
     PvpType PvpType = PvpType.OpenPvP,
@@ -40,4 +38,4 @@ public record PvPConfiguration(
     int ProtectionLevel = 20
 );
 
-public record ReportConfiguration(uint reportMaxTime);
+public record ReportConfiguration(uint ReportMaxTime = 60);

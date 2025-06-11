@@ -1,5 +1,7 @@
 ﻿using NeoServer.Domain.Chat;
+using NeoServer.Domain.Combat;
 using NeoServer.Domain.Common.Combat.Enums;
+using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures.Players;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
@@ -308,4 +310,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event WroteText OnWroteText;
 
     #endregion
+
+    void PostAttack(CombatParameter combatParameter, CombatResult damages);
 }
