@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using NeoServer.Domain.Combat;
+﻿using NeoServer.Domain.Combat;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Combat;
@@ -11,6 +10,7 @@ using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
@@ -48,7 +48,7 @@ public class Monster : WalkableMonster, IMonster
     protected override string CloseInspectionText => InspectionText;
 
     private bool KeepDistance => TargetDistance > 1;
-    private IMonsterCombatAttack[] Attacks => Metadata.Attacks;
+    private MonsterCombatType[] Attacks => Metadata.Attacks;
     internal ICombatDefense[] Defenses => Metadata.Defenses;
     internal TargetList Targets { get; }
     public override bool CanAttackAnyTarget => Targets.CanAttackAnyTarget;
@@ -168,8 +168,11 @@ public class Monster : WalkableMonster, IMonster
 
         Targets.AddTarget(enemy);
     }
-    
-    public override bool CanSee(Location pos) => base.CanSee(pos, (int)MapViewPort.MaxClientViewPortX, (int)MapViewPort.MaxClientViewPortY, 1);
+
+    public override bool CanSee(Location pos)
+    {
+        return base.CanSee(pos, (int)MapViewPort.MaxClientViewPortX, (int)MapViewPort.MaxClientViewPortY, 1);
+    }
 
     public virtual void UpdateState()
     {
@@ -293,100 +296,43 @@ public class Monster : WalkableMonster, IMonster
         }
     }
 
+    [Obsolete]
     public override Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks)
     {
-        combatAttacks = Array.Empty<CombatAttackResult>();
-        if (!IsHostile) return Result.Fail(InvalidOperation.AggressorIsNotHostile);
-
-        var arrayPool = ArrayPool<CombatAttackResult>.Shared;
-
-        combatAttacks = arrayPool.Rent(Attacks.Length);
-
-        if (!Attacks.Any()) return Result.NotPossible;
-
-        var attacked = false;
-
-        var maxNumberOfAttacks = (int)Math.Min(3.0, Math.Ceiling(Attacks.Length / 1.5));
-        var numberOfSuccessfulAttacks = 0;
-
-        var comboChance = 70;
-
-        foreach (var attack in Attacks)
-        {
-            if (!Cooldowns.Expired(attack.Id)) continue;
-
-            if (attack.AttackChance < GameRandom.Random.Next(0, maxValue: 100))
-                continue;
-
-            if (attack.CombatParameter is null) Console.WriteLine($"Combat attack not found for monster: {Name}");
-
-            // if (attack.CombatAttack.TryAttack(this, enemy, attack.Translate(), out var combatAttack) is false) continue;
-            //
-            // combatAttacks[numberOfSuccessfulAttacks++] = combatAttack;
-            //
-            // attacked = true;
-            //
-            // if (comboChance < GameRandom.Random.Next(0, maxValue: 100) ||
-            //     numberOfSuccessfulAttacks >= maxNumberOfAttacks)
-            //     break; //chance to combo next attack
-            //
-            // comboChance = Math.Max(0, comboChance - 30);
-        }
-
-        if (attacked && enemy.Location != Location) TurnTo(enemy);
-
-        if (enemy.IsDead) Targets.RemoveTarget(enemy);
-
-        arrayPool.Return(combatAttacks);
-        combatAttacks = combatAttacks[..numberOfSuccessfulAttacks];
-
-
-        return attacked ? Result.Success : Result.NotPossible;
+        throw new NotSupportedException(
+            "Monsters cannot attack directly. Use the MonsterCombatService to handle attacks.");
     }
 
-    public IMonsterCombatAttack[] SelectAttacks()
+    public void PostAttack(MonsterCombatType type)
     {
-        if (!IsHostile) return [];
-        if (Attacks.Length == 0) return [];
-        var maxNumberOfAttacks = (int)Math.Min(2, Math.Ceiling(Attacks.Length / 1.5));
-        var comboChance = 30;
-
-        Span<IMonsterCombatAttack> selectedAttacks = new IMonsterCombatAttack[2];
-
-        var numberOfAttacks = 0;
-        foreach (var attack in Attacks)
-        {
-            if (numberOfAttacks > maxNumberOfAttacks) break;
-
-            if (!Cooldowns.Expired(attack.Id)) continue;
-
-            if (attack.AttackChance < GameRandom.Random.Next(0, maxValue: 100))
-                continue;
-
-            if (attack.CombatParameter is null)
-            {
-                Console.WriteLine($"Combat attack not found for monster: {Name}");
-                continue;
-            }
-
-            selectedAttacks[numberOfAttacks++] = attack;
-
-            if (comboChance < GameRandom.Random.Next(0, maxValue: 100)) break;
-        }
-
-        return selectedAttacks[..numberOfAttacks].ToArray();
-    }
-
-    public void PostAttack(IMonsterCombatAttack attack)
-    {
-        Cooldowns.Start(attack.Id, attack.Interval);
+        Cooldowns.Start(type.Id, type.Interval);
     }
 
     public override Result CanAttack(CombatParameter combatParameter)
     {
+        if (combatParameter.DamageType == DamageType.Melee && State == MonsterState.Escaping) return Result.Fail(InvalidOperation.NotPossible);
+        
         if (!Cooldowns.Expired(combatParameter.CooldownId)) return Result.Fail(InvalidOperation.CannotAttackThatFast);
 
         return base.CanAttack(combatParameter);
+    }
+
+    public override void AddCondition(ICondition condition)
+    {
+        switch (condition.Type)
+        {
+            case ConditionType.Paralyze when HasImmunity(Immunity.Paralysis):
+            case ConditionType.Drowning when HasImmunity(Immunity.Drown):
+            case ConditionType.Electrified when HasImmunity(Immunity.Energy):
+            case ConditionType.Burning when HasImmunity(Immunity.Fire):
+            case ConditionType.Drunk when HasImmunity(Immunity.Drunkenness):
+            case ConditionType.Poisoned when HasImmunity(Immunity.Earth):
+            case ConditionType.Bleeding when HasImmunity(Immunity.Physical):
+                return;
+            default:
+                base.AddCondition(condition);
+                break;
+        }
     }
 
     public void UpdateLastTargetChance()
@@ -462,24 +408,6 @@ public class Monster : WalkableMonster, IMonster
         Follow(creature);
         SetAttackTarget(creature);
         UpdateLastTargetChance();
-    }
-
-    public override void AddCondition(ICondition condition)
-    {
-        switch (condition.Type)
-        {
-            case ConditionType.Paralyze when HasImmunity(Immunity.Paralysis):
-            case ConditionType.Drowning when HasImmunity(Immunity.Drown):
-            case ConditionType.Electrified when HasImmunity(Immunity.Energy):
-            case ConditionType.Burning when HasImmunity(Immunity.Fire):
-            case ConditionType.Drunk when HasImmunity(Immunity.Drunkenness):
-            case ConditionType.Poisoned when HasImmunity(Immunity.Earth):
-            case ConditionType.Bleeding when HasImmunity(Immunity.Physical):
-                return;
-            default:
-                base.AddCondition(condition);
-                break;
-        }
     }
 
     #region Summon Event Attachment

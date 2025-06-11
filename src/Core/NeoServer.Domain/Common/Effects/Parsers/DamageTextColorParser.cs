@@ -23,6 +23,7 @@ public static class DamageTextColorParser
             DamageType.LifeDrain => TextColor.DarkRed,
             DamageType.Ice => TextColor.LightBlue,
             DamageType.Holy => TextColor.Yellow,
+            DamageType.Drown => TextColor.MayaBlue,
             _ => TextColor.Red
         };
     }

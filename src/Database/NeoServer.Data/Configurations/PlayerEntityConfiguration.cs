@@ -93,7 +93,7 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         string columnType,
         string defaultValueSql = null)
     {
-       return entity.Property(property)
+        return entity.Property(property)
             .HasColumnType(columnType)
             .HasDefaultValueSql(defaultValueSql);
     }

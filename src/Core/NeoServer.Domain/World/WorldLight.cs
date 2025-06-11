@@ -90,7 +90,7 @@ public class WorldLight
     /// </summary>
     private void PublishLightChange()
     {
-        EventAggregator.Instance.Publish(new WorldLightChangedEvent(LightLevel));
+        EventAggregator.Publish(new WorldLightChangedEvent(LightLevel));
     }
 
     /// <summary>

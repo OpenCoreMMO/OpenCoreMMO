@@ -50,6 +50,8 @@ public interface IInventory : IHasItem
 
     void Protect(CombatDamage damage);
 
+    bool HasEquippedItemWithImmunity(Immunity immunity);
+
     #region Events
 
     event AddItemToSlot OnItemAddedToSlot;
@@ -58,6 +60,4 @@ public interface IInventory : IHasItem
     event ChangeInventoryWeight OnWeightChanged;
 
     #endregion
-
-    bool HasEquippedItemWithImmunity(Immunity immunity);
 }

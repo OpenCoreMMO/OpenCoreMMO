@@ -1,6 +1,7 @@
 ﻿using System.Text;
-using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Combat.Calculations;
+using NeoServer.Domain.Combat.Services.Attacks;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;

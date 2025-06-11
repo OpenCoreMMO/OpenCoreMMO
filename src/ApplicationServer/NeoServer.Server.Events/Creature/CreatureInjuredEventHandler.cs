@@ -1,0 +1,31 @@
+﻿using NeoServer.Domain.Combat.Services.Attacks.Events;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Creatures.Events;
+using NeoServer.Domain.Items.Items;
+using NeoServer.Domain.Services;
+
+namespace NeoServer.Server.Events.Creature;
+
+public class CreatureInjuredEventHandler(BloodPoolService bloodPoolService, IPlayerSkullService playerSkullService)
+    : IApplicationEventHandler<CreatureInjuredEvent>
+{
+    public void Handle(CreatureInjuredEvent @event)
+    {
+        var target = @event.Victim;
+
+        foreach (var combatDamage in @event.DamageList)
+        {
+            if (combatDamage is not { Damage: > 0, IsElementalDamage: false }) continue;
+
+            bloodPoolService.CreateSplash(target as ICombatActor, combatDamage);
+            return;
+        }
+
+        if (@event.Enemy is MagicField { Owner: IPlayer player } && !Equals(player, @event.Victim))
+        {
+            playerSkullService.UpdatePlayerSkull(player);
+        }
+    }
+}

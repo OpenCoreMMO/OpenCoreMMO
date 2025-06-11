@@ -24,7 +24,9 @@ public class TalkAction : Script, ITalkAction
         // onSay(player, words, param, type)
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
-            _logger.Error("[TalkAction::ExecuteSay - Player {PlayerName} words {Words}] Call stack overflow. Too many lua script calls being nested. Script name {LoadingScriptName}", player.Name, GetWords(), GetScriptInterface().GetLoadingScriptName());
+            _logger.Error(
+                "[TalkAction::ExecuteSay - Player {PlayerName} words {Words}] Call stack overflow. Too many lua script calls being nested. Script name {LoadingScriptName}",
+                player.Name, GetWords(), GetScriptInterface().GetLoadingScriptName());
             return false;
         }
 

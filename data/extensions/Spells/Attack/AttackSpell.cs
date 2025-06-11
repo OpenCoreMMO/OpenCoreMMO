@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Combat.Services.Attacks;
+﻿using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Combat.Services.Attacks;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
@@ -31,8 +32,45 @@ public abstract class AttackSpell : Spell<AttackSpell>
             target = map.GetNextTile(caster.Location, caster.Direction);
         }
 
-        var attackInput = new AttackInput(caster, target, CombatSettings);
-        CombatSettings.Range = Range;
+        var combatParameter = new CombatParameter
+        {
+            Effect = CombatSettings.Effect,
+            DamageType = CombatSettings.DamageType,
+            ShootType = CombatSettings.ShootType,
+            DamageFormula = CombatSettings.DamageFormula,
+            Area = CombatSettings.Area,
+            NeedDirection = CombatSettings.NeedDirection,
+            FieldAttack = CombatSettings.FieldAttack,
+            BlockArmor = CombatSettings.BlockArmor,
+            Condition = CombatSettings.Condition,
+            Range = Range,
+            MinDamage = CombatSettings.MinDamage,
+            MaxDamage = CombatSettings.MaxDamage,
+            Radius = CombatSettings.Radius,
+            Length = CombatSettings.Length,
+            Spread = CombatSettings.Spread,
+            ExtraAttack = CombatSettings.ExtraAttack,
+            CooldownType = CombatSettings.CooldownType,
+            CooldownId = CombatSettings.CooldownId,
+            IsMagicalAttack = CombatSettings.IsMagicalAttack,
+            CreateItemId = CombatSettings.CreateItemId,
+            CooldownDuration = CombatSettings.CooldownDuration,
+            HitChance = CombatSettings.HitChance,
+            CoordinateArea = CombatSettings.CoordinateArea,
+            UsingWeapon = CombatSettings.UsingWeapon
+        };
+
+        var attackInput = new AttackInput(caster, target, combatParameter);
+
+        if (caster is IMonster monster)
+        {
+            if (monster.Metadata.Spells.TryGetValue(Name, out var attack))
+            {
+                combatParameter.MinDamage = attack.CombatParameter.MinDamage;
+                combatParameter.MaxDamage = attack.CombatParameter.MaxDamage;
+                combatParameter.CooldownId = attack.Id;
+            }
+        }
 
         if (NeedDirection)
         {
@@ -43,8 +81,6 @@ public abstract class AttackSpell : Spell<AttackSpell>
             attackInput.Parameters.NeedDirection = NeedDirection;
         }
 
-        IoC.GetInstance<IAttackService>().Execute(attackInput);
-
-        return Result.Success;
+        return IoC.GetInstance<IAttackService>().Execute(attackInput);
     }
 }

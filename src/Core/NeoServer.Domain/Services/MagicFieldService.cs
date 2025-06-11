@@ -25,9 +25,7 @@ public class MagicFieldService(IMap map, IItemFactory itemFactory, PvPConfigurat
         if (tile is not IDynamicTile dynamicTile) return Result<MagicField>.NotPossible;
 
         if (tile.ProtectionZone || actor.Tile.ProtectionZone)
-        {
             return Result<MagicField>.Fail(InvalidOperation.NotPermittedInProtectionZone);
-        }
 
         var isNonPvpField = IsNonPvpField(actor, tile);
         var fireFieldId = (ushort)(isNonPvpField ? 1500 : 1492);
@@ -40,10 +38,7 @@ public class MagicFieldService(IMap map, IItemFactory itemFactory, PvPConfigurat
             _ => null
         };
 
-        if (field is not MagicField magicField)
-        {
-            return Result<MagicField>.NotPossible;
-        }
+        if (field is not MagicField magicField) return Result<MagicField>.NotPossible;
 
         magicField.Creator = actor;
 
@@ -53,10 +48,7 @@ public class MagicFieldService(IMap map, IItemFactory itemFactory, PvPConfigurat
 
         if (isNonPvpField || dynamicTile.CreaturesCount == 0) return Result<MagicField>.Ok(magicField);
 
-        foreach (var creature in dynamicTile.Creatures)
-        {
-            magicField.CauseDamage(creature);
-        }
+        foreach (var creature in dynamicTile.Creatures) magicField.CauseDamage(creature);
 
         return Result<MagicField>.Ok(magicField);
     }

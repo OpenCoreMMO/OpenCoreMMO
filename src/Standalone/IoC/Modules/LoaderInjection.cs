@@ -3,6 +3,7 @@ using NeoServer.Loaders.Groups;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Loaders.Items;
 using NeoServer.Loaders.Monsters;
+using NeoServer.Loaders.Monsters.Converters;
 using NeoServer.Loaders.Quest;
 using NeoServer.Loaders.Spawns;
 using NeoServer.Loaders.Spells;
@@ -19,7 +20,12 @@ public static class LoaderInjection
         builder.AddSingleton<ItemTypeLoader>();
         builder.AddSingleton<WorldLoader>();
         builder.AddSingleton<SpawnLoader>();
-        builder.AddSingleton<MonsterLoader>();
+
+        builder
+            .AddSingleton<MonsterLoader>()
+            .AddSingleton<MonsterConverter>()
+            .AddSingleton<MonsterAttackConverter>();
+
         builder.AddSingleton<VocationLoader>();
         builder.RegisterPlayerLoaders();
         builder.RegisterStartupLoaders();

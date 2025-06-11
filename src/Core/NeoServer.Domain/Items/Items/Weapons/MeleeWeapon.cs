@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;

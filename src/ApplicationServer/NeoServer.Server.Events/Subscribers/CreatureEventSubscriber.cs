@@ -1,9 +1,9 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Networking.EventHandlers.Creature;
 using NeoServer.Server.Events.Combat;
 using NeoServer.Server.Events.Creature;
 using NeoServer.Server.Events.Creature.Npcs;
 using NeoServer.Server.Events.Talks;
+using CreatureInjuredEventHandler = NeoServer.Server.Events.Creature.CreatureInjuredEventHandler;
 
 namespace NeoServer.Server.Events.Subscribers;
 
@@ -14,7 +14,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
     private readonly CreatureChangedAttackTargetEventHandler _creatureChangedAttackTargetEventHandler;
     private readonly CreatureChangedOutfitEventHandler _creatureChangedOutfitEventHandler;
     private readonly CreatureChangedSpeedEventHandler _creatureChangedSpeedEventHandler;
-    private readonly CreatureDeathEventHandler _creatureDeathEventHandler;
     private readonly CreatureHealedEventHandler _creatureHealedEventHandler;
     private readonly CreatureHearEventHandler _creatureHearEventHandler;
     private readonly CreatureStartedFollowingEventHandler _creatureStartedFollowingEventHandler;
@@ -25,7 +24,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
     private readonly NpcShowShopEventHandler _npcShowShopEventHandler;
 
     public CreatureEventSubscriber(CreatureInjuredEventHandler creatureReceiveDamageEventHandler,
-        CreatureDeathEventHandler creatureDeathEventHandler,
         CreatureBlockedAttackEventHandler creatureBlockedAttackEventHandler,
         CreatureAttackEventHandler creatureAttackEventHandler,
         CreatureTurnedToDirectionEventHandler creatureTurnToDirectionEventHandler,
@@ -40,7 +38,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
         NpcShowShopEventHandler npcShowShopEventHandler,
         NpcCloseShopEventHandler npcCloseShopEventHandler)
     {
-        _creatureDeathEventHandler = creatureDeathEventHandler;
         _creatureBlockedAttackEventHandler = creatureBlockedAttackEventHandler;
         _creatureAttackEventHandler = creatureAttackEventHandler;
         _creatureTurnToDirectionEventHandler = creatureTurnToDirectionEventHandler;
@@ -91,7 +88,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
         if (creature is ICombatActor combatActor)
         {
             combatActor.OnTargetChanged -= _creatureChangedAttackTargetEventHandler.Execute;
-            combatActor.OnDeath -= _creatureDeathEventHandler.Execute;
             combatActor.OnBlockedAttack -= _creatureBlockedAttackEventHandler.Execute;
             combatActor.OnAttackEnemy -= _creatureAttackEventHandler.Execute;
             combatActor.OnHeal -= _creatureHealedEventHandler.Execute;
@@ -116,7 +112,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
         if (creature is not ICombatActor combatActor) return;
 
         combatActor.OnTargetChanged += _creatureChangedAttackTargetEventHandler.Execute;
-        combatActor.OnDeath += _creatureDeathEventHandler.Execute;
         combatActor.OnBlockedAttack += _creatureBlockedAttackEventHandler.Execute;
         combatActor.OnAttackEnemy += _creatureAttackEventHandler.Execute;
         combatActor.OnHeal += _creatureHealedEventHandler.Execute;

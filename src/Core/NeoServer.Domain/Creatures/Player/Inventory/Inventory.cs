@@ -105,13 +105,10 @@ public class Inventory : IInventory
     public bool HasEquippedItemWithImmunity(Immunity immunity)
     {
         foreach (var (item, _) in InventoryMap.Items)
-        {
-            if (immunity is Immunity.Drunkenness && item.Metadata.Attributes.TryGetAttribute(ItemAttribute.SuppressDrunk, out byte suppressDrunk) && suppressDrunk == 1)
-            {
+            if (immunity is Immunity.Drunkenness &&
+                item.Metadata.Attributes.TryGetAttribute(ItemAttribute.SuppressDrunk, out byte suppressDrunk) &&
+                suppressDrunk == 1)
                 return true;
-            }
-            
-        }
 
         return false;
     }

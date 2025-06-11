@@ -11,8 +11,11 @@ public static class MonsterStateService
         if (monster.IsDead) return;
 
         monster.UpdateState();
-
-        if (monster.IsCurrentTargetUnreachable) monster.StopAttack();
+        
+        if (monster.IsCurrentTargetUnreachable)
+        {
+            monster.StopAttack();
+        }
 
         if (monster.State == MonsterState.LookingForEnemy)
         {
@@ -30,12 +33,16 @@ public static class MonsterStateService
                 return;
             }
 
+            monster.TurnTo(monster.CurrentTarget);
+            monster.Follow(monster.CurrentTarget);
+
             monster.Summon(summonService);
 
             if (monster.Metadata.TargetChance.Interval == 0) return;
 
             if (monster.Attacking &&
                 monster.Metadata.TargetChance.Chance < GameRandom.Random.Next(1, maxValue: 100)) return;
+
             monster.SelectTargetToAttack();
         }
 

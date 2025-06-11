@@ -1,4 +1,4 @@
-namespace NeoServer.Domain.Creatures.Player;
+namespace NeoServer.Domain.Creatures.Player.Vocation;
 
 public enum VocationType : byte
 {

@@ -1,5 +1,4 @@
 ﻿using LuaNET;
-using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Items.Items;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 

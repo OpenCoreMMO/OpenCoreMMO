@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using NeoServer.Domain.Chat;
-using NeoServer.Domain.Combat.Services.Spells;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Spells;

@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Effects.Parsers;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Networking.Packets.Outgoing.Creature;
 using NeoServer.Networking.Packets.Outgoing.Effect;
@@ -73,7 +74,7 @@ public class CreatureInjuredEventHandler(IMap map, IGameCreatureManager gameCrea
 
         if (elementalDamage.Damage > 0)
         {
-            var damageEffect = elementalDamage.Effect == 0
+            var damageEffect = elementalDamage.Effect == EffectT.None
                 ? DamageEffectParser.Parse(elementalDamage.Type, victim)
                 : elementalDamage.Effect;
 
@@ -81,7 +82,8 @@ public class CreatureInjuredEventHandler(IMap map, IGameCreatureManager gameCrea
             return;
         }
 
-        connection.OutgoingPackets.Enqueue(new MagicEffectPacket(victim.Location, EffectT.XBlood));
+        if (damages.TotalDamage > 0)
+            connection.OutgoingPackets.Enqueue(new MagicEffectPacket(victim.Location, EffectT.XBlood));
     }
 
     private static void SendDamageNumbers(CombatDamageList damages, ICreature victim, IConnection connection)

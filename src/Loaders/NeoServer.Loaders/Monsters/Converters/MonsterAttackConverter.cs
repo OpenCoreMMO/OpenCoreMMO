@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Combat.Attacks;
@@ -12,22 +13,18 @@ using NeoServer.Domain.Common.Effects.Parsers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Parsers;
 using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Monster;
+using NeoServer.Domain.Spells;
 using NeoServer.Server.Helpers.Extensions;
 using Serilog;
 
 namespace NeoServer.Loaders.Monsters.Converters;
 
-internal static class MonsterAttackConverter
+public class MonsterAttackConverter(ILogger logger, SpellListManager spellListManager)
 {
-    private static HashSet<string> SupportedAttributes = new()
+    private static readonly HashSet<string> SupportedAttackNames = new(StringComparer.InvariantCultureIgnoreCase)
     {
-        "name", "attack", "skill", "min", "max", "interval", "length", "radius", "target", "range", "spread", "chance",
-        "attributes"
-    };
-
-    private static HashSet<string> _supportedAttackNames = new(StringComparer.InvariantCultureIgnoreCase)
-    {
-        "lifedrain", "manadrain", "field", "firefield", "energyfield", "poisonField", "speed",
+        "lifedrain", "manadrain",
         "melee",
         "physical",
         "energy",
@@ -36,18 +33,16 @@ internal static class MonsterAttackConverter
         "earth",
         "ice",
         "holy",
-        "death", "drunk"
+        "drown",
+        "death",
+        "effect"
     };
 
-    public static IMonsterCombatAttack[] Convert(MonsterData data, ILogger logger)
+    public MonsterCombatType[] Convert(MonsterData data)
     {
-        if (data.Name == "Training Monk")
-        {
-        }
-
         if (data.Attacks is null) return [];
 
-        var attacks = new List<IMonsterCombatAttack>();
+        var attacks = new List<MonsterCombatType>();
 
         AdjustAttackChanceValue(data.Attacks);
 
@@ -67,14 +62,12 @@ internal static class MonsterAttackConverter
             attack.TryGetValue("needTarget", out byte needTarget);
             attack.TryGetValue("duration", out int duration);
 
-            if (attack.ContainsKey("needTarget"))
-            {
-                target = needTarget;
-            }
+            if (attack.ContainsKey("needTarget")) target = needTarget;
 
-            if (!_supportedAttackNames.Contains(attackName))
+            if (!attack.ContainsKey("target") &&
+                !attack.ContainsKey("needTarget") && radius == 0 && length == 0 && spread == 0)
             {
-                logger.Warning("{Monster} Attack: {AttackName} is not implemented", data.Name, attackName);
+                target = 1; // Default to no target if not specified
             }
 
             attack.TryGetValue("attributes", out JsonElement attributesElement);
@@ -96,7 +89,7 @@ internal static class MonsterAttackConverter
             attributes.TryGetValue("shootEffect", out string shootEffect);
             attributes.TryGetValue("areaEffect", out string areaEffect);
 
-            var combatAttack = new MonsterCombatAttack
+            var combatAttack = new MonsterCombatType
             {
                 NeedTarget = target != 0,
                 AttackChance = Math.Min(chance, (byte)100),
@@ -120,14 +113,10 @@ internal static class MonsterAttackConverter
             };
 
             if (attack.TryGetValue("damageType", out string damageTypeText))
-            {
                 combatAttack.CombatParameter.DamageType = DamageTypeParser.Parse(damageTypeText);
-            }
 
             if (attack.TryGetValue("effect", out string effect))
-            {
                 combatAttack.CombatParameter.Effect = EffectParser.Parse(effect);
-            }
 
             if (attackName.Equals("melee", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -204,30 +193,6 @@ internal static class MonsterAttackConverter
                 if (attack.TryGetValue("tick", out ushort tick) &&
                     combatAttack.CombatParameter.DamageType == DamageType.Melee)
                     combatAttack.CombatParameter.Condition.Duration = tick;
-
-                continue;
-            }
-
-            if (range > 1 || radius == 1)
-            {
-                if (areaEffect != null)
-                {
-                    var damageType = DamageTypeParser.Parse(areaEffect);
-
-                    combatAttack.CombatParameter.DamageType = damageType == DamageType.Melee
-                        ? combatAttack.CombatParameter.DamageType
-                        : damageType;
-                }
-            }
-
-            if (radius > 1)
-            {
-                combatAttack.CombatParameter.DamageType = DamageTypeParser.Parse(areaEffect);
-            }
-
-            if (length > 0)
-            {
-                combatAttack.CombatParameter.DamageType = DamageTypeParser.Parse(areaEffect);
             }
 
             if (attackName.Equals("lifeDrain", StringComparison.InvariantCultureIgnoreCase))
@@ -254,6 +219,8 @@ internal static class MonsterAttackConverter
 
                 combatAttack.CombatParameter.DamageType = DamageType.None;
                 combatAttack.CombatParameter.Effect = EffectParser.Parse(areaEffect);
+
+                SupportedAttackNames.Add(attackName);
             }
 
             if (attackName.Equals("drunk", StringComparison.InvariantCultureIgnoreCase))
@@ -261,6 +228,8 @@ internal static class MonsterAttackConverter
                 combatAttack.CombatParameter.Condition =
                     new CombatParameter.AttackCondition(ConditionType.Drunk,
                         (uint)Math.Abs(duration == 0 ? 10000 : duration));
+
+                SupportedAttackNames.Add(attackName);
             }
 
             if (attackName.Contains("field"))
@@ -272,6 +241,8 @@ internal static class MonsterAttackConverter
                     : damageTypeText;
 
                 combatAttack.CombatParameter.DamageType = DamageTypeParser.Parse(damageType);
+
+                SupportedAttackNames.Add(attackName);
             }
 
             if (attackName.Contains("condition"))
@@ -285,6 +256,8 @@ internal static class MonsterAttackConverter
                 combatAttack.CombatParameter.Condition =
                     new CombatParameter.AttackCondition(condition,
                         duration == 0 ? ConditionIntervalMap.Get(condition) : (uint)duration);
+
+                SupportedAttackNames.Add(attackName);
             }
 
             if (attackName.Equals("outfit", StringComparison.InvariantCultureIgnoreCase))
@@ -297,9 +270,19 @@ internal static class MonsterAttackConverter
                     {
                         Value = monsterName
                     };
+
+                SupportedAttackNames.Add(attackName);
             }
 
+            var spell = spellListManager.GetByName(attackName);
+            combatAttack.Spell = spell;
+
             attacks.Add(combatAttack);
+
+            if (spell is not null) SupportedAttackNames.Add(attackName);
+
+            if (!SupportedAttackNames.Contains(attackName))
+                logger.Warning("{Monster} Attack: {AttackName} is not implemented", data.Name, attackName);
         }
 
         return attacks.ToArray();

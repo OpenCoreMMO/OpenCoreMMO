@@ -19,6 +19,7 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Models.Bases.Events;
 using NeoServer.Domain.Creatures.Monster.Loot;
 using NeoServer.Domain.Creatures.Player;
@@ -154,15 +155,20 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
             }
         }
 
-        if (!attack.IsElementalDamage) damage = DefendUsingArmor(damage);
-
-        if (damage <= 0)
+        if (!attack.IsElementalDamage)
         {
-            damage = 0;
-            OnBlockedAttack?.Invoke(this, BlockType.Armor);
+            damage = DefendUsingArmor(damage);
+
+            if (damage <= 0)
+            {
+                damage = 0;
+                OnBlockedAttack?.Invoke(this, BlockType.Armor);
+            }
         }
 
         attack.SetNewDamage((ushort)damage);
+
+        if (attack.Damage <= 0) return attack;
 
         attack = OnImmunityDefense(attack);
 
@@ -378,19 +384,13 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         foreach (var damage in damages)
         {
-            if (damage.Damage <= 0 || damage.Type is DamageType.None) continue;
-            
+            if (damage.Type is DamageType.None) continue;
+
             ReduceDamage(damage);
 
-            if (damage.Damage <= 0)
-            {
-                continue;
-            }
+            if (damage.Damage <= 0) continue;
 
-            if (damage.Damage > HealthPoints)
-            {
-                damage.SetNewDamage((ushort)HealthPoints);
-            }
+            if (damage.Damage > HealthPoints) damage.SetNewDamage((ushort)HealthPoints);
 
             wasDamaged = true;
         }
@@ -554,6 +554,8 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         Conditions.Clear();
 
         OnDeath?.Invoke(this, by);
+        EventAggregator.Publish(new CreatureDeathEvent(this, by));
+
         ReceivedDamages.Clear();
     }
 
