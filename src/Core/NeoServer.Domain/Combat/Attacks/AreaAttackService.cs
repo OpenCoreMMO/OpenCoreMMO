@@ -29,9 +29,9 @@ public class AreaAttackService(
     {
         var damage = DamageCalculation.Calculate(attackInput);
 
-        PerformAreaAttack(attackInput, damage);
+        var totalDamage = (uint) PerformAreaAttack(attackInput, damage);
 
-        return new CombatResult(0, Result.Success);
+        return new CombatResult(totalDamage, Result.Success);
     }
 
     private int PerformAreaAttack(AttackInput attackInput, CalculatedAttackDamage damage)
