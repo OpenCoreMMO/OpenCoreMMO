@@ -14,7 +14,6 @@ public class IntenseHealing : Spell<IntenseHealing>
     public override uint Duration => 0;
 
     public override ConditionType ConditionType => ConditionType.None;
-
     public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
         caster.Heal(100, caster);

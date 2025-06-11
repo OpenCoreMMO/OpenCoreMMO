@@ -48,19 +48,25 @@ public class SpellLoader(
                 if (spellInstance.Enabled is false) continue;
 
                 spellInstance.Name ??= spell["name"].GetStringFromJson();
+                
                 spellInstance.Cooldown = spellInstance.Cooldown > 0
                     ? spellInstance.Cooldown
                     : spell["cooldown"].GetUInt32FromJson();
+                
                 spellInstance.ManaConsumption = spellInstance.ManaConsumption > 0
                     ? spellInstance.ManaConsumption
                     : spell["mana"].GetUInt16FromJson();
+                
                 spellInstance.MinLevel = spellInstance.MinLevel > 0
                     ? spellInstance.MinLevel
                     : spell["level"].GetUInt16FromJson();
+                
                 spellInstance.VocationIds = (spellInstance.Vocations?.Length ?? 0) > 0
                     ? LoadVocations(spellInstance.Vocations)
                     : LoadVocations(spell);
-                spellListManager.Add(spellInstance.Words ?? spell["words"].GetStringFromJson(), spellInstance);
+                
+                spellInstance.Words ??= spell["words"].GetStringFromJson();
+                spellListManager.Add(spellInstance.Words, spellInstance);
             }
 
             return [spells.Count];
