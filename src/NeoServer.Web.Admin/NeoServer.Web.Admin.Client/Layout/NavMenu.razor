@@ -1,0 +1,64 @@
+﻿@implements IDisposable
+
+@inject NavigationManager NavigationManager
+
+<MudNavMenu Style="font-size: 1rem; color: rgb(152,153,172)">
+    <MudText Typo="Typo.subtitle2" Class="ml-4 my-3">Server</MudText>
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home">Home</MudNavLink>
+    <MudNavLink Href="Accounts" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.ManageAccounts">Accounts</MudNavLink>
+    <MudNavLink Href="Players" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.People">Players</MudNavLink>
+    <MudNavLink Href="Worlds" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Public">Worlds</MudNavLink>
+    <MudNavLink Href="Guild" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Diversity3">Guilds</MudNavLink>
+    <MudNavLink Href="IpBans" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Block">Ip Bans</MudNavLink>
+    <MudDivider Class="my-2"/>
+    <MudText Typo="Typo.subtitle2" Class="ml-4 my-3">Player Reports</MudText>
+    <MudNavLink Ripple="true" Href="Bug-Reports" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.BugReport">Bug Reports</MudNavLink>
+    <MudNavLink Ripple="true" Href="Bot-Reports" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.SmartToy">Bot Reports</MudNavLink>
+    <MudNavLink Ripple="true" Href="General-Reports" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Report">General Reports</MudNavLink>
+
+
+    @* <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink> *@
+    @* *@
+    @* <MudNavLink Href="weather" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Weather</MudNavLink> *@
+    @* *@
+    @* <MudNavLink Href="auth" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Lock">Auth Required</MudNavLink> *@
+    @* <AuthorizeView> *@
+    @*     <Authorized> *@
+    @*         <MudNavLink Href="Account/Manage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">@context.User.Identity?.Name</MudNavLink> *@
+    @*         <form action="Account/Logout" method="post"> *@
+    @*             <AntiforgeryToken/> *@
+    @*             <input type="hidden" name="ReturnUrl" value="@currentUrl"/> *@
+    @*             <button type="submit" class="mud-nav-link mud-ripple"> *@
+    @*                 <MudIcon Icon="@Icons.Material.Filled.Logout" Color="Color.Info" Class="mr-3"></MudIcon> Logout *@
+    @*             </button> *@
+    @*         </form> *@
+    @*     </Authorized> *@
+    @*     <NotAuthorized> *@
+    @*         <MudNavLink Href="Account/Register" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">Register</MudNavLink> *@
+    @*         <MudNavLink Href="Account/Login" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Password">Login</MudNavLink> *@
+    @*     </NotAuthorized> *@
+    @* </AuthorizeView> *@
+</MudNavMenu>
+
+
+@code {
+    private string? currentUrl;
+
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+
+}

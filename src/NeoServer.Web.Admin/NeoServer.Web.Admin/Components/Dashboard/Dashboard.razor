@@ -1,0 +1,50 @@
+@attribute [ExcludeFromInteractiveRouting]
+
+@page "/"
+
+<PageTitle>Home</PageTitle>
+<MudText Typo="Typo.h5" Color="Color.Primary">Home</MudText>
+<br/>
+
+<MudGrid>
+    @foreach(var stat in Statistics)
+    {
+        <MudItem xs="3">
+            <MudCard Class="d-flex mud-width-full py-3">
+                <MudCardContent>
+                    <div style="display: flex; align-items: center; align-content: flex-start">
+                        <MudIcon Icon="@stat.Icon" Color="@stat.IconColor" Size="Size.Large"
+                                 Style="font-size: 48px; margin-right: 16px;"/>
+
+                        <div>
+                            <MudText Typo="Typo.subtitle1" Color="Color.Default">@stat.Title</MudText>
+                            <MudText Typo="Typo.h5">@stat.Value</MudText>
+                        </div>
+                    </div>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+
+    private List<Statistic> Statistics { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        Statistics.Add(new Statistic { Icon = Icons.Material.Filled.People, Title = "Players Online", Value = 158, IconColor = Color.Primary});
+        Statistics.Add(new Statistic { Icon = Icons.Material.Filled.BugReport, Title = "Bug Reports", Value = 5, IconColor = Color.Error});
+        Statistics.Add(new Statistic { Icon = Icons.Material.Filled.Cancel, Title = "Bans Today", Value = 8, IconColor = Color.Warning});
+        Statistics.Add(new Statistic { Icon = Icons.Material.Filled.ArrowUpward, Title = "Record Online Today", Value = 200, IconColor = Color.Success});
+    }
+
+    public class Statistic
+    {
+        public string Icon { get; set; }
+        public Color IconColor { get; set; }
+        public string Title { get; set; }
+        public int Value { get; set; }
+    }
+
+}
