@@ -80,13 +80,10 @@ public class PlayerPersistenceRoutine
 
     private async Task SaveDepots(List<IPlayer> players)
     {
-        var depotSaveTasks = new List<Task>();
-
-        foreach (var player in players)
-        {
-            if (!_depotManager.Get(player.Id, out var depot)) continue;
-            depotSaveTasks.Add(_playerDepotItemRepository.Save(player, depot));
-        }
+        var depotSaveTasks = players
+            .Where(player => _depotManager.Get(player.Id, out _))
+            .Select(player => _playerDepotItemRepository.Save(player, _depotManager.Get(player.Id, out var depot) ? depot : null))
+            .ToArray();
 
         await Task.WhenAll(depotSaveTasks);
     }

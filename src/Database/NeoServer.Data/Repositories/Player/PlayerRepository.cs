@@ -64,18 +64,11 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
         await using var context = NewDbContext;
         return await context.Players.FirstOrDefaultAsync(x => x.Id == id);
     }
-
     public async Task UpdatePlayers(IEnumerable<IPlayer> players)
     {
-        var tasks = new List<Task>();
-
-        foreach (var player in players)
-        {
-            tasks.Clear();
-            tasks.Add(SavePlayer(player));
-        }
-
+        var tasks = players.Select(SavePlayer).ToList();
         await Task.WhenAll(tasks);
+        tasks.Clear();
     }
 
     public async Task UpdatePlayerOnlineStatus(uint playerId, bool status)
