@@ -1,0 +1,71 @@
+@page "/Players"
+@using NeoServer.Web.API.Response
+@using NeoServer.Web.API.Response.Player
+@using NeoServer.Web.API.Requests.Queries
+@using MediatR
+@using Microsoft.AspNetCore.Components.Web
+@using MudBlazor
+@inject IMediator Mediator
+@inject ProgressBarState ProgressBarState
+
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+<PageTitle>Players</PageTitle>
+
+@if (Players?.Data is not null)
+{
+    <MudButton Color="@Color.Success" Class="add-item-btn">Add Player</MudButton>
+    <br/>
+    <MudTable Items="Players?.Data" RowsPerPage="5" Bordered="true" Hover="true">
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Level</MudTh>
+            <MudTh>Group</MudTh>
+            <MudTh>Online</MudTh>
+            <MudTd></MudTd>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.Name</MudTd>
+            <MudTd>@context.Level</MudTd>
+            <MudTd>@context.Group</MudTd>
+            <MudTd>
+                <MudChip T="string" Color="@(context.Online ? Color.Success : Color.Error)">
+                    @(context.Online ? "Online" : "Offline")
+                </MudChip>
+            </MudTd>
+            <MudTd>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="@($"Player/{context.Id}")">
+                    View
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Error">
+                    Ban
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Warning">
+                    Logout
+                </MudButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code {
+
+    private BasePagedResponseViewModel<IEnumerable<PlayerResponseViewModel>> Players { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ProgressBarState.Show();
+
+        await LoadPlayers();
+        
+        ProgressBarState.Hide();
+    }
+
+    private async Task LoadPlayers()
+    {
+        Players = await Mediator.Send(new GetPlayersRequest
+        {
+            Limit = 10
+        });
+    }
+}

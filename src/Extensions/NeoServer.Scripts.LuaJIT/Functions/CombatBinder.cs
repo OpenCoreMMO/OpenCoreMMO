@@ -27,7 +27,7 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
     {
         RegisterSharedClass(lua, "Combat", "", HandleCombatCreate);
         RegisterMetaMethod(lua, "Combat", "__eq", LuaUserdataCompare<LuaCombat>);
-
+        
         RegisterMethod(lua, "Combat", "setParameter", HandleSetParameterFunction);
         RegisterMethod(lua, "Combat", "setFormula", HandleSetFormulaFunction);
 
