@@ -52,6 +52,8 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
         RegisterMethod(lua, "Spell", "runeId", HandleRuneIdMethod);
         RegisterMethod(lua, "Spell", "allowFarUse", HandleAllowFarUseMethod);
         RegisterMethod(lua, "Spell", "charges", HandleChargesMethod);
+        RegisterMethod(lua,"Spell", "blockWalls", HandleBlockWalls);
+        RegisterMethod(lua,"Spell", "checkFloor", HandleCheckFloor);
 
         //todo: not implemented in 8.60
         RegisterMethod(lua, "Spell", "castSound", HandleNotImplementedFunction);
@@ -353,6 +355,51 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
             Lua.PushNil(lua);
         }
 
+        return 1;
+    }
+    
+    public static int HandleCheckFloor(LuaState l)
+    {
+        var rune = GetUserdata<LuaRune>(l, 1);
+        if (rune is not null) {
+            if (rune.SpellType != SpellType.Rune) {
+                Lua.PushNil(l);
+                return 1;
+            }
+
+            if (Lua.GetTop(l) == 1)
+            {
+                Lua.PushBoolean(l, rune.CheckFloor);
+            }
+            else {
+                rune.BlockWalls = (GetBoolean(l, 2));
+                Lua.PushBoolean(l, true);
+            }
+        } else {
+            Lua.PushNil(l);
+        }
+        
+        return 1;
+    }
+
+    private int HandleBlockWalls(LuaState l)
+    {
+        var rune = GetUserdata<LuaRune>(l, 1);
+        if (rune is not null) {
+            if (rune.SpellType != SpellType.Rune) {
+                Lua.PushNil(l);
+                return 1;
+            }
+
+            if (Lua.GetTop(l) == 1) {
+                Lua.PushBoolean(l, rune.CheckLineOfSight);
+            } else {
+                rune.CheckLineOfSight = (GetBoolean(l, 2));
+                Lua.PushBoolean(l, true);
+            }
+        } else {
+            Lua.PushNil(l);
+        }
         return 1;
     }
 
