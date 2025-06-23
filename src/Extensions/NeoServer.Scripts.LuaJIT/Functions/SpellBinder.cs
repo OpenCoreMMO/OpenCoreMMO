@@ -52,8 +52,8 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
         RegisterMethod(lua, "Spell", "runeId", HandleRuneIdMethod);
         RegisterMethod(lua, "Spell", "allowFarUse", HandleAllowFarUseMethod);
         RegisterMethod(lua, "Spell", "charges", HandleChargesMethod);
-        RegisterMethod(lua,"Spell", "blockWalls", HandleBlockWalls);
-        RegisterMethod(lua,"Spell", "checkFloor", HandleCheckFloor);
+        RegisterMethod(lua, "Spell", "blockWalls", HandleBlockWalls);
+        RegisterMethod(lua, "Spell", "checkFloor", HandleCheckFloor);
 
         //todo: not implemented in 8.60
         RegisterMethod(lua, "Spell", "castSound", HandleNotImplementedFunction);
@@ -382,7 +382,7 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
         return 1;
     }
 
-    private int HandleBlockWalls(LuaState l)
+    public int HandleBlockWalls(LuaState l)
     {
         var rune = GetUserdata<LuaRune>(l, 1);
         if (rune is not null) {

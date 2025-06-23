@@ -45,7 +45,6 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
         }
         
         return 1;
-
     }
 
     /// <summary>
