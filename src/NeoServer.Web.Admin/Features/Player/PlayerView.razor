@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Components.Web
 @using MudBlazor
 @using NeoServer.Web.Admin.Components
+@inject IDialogService DialogService
 
 <PageTitle>Player #@Id</PageTitle>
 
@@ -9,7 +10,7 @@
     @* <MudAvatar Size="Size.Large" Class="me-3"> *@
     @*     <MudImage Src="avatars/paladin.png"></MudImage> *@
     @* </MudAvatar> *@
-    <VocationAvatar Vocation="@Player.Vocation" />
+    <VocationAvatar Vocation="@Player.Vocation"/>
     <div>
         <MudText Typo="Typo.h5">@Player.Name</MudText>
         <MudText Typo="Typo.subtitle2" Color="Color.Primary">@Player.Vocation</MudText>
@@ -22,10 +23,11 @@
             <MudButton StartIcon="@Icons.Material.Filled.Visibility" Variant="Variant.Filled" Color="Color.Primary"
                        Class="mb-2" FullWidth>Account
             </MudButton>
-            <MudButton StartIcon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary"
+            <MudButton StartIcon="@Icons.Material.Filled.Edit" OnClick="OpenPlayerInfoDialog" Variant="Variant.Filled"
+                       Color="Color.Primary"
                        Class="mb-2" FullWidth>Edit Info
             </MudButton>
-            <MudButton StartIcon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" FullWidth>
+            <MudButton StartIcon="@Icons.Material.Filled.Edit" @onclick="OpenSkillEditDialog" Variant="Variant.Filled" Color="Color.Primary" FullWidth>
                 Edit Skills
             </MudButton>
         </MudPaper>
@@ -175,6 +177,71 @@
             Tutorial = "x",
             Blessings = "Access edit"
         };
+    }
+
+    private async Task OpenPlayerInfoDialog()
+    {
+        var parameters = new DialogParameters
+        {
+            ["Character"] = new PlayerInfoEdit.CharacterInfoEditViewModel
+            {
+                Balance = Player.Balance,
+                Capacity = Player.Capacity,
+                Experience = Player.Experience,
+                Level = Player.Level,
+                Health = Player.Health,
+                MaxHealth = Player.MaxHealth,
+                Mana = Player.Mana,
+                MaxMana = Player.MaxMana,
+                SoulPoints = Player.SoulPoints,
+                Sex = Player.Sex,
+                World = Player.World,
+                Town = Player.Town,
+                Name = Player.Name,
+                Vocation = Player.Vocation,
+                Id = Id
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        var dialog = await DialogService.ShowAsync<PlayerInfoEdit>(string.Empty, parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var updatedCharacter = (PlayerInfoEdit.CharacterInfoEditViewModel)result.Data;
+            // Save changes
+        }
+    }
+
+    private async Task OpenSkillEditDialog()
+    {
+        var parameters = new DialogParameters
+        {
+            ["Skill"] = new PlayerSkillEdit.PlayerSkillEditViewModel()
+            {
+                Axe = Player.AxeFighting,
+                Club = Player.ClubFighting,
+                Distance = Player.DistanceFighting,
+                Fist = Player.FistFighting,
+                Fishing = Player.Fishing,
+                MagicLevel = Player.MagicLevel,
+                Shielding = Player.Shielding,
+                Sword = Player.SwordFighting
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        var dialog = await DialogService.ShowAsync<PlayerSkillEdit>(string.Empty, parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var updatedSkills = (PlayerSkillEdit.PlayerSkillEditViewModel)result.Data;
+            // Save updated skills
+        }
     }
 
     public class PlayerViewModel

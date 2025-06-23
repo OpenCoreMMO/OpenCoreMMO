@@ -19,6 +19,10 @@
     <MudTable Items="Players?.Data" RowsPerPage="5" Bordered="true" Hover="true" Elevation="3">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Players</MudText>
+            <br/>
+            <div>
+                <MudText Typo="Typo.subtitle1" Color="Color.Secondary">List of all created players</MudText>
+            </div>
         </ToolBarContent>
         <HeaderContent>
             <MudTh>Name</MudTh>
@@ -29,7 +33,8 @@
         </HeaderContent>
         <RowTemplate>
             <MudTd>
-                <MudLink Typo="Typo.subtitle2" Href="@($"Player/{context.Id}")" Style="text-decoration:none; color:inherit;">@context.Name</MudLink>
+                <MudLink Typo="Typo.subtitle2" Href="@($"Player/{context.Id}")"
+                         Style="text-decoration:none; color:inherit;">@context.Name</MudLink>
                 <MudText Typo="Typo.body2">Paladin</MudText>
             </MudTd>
             <MudTd>@context.Level</MudTd>
@@ -63,7 +68,7 @@
         ProgressBarState.Show();
 
         await LoadPlayers();
-        
+
         ProgressBarState.Hide();
     }
 
@@ -74,4 +79,5 @@
             Limit = 10
         });
     }
+
 }
