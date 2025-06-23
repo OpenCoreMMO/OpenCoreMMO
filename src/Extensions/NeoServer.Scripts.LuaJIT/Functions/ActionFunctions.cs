@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using Microsoft.Extensions.Logging;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
@@ -53,7 +54,7 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
     /// </summary>
     /// <param name="l"></param>
     /// <returns></returns>
-    private int LuaActionBlockWalls(LuaState l)
+    public int LuaActionBlockWalls(LuaState l)
     {
         var action = GetUserdata<Action>(l, 1);
         if (action is not null) {

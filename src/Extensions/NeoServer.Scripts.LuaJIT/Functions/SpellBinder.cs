@@ -372,7 +372,7 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
                 Lua.PushBoolean(l, rune.CheckFloor);
             }
             else {
-                rune.BlockWalls = (GetBoolean(l, 2));
+                rune.CheckFloor = (GetBoolean(l, 2));
                 Lua.PushBoolean(l, true);
             }
         } else {
