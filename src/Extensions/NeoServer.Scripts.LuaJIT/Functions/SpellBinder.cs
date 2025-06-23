@@ -15,19 +15,16 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
     private static ILogger _logger;
     private static IItemTypeStore _itemTypeStore;
     private static RuneManager _runeManager;
-    private static IItemClientServerIdMapStore _itemClientServerIdMapStore;
     private static SpellListManager _spellListManager;
 
     public SpellBinder(ILogger logger,
         IItemTypeStore itemTypeStore,
         RuneManager runeManager,
-        IItemClientServerIdMapStore itemClientServerIdMapStore,
         SpellListManager spellListManager) : base(nameof(SpellBinder))
     {
         _logger = logger;
         _itemTypeStore = itemTypeStore;
         _runeManager = runeManager;
-        _itemClientServerIdMapStore = itemClientServerIdMapStore;
         _spellListManager = spellListManager;
     }
 
@@ -424,8 +421,8 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
             {
                 var runeId = GetNumber<ushort>(lua, 2);
 
-                _itemClientServerIdMapStore.TryGetValue(runeId, out var serverId);
-                rune.RuneId = serverId;
+                _itemTypeStore.TryGetValue(runeId, out var item);
+                rune.RuneId = item.ServerId;
 
                 PushBoolean(lua, true);
             }
