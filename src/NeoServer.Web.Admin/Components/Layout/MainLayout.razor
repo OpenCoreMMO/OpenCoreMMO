@@ -25,7 +25,7 @@
         {
             AppbarBackground = new MudColor("#1e1e1e"),
             Background = new MudColor("#252525"),
-            Primary = new MudColor("#89beff"),
+            Primary = new MudColor("#3883df"),
             Surface = new MudColor("#2d2d31"),
             AppbarText = new MudColor("#939393")
         }
@@ -42,24 +42,30 @@
         <MudImage Src="@LogoImage" Height="42" Style="margin-right: 15px"></MudImage>
         <MudText Typo="Typo.h6">Admin Dashboard</MudText>
         <MudSpacer/>
+        <MudSwitch @bind-Value="IsDarkMode" Class="ma-4" T="bool"
+                   Color="@(IsDarkMode ? Color.Primary : Color.Dark)"
+                   ThumbIconColor="@(IsDarkMode ? Color.Default : Color.Dark)"
+                   ThumbIcon="@(IsDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"/>
+
         <MudAvatar Color="Color.Info" Variant="Variant.Filled">CV</MudAvatar>
     </MudAppBar>
 
     <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu/>
     </MudDrawer>
-    <MudMainContent Class="pt-16" Style="display: flex; align-items: flex-start;" render-mode="InteractiveAuto" >
-        
+    <MudMainContent Class="pt-16" Style="display: flex; align-items: flex-start;" render-mode="InteractiveAuto">
+
         @if (ProgressBarState.Visible)
         {
-            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Style="position: absolute" />
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Style="position: absolute"/>
         }
-        
+
         <div style="flex: 1; padding-top:5px; padding-left: 5px" class="pa-4">
 
             <!-- Row layout for toggle and breadcrumbs -->
             <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                               OnClick="@((e) => DrawerToggle())"/>
                 <MudBreadcrumbs Items="_items"/>
             </div>
 
@@ -85,19 +91,17 @@
 
     protected override void OnInitialized()
     {
-        ProgressBarState.OnChange += ()=>
-        {
-           InvokeAsync(StateHasChanged);
-        };
+        ProgressBarState.OnChange += () => { InvokeAsync(StateHasChanged); };
     }
 
     public void Dispose()
     {
         ProgressBarState.OnChange -= StateHasChanged;
     }
-    
+
     private void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
+
 }

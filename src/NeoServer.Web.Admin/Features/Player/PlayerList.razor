@@ -16,7 +16,10 @@
 {
     <MudButton Color="@Color.Success" Class="add-item-btn">Add Player</MudButton>
     <br/>
-    <MudTable Items="Players?.Data" RowsPerPage="5" Bordered="true" Hover="true">
+    <MudTable Items="Players?.Data" RowsPerPage="5" Bordered="true" Hover="true" Elevation="3">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Players</MudText>
+        </ToolBarContent>
         <HeaderContent>
             <MudTh>Name</MudTh>
             <MudTh>Level</MudTh>
@@ -25,7 +28,10 @@
             <MudTd></MudTd>
         </HeaderContent>
         <RowTemplate>
-            <MudTd>@context.Name</MudTd>
+            <MudTd>
+                <MudLink Typo="Typo.subtitle2" Href="@($"Player/{context.Id}")" Style="text-decoration:none; color:inherit;">@context.Name</MudLink>
+                <MudText Typo="Typo.body2">Paladin</MudText>
+            </MudTd>
             <MudTd>@context.Level</MudTd>
             <MudTd>@context.Group</MudTd>
             <MudTd>
@@ -35,7 +41,7 @@
             </MudTd>
             <MudTd>
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="@($"Player/{context.Id}")">
-                    View
+                    Edit
                 </MudButton>
                 <MudButton Variant="Variant.Filled" Color="Color.Error">
                     Ban
