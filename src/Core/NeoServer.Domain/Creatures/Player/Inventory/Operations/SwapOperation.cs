@@ -16,7 +16,7 @@ public static class SwapOperation
         int totalAmount = newItem.Amount + existingItem.Amount;
         byte amountToRemove = totalAmount > 100
             ? (byte)(totalAmount - 100)
-            : (byte)0;
+            : (byte)existingItem.Amount;
 
         if (newItem.ClientId != existingItem.ClientId)
         {
