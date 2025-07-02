@@ -161,6 +161,7 @@ public class Inventory : IInventory
 
         if (swappedItem.Value is null) return Result<OperationResultList<IItem>>.Success;
 
+        TotalWeight -= swappedItem.Value.Weight;
         return new Result<OperationResultList<IItem>>(new OperationResultList<IItem>(Operation.Removed,
             swappedItem.Value));
     }
