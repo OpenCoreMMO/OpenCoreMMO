@@ -13,9 +13,15 @@ public static class SwapOperation
         if (TryJoinCumulativeItem(newItem, existingItem, out var swappedItem))
             return Result<IItem>.Ok(swappedItem);
 
-        var amountToRemove = (byte)(newItem.Amount + existingItem.Amount > 100
-            ? newItem.Amount + existingItem.Amount - 100
-            : existingItem.Amount);
+        int totalAmount = newItem.Amount + existingItem.Amount;
+        byte amountToRemove = totalAmount > 100
+            ? (byte)(totalAmount - 100)
+            : (byte)0;
+
+        if (newItem.ClientId != existingItem.ClientId)
+        {
+            amountToRemove = existingItem.Amount;
+        }
 
         var result = RemoveFromSlotOperation.Remove(inventory, slot, amountToRemove);
 
