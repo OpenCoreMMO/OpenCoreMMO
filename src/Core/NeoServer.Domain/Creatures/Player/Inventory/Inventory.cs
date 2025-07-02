@@ -122,11 +122,15 @@ public class Inventory : IInventory
 
     private Result<IItem> TryAddItemToSlot(Slot slot, IItem item)
     {
+        var wasBpSlotEmptyBeforeAddition = BackpackSlot == null;
         var result = AddToSlotOperation.Add(this, slot, item);
 
         if (result.Succeeded)
         {
-            TotalWeight += item.Weight;
+            if (slot != Slot.Backpack || wasBpSlotEmptyBeforeAddition)
+            {
+                TotalWeight += item.Weight;
+            }
             OnItemAddedToSlot?.Invoke(this, item, slot);
             return result;
         }
