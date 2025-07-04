@@ -15,19 +15,16 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
     private static ILogger _logger;
     private static IItemTypeStore _itemTypeStore;
     private static RuneManager _runeManager;
-    private static IItemClientServerIdMapStore _itemClientServerIdMapStore;
     private static SpellListManager _spellListManager;
 
     public SpellBinder(ILogger logger,
         IItemTypeStore itemTypeStore,
         RuneManager runeManager,
-        IItemClientServerIdMapStore itemClientServerIdMapStore,
         SpellListManager spellListManager) : base(nameof(SpellBinder))
     {
         _logger = logger;
         _itemTypeStore = itemTypeStore;
         _runeManager = runeManager;
-        _itemClientServerIdMapStore = itemClientServerIdMapStore;
         _spellListManager = spellListManager;
     }
 
@@ -52,6 +49,8 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
         RegisterMethod(lua, "Spell", "runeId", HandleRuneIdMethod);
         RegisterMethod(lua, "Spell", "allowFarUse", HandleAllowFarUseMethod);
         RegisterMethod(lua, "Spell", "charges", HandleChargesMethod);
+        RegisterMethod(lua, "Spell", "blockWalls", HandleBlockWalls);
+        RegisterMethod(lua, "Spell", "checkFloor", HandleCheckFloor);
 
         //todo: not implemented in 8.60
         RegisterMethod(lua, "Spell", "castSound", HandleNotImplementedFunction);
@@ -355,6 +354,51 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
 
         return 1;
     }
+    
+    public static int HandleCheckFloor(LuaState l)
+    {
+        var rune = GetUserdata<LuaRune>(l, 1);
+        if (rune is not null) {
+            if (rune.SpellType != SpellType.Rune) {
+                Lua.PushNil(l);
+                return 1;
+            }
+
+            if (Lua.GetTop(l) == 1)
+            {
+                Lua.PushBoolean(l, rune.CheckFloor);
+            }
+            else {
+                rune.CheckFloor = (GetBoolean(l, 2));
+                Lua.PushBoolean(l, true);
+            }
+        } else {
+            Lua.PushNil(l);
+        }
+        
+        return 1;
+    }
+
+    public int HandleBlockWalls(LuaState l)
+    {
+        var rune = GetUserdata<LuaRune>(l, 1);
+        if (rune is not null) {
+            if (rune.SpellType != SpellType.Rune) {
+                Lua.PushNil(l);
+                return 1;
+            }
+
+            if (Lua.GetTop(l) == 1) {
+                Lua.PushBoolean(l, rune.CheckLineOfSight);
+            } else {
+                rune.CheckLineOfSight = (GetBoolean(l, 2));
+                Lua.PushBoolean(l, true);
+            }
+        } else {
+            Lua.PushNil(l);
+        }
+        return 1;
+    }
 
     public static int HandleRuneIdMethod(LuaState lua)
     {
@@ -377,8 +421,8 @@ public class SpellBinder : LuaScriptInterface, ISpellFunctionMapper
             {
                 var runeId = GetNumber<ushort>(lua, 2);
 
-                _itemClientServerIdMapStore.TryGetValue(runeId, out var serverId);
-                rune.RuneId = serverId;
+                _itemTypeStore.TryGetValue(runeId, out var item);
+                rune.RuneId = item.ServerId;
 
                 PushBoolean(lua, true);
             }

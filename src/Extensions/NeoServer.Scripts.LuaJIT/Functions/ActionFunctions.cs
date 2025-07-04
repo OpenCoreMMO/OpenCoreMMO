@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using Microsoft.Extensions.Logging;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
@@ -23,6 +24,48 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
         RegisterMethod(luaState, "Action", "aid", LuaActionItemActionId);
         RegisterMethod(luaState, "Action", "uid", LuaActionItemUniqueId);
         RegisterMethod(luaState, "Action", "allowFarUse", LuaActionAllowFarUse);
+        RegisterMethod(luaState, "Action", "blockWalls", LuaActionBlockWalls);
+        RegisterMethod(luaState, "Action", "checkFloor", LuaActionCheckFloor);
+    }
+    
+    /// <summary>
+    /// action:checkFloor(bool)
+    /// ref: int LuaScriptInterface::luaActionCheckFloor(lua_State* L) luascript.cpp
+    /// </summary>
+    /// <param name="l"></param>
+    /// <returns></returns>
+    public static int LuaActionCheckFloor(LuaState l)
+    {
+        var action = GetUserdata<Action>(l, 1);
+        if (action is not null) {
+            action.SetCheckFloor(GetBoolean(l, 2));
+            PushBoolean(l, true);
+        } else {
+            ReportError(nameof(LuaActionCheckFloor), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
+            PushBoolean(l, false);
+        }
+        
+        return 1;
+    }
+
+    /// <summary>
+    /// action:blockWalls(bool)
+    /// ref: int LuaScriptInterface::luaActionBlockWalls(lua_State* L) luascript.cpp
+    /// </summary>
+    /// <param name="l"></param>
+    /// <returns></returns>
+    public int LuaActionBlockWalls(LuaState l)
+    {
+        var action = GetUserdata<Action>(l, 1);
+        if (action is not null) {
+            action.SetCheckLineOfSight(GetBoolean(l, 2));
+            PushBoolean(l, true);
+        } else {
+            ReportError(nameof(LuaActionBlockWalls), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
+            PushBoolean(l, false);
+        }
+
+        return 1;
     }
 
     public static int LuaCreateAction(LuaState luaState)
@@ -165,7 +208,7 @@ public class ActionFunctions : LuaScriptInterface, IActionFunctions
         }
         else
         {
-            ReportError(nameof(LuaActionItemId), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
+            ReportError(nameof(LuaActionAllowFarUse), GetErrorDesc(ErrorCodeType.LUA_ERROR_ACTION_NOT_FOUND));
             PushBoolean(luaState, false);
         }
 

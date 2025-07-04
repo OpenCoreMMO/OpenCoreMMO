@@ -12,6 +12,7 @@ public class LuaRune(LuaScriptInterface scriptInterface) : LuaSpell(scriptInterf
     public int Charges { get; set; }
     public bool CheckFloor { get; set; }
     public bool BlockWalls { get; set; }
+    public bool CheckLineOfSight { get; set; }
     public ushort ManaConsumption { get; set; }
     public ushort SoulConsumption { get; set; }
 
