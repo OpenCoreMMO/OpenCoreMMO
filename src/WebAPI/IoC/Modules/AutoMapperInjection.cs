@@ -4,7 +4,7 @@ public static class AutoMapperInjection
 {
     public static IServiceCollection AddAutoMapperProfiles(this IServiceCollection services)
     {
-        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddAutoMapper(typeof(Program).Assembly);
         return services;
     }
 }
