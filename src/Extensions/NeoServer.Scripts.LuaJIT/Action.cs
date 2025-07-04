@@ -105,4 +105,15 @@ public class Action(LuaScriptInterface scriptInterface) : Script(scriptInterface
 
         return default;
     }
+
+    public void SetCheckLineOfSight(bool check)
+    {
+        CheckLineOfSight = check;
+    }
+
+    public void SetCheckFloor(bool check)
+    {
+        CheckFloor = check;
+    }
+ 
 }

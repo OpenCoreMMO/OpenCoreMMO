@@ -100,7 +100,6 @@ var app = builder.Build();
 app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
 // Configure the HTTP request pipeline
 app.UseSwagger();
-app.UseSwaggerUI();
 
 app.UseRouting();
 
