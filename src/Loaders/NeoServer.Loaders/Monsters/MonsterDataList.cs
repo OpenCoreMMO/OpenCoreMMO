@@ -16,13 +16,13 @@ public class MonsterData
 
     [JsonPropertyName("speed")] public ushort Speed { get; set; }
 
-    [JsonPropertyName("manacost")] public ushort Manacost { get; set; }
+    [JsonPropertyName("manacost")] public ushort ManaCost { get; set; }
 
     [JsonPropertyName("health")] public HealthData Health { get; set; }
 
     [JsonPropertyName("look")] public LookData Look { get; set; }
 
-    [JsonPropertyName("targetchange")] public TargetchangeData Targetchange { get; set; }
+    [JsonPropertyName("targetchange")] public TargetchangeData TargetChange { get; set; }
 
     [JsonPropertyName("strategy")] public StrategyData Strategy { get; set; }
 
@@ -125,7 +125,7 @@ public class MonsterData
     {
         [JsonPropertyName("id")] public string Id { get; set; }
 
-        [JsonPropertyName("countmax")] public string Countmax { get; set; }
+        [JsonPropertyName("countmax")] public string CountMax { get; set; }
 
         [JsonPropertyName("chance")] public string Chance { get; set; }
 
@@ -140,7 +140,7 @@ public class MonsterData
 
         [JsonPropertyName("countmax")]
         [JsonConverter(typeof(NumberToStringConverter))]
-        public string Countmax { get; set; }
+        public string CountMax { get; set; }
 
         [JsonPropertyName("chance")]
         [JsonConverter(typeof(NumberToStringConverter))]
