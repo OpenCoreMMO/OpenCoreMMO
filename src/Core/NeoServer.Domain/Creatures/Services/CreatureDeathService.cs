@@ -56,7 +56,8 @@ public class CreatureDeathService(
             map.RemoveCreature(creature);
         }
 
-        corpse.Decay.StartDecay();
+        if (corpse.Decay != null)
+            corpse.Decay.StartDecay();
     }
 
     private void CreateBlood(ICreature creature)

@@ -59,7 +59,7 @@ public class ItemTypeLoader
             var basePath = $"{_serverConfiguration.Data}/items/";
             var itemTypes = LoadOtb(basePath);
 
-            LoadItemsJson(basePath, itemTypes);
+            LoadItemsJson(basePath, itemTypes, _logger);
 
             foreach (var item in itemTypes.OrderBy(x => x.Key))
             {
@@ -86,7 +86,7 @@ public class ItemTypeLoader
         return itemTypes;
     }
 
-    private static void LoadItemsJson(string basePath, IDictionary<ushort, IItemType> itemTypes)
+    private static void LoadItemsJson(string basePath, IDictionary<ushort, IItemType> itemTypes, ILogger logger)
     {
         var itemTypeMetadata = GetItemTypeMetadataList(basePath);
 
@@ -102,13 +102,13 @@ public class ItemTypeLoader
 
             if (metadata.Fromid == null)
             {
-                Console.WriteLine("No item id found");
+                logger.Warning("No item found");
                 return;
             }
 
             if (metadata.Toid == null)
             {
-                Console.WriteLine($"fromid ({metadata.Fromid}) without toid");
+                logger.Warning($"fromid ({metadata.Fromid}) without toid");
                 return;
             }
 
