@@ -10,10 +10,12 @@ using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Loaders.Monsters.Converters;
+using Serilog;
 
 namespace NeoServer.Loaders.Monsters;
 
 public class MonsterConverter(
+    ILogger logger,
     MonsterAttackConverter monsterAttackConverter,
     IItemTypeStore itemTypeStore,
     IMonsterDataManager monsters,
@@ -37,9 +39,12 @@ public class MonsterConverter(
             Defense = ushort.Parse(monsterData.Defense.Defense),
             Experience = (uint)(monsterData.Experience * configuration.ExperienceRate),
             Race = ParseRace(monsterData.Race),
-            TargetChance = new IntervalChance(System.Convert.ToUInt16(monsterData.Targetchange.Interval),
-                System.Convert.ToByte(monsterData.Targetchange.Chance))
+            TargetChance = new IntervalChance(System.Convert.ToUInt16(monsterData.TargetChange.Interval),
+                System.Convert.ToByte(monsterData.TargetChange.Chance))
         };
+
+        if (monster.Race == Race.None)
+            logger.Warning("{Monster} Race: {RaceName} is not implemented", monsterData.Name, monsterData.Race);
 
         if (monsterData.Voices != null)
         {
@@ -73,6 +78,13 @@ public class MonsterConverter(
         foreach (var flag in monsterData.Flags)
         {
             var creatureFlag = ParseCreatureFlag(flag.Key);
+
+            if (creatureFlag == CreatureFlagAttribute.None)
+            {
+                logger.Warning("{Monster} Flag: {FlagName} is not implemented", monsterData.Name, flag.Key);
+                continue;
+            }
+
             monster.Flags.Add(creatureFlag, flag.Value);
         }
 
