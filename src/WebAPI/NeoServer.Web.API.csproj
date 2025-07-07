@@ -20,6 +20,7 @@
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
         <PackageReference Include="Serilog.AspNetCore" Version="9.0.0"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.0" />
         <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0"/>
         <PackageReference Include="Asp.Versioning.Http" Version="8.1.0"/>
         <PackageReference Include="Swashbuckle.AspNetCore.JsonMultipartFormDataSupport" Version="2.0.0"/>
