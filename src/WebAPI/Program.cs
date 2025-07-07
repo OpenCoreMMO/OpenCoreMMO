@@ -42,7 +42,7 @@ public class Program
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
         });
 
-        services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+        services.AddValidatorsFromAssembly(typeof(CreateAccountValidator).Assembly);
 
         services.Configure<ForwardedHeadersOptions>(options =>
         {
