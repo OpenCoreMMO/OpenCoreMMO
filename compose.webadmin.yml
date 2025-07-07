@@ -1,12 +1,14 @@
 services:
 
-  standalone:
-    container_name: standalone
+  webadmin:
     build:
       context: .
-      dockerfile: ./src/Standalone/Dockerfile
+      dockerfile: ./src/NeoServer.Web.Admin/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: "Production"
+      ASPNETCORE_URLS: "https://+;http://+"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "${WEBADMIN_CERTIFICATE_PASSWORD}"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "${WEBADMIN_CERTIFICATE_PATH}"
       SQLITE_DATABASE: "${SQLITE_DATABASE}"
       POSTGRESQL_DATABASE: "${POSTGRESQL_DATABASE}"
       POSTGRESQL_USER: "${POSTGRESQL_USER}"
@@ -14,18 +16,13 @@ services:
       POSTGRESQL_HOST: "${POSTGRESQL_HOST}"
       POSTGRESQL_PORT: "${POSTGRESQL_PORT}"
       ACTIVE_DATABASE: "${ACTIVE_DATABASE}"
-      SERVER_LOGIN_PORT: "${SERVER_LOGIN_PORT}"
-      SERVER_GAME_PORT: "${SERVER_GAME_PORT}"
-      SERVER_GAME_NAME: "${SERVER_GAME_NAME}"
-      SERVER_GAME_IP: "${SERVER_GAME_IP}"
       GRAYLOG_HOSTNAME_OR_ADDRESS: "${GRAYLOG_HOSTNAME_OR_ADDRESS}"
       GRAYLOG_PORT: "${GRAYLOG_PORT}"
       GRAYLOG_HOSTNAME_OVERRIDE: "${GRAYLOG_HOSTNAME_OVERRIDE}"
-      GRAYLOG_FACILITY: "${GRAYLOG_FACILITY_STANDALONE}"
+      GRAYLOG_FACILITY: "${GRAYLOG_FACILITY_WEBADMIN}"
     ports:
-      - "${SERVER_LOGIN_PORT}:${SERVER_LOGIN_PORT}"
-      - "${SERVER_GAME_PORT}:${SERVER_GAME_PORT}"
-    restart: "on-failure"
+      - "${WEBADMIN_PORT_HTTP}:80"
+      - "${WEBADMIN_PORT_HTTPS}:443"
     networks:
       - opencoremmo
 
