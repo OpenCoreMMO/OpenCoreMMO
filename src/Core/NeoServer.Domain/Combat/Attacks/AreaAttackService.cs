@@ -40,16 +40,10 @@ public class AreaAttackService(
 
         var aggressor = attackInput.Aggressor as ICombatActor;
 
-        var areaLocation = aggressor.Location;
-
-        areaLocation =
-            areaLocation.AddDirectionStep(attackInput.Parameters.NeedDirection
-                ? aggressor.Direction
-                : Direction.None);
-
+        var targetlocation = attackInput.Target.Location;
 
         var area = attackInput.Parameters.CoordinateArea ??
-                   AreaEffect.Create(areaLocation, attackInput.Parameters.Area);
+                       AreaEffect.Create(targetlocation, attackInput.Parameters.Area);
 
         var affectedArea = new List<Location>(area.Length);
         var affectedCreatures = new List<ICreature>();
