@@ -21,8 +21,6 @@ end
 rune:id(115)
 rune:group("attack")
 rune:name("avalanche rune")
-rune:castSound(SOUND_EFFECT_TYPE_SPELL_OR_RUNE)
-rune:impactSound(SOUND_EFFECT_TYPE_SPELL_AVALANCHE_RUNE)
 rune:runeId(2274)
 rune:allowFarUse(true)
 rune:charges(4)

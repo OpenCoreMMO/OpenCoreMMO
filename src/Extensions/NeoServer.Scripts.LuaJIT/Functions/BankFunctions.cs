@@ -1,14 +1,15 @@
 using LuaNET;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class BankFunctionBinder : LuaScriptInterface, IBankFunctionBinder
+public class BankFunctions : LuaScriptInterface, IBankFunctions
 {
     private static LuaHelperService _luaHelper;
 
-    public BankFunctionBinder(LuaHelperService luaHelper) : base(nameof(BankFunctionBinder))
+    public BankFunctions(LuaHelperService luaHelper) : base(nameof(BankFunctions))
     {
         _luaHelper = luaHelper;
     }
@@ -56,9 +57,4 @@ public class BankFunctionBinder : LuaScriptInterface, IBankFunctionBinder
 
         return player.Bank;
     }
-}
-
-public interface IBankFunctionBinder
-{
-    void Init(LuaState lua);
 }

@@ -687,6 +687,15 @@ public class LuaFunctionsLoader
             .Replace("[[", "\\[[");
     }
 
+    public static int LuaUserdataCompare(LuaState luaState)
+    {
+        PushBoolean(luaState,
+            EqualityComparer<object>.Default.Equals(GetUserdata<object>(luaState, 1),
+                GetUserdata<object>(luaState, 2)));
+
+        return 1;
+    }
+
     public static int LuaUserdataCompare<T>(LuaState luaState) where T : class
     {
         PushBoolean(luaState, GetUserdata<T>(luaState, 1) == GetUserdata<T>(luaState, 2));

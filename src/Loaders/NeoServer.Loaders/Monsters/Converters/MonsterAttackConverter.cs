@@ -281,8 +281,8 @@ public class MonsterAttackConverter(ILogger logger, SpellListManager spellListMa
 
             if (spell is not null) SupportedAttackNames.Add(attackName);
 
-            if (!SupportedAttackNames.Contains(attackName))
-                logger.Warning("{Monster} Attack: {AttackName} is not implemented", data.Name, attackName);
+            //if (!SupportedAttackNames.Contains(attackName))
+            //    logger.Warning("{Monster} Attack: {AttackName} is not implemented", data.Name, attackName);
         }
 
         return attacks.ToArray();

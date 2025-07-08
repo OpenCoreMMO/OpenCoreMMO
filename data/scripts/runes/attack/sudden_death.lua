@@ -20,8 +20,6 @@ end
 rune:id(8)
 rune:group("attack")
 rune:name("sudden death rune")
-rune:castSound(SOUND_EFFECT_TYPE_SPELL_OR_RUNE)
-rune:impactSound(SOUND_EFFECT_TYPE_SPELL_SUDDENDEATH_RUNE)
 rune:runeId(2268)
 rune:allowFarUse(true)
 rune:checkFloor(true)

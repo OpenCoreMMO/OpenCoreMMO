@@ -17,7 +17,7 @@ public class LuaHelperService(
     IPlayerRepository playerRepository,
     GuildLoader guildLoader,
     IPlayerLoader playerLoader,
-    ILogger logger) : LuaScriptInterface(nameof(BankFunctionBinder))
+    ILogger logger) : LuaScriptInterface(nameof(BankFunctions))
 {
     public Guild GetGuild(LuaState lua, int arg, bool allowOffline = false)
     {

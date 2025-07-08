@@ -25,11 +25,11 @@ public abstract class BaseSpell : ISpell
     public virtual byte? Range { get; set; }
     public virtual string Name { get; set; }
     public abstract EffectT Effect { get; }
-    public virtual bool NeedsPremium { get; }
+    public virtual bool NeedsPremium { get; set; }
     public virtual ushort MinLevel { get; set; } = 0;
-    public ushort MinMagicLevel { get; }
+    public ushort MinMagicLevel { get; set; }
     public virtual bool NeedWeapon { get; }
-    public virtual bool NeedLearn { get; }
+    public virtual bool NeedLearn { get; set; }
     public virtual bool BlockWalls { get; set; }
     public virtual ushort ManaConsumption { get; set; }
     public ushort SoulConsumption { get; set; }
@@ -42,7 +42,7 @@ public abstract class BaseSpell : ISpell
     public bool IsAggressive { get; }
     public bool BlockingCreature { get; set; }
     public bool BlockingSolid { get; set; }
-    public virtual bool NeedDirection { get; }
+    public virtual bool NeedDirection { get; set; }
     public virtual bool CasterNeedsTargetOrDirection { get; }
 
     public Result Invoke(ICombatActor actor, IThing target, bool isHotkey)

@@ -43,8 +43,8 @@ public class MonsterConverter(
                 System.Convert.ToByte(monsterData.TargetChange.Chance))
         };
 
-        if (monster.Race == Race.None)
-            logger.Warning("{Monster} Race: {RaceName} is not implemented", monsterData.Name, monsterData.Race);
+        //if (monster.Race == Race.None)
+        //    logger.Warning("{Monster} Race: {RaceName} is not implemented", monsterData.Name, monsterData.Race);
 
         if (monsterData.Voices != null)
         {
@@ -81,7 +81,7 @@ public class MonsterConverter(
 
             if (creatureFlag == CreatureFlagAttribute.None)
             {
-                logger.Warning("{Monster} Flag: {FlagName} is not implemented", monsterData.Name, flag.Key);
+                //logger.Warning("{Monster} Flag: {FlagName} is not implemented", monsterData.Name, flag.Key);
                 continue;
             }
 
