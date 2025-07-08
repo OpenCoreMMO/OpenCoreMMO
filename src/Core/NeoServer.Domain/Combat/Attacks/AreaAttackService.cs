@@ -40,14 +40,7 @@ public class AreaAttackService(
 
         var aggressor = attackInput.Aggressor as ICombatActor;
 
-        var targetlocation = aggressor.Location;
-
-        if (attackInput.Target != null)
-            targetlocation = attackInput.Target.Location;
-
-        targetlocation = targetlocation.AddDirectionStep(attackInput.Parameters.NeedDirection
-                ? aggressor.Direction
-                : Direction.None);
+        var targetlocation = attackInput.Target.Location;
 
         var area = attackInput.Parameters.CoordinateArea ??
                        AreaEffect.Create(targetlocation, attackInput.Parameters.Area);
