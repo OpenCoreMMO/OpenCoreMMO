@@ -1,8 +1,10 @@
 using LuaNET;
 using NeoServer.Domain.Combat.Attacks;
-using NeoServer.Domain.Combat.Services.Attacks;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Models;
@@ -16,11 +18,16 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
 {
     private static IAttackService _attackService;
     private static IGameCreatureManager _creatureManager;
+    private static IMap _map;
 
-    public CombatBinder(IAttackService attackService, IGameCreatureManager creatureManager) : base(nameof(CombatBinder))
+    public CombatBinder(
+        IAttackService attackService,
+        IGameCreatureManager creatureManager,
+        IMap map) : base(nameof(CombatBinder))
     {
         _attackService = attackService;
         _creatureManager = creatureManager;
+        _map = map;
     }
 
     public void Init(LuaState lua)
@@ -39,14 +46,56 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
         RegisterMethod(lua, "Combat", "execute", HandleExecuteFunction);
     }
 
+    #region Lua Methods
+
     private static int HandleSetAreaFunction(LuaState L)
     {
+        // setArea( {area}, <optional> {extArea} )
         var combat = GetUserdata<LuaCombat>(L, 1);
         if (combat is null)
         {
             Lua.PushNil(L);
             return 1;
         }
+
+        var env = GetScriptEnv();
+        if (env.GetScriptId() != EVENT_ID_LOADING)
+        {
+            ReportError("This function can only be used while loading the script.");
+            Lua.PushBoolean(L, false);
+            return 1;
+        }
+
+        var parameters = Lua.GetTop(L);
+        if (parameters >= 3)
+        {
+            var listAreaExtra = GetArea(L, 3);
+
+            if (listAreaExtra == null || listAreaExtra.Length == 0)
+            {
+                ReportError("Invalid extra area table.");
+                Lua.PushBoolean(L, false);
+                return 1;
+            }
+
+            combat.Areas[Direction.NorthWest] = listAreaExtra;
+            combat.Areas[Direction.NorthEast] = listAreaExtra.Rotate(Direction.NorthEast);
+            combat.Areas[Direction.SouthWest] = listAreaExtra.Rotate(Direction.SouthWest);
+            combat.Areas[Direction.SouthEast] = listAreaExtra.Rotate(Direction.SouthEast);
+        }
+
+        var listArea = GetArea(L, 2);
+        if (listArea == null || listArea.Length == 0)
+        {
+            ReportError("Invalid area table.");
+            Lua.PushBoolean(L, false);
+            return 1;
+        }
+
+        combat.Areas[Direction.West] = listArea;
+        combat.Areas[Direction.East] = listArea.Rotate(Direction.East);
+        combat.Areas[Direction.North] = listArea.Rotate(Direction.North);
+        combat.Areas[Direction.South] = listArea.Rotate(Direction.South);
 
         return 1;
     }
@@ -76,30 +125,50 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
             switch (variant.Type)
             {
                 case LuaVariantType.Number:
-                {
-                    _creatureManager.TryGetCreature(variant.Number, out var target);
-
-                    if (target is null)
                     {
-                        PushBoolean(lua, false);
-                        return 1;
-                    }
+                        _creatureManager.TryGetCreature(variant.Number, out var target);
 
-                    // if (combat->hasArea())
-                    // {
-                    //     combat->doCombat(creature, target->getPosition());
-                    // }
-                    // else
+                        //if (target is null)
+                        //{
+                        //    PushBoolean(lua, false);
+                        //    return 1;
+                        //}
+
+                        // if (combat->hasArea())
+                        // {
+                        //     combat->doCombat(creature, target->getPosition());
+                        // }
+                        // else
+                        {
+                            var combatParameter = combat.BuildCombatParameter(creature as IPlayer, target);
+                            _attackService.Execute(new AttackInput(creature, target, combatParameter));
+                        }
+
+                        break;
+                    }
+                case LuaVariantType.VARIANT_POSITION:
                     {
-                        var combatParameter = combat.BuildCombatParameter(creature as IPlayer);
-                        _attackService.Execute(new AttackInput(creature, target, combatParameter));
-                    }
+                        //if (target is null)
+                        //{
+                        //    PushBoolean(lua, false);
+                        //    return 1;
+                        //}
 
-                    break;
-                }
+                        // if (combat->hasArea())
+                        // {
+                        //     combat->doCombat(creature, target->getPosition());
+                        // }
+                        // else
+                        {
+                            var target = _map.GetTile(variant.Pos);
+                            var combatParameter = combat.BuildCombatParameter(creature as IPlayer, target);
+                            _attackService.Execute(new AttackInput(creature, target, combatParameter));
+                        }
+
+                        break;
+                    }
             }
         }
-
 
         Lua.PushNil(lua);
         return 1;
@@ -181,7 +250,6 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
         return 1;
     }
 
-
     private static int HandleCombatCreate(LuaState lua)
     {
         //Combat
@@ -190,5 +258,60 @@ public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
         PushUserdata(lua, combat);
         SetMetatable(lua, -1, "Combat");
         return 1;
+    }
+
+    #endregion
+
+    private static byte[,] GetArea(LuaState L, int index)
+    {
+        if (!Lua.IsTable(L, index))
+            return null;
+
+        var rows = new List<List<byte>>();
+
+        Lua.PushNil(L);
+        while (Lua.Next(L, index) != 0)
+        {
+            if (!Lua.IsTable(L, -1))
+            {
+                Lua.Pop(L, 1);
+                return null;
+            }
+
+            var row = new List<byte>();
+            Lua.PushNil(L);
+            while (Lua.Next(L, -2) != 0)
+            {
+                if (!Lua.IsNumber(L, -1))
+                {
+                    Lua.Pop(L, 2);
+                    return null;
+                }
+
+                row.Add(GetNumber<byte>(L, -1));
+                Lua.Pop(L, 1);
+            }
+
+            rows.Add(row);
+            Lua.Pop(L, 1);
+        }
+
+        if (rows.Count == 0 || rows[0].Count == 0)
+            return null;
+
+        int height = rows.Count;
+        int width = rows[0].Count;
+        var matrix = new byte[height, width];
+
+        for (int y = 0; y < height; y++)
+        {
+            if (rows[y].Count != width)
+                return null;
+
+            for (int x = 0; x < width; x++)
+                matrix[y, x] = rows[y][x];
+        }
+
+        return matrix;
     }
 }
