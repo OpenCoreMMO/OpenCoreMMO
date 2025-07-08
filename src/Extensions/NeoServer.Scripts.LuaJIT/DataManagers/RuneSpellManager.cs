@@ -2,11 +2,11 @@ using NeoServer.Scripts.LuaJIT.Models.Spell;
 
 namespace NeoServer.Scripts.LuaJIT.DataManagers;
 
-public class RuneManager
+public class RuneSpellManager
 {
-    private Dictionary<int, LuaRune> AttackRunes { get; } = new();
+    private Dictionary<int, LuaRuneSpell> AttackRunes { get; } = new();
 
-    public void Register(LuaRune rune)
+    public void Register(LuaRuneSpell rune)
     {
         AttackRunes.TryAdd(rune.RuneId, rune);
     }
@@ -16,7 +16,7 @@ public class RuneManager
         return AttackRunes.ContainsKey(clientId);
     }
 
-    public LuaRune GetRegisteredRune(int clientId)
+    public LuaRuneSpell GetRegisteredRune(int clientId)
     {
         AttackRunes.TryGetValue(clientId, out var rune);
         return rune;

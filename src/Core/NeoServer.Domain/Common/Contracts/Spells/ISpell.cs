@@ -18,7 +18,7 @@ public interface ISpell : IHasCooldown
     bool BlockWalls { get; set; }
     ushort ManaConsumption { get; set; }
     ushort SoulConsumption { get; set; }
-    bool NeedDirection { get; }
+    bool NeedDirection { get; set; }
     bool CasterNeedsTargetOrDirection { get; }
     bool NeedsTarget { get; set; }
     byte? Range { get; }
@@ -26,13 +26,13 @@ public interface ISpell : IHasCooldown
     bool BlockingCreature { get; set; }
     bool BlockingSolid { get; set; }
     bool NeedWeapon { get; }
-    bool NeedLearn { get; }
+    bool NeedLearn { get; set; }
 
     byte[] VocationIds { get; set; }
     string[] Vocations { get; }
-    bool NeedsPremium { get; }
-    ushort MinLevel { get; }
-    ushort MinMagicLevel { get; }
+    bool NeedsPremium { get; set; }
+    ushort MinLevel { get; set; }
+    ushort MinMagicLevel { get; set; }
     Result Invoke(ICombatActor actor, IThing target, bool isHotkey);
     Result CanCast(ICombatActor caster, IThing target);
 }

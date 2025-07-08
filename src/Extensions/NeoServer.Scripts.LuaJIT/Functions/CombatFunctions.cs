@@ -14,16 +14,16 @@ using LuaDataType = NeoServer.Scripts.LuaJIT.Enums.LuaDataType;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
-public class CombatBinder : LuaScriptInterface, ICombatFunctionMapper
+public class CombatFunctions : LuaScriptInterface, ICombatFunctions
 {
     private static IAttackService _attackService;
     private static IGameCreatureManager _creatureManager;
     private static IMap _map;
 
-    public CombatBinder(
+    public CombatFunctions(
         IAttackService attackService,
         IGameCreatureManager creatureManager,
-        IMap map) : base(nameof(CombatBinder))
+        IMap map) : base(nameof(CombatFunctions))
     {
         _attackService = attackService;
         _creatureManager = creatureManager;

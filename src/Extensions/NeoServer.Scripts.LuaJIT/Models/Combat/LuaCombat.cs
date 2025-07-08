@@ -67,10 +67,16 @@ public class LuaCombat : Script
         }
 
         var areaHasDiagonals = Areas.ContainsKey(Direction.NorthEast);
-        var direction = player.Location.DirectionTo(target.Location, areaHasDiagonals);
 
-        if (direction == Direction.None)
-            direction = player.Direction;
+        var direction = player.Direction;
+
+        if (target != null)
+        {
+            direction = player.Location.DirectionTo(target.Location, areaHasDiagonals);
+
+            if (direction == Direction.None)
+                direction = player.Direction;
+        }
 
         return new CombatParameter
         {
@@ -80,7 +86,7 @@ public class LuaCombat : Script
             MinDamage = (ushort)damageValues.Min,
             MaxDamage = (ushort)damageValues.Max,
             Range = 7,
-            Area = Areas.Any() ? Areas[direction] : null,
+            Area = Areas.Any() ? Areas[direction] : null
         };
     }
 }

@@ -5,7 +5,7 @@ using NeoServer.Scripts.LuaJIT.Enums;
 
 namespace NeoServer.Scripts.LuaJIT.Models.Spell;
 
-public class LuaRune(LuaScriptInterface scriptInterface) : LuaSpell(scriptInterface)
+public class LuaRuneSpell(LuaScriptInterface scriptInterface) : LuaSpell(scriptInterface)
 {
     public int RuneId { get; set; }
     public bool AllowFarUse { get; set; }

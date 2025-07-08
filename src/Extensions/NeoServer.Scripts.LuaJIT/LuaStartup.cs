@@ -1,5 +1,4 @@
 ﻿using LuaNET;
-using NeoServer.Scripts.LuaJIT.Functions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Configurations;
@@ -42,9 +41,9 @@ public class LuaStartup : ILuaStartup
         ITileFunctions tileFunctions,
         ServerConfiguration serverConfiguration,
         IConditionFunctions conditionFunctions,
-        IBankFunctionBinder bankFunctionBinder,
-        ISpellFunctionMapper spellFunctionMapper,
-        ICombatFunctionMapper combatFunctionMapper
+        IBankFunctions bankFunctionBinder,
+        ISpellFunctions spellFunctionMapper,
+        ICombatFunctions combatFunctionMapper
     )
     {
         _logger = logger;
@@ -195,9 +194,9 @@ public class LuaStartup : ILuaStartup
     /// </summary>
     private readonly IConditionFunctions _conditionFunctions;
 
-    private readonly IBankFunctionBinder _bankFunctionBinder;
-    private readonly ISpellFunctionMapper _spellFunctionMapper;
-    private readonly ICombatFunctionMapper _combatFunctionMapper;
+    private readonly IBankFunctions _bankFunctionBinder;
+    private readonly ISpellFunctions _spellFunctionMapper;
+    private readonly ICombatFunctions _combatFunctionMapper;
 
     /// <summary>
     ///     A reference to the <see cref="IConfigFunctions" /> instance in use.
