@@ -86,7 +86,7 @@ public class LuaCombat : Script
             MinDamage = (ushort)damageValues.Min,
             MaxDamage = (ushort)damageValues.Max,
             Range = 7,
-            Area = Areas.Any() ? Areas[direction] : null
+            Area = Areas.Count != 0 ? Areas[direction] : null,
         };
     }
 }
