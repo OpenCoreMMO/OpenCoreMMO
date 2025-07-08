@@ -6,6 +6,7 @@ using NeoServer.Web.API.IoC.Modules;
 using NeoServer.Web.API.Requests.Validators;
 using System;
 using System.Net;
+using NeoServer.Web.Shared.IoC.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;

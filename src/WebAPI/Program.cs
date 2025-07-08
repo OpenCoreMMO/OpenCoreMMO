@@ -7,6 +7,7 @@ using NeoServer.Web.API.IoC.Modules;
 using NeoServer.Web.API.Middlewares;
 using NeoServer.Web.API.Requests.Validators;
 using NeoServer.Web.API.Swagger.SchemaFilters;
+using NeoServer.Web.Shared.IoC.Modules;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.JsonMultipartFormDataSupport.Extensions;
 using Swashbuckle.AspNetCore.JsonMultipartFormDataSupport.Integrations;
