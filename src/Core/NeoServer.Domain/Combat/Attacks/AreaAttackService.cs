@@ -40,16 +40,10 @@ public class AreaAttackService(
 
         var aggressor = attackInput.Aggressor as ICombatActor;
 
-        var areaLocation = aggressor.Location;
-
-        areaLocation =
-            areaLocation.AddDirectionStep(attackInput.Parameters.NeedDirection
-                ? aggressor.Direction
-                : Direction.None);
-
+        var targetlocation = attackInput.Target.Location;
 
         var area = attackInput.Parameters.CoordinateArea ??
-                   AreaEffect.Create(areaLocation, attackInput.Parameters.Area);
+                       AreaEffect.Create(targetlocation, attackInput.Parameters.Area);
 
         var affectedArea = new List<Location>(area.Length);
         var affectedCreatures = new List<ICreature>();
@@ -137,4 +131,135 @@ public class AreaAttackService(
 
         return target.TakeDamage(aggressor, damage.MainDamage);
     }
+}
+
+public static class AreaRotationHelper
+{
+    public static byte[,] Rotate(byte[,] matrix, Direction direction)
+    {
+        return direction switch
+        {
+            Direction.West => matrix,
+            Direction.East => Rotate180(matrix),
+            Direction.North => Rotate270(matrix),
+            Direction.South => Rotate90(matrix),
+            Direction.NorthWest => matrix,
+            Direction.NorthEast => Mirror(matrix),
+            Direction.SouthWest => Flip(matrix),
+            Direction.SouthEast => Mirror(Flip(matrix)),
+            _ => matrix
+        };
+    }
+
+    private static byte[,] Mirror(byte[,] matrix)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+        var result = new byte[rows, cols];
+
+        for (int y = 0; y < rows; y++)
+            for (int x = 0; x < cols; x++)
+                result[y, x] = matrix[y, cols - 1 - x];
+
+        return result;
+    }
+
+    private static byte[,] Flip(byte[,] matrix)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+        var result = new byte[rows, cols];
+
+        for (int y = 0; y < rows; y++)
+            for (int x = 0; x < cols; x++)
+                result[y, x] = matrix[rows - 1 - y, x];
+
+        return result;
+    }
+
+
+    public static byte[,] Rotate90(byte[,] matrix)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+        var result = new byte[cols, rows];
+
+        for (int i = 0; i < rows; ++i)
+            for (int j = 0; j < cols; ++j)
+                result[j, rows - i - 1] = matrix[i, j];
+
+        return result;
+    }
+
+    public static byte[,] Rotate180(byte[,] matrix)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+        var result = new byte[rows, cols];
+
+        for (int i = 0; i < rows; ++i)
+            for (int j = 0; j < cols; ++j)
+                result[rows - i - 1, cols - j - 1] = matrix[i, j];
+
+        return result;
+    }
+
+    public static byte[,] Rotate270(byte[,] matrix)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+        var result = new byte[cols, rows];
+
+        for (int i = 0; i < rows; ++i)
+            for (int j = 0; j < cols; ++j)
+                result[cols - j - 1, i] = matrix[i, j];
+
+        return result;
+    }
+
+    // Rotação diagonal simplificada: espelha a matriz
+    public static byte[,] Rotate45(byte[,] matrix, Direction diagonal)
+    {
+        var rot = diagonal switch
+        {
+            Direction.NorthEast => Rotate90(matrix),
+            Direction.SouthEast => Rotate180(Rotate90(matrix)),
+            Direction.SouthWest => Rotate180(Rotate270(matrix)),
+            Direction.NorthWest => Rotate270(matrix),
+            _ => matrix
+        };
+
+        return rot;
+    }
+
+    public static bool IsCircularArea(byte[,] matrix)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+
+        // Deve ser quadrada e com dimensões ímpares
+        if (rows != cols || rows % 2 == 0)
+            return false;
+
+        int center = rows / 2;
+
+        if (matrix[center, center] != 3)
+            return false;
+
+        // Verifica simetria vertical e horizontal
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                if (matrix[y, x] != matrix[rows - 1 - y, x])
+                    return false;
+
+                if (matrix[y, x] != matrix[y, cols - 1 - x])
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
 }
