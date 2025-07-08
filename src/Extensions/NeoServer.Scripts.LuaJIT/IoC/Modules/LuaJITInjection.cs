@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Scripts.LuaJIT.DataManagers;
 using NeoServer.Scripts.LuaJIT.Functions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
@@ -51,8 +50,6 @@ public static class LuaJitInjection
 
         builder.AddSingleton<ISpellFunctions, SpellFunctions>();
         builder.AddSingleton<ICombatFunctions, CombatFunctions>();
-        builder.AddSingleton<RuneSpellManager>();
-        builder.AddSingleton<InstantSpellManager>();
         return builder;
     }
 }

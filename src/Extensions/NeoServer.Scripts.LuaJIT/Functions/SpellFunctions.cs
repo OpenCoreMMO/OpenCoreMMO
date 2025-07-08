@@ -3,7 +3,6 @@ using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Spells;
-using NeoServer.Scripts.LuaJIT.DataManagers;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Models.Spell;
@@ -16,22 +15,16 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
     private static ILogger _logger;
     private static IItemTypeStore _itemTypeStore;
     private static IVocationStore _vocationStore;
-    private static RuneSpellManager _runeSpellManager;
-    private static InstantSpellManager _instantSpellManager;
     private static SpellListManager _spellListManager;
 
     public SpellFunctions(ILogger logger,
         IItemTypeStore itemTypeStore,
         IVocationStore vocationStore,
-        RuneSpellManager runeSpellManager,
-        InstantSpellManager instantSpellManager,
         SpellListManager spellListManager) : base(nameof(SpellFunctions))
     {
         _logger = logger;
         _itemTypeStore = itemTypeStore;
         _vocationStore = vocationStore;
-        _runeSpellManager = runeSpellManager;
-        _instantSpellManager = instantSpellManager;
         _spellListManager = spellListManager;
     }
 
@@ -210,8 +203,6 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             ((RuneSpell)runeSpell).LuaRune = rune;
 
             item.Attributes.SetCustomAttribute("spell", runeSpell);
-
-            _runeSpellManager.Register(rune);
         }
         else if (spell is LuaInstantSpell instant)
         {
@@ -257,7 +248,6 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
 
             ((InstantSpell)instantSpell).LuaInstantSpell = instant;
 
-            _instantSpellManager.Register(instant);
             _spellListManager.Add(instantSpell.Words, instantSpell);
         }
 
