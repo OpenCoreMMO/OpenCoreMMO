@@ -20,7 +20,7 @@ public class ConditionLight : BaseCondition
     public override ConditionType Type { get; }
     public EffectT Effect { get; }
     public uint ColorLevel { get; private set; }
-    public uint Color { get; private set; } = 215;
+    public uint Color { get; private set; }
     public uint InternalLightTicks { get; private set; }
     public uint LightChangeInterval { get; set; }
 
