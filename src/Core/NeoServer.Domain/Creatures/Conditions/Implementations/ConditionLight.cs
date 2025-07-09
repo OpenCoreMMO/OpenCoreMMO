@@ -8,32 +8,21 @@ namespace NeoServer.Domain.Creatures.Conditions.Implementations;
 
 public class ConditionLight : BaseCondition
 {
-    private CooldownTime _cooldown;
-
     public ConditionLight(ConditionType type, uint interval, uint lightLevel, uint lightColor,
         EffectT effect = EffectT.None) : base(interval)
     {
         Type = type;
-        Interval = interval;
         ColorLevel = lightLevel;
         Color = lightColor;
         Effect = effect;
     }
 
-    public byte Amount { get; }
     public override ConditionType Type { get; }
-    public DamageType DamageType { get; set; }
     public EffectT Effect { get; }
-
-    public uint Interval
-    {
-        set => _cooldown = new CooldownTime(DateTime.Now, value);
-    }
-
-    public uint ColorLevel { get; private set; } = 0;
+    public uint ColorLevel { get; private set; }
     public uint Color { get; private set; } = 215;
-    public uint InternalLightTicks { get; private set; } = 0;
-    public uint LightChangeInterval { get; set; } = 0;
+    public uint InternalLightTicks { get; private set; }
+    public uint LightChangeInterval { get; set; }
 
     public override bool Start(ICreature creature)
     {
