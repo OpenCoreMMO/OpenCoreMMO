@@ -1,10 +1,8 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Networking.EventHandlers.Creature;
 using NeoServer.Server.Events.Combat;
 using NeoServer.Server.Events.Creature;
 using NeoServer.Server.Events.Creature.Npcs;
 using NeoServer.Server.Events.Talks;
-using CreatureInjuredEventHandler = NeoServer.Server.Events.Creature.CreatureInjuredEventHandler;
 
 namespace NeoServer.Server.Events.Subscribers;
 
@@ -14,7 +12,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
     private readonly CreatureBlockedAttackEventHandler _creatureBlockedAttackEventHandler;
     private readonly CreatureChangedAttackTargetEventHandler _creatureChangedAttackTargetEventHandler;
     private readonly CreatureChangedOutfitEventHandler _creatureChangedOutfitEventHandler;
-    private readonly CreatureChangedLightEventHandler _creatureChangedLightEventHandler;
     private readonly CreatureChangedSpeedEventHandler _creatureChangedSpeedEventHandler;
     private readonly CreatureHealedEventHandler _creatureHealedEventHandler;
     private readonly CreatureHearEventHandler _creatureHearEventHandler;
@@ -25,7 +22,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
     private readonly NpcCloseShopEventHandler _npcCloseShopEventHandler;
     private readonly NpcShowShopEventHandler _npcShowShopEventHandler;
 
-    public CreatureEventSubscriber(CreatureInjuredEventHandler creatureReceiveDamageEventHandler,
+    public CreatureEventSubscriber(
         CreatureBlockedAttackEventHandler creatureBlockedAttackEventHandler,
         CreatureAttackEventHandler creatureAttackEventHandler,
         CreatureTurnedToDirectionEventHandler creatureTurnToDirectionEventHandler,
@@ -37,7 +34,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
         CreatureHearEventHandler creatureHearEventHandler,
         CreatureChangedVisibilityEventHandler creatureTurnedInvisibleEventHandler,
         CreatureChangedOutfitEventHandler creatureChangedOutfitEventHandler,
-        CreatureChangedLightEventHandler creatureChangedLightEventHandler,
         NpcShowShopEventHandler npcShowShopEventHandler,
         NpcCloseShopEventHandler npcCloseShopEventHandler)
     {
@@ -52,7 +48,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
         _creatureHearEventHandler = creatureHearEventHandler;
         _creatureTurnedInvisibleEventHandler = creatureTurnedInvisibleEventHandler;
         _creatureChangedOutfitEventHandler = creatureChangedOutfitEventHandler;
-        _creatureChangedLightEventHandler = creatureChangedLightEventHandler;
         _npcShowShopEventHandler = npcShowShopEventHandler;
         _npcCloseShopEventHandler = npcCloseShopEventHandler;
     }
