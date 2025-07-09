@@ -34,10 +34,7 @@ public class NonAggressiveCombatService
                 condition.Parameters.TryGetValue(ConditionParamType.LightLevel, out var lightLevel);
                 condition.Parameters.TryGetValue(ConditionParamType.LightColor, out var lightColor);
 
-                targetCreature.AddCondition(new ConditionLight(duration, lightLevel, lightColor)
-                {
-                    EndAction = targetCreature.RemoveLight
-                });
+                targetCreature.AddCondition(new ConditionLight(duration, lightLevel, lightColor));
             }
         }
     }

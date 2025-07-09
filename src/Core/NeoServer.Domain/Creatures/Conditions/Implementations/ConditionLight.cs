@@ -32,6 +32,9 @@ public class ConditionLight : BaseCondition
         InternalLightTicks = 0;
         LightChangeInterval = (uint)Duration / ColorLevel;
         creature.SetLight((byte)Color, (byte)ColorLevel);
+
+        EndAction = creature.RemoveLight;
+        
         return true;
     }
 }
