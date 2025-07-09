@@ -45,7 +45,7 @@ public class SpellCastValidation(IMapTool mapTool)
         var casterLocation = caster.Location;
 
         var casterHasNoTarget = spell.HasCooldownGroup((int)MagicGroup.Attack) && caster.CurrentTarget is null;
-        var casterNeedsDirection = spell.NeedDirection || spell.CasterNeedsTargetOrDirection;
+        var casterNeedsDirection = spell.NeedDirection || spell.NeedCasterTargetOrDirection;
 
         //check if the next tile is blocked
         if (casterHasNoTarget && casterNeedsDirection &&

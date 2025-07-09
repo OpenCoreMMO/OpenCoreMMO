@@ -1,6 +1,5 @@
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat;
-using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Combat.Validation;
 using NeoServer.Domain.Common;
@@ -29,7 +28,8 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Common;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
 using NeoServer.Domain.Creatures.Npcs;
@@ -266,7 +266,7 @@ public class Player : CombatActor, IPlayer
         }
 
         //protection zone block is persistent, this will be removed elsewhere
-        AddCondition(new Condition.Condition(ConditionType.ProtectionZoneBlock, 0));
+        AddCondition(new Condition(ConditionType.ProtectionZoneBlock, 0));
     }
 
     public void RemoveProtectionZoneBlock()
@@ -831,7 +831,7 @@ public class Player : CombatActor, IPlayer
         else
         {
             RemoveHungry();
-            AddCondition(new Condition.Condition(ConditionType.Regeneration, regenerationMs, SetAsHungry));
+            AddCondition(new Condition(ConditionType.Regeneration, regenerationMs, SetAsHungry));
         }
 
         return true;
@@ -846,20 +846,20 @@ public class Player : CombatActor, IPlayer
     public void SetAsHungry()
     {
         RemoveCondition(ConditionType.Regeneration);
-        AddCondition(new Condition.Condition(ConditionType.Hungry, uint.MaxValue));
+        AddCondition(new Condition(ConditionType.Hungry, uint.MaxValue));
     }
 
     public bool IsManaShieldEnabled => HasCondition(ConditionType.ManaShield);
 
     public void EnableManaShield(uint duration)
     {
-        AddCondition(new Condition.Condition(ConditionType.ManaShield, duration,
+        AddCondition(new Condition(ConditionType.ManaShield, duration,
             () => { RemoveCondition(ConditionType.ManaShield); }));
     }
 
     public void EnableManaShield()
     {
-        AddCondition(new Condition.Condition(ConditionType.ManaShield));
+        AddCondition(new Condition(ConditionType.ManaShield));
     }
 
     public void DisableManaShield()
@@ -1338,7 +1338,7 @@ public class Player : CombatActor, IPlayer
             SetProtectionZoneBlock();
 
         //logout is persistent, this will be removed elsewhere
-        AddCondition(new Condition.Condition(ConditionType.LogoutBlock, 0));
+        AddCondition(new Condition(ConditionType.LogoutBlock, 0));
     }
 
     private void TogglePacifiedCondition(IDynamicTile fromTile, IDynamicTile toTile)
@@ -1346,13 +1346,13 @@ public class Player : CombatActor, IPlayer
         switch (fromTile?.ProtectionZone)
         {
             case null when toTile.ProtectionZone:
-                AddCondition(new Condition.Condition(ConditionType.Pacified, 0));
+                AddCondition(new Condition(ConditionType.Pacified, 0));
                 RemoveProtectionZoneBlock();
                 break;
             case false when toTile.ProtectionZone:
                 RemoveLogoutBlock();
                 RemoveProtectionZoneBlock();
-                AddCondition(new Condition.Condition(ConditionType.Pacified, 0));
+                AddCondition(new Condition(ConditionType.Pacified, 0));
                 break;
             case true when toTile.ProtectionZone is false:
                 RemoveCondition(ConditionType.Pacified);

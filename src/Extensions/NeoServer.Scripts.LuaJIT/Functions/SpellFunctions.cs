@@ -1,4 +1,5 @@
 using LuaNET;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Item;
@@ -43,15 +44,23 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         RegisterMethod(lua, "Spell", "level", LuaSpellLevel);
         RegisterMethod(lua, "Spell", "magicLevel", LuaSpellMagicLevel);
         RegisterMethod(lua, "Spell", "mana", LuaSpellMana);
-        RegisterMethod(lua, "Spell", "needTarget", LuaSpellNeedTarget);
-        RegisterMethod(lua, "Spell", "isBlocking", LuaSpellIsBlocking);
+        RegisterMethod(lua, "Spell", "manaPercente", LuaSpellManaPercent);
+        RegisterMethod(lua, "Spell", "soul", LuaSpellSoul);
+        RegisterMethod(lua, "Spell", "range", LuaSpellRange);
         RegisterMethod(lua, "Spell", "isPremium", LuaSpellIsPremium);
+        RegisterMethod(lua, "Spell", "isEnabled", LuaSpellIsEnabled);
+        RegisterMethod(lua, "Spell", "needTarget", LuaSpellNeedTarget);
+        RegisterMethod(lua, "Spell", "needWeapon", LuaSpellNeedWeapon);
+        RegisterMethod(lua, "Spell", "needLearn", LuaSpellNeedLearn);
+        RegisterMethod(lua, "Spell", "isSelfTarget", LuaSpellIsSelfTarget);
+        RegisterMethod(lua, "Spell", "isBlocking", LuaSpellIsBlocking);
+        RegisterMethod(lua, "Spell", "isAggressive", LuaSpellIsAgressive);
         RegisterMethod(lua, "Spell", "vocation", LuaSpellVocation);
 
         // Only for InstantSpell.
         RegisterMethod(lua, "Spell", "words", LuaSpellWords);
         RegisterMethod(lua, "Spell", "needDirection", LuaSpellNeedDirection);
-        RegisterMethod(lua, "Spell", "needLearn", LuaSpellNeedLearn);
+        RegisterMethod(lua, "Spell", "needCasterTargetOrDirection", LuaSpellNeedCasterTargetOrDirection);
 
         //only for rune spells
         RegisterMethod(lua, "Spell", "runeId", LuaSpellRuneId);
@@ -110,6 +119,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
 
     private static int LuaSpellCastSpell(LuaState lua)
     {
+        // spell:onCastSpell(callback)
         var spell = GetUserdata<LuaSpell>(lua, 1);
         if (spell is null)
         {
@@ -145,7 +155,8 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
     }
 
     public static int LuaSpellRegister(LuaState lua)
-    {
+    {	
+        // spell:register()
         var spell = GetUserdata<LuaSpell>(lua, 1);
         if (spell is null)
         {
@@ -175,8 +186,10 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             ISpell runeSpell = null;
             if (_spellListManager.TryGet(rune.Name, out runeSpell))
             {
-                runeSpell.ManaConsumption = rune.ManaConsumption;
-                runeSpell.SoulConsumption = rune.SoulConsumption;
+                runeSpell.ManaConsumption = rune.Mana;
+                runeSpell.ManaPercent = rune.ManaPercent;
+                runeSpell.SoulConsumption = rune.Soul;
+                runeSpell.Range = rune.Range;
                 runeSpell.BlockWalls = rune.BlockWalls;
                 runeSpell.BlockingSolid = rune.BlockingSolid;
                 runeSpell.BlockingCreature = rune.BlockingCreature;
@@ -184,13 +197,21 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 runeSpell.NeedsPremium = rune.IsPremium;
                 runeSpell.VocationIds = rune.VocationIds;
                 runeSpell.MinLevel = rune.Level;
+                runeSpell.MinMagicLevel = rune.MagicLevel;
+                runeSpell.IsEnabled = rune.IsEnabled;
+                runeSpell.IsSelfTarget = rune.IsSelfTarget;
+                runeSpell.IsAggressive = rune.IsAggressive;
+                runeSpell.NeedLearn = rune.NeedLearn;
+                runeSpell.NeedWeapon = rune.NeedWeapon;
             }
 
             if (runeSpell is null)
                 runeSpell = new RuneSpell
                 {
-                    ManaConsumption = rune.ManaConsumption,
-                    SoulConsumption = rune.SoulConsumption,
+                    ManaConsumption = rune.Mana,
+                    ManaPercent = rune.ManaPercent,
+                    SoulConsumption = rune.Soul,
+                    Range = rune.Range,
                     BlockWalls = rune.BlockWalls,
                     BlockingSolid = rune.BlockingSolid,
                     BlockingCreature = rune.BlockingCreature,
@@ -198,6 +219,12 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                     NeedsPremium = rune.IsPremium,
                     VocationIds = rune.VocationIds,
                     MinLevel = rune.Level,
+                    MinMagicLevel = rune.MagicLevel,
+                    IsEnabled = rune.IsEnabled,
+                    IsSelfTarget = rune.IsSelfTarget,
+                    IsAggressive = rune.IsAggressive,
+                    NeedLearn = rune.NeedLearn,
+                    NeedWeapon = rune.NeedWeapon,
                 };
 
             ((RuneSpell)runeSpell).LuaRune = rune;
@@ -218,6 +245,9 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 instantSpell.NeedsTarget = instant.NeedTarget;
                 instantSpell.Words = instant.Words;
                 instantSpell.ManaConsumption = instant.Mana;
+                instantSpell.ManaPercent = instant.Mana;
+                instantSpell.SoulConsumption = instant.Soul;
+                instantSpell.Range = instant.Range;
                 instantSpell.Name = instant.Name;
                 instantSpell.NeedDirection = instant.NeedDirection;
                 instantSpell.NeedLearn = instant.NeedLearn;
@@ -225,6 +255,11 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 instantSpell.VocationIds = instant.VocationIds;
                 instantSpell.MinLevel = instant.Level;
                 instantSpell.MinMagicLevel = instant.MagicLevel;
+                instantSpell.IsEnabled = instant.IsEnabled;
+                instantSpell.IsSelfTarget = instant.IsSelfTarget;
+                instantSpell.IsAggressive = instant.IsAggressive;
+                instantSpell.NeedCasterTargetOrDirection = instant.NeedCasterTargetOrDirection;
+                instantSpell.NeedWeapon = instant.NeedWeapon;
             }
 
             if (instantSpell is null)
@@ -238,12 +273,20 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                     Words = instant.Words,
                     Name = instant.Name,
                     ManaConsumption = instant.Mana,
+                    ManaPercent = instant.ManaPercent,
+                    SoulConsumption = instant.Soul,
+                    Range = instant.Range,
                     NeedDirection = instant.NeedDirection,
                     NeedLearn = instant.NeedLearn,
                     NeedsPremium = instant.IsPremium,
                     VocationIds = instant.VocationIds,
                     MinLevel = instant.Level,
                     MinMagicLevel = instant.MagicLevel,
+                    IsEnabled = instant.IsEnabled,
+                    IsSelfTarget = instant.IsSelfTarget,
+                    IsAggressive = instant.IsAggressive,
+                    NeedCasterTargetOrDirection = instant.NeedCasterTargetOrDirection,
+                    NeedWeapon = instant.NeedWeapon,
                 };
 
             ((InstantSpell)instantSpell).LuaInstantSpell = instant;
@@ -255,7 +298,8 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
     }
 
     public static int LuaSpellName(LuaState lua)
-    {
+    {	
+        // spell:name(name)
         var spell = GetUserdata<LuaSpell>(lua, 1);
         if (spell is not null)
         {
@@ -279,6 +323,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
 
     public static int LuaSpellId(LuaState lua)
     {
+        // spell:id(id)
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
         if (spell is null)
@@ -309,6 +354,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
 
     public static int LuaSpellGroup(LuaState lua)
     {
+        // spell:group(primaryGroup[, secondaryGroup])
         //todo: need to implement group spell name
 
         var spell = GetUserdata<LuaSpell>(lua, 1);
@@ -364,6 +410,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
 
     public static int LuaSpellCooldown(LuaState lua)
     {
+        // spell:cooldown(cooldown)
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
         if (spell is null)
@@ -387,6 +434,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
 
     public static int LuaSpellGroupCooldown(LuaState lua)
     {
+        // spell:groupCooldown(primaryGroupCd[, secondaryGroupCd])
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
         if (spell is null)
@@ -421,7 +469,8 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
     }
 
     public static int LuaSpellLevel(LuaState lua)
-    {
+    {	
+        // spell:level(lvl)
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
         if (spell is null)
@@ -445,6 +494,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
 
     public static int LuaSpellMagicLevel(LuaState lua)
     {
+        // spell:magicLevel(lvl)
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
         if (spell is null)
@@ -468,6 +518,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
 
     public static int LuaSpellMana(LuaState lua)
     {
+        // spell:mana(mana)
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
         if (spell is not null)
@@ -490,55 +541,84 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         return 1;
     }
 
-    public static int LuaSpellNeedTarget(LuaState lua)
+    public static int LuaSpellManaPercent(LuaState lua)
     {
+        // spell:manaPercent(percent)
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
-        if (spell is null)
+        if (spell is not null)
         {
-            Lua.PushNil(lua);
-            return 1;
-        }
-
-        if (Lua.GetTop(lua) == 1)
-        {
-            Lua.PushBoolean(lua, spell.NeedTarget);
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushNumber(lua, spell.ManaPercent);
+            }
+            else
+            {
+                spell.ManaPercent = GetNumber<ushort>(lua, 2);
+                PushBoolean(lua, true);
+            }
         }
         else
         {
-            spell.NeedTarget = GetBoolean(lua, 2);
-            PushBoolean(lua, true);
+            Lua.PushNil(lua);
         }
 
         return 1;
     }
 
-    public static int LuaSpellIsBlocking(LuaState lua)
+    public static int LuaSpellSoul(LuaState lua)
     {
+        // spell:soul(soul)
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
-        if (spell is null)
+        if (spell is not null)
+        {
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushNumber(lua, spell.Soul);
+            }
+            else
+            {
+                spell.Soul = GetNumber<ushort>(lua, 2);
+                PushBoolean(lua, true);
+            }
+        }
+        else
         {
             Lua.PushNil(lua);
-            return 1;
         }
 
-        if (Lua.GetTop(lua) == 1)
+        return 1;
+    }
+
+    public static int LuaSpellRange(LuaState lua)
+    {
+        // spell:range(range)
+        var spell = GetUserdata<LuaSpell>(lua, 1);
+
+        if (spell is not null)
         {
-            Lua.PushBoolean(lua, spell.BlockingSolid);
-            Lua.PushBoolean(lua, spell.BlockingCreature);
-            return 2;
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushNumber(lua, spell.Range);
+            }
+            else
+            {
+                spell.Range = GetNumber<byte>(lua, 2);
+                PushBoolean(lua, true);
+            }
         }
-
-        spell.BlockingSolid = GetBoolean(lua, 2);
-        spell.BlockingCreature = GetBoolean(lua, 3);
-        PushBoolean(lua, true);
+        else
+        {
+            Lua.PushNil(lua);
+        }
 
         return 1;
     }
 
     public static int LuaSpellIsPremium(LuaState lua)
     {
+        // spell:isPremium(bool)
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
         if (spell is not null)
@@ -561,8 +641,182 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         return 1;
     }
 
+    public static int LuaSpellIsEnabled(LuaState lua)
+    {
+        // spell:isEnabled(bool)
+        var spell = GetUserdata<LuaSpell>(lua, 1);
+
+        if (spell is not null)
+        {
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushBoolean(lua, spell.IsEnabled);
+            }
+            else
+            {
+                spell.IsEnabled = GetBoolean(lua, 2);
+                PushBoolean(lua, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
+    public static int LuaSpellNeedTarget(LuaState lua)
+    {
+        // spell:needTarget(bool)
+        var spell = GetUserdata<LuaSpell>(lua, 1);
+
+        if (spell is null)
+        {
+            Lua.PushNil(lua);
+            return 1;
+        }
+
+        if (Lua.GetTop(lua) == 1)
+        {
+            Lua.PushBoolean(lua, spell.NeedTarget);
+        }
+        else
+        {
+            spell.NeedTarget = GetBoolean(lua, 2);
+            PushBoolean(lua, true);
+        }
+
+        return 1;
+    }
+
+    public static int LuaSpellNeedWeapon(LuaState lua)
+    {
+        // spell:needWeapon(bool)
+        var spell = GetUserdata<LuaSpell>(lua, 1);
+
+        if (spell is null)
+        {
+            Lua.PushNil(lua);
+            return 1;
+        }
+
+        if (Lua.GetTop(lua) == 1)
+        {
+            Lua.PushBoolean(lua, spell.NeedWeapon);
+        }
+        else
+        {
+            spell.NeedWeapon = GetBoolean(lua, 2);
+            PushBoolean(lua, true);
+        }
+
+        return 1;
+    }
+
+    public static int LuaSpellNeedLearn(LuaState lua)
+    {
+        // spell:needLearn(bool)
+        var spell = GetUserdata<LuaSpell>(lua, 1);
+
+        if (spell is not null)
+        {
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushBoolean(lua, spell.NeedLearn);
+            }
+            else
+            {
+                spell.NeedLearn = GetBoolean(lua, 2);
+                PushBoolean(lua, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
+    public static int LuaSpellIsSelfTarget(LuaState lua)
+    {
+        // spell:isSelfTarget(bool)
+        var spell = GetUserdata<LuaSpell>(lua, 1);
+
+        if (spell is not null)
+        {
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushBoolean(lua, spell.IsSelfTarget);
+            }
+            else
+            {
+                spell.IsSelfTarget = GetBoolean(lua, 2);
+                PushBoolean(lua, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
+    public static int LuaSpellIsBlocking(LuaState lua)
+    {
+        // spell:isBlocking(blockingSolid, blockingCreature)
+        var spell = GetUserdata<LuaSpell>(lua, 1);
+
+        if (spell is null)
+        {
+            Lua.PushNil(lua);
+            return 1;
+        }
+
+        if (Lua.GetTop(lua) == 1)
+        {
+            Lua.PushBoolean(lua, spell.BlockingSolid);
+            Lua.PushBoolean(lua, spell.BlockingCreature);
+            return 2;
+        }
+
+        spell.BlockingSolid = GetBoolean(lua, 2);
+        spell.BlockingCreature = GetBoolean(lua, 3);
+        PushBoolean(lua, true);
+
+        return 1;
+    }
+
+    public static int LuaSpellIsAgressive(LuaState lua)
+    {
+        // spell:isAggressive(bool)
+        var spell = GetUserdata<LuaSpell>(lua, 1);
+
+        if (spell is not null)
+        {
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushBoolean(lua, spell.IsAggressive);
+            }
+            else
+            {
+                spell.IsAggressive = GetBoolean(lua, 2);
+                PushBoolean(lua, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
     public static int LuaSpellVocation(LuaState lua)
     {
+        // spell:vocation(vocation)
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
         if (spell is not null)
@@ -610,162 +864,10 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         return 1;
     }
 
-
-    //Rune Spells
-    public static int LuaSpellRuneId(LuaState lua)
-    {
-        var rune = GetUserdata<LuaRuneSpell>(lua, 1);
-
-        if (rune is not null)
-        {
-            // if spell != SPELL_RUNE, it means that this actually is no RuneSpell, so we return nil
-            if (rune.SpellType != SpellType.Rune)
-            {
-                Lua.PushNil(lua);
-                return 1;
-            }
-
-            if (Lua.GetTop(lua) == 1)
-            {
-                Lua.PushNumber(lua, rune.RuneId);
-            }
-            else
-            {
-                var runeId = GetNumber<ushort>(lua, 2);
-                rune.RuneId = runeId;
-                PushBoolean(lua, true);
-            }
-        }
-        else
-        {
-            Lua.PushNil(lua);
-        }
-
-        return 1;
-    }
-
-    public static int LuaSpellCharges(LuaState lua)
-    {
-        var rune = GetUserdata<LuaRuneSpell>(lua, 1);
-
-        if (rune is not null)
-        {
-            // if spell != SPELL_RUNE, it means that this actually is no RuneSpell, so we return nil
-            if (rune.SpellType != SpellType.Rune)
-            {
-                Lua.PushNil(lua);
-                return 1;
-            }
-
-            if (Lua.GetTop(lua) == 1)
-            {
-                Lua.PushNumber(lua, rune.Charges);
-            }
-            else
-            {
-                rune.Charges = GetNumber<int>(lua, 2);
-                PushBoolean(lua, true);
-            }
-        }
-        else
-        {
-            Lua.PushNil(lua);
-        }
-
-        return 1;
-    }
-
-    public static int LuaSpellAllowFarUse(LuaState lua)
-    {
-        var rune = GetUserdata<LuaRuneSpell>(lua, 1);
-
-        if (rune is not null)
-        {
-            // if spell != SPELL_RUNE, it means that this actually is no RuneSpell, so we return nil
-            if (rune.SpellType != SpellType.Rune)
-            {
-                Lua.PushNil(lua);
-                return 1;
-            }
-
-            if (Lua.GetTop(lua) == 1)
-            {
-                Lua.PushBoolean(lua, rune.AllowFarUse);
-            }
-            else
-            {
-                rune.AllowFarUse = GetBoolean(lua, 2);
-                PushBoolean(lua, true);
-            }
-        }
-        else
-        {
-            Lua.PushNil(lua);
-        }
-
-        return 1;
-    }
-
-    public int LuaSpellBlockWalls(LuaState l)
-    {
-        var rune = GetUserdata<LuaRuneSpell>(l, 1);
-        if (rune is not null)
-        {
-            if (rune.SpellType != SpellType.Rune)
-            {
-                Lua.PushNil(l);
-                return 1;
-            }
-
-            if (Lua.GetTop(l) == 1)
-            {
-                Lua.PushBoolean(l, rune.CheckLineOfSight);
-            }
-            else
-            {
-                rune.CheckLineOfSight = (GetBoolean(l, 2));
-                Lua.PushBoolean(l, true);
-            }
-        }
-        else
-        {
-            Lua.PushNil(l);
-        }
-        return 1;
-    }
-
-    public static int LuaSpellCheckFloor(LuaState l)
-    {
-        var rune = GetUserdata<LuaRuneSpell>(l, 1);
-        if (rune is not null)
-        {
-            if (rune.SpellType != SpellType.Rune)
-            {
-                Lua.PushNil(l);
-                return 1;
-            }
-
-            if (Lua.GetTop(l) == 1)
-            {
-                Lua.PushBoolean(l, rune.CheckFloor);
-            }
-            else
-            {
-                rune.CheckFloor = (GetBoolean(l, 2));
-                Lua.PushBoolean(l, true);
-            }
-        }
-        else
-        {
-            Lua.PushNil(l);
-        }
-
-        return 1;
-    }
-
     //Instan Spells
     public static int LuaSpellWords(LuaState lua)
     {
+        // spell:words(words[, separator = ""])
         var instant = GetUserdata<LuaInstantSpell>(lua, 1);
 
         if (instant is not null)
@@ -798,6 +900,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
 
     public static int LuaSpellNeedDirection(LuaState lua)
     {
+        // spell:needDirection(bool)
         var instant = GetUserdata<LuaInstantSpell>(lua, 1);
 
         if (instant is not null)
@@ -820,25 +923,183 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         return 1;
     }
 
-    public static int LuaSpellNeedLearn(LuaState lua)
+    public static int LuaSpellNeedCasterTargetOrDirection(LuaState lua)
     {
+        // spell:needCasterTargetOrDirection(bool)
         var instant = GetUserdata<LuaInstantSpell>(lua, 1);
 
         if (instant is not null)
         {
             if (Lua.GetTop(lua) == 1)
             {
-                Lua.PushBoolean(lua, instant.NeedLearn);
+                Lua.PushBoolean(lua, instant.NeedCasterTargetOrDirection);
             }
             else
             {
-                instant.NeedLearn = GetBoolean(lua, 2);
+                instant.NeedCasterTargetOrDirection = GetBoolean(lua, 2);
                 PushBoolean(lua, true);
             }
         }
         else
         {
             Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
+    //Rune Spells
+    public static int LuaSpellRuneId(LuaState lua)
+    {
+        // spell:runeId(id)
+        var rune = GetUserdata<LuaRuneSpell>(lua, 1);
+
+        if (rune is not null)
+        {
+            // if spell != SPELL_RUNE, it means that this actually is no RuneSpell, so we return nil
+            if (rune.SpellType != SpellType.Rune)
+            {
+                Lua.PushNil(lua);
+                return 1;
+            }
+
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushNumber(lua, rune.RuneId);
+            }
+            else
+            {
+                var runeId = GetNumber<ushort>(lua, 2);
+                rune.RuneId = runeId;
+                PushBoolean(lua, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
+    public static int LuaSpellCharges(LuaState lua)
+    {
+        // spell:charges(charges)
+        var rune = GetUserdata<LuaRuneSpell>(lua, 1);
+
+        if (rune is not null)
+        {
+            // if spell != SPELL_RUNE, it means that this actually is no RuneSpell, so we return nil
+            if (rune.SpellType != SpellType.Rune)
+            {
+                Lua.PushNil(lua);
+                return 1;
+            }
+
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushNumber(lua, rune.Charges);
+            }
+            else
+            {
+                rune.Charges = GetNumber<int>(lua, 2);
+                PushBoolean(lua, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
+    public static int LuaSpellAllowFarUse(LuaState lua)
+    {
+        // spell:allowFarUse(bool)
+        var rune = GetUserdata<LuaRuneSpell>(lua, 1);
+
+        if (rune is not null)
+        {
+            // if spell != SPELL_RUNE, it means that this actually is no RuneSpell, so we return nil
+            if (rune.SpellType != SpellType.Rune)
+            {
+                Lua.PushNil(lua);
+                return 1;
+            }
+
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushBoolean(lua, rune.AllowFarUse);
+            }
+            else
+            {
+                rune.AllowFarUse = GetBoolean(lua, 2);
+                PushBoolean(lua, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
+    public int LuaSpellBlockWalls(LuaState l)
+    {
+        // spell:blockWalls(bool)
+        var rune = GetUserdata<LuaRuneSpell>(l, 1);
+        if (rune is not null)
+        {
+            if (rune.SpellType != SpellType.Rune)
+            {
+                Lua.PushNil(l);
+                return 1;
+            }
+
+            if (Lua.GetTop(l) == 1)
+            {
+                Lua.PushBoolean(l, rune.CheckLineOfSight);
+            }
+            else
+            {
+                rune.CheckLineOfSight = (GetBoolean(l, 2));
+                Lua.PushBoolean(l, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(l);
+        }
+        return 1;
+    }
+
+    public static int LuaSpellCheckFloor(LuaState l)
+    {
+        // spell:checkFloor(bool)
+        var rune = GetUserdata<LuaRuneSpell>(l, 1);
+        if (rune is not null)
+        {
+            if (rune.SpellType != SpellType.Rune)
+            {
+                Lua.PushNil(l);
+                return 1;
+            }
+
+            if (Lua.GetTop(l) == 1)
+            {
+                Lua.PushBoolean(l, rune.CheckFloor);
+            }
+            else
+            {
+                rune.CheckFloor = (GetBoolean(l, 2));
+                Lua.PushBoolean(l, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(l);
         }
 
         return 1;

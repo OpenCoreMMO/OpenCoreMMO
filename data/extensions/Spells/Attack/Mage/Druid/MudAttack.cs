@@ -12,7 +12,7 @@ public class MudAttack : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        DamageFormula = (CombatFormula.MagicLevel, GetFormulaValues),
+        DamageFormula = (FormulaType.MagicLevel, GetFormulaValues),
         DamageType = DamageType.Earth,
         Effect = EffectT.Carniphila,
         ShootType = ShootType.SmallEarth
@@ -29,7 +29,7 @@ public class MudAttack : AttackSpell
     public override bool NeedLearn => false;
     public override byte? Range => 3;
     public override string[] Vocations { get; } = ["druid", "elder druid"];
-    public override bool CasterNeedsTargetOrDirection => true;
+    public override bool NeedCasterTargetOrDirection => true;
 
     private static MinMax GetFormulaValues(IPlayer player, int level, int magicLevel, decimal _)
     {

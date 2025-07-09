@@ -44,6 +44,8 @@ public abstract class Creature : IEquatable<Creature>, ICreature
 
     public event ChangeOutfit OnChangedOutfit;
 
+    public event ChangeLight OnChangedLight;
+
     public event Say OnSay;
 
     public event Think OnThink;
@@ -127,7 +129,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         OnChangedOutfit?.Invoke(this, Outfit);
     }
 
-    public byte LightBrightness { get; protected set; }
+    public byte LightLevel { get; protected set; }
     public byte LightColor { get; protected set; }
     public bool IsInvisible { get; protected set; } // TODO: implement.
     public abstract bool CanSeeInvisible { get; }
@@ -263,6 +265,22 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public override int GetHashCode()
     {
         return HashCode.Combine(CreatureId);
+    }
+
+    public void SetLight(byte color, byte level)
+    {
+        LightColor = color;
+        LightLevel = level;
+
+        OnChangedLight?.Invoke(this);
+    }
+
+    public void SetNormalLight()
+    {
+        LightColor = 0;
+        LightLevel = 0;
+
+        OnChangedLight?.Invoke(this);
     }
 
     public static bool operator ==(Creature creature1, Creature creature2)

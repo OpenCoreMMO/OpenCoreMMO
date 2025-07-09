@@ -60,7 +60,7 @@ public static class CreatureRaw
             cache.AddRange(BitConverter.GetBytes((ushort)0));
         }
 
-        cache.Add(creature.LightBrightness);
+        cache.Add(creature.LightLevel);
         cache.Add(creature.LightColor);
 
         cache.AddRange(BitConverter.GetBytes(creature.Speed));

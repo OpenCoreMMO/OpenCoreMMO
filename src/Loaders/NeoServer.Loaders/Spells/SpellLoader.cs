@@ -45,7 +45,7 @@ public class SpellLoader(
 
                 if (CreateSpell(spellType) is not BaseSpell spellInstance) continue;
 
-                if (spellInstance.Enabled is false) continue;
+                if (spellInstance.IsEnabled is false) continue;
 
                 spellInstance.Name ??= spell["name"].GetStringFromJson();
                 

@@ -7,7 +7,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster.Loot;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;

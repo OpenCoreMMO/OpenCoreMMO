@@ -11,7 +11,7 @@ public class EtherealSpear : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        DamageFormula = (CombatFormula.Skill, GetFormulaValues),
+        DamageFormula = (FormulaType.Skill, GetFormulaValues),
         DamageType = DamageType.Physical,
         Effect = EffectT.XGray,
         ShootType = ShootType.EtherealSpear,

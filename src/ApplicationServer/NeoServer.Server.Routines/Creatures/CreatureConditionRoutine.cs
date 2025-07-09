@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 
 namespace NeoServer.Server.Routines.Creatures;
 
@@ -18,7 +18,7 @@ public static class CreatureConditionRoutine
                 creature.RemoveCondition(condition);
             }
 
-            if (condition is DamageCondition damageCondition) damageCondition.Execute(creature);
+            if (condition is ConditionDamage damageCondition) damageCondition.Execute(creature);
         }
     }
 }

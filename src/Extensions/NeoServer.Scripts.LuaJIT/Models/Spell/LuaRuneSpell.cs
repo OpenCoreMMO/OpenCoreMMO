@@ -13,8 +13,6 @@ public class LuaRuneSpell(LuaScriptInterface scriptInterface) : LuaSpell(scriptI
     public bool CheckFloor { get; set; }
     public bool BlockWalls { get; set; }
     public bool CheckLineOfSight { get; set; }
-    public ushort ManaConsumption { get; set; }
-    public ushort SoulConsumption { get; set; }
 
     public bool OnUse(ICreature creature, IThing target, Rune rune, bool isHotkey)
     {

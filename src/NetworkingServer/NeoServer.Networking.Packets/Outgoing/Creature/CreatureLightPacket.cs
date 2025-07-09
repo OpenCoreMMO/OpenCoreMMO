@@ -17,7 +17,7 @@ public class CreatureLightPacket : OutgoingPacket
         message.AddByte((byte)GameOutgoingPacketType.CreatureLight);
 
         message.AddUInt32(player.CreatureId);
-        message.AddByte(player.LightBrightness); // light level
+        message.AddByte(player.LightLevel); // light level
         message.AddByte(player.LightColor); // color
     }
 }

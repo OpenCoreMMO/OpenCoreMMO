@@ -11,7 +11,7 @@ public class EnergyBeam : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        DamageFormula = (CombatFormula.MagicLevel, GetFormulaValues),
+        DamageFormula = (FormulaType.MagicLevel, GetFormulaValues),
         DamageType = DamageType.Energy,
         Effect = EffectT.DamageEnergy
     };

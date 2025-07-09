@@ -22,7 +22,7 @@ public class SpellService(
         {
             if (spell.NeedsTarget) target = caster.CurrentTarget;
 
-            if (spell.NeedDirection || spell.CasterNeedsTargetOrDirection)
+            if (spell.NeedDirection || spell.NeedCasterTargetOrDirection)
             {
                 var location = casterLocation.AddDirectionStep(caster.Direction);
                 target = map.GetTile(location);

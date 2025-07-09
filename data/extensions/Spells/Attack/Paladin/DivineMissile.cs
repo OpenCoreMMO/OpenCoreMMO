@@ -11,7 +11,7 @@ public class DivineMissile : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        DamageFormula = (CombatFormula.MagicLevel, GetFormulaValues),
+        DamageFormula = (FormulaType.MagicLevel, GetFormulaValues),
         DamageType = DamageType.Holy,
         Effect = EffectT.HolyDamage,
         ShootType = ShootType.SmallHoly
@@ -28,7 +28,7 @@ public class DivineMissile : AttackSpell
     public override bool NeedLearn => false;
     public override byte? Range => 4;
     public override string[] Vocations { get; } = ["paladin", "royal paladin"];
-    public override bool CasterNeedsTargetOrDirection => true;
+    public override bool NeedCasterTargetOrDirection => true;
 
     private static MinMax GetFormulaValues(IPlayer player, int level, int magicLevel, decimal _)
     {

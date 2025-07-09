@@ -1,9 +1,9 @@
-using NeoServer.Domain.Combat.Services.Attacks;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 
 namespace NeoServer.Domain.Combat.Attacks;
 
@@ -25,35 +25,75 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
     {
         var combatParameter = attackInput.Parameters;
         var aggressor = attackInput.Aggressor as ICombatActor;
-        var target = attackInput.Target ?? aggressor?.CurrentTarget;
+        var target = (attackInput.Target ?? aggressor?.CurrentTarget) as ICombatActor;
 
-        if (target is not ICombatActor targetCreature || combatParameter.Condition is null ||
-            combatParameter.Condition.Type is ConditionType.None) return CombatResult.Fail(Result.NotApplicable);
+        if (target is not null &&
+            combatParameter.Condition is not null &&
+            combatParameter.Condition.Type is not ConditionType.None)
+        {
+            var isDamageCondition = HarmfulConditions.Contains(combatParameter.Condition.Type);
+            if (isDamageCondition) return PerformDamageCondition(combatParameter, target, aggressor);
+            return PerformCondition(combatParameter, target);
+        }
+        else if (combatParameter.Conditions.Count > 0)
+        {
+            foreach (var condition in combatParameter.Conditions)
+            {
+                if (target == null)
+                    target = aggressor;
 
-        var isDamageCondition = HarmfulConditions.Contains(combatParameter.Condition.Type);
-        if (isDamageCondition) return PerformDamageCondition(combatParameter, targetCreature, aggressor);
+                var isDamageCondition = HarmfulConditions.Contains(condition.Type);
+                if (isDamageCondition) return PerformDamageCondition(combatParameter, target, aggressor, condition);
 
-        return PerformCondition(combatParameter, targetCreature);
+                PerformCondition(combatParameter, target, condition);
+            }
+
+            return new CombatResult(0, Result.Success);
+        }
+        else
+        {
+            return CombatResult.Fail(Result.NotApplicable);
+        }
+
     }
 
-    private static CombatResult PerformDamageCondition(CombatParameter combatParameter, ICombatActor targetCreature,
-        ICombatActor aggressor)
+    private CombatResult PerformCondition(CombatParameter combatParameter, ICombatActor targetCreature, ICondition condition)
     {
-        var conditionType = combatParameter.Condition.Type;
-        var interval = combatParameter.Condition.Duration;
+        var conditionType = condition.Type;
+        condition.Parameters.TryGetValue(ConditionParamType.Ticks, out var duration);
 
-        if (combatParameter.MinDamage is 0 || combatParameter.MaxDamage is 0) return CombatResult.Fail(Result.NotPossible);
-
-        if (!targetCreature.HasCondition(combatParameter.Condition.Type, out var condition))
+        if (!targetCreature.HasCondition(condition.Type, out var existentCondition))
         {
-            targetCreature.AddCondition(new DamageCondition(aggressor, conditionType, interval,
-                combatParameter.MinDamage,
-                combatParameter.MaxDamage));
+            if (conditionType is ConditionType.Light)
+            {
+                AddLightCondition(combatParameter, targetCreature, conditionType, duration, condition);
+                return new CombatResult(0, Result.Success);
+            }
+
+            if (conditionType is ConditionType.Haste)
+            {
+                AddSpeedCondition(combatParameter, targetCreature, conditionType, duration, condition);
+                return new CombatResult(0, Result.Success);
+            }
+
+            if (conditionType is ConditionType.Paralyze)
+            {
+                AddParalyzeCondition(combatParameter, targetCreature, conditionType, duration, condition);
+                return new CombatResult(0, Result.Success);
+            }
+
+            if (conditionType is ConditionType.Outfit)
+            {
+                AddOutfitCondition(combatParameter, targetCreature, conditionType, duration);
+                return new CombatResult(0, Result.Success);
+            }
+
+            targetCreature.AddCondition(new Condition(conditionType, duration));
 
             return new CombatResult(0, Result.Success);
         }
 
-        (condition as DamageCondition)?.Start(targetCreature, combatParameter.MinDamage, combatParameter.MaxDamage);
+        existentCondition.Start(targetCreature);
         return new CombatResult(0, Result.Success);
     }
 
@@ -83,6 +123,82 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
 
         condition.Start(targetCreature);
         return new CombatResult(0, Result.Success);
+    }
+
+    private static CombatResult PerformDamageCondition(
+        CombatParameter combatParameter,
+        ICombatActor targetCreature,
+        ICombatActor aggressor,
+        ICondition condition)
+    {
+        var conditionType = condition.Type;
+        condition.Parameters.TryGetValue(ConditionParamType.Ticks, out var duration);
+
+        if (combatParameter.MinDamage is 0 || combatParameter.MaxDamage is 0) return CombatResult.Fail(Result.NotPossible);
+
+        if (!targetCreature.HasCondition(condition.Type, out var existentCondition))
+        {
+            targetCreature.AddCondition(new ConditionDamage(aggressor, conditionType, duration,
+                combatParameter.MinDamage,
+                combatParameter.MaxDamage));
+
+            return new CombatResult(0, Result.Success);
+        }
+
+        (existentCondition as ConditionDamage)?.Start(targetCreature, combatParameter.MinDamage, combatParameter.MaxDamage);
+        return new CombatResult(0, Result.Success);
+    }
+
+    private static CombatResult PerformDamageCondition(CombatParameter combatParameter, ICombatActor targetCreature,
+        ICombatActor aggressor)
+    {
+        var conditionType = combatParameter.Condition.Type;
+        var interval = combatParameter.Condition.Duration;
+
+        if (combatParameter.MinDamage is 0 || combatParameter.MaxDamage is 0) return CombatResult.Fail(Result.NotPossible);
+
+        if (!targetCreature.HasCondition(combatParameter.Condition.Type, out var condition))
+        {
+            targetCreature.AddCondition(new ConditionDamage(aggressor, conditionType, interval,
+                combatParameter.MinDamage,
+                combatParameter.MaxDamage));
+
+            return new CombatResult(0, Result.Success);
+        }
+
+        (condition as ConditionDamage)?.Start(targetCreature, combatParameter.MinDamage, combatParameter.MaxDamage);
+        return new CombatResult(0, Result.Success);
+    }
+
+    private static void AddLightCondition(CombatParameter combatParameter, ICombatActor targetCreature,
+        ConditionType conditionType, uint duration, ICondition condition)
+    {
+        //targetCreature.DecreaseSpeed((ushort)Math.Abs((int)combatParameter.Condition.Value));
+
+        condition.Parameters.TryGetValue(ConditionParamType.LightLevel, out var lightLevel);
+        condition.Parameters.TryGetValue(ConditionParamType.LightColor, out var lightColor);
+
+        targetCreature.AddCondition(new ConditionLight(conditionType, duration, lightLevel, lightColor)
+        {
+            EndAction = () => targetCreature.SetNormalLight()
+        });
+    }
+
+    private static void AddSpeedCondition(CombatParameter combatParameter, ICombatActor targetCreature,
+        ConditionType conditionType, uint duration, ICondition condition)
+    {
+        targetCreature.AddCondition(new ConditionSpeed(conditionType, duration, condition.FormulaValues));
+    }
+
+    private static void AddParalyzeCondition(CombatParameter combatParameter, ICombatActor targetCreature,
+        ConditionType conditionType, uint duration, ICondition condition)
+    {
+        targetCreature.DecreaseSpeed((ushort)Math.Abs((int)combatParameter.Condition.Value));
+
+        targetCreature.AddCondition(new Condition(conditionType, duration)
+        {
+            EndAction = () => targetCreature.IncreaseSpeed((ushort)Math.Abs((int)combatParameter.Condition.Value))
+        });
     }
 
     private static void AddParalyzeCondition(CombatParameter combatParameter, ICombatActor targetCreature,
