@@ -8,10 +8,10 @@ namespace NeoServer.Domain.Creatures.Conditions.Implementations;
 
 public class ConditionLight : BaseCondition
 {
-    public ConditionLight(ConditionType type, uint interval, uint lightLevel, uint lightColor,
+    public ConditionLight(uint interval, uint lightLevel, uint lightColor,
         EffectT effect = EffectT.None) : base(interval)
     {
-        Type = type;
+        Type = ConditionType.Light;
         ColorLevel = lightLevel;
         Color = lightColor;
         Effect = effect;

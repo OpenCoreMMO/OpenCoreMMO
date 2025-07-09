@@ -10,6 +10,7 @@ using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Models;
 using NeoServer.Scripts.LuaJIT.Models.Combat;
+using NeoServer.Scripts.LuaJIT.Services;
 using NeoServer.Server.Common.Contracts;
 using LuaDataType = NeoServer.Scripts.LuaJIT.Enums.LuaDataType;
 
@@ -20,22 +21,25 @@ public class CombatFunctions : LuaScriptInterface, ICombatFunctions
     private static IAttackService _attackService;
     private static IGameCreatureManager _creatureManager;
     private static IMap _map;
+    private static LuaCombatService _luaCombatService;
 
     public CombatFunctions(
         IAttackService attackService,
         IGameCreatureManager creatureManager,
-        IMap map) : base(nameof(CombatFunctions))
+        IMap map,
+        LuaCombatService luaCombatService) : base(nameof(CombatFunctions))
     {
         _attackService = attackService;
         _creatureManager = creatureManager;
         _map = map;
+        _luaCombatService = luaCombatService;
     }
 
     public void Init(LuaState luaState)
     {
         RegisterSharedClass(luaState, "Combat", "", LuaCombatCreate);
         RegisterMetaMethod(luaState, "Combat", "__eq", LuaUserdataCompare<LuaCombat>);
-        
+
         RegisterMethod(luaState, "Combat", "setParameter", LuaSetParameter);
         RegisterMethod(luaState, "Combat", "setFormula", LuaSetFormula);
 
@@ -102,7 +106,8 @@ public class CombatFunctions : LuaScriptInterface, ICombatFunctions
     }
 
     public static int LuaAddCondition(LuaState lua)
-    {	// combat:addCondition(condition)
+    {
+        // combat:addCondition(condition)
         var combat = GetUserdata<LuaCombat>(lua, 1);
         var condition = GetUserdata<ICondition>(lua, 2);
 
@@ -142,52 +147,7 @@ public class CombatFunctions : LuaScriptInterface, ICombatFunctions
             var creature = GetUserdata<ICreature>(lua, 2);
             var variant = GetVariant(lua, 3);
 
-            switch (variant.Type)
-            {
-                case LuaVariantType.Number:
-                    {
-                        _creatureManager.TryGetCreature(variant.Number, out var target);
-
-                        //if (target is null)
-                        //{
-                        //    PushBoolean(lua, false);
-                        //    return 1;
-                        //}
-
-                        // if (combat->hasArea())
-                        // {
-                        //     combat->doCombat(creature, target->getPosition());
-                        // }
-                        // else
-                        {
-                            var combatParameter = combat.BuildCombatParameter(creature as IPlayer, target);
-                            _attackService.Execute(new AttackInput(creature, target, combatParameter));
-                        }
-
-                        break;
-                    }
-                case LuaVariantType.VARIANT_POSITION:
-                    {
-                        //if (target is null)
-                        //{
-                        //    PushBoolean(lua, false);
-                        //    return 1;
-                        //}
-
-                        // if (combat->hasArea())
-                        // {
-                        //     combat->doCombat(creature, target->getPosition());
-                        // }
-                        // else
-                        {
-                            var target = _map.GetTile(variant.Pos);
-                            var combatParameter = combat.BuildCombatParameter(creature as IPlayer, target);
-                            _attackService.Execute(new AttackInput(creature, target, combatParameter));
-                        }
-
-                        break;
-                    }
-            }
+            _luaCombatService.Execute(combat, creature, variant);
         }
 
         Lua.PushNil(lua);
