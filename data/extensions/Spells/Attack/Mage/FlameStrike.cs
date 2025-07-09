@@ -11,7 +11,7 @@ public class FlameStrike : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        DamageFormula = (CombatFormula.MagicLevel, GetFormulaValues),
+        DamageFormula = (FormulaType.MagicLevel, GetFormulaValues),
         DamageType = DamageType.Fire,
         Effect = EffectT.FireAttack,
         ShootType = ShootType.Fire

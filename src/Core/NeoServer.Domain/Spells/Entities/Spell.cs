@@ -7,7 +7,8 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Player.Modes;
 
 namespace NeoServer.Domain.Spells;
@@ -39,7 +40,9 @@ public abstract class BaseSpell : ISpell
     public (int Id, uint Cooldown) PrimaryGroup { get; }
     public (int Id, uint Cooldown) SecondaryGroup { get; }
     public virtual uint Cooldown { get; set; }
-    public bool IsAggressive { get; }
+    public bool IsEnabled { get; set; }
+    public bool IsSelfTarget { get; set; }
+    public bool IsAggressive { get; set; }
     public bool BlockingCreature { get; set; }
     public bool BlockingSolid { get; set; }
     public virtual bool NeedDirection { get; set; }
@@ -63,7 +66,6 @@ public abstract class BaseSpell : ISpell
 
     public virtual bool ShouldSay { get; }
     public abstract string Words { get; set; }
-    public virtual bool Enabled => true;
 
     public Result CanCast(ICombatActor caster, IThing target)
     {

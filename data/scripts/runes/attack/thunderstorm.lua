@@ -21,8 +21,6 @@ end
 rune:id(117)
 rune:group("attack")
 rune:name("thunderstorm rune")
-rune:castSound(SOUND_EFFECT_TYPE_SPELL_OR_RUNE)
-rune:impactSound(SOUND_EFFECT_TYPE_SPELL_THUNDERSTORM_RUNE)
 rune:runeId(2315)
 rune:allowFarUse(true)
 rune:charges(4)

@@ -11,7 +11,7 @@ public class TerraStrike : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        DamageFormula = (CombatFormula.MagicLevel, GetFormulaValues),
+        DamageFormula = (FormulaType.MagicLevel, GetFormulaValues),
         DamageType = DamageType.Earth,
         Effect = EffectT.Carniphila,
         ShootType = ShootType.SmallEarth

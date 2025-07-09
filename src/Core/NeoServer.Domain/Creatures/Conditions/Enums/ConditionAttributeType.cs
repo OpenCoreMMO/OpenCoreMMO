@@ -1,6 +1,6 @@
-﻿namespace NeoServer.Domain.Creatures.Condition;
+﻿namespace NeoServer.Domain.Creatures.Conditions.Enums;
 
-public enum ConditionAttribute
+public enum ConditionAttributeType
 {
     Type = 1,
     Id,

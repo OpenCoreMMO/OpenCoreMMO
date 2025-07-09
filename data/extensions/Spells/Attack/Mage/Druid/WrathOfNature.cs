@@ -12,7 +12,7 @@ public class WrathOfNature : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        DamageFormula = (CombatFormula.MagicLevel, GetFormulaValues),
+        DamageFormula = (FormulaType.MagicLevel, GetFormulaValues),
         DamageType = DamageType.Earth,
         Effect = EffectT.SmallPlants,
         Area = AreaEffect.Circle6X6

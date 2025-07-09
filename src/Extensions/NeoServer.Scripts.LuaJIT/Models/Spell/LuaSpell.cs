@@ -18,6 +18,10 @@ public abstract class LuaSpell(LuaScriptInterface scriptInterface) : Script(scri
     public bool NeedTarget { get; set; }
     public bool BlockingSolid { get; set; }
     public bool BlockingCreature { get; set; }
+    public bool IsEnabled { get; set; }
+    public bool NeedLearn { get; set; }
+    public bool IsSelfTarget { get; set; }
     public bool IsPremium { get; set; }
+    public bool IsAggressive { get; set; }
     public byte[] VocationIds { get; set; }
 }

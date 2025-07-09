@@ -12,7 +12,7 @@ public class Berserk : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        DamageFormula = (CombatFormula.Skill, GetFormulaValues),
+        DamageFormula = (FormulaType.Skill, GetFormulaValues),
         DamageType = DamageType.Physical,
         Effect = EffectT.XGray,
         Area = AreaEffect.Square1X1,

@@ -21,6 +21,7 @@ public class AttackService(
     IPlayerSkullService playerSkullService,
     AreaAttackService areaAttackService,
     SingleTargetAttackService singleTargetAttackService,
+    ConditionAttackService conditionAttackService,
     AttackValidation attackValidation) : IAttackService
 {
     public CombatResult Execute(AttackInput attackInput)
@@ -69,6 +70,7 @@ public class AttackService(
         UpdateParameters(attackInput);
 
         if (attackInput.Parameters.IsAttackInArea) return areaAttackService.Execute(attackInput);
+        if (attackInput.Parameters.Conditions.Any()) return conditionAttackService.Execute(attackInput);
 
         return singleTargetAttackService.Execute(attackInput);
     }
@@ -77,7 +79,7 @@ public class AttackService(
     {
         if (attackInput.Aggressor is not IPlayer playerAggressor) return;
 
-        if (attackInput.Parameters.DamageFormula.Formula is CombatFormula.MagicLevel)
+        if (attackInput.Parameters.DamageFormula.Formula is FormulaType.MagicLevel)
         {
             var minMaxDamage = attackInput.Parameters.DamageFormula.Callback.Invoke(playerAggressor,
                 playerAggressor.Skills[playerAggressor.SkillInUse].Level,
@@ -86,7 +88,7 @@ public class AttackService(
             attackInput.Parameters.SetMinMaxDamage(minMaxDamage);
         }
 
-        if (attackInput.Parameters.DamageFormula.Formula is CombatFormula.Skill)
+        if (attackInput.Parameters.DamageFormula.Formula is FormulaType.Skill)
         {
             var minMaxDamage = attackInput.Parameters.DamageFormula.Callback.Invoke(playerAggressor,
                 playerAggressor.Skills[playerAggressor.SkillInUse].Level,

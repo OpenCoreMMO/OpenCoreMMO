@@ -3,6 +3,7 @@ using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Scripts.LuaJIT.Enums;
@@ -30,25 +31,25 @@ public class CombatFunctions : LuaScriptInterface, ICombatFunctions
         _map = map;
     }
 
-    public void Init(LuaState lua)
+    public void Init(LuaState luaState)
     {
-        RegisterSharedClass(lua, "Combat", "", HandleCombatCreate);
-        RegisterMetaMethod(lua, "Combat", "__eq", LuaUserdataCompare<LuaCombat>);
+        RegisterSharedClass(luaState, "Combat", "", LuaCombatCreate);
+        RegisterMetaMethod(luaState, "Combat", "__eq", LuaUserdataCompare<LuaCombat>);
         
-        RegisterMethod(lua, "Combat", "setParameter", HandleSetParameterFunction);
-        RegisterMethod(lua, "Combat", "setFormula", HandleSetFormulaFunction);
+        RegisterMethod(luaState, "Combat", "setParameter", LuaSetParameter);
+        RegisterMethod(luaState, "Combat", "setFormula", LuaSetFormula);
 
-        RegisterMethod(lua, "Combat", "setArea", HandleSetAreaFunction);
-        RegisterMethod(lua, "Combat", "addCondition", HandleNotImplementedFunction);
-        RegisterMethod(lua, "Combat", "setCallback", HandleSetCallbackFunction);
-        RegisterMethod(lua, "Combat", "setOrigin", HandleNotImplementedFunction);
+        RegisterMethod(luaState, "Combat", "setArea", LuaSetArea);
+        RegisterMethod(luaState, "Combat", "addCondition", LuaAddCondition);
+        RegisterMethod(luaState, "Combat", "setCallback", LuaSetCallback);
+        RegisterMethod(luaState, "Combat", "setOrigin", LuaNotImplemented);
 
-        RegisterMethod(lua, "Combat", "execute", HandleExecuteFunction);
+        RegisterMethod(luaState, "Combat", "execute", LuaExecute);
     }
 
     #region Lua Methods
 
-    private static int HandleSetAreaFunction(LuaState L)
+    private static int LuaSetArea(LuaState L)
     {
         // setArea( {area}, <optional> {extArea} )
         var combat = GetUserdata<LuaCombat>(L, 1);
@@ -100,7 +101,26 @@ public class CombatFunctions : LuaScriptInterface, ICombatFunctions
         return 1;
     }
 
-    private static int HandleExecuteFunction(LuaState lua)
+    public static int LuaAddCondition(LuaState lua)
+    {	// combat:addCondition(condition)
+        var combat = GetUserdata<LuaCombat>(lua, 1);
+        var condition = GetUserdata<ICondition>(lua, 2);
+
+        if (combat is not null && condition is not null)
+        {
+            combat.Conditions.Add(condition);
+            PushBoolean(lua, true);
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
+
+    private static int LuaExecute(LuaState lua)
     {
         // combat:execute(creature, variant)
         var combat = GetUserdata<LuaCombat>(lua, 1);
@@ -174,7 +194,7 @@ public class CombatFunctions : LuaScriptInterface, ICombatFunctions
         return 1;
     }
 
-    private static int HandleSetCallbackFunction(LuaState lua)
+    private static int LuaSetCallback(LuaState lua)
     {
         // combat:setCallback(key, function)
         var combat = GetUserdata<LuaCombat>(lua, 1);
@@ -199,7 +219,7 @@ public class CombatFunctions : LuaScriptInterface, ICombatFunctions
         return 1;
     }
 
-    private static int HandleSetFormulaFunction(LuaState l)
+    private static int LuaSetFormula(LuaState l)
     {
         // combat:setFormula(type, mina, minb, maxa, maxb)
         var combat = GetUserdata<LuaCombat>(l, 1);
@@ -209,26 +229,26 @@ public class CombatFunctions : LuaScriptInterface, ICombatFunctions
             return 1;
         }
 
-        var type = GetNumber<CombatFormula>(l, 2);
+        var type = GetNumber<FormulaType>(l, 2);
         var minA = GetNumber<double>(l, 3);
         var minB = GetNumber<double>(l, 4);
         var maxA = GetNumber<double>(l, 5);
         var maxB = GetNumber<double>(l, 6);
 
-        combat.SetPlayerCombatValues(new CombatValues
+        combat.FormulaValues = new FormulaValues
         {
-            CombatFormula = type,
+            FormulaType = type,
             MinA = minA,
             MinB = minB,
             MaxA = maxA,
             MaxB = maxB
-        });
+        };
 
         PushBoolean(l, true);
         return 1;
     }
 
-    private static int HandleSetParameterFunction(LuaState l)
+    private static int LuaSetParameter(LuaState l)
     {
         // combat:setParameter(key, value)
         var combat = GetUserdata<LuaCombat>(l, 1);
@@ -245,12 +265,12 @@ public class CombatFunctions : LuaScriptInterface, ICombatFunctions
         else
             value = GetNumber<int>(l, 3);
 
-        combat.SetParameter(key, value);
+        combat.Parameters.TryAdd(key, value);
         PushBoolean(l, true);
         return 1;
     }
 
-    private static int HandleCombatCreate(LuaState lua)
+    private static int LuaCombatCreate(LuaState lua)
     {
         //Combat
         var combat = new LuaCombat(GetScriptEnv().GetScriptInterface());

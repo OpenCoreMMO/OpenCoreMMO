@@ -52,7 +52,7 @@ public class AttackServiceTestBuilder
 
         var attackValidation = new AttackValidation(new MapTool(map, new PathFinder(map)), map, gameConfiguration.PvP);
 
-        return new AttackService(logger.Object, skullService, areaAttackService, singleTargetCombat, attackValidation);
+        return new AttackService(logger.Object, skullService, areaAttackService, singleTargetCombat, conditionAttackService, attackValidation);
     }
 }
 

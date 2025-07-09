@@ -11,7 +11,7 @@ public class DeathStrike : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        DamageFormula = (CombatFormula.MagicLevel, GetFormulaValues),
+        DamageFormula = (FormulaType.MagicLevel, GetFormulaValues),
         DamageType = DamageType.Death,
         Effect = EffectT.BubbleBlack,
         ShootType = ShootType.Death

@@ -1,4 +1,4 @@
-﻿namespace NeoServer.Domain.Creatures.Condition;
+﻿namespace NeoServer.Domain.Creatures.Conditions.Enums;
 
 public enum ConditionType : uint
 {

@@ -1,6 +1,8 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Creatures.Structs;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 
-namespace NeoServer.Domain.Creatures.Condition;
+namespace NeoServer.Domain.Creatures.Conditions;
 
 public abstract class BaseCondition : ICondition
 {
@@ -23,10 +25,13 @@ public abstract class BaseCondition : ICondition
     public long StartedAt { get; private set; }
     public bool IsDisabled { get; private set; }
 
-    public ConditionIcon Icons => 0;
+    public ConditionIconType Icons => 0;
 
     public abstract ConditionType Type { get; }
     public long RemainingTime => (EndTime - DateTime.Now.Ticks) / TimeSpan.TicksPerMillisecond;
+
+    public FormulaValues FormulaValues { get; set; }
+    public Dictionary<ConditionParamType, uint> Parameters { get; set; } = new();
 
     public void End()
     {
@@ -61,7 +66,6 @@ public abstract class BaseCondition : ICondition
     {
         StartedAt = DateTime.Now.Ticks;
         EndTime = DateTime.Now.Ticks + Duration;
-
         return true;
     }
 

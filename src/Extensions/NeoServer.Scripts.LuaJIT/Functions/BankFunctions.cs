@@ -17,11 +17,12 @@ public class BankFunctions : LuaScriptInterface, IBankFunctions
     public void Init(LuaState lua)
     {
         RegisterTable(lua, "Bank");
-        RegisterMethod(lua, "Bank", "credit", HandleCreditFunction);
+        RegisterMethod(lua, "Bank", "credit", LuaBankCredit);
     }
 
-    private static int HandleCreditFunction(LuaState l)
+    private static int LuaBankCredit(LuaState l)
     {
+        // Bank.credit(playerOrGuild, amount)
         var bank = GetBank(l, 1);
         if (bank == null)
         {

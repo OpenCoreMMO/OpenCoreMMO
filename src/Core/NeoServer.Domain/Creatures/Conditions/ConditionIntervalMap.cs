@@ -1,4 +1,6 @@
-namespace NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
+
+namespace NeoServer.Domain.Creatures.Conditions;
 
 public static class ConditionIntervalMap
 {

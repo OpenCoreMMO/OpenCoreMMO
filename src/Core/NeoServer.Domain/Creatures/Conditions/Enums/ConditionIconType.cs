@@ -1,6 +1,6 @@
-﻿namespace NeoServer.Domain.Creatures.Condition;
+﻿namespace NeoServer.Domain.Creatures.Conditions.Enums;
 
-public enum ConditionIcon : uint
+public enum ConditionIconType : uint
 {
     None = 0,
     Poison = 1 << 0,

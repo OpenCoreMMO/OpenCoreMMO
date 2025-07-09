@@ -2,7 +2,7 @@
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;

@@ -1,6 +1,8 @@
 ﻿using LuaNET;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Common.Creatures.Structs;
+using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
@@ -15,6 +17,10 @@ public class ConditionFunctions : LuaScriptInterface, IConditionFunctions
     {
         RegisterSharedClass(luaState, "Condition", "", LuaConditionCreate);
         RegisterMetaMethod(luaState, "Condition", "__eq", LuaUserdataCompare<ICondition>);
+
+        RegisterMethod(luaState, "Condition", "setParameter", LuaSetParameter);
+        RegisterMethod(luaState, "Condition", "setFormula", LuaSetFormula);
+
     }
 
     private static int LuaConditionCreate(LuaState luaState)
@@ -36,7 +42,7 @@ public class ConditionFunctions : LuaScriptInterface, IConditionFunctions
         var condition = new Condition(conditionType);
         if (condition != null)
         {
-            PushUserdata(luaState, condition is ICondition);
+            PushUserdata(luaState, (ICondition)condition);
             SetMetatable(luaState, -1, "Condition");
         }
         else
@@ -44,6 +50,55 @@ public class ConditionFunctions : LuaScriptInterface, IConditionFunctions
             Lua.PushNil(luaState);
         }
 
+        return 1;
+    }
+
+    private static int LuaSetParameter(LuaState luaState)
+    {
+        // combat:setParameter(key, value)
+        var condition = GetUserdata<ICondition>(luaState, 1);
+        if (condition is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var key = GetNumber<ConditionParamType>(luaState, 2);
+        uint value;
+        if (IsBoolean(luaState, 3))
+            value = (uint)(GetBoolean(luaState, 3) ? 1 : 0);
+        else
+            value = GetNumber<uint>(luaState, 3);
+
+        condition.Parameters.TryAdd(key, value);
+        PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaSetFormula(LuaState luaState)
+    {
+        // combat:setFormula(mina, minb, maxa, maxb)
+        var condition = GetUserdata<ICondition>(luaState, 1);
+        if (condition is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var minA = GetNumber<double>(luaState, 2);
+        var minB = GetNumber<double>(luaState, 3);
+        var maxA = GetNumber<double>(luaState, 4);
+        var maxB = GetNumber<double>(luaState, 5);
+
+        condition.FormulaValues = new FormulaValues
+        {
+            MinA = minA,
+            MinB = minB,
+            MaxA = maxA,
+            MaxB = maxB
+        };
+
+        PushBoolean(luaState, true);
         return 1;
     }
 }

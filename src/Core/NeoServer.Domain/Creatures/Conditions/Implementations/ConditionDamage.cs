@@ -7,17 +7,18 @@ using NeoServer.Domain.Common.Effects.Parsers;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Parsers;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 
-namespace NeoServer.Domain.Creatures.Condition;
+namespace NeoServer.Domain.Creatures.Conditions.Implementations;
 
-public class DamageCondition : BaseCondition
+public class ConditionDamage : BaseCondition
 {
     private CooldownTime _cooldown;
     private Queue<ushort> _damageQueue;
     private ushort _maxDamage;
     private ushort _minDamage;
 
-    public DamageCondition(IThing cause, ConditionType type, uint interval, ushort minDamage, ushort maxDamage,
+    public ConditionDamage(IThing cause, ConditionType type, uint interval, ushort minDamage, ushort maxDamage,
         EffectT effect = EffectT.None) : base(0)
     {
         Cause = cause;
@@ -29,7 +30,7 @@ public class DamageCondition : BaseCondition
         Effect = effect;
     }
 
-    public DamageCondition(IThing cause, ConditionType type, uint interval, byte amount, ushort damage,
+    public ConditionDamage(IThing cause, ConditionType type, uint interval, byte amount, ushort damage,
         EffectT effect = EffectT.None) : base(0)
     {
         if (amount == 0) return;

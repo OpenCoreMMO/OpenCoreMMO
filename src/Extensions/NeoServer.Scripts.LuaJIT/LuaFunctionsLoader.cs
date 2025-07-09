@@ -1005,7 +1005,7 @@ public class LuaFunctionsLoader
         return Lua.GetTop(lua) - 1;
     }
 
-    public static int HandleNotImplementedFunction(LuaState l)
+    public static int LuaNotImplemented(LuaState l)
     {
         Lua.PushNil(l);
         return 1;

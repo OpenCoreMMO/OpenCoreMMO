@@ -1,6 +1,6 @@
-﻿namespace NeoServer.Domain.Creatures.Condition;
+﻿namespace NeoServer.Domain.Creatures.Conditions.Enums;
 
-public enum ConditionSlot
+public enum ConditionSlotType
 {
     Default = -1,
     Combat,

@@ -12,7 +12,7 @@ public class EternalWinter : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        DamageFormula = (CombatFormula.MagicLevel, GetFormulaValues),
+        DamageFormula = (FormulaType.MagicLevel, GetFormulaValues),
         DamageType = DamageType.Ice,
         Effect = EffectT.IceTornado,
         Area = AreaEffect.Circle5X5,

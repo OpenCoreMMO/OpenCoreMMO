@@ -15,7 +15,7 @@ public class WhirlwindThrow : AttackSpell
         ShootType = ShootType.WeaponType,
         Effect = EffectT.XGray,
         BlockArmor = true,
-        DamageFormula = (CombatFormula.Skill, GetFormulaValues)
+        DamageFormula = (FormulaType.Skill, GetFormulaValues)
     };
 
     public override string Name { get; set; } = "Whirlwind Throw";

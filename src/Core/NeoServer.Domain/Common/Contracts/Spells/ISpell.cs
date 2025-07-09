@@ -14,15 +14,16 @@ public interface ISpell : IHasCooldown
     string Name { get; set; }
     bool ShouldSay { get; }
     string Words { get; set; }
-    bool Enabled { get; }
     bool BlockWalls { get; set; }
     ushort ManaConsumption { get; set; }
     ushort SoulConsumption { get; set; }
     bool NeedDirection { get; set; }
     bool CasterNeedsTargetOrDirection { get; }
     bool NeedsTarget { get; set; }
-    byte? Range { get; }
-    bool IsAggressive { get; }
+    byte? Range { get; set; }
+    bool IsEnabled { get; set; }
+    bool IsSelfTarget { get; set; }
+    bool IsAggressive { get; set; }
     bool BlockingCreature { get; set; }
     bool BlockingSolid { get; set; }
     bool NeedWeapon { get; }

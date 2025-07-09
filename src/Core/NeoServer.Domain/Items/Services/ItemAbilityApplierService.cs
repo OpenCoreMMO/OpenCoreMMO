@@ -5,7 +5,7 @@ using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 
 namespace NeoServer.Domain.Items.Services;
 

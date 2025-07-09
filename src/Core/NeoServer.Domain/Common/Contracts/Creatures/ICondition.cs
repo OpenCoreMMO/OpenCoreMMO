@@ -1,11 +1,16 @@
-﻿using NeoServer.Domain.Creatures.Condition;
+﻿using NeoServer.Domain.Common.Creatures.Structs;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
 public interface ICondition
 {
-    ConditionIcon Icons { get; }
+    ConditionIconType Icons { get; }
     ConditionType Type { get; }
+
+    public FormulaValues FormulaValues { get; set; }
+
+    public Dictionary<ConditionParamType, uint> Parameters { get; set; }
 
     bool HasExpired { get; }
 

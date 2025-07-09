@@ -19,7 +19,7 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Models.Bases.Events;
 using NeoServer.Domain.Creatures.Monster.Loot;

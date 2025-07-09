@@ -1,5 +1,5 @@
 ﻿using NeoServer.Domain.Common.Item;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 
 namespace NeoServer.Domain.Common.Parsers;
 

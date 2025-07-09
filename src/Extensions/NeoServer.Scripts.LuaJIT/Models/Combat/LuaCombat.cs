@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Scripts.LuaJIT.Models.Callbacks;
 using NeoServer.Scripts.LuaJIT.Parsers;
@@ -18,14 +19,10 @@ public class LuaCombat : Script
 
     public Dictionary<CombatParam, int> Parameters { get; set; } = new();
     public (CallBackType Type, Callbacks.Callback Callback) Callback { get; set; }
-    public CombatValues CombatValues { get; set; }
+    public FormulaValues FormulaValues { get; set; }
+    public List<ICondition> Conditions { get; set; } = new();
 
     public Dictionary<Direction, byte[,]> Areas { get; set; } = new Dictionary<Direction, byte[,]>();
-
-    public void SetParameter(CombatParam combatParam, int value)
-    {
-        Parameters.TryAdd(combatParam, value);
-    }
 
     public Callback SetCallback(CallBackType callBackType)
     {
@@ -40,11 +37,6 @@ public class LuaCombat : Script
 
         Callback = (callBackType, callback);
         return callback;
-    }
-
-    public void SetPlayerCombatValues(CombatValues combatValues)
-    {
-        CombatValues = combatValues;
     }
 
     public CombatParameter BuildCombatParameter(IPlayer player, IThing target)
@@ -87,15 +79,7 @@ public class LuaCombat : Script
             MaxDamage = (ushort)damageValues.Max,
             Range = 7,
             Area = Areas.Count != 0 ? Areas[direction] : null,
+            Conditions = Conditions,
         };
     }
-}
-
-public struct CombatValues
-{
-    public CombatFormula CombatFormula { get; set; }
-    public double MinA { get; set; }
-    public double MinB { get; set; }
-    public double MaxA { get; set; }
-    public double MaxB { get; set; }
 }

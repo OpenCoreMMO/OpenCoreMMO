@@ -2,7 +2,7 @@
 using LuaNET;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -24,6 +24,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
     public void Init(LuaState luaState)
     {
         RegisterEnumCustom<ConditionType>(luaState, true, true);
+        RegisterEnumCustom<ConditionParamType>(luaState, true, true);
         RegisterEnumCustom<Direction>(luaState);
         //RegisterEnum<DirectionType>(luaState);
         RegisterEnumCustom<Gender>(luaState, renameFromTo: ("Gender", "PlayerSex"));
@@ -78,15 +79,16 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         {
             var nameFromEnum = item.ToString();
 
+            nameFromEnum = prefix + nameFromEnum;
+
             if (addSeparationbewteenWords)
                 nameFromEnum = Regex.Replace(nameFromEnum, @"(?<=[a-z])(?=[A-Z])", "_");
 
-            var name = prefix + nameFromEnum;
 
             if (upperCase)
-                name = name.ToUpperInvariant();
+                nameFromEnum = nameFromEnum.ToUpperInvariant();
 
-            RegisterGlobalVariable(luaState, name, Convert.ToUInt64(item));
+            RegisterGlobalVariable(luaState, nameFromEnum, Convert.ToUInt64(item));
         }
     }
 }

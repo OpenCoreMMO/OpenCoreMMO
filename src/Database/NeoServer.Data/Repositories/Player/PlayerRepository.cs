@@ -10,7 +10,7 @@ using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 using Serilog;
 
 namespace NeoServer.Data.Repositories.Player;
