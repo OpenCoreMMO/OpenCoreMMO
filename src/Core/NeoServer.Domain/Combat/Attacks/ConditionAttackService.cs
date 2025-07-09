@@ -40,8 +40,7 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
         {
             foreach (var condition in combatParameter.Conditions)
             {
-                if (target == null)
-                    target = aggressor;
+                target ??= aggressor;
 
                 var isDamageCondition = HarmfulConditions.Contains(condition.Type);
                 if (isDamageCondition) return PerformDamageCondition(combatParameter, target, aggressor, condition);
