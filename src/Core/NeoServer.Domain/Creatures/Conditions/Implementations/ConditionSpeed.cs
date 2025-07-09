@@ -8,30 +8,19 @@ namespace NeoServer.Domain.Creatures.Conditions.Implementations;
 
 public class ConditionSpeed : BaseCondition
 {
-    private CooldownTime _cooldown;
-
     public ConditionSpeed(ConditionType type, uint interval, FormulaValues formulaValues,
         EffectT effect = EffectT.None) : base(interval)
     {
         Type = type;
         Interval = interval;
         FormulaValues = formulaValues;
-        Effect = effect;
+        Effect = effect; 
     }
 
-    public byte Amount { get; }
     public override ConditionType Type { get; }
-    public DamageType DamageType { get; set; }
     public EffectT Effect { get; }
-
-    public uint Interval
-    {
-        set => _cooldown = new CooldownTime(DateTime.Now, value);
-    }
-
-    public uint InternalLightTicks { get; private set; } = 0;
-    public uint LightChangeInterval { get; set; } = 0;
-
+    public uint Interval { get; }
+    
     public override bool Start(ICreature creature)
     {
         if (!base.Start(creature))
