@@ -1,4 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Networking.EventHandlers.Creature;
 using NeoServer.Server.Events.Combat;
 using NeoServer.Server.Events.Creature;
 using NeoServer.Server.Events.Creature.Npcs;
@@ -59,7 +60,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
     public void Subscribe(ICreature creature)
     {
         creature.OnChangedOutfit += _creatureChangedOutfitEventHandler.Execute;
-        creature.OnChangedLight += _creatureChangedLightEventHandler.Execute;
 
         if (creature is ISociableCreature sociableCreature)
             sociableCreature.OnHear += _creatureHearEventHandler.Execute;
@@ -88,7 +88,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
     public void Unsubscribe(ICreature creature)
     {
         creature.OnChangedOutfit -= _creatureChangedOutfitEventHandler.Execute;
-        creature.OnChangedLight -= _creatureChangedLightEventHandler.Execute;
 
         if (creature is ICombatActor combatActor)
         {

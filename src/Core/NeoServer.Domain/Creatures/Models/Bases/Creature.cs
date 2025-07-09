@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
@@ -7,6 +8,7 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Player.Outfit;
 
 namespace NeoServer.Domain.Creatures.Models.Bases;
@@ -43,9 +45,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public event RemoveCreature OnCreatureRemoved;
 
     public event ChangeOutfit OnChangedOutfit;
-
-    public event ChangeLight OnChangedLight;
-
     public event Say OnSay;
 
     public event Think OnThink;
@@ -272,7 +271,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         LightColor = color;
         LightLevel = level;
 
-        OnChangedLight?.Invoke(this);
+        EventAggregator.Publish(new CreatureChangedLightEvent(this));
     }
 
     public void SetNormalLight()
@@ -280,7 +279,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         LightColor = 0;
         LightLevel = 0;
 
-        OnChangedLight?.Invoke(this);
+        EventAggregator.Publish(new CreatureChangedLightEvent(this));    
     }
 
     public static bool operator ==(Creature creature1, Creature creature2)
