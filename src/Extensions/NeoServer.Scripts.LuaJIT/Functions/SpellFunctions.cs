@@ -44,9 +44,13 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         RegisterMethod(lua, "Spell", "level", LuaSpellLevel);
         RegisterMethod(lua, "Spell", "magicLevel", LuaSpellMagicLevel);
         RegisterMethod(lua, "Spell", "mana", LuaSpellMana);
+        RegisterMethod(lua, "Spell", "manaPercente", LuaSpellManaPercent);
+        RegisterMethod(lua, "Spell", "soul", LuaSpellSoul);
+        RegisterMethod(lua, "Spell", "range", LuaSpellRange);
         RegisterMethod(lua, "Spell", "isPremium", LuaSpellIsPremium);
         RegisterMethod(lua, "Spell", "isEnabled", LuaSpellIsEnabled);
         RegisterMethod(lua, "Spell", "needTarget", LuaSpellNeedTarget);
+        RegisterMethod(lua, "Spell", "needWeapon", LuaSpellNeedWeapon);
         RegisterMethod(lua, "Spell", "needLearn", LuaSpellNeedLearn);
         RegisterMethod(lua, "Spell", "isSelfTarget", LuaSpellIsSelfTarget);
         RegisterMethod(lua, "Spell", "isBlocking", LuaSpellIsBlocking);
@@ -56,6 +60,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         // Only for InstantSpell.
         RegisterMethod(lua, "Spell", "words", LuaSpellWords);
         RegisterMethod(lua, "Spell", "needDirection", LuaSpellNeedDirection);
+        RegisterMethod(lua, "Spell", "needCasterTargetOrDirection", LuaSpellNeedCasterTargetOrDirection);
 
         //only for rune spells
         RegisterMethod(lua, "Spell", "runeId", LuaSpellRuneId);
@@ -181,8 +186,10 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             ISpell runeSpell = null;
             if (_spellListManager.TryGet(rune.Name, out runeSpell))
             {
-                runeSpell.ManaConsumption = rune.ManaConsumption;
-                runeSpell.SoulConsumption = rune.SoulConsumption;
+                runeSpell.ManaConsumption = rune.Mana;
+                runeSpell.ManaPercent = rune.ManaPercent;
+                runeSpell.SoulConsumption = rune.Soul;
+                runeSpell.Range = rune.Range;
                 runeSpell.BlockWalls = rune.BlockWalls;
                 runeSpell.BlockingSolid = rune.BlockingSolid;
                 runeSpell.BlockingCreature = rune.BlockingCreature;
@@ -195,13 +202,16 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 runeSpell.IsSelfTarget = rune.IsSelfTarget;
                 runeSpell.IsAggressive = rune.IsAggressive;
                 runeSpell.NeedLearn = rune.NeedLearn;
+                runeSpell.NeedWeapon = rune.NeedWeapon;
             }
 
             if (runeSpell is null)
                 runeSpell = new RuneSpell
                 {
-                    ManaConsumption = rune.ManaConsumption,
-                    SoulConsumption = rune.SoulConsumption,
+                    ManaConsumption = rune.Mana,
+                    ManaPercent = rune.ManaPercent,
+                    SoulConsumption = rune.Soul,
+                    Range = rune.Range,
                     BlockWalls = rune.BlockWalls,
                     BlockingSolid = rune.BlockingSolid,
                     BlockingCreature = rune.BlockingCreature,
@@ -214,6 +224,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                     IsSelfTarget = rune.IsSelfTarget,
                     IsAggressive = rune.IsAggressive,
                     NeedLearn = rune.NeedLearn,
+                    NeedWeapon = rune.NeedWeapon,
                 };
 
             ((RuneSpell)runeSpell).LuaRune = rune;
@@ -234,6 +245,9 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 instantSpell.NeedsTarget = instant.NeedTarget;
                 instantSpell.Words = instant.Words;
                 instantSpell.ManaConsumption = instant.Mana;
+                instantSpell.ManaPercent = instant.Mana;
+                instantSpell.SoulConsumption = instant.Soul;
+                instantSpell.Range = instant.Range;
                 instantSpell.Name = instant.Name;
                 instantSpell.NeedDirection = instant.NeedDirection;
                 instantSpell.NeedLearn = instant.NeedLearn;
@@ -244,6 +258,8 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 instantSpell.IsEnabled = instant.IsEnabled;
                 instantSpell.IsSelfTarget = instant.IsSelfTarget;
                 instantSpell.IsAggressive = instant.IsAggressive;
+                instantSpell.NeedCasterTargetOrDirection = instant.NeedCasterTargetOrDirection;
+                instantSpell.NeedWeapon = instant.NeedWeapon;
             }
 
             if (instantSpell is null)
@@ -257,6 +273,9 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                     Words = instant.Words,
                     Name = instant.Name,
                     ManaConsumption = instant.Mana,
+                    ManaPercent = instant.ManaPercent,
+                    SoulConsumption = instant.Soul,
+                    Range = instant.Range,
                     NeedDirection = instant.NeedDirection,
                     NeedLearn = instant.NeedLearn,
                     NeedsPremium = instant.IsPremium,
@@ -266,6 +285,8 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                     IsEnabled = instant.IsEnabled,
                     IsSelfTarget = instant.IsSelfTarget,
                     IsAggressive = instant.IsAggressive,
+                    NeedCasterTargetOrDirection = instant.NeedCasterTargetOrDirection,
+                    NeedWeapon = instant.NeedWeapon,
                 };
 
             ((InstantSpell)instantSpell).LuaInstantSpell = instant;
@@ -520,6 +541,81 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         return 1;
     }
 
+    public static int LuaSpellManaPercent(LuaState lua)
+    {
+        // spell:manaPercent(percent)
+        var spell = GetUserdata<LuaSpell>(lua, 1);
+
+        if (spell is not null)
+        {
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushNumber(lua, spell.ManaPercent);
+            }
+            else
+            {
+                spell.ManaPercent = GetNumber<ushort>(lua, 2);
+                PushBoolean(lua, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
+    public static int LuaSpellSoul(LuaState lua)
+    {
+        // spell:soul(soul)
+        var spell = GetUserdata<LuaSpell>(lua, 1);
+
+        if (spell is not null)
+        {
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushNumber(lua, spell.Soul);
+            }
+            else
+            {
+                spell.Soul = GetNumber<ushort>(lua, 2);
+                PushBoolean(lua, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
+    public static int LuaSpellRange(LuaState lua)
+    {
+        // spell:range(range)
+        var spell = GetUserdata<LuaSpell>(lua, 1);
+
+        if (spell is not null)
+        {
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushNumber(lua, spell.Range);
+            }
+            else
+            {
+                spell.Range = GetNumber<byte>(lua, 2);
+                PushBoolean(lua, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
     public static int LuaSpellIsPremium(LuaState lua)
     {
         // spell:isPremium(bool)
@@ -588,6 +684,30 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         else
         {
             spell.NeedTarget = GetBoolean(lua, 2);
+            PushBoolean(lua, true);
+        }
+
+        return 1;
+    }
+
+    public static int LuaSpellNeedWeapon(LuaState lua)
+    {
+        // spell:needWeapon(bool)
+        var spell = GetUserdata<LuaSpell>(lua, 1);
+
+        if (spell is null)
+        {
+            Lua.PushNil(lua);
+            return 1;
+        }
+
+        if (Lua.GetTop(lua) == 1)
+        {
+            Lua.PushBoolean(lua, spell.NeedWeapon);
+        }
+        else
+        {
+            spell.NeedWeapon = GetBoolean(lua, 2);
             PushBoolean(lua, true);
         }
 
@@ -792,6 +912,31 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             else
             {
                 instant.NeedDirection = GetBoolean(lua, 2);
+                PushBoolean(lua, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
+    public static int LuaSpellNeedCasterTargetOrDirection(LuaState lua)
+    {
+        // spell:needCasterTargetOrDirection(bool)
+        var instant = GetUserdata<LuaInstantSpell>(lua, 1);
+
+        if (instant is not null)
+        {
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushBoolean(lua, instant.NeedCasterTargetOrDirection);
+            }
+            else
+            {
+                instant.NeedCasterTargetOrDirection = GetBoolean(lua, 2);
                 PushBoolean(lua, true);
             }
         }

@@ -18,7 +18,6 @@ public abstract class BaseSpell : ISpell
     public abstract uint Duration { get; }
 
     public abstract ConditionType ConditionType { get; }
-    public virtual ushort Soul { get; set; }
     public virtual MagicGroup[] Groups { get; }
     public virtual uint[] GroupCooldown { get; }
     public virtual bool NeedsTarget { get; set; }
@@ -29,10 +28,11 @@ public abstract class BaseSpell : ISpell
     public virtual bool NeedsPremium { get; set; }
     public virtual ushort MinLevel { get; set; } = 0;
     public ushort MinMagicLevel { get; set; }
-    public virtual bool NeedWeapon { get; }
+    public virtual bool NeedWeapon { get; set; }
     public virtual bool NeedLearn { get; set; }
     public virtual bool BlockWalls { get; set; }
     public virtual ushort ManaConsumption { get; set; }
+    public virtual ushort ManaPercent { get; set; }
     public ushort SoulConsumption { get; set; }
     public virtual string[] Vocations { get; }
     public virtual byte[] VocationIds { get; set; }
@@ -46,7 +46,7 @@ public abstract class BaseSpell : ISpell
     public bool BlockingCreature { get; set; }
     public bool BlockingSolid { get; set; }
     public virtual bool NeedDirection { get; set; }
-    public virtual bool CasterNeedsTargetOrDirection { get; }
+    public virtual bool NeedCasterTargetOrDirection { get; set; }
 
     public Result Invoke(ICombatActor actor, IThing target, bool isHotkey)
     {

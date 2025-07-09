@@ -6,7 +6,6 @@ local condition = Condition(CONDITION_LIGHT)
 condition:setParameter(CONDITION_PARAM_LIGHT_LEVEL, 6)
 condition:setParameter(CONDITION_PARAM_LIGHT_COLOR, 215)
 condition:setParameter(CONDITION_PARAM_TICKS, (6 * 60 + 10) * 1000)
---condition:setParameter(CONDITION_PARAM_TICKS, 3000)
 combat:addCondition(condition)
 
 local spell = Spell("instant")

@@ -26,7 +26,7 @@ public abstract class AttackSpell : Spell<AttackSpell>
     {
         if (IsSelfTarget) target = caster;
 
-        if (CasterNeedsTargetOrDirection && target is null)
+        if (NeedCasterTargetOrDirection && target is null)
         {
             var map = IoC.GetInstance<IMap>();
             target = map.GetNextTile(caster.Location, caster.Direction);

@@ -4,4 +4,5 @@ public class LuaInstantSpell(LuaScriptInterface scriptInterface) : LuaSpell(scri
 {
     public string Words { get; set; }
     public bool NeedDirection { get; set; }
+    public bool NeedCasterTargetOrDirection { get; set; }
 }

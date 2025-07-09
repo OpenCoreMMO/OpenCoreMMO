@@ -16,9 +16,10 @@ public interface ISpell : IHasCooldown
     string Words { get; set; }
     bool BlockWalls { get; set; }
     ushort ManaConsumption { get; set; }
+    ushort ManaPercent { get; set; }
     ushort SoulConsumption { get; set; }
     bool NeedDirection { get; set; }
-    bool CasterNeedsTargetOrDirection { get; }
+    bool NeedCasterTargetOrDirection { get; set; }
     bool NeedsTarget { get; set; }
     byte? Range { get; set; }
     bool IsEnabled { get; set; }
@@ -26,7 +27,7 @@ public interface ISpell : IHasCooldown
     bool IsAggressive { get; set; }
     bool BlockingCreature { get; set; }
     bool BlockingSolid { get; set; }
-    bool NeedWeapon { get; }
+    bool NeedWeapon { get; set; }
     bool NeedLearn { get; set; }
 
     byte[] VocationIds { get; set; }

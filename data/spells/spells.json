@@ -16,30 +16,6 @@
     "level": 8
   },
 	{
-		"name":"Ice Strike",
-		"words":"exori frigo",
-		"script": "IceStrike",
-		"mana": 60,
-		"cooldown":"1000",
-		"level":8
-	},
-	{
-		"name":"TerraStrike",
-		"words":"exori tera",
-		"script": "TerraStrike",
-		"mana": 20,
-		"cooldown":"1000",
-		"level":13
-	},
-	{
-		"name":"FlameStrike",
-		"words":"exori flam",
-		"script": "FlameStrike",
-		"mana": 20,
-		"cooldown":"1000",
-		"level":14
-	},
-	{
 		"name":"EnergyBeam",
 		"words":"exevo vis lux",
 		"script": "EnergyBeam",
@@ -54,22 +30,6 @@
 		"mana": 25,
 		"cooldown":"1000",
 		"level":29
-	},
-	{
-		"name":"EnergyStrike",
-		"words":"exori vis",
-		"script": "EnergyStrike",
-		"mana": 20,
-		"cooldown":"1000",
-		"level":12
-	},
-		{
-		"name":"DeathStrike",
-		"words":"exori mort",
-		"script": "DeathStrike",
-		"mana": 20,
-		"cooldown":"1000",
-		"level":16
 	},
 	{
 		"name":"EtherealSpear",
