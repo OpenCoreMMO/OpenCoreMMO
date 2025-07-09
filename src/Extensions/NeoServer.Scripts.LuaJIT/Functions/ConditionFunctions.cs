@@ -20,7 +20,6 @@ public class ConditionFunctions : LuaScriptInterface, IConditionFunctions
 
         RegisterMethod(luaState, "Condition", "setParameter", LuaSetParameter);
         RegisterMethod(luaState, "Condition", "setFormula", LuaSetFormula);
-
     }
 
     private static int LuaConditionCreate(LuaState luaState)
