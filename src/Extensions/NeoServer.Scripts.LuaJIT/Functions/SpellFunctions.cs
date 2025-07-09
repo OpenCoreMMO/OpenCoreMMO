@@ -600,7 +600,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         {
             if (Lua.GetTop(lua) == 1)
             {
-                Lua.PushNumber(lua, spell.Range);
+                Lua.PushNumber(lua, spell.Range ?? 0);
             }
             else
             {

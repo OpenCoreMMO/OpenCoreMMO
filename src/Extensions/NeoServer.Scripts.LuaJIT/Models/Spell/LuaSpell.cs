@@ -14,7 +14,7 @@ public abstract class LuaSpell(LuaScriptInterface scriptInterface) : Script(scri
     public ushort Mana { get; set; }
     public ushort ManaPercent { get; set; }
     public ushort Soul { get; set; }
-    public byte Range { get; set; }
+    public byte? Range { get; set; }
     public uint Cooldown { get; set; }
     public uint PrimaryGroupCooldown { get; set; }
     public uint SecondaryGroupCooldown { get; set; }
