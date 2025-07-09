@@ -2,6 +2,7 @@
 using NeoServer.Scripts.LuaJIT.Functions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Scripts.LuaJIT.Services;
 
 namespace NeoServer.Scripts.LuaJIT.IoC.Modules;
 
@@ -50,6 +51,9 @@ public static class LuaJitInjection
 
         builder.AddSingleton<ISpellFunctions, SpellFunctions>();
         builder.AddSingleton<ICombatFunctions, CombatFunctions>();
+        
+        builder.AddSingleton<LuaCombatService>();
+        builder.AddSingleton<NonAggressiveCombatService>();
         return builder;
     }
 }
