@@ -35,7 +35,8 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
             if (isDamageCondition) return PerformDamageCondition(combatParameter, target, aggressor);
             return PerformCondition(combatParameter, target);
         }
-        else if (combatParameter.Conditions.Count > 0)
+
+        if (combatParameter.Conditions.Count > 0)
         {
             foreach (var condition in combatParameter.Conditions)
             {
@@ -50,10 +51,8 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
 
             return new CombatResult(0, Result.Success);
         }
-        else
-        {
-            return CombatResult.Fail(Result.NotApplicable);
-        }
+
+        return CombatResult.Fail(Result.NotApplicable);
 
     }
 
@@ -180,7 +179,7 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
 
         targetCreature.AddCondition(new ConditionLight(conditionType, duration, lightLevel, lightColor)
         {
-            EndAction = () => targetCreature.SetNormalLight()
+            EndAction = targetCreature.RemoveLight
         });
     }
 

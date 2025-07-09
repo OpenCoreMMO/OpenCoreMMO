@@ -274,13 +274,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         EventAggregator.Publish(new CreatureChangedLightEvent(this));
     }
 
-    public void SetNormalLight()
-    {
-        LightColor = 0;
-        LightLevel = 0;
-
-        EventAggregator.Publish(new CreatureChangedLightEvent(this));    
-    }
+    public void RemoveLight() => SetLight(0,0);
 
     public static bool operator ==(Creature creature1, Creature creature2)
     {

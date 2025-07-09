@@ -229,5 +229,5 @@ public interface ICreature : IMovableThing
     void SetTemporaryOutfit(ushort lookType, byte head, byte body, byte legs, byte feet, byte addon);
 
     void SetLight(byte color, byte level);
-    void SetNormalLight();
+    void RemoveLight();
 }
