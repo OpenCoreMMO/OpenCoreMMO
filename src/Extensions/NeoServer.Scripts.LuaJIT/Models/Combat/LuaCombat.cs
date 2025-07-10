@@ -52,6 +52,7 @@ public class LuaCombat : Script
             var callback = Callback.Type switch
             {
                 CallBackType.LevelMagicValue => Callback.Callback as ValueCallback,
+                CallBackType.SkillValue => Callback.Callback as ValueCallback,
                 _ => throw new ArgumentOutOfRangeException()
             };
 
