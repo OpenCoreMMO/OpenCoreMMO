@@ -1,22 +1,5 @@
 [
   {
-    "name": "Haste",
-    "words": "utani hur",
-    "script": "Haste",
-    "mana": 60,
-    "cooldown": "1000",
-    "level": 8
-  },
-  {
-    "name": "Strong Haste",
-    "words": "utani gran hur",
-    "script": "StrongHaste",
-    "vocations": [1, 2],
-    "mana": 60,
-    "cooldown": "1000",
-    "level": 8
-  },
-  {
     "name": "Intense Healing",
     "words": "exura gran",
     "script": "IntenseHealing",
@@ -32,54 +15,6 @@
     "cooldown": "1000",
     "level": 8
   },
-  {
-    "name": "Food",
-    "words": "exevo pan",
-    "script": "Food",
-    "mana": 0,
-    "cooldown": "1000",
-    "level": 8
-  },
-	{
-		"name":"Ice Strike",
-		"words":"exori frigo",
-		"script": "IceStrike",
-		"mana": 60,
-		"cooldown":"1000",
-		"level":8
-	},
-	{
-		"name":"TerraStrike",
-		"words":"exori tera",
-		"script": "TerraStrike",
-		"mana": 20,
-		"cooldown":"1000",
-		"level":13
-	},
-	{
-		"name":"FlameStrike",
-		"words":"exori flam",
-		"script": "FlameStrike",
-		"mana": 20,
-		"cooldown":"1000",
-		"level":14
-	},
-	{
-		"name":"FireWave",
-		"words":"exevo flam hur",
-		"script": "FireWave",
-		"mana": 25,
-		"cooldown":"1000",
-		"level":18
-	},
-	{
-		"name":"IceWave",
-		"words":"exevo frigo hur",
-		"script": "IceWave",
-		"mana": 25,
-		"cooldown":"1000",
-		"level":18
-	},
 	{
 		"name":"EnergyBeam",
 		"words":"exevo vis lux",
@@ -95,30 +30,6 @@
 		"mana": 25,
 		"cooldown":"1000",
 		"level":29
-	},
-	{
-		"name":"EnergyWave",
-		"words":"exevo vis hur",
-		"script": "EnergyWave",
-		"mana": 25,
-		"cooldown":"1000",
-		"level":38
-	},
-	{
-		"name":"EnergyStrike",
-		"words":"exori vis",
-		"script": "EnergyStrike",
-		"mana": 20,
-		"cooldown":"1000",
-		"level":12
-	},
-		{
-		"name":"DeathStrike",
-		"words":"exori mort",
-		"script": "DeathStrike",
-		"mana": 20,
-		"cooldown":"1000",
-		"level":16
 	},
 	{
 		"name":"EtherealSpear",

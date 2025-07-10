@@ -12,7 +12,7 @@ public class Groundshaker : AttackSpell
 {
     protected override CombatParameter CombatSettings { get; } = new()
     {
-        DamageFormula = (CombatFormula.Skill, GetFormulaValues),
+        DamageFormula = (FormulaType.Skill, GetFormulaValues),
         DamageType = DamageType.Physical,
         Effect = EffectT.GroundShaker,
         Area = AreaEffect.Circle3X3,

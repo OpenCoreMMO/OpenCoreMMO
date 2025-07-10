@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Scripts.LuaJIT.DataManagers;
 using NeoServer.Scripts.LuaJIT.Functions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Scripts.LuaJIT.Services;
 
 namespace NeoServer.Scripts.LuaJIT.IoC.Modules;
 
@@ -47,11 +47,13 @@ public static class LuaJitInjection
         builder.AddSingleton<ITalkActionFunctions, TalkActionFunctions>();
         builder.AddSingleton<ITeleportFunctions, TeleportFunctions>();
         builder.AddSingleton<ITileFunctions, TileFunctions>();
-        builder.AddSingleton<IBankFunctionBinder, BankFunctionBinder>();
+        builder.AddSingleton<IBankFunctions, BankFunctions>();
 
-        builder.AddSingleton<ISpellFunctionMapper, SpellBinder>();
-        builder.AddSingleton<ICombatFunctionMapper, CombatBinder>();
-        builder.AddSingleton<RuneManager>();
+        builder.AddSingleton<ISpellFunctions, SpellFunctions>();
+        builder.AddSingleton<ICombatFunctions, CombatFunctions>();
+        
+        builder.AddSingleton<LuaCombatService>();
+        builder.AddSingleton<NonAggressiveCombatService>();
         return builder;
     }
 }

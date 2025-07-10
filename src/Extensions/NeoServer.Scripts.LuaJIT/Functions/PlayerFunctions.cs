@@ -70,6 +70,20 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         RegisterMethod(luaState, "Player", "setGhostMode", LuaPlayerSetGhostMode);
         RegisterMethod(luaState, "Player", "feed", LuaPlayerFeed);
+        RegisterMethod(luaState, "Player", "getLevel", LuaGetLevel);
+    }
+
+    private static int LuaGetLevel(LuaState l)
+    {
+        var player = GetUserdata<IPlayer>(l, 1);
+        if (player is not null)
+        {
+            Lua.PushNumber(l, player.Level);
+            return 1;
+        }
+
+        Lua.PushNil(l);
+        return 1;
     }
 
     private static int LuaPlayerIsPlayer(LuaState luaState)

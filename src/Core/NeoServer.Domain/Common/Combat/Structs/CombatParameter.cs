@@ -3,7 +3,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 
 namespace NeoServer.Domain.Common.Combat.Structs;
 
@@ -65,10 +65,11 @@ public class CombatParameter
     public Coordinate[] CoordinateArea { get; set; }
     public bool NeedDirection { get; set; }
 
-    public (CombatFormula Formula, Func<IPlayer, int, int, decimal, MinMax> Callback) DamageFormula { get; set; } =
-        (Formula: CombatFormula.None, null);
+    public (FormulaType Formula, Func<IPlayer, int, int, decimal, MinMax> Callback) DamageFormula { get; set; } =
+        (Formula: FormulaType.None, null);
 
     public bool FieldAttack { get; set; }
+    public List<ICondition> Conditions { get; set; } = new();
 
     public void SetMinMaxDamage(MinMax minMaxDamage)
     {
@@ -95,7 +96,7 @@ public class CombatParameter
     }
 }
 
-public enum CombatFormula
+public enum FormulaType
 {
     None,
     MagicLevel,

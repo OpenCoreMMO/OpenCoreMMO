@@ -1,5 +1,4 @@
-﻿using NeoServer.Scripts.LuaJIT.DataManagers;
-using NeoServer.Scripts.LuaJIT.Enums;
+﻿using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
@@ -7,6 +6,40 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class Scripts : IScripts
 {
+    #region injection
+
+    /// <summary>
+    ///     A reference to the logger in use.
+    /// </summary>
+    protected readonly ILogger _logger;
+
+    /// <summary>
+    ///     A reference to the config manager in use.
+    /// </summary>
+    private readonly IConfigManager _configManager;
+
+    private readonly IActions _actions;
+    private readonly ICreatureEvents _creatureEvents;
+    private readonly IGlobalEvents _globalEvents;
+    private readonly IMoveEvents _moveEvents;
+    private readonly INpcs _npcs;
+
+    /// <summary>
+    ///     A reference to the talk actions instance in use.
+    /// </summary>
+    private readonly ITalkActions _talkActions;
+
+    #endregion
+
+    #region members
+
+    private readonly int _scriptId = 0;
+    private readonly LuaScriptInterface _scriptInterface;
+
+    #endregion
+
+    #region constructors
+    
     public Scripts(ILogger logger)
     {
         _logger = logger;
@@ -23,8 +56,7 @@ public class Scripts : IScripts
         ICreatureEvents creatureEvents,
         IGlobalEvents globalEvents,
         IMoveEvents moveEvents,
-        INpcs npcs,
-        RuneManager runeManager)
+        INpcs npcs)
     {
         //_instance = this;
 
@@ -34,14 +66,16 @@ public class Scripts : IScripts
         _creatureEvents = creatureEvents;
         _globalEvents = globalEvents;
         _moveEvents = moveEvents;
-        _runeManager = runeManager;
         _npcs = npcs;
-        _runeManager = runeManager;
         _talkActions = talkActions;
 
         _scriptInterface = new LuaScriptInterface("Scripts Interface");
         //_scriptInterface.InitState();
     }
+
+    #endregion
+
+    #region public methods implementation
 
     public void ClearAllScripts()
     {
@@ -51,7 +85,6 @@ public class Scripts : IScripts
         _moveEvents.Clear();
         _npcs.Clear();
         _talkActions.Clear();
-        _runeManager.Clear();
     }
 
     public bool LoadEventSchedulerScripts(string fileName)
@@ -167,37 +200,6 @@ public class Scripts : IScripts
     {
         return _scriptId;
     }
-
-    #region Injection
-
-    /// <summary>
-    ///     A reference to the logger in use.
-    /// </summary>
-    protected readonly ILogger _logger;
-
-    /// <summary>
-    ///     A reference to the config manager in use.
-    /// </summary>
-    private readonly IConfigManager _configManager;
-
-    private readonly IActions _actions;
-    private readonly ICreatureEvents _creatureEvents;
-    private readonly IGlobalEvents _globalEvents;
-    private readonly IMoveEvents _moveEvents;
-    private readonly INpcs _npcs;
-    private readonly RuneManager _runeManager;
-
-    /// <summary>
-    ///     A reference to the talk actions instance in use.
-    /// </summary>
-    private readonly ITalkActions _talkActions;
-
-    #endregion
-
-    #region Members
-
-    private readonly int _scriptId = 0;
-    private readonly LuaScriptInterface _scriptInterface;
 
     #endregion
 }

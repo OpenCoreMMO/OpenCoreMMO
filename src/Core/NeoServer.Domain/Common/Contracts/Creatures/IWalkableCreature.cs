@@ -26,6 +26,7 @@ public interface IWalkableCreature : ICreature
     ICreature Following { get; }
     bool HasNextStep { get; }
     bool IsFollowing { get; }
+    ushort RawSpeed { get; }
     ushort Speed { get; }
     int StepDelay { get; }
     bool FirstStep { get; } //remove

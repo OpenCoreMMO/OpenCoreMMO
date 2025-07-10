@@ -7,7 +7,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Spells;
 using NeoServer.Server.Helpers;
 
@@ -26,7 +26,7 @@ public abstract class AttackSpell : Spell<AttackSpell>
     {
         if (IsSelfTarget) target = caster;
 
-        if (CasterNeedsTargetOrDirection && target is null)
+        if (NeedCasterTargetOrDirection && target is null)
         {
             var map = IoC.GetInstance<IMap>();
             target = map.GetNextTile(caster.Location, caster.Direction);

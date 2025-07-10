@@ -6,7 +6,7 @@ using NeoServer.Domain.Common.Effects.Parsers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Parsers;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items;
@@ -55,7 +55,7 @@ public class MagicField : BaseItem
         actor.TakeDamage(this,
             new CombatDamage((ushort)damages.Max, DamageType) { Effect = DamageEffectParser.Parse(DamageType) });
 
-        if (actor.HasCondition(conditionType, out var condition) && condition is DamageCondition damageCondition)
+        if (actor.HasCondition(conditionType, out var condition) && condition is ConditionDamage damageCondition)
         {
             if (DamageCount == 0) damageCondition.Start(toCreature, (ushort)damages.Min, (ushort)damages.Max);
             else damageCondition.Restart(DamageCount);
@@ -63,10 +63,10 @@ public class MagicField : BaseItem
         else
         {
             if (DamageCount == 0)
-                actor.AddCondition(new DamageCondition(this, conditionType, Interval, (ushort)damages.Min,
+                actor.AddCondition(new ConditionDamage(this, conditionType, Interval, (ushort)damages.Min,
                     (ushort)damages.Max));
             else
-                actor.AddCondition(new DamageCondition(this, conditionType, Interval, DamageCount,
+                actor.AddCondition(new ConditionDamage(this, conditionType, Interval, DamageCount,
                     (ushort)damages.Min));
         }
     }

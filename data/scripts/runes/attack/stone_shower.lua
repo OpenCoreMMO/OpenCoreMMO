@@ -21,8 +21,6 @@ end
 rune:id(116)
 rune:group("attack")
 rune:name("stone shower rune")
-rune:castSound(SOUND_EFFECT_TYPE_SPELL_OR_RUNE)
-rune:impactSound(SOUND_EFFECT_TYPE_SPELL_STONE_SHOWER_RUNE)
 rune:runeId(2288)
 rune:allowFarUse(true)
 rune:charges(4)

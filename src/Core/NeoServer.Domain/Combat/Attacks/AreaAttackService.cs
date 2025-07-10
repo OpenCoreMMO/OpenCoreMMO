@@ -40,7 +40,7 @@ public class AreaAttackService(
 
         var aggressor = attackInput.Aggressor as ICombatActor;
 
-        var targetlocation = attackInput.Target.Location;
+        var targetlocation = attackInput.Target?.Location ?? aggressor.Location;
 
         var area = attackInput.Parameters.CoordinateArea ??
                        AreaEffect.Create(targetlocation, attackInput.Parameters.Area);

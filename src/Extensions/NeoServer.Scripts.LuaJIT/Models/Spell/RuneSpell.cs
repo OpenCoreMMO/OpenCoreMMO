@@ -9,7 +9,7 @@ namespace NeoServer.Scripts.LuaJIT.Models.Spell;
 
 public class RuneSpell : ScriptedSpell
 {
-    public LuaRune LuaRune { get; set; }
+    public LuaRuneSpell LuaRune { get; set; }
 
     public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {

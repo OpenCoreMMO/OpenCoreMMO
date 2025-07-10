@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
-using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
-using NeoServer.Domain.Common.Contracts.Combat.Attacks;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Effects.Parsers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Parsers;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Spells;
 using NeoServer.Server.Helpers.Extensions;
@@ -281,8 +280,8 @@ public class MonsterAttackConverter(ILogger logger, SpellListManager spellListMa
 
             if (spell is not null) SupportedAttackNames.Add(attackName);
 
-            if (!SupportedAttackNames.Contains(attackName))
-                logger.Warning("{Monster} Attack: {AttackName} is not implemented", data.Name, attackName);
+            //if (!SupportedAttackNames.Contains(attackName))
+            //    logger.Warning("{Monster} Attack: {AttackName} is not implemented", data.Name, attackName);
         }
 
         return attacks.ToArray();

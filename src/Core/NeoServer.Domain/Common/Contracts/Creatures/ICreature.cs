@@ -30,7 +30,6 @@ public delegate void Say(ICreature creature, SpeechType type, string message, IC
 public delegate void AddCondition(ICreature creature, ICondition condition);
 
 public delegate void ChangeOutfit(ICreature creature, IOutfit outfit);
-
 public delegate void Think(ICreature creature, int interval);
 
 public delegate void Appear(ICreature self, ICreature creature);
@@ -85,7 +84,7 @@ public interface ICreature : IMovableThing
     /// <summary>
     ///     Creature's light level
     /// </summary>
-    byte LightBrightness { get; }
+    byte LightLevel { get; }
 
     /// <summary>
     ///     Creature's light color
@@ -228,4 +227,7 @@ public interface ICreature : IMovableThing
     ///     Sets new outfit and store current as last outfit
     /// </summary>
     void SetTemporaryOutfit(ushort lookType, byte head, byte body, byte legs, byte feet, byte addon);
+
+    void SetLight(byte color, byte level);
+    void RemoveLight();
 }

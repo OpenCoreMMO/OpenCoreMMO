@@ -34,6 +34,15 @@ public class ValueCallback(LuaScriptInterface scriptInterface) : Callback(script
                 numberOfParameters += 2;
                 break;
             }
+            case CallBackType.SkillValue:
+            {
+                Lua.PushNumber(luaState, player.Skills[player.SkillInUse].Level);
+                Lua.PushNumber(luaState, player.Inventory.TotalAttack);
+                Lua.PushNumber(luaState, player.DamageFactor);
+                
+                numberOfParameters += 3;
+                break;
+            }
             default:
                 LuaFunctionsLoader.ResetScriptEnv();
                 throw new ArgumentOutOfRangeException();

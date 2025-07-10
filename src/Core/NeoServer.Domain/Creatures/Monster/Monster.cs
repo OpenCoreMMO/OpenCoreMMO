@@ -14,7 +14,7 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster.Actions;
 using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Player;
