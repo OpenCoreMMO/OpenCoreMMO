@@ -5,7 +5,7 @@
       "environmentVariables": {
         "ENVIRONMENT": "Local"
       },
-      "nativeDebugging": true
+      "nativeDebugging": false
     }
   }
 }
