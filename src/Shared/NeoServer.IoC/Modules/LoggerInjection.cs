@@ -18,7 +18,7 @@ public static class LoggerConfigurationExtensions
             SectionName = "Log"
         };
 
-        var grayLogConfiguration = new GrayLogConfiguration(string.Empty, 0, string.Empty, string.Empty);
+        var grayLogConfiguration = new GrayLogConfiguration(false, string.Empty, 0, string.Empty, string.Empty);
 
         configuration.GetSection("GrayLog").Bind(grayLogConfiguration);
 
@@ -26,8 +26,11 @@ public static class LoggerConfigurationExtensions
 
         var loggerConfig = new LoggerConfiguration()
             .ReadFrom.Configuration(configuration, options)
-            .WriteTo.Console(theme: AnsiConsoleTheme.Code)
-            .WriteTo.Graylog(new GraylogSinkOptions
+            .WriteTo.Console(theme: AnsiConsoleTheme.Code);
+
+        if (grayLogConfiguration.Enable)
+        {
+            loggerConfig.WriteTo.Graylog(new GraylogSinkOptions
             {
                 HostnameOrAddress = grayLogConfiguration.HostnameOrAddress,
                 Port = grayLogConfiguration.Port,
@@ -36,6 +39,7 @@ public static class LoggerConfigurationExtensions
                 UseSsl = false,
                 HostnameOverride = grayLogConfiguration.HostnameOverride
             });
+        }
 
         var logger = loggerConfig.CreateLogger();
 
@@ -46,12 +50,14 @@ public static class LoggerConfigurationExtensions
 
     private static void LoadEnvironmentVariables(ref GrayLogConfiguration grayLogConfiguration)
     {
+        var graylogEnable = Environment.GetEnvironmentVariable("GRAYLOG_ENABLE");
         var graylogHostnameOrAddress = Environment.GetEnvironmentVariable("GRAYLOG_HOSTNAME_OR_ADDRESS");
         var graylogPort = Environment.GetEnvironmentVariable("GRAYLOG_PORT");
         var graylogHostnameOverride = Environment.GetEnvironmentVariable("GRAYLOG_HOSTNAME_OVERRIDE");
         var graylogFacility = Environment.GetEnvironmentVariable("GRAYLOG_FACILITY");
 
         grayLogConfiguration = new GrayLogConfiguration(
+            string.IsNullOrEmpty(graylogEnable) ? grayLogConfiguration.Enable : bool.Parse(graylogPort),
             string.IsNullOrEmpty(graylogHostnameOrAddress)
                 ? grayLogConfiguration.HostnameOrAddress
                 : graylogHostnameOrAddress,

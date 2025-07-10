@@ -34,6 +34,7 @@ public record DatabaseConfiguration(Dictionary<DatabaseType, string> Connections
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public record GrayLogConfiguration(
+    bool Enable,
     string HostnameOrAddress,
     int Port,
     string HostnameOverride,
