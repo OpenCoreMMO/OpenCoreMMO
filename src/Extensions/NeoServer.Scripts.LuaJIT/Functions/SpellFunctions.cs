@@ -68,6 +68,29 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         RegisterMethod(lua, "Spell", "allowFarUse", LuaSpellAllowFarUse);
         RegisterMethod(lua, "Spell", "blockWalls", LuaSpellBlockWalls);
         RegisterMethod(lua, "Spell", "checkFloor", LuaSpellCheckFloor);
+        RegisterMethod(lua, "Spell", "setPzLocked", LuaSpellPzLocked);
+    }
+
+    private int LuaSpellPzLocked(LuaState lua)
+    {
+        var spell = GetUserdata<LuaSpell>(lua, 1);
+
+        if (spell is null)
+        {
+            Lua.PushNil(lua);
+            return 1;
+        }
+
+        if (Lua.GetTop(lua) == 1)
+        {
+            Lua.PushBoolean(lua, spell.IsLockedPz);
+            return 2;
+        }
+
+        spell.IsLockedPz = GetBoolean(lua, 2);
+        PushBoolean(lua, true);
+
+        return 1;
     }
 
     public static int LuaSpellCreate(LuaState lua)
