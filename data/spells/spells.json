@@ -7,14 +7,6 @@
     "cooldown": "1000",
     "level": 8
   },
-  {
-    "name": "Invisibility",
-    "words": "utana vid",
-    "script": "Invisibility",
-    "mana": 60,
-    "cooldown": "1000",
-    "level": 8
-  },
 	{
 		"name":"EnergyBeam",
 		"words":"exevo vis lux",

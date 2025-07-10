@@ -171,8 +171,6 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
     private static void AddLightCondition(CombatParameter combatParameter, ICombatActor targetCreature,
         ConditionType conditionType, uint duration, ICondition condition)
     {
-        //targetCreature.DecreaseSpeed((ushort)Math.Abs((int)combatParameter.Condition.Value));
-
         condition.Parameters.TryGetValue(ConditionParamType.LightLevel, out var lightLevel);
         condition.Parameters.TryGetValue(ConditionParamType.LightColor, out var lightColor);
 
@@ -185,7 +183,7 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
     private static void AddSpeedCondition(CombatParameter combatParameter, ICombatActor targetCreature,
         ConditionType conditionType, uint duration, ICondition condition)
     {
-        targetCreature.AddCondition(new ConditionSpeed(conditionType, duration, condition.FormulaValues));
+        targetCreature.AddCondition(new ConditionSpeed(duration, condition.FormulaValues));
     }
 
     private static void AddParalyzeCondition(CombatParameter combatParameter, ICombatActor targetCreature,

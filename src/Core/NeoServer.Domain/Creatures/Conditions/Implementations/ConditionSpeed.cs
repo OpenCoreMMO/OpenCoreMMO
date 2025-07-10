@@ -1,23 +1,23 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Creatures.Structs;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 
 namespace NeoServer.Domain.Creatures.Conditions.Implementations;
 
 public class ConditionSpeed : BaseCondition
 {
-    public ConditionSpeed(ConditionType type, uint interval, FormulaValues formulaValues,
+    public ConditionSpeed(
+        uint interval,
+        FormulaValues formulaValues,
         EffectT effect = EffectT.None) : base(interval)
     {
-        Type = type;
         Interval = interval;
         FormulaValues = formulaValues;
         Effect = effect; 
     }
 
-    public override ConditionType Type { get; }
+    public override ConditionType Type => ConditionType.Haste;
     public EffectT Effect { get; }
     public uint Interval { get; }
     
@@ -40,10 +40,7 @@ public class ConditionSpeed : BaseCondition
 
         walkableCreature.IncreaseSpeed((ushort)speed);
 
-        EndAction = () =>
-        {
-            walkableCreature.DecreaseSpeed((ushort)(speed));
-        };
+        EndAction = () => walkableCreature.DecreaseSpeed((ushort)(speed));
 
         return true;
     }

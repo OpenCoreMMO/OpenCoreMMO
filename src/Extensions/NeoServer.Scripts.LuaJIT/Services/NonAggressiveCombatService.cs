@@ -26,7 +26,7 @@ public class NonAggressiveCombatService
                 
             if (condition.Type is ConditionType.Haste)
             {
-                targetCreature.AddCondition(new ConditionSpeed(condition.Type, duration, condition.FormulaValues));
+                targetCreature.AddCondition(new ConditionSpeed(duration, condition.FormulaValues));
             }
             
             if (condition.Type is ConditionType.Light)
@@ -35,6 +35,11 @@ public class NonAggressiveCombatService
                 condition.Parameters.TryGetValue(ConditionParamType.LightColor, out var lightColor);
 
                 targetCreature.AddCondition(new ConditionLight(duration, lightLevel, lightColor));
+            }
+
+            if (condition.Type is ConditionType.Invisible)
+            {
+                targetCreature.AddCondition(new ConditionInvisible(duration));
             }
         }
     }
