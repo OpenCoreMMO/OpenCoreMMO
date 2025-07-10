@@ -1,23 +1,23 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Creatures.Structs;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 
 namespace NeoServer.Domain.Creatures.Conditions.Implementations;
 
 public class ConditionLight : BaseCondition
 {
-    public ConditionLight(uint interval, uint lightLevel, uint lightColor,
+    public ConditionLight(
+        uint interval,
+        uint lightLevel,
+        uint lightColor,
         EffectT effect = EffectT.None) : base(interval)
     {
-        Type = ConditionType.Light;
         ColorLevel = lightLevel;
         Color = lightColor;
         Effect = effect;
     }
 
-    public override ConditionType Type { get; }
+    public override ConditionType Type => ConditionType.Light;
     public EffectT Effect { get; }
     public uint ColorLevel { get; private set; }
     public uint Color { get; private set; }
@@ -33,7 +33,7 @@ public class ConditionLight : BaseCondition
         LightChangeInterval = (uint)Duration / ColorLevel;
         creature.SetLight((byte)Color, (byte)ColorLevel);
 
-        EndAction = creature.RemoveLight;
+        EndAction = () => creature.RemoveLight();
         
         return true;
     }

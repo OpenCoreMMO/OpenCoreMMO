@@ -18,6 +18,7 @@ public class LuaFunctionsLoader
 
     private static int _scriptEnvIndex;
     private static readonly ScriptEnvironment[] ScriptEnv = new ScriptEnvironment[16];
+    protected static readonly Dictionary<string, LuaFunction> _registeredFunctions = new();
 
     public LuaFunctionsLoader()
     {
@@ -571,6 +572,11 @@ public class LuaFunctionsLoader
 
     public static void RegisterMethod(LuaState luaState, string globalName, string methodName, LuaFunction func)
     {
+        var key = $"{globalName}.{methodName}";
+
+        if (!_registeredFunctions.ContainsKey(key))
+            _registeredFunctions[key] = func;
+
         // globalName.methodName = func
         Lua.GetGlobal(luaState, globalName);
         Lua.PushCFunction(luaState, func);
@@ -712,6 +718,9 @@ public class LuaFunctionsLoader
     public static void RegisterSharedClass(LuaState luaState, string className, string baseClass,
         LuaFunction newFunction)
     {
+        if (!_registeredFunctions.ContainsKey(className))
+            _registeredFunctions[className] = newFunction;
+
         RegisterClass(luaState, className, baseClass, newFunction);
         RegisterMetaMethod(luaState, className, "__gc", LuaGarbageCollection);
     }

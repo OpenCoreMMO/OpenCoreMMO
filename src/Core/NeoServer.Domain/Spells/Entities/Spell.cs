@@ -11,7 +11,7 @@ using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Player.Modes;
 
-namespace NeoServer.Domain.Spells;
+namespace NeoServer.Domain.Spells.Entities;
 
 public abstract class BaseSpell : ISpell
 {
