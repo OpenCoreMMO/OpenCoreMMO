@@ -1,6 +1,9 @@
 ### Description
 <!--- Add a short description of what was changed -->
 
+### Key Changes
+<!--- Add the key changes of the Pull Request -->
+
 ### Types of Changes
 <!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
 - [ ] Bug fix (non-breaking change which fixes an issue)
@@ -11,3 +14,4 @@
 - [ ] Merge Down
 
 ### Test Case
+<!--- Add a test case -->
