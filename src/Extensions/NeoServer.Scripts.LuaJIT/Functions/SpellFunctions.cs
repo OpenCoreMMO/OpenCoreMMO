@@ -205,27 +205,26 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 runeSpell.NeedWeapon = rune.NeedWeapon;
             }
 
-            if (runeSpell is null)
-                runeSpell = new RuneSpell
-                {
-                    ManaConsumption = rune.Mana,
-                    ManaPercent = rune.ManaPercent,
-                    SoulConsumption = rune.Soul,
-                    Range = rune.Range,
-                    BlockWalls = rune.BlockWalls,
-                    BlockingSolid = rune.BlockingSolid,
-                    BlockingCreature = rune.BlockingCreature,
-                    NeedsTarget = rune.NeedTarget,
-                    NeedsPremium = rune.IsPremium,
-                    VocationIds = rune.VocationIds,
-                    MinLevel = rune.Level,
-                    MinMagicLevel = rune.MagicLevel,
-                    IsEnabled = rune.IsEnabled,
-                    IsSelfTarget = rune.IsSelfTarget,
-                    IsAggressive = rune.IsAggressive,
-                    NeedLearn = rune.NeedLearn,
-                    NeedWeapon = rune.NeedWeapon,
-                };
+            runeSpell ??= new RuneSpell
+            {
+                ManaConsumption = rune.Mana,
+                ManaPercent = rune.ManaPercent,
+                SoulConsumption = rune.Soul,
+                Range = rune.Range,
+                BlockWalls = rune.BlockWalls,
+                BlockingSolid = rune.BlockingSolid,
+                BlockingCreature = rune.BlockingCreature,
+                NeedsTarget = rune.NeedTarget,
+                NeedsPremium = rune.IsPremium,
+                VocationIds = rune.VocationIds,
+                MinLevel = rune.Level,
+                MinMagicLevel = rune.MagicLevel,
+                IsEnabled = rune.IsEnabled,
+                IsSelfTarget = rune.IsSelfTarget,
+                IsAggressive = rune.IsAggressive,
+                NeedLearn = rune.NeedLearn,
+                NeedWeapon = rune.NeedWeapon,
+            };
 
             ((RuneSpell)runeSpell).LuaRune = rune;
 
@@ -262,32 +261,31 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 instantSpell.NeedWeapon = instant.NeedWeapon;
             }
 
-            if (instantSpell is null)
-                instantSpell = new InstantSpell
-                {
-                    //SoulConsumption = instant.SoulConsumption,
-                    //BlockWalls = instant.BlockWalls,
-                    BlockingSolid = instant.BlockingSolid,
-                    BlockingCreature = instant.BlockingCreature,
-                    NeedsTarget = instant.NeedTarget,
-                    Words = instant.Words,
-                    Name = instant.Name,
-                    ManaConsumption = instant.Mana,
-                    ManaPercent = instant.ManaPercent,
-                    SoulConsumption = instant.Soul,
-                    Range = instant.Range,
-                    NeedDirection = instant.NeedDirection,
-                    NeedLearn = instant.NeedLearn,
-                    NeedsPremium = instant.IsPremium,
-                    VocationIds = instant.VocationIds,
-                    MinLevel = instant.Level,
-                    MinMagicLevel = instant.MagicLevel,
-                    IsEnabled = instant.IsEnabled,
-                    IsSelfTarget = instant.IsSelfTarget,
-                    IsAggressive = instant.IsAggressive,
-                    NeedCasterTargetOrDirection = instant.NeedCasterTargetOrDirection,
-                    NeedWeapon = instant.NeedWeapon,
-                };
+            instantSpell ??= new InstantSpell
+            {
+                //SoulConsumption = instant.SoulConsumption,
+                //BlockWalls = instant.BlockWalls,
+                BlockingSolid = instant.BlockingSolid,
+                BlockingCreature = instant.BlockingCreature,
+                NeedsTarget = instant.NeedTarget,
+                Words = instant.Words,
+                Name = instant.Name,
+                ManaConsumption = instant.Mana,
+                ManaPercent = instant.ManaPercent,
+                SoulConsumption = instant.Soul,
+                Range = instant.Range,
+                NeedDirection = instant.NeedDirection,
+                NeedLearn = instant.NeedLearn,
+                NeedsPremium = instant.IsPremium,
+                VocationIds = instant.VocationIds,
+                MinLevel = instant.Level,
+                MinMagicLevel = instant.MagicLevel,
+                IsEnabled = instant.IsEnabled,
+                IsSelfTarget = instant.IsSelfTarget,
+                IsAggressive = instant.IsAggressive,
+                NeedCasterTargetOrDirection = instant.NeedCasterTargetOrDirection,
+                NeedWeapon = instant.NeedWeapon
+            };
 
             ((InstantSpell)instantSpell).LuaInstantSpell = instant;
 
