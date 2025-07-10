@@ -52,6 +52,12 @@ public class SpellListManager
         return spell;
     }
 
+    public void Clear()
+    {
+        Spells.Clear();
+        SpellNameWordMap.Clear();
+    }
+
     private (string Words, object[] Params) GetCommand(string words)
     {
         var firstWhiteSpace = words.IndexOf(' ');
