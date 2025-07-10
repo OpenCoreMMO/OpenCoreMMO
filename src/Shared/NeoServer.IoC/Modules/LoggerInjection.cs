@@ -28,7 +28,7 @@ public static class LoggerConfigurationExtensions
             .ReadFrom.Configuration(configuration, options)
             .WriteTo.Console(theme: AnsiConsoleTheme.Code);
 
-        if (grayLogConfiguration.enable)
+        if (grayLogConfiguration.Enable)
         {
             loggerConfig.WriteTo.Graylog(new GraylogSinkOptions
             {
@@ -57,7 +57,7 @@ public static class LoggerConfigurationExtensions
         var graylogFacility = Environment.GetEnvironmentVariable("GRAYLOG_FACILITY");
 
         grayLogConfiguration = new GrayLogConfiguration(
-            string.IsNullOrEmpty(graylogEnable) ? grayLogConfiguration.enable : bool.Parse(graylogPort),
+            string.IsNullOrEmpty(graylogEnable) ? grayLogConfiguration.Enable : bool.Parse(graylogPort),
             string.IsNullOrEmpty(graylogHostnameOrAddress)
                 ? grayLogConfiguration.HostnameOrAddress
                 : graylogHostnameOrAddress,
