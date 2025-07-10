@@ -25,8 +25,5 @@
         <Compile Remove="Items\Sign.cs" />
         <Compile Remove="Runes\HealingRune.cs" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Spells\Support\Knight\" />
-    </ItemGroup>
 
 </Project>

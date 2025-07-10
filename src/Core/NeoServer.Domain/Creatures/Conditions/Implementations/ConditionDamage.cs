@@ -18,7 +18,12 @@ public class ConditionDamage : BaseCondition
     private ushort _maxDamage;
     private ushort _minDamage;
 
-    public ConditionDamage(IThing cause, ConditionType type, uint interval, ushort minDamage, ushort maxDamage,
+    public ConditionDamage(
+        IThing cause,
+        ConditionType type,
+        uint interval,
+        ushort minDamage,
+        ushort maxDamage,
         EffectT effect = EffectT.None) : base(0)
     {
         Cause = cause;
