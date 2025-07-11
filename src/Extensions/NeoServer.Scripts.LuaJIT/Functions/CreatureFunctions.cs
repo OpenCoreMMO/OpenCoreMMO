@@ -494,7 +494,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         if (Lua.IsNumber(L, 2))
         {
             var direction = GetNumber<Direction>(L, 2);
-            if (direction > Direction.Last)
+            if (direction.IsValid())
             {
                 Lua.PushNil(L);
                 return 1;

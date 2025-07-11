@@ -10,7 +10,6 @@ public enum Direction : byte
     SouthEast,
     NorthWest,
     NorthEast,
-    Last = NorthEast,
     None = 255
 }
 
@@ -32,5 +31,10 @@ public static class DirectionExtensions
     public static Direction GetOriginalDirection(this Direction dir)
     {
         return (Direction)((byte)dir & DIRECTION_MASK);
+    }
+
+    public static bool IsValid(this Direction dir)
+    {
+        return dir <= Direction.NorthEast;
     }
 }

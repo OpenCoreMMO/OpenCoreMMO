@@ -51,28 +51,19 @@ public class SpellListManager
         if (string.IsNullOrWhiteSpace(words))
             return false;
 
+        var paramsIndex = words.IndexOf("\"");
 
-        foreach (var kvp in Spells)
-        {
-            var spellWords = kvp.Key;
-            if (words.StartsWith(spellWords, StringComparison.InvariantCultureIgnoreCase))
-            {
-                if (words.Length == spellWords.Length || words[spellWords.Length] == ' ')
-                {
-                    spell = kvp.Value;
+        if (paramsIndex < 0)
+            return TryGet(words, out spell);
 
-                    var paramPart = words.Length > spellWords.Length
-                        ? words[(spellWords.Length + 1)..].Replace("\"", "").Split(',')
-                        : null;
+        var wordsWithoutParams = words.Substring(0, paramsIndex).Trim();
 
-                    spell.Params = paramPart;
+        if (!TryGet(wordsWithoutParams, out spell))
+            return false;
 
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        var wordParam = words.Substring(paramsIndex, (words.Length - 1) - paramsIndex).Replace("\"", "");
+        spell.Params = [ wordParam ];
+        return true;
     }
 
     public ISpell GetByName(string name)
