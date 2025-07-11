@@ -20,7 +20,7 @@ public class LuaCombatService(
         IThing target = null;
 
         //if variant is a number, get the target creature
-        if (variant.Type == LuaVariantType.Number)
+        if (variant.Type == LuaVariantType.VARIANT_NUMBER)
         {
             gameCreatureManager.TryGetCreature(variant.Number, out var targetCreature);
             target = targetCreature;

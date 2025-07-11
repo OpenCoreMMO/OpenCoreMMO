@@ -1,4 +1,8 @@
-﻿-- for use of: data\scripts\globalevents\customs\save_interval.lua
+﻿ropeSpots = {
+	384, 418, 8278, 8592, 13189, 14435, 14436, 14857, 15635, 19518, 24621, 24622, 24623, 24624, 26019
+}
+
+-- for use of: data\scripts\globalevents\customs\save_interval.lua
 
 -- SAVE_INTERVAL_TYPE = configManager.getString(configKeys.SAVE_INTERVAL_TYPE)
 -- SAVE_INTERVAL_CONFIG_TIME = configManager.getNumber(configKeys.SAVE_INTERVAL_TIME)

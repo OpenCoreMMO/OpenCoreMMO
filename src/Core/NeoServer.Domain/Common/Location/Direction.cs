@@ -10,6 +10,7 @@ public enum Direction : byte
     SouthEast,
     NorthWest,
     NorthEast,
+    Last = NorthEast,
     None = 255
 }
 

@@ -44,6 +44,37 @@ public class SpellListManager
         return Spells.TryGetValue(words, out spell);
     }
 
+    public bool TryGetInstantSpell(string words, out ISpell spell)
+    {
+        spell = null;
+
+        if (string.IsNullOrWhiteSpace(words))
+            return false;
+
+
+        foreach (var kvp in Spells)
+        {
+            var spellWords = kvp.Key;
+            if (words.StartsWith(spellWords, StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (words.Length == spellWords.Length || words[spellWords.Length] == ' ')
+                {
+                    spell = kvp.Value;
+
+                    var paramPart = words.Length > spellWords.Length
+                        ? words[(spellWords.Length + 1)..].Replace("\"", "").Split(',')
+                        : null;
+
+                    spell.Params = paramPart;
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public ISpell GetByName(string name)
     {
         if (!SpellNameWordMap.TryGetValue(name, out var words)) return null;
