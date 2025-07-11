@@ -54,31 +54,43 @@ public class SpellListManager
         if (TryGet(words, out spell))
             return true;
 
-        var wordParam = string.Empty;
-        var wordsWithoutParams = string.Empty;
+        var param = string.Empty;
+        var spellWord = string.Empty;
 
-        var paramsIndex = words.IndexOf("\"");
+        var paramsIndex = words.IndexOf('"');
 
         if (paramsIndex < 0)
-            paramsIndex = words.IndexOf("\'");
+            paramsIndex = words.IndexOf('\'');
 
         if (paramsIndex < 0)
         {
-            var splitedWords = words.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            wordParam = splitedWords[splitedWords.Length - 1];
-            wordsWithoutParams = words.Replace(wordParam, "");
+            int lastSpaceIndex = words.LastIndexOf(' ');
+            if (lastSpaceIndex >= 0)
+            {
+                spellWord = words[..lastSpaceIndex];
+                param = words[(lastSpaceIndex + 1)..];
+            }
+            else
+            {
+                spellWord = words;
+                param = string.Empty;
+            }
         }
         else
         {
-            wordParam = words.Substring(paramsIndex, (words.Length - 1) - paramsIndex);
-            wordsWithoutParams = words.Substring(0, paramsIndex);
+            param = words.Substring(paramsIndex, (words.Length - 1) - paramsIndex);
+            spellWord = words[..paramsIndex];
         }
 
-        if (!TryGet(wordsWithoutParams.Trim(), out spell))
+        if (!TryGet(spellWord.Trim(), out spell))
             return false;
 
-        wordParam = wordParam.Replace("\"", "").Replace("\'", "");
-        spell.Params = [wordParam];
+        param = param.Replace("\"", "").Replace("\'", "").Trim();
+
+        if (!string.IsNullOrWhiteSpace(param))
+        {
+            spell.Params = [param];
+        }
 
         return true;
     }
