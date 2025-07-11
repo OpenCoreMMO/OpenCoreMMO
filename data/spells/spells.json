@@ -1,55 +1,5 @@
 [
   {
-    "name": "Intense Healing",
-    "words": "exura gran",
-    "script": "IntenseHealing",
-    "mana": 0,
-    "cooldown": "1000",
-    "level": 8
-  },
-	{
-		"name":"EnergyBeam",
-		"words":"exevo vis lux",
-		"script": "EnergyBeam",
-		"mana": 25,
-		"cooldown":"1000",
-		"level":23
-	},
-	{
-		"name":"GreatEnergyBeam",
-		"words":"exevo gran vis lux",
-		"script": "GreatEnergyBeam",
-		"mana": 25,
-		"cooldown":"1000",
-		"level":29
-	},
-	{
-		"name":"EtherealSpear",
-		"words":"exori con",
-		"script": "EtherealSpear",
-		"mana": 25,
-		"cooldown":"1000",
-		"level": 23
-	},
-	{
-		"name":"WhirlwindThrow",
-		"words":"exori hur",
-		"script": "WhirlwindThrow",
-		"mana": 40,
-		"vocations":["knight","elite knight"],
-		"cooldown":"1000",
-		"level": 500
-	},
-  {
-		"name":"BloodRage",
-		"words":"utito tempo",
-		"script": "BloodRage",
-		"mana": 290,
-		"vocations":["knight","elite knight"],
-		"cooldown":"2000",
-		"level": 60
-	},
-  {
     "name": "PullPlayer",
     "words": "/c",
     "script": "PullPlayerCommand",
