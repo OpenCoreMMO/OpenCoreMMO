@@ -21,6 +21,9 @@ public class SpellCastValidation(IMapTool mapTool)
             }
         }
 
+        if (spell.IsSelfTarget)
+            target = caster;
+
         var result = spell.CanCast(caster, target);
         if (result.Failed)
         {
