@@ -44,6 +44,28 @@ public class SpellListManager
         return Spells.TryGetValue(words, out spell);
     }
 
+    public bool TryGetInstantSpell(string words, out ISpell spell)
+    {
+        spell = null;
+
+        if (string.IsNullOrWhiteSpace(words))
+            return false;
+
+        var paramsIndex = words.IndexOf("\"");
+
+        if (paramsIndex < 0)
+            return TryGet(words, out spell);
+
+        var wordsWithoutParams = words.Substring(0, paramsIndex).Trim();
+
+        if (!TryGet(wordsWithoutParams, out spell))
+            return false;
+
+        var wordParam = words.Substring(paramsIndex, (words.Length - 1) - paramsIndex).Replace("\"", "");
+        spell.Params = [ wordParam ];
+        return true;
+    }
+
     public ISpell GetByName(string name)
     {
         if (!SpellNameWordMap.TryGetValue(name, out var words)) return null;

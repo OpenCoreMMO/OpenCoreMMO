@@ -38,6 +38,8 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
 
         RegisterMethod(luaState, "Tile", "getItems", LuaTileGetItems);
         RegisterMethod(luaState, "Tile", "getItemCount", LuaTileGetItemCount);
+        RegisterMethod(luaState, "Tile", "getDownItemCount", LuaTileGetDownItemCount);
+        RegisterMethod(luaState, "Tile", "getTopItemCount", LuaTileGetTopItemCount);
 
         RegisterMethod(luaState, "Tile", "hasProperty", LuaTileHasProperty);
         RegisterMethod(luaState, "Tile", "hasFlag", LuaTileHasFlag);
@@ -240,6 +242,30 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
             SetItemMetatable(luaState, -1, item);
             Lua.RawSetI(luaState, -2, ++index);
         }
+
+        return 1;
+    }
+
+    public static int LuaTileGetDownItemCount(LuaState luaState)
+    {
+        // tile:getDownItemCount()
+        var tile = GetUserdata<ITile>(luaState, 1);
+        if (tile != null)
+            Lua.PushNumber(luaState, tile.AllItems.Count(c => !c.IsAlwaysOnTop));
+        else
+            Lua.PushNil(luaState);
+
+        return 1;
+    }
+
+    public static int LuaTileGetTopItemCount(LuaState luaState)
+    {
+        // tile:getTopItemCount()
+        var tile = GetUserdata<ITile>(luaState, 1);
+        if (tile != null)
+            Lua.PushNumber(luaState, tile.AllItems.Count(c => c.IsAlwaysOnTop));
+        else
+            Lua.PushNil(luaState);
 
         return 1;
     }

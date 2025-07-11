@@ -35,7 +35,7 @@ public class RuneSpell : ScriptedSpell
 
         var variant = new LuaVariant
         {
-            Type = target is IDynamicTile ? LuaVariantType.VARIANT_POSITION : LuaVariantType.Number,
+            Type = target is IDynamicTile ? LuaVariantType.VARIANT_POSITION : LuaVariantType.VARIANT_NUMBER,
             Number = target is ICreature targetCreature ? targetCreature.CreatureId : 0,
             Pos = target is IDynamicTile targetTile ? targetTile.Location : Location.Zero,
             InstantName = "",

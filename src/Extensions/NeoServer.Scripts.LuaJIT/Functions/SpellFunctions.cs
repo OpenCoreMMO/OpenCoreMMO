@@ -52,6 +52,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         RegisterMethod(lua, "Spell", "needTarget", LuaSpellNeedTarget);
         RegisterMethod(lua, "Spell", "needWeapon", LuaSpellNeedWeapon);
         RegisterMethod(lua, "Spell", "needLearn", LuaSpellNeedLearn);
+        RegisterMethod(lua, "Spell", "setPzLocked", LuaSpellPzLocked);
         RegisterMethod(lua, "Spell", "isSelfTarget", LuaSpellIsSelfTarget);
         RegisterMethod(lua, "Spell", "isBlocking", LuaSpellIsBlocking);
         RegisterMethod(lua, "Spell", "isAggressive", LuaSpellIsAgressive);
@@ -60,6 +61,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         // Only for InstantSpell.
         RegisterMethod(lua, "Spell", "words", LuaSpellWords);
         RegisterMethod(lua, "Spell", "needDirection", LuaSpellNeedDirection);
+        RegisterMethod(lua, "Spell", "hasParams", LuaSpellHasParams);
         RegisterMethod(lua, "Spell", "needCasterTargetOrDirection", LuaSpellNeedCasterTargetOrDirection);
 
         //only for rune spells
@@ -68,7 +70,6 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         RegisterMethod(lua, "Spell", "allowFarUse", LuaSpellAllowFarUse);
         RegisterMethod(lua, "Spell", "blockWalls", LuaSpellBlockWalls);
         RegisterMethod(lua, "Spell", "checkFloor", LuaSpellCheckFloor);
-        RegisterMethod(lua, "Spell", "setPzLocked", LuaSpellPzLocked);
     }
 
     private int LuaSpellPzLocked(LuaState lua)
@@ -282,6 +283,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 instantSpell.IsAggressive = instant.IsAggressive;
                 instantSpell.NeedCasterTargetOrDirection = instant.NeedCasterTargetOrDirection;
                 instantSpell.NeedWeapon = instant.NeedWeapon;
+                instantSpell.HasParams = instant.HasParams;
             }
 
             instantSpell ??= new InstantSpell
@@ -307,7 +309,8 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 IsSelfTarget = instant.IsSelfTarget,
                 IsAggressive = instant.IsAggressive,
                 NeedCasterTargetOrDirection = instant.NeedCasterTargetOrDirection,
-                NeedWeapon = instant.NeedWeapon
+                NeedWeapon = instant.NeedWeapon,
+                HasParams = instant.HasParams
             };
 
             ((InstantSpell)instantSpell).LuaInstantSpell = instant;
@@ -933,6 +936,31 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             else
             {
                 instant.NeedDirection = GetBoolean(lua, 2);
+                PushBoolean(lua, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
+    public static int LuaSpellHasParams(LuaState lua)
+    {
+        // spell:hasParams(bool)
+        var instant = GetUserdata<LuaInstantSpell>(lua, 1);
+
+        if (instant is not null)
+        {
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushBoolean(lua, instant.HasParams);
+            }
+            else
+            {
+                instant.HasParams = GetBoolean(lua, 2);
                 PushBoolean(lua, true);
             }
         }

@@ -3,10 +3,13 @@ using System.Runtime.InteropServices;
 using LuaNET;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Player.Outfit;
+using NeoServer.Domain.Items.Items;
 using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Server.Common.Contracts;
 
 namespace NeoServer.Scripts.LuaJIT;
 
@@ -105,7 +108,7 @@ public class LuaFunctionsLoader
 
         switch (var.Type)
         {
-            case LuaVariantType.Number:
+            case LuaVariantType.VARIANT_NUMBER:
                 SetField(luaState, "number", var.Number);
                 break;
             case LuaVariantType.VARIANT_STRING:
@@ -113,11 +116,11 @@ public class LuaFunctionsLoader
                 break;
             case LuaVariantType.VARIANT_TARGETPOSITION:
             case LuaVariantType.VARIANT_POSITION:
-            {
-                PushPosition(luaState, var.Pos);
-                Lua.SetField(luaState, -2, "pos");
-                break;
-            }
+                {
+                    PushPosition(luaState, var.Pos);
+                    Lua.SetField(luaState, -2, "pos");
+                    break;
+                }
         }
 
         SetField(luaState, "instantName", var.InstantName);
@@ -403,7 +406,7 @@ public class LuaFunctionsLoader
 
         switch (var.Type)
         {
-            case LuaVariantType.Number:
+            case LuaVariantType.VARIANT_NUMBER:
                 var.Number = GetField<uint>(luaState, arg, "number");
                 Lua.Pop(luaState, 4);
                 break;
@@ -426,6 +429,60 @@ public class LuaFunctionsLoader
         }
 
         return var;
+    }
+
+    public static IThing GetThing(LuaState luaState, int arg)
+    {
+        IThing thing = null;
+        if (Lua.GetMetaTable(luaState, arg) != 0)
+        {
+            Lua.RawGetI(luaState, -1, 't');
+            switch (GetNumber<LuaDataType>(luaState, -1))
+            {
+                case LuaDataType.Item:
+                    thing = GetUserdata<IItem>(luaState, arg, "Item");
+                    break;
+
+                case LuaDataType.Container:
+                    thing = GetUserdata<IContainer>(luaState, arg, "Container");
+                    break;
+
+                case LuaDataType.Teleport:
+                    thing = GetUserdata<TeleportItem>(luaState, arg, "Teleport");
+                    break;
+
+                case LuaDataType.Player:
+                    thing = GetUserdata<IPlayer>(luaState, arg, "Player");
+                    break;
+
+                case LuaDataType.Monster:
+                    thing = GetUserdata<IMonster>(luaState, arg, "Monster");
+                    break;
+
+                case LuaDataType.Npc:
+                    thing = GetUserdata<INpc>(luaState, arg, "Npc");
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            thing = GetScriptEnv().GetThingByUID(GetNumber<uint>(luaState, arg));
+        }
+
+        return thing;
+    }
+
+    public static ICreature GetCreature(LuaState luaState, int arg)
+    {
+        if (Lua.IsUserData(luaState, arg))
+            return GetUserdata<ICreature>(luaState, arg, "Creature");
+
+        Server.Helpers.IoC.GetInstance<IGameCreatureManager>().TryGetCreature(GetNumber<uint>(luaState, arg), out var creature);
+
+        return creature;
     }
 
     public static string GetFieldString(LuaState luaState, int arg, string key)

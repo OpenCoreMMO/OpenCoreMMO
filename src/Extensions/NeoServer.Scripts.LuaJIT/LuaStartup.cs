@@ -41,9 +41,10 @@ public class LuaStartup : ILuaStartup
         ITileFunctions tileFunctions,
         ServerConfiguration serverConfiguration,
         IConditionFunctions conditionFunctions,
-        IBankFunctions bankFunctionBinder,
-        ISpellFunctions spellFunctionMapper,
-        ICombatFunctions combatFunctionMapper
+        IBankFunctions bankFunctions,
+        ISpellFunctions spellFunctions,
+        ICombatFunctions combatFunctions,
+        IVariantFunctions variantFunctions
     )
     {
         _logger = logger;
@@ -75,14 +76,14 @@ public class LuaStartup : ILuaStartup
         _talkActionFunctions = talkActionFunctions;
         _teleportFunctions = teleportFunctions;
         _tileFunctions = tileFunctions;
-        _spellFunctionMapper = spellFunctionMapper;
-        _combatFunctionMapper = combatFunctionMapper;
-        _combatFunctionMapper = combatFunctionMapper;
+        _spellFunctions = spellFunctions;
+        _combatFunctions = combatFunctions;
+        _combatFunctions = combatFunctions;
 
         _serverConfiguration = serverConfiguration;
         _conditionFunctions = conditionFunctions;
-        _bankFunctionBinder = bankFunctionBinder;
-        _spellFunctionMapper = spellFunctionMapper;
+        _bankFunctions = bankFunctions;
+        _variantFunctions = variantFunctions;
     }
 
     #endregion
@@ -131,9 +132,10 @@ public class LuaStartup : ILuaStartup
         _playerFunctions.Init(luaState);
         _teleportFunctions.Init(luaState);
         _groupFunctions.Init(luaState);
-        _spellFunctionMapper.Init(luaState);
-        _combatFunctionMapper.Init(luaState);
-        _bankFunctionBinder.Init(luaState);
+        _spellFunctions.Init(luaState);
+        _combatFunctions.Init(luaState);
+        _bankFunctions.Init(luaState);
+        _variantFunctions.Init(luaState);
 
         ModulesLoadHelper(_configManager.Load($"{currentDir}/config.lua"), "config.lua");
 
@@ -194,9 +196,10 @@ public class LuaStartup : ILuaStartup
     /// </summary>
     private readonly IConditionFunctions _conditionFunctions;
 
-    private readonly IBankFunctions _bankFunctionBinder;
-    private readonly ISpellFunctions _spellFunctionMapper;
-    private readonly ICombatFunctions _combatFunctionMapper;
+    private readonly IBankFunctions _bankFunctions;
+    private readonly ISpellFunctions _spellFunctions;
+    private readonly ICombatFunctions _combatFunctions;
+    private readonly IVariantFunctions _variantFunctions;
 
     /// <summary>
     ///     A reference to the <see cref="IConfigFunctions" /> instance in use.

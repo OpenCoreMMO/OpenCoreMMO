@@ -47,6 +47,8 @@ public abstract class BaseSpell : ISpell
     public bool BlockingSolid { get; set; }
     public virtual bool NeedDirection { get; set; }
     public virtual bool NeedCasterTargetOrDirection { get; set; }
+    public virtual bool HasParams { get; set; }
+    public object[] Params { get; set; }
 
     public Result Invoke(ICombatActor actor, IThing target, bool isHotkey)
     {
