@@ -51,6 +51,8 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(luaState, "Player", "getSex", LuaPlayerGetSex);
         RegisterMethod(luaState, "Player", "setSex", LuaPlayerSetSex);
 
+        RegisterMethod(luaState, "Player", "getMana", LuaPlayerGetMana);
+
         //RegisterMethod(luaState, "Player", "getPronoun", LuaPlayerGetPronoun);
 
         //RegisterMethod(luaState, "Player", "getTown", LuaPlayerGetTown);
@@ -278,6 +280,18 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         {
             Lua.PushNil(luaState);
         }
+
+        return 1;
+    }
+
+    private static int LuaPlayerGetMana(LuaState luaState)
+    {
+        // player:getMana()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player != null)
+            Lua.PushNumber(luaState, player.Mana);
+        else
+            Lua.PushNil(luaState);
 
         return 1;
     }

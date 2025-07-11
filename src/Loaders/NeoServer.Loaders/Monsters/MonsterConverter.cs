@@ -40,7 +40,8 @@ public class MonsterConverter(
             Experience = (uint)(monsterData.Experience * configuration.ExperienceRate),
             Race = ParseRace(monsterData.Race),
             TargetChance = new IntervalChance(System.Convert.ToUInt16(monsterData.TargetChange.Interval),
-                System.Convert.ToByte(monsterData.TargetChange.Chance))
+                System.Convert.ToByte(monsterData.TargetChange.Chance)),
+            ManaCost = monsterData.ManaCost,
         };
 
         //if (monster.Race == Race.None)

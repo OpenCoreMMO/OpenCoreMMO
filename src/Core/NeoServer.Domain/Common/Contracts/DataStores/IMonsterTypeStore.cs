@@ -2,9 +2,9 @@
 
 namespace NeoServer.Domain.Common.Contracts.DataStores;
 
-public interface INpcStore : IDataStore<string, INpcType>
+public interface IMonsterTypeStore : IDataStore<string, IMonsterType>
 {
-    public virtual INpcType GetByName(string name)
+    public virtual IMonsterType GetByName(string name)
     {
         return All.FirstOrDefault(c => c.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
     }

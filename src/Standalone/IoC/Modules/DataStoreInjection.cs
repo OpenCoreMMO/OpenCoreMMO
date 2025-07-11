@@ -14,7 +14,9 @@ public static class DataStoreInjection
 
         builder.AddSingleton<IGuildStore, GuildStore>();
 
-        builder.AddSingleton<INpcStore, NpcStore>();
+        builder.AddSingleton<INpcTypeStore, NpcTypeStore>();
+
+        builder.AddSingleton<IMonsterTypeStore, MonsterTypeStore>();
 
         builder.AddSingleton<IVocationStore, VocationStore>();
 
