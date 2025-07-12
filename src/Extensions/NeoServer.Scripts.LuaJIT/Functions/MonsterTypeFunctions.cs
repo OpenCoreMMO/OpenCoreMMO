@@ -458,5 +458,4 @@ public class MonsterTypeFunctions : LuaScriptInterface, IMonsterTypeFunctions
 
         return 1;
     }
-
 }
