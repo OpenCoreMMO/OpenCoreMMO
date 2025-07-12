@@ -52,6 +52,9 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(luaState, "Player", "setSex", LuaPlayerSetSex);
 
         RegisterMethod(luaState, "Player", "getMana", LuaPlayerGetMana);
+        RegisterMethod(luaState, "Player", "addMana", LuaPlayerAddMana);
+        RegisterMethod(luaState, "Player", "getManaSpent", LuaPlayerGetManaSpent);
+        RegisterMethod(luaState, "Player", "addManaSpent", LuaPlayerAddManaSpent);
 
         //RegisterMethod(luaState, "Player", "getPronoun", LuaPlayerGetPronoun);
 
@@ -290,6 +293,51 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         var player = GetUserdata<IPlayer>(luaState, 1);
         if (player != null)
             Lua.PushNumber(luaState, player.Mana);
+        else
+            Lua.PushNil(luaState);
+
+        return 1;
+    }
+
+    private static int LuaPlayerAddMana(LuaState luaState)
+    {
+        // player:addMana(manaChange[, animationOnLoss = false])
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var manaChange = GetNumber<int>(luaState, 2);
+        var animationOnLoss = GetBoolean(luaState, 3, false);
+        if (!animationOnLoss && manaChange < 0)
+            player.DecreaseMana((uint)manaChange);
+        else
+            player.IncreaseMana((uint)manaChange);
+
+        PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaPlayerGetManaSpent(LuaState luaState)
+    {
+        // player:getManaSpent()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player != null)
+            Lua.PushNumber(luaState, player.ManaSpent);
+        else
+            Lua.PushNil(luaState);
+
+        return 1;
+    }
+
+    private static int LuaPlayerAddManaSpent(LuaState luaState)
+    {
+        // player:addManaSpent(amount)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player != null)
+            player.UpdateManaSpent(GetNumber<uint>(luaState, 2));
         else
             Lua.PushNil(luaState);
 

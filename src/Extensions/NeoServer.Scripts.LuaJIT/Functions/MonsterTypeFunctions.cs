@@ -1,15 +1,10 @@
 ﻿using LuaNET;
-using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Monster;
-using NeoServer.Domain.Creatures.Monster.Combat;
-using NeoServer.Domain.Creatures.Npcs;
-using NeoServer.Domain.Creatures.Npcs.Shop;
-using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts;
@@ -66,8 +61,8 @@ public class MonsterTypeFunctions : LuaScriptInterface, IMonsterTypeFunctions
     internal static int LuaMonsterTypeCreate(LuaState luaState)
     {
         // MonsterType(name)
-        var monsterName = GetString(luaState, 1);
-        var monsterType = _monsterTypeStore.GetByName(monsterName);
+        var monsterName = GetString(luaState, 2);
+        _monsterTypeStore.TryGetValue(monsterName, out var monsterType);
 
         if (monsterType is null)
         {

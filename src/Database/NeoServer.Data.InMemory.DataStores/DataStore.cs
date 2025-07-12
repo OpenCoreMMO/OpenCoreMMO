@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Helpers;
+using System.Linq;
 
 namespace NeoServer.Data.InMemory.DataStores;
 
@@ -32,6 +34,12 @@ public class DataStore<TStore, TKey, TValue> : IDataStore<TKey, TValue> where TS
         _values.AddOrUpdate(key, value);
     }
 
+    public void AddOrUpdateRange(IEnumerable<(TKey, TValue)> values)
+    {
+        foreach (var value in values)
+            _values.AddOrUpdate(value.Item1, value.Item2);
+    }
+
     public virtual TValue Get(TKey key)
     {
         return _values.TryGetValue(key, out var value) ? value : default;
@@ -39,6 +47,14 @@ public class DataStore<TStore, TKey, TValue> : IDataStore<TKey, TValue> where TS
 
     public virtual bool TryGetValue(TKey key, out TValue value)
     {
+        if(key is string strKey)
+        {
+            var actualKey = _values.Keys.FirstOrDefault(k =>
+                k is string s && s.Equals(strKey, StringComparison.InvariantCultureIgnoreCase));
+            if (actualKey != null)
+                return _values.TryGetValue(actualKey, out value);
+        }
+
         return _values.TryGetValue(key, out value);
     }
 

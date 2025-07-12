@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
 using Serilog;
@@ -11,7 +12,7 @@ using Serilog;
 namespace NeoServer.Loaders.Monsters;
 
 public class MonsterLoader(
-    IMonsterDataManager monsterManager,
+    IMonsterTypeStore monsterTypeStore,
     ILogger logger,
     ServerConfiguration serverConfiguration,
     MonsterConverter monsterConverter)
@@ -29,7 +30,8 @@ public class MonsterLoader(
         logger.Step("Loading monsters...", "{n} monsters loaded", () =>
         {
             var monsters = GetMonsterDataListAsync().GetAwaiter().GetResult().ToList();
-            monsterManager.Load(monsters);
+
+            monsterTypeStore.AddOrUpdateRange(monsters);
             return [monsters.Count];
         });
     }

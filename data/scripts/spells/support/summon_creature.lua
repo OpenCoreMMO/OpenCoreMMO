@@ -3,6 +3,7 @@ local spell = Spell("instant")
 function spell.onCastSpell(player, variant)
 	local position = player:getPosition()
 	local monsterName = variant:getString()
+
 	local monsterType = MonsterType(monsterName)
 
 	if not monsterType then
