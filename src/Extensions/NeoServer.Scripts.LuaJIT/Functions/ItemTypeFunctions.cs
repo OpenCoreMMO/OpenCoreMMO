@@ -19,6 +19,7 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
         RegisterSharedClass(luaState, "ItemType", "", LuaCreateItemType);
         RegisterMetaMethod(luaState, "ItemType", "__eq", LuaUserdataCompare<IItemType>);
 
+        RegisterMethod(luaState, "ItemType", "isCorpse", LuaItemTypeIsCorpse);
         RegisterMethod(luaState, "ItemType", "isMovable", LuaItemTypeIsMoveable);
         RegisterMethod(luaState, "ItemType", "isStackable", LuaItemTypeIsStackable);
         RegisterMethod(luaState, "ItemType", "isFluidContainer", LuaItemTypeIsFluidContainer);
@@ -51,6 +52,18 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
 
         PushUserdata(luaState, itemType);
         SetMetatable(luaState, -1, "ItemType");
+
+        return 1;
+    }
+
+    public static int LuaItemTypeIsCorpse(LuaState luaState)
+    {
+        // itemType:isCorpse()
+        var itemType = GetUserdata<IItemType>(luaState, 1);
+        if (itemType != null)
+            Lua.PushBoolean(luaState, itemType.IsCorpse());
+        else
+            Lua.PushNil(luaState);
 
         return 1;
     }
