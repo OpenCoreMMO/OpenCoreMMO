@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using NeoServer.Domain.Common.Item;
-
-namespace NeoServer.Loaders.OTB.Parsers;
+﻿using System.Collections.Generic;
+using System;
 
 internal class ItemAttributeTranslationMap
 {
@@ -17,17 +14,21 @@ internal class ItemAttributeTranslationMap
         ["defense"] = ItemAttribute.Defense,
         ["extradef"] = ItemAttribute.ExtraDefense,
         ["attack"] = ItemAttribute.Attack,
+        ["attackspeed"] = ItemAttribute.AttackSpeed,
         ["rotateto"] = ItemAttribute.RotateTarget,
         ["moveable"] = ItemAttribute.Moveable,
         ["movable"] = ItemAttribute.Moveable,
         ["blockprojectile"] = ItemAttribute.BlockProjectTile,
+        ["ignoreblocking"] = ItemAttribute.Blocking,
         ["allowpickupable"] = ItemAttribute.Pickupable,
         ["pickupable"] = ItemAttribute.Pickupable,
         ["forceserialize"] = ItemAttribute.ForceSerialize,
+        ["forcesave"] = ItemAttribute.ForceSerialize,
         ["floorchange"] = ItemAttribute.FloorChange,
         ["corpsetype"] = ItemAttribute.CorpseType,
         ["containersize"] = ItemAttribute.Capacity,
         ["fluidsource"] = ItemAttribute.SourceLiquidType,
+        ["fluidcontainer"] = ItemAttribute.ContainerLiquidType,
         ["readable"] = ItemAttribute.Readable,
         ["writeable"] = ItemAttribute.Writeable,
         ["maxtextlen"] = ItemAttribute.MaxLength,
@@ -96,7 +97,7 @@ internal class ItemAttributeTranslationMap
         ["absorbpercentdrown"] = ItemAttribute.AbsorbPercentDrown,
         ["absorbpercentphysical"] = ItemAttribute.AbsorbPercentPhysical,
         ["absorbpercenthealing"] = ItemAttribute.AbsorbPercentHealing,
-        ["absorbpercentundefined"] = ItemAttribute.AbsorbPercenUndefined, //remove
+        ["absorbpercentundefined"] = ItemAttribute.AbsorbPercentUndefined,
         ["suppressdrunk"] = ItemAttribute.SuppressDrunk,
         ["suppressenergy"] = ItemAttribute.SuppressEnergy,
         ["suppressfire"] = ItemAttribute.SuppressFire,
@@ -120,31 +121,31 @@ internal class ItemAttributeTranslationMap
         ["elementearth"] = ItemAttribute.ElementEarth,
         ["elementfire"] = ItemAttribute.ElementFire,
         ["elementenergy"] = ItemAttribute.ElementEnergy,
+        ["elementdeath"] = ItemAttribute.ElementDeath,
+        ["elementholy"] = ItemAttribute.ElementHoly,
         ["walkstack"] = ItemAttribute.WalkStack,
         ["blocking"] = ItemAttribute.Blocking,
         ["allowdistread"] = ItemAttribute.AllowDistRead,
-        ["minlevel"] = ItemAttribute.MinimumLevel,
-        ["minmagiclevel"] = ItemAttribute.MinimumMagicLevel,
-        ["teleport"] = ItemAttribute.TeleportDestination,
-        ["useon"] = ItemAttribute.UseOn,
-        ["healing"] = ItemAttribute.Healing,
-        ["min"] = ItemAttribute.Min,
-        ["max"] = ItemAttribute.Max,
-        ["sentence"] = ItemAttribute.Sentence,
+        ["storeitem"] = ItemAttribute.StoreItem,
+        ["worth"] = ItemAttribute.Worth,
+
+        // Adicionais exclusivos do C#
+        ["isaggresive"] = ItemAttribute.IsAggressive,
+        ["decayelapsed"] = ItemAttribute.DecayElapsed,
         ["vocations"] = ItemAttribute.Vocation,
-        ["regeneration"] = ItemAttribute.Regeneration,
-        ["needtarget"] = ItemAttribute.NeedTarget,
-        ["formula"] = ItemAttribute.Formula,
-        ["damage"] = ItemAttribute.Damage,
+        ["useon"] = ItemAttribute.UseOn,
+        ["manaUse"] = ItemAttribute.ManaUse,
+        ["cooldown"] = ItemAttribute.CooldownTime,
+        ["souluse"] = ItemAttribute.SoulUse,
+        ["script"] = ItemAttribute.Script,
         ["area"] = ItemAttribute.Area,
         ["ticks"] = ItemAttribute.Ticks,
-        ["count"] = ItemAttribute.Count,
-        ["script"] = ItemAttribute.Script,
-        ["worth"] = ItemAttribute.Worth,
-        ["manause"] = ItemAttribute.ManaUse,
-        ["cooldown"] = ItemAttribute.CooldownTime,
-        ["actionid"] = ItemAttribute.ActionId,
-        ["decayElapsed"] = ItemAttribute.DecayElapsed,
-        ["souluse"] = ItemAttribute.SoulUse
+        ["formula"] = ItemAttribute.Formula,
+        ["needtarget"] = ItemAttribute.NeedTarget,
+        ["regeneration"] = ItemAttribute.Regeneration,
+        ["sentence"] = ItemAttribute.Sentence,
+        ["min"] = ItemAttribute.Min,
+        ["max"] = ItemAttribute.Max,
+        ["teleport"] = ItemAttribute.TeleportDestination
     };
 }
