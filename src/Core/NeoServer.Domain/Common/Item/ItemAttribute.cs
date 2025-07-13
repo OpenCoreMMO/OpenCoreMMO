@@ -2,6 +2,7 @@
 
 public enum ItemAttribute : byte
 {
+    //ItemAttributes
     None = 0,
     ActionId,
     UniqueId,
@@ -31,6 +32,17 @@ public enum ItemAttribute : byte
     StoreItem,
     AttackSpeed,
     Custom,
+    //ItemParseAttributes and others...
+    AnotherDescription,
+    ExtensionFile,
+    TileFlags,
+    Item,
+    DepotId,
+    ExtensionFileForSpawns,
+    ExtensionFileForHouses,
+    SleeperGuid,
+    SleepStart,
+    ContainerItems,
     Count,
     TeleportDestination,
     Capacity,
@@ -221,5 +233,6 @@ public enum ItemAttribute : byte
     NeedDirection,
     CasterNeedsTargetOrDirection,
     NeedWeapon,
-    NeedLearn
+    NeedLearn,
+    None2 = 254
 }
