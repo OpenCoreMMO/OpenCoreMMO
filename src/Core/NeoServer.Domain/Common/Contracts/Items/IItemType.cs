@@ -51,7 +51,7 @@ public interface IItemType
     bool HasAtLeastOneFlag(params ItemFlag[] flags);
     void SetGroupIfNone();
 
-    bool IsCorpse() => Flags.Contains(ItemFlag.Corpse);
+    bool IsCorpse() => Attributes.HasAttribute(ItemAttribute.CorpseType);
 
     bool IsMovable() =>  Flags.Contains(ItemFlag.Movable);
 
