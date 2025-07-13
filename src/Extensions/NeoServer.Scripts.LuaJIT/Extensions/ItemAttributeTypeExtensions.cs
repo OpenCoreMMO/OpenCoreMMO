@@ -76,4 +76,49 @@ public static class ItemAttributeTypeExtensions
             _ => ItemAttributeType.ITEM_ATTRIBUTE_NONE
         };
     }
+
+    public static bool IsAttributeInteger(this ItemAttributeType type)
+    {
+        return type switch
+        {
+            ItemAttributeType.ITEM_ATTRIBUTE_STOREITEM or
+            ItemAttributeType.ITEM_ATTRIBUTE_ACTIONID or
+            ItemAttributeType.ITEM_ATTRIBUTE_UNIQUEID or
+            ItemAttributeType.ITEM_ATTRIBUTE_DATE or
+            ItemAttributeType.ITEM_ATTRIBUTE_WEIGHT or
+            ItemAttributeType.ITEM_ATTRIBUTE_ATTACK or
+            ItemAttributeType.ITEM_ATTRIBUTE_DEFENSE or
+            ItemAttributeType.ITEM_ATTRIBUTE_EXTRADEFENSE or
+            ItemAttributeType.ITEM_ATTRIBUTE_ARMOR or
+            ItemAttributeType.ITEM_ATTRIBUTE_HITCHANCE or
+            ItemAttributeType.ITEM_ATTRIBUTE_SHOOTRANGE or
+            ItemAttributeType.ITEM_ATTRIBUTE_OWNER or
+            ItemAttributeType.ITEM_ATTRIBUTE_DURATION or
+            ItemAttributeType.ITEM_ATTRIBUTE_DECAYSTATE or
+            ItemAttributeType.ITEM_ATTRIBUTE_CORPSEOWNER or
+            ItemAttributeType.ITEM_ATTRIBUTE_CHARGES or
+            ItemAttributeType.ITEM_ATTRIBUTE_FLUIDTYPE or
+            ItemAttributeType.ITEM_ATTRIBUTE_DOORID or
+            ItemAttributeType.ITEM_ATTRIBUTE_DECAYTO or
+            ItemAttributeType.ITEM_ATTRIBUTE_WRAPID or
+            ItemAttributeType.ITEM_ATTRIBUTE_ATTACK_SPEED
+                => true,
+            _ => false
+        };
+    }
+
+    public static bool IsAttributeString(this ItemAttributeType type)
+    {
+        return type switch
+        {
+            ItemAttributeType.ITEM_ATTRIBUTE_DESCRIPTION or
+            ItemAttributeType.ITEM_ATTRIBUTE_TEXT or
+            ItemAttributeType.ITEM_ATTRIBUTE_WRITER or
+            ItemAttributeType.ITEM_ATTRIBUTE_NAME or
+            ItemAttributeType.ITEM_ATTRIBUTE_ARTICLE or
+            ItemAttributeType.ITEM_ATTRIBUTE_PLURALNAME
+                => true,
+            _ => false
+        };
+    }
 }

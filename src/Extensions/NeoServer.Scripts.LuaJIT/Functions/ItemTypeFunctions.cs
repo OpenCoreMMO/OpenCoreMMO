@@ -1,7 +1,12 @@
 ﻿using LuaNET;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
+using NeoServer.Domain.Extensions;
+using NeoServer.Domain.Items.Bases;
+using System;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -32,6 +37,9 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
         RegisterMethod(luaState, "ItemType", "getWeight", LuaItemTypeGetWeight);
 
         RegisterMethod(luaState, "ItemType", "getDestroyId", LuaItemDestroyId);
+
+        RegisterMethod(luaState, "ItemType", "hasAttribute", LuaItemHasAttribute);
+        RegisterMethod(luaState, "ItemType", "getAttribute", LuaItemGetAttribute);
     }
 
     public static int LuaCreateItemType(LuaState luaState)
@@ -178,6 +186,88 @@ public class ItemTypeFunctions : LuaScriptInterface, IItemTypeFunctions
             Lua.PushNumber(luaState, itemType.DestroyTo);
         else
             Lua.PushNil(luaState);
+
+        return 1;
+    }
+
+    public static int LuaItemHasAttribute(LuaState luaState)
+    {
+        // item:hasAttribute(key)
+        var itemType = GetUserdata<IItemType>(luaState, 1);
+
+        if (itemType == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var attribute = ItemAttributeType.ITEM_ATTRIBUTE_NONE;
+        if (Lua.IsNumber(luaState, 2))
+            attribute = GetNumber<ItemAttributeType>(luaState, 2);
+        else if (Lua.IsString(luaState, 2))
+            attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
+
+        var hasAttribute = false;
+
+        if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_NAME)
+            hasAttribute = true;
+        else if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_PLURALNAME)
+            hasAttribute = true;
+        else if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_ARTICLE)
+            hasAttribute = true;
+        else if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_DESCRIPTION)
+            hasAttribute = true;
+        else
+            hasAttribute = itemType.Attributes.HasAttribute(attribute.ToItemAttribute());
+        
+        Lua.PushBoolean(luaState, hasAttribute);
+
+        return 1;
+    }
+
+    public static int LuaItemGetAttribute(LuaState luaState)
+    {
+        // item:getAttribute(key)
+        var itemType = GetUserdata<IItemType>(luaState, 1);
+
+        if (itemType == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var attribute = ItemAttributeType.ITEM_ATTRIBUTE_NONE;
+        if (Lua.IsNumber(luaState, 2))
+            attribute = GetNumber<ItemAttributeType>(luaState, 2);
+        else if (Lua.IsString(luaState, 2))
+            attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
+
+        if (attribute.IsAttributeInteger())
+        {
+            var attributeValue = itemType.Attributes.GetAttribute<long>(attribute.ToItemAttribute());
+            Lua.PushNumber(luaState, attributeValue);
+        }
+        else if (attribute.IsAttributeString())
+        {
+            var attributeValue = string.Empty;
+
+            if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_NAME)
+                attributeValue = itemType.Name;
+            else if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_PLURALNAME)
+                attributeValue = itemType.PluralName;
+            else if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_ARTICLE)
+                attributeValue = itemType.Article;
+            else if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_DESCRIPTION)
+                attributeValue = itemType.Description;
+            else
+                attributeValue = itemType.Attributes.GetAttribute(attribute.ToItemAttribute());
+            
+            Lua.PushString(luaState, attributeValue);
+        }
+        else
+        {
+            Lua.PushNil(luaState);
+        }
 
         return 1;
     }
