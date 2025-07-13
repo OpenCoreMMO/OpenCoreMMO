@@ -61,7 +61,7 @@ public class LuaActionScriptService : IActionScriptService
         {
             if (target is ITile tile)
             {
-                target = tile.TopItemOnStack;
+                target = tile.TopDownItemOnStack;
             }
             else if (target is ICreature creature)
             {

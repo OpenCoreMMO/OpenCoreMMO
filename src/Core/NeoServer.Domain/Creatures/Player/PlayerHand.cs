@@ -48,14 +48,14 @@ public class PlayerHand : IPlayerHand
     {
         if (tile is not IDynamicTile fromTile) return Result<OperationResultList<IItem>>.NotPossible;
 
-        var topItemOnStackIsPickupable = tile.TopItemOnStack?.IsPickupable ?? false;
+        var topItemOnStackIsPickupable = tile.TopDownItemOnStack?.IsPickupable ?? false;
 
         if (!topItemOnStackIsPickupable) return Result<OperationResultList<IItem>>.NotPossible;
         if (_player.Inventory.BackpackSlot is not { } backpack) return Result<OperationResultList<IItem>>.NotPossible;
 
-        if (tile.TopItemOnStack != item) return Result<OperationResultList<IItem>>.NotPossible;
+        if (tile.TopDownItemOnStack != item) return Result<OperationResultList<IItem>>.NotPossible;
 
-        return Move(tile.TopItemOnStack, fromTile, backpack, amount, 0, 0);
+        return Move(tile.TopDownItemOnStack, fromTile, backpack, amount, 0, 0);
     }
 
     private static IItem RemoveItem(IItem item, IHasItem from, byte amount, byte fromPosition, uint possibleAmountToAdd)

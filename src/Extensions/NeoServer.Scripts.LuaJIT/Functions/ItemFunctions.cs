@@ -367,7 +367,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         }
 
         dynamicFromTile.TryGetStackPositionOfItem(item, out var stackPosition);
-        dynamicToTile.TryGetStackPositionOfItem(dynamicToTile.TopItemOnStack, out var stackPositionTopItem);
+        dynamicToTile.TryGetStackPositionOfItem(dynamicToTile.TopDownItemOnStack, out var stackPositionTopItem);
         var result = _itemMovementService.Move(item, dynamicFromTile, dynamicToTile, item.Amount, stackPosition,
             (byte)(dynamicToTile.ItemsCount + 1));
 
