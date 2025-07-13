@@ -201,7 +201,7 @@ public class SkillBonusItemTests
             (ItemAttribute.SkillShield, 55),
             (ItemAttribute.MagicPoints, 3),
             (ItemAttribute.SkillFishing, 10),
-            (ItemAttribute.Speed, 20)
+            (ItemAttribute.AttackSpeed, 20)
         });
         var sut = new SkillBonus(item);
 
@@ -221,7 +221,7 @@ public class SkillBonusItemTests
         var item = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
         {
             (ItemAttribute.SkillAxe, 5),
-            (ItemAttribute.Speed, 0)
+            (ItemAttribute.AttackSpeed, 0)
         });
         var sut = new SkillBonus(item);
 

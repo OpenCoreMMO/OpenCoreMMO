@@ -50,7 +50,7 @@ internal class ItemAttributeTranslationMap
         ["hitchance"] = ItemAttribute.HitChance,
         ["maxhitchance"] = ItemAttribute.MaxHitChance,
         ["invisible"] = ItemAttribute.Invisible,
-        ["speed"] = ItemAttribute.Speed,
+        ["speed"] = ItemAttribute.AttackSpeed,
         ["healthgain"] = ItemAttribute.HealthGain,
         ["healthticks"] = ItemAttribute.HealTicks,
         ["managain"] = ItemAttribute.ManaGain,

@@ -54,7 +54,7 @@ public class ItemType : IItemType
 
     public ItemGroup Group { get; private set; }
 
-    public ushort Speed => Attributes.GetAttribute<ushort>(ItemAttribute.Speed);
+    public ushort Speed => Attributes.GetAttribute<ushort>(ItemAttribute.AttackSpeed);
     public string Article { get; private set; }
     public string Plural { get; private set; }
 
@@ -118,7 +118,7 @@ public class ItemType : IItemType
 
     public void SetSpeed(ushort speed)
     {
-        Attributes.SetAttribute(ItemAttribute.Speed, speed);
+        Attributes.SetAttribute(ItemAttribute.AttackSpeed, speed);
         ThrowIfLocked();
     }
 

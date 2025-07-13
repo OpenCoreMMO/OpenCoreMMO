@@ -68,7 +68,7 @@ public static class MapTestDataBuilder
     {
         var itemType = new ItemType();
         itemType.SetId(id);
-        itemType.Attributes?.SetAttribute(ItemAttribute.Speed, speed);
+        itemType.Attributes?.SetAttribute(ItemAttribute.AttackSpeed, speed);
 
         return new Ground(itemType, location);
     }
