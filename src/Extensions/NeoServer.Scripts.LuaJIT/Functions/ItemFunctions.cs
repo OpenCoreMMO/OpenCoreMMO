@@ -297,20 +297,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         else if (Lua.IsString(luaState, 2))
             attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
 
-        var hasAttribute = false;
-
-        if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_NAME)
-            hasAttribute = true;
-        else if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_PLURALNAME)
-            hasAttribute = true;
-        else if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_ARTICLE)
-            hasAttribute = true;
-        else if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_DESCRIPTION)
-            hasAttribute = true;
-        else
-            hasAttribute = item.Metadata.Attributes.HasAttribute(attribute.ToItemAttribute());
-
-        Lua.PushBoolean(luaState, hasAttribute);
+        Lua.PushBoolean(luaState, item.Metadata.Attributes.HasAttribute(attribute.ToItemAttribute()));
 
         return 1;
     }
@@ -333,39 +320,11 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
 
         if (attribute.IsAttributeInteger())
-        {
-            long attributeValue = 0;
-
-            if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_ACTIONID)
-                attributeValue = item.ActionId;
-            else if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_UNIQUEID)
-                attributeValue = item.UniqueId;
-            else
-                attributeValue = item.Metadata.Attributes.GetAttribute<long>(attribute.ToItemAttribute());
-
-            Lua.PushNumber(luaState, attributeValue);
-        }
+            Lua.PushNumber(luaState, item.Metadata.Attributes.GetAttribute<long>(attribute.ToItemAttribute()));
         else if (attribute.IsAttributeString())
-        {
-            var attributeValue = string.Empty;
-
-            if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_NAME)
-                attributeValue = item.Name;
-            else if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_PLURALNAME)
-                attributeValue = item.Metadata.PluralName;
-            else if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_ARTICLE)
-                attributeValue = item.Article;
-            else if (attribute == ItemAttributeType.ITEM_ATTRIBUTE_DESCRIPTION)
-                attributeValue = item.Metadata.Description;
-            else
-                attributeValue = item.Metadata.Attributes.GetAttribute(attribute.ToItemAttribute());
-
-            Lua.PushString(luaState, attributeValue);
-        }
+            Lua.PushString(luaState, item.Metadata.Attributes.GetAttribute(attribute.ToItemAttribute()));
         else
-        {
             Lua.PushNil(luaState);
-        }
 
         return 1;
     }

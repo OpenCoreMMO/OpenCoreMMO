@@ -20,7 +20,7 @@ public class ContainerTests
     {
         var itemType = new ItemType();
         itemType.Attributes.SetAttribute(ItemAttribute.Capacity, capacity);
-        itemType.UpdateName(name);
+        itemType.SetName(name);
         itemType.SetFlag(ItemFlag.Pickupable);
         itemType.SetFlag(ItemFlag.Movable);
 
@@ -31,7 +31,7 @@ public class ContainerTests
     {
         var type = new ItemType();
         type.SetClientId(id);
-        type.UpdateName("item");
+        type.SetName("item");
 
         return new Cumulative(type, new Location(100, 100, 7), amount);
     }
@@ -40,7 +40,7 @@ public class ContainerTests
     {
         var type = new ItemType();
         type.SetClientId(id);
-        type.UpdateName(name);
+        type.SetName(name);
         type.SetFlag(ItemFlag.Pickupable);
 
         return new Item(type, new Location(100, 100, 7));

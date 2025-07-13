@@ -136,17 +136,10 @@ public class ItemFactory : IItemFactory
 
     private static void SetItemIds(ushort serverid, IDictionary<ItemAttribute, IConvertible> attributes, IItem createdItem)
     {
-        //createdItem.SetServerId(serverid);
-
         if (Guard.AnyNull(attributes, createdItem)) return;
         if (!attributes.Any()) return;
 
-        attributes.TryGetValue(ItemAttribute.ActionId, out var actionId);
-        attributes.TryGetValue(ItemAttribute.UniqueId, out var uniqueId);
-
-        if (actionId is not null) createdItem.SetActionId((ushort)actionId);
-        if (actionId is not null) createdItem.SetActionId((ushort)actionId);
-        if (uniqueId is not null) createdItem.SetUniqueId(Convert.ToUInt32(uniqueId));
+        createdItem.Metadata.Attributes.SetAttribute(attributes);
     }
 
     private void SubscribeEvents(IItem createdItem)
@@ -167,8 +160,6 @@ public class ItemFactory : IItemFactory
     private IItem CreateItem(IItemType itemType, Location location,
         IDictionary<ItemAttribute, IConvertible> attributes, IEnumerable<IItem> children)
     {
-        itemType.Attributes.SetAttribute(attributes);
-
         if (itemType.ServerId < 100) return null;
 
         if (itemType.Group == ItemGroup.Deprecated) return null;

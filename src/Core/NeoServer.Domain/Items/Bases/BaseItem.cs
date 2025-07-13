@@ -15,7 +15,7 @@ public abstract class BaseItem : IItem
     protected BaseItem(IItemType metadata, Location location)
     {
         Location = location;
-        Metadata = metadata;
+        Metadata = metadata.Clone();
 
         Decay = DecayableFactory.CreateIfItemIsDecayable(this);
     }
@@ -37,16 +37,15 @@ public abstract class BaseItem : IItem
 
     public void SetActionId(ushort actionId)
     {
-        ActionId = actionId;
+        Metadata.Attributes.SetAttribute(ItemAttribute.ActionId, actionId);
+        Metadata.ThrowIfLocked();
     }
 
     public void SetUniqueId(uint uniqueId)
     {
-        UniqueId = uniqueId;
+        Metadata.Attributes.SetAttribute(ItemAttribute.UniqueId, uniqueId);
+        Metadata.ThrowIfLocked();
     }
-
-    public ushort ActionId { get; private set; }
-    public uint UniqueId { get; private set; }
 
     public IItemType Metadata { get; private set; }
 

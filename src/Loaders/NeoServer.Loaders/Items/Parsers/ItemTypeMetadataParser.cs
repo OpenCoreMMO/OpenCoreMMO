@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Items;
 using NeoServer.Loaders.Extensions;
 using NeoServer.Loaders.OTB.Parsers;
@@ -29,7 +28,7 @@ public class ItemTypeMetadataParser
 
         if (!itemTypes.TryGetValue(id, out var itemType)) return;
 
-        itemType.UpdateName(metadata.Name);
+        itemType.SetName(metadata.Name);
         itemType.SetArticle(metadata.Article);
         itemType.SetPlural(metadata.Plural);
 

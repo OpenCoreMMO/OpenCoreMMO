@@ -55,8 +55,8 @@ public interface IItem : IThing, IHasDecay
     }
 
     string FullName => Metadata.FullName;
-    ushort ActionId { get; }
-    uint UniqueId { get; }
+    ushort ActionId => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ActionId);
+    uint UniqueId => Metadata.Attributes.GetAttribute<uint>(ItemAttribute.UniqueId);    
     public bool IsDeleted { get; }
     IThing Owner { get; }
     float Weight { get; }

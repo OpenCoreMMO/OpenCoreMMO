@@ -6,12 +6,12 @@ using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Helpers;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.World.Models;
 using NeoServer.Loaders.OTB.Enums;
 using NeoServer.Loaders.OTB.Parsers;
+using NeoServer.Loaders.OTBM.Enums;
 using NeoServer.Loaders.OTBM.Loaders;
 using NeoServer.Loaders.OTBM.Structure;
 using NeoServer.Loaders.OTBM.Structure.TileArea;
@@ -134,9 +134,13 @@ public class WorldLoader
             IDictionary<ItemAttribute, IConvertible> attributes = null;
             if (itemNode.ItemNodeAttributes != null)
             {
-                attributes = new Dictionary<ItemAttribute, IConvertible>();
+                attributes = new Dictionary<ItemAttribute, IConvertible>(); 
                 foreach (var attr in itemNode.ItemNodeAttributes)
-                    attributes.TryAdd((ItemAttribute)attr.AttributeName, attr.Value);
+                {
+                    var mappedAttr = MapAttribute(attr.AttributeName);
+                    if (mappedAttr != null)
+                        attributes.TryAdd(mappedAttr.Value, attr.Value);
+                }
             }
 
             var children = CreateChildrenItems(tileNode, itemNode, attributes);
@@ -163,6 +167,38 @@ public class WorldLoader
 
         return items;
     }
+
+
+
+    private static ItemAttribute? MapAttribute(ItemNodeAttribute nodeAttr)
+    {
+        return nodeAttr switch
+        {
+            ItemNodeAttribute.ActionId => ItemAttribute.ActionId,
+            ItemNodeAttribute.UniqueId => ItemAttribute.UniqueId,
+            ItemNodeAttribute.Text => ItemAttribute.Text,
+            ItemNodeAttribute.Description => ItemAttribute.Description,
+            ItemNodeAttribute.WrittenDate => ItemAttribute.Date,
+            ItemNodeAttribute.WrittenBy => ItemAttribute.Writer,
+            ItemNodeAttribute.Name => ItemAttribute.Name,
+            ItemNodeAttribute.Article => ItemAttribute.Article,
+            ItemNodeAttribute.PluralName => ItemAttribute.PluralName,
+            ItemNodeAttribute.Weight => ItemAttribute.Weight,
+            ItemNodeAttribute.Attack => ItemAttribute.Attack,
+            ItemNodeAttribute.Defense => ItemAttribute.Defense,
+            ItemNodeAttribute.ExtraDefense => ItemAttribute.ExtraDefense,
+            ItemNodeAttribute.Armor => ItemAttribute.Armor,
+            ItemNodeAttribute.HitChance => ItemAttribute.HitChance,
+            ItemNodeAttribute.ShootRange => ItemAttribute.ShootRange,
+            ItemNodeAttribute.Duration => ItemAttribute.Duration,
+            ItemNodeAttribute.DecayingState => ItemAttribute.DecayState,
+            ItemNodeAttribute.Charges => ItemAttribute.Charges,
+            ItemNodeAttribute.HouseDoorId => ItemAttribute.DoorId,
+            ItemNodeAttribute.DecayTo => ItemAttribute.DecayTo,
+            _ => null
+        };
+    }
+
 
     private IEnumerable<IItem> CreateChildrenItems(TileNode tileNode, ItemNode itemNode,
         IDictionary<ItemAttribute, IConvertible> attributes)

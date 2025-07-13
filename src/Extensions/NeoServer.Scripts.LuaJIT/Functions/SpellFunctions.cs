@@ -1,8 +1,6 @@
 using LuaNET;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Spells;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Spells;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -193,7 +191,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         {
             var item = _itemTypeStore.Get((ushort)rune.RuneId);
 
-            if (string.IsNullOrWhiteSpace(item.Name)) item.UpdateName(rune.Name);
+            if (string.IsNullOrWhiteSpace(item.Name)) item.SetName(rune.Name);
 
             item.Attributes.SetAttribute(ItemAttribute.MinimumMagicLevel, rune.MagicLevel);
             item.Attributes.SetAttribute(ItemAttribute.MinimumLevel, rune.Level);

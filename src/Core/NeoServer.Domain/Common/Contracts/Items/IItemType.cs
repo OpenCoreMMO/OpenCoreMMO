@@ -42,10 +42,10 @@ public interface IItemType
     ushort Count
         => Attributes.GetAttribute<ushort>(ItemAttribute.ShowCount);
 
+    void SetName(string value);
     void SetArticle(string article);
     void SetPlural(string plural);
 
-    void UpdateName(string value);
     bool HasFlag(ItemFlag flag);
     void SetOnUse();
     bool HasAtLeastOneFlag(params ItemFlag[] flags);
@@ -64,4 +64,6 @@ public interface IItemType
     bool IsKey() => Flags.Contains(ItemFlag.Key);
 
     bool HasSubType() => IsFluidContainer() || IsSplash() || IsStackable() || Charges != 0;
+    void ThrowIfLocked();
+    IItemType Clone();
 }

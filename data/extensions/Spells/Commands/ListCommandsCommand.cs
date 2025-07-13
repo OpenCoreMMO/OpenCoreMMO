@@ -26,7 +26,7 @@ public class ListCommandsCommand : CommandSpell
     private static IItemType CreateItemBook()
     {
         var item = new ItemType();
-        item.UpdateName("book");
+        item.SetName("book");
         item.SetClientId(2821);
         return item;
     }

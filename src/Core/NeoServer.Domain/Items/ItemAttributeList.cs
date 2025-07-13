@@ -117,8 +117,6 @@ public sealed class ItemAttributeList
 
     public void SetAttribute(ItemAttribute attribute, IConvertible attributeValue)
     {
-        if (attribute is ItemAttribute.ActionId or ItemAttribute.UniqueId) return;
-
         _defaultAttributes.AddOrUpdate(attribute, (attributeValue, null));
     }
 
@@ -441,4 +439,25 @@ public sealed class ItemAttributeList
 
         return !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
     }
+
+    public ItemAttributeList Clone()
+    {
+        var clone = new ItemAttributeList();
+
+        foreach (var kvp in _defaultAttributes)
+        {
+            clone._defaultAttributes[kvp.Key] = (kvp.Value.Item1, kvp.Value.Item2?.Clone());
+        }
+
+        if (customAttributes != null)
+        {
+            foreach (var kvp in customAttributes)
+            {
+                clone._customAttributes[kvp.Key] = (kvp.Value.Item1, kvp.Value.Item2?.Clone());
+            }
+        }
+
+        return clone;
+    }
+
 }

@@ -14,7 +14,6 @@ public class ItemType : IItemType
     public ItemType()
     {
         ServerId = 0;
-        Name = string.Empty;
         Flags = new HashSet<ItemFlag>();
         Attributes = new ItemAttributeList();
         Locked = false;
@@ -32,7 +31,7 @@ public class ItemType : IItemType
     /// <summary>
     ///     ItemType's name
     /// </summary>
-    public string Name { get; private set; }
+    public string Name => Attributes.GetAttribute(ItemAttribute.Name);
 
     public string FullName => string.IsNullOrWhiteSpace(Article)
         ? $"{Name}"
@@ -43,9 +42,9 @@ public class ItemType : IItemType
     /// </summary>
     public string Description => Attributes.GetAttribute(ItemAttribute.Description);
 
-    public ISet<ItemFlag> Flags { get; }
+    public ISet<ItemFlag> Flags { get; set; }
 
-    public ItemAttributeList Attributes { get; }
+    public ItemAttributeList Attributes { get; set; }
     public ItemAttributeList OnUse { get; private set; }
 
     public ushort ClientId { get; private set; }
@@ -55,14 +54,14 @@ public class ItemType : IItemType
     public ItemGroup Group { get; private set; }
 
     public ushort Speed => Attributes.GetAttribute<ushort>(ItemAttribute.AttackSpeed);
-    public string Article { get; private set; }
-    public string Plural { get; private set; }
-
+    public string Article => Attributes.GetAttribute(ItemAttribute.Article);
+    public string Plural => Attributes.GetAttribute(ItemAttribute.PluralName);
     public float Weight => Attributes.GetAttribute<float>(ItemAttribute.Weight);
 
-    public void UpdateName(string name)
+    public void SetName(string name)
     {
-        Name = name;
+        Attributes.SetAttribute(ItemAttribute.Name, name);
+        ThrowIfLocked();
     }
 
     public void SetOnUse()
@@ -74,12 +73,14 @@ public class ItemType : IItemType
 
     public void SetArticle(string article)
     {
-        Article = article;
+        Attributes.SetAttribute(ItemAttribute.Article, article);
+        ThrowIfLocked();
     }
 
     public void SetPlural(string plural)
     {
-        Plural = plural;
+        Attributes.SetAttribute(ItemAttribute.PluralName, plural);
+        ThrowIfLocked();
     }
 
     public bool HasFlag(ItemFlag flag)
@@ -133,7 +134,7 @@ public class ItemType : IItemType
         Locked = true;
     }
 
-    private void ThrowIfLocked()
+    public void ThrowIfLocked()
     {
         if (Locked) throw new InvalidOperationException("This ItemType is locked and cannot be altered.");
     }
@@ -228,5 +229,22 @@ public class ItemType : IItemType
     private bool HasOTFlag(uint flags, uint flag)
     {
         return (flags & flag) != 0;
+    }
+
+    public IItemType Clone()
+    {
+        var clone = new ItemType
+        {
+            // Copia campos simples
+            ServerId = this.ServerId,
+            ClientId = this.ClientId,
+            Group = this.Group,
+            LightBlock = this.LightBlock,
+            Locked = this.Locked,
+            Flags = new HashSet<ItemFlag>(this.Flags),
+            Attributes = this.Attributes?.Clone(),
+            OnUse = this.OnUse?.Clone()
+        };
+        return clone;
     }
 }

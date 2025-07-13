@@ -35,7 +35,7 @@ Storage = {
             Key = 9003
         },
         CombatKnifeQuest = {
-            Key = 9003
+            Key = 9004
         },
     },
 
