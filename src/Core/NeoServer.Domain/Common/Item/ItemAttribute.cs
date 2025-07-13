@@ -41,7 +41,7 @@
     //Defense, //Duplicated
     //ExtraDefense, //Duplicated
     //Attack, //Duplicated
-    //AttackSpeed, //Duplicated
+    //AttackSpeed,
     RotateTarget,
     Moveable,
     BlockProjectTile,
