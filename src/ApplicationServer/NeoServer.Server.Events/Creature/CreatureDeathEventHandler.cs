@@ -1,5 +1,4 @@
 using NeoServer.Data.Interfaces;
-using NeoServer.Domain.Combat.Services.Attacks.Events;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
@@ -28,7 +27,7 @@ public class CreatureDeathEventHandler(
         var by = @event.Attacker;
         //lua script can be added here to handle loot creation
 
-        _ = lootService.CreateLootContainer(deadCreature);
+        _ = lootService.CreateLootContainer(deadCreature, by);
 
         var damageRecordResult = deadCreature.ReceivedDamages.GetDamageRecords(gameConfiguration.Death);
 

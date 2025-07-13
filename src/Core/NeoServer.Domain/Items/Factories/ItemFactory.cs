@@ -1,4 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Helpers;
@@ -54,11 +55,14 @@ public class ItemFactory : IItemFactory
     public ICoinTypeStore CoinTypeStore { get; set; }
     public event CreateItem OnItemCreated;
 
-    public IItem CreateLootCorpse(ushort typeId, Location location, Loot loot)
+    public IItem CreateLootCorpse(ushort typeId, Location location, Loot loot, IThing killer)
     {
         if (!ItemTypeStore.TryGetValue(typeId, out var itemType)) return null;
 
         var createdItem = new LootContainer(itemType, location, loot);
+
+        if ( killer is ICreature creature)
+            createdItem.Metadata.Attributes.SetAttribute(ItemAttribute.CorpseOwner, creature.CreatureId);
 
         SubscribeEvents(createdItem);
 

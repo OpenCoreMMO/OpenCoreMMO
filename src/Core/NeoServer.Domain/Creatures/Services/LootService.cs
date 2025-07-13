@@ -9,10 +9,10 @@ namespace NeoServer.Domain.Creatures.Services;
 
 public class LootService(GameConfiguration gameConfiguration, IItemFactory itemFactory) : ILootService
 {
-    public ILootContainer CreateLootContainer(ICreature deadCreature, decimal lootRate = 0)
+    public ILootContainer CreateLootContainer(ICreature deadCreature, IThing killer, decimal lootRate = 0)
     {
         var loot = GenerateLoot(deadCreature, lootRate);
-        var corpse = itemFactory.CreateLootCorpse(deadCreature.CorpseType, deadCreature.Location, loot);
+        var corpse = itemFactory.CreateLootCorpse(deadCreature.CorpseType, deadCreature.Location, loot, killer);
         deadCreature.Corpse = corpse;
 
         return corpse as ILootContainer;

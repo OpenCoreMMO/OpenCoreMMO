@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Common.Item;
-using NeoServer.Domain.Creatures.Monster.Loot;
+﻿using NeoServer.Domain.Creatures.Monster.Loot;
 using NeoServer.Domain.Items.Items.Cumulatives;
 
 namespace NeoServer.Domain.Common.Contracts.Items;
@@ -18,7 +17,7 @@ public interface IItemFactory : IFactory
         IEnumerable<IItem> children = null);
 
     IEnumerable<Coin> CreateCoins(ulong amount);
-    IItem CreateLootCorpse(ushort typeId, Location.Structs.Location location, Loot loot);
+    IItem CreateLootCorpse(ushort typeId, Location.Structs.Location location, Loot loot, IThing killer);
 
     IItem Create(IItemType itemType, Location.Structs.Location location,
         IDictionary<ItemAttribute, IConvertible> attributes, IEnumerable<IItem> children = null);
