@@ -70,7 +70,7 @@ public class ShopperNpc : Npc, IShopperNpc
             var (coinType, amount) = coin;
 
             var item = CreateNewItem(coinType, Location.Inventory(Slot.Backpack),
-                new Dictionary<ItemAttribute, IConvertible> { { ItemAttribute.Count, amount } });
+                new Dictionary<ItemAttribute, IConvertible> { { ItemAttribute.Count, amount } }, null);
 
             if (item is null) continue;
             items[i++] = item;

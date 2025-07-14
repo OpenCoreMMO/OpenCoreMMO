@@ -111,6 +111,14 @@ public enum ItemAttributeType : uint
 }
 
 
+public enum ItemDecayStateType : byte
+{
+    DECAYING_FALSE = 0,
+    DECAYING_TRUE,
+    DECAYING_PENDING,
+    DECAYING_STOPPING,
+};
+
 public enum SlotsType : byte
 {
     CONST_SLOT_WHEREEVER = 0,

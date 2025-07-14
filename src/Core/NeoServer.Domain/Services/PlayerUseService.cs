@@ -76,7 +76,7 @@ public class PlayerUseService : IPlayerUseService
         void PickItemFromGround()
         {
             if (usableItem.Metadata.OnUse is not null &&
-                usableItem.Metadata.OnUse.TryGetAttribute<bool>("pickfromground", out var pickFromGround) &&
+                usableItem.Metadata.OnUse.TryGetCustomAttribute<bool>("pickfromground", out var pickFromGround) &&
                 pickFromGround)
             {
                 if (_map[usableItem.Location] is not IDynamicTile dynamicTile) return;
@@ -94,7 +94,7 @@ public class PlayerUseService : IPlayerUseService
     private void WalkToTarget(IPlayer player, IUsableOn item, IThing destinationThing)
     {
         if (item.Metadata.OnUse is not null &&
-            item.Metadata.OnUse.TryGetAttribute<bool>("walktotarget", out var walkToTarget) &&
+            item.Metadata.OnUse.TryGetCustomAttribute<bool>("walktotarget", out var walkToTarget) &&
             walkToTarget)
         {
             _walkToMechanism.WalkTo(player, () => UseOn(player, item, destinationThing), destinationThing.Location);

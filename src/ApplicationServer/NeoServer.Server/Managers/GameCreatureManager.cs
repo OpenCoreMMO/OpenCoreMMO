@@ -130,7 +130,16 @@ public class GameCreatureManager : IGameCreatureManager
 
         _creatureInstances.TryRemove(creature.CreatureId);
 
-        //todo remove summons
+        if (creature is ISummon summon)
+            summon.Dismiss();
+        else if (creature is IPlayer player)
+            foreach (var summonPlayer in player.Summons.ToList())
+            {
+                summonPlayer.Dismiss();
+                _map.RemoveCreature(summonPlayer);
+                _creatureInstances.TryRemove(summonPlayer.CreatureId);
+            }
+
         return true;
     }
 

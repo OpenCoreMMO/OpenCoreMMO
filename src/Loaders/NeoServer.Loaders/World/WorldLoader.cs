@@ -145,7 +145,7 @@ public class WorldLoader
 
             var children = CreateChildrenItems(tileNode, itemNode, attributes);
 
-            var item = itemFactory.Create(itemNode.ItemId, new Location(tileNode.Coordinate), attributes, children);
+            var item = itemFactory.Create(itemNode.ItemId, new Location(tileNode.Coordinate), attributes, null, children);
 
             if (item.IsNull())
             {
@@ -207,7 +207,7 @@ public class WorldLoader
         foreach (var child in itemNode.Children)
         {
             var children = CreateChildrenItems(tileNode, child, attributes);
-            var item = itemFactory.Create(child.ItemId, new Location(tileNode.Coordinate), attributes, children);
+            var item = itemFactory.Create(child.ItemId, new Location(tileNode.Coordinate), attributes, null, children);
 
             if (item is null) continue;
             items.Add(item);

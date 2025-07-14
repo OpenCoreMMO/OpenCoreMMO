@@ -34,14 +34,14 @@ public class Door : BaseItem
         var containsLockedOnDescription =
             Metadata.Description?.Contains("locked", StringComparison.InvariantCultureIgnoreCase) ?? false;
 
-        if ((Metadata.Attributes.TryGetAttribute("locked", out bool isLocked) && isLocked) ||
+        if ((Metadata.Attributes.TryGetCustomAttribute("locked", out bool isLocked) && isLocked) ||
             containsLockedOnDescription)
         {
             OperationFailService.Send(usedBy.CreatureId, TextConstants.IT_IS_LOCKED);
             return;
         }
 
-        var mode = Metadata.Attributes.GetAttribute("mode");
+        var mode = Metadata.Attributes.GetCustomAttribute("mode");
 
         mode = ExtractModeIfEmpty(mode);
         if (mode.Equals("closed", StringComparison.InvariantCultureIgnoreCase))
@@ -73,11 +73,11 @@ public class Door : BaseItem
 
     private void OpenDoor(DynamicTile dynamicTile)
     {
-        var wallId = Metadata.Attributes.GetAttribute<ushort>("wall");
+        var wallId = Metadata.Attributes.GetCustomAttribute<ushort>("wall");
 
         if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.TransformTo, out var doorId)) return;
 
-        var door = ItemFactory.Instance.Create(doorId, Location, null);
+        var door = ItemFactory.Instance.Create(doorId, Location, null, null);
 
         dynamicTile.RemoveItem(this, 1, out _);
 
@@ -93,7 +93,7 @@ public class Door : BaseItem
     private void CloseDoor(DynamicTile dynamicTile)
     {
         if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.TransformTo, out var doorId)) return;
-        var door = ItemFactory.Instance.Create(doorId, Location, null);
+        var door = ItemFactory.Instance.Create(doorId, Location, null, null);
 
         dynamicTile.RemoveItem(this, 1, out _);
 

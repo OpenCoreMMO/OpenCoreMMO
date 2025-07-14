@@ -32,8 +32,8 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
 
     private byte Defense => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Defense);
 
-    private decimal BreakChance => Metadata.Attributes.HasAttribute("breakChance")
-        ? Metadata.Attributes.GetAttribute<decimal>("breakChance")
+    private decimal BreakChance => Metadata.Attributes.HasCustomAttribute("breakChance")
+        ? Metadata.Attributes.GetCustomAttribute<decimal>("breakChance")
         : 100;
 
     protected override string PartialInspectionText

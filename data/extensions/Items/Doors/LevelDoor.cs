@@ -30,7 +30,7 @@ public class LevelDoor : Door
 
         var directionTo = Location.DirectionTo(usedBy.Location, true);
 
-        if (!Metadata.Attributes.TryGetAttribute<string>("orientation", out var doorOrientation)) return;
+        if (!Metadata.Attributes.TryGetCustomAttribute<string>("orientation", out var doorOrientation)) return;
 
         Teleport(usedBy, doorOrientation, directionTo);
     }

@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NeoServer.Data.Entities;
-using NeoServer.Data.Extensions;
-using NeoServer.Domain.Common.Contracts.Items;
+﻿using NeoServer.Data.Entities;
 using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Location.Structs;
-
-namespace NeoServer.Data.Parsers;
+using System.Collections.Generic;
+using System.Linq;
 
 public static class ItemEntityParser
 {
@@ -19,7 +16,9 @@ public static class ItemEntityParser
             DecayTo = item.Decay?.DecaysTo,
             DecayDuration = item.Decay?.Duration,
             DecayElapsed = item.Decay?.Elapsed,
-            Charges = item is IChargeable chargeable ? chargeable.Charges : null
+            Charges = item is IChargeable chargeable ? chargeable.Charges : null,
+            Attributes = item.ExtractAttributes(),
+            CustomAttributes = item.ExtractCustomAttributes()
         };
 
         return itemModel;
@@ -31,25 +30,20 @@ public static class ItemEntityParser
         if (items == null || items.Count == 0)
             return container;
 
-        // Queue to hold the child containers and their corresponding container IDs
         var childrenContainers = new Queue<(IContainer Container, int ContainerId)>();
         childrenContainers.Enqueue((container, 0));
 
         while (childrenContainers.TryDequeue(out var dequeuedContainer))
         {
-            // Get the items that belong to the current container and order them by ID in descending order
             var containerItemsRecords = items.Where(x => x.ParentId == dequeuedContainer.ContainerId)
                 .OrderByDescending(x => x.Id).ToList();
 
             foreach (var itemRecord in containerItemsRecords)
             {
-                // Create an item using the item factory, based on the item record
-                var item = itemFactory.Create((ushort)itemRecord.ServerId, location, itemRecord.GetAttributes());
+                var item = itemFactory.Create((ushort)itemRecord.ServerId, location, itemRecord.GetAttributes(), itemRecord.GetCustomAttributes());
 
-                // Add the item to the current container
                 dequeuedContainer.Container.AddItem(item);
 
-                // If the item is also a container, set its parent and enqueue it for further processing
                 if (item is not IContainer childContainer)
                     continue;
 
@@ -58,7 +52,6 @@ public static class ItemEntityParser
             }
         }
 
-        // Return the updated container
         return container;
     }
 }

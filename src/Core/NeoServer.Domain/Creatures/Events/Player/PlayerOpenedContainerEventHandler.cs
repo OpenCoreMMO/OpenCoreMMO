@@ -2,7 +2,6 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Monster.Loot;
 
 namespace NeoServer.Domain.Creatures.Events.Player;
@@ -28,10 +27,11 @@ public class PlayerOpenedContainerEventHandler(IItemFactory itemFactory) : IGame
         foreach (var item in items)
         {
             var attributes = new Dictionary<ItemAttribute, IConvertible>();
+            var customAttributes = new Dictionary<string, IConvertible>();
 
             if (item.Amount > 1) attributes.TryAdd(ItemAttribute.Count, item.Amount);
 
-            var itemToDrop = itemFactory.Create(item.ItemType.ServerId, container.Location, attributes);
+            var itemToDrop = itemFactory.Create(item.ItemType.ServerId, container.Location, attributes, customAttributes);
 
             if (itemToDrop is IContainer && item.Items?.Length == 0) continue;
 

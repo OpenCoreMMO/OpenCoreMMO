@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NeoServer.Data.Entities;
+using NeoServer.Data.Extensions;
 using NeoServer.Data.Seeds;
 
 namespace NeoServer.Data.Configurations.ForSqLite;
@@ -50,6 +51,13 @@ public class ForSqLitePlayerItemEntityConfiguration : IEntityTypeConfiguration<P
 
         entity.Property(e => e.Charges)
             .HasDefaultValueSql("0");
+
+        entity.Property(e => e.Attributes)
+            .HasColumnType("TEXT")
+            .HasConversion(
+                v => JsonExtensions.SerializeAttributes(v),
+                v => JsonExtensions.DeserializeAttributes<ItemAttribute>(v)
+            );
 
         PlayerItemSeed.Seed(entity);
     }

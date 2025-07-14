@@ -115,6 +115,13 @@ public sealed class ItemAttributeList
         _customAttributes[attribute] = (attributeValue, attrs);
     }
 
+    public void SetCustomAttribute(IDictionary<string, IConvertible> attributeValues)
+    {
+        if (attributeValues.IsNull()) return;
+
+        foreach (var (key, value) in attributeValues) SetCustomAttribute(key, value);
+    }
+
     public void SetAttribute(ItemAttribute attribute, IConvertible attributeValue)
     {
         _defaultAttributes.AddOrUpdate(attribute, (attributeValue, null));
@@ -144,7 +151,7 @@ public sealed class ItemAttributeList
         return _defaultAttributes.ContainsKey(attribute);
     }
 
-    public bool HasAttribute(string attribute)
+    public bool HasCustomAttribute(string attribute)
     {
         return _customAttributes.ContainsKey(attribute);
     }
@@ -199,7 +206,7 @@ public sealed class ItemAttributeList
         return true;
     }
 
-    public bool TryGetAttribute<T>(string attribute, out T attrValue)
+    public bool TryGetCustomAttribute<T>(string attribute, out T attrValue)
     {
         attrValue = default;
 
@@ -228,7 +235,7 @@ public sealed class ItemAttributeList
         return default;
     }
 
-    public T GetAttribute<T>(string attribute)
+    public T GetCustomAttribute<T>(string attribute)
     {
         if (_customAttributes is null) return default;
 
@@ -243,7 +250,7 @@ public sealed class ItemAttributeList
         return default;
     }
 
-    public string GetAttribute(string attribute)
+    public string GetCustomAttribute(string attribute)
     {
         if (_customAttributes is null) return default;
 
@@ -289,7 +296,7 @@ public sealed class ItemAttributeList
         return newArray[..count];
     }
 
-    public dynamic[] GetAttributeArray(string attribute)
+    public dynamic[] GetCustomAttributeArray(string attribute)
     {
         if (_customAttributes is null) return default;
 
@@ -313,19 +320,53 @@ public sealed class ItemAttributeList
 
     public Dictionary<TKey, TValue> ToDictionary<TKey, TValue>()
     {
-        if (_defaultAttributes is null && _customAttributes is null) return default;
+        if (_defaultAttributes is null && _customAttributes is null)
+            return default;
 
         var dictionary = new Dictionary<TKey, TValue>();
 
         if (_defaultAttributes is not null)
+        {
             foreach (var item in _defaultAttributes)
-                dictionary.Add((TKey)Convert.ChangeType(item.Key, typeof(TKey), CultureInfo.InvariantCulture),
-                    (TValue)item.Value.Item1);
-        if (_customAttributes is not null)
-            foreach (var item in _customAttributes)
-                dictionary.Add((TKey)Convert.ChangeType(item.Key, typeof(TKey), CultureInfo.InvariantCulture),
-                    (TValue)item.Value.Item1);
+            {
+                TKey key = ConvertKey<TKey>(item.Key);
+                dictionary[key] = (TValue)item.Value.Item1;
+            }
+        }
+
         return dictionary;
+    }
+
+    public Dictionary<TKey, TValue> ToDictionaryCustom<TKey, TValue>()
+    {
+        if (_defaultAttributes is null && _customAttributes is null)
+            return default;
+
+        var dictionary = new Dictionary<TKey, TValue>();
+
+        if (_customAttributes is not null)
+        {
+            foreach (var item in _customAttributes)
+            {
+                TKey key = ConvertKey<TKey>(item.Key);
+                dictionary[key] = (TValue)item.Value.Item1;
+            }
+        }
+
+        return dictionary;
+    }
+
+    private static TKey ConvertKey<TKey>(object key)
+    {
+        if (typeof(TKey).IsEnum)
+        {
+            if (key is string s)
+                return (TKey)Enum.Parse(typeof(TKey), s);
+            else
+                return (TKey)Enum.ToObject(typeof(TKey), key);
+        }
+
+        return (TKey)Convert.ChangeType(key, typeof(TKey));
     }
 
     public ItemAttributeList GetInnerAttributes(ItemAttribute attribute)
@@ -460,4 +501,19 @@ public sealed class ItemAttributeList
         return clone;
     }
 
+    public bool RemoveAttribute(ItemAttribute attribute)
+    {
+        if (_defaultAttributes is null)
+            return false;
+
+        return _defaultAttributes.Remove(attribute);
+    }
+
+    public bool RemoveCustomAttribute(string attribute)
+    {
+        if (_customAttributes is null)
+            return false;
+
+        return _customAttributes.Remove(attribute);
+    }
 }

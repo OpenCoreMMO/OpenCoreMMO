@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Domain.Common.Item;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
@@ -9,7 +8,8 @@ public delegate string KeywordReplacement(string message, INpc npc, ISociableCre
 public delegate void CustomerLeft(ICreature creature);
 
 public delegate IItem CreateItem(ushort typeId, Location.Structs.Location location,
-    IDictionary<ItemAttribute, IConvertible> attributes, IEnumerable<IItem> children = null);
+    IDictionary<ItemAttribute, IConvertible> attributes,
+    IDictionary<string, IConvertible> customAttributes, IEnumerable<IItem> children = null);
 
 public delegate void PlayerCloseChannel(INpc npc, IPlayer player);
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NeoServer.Data.Entities;
+using NeoServer.Data.Extensions;
 
 namespace NeoServer.Data.Configurations;
 
@@ -49,5 +50,12 @@ public class PlayerDepotItemEntitytConfiguration : IEntityTypeConfiguration<Play
 
         entity.Property(e => e.Charges)
             .HasColumnType("int");
+
+        entity.Property(e => e.Attributes)
+            .HasColumnType("jsonb")
+            .HasConversion(
+                v => JsonExtensions.SerializeAttributes(v),
+                v => JsonExtensions.DeserializeAttributes<ItemAttribute>(v)
+            );
     }
 }

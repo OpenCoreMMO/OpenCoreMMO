@@ -75,17 +75,18 @@ public class ItemFactory : IItemFactory
         IEnumerable<IItem> children = null)
     {
         var attributes = new Dictionary<ItemAttribute, IConvertible> { { ItemAttribute.Count, count } };
-        return Create(typeId, location, attributes, children);
+        var customAttributes = new Dictionary<string, IConvertible> { };
+        return Create(typeId, location, attributes, customAttributes, children);
     }
 
     public IItem Create(ushort typeId, Location location, IDictionary<ItemAttribute, IConvertible> attributes,
-        IEnumerable<IItem> children = null)
+        IDictionary<string, IConvertible> customAttributes, IEnumerable<IItem> children = null)
     {
         if (!ItemTypeStore.TryGetValue(typeId, out var itemType)) return null;
          
         var createdItem = CreateItem(itemType, location, attributes, children);
 
-        SetItemIds(itemType.ServerId, attributes, createdItem);
+        SetItemIds(itemType.ServerId, attributes, customAttributes, createdItem);
 
         SubscribeEvents(createdItem);
 
@@ -95,11 +96,11 @@ public class ItemFactory : IItemFactory
     }
 
     public IItem Create(IItemType itemType, Location location, IDictionary<ItemAttribute, IConvertible> attributes,
-        IEnumerable<IItem> children = null)
+        IDictionary<string, IConvertible> customAttributes, IEnumerable<IItem> children = null)
     {
         var createdItem = CreateItem(itemType, location, attributes, children);
 
-        SetItemIds(itemType.ServerId, attributes, createdItem);
+        SetItemIds(itemType.ServerId, attributes, customAttributes, createdItem);
 
         SubscribeEvents(createdItem);
 
@@ -115,7 +116,7 @@ public class ItemFactory : IItemFactory
 
         foreach (var coinToAdd in coinsToAdd)
         {
-            var createdCoin = Create(coinToAdd.Item1, Location.Inventory(Slot.Backpack), null);
+            var createdCoin = Create(coinToAdd.Item1, Location.Inventory(Slot.Backpack), null, null);
             if (createdCoin is not Coin newCoin) continue;
             newCoin.Amount = coinToAdd.Item2;
 
@@ -126,20 +127,22 @@ public class ItemFactory : IItemFactory
     }
 
     public IItem Create(string name, Location location, IDictionary<ItemAttribute, IConvertible> attributes,
-        IEnumerable<IItem> children = null)
+        IDictionary<string, IConvertible> customAttributes, IEnumerable<IItem> children = null)
     {
         var item = ItemTypeStore.All.FirstOrDefault(x =>
             x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
-        return item is null ? null : Create(item.ServerId, location, attributes, children);
+        return item is null ? null : Create(item.ServerId, location, attributes, customAttributes, children);
     }
 
-    private static void SetItemIds(ushort serverid, IDictionary<ItemAttribute, IConvertible> attributes, IItem createdItem)
+    private static void SetItemIds(ushort serverid, IDictionary<ItemAttribute, IConvertible> attributes,
+        IDictionary<string, IConvertible> customAttributes, IItem createdItem)
     {
         if (Guard.AnyNull(attributes, createdItem)) return;
         if (!attributes.Any()) return;
 
         createdItem.Metadata.Attributes.SetAttribute(attributes);
+        createdItem.Metadata.Attributes.SetCustomAttribute(customAttributes);
     }
 
     private void SubscribeEvents(IItem createdItem)
