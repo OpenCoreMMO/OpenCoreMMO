@@ -41,6 +41,7 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         ConfigureProperty(entity, e => e.LookType, "int", "136");
         ConfigureProperty(entity, e => e.Mana, "int", "0");
         ConfigureProperty(entity, e => e.MaxMana, "int", "0");
+        ConfigureProperty(entity, e => e.ManaSpent, "int", "0");
         ConfigureProperty(entity, e => e.Name, "varchar(255)").HasMaxLength(255);
         ConfigureProperty(entity, e => e.PosX, "int", "0");
         ConfigureProperty(entity, e => e.PosY, "int", "0");

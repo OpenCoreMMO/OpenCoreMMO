@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text.Json;
 using NeoServer.Domain.Combat.Defenses;
 using NeoServer.Domain.Common.Contracts.Combat;
-using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Server.Helpers.Extensions;
 
 namespace NeoServer.Loaders.Monsters.Converters;
 
 public class MonsterDefenseConverter
 {
-    public static ICombatDefense[] Convert(MonsterData data, IMonsterDataManager monsters)
+    public static ICombatDefense[] Convert(MonsterData data, IMonsterTypeStore monsterTypeStore)
     {
         if (data.Defenses is null) return Array.Empty<ICombatDefense>();
 
@@ -83,7 +83,7 @@ public class MonsterDefenseConverter
                 defense.TryGetValue("monster", out string monsterName);
 
                 defenses.Add(new IllusionCombatDefense(duration, monsterName,
-                    MonsterAttributeParser.ParseAreaEffect(areaEffect), monsters)
+                    MonsterAttributeParser.ParseAreaEffect(areaEffect), monsterTypeStore)
                 {
                     Chance = chance,
                     Interval = interval

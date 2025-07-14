@@ -46,6 +46,7 @@ internal static class PlayerModelSeed
             Online = false,
             Mana = mana,
             MaxMana = maxMana,
+            ManaSpent = 0,
             Soul = 100,
             MaxSoul = 100,
             PosX = posX,

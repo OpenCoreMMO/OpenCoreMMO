@@ -33,7 +33,7 @@ public class Scripts : IScripts
     private readonly ITalkActions _talkActions;
 
     private readonly SpellListManager _spellListManager;
-    private readonly INpcStore _npcStore;
+    private readonly INpcTypeStore _npcStore;
 
     #endregion
 
@@ -64,7 +64,7 @@ public class Scripts : IScripts
         IMoveEvents moveEvents,
         INpcs npcs,
         SpellListManager spellListManager,
-        INpcStore npcStore)
+        INpcTypeStore npcStore)
     {
         //_instance = this;
 

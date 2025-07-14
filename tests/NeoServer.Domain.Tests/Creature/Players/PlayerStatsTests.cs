@@ -64,7 +64,7 @@ public class PlayerStatsTests
     {
         var sut = PlayerTestDataBuilder.Build(mana: mana);
 
-        sut.ConsumeMana(consume);
+        sut.DecreaseMana(consume);
 
         sut.Mana.Should().Be(expectedMana);
     }
@@ -74,7 +74,7 @@ public class PlayerStatsTests
     {
         var sut = PlayerTestDataBuilder.Build(mana: 200);
 
-        sut.ConsumeMana(300);
+        sut.DecreaseMana(300);
         sut.Mana.Should().Be(200);
     }
 }

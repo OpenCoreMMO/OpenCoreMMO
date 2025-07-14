@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Creatures.Monster.Managers;
 using NeoServer.Domain.Depot;
 using NeoServer.Domain.Spells;
 using NeoServer.Domain.World.Models.Spawns;
@@ -18,7 +16,6 @@ public static class ManagerInjection
         builder.AddSingleton<IDecayableItemManager, DecayableItemManager>();
 
 
-        builder.AddSingleton<IMonsterDataManager, MonsterDataManager>();
         builder.AddSingleton<SpawnManager>();
         builder.AddSingleton<DepotManager>();
         builder.AddSingleton<SpellListManager>();

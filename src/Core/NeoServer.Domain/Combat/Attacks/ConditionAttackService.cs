@@ -1,5 +1,6 @@
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Conditions.Enums;
@@ -7,7 +8,7 @@ using NeoServer.Domain.Creatures.Conditions.Implementations;
 
 namespace NeoServer.Domain.Combat.Attacks;
 
-public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IAttackService
+public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttackService
 {
     private static readonly HashSet<ConditionType> HarmfulConditions =
     [
@@ -211,7 +212,7 @@ public class ConditionAttackService(IMonsterDataManager monsterDataManager) : IA
     private void AddOutfitCondition(CombatParameter combatParameter, ICombatActor targetCreature,
         ConditionType conditionType, uint duration)
     {
-        monsterDataManager.TryGetMonster((string)combatParameter.Condition.Value, out var monster);
+        monsterTypeStore.TryGetValue((string)combatParameter.Condition.Value, out var monster);
 
         monster.Look.TryGetValue(LookType.Type, out var lookType);
         monster.Look.TryGetValue(LookType.Addon, out var addon);
