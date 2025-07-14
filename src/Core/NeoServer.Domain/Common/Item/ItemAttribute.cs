@@ -28,7 +28,7 @@
     DecayTo,
     WrapId,
     StoreItem,
-    AttackSpeed,
+    AttackSpeed, //todo: Check this, exists in tfs but not in canary?
     Custom,
 
     //ItemParseAttributes

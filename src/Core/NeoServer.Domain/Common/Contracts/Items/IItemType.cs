@@ -40,7 +40,7 @@ public interface IItemType
         => Attributes.GetAttribute<ushort>(ItemAttribute.Charges);
 
     ushort Count
-        => Attributes.GetAttribute<ushort>(ItemAttribute.ShowCount);
+        => Attributes.GetAttribute<ushort>(ItemAttribute.Count);
 
     void SetName(string value);
     void SetArticle(string article);
