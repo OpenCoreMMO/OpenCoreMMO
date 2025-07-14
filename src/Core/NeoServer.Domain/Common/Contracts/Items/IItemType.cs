@@ -51,33 +51,17 @@ public interface IItemType
     bool HasAtLeastOneFlag(params ItemFlag[] flags);
     void SetGroupIfNone();
 
-    bool IsMovable()
-    {
-        return Flags.Contains(ItemFlag.Movable);
-    }
+    bool IsCorpse() => Attributes.HasAttribute(ItemAttribute.CorpseType);
 
-    bool IsFluidContainer()
-    {
-        return Flags.Contains(ItemFlag.LiquidContainer);
-    }
+    bool IsMovable() =>  Flags.Contains(ItemFlag.Movable);
 
-    bool IsSplash()
-    {
-        return Group == ItemGroup.Splash;
-    }
+    bool IsFluidContainer() => Flags.Contains(ItemFlag.LiquidContainer);
 
-    bool IsStackable()
-    {
-        return Group == ItemGroup.Splash;
-    }
+    bool IsSplash() => Group == ItemGroup.Splash;
 
-    bool IsKey()
-    {
-        return Flags.Contains(ItemFlag.Key);
-    }
+    bool IsStackable() => Group == ItemGroup.Splash;
 
-    bool HasSubType()
-    {
-        return IsFluidContainer() || IsSplash() || IsStackable() || Charges != 0;
-    }
+    bool IsKey() => Flags.Contains(ItemFlag.Key);
+
+    bool HasSubType() => IsFluidContainer() || IsSplash() || IsStackable() || Charges != 0;
 }
