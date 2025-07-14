@@ -20,18 +20,20 @@ public class DataStore<TStore, TKey, TValue> : IDataStore<TKey, TValue> where TS
         }
     }
 
+    public DataStore()
+    {
+        if (typeof(TKey) == typeof(string))
+            _values = new Dictionary<TKey, TValue>((IEqualityComparer<TKey>)(object)StringComparer.InvariantCultureIgnoreCase);
+        else
+            _values = new Dictionary<TKey, TValue>();
+    }
+
     public virtual IEnumerable<TValue> All => _values.Values;
     public virtual IDictionary<TKey, TValue> Map => _values;
 
-    public void Clear()
-    {
-        _values.Clear();
-    }
+    public void Clear() => _values.Clear();
 
-    public virtual void AddOrUpdate(TKey key, TValue value)
-    {
-        _values.AddOrUpdate(key, value);
-    }
+    public virtual void AddOrUpdate(TKey key, TValue value) => _values.AddOrUpdate(key, value);
 
     public void AddOrUpdateRange(IEnumerable<(TKey, TValue)> values)
     {
@@ -39,24 +41,9 @@ public class DataStore<TStore, TKey, TValue> : IDataStore<TKey, TValue> where TS
             _values.AddOrUpdate(value.Item1, value.Item2);
     }
 
-    public virtual TValue Get(TKey key)
-    {
-        return _values.TryGetValue(key, out var value) ? value : default;
-    }
+    public virtual TValue Get(TKey key) => _values.TryGetValue(key, out var value) ? value : default;
 
-    public virtual bool TryGetValue(TKey key, out TValue value)
-    {
-        //TODO: Remove this and use InvariantCultureIgnoreCase in the dictionary
-        if (key is string strKey)
-            foreach (var k in _values.Keys)
-                if (k is string s && s.Equals(strKey, StringComparison.InvariantCultureIgnoreCase))
-                    return _values.TryGetValue(k, out value);
+    public virtual bool TryGetValue(TKey key, out TValue value) => _values.TryGetValue(key, out value);
 
-        return _values.TryGetValue(key, out value);
-    }
-
-    public virtual bool Contains(TKey key)
-    {
-        return _values.ContainsKey(key);
-    }
+    public virtual bool Contains(TKey key) => _values.ContainsKey(key);
 }
