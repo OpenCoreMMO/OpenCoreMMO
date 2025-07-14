@@ -32,7 +32,7 @@ public class HealingItem : Cumulative, IConsumable
 
         if (Type.Equals("hp", StringComparison.InvariantCultureIgnoreCase))
             actor.Heal(value, usedBy);
-        else if (creature is IPlayer player) player.HealMana(value);
+        else if (creature is IPlayer player) player.IncreaseMana(value);
 
         Reduce();
 

@@ -92,8 +92,12 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     ITown Town { get; set; }
 
     IInventory Inventory { get; }
-    ushort Mana { get; }
-    ushort MaxMana { get; }
+    uint Mana { get; }
+    /// <summary>
+    /// Spent mana consumption until magic level increase
+    /// </summary>
+    uint ManaSpent { get; }
+    uint MaxMana { get; }
     SkillType SkillInUse { get; }
     bool CannotLogout { get; }
     uint Id { get; }
@@ -187,13 +191,19 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     /// </summary>
     /// <param name="mana"></param>
     /// <returns></returns>
-    bool HasEnoughMana(ushort mana);
+    bool HasEnoughMana(uint mana);
 
     /// <summary>
     ///     Consume mana points
     /// </summary>
     /// <param name="mana"></param>
-    void ConsumeMana(ushort mana);
+    void DecreaseMana(uint mana);
+
+    /// <summary>
+    ///     Update mana spent for magic level increase
+    /// </summary>
+    /// <param name="mana"></param>
+    void UpdateManaSpent(uint manaCost);
 
     /// <summary>
     ///     Checks if the player has specified level points
@@ -212,7 +222,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     /// </summary>
     void Recover();
 
-    void HealMana(ushort increasing);
+    void IncreaseMana(uint increasing);
 
     bool Feed(Food food);
     bool Feed(int duration);

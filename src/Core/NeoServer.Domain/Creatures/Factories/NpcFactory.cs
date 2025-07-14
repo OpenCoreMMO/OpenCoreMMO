@@ -16,12 +16,12 @@ public class NpcFactory : INpcFactory
     private readonly IItemFactory _itemFactory;
     private readonly ILogger _logger;
     private readonly IMapTool _mapTool;
-    private readonly INpcStore _npcStore;
+    private readonly INpcTypeStore _npcStore;
 
     public NpcFactory(
         ILogger logger,
         IItemFactory itemFactory,
-        INpcStore npcStore,
+        INpcTypeStore npcStore,
         ICoinTypeStore coinTypeStore,
         IMapTool mapTool)
     {

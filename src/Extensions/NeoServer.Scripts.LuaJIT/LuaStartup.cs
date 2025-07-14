@@ -30,6 +30,7 @@ public class LuaStartup : ILuaStartup
         IItemTypeFunctions itemTypeFunctions,
         ILoggerFunctions loggerFunctions,
         IMonsterFunctions monsterFunctions,
+        IMonsterTypeFunctions monsterTypeFunctions,
         IMoveEventFunctions moveEventFunctions,
         INpcFunctions npcFunctions,
         INpcTypeFunctions npcTypeFunctions,
@@ -68,6 +69,7 @@ public class LuaStartup : ILuaStartup
         _loggerFunctions = loggerFunctions;
         _playerFunctions = playerFunctions;
         _monsterFunctions = monsterFunctions;
+        _monsterTypeFunctions = monsterTypeFunctions;
         _moveEventFunctions = moveEventFunctions;
         _npcFunctions = npcFunctions;
         _npcTypeFunctions = npcTypeFunctions;
@@ -126,6 +128,7 @@ public class LuaStartup : ILuaStartup
 
         _containerFunctions.Init(luaState);
         _monsterFunctions.Init(luaState);
+        _monsterTypeFunctions.Init(luaState);
         _moveEventFunctions.Init(luaState);
         _npcFunctions.Init(luaState);
         _npcTypeFunctions.Init(luaState);
@@ -196,9 +199,24 @@ public class LuaStartup : ILuaStartup
     /// </summary>
     private readonly IConditionFunctions _conditionFunctions;
 
+    /// <summary>
+    ///     A reference to the <see cref="IBankFunctions" /> instance in use.
+    /// </summary>
     private readonly IBankFunctions _bankFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ISpellFunctions" /> instance in use.
+    /// </summary>
     private readonly ISpellFunctions _spellFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ICombatFunctions" /> instance in use.
+    /// </summary>
     private readonly ICombatFunctions _combatFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IVariantFunctions" /> instance in use.
+    /// </summary>
     private readonly IVariantFunctions _variantFunctions;
 
     /// <summary>
@@ -270,6 +288,11 @@ public class LuaStartup : ILuaStartup
     ///     A reference to the <see cref="IMonsterFunctions" /> instance in use.
     /// </summary>
     private readonly IMonsterFunctions _monsterFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IMonsterTypeFunctions" /> instance in use.
+    /// </summary>
+    private readonly IMonsterTypeFunctions _monsterTypeFunctions;
 
     /// <summary>
     ///     A reference to the <see cref="IMoveEventFunctions" /> instance in use.

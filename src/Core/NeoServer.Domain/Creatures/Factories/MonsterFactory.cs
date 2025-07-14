@@ -1,4 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using Serilog;
@@ -8,16 +9,15 @@ namespace NeoServer.Domain.Creatures.Factories;
 public class MonsterFactory : IMonsterFactory
 {
     private readonly IMapTool _mapTool;
-    private readonly IMonsterDataManager _monsterManager;
+    private readonly IMonsterTypeStore _monsterTypeStore;
+    private readonly ILogger _logger;
 
-    private readonly ILogger logger;
-
-    public MonsterFactory(IMonsterDataManager monsterManager,
+    public MonsterFactory(IMonsterTypeStore monsterTypeStore,
         ILogger logger, IMapTool mapTool)
     {
-        _monsterManager = monsterManager;
+        _monsterTypeStore = monsterTypeStore;
 
-        this.logger = logger;
+        this._logger = logger;
         _mapTool = mapTool;
         Instance = this;
     }
@@ -26,10 +26,10 @@ public class MonsterFactory : IMonsterFactory
 
     public IMonster CreateSummon(string name, ICreature master)
     {
-        var result = _monsterManager.TryGetMonster(name, out var monsterType);
+        var result = _monsterTypeStore.TryGetValue(name, out var monsterType);
         if (result == false)
         {
-            logger.Warning("Given monster name: {Name} is not loaded", name);
+            _logger.Warning("Given monster name: {Name} is not loaded", name);
             return null;
         }
 
@@ -40,10 +40,10 @@ public class MonsterFactory : IMonsterFactory
 
     public IMonster Create(string name, ISpawnPoint spawn = null)
     {
-        var result = _monsterManager.TryGetMonster(name, out var monsterType);
+        var result = _monsterTypeStore.TryGetValue(name, out var monsterType);
         if (result == false)
         {
-            logger.Warning("Given monster name: {Name} is not loaded", name);
+            _logger.Warning("Given monster name: {Name} is not loaded", name);
             return null;
         }
 

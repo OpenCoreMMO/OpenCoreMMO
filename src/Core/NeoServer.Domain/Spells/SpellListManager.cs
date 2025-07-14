@@ -51,18 +51,47 @@ public class SpellListManager
         if (string.IsNullOrWhiteSpace(words))
             return false;
 
-        var paramsIndex = words.IndexOf("\"");
+        if (TryGet(words, out spell))
+            return true;
+
+        var param = string.Empty;
+        var spellWord = string.Empty;
+
+        var paramsIndex = words.IndexOf('"');
 
         if (paramsIndex < 0)
-            return TryGet(words, out spell);
+            paramsIndex = words.IndexOf('\'');
 
-        var wordsWithoutParams = words.Substring(0, paramsIndex).Trim();
+        if (paramsIndex < 0)
+        {
+            int lastSpaceIndex = words.LastIndexOf(' ');
+            if (lastSpaceIndex >= 0)
+            {
+                spellWord = words[..lastSpaceIndex];
+                param = words[(lastSpaceIndex + 1)..];
+            }
+            else
+            {
+                spellWord = words;
+                param = string.Empty;
+            }
+        }
+        else
+        {
+            param = words.Substring(paramsIndex, (words.Length - 1) - paramsIndex);
+            spellWord = words[..paramsIndex];
+        }
 
-        if (!TryGet(wordsWithoutParams, out spell))
+        if (!TryGet(spellWord.Trim(), out spell))
             return false;
 
-        var wordParam = words.Substring(paramsIndex, (words.Length - 1) - paramsIndex).Replace("\"", "");
-        spell.Params = [ wordParam ];
+        param = param.Replace("\"", "").Replace("\'", "").Trim();
+
+        if (!string.IsNullOrWhiteSpace(param))
+        {
+            spell.Params = [param];
+        }
+
         return true;
     }
 

@@ -2,7 +2,7 @@
 
 namespace NeoServer.Domain.Common.Contracts.DataStores;
 
-public interface INpcStore : IDataStore<string, INpcType>
+public interface INpcTypeStore : IDataStore<string, INpcType>
 {
     public virtual INpcType GetByName(string name)
     {
