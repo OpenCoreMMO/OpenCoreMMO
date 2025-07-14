@@ -39,7 +39,7 @@ public class TileHeightTests
 
         //assert
         tile.ItemsCount.Should().Be(3);
-        tile.TopDownItemOnStack.Should().Be(weapon);
+        tile.TopItemOnStack.Should().Be(weapon);
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class TileHeightTests
 
         //assert
         tile.ItemsCount.Should().Be(3);
-        tile.TopDownItemOnStack.Should().Be(weapon);
+        tile.TopItemOnStack.Should().Be(weapon);
     }
 
     [Theory]

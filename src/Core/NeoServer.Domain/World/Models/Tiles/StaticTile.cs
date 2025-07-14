@@ -9,8 +9,7 @@ namespace NeoServer.Domain.World.Models.Tiles;
 
 public class StaticTile : BaseTile, IStaticTile
 {
-    private IItem _topTopItemOnStack;
-    private IItem _topDownItemOnStack;
+    private IItem _topItemOnStack;
 
     public StaticTile(Coordinate coordinate, params IItem[] items) : this(
         new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z), items)
@@ -29,8 +28,7 @@ public class StaticTile : BaseTile, IStaticTile
 
     public override int ThingsCount { get; }
     public byte[] Raw { get; }
-    public override IItem TopTopItemOnStack => _topTopItemOnStack;
-    public override IItem TopDownItemOnStack => _topDownItemOnStack;
+    public override IItem TopItemOnStack => _topItemOnStack;
     public override ICreature TopCreatureOnStack => null;
 
     public override int ItemsCount => AllItems?.Length ?? 0;
@@ -84,7 +82,7 @@ public class StaticTile : BaseTile, IStaticTile
 
             if (item is IGround groundItem)
             {
-                _topDownItemOnStack = groundItem;
+                _topItemOnStack = groundItem;
                 ground.AddRange(BitConverter.GetBytes(item.ClientId));
                 continue;
             }
@@ -93,12 +91,12 @@ public class StaticTile : BaseTile, IStaticTile
             {
                 if (item.FloorDirection != default) FloorDirection = item.FloorDirection;
 
-                _topDownItemOnStack = item;
+                _topItemOnStack = item;
                 top1.AddRange(BitConverter.GetBytes(item.ClientId));
             }
             else
             {
-                _topDownItemOnStack = item;
+                _topItemOnStack = item;
                 downRawItems.InsertRange(0, BitConverter.GetBytes(item.ClientId));
             }
 

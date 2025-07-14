@@ -27,7 +27,7 @@ public class MapToContainerMovementOperation
         var tile = map[itemThrow.FromLocation];
 
         if (tile is not IDynamicTile fromTile) return;
-        var item = fromTile.TopDownItemOnStack;
+        var item = fromTile.TopItemOnStack;
 
         if (item is null) return;
         if (!item.IsPickupable) return;

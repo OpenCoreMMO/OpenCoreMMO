@@ -35,7 +35,7 @@ public class PlayerMoveItemTests
         //assert
         Assert.True(result.Succeeded);
         Assert.Equal(inventory[Slot.Left], item);
-        Assert.Null(tile.TopDownItemOnStack);
+        Assert.Null(tile.TopItemOnStack);
     }
 
 
@@ -60,7 +60,7 @@ public class PlayerMoveItemTests
         result.Failed.Should().BeTrue();
         result.Error.Should().Be(InvalidOperation.CannotDress);
         inventory[Slot.Backpack].Should().BeNull();
-        tile.TopDownItemOnStack.Should().Be(item);
+        tile.TopItemOnStack.Should().Be(item);
     }
 
 
@@ -85,7 +85,7 @@ public class PlayerMoveItemTests
         //assert
         Assert.True(result.Succeeded);
         Assert.Equal(inventory[Slot.Left], item);
-        Assert.Equal(itemOnInventory, tile.TopDownItemOnStack);
+        Assert.Equal(itemOnInventory, tile.TopItemOnStack);
     }
 
     [Fact]
@@ -102,13 +102,13 @@ public class PlayerMoveItemTests
             new[] { item });
 
         //act
-        var result = player.MoveItem(tile.TopDownItemOnStack, tile, inventory, 20, 0, (byte)Slot.Ammo);
+        var result = player.MoveItem(tile.TopItemOnStack, tile, inventory, 20, 0, (byte)Slot.Ammo);
 
         //assert
         Assert.True(result.Succeeded);
         Assert.Equal(20, inventory[Slot.Ammo].Amount);
 
-        Assert.Null(tile.TopDownItemOnStack);
+        Assert.Null(tile.TopItemOnStack);
     }
 
     [Fact]
@@ -129,14 +129,14 @@ public class PlayerMoveItemTests
             new[] { item });
 
         //act
-        var result = player.MoveItem(tile.TopDownItemOnStack, tile, inventory, 100, 0, (byte)Slot.Ammo);
+        var result = player.MoveItem(tile.TopItemOnStack, tile, inventory, 100, 0, (byte)Slot.Ammo);
 
         //assert
         Assert.False(result.Succeeded);
         Assert.Equal(InvalidOperation.NotEnoughRoom, result.Error);
         Assert.Equal(100, inventory[Slot.Ammo].Amount);
 
-        Assert.Equal(51, tile.TopDownItemOnStack.Amount);
+        Assert.Equal(51, tile.TopItemOnStack.Amount);
     }
 
 
@@ -158,14 +158,14 @@ public class PlayerMoveItemTests
             new IItem[] { item });
 
         //act
-        var result = player.MoveItem(tile.TopDownItemOnStack, tile, inventory, 100, 0, (byte)Slot.Ammo);
+        var result = player.MoveItem(tile.TopItemOnStack, tile, inventory, 100, 0, (byte)Slot.Ammo);
 
         //assert
         Assert.False(result.Succeeded);
         Assert.Equal(itemOnInventory, inventory[Slot.Left]);
 
-        Assert.Equal(item, tile.TopDownItemOnStack);
-        Assert.Equal(100, tile.TopDownItemOnStack.Amount);
+        Assert.Equal(item, tile.TopItemOnStack);
+        Assert.Equal(100, tile.TopItemOnStack.Amount);
     }
 
     [Fact]
@@ -186,13 +186,13 @@ public class PlayerMoveItemTests
             new[] { item });
 
         //act
-        var result = player.MoveItem(tile.TopDownItemOnStack, tile, inventory, 100, 0, (byte)Slot.Backpack);
+        var result = player.MoveItem(tile.TopItemOnStack, tile, inventory, 100, 0, (byte)Slot.Backpack);
 
         //assert
         Assert.True(result.Succeeded);
         Assert.Equal(item, ((IContainer)inventory[Slot.Backpack])[item.Location.ContainerSlot]);
 
-        Assert.Null(tile.TopDownItemOnStack);
+        Assert.Null(tile.TopItemOnStack);
         Assert.Equal(100, ((IContainer)inventory[Slot.Backpack])[item.Location.ContainerSlot].Amount);
     }
 
@@ -217,7 +217,7 @@ public class PlayerMoveItemTests
         //assert
         Assert.True(result.Succeeded);
         Assert.Null(inventory[Slot.Right]);
-        Assert.Equal(item, tile.TopDownItemOnStack);
+        Assert.Equal(item, tile.TopItemOnStack);
     }
 
     [Fact]
@@ -292,8 +292,8 @@ public class PlayerMoveItemTests
 
         //assert
         Assert.True(result.Succeeded);
-        Assert.Null(fromTile.TopDownItemOnStack);
-        Assert.Equal(item, dest.TopDownItemOnStack);
+        Assert.Null(fromTile.TopItemOnStack);
+        Assert.Equal(item, dest.TopItemOnStack);
     }
 
     [Fact]
@@ -316,11 +316,11 @@ public class PlayerMoveItemTests
         //assert
         Assert.True(result.Succeeded);
 
-        Assert.Equal(100, dest.TopDownItemOnStack.ClientId);
-        Assert.Equal(item, fromTile.TopDownItemOnStack);
+        Assert.Equal(100, dest.TopItemOnStack.ClientId);
+        Assert.Equal(item, fromTile.TopItemOnStack);
 
-        Assert.Equal(20, ((ICumulative)fromTile.TopDownItemOnStack).Amount);
-        Assert.Equal(80, ((ICumulative)dest.TopDownItemOnStack).Amount);
+        Assert.Equal(20, ((ICumulative)fromTile.TopItemOnStack).Amount);
+        Assert.Equal(80, ((ICumulative)dest.TopItemOnStack).Amount);
     }
 
     [Fact]
@@ -343,11 +343,11 @@ public class PlayerMoveItemTests
         //assert
         Assert.True(result.Succeeded);
 
-        Assert.Equal(100, dest.TopDownItemOnStack.ClientId);
-        Assert.Equal(item, fromTile.TopDownItemOnStack);
+        Assert.Equal(100, dest.TopItemOnStack.ClientId);
+        Assert.Equal(item, fromTile.TopItemOnStack);
 
-        Assert.Equal(50, ((ICumulative)fromTile.TopDownItemOnStack).Amount);
-        Assert.Equal(50, ((ICumulative)dest.TopDownItemOnStack).Amount);
+        Assert.Equal(50, ((ICumulative)fromTile.TopItemOnStack).Amount);
+        Assert.Equal(50, ((ICumulative)dest.TopItemOnStack).Amount);
     }
 
     [Fact]
@@ -369,11 +369,11 @@ public class PlayerMoveItemTests
         //assert
         Assert.True(result.Succeeded);
 
-        Assert.Equal(100, dest.TopDownItemOnStack.ClientId);
-        Assert.Equal(item, fromTile.TopDownItemOnStack);
+        Assert.Equal(100, dest.TopItemOnStack.ClientId);
+        Assert.Equal(item, fromTile.TopItemOnStack);
 
-        Assert.Equal(60, ((ICumulative)fromTile.TopDownItemOnStack).Amount);
-        Assert.Equal(90, ((ICumulative)dest.TopDownItemOnStack).Amount);
+        Assert.Equal(60, ((ICumulative)fromTile.TopItemOnStack).Amount);
+        Assert.Equal(90, ((ICumulative)dest.TopItemOnStack).Amount);
 
         //act
         result = player.MoveItem(item, fromTile, dest, 60, 0, 0);
@@ -381,10 +381,10 @@ public class PlayerMoveItemTests
         //assert
         Assert.True(result.Succeeded);
 
-        Assert.Equal(100, dest.TopDownItemOnStack.ClientId);
-        Assert.Null(fromTile.TopDownItemOnStack);
+        Assert.Equal(100, dest.TopItemOnStack.ClientId);
+        Assert.Null(fromTile.TopItemOnStack);
 
-        Assert.Equal(50, ((ICumulative)dest.TopDownItemOnStack).Amount);
+        Assert.Equal(50, ((ICumulative)dest.TopItemOnStack).Amount);
     }
 
     #endregion
