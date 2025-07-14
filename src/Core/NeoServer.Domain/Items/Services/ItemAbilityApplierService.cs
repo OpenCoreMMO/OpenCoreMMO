@@ -16,7 +16,7 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
         if (Guard.AnyNull(player, item))
             throw new ArgumentException($"[{nameof(ItemAbilityApplierService)}] Player or item cannot be null");
 
-        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.AttackSpeed, out var speed))
+        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.Speed, out var speed))
             player.IncreaseSpeed(speed);
 
         if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemAttribute.Invisible, out var invisible) && invisible)
@@ -60,7 +60,7 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
         if (Guard.AnyNull(player, item))
             throw new ArgumentException($"[{nameof(ItemAbilityApplierService)}] Player or item cannot be null");
 
-        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.AttackSpeed, out var speed))
+        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.Speed, out var speed))
             player.DecreaseSpeed(speed);
 
         if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemAttribute.Invisible, out var invisible) && invisible)
