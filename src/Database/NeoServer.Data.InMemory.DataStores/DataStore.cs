@@ -46,6 +46,7 @@ public class DataStore<TStore, TKey, TValue> : IDataStore<TKey, TValue> where TS
 
     public virtual bool TryGetValue(TKey key, out TValue value)
     {
+        //TODO: Remove this and use InvariantCultureIgnoreCase in the dictionary
         if (key is string strKey)
             foreach (var k in _values.Keys)
                 if (k is string s && s.Equals(strKey, StringComparison.InvariantCultureIgnoreCase))
