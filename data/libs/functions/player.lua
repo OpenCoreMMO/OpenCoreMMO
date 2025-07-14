@@ -4,3 +4,7 @@
     end
     return self:sendTextMessage(MESSAGE_STATUS_SMALL, message)
 end
+
+function Player.hasFlag(self, flag)
+	return self:getGroup():hasFlag(flag)
+end

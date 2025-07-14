@@ -13,4 +13,5 @@ public interface IDataStore<TKey, TValue>
     bool TryGetValue(TKey key, out TValue value);
     bool Contains(TKey key);
     void Clear();
+    void AddOrUpdateRange(IEnumerable<(TKey, TValue)> values);
 }

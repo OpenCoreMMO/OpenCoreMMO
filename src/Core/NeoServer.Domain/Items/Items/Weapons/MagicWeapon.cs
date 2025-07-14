@@ -44,7 +44,7 @@ public class MagicWeapon : Equipment, IDistanceWeapon
 
         if (DistanceCombatAttack.CalculateAttack(actor, enemy, combat, out var damage))
         {
-            player.ConsumeMana(ManaConsumption);
+            player.DecreaseMana(ManaConsumption);
             enemy.TakeDamage(actor, damage);
             return true;
         }
