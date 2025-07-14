@@ -459,5 +459,4 @@ public sealed class ItemAttributeList
 
         return clone;
     }
-
 }
