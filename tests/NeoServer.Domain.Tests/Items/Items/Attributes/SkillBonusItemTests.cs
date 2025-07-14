@@ -221,7 +221,7 @@ public class SkillBonusItemTests
         var item = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
         {
             (ItemAttribute.SkillAxe, 5),
-            (ItemAttribute.AttackSpeed, 0)
+            (ItemAttribute.Speed, 0)
         });
         var sut = new SkillBonus(item);
 
