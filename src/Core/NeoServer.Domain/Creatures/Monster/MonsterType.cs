@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using NeoServer.Domain.Common.Contracts.Combat;
-using NeoServer.Domain.Common.Contracts.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Creatures.Monsters;
 using NeoServer.Domain.Common.Creatures;
