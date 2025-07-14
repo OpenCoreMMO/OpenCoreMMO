@@ -116,8 +116,8 @@ public enum ItemDecayStateType : byte
     DECAYING_FALSE = 0,
     DECAYING_TRUE,
     DECAYING_PENDING,
-    DECAYING_STOPPING,
-};
+    DECAYING_STOPPING
+}
 
 public enum SlotsType : byte
 {
