@@ -86,7 +86,7 @@ public class ItemFactory : IItemFactory
          
         var createdItem = CreateItem(itemType, location, attributes, children);
 
-        SetItemIds(itemType.ServerId, attributes, customAttributes, createdItem);
+        SetItemIds(attributes, customAttributes, createdItem);
 
         SubscribeEvents(createdItem);
 
@@ -100,7 +100,7 @@ public class ItemFactory : IItemFactory
     {
         var createdItem = CreateItem(itemType, location, attributes, children);
 
-        SetItemIds(itemType.ServerId, attributes, customAttributes, createdItem);
+        SetItemIds(attributes, customAttributes, createdItem);
 
         SubscribeEvents(createdItem);
 
@@ -135,7 +135,7 @@ public class ItemFactory : IItemFactory
         return item is null ? null : Create(item.ServerId, location, attributes, customAttributes, children);
     }
 
-    private static void SetItemIds(ushort serverid, IDictionary<ItemAttribute, IConvertible> attributes,
+    private static void SetItemIds(IDictionary<ItemAttribute, IConvertible> attributes,
         IDictionary<string, IConvertible> customAttributes, IItem createdItem)
     {
         if (Guard.AnyNull(attributes, createdItem)) return;
