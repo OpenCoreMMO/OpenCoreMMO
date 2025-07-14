@@ -16,7 +16,7 @@ namespace NeoServer.Scripts.LuaJIT.Functions;
 public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
 {
     private static IGameCreatureManager _gameCreatureManager;
-    private static INpcStore _npcStore;
+    private static INpcTypeStore _npcStore;
     private static IItemTypeStore _itemTypeStore;
     private static IScripts _scripts;
     private static INpcs _npcs;
@@ -24,7 +24,7 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
 
     public NpcTypeFunctions(
         IGameCreatureManager gameCreatureManager,
-        INpcStore npcStore,
+        INpcTypeStore npcStore,
         IItemTypeStore itemTypeStore,
         IScripts scripts,
         INpcs npcs) : base(nameof(NpcTypeFunctions))

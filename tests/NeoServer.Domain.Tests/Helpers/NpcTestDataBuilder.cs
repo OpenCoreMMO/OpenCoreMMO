@@ -19,7 +19,7 @@ public static class NpcTestDataBuilder
         var logger = new Mock<ILogger>();
         var itemFactory = new ItemFactory(null, null, null, null, null, null, null, null, null, null);
 
-        var npcStore = new NpcStore();
+        var npcStore = new NpcTypeStore();
         npcStore.AddOrUpdate(name, npcType);
 
         var coinTypeStore = new CoinTypeStore();
