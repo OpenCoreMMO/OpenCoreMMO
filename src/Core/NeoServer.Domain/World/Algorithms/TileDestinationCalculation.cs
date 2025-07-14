@@ -18,7 +18,7 @@ public static class TileDestinationCalculation
     {
         if (tile is not IDynamicTile toTile) return tile;
 
-        var topItemOnStack = tile.TopItemOnStack;
+        var topItemOnStack = tile.TopDownItemOnStack;
 
         if (IsTeleportTile(topItemOnStack)) return GetTeleportDestinationTile(topItemOnStack, map) ?? tile;
 

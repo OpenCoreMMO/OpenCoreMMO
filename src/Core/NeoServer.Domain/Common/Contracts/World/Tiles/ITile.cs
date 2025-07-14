@@ -8,7 +8,8 @@ public interface ITile : IThing
 {
     int ItemsCount { get; }
     IItem[] AllItems { get; }
-    IItem TopItemOnStack { get; }
+    IItem TopTopItemOnStack { get; }
+    IItem TopDownItemOnStack { get; }
     ICreature TopCreatureOnStack { get; }
     bool BlockMissile { get; }
     int ThingsCount { get; }

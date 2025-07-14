@@ -25,7 +25,7 @@ public class ItemFinderService
         {
             _ when itemLocation.Type == LocationType.Ground => _gameServer.Map[itemLocation] is not { } tile
                 ? null
-                : tile.TopItemOnStack,
+                : tile.TopDownItemOnStack,
             _ when itemLocation.Type == LocationType.Slot => player.Inventory[itemLocation.Slot],
             _ when itemLocation.Type == LocationType.Container => player.Containers[itemLocation.ContainerId][
                 itemLocation.ContainerSlot],

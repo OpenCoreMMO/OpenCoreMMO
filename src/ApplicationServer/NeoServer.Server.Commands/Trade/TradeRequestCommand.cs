@@ -42,7 +42,7 @@ public class TradeRequestCommand : ICommand
         if (packet.Location.Type == LocationType.Ground)
         {
             if (_map[packet.Location] is not { } tile) return null;
-            return tile.TopItemOnStack;
+            return tile.TopDownItemOnStack;
         }
 
         if (packet.Location.Slot == Slot.Backpack)
