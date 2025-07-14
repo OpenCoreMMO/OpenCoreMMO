@@ -52,7 +52,7 @@ public class ToMapMovementService : IToMapMovementService
         if (_map[movementParams.FromLocation] is not DynamicTile fromTile) return;
         if (_map[movementParams.ToLocation] is not DynamicTile toTile) return;
 
-        if (fromTile.TopDownItemOnStack is not { } item) return;
+        if (fromTile.TopItemOnStack is not { } item) return;
 
         var finalTile = (DynamicTile)_mapService.GetFinalTile(toTile.Location);
 

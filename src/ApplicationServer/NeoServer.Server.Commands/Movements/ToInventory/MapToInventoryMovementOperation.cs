@@ -25,7 +25,7 @@ public sealed class MapToInventoryMovementOperation
     private void FromMapToInventory(IPlayer player, IMap map, ItemThrowPacket itemThrow)
     {
         if (map[itemThrow.FromLocation] is not { } fromTile) return;
-        if (fromTile.TopDownItemOnStack is not { } item) return;
+        if (fromTile.TopItemOnStack is not { } item) return;
         if (fromTile is not IDynamicTile dynamicTile) return;
 
         var result = _itemMovementService.Move(player, item, dynamicTile, player.Inventory, itemThrow.Count, 0,

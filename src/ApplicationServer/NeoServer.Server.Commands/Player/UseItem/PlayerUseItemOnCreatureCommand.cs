@@ -163,7 +163,7 @@ public class PlayerUseItemOnCreatureCommand : ICommand
         if (useItemPacket.FromLocation.Type == LocationType.Ground)
         {
             if (_game.Map[useItemPacket.FromLocation] is not { } tile) return null;
-            return tile.TopDownItemOnStack;
+            return tile.TopItemOnStack;
         }
 
         if (useItemPacket.FromLocation.Type == LocationType.Slot)

@@ -275,9 +275,9 @@ public class TileTest
             new MovementParams(sourceTile.Location, destinationTile.Location, 1));
 
         //assert
-        sourceTile.TopDownItemOnStack.Should().NotBe(item);
-        destinationTile.TopDownItemOnStack.Should().NotBe(item);
-        undergroundTile.TopDownItemOnStack.Should().Be(item);
+        sourceTile.TopItemOnStack.Should().NotBe(item);
+        destinationTile.TopItemOnStack.Should().NotBe(item);
+        undergroundTile.TopItemOnStack.Should().Be(item);
     }
 
     [Fact]
@@ -320,9 +320,9 @@ public class TileTest
         toMapMovementService.Move(player, new MovementParams(sourceTile.Location, destinationTile.Location, 1));
 
         //assert
-        sourceTile.TopDownItemOnStack.Should().Be(item);
-        destinationTile.TopDownItemOnStack.Should().NotBe(item);
-        undergroundTile.TopDownItemOnStack.Should().NotBe(item);
+        sourceTile.TopItemOnStack.Should().Be(item);
+        destinationTile.TopItemOnStack.Should().NotBe(item);
+        undergroundTile.TopItemOnStack.Should().NotBe(item);
     }
 
     [Fact]
@@ -365,10 +365,10 @@ public class TileTest
         toMapMovementService.Move(player, new MovementParams(sourceTile.Location, destinationTile.Location, 1));
 
         //assert
-        sourceTile.TopDownItemOnStack.Should().NotBe(item);
-        destinationTile.TopDownItemOnStack.Should().NotBe(item);
-        undergroundTile.TopDownItemOnStack.Should().NotBe(item);
-        secondFloor.TopDownItemOnStack.Should().Be(item);
+        sourceTile.TopItemOnStack.Should().NotBe(item);
+        destinationTile.TopItemOnStack.Should().NotBe(item);
+        undergroundTile.TopItemOnStack.Should().NotBe(item);
+        secondFloor.TopItemOnStack.Should().Be(item);
     }
 
     [Fact]
@@ -401,9 +401,9 @@ public class TileTest
         mapService.ReplaceGround(destinationTile.Location, hole);
 
         //assert
-        sourceTile.TopDownItemOnStack.Should().NotBe(item);
-        destinationTile.TopDownItemOnStack.Should().NotBe(item);
-        undergroundTile.TopDownItemOnStack.Should().Be(item);
+        sourceTile.TopItemOnStack.Should().NotBe(item);
+        destinationTile.TopItemOnStack.Should().NotBe(item);
+        undergroundTile.TopItemOnStack.Should().Be(item);
     }
 
     [Fact]
@@ -454,7 +454,7 @@ public class TileTest
         player.MoveItem(itemToMove, sourceTile, destinationTile, 1, 0, 0);
 
         //assert
-        sourceTile.TopDownItemOnStack.Should().Be(itemToMove);
-        destinationTile.TopDownItemOnStack.Should().Be(unpassableItem);
+        sourceTile.TopItemOnStack.Should().Be(itemToMove);
+        destinationTile.TopItemOnStack.Should().Be(unpassableItem);
     }
 }

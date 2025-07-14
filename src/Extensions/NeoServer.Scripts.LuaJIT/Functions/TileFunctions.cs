@@ -36,9 +36,6 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         RegisterMethod(luaState, "Tile", "getTopVisibleThing", LuaTileGetTopVisibleThing);
         RegisterMethod(luaState, "Tile", "getTopCreature", LuaTileGetTopCreature);
 
-        RegisterMethod(luaState, "Tile", "getTopTopItem", LuaTileGetTopTopItem);
-        RegisterMethod(luaState, "Tile", "getTopDownItem", LuaTileGetTopDownItem);
-
         RegisterMethod(luaState, "Tile", "getItems", LuaTileGetItems);
         RegisterMethod(luaState, "Tile", "getItemCount", LuaTileGetItemCount);
         RegisterMethod(luaState, "Tile", "getDownItemCount", LuaTileGetDownItemCount);
@@ -158,7 +155,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
             return 1;
         }
 
-        var visibleItem = dynamicTile.TopDownItemOnStack;
+        var visibleItem = dynamicTile.TopItemOnStack;
 
         if (visibleItem != null)
         {
@@ -212,10 +209,10 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
     {
         // tile:getGround()
         var tile = GetUserdata<ITile>(luaState, 1);
-        if (tile is { TopDownItemOnStack: not null })
+        if (tile is { TopItemOnStack: not null })
         {
-            PushUserdata(luaState, tile.TopDownItemOnStack);
-            SetItemMetatable(luaState, -1, tile.TopDownItemOnStack);
+            PushUserdata(luaState, tile.TopItemOnStack);
+            SetItemMetatable(luaState, -1, tile.TopItemOnStack);
         }
         else
         {
@@ -245,42 +242,6 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
             SetItemMetatable(luaState, -1, item);
             Lua.RawSetI(luaState, -2, ++index);
         }
-
-        return 1;
-    }
-
-    public static int LuaTileGetTopTopItem(LuaState luaState)
-    {
-        // tile:getTopTopItem()
-        var tile = GetUserdata<ITile>(luaState, 1);
-
-        if (tile is not IDynamicTile dynamicTile || 
-            tile.TopTopItemOnStack == null)
-        {
-            Lua.PushNil(luaState);
-            return 1;
-        }
-
-        PushUserdata(luaState, tile.TopTopItemOnStack);
-        SetItemMetatable(luaState, -1, tile.TopTopItemOnStack);
-
-        return 1;
-    }
-
-    public static int LuaTileGetTopDownItem(LuaState luaState)
-    {
-        // tile:getTopTopItem()
-        var tile = GetUserdata<ITile>(luaState, 1);
-
-        if (tile is not IDynamicTile dynamicTile ||
-            tile.TopDownItemOnStack == null)
-        {
-            Lua.PushNil(luaState);
-            return 1;
-        }
-
-        PushUserdata(luaState, tile.TopDownItemOnStack);
-        SetItemMetatable(luaState, -1, tile.TopDownItemOnStack);
 
         return 1;
     }
