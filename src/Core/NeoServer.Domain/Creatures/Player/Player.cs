@@ -605,9 +605,9 @@ public class Player : CombatActor, IPlayer
     public void LookAt(ITile tile)
     {
         var isClose = Location.IsNextTo(tile.Location);
-        if (tile.TopCreatureOnStack is null && tile.TopItemOnStack is null) return;
+        if (tile.TopCreatureOnStack is null && tile.TopDownItemOnStack is null) return;
 
-        IThing thing = tile.TopCreatureOnStack is null ? tile.TopItemOnStack : tile.TopCreatureOnStack;
+        IThing thing = tile.TopCreatureOnStack is null ? tile.TopDownItemOnStack : tile.TopCreatureOnStack;
         OnLookedAt?.Invoke(this, thing, isClose);
     }
 
@@ -765,7 +765,7 @@ public class Player : CombatActor, IPlayer
                     itemUsed = useableOnTile.Use(this, onCreature.Tile);
                     break;
                 case IUsableOnItem useableOnItem:
-                    itemUsed = useableOnItem.Use(this, onCreature.Tile.TopItemOnStack);
+                    itemUsed = useableOnItem.Use(this, onCreature.Tile.TopDownItemOnStack);
                     break;
             }
 
@@ -810,7 +810,7 @@ public class Player : CombatActor, IPlayer
             return Result.NotPossible;
         }
 
-        if (targetTile.TopItemOnStack is not { } onItem) return Result.NotPossible;
+        if (targetTile.TopDownItemOnStack is not { } onItem) return Result.NotPossible;
 
         var result = item switch
         {

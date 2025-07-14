@@ -78,7 +78,7 @@ public class ItemFactory : IItemFactory
         IEnumerable<IItem> children = null)
     {
         if (!ItemTypeStore.TryGetValue(typeId, out var itemType)) return null;
-
+         
         var createdItem = CreateItem(itemType, location, attributes, children);
 
         SetItemIds(attributes, createdItem);

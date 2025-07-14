@@ -30,7 +30,8 @@ public abstract class BaseTile : ITile
         }
     }
 
-    public abstract IItem TopItemOnStack { get; }
+    public abstract IItem TopTopItemOnStack { get; }
+    public abstract IItem TopDownItemOnStack { get; }
     public abstract ICreature TopCreatureOnStack { get; }
     public abstract int ThingsCount { get; }
     public bool HasThings => ThingsCount > 0;

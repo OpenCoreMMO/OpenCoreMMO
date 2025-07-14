@@ -598,12 +598,12 @@ public class DecayableTests : IAsyncLifetime
         await Task.Delay(1050);
 
         decayableItemManager.DecayExpiredItems();
-        map[100, 100, 7].TopItemOnStack.Should().NotBe(item1);
-        map[101, 100, 7].TopItemOnStack.Should().Be(item2);
+        map[100, 100, 7].TopDownItemOnStack.Should().NotBe(item1);
+        map[101, 100, 7].TopDownItemOnStack.Should().Be(item2);
 
         await Task.Delay(2050);
 
         decayableItemManager.DecayExpiredItems();
-        map[101, 100, 7].TopItemOnStack.Should().NotBe(item2);
+        map[101, 100, 7].TopDownItemOnStack.Should().NotBe(item2);
     }
 }
