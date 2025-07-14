@@ -63,6 +63,13 @@ public class Summon : Monster, ISummon
 
         Master.Summons.Remove(this);
 
+        Dismiss();
+    }
+
+    public override void Dismiss()
+    {
+        Master.Summons.Remove(this);
+
         if (Master is not ICombatActor actor) return;
         actor.OnDeath -= OnMasterKilled;
         actor.OnTargetChanged -= OnMasterTargetChange;
@@ -70,6 +77,8 @@ public class Summon : Monster, ISummon
 
         if (Master is not IPlayer player) return;
         player.OnLoggedOut -= OnMasterLoggedOut;
+
+        base.Dismiss();
     }
 
     public override bool IsHostileTo(ICombatActor enemy)
