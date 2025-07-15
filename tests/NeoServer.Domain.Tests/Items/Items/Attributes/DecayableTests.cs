@@ -30,7 +30,7 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
 
-        var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: new (ItemTypeAttribute, IConvertible)[]
+        var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
         {
         });
         var decayableItem = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
