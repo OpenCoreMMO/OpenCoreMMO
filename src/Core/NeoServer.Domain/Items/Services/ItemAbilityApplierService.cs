@@ -16,19 +16,19 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
         if (Guard.AnyNull(player, item))
             throw new ArgumentException($"[{nameof(ItemAbilityApplierService)}] Player or item cannot be null");
 
-        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.Speed, out var speed))
+        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.Speed, out var speed))
             player.IncreaseSpeed(speed);
 
-        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemAttribute.Invisible, out var invisible) && invisible)
+        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.Invisible, out var invisible) && invisible)
             player.TurnInvisible();
 
-        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemAttribute.ManaShield, out var manaShield) && manaShield)
+        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.ManaShield, out var manaShield) && manaShield)
             player.EnableManaShield();
 
-        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.HealthGain, out var healthGain) &&
+        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.HealthGain, out var healthGain) &&
             healthGain > 0)
         {
-            item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.HealTicks, out var ticks);
+            item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.HealTicks, out var ticks);
 
             player.AddRegenerationBonus(new RegenerationBonus
             {
@@ -38,9 +38,9 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
             });
         }
 
-        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.ManaGain, out var manaGain) && manaGain > 0)
+        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ManaGain, out var manaGain) && manaGain > 0)
         {
-            item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.ManaTicks, out var ticks);
+            item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ManaTicks, out var ticks);
 
             player.AddRegenerationBonus(new RegenerationBonus
             {
@@ -60,19 +60,19 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
         if (Guard.AnyNull(player, item))
             throw new ArgumentException($"[{nameof(ItemAbilityApplierService)}] Player or item cannot be null");
 
-        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.Speed, out var speed))
+        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.Speed, out var speed))
             player.DecreaseSpeed(speed);
 
-        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemAttribute.Invisible, out var invisible) && invisible)
+        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.Invisible, out var invisible) && invisible)
             player.TurnVisible();
 
-        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemAttribute.ManaShield, out var manaShield) && manaShield)
+        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.ManaShield, out var manaShield) && manaShield)
             player.DisableManaShield();
 
-        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.HealthGain, out var healthGain) &&
+        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.HealthGain, out var healthGain) &&
             healthGain > 0)
         {
-            item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.HealTicks, out var ticks);
+            item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.HealTicks, out var ticks);
 
             player.RemoveRegenerationBonus(new RegenerationBonus
             {
@@ -82,9 +82,9 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
             });
         }
 
-        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.ManaGain, out var manaGain) && manaGain > 0)
+        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ManaGain, out var manaGain) && manaGain > 0)
         {
-            item.Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.ManaTicks, out var ticks);
+            item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ManaTicks, out var ticks);
 
             player.RemoveRegenerationBonus(new RegenerationBonus
             {
@@ -101,13 +101,13 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
 
     private static void ToggleConditions(IPlayer player, IItem item, bool supress)
     {
-        ReadOnlySpan<ItemAttribute> suppressAttributes =
+        ReadOnlySpan<ItemTypeAttribute> suppressAttributes =
         [
-            ItemAttribute.SuppressDrown, ItemAttribute.SuppressDrunk,
-            ItemAttribute.SuppressCurse, ItemAttribute.SuppressDazzle,
-            ItemAttribute.SuppressEnergy, ItemAttribute.SuppressFire,
-            ItemAttribute.SuppressFreeze, ItemAttribute.SuppressPhysical,
-            ItemAttribute.SuppressPoison
+            ItemTypeAttribute.SuppressDrown, ItemTypeAttribute.SuppressDrunk,
+            ItemTypeAttribute.SuppressCurse, ItemTypeAttribute.SuppressDazzle,
+            ItemTypeAttribute.SuppressEnergy, ItemTypeAttribute.SuppressFire,
+            ItemTypeAttribute.SuppressFreeze, ItemTypeAttribute.SuppressPhysical,
+            ItemTypeAttribute.SuppressPoison
         ];
 
         foreach (var suppressAttribute in suppressAttributes)
@@ -117,15 +117,15 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
 
             var condition = suppressAttribute switch
             {
-                ItemAttribute.SuppressDrown => ConditionType.Drowning,
-                ItemAttribute.SuppressDrunk => ConditionType.Drunk,
-                ItemAttribute.SuppressCurse => ConditionType.Cursed,
-                ItemAttribute.SuppressDazzle => ConditionType.Dazzled,
-                ItemAttribute.SuppressEnergy => ConditionType.Electrified,
-                ItemAttribute.SuppressFire => ConditionType.Burning,
-                ItemAttribute.SuppressFreeze => ConditionType.Freezing,
-                ItemAttribute.SuppressPhysical => ConditionType.None,
-                ItemAttribute.SuppressPoison => ConditionType.Poisoned,
+                ItemTypeAttribute.SuppressDrown => ConditionType.Drowning,
+                ItemTypeAttribute.SuppressDrunk => ConditionType.Drunk,
+                ItemTypeAttribute.SuppressCurse => ConditionType.Cursed,
+                ItemTypeAttribute.SuppressDazzle => ConditionType.Dazzled,
+                ItemTypeAttribute.SuppressEnergy => ConditionType.Electrified,
+                ItemTypeAttribute.SuppressFire => ConditionType.Burning,
+                ItemTypeAttribute.SuppressFreeze => ConditionType.Freezing,
+                ItemTypeAttribute.SuppressPhysical => ConditionType.None,
+                ItemTypeAttribute.SuppressPoison => ConditionType.Poisoned,
                 _ => ConditionType.None
             };
 

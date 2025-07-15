@@ -22,7 +22,7 @@ public class WeaponFactory : IFactory
 
     public event CreateItem OnItemCreated;
 
-    public IItem Create(IItemType itemType, Location location, IDictionary<ItemAttribute, IConvertible> attributes)
+    public IItem Create(IItemType itemType, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes)
     {
         var chargeable = _chargeableFactory.Create(itemType);
 

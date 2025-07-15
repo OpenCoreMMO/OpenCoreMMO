@@ -55,14 +55,18 @@ public class ItemFactory : IItemFactory
     public ICoinTypeStore CoinTypeStore { get; set; }
     public event CreateItem OnItemCreated;
 
-    public IItem CreateLootCorpse(ushort typeId, Location location, Loot loot, IThing killer)
+    public IItem CreateLootCorpse(
+        ushort typeId,
+        Location location,
+        Loot loot,
+        IThing killer)
     {
         if (!ItemTypeStore.TryGetValue(typeId, out var itemType)) return null;
 
         var createdItem = new LootContainer(itemType, location, loot);
 
         if ( killer is ICreature creature)
-            createdItem.Metadata.Attributes.SetAttribute(ItemAttribute.CorpseOwner, creature.CreatureId);
+            createdItem.Attributes.SetAttribute(ItemAttribute.CorpseOwner, creature.CreatureId);
 
         SubscribeEvents(createdItem);
 
@@ -71,22 +75,34 @@ public class ItemFactory : IItemFactory
         return createdItem;
     }
 
-    public IItem Create(ushort typeId, Location location, int count = 1,
+    public IItem Create(
+        ushort typeId,
+        Location location,
+        int count = 1,
         IEnumerable<IItem> children = null)
     {
-        var attributes = new Dictionary<ItemAttribute, IConvertible> { { ItemAttribute.Count, count } };
-        var customAttributes = new Dictionary<string, IConvertible> { };
-        return Create(typeId, location, attributes, customAttributes, children);
+        var itemTypeAttributes = new Dictionary<ItemTypeAttribute, IConvertible> { { ItemTypeAttribute.Count, count } };
+
+        var itemTypeCustomAttributes = new Dictionary<string, IConvertible> { };
+        var itemAttributes = new Dictionary<ItemAttribute, IConvertible> { };
+        var itemCustomAttributes = new Dictionary<string, IConvertible> { };
+        return Create(typeId, location, itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, children);
     }
 
-    public IItem Create(ushort typeId, Location location, IDictionary<ItemAttribute, IConvertible> attributes,
-        IDictionary<string, IConvertible> customAttributes, IEnumerable<IItem> children = null)
+    public IItem Create(
+        ushort typeId,
+        Location location,
+        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
+        IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
+        IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
+        IDictionary<string, IConvertible> itemCustomAttributes = null,
+        IEnumerable<IItem> children = null)
     {
         if (!ItemTypeStore.TryGetValue(typeId, out var itemType)) return null;
          
-        var createdItem = CreateItem(itemType, location, attributes, children);
+        var createdItem = CreateItem(itemType, location, itemTypeAttributes, itemAttributes, children);
 
-        SetItemIds(attributes, customAttributes, createdItem);
+        SetAttributes(itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, createdItem);
 
         SubscribeEvents(createdItem);
 
@@ -95,12 +111,17 @@ public class ItemFactory : IItemFactory
         return createdItem;
     }
 
-    public IItem Create(IItemType itemType, Location location, IDictionary<ItemAttribute, IConvertible> attributes,
-        IDictionary<string, IConvertible> customAttributes, IEnumerable<IItem> children = null)
+    public IItem Create(
+        IItemType itemType,
+        Location location, IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
+        IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
+        IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
+        IDictionary<string, IConvertible> itemCustomAttributes = null,
+        IEnumerable<IItem> children = null)
     {
-        var createdItem = CreateItem(itemType, location, attributes, children);
+        var createdItem = CreateItem(itemType, location, itemTypeAttributes, itemAttributes, children);
 
-        SetItemIds(attributes, customAttributes, createdItem);
+        SetAttributes(itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, createdItem);
 
         SubscribeEvents(createdItem);
 
@@ -126,23 +147,42 @@ public class ItemFactory : IItemFactory
         }
     }
 
-    public IItem Create(string name, Location location, IDictionary<ItemAttribute, IConvertible> attributes,
-        IDictionary<string, IConvertible> customAttributes, IEnumerable<IItem> children = null)
+    public IItem Create(
+        string name,
+        Location location,
+        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
+        IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
+        IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
+        IDictionary<string, IConvertible> itemCustomAttributes = null,
+        IEnumerable<IItem> children = null)
     {
         var item = ItemTypeStore.All.FirstOrDefault(x =>
             x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
-        return item is null ? null : Create(item.ServerId, location, attributes, customAttributes, children);
+        return item is null ? null : Create(item.ServerId, location, itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, children);
     }
 
-    private static void SetItemIds(IDictionary<ItemAttribute, IConvertible> attributes,
-        IDictionary<string, IConvertible> customAttributes, IItem createdItem)
+    private static void SetAttributes(
+        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
+        IDictionary<string, IConvertible> itemTypeCustomAttributes,
+        IDictionary<ItemAttribute, IConvertible> itemAttributes,
+        IDictionary<string, IConvertible> itemCustomAttributes,
+        IItem createdItem)
     {
-        if (Guard.AnyNull(attributes, createdItem)) return;
-        if (!attributes.Any()) return;
+        if (Guard.IsNull(createdItem))
+            return;
 
-        createdItem.Metadata.Attributes.SetAttribute(attributes);
-        createdItem.Metadata.Attributes.SetCustomAttribute(customAttributes);
+        if (!Guard.IsNull(itemTypeAttributes) && itemTypeAttributes.Any())
+            createdItem.Metadata.Attributes.SetAttribute(itemTypeAttributes);
+
+        if (!Guard.IsNull(itemTypeCustomAttributes) && itemTypeCustomAttributes.Any())
+            createdItem.Metadata.Attributes.SetCustomAttribute(itemTypeCustomAttributes);
+
+        if (!Guard.IsNull(itemAttributes) && itemAttributes.Any())
+            createdItem.Attributes.SetAttribute(itemAttributes);
+
+        if (!Guard.IsNull(itemCustomAttributes) && itemCustomAttributes.Any())
+            createdItem.Attributes.SetCustomAttribute(itemCustomAttributes);
     }
 
     private void SubscribeEvents(IItem createdItem)
@@ -160,31 +200,39 @@ public class ItemFactory : IItemFactory
             subscriber.Subscribe(createdItem);
     }
 
-    private IItem CreateItem(IItemType itemType, Location location,
-        IDictionary<ItemAttribute, IConvertible> attributes, IEnumerable<IItem> children)
+    private IItem CreateItem(
+        IItemType itemType,
+        Location location,
+        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
+        IDictionary<ItemAttribute, IConvertible> itemAttributes,
+        IEnumerable<IItem> children)
     {
         if (itemType.ServerId < 100) return null;
 
         if (itemType.Group == ItemGroup.Deprecated) return null;
 
-        if (itemType.Attributes.GetAttribute(ItemAttribute.Script) is { } script)
-            if (ItemFromScriptFactory.Create(itemType, location, attributes, script) is { } instance)
+        if (itemType.Attributes.GetAttribute(ItemTypeAttribute.Script) is { } script)
+            if (ItemFromScriptFactory.Create(itemType, location, itemTypeAttributes, script) is { } instance)
                 return instance;
 
         if (DefenseEquipmentFactory?.Create(itemType, location) is { } equipment) return equipment;
-        if (WeaponFactory?.Create(itemType, location, attributes) is { } weapon) return weapon;
+        if (WeaponFactory?.Create(itemType, location, itemTypeAttributes) is { } weapon) return weapon;
         if (ContainerFactory?.Create(itemType, location, children) is { } container) return container;
-        if (RuneFactory?.Create(itemType, location, attributes) is { } rune) return rune;
+        if (RuneFactory?.Create(itemType, location, itemTypeAttributes) is { } rune) return rune;
         if (GroundFactory?.Create(itemType, location) is { } ground) return ground;
 
-        if (CumulativeFactory?.Create(itemType, location, attributes) is { } cumulative) return cumulative;
+        if (CumulativeFactory?.Create(itemType, location, itemTypeAttributes) is { } cumulative) return cumulative;
 
-        if (LiquidPool.IsApplicable(itemType)) return new LiquidPool(itemType, location, attributes);
+        if (LiquidPool.IsApplicable(itemType)) return new LiquidPool(itemType, location, itemTypeAttributes);
         if (MagicField.IsApplicable(itemType)) return new MagicField(itemType, location);
         if (FloorChanger.IsApplicable(itemType)) return new FloorChanger(itemType, location);
-        if (TeleportItem.IsApplicable(itemType)) return new TeleportItem(itemType, location, attributes);
-        if (Paper.IsApplicable(itemType)) return new Paper(itemType, location, attributes);
-        if (Sign.IsApplicable(itemType)) return new Sign(itemType, location, attributes);
+
+        if (itemAttributes != null)
+        {
+            if (TeleportItem.IsApplicable(itemType)) return new TeleportItem(itemType, location, itemAttributes);
+            if (Paper.IsApplicable(itemType)) return new Paper(itemType, location, itemAttributes);
+            if (Sign.IsApplicable(itemType, itemAttributes)) return new Sign(itemType, location, itemAttributes);
+        }
 
         if (UsableOnItem.IsApplicable(itemType))
         {

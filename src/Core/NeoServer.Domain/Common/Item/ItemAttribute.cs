@@ -30,18 +30,31 @@
     StoreItem,
     AttackSpeed, //todo: Check this, exists in tfs but not in canary?
     Custom,
+    TeleportDestination,
+}
 
+public enum ItemTypeAttribute : byte
+{
     //ItemParseAttributes
+    None = 0,
+    StoreItem,
+    Duration,
+    Charges,
+    HitChance,
+    Text,
+    Name,
+    Article,
+    PluralName,
     Type,
-    //Description, //Duplicated
+    Description,
     RuneSpellName,
-    //Weight,
+    Weight,
     ShowCount,
-    //Armor, //Duplicated
-    //Defense, //Duplicated
-    //ExtraDefense, //Duplicated
-    //Attack, //Duplicated
-    //AttackSpeed,
+    Armor, 
+    Defense, 
+    ExtraDefense,
+    Attack,
+    AttackSpeed,
     RotateTarget,
     Moveable,
     BlockProjectTile,
@@ -177,6 +190,7 @@
     SleepStart,
     ContainerItems,
     IsAggressive,
+    DecayTo,
     DecayElapsed,
     AllowFarUse,
     Count,

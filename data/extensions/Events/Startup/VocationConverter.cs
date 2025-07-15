@@ -28,11 +28,11 @@ public class VocationConverter : IStartup
     {
         foreach (var itemType in _itemTypeStore.All)
         {
-            var vocationsAttr = itemType.Attributes.GetAttributeArray(ItemAttribute.Vocation);
+            var vocationsAttr = itemType.Attributes.GetAttributeArray(ItemTypeAttribute.Vocation);
 
             if (vocationsAttr is not string[] vocations) continue;
 
-            itemType.Attributes.SetAttribute(ItemAttribute.VocationNames, vocations);
+            itemType.Attributes.SetAttribute(ItemTypeAttribute.VocationNames, vocations);
 
             var vocationsType = new List<byte>(vocations.Length);
             foreach (var vocation in vocations)
@@ -44,7 +44,7 @@ public class VocationConverter : IStartup
                 vocationsType.Add(vocationFound.VocationType);
             }
 
-            itemType.Attributes.SetAttribute(ItemAttribute.Vocation, vocationsType.ToArray());
+            itemType.Attributes.SetAttribute(ItemTypeAttribute.Vocation, vocationsType.ToArray());
         }
 
         _logger.Debug("Extensions: Converting vocations...");

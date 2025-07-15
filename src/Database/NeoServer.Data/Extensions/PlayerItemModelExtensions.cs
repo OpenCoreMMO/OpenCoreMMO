@@ -7,20 +7,7 @@ public static class PlayerItemModelExtensions
 {
     public static Dictionary<ItemAttribute, IConvertible> GetAttributes(this PlayerItemBaseEntity itemEntity)
     {
-        var attributes = new Dictionary<ItemAttribute, IConvertible>
-        {
-            { ItemAttribute.Count, itemEntity.Amount }
-        };
-
-        if (itemEntity.Charges > 0)
-            attributes[ItemAttribute.Charges] = itemEntity.Charges;
-
-        if (itemEntity.DecayDuration > 0)
-        {
-            attributes[ItemAttribute.DecayTo] = itemEntity.DecayTo;
-            attributes[ItemAttribute.DecayElapsed] = itemEntity.DecayElapsed;
-            attributes[ItemAttribute.Duration] = itemEntity.DecayDuration;
-        }
+        var attributes = new Dictionary<ItemAttribute, IConvertible>();
 
         if (itemEntity.Attributes != null)
         {
@@ -52,9 +39,7 @@ public static class PlayerItemModelExtensions
 
     public static Dictionary<ItemAttribute, IConvertible> GetAttributes(this PlayerInventoryItemEntity itemEntity)
     {
-        var attributes = new Dictionary<ItemAttribute, IConvertible>
-        {
-        };
+        var attributes = new Dictionary<ItemAttribute, IConvertible>();
 
         if (itemEntity.Attributes != null)
         {
@@ -100,16 +85,11 @@ public static class PlayerItemModelExtensions
     {
         var dict = new Dictionary<ItemAttribute, string>();
 
-        if (item?.Metadata.Attributes == null)
+        if (item?.Attributes == null)
             return dict;
 
-        foreach (var (key, value) in item.Metadata.Attributes.ToDictionary<ItemAttribute, object>())
-        {
-            if (key is ItemAttribute.Count or ItemAttribute.Charges or ItemAttribute.DecayTo or ItemAttribute.Duration or ItemAttribute.DecayElapsed)
-                continue;
-
+        foreach (var (key, value) in item.Attributes.ToDictionary<ItemAttribute, object>())
             dict[key] = value?.ToString() ?? string.Empty;
-        }
 
         return dict;
     }
@@ -118,13 +98,11 @@ public static class PlayerItemModelExtensions
     {
         var dict = new Dictionary<string, string>();
 
-        if (item?.Metadata.Attributes == null)
+        if (item?.Attributes == null)
             return dict;
 
-        foreach (var (key, value) in item.Metadata.Attributes.ToDictionaryCustom<string, object>())
-        {
+        foreach (var (key, value) in item.Attributes.ToDictionaryCustom<string, object>())
             dict[key] = value?.ToString() ?? string.Empty;
-        }
 
         return dict;
     }

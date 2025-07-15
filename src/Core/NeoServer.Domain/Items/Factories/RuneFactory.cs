@@ -12,7 +12,7 @@ public class RuneFactory : IFactory
     public event CreateItem OnItemCreated;
 
     public IItem Create(IItemType itemType, Location location,
-        IDictionary<ItemAttribute, IConvertible> attributes)
+        IDictionary<ItemTypeAttribute, IConvertible> attributes)
     {
         if (!ICumulative.IsApplicable(itemType)) return null;
         if (!Rune.IsApplicable(itemType)) return null;

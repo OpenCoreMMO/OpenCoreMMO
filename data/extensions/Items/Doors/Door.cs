@@ -16,7 +16,7 @@ namespace NeoServer.Extensions.Items.Doors;
 
 public class Door : BaseItem
 {
-    public Door(IItemType metadata, Location location, IDictionary<ItemAttribute, IConvertible> attributes) :
+    public Door(IItemType metadata, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) :
         base(metadata, location)
     {
     }
@@ -75,7 +75,7 @@ public class Door : BaseItem
     {
         var wallId = Metadata.Attributes.GetCustomAttribute<ushort>("wall");
 
-        if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.TransformTo, out var doorId)) return;
+        if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.TransformTo, out var doorId)) return;
 
         var door = ItemFactory.Instance.Create(doorId, Location, null, null);
 
@@ -92,8 +92,8 @@ public class Door : BaseItem
 
     private void CloseDoor(DynamicTile dynamicTile)
     {
-        if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.TransformTo, out var doorId)) return;
-        var door = ItemFactory.Instance.Create(doorId, Location, null, null);
+        if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.TransformTo, out var doorId)) return;
+        var door = ItemFactory.Instance.Create(doorId, Location, null);
 
         dynamicTile.RemoveItem(this, 1, out _);
 
@@ -102,6 +102,6 @@ public class Door : BaseItem
 
     public static bool IsApplicable(IItemType type)
     {
-        return type.Attributes.GetAttribute(ItemAttribute.Type) == "door";
+        return type.Attributes.GetAttribute(ItemTypeAttribute.Type) == "door";
     }
 }

@@ -20,7 +20,7 @@ namespace NeoServer.Domain.Items.Items.Weapons;
 public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRange
 {
     public ThrowableWeapon(IItemType type, Location location,
-        IDictionary<ItemAttribute, IConvertible> attributes) : base(type, location, attributes)
+        IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type, location, attributes)
     {
         WeaponAttack = new WeaponAttack(Metadata);
     }
@@ -30,7 +30,7 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
         WeaponAttack = new WeaponAttack(Metadata);
     }
 
-    private byte Defense => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Defense);
+    private byte Defense => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Defense);
 
     private decimal BreakChance => Metadata.Attributes.HasCustomAttribute("breakChance")
         ? Metadata.Attributes.GetCustomAttribute<decimal>("breakChance")
@@ -61,12 +61,12 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
         }
     }
 
-    public byte ExtraHitChance => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.HitChance);
+    public byte ExtraHitChance => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.HitChance);
 
-    public byte AttackPower => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Attack);
+    public byte AttackPower => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Attack);
     public bool ShouldBreak => BreakChance > 0 && GameRandom.Random.Next(1, maxValue: 100) <= BreakChance;
     public WeaponAttack WeaponAttack { get; } //todo: rename to Attack
-    public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Range);
+    public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Range);
 
     public override bool CanBeDressed(IPlayer player)
     {

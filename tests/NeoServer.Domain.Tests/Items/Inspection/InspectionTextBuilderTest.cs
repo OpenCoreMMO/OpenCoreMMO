@@ -17,7 +17,7 @@ public class InspectionTextBuilderTest
     public void Add_HasVocations_ReturnText(string expected, params string[] vocations)
     {
         var item = ItemTestData.CreateDefenseEquipmentItem(1);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.VocationNames, vocations);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.VocationNames, vocations);
 
         //act
         var actual = InspectionTextBuilder.Build(item);

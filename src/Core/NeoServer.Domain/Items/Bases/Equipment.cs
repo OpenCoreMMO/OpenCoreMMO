@@ -70,7 +70,7 @@ public abstract class Equipment : BaseItem, IEquipment
 
     public abstract bool CanBeDressed(IPlayer player);
     public byte[] Vocations => Metadata.Attributes.GetRequiredVocations();
-    public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumLevel);
+    public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MinimumLevel);
 
     #region Charges
 
@@ -136,7 +136,7 @@ public abstract class Equipment : BaseItem, IEquipment
     public void StartDecay()
     {
         if (Guard.AnyNull(Metadata)) return;
-        if (Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.StopDecaying, out var stopDecaying) &&
+        if (Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.StopDecaying, out var stopDecaying) &&
             stopDecaying == 1) return;
         Decay?.StartDecay();
     }
@@ -146,7 +146,7 @@ public abstract class Equipment : BaseItem, IEquipment
         if (Metadata is null) return;
 
         var hasStopDecaying =
-            Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.StopDecaying, out var stopDecaying);
+            Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.StopDecaying, out var stopDecaying);
         if (!hasStopDecaying || stopDecaying == 0) return;
 
         Decay?.PauseDecay();
@@ -158,7 +158,7 @@ public abstract class Equipment : BaseItem, IEquipment
 
     public void TransformOnEquip()
     {
-        if (!Metadata.Attributes.HasAttribute(ItemAttribute.TransformEquipTo)) return;
+        if (!Metadata.Attributes.HasAttribute(ItemTypeAttribute.TransformEquipTo)) return;
 
         var before = Metadata;
         UpdateMetadata(TransformEquipItem);
@@ -172,7 +172,7 @@ public abstract class Equipment : BaseItem, IEquipment
 
     public void TransformOnDequip()
     {
-        if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.TransformDequipTo, out _)) return;
+        if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.TransformDequipTo, out _)) return;
 
         var before = Metadata;
         UpdateMetadata(TransformDequipItem);
@@ -181,10 +181,10 @@ public abstract class Equipment : BaseItem, IEquipment
     }
 
     public IItemType TransformEquipItem =>
-        ItemTypeFinder?.Invoke(Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.TransformEquipTo));
+        ItemTypeFinder?.Invoke(Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.TransformEquipTo));
 
     public IItemType TransformDequipItem =>
-        ItemTypeFinder?.Invoke(Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.TransformDequipTo));
+        ItemTypeFinder?.Invoke(Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.TransformDequipTo));
 
     public event TransformEquipment OnTransformed;
 

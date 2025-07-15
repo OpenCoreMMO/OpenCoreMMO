@@ -26,8 +26,8 @@ public class PlayerStatusPacket : OutgoingPacket
 
         message.AddUInt16(player.Level);
         message.AddByte(player.LevelPercent);
-        message.AddUInt16(Math.Min(ushort.MaxValue, player.Mana));
-        message.AddUInt16(Math.Min(ushort.MaxValue, player.MaxMana));
+        message.AddUInt16((ushort)Math.Min(ushort.MaxValue, player.Mana));
+        message.AddUInt16((ushort)Math.Min(ushort.MaxValue, player.MaxMana));
         message.AddByte((byte)player.GetSkillLevel(SkillType.Magic));
         message.AddByte(player.GetSkillPercent(SkillType.Magic));
 

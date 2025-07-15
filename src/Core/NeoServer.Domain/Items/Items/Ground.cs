@@ -15,7 +15,7 @@ public class Ground : Item, IGround
 
     public event CreatureWalkedThroughGround OnCreatureWalkedThrough;
     public ushort StepSpeed => (Metadata?.Speed ?? 0) != 0 ? Metadata.Speed : (ushort)150;
-    public byte MovementPenalty => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Waypoints);
+    public byte MovementPenalty => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Waypoints);
 
     public void CreatureEntered(ICreature creature)
     {

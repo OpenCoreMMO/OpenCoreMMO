@@ -180,7 +180,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         var actionId = GetNumber<ushort>(luaState, 2);
         if (item != null)
         {
-            item.Metadata.Attributes.SetAttribute(ItemAttribute.ActionId, actionId);
+            item.Attributes.SetAttribute(ItemAttribute.ActionId, actionId);
             Lua.PushBoolean(luaState, true);
         }
         else
@@ -303,7 +303,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         else if (Lua.IsString(luaState, 2))
             attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
 
-        Lua.PushBoolean(luaState, item.Metadata.Attributes.HasAttribute(attribute.ToItemAttribute()));
+        Lua.PushBoolean(luaState, item.Attributes.HasAttribute(attribute.ToItemAttribute()));
 
         return 1;
     }
@@ -326,9 +326,9 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
 
         if (attribute.IsAttributeInteger())
-            Lua.PushNumber(luaState, item.Metadata.Attributes.GetAttribute<long>(attribute.ToItemAttribute()));
+            Lua.PushNumber(luaState, item.Attributes.GetAttribute<long>(attribute.ToItemAttribute()));
         else if (attribute.IsAttributeString())
-            Lua.PushString(luaState, item.Metadata.Attributes.GetAttribute(attribute.ToItemAttribute()));
+            Lua.PushString(luaState, item.Attributes.GetAttribute(attribute.ToItemAttribute()));
         else
             Lua.PushNil(luaState);
 
@@ -391,7 +391,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         {
             var value = GetNumber<long>(luaState, 3);
 
-            item.Metadata.Attributes.SetAttribute(attribute, value);
+            item.Attributes.SetAttribute(attribute, value);
             //todo: check if need this update tile flags
             //item.UpdateTileFlags();
             Lua.PushBoolean(luaState, true);
@@ -399,7 +399,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         else if (attributeType.IsAttributeString())
         {
             var value = GetString(luaState, 3);
-            item.Metadata.Attributes.SetAttribute(attribute, value);
+            item.Attributes.SetAttribute(attribute, value);
             //todo: check if need this update tile flags
             //item.UpdateTileFlags();
             Lua.PushBoolean(luaState, true);
@@ -434,7 +434,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
 
         if (canRemove)
         {
-            item.Metadata.Attributes.RemoveAttribute(attribute);
+            item.Attributes.RemoveAttribute(attribute);
         }
         else
         {
@@ -592,7 +592,9 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             return 1;
         }
 
-        Lua.PushBoolean(luaState, item.Metadata.Attributes.RemoveCustomAttribute(key));
+        item.Attributes.RemoveCustomAttribute(key);
+
+        Lua.PushBoolean(luaState, true);
         return 1;
     }
 
@@ -747,7 +749,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             {
                 var it = _itemTypeStore.Get(item.ServerId);
                 var decayTo = GetNumber<int>(luaState, 2);
-                it.Attributes.SetAttribute(ItemAttribute.DecayTo, decayTo);
+                it.Attributes.SetAttribute(ItemTypeAttribute.DecayTo, decayTo);
                 item.UpdateMetadata(it);
             }
 

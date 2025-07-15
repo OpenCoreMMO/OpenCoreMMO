@@ -39,7 +39,7 @@ public class DistanceWeapon(IItemType type, Location location)
         }
     }
 
-    public byte ExtraAttack => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Attack);
+    public byte ExtraAttack => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Attack);
 
     public override bool CanBeDressed(IPlayer player)
     {
@@ -52,8 +52,8 @@ public class DistanceWeapon(IItemType type, Location location)
         return false;
     }
 
-    public sbyte ExtraHitChance => Metadata.Attributes.GetAttribute<sbyte>(ItemAttribute.HitChance);
-    public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Range);
+    public sbyte ExtraHitChance => Metadata.Attributes.GetAttribute<sbyte>(ItemTypeAttribute.HitChance);
+    public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Range);
 
     public ushort? MinHitChance { get; }
 
@@ -110,7 +110,7 @@ public class DistanceWeapon(IItemType type, Location location)
     {
     }
 
-    public byte AttackBonus => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Attack);
+    public byte AttackBonus => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Attack);
 
     public bool CanShootAmmunition(Ammo ammo)
     {

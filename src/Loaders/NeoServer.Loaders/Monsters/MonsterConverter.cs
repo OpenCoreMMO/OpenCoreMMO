@@ -18,7 +18,7 @@ public class MonsterConverter(
     ILogger logger,
     MonsterAttackConverter monsterAttackConverter,
     IItemTypeStore itemTypeStore,
-    IMonsterDataManager monsters,
+    IMonsterTypeStore monsterTypeStore,
     GameConfiguration configuration)
 {
     public IMonsterType Convert(MonsterData monsterData)
@@ -40,7 +40,8 @@ public class MonsterConverter(
             Experience = (uint)(monsterData.Experience * configuration.ExperienceRate),
             Race = ParseRace(monsterData.Race),
             TargetChance = new IntervalChance(System.Convert.ToUInt16(monsterData.TargetChange.Interval),
-                System.Convert.ToByte(monsterData.TargetChange.Chance))
+                System.Convert.ToByte(monsterData.TargetChange.Chance)),
+            ManaCost = monsterData.ManaCost,
         };
 
         //if (monster.Race == Race.None)
@@ -67,7 +68,7 @@ public class MonsterConverter(
         monster.ElementResistance = MonsterResistanceConverter.Convert(monsterData).ToImmutableDictionary();
         monster.Immunities = MonsterImmunityConverter.Convert(monsterData);
 
-        monster.Defenses = MonsterDefenseConverter.Convert(monsterData, monsters);
+        monster.Defenses = MonsterDefenseConverter.Convert(monsterData, monsterTypeStore);
 
         monster.Loot = MonsterLootConverter.Convert(monsterData, itemTypeStore);
 

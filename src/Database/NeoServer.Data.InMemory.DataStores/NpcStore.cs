@@ -3,6 +3,6 @@ using NeoServer.Domain.Common.Contracts.DataStores;
 
 namespace NeoServer.Data.InMemory.DataStores;
 
-public class NpcStore : DataStore<NpcStore, string, INpcType>, INpcStore
+public class NpcTypeStore : DataStore<NpcTypeStore, string, INpcType>, INpcTypeStore
 {
 }

@@ -560,9 +560,9 @@ public class TradeCancellationTests
         var secondPlayer = PlayerTestDataBuilder.Build();
 
         var item = ItemTestData.CreateWeaponItem(1);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.DecayTo, 0);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.ExpireTarget, 0);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.Duration, 1000);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.DecayTo, 0);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.ExpireTarget, 0);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Duration, 1000);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(secondPlayer);
         ((DynamicTile)map[101, 100, 7]).AddCreature(player);
@@ -595,9 +595,9 @@ public class TradeCancellationTests
         var item = ItemTestData.CreateWeaponItem(1);
         backpack.AddItem(item);
 
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.DecayTo, 0);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.ExpireTarget, 0);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.Duration, 1000);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.DecayTo, 0);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.ExpireTarget, 0);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Duration, 1000);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(secondPlayer);
         ((DynamicTile)map[101, 100, 7]).AddCreature(player);
@@ -636,9 +636,9 @@ public class TradeCancellationTests
 
         backpack.AddItem(innerBackpack);
 
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.DecayTo, 0);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.ExpireTarget, 0);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.Duration, 1000);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.DecayTo, 0);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.ExpireTarget, 0);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Duration, 1000);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(secondPlayer);
         ((DynamicTile)map[101, 100, 7]).AddCreature(player);
@@ -668,9 +668,9 @@ public class TradeCancellationTests
 
         var item = player.Inventory[Slot.Left];
 
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.DecayTo, 0);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.ExpireTarget, 0);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.Duration, 1000);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.DecayTo, 0);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.ExpireTarget, 0);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Duration, 1000);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(secondPlayer);
         ((DynamicTile)map[101, 100, 7]).AddCreature(player);

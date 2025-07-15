@@ -258,14 +258,15 @@ public class PlayerLoader : IPlayerLoader
     protected IInventory ConvertToInventory(IPlayer player, PlayerEntity playerRecord)
     {
         var inventory = new Dictionary<Slot, (IItem Item, ushort Id)>();
-        var attrs = new Dictionary<ItemAttribute, IConvertible> { { ItemAttribute.Count, 0 } };
+        var attrs = new Dictionary<ItemTypeAttribute, IConvertible> { { ItemTypeAttribute.Count, 0 } };
 
         foreach (var item in playerRecord.PlayerInventoryItems)
         {
-            attrs[ItemAttribute.Count] = (byte)item.Amount;
+            attrs[ItemTypeAttribute.Count] = (byte)item.Amount;
             var location = item.SlotId <= 10 ? Location.Inventory((Slot)item.SlotId) : Location.Container(0, 0);
 
-            var createdItem = ItemFactory.Create((ushort)item.ServerId, location, item.GetAttributes(), item.GetCustomAttributes());
+            //todo: check this, if need pass Metadata to itemFactory.Create
+            var createdItem = ItemFactory.Create((ushort)item.ServerId, location, null, null, item.GetAttributes(), item.GetCustomAttributes());
 
             var createdItemIsPickupable = createdItem?.IsPickupable ?? false;
 

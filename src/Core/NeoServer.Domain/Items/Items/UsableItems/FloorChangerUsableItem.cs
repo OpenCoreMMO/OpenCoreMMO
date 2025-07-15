@@ -17,11 +17,11 @@ public class FloorChangerUsableItem : UsableOnItem, IUsableOnItem
     public virtual bool Use(ICreature usedBy, IItem onItem)
     {
         if (usedBy is not IPlayer player) return false;
-        var canUseOnItems = Metadata.OnUse?.GetAttributeArray<ushort>(ItemAttribute.UseOn) ?? Array.Empty<ushort>();
+        var canUseOnItems = Metadata.OnUse?.GetAttributeArray<ushort>(ItemTypeAttribute.UseOn) ?? Array.Empty<ushort>();
 
         if (!canUseOnItems.Contains(onItem.Metadata.ServerId)) return false;
 
-        if (Metadata.OnUse?.GetAttribute(ItemAttribute.FloorChange) != "up") return false;
+        if (Metadata.OnUse?.GetAttribute(ItemTypeAttribute.FloorChange) != "up") return false;
 
         var toLocation = new Location(onItem.Location.X, onItem.Location.Y, (byte)(onItem.Location.Z - 1));
 

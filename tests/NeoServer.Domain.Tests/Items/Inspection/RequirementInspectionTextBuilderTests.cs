@@ -16,7 +16,7 @@ public class RequirementInspectionTextBuilderTests
     public void Add_HasVocations_ReturnText(string expected, params string[] vocations)
     {
         var item = ItemTestData.CreateDefenseEquipmentItem(1);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.VocationNames, vocations);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.VocationNames, vocations);
 
         //act
         var actual = RequirementInspectionTextBuilder.Build(item);
@@ -33,7 +33,7 @@ public class RequirementInspectionTextBuilderTests
     public void Add_HasLevel_ReturnText(string expected, int level)
     {
         var item = ItemTestData.CreateDefenseEquipmentItem(1);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.MinimumLevel, level);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.MinimumLevel, level);
 
         //act
         var actual = RequirementInspectionTextBuilder.Build(item);
@@ -52,8 +52,8 @@ public class RequirementInspectionTextBuilderTests
     public void Add_HasLevelAndVocations_ReturnText(string expected, int level, params string[] vocations)
     {
         var item = ItemTestData.CreateDefenseEquipmentItem(1);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.MinimumLevel, level);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.VocationNames, vocations);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.MinimumLevel, level);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.VocationNames, vocations);
 
         //act
         var actual = RequirementInspectionTextBuilder.Build(item);
@@ -82,8 +82,8 @@ public class RequirementInspectionTextBuilderTests
     public void Build_UsableHasLevelAndVocations_ReturnText(string expected, int level, params string[] vocations)
     {
         var item = ItemTestData.CreateAttackRune(1);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.MinimumLevel, level);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.VocationNames, vocations);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.MinimumLevel, level);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.VocationNames, vocations);
 
         //act
         var actual = RequirementInspectionTextBuilder.Build(item);
@@ -102,8 +102,8 @@ public class RequirementInspectionTextBuilderTests
     public void Build_ConsumableHasLevelAndVocations_ReturnText(string expected, int level, params string[] vocations)
     {
         var item = ItemTestData.CreatePot(1);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.MinimumLevel, level);
-        item.Metadata.Attributes.SetAttribute(ItemAttribute.VocationNames, vocations);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.MinimumLevel, level);
+        item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.VocationNames, vocations);
 
         //act
         var actual = RequirementInspectionTextBuilder.Build(item);

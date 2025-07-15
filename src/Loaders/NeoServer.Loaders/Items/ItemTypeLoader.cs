@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text.Json;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Loaders.Items.Parsers;
 using NeoServer.Loaders.OTB.Parsers;
 using NeoServer.Loaders.OTB.Structure;
@@ -66,7 +65,7 @@ public class ItemTypeLoader
                 _itemTypeStore.AddOrUpdate(item.Key, item.Value);
                 _itemClientServerIdMapStore.AddOrUpdate(item.Value.ClientId, item.Key);
 
-                if (item.Value.Attributes.GetAttribute(ItemAttribute.Type)
+                if (item.Value.Attributes.GetAttribute(ItemTypeAttribute.Type)
                         ?.Equals("coin", StringComparison.InvariantCultureIgnoreCase) ?? false)
                     _coinTypeStore.AddOrUpdate(item.Key, item.Value);
             }

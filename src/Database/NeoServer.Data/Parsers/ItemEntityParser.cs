@@ -40,7 +40,8 @@ public static class ItemEntityParser
 
             foreach (var itemRecord in containerItemsRecords)
             {
-                var item = itemFactory.Create((ushort)itemRecord.ServerId, location, itemRecord.GetAttributes(), itemRecord.GetCustomAttributes());
+                //todo: check this, if need pass Metadata to itemFactory.Create
+                var item = itemFactory.Create((ushort)itemRecord.ServerId, location, null, null, itemRecord.GetAttributes(), itemRecord.GetCustomAttributes());
 
                 dequeuedContainer.Container.AddItem(item);
 
