@@ -581,7 +581,7 @@ public class EquipmentTests : IAsyncLifetime
         var player = PlayerTestDataBuilder.Build();
 
         var decaysTo = ItemTestData.CreateDefenseEquipmentItem(3, "ring",
-            attributes: new (ItemTypeAttribute, IConvertible)[]
+            attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
             {
             });
         var itemTypeStore = ItemTestData.GetItemTypeStore(decaysTo.Metadata);
