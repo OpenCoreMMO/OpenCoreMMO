@@ -1,7 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Player;
@@ -14,8 +13,6 @@ public class DistanceWeaponTests
     public void InspectionText_NoAttributeFound_ReturnsText()
     {
         var sut = ItemTestData.CreateDistanceWeapon(1, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
-        {
-        })
 
         //assert
         sut.InspectionText.Should().BeEmpty();

@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Items.Items.Attributes;
@@ -177,8 +176,6 @@ public class SkillBonusItemTests
     {
         //arrange
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
-        {
-        })
 
         //act
         var actual = new SkillBonus(sut).ToString();
