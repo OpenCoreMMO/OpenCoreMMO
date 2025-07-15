@@ -82,22 +82,27 @@ public class ItemFactory : IItemFactory
         IEnumerable<IItem> children = null)
     {
         var itemTypeAttributes = new Dictionary<ItemTypeAttribute, IConvertible> { { ItemTypeAttribute.Count, count } };
+
+        var itemTypeCustomAttributes = new Dictionary<string, IConvertible> { };
         var itemAttributes = new Dictionary<ItemAttribute, IConvertible> { };
-        return Create(typeId, location, itemTypeAttributes, itemAttributes, children);
+        var itemCustomAttributes = new Dictionary<string, IConvertible> { };
+        return Create(typeId, location, itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, children);
     }
 
     public IItem Create(
         ushort typeId,
         Location location,
         IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
+        IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
         IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
+        IDictionary<string, IConvertible> itemCustomAttributes = null,
         IEnumerable<IItem> children = null)
     {
         if (!ItemTypeStore.TryGetValue(typeId, out var itemType)) return null;
          
         var createdItem = CreateItem(itemType, location, itemTypeAttributes, itemAttributes, children);
 
-        SetAttributes(itemTypeAttributes, itemAttributes, createdItem);
+        SetAttributes(itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, createdItem);
 
         SubscribeEvents(createdItem);
 
@@ -109,12 +114,14 @@ public class ItemFactory : IItemFactory
     public IItem Create(
         IItemType itemType,
         Location location, IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
+        IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
         IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
+        IDictionary<string, IConvertible> itemCustomAttributes = null,
         IEnumerable<IItem> children = null)
     {
         var createdItem = CreateItem(itemType, location, itemTypeAttributes, itemAttributes, children);
 
-        SetAttributes(itemTypeAttributes, itemAttributes, createdItem);
+        SetAttributes(itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, createdItem);
 
         SubscribeEvents(createdItem);
 
@@ -144,18 +151,22 @@ public class ItemFactory : IItemFactory
         string name,
         Location location,
         IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
+        IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
         IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
+        IDictionary<string, IConvertible> itemCustomAttributes = null,
         IEnumerable<IItem> children = null)
     {
         var item = ItemTypeStore.All.FirstOrDefault(x =>
             x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
-        return item is null ? null : Create(item.ServerId, location, itemTypeAttributes, itemAttributes, children);
+        return item is null ? null : Create(item.ServerId, location, itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, children);
     }
 
     private static void SetAttributes(
         IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
+        IDictionary<string, IConvertible> itemTypeCustomAttributes,
         IDictionary<ItemAttribute, IConvertible> itemAttributes,
+        IDictionary<string, IConvertible> itemCustomAttributes,
         IItem createdItem)
     {
         if (Guard.IsNull(createdItem))
@@ -164,8 +175,14 @@ public class ItemFactory : IItemFactory
         if (!Guard.IsNull(itemTypeAttributes) && itemTypeAttributes.Any())
             createdItem.Metadata.Attributes.SetAttribute(itemTypeAttributes);
 
+        if (!Guard.IsNull(itemTypeCustomAttributes) && itemTypeCustomAttributes.Any())
+            createdItem.Metadata.Attributes.SetCustomAttribute(itemTypeCustomAttributes);
+
         if (!Guard.IsNull(itemAttributes) && itemAttributes.Any())
             createdItem.Attributes.SetAttribute(itemAttributes);
+
+        if (!Guard.IsNull(itemCustomAttributes) && itemCustomAttributes.Any())
+            createdItem.Attributes.SetCustomAttribute(itemCustomAttributes);
     }
 
     private void SubscribeEvents(IItem createdItem)

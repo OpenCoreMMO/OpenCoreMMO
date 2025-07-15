@@ -52,7 +52,7 @@ public class Rune : Cumulative, IHasCooldown, IUsableRequirement
     public byte[] VocationIds { get; set; }
     public bool NeedsPremium => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.NeedsPremium);
 
-    public ISpell Spell => Metadata.Attributes.GetAttribute<ISpell>("spell");
+    public ISpell Spell => Metadata.Attributes.GetCustomAttribute<ISpell>("spell");
     public bool Enabled => true;
 
     //Cooldown

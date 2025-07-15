@@ -1,4 +1,6 @@
-﻿namespace NeoServer.Data.Entities;
+﻿using System.Collections.Generic;
+
+namespace NeoServer.Data.Entities;
 
 public sealed class PlayerInventoryItemEntity
 {
@@ -7,6 +9,8 @@ public sealed class PlayerInventoryItemEntity
     public int ServerId { get; set; }
     public int SlotId { get; set; }
     public short Amount { get; set; }
+
+    public Dictionary<string, string> Attributes { get; set; } = new();
 
     public PlayerEntity Player { get; set; }
 }

@@ -43,6 +43,7 @@ internal static class InventoryManager
                 playerInventoryItemEntity.Amount = item?.Amount ?? 0;
                 playerInventoryItemEntity.PlayerId = (int)player.Id;
                 playerInventoryItemEntity.SlotId = (int)slot;
+                playerInventoryItemEntity.Attributes = item.ExtractAllAttributes();
 
                 neoContext.PlayerInventoryItems.Update(playerInventoryItemEntity);
                 continue;
@@ -50,7 +51,11 @@ internal static class InventoryManager
 
             await neoContext.PlayerInventoryItems.AddAsync(new PlayerInventoryItemEntity
             {
-                Amount = 0, PlayerId = (int)player.Id, SlotId = (int)slot, ServerId = 0
+                Amount = item?.Amount ?? 0,
+                PlayerId = (int)player.Id,
+                SlotId = (int)slot,
+                ServerId = item?.Metadata?.ServerId ?? 0,
+                Attributes = item.ExtractAllAttributes()
             });
         }
     }

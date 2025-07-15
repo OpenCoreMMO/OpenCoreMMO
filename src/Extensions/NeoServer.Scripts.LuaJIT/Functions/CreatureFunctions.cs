@@ -65,6 +65,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 
         RegisterMethod(luaState, "Creature", "getSummons", LuaCreatureGetSummons);
         RegisterMethod(luaState, "Creature", "move", LuaCreatureMove);
+        RegisterMethod(luaState, "Creature", "remove", LuaCreatureRemove);
     }
 
     private static int LuaCreatureCreate(LuaState luaState)
@@ -513,6 +514,34 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
             var result = _map.TryMoveCreature(walkableCreature, tile.Location);
             Lua.PushNumber(L, result ? (int)ReturnValueType.RETURNVALUE_NOERROR : (int)ReturnValueType.RETURNVALUE_NOTPOSSIBLE);
         }
+        return 1;
+    }
+
+    private static int LuaCreatureRemove(LuaState luaState)
+    {
+        // creature:remove([forced = true])
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (creature == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var forced = GetBoolean(luaState, 2, true);
+        if (creature is IPlayer player)
+            _gameCreatureManager.RemovePlayer(player);
+        else if (creature is ISummon summon)
+        {
+            summon.Dismiss();
+            Thread.Sleep(200);
+            _gameCreatureManager.RemoveCreature(summon);
+        }
+        else
+        {
+            _gameCreatureManager.RemoveCreature(creature);
+        }
+
+        Lua.PushBoolean(luaState, true);
         return 1;
     }
 }

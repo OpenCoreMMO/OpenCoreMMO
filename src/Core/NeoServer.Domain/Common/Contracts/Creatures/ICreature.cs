@@ -139,7 +139,7 @@ public interface ICreature : IMovableThing
     /// <summary>
     ///     Summons of creature
     /// </summary>
-    IList<IMonster> Summons { get; }
+    IList<ISummon> Summons { get; }
 
     /// <summary>
     ///     Fires when creature is removed from game
