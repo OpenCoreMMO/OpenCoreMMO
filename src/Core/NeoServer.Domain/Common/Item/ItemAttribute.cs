@@ -47,7 +47,7 @@ public enum ItemTypeAttribute : byte
     RuneSpellName,
     Weight,
     ShowCount,
-    Armor, 
+    Armor,
     Defense,
     ExtraDefense,
     Attack,
