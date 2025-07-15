@@ -39,7 +39,7 @@ internal static class InventoryAttackCalculation
 
         if (weapon is IHasAttack hasAttack) attack += hasAttack.WeaponAttack.AttackPower;
 
-        if (weapon is IHasAttackBonus hasAttackBonus) attack += hasAttackBonus.AttackPower;
+        if (weapon is IHasAttackBonus) attack += weapon.AttackPower;
 
         if (weapon is INeedsAmmo needsAmmo && needsAmmo.CanShootAmmunition(inventory.Ammo))
             attack += inventory.Ammo.WeaponAttack.AttackPower;
@@ -50,7 +50,7 @@ internal static class InventoryAttackCalculation
     internal static byte CalculateAttackRange(this InventoryMap inventoryMap)
     {
         if (inventoryMap.GetItem<IDistanceWeapon>(Slot.Left) is { } leftWeapon)
-            return ((IHasRange)leftWeapon).Range;
+            return leftWeapon.Range;
 
         if (inventoryMap.GetItem<ThrowableWeapon>(Slot.Left) is { } rightWeapon)
             return rightWeapon.Range;

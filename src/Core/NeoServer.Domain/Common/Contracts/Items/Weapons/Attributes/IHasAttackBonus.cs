@@ -2,5 +2,4 @@ namespace NeoServer.Domain.Common.Contracts.Items.Weapons.Attributes;
 
 public interface IHasAttackBonus
 {
-    ushort AttackPower { get; }
 }

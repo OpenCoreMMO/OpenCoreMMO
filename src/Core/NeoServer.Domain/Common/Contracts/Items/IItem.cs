@@ -16,46 +16,24 @@ public interface IItem : IThing, IHasDecay
     IItemType Metadata { get; }
     ItemAttributeList Attributes { get; }
 
-    ushort ActionId => Attributes.GetAttribute<ushort>(ItemAttribute.ActionId);
-    uint UniqueId => Attributes.GetAttribute<uint>(ItemAttribute.UniqueId);
-    string IThing.Name => Attributes.GetAttribute(ItemAttribute.Name) ?? Metadata.Name;
-    string Article => Attributes.GetAttribute(ItemAttribute.Article) ?? Metadata.Article;
-    string Plural => Attributes.GetAttribute(ItemAttribute.PluralName) ?? Metadata.PluralName;
+    ushort ActionId { get; }
+    uint UniqueId { get; }
+    string Article { get; }
+    string Plural { get; }
 
-    float Weight =>
-        Attributes.TryGetAttribute<float>(ItemAttribute.Weight, out var weight)
-            ? weight
-            : Metadata.Weight;
+    float Weight { get; }
 
-    ushort Attack =>
-        Attributes.TryGetAttribute<ushort>(ItemAttribute.Attack, out var attack)
-            ? attack
-            : Metadata.AttackPower;
+    ushort AttackPower { get; }
 
-    ushort Defense =>
-        Attributes.TryGetAttribute<ushort>(ItemAttribute.Defense, out var defense)
-            ? defense
-            : Metadata.Defense;
+    ushort Defense { get; }
 
-    ushort ExtraDefense =>
-        Attributes.TryGetAttribute<ushort>(ItemAttribute.ExtraDefense, out var extraDefense)
-            ? extraDefense
-            : Metadata.ExtraDefense;
+    ushort ExtraDefense { get; }
 
-    ushort Armor =>
-        Attributes.TryGetAttribute<ushort>(ItemAttribute.Armor, out var armor)
-            ? armor
-            : Metadata.Armor;
+    ushort Armor { get; }
 
-    sbyte ExtraHitChance =>
-        Attributes.TryGetAttribute<sbyte>(ItemAttribute.HitChance, out var hitChance)
-            ? hitChance
-            : Metadata.ExtraHitChance;
+    sbyte ExtraHitChance { get; }
 
-    byte Range =>
-        Attributes.TryGetAttribute<byte>(ItemAttribute.ShootRange, out var shootRange)
-            ? shootRange
-            : Metadata.Range;
+    byte Range { get; }
 
     public bool IsDeleted { get; }
     IThing Owner { get; }

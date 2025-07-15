@@ -14,6 +14,9 @@ public abstract class BaseItem : IItem
 
     private ItemAttributeList _attributes;
     public ItemAttributeList Attributes => _attributes ??= new ItemAttributeList();
+
+    public ushort ActionId => Attributes.GetAttribute<ushort>(ItemAttribute.ActionId);
+    public uint UniqueId => Attributes.GetAttribute<uint>(ItemAttribute.UniqueId);
     public string Name => Attributes.GetAttribute(ItemAttribute.Name) ?? Metadata.Name;
     public string Article => Attributes.GetAttribute(ItemAttribute.Article) ?? Metadata.Article;
     public string Plural => Attributes.GetAttribute(ItemAttribute.PluralName) ?? Metadata.PluralName;
