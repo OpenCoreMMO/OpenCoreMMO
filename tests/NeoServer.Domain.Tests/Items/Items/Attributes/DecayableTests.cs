@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Items.Items.Attributes;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -31,8 +30,7 @@ public class DecayableTests : IAsyncLifetime
         //arrange
 
         var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
-        {
-        })
+
         var decayableItem = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Duration, 60),
@@ -49,8 +47,7 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
-        {
-        })
+
         var decayableItem = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Duration, 60),
@@ -71,8 +68,7 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
-        {
-        })
+
         var decayableItem = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Duration, 2),
@@ -93,8 +89,7 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
-        {
-        })
+
         var decayableItem = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Duration, 2),

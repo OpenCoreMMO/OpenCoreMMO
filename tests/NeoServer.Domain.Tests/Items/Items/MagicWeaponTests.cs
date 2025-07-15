@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Player;
@@ -13,8 +12,6 @@ public class MagicWeaponTests
     public void InspectionText_NoAttributeFound_ReturnsText()
     {
         var sut = ItemTestData.CreateMagicWeapon(1, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
-        {
-        })
 
         //assert
         sut.InspectionText.Should().BeEmpty();
