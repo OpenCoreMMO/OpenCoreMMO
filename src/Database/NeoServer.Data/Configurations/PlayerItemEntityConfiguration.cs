@@ -58,15 +58,8 @@ public class PlayerItemEntityConfiguration : IEntityTypeConfiguration<PlayerItem
         entity.Property(e => e.Attributes)
             .HasColumnType("jsonb")
             .HasConversion(
-                v => JsonExtensions.SerializeAttributes(v),
-                v => JsonExtensions.DeserializeAttributes<ItemAttribute>(v)
-            );
-
-        entity.Property(e => e.CustomAttributes)
-            .HasColumnType("jsonb")
-            .HasConversion(
-                v => JsonExtensions.SerializeCustomAttributes(v),
-                v => JsonExtensions.DeserializeCustomAttributes(v)
+                v => JsonExtensions.SerializeAllAttributes(v),
+                v => JsonExtensions.DeserializeAllAttributes(v)
             );
 
         PlayerItemSeed.Seed(entity);

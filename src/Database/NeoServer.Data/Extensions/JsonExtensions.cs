@@ -17,4 +17,10 @@ public static class JsonExtensions
 
     public static Dictionary<string, string> DeserializeCustomAttributes(string json)
         => JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+
+    public static string SerializeAllAttributes(Dictionary<string, string> dict)
+        => JsonSerializer.Serialize(dict);
+
+    public static Dictionary<string, string> DeserializeAllAttributes(string json)
+        => JsonSerializer.Deserialize<Dictionary<string, string>>(json);
 }

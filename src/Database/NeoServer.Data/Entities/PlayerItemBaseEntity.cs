@@ -17,8 +17,7 @@ public abstract class PlayerItemBaseEntity
     public ushort? Charges { get; set; }
     public int ContainerId { get; set; } = 0;
 
-    public Dictionary<ItemAttribute, string> Attributes { get; set; } = new();
-    public Dictionary<string, string> CustomAttributes { get; set; } = new();
+    public Dictionary<string, string> Attributes { get; set; } = new();
 
     public virtual PlayerEntity Player { get; set; }
 }

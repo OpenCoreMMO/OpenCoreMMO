@@ -54,8 +54,8 @@ public class PlayerDepotItemEntitytConfiguration : IEntityTypeConfiguration<Play
         entity.Property(e => e.Attributes)
             .HasColumnType("jsonb")
             .HasConversion(
-                v => JsonExtensions.SerializeAttributes(v),
-                v => JsonExtensions.DeserializeAttributes<ItemAttribute>(v)
+                v => JsonExtensions.SerializeAllAttributes(v),
+                v => JsonExtensions.DeserializeAllAttributes(v)
             );
     }
 }

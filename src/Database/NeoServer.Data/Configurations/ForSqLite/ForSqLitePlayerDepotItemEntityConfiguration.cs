@@ -51,8 +51,8 @@ public class ForSqLitePlayerDepotItemEntityConfiguration : IEntityTypeConfigurat
         entity.Property(e => e.Attributes)
             .HasColumnType("TEXT")
             .HasConversion(
-                v => JsonExtensions.SerializeAttributes(v),
-                v => JsonExtensions.DeserializeAttributes<ItemAttribute>(v)
+                v => JsonExtensions.SerializeAllAttributes(v),
+                v => JsonExtensions.DeserializeAllAttributes(v)
             );
     }
 }
