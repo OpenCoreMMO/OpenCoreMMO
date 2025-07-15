@@ -178,7 +178,7 @@ public class SkillBonusItemTests
         //arrange
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
         {
-        });
+        })
 
         //act
         var actual = new SkillBonus(sut).ToString();
