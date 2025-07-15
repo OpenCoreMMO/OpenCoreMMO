@@ -133,7 +133,7 @@ public class GameCreatureManager : IGameCreatureManager
         if (creature is ISummon summon)
             summon.Dismiss();
         else if (creature is IPlayer player)
-            foreach (var summonPlayer in player.Summons.ToList())
+            foreach (var summonPlayer in player.Summons)
             {
                 summonPlayer.Dismiss();
                 _map.RemoveCreature(summonPlayer);
