@@ -583,7 +583,7 @@ public class EquipmentTests : IAsyncLifetime
         var decaysTo = ItemTestData.CreateDefenseEquipmentItem(3, "ring",
             attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
             {
-            });
+            })
         var itemTypeStore = ItemTestData.GetItemTypeStore(decaysTo.Metadata);
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
