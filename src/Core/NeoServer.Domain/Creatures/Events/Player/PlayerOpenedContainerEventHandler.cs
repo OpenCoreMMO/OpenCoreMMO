@@ -27,9 +27,9 @@ public class PlayerOpenedContainerEventHandler(IItemFactory itemFactory) : IGame
     {
         foreach (var item in items)
         {
-            var attributes = new Dictionary<ItemAttribute, IConvertible>();
+            var attributes = new Dictionary<ItemTypeAttribute, IConvertible>();
 
-            if (item.Amount > 1) attributes.TryAdd(ItemAttribute.Count, item.Amount);
+            if (item.Amount > 1) attributes.TryAdd(ItemTypeAttribute.Count, item.Amount);
 
             var itemToDrop = itemFactory.Create(item.ItemType.ServerId, container.Location, attributes);
 

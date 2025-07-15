@@ -100,7 +100,7 @@ public abstract class BaseTile : ITile
 
         if (item.Metadata.HasFlag(ItemFlag.BlockProjectTile)) SetFlag(TileFlags.BlockProjecTile);
 
-        if (item.Metadata.Attributes.TryGetAttribute(ItemAttribute.BlockProjectTile, out int value) && value == 1)
+        if (item.Metadata.Attributes.TryGetAttribute(ItemTypeAttribute.BlockProjectTile, out int value) && value == 1)
             SetFlag(TileFlags.BlockProjecTile);
 
         if (item is TeleportItem) SetFlag(TileFlags.Teleport);

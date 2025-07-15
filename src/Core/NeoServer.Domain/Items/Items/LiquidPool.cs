@@ -16,7 +16,7 @@ public class LiquidPool : BaseItem, ILiquid
     }
 
     public LiquidPool(IItemType type, Location location,
-        IDictionary<ItemAttribute, IConvertible> attributes) : base(type, location)
+        IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type, location)
     {
         LiquidColor = LiquidColor.Empty;
         LiquidColor = GetLiquidColor(attributes);
@@ -47,10 +47,10 @@ public class LiquidPool : BaseItem, ILiquid
         return color;
     }
 
-    private LiquidColor GetLiquidColor(IDictionary<ItemAttribute, IConvertible> attributes)
+    private LiquidColor GetLiquidColor(IDictionary<ItemTypeAttribute, IConvertible> attributes)
     {
         if (!IsLiquidPool && !IsLiquidContainer) return 0x00;
-        if (attributes != null && attributes.TryGetValue(ItemAttribute.Count, out var count))
+        if (attributes != null && attributes.TryGetValue(ItemTypeAttribute.Count, out var count))
             return new LiquidTypeMap()[(byte)count];
         return LiquidColor.Empty;
     }

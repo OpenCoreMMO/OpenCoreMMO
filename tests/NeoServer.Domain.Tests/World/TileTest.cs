@@ -253,7 +253,7 @@ public class TileTest
         var item = ItemTestData.CreateWeaponItem(1);
 
         var hole = new Ground(new ItemType(), new Location(100, 100, 7));
-        hole.Metadata.Attributes.SetAttribute(ItemAttribute.FloorChange, "down");
+        hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         map.PlaceCreature(player);
 
@@ -297,7 +297,7 @@ public class TileTest
         var item = ItemTestData.CreateWeaponItem(1);
 
         var hole = new Ground(new ItemType(), new Location(100, 100, 7));
-        hole.Metadata.Attributes.SetAttribute(ItemAttribute.FloorChange, "down");
+        hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         map.PlaceCreature(player);
 
@@ -339,12 +339,12 @@ public class TileTest
         var item = ItemTestData.CreateWeaponItem(1);
 
         var hole = new Ground(new ItemType(), new Location(100, 100, 7));
-        hole.Metadata.Attributes.SetAttribute(ItemAttribute.FloorChange, "down");
+        hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         map.PlaceCreature(player);
 
         var secondHole = new Ground(new ItemType(), new Location(100, 100, 8));
-        secondHole.Metadata.Attributes.SetAttribute(ItemAttribute.FloorChange, "down");
+        secondHole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         var sourceTile = (IDynamicTile)map[101, 100, 7];
         var destinationTile = (IDynamicTile)map[100, 100, 7];
@@ -385,7 +385,7 @@ public class TileTest
         var item = ItemTestData.CreateWeaponItem(1);
 
         var hole = new Ground(new ItemType(), new Location(100, 100, 7));
-        hole.Metadata.Attributes.SetAttribute(ItemAttribute.FloorChange, "down");
+        hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         map.PlaceCreature(player);
 
@@ -417,7 +417,7 @@ public class TileTest
         player.SetNewLocation(new Location(100, 100, 7));
 
         var hole = new Ground(new ItemType(), new Location(100, 100, 7));
-        hole.Metadata.Attributes.SetAttribute(ItemAttribute.FloorChange, "down");
+        hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         var tile = (IDynamicTile)map[100, 100, 7];
         var undergroundTile = (IDynamicTile)map[100, 100, 8];

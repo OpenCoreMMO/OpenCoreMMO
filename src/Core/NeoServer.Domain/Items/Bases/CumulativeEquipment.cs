@@ -9,7 +9,7 @@ namespace NeoServer.Domain.Items.Bases;
 public abstract class CumulativeEquipment : Equipment, ICumulative
 {
     protected CumulativeEquipment(IItemType type, Location location,
-        IDictionary<ItemAttribute, IConvertible> attributes) : base(type, location)
+        IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type, location)
     {
         SetAmount(attributes);
     }
@@ -103,11 +103,11 @@ public abstract class CumulativeEquipment : Equipment, ICumulative
         OnReduced?.Invoke(this, amount);
     }
 
-    private void SetAmount(IDictionary<ItemAttribute, IConvertible> attributes)
+    private void SetAmount(IDictionary<ItemTypeAttribute, IConvertible> attributes)
     {
         Amount = 1;
 
-        if (attributes == null || !attributes.TryGetValue(ItemAttribute.Count, out var count)) return;
+        if (attributes == null || !attributes.TryGetValue(ItemTypeAttribute.Count, out var count)) return;
 
         var amount = Convert.ToByte(count);
         Amount = Math.Min((byte)100, amount);

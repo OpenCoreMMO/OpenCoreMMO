@@ -65,7 +65,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
     public bool HasHole =>
         Ground is not null &&
-        Ground.Metadata.Attributes.TryGetAttribute(ItemAttribute.FloorChange, out var floorChange) &&
+        Ground.Metadata.Attributes.TryGetAttribute(ItemTypeAttribute.FloorChange, out var floorChange) &&
         floorChange == "down";
 
     public IGround Ground { get; private set; }
@@ -699,7 +699,7 @@ public class DynamicTile : BaseTile, IDynamicTile
                     operations.Add(Operation.Added, item);
                 }
 
-                if (item.Metadata.Attributes.HasAttribute(ItemAttribute.Field)) SetFlag(TileFlags.MagicField);
+                if (item.Metadata.Attributes.HasAttribute(ItemTypeAttribute.Field)) SetFlag(TileFlags.MagicField);
             }
         }
 

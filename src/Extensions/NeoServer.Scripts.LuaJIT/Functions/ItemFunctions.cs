@@ -7,6 +7,7 @@ using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Extensions;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -59,6 +60,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
 
         RegisterMethod(luaState, "Item", "hasProperty", LuaItemHasProperty);
         RegisterMethod(luaState, "Item", "hasAttribute", LuaItemHasAttribute);
+        RegisterMethod(luaState, "Item", "getAttribute", LuaItemGetAttribute);
 
         RegisterMethod(luaState, "Item", "moveTo", LuaItemMoveTo);
         RegisterMethod(luaState, "Item", "transform", LuaItemTransform);
@@ -172,7 +174,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         var actionId = GetNumber<ushort>(luaState, 2);
         if (item != null)
         {
-            item.Metadata.Attributes.SetAttribute(ItemAttribute.ActionId, actionId);
+            item.Attributes.SetAttribute(ItemAttribute.ActionId, actionId);
             Lua.PushBoolean(luaState, true);
         }
         else
@@ -280,17 +282,49 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
 
     public static int LuaItemHasAttribute(LuaState luaState)
     {
-        // item:hasAttribute()
+        // item:hasAttribute(key)
         var item = GetUserdata<IItem>(luaState, 1);
-        if (item != null)
-        {
-            var property = GetNumber<ItemAttributeType>(luaState, 2);
-            Lua.PushBoolean(luaState, item.Metadata.Attributes.HasAttribute(property.ToItemAttribute()));
-        }
-        else
+
+        if (item == null)
         {
             Lua.PushNil(luaState);
+            return 1;
         }
+
+        var attribute = ItemAttributeType.ITEM_ATTRIBUTE_NONE;
+        if (Lua.IsNumber(luaState, 2))
+            attribute = GetNumber<ItemAttributeType>(luaState, 2);
+        else if (Lua.IsString(luaState, 2))
+            attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
+
+        Lua.PushBoolean(luaState, item.Attributes.HasAttribute(attribute.ToItemAttribute()));
+
+        return 1;
+    }
+
+    public static int LuaItemGetAttribute(LuaState luaState)
+    {
+        // item:getAttribute(key)
+        var item = GetUserdata<IItem>(luaState, 1);
+
+        if (item == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var attribute = ItemAttributeType.ITEM_ATTRIBUTE_NONE;
+        if (Lua.IsNumber(luaState, 2))
+            attribute = GetNumber<ItemAttributeType>(luaState, 2);
+        else if (Lua.IsString(luaState, 2))
+            attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
+
+        if (attribute.IsAttributeInteger())
+            Lua.PushNumber(luaState, item.Attributes.GetAttribute<long>(attribute.ToItemAttribute()));
+        else if (attribute.IsAttributeString())
+            Lua.PushString(luaState, item.Attributes.GetAttribute(attribute.ToItemAttribute()));
+        else
+            Lua.PushNil(luaState);
 
         return 1;
     }
@@ -446,7 +480,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             {
                 var it = _itemTypeStore.Get(item.ServerId);
                 var decayTo = GetNumber<int>(luaState, 2);
-                it.Attributes.SetAttribute(ItemAttribute.DecayTo, decayTo);
+                it.Attributes.SetAttribute(ItemTypeAttribute.DecayTo, decayTo);
                 item.UpdateMetadata(it);
             }
 

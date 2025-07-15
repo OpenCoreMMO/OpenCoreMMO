@@ -106,7 +106,7 @@ public class Inventory : IInventory
     {
         foreach (var (item, _) in InventoryMap.Items)
             if (immunity is Immunity.Drunkenness &&
-                item.Metadata.Attributes.TryGetAttribute(ItemAttribute.SuppressDrunk, out byte suppressDrunk) &&
+                item.Metadata.Attributes.TryGetAttribute(ItemTypeAttribute.SuppressDrunk, out byte suppressDrunk) &&
                 suppressDrunk == 1)
                 return true;
 

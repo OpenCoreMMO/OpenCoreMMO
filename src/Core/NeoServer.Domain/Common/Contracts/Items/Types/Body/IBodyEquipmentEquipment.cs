@@ -15,7 +15,7 @@ public interface IBodyEquipmentEquipment : IDressable, IInventoryEquipment
 {
     bool Pickupable => true;
 
-    ushort MinimumLevelRequired => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumLevel);
+    ushort MinimumLevelRequired => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MinimumLevel);
 
     public ImmutableDictionary<SkillType, sbyte> SkillBonus =>
         Metadata.Attributes.SkillBonuses.ToImmutableDictionary();

@@ -21,8 +21,8 @@ public class Paper : BaseItem, IReadable
     }
 
     public string Text { get; private set; }
-    public ushort MaxLength => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MaxLength);
-    public bool CanWrite => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Writeable) == 1;
+    public ushort MaxLength => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MaxLength);
+    public bool CanWrite => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Writeable) == 1;
 
     public string
         WrittenBy { get; private set; } //todo: change to id and then query the database to get the current name

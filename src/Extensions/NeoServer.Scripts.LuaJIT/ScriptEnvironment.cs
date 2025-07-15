@@ -99,7 +99,7 @@ public class ScriptEnvironment
 
         if (thing is ICreature creature) return creature.CreatureId;
 
-        if (thing is IItem item && item.Metadata.Attributes.HasAttribute(ItemAttribute.UniqueId)) return item.UniqueId;
+        if (thing is IItem item && item.Attributes.HasAttribute(ItemAttribute.UniqueId)) return item.UniqueId;
 
         foreach (var it in _localMap)
             if (it.Value == thing)

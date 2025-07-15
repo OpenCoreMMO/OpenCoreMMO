@@ -1,8 +1,6 @@
 using LuaNET;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Spells;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Spells;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -193,19 +191,19 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         {
             var item = _itemTypeStore.Get((ushort)rune.RuneId);
 
-            if (string.IsNullOrWhiteSpace(item.Name)) item.UpdateName(rune.Name);
+            if (string.IsNullOrWhiteSpace(item.Name)) item.SetName(rune.Name);
 
-            item.Attributes.SetAttribute(ItemAttribute.MinimumMagicLevel, rune.MagicLevel);
-            item.Attributes.SetAttribute(ItemAttribute.MinimumLevel, rune.Level);
-            item.Attributes.SetAttribute(ItemAttribute.Charges, rune.Charges);
-            item.Attributes.SetAttribute(ItemAttribute.AllowFarUse, rune.AllowFarUse);
-            item.Attributes.SetAttribute(ItemAttribute.CheckFloor, rune.CheckFloor);
+            item.Attributes.SetAttribute(ItemTypeAttribute.MinimumMagicLevel, rune.MagicLevel);
+            item.Attributes.SetAttribute(ItemTypeAttribute.MinimumLevel, rune.Level);
+            item.Attributes.SetAttribute(ItemTypeAttribute.Charges, rune.Charges);
+            item.Attributes.SetAttribute(ItemTypeAttribute.AllowFarUse, rune.AllowFarUse);
+            item.Attributes.SetAttribute(ItemTypeAttribute.CheckFloor, rune.CheckFloor);
 
-            item.Attributes.SetAttribute(ItemAttribute.CooldownTime, rune.Cooldown);
-            item.Attributes.SetAttribute(ItemAttribute.PrimaryGroupCooldown, rune.PrimaryGroupCooldown);
-            item.Attributes.SetAttribute(ItemAttribute.PrimaryGroupCooldown, rune.SecondaryGroupCooldown);
-            item.Attributes.SetAttribute(ItemAttribute.PrimaryGroup, rune.PrimaryGroup);
-            item.Attributes.SetAttribute(ItemAttribute.SecondaryGroup, rune.SecondaryGroup);
+            item.Attributes.SetAttribute(ItemTypeAttribute.CooldownTime, rune.Cooldown);
+            item.Attributes.SetAttribute(ItemTypeAttribute.PrimaryGroupCooldown, rune.PrimaryGroupCooldown);
+            item.Attributes.SetAttribute(ItemTypeAttribute.PrimaryGroupCooldown, rune.SecondaryGroupCooldown);
+            item.Attributes.SetAttribute(ItemTypeAttribute.PrimaryGroup, rune.PrimaryGroup);
+            item.Attributes.SetAttribute(ItemTypeAttribute.SecondaryGroup, rune.SecondaryGroup);
 
             ISpell runeSpell = null;
             if (_spellListManager.TryGet(rune.Name, out runeSpell))

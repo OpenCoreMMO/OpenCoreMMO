@@ -32,7 +32,7 @@ public class ItemUsedEventHandler : IGameEventHandler
     {
         if (item?.CanTransformTo == 0) return;
         if (usedBy is not IPlayer player) return;
-        var createdItem = itemFactory.Create(item.CanTransformTo, creature.Location, null);
+        var createdItem = itemFactory.Create(item.CanTransformTo, creature.Location, null, null);
 
         if (map[creature.Location] is not IDynamicTile tile) return;
 

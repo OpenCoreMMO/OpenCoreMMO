@@ -12,15 +12,15 @@ public class InventoryDefenseCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateWeaponItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var weapon = ItemTestData.CreateWeaponItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Defense, 10)
+            (ItemTypeAttribute.Defense, 10)
         });
 
-        var shield = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var shield = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, "shield"),
-            (ItemAttribute.Defense, 40)
+            (ItemTypeAttribute.BodyPosition, "shield"),
+            (ItemTypeAttribute.Defense, 40)
         });
 
         inventory.AddItem(weapon);
@@ -35,16 +35,16 @@ public class InventoryDefenseCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var legs = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var legs = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, "legs"),
-            (ItemAttribute.Armor, 10)
+            (ItemTypeAttribute.BodyPosition, "legs"),
+            (ItemTypeAttribute.Armor, 10)
         });
 
-        var helmet = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var helmet = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, "head"),
-            (ItemAttribute.Armor, 40)
+            (ItemTypeAttribute.BodyPosition, "head"),
+            (ItemTypeAttribute.Armor, 40)
         });
 
         inventory.AddItem(legs);

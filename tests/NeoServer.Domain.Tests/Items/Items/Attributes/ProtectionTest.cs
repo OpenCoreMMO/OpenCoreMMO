@@ -19,8 +19,8 @@ public class ProtectionTest
     {
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes:
         [
-            (ItemAttribute.BodyPosition, "body"),
-            (ItemAttribute.AbsorbPercentFire, 20)
+            (ItemTypeAttribute.BodyPosition, "body"),
+            (ItemTypeAttribute.AbsorbPercentFire, 20)
         ], charges: 10);
 
         var player = PlayerTestDataBuilder.Build(hp: 400);
@@ -42,8 +42,8 @@ public class ProtectionTest
     {
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes:
         [
-            (ItemAttribute.BodyPosition, "body"),
-            (ItemAttribute.AbsorbPercentPoison, 20)
+            (ItemTypeAttribute.BodyPosition, "body"),
+            (ItemTypeAttribute.AbsorbPercentPoison, 20)
         ], charges: 10);
 
         var player = PlayerTestDataBuilder.Build(hp: 400);
@@ -64,8 +64,8 @@ public class ProtectionTest
     {
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes:
         [
-            (ItemAttribute.BodyPosition, "body"),
-            (ItemAttribute.AbsorbPercentFire, 100)
+            (ItemTypeAttribute.BodyPosition, "body"),
+            (ItemTypeAttribute.AbsorbPercentFire, 100)
         ], charges: 10);
 
         var player = PlayerTestDataBuilder.Build();
@@ -86,7 +86,7 @@ public class ProtectionTest
     {
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, "body", attributes:
         [
-            (ItemAttribute.AbsorbPercentFire, 100)
+            (ItemTypeAttribute.AbsorbPercentFire, 100)
         ], charges: 10);
 
         var player = PlayerTestDataBuilder.Build();
@@ -106,8 +106,8 @@ public class ProtectionTest
     {
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes:
         [
-            (ItemAttribute.BodyPosition, "body"),
-            (ItemAttribute.AbsorbPercentFire, 100)
+            (ItemTypeAttribute.BodyPosition, "body"),
+            (ItemTypeAttribute.AbsorbPercentFire, 100)
         ], charges: 10);
 
         var player = PlayerTestDataBuilder.Build(hp: 500);
@@ -144,8 +144,8 @@ public class ProtectionTest
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 50,
             attributes:
             [
-                (ItemAttribute.BodyPosition, "body"),
-                (ItemAttribute.AbsorbPercentEnergy, 10)
+                (ItemTypeAttribute.BodyPosition, "body"),
+                (ItemTypeAttribute.AbsorbPercentEnergy, 10)
             ]);
 
         defender.Inventory.AddItem(sut, Slot.Body);
@@ -174,8 +174,8 @@ public class ProtectionTest
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 50,
             attributes:
             [
-                (ItemAttribute.BodyPosition, "body"),
-                (ItemAttribute.AbsorbPercentFire, 100)
+                (ItemTypeAttribute.BodyPosition, "body"),
+                (ItemTypeAttribute.AbsorbPercentFire, 100)
             ]);
 
         defender.Inventory.AddItem(sut, Slot.Body);
@@ -205,8 +205,8 @@ public class ProtectionTest
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 0, slot: "body",
             attributes:
             [
-                (ItemAttribute.AbsorbPercentEnergy, 100),
-                (ItemAttribute.Duration, 100)
+                (ItemTypeAttribute.AbsorbPercentEnergy, 100),
+                (ItemTypeAttribute.Duration, 100)
             ]);
 
         defender.Inventory.AddItem(sut, Slot.Body);
@@ -235,7 +235,7 @@ public class ProtectionTest
         (map[101, 100, 7] as DynamicTile)?.AddCreature(defender);
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1, slot: "body");
-        sut.Metadata.Attributes.SetAttribute(ItemAttribute.AbsorbPercentEnergy, 100);
+        sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.AbsorbPercentEnergy, 100);
 
         sut.DecreaseCharges();
 
@@ -267,8 +267,8 @@ public class ProtectionTest
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1, slot: "body", attributes:
         [
-            (ItemAttribute.AbsorbPercentEnergy, 100),
-            (ItemAttribute.Duration, 100)
+            (ItemTypeAttribute.AbsorbPercentEnergy, 100),
+            (ItemTypeAttribute.Duration, 100)
         ]);
 
         defender.Inventory.AddItem(sut, Slot.Body);
@@ -297,7 +297,7 @@ public class ProtectionTest
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
             attributes:
             [
-                (ItemAttribute.AbsorbPercentEnergy, protection)
+                (ItemTypeAttribute.AbsorbPercentEnergy, protection)
             ]);
 
         defender.Inventory.AddItem(sut, Slot.Body);
@@ -322,7 +322,7 @@ public class ProtectionTest
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
             attributes:
             [
-                (ItemAttribute.AbsorbPercentManaDrain, 10)
+                (ItemTypeAttribute.AbsorbPercentManaDrain, 10)
             ]);
 
         defender.Inventory.AddItem(sut, Slot.Body);
@@ -349,7 +349,7 @@ public class ProtectionTest
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
             attributes:
             [
-                (ItemAttribute.AbsorbPercentLifeDrain, 10)
+                (ItemTypeAttribute.AbsorbPercentLifeDrain, 10)
             ]);
 
         defender.Inventory.AddItem(sut, Slot.Body);
@@ -365,19 +365,19 @@ public class ProtectionTest
     }
 
     [Theory]
-    [InlineData(DamageType.Energy, ItemAttribute.AbsorbPercentEnergy)]
-    [InlineData(DamageType.Fire, ItemAttribute.AbsorbPercentFire)]
-    [InlineData(DamageType.Drown, ItemAttribute.AbsorbPercentDrown)]
-    [InlineData(DamageType.Holy, ItemAttribute.AbsorbPercentHoly)]
-    [InlineData(DamageType.Ice, ItemAttribute.AbsorbPercentIce)]
-    [InlineData(DamageType.ManaDrain, ItemAttribute.AbsorbPercentManaDrain)]
-    [InlineData(DamageType.Earth, ItemAttribute.AbsorbPercentPoison)]
-    [InlineData(DamageType.Death, ItemAttribute.AbsorbPercentDeath)]
-    [InlineData(DamageType.LifeDrain, ItemAttribute.AbsorbPercentLifeDrain)]
-    [InlineData(DamageType.Physical, ItemAttribute.AbsorbPercentPhysical)]
-    [InlineData(DamageType.Melee, ItemAttribute.AbsorbPercentPhysical)]
+    [InlineData(DamageType.Energy, ItemTypeAttribute.AbsorbPercentEnergy)]
+    [InlineData(DamageType.Fire, ItemTypeAttribute.AbsorbPercentFire)]
+    [InlineData(DamageType.Drown, ItemTypeAttribute.AbsorbPercentDrown)]
+    [InlineData(DamageType.Holy, ItemTypeAttribute.AbsorbPercentHoly)]
+    [InlineData(DamageType.Ice, ItemTypeAttribute.AbsorbPercentIce)]
+    [InlineData(DamageType.ManaDrain, ItemTypeAttribute.AbsorbPercentManaDrain)]
+    [InlineData(DamageType.Earth, ItemTypeAttribute.AbsorbPercentPoison)]
+    [InlineData(DamageType.Death, ItemTypeAttribute.AbsorbPercentDeath)]
+    [InlineData(DamageType.LifeDrain, ItemTypeAttribute.AbsorbPercentLifeDrain)]
+    [InlineData(DamageType.Physical, ItemTypeAttribute.AbsorbPercentPhysical)]
+    [InlineData(DamageType.Melee, ItemTypeAttribute.AbsorbPercentPhysical)]
     public void Player_with_elemental_damage_protection_equipment_decreases_damage(DamageType damageType,
-        ItemAttribute protectionAttribute)
+        ItemTypeAttribute protectionAttribute)
     {
         //arrange
         var defender = PlayerTestDataBuilder.Build(hp: 500, mana: 500);
@@ -401,19 +401,19 @@ public class ProtectionTest
     }
 
     [Theory]
-    [InlineData(DamageType.Energy, ItemAttribute.AbsorbPercentElements)]
-    [InlineData(DamageType.Fire, ItemAttribute.AbsorbPercentElements)]
-    [InlineData(DamageType.Drown, ItemAttribute.AbsorbPercentElements)]
-    [InlineData(DamageType.Holy, ItemAttribute.AbsorbPercentElements)]
-    [InlineData(DamageType.Ice, ItemAttribute.AbsorbPercentElements)]
-    [InlineData(DamageType.ManaDrain, ItemAttribute.AbsorbPercentElements)]
-    [InlineData(DamageType.Earth, ItemAttribute.AbsorbPercentElements)]
-    [InlineData(DamageType.Death, ItemAttribute.AbsorbPercentElements)]
-    [InlineData(DamageType.LifeDrain, ItemAttribute.AbsorbPercentElements)]
-    [InlineData(DamageType.Physical, ItemAttribute.AbsorbPercentElements, 200)]
-    [InlineData(DamageType.Melee, ItemAttribute.AbsorbPercentElements, 200)]
+    [InlineData(DamageType.Energy, ItemTypeAttribute.AbsorbPercentElements)]
+    [InlineData(DamageType.Fire, ItemTypeAttribute.AbsorbPercentElements)]
+    [InlineData(DamageType.Drown, ItemTypeAttribute.AbsorbPercentElements)]
+    [InlineData(DamageType.Holy, ItemTypeAttribute.AbsorbPercentElements)]
+    [InlineData(DamageType.Ice, ItemTypeAttribute.AbsorbPercentElements)]
+    [InlineData(DamageType.ManaDrain, ItemTypeAttribute.AbsorbPercentElements)]
+    [InlineData(DamageType.Earth, ItemTypeAttribute.AbsorbPercentElements)]
+    [InlineData(DamageType.Death, ItemTypeAttribute.AbsorbPercentElements)]
+    [InlineData(DamageType.LifeDrain, ItemTypeAttribute.AbsorbPercentElements)]
+    [InlineData(DamageType.Physical, ItemTypeAttribute.AbsorbPercentElements, 200)]
+    [InlineData(DamageType.Melee, ItemTypeAttribute.AbsorbPercentElements, 200)]
     public void Player_with_all_elemental_damage_protection_equipment_decreases_damage(DamageType damageType,
-        ItemAttribute protectionAttribute, ushort expectedDamage = 180)
+        ItemTypeAttribute protectionAttribute, ushort expectedDamage = 180)
     {
         //arrange
         var defender = PlayerTestDataBuilder.Build(hp: 500, mana: 500);
@@ -437,19 +437,19 @@ public class ProtectionTest
     }
 
     [Theory]
-    [InlineData(DamageType.Energy, ItemAttribute.AbsorbPercentAll)]
-    [InlineData(DamageType.Fire, ItemAttribute.AbsorbPercentAll)]
-    [InlineData(DamageType.Drown, ItemAttribute.AbsorbPercentAll)]
-    [InlineData(DamageType.Holy, ItemAttribute.AbsorbPercentAll)]
-    [InlineData(DamageType.Ice, ItemAttribute.AbsorbPercentAll)]
-    [InlineData(DamageType.ManaDrain, ItemAttribute.AbsorbPercentAll)]
-    [InlineData(DamageType.Earth, ItemAttribute.AbsorbPercentAll)]
-    [InlineData(DamageType.Death, ItemAttribute.AbsorbPercentAll)]
-    [InlineData(DamageType.LifeDrain, ItemAttribute.AbsorbPercentAll)]
-    [InlineData(DamageType.Physical, ItemAttribute.AbsorbPercentAll)]
-    [InlineData(DamageType.Melee, ItemAttribute.AbsorbPercentAll)]
+    [InlineData(DamageType.Energy, ItemTypeAttribute.AbsorbPercentAll)]
+    [InlineData(DamageType.Fire, ItemTypeAttribute.AbsorbPercentAll)]
+    [InlineData(DamageType.Drown, ItemTypeAttribute.AbsorbPercentAll)]
+    [InlineData(DamageType.Holy, ItemTypeAttribute.AbsorbPercentAll)]
+    [InlineData(DamageType.Ice, ItemTypeAttribute.AbsorbPercentAll)]
+    [InlineData(DamageType.ManaDrain, ItemTypeAttribute.AbsorbPercentAll)]
+    [InlineData(DamageType.Earth, ItemTypeAttribute.AbsorbPercentAll)]
+    [InlineData(DamageType.Death, ItemTypeAttribute.AbsorbPercentAll)]
+    [InlineData(DamageType.LifeDrain, ItemTypeAttribute.AbsorbPercentAll)]
+    [InlineData(DamageType.Physical, ItemTypeAttribute.AbsorbPercentAll)]
+    [InlineData(DamageType.Melee, ItemTypeAttribute.AbsorbPercentAll)]
     public void Player_with_all_damage_protection_equipment_decreases_damage(DamageType damageType,
-        ItemAttribute protectionAttribute)
+        ItemTypeAttribute protectionAttribute)
     {
         //arrange
         var defender = PlayerTestDataBuilder.Build(hp: 500, mana: 500);
@@ -483,8 +483,8 @@ public class ProtectionTest
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
             attributes:
             [
-                (ItemAttribute.AbsorbPercentAll, 10),
-                (ItemAttribute.AbsorbPercentDeath, 50)
+                (ItemTypeAttribute.AbsorbPercentAll, 10),
+                (ItemTypeAttribute.AbsorbPercentDeath, 50)
             ]);
 
         defender.Inventory.AddItem(sut, Slot.Body);
@@ -515,8 +515,8 @@ public class ProtectionTest
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
             attributes:
             [
-                (ItemAttribute.AbsorbPercentElements, 10),
-                (ItemAttribute.AbsorbPercentDeath, 50)
+                (ItemTypeAttribute.AbsorbPercentElements, 10),
+                (ItemTypeAttribute.AbsorbPercentDeath, 50)
             ]);
 
         defender.Inventory.AddItem(sut, Slot.Body);
@@ -551,16 +551,16 @@ public class ProtectionTest
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
             attributes:
             [
-                (ItemAttribute.AbsorbPercentEnergy, 10),
-                (ItemAttribute.AbsorbPercentFire, 20),
-                (ItemAttribute.AbsorbPercentDeath, -25),
-                (ItemAttribute.AbsorbPercentManaDrain, 30),
-                (ItemAttribute.AbsorbPercentLifeDrain, 45),
-                (ItemAttribute.AbsorbPercentIce, 50),
-                (ItemAttribute.AbsorbPercentPhysical, -65),
-                (ItemAttribute.AbsorbPercentDrown, 80),
-                (ItemAttribute.AbsorbPercentPoison, 100),
-                (ItemAttribute.AbsorbPercentHoly, 50)
+                (ItemTypeAttribute.AbsorbPercentEnergy, 10),
+                (ItemTypeAttribute.AbsorbPercentFire, 20),
+                (ItemTypeAttribute.AbsorbPercentDeath, -25),
+                (ItemTypeAttribute.AbsorbPercentManaDrain, 30),
+                (ItemTypeAttribute.AbsorbPercentLifeDrain, 45),
+                (ItemTypeAttribute.AbsorbPercentIce, 50),
+                (ItemTypeAttribute.AbsorbPercentPhysical, -65),
+                (ItemTypeAttribute.AbsorbPercentDrown, 80),
+                (ItemTypeAttribute.AbsorbPercentPoison, 100),
+                (ItemTypeAttribute.AbsorbPercentHoly, 50)
             ]);
 
         var sut = new Protection(item);
@@ -577,7 +577,7 @@ public class ProtectionTest
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
             attributes:
             [
-                (ItemAttribute.AbsorbPercentAll, 10)
+                (ItemTypeAttribute.AbsorbPercentAll, 10)
             ]);
         var sut = new Protection(item);
 
@@ -592,7 +592,7 @@ public class ProtectionTest
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
             attributes:
             [
-                (ItemAttribute.AbsorbPercentElements, 10)
+                (ItemTypeAttribute.AbsorbPercentElements, 10)
             ]);
         var sut = new Protection(item);
 
@@ -607,8 +607,8 @@ public class ProtectionTest
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
             attributes:
             [
-                (ItemAttribute.AbsorbPercentElements, 10),
-                (ItemAttribute.AbsorbPercentDeath, 0)
+                (ItemTypeAttribute.AbsorbPercentElements, 10),
+                (ItemTypeAttribute.AbsorbPercentDeath, 0)
             ]);
         var sut = new Protection(item);
 
@@ -639,7 +639,7 @@ public class ProtectionTest
         //arrange
         var item = new Mock<IItem>();
         var itemType = new Mock<IItemType>();
-        var itemAttribute = new ItemAttributeList();
+        var itemAttribute = new ItemTypeAttributeList();
 
         itemType.SetupGet(x => x.Attributes).Returns(itemAttribute);
         item.Setup(x => x.Metadata).Returns(itemType.Object);
@@ -662,8 +662,8 @@ public class ProtectionTest
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1,
             attributes:
             [
-                (ItemAttribute.AbsorbPercentElements, 10),
-                (ItemAttribute.AbsorbPercentDeath, 0)
+                (ItemTypeAttribute.AbsorbPercentElements, 10),
+                (ItemTypeAttribute.AbsorbPercentDeath, 0)
             ]);
         var combatDamage = new CombatDamage(100, DamageType.None);
 

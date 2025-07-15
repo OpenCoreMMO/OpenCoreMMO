@@ -6,13 +6,13 @@ namespace NeoServer.Domain.Common.Parsers;
 
 public class SlotTypeParser
 {
-    public static Slot Parse(ItemAttributeList itemAttributes)
+    public static Slot Parse(ItemTypeAttributeList itemAttributes)
     {
         if (itemAttributes is null) return Slot.None;
 
-        var slotType = itemAttributes.GetAttribute(ItemAttribute.BodyPosition);
+        var slotType = itemAttributes.GetAttribute(ItemTypeAttribute.BodyPosition);
 
-        if (slotType is null && itemAttributes.TryGetAttribute(ItemAttribute.WeaponType, out var weaponType))
+        if (slotType is null && itemAttributes.TryGetAttribute(ItemTypeAttribute.WeaponType, out var weaponType))
             slotType = weaponType;
 
         return slotType switch

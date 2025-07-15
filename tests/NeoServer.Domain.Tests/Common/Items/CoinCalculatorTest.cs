@@ -45,13 +45,13 @@ public class CoinCalculatorTest
     public void Calculate(uint value, (CoinType, byte)[] expected)
     {
         var goldType = new ItemType();
-        goldType.SetId((ushort)CoinType.Gold).Attributes.SetAttribute(ItemAttribute.Worth, 1);
+        goldType.SetId((ushort)CoinType.Gold).Attributes.SetAttribute(ItemTypeAttribute.Worth, 1);
 
         var platinumType = new ItemType();
-        platinumType.SetId((ushort)CoinType.Platinum).Attributes.SetAttribute(ItemAttribute.Worth, 100);
+        platinumType.SetId((ushort)CoinType.Platinum).Attributes.SetAttribute(ItemTypeAttribute.Worth, 100);
 
         var crystalType = new ItemType();
-        crystalType.SetId((ushort)CoinType.Crystal).Attributes.SetAttribute(ItemAttribute.Worth, 10_000);
+        crystalType.SetId((ushort)CoinType.Crystal).Attributes.SetAttribute(ItemTypeAttribute.Worth, 10_000);
 
         var coinTypes = new Dictionary<ushort, IItemType>
         {

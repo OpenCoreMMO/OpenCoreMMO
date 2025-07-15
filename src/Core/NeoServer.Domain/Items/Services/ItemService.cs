@@ -31,7 +31,7 @@ public class ItemService : IItemService
 
         if (tile is not IDynamicTile dynamicTile) return null;
 
-        var newItem = _itemFactory.Create(toItemId, tile.Location, new Dictionary<ItemAttribute, IConvertible>());
+        var newItem = _itemFactory.Create(toItemId, tile.Location, new Dictionary<ItemTypeAttribute, IConvertible>(), null);
 
         dynamicTile.ReplaceItem(fromItemId, newItem);
 
@@ -60,7 +60,7 @@ public class ItemService : IItemService
 
         if (tile is not IDynamicTile dynamicTile) return null;
 
-        var newItem = _itemFactory.Create(id, tile.Location, new Dictionary<ItemAttribute, IConvertible>());
+        var newItem = _itemFactory.Create(id, tile.Location, new Dictionary<ItemTypeAttribute, IConvertible>(), null);
 
         dynamicTile.AddItem(newItem);
 

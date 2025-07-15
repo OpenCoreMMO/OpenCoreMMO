@@ -11,9 +11,9 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateWeaponItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var weapon = ItemTestData.CreateWeaponItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Attack, 50)
+            (ItemTypeAttribute.Attack, 50)
         });
 
         inventory.AddItem(weapon);
@@ -27,14 +27,14 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateDistanceWeapon(1, attributes: new (ItemAttribute, IConvertible)[]
+        var weapon = ItemTestData.CreateDistanceWeapon(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Attack, 50)
+            (ItemTypeAttribute.Attack, 50)
         });
 
-        var ammo = ItemTestData.CreateAmmo(1, 50, new (ItemAttribute, IConvertible)[]
+        var ammo = ItemTestData.CreateAmmo(1, 50, new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Attack, 60)
+            (ItemTypeAttribute.Attack, 60)
         });
 
         inventory.AddItem(weapon);
@@ -49,9 +49,9 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateThrowableDistanceItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var weapon = ItemTestData.CreateThrowableDistanceItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Attack, 50)
+            (ItemTypeAttribute.Attack, 50)
         });
 
         inventory.AddItem(weapon);
@@ -65,9 +65,9 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateDistanceWeapon(1, attributes: new (ItemAttribute, IConvertible)[]
+        var weapon = ItemTestData.CreateDistanceWeapon(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Range, 30)
+            (ItemTypeAttribute.Range, 30)
         });
 
         inventory.AddItem(weapon);
@@ -81,9 +81,9 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateThrowableDistanceItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var weapon = ItemTestData.CreateThrowableDistanceItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Range, 30)
+            (ItemTypeAttribute.Range, 30)
         });
 
         inventory.AddItem(weapon);
@@ -97,9 +97,9 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateWeaponItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var weapon = ItemTestData.CreateWeaponItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Attack, 30)
+            (ItemTypeAttribute.Attack, 30)
         });
 
         inventory.AddItem(weapon);

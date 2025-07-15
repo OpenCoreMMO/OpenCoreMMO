@@ -14,9 +14,8 @@ public class ItemType : IItemType
     public ItemType()
     {
         ServerId = 0;
-        Name = string.Empty;
         Flags = new HashSet<ItemFlag>();
-        Attributes = new ItemAttributeList();
+        Attributes = new ItemTypeAttributeList();
         Locked = false;
     }
 
@@ -32,7 +31,7 @@ public class ItemType : IItemType
     /// <summary>
     ///     ItemType's name
     /// </summary>
-    public string Name { get; private set; }
+    public string Name => Attributes.GetAttribute(ItemTypeAttribute.Name);
 
     public string FullName => string.IsNullOrWhiteSpace(Article)
         ? $"{Name}"
@@ -41,12 +40,12 @@ public class ItemType : IItemType
     /// <summary>
     ///     ItemType's description
     /// </summary>
-    public string Description => Attributes.GetAttribute(ItemAttribute.Description);
+    public string Description => Attributes.GetAttribute(ItemTypeAttribute.Description);
 
-    public ISet<ItemFlag> Flags { get; }
+    public ISet<ItemFlag> Flags { get; set; }
 
-    public ItemAttributeList Attributes { get; }
-    public ItemAttributeList OnUse { get; private set; }
+    public ItemTypeAttributeList Attributes { get; set; }
+    public ItemTypeAttributeList OnUse { get; private set; }
 
     public ushort ClientId { get; private set; }
     public ushort TransformTo => Attributes.GetTransformationItem();
@@ -54,32 +53,34 @@ public class ItemType : IItemType
 
     public ItemGroup Group { get; private set; }
 
-    public ushort Speed => Attributes.GetAttribute<ushort>(ItemAttribute.Speed);
-    public string Article { get; private set; }
-    public string Plural { get; private set; }
+    public ushort Speed => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Speed);
+    public string Article => Attributes.GetAttribute(ItemTypeAttribute.Article);
+    public string Plural => Attributes.GetAttribute(ItemTypeAttribute.PluralName);
+    public float Weight => Attributes.GetAttribute<float>(ItemTypeAttribute.Weight);
 
-    public float Weight => Attributes.GetAttribute<float>(ItemAttribute.Weight);
-
-    public void UpdateName(string name)
+    public void SetName(string name)
     {
-        Name = name;
+        Attributes.SetAttribute(ItemTypeAttribute.Name, name);
+        ThrowIfLocked();
     }
 
     public void SetOnUse()
     {
         ThrowIfLocked();
         if (OnUse is not null) return;
-        OnUse = new ItemAttributeList();
+        OnUse = new ItemTypeAttributeList();
     }
 
     public void SetArticle(string article)
     {
-        Article = article;
+        Attributes.SetAttribute(ItemTypeAttribute.Article, article);
+        ThrowIfLocked();
     }
 
     public void SetPlural(string plural)
     {
-        Plural = plural;
+        Attributes.SetAttribute(ItemTypeAttribute.PluralName, plural);
+        ThrowIfLocked();
     }
 
     public bool HasFlag(ItemFlag flag)
@@ -96,7 +97,7 @@ public class ItemType : IItemType
         return false;
     }
 
-    public AmmoType AmmoType => Attributes?.GetAttribute(ItemAttribute.AmmoType) switch
+    public AmmoType AmmoType => Attributes?.GetAttribute(ItemTypeAttribute.AmmoType) switch
     {
         "bolt" => AmmoType.Bolt,
         "arrow" => AmmoType.Arrow,
@@ -104,10 +105,10 @@ public class ItemType : IItemType
     };
 
     public Slot BodyPosition => SlotTypeParser.Parse(Attributes);
-    public ShootType ShootType => ShootTypeParser.Parse(Attributes?.GetAttribute(ItemAttribute.ShootType));
-    public WeaponType WeaponType => WeaponTypeParser.Parse(Attributes?.GetAttribute(ItemAttribute.WeaponType));
-    public DamageType DamageType => DamageTypeParser.Parse(Attributes?.GetAttribute(ItemAttribute.Damage));
-    public EffectT EffectT => EffectParser.Parse(Attributes?.GetAttribute(ItemAttribute.Effect));
+    public ShootType ShootType => ShootTypeParser.Parse(Attributes?.GetAttribute(ItemTypeAttribute.ShootType));
+    public WeaponType WeaponType => WeaponTypeParser.Parse(Attributes?.GetAttribute(ItemTypeAttribute.WeaponType));
+    public DamageType DamageType => DamageTypeParser.Parse(Attributes?.GetAttribute(ItemTypeAttribute.Damage));
+    public EffectT EffectT => EffectParser.Parse(Attributes?.GetAttribute(ItemTypeAttribute.Effect));
 
     public void SetGroupIfNone()
     {
@@ -118,7 +119,7 @@ public class ItemType : IItemType
 
     public void SetSpeed(ushort speed)
     {
-        Attributes.SetAttribute(ItemAttribute.AttackSpeed, speed);
+        Attributes.SetAttribute(ItemTypeAttribute.AttackSpeed, speed);
         ThrowIfLocked();
     }
 
@@ -133,7 +134,7 @@ public class ItemType : IItemType
         Locked = true;
     }
 
-    private void ThrowIfLocked()
+    public void ThrowIfLocked()
     {
         if (Locked) throw new InvalidOperationException("This ItemType is locked and cannot be altered.");
     }

@@ -7,8 +7,8 @@ namespace NeoServer.Domain.Common.Contracts.Items;
 public interface IRequirement : IItem
 {
     public byte[] Vocations => Metadata.Attributes.GetRequiredVocations();
-    public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumLevel);
-    public ushort MinMagicLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumMagicLevel);
+    public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MinimumLevel);
+    public ushort MinMagicLevel => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MinimumMagicLevel);
 }
 
 public interface IConsumableRequirement : IRequirement
