@@ -122,15 +122,15 @@ public class BaseAttributeList<T> where T : Enum
     }
 
     public void SetAttribute(T attribute, IConvertible attributeValue)
-    {
+        {
         _defaultAttributes.AddOrUpdate(attribute, (attributeValue, null));
-    }
+        }
 
     public void SetAttribute(IDictionary<T, IConvertible> attributeValues)
-    {
+        {
         if (attributeValues.IsNull()) return;
         foreach (var (key, value) in attributeValues) SetAttribute(key, value);
-    }
+        }
 
     public void SetAttribute(T attribute, dynamic values)
     {
@@ -216,9 +216,9 @@ public class BaseAttributeList<T> where T : Enum
         try
         {
             attrValue = (TValue)Convert.ChangeType(value.Item1, typeof(TValue), CultureInfo.InvariantCulture);
-        }
+    }
         catch
-        {
+    {
             attrValue = default;
         }
 

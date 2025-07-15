@@ -560,13 +560,15 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         {
             item.Attributes.SetCustomAttribute(key, GetBoolean(luaState, 3));
         }
-        else
-        {
-            Lua.PushNil(luaState);
-            return 1;
-        }
 
-        Lua.PushBoolean(luaState, true);
+        var attribute = ItemAttributeType.ITEM_ATTRIBUTE_NONE;
+        if (Lua.IsNumber(luaState, 2))
+            attribute = GetNumber<ItemAttributeType>(luaState, 2);
+        else if (Lua.IsString(luaState, 2))
+            attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
+
+        Lua.PushBoolean(luaState, item.Attributes.HasAttribute(attribute.ToItemAttribute()));
+
         return 1;
     }
 
