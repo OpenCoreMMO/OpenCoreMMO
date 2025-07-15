@@ -14,7 +14,7 @@ public class MagicWeaponTests
     {
         var sut = ItemTestData.CreateMagicWeapon(1, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
         {
-        });
+        })
 
         //assert
         sut.InspectionText.Should().BeEmpty();
