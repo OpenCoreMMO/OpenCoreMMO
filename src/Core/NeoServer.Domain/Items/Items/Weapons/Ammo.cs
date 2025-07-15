@@ -28,11 +28,6 @@ public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
         WeaponAttack = new WeaponAttack(itemType, itemAttributes);
     }
 
-    public Ammo(IItemType itemType, Location location, byte amount) : base(itemType, location, amount)
-    {
-        WeaponAttack = new WeaponAttack(itemType);
-    }
-
     protected override string PartialInspectionText
     {
         get

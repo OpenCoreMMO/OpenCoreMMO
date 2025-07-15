@@ -309,6 +309,7 @@ public class ItemTestData
         type.Attributes.SetAttribute(ItemTypeAttribute.Weight, weight);
         type.Attributes.SetAttribute(ItemTypeAttribute.BodyPosition, "weapon");
         type.Attributes.SetAttribute(ItemTypeAttribute.Range, range);
+        type.Attributes.SetAttribute(ItemTypeAttribute.Count, amount);
         type.Attributes.SetCustomAttribute("breakChance", breakChance);
         type.Flags.Add(ItemFlag.Pickupable);
         type.Flags.Add(ItemFlag.Movable);
@@ -316,11 +317,16 @@ public class ItemTestData
 
         LoadItemTypeAttributes(type, itemTypeAttributes);
 
-        var item = new ThrowableWeapon(type, new Location(100, 100, 7), amount)
+        var item = new ThrowableWeapon(
+        type,
+        new Location(100, 100, 7),
+        type.Attributes.ToDictionary<ItemTypeAttribute, IConvertible>(),
+        itemAttributes != null ? itemAttributes.ToDictionary() : null)
         {
             Chargeable = null,
             ItemTypeFinder = itemTypeFinder
         };
+
         LoadItemAttributes(item, itemAttributes);
         return item;
     }
@@ -386,6 +392,7 @@ public class ItemTestData
         type.Attributes.SetAttribute(ItemTypeAttribute.WeaponType, "ammunition");
         type.Attributes.SetAttribute(ItemTypeAttribute.BodyPosition, "ammo");
         type.Attributes.SetAttribute(ItemTypeAttribute.Weight, weight);
+        type.Attributes.SetAttribute(ItemTypeAttribute.Count, amount);
         type.Flags.Add(ItemFlag.Stackable);
         type.Flags.Add(ItemFlag.Pickupable);
         type.Flags.Add(ItemFlag.Movable);
@@ -393,11 +400,16 @@ public class ItemTestData
         LoadItemTypeAttributes(type, itemTypeAttributes);
         type.SetGroupIfNone();
 
-        var item = new Ammo(type, new Location(100, 100, 7), amount)
+        var item = new Ammo(
+            type,
+            new Location(100, 100, 7),
+            type.Attributes.ToDictionary<ItemTypeAttribute, IConvertible>(),
+            itemAttributes != null ? itemAttributes.ToDictionary() : null)
         {
             Chargeable = null,
             ItemTypeFinder = itemTypeFinder
         };
+
         LoadItemAttributes(item, itemAttributes);
         return item;
     }
@@ -476,9 +488,6 @@ public class ItemTestData
         type.SetGroupIfNone();
 
         var factory = new RuneFactory();
-
-        //var attributesDict = (itemTypeAttributes ?? Array.Empty<(ItemTypeAttribute, IConvertible)>()).ToDictionary(x => x.Item1, x => x.Item2);
-        var attributesDict = (itemTypeAttributes ?? Array.Empty<(ItemTypeAttribute, IConvertible)>()).ToDictionary(x => x.Item1, x => x.Item2);
         var item = (Rune)factory.Create(type, new Location(100, 100, 7), type.Attributes.ToDictionary<ItemTypeAttribute, IConvertible>());
 
         LoadItemAttributes(item, itemAttributes);
@@ -492,7 +501,7 @@ public class ItemTestData
         var type = new ItemType();
         type.SetClientId(id);
         type.SetId(id);
-        type.SetName("item"); 
+        type.SetName("item");
         if (topOrder == 1)
             type.SetFlag(ItemFlag.AlwaysOnTop);
         else

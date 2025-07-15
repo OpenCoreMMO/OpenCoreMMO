@@ -7,15 +7,12 @@ namespace NeoServer.Domain.Items.Bases;
 //todo: code duplicated from cumulative class
 public abstract class CumulativeEquipment : Equipment, ICumulative
 {
-    protected CumulativeEquipment(IItemType type, Location location,
+    protected CumulativeEquipment(
+        IItemType type,
+        Location location,
         IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type, location)
     {
         SetAmount(attributes);
-    }
-
-    protected CumulativeEquipment(IItemType type, Location location, byte amount) : base(type, location)
-    {
-        Amount = Math.Min((byte)100, amount);
     }
 
     public event ItemReduce OnReduced;

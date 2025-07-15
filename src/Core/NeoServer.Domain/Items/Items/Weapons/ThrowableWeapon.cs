@@ -60,11 +60,6 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
         WeaponAttack = new WeaponAttack(itemType, itemAttributes);
     }
 
-    public ThrowableWeapon(IItemType itemType, Location location, byte amount) : base(itemType, location, amount)
-    {
-        WeaponAttack = new WeaponAttack(itemType);
-    }
-
     public override bool CanBeDressed(IPlayer player)
     {
         if (Guard.IsNullOrEmpty(Vocations)) return true;
