@@ -8,16 +8,16 @@ public readonly struct WeaponAttack(
     IDictionary<ItemAttribute, IConvertible> itemAttributes = null) : IHasElementalDamage
 {
     public ushort AttackPower =>
-    itemAttributes != null && itemAttributes.TryGetValue(ItemAttribute.Attack, out var attack)
-        ? Convert.ToUInt16(attack)
-        : metadata != null ? metadata.AttackPower : (ushort)0;
+        itemAttributes != null && itemAttributes.TryGetValue(ItemAttribute.Attack, out var attack)
+            ? (ushort)attack
+            : metadata?.AttackPower ?? 0;
 
     public byte AttackPowerPercentage => TotalAttackPower is 0 ? (byte)0 : (byte)(AttackPower * 100 / TotalAttackPower);
 
     public byte ElementalAttackPowerPercentage =>
         TotalAttackPower is 0 ? (byte)0 : (byte)(ElementalDamage.AttackPower * 100 / TotalAttackPower);
 
-    public ushort TotalAttackPower => (ushort)(AttackPower + ElementalDamage.AttackPower);
+    private ushort TotalAttackPower => (ushort)(AttackPower + ElementalDamage.AttackPower);
 
     public ElementalDamage ElementalDamage => metadata.Attributes.GetWeaponElementDamage();
 }
