@@ -42,6 +42,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         //RegisterEnum<SkillsType>(luaState);
         RegisterEnumCustom<SkillType>(luaState);
         RegisterEnum<TileFlagsType>(luaState);
+        RegisterEnum<CylinderFlagsType>(luaState);
 
         RegisterEnum<CombatType>(luaState);
         RegisterEnum<CombatParam>(luaState);

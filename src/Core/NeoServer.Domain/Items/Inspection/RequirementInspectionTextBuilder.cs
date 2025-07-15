@@ -11,7 +11,7 @@ public static class RequirementInspectionTextBuilder
     {
         if (item is not IRequirement itemRequirement) return string.Empty;
 
-        var vocations = itemRequirement.Metadata.Attributes.GetAttributeArray<string>(ItemAttribute.VocationNames);
+        var vocations = itemRequirement.Metadata.Attributes.GetAttributeArray<string>(ItemTypeAttribute.VocationNames);
         var minLevel = itemRequirement.MinLevel;
 
         if (Guard.IsNullOrEmpty(vocations) && minLevel == 0) return string.Empty;

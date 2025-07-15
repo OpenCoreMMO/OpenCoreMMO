@@ -29,6 +29,8 @@ public interface ISpell : IHasCooldown
     bool BlockingSolid { get; set; }
     bool NeedWeapon { get; set; }
     bool NeedLearn { get; set; }
+    bool HasParams { get; set; }
+    public object[] Params { get; set; }
 
     byte[] VocationIds { get; set; }
     string[] Vocations { get; }
@@ -41,5 +43,4 @@ public interface ISpell : IHasCooldown
 
 public interface ICommandSpell : ISpell
 {
-    public object[] Params { get; set; }
 }

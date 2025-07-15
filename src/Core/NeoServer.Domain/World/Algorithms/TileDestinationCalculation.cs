@@ -18,7 +18,7 @@ public static class TileDestinationCalculation
     {
         if (tile is not IDynamicTile toTile) return tile;
 
-        var topItemOnStack = tile.TopItemOnStack;
+        var topItemOnStack = tile.TopDownItemOnStack;
 
         if (IsTeleportTile(topItemOnStack)) return GetTeleportDestinationTile(topItemOnStack, map) ?? tile;
 
@@ -37,14 +37,14 @@ public static class TileDestinationCalculation
 
     private static bool IsTeleportTile(IItem topItemOnStack)
     {
-        return topItemOnStack.Metadata.Attributes.GetAttribute(ItemAttribute.Type)
+        return topItemOnStack.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type)
             .Equals("teleport", StringComparison.InvariantCultureIgnoreCase);
     }
 
     private static ITile GetTeleportDestinationTile(IItem topItemOnStack, IMap map)
     {
         return topItemOnStack.Metadata.Attributes.TryGetAttribute<Location>(
-            ItemAttribute.TeleportDestination, out var teleportDestination)
+            ItemTypeAttribute.TeleportDestination, out var teleportDestination)
             ? map[teleportDestination]
             : null;
     }

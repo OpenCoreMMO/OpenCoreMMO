@@ -13,7 +13,7 @@ public class CumulativeFactory : IFactory
     public event CreateItem OnItemCreated;
 
 
-    public IItem Create(IItemType itemType, Location location, IDictionary<ItemAttribute, IConvertible> attributes)
+    public IItem Create(IItemType itemType, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes)
     {
         if (!ICumulative.IsApplicable(itemType)) return null;
 

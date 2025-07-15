@@ -92,6 +92,54 @@ public class Map : IMap
         return true;
     }
 
+    public bool TryMoveCreature(IWalkableCreature creature, Direction nextDirection)
+    {
+        if (nextDirection == Direction.None) return false;
+
+        var nextTile = GetNextTile(creature.Location, nextDirection);
+
+        if (creature.Location.Z != 8 && creature.Tile.HasHeight(3))
+        {
+            var toLocation = creature.Location.GetNextLocation(nextDirection);
+            var newDestination = new Location(toLocation.X, toLocation.Y, (byte)(toLocation.Z - 1));
+
+            if (this[newDestination] is IDynamicTile newDestinationTile) nextTile = newDestinationTile;
+        }
+
+        if (!creature.Location.IsSurface && nextTile is null)
+        {
+            var toLocation = creature.Location.GetNextLocation(nextDirection);
+            var newDestination = toLocation.AddFloors(1);
+
+            if (this[newDestination] is IDynamicTile newDestinationTile && newDestinationTile.HasHeight(3))
+                nextTile = newDestinationTile;
+        }
+
+        if (nextTile is null)
+        {
+            creature.CancelWalk();
+            return false;
+        }
+
+        if (creature is IPlayer player && nextTile.ProtectionZone && player.IsProtectionZoneBlocked)
+        {
+            creature.CancelWalk();
+            OperationFailService.Send(creature.CreatureId, TextConstants.YOU_CANNOT_ENTER_PROTECTION_ZONE);
+            return false;
+        }
+
+        if (nextTile is IDynamicTile dynamicTile && !(dynamicTile.CanEnterFunction?.Invoke(creature) ?? true))
+        {
+            creature.CancelWalk();
+            OperationFailService.Send(creature.CreatureId, TextConstants.NOT_POSSIBLE);
+            return false;
+        }
+
+        if (creature.TileEnterRule.CanEnter(nextTile, creature) && TryMoveCreature(creature, nextTile.Location)) return true;
+
+        creature.CancelWalk();
+        return false;
+    }
 
     public void SwapCreatureBetweenSectors(ICreature creature, Location fromLocation, Location toLocation)
     {
@@ -445,51 +493,8 @@ public class Map : IMap
 
     public void MoveCreature(IWalkableCreature creature, Direction nextDirection)
     {
-        if (nextDirection == Direction.None) return;
-
-        var nextTile = GetNextTile(creature.Location, nextDirection);
-
-        if (creature.Location.Z != 8 && creature.Tile.HasHeight(3))
-        {
-            var toLocation = creature.Location.GetNextLocation(nextDirection);
-            var newDestination = new Location(toLocation.X, toLocation.Y, (byte)(toLocation.Z - 1));
-
-            if (this[newDestination] is IDynamicTile newDestinationTile) nextTile = newDestinationTile;
-        }
-
-        if (!creature.Location.IsSurface && nextTile is null)
-        {
-            var toLocation = creature.Location.GetNextLocation(nextDirection);
-            var newDestination = toLocation.AddFloors(1);
-
-            if (this[newDestination] is IDynamicTile newDestinationTile && newDestinationTile.HasHeight(3))
-                nextTile = newDestinationTile;
-        }
-
-        if (nextTile is null)
-        {
-            creature.CancelWalk();
-            return;
-        }
-
-        if (creature is IPlayer player && nextTile.ProtectionZone && player.IsProtectionZoneBlocked)
-        {
-            creature.CancelWalk();
-            OperationFailService.Send(creature.CreatureId, TextConstants.YOU_CANNOT_ENTER_PROTECTION_ZONE);
-            return;
-        }
-
-        if (nextTile is IDynamicTile dynamicTile && !(dynamicTile.CanEnterFunction?.Invoke(creature) ?? true))
-        {
-            creature.CancelWalk();
+        if (!TryMoveCreature(creature, nextDirection))
             OperationFailService.Send(creature.CreatureId, TextConstants.NOT_POSSIBLE);
-            return;
-        }
-
-        if (creature.TileEnterRule.CanEnter(nextTile, creature) && TryMoveCreature(creature, nextTile.Location)) return;
-
-        creature.CancelWalk();
-        OperationFailService.Send(creature.CreatureId, TextConstants.NOT_POSSIBLE);
     }
 
     public void CreateBloodPool(ILiquid pool, IDynamicTile tile)

@@ -40,5 +40,6 @@ public interface IMonsterType : ICreatureType
     ushort Immunities { get; set; }
     bool HasDistanceAttack { get; set; }
     byte MaxRangeDistanceAttack { get; set; }
+    ushort ManaCost { get; set; }
     bool HasFlag(CreatureFlagAttribute flag);
 }

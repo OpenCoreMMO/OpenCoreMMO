@@ -18,7 +18,7 @@ internal static class ReplaceItemOnInventoryOperation
 
         if (toItemType is null) return Result<IItem>.Ok(null);
 
-        var createdItem = itemFactory.Create(toItemType, fromItem.Location, null);
+        var createdItem = itemFactory.Create(toItemType, fromItem.Location, null, null);
 
         if (createdItem is null) return Result<IItem>.Ok(null);
 

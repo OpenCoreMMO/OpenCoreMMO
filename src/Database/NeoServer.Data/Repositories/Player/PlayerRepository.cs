@@ -120,6 +120,7 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
         playerEntity.Level = player.Level;
         playerEntity.Mana = player.Mana;
         playerEntity.MaxMana = player.MaxMana;
+        playerEntity.ManaSpent = 0;
         playerEntity.Health = player.HealthPoints;
         playerEntity.MaxHealth = player.MaxHealthPoints;
         playerEntity.Soul = player.SoulPoints;

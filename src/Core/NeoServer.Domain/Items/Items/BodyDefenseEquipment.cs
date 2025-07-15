@@ -16,21 +16,21 @@ public class BodyDefenseEquipment : Equipment, IBodyEquipmentEquipment
     {
     }
 
-    public ushort DefenseValue => Metadata.Attributes.HasAttribute(ItemAttribute.Defense)
-        ? Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Defense)
-        : Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Armor);
+    public ushort DefenseValue => Metadata.Attributes.HasAttribute(ItemTypeAttribute.Defense)
+        ? Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Defense)
+        : Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Armor);
 
-    public ushort ArmorValue => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Armor);
+    public ushort ArmorValue => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Armor);
 
     protected override string PartialInspectionText
     {
         get
         {
-            var hasArmorValue = Metadata.Attributes.TryGetAttribute<byte>(ItemAttribute.Armor, out var armorValue);
+            var hasArmorValue = Metadata.Attributes.TryGetAttribute<byte>(ItemTypeAttribute.Armor, out var armorValue);
             if (hasArmorValue) return $"Arm: {armorValue}";
 
             var hasDefenseValue =
-                Metadata.Attributes.TryGetAttribute<byte>(ItemAttribute.Defense, out var defenseValue);
+                Metadata.Attributes.TryGetAttribute<byte>(ItemTypeAttribute.Defense, out var defenseValue);
             return hasDefenseValue ? $"Def: {defenseValue}" : string.Empty;
         }
     }

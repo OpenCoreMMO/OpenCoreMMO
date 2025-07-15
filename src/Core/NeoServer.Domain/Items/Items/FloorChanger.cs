@@ -17,7 +17,7 @@ public class FloorChanger : BaseItem
         if (!usedBy.Location.IsNextTo(Location)) return;
         var toLocation = Location.Zero;
 
-        var floorChange = Metadata.Attributes.GetAttribute(ItemAttribute.FloorChange);
+        var floorChange = Metadata.Attributes.GetAttribute(ItemTypeAttribute.FloorChange);
 
         if (floorChange == "up") toLocation.Update(Location.X, Location.Y, (byte)(Location.Z - 1));
         if (floorChange == "down") toLocation.Update(Location.X, Location.Y, (byte)(Location.Z + 1));
@@ -27,7 +27,7 @@ public class FloorChanger : BaseItem
 
     public static bool IsApplicable(IItemType type)
     {
-        return type.Attributes.HasAttribute(ItemAttribute.FloorChange) &&
+        return type.Attributes.HasAttribute(ItemTypeAttribute.FloorChange) &&
                type.HasFlag(ItemFlag.Usable);
     }
 }

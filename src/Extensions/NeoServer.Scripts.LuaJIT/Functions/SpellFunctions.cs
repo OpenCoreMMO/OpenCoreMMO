@@ -1,8 +1,6 @@
 using LuaNET;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Spells;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Spells;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -52,6 +50,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         RegisterMethod(lua, "Spell", "needTarget", LuaSpellNeedTarget);
         RegisterMethod(lua, "Spell", "needWeapon", LuaSpellNeedWeapon);
         RegisterMethod(lua, "Spell", "needLearn", LuaSpellNeedLearn);
+        RegisterMethod(lua, "Spell", "setPzLocked", LuaSpellPzLocked);
         RegisterMethod(lua, "Spell", "isSelfTarget", LuaSpellIsSelfTarget);
         RegisterMethod(lua, "Spell", "isBlocking", LuaSpellIsBlocking);
         RegisterMethod(lua, "Spell", "isAggressive", LuaSpellIsAgressive);
@@ -60,6 +59,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         // Only for InstantSpell.
         RegisterMethod(lua, "Spell", "words", LuaSpellWords);
         RegisterMethod(lua, "Spell", "needDirection", LuaSpellNeedDirection);
+        RegisterMethod(lua, "Spell", "hasParams", LuaSpellHasParams);
         RegisterMethod(lua, "Spell", "needCasterTargetOrDirection", LuaSpellNeedCasterTargetOrDirection);
 
         //only for rune spells
@@ -68,7 +68,6 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         RegisterMethod(lua, "Spell", "allowFarUse", LuaSpellAllowFarUse);
         RegisterMethod(lua, "Spell", "blockWalls", LuaSpellBlockWalls);
         RegisterMethod(lua, "Spell", "checkFloor", LuaSpellCheckFloor);
-        RegisterMethod(lua, "Spell", "setPzLocked", LuaSpellPzLocked);
     }
 
     private int LuaSpellPzLocked(LuaState lua)
@@ -192,19 +191,19 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         {
             var item = _itemTypeStore.Get((ushort)rune.RuneId);
 
-            if (string.IsNullOrWhiteSpace(item.Name)) item.UpdateName(rune.Name);
+            if (string.IsNullOrWhiteSpace(item.Name)) item.SetName(rune.Name);
 
-            item.Attributes.SetAttribute(ItemAttribute.MinimumMagicLevel, rune.MagicLevel);
-            item.Attributes.SetAttribute(ItemAttribute.MinimumLevel, rune.Level);
-            item.Attributes.SetAttribute(ItemAttribute.Charges, rune.Charges);
-            item.Attributes.SetAttribute(ItemAttribute.AllowFarUse, rune.AllowFarUse);
-            item.Attributes.SetAttribute(ItemAttribute.CheckFloor, rune.CheckFloor);
+            item.Attributes.SetAttribute(ItemTypeAttribute.MinimumMagicLevel, rune.MagicLevel);
+            item.Attributes.SetAttribute(ItemTypeAttribute.MinimumLevel, rune.Level);
+            item.Attributes.SetAttribute(ItemTypeAttribute.Charges, rune.Charges);
+            item.Attributes.SetAttribute(ItemTypeAttribute.AllowFarUse, rune.AllowFarUse);
+            item.Attributes.SetAttribute(ItemTypeAttribute.CheckFloor, rune.CheckFloor);
 
-            item.Attributes.SetAttribute(ItemAttribute.CooldownTime, rune.Cooldown);
-            item.Attributes.SetAttribute(ItemAttribute.PrimaryGroupCooldown, rune.PrimaryGroupCooldown);
-            item.Attributes.SetAttribute(ItemAttribute.PrimaryGroupCooldown, rune.SecondaryGroupCooldown);
-            item.Attributes.SetAttribute(ItemAttribute.PrimaryGroup, rune.PrimaryGroup);
-            item.Attributes.SetAttribute(ItemAttribute.SecondaryGroup, rune.SecondaryGroup);
+            item.Attributes.SetAttribute(ItemTypeAttribute.CooldownTime, rune.Cooldown);
+            item.Attributes.SetAttribute(ItemTypeAttribute.PrimaryGroupCooldown, rune.PrimaryGroupCooldown);
+            item.Attributes.SetAttribute(ItemTypeAttribute.PrimaryGroupCooldown, rune.SecondaryGroupCooldown);
+            item.Attributes.SetAttribute(ItemTypeAttribute.PrimaryGroup, rune.PrimaryGroup);
+            item.Attributes.SetAttribute(ItemTypeAttribute.SecondaryGroup, rune.SecondaryGroup);
 
             ISpell runeSpell = null;
             if (_spellListManager.TryGet(rune.Name, out runeSpell))
@@ -282,6 +281,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 instantSpell.IsAggressive = instant.IsAggressive;
                 instantSpell.NeedCasterTargetOrDirection = instant.NeedCasterTargetOrDirection;
                 instantSpell.NeedWeapon = instant.NeedWeapon;
+                instantSpell.HasParams = instant.HasParams;
             }
 
             instantSpell ??= new InstantSpell
@@ -307,7 +307,8 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 IsSelfTarget = instant.IsSelfTarget,
                 IsAggressive = instant.IsAggressive,
                 NeedCasterTargetOrDirection = instant.NeedCasterTargetOrDirection,
-                NeedWeapon = instant.NeedWeapon
+                NeedWeapon = instant.NeedWeapon,
+                HasParams = instant.HasParams
             };
 
             ((InstantSpell)instantSpell).LuaInstantSpell = instant;
@@ -933,6 +934,31 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             else
             {
                 instant.NeedDirection = GetBoolean(lua, 2);
+                PushBoolean(lua, true);
+            }
+        }
+        else
+        {
+            Lua.PushNil(lua);
+        }
+
+        return 1;
+    }
+
+    public static int LuaSpellHasParams(LuaState lua)
+    {
+        // spell:hasParams(bool)
+        var instant = GetUserdata<LuaInstantSpell>(lua, 1);
+
+        if (instant is not null)
+        {
+            if (Lua.GetTop(lua) == 1)
+            {
+                Lua.PushBoolean(lua, instant.HasParams);
+            }
+            else
+            {
+                instant.HasParams = GetBoolean(lua, 2);
                 PushBoolean(lua, true);
             }
         }

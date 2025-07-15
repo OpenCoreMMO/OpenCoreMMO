@@ -32,16 +32,31 @@ public class InstantSpell : ScriptedSpell
 
         LuaFunctionsLoader.SetCreatureMetatable(luaState, -1, caster);
 
-        var pos = target is IDynamicTile targetTile ? targetTile.Location : caster.Location;
+        LuaVariant variant = default;
 
-        var variant = new LuaVariant
+        if (HasParams && Params.Length > 0)
         {
-            Type = target is IDynamicTile ? LuaVariantType.VARIANT_POSITION : LuaVariantType.Number,
-            Number = target is ICreature targetCreature ? targetCreature.CreatureId : 0,
-            Pos = pos,
-            InstantName = LuaInstantSpell.Name,
-            RuneName = "",
-        };
+            variant = new LuaVariant
+            {
+                Type = LuaVariantType.VARIANT_STRING,
+                InstantName = LuaInstantSpell.Name,
+                Text = Params[0].ToString(),
+                RuneName = string.Empty
+            };
+        }
+        else
+        {
+            var pos = target is IDynamicTile targetTile ? targetTile.Location : caster.Location;
+
+            variant = new LuaVariant
+            {
+                Type = target is IDynamicTile ? LuaVariantType.VARIANT_POSITION : LuaVariantType.VARIANT_NUMBER,
+                Number = target is ICreature targetCreature ? targetCreature.CreatureId : 0,
+                Pos = pos,
+                InstantName = LuaInstantSpell.Name,
+                RuneName = string.Empty,
+            };
+        }
 
         LuaFunctionsLoader.PushVariant(luaState, variant);
         LuaFunctionsLoader.PushBoolean(luaState, isHotkey);

@@ -14,9 +14,9 @@ public class BodyDefenseEquipmentTests
     public void InspectionText_Armor_ReturnsText()
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Armor, 5)
+            (ItemTypeAttribute.Armor, 5)
         });
 
         //assert
@@ -27,9 +27,9 @@ public class BodyDefenseEquipmentTests
     public void InspectionText_Shield_ReturnsText()
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Defense, 50)
+            (ItemTypeAttribute.Defense, 50)
         });
 
         //assert
@@ -40,9 +40,9 @@ public class BodyDefenseEquipmentTests
     public void Pickupable_ReturnsTrue()
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Defense, 50)
+            (ItemTypeAttribute.Defense, 50)
         });
 
         //assert
@@ -70,9 +70,9 @@ public class BodyDefenseEquipmentTests
     public void IsApplicable_ReturnsTrue(string slot)
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, slot)
+            (ItemTypeAttribute.BodyPosition, slot)
         });
 
         //act
@@ -90,9 +90,9 @@ public class BodyDefenseEquipmentTests
     public void IsApplicable_ReturnsFalse(string slot)
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, slot)
+            (ItemTypeAttribute.BodyPosition, slot)
         });
         //act
         var actual = BodyDefenseEquipment.IsApplicable(sut.Metadata);
@@ -116,12 +116,12 @@ public class BodyDefenseEquipmentTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, "body"),
-            (ItemAttribute.MinimumLevel, minLevel)
+            (ItemTypeAttribute.BodyPosition, "body"),
+            (ItemTypeAttribute.MinimumLevel, minLevel)
         });
-        sut.Metadata.Attributes.SetAttribute(ItemAttribute.Vocation, new[] { (byte)requiredVocation });
+        sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
         var actual = sut.CanBeDressed(player);
@@ -143,12 +143,12 @@ public class BodyDefenseEquipmentTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, "body"),
-            (ItemAttribute.MinimumLevel, minLevel)
+            (ItemTypeAttribute.BodyPosition, "body"),
+            (ItemTypeAttribute.MinimumLevel, minLevel)
         });
-        sut.Metadata.Attributes.SetAttribute(ItemAttribute.Vocation, new[] { (byte)requiredVocation });
+        sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
         var actual = sut.CanBeDressed(player);
@@ -169,10 +169,10 @@ public class BodyDefenseEquipmentTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, "body"),
-            (ItemAttribute.MinimumLevel, minLevel)
+            (ItemTypeAttribute.BodyPosition, "body"),
+            (ItemTypeAttribute.MinimumLevel, minLevel)
         });
 
         //act
@@ -194,11 +194,11 @@ public class BodyDefenseEquipmentTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, 1)
             });
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, "body")
+            (ItemTypeAttribute.BodyPosition, "body")
         });
-        sut.Metadata.Attributes.SetAttribute(ItemAttribute.Vocation, new[] { (byte)requiredVocation });
+        sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
         var actual = sut.CanBeDressed(player);

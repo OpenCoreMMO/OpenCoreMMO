@@ -30,6 +30,7 @@ public class LuaStartup : ILuaStartup
         IItemTypeFunctions itemTypeFunctions,
         ILoggerFunctions loggerFunctions,
         IMonsterFunctions monsterFunctions,
+        IMonsterTypeFunctions monsterTypeFunctions,
         IMoveEventFunctions moveEventFunctions,
         INpcFunctions npcFunctions,
         INpcTypeFunctions npcTypeFunctions,
@@ -41,9 +42,10 @@ public class LuaStartup : ILuaStartup
         ITileFunctions tileFunctions,
         ServerConfiguration serverConfiguration,
         IConditionFunctions conditionFunctions,
-        IBankFunctions bankFunctionBinder,
-        ISpellFunctions spellFunctionMapper,
-        ICombatFunctions combatFunctionMapper
+        IBankFunctions bankFunctions,
+        ISpellFunctions spellFunctions,
+        ICombatFunctions combatFunctions,
+        IVariantFunctions variantFunctions
     )
     {
         _logger = logger;
@@ -67,6 +69,7 @@ public class LuaStartup : ILuaStartup
         _loggerFunctions = loggerFunctions;
         _playerFunctions = playerFunctions;
         _monsterFunctions = monsterFunctions;
+        _monsterTypeFunctions = monsterTypeFunctions;
         _moveEventFunctions = moveEventFunctions;
         _npcFunctions = npcFunctions;
         _npcTypeFunctions = npcTypeFunctions;
@@ -75,14 +78,14 @@ public class LuaStartup : ILuaStartup
         _talkActionFunctions = talkActionFunctions;
         _teleportFunctions = teleportFunctions;
         _tileFunctions = tileFunctions;
-        _spellFunctionMapper = spellFunctionMapper;
-        _combatFunctionMapper = combatFunctionMapper;
-        _combatFunctionMapper = combatFunctionMapper;
+        _spellFunctions = spellFunctions;
+        _combatFunctions = combatFunctions;
+        _combatFunctions = combatFunctions;
 
         _serverConfiguration = serverConfiguration;
         _conditionFunctions = conditionFunctions;
-        _bankFunctionBinder = bankFunctionBinder;
-        _spellFunctionMapper = spellFunctionMapper;
+        _bankFunctions = bankFunctions;
+        _variantFunctions = variantFunctions;
     }
 
     #endregion
@@ -125,15 +128,17 @@ public class LuaStartup : ILuaStartup
 
         _containerFunctions.Init(luaState);
         _monsterFunctions.Init(luaState);
+        _monsterTypeFunctions.Init(luaState);
         _moveEventFunctions.Init(luaState);
         _npcFunctions.Init(luaState);
         _npcTypeFunctions.Init(luaState);
         _playerFunctions.Init(luaState);
         _teleportFunctions.Init(luaState);
         _groupFunctions.Init(luaState);
-        _spellFunctionMapper.Init(luaState);
-        _combatFunctionMapper.Init(luaState);
-        _bankFunctionBinder.Init(luaState);
+        _spellFunctions.Init(luaState);
+        _combatFunctions.Init(luaState);
+        _bankFunctions.Init(luaState);
+        _variantFunctions.Init(luaState);
 
         ModulesLoadHelper(_configManager.Load($"{currentDir}/config.lua"), "config.lua");
 
@@ -194,9 +199,25 @@ public class LuaStartup : ILuaStartup
     /// </summary>
     private readonly IConditionFunctions _conditionFunctions;
 
-    private readonly IBankFunctions _bankFunctionBinder;
-    private readonly ISpellFunctions _spellFunctionMapper;
-    private readonly ICombatFunctions _combatFunctionMapper;
+    /// <summary>
+    ///     A reference to the <see cref="IBankFunctions" /> instance in use.
+    /// </summary>
+    private readonly IBankFunctions _bankFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ISpellFunctions" /> instance in use.
+    /// </summary>
+    private readonly ISpellFunctions _spellFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ICombatFunctions" /> instance in use.
+    /// </summary>
+    private readonly ICombatFunctions _combatFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IVariantFunctions" /> instance in use.
+    /// </summary>
+    private readonly IVariantFunctions _variantFunctions;
 
     /// <summary>
     ///     A reference to the <see cref="IConfigFunctions" /> instance in use.
@@ -267,6 +288,11 @@ public class LuaStartup : ILuaStartup
     ///     A reference to the <see cref="IMonsterFunctions" /> instance in use.
     /// </summary>
     private readonly IMonsterFunctions _monsterFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IMonsterTypeFunctions" /> instance in use.
+    /// </summary>
+    private readonly IMonsterTypeFunctions _monsterTypeFunctions;
 
     /// <summary>
     ///     A reference to the <see cref="IMoveEventFunctions" /> instance in use.

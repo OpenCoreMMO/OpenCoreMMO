@@ -12,6 +12,9 @@ public abstract class BaseItem : IItem
 {
     private IThing _owner;
 
+    private ItemAttributeList _attributes;
+    public ItemAttributeList Attributes => _attributes ??= new ItemAttributeList();
+
     protected BaseItem(IItemType metadata, Location location)
     {
         Location = location;
@@ -34,19 +37,6 @@ public abstract class BaseItem : IItem
     {
         OnRemoved?.Invoke(this, from);
     }
-
-    public void SetActionId(ushort actionId)
-    {
-        ActionId = actionId;
-    }
-
-    public void SetUniqueId(uint uniqueId)
-    {
-        UniqueId = uniqueId;
-    }
-
-    public ushort ActionId { get; private set; }
-    public uint UniqueId { get; private set; }
 
     public IItemType Metadata { get; private set; }
 

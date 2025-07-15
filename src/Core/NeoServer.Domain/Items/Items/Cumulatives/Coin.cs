@@ -6,7 +6,7 @@ namespace NeoServer.Domain.Items.Items.Cumulatives;
 
 public class Coin : Cumulative
 {
-    public Coin(IItemType type, Location location, IDictionary<ItemAttribute, IConvertible> attributes) : base(type,
+    public Coin(IItemType type, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type,
         location, attributes)
     {
     }
@@ -15,7 +15,7 @@ public class Coin : Cumulative
     {
     }
 
-    private uint WorthMultiplier => Metadata.Attributes.GetAttribute<uint>(ItemAttribute.Worth);
+    private uint WorthMultiplier => Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.Worth);
     public uint Worth => Amount * WorthMultiplier;
 
     public static bool IsApplicable(IItemType type)

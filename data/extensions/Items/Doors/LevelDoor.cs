@@ -11,16 +11,15 @@ namespace NeoServer.Extensions.Items.Doors;
 
 public class LevelDoor : Door
 {
-    public LevelDoor(IItemType metadata, Location location, IDictionary<ItemAttribute, IConvertible> attributes) :
+    public LevelDoor(IItemType metadata, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) :
         base(metadata, location, attributes)
     {
     }
 
     public override void Use(IPlayer usedBy)
     {
-        Metadata.Attributes.TryGetAttribute(ItemAttribute.LevelDoor, out _);
-
-        Metadata.Attributes.TryGetAttribute(ItemAttribute.ActionId, out int actionId);
+        Metadata.Attributes.TryGetAttribute(ItemTypeAttribute.LevelDoor, out _);
+        Attributes.TryGetAttribute(ItemAttribute.ActionId, out int actionId);
 
         if (usedBy.Level < actionId - 1000)
         {
@@ -30,7 +29,7 @@ public class LevelDoor : Door
 
         var directionTo = Location.DirectionTo(usedBy.Location, true);
 
-        if (!Metadata.Attributes.TryGetAttribute<string>("orientation", out var doorOrientation)) return;
+        if (!Metadata.Attributes.TryGetCustomAttribute<string>("orientation", out var doorOrientation)) return;
 
         Teleport(usedBy, doorOrientation, directionTo);
     }
@@ -64,7 +63,7 @@ public class LevelDoor : Door
     public override string GetLookText(
         bool isClose = false, bool showInternalDetails = false)
     {
-        Metadata.Attributes.TryGetAttribute(ItemAttribute.ActionId, out int actionId);
+        Attributes.TryGetAttribute(ItemAttribute.ActionId, out int actionId);
 
         var minLevel = Math.Max(0, actionId - 1000);
 
@@ -75,6 +74,6 @@ public class LevelDoor : Door
 
     public new static bool IsApplicable(IItemType type)
     {
-        return Door.IsApplicable(type) && type.Attributes.HasAttribute(ItemAttribute.LevelDoor);
+        return Door.IsApplicable(type) && type.Attributes.HasAttribute(ItemTypeAttribute.LevelDoor);
     }
 }

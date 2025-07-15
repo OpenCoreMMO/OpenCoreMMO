@@ -24,8 +24,9 @@ public sealed class PlayerEntity
     public byte Group { get; set; } //1 = player
     public uint Capacity { get; set; }
     public ushort Level { get; set; }
-    public ushort Mana { get; set; }
-    public ushort MaxMana { get; set; }
+    public uint Mana { get; set; }
+    public uint MaxMana { get; set; }
+    public uint ManaSpent { get; set; }
     public uint Health { get; set; }
     public uint MaxHealth { get; set; }
     public byte Soul { get; set; }

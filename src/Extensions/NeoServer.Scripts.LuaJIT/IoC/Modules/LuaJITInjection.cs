@@ -51,7 +51,9 @@ public static class LuaJitInjection
 
         builder.AddSingleton<ISpellFunctions, SpellFunctions>();
         builder.AddSingleton<ICombatFunctions, CombatFunctions>();
-        
+        builder.AddSingleton<IVariantFunctions, VariantFunctions>();
+        builder.AddSingleton<IMonsterTypeFunctions, MonsterTypeFunctions>();
+
         builder.AddSingleton<LuaCombatService>();
         builder.AddSingleton<NonAggressiveCombatService>();
         return builder;

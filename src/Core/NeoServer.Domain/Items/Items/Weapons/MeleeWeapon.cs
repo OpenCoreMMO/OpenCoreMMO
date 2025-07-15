@@ -28,8 +28,8 @@ public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDe
     {
         get
         {
-            var defense = Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Defense);
-            var extraDefense = Metadata.Attributes.GetAttribute<sbyte>(ItemAttribute.ExtraDefense);
+            var defense = Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Defense);
+            var extraDefense = Metadata.Attributes.GetAttribute<sbyte>(ItemTypeAttribute.ExtraDefense);
 
             var extraDefenseText = extraDefense > 0 ? $" +{extraDefense}" :
                 extraDefense < 0 ? $" -{extraDefense}" : string.Empty;
@@ -42,11 +42,11 @@ public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDe
         }
     }
 
-    public sbyte ExtraDefense => Metadata.Attributes.GetAttribute<sbyte>(ItemAttribute.ExtraDefense);
+    public sbyte ExtraDefense => Metadata.Attributes.GetAttribute<sbyte>(ItemTypeAttribute.ExtraDefense);
 
-    public ushort AttackPower => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.Attack);
+    public ushort AttackPower => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.Attack);
     public WeaponAttack WeaponAttack { get; } //todo: rename to attack
-    public byte Defense => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Defense);
+    public byte Defense => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Defense);
 
     public virtual bool CanUseOn(ushort[] items, IItem onItem)
     {
@@ -55,7 +55,7 @@ public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDe
 
     public virtual bool CanUseOn(IItem onItem)
     {
-        var useOnItems = Metadata.OnUse?.GetAttributeArray<ushort>(ItemAttribute.UseOn);
+        var useOnItems = Metadata.OnUse?.GetAttributeArray<ushort>(ItemTypeAttribute.UseOn);
 
         return useOnItems is not null && ((IList)useOnItems).Contains(onItem.Metadata.ServerId);
     }

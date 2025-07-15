@@ -59,8 +59,8 @@ public class Player : CombatActor, IPlayer
         Group group,
         Gender gender,
         bool online,
-        ushort mana,
-        ushort maxMana,
+        uint mana,
+        uint maxMana,
         FightMode fightMode,
         byte soulPoints,
         byte soulMax,
@@ -199,8 +199,9 @@ public class Player : CombatActor, IPlayer
     public uint TotalCapacity { get; private set; }
     public ushort Level => (ushort)(Skills.TryGetValue(SkillType.Level, out var level) ? level?.Level ?? 1 : 1);
     public ushort MagicLevel => (ushort)(Skills.TryGetValue(SkillType.Magic, out var level) ? level?.Level ?? 1 : 1);
-    public ushort Mana { get; private set; }
-    public ushort MaxMana { get; private set; }
+    public uint Mana { get; private set; }
+    public uint ManaSpent { get; private set; }
+    public uint MaxMana { get; private set; }
     public FightMode FightMode { get; private set; }
     public IPlayerSkull PlayerSkull { get; set; }
     public Skull Skull => PlayerSkull.Skull;
@@ -543,16 +544,29 @@ public class Player : CombatActor, IPlayer
     {
         const SpeechType talkType = SpeechType.MonsterSay;
 
-        if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteMana)) ConsumeMana(spell.ManaConsumption);
+        if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteMana)) DecreaseMana(spell.ManaConsumption);
 
         if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteSoul)) ConsumeSoul(spell.SoulConsumption);
 
-        if (spell.ManaConsumption > 0 && !Group.FlagIsEnabled(PlayerFlag.NotGainSkill))
-            IncreaseSkillCounter(SkillType.Magic, spell.ManaConsumption);
+        UpdateManaSpent(spell.ManaConsumption);
 
         if (!spell.ShouldSay) return;
 
         if (!string.IsNullOrWhiteSpace(spell.Words)) base.Say(spell.Words, talkType);
+    }
+
+    public void UpdateManaSpent(uint manaCost)
+    {
+        Skills.TryGetValue(SkillType.Magic, out var currentMagicLevel);
+
+        ManaSpent += manaCost;
+        if (manaCost > 0 && !Group.FlagIsEnabled(PlayerFlag.NotGainSkill))
+            IncreaseSkillCounter(SkillType.Magic, manaCost);
+
+        Skills.TryGetValue(SkillType.Magic, out var updatedMagicLevel);
+
+        if (currentMagicLevel != updatedMagicLevel)
+            ManaSpent = 0;
     }
 
     public bool HasEnoughSoul(ushort soul)
@@ -560,12 +574,12 @@ public class Player : CombatActor, IPlayer
         return SoulPoints >= soul;
     }
 
-    public bool HasEnoughMana(ushort mana)
+    public bool HasEnoughMana(uint mana)
     {
         return Mana >= mana;
     }
 
-    public void ConsumeMana(ushort mana)
+    public void DecreaseMana(uint mana)
     {
         if (mana == 0) return;
         if (!HasEnoughMana(mana)) return;
@@ -591,9 +605,9 @@ public class Player : CombatActor, IPlayer
     public void LookAt(ITile tile)
     {
         var isClose = Location.IsNextTo(tile.Location);
-        if (tile.TopCreatureOnStack is null && tile.TopItemOnStack is null) return;
+        if (tile.TopCreatureOnStack is null && tile.TopDownItemOnStack is null) return;
 
-        IThing thing = tile.TopCreatureOnStack is null ? tile.TopItemOnStack : tile.TopCreatureOnStack;
+        IThing thing = tile.TopCreatureOnStack is null ? tile.TopDownItemOnStack : tile.TopCreatureOnStack;
         OnLookedAt?.Invoke(this, thing, isClose);
     }
 
@@ -660,13 +674,13 @@ public class Player : CombatActor, IPlayer
         return true;
     }
 
-    public void HealMana(ushort increasing)
+    public void IncreaseMana(uint increasing)
     {
         if (increasing <= 0) return;
 
         if (Mana == MaxMana) return;
 
-        Mana = Mana + increasing >= MaxMana ? MaxMana : (ushort)(Mana + increasing);
+        Mana = Mana + increasing >= MaxMana ? MaxMana : Mana + increasing;
         OnStatusChanged?.Invoke(this);
     }
 
@@ -675,7 +689,7 @@ public class Player : CombatActor, IPlayer
         if (!Recovering) return;
 
         if (Cooldowns.Expired(CooldownType.HealthRecovery)) Heal(Vocation.GainHpAmount, this);
-        if (Cooldowns.Expired(CooldownType.ManaRecovery)) HealMana(Vocation.GainManaAmount);
+        if (Cooldowns.Expired(CooldownType.ManaRecovery)) IncreaseMana(Vocation.GainManaAmount);
         if (Cooldowns.Expired(CooldownType.SoulRecovery)) HealSoul(1);
 
         foreach (var regenerationBonus in RegenerationBonusList)
@@ -688,7 +702,7 @@ public class Player : CombatActor, IPlayer
                     Heal(regenerationBonus.Gain, this);
                     break;
                 case RegenerationType.Mana:
-                    HealMana(regenerationBonus.Gain);
+                    IncreaseMana(regenerationBonus.Gain);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -751,7 +765,7 @@ public class Player : CombatActor, IPlayer
                     itemUsed = useableOnTile.Use(this, onCreature.Tile);
                     break;
                 case IUsableOnItem useableOnItem:
-                    itemUsed = useableOnItem.Use(this, onCreature.Tile.TopItemOnStack);
+                    itemUsed = useableOnItem.Use(this, onCreature.Tile.TopDownItemOnStack);
                     break;
             }
 
@@ -796,7 +810,7 @@ public class Player : CombatActor, IPlayer
             return Result.NotPossible;
         }
 
-        if (targetTile.TopItemOnStack is not { } onItem) return Result.NotPossible;
+        if (targetTile.TopDownItemOnStack is not { } onItem) return Result.NotPossible;
 
         var result = item switch
         {
@@ -894,7 +908,7 @@ public class Player : CombatActor, IPlayer
             return new Result(InvalidOperation.AttackTargetIsInvisible);
         }
 
-        if (Summons.Contains(target))
+        if (Summons.Contains(target as ISummon))
         {
             InvokeAttackCanceled();
             return Result.NotPossible;
@@ -1312,7 +1326,7 @@ public class Player : CombatActor, IPlayer
 
     public void ResetMana()
     {
-        HealMana(MaxMana);
+        IncreaseMana(MaxMana);
     }
 
     public override bool HasImmunity(Immunity immunity)
@@ -1423,13 +1437,13 @@ public class Player : CombatActor, IPlayer
 
         if (totalDamage.ManaDamage > 0)
         {
-            ConsumeMana(totalDamage.ManaDamage);
+            DecreaseMana(totalDamage.ManaDamage);
             return;
         }
 
         if (IsManaShieldEnabled)
         {
-            ConsumeMana(totalDamage.HealthDamage);
+            DecreaseMana(totalDamage.HealthDamage);
             return;
         }
 

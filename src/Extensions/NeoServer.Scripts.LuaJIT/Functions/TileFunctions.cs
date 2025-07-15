@@ -36,8 +36,13 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         RegisterMethod(luaState, "Tile", "getTopVisibleThing", LuaTileGetTopVisibleThing);
         RegisterMethod(luaState, "Tile", "getTopCreature", LuaTileGetTopCreature);
 
+        RegisterMethod(luaState, "Tile", "getTopTopItem", LuaTileGetTopTopItem);
+        RegisterMethod(luaState, "Tile", "getTopDownItem", LuaTileGetTopDownItem);
+
         RegisterMethod(luaState, "Tile", "getItems", LuaTileGetItems);
         RegisterMethod(luaState, "Tile", "getItemCount", LuaTileGetItemCount);
+        RegisterMethod(luaState, "Tile", "getDownItemCount", LuaTileGetDownItemCount);
+        RegisterMethod(luaState, "Tile", "getTopItemCount", LuaTileGetTopItemCount);
 
         RegisterMethod(luaState, "Tile", "hasProperty", LuaTileHasProperty);
         RegisterMethod(luaState, "Tile", "hasFlag", LuaTileHasFlag);
@@ -153,7 +158,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
             return 1;
         }
 
-        var visibleItem = dynamicTile.TopItemOnStack;
+        var visibleItem = dynamicTile.TopDownItemOnStack;
 
         if (visibleItem != null)
         {
@@ -207,10 +212,10 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
     {
         // tile:getGround()
         var tile = GetUserdata<ITile>(luaState, 1);
-        if (tile is { TopItemOnStack: not null })
+        if (tile is { TopDownItemOnStack: not null })
         {
-            PushUserdata(luaState, tile.TopItemOnStack);
-            SetItemMetatable(luaState, -1, tile.TopItemOnStack);
+            PushUserdata(luaState, tile.TopDownItemOnStack);
+            SetItemMetatable(luaState, -1, tile.TopDownItemOnStack);
         }
         else
         {
@@ -240,6 +245,66 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
             SetItemMetatable(luaState, -1, item);
             Lua.RawSetI(luaState, -2, ++index);
         }
+
+        return 1;
+    }
+
+    public static int LuaTileGetTopTopItem(LuaState luaState)
+    {
+        // tile:getTopTopItem()
+        var tile = GetUserdata<ITile>(luaState, 1);
+
+        if (tile is not IDynamicTile dynamicTile || 
+            tile.TopTopItemOnStack == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        PushUserdata(luaState, tile.TopTopItemOnStack);
+        SetItemMetatable(luaState, -1, tile.TopTopItemOnStack);
+
+        return 1;
+    }
+
+    public static int LuaTileGetTopDownItem(LuaState luaState)
+    {
+        // tile:getTopTopItem()
+        var tile = GetUserdata<ITile>(luaState, 1);
+
+        if (tile is not IDynamicTile dynamicTile ||
+            tile.TopDownItemOnStack == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        PushUserdata(luaState, tile.TopDownItemOnStack);
+        SetItemMetatable(luaState, -1, tile.TopDownItemOnStack);
+
+        return 1;
+    }
+
+    public static int LuaTileGetDownItemCount(LuaState luaState)
+    {
+        // tile:getDownItemCount()
+        var tile = GetUserdata<ITile>(luaState, 1);
+        if (tile != null)
+            Lua.PushNumber(luaState, tile.AllItems.Count(c => !c.IsAlwaysOnTop));
+        else
+            Lua.PushNil(luaState);
+
+        return 1;
+    }
+
+    public static int LuaTileGetTopItemCount(LuaState luaState)
+    {
+        // tile:getTopItemCount()
+        var tile = GetUserdata<ITile>(luaState, 1);
+        if (tile != null)
+            Lua.PushNumber(luaState, tile.AllItems.Count(c => c.IsAlwaysOnTop));
+        else
+            Lua.PushNil(luaState);
 
         return 1;
     }

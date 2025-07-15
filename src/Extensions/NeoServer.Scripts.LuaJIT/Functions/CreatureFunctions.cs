@@ -1,6 +1,9 @@
 ﻿using LuaNET;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Scripts.LuaJIT.Enums;
@@ -16,15 +19,18 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
     private static IGameCreatureManager _gameCreatureManager;
     private static ICreatureEvents _creatureEvents;
     private static CreatureHealedEventHandler _creatureHealedEventHandler;
+    private static IMap _map;
 
     public CreatureFunctions(
         IGameCreatureManager gameCreatureManager,
         ICreatureEvents creatureEvents,
-        CreatureHealedEventHandler creatureHealedEventHandler) : base(nameof(CreatureFunctions))
+        CreatureHealedEventHandler creatureHealedEventHandler,
+        IMap map) : base(nameof(CreatureFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
         _creatureEvents = creatureEvents;
         _creatureHealedEventHandler = creatureHealedEventHandler;
+        _map = map;
     }
 
     public void Init(LuaState luaState)
@@ -58,6 +64,8 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         RegisterMethod(luaState, "Creature", "say", LuaCreatureSay);
 
         RegisterMethod(luaState, "Creature", "getSummons", LuaCreatureGetSummons);
+        RegisterMethod(luaState, "Creature", "move", LuaCreatureMove);
+        RegisterMethod(luaState, "Creature", "remove", LuaCreatureRemove);
     }
 
     private static int LuaCreatureCreate(LuaState luaState)
@@ -469,6 +477,71 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
             Lua.RawSetI(luaState, -2, ++index);
         }
 
+        return 1;
+    }
+
+    private static int LuaCreatureMove(LuaState L)
+    {
+        // creature:move(direction)
+        // creature:move(tile[, flags = 0])
+        //todo: implement flags
+        var creature = GetUserdata<ICreature>(L, 1);
+        if (!creature || creature is not IWalkableCreature walkableCreature)
+        {
+            Lua.PushNil(L);
+            return 1;
+        }
+
+        if (Lua.IsNumber(L, 2))
+        {
+            var direction = GetNumber<Direction>(L, 2);
+            if (direction.IsValid())
+            {
+                Lua.PushNil(L);
+                return 1;
+            }
+            var result = _map.TryMoveCreature(walkableCreature, direction);
+            Lua.PushNumber(L, result ? (int)ReturnValueType.RETURNVALUE_NOERROR : (int)ReturnValueType.RETURNVALUE_NOTPOSSIBLE);
+        }
+        else
+        {
+            var tile = GetUserdata<ITile>(L, 2);
+            if (!tile)
+            {
+                Lua.PushNil(L);
+                return 1;
+            }
+            var result = _map.TryMoveCreature(walkableCreature, tile.Location);
+            Lua.PushNumber(L, result ? (int)ReturnValueType.RETURNVALUE_NOERROR : (int)ReturnValueType.RETURNVALUE_NOTPOSSIBLE);
+        }
+        return 1;
+    }
+
+    private static int LuaCreatureRemove(LuaState luaState)
+    {
+        // creature:remove([forced = true])
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (creature == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var forced = GetBoolean(luaState, 2, true);
+        if (creature is IPlayer player)
+            _gameCreatureManager.RemovePlayer(player);
+        else if (creature is ISummon summon)
+        {
+            summon.Dismiss();
+            Thread.Sleep(200);
+            _gameCreatureManager.RemoveCreature(summon);
+        }
+        else
+        {
+            _gameCreatureManager.RemoveCreature(creature);
+        }
+
+        Lua.PushBoolean(luaState, true);
         return 1;
     }
 }

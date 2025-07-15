@@ -53,3 +53,36 @@ function Tile.isWalkable(self)
     end
     return true
 end
+
+-- Functions from OTServbr-Global
+function Tile.isHouse(self)
+	local house = self:getHouse()
+	return house and true or false
+end
+
+function Tile.isPz(self)
+	return self:hasFlag(TILESTATE_PROTECTIONZONE)
+end
+
+function Tile:isRopeSpot()
+	if not self then
+		return false
+	end
+
+	if not self:getGround() then
+		return false
+	end
+
+	if table.contains(ropeSpots, self:getGround():getId()) then
+		return true
+	end
+
+	for i = 1, self:getTopItemCount() do
+		local thing = self:getThing(i)
+		if thing and table.contains(specialRopeSpots, thing:getId()) then
+			return true
+		end
+	end
+
+	return false
+end

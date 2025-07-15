@@ -23,7 +23,7 @@ public interface IItemType
 
     ushort Speed { get; }
     string Article { get; }
-    ItemAttributeList Attributes { get; }
+    ItemTypeAttributeList Attributes { get; }
     ShootType ShootType { get; }
     AmmoType AmmoType { get; }
     WeaponType WeaponType { get; }
@@ -32,52 +32,37 @@ public interface IItemType
     ushort TransformTo { get; }
     ushort DestroyTo { get; }
     string Plural { get; }
-    ItemAttributeList OnUse { get; }
+    ItemTypeAttributeList OnUse { get; }
     DamageType DamageType { get; }
     EffectT EffectT { get; }
 
     ushort Charges
-        => Attributes.GetAttribute<ushort>(ItemAttribute.Charges);
+        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Charges);
 
     ushort Count
-        => Attributes.GetAttribute<ushort>(ItemAttribute.Count);
+        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Count);
 
+    void SetName(string value);
     void SetArticle(string article);
     void SetPlural(string plural);
 
-    void UpdateName(string value);
     bool HasFlag(ItemFlag flag);
     void SetOnUse();
     bool HasAtLeastOneFlag(params ItemFlag[] flags);
     void SetGroupIfNone();
 
-    bool IsMovable()
-    {
-        return Flags.Contains(ItemFlag.Movable);
-    }
+    bool IsCorpse() => Attributes.HasAttribute(ItemTypeAttribute.CorpseType);
 
-    bool IsFluidContainer()
-    {
-        return Flags.Contains(ItemFlag.LiquidContainer);
-    }
+    bool IsMovable() =>  Flags.Contains(ItemFlag.Movable);
 
-    bool IsSplash()
-    {
-        return Group == ItemGroup.Splash;
-    }
+    bool IsFluidContainer() => Flags.Contains(ItemFlag.LiquidContainer);
 
-    bool IsStackable()
-    {
-        return Group == ItemGroup.Splash;
-    }
+    bool IsSplash() => Group == ItemGroup.Splash;
 
-    bool IsKey()
-    {
-        return Flags.Contains(ItemFlag.Key);
-    }
+    bool IsStackable() => Group == ItemGroup.Splash;
 
-    bool HasSubType()
-    {
-        return IsFluidContainer() || IsSplash() || IsStackable() || Charges != 0;
-    }
+    bool IsKey() => Flags.Contains(ItemFlag.Key);
+
+    bool HasSubType() => IsFluidContainer() || IsSplash() || IsStackable() || Charges != 0;
+    void ThrowIfLocked();
 }

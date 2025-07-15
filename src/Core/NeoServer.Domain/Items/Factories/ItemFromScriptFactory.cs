@@ -11,7 +11,7 @@ namespace NeoServer.Domain.Items.Factories;
 /// </summary>
 public static class ItemFromScriptFactory
 {
-    private static readonly Dictionary<Type, Func<IItemType, Location, IDictionary<ItemAttribute, IConvertible>, IItem>>
+    private static readonly Dictionary<Type, Func<IItemType, Location, IDictionary<ItemTypeAttribute, IConvertible>, IItem>>
         ScriptFactoryMap = new();
 
     /// <summary>
@@ -23,7 +23,7 @@ public static class ItemFromScriptFactory
     /// <param name="script">The script file name without the ".cs" extension.</param>
     /// <returns>An instance of <see cref="IItem" /> if the script file was found, otherwise null.</returns>
     public static IItem Create(IItemType itemType, Location location,
-        IDictionary<ItemAttribute, IConvertible> attributes, string script)
+        IDictionary<ItemTypeAttribute, IConvertible> attributes, string script)
     {
         if (string.IsNullOrWhiteSpace(script)) return null;
 
@@ -43,22 +43,22 @@ public static class ItemFromScriptFactory
         return factory(itemType, location, attributes);
     }
 
-    private static Func<IItemType, Location, IDictionary<ItemAttribute, IConvertible>, IItem> CreateFactory(Type type)
+    private static Func<IItemType, Location, IDictionary<ItemTypeAttribute, IConvertible>, IItem> CreateFactory(Type type)
     {
         var itemTypeParam = Expression.Parameter(typeof(IItemType), "itemType");
         var locationParam = Expression.Parameter(typeof(Location), "location");
-        var attributesParam = Expression.Parameter(typeof(IDictionary<ItemAttribute, IConvertible>), "attributes");
+        var attributesParam = Expression.Parameter(typeof(IDictionary<ItemTypeAttribute, IConvertible>), "attributes");
 
         var constructorInfo = type.GetConstructor(new[]
         {
-            typeof(IItemType), typeof(Location), typeof(IDictionary<ItemAttribute, IConvertible>)
+            typeof(IItemType), typeof(Location), typeof(IDictionary<ItemTypeAttribute, IConvertible>)
         });
 
         var newInstance = Expression.New(constructorInfo, itemTypeParam, locationParam, attributesParam);
 
         var castExpression = Expression.Convert(newInstance, type);
 
-        return Expression.Lambda<Func<IItemType, Location, IDictionary<ItemAttribute, IConvertible>, IItem>>(
+        return Expression.Lambda<Func<IItemType, Location, IDictionary<ItemTypeAttribute, IConvertible>, IItem>>(
             castExpression,
             itemTypeParam, locationParam, attributesParam).Compile();
     }

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Items;
 using NeoServer.Loaders.Extensions;
 using NeoServer.Loaders.OTB.Parsers;
@@ -29,7 +28,7 @@ public class ItemTypeMetadataParser
 
         if (!itemTypes.TryGetValue(id, out var itemType)) return;
 
-        itemType.UpdateName(metadata.Name);
+        itemType.SetName(metadata.Name);
         itemType.SetArticle(metadata.Article);
         itemType.SetPlural(metadata.Plural);
 
@@ -61,7 +60,7 @@ public class ItemTypeMetadataParser
 
             var value = JsonTextExtensions.ParseFromJson(attribute.Value);
 
-            if (itemAttribute == ItemAttribute.None)
+            if (itemAttribute == ItemTypeAttribute.None)
                 itemType.OnUse.SetCustomAttribute(attribute.Key, value);
             else
                 itemType.OnUse.SetAttribute(itemAttribute, value);
@@ -71,7 +70,7 @@ public class ItemTypeMetadataParser
     }
 
     private static void SetAttributes(IEnumerable<ItemTypeMetadata.Attribute> metaAttributes,
-        ItemAttributeList attributes)
+        ItemTypeAttributeList attributes)
     {
         foreach (var attribute in metaAttributes)
         {
@@ -79,7 +78,7 @@ public class ItemTypeMetadataParser
 
             var originalValue = JsonTextExtensions.ParseFromJson(attribute.Value);
 
-            var value = itemAttribute == ItemAttribute.Weight
+            var value = itemAttribute == ItemTypeAttribute.Weight
                 ? int.Parse(originalValue) / 100f
                 : originalValue;
 
@@ -89,14 +88,14 @@ public class ItemTypeMetadataParser
                 {
                     var arrayValues = value;
 
-                    if (itemAttribute == ItemAttribute.None)
+                    if (itemAttribute == ItemTypeAttribute.None)
                         attributes.SetCustomAttribute(attribute.Key, values: arrayValues);
                     else
                         attributes.SetAttribute(itemAttribute, values: arrayValues);
                 }
                 else
                 {
-                    if (itemAttribute == ItemAttribute.None)
+                    if (itemAttribute == ItemTypeAttribute.None)
                         attributes.SetCustomAttribute(attribute.Key, value);
                     else
                         attributes.SetAttribute(itemAttribute, value);
@@ -104,10 +103,10 @@ public class ItemTypeMetadataParser
             }
             else
             {
-                var innerAttributes = new ItemAttributeList();
+                var innerAttributes = new ItemTypeAttributeList();
                 SetAttributes(attribute.Attributes, innerAttributes);
 
-                if (itemAttribute == ItemAttribute.None)
+                if (itemAttribute == ItemTypeAttribute.None)
                     attributes.SetCustomAttribute(attribute.Key, value, innerAttributes);
                 else
                     attributes.SetAttribute(itemAttribute, value, innerAttributes);

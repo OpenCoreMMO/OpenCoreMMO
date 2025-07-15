@@ -18,7 +18,7 @@ public class UsableOnItem : BaseItem, IUsableOnItem
 
     public virtual bool CanUseOn(IItem onItem)
     {
-        var useOnItems = Metadata.OnUse?.GetAttributeArray<ushort>(ItemAttribute.UseOn);
+        var useOnItems = Metadata.OnUse?.GetAttributeArray<ushort>(ItemTypeAttribute.UseOn);
 
         return useOnItems is not null && useOnItems.Contains(onItem.Metadata.ServerId);
     }

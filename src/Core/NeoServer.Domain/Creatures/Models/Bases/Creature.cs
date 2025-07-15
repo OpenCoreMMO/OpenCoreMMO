@@ -80,7 +80,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public abstract IOutfit Outfit { get; protected set; }
     public IOutfit LastOutfit { get; private set; }
     public Direction Direction { get; protected set; }
-    public IList<IMonster> Summons { get; protected set; } = new List<IMonster>();
+    public IList<ISummon> Summons { get; protected set; } = new List<ISummon>();
 
     public Direction SafeDirection
     {

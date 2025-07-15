@@ -44,6 +44,57 @@ public class SpellListManager
         return Spells.TryGetValue(words, out spell);
     }
 
+    public bool TryGetInstantSpell(string words, out ISpell spell)
+    {
+        spell = null;
+
+        if (string.IsNullOrWhiteSpace(words))
+            return false;
+
+        if (TryGet(words, out spell))
+            return true;
+
+        var param = string.Empty;
+        var spellWord = string.Empty;
+
+        var paramsIndex = words.IndexOf('"');
+
+        if (paramsIndex < 0)
+            paramsIndex = words.IndexOf('\'');
+
+        if (paramsIndex < 0)
+        {
+            int lastSpaceIndex = words.LastIndexOf(' ');
+            if (lastSpaceIndex >= 0)
+            {
+                spellWord = words[..lastSpaceIndex];
+                param = words[(lastSpaceIndex + 1)..];
+            }
+            else
+            {
+                spellWord = words;
+                param = string.Empty;
+            }
+        }
+        else
+        {
+            param = words.Substring(paramsIndex, (words.Length - 1) - paramsIndex);
+            spellWord = words[..paramsIndex];
+        }
+
+        if (!TryGet(spellWord.Trim(), out spell))
+            return false;
+
+        param = param.Replace("\"", "").Replace("\'", "").Trim();
+
+        if (!string.IsNullOrWhiteSpace(param))
+        {
+            spell.Params = [param];
+        }
+
+        return true;
+    }
+
     public ISpell GetByName(string name)
     {
         if (!SpellNameWordMap.TryGetValue(name, out var words)) return null;

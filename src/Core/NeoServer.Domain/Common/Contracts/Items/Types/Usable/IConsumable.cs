@@ -7,7 +7,7 @@ public delegate void Use(ICreature usedBy, ICreature creature, IItem item);
 
 public interface IConsumable : IConsumableRequirement, IUsableOnCreature
 {
-    public string Sentence => Metadata.Attributes.GetAttribute(ItemAttribute.Sentence);
+    public string Sentence => Metadata.Attributes.GetAttribute(ItemTypeAttribute.Sentence);
     public static event Use OnUsed;
 
     public static void RaiseOnUsed(ICreature usedBy, ICreature creature, IItem item)

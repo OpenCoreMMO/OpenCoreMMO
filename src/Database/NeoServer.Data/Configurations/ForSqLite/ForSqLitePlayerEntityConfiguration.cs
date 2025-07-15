@@ -43,6 +43,7 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
         ConfigureProperty(entity, e => e.LookType, "int(11)", "136");
         ConfigureProperty(entity, e => e.Mana, "int(11)", "0");
         ConfigureProperty(entity, e => e.MaxMana, "int(11)", "0");
+        ConfigureProperty(entity, e => e.ManaSpent, "int(11)", "0");
         ConfigureProperty(entity, e => e.Name, "varchar(255)").HasMaxLength(255);
         ConfigureProperty(entity, e => e.PosX, "int(11)", "0");
         ConfigureProperty(entity, e => e.PosY, "int(11)", "0");

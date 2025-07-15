@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NeoServer.Data.Entities;
+using NeoServer.Data.Extensions;
 using NeoServer.Data.Seeds;
 
 namespace NeoServer.Data.Configurations.ForSqLite;
@@ -30,6 +31,13 @@ public class ForSqLitePlayerInventoryItemEntityConfiguration : IEntityTypeConfig
         entity.Property(e => e.ServerId)
             .IsRequired()
             .HasDefaultValueSql("0");
+
+        entity.Property(e => e.Attributes)
+            .HasColumnType("TEXT")
+            .HasConversion(
+                v => JsonExtensions.SerializeAllAttributes(v),
+                v => JsonExtensions.DeserializeAllAttributes(v)
+            );
 
         entity.HasOne(d => d.Player)
             .WithMany(p => p.PlayerInventoryItems)

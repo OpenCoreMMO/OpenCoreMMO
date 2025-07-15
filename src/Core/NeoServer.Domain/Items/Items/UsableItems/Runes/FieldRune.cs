@@ -9,7 +9,7 @@ namespace NeoServer.Domain.Items.Items.UsableItems.Runes;
 
 public class FieldRune : Rune, IUsableOnTile
 {
-    public FieldRune(IItemType type, Location location, IDictionary<ItemAttribute, IConvertible> attributes) : base(
+    public FieldRune(IItemType type, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(
         type, location, attributes)
     {
     }
@@ -18,9 +18,9 @@ public class FieldRune : Rune, IUsableOnTile
     {
     }
 
-    public ushort Field => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.Field);
+    public ushort Field => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.Field);
 
-    public virtual string Area => Metadata.Attributes.GetAttribute(ItemAttribute.Area);
+    public virtual string Area => Metadata.Attributes.GetAttribute(ItemTypeAttribute.Area);
 
     public bool Use(ICreature usedBy, ITile tile)
     {

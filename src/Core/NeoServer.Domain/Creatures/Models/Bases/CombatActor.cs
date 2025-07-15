@@ -8,6 +8,7 @@ using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
@@ -546,14 +547,18 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
             //todo: implements real damage
             OnBeforeDeath?.Invoke(this, combatActor, 0);
 
+        Dismiss();
+
+        OnDeath?.Invoke(this, by);
+        EventAggregator.Publish(new CreatureDeathEvent(this, by));
+    }
+
+    public virtual void Dismiss()
+    {
         StopAttack();
         StopFollowing();
         StopWalking();
         Conditions.Clear();
-
-        OnDeath?.Invoke(this, by);
-        EventAggregator.Publish(new CreatureDeathEvent(this, by));
-
         ReceivedDamages.Clear();
     }
 

@@ -39,7 +39,7 @@ public class LuaRuneSpell(LuaScriptInterface scriptInterface) : LuaSpell(scriptI
 
         var variant = new LuaVariant
         {
-            Type = LuaVariantType.Number,
+            Type = LuaVariantType.VARIANT_NUMBER,
             Number = target is ICreature targetCreature ? targetCreature.CreatureId : 0,
             InstantName = "",
             RuneName = rune.Name
