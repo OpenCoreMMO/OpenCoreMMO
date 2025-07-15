@@ -65,5 +65,4 @@ public interface IItemType
 
     bool HasSubType() => IsFluidContainer() || IsSplash() || IsStackable() || Charges != 0;
     void ThrowIfLocked();
-    IItemType Clone();
 }

@@ -18,7 +18,7 @@ public abstract class BaseItem : IItem
     protected BaseItem(IItemType metadata, Location location)
     {
         Location = location;
-        Metadata = metadata.Clone();
+        Metadata = metadata;
 
         Decay = DecayableFactory.CreateIfItemIsDecayable(this);
     }

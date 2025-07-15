@@ -230,21 +230,4 @@ public class ItemType : IItemType
     {
         return (flags & flag) != 0;
     }
-
-    public IItemType Clone()
-    {
-        var clone = new ItemType
-        {
-            // Copia campos simples
-            ServerId = this.ServerId,
-            ClientId = this.ClientId,
-            Group = this.Group,
-            LightBlock = this.LightBlock,
-            Locked = this.Locked,
-            Flags = new HashSet<ItemFlag>(this.Flags),
-            Attributes = this.Attributes?.Clone(),
-            OnUse = this.OnUse?.Clone()
-        };
-        return clone;
-    }
 }
