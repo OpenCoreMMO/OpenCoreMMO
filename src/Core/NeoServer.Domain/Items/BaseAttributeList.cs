@@ -150,18 +150,16 @@ public class BaseAttributeList<T> where T : Enum
 
     public Dictionary<TKey, TValue> ToDictionary<TKey, TValue>()
     {
-        if (_defaultAttributes is null && _customAttributes is null) return default;
+        if (_defaultAttributes is null) return default;
 
         var dictionary = new Dictionary<TKey, TValue>();
 
-        if (_defaultAttributes is not null)
-            foreach (var item in _defaultAttributes)
-                dictionary.Add((TKey)Convert.ChangeType(item.Key, typeof(TKey), CultureInfo.InvariantCulture),
-                    (TValue)item.Value.Item1);
-        if (_customAttributes is not null)
-            foreach (var item in _customAttributes)
-                dictionary.Add((TKey)Convert.ChangeType(item.Key, typeof(TKey), CultureInfo.InvariantCulture),
-                    (TValue)item.Value.Item1);
+        foreach (var item in _defaultAttributes)
+        {
+            TKey key = ConvertKey<TKey>(item.Key);
+            dictionary[key] = (TValue)item.Value.Item1;
+        }
+
         return dictionary;
     }
 
@@ -217,7 +215,7 @@ public class BaseAttributeList<T> where T : Enum
 
         try
         {
-            attrValue = (TValue)Convert.ChangeType(value.Item1, typeof(T), CultureInfo.InvariantCulture);
+            attrValue = (TValue)Convert.ChangeType(value.Item1, typeof(TValue), CultureInfo.InvariantCulture);
         }
         catch
         {
@@ -283,14 +281,15 @@ public class BaseAttributeList<T> where T : Enum
 
     public Dictionary<TKey, TValue> ToDictionaryCustom<TKey, TValue>()
     {
-        if (_customAttributes is null && _customAttributes is null) return default;
+        if (_customAttributes is null) return default;
 
         var dictionary = new Dictionary<TKey, TValue>();
 
-        if (_customAttributes is not null)
-            foreach (var item in _customAttributes)
-                dictionary.Add((TKey)Convert.ChangeType(item.Key, typeof(TKey), CultureInfo.InvariantCulture),
-                    (TValue)item.Value.Item1);
+        foreach (var item in _customAttributes)
+        {
+            TKey key = ConvertKey<TKey>(item.Key);
+            dictionary[key] = (TValue)item.Value.Item1;
+        }
 
         return dictionary;
     }
@@ -305,5 +304,17 @@ public class BaseAttributeList<T> where T : Enum
         var type = ((object)value).GetType();
 
         return !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
+    }
+
+    private static TKey ConvertKey<TKey>(object key)
+    {
+        if (typeof(TKey).IsEnum)
+        {
+            if (key is string s)
+                return (TKey)Enum.Parse(typeof(TKey), s, ignoreCase: true);
+            return (TKey)Enum.ToObject(typeof(TKey), key);
+        }
+
+        return (TKey)Convert.ChangeType(key, typeof(TKey), CultureInfo.InvariantCulture);
     }
 }
