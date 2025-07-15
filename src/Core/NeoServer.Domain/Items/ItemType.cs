@@ -34,6 +34,12 @@ public class ItemType : IItemType
 
     public ushort Speed => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Speed);
 
+    public ushort Charges
+        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Charges);
+
+    public ushort Count
+        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Count);
+
     /// <summary>
     ///     ItemType's description
     /// </summary>

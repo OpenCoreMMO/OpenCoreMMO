@@ -10,22 +10,20 @@ public interface IItemType
     ushort ServerId { get; }
     ushort ClientId { get; }
 
-    string Name => Attributes.GetAttribute(ItemTypeAttribute.Name);
-    string Article => Attributes.GetAttribute(ItemTypeAttribute.Article);
-    string Plural => Attributes.GetAttribute(ItemTypeAttribute.PluralName);
-    float Weight => Attributes.GetAttribute<float>(ItemTypeAttribute.Weight);
-    ushort AttackPower => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Attack);
-    ushort Defense => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Defense);
-    ushort ExtraDefense => Attributes.GetAttribute<ushort>(ItemTypeAttribute.ExtraDefense);
-    ushort Armor => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Armor);
-    sbyte ExtraHitChance => Attributes.GetAttribute<sbyte>(ItemTypeAttribute.HitChance);
-    byte Range => Attributes.GetAttribute<byte>(ItemTypeAttribute.Range);
+    string Name { get; }
+    string Article { get; }
+    string Plural { get; }
+    float Weight { get; }
+    ushort AttackPower { get; }
+    ushort Defense { get; }
+    ushort ExtraDefense { get; }
+    ushort Armor { get; }
+    sbyte ExtraHitChance { get; }
+    byte Range { get; }
 
-    ushort Charges
-        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Charges);
+    ushort Charges { get; }
 
-    ushort Count
-        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Count);
+    ushort Count { get; }
 
     string Description { get; }
 
