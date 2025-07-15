@@ -32,10 +32,6 @@ public class Rune : Cumulative, IHasCooldown, IUsableRequirement
 
     public bool NeedsTarget => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.NeedTarget);
 
-    public byte? Range => Metadata.Attributes.HasAttribute(ItemTypeAttribute.Range)
-        ? Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Range)
-        : null;
-
     public bool SelfTarget => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.SelfTarget);
 
     public bool IsAggressive => !Metadata.Attributes.HasAttribute(ItemTypeAttribute.IsAggressive) ||
@@ -80,7 +76,6 @@ public class Rune : Cumulative, IHasCooldown, IUsableRequirement
 
     public uint Cooldown => Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.CooldownTime);
 
-    public string Name => Metadata.Name;
     public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MinimumLevel);
     public ushort MinMagicLevel => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MinimumMagicLevel);
 

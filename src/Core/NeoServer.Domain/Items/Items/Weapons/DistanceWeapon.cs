@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Combat.Calculations;
-using NeoServer.Domain.Combat.Services.Attacks;
+using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
@@ -18,12 +18,16 @@ namespace NeoServer.Domain.Items.Items.Weapons;
 public class DistanceWeapon(IItemType type, Location location)
     : Equipment(type, location), IDistanceWeapon, IHasAttackBonus, INeedsAmmo
 {
+    public WeaponAttack WeaponAttack { get; }
+
+    public ushort? MinHitChance { get; }
+
     protected override string PartialInspectionText
     {
         get
         {
             var range = Range > 0 ? $"Range: {Range}" : string.Empty;
-            var atk = ExtraAttack > 0 ? $"Atk: {ExtraAttack:+#}" : string.Empty;
+            var atk = AttackPower > 0 ? $"Atk: {AttackPower:+#}" : string.Empty;
             var hit = ExtraHitChance != 0 ? $"Hit% {ExtraHitChance:+#;-#}" : string.Empty;
 
             if (Guard.AllNullOrEmpty(range, atk, hit)) return string.Empty;
@@ -39,8 +43,6 @@ public class DistanceWeapon(IItemType type, Location location)
         }
     }
 
-    public byte ExtraAttack => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Attack);
-
     public override bool CanBeDressed(IPlayer player)
     {
         if (Guard.IsNullOrEmpty(Vocations)) return true;
@@ -51,11 +53,6 @@ public class DistanceWeapon(IItemType type, Location location)
 
         return false;
     }
-
-    public sbyte ExtraHitChance => Metadata.Attributes.GetAttribute<sbyte>(ItemTypeAttribute.HitChance);
-    public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Range);
-
-    public ushort? MinHitChance { get; }
 
     public bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combatResult)
     {
@@ -89,7 +86,7 @@ public class DistanceWeapon(IItemType type, Location location)
             return true;
         }
 
-        var maxDamage = player.CalculateAttackPower(0.09f, (ushort)(ammo.Attack + ExtraAttack));
+        var maxDamage = player.CalculateAttackPower(0.09f, (ushort)(ammo.AttackPower + AttackPower));
 
         var combat = new CombatAttackValue(actor.MinimumAttackPower, maxDamage, Range, DamageType.Physical);
 
@@ -109,8 +106,6 @@ public class DistanceWeapon(IItemType type, Location location)
     public void OnMoved(IThing to)
     {
     }
-
-    public byte AttackBonus => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Attack);
 
     public bool CanShootAmmunition(Ammo ammo)
     {

@@ -1240,8 +1240,6 @@ public class Player : CombatActor, IPlayer
 
     public override CalculatedAttackDamage CalculateAttackDamage()
     {
-        var damage = new CalculatedAttackDamage();
-
         return base.CalculateAttackDamage();
     }
 

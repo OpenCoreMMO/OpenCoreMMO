@@ -16,10 +16,32 @@ public interface IItem : IThing, IHasDecay
     IItemType Metadata { get; }
     ItemAttributeList Attributes { get; }
 
+    ushort ActionId { get; }
+    uint UniqueId { get; }
+    string Article { get; }
+    string Plural { get; }
+
+    float Weight { get; }
+
+    ushort AttackPower { get; }
+
+    ushort Defense { get; }
+
+    ushort ExtraDefense { get; }
+
+    ushort Armor { get; }
+
+    sbyte ExtraHitChance { get; }
+
+    byte Range { get; }
+
+    public bool IsDeleted { get; }
+    IThing Owner { get; }
+
+    IThing Parent { get; }
+
     string InspectionText => string.Empty;
     string CloseInspectionText => string.Empty;
-    string Plural => Metadata.Plural;
-
     ushort ClientId => Metadata.ClientId;
     ushort ServerId => Metadata.ServerId;
     ushort CanTransformTo => Metadata.Attributes.GetTransformationItem();
@@ -56,15 +78,21 @@ public interface IItem : IThing, IHasDecay
         }
     }
 
-    string FullName => Metadata.FullName;
-    ushort ActionId => Attributes.GetAttribute<ushort>(ItemAttribute.ActionId);
-    uint UniqueId => Attributes.GetAttribute<uint>(ItemAttribute.UniqueId);    
-    public bool IsDeleted { get; }
-    IThing Owner { get; }
-    float Weight { get; }
-    IThing Parent { get; }
-    string Article => Metadata.Article;
-    string IThing.Name => Metadata.Name;
+    public string FullName
+    {
+        get
+        {
+            if (Attributes.HasAttribute(ItemAttribute.Article))
+            {
+               return string.IsNullOrWhiteSpace(Attributes.GetAttribute(ItemAttribute.Article))
+                ? $"{Attributes.GetAttribute(ItemAttribute.Name)}"
+                : $"{Attributes.GetAttribute(ItemAttribute.Article)} {Attributes.GetAttribute(ItemAttribute.Name)}";
+            }
+
+            return Metadata.FullName;
+        }
+    }
+
     void UpdateMetadata(IItemType newMetadata);
     void MarkAsDeleted();
 
