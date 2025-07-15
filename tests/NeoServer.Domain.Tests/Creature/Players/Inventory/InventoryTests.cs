@@ -551,9 +551,9 @@ public class InventoryTests
         var skills = PlayerTestDataBuilder.GenerateSkills(10);
         var sut = PlayerTestDataBuilder.Build(skills: skills);
 
-        var bodyItemToAdd = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var bodyItemToAdd = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.MinimumLevel, 1000)
+            (ItemTypeAttribute.MinimumLevel, 1000)
         });
 
         //act

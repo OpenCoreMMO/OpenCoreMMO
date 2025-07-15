@@ -41,7 +41,7 @@ public class StaticToDynamicTileService : IStaticToDynamicTileService
         {
             if (!_itemClientServerIdMapStore.TryGetValue(clientId, out var serverId)) continue;
 
-            var item = _itemFactory.Create(serverId, tile.Location, new Dictionary<ItemAttribute, IConvertible>());
+            var item = _itemFactory.Create(serverId, tile.Location, new Dictionary<ItemTypeAttribute, IConvertible>(), null);
             items.Add(item);
         }
 

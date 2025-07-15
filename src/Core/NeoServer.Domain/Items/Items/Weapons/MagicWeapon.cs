@@ -20,17 +20,17 @@ public class MagicWeapon : Equipment, IDistanceWeapon
 
     private ShootType ShootType => Metadata.ShootType;
 
-    private DamageType DamageType => Metadata.Attributes.HasAttribute(ItemAttribute.Damage)
+    private DamageType DamageType => Metadata.Attributes.HasAttribute(ItemTypeAttribute.Damage)
         ? Metadata.DamageType
         : ShootType.ToDamageType();
 
-    private ushort MaxDamage => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.MaxHitChance);
+    private ushort MaxDamage => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.MaxHitChance);
 
     protected override string PartialInspectionText => string.Empty;
-    public ushort MaxHitChance => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.MaxHitChance);
-    public ushort ManaConsumption => Metadata.Attributes?.GetAttribute<ushort>(ItemAttribute.ManaUse) ?? 0;
+    public ushort MaxHitChance => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.MaxHitChance);
+    public ushort ManaConsumption => Metadata.Attributes?.GetAttribute<ushort>(ItemTypeAttribute.ManaUse) ?? 0;
     public ushort? MinHitChance => (ushort)(MaxHitChance / 2);
-    public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Range);
+    public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Range);
     public WeaponType WeaponType => WeaponType.Magical;
 
     public bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combatResult)

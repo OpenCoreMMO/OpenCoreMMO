@@ -19,7 +19,7 @@ public class ContainerTests
     private IContainer CreateContainer(byte capacity = 6, string name = "")
     {
         var itemType = new ItemType();
-        itemType.Attributes.SetAttribute(ItemAttribute.Capacity, capacity);
+        itemType.Attributes.SetAttribute(ItemTypeAttribute.Capacity, capacity);
         itemType.SetName(name);
         itemType.SetFlag(ItemFlag.Pickupable);
         itemType.SetFlag(ItemFlag.Movable);
@@ -50,7 +50,7 @@ public class ContainerTests
     public void Constructor_Should_Create_Instance_With_Capacity_And_List_Items()
     {
         var itemType = new ItemType();
-        itemType.Attributes.SetAttribute(ItemAttribute.Capacity, 20);
+        itemType.Attributes.SetAttribute(ItemTypeAttribute.Capacity, 20);
 
         var sut = new Domain.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
 
@@ -63,7 +63,7 @@ public class ContainerTests
     public void SetParent_Should_Modify_Parent_Property()
     {
         var itemType = new ItemType();
-        itemType.Attributes.SetAttribute(ItemAttribute.Capacity, 20);
+        itemType.Attributes.SetAttribute(ItemTypeAttribute.Capacity, 20);
 
         var parentContainer =
             new Domain.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
@@ -82,7 +82,7 @@ public class ContainerTests
     public void IsApplicable_Returns_True_When_ItemType_Is_Container()
     {
         var type = new ItemType();
-        type.Attributes.SetAttribute(ItemAttribute.Type, "container");
+        type.Attributes.SetAttribute(ItemTypeAttribute.Type, "container");
         type.SetGroupIfNone();
 
         Assert.True(Domain.Items.Items.Containers.Container.Container.IsApplicable(type));
@@ -94,7 +94,7 @@ public class ContainerTests
         Assert.True(Domain.Items.Items.Containers.Container.Container.IsApplicable(type));
 
         type = new ItemType();
-        type.Attributes.SetAttribute(ItemAttribute.Type, "container");
+        type.Attributes.SetAttribute(ItemTypeAttribute.Type, "container");
         type.SetGroup((byte)ItemGroup.Container);
         type.SetGroupIfNone();
 
@@ -642,7 +642,7 @@ public class ContainerTests
     public void ToString_When_Container_Is_Empty_Should_Return_Nothing()
     {
         var itemType = new ItemType();
-        itemType.Attributes.SetAttribute(ItemAttribute.Capacity, 20);
+        itemType.Attributes.SetAttribute(ItemTypeAttribute.Capacity, 20);
 
         var sut = new Domain.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
 
@@ -653,7 +653,7 @@ public class ContainerTests
     public void ToString_When_Container_Has_Items_Should_Return_Items_Name()
     {
         var itemType = new ItemType();
-        itemType.Attributes.SetAttribute(ItemAttribute.Capacity, 20);
+        itemType.Attributes.SetAttribute(ItemTypeAttribute.Capacity, 20);
 
         var sut = new Domain.Items.Items.Containers.Container.Container(itemType, new Location(100, 100, 7));
 

@@ -51,7 +51,7 @@ public class TileHeightTests
 
         var depot = ItemTestData.CreateRegularItem(1);
         depot.Metadata.Flags.Add(ItemFlag.HasHeight);
-        depot.Metadata.Attributes.SetAttribute(ItemAttribute.Type, "depot");
+        depot.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "depot");
 
         IItem[] items =
         {

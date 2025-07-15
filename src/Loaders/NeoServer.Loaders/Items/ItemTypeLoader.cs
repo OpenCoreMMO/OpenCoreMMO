@@ -66,7 +66,7 @@ public class ItemTypeLoader
                 _itemTypeStore.AddOrUpdate(item.Key, item.Value);
                 _itemClientServerIdMapStore.AddOrUpdate(item.Value.ClientId, item.Key);
 
-                if (item.Value.Attributes.GetAttribute(ItemAttribute.Type)
+                if (item.Value.Attributes.GetAttribute(ItemTypeAttribute.Type)
                         ?.Equals("coin", StringComparison.InvariantCultureIgnoreCase) ?? false)
                     _coinTypeStore.AddOrUpdate(item.Key, item.Value);
             }

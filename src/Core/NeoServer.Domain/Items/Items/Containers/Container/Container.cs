@@ -39,7 +39,7 @@ public class Container : BaseItem, IContainer
     public bool IsFull => SlotsUsed >= Capacity;
     public IThing Parent { get; internal set; }
     public bool HasParent => Parent != null;
-    public byte Capacity => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Capacity);
+    public byte Capacity => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Capacity);
     public List<IItem> Items { get; }
     public IItem this[int index] => Items.Count > index ? Items[index] : null;
     public bool HasItems => SlotsUsed > 0;

@@ -97,7 +97,7 @@ public class CumulativeItemTest
     {
         var type = new ItemType();
         type.SetClientId(100);
-        type.Attributes.SetAttribute(ItemAttribute.Weight, weight);
+        type.Attributes.SetAttribute(ItemTypeAttribute.Weight, weight);
 
         var sup = new Cumulative(type, new Location(100, 100, 7), amount);
         Assert.Equal(totalWeight, sup.Weight);

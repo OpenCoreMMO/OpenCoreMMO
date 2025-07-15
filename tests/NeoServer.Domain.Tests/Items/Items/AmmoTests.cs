@@ -16,9 +16,9 @@ public class AmmoTests
     [InlineData(1, "(Atk: 1)")]
     public void InspectionText_ReturnsText(int attack, string expected)
     {
-        var sut = ItemTestData.CreateAmmo(1, 10, new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateAmmo(1, 10, new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Attack, attack)
+            (ItemTypeAttribute.Attack, attack)
         });
 
         //assert
@@ -26,17 +26,17 @@ public class AmmoTests
     }
 
     [Theory]
-    [InlineData(ItemAttribute.ElementFire, 5, "(Atk: 6 + 5 fire)")]
-    [InlineData(ItemAttribute.ElementEarth, 10, "(Atk: 6 + 10 earth)")]
-    [InlineData(ItemAttribute.ElementEnergy, 1, "(Atk: 6 + 1 energy)")]
-    [InlineData(ItemAttribute.ElementIce, 23, "(Atk: 6 + 23 ice)")]
-    [InlineData(ItemAttribute.ElementIce, 0, "(Atk: 6)")]
-    public void InspectionText_HasElementalDamage_ReturnsText(ItemAttribute itemAttribute, int elementalDamage,
+    [InlineData(ItemTypeAttribute.ElementFire, 5, "(Atk: 6 + 5 fire)")]
+    [InlineData(ItemTypeAttribute.ElementEarth, 10, "(Atk: 6 + 10 earth)")]
+    [InlineData(ItemTypeAttribute.ElementEnergy, 1, "(Atk: 6 + 1 energy)")]
+    [InlineData(ItemTypeAttribute.ElementIce, 23, "(Atk: 6 + 23 ice)")]
+    [InlineData(ItemTypeAttribute.ElementIce, 0, "(Atk: 6)")]
+    public void InspectionText_HasElementalDamage_ReturnsText(ItemTypeAttribute itemAttribute, int elementalDamage,
         string expected)
     {
-        var sut = (IEquipment)ItemTestData.CreateAmmo(1, 10, new (ItemAttribute, IConvertible)[]
+        var sut = (IEquipment)ItemTestData.CreateAmmo(1, 10, new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Attack, 6),
+            (ItemTypeAttribute.Attack, 6),
             (itemAttribute, elementalDamage)
         });
 
@@ -54,11 +54,11 @@ public class AmmoTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation);
-        var sut = (IEquipment)ItemTestData.CreateAmmo(1, 100, new (ItemAttribute, IConvertible)[]
+        var sut = (IEquipment)ItemTestData.CreateAmmo(1, 100, new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, "body")
+            (ItemTypeAttribute.BodyPosition, "body")
         });
-        sut.Metadata.Attributes.SetAttribute(ItemAttribute.Vocation, new[] { (byte)requiredVocation });
+        sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
         var actual = sut.CanBeDressed(player);
@@ -81,12 +81,12 @@ public class AmmoTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = (IEquipment)ItemTestData.CreateAmmo(1, 100, new (ItemAttribute, IConvertible)[]
+        var sut = (IEquipment)ItemTestData.CreateAmmo(1, 100, new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, "body"),
-            (ItemAttribute.MinimumLevel, minLevel)
+            (ItemTypeAttribute.BodyPosition, "body"),
+            (ItemTypeAttribute.MinimumLevel, minLevel)
         });
-        sut.Metadata.Attributes.SetAttribute(ItemAttribute.Vocation, new[] { (byte)requiredVocation });
+        sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
         var actual = sut.CanBeDressed(player);
@@ -100,9 +100,9 @@ public class AmmoTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: 1);
-        var sut = (IEquipment)ItemTestData.CreateAmmo(1, 100, new (ItemAttribute, IConvertible)[]
+        var sut = (IEquipment)ItemTestData.CreateAmmo(1, 100, new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, "body")
+            (ItemTypeAttribute.BodyPosition, "body")
         });
 
         //act

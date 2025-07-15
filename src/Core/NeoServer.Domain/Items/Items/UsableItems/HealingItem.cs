@@ -10,18 +10,18 @@ namespace NeoServer.Domain.Items.Items.UsableItems;
 
 public class HealingItem : Cumulative, IConsumable
 {
-    public HealingItem(IItemType type, Location location, IDictionary<ItemAttribute, IConvertible> attributes) :
+    public HealingItem(IItemType type, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) :
         base(type, location, attributes)
     {
     }
 
-    public ushort Min => Metadata.Attributes.GetInnerAttributes(ItemAttribute.Healing)
-        ?.GetAttribute<ushort>(ItemAttribute.Min) ?? 0;
+    public ushort Min => Metadata.Attributes.GetInnerAttributes(ItemTypeAttribute.Healing)
+        ?.GetAttribute<ushort>(ItemTypeAttribute.Min) ?? 0;
 
-    public ushort Max => Metadata.Attributes.GetInnerAttributes(ItemAttribute.Healing)
-        ?.GetAttribute<ushort>(ItemAttribute.Max) ?? 0;
+    public ushort Max => Metadata.Attributes.GetInnerAttributes(ItemTypeAttribute.Healing)
+        ?.GetAttribute<ushort>(ItemTypeAttribute.Max) ?? 0;
 
-    public string Type => Metadata.Attributes.GetAttribute(ItemAttribute.Healing);
+    public string Type => Metadata.Attributes.GetAttribute(ItemTypeAttribute.Healing);
 
     public void Use(IPlayer usedBy, ICreature creature)
     {

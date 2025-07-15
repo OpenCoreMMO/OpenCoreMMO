@@ -1,5 +1,6 @@
 ﻿using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Items;
 
 namespace NeoServer.Domain.Common.Contracts.Items;
 
@@ -13,6 +14,7 @@ public interface IItem : IThing, IHasDecay
     ///     Item metadata. Contains a lot of information about item
     /// </summary>
     IItemType Metadata { get; }
+    ItemAttributeList Attributes { get; }
 
     string InspectionText => string.Empty;
     string CloseInspectionText => string.Empty;
@@ -38,7 +40,7 @@ public interface IItem : IThing, IHasDecay
     bool IsContainer => Metadata.Group == ItemGroup.Container;
     bool IsTeleport => Metadata.Group == ItemGroup.Teleport;
 
-    bool AllowFarUse => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.AllowFarUse);
+    bool AllowFarUse => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.AllowFarUse);
 
     FloorChangeDirection FloorDirection => Metadata.Attributes.GetFloorChangeDirection();
 
@@ -47,16 +49,16 @@ public interface IItem : IThing, IHasDecay
         get
         {
             var hasShowDuration =
-                Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.ShowDuration, out _);
-            var hasDuration = Metadata.Attributes.TryGetAttribute<ushort>(ItemAttribute.Duration, out _);
+                Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ShowDuration, out _);
+            var hasDuration = Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.Duration, out _);
 
             return hasShowDuration || hasDuration;
         }
     }
 
     string FullName => Metadata.FullName;
-    ushort ActionId => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ActionId);
-    uint UniqueId => Metadata.Attributes.GetAttribute<uint>(ItemAttribute.UniqueId);    
+    ushort ActionId => Attributes.GetAttribute<ushort>(ItemAttribute.ActionId);
+    uint UniqueId => Attributes.GetAttribute<uint>(ItemAttribute.UniqueId);    
     public bool IsDeleted { get; }
     IThing Owner { get; }
     float Weight { get; }
@@ -71,8 +73,6 @@ public interface IItem : IThing, IHasDecay
         return BitConverter.GetBytes(ClientId);
     }
 
-    void SetActionId(ushort actionId);
-    void SetUniqueId(uint uniqueId);
     void SetOwner(IThing owner);
     event ItemDelete OnDeleted;
     void SetParent(IThing parent);
@@ -83,17 +83,17 @@ public interface IItem : IThing, IHasDecay
     {
         if (Metadata.HasFlag(ItemFlag.LiquidContainer))
         {
-            var fluidType = Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ContainerLiquidType);
+            var fluidType = Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.ContainerLiquidType);
             return fluidType;
         }
 
         if (Metadata.HasFlag(ItemFlag.Stackable))
         {
-            var count = Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.Count);
+            var count = Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.Count);
             return count;
         }
 
-        var charges = Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.Charges);
+        var charges = Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.Charges);
         return charges;
     }
 }

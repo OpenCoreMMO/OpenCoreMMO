@@ -9,7 +9,7 @@ public static class CoinCalculator
         if (coinTypes is null) return null;
         return Calculate(value,
             coinTypes.ToDictionary(x => x.Key,
-                x => x.Value?.Attributes?.GetAttribute<uint>(ItemAttribute.Worth) ?? 0));
+                x => x.Value?.Attributes?.GetAttribute<uint>(ItemTypeAttribute.Worth) ?? 0));
     }
 
     private static IEnumerable<(ushort, byte)> Calculate(ulong value, IDictionary<ushort, uint> coinTypes,

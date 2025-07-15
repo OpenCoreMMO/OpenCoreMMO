@@ -20,7 +20,7 @@ public static class InventoryMoneyCalculation
             if (coinType is null) continue;
             if (!inventoryMap.TryGetValue(coinType.ServerId, out var coinAmount)) continue;
 
-            var worthMultiplier = coinType?.Attributes?.GetAttribute<uint>(ItemAttribute.Worth) ?? 0;
+            var worthMultiplier = coinType?.Attributes?.GetAttribute<uint>(ItemTypeAttribute.Worth) ?? 0;
             total += worthMultiplier * coinAmount;
         }
 

@@ -13,7 +13,7 @@ public static class AddToBackpackSlotRule
         if (item is IContainer container &&
             container.IsPickupable &&
             !inventory.InventoryMap.HasItemOnSlot(Slot.Backpack) &&
-            item.Metadata.Attributes.GetAttribute(ItemAttribute.BodyPosition) == "backpack")
+            item.Metadata.Attributes.GetAttribute(ItemTypeAttribute.BodyPosition) == "backpack")
             return Result.Success;
 
         return inventory.InventoryMap.HasItemOnSlot(Slot.Backpack)

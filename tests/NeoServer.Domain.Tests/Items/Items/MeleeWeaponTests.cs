@@ -19,11 +19,11 @@ public class MeleeWeaponTests
     [InlineData(0, 0, 0, "(Atk: 0, Def: 0)")]
     public void InspectionText_ReturnsText(int attack, int defense, int extraDef, string expected)
     {
-        var sut = ItemTestData.CreateWeaponItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateWeaponItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Attack, attack),
-            (ItemAttribute.Defense, defense),
-            (ItemAttribute.ExtraDefense, extraDef)
+            (ItemTypeAttribute.Attack, attack),
+            (ItemTypeAttribute.Defense, defense),
+            (ItemTypeAttribute.ExtraDefense, extraDef)
         });
 
         //assert
@@ -31,19 +31,19 @@ public class MeleeWeaponTests
     }
 
     [Theory]
-    [InlineData(ItemAttribute.ElementFire, 5, "(Atk: 6 + 5 fire, Def: 7 +10)")]
-    [InlineData(ItemAttribute.ElementEarth, 10, "(Atk: 6 + 10 earth, Def: 7 +10)")]
-    [InlineData(ItemAttribute.ElementEnergy, 1, "(Atk: 6 + 1 energy, Def: 7 +10)")]
-    [InlineData(ItemAttribute.ElementIce, 23, "(Atk: 6 + 23 ice, Def: 7 +10)")]
-    [InlineData(ItemAttribute.ElementIce, 0, "(Atk: 6, Def: 7 +10)")]
-    public void InspectionText_HasElementalDamage_ReturnsText(ItemAttribute itemAttribute, int elementalDamage,
+    [InlineData(ItemTypeAttribute.ElementFire, 5, "(Atk: 6 + 5 fire, Def: 7 +10)")]
+    [InlineData(ItemTypeAttribute.ElementEarth, 10, "(Atk: 6 + 10 earth, Def: 7 +10)")]
+    [InlineData(ItemTypeAttribute.ElementEnergy, 1, "(Atk: 6 + 1 energy, Def: 7 +10)")]
+    [InlineData(ItemTypeAttribute.ElementIce, 23, "(Atk: 6 + 23 ice, Def: 7 +10)")]
+    [InlineData(ItemTypeAttribute.ElementIce, 0, "(Atk: 6, Def: 7 +10)")]
+    public void InspectionText_HasElementalDamage_ReturnsText(ItemTypeAttribute itemAttribute, int elementalDamage,
         string expected)
     {
-        var sut = ItemTestData.CreateWeaponItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateWeaponItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.Attack, 6),
-            (ItemAttribute.Defense, 7),
-            (ItemAttribute.ExtraDefense, 10),
+            (ItemTypeAttribute.Attack, 6),
+            (ItemTypeAttribute.Defense, 7),
+            (ItemTypeAttribute.ExtraDefense, 10),
             (itemAttribute, elementalDamage)
         });
 
@@ -61,11 +61,11 @@ public class MeleeWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation);
-        var sut = (IWeapon)ItemTestData.CreateWeaponItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = (IWeapon)ItemTestData.CreateWeaponItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, "body")
+            (ItemTypeAttribute.BodyPosition, "body")
         });
-        sut.Metadata.Attributes.SetAttribute(ItemAttribute.Vocation, new[] { (byte)requiredVocation });
+        sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
         var actual = sut.CanBeDressed(player);
@@ -88,12 +88,12 @@ public class MeleeWeaponTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = (IWeapon)ItemTestData.CreateWeaponItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = (IWeapon)ItemTestData.CreateWeaponItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, "body"),
-            (ItemAttribute.MinimumLevel, minLevel)
+            (ItemTypeAttribute.BodyPosition, "body"),
+            (ItemTypeAttribute.MinimumLevel, minLevel)
         });
-        sut.Metadata.Attributes.SetAttribute(ItemAttribute.Vocation, new[] { (byte)requiredVocation });
+        sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
         var actual = sut.CanBeDressed(player);
@@ -107,9 +107,9 @@ public class MeleeWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: 1);
-        var sut = (IWeapon)ItemTestData.CreateWeaponItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = (IWeapon)ItemTestData.CreateWeaponItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.BodyPosition, "body")
+            (ItemTypeAttribute.BodyPosition, "body")
         });
 
         //act

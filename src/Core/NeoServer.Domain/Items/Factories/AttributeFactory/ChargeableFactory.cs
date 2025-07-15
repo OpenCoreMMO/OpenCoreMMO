@@ -11,8 +11,8 @@ public class ChargeableFactory : IFactory
 
     public IChargeable Create(IItemType itemType)
     {
-        if (!itemType.Attributes.TryGetAttribute<ushort>(ItemAttribute.Charges, out var charges)) return null;
-        if (!itemType.Attributes.TryGetAttribute<ushort>(ItemAttribute.ShowCharges, out var showCharges))
+        if (!itemType.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.Charges, out var charges)) return null;
+        if (!itemType.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ShowCharges, out var showCharges))
             return new Chargeable(charges, true);
 
         return new Chargeable(charges, showCharges == 1);

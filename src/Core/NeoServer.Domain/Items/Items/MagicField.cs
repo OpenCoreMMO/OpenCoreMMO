@@ -19,23 +19,23 @@ public class MagicField : BaseItem
 
     public IThing Creator { get; set; }
 
-    private byte DamageCount => Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field)
-        ?.GetAttribute<byte>(ItemAttribute.Count) ?? 0;
+    private byte DamageCount => Metadata.Attributes.GetInnerAttributes(ItemTypeAttribute.Field)
+        ?.GetAttribute<byte>(ItemTypeAttribute.Count) ?? 0;
 
-    private DamageType DamageType => DamageTypeParser.Parse(Metadata.Attributes.GetAttribute(ItemAttribute.Field));
+    private DamageType DamageType => DamageTypeParser.Parse(Metadata.Attributes.GetAttribute(ItemTypeAttribute.Field));
 
     private uint Interval =>
-        Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field)?.GetAttribute<uint>(ItemAttribute.Ticks) ??
+        Metadata.Attributes.GetInnerAttributes(ItemTypeAttribute.Field)?.GetAttribute<uint>(ItemTypeAttribute.Ticks) ??
         10000;
 
     private MinMax Damage
     {
         get
         {
-            var attributes = Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field);
+            var attributes = Metadata.Attributes.GetInnerAttributes(ItemTypeAttribute.Field);
             if (attributes is null) return new MinMax();
 
-            var values = attributes.GetAttributeArray(ItemAttribute.Damage);
+            var values = attributes.GetAttributeArray(ItemTypeAttribute.Damage);
 
             if ((values?.Length ?? 0) < 2) return new MinMax(0, 0);
 

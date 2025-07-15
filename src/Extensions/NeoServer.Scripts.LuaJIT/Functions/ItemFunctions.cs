@@ -174,7 +174,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         var actionId = GetNumber<ushort>(luaState, 2);
         if (item != null)
         {
-            item.Metadata.Attributes.SetAttribute(ItemAttribute.ActionId, actionId);
+            item.Attributes.SetAttribute(ItemAttribute.ActionId, actionId);
             Lua.PushBoolean(luaState, true);
         }
         else
@@ -297,7 +297,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         else if (Lua.IsString(luaState, 2))
             attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
 
-        Lua.PushBoolean(luaState, item.Metadata.Attributes.HasAttribute(attribute.ToItemAttribute()));
+        Lua.PushBoolean(luaState, item.Attributes.HasAttribute(attribute.ToItemAttribute()));
 
         return 1;
     }
@@ -320,9 +320,9 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
 
         if (attribute.IsAttributeInteger())
-            Lua.PushNumber(luaState, item.Metadata.Attributes.GetAttribute<long>(attribute.ToItemAttribute()));
+            Lua.PushNumber(luaState, item.Attributes.GetAttribute<long>(attribute.ToItemAttribute()));
         else if (attribute.IsAttributeString())
-            Lua.PushString(luaState, item.Metadata.Attributes.GetAttribute(attribute.ToItemAttribute()));
+            Lua.PushString(luaState, item.Attributes.GetAttribute(attribute.ToItemAttribute()));
         else
             Lua.PushNil(luaState);
 
@@ -480,7 +480,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             {
                 var it = _itemTypeStore.Get(item.ServerId);
                 var decayTo = GetNumber<int>(luaState, 2);
-                it.Attributes.SetAttribute(ItemAttribute.DecayTo, decayTo);
+                it.Attributes.SetAttribute(ItemTypeAttribute.DecayTo, decayTo);
                 item.UpdateMetadata(it);
             }
 

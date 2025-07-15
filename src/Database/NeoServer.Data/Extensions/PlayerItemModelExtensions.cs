@@ -7,20 +7,20 @@ namespace NeoServer.Data.Extensions;
 
 public static class PlayerItemModelExtensions
 {
-    public static Dictionary<ItemAttribute, IConvertible> GetAttributes(this PlayerItemBaseEntity itemEntity)
+    public static Dictionary<ItemTypeAttribute, IConvertible> GetAttributes(this PlayerItemBaseEntity itemEntity)
     {
-        var attributes = new Dictionary<ItemAttribute, IConvertible>
+        var attributes = new Dictionary<ItemTypeAttribute, IConvertible>
         {
-            { ItemAttribute.Count, itemEntity.Amount }
+            { ItemTypeAttribute.Count, itemEntity.Amount }
         };
 
-        if (itemEntity.Charges > 0) attributes.Add(ItemAttribute.Charges, itemEntity.Charges);
+        if (itemEntity.Charges > 0) attributes.Add(ItemTypeAttribute.Charges, itemEntity.Charges);
 
         if (itemEntity.DecayDuration > 0)
         {
-            attributes.Add(ItemAttribute.DecayTo, itemEntity.DecayTo);
-            attributes.Add(ItemAttribute.DecayElapsed, itemEntity.DecayElapsed);
-            attributes.Add(ItemAttribute.Duration, itemEntity.DecayDuration);
+            attributes.Add(ItemTypeAttribute.DecayTo, itemEntity.DecayTo);
+            attributes.Add(ItemTypeAttribute.DecayElapsed, itemEntity.DecayElapsed);
+            attributes.Add(ItemTypeAttribute.Duration, itemEntity.DecayDuration);
         }
 
         return attributes;

@@ -23,7 +23,7 @@ public interface IItemType
 
     ushort Speed { get; }
     string Article { get; }
-    ItemAttributeList Attributes { get; }
+    ItemTypeAttributeList Attributes { get; }
     ShootType ShootType { get; }
     AmmoType AmmoType { get; }
     WeaponType WeaponType { get; }
@@ -32,15 +32,15 @@ public interface IItemType
     ushort TransformTo { get; }
     ushort DestroyTo { get; }
     string Plural { get; }
-    ItemAttributeList OnUse { get; }
+    ItemTypeAttributeList OnUse { get; }
     DamageType DamageType { get; }
     EffectT EffectT { get; }
 
     ushort Charges
-        => Attributes.GetAttribute<ushort>(ItemAttribute.Charges);
+        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Charges);
 
     ushort Count
-        => Attributes.GetAttribute<ushort>(ItemAttribute.Count);
+        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Count);
 
     void SetName(string value);
     void SetArticle(string article);
@@ -51,7 +51,7 @@ public interface IItemType
     bool HasAtLeastOneFlag(params ItemFlag[] flags);
     void SetGroupIfNone();
 
-    bool IsCorpse() => Attributes.HasAttribute(ItemAttribute.CorpseType);
+    bool IsCorpse() => Attributes.HasAttribute(ItemTypeAttribute.CorpseType);
 
     bool IsMovable() =>  Flags.Contains(ItemFlag.Movable);
 

@@ -13,7 +13,7 @@ namespace NeoServer.Domain.Items.Items.Weapons;
 
 public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
 {
-    public Ammo(IItemType type, Location location, IDictionary<ItemAttribute, IConvertible> attributes) : base(type,
+    public Ammo(IItemType type, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type,
         location, attributes)
     {
         WeaponAttack = new WeaponAttack(Metadata);
@@ -36,9 +36,9 @@ public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
         }
     }
 
-    public byte Attack => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Attack);
+    public byte Attack => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Attack);
 
-    public byte ExtraHitChance => Metadata.Attributes.GetAttribute<byte>(ItemAttribute.HitChance);
+    public byte ExtraHitChance => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.HitChance);
     public AmmoType AmmoType => Metadata.AmmoType;
     public ShootType ShootType => Metadata.ShootType;
     public bool HasElementalDamage => WeaponAttack.ElementalDamage.AttackPower is not 0;
