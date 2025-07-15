@@ -14,9 +14,9 @@ public class BaseAttributeList<T> where T : Enum
         _defaultAttributes = new Dictionary<T, (dynamic, BaseAttributeList<T>)>();
     }
 
-    protected IDictionary<string, (dynamic, BaseAttributeList<T>)> _customAttributes 
+    protected IDictionary<string, (dynamic, BaseAttributeList<T>)> _customAttributes
         => customAttributes ??= new Dictionary<string, (dynamic, BaseAttributeList<T>)>(StringComparer
-                .InvariantCultureIgnoreCase);
+            .InvariantCultureIgnoreCase);
 
     #region Attributes
 
@@ -122,15 +122,15 @@ public class BaseAttributeList<T> where T : Enum
     }
 
     public void SetAttribute(T attribute, IConvertible attributeValue)
-        {
+    {
         _defaultAttributes.AddOrUpdate(attribute, (attributeValue, null));
-        }
+    }
 
     public void SetAttribute(IDictionary<T, IConvertible> attributeValues)
-        {
+    {
         if (attributeValues.IsNull()) return;
         foreach (var (key, value) in attributeValues) SetAttribute(key, value);
-        }
+    }
 
     public void SetAttribute(T attribute, dynamic values)
     {
@@ -185,10 +185,9 @@ public class BaseAttributeList<T> where T : Enum
     {
         if (_customAttributes is null) return default;
 
-
         if (_customAttributes.TryGetValue(attribute, out var value))
         {
-            if (IsNullable(value.Item1)) return (TValue)value.Item1;
+            if (!IsNullable(value.Item1)) return (TValue)value.Item1;
 
             return (TValue)Convert.ChangeType(value.Item1, typeof(TValue), CultureInfo.InvariantCulture);
         }
@@ -216,9 +215,9 @@ public class BaseAttributeList<T> where T : Enum
         try
         {
             attrValue = (TValue)Convert.ChangeType(value.Item1, typeof(TValue), CultureInfo.InvariantCulture);
-    }
+        }
         catch
-    {
+        {
             attrValue = default;
         }
 
