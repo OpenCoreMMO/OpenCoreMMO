@@ -112,6 +112,8 @@ retrocompatibility.
 - action:aid(ids)
 - action:uid(ids)
 - action:allowFarUse(bool)
+- action:blockWalls(bool)
+- action:checkFloor(bool)
 
 **Condition (1)**
 

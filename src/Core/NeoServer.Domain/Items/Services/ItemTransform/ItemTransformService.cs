@@ -32,7 +32,7 @@ public class ItemTransformService : IItemTransformService
 
     public Result<IItem> Transform(IPlayer by, IItem fromItem, ushort toItem)
     {
-        var createdItem = _itemFactory.Create(toItem, fromItem.Location, null);
+        var createdItem = _itemFactory.Create(toItem, fromItem.Location, null, null);
 
         _itemTypeStore.TryGetValue(toItem, out var toItemType);
 

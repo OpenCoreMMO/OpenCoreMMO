@@ -7,13 +7,13 @@ public class ItemAttributeTranslation
     /// <summary>
     ///     Translate attribute name to enum
     /// </summary>
-    public static ItemAttribute Translate(string attrName, out bool success)
+    public static ItemTypeAttribute Translate(string attrName, out bool success)
     {
         success = true;
         if (!ItemAttributeTranslationMap.Map.TryGetValue(attrName, out var attribute))
         {
             success = false;
-            return ItemAttribute.None;
+            return ItemTypeAttribute.None;
         }
 
         return attribute;

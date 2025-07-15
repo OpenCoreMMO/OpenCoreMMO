@@ -30,7 +30,8 @@ public abstract class BaseTile : ITile
         }
     }
 
-    public abstract IItem TopItemOnStack { get; }
+    public abstract IItem TopTopItemOnStack { get; }
+    public abstract IItem TopDownItemOnStack { get; }
     public abstract ICreature TopCreatureOnStack { get; }
     public abstract int ThingsCount { get; }
     public bool HasThings => ThingsCount > 0;
@@ -99,7 +100,7 @@ public abstract class BaseTile : ITile
 
         if (item.Metadata.HasFlag(ItemFlag.BlockProjectTile)) SetFlag(TileFlags.BlockProjecTile);
 
-        if (item.Metadata.Attributes.TryGetAttribute(ItemAttribute.BlockProjectTile, out int value) && value == 1)
+        if (item.Metadata.Attributes.TryGetAttribute(ItemTypeAttribute.BlockProjectTile, out int value) && value == 1)
             SetFlag(TileFlags.BlockProjecTile);
 
         if (item is TeleportItem) SetFlag(TileFlags.Teleport);

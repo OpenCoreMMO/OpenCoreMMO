@@ -2,7 +2,8 @@
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Spells.Entities;
 
 namespace NeoServer.Domain.Spells;
 

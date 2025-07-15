@@ -60,7 +60,6 @@ public struct TileNode : ITileNode
             else if (IsItem)
                 Items.Add(new ItemNode(stream));
             else
-                //Console.WriteLine($"{Coordinate}: Unknown tile attribute");
                 throw new Exception($"{Coordinate}: Unknown tile attribute");
         }
     }

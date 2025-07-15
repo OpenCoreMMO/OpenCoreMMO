@@ -42,7 +42,7 @@ public class CombatTests
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
         var shield = ItemTestData.CreateBodyEquipmentItem(7, "", "shield");
-        shield.Metadata.Attributes.SetAttribute(ItemAttribute.Defense, byte.MaxValue);
+        shield.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Defense, byte.MaxValue);
 
         inventory.AddItem(shield, Slot.Right);
 

@@ -1,33 +1,27 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Spells.Entities;
 
 namespace NeoServer.Domain.Spells;
 
-public class IllusionSpell : Spell<IllusionSpell>
+public class IllusionSpell(uint duration, string creatureName, IMonsterTypeStore monsterTypeStore, EffectT effect) : Spell<IllusionSpell>
 {
-    public IllusionSpell(uint duration, string creatureName, IMonsterDataManager monsters, EffectT effect)
-    {
-        Monsters = monsters;
-        Duration = duration;
-        Effect = effect;
-        CreatureName = creatureName;
-    }
-
     public override string Name => "Illusion";
-    public override EffectT Effect { get; } = EffectT.GlitterGreen;
-    public override uint Duration { get; } = 5000;
+    public override EffectT Effect { get; } = effect;
+    public override uint Duration { get; } = duration;
     public override ushort ManaConsumption => 100;
     public override ConditionType ConditionType => ConditionType.Illusion;
-    public virtual IMonsterDataManager Monsters { get; }
-    public virtual string CreatureName { get; }
+    public virtual IMonsterTypeStore MonsterTypeStore { get; } = monsterTypeStore;
+    public virtual string CreatureName { get; } = creatureName;
 
     public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
-        if (!Monsters.TryGetMonster(CreatureName, out var monster)) return Result.NotApplicable;
+        if (!MonsterTypeStore.TryGetValue(CreatureName, out var monster)) return Result.NotApplicable;
 
         var look = monster.Look;
 

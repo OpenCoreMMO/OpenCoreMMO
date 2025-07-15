@@ -18,21 +18,21 @@ public class Decayable : IDecay
 
     public Decayable(IItem item)
     {
-        _lastElapsed = item.Metadata.Attributes.GetAttribute<uint>(ItemAttribute.DecayElapsed);
+        _lastElapsed = item.Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.DecayElapsed);
         _item = item;
     }
 
     private bool ShowDuration =>
-        !_item.Metadata.Attributes.TryGetAttribute<byte>(ItemAttribute.ShowDuration, out var showDuration) ||
+        !_item.Metadata.Attributes.TryGetAttribute<byte>(ItemTypeAttribute.ShowDuration, out var showDuration) ||
         showDuration == 1;
 
     public bool StartedToDecay => _startedToDecayTime != default;
     public bool IsPaused { get; private set; } = true;
-    public ushort DecaysTo => _item.Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ExpireTarget);
+    public ushort DecaysTo => _item.Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.ExpireTarget);
 
-    public uint Duration => _duration = _item.Metadata.Attributes.GetAttribute<uint>(ItemAttribute.Duration) == 0
+    public uint Duration => _duration = _item.Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.Duration) == 0
         ? _duration
-        : _item.Metadata.Attributes.GetAttribute<uint>(ItemAttribute.Duration);
+        : _item.Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.Duration);
 
     public uint Remaining => Duration <= Elapsed ? 0 : Math.Max(0, Duration - Elapsed);
 

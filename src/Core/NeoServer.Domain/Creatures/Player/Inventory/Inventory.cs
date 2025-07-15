@@ -106,7 +106,7 @@ public class Inventory : IInventory
     {
         foreach (var (item, _) in InventoryMap.Items)
             if (immunity is Immunity.Drunkenness &&
-                item.Metadata.Attributes.TryGetAttribute(ItemAttribute.SuppressDrunk, out byte suppressDrunk) &&
+                item.Metadata.Attributes.TryGetAttribute(ItemTypeAttribute.SuppressDrunk, out byte suppressDrunk) &&
                 suppressDrunk == 1)
                 return true;
 
@@ -122,11 +122,15 @@ public class Inventory : IInventory
 
     private Result<IItem> TryAddItemToSlot(Slot slot, IItem item)
     {
+        var wasBpSlotEmptyBeforeAddition = BackpackSlot == null;
         var result = AddToSlotOperation.Add(this, slot, item);
 
         if (result.Succeeded)
         {
-            TotalWeight += item.Weight;
+            if (slot != Slot.Backpack || wasBpSlotEmptyBeforeAddition)
+            {
+                TotalWeight += item.Weight;
+            }
             OnItemAddedToSlot?.Invoke(this, item, slot);
             return result;
         }
@@ -161,6 +165,7 @@ public class Inventory : IInventory
 
         if (swappedItem.Value is null) return Result<OperationResultList<IItem>>.Success;
 
+        TotalWeight -= swappedItem.Value.Weight;
         return new Result<OperationResultList<IItem>>(new OperationResultList<IItem>(Operation.Removed,
             swappedItem.Value));
     }

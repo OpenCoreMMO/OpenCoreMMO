@@ -73,14 +73,14 @@ internal static class ItemGroupQuery
 
     private static ItemGroup GetFloorChangeGroup(IItemType metadata)
     {
-        return metadata.Attributes.HasAttribute(ItemAttribute.FloorChange) && metadata.HasFlag(ItemFlag.Usable)
+        return metadata.Attributes.HasAttribute(ItemTypeAttribute.FloorChange) && metadata.HasFlag(ItemFlag.Usable)
             ? ItemGroup.FloorChanger
             : ItemGroup.None;
     }
 
     private static ItemGroup GetMagicFieldGroup(IItemType metadata)
     {
-        return metadata.Attributes.GetAttribute(ItemAttribute.Type)
+        return metadata.Attributes.GetAttribute(ItemTypeAttribute.Type)
             ?.Equals("magicfield", StringComparison.InvariantCultureIgnoreCase) ?? false
             ? ItemGroup.MagicField
             : ItemGroup.None;
@@ -93,8 +93,8 @@ internal static class ItemGroupQuery
 
     private static ItemGroup GetSignGroup(IItemType metadata)
     {
-        return (metadata.Attributes.HasAttribute(ItemAttribute.Text) && !metadata.Flags.Contains(ItemFlag.Usable)) ||
-               (metadata.Attributes.GetAttribute(ItemAttribute.Type)
+        return (metadata.Attributes.HasAttribute(ItemTypeAttribute.Text) && !metadata.Flags.Contains(ItemFlag.Usable)) ||
+               (metadata.Attributes.GetAttribute(ItemTypeAttribute.Type)
                    ?.Equals("sign", StringComparison.InvariantCultureIgnoreCase) ?? false)
             ? ItemGroup.Sign
             : ItemGroup.None;
@@ -102,7 +102,7 @@ internal static class ItemGroupQuery
 
     private static ItemGroup GetTeleportGroup(IItemType metadata)
     {
-        return metadata.Attributes.GetAttribute(ItemAttribute.Type)
+        return metadata.Attributes.GetAttribute(ItemTypeAttribute.Type)
             ?.Equals("teleport", StringComparison.InvariantCultureIgnoreCase) ?? false
             ? ItemGroup.Teleport
             : ItemGroup.None;
@@ -110,7 +110,7 @@ internal static class ItemGroupQuery
 
     private static ItemGroup GetContainerGroup(IItemType metadata)
     {
-        var type = metadata.Attributes.GetAttribute(ItemAttribute.Type);
+        var type = metadata.Attributes.GetAttribute(ItemTypeAttribute.Type);
 
         if (type is null) return ItemGroup.None;
 
@@ -123,10 +123,10 @@ internal static class ItemGroupQuery
     {
         if (!ICumulative.IsApplicable(metadata)) return ItemGroup.None;
 
-        if (metadata.Attributes?.HasAttribute(ItemAttribute.Healing) ?? false)
+        if (metadata.Attributes?.HasAttribute(ItemTypeAttribute.Healing) ?? false)
             return ItemGroup.Healing;
 
-        var type = metadata.Attributes?.GetAttribute(ItemAttribute.Type);
+        var type = metadata.Attributes?.GetAttribute(ItemTypeAttribute.Type);
 
         if (type is null) return ItemGroup.None;
 
@@ -143,14 +143,14 @@ internal static class ItemGroupQuery
     {
         if (!ICumulative.IsApplicable(metadata)) return ItemGroup.None;
 
-        var type = metadata.Attributes.GetAttribute(ItemAttribute.Type);
+        var type = metadata.Attributes.GetAttribute(ItemTypeAttribute.Type);
 
         if (type is null) return ItemGroup.None;
 
         if (!type.Equals("rune", StringComparison.InvariantCultureIgnoreCase)) return ItemGroup.None;
 
-        if (metadata.Attributes.HasAttribute(ItemAttribute.Damage)) return ItemGroup.AttackRune;
-        if (metadata.Attributes.HasAttribute(ItemAttribute.Field)) return ItemGroup.FieldRune;
+        if (metadata.Attributes.HasAttribute(ItemTypeAttribute.Damage)) return ItemGroup.AttackRune;
+        if (metadata.Attributes.HasAttribute(ItemTypeAttribute.Field)) return ItemGroup.FieldRune;
 
         return ItemGroup.None;
     }
@@ -160,7 +160,7 @@ internal static class ItemGroupQuery
         if (!metadata.Flags.Contains(ItemFlag.Usable) || !metadata.Flags.Contains(ItemFlag.Pickupable))
             return ItemGroup.None;
 
-        if (metadata.OnUse?.HasAttribute(ItemAttribute.FloorChange) ?? false) return ItemGroup.UsableFloorChanger;
+        if (metadata.OnUse?.HasAttribute(ItemTypeAttribute.FloorChange) ?? false) return ItemGroup.UsableFloorChanger;
 
         return ItemGroup.UsableOn;
     }

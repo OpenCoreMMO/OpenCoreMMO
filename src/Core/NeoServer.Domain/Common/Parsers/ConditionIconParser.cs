@@ -1,27 +1,27 @@
-﻿using NeoServer.Domain.Creatures.Condition;
+﻿using NeoServer.Domain.Creatures.Conditions.Enums;
 
 namespace NeoServer.Domain.Common.Parsers;
 
 public static class ConditionIconParser
 {
-    public static ConditionIcon Parse(ConditionType type)
+    public static ConditionIconType Parse(ConditionType type)
     {
         return type switch
         {
-            ConditionType.Haste => ConditionIcon.Haste,
-            ConditionType.Poisoned => ConditionIcon.Poison,
-            ConditionType.LogoutBlock => ConditionIcon.Swords,
-            ConditionType.Paralyze => ConditionIcon.Paralyze,
-            ConditionType.Burning => ConditionIcon.Burn,
-            ConditionType.Electrified => ConditionIcon.Energy,
-            ConditionType.Drunk => ConditionIcon.Drunk,
-            ConditionType.Cursed => ConditionIcon.Cursed,
-            ConditionType.Freezing => ConditionIcon.Freezing,
-            ConditionType.ManaShield => ConditionIcon.ManaShield,
-            ConditionType.Drowning => ConditionIcon.Drowning,
-            ConditionType.Pacified => ConditionIcon.Pigeon,
-            ConditionType.ProtectionZoneBlock => ConditionIcon.RedSwords,
-            _ => ConditionIcon.None
+            ConditionType.Haste => ConditionIconType.Haste,
+            ConditionType.Poisoned => ConditionIconType.Poison,
+            ConditionType.LogoutBlock => ConditionIconType.Swords,
+            ConditionType.Paralyze => ConditionIconType.Paralyze,
+            ConditionType.Burning => ConditionIconType.Burn,
+            ConditionType.Electrified => ConditionIconType.Energy,
+            ConditionType.Drunk => ConditionIconType.Drunk,
+            ConditionType.Cursed => ConditionIconType.Cursed,
+            ConditionType.Freezing => ConditionIconType.Freezing,
+            ConditionType.ManaShield => ConditionIconType.ManaShield,
+            ConditionType.Drowning => ConditionIconType.Drowning,
+            ConditionType.Pacified => ConditionIconType.Pigeon,
+            ConditionType.ProtectionZoneBlock => ConditionIconType.RedSwords,
+            _ => ConditionIconType.None
         };
     }
 }

@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Items.Items.Attributes;
@@ -25,10 +24,10 @@ public class SkillBonusItemTests
         var skills = PlayerTestDataBuilder.GenerateSkills(10);
         var player = PlayerTestDataBuilder.Build(skills: skills);
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.SkillAxe, 5),
-            (ItemAttribute.SkillShield, 15)
+            (ItemTypeAttribute.SkillAxe, 5),
+            (ItemTypeAttribute.SkillShield, 15)
         });
 
         sut.AddSkillBonus(player);
@@ -60,8 +59,8 @@ public class SkillBonusItemTests
         var player = PlayerTestDataBuilder.Build(skills: skills);
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1);
-        sut.Metadata.Attributes.SetAttribute(ItemAttribute.SkillAxe, 5);
-        sut.Metadata.Attributes.SetAttribute(ItemAttribute.SkillShield, 15);
+        sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.SkillAxe, 5);
+        sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.SkillShield, 15);
 
 
         sut.AddSkillBonus(player);
@@ -87,15 +86,15 @@ public class SkillBonusItemTests
         var skills = PlayerTestDataBuilder.GenerateSkills(10);
         var player = PlayerTestDataBuilder.Build(skills: skills);
 
-        var item1 = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var item1 = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.SkillAxe, 5),
-            (ItemAttribute.SkillShield, 15)
+            (ItemTypeAttribute.SkillAxe, 5),
+            (ItemTypeAttribute.SkillShield, 15)
         });
-        var item2 = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var item2 = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.SkillAxe, 15),
-            (ItemAttribute.SkillShield, 25)
+            (ItemTypeAttribute.SkillAxe, 15),
+            (ItemTypeAttribute.SkillShield, 25)
         });
 
         item1.AddSkillBonus(player);
@@ -113,17 +112,17 @@ public class SkillBonusItemTests
         var skills = PlayerTestDataBuilder.GenerateSkills(10);
         var player = PlayerTestDataBuilder.Build(skills: skills);
 
-        var item2 = ItemTestData.CreateDefenseEquipmentItem(2, attributes: new (ItemAttribute, IConvertible)[]
+        var item2 = ItemTestData.CreateDefenseEquipmentItem(2, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.SkillSword, 10)
+            (ItemTypeAttribute.SkillSword, 10)
         });
 
         var itemStore = ItemTestData.GetItemTypeStore(item2.Metadata);
 
-        var item1 = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var item1 = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.SkillAxe, 5),
-            (ItemAttribute.TransformEquipTo, 2)
+            (ItemTypeAttribute.SkillAxe, 5),
+            (ItemTypeAttribute.TransformEquipTo, 2)
         }, itemTypeFinder: itemStore.Get);
 
         //act
@@ -151,9 +150,9 @@ public class SkillBonusItemTests
         var skills = PlayerTestDataBuilder.GenerateSkills(10);
         var player = PlayerTestDataBuilder.Build(skills: skills);
 
-        var item1 = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var item1 = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.SkillAxe, 5)
+            (ItemTypeAttribute.SkillAxe, 5)
         });
 
         //act
@@ -176,9 +175,7 @@ public class SkillBonusItemTests
     public void ToString_NoAttribute_ReturnsEmpty()
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
-        {
-        });
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
 
         //act
         var actual = new SkillBonus(sut).ToString();
@@ -191,17 +188,17 @@ public class SkillBonusItemTests
     public void ToString_ReturnsText()
     {
         //arrange
-        var item = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var item = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.SkillAxe, 5),
-            (ItemAttribute.SkillClub, 15),
-            (ItemAttribute.SkillSword, 25),
-            (ItemAttribute.SkillDistance, 35),
-            (ItemAttribute.SkillFist, 45),
-            (ItemAttribute.SkillShield, 55),
-            (ItemAttribute.MagicPoints, 3),
-            (ItemAttribute.SkillFishing, 10),
-            (ItemAttribute.Speed, 20)
+            (ItemTypeAttribute.SkillAxe, 5),
+            (ItemTypeAttribute.SkillClub, 15),
+            (ItemTypeAttribute.SkillSword, 25),
+            (ItemTypeAttribute.SkillDistance, 35),
+            (ItemTypeAttribute.SkillFist, 45),
+            (ItemTypeAttribute.SkillShield, 55),
+            (ItemTypeAttribute.MagicPoints, 3),
+            (ItemTypeAttribute.SkillFishing, 10),
+            (ItemTypeAttribute.Speed, 20)
         });
         var sut = new SkillBonus(item);
 
@@ -218,10 +215,10 @@ public class SkillBonusItemTests
     public void ToString_0Bonus_DoNotAddToText()
     {
         //arrange
-        var item = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var item = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.SkillAxe, 5),
-            (ItemAttribute.Speed, 0)
+            (ItemTypeAttribute.SkillAxe, 5),
+            (ItemTypeAttribute.Speed, 0)
         });
         var sut = new SkillBonus(item);
 
@@ -242,10 +239,10 @@ public class SkillBonusItemTests
             [SkillType.Sword] = new Skill(SkillType.Sword, 10)
         });
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.SkillAxe, -5),
-            (ItemAttribute.SkillSword, -15)
+            (ItemTypeAttribute.SkillAxe, -5),
+            (ItemTypeAttribute.SkillSword, -15)
         });
 
         //act
@@ -269,10 +266,10 @@ public class SkillBonusItemTests
             [SkillType.Sword] = new Skill(SkillType.Sword, 10)
         });
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "body", attributes: new (ItemAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "body", attributes: new (ItemTypeAttribute, IConvertible)[]
         {
-            (ItemAttribute.SkillAxe, -5),
-            (ItemAttribute.SkillSword, -15)
+            (ItemTypeAttribute.SkillAxe, -5),
+            (ItemTypeAttribute.SkillSword, -15)
         });
 
         player.Inventory.AddItem(sut);

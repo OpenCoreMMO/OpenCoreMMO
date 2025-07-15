@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text.Json;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Loaders.Items.Parsers;
 using NeoServer.Loaders.OTB.Parsers;
 using NeoServer.Loaders.OTB.Structure;
@@ -59,14 +58,14 @@ public class ItemTypeLoader
             var basePath = $"{_serverConfiguration.Data}/items/";
             var itemTypes = LoadOtb(basePath);
 
-            LoadItemsJson(basePath, itemTypes);
+            LoadItemsJson(basePath, itemTypes, _logger);
 
             foreach (var item in itemTypes.OrderBy(x => x.Key))
             {
                 _itemTypeStore.AddOrUpdate(item.Key, item.Value);
                 _itemClientServerIdMapStore.AddOrUpdate(item.Value.ClientId, item.Key);
 
-                if (item.Value.Attributes.GetAttribute(ItemAttribute.Type)
+                if (item.Value.Attributes.GetAttribute(ItemTypeAttribute.Type)
                         ?.Equals("coin", StringComparison.InvariantCultureIgnoreCase) ?? false)
                     _coinTypeStore.AddOrUpdate(item.Key, item.Value);
             }
@@ -86,7 +85,7 @@ public class ItemTypeLoader
         return itemTypes;
     }
 
-    private static void LoadItemsJson(string basePath, IDictionary<ushort, IItemType> itemTypes)
+    private static void LoadItemsJson(string basePath, IDictionary<ushort, IItemType> itemTypes, ILogger logger)
     {
         var itemTypeMetadata = GetItemTypeMetadataList(basePath);
 
@@ -102,13 +101,13 @@ public class ItemTypeLoader
 
             if (metadata.Fromid == null)
             {
-                Console.WriteLine("No item id found");
+                logger.Warning("No item found");
                 return;
             }
 
             if (metadata.Toid == null)
             {
-                Console.WriteLine($"fromid ({metadata.Fromid}) without toid");
+                logger.Warning($"fromid ({metadata.Fromid}) without toid");
                 return;
             }
 

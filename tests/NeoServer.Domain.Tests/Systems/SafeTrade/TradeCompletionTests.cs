@@ -77,8 +77,8 @@ public class TradeCompletionTests
         //assert
         result.Should().Be(SafeTradeError.None);
 
-        ((DynamicTile)map[100, 100, 7]).TopItemOnStack.Should().NotBe(item1);
-        ((DynamicTile)map[101, 100, 7]).TopItemOnStack.Should().NotBe(item2);
+        ((DynamicTile)map[100, 100, 7]).TopDownItemOnStack.Should().NotBe(item1);
+        ((DynamicTile)map[101, 100, 7]).TopDownItemOnStack.Should().NotBe(item2);
 
         player.Inventory.BackpackSlot.Items[0].Should().Be(item2);
         secondPlayer.Inventory.Weapon.Should().Be(item1);
@@ -152,8 +152,8 @@ public class TradeCompletionTests
         //assert
         result.Should().Be(SafeTradeError.None);
 
-        ((DynamicTile)map[100, 100, 7]).TopItemOnStack.Should().NotBe(item1);
-        ((DynamicTile)map[101, 100, 7]).TopItemOnStack.Should().NotBe(item2);
+        ((DynamicTile)map[100, 100, 7]).TopDownItemOnStack.Should().NotBe(item1);
+        ((DynamicTile)map[101, 100, 7]).TopDownItemOnStack.Should().NotBe(item2);
 
         player.Inventory.Weapon.ServerId.Should().Be(1);
         player.Inventory.Weapon.Amount.Should().Be(100);

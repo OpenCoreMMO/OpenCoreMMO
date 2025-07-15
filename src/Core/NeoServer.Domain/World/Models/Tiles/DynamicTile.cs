@@ -65,7 +65,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
     public bool HasHole =>
         Ground is not null &&
-        Ground.Metadata.Attributes.TryGetAttribute(ItemAttribute.FloorChange, out var floorChange) &&
+        Ground.Metadata.Attributes.TryGetAttribute(ItemTypeAttribute.FloorChange, out var floorChange) &&
         floorChange == "down";
 
     public IGround Ground { get; private set; }
@@ -116,9 +116,15 @@ public class DynamicTile : BaseTile, IDynamicTile
     }
 
     /// <summary>
+    ///     Get the top item on TopItems's stack
+    /// </summary>
+    public override IItem TopTopItemOnStack => TopItems is not null && TopItems.TryPeek(out var item) ? item :
+        DownItems is not null && DownItems.TryPeek(out item) ? item : Ground;
+
+    /// <summary>
     ///     Get the top item on DownItems's stack
     /// </summary>
-    public override IItem TopItemOnStack => DownItems != null && DownItems.TryPeek(out var item) ? item :
+    public override IItem TopDownItemOnStack => DownItems != null && DownItems.TryPeek(out var item) ? item :
         TopItems is not null && TopItems.TryPeek(out item) ? item : Ground;
 
     public MagicField MagicField
@@ -383,11 +389,11 @@ public class DynamicTile : BaseTile, IDynamicTile
 
     public Result<IItem> RemoveTopItem(bool force = false)
     {
-        if (Guard.IsNull(TopItemOnStack)) return Result<IItem>.Fail(InvalidOperation.CannotMove);
+        if (Guard.IsNull(TopDownItemOnStack)) return Result<IItem>.Fail(InvalidOperation.CannotMove);
 
-        if (!TopItemOnStack.CanBeMoved && !force) return Result<IItem>.Fail(InvalidOperation.CannotMove);
+        if (!TopDownItemOnStack.CanBeMoved && !force) return Result<IItem>.Fail(InvalidOperation.CannotMove);
 
-        RemoveItem(TopItemOnStack, TopItemOnStack.Amount, out var removedItem);
+        RemoveItem(TopDownItemOnStack, TopDownItemOnStack.Amount, out var removedItem);
 
         return new Result<IItem>(removedItem);
     }
@@ -466,7 +472,7 @@ public class DynamicTile : BaseTile, IDynamicTile
     {
         IItem removed = null;
 
-        var topItemOnStack = TopItemOnStack;
+        var topItemOnStack = TopDownItemOnStack;
 
         if (topItemOnStack.ServerId != fromId) return;
 
@@ -504,7 +510,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         }
 
         var possibleAmountToAdd = freeSpace * 100;
-        if (TopItemOnStack is ICumulative c && TopItemOnStack.ClientId == cumulative.ClientId)
+        if (TopDownItemOnStack is ICumulative c && TopDownItemOnStack.ClientId == cumulative.ClientId)
             possibleAmountToAdd += c.AmountToComplete;
 
         return (uint)possibleAmountToAdd;
@@ -693,7 +699,7 @@ public class DynamicTile : BaseTile, IDynamicTile
                     operations.Add(Operation.Added, item);
                 }
 
-                if (item.Metadata.Attributes.HasAttribute(ItemAttribute.Field)) SetFlag(TileFlags.MagicField);
+                if (item.Metadata.Attributes.HasAttribute(ItemTypeAttribute.Field)) SetFlag(TileFlags.MagicField);
             }
         }
 

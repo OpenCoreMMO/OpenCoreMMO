@@ -25,14 +25,14 @@ public static class MonsterLootConverter
         {
             Chance = gp.FirstOrDefault().Chance,
             Id = gp.Key,
-            Countmax = gp.Sum(s => byte.TryParse(s.Countmax, out var amount) ? amount : 0).ToString(),
+            CountMax = gp.Sum(s => byte.TryParse(s.CountMax, out var amount) ? amount : 0).ToString(),
             Items = Normalize(gp.FirstOrDefault().Items)
         })?.ToList();
     }
 
     private static LootItem ConvertToLootItem(LootData item, IItemTypeStore itemTypeStore)
     {
-        byte.TryParse(item.Countmax, out var amount);
+        byte.TryParse(item.CountMax, out var amount);
         ushort.TryParse(item.Id, out var id);
         uint.TryParse(item.Chance, out var chance);
 

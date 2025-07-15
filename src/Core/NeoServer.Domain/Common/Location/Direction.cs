@@ -32,4 +32,9 @@ public static class DirectionExtensions
     {
         return (Direction)((byte)dir & DIRECTION_MASK);
     }
+
+    public static bool IsValid(this Direction dir)
+    {
+        return dir <= Direction.NorthEast;
+    }
 }

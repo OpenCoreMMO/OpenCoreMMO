@@ -7,6 +7,7 @@ using System.Text.Json;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Spells;
+using NeoServer.Domain.Spells.Entities;
 using NeoServer.Loaders.Extensions;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
@@ -45,7 +46,7 @@ public class SpellLoader(
 
                 if (CreateSpell(spellType) is not BaseSpell spellInstance) continue;
 
-                if (spellInstance.Enabled is false) continue;
+                if (spellInstance.IsEnabled is false) continue;
 
                 spellInstance.Name ??= spell["name"].GetStringFromJson();
                 

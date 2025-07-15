@@ -8,5 +8,5 @@ public interface ILootService
 {
     Loot GenerateLoot(IMonster monster, decimal lootRate = 0);
     Loot GenerateLoot(ICreature creature, decimal lootRate = 0);
-    ILootContainer CreateLootContainer(ICreature deadCreature, decimal lootRate = 0);
+    ILootContainer CreateLootContainer(ICreature deadCreature, IThing killer, decimal lootRate = 0);
 }

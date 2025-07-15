@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NeoServer.Data.Entities;
+using NeoServer.Data.Extensions;
 using NeoServer.Data.Seeds;
 
 namespace NeoServer.Data.Configurations;
@@ -33,6 +34,13 @@ public class PlayerInventoryItemEntityConfiguration : IEntityTypeConfiguration<P
         entity.Property(e => e.Amount)
             .HasColumnType("smallint")
             .HasDefaultValueSql("1");
+
+        entity.Property(e => e.Attributes)
+            .HasColumnType("jsonb")
+            .HasConversion(
+                v => JsonExtensions.SerializeAllAttributes(v),
+                v => JsonExtensions.DeserializeAllAttributes(v)
+            );
 
         entity.HasOne(d => d.Player)
             .WithMany(p => p.PlayerInventoryItems)

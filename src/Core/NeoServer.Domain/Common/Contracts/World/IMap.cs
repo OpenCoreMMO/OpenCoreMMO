@@ -54,7 +54,6 @@ public interface IMap
     void MoveCreature(IWalkableCreature creature);
     void CreateBloodPool(ILiquid liquid, IDynamicTile tile);
     ITile GetTileDestination(ITile tile);
-    bool TryMoveCreature(ICreature creature, Location.Structs.Location toLocation);
     void RemoveCreature(ICreature creature);
 
     void SwapCreatureBetweenSectors(ICreature creature, Location.Structs.Location fromLocation,
@@ -70,4 +69,6 @@ public interface IMap
     ITile GetFinalTile(ITile toTile);
     void ReplaceTile(ITile newTile);
     void MoveCreature(IWalkableCreature creature, Direction nextDirection);
+    bool TryMoveCreature(ICreature creature, Location.Structs.Location toLocation);
+    bool TryMoveCreature(IWalkableCreature creature, Direction nextDirection);
 }

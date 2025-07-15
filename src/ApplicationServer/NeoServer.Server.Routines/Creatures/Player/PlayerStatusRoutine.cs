@@ -1,7 +1,7 @@
 using System;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 
 namespace NeoServer.Server.Routines.Creatures.Player;
 

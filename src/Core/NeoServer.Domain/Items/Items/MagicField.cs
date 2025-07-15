@@ -6,7 +6,7 @@ using NeoServer.Domain.Common.Effects.Parsers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Parsers;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items;
@@ -19,23 +19,23 @@ public class MagicField : BaseItem
 
     public IThing Creator { get; set; }
 
-    private byte DamageCount => Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field)
-        ?.GetAttribute<byte>(ItemAttribute.Count) ?? 0;
+    private byte DamageCount => Metadata.Attributes.GetInnerAttributes(ItemTypeAttribute.Field)
+        ?.GetAttribute<byte>(ItemTypeAttribute.Count) ?? 0;
 
-    private DamageType DamageType => DamageTypeParser.Parse(Metadata.Attributes.GetAttribute(ItemAttribute.Field));
+    private DamageType DamageType => DamageTypeParser.Parse(Metadata.Attributes.GetAttribute(ItemTypeAttribute.Field));
 
     private uint Interval =>
-        Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field)?.GetAttribute<uint>(ItemAttribute.Ticks) ??
+        Metadata.Attributes.GetInnerAttributes(ItemTypeAttribute.Field)?.GetAttribute<uint>(ItemTypeAttribute.Ticks) ??
         10000;
 
     private MinMax Damage
     {
         get
         {
-            var attributes = Metadata.Attributes.GetInnerAttributes(ItemAttribute.Field);
+            var attributes = Metadata.Attributes.GetInnerAttributes(ItemTypeAttribute.Field);
             if (attributes is null) return new MinMax();
 
-            var values = attributes.GetAttributeArray(ItemAttribute.Damage);
+            var values = attributes.GetAttributeArray(ItemTypeAttribute.Damage);
 
             if ((values?.Length ?? 0) < 2) return new MinMax(0, 0);
 
@@ -55,7 +55,7 @@ public class MagicField : BaseItem
         actor.TakeDamage(this,
             new CombatDamage((ushort)damages.Max, DamageType) { Effect = DamageEffectParser.Parse(DamageType) });
 
-        if (actor.HasCondition(conditionType, out var condition) && condition is DamageCondition damageCondition)
+        if (actor.HasCondition(conditionType, out var condition) && condition is ConditionDamage damageCondition)
         {
             if (DamageCount == 0) damageCondition.Start(toCreature, (ushort)damages.Min, (ushort)damages.Max);
             else damageCondition.Restart(DamageCount);
@@ -63,10 +63,10 @@ public class MagicField : BaseItem
         else
         {
             if (DamageCount == 0)
-                actor.AddCondition(new DamageCondition(this, conditionType, Interval, (ushort)damages.Min,
+                actor.AddCondition(new ConditionDamage(this, conditionType, Interval, (ushort)damages.Min,
                     (ushort)damages.Max));
             else
-                actor.AddCondition(new DamageCondition(this, conditionType, Interval, DamageCount,
+                actor.AddCondition(new ConditionDamage(this, conditionType, Interval, DamageCount,
                     (ushort)damages.Min));
         }
     }

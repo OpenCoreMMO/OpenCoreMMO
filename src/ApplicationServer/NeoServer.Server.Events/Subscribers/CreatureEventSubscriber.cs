@@ -3,7 +3,6 @@ using NeoServer.Server.Events.Combat;
 using NeoServer.Server.Events.Creature;
 using NeoServer.Server.Events.Creature.Npcs;
 using NeoServer.Server.Events.Talks;
-using CreatureInjuredEventHandler = NeoServer.Server.Events.Creature.CreatureInjuredEventHandler;
 
 namespace NeoServer.Server.Events.Subscribers;
 
@@ -23,7 +22,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber
     private readonly NpcCloseShopEventHandler _npcCloseShopEventHandler;
     private readonly NpcShowShopEventHandler _npcShowShopEventHandler;
 
-    public CreatureEventSubscriber(CreatureInjuredEventHandler creatureReceiveDamageEventHandler,
+    public CreatureEventSubscriber(
         CreatureBlockedAttackEventHandler creatureBlockedAttackEventHandler,
         CreatureAttackEventHandler creatureAttackEventHandler,
         CreatureTurnedToDirectionEventHandler creatureTurnToDirectionEventHandler,

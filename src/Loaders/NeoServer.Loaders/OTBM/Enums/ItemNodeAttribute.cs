@@ -7,7 +7,6 @@ namespace NeoServer.Loaders.OTBM.Enums;
 public enum ItemNodeAttribute : byte
 {
     None = 0, // We added this value to the C# version, because ughz... That's why...
-    None2 = 254, // We added this value to the C# version, because ughz... That's why...
     AnotherDescription = 1, // //ATTR_DESCRIPTION = 1,
     ExtensionFile = 2, // //ATTR_EXT_FILE = 2,
     TileFlags = 3, // ATTR_TILE_FLAGS = 3,
@@ -42,5 +41,5 @@ public enum ItemNodeAttribute : byte
     HitChance, // ATTR_HITCHANCE = 32,
     ShootRange, // ATTR_SHOOTRANGE = 33,
     CustomAttributes, // ATTR_CUSTOM_ATTRIBUTES = 34
-    DecayTo
+    DecayTo // ATTR_DECAYTO = 35
 }

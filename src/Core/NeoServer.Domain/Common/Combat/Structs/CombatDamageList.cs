@@ -21,7 +21,7 @@ public readonly struct CombatDamageList
         _multipleDamages = damages;
 
         foreach (var damage in damages)
-            if (damage.Unjustified)
+            if (damage != null && damage.Unjustified)
             {
                 Unjustified = true;
                 break;
@@ -40,10 +40,15 @@ public readonly struct CombatDamageList
             ushort health = 0, mana = 0;
 
             foreach (var damage in this)
+            {
+                if (damage == null)
+                    continue;
+
                 if (damage.Type is DamageType.ManaDrain)
                     mana += damage.Damage;
                 else
                     health += damage.Damage;
+            }
 
             return new Damage(health, mana);
         }
@@ -54,7 +59,7 @@ public readonly struct CombatDamageList
         get
         {
             foreach (var damage in this)
-                if (damage is { IsElementalDamage: true, NoEffect: false, Damage: > 0 })
+                if (damage != null && damage is { IsElementalDamage: true, NoEffect: false, Damage: > 0 })
                     return damage;
 
             return new CombatDamage();

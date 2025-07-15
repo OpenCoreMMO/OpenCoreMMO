@@ -41,7 +41,7 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         RegisterGlobalMethod(luaState, "sendChannelMessage", LuaSendChannelMessage);
         RegisterGlobalMethod(luaState, "getWorldTime", LuaGetWorldTime);
         RegisterGlobalMethod(luaState, "getWorldLight", LuaGetWorldLight);
-        RegisterGlobalMethod(luaState, "createCombatArea", HandleNotImplementedFunction);
+        RegisterGlobalMethod(luaState, "createCombatArea", LuaCreateCombatArea);
     }
 
     private static int HandleCreateCombatFunction(LuaState L)
@@ -166,5 +166,11 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         Lua.PushNumber(luaState, _gameServer.LightLevel);
         Lua.PushNumber(luaState, _gameServer.LightColor);
         return 2;
+    }
+
+    private static int LuaCreateCombatArea(LuaState L)
+    {
+        // createCombatArea( {area}, <optional> {extArea} )
+        return Lua.GetTop(L);
     }
 }

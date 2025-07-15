@@ -1,6 +1,7 @@
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Spells;
+using NeoServer.Domain.Spells.Entities;
 
 namespace NeoServer.Scripts.LuaJIT.Models.Spell;
 

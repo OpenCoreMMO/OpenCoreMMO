@@ -1,21 +1,5 @@
 services:
-# PostgreSQL: https://hub.docker.com/_/postgres/
-  postgres:
-    image: postgres
-    container_name: postgres
-    environment:
-      POSTGRES_PASSWORD: "${POSTGRESQL_PASSWORD}"
-      POSTGRES_USER: "${POSTGRESQL_USER}"
-      POSTGRES_DB: "${POSTGRESQL_DATABASE}"
-    ports:
-      - "${POSTGRESQL_PORT}:${POSTGRESQL_PORT}"
-    restart: "on-failure"
-    volumes:
-      - postgresql-data:/var/lib/postgresql/data
-    networks:
-      - opencoremmo
 
-# OpenCoreMMO
   standalone:
     container_name: standalone
     image: ghcr.io/opencoremmo/opencoremmo:baiak
@@ -42,41 +26,7 @@ services:
     restart: "on-failure"
     networks:
       - opencoremmo
-    depends_on:
-      - postgres
 
-  webapi:
-    container_name: webapi
-    build:
-      context: .
-      dockerfile: ./src/WebAPI/Dockerfile
-    environment:
-      ASPNETCORE_ENVIRONMENT: "Production"
-      ASPNETCORE_URLS: "https://+;http://+"
-      ASPNETCORE_Kestrel__Certificates__Default__Password: "${WEBAPI_CERTIFICATE_PASSWORD}"
-      ASPNETCORE_Kestrel__Certificates__Default__Path: "${WEBAPI_CERTIFICATE_PATH}"
-      SQLITE_DATABASE: "${SQLITE_DATABASE}"
-      POSTGRESQL_DATABASE: "${POSTGRESQL_DATABASE}"
-      POSTGRESQL_USER: "${POSTGRESQL_USER}"
-      POSTGRESQL_PASSWORD: "${POSTGRESQL_PASSWORD}"
-      POSTGRESQL_HOST: "${POSTGRESQL_HOST}"
-      POSTGRESQL_PORT: "${POSTGRESQL_PORT}"
-      ACTIVE_DATABASE: "${ACTIVE_DATABASE}"
-      GRAYLOG_HOSTNAME_OR_ADDRESS: "${GRAYLOG_HOSTNAME_OR_ADDRESS}"
-      GRAYLOG_PORT: "${GRAYLOG_PORT}"
-      GRAYLOG_HOSTNAME_OVERRIDE: "${GRAYLOG_HOSTNAME_OVERRIDE}"
-      GRAYLOG_FACILITY: "${GRAYLOG_FACILITY_WEBAPI}"
-    ports:
-      - "443:443"
-      - "80:80"
-    networks:
-      - opencoremmo
-    depends_on:
-      - postgres
-
-networks: 
+networks:
   opencoremmo:
-    driver: bridge
-
-volumes:
-  postgresql-data:
+    external: true

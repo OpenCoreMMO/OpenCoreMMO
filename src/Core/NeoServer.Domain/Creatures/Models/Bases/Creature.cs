@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
@@ -7,6 +8,7 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Player.Outfit;
 
 namespace NeoServer.Domain.Creatures.Models.Bases;
@@ -43,7 +45,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public event RemoveCreature OnCreatureRemoved;
 
     public event ChangeOutfit OnChangedOutfit;
-
     public event Say OnSay;
 
     public event Think OnThink;
@@ -79,7 +80,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public abstract IOutfit Outfit { get; protected set; }
     public IOutfit LastOutfit { get; private set; }
     public Direction Direction { get; protected set; }
-    public IList<IMonster> Summons { get; protected set; } = new List<IMonster>();
+    public IList<ISummon> Summons { get; protected set; } = new List<ISummon>();
 
     public Direction SafeDirection
     {
@@ -127,7 +128,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         OnChangedOutfit?.Invoke(this, Outfit);
     }
 
-    public byte LightBrightness { get; protected set; }
+    public byte LightLevel { get; protected set; }
     public byte LightColor { get; protected set; }
     public bool IsInvisible { get; protected set; } // TODO: implement.
     public abstract bool CanSeeInvisible { get; }
@@ -264,6 +265,16 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         return HashCode.Combine(CreatureId);
     }
+
+    public void SetLight(byte color, byte level)
+    {
+        LightColor = color;
+        LightLevel = level;
+
+        EventAggregator.Publish(new CreatureChangedLightEvent(this));
+    }
+
+    public void RemoveLight() => SetLight(0,0);
 
     public static bool operator ==(Creature creature1, Creature creature2)
     {

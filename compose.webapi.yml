@@ -1,0 +1,32 @@
+services:
+
+  webapi:
+    container_name: webapi
+    build:
+      context: .
+      dockerfile: ./src/WebAPI/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ASPNETCORE_URLS: "https://+;http://+"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "${WEBAPI_CERTIFICATE_PASSWORD}"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "${WEBAPI_CERTIFICATE_PATH}"
+      SQLITE_DATABASE: "${SQLITE_DATABASE}"
+      POSTGRESQL_DATABASE: "${POSTGRESQL_DATABASE}"
+      POSTGRESQL_USER: "${POSTGRESQL_USER}"
+      POSTGRESQL_PASSWORD: "${POSTGRESQL_PASSWORD}"
+      POSTGRESQL_HOST: "${POSTGRESQL_HOST}"
+      POSTGRESQL_PORT: "${POSTGRESQL_PORT}"
+      ACTIVE_DATABASE: "${ACTIVE_DATABASE}"
+      GRAYLOG_HOSTNAME_OR_ADDRESS: "${GRAYLOG_HOSTNAME_OR_ADDRESS}"
+      GRAYLOG_PORT: "${GRAYLOG_PORT}"
+      GRAYLOG_HOSTNAME_OVERRIDE: "${GRAYLOG_HOSTNAME_OVERRIDE}"
+      GRAYLOG_FACILITY: "${GRAYLOG_FACILITY_WEBAPI}"
+    ports:
+      - "${WEBAPI_PORT_HTTP}:80"
+      - "${WEBAPI_PORT_HTTPS}:443"
+    networks:
+      - opencoremmo
+
+networks:
+  opencoremmo:
+    external: true

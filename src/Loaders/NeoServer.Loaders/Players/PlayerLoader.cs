@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NeoServer.Data.Entities;
-using NeoServer.Data.Parsers;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Common;
@@ -15,9 +14,9 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Outfit;
@@ -259,14 +258,16 @@ public class PlayerLoader : IPlayerLoader
     protected IInventory ConvertToInventory(IPlayer player, PlayerEntity playerRecord)
     {
         var inventory = new Dictionary<Slot, (IItem Item, ushort Id)>();
-        var attrs = new Dictionary<ItemAttribute, IConvertible> { { ItemAttribute.Count, 0 } };
+        var attrs = new Dictionary<ItemTypeAttribute, IConvertible> { { ItemTypeAttribute.Count, 0 } };
 
         foreach (var item in playerRecord.PlayerInventoryItems)
         {
-            attrs[ItemAttribute.Count] = (byte)item.Amount;
+            attrs[ItemTypeAttribute.Count] = (byte)item.Amount;
             var location = item.SlotId <= 10 ? Location.Inventory((Slot)item.SlotId) : Location.Container(0, 0);
 
-            var createdItem = ItemFactory.Create((ushort)item.ServerId, location, attrs);
+            //todo: check this, if need pass Metadata to itemFactory.Create
+            var createdItem = ItemFactory.Create((ushort)item.ServerId, location, null, null, item.GetAttributes(), item.GetCustomAttributes());
+
             var createdItemIsPickupable = createdItem?.IsPickupable ?? false;
 
             if (!createdItemIsPickupable) continue;

@@ -7,6 +7,7 @@ using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Extensions;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -59,6 +60,13 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
 
         RegisterMethod(luaState, "Item", "hasProperty", LuaItemHasProperty);
         RegisterMethod(luaState, "Item", "hasAttribute", LuaItemHasAttribute);
+        RegisterMethod(luaState, "Item", "getAttribute", LuaItemGetAttribute);
+        RegisterMethod(luaState, "Item", "setAttribute", LuaItemSetAttribute);
+        RegisterMethod(luaState, "Item", "removeAttribute", LuaItemRemoveAttribute);
+        RegisterMethod(luaState, "Item", "hasCustomAttribute", LuaItemHasCustomAttribute);
+        RegisterMethod(luaState, "Item", "getCustomAttribute", LuaItemGetCustomAttribute);
+        RegisterMethod(luaState, "Item", "setCustomAttribute", LuaItemSetCustomAttribute);
+        RegisterMethod(luaState, "Item", "removeCustomAttribute", LuaItemRemoveCustomAttribute);
 
         RegisterMethod(luaState, "Item", "moveTo", LuaItemMoveTo);
         RegisterMethod(luaState, "Item", "transform", LuaItemTransform);
@@ -172,7 +180,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         var actionId = GetNumber<ushort>(luaState, 2);
         if (item != null)
         {
-            item.Metadata.Attributes.SetAttribute(ItemAttribute.ActionId, actionId);
+            item.Attributes.SetAttribute(ItemAttribute.ActionId, actionId);
             Lua.PushBoolean(luaState, true);
         }
         else
@@ -280,18 +288,315 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
 
     public static int LuaItemHasAttribute(LuaState luaState)
     {
-        // item:hasAttribute()
+        // item:hasAttribute(key)
         var item = GetUserdata<IItem>(luaState, 1);
-        if (item != null)
+
+        if (item == null)
         {
-            var property = GetNumber<ItemAttributeType>(luaState, 2);
-            Lua.PushBoolean(luaState, item.Metadata.Attributes.HasAttribute(property.ToItemAttribute()));
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var attribute = ItemAttributeType.ITEM_ATTRIBUTE_NONE;
+        if (Lua.IsNumber(luaState, 2))
+            attribute = GetNumber<ItemAttributeType>(luaState, 2);
+        else if (Lua.IsString(luaState, 2))
+            attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
+
+        Lua.PushBoolean(luaState, item.Attributes.HasAttribute(attribute.ToItemAttribute()));
+
+        return 1;
+    }
+
+    public static int LuaItemGetAttribute(LuaState luaState)
+    {
+        // item:getAttribute(key)
+        var item = GetUserdata<IItem>(luaState, 1);
+
+        if (item == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var attribute = ItemAttributeType.ITEM_ATTRIBUTE_NONE;
+        if (Lua.IsNumber(luaState, 2))
+            attribute = GetNumber<ItemAttributeType>(luaState, 2);
+        else if (Lua.IsString(luaState, 2))
+            attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
+
+        if (attribute.IsAttributeInteger())
+            Lua.PushNumber(luaState, item.Attributes.GetAttribute<long>(attribute.ToItemAttribute()));
+        else if (attribute.IsAttributeString())
+            Lua.PushString(luaState, item.Attributes.GetAttribute(attribute.ToItemAttribute()));
+        else
+            Lua.PushNil(luaState);
+
+        return 1;
+    }
+
+    public static int LuaItemSetAttribute(LuaState luaState)
+    {
+        // item:setAttribute(key, value)
+        var item = GetUserdata<IItem>(luaState, 1);
+        if (item == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var attributeType = ItemAttributeType.ITEM_ATTRIBUTE_NONE;
+        if (Lua.IsNumber(luaState, 2))
+            attributeType = GetNumber<ItemAttributeType>(luaState, 2);
+        else if (Lua.IsString(luaState, 2))
+            attributeType = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
+
+        var attribute = attributeType.ToItemAttribute();
+
+        //todo: implement start decay?
+        // DecayState especial
+        //if (attribute == ItemAttribute.DecayState)
+        //{
+        //    var decayState = GetNumber<ItemDecayStateType>(luaState, 3);
+        //    if (decayState == ItemDecayStateType.DECAYING_FALSE || decayState == ItemDecayStateType.DECAYING_STOPPING)
+        //        Decay.Instance.Stop(item);
+        //    else
+        //        Decay.Instance.Start(item);
+
+        //    Lua.PushBoolean(luaState, true);
+        //    return 1;
+        //}
+
+        //todo: implement start duration?
+        //// Duration
+        //if (attribute == ItemAttribute.Duration)
+        //{
+        //    item.Decaying = ItemDecayStateType.DecayingPending;
+        //    var duration = GetNumber<uint>(luaState, 3);
+        //    item.SetAttribute(ItemAttribute.Duration, duration);
+        //    Decay.Instance.Start(item);
+
+        //    Lua.PushBoolean(luaState, true);
+        //    return 1;
+        //}
+
+        if (attribute == ItemAttribute.Duration)
+        {
+            ReportError("Attempt to set protected key 'duration timestamp'");
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
+        if (attributeType.IsAttributeInteger())
+        {
+            var value = GetNumber<long>(luaState, 3);
+
+            item.Attributes.SetAttribute(attribute, value);
+            //todo: check if need this update tile flags
+            //item.UpdateTileFlags();
+            Lua.PushBoolean(luaState, true);
+        }
+        else if (attributeType.IsAttributeString())
+        {
+            var value = GetString(luaState, 3);
+            item.Attributes.SetAttribute(attribute, value);
+            //todo: check if need this update tile flags
+            //item.UpdateTileFlags();
+            Lua.PushBoolean(luaState, true);
         }
         else
         {
             Lua.PushNil(luaState);
         }
 
+        return 1;
+    }
+
+    public static int LuaItemRemoveAttribute(LuaState luaState)
+    {
+        // item:removeAttribute(key)
+        var item = GetUserdata<IItem>(luaState, 1);
+        if (item == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var attributeType = ItemAttributeType.ITEM_ATTRIBUTE_NONE;
+        if (Lua.IsNumber(luaState, 2))
+            attributeType = GetNumber<ItemAttributeType>(luaState, 2);
+        else if (Lua.IsString(luaState, 2))
+            attributeType = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
+
+        var attribute = attributeType.ToItemAttribute();
+
+        var canRemove = attribute is not ItemAttribute.UniqueId and not ItemAttribute.Duration;
+
+        if (canRemove)
+        {
+            item.Attributes.RemoveAttribute(attribute);
+        }
+        else
+        {
+            ReportError(attribute == ItemAttribute.UniqueId
+                ? "Attempt to erase protected key 'uid'"
+                : "Attempt to erase protected key 'duration timestamp'");
+        }
+
+        Lua.PushBoolean(luaState, canRemove);
+        return 1;
+    }
+
+    public static int LuaItemHasCustomAttribute(LuaState luaState)
+    {
+        // item:hasCustomAttribute(key)
+        var item = GetUserdata<IItem>(luaState, 1);
+
+        if (item == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        string key = Lua.IsNumber(luaState, 2)
+            ? GetNumber<long>(luaState, 2).ToString()
+            : Lua.IsString(luaState, 2)
+                ? GetString(luaState, 2)
+                : null;
+
+        Lua.PushBoolean(luaState, key != null && item.Attributes.HasCustomAttribute(key));
+        return 1;
+    }
+
+
+    public static int LuaItemGetCustomAttribute(LuaState luaState)
+    {
+        // item:getCustomAttribute(key)
+        var item = GetUserdata<IItem>(luaState, 1);
+        if (item == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        string key = Lua.IsNumber(luaState, 2)
+            ? GetNumber<long>(luaState, 2).ToString()
+            : Lua.IsString(luaState, 2)
+                ? GetString(luaState, 2)
+                : null;
+
+        if (key == null || !item.Attributes.TryGetCustomAttribute<object>(key, out var value))
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        switch (value)
+        {
+            case bool boolVal:
+                Lua.PushBoolean(luaState, boolVal);
+                break;
+            case double doubleVal:
+                Lua.PushNumber(luaState, doubleVal);
+                break;
+            case long longVal:
+                Lua.PushNumber(luaState, longVal);
+                break;
+            case int intVal:
+                Lua.PushNumber(luaState, intVal);
+                break;
+            case ushort ushortVal:
+                Lua.PushNumber(luaState, ushortVal);
+                break;
+            case byte byteVal:
+                Lua.PushNumber(luaState, byteVal);
+                break;
+            case string strVal:
+                Lua.PushString(luaState, strVal);
+                break;
+            default:
+                Lua.PushNil(luaState);
+                break;
+        }
+
+        return 1;
+    }
+
+    public static int LuaItemSetCustomAttribute(LuaState luaState)
+    {
+        // item:setCustomAttribute(key, value)
+        var item = GetUserdata<IItem>(luaState, 1);
+        if (item == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        string key = Lua.IsNumber(luaState, 2)
+            ? GetNumber<long>(luaState, 2).ToString()
+            : Lua.IsString(luaState, 2)
+                ? GetString(luaState, 2)
+                : null;
+
+        if (key == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        if (Lua.IsNumber(luaState, 3))
+        {
+            var number = GetNumber<double>(luaState, 3);
+            if (Math.Floor(number) == number)
+                item.Attributes.SetCustomAttribute(key, Convert.ToInt64(number));
+            else
+                item.Attributes.SetCustomAttribute(key, number);
+        }
+        else if (Lua.IsString(luaState, 3))
+        {
+            item.Attributes.SetCustomAttribute(key, GetString(luaState, 3));
+        }
+        else if (Lua.IsBoolean(luaState, 3))
+        {
+            item.Attributes.SetCustomAttribute(key, GetBoolean(luaState, 3));
+        }
+
+        var attribute = ItemAttributeType.ITEM_ATTRIBUTE_NONE;
+        if (Lua.IsNumber(luaState, 2))
+            attribute = GetNumber<ItemAttributeType>(luaState, 2);
+        else if (Lua.IsString(luaState, 2))
+            attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
+
+        Lua.PushBoolean(luaState, item.Attributes.HasAttribute(attribute.ToItemAttribute()));
+
+        return 1;
+    }
+
+    public static int LuaItemRemoveCustomAttribute(LuaState luaState)
+    {
+        // item:removeCustomAttribute(key)
+        var item = GetUserdata<IItem>(luaState, 1);
+        if (item == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        string key = Lua.IsNumber(luaState, 2)
+            ? GetNumber<long>(luaState, 2).ToString()
+            : Lua.IsString(luaState, 2)
+                ? GetString(luaState, 2)
+                : null;
+
+        if (key == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        item.Attributes.RemoveCustomAttribute(key);
+
+        Lua.PushBoolean(luaState, true);
         return 1;
     }
 
@@ -367,7 +672,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         }
 
         dynamicFromTile.TryGetStackPositionOfItem(item, out var stackPosition);
-        dynamicToTile.TryGetStackPositionOfItem(dynamicToTile.TopItemOnStack, out var stackPositionTopItem);
+        dynamicToTile.TryGetStackPositionOfItem(dynamicToTile.TopDownItemOnStack, out var stackPositionTopItem);
         var result = _itemMovementService.Move(item, dynamicFromTile, dynamicToTile, item.Amount, stackPosition,
             (byte)(dynamicToTile.ItemsCount + 1));
 
@@ -446,7 +751,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             {
                 var it = _itemTypeStore.Get(item.ServerId);
                 var decayTo = GetNumber<int>(luaState, 2);
-                it.Attributes.SetAttribute(ItemAttribute.DecayTo, decayTo);
+                it.Attributes.SetAttribute(ItemTypeAttribute.DecayTo, decayTo);
                 item.UpdateMetadata(it);
             }
 

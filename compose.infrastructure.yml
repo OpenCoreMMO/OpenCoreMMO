@@ -1,4 +1,19 @@
 services:
+# PostgreSQL: https://hub.docker.com/_/postgres/
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRESQL_PASSWORD}"
+      POSTGRES_USER: "${POSTGRESQL_USER}"
+      POSTGRES_DB: "${POSTGRESQL_DATABASE}"
+    ports:
+      - "${POSTGRESQL_PORT}:${POSTGRESQL_PORT}"
+    restart: "on-failure"
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+    networks:
+      - opencoremmo
+
 # pgAdmin 4: https://hub.docker.com/r/dpage/pgadmin4
   pgadmin:
     image: dpage/pgadmin4
@@ -100,6 +115,10 @@ services:
       - opencoremmo
     volumes:
       - "graylog-data:/usr/share/graylog/data"
+
+networks:
+  opencoremmo:
+    external: true
 
 volumes:
   pgadmin-data:

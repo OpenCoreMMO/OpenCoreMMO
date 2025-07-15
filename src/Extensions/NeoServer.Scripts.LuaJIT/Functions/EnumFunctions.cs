@@ -2,8 +2,9 @@
 using LuaNET;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
-using NeoServer.Domain.Creatures.Condition;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Scripts.LuaJIT.Attributes;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
@@ -24,6 +25,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
     public void Init(LuaState luaState)
     {
         RegisterEnumCustom<ConditionType>(luaState, true, true);
+        RegisterEnumCustom<ConditionParamType>(luaState, true, true);
         RegisterEnumCustom<Direction>(luaState);
         //RegisterEnum<DirectionType>(luaState);
         RegisterEnumCustom<Gender>(luaState, renameFromTo: ("Gender", "PlayerSex"));
@@ -40,6 +42,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         //RegisterEnum<SkillsType>(luaState);
         RegisterEnumCustom<SkillType>(luaState);
         RegisterEnum<TileFlagsType>(luaState);
+        RegisterEnum<CylinderFlagsType>(luaState);
 
         RegisterEnum<CombatType>(luaState);
         RegisterEnum<CombatParam>(luaState);
@@ -47,6 +50,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         RegisterEnum<ShootType>(luaState);
 
         RegisterEnumCustom<SoundEffect>(luaState, prefix: "SOUND_EFFECT_TYPE");
+        RegisterEnum<CallBackType>(luaState);
     }
 
     private static void RegisterEnum(LuaState luaState, string name, Enum value)
@@ -57,8 +61,22 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
 
     private static void RegisterEnum<T>(LuaState luaState) where T : Enum
     {
-        foreach (var item in Enum.GetValues(typeof(T)))
-            RegisterGlobalVariable(luaState, item.ToString(), Convert.ToUInt32(item));
+        var type = typeof(T);
+        foreach (var item in Enum.GetValues(type))
+        {
+            var memberName = item.ToString();
+            var memberInfo = type.GetMember(memberName).FirstOrDefault();
+
+            // Default name is the enum member name
+            string luaName = memberName;
+
+            // Try to get the attribute
+            if (memberInfo?.GetCustomAttributes(typeof(LuaEnumNameAttribute), false)
+                    .FirstOrDefault() is LuaEnumNameAttribute attr)
+                luaName = attr.Name;
+
+            RegisterGlobalVariable(luaState, luaName, Convert.ToUInt32(item));
+        }
     }
 
     private static void RegisterEnumCustom<T>(
@@ -78,15 +96,16 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         {
             var nameFromEnum = item.ToString();
 
+            nameFromEnum = prefix + nameFromEnum;
+
             if (addSeparationbewteenWords)
                 nameFromEnum = Regex.Replace(nameFromEnum, @"(?<=[a-z])(?=[A-Z])", "_");
 
-            var name = prefix + nameFromEnum;
 
             if (upperCase)
-                name = name.ToUpperInvariant();
+                nameFromEnum = nameFromEnum.ToUpperInvariant();
 
-            RegisterGlobalVariable(luaState, name, Convert.ToUInt64(item));
+            RegisterGlobalVariable(luaState, nameFromEnum, Convert.ToUInt64(item));
         }
     }
 }

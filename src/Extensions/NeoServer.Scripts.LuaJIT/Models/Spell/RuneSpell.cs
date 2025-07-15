@@ -1,5 +1,7 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Scripts.LuaJIT.Enums;
 
@@ -7,7 +9,7 @@ namespace NeoServer.Scripts.LuaJIT.Models.Spell;
 
 public class RuneSpell : ScriptedSpell
 {
-    public LuaRune LuaRune { get; set; }
+    public LuaRuneSpell LuaRune { get; set; }
 
     public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
     {
@@ -28,13 +30,14 @@ public class RuneSpell : ScriptedSpell
         scriptInterface.PushFunction(LuaRune.GetScriptId());
 
         LuaFunctionsLoader.PushUserdata(luaState, caster);
-        ;
+        
         LuaFunctionsLoader.SetCreatureMetatable(luaState, -1, caster);
 
         var variant = new LuaVariant
         {
-            Type = LuaVariantType.Number,
+            Type = target is IDynamicTile ? LuaVariantType.VARIANT_POSITION : LuaVariantType.VARIANT_NUMBER,
             Number = target is ICreature targetCreature ? targetCreature.CreatureId : 0,
+            Pos = target is IDynamicTile targetTile ? targetTile.Location : Location.Zero,
             InstantName = "",
             RuneName = LuaRune.Name
         };

@@ -22,7 +22,7 @@ public class CreatureDeathService(
             return;
         }
 
-        ReplaceCreatureByCorpse(deadCreature);
+        ReplaceCreatureByCorpse(deadCreature, by);
         CreateBlood(deadCreature);
 
         ProcessDamageRecords(deadCreature, by, damageRecords);
@@ -44,9 +44,9 @@ public class CreatureDeathService(
         }
     }
 
-    private void ReplaceCreatureByCorpse(ICreature creature)
+    private void ReplaceCreatureByCorpse(ICreature creature, IThing killer)
     {
-        creature.Corpse ??= itemFactory.CreateLootCorpse(creature.CorpseType, creature.Location, new Loot([]));
+        creature.Corpse ??= itemFactory.CreateLootCorpse(creature.CorpseType, creature.Location, new Loot([]), killer);
 
         if (creature.Corpse is not IItem corpse) return;
 
@@ -56,7 +56,7 @@ public class CreatureDeathService(
             map.RemoveCreature(creature);
         }
 
-        corpse.Decay.StartDecay();
+         corpse.Decay?.StartDecay();
     }
 
     private void CreateBlood(ICreature creature)

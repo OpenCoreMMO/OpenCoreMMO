@@ -1,15 +1,12 @@
 using Moq;
+using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Domain.Combat;
 using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Combat.Monster;
 using NeoServer.Domain.Combat.Player;
-using NeoServer.Domain.Combat.Services;
-using NeoServer.Domain.Combat.Services.Attacks;
 using NeoServer.Domain.Combat.Validations;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Domain.Creatures.Monster.Managers;
-using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Services;
 using NeoServer.Domain.Spells;
@@ -39,9 +36,9 @@ public class AttackServiceTestBuilder
         var magicFieldService =
             new MagicFieldService(map, ItemFactoryTestBuilder.Build(itemTypeStore), gameConfiguration.PvP);
 
-        var monsterDataManager = new MonsterDataManager();
+        var monsterTypeStore = new MonsterTypeStore();
 
-        var conditionAttackService = new ConditionAttackService(monsterDataManager);
+        var conditionAttackService = new ConditionAttackService(monsterTypeStore);
 
         var areaAttackService =
             new AreaAttackService(mockEventAggregator.Object, map, magicFieldService, conditionAttackService);
@@ -52,7 +49,7 @@ public class AttackServiceTestBuilder
 
         var attackValidation = new AttackValidation(new MapTool(map, new PathFinder(map)), map, gameConfiguration.PvP);
 
-        return new AttackService(logger.Object, skullService, areaAttackService, singleTargetCombat, attackValidation);
+        return new AttackService(logger.Object, skullService, areaAttackService, singleTargetCombat, conditionAttackService, attackValidation);
     }
 }
 

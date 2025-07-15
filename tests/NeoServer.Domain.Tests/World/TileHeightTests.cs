@@ -39,7 +39,7 @@ public class TileHeightTests
 
         //assert
         tile.ItemsCount.Should().Be(3);
-        tile.TopItemOnStack.Should().Be(weapon);
+        tile.TopDownItemOnStack.Should().Be(weapon);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class TileHeightTests
 
         var depot = ItemTestData.CreateRegularItem(1);
         depot.Metadata.Flags.Add(ItemFlag.HasHeight);
-        depot.Metadata.Attributes.SetAttribute(ItemAttribute.Type, "depot");
+        depot.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "depot");
 
         IItem[] items =
         {
@@ -68,7 +68,7 @@ public class TileHeightTests
 
         //assert
         tile.ItemsCount.Should().Be(3);
-        tile.TopItemOnStack.Should().Be(weapon);
+        tile.TopDownItemOnStack.Should().Be(weapon);
     }
 
     [Theory]

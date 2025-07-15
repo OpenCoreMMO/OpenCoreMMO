@@ -26,8 +26,13 @@ public class Sign : BaseItem
         return string.IsNullOrWhiteSpace(Text) ? lookText : $"{lookText}\nYou read: {Text.AddEndOfSentencePeriod()}";
     }
 
-    public static bool IsApplicable(IItemType type)
+    public static bool IsApplicable(IItemType type, IDictionary<ItemAttribute, IConvertible> attributes)
     {
-        return type.Group is ItemGroup.Paper;
+        return (attributes.ContainsKey(ItemAttribute.Text) && !type.Flags.Contains(ItemFlag.Usable)) ||
+               (type.Attributes.GetAttribute(ItemTypeAttribute.Type)
+                   ?.Equals("sign", StringComparison.InvariantCultureIgnoreCase) ?? false)
+            ? true
+            : false;
+        //return type.Group is ItemGroup.Sign;
     }
 }

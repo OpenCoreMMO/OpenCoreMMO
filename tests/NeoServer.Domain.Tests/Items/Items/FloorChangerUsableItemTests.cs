@@ -23,8 +23,8 @@ public class FloorChangerUsableItemTests
 
         var floorChangerItemType = new ItemType();
         floorChangerItemType.SetOnUse();
-        floorChangerItemType.OnUse.SetAttribute(ItemAttribute.UseOn, new long[] { 100, 101, 102 });
-        floorChangerItemType.OnUse.SetAttribute(ItemAttribute.FloorChange, "up");
+        floorChangerItemType.OnUse.SetAttribute(ItemTypeAttribute.UseOn, new long[] { 100, 101, 102 });
+        floorChangerItemType.OnUse.SetAttribute(ItemTypeAttribute.FloorChange, "up");
 
         floorChangerItemType.Flags.Add(ItemFlag.Pickupable);
         floorChangerItemType.Flags.Add(ItemFlag.Movable);
@@ -62,8 +62,8 @@ public class FloorChangerUsableItemTests
 
         var floorChangerItemType = new ItemType();
         floorChangerItemType.SetOnUse();
-        floorChangerItemType.OnUse.SetAttribute(ItemAttribute.UseOn, new long[] { 200, 201, 202 });
-        floorChangerItemType.OnUse.SetAttribute(ItemAttribute.FloorChange, "up");
+        floorChangerItemType.OnUse.SetAttribute(ItemTypeAttribute.UseOn, new long[] { 200, 201, 202 });
+        floorChangerItemType.OnUse.SetAttribute(ItemTypeAttribute.FloorChange, "up");
         var floorChangerItem = new FloorChangerUsableItem(floorChangerItemType, Location.Zero);
 
         var location = new Location(100, 100, 7);

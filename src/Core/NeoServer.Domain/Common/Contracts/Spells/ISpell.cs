@@ -14,30 +14,33 @@ public interface ISpell : IHasCooldown
     string Name { get; set; }
     bool ShouldSay { get; }
     string Words { get; set; }
-    bool Enabled { get; }
     bool BlockWalls { get; set; }
     ushort ManaConsumption { get; set; }
+    ushort ManaPercent { get; set; }
     ushort SoulConsumption { get; set; }
-    bool NeedDirection { get; }
-    bool CasterNeedsTargetOrDirection { get; }
+    bool NeedDirection { get; set; }
+    bool NeedCasterTargetOrDirection { get; set; }
     bool NeedsTarget { get; set; }
-    byte? Range { get; }
-    bool IsAggressive { get; }
+    byte? Range { get; set; }
+    bool IsEnabled { get; set; }
+    bool IsSelfTarget { get; set; }
+    bool IsAggressive { get; set; }
     bool BlockingCreature { get; set; }
     bool BlockingSolid { get; set; }
-    bool NeedWeapon { get; }
-    bool NeedLearn { get; }
+    bool NeedWeapon { get; set; }
+    bool NeedLearn { get; set; }
+    bool HasParams { get; set; }
+    public object[] Params { get; set; }
 
     byte[] VocationIds { get; set; }
     string[] Vocations { get; }
-    bool NeedsPremium { get; }
-    ushort MinLevel { get; }
-    ushort MinMagicLevel { get; }
+    bool NeedsPremium { get; set; }
+    ushort MinLevel { get; set; }
+    ushort MinMagicLevel { get; set; }
     Result Invoke(ICombatActor actor, IThing target, bool isHotkey);
     Result CanCast(ICombatActor caster, IThing target);
 }
 
 public interface ICommandSpell : ISpell
 {
-    public object[] Params { get; set; }
 }

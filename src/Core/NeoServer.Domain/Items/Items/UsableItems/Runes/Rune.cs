@@ -3,7 +3,6 @@ using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Spells;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Player;
@@ -13,7 +12,7 @@ namespace NeoServer.Domain.Items.Items.UsableItems.Runes;
 
 public class Rune : Cumulative, IHasCooldown, IUsableRequirement
 {
-    public Rune(IItemType type, Location location, IDictionary<ItemAttribute, IConvertible> attributes) : base(type,
+    public Rune(IItemType type, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type,
         location, attributes)
     {
     }
@@ -22,38 +21,38 @@ public class Rune : Cumulative, IHasCooldown, IUsableRequirement
     {
     }
 
-    public bool CheckFloor => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.CheckFloor);
-    public bool BlockWalls => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.BlockWalls);
-    public ushort ManaConsumption => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.ManaUse);
-    public ushort SoulConsumption => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.SoulUse);
-    public bool NeedDirection => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedDirection);
+    public bool CheckFloor => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.CheckFloor);
+    public bool BlockWalls => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.BlockWalls);
+    public ushort ManaConsumption => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.ManaUse);
+    public ushort SoulConsumption => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.SoulUse);
+    public bool NeedDirection => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.NeedDirection);
 
     public bool CasterNeedsTargetOrDirection =>
-        Metadata.Attributes.GetAttribute<bool>(ItemAttribute.CasterNeedsTargetOrDirection);
+        Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.CasterNeedsTargetOrDirection);
 
-    public bool NeedsTarget => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedTarget);
+    public bool NeedsTarget => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.NeedTarget);
 
-    public byte? Range => Metadata.Attributes.HasAttribute(ItemAttribute.Range)
-        ? Metadata.Attributes.GetAttribute<byte>(ItemAttribute.Range)
+    public byte? Range => Metadata.Attributes.HasAttribute(ItemTypeAttribute.Range)
+        ? Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Range)
         : null;
 
-    public bool SelfTarget => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.SelfTarget);
+    public bool SelfTarget => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.SelfTarget);
 
-    public bool IsAggressive => !Metadata.Attributes.HasAttribute(ItemAttribute.IsAggressive) ||
-                                Metadata.Attributes.GetAttribute<bool>(ItemAttribute.IsAggressive);
+    public bool IsAggressive => !Metadata.Attributes.HasAttribute(ItemTypeAttribute.IsAggressive) ||
+                                Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.IsAggressive);
 
-    public bool BlockingCreature => Metadata.Attributes.HasAttribute(ItemAttribute.Blocking) &&
-                                    !Metadata.Attributes.GetAttribute<bool>(ItemAttribute.Blocking);
+    public bool BlockingCreature => Metadata.Attributes.HasAttribute(ItemTypeAttribute.Blocking) &&
+                                    !Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.Blocking);
 
-    public bool BlockingSolid => Metadata.Attributes.HasAttribute(ItemAttribute.Blocking) &&
-                                 Metadata.Attributes.GetAttribute<bool>(ItemAttribute.Blocking);
+    public bool BlockingSolid => Metadata.Attributes.HasAttribute(ItemTypeAttribute.Blocking) &&
+                                 Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.Blocking);
 
-    public bool NeedWeapon => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedWeapon);
-    public bool NeedLearn => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedLearn);
+    public bool NeedWeapon => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.NeedWeapon);
+    public bool NeedLearn => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.NeedLearn);
     public byte[] VocationIds { get; set; }
-    public bool NeedsPremium => Metadata.Attributes.GetAttribute<bool>(ItemAttribute.NeedsPremium);
+    public bool NeedsPremium => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.NeedsPremium);
 
-    public ISpell Spell => Metadata.Attributes.GetAttribute<ISpell>("spell");
+    public ISpell Spell => Metadata.Attributes.GetCustomAttribute<ISpell>("spell");
     public bool Enabled => true;
 
     //Cooldown
@@ -61,33 +60,33 @@ public class Rune : Cumulative, IHasCooldown, IUsableRequirement
     {
         get
         {
-            if (Metadata.Attributes.HasAttribute(ItemAttribute.CooldownId))
-                return Metadata.Attributes.GetAttribute<Guid>(ItemAttribute.CooldownId);
+            if (Metadata.Attributes.HasAttribute(ItemTypeAttribute.CooldownId))
+                return Metadata.Attributes.GetAttribute<Guid>(ItemTypeAttribute.CooldownId);
 
             var id = Guid.NewGuid();
-            Metadata.Attributes.SetAttribute(ItemAttribute.CooldownId, id);
+            Metadata.Attributes.SetAttribute(ItemTypeAttribute.CooldownId, id);
 
             return id;
         }
     }
 
     public (int Id, uint Cooldown) PrimaryGroup =>
-        (Metadata.Attributes.GetAttribute<int>(ItemAttribute.PrimaryGroup),
-            Metadata.Attributes.GetAttribute<uint>(ItemAttribute.PrimaryGroupCooldown));
+        (Metadata.Attributes.GetAttribute<int>(ItemTypeAttribute.PrimaryGroup),
+            Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.PrimaryGroupCooldown));
 
     public (int Id, uint Cooldown) SecondaryGroup =>
-        (Metadata.Attributes.GetAttribute<int>(ItemAttribute.SecondaryGroup),
-            Metadata.Attributes.GetAttribute<uint>(ItemAttribute.SecondaryGroupCooldown));
+        (Metadata.Attributes.GetAttribute<int>(ItemTypeAttribute.SecondaryGroup),
+            Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.SecondaryGroupCooldown));
 
-    public uint Cooldown => Metadata.Attributes.GetAttribute<uint>(ItemAttribute.CooldownTime);
+    public uint Cooldown => Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.CooldownTime);
 
     public string Name => Metadata.Name;
-    public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumLevel);
-    public ushort MinMagicLevel => Metadata.Attributes.GetAttribute<ushort>(ItemAttribute.MinimumMagicLevel);
+    public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MinimumLevel);
+    public ushort MinMagicLevel => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MinimumMagicLevel);
 
     public static bool IsApplicable(IItemType type)
     {
-        return type.Attributes.GetAttribute(ItemAttribute.Type)
+        return type.Attributes.GetAttribute(ItemTypeAttribute.Type)
             ?.Equals("rune", StringComparison.InvariantCultureIgnoreCase) ?? false;
     }
 
