@@ -1,23 +1,23 @@
 ﻿public enum ItemAttribute : byte
 {
     //ItemAttributes
-    None = 0, //v
-    ActionId, //v
-    UniqueId, //v
+    None = 0,
+    ActionId,
+    UniqueId,
     Description,
     Text,
     Date,
     Writer,
-    Name, //v
-    Article, //v
-    PluralName, //v
-    Weight, //v
-    Attack, //v
-    Defense, //v
-    ExtraDefense, //v
-    Armor, //v
-    HitChance, //v
-    ShootRange, //v
+    Name,
+    Article,
+    PluralName,
+    Weight,
+    Attack,
+    Defense,
+    ExtraDefense,
+    Armor,
+    HitChance,
+    ShootRange,
     Owner,
     Duration,
     DecayState,
@@ -39,18 +39,18 @@ public enum ItemTypeAttribute : byte
     None = 0,
     StoreItem,
     Text,
-    Name, //v
-    Article, //v
-    PluralName, //v
+    Name,
+    Article,
+    PluralName,
     Type,
     Description,
     RuneSpellName,
-    Weight, //v
+    Weight,
     ShowCount,
     Armor, 
-    Defense,  //v
+    Defense,
     ExtraDefense,
-    Attack, //v
+    Attack,
     AttackSpeed,
     RotateTarget,
     Moveable,
