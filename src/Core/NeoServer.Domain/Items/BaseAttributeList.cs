@@ -242,10 +242,6 @@ public class BaseAttributeList<T> where T : Enum
             foreach (var item in _defaultAttributes)
                 dictionary.Add((TKey)Convert.ChangeType(item.Key, typeof(TKey), CultureInfo.InvariantCulture),
                     (TValue)item.Value.Item1);
-        if (_customAttributes is not null)
-            foreach (var item in _customAttributes)
-                dictionary.Add((TKey)Convert.ChangeType(item.Key, typeof(TKey), CultureInfo.InvariantCulture),
-                    (TValue)item.Value.Item1);
         return dictionary;
     }
 

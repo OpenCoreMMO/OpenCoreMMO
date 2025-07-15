@@ -199,7 +199,7 @@ public class ItemFactory : IItemFactory
                 return instance;
 
         if (DefenseEquipmentFactory?.Create(itemType, location) is { } equipment) return equipment;
-        if (WeaponFactory?.Create(itemType, location, itemTypeAttributes) is { } weapon) return weapon;
+        if (WeaponFactory?.Create(itemType, location, itemTypeAttributes, itemAttributes) is { } weapon) return weapon;
         if (ContainerFactory?.Create(itemType, location, children) is { } container) return container;
         if (RuneFactory?.Create(itemType, location, itemTypeAttributes) is { } rune) return rune;
         if (GroundFactory?.Create(itemType, location) is { } ground) return ground;

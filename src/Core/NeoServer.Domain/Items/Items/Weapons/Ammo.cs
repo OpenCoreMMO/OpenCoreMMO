@@ -13,15 +13,24 @@ namespace NeoServer.Domain.Items.Items.Weapons;
 
 public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
 {
-    public Ammo(IItemType type, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type,
-        location, attributes)
+    public WeaponAttack WeaponAttack { get; }
+
+    public AmmoType AmmoType => Metadata.AmmoType;
+    public ShootType ShootType => Metadata.ShootType;
+    public bool HasElementalDamage => WeaponAttack.ElementalDamage.AttackPower is not 0;
+
+    public Ammo(
+        IItemType itemType,
+        Location location,
+        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
+        IDictionary<ItemAttribute, IConvertible> itemAttributes) : base(itemType, location, itemTypeAttributes)
     {
-        WeaponAttack = new WeaponAttack(Metadata);
+        WeaponAttack = new WeaponAttack(itemType, itemAttributes);
     }
 
-    public Ammo(IItemType type, Location location, byte amount) : base(type, location, amount)
+    public Ammo(IItemType itemType, Location location, byte amount) : base(itemType, location, amount)
     {
-        WeaponAttack = new WeaponAttack(Metadata);
+        WeaponAttack = new WeaponAttack(itemType);
     }
 
     protected override string PartialInspectionText
@@ -32,16 +41,9 @@ public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
                 ? $" + {WeaponAttack.ElementalDamage.AttackPower} {DamageTypeParser.Parse(WeaponAttack.ElementalDamage.DamageType)}"
                 : string.Empty;
 
-            return $"Atk: {Attack}{elementalDamageText}";
+            return $"Atk: {AttackPower}{elementalDamageText}";
         }
     }
-
-    public byte Attack => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Attack);
-
-    public byte ExtraHitChance => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.HitChance);
-    public AmmoType AmmoType => Metadata.AmmoType;
-    public ShootType ShootType => Metadata.ShootType;
-    public bool HasElementalDamage => WeaponAttack.ElementalDamage.AttackPower is not 0;
 
     public override bool CanBeDressed(IPlayer player)
     {
@@ -57,8 +59,6 @@ public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
     public void OnMoved(IThing to)
     {
     }
-
-    public WeaponAttack WeaponAttack { get; }
 
     public void Throw()
     {

@@ -16,10 +16,54 @@ public interface IItem : IThing, IHasDecay
     IItemType Metadata { get; }
     ItemAttributeList Attributes { get; }
 
+    ushort ActionId => Attributes.GetAttribute<ushort>(ItemAttribute.ActionId);
+    uint UniqueId => Attributes.GetAttribute<uint>(ItemAttribute.UniqueId);
+    string IThing.Name => Attributes.GetAttribute(ItemAttribute.Name) ?? Metadata.Name;
+    string Article => Attributes.GetAttribute(ItemAttribute.Article) ?? Metadata.Article;
+    string Plural => Attributes.GetAttribute(ItemAttribute.PluralName) ?? Metadata.PluralName;
+
+    float Weight =>
+        Attributes.TryGetAttribute<float>(ItemAttribute.Weight, out var weight)
+            ? weight
+            : Metadata.Weight;
+
+    ushort Attack =>
+        Attributes.TryGetAttribute<ushort>(ItemAttribute.Attack, out var attack)
+            ? attack
+            : Metadata.AttackPower;
+
+    ushort Defense =>
+        Attributes.TryGetAttribute<ushort>(ItemAttribute.Defense, out var defense)
+            ? defense
+            : Metadata.Defense;
+
+    ushort ExtraDefense =>
+        Attributes.TryGetAttribute<ushort>(ItemAttribute.ExtraDefense, out var extraDefense)
+            ? extraDefense
+            : Metadata.ExtraDefense;
+
+    ushort Armor =>
+        Attributes.TryGetAttribute<ushort>(ItemAttribute.Armor, out var armor)
+            ? armor
+            : Metadata.Armor;
+
+    sbyte ExtraHitChance =>
+        Attributes.TryGetAttribute<sbyte>(ItemAttribute.HitChance, out var hitChance)
+            ? hitChance
+            : Metadata.ExtraHitChance;
+
+    byte Range =>
+        Attributes.TryGetAttribute<byte>(ItemAttribute.ShootRange, out var shootRange)
+            ? shootRange
+            : Metadata.Range;
+
+    public bool IsDeleted { get; }
+    IThing Owner { get; }
+
+    IThing Parent { get; }
+
     string InspectionText => string.Empty;
     string CloseInspectionText => string.Empty;
-    string Plural => Metadata.Plural;
-
     ushort ClientId => Metadata.ClientId;
     ushort ServerId => Metadata.ServerId;
     ushort CanTransformTo => Metadata.Attributes.GetTransformationItem();
@@ -56,15 +100,21 @@ public interface IItem : IThing, IHasDecay
         }
     }
 
-    string FullName => Metadata.FullName;
-    ushort ActionId => Attributes.GetAttribute<ushort>(ItemAttribute.ActionId);
-    uint UniqueId => Attributes.GetAttribute<uint>(ItemAttribute.UniqueId);    
-    public bool IsDeleted { get; }
-    IThing Owner { get; }
-    float Weight { get; }
-    IThing Parent { get; }
-    string Article => Metadata.Article;
-    string IThing.Name => Metadata.Name;
+    public string FullName
+    {
+        get
+        {
+            if (Attributes.HasAttribute(ItemAttribute.Article))
+            {
+               return string.IsNullOrWhiteSpace(Attributes.GetAttribute(ItemAttribute.Article))
+                ? $"{Attributes.GetAttribute(ItemAttribute.Name)}"
+                : $"{Attributes.GetAttribute(ItemAttribute.Article)} {Attributes.GetAttribute(ItemAttribute.Name)}";
+            }
+
+            return Metadata.FullName;
+        }
+    }
+
     void UpdateMetadata(IItemType newMetadata);
     void MarkAsDeleted();
 

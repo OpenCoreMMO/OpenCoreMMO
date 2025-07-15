@@ -14,6 +14,59 @@ public abstract class BaseItem : IItem
 
     private ItemAttributeList _attributes;
     public ItemAttributeList Attributes => _attributes ??= new ItemAttributeList();
+    public string Name => Attributes.GetAttribute(ItemAttribute.Name) ?? Metadata.Name;
+    public string Article => Attributes.GetAttribute(ItemAttribute.Article) ?? Metadata.Article;
+    public string Plural => Attributes.GetAttribute(ItemAttribute.PluralName) ?? Metadata.PluralName;
+
+    public virtual float Weight =>
+        Attributes.TryGetAttribute<float>(ItemAttribute.Weight, out var weight)
+            ? weight
+            : Metadata.Weight;
+
+    public ushort AttackPower =>
+        Attributes.TryGetAttribute<ushort>(ItemAttribute.Attack, out var attack)
+            ? attack
+            : Metadata.AttackPower;
+
+    public ushort Defense =>
+        Attributes.TryGetAttribute<ushort>(ItemAttribute.Defense, out var defense)
+            ? defense
+            : Metadata.Defense;
+
+    public ushort ExtraDefense =>
+        Attributes.TryGetAttribute<ushort>(ItemAttribute.ExtraDefense, out var extraDefense)
+            ? extraDefense
+            : Metadata.ExtraDefense;
+
+    public ushort Armor =>
+        Attributes.TryGetAttribute<ushort>(ItemAttribute.Armor, out var armor)
+            ? armor
+            : Metadata.Armor;
+
+    public sbyte ExtraHitChance =>
+        Attributes.TryGetAttribute<sbyte>(ItemAttribute.HitChance, out var hitChance)
+            ? hitChance
+            : Metadata.ExtraHitChance;
+
+    public byte Range =>
+        Attributes.TryGetAttribute<byte>(ItemAttribute.ShootRange, out var shootRange)
+            ? shootRange
+            : Metadata.Range;
+
+    public string FullName
+    {
+        get
+        {
+            if (Attributes.HasAttribute(ItemAttribute.Article))
+            {
+                return string.IsNullOrWhiteSpace(Attributes.GetAttribute(ItemAttribute.Article))
+                 ? $"{Attributes.GetAttribute(ItemAttribute.Name)}"
+                 : $"{Attributes.GetAttribute(ItemAttribute.Article)} {Attributes.GetAttribute(ItemAttribute.Name)}";
+            }
+
+            return Metadata.FullName;
+        }
+    }
 
     protected BaseItem(IItemType metadata, Location location)
     {
@@ -58,18 +111,15 @@ public abstract class BaseItem : IItem
     {
         return InspectionTextBuilder.IsApplicable(this)
             ? InspectionTextBuilder.Build(this, isClose, showInternalDetails)
-            : $"You see {Metadata.Article} {Metadata.Name}.";
+            : $"You see {Article} {Name}.";
     }
 
-    public string FullName => Metadata.FullName;
     public byte Amount { get; set; } = 1;
 
     public virtual void Use(IPlayer usedBy)
     {
         UseFunction?.Invoke(this, usedBy);
     }
-
-    public virtual float Weight => Metadata.Weight;
 
     public IThing Parent { get; private set; }
 
@@ -97,8 +147,8 @@ public abstract class BaseItem : IItem
 
     public override string ToString()
     {
-        var plural = Metadata.Plural ?? $"{Metadata.Name}s";
-        return Amount > 1 ? $"{Amount} {plural}" : Metadata.FullName;
+        var plural = Plural ?? $"{Name}s";
+        return Amount > 1 ? $"{Amount} {plural}" : FullName;
     }
 
     #region Events

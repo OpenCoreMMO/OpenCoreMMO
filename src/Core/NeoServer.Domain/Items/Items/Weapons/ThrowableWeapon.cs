@@ -1,8 +1,6 @@
 ﻿using System.Text;
-using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Combat.Calculations;
-using NeoServer.Domain.Combat.Services.Attacks;
 using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -19,22 +17,14 @@ namespace NeoServer.Domain.Items.Items.Weapons;
 
 public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRange
 {
-    public ThrowableWeapon(IItemType type, Location location,
-        IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type, location, attributes)
-    {
-        WeaponAttack = new WeaponAttack(Metadata);
-    }
-
-    public ThrowableWeapon(IItemType type, Location location, byte amount) : base(type, location, amount)
-    {
-        WeaponAttack = new WeaponAttack(Metadata);
-    }
-
-    private byte Defense => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Defense);
-
     private decimal BreakChance => Metadata.Attributes.HasAttribute("breakChance")
         ? Metadata.Attributes.GetAttribute<decimal>("breakChance")
         : 100;
+
+    public bool ShouldBreak => BreakChance > 0 && GameRandom.Random.Next(1, maxValue: 100) <= BreakChance;
+    public WeaponAttack WeaponAttack { get; } //todo: rename to Attack
+
+    public ushort? MinHitChance { get; }
 
     protected override string PartialInspectionText
     {
@@ -61,12 +51,19 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
         }
     }
 
-    public byte ExtraHitChance => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.HitChance);
+    public ThrowableWeapon(
+        IItemType itemType,
+        Location location,
+        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
+        IDictionary<ItemAttribute, IConvertible> itemAttributes) : base(itemType, location, itemTypeAttributes)
+    {
+        WeaponAttack = new WeaponAttack(itemType, itemAttributes);
+    }
 
-    public byte AttackPower => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Attack);
-    public bool ShouldBreak => BreakChance > 0 && GameRandom.Random.Next(1, maxValue: 100) <= BreakChance;
-    public WeaponAttack WeaponAttack { get; } //todo: rename to Attack
-    public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Range);
+    public ThrowableWeapon(IItemType itemType, Location location, byte amount) : base(itemType, location, amount)
+    {
+        WeaponAttack = new WeaponAttack(itemType);
+    }
 
     public override bool CanBeDressed(IPlayer player)
     {
@@ -78,8 +75,6 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
 
         return false;
     }
-
-    public ushort? MinHitChance { get; }
 
     public bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combatResult)
     {

@@ -5,7 +5,7 @@ namespace NeoServer.Domain.Common.Contracts.Items;
 
 public interface IThing : IUsable
 {
-    string Name { get; }
+    public string Name { get; }
 
     public byte Amount => 1;
 

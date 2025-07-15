@@ -10,7 +10,7 @@ internal static class InventoryDefenseCalculation
         var totalDefense = 0;
         totalDefense += inventory.GetItem<IHasDefense>(Slot.Left)?.Defense ?? 0;
 
-        totalDefense += inventory.GetItem<BodyDefenseEquipment>(Slot.Right)?.DefenseValue ?? 0;
+        totalDefense += inventory.GetItem<BodyDefenseEquipment>(Slot.Right)?.Defense ?? 0;
 
         return (ushort)totalDefense;
     }
@@ -21,7 +21,7 @@ internal static class InventoryDefenseCalculation
 
         byte GetDefenseValue(Slot slot)
         {
-            return (byte)(inventoryMap.GetItem<BodyDefenseEquipment>(slot)?.DefenseValue ?? default);
+            return (byte)(inventoryMap.GetItem<BodyDefenseEquipment>(slot)?.Defense ?? default);
         }
 
         totalArmor += GetDefenseValue(Slot.Necklace);

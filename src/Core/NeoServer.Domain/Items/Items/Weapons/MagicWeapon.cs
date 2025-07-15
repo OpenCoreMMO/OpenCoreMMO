@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Combat.Attacks;
-using NeoServer.Domain.Combat.Attacks.Obsoletes;
+﻿using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
@@ -30,7 +29,6 @@ public class MagicWeapon : Equipment, IDistanceWeapon
     public ushort MaxHitChance => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.MaxHitChance);
     public ushort ManaConsumption => Metadata.Attributes?.GetAttribute<ushort>(ItemTypeAttribute.ManaUse) ?? 0;
     public ushort? MinHitChance => (ushort)(MaxHitChance / 2);
-    public byte Range => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Range);
     public WeaponType WeaponType => WeaponType.Magical;
 
     public bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combatResult)

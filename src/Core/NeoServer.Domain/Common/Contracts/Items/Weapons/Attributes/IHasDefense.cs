@@ -2,5 +2,5 @@ namespace NeoServer.Domain.Common.Contracts.Items.Weapons.Attributes;
 
 public interface IHasDefense
 {
-    byte Defense { get; }
+    ushort Defense { get; }
 }
