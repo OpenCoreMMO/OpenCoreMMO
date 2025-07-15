@@ -17,8 +17,8 @@ namespace NeoServer.Domain.Items.Items.Weapons;
 
 public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRange
 {
-    private decimal BreakChance => Metadata.Attributes.HasAttribute("breakChance")
-        ? Metadata.Attributes.GetAttribute<decimal>("breakChance")
+    private decimal BreakChance => Metadata.Attributes.HasCustomAttribute("breakChance")
+        ? Metadata.Attributes.GetCustomAttribute<decimal>("breakChance")
         : 100;
 
     public bool ShouldBreak => BreakChance > 0 && GameRandom.Random.Next(1, maxValue: 100) <= BreakChance;

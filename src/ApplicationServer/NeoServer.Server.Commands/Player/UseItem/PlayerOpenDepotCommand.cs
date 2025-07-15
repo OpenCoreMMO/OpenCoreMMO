@@ -1,6 +1,5 @@
 using System.Linq;
 using NeoServer.Data.Interfaces;
-using NeoServer.Data.Parsers;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
@@ -41,7 +40,7 @@ public class PlayerOpenDepotCommand
 
         var depotRecordsTask = _playerDepotItemRepository.GetByPlayerId(player.Id);
 
-        depot = (Depot)_itemFactory.Create(container.Metadata, container.Location, null);
+        depot = (Depot)_itemFactory.Create(container.Metadata, container.Location, null, null);
 
         var depotRecords = depotRecordsTask.Result.ToList();
 

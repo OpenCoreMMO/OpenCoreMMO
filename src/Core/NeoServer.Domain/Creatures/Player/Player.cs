@@ -908,7 +908,7 @@ public class Player : CombatActor, IPlayer
             return new Result(InvalidOperation.AttackTargetIsInvisible);
         }
 
-        if (Summons.Contains(target))
+        if (Summons.Contains(target as ISummon))
         {
             InvokeAttackCanceled();
             return Result.NotPossible;

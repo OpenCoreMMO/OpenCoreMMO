@@ -17,14 +17,18 @@ public interface IItemFactory : IFactory
         ushort typeId,
         Location.Structs.Location location,
         IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
+        IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
         IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
+        IDictionary<string, IConvertible> itemCustomAttributes = null,
         IEnumerable<IItem> children = null);
 
     IItem Create(
         string name,
         Location.Structs.Location location,
         IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
+        IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
         IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
+        IDictionary<string, IConvertible> itemCustomAttributes = null,
         IEnumerable<IItem> children = null);
 
     IEnumerable<Coin> CreateCoins(ulong amount);
@@ -38,6 +42,8 @@ public interface IItemFactory : IFactory
         IItemType itemType,
         Location.Structs.Location location,
         IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
+        IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
         IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
+        IDictionary<string, IConvertible> itemCustomAttributes = null,
         IEnumerable<IItem> children = null);
 }

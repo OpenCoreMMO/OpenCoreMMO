@@ -69,7 +69,7 @@ public class DealTransaction(IItemFactory itemFactory, ICoinTransaction coinTran
 
     private void AddItems(IPlayer player, INpc seller, SaleContract saleContract)
     {
-        var item = itemFactory.Create(saleContract.TypeId, Location.Inventory(Slot.Backpack), null);
+        var item = itemFactory.Create(saleContract.TypeId, Location.Inventory(Slot.Backpack), null, null);
 
         if (item is ICumulative cumulative)
         {
@@ -82,7 +82,7 @@ public class DealTransaction(IItemFactory itemFactory, ICoinTransaction coinTran
             items[0] = item;
 
             for (var i = 1; i < saleContract.Amount; i++)
-                items[i] = itemFactory.Create(saleContract.TypeId, Location.Inventory(Slot.Backpack), null);
+                items[i] = itemFactory.Create(saleContract.TypeId, Location.Inventory(Slot.Backpack), null, null);
 
             player.ReceivePurchasedItems(seller, saleContract, items);
         }
@@ -94,7 +94,7 @@ public class DealTransaction(IItemFactory itemFactory, ICoinTransaction coinTran
 
         foreach (var coinToAdd in coinsToAdd)
         {
-            var createdCoin = itemFactory.Create(coinToAdd.Item1, Location.Inventory(Slot.Backpack), null);
+            var createdCoin = itemFactory.Create(coinToAdd.Item1, Location.Inventory(Slot.Backpack), null, null);
             if (createdCoin is not Coin newCoin) continue;
             newCoin.Amount = coinToAdd.Item2;
 
