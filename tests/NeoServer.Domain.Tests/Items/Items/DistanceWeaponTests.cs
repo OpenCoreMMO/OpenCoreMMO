@@ -15,7 +15,7 @@ public class DistanceWeaponTests
     {
         var sut = ItemTestData.CreateDistanceWeapon(1, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
         {
-        });
+        })
 
         //assert
         sut.InspectionText.Should().BeEmpty();
