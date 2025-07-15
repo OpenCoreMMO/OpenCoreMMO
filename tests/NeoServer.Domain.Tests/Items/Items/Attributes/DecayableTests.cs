@@ -30,9 +30,9 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
 
-        var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: new (ItemTypeAttribute, IConvertible)[]
+        var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
         {
-        });
+        })
         var decayableItem = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Duration, 60),
@@ -48,9 +48,9 @@ public class DecayableTests : IAsyncLifetime
     public void Expired_ElapsedLessThanDuration_ReturnsFalse()
     {
         //arrange
-        var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: new (ItemTypeAttribute, IConvertible)[]
+        var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
         {
-        });
+        })
         var decayableItem = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Duration, 60),
@@ -70,9 +70,9 @@ public class DecayableTests : IAsyncLifetime
     public void Expired_ElapsedGreaterThanDuration_ReturnsTrue()
     {
         //arrange
-        var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: new (ItemTypeAttribute, IConvertible)[]
+        var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
         {
-        });
+        })
         var decayableItem = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Duration, 2),
@@ -92,9 +92,9 @@ public class DecayableTests : IAsyncLifetime
     public void StartedToDecay_CalledStart_ReturnsTrue()
     {
         //arrange
-        var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: new (ItemTypeAttribute, IConvertible)[]
+        var item = ItemTestData.CreateDefenseEquipmentItem(2, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
         {
-        });
+        })
         var decayableItem = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Duration, 2),

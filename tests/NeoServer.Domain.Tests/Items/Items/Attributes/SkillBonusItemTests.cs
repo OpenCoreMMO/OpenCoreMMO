@@ -176,9 +176,9 @@ public class SkillBonusItemTests
     public void ToString_NoAttribute_ReturnsEmpty()
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
         {
-        });
+        })
 
         //act
         var actual = new SkillBonus(sut).ToString();

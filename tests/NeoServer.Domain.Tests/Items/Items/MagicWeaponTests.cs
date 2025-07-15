@@ -12,9 +12,9 @@ public class MagicWeaponTests
     [Fact]
     public void InspectionText_NoAttributeFound_ReturnsText()
     {
-        var sut = ItemTestData.CreateMagicWeapon(1, attributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateMagicWeapon(1, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
         {
-        });
+        })
 
         //assert
         sut.InspectionText.Should().BeEmpty();
