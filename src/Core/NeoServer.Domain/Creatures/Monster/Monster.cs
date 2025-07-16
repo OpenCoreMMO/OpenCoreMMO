@@ -416,9 +416,6 @@ public class Monster : WalkableMonster, IMonster
 
     protected void ChangeAttackTarget(ICreature creature)
     {
-        if (Equals(CurrentTarget, creature))
-            return;
-
         Follow(creature);
         SetAttackTarget(creature);
         UpdateLastTargetChance();
