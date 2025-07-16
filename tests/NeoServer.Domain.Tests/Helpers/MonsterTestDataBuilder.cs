@@ -46,8 +46,7 @@ public static class MonsterTestDataBuilder
             ]
         };
 
-        monsterType.Flags.AddOrUpdate(CreatureFlagAttribute.Hostile, isHostile ? (ushort)1 : (ushort)0);
-
+        monsterType.Flags[CreatureFlagAttribute.Hostile] = (ushort)(isHostile ? 1 : 0);
         return new Monster(monsterType, mapTool, spawnPoint);
     }
 
