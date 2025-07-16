@@ -235,7 +235,12 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public virtual Result Attack(ICombatActor enemy)
     {
-        var canAttackResult = AttackValidation.CanAttack(this, enemy);
+        var target = enemy;
+
+        if (enemy is IPlayer playerEnemy && playerEnemy.Summons.Count > 0)
+            target = playerEnemy.Summons[0];
+
+        var canAttackResult = AttackValidation.CanAttack(this, target);
         if (canAttackResult.Failed)
         {
             StopAttack();
@@ -244,15 +249,15 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         if (!Cooldowns.Expired(CooldownType.WeaponAttack)) return Result.Fail(InvalidOperation.CannotAttackThatFast);
 
-        SetAttackTarget(enemy);
+        SetAttackTarget(target);
 
-        if (MapTool.SightClearChecker?.Invoke(Location, enemy.Location, true) == false)
+        if (MapTool.SightClearChecker?.Invoke(Location, target.Location, true) == false)
             return Result.Fail(InvalidOperation.CreatureIsNotReachable);
 
-        var attackResult = OnAttack(enemy, out var combat);
+        var attackResult = OnAttack(target, out var combat);
         if (attackResult.Failed) return attackResult;
 
-        OnAttackEnemy?.Invoke(this, enemy, combat);
+        OnAttackEnemy?.Invoke(this, target, combat);
 
         Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
 
@@ -295,13 +300,21 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public virtual Result SetAttackTarget(ICreature target)
     {
-        if (target is not ICombatActor enemy) return Result.NotPossible;
-        if (target?.CreatureId == AutoAttackTargetId) return Result.NotPossible;
+        if (target is not ICombatActor enemy ||
+            target?.CreatureId == AutoAttackTargetId)
+        {
+            StopAttack();
+            StopFollowing();
+            InvokeAttackCanceled();
+            return Result.NotPossible;
+        }
 
         var canAttackResult = AttackValidation.CanAttack(this, enemy);
 
         if (canAttackResult.Failed)
         {
+            StopAttack();
+            StopFollowing();
             InvokeAttackCanceled();
             return canAttackResult;
         }

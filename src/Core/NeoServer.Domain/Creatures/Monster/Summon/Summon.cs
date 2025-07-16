@@ -110,8 +110,13 @@ public class Summon : Monster, ISummon
     private void OnMasterTargetChange(ICombatActor actor, uint oldTargetId, uint newTargetId)
     {
         Targets.Clear();
-        SetAsEnemy(actor.CurrentTarget);
-        ChangeAttackTarget(actor.CurrentTarget);
+
+        if (actor.CurrentTarget is not null && !Equals(actor.CurrentTarget, this))
+        {
+            SetAsEnemy(actor.CurrentTarget);
+            if (!Equals(CurrentTarget, actor.CurrentTarget))
+                ChangeAttackTarget(actor.CurrentTarget);
+        }
     }
 
     private void OnMasterStoppedAttack(ICombatActor actor)

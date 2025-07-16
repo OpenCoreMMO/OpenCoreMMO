@@ -915,9 +915,17 @@ public class Player : CombatActor, IPlayer
         }
 
         var result = base.SetAttackTarget(target);
-        if (result.Failed) return result;
+        if (result.Failed)
+            return result;
 
-        if (target.CreatureId != 0 && ChaseMode == ChaseMode.Follow) Follow(target, PathSearchParams);
+        foreach (var summon in Summons)
+        {
+            if (!Equals(summon.CurrentTarget, target))
+                summon.SetAttackTarget(target);
+        }
+
+        if (target.CreatureId != 0 && ChaseMode == ChaseMode.Follow)
+            Follow(target, PathSearchParams);
 
         return result;
     }

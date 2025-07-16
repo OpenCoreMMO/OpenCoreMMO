@@ -70,7 +70,7 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
                         return Result.Fail(InvalidOperation.NotPermittedInNoPvpZone);
                     //Monster cannot attack another monster or summons monster
                     case IMonster monsterAggressor
-                        when monsterTarget is ISummon { Master: IMonster } || monsterAggressor is not ISummon:
+                        when monsterTarget is IMonster and not ISummon:
                         return Result.Fail(InvalidOperation.YouMayNotAttackThisCreature);
                 }
 
