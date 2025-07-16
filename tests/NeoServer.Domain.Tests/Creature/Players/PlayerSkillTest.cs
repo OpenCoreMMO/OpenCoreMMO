@@ -58,7 +58,7 @@ public class PlayerSkillTest
     {
         //arrange
         var necklace = ItemTestData.CreateDefenseEquipmentItem(100, "necklace",
-            attributes: new (ItemTypeAttribute, IConvertible)[]
+            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.SkillAxe, 5)
             });

@@ -39,7 +39,7 @@ internal static class InventoryAttackCalculation
 
         if (weapon is IHasAttack hasAttack) attack += hasAttack.WeaponAttack.AttackPower;
 
-        if (weapon is IHasAttackBonus hasAttackBonus) attack += hasAttackBonus.AttackBonus;
+        if (weapon is IHasAttackBonus) attack += weapon.AttackPower;
 
         if (weapon is INeedsAmmo needsAmmo && needsAmmo.CanShootAmmunition(inventory.Ammo))
             attack += inventory.Ammo.WeaponAttack.AttackPower;

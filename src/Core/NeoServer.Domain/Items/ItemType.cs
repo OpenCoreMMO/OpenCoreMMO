@@ -11,6 +11,58 @@ namespace NeoServer.Domain.Items;
 
 public class ItemType : IItemType
 {
+    /// <summary>
+    ///     Server Id
+    /// </summary>
+    public ushort ServerId { get; private set; }
+
+    public ushort ClientId { get; private set; }
+
+    /// <summary>
+    ///     ItemType's name
+    /// </summary>
+    public string Name => Attributes.GetAttribute(ItemTypeAttribute.Name);
+    public string Article => Attributes.GetAttribute(ItemTypeAttribute.Article);
+    public string Plural => Attributes.GetAttribute(ItemTypeAttribute.PluralName);
+    public float Weight => Attributes.GetAttribute<float>(ItemTypeAttribute.Weight);
+    public ushort AttackPower => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Attack);
+    public ushort Defense => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Defense);
+    public ushort ExtraDefense => Attributes.GetAttribute<ushort>(ItemTypeAttribute.ExtraDefense);
+    public ushort Armor => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Armor);
+    public sbyte ExtraHitChance => Attributes.GetAttribute<sbyte>(ItemTypeAttribute.HitChance);
+    public byte Range => Attributes.GetAttribute<byte>(ItemTypeAttribute.Range);
+
+    public ushort Speed => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Speed);
+
+    public ushort Charges
+        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Charges);
+
+    public ushort Count
+        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Count);
+
+    /// <summary>
+    ///     ItemType's description
+    /// </summary>
+    public string Description => Attributes.GetAttribute(ItemTypeAttribute.Description);
+
+    public string FullName => string.IsNullOrWhiteSpace(Article)
+        ? $"{Name}"
+        : $"{Article} {Name}";
+
+    public bool Locked { get; private set; }
+    public ushort WareId { get; }
+    public LightBlock LightBlock { get; private set; }
+
+    public ISet<ItemFlag> Flags { get; set; }
+
+    public ItemTypeAttributeList Attributes { get; set; }
+    public ItemTypeAttributeList OnUse { get; private set; }
+
+    public ushort TransformTo => Attributes.GetTransformationItem();
+    public ushort DestroyTo => Attributes.GetDestructionItem();
+
+    public ItemGroup Group { get; private set; }
+
     public ItemType()
     {
         ServerId = 0;
@@ -18,45 +70,6 @@ public class ItemType : IItemType
         Attributes = new ItemTypeAttributeList();
         Locked = false;
     }
-
-    public bool Locked { get; private set; }
-    public ushort WareId { get; }
-    public LightBlock LightBlock { get; private set; }
-
-    /// <summary>
-    ///     Server Id
-    /// </summary>
-    public ushort ServerId { get; private set; }
-
-    /// <summary>
-    ///     ItemType's name
-    /// </summary>
-    public string Name => Attributes.GetAttribute(ItemTypeAttribute.Name);
-
-    public string FullName => string.IsNullOrWhiteSpace(Article)
-        ? $"{Name}"
-        : $"{Article} {Name}";
-
-    /// <summary>
-    ///     ItemType's description
-    /// </summary>
-    public string Description => Attributes.GetAttribute(ItemTypeAttribute.Description);
-
-    public ISet<ItemFlag> Flags { get; set; }
-
-    public ItemTypeAttributeList Attributes { get; set; }
-    public ItemTypeAttributeList OnUse { get; private set; }
-
-    public ushort ClientId { get; private set; }
-    public ushort TransformTo => Attributes.GetTransformationItem();
-    public ushort DestroyTo => Attributes.GetDestructionItem();
-
-    public ItemGroup Group { get; private set; }
-
-    public ushort Speed => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Speed);
-    public string Article => Attributes.GetAttribute(ItemTypeAttribute.Article);
-    public string Plural => Attributes.GetAttribute(ItemTypeAttribute.PluralName);
-    public float Weight => Attributes.GetAttribute<float>(ItemTypeAttribute.Weight);
 
     public void SetName(string name)
     {

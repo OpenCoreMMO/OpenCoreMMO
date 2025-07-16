@@ -37,9 +37,6 @@ public enum ItemTypeAttribute : byte
     //ItemParseAttributes
     None = 0,
     StoreItem,
-    Duration,
-    Charges,
-    HitChance,
     Text,
     Name,
     Article,
@@ -49,8 +46,8 @@ public enum ItemTypeAttribute : byte
     RuneSpellName,
     Weight,
     ShowCount,
-    Armor, 
-    Defense, 
+    Armor,
+    Defense,
     ExtraDefense,
     Attack,
     AttackSpeed,
@@ -78,12 +75,12 @@ public enum ItemTypeAttribute : byte
     ExpireTarget,
     TransformEquipTo,
     TransformDequipTo,
-    //Duration, //Duplicated
+    Duration,
     ShowDuration,
-    //Charges, //Duplicated
+    Charges,
     ShowCharges,
     ShowAttributes,
-    //HitChance, //Duplicated
+    HitChance,
     MaxHitChance,
     Invisible,
     Speed,

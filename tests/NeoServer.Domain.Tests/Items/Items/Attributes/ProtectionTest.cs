@@ -17,7 +17,7 @@ public class ProtectionTest
     [Fact]
     public void Player_with_fire_protection_equipment_takes_reduced_fire_damage()
     {
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes:
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes:
         [
             (ItemTypeAttribute.BodyPosition, "body"),
             (ItemTypeAttribute.AbsorbPercentFire, 20)
@@ -40,7 +40,7 @@ public class ProtectionTest
     [Fact]
     public void Player_with_no_fire_protection_equipment_takes_regular_fire_damage()
     {
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes:
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes:
         [
             (ItemTypeAttribute.BodyPosition, "body"),
             (ItemTypeAttribute.AbsorbPercentPoison, 20)
@@ -62,7 +62,7 @@ public class ProtectionTest
     [Fact]
     public void Player_with_100percent_fire_protection_equipment_takes_no_fire_damage()
     {
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes:
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes:
         [
             (ItemTypeAttribute.BodyPosition, "body"),
             (ItemTypeAttribute.AbsorbPercentFire, 100)
@@ -84,7 +84,7 @@ public class ProtectionTest
     [Fact]
     public void Player_with_fire_protection_equipment_takes_regular_energy_damage()
     {
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "body", attributes:
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "body", itemTypeAttributes:
         [
             (ItemTypeAttribute.AbsorbPercentFire, 100)
         ], charges: 10);
@@ -104,7 +104,7 @@ public class ProtectionTest
     [Fact]
     public void Player_takes_regular_damage_after_removing_protection_equipment()
     {
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, attributes:
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes:
         [
             (ItemTypeAttribute.BodyPosition, "body"),
             (ItemTypeAttribute.AbsorbPercentFire, 100)
@@ -142,7 +142,7 @@ public class ProtectionTest
         (map[101, 100, 7] as DynamicTile)?.AddCreature(defender);
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 50,
-            attributes:
+            itemTypeAttributes:
             [
                 (ItemTypeAttribute.BodyPosition, "body"),
                 (ItemTypeAttribute.AbsorbPercentEnergy, 10)
@@ -172,7 +172,7 @@ public class ProtectionTest
         (map[101, 100, 7] as DynamicTile)?.AddCreature(defender);
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 50,
-            attributes:
+            itemTypeAttributes:
             [
                 (ItemTypeAttribute.BodyPosition, "body"),
                 (ItemTypeAttribute.AbsorbPercentFire, 100)
@@ -203,7 +203,7 @@ public class ProtectionTest
         (map[101, 100, 7] as DynamicTile)?.AddCreature(defender);
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 0, slot: "body",
-            attributes:
+            itemTypeAttributes:
             [
                 (ItemTypeAttribute.AbsorbPercentEnergy, 100),
                 (ItemTypeAttribute.Duration, 100)
@@ -265,7 +265,7 @@ public class ProtectionTest
 
         var oldHp = defender.HealthPoints;
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1, slot: "body", attributes:
+        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1, slot: "body", itemTypeAttributes:
         [
             (ItemTypeAttribute.AbsorbPercentEnergy, 100),
             (ItemTypeAttribute.Duration, 100)
@@ -295,7 +295,7 @@ public class ProtectionTest
         var attacker = PlayerTestDataBuilder.Build();
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
-            attributes:
+            itemTypeAttributes:
             [
                 (ItemTypeAttribute.AbsorbPercentEnergy, protection)
             ]);
@@ -320,7 +320,7 @@ public class ProtectionTest
         var attacker = PlayerTestDataBuilder.Build();
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
-            attributes:
+            itemTypeAttributes:
             [
                 (ItemTypeAttribute.AbsorbPercentManaDrain, 10)
             ]);
@@ -347,7 +347,7 @@ public class ProtectionTest
         var oldHp = defender.HealthPoints;
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
-            attributes:
+            itemTypeAttributes:
             [
                 (ItemTypeAttribute.AbsorbPercentLifeDrain, 10)
             ]);
@@ -384,7 +384,7 @@ public class ProtectionTest
         var attacker = PlayerTestDataBuilder.Build();
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
-            attributes:
+            itemTypeAttributes:
             [
                 (protectionAttribute, 10)
             ]);
@@ -420,7 +420,7 @@ public class ProtectionTest
         var attacker = PlayerTestDataBuilder.Build();
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
-            attributes:
+            itemTypeAttributes:
             [
                 (protectionAttribute, 10)
             ]);
@@ -456,7 +456,7 @@ public class ProtectionTest
         var attacker = PlayerTestDataBuilder.Build();
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
-            attributes:
+            itemTypeAttributes:
             [
                 (protectionAttribute, 10)
             ]);
@@ -481,7 +481,7 @@ public class ProtectionTest
         var attacker = PlayerTestDataBuilder.Build();
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
-            attributes:
+            itemTypeAttributes:
             [
                 (ItemTypeAttribute.AbsorbPercentAll, 10),
                 (ItemTypeAttribute.AbsorbPercentDeath, 50)
@@ -513,7 +513,7 @@ public class ProtectionTest
         var attacker = PlayerTestDataBuilder.Build();
 
         var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
-            attributes:
+            itemTypeAttributes:
             [
                 (ItemTypeAttribute.AbsorbPercentElements, 10),
                 (ItemTypeAttribute.AbsorbPercentDeath, 50)
@@ -549,7 +549,7 @@ public class ProtectionTest
     {
         //arrange
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10, slot: "body",
-            attributes:
+            itemTypeAttributes:
             [
                 (ItemTypeAttribute.AbsorbPercentEnergy, 10),
                 (ItemTypeAttribute.AbsorbPercentFire, 20),
@@ -575,7 +575,7 @@ public class ProtectionTest
     {
         //arrange
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes:
+            itemTypeAttributes:
             [
                 (ItemTypeAttribute.AbsorbPercentAll, 10)
             ]);
@@ -590,7 +590,7 @@ public class ProtectionTest
     {
         //arrange
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes:
+            itemTypeAttributes:
             [
                 (ItemTypeAttribute.AbsorbPercentElements, 10)
             ]);
@@ -605,7 +605,7 @@ public class ProtectionTest
     {
         //arrange
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10,
-            attributes:
+            itemTypeAttributes:
             [
                 (ItemTypeAttribute.AbsorbPercentElements, 10),
                 (ItemTypeAttribute.AbsorbPercentDeath, 0)
@@ -660,7 +660,7 @@ public class ProtectionTest
     {
         //arrange
         var item = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1,
-            attributes:
+            itemTypeAttributes:
             [
                 (ItemTypeAttribute.AbsorbPercentElements, 10),
                 (ItemTypeAttribute.AbsorbPercentDeath, 0)

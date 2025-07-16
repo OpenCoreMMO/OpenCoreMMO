@@ -11,7 +11,7 @@ public class MagicWeaponTests
     [Fact]
     public void InspectionText_NoAttributeFound_ReturnsText()
     {
-        var sut = ItemTestData.CreateMagicWeapon(1, attributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
+        var sut = ItemTestData.CreateMagicWeapon(1, itemTypeAttributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
 
         //assert
         sut.InspectionText.Should().BeEmpty();
@@ -27,7 +27,7 @@ public class MagicWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation);
-        var sut = ItemTestData.CreateMagicWeapon(1, attributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateMagicWeapon(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.BodyPosition, "body")
         });
@@ -54,7 +54,7 @@ public class MagicWeaponTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = ItemTestData.CreateMagicWeapon(1, attributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateMagicWeapon(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.BodyPosition, "body"),
             (ItemTypeAttribute.MinimumLevel, minLevel)
@@ -73,7 +73,7 @@ public class MagicWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: 1);
-        var sut = ItemTestData.CreateMagicWeapon(1, attributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestData.CreateMagicWeapon(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.BodyPosition, "body")
         });
