@@ -358,20 +358,22 @@ public class Monster : WalkableMonster, IMonster
 
     public bool IsInPerfectPositionToCombat(CombatTarget target)
     {
-        var distance = target.Creature.Location.GetMaxSqmDistance(Location);
-
-        Console.WriteLine($"[DEBUG] Monster {Name}: Distance = {distance}, TargetDistance = {TargetDistance}, HasSight = {target.HasSightClear}");
+        if (HasDistanceAttack && target.HasSightClear && !target.CanReachCreature && target.IsInRange(this))
+            return true;
 
         if (KeepDistance)
         {
-            // Fica parado se já está exatamente na distância ideal
-            return distance == TargetDistance && target.HasSightClear;
+            if (target.Creature.Location.GetMaxSqmDistance(Location) == TargetDistance)
+                return target.CanReachCreature;
+        }
+        else
+        {
+            if (target.Creature.Location.GetMaxSqmDistance(Location) <= TargetDistance)
+                return target.CanReachCreature;
         }
 
-        // Melee: aceita estar até a distância desejada
-        return distance <= TargetDistance && target.HasSightClear;
+        return false;
     }
-
 
     public override bool HasImmunity(Immunity immunity)
     {
