@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Combat;
 using NeoServer.Domain.Combat.Validation;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
@@ -22,68 +21,40 @@ internal static class TargetDetector
         monster.Targets.NearestTarget = null;
         monster.Targets.NearestSightClearTarget = null;
 
-        var targetsToRemove = new List<ICombatActor>();
-        var targetsToAdd = new List<ICombatActor>();
-
         foreach (CombatTarget target in monster.Targets)
         {
             target.ResetFlags();
 
-            var combatTarget = target;
-
-            var creature = target.Creature;
-
-            if (creature is IPlayer player && player.Summons.Count > 0)
+            if (target.Creature.IsDead)
             {
-                creature = player.Summons[0];
-
-                if (monster.CurrentTarget != null && monster.CurrentTarget.CreatureId == creature.CreatureId)
-                    return;
-
-                targetsToRemove.Add(player);
-                targetsToAdd.Add(creature);
-                combatTarget = new CombatTarget(creature);
-            }
-
-            if (creature.IsDead)
-            {
-                targetsToRemove.Add(creature);
+                monster.Targets.RemoveTarget(target.Creature);
                 continue;
             }
 
-            if (mapTool.SightClearChecker.Invoke(monster.Location, creature.Location, true) &&
-                combatTarget.IsInRange(monster))
+            if (mapTool.SightClearChecker.Invoke(monster.Location, target.Creature.Location, true) &&
+                target.IsInRange(monster))
             {
-                combatTarget.SetAsHasSightClear();
+                target.SetAsHasSightClear();
 
-                var offsetSightClear = monster.Location.GetSqmDistance(creature.Location);
+                var offsetSightClear = monster.Location.GetSqmDistance(target.Creature.Location);
 
-                if (offsetSightClear < nearestSightClear)
-                {
-                    nearestSightClear = offsetSightClear;
-                    monster.Targets.NearestSightClearTarget = combatTarget;
-                }
+                if (offsetSightClear >= nearestSightClear) continue;
+                nearestSightClear = offsetSightClear;
+                monster.Targets.NearestSightClearTarget = target;
             }
 
-            var targetIsUnreachable = IsTargetUnreachable(monster, combatTarget, mapTool);
+            var targetIsUnreachable = IsTargetUnreachable(monster, target, mapTool);
             if (targetIsUnreachable.Unreachable) continue;
 
-            combatTarget.SetAsReachable(targetIsUnreachable.Directions);
+            target.SetAsReachable(targetIsUnreachable.Directions);
 
-            var offset = monster.Location.GetSqmDistance(creature.Location);
+            var offset = monster.Location.GetSqmDistance(target.Creature.Location);
 
-            if (offset < nearest)
-            {
-                nearest = offset;
-                monster.Targets.NearestTarget = combatTarget;
-            }
+            if (offset >= nearest) continue;
+
+            nearest = offset;
+            monster.Targets.NearestTarget = target;
         }
-
-        foreach (var target in targetsToAdd)
-            monster.Targets.AddTarget(target);
-
-        foreach (var target in targetsToRemove)
-            monster.Targets.RemoveTarget(target);
     }
 
     private static (bool Unreachable, Direction[] Directions) IsTargetUnreachable(Monster monster, CombatTarget target,
