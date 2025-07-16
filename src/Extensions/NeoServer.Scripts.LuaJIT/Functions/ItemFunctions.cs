@@ -303,7 +303,14 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         else if (Lua.IsString(luaState, 2))
             attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
 
-        Lua.PushBoolean(luaState, item.Attributes.HasAttribute(attribute.ToItemAttribute()));
+        var result = false;
+
+        if (item.Attributes.HasAttribute(attribute.ToItemAttribute()))
+            result = true;
+        else if (item.Metadata.Attributes.HasAttribute(attribute.ToItemTypeAttribute()))
+            result = true;
+
+        Lua.PushBoolean(luaState, result);
 
         return 1;
     }
@@ -326,9 +333,19 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             attribute = EnumExtensions.FromDescription<ItemAttributeType>(GetString(luaState, 2));
 
         if (attribute.IsAttributeInteger())
-            Lua.PushNumber(luaState, item.Attributes.GetAttribute<long>(attribute.ToItemAttribute()));
+        {
+            if (item.Attributes.TryGetAttribute<long>(attribute.ToItemAttribute(), out var value))
+                Lua.PushNumber(luaState, value);
+            else
+                Lua.PushNumber(luaState, item.Metadata.Attributes.GetAttribute<long>(attribute.ToItemTypeAttribute()));
+        }
         else if (attribute.IsAttributeString())
-            Lua.PushString(luaState, item.Attributes.GetAttribute(attribute.ToItemAttribute()));
+        {
+            if (item.Attributes.TryGetAttribute(attribute.ToItemAttribute(), out var value))
+                Lua.PushString(luaState, value);
+            else
+                Lua.PushString(luaState, item.Metadata.Attributes.GetAttribute(attribute.ToItemTypeAttribute()));
+        }
         else
             Lua.PushNil(luaState);
 
@@ -464,7 +481,14 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
                 ? GetString(luaState, 2)
                 : null;
 
-        Lua.PushBoolean(luaState, key != null && item.Attributes.HasCustomAttribute(key));
+        var result = false;
+
+        if (item.Attributes.HasCustomAttribute(key))
+            result = true;
+        else if (item.Metadata.Attributes.HasCustomAttribute(key))
+            result = true;
+
+        Lua.PushBoolean(luaState, result);
         return 1;
     }
 
@@ -485,7 +509,12 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
                 ? GetString(luaState, 2)
                 : null;
 
-        if (key == null || !item.Attributes.TryGetCustomAttribute<object>(key, out var value))
+        object value = null;
+
+        if (!item.Attributes.TryGetCustomAttribute(key, out value))
+            item.Metadata.Attributes.TryGetCustomAttribute(key, out value);
+
+        if (key == null || value == null)
         {
             Lua.PushNil(luaState);
             return 1;
