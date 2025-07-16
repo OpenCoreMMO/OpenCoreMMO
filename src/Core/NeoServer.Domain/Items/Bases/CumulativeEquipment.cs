@@ -109,6 +109,11 @@ public abstract class CumulativeEquipment : Equipment, ICumulative
         Amount = Math.Min((byte)100, amount);
     }
 
+    public void SetAmount(byte amount)
+    {
+        Amount = amount;
+    }
+
     public void Increase(byte amount)
     {
         Amount = (byte)(amount + Amount > 100 ? 100 : amount + Amount);

@@ -134,7 +134,6 @@ public class ItemFactory : IItemFactory
         return createdItem;
     }
 
-
     public IEnumerable<Coin> CreateCoins(ulong amount)
     {
         var coinsToAdd = CoinCalculator.Calculate(CoinTypeStore.Map, amount);

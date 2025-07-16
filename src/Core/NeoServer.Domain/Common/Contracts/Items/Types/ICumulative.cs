@@ -15,6 +15,7 @@ public interface ICumulative : IItem
     ICumulative Clone(byte amount);
     ICumulative Split(byte amount);
     void ClearSubscribers();
+    void SetAmount(byte count);
 
     public static bool IsApplicable(IItemType type)
     {

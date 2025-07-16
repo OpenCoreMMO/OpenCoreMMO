@@ -42,6 +42,9 @@ public static class ItemEntityParser
                 //todo: check this, if need pass Metadata to itemFactory.Create
                 var item = itemFactory.Create((ushort)itemRecord.ServerId, location, null, null, itemRecord.GetAttributes(), itemRecord.GetCustomAttributes());
 
+                if (item is ICumulative cumulativeItem && itemRecord.Amount > 1)
+                    cumulativeItem.Amount = (byte)itemRecord.Amount;
+
                 dequeuedContainer.Container.AddItem(item);
 
                 if (item is not IContainer childContainer)
