@@ -215,9 +215,6 @@ public class Monster : WalkableMonster, IMonster
     {
         if (!Targets.TryGetTarget(AutoAttackTargetId, out var combatTarget)) return;
 
-        if (!HasDistanceAttack && Location.IsNextTo(combatTarget.Creature.Location))
-            return;
-
         if (IsInPerfectPositionToCombat(combatTarget)) return;
 
         MoveAroundEnemy(combatTarget);

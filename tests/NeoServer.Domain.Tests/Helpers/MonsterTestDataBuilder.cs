@@ -16,7 +16,7 @@ namespace NeoServer.Domain.Tests.Helpers;
 
 public static class MonsterTestDataBuilder
 {
-    public static IMonster Build(uint maxHealth = 100, ushort speed = 200, IMap map = null)
+    public static IMonster Build(uint maxHealth = 100, ushort speed = 200, IMap map = null, bool isHostile = false)
     {
         map ??= MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         var pathFinder = new PathFinder(map);
@@ -44,6 +44,9 @@ public static class MonsterTestDataBuilder
                 }
             ]
         };
+
+        monsterType.Flags.Add(CreatureFlagAttribute.Hostile, isHostile ? (ushort)1 : (ushort)0);
+
         return new Monster(monsterType, mapTool, spawnPoint);
     }
 
