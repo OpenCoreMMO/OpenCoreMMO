@@ -2,7 +2,7 @@
 
 internal readonly record struct NeighborsDirection
 {
-    public static sbyte[,] West => new sbyte[,]
+    public static readonly sbyte[,] West = new sbyte[,]
     {
         { 0, 1 },
         { 1, 0 },
@@ -11,7 +11,7 @@ internal readonly record struct NeighborsDirection
         { 1, 1 }
     };
 
-    public static sbyte[,] East => new sbyte[,]
+    public static readonly sbyte[,] East = new sbyte[,]
     {
         { -1, 0 },
         { 0, 1 },
@@ -20,7 +20,7 @@ internal readonly record struct NeighborsDirection
         { -1, 1 }
     };
 
-    public static sbyte[,] North => new sbyte[,]
+    public static readonly sbyte[,] North = new sbyte[,]
     {
         { -1, 0 },
         { 0, 1 },
@@ -29,7 +29,7 @@ internal readonly record struct NeighborsDirection
         { -1, 1 }
     };
 
-    public static sbyte[,] South => new sbyte[,]
+    public static readonly sbyte[,] South = new sbyte[,]
     {
         { -1, 0 },
         { 1, 0 },
@@ -38,7 +38,7 @@ internal readonly record struct NeighborsDirection
         { 1, -1 }
     };
 
-    public static sbyte[,] NorthWest => new sbyte[,]
+    public static readonly sbyte[,] NorthWest = new sbyte[,]
     {
         { 0, 1 },
         { 1, 0 },
@@ -47,7 +47,7 @@ internal readonly record struct NeighborsDirection
         { -1, 1 }
     };
 
-    public static sbyte[,] NorthEast => new sbyte[,]
+    public static readonly sbyte[,] NorthEast = new sbyte[,]
     {
         { -1, 0 },
         { 0, 1 },
@@ -56,7 +56,7 @@ internal readonly record struct NeighborsDirection
         { -1, 1 }
     };
 
-    public static sbyte[,] SouthWest => new sbyte[,]
+    public static readonly sbyte[,] SouthWest = new sbyte[,]
     {
         { 1, 0 },
         { 0, -1 },
@@ -65,7 +65,7 @@ internal readonly record struct NeighborsDirection
         { 1, 1 }
     };
 
-    public static sbyte[,] SouthEast => new sbyte[,]
+    public static readonly sbyte[,] SouthEast = new sbyte[,]
     {
         { -1, 0 },
         { 0, -1 },

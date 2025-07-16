@@ -65,8 +65,12 @@ public class ItemFactory : IItemFactory
 
         var createdItem = new LootContainer(itemType, location, loot);
 
-        if ( killer is ICreature creature)
-            createdItem.Attributes.SetAttribute(ItemAttribute.CorpseOwner, creature.CreatureId);
+        if (killer is ISummon summonKiller)
+            createdItem.Attributes.SetAttribute(
+                ItemAttribute.CorpseOwner, summonKiller.Master.CreatureId);
+        else if (killer is ICreature creatureKiller)
+            createdItem.Attributes.SetAttribute(
+                ItemAttribute.CorpseOwner, creatureKiller.CreatureId);
 
         SubscribeEvents(createdItem);
 
