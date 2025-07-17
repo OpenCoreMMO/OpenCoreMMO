@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
@@ -16,8 +17,12 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
         RegisterMetaMethod(luaState, "Container", "__eq", LuaUserdataCompare<IContainer>);
 
         RegisterMethod(luaState, "Container", "getSize", LuaContainerGetSize);
-
+        RegisterMethod(luaState, "Container", "getCapacity", LuaContainerGetCapacity);
+        RegisterMethod(luaState, "Container", "getEmptySlots", LuaContainerGetEmptySlots);
+       
         RegisterMethod(luaState, "Container", "getItem", LuaContainerGetItem);
+        RegisterMethod(luaState, "Container", "hasItem", LuaContainerHasItem);
+      
     }
 
     private static int LuaContainerCreate(LuaState luaState)
@@ -51,6 +56,44 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
         return 1;
     }
 
+    public static int LuaContainerGetCapacity(LuaState luaState)
+    {
+        // container:getCapacity()
+        var container = GetUserdata<IContainer>(luaState, 1);
+        if (container != null)
+            Lua.PushNumber(luaState, container.Capacity);
+        else
+            Lua.PushNil(luaState);
+
+        return 1;
+    }
+
+    public static int LuaContainerGetEmptySlots(LuaState luaState)
+    {
+        // container:getEmptySlots([recursive = false])
+        var container = GetUserdata<IContainer>(luaState, 1);
+        if (container == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var slots = container.Capacity - container.Items.Count;
+        var recursive = GetBoolean(luaState, 2, false);
+
+        if (recursive)
+        {
+            foreach (var item in container.Items)
+            {
+                if (item is IContainer innerContainer)
+                    slots += innerContainer.Capacity - innerContainer.Items.Count;
+            }
+        }
+
+        Lua.PushNumber(luaState, slots);
+        return 1;
+    }
+
     public static int LuaContainerGetItem(LuaState luaState)
     {
         // container:getItem(index)
@@ -77,4 +120,19 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
 
         return 1;
     }
+
+    public static int LuaContainerHasItem(LuaState luaState)
+    {
+        // container:hasItem(item)
+        var container = GetUserdata<IContainer>(luaState, 1);
+        var item = GetUserdata<IItem>(luaState, 2);
+
+        if (container != null)
+            Lua.PushBoolean(luaState, container.Items.Contains(item));
+        else
+            Lua.PushNil(luaState);
+
+        return 1;
+    }
+
 }
