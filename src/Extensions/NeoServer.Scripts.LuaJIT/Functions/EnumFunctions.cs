@@ -1,9 +1,9 @@
-﻿using System.Text.RegularExpressions;
-using LuaNET;
+﻿using LuaNET;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Scripts.LuaJIT.Attributes;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -11,6 +11,7 @@ using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Scripts.LuaJIT.Models;
 using NeoServer.Scripts.LuaJIT.Models.Combat;
 using Serilog;
+using System.Text.RegularExpressions;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -24,6 +25,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
 
     public void Init(LuaState luaState)
     {
+        RegisterEnumCustom<Slot>(luaState, true, true, prefix: "CONST_SLOT", ("None", "WHEREEVER"), ("Body", "ARMOR"));
         RegisterEnumCustom<ConditionType>(luaState, true, true);
         RegisterEnumCustom<ConditionParamType>(luaState, true, true);
         RegisterEnumCustom<Direction>(luaState);
@@ -83,14 +85,11 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         LuaState luaState,
         bool upperCase = true,
         bool addSeparationbewteenWords = false,
-        (string, string)? renameFromTo = null,
-        string prefix = null) where T : Enum
+        string prefix = null,
+        params (string, string)[] renameFromTo) where T : Enum
     {
         prefix ??= typeof(T).Name.Replace("Type", "");
         prefix += "_";
-
-        if (renameFromTo.HasValue)
-            prefix = prefix.Replace(renameFromTo.Value.Item1, renameFromTo.Value.Item2);
 
         foreach (var item in Enum.GetValues(typeof(T)))
         {
@@ -98,9 +97,12 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
 
             nameFromEnum = prefix + nameFromEnum;
 
+            if (renameFromTo != null && renameFromTo.Length > 0)
+                foreach (var (from, to) in renameFromTo)
+                    nameFromEnum = nameFromEnum.Replace(from, to);
+
             if (addSeparationbewteenWords)
                 nameFromEnum = Regex.Replace(nameFromEnum, @"(?<=[a-z])(?=[A-Z])", "_");
-
 
             if (upperCase)
                 nameFromEnum = nameFromEnum.ToUpperInvariant();
