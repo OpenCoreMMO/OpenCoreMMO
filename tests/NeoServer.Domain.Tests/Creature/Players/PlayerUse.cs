@@ -22,7 +22,7 @@ public class PlayerUse
 
         var map = MapTestDataBuilder.Build(tile, secondTile);
 
-        var food = ItemTestData.CreateFood(2);
+        var food = ItemTestDataBuilder.CreateFood(2);
 
         tile.AddCreature(player);
         secondTile.AddItem(food);

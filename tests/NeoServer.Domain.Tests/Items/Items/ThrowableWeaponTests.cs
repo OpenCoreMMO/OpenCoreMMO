@@ -21,7 +21,7 @@ public class ThrowableWeaponTests
     public void InspectionText_AttributeFound_ReturnsText(int range, int attack, int defense, int chance,
         string expected)
     {
-        var sut = ItemTestData.CreateThrowableDistanceItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateThrowableDistanceItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Range, range),
             (ItemTypeAttribute.Attack, attack),
@@ -42,7 +42,7 @@ public class ThrowableWeaponTests
     public void InspectionText_HasElementalDamage_ReturnsText(ItemTypeAttribute itemAttribute, int elementalDamage,
         string expected)
     {
-        var sut = ItemTestData.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Attack, 6),
             (ItemTypeAttribute.Defense, 7),
@@ -64,7 +64,7 @@ public class ThrowableWeaponTests
         var tile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
         var enemyTile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(101, 100, 7));
 
-        var spear = (ThrowableWeapon)ItemTestData.CreateThrowableDistanceItem(1,
+        var spear = (ThrowableWeapon)ItemTestDataBuilder.CreateThrowableDistanceItem(1,
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Attack, 6),
@@ -100,7 +100,7 @@ public class ThrowableWeaponTests
         var tile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
         var enemyTile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(104, 100, 7));
 
-        var spear = (ThrowableWeapon)ItemTestData.CreateThrowableDistanceItem(1,
+        var spear = (ThrowableWeapon)ItemTestDataBuilder.CreateThrowableDistanceItem(1,
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Attack, 6),
@@ -131,7 +131,7 @@ public class ThrowableWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation);
-        var sut = ItemTestData.CreateThrowableDistanceItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateThrowableDistanceItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.BodyPosition, "body")
         });
@@ -158,7 +158,7 @@ public class ThrowableWeaponTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = ItemTestData.CreateThrowableDistanceItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateThrowableDistanceItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.BodyPosition, "body"),
             (ItemTypeAttribute.MinimumLevel, minLevel)
@@ -177,7 +177,7 @@ public class ThrowableWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: 1);
-        var sut = ItemTestData.CreateThrowableDistanceItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateThrowableDistanceItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.BodyPosition, "body")
         });

@@ -15,7 +15,7 @@ public class RequirementInspectionTextBuilderTests
     [InlineData("It can only be wielded properly by knights, sorcerers and druids.", "knight", "sorcerer", "druid")]
     public void Add_HasVocations_ReturnText(string expected, params string[] vocations)
     {
-        var item = ItemTestData.CreateDefenseEquipmentItem(1);
+        var item = ItemTestDataBuilder.CreateDefenseEquipmentItem(1);
         item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.VocationNames, vocations);
 
         //act
@@ -32,7 +32,7 @@ public class RequirementInspectionTextBuilderTests
     [InlineData("", 0)]
     public void Add_HasLevel_ReturnText(string expected, int level)
     {
-        var item = ItemTestData.CreateDefenseEquipmentItem(1);
+        var item = ItemTestDataBuilder.CreateDefenseEquipmentItem(1);
         item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.MinimumLevel, level);
 
         //act
@@ -51,7 +51,7 @@ public class RequirementInspectionTextBuilderTests
     [InlineData("", 0)]
     public void Add_HasLevelAndVocations_ReturnText(string expected, int level, params string[] vocations)
     {
-        var item = ItemTestData.CreateDefenseEquipmentItem(1);
+        var item = ItemTestDataBuilder.CreateDefenseEquipmentItem(1);
         item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.MinimumLevel, level);
         item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.VocationNames, vocations);
 
@@ -65,7 +65,7 @@ public class RequirementInspectionTextBuilderTests
     [Fact]
     public void Add_HasNoRequirement_ReturnEmpty()
     {
-        var item = ItemTestData.CreateCoin(1, 10, 1);
+        var item = ItemTestDataBuilder.CreateCoin(1, 10, 1);
         //act
         var actual = RequirementInspectionTextBuilder.Build(item);
 
@@ -81,7 +81,7 @@ public class RequirementInspectionTextBuilderTests
     [InlineData("", 0)]
     public void Build_UsableHasLevelAndVocations_ReturnText(string expected, int level, params string[] vocations)
     {
-        var item = ItemTestData.CreateAttackRune(1);
+        var item = ItemTestDataBuilder.CreateAttackRune(1);
         item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.MinimumLevel, level);
         item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.VocationNames, vocations);
 
@@ -101,7 +101,7 @@ public class RequirementInspectionTextBuilderTests
     [InlineData("", 0)]
     public void Build_ConsumableHasLevelAndVocations_ReturnText(string expected, int level, params string[] vocations)
     {
-        var item = ItemTestData.CreatePot(1);
+        var item = ItemTestDataBuilder.CreatePot(1);
         item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.MinimumLevel, level);
         item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.VocationNames, vocations);
 

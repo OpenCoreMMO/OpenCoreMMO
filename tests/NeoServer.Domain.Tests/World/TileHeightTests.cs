@@ -21,7 +21,7 @@ public class TileHeightTests
         var mockLogger = new Mock<ILogger>();
         var tileFactory = new TileFactory(mockLogger.Object);
 
-        var hasHeightItem = ItemTestData.CreateUnpassableItem(1);
+        var hasHeightItem = ItemTestDataBuilder.CreateUnpassableItem(1);
         hasHeightItem.Metadata.Flags.Add(ItemFlag.HasHeight);
 
         var items = new[]
@@ -32,7 +32,7 @@ public class TileHeightTests
 
         var tile = (DynamicTile)tileFactory.CreateTile(new Coordinate(100, 100, 7), TileFlag.None, items);
 
-        var weapon = ItemTestData.CreateWeaponItem(1);
+        var weapon = ItemTestDataBuilder.CreateWeaponItem(1);
 
         //act
         tile.AddItem(weapon);
@@ -49,7 +49,7 @@ public class TileHeightTests
         var mockLogger = new Mock<ILogger>();
         var tileFactory = new TileFactory(mockLogger.Object);
 
-        var depot = ItemTestData.CreateRegularItem(1);
+        var depot = ItemTestDataBuilder.CreateRegularItem(1);
         depot.Metadata.Flags.Add(ItemFlag.HasHeight);
         depot.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "depot");
 
@@ -61,7 +61,7 @@ public class TileHeightTests
 
         var tile = (DynamicTile)tileFactory.CreateTile(new Coordinate(100, 100, 7), TileFlag.None, items);
 
-        var weapon = ItemTestData.CreateWeaponItem(1);
+        var weapon = ItemTestDataBuilder.CreateWeaponItem(1);
 
         //act
         tile.AddItem(weapon);
@@ -81,9 +81,9 @@ public class TileHeightTests
         var tile1StFloor = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
         var tile2StFloor = MapTestDataBuilder.CreateTile(new Location(101, 100, 6));
 
-        var parcel1 = ItemTestData.CreateRegularItem(1);
-        var parcel2 = ItemTestData.CreateRegularItem(1);
-        var parcel3 = ItemTestData.CreateRegularItem(1);
+        var parcel1 = ItemTestDataBuilder.CreateRegularItem(1);
+        var parcel2 = ItemTestDataBuilder.CreateRegularItem(1);
+        var parcel3 = ItemTestDataBuilder.CreateRegularItem(1);
 
         parcel1.Metadata.Flags.Add(ItemFlag.HasHeight);
         parcel2.Metadata.Flags.Add(ItemFlag.HasHeight);
@@ -125,7 +125,7 @@ public class TileHeightTests
 
         for (var i = 0; i < numberOfParcels; i++)
         {
-            var parcel = ItemTestData.CreateRegularItem(1);
+            var parcel = ItemTestDataBuilder.CreateRegularItem(1);
             parcel.Metadata.Flags.Add(ItemFlag.HasHeight);
             tile1StFloor.AddItem(parcel);
         }
@@ -153,9 +153,9 @@ public class TileHeightTests
         var tile1StFloor = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
         var tile2StFloor = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(101, 100, 6));
 
-        var parcel1 = ItemTestData.CreateRegularItem(1);
-        var parcel2 = ItemTestData.CreateRegularItem(1);
-        var parcel3 = ItemTestData.CreateRegularItem(1);
+        var parcel1 = ItemTestDataBuilder.CreateRegularItem(1);
+        var parcel2 = ItemTestDataBuilder.CreateRegularItem(1);
+        var parcel3 = ItemTestDataBuilder.CreateRegularItem(1);
 
         parcel1.Metadata.Flags.Add(ItemFlag.HasHeight);
         parcel2.Metadata.Flags.Add(ItemFlag.HasHeight);
@@ -198,7 +198,7 @@ public class TileHeightTests
 
         for (var i = 0; i < numberOfParcels; i++)
         {
-            var parcel = ItemTestData.CreateRegularItem(1);
+            var parcel = ItemTestDataBuilder.CreateRegularItem(1);
             parcel.Metadata.Flags.Add(ItemFlag.HasHeight);
             tile1StFloor.AddItem(parcel);
         }

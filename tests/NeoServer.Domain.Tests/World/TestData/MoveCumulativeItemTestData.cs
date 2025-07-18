@@ -16,7 +16,7 @@ public class MoveCumulativeItemTestData : IEnumerable<object[]>
     {
         yield return new object[]
         {
-            new Data(ItemTestData.CreateCumulativeItem(5, 100), 40, new Location(101, 100, 7),
+            new Data(ItemTestDataBuilder.CreateCumulativeItem(5, 100), 40, new Location(101, 100, 7),
                 new List<IItem>(), new List<IItem>())
         };
     }
@@ -55,7 +55,7 @@ public class MoveCumulativeItemTestData : IEnumerable<object[]>
             {
                 var items = new List<IItem>
                 {
-                    ItemTestData.CreateRegularItem(1)
+                    ItemTestDataBuilder.CreateRegularItem(1)
                 };
 
                 if (item.Location == new Location((ushort)x, (ushort)y, 7)) items.Add(item);

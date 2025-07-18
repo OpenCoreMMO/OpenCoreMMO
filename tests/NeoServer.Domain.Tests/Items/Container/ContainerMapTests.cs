@@ -8,12 +8,12 @@ public class ContainerMapTests
     public void Container_map_returns_all_items_and_their_amount()
     {
         //arrange
-        var sut = ItemTestData.CreateContainer(id: 5);
-        var item1 = ItemTestData.CreateWeaponItem(1);
-        var item2 = ItemTestData.CreateAmmo(2, 30);
-        var childContainer = ItemTestData.CreateContainer(id: 6);
-        var item3 = ItemTestData.CreateWeaponItem(1);
-        var item4 = ItemTestData.CreateAmmo(2, 40);
+        var sut = ItemTestDataBuilder.CreateContainer(id: 5);
+        var item1 = ItemTestDataBuilder.CreateWeaponItem(1);
+        var item2 = ItemTestDataBuilder.CreateAmmo(2, 30);
+        var childContainer = ItemTestDataBuilder.CreateContainer(id: 6);
+        var item3 = ItemTestDataBuilder.CreateWeaponItem(1);
+        var item4 = ItemTestDataBuilder.CreateAmmo(2, 40);
 
         sut.AddItem(item1);
         sut.AddItem(item2);

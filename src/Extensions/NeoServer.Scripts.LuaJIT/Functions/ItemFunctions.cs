@@ -7,6 +7,7 @@ using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Extensions;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
@@ -760,7 +761,12 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         var env = GetScriptEnv();
         var uid = env.AddThing(item);
 
-        var result = _itemTransformService.Transform(item, itemId);
+        Result<IItem> result;
+
+        if (item.Owner is IPlayer player)
+            result = _itemTransformService.Transform(player, item, itemId);
+        else
+            result = _itemTransformService.Transform(item, itemId);
 
         if (result.Succeeded && result.Value != item)
         {

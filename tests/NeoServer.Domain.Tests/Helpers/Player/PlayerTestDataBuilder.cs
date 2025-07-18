@@ -147,19 +147,19 @@ public static class PlayerTestDataBuilder
     {
         return new Dictionary<Slot, (IItem Item, ushort Id)>
         {
-            [Slot.Backpack] = (ItemTestData.CreateBackpack(), 1),
-            [Slot.Ammo] = (ItemTestData.CreateAmmo(2, 10), 2),
-            [Slot.Head] = (ItemTestData.CreateBodyEquipmentItem(3, "head"), 3),
-            [Slot.Left] = (ItemTestData.CreateWeaponItem(4, "axe"), 4),
-            [Slot.Body] = (ItemTestData.CreateBodyEquipmentItem(5, "body"), 5),
-            [Slot.Feet] = (ItemTestData.CreateBodyEquipmentItem(6, "feet"), 6),
-            [Slot.Right] = (ItemTestData.CreateBodyEquipmentItem(7, "", "shield"), 7),
+            [Slot.Backpack] = (ItemTestDataBuilder.CreateBackpack(), 1),
+            [Slot.Ammo] = (ItemTestDataBuilder.CreateAmmo(2, 10), 2),
+            [Slot.Head] = (ItemTestDataBuilder.CreateBodyEquipmentItem(3, "head"), 3),
+            [Slot.Left] = (ItemTestDataBuilder.CreateWeaponItem(4, "axe"), 4),
+            [Slot.Body] = (ItemTestDataBuilder.CreateBodyEquipmentItem(5, "body"), 5),
+            [Slot.Feet] = (ItemTestDataBuilder.CreateBodyEquipmentItem(6, "feet"), 6),
+            [Slot.Right] = (ItemTestDataBuilder.CreateBodyEquipmentItem(7, "", "shield"), 7),
             [Slot.Ring] =
-                (ItemTestData.CreateDefenseEquipmentItem(8, "ring"), 8),
+                (ItemTestDataBuilder.CreateDefenseEquipmentItem(8, "ring"), 8),
             [Slot.Necklace] =
-                (ItemTestData.CreateDefenseEquipmentItem(10, "necklace"),
+                (ItemTestDataBuilder.CreateDefenseEquipmentItem(10, "necklace"),
                     10),
-            [Slot.Legs] = (ItemTestData.CreateBodyEquipmentItem(11, "legs"), 11)
+            [Slot.Legs] = (ItemTestDataBuilder.CreateBodyEquipmentItem(11, "legs"), 11)
         };
     }
 }

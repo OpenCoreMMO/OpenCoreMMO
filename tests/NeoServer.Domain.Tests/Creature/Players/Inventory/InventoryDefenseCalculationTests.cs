@@ -12,13 +12,13 @@ public class InventoryDefenseCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateWeaponItem(1,
+        var weapon = ItemTestDataBuilder.CreateWeaponItem(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Defense, 10)
             ]);
 
-        var shield = ItemTestData.CreateDefenseEquipmentItem(1,
+        var shield = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.BodyPosition, "shield"),
@@ -37,14 +37,14 @@ public class InventoryDefenseCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var legs = ItemTestData.CreateDefenseEquipmentItem(1,
+        var legs = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.BodyPosition, "legs"),
                 (ItemTypeAttribute.Armor, 10)
             ]);
 
-        var helmet = ItemTestData.CreateDefenseEquipmentItem(1, 
+        var helmet = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, 
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.BodyPosition, "head"),
@@ -63,7 +63,7 @@ public class InventoryDefenseCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateWeaponItem(1,
+        var weapon = ItemTestDataBuilder.CreateWeaponItem(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Defense, 10)
@@ -73,7 +73,7 @@ public class InventoryDefenseCalculationTests
                 (ItemAttribute.Defense, 20)
             ]);
 
-        var shield = ItemTestData.CreateDefenseEquipmentItem(1,
+        var shield = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.BodyPosition, "shield"),
@@ -96,7 +96,7 @@ public class InventoryDefenseCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var legs = ItemTestData.CreateDefenseEquipmentItem(1,
+        var legs = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.BodyPosition, "legs"),
@@ -107,7 +107,7 @@ public class InventoryDefenseCalculationTests
                 (ItemAttribute.Armor, 20)
             ]);
 
-        var helmet = ItemTestData.CreateDefenseEquipmentItem(1,
+        var helmet = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.BodyPosition, "head"),

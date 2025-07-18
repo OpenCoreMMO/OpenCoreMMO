@@ -29,7 +29,7 @@ public class EquipmentTests : IAsyncLifetime
     [Fact]
     public void DressedIn_Null_DoNotThrow()
     {
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1);
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1);
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.SkillAxe, 5);
         sut.DressedIn(null);
     }
@@ -39,7 +39,7 @@ public class EquipmentTests : IAsyncLifetime
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(skills: PlayerTestDataBuilder.GenerateSkills(10));
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.SkillAxe, 5),
             (ItemTypeAttribute.Duration, 100)
@@ -55,7 +55,7 @@ public class EquipmentTests : IAsyncLifetime
     public void UndressFrom_Null_DoNotThrow()
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.SkillAxe, 5),
             (ItemTypeAttribute.Duration, 100)
@@ -69,7 +69,7 @@ public class EquipmentTests : IAsyncLifetime
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(skills: PlayerTestDataBuilder.GenerateSkills(10));
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.SkillAxe, 5),
             (ItemTypeAttribute.Duration, 100)
@@ -90,7 +90,7 @@ public class EquipmentTests : IAsyncLifetime
     public void NoCharges_10Charges_ReturnsFalse()
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 10);
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, charges: 10);
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.AbsorbPercentEnergy, 10);
 
         //assert
@@ -101,7 +101,7 @@ public class EquipmentTests : IAsyncLifetime
     public void NoCharges_0Charges_ReturnsTrue()
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1);
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, charges: 1);
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.AbsorbPercentEnergy, 10);
 
         //act
@@ -115,7 +115,7 @@ public class EquipmentTests : IAsyncLifetime
     public void NoCharges_NonChargeable_ReturnsFalse()
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 0);
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, charges: 0);
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.AbsorbPercentEnergy, 10);
 
         //assert
@@ -127,7 +127,7 @@ public class EquipmentTests : IAsyncLifetime
     {
         //arrange
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, charges: 1,
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.AbsorbPercentEnergy, 100),
@@ -148,11 +148,11 @@ public class EquipmentTests : IAsyncLifetime
     {
         //arrange
 
-        var transformToItem = ItemTestData.CreateDefenseEquipmentItem(2);
+        var transformToItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(2);
 
-        var itemTypeStore = ItemTestData.GetItemTypeStore(transformToItem.Metadata);
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformToItem.Metadata);
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, charges: 1,
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.AbsorbPercentEnergy, 100),
@@ -173,10 +173,10 @@ public class EquipmentTests : IAsyncLifetime
     [Fact]
     public void TransformOnDequip_NoItemToTransformTo_DoNotTransform()
     {
-        var itemTypeStore = ItemTestData.GetItemTypeStore();
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore();
 
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, charges: 1,
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.AbsorbPercentEnergy, 100),
@@ -196,11 +196,11 @@ public class EquipmentTests : IAsyncLifetime
     public void TransformOnDequip_HasItemToTransformTo_Transform()
     {
         //arrange
-        var transformToItem = ItemTestData.CreateDefenseEquipmentItem(2);
+        var transformToItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(2);
 
-        var itemTypeStore = ItemTestData.GetItemTypeStore(transformToItem.Metadata);
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformToItem.Metadata);
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, charges: 1,
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.AbsorbPercentEnergy, 100),
@@ -223,11 +223,11 @@ public class EquipmentTests : IAsyncLifetime
     {
         //arrange
         var player = PlayerTestDataBuilder.Build();
-        var transformToItem = ItemTestData.CreateDefenseEquipmentItem(2);
+        var transformToItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(2);
 
-        var itemTypeStore = ItemTestData.GetItemTypeStore(transformToItem.Metadata);
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformToItem.Metadata);
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, charges: 1,
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.AbsorbPercentEnergy, 100),
@@ -261,17 +261,17 @@ public class EquipmentTests : IAsyncLifetime
         //arrange
         var player = PlayerTestDataBuilder.Build();
 
-        var transformToItem = ItemTestData.CreateDefenseEquipmentItem(2,
+        var transformToItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(2,
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.TransformDequipTo, 3)
             });
 
-        var transformOnDequipItem = ItemTestData.CreateDefenseEquipmentItem(3);
+        var transformOnDequipItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(3);
 
-        var itemTypeStore = ItemTestData.GetItemTypeStore(transformToItem.Metadata, transformOnDequipItem.Metadata);
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformToItem.Metadata, transformOnDequipItem.Metadata);
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, charges: 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, charges: 1,
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.AbsorbPercentEnergy, 100),
@@ -318,14 +318,14 @@ public class EquipmentTests : IAsyncLifetime
         var player = PlayerTestDataBuilder.Build();
 
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.AbsorbPercentEnergy, 100),
                 (ItemTypeAttribute.Duration, 1)
             });
-        var itemTypeStore = ItemTestData.GetItemTypeStore();
-        ItemTestData.AddItemTypeStore(itemTypeStore, sut.Metadata);
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore();
+        ItemTestDataBuilder.AddItemTypeStore(itemTypeStore, sut.Metadata);
 
         var slotRemoved = Slot.None;
         IItem itemRemoved = null;
@@ -356,7 +356,7 @@ public class EquipmentTests : IAsyncLifetime
         //arrange
         var player = PlayerTestDataBuilder.Build();
 
-        var transformToItem = ItemTestData.CreateDefenseEquipmentItem(2, "ring", 1,
+        var transformToItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(2, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.AbsorbPercentEnergy, 100),
@@ -364,9 +364,9 @@ public class EquipmentTests : IAsyncLifetime
                 (ItemTypeAttribute.Duration, 1800)
             });
 
-        var itemTypeStore = ItemTestData.GetItemTypeStore(transformToItem.Metadata);
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformToItem.Metadata);
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.AbsorbPercentEnergy, 100),
@@ -390,7 +390,7 @@ public class EquipmentTests : IAsyncLifetime
         //arrange
         var player = PlayerTestDataBuilder.Build();
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 1000),
@@ -414,7 +414,7 @@ public class EquipmentTests : IAsyncLifetime
         //arrange
         var player = PlayerTestDataBuilder.Build();
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 1000),
@@ -439,7 +439,7 @@ public class EquipmentTests : IAsyncLifetime
         //arrange
         var player = PlayerTestDataBuilder.Build();
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 1000),
@@ -464,16 +464,16 @@ public class EquipmentTests : IAsyncLifetime
         //arrange
         var player = PlayerTestDataBuilder.Build();
 
-        var transformToItem = ItemTestData.CreateDefenseEquipmentItem(2, "ring", 1,
+        var transformToItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(2, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 100),
                 (ItemTypeAttribute.ShowDuration, false)
             });
 
-        var itemTypeStore = ItemTestData.GetItemTypeStore(transformToItem.Metadata);
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformToItem.Metadata);
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 100),
@@ -500,14 +500,14 @@ public class EquipmentTests : IAsyncLifetime
         //arrange
         var player = PlayerTestDataBuilder.Build();
 
-        var dequipTo = ItemTestData.CreateDefenseEquipmentItem(3,
+        var dequipTo = ItemTestDataBuilder.CreateDefenseEquipmentItem(3,
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.StopDecaying, 1)
             });
-        var itemTypeStore = ItemTestData.GetItemTypeStore(dequipTo.Metadata);
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(dequipTo.Metadata);
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 100),
@@ -533,7 +533,7 @@ public class EquipmentTests : IAsyncLifetime
     {
         //arrange
         var player = PlayerTestDataBuilder.Build();
-        var transformToItem = ItemTestData.CreateDefenseEquipmentItem(2, "ring", 1,
+        var transformToItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(2, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 100),
@@ -541,7 +541,7 @@ public class EquipmentTests : IAsyncLifetime
                 (ItemTypeAttribute.StopDecaying, 0)
             });
 
-        var transformToItemDequip = ItemTestData.CreateDefenseEquipmentItem(3, "ring", 1,
+        var transformToItemDequip = ItemTestDataBuilder.CreateDefenseEquipmentItem(3, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 100),
@@ -549,9 +549,9 @@ public class EquipmentTests : IAsyncLifetime
                 (ItemTypeAttribute.StopDecaying, 0)
             });
 
-        var itemTypeStore = ItemTestData.GetItemTypeStore(transformToItemDequip.Metadata, transformToItem.Metadata);
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformToItemDequip.Metadata, transformToItem.Metadata);
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 100),
@@ -580,12 +580,12 @@ public class EquipmentTests : IAsyncLifetime
         //arrange
         var player = PlayerTestDataBuilder.Build();
 
-        var decaysTo = ItemTestData.CreateDefenseEquipmentItem(3, "ring",
+        var decaysTo = ItemTestDataBuilder.CreateDefenseEquipmentItem(3, "ring",
             itemTypeAttributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
 
-        var itemTypeStore = ItemTestData.GetItemTypeStore(decaysTo.Metadata);
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(decaysTo.Metadata);
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 1),
@@ -612,16 +612,16 @@ public class EquipmentTests : IAsyncLifetime
         //arrange
         var player = PlayerTestDataBuilder.Build();
 
-        var transformOnEquip = ItemTestData.CreateDefenseEquipmentItem(3, "ring",
+        var transformOnEquip = ItemTestDataBuilder.CreateDefenseEquipmentItem(3, "ring",
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 100),
                 (ItemTypeAttribute.ShowDuration, 1),
                 (ItemTypeAttribute.ExpireTarget, 0)
             });
-        var itemTypeStore = ItemTestData.GetItemTypeStore(transformOnEquip.Metadata);
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformOnEquip.Metadata);
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.TransformEquipTo, 3)
@@ -644,11 +644,11 @@ public class EquipmentTests : IAsyncLifetime
 
         var player = PlayerTestDataBuilder.Build();
 
-        var itemTypeStore = ItemTestData.GetItemTypeStore();
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore();
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
         Decayable.OnStarted += decayableItemManager.Add;
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 1),
@@ -673,9 +673,9 @@ public class EquipmentTests : IAsyncLifetime
         var player = PlayerTestDataBuilder.Build();
         var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
 
-        var itemTypeStore = ItemTestData.GetItemTypeStore();
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore();
 
-        var item3Equipped = ItemTestData.CreateDefenseEquipmentItem(600, "ring",
+        var item3Equipped = ItemTestDataBuilder.CreateDefenseEquipmentItem(600, "ring",
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 2),
@@ -684,14 +684,14 @@ public class EquipmentTests : IAsyncLifetime
                 (ItemTypeAttribute.TransformDequipTo, 500)
             });
 
-        var item3 = ItemTestData.CreateDefenseEquipmentItem(500, "ring", 1,
+        var item3 = ItemTestDataBuilder.CreateDefenseEquipmentItem(500, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.TransformEquipTo, 600),
                 (ItemTypeAttribute.StopDecaying, 1),
                 (ItemTypeAttribute.ShowDuration, 1)
             }, null, itemTypeStore.Get);
-        var item2Equipped = ItemTestData.CreateDefenseEquipmentItem(400, "ring",
+        var item2Equipped = ItemTestDataBuilder.CreateDefenseEquipmentItem(400, "ring",
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 2),
@@ -700,7 +700,7 @@ public class EquipmentTests : IAsyncLifetime
                 (ItemTypeAttribute.TransformDequipTo, 300)
             });
 
-        var item2 = ItemTestData.CreateDefenseEquipmentItem(300, "ring", 1,
+        var item2 = ItemTestDataBuilder.CreateDefenseEquipmentItem(300, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.TransformEquipTo, 400),
@@ -708,7 +708,7 @@ public class EquipmentTests : IAsyncLifetime
                 (ItemTypeAttribute.ShowDuration, 1)
             }, null, itemTypeStore.Get);
 
-        var item1Equipped = ItemTestData.CreateDefenseEquipmentItem(200, "ring",
+        var item1Equipped = ItemTestDataBuilder.CreateDefenseEquipmentItem(200, "ring",
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.Duration, 2),
@@ -717,7 +717,7 @@ public class EquipmentTests : IAsyncLifetime
                 (ItemTypeAttribute.TransformDequipTo, 100)
             });
 
-        var item1 = ItemTestData.CreateDefenseEquipmentItem(100, "ring", 1,
+        var item1 = ItemTestDataBuilder.CreateDefenseEquipmentItem(100, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.TransformEquipTo, 200),
@@ -725,7 +725,7 @@ public class EquipmentTests : IAsyncLifetime
                 (ItemTypeAttribute.ShowDuration, 1)
             }, null, itemTypeStore.Get);
 
-        ItemTestData.AddItemTypeStore(itemTypeStore, item1.Metadata, item1Equipped.Metadata, item2.Metadata,
+        ItemTestDataBuilder.AddItemTypeStore(itemTypeStore, item1.Metadata, item1Equipped.Metadata, item2.Metadata,
             item2Equipped.Metadata, item3.Metadata, item3Equipped.Metadata);
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(map, itemTypeStore);
@@ -778,14 +778,14 @@ public class EquipmentTests : IAsyncLifetime
         //arrange
         var player = PlayerTestDataBuilder.Build();
 
-        var transformOnEquip = ItemTestData.CreateDefenseEquipmentItem(3, "ring",
+        var transformOnEquip = ItemTestDataBuilder.CreateDefenseEquipmentItem(3, "ring",
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.SkillAxe, 5)
             });
-        var itemTypeStore = ItemTestData.GetItemTypeStore(transformOnEquip.Metadata);
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformOnEquip.Metadata);
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.TransformEquipTo, 3)
@@ -807,14 +807,14 @@ public class EquipmentTests : IAsyncLifetime
 
         var combatDamage = new CombatDamage(100, DamageType.Death);
 
-        var transformOnEquip = ItemTestData.CreateDefenseEquipmentItem(3, "ring",
+        var transformOnEquip = ItemTestDataBuilder.CreateDefenseEquipmentItem(3, "ring",
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.AbsorbPercentDeath, 5)
             });
-        var itemTypeStore = ItemTestData.GetItemTypeStore(transformOnEquip.Metadata);
+        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformOnEquip.Metadata);
 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 1,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.TransformEquipTo, 3)
@@ -834,8 +834,8 @@ public class EquipmentTests : IAsyncLifetime
     public void Player_swipes_item_undress_it()
     {
         //arrange 
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "body");
-        var backpack = ItemTestData.CreateBackpack();
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "body");
+        var backpack = ItemTestDataBuilder.CreateBackpack();
 
         using var monitor = sut.Monitor();
 
@@ -845,7 +845,7 @@ public class EquipmentTests : IAsyncLifetime
             [Slot.Body] = new(sut, 1)
         });
 
-        var item = ItemTestData.CreateDefenseEquipmentItem(2, "body");
+        var item = ItemTestDataBuilder.CreateDefenseEquipmentItem(2, "body");
         backpack.AddItem(item);
 
         //act
@@ -862,7 +862,7 @@ public class EquipmentTests : IAsyncLifetime
     public void InspectionText_HasCharges_ShowChargesCount()
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, "ring", 2,
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 2,
             new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.ShowCharges, true)
@@ -880,7 +880,7 @@ public class EquipmentTests : IAsyncLifetime
     public void InspectionText_HasAttribute_ReturnText()
     {
         //arrange
-        var sut = ItemTestData.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Attack, 50),
             (ItemTypeAttribute.Defense, 20)
@@ -894,7 +894,7 @@ public class EquipmentTests : IAsyncLifetime
     public void InspectionText_HasAttributesAndSkillBonus_ReturnText()
     {
         //arrange
-        var sut = ItemTestData.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Attack, 50),
             (ItemTypeAttribute.Defense, 20),
@@ -910,7 +910,7 @@ public class EquipmentTests : IAsyncLifetime
     public void InspectionText_HasAttributesAndSkillBonusAndProtection_ReturnText()
     {
         //arrange
-        var sut = ItemTestData.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Attack, 50),
             (ItemTypeAttribute.Defense, 20),
@@ -929,7 +929,7 @@ public class EquipmentTests : IAsyncLifetime
     public void InspectionText_AllAttributesAndDecay_ReturnText()
     {
         //arrange
-        var sut = ItemTestData.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Attack, 50),
             (ItemTypeAttribute.Defense, 20),
@@ -957,7 +957,7 @@ public class EquipmentTests : IAsyncLifetime
     public void InspectionText_AllAttributesAndCharges_ReturnText()
     {
         //arrange
-        var sut = ItemTestData.CreateWeaponItem(1, charges: 10, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateWeaponItem(1, charges: 10, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Attack, 50),
             (ItemTypeAttribute.Defense, 20),
