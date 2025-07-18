@@ -168,7 +168,7 @@ function talkAction.onSay(player, words, param)
 
     local container = player:getSlotItem(CONST_SLOT_BACKPACK)
     if not container then
-        player:sendCancelMessage("You do not have a container in slot 0.")
+        player:sendCancelMessage("You do not have a container in slot CONST_SLOT_BACKPACK.")
         return false
     end
 
