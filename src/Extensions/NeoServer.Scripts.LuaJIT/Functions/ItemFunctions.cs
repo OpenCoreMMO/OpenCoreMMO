@@ -41,6 +41,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         RegisterMetaMethod(luaState, "Item", "__eq", LuaUserdataCompare<IItem>);
 
         RegisterMethod(luaState, "Item", "isItem", LuaItemIsItem);
+        RegisterMethod(luaState, "Item", "isContainer", LuaItemIsContainer);
 
         RegisterMethod(luaState, "Item", "getId", LuaItemGetId);
 
@@ -98,6 +99,15 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         // item:isItem()
         var item = GetUserdata<IItem>(luaState, 1);
         Lua.PushBoolean(luaState, item is not null);
+
+        return 1;
+    }
+
+    public static int LuaItemIsContainer(LuaState luaState)
+    {
+        // item:isContainer()
+        var item = GetUserdata<IItem>(luaState, 1);
+        Lua.PushBoolean(luaState, item is not null && item is IContainer);
 
         return 1;
     }
