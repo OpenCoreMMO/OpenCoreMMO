@@ -76,6 +76,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(luaState, "Player", "setGhostMode", LuaPlayerSetGhostMode);
         RegisterMethod(luaState, "Player", "feed", LuaPlayerFeed);
         RegisterMethod(luaState, "Player", "getLevel", LuaGetLevel);
+        RegisterMethod(luaState, "Player", "getSlotItem", LuaPlayerGetSlotItem); 
     }
 
     private static int LuaGetLevel(LuaState l)
@@ -692,6 +693,37 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         if (player != null && food > 0) player.Feed(food);
 
         PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaPlayerGetSlotItem(LuaState luaState)
+    {
+        // player:getSlotItem(slot)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var slot = GetNumber<Slot>(luaState, 2);
+        var thing = player.Inventory.TryGetItem<IThing>(slot);
+        if (thing == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var item = thing as IItem;
+        if (item != null)
+        {
+            PushUserdata(luaState, item);
+            SetItemMetatable(luaState, -1, item);
+        }
+        else
+        {
+            Lua.PushNil(luaState);
+        }
         return 1;
     }
 }
