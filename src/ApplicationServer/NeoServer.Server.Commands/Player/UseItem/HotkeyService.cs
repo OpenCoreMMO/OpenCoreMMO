@@ -35,7 +35,7 @@ public class HotkeyService
                 return hotKeyItemLocation.Container[hotKeyItemLocation.SlotIndex];
         }
 
-        var foundItem = player.Inventory?.BackpackSlot?.GetFirstItem(clientId); // is not IThing thing) return null;
+        var foundItem = player.Inventory?.BackpackSlot?.GetFirstItemByClientId(clientId); // is not IThing thing) return null;
         if (foundItem?.Item1 is not { } item) return null;
         AddToCache(player.Id, clientId, foundItem.Value.Item2, foundItem.Value.Item3);
         return item;

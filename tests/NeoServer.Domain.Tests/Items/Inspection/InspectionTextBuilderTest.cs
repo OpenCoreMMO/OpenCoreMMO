@@ -16,7 +16,7 @@ public class InspectionTextBuilderTest
         "paladin", "sorcerer", "druid")]
     public void Add_HasVocations_ReturnText(string expected, params string[] vocations)
     {
-        var item = ItemTestData.CreateDefenseEquipmentItem(1);
+        var item = ItemTestDataBuilder.CreateDefenseEquipmentItem(1);
         item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.VocationNames, vocations);
 
         //act

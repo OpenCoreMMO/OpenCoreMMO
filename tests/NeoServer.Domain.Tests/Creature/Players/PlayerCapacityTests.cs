@@ -12,28 +12,28 @@ public class PlayerCapacityTests
         {
             new object[]
             {
-                Slot.Backpack, ItemTestData.CreateBackpack(105, 20, new List<IItem>
+                Slot.Backpack, ItemTestDataBuilder.CreateBackpack(105, 20, new List<IItem>
                 {
-                    ItemTestData.CreateWeaponItem(100, weight: 10),
-                    ItemTestData.CreateWeaponItem(101, weight: 10),
-                    ItemTestData.CreateCumulativeItem(101, weight: 1, amount: 20),
-                    ItemTestData.CreateBackpack(105, 20, new List<IItem>
+                    ItemTestDataBuilder.CreateWeaponItem(100, weight: 10),
+                    ItemTestDataBuilder.CreateWeaponItem(101, weight: 10),
+                    ItemTestDataBuilder.CreateCumulativeItem(101, weight: 1, amount: 20),
+                    ItemTestDataBuilder.CreateBackpack(105, 20, new List<IItem>
                     {
-                        ItemTestData.CreateWeaponItem(101, weight: 10),
-                        ItemTestData.CreateCumulativeItem(101, weight: 1, amount: 10)
+                        ItemTestDataBuilder.CreateWeaponItem(101, weight: 10),
+                        ItemTestDataBuilder.CreateCumulativeItem(101, weight: 1, amount: 10)
                     })
                 })
             },
-            new object[] { Slot.Ammo, ItemTestData.CreateAmmo(100, 100, weight: 1) },
-            new object[] { Slot.Head, ItemTestData.CreateBodyEquipmentItem(100, "head", weight: 100) },
-            new object[] { Slot.Left, ItemTestData.CreateWeaponItem(100, "axe", weight: 100) },
-            new object[] { Slot.Body, ItemTestData.CreateBodyEquipmentItem(100, "body", weight: 100) },
-            new object[] { Slot.Feet, ItemTestData.CreateBodyEquipmentItem(100, "feet", weight: 100) },
-            new object[] { Slot.Right, ItemTestData.CreateBodyEquipmentItem(100, "", "shield", 100) },
-            new object[] { Slot.Ring, ItemTestData.CreateBodyEquipmentItem(100, "ring", weight: 100) },
+            new object[] { Slot.Ammo, ItemTestDataBuilder.CreateAmmo(100, 100, weight: 1) },
+            new object[] { Slot.Head, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "head", weight: 100) },
+            new object[] { Slot.Left, ItemTestDataBuilder.CreateWeaponItem(100, "axe", weight: 100) },
+            new object[] { Slot.Body, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "body", weight: 100) },
+            new object[] { Slot.Feet, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "feet", weight: 100) },
+            new object[] { Slot.Right, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "", "shield", 100) },
+            new object[] { Slot.Ring, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "ring", weight: 100) },
             new object[]
-                { Slot.Left, ItemTestData.CreateWeaponItem(100, weaponType: "sword", twoHanded: true, weight: 100) },
-            new object[] { Slot.Necklace, ItemTestData.CreateBodyEquipmentItem(100, "necklace", weight: 100) }
+                { Slot.Left, ItemTestDataBuilder.CreateWeaponItem(100, weaponType: "sword", twoHanded: true, weight: 100) },
+            new object[] { Slot.Necklace, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "necklace", weight: 100) }
         };
 
     [Theory]
@@ -71,20 +71,20 @@ public class PlayerCapacityTests
         //arrange
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
-        var backpack = ItemTestData.CreateBackpack(weight: 20);
+        var backpack = ItemTestDataBuilder.CreateBackpack(weight: 20);
 
-        var item = ItemTestData.CreateWeaponItem(100, weight: 20);
-        var item2 = ItemTestData.CreateCumulativeItem(101, 20, weight: 1);
-        var item3 = ItemTestData.CreateFood(102, 20, 1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(100, weight: 20);
+        var item2 = ItemTestDataBuilder.CreateCumulativeItem(101, 20, weight: 1);
+        var item3 = ItemTestDataBuilder.CreateFood(102, 20, 1);
 
-        var innerBag = ItemTestData.CreateBackpack(weight: 20);
+        var innerBag = ItemTestDataBuilder.CreateBackpack(weight: 20);
 
-        var item4 = ItemTestData.CreateFood(102, 20, 1);
-        var item5 = ItemTestData.CreateCumulativeItem(101, 20, weight: 1);
-        var item6 = ItemTestData.CreateWeaponItem(100, weight: 20);
+        var item4 = ItemTestDataBuilder.CreateFood(102, 20, 1);
+        var item5 = ItemTestDataBuilder.CreateCumulativeItem(101, 20, weight: 1);
+        var item6 = ItemTestDataBuilder.CreateWeaponItem(100, weight: 20);
 
-        var item7 = ItemTestData.CreateCumulativeItem(103, 20, weight: 1);
-        var item8 = ItemTestData.CreateWeaponItem(100, weight: 20);
+        var item7 = ItemTestDataBuilder.CreateCumulativeItem(103, 20, weight: 1);
+        var item8 = ItemTestDataBuilder.CreateWeaponItem(100, weight: 20);
 
         backpack.AddItem(item);
         backpack.AddItem(item2);
@@ -148,59 +148,59 @@ public class PlayerCapacityTests
     {
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
-        var backpack = ItemTestData.CreateBackpack(weight: 20);
+        var backpack = ItemTestDataBuilder.CreateBackpack(weight: 20);
 
         player.Inventory.AddItem(backpack);
         player.FreeCapacity.Should().Be(980);
 
-        var item = ItemTestData.CreateWeaponItem(100, weight: 20);
+        var item = ItemTestDataBuilder.CreateWeaponItem(100, weight: 20);
         backpack.AddItem(item);
         player.FreeCapacity.Should().Be(960);
 
-        var item2 = ItemTestData.CreateCumulativeItem(101, 10, weight: 1);
+        var item2 = ItemTestDataBuilder.CreateCumulativeItem(101, 10, weight: 1);
         backpack.AddItem(item2);
         player.FreeCapacity.Should().Be(950);
 
-        var item2B = ItemTestData.CreateCumulativeItem(101, 10, weight: 1);
+        var item2B = ItemTestDataBuilder.CreateCumulativeItem(101, 10, weight: 1);
         backpack.AddItem(item2B);
         player.FreeCapacity.Should().Be(940);
 
-        var item3 = ItemTestData.CreateFood(102, 10, 1);
+        var item3 = ItemTestDataBuilder.CreateFood(102, 10, 1);
         backpack.AddItem(item3);
         player.FreeCapacity.Should().Be(930);
 
-        var item3B = ItemTestData.CreateFood(102, 10, 1);
+        var item3B = ItemTestDataBuilder.CreateFood(102, 10, 1);
         backpack.AddItem(item3B);
         player.FreeCapacity.Should().Be(920);
 
-        var innerBag = ItemTestData.CreateBackpack(weight: 20);
-        var item8 = ItemTestData.CreateWeaponItem(100, weight: 20);
+        var innerBag = ItemTestDataBuilder.CreateBackpack(weight: 20);
+        var item8 = ItemTestDataBuilder.CreateWeaponItem(100, weight: 20);
         innerBag.AddItem(item8);
 
         backpack.AddItem(innerBag);
         player.FreeCapacity.Should().Be(880);
 
-        var item4 = ItemTestData.CreateFood(102, 10, 1);
+        var item4 = ItemTestDataBuilder.CreateFood(102, 10, 1);
         innerBag.AddItem(item4);
         player.FreeCapacity.Should().Be(870);
 
-        var item4B = ItemTestData.CreateFood(102, 10, 1);
+        var item4B = ItemTestDataBuilder.CreateFood(102, 10, 1);
         innerBag.AddItem(item4B);
         player.FreeCapacity.Should().Be(860);
 
-        var item5 = ItemTestData.CreateCumulativeItem(101, 10, weight: 1);
+        var item5 = ItemTestDataBuilder.CreateCumulativeItem(101, 10, weight: 1);
         innerBag.AddItem(item5);
         player.FreeCapacity.Should().Be(850);
 
-        var item5B = ItemTestData.CreateCumulativeItem(101, 10, weight: 1);
+        var item5B = ItemTestDataBuilder.CreateCumulativeItem(101, 10, weight: 1);
         innerBag.AddItem(item5B);
         player.FreeCapacity.Should().Be(840);
 
-        var item6 = ItemTestData.CreateWeaponItem(100, weight: 20);
+        var item6 = ItemTestDataBuilder.CreateWeaponItem(100, weight: 20);
         innerBag.AddItem(item6);
         player.FreeCapacity.Should().Be(820);
 
-        var item7 = ItemTestData.CreateCumulativeItem(103, 20, weight: 1);
+        var item7 = ItemTestDataBuilder.CreateCumulativeItem(103, 20, weight: 1);
         innerBag.AddItem(item7);
         player.FreeCapacity.Should().Be(800);
     }

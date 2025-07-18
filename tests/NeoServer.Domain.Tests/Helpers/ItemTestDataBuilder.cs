@@ -20,7 +20,7 @@ using NeoServer.Domain.Items.Items.Weapons;
 
 namespace NeoServer.Domain.Tests.Helpers;
 
-public class ItemTestData
+public class ItemTestDataBuilder
 {
     public static void LoadItemTypeAttributes(IItemType itemType, (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null)
     {

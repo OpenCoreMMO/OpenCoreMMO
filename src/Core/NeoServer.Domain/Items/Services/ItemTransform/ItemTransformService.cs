@@ -32,24 +32,33 @@ public class ItemTransformService : IItemTransformService
 
     public Result<IItem> Transform(IPlayer by, IItem fromItem, ushort toItem)
     {
-        var createdItem = _itemFactory.Create(toItem, fromItem.Location, null, null);
-
         _itemTypeStore.TryGetValue(toItem, out var toItemType);
 
-        var result =
-            ReplaceItemFromGroundOperation.Execute(_map, _staticToDynamicTileService, _itemFactory, fromItem,
-                toItemType);
-        if (!result.IsNotApplicable) return result;
+        Result<IItem> result;
 
-        result = ReplaceItemOnContainerOperation.Execute(by, _itemFactory, fromItem, toItemType);
-        if (!result.IsNotApplicable) return result;
+        switch (fromItem.Location.Type)     
+        {
+            case Common.Location.LocationType.Container:
+                result = ReplaceItemOnContainerOperation.Execute(by, _itemFactory, fromItem, toItemType);
+                if (!result.IsNotApplicable) return result;
+                break;
+            case Common.Location.LocationType.Slot:
+                result = ReplaceItemOnInventoryOperation.Execute(_itemFactory, fromItem, toItemType);
+                if (!result.IsNotApplicable) return result;
+                break;
+            case Common.Location.LocationType.Ground:
+                result =
+                    ReplaceItemFromGroundOperation.Execute(_map, _staticToDynamicTileService, _itemFactory, fromItem,
+                        toItemType);
+                if (!result.IsNotApplicable) return result;
 
-        result = ReplaceItemOnInventoryOperation.Execute(_itemFactory, fromItem, toItemType);
-        if (!result.IsNotApplicable) return result;
-
-        result = ReplaceGroundOperation.Execute(_map, _mapService, fromItem, createdItem);
-        if (!result.IsNotApplicable) return result;
-
+                var createdItem = _itemFactory.Create(toItem, fromItem.Location, null, null);
+                result = ReplaceGroundOperation.Execute(_map, _mapService, fromItem, createdItem);
+                if (!result.IsNotApplicable) return result;
+                break;
+            default:
+                break;
+        }
         return Result<IItem>.Ok(null);
     }
 

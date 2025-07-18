@@ -25,9 +25,9 @@ public class TradeExchangeValidationTests
         var player = PlayerTestDataBuilder.Build(capacity: 100);
         var secondPlayer = PlayerTestDataBuilder.Build();
 
-        var item1 = ItemTestData.CreateWeaponItem(1, weight: 100);
+        var item1 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
 
-        var item2 = ItemTestData.CreateWeaponItem(1, weight: 150);
+        var item2 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 150);
 
         player.Inventory.AddItem(item1, (byte)Slot.Left);
 
@@ -60,10 +60,10 @@ public class TradeExchangeValidationTests
         var player = PlayerTestDataBuilder.Build(capacity: 100);
         var secondPlayer = PlayerTestDataBuilder.Build();
 
-        var item1 = ItemTestData.CreateWeaponItem(1, weight: 100);
+        var item1 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
 
-        var backpack = ItemTestData.CreateBackpack(2);
-        var weapon = ItemTestData.CreateWeaponItem(1, weight: 100);
+        var backpack = ItemTestDataBuilder.CreateBackpack(2);
+        var weapon = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
         backpack.AddItem(weapon);
 
         player.Inventory.AddItem(item1, (byte)Slot.Left);
@@ -98,10 +98,10 @@ public class TradeExchangeValidationTests
         var secondPlayer = PlayerTestDataBuilder.Build();
 
         Enumerable.Range(0, 20).ToList()
-            .ForEach(_ => player.Inventory.BackpackSlot.AddItem(ItemTestData.CreateWeaponItem(1)));
+            .ForEach(_ => player.Inventory.BackpackSlot.AddItem(ItemTestDataBuilder.CreateWeaponItem(1)));
 
-        var item1 = ItemTestData.CreateWeaponItem(1, weight: 100);
-        var item2 = ItemTestData.CreateWeaponItem(1, weight: 100);
+        var item1 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
+        var item2 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(player);
         ((DynamicTile)map[101, 100, 7]).AddCreature(secondPlayer);
@@ -136,8 +136,8 @@ public class TradeExchangeValidationTests
         var player = PlayerTestDataBuilder.Build(capacity: 10000, inventoryMap: inventory);
         var secondPlayer = PlayerTestDataBuilder.Build();
 
-        var item1 = ItemTestData.CreateWeaponItem(1, weight: 100);
-        var item2 = ItemTestData.CreateWeaponItem(1, weight: 100);
+        var item1 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
+        var item2 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(player);
         ((DynamicTile)map[101, 100, 7]).AddCreature(secondPlayer);
@@ -167,15 +167,15 @@ public class TradeExchangeValidationTests
 
         var inventory = InventoryTestDataBuilder.GenerateInventory();
 
-        inventory[Slot.Left] = (ItemTestData.CreateThrowableDistanceItem(1, 50), 1);
+        inventory[Slot.Left] = (ItemTestDataBuilder.CreateThrowableDistanceItem(1, 50), 1);
         var player = PlayerTestDataBuilder.Build(capacity: 10000, inventoryMap: inventory);
         var secondPlayer = PlayerTestDataBuilder.Build();
 
         Enumerable.Range(0, 20).ToList()
-            .ForEach(_ => player.Inventory.BackpackSlot.AddItem(ItemTestData.CreateWeaponItem(1)));
+            .ForEach(_ => player.Inventory.BackpackSlot.AddItem(ItemTestDataBuilder.CreateWeaponItem(1)));
 
-        var item1 = ItemTestData.CreateWeaponItem(1, weight: 100);
-        var item2 = ItemTestData.CreateThrowableDistanceItem(1, 60);
+        var item1 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
+        var item2 = ItemTestDataBuilder.CreateThrowableDistanceItem(1, 60);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(player);
         ((DynamicTile)map[101, 100, 7]).AddCreature(secondPlayer);
@@ -208,7 +208,7 @@ public class TradeExchangeValidationTests
         var player = PlayerTestDataBuilder.Build(capacity: 10000, inventoryMap: inventory);
         var secondPlayer = PlayerTestDataBuilder.Build();
 
-        var item2 = ItemTestData.CreateWeaponItem(1, weight: 100);
+        var item2 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(player);
         ((DynamicTile)map[101, 100, 7]).AddCreature(secondPlayer);
@@ -235,7 +235,7 @@ public class TradeExchangeValidationTests
 
         var tile = (DynamicTile)map[x, player.Location.Y, player.Location.Z];
         tile.AddCreature(secondPlayer);
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         tile.AddItem(item);
 

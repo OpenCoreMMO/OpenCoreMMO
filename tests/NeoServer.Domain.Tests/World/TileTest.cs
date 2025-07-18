@@ -23,12 +23,12 @@ public class RemoveThingTileTestData : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()
     {
-        yield return new object[] { ItemTestData.CreateCumulativeItem(500, 100), 40, 500, 60 };
-        yield return new object[] { ItemTestData.CreateCumulativeItem(500, 50), 49, 500, 1 };
-        yield return new object[] { ItemTestData.CreateCumulativeItem(500, 50), 1, 500, 49 };
-        yield return new object[] { ItemTestData.CreateCumulativeItem(500, 1), 1, 400, 32 };
-        yield return new object[] { ItemTestData.CreateCumulativeItem(500, 100), 100, 400, 32 };
-        yield return new object[] { ItemTestData.CreateCumulativeItem(500, 45), 45, 400, 32 };
+        yield return new object[] { ItemTestDataBuilder.CreateCumulativeItem(500, 100), 40, 500, 60 };
+        yield return new object[] { ItemTestDataBuilder.CreateCumulativeItem(500, 50), 49, 500, 1 };
+        yield return new object[] { ItemTestDataBuilder.CreateCumulativeItem(500, 50), 1, 500, 49 };
+        yield return new object[] { ItemTestDataBuilder.CreateCumulativeItem(500, 1), 1, 400, 32 };
+        yield return new object[] { ItemTestDataBuilder.CreateCumulativeItem(500, 100), 100, 400, 32 };
+        yield return new object[] { ItemTestDataBuilder.CreateCumulativeItem(500, 45), 45, 400, 32 };
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -88,12 +88,12 @@ public class TileTest
     {
         var topItems = new List<IItem>
         {
-            ItemTestData.CreateTopItem(1, 1)
+            ItemTestDataBuilder.CreateTopItem(1, 1)
         };
         var items = new List<IItem>
         {
-            ItemTestData.CreateRegularItem(100),
-            ItemTestData.CreateRegularItem(200)
+            ItemTestDataBuilder.CreateRegularItem(100),
+            ItemTestDataBuilder.CreateRegularItem(200)
         };
         items.AddRange(item);
 
@@ -107,30 +107,30 @@ public class TileTest
     {
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, new List<IItem>
         {
-            ItemTestData.CreateTopItem(2, 1)
+            ItemTestDataBuilder.CreateTopItem(2, 1)
         }.ToArray(), new List<IItem>
         {
-            ItemTestData.CreateRegularItem(5),
-            ItemTestData.CreateRegularItem(6),
-            ItemTestData.CreateRegularItem(6),
-            ItemTestData.CreateCumulativeItem(7, 35),
-            ItemTestData.CreateCumulativeItem(7, 80),
-            ItemTestData.CreateCumulativeItem(8, 3)
+            ItemTestDataBuilder.CreateRegularItem(5),
+            ItemTestDataBuilder.CreateRegularItem(6),
+            ItemTestDataBuilder.CreateRegularItem(6),
+            ItemTestDataBuilder.CreateCumulativeItem(7, 35),
+            ItemTestDataBuilder.CreateCumulativeItem(7, 80),
+            ItemTestDataBuilder.CreateCumulativeItem(8, 3)
         }.ToArray());
 
         var downItemsExpected = new List<IItem>
         {
-            ItemTestData.CreateRegularItem(5),
-            ItemTestData.CreateRegularItem(6),
-            ItemTestData.CreateRegularItem(6),
-            ItemTestData.CreateCumulativeItem(7, 35),
-            ItemTestData.CreateCumulativeItem(7, 80),
-            ItemTestData.CreateCumulativeItem(8, 3)
+            ItemTestDataBuilder.CreateRegularItem(5),
+            ItemTestDataBuilder.CreateRegularItem(6),
+            ItemTestDataBuilder.CreateRegularItem(6),
+            ItemTestDataBuilder.CreateCumulativeItem(7, 35),
+            ItemTestDataBuilder.CreateCumulativeItem(7, 80),
+            ItemTestDataBuilder.CreateCumulativeItem(8, 3)
         };
 
         var top1Expected = new List<IItem>
         {
-            ItemTestData.CreateTopItem(2, 1)
+            ItemTestDataBuilder.CreateTopItem(2, 1)
         };
 
         var item = Assert.Single(tile.TopItems);
@@ -159,7 +159,7 @@ public class TileTest
     [Fact]
     public void RemoveThing_Removes_Item_From_Stack()
     {
-        var item = ItemTestData.CreateMoveableItem(500);
+        var item = ItemTestDataBuilder.CreateMoveableItem(500);
         var sut = CreateTile(item);
 
         sut.RemoveItem(item, 1, 0, out var removedThing);
@@ -175,7 +175,7 @@ public class TileTest
     public void RemoveThing_Removes_CumulativeItem_From_Stack(ICumulative item, byte amountToRemove,
         ushort topItemId, byte remainingAmount)
     {
-        var item2 = ItemTestData.CreateCumulativeItem(400, 32);
+        var item2 = ItemTestDataBuilder.CreateCumulativeItem(400, 32);
         var sut = CreateTile(item2, item);
 
         sut.RemoveItem(item, amountToRemove, 0, out var removedThing);
@@ -187,10 +187,10 @@ public class TileTest
     [Fact]
     public void AddThing_When_Cumulative_On_Top_Join_If_Same_Type()
     {
-        var item = ItemTestData.CreateThrowableDistanceItem(500, 5);
+        var item = ItemTestDataBuilder.CreateThrowableDistanceItem(500, 5);
         var sut = CreateTile(item);
 
-        var item2 = ItemTestData.CreateThrowableDistanceItem(500, 3);
+        var item2 = ItemTestDataBuilder.CreateThrowableDistanceItem(500, 3);
         sut.AddItem(item2);
 
         Assert.Equal(3, sut.DownItems.Count);
@@ -203,10 +203,10 @@ public class TileTest
     [Fact]
     public void AddThing_When_Cumulative_On_Top_Join_If_Same_Type_And_Creates_New_Item_When_Overflows()
     {
-        var item = ItemTestData.CreateThrowableDistanceItem(500, 60);
+        var item = ItemTestDataBuilder.CreateThrowableDistanceItem(500, 60);
         var sut = CreateTile(item);
 
-        var item2 = ItemTestData.CreateThrowableDistanceItem(500, 100);
+        var item2 = ItemTestDataBuilder.CreateThrowableDistanceItem(500, 100);
         sut.AddItem(item2);
 
         Assert.Equal(4, sut.DownItems.Count);
@@ -250,7 +250,7 @@ public class TileTest
 
         var mapService = new MapService(map);
 
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         var hole = new Ground(new ItemType(), new Location(100, 100, 7));
         hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
@@ -294,7 +294,7 @@ public class TileTest
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(102, 100, 7));
 
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         var hole = new Ground(new ItemType(), new Location(100, 100, 7));
         hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
@@ -336,7 +336,7 @@ public class TileTest
 
         var mapService = new MapService(map);
 
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         var hole = new Ground(new ItemType(), new Location(100, 100, 7));
         hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
@@ -382,7 +382,7 @@ public class TileTest
 
         player.SetNewLocation(new Location(102, 100, 7));
 
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         var hole = new Ground(new ItemType(), new Location(100, 100, 7));
         hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
@@ -440,9 +440,9 @@ public class TileTest
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
         var player = PlayerTestDataBuilder.Build();
 
-        var unpassableItem = ItemTestData.CreateUnpassableItem(1);
+        var unpassableItem = ItemTestDataBuilder.CreateUnpassableItem(1);
 
-        var itemToMove = ItemTestData.CreateWeaponItem(2);
+        var itemToMove = ItemTestDataBuilder.CreateWeaponItem(2);
 
         var sourceTile = (IDynamicTile)map[101, 100, 7];
         var destinationTile = (IDynamicTile)map[100, 100, 7];

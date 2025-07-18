@@ -80,7 +80,8 @@ public interface IContainer : IInventoryEquipment, IHasItem
 
     Result<OperationResultList<IItem>> AddItem(IItem item, bool addToAnyChild);
     void RemoveItem(IItem item, byte amount);
-    (IItem ItemFound, IContainer Container, byte SlotIndex) GetFirstItem(ushort clientId);
+    (IItem ItemFound, IContainer Container, byte SlotIndex) GetFirstItemByClientId(ushort clientId);
+    (IItem ItemFound, IContainer Container, byte SlotIndex) GetFirstItemByServerId(ushort serverId);
     void ClosedBy(IPlayer player);
     void Use(IPlayer usedBy, byte openAtIndex);
 

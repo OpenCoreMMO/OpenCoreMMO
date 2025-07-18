@@ -45,7 +45,7 @@ public class PlayerSkillTest
         {
             {
                 Slot.Necklace,
-                (ItemTestData.CreateDefenseEquipmentItem(100, "necklace"), 1)
+                (ItemTestDataBuilder.CreateDefenseEquipmentItem(100, "necklace"), 1)
             }
         });
         var level = player.GetSkillLevel(SkillType.Axe);
@@ -57,7 +57,7 @@ public class PlayerSkillTest
     public void Player_wearing_a_skill_bonus_item_has_skill_increased()
     {
         //arrange
-        var necklace = ItemTestData.CreateDefenseEquipmentItem(100, "necklace",
+        var necklace = ItemTestDataBuilder.CreateDefenseEquipmentItem(100, "necklace",
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
             {
                 (ItemTypeAttribute.SkillAxe, 5)

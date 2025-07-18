@@ -8,24 +8,24 @@ public class ContainerClearTests
     public void Container_clear_removes_all_items_from_it()
     {
         //arrange
-        var bag = ItemTestData.CreateContainer();
-        var item1 = ItemTestData.CreateRegularItem(100);
-        var item2 = ItemTestData.CreateRegularItem(101);
-        var item3 = ItemTestData.CreateCumulativeItem(101, 20);
+        var bag = ItemTestDataBuilder.CreateContainer();
+        var item1 = ItemTestDataBuilder.CreateRegularItem(100);
+        var item2 = ItemTestDataBuilder.CreateRegularItem(101);
+        var item3 = ItemTestDataBuilder.CreateCumulativeItem(101, 20);
         bag.AddItem(item1);
         bag.AddItem(item2);
         bag.AddItem(item3);
 
-        var innerBag = ItemTestData.CreateContainer();
-        var item4 = ItemTestData.CreateRegularItem(103);
-        var item5 = ItemTestData.CreateCumulativeItem(104, 100);
+        var innerBag = ItemTestDataBuilder.CreateContainer();
+        var item4 = ItemTestDataBuilder.CreateRegularItem(103);
+        var item5 = ItemTestDataBuilder.CreateCumulativeItem(104, 100);
         bag.AddItem(innerBag);
         innerBag.AddItem(item4);
         innerBag.AddItem(item5);
 
-        var innerBag2 = ItemTestData.CreateContainer();
-        var item6 = ItemTestData.CreateRegularItem(103);
-        var item7 = ItemTestData.CreateCumulativeItem(104, 15);
+        var innerBag2 = ItemTestDataBuilder.CreateContainer();
+        var item6 = ItemTestDataBuilder.CreateRegularItem(103);
+        var item7 = ItemTestDataBuilder.CreateCumulativeItem(104, 15);
         innerBag.AddItem(innerBag2);
         innerBag2.AddItem(item6);
         innerBag2.AddItem(item7);

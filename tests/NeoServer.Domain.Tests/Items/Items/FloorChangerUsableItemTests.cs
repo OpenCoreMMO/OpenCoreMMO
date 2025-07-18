@@ -19,7 +19,7 @@ public class FloorChangerUsableItemTests
     public void Player_is_sent_to_another_floor_when_uses_a_floor_changer_item()
     {
         //arrange
-        var backpack = ItemTestData.CreateBackpack();
+        var backpack = ItemTestDataBuilder.CreateBackpack();
 
         var floorChangerItemType = new ItemType();
         floorChangerItemType.SetOnUse();
@@ -58,7 +58,7 @@ public class FloorChangerUsableItemTests
     public void Player_is_not_sent_to_another_floor_if_tile_has_no_rope_spot()
     {
         //arrange
-        var backpack = ItemTestData.CreateBackpack();
+        var backpack = ItemTestDataBuilder.CreateBackpack();
 
         var floorChangerItemType = new ItemType();
         floorChangerItemType.SetOnUse();

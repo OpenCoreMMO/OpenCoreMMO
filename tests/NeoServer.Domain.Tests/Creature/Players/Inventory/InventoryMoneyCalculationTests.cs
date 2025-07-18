@@ -12,15 +12,15 @@ public class InventoryMoneyCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var backpack = ItemTestData.CreateBackpack(5);
+        var backpack = ItemTestDataBuilder.CreateBackpack(5);
 
         inventory.AddItem(backpack);
 
-        var platinum = ItemTestData.CreateCoin(1, 50, 100);
-        var gold = ItemTestData.CreateCoin(2, 10, 1);
-        var crystal = ItemTestData.CreateCoin(3, 2, 10_000);
+        var platinum = ItemTestDataBuilder.CreateCoin(1, 50, 100);
+        var gold = ItemTestDataBuilder.CreateCoin(2, 10, 1);
+        var crystal = ItemTestDataBuilder.CreateCoin(3, 2, 10_000);
 
-        var bag = ItemTestData.CreateBackpack(5);
+        var bag = ItemTestDataBuilder.CreateBackpack(5);
 
         bag.AddItem(crystal);
         backpack.AddItem(platinum);

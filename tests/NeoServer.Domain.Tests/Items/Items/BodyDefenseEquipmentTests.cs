@@ -14,7 +14,7 @@ public class BodyDefenseEquipmentTests
     public void InspectionText_Armor_ReturnsText()
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Armor, 5)
         });
@@ -27,7 +27,7 @@ public class BodyDefenseEquipmentTests
     public void InspectionText_Shield_ReturnsText()
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Defense, 50)
         });
@@ -40,7 +40,7 @@ public class BodyDefenseEquipmentTests
     public void Pickupable_ReturnsTrue()
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.Defense, 50)
         });
@@ -70,7 +70,7 @@ public class BodyDefenseEquipmentTests
     public void IsApplicable_ReturnsTrue(string slot)
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.BodyPosition, slot)
         });
@@ -90,7 +90,7 @@ public class BodyDefenseEquipmentTests
     public void IsApplicable_ReturnsFalse(string slot)
     {
         //arrange
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.BodyPosition, slot)
         });
@@ -116,7 +116,7 @@ public class BodyDefenseEquipmentTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.BodyPosition, "body"),
             (ItemTypeAttribute.MinimumLevel, minLevel)
@@ -143,7 +143,7 @@ public class BodyDefenseEquipmentTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.BodyPosition, "body"),
             (ItemTypeAttribute.MinimumLevel, minLevel)
@@ -169,7 +169,7 @@ public class BodyDefenseEquipmentTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.BodyPosition, "body"),
             (ItemTypeAttribute.MinimumLevel, minLevel)
@@ -194,7 +194,7 @@ public class BodyDefenseEquipmentTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, 1)
             });
-        var sut = ItemTestData.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
         {
             (ItemTypeAttribute.BodyPosition, "body")
         });

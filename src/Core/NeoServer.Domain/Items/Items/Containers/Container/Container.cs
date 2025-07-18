@@ -158,9 +158,14 @@ public class Container : BaseItem, IContainer
 
     #region Queries
 
-    public (IItem ItemFound, IContainer Container, byte SlotIndex) GetFirstItem(ushort clientId)
+    public (IItem ItemFound, IContainer Container, byte SlotIndex) GetFirstItemByClientId(ushort clientId)
     {
         return FindFirstItemByClientIdQuery.Find(this, clientId);
+    }
+
+    public (IItem ItemFound, IContainer Container, byte SlotIndex) GetFirstItemByServerId(ushort serverId)
+    {
+        return FindFirstItemByServerIdQuery.Find(this, serverId);
     }
 
     public bool GetContainerAt(byte index, out IContainer container)

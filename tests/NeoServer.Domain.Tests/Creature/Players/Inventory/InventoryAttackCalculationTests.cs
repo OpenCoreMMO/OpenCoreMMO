@@ -10,7 +10,7 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateWeaponItem(1, 
+        var weapon = ItemTestDataBuilder.CreateWeaponItem(1, 
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Attack, 50)
@@ -27,13 +27,13 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateDistanceWeapon(1, 
+        var weapon = ItemTestDataBuilder.CreateDistanceWeapon(1, 
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Attack, 50)
             ]);
 
-        var ammo = ItemTestData.CreateAmmo(1, 50, 
+        var ammo = ItemTestDataBuilder.CreateAmmo(1, 50, 
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Attack, 60)
@@ -56,7 +56,7 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateThrowableDistanceItem(1, 
+        var weapon = ItemTestDataBuilder.CreateThrowableDistanceItem(1, 
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Attack, 50)
@@ -73,7 +73,7 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateDistanceWeapon(1, 
+        var weapon = ItemTestDataBuilder.CreateDistanceWeapon(1, 
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Range, 30)
@@ -90,7 +90,7 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateThrowableDistanceItem(1, 
+        var weapon = ItemTestDataBuilder.CreateThrowableDistanceItem(1, 
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Range, 30)
@@ -107,7 +107,7 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateWeaponItem(1,
+        var weapon = ItemTestDataBuilder.CreateWeaponItem(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Attack, 30)
@@ -124,7 +124,7 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateWeaponItem(1,
+        var weapon = ItemTestDataBuilder.CreateWeaponItem(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Attack, 50)
@@ -141,7 +141,7 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateDistanceWeapon(1,
+        var weapon = ItemTestDataBuilder.CreateDistanceWeapon(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Attack, 50)
@@ -151,7 +151,7 @@ public class InventoryAttackCalculationTests
                 (ItemAttribute.Attack, 100)
             ]);
 
-        var ammo = ItemTestData.CreateAmmo(1, 50,
+        var ammo = ItemTestDataBuilder.CreateAmmo(1, 50,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Attack, 60)
@@ -173,7 +173,7 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateThrowableDistanceItem(1,
+        var weapon = ItemTestDataBuilder.CreateThrowableDistanceItem(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Attack, 50)
@@ -194,7 +194,7 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateDistanceWeapon(1,
+        var weapon = ItemTestDataBuilder.CreateDistanceWeapon(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Range, 30)
@@ -215,7 +215,7 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateThrowableDistanceItem(1,
+        var weapon = ItemTestDataBuilder.CreateThrowableDistanceItem(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Range, 30)
@@ -236,7 +236,7 @@ public class InventoryAttackCalculationTests
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateWeaponItem(1,
+        var weapon = ItemTestDataBuilder.CreateWeaponItem(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.Attack, 30)
