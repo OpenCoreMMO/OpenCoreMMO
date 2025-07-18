@@ -12,6 +12,8 @@ function playerLogin.onLogin(player)
     player:registerEvent("PlayerPrepareDeath")
     player:registerEvent("PlayerTextEdit")
     player:registerEvent("PlayerKill")
+    player:registerEvent("PlayerManaChange")
+    player:registerEvent("PlayerHealthChange")
     -- player:registerEvent("DropLoot")
 
     --player:registerEvent("onthinkExample")
