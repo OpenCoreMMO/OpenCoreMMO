@@ -76,7 +76,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(luaState, "Player", "setGhostMode", LuaPlayerSetGhostMode);
         RegisterMethod(luaState, "Player", "feed", LuaPlayerFeed);
         RegisterMethod(luaState, "Player", "getLevel", LuaGetLevel);
-        RegisterMethod(luaState, "Player", "getSlotItem", LuaPlayerGetSlotItem);
+        RegisterMethod(luaState, "Player", "getSlotItem", LuaPlayerGetSlotItem); 
     }
 
     private static int LuaGetLevel(LuaState l)

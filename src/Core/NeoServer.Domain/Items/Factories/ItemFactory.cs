@@ -117,7 +117,8 @@ public class ItemFactory : IItemFactory
 
     public IItem Create(
         IItemType itemType,
-        Location location, IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
+        Location location,
+        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
         IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
         IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
         IDictionary<string, IConvertible> itemCustomAttributes = null,
