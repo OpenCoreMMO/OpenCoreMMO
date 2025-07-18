@@ -519,12 +519,12 @@ public class Player : CombatActor, IPlayer
         switch (ArmorRating)
         {
             case > 3:
-            {
-                var min = ArmorRating / 2 * (Vocation.Formula?.Armor ?? 1f);
-                var max = (ArmorRating / 2 * 2 - 1) * (Vocation.Formula?.Armor ?? 1f);
-                damage -= (ushort)GameRandom.Random.NextInRange(min, max);
-                break;
-            }
+                {
+                    var min = ArmorRating / 2 * (Vocation.Formula?.Armor ?? 1f);
+                    var max = (ArmorRating / 2 * 2 - 1) * (Vocation.Formula?.Armor ?? 1f);
+                    damage -= (ushort)GameRandom.Random.NextInRange(min, max);
+                    break;
+                }
             case > 0:
                 --damage;
                 break;
@@ -1009,7 +1009,7 @@ public class Player : CombatActor, IPlayer
     {
         SetLogoutBlock();
         if (!combatParameter.UsingWeapon) return;
-        
+
         Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
 
         if (combatResult.TotalDamage > 0)
@@ -1240,8 +1240,6 @@ public class Player : CombatActor, IPlayer
 
     public override CalculatedAttackDamage CalculateAttackDamage()
     {
-        var damage = new CalculatedAttackDamage();
-
         return base.CalculateAttackDamage();
     }
 

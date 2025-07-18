@@ -8,39 +8,43 @@ namespace NeoServer.Domain.Common.Contracts.Items;
 public interface IItemType
 {
     ushort ServerId { get; }
+    ushort ClientId { get; }
 
     string Name { get; }
-    string FullName { get; }
-    string PluralName => Plural ?? $"{Name}s";
+    string Article { get; }
+    string Plural { get; }
+    float Weight { get; }
+    ushort AttackPower { get; }
+    ushort Defense { get; }
+    ushort ExtraDefense { get; }
+    ushort Armor { get; }
+    sbyte ExtraHitChance { get; }
+    byte Range { get; }
+
+    ushort Charges { get; }
+
+    ushort Count { get; }
 
     string Description { get; }
+
+    string FullName { get; }
+    string PluralName => Plural ?? $"{Name}s";
 
     ISet<ItemFlag> Flags { get; }
 
     ItemGroup Group { get; }
 
-    ushort ClientId { get; }
-
     ushort Speed { get; }
-    string Article { get; }
     ItemTypeAttributeList Attributes { get; }
     ShootType ShootType { get; }
     AmmoType AmmoType { get; }
     WeaponType WeaponType { get; }
     Slot BodyPosition { get; }
-    float Weight { get; }
     ushort TransformTo { get; }
     ushort DestroyTo { get; }
-    string Plural { get; }
     ItemTypeAttributeList OnUse { get; }
     DamageType DamageType { get; }
     EffectT EffectT { get; }
-
-    ushort Charges
-        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Charges);
-
-    ushort Count
-        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Count);
 
     void SetName(string value);
     void SetArticle(string article);

@@ -8,20 +8,22 @@ namespace NeoServer.Domain.Tests.Creature.Players.Inventory;
 public class InventoryDefenseCalculationTests
 {
     [Fact]
-    public void Inventory_total_defense_is_the_sum_of_defense_equipment_attribute()
+    public void Inventory_total_defense_is_the_sum_of_defense_equipment()
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var weapon = ItemTestData.CreateWeaponItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.Defense, 10)
-        });
+        var weapon = ItemTestDataBuilder.CreateWeaponItem(1,
+            itemTypeAttributes:
+            [
+                (ItemTypeAttribute.Defense, 10)
+            ]);
 
-        var shield = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.BodyPosition, "shield"),
-            (ItemTypeAttribute.Defense, 40)
-        });
+        var shield = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
+            itemTypeAttributes:
+            [
+                (ItemTypeAttribute.BodyPosition, "shield"),
+                (ItemTypeAttribute.Defense, 40)
+            ]);
 
         inventory.AddItem(weapon);
         inventory.AddItem(shield, (byte)Slot.Right);
@@ -31,26 +33,95 @@ public class InventoryDefenseCalculationTests
     }
 
     [Fact]
-    public void Inventory_total_armor_is_the_sum_of_armor_value_equipment_attribute()
+    public void Inventory_total_armor_is_the_sum_of_armor_value_equipment()
     {
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
-        var legs = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.BodyPosition, "legs"),
-            (ItemTypeAttribute.Armor, 10)
-        });
+        var legs = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
+            itemTypeAttributes:
+            [
+                (ItemTypeAttribute.BodyPosition, "legs"),
+                (ItemTypeAttribute.Armor, 10)
+            ]);
 
-        var helmet = ItemTestData.CreateDefenseEquipmentItem(1, attributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.BodyPosition, "head"),
-            (ItemTypeAttribute.Armor, 40)
-        });
+        var helmet = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, 
+            itemTypeAttributes:
+            [
+                (ItemTypeAttribute.BodyPosition, "head"),
+                (ItemTypeAttribute.Armor, 40)
+            ]);
 
         inventory.AddItem(legs);
         inventory.AddItem(helmet);
 
         //assert
         inventory.TotalArmor.Should().Be(50);
+    }
+
+    [Fact]
+    public void Inventory_total_defense_is_the_sum_of_defense_equipment_with_item_attribute()
+    {
+        //arrange
+        var inventory = InventoryTestDataBuilder.Build();
+        var weapon = ItemTestDataBuilder.CreateWeaponItem(1,
+            itemTypeAttributes:
+            [
+                (ItemTypeAttribute.Defense, 10)
+            ],
+            itemAttributes:
+            [
+                (ItemAttribute.Defense, 20)
+            ]);
+
+        var shield = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
+            itemTypeAttributes:
+            [
+                (ItemTypeAttribute.BodyPosition, "shield"),
+                (ItemTypeAttribute.Defense, 40)
+            ],
+            itemAttributes:
+            [
+                (ItemAttribute.Defense, 80)
+            ]);
+
+        inventory.AddItem(weapon);
+        inventory.AddItem(shield, (byte)Slot.Right);
+
+        //assert
+        inventory.TotalDefense.Should().Be(100);
+    }
+
+    [Fact]
+    public void Inventory_total_armor_is_the_sum_of_armor_value_equipment_with_item_attribute()
+    {
+        //arrange
+        var inventory = InventoryTestDataBuilder.Build();
+        var legs = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
+            itemTypeAttributes:
+            [
+                (ItemTypeAttribute.BodyPosition, "legs"),
+                (ItemTypeAttribute.Armor, 10)
+            ],
+            itemAttributes:
+            [
+                (ItemAttribute.Armor, 20)
+            ]);
+
+        var helmet = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
+            itemTypeAttributes:
+            [
+                (ItemTypeAttribute.BodyPosition, "head"),
+                (ItemTypeAttribute.Armor, 40)
+            ],
+            itemAttributes:
+            [
+                (ItemAttribute.Armor, 80)
+            ]);
+
+        inventory.AddItem(legs);
+        inventory.AddItem(helmet);
+
+        //assert
+        inventory.TotalArmor.Should().Be(100);
     }
 }

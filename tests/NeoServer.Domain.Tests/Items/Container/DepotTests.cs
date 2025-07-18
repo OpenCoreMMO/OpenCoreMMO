@@ -12,7 +12,7 @@ public class DepotTests
         var player1 = PlayerTestDataBuilder.Build();
         var player2 = PlayerTestDataBuilder.Build(2);
 
-        var depot = ItemTestData.CreateDepot();
+        var depot = ItemTestDataBuilder.CreateDepot();
 
         player1.Use(depot, 0);
 
@@ -31,7 +31,7 @@ public class DepotTests
         var player1 = PlayerTestDataBuilder.Build();
         var player2 = PlayerTestDataBuilder.Build(2);
 
-        var depot = ItemTestData.CreateDepot();
+        var depot = ItemTestDataBuilder.CreateDepot();
 
         player1.Use(depot, 0);
 
@@ -58,8 +58,8 @@ public class DepotTests
         var player1 = PlayerTestDataBuilder.Build();
         var player2 = PlayerTestDataBuilder.Build(2);
 
-        var depot = ItemTestData.CreateDepot();
-        var backpack = ItemTestData.CreateBackpack();
+        var depot = ItemTestDataBuilder.CreateDepot();
+        var backpack = ItemTestDataBuilder.CreateBackpack();
         depot.AddItem(backpack);
 
         player1.Use(depot, 0);

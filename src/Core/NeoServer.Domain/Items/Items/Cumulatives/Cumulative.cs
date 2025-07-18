@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Items.Bases;
 
@@ -112,6 +111,11 @@ public class Cumulative : BaseItem, ICumulative
 
         var amount = Convert.ToByte(count);
         Amount = Math.Min((byte)100, amount);
+    }
+
+    public void SetAmount(byte count)
+    {
+        Amount = count;
     }
 
     public void Increase(byte amount)

@@ -10,7 +10,6 @@ public class CreatureEventsSubscriber(
     CreatureOnDeathEventHandler creatureOnDeathEventHandler,
     CreatureOnThinkEventHandler creatureOnThinkEventHandler,
     CreatureOnPrepareDeathEventHandler creatureOnPrepareDeathEventHandler,
-    CreatureOnManaChangeEventHandler creatureOnManaChangeEventHandler,
     PlayerOnLoginEventHandler playerOnLoginEventHandler,
     PlayerOnLogoutEventHandler playerOnLogoutEventHandler,
     PlayerOnAdvanceEventHandler playerOnAdvanceEventHandler,
@@ -31,7 +30,6 @@ public class CreatureEventsSubscriber(
         {
             actor.OnDeath += creatureOnDeathEventHandler.Execute;
             actor.OnBeforeDeath += creatureOnPrepareDeathEventHandler.Execute;
-            actor.OnManaChanged += creatureOnManaChangeEventHandler.Execute;
         }
 
         if (creature is IPlayer player)
@@ -67,7 +65,6 @@ public class CreatureEventsSubscriber(
         {
             actor.OnDeath -= creatureOnDeathEventHandler.Execute;
             actor.OnBeforeDeath -= creatureOnPrepareDeathEventHandler.Execute;
-            actor.OnManaChanged -= creatureOnManaChangeEventHandler.Execute;
         }
 
         if (creature is IPlayer player)

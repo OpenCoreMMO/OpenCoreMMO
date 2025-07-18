@@ -1,3 +1,4 @@
+using System.Runtime.Versioning;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
@@ -21,16 +22,11 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
 
         if (Guard.IsNull(aggressor))
             return Result.NotPossible;
-
+        
         switch (target)
         {
             case IPlayer targetPlayer:
             {
-                if (targetPlayer.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked) && targetPlayer != aggressor)
-                    return Result.Fail(InvalidOperation.YouMayNotAttackThisPlayer);
-
-                if (targetPlayer.Tile.NoPvpZone) return Result.Fail(InvalidOperation.NotPermittedInNoPvpZone);
-
                 switch (aggressor)
                 {
                     //Player cannot attack a player
@@ -70,7 +66,7 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
                         return Result.Fail(InvalidOperation.NotPermittedInNoPvpZone);
                     //Monster cannot attack another monster or summons monster
                     case IMonster monsterAggressor
-                        when monsterTarget is ISummon { Master: IMonster } || monsterAggressor is not ISummon:
+                        when monsterTarget is ISummon { Master: IMonster }:
                         return Result.Fail(InvalidOperation.YouMayNotAttackThisCreature);
                 }
 

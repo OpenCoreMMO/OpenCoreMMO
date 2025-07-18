@@ -596,7 +596,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public event PropagateAttack OnPropagateAttack;
     public event GainExperience OnGainedExperience;
     public event LoseExperience OnLoseExperience;
-    public event ManaChange OnManaChanged;
     public event DropLoot OnDroppedLoot;
 
     #endregion

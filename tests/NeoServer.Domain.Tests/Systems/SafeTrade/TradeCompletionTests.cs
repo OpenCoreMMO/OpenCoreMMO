@@ -23,8 +23,8 @@ public class TradeCompletionTests
         var player = PlayerTestDataBuilder.Build(capacity: 100);
         var secondPlayer = PlayerTestDataBuilder.Build(capacity: 100);
 
-        var item1 = ItemTestData.CreateWeaponItem(1, weight: 100);
-        var item2 = ItemTestData.CreateWeaponItem(1, weight: 100);
+        var item1 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
+        var item2 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(player);
         ((DynamicTile)map[101, 100, 7]).AddCreature(secondPlayer);
@@ -59,8 +59,8 @@ public class TradeCompletionTests
         var player = PlayerTestDataBuilder.Build(capacity: 1000, inventoryMap: inventory);
         var secondPlayer = PlayerTestDataBuilder.Build(capacity: 1000);
 
-        var item1 = ItemTestData.CreateWeaponItem(1, weight: 100);
-        var item2 = ItemTestData.CreateWeaponItem(1, weight: 100);
+        var item1 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
+        var item2 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(player);
         ((DynamicTile)map[101, 100, 7]).AddCreature(secondPlayer);
@@ -127,15 +127,15 @@ public class TradeCompletionTests
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
         var inventory = InventoryTestDataBuilder.GenerateInventory();
-        inventory[Slot.Left] = (ItemTestData.CreateThrowableDistanceItem(1, 50, 1), 1);
+        inventory[Slot.Left] = (ItemTestDataBuilder.CreateThrowableDistanceItem(1, 50, 1), 1);
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000, inventoryMap: inventory);
         var secondPlayer = PlayerTestDataBuilder.Build(capacity: 1000);
 
         player.Inventory.RemoveItem(Slot.Backpack, 1);
 
-        var item1 = ItemTestData.CreateWeaponItem(1, weight: 100);
-        var item2 = ItemTestData.CreateThrowableDistanceItem(1, 50, 1);
+        var item1 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
+        var item2 = ItemTestDataBuilder.CreateThrowableDistanceItem(1, 50, 1);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(player);
         ((DynamicTile)map[101, 100, 7]).AddCreature(secondPlayer);

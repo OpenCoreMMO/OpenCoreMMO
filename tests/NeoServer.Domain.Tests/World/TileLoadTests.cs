@@ -11,7 +11,7 @@ public class TileLoadTests
     public void Food_when_loaded_from_map_will_fire_map_event()
     {
         //arrange
-        var food = ItemTestData.CreateFood(1, 2);
+        var food = ItemTestDataBuilder.CreateFood(1, 2);
 
         IDynamicTile TileFunc()
         {

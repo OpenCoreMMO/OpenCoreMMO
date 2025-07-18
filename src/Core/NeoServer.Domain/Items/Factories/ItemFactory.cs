@@ -65,8 +65,12 @@ public class ItemFactory : IItemFactory
 
         var createdItem = new LootContainer(itemType, location, loot);
 
-        if ( killer is ICreature creature)
-            createdItem.Attributes.SetAttribute(ItemAttribute.CorpseOwner, creature.CreatureId);
+        if (killer is ISummon summonKiller)
+            createdItem.Attributes.SetAttribute(
+                ItemAttribute.CorpseOwner, summonKiller.Master.CreatureId);
+        else if (killer is ICreature creatureKiller)
+            createdItem.Attributes.SetAttribute(
+                ItemAttribute.CorpseOwner, creatureKiller.CreatureId);
 
         SubscribeEvents(createdItem);
 
@@ -113,7 +117,8 @@ public class ItemFactory : IItemFactory
 
     public IItem Create(
         IItemType itemType,
-        Location location, IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
+        Location location,
+        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
         IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
         IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
         IDictionary<string, IConvertible> itemCustomAttributes = null,
@@ -129,7 +134,6 @@ public class ItemFactory : IItemFactory
 
         return createdItem;
     }
-
 
     public IEnumerable<Coin> CreateCoins(ulong amount)
     {
@@ -216,7 +220,7 @@ public class ItemFactory : IItemFactory
                 return instance;
 
         if (DefenseEquipmentFactory?.Create(itemType, location) is { } equipment) return equipment;
-        if (WeaponFactory?.Create(itemType, location, itemTypeAttributes) is { } weapon) return weapon;
+        if (WeaponFactory?.Create(itemType, location, itemTypeAttributes, itemAttributes) is { } weapon) return weapon;
         if (ContainerFactory?.Create(itemType, location, children) is { } container) return container;
         if (RuneFactory?.Create(itemType, location, itemTypeAttributes) is { } rune) return rune;
         if (GroundFactory?.Create(itemType, location) is { } ground) return ground;

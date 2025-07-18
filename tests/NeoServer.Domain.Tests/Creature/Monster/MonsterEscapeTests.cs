@@ -15,7 +15,6 @@ public class MonsterEscapeTests
         var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
 
         var monster = MonsterTestDataBuilder.Build();
-        monster.Metadata.Flags.Add(CreatureFlagAttribute.Hostile, 1);
 
         var enemy = PlayerTestDataBuilder.Build();
         using var monitor = monster.Monitor();

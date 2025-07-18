@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Items.Bases;
@@ -8,15 +7,12 @@ namespace NeoServer.Domain.Items.Bases;
 //todo: code duplicated from cumulative class
 public abstract class CumulativeEquipment : Equipment, ICumulative
 {
-    protected CumulativeEquipment(IItemType type, Location location,
+    protected CumulativeEquipment(
+        IItemType type,
+        Location location,
         IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type, location)
     {
         SetAmount(attributes);
-    }
-
-    protected CumulativeEquipment(IItemType type, Location location, byte amount) : base(type, location)
-    {
-        Amount = Math.Min((byte)100, amount);
     }
 
     public event ItemReduce OnReduced;
@@ -111,6 +107,11 @@ public abstract class CumulativeEquipment : Equipment, ICumulative
 
         var amount = Convert.ToByte(count);
         Amount = Math.Min((byte)100, amount);
+    }
+
+    public void SetAmount(byte amount)
+    {
+        Amount = amount;
     }
 
     public void Increase(byte amount)
