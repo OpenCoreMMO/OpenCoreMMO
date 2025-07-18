@@ -1,7 +1,7 @@
-﻿local event = CreatureEvent("OnManaChange")
+﻿local playerHealthChange = CreatureEvent("PlayerHealthChange")
 
-function event.onManaChange(creature, attacker, primaryDamage, primaryType, secondaryDamage, secondaryType, origin)
-    -- logger.info('event.onManaChange')
+function playerHealthChange.onHealthChange(creature, attacker, primaryDamage, primaryType, secondaryDamage, secondaryType, origin)
+    -- logger.info('playerHealthChange.onHealthChange')
 
     -- logger.info('creature:getName(): ' .. creature:getName())
     -- logger.info('attacker:getName(): ' .. attacker:getName())
@@ -14,4 +14,4 @@ function event.onManaChange(creature, attacker, primaryDamage, primaryType, seco
     return true
 end
 
-event:register()
+playerHealthChange:register()
