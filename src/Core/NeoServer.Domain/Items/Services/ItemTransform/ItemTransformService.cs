@@ -41,13 +41,13 @@ public class ItemTransformService : IItemTransformService
                 toItemType);
         if (!result.IsNotApplicable) return result;
 
+        result = ReplaceItemOnContainerOperation.Execute(by, _itemFactory, fromItem, toItemType);
+        if (!result.IsNotApplicable) return result;
+
         result = ReplaceItemOnInventoryOperation.Execute(_itemFactory, fromItem, toItemType);
         if (!result.IsNotApplicable) return result;
 
         result = ReplaceGroundOperation.Execute(_map, _mapService, fromItem, createdItem);
-        if (!result.IsNotApplicable) return result;
-
-        result = ReplaceItemOnContainerOperation.Execute(by, fromItem, createdItem);
         if (!result.IsNotApplicable) return result;
 
         return Result<IItem>.Ok(null);

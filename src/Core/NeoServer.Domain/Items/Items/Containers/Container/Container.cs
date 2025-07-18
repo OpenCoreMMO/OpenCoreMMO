@@ -240,6 +240,15 @@ public class Container : BaseItem, IContainer
         return new Result<OperationResultList<IItem>>(AddItemOperation.TryAddItem(this, item, position).Reason);
     }
 
+    public bool UpdateItem(IItem item, IItemType newType)
+    {
+        var result = ReplaceItemOperation.Replace(this, item, newType);
+        if (!result) return false;
+
+        InvokeItemUpdatedEvent((byte)item.Location.ContainerSlot, (sbyte)item.Amount);
+        return true;
+    }
+
     #endregion
 
     #region Events
@@ -265,4 +274,16 @@ public class Container : BaseItem, IContainer
     }
 
     #endregion
+}
+
+public static class ReplaceItemOperation
+{
+    public static bool Replace(Container container, IItem fromItem, IItemType toItemType)
+    {
+        if (toItemType is null) return false;
+        if (fromItem.Metadata.Group != toItemType.Group) return false;
+
+        fromItem.UpdateMetadata(toItemType);
+        return true;
+    }
 }

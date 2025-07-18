@@ -88,4 +88,5 @@ public interface IContainer : IInventoryEquipment, IHasItem
 
     void SubscribeToWeightChangeEvent(WeightChange weightChange);
     void UnsubscribeFromWeightChangeEvent(WeightChange weightChange);
+    bool UpdateItem(IItem item, IItemType newType);
 }
