@@ -54,6 +54,18 @@ public readonly struct CombatDamageList
         }
     }
 
+    public CombatDamage Damage
+    {
+        get
+        {
+            foreach (var damage in this)
+                if (damage != null && damage is { IsElementalDamage: false, Damage: > 0 })
+                    return damage;
+
+            return new CombatDamage();
+        }
+    }
+
     public CombatDamage ElementalDamage
     {
         get

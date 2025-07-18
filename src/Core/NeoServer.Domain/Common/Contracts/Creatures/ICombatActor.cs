@@ -60,7 +60,6 @@ public interface ICombatActor : IWalkableCreature
     event ChangeVisibility OnChangedVisibility;
     event PropagateAttack OnPropagateAttack;
     event GainExperience OnGainedExperience;
-    event ManaChange OnManaChanged;
 
     int DefendUsingArmor(int attack);
     Result Attack(ICombatActor enemy, ICombatAttack attack, CombatAttackValue value);

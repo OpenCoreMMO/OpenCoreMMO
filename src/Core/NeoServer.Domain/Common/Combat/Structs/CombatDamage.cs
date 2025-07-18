@@ -23,34 +23,6 @@ public struct CalculatedAttackDamage
 
 public class CombatDamage
 {
-    public CombatDamage()
-    {
-    }
-
-    public CombatDamage(ushort damage, DamageType type)
-    {
-        Damage = damage;
-        Type = type;
-        Effect = EffectT.None;
-        NoEffect = false;
-    }
-
-    public CombatDamage(ushort damage, DamageType type, EffectT effect)
-    {
-        Damage = damage;
-        Type = type;
-        Effect = effect;
-        NoEffect = false;
-    }
-
-    public CombatDamage(ushort damage, DamageType type, bool noEffect)
-    {
-        Damage = damage;
-        Type = type;
-        Effect = EffectT.None;
-        NoEffect = noEffect;
-    }
-
     public bool NoEffect { get; }
 
     /// <summary>
@@ -68,10 +40,47 @@ public class CombatDamage
     /// </summary>
     public DamageType Type { get; }
 
+    /// <summary>
+    ///     Origin of the damage (condition, spell...)
+    /// </summary>
+    public DamageOrigin Origin { get; }
+
     public EffectT Effect { get; set; }
 
     public bool Unjustified { get; set; }
 
+    public CombatDamage()
+    {
+    }
+
+    public CombatDamage(ushort damage, DamageType type, DamageOrigin origin = DamageOrigin.None)
+    {
+        Damage = damage;
+        Type = type;
+        Effect = EffectT.None;
+        NoEffect = false;
+        Origin = origin;
+    }
+
+    public CombatDamage(ushort damage, DamageType type, EffectT effect, DamageOrigin origin = DamageOrigin.None)
+    {
+        Damage = damage;
+        Type = type;
+        Effect = effect;
+        NoEffect = false;
+        Origin = origin;
+    }
+
+    public CombatDamage(ushort damage, DamageType type, bool noEffect, DamageOrigin origin = DamageOrigin.None)
+    {
+        Damage = damage;
+        Type = type;
+        Effect = EffectT.None;
+        NoEffect = noEffect;
+        Origin = origin;
+    }
+
+    
     /// <summary>
     ///     Sets a new damage
     /// </summary>
