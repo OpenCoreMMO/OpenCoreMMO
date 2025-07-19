@@ -1,5 +1,4 @@
 ﻿using LuaNET;
-using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Creatures.Conditions.Enums;
@@ -40,7 +39,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         RegisterEnum<MessageClassesType>(luaState);
         RegisterEnum<NpcsEventType>(luaState);
         RegisterEnumCustom<PlayerFlag>(luaState, false);
-        RegisterEnumCustom<ReloadType>(luaState, true, true, prefix: "RELOAD_TYPE");
+        RegisterEnum<ReloadType>(luaState);
         RegisterEnum<ReturnValueType>(luaState);
         //RegisterEnum<SkillsType>(luaState);
         RegisterEnumCustom<SkillType>(luaState);

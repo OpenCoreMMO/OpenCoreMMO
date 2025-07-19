@@ -12,7 +12,6 @@ public static class LuaJitInjection
     {
         builder.AddSingleton<ILuaStartup, LuaStartup>();
         builder.AddSingleton<IConfigManager, ConfigManager>();
-        builder.AddSingleton<IReloadManager, ReloadManager>();
         builder.AddSingleton<ILuaEnvironment, LuaEnvironment>();
         builder.AddSingleton<IScripts, Scripts>();
         builder.AddSingleton<IActions, Actions>();

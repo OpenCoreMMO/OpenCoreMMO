@@ -6,44 +6,90 @@ using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public class LuaStartup(
-    ILogger logger,
-    ILuaEnvironment luaEnviroment,
-    IConfigManager configManager,
-    IScripts scripts,
-    IActionFunctions actionFunctions,
-    IConfigFunctions configFunctions,
-    IContainerFunctions containerFunctions,
-    ICreatureFunctions creatureFunctions,
-    ICreatureEventFunctions creatureEventFunctions,
-    IDBFunctions dbFunctions,
-    IEnumFunctions enumFunctions,
-    IGameFunctions gameFunctions,
-    IGlobalFunctions globalFunctions,
-    IGlobalEventFunctions globalEventFunctions,
-    IGroupFunctions groupFunctions,
-    IItemFunctions itemFunctions,
-    IItemTypeFunctions itemTypeFunctions,
-    ILoggerFunctions loggerFunctions,
-    IMonsterFunctions monsterFunctions,
-    IMonsterTypeFunctions monsterTypeFunctions,
-    IMoveEventFunctions moveEventFunctions,
-    INpcFunctions npcFunctions,
-    INpcTypeFunctions npcTypeFunctions,
-    IPlayerFunctions playerFunctions,
-    IPositionFunctions positionFunctions,
-    IResultFunctions resultFunctions,
-    ITalkActionFunctions talkActionFunctions,
-    ITeleportFunctions teleportFunctions,
-    ITileFunctions tileFunctions,
-    ServerConfiguration serverConfiguration,
-    IConditionFunctions conditionFunctions,
-    IBankFunctions bankFunctions,
-    ISpellFunctions spellFunctions,
-    ICombatFunctions combatFunctions,
-    IVariantFunctions variantFunctions
-) : ILuaStartup
+public class LuaStartup : ILuaStartup
 {
+    #region Constructors
+
+    public LuaStartup(
+        ILogger logger,
+        ILuaEnvironment luaEnviroment,
+        IConfigManager configManager,
+        IScripts scripts,
+        IActionFunctions actionFunctions,
+        IConfigFunctions configFunctions,
+        IContainerFunctions containerFunctions,
+        ICreatureFunctions creatureFunctions,
+        ICreatureEventFunctions creatureEventFunctions,
+        IDBFunctions dbFunctions,
+        IEnumFunctions enumFunctions,
+        IGameFunctions gameFunctions,
+        IGlobalFunctions globalFunctions,
+        IGlobalEventFunctions globalEventFunctions,
+        IGroupFunctions groupFunctions,
+        IItemFunctions itemFunctions,
+        IItemTypeFunctions itemTypeFunctions,
+        ILoggerFunctions loggerFunctions,
+        IMonsterFunctions monsterFunctions,
+        IMonsterTypeFunctions monsterTypeFunctions,
+        IMoveEventFunctions moveEventFunctions,
+        INpcFunctions npcFunctions,
+        INpcTypeFunctions npcTypeFunctions,
+        IPlayerFunctions playerFunctions,
+        IPositionFunctions positionFunctions,
+        IResultFunctions resultFunctions,
+        ITalkActionFunctions talkActionFunctions,
+        ITeleportFunctions teleportFunctions,
+        ITileFunctions tileFunctions,
+        ServerConfiguration serverConfiguration,
+        IConditionFunctions conditionFunctions,
+        IBankFunctions bankFunctions,
+        ISpellFunctions spellFunctions,
+        ICombatFunctions combatFunctions,
+        IVariantFunctions variantFunctions
+    )
+    {
+        _logger = logger;
+        _luaEnviroment = luaEnviroment;
+        _configManager = configManager;
+        _scripts = scripts;
+
+        _actionFunctions = actionFunctions;
+        _configFunctions = configFunctions;
+        _containerFunctions = containerFunctions;
+        _creatureFunctions = creatureFunctions;
+        _creatureEventFunctions = creatureEventFunctions;
+        _dbFunctions = dbFunctions;
+        _enumFunctions = enumFunctions;
+        _gameFunctions = gameFunctions;
+        _globalFunctions = globalFunctions;
+        _globalEventFunctions = globalEventFunctions;
+        _groupFunctions = groupFunctions;
+        _itemFunctions = itemFunctions;
+        _itemTypeFunctions = itemTypeFunctions;
+        _loggerFunctions = loggerFunctions;
+        _playerFunctions = playerFunctions;
+        _monsterFunctions = monsterFunctions;
+        _monsterTypeFunctions = monsterTypeFunctions;
+        _moveEventFunctions = moveEventFunctions;
+        _npcFunctions = npcFunctions;
+        _npcTypeFunctions = npcTypeFunctions;
+        _positionFunctions = positionFunctions;
+        _resultFunctions = resultFunctions;
+        _talkActionFunctions = talkActionFunctions;
+        _teleportFunctions = teleportFunctions;
+        _tileFunctions = tileFunctions;
+        _spellFunctions = spellFunctions;
+        _combatFunctions = combatFunctions;
+        _combatFunctions = combatFunctions;
+
+        _serverConfiguration = serverConfiguration;
+        _conditionFunctions = conditionFunctions;
+        _bankFunctions = bankFunctions;
+        _variantFunctions = variantFunctions;
+    }
+
+    #endregion
+
     #region Public Methods
 
     public void Start()
@@ -53,59 +99,59 @@ public class LuaStartup(
         if (!string.IsNullOrEmpty(ArgManager.GetInstance().ExePath))
             currentDir = ArgManager.GetInstance().ExePath;
 
-        ModulesLoadHelper(luaEnviroment.InitState(), "luaEnvironment");
+        ModulesLoadHelper(_luaEnviroment.InitState(), "luaEnvironment");
 
-        var luaState = luaEnviroment.GetLuaState();
+        var luaState = _luaEnviroment.GetLuaState();
 
         if (luaState.IsNull)
-            logger.Error("Invalid lua state, cannot load lua Functions");
+            _logger.Error("Invalid lua state, cannot load lua Functions");
 
         Lua.OpenLibs(luaState);
 
-        actionFunctions.Init(luaState);
-        conditionFunctions.Init(luaState);
-        configFunctions.Init(luaState);
-        creatureFunctions.Init(luaState);
-        creatureEventFunctions.Init(luaState);
-        dbFunctions.Init(luaState);
-        enumFunctions.Init(luaState);
-        gameFunctions.Init(luaState);
-        globalFunctions.Init(luaState);
-        globalEventFunctions.Init(luaState);
-        itemFunctions.Init(luaState);
-        itemTypeFunctions.Init(luaState);
-        loggerFunctions.Init(luaState);
-        positionFunctions.Init(luaState);
-        resultFunctions.Init(luaState);
-        talkActionFunctions.Init(luaState);
-        tileFunctions.Init(luaState);
+        _actionFunctions.Init(luaState);
+        _conditionFunctions.Init(luaState);
+        _configFunctions.Init(luaState);
+        _creatureFunctions.Init(luaState);
+        _creatureEventFunctions.Init(luaState);
+        _dbFunctions.Init(luaState);
+        _enumFunctions.Init(luaState);
+        _gameFunctions.Init(luaState);
+        _globalFunctions.Init(luaState);
+        _globalEventFunctions.Init(luaState);
+        _itemFunctions.Init(luaState);
+        _itemTypeFunctions.Init(luaState);
+        _loggerFunctions.Init(luaState);
+        _positionFunctions.Init(luaState);
+        _resultFunctions.Init(luaState);
+        _talkActionFunctions.Init(luaState);
+        _tileFunctions.Init(luaState);
 
-        containerFunctions.Init(luaState);
-        monsterFunctions.Init(luaState);
-        monsterTypeFunctions.Init(luaState);
-        moveEventFunctions.Init(luaState);
-        npcFunctions.Init(luaState);
-        npcTypeFunctions.Init(luaState);
-        playerFunctions.Init(luaState);
-        teleportFunctions.Init(luaState);
-        groupFunctions.Init(luaState);
-        spellFunctions.Init(luaState);
-        combatFunctions.Init(luaState);
-        bankFunctions.Init(luaState);
-        variantFunctions.Init(luaState);
+        _containerFunctions.Init(luaState);
+        _monsterFunctions.Init(luaState);
+        _monsterTypeFunctions.Init(luaState);
+        _moveEventFunctions.Init(luaState);
+        _npcFunctions.Init(luaState);
+        _npcTypeFunctions.Init(luaState);
+        _playerFunctions.Init(luaState);
+        _teleportFunctions.Init(luaState);
+        _groupFunctions.Init(luaState);
+        _spellFunctions.Init(luaState);
+        _combatFunctions.Init(luaState);
+        _bankFunctions.Init(luaState);
+        _variantFunctions.Init(luaState);
 
-        ModulesLoadHelper(configManager.Load($"{currentDir}/config.lua"), "config.lua");
+        ModulesLoadHelper(_configManager.Load($"{currentDir}/config.lua"), "config.lua");
 
-        ModulesLoadHelper(luaEnviroment.LoadFile($"{serverConfiguration.Data}/core.lua", "core.lua"),
+        ModulesLoadHelper(_luaEnviroment.LoadFile($"{_serverConfiguration.Data}/core.lua", "core.lua"),
             "/Data/core.lua");
 
-        ModulesLoadHelper(scripts.LoadScripts($"{serverConfiguration.Data}/scripts/libs", true, false),
+        ModulesLoadHelper(_scripts.LoadScripts($"{_serverConfiguration.Data}/scripts/libs", true, false),
             "/Data/scripts/libs");
-        ModulesLoadHelper(scripts.LoadScripts($"{serverConfiguration.Data}/scripts", false, false), "/Data/scripts");
-        ModulesLoadHelper(luaEnviroment.LoadFile($"{serverConfiguration.Data}/npclib/load.lua", "load.lua"),
+        ModulesLoadHelper(_scripts.LoadScripts($"{_serverConfiguration.Data}/scripts", false, false), "/Data/scripts");
+        ModulesLoadHelper(_luaEnviroment.LoadFile($"{_serverConfiguration.Data}/npclib/load.lua", "load.lua"),
             "/Data/npclib");
 
-        ModulesLoadHelper(scripts.LoadScripts($"{serverConfiguration.Data}/npcs", false, false), "/Data/npcs");
+        ModulesLoadHelper(_scripts.LoadScripts($"{_serverConfiguration.Data}/npcs", false, false), "/Data/npcs");
     }
 
     #endregion
@@ -114,10 +160,189 @@ public class LuaStartup(
 
     private void ModulesLoadHelper(bool loaded, string moduleName)
     {
-        logger.Information("Loaded {ModuleName}", moduleName);
+        _logger.Information("Loaded {ModuleName}", moduleName);
         if (!loaded)
-            logger.Error("Cannot load: {ModuleName}", moduleName);
+            _logger.Error("Cannot load: {ModuleName}", moduleName);
     }
+
+    #endregion
+
+    #region Dependency Injections
+
+    /// <summary>
+    ///     A reference to the <see cref="ILogger" /> instance in use.
+    /// </summary>
+    private readonly ILogger _logger;
+
+    /// <summary>
+    ///     A reference to the <see cref="ILuaEnvironment" /> instance in use.
+    /// </summary>
+    private readonly ILuaEnvironment _luaEnviroment;
+
+    /// <summary>
+    ///     A reference to the <see cref="IConfigManager" /> instance in use.
+    /// </summary>
+    private readonly IConfigManager _configManager;
+
+    /// <summary>
+    ///     A reference to the <see cref="IScripts" /> instance in use.
+    /// </summary>
+    private readonly IScripts _scripts;
+
+    /// <summary>
+    ///     A reference to the <see cref="IActionFunctions" /> instance in use.
+    /// </summary>
+    private readonly IActionFunctions _actionFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IConditionFunctions" /> instance in use.
+    /// </summary>
+    private readonly IConditionFunctions _conditionFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IBankFunctions" /> instance in use.
+    /// </summary>
+    private readonly IBankFunctions _bankFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ISpellFunctions" /> instance in use.
+    /// </summary>
+    private readonly ISpellFunctions _spellFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ICombatFunctions" /> instance in use.
+    /// </summary>
+    private readonly ICombatFunctions _combatFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IVariantFunctions" /> instance in use.
+    /// </summary>
+    private readonly IVariantFunctions _variantFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IConfigFunctions" /> instance in use.
+    /// </summary>
+    private readonly IConfigFunctions _configFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IContainerFunctions" /> instance in use.
+    /// </summary>
+    private readonly IContainerFunctions _containerFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ICreatureFunctions" /> instance in use.
+    /// </summary>
+    private readonly ICreatureFunctions _creatureFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ICreatureEventFunctions" /> instance in use.
+    /// </summary>
+    private readonly ICreatureEventFunctions _creatureEventFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IDBFunctions" /> instance in use.
+    /// </summary>
+    private readonly IDBFunctions _dbFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IEnumFunctions" /> instance in use.
+    /// </summary>
+    private readonly IEnumFunctions _enumFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IGameFunctions" /> instance in use.
+    /// </summary>
+    private readonly IGameFunctions _gameFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IGlobalFunctions" /> instance in use.
+    /// </summary>
+    private readonly IGlobalFunctions _globalFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IGlobalEventFunctions" /> instance in use.
+    /// </summary>
+    private readonly IGlobalEventFunctions _globalEventFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IGroupFunctions" /> instance in use.
+    /// </summary>
+    private readonly IGroupFunctions _groupFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IItemFunctions" /> instance in use.
+    /// </summary>
+    private readonly IItemFunctions _itemFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IItemTypeFunctions" /> instance in use.
+    /// </summary>
+    private readonly IItemTypeFunctions _itemTypeFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ILoggerFunctions" /> instance in use.
+    /// </summary>
+    private readonly ILoggerFunctions _loggerFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IMonsterFunctions" /> instance in use.
+    /// </summary>
+    private readonly IMonsterFunctions _monsterFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IMonsterTypeFunctions" /> instance in use.
+    /// </summary>
+    private readonly IMonsterTypeFunctions _monsterTypeFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IMoveEventFunctions" /> instance in use.
+    /// </summary>
+    private readonly IMoveEventFunctions _moveEventFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="INpcFunctions" /> instance in use.
+    /// </summary>
+    private readonly INpcFunctions _npcFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="INpcTypeFunctions" /> instance in use.
+    /// </summary>
+    private readonly INpcTypeFunctions _npcTypeFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IPlayerFunctions" /> instance in use.
+    /// </summary>
+    private readonly IPlayerFunctions _playerFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IPositionFunctions" /> instance in use.
+    /// </summary>
+    private readonly IPositionFunctions _positionFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IResultFunctions" /> instance in use.
+    /// </summary>
+    private readonly IResultFunctions _resultFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ITalkActionFunctions" /> instance in use.
+    /// </summary>
+    private readonly ITalkActionFunctions _talkActionFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ITeleportFunctions" /> instance in use.
+    /// </summary>
+    private readonly ITeleportFunctions _teleportFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ITileFunctions" /> instance in use.
+    /// </summary>
+    private readonly ITileFunctions _tileFunctions;
+
+    /// <summary>
+    ///     A reference to the <see cref="ServerConfiguration" /> instance in use.
+    /// </summary>
+    private readonly ServerConfiguration _serverConfiguration;
 
     #endregion
 }

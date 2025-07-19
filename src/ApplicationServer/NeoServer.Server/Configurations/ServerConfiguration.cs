@@ -22,7 +22,6 @@ public record ServerConfiguration(
     string Extensions,
     int ServerLoginPort,
     int ServerGamePort,
-    bool AutoReloadScripts,
     SaveConfiguration Save)
 {
 }
