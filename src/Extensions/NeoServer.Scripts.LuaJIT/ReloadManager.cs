@@ -1,6 +1,6 @@
-﻿using System.Threading; // Adicionado para Interlocked
-using LuaNET;
+﻿using LuaNET;
 using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Configurations;
 using Serilog;
@@ -12,6 +12,7 @@ public class ReloadManager (
     ILuaEnvironment luaEnvironment,
     IScripts scripts,
     INpcs npcs,
+    INpcTypeStore npcsTypeStore,
     ServerConfiguration serverConfiguration) : IReloadManager
 {
 
@@ -93,6 +94,7 @@ public class ReloadManager (
     private void ReloadNpcs()
     {
         npcs.Clear();
+        npcsTypeStore.Clear();
         luaEnvironment.LoadFile($"{serverConfiguration.Data}/npclib/load.lua", "load.lua");
         scripts.LoadScripts($"{serverConfiguration.Data}/npcs", false, true);
     }

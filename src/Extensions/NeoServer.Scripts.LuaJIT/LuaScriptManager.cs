@@ -25,6 +25,7 @@ public class LuaScriptManager(
     private static Timer _debounceTimer;
     private static readonly object _debounceLock = new();
     private static bool _pendingReload;
+    private static string _lastChangedFilePath;
 
     #endregion
 
@@ -58,12 +59,6 @@ public class LuaScriptManager(
 
     #endregion
 
-    public void Reload(ReloadType reloadType)
-    {
-        reloadManager.Reload(reloadType);
-        logger.Information("Reloaded {reloadType} Lua Scripts", reloadType);
-    }
-
     #region Private Methods
 
     private void SetupAutoReloadLuaScripts()
@@ -77,6 +72,7 @@ public class LuaScriptManager(
             lock (_debounceLock)
             {
                 _pendingReload = true;
+                _lastChangedFilePath = e.FullPath;
                 //Reset timer: only reloads if there are no events for 1 second
                 _debounceTimer?.Change(Timeout.Infinite, Timeout.Infinite);
                 if (_debounceTimer == null)
@@ -87,8 +83,25 @@ public class LuaScriptManager(
                         {
                             if (_pendingReload)
                             {
-                                Reload(ReloadType.All);
+                                var reloadType = ReloadType.All;
+
+                                var scriptsDir = Path.Combine(serverConfiguration.Data, "scripts").Replace('\\', '/');
+                                var npcsDir = Path.Combine(serverConfiguration.Data, "npcs").Replace('\\', '/');
+                                var filePath = _lastChangedFilePath?.Replace('\\', '/');
+
+                                if (!string.IsNullOrEmpty(filePath))
+                                {
+                                    if (filePath.StartsWith(scriptsDir, StringComparison.OrdinalIgnoreCase))
+                                        reloadType = ReloadType.Scripts;
+                                    else if (filePath.StartsWith(npcsDir, StringComparison.OrdinalIgnoreCase))
+                                        reloadType = ReloadType.Npcs;
+                                }
+
+                                reloadManager.Reload(reloadType);
+                                logger.Information("Reloaded {reloadType} Lua Scripts", reloadType);
+
                                 _pendingReload = false;
+                                _lastChangedFilePath = null;
                             }
                         }
                     }, null, 1000, Timeout.Infinite);
