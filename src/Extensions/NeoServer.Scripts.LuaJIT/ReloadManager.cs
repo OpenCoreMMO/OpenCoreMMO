@@ -15,7 +15,6 @@ public class ReloadManager (
     INpcTypeStore npcsTypeStore,
     ServerConfiguration serverConfiguration) : IReloadManager
 {
-
     #region Private Members
 
     private int _isReloading; // Use int to Interlocked
