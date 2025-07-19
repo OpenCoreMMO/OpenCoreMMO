@@ -23,7 +23,24 @@ public static class ScriptManagerTestBuilder
             new Mock<IMoveEventsScriptService>().Object,
             new Mock<ITalkActionScriptService>().Object,
             new Mock<IReloadManager>().Object,
-            new Mock<ServerConfiguration>().Object
+            CreateMockServerConfiguration()
+        );
+    }
+
+    public static ServerConfiguration CreateMockServerConfiguration()
+    {
+        return new ServerConfiguration(
+            Version: 1,
+            OTBM: "mock.otbm",
+            OTB: "mock.otb",
+            Data: "/mock/data",
+            ServerName: "MockServer",
+            ServerIp: "127.0.0.1",
+            Extensions: "/mock/extensions",
+            ServerLoginPort: 7171,
+            ServerGamePort: 7172,
+            AutoReloadScripts: true,
+            Save: new SaveConfiguration(Players: 100)
         );
     }
 }

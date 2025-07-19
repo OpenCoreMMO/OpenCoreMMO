@@ -74,7 +74,7 @@ public class ReloadManager (
         }
         finally
         {
-            Interlocked.Exchange(ref _isReloading, 0); // Libera para próximo reload
+            Interlocked.Exchange(ref _isReloading, 0);
         }
 
         return isReloaded;
