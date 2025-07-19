@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img align="center" width="120px" src="https://github.com/caioavidal/OpenCoreMMO/blob/develop/ocmsquare.png?raw=true" target="_blank"  />
+  <img align="center" width="120px" src="https://github.com/OpenCoreMMO/OpenCoreMMO/blob/develop/ocmsquare.png?raw=true" target="_blank"  />
   <br>
   OPENCOREMMO</h1>
 <p align="center">
@@ -9,11 +9,11 @@
 <a href="https://www.codefactor.io/repository/github/opencoremmo/opencoremmo"><img src="https://www.codefactor.io/repository/github/opencoremmo/opencoremmo/badge" align="center" alt="CodeFactor" /></a><a href="https://discord.gg/Kazq9z2">
   <img align="center" src="https://badgen.net/badge/icon/discord?icon=discord&label" />
 </a>
-<a href="https://github.com/caioavidal/opencoremmo/stargazers">
-  <img align="center" src="https://img.shields.io/github/stars/caioavidal/opencoremmo?label=stargazers&logoColor=yellow&style=social" />
+<a href="https://github.com/OpenCoreMMO/opencoremmo/stargazers">
+  <img align="center" src="https://img.shields.io/github/stars/OpenCoreMMO/opencoremmo?label=stargazers&logoColor=yellow&style=social" />
   </a>
-  <a href="https://github.com/caioavidal/OpenCoreMMO/blob/develop/LICENSE">
-  <img align="center" src="https://badgen.net/github/license/caioavidal/opencoremmo" />
+  <a href="https://github.com/OpenCoreMMO/OpenCoreMMO/blob/develop/LICENSE">
+  <img align="center" src="https://badgen.net/github/license/OpenCoreMMO/opencoremmo" />
   </a>
 </p>
 
@@ -34,15 +34,15 @@
 
 | Enviroment | Status |
 |------------|--------|
-|![win](https://badgen.net/badge/icon/Windows,.NET%209?icon=windows&label&list=1)|[![OpenCoreMMO](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)        |
-|![linux](https://badgen.net/badge/icon/Ubuntu%20Linux%2022.04%20x64?icon=terminal&label&color=orange)|[![OpenCoreMMO](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
-|![mac](https://badgen.net/badge/icon/macOS%20Latest?icon=apple&label&color=purple&list=1)|[![OpenCoreMMO](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/caioavidal/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
+|![win](https://badgen.net/badge/icon/Windows,.NET%209?icon=windows&label&list=1)|[![OpenCoreMMO](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)        |
+|![linux](https://badgen.net/badge/icon/Ubuntu%20Linux%2022.04%20x64?icon=terminal&label&color=orange)|[![OpenCoreMMO](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
+|![mac](https://badgen.net/badge/icon/macOS%20Latest?icon=apple&label&color=purple&list=1)|[![OpenCoreMMO](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
 
 ## Usage
 
 ```sh
 download and install .NET 9: https://dotnet.microsoft.com/download/dotnet/9.0
-git clone https://github.com/caioavidal/OpenCoreMMO.git
+git clone https://github.com/OpenCoreMMO/OpenCoreMMO.git
 cd src
 dotnet run --project "Standalone"
 ```
@@ -76,18 +76,60 @@ To connect to the self-hosted server for development, please use the following c
   - Share Loot: :heavy_check_mark:
   - Shared Experience: :heavy_check_mark:
 - NPC System: :heavy_check_mark:
-- Lua Scripting: :heavy_check_mark:
-- C# Extensions: :heavy_check_mark:
-- Revscript LuaJIT Scripting: :warning:
 - In-Memory Cache: :warning:
+- C# Scripting: :warning:
+- Lua Scripting Auto Reload: :heavy_check_mark:
+- Lua Scripting (Revscript): :arrows_counterclockwise:
+  - Action: :arrows_counterclockwise:
+  - Bank: :arrows_counterclockwise:
+  - Combat: :arrows_counterclockwise:
+  - Condition: :arrows_counterclockwise:
+  - Config: :heavy_check_mark:
+  - Container: :heavy_check_mark:
+  - Creature Event: :heavy_check_mark:
+  - Creature: :arrows_counterclockwise:
+  - DB: :arrows_counterclockwise:
+  - Event Callback: :warning:
+  - Events Scheduler: :warning:
+  - Game: :arrows_counterclockwise:
+  - Global Event: :heavy_check_mark:
+  - Global: :arrows_counterclockwise:
+  - Group: :heavy_check_mark:
+  - Guild: :warning:
+  - House: :warning:
+  - Item: :arrows_counterclockwise:
+  - Item Type: :arrows_counterclockwise:
+  - Logger: :heavy_check_mark:
+  - Loot: :warning:
+  - Monster: :arrows_counterclockwise:
+  - Monster Spell: :warning:
+  - Monster Type: :arrows_counterclockwise:
+  - Move Event: :arrows_counterclockwise:
+  - Network Message: :warning:
+  - NPC: :arrows_counterclockwise:
+  - NPC Type: :arrows_counterclockwise:
+  - Party: :warning:
+  - Player: :arrows_counterclockwise:
+  - Position: :arrows_counterclockwise:
+  - Result: :heavy_check_mark:
+  - Spell: :arrows_counterclockwise:
+  - Talk Action: :arrows_counterclockwise:
+  - Teleport: :arrows_counterclockwise:
+  - Tile: :arrows_counterclockwise:
+  - Town: :warning:
+  - Variant: :heavy_check_mark:
+  - Vocation: :arrows_counterclockwise:
+  - Weapon: :arrows_counterclockwise:
+  - Webhook: :arrows_counterclockwise:
 
 ## Technologies
 
 * C#
 * .Net 9
-* Database support: InMemory, PostgreSQL, and SQLite
+* Database support: InMemory, PostgreSQL and SQLite
 * Console Debug Logging
 * XUnit Testing
+* Docker
 
  [![My Skills](https://skillicons.dev/icons?i=dotnet,cs,docker,git,postgresql,sqlite,lua)](https://skillicons.dev)
 
@@ -95,7 +137,7 @@ To connect to the self-hosted server for development, please use the following c
 
 * Documentation: https://opencoremmo.gitbook.io/opencoremmo/
 * Discord Invite: https://discord.gg/Kazq9z2
-* Revscript (LuaJIT) Functions Readme: https://github.com/caioavidal/OpenCoreMMO/tree/develop/data#readme
+* Lua Scripting (Revscript) Functions Readme: https://github.com/OpenCoreMMO/OpenCoreMMO/tree/develop/data#readme
 
 ## Author
 
