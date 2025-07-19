@@ -1,12 +1,15 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Networking.Packets.Incoming;
+using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Commands.Movements.ToInventory;
 
 public class ContainerToInventoryMovementOperation
 {
-    public static void Execute(IPlayer player, ItemThrowPacket itemThrow)
+    public static void Execute(IPlayer player,
+        ItemThrowPacket itemThrow,
+        IScriptManager scriptManager)
     {
         var container = player.Containers[itemThrow.FromLocation.ContainerId];
 
@@ -15,6 +18,9 @@ public class ContainerToInventoryMovementOperation
         if (item is null) return;
 
         if (!item.IsPickupable) return;
+
+        if (scriptManager.MoveEvents.EquipItem(player, item, itemThrow.ToLocation.Slot, false).HasValue)
+            return;
 
         player.MoveItem(item, container, player.Inventory, itemThrow.Count,
             (byte)itemThrow.FromLocation.ContainerSlot, (byte)itemThrow.ToLocation.Slot);
