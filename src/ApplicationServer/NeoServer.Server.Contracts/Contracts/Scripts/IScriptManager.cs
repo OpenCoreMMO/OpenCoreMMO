@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Common;
-using NeoServer.Server.Common.Contracts.Scripts.Services;
+﻿using NeoServer.Server.Common.Contracts.Scripts.Services;
 
 namespace NeoServer.Server.Common.Contracts.Scripts;
 
@@ -12,5 +11,4 @@ public interface IScriptManager
     ITalkActionScriptService TalkActions { get; }
 
     void Initialize();
-    void Reload(ReloadType reloadType);
 }
