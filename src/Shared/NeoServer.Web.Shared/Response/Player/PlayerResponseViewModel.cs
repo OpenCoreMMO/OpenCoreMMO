@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Creatures.Player;
+﻿using NeoServer.Data.Entities;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Modes;
 
 namespace NeoServer.Web.API.Response.Player;
@@ -64,4 +65,66 @@ public class PlayerResponseViewModel
     public byte Vocation { get; set; }
     public int RemainingRecoverySeconds { get; set; }
     public int WorldId { get; set; }
+
+    public static implicit operator PlayerResponseViewModel(PlayerEntity entity)
+        => entity == null
+            ? null
+            : new PlayerResponseViewModel
+            {
+                Id = entity.Id,
+                AccountId = entity.AccountId,
+                TownId = entity.TownId,
+                Name = entity.Name,
+                Group = entity.Group,
+                Capacity = entity.Capacity,
+                Level = entity.Level,
+                Mana = (ushort)entity.Mana,
+                MaxMana = (ushort)entity.MaxMana,
+                Health = entity.Health,
+                MaxHealth = entity.MaxHealth,
+                Soul = entity.Soul,
+                MaxSoul = entity.MaxSoul,
+                Speed = entity.Speed,
+                StaminaMinutes = entity.StaminaMinutes,
+                Online = entity.Online,
+
+                LookAddons = entity.LookAddons,
+                LookBody = entity.LookBody,
+                LookFeet = entity.LookFeet,
+                LookHead = entity.LookHead,
+                LookLegs = entity.LookLegs,
+                LookType = entity.LookType,
+
+                PosX = entity.PosX,
+                PosY = entity.PosY,
+                PosZ = entity.PosZ,
+
+                SkillFist = entity.SkillFist,
+                SkillFistTries = entity.SkillFist,
+
+                SkillClub = entity.SkillClub,
+                SkillClubTries = entity.SkillClub,
+
+                SkillSword = entity.SkillSword,
+                SkillSwordTries = entity.SkillSword,
+
+                SkillAxe = entity.SkillAxe,
+                SkillAxeTries = entity.SkillAxe,
+
+                SkillDist = entity.SkillDist,
+                SkillDistTries = entity.SkillDist,
+
+                SkillShielding = entity.SkillShielding,
+                SkillShieldingTries = entity.SkillShielding,
+
+                SkillFishing = entity.SkillFishing,
+                SkillFishingTries = entity.SkillFishing,
+
+                MagicLevel = entity.MagicLevel,
+                MagicLevelTries = entity.MagicLevel,
+
+                Experience = entity.Experience,
+                ChaseMode = entity.ChaseMode,
+                FightMode = entity.FightMode
+            };
 }

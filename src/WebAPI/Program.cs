@@ -35,7 +35,7 @@ public class Program
         builder.AddDefaultValuesInjection();
         services.AddHttpContextAccessor();
         services.AddServicesApi();
-        services.AddAutoMapperProfiles(typeof(Program).Assembly);
+        // services.AddAutoMapperProfiles(typeof(Program).Assembly);
 
         services.AddMediatR(config =>
         {

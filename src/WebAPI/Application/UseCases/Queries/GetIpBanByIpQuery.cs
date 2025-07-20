@@ -1,18 +1,13 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using NeoServer.Data.Interfaces;
 using NeoServer.Web.API.Requests.Queries;
 using NeoServer.Web.API.Response.IpBans;
 
 namespace NeoServer.Web.API.Application.UseCases.Queries;
 
-public class GetIpBanByIpQuery(IMapper mapper, IIpBansRepository ipBansRepository)
+public class GetIpBanByIpQuery(IIpBansRepository ipBansRepository)
     : IRequestHandler<GetIpBanByIpRequest, IpBanResponseViewModel>
 {
     public async Task<IpBanResponseViewModel> Handle(GetIpBanByIpRequest request, CancellationToken cancellationToken)
-    {
-        var ipban = await ipBansRepository.ExistBan(request.ip);
-        var response = mapper.Map<IpBanResponseViewModel>(ipban);
-        return response;
-    }
+        => await ipBansRepository.ExistBan(request.ip);
 }
