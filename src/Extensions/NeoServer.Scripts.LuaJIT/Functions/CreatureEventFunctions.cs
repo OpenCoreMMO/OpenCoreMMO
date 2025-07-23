@@ -35,7 +35,6 @@ public class CreatureEventFunctions : LuaScriptInterface, ICreatureEventFunction
         RegisterMethod(luaState, "CreatureEvent", "onDeath", LuaCreatureEventOnCallback);
         RegisterMethod(luaState, "CreatureEvent", "onKill", LuaCreatureEventOnCallback);
         RegisterMethod(luaState, "CreatureEvent", "onAdvance", LuaCreatureEventOnCallback);
-        RegisterMethod(luaState, "CreatureEvent", "onModalWindow", LuaCreatureEventOnCallback);
         RegisterMethod(luaState, "CreatureEvent", "onTextEdit", LuaCreatureEventOnCallback);
         RegisterMethod(luaState, "CreatureEvent", "onHealthChange", LuaCreatureEventOnCallback);
         RegisterMethod(luaState, "CreatureEvent", "onManaChange", LuaCreatureEventOnCallback);
@@ -86,10 +85,6 @@ public class CreatureEventFunctions : LuaScriptInterface, ICreatureEventFunction
             else if (tmpStr == "advance")
             {
                 creatureEvent.EventType = CreatureEventType.CREATURE_EVENT_ADVANCE;
-            }
-            else if (tmpStr == "modalwindow")
-            {
-                creatureEvent.EventType = CreatureEventType.CREATURE_EVENT_MODALWINDOW;
             }
             else if (tmpStr == "textedit")
             {
