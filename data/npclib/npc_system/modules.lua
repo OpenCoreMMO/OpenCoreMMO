@@ -1,3 +1,6 @@
+---@diagnostic disable: missing-parameter
+---@diagnostic disable: param-type-mismatch
+---@
 -- Advanced NPC System by Jiddo
 
 if Modules == nil then

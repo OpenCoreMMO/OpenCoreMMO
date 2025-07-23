@@ -1,3 +1,7 @@
+---@diagnostic disable: lowercase-global
+
+---@param tbl table The table to convert to a pretty string.
+---@param indent number The current indentation level.
 function PrettyString(tbl, indent)
     if not indent then
         indent = 0

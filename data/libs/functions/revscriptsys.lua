@@ -1,4 +1,7 @@
-﻿-- Create functions revscriptsys
+﻿---@diagnostic disable: inject-field
+---@diagnostic disable: lowercase-global
+
+-- Create functions revscriptsys
 function createFunctions(class)
     local exclude = { [2] = { "is" }, [3] = { "get", "set", "add", "can" }, [4] = { "need" } }
     local temp = {}
@@ -30,6 +33,7 @@ function createFunctions(class)
     end
 end
 
+-- todo: Implement THING_TYPE ENUM
 -- Creature index
 do
     local function CreatureIndex(self, key)

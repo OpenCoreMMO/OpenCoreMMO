@@ -1,3 +1,6 @@
+---@diagnostic disable: missing-parameter
+---@diagnostic disable: param-type-mismatch
+
 -- Function called with by the function "Npc:sayWithDelay"
 local sayFunction = function(npcId, text, type, eventDelay, playerId)
     local npc = Npc(npcId)
@@ -64,8 +67,6 @@ function Npc:talk(player, text)
     end
 end
 
--- Npc send message to player
--- npc:sendMessage(text)
 function Npc:sendMessage(player, text)
     return self:say(string.format(text or "", player:getName()), TALKTYPE_PRIVATE_NP, true, player)
 end

@@ -1,4 +1,9 @@
-﻿function Creature.getClosestFreePosition(self, position, maxRadius, mustBeReachable)
+﻿---@param self Creature
+---@param position Position|nil
+---@param maxRadius number|boolean
+---@param mustBeReachable boolean|nil
+---@return Position|nil
+function Creature.getClosestFreePosition(self, position, maxRadius, mustBeReachable)
     maxRadius = maxRadius or 1
 
     -- backward compatability (extended)
@@ -24,7 +29,10 @@
             end
 
             local tile = Tile(checkPosition)
-            if tile and tile:getCreatureCount() == 0 and not tile:hasProperty(CONST_PROP_IMMOVABLEBLOCKSOLID) and (not mustBeReachable or self:getPathTo(checkPosition)) then
+            -- todo: implements Creature:getPathTo
+            if tile and tile:getCreatureCount() == 0 
+                    and not tile:hasProperty(CONST_PROP_IMMOVABLEBLOCKSOLID) 
+                    and (not mustBeReachable or self:getPathTo(checkPosition)) then
                 local distance = self:getPosition():getDistance(checkPosition)
                 if closestDistance == -1 or closestDistance > distance then
                     closestDistance = distance

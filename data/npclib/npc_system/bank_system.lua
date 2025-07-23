@@ -1,3 +1,6 @@
+---@diagnostic disable: missing-parameter
+---@diagnostic disable: param-type-mismatch
+
 local count = {}
 local transfer = {}
 local receiptFormat = "Date: %s\nType: %s\nGold Amount: %d\nReceipt Owner: %s\nRecipient: %s\n\n%s"

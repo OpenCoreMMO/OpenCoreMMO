@@ -19,6 +19,7 @@ function Tile.relocateTo(self, toPosition)
         return false
     end
 
+    --todo: implements ThingFunctions
     for i = self:getThingCount() - 1, 0, -1 do
         local thing = self:getThing(i)
         if thing then
@@ -55,6 +56,7 @@ function Tile.isWalkable(self)
 end
 
 -- Functions from OTServbr-Global
+--todo: Implements HouseFunctions
 function Tile.isHouse(self)
 	local house = self:getHouse()
 	return house and true or false
@@ -79,6 +81,7 @@ function Tile:isRopeSpot()
 
 	for i = 1, self:getTopItemCount() do
 		local thing = self:getThing(i)
+        --todo: implements specialRopeSpots
 		if thing and table.contains(specialRopeSpots, thing:getId()) then
 			return true
 		end
