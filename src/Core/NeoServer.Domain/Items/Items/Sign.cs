@@ -23,7 +23,6 @@ public class Sign : BaseItem
     }
 
     public static bool IsApplicable(IItemType type, IDictionary<ItemAttribute, IConvertible> attributes)
-    {
 
         return
             type.Group == ItemGroup.Sign ||
