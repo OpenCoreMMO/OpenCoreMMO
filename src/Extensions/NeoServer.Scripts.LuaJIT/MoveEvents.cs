@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
@@ -294,6 +295,18 @@ public class MoveEvents : IMoveEvents
                     break;
             }
         }
+    }
+
+    public bool? OnEquipItem(IPlayer player, IItem item, Slot slot, bool isChecks)
+    {
+        var moveEvent = GetEvent(item, MoveEventType.MOVE_EVENT_EQUIP);
+        return moveEvent?.FireEquipItem(player, item, slot, isChecks);
+    }
+
+    public bool? OnDeEquipItem(IPlayer player, IItem item, Slot slot, bool isChecks)
+    {
+        var moveEvent = GetEvent(item, MoveEventType.MOVE_EVENT_DEEQUIP);
+        return moveEvent?.FireEquipItem(player, item, slot, isChecks);
     }
 
     public void Clear()
