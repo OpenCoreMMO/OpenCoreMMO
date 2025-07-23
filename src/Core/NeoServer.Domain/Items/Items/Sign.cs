@@ -27,7 +27,7 @@ public class Sign : BaseItem
 
         return
             type.Group == ItemGroup.Sign ||
-            (attributes.ContainsKey(ItemAttribute.Text) && !type.Flags.Contains(ItemFlag.Usable)) ||
+            (attributes != null && attributes.ContainsKey(ItemAttribute.Text) && !type.Flags.Contains(ItemFlag.Usable)) ||
             (type.Attributes.GetAttribute(ItemTypeAttribute.Type)
                 ?.Equals("sign", StringComparison.InvariantCultureIgnoreCase) ?? false);
     }
