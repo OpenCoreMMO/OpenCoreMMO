@@ -88,11 +88,14 @@ public class MapMoveCreatureTest
 
         var teleport = new TeleportItem(new ItemType(), teleportLocation);
 
+        teleport.Attributes.SetAttribute(teleportAttrs);
+
         var sut = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7, true,
             new Dictionary<Location, IItem[]>
             {
                 [teleportLocation] = new IItem[] { teleport }
             });
+
         var pathFinder = new PathFinder(sut);
 
         var player = PlayerTestDataBuilder.Build(pathFinder: pathFinder);
