@@ -320,7 +320,7 @@ public class Player : CombatActor, IPlayer
     public bool Recovering => HasCondition(ConditionType.Regeneration);
     public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
     public override bool CanBeSeen => Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
-    public virtual bool CanSeeInspectionDetails => false;
+    public virtual bool CanSeeInspectionDetails => Group.Access;
 
     public override ushort MaximumElementalAttackPower =>
         CalculateTotalAttack(Inventory.TotalElementalAttack.AttackPower, true);
