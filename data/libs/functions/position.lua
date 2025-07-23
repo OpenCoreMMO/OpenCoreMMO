@@ -9,14 +9,15 @@
     [DIRECTION_NORTHEAST] = { x = 1, y = -1 }
 }
 
-function Position:getNextPosition(direction, steps)
-    local offset = Position.directionOffset[direction]
-    if offset then
-        steps = steps or 1
-        self.x = self.x + offset.x * steps
-        self.y = self.y + offset.y * steps
-    end
-end
+--todo: check this function, it is duplicated with PositionFunctions in c#
+-- function Position:getNextPosition(direction, steps)
+--     local offset = Position.directionOffset[direction]
+--     if offset then
+--         steps = steps or 1
+--         self.x = self.x + offset.x * steps
+--         self.y = self.y + offset.y * steps
+--     end
+-- end
 
 function Position:moveUpstairs()
     local swap = function(lhs, rhs)
@@ -47,6 +48,8 @@ function Position:moveUpstairs()
     return self
 end
 
+---@param from Position
+---@param to Position
 function Position:isInRange(from, to)
     -- No matter what corner from and to is, we want to make
     -- life easier by calculating north-west and south-east
