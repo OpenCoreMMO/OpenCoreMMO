@@ -261,16 +261,12 @@ public class MoveEvent : Script
 
     #region Item Equip
 
-    public delegate bool EquipItemFunction(MoveEvent moveEvent, IPlayer player, IItem item, Slot onSlot, bool isCheck);
-
-    public EquipItemFunction OnEquipItemFunction = null;
-
-    public bool FireEquipItem(IPlayer player, IItem item, Slot onSlot, bool isCheck)
+    public bool? FireEquipItem(IPlayer player, IItem item, Slot onSlot, bool isCheck)
     {
-        if (IsLoadedScriptId() && (OnEquipItemFunction?.Invoke(this, player, item, onSlot, isCheck) ?? false))
+        if (IsLoadedScriptId())
             return ExecuteEquip(player, item, onSlot, isCheck);
 
-        return false;
+        return null;
     }
 
     public bool ExecuteEquip(IPlayer player, IItem item, Slot onSlot, bool isCheck)
