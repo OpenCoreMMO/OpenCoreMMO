@@ -24,11 +24,11 @@ public class Sign : BaseItem
 
     public static bool IsApplicable(IItemType type, IDictionary<ItemAttribute, IConvertible> attributes)
     {
-        return (attributes.ContainsKey(ItemAttribute.Text) && !type.Flags.Contains(ItemFlag.Usable)) ||
-               (type.Attributes.GetAttribute(ItemTypeAttribute.Type)
-                   ?.Equals("sign", StringComparison.InvariantCultureIgnoreCase) ?? false)
-            ? true
-            : false;
-        //return type.Group is ItemGroup.Sign;
+
+        return
+            type.Group == ItemGroup.Sign ||
+            (attributes.ContainsKey(ItemAttribute.Text) && !type.Flags.Contains(ItemFlag.Usable)) ||
+            (type.Attributes.GetAttribute(ItemTypeAttribute.Type)
+                ?.Equals("sign", StringComparison.InvariantCultureIgnoreCase) ?? false);
     }
 }

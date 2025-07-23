@@ -231,12 +231,9 @@ public class ItemFactory : IItemFactory
         if (MagicField.IsApplicable(itemType)) return new MagicField(itemType, location);
         if (FloorChanger.IsApplicable(itemType)) return new FloorChanger(itemType, location);
 
-        if (itemAttributes != null)
-        {
-            if (TeleportItem.IsApplicable(itemType)) return new TeleportItem(itemType, location);
-            if (Paper.IsApplicable(itemType)) return new Paper(itemType, location);
-            if (Sign.IsApplicable(itemType, itemAttributes)) return new Sign(itemType, location);
-        }
+        if (TeleportItem.IsApplicable(itemType)) return new TeleportItem(itemType, location);
+        if (Paper.IsApplicable(itemType)) return new Paper(itemType, location);
+        if (Sign.IsApplicable(itemType, itemAttributes)) return new Sign(itemType, location);
 
         if (UsableOnItem.IsApplicable(itemType))
         {

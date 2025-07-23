@@ -46,6 +46,10 @@ public class Paper : BaseItem, IReadable
 
     public static bool IsApplicable(IItemType type)
     {
-        return type.Group is ItemGroup.Paper;
+        return
+            type.Group == ItemGroup.Paper ||
+            (type.Attributes.HasAttribute(ItemTypeAttribute.Text)) ||
+            (type.Attributes.GetAttribute(ItemTypeAttribute.Type)
+                ?.Equals("paper", StringComparison.InvariantCultureIgnoreCase) ?? false);
     }
 }
