@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using NeoServer.Domain.Common.Contracts.Items;
+﻿using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
@@ -9,14 +8,11 @@ namespace NeoServer.Domain.Items.Items;
 
 public class Sign : BaseItem
 {
-    public Sign(IItemType metadata, Location location, IDictionary<ItemAttribute, IConvertible> attributes) : base(
-        metadata, location)
+    public Sign(IItemType metadata, Location location) : base(metadata, location)
     {
-        attributes.TryGetValue(ItemAttribute.Text, out var text);
-        Text = text?.ToString(CultureInfo.InvariantCulture);
     }
 
-    public string Text { get; }
+    public string Text => Attributes.GetAttribute(ItemAttribute.Text);
 
     public override string GetLookText(bool isClose = false,
         bool showInternalDetails = false)
