@@ -6,6 +6,7 @@ using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Services;
 using NeoServer.Server.Common.Contracts;
+using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Events.Creature;
 
@@ -17,8 +18,8 @@ public class CreatureDeathEventHandler(
         IExperienceSharingService experienceSharingService,
         ILootService lootService,
         BloodPoolService bloodPoolService,
-        GameConfiguration gameConfiguration)
-    //IScriptManager scriptManager)
+        GameConfiguration gameConfiguration,
+        IScriptManager scriptManager)
     : IApplicationEventHandler<CreatureDeathEvent>
 {
     public void Handle(CreatureDeathEvent @event)
@@ -43,12 +44,13 @@ public class CreatureDeathEventHandler(
                 OnMonsterKilled(monster);
                 break;
             case IPlayer player:
+                player.MoveToTemple();
                 playerRepository.SavePlayer(player);
                 playerDeathRepository.Save(player, damageRecordResult);
                 break;
         }
 
-        //    scriptManager.CreatureEvents.ExecuteOnCreatureDeath(deadCreature, by);
+        scriptManager.CreatureEvents.ExecuteOnCreatureDeath(deadCreature, by);
     }
 
     private void OnMonsterKilled(ICombatActor creature)
