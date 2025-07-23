@@ -1,5 +1,9 @@
-﻿local talkAction = TalkAction("/s")
+﻿---@type TalkAction
+local talkAction = TalkAction("/s")
 
+---@param player Player
+---@param words string
+---@param param string
 function talkAction.onSay(player, words, param)
     if not player:getGroup():getAccess() then
         return true

@@ -1,5 +1,12 @@
-﻿local darkHelmetQuest = Action()
+﻿---@type Action
+local darkHelmetQuest = Action()
 
+---@param player Player
+---@param item Item
+---@param fromPosition Position
+---@param target Thing
+---@param toPosition Position
+---@param isHotkey boolean
 function darkHelmetQuest.onUse(player, item, fromPosition, target, toPosition, isHotkey)
     local questStorage = player:getStorageValue(Storage.Quest.DarkHelmetQuest.Key)
     if questStorage > -1 then
