@@ -1451,13 +1451,12 @@ public class Player : CombatActor, IPlayer
     public override void Death(IThing by)
     {
         base.Death(by);
-
+        
         PlayerSkull.RemoveYellowSkull();
         DecreaseExp();
-        MoveToTemple();
     }
 
-    private void MoveToTemple()
+    public void MoveToTemple()
     {
         SetNewLocation(new Location(Town.Coordinate));
     }
