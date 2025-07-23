@@ -322,4 +322,5 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     #endregion
 
     void PostAttack(CombatParameter combatParameter, CombatResult damages);
+    public void MoveToTemple();
 }

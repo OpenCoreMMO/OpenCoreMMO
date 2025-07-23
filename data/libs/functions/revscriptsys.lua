@@ -138,10 +138,6 @@ do
             self:type("advance")
             self:onAdvance(value)
             return
-        elseif key == "onModalWindow" then
-            self:type("modalwindow")
-            self:onModalWindow(value)
-            return
         elseif key == "onTextEdit" then
             self:type("textedit")
             self:onTextEdit(value)
@@ -174,6 +170,14 @@ do
         elseif key == "onRemoveItem" then
             self:type("removeitem")
             self:onRemoveItem(value)
+            return
+        elseif key == "onEquipItem" then
+            self:type("equip")
+            self:onEquipItem(value)
+            return
+        elseif key == "onDeEquipItem" then
+            self:type("deequip")
+            self:onDeEquipItem(value)
             return
         elseif key == "onStepIn" then
             self:type("stepin")
