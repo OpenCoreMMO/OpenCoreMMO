@@ -4,4 +4,4 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 
 namespace NeoServer.Domain.Creatures.Events.Player;
 
-public record PlayerReadTextEvent(IPlayer player, IReadable readable, string text) : IEvent;
+public record PlayerReadTextEvent(IPlayer Player, IReadable Readable, string Text) : IEvent;

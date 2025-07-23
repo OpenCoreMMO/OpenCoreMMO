@@ -12,13 +12,13 @@ public class PlayerReadTextEventHandler(IGameServer game)
 {
     public void Handle(PlayerReadTextEvent @event)
     {
-        if (Guard.AnyNull(@event.player, @event.readable)) return;
+        if (Guard.AnyNull(@event.Player, @event.Readable)) return;
 
-        if (!game.CreatureManager.GetPlayerConnection(@event.player.CreatureId, out var connection)) return;
+        if (!game.CreatureManager.GetPlayerConnection(@event.Player.CreatureId, out var connection)) return;
 
-        var id = ItemTextWindowStore.Add(@event.player, @event.readable);
+        var id = ItemTextWindowStore.Add(@event.Player, @event.Readable);
 
-        connection.OutgoingPackets.Enqueue(new TextWindowPacket(id, @event.readable));
+        connection.OutgoingPackets.Enqueue(new TextWindowPacket(id, @event.Readable));
 
         connection.Send();
     }

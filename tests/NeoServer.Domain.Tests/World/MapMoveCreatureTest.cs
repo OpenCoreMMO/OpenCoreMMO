@@ -63,8 +63,7 @@ public class MapMoveCreatureTest
             //no destination
         };
 
-        ((IDynamicTile)sut[teleportLocation]).AddItem(new TeleportItem(new ItemType(), teleportLocation,
-            teleportAttrs));
+        ((IDynamicTile)sut[teleportLocation]).AddItem(new TeleportItem(new ItemType(), teleportLocation));
 
         player.OnStartedWalking += c => sut.MoveCreature(c);
 
@@ -87,7 +86,7 @@ public class MapMoveCreatureTest
             [ItemAttribute.TeleportDestination] = new Location(105, 105, 7)
         };
 
-        var teleport = new TeleportItem(new ItemType(), teleportLocation, teleportAttrs);
+        var teleport = new TeleportItem(new ItemType(), teleportLocation);
 
         var sut = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7, true,
             new Dictionary<Location, IItem[]>
