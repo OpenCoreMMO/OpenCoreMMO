@@ -1,4 +1,5 @@
-﻿local talkAction = TalkAction("/reload")
+﻿---@type TalkAction
+local talkAction = TalkAction("/reload")
 
 local reloadTypes = {
     ["all"] = RELOAD_TYPE_ALL,
@@ -45,6 +46,9 @@ local reloadTypes = {
     ["groups"] = RELOAD_TYPE_GROUPS,
 }
 
+---@param player Player
+---@param words string
+---@param param string
 function talkAction.onSay(player, words, param)
     if not player:getGroup():getAccess() then
         return true

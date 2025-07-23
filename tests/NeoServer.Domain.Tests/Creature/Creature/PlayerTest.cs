@@ -307,11 +307,10 @@ public class PlayerTest
         var player =
             PlayerTestDataBuilder.Build(hp: 100, town: new Town { Coordinate = townCoordinate }) as Player;
 
-        player.SetNewLocation(new Location(1234, 1341, 3));
-
         Assert.NotEqual(player.Location, townCoordinate.Location);
 
         player.Death(null);
+        player.MoveToTemple();
 
         Assert.Equal(player.Location, townCoordinate.Location);
     }

@@ -1,7 +1,14 @@
-﻿local ladder = Action()
+﻿---@type Action
+local ladder = Action()
 
 local upFloorIds = { 1386, 3678, 5543 }
 
+---@param player Player
+---@param item Item
+---@param fromPosition Position
+---@param target Thing
+---@param toPosition Position
+---@param isHotkey boolean
 function ladder.onUse(player, item, fromPosition, target, toPosition, isHotkey)
     if table.contains(upFloorIds, item.itemid) then
         fromPosition:moveUpstairs()

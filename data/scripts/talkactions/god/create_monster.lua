@@ -1,5 +1,9 @@
-﻿local talkAction = TalkAction("/m")
+﻿---@type TalkAction
+local talkAction = TalkAction("/m")
 
+---@param player Player
+---@param words string
+---@param param string
 function talkAction.onSay(player, words, param)
     if not player:getGroup():getAccess() then
         return true
@@ -9,6 +13,7 @@ function talkAction.onSay(player, words, param)
     -- 	return false
     -- end
 
+    --todo: implements player:getPosition()
     local position = player:getPosition()
     local monster = Game.createMonster(param, position)
     if monster then

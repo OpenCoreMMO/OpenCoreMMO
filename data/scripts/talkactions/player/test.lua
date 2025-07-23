@@ -1,5 +1,9 @@
-﻿local talkAction = TalkAction("!test")
+﻿---@type TalkAction
+local talkAction = TalkAction("!test")
 
+---@param player Player
+---@param words string
+---@param param string
 function talkAction.onSay(player, words, param)
     logger.info('executing talkAction test from lua: ' .. words .. ' ' .. param)
 

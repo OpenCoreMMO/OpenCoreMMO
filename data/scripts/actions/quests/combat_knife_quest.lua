@@ -1,5 +1,12 @@
-﻿local combatKnifeQuest = Action()
+﻿---@type Action
+local combatKnifeQuest = Action()
 
+---@param player Player
+---@param item Item
+---@param fromPosition Position
+---@param target Thing
+---@param toPosition Position
+---@param isHotkey boolean
 function combatKnifeQuest.onUse(player, item, fromPosition, target, toPosition, isHotkey)
     local questStorage = player:getStorageValue(Storage.Quest.CombatKnifeQuest.Key)
     if questStorage > -1 then
