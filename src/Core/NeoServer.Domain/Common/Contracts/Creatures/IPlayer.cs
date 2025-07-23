@@ -316,7 +316,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event ChangeChaseMode OnChangedChaseMode;
     public event AddSkillBonus OnAddedSkillBonus;
     public event RemoveSkillBonus OnRemovedSkillBonus;
-    public event ReadText OnReadText;
     public event WroteText OnWroteText;
 
     #endregion

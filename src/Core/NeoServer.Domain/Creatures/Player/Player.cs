@@ -30,6 +30,7 @@ using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Common;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
+using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
 using NeoServer.Domain.Creatures.Npcs;
@@ -625,7 +626,7 @@ public class Player : CombatActor, IPlayer
 
     public void Read(IReadable readable)
     {
-        OnReadText?.Invoke(this, readable, readable.Text);
+        EventAggregator.Publish(new PlayerReadTextEvent(this, readable, readable.Text));
     }
 
     public void Write(IReadable readable, string text)
@@ -1533,7 +1534,6 @@ public class Player : CombatActor, IPlayer
     public event ChangeChaseMode OnChangedChaseMode;
     public event AddSkillBonus OnAddedSkillBonus;
     public event RemoveSkillBonus OnRemovedSkillBonus;
-    public event ReadText OnReadText;
     public event WroteText OnWroteText;
     public event EquipItem OnEquipItem;
     public event DeEquipItem OnDeEquipItem;

@@ -172,6 +172,18 @@ public class BaseAttributeList<T> where T : Enum
         return default;
     }
 
+    public bool TryGetValue(T attribute, out dynamic value)
+    {
+        value = default;
+
+        if (_defaultAttributes is null) return false;
+
+        if (!_defaultAttributes.TryGetValue(attribute, out var attr)) return false;
+
+        value = attr.Item1;
+        return true;
+    }
+
     #endregion
 
     #region Custom Attributes
