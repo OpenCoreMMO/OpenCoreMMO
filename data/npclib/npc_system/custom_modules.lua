@@ -1,3 +1,6 @@
+---@diagnostic disable: missing-parameter
+---@diagnostic disable: param-type-mismatch
+
 -- Custom Modules, created to help us in this datapack
 local travelDiscounts = {
     ["postman"] = { price = 10, storage = Storage.Quest.ExampleQuest, value = 1 },

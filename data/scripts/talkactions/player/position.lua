@@ -1,5 +1,9 @@
-﻿local talkAction = TalkAction("!position")
+﻿---@type TalkAction
+local talkAction = TalkAction("!position")
 
+---@param player Player
+---@param words string
+---@param param string
 function talkAction.onSay(player, words, param)
     local position = player:getPosition()
     player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, "Your current position is: " .. position.x .. ", " .. position.y .. ", " .. position.z .. ".")

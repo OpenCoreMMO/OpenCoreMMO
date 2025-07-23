@@ -1,9 +1,13 @@
-﻿local talkAction = TalkAction("/i")
+﻿---@type TalkAction
+local talkAction = TalkAction("/i")
 
 local invalidIds = {
     1, 2, 3, 4, 5, 6, 7, 10, 11, 13, 14, 15, 19, 21, 26, 27, 28, 35, 43
 }
 
+---@param player Player
+---@param words string
+---@param param string
 function talkAction.onSay(player, words, param)
     if not player:getGroup():getAccess() then
         return true
@@ -63,6 +67,7 @@ function talkAction.onSay(player, words, param)
                 result:decay()
             end
         end
+        --todo: implements player:getPosition()
         player:getPosition():sendMagicEffect(CONST_ME_MAGIC_GREEN)
     end
 

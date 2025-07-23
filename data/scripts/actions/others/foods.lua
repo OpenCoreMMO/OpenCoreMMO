@@ -1,4 +1,5 @@
-﻿local food = Action()
+﻿---@type Action
+local food = Action()
 
 local foods = {
     [2362] = { 5, "Crunch." }, -- carrot
@@ -92,6 +93,12 @@ local foods = {
     [12639] = { 2, "Munch." }, -- peas
 }
 
+---@param player Player
+---@param item Item
+---@param fromPosition Position
+---@param target Thing
+---@param toPosition Position
+---@param isHotkey boolean
 function food.onUse(player, item, fromPosition, target, toPosition, isHotkey)
     local food = foods[item.itemid]
     if not food then

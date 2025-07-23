@@ -1,3 +1,5 @@
+---@diagnostic disable: lowercase-global
+
 local function formulaFunction(player, level, maglevel)
 	local min = (level / 5) + (maglevel * 4.5)
 	local max = (level / 5) + (maglevel * 9)
