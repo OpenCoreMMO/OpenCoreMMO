@@ -41,7 +41,8 @@ public class LuaStartup(
     IBankFunctions bankFunctions,
     ISpellFunctions spellFunctions,
     ICombatFunctions combatFunctions,
-    IVariantFunctions variantFunctions
+    IVariantFunctions variantFunctions,
+    ITownFunctions townFunctions
 ) : ILuaStartup
 {
     #region Public Methods
@@ -93,6 +94,7 @@ public class LuaStartup(
         combatFunctions.Init(luaState);
         bankFunctions.Init(luaState);
         variantFunctions.Init(luaState);
+        townFunctions.Init(luaState);
 
         ModulesLoadHelper(configManager.Load($"{currentDir}/config.lua"), "config.lua");
 

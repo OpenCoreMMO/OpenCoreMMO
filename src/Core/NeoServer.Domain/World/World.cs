@@ -102,6 +102,19 @@ public class World
         return false;
     }
 
+    public bool TryGetTown(string name, out ITown town)
+    {
+        foreach (var item in towns)
+            if (item.Value.Name == name)
+            {
+                town = item.Value;
+                return true;
+            }
+
+        town = null;
+        return false;
+    }
+
     public void AddWaypoint(IWaypoint waypoint)
     {
         if (waypoint.IsNull()) return;
