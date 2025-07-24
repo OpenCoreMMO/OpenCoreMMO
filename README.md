@@ -116,7 +116,7 @@ To connect to the self-hosted server for development, please use the following c
   - Talk Action: :arrows_counterclockwise:
   - Teleport: :arrows_counterclockwise:
   - Tile: :arrows_counterclockwise:
-  - Town: :warning:
+  - Town: :heavy_check_mark:
   - Variant: :heavy_check_mark:
   - Vocation: :arrows_counterclockwise:
   - Weapon: :arrows_counterclockwise:
