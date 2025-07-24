@@ -250,7 +250,7 @@ public class PlayerLoader : IPlayerLoader
         };
     }
 
-    protected Dictionary<int, int> ConvertToStorages(PlayerEntity playerRecord)
+    protected Dictionary<uint, int> ConvertToStorages(PlayerEntity playerRecord)
     {
         return playerRecord.PlayerStorages?.ToDictionary(c => c.Key, c => c.Value);
     }

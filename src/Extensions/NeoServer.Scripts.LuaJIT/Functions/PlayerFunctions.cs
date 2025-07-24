@@ -425,7 +425,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         // player:getStorageValue(key)
         var player = GetUserdata<IPlayer>(luaState, 1);
         if (player != null)
-            Lua.PushNumber(luaState, player.GetStorageValue(GetNumber<int>(luaState, 2)));
+            Lua.PushNumber(luaState, player.GetStorageValue(GetNumber<uint>(luaState, 2)));
         else
             Lua.PushNil(luaState);
 
@@ -444,7 +444,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             return 1;
         }
 
-        var key = GetNumber<int>(luaState, 2);
+        var key = GetNumber<uint>(luaState, 2);
         var value = GetNumber<int>(luaState, 3);
 
         var startReservedRange = 10000000;

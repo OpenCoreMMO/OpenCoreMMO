@@ -1,13 +1,14 @@
-﻿using System.Text;
+﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Helpers;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Items.Factories.AttributeFactory;
 using NeoServer.Domain.Items.Items.Attributes;
+using System.Text;
 
 namespace NeoServer.Domain.Items.Bases;
 
@@ -112,6 +113,7 @@ public abstract class Equipment : BaseItem, IEquipment
         StartDecay();
         OnDressed?.Invoke(this);
         player.OnDressedItem(this);
+        EventAggregator.Publish(new PlayerInventoryUpdateEvent(player, this, Location.Slot, true));
     }
 
     public void UndressFrom(IPlayer player)
@@ -125,6 +127,7 @@ public abstract class Equipment : BaseItem, IEquipment
         PlayerDressing = null;
         PauseDecay();
         OnUndressed?.Invoke(this);
+        EventAggregator.Publish(new PlayerInventoryUpdateEvent(player, this, Location.Slot, false));
     }
 
     #endregion

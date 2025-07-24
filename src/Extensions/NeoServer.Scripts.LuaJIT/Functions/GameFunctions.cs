@@ -63,6 +63,36 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         RegisterMethod(luaState, "Game", "getPlayers", LuaGameGetPlayers);
         RegisterMethod(luaState, "Game", "getNormalizedPlayerName", LuaGameGetNormalizedPlayerNameFunction);
+
+        RegisterMethod(luaState, "Game", "getEventCallbacks", LuaGameGetEventCallbacks);
+    }
+
+    private static int LuaGameGetEventCallbacks(LuaState luaState)
+    {
+        // Game.getEventCallbacks()
+        Lua.NewTable(luaState); // create a new table
+
+        // Push the EventCallbackFunctions.LuaEventCallbackLoad function
+        Lua.PushCFunction(luaState, EventCallbackFunctions.LuaEventCallbackLoad);
+
+        // Register all EventCallbackType enum entries except None
+        foreach (EventCallbackType value in Enum.GetValues(typeof(EventCallbackType)))
+        {
+            if (value == EventCallbackType.None)
+                continue;
+
+            // Make the first letter lowercase
+            string methodName = value.ToString();
+            if (!string.IsNullOrEmpty(methodName))
+                methodName = char.ToLowerInvariant(methodName[0]) + methodName.Substring(1);
+
+            Lua.PushString(luaState, methodName);
+            Lua.PushValue(luaState, -2); // copy the function reference to the top of the stack
+            Lua.SetTable(luaState, -4);  // set table[methodName] = function
+        }
+
+        Lua.Pop(luaState, 1); // pop the function
+        return 1;
     }
 
     private int LuaGameGetNormalizedPlayerNameFunction(LuaState luaState)
