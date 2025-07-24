@@ -109,7 +109,7 @@ public class PlayerLoader : IPlayerLoader
                 Feet = (byte)playerEntity.LookFeet,
                 Head = (byte)playerEntity.LookHead,
                 Legs = (byte)playerEntity.LookLegs,
-                LookType = (byte)playerEntity.LookType
+                LookType = (ushort)playerEntity.LookType
             },
             0,
             playerLocation,

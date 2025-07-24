@@ -42,6 +42,7 @@ public class LuaStartup(
     ISpellFunctions spellFunctions,
     ICombatFunctions combatFunctions,
     IVariantFunctions variantFunctions,
+    ITownFunctions townFunctions,
     IEventCallbackFunctions eventCallbackFunctions
 ) : ILuaStartup
 {
@@ -94,6 +95,7 @@ public class LuaStartup(
         combatFunctions.Init(luaState);
         bankFunctions.Init(luaState);
         variantFunctions.Init(luaState);
+        townFunctions.Init(luaState);
         eventCallbackFunctions.Init(luaState);
 
         ModulesLoadHelper(configManager.Load($"{currentDir}/config.lua"), "config.lua");
