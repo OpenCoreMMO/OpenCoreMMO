@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.DataStores;
+﻿using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Spells;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
@@ -34,6 +33,7 @@ public class Scripts : IScripts
 
     private readonly SpellListManager _spellListManager;
     private readonly INpcTypeStore _npcStore;
+    private readonly IEventsCallbacks _eventsCallbacks;
 
     #endregion
 
@@ -64,7 +64,8 @@ public class Scripts : IScripts
         IMoveEvents moveEvents,
         INpcs npcs,
         SpellListManager spellListManager,
-        INpcTypeStore npcStore)
+        INpcTypeStore npcStore,
+        IEventsCallbacks eventsCallbacks)
     {
         //_instance = this;
 
@@ -80,6 +81,7 @@ public class Scripts : IScripts
         _scriptInterface = new LuaScriptInterface("Scripts Interface");
         _spellListManager = spellListManager;
         _npcStore = npcStore;
+        _eventsCallbacks = eventsCallbacks;
         //_scriptInterface.InitState();
     }
 
@@ -97,6 +99,7 @@ public class Scripts : IScripts
         _talkActions.Clear();
         _spellListManager.Clear();
         _npcStore.Clear();
+        _eventsCallbacks.Clear();
     }
 
     public bool LoadEventSchedulerScripts(string fileName)

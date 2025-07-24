@@ -345,6 +345,59 @@ public enum BugReportTypeType : byte
     BUG_CATEGORY_OTHER = 3
 }
 
+public enum EventCallbackType : ushort
+{
+    None,
+    // Creature
+    CreatureOnChangeOutfit,
+    CreatureOnAreaCombat,
+    CreatureOnTargetCombat,
+    CreatureOnDrainHealth,
+    CreatureOnCombat,
+    // Party
+    PartyOnJoin,
+    PartyOnLeave,
+    PartyOnDisband,
+    PartyOnShareExperience,
+    // Player
+    PlayerOnBrowseField,
+    PlayerOnLook,
+    PlayerOnLookInBattleList,
+    PlayerOnLookInTrade,
+    PlayerOnLookInShop,
+    PlayerOnMoveItem,
+    PlayerOnItemMoved,
+    PlayerOnChangeZone,
+    PlayerOnChangeHazard,
+    PlayerOnMoveCreature,
+    PlayerOnReportRuleViolation,
+    PlayerOnReportBug,
+    PlayerOnTurn,
+    PlayerOnTradeRequest,
+    PlayerOnTradeAccept,
+    PlayerOnGainExperience,
+    PlayerOnLoseExperience,
+    PlayerOnGainSkillTries,
+    PlayerOnRequestQuestLog,
+    PlayerOnRequestQuestLine,
+    PlayerOnStorageUpdate,
+    PlayerOnRemoveCount,
+    PlayerOnCombat,
+    PlayerOnInventoryUpdate,
+    PlayerOnRotateItem,
+    PlayerOnWalk,
+    PlayerOnThink,
+    // Monster
+    MonsterOnDropLoot,
+    MonsterPostDropLoot,
+    // Zone
+    ZoneBeforeCreatureEnter,
+    ZoneBeforeCreatureLeave,
+    ZoneAfterCreatureEnter,
+    ZoneAfterCreatureLeave,
+    MapOnLoad
+}
+
 // Struct
 public struct LuaVariant
 {

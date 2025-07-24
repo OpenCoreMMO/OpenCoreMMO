@@ -66,7 +66,7 @@ public class Player : CombatActor, IPlayer
         byte soulPoints,
         byte soulMax,
         IDictionary<SkillType, ISkill> skills,
-        IDictionary<int, int> storages,
+        IDictionary<uint, int> storages,
         ushort staminaMinutes,
         IOutfit outfit,
         ushort speed,
@@ -429,6 +429,8 @@ public class Player : CombatActor, IPlayer
         TogglePacifiedCondition(fromTile, toTile);
         Containers.CloseDistantContainers();
         base.OnMoved(fromTile, toTile, spectators);
+
+        EventAggregator.Publish(new PlayerWalkEvent(this, Direction));
     }
 
     public override bool CanSee(ICreature otherCreature)
@@ -1478,16 +1480,24 @@ public class Player : CombatActor, IPlayer
     #region Storage
 
     //TODO: rename this method to something more meaningful or take this from here if this is not game business rule
-    public IDictionary<int, int> Storages { get; }
+    public IDictionary<uint, int> Storages { get; }
 
-    public int GetStorageValue(int key)
+    public int GetStorageValue(uint key)
     {
         return Storages.TryGetValue(key, out var storage) ? storage : -1;
     }
 
-    public void AddOrUpdateStorageValue(int key, int value)
+    public void AddOrUpdateStorageValue(uint key, int value)
     {
+        var oldValue = GetStorageValue(key);
         Storages.AddOrUpdate(key, value);
+        //todo: implement current time
+        EventAggregator.Publish(new PlayerStorageUpdateEvent(this, key, value, oldValue, 0));
+    }
+
+    public override void Think(int interval)
+    {
+        EventAggregator.Publish(new PlayerThinkEvent(this, interval));
     }
 
     #endregion
