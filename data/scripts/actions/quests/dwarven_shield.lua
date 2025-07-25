@@ -1,5 +1,12 @@
-﻿local dwarvenShieldQuest = Action()
+﻿---@type Action
+local dwarvenShieldQuest = Action()
 
+---@param player Player
+---@param item Item
+---@param fromPosition Position
+---@param target Thing
+---@param toPosition Position
+---@param isHotkey boolean
 function dwarvenShieldQuest.onUse(player, item, fromPosition, target, toPosition, isHotkey)
     local questStorage = player:getStorageValue(Storage.Quest.DwarvenShieldQuest.Key)
     if questStorage > -1 then

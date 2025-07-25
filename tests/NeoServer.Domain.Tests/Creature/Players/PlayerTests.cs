@@ -42,7 +42,7 @@ public class PlayerTests
             {
                 { SkillType.Axe, new Skill(SkillType.Axe, 10) }
             },
-            new Dictionary<int, int>(),
+            new Dictionary<uint, int>(),
             300,
             new Outfit(),
             300,

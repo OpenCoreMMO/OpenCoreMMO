@@ -1,0 +1,39 @@
+{
+    "Lua.workspace.library": [
+        "${workspaceFolder}/.vscode/lua"
+    ],
+    "Lua.diagnostics.globals": [
+        "Action",
+        "Bank",
+        "Combat",
+        "Creature",
+        "Condition",
+        "Config",
+        "Container",
+        "CreatureEvent",
+        "db",
+        "Game",
+        "GlobalEvent",
+        "Group",
+        "Item",
+        "ItemType",
+        "logger",
+        "Monster",
+        "MonsterType",
+        "MoveEvent",
+        "Npc",
+        "NpcType",
+        "Player",
+        "Position",
+        "Result",
+        "Spell",
+        "TalkAction",
+        "Teleport",
+        "Tile",
+        "Variant",
+        "bit",
+        "EventCallback"
+    ],
+    "Lua.runtime.version": "Lua 5.1",
+    "Lua.workspace.checkThirdParty": false
+}

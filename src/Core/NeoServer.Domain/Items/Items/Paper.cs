@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using NeoServer.Domain.Common;
+﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
@@ -13,14 +12,11 @@ namespace NeoServer.Domain.Items.Items;
 
 public class Paper : BaseItem, IReadable
 {
-    public Paper(IItemType metadata, Location location, IDictionary<ItemAttribute, IConvertible> attributes) : base(
-        metadata, location)
+    public Paper(IItemType metadata, Location location) : base(metadata, location)
     {
-        attributes.TryGetValue(ItemAttribute.Text, out var text);
-        Text = text?.ToString(CultureInfo.InvariantCulture);
     }
 
-    public string Text { get; private set; }
+    public string Text => Attributes.GetAttribute(ItemAttribute.Text);
     public ushort MaxLength => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MaxLength);
     public bool CanWrite => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Writeable) == 1;
 
@@ -37,7 +33,7 @@ public class Paper : BaseItem, IReadable
 
         if (text.Length > MaxLength) return Result.Fail(InvalidOperation.NotPossible);
 
-        Text = text;
+        Attributes.SetAttribute(ItemAttribute.Text, text);
         WrittenBy = writtenBy.Name;
         WrittenOn = DateTime.Now;
         return Result.Success;
@@ -48,8 +44,9 @@ public class Paper : BaseItem, IReadable
         usedBy.Read(this);
     }
 
-    public static bool IsApplicable(IItemType type)
-    {
-        return type.Group is ItemGroup.Paper;
-    }
+    public static bool IsApplicable(IItemType type) =>
+            type.Group == ItemGroup.Paper ||
+            (type.Attributes.HasAttribute(ItemTypeAttribute.Text)) ||
+            (type.Attributes.GetAttribute(ItemTypeAttribute.Type)
+                ?.Equals("paper", StringComparison.InvariantCultureIgnoreCase) ?? false);
 }

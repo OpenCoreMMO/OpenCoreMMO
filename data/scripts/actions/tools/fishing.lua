@@ -1,4 +1,5 @@
-﻿local fishing = Action()
+﻿---@type Action
+local fishing = Action()
 
 local waterIds = { 493, 4608, 4609, 4610, 4611, 4612, 4613, 4614, 4615, 4616, 4617, 4618, 4619, 4620, 4621, 4622, 4623, 4624, 4625, 7236, 10499 }
 local lootTrash = { 2234, 2238, 2376, 2509, 2667 }
@@ -7,6 +8,12 @@ local lootRare = { 2143, 2146, 2149, 7158, 7159 }
 local lootVeryRare = { 7632, 7633, 10220 }
 local useWorms = true
 
+---@param player Player
+---@param item Item
+---@param fromPosition Position
+---@param target Thing
+---@param toPosition Position
+---@param isHotkey boolean
 function fishing.onUse(player, item, fromPosition, target, toPosition, isHotkey)
     local targetId = target.itemid
     if not table.contains(waterIds, targetId) then

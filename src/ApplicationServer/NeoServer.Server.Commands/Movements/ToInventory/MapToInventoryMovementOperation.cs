@@ -5,30 +5,26 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Networking.Packets.Incoming;
+using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Commands.Movements.ToInventory;
 
-public sealed class MapToInventoryMovementOperation
+public sealed class MapToInventoryMovementOperation(IItemMovementService itemMovementService)
 {
-    private readonly IItemMovementService _itemMovementService;
-
-    public MapToInventoryMovementOperation(IItemMovementService itemMovementService)
-    {
-        _itemMovementService = itemMovementService;
-    }
-
-    public void Execute(IPlayer player, IMap map, ItemThrowPacket itemThrow)
-    {
-        FromMapToInventory(player, map, itemThrow);
-    }
-
-    private void FromMapToInventory(IPlayer player, IMap map, ItemThrowPacket itemThrow)
+    public void Execute(
+        IPlayer player,
+        IMap map,
+        ItemThrowPacket itemThrow,
+        IScriptManager scriptManager)
     {
         if (map[itemThrow.FromLocation] is not { } fromTile) return;
         if (fromTile.TopDownItemOnStack is not { } item) return;
         if (fromTile is not IDynamicTile dynamicTile) return;
 
-        var result = _itemMovementService.Move(player, item, dynamicTile, player.Inventory, itemThrow.Count, 0,
+        if (scriptManager.MoveEvents.EquipItem(player, item, itemThrow.ToLocation.Slot, false).HasValue)
+            return;
+
+        var result = itemMovementService.Move(player, item, dynamicTile, player.Inventory, itemThrow.Count, 0,
             (byte)itemThrow.ToLocation.Slot);
 
         if (result.Failed) OperationFailService.Send(player, result.Error);

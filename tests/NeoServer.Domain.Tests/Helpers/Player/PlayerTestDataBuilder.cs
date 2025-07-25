@@ -28,7 +28,7 @@ public static class PlayerTestDataBuilder
         ushort speed = 200,
         Dictionary<Slot, (IItem Item, ushort Id)> inventoryMap = null,
         Dictionary<SkillType, ISkill> skills = null,
-        Dictionary<int, int> storages = null,
+        Dictionary<uint, int> storages = null,
         byte vocationType = 1,
         byte groupId = 1,
         IPathFinder pathFinder = null,
@@ -105,7 +105,7 @@ public static class PlayerTestDataBuilder
                     }
                 }
             },
-            storages ?? new Dictionary<int, int>(),
+            storages ?? new Dictionary<uint, int>(),
             300,
             new Outfit(),
             speed,

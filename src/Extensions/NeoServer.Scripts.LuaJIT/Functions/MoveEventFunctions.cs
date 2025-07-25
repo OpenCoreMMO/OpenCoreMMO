@@ -42,6 +42,8 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
         RegisterMethod(L, "MoveEvent", "vocation", LuaMoveEventVocation);
         RegisterMethod(L, "MoveEvent", "onStepIn", LuaMoveEventOnCallback);
         RegisterMethod(L, "MoveEvent", "onStepOut", LuaMoveEventOnCallback);
+        RegisterMethod(L, "MoveEvent", "onEquipItem", LuaMoveEventOnCallback);
+        RegisterMethod(L, "MoveEvent", "onDeEquipItem", LuaMoveEventOnCallback);
         RegisterMethod(L, "MoveEvent", "onAddItem", LuaMoveEventOnCallback);
         RegisterMethod(L, "MoveEvent", "onRemoveItem", LuaMoveEventOnCallback);
     }
@@ -71,6 +73,14 @@ public class MoveEventFunctions : LuaScriptInterface, IMoveEventFunctions
             {
                 moveEvent.EventType = MoveEventType.MOVE_EVENT_STEP_OUT;
                 moveEvent.OnStepFunction = _moveEvents.StepOut;
+            }
+            else if (tmpStr == "equip")
+            {
+                moveEvent.EventType = MoveEventType.MOVE_EVENT_EQUIP;
+            }
+            else if (tmpStr == "deequip")
+            {
+                moveEvent.EventType = MoveEventType.MOVE_EVENT_DEEQUIP;
             }
             else if (tmpStr == "additem")
             {

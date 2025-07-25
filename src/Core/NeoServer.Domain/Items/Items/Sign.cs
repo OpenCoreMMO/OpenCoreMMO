@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using NeoServer.Domain.Common.Contracts.Items;
+﻿using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
@@ -9,14 +8,11 @@ namespace NeoServer.Domain.Items.Items;
 
 public class Sign : BaseItem
 {
-    public Sign(IItemType metadata, Location location, IDictionary<ItemAttribute, IConvertible> attributes) : base(
-        metadata, location)
+    public Sign(IItemType metadata, Location location) : base(metadata, location)
     {
-        attributes.TryGetValue(ItemAttribute.Text, out var text);
-        Text = text?.ToString(CultureInfo.InvariantCulture);
     }
 
-    public string Text { get; }
+    public string Text => Attributes.GetAttribute(ItemAttribute.Text);
 
     public override string GetLookText(bool isClose = false,
         bool showInternalDetails = false)
@@ -26,13 +22,9 @@ public class Sign : BaseItem
         return string.IsNullOrWhiteSpace(Text) ? lookText : $"{lookText}\nYou read: {Text.AddEndOfSentencePeriod()}";
     }
 
-    public static bool IsApplicable(IItemType type, IDictionary<ItemAttribute, IConvertible> attributes)
-    {
-        return (attributes.ContainsKey(ItemAttribute.Text) && !type.Flags.Contains(ItemFlag.Usable)) ||
-               (type.Attributes.GetAttribute(ItemTypeAttribute.Type)
-                   ?.Equals("sign", StringComparison.InvariantCultureIgnoreCase) ?? false)
-            ? true
-            : false;
-        //return type.Group is ItemGroup.Sign;
-    }
+    public static bool IsApplicable(IItemType type, IDictionary<ItemAttribute, IConvertible> attributes) =>
+            type.Group == ItemGroup.Sign ||
+            (attributes != null && attributes.ContainsKey(ItemAttribute.Text) && !type.Flags.Contains(ItemFlag.Usable)) ||
+            (type.Attributes.GetAttribute(ItemTypeAttribute.Type)
+                ?.Equals("sign", StringComparison.InvariantCultureIgnoreCase) ?? false);
 }

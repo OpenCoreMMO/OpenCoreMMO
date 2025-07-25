@@ -2,10 +2,6 @@
     return ItemType(self:getId())
 end
 
-function Item.isContainer(self)
-    return false
-end
-
 function Item.isCreature(self)
     return false
 end

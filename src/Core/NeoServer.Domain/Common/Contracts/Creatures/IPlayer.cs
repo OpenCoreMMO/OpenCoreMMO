@@ -126,7 +126,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     int PremiumTime { get; }
     bool HasPremiumTime => PremiumTime > 0;
     IDictionary<SkillType, ISkill> Skills { get; }
-    IDictionary<int, int> Storages { get; }
+    IDictionary<uint, int> Storages { get; }
 
     bool CanSeeInspectionDetails { get; }
     bool IsManaShieldEnabled { get; }
@@ -261,8 +261,8 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     void SetAsHungry();
     void Use(IContainer item, byte openAtIndex);
     ushort GetRawSkillLevel(SkillType skillType);
-    int GetStorageValue(int key);
-    void AddOrUpdateStorageValue(int key, int value);
+    int GetStorageValue(uint key);
+    void AddOrUpdateStorageValue(uint key, int value);
     Skull GetSkull(IPlayer enemy);
     void SetSkull(Skull skull, DateTime? skullEndingDate = null, IPlayer enemy = null);
     void RemoveSkull();
@@ -316,10 +316,10 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event ChangeChaseMode OnChangedChaseMode;
     public event AddSkillBonus OnAddedSkillBonus;
     public event RemoveSkillBonus OnRemovedSkillBonus;
-    public event ReadText OnReadText;
     public event WroteText OnWroteText;
 
     #endregion
 
     void PostAttack(CombatParameter combatParameter, CombatResult damages);
+    public void MoveToTemple();
 }

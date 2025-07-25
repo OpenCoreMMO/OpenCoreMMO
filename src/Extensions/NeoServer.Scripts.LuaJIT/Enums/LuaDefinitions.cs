@@ -153,7 +153,6 @@ public enum LuaDataType : byte
     Variant,
     Position,
     NetworkMessage,
-    ModalWindow,
     Guild,
     Group,
     Vocation,
@@ -162,7 +161,6 @@ public enum LuaDataType : byte
     ItemType,
     Combat,
     Condition,
-    Charm,
     Loot,
     MonsterSpell,
     Spell,
@@ -172,10 +170,7 @@ public enum LuaDataType : byte
     CreatureEvent,
     MoveEvent,
     GlobalEvent,
-    Weapon,
-    Imbuement,
-    Mount,
-    ItemClassification
+    Weapon
 }
 
 public enum CreatureEventType
@@ -188,7 +183,6 @@ public enum CreatureEventType
     CREATURE_EVENT_DEATH,
     CREATURE_EVENT_KILL,
     CREATURE_EVENT_ADVANCE,
-    CREATURE_EVENT_MODALWINDOW,
     CREATURE_EVENT_TEXTEDIT,
     CREATURE_EVENT_HEALTHCHANGE,
     CREATURE_EVENT_MANACHANGE,
@@ -201,6 +195,8 @@ public enum MoveEventType
 {
     MOVE_EVENT_STEP_IN,
     MOVE_EVENT_STEP_OUT,
+    MOVE_EVENT_EQUIP,
+    MOVE_EVENT_DEEQUIP,
     MOVE_EVENT_ADD_ITEM,
     MOVE_EVENT_REMOVE_ITEM,
     MOVE_EVENT_ADD_ITEM_ITEMTILE,
@@ -347,6 +343,59 @@ public enum BugReportTypeType : byte
     BUG_CATEGORY_TYPO = 1,
     BUG_CATEGORY_TECHNICAL = 2,
     BUG_CATEGORY_OTHER = 3
+}
+
+public enum EventCallbackType : ushort
+{
+    None,
+    // Creature
+    CreatureOnChangeOutfit,
+    CreatureOnAreaCombat,
+    CreatureOnTargetCombat,
+    CreatureOnDrainHealth,
+    CreatureOnCombat,
+    // Party
+    PartyOnJoin,
+    PartyOnLeave,
+    PartyOnDisband,
+    PartyOnShareExperience,
+    // Player
+    PlayerOnBrowseField,
+    PlayerOnLook,
+    PlayerOnLookInBattleList,
+    PlayerOnLookInTrade,
+    PlayerOnLookInShop,
+    PlayerOnMoveItem,
+    PlayerOnItemMoved,
+    PlayerOnChangeZone,
+    PlayerOnChangeHazard,
+    PlayerOnMoveCreature,
+    PlayerOnReportRuleViolation,
+    PlayerOnReportBug,
+    PlayerOnTurn,
+    PlayerOnTradeRequest,
+    PlayerOnTradeAccept,
+    PlayerOnGainExperience,
+    PlayerOnLoseExperience,
+    PlayerOnGainSkillTries,
+    PlayerOnRequestQuestLog,
+    PlayerOnRequestQuestLine,
+    PlayerOnStorageUpdate,
+    PlayerOnRemoveCount,
+    PlayerOnCombat,
+    PlayerOnInventoryUpdate,
+    PlayerOnRotateItem,
+    PlayerOnWalk,
+    PlayerOnThink,
+    // Monster
+    MonsterOnDropLoot,
+    MonsterPostDropLoot,
+    // Zone
+    ZoneBeforeCreatureEnter,
+    ZoneBeforeCreatureLeave,
+    ZoneAfterCreatureEnter,
+    ZoneAfterCreatureLeave,
+    MapOnLoad
 }
 
 // Struct
