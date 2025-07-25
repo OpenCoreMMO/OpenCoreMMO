@@ -9,7 +9,7 @@ using NeoServer.Web.API.Response.Player;
 
 namespace NeoServer.Web.API.Application.UseCases.Queries;
 
-public class GetPlayersQuery(IMapper mapper, IPlayerRepository playerRepository)
+public class GetPlayersQuery(IPlayerRepository playerRepository)
     : IRequestHandler<GetPlayersRequest, BasePagedResponseViewModel<IEnumerable<PlayerResponseViewModel>>>
 {
     public async Task<BasePagedResponseViewModel<IEnumerable<PlayerResponseViewModel>>> Handle(
@@ -25,7 +25,7 @@ public class GetPlayersQuery(IMapper mapper, IPlayerRepository playerRepository)
 
         var totalPlayers = await playerRepository.CountAllAsync(expression);
         var players = await playerRepository.GetPaginatedPlayersAsync(expression, request.Page, request.Limit);
-        var response = mapper.Map<IEnumerable<PlayerResponseViewModel>>(players);
+        var response = players.Select(item => (PlayerResponseViewModel)item);
 
         var totalPages = (int)Math.Ceiling((double)totalPlayers / request.Limit);
 

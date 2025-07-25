@@ -1,7 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
-
-namespace NeoServer.Web.API.IoC.Modules;
+﻿using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+namespace NeoServer.Web.Shared.IoC.Modules;
 
 public static class AutoMapperInjection
 {

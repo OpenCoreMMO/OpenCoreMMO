@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using AutoMapper;
 using MediatR;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
@@ -9,7 +8,7 @@ using NeoServer.Web.API.Response.World;
 
 namespace NeoServer.Web.API.Application.UseCases.Queries;
 
-public class GetWorldsQuery(IMapper mapper, IWorldRepository worldRepository)
+public class GetWorldsQuery(IWorldRepository worldRepository)
     : IRequestHandler<GetWorldsRequest, BasePagedResponseViewModel<IEnumerable<WorldResponseViewModel>>>
 {
     public async Task<BasePagedResponseViewModel<IEnumerable<WorldResponseViewModel>>> Handle(GetWorldsRequest request,
@@ -26,7 +25,7 @@ public class GetWorldsQuery(IMapper mapper, IWorldRepository worldRepository)
 
         var totalWorlds = await worldRepository.CountAllAsync(expression);
         var players = await worldRepository.GetPaginatedWorldsAsync(expression, request.Page, request.Limit);
-        var response = mapper.Map<IEnumerable<WorldResponseViewModel>>(players);
+        var response = players.Select(item => (WorldResponseViewModel)item);
 
         var totalPages = (int)Math.Ceiling((double)totalWorlds / request.Limit);
 

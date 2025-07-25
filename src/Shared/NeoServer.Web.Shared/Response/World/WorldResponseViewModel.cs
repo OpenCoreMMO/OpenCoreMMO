@@ -26,4 +26,23 @@ public class WorldResponseViewModel
     public DateTime CreatedAt { get; set; }
 
     public int MaxCapacity { get; set; }
+    
+    public static implicit operator WorldResponseViewModel(WorldEntity entity) 
+        => entity == null 
+        ? null 
+        : new WorldResponseViewModel
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            Ip = entity.Ip,
+            Port = entity.Port,
+            Region = entity.Region,
+            PvpType = entity.PvpType,
+            Type = entity.Type,
+            RequiresPremium = entity.RequiresPremium,
+            TransferEnabled = entity.TransferEnabled,
+            AntiCheatEnabled = entity.AntiCheatEnabled,
+            CreatedAt = entity.CreatedAt,
+            MaxCapacity = entity.MaxCapacity
+        };
 }
