@@ -17,9 +17,7 @@ public class CreatureDeathEventHandler(
         ICreatureDeathService creatureDeathService,
         IExperienceSharingService experienceSharingService,
         ILootService lootService,
-        BloodPoolService bloodPoolService,
-        GameConfiguration gameConfiguration,
-        IScriptManager scriptManager)
+        GameConfiguration gameConfiguration)
     : IApplicationEventHandler<CreatureDeathEvent>
 {
     public void Handle(CreatureDeathEvent @event)
@@ -49,8 +47,6 @@ public class CreatureDeathEventHandler(
                 playerDeathRepository.Save(player, damageRecordResult);
                 break;
         }
-
-        scriptManager.CreatureEvents.ExecuteOnCreatureDeath(deadCreature, by);
     }
 
     private void OnMonsterKilled(ICombatActor creature)
