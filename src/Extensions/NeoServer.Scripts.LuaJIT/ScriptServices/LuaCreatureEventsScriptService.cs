@@ -49,12 +49,5 @@ public class LuaCreatureEventsScriptService : ICreatureEventsScriptService
             creatureEvent.ExecuteOnExtendedOpcode(player, opcode, buffer);
     }
 
-    public void ExecuteOnCreatureDeath(ICombatActor actor, IThing by)
-    {
-        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(actor.CreatureId,
-                     CreatureEventType.CREATURE_EVENT_DEATH))
-            creatureEvent.ExecuteOnDeath(actor, actor.Corpse as IItem, by as ICreature, null, false, false);
-    }
-
     #endregion
 }

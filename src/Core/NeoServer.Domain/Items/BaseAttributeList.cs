@@ -25,12 +25,20 @@ public class BaseAttributeList<T> where T : Enum
         return _defaultAttributes.ContainsKey(attribute);
     }
 
-    public TValue GetAttribute<TValue>(T attribute) where TValue : struct
+    public TValue GetAttribute<TValue>(T attribute)
     {
         if (_defaultAttributes is null) return default;
 
         if (_defaultAttributes.TryGetValue(attribute, out var value))
-            return (TValue)Convert.ChangeType(value.Item1, typeof(TValue), CultureInfo.InvariantCulture);
+        {
+            if (value.Item1 is TValue tValue)
+                return tValue;
+
+            if (typeof(IConvertible).IsAssignableFrom(typeof(TValue)))
+                return (TValue)Convert.ChangeType(value.Item1, typeof(TValue), CultureInfo.InvariantCulture);
+
+            return (TValue)value.Item1;
+        }
 
         return default;
     }
@@ -199,9 +207,13 @@ public class BaseAttributeList<T> where T : Enum
 
         if (_customAttributes.TryGetValue(attribute, out var value))
         {
-            if (!IsNullable(value.Item1)) return (TValue)value.Item1;
+            if (value.Item1 is TValue tValue)
+                return tValue;
 
-            return (TValue)Convert.ChangeType(value.Item1, typeof(TValue), CultureInfo.InvariantCulture);
+            if (typeof(IConvertible).IsAssignableFrom(typeof(TValue)))
+                return (TValue)Convert.ChangeType(value.Item1, typeof(TValue), CultureInfo.InvariantCulture);
+
+            return (TValue)value.Item1;
         }
 
         return default;

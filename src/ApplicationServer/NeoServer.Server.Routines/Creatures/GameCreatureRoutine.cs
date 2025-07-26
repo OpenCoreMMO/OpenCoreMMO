@@ -12,8 +12,7 @@ namespace NeoServer.Server.Routines.Creatures;
 
 public class GameCreatureRoutine
 {
-    private const ushort EVENT_CREATURE_THINK_INTERVAL = 1000;
-    private const ushort EVENT_CHECK_CREATURE_INTERVAL = 500;
+    private const ushort EVENT_CHECK_CREATURE_INTERVAL = 1000;
     private readonly IGameServer _game;
     private readonly PlayerLogOutCommand _playerLogOutCommand;
     private readonly PlayerStatusRoutine _playerStatusRoutine;
@@ -35,14 +34,12 @@ public class GameCreatureRoutine
 
     public void StartChecking()
     {
-        _game.Scheduler.AddEvent(new SchedulerEvent(EVENT_CHECK_CREATURE_INTERVAL, StartChecking));
-
         foreach (var creature in _game.CreatureManager.GetCreatures())
         {
             if (creature is null or ICombatActor { IsDead: true }) continue;
             if (!creature.IsThinking()) continue;
 
-            creature.Think(EVENT_CREATURE_THINK_INTERVAL);
+            creature.Think(EVENT_CHECK_CREATURE_INTERVAL);
 
             CheckPlayer(creature);
             CheckCreature(creature);
@@ -51,6 +48,8 @@ public class GameCreatureRoutine
 
             RespawnRoutine.Execute(_spawnManager);
         }
+
+        _game.Scheduler.AddEvent(new SchedulerEvent(EVENT_CHECK_CREATURE_INTERVAL, StartChecking));
     }
 
     private static void CheckCreature(ICreature creature)
