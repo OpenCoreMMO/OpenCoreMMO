@@ -120,10 +120,13 @@ public class Skill : ISkill
         if (Type == SkillType.Level)
         {
             var currentLevelExp = CalculateExpByLevel(Level);
-
             var nextLevelExp = CalculateExpByLevel(Level + 1);
 
-            if (count < currentLevelExp || count > nextLevelExp) Count = currentLevelExp;
+            if (count < currentLevelExp)
+                count = currentLevelExp;
+            if (count > nextLevelExp)
+                count = nextLevelExp;
+
             return CalculatePercentage(count - currentLevelExp, nextLevelExp - currentLevelExp);
         }
 

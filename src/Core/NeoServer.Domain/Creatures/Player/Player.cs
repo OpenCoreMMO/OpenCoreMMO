@@ -386,7 +386,7 @@ public class Player : CombatActor, IPlayer
     {
         var rate = Creatures.Player.Vocation.Vocation.DefaultSkillMultiplier;
         Vocation.Skills?.TryGetValue(skill, out rate);
-        return (byte)Skills[skill].GetPercentage(rate);
+        return (byte)Math.Clamp(Skills[skill].GetPercentage(rate), 0, 100);
     }
 
     public bool KnowsCreatureWithId(uint creatureId)
