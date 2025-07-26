@@ -14,6 +14,5 @@ public enum Slot : byte
     Ring = 9,
     Ammo = 10,
     Depot = 11,
-    TwoHanded = 12,
-    Hand = Left | Right
+    TwoHanded = 12
 }

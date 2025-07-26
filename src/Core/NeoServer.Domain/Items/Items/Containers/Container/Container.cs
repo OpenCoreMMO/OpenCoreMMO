@@ -220,6 +220,9 @@ public class Container : BaseItem, IContainer
 
     public Result<OperationResultList<IItem>> AddItem(IItem item, bool includeChildren)
     {
+        if (Owner != null)
+            item.SetOwner(Owner);
+
         if (item is null) return Result<OperationResultList<IItem>>.NotPossible;
 
         Result<OperationResultList<IItem>> result = new(AddItemOperation.TryAddItem(this, item).Reason);
