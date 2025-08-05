@@ -50,6 +50,7 @@ public static class ServiceInjection
         builder.AddSingleton<IPlayerUseService, PlayerUseService>();
         builder.AddSingleton<IItemMovementService, ItemMovementService>();
         builder.AddSingleton<IItemService, ItemService>();
+        builder.AddSingleton<IHouseService, HouseService>();
         builder.AddSingleton<IStaticToDynamicTileService, StaticToDynamicTileService>();
         builder.AddSingleton<SafeTradeSystem>();
         builder.AddSingleton<IItemRequirementService, ItemRequirementService>();

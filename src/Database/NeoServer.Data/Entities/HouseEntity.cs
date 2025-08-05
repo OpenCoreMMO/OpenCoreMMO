@@ -1,22 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace NeoServer.Data.Entities;
 
 public sealed class HouseEntity
 {
-    public int Id { get; set; }
-    public int Onwer { get; set; }
-    public int Paid { get; set; }
-    public int Warnings { get; set; }
+    public uint Id { get; set; }
+    public uint Owner { get; set; }
     public string Name { get; set; }
-    public int Rent { get; set; }
-    public int TownId { get; set; }
-    public int Bid { get; set; }
-    public int BidEnd { get; set; }
-    public int LastBid { get; set; }
-    public int HighestBidder { get; set; }
-    public int Size { get; set; }
-    public int Beds { get; set; }
+    public uint TownId { get; set; }
+    public uint Price { get; set; }
+    public uint Rent { get; set; }
+    public uint Size { get; set; }
+    public long PaidUntil { get; set; }
+    public DateTime? LastPayment { get; set; }
+    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    public DateTime ModifiedDate { get; set; } = DateTime.UtcNow;
+    
+    // Coordenadas de entrada (formato serializado)
+    public string EntryCoordinates { get; set; }
+    
+    // Tiles da casa (formato serializado)
+    public string TileCoordinates { get; set; }
+    
+    // Portas da casa (formato serializado) 
+    public string DoorCoordinates { get; set; }
 
     public ICollection<HouseListEntity> HouseLists { get; set; }
 }
