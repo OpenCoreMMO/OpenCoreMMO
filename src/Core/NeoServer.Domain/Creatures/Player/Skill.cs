@@ -127,6 +127,8 @@ public class Skill : ISkill
             if (count > nextLevelExp)
                 count = nextLevelExp;
 
+            Count = count;
+
             return CalculatePercentage(count - currentLevelExp, nextLevelExp - currentLevelExp);
         }
 
