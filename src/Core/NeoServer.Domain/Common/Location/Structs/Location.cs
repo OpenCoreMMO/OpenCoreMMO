@@ -78,7 +78,7 @@ public struct Location : IEquatable<Location>, IConvertible
         );
     }
 
-    public Slot Slot => (Slot)Convert.ToByte(Y);
+    public Slot Slot => Y <= (ushort)Slot.TwoHanded ? (Slot)Convert.ToByte(Y) : Slot.None;
 
     // public byte Container => Convert.ToByte(Y - 0x40);
     public byte ContainerId => Convert.ToByte(Y & 0x0F);
