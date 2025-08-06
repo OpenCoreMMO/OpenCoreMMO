@@ -3,7 +3,7 @@
 public enum GameOutgoingPacketType : byte
 {
     NoType = 0x00,
-    Ping = 0x1E,
+    Ping = 0x1D,
     SelfAppear = 0x17,// 0x0A, old
     PlayerModes = 0xA7,
     Disconnect = 0x14,
@@ -64,5 +64,6 @@ public enum GameOutgoingPacketType : byte
     OnlineStatusVip = 0xD3,
     OfflineStatusVip = 0xD4,
     TextWindow = 0x96,
-    NetworkPing = 0x40
+    NetworkPing = 0x40,
+    PingBack = 0x1E
 }

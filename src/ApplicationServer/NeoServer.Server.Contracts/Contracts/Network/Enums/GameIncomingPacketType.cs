@@ -75,5 +75,7 @@ public enum GameIncomingPacketType : byte
     ReportDebugAssertion = 0xE8,
     NewPing = 0x40,
     ExtendedOpcode = 0x32,
+    Disconnect = 0x0F,
+    PingBack = 0x1D,
     Any = 0xFF // Do not send
 }

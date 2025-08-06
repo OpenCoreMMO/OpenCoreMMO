@@ -1,7 +1,7 @@
-﻿using System;
-using NeoServer.Server.Common.Contracts;
+﻿using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
 using NeoServer.Server.Tasks;
+using System;
 
 namespace NeoServer.Networking.Handlers.Player;
 
