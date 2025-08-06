@@ -142,7 +142,7 @@ public interface IItem : IThing, IHasDecay
         }
 
         if (it.IsAnimation())
-            bytes.Add(0xFE); 
+            bytes.Add(0xFE);
 
         return new Span<byte>(bytes.ToArray());
     }

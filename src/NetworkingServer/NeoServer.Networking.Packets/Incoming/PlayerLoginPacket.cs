@@ -62,6 +62,9 @@ public class PlayerLogInPacket : IncomingPacket
         ChallengeNumber = data.GetByte();
         var clientStringLength = data.GetUInt16();
         if (clientStringLength == 5 && data.GetString(5) == "OTCv8") OtcV8Version = data.GetUInt16();
+
+        //todo: fix this, meha dont send OtcV8Version in packet
+        OtcV8Version = 320;
     }
 
     public ushort OtcV8Version { get; set; }
