@@ -58,6 +58,7 @@ public class PacketHandlerRouter
             or GameIncomingPacketType.CancelAutoWalk
             or GameIncomingPacketType.PlayerLogOut
             or GameIncomingPacketType.OpenStore
+            or GameIncomingPacketType.RequestQuestLog
             or GameIncomingPacketType.Disconnect);
     }
 
