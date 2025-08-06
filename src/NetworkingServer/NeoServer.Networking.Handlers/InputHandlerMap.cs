@@ -80,6 +80,7 @@ public static class InputHandlerMap
             [GameIncomingPacketType.RequestQuestLog] = typeof(RequestQuestLogHandler),
             [GameIncomingPacketType.ClientEnterGame] = typeof(ClientEnterGameHandler),
             [GameIncomingPacketType.OpenStore] = typeof(OpenStoreHandler),
+            [GameIncomingPacketType.RequestStoreOffers] = typeof(RequestStoreOffersHandler),
             [GameIncomingPacketType.Disconnect] = typeof(DisconnectHandler),
             [GameIncomingPacketType.PingBack] = typeof(PlayerPingBackResponseHandler)
         };
