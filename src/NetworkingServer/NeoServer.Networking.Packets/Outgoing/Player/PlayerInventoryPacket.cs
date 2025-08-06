@@ -19,6 +19,8 @@ public class PlayerInventoryPacket : OutgoingPacket
     {
         void SendInventoryItem(Slot slot)
         {
+
+            //todo: 1098 implements this
             if (inventory[slot] == null)
             {
                 message.AddByte((byte)GameOutgoingPacketType.InventoryEmpty);
@@ -32,8 +34,6 @@ public class PlayerInventoryPacket : OutgoingPacket
             }
         }
 
-        ;
-
         SendInventoryItem(Slot.Head);
         SendInventoryItem(Slot.Necklace);
         SendInventoryItem(Slot.Backpack);
@@ -44,5 +44,6 @@ public class PlayerInventoryPacket : OutgoingPacket
         SendInventoryItem(Slot.Feet);
         SendInventoryItem(Slot.Ring);
         SendInventoryItem(Slot.Ammo);
+        SendInventoryItem(Slot.StoreInbox);
     }
 }

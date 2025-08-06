@@ -9,26 +9,31 @@ public class AccountLoginPacket : IncomingPacket
 {
     public AccountLoginPacket(IReadOnlyNetworkMessage message)
     {
-        var packetPayload = message.GetUInt16();
-        var tcpPayload = packetPayload + 2;
-        message.SkipBytes(5);
+        message.SkipBytes(7);
         OperatingSystem = (OperatingSystem)message.GetUInt16();
         ProtocolVersion = message.GetUInt16();
 
-        message.SkipBytes(12);
+        message.SkipBytes(17);
 
-        var encryptedDataLength = tcpPayload - message.BytesRead;
-        var encryptedData = message.GetBytes(encryptedDataLength);
+        var encryptedData = message.GetBytes(Rsa.LENGTH);
         var bytes = Rsa.Decrypt(encryptedData.ToArray());
 
         if (bytes is null || bytes.Length == 0) return;
 
-        var data = new ReadOnlyNetworkMessage(bytes, encryptedDataLength);
+        var data = new ReadOnlyNetworkMessage(bytes, encryptedData.Length);
 
         LoadXtea(data);
 
         Account = data.GetString();
         Password = data.GetString();
+
+        // read authenticator token and stay logged in flag from last 128 bytes
+        message.SkipBytes((message.Length - Rsa.LENGTH) - message.BytesRead); 
+        encryptedData = message.GetBytes(Rsa.LENGTH);
+        bytes = Rsa.Decrypt(encryptedData.ToArray());
+        data = new ReadOnlyNetworkMessage(bytes, encryptedData.Length);
+
+        Token = data.GetString();
     }
 
     public OperatingSystem OperatingSystem { get; set; }
@@ -36,6 +41,7 @@ public class AccountLoginPacket : IncomingPacket
     public string Account { get; }
     public string Password { get; }
     public ushort ProtocolVersion { get; }
+    public string Token { get; }
 
     public bool IsValid()
     {

@@ -17,6 +17,6 @@ public class PlayerLevelAdvancedEventHandler : PlayerLevelChangeEventHandler
     {
         connection.OutgoingPackets.Enqueue(new TextMessagePacket(
             MessageParser.GetSkillAdvancedMessage(skillType, fromLevel, toLevel),
-            TextMessageOutgoingType.MESSAGE_EVENT_LEVEL_CHANGE));
+            TextMessageOutgoingType.MESSAGE_EVENT_ADVANCE));
     }
 }

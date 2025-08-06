@@ -10,31 +10,54 @@ public class PlayerLogInPacket : IncomingPacket
 {
     public PlayerLogInPacket(IReadOnlyNetworkMessage message)
     {
-        var packetLength = message.GetUInt16();
-        var tcpPayload = packetLength + 2;
-        message.SkipBytes(5);
+        
+        message.SkipBytes(7); 
 
         OperatingSystem = (OperatingSystem)message.GetUInt16();
         Version = message.GetUInt16();
 
-        //message.SkipBytes(9);
+        message.SkipBytes(7); // U32 client version, U8 client type, U16 dat revision
 
         //// todo: version validation
 
-        var encryptedDataLength = tcpPayload - message.BytesRead;
-        var encryptedData = message.GetBytes(encryptedDataLength);
+        var encryptedData = message.GetBytes(Rsa.LENGTH);
 
         var decryptedData = Rsa.Decrypt(encryptedData.ToArray());
         if (decryptedData is null || decryptedData.Length == 0) return;
 
-        var data = new ReadOnlyNetworkMessage(decryptedData, encryptedDataLength);
+        var data = new ReadOnlyNetworkMessage(decryptedData, encryptedData.Length);
 
         LoadXtea(data);
 
         GameMaster = Convert.ToBoolean(data.GetByte());
-        Account = data.GetString();
+        var sessionKey = data.GetString();
+
+        if (string.IsNullOrEmpty(sessionKey))
+        {
+            //todo: 1098 disconnect();
+            return;
+        }
+
+        var sessionArgs = sessionKey.Split('\n');
+        if (sessionArgs.Length != 4)
+        {
+            //todo: 1098 disconnect();
+            return;
+        }
+
+        Account = sessionArgs[0];
+        Password = sessionArgs[1];
+        var token = sessionArgs[2];
+
         CharacterName = data.GetString();
-        Password = data.GetString();
+
+        //todo: 1098 implement this
+        //if (challengeTimestamp != timeStamp || challengeRandom != randNumber)
+        //{
+        //    disconnect();
+        //    return;
+        //}
+
         ChallengeTimeStamp = data.GetUInt32();
         ChallengeNumber = data.GetByte();
         var clientStringLength = data.GetUInt16();

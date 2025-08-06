@@ -1,8 +1,8 @@
 ﻿#define GAME_FEATURE_MESSAGE_LEVEL
-using System.Text;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Guild;
 using NeoServer.Domain.Party;
+using System.Text;
 
 namespace NeoServer.Domain.Creatures;
 
@@ -28,12 +28,33 @@ public static class CreatureRaw
             cache.AddRange(BitConverter.GetBytes(playerRequesting.ChooseToRemoveFromKnownSet()));
             cache.AddRange(BitConverter.GetBytes(creature.CreatureId));
 
+            cache.Add(0x00); //todo: 1098 implements this? get creature type
+
+            //todo: 1098 implements this?
+            //enum CreatureType_t : uint8_t
+            //{
+            //    CREATURETYPE_PLAYER = 0,
+            //    CREATURETYPE_MONSTER = 1,
+            //    CREATURETYPE_NPC = 2,
+            //    CREATURETYPE_SUMMON_OWN = 3,
+            //    CREATURETYPE_SUMMON_OTHERS = 4,
+            //};
+
             var creatureNameBytes = Encoding.Default.GetBytes(creature.Name);
             cache.AddRange(BitConverter.GetBytes((ushort)creatureNameBytes.Length));
             cache.AddRange(creatureNameBytes);
         }
 
+        //todo: 1098 implements this
+        //if (creature->isHealthHidden())
+        //{
+        //    msg.addByte(0x00);
+        //}
+        //else
+        //{
         cache.Add((byte)Math.Min(100, creature.HealthPoints * 100 / creature.MaxHealthPoints));
+        //}
+
         cache.Add((byte)creature.SafeDirection);
 
         if (playerRequesting.CanSee(creature))
@@ -53,6 +74,8 @@ public static class CreatureRaw
             {
                 cache.AddRange(BitConverter.GetBytes(creature.Outfit.LookType));
             }
+
+            cache.AddRange(BitConverter.GetBytes((ushort)0));//todo: 1098 implements this mounts
         }
         else
         {
@@ -63,7 +86,7 @@ public static class CreatureRaw
         cache.Add(creature.LightLevel);
         cache.Add(creature.LightColor);
 
-        cache.AddRange(BitConverter.GetBytes(creature.Speed));
+        cache.AddRange(BitConverter.GetBytes((ushort)(creature.Speed / 2)));
 
         cache.Add((byte)((creature as IPlayer)?.Skull ?? 0x00));
         cache.Add((byte)GetPartyEmblem(playerRequesting, creature));
@@ -82,7 +105,23 @@ public static class CreatureRaw
             }
         }
 
-        cache.Add(creature is IPlayer ? (byte)0x00 : (byte)0x01);
+        cache.Add(creature is IPlayer ? (byte)0x00 : (byte)0x01); //todo: 1098 implements this?
+
+        cache.Add(0x00); //todo: 1098 implements this //getSpeechBubble
+        cache.Add(0xFF); //todo: 1098 implements this // MARK_UNMARKED
+
+        //todo: 1098 implements this
+        //if (otherPlayer)
+        //{
+        //    msg.add<uint16_t>(otherPlayer->getHelpers());
+        //}
+        //else
+        //{
+        cache.AddRange(BitConverter.GetBytes((ushort)(0))); //getSpeechBubble
+        //}
+
+        //todo: 1098 implements this
+        cache.Add(0x00); //msg.addByte(player->canWalkthroughEx(creature) ? 0x00 : 0x01);
 
         return cache.ToArray();
     }

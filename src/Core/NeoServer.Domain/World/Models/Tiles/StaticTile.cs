@@ -85,7 +85,7 @@ public class StaticTile : BaseTile, IStaticTile
             if (item is IGround groundItem)
             {
                 _topDownItemOnStack = groundItem;
-                ground.AddRange(BitConverter.GetBytes(item.ClientId));
+                ground.AddRange(groundItem.GetRaw());
                 continue;
             }
 
@@ -94,12 +94,12 @@ public class StaticTile : BaseTile, IStaticTile
                 if (item.FloorDirection != default) FloorDirection = item.FloorDirection;
 
                 _topDownItemOnStack = item;
-                top1.AddRange(BitConverter.GetBytes(item.ClientId));
+                top1.AddRange(item.GetRaw());
             }
             else
             {
                 _topDownItemOnStack = item;
-                downRawItems.InsertRange(0, BitConverter.GetBytes(item.ClientId));
+                downRawItems.InsertRange(0, item.GetRaw());
             }
 
             SetTileFlags(item);

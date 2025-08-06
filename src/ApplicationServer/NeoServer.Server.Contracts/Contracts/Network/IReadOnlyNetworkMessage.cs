@@ -45,6 +45,12 @@ public interface IReadOnlyNetworkMessage
     uint GetUInt32();
 
     /// <summary>
+    ///     Reads a 64-bit unsigned integer from the message.
+    /// </summary>
+    /// <returns>The 64-bit unsigned integer.</returns>
+    ulong GetUInt64();
+
+    /// <summary>
     ///     Skips a specified number of bytes in the message.
     /// </summary>
     /// <param name="count">The number of bytes to skip.</param>
@@ -68,6 +74,12 @@ public interface IReadOnlyNetworkMessage
     /// </summary>
     /// <returns>The string.</returns>
     string GetString();
+
+    /// <summary>
+    ///     Reads a double from the message.
+    /// </summary>
+    /// <returns>The string.</returns>
+    double GetDouble();
 
     /// <summary>
     ///     Gets a read-only span of the message bytes.

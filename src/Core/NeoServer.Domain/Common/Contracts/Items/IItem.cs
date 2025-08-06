@@ -4,12 +4,23 @@ using NeoServer.Domain.Items;
 
 namespace NeoServer.Domain.Common.Contracts.Items;
 
+
 public delegate void ItemDelete(IItem item);
 
 public delegate void ItemRemove(IItem item, IThing from);
 
 public interface IItem : IThing, IHasDecay
 {
+    // Define these constants at the top of your file or in a suitable static class
+    const byte CLIENTFLUID_EMPTY = 0x00;
+    const byte CLIENTFLUID_BLUE = 0x01;
+    const byte CLIENTFLUID_RED = 0x02;
+    const byte CLIENTFLUID_BROWN_1 = 0x03;
+    const byte CLIENTFLUID_GREEN = 0x04;
+    const byte CLIENTFLUID_YELLOW = 0x05;
+    const byte CLIENTFLUID_WHITE = 0x06;
+    const byte CLIENTFLUID_PURPLE = 0x07;
+
     /// <summary>
     ///     Item metadata. Contains a lot of information about item
     /// </summary>
@@ -98,7 +109,42 @@ public interface IItem : IThing, IHasDecay
 
     Span<byte> GetRaw()
     {
-        return BitConverter.GetBytes(ClientId);
+        var bytes = new List<byte>();
+        var it = Metadata;
+        byte count = Amount; // Assuming Amount is the stack count or fluid type
+
+        // Fluid map as per common Tibia/Otserv conventions
+        // Adjust values as needed for your protocol
+        byte[] fluidMap = new byte[]
+        {
+            CLIENTFLUID_EMPTY,
+            CLIENTFLUID_BLUE,
+            CLIENTFLUID_RED,
+            CLIENTFLUID_BROWN_1,
+            CLIENTFLUID_GREEN,
+            CLIENTFLUID_YELLOW,
+            CLIENTFLUID_WHITE,
+            CLIENTFLUID_PURPLE
+        };
+
+        // Add ClientId (ushort, little-endian)
+        bytes.AddRange(BitConverter.GetBytes(ClientId));
+
+        bytes.Add(0xFF); // MARK_UNMARKED
+
+        if (it.IsStackable())
+        {
+            bytes.Add(count);
+        }
+        else if (it.IsSplash() || it.IsFluidContainer())
+        {
+            bytes.Add(fluidMap[count & 7]);
+        }
+
+        if (it.IsAnimation())
+            bytes.Add(0xFE); 
+
+        return new Span<byte>(bytes.ToArray());
     }
 
     void SetOwner(IThing owner);

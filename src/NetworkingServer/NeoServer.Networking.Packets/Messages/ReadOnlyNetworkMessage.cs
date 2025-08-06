@@ -69,6 +69,11 @@ public class ReadOnlyNetworkMessage : IReadOnlyNetworkMessage
         return Convert(BitConverter.ToUInt32);
     }
 
+    public ulong GetUInt64()
+    {
+        return Convert(BitConverter.ToUInt64);
+    }
+
     public void SkipBytes(int length)
     {
         if (length + BytesRead > Buffer.Length)
@@ -135,6 +140,15 @@ public class ReadOnlyNetworkMessage : IReadOnlyNetworkMessage
 
         var span = GetBytes(length);
         return Iso88591Encoding.GetString(span);
+    }
+
+    public double GetDouble()
+    {
+        byte precision = GetByte();
+        uint scaled = GetUInt32();
+        double value = scaled - int.MaxValue;
+        value /= Math.Pow(10, precision);
+        return value;
     }
 
     private void IncreaseByteRead(int length)

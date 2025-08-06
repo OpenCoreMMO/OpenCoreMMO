@@ -69,4 +69,5 @@ public interface IItemType
 
     bool HasSubType() => IsFluidContainer() || IsSplash() || IsStackable() || Charges != 0;
     void ThrowIfLocked();
+    bool IsAnimation() => Flags.Contains(ItemFlag.Animation);
 }

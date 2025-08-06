@@ -18,7 +18,10 @@ public class MapDescriptionPacket : OutgoingPacket
     }
 
     public override void WriteToMessage(INetworkMessage message)
-    {
+    {        
+        //todo: 1098 implement this
+        message.AddByte(0x0F); //sendEnterWorld
+
         message.AddByte((int)GameOutgoingPacketType.MapDescription);
         message.AddLocation(_player.Location);
 

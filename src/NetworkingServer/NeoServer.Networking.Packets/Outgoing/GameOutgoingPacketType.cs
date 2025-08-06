@@ -4,7 +4,7 @@ public enum GameOutgoingPacketType : byte
 {
     NoType = 0x00,
     Ping = 0x1E,
-    SelfAppear = 0x0A,
+    SelfAppear = 0x17,// 0x0A, old
     PlayerModes = 0xA7,
     Disconnect = 0x14,
     AddUnknownCreature = 0x61,

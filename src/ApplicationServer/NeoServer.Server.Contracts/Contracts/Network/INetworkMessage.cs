@@ -17,4 +17,6 @@ public interface INetworkMessage : IReadOnlyNetworkMessage
     void AddItem(IItem item, bool showItemDescription = false);
     void AddLocation(Location location);
     void AddLength();
+    void AddDouble(double value, byte precision = 2);
+    void AddUInt64(ulong value);
 }

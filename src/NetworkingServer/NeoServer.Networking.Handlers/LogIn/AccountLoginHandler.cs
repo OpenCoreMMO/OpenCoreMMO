@@ -65,6 +65,6 @@ public class AccountLoginHandler : PacketHandler
         }
 
         connection.Send(new CharacterListPacket(foundedAccount, _serverConfiguration.ServerName,
-            _serverConfiguration.ServerIp, (ushort)_serverConfiguration.ServerGamePort));
+            _serverConfiguration.ServerIp, (ushort)_serverConfiguration.ServerGamePort, account));
     }
 }
