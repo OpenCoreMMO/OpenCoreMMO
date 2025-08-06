@@ -64,6 +64,7 @@ public enum GameOutgoingPacketType : byte
     OnlineStatusVip = 0xD3,
     OfflineStatusVip = 0xD4,
     TextWindow = 0x96,
+    DailyRewardWindow = 0xE4, // Daily reward window
     NetworkPing = 0x40,
     PingBack = 0x1E
 }

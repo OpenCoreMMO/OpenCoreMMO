@@ -4,6 +4,8 @@ using NeoServer.Networking.Handlers.Chat;
 using NeoServer.Networking.Handlers.Custom;
 using NeoServer.Networking.Handlers.LogIn;
 using NeoServer.Networking.Handlers.Player;
+using NeoServer.Networking.Handlers.Player.DailyReward;
+using NeoServer.Networking.Handlers.Player.Store;
 using NeoServer.Networking.Handlers.Player.Movement;
 using NeoServer.Networking.Handlers.Player.Party;
 using NeoServer.Networking.Handlers.Reports;
@@ -73,6 +75,9 @@ public static class InputHandlerMap
             [GameIncomingPacketType.NewPing] = typeof(NetworkPingHandler),
             [GameIncomingPacketType.ExtendedOpcode] = typeof(ExtendedOpcodeHandler),
             [GameIncomingPacketType.ReportBug] = typeof(PlayerReportBugHandler),
+            [GameIncomingPacketType.DailyRewardCollect] = typeof(PlayerDailyRewardHandler),
+            [GameIncomingPacketType.ClientEnterGame] = typeof(ClientEnterGameHandler),
+            [GameIncomingPacketType.OpenStore] = typeof(OpenStoreHandler),
             [GameIncomingPacketType.Disconnect] = typeof(DisconnectHandler),
             [GameIncomingPacketType.PingBack] = typeof(PlayerPingBackResponseHandler)
         };

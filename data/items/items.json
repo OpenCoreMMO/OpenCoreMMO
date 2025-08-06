@@ -1015,6 +1015,10 @@
       {
         "key": "description",
         "value": "It is locked."
+      },
+      {
+        "key": "transformto",
+        "value": "1211"
       }
     ]
   },
@@ -1030,6 +1034,10 @@
       {
         "key": "blockprojectile",
         "value": "1"
+      },
+      {
+        "key": "transformto",
+        "value": "1211"
       }
     ]
   },
@@ -1041,6 +1049,10 @@
       {
         "key": "type",
         "value": "door"
+      },
+      {
+        "key": "transformto",
+        "value": "1210"
       }
     ]
   },
@@ -1060,6 +1072,10 @@
       {
         "key": "description",
         "value": "It is locked."
+      },
+      {
+        "key": "transformto",
+        "value": "1214"
       }
     ]
   },
@@ -1075,6 +1091,10 @@
       {
         "key": "blockprojectile",
         "value": "1"
+      },
+      {
+        "key": "transformto",
+        "value": "1214"
       }
     ]
   },
@@ -1086,6 +1106,10 @@
       {
         "key": "type",
         "value": "door"
+      },
+      {
+        "key": "transformto",
+        "value": "1213"
       }
     ]
   },
@@ -1107,6 +1131,10 @@
       {
         "key": "blockprojectile",
         "value": "1"
+      },
+      {
+        "key": "transformto",
+        "value": "1220"
       }
     ]
   },
@@ -1118,6 +1146,10 @@
       {
         "key": "type",
         "value": "door"
+      },
+      {
+        "key": "transformto",
+        "value": "1219"
       }
     ]
   },
@@ -1133,6 +1165,10 @@
       {
         "key": "blockprojectile",
         "value": "1"
+      },
+      {
+        "key": "transformto",
+        "value": "1222"
       }
     ]
   },
@@ -1144,6 +1180,10 @@
       {
         "key": "type",
         "value": "door"
+      },
+      {
+        "key": "transformto",
+        "value": "1221"
       }
     ]
   },
@@ -1159,6 +1199,10 @@
       {
         "key": "blockprojectile",
         "value": "1"
+      },
+      {
+        "key": "transformto",
+        "value": "1224"
       }
     ]
   },
@@ -1170,6 +1214,10 @@
       {
         "key": "type",
         "value": "door"
+      },
+      {
+        "key": "transformto",
+        "value": "1223"
       }
     ]
   },
@@ -1185,6 +1233,10 @@
       {
         "key": "blockprojectile",
         "value": "1"
+      },
+      {
+        "key": "transformto",
+        "value": "1226"
       }
     ]
   },
@@ -1196,6 +1248,10 @@
       {
         "key": "type",
         "value": "door"
+      },
+      {
+        "key": "transformto",
+        "value": "1225"
       }
     ]
   },
@@ -1275,6 +1331,10 @@
       {
         "key": "description",
         "value": "It is locked."
+      },
+      {
+        "key": "transformto",
+        "value": "1233"
       }
     ]
   },
@@ -1290,6 +1350,10 @@
       {
         "key": "blockprojectile",
         "value": "1"
+      },
+      {
+        "key": "transformto",
+        "value": "1233"
       }
     ]
   },
@@ -1301,6 +1365,10 @@
       {
         "key": "type",
         "value": "door"
+      },
+      {
+        "key": "transformto",
+        "value": "1231"
       }
     ]
   },
@@ -1320,6 +1388,10 @@
       {
         "key": "description",
         "value": "It is locked."
+      },
+      {
+        "key": "transformto",
+        "value": "1236"
       }
     ]
   },
@@ -1335,6 +1407,10 @@
       {
         "key": "blockprojectile",
         "value": "1"
+      },
+      {
+        "key": "transformto",
+        "value": "1236"
       }
     ]
   },
@@ -1346,6 +1422,10 @@
       {
         "key": "type",
         "value": "door"
+      },
+      {
+        "key": "transformto",
+        "value": "1234"
       }
     ]
   },
@@ -1361,6 +1441,10 @@
       {
         "key": "blockprojectile",
         "value": "1"
+      },
+      {
+        "key": "transformto",
+        "value": "1238"
       }
     ]
   },
@@ -1372,6 +1456,10 @@
       {
         "key": "type",
         "value": "door"
+      },
+      {
+        "key": "transformto",
+        "value": "1237"
       }
     ]
   },
@@ -32400,6 +32488,10 @@
       {
         "key": "blockprojectile",
         "value": "1"
+      },
+      {
+        "key": "transformto",
+        "value": "5100"
       }
     ]
   },
@@ -32411,6 +32503,10 @@
       {
         "key": "type",
         "value": "door"
+      },
+      {
+        "key": "transformto",
+        "value": "5099"
       }
     ]
   },

@@ -6,6 +6,7 @@ public enum GameIncomingPacketType : byte
     PlayerLoginRequest = 0x01,
     PlayerLogIn = 0x0A,
     PlayerLogOut = 0x14, // logout
+    ClientEnterGame = 0x15, // client enter game
     Ping = 0x1E, // keep alive / ping response
     AutoMove = 0x64, // move with autowalk
     WalkNorth = 0x65, // move north
@@ -73,6 +74,8 @@ public enum GameIncomingPacketType : byte
     ReportBug = 0xE6,
     ReportViolation = 0xE7,
     ReportDebugAssertion = 0xE8,
+    DailyRewardCollect = 0xE4, // Daily reward collection
+    OpenStore = 0xFA, // Open store
     NewPing = 0x40,
     ExtendedOpcode = 0x32,
     Disconnect = 0x0F,

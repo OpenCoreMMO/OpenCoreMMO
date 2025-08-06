@@ -21,6 +21,10 @@ public interface IItem : IThing, IHasDecay
     const byte CLIENTFLUID_WHITE = 0x06;
     const byte CLIENTFLUID_PURPLE = 0x07;
 
+    // Market special item IDs (similar to otclientv8's MarketRequest enum)
+    const ushort MARKET_MYOFFERS = 0xFFFE; // 65534 - My Offers
+    const ushort MARKET_MYHISTORY = 0xFF01; // 65281 - My History
+
     /// <summary>
     ///     Item metadata. Contains a lot of information about item
     /// </summary>
@@ -127,8 +131,17 @@ public interface IItem : IThing, IHasDecay
             CLIENTFLUID_PURPLE
         };
 
+        // Handle special market IDs by replacing them with a valid item ID
+        ushort clientIdToSend = ClientId;
+        if (ClientId == MARKET_MYHISTORY || ClientId == MARKET_MYOFFERS)
+        {
+            // Use a valid bag/container ID instead of the special market ID
+            // This prevents "unable to create item with invalid id" errors
+            clientIdToSend = 1987; // Common bag ID used in Tibia
+        }
+
         // Add ClientId (ushort, little-endian)
-        bytes.AddRange(BitConverter.GetBytes(ClientId));
+        bytes.AddRange(BitConverter.GetBytes(clientIdToSend));
 
         bytes.Add(0xFF); // MARK_UNMARKED
 

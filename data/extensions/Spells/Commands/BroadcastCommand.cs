@@ -16,7 +16,7 @@ public class BroadcastCommand : CommandSpell
     {
         return color switch
         {
-            "white" => TextMessageOutgoingType.MESSAGE_EVENT_LEVEL_CHANGE,
+            "white" => TextMessageOutgoingType.MESSAGE_EVENT_DEFAULT,
             "red" => TextMessageOutgoingType.MESSAGE_STATUS_WARNING,
             "green" => TextMessageOutgoingType.Description,
             _ => TextMessageOutgoingType.Description
