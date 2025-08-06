@@ -33,11 +33,27 @@ public class PlayerOutFitWindowPacket : OutgoingPacket
             message.AddByte(player.Outfit.Feet);
             message.AddByte(player.Outfit.Addon);
         }
+        else
+        {
+            message.AddUInt16(0); // lookTypeEx for non-player creatures
+        }
+
+        // Add current mount ID (0 = no mount for now)
+        message.AddUInt16(0);
+        
+        // Since mount is 0, we need to send mount colors anyway for protocol compatibility
+        message.AddByte(0); // mount head color
+        message.AddByte(0); // mount body color  
+        message.AddByte(0); // mount legs color
+        message.AddByte(0); // mount feet color
+        
+        // Add current familiar looktype (0 = no familiar for now)
+        message.AddUInt16(0);
 
         var outfits = _outfits.Where(x => (!x.RequiresPremium || (player.PremiumTime > 0 && x.RequiresPremium)) &&
                                           x.Enabled).ToList();
 
-        message.AddByte((byte)outfits.Count);
+        message.AddUInt16((ushort)outfits.Count);
 
         var playerAddons = GetPlayerAddonsMap();
 
@@ -51,6 +67,9 @@ public class PlayerOutFitWindowPacket : OutgoingPacket
             message.AddString(outfit.Name);
             message.AddByte((byte)addonLevel); // Enable fully Addon to outfit.
         }
+
+        // Add mounts list (empty for now)
+        message.AddUInt16(0); // mounts count
     }
 
     private Dictionary<int, int> GetPlayerAddonsMap()
