@@ -1,23 +1,55 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Item;
 
-public class AddAtStackPositionPacket : OutgoingPacket
+public class AddAtStackPositionPacket(ICreature creature, byte stackPosition) : OutgoingPacket
 {
-    private readonly ICreature creature;
-    private readonly byte stackPosition;
-
-    public AddAtStackPositionPacket(ICreature creature, byte stackPosition)
-    {
-        this.creature = creature;
-        this.stackPosition = stackPosition;
-    }
-
     public override void WriteToMessage(INetworkMessage message)
     {
-        message.AddByte((byte)GameOutgoingPacketType.AddAtStackPos);
-        message.AddLocation(creature.Location);
-        message.AddByte(stackPosition);
+        if (stackPosition >= 10)
+        {
+            message.AddByte((byte)GameOutgoingPacketType.TileUpdate);
+            message.AddLocation(creature.Location);
+
+            if (creature.Tile != null)
+            {
+                message.AddByte(0x00);
+                message.AddByte(0xFF);
+            }
+            else
+            {
+                message.AddByte(0x01);
+                message.AddByte(0xFF);
+            }
+        }
+        else
+        {
+            message.AddByte((byte)GameOutgoingPacketType.AddAtStackPos);
+            message.AddLocation(creature.Location);
+            message.AddByte(stackPosition);
+        }
+    }
+}
+
+public class UpdateTilePacket(Location location, ITile tile = null) : OutgoingPacket
+{
+    public override void WriteToMessage(INetworkMessage message)
+    {
+        message.AddByte((byte)GameOutgoingPacketType.TileUpdate);
+        message.AddLocation(location);
+
+        if (tile != null)
+        {
+            message.AddByte(0x00);
+            message.AddByte(0xFF);
+        }
+        else
+        {
+            message.AddByte(0x01);
+            message.AddByte(0xFF);
+        }
     }
 }

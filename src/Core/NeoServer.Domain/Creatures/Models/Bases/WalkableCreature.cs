@@ -301,7 +301,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     public void ChangeSpeedLevel(int newSpeed)
     {
         Speed = (ushort)newSpeed;
-        OnChangedSpeed?.Invoke(this, Speed);
+        OnChangedSpeed?.Invoke(this, Speed, RawSpeed);
     }
 
     #region Events

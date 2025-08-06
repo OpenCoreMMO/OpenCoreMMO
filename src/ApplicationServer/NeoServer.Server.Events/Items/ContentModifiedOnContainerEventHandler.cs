@@ -34,7 +34,7 @@ public class ContentModifiedOnContainerEventHandler
                 connection.OutgoingPackets.Enqueue(new RemoveItemContainerPacket(containerId, slotIndex, item));
                 break;
             case ContainerOperation.ItemAdded:
-                connection.OutgoingPackets.Enqueue(new AddItemContainerPacket(containerId, item)
+                connection.OutgoingPackets.Enqueue(new AddItemContainerPacket(containerId, slotIndex, item)
                 {
                     ShowItemDescription = connection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip
                 });

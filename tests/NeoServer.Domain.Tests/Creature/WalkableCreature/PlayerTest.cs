@@ -60,7 +60,7 @@ public class PlayerTest
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100, speed: 300);
         var emittedEvent = false;
-        sut.OnChangedSpeed += (_, _) => emittedEvent = true;
+        sut.OnChangedSpeed += (_, _, _) => emittedEvent = true;
 
         sut.DecreaseSpeed(decrease);
 
@@ -76,7 +76,7 @@ public class PlayerTest
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100, speed: 300);
         var emittedEvent = false;
-        sut.OnChangedSpeed += (_, _) => emittedEvent = true;
+        sut.OnChangedSpeed += (_, _, _) => emittedEvent = true;
 
         sut.IncreaseSpeed(increase);
 

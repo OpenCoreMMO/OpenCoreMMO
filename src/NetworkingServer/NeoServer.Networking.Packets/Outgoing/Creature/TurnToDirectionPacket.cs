@@ -20,10 +20,21 @@ public class TurnToDirectionPacket : OutgoingPacket
     public override void WriteToMessage(INetworkMessage message)
     {
         message.AddByte((byte)GameOutgoingPacketType.TransformThing);
-        message.AddLocation(creature.Location);
-        message.AddByte(stackPosition);
+
+        if (stackPosition >= 10)
+        {
+            message.AddUInt16(0xFFFF);
+            message.AddUInt32(creature.CreatureId);
+        }
+        else
+        {
+            message.AddLocation(creature.Location);
+            message.AddByte(stackPosition);
+        }
+
         message.AddUInt16((byte)GameOutgoingPacketType.CreatureTurn);
         message.AddUInt32(creature.CreatureId);
         message.AddByte((byte)direction);
+        message.AddByte(0x00); //todo: 1098 msg.addByte(player->canWalkthroughEx(creature) ? 0x00 : 0x01);
     }
 }

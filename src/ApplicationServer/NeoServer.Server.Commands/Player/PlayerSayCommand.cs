@@ -57,26 +57,26 @@ public class PlayerSayCommand(
             case SpeechType.PrivateNpcToPlayer:
                 break;
 
-            case SpeechType.ChannelOrangeText:
-            case SpeechType.ChannelRed1Text:
-            case SpeechType.ChannelYellowText:
+            case SpeechType.ChannelOrange:
+            case SpeechType.ChannelRed1:
+            case SpeechType.ChannelYellow:
                 SendMessageToChannel(player, playerSayPacket.ChannelId, message);
                 break;
 
-            case SpeechType.ChannelRed2Text:
-                break;
-            case SpeechType.ChannelWhiteText:
-                break;
-            case SpeechType.RvrChannel:
-                break;
-            case SpeechType.RvrAnswer:
-                break;
-            case SpeechType.RvrContinue:
-                break;
+            //case SpeechType.ChannelRed2:
+            //    break;
+            //case SpeechType.ChannelWhite:
+            //    break;
+            //case SpeechType.RvrChannel:
+            //    break;
+            //case SpeechType.RvrAnswer:
+            //    break;
+            //case SpeechType.RvrContinue:
+            //    break;
             case SpeechType.Broadcast:
                 break;
-            case SpeechType.Private:
-            case SpeechType.PrivateRed:
+            case SpeechType.PrivateFrom:
+            case SpeechType.PrivateRedFrom:
                 SendMessageToPlayer(player, connection, playerSayPacket, message);
                 break;
             case SpeechType.MonsterSay:

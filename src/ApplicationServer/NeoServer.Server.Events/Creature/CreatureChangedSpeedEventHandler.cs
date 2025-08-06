@@ -16,12 +16,12 @@ public class CreatureChangedSpeedEventHandler
         this.game = game;
     }
 
-    public void Execute(IWalkableCreature creature, ushort speed)
+    public void Execute(IWalkableCreature creature, ushort speed, ushort baseSpeed)
     {
         foreach (var spectator in map.GetPlayersAtPositionZone(creature.Location))
         {
             if (!game.CreatureManager.GetPlayerConnection(spectator.CreatureId, out var connection)) continue;
-            connection.OutgoingPackets.Enqueue(new CreatureChangeSpeedPacket(creature.CreatureId, speed));
+            connection.OutgoingPackets.Enqueue(new CreatureChangeSpeedPacket(creature.CreatureId, speed, baseSpeed));
             connection.Send();
         }
     }

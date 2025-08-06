@@ -30,7 +30,8 @@ public class CreatureSayPacket : OutgoingPacket
     public override void WriteToMessage(INetworkMessage message)
     {
         message.AddByte(0xAA);
-        message.AddUInt32(0x00);
+
+        message.AddUInt32(0x00);//todo: 1098 statementId
 
         message.AddString(_creature?.Name ?? string.Empty);
 

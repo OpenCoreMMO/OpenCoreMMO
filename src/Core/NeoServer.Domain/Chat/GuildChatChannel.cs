@@ -25,12 +25,12 @@ public class GuildChatChannel(ushort id, string name, Guild.Guild guild) : ChatC
 
     public override SpeechType GetTextColor(IPlayer player)
     {
-        if (Guild.GetMemberLevel(player) is not { } guildMember) return SpeechType.ChannelYellowText;
+        if (Guild.GetMemberLevel(player) is not { } guildMember) return SpeechType.ChannelYellow;
 
         return guildMember.Level switch
         {
-            GuildRank.Leader => SpeechType.ChannelOrangeText,
-            _ => SpeechType.ChannelYellowText
+            GuildRank.Leader => SpeechType.ChannelOrange,
+            _ => SpeechType.ChannelYellow
         };
     }
 }

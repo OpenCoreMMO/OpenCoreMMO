@@ -10,7 +10,7 @@ public delegate bool PathFinder(IWalkableCreature creature, Location.Structs.Loc
 
 public delegate void StartFollow(IWalkableCreature creature, ICreature following, FindPathParams fpp);
 
-public delegate void ChangeSpeed(IWalkableCreature creature, ushort speed);
+public delegate void ChangeSpeed(IWalkableCreature creature, ushort speed, ushort baseSpeed);
 
 public delegate bool CanGoToDirection(ICreature creature, Location.Structs.Location location, Direction direction,
     ITileEnterRule rule);

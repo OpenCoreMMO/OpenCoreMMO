@@ -36,7 +36,7 @@ public class PlayerSayCommandTest
         var spellService = new SpellService(new SpellCastValidation(mapTool), new Mock<IEventAggregator>().Object, map);
 
         var playerSayPacket = new Mock<PlayerSayPacket>(network.Object);
-        playerSayPacket.SetupGet(x => x.TalkType).Returns(SpeechType.Private);
+        playerSayPacket.SetupGet(x => x.TalkType).Returns(SpeechType.PrivateRedTo);
         playerSayPacket.SetupGet(x => x.Receiver).Returns("receiver");
         playerSayPacket.SetupGet(x => x.Message).Returns("hello");
 
@@ -54,6 +54,6 @@ public class PlayerSayCommandTest
         sut.Execute(player.Object, connection.Object, playerSayPacket.Object);
 
         //assert
-        player.Verify(x => x.SendMessageTo(receiver, SpeechType.Private, "hello"), Times.Once());
+        player.Verify(x => x.SendMessageTo(receiver, SpeechType.PrivateRedTo, "hello"), Times.Once());
     }
 }
