@@ -75,6 +75,7 @@ public enum GameIncomingPacketType : byte
     ReportViolation = 0xE7,
     ReportDebugAssertion = 0xE8,
     DailyRewardCollect = 0xE4, // Daily reward collection
+    RequestBless = 0xCF, // Request blessing
     RequestQuestLog = 0xF0, // Request quest log
     OpenStore = 0xFA, // Open store
     RequestStoreOffers = 0xFB, // Request store offers
