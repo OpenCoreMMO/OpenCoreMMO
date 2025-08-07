@@ -28,6 +28,7 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Common;
+using Serilog;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Events.Player;
@@ -1072,10 +1073,31 @@ public class Player : CombatActor, IPlayer
 
     public bool CanUseOutfit(IOutfit outfit)
     {
-        if (string.IsNullOrEmpty(outfit.Name)) return false;
-        if (outfit.Premium && !(PremiumTime > 0)) return false;
+        var logger = Log.ForContext<Player>();
+        
+        logger.Information("Checking if player {PlayerName} can use outfit: Name='{OutfitName}', Premium={Premium}, Unlocked={Unlocked}, PlayerPremiumTime={PremiumTime}", 
+            Name, outfit.Name, outfit.Premium, outfit.Unlocked, PremiumTime);
+            
+        if (string.IsNullOrEmpty(outfit.Name)) 
+        {
+            logger.Warning("Player {PlayerName} cannot use outfit: Name is null or empty", Name);
+            return false;
+        }
+        
+        if (outfit.Premium && !(PremiumTime > 0)) 
+        {
+            logger.Warning("Player {PlayerName} cannot use outfit: Requires premium but player has no premium time", Name);
+            return false;
+        }
 
-        return outfit.Unlocked;
+        if (!outfit.Unlocked)
+        {
+            logger.Warning("Player {PlayerName} cannot use outfit: Outfit is not unlocked", Name);
+            return false;
+        }
+        
+        logger.Information("Player {PlayerName} can use outfit {OutfitName}", Name, outfit.Name);
+        return true;
     }
 
     public override void ChangeOutfit(IOutfit outfit)
