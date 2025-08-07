@@ -77,7 +77,7 @@ public interface IItemType
 
     bool IsStackable()
     {
-        return Group == ItemGroup.Splash;
+        return Flags.Contains(ItemFlag.Stackable);
     }
 
     bool IsKey()

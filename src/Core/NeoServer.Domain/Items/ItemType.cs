@@ -51,7 +51,7 @@ public class ItemType : IItemType
         => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Charges);
 
     public ushort Count
-        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Count);
+        => Attributes.GetAttribute<ushort>(ItemTypeAttribute.Count) > 0 ? Attributes.GetAttribute<ushort>(ItemTypeAttribute.Count) : (ushort)1;
 
     /// <summary>
     ///     ItemType's description
