@@ -7,7 +7,7 @@ using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.Tests.Helpers.Services;
 
-namespace NeoServer.Domain.Tests.Items.Container;
+namespace NeoServer.Domain.Tests.Items.Transform;
 
 public class TransformItemTests
 {

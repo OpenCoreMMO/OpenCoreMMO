@@ -16,7 +16,6 @@ using NeoServer.Server.Commands.WaitingInLine;
 using NeoServer.Server.Common.Contracts.Tasks;
 using NeoServer.Server.Standalone.IoC.Modules;
 using NeoServer.Server.Tasks;
-using NeoServer.Shared.IoC.Modules;
 using PathFinder = NeoServer.Domain.World.Map.PathFinder;
 
 namespace NeoServer.Server.Standalone.IoC;

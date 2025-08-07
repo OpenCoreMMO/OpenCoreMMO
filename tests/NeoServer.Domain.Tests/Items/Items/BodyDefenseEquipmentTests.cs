@@ -1,5 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Tests.Helpers;

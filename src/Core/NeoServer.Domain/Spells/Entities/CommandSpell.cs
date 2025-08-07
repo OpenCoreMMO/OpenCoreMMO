@@ -1,9 +1,8 @@
 ﻿using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Creatures.Conditions.Enums;
-using NeoServer.Domain.Spells.Entities;
 
-namespace NeoServer.Domain.Spells;
+namespace NeoServer.Domain.Spells.Entities;
 
 public abstract class CommandSpell : Spell<CommandSpell>, ICommandSpell
 {
