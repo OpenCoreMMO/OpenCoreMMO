@@ -7,12 +7,19 @@ namespace NeoServer.Server.Security;
 
 public static class Rsa
 {
-    private const int MAX_LENGTH = 128;
+    public const int LENGTH = 128;
     private static RsaEngine RsaEngine { get; set; }
 
     public static byte[] Decrypt(byte[] data)
     {
-        return data.Length > MAX_LENGTH ? null : RsaEngine.ProcessBlock(data, 0, data.Length);
+        try
+        {
+            return data.Length > LENGTH ? null : RsaEngine.ProcessBlock(data, 0, data.Length);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public static void LoadPem(string basePath)
