@@ -79,7 +79,8 @@ public class CreatureMovedEventHandler(IGameServer game, IScriptManager scriptMa
             connection.OutgoingPackets.Enqueue(
                 new AddAtStackPositionPacket(game.Map, creature, cylinderSpectator.ToStackPosition, player));
 
-            connection.OutgoingPackets.Enqueue(new AddCreaturePacket(player, creature));
+            //todo: check this, has removed in 1098, its cause bug and errors in client
+            //connection.OutgoingPackets.Enqueue(new AddCreaturePacket(player, creature));
 
             connection.Send();
         }

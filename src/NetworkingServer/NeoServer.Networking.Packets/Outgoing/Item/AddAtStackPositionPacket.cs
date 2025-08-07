@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Server.Common.Contracts.Network;
+using System.Linq;
 
 namespace NeoServer.Networking.Packets.Outgoing.Item;
 
@@ -17,7 +18,7 @@ public class AddAtStackPositionPacket(IMap map, ICreature creature, byte stackPo
 
             if (creature.Tile != null && player != null)
             {
-                map.GetTileDescription(creature.Tile, player);
+                message.AddBytes(map.GetTileDescription(creature.Tile, player).ToArray());
 
                 message.AddByte(0x00);
                 message.AddByte(0xFF);
