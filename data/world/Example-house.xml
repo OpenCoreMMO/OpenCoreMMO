@@ -1,2 +1,8 @@
 <?xml version="1.0"?>
-<houses />
+<houses>
+	<house name="Sea Flat #1" houseid="1" entryx="991" entryy="1017" entryz="7" rent="1337" townid="1" size="88" />
+	<house name="Sea Flat #2" houseid="2" entryx="991" entryy="1010" entryz="7" rent="1337" townid="1" size="78" />
+	<house name="Sea Flat #3" houseid="3" entryx="991" entryy="1015" entryz="6" rent="0" townid="1" size="88" />
+	<house name="Sea Flat #4" houseid="4" entryx="991" entryy="1011" entryz="6" rent="0" townid="1" size="78" />
+	<house name="Sea GuildHall #1" houseid="5" entryx="0" entryy="0" entryz="0" rent="7331" guildhall="true" townid="1" size="459" />
+</houses>

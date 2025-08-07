@@ -3,15 +3,8 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Creature;
 
-public class CreatureOutfitPacket : OutgoingPacket
+public class CreatureOutfitPacket(ICreature creature) : OutgoingPacket
 {
-    private readonly ICreature creature;
-
-    public CreatureOutfitPacket(ICreature creature)
-    {
-        this.creature = creature;
-    }
-
     public override void WriteToMessage(INetworkMessage message)
     {
         message.AddByte((byte)GameOutgoingPacketType.CreatureOutfit);
@@ -29,11 +22,9 @@ public class CreatureOutfitPacket : OutgoingPacket
         }
         else
         {
-            // For items/creatures with LookType 0, use LookTypeEx (item ID)
-            message.AddUInt16(0); // lookTypeEx - needs to be implemented if using items
+            message.AddUInt16(0); //todo: 1098 implement this outfit.lookTypeEx
         }
-        
-        // Add mount (required by TFS protocol)
-        message.AddUInt16(0); // lookMount - mount ID, 0 if no mount
+
+        message.AddUInt16(0); //todo: 1098 implement this outfit.lookMount
     }
 }
