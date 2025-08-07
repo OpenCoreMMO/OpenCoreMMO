@@ -4,25 +4,25 @@ local fields = { 105, 2118, 2119, 2120, 2121, 2122, 2123, 2124, 2125, 2126, 2132
 local rune = Spell("rune")
 
 function rune.onCastSpell(creature, variant, isHotkey)
-	local inPz = creature:getTile():hasFlag(TILESTATE_PROTECTIONZONE)
-	if inPz then
-		creature:sendCancelMessage(RETURNVALUE_NOTPOSSIBLE)
-		creature:getPosition():sendMagicEffect(CONST_ME_POFF)
-		return false
-	end
+    local inPz = creature:getTile():hasFlag(TILESTATE_PROTECTIONZONE)
+    if inPz then
+        creature:sendCancelMessage(RETURNVALUE_NOTPOSSIBLE)
+        creature:getPosition():sendMagicEffect(CONST_ME_POFF)
+        return false
+    end
 
-	local position = Variant.getPosition(variant)
-	local tile = Tile(position)
-	local field = tile and tile:getItemByType(ITEM_TYPE_MAGICFIELD)
-	if field and table.contains(fields, field:getId()) then
-		field:remove()
-		position:sendMagicEffect(CONST_ME_POFF)
-		return true
-	end
+    local position = Variant.getPosition(variant)
+    local tile = Tile(position)
+    local field = tile and tile:getItemByType(ITEM_TYPE_MAGICFIELD)
+    if field and table.contains(fields, field:getId()) then
+        field:remove()
+        position:sendMagicEffect(CONST_ME_POFF)
+        return true
+    end
 
-	creature:sendCancelMessage(RETURNVALUE_NOTPOSSIBLE)
-	creature:getPosition():sendMagicEffect(CONST_ME_POFF)
-	return false
+    creature:sendCancelMessage(RETURNVALUE_NOTPOSSIBLE)
+    creature:getPosition():sendMagicEffect(CONST_ME_POFF)
+    return false
 end
 
 rune:id(30)

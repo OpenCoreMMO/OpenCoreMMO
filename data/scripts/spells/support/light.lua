@@ -11,7 +11,7 @@ combat:addCondition(condition)
 local spell = Spell("instant")
 
 function spell.onCastSpell(creature, variant)
-	return combat:execute(creature, variant)
+    return combat:execute(creature, variant)
 end
 
 spell:name("Light")

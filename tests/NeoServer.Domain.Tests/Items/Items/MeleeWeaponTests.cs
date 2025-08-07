@@ -1,7 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Player;
@@ -61,10 +60,11 @@ public class MeleeWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation);
-        var sut = (IWeapon)ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.BodyPosition, "body")
-        });
+        var sut = (IWeapon)ItemTestDataBuilder.CreateWeaponItem(1,
+            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+            {
+                (ItemTypeAttribute.BodyPosition, "body")
+            });
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
@@ -88,11 +88,12 @@ public class MeleeWeaponTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = (IWeapon)ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.BodyPosition, "body"),
-            (ItemTypeAttribute.MinimumLevel, minLevel)
-        });
+        var sut = (IWeapon)ItemTestDataBuilder.CreateWeaponItem(1,
+            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+            {
+                (ItemTypeAttribute.BodyPosition, "body"),
+                (ItemTypeAttribute.MinimumLevel, minLevel)
+            });
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
@@ -107,10 +108,11 @@ public class MeleeWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: 1);
-        var sut = (IWeapon)ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.BodyPosition, "body")
-        });
+        var sut = (IWeapon)ItemTestDataBuilder.CreateWeaponItem(1,
+            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+            {
+                (ItemTypeAttribute.BodyPosition, "body")
+            });
 
         //act
         var actual = sut.CanBeDressed(player);

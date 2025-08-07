@@ -32,7 +32,9 @@ public class PlayerCapacityTests
             new object[] { Slot.Right, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "", "shield", 100) },
             new object[] { Slot.Ring, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "ring", weight: 100) },
             new object[]
-                { Slot.Left, ItemTestDataBuilder.CreateWeaponItem(100, weaponType: "sword", twoHanded: true, weight: 100) },
+            {
+                Slot.Left, ItemTestDataBuilder.CreateWeaponItem(100, weaponType: "sword", twoHanded: true, weight: 100)
+            },
             new object[] { Slot.Necklace, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "necklace", weight: 100) }
         };
 

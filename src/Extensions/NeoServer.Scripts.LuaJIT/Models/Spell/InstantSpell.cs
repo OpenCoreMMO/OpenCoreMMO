@@ -54,7 +54,7 @@ public class InstantSpell : ScriptedSpell
                 Number = target is ICreature targetCreature ? targetCreature.CreatureId : 0,
                 Pos = pos,
                 InstantName = LuaInstantSpell.Name,
-                RuneName = string.Empty,
+                RuneName = string.Empty
             };
         }
 

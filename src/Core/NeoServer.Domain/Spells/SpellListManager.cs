@@ -64,7 +64,7 @@ public class SpellListManager
 
         if (paramsIndex < 0)
         {
-            int lastSpaceIndex = words.LastIndexOf(' ');
+            var lastSpaceIndex = words.LastIndexOf(' ');
             if (lastSpaceIndex >= 0)
             {
                 spellWord = words[..lastSpaceIndex];
@@ -78,7 +78,7 @@ public class SpellListManager
         }
         else
         {
-            param = words.Substring(paramsIndex, (words.Length - 1) - paramsIndex);
+            param = words.Substring(paramsIndex, words.Length - 1 - paramsIndex);
             spellWord = words[..paramsIndex];
         }
 
@@ -87,10 +87,7 @@ public class SpellListManager
 
         param = param.Replace("\"", "").Replace("\'", "").Trim();
 
-        if (!string.IsNullOrWhiteSpace(param))
-        {
-            spell.Params = [param];
-        }
+        if (!string.IsNullOrWhiteSpace(param)) spell.Params = [param];
 
         return true;
     }

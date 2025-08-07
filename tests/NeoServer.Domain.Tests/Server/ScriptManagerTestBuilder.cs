@@ -30,17 +30,17 @@ public static class ScriptManagerTestBuilder
     public static ServerConfiguration CreateMockServerConfiguration()
     {
         return new ServerConfiguration(
-            Version: 1,
-            OTBM: "mock.otbm",
-            OTB: "mock.otb",
-            Data: "/mock/data",
-            ServerName: "MockServer",
-            ServerIp: "127.0.0.1",
-            Extensions: "/mock/extensions",
-            ServerLoginPort: 7171,
-            ServerGamePort: 7172,
-            AutoReloadScripts: true,
-            Save: new SaveConfiguration(Players: 100)
+            1,
+            "mock.otbm",
+            "mock.otb",
+            "/mock/data",
+            "MockServer",
+            "127.0.0.1",
+            "/mock/extensions",
+            7171,
+            7172,
+            true,
+            new SaveConfiguration(100)
         );
     }
 }

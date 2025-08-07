@@ -12,7 +12,8 @@ public class DistanceWeaponTests
     [Fact]
     public void InspectionText_NoAttributeFound_ReturnsText()
     {
-        var sut = ItemTestDataBuilder.CreateDistanceWeapon(1, itemTypeAttributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
+        var sut = ItemTestDataBuilder.CreateDistanceWeapon(1,
+            itemTypeAttributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
 
         //assert
         sut.InspectionText.Should().BeEmpty();
@@ -31,12 +32,13 @@ public class DistanceWeaponTests
     [InlineData(0, 0, 0, "")]
     public void InspectionText_AttributeFound_ReturnsText(int range, int attack, int chance, string expected)
     {
-        var sut = ItemTestDataBuilder.CreateDistanceWeapon(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.Range, range),
-            (ItemTypeAttribute.Attack, attack),
-            (ItemTypeAttribute.HitChance, chance)
-        });
+        var sut = ItemTestDataBuilder.CreateDistanceWeapon(1,
+            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+            {
+                (ItemTypeAttribute.Range, range),
+                (ItemTypeAttribute.Attack, attack),
+                (ItemTypeAttribute.HitChance, chance)
+            });
 
         //assert
         sut.InspectionText.Should().Be(expected);
@@ -52,10 +54,11 @@ public class DistanceWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation);
-        var sut = (IDistanceWeapon)ItemTestDataBuilder.CreateDistanceWeapon(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.BodyPosition, "body")
-        });
+        var sut = (IDistanceWeapon)ItemTestDataBuilder.CreateDistanceWeapon(1,
+            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+            {
+                (ItemTypeAttribute.BodyPosition, "body")
+            });
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
@@ -79,11 +82,12 @@ public class DistanceWeaponTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = (IDistanceWeapon)ItemTestDataBuilder.CreateDistanceWeapon(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.BodyPosition, "body"),
-            (ItemTypeAttribute.MinimumLevel, minLevel)
-        });
+        var sut = (IDistanceWeapon)ItemTestDataBuilder.CreateDistanceWeapon(1,
+            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+            {
+                (ItemTypeAttribute.BodyPosition, "body"),
+                (ItemTypeAttribute.MinimumLevel, minLevel)
+            });
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
@@ -98,10 +102,11 @@ public class DistanceWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: 1);
-        var sut = (IDistanceWeapon)ItemTestDataBuilder.CreateDistanceWeapon(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.BodyPosition, "body")
-        });
+        var sut = (IDistanceWeapon)ItemTestDataBuilder.CreateDistanceWeapon(1,
+            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+            {
+                (ItemTypeAttribute.BodyPosition, "body")
+            });
 
         //act
         var actual = sut.CanBeDressed(player);

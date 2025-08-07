@@ -8,16 +8,16 @@ namespace NeoServer.Domain.Creatures.Factories;
 
 public class MonsterFactory : IMonsterFactory
 {
+    private readonly ILogger _logger;
     private readonly IMapTool _mapTool;
     private readonly IMonsterTypeStore _monsterTypeStore;
-    private readonly ILogger _logger;
 
     public MonsterFactory(IMonsterTypeStore monsterTypeStore,
         ILogger logger, IMapTool mapTool)
     {
         _monsterTypeStore = monsterTypeStore;
 
-        this._logger = logger;
+        _logger = logger;
         _mapTool = mapTool;
         Instance = this;
     }

@@ -10,12 +10,12 @@ combat:addCondition(condition)
 local rune = Spell("rune")
 
 function rune.onCastSpell(creature, var)
-	if not combat:execute(creature, var) then
-		return false
-	end
+    if not combat:execute(creature, var) then
+        return false
+    end
 
-	creature:getPosition():sendMagicEffect(CONST_ME_MAGIC_GREEN)
-	return true
+    creature:getPosition():sendMagicEffect(CONST_ME_MAGIC_GREEN)
+    return true
 end
 
 rune:id(54)

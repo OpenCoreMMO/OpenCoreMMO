@@ -6,5 +6,5 @@
 end
 
 function Player.hasFlag(self, flag)
-	return self:getGroup():hasFlag(flag)
+    return self:getGroup():hasFlag(flag)
 end

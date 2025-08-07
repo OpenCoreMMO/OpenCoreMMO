@@ -10,9 +10,18 @@ namespace NeoServer.Domain.Items.Bases;
 
 public abstract class BaseItem : IItem
 {
+    private ItemAttributeList _attributes;
     private IThing _owner;
 
-    private ItemAttributeList _attributes;
+    protected BaseItem(IItemType metadata, Location location)
+    {
+        Location = location;
+        Metadata = metadata;
+
+        Decay = DecayableFactory.CreateIfItemIsDecayable(this);
+    }
+
+    public static Func<IItem, IPlayer, bool> UseFunction { get; set; }
     public ItemAttributeList Attributes => _attributes ??= new ItemAttributeList();
 
     public ushort ActionId => Attributes.GetAttribute<ushort>(ItemAttribute.ActionId);
@@ -61,25 +70,13 @@ public abstract class BaseItem : IItem
         get
         {
             if (Attributes.HasAttribute(ItemAttribute.Article))
-            {
                 return string.IsNullOrWhiteSpace(Attributes.GetAttribute(ItemAttribute.Article))
-                 ? $"{Attributes.GetAttribute(ItemAttribute.Name)}"
-                 : $"{Attributes.GetAttribute(ItemAttribute.Article)} {Attributes.GetAttribute(ItemAttribute.Name)}";
-            }
+                    ? $"{Attributes.GetAttribute(ItemAttribute.Name)}"
+                    : $"{Attributes.GetAttribute(ItemAttribute.Article)} {Attributes.GetAttribute(ItemAttribute.Name)}";
 
             return Metadata.FullName;
         }
     }
-
-    protected BaseItem(IItemType metadata, Location location)
-    {
-        Location = location;
-        Metadata = metadata;
-
-        Decay = DecayableFactory.CreateIfItemIsDecayable(this);
-    }
-
-    public static Func<IItem, IPlayer, bool> UseFunction { get; set; }
 
     public void MarkAsDeleted()
     {

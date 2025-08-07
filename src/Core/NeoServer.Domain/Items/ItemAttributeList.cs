@@ -2,5 +2,4 @@
 
 public sealed class ItemAttributeList : BaseAttributeList<ItemAttribute>
 {
-
 }

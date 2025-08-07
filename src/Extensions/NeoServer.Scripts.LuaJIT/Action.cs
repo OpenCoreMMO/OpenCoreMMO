@@ -115,5 +115,4 @@ public class Action(LuaScriptInterface scriptInterface) : Script(scriptInterface
     {
         CheckFloor = check;
     }
- 
 }

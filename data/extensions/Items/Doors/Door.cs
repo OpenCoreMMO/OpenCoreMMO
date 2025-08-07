@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;

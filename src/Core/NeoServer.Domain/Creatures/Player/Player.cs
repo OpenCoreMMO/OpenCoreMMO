@@ -132,7 +132,6 @@ public class Player : CombatActor, IPlayer
     protected override string InspectionText =>
         $"{Name} (Level {Level}). {GenderPronoun} {Vocation.InspectText}. {Guild?.InspectionText(this)} {PlayerParty?.Party?.InspectionText(this)}";
 
-    public override ushort RawSpeed => (ushort)(220 + 2 * (Level - 1));
     public string CharacterName { get; }
     public Dictionary<uint, long> KnownCreatures { get; }
     public bool Online { get; }
@@ -148,6 +147,8 @@ public class Player : CombatActor, IPlayer
     public IPlayerHand PlayerHand { get; }
 
     public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
+
+    public override ushort RawSpeed => (ushort)(220 + 2 * (Level - 1));
 
     public float DamageFactor => FightMode switch
     {
@@ -523,12 +524,12 @@ public class Player : CombatActor, IPlayer
         switch (ArmorRating)
         {
             case > 3:
-                {
-                    var min = ArmorRating / 2 * (Vocation.Formula?.Armor ?? 1f);
-                    var max = (ArmorRating / 2 * 2 - 1) * (Vocation.Formula?.Armor ?? 1f);
-                    damage -= (ushort)GameRandom.Random.NextInRange(min, max);
-                    break;
-                }
+            {
+                var min = ArmorRating / 2 * (Vocation.Formula?.Armor ?? 1f);
+                var max = (ArmorRating / 2 * 2 - 1) * (Vocation.Formula?.Armor ?? 1f);
+                damage -= (ushort)GameRandom.Random.NextInRange(min, max);
+                break;
+            }
             case > 0:
                 --damage;
                 break;
@@ -1016,10 +1017,7 @@ public class Player : CombatActor, IPlayer
 
         Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
 
-        if (combatResult.TotalDamage > 0)
-        {
-            IncreaseSkillCounter(SkillInUse, 1);
-        }
+        if (combatResult.TotalDamage > 0) IncreaseSkillCounter(SkillInUse, 1);
     }
 
     public override Result CanAttack(CombatParameter combatParameter)
@@ -1231,6 +1229,11 @@ public class Player : CombatActor, IPlayer
                 base.AddCondition(condition);
                 break;
         }
+    }
+
+    public void MoveToTemple()
+    {
+        SetNewLocation(new Location(Town.Coordinate));
     }
 
 
@@ -1476,14 +1479,9 @@ public class Player : CombatActor, IPlayer
     public override void Death(IThing by)
     {
         base.Death(by);
-        
+
         PlayerSkull.RemoveYellowSkull();
         DecreaseExp();
-    }
-
-    public void MoveToTemple()
-    {
-        SetNewLocation(new Location(Town.Coordinate));
     }
 
     private void DecreaseExp()

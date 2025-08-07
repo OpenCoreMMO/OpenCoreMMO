@@ -1,5 +1,3 @@
-using NeoServer.Domain.Common.Contracts.Creatures;
-
 namespace NeoServer.Scripts.LuaJIT.Models.Spell;
 
 public abstract class LuaSpell(LuaScriptInterface scriptInterface) : Script(scriptInterface)
@@ -27,6 +25,6 @@ public abstract class LuaSpell(LuaScriptInterface scriptInterface) : Script(scri
     public bool IsSelfTarget { get; set; }
     public bool IsPremium { get; set; }
     public bool IsAggressive { get; set; }
-    public bool IsLockedPz  { get; set; }
+    public bool IsLockedPz { get; set; }
     public byte[] VocationIds { get; set; }
 }

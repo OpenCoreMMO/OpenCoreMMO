@@ -85,10 +85,12 @@ public class PreTradeValidationTests
         var backpack1 = ItemTestDataBuilder.CreatePickupableContainer(255);
         var backpack2 = ItemTestDataBuilder.CreatePickupableContainer(255);
 
-        Enumerable.Range(1, 200).ToList().ForEach(x => backpack1.AddItem(ItemTestDataBuilder.CreateWeaponItem((ushort)x)));
+        Enumerable.Range(1, 200).ToList()
+            .ForEach(x => backpack1.AddItem(ItemTestDataBuilder.CreateWeaponItem((ushort)x)));
         backpack1.AddItem(backpack2);
 
-        Enumerable.Range(1, 200).ToList().ForEach(x => backpack2.AddItem(ItemTestDataBuilder.CreateWeaponItem((ushort)x)));
+        Enumerable.Range(1, 200).ToList()
+            .ForEach(x => backpack2.AddItem(ItemTestDataBuilder.CreateWeaponItem((ushort)x)));
 
         //act
         var result = tradeSystem.Request(player, secondPlayer, backpack1);

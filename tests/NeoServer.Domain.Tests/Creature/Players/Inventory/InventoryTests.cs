@@ -1,7 +1,6 @@
 ﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Items.Items.Weapons;
@@ -551,10 +550,11 @@ public class InventoryTests
         var skills = PlayerTestDataBuilder.GenerateSkills(10);
         var sut = PlayerTestDataBuilder.Build(skills: skills);
 
-        var bodyItemToAdd = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.MinimumLevel, 1000)
-        });
+        var bodyItemToAdd = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
+            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+            {
+                (ItemTypeAttribute.MinimumLevel, 1000)
+            });
 
         //act
         var actual = sut.Inventory.AddItem(bodyItemToAdd, (byte)Slot.Body);
@@ -757,14 +757,18 @@ public class InventoryTests
     public static IEnumerable<object[]> SlotSwapItemsData =>
         new List<object[]>
         {
-            new object[] { Slot.Ammo, ItemTestDataBuilder.CreateAmmo(100, 10), ItemTestDataBuilder.CreateAmmo(102, 10) },
+            new object[]
+                { Slot.Ammo, ItemTestDataBuilder.CreateAmmo(100, 10), ItemTestDataBuilder.CreateAmmo(102, 10) },
             new object[]
             {
                 Slot.Head, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "head"),
                 ItemTestDataBuilder.CreateBodyEquipmentItem(102, "head")
             },
             new object[]
-                { Slot.Left, ItemTestDataBuilder.CreateWeaponItem(100, "axe"), ItemTestDataBuilder.CreateWeaponItem(102, "axe") },
+            {
+                Slot.Left, ItemTestDataBuilder.CreateWeaponItem(100, "axe"),
+                ItemTestDataBuilder.CreateWeaponItem(102, "axe")
+            },
             new object[]
             {
                 Slot.Body, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "body"),
@@ -818,7 +822,8 @@ public class InventoryTests
             new object[]
             {
                 Slot.Left, ItemTestDataBuilder.CreateThrowableDistanceItem(100),
-                ItemTestDataBuilder.CreateThrowableDistanceItem(100, 5), ItemTestDataBuilder.CreateThrowableDistanceItem(100, 6)
+                ItemTestDataBuilder.CreateThrowableDistanceItem(100, 5),
+                ItemTestDataBuilder.CreateThrowableDistanceItem(100, 6)
             }
         };
 

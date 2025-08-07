@@ -24,7 +24,7 @@ public class AttackServiceTestBuilder
         var gameConfiguration = new GameConfiguration
         {
             PvP = new PvPConfiguration(pvpType),
-            Combat = new CombatConfiguration(true, true, 1)
+            Combat = new CombatConfiguration(true, true)
         };
 
         var skullService = new PlayerSkullService(gameConfiguration);
@@ -49,7 +49,8 @@ public class AttackServiceTestBuilder
 
         var attackValidation = new AttackValidation(new MapTool(map, new PathFinder(map)), map, gameConfiguration.PvP);
 
-        return new AttackService(logger.Object, skullService, areaAttackService, singleTargetCombat, conditionAttackService, attackValidation);
+        return new AttackService(logger.Object, skullService, areaAttackService, singleTargetCombat,
+            conditionAttackService, attackValidation);
     }
 }
 

@@ -11,7 +11,8 @@ public class MagicWeaponTests
     [Fact]
     public void InspectionText_NoAttributeFound_ReturnsText()
     {
-        var sut = ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
+        var sut = ItemTestDataBuilder.CreateMagicWeapon(1,
+            itemTypeAttributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
 
         //assert
         sut.InspectionText.Should().BeEmpty();

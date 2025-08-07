@@ -7,12 +7,12 @@ combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_ETHEREALSPEAR)
 combat:setParameter(COMBAT_PARAM_BLOCKARMOR, 1)
 
 function onGetFormulaValues(player, skill, attack, factor)
-	local level = player:getLevel()
+    local level = player:getLevel()
 
-	local min = (level / 5) + (skill + 25) / 3
-	local max = (level / 5) + skill + 25
+    local min = (level / 5) + (skill + 25) / 3
+    local max = (level / 5) + skill + 25
 
-	return -min, -max
+    return -min, -max
 end
 
 combat:setCallback(CALLBACK_PARAM_SKILLVALUE, "onGetFormulaValues")
@@ -20,7 +20,7 @@ combat:setCallback(CALLBACK_PARAM_SKILLVALUE, "onGetFormulaValues")
 local spell = Spell("instant")
 
 function spell.onCastSpell(creature, var)
-	return combat:execute(creature, var)
+    return combat:execute(creature, var)
 end
 
 spell:group("attack")

@@ -6,7 +6,6 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
-using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Models;
 using NeoServer.Scripts.LuaJIT.Models.Combat;
@@ -49,6 +48,59 @@ public class CombatFunctions : LuaScriptInterface, ICombatFunctions
         RegisterMethod(luaState, "Combat", "setOrigin", LuaNotImplemented);
 
         RegisterMethod(luaState, "Combat", "execute", LuaExecute);
+    }
+
+    private static byte[,] GetArea(LuaState L, int index)
+    {
+        if (!Lua.IsTable(L, index))
+            return null;
+
+        var rows = new List<List<byte>>();
+
+        Lua.PushNil(L);
+        while (Lua.Next(L, index) != 0)
+        {
+            if (!Lua.IsTable(L, -1))
+            {
+                Lua.Pop(L, 1);
+                return null;
+            }
+
+            var row = new List<byte>();
+            Lua.PushNil(L);
+            while (Lua.Next(L, -2) != 0)
+            {
+                if (!Lua.IsNumber(L, -1))
+                {
+                    Lua.Pop(L, 2);
+                    return null;
+                }
+
+                row.Add(GetNumber<byte>(L, -1));
+                Lua.Pop(L, 1);
+            }
+
+            rows.Add(row);
+            Lua.Pop(L, 1);
+        }
+
+        if (rows.Count == 0 || rows[0].Count == 0)
+            return null;
+
+        var height = rows.Count;
+        var width = rows[0].Count;
+        var matrix = new byte[height, width];
+
+        for (var y = 0; y < height; y++)
+        {
+            if (rows[y].Count != width)
+                return null;
+
+            for (var x = 0; x < width; x++)
+                matrix[y, x] = rows[y][x];
+        }
+
+        return matrix;
     }
 
     #region Lua Methods
@@ -241,57 +293,4 @@ public class CombatFunctions : LuaScriptInterface, ICombatFunctions
     }
 
     #endregion
-
-    private static byte[,] GetArea(LuaState L, int index)
-    {
-        if (!Lua.IsTable(L, index))
-            return null;
-
-        var rows = new List<List<byte>>();
-
-        Lua.PushNil(L);
-        while (Lua.Next(L, index) != 0)
-        {
-            if (!Lua.IsTable(L, -1))
-            {
-                Lua.Pop(L, 1);
-                return null;
-            }
-
-            var row = new List<byte>();
-            Lua.PushNil(L);
-            while (Lua.Next(L, -2) != 0)
-            {
-                if (!Lua.IsNumber(L, -1))
-                {
-                    Lua.Pop(L, 2);
-                    return null;
-                }
-
-                row.Add(GetNumber<byte>(L, -1));
-                Lua.Pop(L, 1);
-            }
-
-            rows.Add(row);
-            Lua.Pop(L, 1);
-        }
-
-        if (rows.Count == 0 || rows[0].Count == 0)
-            return null;
-
-        int height = rows.Count;
-        int width = rows[0].Count;
-        var matrix = new byte[height, width];
-
-        for (int y = 0; y < height; y++)
-        {
-            if (rows[y].Count != width)
-                return null;
-
-            for (int x = 0; x < width; x++)
-                matrix[y, x] = rows[y][x];
-        }
-
-        return matrix;
-    }
 }

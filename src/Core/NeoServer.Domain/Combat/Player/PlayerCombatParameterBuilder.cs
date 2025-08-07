@@ -41,7 +41,7 @@ public static class PlayerCombatParameterBuilder
                 (byte)player.Location.GetSqmDistance(target.Location))
         };
     }
-    
+
     private static DamageType GetDamageType(IPlayer player)
     {
         if (player.Inventory.Weapon is null) return DamageType.Physical;

@@ -11,6 +11,18 @@ namespace NeoServer.Domain.Items;
 
 public class ItemType : IItemType
 {
+    public ItemType()
+    {
+        ServerId = 0;
+        Flags = new HashSet<ItemFlag>();
+        Attributes = new ItemTypeAttributeList();
+        Locked = false;
+    }
+
+    public bool Locked { get; private set; }
+    public ushort WareId { get; }
+    public LightBlock LightBlock { get; private set; }
+
     /// <summary>
     ///     Server Id
     /// </summary>
@@ -22,6 +34,7 @@ public class ItemType : IItemType
     ///     ItemType's name
     /// </summary>
     public string Name => Attributes.GetAttribute(ItemTypeAttribute.Name);
+
     public string Article => Attributes.GetAttribute(ItemTypeAttribute.Article);
     public string Plural => Attributes.GetAttribute(ItemTypeAttribute.PluralName);
     public float Weight => Attributes.GetAttribute<float>(ItemTypeAttribute.Weight);
@@ -49,10 +62,6 @@ public class ItemType : IItemType
         ? $"{Name}"
         : $"{Article} {Name}";
 
-    public bool Locked { get; private set; }
-    public ushort WareId { get; }
-    public LightBlock LightBlock { get; private set; }
-
     public ISet<ItemFlag> Flags { get; set; }
 
     public ItemTypeAttributeList Attributes { get; set; }
@@ -62,14 +71,6 @@ public class ItemType : IItemType
     public ushort DestroyTo => Attributes.GetDestructionItem();
 
     public ItemGroup Group { get; private set; }
-
-    public ItemType()
-    {
-        ServerId = 0;
-        Flags = new HashSet<ItemFlag>();
-        Attributes = new ItemTypeAttributeList();
-        Locked = false;
-    }
 
     public void SetName(string name)
     {
@@ -130,6 +131,11 @@ public class ItemType : IItemType
         Group = ItemGroupQuery.Find(this);
     }
 
+    public void ThrowIfLocked()
+    {
+        if (Locked) throw new InvalidOperationException("This ItemType is locked and cannot be altered.");
+    }
+
     public void SetSpeed(ushort speed)
     {
         Attributes.SetAttribute(ItemTypeAttribute.AttackSpeed, speed);
@@ -145,11 +151,6 @@ public class ItemType : IItemType
     public void LockChanges()
     {
         Locked = true;
-    }
-
-    public void ThrowIfLocked()
-    {
-        if (Locked) throw new InvalidOperationException("This ItemType is locked and cannot be altered.");
     }
 
     public void SetGroup(byte type)

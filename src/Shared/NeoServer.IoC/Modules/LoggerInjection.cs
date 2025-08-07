@@ -29,7 +29,6 @@ public static class LoggerConfigurationExtensions
             .WriteTo.Console(theme: AnsiConsoleTheme.Code);
 
         if (grayLogConfiguration.Enable)
-        {
             loggerConfig.WriteTo.Graylog(new GraylogSinkOptions
             {
                 HostnameOrAddress = grayLogConfiguration.HostnameOrAddress,
@@ -39,7 +38,6 @@ public static class LoggerConfigurationExtensions
                 UseSsl = false,
                 HostnameOverride = grayLogConfiguration.HostnameOverride
             });
-        }
 
         var logger = loggerConfig.CreateLogger();
 

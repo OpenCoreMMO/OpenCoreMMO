@@ -2,7 +2,6 @@
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Items.Services;
@@ -31,7 +30,7 @@ public class ItemService : IItemService
 
         if (tile is not IDynamicTile dynamicTile) return null;
 
-        var newItem = _itemFactory.Create(toItemId, tile.Location, new Dictionary<ItemTypeAttribute, IConvertible>(), null);
+        var newItem = _itemFactory.Create(toItemId, tile.Location, new Dictionary<ItemTypeAttribute, IConvertible>());
 
         dynamicTile.ReplaceItem(fromItemId, newItem);
 
@@ -60,7 +59,7 @@ public class ItemService : IItemService
 
         if (tile is not IDynamicTile dynamicTile) return null;
 
-        var newItem = _itemFactory.Create(id, tile.Location, new Dictionary<ItemTypeAttribute, IConvertible>(), null);
+        var newItem = _itemFactory.Create(id, tile.Location, new Dictionary<ItemTypeAttribute, IConvertible>());
 
         dynamicTile.AddItem(newItem);
 

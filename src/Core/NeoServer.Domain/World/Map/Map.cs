@@ -135,7 +135,8 @@ public class Map : IMap
             return false;
         }
 
-        if (creature.TileEnterRule.CanEnter(nextTile, creature) && TryMoveCreature(creature, nextTile.Location)) return true;
+        if (creature.TileEnterRule.CanEnter(nextTile, creature) &&
+            TryMoveCreature(creature, nextTile.Location)) return true;
 
         creature.CancelWalk();
         return false;

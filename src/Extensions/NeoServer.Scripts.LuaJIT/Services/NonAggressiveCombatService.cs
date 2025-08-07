@@ -12,10 +12,7 @@ public class NonAggressiveCombatService
     {
         target ??= caster;
 
-        if (target is ICombatActor targetCreature)
-        {
-            AddConditions(combat, targetCreature);
-        }
+        if (target is ICombatActor targetCreature) AddConditions(combat, targetCreature);
     }
 
     private static void AddConditions(LuaCombat combat, ICombatActor targetCreature)
@@ -23,12 +20,10 @@ public class NonAggressiveCombatService
         foreach (var condition in combat.Conditions)
         {
             condition.Parameters.TryGetValue(ConditionParamType.Ticks, out var duration);
-                
+
             if (condition.Type is ConditionType.Haste)
-            {
                 targetCreature.AddCondition(new ConditionSpeed(duration, condition.FormulaValues));
-            }
-            
+
             if (condition.Type is ConditionType.Light)
             {
                 condition.Parameters.TryGetValue(ConditionParamType.LightLevel, out var lightLevel);
@@ -38,9 +33,7 @@ public class NonAggressiveCombatService
             }
 
             if (condition.Type is ConditionType.Invisible)
-            {
                 targetCreature.AddCondition(new ConditionInvisible(duration));
-            }
         }
     }
 }

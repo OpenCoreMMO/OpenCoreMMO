@@ -40,7 +40,7 @@ public class EventCallbackFunctions : LuaScriptInterface, IEventCallbackFunction
             return 1;
         }
 
-        bool skipDuplicationCheck = GetBoolean(L, 3, false);
+        var skipDuplicationCheck = GetBoolean(L, 3, false);
 
         var eventCallback = new EventCallback(GetScriptEnv().GetScriptInterface(), _logger, _scripts);
 

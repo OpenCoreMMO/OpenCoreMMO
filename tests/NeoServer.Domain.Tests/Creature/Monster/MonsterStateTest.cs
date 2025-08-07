@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Combat.Attacks;
-using NeoServer.Domain.Common.Combat.Structs;
+﻿using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;

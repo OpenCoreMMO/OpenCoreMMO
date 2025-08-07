@@ -11,8 +11,9 @@ public class PlayerStorageUpdateEventHandler(IEventsCallbacks eventsCallbacks)
     public void Handle(PlayerStorageUpdateEvent @event)
     {
         eventsCallbacks.ExecuteCallback(
-                EventCallbackType.PlayerOnStorageUpdate,
-                callback =>
-                    callback.PlayerOnStorageUpdate(@event.Player, @event.Key, @event.Value, @event.OldValue, @event.CurrentTime));
+            EventCallbackType.PlayerOnStorageUpdate,
+            callback =>
+                callback.PlayerOnStorageUpdate(@event.Player, @event.Key, @event.Value, @event.OldValue,
+                    @event.CurrentTime));
     }
 }

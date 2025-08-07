@@ -11,14 +11,6 @@ namespace NeoServer.Domain.Items.Items;
 
 public class BodyDefenseEquipment : Equipment, IBodyEquipmentEquipment
 {
-    public new ushort Defense => base.Defense > 0
-        ? base.Defense
-        : base.Armor;
-
-    public bool Pickupable => true;
-
-    public Slot Slot => Metadata.WeaponType == WeaponType.Shield ? Slot.Right : Metadata.BodyPosition;
-
     public BodyDefenseEquipment(IItemType itemType, Location location)
         : base(itemType, location)
     {
@@ -33,6 +25,14 @@ public class BodyDefenseEquipment : Equipment, IBodyEquipmentEquipment
         }
     }
 
+    public new ushort Defense => base.Defense > 0
+        ? base.Defense
+        : Armor;
+
+    public bool Pickupable => true;
+
+    public Slot Slot => Metadata.WeaponType == WeaponType.Shield ? Slot.Right : Metadata.BodyPosition;
+
     public override bool CanBeDressed(IPlayer player)
     {
         var hasRequiredVocation = Guard.IsNullOrEmpty(Vocations);
@@ -46,6 +46,7 @@ public class BodyDefenseEquipment : Equipment, IBodyEquipmentEquipment
         if (player.Level >= MinLevel) hasMinimumLevel = true;
         return hasRequiredVocation && hasMinimumLevel;
     }
+
     public virtual void OnMoved(IThing to)
     {
     }

@@ -4,17 +4,10 @@ namespace NeoServer.Domain.Tests.Items.ItemAttributeList;
 
 public class BaseAttributeListTests
 {
-    private class TestAttributeList : BaseAttributeList<TestEnum>
+    public enum TestEnum
     {
-        public TestAttributeList()
-        {
-            SetCustomAttribute("str", "test");
-            SetCustomAttribute("dec", 123.45m);
-            SetCustomAttribute("int", 42);
-        }
+        Dummy
     }
-
-    public enum TestEnum { Dummy }
 
     [Fact]
     public void GetCustomAttribute_ShouldReturnStringValue()
@@ -38,5 +31,15 @@ public class BaseAttributeListTests
         var list = new TestAttributeList();
         var value = list.GetCustomAttribute<int>("int");
         Assert.Equal(42, value);
+    }
+
+    private class TestAttributeList : BaseAttributeList<TestEnum>
+    {
+        public TestAttributeList()
+        {
+            SetCustomAttribute("str", "test");
+            SetCustomAttribute("dec", 123.45m);
+            SetCustomAttribute("int", 42);
+        }
     }
 }

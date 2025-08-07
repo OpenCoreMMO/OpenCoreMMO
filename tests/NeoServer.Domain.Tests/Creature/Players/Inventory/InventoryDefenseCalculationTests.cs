@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Common.Item;
-using NeoServer.Domain.Creatures.Player.Inventory;
+﻿using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Player;
 
@@ -44,7 +43,7 @@ public class InventoryDefenseCalculationTests
                 (ItemTypeAttribute.Armor, 10)
             ]);
 
-        var helmet = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, 
+        var helmet = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
             itemTypeAttributes:
             [
                 (ItemTypeAttribute.BodyPosition, "head"),

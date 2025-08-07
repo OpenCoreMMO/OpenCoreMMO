@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 
 internal class ItemAttributeTranslationMap
 {
@@ -151,6 +151,6 @@ internal class ItemAttributeTranslationMap
         ["teleport"] = ItemTypeAttribute.TeleportDestination,
         ["ticks"] = ItemTypeAttribute.Ticks,
         ["useon"] = ItemTypeAttribute.UseOn,
-        ["vocations"] = ItemTypeAttribute.Vocation,
+        ["vocations"] = ItemTypeAttribute.Vocation
     };
-};
+}

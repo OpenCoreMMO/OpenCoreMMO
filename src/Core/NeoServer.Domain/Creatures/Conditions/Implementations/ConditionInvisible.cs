@@ -27,7 +27,7 @@ public class ConditionInvisible : BaseCondition
         player.TurnInvisible();
 
         EndAction = () => player.TurnVisible();
-        
+
         return true;
     }
 }

@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common;
+﻿using System.Text;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
@@ -8,7 +9,6 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Items.Factories.AttributeFactory;
 using NeoServer.Domain.Items.Items.Attributes;
-using System.Text;
 
 namespace NeoServer.Domain.Items.Bases;
 
