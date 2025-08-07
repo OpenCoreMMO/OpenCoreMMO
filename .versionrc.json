@@ -1,22 +1,24 @@
 {
   "types": [
-    {"type": "feat", "section": "Features"},
-    {"type": "fix", "section": "Bug Fixes"},
-    {"type": "chore", "hidden": true},
-    {"type": "docs", "section": "Documentation"},
-    {"type": "style", "hidden": true},
-    {"type": "refactor", "section": "Code Refactoring"},
-    {"type": "perf", "section": "Performance Improvements"},
-    {"type": "test", "hidden": true},
-    {"type": "build", "hidden": true},
-    {"type": "ci", "hidden": true},
-    {"type": "revert", "section": "Reverts"}
+    {"type": "feat", "section": "✨ Features"},
+    {"type": "fix", "section": "🐛 Bug Fixes"},
+    {"type": "chore", "section": "🔧 Chores", "hidden": false},
+    {"type": "docs", "section": "📚 Documentation"},
+    {"type": "style", "section": "💄 Styles", "hidden": false},
+    {"type": "refactor", "section": "♻️ Code Refactoring"},
+    {"type": "perf", "section": "⚡ Performance Improvements"},
+    {"type": "test", "section": "✅ Tests", "hidden": false},
+    {"type": "build", "section": "🏗️ Build System", "hidden": false},
+    {"type": "ci", "section": "👷 CI/CD", "hidden": false},
+    {"type": "revert", "section": "⏪ Reverts"}
   ],
   "commitUrlFormat": "https://github.com/opencoremmo/opencoremmo/commit/{{hash}}",
   "compareUrlFormat": "https://github.com/opencoremmo/opencoremmo/compare/{{previousTag}}...{{currentTag}}",
   "issueUrlFormat": "https://github.com/opencoremmo/opencoremmo/issues/{{id}}",
   "userUrlFormat": "https://github.com/{{user}}",
   "releaseCommitMessageFormat": "chore(release): {{currentTag}}",
+  "infile": "CHANGELOG.md",
+  "header": "# Changelog\n\nAll notable changes to this project will be documented in this file.\n\nThe format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\nand this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n\n",
   "bumpFiles": [
     {
       "filename": "package.json",

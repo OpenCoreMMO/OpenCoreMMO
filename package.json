@@ -1,4 +1,35 @@
-{  "name": "opencoremmo-server",  "version": "1.0.0",  "description": "OpenCoreMMO Server - .NET MMORPG Server",  "repository": {    "type": "git",    "url": "https://github.com/opencoremmo/opencoremmo.git"  },  "scripts": {    "prepare": "husky install",    "commit": "cz",    "release": "standard-version",    "commit-and-release": "cz && npm run release"  },  "config": {    "commitizen": {      "path": "cz-conventional-changelog"    }  },  "devDependencies": {    "@commitlint/cli": "^18.4.3",    "@commitlint/config-conventional": "^18.4.3",    "commitizen": "^4.3.0",    "cz-conventional-changelog": "^3.3.0",    "husky": "^8.0.3",    "standard-version": "^9.5.0"  },  "keywords": [    "mmorpg",    "server",
+{
+  "name": "opencoremmo-server",
+  "version": "1.0.0",
+  "description": "OpenCoreMMO Server - .NET MMORPG Server",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opencoremmo/opencoremmo.git"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "commit": "cz",
+    "release": "standard-version",
+    "release:first": "standard-version --first-release",
+    "release:dry": "standard-version --dry-run",
+    "commit-and-release": "cz && npm run release"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^8.0.3",
+    "standard-version": "^9.5.0"
+  },
+  "keywords": [
+    "mmorpg",
+    "server",
     "dotnet",
     "game-server"
   ],
