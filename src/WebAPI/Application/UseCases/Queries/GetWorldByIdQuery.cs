@@ -9,5 +9,7 @@ public class GetWorldByIdQuery(IWorldRepository worldRepository)
     : IRequestHandler<GetWorldByIdRequest, WorldResponseViewModel>
 {
     public async Task<WorldResponseViewModel> Handle(GetWorldByIdRequest request, CancellationToken cancellationToken)
-        => await worldRepository.GetAsync(request.Id);
+    {
+        return await worldRepository.GetAsync(request.Id);
+    }
 }

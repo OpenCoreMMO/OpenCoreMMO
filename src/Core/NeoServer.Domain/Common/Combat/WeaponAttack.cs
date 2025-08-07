@@ -9,8 +9,10 @@ public readonly struct WeaponAttack(
 {
     public ushort AttackPower =>
         itemAttributes != null && itemAttributes.TryGetValue(ItemAttribute.Attack, out var attack)
-        ? Convert.ToUInt16(attack)
-        : metadata != null ? metadata.AttackPower : (ushort)0;
+            ? Convert.ToUInt16(attack)
+            : metadata != null
+                ? metadata.AttackPower
+                : (ushort)0;
 
     public byte AttackPowerPercentage => TotalAttackPower is 0 ? (byte)0 : (byte)(AttackPower * 100 / TotalAttackPower);
 

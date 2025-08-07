@@ -19,11 +19,11 @@ namespace NeoServer.Loaders.Vocations;
 public class VocationLoader
 {
     public static VocationLoader Instance;
+    private readonly GameConfiguration _gameConfiguration;
 
     private readonly ILogger _logger;
     private readonly ServerConfiguration _serverConfiguration;
     private readonly IVocationStore _vocationStore;
-    private readonly GameConfiguration _gameConfiguration;
 
     public VocationLoader(ILogger logger,
         ServerConfiguration serverConfiguration, IVocationStore vocationStore, GameConfiguration gameConfiguration)
@@ -44,7 +44,8 @@ public class VocationLoader
 
             foreach (var vocation in vocations)
             {
-                vocation.AttackSpeed = (ushort)Math.Round(vocation.AttackSpeed / Math.Max(_gameConfiguration.Combat.AttackSpeedMultiplier, 1));
+                vocation.AttackSpeed = (ushort)Math.Round(vocation.AttackSpeed /
+                                                          Math.Max(_gameConfiguration.Combat.AttackSpeedMultiplier, 1));
                 _vocationStore.AddOrUpdate(vocation.VocationType, vocation);
             }
 
@@ -89,7 +90,8 @@ public class VocationLoader
 
         UpdateSkills(existingVocation, vocation);
 
-        existingVocation.AttackSpeed = (ushort) Math.Round(vocation.AttackSpeed / Math.Max(_gameConfiguration.Combat.AttackSpeedMultiplier, 1));
+        existingVocation.AttackSpeed =
+            (ushort)Math.Round(vocation.AttackSpeed / Math.Max(_gameConfiguration.Combat.AttackSpeedMultiplier, 1));
         existingVocation.BaseSpeed = vocation.BaseSpeed;
         existingVocation.FromVoc = vocation.FromVoc;
         existingVocation.GainCap = vocation.GainCap;

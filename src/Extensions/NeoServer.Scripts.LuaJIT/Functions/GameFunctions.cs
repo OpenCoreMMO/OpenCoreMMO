@@ -82,13 +82,13 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
                 continue;
 
             // Make the first letter lowercase
-            string methodName = value.ToString();
+            var methodName = value.ToString();
             if (!string.IsNullOrEmpty(methodName))
                 methodName = char.ToLowerInvariant(methodName[0]) + methodName.Substring(1);
 
             Lua.PushString(luaState, methodName);
             Lua.PushValue(luaState, -2); // copy the function reference to the top of the stack
-            Lua.SetTable(luaState, -4);  // set table[methodName] = function
+            Lua.SetTable(luaState, -4); // set table[methodName] = function
         }
 
         Lua.Pop(luaState, 1); // pop the function

@@ -27,10 +27,7 @@ public class LuaCombatService(
         }
 
         //if variant is a position, get the target tile
-        if (variant.Type == LuaVariantType.VARIANT_POSITION)
-        {
-            target = map.GetTile(variant.Pos);
-        }
+        if (variant.Type == LuaVariantType.VARIANT_POSITION) target = map.GetTile(variant.Pos);
 
         //if combat is not aggressive, execute non-aggressive combat
         if (combat.Parameters.TryGetValue(CombatParam.COMBAT_PARAM_AGGRESSIVE, out var aggressive) && aggressive == 0)

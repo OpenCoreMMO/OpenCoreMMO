@@ -6,9 +6,9 @@ combat:setParameter(COMBAT_PARAM_TARGETCASTERORTOPMOST, 1)
 combat:setParameter(COMBAT_PARAM_DISPEL, CONDITION_PARALYZE)
 
 function onGetFormulaValues(player, level, maglevel)
-	local min = (level / 5) + (maglevel * 7.3) + 42
-	local max = (level / 5) + (maglevel * 12.4) + 90
-	return min, max
+    local min = (level / 5) + (maglevel * 7.3) + 42
+    local max = (level / 5) + (maglevel * 12.4) + 90
+    return min, max
 end
 
 combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
@@ -16,13 +16,13 @@ combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 local rune = Spell("rune")
 
 function rune.onCastSpell(creature, var, isHotkey)
-	if Monster(var:getNumber(1073762188)) then
-		creature:sendCancelMessage("Sorry, not possible.")
-		creature:getPosition():sendMagicEffect(CONST_ME_POFF)
-		return false
-	else
-		return combat:execute(creature, var)
-	end
+    if Monster(var:getNumber(1073762188)) then
+        creature:sendCancelMessage("Sorry, not possible.")
+        creature:getPosition():sendMagicEffect(CONST_ME_POFF)
+        return false
+    else
+        return combat:execute(creature, var)
+    end
 end
 
 rune:id(5)

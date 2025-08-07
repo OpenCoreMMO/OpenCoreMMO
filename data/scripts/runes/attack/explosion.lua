@@ -6,9 +6,9 @@ combat:setParameter(COMBAT_PARAM_BLOCKARMOR, 1)
 combat:setArea(createCombatArea(AREA_CIRCLE1X1))
 
 function onGetFormulaValues(player, level, maglevel)
-	local min = 0
-	local max = (level / 5) + (maglevel * 4.8)
-	return -min, -max
+    local min = 0
+    local max = (level / 5) + (maglevel * 4.8)
+    return -min, -max
 end
 
 combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
@@ -16,7 +16,7 @@ combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 local rune = Spell("rune")
 
 function rune.onCastSpell(creature, var, isHotkey)
-	return combat:execute(creature, var)
+    return combat:execute(creature, var)
 end
 
 rune:id(18)

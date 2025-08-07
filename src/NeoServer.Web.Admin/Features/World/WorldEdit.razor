@@ -1,5 +1,4 @@
 @page "/worlds/{worldId:int}/edit"
-@using MudBlazor
 
 @inject NavigationManager NavManager
 
@@ -7,13 +6,13 @@
 
     <MudGrid Spacing="3">
         <MudItem xs="12" sm="6" md="3">
-            <MudTextField Label="Name" @bind-Value="World.Name" Variant="Variant.Outlined" />
+            <MudTextField Label="Name" @bind-Value="World.Name" Variant="Variant.Outlined"/>
         </MudItem>
         <MudItem xs="12" sm="6" md="3">
-            <MudTextField Label="IP Address" @bind-Value="World.IpAddress" Variant="Variant.Outlined" />
+            <MudTextField Label="IP Address" @bind-Value="World.IpAddress" Variant="Variant.Outlined"/>
         </MudItem>
         <MudItem xs="12" sm="6" md="2">
-            <MudTextField Label="Port" @bind-Value="World.Port" Variant="Variant.Outlined" />
+            <MudTextField Label="Port" @bind-Value="World.Port" Variant="Variant.Outlined"/>
         </MudItem>
         <MudItem xs="12" sm="6" md="4">
             <MudSelect Label="Battle-Eye" T="string" @bind-Value="World.BattleEye" Variant="Variant.Outlined">
@@ -83,11 +82,14 @@
     }
 
     // TEMP: Fake backend data
-    private List<WorldModel> GetWorldsFromServer() => new()
+    private List<WorldModel> GetWorldsFromServer()
     {
-        new WorldModel { Id = 1, Name = "LocalHost", IpAddress = "127.0.0.1", Port = "7172", Location = "South America", PvpType = "Open PvP", PremiumType = "premium", TransferType = "blocked", BattleEye = "Not protected by BattlEye.", WorldType = "Regular" },
-        new WorldModel { Id = 2, Name = "Dev Test", IpAddress = "206.42.57.225", Port = "7172", Location = "South America", PvpType = "Open PvP", PremiumType = "premium", TransferType = "blocked", BattleEye = "Not protected by BattlEye.", WorldType = "Regular" }
-    };
+        return new List<WorldModel>
+        {
+            new WorldModel { Id = 1, Name = "LocalHost", IpAddress = "127.0.0.1", Port = "7172", Location = "South America", PvpType = "Open PvP", PremiumType = "premium", TransferType = "blocked", BattleEye = "Not protected by BattlEye.", WorldType = "Regular" },
+            new WorldModel { Id = 2, Name = "Dev Test", IpAddress = "206.42.57.225", Port = "7172", Location = "South America", PvpType = "Open PvP", PremiumType = "premium", TransferType = "blocked", BattleEye = "Not protected by BattlEye.", WorldType = "Regular" }
+        };
+    }
 
     public class WorldModel
     {
@@ -102,4 +104,5 @@
         public string BattleEye { get; set; }
         public string WorldType { get; set; }
     }
+
 }

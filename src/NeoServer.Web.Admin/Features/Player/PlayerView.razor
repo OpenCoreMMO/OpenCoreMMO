@@ -1,6 +1,4 @@
 @page "/player/{Id:int}"
-@using Microsoft.AspNetCore.Components.Web
-@using MudBlazor
 @using NeoServer.Web.Admin.Components
 @inject IDialogService DialogService
 
@@ -27,7 +25,8 @@
                        Color="Color.Primary"
                        Class="mb-2" FullWidth>Edit Info
             </MudButton>
-            <MudButton StartIcon="@Icons.Material.Filled.Edit" @onclick="OpenSkillEditDialog" Variant="Variant.Filled" Color="Color.Primary" FullWidth>
+            <MudButton StartIcon="@Icons.Material.Filled.Edit" @onclick="OpenSkillEditDialog" Variant="Variant.Filled"
+                       Color="Color.Primary" FullWidth>
                 Edit Skills
             </MudButton>
         </MudPaper>
@@ -219,7 +218,7 @@
     {
         var parameters = new DialogParameters
         {
-            ["Skill"] = new PlayerSkillEdit.PlayerSkillEditViewModel()
+            ["Skill"] = new PlayerSkillEdit.PlayerSkillEditViewModel
             {
                 Axe = Player.AxeFighting,
                 Club = Player.ClubFighting,

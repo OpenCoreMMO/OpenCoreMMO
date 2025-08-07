@@ -1,5 +1,4 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.Items;
 
 namespace NeoServer.Server.Common.Contracts.Scripts.Services;
 

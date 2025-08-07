@@ -12,7 +12,6 @@ namespace NeoServer.Scripts.LuaJIT.Models.Combat;
 
 public class LuaCombat : Script
 {
-
     public LuaCombat(LuaScriptInterface scriptInterface) : base(scriptInterface)
     {
     }
@@ -22,7 +21,7 @@ public class LuaCombat : Script
     public FormulaValues FormulaValues { get; set; }
     public List<ICondition> Conditions { get; set; } = new();
 
-    public Dictionary<Direction, byte[,]> Areas { get; set; } = new Dictionary<Direction, byte[,]>();
+    public Dictionary<Direction, byte[,]> Areas { get; set; } = new();
 
     public Callback SetCallback(CallBackType callBackType)
     {
@@ -80,7 +79,7 @@ public class LuaCombat : Script
             MaxDamage = (ushort)damageValues.Max,
             Range = 7,
             Area = Areas.Count != 0 ? Areas[direction] : null,
-            Conditions = Conditions,
+            Conditions = Conditions
         };
     }
 }

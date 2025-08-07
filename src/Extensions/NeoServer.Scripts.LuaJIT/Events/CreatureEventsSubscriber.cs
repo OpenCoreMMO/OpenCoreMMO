@@ -25,10 +25,7 @@ public class CreatureEventsSubscriber(
     {
         creature.OnThink += creatureOnThinkEventHandler.Execute;
 
-        if (creature is ICombatActor actor)
-        {
-            actor.OnBeforeDeath += creatureOnPrepareDeathEventHandler.Execute;
-        }
+        if (creature is ICombatActor actor) actor.OnBeforeDeath += creatureOnPrepareDeathEventHandler.Execute;
 
         if (creature is IPlayer player)
         {
@@ -59,10 +56,7 @@ public class CreatureEventsSubscriber(
     {
         creature.OnThink -= creatureOnThinkEventHandler.Execute;
 
-        if (creature is ICombatActor actor)
-        {
-            actor.OnBeforeDeath -= creatureOnPrepareDeathEventHandler.Execute;
-        }
+        if (creature is ICombatActor actor) actor.OnBeforeDeath -= creatureOnPrepareDeathEventHandler.Execute;
 
         if (creature is IPlayer player)
         {

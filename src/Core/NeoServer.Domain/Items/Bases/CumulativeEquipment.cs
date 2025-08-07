@@ -99,6 +99,11 @@ public abstract class CumulativeEquipment : Equipment, ICumulative
         OnReduced?.Invoke(this, amount);
     }
 
+    public void SetAmount(byte amount)
+    {
+        Amount = amount;
+    }
+
     private void SetAmount(IDictionary<ItemTypeAttribute, IConvertible> attributes)
     {
         Amount = 1;
@@ -107,11 +112,6 @@ public abstract class CumulativeEquipment : Equipment, ICumulative
 
         var amount = Convert.ToByte(count);
         Amount = Math.Min((byte)100, amount);
-    }
-
-    public void SetAmount(byte amount)
-    {
-        Amount = amount;
     }
 
     public void Increase(byte amount)

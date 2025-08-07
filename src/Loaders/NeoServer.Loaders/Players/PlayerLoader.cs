@@ -266,7 +266,8 @@ public class PlayerLoader : IPlayerLoader
             var location = item.SlotId <= 10 ? Location.Inventory((Slot)item.SlotId) : Location.Container(0, 0);
 
             //todo: check this, if need pass Metadata to itemFactory.Create
-            var createdItem = ItemFactory.Create((ushort)item.ServerId, location, null, null, item.GetAttributes(), item.GetCustomAttributes());
+            var createdItem = ItemFactory.Create((ushort)item.ServerId, location, null, null, item.GetAttributes(),
+                item.GetCustomAttributes());
 
             var createdItemIsPickupable = createdItem?.IsPickupable ?? false;
 

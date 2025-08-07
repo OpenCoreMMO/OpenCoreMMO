@@ -3,14 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Combat.Monster;
 using NeoServer.Domain.Combat.Player;
-using NeoServer.Domain.Combat.Services;
-using NeoServer.Domain.Combat.Services.Attacks;
 using NeoServer.Domain.Combat.Validations;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Inspection;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.Items.Services.ItemTransform;
@@ -88,7 +85,7 @@ public static class ServiceInjection
         builder.AddSingleton<AreaAttackService>();
         builder.AddSingleton<BloodPoolService>();
         builder.AddSingleton<ConditionAttackService>();
-        
+
         builder.AddSingleton<MonsterCombatService>();
         builder.AddSingleton<PlayerCombatService>();
 

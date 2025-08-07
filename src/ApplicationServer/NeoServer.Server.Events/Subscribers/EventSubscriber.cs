@@ -7,7 +7,6 @@ using NeoServer.Domain.Items.Events;
 using NeoServer.Domain.Items.Items.Attributes;
 using NeoServer.Domain.Items.Items.UsableItems.Runes;
 using NeoServer.Domain.SafeTrade;
-using NeoServer.Domain.Spells;
 using NeoServer.Domain.Spells.Entities;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Events.Combat;

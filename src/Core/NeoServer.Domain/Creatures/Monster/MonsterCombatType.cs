@@ -1,5 +1,4 @@
 ﻿using NeoServer.Domain.Common.Combat.Structs;
-using NeoServer.Domain.Common.Contracts.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Spells;
 
 namespace NeoServer.Domain.Creatures.Monster;

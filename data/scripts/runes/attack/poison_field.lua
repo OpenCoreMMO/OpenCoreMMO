@@ -7,7 +7,7 @@ combat:setParameter(COMBAT_PARAM_CREATEITEM, ITEM_POISONFIELD_PVP)
 local rune = Spell("rune")
 
 function rune.onCastSpell(creature, var, isHotkey)
-	return combat:execute(creature, var)
+    return combat:execute(creature, var)
 end
 
 rune:id(26)

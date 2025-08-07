@@ -17,9 +17,14 @@ namespace NeoServer.Domain.Items.Items.Weapons;
 
 public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDefense
 {
-    public WeaponAttack WeaponAttack { get; } //todo: rename to Attack
-
-    public ushort? MinHitChance { get; }
+    public MeleeWeapon(
+        IItemType itemType,
+        Location location,
+        IDictionary<ItemAttribute, IConvertible> itemAttributes = null) : base(itemType, location)
+    {
+        //AllowedVocations  todo
+        WeaponAttack = new WeaponAttack(itemType, itemAttributes);
+    }
 
     protected override string PartialInspectionText
     {
@@ -36,14 +41,7 @@ public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDe
         }
     }
 
-    public MeleeWeapon(
-        IItemType itemType,
-        Location location,
-        IDictionary<ItemAttribute, IConvertible> itemAttributes = null) : base(itemType, location)
-    {
-        //AllowedVocations  todo
-        WeaponAttack = new WeaponAttack(itemType, itemAttributes);
-    }
+    public WeaponAttack WeaponAttack { get; } //todo: rename to Attack
 
     public virtual bool CanUseOn(ushort[] items, IItem onItem)
     {
@@ -56,6 +54,8 @@ public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDe
 
         return useOnItems is not null && ((IList)useOnItems).Contains(onItem.Metadata.ServerId);
     }
+
+    public ushort? MinHitChance { get; }
 
     public override bool CanBeDressed(IPlayer player)
     {

@@ -11,8 +11,8 @@ public class PlayerInventoryUpdateEventEventHandler(IEventsCallbacks eventsCallb
     public void Handle(PlayerInventoryUpdateEvent @event)
     {
         eventsCallbacks.ExecuteCallback(
-                EventCallbackType.PlayerOnInventoryUpdate,
-                callback =>
-                    callback.PlayerOnInventoryUpdate(@event.Player, @event.Item, @event.Slot, @event.Equip));
+            EventCallbackType.PlayerOnInventoryUpdate,
+            callback =>
+                callback.PlayerOnInventoryUpdate(@event.Player, @event.Item, @event.Slot, @event.Equip));
     }
 }

@@ -1,9 +1,7 @@
 using NeoServer.Domain.Combat;
 using NeoServer.Domain.Combat.Player;
-using NeoServer.Domain.Combat.Services;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
-using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Server.Events.Combat;
 

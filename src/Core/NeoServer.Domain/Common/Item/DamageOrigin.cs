@@ -6,5 +6,5 @@ public enum DamageOrigin : byte
     Condition,
     Spell,
     Melee,
-    Ranged,
+    Ranged
 }

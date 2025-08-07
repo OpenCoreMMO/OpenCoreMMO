@@ -17,14 +17,20 @@ namespace NeoServer.Domain.Items.Items.Weapons;
 
 public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRange
 {
+    public ThrowableWeapon(
+        IItemType itemType,
+        Location location,
+        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
+        IDictionary<ItemAttribute, IConvertible> itemAttributes) : base(itemType, location, itemTypeAttributes)
+    {
+        WeaponAttack = new WeaponAttack(itemType, itemAttributes);
+    }
+
     private decimal BreakChance => Metadata.Attributes.HasCustomAttribute("breakChance")
         ? Metadata.Attributes.GetCustomAttribute<decimal>("breakChance")
         : 100;
 
     public bool ShouldBreak => BreakChance > 0 && GameRandom.Random.Next(1, maxValue: 100) <= BreakChance;
-    public WeaponAttack WeaponAttack { get; } //todo: rename to Attack
-
-    public ushort? MinHitChance { get; }
 
     protected override string PartialInspectionText
     {
@@ -51,14 +57,9 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
         }
     }
 
-    public ThrowableWeapon(
-        IItemType itemType,
-        Location location,
-        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
-        IDictionary<ItemAttribute, IConvertible> itemAttributes) : base(itemType, location, itemTypeAttributes)
-    {
-        WeaponAttack = new WeaponAttack(itemType, itemAttributes);
-    }
+    public WeaponAttack WeaponAttack { get; } //todo: rename to Attack
+
+    public ushort? MinHitChance { get; }
 
     public override bool CanBeDressed(IPlayer player)
     {

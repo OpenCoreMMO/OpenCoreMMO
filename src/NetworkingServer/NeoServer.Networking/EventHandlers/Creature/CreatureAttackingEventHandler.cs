@@ -1,4 +1,3 @@
-using NeoServer.Domain.Combat.Services.Attacks.Events;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;

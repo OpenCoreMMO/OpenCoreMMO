@@ -1,11 +1,10 @@
+using System.Net;
 using MudBlazor.Services;
 using NeoServer.Shared.IoC.Modules;
 using NeoServer.Web.Admin;
 using NeoServer.Web.Admin.Components;
 using NeoServer.Web.API.IoC.Modules;
 using NeoServer.Web.API.Requests.Validators;
-using System;
-using System.Net;
 using NeoServer.Web.Shared.IoC.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -56,7 +55,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseExceptionHandler("/Error", true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }

@@ -14,13 +14,13 @@ public class ConditionSpeed : BaseCondition
     {
         Interval = interval;
         FormulaValues = formulaValues;
-        Effect = effect; 
+        Effect = effect;
     }
 
     public override ConditionType Type => ConditionType.Haste;
     public EffectT Effect { get; }
     public uint Interval { get; }
-    
+
     public override bool Start(ICreature creature)
     {
         if (!base.Start(creature))
@@ -40,7 +40,7 @@ public class ConditionSpeed : BaseCondition
 
         walkableCreature.IncreaseSpeed((ushort)speed);
 
-        EndAction = () => walkableCreature.DecreaseSpeed((ushort)(speed));
+        EndAction = () => walkableCreature.DecreaseSpeed((ushort)speed);
 
         return true;
     }

@@ -204,6 +204,19 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
     }
 
+    public void SetLight(byte color, byte level)
+    {
+        LightColor = color;
+        LightLevel = level;
+
+        EventAggregator.Publish(new CreatureChangedLightEvent(this));
+    }
+
+    public void RemoveLight()
+    {
+        SetLight(0, 0);
+    }
+
     public bool Equals([AllowNull] Creature other)
     {
         return this == other;
@@ -265,16 +278,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         return HashCode.Combine(CreatureId);
     }
-
-    public void SetLight(byte color, byte level)
-    {
-        LightColor = color;
-        LightLevel = level;
-
-        EventAggregator.Publish(new CreatureChangedLightEvent(this));
-    }
-
-    public void RemoveLight() => SetLight(0,0);
 
     public static bool operator ==(Creature creature1, Creature creature2)
     {

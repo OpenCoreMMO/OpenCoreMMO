@@ -1,14 +1,12 @@
 @page "/Players"
+@using MediatR
+@using NeoServer.Web.API.Requests.Queries
 @using NeoServer.Web.API.Response
 @using NeoServer.Web.API.Response.Player
-@using NeoServer.Web.API.Requests.Queries
-@using MediatR
-@using Microsoft.AspNetCore.Components.Web
-@using MudBlazor
 @inject IMediator Mediator
 @inject ProgressBarState ProgressBarState
 
-@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@rendermode @(new InteractiveServerRenderMode(false))
 
 <PageTitle>Players</PageTitle>
 

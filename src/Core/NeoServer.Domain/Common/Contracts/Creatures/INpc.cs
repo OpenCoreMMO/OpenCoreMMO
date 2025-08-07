@@ -9,10 +9,10 @@ public delegate void CustomerLeft(ICreature creature);
 
 public delegate IItem CreateItem(
     ushort typeId, Location.Structs.Location location,
-        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
-        IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
-        IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
-        IDictionary<string, IConvertible> itemCustomAttributes = null,
+    IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
+    IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
+    IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
+    IDictionary<string, IConvertible> itemCustomAttributes = null,
     IEnumerable<IItem> children = null);
 
 public delegate void PlayerCloseChannel(INpc npc, IPlayer player);

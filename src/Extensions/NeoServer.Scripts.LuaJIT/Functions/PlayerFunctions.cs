@@ -80,7 +80,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(luaState, "Player", "setGhostMode", LuaPlayerSetGhostMode);
         RegisterMethod(luaState, "Player", "feed", LuaPlayerFeed);
         RegisterMethod(luaState, "Player", "getLevel", LuaGetLevel);
-        RegisterMethod(luaState, "Player", "getSlotItem", LuaPlayerGetSlotItem); 
+        RegisterMethod(luaState, "Player", "getSlotItem", LuaPlayerGetSlotItem);
     }
 
     private static int LuaGetLevel(LuaState l)
@@ -436,8 +436,8 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
     {
         // player:setStorageValue(key, value)
 
-        var player = GetUserdata<IPlayer>(luaState, 1); 
-        
+        var player = GetUserdata<IPlayer>(luaState, 1);
+
         if (player is null)
         {
             PushBoolean(luaState, false);
@@ -521,7 +521,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         //todo: implements length and canWrite
         var canWrite = GetBoolean(luaState, 4, false);
-        var length = GetNumber<int>(luaState, 5, -1);
+        var length = GetNumber(luaState, 5, -1);
         var text = string.Empty;
 
         var parameters = Lua.GetTop(luaState);
@@ -797,6 +797,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 }

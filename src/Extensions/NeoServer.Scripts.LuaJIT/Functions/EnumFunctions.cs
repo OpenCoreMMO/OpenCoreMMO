@@ -1,4 +1,5 @@
-﻿using LuaNET;
+﻿using System.Text.RegularExpressions;
+using LuaNET;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
@@ -12,7 +13,6 @@ using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Scripts.LuaJIT.Models;
 using NeoServer.Scripts.LuaJIT.Models.Combat;
 using Serilog;
-using System.Text.RegularExpressions;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -26,7 +26,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
 
     public void Init(LuaState luaState)
     {
-        RegisterEnumCustom<Slot>(luaState, true, true, prefix: "CONST_SLOT", ("None", "WHEREEVER"), ("Body", "ARMOR"));
+        RegisterEnumCustom<Slot>(luaState, true, true, "CONST_SLOT", ("None", "WHEREEVER"), ("Body", "ARMOR"));
         RegisterEnumCustom<ConditionType>(luaState, true, true);
         RegisterEnumCustom<ConditionParamType>(luaState, true, true);
         RegisterEnumCustom<Direction>(luaState);
@@ -40,7 +40,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         RegisterEnum<MessageClassesType>(luaState);
         RegisterEnum<NpcsEventType>(luaState);
         RegisterEnumCustom<PlayerFlag>(luaState, false);
-        RegisterEnumCustom<ReloadType>(luaState, true, true, prefix: "RELOAD_TYPE");
+        RegisterEnumCustom<ReloadType>(luaState, true, true, "RELOAD_TYPE");
         RegisterEnum<ReturnValueType>(luaState);
         //RegisterEnum<SkillsType>(luaState);
         RegisterEnumCustom<SkillType>(luaState);
@@ -71,7 +71,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
             var memberInfo = type.GetMember(memberName).FirstOrDefault();
 
             // Default name is the enum member name
-            string luaName = memberName;
+            var luaName = memberName;
 
             // Try to get the attribute
             if (memberInfo?.GetCustomAttributes(typeof(LuaEnumNameAttribute), false)

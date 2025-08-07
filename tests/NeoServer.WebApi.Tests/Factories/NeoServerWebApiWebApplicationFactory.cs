@@ -1,6 +1,8 @@
-﻿namespace NeoServer.WebApi.Tests.Factories;
+﻿using NeoServer.Web.API;
 
-public sealed class NeoServerWebApiWebApplicationFactory : BaseWebApplicationFactory<Web.API.Program>
+namespace NeoServer.WebApi.Tests.Factories;
+
+public sealed class NeoServerWebApiWebApplicationFactory : BaseWebApplicationFactory<Program>
 {
     #region private members
 

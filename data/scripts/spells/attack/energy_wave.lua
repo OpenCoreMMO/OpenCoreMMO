@@ -1,27 +1,27 @@
 ---@diagnostic disable: lowercase-global
 
 local function formulaFunction(player, level, maglevel)
-	local min = (level / 5) + (maglevel * 4.5)
-	local max = (level / 5) + (maglevel * 9)
-	return -min, -max
+    local min = (level / 5) + (maglevel * 4.5)
+    local max = (level / 5) + (maglevel * 9)
+    return -min, -max
 end
 
 function onGetFormulaValues(player, level, maglevel)
-	return formulaFunction(player, level, maglevel)
+    return formulaFunction(player, level, maglevel)
 end
 
 function onGetFormulaValuesWOD(player, level, maglevel)
-	return formulaFunction(player, level, maglevel)
+    return formulaFunction(player, level, maglevel)
 end
 
 local function createCombat(area, areaDiagonal, combatFunc)
-	local initCombat = Combat()
-	initCombat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, combatFunc)
-	initCombat:setParameter(COMBAT_PARAM_TYPE, COMBAT_ENERGYDAMAGE)
-	initCombat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_ENERGYAREA)
-	initCombat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_ENERGY)
-	initCombat:setArea(createCombatArea(area, areaDiagonal))
-	return initCombat
+    local initCombat = Combat()
+    initCombat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, combatFunc)
+    initCombat:setParameter(COMBAT_PARAM_TYPE, COMBAT_ENERGYDAMAGE)
+    initCombat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_ENERGYAREA)
+    initCombat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_ENERGY)
+    initCombat:setArea(createCombatArea(area, areaDiagonal))
+    return initCombat
 end
 
 local combat = createCombat(AREA_SQUAREWAVE5, AREADIAGONAL_SQUAREWAVE5, "onGetFormulaValues")
@@ -30,7 +30,7 @@ local combatWOD = createCombat(AREA_WAVE7, AREADIAGONAL_WAVE7, "onGetFormulaValu
 local spell = Spell("instant")
 
 function spell.onCastSpell(creature, var)
-	return combat:execute(creature, var)
+    return combat:execute(creature, var)
 end
 
 spell:group("attack")

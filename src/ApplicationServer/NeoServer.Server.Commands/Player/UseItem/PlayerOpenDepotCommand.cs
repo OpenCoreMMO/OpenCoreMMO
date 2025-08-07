@@ -40,7 +40,7 @@ public class PlayerOpenDepotCommand
 
         var depotRecordsTask = _playerDepotItemRepository.GetByPlayerId(player.Id);
 
-        depot = (Depot)_itemFactory.Create(container.Metadata, container.Location, null, null);
+        depot = (Depot)_itemFactory.Create(container.Metadata, container.Location);
 
         var depotRecords = depotRecordsTask.Result.ToList();
 

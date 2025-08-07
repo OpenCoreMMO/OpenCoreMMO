@@ -1,5 +1,4 @@
 ﻿using NeoServer.Domain.Common.Contracts.DataStores;
-using NeoServer.Domain.Common.Item;
 
 namespace NeoServer.Domain.Creatures.Player.Inventory.Calculations;
 

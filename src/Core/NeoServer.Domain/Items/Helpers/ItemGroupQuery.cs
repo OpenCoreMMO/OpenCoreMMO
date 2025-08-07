@@ -93,7 +93,8 @@ internal static class ItemGroupQuery
 
     private static ItemGroup GetSignGroup(IItemType metadata)
     {
-        return (metadata.Attributes.HasAttribute(ItemTypeAttribute.Text) && !metadata.Flags.Contains(ItemFlag.Usable)) ||
+        return (metadata.Attributes.HasAttribute(ItemTypeAttribute.Text) &&
+                !metadata.Flags.Contains(ItemFlag.Usable)) ||
                (metadata.Attributes.GetAttribute(ItemTypeAttribute.Type)
                    ?.Equals("sign", StringComparison.InvariantCultureIgnoreCase) ?? false)
             ? ItemGroup.Sign

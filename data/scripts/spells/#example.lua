@@ -6,9 +6,9 @@ combat:setParameter(COMBAT_PARAM_TARGETCASTERORTOPMOST, true)
 combat:setParameter(COMBAT_PARAM_AGGRESSIVE, false)
 
 function onGetFormulaValues(player, level, magicLevel)
-	local min = (level / 5) + (magicLevel * 3.2) + 20
-	local max = (level / 5) + (magicLevel * 5.4) + 40
-	return min, max
+    local min = (level / 5) + (magicLevel * 3.2) + 20
+    local max = (level / 5) + (magicLevel * 5.4) + 40
+    return min, max
 end
 
 combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
@@ -16,7 +16,7 @@ combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 local spell = Spell(SPELL_RUNE)
 
 function spell.onCastSpell(creature, variant, isHotkey)
-	return combat:execute(creature, variant)
+    return combat:execute(creature, variant)
 end
 
 spell:name("test rune")
@@ -34,7 +34,7 @@ spell:register()
 local conjureRune = Spell(SPELL_INSTANT)
 
 function conjureRune.onCastSpell(creature, variant)
-	return creature:conjureItem(3147, 3162, 25)
+    return creature:conjureItem(3147, 3162, 25)
 end
 
 conjureRune:name("Test")

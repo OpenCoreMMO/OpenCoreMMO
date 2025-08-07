@@ -358,7 +358,9 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
                 Lua.PushString(luaState, item.Metadata.Attributes.GetAttribute(attribute.ToItemTypeAttribute()));
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
 
         return 1;
     }
@@ -461,15 +463,11 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         var canRemove = attribute is not ItemAttribute.UniqueId and not ItemAttribute.Duration;
 
         if (canRemove)
-        {
             item.Attributes.RemoveAttribute(attribute);
-        }
         else
-        {
             ReportError(attribute == ItemAttribute.UniqueId
                 ? "Attempt to erase protected key 'uid'"
                 : "Attempt to erase protected key 'duration timestamp'");
-        }
 
         Lua.PushBoolean(luaState, canRemove);
         return 1;
@@ -486,7 +484,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             return 1;
         }
 
-        string key = Lua.IsNumber(luaState, 2)
+        var key = Lua.IsNumber(luaState, 2)
             ? GetNumber<long>(luaState, 2).ToString()
             : Lua.IsString(luaState, 2)
                 ? GetString(luaState, 2)
@@ -514,7 +512,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             return 1;
         }
 
-        string key = Lua.IsNumber(luaState, 2)
+        var key = Lua.IsNumber(luaState, 2)
             ? GetNumber<long>(luaState, 2).ToString()
             : Lua.IsString(luaState, 2)
                 ? GetString(luaState, 2)
@@ -572,7 +570,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             return 1;
         }
 
-        string key = Lua.IsNumber(luaState, 2)
+        var key = Lua.IsNumber(luaState, 2)
             ? GetNumber<long>(luaState, 2).ToString()
             : Lua.IsString(luaState, 2)
                 ? GetString(luaState, 2)
@@ -616,7 +614,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
             return 1;
         }
 
-        string key = Lua.IsNumber(luaState, 2)
+        var key = Lua.IsNumber(luaState, 2)
             ? GetNumber<long>(luaState, 2).ToString()
             : Lua.IsString(luaState, 2)
                 ? GetString(luaState, 2)

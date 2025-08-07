@@ -1,5 +1,4 @@
 @page "/worlds"
-@using MudBlazor
 
 <MudPaper Class="pa-6 mb-4">
     <MudGrid Spacing="3">
@@ -115,10 +114,10 @@
 
     private WorldModel NewWorld = new();
 
-    private List<WorldModel> Worlds = new()
+    private readonly List<WorldModel> Worlds = new()
     {
-        new() { Id = 1, Name = "LocalHost", IpAddress = "127.0.0.1", Port = "7172", Location = "South America" },
-        new() { Id = 2, Name = "Dev Test", IpAddress = "206.42.57.225", Port = "7172", Location = "South America" }
+        new WorldModel { Id = 1, Name = "LocalHost", IpAddress = "127.0.0.1", Port = "7172", Location = "South America" },
+        new WorldModel { Id = 2, Name = "Dev Test", IpAddress = "206.42.57.225", Port = "7172", Location = "South America" }
     };
 
     private void CreateWorld()
@@ -136,7 +135,7 @@
             WorldType = NewWorld.WorldType
         });
 
-        NewWorld = new(); // Reset form
+        NewWorld = new WorldModel(); // Reset form
     }
 
     private void DeleteWorld(WorldModel world)

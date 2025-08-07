@@ -19,26 +19,6 @@ public class LuaScriptManager(
     IReloadManager reloadManager,
     ServerConfiguration serverConfiguration) : IScriptManager
 {
-    #region Private Members
-
-    private static FileSystemWatcher _scriptsWatcher;
-    private static Timer _debounceTimer;
-    private static readonly object _debounceLock = new();
-    private static bool _pendingReload;
-    private static string _lastChangedFilePath;
-
-    #endregion
-
-    #region Properties
-
-    public IActionScriptService Actions { get; } = actionsScriptService;
-    public ICreatureEventsScriptService CreatureEvents { get; } = creatureEventsScriptService;
-    public IGlobalEventsScriptService GlobalEvents { get; } = globalEventsScriptService;
-    public IMoveEventsScriptService MoveEvents { get; } = moveEventsScriptService;
-    public ITalkActionScriptService TalkActions { get; } = talkActionsScriptService;
-
-    #endregion
-
     #region Public Methods
 
     public void Initialize()
@@ -76,7 +56,6 @@ public class LuaScriptManager(
                 //Reset timer: only reloads if there are no events for 1 second
                 _debounceTimer?.Change(Timeout.Infinite, Timeout.Infinite);
                 if (_debounceTimer == null)
-                {
                     _debounceTimer = new Timer(_ =>
                     {
                         lock (_debounceLock)
@@ -105,11 +84,8 @@ public class LuaScriptManager(
                             }
                         }
                     }, null, 1000, Timeout.Infinite);
-                }
                 else
-                {
                     _debounceTimer.Change(1000, Timeout.Infinite);
-                }
             }
         }
 
@@ -120,6 +96,26 @@ public class LuaScriptManager(
 
         _scriptsWatcher.EnableRaisingEvents = true;
     }
+
+    #endregion
+
+    #region Private Members
+
+    private static FileSystemWatcher _scriptsWatcher;
+    private static Timer _debounceTimer;
+    private static readonly object _debounceLock = new();
+    private static bool _pendingReload;
+    private static string _lastChangedFilePath;
+
+    #endregion
+
+    #region Properties
+
+    public IActionScriptService Actions { get; } = actionsScriptService;
+    public ICreatureEventsScriptService CreatureEvents { get; } = creatureEventsScriptService;
+    public IGlobalEventsScriptService GlobalEvents { get; } = globalEventsScriptService;
+    public IMoveEventsScriptService MoveEvents { get; } = moveEventsScriptService;
+    public ITalkActionScriptService TalkActions { get; } = talkActionsScriptService;
 
     #endregion
 }

@@ -11,8 +11,8 @@ public class PlayerThinkUpdateEventHandler(IEventsCallbacks eventsCallbacks)
     public void Handle(PlayerThinkEvent @event)
     {
         eventsCallbacks.ExecuteCallback(
-                EventCallbackType.PlayerOnThink,
-                callback =>
-                    callback.PlayerOnThink(@event.Player, @event.Interval));
+            EventCallbackType.PlayerOnThink,
+            callback =>
+                callback.PlayerOnThink(@event.Player, @event.Interval));
     }
 }

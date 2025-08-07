@@ -14,35 +14,22 @@ public class SpellCastValidation(IMapTool mapTool)
     public Result CanBeCastBy(ICombatActor caster, IThing target, ISpell spell)
     {
         if (caster is IPlayer aggressorPlayer)
-        {
             if (aggressorPlayer.Group.FlagIsEnabled(PlayerFlag.CannotUseSpells))
-            {
                 return Result.NotPossible;
-            }
-        }
 
         if (spell.IsSelfTarget)
             target = caster;
 
         var result = spell.CanCast(caster, target);
-        if (result.Failed)
-        {
-            return result;
-        }
+        if (result.Failed) return result;
 
         if (spell.Range.HasValue && !mapTool.CanThrowObjectTo(caster.Location, target.Location,
                 SightLine.CheckSightLineAndFloor, spell.Range.Value, spell.Range.Value))
-        {
             return Result.Fail(InvalidOperation.DestinationOutOfReach);
-        }
 
         if (spell.BlockWalls && spell.NeedsTarget)
-        {
             if (mapTool.SightClearChecker?.Invoke(caster.Location, caster.CurrentTarget.Location, true) is false)
-            {
                 return Result.Fail(InvalidOperation.CannotThrowThere);
-            }
-        }
 
         var casterLocation = caster.Location;
 
@@ -54,9 +41,7 @@ public class SpellCastValidation(IMapTool mapTool)
             mapTool.SightClearChecker?.Invoke(caster.Location, casterLocation.AddDirectionStep(caster.Direction, 2),
                     true)
                 is false)
-        {
             return Result.Fail(InvalidOperation.NotEnoughRoom);
-        }
 
         return Result.Success;
     }

@@ -13,10 +13,10 @@ public class CreatureInjuredEventHandler(ICreatureEvents creatureEvents)
     public void Handle(CreatureInjuredEvent @event)
     {
         foreach (var creatureEvent in creatureEvents.GetCreatureEvents(
-            @event.Victim.CreatureId,
-            @event.DamageList.Damage.Type == DamageType.ManaDrain ? 
-            CreatureEventType.CREATURE_EVENT_MANACHANGE :
-            CreatureEventType.CREATURE_EVENT_HEALTHCHANGE))
+                     @event.Victim.CreatureId,
+                     @event.DamageList.Damage.Type == DamageType.ManaDrain
+                         ? CreatureEventType.CREATURE_EVENT_MANACHANGE
+                         : CreatureEventType.CREATURE_EVENT_HEALTHCHANGE))
             creatureEvent.ExecuteOnDamageReceivedChange(@event.Victim, @event.Enemy as ICreature, @event.DamageList);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+
 namespace NeoServer.Web.Shared.IoC.Modules;
 
 public static class AutoMapperInjection

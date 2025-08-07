@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Common.Item;
-using NeoServer.Domain.Items.Inspection;
+﻿using NeoServer.Domain.Items.Inspection;
 using NeoServer.Domain.Tests.Helpers;
 
 namespace NeoServer.Domain.Tests.Items.Inspection;

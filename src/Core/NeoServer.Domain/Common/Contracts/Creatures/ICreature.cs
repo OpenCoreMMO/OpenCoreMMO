@@ -30,6 +30,7 @@ public delegate void Say(ICreature creature, SpeechType type, string message, IC
 public delegate void AddCondition(ICreature creature, ICondition condition);
 
 public delegate void ChangeOutfit(ICreature creature, IOutfit outfit);
+
 public delegate void Think(ICreature creature, int interval);
 
 public delegate void Appear(ICreature self, ICreature creature);

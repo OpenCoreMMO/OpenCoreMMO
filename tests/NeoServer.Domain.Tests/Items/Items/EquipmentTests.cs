@@ -39,11 +39,12 @@ public class EquipmentTests : IAsyncLifetime
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(skills: PlayerTestDataBuilder.GenerateSkills(10));
-        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.SkillAxe, 5),
-            (ItemTypeAttribute.Duration, 100)
-        });
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
+            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+            {
+                (ItemTypeAttribute.SkillAxe, 5),
+                (ItemTypeAttribute.Duration, 100)
+            });
         //act
         sut.DressedIn(player);
 
@@ -55,11 +56,12 @@ public class EquipmentTests : IAsyncLifetime
     public void UndressFrom_Null_DoNotThrow()
     {
         //arrange
-        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.SkillAxe, 5),
-            (ItemTypeAttribute.Duration, 100)
-        });
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
+            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+            {
+                (ItemTypeAttribute.SkillAxe, 5),
+                (ItemTypeAttribute.Duration, 100)
+            });
         //act
         sut.UndressFrom(null);
     }
@@ -69,11 +71,12 @@ public class EquipmentTests : IAsyncLifetime
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(skills: PlayerTestDataBuilder.GenerateSkills(10));
-        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.SkillAxe, 5),
-            (ItemTypeAttribute.Duration, 100)
-        });
+        var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
+            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+            {
+                (ItemTypeAttribute.SkillAxe, 5),
+                (ItemTypeAttribute.Duration, 100)
+            });
 
         //act
         sut.DressedIn(player);
@@ -269,7 +272,8 @@ public class EquipmentTests : IAsyncLifetime
 
         var transformOnDequipItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(3);
 
-        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformToItem.Metadata, transformOnDequipItem.Metadata);
+        var itemTypeStore =
+            ItemTestDataBuilder.GetItemTypeStore(transformToItem.Metadata, transformOnDequipItem.Metadata);
 
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, charges: 1,
             itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
@@ -549,7 +553,8 @@ public class EquipmentTests : IAsyncLifetime
                 (ItemTypeAttribute.StopDecaying, 0)
             });
 
-        var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformToItemDequip.Metadata, transformToItem.Metadata);
+        var itemTypeStore =
+            ItemTestDataBuilder.GetItemTypeStore(transformToItemDequip.Metadata, transformToItem.Metadata);
 
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
             new (ItemTypeAttribute, IConvertible)[]
@@ -957,16 +962,17 @@ public class EquipmentTests : IAsyncLifetime
     public void InspectionText_AllAttributesAndCharges_ReturnText()
     {
         //arrange
-        var sut = ItemTestDataBuilder.CreateWeaponItem(1, charges: 10, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
-            (ItemTypeAttribute.Attack, 50),
-            (ItemTypeAttribute.Defense, 20),
-            (ItemTypeAttribute.SkillAxe, 30),
-            (ItemTypeAttribute.SkillClub, 10),
-            (ItemTypeAttribute.AbsorbPercentDeath, 60),
-            (ItemTypeAttribute.AbsorbPercentEnergy, 70),
-            (ItemTypeAttribute.ShowCharges, 1)
-        });
+        var sut = ItemTestDataBuilder.CreateWeaponItem(1, charges: 10,
+            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
+            {
+                (ItemTypeAttribute.Attack, 50),
+                (ItemTypeAttribute.Defense, 20),
+                (ItemTypeAttribute.SkillAxe, 30),
+                (ItemTypeAttribute.SkillClub, 10),
+                (ItemTypeAttribute.AbsorbPercentDeath, 60),
+                (ItemTypeAttribute.AbsorbPercentEnergy, 70),
+                (ItemTypeAttribute.ShowCharges, 1)
+            });
 
         //assert
         sut.InspectionText.Should()

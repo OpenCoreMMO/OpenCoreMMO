@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using AutoMapper;
 using MediatR;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;

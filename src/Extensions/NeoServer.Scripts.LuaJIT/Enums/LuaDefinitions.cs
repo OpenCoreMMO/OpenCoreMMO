@@ -1,5 +1,5 @@
-﻿using NeoServer.Domain.Common.Location.Structs;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Scripts.LuaJIT.Enums;
 
@@ -22,94 +22,64 @@ internal enum SkillsType : byte
 
 public enum ItemAttributeType : uint
 {
-    [Description("none")]
-    ITEM_ATTRIBUTE_NONE,
+    [Description("none")] ITEM_ATTRIBUTE_NONE,
 
-    [Description("aid")]
-    ITEM_ATTRIBUTE_ACTIONID = 1 << 0,
+    [Description("aid")] ITEM_ATTRIBUTE_ACTIONID = 1 << 0,
 
-    [Description("uid")]
-    ITEM_ATTRIBUTE_UNIQUEID = 1 << 1,
+    [Description("uid")] ITEM_ATTRIBUTE_UNIQUEID = 1 << 1,
 
-    [Description("description")]
-    ITEM_ATTRIBUTE_DESCRIPTION = 1 << 2,
+    [Description("description")] ITEM_ATTRIBUTE_DESCRIPTION = 1 << 2,
 
-    [Description("text")]
-    ITEM_ATTRIBUTE_TEXT = 1 << 3,
+    [Description("text")] ITEM_ATTRIBUTE_TEXT = 1 << 3,
 
-    [Description("date")]
-    ITEM_ATTRIBUTE_DATE = 1 << 4,
+    [Description("date")] ITEM_ATTRIBUTE_DATE = 1 << 4,
 
-    [Description("writer")]
-    ITEM_ATTRIBUTE_WRITER = 1 << 5,
+    [Description("writer")] ITEM_ATTRIBUTE_WRITER = 1 << 5,
 
-    [Description("name")]
-    ITEM_ATTRIBUTE_NAME = 1 << 6,
+    [Description("name")] ITEM_ATTRIBUTE_NAME = 1 << 6,
 
-    [Description("article")]
-    ITEM_ATTRIBUTE_ARTICLE = 1 << 7,
+    [Description("article")] ITEM_ATTRIBUTE_ARTICLE = 1 << 7,
 
-    [Description("pluralname")]
-    ITEM_ATTRIBUTE_PLURALNAME = 1 << 8,
+    [Description("pluralname")] ITEM_ATTRIBUTE_PLURALNAME = 1 << 8,
 
-    [Description("weight")]
-    ITEM_ATTRIBUTE_WEIGHT = 1 << 9,
+    [Description("weight")] ITEM_ATTRIBUTE_WEIGHT = 1 << 9,
 
-    [Description("attack")]
-    ITEM_ATTRIBUTE_ATTACK = 1 << 10,
+    [Description("attack")] ITEM_ATTRIBUTE_ATTACK = 1 << 10,
 
-    [Description("defense")]
-    ITEM_ATTRIBUTE_DEFENSE = 1 << 11,
+    [Description("defense")] ITEM_ATTRIBUTE_DEFENSE = 1 << 11,
 
-    [Description("extradefense")]
-    ITEM_ATTRIBUTE_EXTRADEFENSE = 1 << 12,
+    [Description("extradefense")] ITEM_ATTRIBUTE_EXTRADEFENSE = 1 << 12,
 
-    [Description("armor")]
-    ITEM_ATTRIBUTE_ARMOR = 1 << 13,
+    [Description("armor")] ITEM_ATTRIBUTE_ARMOR = 1 << 13,
 
-    [Description("hitchance")]
-    ITEM_ATTRIBUTE_HITCHANCE = 1 << 14,
+    [Description("hitchance")] ITEM_ATTRIBUTE_HITCHANCE = 1 << 14,
 
-    [Description("shootrange")]
-    ITEM_ATTRIBUTE_SHOOTRANGE = 1 << 15,
+    [Description("shootrange")] ITEM_ATTRIBUTE_SHOOTRANGE = 1 << 15,
 
-    [Description("owner")]
-    ITEM_ATTRIBUTE_OWNER = 1 << 16,
+    [Description("owner")] ITEM_ATTRIBUTE_OWNER = 1 << 16,
 
-    [Description("duration")]
-    ITEM_ATTRIBUTE_DURATION = 1 << 17,
+    [Description("duration")] ITEM_ATTRIBUTE_DURATION = 1 << 17,
 
-    [Description("decaystate")]
-    ITEM_ATTRIBUTE_DECAYSTATE = 1 << 18,
+    [Description("decaystate")] ITEM_ATTRIBUTE_DECAYSTATE = 1 << 18,
 
-    [Description("corpseowner")]
-    ITEM_ATTRIBUTE_CORPSEOWNER = 1 << 19,
+    [Description("corpseowner")] ITEM_ATTRIBUTE_CORPSEOWNER = 1 << 19,
 
-    [Description("charges")]
-    ITEM_ATTRIBUTE_CHARGES = 1 << 20,
+    [Description("charges")] ITEM_ATTRIBUTE_CHARGES = 1 << 20,
 
-    [Description("fluidtype")]
-    ITEM_ATTRIBUTE_FLUIDTYPE = 1 << 21,
+    [Description("fluidtype")] ITEM_ATTRIBUTE_FLUIDTYPE = 1 << 21,
 
-    [Description("doorid")]
-    ITEM_ATTRIBUTE_DOORID = 1 << 22,
+    [Description("doorid")] ITEM_ATTRIBUTE_DOORID = 1 << 22,
 
-    [Description("decayto")]
-    ITEM_ATTRIBUTE_DECAYTO = 1 << 23,
+    [Description("decayto")] ITEM_ATTRIBUTE_DECAYTO = 1 << 23,
 
-    [Description("wrapid")]
-    ITEM_ATTRIBUTE_WRAPID = 1 << 24,
+    [Description("wrapid")] ITEM_ATTRIBUTE_WRAPID = 1 << 24,
 
-    [Description("store")]
-    ITEM_ATTRIBUTE_STOREITEM = 1 << 25,
+    [Description("store")] ITEM_ATTRIBUTE_STOREITEM = 1 << 25,
 
-    [Description("attackspeed")]
-    ITEM_ATTRIBUTE_ATTACK_SPEED = 1 << 26,
+    [Description("attackspeed")] ITEM_ATTRIBUTE_ATTACK_SPEED = 1 << 26,
 
-    [Description("custom")]
-    ITEM_ATTRIBUTE_CUSTOM = 1U << 31
+    [Description("custom")] ITEM_ATTRIBUTE_CUSTOM = 1U << 31
 }
-
 
 public enum ItemDecayStateType : byte
 {
@@ -348,17 +318,20 @@ public enum BugReportTypeType : byte
 public enum EventCallbackType : ushort
 {
     None,
+
     // Creature
     CreatureOnChangeOutfit,
     CreatureOnAreaCombat,
     CreatureOnTargetCombat,
     CreatureOnDrainHealth,
     CreatureOnCombat,
+
     // Party
     PartyOnJoin,
     PartyOnLeave,
     PartyOnDisband,
     PartyOnShareExperience,
+
     // Player
     PlayerOnBrowseField,
     PlayerOnLook,
@@ -387,9 +360,11 @@ public enum EventCallbackType : ushort
     PlayerOnRotateItem,
     PlayerOnWalk,
     PlayerOnThink,
+
     // Monster
     MonsterOnDropLoot,
     MonsterPostDropLoot,
+
     // Zone
     ZoneBeforeCreatureEnter,
     ZoneBeforeCreatureLeave,

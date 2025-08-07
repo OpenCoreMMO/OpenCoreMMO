@@ -11,8 +11,8 @@ public class PlayerWalkEventEventHandler(IEventsCallbacks eventsCallbacks)
     public void Handle(PlayerWalkEvent @event)
     {
         eventsCallbacks.ExecuteCallback(
-                EventCallbackType.PlayerOnWalk,
-                callback => 
-                    callback.PlayerOnWalk(@event.Player, (byte)@event.Direction));
+            EventCallbackType.PlayerOnWalk,
+            callback =>
+                callback.PlayerOnWalk(@event.Player, (byte)@event.Direction));
     }
 }

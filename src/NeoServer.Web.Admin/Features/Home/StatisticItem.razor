@@ -1,8 +1,7 @@
-@using MudBlazor
 <MudItem xs="6" sm="3">
     <div class="d-flex flex-row">
         <MudAvatar Size="Size.Large" Class="me-4" Style="@GetStyle()">
-            <MudIcon Icon="@Icon" Size="Size.Medium" Color="@AvatarColor" />
+            <MudIcon Icon="@Icon" Size="Size.Medium" Color="@AvatarColor"/>
         </MudAvatar>
         <div class="my-auto">
             <div class="mb-0">@Title</div>
@@ -17,7 +16,7 @@
     [Parameter] public int Value { get; set; }
     [Parameter] public string Icon { get; set; }
     [Parameter] public Color AvatarColor { get; set; }
-    
+
     private string GetStyle()
     {
         var colorName = AvatarColor.ToString().ToLower();

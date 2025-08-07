@@ -13,12 +13,6 @@ namespace NeoServer.Domain.Items.Items.Weapons;
 
 public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
 {
-    public WeaponAttack WeaponAttack { get; }
-
-    public AmmoType AmmoType => Metadata.AmmoType;
-    public ShootType ShootType => Metadata.ShootType;
-    public bool HasElementalDamage => WeaponAttack.ElementalDamage.AttackPower is not 0;
-
     public Ammo(
         IItemType itemType,
         Location location,
@@ -27,6 +21,10 @@ public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
     {
         WeaponAttack = new WeaponAttack(itemType, itemAttributes);
     }
+
+    public AmmoType AmmoType => Metadata.AmmoType;
+    public ShootType ShootType => Metadata.ShootType;
+    public bool HasElementalDamage => WeaponAttack.ElementalDamage.AttackPower is not 0;
 
     protected override string PartialInspectionText
     {
@@ -54,6 +52,8 @@ public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
     public void OnMoved(IThing to)
     {
     }
+
+    public WeaponAttack WeaponAttack { get; }
 
     public void Throw()
     {

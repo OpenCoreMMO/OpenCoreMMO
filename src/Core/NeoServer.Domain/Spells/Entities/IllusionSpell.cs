@@ -9,7 +9,8 @@ using NeoServer.Domain.Spells.Entities;
 
 namespace NeoServer.Domain.Spells;
 
-public class IllusionSpell(uint duration, string creatureName, IMonsterTypeStore monsterTypeStore, EffectT effect) : Spell<IllusionSpell>
+public class IllusionSpell(uint duration, string creatureName, IMonsterTypeStore monsterTypeStore, EffectT effect)
+    : Spell<IllusionSpell>
 {
     public override string Name => "Illusion";
     public override EffectT Effect { get; } = effect;

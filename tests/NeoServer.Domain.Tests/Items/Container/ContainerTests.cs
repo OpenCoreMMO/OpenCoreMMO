@@ -886,7 +886,8 @@ public class ContainerTests
 
         var bag = ItemTestDataBuilder.CreateContainer(weight: 20, children: new List<IItem> { item3 });
 
-        var container = ItemTestDataBuilder.CreateContainer(weight: 10, children: new List<IItem> { item1, item2, bag });
+        var container =
+            ItemTestDataBuilder.CreateContainer(weight: 10, children: new List<IItem> { item1, item2, bag });
 
         //assert
         container.Weight.Should().Be(120);

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
@@ -77,7 +76,7 @@ public class Door : BaseItem
 
         if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.TransformTo, out var doorId)) return;
 
-        var door = ItemFactory.Instance.Create(doorId, Location, null, null);
+        var door = ItemFactory.Instance.Create(doorId, Location, null);
 
         dynamicTile.RemoveItem(this, 1, out _);
 

@@ -1,4 +1,3 @@
-using System.Runtime.Versioning;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
@@ -22,7 +21,7 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
 
         if (Guard.IsNull(aggressor))
             return Result.NotPossible;
-        
+
         switch (target)
         {
             case IPlayer targetPlayer:
