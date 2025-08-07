@@ -29,7 +29,11 @@ public class CreatureOutfitPacket : OutgoingPacket
         }
         else
         {
-            message.AddUInt16(0); //todo
+            // For items/creatures with LookType 0, use LookTypeEx (item ID)
+            message.AddUInt16(0); // lookTypeEx - needs to be implemented if using items
         }
+        
+        // Add mount (required by TFS protocol)
+        message.AddUInt16(0); // lookMount - mount ID, 0 if no mount
     }
 }
