@@ -110,19 +110,19 @@ Our automated validation enforces these rules:
   - Required, not empty
   - Lowercase (no sentence case, title case, etc.)
   - No period at the end
-  - Maximum 72 characters
+  - **No size limits** - write as much as needed
 
 ### Body Rules
 
 - **Leading blank line**: Required if body is present
-- **Line length**: Maximum 100 characters per line
 - **Content**: Explain *what* and *why*, not *how*
+- **No size limits** - write detailed explanations when needed
 
 ### Footer Rules
 
 - **Leading blank line**: Required if footer is present
 - **Format**: Key-value pairs or references
-- **Line length**: Maximum 100 characters per line
+- **No size limits** - include all necessary information
 
 ## 🎨 Advanced Examples
 
@@ -264,29 +264,22 @@ git commit -m "fix(database): resolve connection timeout"
 git commit -m "feat!: upgrade to new API version"
 ```
 
-## 🛠️ Troubleshooting
+## 🛠️ How to Commit
 
-### Commit Rejected
+### Simple Git Commits
 
-If your commit is rejected:
-
-1. **Check the error message**: commitlint provides specific guidance
-2. **Fix the format**: Adjust your commit message
-3. **Use interactive tool**: Run `npm run commit` for guidance
-4. **Amend if needed**: `git commit --amend` to fix the last commit
-
-### Validation Not Working
+Use regular git commands - our system automatically validates:
 
 ```bash
-# Reinstall hooks
-npm run prepare
+# Just commit normally
+git commit -m "feat: implement player trading system"
 
-# Test validation manually
-echo "invalid commit" | npx commitlint
-
-# Check hook permissions
-ls -la .husky/commit-msg
+# ✅ Automatic validation ensures conventional format
+# ✅ Changelog updated automatically  
+# ✅ No size limitations on commit messages
 ```
+
+**That's it!** No interactive tools or complex setup needed.
 
 ## 📈 Metrics & Analytics
 
@@ -331,4 +324,4 @@ graph TD
 
 ---
 
-> 💡 **Pro Tip**: Use `npm run commit` for guided commit creation, especially when starting out. It ensures perfect formatting every time!
+> 💡 **Pro Tip**: Just use `git commit` normally! Our automatic validation ensures perfect formatting every time, and there are no size restrictions - write as much detail as you need!

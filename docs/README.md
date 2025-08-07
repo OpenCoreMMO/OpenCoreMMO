@@ -12,6 +12,7 @@ This documentation follows Inner Source principles, providing clear guidance for
 |---------|-------------|-------------|
 | **Contributing** | Guidelines for contributors | [Branch Strategy](./contributing/branch-strategy.md) • [Commit Guidelines](./contributing/commit-guidelines.md) |
 | **Development** | Development workflows and standards | [Versioning](./development/versioning-strategy.md) • [Release Process](./development/release-process.md) |
+| **Implementation** | Current system status | [Implementation Status](./implementation-status.md) |
 
 ## 🚀 Getting Started
 

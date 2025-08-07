@@ -347,10 +347,36 @@ graph TD
 
 ## 🛠️ Tools & Automation
 
+### Automated Commit System
+
+Our release process is powered by automatic commit validation and changelog generation:
+
+```mermaid
+graph LR
+    A[Git Commit] --> B[Commitlint Validation]
+    B --> C{Valid Format?}
+    C -->|Yes| D[Commit Success]
+    C -->|No| E[Show Error & Block]
+    D --> F[Auto Changelog Update]
+    F --> G[Ready for Release]
+    
+    style D fill:#e8f5e8
+    style F fill:#e3f2fd
+    style E fill:#ffebee
+```
+
+**✨ Key Features:**
+- **Zero Configuration**: Just use `git commit` normally
+- **Automatic Validation**: Ensures conventional commit format
+- **No Size Limits**: Write detailed commit messages
+- **Auto Changelog**: Updates automatically on valid commits
+- **Release Ready**: `npm run release` generates versions and tags
+
 ### Release Toolchain
 
 | Tool | Purpose | Configuration |
 |------|---------|---------------|
+| **commitlint** | Commit message validation | `commitlint.config.js` |
 | **standard-version** | Version bumping, changelog | `.versionrc.json` |
 | **Husky** | Git hooks validation | `.husky/` |
 | **GitHub Actions** | CI/CD pipeline | `.github/workflows/` |
