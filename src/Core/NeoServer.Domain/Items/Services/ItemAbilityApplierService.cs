@@ -3,7 +3,6 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Helpers;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 
@@ -22,7 +21,8 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
         if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.Invisible, out var invisible) && invisible)
             player.TurnInvisible();
 
-        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.ManaShield, out var manaShield) && manaShield)
+        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.ManaShield, out var manaShield) &&
+            manaShield)
             player.EnableManaShield();
 
         if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.HealthGain, out var healthGain) &&
@@ -38,7 +38,8 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
             });
         }
 
-        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ManaGain, out var manaGain) && manaGain > 0)
+        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ManaGain, out var manaGain) &&
+            manaGain > 0)
         {
             item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ManaTicks, out var ticks);
 
@@ -66,7 +67,8 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
         if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.Invisible, out var invisible) && invisible)
             player.TurnVisible();
 
-        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.ManaShield, out var manaShield) && manaShield)
+        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.ManaShield, out var manaShield) &&
+            manaShield)
             player.DisableManaShield();
 
         if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.HealthGain, out var healthGain) &&
@@ -82,7 +84,8 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
             });
         }
 
-        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ManaGain, out var manaGain) && manaGain > 0)
+        if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ManaGain, out var manaGain) &&
+            manaGain > 0)
         {
             item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ManaTicks, out var ticks);
 

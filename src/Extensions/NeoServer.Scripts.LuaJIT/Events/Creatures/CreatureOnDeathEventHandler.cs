@@ -1,5 +1,4 @@
 ﻿using NeoServer.Domain.Common;
-using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Creatures.Events;
@@ -15,6 +14,7 @@ public class CreatureOnDeathEventHandler(ICreatureEvents creatureEvents) : IAppl
         //TODO: we need to move this to the CreatureDeathEventHandler in the Events project
         foreach (var creatureEvent in creatureEvents.GetCreatureEvents(@event.DeadCreature.CreatureId,
                      CreatureEventType.CREATURE_EVENT_DEATH))
-            creatureEvent.ExecuteOnDeath(@event.DeadCreature, @event.DeadCreature.Corpse as IItem, @event.Attacker as ICreature, null, false, false);
+            creatureEvent.ExecuteOnDeath(@event.DeadCreature, @event.DeadCreature.Corpse as IItem,
+                @event.Attacker as ICreature, null, false, false);
     }
 }

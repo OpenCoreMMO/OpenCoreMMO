@@ -15,7 +15,10 @@ public record GameConfiguration(
     ReportConfiguration Report = null
 );
 
-public record CombatConfiguration(bool InfiniteAmmo = false, bool InfiniteThrowingWeapon = false, decimal AttackSpeedMultiplier = 1);
+public record CombatConfiguration(
+    bool InfiniteAmmo = false,
+    bool InfiniteThrowingWeapon = false,
+    decimal AttackSpeedMultiplier = 1);
 
 public record DeathConfiguration(
     bool IsDeathListEnabled = true,

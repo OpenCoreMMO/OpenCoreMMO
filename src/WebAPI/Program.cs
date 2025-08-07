@@ -7,7 +7,6 @@ using NeoServer.Web.API.IoC.Modules;
 using NeoServer.Web.API.Middlewares;
 using NeoServer.Web.API.Requests.Validators;
 using NeoServer.Web.API.Swagger.SchemaFilters;
-using NeoServer.Web.Shared.IoC.Modules;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.JsonMultipartFormDataSupport.Extensions;
 using Swashbuckle.AspNetCore.JsonMultipartFormDataSupport.Integrations;
@@ -60,7 +59,8 @@ public class Program
 
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                Description =
+                    "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
                 Type = SecuritySchemeType.ApiKey,
@@ -69,20 +69,20 @@ public class Program
 
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header
-            },
-            new List<string>()
-        }
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        },
+                        Scheme = "oauth2",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header
+                    },
+                    new List<string>()
+                }
             });
 
             c.OperationFilter<SwaggerJsonIgnoreFilter>();
@@ -104,10 +104,10 @@ public class Program
 
         var app = builder.Build();
 
-app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
+        app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
 // Configure the HTTP request pipeline
-app.UseSwagger();
-app.UseSwaggerUI();
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
         app.UseRouting();
 

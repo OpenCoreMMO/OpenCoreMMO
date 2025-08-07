@@ -6,20 +6,19 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class EventCallbackEntry
 {
-    public string Name { get; }
-    public EventCallback Callback { get; }
-
     public EventCallbackEntry(string name, EventCallback callback)
     {
         Name = name;
         Callback = callback;
     }
+
+    public string Name { get; }
+    public EventCallback Callback { get; }
 }
 
 public class EventsCallbacks : IEventsCallbacks
 {
     private static readonly Lazy<EventsCallbacks> _instance = new(() => new EventsCallbacks());
-    public static EventsCallbacks Instance => _instance.Value;
 
     private readonly Dictionary<EventCallbackType, List<EventCallbackEntry>> _callbacks = new();
 
@@ -28,8 +27,10 @@ public class EventsCallbacks : IEventsCallbacks
     public EventsCallbacks()
     {
         // Use your IoC or logger instance as needed
-        _logger = Serilog.Log.Logger;
+        _logger = Log.Logger;
     }
+
+    public static EventsCallbacks Instance => _instance.Value;
 
     public bool IsCallbackRegistered(EventCallback callback)
     {
@@ -70,12 +71,8 @@ public class EventsCallbacks : IEventsCallbacks
             return;
 
         foreach (var entry in callbackList)
-        {
             if (entry.Callback != null && entry.Callback.IsLoadedScriptId())
-            {
                 callbackAction(entry.Callback);
-            }
-        }
     }
 
     // Check if all callbacks of a given type succeed (return true)
@@ -84,33 +81,30 @@ public class EventsCallbacks : IEventsCallbacks
         if (!_callbacks.TryGetValue(eventType, out var callbackList))
             return true;
 
-        bool allSucceeded = true;
+        var allSucceeded = true;
         foreach (var entry in callbackList)
-        {
             if (entry.Callback != null && entry.Callback.IsLoadedScriptId())
-            {
                 allSucceeded &= callbackFunc(entry.Callback);
-            }
-        }
+
         return allSucceeded;
     }
 
     // Check with return value (for enums, e.g., ReturnValue)
-    public TReturn CheckCallbackWithReturnValue<TReturn>(EventCallbackType eventType, Func<EventCallback, TReturn> callbackFunc, TReturn noErrorValue)
+    public TReturn CheckCallbackWithReturnValue<TReturn>(EventCallbackType eventType,
+        Func<EventCallback, TReturn> callbackFunc, TReturn noErrorValue)
         where TReturn : struct, IEquatable<TReturn>
     {
         if (!_callbacks.TryGetValue(eventType, out var callbackList))
             return noErrorValue;
 
         foreach (var entry in callbackList)
-        {
             if (entry.Callback != null && entry.Callback.IsLoadedScriptId())
             {
                 var result = callbackFunc(entry.Callback);
                 if (!result.Equals(noErrorValue))
                     return result;
             }
-        }
+
         return noErrorValue;
     }
 }

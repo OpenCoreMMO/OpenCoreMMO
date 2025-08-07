@@ -288,7 +288,7 @@ public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, I
         return scriptInterface.CallFunction(3);
     }
 
-    public bool ExecuteOnDamageReceivedChange(ICreature creature, ICreature attacker, CombatDamageList combatDamageList) 
+    public bool ExecuteOnDamageReceivedChange(ICreature creature, ICreature attacker, CombatDamageList combatDamageList)
     {
         // ExecuteOnHealthChange(creature, attacker, primaryDamage, primaryType, secondaryDamage, secondaryType, origin)
         // ExecuteOnManaChange(creature, attacker, primaryDamage, primaryType, secondaryDamage, secondaryType, origin)

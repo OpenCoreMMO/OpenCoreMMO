@@ -44,7 +44,7 @@ public static class DamageCalculation
 
         return damage;
     }
-    
+
     private static CombatDamage Calculate(ushort minDamage, ushort maxDamage, DamageType damageType)
     {
         var damageValue = (ushort)GameRandom.Random.NextInRange(minDamage, maxDamage);

@@ -117,11 +117,11 @@ public class LuaFunctionsLoader
                 break;
             case LuaVariantType.VARIANT_TARGETPOSITION:
             case LuaVariantType.VARIANT_POSITION:
-                {
-                    PushPosition(luaState, var.Pos);
-                    Lua.SetField(luaState, -2, "pos");
-                    break;
-                }
+            {
+                PushPosition(luaState, var.Pos);
+                Lua.SetField(luaState, -2, "pos");
+                break;
+            }
         }
 
         SetField(luaState, "instantName", var.InstantName);
@@ -463,9 +463,6 @@ public class LuaFunctionsLoader
                 case LuaDataType.Npc:
                     thing = GetUserdata<INpc>(luaState, arg, "Npc");
                     break;
-
-                default:
-                    break;
             }
         }
         else
@@ -481,7 +478,8 @@ public class LuaFunctionsLoader
         if (Lua.IsUserData(luaState, arg))
             return GetUserdata<ICreature>(luaState, arg, "Creature");
 
-        Server.Helpers.IoC.GetInstance<IGameCreatureManager>().TryGetCreature(GetNumber<uint>(luaState, arg), out var creature);
+        Server.Helpers.IoC.GetInstance<IGameCreatureManager>()
+            .TryGetCreature(GetNumber<uint>(luaState, arg), out var creature);
 
         return creature;
     }

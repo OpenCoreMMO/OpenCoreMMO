@@ -3,7 +3,6 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 
@@ -41,7 +40,7 @@ public class StaticToDynamicTileService : IStaticToDynamicTileService
         {
             if (!_itemClientServerIdMapStore.TryGetValue(clientId, out var serverId)) continue;
 
-            var item = _itemFactory.Create(serverId, tile.Location, new Dictionary<ItemTypeAttribute, IConvertible>(), null);
+            var item = _itemFactory.Create(serverId, tile.Location, new Dictionary<ItemTypeAttribute, IConvertible>());
             items.Add(item);
         }
 

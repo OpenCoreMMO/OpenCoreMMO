@@ -67,7 +67,8 @@ public class PlayerResponseViewModel
     public int WorldId { get; set; }
 
     public static implicit operator PlayerResponseViewModel(PlayerEntity entity)
-        => entity == null
+    {
+        return entity == null
             ? null
             : new PlayerResponseViewModel
             {
@@ -127,4 +128,5 @@ public class PlayerResponseViewModel
                 ChaseMode = entity.ChaseMode,
                 FightMode = entity.FightMode
             };
+    }
 }

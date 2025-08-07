@@ -2,6 +2,7 @@ namespace NeoServer.Web.Admin;
 
 public class ProgressBarState
 {
+    public bool Visible { get; private set; }
     public event Action? OnChange;
 
     public void Show()
@@ -17,6 +18,4 @@ public class ProgressBarState
         Visible = false;
         OnChange?.Invoke();
     }
-
-    public bool Visible { get; private set; }
 }

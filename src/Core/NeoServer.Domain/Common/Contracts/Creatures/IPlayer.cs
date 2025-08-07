@@ -93,10 +93,12 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     IInventory Inventory { get; }
     uint Mana { get; }
+
     /// <summary>
-    /// Spent mana consumption until magic level increase
+    ///     Spent mana consumption until magic level increase
     /// </summary>
     uint ManaSpent { get; }
+
     uint MaxMana { get; }
     SkillType SkillInUse { get; }
     bool CannotLogout { get; }
@@ -296,6 +298,9 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     Result CanCastSpell(ISpell spell);
     void ConsumeSoul(ushort soul);
 
+    void PostAttack(CombatParameter combatParameter, CombatResult damages);
+    public void MoveToTemple();
+
     #region Events
 
     public event PlayerLevelAdvance OnLevelAdvanced;
@@ -319,7 +324,4 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event WroteText OnWroteText;
 
     #endregion
-
-    void PostAttack(CombatParameter combatParameter, CombatResult damages);
-    public void MoveToTemple();
 }

@@ -16,7 +16,7 @@ public class PlayerThrowItemCommand(
     MapToContainerMovementOperation mapToContainerMovementOperation,
     MapToInventoryMovementOperation mapToInventoryMovementOperation,
     IScriptManager scriptManager
-    ) : ICommand
+) : ICommand
 {
     public void Execute(IPlayer player, ItemThrowPacket itemThrow)
     {

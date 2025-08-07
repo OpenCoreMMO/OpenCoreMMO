@@ -23,32 +23,6 @@ public struct CalculatedAttackDamage
 
 public class CombatDamage
 {
-    public bool NoEffect { get; }
-
-    /// <summary>
-    ///     Check if damage is elemental
-    /// </summary>
-    public bool IsElementalDamage => Type != DamageType.Melee && Type != DamageType.Physical;
-
-    /// <summary>
-    ///     Damage value to health or mana
-    /// </summary>
-    public ushort Damage { get; private set; }
-
-    /// <summary>
-    ///     Type of the damage (physical, fire...)
-    /// </summary>
-    public DamageType Type { get; }
-
-    /// <summary>
-    ///     Origin of the damage (condition, spell...)
-    /// </summary>
-    public DamageOrigin Origin { get; }
-
-    public EffectT Effect { get; set; }
-
-    public bool Unjustified { get; set; }
-
     public CombatDamage()
     {
     }
@@ -80,7 +54,33 @@ public class CombatDamage
         Origin = origin;
     }
 
-    
+    public bool NoEffect { get; }
+
+    /// <summary>
+    ///     Check if damage is elemental
+    /// </summary>
+    public bool IsElementalDamage => Type != DamageType.Melee && Type != DamageType.Physical;
+
+    /// <summary>
+    ///     Damage value to health or mana
+    /// </summary>
+    public ushort Damage { get; private set; }
+
+    /// <summary>
+    ///     Type of the damage (physical, fire...)
+    /// </summary>
+    public DamageType Type { get; }
+
+    /// <summary>
+    ///     Origin of the damage (condition, spell...)
+    /// </summary>
+    public DamageOrigin Origin { get; }
+
+    public EffectT Effect { get; set; }
+
+    public bool Unjustified { get; set; }
+
+
     /// <summary>
     ///     Sets a new damage
     /// </summary>

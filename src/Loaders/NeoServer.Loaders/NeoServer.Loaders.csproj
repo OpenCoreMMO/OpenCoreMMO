@@ -1,33 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj" />
-        <ProjectReference Include="..\..\Core\NeoServer.Domain\NeoServer.Domain.csproj" />
-        <ProjectReference Include="..\..\Database\NeoServer.Data.InMemory.DataStores\NeoServer.Data.InMemory.DataStores.csproj" />
-        <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj" />
-        <ProjectReference Include="..\..\Database\NeoServer.Data\NeoServer.Data.csproj" />
+        <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server.Helpers\NeoServer.Server.Helpers.csproj"/>
+        <ProjectReference Include="..\..\Core\NeoServer.Domain\NeoServer.Domain.csproj"/>
+        <ProjectReference Include="..\..\Database\NeoServer.Data.InMemory.DataStores\NeoServer.Data.InMemory.DataStores.csproj"/>
+        <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj"/>
+        <ProjectReference Include="..\..\Database\NeoServer.Data\NeoServer.Data.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="serilog" Version="4.3.0" />
-        <PackageReference Include="System.Text.Json" Version="9.0.6" />
+        <PackageReference Include="serilog" Version="4.3.0"/>
+        <PackageReference Include="System.Text.Json" Version="9.0.6"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Attributes\**" />
+        <Compile Remove="Attributes\**"/>
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Remove="Attributes\**" />
+        <EmbeddedResource Remove="Attributes\**"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Attributes\**" />
+        <None Remove="Attributes\**"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="OTBM\" />
-        <Folder Include="OTB\" />
+        <Folder Include="OTBM\"/>
+        <Folder Include="OTB\"/>
     </ItemGroup>
 
     <PropertyGroup>

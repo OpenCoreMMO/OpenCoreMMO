@@ -57,15 +57,6 @@ public class Summon : Monster, ISummon
         Follow(Master);
     }
 
-    public override void Death(IThing by)
-    {
-        base.Death(by);
-
-        Master.Summons.Remove(this);
-
-        Dismiss();
-    }
-
     public override void Dismiss()
     {
         Master.Summons.Remove(this);
@@ -93,6 +84,15 @@ public class Summon : Monster, ISummon
 
 
         return base.IsHostileTo(enemy);
+    }
+
+    public override void Death(IThing by)
+    {
+        base.Death(by);
+
+        Master.Summons.Remove(this);
+
+        Dismiss();
     }
 
     private void Die()

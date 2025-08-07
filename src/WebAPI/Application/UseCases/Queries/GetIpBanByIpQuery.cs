@@ -9,5 +9,7 @@ public class GetIpBanByIpQuery(IIpBansRepository ipBansRepository)
     : IRequestHandler<GetIpBanByIpRequest, IpBanResponseViewModel>
 {
     public async Task<IpBanResponseViewModel> Handle(GetIpBanByIpRequest request, CancellationToken cancellationToken)
-        => await ipBansRepository.ExistBan(request.ip);
+    {
+        return await ipBansRepository.ExistBan(request.ip);
+    }
 }

@@ -37,18 +37,15 @@ public class AttackService(
         {
             uint totalDamage = 0;
             var result = Result.NotPossible;
-            
+
             foreach (var target in targetTile.Creatures)
             {
                 if (target is not ICombatActor) continue;
                 var combatResult = Execute(new AttackInput(attackInput.Aggressor, target, attackInput.Parameters));
 
                 totalDamage += combatResult.TotalDamage;
-                
-                if (result.Succeeded)
-                {
-                    continue;
-                }
+
+                if (result.Succeeded) continue;
 
                 result = combatResult.Result;
             }
@@ -64,7 +61,8 @@ public class AttackService(
 
         playerSkullService.UpdateSkullOnAttack(attackInput.Aggressor as IPlayer, attackInput.Target as IPlayer);
 
-        if (DistanceAttackValidator.IsValid(attackInput) == false) return CombatResult.Fail(Result.Fail(InvalidOperation.TooFar));
+        if (DistanceAttackValidator.IsValid(attackInput) == false)
+            return CombatResult.Fail(Result.Fail(InvalidOperation.TooFar));
 
         UpdateParameters(attackInput);
 
@@ -124,10 +122,10 @@ public class AttackService(
         if (tryingToAttackWithPvpDisabled)
         {
             playerAggressor.StopAttack(true);
-            
+
             OperationFailService.Send(playerAggressor,
                 InvalidOperation.AdjustCombatSettingsToAttackPlayer);
-            
+
             return Result.Fail(InvalidOperation.AdjustCombatSettingsToAttackPlayer);
         }
 

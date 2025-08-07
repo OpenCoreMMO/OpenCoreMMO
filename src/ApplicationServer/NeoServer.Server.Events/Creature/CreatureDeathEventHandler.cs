@@ -4,20 +4,18 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Monster.Summon;
-using NeoServer.Domain.Services;
 using NeoServer.Server.Common.Contracts;
-using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Events.Creature;
 
 public class CreatureDeathEventHandler(
-        IPlayerRepository playerRepository,
-        IPlayerDeathRepository playerDeathRepository,
-        IGameCreatureManager creatureManager,
-        ICreatureDeathService creatureDeathService,
-        IExperienceSharingService experienceSharingService,
-        ILootService lootService,
-        GameConfiguration gameConfiguration)
+    IPlayerRepository playerRepository,
+    IPlayerDeathRepository playerDeathRepository,
+    IGameCreatureManager creatureManager,
+    ICreatureDeathService creatureDeathService,
+    IExperienceSharingService experienceSharingService,
+    ILootService lootService,
+    GameConfiguration gameConfiguration)
     : IApplicationEventHandler<CreatureDeathEvent>
 {
     public void Handle(CreatureDeathEvent @event)

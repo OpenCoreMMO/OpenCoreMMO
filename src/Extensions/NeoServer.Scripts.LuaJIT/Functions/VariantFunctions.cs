@@ -1,7 +1,6 @@
 ﻿using LuaNET;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Items.Items;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
@@ -30,7 +29,8 @@ public class VariantFunctions : LuaScriptInterface, IVariantFunctions
         LuaVariant variant = default;
         if (Lua.IsUserData(luaState, 2))
         {
-            if (GetThing(luaState, 2) is IThing thing) {
+            if (GetThing(luaState, 2) is IThing thing)
+            {
                 variant.Type = LuaVariantType.VARIANT_TARGETPOSITION;
                 variant.Pos = thing.Location;
             }
@@ -60,13 +60,9 @@ public class VariantFunctions : LuaScriptInterface, IVariantFunctions
         // Variant:Lua::getNumber()
         var variant = GetVariant(luaState, 1);
         if (variant.Type == LuaVariantType.VARIANT_NUMBER)
-        {
             Lua.PushNumber(luaState, variant.Number);
-        }
         else
-        {
             Lua.PushNumber(luaState, 0);
-        }
         return 1;
     }
 
@@ -75,13 +71,9 @@ public class VariantFunctions : LuaScriptInterface, IVariantFunctions
         // Variant:Lua::getString()
         var variant = GetVariant(luaState, 1);
         if (variant.Type == LuaVariantType.VARIANT_STRING)
-        {
             Lua.PushString(luaState, variant.Text);
-        }
         else
-        {
             Lua.PushString(luaState, string.Empty);
-        }
         return 1;
     }
 
@@ -90,13 +82,9 @@ public class VariantFunctions : LuaScriptInterface, IVariantFunctions
         // Variant:Lua::getPosition()
         var variant = GetVariant(luaState, 1);
         if (variant.Type == LuaVariantType.VARIANT_POSITION || variant.Type == LuaVariantType.VARIANT_TARGETPOSITION)
-        {
             PushPosition(luaState, variant.Pos);
-        }
         else
-        {
             PushPosition(luaState, Location.Zero);
-        }
         return 1;
     }
 }

@@ -1,14 +1,15 @@
 ﻿using LuaNET;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.World;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
 public class TownFunctions : LuaScriptInterface, ITownFunctions
 {
-    private static Domain.World.World _world;
+    private static World _world;
 
-    public TownFunctions(Domain.World.World world) : base(nameof(TownFunctions))
+    public TownFunctions(World world) : base(nameof(TownFunctions))
     {
         _world = world;
     }
@@ -48,6 +49,7 @@ public class TownFunctions : LuaScriptInterface, ITownFunctions
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 

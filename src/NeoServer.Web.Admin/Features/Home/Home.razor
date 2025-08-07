@@ -1,7 +1,5 @@
 ﻿@page "/"
 @using System.Globalization
-@using MudBlazor
-@using Microsoft.AspNetCore.Components.Web
 
 <PageTitle>Home</PageTitle>
 
@@ -47,15 +45,23 @@
             <MudText Typo="Typo.h6">Statistics</MudText>
 
             <MudGrid Class="mt-4" GutterSize="16px">
-                <StatisticItem Icon="@Icons.Material.Outlined.Shield" Title="Guilds" Value="1" AvatarColor="Color.Primary"/>
-                <StatisticItem Icon="@Icons.Material.Outlined.House" Title="Houses" Value="1239" AvatarColor="Color.Info"/>
-                <StatisticItem Icon="@Icons.Material.Outlined.Key" Title="Accounts" Value="5" AvatarColor="Color.Success"/>
-                <StatisticItem Icon="@Icons.Material.Outlined.Person" Title="Players" Value="5" AvatarColor="Color.Success"/>
+                <StatisticItem Icon="@Icons.Material.Outlined.Shield" Title="Guilds" Value="1"
+                               AvatarColor="Color.Primary"/>
+                <StatisticItem Icon="@Icons.Material.Outlined.House" Title="Houses" Value="1239"
+                               AvatarColor="Color.Info"/>
+                <StatisticItem Icon="@Icons.Material.Outlined.Key" Title="Accounts" Value="5"
+                               AvatarColor="Color.Success"/>
+                <StatisticItem Icon="@Icons.Material.Outlined.Person" Title="Players" Value="5"
+                               AvatarColor="Color.Success"/>
 
-                <StatisticItem Icon="@Icons.Material.Outlined.Person" Title="Sorcerer" Value="7" AvatarColor="Color.Success"/>
-                <StatisticItem Icon="@Icons.Material.Outlined.Person" Title="Druid" Value="1" AvatarColor="Color.Success"/>
-                <StatisticItem Icon="@Icons.Material.Outlined.Person" Title="Knight" Value="2" AvatarColor="Color.Success"/>
-                <StatisticItem Icon="@Icons.Material.Outlined.Person" Title="Paladin" Value="2" AvatarColor="Color.Success"/>
+                <StatisticItem Icon="@Icons.Material.Outlined.Person" Title="Sorcerer" Value="7"
+                               AvatarColor="Color.Success"/>
+                <StatisticItem Icon="@Icons.Material.Outlined.Person" Title="Druid" Value="1"
+                               AvatarColor="Color.Success"/>
+                <StatisticItem Icon="@Icons.Material.Outlined.Person" Title="Knight" Value="2"
+                               AvatarColor="Color.Success"/>
+                <StatisticItem Icon="@Icons.Material.Outlined.Person" Title="Paladin" Value="2"
+                               AvatarColor="Color.Success"/>
             </MudGrid>
 
             <MudText Typo="Typo.subtitle2" Class="mt-6">Today's boosted</MudText>
@@ -123,12 +129,12 @@
         public int Value { get; set; }
     }
 
-    string[] Labels = CultureInfo.CurrentCulture.DateTimeFormat.MonthNames[..12];
+    readonly string[] Labels = CultureInfo.CurrentCulture.DateTimeFormat.MonthNames[..12];
 
-    ChartSeries[] Datasets = new[]
+    readonly ChartSeries[] Datasets = new[]
     {
-        new ChartSeries { Name = "Paid", Data = new double[] { 1.2, 1.0, 0.8, 0.5, 1.5, 2.0, 1.7, 1.8, 0.9, 0.5, 0.2, 0.1 } },
-        new ChartSeries { Name = "Canceled", Data = new double[] { 0.2, 0.4, 0.3, 0.6, 0.5, 0.8, 1.0, 0.3, 0.5, 0.2, 0.1, 0.0 } }
+        new ChartSeries { Name = "Paid", Data = new[] { 1.2, 1.0, 0.8, 0.5, 1.5, 2.0, 1.7, 1.8, 0.9, 0.5, 0.2, 0.1 } },
+        new ChartSeries { Name = "Canceled", Data = new[] { 0.2, 0.4, 0.3, 0.6, 0.5, 0.8, 1.0, 0.3, 0.5, 0.2, 0.1, 0.0 } }
     };
 
 }

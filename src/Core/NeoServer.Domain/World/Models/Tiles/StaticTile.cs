@@ -9,8 +9,8 @@ namespace NeoServer.Domain.World.Models.Tiles;
 
 public class StaticTile : BaseTile, IStaticTile
 {
-    private IItem _topTopItemOnStack;
     private IItem _topDownItemOnStack;
+    private IItem _topTopItemOnStack;
 
     public StaticTile(Coordinate coordinate, params IItem[] items) : this(
         new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z), items)

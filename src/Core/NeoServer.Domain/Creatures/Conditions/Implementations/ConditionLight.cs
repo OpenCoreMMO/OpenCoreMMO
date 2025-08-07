@@ -19,8 +19,8 @@ public class ConditionLight : BaseCondition
 
     public override ConditionType Type => ConditionType.Light;
     public EffectT Effect { get; }
-    public uint ColorLevel { get; private set; }
-    public uint Color { get; private set; }
+    public uint ColorLevel { get; }
+    public uint Color { get; }
     public uint InternalLightTicks { get; private set; }
     public uint LightChangeInterval { get; set; }
 
@@ -34,7 +34,7 @@ public class ConditionLight : BaseCondition
         creature.SetLight((byte)Color, (byte)ColorLevel);
 
         EndAction = () => creature.RemoveLight();
-        
+
         return true;
     }
 }

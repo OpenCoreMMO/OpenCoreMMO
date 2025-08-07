@@ -32,6 +32,7 @@ public interface IItemFactory : IFactory
         IEnumerable<IItem> children = null);
 
     IEnumerable<Coin> CreateCoins(ulong amount);
+
     IItem CreateLootCorpse(
         ushort typeId,
         Location.Structs.Location location,

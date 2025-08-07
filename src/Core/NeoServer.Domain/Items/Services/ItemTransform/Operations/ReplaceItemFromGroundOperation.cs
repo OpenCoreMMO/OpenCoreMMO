@@ -37,7 +37,7 @@ internal static class ReplaceItemFromGroundOperation
         var result = tile.UpdateItemType(fromItem, toItemType);
         if (result) return Result<IItem>.Ok(fromItem);
 
-        var createdItem = toItemType is null ? null : itemFactory.Create(toItemType, fromItem.Location, null, null);
+        var createdItem = toItemType is null ? null : itemFactory.Create(toItemType, fromItem.Location);
 
         tile.ReplaceItem(fromItem, createdItem);
         return Result<IItem>.Ok(createdItem);

@@ -25,26 +25,26 @@ public static class MatrixExtensions
 
     private static byte[,] Mirror(byte[,] matrix)
     {
-        int rows = matrix.GetLength(0);
-        int cols = matrix.GetLength(1);
+        var rows = matrix.GetLength(0);
+        var cols = matrix.GetLength(1);
         var result = new byte[rows, cols];
 
-        for (int y = 0; y < rows; y++)
-            for (int x = 0; x < cols; x++)
-                result[y, x] = matrix[y, cols - 1 - x];
+        for (var y = 0; y < rows; y++)
+        for (var x = 0; x < cols; x++)
+            result[y, x] = matrix[y, cols - 1 - x];
 
         return result;
     }
 
     private static byte[,] Flip(byte[,] matrix)
     {
-        int rows = matrix.GetLength(0);
-        int cols = matrix.GetLength(1);
+        var rows = matrix.GetLength(0);
+        var cols = matrix.GetLength(1);
         var result = new byte[rows, cols];
 
-        for (int y = 0; y < rows; y++)
-            for (int x = 0; x < cols; x++)
-                result[y, x] = matrix[rows - 1 - y, x];
+        for (var y = 0; y < rows; y++)
+        for (var x = 0; x < cols; x++)
+            result[y, x] = matrix[rows - 1 - y, x];
 
         return result;
     }
@@ -52,39 +52,39 @@ public static class MatrixExtensions
 
     public static byte[,] Rotate90(byte[,] matrix)
     {
-        int rows = matrix.GetLength(0);
-        int cols = matrix.GetLength(1);
+        var rows = matrix.GetLength(0);
+        var cols = matrix.GetLength(1);
         var result = new byte[cols, rows];
 
-        for (int i = 0; i < rows; ++i)
-            for (int j = 0; j < cols; ++j)
-                result[j, rows - i - 1] = matrix[i, j];
+        for (var i = 0; i < rows; ++i)
+        for (var j = 0; j < cols; ++j)
+            result[j, rows - i - 1] = matrix[i, j];
 
         return result;
     }
 
     public static byte[,] Rotate180(byte[,] matrix)
     {
-        int rows = matrix.GetLength(0);
-        int cols = matrix.GetLength(1);
+        var rows = matrix.GetLength(0);
+        var cols = matrix.GetLength(1);
         var result = new byte[rows, cols];
 
-        for (int i = 0; i < rows; ++i)
-            for (int j = 0; j < cols; ++j)
-                result[rows - i - 1, cols - j - 1] = matrix[i, j];
+        for (var i = 0; i < rows; ++i)
+        for (var j = 0; j < cols; ++j)
+            result[rows - i - 1, cols - j - 1] = matrix[i, j];
 
         return result;
     }
 
     public static byte[,] Rotate270(byte[,] matrix)
     {
-        int rows = matrix.GetLength(0);
-        int cols = matrix.GetLength(1);
+        var rows = matrix.GetLength(0);
+        var cols = matrix.GetLength(1);
         var result = new byte[cols, rows];
 
-        for (int i = 0; i < rows; ++i)
-            for (int j = 0; j < cols; ++j)
-                result[cols - j - 1, i] = matrix[i, j];
+        for (var i = 0; i < rows; ++i)
+        for (var j = 0; j < cols; ++j)
+            result[cols - j - 1, i] = matrix[i, j];
 
         return result;
     }
@@ -106,29 +106,27 @@ public static class MatrixExtensions
 
     public static bool IsCircularArea(byte[,] matrix)
     {
-        int rows = matrix.GetLength(0);
-        int cols = matrix.GetLength(1);
+        var rows = matrix.GetLength(0);
+        var cols = matrix.GetLength(1);
 
         // Deve ser quadrada e com dimensões ímpares
         if (rows != cols || rows % 2 == 0)
             return false;
 
-        int center = rows / 2;
+        var center = rows / 2;
 
         if (matrix[center, center] != 3)
             return false;
 
         // Verifica simetria vertical e horizontal
-        for (int y = 0; y < rows; y++)
+        for (var y = 0; y < rows; y++)
+        for (var x = 0; x < cols; x++)
         {
-            for (int x = 0; x < cols; x++)
-            {
-                if (matrix[y, x] != matrix[rows - 1 - y, x])
-                    return false;
+            if (matrix[y, x] != matrix[rows - 1 - y, x])
+                return false;
 
-                if (matrix[y, x] != matrix[y, cols - 1 - x])
-                    return false;
-            }
+            if (matrix[y, x] != matrix[y, cols - 1 - x])
+                return false;
         }
 
         return true;

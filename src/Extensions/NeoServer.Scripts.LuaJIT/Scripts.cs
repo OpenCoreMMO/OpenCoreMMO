@@ -45,7 +45,7 @@ public class Scripts : IScripts
     #endregion
 
     #region constructors
-    
+
     public Scripts(ILogger logger)
     {
         _logger = logger;

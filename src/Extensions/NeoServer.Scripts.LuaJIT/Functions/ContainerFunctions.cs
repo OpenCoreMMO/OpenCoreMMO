@@ -1,4 +1,5 @@
-﻿using LuaNET;
+﻿using System.Text;
+using LuaNET;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
@@ -15,7 +16,7 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
     public ContainerFunctions(
         IItemTypeStore itemTypeStore,
         IItemFactory itemFactory
-        ) : base(nameof(ContainerFunctions))
+    ) : base(nameof(ContainerFunctions))
     {
         _itemTypeStore = itemTypeStore;
         _itemFactory = itemFactory;
@@ -98,13 +99,9 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
         var recursive = GetBoolean(luaState, 2, false);
 
         if (recursive)
-        {
             foreach (var item in container.Items)
-            {
                 if (item is IContainer innerContainer)
                     slots += innerContainer.Capacity - innerContainer.Items.Count;
-            }
-        }
 
         Lua.PushNumber(luaState, slots);
         return 1;
@@ -116,7 +113,7 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
         var container = GetUserdata<IContainer>(luaState, 1);
         if (container != null)
         {
-            var sb = new System.Text.StringBuilder();
+            var sb = new StringBuilder();
             foreach (var item in container.Items)
             {
                 if (item is IContainer)
@@ -135,6 +132,7 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -161,6 +159,7 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
             SetItemMetatable(luaState, -1, item);
             Lua.RawSetI(luaState, -2, index++);
         }
+
         return 1;
     }
 
@@ -187,8 +186,8 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
         }
 
         var itemId = 0;
-            
-        if(IsNumber(luaState, 2))
+
+        if (IsNumber(luaState, 2))
         {
             itemId = GetNumber<int>(luaState, 2);
         }
@@ -196,7 +195,9 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
         {
             var itemType = _itemTypeStore.GetByName(GetString(luaState, 2));
             if (itemType != null)
+            {
                 itemId = itemType.ServerId;
+            }
             else
             {
                 Lua.PushNil(luaState);
@@ -276,7 +277,9 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
         {
             var itemType = _itemTypeStore.GetByName(GetString(luaState, 2));
             if (itemType != null)
+            {
                 itemId = itemType.ServerId;
+            }
             else
             {
                 Lua.PushNil(luaState);
@@ -307,6 +310,7 @@ public class ContainerFunctions : LuaScriptInterface, IContainerFunctions
         {
             Lua.PushBoolean(luaState, false);
         }
+
         return 1;
     }
 

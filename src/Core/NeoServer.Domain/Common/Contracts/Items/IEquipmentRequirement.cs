@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Item;
 
 namespace NeoServer.Domain.Common.Contracts.Items;
 

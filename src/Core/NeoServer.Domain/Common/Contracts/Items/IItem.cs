@@ -14,6 +14,7 @@ public interface IItem : IThing, IHasDecay
     ///     Item metadata. Contains a lot of information about item
     /// </summary>
     IItemType Metadata { get; }
+
     ItemAttributeList Attributes { get; }
 
     ushort ActionId { get; }
@@ -83,11 +84,9 @@ public interface IItem : IThing, IHasDecay
         get
         {
             if (Attributes.HasAttribute(ItemAttribute.Article))
-            {
-               return string.IsNullOrWhiteSpace(Attributes.GetAttribute(ItemAttribute.Article))
-                ? $"{Attributes.GetAttribute(ItemAttribute.Name)}"
-                : $"{Attributes.GetAttribute(ItemAttribute.Article)} {Attributes.GetAttribute(ItemAttribute.Name)}";
-            }
+                return string.IsNullOrWhiteSpace(Attributes.GetAttribute(ItemAttribute.Article))
+                    ? $"{Attributes.GetAttribute(ItemAttribute.Name)}"
+                    : $"{Attributes.GetAttribute(ItemAttribute.Article)} {Attributes.GetAttribute(ItemAttribute.Name)}";
 
             return Metadata.FullName;
         }

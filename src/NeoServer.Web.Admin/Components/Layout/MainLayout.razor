@@ -1,27 +1,26 @@
 ﻿@using MudBlazor.Utilities
-@using MudBlazor.StaticInput
 @inherits LayoutComponentBase
 @inject ProgressBarState ProgressBarState
 
 @code{
 
-    public bool IsDarkMode { get; set; } = false;
+    public bool IsDarkMode { get; set; }
     public string LogoImage => IsDarkMode ? "/Opencoremmo-icon.png" : "/Opencoremmo-white.png";
 
     readonly MudTheme _theme = new()
     {
-        Typography = new Typography()
+        Typography = new Typography
         {
-            Default = new DefaultTypography()
+            Default = new DefaultTypography
             {
                 FontFamily = ["Montserrat", "Roboto", "sans-serif"]
             }
         },
-        PaletteLight = new PaletteLight()
+        PaletteLight = new PaletteLight
         {
             AppbarBackground = new MudColor("#105ed2")
         },
-        PaletteDark = new PaletteDark()
+        PaletteDark = new PaletteDark
         {
             AppbarBackground = new MudColor("#1e1e1e"),
             Background = new MudColor("#252525"),
@@ -65,7 +64,7 @@
             <!-- Row layout for toggle and breadcrumbs -->
             <div style="display: flex; align-items: center; margin-bottom: 1rem;">
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
-                               OnClick="@((e) => DrawerToggle())"/>
+                               OnClick="@(e => DrawerToggle())"/>
                 <MudBreadcrumbs Items="_items"/>
             </div>
 
@@ -83,10 +82,10 @@
 @code {
     private bool _drawerOpen = true;
 
-    private List<BreadcrumbItem> _items =
+    private readonly List<BreadcrumbItem> _items =
     [
-        new("Home", href: "#"),
-        new("Players", href: "#")
+        new("Home", "#"),
+        new("Players", "#")
     ];
 
     protected override void OnInitialized()

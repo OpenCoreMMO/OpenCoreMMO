@@ -18,6 +18,28 @@ public class BaseAttributeList<T> where T : Enum
         => customAttributes ??= new Dictionary<string, (dynamic, BaseAttributeList<T>)>(StringComparer
             .InvariantCultureIgnoreCase);
 
+    protected static bool IsNullable(dynamic value)
+    {
+        if (value == null)
+            return true; // null itself is always nullable
+
+        var type = ((object)value).GetType();
+
+        return !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
+    }
+
+    private static TKey ConvertKey<TKey>(object key)
+    {
+        if (typeof(TKey).IsEnum)
+        {
+            if (key is string s)
+                return (TKey)Enum.Parse(typeof(TKey), s, true);
+            return (TKey)Enum.ToObject(typeof(TKey), key);
+        }
+
+        return (TKey)Convert.ChangeType(key, typeof(TKey), CultureInfo.InvariantCulture);
+    }
+
     #region Attributes
 
     public bool HasAttribute(T attribute)
@@ -164,7 +186,7 @@ public class BaseAttributeList<T> where T : Enum
 
         foreach (var item in _defaultAttributes)
         {
-            TKey key = ConvertKey<TKey>(item.Key);
+            var key = ConvertKey<TKey>(item.Key);
             dictionary[key] = (TValue)item.Value.Item1;
         }
 
@@ -310,7 +332,7 @@ public class BaseAttributeList<T> where T : Enum
 
         foreach (var item in _customAttributes)
         {
-            TKey key = ConvertKey<TKey>(item.Key);
+            var key = ConvertKey<TKey>(item.Key);
             dictionary[key] = (TValue)item.Value.Item1;
         }
 
@@ -318,26 +340,4 @@ public class BaseAttributeList<T> where T : Enum
     }
 
     #endregion
-
-    protected static bool IsNullable(dynamic value)
-    {
-        if (value == null)
-            return true; // null itself is always nullable
-
-        var type = ((object)value).GetType();
-
-        return !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
-    }
-
-    private static TKey ConvertKey<TKey>(object key)
-    {
-        if (typeof(TKey).IsEnum)
-        {
-            if (key is string s)
-                return (TKey)Enum.Parse(typeof(TKey), s, ignoreCase: true);
-            return (TKey)Enum.ToObject(typeof(TKey), key);
-        }
-
-        return (TKey)Convert.ChangeType(key, typeof(TKey), CultureInfo.InvariantCulture);
-    }
 }

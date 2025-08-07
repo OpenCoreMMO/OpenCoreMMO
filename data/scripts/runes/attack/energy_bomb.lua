@@ -8,7 +8,7 @@ combat:setArea(createCombatArea(AREA_SQUARE1X1))
 local rune = Spell("rune")
 
 function rune.onCastSpell(creature, var, isHotkey)
-	return combat:execute(creature, var)
+    return combat:execute(creature, var)
 end
 
 rune:id(55)

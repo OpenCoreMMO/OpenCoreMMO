@@ -20,8 +20,6 @@ public class DistanceWeapon(IItemType type, Location location)
 {
     public WeaponAttack WeaponAttack { get; }
 
-    public ushort? MinHitChance { get; }
-
     protected override string PartialInspectionText
     {
         get
@@ -42,6 +40,8 @@ public class DistanceWeapon(IItemType type, Location location)
             return stringBuilder.ToString();
         }
     }
+
+    public ushort? MinHitChance { get; }
 
     public override bool CanBeDressed(IPlayer player)
     {

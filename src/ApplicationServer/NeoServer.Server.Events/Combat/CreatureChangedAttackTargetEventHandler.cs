@@ -1,7 +1,5 @@
-﻿using NeoServer.Domain.Combat.Attacks;
-using NeoServer.Domain.Combat.Monster;
+﻿using NeoServer.Domain.Combat.Monster;
 using NeoServer.Domain.Combat.Player;
-using NeoServer.Domain.Combat.Services.Attacks;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Server.Common.Contracts;

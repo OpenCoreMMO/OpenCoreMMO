@@ -11,11 +11,8 @@ public static class MonsterStateService
         if (monster.IsDead) return;
 
         monster.UpdateState();
-        
-        if (monster.IsCurrentTargetUnreachable)
-        {
-            monster.StopAttack();
-        }
+
+        if (monster.IsCurrentTargetUnreachable) monster.StopAttack();
 
         if (monster.State == MonsterState.LookingForEnemy)
         {

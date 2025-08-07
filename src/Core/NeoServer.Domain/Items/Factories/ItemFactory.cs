@@ -87,10 +87,11 @@ public class ItemFactory : IItemFactory
     {
         var itemTypeAttributes = new Dictionary<ItemTypeAttribute, IConvertible> { { ItemTypeAttribute.Count, count } };
 
-        var itemTypeCustomAttributes = new Dictionary<string, IConvertible> { };
-        var itemAttributes = new Dictionary<ItemAttribute, IConvertible> { };
-        var itemCustomAttributes = new Dictionary<string, IConvertible> { };
-        return Create(typeId, location, itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, children);
+        var itemTypeCustomAttributes = new Dictionary<string, IConvertible>();
+        var itemAttributes = new Dictionary<ItemAttribute, IConvertible>();
+        var itemCustomAttributes = new Dictionary<string, IConvertible>();
+        return Create(typeId, location, itemTypeAttributes, itemTypeCustomAttributes, itemAttributes,
+            itemCustomAttributes, children);
     }
 
     public IItem Create(
@@ -103,7 +104,7 @@ public class ItemFactory : IItemFactory
         IEnumerable<IItem> children = null)
     {
         if (!ItemTypeStore.TryGetValue(typeId, out var itemType)) return null;
-         
+
         var createdItem = CreateItem(itemType, location, itemTypeAttributes, itemAttributes, children);
 
         SetAttributes(itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, createdItem);
@@ -141,7 +142,7 @@ public class ItemFactory : IItemFactory
 
         foreach (var coinToAdd in coinsToAdd)
         {
-            var createdCoin = Create(coinToAdd.Item1, Location.Inventory(Slot.Backpack), null, null);
+            var createdCoin = Create(coinToAdd.Item1, Location.Inventory(Slot.Backpack), null);
             if (createdCoin is not Coin newCoin) continue;
             newCoin.Amount = coinToAdd.Item2;
 
@@ -163,7 +164,10 @@ public class ItemFactory : IItemFactory
         var item = ItemTypeStore.All.FirstOrDefault(x =>
             x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
-        return item is null ? null : Create(item.ServerId, location, itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, children);
+        return item is null
+            ? null
+            : Create(item.ServerId, location, itemTypeAttributes, itemTypeCustomAttributes, itemAttributes,
+                itemCustomAttributes, children);
     }
 
     private static void SetAttributes(

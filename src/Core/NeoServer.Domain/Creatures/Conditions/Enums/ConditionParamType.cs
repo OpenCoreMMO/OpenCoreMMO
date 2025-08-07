@@ -4,6 +4,7 @@ public enum ConditionParamType : byte
 {
     Owner = 1,
     Ticks = 2,
+
     // Outfit = 3,
     HealthGain = 4,
     HealthTicks = 5,
@@ -30,10 +31,12 @@ public enum ConditionParamType : byte
     SkillFishing = 26,
     StatMaxHitPoints = 27,
     StatMaxManaPoints = 28,
+
     // StatSoulPoints = 29,
     StatMagicPoints = 30,
     StatMaxHitPointsPercent = 31,
     StatMaxManaPointsPercent = 32,
+
     // StatSoulPointsPercent = 33,
     StatMagicPointsPercent = 34,
     PeriodicDamage = 35,

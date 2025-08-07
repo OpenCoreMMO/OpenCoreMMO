@@ -11,8 +11,8 @@ public class PlayerRotateItemEventEventHandler(IEventsCallbacks eventsCallbacks)
     public void Handle(PlayerRotateItemEvent @event)
     {
         eventsCallbacks.ExecuteCallback(
-                EventCallbackType.PlayerOnRotateItem,
-                callback =>
-                    callback.PlayerOnRotateItem(@event.Player, @event.Item, @event.Position));
+            EventCallbackType.PlayerOnRotateItem,
+            callback =>
+                callback.PlayerOnRotateItem(@event.Player, @event.Item, @event.Position));
     }
 }

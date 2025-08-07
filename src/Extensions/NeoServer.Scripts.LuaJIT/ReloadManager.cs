@@ -7,7 +7,7 @@ using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public class ReloadManager (
+public class ReloadManager(
     ILogger logger,
     ILuaEnvironment luaEnvironment,
     IScripts scripts,
@@ -35,29 +35,29 @@ public class ReloadManager (
             switch (reloadType)
             {
                 case ReloadType.All:
-                    {
-                        ReloadCore();
-                        ReloadScripts();
-                        break;
-                    }
+                {
+                    ReloadCore();
+                    ReloadScripts();
+                    break;
+                }
 
                 case ReloadType.Core:
-                    {
-                        ReloadCore();
-                        break;
-                    }
+                {
+                    ReloadCore();
+                    break;
+                }
 
                 case ReloadType.Npcs:
-                    {
-                        ReloadNpcs();
-                        break;
-                    }
+                {
+                    ReloadNpcs();
+                    break;
+                }
 
                 case ReloadType.Scripts:
-                    {
-                        ReloadScripts();
-                        break;
-                    }
+                {
+                    ReloadScripts();
+                    break;
+                }
 
                 default:
                     isReloaded = false;
@@ -82,6 +82,7 @@ public class ReloadManager (
     #endregion
 
     #region Private Methods
+
     private void ReloadCore()
     {
         var coreLoaded = luaEnvironment.LoadFile($"{serverConfiguration.Data}/core.lua", "core.lua");
@@ -107,6 +108,6 @@ public class ReloadManager (
         ReloadNpcs();
         //ReloadMonsters(dir);
     }
-    #endregion
 
+    #endregion
 }

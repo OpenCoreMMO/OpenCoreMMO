@@ -1,5 +1,4 @@
 @page "/accounts"
-@using MudBlazor
 
 <MudPaper Class="mx-auto mt-4" Elevation="2">
     <div class="pa-4">
@@ -24,7 +23,8 @@
                 <MudChip T="string" Color="Color.Warning" Variant="Variant.Outlined">Coins: @context.Coins</MudChip>
             </MudTd>
             <MudTd align="right">
-                <MudIconButton Href="@($"/accounts/{context.Id}")" Icon="@Icons.Material.Filled.Visibility" Color="Color.Primary"/>
+                <MudIconButton Href="@($"/accounts/{context.Id}")" Icon="@Icons.Material.Filled.Visibility"
+                               Color="Color.Primary"/>
             </MudTd>
         </RowTemplate>
     </MudTable>
@@ -40,7 +40,7 @@
         public int Coins { get; set; }
     }
 
-    private List<AccountModel> Accounts = new()
+    private readonly List<AccountModel> Accounts = new()
     {
         new AccountModel { Id = 1, Email = "god@mail.com", PageAccess = 3, Coins = 2000000 },
         new AccountModel { Id = 3, Email = "autor.net@gmail.com", PageAccess = 1, Coins = 1000 },

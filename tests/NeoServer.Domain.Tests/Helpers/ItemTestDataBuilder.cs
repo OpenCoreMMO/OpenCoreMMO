@@ -22,7 +22,8 @@ namespace NeoServer.Domain.Tests.Helpers;
 
 public class ItemTestDataBuilder
 {
-    public static void LoadItemTypeAttributes(IItemType itemType, (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null)
+    public static void LoadItemTypeAttributes(IItemType itemType,
+        (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null)
     {
         itemTypeAttributes ??= Array.Empty<(ItemTypeAttribute, IConvertible)>();
         foreach (var (itemTypeAttribute, value) in itemTypeAttributes)
@@ -37,9 +38,9 @@ public class ItemTestDataBuilder
     }
 
     public static Container CreateContainer(byte capacity = 6, float weight = 0, string name = "bag",
-    IEnumerable<IItem> children = null, ushort id = 0,
-    (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
-    (ItemAttribute, IConvertible)[] itemAttributes = null)
+        IEnumerable<IItem> children = null, ushort id = 0,
+        (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
+        (ItemAttribute, IConvertible)[] itemAttributes = null)
     {
         var itemType = new ItemType();
         itemType.SetId(id);
@@ -202,7 +203,7 @@ public class ItemTestDataBuilder
 
         var item = new HealingItem(type, new Location(100, 100, 7),
             (itemTypeAttributes ?? Array.Empty<(ItemTypeAttribute, IConvertible)>())
-                .ToDictionary(x => x.Item1, x => x.Item2));
+            .ToDictionary(x => x.Item1, x => x.Item2));
         LoadItemAttributes(item, itemAttributes);
         return item;
     }
@@ -318,10 +319,10 @@ public class ItemTestDataBuilder
         LoadItemTypeAttributes(type, itemTypeAttributes);
 
         var item = new ThrowableWeapon(
-        type,
-        new Location(100, 100, 7),
-        type.Attributes.ToDictionary<ItemTypeAttribute, IConvertible>(),
-        itemAttributes != null ? itemAttributes.ToDictionary() : null)
+            type,
+            new Location(100, 100, 7),
+            type.Attributes.ToDictionary<ItemTypeAttribute, IConvertible>(),
+            itemAttributes != null ? itemAttributes.ToDictionary() : null)
         {
             Chargeable = null,
             ItemTypeFinder = itemTypeFinder
@@ -381,7 +382,8 @@ public class ItemTestDataBuilder
         return item;
     }
 
-    public static IItem CreateAmmo(ushort id, byte amount, (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
+    public static IItem CreateAmmo(ushort id, byte amount,
+        (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
         (ItemAttribute, IConvertible)[] itemAttributes = null,
         Func<ushort, IItemType> itemTypeFinder = null, float weight = 1)
     {
@@ -488,7 +490,8 @@ public class ItemTestDataBuilder
         type.SetGroupIfNone();
 
         var factory = new RuneFactory();
-        var item = (Rune)factory.Create(type, new Location(100, 100, 7), type.Attributes.ToDictionary<ItemTypeAttribute, IConvertible>());
+        var item = (Rune)factory.Create(type, new Location(100, 100, 7),
+            type.Attributes.ToDictionary<ItemTypeAttribute, IConvertible>());
 
         LoadItemAttributes(item, itemAttributes);
         return item;
