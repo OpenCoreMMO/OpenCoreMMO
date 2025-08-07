@@ -608,7 +608,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             var stackCount = subType;
             if (it.IsStackable())
             {
-                stackCount = int.Max(stackCount, it.Count);
+                stackCount = int.Min(stackCount, it.Count);
                 subType -= stackCount;
             }
 
