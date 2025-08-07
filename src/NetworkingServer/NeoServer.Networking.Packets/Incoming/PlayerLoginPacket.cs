@@ -10,16 +10,13 @@ public class PlayerLogInPacket : IncomingPacket
 {
     public PlayerLogInPacket(IReadOnlyNetworkMessage message)
     {
-        
-        message.SkipBytes(7); 
-
+        message.SkipBytes(7);
         OperatingSystem = (OperatingSystem)message.GetUInt16();
         Version = message.GetUInt16();
 
         message.SkipBytes(7); // U32 client version, U8 client type, U16 dat revision
 
         //// todo: version validation
-
         var encryptedData = message.GetBytes(Rsa.LENGTH);
 
         var decryptedData = Rsa.Decrypt(encryptedData.ToArray());

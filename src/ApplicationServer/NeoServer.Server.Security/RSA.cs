@@ -12,7 +12,14 @@ public static class Rsa
 
     public static byte[] Decrypt(byte[] data)
     {
-        return data.Length > LENGTH ? null : RsaEngine.ProcessBlock(data, 0, data.Length);
+        try
+        {
+            return data.Length > LENGTH ? null : RsaEngine.ProcessBlock(data, 0, data.Length);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public static void LoadPem(string basePath)
