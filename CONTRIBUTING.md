@@ -49,11 +49,12 @@ git checkout -b feature/your-feature-name
 # Make your changes
 # ... develop your feature ...
 
-# Use interactive commit tool (recommended)
-npm run commit
-
-# Or manual commit (will be validated)
+# Commit normally (validation is automatic)
 git commit -m "feat: add new feature description"
+
+# The system will automatically:
+# ✅ Validate your commit format
+# ✅ Update changelog if needed
 ```
 
 ### 3. Submit Your Contribution

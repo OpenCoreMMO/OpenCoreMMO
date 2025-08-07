@@ -8,22 +8,13 @@
   },
   "scripts": {
     "prepare": "husky install",
-    "commit": "cz",
     "release": "standard-version",
     "release:first": "standard-version --first-release",
-    "release:dry": "standard-version --dry-run",
-    "commit-and-release": "cz && npm run release"
-  },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
+    "release:dry": "standard-version --dry-run"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
-    "commitizen": "^4.3.0",
-    "cz-conventional-changelog": "^3.3.0",
     "husky": "^8.0.3",
     "standard-version": "^9.5.0"
   },

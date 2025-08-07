@@ -6,15 +6,18 @@ OpenCoreMMO enforces **Conventional Commits** specification to ensure consistent
 
 Our commit validation system automatically ensures every commit follows the conventional format, making our history semantic and enabling powerful automation.
 
+**✨ 100% Automático**: Apenas faça `git commit` normalmente - nossa validação e changelog são automáticos!
+
 ```mermaid
 graph LR
     A[Write Code] --> B[Stage Changes]
-    B --> C[Interactive Commit]
-    C --> D[Validation]
+    B --> C[Git Commit]
+    C --> D[Auto Validation]
     D --> E{Valid Format?}
-    E -->|Yes| F[Commit Success]
-    E -->|No| G[Fix Message]
-    G --> C
+    E -->|Yes| F[Commit Success + Auto Changelog]
+    E -->|No| G[Show Error Message]
+    G --> H[Fix & Retry]
+    H --> C
     
     style C fill:#fff3e0
     style D fill:#e3f2fd
