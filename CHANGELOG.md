@@ -7,15 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Tests
-- Validate automatic changelog update system (brewertonsantos)
-
 ### Added
+- Implement automatic changelog updates on push (brewertonsantos)
 - Initial release preparation
 
 ### Fixed
 - Adjustments to compile extensions, and remove premium tiles from tiles.json (Felipe Muniz)
 - Various stability improvements
+
+### Tests
+- Validate automatic changelog update system (brewertonsantos)
 
 ### Documentation
 - Added comprehensive contributing guidelines

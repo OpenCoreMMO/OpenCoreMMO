@@ -98,13 +98,17 @@ add_commit_to_changelog() {
     # Create a temporary file
     local temp_file=$(mktemp)
 
+    # Check if entry already exists to avoid duplicates
+    if grep -q "^- $description" "$CHANGELOG_FILE"; then
+        log_info "Entry already exists in changelog, skipping"
+        return 0
+    fi
+
     # Process the changelog
     local in_unreleased=false
     local category_found=false
     local category_section="### $category"
-    local added_entry=false
-
-    while IFS= read -r line || [[ -n "$line" ]]; do
+    local added_entry=false    while IFS= read -r line || [[ -n "$line" ]]; do
         # Check if we're entering the Unreleased section
         if [[ $line =~ ^\#\#[[:space:]]*\[Unreleased\] ]]; then
             echo "$line" >> "$temp_file"
