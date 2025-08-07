@@ -36,7 +36,7 @@ public class PlayerOpenDepotCommand
     private Depot LoadDepot(IPlayer player, IItem container)
     {
         var depot = _depotManager.Get(player.Id);
-        if (depot is not null) return depot;
+        if (depot is not null && depot.Location == container.Location) return depot;
 
         var depotRecordsTask = _playerDepotItemRepository.GetByPlayerId(player.Id);
 
