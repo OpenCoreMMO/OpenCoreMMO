@@ -1,8 +1,71 @@
-# Summary
+# Contributing to OpenCoreMMO
 
-The Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history; which makes it easier to write automated tools on top of. This convention dovetails with [SemVer](http://semver.org/), by describing the features, fixes, and breaking changes made in commit messages.
+Welcome to OpenCoreMMO! We're excited to have you contribute to our modern .NET MMORPG server implementation.
 
-The commit message should be structured as follows:
+## 🎯 Project Management & Priorities
+
+> **📋 Current Development Status**  
+> All current priorities, features in development, and future roadmap items are managed through our [GitHub Projects](https://github.com/opencoremmo/opencoremmo/projects).
+>
+> **Before starting any work:**
+> 1. Check the [active project boards](https://github.com/opencoremmo/opencoremmo/projects) for current priorities
+> 2. Review [open issues](https://github.com/opencoremmo/opencoremmo/issues) for bugs and feature requests
+> 3. Join relevant [discussions](https://github.com/opencoremmo/opencoremmo/discussions) for feature planning
+
+## 📚 Comprehensive Documentation
+
+We've created detailed documentation to help you contribute effectively:
+
+### 🚀 Essential Reading
+
+- **[Contributing Guidelines](./docs/contributing/README.md)** - Complete guide for new contributors
+- **[Branch Strategy](./docs/contributing/branch-strategy.md)** - How we organize our codebase
+- **[Commit Guidelines](./docs/contributing/commit-guidelines.md)** - Writing meaningful commits
+
+### 🏗️ Development Processes
+
+- **[Versioning Strategy](./docs/development/versioning-strategy.md)** - Our semantic versioning approach
+- **[Release Process](./docs/development/release-process.md)** - How we deliver software
+
+## ⚡ Quick Start
+
+### 1. Set Up Development Environment
+
+```bash
+# Clone the repository
+git clone https://github.com/opencoremmo/opencoremmo.git
+cd opencoremmo/server
+
+# Install commit validation tools
+npm install
+
+# Create your feature branch
+git checkout -b feature/your-feature-name
+```
+
+### 2. Make Your Changes
+
+```bash
+# Make your changes
+# ... develop your feature ...
+
+# Use interactive commit tool (recommended)
+npm run commit
+
+# Or manual commit (will be validated)
+git commit -m "feat: add new feature description"
+```
+
+### 3. Submit Your Contribution
+
+1. Push your branch: `git push origin feature/your-feature-name`
+2. Create a Pull Request on GitHub
+3. Address review feedback
+4. Celebrate your contribution! 🎉
+
+## 📋 Commit Format (Quick Reference)
+
+We use [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
 <type>[optional scope]: <description>
@@ -11,13 +74,40 @@ The commit message should be structured as follows:
 
 [optional footer(s)]
 ```
-The commit contains the following structural elements, to communicate intent to the consumers of your library:
 
-1. fix: a commit of the type fix patches a bug in your codebase (this correlates with [PATCH](http://semver.org/#summary) in Semantic Versioning).
-2. feat: a commit of the type feat introduces a new feature to the codebase (this correlates with [MINOR](http://semver.org/#summary) in Semantic Versioning).
-3. BREAKING CHANGE: a commit that has a footer BREAKING CHANGE:, or appends a ! after the type/scope, introduces a breaking API change (correlating with [MAJOR](http://semver.org/#summary) in Semantic Versioning). A BREAKING CHANGE can be part of commits of any type.
-4. types other than fix: and feat: are allowed, for example [@commitlint/config-conventional](https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional) (based on the [Angular convention](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#-commit-message-guidelines)) recommends build:, chore:, ci:, docs:, style:, refactor:, perf:, test:, and others.
-5. footers other than BREAKING CHANGE: <description> may be provided and follow a convention similar to [git trailer format](https://git-scm.com/docs/git-interpret-trailers).
+**Common types:**
+- `feat:` - New features
+- `fix:` - Bug fixes  
+- `docs:` - Documentation changes
+- `style:` - Code formatting
+- `refactor:` - Code refactoring
+- `test:` - Adding tests
+- `chore:` - Maintenance tasks
 
+**Example:**
+```bash
+feat(auth): add OAuth2 integration
+fix(database): resolve connection timeout
+docs: update API documentation
+```
 
-Read more [here](https://www.conventionalcommits.org/en/v1.0.0/#specification)
+For detailed commit guidelines, see [Commit Guidelines](./docs/contributing/commit-guidelines.md).
+
+## 🤝 Getting Help
+
+- **📖 Documentation**: Check our [comprehensive docs](./docs/)
+- **💬 Discussions**: Join [GitHub Discussions](https://github.com/opencoremmo/opencoremmo/discussions)
+- **🐛 Issues**: Report bugs or request features via [GitHub Issues](https://github.com/opencoremmo/opencoremmo/issues)
+
+## 🎯 What We're Looking For
+
+| Type | Description | Getting Started |
+|------|-------------|-----------------|
+| 🐛 **Bug Fixes** | Resolve existing issues | Check [bug reports](https://github.com/opencoremmo/opencoremmo/labels/bug) |
+| ✨ **Features** | Add new functionality | Review [feature requests](https://github.com/opencoremmo/opencoremmo/labels/enhancement) |
+| 📚 **Documentation** | Improve docs and guides | See documentation issues |
+| 🧪 **Testing** | Add or improve tests | Check test coverage reports |
+
+---
+
+> 🚀 **Ready to contribute?** Start by checking our [GitHub Projects](https://github.com/opencoremmo/opencoremmo/projects) for current priorities, then dive into our [detailed documentation](./docs/) for guidance!
