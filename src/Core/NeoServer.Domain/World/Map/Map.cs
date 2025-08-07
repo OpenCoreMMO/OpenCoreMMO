@@ -376,9 +376,7 @@ public class Map : IMap
 
                 skip = 0;
 
-                if (tile is IStaticTile immutableTile)
-                    tempBytes.AddRange(immutableTile.Raw);
-                else if (tile is IDynamicTile mutableTile) tempBytes.AddRange(mutableTile.GetRaw(thing as IPlayer));
+                tempBytes.AddRange(GetTileDescription(tile, thing));
             }
             else if (skip == start)
             {
@@ -391,6 +389,17 @@ public class Map : IMap
                 ++skip;
             }
         }
+
+        return tempBytes;
+    }
+
+    public IList<byte> GetTileDescription(ITile tile, IThing thing)
+    {
+        var tempBytes = new List<byte>();
+
+        if (tile is IStaticTile immutableTile)
+            tempBytes.AddRange(immutableTile.Raw);
+        else if (tile is IDynamicTile mutableTile) tempBytes.AddRange(mutableTile.GetRaw(thing as IPlayer));
 
         return tempBytes;
     }

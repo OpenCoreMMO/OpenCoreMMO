@@ -13,6 +13,32 @@ public static class CreatureRaw
         //optimize this method
         var cache = new List<byte>();
 
+        //todo: 1098 implements this?
+        //enum CreatureType_t : uint8_t
+        //{
+        //    CREATURETYPE_PLAYER = 0,
+        //    CREATURETYPE_MONSTER = 1,
+        //    CREATURETYPE_NPC = 2,
+        //    CREATURETYPE_SUMMON_OWN = 3,
+        //    CREATURETYPE_SUMMON_OTHERS = 4,
+        //};
+
+        var creatureType = (byte)0x00;
+
+        if (creature is IPlayer)
+            creatureType = (byte)0x00;
+        else if (creature is IMonster)
+            creatureType = (byte)0x01;
+        else if (creature is INpc)
+            creatureType = (byte)0x02;
+        else if (creature is ISummon summon)
+        {
+            if (summon.Master.CreatureId == playerRequesting.CreatureId)
+                creatureType = (byte)0x01;
+            else
+                creatureType = (byte)0x04;
+        }
+
         var known = playerRequesting.KnowsCreatureWithId(creature.CreatureId);
 
         if (known)
@@ -28,17 +54,7 @@ public static class CreatureRaw
             cache.AddRange(BitConverter.GetBytes(playerRequesting.ChooseToRemoveFromKnownSet()));
             cache.AddRange(BitConverter.GetBytes(creature.CreatureId));
 
-            cache.Add(0x00); //todo: 1098 implements this? get creature type
-
-            //todo: 1098 implements this?
-            //enum CreatureType_t : uint8_t
-            //{
-            //    CREATURETYPE_PLAYER = 0,
-            //    CREATURETYPE_MONSTER = 1,
-            //    CREATURETYPE_NPC = 2,
-            //    CREATURETYPE_SUMMON_OWN = 3,
-            //    CREATURETYPE_SUMMON_OTHERS = 4,
-            //};
+            cache.Add(creatureType);
 
             var creatureNameBytes = Encoding.Default.GetBytes(creature.Name);
             cache.AddRange(BitConverter.GetBytes((ushort)creatureNameBytes.Length));
@@ -52,7 +68,7 @@ public static class CreatureRaw
         //}
         //else
         //{
-        cache.Add((byte)Math.Min(100, creature.HealthPoints * 100 / creature.MaxHealthPoints));
+        cache.Add((byte)Math.Ceiling((double)creature.HealthPoints / Math.Max(creature.MaxHealthPoints, 1u) * 100));
         //}
 
         cache.Add((byte)creature.SafeDirection);
@@ -72,31 +88,32 @@ public static class CreatureRaw
             }
             else
             {
-                cache.AddRange(BitConverter.GetBytes(creature.Outfit.LookType));
+                cache.AddRange(BitConverter.GetBytes((ushort)0)); //todo: implements this creature.Outfit.LookTypeEx
             }
 
             cache.AddRange(BitConverter.GetBytes((ushort)0));//todo: 1098 implements this mounts
         }
         else
         {
-            cache.AddRange(BitConverter.GetBytes((ushort)0));
-            cache.AddRange(BitConverter.GetBytes((ushort)0));
+            cache.AddRange(BitConverter.GetBytes((ushort)0)); //LookType
+            cache.AddRange(BitConverter.GetBytes((ushort)0)); //LookTypeEx
+            cache.AddRange(BitConverter.GetBytes((ushort)0)); //Mount
         }
 
         cache.Add(creature.LightLevel);
         cache.Add(creature.LightColor);
 
-        cache.AddRange(BitConverter.GetBytes((ushort)(creature.Speed / 2)));
+        cache.AddRange(BitConverter.GetBytes((ushort)(creature.Speed)));
 
         cache.Add((byte)((creature as IPlayer)?.Skull ?? 0x00));
         cache.Add((byte)GetPartyEmblem(playerRequesting, creature));
 
         if (!known)
         {
-            if (creature is IPlayer player)
+            if (creature is IPlayer playerUnknow)
             {
-                if (player.GuildId == 0) cache.Add((byte)GuildEmblem.None); //guild emblem
-                else if (playerRequesting.GuildId == player.GuildId) cache.Add((byte)GuildEmblem.Ally);
+                if (playerUnknow.GuildId == 0) cache.Add((byte)GuildEmblem.None); //guild emblem
+                else if (playerRequesting.GuildId == playerUnknow.GuildId) cache.Add((byte)GuildEmblem.Ally);
                 else cache.Add((byte)GuildEmblem.Neutral); //guild emblem
             }
             else
@@ -105,20 +122,20 @@ public static class CreatureRaw
             }
         }
 
-        cache.Add(creature is IPlayer ? (byte)0x00 : (byte)0x01); //todo: 1098 implements this?
+        cache.Add(creatureType);
 
         cache.Add(0x00); //todo: 1098 implements this //getSpeechBubble
         cache.Add(0xFF); //todo: 1098 implements this // MARK_UNMARKED
 
         //todo: 1098 implements this
-        //if (otherPlayer)
-        //{
-        //    msg.add<uint16_t>(otherPlayer->getHelpers());
-        //}
-        //else
-        //{
-        cache.AddRange(BitConverter.GetBytes((ushort)(0))); //getSpeechBubble
-        //}
+        if (creature is IPlayer player && player.CreatureId != playerRequesting.CreatureId)
+        {
+            cache.AddRange(BitConverter.GetBytes((ushort)(0))); //todo: 1098 implement this Player::getHelpers()
+        }
+        else
+        {
+            cache.AddRange(BitConverter.GetBytes((ushort)(0)));
+        }
 
         //todo: 1098 implements this
         cache.Add(0x00); //msg.addByte(player->canWalkthroughEx(creature) ? 0x00 : 0x01);

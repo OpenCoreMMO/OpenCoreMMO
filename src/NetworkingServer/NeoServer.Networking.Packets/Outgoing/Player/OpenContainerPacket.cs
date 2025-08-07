@@ -46,7 +46,7 @@ public class OpenContainerPacket : OutgoingPacket
         message.AddByte(0x00); // container->hasPagination() ? 0x01 : 0x00); // Pagination //todo: 1098 implement this
 
         message.AddUInt16((ushort)container.Items.Count);//todo: 1098 implement this //containerSize
-        message.AddUInt16(1);//todo: 1098 implement this //firstIndex
+        message.AddUInt16(0);//todo: 1098 implement this //firstIndex
 
         if (container.HasItems)
         {
@@ -54,7 +54,7 @@ public class OpenContainerPacket : OutgoingPacket
             for (byte i = 0; i < container.SlotsUsed; i++)
                 message.AddItem(container.Items[i], WithDescription);
         }
-        {
+        else {
             message.AddByte(0x00);
         }
 

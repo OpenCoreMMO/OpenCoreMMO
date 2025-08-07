@@ -1,9 +1,11 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Networking.Packets.Outgoing.Item;
 using NeoServer.Networking.Packets.Outgoing.Npc;
+using NeoServer.Networking.Packets.Outgoing.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Configurations;
 
@@ -45,6 +47,14 @@ public class ContentModifiedOnContainerEventHandler
                     ShowItemDescription = connection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip
                 });
                 break;
+        }
+
+        if (item.Parent is IContainer container)
+        {
+            connection.OutgoingPackets.Enqueue(new OpenContainerPacket(container, containerId)
+            {
+                WithDescription = connection.OtcV8Version > 0 && _clientConfiguration.OtcV8.GameItemTooltip
+            });
         }
 
         if (Equals(player.Containers[containerId]?.Parent, player) && player.Shopping)
