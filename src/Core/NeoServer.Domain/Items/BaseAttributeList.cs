@@ -340,4 +340,54 @@ public class BaseAttributeList<T> where T : Enum
     }
 
     #endregion
+
+    public BaseAttributeList<T> Clone()
+    {
+        var clone = new BaseAttributeList<T>();
+
+        if (_defaultAttributes != null)
+        {
+            foreach (var kv in _defaultAttributes)
+            {
+                var valueCopy = CloneValue(kv.Value.Item1);
+                var innerCopy = kv.Value.Item2 != null ? kv.Value.Item2.Clone() : null;
+                clone._defaultAttributes[kv.Key] = (valueCopy, innerCopy);
+            }
+        }
+
+        if (customAttributes != null)
+        {
+            clone.customAttributes = new Dictionary<string, (dynamic, BaseAttributeList<T>)>(
+                StringComparer.InvariantCultureIgnoreCase);
+
+            foreach (var kv in customAttributes)
+            {
+                var valueCopy = CloneValue(kv.Value.Item1);
+                var innerCopy = kv.Value.Item2 != null ? kv.Value.Item2.Clone() : null;
+                clone.customAttributes[kv.Key] = (valueCopy, innerCopy);
+            }
+        }
+
+        return clone;
+    }
+
+    private static dynamic CloneValue(dynamic value)
+    {
+        if (value is null) return null;
+
+        object obj = value;
+
+        if (obj is Array arr)
+        {
+            var elementType = obj.GetType().GetElementType() ?? typeof(object);
+            var copy = Array.CreateInstance(elementType, arr.Length);
+            Array.Copy(arr, copy, arr.Length);
+            return copy;
+        }
+
+        if (obj is ICloneable cloneable)
+            return cloneable.Clone();
+
+        return value;
+    }
 }

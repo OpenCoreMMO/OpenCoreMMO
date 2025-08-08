@@ -42,6 +42,12 @@ public class Cumulative : BaseItem, ICumulative
     public ICumulative Clone(byte amount)
     {
         var clone = (ICumulative)MemberwiseClone();
+
+        clone.Attributes = new ItemAttributeList();
+
+        clone.Attributes.SetAttribute(Attributes.ToDictionary<ItemAttribute, IConvertible>());
+        clone.Attributes.SetCustomAttribute(Attributes.ToDictionaryCustom<string, IConvertible>());
+
         clone.SetAmount(amount);
         clone.ClearSubscribers();
         return clone;
