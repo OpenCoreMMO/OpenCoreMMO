@@ -12,6 +12,7 @@ public class PersistenceDispatcher : IPersistenceDispatcher
     private readonly ILogger _logger;
     private readonly ChannelReader<Func<Task>> _reader;
     private readonly ChannelWriter<Func<Task>> _writer;
+    private Task _processingTask;
 
     /// <summary>
     ///     A queue responsible for process events
@@ -40,23 +41,64 @@ public class PersistenceDispatcher : IPersistenceDispatcher
     /// <param name="token"></param>
     public void Start(CancellationToken token)
     {
-        Task.Factory.StartNew(async () =>
+        if (_processingTask != null && !_processingTask.IsCompleted)
         {
-            while (await _reader.WaitToReadAsync(token))
-            {
-                if (token.IsCancellationRequested) _writer.Complete();
-                // Fast loop around available jobs
-                while (_reader.TryRead(out var evt))
+            _logger.Warning("PersistenceDispatcher: already started.");
+            return;
+        }
 
-                    try
+        _logger.Information("PersistenceDispatcher: starting processing loop.");
+
+        _processingTask = Task.Run(async () =>
+        {
+            try
+            {
+                while (await _reader.WaitToReadAsync(token).ConfigureAwait(false))
+                {
+                    while (_reader.TryRead(out var evt))
                     {
-                        await evt.Invoke(); //execute event
+                        try
+                        {
+                            await evt().ConfigureAwait(false);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Error(ex, "PersistenceDispatcher: error during persistence operation.");
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        _logger.Error(ex, "Error found during persistence operation");
-                    }
+                }
+
+                _logger.Information("PersistenceDispatcher: channel has been completed, stopping processing.");
             }
-        }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            catch (OperationCanceledException)
+            {
+                _logger.Information("PersistenceDispatcher: operation was cancelled.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "PersistenceDispatcher: fatal exception, dispatcher will stop.");
+                throw;
+            }
+            finally
+            {
+                try
+                {
+                    _writer.Complete();
+                    _logger.Information("PersistenceDispatcher: channel completed.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.Warning(ex, "PersistenceDispatcher: error completing channel.");
+                }
+            }
+        }, CancellationToken.None); // Do not pass token here to avoid automatic task cancellation
+
+        _logger.Information("PersistenceDispatcher: started successfully.");
+    }
+
+    // Additional method to wait for dispatcher completion (useful for tests and shutdown)
+    public Task WaitForCompletionAsync()
+    {
+        return _processingTask ?? Task.CompletedTask;
     }
 }

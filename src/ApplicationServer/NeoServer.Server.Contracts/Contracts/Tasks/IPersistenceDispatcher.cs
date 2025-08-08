@@ -9,4 +9,5 @@ public interface IPersistenceDispatcher
     void AddEvent(Func<Task> evt);
 
     void Start(CancellationToken token);
+    Task WaitForCompletionAsync();
 }
