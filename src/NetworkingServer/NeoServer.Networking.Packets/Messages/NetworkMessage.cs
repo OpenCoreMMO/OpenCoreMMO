@@ -46,12 +46,13 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
     }
 
     /// <summary>
-    ///     Inserts a string on buffer. This method put the string's length in front of the value itself
+    ///     Inserts string into the buffer.
     ///     Ex: the string "hello world" will be inserted as 0x0b 0 + string bytes
     /// </summary>
     /// <param name="value"></param>
     public void AddString(string value)
     {
+        value ??= string.Empty; // Handle null strings
         AddUInt16((ushort)value.Length);
         WriteBytes(Encoding.Latin1.GetBytes(value));
     }

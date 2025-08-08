@@ -29,7 +29,10 @@ public class PlayerChannelListRequestHandler : PacketHandler
             ? channels
             : channels.Concat(privateChannels);
 
-        connection.OutgoingPackets.Enqueue(new PlayerChannelListPacket(channels.ToArray()));
+        // Filter out channels with null names to prevent crashes
+        var validChannels = channels.Where(x => !string.IsNullOrEmpty(x?.Name)).ToArray();
+
+        connection.OutgoingPackets.Enqueue(new PlayerChannelListPacket(validChannels));
         connection.Send();
     }
 }

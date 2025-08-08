@@ -28,6 +28,10 @@ public class NeoContext : DbContext
     public DbSet<AccountVipListEntity> AccountsVipList { get; set; }
     public DbSet<GuildEntity> Guilds { get; set; }
     public DbSet<GuildMembershipEntity> GuildMemberships { get; set; }
+    public DbSet<GuildRankEntity> GuildRanks { get; set; }
+    public DbSet<GuildWarEntity> GuildWars { get; set; }
+    public DbSet<GuildWarKillEntity> GuildWarKills { get; set; }
+    public DbSet<GuildInviteEntity> GuildInvites { get; set; }
     public DbSet<WorldEntity> Worlds { get; set; }
     public DbSet<PlayerQuestEntity> PlayerQuests { get; set; }
     public DbSet<PlayerOutfitAddonEntity> PlayerOutfitAddons { get; set; }
@@ -86,6 +90,9 @@ public class NeoContext : DbContext
         modelBuilder.ApplyConfiguration(new PlayerOutfitAddonEntityConfiguration());
         modelBuilder.ApplyConfiguration(new AccountVipListEntityConfiguration());
         modelBuilder.ApplyConfiguration(new GuildMembershipEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new GuildWarEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new GuildWarKillEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new GuildInviteEntityConfiguration());
         modelBuilder.ApplyConfiguration(new PlayerStorageEntityConfiguration());
         modelBuilder.ApplyConfiguration(new IpBanEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ReportBugEntityConfiguration());

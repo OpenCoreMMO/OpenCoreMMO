@@ -123,6 +123,7 @@ public class PlayerLoader : IPlayerLoader
             AccountId = (uint)playerEntity.AccountId,
             WorldId = playerEntity.WorldId,
             Guild = GuildStore.Get((ushort)(playerEntity.GuildMember?.GuildId ?? 0)),
+            GuildId = (ushort)(playerEntity.GuildMember?.GuildId ?? 0),
             GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0)
         };
 
