@@ -1,4 +1,6 @@
-﻿public enum ItemAttribute : byte
+﻿namespace NeoServer.Domain.Common.Item;
+
+public enum ItemAttribute : byte
 {
     None = 0,
     ActionId = 1,

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Server.Configurations;
 using Serilog;
@@ -7,7 +8,7 @@ using Serilog.Sinks.Graylog;
 using Serilog.Sinks.Graylog.Core.Transport;
 using Serilog.Sinks.SystemConsole.Themes;
 
-namespace NeoServer.Shared.IoC.Modules;
+namespace NeoServer.Server.Standalone.IoC.Modules;
 
 public static class LoggerConfigurationExtensions
 {
