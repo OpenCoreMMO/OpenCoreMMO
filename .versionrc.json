@@ -16,13 +16,11 @@
   "compareUrlFormat": "https://github.com/opencoremmo/opencoremmo/compare/{{previousTag}}...{{currentTag}}",
   "issueUrlFormat": "https://github.com/opencoremmo/opencoremmo/issues/{{id}}",
   "userUrlFormat": "https://github.com/{{user}}",
-  "releaseCommitMessageFormat": "chore(release): {{currentTag}}",
   "infile": "CHANGELOG.md",
-  "header": "# Changelog\n\nAll notable changes to this project will be documented in this file.\n\nThe format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\nand this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n\n",
-  "bumpFiles": [
-    {
-      "filename": "package.json",
-      "type": "json"
-    }
-  ]
+  "header": "# Changelog\n\nAll notable changes to this project will be documented in this file.\n\nThe format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\nand this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n\n## Unreleased\n\n",
+  "skip": {
+    "bump": true,
+    "tag": true
+  },
+  "bumpFiles": []
 }
