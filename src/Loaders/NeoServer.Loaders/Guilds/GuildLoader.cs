@@ -31,12 +31,6 @@ public class GuildLoader : ICustomLoader
         var guild = await GetOrCreateGuildAsync(guildEntity);
         if (guild == null) return null;
 
-        guild.Name = guildEntity.Name;
-        guild.Motd = guildEntity.Modt ?? string.Empty;
-        guild.OwnerId = (ushort)guildEntity.OwnerId;
-        guild.CreationDate = guildEntity.CreatedAt;
-        guild.MemberCount = (uint)(guildEntity.Members?.Count ?? 0);
-
         // Load ranks
         if (guildEntity.Ranks?.Any() == true)
         {
@@ -46,7 +40,7 @@ public class GuildLoader : ICustomLoader
             }
         }
 
-        _guildStore.AddOrUpdate(guild.Id, guild);
+        // Guild already added to store in GetOrCreateGuildAsync
         _logger.Debug("Guild {Guild} loaded with {MemberCount} members", guildEntity.Name, guild.MemberCount);
         
         return guild;
@@ -63,14 +57,25 @@ public class GuildLoader : ICustomLoader
         var existingGuild = _guildStore.Get((ushort)guildEntity.Id);
         if (existingGuild != null) return existingGuild;
 
+        // Create guild with all properties first
         var guild = new Guild
         {
             Id = (ushort)guildEntity.Id,
-            Channel = _chatChannelFactory.CreateGuildChannel($"{guildEntity.Name ?? "Unknown Guild"}'s Channel",
-                (ushort)guildEntity.Id),
+            Name = guildEntity.Name,
+            Motd = guildEntity.Modt ?? string.Empty,
+            CreatedDate = guildEntity.CreatedAt,
+            OwnerId = (ushort)guildEntity.OwnerId,
+            MemberCount = (uint)guildEntity.Members.Count,
             Bank = new Bank(guildEntity.BankAmount),
             GuildLevels = new Dictionary<ushort, GuildLevel>()
         };
+
+        // Add guild to store first so CreateGuildChannel can find it
+        _guildStore.AddOrUpdate(guild.Id, guild);
+
+        // Now create the guild channel with the complete guild
+        guild.Channel = _chatChannelFactory.CreateGuildChannel($"{guildEntity.Name ?? "Unknown Guild"}'s Channel",
+            (ushort)guildEntity.Id);
 
         return guild;
     }

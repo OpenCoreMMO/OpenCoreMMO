@@ -2,6 +2,8 @@ using LuaNET;
 using NeoServer.Data.Interfaces;
 using NeoServer.Data.Entities;
 using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Chats;
+using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Guild;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using Serilog;
@@ -85,6 +87,44 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             guildRepository.Insert(guildEntity).GetAwaiter().GetResult();
             _logger?.Information("Guild created successfully: '{GuildName}' with ID {GuildId}", name, guildEntity.Id);
 
+            // Create default guild ranks in database
+            var dbContext = Server.Helpers.IoC.GetInstance<NeoServer.Data.Contexts.NeoContext>();
+            
+            var memberRank = new NeoServer.Data.Entities.GuildRankEntity
+            {
+                GuildId = guildEntity.Id,
+                Name = "Member",
+                Level = 1
+            };
+            
+            var viceLeaderRank = new NeoServer.Data.Entities.GuildRankEntity
+            {
+                GuildId = guildEntity.Id,
+                Name = "Vice-Leader", 
+                Level = 2
+            };
+            
+            var leaderRank = new NeoServer.Data.Entities.GuildRankEntity
+            {
+                GuildId = guildEntity.Id,
+                Name = "Leader",
+                Level = 3
+            };
+
+            dbContext.GuildRanks.AddRange(memberRank, viceLeaderRank, leaderRank);
+            dbContext.SaveChanges();
+            
+            // Refresh entities to get auto-generated IDs
+            dbContext.Entry(memberRank).Reload();
+            dbContext.Entry(viceLeaderRank).Reload();
+            dbContext.Entry(leaderRank).Reload();
+            
+            _logger?.Information("Default guild ranks created for guild '{GuildName}' - Member: {MemberId}, Vice: {ViceId}, Leader: {LeaderId}", 
+                name, memberRank.Id, viceLeaderRank.Id, leaderRank.Id);
+
+            // Get chat channel factory to create guild channel
+            var chatChannelFactory = Server.Helpers.IoC.GetInstance<ChatChannelFactory>();
+
             // Create guild domain object
             var guild = new Guild
             {
@@ -95,9 +135,18 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
                 Bank = new NeoServer.Domain.Creatures.Common.Bank(0) // Initialize required Bank property with 0 amount
             };
 
-            // Add to guild store for runtime access
+            // Add default guild ranks using the actual database IDs
+            guild.AddRank((ushort)memberRank.Id, "Member", 1);          // Member rank (level 1)
+            guild.AddRank((ushort)viceLeaderRank.Id, "Vice-Leader", 2); // Vice-Leader rank (level 2)
+            guild.AddRank((ushort)leaderRank.Id, "Leader", 3);          // Leader rank (level 3)
+
+            // Add to guild store for runtime access first
             guildStore.AddOrUpdate(guild.Id, guild);
             _logger?.Information("Guild '{GuildName}' added to runtime store with ID {GuildId}", name, guild.Id);
+
+            // Create guild channel automatically with guild object
+            guild.Channel = chatChannelFactory.CreateGuildChannel($"{name}'s Channel", guild);
+            _logger?.Information("Guild channel created for '{GuildName}' with channel ID {ChannelId}", name, guild.Channel.Id);
 
             PushUserdata(luaState, guild);
             SetMetatable(luaState, -1, "Guild");
