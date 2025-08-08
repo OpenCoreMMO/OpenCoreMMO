@@ -17,7 +17,10 @@ public class PlayerChangeOutFitPacket : IncomingPacket
             Feet = message.GetByte(),
             Addon = message.GetByte()
         };
+        
+        Mount = message.GetUInt16(); // Mount ID
     }
 
     public IOutfit Outfit { get; set; }
+    public ushort Mount { get; set; } // Mount ID
 }

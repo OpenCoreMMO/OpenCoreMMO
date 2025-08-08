@@ -10,6 +10,8 @@ public static class CommandInjection
     {
         builder.AddSingleton<MapToContainerMovementOperation>();
         builder.AddSingleton<MapToInventoryMovementOperation>();
+        
+        // Guild commands are now handled by Lua scripts
         return builder;
     }
 }

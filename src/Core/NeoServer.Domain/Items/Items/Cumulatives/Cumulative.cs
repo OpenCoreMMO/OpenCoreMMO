@@ -29,18 +29,6 @@ public class Cumulative : BaseItem, ICumulative
         return Metadata.Weight * amount;
     }
 
-    public Span<byte> GetRaw()
-    {
-        Span<byte> cache = stackalloc byte[3];
-        var idBytes = BitConverter.GetBytes(Metadata.ClientId);
-
-        cache[0] = idBytes[0];
-        cache[1] = idBytes[1];
-        cache[2] = Amount;
-
-        return cache.ToArray();
-    }
-
     public ICumulative Clone(byte amount)
     {
         var clone = (ICumulative)MemberwiseClone();

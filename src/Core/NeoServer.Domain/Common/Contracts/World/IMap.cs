@@ -34,7 +34,7 @@ public interface IMap
 
     IList<byte> GetDescription(IThing thing, ushort fromX, ushort fromY, byte currentZ,
         byte windowSizeX = 18, byte windowSizeY = 14);
-
+    IList<byte> GetTileDescription(ITile tile, IThing thing);
     bool ArePlayersAround(Location.Structs.Location location);
     void PlaceCreature(ICreature creature);
     ITile GetNextTile(Location.Structs.Location fromLocation, Direction direction);

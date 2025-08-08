@@ -110,11 +110,11 @@ public class ChannelLoader : IStartupLoader
     {
         return color switch
         {
-            "red" => SpeechType.ChannelRed1Text,
-            "yellow" => SpeechType.ChannelYellowText,
-            "white" => SpeechType.ChannelWhiteText,
-            "orange" => SpeechType.ChannelOrangeText,
-            _ => SpeechType.ChannelYellowText
+            "red" => SpeechType.ChannelRed1,
+            "yellow" => SpeechType.ChannelYellow,
+            "white" => SpeechType.Say, //todo: 1098 revise this
+            "orange" => SpeechType.ChannelOrange,
+            _ => SpeechType.ChannelYellow
         };
     }
 }

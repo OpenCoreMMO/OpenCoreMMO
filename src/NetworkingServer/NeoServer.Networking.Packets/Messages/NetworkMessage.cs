@@ -46,12 +46,13 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
     }
 
     /// <summary>
-    ///     Inserts a string on buffer. This method put the string's length in front of the value itself
+    ///     Inserts string into the buffer.
     ///     Ex: the string "hello world" will be inserted as 0x0b 0 + string bytes
     /// </summary>
     /// <param name="value"></param>
     public void AddString(string value)
     {
+        value ??= string.Empty; // Handle null strings
         AddUInt16((ushort)value.Length);
         WriteBytes(Encoding.Latin1.GetBytes(value));
     }
@@ -78,6 +79,17 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
     public void AddUInt32(uint value)
     {
         Span<byte> buffer = stackalloc byte[4];
+        BitConverter.TryWriteBytes(buffer, value);
+        WriteBytes(buffer);
+    }
+
+    /// <summary>
+    ///     Adds ulong value (8 bytes) to buffer
+    /// </summary>
+    /// <param name="value"></param>
+    public void AddUInt64(ulong value)
+    {
+        Span<byte> buffer = stackalloc byte[8];
         BitConverter.TryWriteBytes(buffer, value);
         WriteBytes(buffer);
     }
@@ -210,5 +222,12 @@ public class NetworkMessage : ReadOnlyNetworkMessage, INetworkMessage
         header[5] = checkSumBytes[3];
 
         return header;
+    }
+
+    public void AddDouble(double value, byte precision = 2)
+    {
+        AddByte(precision);
+        uint scaled = (uint)((value * Math.Pow(10, precision)) + int.MaxValue);
+        AddUInt32(scaled);
     }
 }

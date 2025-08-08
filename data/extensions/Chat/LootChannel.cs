@@ -19,8 +19,8 @@ public class LootChannel : PersonalChatChannel
 
     public override SpeechType ChatColor
     {
-        get => SpeechType.ChannelWhiteText;
-        init => base.ChatColor = SpeechType.ChannelWhiteText;
+        get => SpeechType.ChannelYellow;
+        init => base.ChatColor = SpeechType.ChannelYellow;
     }
 
     public override ChannelRule WriteRule

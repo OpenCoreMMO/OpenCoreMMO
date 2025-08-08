@@ -45,6 +45,14 @@ public class ChatChannelFactory
         return channel;
     }
 
+    public ChatChannel CreateGuildChannel(string name, Guild.Guild guild)
+    {
+        var id = GenerateUniqueId();
+        var channel = new GuildChatChannel(id, name, guild);
+        SubscribeEvents(channel);
+        return channel;
+    }
+
     public ChatChannel CreatePartyChannel(string name = "Party")
     {
         var id = GenerateUniqueId();
@@ -69,7 +77,7 @@ public class ChatChannelFactory
         var channel = new ChatChannel(id, name)
         {
             Description = description,
-            ChatColor = chatColor == SpeechType.None ? SpeechType.ChannelYellowText : chatColor,
+            ChatColor = chatColor == SpeechType.None ? SpeechType.ChannelYellow : chatColor,
             ChatColorByVocation = chatColorByVocation ?? default,
             JoinRule = joinRule,
             WriteRule = writeRule,

@@ -41,43 +41,22 @@ public class Door : BaseItem
             return;
         }
 
-        var mode = Metadata.Attributes.GetCustomAttribute("mode");
-
-        mode = ExtractModeIfEmpty(mode);
-        if (mode.Equals("closed", StringComparison.InvariantCultureIgnoreCase))
+        // Check if door has transformto attribute
+        if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.TransformTo, out var transformToId) || 
+            transformToId == 0)
         {
-            OpenDoor(tile);
+            OperationFailService.Send(usedBy.CreatureId, TextConstants.NOT_POSSIBLE);
             return;
         }
 
-        if (mode.Equals("opened", StringComparison.InvariantCultureIgnoreCase))
-        {
-            CloseDoor(tile);
-            return;
-        }
-
-        OperationFailService.Send(usedBy.CreatureId, TextConstants.NOT_POSSIBLE);
+        TransformDoor(tile, transformToId);
     }
 
-    private string ExtractModeIfEmpty(string mode)
-    {
-        if (!string.IsNullOrEmpty(mode)) return mode;
-
-        return Metadata.Name switch
-        {
-            { } s when s.Contains("closed", StringComparison.InvariantCultureIgnoreCase) => "closed",
-            { } s when s.Contains("opened", StringComparison.InvariantCultureIgnoreCase) => "opened",
-            _ => mode
-        };
-    }
-
-    private void OpenDoor(DynamicTile dynamicTile)
+    private void TransformDoor(DynamicTile dynamicTile, ushort transformToId)
     {
         var wallId = Metadata.Attributes.GetCustomAttribute<ushort>("wall");
 
-        if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.TransformTo, out var doorId)) return;
-
-        var door = ItemFactory.Instance.Create(doorId, Location, null);
+        var newDoor = ItemFactory.Instance.Create(transformToId, Location, null);
 
         dynamicTile.RemoveItem(this, 1, out _);
 
@@ -87,17 +66,7 @@ public class Door : BaseItem
             if (wall is not null) dynamicTile.RemoveItem(wall, 1, out _);
         }
 
-        dynamicTile.AddItem(door);
-    }
-
-    private void CloseDoor(DynamicTile dynamicTile)
-    {
-        if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.TransformTo, out var doorId)) return;
-        var door = ItemFactory.Instance.Create(doorId, Location, null);
-
-        dynamicTile.RemoveItem(this, 1, out _);
-
-        dynamicTile.AddItem(door);
+        dynamicTile.AddItem(newDoor);
     }
 
     public static bool IsApplicable(IItemType type)

@@ -1,24 +1,2 @@
 [
-	{
-		"tiles": [
-			[ 32091, 32175, 6],
-			[ 32092, 32175, 6]
-		],
-		"minLevel": 2,
-		"requiresPremium": false,
-		"message": "Only citizens level 2 or more may pass."
-	},
-	{
-		"tiles": [
-			[32057,32192, 7],
-			[32057,32193,7]
-		],
-		"requiresPremium": true,
-		"message": "Only premium citizens may pass."
-	},
-	{
-		"tiles": [[1012,1029, 7]],
-		"minLevel": 60000,
-		"requiresPremium": true
-	}
 ]

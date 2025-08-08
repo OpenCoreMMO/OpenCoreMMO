@@ -19,7 +19,7 @@ public class ChatChannel
     public ChannelRule JoinRule { get; init; }
     public virtual ChannelRule WriteRule { get; init; }
     public MuteRule MuteRule { get; init; }
-    public virtual SpeechType ChatColor { get; init; } = SpeechType.ChannelYellowText;
+    public virtual SpeechType ChatColor { get; init; } = SpeechType.ChannelYellow;
 
     public Dictionary<byte, SpeechType> ChatColorByVocation { private get; init; }
 

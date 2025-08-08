@@ -254,10 +254,11 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         if (Ground != default)
         {
-            BitConverter.GetBytes(Ground.ClientId).AsSpan().CopyTo(stream);
+            var raw = Ground.GetRaw();
+            raw.CopyTo(stream.Slice(countBytes, raw.Length));
 
             countThings++;
-            countBytes += 2;
+            countBytes += raw.Length;
         }
 
         if (TopItems is not null)

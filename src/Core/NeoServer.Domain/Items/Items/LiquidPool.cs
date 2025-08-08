@@ -28,18 +28,6 @@ public class LiquidPool : BaseItem, ILiquid
     public LiquidColor LiquidColor { get; }
     public ushort ClientId => Metadata.ClientId;
 
-    public Span<byte> GetRaw()
-    {
-        Span<byte> cache = stackalloc byte[3];
-        var idBytes = BitConverter.GetBytes(ClientId);
-
-        cache[0] = idBytes[0];
-        cache[1] = idBytes[1];
-        cache[2] = (byte)LiquidColor;
-
-        return cache.ToArray();
-    }
-
     private LiquidColor GetLiquidColor(LiquidColor color)
     {
         if (!IsLiquidPool && !IsLiquidContainer) return 0x00;

@@ -13,6 +13,7 @@ public enum Slot : byte
     Feet = 8,
     Ring = 9,
     Ammo = 10,
-    Depot = 11,
-    TwoHanded = 12
+    StoreInbox = 11,
+    Depot = 12,
+    TwoHanded = 13
 }

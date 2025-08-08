@@ -4,10 +4,10 @@ public enum LiquidColor : byte
 {
     Empty = 0,
     Blue = 1,
-    Red = 5,
+    Red = 2,
     Brown = 3,
-    Green = 6,
-    Yellow = 8,
-    White = 9,
-    Purple = 2
+    Green = 4,
+    Yellow = 5,
+    White = 6,
+    Purple = 7
 }

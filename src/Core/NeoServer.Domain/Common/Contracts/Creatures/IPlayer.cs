@@ -115,6 +115,9 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     Guild.Guild Guild { get; }
     ushort GuildId => Guild?.Id ?? default;
     bool HasGuild { get; }
+    void SetGuild(Guild.Guild guild);
+    Guild.GuildRankInfo GuildRank { get; set; }
+    string GuildNick { get; set; }
     bool Shopping { get; }
     ulong BankAmount { get; }
     IShopperNpc TradingWithNpc { get; }

@@ -66,17 +66,101 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         OnTurnedToDirection?.Invoke(this, direction);
     }
 
-    public int StepDelay
-    {
-        get
-        {
-            if (FirstStep)
-                return 0;
+    //todo: 1098 resting new speed calculation
+    //public int StepDelay
+    //{
+    //    get
+    //    {
+    //        if (FirstStep || Speed == 0 || Tile == null)
+    //            return 0;
 
-            if (Speed == 0) return 0;
-            return (int)(Tile.StepSpeed / (decimal)Speed * 1000 * _lastStepCost);
-        }
+    //        const double speedA = 857.36;
+    //        const double speedB = 261.29;
+    //        const double speedC = -4795.01;
+
+    //        double baseSpeed = Speed / 2.0;
+
+    //        double calculatedStepSpeed = Math.Floor(speedA * Math.Log(baseSpeed + speedB) + speedC + 0.5);
+    //        if (calculatedStepSpeed <= 0)
+    //            calculatedStepSpeed = 1;
+
+    //        double groundSpeed = Tile?.Ground?.StepSpeed ?? 150;
+    //        if (groundSpeed == 0)
+    //            groundSpeed = 150;
+
+    //        double duration = Math.Floor(1000.0 * groundSpeed / calculatedStepSpeed);
+    //        double stepDuration = Math.Ceiling(duration / 50.0) * 50.0;
+
+    //        return (int)(stepDuration * _lastStepCost);
+    //    }
+    //}
+
+    //todo: 1098 resting new speed calculation
+    public int GetStepDelay()
+    {
+        if (FirstStep || Speed == 0 || Tile == null)
+            return 0;
+
+        const double speedA = 857.36;
+        const double speedB = 261.29;
+        const double speedC = -4795.01;
+
+        double baseSpeed = Speed;
+
+        double calculatedStepSpeed = Math.Floor(speedA * Math.Log(baseSpeed + speedB) + speedC + 0.5);
+        if (calculatedStepSpeed <= 0)
+            calculatedStepSpeed = 1;
+
+        double groundSpeed = Tile?.Ground?.StepSpeed ?? 150;
+        if (groundSpeed == 0)
+            groundSpeed = 150;
+
+        double duration = Math.Floor(1000.0 * groundSpeed / calculatedStepSpeed);
+        double stepDuration = Math.Ceiling(duration / 50.0) * 50.0;
+
+        return (int)(stepDuration * _lastStepCost);
     }
+
+    //todo: 1098 resting new speed calculation
+    //public int GetStepDelay(Location fromLocation, Location toLocation)
+    //{
+    //    if (FirstStep || Speed == 0 || Tile == null)
+    //        return 0;
+
+    //    const double speedA = 857.36;
+    //    const double speedB = 261.29;
+    //    const double speedC = -4795.01;
+    //    double baseSpeed = Speed;
+
+    //    double calculatedStepSpeed;
+    //    if (baseSpeed > -speedB)
+    //    {
+    //        calculatedStepSpeed = Math.Floor(speedA * Math.Log(baseSpeed + speedB) + speedC + 0.5);
+    //        if (calculatedStepSpeed <= 0)
+    //            calculatedStepSpeed = 1;
+    //    }
+    //    else
+    //    {
+    //        calculatedStepSpeed = 1;
+    //    }
+
+    //    double groundSpeed = Tile.Ground?.StepSpeed ?? 150;
+    //    if (groundSpeed == 0)
+    //        groundSpeed = 150;
+
+    //    double duration = Math.Floor(1000.0 * groundSpeed / calculatedStepSpeed);
+
+    //    double stepDuration = Math.Ceiling(duration / 50.0) * 50.0;
+
+    //    if (fromLocation.Z != toLocation.Z)
+    //        _lastStepCost = 2;
+    //    else if (fromLocation.IsDiagonalMovement(toLocation))
+    //        _lastStepCost = 3; 
+    //    else
+    //        _lastStepCost = 1;
+
+    //    return (int)(stepDuration * _lastStepCost);
+    //}
 
     public bool FirstStep { get; private set; }
 
@@ -290,7 +374,10 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         if (_walkingQueue.TryDequeue(out direction))
         {
             FirstStep = false;
-            Cooldowns.Start(CooldownType.Move, (uint)StepDelay);
+            //todo: 1098 resting new speed calculation
+            //var nextLocation = Location.GetNextLocation(direction);
+            //Cooldowns.Start(CooldownType.Move, (uint)GetStepDelay(Location, nextLocation));
+            Cooldowns.Start(CooldownType.Move, (uint)GetStepDelay());
 
             return true;
         }
@@ -301,7 +388,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     public void ChangeSpeedLevel(int newSpeed)
     {
         Speed = (ushort)newSpeed;
-        OnChangedSpeed?.Invoke(this, Speed);
+        OnChangedSpeed?.Invoke(this, Speed, RawSpeed);
     }
 
     #region Events

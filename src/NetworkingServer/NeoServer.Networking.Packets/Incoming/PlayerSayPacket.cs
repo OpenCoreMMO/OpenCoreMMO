@@ -14,17 +14,17 @@ public class PlayerSayPacket : IncomingPacket
             case SpeechType.None:
                 return;
 
-            case SpeechType.Private:
-            case SpeechType.PrivateRed:
+            case SpeechType.PrivateRedTo:
+            case SpeechType.PrivateRedFrom:
 #if GAME_FEATURE_RULEVIOLATION
 		        case TALKTYPE_RVR_ANSWER:
 #endif
                 Receiver = message.GetString();
                 break;
 
-            case SpeechType.ChannelYellowText:
-            case SpeechType.ChannelRed1Text:
-            case SpeechType.ChannelOrangeText:
+            case SpeechType.ChannelYellow:
+            case SpeechType.ChannelRed1:
+            case SpeechType.ChannelOrange:
                 ChannelId = message.GetUInt16();
                 break;
             default:

@@ -150,6 +150,35 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
         playerEntity.Skull = player.Skull;
         playerEntity.SkullEndsAt = player.SkullEndsAt;
 
+        // Update guild membership
+        await UpdateGuildMembership(player, neoContext);
+
         neoContext.Update(playerEntity);
+    }
+
+    private static async Task UpdateGuildMembership(IPlayer player, NeoContext neoContext)
+    {
+        // First, remove any existing guild membership for this player
+        var existingMembership = await neoContext.GuildMemberships
+            .FirstOrDefaultAsync(gm => gm.PlayerId == player.Id);
+        
+        if (existingMembership != null)
+        {
+            neoContext.GuildMemberships.Remove(existingMembership);
+        }
+
+        // If player has a guild, create new membership
+        if (player.Guild != null && player.GuildId != 0)
+        {
+            var guildMembership = new GuildMembershipEntity
+            {
+                PlayerId = (int)player.Id,
+                GuildId = (int)player.GuildId,
+                RankId = player.GuildRank?.Id ?? 1, // Default to rank 1 (member) if no rank set
+                Nick = player.GuildNick ?? string.Empty
+            };
+
+            await neoContext.GuildMemberships.AddAsync(guildMembership);
+        }
     }
 }

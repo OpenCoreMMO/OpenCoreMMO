@@ -2,7 +2,7 @@
 
 public enum GuildRank
 {
-    Leader = 1,
+    Member = 1,
     ViceLeader = 2,
-    Member = 3
+    Leader = 3
 }

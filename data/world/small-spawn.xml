@@ -1,9 +1,5 @@
 <?xml version="1.0"?>
 <spawns>
-	<spawn centerx="1018" centery="1018" centerz="7" radius="1">
-		<monster name="Trainer" x="0" y="0" z="7" spawntime="60" />
-	</spawn>
-	<spawn centerx="1024" centery="1030" centerz="7" radius="1">
-		<npc name="Eryn" x="0" y="0" z="7" spawntime="60" />
-	</spawn>
+	<spawn centerx="1018" centery="1018" centerz="7" radius="1" />
+	<spawn centerx="1024" centery="1030" centerz="7" radius="1" />
 </spawns>

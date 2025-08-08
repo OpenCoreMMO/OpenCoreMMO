@@ -20,7 +20,7 @@ public class PlayerSayCommand(
     SpellListManager spellListManager)
     : ICommand
 {
-    public void Execute(IPlayer player, IConnection connection, PlayerSayPacket playerSayPacket)
+    public async void Execute(IPlayer player, IConnection connection, PlayerSayPacket playerSayPacket)
     {
         if (string.IsNullOrWhiteSpace(playerSayPacket.Message) ||
             (playerSayPacket.Message?.Length ?? 0) > 255) return;
@@ -57,26 +57,26 @@ public class PlayerSayCommand(
             case SpeechType.PrivateNpcToPlayer:
                 break;
 
-            case SpeechType.ChannelOrangeText:
-            case SpeechType.ChannelRed1Text:
-            case SpeechType.ChannelYellowText:
+            case SpeechType.ChannelOrange:
+            case SpeechType.ChannelRed1:
+            case SpeechType.ChannelYellow:
                 SendMessageToChannel(player, playerSayPacket.ChannelId, message);
                 break;
 
-            case SpeechType.ChannelRed2Text:
-                break;
-            case SpeechType.ChannelWhiteText:
-                break;
-            case SpeechType.RvrChannel:
-                break;
-            case SpeechType.RvrAnswer:
-                break;
-            case SpeechType.RvrContinue:
-                break;
+            //case SpeechType.ChannelRed2:
+            //    break;
+            //case SpeechType.ChannelWhite:
+            //    break;
+            //case SpeechType.RvrChannel:
+            //    break;
+            //case SpeechType.RvrAnswer:
+            //    break;
+            //case SpeechType.RvrContinue:
+            //    break;
             case SpeechType.Broadcast:
                 break;
-            case SpeechType.Private:
-            case SpeechType.PrivateRed:
+            case SpeechType.PrivateFrom:
+            case SpeechType.PrivateRedFrom:
                 SendMessageToPlayer(player, connection, playerSayPacket, message);
                 break;
             case SpeechType.MonsterSay:

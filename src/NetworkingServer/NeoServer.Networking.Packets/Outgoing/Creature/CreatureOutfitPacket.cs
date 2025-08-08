@@ -3,15 +3,8 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Creature;
 
-public class CreatureOutfitPacket : OutgoingPacket
+public class CreatureOutfitPacket(ICreature creature) : OutgoingPacket
 {
-    private readonly ICreature creature;
-
-    public CreatureOutfitPacket(ICreature creature)
-    {
-        this.creature = creature;
-    }
-
     public override void WriteToMessage(INetworkMessage message)
     {
         message.AddByte((byte)GameOutgoingPacketType.CreatureOutfit);
@@ -29,7 +22,9 @@ public class CreatureOutfitPacket : OutgoingPacket
         }
         else
         {
-            message.AddUInt16(0); //todo
+            message.AddUInt16(0); //todo: 1098 implement this outfit.lookTypeEx
         }
+
+        message.AddUInt16(0); //todo: 1098 implement this outfit.lookMount
     }
 }

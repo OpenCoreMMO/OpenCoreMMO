@@ -37,7 +37,7 @@ public class CreatureAddedOnMapEventHandler : IEventHandler
 
             if (!game.CreatureManager.GetPlayerConnection(spectator.CreatureId, out var connection)) continue;
 
-            SendPacketsToSpectator(spectatorPlayer, creature, connection,
+            SendPacketsToSpectator(game, spectatorPlayer, creature, connection,
                 cylinderSpectator.ToStackPosition == byte.MaxValue
                     ? cylinderSpectator.FromStackPosition
                     : cylinderSpectator.ToStackPosition);
@@ -46,10 +46,10 @@ public class CreatureAddedOnMapEventHandler : IEventHandler
         }
     }
 
-    private static void SendPacketsToSpectator(IPlayer playerToSend, IWalkableCreature creatureAdded,
+    private static void SendPacketsToSpectator(IGameServer game, IPlayer playerToSend, IWalkableCreature creatureAdded,
         IConnection connection, byte stackPosition)
     {
-        connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(creatureAdded, stackPosition));
+        connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(game.Map, creatureAdded, stackPosition, playerToSend));
         connection.OutgoingPackets.Enqueue(new AddCreaturePacket(playerToSend, creatureAdded));
         connection.OutgoingPackets.Enqueue(new MagicEffectPacket(creatureAdded.Location, EffectT.BubbleBlue));
     }

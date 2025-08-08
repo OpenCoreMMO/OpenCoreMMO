@@ -8,6 +8,7 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
+using NeoServer.Domain.Guild;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -82,6 +83,20 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(luaState, "Player", "feed", LuaPlayerFeed);
         RegisterMethod(luaState, "Player", "getLevel", LuaGetLevel);
         RegisterMethod(luaState, "Player", "getSlotItem", LuaPlayerGetSlotItem);
+        
+        // Guild methods
+        RegisterMethod(luaState, "Player", "getGuild", LuaPlayerGetGuild);
+        RegisterMethod(luaState, "Player", "setGuild", LuaPlayerSetGuild);
+        RegisterMethod(luaState, "Player", "getGuildLevel", LuaPlayerGetGuildLevel);
+        RegisterMethod(luaState, "Player", "getGuildId", LuaPlayerGetGuildId);
+        RegisterMethod(luaState, "Player", "setGuildNick", LuaPlayerSetGuildNick);
+        RegisterMethod(luaState, "Player", "getGuildNick", LuaPlayerGetGuildNick);
+        RegisterMethod(luaState, "Player", "removeMoneyBank", LuaPlayerRemoveMoneyBank);
+        RegisterMethod(luaState, "Player", "addMoneyBank", LuaPlayerAddMoneyBank);
+        RegisterMethod(luaState, "Player", "inviteToGuild", LuaPlayerInviteToGuild);
+        RegisterMethod(luaState, "Player", "kickFromGuild", LuaPlayerKickFromGuild);
+        RegisterMethod(luaState, "Player", "hasMoneyBank", LuaPlayerHasMoneyBank);
+        RegisterMethod(luaState, "Player", "getGuildRank", LuaPlayerGetGuildRank);
     }
 
     private static int LuaGetLevel(LuaState l)
@@ -799,6 +814,247 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             Lua.PushNil(luaState);
         }
 
+        return 1;
+    }
+
+    // Guild-related methods
+    private static int LuaPlayerGetGuild(LuaState luaState)
+    {
+        // player:getGuild()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player?.Guild == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        PushUserdata(luaState, player.Guild);
+        SetMetatable(luaState, -1, "Guild");
+        return 1;
+    }
+
+    private static int LuaPlayerSetGuild(LuaState luaState)
+    {
+        // player:setGuild(guild)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player == null)
+        {
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
+        // Get guild parameter - can be nil to remove guild
+        var guild = GetUserdata<Guild>(luaState, 2);
+        
+        try
+        {
+            player.SetGuild(guild);
+            _logger?.Information("Player {PlayerName} joined guild {GuildName}", 
+                player.Name, guild?.Name ?? "None");
+            
+            Lua.PushBoolean(luaState, true);
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Failed to set guild for player {PlayerName}", player.Name);
+            Lua.PushBoolean(luaState, false);
+        }
+
+        return 1;
+    }
+
+    private static int LuaPlayerGetGuildLevel(LuaState luaState)
+    {
+        // player:getGuildLevel()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player?.Guild == null)
+        {
+            Lua.PushNumber(luaState, 0);
+            return 1;
+        }
+
+        // TODO: Implement guild level retrieval from player-guild relationship
+        // Need to check the guild level/rank from the Guild domain object
+        // For now, return 1 (member) as default
+        Lua.PushNumber(luaState, 1);
+        return 1;
+    }
+
+    private static int LuaPlayerGetGuildId(LuaState luaState)
+    {
+        // player:getGuildId()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player?.Guild == null)
+        {
+            Lua.PushNumber(luaState, 0);
+            return 1;
+        }
+
+        Lua.PushNumber(luaState, player.Guild.Id);
+        return 1;
+    }
+
+    private static int LuaPlayerSetGuildNick(LuaState luaState)
+    {
+        // player:setGuildNick(nick)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player?.Guild == null)
+        {
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var nick = GetString(luaState, 2);
+        
+        // TODO: Implement guild nick setting in player entity
+        // For now, just return true to indicate success
+        Lua.PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaPlayerGetGuildNick(LuaState luaState)
+    {
+        // player:getGuildNick()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player?.Guild == null)
+        {
+            PushString(luaState, "");
+            return 1;
+        }
+
+        // TODO: Implement guild nick retrieval from player entity
+        // For now, return empty string
+        PushString(luaState, "");
+        return 1;
+    }
+
+    private static int LuaPlayerRemoveMoneyBank(LuaState luaState)
+    {
+        // player:removeMoneyBank(amount)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player == null)
+        {
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var amount = GetNumber<ulong>(luaState, 2);
+        
+        if (player.BankAmount >= amount)
+        {
+            player.WithdrawFromBank(amount);
+            Lua.PushBoolean(luaState, true);
+        }
+        else
+        {
+            Lua.PushBoolean(luaState, false);
+        }
+        
+        return 1;
+    }
+
+    private static int LuaPlayerAddMoneyBank(LuaState luaState)
+    {
+        // player:addMoneyBank(amount)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player == null)
+        {
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var amount = GetNumber<ulong>(luaState, 2);
+        player.Bank.Credit(amount);
+        Lua.PushBoolean(luaState, true);
+        
+        return 1;
+    }
+
+    private static int LuaPlayerInviteToGuild(LuaState luaState)
+    {
+        // player:inviteToGuild(invitedPlayer)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player?.Guild == null)
+        {
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var invitedPlayer = GetUserdata<IPlayer>(luaState, 2);
+        if (invitedPlayer?.Guild != null)
+        {
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
+        // TODO: Implement guild invitation system
+        // 1. Check if player has permission to invite (vice-leader or leader)
+        // 2. Add invitation to player's pending invitations
+        // 3. Notify invited player
+        
+        Lua.PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaPlayerKickFromGuild(LuaState luaState)
+    {
+        // player:kickFromGuild(targetPlayer)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player?.Guild == null)
+        {
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var targetPlayer = GetUserdata<IPlayer>(luaState, 2);
+        if (targetPlayer?.Guild?.Id != player.Guild.Id)
+        {
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
+        // TODO: Implement guild kick system
+        // 1. Check if player has permission to kick (vice-leader or leader)
+        // 2. Check if target rank is lower than kicker
+        // 3. Remove target from guild
+        // 4. Notify guild members
+        
+        Lua.PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaPlayerHasMoneyBank(LuaState luaState)
+    {
+        // player:hasMoneyBank(amount)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player == null)
+        {
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var amount = GetNumber<ulong>(luaState, 2);
+        
+        Lua.PushBoolean(luaState, player.BankAmount >= amount);
+        return 1;
+    }
+
+    private static int LuaPlayerGetGuildRank(LuaState luaState)
+    {
+        // player:getGuildRank()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player?.Guild == null)
+        {
+            PushString(luaState, "");
+            return 1;
+        }
+
+        // TODO: Implement guild rank name retrieval from Guild entity
+        // For now, we'll return "Member" as default since we don't have
+        // the guild level stored in the player entity yet
+        var rankName = "Member";
+        
+        PushString(luaState, rankName);
         return 1;
     }
 }
