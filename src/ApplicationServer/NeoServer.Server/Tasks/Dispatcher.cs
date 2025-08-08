@@ -15,7 +15,10 @@ public class Dispatcher : IDispatcher
     private readonly ILogger _logger;
     private readonly ChannelReader<IEvent> _reader;
     private readonly ChannelWriter<IEvent> _writer;
+    private readonly CancellationTokenSource _internalCancellation = new();
+    
     private Task _processingTask;
+    private volatile bool _isShuttingDown;
 
     /// <summary>
     ///     A queue responsible for process events
@@ -37,9 +40,10 @@ public class Dispatcher : IDispatcher
     /// <param name="evt"></param>
     public void AddEvent(IEvent evt)
     {
-        if (evt?.Action is null)
+        if (_isShuttingDown || evt?.Action is null)
         {
-            _logger.Warning("Dispatcher: Attempted to add null event or event with null action");
+            if (evt?.Action is null)
+                _logger.Warning("Dispatcher: Attempted to add null event or event with null action");
             return;
         }
 
@@ -61,61 +65,108 @@ public class Dispatcher : IDispatcher
             return;
         }
 
-        _processingTask = Task.Run(async () =>
+        // Combine external cancellation with internal
+        var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(token, _internalCancellation.Token);
+
+        _processingTask = Task.Factory.StartNew(async () =>
         {
+            _logger.Information("Dispatcher: Starting event processing loop");
+            var eventCount = 0L;
+            
             try
             {
-                while (await _reader.WaitToReadAsync(token).ConfigureAwait(false))
+                await foreach (var evt in _reader.ReadAllAsync(combinedCts.Token))
                 {
                     GlobalTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    eventCount++;
 
-                    while (_reader.TryRead(out var evt))
+                    if (evt?.Action is null)
                     {
-                        if (evt?.Action is null)
-                        {
-                            _logger.Warning("Dispatcher: Skipping event with null action");
-                            continue;
-                        }
+                        _logger.Warning("Dispatcher: Skipping event with null action");
+                        continue;
+                    }
 
-                        if (!evt.HasExpired || evt.HasNoTimeout)
+                    if (!evt.HasExpired || evt.HasNoTimeout)
+                    {
+                        // Add timeout to prevent hanging during debugging
+                        using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+                        try
                         {
-                            try
+                            var eventTask = Task.Run(() => evt.Action.Invoke(), timeoutCts.Token);
+                            
+                            await eventTask;
+                            _eventAggregator.PropagateEvents();
+                            
+                            // Progress logging for debugging
+                            if (eventCount % 1000 == 0)
                             {
-                                evt.Action.Invoke();
-                                _eventAggregator.PropagateEvents();
-                            }
-                            catch (Exception ex)
-                            {
-                                _logger.Error(ex, "Dispatcher: Exception in event execution");
+                                _logger.Debug("Dispatcher: Processed {EventCount} events", eventCount);
                             }
                         }
-                        else
+                        catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
                         {
-                            _logger.Debug("Dispatcher: Skipped expired event");
+                            _logger.Warning("Dispatcher: Event execution timeout - possible deadlock during debugging");
+                            // Continue processing other events
                         }
+                        catch (Exception ex)
+                        {
+                            _logger.Error(ex, "Dispatcher: Exception in event execution");
+                        }
+                    }
+                    else
+                    {
+                        _logger.Debug("Dispatcher: Skipped expired event");
                     }
                 }
             }
             catch (OperationCanceledException)
             {
-                _logger.Information("Dispatcher: cancelled");
+                _logger.Information("Dispatcher: Cancelled after processing {EventCount} events", eventCount);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Dispatcher: fatal error");
+                _logger.Error(ex, "Dispatcher: Fatal error after processing {EventCount} events", eventCount);
                 throw;
             }
             finally
             {
                 try { _writer.Complete(); }
-                catch (Exception ex) { _logger.Warning(ex, "Dispatcher: error completing channel"); }
+                catch (Exception ex) { _logger.Warning(ex, "Dispatcher: Error completing channel"); }
+                
+                _logger.Information("Dispatcher: Event processing loop ended. Total events processed: {EventCount}", eventCount);
             }
-        }, CancellationToken.None);
+        }, combinedCts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
     }
 
     // Additional method to wait for dispatcher completion (useful for tests and shutdown)
-    public Task WaitForCompletionAsync()
+    public async Task WaitForCompletionAsync()
     {
-        return _processingTask ?? Task.CompletedTask;
+        if (_processingTask == null) return;
+
+        try
+        {
+            await _processingTask.ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Dispatcher: Error during shutdown");
+        }
+    }
+
+    public void Shutdown()
+    {
+        if (_isShuttingDown) return;
+        
+        _isShuttingDown = true;
+        _logger.Information("Dispatcher: Initiating shutdown");
+        
+        _writer.TryComplete();
+        _internalCancellation.Cancel();
+    }
+
+    public void Dispose()
+    {
+        Shutdown();
+        _internalCancellation?.Dispose();
     }
 }
