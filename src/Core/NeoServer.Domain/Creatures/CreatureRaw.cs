@@ -138,7 +138,7 @@ public static class CreatureRaw
         }
 
         //todo: 1098 implements this
-        cache.Add(0x00); //msg.addByte(player->canWalkthroughEx(creature) ? 0x00 : 0x01);
+        cache.Add(0x01); //msg.addByte(player->canWalkthroughEx(creature) ? 0x00 : 0x01);
 
         return cache.ToArray();
     }

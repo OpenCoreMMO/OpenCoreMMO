@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Item;
+﻿using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Items;
 
@@ -11,16 +12,6 @@ public delegate void ItemRemove(IItem item, IThing from);
 
 public interface IItem : IThing, IHasDecay
 {
-    // Define these constants at the top of your file or in a suitable static class
-    const byte CLIENTFLUID_EMPTY = 0x00;
-    const byte CLIENTFLUID_BLUE = 0x01;
-    const byte CLIENTFLUID_RED = 0x02;
-    const byte CLIENTFLUID_BROWN_1 = 0x03;
-    const byte CLIENTFLUID_GREEN = 0x04;
-    const byte CLIENTFLUID_YELLOW = 0x05;
-    const byte CLIENTFLUID_WHITE = 0x06;
-    const byte CLIENTFLUID_PURPLE = 0x07;
-
     // Market special item IDs (similar to otclientv8's MarketRequest enum)
     const ushort MARKET_MYOFFERS = 0xFFFE; // 65534 - My Offers
     const ushort MARKET_MYHISTORY = 0xFF01; // 65281 - My History
@@ -110,6 +101,20 @@ public interface IItem : IThing, IHasDecay
     void UpdateMetadata(IItemType newMetadata);
     void MarkAsDeleted();
 
+    enum ClientFluidTypes : byte
+    {
+        CLIENTFLUID_EMPTY = 0,
+        CLIENTFLUID_BLUE = 1,
+        CLIENTFLUID_PURPLE = 2,
+        CLIENTFLUID_BROWN_1 = 3,
+        CLIENTFLUID_BROWN_2 = 4,
+        CLIENTFLUID_RED = 5,
+        CLIENTFLUID_GREEN = 6,
+        CLIENTFLUID_BROWN = 7,
+        CLIENTFLUID_YELLOW = 8,
+        CLIENTFLUID_WHITE = 9,
+    };
+
     Span<byte> GetRaw()
     {
         var bytes = new List<byte>();
@@ -120,14 +125,14 @@ public interface IItem : IThing, IHasDecay
         // Adjust values as needed for your protocol
         byte[] fluidMap = new byte[]
         {
-            CLIENTFLUID_EMPTY,
-            CLIENTFLUID_BLUE,
-            CLIENTFLUID_RED,
-            CLIENTFLUID_BROWN_1,
-            CLIENTFLUID_GREEN,
-            CLIENTFLUID_YELLOW,
-            CLIENTFLUID_WHITE,
-            CLIENTFLUID_PURPLE
+            (byte)ClientFluidTypes.CLIENTFLUID_EMPTY,
+            (byte)ClientFluidTypes.CLIENTFLUID_BLUE,
+            (byte)ClientFluidTypes.CLIENTFLUID_RED,
+            (byte)ClientFluidTypes.CLIENTFLUID_BROWN_1,
+            (byte)ClientFluidTypes.CLIENTFLUID_GREEN,
+            (byte)ClientFluidTypes.CLIENTFLUID_YELLOW,
+            (byte)ClientFluidTypes.CLIENTFLUID_WHITE,
+            (byte)ClientFluidTypes.CLIENTFLUID_PURPLE,
         };
 
         // Handle special market IDs by replacing them with a valid item ID
@@ -148,9 +153,10 @@ public interface IItem : IThing, IHasDecay
         {
             bytes.Add(count);
         }
-        else if (it.IsSplash() || it.IsFluidContainer())
+        else if (it.IsSplash() || it.IsFluidContainer() && this is ILiquid)
         {
-            bytes.Add(fluidMap[count & 7]);
+            var liquid = this as ILiquid;
+            bytes.Add(fluidMap[(byte)liquid.LiquidColor & 7]);
         }
 
         if (it.IsAnimation())
