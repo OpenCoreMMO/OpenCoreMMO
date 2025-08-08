@@ -3,5 +3,5 @@
 
 # Gera changelog automaticamente após cada commit
 echo "📝 Atualizando changelog automaticamente..."
-npm run release:dry > /dev/null 2>&1 || true
-echo "✅ Changelog verificado!"
+npm run release > /dev/null 2>&1 || true
+echo "✅ Changelog atualizado!"
