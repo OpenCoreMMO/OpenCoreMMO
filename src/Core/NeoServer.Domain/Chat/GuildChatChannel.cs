@@ -15,12 +15,53 @@ public class GuildChatChannel(ushort id, string name, Guild.Guild guild) : ChatC
 
     public override bool AddUser(IPlayer player)
     {
-        if (player.Guild is null) return false;
-        if (Guild is null) return false;
+        Console.WriteLine($"[GuildChannel] AddUser called for player: {player?.Name ?? "null"}");
+        
+        if (player.Guild is null) 
+        {
+            Console.WriteLine($"[GuildChannel] Player {player.Name} has no guild (player.Guild is null)");
+            return false;
+        }
+        
+        if (Guild is null) 
+        {
+            Console.WriteLine($"[GuildChannel] Channel has no guild (Guild is null)");
+            return false;
+        }
 
-        if (!Guild.HasMember(player)) return false;
+        Console.WriteLine($"[GuildChannel] Player guild: {player.Guild?.Name} (ID: {player.Guild?.Id}), Channel guild: {Guild?.Name} (ID: {Guild?.Id})");
+        Console.WriteLine($"[GuildChannel] Player.GuildId: {player.GuildId}");
 
-        return base.AddUser(player);
+        if (!Guild.HasMember(player)) 
+        {
+            Console.WriteLine($"[GuildChannel] Guild.HasMember returned false for player {player.Name}");
+            return false;
+        }
+
+        Console.WriteLine($"[GuildChannel] Guild validation passed, checking if user already exists...");
+
+        // Skip the base PlayerCanJoin validation and go directly to the core AddUser logic
+        if (HasUser(player)) 
+        {
+            Console.WriteLine($"[GuildChannel] Player {player.Name} already in channel");
+            return false;
+        }
+        
+        if (users.TryGetValue(player.Id, out var user))
+        {
+            if (user.Removed)
+            {
+                Console.WriteLine($"[GuildChannel] Player {player.Name} was removed, marking as added");
+                user.MarkAsAdded();
+                return true;
+            }
+            Console.WriteLine($"[GuildChannel] Player {player.Name} already exists in users collection");
+            return false;
+        }
+
+        var success = users.TryAdd(player.Id, new UserChat { Player = player });
+        Console.WriteLine($"[GuildChannel] TryAdd result for player {player.Name}: {success}");
+        return success;
     }
 
     public override SpeechType GetTextColor(IPlayer player)

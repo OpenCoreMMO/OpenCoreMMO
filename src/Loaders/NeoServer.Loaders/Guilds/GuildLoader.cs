@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using NeoServer.Data.Entities;
 using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Common.Contracts.DataStores;
@@ -23,27 +24,54 @@ public class GuildLoader : ICustomLoader
         _guildStore = guildStore;
     }
 
-    public Guild Load(GuildEntity guildEntity)
+    public async Task<Guild> LoadAsync(GuildEntity guildEntity)
     {
         if (guildEntity is null) return null;
 
-        var guild = GetOrCreateGuild(guildEntity, out var shouldAddToStore);
+        var guild = await GetOrCreateGuildAsync(guildEntity);
+        if (guild == null) return null;
 
         guild.Name = guildEntity.Name;
-        guild.GuildLevels?.Clear();
+        guild.Motd = guildEntity.Modt ?? string.Empty;
+        guild.OwnerId = (ushort)guildEntity.OwnerId;
+        guild.CreationDate = guildEntity.CreatedAt;
+        guild.MemberCount = (uint)(guildEntity.Members?.Count ?? 0);
 
-        if ((guildEntity.Ranks?.Count ?? 0) > 0)
-            guild.GuildLevels = new Dictionary<ushort, GuildLevel>();
-
-        AddMembers(guildEntity, guild);
-
-        if (shouldAddToStore)
+        // Load ranks
+        if (guildEntity.Ranks?.Any() == true)
         {
-            _guildStore.AddOrUpdate(guild.Id, guild);
-            return guild;
+            foreach (var rank in guildEntity.Ranks)
+            {
+                guild.AddRank((ushort)rank.Id, rank.Name, (byte)rank.Level);
+            }
         }
 
-        _logger.Debug("Guild {Guild} loaded", guildEntity.Name);
+        _guildStore.AddOrUpdate(guild.Id, guild);
+        _logger.Debug("Guild {Guild} loaded with {MemberCount} members", guildEntity.Name, guild.MemberCount);
+        
+        return guild;
+    }
+
+    public Guild Load(GuildEntity guildEntity)
+    {
+        // Synchronous wrapper for backward compatibility
+        return LoadAsync(guildEntity).GetAwaiter().GetResult();
+    }
+
+    private async Task<Guild> GetOrCreateGuildAsync(GuildEntity guildEntity)
+    {
+        var existingGuild = _guildStore.Get((ushort)guildEntity.Id);
+        if (existingGuild != null) return existingGuild;
+
+        var guild = new Guild
+        {
+            Id = (ushort)guildEntity.Id,
+            Channel = _chatChannelFactory.CreateGuildChannel($"{guildEntity.Name ?? "Unknown Guild"}'s Channel",
+                (ushort)guildEntity.Id),
+            Bank = new Bank(guildEntity.BankAmount),
+            GuildLevels = new Dictionary<ushort, GuildLevel>()
+        };
+
         return guild;
     }
 
@@ -58,26 +86,5 @@ public class GuildLoader : ICustomLoader
 
             guild.GuildLevels?.Add((ushort)memberRank.Id, guildLevel);
         }
-    }
-
-    private Guild GetOrCreateGuild(GuildEntity guildEntity, out bool shouldAddToStore)
-    {
-        var guild = _guildStore.Get((ushort)guildEntity.Id);
-
-        shouldAddToStore = false;
-
-        if (guild is not null) return guild;
-
-        shouldAddToStore = true;
-
-        guild = new Guild
-        {
-            Id = (ushort)guildEntity.Id,
-            Channel = _chatChannelFactory.CreateGuildChannel($"{guildEntity.Name}'s Channel",
-                (ushort)guildEntity.Id),
-            Bank = new Bank(guildEntity.BankAmount)
-        };
-
-        return guild;
     }
 }

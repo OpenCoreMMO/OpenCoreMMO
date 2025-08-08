@@ -20,7 +20,7 @@ public class PlayerSayCommand(
     SpellListManager spellListManager)
     : ICommand
 {
-    public void Execute(IPlayer player, IConnection connection, PlayerSayPacket playerSayPacket)
+    public async void Execute(IPlayer player, IConnection connection, PlayerSayPacket playerSayPacket)
     {
         if (string.IsNullOrWhiteSpace(playerSayPacket.Message) ||
             (playerSayPacket.Message?.Length ?? 0) > 255) return;
