@@ -12,10 +12,7 @@ public class OptimizedScheduler : Scheduler
     private readonly IDispatcher _dispatcher;
     private readonly ConcurrentQueue<ISchedulerEvent> _preQueue = new();
     private readonly SemaphoreSlim _preQueueSemaphore = new(0);
-    private readonly CancellationTokenSource _internalCancellation = new();
     
-    private volatile bool _isShuttingDown;
-
     public OptimizedScheduler(IDispatcher dispatcher) : base(dispatcher)
     {
         _dispatcher = dispatcher;
@@ -23,7 +20,7 @@ public class OptimizedScheduler : Scheduler
 
     public override void Start(CancellationToken token)
     {
-        var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(token, _internalCancellation.Token);
+        var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(token);
 
         // Main scheduler thread
         Task.Factory.StartNew(async () =>
@@ -134,22 +131,6 @@ public class OptimizedScheduler : Scheduler
 
     public override bool CancelEvent(uint eventId)
     {
-        if (_isShuttingDown) return false;
         return base.CancelEvent(eventId);
-    }
-
-    public void Shutdown()
-    {
-        if (_isShuttingDown) return;
-        
-        _isShuttingDown = true;
-        _internalCancellation.Cancel();
-    }
-
-    public void Dispose()
-    {
-        Shutdown();
-        _preQueueSemaphore?.Dispose();
-        _internalCancellation?.Dispose();
     }
 }
