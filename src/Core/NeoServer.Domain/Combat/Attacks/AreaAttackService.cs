@@ -1,4 +1,5 @@
 using NeoServer.Domain.Combat.Calculations;
+using NeoServer.Domain.Combat.Validations;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
@@ -21,7 +22,8 @@ public class AreaAttackService(
     IEventAggregator eventAggregator,
     IMap map,
     MagicFieldService magicFieldService,
-    ConditionAttackService conditionAttackService) : IAttackService
+    ConditionAttackService conditionAttackService,
+    AttackValidation attackValidation) : IAttackService
 {
     public CombatResult Execute(AttackInput attackInput)
     {
@@ -79,6 +81,13 @@ public class AreaAttackService(
         {
             if (affectedCreature is not ICombatActor target) continue;
             if (affectedCreature.Equals(aggressor)) continue;
+
+            //Attack validation for each target
+            var attackValidationResult = attackValidation.Validate(new AttackInput(aggressor, target, attackInput.Parameters));
+            if (attackValidationResult.Failed)
+            {
+                continue;
+            }
 
             var unjustifiedAttack =
                 target is IPlayer targetPlayer && aggressor is IPlayer playerAggressor &&
