@@ -100,11 +100,11 @@ public class CustomOptimizedScheduler : OptimizedScheduler
         {
             ActiveEventIds.TryRemove(evt.EventId, out _);
 
-            PreQueue.Enqueue(evt);
-            lock (PreQueueMonitor) // Let's now wake up the thread by
-            {
-                Monitor.Pulse(PreQueueMonitor);
-            }
+            //PreQueue.Enqueue(evt);
+            //lock (PreQueueMonitor) // Let's now wake up the thread by
+            //{
+            //    Monitor.Pulse(PreQueueMonitor);
+            //}
 
             return false;
         }
