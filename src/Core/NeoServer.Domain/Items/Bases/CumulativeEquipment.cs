@@ -1,13 +1,14 @@
 ﻿using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Items.Bases;
 
 //todo: code duplicated from cumulative class
 public abstract class CumulativeEquipment : Equipment, ICumulative
 {
-    protected CumulativeEquipment(IItemType type, ocation location) : base(type, location)
+    protected CumulativeEquipment(IItemType type, Location location) : base(type, location)
     {
     }
 
