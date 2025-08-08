@@ -1,0 +1,41 @@
+[
+    {
+        "centerx": "1005",
+        "centery": "1035",
+        "centerz": "7",
+        "radius": "1",
+        "npc": {
+            "name": "Rashid",
+            "x": "0",
+            "y": "0",
+            "z": "7",
+            "spawntime": "600"
+        }
+    },
+    {
+        "centerx": "1021",
+        "centery": "1036",
+        "centerz": "7",
+        "radius": "1",
+        "npc": {
+            "name": "Xodet",
+            "x": "0",
+            "y": "0",
+            "z": "7",
+            "spawntime": "600"
+        }
+    },
+    {
+        "centerx": "1013",
+        "centery": "1045",
+        "centerz": "7",
+        "radius": "1",
+        "npc": {
+            "name": "Suzy",
+            "x": "0",
+            "y": "0",
+            "z": "7",
+            "spawntime": "600"
+        }
+    }
+]
