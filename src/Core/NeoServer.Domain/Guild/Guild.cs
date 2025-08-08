@@ -45,7 +45,11 @@ public class Guild : IBankable
 
     public string InspectionText(IPlayer player)
     {
-        return $"{player.GenderPronoun} is member of the {Name}.";
+        if (player.GuildRank == null)
+            return $"{player.GenderPronoun} is member of the {Name}.";
+
+        var rankName = player.GuildRank.Name;
+        return $"{player.GenderPronoun} is {rankName} of the {Name}.";
     }
 
     public void AddMember(IPlayer player)
@@ -149,6 +153,14 @@ public class Guild : IBankable
         
         // Set player's guild
         player.SetGuild(this);
+        
+        // Set player's guild rank to Leader (level 3)
+        var leaderRank = GetRankByLevel(3); // Leader rank
+        
+        if (leaderRank != null)
+        {
+            player.GuildRank = leaderRank;
+        }
     }
 
     public bool InvitePlayer(IPlayer player)

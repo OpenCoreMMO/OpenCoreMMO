@@ -51,6 +51,8 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
             .ThenInclude(x => x.Player)
             .Include(x => x.GuildMember)
             .ThenInclude(x => x.Guild)
+            .Include(x => x.GuildMember)
+            .ThenInclude(x => x.Rank)
             .Include(x => x.PlayerStorages);
 
         if (includeDeathList)

@@ -45,6 +45,14 @@ public class ChatChannelFactory
         return channel;
     }
 
+    public ChatChannel CreateGuildChannel(string name, Guild.Guild guild)
+    {
+        var id = GenerateUniqueId();
+        var channel = new GuildChatChannel(id, name, guild);
+        SubscribeEvents(channel);
+        return channel;
+    }
+
     public ChatChannel CreatePartyChannel(string name = "Party")
     {
         var id = GenerateUniqueId();
