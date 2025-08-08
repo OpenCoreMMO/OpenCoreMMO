@@ -1,6 +1,7 @@
 ﻿using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Items.Items.Cumulatives;
 using NeoServer.Domain.Items.Items.UsableItems;

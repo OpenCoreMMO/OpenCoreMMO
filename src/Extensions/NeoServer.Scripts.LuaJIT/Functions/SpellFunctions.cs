@@ -1,6 +1,7 @@
 using LuaNET;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Spells;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Spells;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;

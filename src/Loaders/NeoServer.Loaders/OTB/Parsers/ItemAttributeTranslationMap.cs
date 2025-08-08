@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using NeoServer.Domain.Common.Item;
+
+namespace NeoServer.Loaders.OTB.Parsers;
 
 internal class ItemAttributeTranslationMap
 {

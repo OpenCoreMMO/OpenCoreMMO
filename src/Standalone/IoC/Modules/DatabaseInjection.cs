@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Data.Contexts;
@@ -12,7 +13,7 @@ using NeoServer.Data.Repositories.Player;
 using NeoServer.Server.Configurations;
 using Serilog;
 
-namespace NeoServer.Shared.IoC.Modules;
+namespace NeoServer.Server.Standalone.IoC.Modules;
 
 public static class DatabaseInjection
 {

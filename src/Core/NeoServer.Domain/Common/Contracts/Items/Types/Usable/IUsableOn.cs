@@ -1,4 +1,5 @@
 ﻿using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Item;
 
 namespace NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 

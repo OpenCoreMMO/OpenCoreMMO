@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Spells;
+using NeoServer.Domain.Spells.Entities;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Helpers;
 using NeoServer.Server.Services;

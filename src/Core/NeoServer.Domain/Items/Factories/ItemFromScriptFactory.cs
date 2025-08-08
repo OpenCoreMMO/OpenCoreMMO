@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Items.Factories;

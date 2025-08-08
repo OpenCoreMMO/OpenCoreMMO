@@ -1,6 +1,6 @@
-﻿using NeoServer.Domain.Combat.Services.Attacks.Events;
-using NeoServer.Domain.Common;
+﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Spells.Events;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Networking.Packets.Outgoing.Effect;
 using NeoServer.Server.Common.Contracts;
