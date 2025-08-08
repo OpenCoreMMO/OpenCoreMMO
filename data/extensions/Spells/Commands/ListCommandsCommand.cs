@@ -13,6 +13,7 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Bases;
 using NeoServer.Domain.Spells;
+using NeoServer.Domain.Spells.Entities;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers;
 using Newtonsoft.Json;

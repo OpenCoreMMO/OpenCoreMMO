@@ -1,4 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Item;
 
 namespace NeoServer.Domain.Items.Items.Attributes;
 
