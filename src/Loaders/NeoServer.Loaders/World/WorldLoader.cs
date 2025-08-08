@@ -197,6 +197,7 @@ public class WorldLoader
             ItemNodeAttribute.HouseDoorId => ItemAttribute.DoorId,
             ItemNodeAttribute.DecayTo => ItemAttribute.DecayTo,
             ItemNodeAttribute.TeleportDestination => ItemAttribute.TeleportDestination,
+            ItemNodeAttribute.Count => ItemAttribute.Count,
             _ => null
         };
     }

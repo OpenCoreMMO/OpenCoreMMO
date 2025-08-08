@@ -10,8 +10,7 @@ namespace NeoServer.Domain.Items.Items.UsableItems;
 
 public class HealingItem : Cumulative, IConsumable
 {
-    public HealingItem(IItemType type, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) :
-        base(type, location, attributes)
+    public HealingItem(IItemType type, Location location) : base(type, location)
     {
     }
 

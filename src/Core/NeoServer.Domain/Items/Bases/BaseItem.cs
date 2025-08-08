@@ -115,7 +115,7 @@ public abstract class BaseItem : IItem
             : $"You see {Article} {Name}.";
     }
 
-    public byte Amount { get; set; } = 1;
+    public byte Amount => Attributes.GetAttribute<byte>(ItemAttribute.Count);
 
     public virtual void Use(IPlayer usedBy)
     {

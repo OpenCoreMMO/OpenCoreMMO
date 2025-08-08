@@ -201,9 +201,7 @@ public class ItemTestDataBuilder
 
         LoadItemTypeAttributes(type, itemTypeAttributes);
 
-        var item = new HealingItem(type, new Location(100, 100, 7),
-            (itemTypeAttributes ?? Array.Empty<(ItemTypeAttribute, IConvertible)>())
-            .ToDictionary(x => x.Item1, x => x.Item2));
+        var item = new HealingItem(type, new Location(100, 100, 7));
         LoadItemAttributes(item, itemAttributes);
         return item;
     }
@@ -321,7 +319,6 @@ public class ItemTestDataBuilder
         var item = new ThrowableWeapon(
             type,
             new Location(100, 100, 7),
-            type.Attributes.ToDictionary<ItemTypeAttribute, IConvertible>(),
             itemAttributes != null ? itemAttributes.ToDictionary() : null)
         {
             Chargeable = null,
@@ -405,7 +402,6 @@ public class ItemTestDataBuilder
         var item = new Ammo(
             type,
             new Location(100, 100, 7),
-            type.Attributes.ToDictionary<ItemTypeAttribute, IConvertible>(),
             itemAttributes != null ? itemAttributes.ToDictionary() : null)
         {
             Chargeable = null,
@@ -490,8 +486,7 @@ public class ItemTestDataBuilder
         type.SetGroupIfNone();
 
         var factory = new RuneFactory();
-        var item = (Rune)factory.Create(type, new Location(100, 100, 7),
-            type.Attributes.ToDictionary<ItemTypeAttribute, IConvertible>());
+        var item = (Rune)factory.Create(type, new Location(100, 100, 7));
 
         LoadItemAttributes(item, itemAttributes);
         return item;

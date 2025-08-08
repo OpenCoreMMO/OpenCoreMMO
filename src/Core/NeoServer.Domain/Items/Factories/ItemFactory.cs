@@ -144,7 +144,7 @@ public class ItemFactory : IItemFactory
         {
             var createdCoin = Create(coinToAdd.Item1, Location.Inventory(Slot.Backpack), null);
             if (createdCoin is not Coin newCoin) continue;
-            newCoin.Amount = coinToAdd.Item2;
+            newCoin.SetAmount(coinToAdd.Item2);
 
             OnItemCreated?.Invoke(newCoin);
 
@@ -224,14 +224,14 @@ public class ItemFactory : IItemFactory
                 return instance;
 
         if (DefenseEquipmentFactory?.Create(itemType, location) is { } equipment) return equipment;
-        if (WeaponFactory?.Create(itemType, location, itemTypeAttributes, itemAttributes) is { } weapon) return weapon;
+        if (WeaponFactory?.Create(itemType, location, itemAttributes) is { } weapon) return weapon;
         if (ContainerFactory?.Create(itemType, location, children) is { } container) return container;
-        if (RuneFactory?.Create(itemType, location, itemTypeAttributes) is { } rune) return rune;
+        if (RuneFactory?.Create(itemType, location) is { } rune) return rune;
         if (GroundFactory?.Create(itemType, location) is { } ground) return ground;
 
-        if (CumulativeFactory?.Create(itemType, location, itemTypeAttributes) is { } cumulative) return cumulative;
+        if (CumulativeFactory?.Create(itemType, location) is { } cumulative) return cumulative;
 
-        if (LiquidPool.IsApplicable(itemType)) return new LiquidPool(itemType, location, itemTypeAttributes);
+        if (LiquidPool.IsApplicable(itemType)) return new LiquidPool(itemType, location);
         if (MagicField.IsApplicable(itemType)) return new MagicField(itemType, location);
         if (FloorChanger.IsApplicable(itemType)) return new FloorChanger(itemType, location);
 

@@ -16,8 +16,7 @@ public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
     public Ammo(
         IItemType itemType,
         Location location,
-        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
-        IDictionary<ItemAttribute, IConvertible> itemAttributes) : base(itemType, location, itemTypeAttributes)
+        IDictionary<ItemAttribute, IConvertible> itemAttributes) : base(itemType, location)
     {
         WeaponAttack = new WeaponAttack(itemType, itemAttributes);
     }
