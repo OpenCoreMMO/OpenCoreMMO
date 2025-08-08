@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using NeoServer.Domain.Chat;
+﻿using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Tasks;
+using System.Collections.Generic;
 
 namespace NeoServer.Server.Events.Creature;
 
@@ -18,7 +18,14 @@ public class CreatureStartedWalkingEventHandler(IGameServer game)
 
         if (eventWalk != 0) return;
 
-        var eventId = game.Scheduler.AddEvent(new SchedulerEvent(creature.StepDelay, () => Move(creature)));
+        //todo: 1098 resting new speed calculation
+        //var nextStep = creature.GetNextStep();
+        //var nextLocation = creature.Location.GetNextLocation(nextStep);
+
+        //var eventId = game.Scheduler.AddEvent(new SchedulerEvent(creature.GetStepDelay(creature.Location, nextLocation), () => Move(creature)));
+
+        var eventId = game.Scheduler.AddEvent(new SchedulerEvent(creature.GetStepDelay(), () => Move(creature)));
+
         _eventWalks.AddOrUpdate(creature.CreatureId, eventId);
     }
 

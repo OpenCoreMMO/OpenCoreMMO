@@ -28,7 +28,10 @@ public interface IWalkableCreature : ICreature
     bool IsFollowing { get; }
     ushort RawSpeed { get; }
     ushort Speed { get; }
-    int StepDelay { get; }
+
+    //todo: 1098 resting new speed calculation
+    //int GetStepDelay(Location.Structs.Location fromLocation, Location.Structs.Location toLocation);
+    int GetStepDelay();
     bool FirstStep { get; } //remove
     ITileEnterRule TileEnterRule { get; }
 

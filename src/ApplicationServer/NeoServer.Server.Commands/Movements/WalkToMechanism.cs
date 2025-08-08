@@ -26,8 +26,12 @@ public class WalkToMechanism : IWalkToMechanism
 
             void CallBack(ICreature _)
             {
+                //todo: 1098 resting new speed calculation
+                //_scheduler.AddEvent(
+                //    new SchedulerEvent(player.GetStepDelay(player.Location, toLocation), () => WalkTo(player, action, toLocation, true)));
+
                 _scheduler.AddEvent(
-                    new SchedulerEvent(player.StepDelay, () => WalkTo(player, action, toLocation, true)));
+                    new SchedulerEvent(player.GetStepDelay(), () => WalkTo(player, action, toLocation, true)));
             }
         }
 
