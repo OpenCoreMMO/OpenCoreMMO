@@ -31,6 +31,8 @@ public class AttackServiceTestBuilder
         var logger = new Mock<ILogger>();
         var mockEventAggregator = new Mock<IEventAggregator>();
 
+        var attackValidation = new AttackValidation(new MapTool(map, new PathFinder(map)), map, gameConfiguration.PvP);
+
         var itemTypeStore = ItemTypeStoreTestBuilder.Build(new ItemType().SetId(2019));
 
         var magicFieldService =
@@ -41,13 +43,11 @@ public class AttackServiceTestBuilder
         var conditionAttackService = new ConditionAttackService(monsterTypeStore);
 
         var areaAttackService =
-            new AreaAttackService(mockEventAggregator.Object, map, magicFieldService, conditionAttackService);
+            new AreaAttackService(mockEventAggregator.Object, map, magicFieldService, conditionAttackService, attackValidation);
 
         var singleTargetCombat =
             new SingleTargetAttackService(mockEventAggregator.Object, gameConfiguration.Combat, conditionAttackService,
                 magicFieldService);
-
-        var attackValidation = new AttackValidation(new MapTool(map, new PathFinder(map)), map, gameConfiguration.PvP);
 
         return new AttackService(logger.Object, skullService, areaAttackService, singleTargetCombat,
             conditionAttackService, attackValidation);
