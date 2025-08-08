@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Spells;
+using NeoServer.Domain.Spells.Entities;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers;

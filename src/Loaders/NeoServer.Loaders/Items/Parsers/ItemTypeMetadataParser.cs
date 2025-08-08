@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Items;
 using NeoServer.Loaders.Extensions;
 using NeoServer.Loaders.OTB.Parsers;

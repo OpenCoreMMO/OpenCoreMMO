@@ -2,6 +2,7 @@
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Spells;
+using NeoServer.Domain.Spells.Entities;
 
 namespace NeoServer.Domain.Combat.Defenses;
 

@@ -61,41 +61,15 @@ public class Dispatcher : IDispatcher
             return;
         }
 
-        _logger.Information("Dispatcher: Starting event processing");
-
         _processingTask = Task.Run(async () =>
         {
             try
             {
-                while (!token.IsCancellationRequested)
+                while (await _reader.WaitToReadAsync(token).ConfigureAwait(false))
                 {
-                    // Use timeout on WaitToReadAsync to allow periodic cancellation checks
-                    var waitTask = _reader.WaitToReadAsync(CancellationToken.None).AsTask();
-                    var delayTask = Task.Delay(100, token); // 100ms timeout
-
-                    var completedTask = await Task.WhenAny(waitTask, delayTask);
-
-                    if (completedTask == delayTask)
-                    {
-                        // Timeout - continue loop to check for cancellation
-                        if (token.IsCancellationRequested)
-                            break;
-                        continue;
-                    }
-
-                    if (!await waitTask)
-                    {
-                        // Channel was completed
-                        _logger.Information("Dispatcher: Channel was completed, exiting");
-                        break;
-                    }
-
-                    // Update GlobalTime once per iteration
                     GlobalTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-                    // Process all available events
-                    var eventsProcessed = 0;
-                    while (_reader.TryRead(out var evt) && !token.IsCancellationRequested)
+                    while (_reader.TryRead(out var evt))
                     {
                         if (evt?.Action is null)
                         {
@@ -109,9 +83,6 @@ public class Dispatcher : IDispatcher
                             {
                                 evt.Action.Invoke();
                                 _eventAggregator.PropagateEvents();
-                                eventsProcessed++;
-
-                                _logger.Verbose("Dispatcher: Executed event {Action}", evt.Action.Target?.ToString());
                             }
                             catch (Exception ex)
                             {
@@ -123,40 +94,23 @@ public class Dispatcher : IDispatcher
                             _logger.Debug("Dispatcher: Skipped expired event");
                         }
                     }
-
-                    if (eventsProcessed > 0)
-                    {
-                        _logger.Debug("Dispatcher: Processed {Count} events in this iteration", eventsProcessed);
-                    }
                 }
-
-                _logger.Information("Dispatcher: Processing loop ended due to cancellation");
             }
             catch (OperationCanceledException)
             {
-                _logger.Information("Dispatcher: Operation was cancelled");
+                _logger.Information("Dispatcher: cancelled");
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Dispatcher: Fatal exception occurred, dispatcher will stop");
-                throw; // Re-throw so it can be detected as a fatal failure
+                _logger.Error(ex, "Dispatcher: fatal error");
+                throw;
             }
             finally
             {
-                // Only close the channel when we are actually exiting
-                try
-                {
-                    _writer.Complete();
-                    _logger.Information("Dispatcher: Channel completed");
-                }
-                catch (Exception ex)
-                {
-                    _logger.Warning(ex, "Dispatcher: Error completing channel");
-                }
+                try { _writer.Complete(); }
+                catch (Exception ex) { _logger.Warning(ex, "Dispatcher: error completing channel"); }
             }
-        }, CancellationToken.None); // Don't pass the token here to avoid automatic cancellation
-
-        _logger.Information("Dispatcher: Started successfully");
+        }, CancellationToken.None);
     }
 
     // Additional method to wait for dispatcher completion (useful for tests and shutdown)

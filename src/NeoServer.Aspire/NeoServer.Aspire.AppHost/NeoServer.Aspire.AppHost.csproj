@@ -19,7 +19,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Standalone\NeoServer.Server.Standalone.csproj"/>
-        <ProjectReference Include="..\..\WebAPI\NeoServer.Web.API.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using NeoServer.Data.Entities;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Item;
+
+namespace NeoServer.Data.Extensions;
 
 public static class PlayerItemModelExtensions
 {

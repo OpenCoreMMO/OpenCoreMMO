@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Spells.Entities;
 
 namespace NeoServer.Domain.Spells;
 
