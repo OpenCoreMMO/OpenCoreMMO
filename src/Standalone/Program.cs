@@ -179,7 +179,9 @@ public class Program
     {
         logger.Warning("Server is in Shutdown...");
         await container.Resolve<IDispatcher>().WaitForCompletionAsync();
+        container.Resolve<IDispatcher>().Dispose();
         await container.Resolve<IPersistenceDispatcher>().WaitForCompletionAsync();
+        container.Resolve<IPersistenceDispatcher>().Dispose();
         container.Resolve<IScriptManager>().GlobalEvents.ExecuteShutdown();
         await container.Resolve<PlayerPersistenceRoutine>().SavePlayers();
     }

@@ -12,10 +12,13 @@ public class PersistenceDispatcher : IPersistenceDispatcher
     private readonly ILogger _logger;
     private readonly ChannelReader<Func<Task>> _reader;
     private readonly ChannelWriter<Func<Task>> _writer;
+    private readonly CancellationTokenSource _internalCancellation = new();
+    
     private Task _processingTask;
+    private volatile bool _isShuttingDown;
 
     /// <summary>
-    ///     A queue responsible for process events
+    ///     A queue responsible for processing persistence events
     /// </summary>
     public PersistenceDispatcher(ILogger logger)
     {
@@ -26,79 +29,145 @@ public class PersistenceDispatcher : IPersistenceDispatcher
     }
 
     /// <summary>
-    ///     Adds an event to dispatcher queue
+    ///     Adds a persistence event to the dispatcher queue
     /// </summary>
     /// <param name="evt"></param>
     public void AddEvent(Func<Task> evt)
     {
-        if (evt is null) return;
-        _writer.TryWrite(evt);
+        if (_isShuttingDown || evt is null)
+        {
+            if (evt is null)
+                _logger.Warning("PersistenceDispatcher: Attempted to add null event");
+            return;
+        }
+
+        if (!_writer.TryWrite(evt))
+        {
+            _logger.Warning("PersistenceDispatcher: Failed to write event to channel - channel may be completed");
+        }
     }
 
     /// <summary>
-    ///     Starts dispatcher processing queue
+    ///     Starts persistence dispatcher processing queue
     /// </summary>
     /// <param name="token"></param>
     public void Start(CancellationToken token)
     {
         if (_processingTask != null && !_processingTask.IsCompleted)
         {
-            _logger.Warning("PersistenceDispatcher: already started.");
+            _logger.Warning("PersistenceDispatcher: Already started");
             return;
         }
 
-        _logger.Information("PersistenceDispatcher: starting processing loop.");
+        // Combine external cancellation with internal
+        var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(token, _internalCancellation.Token);
 
-        _processingTask = Task.Run(async () =>
+        _logger.Information("PersistenceDispatcher: Starting persistence processing loop");
+
+        _processingTask = Task.Factory.StartNew(async () =>
         {
+            var eventCount = 0L;
+            
             try
             {
-                while (await _reader.WaitToReadAsync(token).ConfigureAwait(false))
+                await foreach (var evt in _reader.ReadAllAsync(combinedCts.Token))
                 {
-                    while (_reader.TryRead(out var evt))
+                    eventCount++;
+
+                    // Add timeout to prevent hanging during debugging
+                    using var timeoutCts = new CancellationTokenSource(TimeSpan.FromMinutes(5)); // Longer timeout for DB operations
+
+                    try
                     {
-                        try
+                        var persistenceTask = Task.Run(async () => await evt().ConfigureAwait(false), timeoutCts.Token);
+                        
+                        await persistenceTask;
+                        
+                        // Progress logging for debugging
+                        if (eventCount % 100 == 0)
                         {
-                            await evt().ConfigureAwait(false);
+                            _logger.Debug("PersistenceDispatcher: Processed {EventCount} persistence events", eventCount);
                         }
-                        catch (Exception ex)
-                        {
-                            _logger.Error(ex, "PersistenceDispatcher: error during persistence operation.");
-                        }
+                    }
+                    catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
+                    {
+                        _logger.Warning("PersistenceDispatcher: Persistence operation timeout - possible database deadlock during debugging");
+                        // Continue processing other events
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error(ex, "PersistenceDispatcher: Error during persistence operation");
+                        // Continue processing other events instead of crashing
                     }
                 }
 
-                _logger.Information("PersistenceDispatcher: channel has been completed, stopping processing.");
+                _logger.Information("PersistenceDispatcher: Channel completed, stopping processing after {EventCount} events", eventCount);
             }
             catch (OperationCanceledException)
             {
-                _logger.Information("PersistenceDispatcher: operation was cancelled.");
+                _logger.Information("PersistenceDispatcher: Cancelled after processing {EventCount} events", eventCount);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "PersistenceDispatcher: fatal exception, dispatcher will stop.");
+                _logger.Error(ex, "PersistenceDispatcher: Fatal exception after processing {EventCount} events", eventCount);
                 throw;
             }
             finally
             {
-                try
-                {
+                try 
+                { 
                     _writer.Complete();
-                    _logger.Information("PersistenceDispatcher: channel completed.");
+                    _logger.Information("PersistenceDispatcher: Channel completed successfully");
                 }
-                catch (Exception ex)
-                {
-                    _logger.Warning(ex, "PersistenceDispatcher: error completing channel.");
+                catch (Exception ex) 
+                { 
+                    _logger.Warning(ex, "PersistenceDispatcher: Error completing channel"); 
                 }
+                
+                _logger.Information("PersistenceDispatcher: Processing loop ended. Total persistence events processed: {EventCount}", eventCount);
             }
-        }, CancellationToken.None); // Do not pass token here to avoid automatic task cancellation
+        }, combinedCts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
 
-        _logger.Information("PersistenceDispatcher: started successfully.");
+        _logger.Information("PersistenceDispatcher: Started successfully");
     }
 
-    // Additional method to wait for dispatcher completion (useful for tests and shutdown)
-    public Task WaitForCompletionAsync()
+    /// <summary>
+    /// Wait for dispatcher completion (useful for tests and shutdown)
+    /// </summary>
+    public async Task WaitForCompletionAsync()
     {
-        return _processingTask ?? Task.CompletedTask;
+        if (_processingTask == null) return;
+
+        try
+        {
+            await _processingTask.ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "PersistenceDispatcher: Error during shutdown");
+        }
+    }
+
+    /// <summary>
+    /// Initiate graceful shutdown of the persistence dispatcher
+    /// </summary>
+    public void Shutdown()
+    {
+        if (_isShuttingDown) return;
+        
+        _isShuttingDown = true;
+        _logger.Information("PersistenceDispatcher: Initiating shutdown");
+        
+        _writer.TryComplete();
+        _internalCancellation.Cancel();
+    }
+
+    /// <summary>
+    /// Dispose resources
+    /// </summary>
+    public void Dispose()
+    {
+        Shutdown();
+        _internalCancellation?.Dispose();
     }
 }
