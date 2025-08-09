@@ -72,9 +72,10 @@ function kickGuild.onSay(player, words, param)
         player:getPosition():sendMagicEffect(CONST_ME_MAGIC_RED)
         targetPlayer:getPosition():sendMagicEffect(CONST_ME_MAGIC_RED)
         
-        -- Notify other guild members
-        for _, member in pairs(guild:getMembers()) do
-            if member:isOnline() and member ~= player and member ~= targetPlayer then
+        -- Notify other guild members (using getMembersOnline to avoid isOnline issues)
+        local membersOnline = guild:getMembersOnline()
+        for i, member in pairs(membersOnline) do
+            if member and member ~= player and member ~= targetPlayer then
                 member:sendTextMessage(MESSAGE_INFO_DESCR, string.format("%s has been kicked from the guild by %s.", targetPlayer:getName(), player:getName()))
             end
         end

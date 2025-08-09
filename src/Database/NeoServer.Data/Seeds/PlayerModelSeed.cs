@@ -18,7 +18,13 @@ internal static class PlayerModelSeed
             CreatePlayerEntity(4, "Druid Sample", 2, 1, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 130, 69, 95,
                 78, 58),
             CreatePlayerEntity(5, "Paladin Sample", 3, 1, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 137, 69, 95,
-                78, 58)
+                78, 58),
+            // Staff Characters - for testing role-based chat colors
+            CreatePlayerEntity(6, "Junior Tutor", 1, 2, 200, 2645, 2645, 8850, 8850, 1020, 1022, 7, 2520, 130, 69, 95, 78, 58),
+            CreatePlayerEntity(7, "Senior Tutor", 2, 3, 350, 3440, 3440, 12750, 12750, 1020, 1022, 7, 2520, 137, 69, 95, 78, 58),
+            CreatePlayerEntity(8, "Game Master", 4, 4, 800, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 75, 69, 95, 78, 58),
+            CreatePlayerEntity(9, "Community Manager", 1, 5, 600, 3440, 3440, 15750, 15750, 1020, 1022, 7, 2520, 130, 69, 95, 78, 58),
+            CreatePlayerEntity(10, "Administrator", 11, 6, 1000, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 75, 69, 95, 78, 58)
         );
     }
 

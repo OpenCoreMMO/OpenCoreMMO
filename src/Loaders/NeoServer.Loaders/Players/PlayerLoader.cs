@@ -32,6 +32,7 @@ public class PlayerLoader : IPlayerLoader
 {
     private readonly GameConfiguration _gameConfiguration;
     protected readonly ChatChannelFactory ChatChannelFactory;
+    protected readonly IChatChannelStore ChatChannelStore;
     protected readonly ICreatureFactory CreatureFactory;
     protected readonly IGroupStore GroupStore;
     protected readonly IGuildStore GuildStore;
@@ -44,6 +45,7 @@ public class PlayerLoader : IPlayerLoader
     [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
     public PlayerLoader(IItemFactory itemFactory, ICreatureFactory creatureFactory,
         ChatChannelFactory chatChannelFactory,
+        IChatChannelStore chatChannelStore,
         IGuildStore guildStore,
         IVocationStore vocationStore,
         IGroupStore groupStore,
@@ -55,6 +57,7 @@ public class PlayerLoader : IPlayerLoader
         ItemFactory = itemFactory;
         CreatureFactory = creatureFactory;
         ChatChannelFactory = chatChannelFactory;
+        ChatChannelStore = chatChannelStore;
         GuildStore = guildStore;
         VocationStore = vocationStore;
         GroupStore = groupStore;
@@ -138,6 +141,13 @@ public class PlayerLoader : IPlayerLoader
             player.GuildRank = new Domain.Guild.GuildRankInfo((ushort)guildRank.Id, guildRank.Name, (byte)guildRank.Level);
         }
 
+        // Add player to guild member lists if they have a guild
+        if (player.Guild is not null)
+        {
+            Console.WriteLine($"[DEBUG] PlayerLoader: Adding player {player.Name} to guild {player.Guild.Name} member lists");
+            player.Guild.AddMember(player);
+        }
+
         AddRegenerationCondition(playerEntity, player);
 
         player.AddInventory(ConvertToInventory(player, playerEntity));
@@ -213,6 +223,9 @@ public class PlayerLoader : IPlayerLoader
     {
         if (player is null) return;
 
+        Console.WriteLine($"[DEBUG] AddExistingPersonalChannels called for player: {player.Name}");
+        Console.WriteLine($"[DEBUG] Player Group: {player.Group?.Name ?? "null"}, Access: {player.Group?.Access ?? false}");
+
         var personalChannels = GameAssemblyCache.Cache
             .Where(x => typeof(PersonalChatChannel).IsAssignableFrom(x));
         foreach (var channel in personalChannels)
@@ -222,6 +235,43 @@ public class PlayerLoader : IPlayerLoader
             var createdChannel = ChatChannelFactory.Create(channel, null, player);
             player.Channels.AddPersonalChannel(createdChannel);
         }
+        
+        // Add administrators to all available channels
+        if (player.Group?.Access == true)
+        {
+            Console.WriteLine($"[DEBUG] Player {player.Name} is administrator - adding to all channels");
+            AddAdminToAllChannels(player);
+        }
+        else
+        {
+            Console.WriteLine($"[DEBUG] Player {player.Name} is NOT administrator - skipping channel auto-add");
+        }
+    }
+    
+    protected virtual void AddAdminToAllChannels(IPlayer admin)
+    {
+        Console.WriteLine($"[DEBUG] Adding administrator {admin.Name} to all available channels");
+        
+        // Get all channels from the chat channel store
+        var allChannels = ChatChannelStore.All;
+        
+        Console.WriteLine($"[DEBUG] Found {allChannels.Count()} total channels in store");
+        
+        foreach (var channel in allChannels)
+        {
+            Console.WriteLine($"[DEBUG] Attempting to add {admin.Name} to channel: {channel.Name} (ID: {channel.Id}, Type: {channel.GetType().Name})");
+            
+            if (channel.AddUser(admin))
+            {
+                Console.WriteLine($"[DEBUG] SUCCESS: Administrator {admin.Name} added to channel: {channel.Name}");
+            }
+            else
+            {
+                Console.WriteLine($"[DEBUG] FAILED: Could not add administrator {admin.Name} to channel: {channel.Name}");
+            }
+        }
+        
+        Console.WriteLine($"[DEBUG] Finished adding administrator {admin.Name} to channels");
     }
 
     protected Dictionary<SkillType, ISkill> ConvertToSkills(PlayerEntity playerRecord)

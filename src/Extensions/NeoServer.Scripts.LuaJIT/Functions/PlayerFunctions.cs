@@ -869,13 +869,22 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         var player = GetUserdata<IPlayer>(luaState, 1);
         if (player?.Guild == null)
         {
+            Console.WriteLine($"[DEBUG] LuaPlayerGetGuildLevel - Player {player?.Name ?? "null"} has no guild");
             Lua.PushNumber(luaState, 0);
             return 1;
         }
 
-        // TODO: Implement guild level retrieval from player-guild relationship
-        // Need to check the guild level/rank from the Guild domain object
-        // For now, return 1 (member) as default
+        // Get guild level from player's guild rank
+        var guildRank = player.GuildRank;
+        if (guildRank != null)
+        {
+            Console.WriteLine($"[DEBUG] LuaPlayerGetGuildLevel - Player {player.Name} has rank {guildRank.Name} (Level: {guildRank.Level})");
+            Lua.PushNumber(luaState, guildRank.Level);
+            return 1;
+        }
+        
+        Console.WriteLine($"[DEBUG] LuaPlayerGetGuildLevel - Player {player.Name} has no guild rank, defaulting to 1 (Member)");
+        // Default to Member level if no specific rank is set
         Lua.PushNumber(luaState, 1);
         return 1;
     }

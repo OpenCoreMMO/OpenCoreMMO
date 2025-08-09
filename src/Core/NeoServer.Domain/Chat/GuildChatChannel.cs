@@ -15,6 +15,28 @@ public class GuildChatChannel(ushort id, string name, Guild.Guild guild) : ChatC
 
     public override bool AddUser(IPlayer player)
     {
+        // Administrators can access any guild channel
+        if (player?.Group?.Access == true)
+        {
+            if (HasUser(player)) 
+            {
+                return false;
+            }
+            
+            if (users.TryGetValue(player.Id, out var adminUser))
+            {
+                if (adminUser.Removed)
+                {
+                    adminUser.MarkAsAdded();
+                    return true;
+                }
+                return false;
+            }
+
+            return users.TryAdd(player.Id, new UserChat { Player = player });
+        }
+        
+        // Regular guild member validation
         if (player.Guild is null) 
         {
             return false;
@@ -52,6 +74,12 @@ public class GuildChatChannel(ushort id, string name, Guild.Guild guild) : ChatC
 
     public override SpeechType GetTextColor(IPlayer player)
     {
+        // Administrators get special red color in guild channels
+        if (player?.Group?.Access == true)
+        {
+            return SpeechType.ChannelRed1; // Admin gets leader color
+        }
+        
         var rank = player.GuildRank;
         
         // If rank is null, use default color

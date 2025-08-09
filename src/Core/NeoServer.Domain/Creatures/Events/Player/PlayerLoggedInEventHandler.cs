@@ -1,4 +1,6 @@
-﻿using NeoServer.Domain.Chat;
+﻿using System;
+using System.Linq;
+using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
@@ -22,6 +24,13 @@ public class PlayerLoggedInEventHandler : IGameEventHandler
         if (player is null) return;
 
         _map.PlaceCreature(player);
+
+        // Re-add player to guild if they have one
+        if (player.Guild != null)
+        {
+            Console.WriteLine($"[DEBUG] PlayerLoggedIn - Re-adding {player.Name} to guild {player.Guild.Name}");
+            player.Guild.AddMember(player);
+        }
 
         JoinChannels(player);
     }

@@ -55,23 +55,27 @@ function passLeadership.onSay(player, words, param)
         return false
     end
 
-    -- TODO: Implement leadership transfer:
-    -- 1. Update current leader to vice-leader (level 2) in database
-    -- 2. Update target to leader (level 3) in database
-    -- 3. Update both players' guild levels in game
-    -- 4. Update guild ownership information
-    -- 5. Notify all guild members
+    -- Transfer leadership:
+    -- Use the dedicated transferLeadership function
     
     local guildName = guild:getName()
+    
+    -- Transfer leadership using the dedicated function
+    if not guild:transferLeadership(player, targetPlayer) then
+        player:sendCancelMessage("Failed to transfer leadership. Please try again.")
+        return false
+    end
     
     player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have passed leadership of %s to %s. You are now a Vice-Leader.", guildName, targetPlayer:getName()))
     targetPlayer:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have received leadership of the guild '%s' from %s. You are now the Guild Leader.", guildName, player:getName()))
     
-    -- TODO: Notify all online guild members about leadership change
-    -- for each online guild member:
-    --     if member ~= player and member ~= targetPlayer then
-    --         member:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("Guild leadership of '%s' has been passed from %s to %s.", guildName, player:getName(), targetPlayer:getName()))
-    --     end
+    -- Notify all online guild members about leadership change
+    local membersOnline = guild:getMembersOnline()
+    for i, member in pairs(membersOnline) do
+        if member and member ~= player and member ~= targetPlayer then
+            member:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("Guild leadership of '%s' has been passed from %s to %s.", guildName, player:getName(), targetPlayer:getName()))
+        end
+    end
     
     player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
     targetPlayer:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)

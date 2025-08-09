@@ -7,6 +7,7 @@ using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Guild;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using Serilog;
+using System.Linq;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -43,6 +44,7 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
         RegisterMethod(luaState, "Guild", "revokeInvitation", LuaGuildRevokeInvitation);
         RegisterMethod(luaState, "Guild", "promoteMember", LuaGuildPromoteMember);
         RegisterMethod(luaState, "Guild", "demoteMember", LuaGuildDemoteMember);
+        RegisterMethod(luaState, "Guild", "transferLeadership", LuaGuildTransferLeadership);
         RegisterMethod(luaState, "Guild", "disband", LuaGuildDisband);
         
         // Register global function to check if guild exists
@@ -276,10 +278,9 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
         var index = 1;
         foreach (var member in guild.MembersOnline)
         {
-            Lua.PushNumber(luaState, index++);
             PushUserdata(luaState, member);
             SetMetatable(luaState, -1, "Player");
-            Lua.SetTable(luaState, -3);
+            Lua.RawSetI(luaState, -2, index++);
         }
 
         return 1;
@@ -310,9 +311,12 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
     private static int LuaGuildRemoveMember(LuaState luaState)
     {
         // guild:removeMember(player)
+        Console.WriteLine("[DEBUG] LuaGuildRemoveMember called");
+        
         var guild = GetUserdata<Guild>(luaState, 1);
         if (guild == null)
         {
+            Console.WriteLine("[DEBUG] LuaGuildRemoveMember failed - Guild is null");
             Lua.PushBoolean(luaState, false);
             return 1;
         }
@@ -320,12 +324,17 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
         var player = GetUserdata<NeoServer.Domain.Common.Contracts.Creatures.IPlayer>(luaState, 2);
         if (player == null)
         {
+            Console.WriteLine("[DEBUG] LuaGuildRemoveMember failed - Player is null");
             Lua.PushBoolean(luaState, false);
             return 1;
         }
 
-        guild.RemoveMember(player);
-        Lua.PushBoolean(luaState, true);
+        Console.WriteLine($"[DEBUG] LuaGuildRemoveMember - Guild: {guild.Name}, Player: {player.Name}");
+        
+        var result = guild.RemoveMember(player);
+        Console.WriteLine($"[DEBUG] LuaGuildRemoveMember result: {result}");
+        
+        Lua.PushBoolean(luaState, result);
         return 1;
     }
 
@@ -470,9 +479,12 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
     private static int LuaGuildPromoteMember(LuaState luaState)
     {
         // guild:promoteMember(player, newLevel)
+        Console.WriteLine("[DEBUG] LuaGuildPromoteMember called");
+        
         var guild = GetUserdata<Guild>(luaState, 1);
         if (guild == null)
         {
+            Console.WriteLine("[DEBUG] LuaGuildPromoteMember failed - Guild is null");
             Lua.PushBoolean(luaState, false);
             return 1;
         }
@@ -480,13 +492,17 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
         var player = GetUserdata<NeoServer.Domain.Common.Contracts.Creatures.IPlayer>(luaState, 2);
         var newLevel = GetNumber<int>(luaState, 3);
         
+        Console.WriteLine($"[DEBUG] LuaGuildPromoteMember - Guild: {guild.Name}, Player: {player?.Name ?? "null"}, NewLevel: {newLevel}");
+        
         if (player == null)
         {
+            Console.WriteLine("[DEBUG] LuaGuildPromoteMember failed - Player is null");
             Lua.PushBoolean(luaState, false);
             return 1;
         }
 
         var result = guild.PromoteMember(player, (int)newLevel);
+        Console.WriteLine($"[DEBUG] LuaGuildPromoteMember result: {result}");
         Lua.PushBoolean(luaState, result);
         return 1;
     }
@@ -515,18 +531,118 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
         return 1;
     }
 
-    private static int LuaGuildDisband(LuaState luaState)
+    private static int LuaGuildTransferLeadership(LuaState luaState)
     {
-        // guild:disband()
+        // guild:transferLeadership(currentLeader, newLeader)
+        Console.WriteLine("[DEBUG] LuaGuildTransferLeadership called");
+        
         var guild = GetUserdata<Guild>(luaState, 1);
         if (guild == null)
         {
+            Console.WriteLine("[DEBUG] LuaGuildTransferLeadership failed - Guild is null");
             Lua.PushBoolean(luaState, false);
             return 1;
         }
 
-        var result = guild.Disband();
+        var currentLeader = GetUserdata<NeoServer.Domain.Common.Contracts.Creatures.IPlayer>(luaState, 2);
+        var newLeader = GetUserdata<NeoServer.Domain.Common.Contracts.Creatures.IPlayer>(luaState, 3);
+        
+        Console.WriteLine($"[DEBUG] LuaGuildTransferLeadership - Guild: {guild.Name}, Current: {currentLeader?.Name ?? "null"}, New: {newLeader?.Name ?? "null"}");
+        
+        if (currentLeader == null || newLeader == null)
+        {
+            Console.WriteLine("[DEBUG] LuaGuildTransferLeadership failed - One of the players is null");
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var result = guild.TransferLeadership(currentLeader, newLeader);
+        Console.WriteLine($"[DEBUG] LuaGuildTransferLeadership result: {result}");
         Lua.PushBoolean(luaState, result);
+        return 1;
+    }
+
+    private static int LuaGuildDisband(LuaState luaState)
+    {
+        // guild:disband()
+        Console.WriteLine("[DEBUG] LuaGuildDisband called");
+        
+        var guild = GetUserdata<Guild>(luaState, 1);
+        if (guild == null)
+        {
+            Console.WriteLine("[DEBUG] LuaGuildDisband failed - Guild is null");
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
+        Console.WriteLine($"[DEBUG] LuaGuildDisband - Guild: {guild.Name} (ID: {guild.Id})");
+
+        try
+        {
+            // First disband the guild (removes members)
+            var result = guild.Disband();
+            if (!result)
+            {
+                Console.WriteLine("[DEBUG] LuaGuildDisband failed - Guild.Disband() returned false");
+                Lua.PushBoolean(luaState, false);
+                return 1;
+            }
+
+            // Remove from guild store
+            var guildStore = Server.Helpers.IoC.GetInstance<IGuildStore>();
+            guildStore.Map.Remove(guild.Id);
+            Console.WriteLine($"[DEBUG] Guild {guild.Id} removed from guild store");
+            
+            // Remove guild channel from channel store if exists
+            if (guild.Channel != null)
+            {
+                var chatChannelStore = Server.Helpers.IoC.GetInstance<IChatChannelStore>();
+                chatChannelStore.Map.Remove(guild.Channel.Id);
+                Console.WriteLine($"[DEBUG] Guild channel {guild.Channel.Id} removed from channel store");
+            }
+
+            // Remove from database
+            var guildRepository = Server.Helpers.IoC.GetInstance<IGuildRepository>();
+            var dbContext = Server.Helpers.IoC.GetInstance<NeoServer.Data.Contexts.NeoContext>();
+            
+            // Remove guild memberships first (foreign key constraint)
+            var guildMemberships = dbContext.GuildMemberships.Where(m => m.GuildId == guild.Id).ToList();
+            if (guildMemberships.Any())
+            {
+                dbContext.GuildMemberships.RemoveRange(guildMemberships);
+                Console.WriteLine($"[DEBUG] Removed {guildMemberships.Count} guild memberships from database");
+            }
+            
+            // Remove guild ranks (foreign key constraint)
+            var guildRanks = dbContext.GuildRanks.Where(r => r.GuildId == guild.Id).ToList();
+            if (guildRanks.Any())
+            {
+                dbContext.GuildRanks.RemoveRange(guildRanks);
+                Console.WriteLine($"[DEBUG] Removed {guildRanks.Count} guild ranks from database");
+            }
+            
+            // Remove guild from database
+            var guildEntity = dbContext.Guilds.FirstOrDefault(g => g.Id == guild.Id);
+            if (guildEntity != null)
+            {
+                dbContext.Guilds.Remove(guildEntity);
+                Console.WriteLine($"[DEBUG] Guild {guild.Id} removed from database");
+            }
+            
+            // Save all changes
+            dbContext.SaveChanges();
+            Console.WriteLine("[DEBUG] Database changes saved");
+
+            Console.WriteLine("[DEBUG] LuaGuildDisband completed successfully");
+            Lua.PushBoolean(luaState, true);
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Failed to disband guild: {GuildName} (ID: {GuildId})", guild.Name, guild.Id);
+            Console.WriteLine($"[DEBUG] LuaGuildDisband failed with exception: {ex.Message}");
+            Lua.PushBoolean(luaState, false);
+        }
+
         return 1;
     }
 

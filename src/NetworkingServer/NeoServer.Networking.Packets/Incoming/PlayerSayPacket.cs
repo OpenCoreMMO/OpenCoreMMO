@@ -25,6 +25,7 @@ public class PlayerSayPacket : IncomingPacket
             case SpeechType.ChannelYellow:
             case SpeechType.ChannelRed1:
             case SpeechType.ChannelOrange:
+            case SpeechType.ChannelManager:
                 ChannelId = message.GetUInt16();
                 break;
             default:

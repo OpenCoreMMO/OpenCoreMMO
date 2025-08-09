@@ -1557,6 +1557,13 @@ public class Player : CombatActor, IPlayer
 
         var oldGuild = Guild;
         
+        // Force exit from old guild channel BEFORE clearing guild data
+        // This ensures the guild chat window is properly closed on the client
+        if (oldGuild?.Channel != null && Channels.PrivateChannels?.Contains(oldGuild.Channel) == true)
+        {
+            Channels.ExitChannel(oldGuild.Channel);
+        }
+        
         // Clear guild data
         GuildNick = string.Empty;
         Guild = null;

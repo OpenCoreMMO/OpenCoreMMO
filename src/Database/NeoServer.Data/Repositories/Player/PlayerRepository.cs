@@ -39,13 +39,6 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
         await connection.ExecuteAsync(sql);
     }
 
-    public async Task Add(PlayerEntity player)
-    {
-        await using var context = NewDbContext;
-        await context.AddAsync(player);
-        await context.SaveChangesAsync();
-    }
-
     public async Task<List<PlayerOutfitAddonEntity>> GetOutfitAddons(int playerId)
     {
         await using var context = NewDbContext;
@@ -100,14 +93,6 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
         await StorageManager.SaveStorages(player, neoContext);
 
         await neoContext.SaveChangesAsync();
-    }
-
-    public async Task<IEnumerable<PlayerEntity>> GetPaginatedPlayersAsync(Expression<Func<PlayerEntity, bool>> filter,
-        int page, int limit)
-    {
-        await using var neoContext = NewDbContext;
-        var skip = (page - 1) * limit;
-        return await neoContext.Players.Where(filter).Skip(skip).Take(limit).ToListAsync();
     }
 
     private static async Task UpdatePlayer(IPlayer player, NeoContext neoContext)

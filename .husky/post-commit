@@ -1,7 +1,38 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Gera changelog automaticamente após cada commit
-echo "📝 Atualizando changelog automaticamente..."
-npm run release > /dev/null 2>&1 || true
-echo "✅ Changelog atualizado!"
+# Add current commit to changelog if it's a conventional commit
+echo "📝 Checking if commit follows conventional commits..."
+
+# Get the last commit message
+COMMIT_MSG=$(git log -1 --pretty=%B)
+COMMIT_HASH=$(git log -1 --pretty=%h)
+DATE=$(date +%Y-%m-%d)
+
+# Check if it's a conventional commit (only feat and fix)
+if echo "$COMMIT_MSG" | grep -qE "^(feat|fix)(\(.+\))?: .+"; then
+    echo "✅ Conventional commit detected, adding to changelog..."
+    
+    # Add entry to the top of changelog (after header)
+    TEMP_FILE=$(mktemp)
+    
+    # Read changelog header
+    head -8 CHANGELOG.md > "$TEMP_FILE"
+    
+    # Add new entry
+    echo "" >> "$TEMP_FILE"
+    echo "## [$DATE]" >> "$TEMP_FILE"
+    echo "" >> "$TEMP_FILE"
+    echo "- **$COMMIT_MSG** ([${COMMIT_HASH}](https://github.com/opencoremmo/opencoremmo/commit/${COMMIT_HASH}))" >> "$TEMP_FILE"
+    echo "" >> "$TEMP_FILE"
+    
+    # Add the rest of changelog (skip first 8 header lines)
+    tail -n +9 CHANGELOG.md >> "$TEMP_FILE"
+    
+    # Replace original file
+    mv "$TEMP_FILE" CHANGELOG.md
+    
+    echo "✅ Changelog updated!"
+else
+    echo "ℹ️ Commit is not conventional, changelog was not modified"
+fi

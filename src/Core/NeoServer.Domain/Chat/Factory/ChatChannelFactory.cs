@@ -42,6 +42,11 @@ public class ChatChannelFactory
         var guid = _guildStore.Get(guildId);
         var channel = new GuildChatChannel(id, name, guid);
         SubscribeEvents(channel);
+        
+        // Add guild channel to the chat channel store so administrators can access it
+        _chatChannelStore.AddOrUpdate(channel.Id, channel);
+        Console.WriteLine($"[DEBUG] Guild channel '{name}' (ID: {channel.Id}) added to ChatChannelStore");
+        
         return channel;
     }
 
@@ -50,6 +55,11 @@ public class ChatChannelFactory
         var id = GenerateUniqueId();
         var channel = new GuildChatChannel(id, name, guild);
         SubscribeEvents(channel);
+        
+        // Add guild channel to the chat channel store so administrators can access it
+        _chatChannelStore.AddOrUpdate(channel.Id, channel);
+        Console.WriteLine($"[DEBUG] Guild channel '{name}' (ID: {channel.Id}) added to ChatChannelStore");
+        
         return channel;
     }
 

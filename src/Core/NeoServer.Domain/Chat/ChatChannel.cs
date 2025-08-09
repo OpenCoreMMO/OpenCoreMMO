@@ -33,10 +33,41 @@ public class ChatChannel
     public virtual SpeechType GetTextColor(IPlayer player)
     {
         if (player is null) return ChatColor;
+        
+        // Staff colors based on group - applies to all channels
+        if (player.Group != null)
+        {
+            switch (player.Group.Id)
+            {
+                case 6: // God (Administrator) - Red (same as other staff)
+                    return SpeechType.ChannelRed1;
+                case 5: // Community Manager - Red (same as GM to avoid protocol issues)
+                    return SpeechType.ChannelRed1;
+                case 4: // GameMaster - Red
+                    return SpeechType.ChannelRed1;
+                case 3: // Senior Tutor - Red (only in specific channels)
+                    if (IsTutorChannel())
+                        return SpeechType.ChannelRed1;
+                    break;
+                case 2: // Junior Tutor - Orange (only in specific channels)
+                    if (IsTutorChannel())
+                        return SpeechType.ChannelOrange;
+                    break;
+            }
+        }
+        
+        // Default vocation-based color system
         if (ChatColorByVocation is not null &&
             ChatColorByVocation.TryGetValue(player.Vocation.VocationType, out var color)) return color;
 
         return ChatColor;
+    }
+    
+    private bool IsTutorChannel()
+    {
+        // Channels where tutors have special colors: Help, English Chat, World Chat, Polish Chat, Portuguese Chat, Spanish Chat
+        var tutorChannelNames = new[] { "Help", "English Chat", "World Chat", "Polish Chat", "Portuguese Chat", "Spanish Chat" };
+        return tutorChannelNames.Contains(Name, StringComparer.OrdinalIgnoreCase);
     }
 
     public virtual bool HasUser(IPlayer player)
@@ -143,6 +174,12 @@ public class ChatChannel
 
     public bool Validate(ChannelRule rule, IPlayer player)
     {
+        // Administrators bypass all channel restrictions
+        if (player?.Group?.Access == true)
+        {
+            return true;
+        }
+        
         if (rule.None) return true;
         if (rule.AllowedVocations?.Length > 0 &&
             !rule.AllowedVocations.Contains(player.Vocation.VocationType)) return false;

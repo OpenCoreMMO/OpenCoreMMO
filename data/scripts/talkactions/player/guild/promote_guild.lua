@@ -76,7 +76,8 @@ function promoteGuild.onSay(player, words, param)
         targetPlayer:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
         
         -- Notify other guild members
-        for _, member in pairs(guild:getMembers()) do
+        local members = guild:getMembers()
+        for _, member in pairs(members) do
             if member:isOnline() and member ~= player and member ~= targetPlayer then
                 member:sendTextMessage(MESSAGE_INFO_DESCR, string.format("%s has been promoted to %s by %s.", targetPlayer:getName(), levelName, player:getName()))
             end

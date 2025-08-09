@@ -73,5 +73,23 @@
 		"color":{
 			"default":"white"
 		}
+	},
+	{
+		"id": 10,
+		"name": "Polish Chat",
+		"opened": true,
+		"enabled": true
+	},
+	{
+		"id": 11,
+		"name": "Portuguese Chat", 
+		"opened": true,
+		"enabled": true
+	},
+	{
+		"id": 12,
+		"name": "Spanish Chat",
+		"opened": true,
+		"enabled": true
 	}
 ]

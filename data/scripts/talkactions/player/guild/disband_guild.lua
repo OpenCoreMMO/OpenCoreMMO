@@ -17,26 +17,27 @@ function disbandGuild.onSay(player, words, param)
     end
 
     -- Check if player is the guild leader
-    if player:getGuildLevel() ~= 3 then -- Only leaders can disband
+    local guildLevel = player:getGuildLevel()
+    if guildLevel ~= 3 then -- Only leaders can disband
         player:sendCancelMessage("Only the guild leader can disband the guild.")
         return false
     end
 
-    -- Confirmation check
-    if param ~= "yes" then
-        player:sendCancelMessage("Are you sure you want to disband your guild? This action cannot be undone. Type '!disbandguild yes' to confirm.")
-        return false
-    end
+    -- Confirmation check is removed - direct execution
+    -- if param ~= "yes" then
+    --     print("DEBUG: No confirmation provided")
+    --     player:sendCancelMessage("Are you sure you want to disband your guild? This action cannot be undone. Type '!disbandguild yes' to confirm.")
+    --     return false
+    -- end
 
     local guildName = guild:getName()
     
-    -- Notify all online guild members first
-    for _, member in pairs(guild:getMembers()) do
-        if member:isOnline() then
-            if member ~= player then
-                member:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("The guild '%s' has been disbanded by %s.", guildName, player:getName()))
-                member:getPosition():sendMagicEffect(CONST_ME_MAGIC_RED)
-            end
+    -- Notify all online guild members first (simplified - no isOnline check)
+    local membersOnline = guild:getMembersOnline()
+    for i, member in pairs(membersOnline) do
+        if member and member ~= player then
+            member:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("The guild '%s' has been disbanded by %s.", guildName, player:getName()))
+            member:getPosition():sendMagicEffect(CONST_ME_MAGIC_RED)
         end
     end
     

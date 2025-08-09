@@ -51,7 +51,7 @@ public class PlayerChannel : IPlayerChannel
 
         if (channel.HasUser(_owner))
         {
-            OperationFailService.Send(CreatureId, "You've already joined this chat channel");
+            // Don't send message if already joined - this prevents spam during login
             return false;
         }
 

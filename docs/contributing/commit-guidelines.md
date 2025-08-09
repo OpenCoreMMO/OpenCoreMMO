@@ -51,17 +51,19 @@ test: add unit tests for player inventory
 
 | Type | Purpose | Changelog | Examples |
 |------|---------|-----------|----------|
-| `feat` | ✨ New features | **Features** | `feat: add guild system` |
-| `fix` | 🐛 Bug fixes | **Bug Fixes** | `fix: resolve memory leak` |
-| `docs` | 📚 Documentation | **Documentation** | `docs: update setup guide` |
-| `style` | 💄 Code style | **Styles** | `style: format code with prettier` |
-| `refactor` | ♻️ Code refactoring | **Code Refactoring** | `refactor: extract common utilities` |
-| `perf` | ⚡ Performance | **Performance** | `perf: optimize database queries` |
-| `test` | ✅ Testing | **Tests** | `test: add integration tests` |
-| `build` | 🏗️ Build system | **Build System** | `build: update dependencies` |
-| `ci` | 👷 CI/CD | **CI/CD** | `ci: add automated deployment` |
-| `chore` | 🔧 Maintenance | **Chores** | `chore: update package versions` |
-| `revert` | ⏪ Revert changes | **Reverts** | `revert: undo previous commit` |
+| `feat` | ✨ New features | ✅ **Auto-added** | `feat: add guild system` |
+| `fix` | 🐛 Bug fixes | ✅ **Auto-added** | `fix: resolve memory leak` |
+| `docs` | 📚 Documentation | ❌ *Not added* | `docs: update setup guide` |
+| `style` | 💄 Code style | ❌ *Not added* | `style: format code with prettier` |
+| `refactor` | ♻️ Code refactoring | ❌ *Not added* | `refactor: extract common utilities` |
+| `perf` | ⚡ Performance | ❌ *Not added* | `perf: optimize database queries` |
+| `test` | ✅ Testing | ❌ *Not added* | `test: add integration tests` |
+| `build` | 🏗️ Build system | ❌ *Not added* | `build: update dependencies` |
+| `ci` | 👷 CI/CD | ❌ *Not added* | `ci: add automated deployment` |
+| `chore` | 🔧 Maintenance | ❌ *Not added* | `chore: update package versions` |
+| `revert` | ⏪ Revert changes | ❌ *Not added* | `revert: undo previous commit` |
+
+> 📝 **Changelog Policy**: Only `feat` and `fix` commits are automatically added to the changelog as they represent user-facing changes. Other types are still validated and encouraged for development tracking.
 
 ## 🎪 Interactive Commit Creation
 
@@ -201,31 +203,32 @@ Our Husky hooks automatically run:
 
 ## 📊 Changelog Generation
 
-Conventional commits enable automatic changelog generation:
+Our simplified changelog system automatically tracks user-facing changes:
 
 ```mermaid
 graph TD
-    A[Conventional Commits] --> B[standard-version]
-    B --> C[Analyze Commit Types]
-    C --> D[Group by Type]
-    D --> E[Generate Changelog]
-    E --> F[Bump Version]
-    F --> G[Create Git Tag]
+    A[feat/fix Commits] --> B[Post-commit Hook]
+    B --> C[Check Commit Type]
+    C --> D{feat or fix?}
+    D -->|Yes| E[Add to Changelog]
+    D -->|No| F[Skip Addition]
+    E --> G[Update CHANGELOG.md]
     
     style E fill:#e8f5e8
+    style F fill:#fff3e0
 ```
 
 ### Generated Changelog Example
 
 ```markdown
-## [1.2.0] - 2025-08-07
+## [2025-08-08]
 
-### ✨ Features
-- **auth**: implement OAuth2 integration (#123)
-- **guild**: add guild management system (#456)
+- **feat: implement guild management system** ([abc123](https://github.com/opencoremmo/opencoremmo/commit/abc123))
+- **fix: resolve inventory duplication bug** ([def456](https://github.com/opencoremmo/opencoremmo/commit/def456))
 
-### 🐛 Bug Fixes
-- **inventory**: resolve item duplication bug (#789)
+## [2025-08-07]
+
+- **feat: add OAuth2 authentication** ([ghi789](https://github.com/opencoremmo/opencoremmo/commit/ghi789))
 - **database**: fix connection timeout issues (#790)
 
 ### 📚 Documentation
@@ -275,7 +278,7 @@ Use regular git commands - our system automatically validates:
 git commit -m "feat: implement player trading system"
 
 # ✅ Automatic validation ensures conventional format
-# ✅ Changelog updated automatically  
+# ✅ Changelog updated for feat/fix commits only
 # ✅ No size limitations on commit messages
 ```
 

@@ -60,6 +60,7 @@ public class PlayerSayCommand(
             case SpeechType.ChannelOrange:
             case SpeechType.ChannelRed1:
             case SpeechType.ChannelYellow:
+            case SpeechType.ChannelManager:
                 SendMessageToChannel(player, playerSayPacket.ChannelId, message);
                 break;
 
@@ -73,8 +74,6 @@ public class PlayerSayCommand(
             //    break;
             //case SpeechType.RvrContinue:
             //    break;
-            case SpeechType.Broadcast:
-                break;
             case SpeechType.PrivateFrom:
             case SpeechType.PrivateRedFrom:
                 SendMessageToPlayer(player, connection, playerSayPacket, message);
