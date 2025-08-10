@@ -14,5 +14,4 @@ public interface IAccountRepository : IBaseRepositoryNeo<AccountEntity>
 
     Task<PlayerEntity> GetOnlinePlayer(string accountName);
     Task<int> Ban(uint accountId, string reason, uint bannedByAccountId);
-    Task<AccountEntity> GetByEmailOrAccountName(string email, string accountName);
 }
