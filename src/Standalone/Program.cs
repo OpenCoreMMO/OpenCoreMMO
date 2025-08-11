@@ -178,8 +178,18 @@ public class Program
     private static async Task Shutdown(ILogger logger, IServiceProvider container)
     {
         logger.Warning("Server is in Shutdown...");
+
         container.Resolve<IScriptManager>().GlobalEvents.ExecuteShutdown();
         await container.Resolve<PlayerPersistenceRoutine>().SavePlayers();
+
+        container.Resolve<LoginListener>().Dispose();
+        container.Resolve<GameListener>().Dispose();
+
+        await container.Resolve<IDispatcher>().WaitForCompletionAsync();
+        container.Resolve<IDispatcher>().Dispose();
+
+        await container.Resolve<IPersistenceDispatcher>().WaitForCompletionAsync();
+        container.Resolve<IPersistenceDispatcher>().Dispose();
     }
 
     private static async Task LoadDatabase(IServiceProvider container, ILogger logger,

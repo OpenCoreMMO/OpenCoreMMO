@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Channels;
@@ -13,10 +14,9 @@ public class Scheduler : IScheduler
 
     protected readonly ConcurrentDictionary<uint, byte> ActiveEventIds = new();
     protected readonly ConcurrentDictionary<uint, byte> CancelledEventIds = new();
-
     protected readonly ChannelReader<ISchedulerEvent> Reader;
+    
     private uint _lastEventId;
-
     protected ulong EventLength;
 
     protected Scheduler(IDispatcher dispatcher)
@@ -28,9 +28,7 @@ public class Scheduler : IScheduler
     }
 
     public ulong Count => EventLength;
-
     public bool Empty => ActiveEventIds.IsEmpty;
-
     public long GlobalTime => _dispatcher.GlobalTime;
 
     /// <summary>
@@ -42,7 +40,8 @@ public class Scheduler : IScheduler
     {
         if (evt.EventId == default) evt.SetEventId(++_lastEventId);
 
-        if (ActiveEventIds.TryAdd(evt.EventId, default)) _writer.TryWrite(evt);
+        if (ActiveEventIds.TryAdd(evt.EventId, default)) 
+            _writer.TryWrite(evt);
 
         return evt.EventId;
     }
@@ -55,20 +54,33 @@ public class Scheduler : IScheduler
     {
         Task.Factory.StartNew(async () =>
         {
-            while (await Reader.WaitToReadAsync(token))
-                // Fast loop around available jobs
-            while (Reader.TryRead(out var evt))
+            try
             {
-                if (EventIsCancelled(evt.EventId)) continue;
-
-                if (!evt.HasExpired)
+                await foreach (var evt in Reader.ReadAllAsync(token))
                 {
-                    var scheduleEvent = evt;
-                    ThreadPool.QueueUserWorkItem(_ => SendBack(scheduleEvent));
-                    continue;
-                }
+                    if (EventIsCancelled(evt.EventId)) continue;
 
-                DispatchEvent(evt);
+                    if (!evt.HasExpired)
+                    {
+                        // Use Task.Delay instead of ThreadPool for better debugging
+                        _ = Task.Delay(evt.ExpirationDelay, token)
+                            .ContinueWith(task =>
+                            {
+                                if (!token.IsCancellationRequested)
+                                {
+                                    ActiveEventIds.TryRemove(evt.EventId, out var _);
+                                    AddEvent(evt);
+                                }
+                            }, TaskScheduler.Default);
+                        continue;
+                    }
+
+                    DispatchEvent(evt);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Expected during shutdown
             }
         }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
@@ -81,7 +93,7 @@ public class Scheduler : IScheduler
     public virtual bool CancelEvent(uint eventId)
     {
         if (eventId == default) return false;
-        var removed = ActiveEventIds.TryRemove(eventId, out _);
+        var removed = ActiveEventIds.TryRemove(eventId, out var _);
         CancelledEventIds.TryAdd(eventId, default);
         return removed;
     }
@@ -96,13 +108,6 @@ public class Scheduler : IScheduler
         return CancelledEventIds.ContainsKey(eventId);
     }
 
-    private void SendBack(ISchedulerEvent evt)
-    {
-        Thread.Sleep(evt.ExpirationDelay);
-        ActiveEventIds.TryRemove(evt.EventId, out _);
-        AddEvent(evt);
-    }
-
     protected virtual bool DispatchEvent(ISchedulerEvent evt)
     {
         evt.SetToNotExpire();
@@ -110,8 +115,8 @@ public class Scheduler : IScheduler
         if (!EventIsCancelled(evt.EventId))
         {
             Interlocked.Increment(ref EventLength);
-            ActiveEventIds.TryRemove(evt.EventId, out _);
-            _dispatcher.AddEvent(evt); //send to dispatcher      
+            ActiveEventIds.TryRemove(evt.EventId, out var _);
+            _dispatcher.AddEvent(evt);
             return true;
         }
 
