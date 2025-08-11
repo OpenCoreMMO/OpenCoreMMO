@@ -191,6 +191,9 @@ public class ItemFactory : IItemFactory
 
         if (!Guard.IsNull(itemCustomAttributes) && itemCustomAttributes.Any())
             createdItem.Attributes.SetCustomAttribute(itemCustomAttributes);
+
+        if (!createdItem.Attributes.HasAttribute(ItemAttribute.Count))
+            createdItem.Attributes.SetAttribute(ItemAttribute.Count, 1);
     }
 
     private void SubscribeEvents(IItem createdItem)

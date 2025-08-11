@@ -36,6 +36,12 @@ public abstract class CumulativeEquipment : Equipment, ICumulative
     public ICumulative Clone(byte amount)
     {
         var clone = (ICumulative)MemberwiseClone();
+
+        clone.Attributes = new ItemAttributeList();
+
+        clone.Attributes.SetAttribute(Attributes.ToDictionary<ItemAttribute, IConvertible>());
+        clone.Attributes.SetCustomAttribute(Attributes.ToDictionaryCustom<string, IConvertible>());
+
         clone.SetAmount(amount);
         clone.ClearSubscribers();
         return clone;
@@ -78,7 +84,9 @@ public abstract class CumulativeEquipment : Equipment, ICumulative
             return true;
         }
 
-        item.SetAmount((byte)(totalAmount - Amount));
+        SetAmount(100);
+        var remainingAmount = (byte)(totalAmount - 100);
+        item.SetAmount(remainingAmount);
 
         return true;
     }

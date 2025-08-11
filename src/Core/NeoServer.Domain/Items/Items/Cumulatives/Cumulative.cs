@@ -83,18 +83,17 @@ public class Cumulative : BaseItem, ICumulative
 
         var totalAmount = Amount + item.Amount;
 
-        var newAmount = Amount;
-
         if (totalAmount <= 100)
         {
-            newAmount = (byte)totalAmount;
+            SetAmount((byte)totalAmount);
             item = null;
-            SetAmount(newAmount);
             return true;
         }
 
-        newAmount = (byte)(totalAmount - Amount);
-        SetAmount(newAmount);
+        SetAmount(100);
+        var remainingAmount = (byte)(totalAmount - 100);
+        item.SetAmount(remainingAmount);
+
         return true;
     }
 
