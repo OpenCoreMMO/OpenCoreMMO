@@ -516,10 +516,12 @@ public class DynamicTile : BaseTile, IDynamicTile
             return (uint)freeSpace;
         }
 
-        var possibleAmountToAdd = freeSpace * 100;
-        if (TopDownItemOnStack is ICumulative c && TopDownItemOnStack.ClientId == cumulative.ClientId)
-            possibleAmountToAdd += c.AmountToComplete;
+        if (TopDownItemOnStack is ICumulative c &&
+            TopDownItemOnStack.ClientId == cumulative.ClientId
+            && c.AmountToComplete > 0)
+            return c.AmountToComplete;
 
+        var possibleAmountToAdd = freeSpace * 100;
         return (uint)possibleAmountToAdd;
     }
 

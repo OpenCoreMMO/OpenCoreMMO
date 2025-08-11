@@ -25,7 +25,6 @@ public class WeaponFactory : IFactory
     public IItem Create(
         IItemType itemType,
         Location location,
-        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
         IDictionary<ItemAttribute, IConvertible> itemAttributes)
     {
         var chargeable = _chargeableFactory.Create(itemType);
@@ -52,8 +51,8 @@ public class WeaponFactory : IFactory
         if (ICumulative.IsApplicable(itemType))
         {
             if (ThrowableWeapon.IsApplicable(itemType))
-                return new ThrowableWeapon(itemType, location, itemTypeAttributes, itemAttributes);
-            if (Ammo.IsApplicable(itemType)) return new Ammo(itemType, location, itemTypeAttributes, itemAttributes);
+                return new ThrowableWeapon(itemType, location, itemAttributes);
+            if (Ammo.IsApplicable(itemType)) return new Ammo(itemType, location, itemAttributes);
         }
 
         return null;
