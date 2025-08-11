@@ -51,6 +51,12 @@ public class ItemTestDataBuilder
         itemType.Attributes.SetAttribute(ItemTypeAttribute.Weight, weight);
         itemType.SetFlag(ItemFlag.Movable);
 
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
+
         LoadItemTypeAttributes(itemType, itemTypeAttributes);
 
         var item = new Container(itemType, new Location(100, 100, 7), children);
@@ -67,6 +73,12 @@ public class ItemTestDataBuilder
         itemType.SetArticle("a");
         itemType.Attributes.SetAttribute(ItemTypeAttribute.Capacity, capacity);
         itemType.SetFlag(ItemFlag.Movable);
+
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
 
         LoadItemTypeAttributes(itemType, itemTypeAttributes);
 
@@ -88,6 +100,12 @@ public class ItemTestDataBuilder
         if (backpack)
             itemType.Attributes.SetAttribute(ItemTypeAttribute.BodyPosition, "backpack");
 
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
+
         LoadItemTypeAttributes(itemType, itemTypeAttributes);
 
         var item = new Container(itemType, new Location(100, 100, 7), children?.ToList());
@@ -108,6 +126,12 @@ public class ItemTestDataBuilder
         itemType.Flags.Add(ItemFlag.Movable);
         itemType.Attributes.SetAttribute(ItemTypeAttribute.BodyPosition, "backpack");
 
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
+
         LoadItemTypeAttributes(itemType, itemTypeAttributes);
 
         var item = new Container(itemType, new Location(100, 100, 7), items);
@@ -125,6 +149,12 @@ public class ItemTestDataBuilder
         itemType.Attributes.SetAttribute(ItemTypeAttribute.Capacity, 20);
         itemType.Attributes.SetAttribute(ItemTypeAttribute.Weight, weight);
 
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
+
         LoadItemTypeAttributes(itemType, itemTypeAttributes);
 
         var item = new Depot.Depot(itemType, new Location(100, 100, 7), items);
@@ -132,7 +162,7 @@ public class ItemTestDataBuilder
         return item;
     }
 
-    public static ICumulative CreateCumulativeItem(ushort id, byte amount, string name = "item", string slot = null,
+    public static ICumulative CreateCumulativeItem(ushort id, byte amount = 1, string name = "item", string slot = null,
         float weight = 1,
         (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
         (ItemAttribute, IConvertible)[] itemAttributes = null)
@@ -146,6 +176,12 @@ public class ItemTestDataBuilder
         type.Flags.Add(ItemFlag.Stackable);
         type.Flags.Add(ItemFlag.Pickupable);
         type.Flags.Add(ItemFlag.Movable);
+
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, amount)
+            ];
 
         LoadItemTypeAttributes(type, itemTypeAttributes);
 
@@ -163,6 +199,12 @@ public class ItemTestDataBuilder
         type.SetId(id);
         type.SetName("item");
 
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
+
         LoadItemTypeAttributes(type, itemTypeAttributes);
 
         var item = new Item(type, new Location(100, 100, 7));
@@ -179,6 +221,12 @@ public class ItemTestDataBuilder
         type.SetId(id);
         type.SetName("item");
         type.Flags.Add(ItemFlag.Movable);
+
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
 
         LoadItemTypeAttributes(type, itemTypeAttributes);
 
@@ -199,11 +247,15 @@ public class ItemTestDataBuilder
         type.Flags.Add(ItemFlag.Pickupable);
         type.SetFlag(ItemFlag.Movable);
 
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
+
         LoadItemTypeAttributes(type, itemTypeAttributes);
 
-        var item = new HealingItem(type, new Location(100, 100, 7),
-            (itemTypeAttributes ?? Array.Empty<(ItemTypeAttribute, IConvertible)>())
-            .ToDictionary(x => x.Item1, x => x.Item2));
+        var item = new HealingItem(type, new Location(100, 100, 7));
         LoadItemAttributes(item, itemAttributes);
         return item;
     }
@@ -221,6 +273,12 @@ public class ItemTestDataBuilder
         type.Attributes.SetAttribute(ItemTypeAttribute.BodyPosition, twoHanded ? "two-handed" : "weapon");
         type.Flags.Add(ItemFlag.Pickupable);
         type.Flags.Add(ItemFlag.Movable);
+
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
 
         LoadItemTypeAttributes(type, itemTypeAttributes);
 
@@ -254,6 +312,12 @@ public class ItemTestDataBuilder
         type.Flags.Add(ItemFlag.Movable);
         type.Attributes.SetAttribute(ItemTypeAttribute.BodyPosition, twoHanded ? "two-handed" : "weapon");
 
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
+
         LoadItemTypeAttributes(type, itemTypeAttributes);
 
         var item = new MeleeWeapon(type, new Location(100, 100, 7))
@@ -281,6 +345,12 @@ public class ItemTestDataBuilder
         type.Flags.Add(ItemFlag.Pickupable);
         type.Flags.Add(ItemFlag.Movable);
         type.Attributes.SetAttribute(ItemTypeAttribute.BodyPosition, twoHanded ? "two-handed" : "weapon");
+
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
 
         LoadItemTypeAttributes(type, itemTypeAttributes);
 
@@ -316,12 +386,17 @@ public class ItemTestDataBuilder
         type.Flags.Add(ItemFlag.Movable);
         type.Flags.Add(ItemFlag.Stackable);
 
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, amount)
+            ];
+
         LoadItemTypeAttributes(type, itemTypeAttributes);
 
         var item = new ThrowableWeapon(
             type,
             new Location(100, 100, 7),
-            type.Attributes.ToDictionary<ItemTypeAttribute, IConvertible>(),
             itemAttributes != null ? itemAttributes.ToDictionary() : null)
         {
             Chargeable = null,
@@ -345,6 +420,12 @@ public class ItemTestDataBuilder
         type.SetName("item");
         type.Flags.Add(ItemFlag.Pickupable);
         type.Flags.Add(ItemFlag.Movable);
+
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
 
         LoadItemTypeAttributes(type, itemTypeAttributes);
         type.SetGroupIfNone();
@@ -374,6 +455,12 @@ public class ItemTestDataBuilder
         type.Flags.Add(ItemFlag.Movable);
         type.SetName("item");
 
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
+
         LoadItemTypeAttributes(type, itemTypeAttributes);
         type.SetGroupIfNone();
 
@@ -382,7 +469,7 @@ public class ItemTestDataBuilder
         return item;
     }
 
-    public static IItem CreateAmmo(ushort id, byte amount,
+    public static IItem CreateAmmo(ushort id, byte amount = 1,
         (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
         (ItemAttribute, IConvertible)[] itemAttributes = null,
         Func<ushort, IItemType> itemTypeFinder = null, float weight = 1)
@@ -394,10 +481,15 @@ public class ItemTestDataBuilder
         type.Attributes.SetAttribute(ItemTypeAttribute.WeaponType, "ammunition");
         type.Attributes.SetAttribute(ItemTypeAttribute.BodyPosition, "ammo");
         type.Attributes.SetAttribute(ItemTypeAttribute.Weight, weight);
-        type.Attributes.SetAttribute(ItemTypeAttribute.Count, amount);
         type.Flags.Add(ItemFlag.Stackable);
         type.Flags.Add(ItemFlag.Pickupable);
         type.Flags.Add(ItemFlag.Movable);
+
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, amount)
+            ];
 
         LoadItemTypeAttributes(type, itemTypeAttributes);
         type.SetGroupIfNone();
@@ -405,7 +497,6 @@ public class ItemTestDataBuilder
         var item = new Ammo(
             type,
             new Location(100, 100, 7),
-            type.Attributes.ToDictionary<ItemTypeAttribute, IConvertible>(),
             itemAttributes != null ? itemAttributes.ToDictionary() : null)
         {
             Chargeable = null,
@@ -432,6 +523,12 @@ public class ItemTestDataBuilder
         type.Flags.Add(ItemFlag.Movable);
         type.Flags.Add(ItemFlag.Stackable);
 
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, amount)
+            ];
+
         LoadItemTypeAttributes(type, itemTypeAttributes);
         type.SetGroupIfNone();
 
@@ -440,7 +537,7 @@ public class ItemTestDataBuilder
         return item;
     }
 
-    public static IItem CreateCoin(ushort id, byte amount, uint multiplier,
+    public static IItem CreateCoin(ushort id, byte amount = 1, uint multiplier = 1,
         (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
         (ItemAttribute, IConvertible)[] itemAttributes = null)
     {
@@ -454,6 +551,12 @@ public class ItemTestDataBuilder
         type.Flags.Add(ItemFlag.Pickupable);
         type.Flags.Add(ItemFlag.Movable);
         type.Flags.Add(ItemFlag.Stackable);
+
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, amount)
+            ];
 
         LoadItemTypeAttributes(type, itemTypeAttributes);
         type.SetGroupIfNone();
@@ -485,13 +588,18 @@ public class ItemTestDataBuilder
         type.Flags.Add(ItemFlag.Pickupable);
         type.Flags.Add(ItemFlag.Movable);
 
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, amount)
+            ];
+
         LoadItemTypeAttributes(type, itemTypeAttributes);
 
         type.SetGroupIfNone();
 
         var factory = new RuneFactory();
-        var item = (Rune)factory.Create(type, new Location(100, 100, 7),
-            type.Attributes.ToDictionary<ItemTypeAttribute, IConvertible>());
+        var item = (Rune)factory.Create(type, new Location(100, 100, 7));
 
         LoadItemAttributes(item, itemAttributes);
         return item;
@@ -510,6 +618,12 @@ public class ItemTestDataBuilder
         else
             type.SetFlag(ItemFlag.Bottom);
 
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
+
         LoadItemTypeAttributes(type, itemTypeAttributes);
 
         var item = new Item(type, new Location(100, 100, 7));
@@ -526,6 +640,12 @@ public class ItemTestDataBuilder
         type.SetId(id);
         type.SetFlag(ItemFlag.Unpassable);
         type.SetName("item");
+
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
 
         LoadItemTypeAttributes(type, itemTypeAttributes);
 

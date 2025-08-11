@@ -11,7 +11,6 @@ namespace NeoServer.Domain.Items.Bases;
 
 public abstract class BaseItem : IItem
 {
-    private ItemAttributeList _attributes;
     private IThing _owner;
 
     protected BaseItem(IItemType metadata, Location location)
@@ -20,10 +19,11 @@ public abstract class BaseItem : IItem
         Metadata = metadata;
 
         Decay = DecayableFactory.CreateIfItemIsDecayable(this);
+        Attributes = new ItemAttributeList();
     }
 
     public static Func<IItem, IPlayer, bool> UseFunction { get; set; }
-    public ItemAttributeList Attributes => _attributes ??= new ItemAttributeList();
+    public ItemAttributeList Attributes { get; set; }
 
     public ushort ActionId => Attributes.GetAttribute<ushort>(ItemAttribute.ActionId);
     public uint UniqueId => Attributes.GetAttribute<uint>(ItemAttribute.UniqueId);
@@ -115,7 +115,7 @@ public abstract class BaseItem : IItem
             : $"You see {Article} {Name}.";
     }
 
-    public byte Amount { get; set; } = 1;
+    public byte Amount => Attributes.GetAttribute<byte>(ItemAttribute.Count);
 
     public virtual void Use(IPlayer usedBy)
     {

@@ -9,8 +9,7 @@ namespace NeoServer.Domain.Items.Items.UsableItems.Runes;
 
 public class FieldRune : Rune, IUsableOnTile
 {
-    public FieldRune(IItemType type, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(
-        type, location, attributes)
+    public FieldRune(IItemType type, Location location) : base(type, location)
     {
     }
 
