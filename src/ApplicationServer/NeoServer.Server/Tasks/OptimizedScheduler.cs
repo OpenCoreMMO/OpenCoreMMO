@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
@@ -9,9 +10,9 @@ namespace NeoServer.Server.Tasks;
 public class OptimizedScheduler : Scheduler
 {
     private readonly IDispatcher _dispatcher;
-    protected readonly ConcurrentQueue<ISchedulerEvent> PreQueue = new();
-    protected readonly object PreQueueMonitor = new();
-
+    private readonly ConcurrentQueue<ISchedulerEvent> _preQueue = new();
+    private readonly SemaphoreSlim _preQueueSemaphore = new(0);
+    
     public OptimizedScheduler(IDispatcher dispatcher) : base(dispatcher)
     {
         _dispatcher = dispatcher;
@@ -19,59 +20,78 @@ public class OptimizedScheduler : Scheduler
 
     public override void Start(CancellationToken token)
     {
+        var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(token);
+
+        // Main scheduler thread
         Task.Factory.StartNew(async () =>
         {
-            while (await Reader.WaitToReadAsync(token))
-            while (Reader.TryRead(out var evt))
+            try
             {
-                if (EventIsCancelled(evt.EventId))
+                await foreach (var evt in Reader.ReadAllAsync(combinedCts.Token))
                 {
-                    CancelledEventIds.TryRemove(evt.EventId, out _);
-                    continue;
+                    if (EventIsCancelled(evt.EventId))
+                    {
+                        CancelledEventIds.TryRemove(evt.EventId, out var _);
+                        continue;
+                    }
+
+                    DispatchEvent(evt);
                 }
-
-                DispatchEvent(evt);
             }
-        }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            catch (OperationCanceledException)
+            {
+                // Expected during shutdown
+            }
+        }, combinedCts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-        Task.Factory.StartNew(() =>
+        // Pre-queue thread with improved timing
+        Task.Factory.StartNew(async () =>
         {
             var replace = new List<ISchedulerEvent>();
+            const int baseDelay = 50; // Reduced for better responsiveness
 
-            const int minDelay = 100;
-
-            PreQueueLoop(minDelay, replace, token);
-        }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-    }
-
-    private void PreQueueLoop(int minDelay, List<ISchedulerEvent> replace, CancellationToken cancellationToken)
-    {
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            lock (PreQueueMonitor)
+            try
             {
-                Monitor.Wait(PreQueueMonitor, minDelay);
-            }
-
-            minDelay = 100;
-
-            while (PreQueue.TryDequeue(out var evt))
-            {
-                var remainingTime = evt.RemainingTime;
-                if (remainingTime > 0)
+                while (!combinedCts.Token.IsCancellationRequested)
                 {
-                    minDelay = remainingTime < minDelay ? (int)remainingTime : minDelay;
-                    replace.Add(evt);
-                    continue;
+                    var nextDelay = baseDelay;
+                    
+                    // Process all available events in pre-queue
+                    while (_preQueue.TryDequeue(out var evt))
+                    {
+                        var remainingTime = evt.RemainingTime;
+                        if (remainingTime > 0)
+                        {
+                            nextDelay = Math.Min(nextDelay, (int)Math.Max(remainingTime, 10));
+                            replace.Add(evt);
+                            continue;
+                        }
+
+                        AddEvent(evt);
+                    }
+
+                    // Re-add events that haven't expired yet
+                    foreach (var action in replace) 
+                        _preQueue.Enqueue(action);
+                    
+                    replace.Clear();
+
+                    // Wait using semaphore or timeout
+                    try
+                    {
+                        await _preQueueSemaphore.WaitAsync(nextDelay, combinedCts.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
                 }
-
-                AddEvent(evt);
             }
-
-            foreach (var action in replace) PreQueue.Enqueue(action);
-
-            replace.Clear();
-        }
+            catch (OperationCanceledException)
+            {
+                // Expected during cancellation
+            }
+        }, combinedCts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
 
     protected override bool DispatchEvent(ISchedulerEvent evt)
@@ -80,10 +100,15 @@ public class OptimizedScheduler : Scheduler
         {
             ActiveEventIds.TryRemove(evt.EventId, out _);
 
-            PreQueue.Enqueue(evt);
-            lock (PreQueueMonitor)
+            _preQueue.Enqueue(evt);
+            // Notify semaphore without blocking
+            try
             {
-                Monitor.Pulse(PreQueueMonitor);
+                _preQueueSemaphore.Release();
+            }
+            catch (SemaphoreFullException)
+            {
+                // Ignore if already at maximum
             }
 
             return false;
@@ -99,8 +124,13 @@ public class OptimizedScheduler : Scheduler
 
         Interlocked.Increment(ref EventLength);
         ActiveEventIds.TryRemove(evt.EventId, out _);
-        _dispatcher.AddEvent(evt); //send to dispatcher      
+        _dispatcher.AddEvent(evt);
 
         return true;
+    }
+
+    public override bool CancelEvent(uint eventId)
+    {
+        return base.CancelEvent(eventId);
     }
 }

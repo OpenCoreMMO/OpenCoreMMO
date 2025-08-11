@@ -6,7 +6,6 @@ public delegate void ItemReduce(ICumulative item, byte amount);
 
 public interface ICumulative : IItem
 {
-    public new byte Amount { get; set; }
     byte AmountToComplete { get; }
     event ItemReduce OnReduced;
 
