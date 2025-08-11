@@ -73,7 +73,7 @@ public class DealTransaction(IItemFactory itemFactory, ICoinTransaction coinTran
 
         if (item is ICumulative cumulative)
         {
-            cumulative.Amount = saleContract.Amount;
+            cumulative.SetAmount(saleContract.Amount);
             player.ReceivePurchasedItems(seller, saleContract, item);
         }
         else
@@ -96,7 +96,7 @@ public class DealTransaction(IItemFactory itemFactory, ICoinTransaction coinTran
         {
             var createdCoin = itemFactory.Create(coinToAdd.Item1, Location.Inventory(Slot.Backpack), null);
             if (createdCoin is not Coin newCoin) continue;
-            newCoin.Amount = coinToAdd.Item2;
+            newCoin.SetAmount(coinToAdd.Item2);
 
             yield return newCoin;
         }

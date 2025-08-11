@@ -1,7 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Items.Items.UsableItems.Runes;
 
@@ -11,15 +10,14 @@ public class RuneFactory : IFactory
 {
     public event CreateItem OnItemCreated;
 
-    public IItem Create(IItemType itemType, Location location,
-        IDictionary<ItemTypeAttribute, IConvertible> attributes)
+    public IItem Create(IItemType itemType, Location location)
     {
         if (!ICumulative.IsApplicable(itemType)) return null;
         if (!Rune.IsApplicable(itemType)) return null;
 
 
-        if (FieldRune.IsApplicable(itemType)) return new FieldRune(itemType, location, attributes);
+        if (FieldRune.IsApplicable(itemType)) return new FieldRune(itemType, location);
 
-        return new Rune(itemType, location, attributes);
+        return new Rune(itemType, location);
     }
 }

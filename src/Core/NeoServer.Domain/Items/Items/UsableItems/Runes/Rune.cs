@@ -13,8 +13,7 @@ namespace NeoServer.Domain.Items.Items.UsableItems.Runes;
 
 public class Rune : Cumulative, IHasCooldown, IUsableRequirement
 {
-    public Rune(IItemType type, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type,
-        location, attributes)
+    public Rune(IItemType type, Location location) : base(type, location)
     {
     }
 

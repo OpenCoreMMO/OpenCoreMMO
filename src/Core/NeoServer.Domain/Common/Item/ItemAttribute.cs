@@ -31,7 +31,8 @@ public enum ItemAttribute : byte
     StoreItem = 26,
     AttackSpeed = 27, // todo: Check this, exists in TFS but not in Canary?
     Custom = 28,
-    TeleportDestination = 29 // especifics to opencoremmorpg load teleports from map
+    TeleportDestination = 29, // specifics to opencoremmorpg load teleports from map,
+    Count = 30 // specifics to opencoremmorpg load count from map
 }
 
 public enum ItemTypeAttribute : byte
