@@ -30,10 +30,11 @@ public class MessageToChannelPacket : OutgoingPacket
 
         var speechType = TalkType;
 
-        if (speechType == SpeechType.ChannelRed2Text)
+        //todo: 1098 revise this
+        if (speechType == SpeechType.PrivateRedTo || speechType == SpeechType.PrivateRedFrom) 
         {
             message.AddString(string.Empty);
-            speechType = SpeechType.ChannelRed1Text;
+            speechType = SpeechType.ChannelRed1;
         }
         else
         {

@@ -14,7 +14,7 @@ public class PlayerLogInPacket : IncomingPacket
         OperatingSystem = (OperatingSystem)message.GetUInt16();
         Version = message.GetUInt16();
 
-        //message.SkipBytes(9);
+        message.SkipBytes(7); // U32 client version, U8 client type, U16 dat revision
 
         //// todo: version validation
         var encryptedData = message.GetBytes(Rsa.LENGTH);
@@ -27,13 +27,41 @@ public class PlayerLogInPacket : IncomingPacket
         LoadXtea(data);
 
         GameMaster = Convert.ToBoolean(data.GetByte());
-        Account = data.GetString();
+        var sessionKey = data.GetString();
+
+        if (string.IsNullOrEmpty(sessionKey))
+        {
+            //todo: 1098 disconnect();
+            return;
+        }
+
+        var sessionArgs = sessionKey.Split('\n');
+        if (sessionArgs.Length != 4)
+        {
+            //todo: 1098 disconnect();
+            return;
+        }
+
+        Account = sessionArgs[0];
+        Password = sessionArgs[1];
+        var token = sessionArgs[2];
+
         CharacterName = data.GetString();
-        Password = data.GetString();
+
+        //todo: 1098 implement this
+        //if (challengeTimestamp != timeStamp || challengeRandom != randNumber)
+        //{
+        //    disconnect();
+        //    return;
+        //}
+
         ChallengeTimeStamp = data.GetUInt32();
         ChallengeNumber = data.GetByte();
         var clientStringLength = data.GetUInt16();
         if (clientStringLength == 5 && data.GetString(5) == "OTCv8") OtcV8Version = data.GetUInt16();
+
+        //todo: fix this, meha dont send OtcV8Version in packet
+        OtcV8Version = 320;
     }
 
     public ushort OtcV8Version { get; set; }

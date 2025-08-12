@@ -39,6 +39,7 @@ public class LuaStartup(
     ServerConfiguration serverConfiguration,
     IConditionFunctions conditionFunctions,
     IBankFunctions bankFunctions,
+    IGuildFunctions guildFunctions,
     ISpellFunctions spellFunctions,
     ICombatFunctions combatFunctions,
     IVariantFunctions variantFunctions,
@@ -94,6 +95,7 @@ public class LuaStartup(
         spellFunctions.Init(luaState);
         combatFunctions.Init(luaState);
         bankFunctions.Init(luaState);
+        guildFunctions.Init(luaState);
         variantFunctions.Init(luaState);
         townFunctions.Init(luaState);
         eventCallbackFunctions.Init(luaState);

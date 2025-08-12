@@ -68,5 +68,6 @@ public enum ItemFlag : byte
     Corpse,
     TeleportAbsolute,
     TeleportRelative,
-    LookTrough
+    LookTrough,
+    Animation
 }

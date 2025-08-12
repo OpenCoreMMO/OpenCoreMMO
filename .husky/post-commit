@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Gera changelog automaticamente após cada commit
+echo "📝 Atualizando changelog automaticamente..."
+npm run release > /dev/null 2>&1 || true
+echo "✅ Changelog atualizado!"

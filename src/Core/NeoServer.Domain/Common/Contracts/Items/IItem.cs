@@ -1,8 +1,10 @@
-﻿using NeoServer.Domain.Common.Item;
+﻿using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Items;
 
 namespace NeoServer.Domain.Common.Contracts.Items;
+
 
 public delegate void ItemDelete(IItem item);
 
@@ -10,6 +12,10 @@ public delegate void ItemRemove(IItem item, IThing from);
 
 public interface IItem : IThing, IHasDecay
 {
+    // Market special item IDs (similar to otclientv8's MarketRequest enum)
+    const ushort MARKET_MYOFFERS = 0xFFFE; // 65534 - My Offers
+    const ushort MARKET_MYHISTORY = 0xFF01; // 65281 - My History
+
     /// <summary>
     ///     Item metadata. Contains a lot of information about item
     /// </summary>
@@ -95,9 +101,68 @@ public interface IItem : IThing, IHasDecay
     void UpdateMetadata(IItemType newMetadata);
     void MarkAsDeleted();
 
+    enum ClientFluidTypes : byte
+    {
+        CLIENTFLUID_EMPTY = 0,
+        CLIENTFLUID_BLUE = 1,
+        CLIENTFLUID_PURPLE = 2,
+        CLIENTFLUID_BROWN_1 = 3,
+        CLIENTFLUID_BROWN_2 = 4,
+        CLIENTFLUID_RED = 5,
+        CLIENTFLUID_GREEN = 6,
+        CLIENTFLUID_BROWN = 7,
+        CLIENTFLUID_YELLOW = 8,
+        CLIENTFLUID_WHITE = 9,
+    };
+
     Span<byte> GetRaw()
     {
-        return BitConverter.GetBytes(ClientId);
+        var bytes = new List<byte>();
+        var it = Metadata;
+        byte count = Amount; // Assuming Amount is the stack count or fluid type
+
+        // Fluid map as per common Tibia/Otserv conventions
+        // Adjust values as needed for your protocol
+        byte[] fluidMap = new byte[]
+        {
+            (byte)ClientFluidTypes.CLIENTFLUID_EMPTY,
+            (byte)ClientFluidTypes.CLIENTFLUID_BLUE,
+            (byte)ClientFluidTypes.CLIENTFLUID_RED,
+            (byte)ClientFluidTypes.CLIENTFLUID_BROWN_1,
+            (byte)ClientFluidTypes.CLIENTFLUID_GREEN,
+            (byte)ClientFluidTypes.CLIENTFLUID_YELLOW,
+            (byte)ClientFluidTypes.CLIENTFLUID_WHITE,
+            (byte)ClientFluidTypes.CLIENTFLUID_PURPLE,
+        };
+
+        // Handle special market IDs by replacing them with a valid item ID
+        ushort clientIdToSend = ClientId;
+        if (ClientId == MARKET_MYHISTORY || ClientId == MARKET_MYOFFERS)
+        {
+            // Use a valid bag/container ID instead of the special market ID
+            // This prevents "unable to create item with invalid id" errors
+            clientIdToSend = 1987; // Common bag ID used in Tibia
+        }
+
+        // Add ClientId (ushort, little-endian)
+        bytes.AddRange(BitConverter.GetBytes(clientIdToSend));
+
+        bytes.Add(0xFF); // MARK_UNMARKED
+
+        if (it.IsStackable())
+        {
+            bytes.Add(count);
+        }
+        else if (it.IsSplash() || it.IsFluidContainer() && this is ILiquid)
+        {
+            var liquid = this as ILiquid;
+            bytes.Add(fluidMap[(byte)liquid.LiquidColor & 7]);
+        }
+
+        if (it.IsAnimation())
+            bytes.Add(0xFE);
+
+        return new Span<byte>(bytes.ToArray());
     }
 
     void SetOwner(IThing owner);

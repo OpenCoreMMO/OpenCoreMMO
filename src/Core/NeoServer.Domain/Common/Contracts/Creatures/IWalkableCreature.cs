@@ -10,7 +10,7 @@ public delegate bool PathFinder(IWalkableCreature creature, Location.Structs.Loc
 
 public delegate void StartFollow(IWalkableCreature creature, ICreature following, FindPathParams fpp);
 
-public delegate void ChangeSpeed(IWalkableCreature creature, ushort speed);
+public delegate void ChangeSpeed(IWalkableCreature creature, ushort speed, ushort baseSpeed);
 
 public delegate bool CanGoToDirection(ICreature creature, Location.Structs.Location location, Direction direction,
     ITileEnterRule rule);
@@ -28,7 +28,10 @@ public interface IWalkableCreature : ICreature
     bool IsFollowing { get; }
     ushort RawSpeed { get; }
     ushort Speed { get; }
-    int StepDelay { get; }
+
+    //todo: 1098 resting new speed calculation
+    //int GetStepDelay(Location.Structs.Location fromLocation, Location.Structs.Location toLocation);
+    int GetStepDelay();
     bool FirstStep { get; } //remove
     ITileEnterRule TileEnterRule { get; }
 

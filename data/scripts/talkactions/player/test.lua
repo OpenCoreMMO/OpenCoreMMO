@@ -186,8 +186,12 @@ function talkAction.onSay(player, words, param)
     logger.info("Container item count by id 2666 meat: " .. container:getItemCountById(2666))
     logger.info("Container item count by id 2175 spellbook: " .. container:getItemCountById(2175))
     local itemFromindex = container:getItem(0)
-    logger.info("Container get item by index 0: " .. itemFromindex:getName())
-    logger.info("Container has item: " .. tostring(container:hasItem(itemFromindex)))
+    if itemFromindex then
+        logger.info("Container get item by index 0: " .. itemFromindex:getName())
+        logger.info("Container has item: " .. tostring(container:hasItem(itemFromindex)))
+    else
+        logger.info("Container get item by index 0: nil (no item at index 0)")
+    end
     local itemFromAddItem = container:addItem(2120, 1) -- Add a rope to the container
     logger.info("Container has item after adding rope: " .. tostring(container:hasItem(itemFromAddItem)))
     local itemToAddItemEx = Game.createItem(2124, 1) -- Create a crystal ring item

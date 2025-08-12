@@ -4,6 +4,10 @@ using NeoServer.Networking.Handlers.Chat;
 using NeoServer.Networking.Handlers.Custom;
 using NeoServer.Networking.Handlers.LogIn;
 using NeoServer.Networking.Handlers.Player;
+using NeoServer.Networking.Handlers.Player.Bless;
+using NeoServer.Networking.Handlers.Player.DailyReward;
+using NeoServer.Networking.Handlers.Player.Quest;
+using NeoServer.Networking.Handlers.Player.Store;
 using NeoServer.Networking.Handlers.Player.Movement;
 using NeoServer.Networking.Handlers.Player.Party;
 using NeoServer.Networking.Handlers.Reports;
@@ -72,6 +76,14 @@ public static class InputHandlerMap
             [GameIncomingPacketType.TradeAccept] = typeof(TradeAcceptHandler),
             [GameIncomingPacketType.NewPing] = typeof(NetworkPingHandler),
             [GameIncomingPacketType.ExtendedOpcode] = typeof(ExtendedOpcodeHandler),
-            [GameIncomingPacketType.ReportBug] = typeof(PlayerReportBugHandler)
+            [GameIncomingPacketType.ReportBug] = typeof(PlayerReportBugHandler),
+            [GameIncomingPacketType.DailyRewardCollect] = typeof(PlayerDailyRewardHandler),
+            [GameIncomingPacketType.RequestBless] = typeof(RequestBlessHandler),
+            [GameIncomingPacketType.RequestQuestLog] = typeof(RequestQuestLogHandler),
+            [GameIncomingPacketType.ClientEnterGame] = typeof(ClientEnterGameHandler),
+            [GameIncomingPacketType.OpenStore] = typeof(OpenStoreHandler),
+            [GameIncomingPacketType.RequestStoreOffers] = typeof(RequestStoreOffersHandler),
+            [GameIncomingPacketType.Disconnect] = typeof(DisconnectHandler),
+            [GameIncomingPacketType.PingBack] = typeof(PlayerPingBackResponseHandler)
         };
 }

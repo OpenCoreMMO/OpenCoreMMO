@@ -19,6 +19,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Core\NeoServer.Domain\NeoServer.Domain.csproj"/>
+        <ProjectReference Include="..\..\Domain\NeoServer.Domain.Chat\NeoServer.Domain.Chat.csproj"/>
     </ItemGroup>
 
 </Project>

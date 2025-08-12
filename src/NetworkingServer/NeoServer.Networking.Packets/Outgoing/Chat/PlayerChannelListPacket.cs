@@ -21,7 +21,7 @@ public class PlayerChannelListPacket : OutgoingPacket
         foreach (var channel in chatChannels)
         {
             message.AddUInt16(channel.Id);
-            message.AddString(channel.Name);
+            message.AddString(channel.Name ?? "Unknown Channel");
         }
     }
 }

@@ -14,3 +14,15 @@ public enum SkillType : byte
     Speed = 9,
     None
 }
+
+//todo: use this
+public enum SpecialSkillType : byte
+{
+    CriticalHitChance = 0,
+    CriticalHitAmount = 1,
+    LifeLeechChance = 2,
+    LifeLeechAmount = 3,
+    ManaLeechChance = 4,
+    ManaLeechAmount = 5,
+    None
+}

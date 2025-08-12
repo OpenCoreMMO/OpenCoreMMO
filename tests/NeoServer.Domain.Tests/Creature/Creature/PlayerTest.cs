@@ -194,10 +194,10 @@ public class PlayerTest
             to = receiver;
         };
 
-        sut.Say("Hello", SpeechType.Private, receiver.Object);
+        sut.Say("Hello", SpeechType.PrivateRedTo, receiver.Object);
 
         Assert.Equal("Hello", messageEmitted);
-        Assert.Equal(SpeechType.Private, speechTypeEmitted);
+        Assert.Equal(SpeechType.PrivateRedTo, speechTypeEmitted);
         Assert.Equal(receiver.Object, to);
     }
 
@@ -219,7 +219,7 @@ public class PlayerTest
             to = receiver;
         };
 
-        sut.Say("", SpeechType.Private, receiver.Object);
+        sut.Say("", SpeechType.PrivateRedTo, receiver.Object);
 
         Assert.Null(messageEmitted);
         Assert.Equal(SpeechType.None, speechTypeEmitted);

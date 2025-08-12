@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat;
 using NeoServer.Domain.Combat.Attacks.Obsoletes;
@@ -28,6 +30,7 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Common;
+using Serilog;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Events.Player;
@@ -1070,10 +1073,31 @@ public class Player : CombatActor, IPlayer
 
     public bool CanUseOutfit(IOutfit outfit)
     {
-        if (string.IsNullOrEmpty(outfit.Name)) return false;
-        if (outfit.Premium && !(PremiumTime > 0)) return false;
+        var logger = Log.ForContext<Player>();
+        
+        logger.Information("Checking if player {PlayerName} can use outfit: Name='{OutfitName}', Premium={Premium}, Unlocked={Unlocked}, PlayerPremiumTime={PremiumTime}", 
+            Name, outfit.Name, outfit.Premium, outfit.Unlocked, PremiumTime);
+            
+        if (string.IsNullOrEmpty(outfit.Name)) 
+        {
+            logger.Warning("Player {PlayerName} cannot use outfit: Name is null or empty", Name);
+            return false;
+        }
+        
+        if (outfit.Premium && !(PremiumTime > 0)) 
+        {
+            logger.Warning("Player {PlayerName} cannot use outfit: Requires premium but player has no premium time", Name);
+            return false;
+        }
 
-        return outfit.Unlocked;
+        if (!outfit.Unlocked)
+        {
+            logger.Warning("Player {PlayerName} cannot use outfit: Outfit is not unlocked", Name);
+            return false;
+        }
+        
+        logger.Information("Player {PlayerName} can use outfit {OutfitName}", Name, outfit.Name);
+        return true;
     }
 
     public override void ChangeOutfit(IOutfit outfit)
@@ -1502,9 +1526,67 @@ public class Player : CombatActor, IPlayer
 
     #region Guild
 
+    public ushort? GuildId { get; set; }
     public ushort GuildLevel { get; set; }
+    public string GuildNick { get; set; } = string.Empty;
     public bool HasGuild => Guild is not null;
-    public Guild.Guild Guild { get; init; }
+    public Guild.Guild Guild { get; set; }
+    public Guild.GuildRankInfo GuildRank { get; set; }
+    public List<ushort> GuildWarList { get; private set; } = new();
+
+    public bool IsGuildMate(IPlayer otherPlayer)
+    {
+        if (!HasGuild || otherPlayer?.Guild == null) return false;
+        return Guild?.Id == otherPlayer.Guild?.Id;
+    }
+
+    public bool IsInWar(IPlayer otherPlayer)
+    {
+        if (!HasGuild || otherPlayer?.Guild == null) return false;
+        return Guild?.IsInWar(otherPlayer) == true;
+    }
+
+    public bool IsInWarList(ushort guildId)
+    {
+        return GuildWarList.Contains(guildId);
+    }
+
+    public void SetGuild(Guild.Guild guild)
+    {
+        if (Guild == guild) return;
+
+        var oldGuild = Guild;
+        
+        // Clear guild data
+        GuildNick = string.Empty;
+        Guild = null;
+        GuildRank = null;
+
+        if (guild != null)
+        {
+            // Set new guild
+            Guild = guild;
+            GuildId = guild.Id;
+            
+            // Get default rank (level 1)
+            var defaultRank = guild.GetRankByLevel(1);
+            if (defaultRank != null)
+            {
+                GuildRank = defaultRank;
+                guild.AddMember(this);
+            }
+        }
+        else
+        {
+            GuildId = null;
+        }
+
+        // Remove from old guild if switching
+        if (oldGuild != null && oldGuild != guild)
+        {
+            oldGuild.RemoveMember(this);
+        }
+    }
 
     #endregion
 

@@ -50,7 +50,18 @@ public class PacketHandlerRouter
     private static bool RequireAuthentication(GameIncomingPacketType gameIncomingPacketType)
     {
         return gameIncomingPacketType is not (GameIncomingPacketType.PlayerLogIn
-            or GameIncomingPacketType.PlayerLoginRequest);
+            or GameIncomingPacketType.PlayerLoginRequest
+            or GameIncomingPacketType.ClientEnterGame
+            or GameIncomingPacketType.Ping
+            or GameIncomingPacketType.PingBack
+            or GameIncomingPacketType.NewPing
+            or GameIncomingPacketType.CancelAutoWalk
+            or GameIncomingPacketType.PlayerLogOut
+            or GameIncomingPacketType.OpenStore
+            or GameIncomingPacketType.RequestBless
+            or GameIncomingPacketType.RequestQuestLog
+            or GameIncomingPacketType.RequestStoreOffers
+            or GameIncomingPacketType.Disconnect);
     }
 
     private void HandleNotImplementedPacket(GameIncomingPacketType packet)

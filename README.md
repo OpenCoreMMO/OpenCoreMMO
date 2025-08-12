@@ -28,7 +28,15 @@
 > Modern, free, and open-source MMORPG server emulator written in C#.
 > 
 > It was written from scratch and development on the project began in January 2020.
-> <br>To connect to the server, you can use either [OTClient](https://github.com/edubart/otclient), [OTCv8](https://github.com/OTCv8/otclientv8) or [OTCR](https://github.com/mehah/otclient) for version 8.6.
+> <br>To connect to the server, you can use either [OTClient](https://github.com/edubart/otclient), [OTCv8](https://github.com/OTCv8/otclientv8) or [OTCR](https://github.com/mehah/otclient) for version 10.98
+
+## 📋 Project Management
+
+> **🎯 Current Priorities & Roadmap**  
+> All development priorities, features in progress, and future roadmap items are tracked in our [GitHub Projects](https://github.com/opencoremmo/opencoremmo/projects).
+>
+> **📚 Comprehensive Documentation**  
+> Visit our [documentation](./docs/) for detailed guides on contributing, development processes, and project architecture.
 
 ## Latest Builds
 
@@ -38,16 +46,47 @@
 |![linux](https://badgen.net/badge/icon/Ubuntu%20Linux%2022.04%20x64?icon=terminal&label&color=orange)|[![OpenCoreMMO](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
 |![mac](https://badgen.net/badge/icon/macOS%20Latest?icon=apple&label&color=purple&list=1)|[![OpenCoreMMO](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push)](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
 
-## Usage
+## 🚀 Quick Start
+
+### Prerequisites
+- **.NET 9.0 SDK** - [Download here](https://dotnet.microsoft.com/download/dotnet/9.0)
+- **PostgreSQL** (recommended) or SQLite for development
+
+### Development Setup
 
 ```sh
-download and install .NET 9: https://dotnet.microsoft.com/download/dotnet/9.0
+# Clone the repository
 git clone https://github.com/OpenCoreMMO/OpenCoreMMO.git
+cd opencoremmo/server
+
+# Install commit validation tools
+npm install
+
+# Run the server
 cd src
 dotnet run --project "Standalone"
 ```
-To connect to the self-hosted server for development, please use the following connection details:
-1. IP Address: 127.0.0.1
+
+### Connection Details (Development)
+- **IP Address**: 127.0.0.1
+- **Port**: 7171  
+- **Account**: 1
+- **Password**: 1
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how to get started:
+
+1. **📋 Check Projects**: Review our [GitHub Projects](https://github.com/opencoremmo/opencoremmo/projects) for current priorities
+2. **📖 Read Documentation**: Visit our [Contributing Guide](./docs/contributing/) for detailed guidelines
+3. **🔧 Set Up Environment**: Follow our [setup instructions](./docs/contributing/README.md)
+4. **💬 Join Discussions**: Connect with the community via [GitHub Discussions](https://github.com/opencoremmo/opencoremmo/discussions)
+
+### Quick Links
+- **[Contributing Guidelines](./docs/contributing/README.md)** - Complete contributor guide
+- **[Branch Strategy](./docs/contributing/branch-strategy.md)** - How we organize code
+- **[Commit Guidelines](./docs/contributing/commit-guidelines.md)** - Writing good commits
+- **[Development Process](./docs/development/)** - Release and versioning strategy
 2. Port: 7171
 3. Account Name: 1
 4. Password: 1

@@ -231,10 +231,11 @@ public class ItemType : IItemType
 
         //if (HasFlag(flags, 1 << 21)) // unused -- unused
 
-        //if (HasFlag(flags, 1 << 22)) // isAnimation -- unused
-
         if (HasOTFlag(flags, 1 << 23)) // lookTrough
             SetFlag(ItemFlag.LookTrough);
+
+        if (HasOTFlag(flags, 1 << 24)) // isAnimation
+            SetFlag(ItemFlag.Animation);
 
         if (HasOTFlag(flags, 1 << 26)) // forceUse
             SetFlag(ItemFlag.ForceUse);

@@ -36,7 +36,8 @@ public class CreatureChangedVisibilityEventHandler
             }
             else
             {
-                connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(creature, stackPosition));
+                game.CreatureManager.TryGetLoggedPlayer(spectator.CreatureId, out var loggedPlayer);
+                connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(map, creature, stackPosition, loggedPlayer));
                 connection.OutgoingPackets.Enqueue(new AddCreaturePacket((IPlayer)spectator, creature));
             }
 

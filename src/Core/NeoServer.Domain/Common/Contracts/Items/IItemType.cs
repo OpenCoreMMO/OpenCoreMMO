@@ -91,4 +91,5 @@ public interface IItemType
     }
 
     void ThrowIfLocked();
+    bool IsAnimation() => Flags.Contains(ItemFlag.Animation);
 }

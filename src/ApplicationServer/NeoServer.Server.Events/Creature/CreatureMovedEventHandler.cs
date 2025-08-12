@@ -55,7 +55,7 @@ public class CreatureMovedEventHandler(IGameServer game, IScriptManager scriptMa
             if (player.CanSee(creature) && player.CanSee(fromLocation) &&
                 player.CanSee(toLocation)) //spectator can see old and new location
             {
-                MoveCreature(creature, fromLocation, toLocation, connection, fromTile, cylinderSpectator, player);
+                MoveCreature(game, creature, fromLocation, toLocation, connection, fromTile, cylinderSpectator, player);
 
                 connection.Send();
 
@@ -76,10 +76,11 @@ public class CreatureMovedEventHandler(IGameServer game, IScriptManager scriptMa
             if (!player.CanSee(creature) || !player.CanSee(toLocation)) continue;
 
             //happens when player enters spectator's view area
-            connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(creature,
-                cylinderSpectator.ToStackPosition));
+            connection.OutgoingPackets.Enqueue(
+                new AddAtStackPositionPacket(game.Map, creature, cylinderSpectator.ToStackPosition, player));
 
-            connection.OutgoingPackets.Enqueue(new AddCreaturePacket(player, creature));
+            //todo: check this, has removed in 1098, its cause bug and errors in client
+            //connection.OutgoingPackets.Enqueue(new AddCreaturePacket(player, creature));
 
             connection.Send();
         }
@@ -87,15 +88,15 @@ public class CreatureMovedEventHandler(IGameServer game, IScriptManager scriptMa
         scriptManager.MoveEvents.CreatureMove(creature, cylinder.FromTile.Location, cylinder.ToTile.Location);
     }
 
-    private static void MoveCreature(IWalkableCreature creature, Location fromLocation, Location toLocation,
+    private static void MoveCreature(IGameServer game, IWalkableCreature creature, Location fromLocation, Location toLocation,
         IConnection connection, ITile fromTile, ICylinderSpectator cylinderSpectator, IPlayer player)
     {
         if (fromLocation.Z != toLocation.Z)
         {
             connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(fromTile,
                 cylinderSpectator.FromStackPosition));
-            connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(creature,
-                cylinderSpectator.ToStackPosition));
+            connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(game.Map, creature,
+                cylinderSpectator.ToStackPosition, player));
 
             connection.OutgoingPackets.Enqueue(new AddCreaturePacket(player, creature));
 
