@@ -3,9 +3,9 @@ run-name: OpenCoreMMO Build Workflow
 on:
   workflow_dispatch:  # Add this line to enable manual triggering
   push:
-    branches: [ develop ]
+    branches: [ develop, version/860 ]
   pull_request:
-    branches: [ develop ]
+    branches: [ develop, version/860 ]
 jobs:
   workflow:
     uses: ./.github/workflows/_workflow.yaml
