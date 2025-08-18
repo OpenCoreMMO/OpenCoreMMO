@@ -14,6 +14,7 @@ public enum DatabaseType
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public record ServerConfiguration(
     int Version,
+    int MinVersion,
     string OTBM,
     string OTB,
     string Data,
