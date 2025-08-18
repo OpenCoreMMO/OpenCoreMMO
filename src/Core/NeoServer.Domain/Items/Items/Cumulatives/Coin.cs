@@ -6,8 +6,7 @@ namespace NeoServer.Domain.Items.Items.Cumulatives;
 
 public class Coin : Cumulative
 {
-    public Coin(IItemType type, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type,
-        location, attributes)
+    public Coin(IItemType type, Location location) : base (type, location)
     {
     }
 

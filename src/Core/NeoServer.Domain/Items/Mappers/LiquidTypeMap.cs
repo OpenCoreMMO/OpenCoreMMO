@@ -16,6 +16,14 @@ public class LiquidTypeMap
         { 7, LiquidColor.Purple }
     };
 
+    // Reverse mapping from enum values to keys
+    private readonly Dictionary<LiquidColor, byte> reverseTypes;
+
+    public LiquidTypeMap()
+    {
+        reverseTypes = types.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+    }
+
     public LiquidColor this[byte value]
     {
         get
@@ -23,5 +31,15 @@ public class LiquidTypeMap
             if (types.TryGetValue(value, out var color)) return color;
             return LiquidColor.Empty;
         }
+    }
+
+    public byte GetReverseLiquidColor(LiquidColor liquidColor)
+    {
+       //Get value from the reverse mapping
+        if (reverseTypes.TryGetValue(liquidColor, out var value))
+        {
+            return value;
+        }
+        return 0; // Default to 0 if not found
     }
 }

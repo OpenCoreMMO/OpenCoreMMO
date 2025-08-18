@@ -47,7 +47,7 @@ public static class ItemEntityParser
                     itemRecord.GetAttributes(), itemRecord.GetCustomAttributes());
 
                 if (item is ICumulative cumulativeItem && itemRecord.Amount > 1)
-                    cumulativeItem.Amount = (byte)itemRecord.Amount;
+                    cumulativeItem.SetAmount((byte)itemRecord.Amount);
 
                 dequeuedContainer.Container.AddItem(item);
 

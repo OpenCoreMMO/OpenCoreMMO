@@ -8,12 +8,8 @@ namespace NeoServer.Domain.Items.Bases;
 //todo: code duplicated from cumulative class
 public abstract class CumulativeEquipment : Equipment, ICumulative
 {
-    protected CumulativeEquipment(
-        IItemType type,
-        Location location,
-        IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type, location)
+    protected CumulativeEquipment(IItemType type, Location location) : base(type, location)
     {
-        SetAmount(attributes);
     }
 
     public event ItemReduce OnReduced;
@@ -28,7 +24,13 @@ public abstract class CumulativeEquipment : Equipment, ICumulative
     public ICumulative Clone(byte amount)
     {
         var clone = (ICumulative)MemberwiseClone();
-        clone.Amount = amount;
+
+        clone.Attributes = new ItemAttributeList();
+
+        clone.Attributes.SetAttribute(Attributes.ToDictionary<ItemAttribute, IConvertible>());
+        clone.Attributes.SetCustomAttribute(Attributes.ToDictionaryCustom<string, IConvertible>());
+
+        clone.SetAmount(amount);
         clone.ClearSubscribers();
         return clone;
     }
@@ -65,14 +67,14 @@ public abstract class CumulativeEquipment : Equipment, ICumulative
 
         if (totalAmount <= 100)
         {
-            Amount = (byte)totalAmount;
+            SetAmount((byte)totalAmount);
             item = null;
             return true;
         }
 
-        Amount = 100;
-
-        item.Amount = (byte)(totalAmount - Amount);
+        SetAmount(100);
+        var remainingAmount = (byte)(totalAmount - 100);
+        item.SetAmount(remainingAmount);
 
         return true;
     }
@@ -90,22 +92,13 @@ public abstract class CumulativeEquipment : Equipment, ICumulative
 
     public void SetAmount(byte amount)
     {
-        Amount = amount;
-    }
-
-    private void SetAmount(IDictionary<ItemTypeAttribute, IConvertible> attributes)
-    {
-        Amount = 1;
-
-        if (attributes == null || !attributes.TryGetValue(ItemTypeAttribute.Count, out var count)) return;
-
-        var amount = Convert.ToByte(count);
-        Amount = Math.Min((byte)100, amount);
+        Attributes.SetAttribute(ItemAttribute.Count, amount);
     }
 
     public void Increase(byte amount)
     {
-        Amount = (byte)(amount + Amount > 100 ? 100 : amount + Amount);
+        var newAmount = (byte)(amount + Amount > 100 ? 100 : amount + Amount);
+        SetAmount(newAmount);
     }
 
     private bool TryReduce(byte amount = 1)
@@ -115,7 +108,8 @@ public abstract class CumulativeEquipment : Equipment, ICumulative
         amount = (byte)(amount > 100 ? 100 : amount);
 
         var oldAmount = Amount;
-        Amount -= amount;
+        var newAmount = Amount - amount;
+        SetAmount((byte)newAmount);
 
         if (oldAmount == Amount) return false;
         return true;

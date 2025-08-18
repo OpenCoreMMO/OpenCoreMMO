@@ -21,7 +21,7 @@ public interface IItem : IThing, IHasDecay
     /// </summary>
     IItemType Metadata { get; }
 
-    ItemAttributeList Attributes { get; }
+    ItemAttributeList Attributes { get; set; }
 
     ushort ActionId { get; }
     uint UniqueId { get; }
