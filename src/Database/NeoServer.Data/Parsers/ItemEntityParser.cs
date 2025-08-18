@@ -1,9 +1,12 @@
-﻿using NeoServer.Data.Entities;
-using NeoServer.Domain.Common.Contracts.Items.Types;
-using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Location.Structs;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using NeoServer.Data.Entities;
+using NeoServer.Data.Extensions;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Location.Structs;
+
+namespace NeoServer.Data.Parsers;
 
 public static class ItemEntityParser
 {
@@ -17,7 +20,7 @@ public static class ItemEntityParser
             DecayDuration = item.Decay?.Duration,
             DecayElapsed = item.Decay?.Elapsed,
             Charges = item is IChargeable chargeable ? chargeable.Charges : null,
-            Attributes = item.ExtractAllAttributes(),
+            Attributes = item.ExtractAllAttributes()
         };
 
         return itemModel;
@@ -40,7 +43,11 @@ public static class ItemEntityParser
             foreach (var itemRecord in containerItemsRecords)
             {
                 //todo: check this, if need pass Metadata to itemFactory.Create
-                var item = itemFactory.Create((ushort)itemRecord.ServerId, location, null, null, itemRecord.GetAttributes(), itemRecord.GetCustomAttributes());
+                var item = itemFactory.Create((ushort)itemRecord.ServerId, location, null, null,
+                    itemRecord.GetAttributes(), itemRecord.GetCustomAttributes());
+
+                if (item is ICumulative cumulativeItem && itemRecord.Amount > 1)
+                    cumulativeItem.SetAmount((byte)itemRecord.Amount);
 
                 dequeuedContainer.Container.AddItem(item);
 

@@ -24,7 +24,7 @@ public class PlayerMoveItemTests
         var inventory = InventoryTestDataBuilder.Build(player,
             new Dictionary<Slot, (IItem Item, ushort Id)>());
 
-        var item = ItemTestData.CreateWeaponItem(100);
+        var item = ItemTestDataBuilder.CreateWeaponItem(100);
 
         IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
             new[] { item });
@@ -48,7 +48,7 @@ public class PlayerMoveItemTests
         var inventory = InventoryTestDataBuilder.Build(player,
             new Dictionary<Slot, (IItem Item, ushort Id)>());
 
-        var item = ItemTestData.CreateWeaponItem(100);
+        var item = ItemTestDataBuilder.CreateWeaponItem(100);
 
         IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
             new[] { item });
@@ -70,12 +70,12 @@ public class PlayerMoveItemTests
         //arrange
         var dictionary = new Dictionary<Slot, (IItem Item, ushort Id)>();
 
-        var itemOnInventory = ItemTestData.CreateWeaponItem(200, "axe");
+        var itemOnInventory = ItemTestDataBuilder.CreateWeaponItem(200, "axe");
         dictionary.Add(Slot.Left, (itemOnInventory, 200));
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
         var inventory = InventoryTestDataBuilder.Build(player, dictionary);
-        var item = ItemTestData.CreateWeaponItem(100);
+        var item = ItemTestDataBuilder.CreateWeaponItem(100);
         IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
             new[] { item });
 
@@ -97,7 +97,7 @@ public class PlayerMoveItemTests
         var inventory = InventoryTestDataBuilder.Build(player,
             new Dictionary<Slot, (IItem Item, ushort Id)>());
 
-        var item = ItemTestData.CreateAmmo(100, 20);
+        var item = ItemTestDataBuilder.CreateAmmo(100, 20);
         IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
             new[] { item });
 
@@ -115,7 +115,7 @@ public class PlayerMoveItemTests
     public void Player_moves_cumulative_from_ground_to_exiting_item_on_inventory()
     {
         //arrange
-        var itemOnInventory = ItemTestData.CreateAmmo(100, 51);
+        var itemOnInventory = ItemTestDataBuilder.CreateAmmo(100, 51);
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
         var inventory = InventoryTestDataBuilder.Build(player,
@@ -124,7 +124,7 @@ public class PlayerMoveItemTests
                 { Slot.Ammo, (itemOnInventory, 100) }
             });
 
-        var item = ItemTestData.CreateAmmo(100, 100);
+        var item = ItemTestDataBuilder.CreateAmmo(100, 100);
         IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
             new[] { item });
 
@@ -146,14 +146,14 @@ public class PlayerMoveItemTests
         //arrange
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
-        var itemOnInventory = ItemTestData.CreateWeaponItem(100);
+        var itemOnInventory = ItemTestDataBuilder.CreateWeaponItem(100);
         var inventory = InventoryTestDataBuilder.Build(player,
             new Dictionary<Slot, (IItem Item, ushort Id)>
             {
                 { Slot.Left, (itemOnInventory, 100) }
             });
 
-        var item = ItemTestData.CreateThrowableDistanceItem(200, 100);
+        var item = ItemTestDataBuilder.CreateThrowableDistanceItem(200, 100);
         IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
             new IItem[] { item });
 
@@ -172,7 +172,7 @@ public class PlayerMoveItemTests
     public void Player_moves_cumulative_from_ground_to_inventory_backpack()
     {
         //arrange
-        var backpack = ItemTestData.CreateBackpack();
+        var backpack = ItemTestDataBuilder.CreateBackpack();
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
         var inventory = InventoryTestDataBuilder.Build(player,
@@ -181,7 +181,7 @@ public class PlayerMoveItemTests
                 { Slot.Backpack, (backpack, 100) }
             });
 
-        var item = ItemTestData.CreateAmmo(200, 100);
+        var item = ItemTestDataBuilder.CreateAmmo(200, 100);
         IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
             new[] { item });
 
@@ -200,7 +200,7 @@ public class PlayerMoveItemTests
     public void Player_moves_item_from_inventory_to_tile()
     {
         //arrange
-        var item = ItemTestData.CreateBodyEquipmentItem(100, "", "shield");
+        var item = ItemTestDataBuilder.CreateBodyEquipmentItem(100, "", "shield");
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
         var inventory = InventoryTestDataBuilder.Build(player,
@@ -224,8 +224,8 @@ public class PlayerMoveItemTests
     public void Player_moves_ammo_from_container_to_inventory()
     {
         //arrange
-        var container = ItemTestData.CreateContainer(2);
-        var ammo = ItemTestData.CreateAmmo(100, 1);
+        var container = ItemTestDataBuilder.CreateContainer(2);
+        var ammo = ItemTestDataBuilder.CreateAmmo(100, 1);
         container.AddItem(ammo);
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
@@ -247,8 +247,8 @@ public class PlayerMoveItemTests
     public void Player_moves_ammo_from_backpack_to_inventory()
     {
         //arrange
-        var backpack = ItemTestData.CreateBackpack();
-        var ammo = ItemTestData.CreateAmmo(100, 1);
+        var backpack = ItemTestDataBuilder.CreateBackpack();
+        var ammo = ItemTestDataBuilder.CreateAmmo(100, 1);
         backpack.AddItem(ammo);
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
@@ -284,7 +284,7 @@ public class PlayerMoveItemTests
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
-        var item = ItemTestData.CreateWeaponItem(100);
+        var item = ItemTestDataBuilder.CreateWeaponItem(100);
         fromTile.AddItem(item);
 
         //act
@@ -306,7 +306,7 @@ public class PlayerMoveItemTests
             Array.Empty<IItem>());
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
-        var item = ItemTestData.CreateAmmo(100, 100);
+        var item = ItemTestDataBuilder.CreateAmmo(100, 100);
 
         fromTile.AddItem(item);
 
@@ -333,7 +333,7 @@ public class PlayerMoveItemTests
             Array.Empty<IItem>());
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
-        var item = ItemTestData.CreateAmmo(100, 100);
+        var item = ItemTestDataBuilder.CreateAmmo(100, 100);
 
         fromTile.AddItem(item);
 
@@ -357,10 +357,10 @@ public class PlayerMoveItemTests
         IDynamicTile fromTile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
             Array.Empty<IItem>());
         IDynamicTile dest = new DynamicTile(new Coordinate(102, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            new[] { ItemTestData.CreateAmmo(100, 50) });
+            new[] { ItemTestDataBuilder.CreateAmmo(100, 50) });
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
-        var item = ItemTestData.CreateAmmo(100, 100);
+        var item = ItemTestDataBuilder.CreateAmmo(100, 100);
         fromTile.AddItem(item);
 
         //act
@@ -395,18 +395,18 @@ public class PlayerMoveItemTests
     public void Player_adds_cumulative_item_to_child_container_joins_or_return_full_when_exceeds()
     {
         //arrange
-        var fromContainer = ItemTestData.CreateContainer(2);
+        var fromContainer = ItemTestDataBuilder.CreateContainer(2);
 
-        var child = ItemTestData.CreateContainer(1);
+        var child = ItemTestDataBuilder.CreateContainer(1);
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
         IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
             Array.Empty<IItem>());
 
-        var itemOnChild = ItemTestData.CreateCumulativeItem(100, 50);
+        var itemOnChild = ItemTestDataBuilder.CreateCumulativeItem(100, 50);
         child.AddItem(itemOnChild);
 
-        var item = ItemTestData.CreateCumulativeItem(100, 100);
+        var item = ItemTestDataBuilder.CreateCumulativeItem(100, 100);
         fromContainer.AddItem(child);
         fromContainer.AddItem(item);
 
@@ -428,9 +428,9 @@ public class PlayerMoveItemTests
     public void Player_moves_cumulative_item_from_container_to_child()
     {
         //arrange
-        var fromContainer = ItemTestData.CreateContainer(2);
-        var child = ItemTestData.CreateContainer(1);
-        var item = ItemTestData.CreateCumulativeItem(100, 40);
+        var fromContainer = ItemTestDataBuilder.CreateContainer(2);
+        var child = ItemTestDataBuilder.CreateContainer(1);
+        var item = ItemTestDataBuilder.CreateCumulativeItem(100, 40);
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
         fromContainer.AddItem(child);
@@ -458,11 +458,11 @@ public class PlayerMoveItemTests
     public void Player_moves_regular_item_from_container_to_child()
     {
         //arrange
-        var fromContainer = ItemTestData.CreateBackpack();
-        var child = ItemTestData.CreateBackpack();
+        var fromContainer = ItemTestDataBuilder.CreateBackpack();
+        var child = ItemTestDataBuilder.CreateBackpack();
 
-        var item2 = ItemTestData.CreateBodyEquipmentItem(101, "head");
-        var item = ItemTestData.CreateBodyEquipmentItem(100, "head");
+        var item2 = ItemTestDataBuilder.CreateBodyEquipmentItem(101, "head");
+        var item = ItemTestDataBuilder.CreateBodyEquipmentItem(100, "head");
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
@@ -496,10 +496,10 @@ public class PlayerMoveItemTests
     public void Player_cannot_move_cumulative_to_child_when_it_is_already_full()
     {
         //arrange
-        var fromContainer = ItemTestData.CreateContainer(2);
-        var child = ItemTestData.CreateContainer(1);
-        var item = ItemTestData.CreateCumulativeItem(100, 40);
-        var item2 = ItemTestData.CreateCumulativeItem(100, 100);
+        var fromContainer = ItemTestDataBuilder.CreateContainer(2);
+        var child = ItemTestDataBuilder.CreateContainer(1);
+        var item = ItemTestDataBuilder.CreateCumulativeItem(100, 40);
+        var item2 = ItemTestDataBuilder.CreateCumulativeItem(100, 100);
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
@@ -521,9 +521,9 @@ public class PlayerMoveItemTests
     public void Player_moves_backpack_to_first_slot_of_another_backpack()
     {
         //arrange
-        var anotherBackpack = ItemTestData.CreateContainer(2);
-        var bp1 = ItemTestData.CreateContainer(2);
-        var item = ItemTestData.CreateBackpack();
+        var anotherBackpack = ItemTestDataBuilder.CreateContainer(2);
+        var bp1 = ItemTestDataBuilder.CreateContainer(2);
+        var item = ItemTestDataBuilder.CreateBackpack();
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
         bp1.AddItem(item);
@@ -540,10 +540,10 @@ public class PlayerMoveItemTests
     public void Player_moves_cumulative_item_from_container_to_join_child()
     {
         //arrange
-        var fromContainer = ItemTestData.CreateBackpack();
-        var child = ItemTestData.CreateBackpack();
-        var item = ItemTestData.CreateCumulativeItem(100, 40);
-        var item2 = ItemTestData.CreateCumulativeItem(100, 20);
+        var fromContainer = ItemTestDataBuilder.CreateBackpack();
+        var child = ItemTestDataBuilder.CreateBackpack();
+        var item = ItemTestDataBuilder.CreateCumulativeItem(100, 40);
+        var item2 = ItemTestDataBuilder.CreateCumulativeItem(100, 20);
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
         fromContainer.AddItem(child);

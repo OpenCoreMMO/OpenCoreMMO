@@ -18,7 +18,7 @@ public class MapTest
         {
             var items = new List<IItem>
             {
-                ItemTestData.CreateRegularItem(1)
+                ItemTestDataBuilder.CreateRegularItem(1)
             };
 
             if (item.Location == new Location((ushort)x, (ushort)y, 7)) items.Add(item);

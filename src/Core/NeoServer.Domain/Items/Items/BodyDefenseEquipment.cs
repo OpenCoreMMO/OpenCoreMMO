@@ -16,24 +16,22 @@ public class BodyDefenseEquipment : Equipment, IBodyEquipmentEquipment
     {
     }
 
-    public ushort DefenseValue => Metadata.Attributes.HasAttribute(ItemTypeAttribute.Defense)
-        ? Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Defense)
-        : Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Armor);
-
-    public ushort ArmorValue => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Armor);
-
     protected override string PartialInspectionText
     {
         get
         {
-            var hasArmorValue = Metadata.Attributes.TryGetAttribute<byte>(ItemTypeAttribute.Armor, out var armorValue);
-            if (hasArmorValue) return $"Arm: {armorValue}";
-
-            var hasDefenseValue =
-                Metadata.Attributes.TryGetAttribute<byte>(ItemTypeAttribute.Defense, out var defenseValue);
-            return hasDefenseValue ? $"Def: {defenseValue}" : string.Empty;
+            if (Armor > 0) return $"Arm: {Armor}";
+            return Defense > 0 ? $"Def: {Defense}" : string.Empty;
         }
     }
+
+    public new ushort Defense => base.Defense > 0
+        ? base.Defense
+        : Armor;
+
+    public bool Pickupable => true;
+
+    public Slot Slot => Metadata.WeaponType == WeaponType.Shield ? Slot.Right : Metadata.BodyPosition;
 
     public override bool CanBeDressed(IPlayer player)
     {
@@ -48,10 +46,6 @@ public class BodyDefenseEquipment : Equipment, IBodyEquipmentEquipment
         if (player.Level >= MinLevel) hasMinimumLevel = true;
         return hasRequiredVocation && hasMinimumLevel;
     }
-
-    public bool Pickupable => true;
-
-    public Slot Slot => Metadata.WeaponType == WeaponType.Shield ? Slot.Right : Metadata.BodyPosition;
 
     public virtual void OnMoved(IThing to)
     {

@@ -15,7 +15,7 @@ public class ThingTests
         //arrange
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7);
         var player = PlayerTestDataBuilder.Build();
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         ((IDynamicTile)map[100, 102, 7]).AddItem(item);
 
@@ -32,7 +32,7 @@ public class ThingTests
         //arrange
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
         var player = PlayerTestDataBuilder.Build();
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         ((IDynamicTile)map[100, 102, 8]).AddItem(item);
 
@@ -49,7 +49,7 @@ public class ThingTests
         //arrange
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
         var player = PlayerTestDataBuilder.Build();
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         ((IDynamicTile)map[100, 101, 7]).AddItem(item);
 
@@ -64,7 +64,7 @@ public class ThingTests
     public void Item_on_inventory_tile_is_closed_to_player()
     {
         //arrange
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
         var player = PlayerTestDataBuilder.Build(inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
         {
             [Slot.Left] = new(item, 1)

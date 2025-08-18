@@ -500,8 +500,10 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
                 Lua.PushNil(L);
                 return 1;
             }
+
             var result = _map.TryMoveCreature(walkableCreature, direction);
-            Lua.PushNumber(L, result ? (int)ReturnValueType.RETURNVALUE_NOERROR : (int)ReturnValueType.RETURNVALUE_NOTPOSSIBLE);
+            Lua.PushNumber(L,
+                result ? (int)ReturnValueType.RETURNVALUE_NOERROR : (int)ReturnValueType.RETURNVALUE_NOTPOSSIBLE);
         }
         else
         {
@@ -511,9 +513,12 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
                 Lua.PushNil(L);
                 return 1;
             }
+
             var result = _map.TryMoveCreature(walkableCreature, tile.Location);
-            Lua.PushNumber(L, result ? (int)ReturnValueType.RETURNVALUE_NOERROR : (int)ReturnValueType.RETURNVALUE_NOTPOSSIBLE);
+            Lua.PushNumber(L,
+                result ? (int)ReturnValueType.RETURNVALUE_NOERROR : (int)ReturnValueType.RETURNVALUE_NOTPOSSIBLE);
         }
+
         return 1;
     }
 
@@ -529,7 +534,9 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 
         var forced = GetBoolean(luaState, 2, true);
         if (creature is IPlayer player)
+        {
             _gameCreatureManager.RemovePlayer(player);
+        }
         else if (creature is ISummon summon)
         {
             summon.Dismiss();

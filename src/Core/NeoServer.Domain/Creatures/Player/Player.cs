@@ -30,6 +30,7 @@ using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Common;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
+using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
 using NeoServer.Domain.Creatures.Npcs;
@@ -65,7 +66,7 @@ public class Player : CombatActor, IPlayer
         byte soulPoints,
         byte soulMax,
         IDictionary<SkillType, ISkill> skills,
-        IDictionary<int, int> storages,
+        IDictionary<uint, int> storages,
         ushort staminaMinutes,
         IOutfit outfit,
         ushort speed,
@@ -130,7 +131,6 @@ public class Player : CombatActor, IPlayer
     protected override string InspectionText =>
         $"{Name} (Level {Level}). {GenderPronoun} {Vocation.InspectText}. {Guild?.InspectionText(this)} {PlayerParty?.Party?.InspectionText(this)}";
 
-    public override ushort RawSpeed => (ushort)(220 + 2 * (Level - 1));
     public string CharacterName { get; }
     public Dictionary<uint, long> KnownCreatures { get; }
     public bool Online { get; }
@@ -146,6 +146,8 @@ public class Player : CombatActor, IPlayer
     public IPlayerHand PlayerHand { get; }
 
     public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
+
+    public override ushort RawSpeed => (ushort)(220 + 2 * (Level - 1));
 
     public float DamageFactor => FightMode switch
     {
@@ -320,7 +322,7 @@ public class Player : CombatActor, IPlayer
     public bool Recovering => HasCondition(ConditionType.Regeneration);
     public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
     public override bool CanBeSeen => Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
-    public virtual bool CanSeeInspectionDetails => false;
+    public virtual bool CanSeeInspectionDetails => Group.Access;
 
     public override ushort MaximumElementalAttackPower =>
         CalculateTotalAttack(Inventory.TotalElementalAttack.AttackPower, true);
@@ -385,7 +387,7 @@ public class Player : CombatActor, IPlayer
     {
         var rate = Creatures.Player.Vocation.Vocation.DefaultSkillMultiplier;
         Vocation.Skills?.TryGetValue(skill, out rate);
-        return (byte)Skills[skill].GetPercentage(rate);
+        return (byte)Math.Clamp(Skills[skill].GetPercentage(rate), 0, 100);
     }
 
     public bool KnowsCreatureWithId(uint creatureId)
@@ -428,6 +430,8 @@ public class Player : CombatActor, IPlayer
         TogglePacifiedCondition(fromTile, toTile);
         Containers.CloseDistantContainers();
         base.OnMoved(fromTile, toTile, spectators);
+
+        EventAggregator.Publish(new PlayerWalkEvent(this, Direction));
     }
 
     public override bool CanSee(ICreature otherCreature)
@@ -625,7 +629,7 @@ public class Player : CombatActor, IPlayer
 
     public void Read(IReadable readable)
     {
-        OnReadText?.Invoke(this, readable, readable.Text);
+        EventAggregator.Publish(new PlayerReadTextEvent(this, readable, readable.Text));
     }
 
     public void Write(IReadable readable, string text)
@@ -1009,13 +1013,10 @@ public class Player : CombatActor, IPlayer
     {
         SetLogoutBlock();
         if (!combatParameter.UsingWeapon) return;
-        
+
         Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
 
-        if (combatResult.TotalDamage > 0)
-        {
-            IncreaseSkillCounter(SkillInUse, 1);
-        }
+        if (combatResult.TotalDamage > 0) IncreaseSkillCounter(SkillInUse, 1);
     }
 
     public override Result CanAttack(CombatParameter combatParameter)
@@ -1208,6 +1209,11 @@ public class Player : CombatActor, IPlayer
         }
     }
 
+    public void MoveToTemple()
+    {
+        SetNewLocation(new Location(Town.Coordinate));
+    }
+
 
     private ushort CalculateTotalAttack(ushort attackPower, bool isElemental = false)
     {
@@ -1240,8 +1246,6 @@ public class Player : CombatActor, IPlayer
 
     public override CalculatedAttackDamage CalculateAttackDamage()
     {
-        var damage = new CalculatedAttackDamage();
-
         return base.CalculateAttackDamage();
     }
 
@@ -1456,12 +1460,6 @@ public class Player : CombatActor, IPlayer
 
         PlayerSkull.RemoveYellowSkull();
         DecreaseExp();
-        MoveToTemple();
-    }
-
-    private void MoveToTemple()
-    {
-        SetNewLocation(new Location(Town.Coordinate));
     }
 
     private void DecreaseExp()
@@ -1480,16 +1478,24 @@ public class Player : CombatActor, IPlayer
     #region Storage
 
     //TODO: rename this method to something more meaningful or take this from here if this is not game business rule
-    public IDictionary<int, int> Storages { get; }
+    public IDictionary<uint, int> Storages { get; }
 
-    public int GetStorageValue(int key)
+    public int GetStorageValue(uint key)
     {
         return Storages.TryGetValue(key, out var storage) ? storage : -1;
     }
 
-    public void AddOrUpdateStorageValue(int key, int value)
+    public void AddOrUpdateStorageValue(uint key, int value)
     {
+        var oldValue = GetStorageValue(key);
         Storages.AddOrUpdate(key, value);
+        //todo: implement current time
+        EventAggregator.Publish(new PlayerStorageUpdateEvent(this, key, value, oldValue, 0));
+    }
+
+    public override void Think(int interval)
+    {
+        EventAggregator.Publish(new PlayerThinkEvent(this, interval));
     }
 
     #endregion
@@ -1536,7 +1542,6 @@ public class Player : CombatActor, IPlayer
     public event ChangeChaseMode OnChangedChaseMode;
     public event AddSkillBonus OnAddedSkillBonus;
     public event RemoveSkillBonus OnRemovedSkillBonus;
-    public event ReadText OnReadText;
     public event WroteText OnWroteText;
     public event EquipItem OnEquipItem;
     public event DeEquipItem OnDeEquipItem;

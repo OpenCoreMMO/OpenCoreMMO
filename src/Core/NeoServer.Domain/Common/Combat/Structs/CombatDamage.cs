@@ -27,28 +27,31 @@ public class CombatDamage
     {
     }
 
-    public CombatDamage(ushort damage, DamageType type)
+    public CombatDamage(ushort damage, DamageType type, DamageOrigin origin = DamageOrigin.None)
     {
         Damage = damage;
         Type = type;
         Effect = EffectT.None;
         NoEffect = false;
+        Origin = origin;
     }
 
-    public CombatDamage(ushort damage, DamageType type, EffectT effect)
+    public CombatDamage(ushort damage, DamageType type, EffectT effect, DamageOrigin origin = DamageOrigin.None)
     {
         Damage = damage;
         Type = type;
         Effect = effect;
         NoEffect = false;
+        Origin = origin;
     }
 
-    public CombatDamage(ushort damage, DamageType type, bool noEffect)
+    public CombatDamage(ushort damage, DamageType type, bool noEffect, DamageOrigin origin = DamageOrigin.None)
     {
         Damage = damage;
         Type = type;
         Effect = EffectT.None;
         NoEffect = noEffect;
+        Origin = origin;
     }
 
     public bool NoEffect { get; }
@@ -68,9 +71,15 @@ public class CombatDamage
     /// </summary>
     public DamageType Type { get; }
 
+    /// <summary>
+    ///     Origin of the damage (condition, spell...)
+    /// </summary>
+    public DamageOrigin Origin { get; }
+
     public EffectT Effect { get; set; }
 
     public bool Unjustified { get; set; }
+
 
     /// <summary>
     ///     Sets a new damage

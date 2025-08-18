@@ -77,7 +77,7 @@ public class Door : BaseItem
 
         if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.TransformTo, out var doorId)) return;
 
-        var door = ItemFactory.Instance.Create(doorId, Location, null, null);
+        var door = ItemFactory.Instance.Create(doorId, Location, null);
 
         dynamicTile.RemoveItem(this, 1, out _);
 

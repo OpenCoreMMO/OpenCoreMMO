@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures;
@@ -287,11 +288,48 @@ public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, I
         return scriptInterface.CallFunction(3);
     }
 
-    //todo: implement this
-    //public bool ExecuteOnHealthChange(ICreature creature, ICreature attacker, CombatDamage damage)) { }
+    public bool ExecuteOnDamageReceivedChange(ICreature creature, ICreature attacker, CombatDamageList combatDamageList)
+    {
+        // ExecuteOnHealthChange(creature, attacker, primaryDamage, primaryType, secondaryDamage, secondaryType, origin)
+        // ExecuteOnManaChange(creature, attacker, primaryDamage, primaryType, secondaryDamage, secondaryType, origin)
+        if (!GetScriptInterface().InternalReserveScriptEnv())
+        {
+            var excuteOnMethod = EventType == CreatureEventType.CREATURE_EVENT_HEALTHCHANGE
+                ? "ExecuteOnHealthChange"
+                : "ExecuteOnManaChange";
 
-    //todo: implement this
-    //public bool ExecuteOnManaChange(ICreature creature, ICreature attacker, CombatDamage damage)) { }
+            logger.Error(
+                "[CreatureEvent:{ExecuteOn} - Creature {CreatureName} event {EventName}] Call stack overflow, too many lua script calls being nested",
+                excuteOnMethod, creature.Name, Name);
+
+            return false;
+        }
+
+        var scriptInterface = GetScriptInterface();
+        var scriptEnvironment = scriptInterface.InternalGetScriptEnv();
+        scriptEnvironment.SetScriptId(GetScriptId(), GetScriptInterface());
+
+        var luaState = scriptInterface.GetLuaState();
+        scriptInterface.PushFunction(GetScriptId());
+
+        LuaScriptInterface.PushUserdata(luaState, creature);
+        LuaScriptInterface.SetMetatable(luaState, -1, "Creature");
+
+        LuaScriptInterface.PushUserdata(luaState, attacker);
+        LuaScriptInterface.SetMetatable(luaState, -1, "Creature");
+
+        //Primary damage
+        Lua.PushNumber(luaState, (byte)combatDamageList.Damage.Type);
+        Lua.PushNumber(luaState, combatDamageList.Damage.Damage);
+
+        //Secondary damage
+        Lua.PushNumber(luaState, (byte)combatDamageList.ElementalDamage.Type);
+        Lua.PushNumber(luaState, combatDamageList.ElementalDamage.Damage);
+
+        Lua.PushNumber(luaState, (byte)combatDamageList.ElementalDamage.Origin);
+
+        return scriptInterface.CallFunction(7);
+    }
 
     public bool ExecuteOnExtendedOpcode(IPlayer player, byte opcode, string buffer)
     {

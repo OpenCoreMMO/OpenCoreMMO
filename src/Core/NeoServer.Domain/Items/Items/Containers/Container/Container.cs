@@ -158,9 +158,14 @@ public class Container : BaseItem, IContainer
 
     #region Queries
 
-    public (IItem ItemFound, IContainer Container, byte SlotIndex) GetFirstItem(ushort clientId)
+    public (IItem ItemFound, IContainer Container, byte SlotIndex) GetFirstItemByClientId(ushort clientId)
     {
         return FindFirstItemByClientIdQuery.Find(this, clientId);
+    }
+
+    public (IItem ItemFound, IContainer Container, byte SlotIndex) GetFirstItemByServerId(ushort serverId)
+    {
+        return FindFirstItemByServerIdQuery.Find(this, serverId);
     }
 
     public bool GetContainerAt(byte index, out IContainer container)
@@ -215,6 +220,9 @@ public class Container : BaseItem, IContainer
 
     public Result<OperationResultList<IItem>> AddItem(IItem item, bool includeChildren)
     {
+        if (Owner != null)
+            item.SetOwner(Owner);
+
         if (item is null) return Result<OperationResultList<IItem>>.NotPossible;
 
         Result<OperationResultList<IItem>> result = new(AddItemOperation.TryAddItem(this, item).Reason);
@@ -238,6 +246,15 @@ public class Container : BaseItem, IContainer
         if (item is null) return Result<OperationResultList<IItem>>.NotPossible;
 
         return new Result<OperationResultList<IItem>>(AddItemOperation.TryAddItem(this, item, position).Reason);
+    }
+
+    public bool UpdateItem(IItem item, IItemType newType)
+    {
+        var result = ReplaceItemOperation.Replace(this, item, newType);
+        if (!result) return false;
+
+        InvokeItemUpdatedEvent((byte)item.Location.ContainerSlot, (sbyte)item.Amount);
+        return true;
     }
 
     #endregion
@@ -265,4 +282,16 @@ public class Container : BaseItem, IContainer
     }
 
     #endregion
+}
+
+public static class ReplaceItemOperation
+{
+    public static bool Replace(Container container, IItem fromItem, IItemType toItemType)
+    {
+        if (toItemType is null) return false;
+        if (fromItem.Metadata.Group != toItemType.Group) return false;
+
+        fromItem.UpdateMetadata(toItemType);
+        return true;
+    }
 }

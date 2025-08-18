@@ -75,7 +75,7 @@ public class NpcFactory : INpcFactory
         return new Outfit
         {
             Addon = npcType.Look.TryGetValue(LookType.Addon, out var addon) ? (byte)addon : default,
-            LookType = npcType.Look.TryGetValue(LookType.Type, out var type) ? (byte)type : default,
+            LookType = npcType.Look.TryGetValue(LookType.Type, out var type) ? type : default,
             Body = npcType.Look.TryGetValue(LookType.Body, out var body) ? (byte)body : default,
             Feet = npcType.Look.TryGetValue(LookType.Feet, out var feet) ? (byte)feet : default,
             Head = npcType.Look.TryGetValue(LookType.Head, out var head) ? (byte)head : default,

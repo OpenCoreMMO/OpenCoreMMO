@@ -12,7 +12,4 @@ var postgres = builder.AddPostgres("postgres", username, password, 5432)
 var standaloneServer = builder.AddProject<NeoServer_Server_Standalone>("Standalone")
     .WaitFor(postgres);
 
-var webApi = builder.AddProject<NeoServer_Web_API>("webApi")
-    .WaitFor(postgres);
-
 builder.Build().Run();

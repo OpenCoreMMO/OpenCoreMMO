@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using NeoServer.Domain.Common.Item;
+
+namespace NeoServer.Loaders.OTB.Parsers;
 
 internal class ItemAttributeTranslationMap
 {
@@ -129,23 +132,28 @@ internal class ItemAttributeTranslationMap
         ["storeitem"] = ItemTypeAttribute.StoreItem,
         ["worth"] = ItemTypeAttribute.Worth,
 
-        // Adicionais exclusivos do C#
-        ["isaggresive"] = ItemTypeAttribute.IsAggressive,
-        ["decayelapsed"] = ItemTypeAttribute.DecayElapsed,
-        ["vocations"] = ItemTypeAttribute.Vocation,
-        ["useon"] = ItemTypeAttribute.UseOn,
-        ["manaUse"] = ItemTypeAttribute.ManaUse,
-        ["cooldown"] = ItemTypeAttribute.CooldownTime,
-        ["souluse"] = ItemTypeAttribute.SoulUse,
-        ["script"] = ItemTypeAttribute.Script,
+        // Adicionais exclusivos do OpenCore
         ["area"] = ItemTypeAttribute.Area,
-        ["ticks"] = ItemTypeAttribute.Ticks,
+        ["cooldown"] = ItemTypeAttribute.CooldownTime,
+        ["count"] = ItemTypeAttribute.Count,
+        ["damage"] = ItemTypeAttribute.Damage,
+        ["decayelapsed"] = ItemTypeAttribute.DecayElapsed,
         ["formula"] = ItemTypeAttribute.Formula,
+        ["healing"] = ItemTypeAttribute.Healing,
+        ["isaggresive"] = ItemTypeAttribute.IsAggressive,
+        ["manaUse"] = ItemTypeAttribute.ManaUse,
+        ["max"] = ItemTypeAttribute.Max,
+        ["min"] = ItemTypeAttribute.Min,
+        ["minlevel"] = ItemTypeAttribute.MinimumLevel,
+        ["minmagiclevel"] = ItemTypeAttribute.MinimumMagicLevel,
         ["needtarget"] = ItemTypeAttribute.NeedTarget,
         ["regeneration"] = ItemTypeAttribute.Regeneration,
+        ["script"] = ItemTypeAttribute.Script,
         ["sentence"] = ItemTypeAttribute.Sentence,
-        ["min"] = ItemTypeAttribute.Min,
-        ["max"] = ItemTypeAttribute.Max,
-        ["teleport"] = ItemTypeAttribute.TeleportDestination
+        ["souluse"] = ItemTypeAttribute.SoulUse,
+        ["teleport"] = ItemTypeAttribute.TeleportDestination,
+        ["ticks"] = ItemTypeAttribute.Ticks,
+        ["useon"] = ItemTypeAttribute.UseOn,
+        ["vocations"] = ItemTypeAttribute.Vocation
     };
 }

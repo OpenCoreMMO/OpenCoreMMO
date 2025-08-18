@@ -9,11 +9,11 @@ public class ContainerWeightTests
     public void Container_weight_increases_when_items_are_added_to_it()
     {
         //arrange
-        var backpack = ItemTestData.CreateBackpack(weight: 18);
+        var backpack = ItemTestDataBuilder.CreateBackpack(weight: 18);
 
-        var weapon = ItemTestData.CreateWeaponItem(2, weight: 40);
-        var fiveArrows = ItemTestData.CreateCumulativeItem(3, 5, weight: 0.70f);
-        var twoArrows = ItemTestData.CreateCumulativeItem(3, 2, weight: 0.70f);
+        var weapon = ItemTestDataBuilder.CreateWeaponItem(2, weight: 40);
+        var fiveArrows = ItemTestDataBuilder.CreateCumulativeItem(3, 5, weight: 0.70f);
+        var twoArrows = ItemTestDataBuilder.CreateCumulativeItem(3, 2, weight: 0.70f);
 
         //assert
         backpack.Weight.Should().Be(18);
@@ -42,11 +42,11 @@ public class ContainerWeightTests
     {
         //arrange
 
-        var weapon = ItemTestData.CreateWeaponItem(2, weight: 40);
-        var twoArrows = ItemTestData.CreateCumulativeItem(3, 2, weight: 0.70f);
-        var twoMeat = ItemTestData.CreateFood(4, 2);
+        var weapon = ItemTestDataBuilder.CreateWeaponItem(2, weight: 40);
+        var twoArrows = ItemTestDataBuilder.CreateCumulativeItem(3, 2, weight: 0.70f);
+        var twoMeat = ItemTestDataBuilder.CreateFood(4, 2);
 
-        var backpack = ItemTestData.CreateContainer(weight: 8, children: new List<IItem>
+        var backpack = ItemTestDataBuilder.CreateContainer(weight: 8, children: new List<IItem>
         {
             twoArrows, weapon, twoMeat
         });

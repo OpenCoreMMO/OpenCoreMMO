@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Items.Services.ItemTransform.Operations;
 
@@ -32,23 +33,31 @@ public class ItemTransformService : IItemTransformService
 
     public Result<IItem> Transform(IPlayer by, IItem fromItem, ushort toItem)
     {
-        var createdItem = _itemFactory.Create(toItem, fromItem.Location, null, null);
-
         _itemTypeStore.TryGetValue(toItem, out var toItemType);
 
-        var result =
-            ReplaceItemFromGroundOperation.Execute(_map, _staticToDynamicTileService, _itemFactory, fromItem,
-                toItemType);
-        if (!result.IsNotApplicable) return result;
+        Result<IItem> result;
 
-        result = ReplaceItemOnInventoryOperation.Execute(_itemFactory, fromItem, toItemType);
-        if (!result.IsNotApplicable) return result;
+        switch (fromItem.Location.Type)
+        {
+            case LocationType.Container:
+                result = ReplaceItemOnContainerOperation.Execute(by, _itemFactory, fromItem, toItemType);
+                if (!result.IsNotApplicable) return result;
+                break;
+            case LocationType.Slot:
+                result = ReplaceItemOnInventoryOperation.Execute(_itemFactory, fromItem, toItemType);
+                if (!result.IsNotApplicable) return result;
+                break;
+            case LocationType.Ground:
+                result =
+                    ReplaceItemFromGroundOperation.Execute(_map, _staticToDynamicTileService, _itemFactory, fromItem,
+                        toItemType);
+                if (!result.IsNotApplicable) return result;
 
-        result = ReplaceGroundOperation.Execute(_map, _mapService, fromItem, createdItem);
-        if (!result.IsNotApplicable) return result;
-
-        result = ReplaceItemOnContainerOperation.Execute(by, fromItem, createdItem);
-        if (!result.IsNotApplicable) return result;
+                var createdItem = _itemFactory.Create(toItem, fromItem.Location, null);
+                result = ReplaceGroundOperation.Execute(_map, _mapService, fromItem, createdItem);
+                if (!result.IsNotApplicable) return result;
+                break;
+        }
 
         return Result<IItem>.Ok(null);
     }

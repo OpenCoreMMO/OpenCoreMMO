@@ -13,16 +13,17 @@ namespace NeoServer.Domain.Items.Items.Weapons;
 
 public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
 {
-    public Ammo(IItemType type, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type,
-        location, attributes)
+    public Ammo(
+        IItemType itemType,
+        Location location,
+        IDictionary<ItemAttribute, IConvertible> itemAttributes) : base(itemType, location)
     {
-        WeaponAttack = new WeaponAttack(Metadata);
+        WeaponAttack = new WeaponAttack(itemType, itemAttributes);
     }
 
-    public Ammo(IItemType type, Location location, byte amount) : base(type, location, amount)
-    {
-        WeaponAttack = new WeaponAttack(Metadata);
-    }
+    public AmmoType AmmoType => Metadata.AmmoType;
+    public ShootType ShootType => Metadata.ShootType;
+    public bool HasElementalDamage => WeaponAttack.ElementalDamage.AttackPower is not 0;
 
     protected override string PartialInspectionText
     {
@@ -32,16 +33,9 @@ public class Ammo : CumulativeEquipment, IBodyEquipmentEquipment, IHasAttack
                 ? $" + {WeaponAttack.ElementalDamage.AttackPower} {DamageTypeParser.Parse(WeaponAttack.ElementalDamage.DamageType)}"
                 : string.Empty;
 
-            return $"Atk: {Attack}{elementalDamageText}";
+            return $"Atk: {AttackPower}{elementalDamageText}";
         }
     }
-
-    public byte Attack => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Attack);
-
-    public byte ExtraHitChance => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.HitChance);
-    public AmmoType AmmoType => Metadata.AmmoType;
-    public ShootType ShootType => Metadata.ShootType;
-    public bool HasElementalDamage => WeaponAttack.ElementalDamage.AttackPower is not 0;
 
     public override bool CanBeDressed(IPlayer player)
     {

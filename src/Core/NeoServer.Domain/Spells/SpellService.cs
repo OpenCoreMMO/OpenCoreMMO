@@ -1,9 +1,9 @@
-using NeoServer.Domain.Combat.Services.Attacks.Events;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Spells.Events;
 
 namespace NeoServer.Domain.Spells;
 

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Networking.Packets.Messages;
 using NeoServer.Networking.Packets.Outgoing.Login;
@@ -14,14 +17,16 @@ public class Connection : IConnection
 {
     private const uint NETWORK_MESSAGE_MAXSIZE = 24590u - 16u;
     private const int BUFFER_SIZE = 1024;
-
     private const byte HEADER_LENGTH = 2;
-    private readonly object _connectionLock;
-    private readonly ILogger _logger;
 
+    private readonly ILogger _logger;
     private readonly Socket _socket;
     private readonly NetworkStream _stream;
-    private readonly object _writeLock;
+    private readonly SemaphoreSlim _readSemaphore = new(1, 1);
+    private readonly SemaphoreSlim _writeSemaphore = new(1, 1);
+
+    private volatile bool _isDisposed;
+    private volatile bool _isReading;
 
     public Connection(Socket socket, ILogger logger)
     {
@@ -31,24 +36,13 @@ public class Connection : IConnection
         XteaKey = new uint[4];
         IsAuthenticated = false;
         InMessage = new ReadOnlyNetworkMessage(new byte[16394], 0);
-        _writeLock = new object();
-        _connectionLock = new object();
         _logger = logger;
         LastPingResponse = DateTime.Now.Ticks;
         RandomNumber = (byte)new Random().Next(byte.MinValue, byte.MaxValue);
         TimeStamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     }
 
-    private bool Closed
-    {
-        get
-        {
-            lock (_connectionLock)
-            {
-                return !_stream.CanRead || !_socket.Connected;
-            }
-        }
-    }
+    private bool Closed => _isDisposed || !_stream.CanRead || !_socket.Connected;
 
     public Queue<IOutgoingPacket> OutgoingPackets { get; private set; }
     public IReadOnlyNetworkMessage InMessage { get; }
@@ -64,26 +58,98 @@ public class Connection : IConnection
     public event EventHandler<IConnectionEventArgs> OnProcessEvent;
     public event EventHandler<IConnectionEventArgs> OnCloseEvent;
     public event EventHandler<IConnectionEventArgs> OnPostProcessEvent;
-
     public string Ip { get; }
 
     public void BeginStreamRead()
     {
-        lock (_connectionLock)
+        if (_isDisposed || _isReading) return;
+
+        _ = Task.Run(async () =>
         {
-            if (!_stream.CanRead || !_socket.Connected || Disconnected) return;
-        }
+            await ReadLoopAsync();
+        });
+    }
+
+    private async Task ReadLoopAsync()
+    {
+        if (!await _readSemaphore.WaitAsync(100)) return;
 
         try
         {
-            lock (_connectionLock)
+            _isReading = true;
+
+            while (!_isDisposed && _socket.Connected && !Disconnected)
             {
-                _stream.BeginRead(InMessage.Buffer, 0, HEADER_LENGTH, OnRead, null);
+                try
+                {
+                    await ReadMessageAsync();
+                }
+                catch
+                {
+                    break;
+                }
             }
         }
-        catch (Exception ex)
+        finally
         {
-            _logger.Error(ex, "Unable to read stream");
+            _isReading = false;
+            _readSemaphore.Release();
+        }
+    }
+
+    private async Task ReadMessageAsync()
+    {
+        // Read header first
+        var headerBuffer = new byte[HEADER_LENGTH];
+        await ReadExactAsync(headerBuffer, 0, HEADER_LENGTH);
+
+        var messageSize = BitConverter.ToUInt16(headerBuffer, 0) + 2;
+        
+        if (messageSize >= NETWORK_MESSAGE_MAXSIZE)
+        {
+            Close(true);
+            return;
+        }
+
+        // Copy header to main buffer
+        Array.Copy(headerBuffer, InMessage.Buffer, HEADER_LENGTH);
+
+        // Read remaining message if necessary
+        if (messageSize > HEADER_LENGTH)
+        {
+            var remainingSize = Math.Min(messageSize - HEADER_LENGTH, BUFFER_SIZE - HEADER_LENGTH);
+            await ReadExactAsync(InMessage.Buffer, HEADER_LENGTH, remainingSize);
+        }
+
+        InMessage.Resize(messageSize);
+
+        // Process message in dispatcher to avoid callback hell
+        var clientDisconnected = messageSize == 0;
+        if (clientDisconnected && !IsAuthenticated)
+        {
+            Close();
+            return;
+        }
+
+        if (clientDisconnected && IsAuthenticated) 
+        {
+            Disconnected = true;
+        }
+
+        var eventArgs = new ConnectionEventArgs(this);
+        OnProcessEvent?.Invoke(this, eventArgs);
+    }
+
+    private async Task ReadExactAsync(byte[] buffer, int offset, int count)
+    {
+        int totalRead = 0;
+        while (totalRead < count && !_isDisposed)
+        {
+            int bytesRead = await _stream.ReadAsync(buffer, offset + totalRead, count - totalRead);
+            if (bytesRead == 0)
+                throw new EndOfStreamException("Connection closed by remote host");
+
+            totalRead += bytesRead;
         }
     }
 
@@ -94,21 +160,23 @@ public class Connection : IConnection
 
     public void Close(bool force = false)
     {
+        if (_isDisposed) return;
+
         try
         {
-            //todo needs to remove this connection from pool
-            lock (_connectionLock)
-            {
-                if (!_socket.Connected)
-                {
-                    if (_stream.CanRead) _stream.Close();
-                    return;
-                }
+            _isDisposed = true;
 
-                if (OutgoingPackets == null || OutgoingPackets.Count == 0 || force) CloseSocket();
+            if (!_socket.Connected)
+            {
+                _stream?.Close();
+                return;
             }
 
-            // Tells the subscribers of this event that this connection has been closed.
+            if (OutgoingPackets == null || OutgoingPackets.Count == 0 || force)
+            {
+                CloseSocket();
+            }
+
             OnCloseEvent?.Invoke(this, new ConnectionEventArgs(this));
         }
         catch (Exception ex)
@@ -129,27 +197,21 @@ public class Connection : IConnection
 
         message.AddLength();
 
-        SendMessage(message, false);
+        _ = SendMessageAsync(message, false);
     }
-
 
     public void Send(IOutgoingPacket packet)
     {
         var message = new NetworkMessage();
-
         packet.WriteToMessage(message);
-
         message.AddLength();
 
         var encryptedMessage = Xtea.Encrypt(message, XteaKey);
-
         _logger.Debug("To {PlayerId}: {Name}", CreatureId, packet.GetType().Name);
-        SendMessage(encryptedMessage);
+
+        _ = SendMessageAsync(encryptedMessage);
     }
 
-    /// <summary>
-    ///     Sends all packets in connection's outgoing packets queue and clean
-    /// </summary>
     public void Send()
     {
         if (OutgoingPackets.Count == 0) return;
@@ -163,22 +225,19 @@ public class Connection : IConnection
         }
 
         message.AddLength();
-
         var encryptedMessage = Xtea.Encrypt(message, XteaKey);
-        SendMessage(encryptedMessage);
+        _ = SendMessageAsync(encryptedMessage);
     }
 
     public void Disconnect(string text)
     {
-        var message = new NetworkMessage();
-
         if (!string.IsNullOrWhiteSpace(text))
         {
+            var message = new NetworkMessage();
             new LoginFailurePacket(text).WriteToMessage(message);
             message.AddLength();
             var encryptedMessage = Xtea.Encrypt(message, XteaKey);
-
-            SendMessage(encryptedMessage);
+            _ = SendMessageAsync(encryptedMessage);
         }
 
         Close();
@@ -193,93 +252,43 @@ public class Connection : IConnection
     {
         if (CreatureId != 0) throw new InvalidOperationException("Connection already has a Player Id");
         SetAsAuthenticated();
-
         OutgoingPackets = new Queue<IOutgoingPacket>();
-
         CreatureId = player.CreatureId;
     }
 
-    private void OnRead(IAsyncResult ar)
+    private async Task SendMessageAsync(INetworkMessage message, bool addHeader = true)
     {
-        var clientDisconnected = !CompleteRead(ar);
-        if (clientDisconnected && !IsAuthenticated)
+        if (!await _writeSemaphore.WaitAsync(1000))
         {
-            Close();
+            _logger.Warning("Send timeout on connection {IP}", Ip);
             return;
         }
 
-        if (clientDisconnected && IsAuthenticated) Disconnected = true;
-
-        var eventArgs = new ConnectionEventArgs(this);
-
         try
         {
-            OnProcessEvent?.Invoke(this, eventArgs);
-            BeginStreamRead();
+            if (Closed || !_socket.Connected || Disconnected) return;
+
+            var streamMessage = addHeader ? message.AddHeader() : message.GetMessageInBytes().ToArray();
+            await _stream.WriteAsync(streamMessage, 0, streamMessage.Length);
+            await _stream.FlushAsync();
+
+            var eventArgs = new ConnectionEventArgs(this);
+            OnPostProcessEvent?.Invoke(this, eventArgs);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is ObjectDisposedException or SocketException)
         {
-            _logger.Error(ex, "Unable to start stream read");
-
-            // TODO: is closing the connection really necessary?
-            // Disconnected = true;
-            // OnProcessEvent?.Invoke(this, eventArgs);
-        }
-    }
-
-    private bool CompleteRead(IAsyncResult ar)
-    {
-        try
-        {
-            lock (_connectionLock)
-            {
-                if (_socket.Connected == false)
-                {
-                    Close();
-                    return false;
-                }
-
-                if (_socket.Available == 0) return false;
-
-                var totalBytesRead = _stream.EndRead(ar);
-
-                var size = BitConverter.ToUInt16(InMessage.Buffer, 0) + 2;
-
-                if (size >= NETWORK_MESSAGE_MAXSIZE)
-                {
-                    Close(true);
-                    return false;
-                }
-
-                if (size > BUFFER_SIZE) size = BUFFER_SIZE;
-
-                while (totalBytesRead < size)
-                {
-                    if (!_stream.CanRead || !_stream.DataAvailable) return false;
-
-                    var bytesRead = _stream.Read(InMessage.Buffer, totalBytesRead, size - totalBytesRead);
-                    if (bytesRead == 0) break;
-
-                    totalBytesRead += bytesRead;
-                }
-
-                InMessage.Resize(size);
-            }
-
-            return true;
-        }
-
-        catch (ObjectDisposedException)
-        {
-            // this exception is expected when the clientListener got disposed. In this case we don't want to spam the log.
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "Unable to complete stream read");
+            _logger.Debug("Connection closed during send: {Exception}", ex.Message);
             Close();
         }
-
-        return false;
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Unable to send stream message");
+            Close();
+        }
+        finally
+        {
+            _writeSemaphore.Release();
+        }
     }
 
     private void CloseSocket()
@@ -291,30 +300,15 @@ public class Connection : IConnection
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Unable to close socket");
+            _logger.Warning(ex, "Unable to close socket gracefully");
         }
     }
 
-    private void SendMessage(INetworkMessage message, bool addHeader = true)
+    public void Dispose()
     {
-        try
-        {
-            lock (_writeLock)
-            {
-                if (Closed || !_socket.Connected || Disconnected) return;
-
-                var streamMessage = addHeader ? message.AddHeader() : message.GetMessageInBytes().ToArray();
-
-                _stream.BeginWrite(streamMessage, 0, streamMessage.Length, null, null);
-            }
-
-            var eventArgs = new ConnectionEventArgs(this);
-            OnPostProcessEvent?.Invoke(this, eventArgs);
-        }
-        catch (ObjectDisposedException ex)
-        {
-            _logger.Error(ex, "Unable to send stream message");
-            Close();
-        }
+        Close(true);
+        _readSemaphore?.Dispose();
+        _writeSemaphore?.Dispose();
+        _stream?.Dispose();
     }
 }

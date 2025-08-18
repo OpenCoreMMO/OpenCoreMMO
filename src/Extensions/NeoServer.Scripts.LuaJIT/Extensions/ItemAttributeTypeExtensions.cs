@@ -1,4 +1,5 @@
-﻿using NeoServer.Scripts.LuaJIT.Enums;
+﻿using NeoServer.Domain.Common.Item;
+using NeoServer.Scripts.LuaJIT.Enums;
 
 namespace NeoServer.Scripts.LuaJIT.Extensions;
 
@@ -37,6 +38,42 @@ public static class ItemAttributeTypeExtensions
             ItemAttributeType.ITEM_ATTRIBUTE_ATTACK_SPEED => ItemAttribute.AttackSpeed,
             ItemAttributeType.ITEM_ATTRIBUTE_CUSTOM => ItemAttribute.Custom,
             _ => ItemAttribute.None
+        };
+    }
+
+    public static ItemTypeAttribute ToItemTypeAttribute(this ItemAttributeType value)
+    {
+        return value switch
+        {
+            //ItemAttributeType.ITEM_ATTRIBUTE_ACTIONID => ItemTypeAttribute.ActionId,
+            //ItemAttributeType.ITEM_ATTRIBUTE_UNIQUEID => ItemTypeAttribute.UniqueId,
+            ItemAttributeType.ITEM_ATTRIBUTE_DESCRIPTION => ItemTypeAttribute.Description,
+            ItemAttributeType.ITEM_ATTRIBUTE_TEXT => ItemTypeAttribute.Text,
+            ItemAttributeType.ITEM_ATTRIBUTE_DATE => ItemTypeAttribute.WrittenDate,
+            ItemAttributeType.ITEM_ATTRIBUTE_WRITER => ItemTypeAttribute.WrittenBy,
+            ItemAttributeType.ITEM_ATTRIBUTE_NAME => ItemTypeAttribute.Name,
+            ItemAttributeType.ITEM_ATTRIBUTE_ARTICLE => ItemTypeAttribute.Article,
+            ItemAttributeType.ITEM_ATTRIBUTE_PLURALNAME => ItemTypeAttribute.PluralName,
+            ItemAttributeType.ITEM_ATTRIBUTE_WEIGHT => ItemTypeAttribute.Weight,
+            ItemAttributeType.ITEM_ATTRIBUTE_ATTACK => ItemTypeAttribute.Attack,
+            ItemAttributeType.ITEM_ATTRIBUTE_DEFENSE => ItemTypeAttribute.Defense,
+            ItemAttributeType.ITEM_ATTRIBUTE_EXTRADEFENSE => ItemTypeAttribute.ExtraDefense,
+            ItemAttributeType.ITEM_ATTRIBUTE_ARMOR => ItemTypeAttribute.Armor,
+            ItemAttributeType.ITEM_ATTRIBUTE_HITCHANCE => ItemTypeAttribute.HitChance,
+            //ItemAttributeType.ITEM_ATTRIBUTE_SHOOTRANGE => ItemTypeAttribute.ShootRange,
+            //ItemAttributeType.ITEM_ATTRIBUTE_OWNER => ItemTypeAttribute.Owner,
+            //ItemAttributeType.ITEM_ATTRIBUTE_WRAPID => ItemTypeAttribute.WrapId,
+            ItemAttributeType.ITEM_ATTRIBUTE_DURATION => ItemTypeAttribute.Duration,
+            ItemAttributeType.ITEM_ATTRIBUTE_DECAYSTATE => ItemTypeAttribute.DecayingState,
+            //ItemAttributeType.ITEM_ATTRIBUTE_CORPSEOWNER => ItemTypeAttribute.CorpseOwner,
+            ItemAttributeType.ITEM_ATTRIBUTE_CHARGES => ItemTypeAttribute.Charges,
+            //ItemAttributeType.ITEM_ATTRIBUTE_FLUIDTYPE => ItemTypeAttribute.FluidType,
+            ItemAttributeType.ITEM_ATTRIBUTE_DOORID => ItemTypeAttribute.HouseDoorId,
+            ItemAttributeType.ITEM_ATTRIBUTE_DECAYTO => ItemTypeAttribute.DecayTo,
+            ItemAttributeType.ITEM_ATTRIBUTE_STOREITEM => ItemTypeAttribute.StoreItem,
+            ItemAttributeType.ITEM_ATTRIBUTE_ATTACK_SPEED => ItemTypeAttribute.AttackSpeed,
+            ItemAttributeType.ITEM_ATTRIBUTE_CUSTOM => ItemTypeAttribute.CustomAttributes,
+            _ => ItemTypeAttribute.None
         };
     }
 
@@ -81,26 +118,26 @@ public static class ItemAttributeTypeExtensions
         return type switch
         {
             ItemAttributeType.ITEM_ATTRIBUTE_STOREITEM or
-            ItemAttributeType.ITEM_ATTRIBUTE_ACTIONID or
-            ItemAttributeType.ITEM_ATTRIBUTE_UNIQUEID or
-            ItemAttributeType.ITEM_ATTRIBUTE_DATE or
-            ItemAttributeType.ITEM_ATTRIBUTE_WEIGHT or
-            ItemAttributeType.ITEM_ATTRIBUTE_ATTACK or
-            ItemAttributeType.ITEM_ATTRIBUTE_DEFENSE or
-            ItemAttributeType.ITEM_ATTRIBUTE_EXTRADEFENSE or
-            ItemAttributeType.ITEM_ATTRIBUTE_ARMOR or
-            ItemAttributeType.ITEM_ATTRIBUTE_HITCHANCE or
-            ItemAttributeType.ITEM_ATTRIBUTE_SHOOTRANGE or
-            ItemAttributeType.ITEM_ATTRIBUTE_OWNER or
-            ItemAttributeType.ITEM_ATTRIBUTE_DURATION or
-            ItemAttributeType.ITEM_ATTRIBUTE_DECAYSTATE or
-            ItemAttributeType.ITEM_ATTRIBUTE_CORPSEOWNER or
-            ItemAttributeType.ITEM_ATTRIBUTE_CHARGES or
-            ItemAttributeType.ITEM_ATTRIBUTE_FLUIDTYPE or
-            ItemAttributeType.ITEM_ATTRIBUTE_DOORID or
-            ItemAttributeType.ITEM_ATTRIBUTE_DECAYTO or
-            ItemAttributeType.ITEM_ATTRIBUTE_WRAPID or
-            ItemAttributeType.ITEM_ATTRIBUTE_ATTACK_SPEED
+                ItemAttributeType.ITEM_ATTRIBUTE_ACTIONID or
+                ItemAttributeType.ITEM_ATTRIBUTE_UNIQUEID or
+                ItemAttributeType.ITEM_ATTRIBUTE_DATE or
+                ItemAttributeType.ITEM_ATTRIBUTE_WEIGHT or
+                ItemAttributeType.ITEM_ATTRIBUTE_ATTACK or
+                ItemAttributeType.ITEM_ATTRIBUTE_DEFENSE or
+                ItemAttributeType.ITEM_ATTRIBUTE_EXTRADEFENSE or
+                ItemAttributeType.ITEM_ATTRIBUTE_ARMOR or
+                ItemAttributeType.ITEM_ATTRIBUTE_HITCHANCE or
+                ItemAttributeType.ITEM_ATTRIBUTE_SHOOTRANGE or
+                ItemAttributeType.ITEM_ATTRIBUTE_OWNER or
+                ItemAttributeType.ITEM_ATTRIBUTE_DURATION or
+                ItemAttributeType.ITEM_ATTRIBUTE_DECAYSTATE or
+                ItemAttributeType.ITEM_ATTRIBUTE_CORPSEOWNER or
+                ItemAttributeType.ITEM_ATTRIBUTE_CHARGES or
+                ItemAttributeType.ITEM_ATTRIBUTE_FLUIDTYPE or
+                ItemAttributeType.ITEM_ATTRIBUTE_DOORID or
+                ItemAttributeType.ITEM_ATTRIBUTE_DECAYTO or
+                ItemAttributeType.ITEM_ATTRIBUTE_WRAPID or
+                ItemAttributeType.ITEM_ATTRIBUTE_ATTACK_SPEED
                 => true,
             _ => false
         };
@@ -111,11 +148,11 @@ public static class ItemAttributeTypeExtensions
         return type switch
         {
             ItemAttributeType.ITEM_ATTRIBUTE_DESCRIPTION or
-            ItemAttributeType.ITEM_ATTRIBUTE_TEXT or
-            ItemAttributeType.ITEM_ATTRIBUTE_WRITER or
-            ItemAttributeType.ITEM_ATTRIBUTE_NAME or
-            ItemAttributeType.ITEM_ATTRIBUTE_ARTICLE or
-            ItemAttributeType.ITEM_ATTRIBUTE_PLURALNAME
+                ItemAttributeType.ITEM_ATTRIBUTE_TEXT or
+                ItemAttributeType.ITEM_ATTRIBUTE_WRITER or
+                ItemAttributeType.ITEM_ATTRIBUTE_NAME or
+                ItemAttributeType.ITEM_ATTRIBUTE_ARTICLE or
+                ItemAttributeType.ITEM_ATTRIBUTE_PLURALNAME
                 => true,
             _ => false
         };

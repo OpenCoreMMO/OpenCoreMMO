@@ -13,13 +13,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.1" />
-        <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.3.1" />
+        <PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.1"/>
+        <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.3.1"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\Standalone\NeoServer.Server.Standalone.csproj"/>
-        <ProjectReference Include="..\..\WebAPI\NeoServer.Web.API.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -129,7 +129,7 @@ public class ContainerTests
     public void PossibleAmountToAdd_When_Passing_Regular_Item_Should_Return_Empty_Slots_Count()
     {
         var sut = CreateContainer(1);
-        var item = ItemTestData.CreateRegularItem(100);
+        var item = ItemTestDataBuilder.CreateRegularItem(100);
 
         var result = sut.PossibleAmountToAdd(item);
         Assert.Equal(1u, result);
@@ -143,7 +143,7 @@ public class ContainerTests
     public void PossibleAmountToAdd_When_Passing_Cumulative_Item_Should_Return_Amount_Count()
     {
         var sut = CreateContainer(3);
-        var item = ItemTestData.CreateAmmo(100, 100);
+        var item = ItemTestDataBuilder.CreateAmmo(100, 100);
 
         var result = sut.PossibleAmountToAdd(item);
         Assert.Equal(300u, result);
@@ -153,19 +153,19 @@ public class ContainerTests
         result = sut.PossibleAmountToAdd(item);
         Assert.Equal(200u, result);
 
-        var item2 = ItemTestData.CreateAmmo(100, 30);
+        var item2 = ItemTestDataBuilder.CreateAmmo(100, 30);
 
         sut.AddItem(item2);
         result = sut.PossibleAmountToAdd(item);
         Assert.Equal(170u, result);
 
-        var item3 = ItemTestData.CreateAmmo(200, 100);
+        var item3 = ItemTestDataBuilder.CreateAmmo(200, 100);
 
         sut.AddItem(item3);
         result = sut.PossibleAmountToAdd(item);
         Assert.Equal(70u, result);
 
-        var item4 = ItemTestData.CreateAmmo(100, 70);
+        var item4 = ItemTestDataBuilder.CreateAmmo(100, 70);
 
         sut.AddItem(item4);
         result = sut.PossibleAmountToAdd(item);
@@ -354,19 +354,19 @@ public class ContainerTests
     public void Container_adds_item_to_child_bag_if_parent_is_full()
     {
         //arrange
-        var bag = ItemTestData.CreateContainer(2);
-        var innerBag = ItemTestData.CreateContainer(2);
-        var innerBag2 = ItemTestData.CreateContainer(2);
+        var bag = ItemTestDataBuilder.CreateContainer(2);
+        var innerBag = ItemTestDataBuilder.CreateContainer(2);
+        var innerBag2 = ItemTestDataBuilder.CreateContainer(2);
 
-        var item = ItemTestData.CreateRegularItem(100);
+        var item = ItemTestDataBuilder.CreateRegularItem(100);
         bag.AddItem(item);
         bag.AddItem(innerBag);
         innerBag.AddItem(innerBag2);
 
-        var item2 = ItemTestData.CreateCumulativeItem(101, 50);
-        var item3 = ItemTestData.CreateCumulativeItem(101, 80);
-        var item4 = ItemTestData.CreateRegularItem(102);
-        var item5 = ItemTestData.CreateRegularItem(102);
+        var item2 = ItemTestDataBuilder.CreateCumulativeItem(101, 50);
+        var item3 = ItemTestDataBuilder.CreateCumulativeItem(101, 80);
+        var item4 = ItemTestDataBuilder.CreateRegularItem(102);
+        var item5 = ItemTestDataBuilder.CreateRegularItem(102);
 
         //act
         var result = bag.AddItem(item2, true);
@@ -677,7 +677,7 @@ public class ContainerTests
     public void TryAddItem_Changes_Item_Location()
     {
         var sut = CreateContainer(5);
-        var item = ItemTestData.CreateWeaponItem(100, "axe");
+        var item = ItemTestDataBuilder.CreateWeaponItem(100, "axe");
         sut.AddItem(item);
 
         Assert.Equal(Location.Container(0, 0), item.Location);
@@ -715,7 +715,7 @@ public class ContainerTests
     public void CanAddItem_Adding_Regular_Item_With_No_Free_Slots_Returns_Error()
     {
         var sut = CreateContainer(0);
-        var item = ItemTestData.CreateWeaponItem(100, "axe");
+        var item = ItemTestDataBuilder.CreateWeaponItem(100, "axe");
         var result = sut.CanAddItem(item.Metadata);
 
         Assert.Equal(InvalidOperation.NotEnoughRoom, result.Error);
@@ -725,7 +725,7 @@ public class ContainerTests
     public void CanAddItem_Adding_Cumulative_Item_With_No_Free_Slots_Returns_Error()
     {
         var sut = CreateContainer(0);
-        var item = ItemTestData.CreateCumulativeItem(1, 100);
+        var item = ItemTestDataBuilder.CreateCumulativeItem(1, 100);
         var result = sut.CanAddItem(item.Metadata);
 
         Assert.Equal(InvalidOperation.NotEnoughRoom, result.Error);
@@ -735,7 +735,7 @@ public class ContainerTests
     public void CanAddItem_Adding_Regular_Item_With_Free_Slots_Returns_Success()
     {
         var sut = CreateContainer(1);
-        var item = ItemTestData.CreateWeaponItem(1, "axe");
+        var item = ItemTestDataBuilder.CreateWeaponItem(1, "axe");
         var result = sut.CanAddItem(item.Metadata);
 
         Assert.Equal(1u, result.Value);
@@ -749,7 +749,7 @@ public class ContainerTests
 
         sut.AddItem(child);
 
-        var item = ItemTestData.CreateWeaponItem(1, "axe");
+        var item = ItemTestDataBuilder.CreateWeaponItem(1, "axe");
 
         var result = sut.CanAddItem(item.Metadata);
 
@@ -761,7 +761,7 @@ public class ContainerTests
     {
         var sut = CreateContainer(1);
 
-        var item = ItemTestData.CreateAmmo(1, 100);
+        var item = ItemTestDataBuilder.CreateAmmo(1, 100);
 
         var result = sut.CanAddItem(item.Metadata);
 
@@ -773,9 +773,9 @@ public class ContainerTests
     {
         var sut = CreateContainer(1);
 
-        sut.AddItem(ItemTestData.CreateAmmo(1, 50));
+        sut.AddItem(ItemTestDataBuilder.CreateAmmo(1, 50));
 
-        var item = ItemTestData.CreateAmmo(1, 100);
+        var item = ItemTestDataBuilder.CreateAmmo(1, 100);
 
         var result = sut.CanAddItem(item.Metadata);
 
@@ -787,9 +787,9 @@ public class ContainerTests
     {
         var sut = CreateContainer(1);
 
-        sut.AddItem(ItemTestData.CreateAmmo(2, 50));
+        sut.AddItem(ItemTestDataBuilder.CreateAmmo(2, 50));
 
-        var item = ItemTestData.CreateAmmo(1, 100);
+        var item = ItemTestDataBuilder.CreateAmmo(1, 100);
 
         var result = sut.CanAddItem(item.Metadata);
 
@@ -815,13 +815,13 @@ public class ContainerTests
         //arrange
         var children = new List<IItem>
         {
-            ItemTestData.CreateWeaponItem(1),
-            ItemTestData.CreateContainer(2),
-            ItemTestData.CreateAttackRune(3, amount: 55)
+            ItemTestDataBuilder.CreateWeaponItem(1),
+            ItemTestDataBuilder.CreateContainer(2),
+            ItemTestDataBuilder.CreateAttackRune(3, amount: 55)
         };
 
         //act
-        var sut = ItemTestData.CreateContainer(5, children: children);
+        var sut = ItemTestDataBuilder.CreateContainer(5, children: children);
 
         //assert
         sut.Items[0].Should().Be(children[0]);
@@ -837,15 +837,15 @@ public class ContainerTests
     {
         //arrange
 
-        var food = ItemTestData.CreateCumulativeItem(1, 1, "meat");
+        var food = ItemTestDataBuilder.CreateCumulativeItem(1, 1, "meat");
         var children = new List<IItem>
         {
-            ItemTestData.CreateWeaponItem(1, name: "sabre"),
-            ItemTestData.CreateContainer(2, children: new List<IItem> { food }),
-            ItemTestData.CreateAttackRune(3, amount: 55)
+            ItemTestDataBuilder.CreateWeaponItem(1, name: "sabre"),
+            ItemTestDataBuilder.CreateContainer(2, children: new List<IItem> { food }),
+            ItemTestDataBuilder.CreateAttackRune(3, amount: 55)
         };
 
-        var sut = ItemTestData.CreateContainer(5, children: children);
+        var sut = ItemTestDataBuilder.CreateContainer(5, children: children);
 
         //act
         var result = sut.ToString();
@@ -858,17 +858,17 @@ public class ContainerTests
     {
         //arrange
 
-        var food = ItemTestData.CreateCumulativeItem(1, 1, "meat");
+        var food = ItemTestDataBuilder.CreateCumulativeItem(1, 1, "meat");
 
         var loot = new Loot(new[]
         {
-            new LootItem(ItemTestData.CreateWeaponItem(1, name: "sabre").Metadata, 1, 1, null),
-            new LootItem(ItemTestData.CreateContainer(2).Metadata, 1, 1,
+            new LootItem(ItemTestDataBuilder.CreateWeaponItem(1, name: "sabre").Metadata, 1, 1, null),
+            new LootItem(ItemTestDataBuilder.CreateContainer(2).Metadata, 1, 1,
                 new[] { new LootItem(food.Metadata, 1, 1, null) }),
-            new LootItem(ItemTestData.CreateAttackRune(3, amount: 55).Metadata, 55, 1, null)
+            new LootItem(ItemTestDataBuilder.CreateAttackRune(3, amount: 55).Metadata, 55, 1, null)
         }, new HashSet<ICreature>(0));
 
-        var sut = ItemTestData.CreateLootContainer(5, loot: loot);
+        var sut = ItemTestDataBuilder.CreateLootContainer(5, loot: loot);
 
         //act
         var result = sut.ToString();
@@ -880,13 +880,14 @@ public class ContainerTests
     public void Bag_created_with_items_inside_weights_sum_of_all_items_weight()
     {
         //arrange
-        var item1 = ItemTestData.CreateWeaponItem(100);
-        var item2 = ItemTestData.CreateWeaponItem(101);
-        var item3 = ItemTestData.CreateCumulativeItem(102, 10);
+        var item1 = ItemTestDataBuilder.CreateWeaponItem(100);
+        var item2 = ItemTestDataBuilder.CreateWeaponItem(101);
+        var item3 = ItemTestDataBuilder.CreateCumulativeItem(102, 10);
 
-        var bag = ItemTestData.CreateContainer(weight: 20, children: new List<IItem> { item3 });
+        var bag = ItemTestDataBuilder.CreateContainer(weight: 20, children: new List<IItem> { item3 });
 
-        var container = ItemTestData.CreateContainer(weight: 10, children: new List<IItem> { item1, item2, bag });
+        var container =
+            ItemTestDataBuilder.CreateContainer(weight: 10, children: new List<IItem> { item1, item2, bag });
 
         //assert
         container.Weight.Should().Be(120);
@@ -898,15 +899,15 @@ public class ContainerTests
     public void Player_removes_item_from_container()
     {
         //arrange
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
         var children = new List<IItem>
         {
             item,
-            ItemTestData.CreateContainer(2),
-            ItemTestData.CreateAttackRune(3, amount: 55)
+            ItemTestDataBuilder.CreateContainer(2),
+            ItemTestDataBuilder.CreateAttackRune(3, amount: 55)
         };
 
-        var sut = ItemTestData.CreateContainer(5, children: children);
+        var sut = ItemTestDataBuilder.CreateContainer(5, children: children);
 
 
         //act
@@ -921,19 +922,19 @@ public class ContainerTests
     public void Player_removes_item_from_container_within_another_container()
     {
         //arrange
-        var item = ItemTestData.CreateWeaponItem(1);
-        var innerContainer = ItemTestData.CreateContainer(2);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
+        var innerContainer = ItemTestDataBuilder.CreateContainer(2);
 
         innerContainer.AddItem(item);
-        innerContainer.AddItem(ItemTestData.CreateWeaponItem(1));
+        innerContainer.AddItem(ItemTestDataBuilder.CreateWeaponItem(1));
 
         var children = new List<IItem>
         {
             innerContainer,
-            ItemTestData.CreateAttackRune(3, amount: 55)
+            ItemTestDataBuilder.CreateAttackRune(3, amount: 55)
         };
 
-        var sut = ItemTestData.CreateContainer(5, children: children);
+        var sut = ItemTestDataBuilder.CreateContainer(5, children: children);
 
         //act
         sut.RemoveItem(item.Metadata, 2);
@@ -947,9 +948,9 @@ public class ContainerTests
     public void Player_removes_item_by_item_reference_from_container_within_another_container()
     {
         //arrange
-        var item = ItemTestData.CreateWeaponItem(1);
-        var item2 = ItemTestData.CreateWeaponItem(1);
-        var innerContainer = ItemTestData.CreateContainer(2);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
+        var item2 = ItemTestDataBuilder.CreateWeaponItem(1);
+        var innerContainer = ItemTestDataBuilder.CreateContainer(2);
 
         innerContainer.AddItem(item);
         innerContainer.AddItem(item2);
@@ -957,10 +958,10 @@ public class ContainerTests
         var children = new List<IItem>
         {
             innerContainer,
-            ItemTestData.CreateAttackRune(3, amount: 55)
+            ItemTestDataBuilder.CreateAttackRune(3, amount: 55)
         };
 
-        var sut = ItemTestData.CreateContainer(5, children: children);
+        var sut = ItemTestDataBuilder.CreateContainer(5, children: children);
 
         //act
         sut.RemoveItem(item, 1);
@@ -974,9 +975,9 @@ public class ContainerTests
     public void Player_removes_two_items_from_container_and_one_remains()
     {
         //arrange
-        var item = ItemTestData.CreateWeaponItem(1);
-        var item2 = ItemTestData.CreateWeaponItem(1);
-        var item3 = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
+        var item2 = ItemTestDataBuilder.CreateWeaponItem(1);
+        var item3 = ItemTestDataBuilder.CreateWeaponItem(1);
 
         var children = new List<IItem>
         {
@@ -985,7 +986,7 @@ public class ContainerTests
             item3
         };
 
-        var sut = ItemTestData.CreateContainer(5, children: children);
+        var sut = ItemTestDataBuilder.CreateContainer(5, children: children);
 
         //act
         sut.RemoveItem(item.Metadata, 2);
@@ -999,9 +1000,9 @@ public class ContainerTests
     public void Player_removes_inner_container_from_container()
     {
         //arrange
-        var innerContainer = ItemTestData.CreateContainer(10);
-        var item2 = ItemTestData.CreateWeaponItem(1);
-        var item3 = ItemTestData.CreateWeaponItem(1);
+        var innerContainer = ItemTestDataBuilder.CreateContainer(10);
+        var item2 = ItemTestDataBuilder.CreateWeaponItem(1);
+        var item3 = ItemTestDataBuilder.CreateWeaponItem(1);
 
         innerContainer.AddItem(item2);
         innerContainer.AddItem(item3);
@@ -1011,7 +1012,7 @@ public class ContainerTests
             innerContainer
         };
 
-        var sut = ItemTestData.CreateContainer(5, children: children);
+        var sut = ItemTestDataBuilder.CreateContainer(5, children: children);
 
         //act
         sut.RemoveItem(innerContainer.Metadata, 10);
@@ -1025,9 +1026,9 @@ public class ContainerTests
     public void Player_removes_all_cumulative_from_container()
     {
         //arrange
-        var innerContainer = ItemTestData.CreateContainer(10);
-        var cumulative = ItemTestData.CreateCumulativeItem(1, 50);
-        var item3 = ItemTestData.CreateWeaponItem(1);
+        var innerContainer = ItemTestDataBuilder.CreateContainer(10);
+        var cumulative = ItemTestDataBuilder.CreateCumulativeItem(1, 50);
+        var item3 = ItemTestDataBuilder.CreateWeaponItem(1);
 
         innerContainer.AddItem(item3);
 
@@ -1037,7 +1038,7 @@ public class ContainerTests
             innerContainer
         };
 
-        var sut = ItemTestData.CreateContainer(5, children: children);
+        var sut = ItemTestDataBuilder.CreateContainer(5, children: children);
 
         //act
         sut.RemoveItem(cumulative.Metadata, 50);
@@ -1051,9 +1052,9 @@ public class ContainerTests
     public void Player_removes_part_of_cumulative_from_container()
     {
         //arrange
-        var innerContainer = ItemTestData.CreateContainer(10);
-        var cumulative = ItemTestData.CreateCumulativeItem(1, 100);
-        var item3 = ItemTestData.CreateWeaponItem(1);
+        var innerContainer = ItemTestDataBuilder.CreateContainer(10);
+        var cumulative = ItemTestDataBuilder.CreateCumulativeItem(1, 100);
+        var item3 = ItemTestDataBuilder.CreateWeaponItem(1);
 
         innerContainer.AddItem(item3);
 
@@ -1063,7 +1064,7 @@ public class ContainerTests
             innerContainer
         };
 
-        var sut = ItemTestData.CreateContainer(5, children: children);
+        var sut = ItemTestDataBuilder.CreateContainer(5, children: children);
 
         //act
         sut.RemoveItem(cumulative.Metadata, 50);
@@ -1078,10 +1079,10 @@ public class ContainerTests
     public void Player_removes_cumulative_from_container_and_inner_container()
     {
         //arrange
-        var innerContainer = ItemTestData.CreateContainer(10);
-        var cumulative = ItemTestData.CreateCumulativeItem(1, 30);
-        var cumulative2 = ItemTestData.CreateCumulativeItem(1, 50);
-        var item3 = ItemTestData.CreateWeaponItem(1);
+        var innerContainer = ItemTestDataBuilder.CreateContainer(10);
+        var cumulative = ItemTestDataBuilder.CreateCumulativeItem(1, 30);
+        var cumulative2 = ItemTestDataBuilder.CreateCumulativeItem(1, 50);
+        var item3 = ItemTestDataBuilder.CreateWeaponItem(1);
 
         innerContainer.AddItem(item3);
         innerContainer.AddItem(cumulative2);
@@ -1092,7 +1093,7 @@ public class ContainerTests
             innerContainer
         };
 
-        var sut = ItemTestData.CreateContainer(5, children: children);
+        var sut = ItemTestDataBuilder.CreateContainer(5, children: children);
 
         //act
         sut.RemoveItem(cumulative.Metadata, 80);
@@ -1107,10 +1108,10 @@ public class ContainerTests
     public void Player_removes_cumulative_from_container_and_inner_container_but_remains_20()
     {
         //arrange
-        var innerContainer = ItemTestData.CreateContainer(10);
-        var cumulative = ItemTestData.CreateCumulativeItem(1, 30);
-        var cumulative2 = ItemTestData.CreateCumulativeItem(1, 70);
-        var item3 = ItemTestData.CreateWeaponItem(1);
+        var innerContainer = ItemTestDataBuilder.CreateContainer(10);
+        var cumulative = ItemTestDataBuilder.CreateCumulativeItem(1, 30);
+        var cumulative2 = ItemTestDataBuilder.CreateCumulativeItem(1, 70);
+        var item3 = ItemTestDataBuilder.CreateWeaponItem(1);
 
         innerContainer.AddItem(item3);
         innerContainer.AddItem(cumulative2);
@@ -1121,7 +1122,7 @@ public class ContainerTests
             innerContainer
         };
 
-        var sut = ItemTestData.CreateContainer(5, children: children);
+        var sut = ItemTestDataBuilder.CreateContainer(5, children: children);
 
         //act
         sut.RemoveItem(cumulative.Metadata, 80);
@@ -1141,10 +1142,10 @@ public class ContainerTests
     public void Container_updates_id_and_children_location()
     {
         //arrange
-        var bag = ItemTestData.CreateContainer();
-        var item = ItemTestData.CreateCumulativeItem(100, 20);
-        var item2 = ItemTestData.CreateMoveableItem(101);
-        var innerBag = ItemTestData.CreateContainer();
+        var bag = ItemTestDataBuilder.CreateContainer();
+        var item = ItemTestDataBuilder.CreateCumulativeItem(100, 20);
+        var item2 = ItemTestDataBuilder.CreateMoveableItem(101);
+        var innerBag = ItemTestDataBuilder.CreateContainer();
 
         bag.AddItem(item);
         bag.AddItem(item2);
@@ -1173,7 +1174,7 @@ public class ContainerTests
     public void Container_when_id_removed_sets_to_null()
     {
         //arrange
-        var bag = ItemTestData.CreateContainer();
+        var bag = ItemTestDataBuilder.CreateContainer();
 
         //act
         bag.RemoveId();
@@ -1186,8 +1187,8 @@ public class ContainerTests
     public void Container_when_has_any_items_HasItems_returns_true()
     {
         //arrange
-        var bag = ItemTestData.CreateContainer();
-        var item = ItemTestData.CreateRegularItem(1);
+        var bag = ItemTestDataBuilder.CreateContainer();
+        var item = ItemTestDataBuilder.CreateRegularItem(1);
 
         //assert
         bag.HasItems.Should().BeFalse();

@@ -9,18 +9,18 @@ namespace NeoServer.Domain.Items.Items.Containers.Container.Operations.Add;
 
 internal static class AddItemOperation
 {
-    public static Result TryAddItem(Container toContainer, IItem item, byte? slot = null)
+    public static Result TryAddItem(Container toContainer, IItem item, byte? position = null)
     {
         if (item is null) return Result.NotPossible;
 
-        if (slot.HasValue && toContainer.Capacity <= slot) slot = null;
+        if (position.HasValue && toContainer.Capacity <= position) position = null;
 
-        var validation = CanAddItemToContainerRule.CanAdd(toContainer, item, slot);
+        var validation = CanAddItemToContainerRule.CanAdd(toContainer, item, position);
         if (!validation.Succeeded) return validation;
 
-        slot ??= toContainer.LastFreeSlot;
+        position ??= toContainer.LastFreeSlot;
 
-        return AddItem(toContainer, item, slot);
+        return AddItem(toContainer, item, position);
     }
 
     public static void AddChildren(Container container, IEnumerable<IItem> children)
@@ -30,21 +30,21 @@ internal static class AddItemOperation
         foreach (var item in children.Reverse()) TryAddItem(container, item);
     }
 
-    private static Result AddItem(Container toContainer, IItem item, byte? slot)
+    private static Result AddItem(Container toContainer, IItem item, byte? position)
     {
-        var result = toContainer.GetContainerAt(slot.Value, out var container)
+        var result = toContainer.GetContainerAt(position.Value, out var container)
             ? container.AddItem(item).ResultValue
-            : AddItem(toContainer, item, slot.Value);
+            : AddItem(toContainer, item, position.Value);
 
         item.SetParent(container ?? toContainer);
 
         return result;
     }
 
-    private static Result AddItem(Container toContainer, IItem item, byte slot)
+    private static Result AddItem(Container toContainer, IItem item, byte position)
     {
         if (item is null) return Result.NotPossible;
-        if (toContainer.Capacity <= slot) throw new ArgumentOutOfRangeException(nameof(toContainer));
+        if (toContainer.Capacity <= position) throw new ArgumentOutOfRangeException(nameof(toContainer));
 
         if (item is not ICumulative cumulativeItem) return AddItemToFrontOperation.Add(toContainer, item);
 

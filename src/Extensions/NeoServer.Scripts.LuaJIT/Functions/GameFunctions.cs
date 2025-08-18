@@ -1,4 +1,5 @@
 ﻿using LuaNET;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
@@ -19,20 +20,15 @@ namespace NeoServer.Scripts.LuaJIT.Functions;
 
 public class GameFunctions : LuaScriptInterface, IGameFunctions
 {
-    private static ILuaEnvironment _luaEnvironment;
-    private static IScripts _scripts;
     private static IItemTypeStore _itemTypeStore;
     private static IItemFactory _itemFactory;
     private static IMap _map;
     private static ICreatureFactory _creatureFactory;
     private static IGameCreatureManager _gameCreatureManager;
-    private static ServerConfiguration _serverConfiguration;
     private static IStaticToDynamicTileService _staticToDynamicTileService;
-    private static INpcs _npcs;
+    private static IReloadManager _reloadManager;
 
     public GameFunctions(
-        ILuaEnvironment luaEnvironment,
-        IScripts scripts,
         IItemTypeStore itemTypeStore,
         IItemFactory itemFactory,
         IMap map,
@@ -40,18 +36,15 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         IGameCreatureManager gameCreatureManager,
         ServerConfiguration serverConfiguration,
         IStaticToDynamicTileService staticToDynamicTileService,
-        INpcs npcs) : base(nameof(GameFunctions))
+        IReloadManager reloadManager) : base(nameof(GameFunctions))
     {
-        _luaEnvironment = luaEnvironment;
-        _scripts = scripts;
         _itemTypeStore = itemTypeStore;
         _itemFactory = itemFactory;
         _map = map;
         _creatureFactory = creatureFactory;
         _gameCreatureManager = gameCreatureManager;
-        _serverConfiguration = serverConfiguration;
         _staticToDynamicTileService = staticToDynamicTileService;
-        _npcs = npcs;
+        _reloadManager = reloadManager;
     }
 
     public void Init(LuaState luaState)
@@ -69,20 +62,53 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         RegisterMethod(luaState, "Game", "reload", LuaGameReload);
 
         RegisterMethod(luaState, "Game", "getPlayers", LuaGameGetPlayers);
-        RegisterMethod(luaState, "Game", "getNormalizedPlayerName", HandleGetNormalizedPlayerNameFunction);
+        RegisterMethod(luaState, "Game", "getNormalizedPlayerName", LuaGameGetNormalizedPlayerNameFunction);
+
+        RegisterMethod(luaState, "Game", "getEventCallbacks", LuaGameGetEventCallbacks);
     }
 
-    private int HandleGetNormalizedPlayerNameFunction(LuaState l)
+    private static int LuaGameGetEventCallbacks(LuaState luaState)
+    {
+        // Game.getEventCallbacks()
+        Lua.NewTable(luaState); // create a new table
+
+        // Push the EventCallbackFunctions.LuaEventCallbackLoad function
+        Lua.PushCFunction(luaState, EventCallbackFunctions.LuaEventCallbackLoad);
+
+        // Register all EventCallbackType enum entries except None
+        foreach (EventCallbackType value in Enum.GetValues(typeof(EventCallbackType)))
+        {
+            if (value == EventCallbackType.None)
+                continue;
+
+            // Make the first letter lowercase
+            var methodName = value.ToString();
+            if (!string.IsNullOrEmpty(methodName))
+                methodName = char.ToLowerInvariant(methodName[0]) + methodName.Substring(1);
+
+            Lua.PushString(luaState, methodName);
+            Lua.PushValue(luaState, -2); // copy the function reference to the top of the stack
+            Lua.SetTable(luaState, -4); // set table[methodName] = function
+        }
+
+        Lua.Pop(luaState, 1); // pop the function
+        return 1;
+    }
+
+    private int LuaGameGetNormalizedPlayerNameFunction(LuaState luaState)
     {
         // Game.getNormalizedPlayerName(name[, isNewName = false])
-        // var name = GetString(l, 1);
-        // var isNewName = GetBoolean(L, 2, false);
-        // var player = g_game().getPlayerByName(name, true, isNewName);
-        // if (player) {
-        //     Lua::pushString(L, player->getName());
-        // } else {
-        //     lua_pushnil(L);
-        // }
+        var name = GetString(luaState, 1);
+
+        //todo: implement isNewName logic
+        var isNewName = GetBoolean(luaState, 2, false);
+
+        _gameCreatureManager.TryGetPlayer(name, out var player);
+        if (player != null)
+            Lua.PushString(luaState, player.Name);
+        else
+            Lua.PushNil(luaState);
+
         return 1;
     }
 
@@ -337,70 +363,12 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
     {
         // Game.reload(reloadType)
         var reloadType = GetNumber<ReloadType>(luaState, 1);
-        if (reloadType == ReloadType.RELOAD_TYPE_NONE)
-        {
-            ReportError(nameof(LuaGameReload), "Reload type is none");
-            PushBoolean(luaState, false);
-            return 0;
-        }
+        var result = _reloadManager.Reload(reloadType);
 
-        if (reloadType >= ReloadType.RELOAD_TYPE_LAST)
-        {
-            ReportError(nameof(LuaGameReload), "Reload type not exist");
-            PushBoolean(luaState, false);
-            return 0;
-        }
+        if (!result)
+            ReportError(nameof(LuaGameReload), "Reload type not implemented");
 
-        try
-        {
-            var dir = _serverConfiguration.Data;
-            switch (reloadType)
-            {
-                case ReloadType.RELOAD_TYPE_ALL:
-                {
-                    ReloadCore(dir);
-                    ReloadScripts(dir);
-                    break;
-                }
-
-                case ReloadType.RELOAD_TYPE_CORE:
-                {
-                    ReloadCore(dir);
-                    break;
-                }
-
-                //case ReloadType.RELOAD_TYPE_MONSTERS:
-                //    {
-                //        ReloadMonsters(dir);
-                //        break;
-                //    }
-
-                case ReloadType.RELOAD_TYPE_NPCS:
-                {
-                    ReloadNpcs(dir);
-                    break;
-                }
-
-                case ReloadType.RELOAD_TYPE_SCRIPTS:
-                {
-                    ReloadScripts(dir);
-                    break;
-                }
-
-                default:
-                    ReportError(nameof(LuaGameReload), "Reload type not implemented");
-                    break;
-            }
-
-            Lua.GC(LuaEnvironment.GetInstance().GetLuaState(), LuaGCParam.Collect, 0);
-        }
-        catch (Exception e)
-        {
-            PushBoolean(luaState, false);
-            return 0;
-        }
-
-        PushBoolean(luaState, true);
+        PushBoolean(luaState, result);
         return 1;
     }
 
@@ -420,30 +388,5 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         }
 
         return 1;
-    }
-
-    private static void ReloadCore(string dir)
-    {
-        var coreLoaded = _luaEnvironment.LoadFile($"{dir}/core.lua", "core.lua");
-        if (!coreLoaded) return;
-
-        _scripts.LoadScripts($"{dir}/scripts/libs", true, false);
-    }
-
-    private static void ReloadNpcs(string dir)
-    {
-        _npcs.Clear();
-        _luaEnvironment.LoadFile($"{dir}/npclib/load.lua", "load.lua");
-        _scripts.LoadScripts($"{dir}/npcs", false, true);
-    }
-
-    private static void ReloadScripts(string dir)
-    {
-        _scripts.ClearAllScripts();
-        _scripts.LoadScripts($"{dir}/scripts", false, true);
-        _scripts.LoadScripts($"{dir}/scripts/libs", true, true);
-
-        ReloadNpcs(dir);
-        //ReloadMonsters(dir);
     }
 }

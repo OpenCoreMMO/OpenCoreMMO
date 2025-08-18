@@ -1,5 +1,4 @@
 ﻿using NeoServer.Domain.Combat;
-using NeoServer.Domain.Combat.Services.Attacks.Events;
 using NeoServer.Domain.Combat.Validation;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat;
@@ -8,7 +7,6 @@ using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
@@ -231,7 +229,10 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return Result.Success;
     }
 
-    public DamageResult TakeDamage(IThing enemy, CombatDamage damages) => TakeDamage(enemy, new CombatDamageList(damages));
+    public DamageResult TakeDamage(IThing enemy, CombatDamage damages)
+    {
+        return TakeDamage(enemy, new CombatDamageList(damages));
+    }
 
     public virtual Result Attack(ICombatActor enemy)
     {
@@ -596,7 +597,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public event PropagateAttack OnPropagateAttack;
     public event GainExperience OnGainedExperience;
     public event LoseExperience OnLoseExperience;
-    public event ManaChange OnManaChanged;
     public event DropLoot OnDroppedLoot;
 
     #endregion

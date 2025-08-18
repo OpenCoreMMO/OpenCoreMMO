@@ -9,8 +9,7 @@ namespace NeoServer.Domain.Items.Items.UsableItems;
 
 public class Food : Cumulative, IConsumable
 {
-    public Food(IItemType type, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type,
-        location, attributes)
+    public Food(IItemType type, Location location) : base(type, location)
     {
     }
 

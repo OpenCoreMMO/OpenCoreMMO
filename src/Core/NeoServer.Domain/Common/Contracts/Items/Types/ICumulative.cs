@@ -6,7 +6,6 @@ public delegate void ItemReduce(ICumulative item, byte amount);
 
 public interface ICumulative : IItem
 {
-    public new byte Amount { get; set; }
     byte AmountToComplete { get; }
     event ItemReduce OnReduced;
 
@@ -15,6 +14,7 @@ public interface ICumulative : IItem
     ICumulative Clone(byte amount);
     ICumulative Split(byte amount);
     void ClearSubscribers();
+    void SetAmount(byte count);
 
     public static bool IsApplicable(IItemType type)
     {

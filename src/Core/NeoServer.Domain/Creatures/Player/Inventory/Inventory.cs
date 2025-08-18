@@ -7,6 +7,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Player.Inventory.Calculations;
 using NeoServer.Domain.Creatures.Player.Inventory.Operations;
@@ -122,15 +123,17 @@ public class Inventory : IInventory
 
     private Result<IItem> TryAddItemToSlot(Slot slot, IItem item)
     {
+        if (Owner != null)
+            item.SetOwner(Owner);
+
+        item.SetNewLocation(Location.Inventory(slot), true);
+
         var wasBpSlotEmptyBeforeAddition = BackpackSlot == null;
         var result = AddToSlotOperation.Add(this, slot, item);
 
         if (result.Succeeded)
         {
-            if (slot != Slot.Backpack || wasBpSlotEmptyBeforeAddition)
-            {
-                TotalWeight += item.Weight;
-            }
+            if (slot != Slot.Backpack || wasBpSlotEmptyBeforeAddition) TotalWeight += item.Weight;
             OnItemAddedToSlot?.Invoke(this, item, slot);
             return result;
         }

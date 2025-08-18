@@ -10,8 +10,8 @@ namespace NeoServer.Domain.Creatures.Monster;
 
 public sealed class MonsterType : IMonsterType
 {
-    public ushort ManaCost { get; set; }
     public CombatStrategy CombatStrategy { get; set; }
+    public ushort ManaCost { get; set; }
     public string Description { get; set; }
     public string Name { get; set; }
     public Race Race { get; set; }

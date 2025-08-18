@@ -1,5 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Items.Bases;
 
@@ -7,19 +8,15 @@ namespace NeoServer.Domain.Items.Items;
 
 public class TeleportItem : BaseItem
 {
-    public TeleportItem(IItemType metadata, Location location,
-        IDictionary<ItemAttribute, IConvertible> attributes) : base(metadata, location)
+    public TeleportItem(IItemType metadata, Location location) : base(metadata, location)
     {
-        Destination = Location.Zero;
-
-        if (attributes is not null)
-            Destination = attributes.TryGetValue(ItemAttribute.TeleportDestination, out var destination) &&
-                          destination is Location destLocation
-                ? destLocation
-                : Location.Zero;
     }
 
-    private Location Destination { get; }
+    private Location Destination =>
+        Attributes.TryGetValue(ItemAttribute.TeleportDestination, out var destination) &&
+        destination is Location destLocation
+            ? destLocation
+            : Location.Zero;
 
     public bool HasDestination => Destination != Location.Zero;
 

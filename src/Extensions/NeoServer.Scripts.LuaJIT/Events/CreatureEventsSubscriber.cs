@@ -7,10 +7,8 @@ using NeoServer.Scripts.LuaJIT.Events.Players;
 namespace NeoServer.Scripts.LuaJIT.Events;
 
 public class CreatureEventsSubscriber(
-    CreatureOnDeathEventHandler creatureOnDeathEventHandler,
     CreatureOnThinkEventHandler creatureOnThinkEventHandler,
     CreatureOnPrepareDeathEventHandler creatureOnPrepareDeathEventHandler,
-    CreatureOnManaChangeEventHandler creatureOnManaChangeEventHandler,
     PlayerOnLoginEventHandler playerOnLoginEventHandler,
     PlayerOnLogoutEventHandler playerOnLogoutEventHandler,
     PlayerOnAdvanceEventHandler playerOnAdvanceEventHandler,
@@ -27,12 +25,7 @@ public class CreatureEventsSubscriber(
     {
         creature.OnThink += creatureOnThinkEventHandler.Execute;
 
-        if (creature is ICombatActor actor)
-        {
-            actor.OnDeath += creatureOnDeathEventHandler.Execute;
-            actor.OnBeforeDeath += creatureOnPrepareDeathEventHandler.Execute;
-            actor.OnManaChanged += creatureOnManaChangeEventHandler.Execute;
-        }
+        if (creature is ICombatActor actor) actor.OnBeforeDeath += creatureOnPrepareDeathEventHandler.Execute;
 
         if (creature is IPlayer player)
         {
@@ -63,12 +56,7 @@ public class CreatureEventsSubscriber(
     {
         creature.OnThink -= creatureOnThinkEventHandler.Execute;
 
-        if (creature is ICombatActor actor)
-        {
-            actor.OnDeath -= creatureOnDeathEventHandler.Execute;
-            actor.OnBeforeDeath -= creatureOnPrepareDeathEventHandler.Execute;
-            actor.OnManaChanged -= creatureOnManaChangeEventHandler.Execute;
-        }
+        if (creature is ICombatActor actor) actor.OnBeforeDeath -= creatureOnPrepareDeathEventHandler.Execute;
 
         if (creature is IPlayer player)
         {

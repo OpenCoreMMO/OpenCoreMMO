@@ -1,4 +1,7 @@
-﻿-- Create functions revscriptsys
+﻿---@diagnostic disable: inject-field
+---@diagnostic disable: lowercase-global
+
+-- Create functions revscriptsys
 function createFunctions(class)
     local exclude = { [2] = { "is" }, [3] = { "get", "set", "add", "can" }, [4] = { "need" } }
     local temp = {}
@@ -30,6 +33,7 @@ function createFunctions(class)
     end
 end
 
+-- todo: Implement THING_TYPE ENUM
 -- Creature index
 do
     local function CreatureIndex(self, key)
@@ -103,6 +107,22 @@ do
     meta.__newindex = TalkActionNewIndex
 end
 
+-- Sets a custom __newindex behavior for the EventCallback class's metatable. It dynamically maps certain keys to predefined callback methods within the EventCallback class. When a key matching a method name is added, it triggers the associated function, sets the event type, and logs the registration. This allows for flexible, runtime assignment of various event handlers through Lua scripts.
+local eventCallbacks = Game.getEventCallbacks()
+do
+    local function EventCallbackNewIndex(self, key, value)
+        local func = eventCallbacks[key]
+        if func and type(func) == "function" then
+            logger.debug("[Registering EventCallback: {}", key)
+            func(self, value)
+            self:type(key)
+        else
+            logger.error("Invalid EventCallback with name: {}", tostring(key))
+        end
+    end
+    rawgetmetatable("EventCallback").__newindex = EventCallbackNewIndex
+end
+
 -- CreatureEvent revscriptsys
 do
     local function CreatureEventNewIndex(self, key, value)
@@ -133,10 +153,6 @@ do
         elseif key == "onAdvance" then
             self:type("advance")
             self:onAdvance(value)
-            return
-        elseif key == "onModalWindow" then
-            self:type("modalwindow")
-            self:onModalWindow(value)
             return
         elseif key == "onTextEdit" then
             self:type("textedit")
@@ -170,6 +186,14 @@ do
         elseif key == "onRemoveItem" then
             self:type("removeitem")
             self:onRemoveItem(value)
+            return
+        elseif key == "onEquipItem" then
+            self:type("equip")
+            self:onEquipItem(value)
+            return
+        elseif key == "onDeEquipItem" then
+            self:type("deequip")
+            self:onDeEquipItem(value)
             return
         elseif key == "onStepIn" then
             self:type("stepin")

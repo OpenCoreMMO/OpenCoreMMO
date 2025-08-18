@@ -30,7 +30,7 @@ public class RuneSpell : ScriptedSpell
         scriptInterface.PushFunction(LuaRune.GetScriptId());
 
         LuaFunctionsLoader.PushUserdata(luaState, caster);
-        
+
         LuaFunctionsLoader.SetCreatureMetatable(luaState, -1, caster);
 
         var variant = new LuaVariant

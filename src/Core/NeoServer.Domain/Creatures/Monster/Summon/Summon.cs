@@ -57,15 +57,6 @@ public class Summon : Monster, ISummon
         Follow(Master);
     }
 
-    public override void Death(IThing by)
-    {
-        base.Death(by);
-
-        Master.Summons.Remove(this);
-
-        Dismiss();
-    }
-
     public override void Dismiss()
     {
         Master.Summons.Remove(this);
@@ -95,6 +86,15 @@ public class Summon : Monster, ISummon
         return base.IsHostileTo(enemy);
     }
 
+    public override void Death(IThing by)
+    {
+        base.Death(by);
+
+        Master.Summons.Remove(this);
+
+        Dismiss();
+    }
+
     private void Die()
     {
         HealthPoints = 0;
@@ -110,6 +110,7 @@ public class Summon : Monster, ISummon
     private void OnMasterTargetChange(ICombatActor actor, uint oldTargetId, uint newTargetId)
     {
         Targets.Clear();
+
         SetAsEnemy(actor.CurrentTarget);
         ChangeAttackTarget(actor.CurrentTarget);
     }

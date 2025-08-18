@@ -26,9 +26,7 @@ public class ItemUseValidation(IMapTool mapTool, IMap map)
 
             var sightLine = param.CheckFloor ? SightLine.CheckSightLineAndFloor : SightLine.CheckSightLine;
             if (param.CheckClearSight && !mapTool.CanThrowObjectTo(player.Location, target.Location, sightLine))
-            {
                 return Result.Fail(InvalidOperation.CannotThrowThere);
-            }
 
             return Result.Success;
         }

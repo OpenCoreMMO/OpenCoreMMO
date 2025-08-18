@@ -2,7 +2,10 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Networking.Packets.Outgoing;
@@ -66,6 +69,8 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(luaState, "Player", "getStorageValue", LuaPlayerGetStorageValue);
         RegisterMethod(luaState, "Player", "setStorageValue", LuaPlayerSetStorageValue);
 
+        RegisterMethod(luaState, "Player", "showTextDialog", LuaPlayerShowTextDialog);
+
         RegisterMethod(luaState, "Player", "addItem", LuaPlayerAddItem);
         RegisterMethod(luaState, "Player", "removeItem", LuaPlayerRemoveItem);
 
@@ -76,6 +81,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(luaState, "Player", "setGhostMode", LuaPlayerSetGhostMode);
         RegisterMethod(luaState, "Player", "feed", LuaPlayerFeed);
         RegisterMethod(luaState, "Player", "getLevel", LuaGetLevel);
+        RegisterMethod(luaState, "Player", "getSlotItem", LuaPlayerGetSlotItem);
     }
 
     private static int LuaGetLevel(LuaState l)
@@ -420,7 +426,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         // player:getStorageValue(key)
         var player = GetUserdata<IPlayer>(luaState, 1);
         if (player != null)
-            Lua.PushNumber(luaState, player.GetStorageValue(GetNumber<int>(luaState, 2)));
+            Lua.PushNumber(luaState, player.GetStorageValue(GetNumber<uint>(luaState, 2)));
         else
             Lua.PushNil(luaState);
 
@@ -430,8 +436,16 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
     private static int LuaPlayerSetStorageValue(LuaState luaState)
     {
         // player:setStorageValue(key, value)
+
         var player = GetUserdata<IPlayer>(luaState, 1);
-        var key = GetNumber<int>(luaState, 2);
+
+        if (player is null)
+        {
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var key = GetNumber<uint>(luaState, 2);
         var value = GetNumber<int>(luaState, 3);
 
         var startReservedRange = 10000000;
@@ -459,6 +473,67 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         {
             Lua.PushNil(luaState);
         }
+
+        return 1;
+    }
+
+    private static int LuaPlayerShowTextDialog(LuaState luaState)
+    {
+        // player:showTextDialog(id or name or userdata[, text[, canWrite[, length]]])
+        var player = GetUserdata<IPlayer>(luaState, 1);
+
+        if (player is null)
+        {
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        IItem item = null;
+        if (Lua.IsNumber(luaState, 2))
+        {
+            var itemId = GetNumber<ushort>(luaState, 2);
+            item = _itemFactory.Create(itemId, Location.Zero);
+        }
+        else if (IsString(luaState, 2))
+        {
+            var itemName = GetString(luaState, 2);
+            var itemType = _itemTypeStore.GetByName(itemName);
+
+            if (itemType != null)
+                item = _itemFactory.Create(itemType, Location.Zero);
+        }
+        else if (Lua.IsUserData(luaState, 2))
+        {
+            item = (IReadable)GetUserdata<IItem>(luaState, 2);
+
+            if (item == null)
+            {
+                Lua.PushBoolean(luaState, false);
+                return 1;
+            }
+        }
+
+        if (item == null)
+        {
+            ReportError(GetErrorDesc(ErrorCodeType.LUA_ERROR_ITEM_NOT_FOUND));
+            Lua.PushBoolean(luaState, false);
+            return 1;
+        }
+
+        //todo: implements length and canWrite
+        var canWrite = GetBoolean(luaState, 4, false);
+        var length = GetNumber(luaState, 5, -1);
+        var text = string.Empty;
+
+        var parameters = Lua.GetTop(luaState);
+        if (parameters >= 3)
+            text = GetString(luaState, 3);
+
+        var reliableItem = (IReadable)item;
+
+        reliableItem.Attributes.SetAttribute(ItemAttribute.Text, text);
+
+        player.Read(reliableItem);
 
         return 1;
     }
@@ -534,7 +609,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             var stackCount = subType;
             if (it.IsStackable())
             {
-                stackCount = int.Max(stackCount, it.Count);
+                stackCount = int.Min(stackCount, it.Count);
                 subType -= stackCount;
             }
 
@@ -692,6 +767,38 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         if (player != null && food > 0) player.Feed(food);
 
         PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaPlayerGetSlotItem(LuaState luaState)
+    {
+        // player:getSlotItem(slot)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var slot = GetNumber<Slot>(luaState, 2);
+        var thing = player.Inventory.TryGetItem<IThing>(slot);
+        if (thing == null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var item = thing as IItem;
+        if (item != null)
+        {
+            PushUserdata(luaState, item);
+            SetItemMetatable(luaState, -1, item);
+        }
+        else
+        {
+            Lua.PushNil(luaState);
+        }
+
         return 1;
     }
 }

@@ -53,10 +53,10 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
         }
 
         return CombatResult.Fail(Result.NotApplicable);
-
     }
 
-    private CombatResult PerformCondition(CombatParameter combatParameter, ICombatActor targetCreature, ICondition condition)
+    private CombatResult PerformCondition(CombatParameter combatParameter, ICombatActor targetCreature,
+        ICondition condition)
     {
         var conditionType = condition.Type;
         condition.Parameters.TryGetValue(ConditionParamType.Ticks, out var duration);
@@ -133,7 +133,8 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
         var conditionType = condition.Type;
         condition.Parameters.TryGetValue(ConditionParamType.Ticks, out var duration);
 
-        if (combatParameter.MinDamage is 0 || combatParameter.MaxDamage is 0) return CombatResult.Fail(Result.NotPossible);
+        if (combatParameter.MinDamage is 0 || combatParameter.MaxDamage is 0)
+            return CombatResult.Fail(Result.NotPossible);
 
         if (!targetCreature.HasCondition(condition.Type, out var existentCondition))
         {
@@ -144,7 +145,8 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
             return new CombatResult(0, Result.Success);
         }
 
-        (existentCondition as ConditionDamage)?.Start(targetCreature, combatParameter.MinDamage, combatParameter.MaxDamage);
+        (existentCondition as ConditionDamage)?.Start(targetCreature, combatParameter.MinDamage,
+            combatParameter.MaxDamage);
         return new CombatResult(0, Result.Success);
     }
 
@@ -154,7 +156,8 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
         var conditionType = combatParameter.Condition.Type;
         var interval = combatParameter.Condition.Duration;
 
-        if (combatParameter.MinDamage is 0 || combatParameter.MaxDamage is 0) return CombatResult.Fail(Result.NotPossible);
+        if (combatParameter.MinDamage is 0 || combatParameter.MaxDamage is 0)
+            return CombatResult.Fail(Result.NotPossible);
 
         if (!targetCreature.HasCondition(combatParameter.Condition.Type, out var condition))
         {

@@ -22,12 +22,15 @@ public class WeaponFactory : IFactory
 
     public event CreateItem OnItemCreated;
 
-    public IItem Create(IItemType itemType, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes)
+    public IItem Create(
+        IItemType itemType,
+        Location location,
+        IDictionary<ItemAttribute, IConvertible> itemAttributes)
     {
         var chargeable = _chargeableFactory.Create(itemType);
 
         if (MeleeWeapon.IsApplicable(itemType))
-            return new MeleeWeapon(itemType, location)
+            return new MeleeWeapon(itemType, location, itemAttributes)
             {
                 Chargeable = chargeable,
                 ItemTypeFinder = _itemTypeStore.Get
@@ -48,8 +51,8 @@ public class WeaponFactory : IFactory
         if (ICumulative.IsApplicable(itemType))
         {
             if (ThrowableWeapon.IsApplicable(itemType))
-                return new ThrowableWeapon(itemType, location, attributes);
-            if (Ammo.IsApplicable(itemType)) return new Ammo(itemType, location, attributes);
+                return new ThrowableWeapon(itemType, location, itemAttributes);
+            if (Ammo.IsApplicable(itemType)) return new Ammo(itemType, location, itemAttributes);
         }
 
         return null;

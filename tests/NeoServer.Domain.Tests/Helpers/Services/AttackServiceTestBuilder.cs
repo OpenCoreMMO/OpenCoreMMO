@@ -24,12 +24,14 @@ public class AttackServiceTestBuilder
         var gameConfiguration = new GameConfiguration
         {
             PvP = new PvPConfiguration(pvpType),
-            Combat = new CombatConfiguration(true, true, 1)
+            Combat = new CombatConfiguration(true, true)
         };
 
         var skullService = new PlayerSkullService(gameConfiguration);
         var logger = new Mock<ILogger>();
         var mockEventAggregator = new Mock<IEventAggregator>();
+
+        var attackValidation = new AttackValidation(new MapTool(map, new PathFinder(map)), map, gameConfiguration.PvP);
 
         var itemTypeStore = ItemTypeStoreTestBuilder.Build(new ItemType().SetId(2019));
 
@@ -41,15 +43,14 @@ public class AttackServiceTestBuilder
         var conditionAttackService = new ConditionAttackService(monsterTypeStore);
 
         var areaAttackService =
-            new AreaAttackService(mockEventAggregator.Object, map, magicFieldService, conditionAttackService);
+            new AreaAttackService(mockEventAggregator.Object, map, magicFieldService, conditionAttackService, attackValidation);
 
         var singleTargetCombat =
             new SingleTargetAttackService(mockEventAggregator.Object, gameConfiguration.Combat, conditionAttackService,
                 magicFieldService);
 
-        var attackValidation = new AttackValidation(new MapTool(map, new PathFinder(map)), map, gameConfiguration.PvP);
-
-        return new AttackService(logger.Object, skullService, areaAttackService, singleTargetCombat, conditionAttackService, attackValidation);
+        return new AttackService(logger.Object, skullService, areaAttackService, singleTargetCombat,
+            conditionAttackService, attackValidation);
     }
 }
 

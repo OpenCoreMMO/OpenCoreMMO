@@ -13,14 +13,14 @@ public class TileTestFactory
     {
         var topItems = new List<IItem>
         {
-            ItemTestData.CreateTopItem(1, 1),
-            ItemTestData.CreateTopItem(2, 2)
+            ItemTestDataBuilder.CreateTopItem(1, 1),
+            ItemTestDataBuilder.CreateTopItem(2, 2)
         };
 
         var items = new List<IItem>
         {
-            ItemTestData.CreateRegularItem(100),
-            ItemTestData.CreateRegularItem(200)
+            ItemTestDataBuilder.CreateRegularItem(100),
+            ItemTestDataBuilder.CreateRegularItem(200)
         };
         items.AddRange(item);
 

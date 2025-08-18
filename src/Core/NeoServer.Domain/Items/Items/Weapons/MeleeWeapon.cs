@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Combat.Structs;
@@ -18,35 +17,31 @@ namespace NeoServer.Domain.Items.Items.Weapons;
 
 public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDefense
 {
-    public MeleeWeapon(IItemType itemType, Location location) : base(itemType, location)
+    public MeleeWeapon(
+        IItemType itemType,
+        Location location,
+        IDictionary<ItemAttribute, IConvertible> itemAttributes = null) : base(itemType, location)
     {
         //AllowedVocations  todo
-        WeaponAttack = new WeaponAttack(Metadata);
+        WeaponAttack = new WeaponAttack(itemType, itemAttributes);
     }
 
     protected override string PartialInspectionText
     {
         get
         {
-            var defense = Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Defense);
-            var extraDefense = Metadata.Attributes.GetAttribute<sbyte>(ItemTypeAttribute.ExtraDefense);
-
-            var extraDefenseText = extraDefense > 0 ? $" +{extraDefense}" :
-                extraDefense < 0 ? $" -{extraDefense}" : string.Empty;
+            var extraDefenseText = ExtraDefense > 0 ? $" +{ExtraDefense}" :
+                ExtraDefense < 0 ? $" -{ExtraDefense}" : string.Empty;
 
             var elementalDamageText = WeaponAttack.ElementalDamage.AttackPower > 0
                 ? $" + {WeaponAttack.ElementalDamage.AttackPower} {DamageTypeParser.Parse(WeaponAttack.ElementalDamage.DamageType)},"
                 : ",";
 
-            return $"Atk: {WeaponAttack.AttackPower}{elementalDamageText} Def: {defense}{extraDefenseText}";
+            return $"Atk: {WeaponAttack.AttackPower}{elementalDamageText} Def: {Defense}{extraDefenseText}";
         }
     }
 
-    public sbyte ExtraDefense => Metadata.Attributes.GetAttribute<sbyte>(ItemTypeAttribute.ExtraDefense);
-
-    public ushort AttackPower => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.Attack);
-    public WeaponAttack WeaponAttack { get; } //todo: rename to attack
-    public byte Defense => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Defense);
+    public WeaponAttack WeaponAttack { get; } //todo: rename to Attack
 
     public virtual bool CanUseOn(ushort[] items, IItem onItem)
     {
@@ -60,6 +55,8 @@ public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDe
         return useOnItems is not null && ((IList)useOnItems).Contains(onItem.Metadata.ServerId);
     }
 
+    public ushort? MinHitChance { get; }
+
     public override bool CanBeDressed(IPlayer player)
     {
         if (Guard.IsNullOrEmpty(Vocations)) return true;
@@ -70,8 +67,6 @@ public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDe
 
         return false;
     }
-
-    public ushort? MinHitChance { get; }
 
     public bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combatResult)
     {

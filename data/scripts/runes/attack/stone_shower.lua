@@ -5,9 +5,9 @@ combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_EARTH)
 combat:setArea(createCombatArea(AREA_CIRCLE3X3))
 
 function onGetFormulaValues(player, level, magicLevel)
-	local min = (level / 5) + (magicLevel * 1) + 6
-	local max = (level / 5) + (magicLevel * 2.6) + 16
-	return -min, -max
+    local min = (level / 5) + (magicLevel * 1) + 6
+    local max = (level / 5) + (magicLevel * 2.6) + 16
+    return -min, -max
 end
 
 combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
@@ -15,7 +15,7 @@ combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 local rune = Spell("rune")
 
 function rune.onCastSpell(creature, var, isHotkey)
-	return combat:execute(creature, var)
+    return combat:execute(creature, var)
 end
 
 rune:id(116)

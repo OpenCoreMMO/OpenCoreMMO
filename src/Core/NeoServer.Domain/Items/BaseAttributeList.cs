@@ -14,9 +14,31 @@ public class BaseAttributeList<T> where T : Enum
         _defaultAttributes = new Dictionary<T, (dynamic, BaseAttributeList<T>)>();
     }
 
-    protected IDictionary<string, (dynamic, BaseAttributeList<T>)> _customAttributes 
+    protected IDictionary<string, (dynamic, BaseAttributeList<T>)> _customAttributes
         => customAttributes ??= new Dictionary<string, (dynamic, BaseAttributeList<T>)>(StringComparer
-                .InvariantCultureIgnoreCase);
+            .InvariantCultureIgnoreCase);
+
+    protected static bool IsNullable(dynamic value)
+    {
+        if (value == null)
+            return true; // null itself is always nullable
+
+        var type = ((object)value).GetType();
+
+        return !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
+    }
+
+    private static TKey ConvertKey<TKey>(object key)
+    {
+        if (typeof(TKey).IsEnum)
+        {
+            if (key is string s)
+                return (TKey)Enum.Parse(typeof(TKey), s, true);
+            return (TKey)Enum.ToObject(typeof(TKey), key);
+        }
+
+        return (TKey)Convert.ChangeType(key, typeof(TKey), CultureInfo.InvariantCulture);
+    }
 
     #region Attributes
 
@@ -25,12 +47,20 @@ public class BaseAttributeList<T> where T : Enum
         return _defaultAttributes.ContainsKey(attribute);
     }
 
-    public TValue GetAttribute<TValue>(T attribute) where TValue : struct
+    public TValue GetAttribute<TValue>(T attribute)
     {
         if (_defaultAttributes is null) return default;
 
         if (_defaultAttributes.TryGetValue(attribute, out var value))
-            return (TValue)Convert.ChangeType(value.Item1, typeof(TValue), CultureInfo.InvariantCulture);
+        {
+            if (value.Item1 is TValue tValue)
+                return tValue;
+
+            if (typeof(IConvertible).IsAssignableFrom(typeof(TValue)))
+                return (TValue)Convert.ChangeType(value.Item1, typeof(TValue), CultureInfo.InvariantCulture);
+
+            return (TValue)value.Item1;
+        }
 
         return default;
     }
@@ -122,15 +152,15 @@ public class BaseAttributeList<T> where T : Enum
     }
 
     public void SetAttribute(T attribute, IConvertible attributeValue)
-        {
+    {
         _defaultAttributes.AddOrUpdate(attribute, (attributeValue, null));
-        }
+    }
 
     public void SetAttribute(IDictionary<T, IConvertible> attributeValues)
-        {
+    {
         if (attributeValues.IsNull()) return;
         foreach (var (key, value) in attributeValues) SetAttribute(key, value);
-        }
+    }
 
     public void SetAttribute(T attribute, dynamic values)
     {
@@ -156,7 +186,7 @@ public class BaseAttributeList<T> where T : Enum
 
         foreach (var item in _defaultAttributes)
         {
-            TKey key = ConvertKey<TKey>(item.Key);
+            var key = ConvertKey<TKey>(item.Key);
             dictionary[key] = (TValue)item.Value.Item1;
         }
 
@@ -172,6 +202,18 @@ public class BaseAttributeList<T> where T : Enum
         return default;
     }
 
+    public bool TryGetValue(T attribute, out dynamic value)
+    {
+        value = default;
+
+        if (_defaultAttributes is null) return false;
+
+        if (!_defaultAttributes.TryGetValue(attribute, out var attr)) return false;
+
+        value = attr.Item1;
+        return true;
+    }
+
     #endregion
 
     #region Custom Attributes
@@ -185,12 +227,15 @@ public class BaseAttributeList<T> where T : Enum
     {
         if (_customAttributes is null) return default;
 
-
         if (_customAttributes.TryGetValue(attribute, out var value))
         {
-            if (IsNullable(value.Item1)) return (TValue)value.Item1;
+            if (value.Item1 is TValue tValue)
+                return tValue;
 
-            return (TValue)Convert.ChangeType(value.Item1, typeof(TValue), CultureInfo.InvariantCulture);
+            if (typeof(IConvertible).IsAssignableFrom(typeof(TValue)))
+                return (TValue)Convert.ChangeType(value.Item1, typeof(TValue), CultureInfo.InvariantCulture);
+
+            return (TValue)value.Item1;
         }
 
         return default;
@@ -216,9 +261,9 @@ public class BaseAttributeList<T> where T : Enum
         try
         {
             attrValue = (TValue)Convert.ChangeType(value.Item1, typeof(TValue), CultureInfo.InvariantCulture);
-    }
+        }
         catch
-    {
+        {
             attrValue = default;
         }
 
@@ -287,7 +332,7 @@ public class BaseAttributeList<T> where T : Enum
 
         foreach (var item in _customAttributes)
         {
-            TKey key = ConvertKey<TKey>(item.Key);
+            var key = ConvertKey<TKey>(item.Key);
             dictionary[key] = (TValue)item.Value.Item1;
         }
 
@@ -296,25 +341,53 @@ public class BaseAttributeList<T> where T : Enum
 
     #endregion
 
-    protected static bool IsNullable(dynamic value)
+    public BaseAttributeList<T> Clone()
     {
-        if (value == null)
-            return true; // null itself is always nullable
+        var clone = new BaseAttributeList<T>();
 
-        var type = ((object)value).GetType();
-
-        return !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
-    }
-
-    private static TKey ConvertKey<TKey>(object key)
-    {
-        if (typeof(TKey).IsEnum)
+        if (_defaultAttributes != null)
         {
-            if (key is string s)
-                return (TKey)Enum.Parse(typeof(TKey), s, ignoreCase: true);
-            return (TKey)Enum.ToObject(typeof(TKey), key);
+            foreach (var kv in _defaultAttributes)
+            {
+                var valueCopy = CloneValue(kv.Value.Item1);
+                var innerCopy = kv.Value.Item2 != null ? kv.Value.Item2.Clone() : null;
+                clone._defaultAttributes[kv.Key] = (valueCopy, innerCopy);
+            }
         }
 
-        return (TKey)Convert.ChangeType(key, typeof(TKey), CultureInfo.InvariantCulture);
+        if (customAttributes != null)
+        {
+            clone.customAttributes = new Dictionary<string, (dynamic, BaseAttributeList<T>)>(
+                StringComparer.InvariantCultureIgnoreCase);
+
+            foreach (var kv in customAttributes)
+            {
+                var valueCopy = CloneValue(kv.Value.Item1);
+                var innerCopy = kv.Value.Item2 != null ? kv.Value.Item2.Clone() : null;
+                clone.customAttributes[kv.Key] = (valueCopy, innerCopy);
+            }
+        }
+
+        return clone;
+    }
+
+    private static dynamic CloneValue(dynamic value)
+    {
+        if (value is null) return null;
+
+        object obj = value;
+
+        if (obj is Array arr)
+        {
+            var elementType = obj.GetType().GetElementType() ?? typeof(object);
+            var copy = Array.CreateInstance(elementType, arr.Length);
+            Array.Copy(arr, copy, arr.Length);
+            return copy;
+        }
+
+        if (obj is ICloneable cloneable)
+            return cloneable.Clone();
+
+        return value;
     }
 }

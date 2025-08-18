@@ -1,13 +1,17 @@
-﻿local talkAction = TalkAction("!test")
+﻿---@type TalkAction
+local talkAction = TalkAction("!test")
 
+---@param player Player
+---@param words string
+---@param param string
 function talkAction.onSay(player, words, param)
     logger.info('executing talkAction test from lua: ' .. words .. ' ' .. param)
 
-    local message = string.format("%s was KILLED at level %d by %s", player:getName(), 1, "test")
-    sendChannelMessage(9, TALKTYPE_CHANNEL_R1, message)
+    -- local message = string.format("%s was KILLED at level %d by %s", player:getName(), 1, "test")
+    -- sendChannelMessage(9, TALKTYPE_CHANNEL_R1, message)
 
-    logger.info(player:getName())
-    logger.info(player:getId())
+    -- logger.info(player:getName())
+    -- logger.info(player:getId())
 
     -- local loginStr = "TEST !!"
     -- player:sendTextMessage(MESSAGE_STATUS_DEFAULT, loginStr)
@@ -121,45 +125,74 @@ function talkAction.onSay(player, words, param)
     -- stopEvent(eventId);
 
     -- Database tests
-    logger.info("query")
-    local resultQuery = db.query("SELECT * FROM Player")
-    logger.info(tostring(resultQuery))
+    -- logger.info("query")
+    -- local resultQuery = db.query("SELECT * FROM Player")
+    -- logger.info(tostring(resultQuery))
 
-    logger.info("asyncQuery")
-    local resultAsyncQuery = db.asyncQuery("SELECT * FROM Player")
-    logger.info(tostring(resultAsyncQuery))
+    -- logger.info("asyncQuery")
+    -- local resultAsyncQuery = db.asyncQuery("SELECT * FROM Player")
+    -- logger.info(tostring(resultAsyncQuery))
 
-    logger.info("store")
-    local resultStoreId = db.storeQuery("SELECT * FROM Player")
-    logger.info(tostring(resultStoreId))
+    -- logger.info("store")
+    -- local resultStoreId = db.storeQuery("SELECT * FROM Player")
+    -- logger.info(tostring(resultStoreId))
 
-    if resultStoreId then
-        repeat
-            local id = Result.getNumber(resultStoreId, "id")
-            local townId = Result.getNumber(resultStoreId, "townId")
-            local name = Result.getString(resultStoreId, "name")
-            logger.info(string.format("id: %d, townId: %d, name: %s", id, townId, name))
-        until not Result.next(resultStoreId)
+    -- if resultStoreId then
+    --     repeat
+    --         local id = Result.getNumber(resultStoreId, "id")
+    --         local townId = Result.getNumber(resultStoreId, "townId")
+    --         local name = Result.getString(resultStoreId, "name")
+    --         logger.info(string.format("id: %d, townId: %d, name: %s", id, townId, name))
+    --     until not Result.next(resultStoreId)
 
-        Result.free(resultStoreId)
-    end
+    --     Result.free(resultStoreId)
+    -- end
 
-    logger.info("asyncStore")
-    local resultAsyncStoreId = db.storeQuery("SELECT * FROM Player")
-    logger.info(tostring(resultAsyncStoreId))
+    -- logger.info("asyncStore")
+    -- local resultAsyncStoreId = db.storeQuery("SELECT * FROM Player")
+    -- logger.info(tostring(resultAsyncStoreId))
 
-    if resultAsyncStoreId then
-        repeat
-            local id = Result.getNumber(resultAsyncStoreId, "id")
-            local townId = Result.getNumber(resultAsyncStoreId, "townId")
-            local name = Result.getString(resultAsyncStoreId, "name")
-            logger.info(string.format("id: %d, townId: %d, name: %s", id, townId, name))
-        until not Result.next(resultAsyncStoreId)
+    -- if resultAsyncStoreId then
+    --     repeat
+    --         local id = Result.getNumber(resultAsyncStoreId, "id")
+    --         local townId = Result.getNumber(resultAsyncStoreId, "townId")
+    --         local name = Result.getString(resultAsyncStoreId, "name")
+    --         logger.info(string.format("id: %d, townId: %d, name: %s", id, townId, name))
+    --     until not Result.next(resultAsyncStoreId)
 
-        Result.free(resultAsyncStoreId)
-    end
+    --     Result.free(resultAsyncStoreId)
+    -- end
 
     --db.query("INSERT INTO worldrecords VALUES(2, 1, 2, '2025-01-04 03:36:26')")
+    ---------------------------------------------------------------------------
+
+
+    -- Container tests
+    logger.info("Container tests")
+
+    local container = player:getSlotItem(CONST_SLOT_BACKPACK)
+    if not container then
+        player:sendCancelMessage("You do not have a container in slot CONST_SLOT_BACKPACK.")
+        return false
+    end
+
+    logger.info("Container id: " .. container:getId())
+    logger.info("Container size: " .. container:getSize())
+    logger.info("Container capacity: " .. container:getCapacity())
+    logger.info("Container emptySlots: " .. container:getEmptySlots())
+    logger.info("Container contentDescription: " .. container:getContentDescription())
+    logger.info("Container items: " .. #container:getItems())
+    logger.info("Container item count: " .. container:getItemHoldingCount())
+    logger.info("Container item count by id 2666 meat: " .. container:getItemCountById(2666))
+    logger.info("Container item count by id 2175 spellbook: " .. container:getItemCountById(2175))
+    local itemFromindex = container:getItem(0)
+    logger.info("Container get item by index 0: " .. itemFromindex:getName())
+    logger.info("Container has item: " .. tostring(container:hasItem(itemFromindex)))
+    local itemFromAddItem = container:addItem(2120, 1) -- Add a rope to the container
+    logger.info("Container has item after adding rope: " .. tostring(container:hasItem(itemFromAddItem)))
+    local itemToAddItemEx = Game.createItem(2124, 1) -- Create a crystal ring item
+    container:addItemEx(itemToAddItemEx) -- Add a crystal ring to the container
+    logger.info("Container has item after adding crystal ring: " .. tostring(container:hasItem(itemToAddItemEx)))
     ---------------------------------------------------------------------------
 
     logger.info('end talkaction test from lua')
@@ -168,3 +201,4 @@ end
 
 talkAction:separator(" ")
 talkAction:register()
+    

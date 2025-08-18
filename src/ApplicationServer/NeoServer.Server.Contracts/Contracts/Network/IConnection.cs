@@ -4,7 +4,7 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 
 namespace NeoServer.Server.Common.Contracts.Network;
 
-public interface IConnection
+public interface IConnection : IDisposable
 {
     IReadOnlyNetworkMessage InMessage { get; }
     uint[] XteaKey { get; }
@@ -26,7 +26,7 @@ public interface IConnection
     void BeginStreamRead();
     void Close(bool force = false);
     void Disconnect(string text = null);
-    public void Send(IOutgoingPacket packet);
+    void Send(IOutgoingPacket packet);
     void SendFirstConnection();
     void SetXtea(uint[] xtea);
     void SetAsAuthenticated();

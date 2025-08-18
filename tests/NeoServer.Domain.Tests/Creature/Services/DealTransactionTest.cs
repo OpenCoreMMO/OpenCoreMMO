@@ -70,9 +70,9 @@ public class DealTransactionTest
 
         var coinTypeStore = new CoinTypeStore();
 
-        var coin1 = ItemTestData.CreateCoin(1, 100, 1);
-        var coin2 = ItemTestData.CreateCoin(1, 100, 1);
-        var coin3 = ItemTestData.CreateCoin(1, 100, 1);
+        var coin1 = ItemTestDataBuilder.CreateCoin(1, 100, 1);
+        var coin2 = ItemTestDataBuilder.CreateCoin(1, 100, 1);
+        var coin3 = ItemTestDataBuilder.CreateCoin(1, 100, 1);
 
         coinTypeStore.AddOrUpdate(1, coin1.Metadata);
 
@@ -80,12 +80,12 @@ public class DealTransactionTest
 
         var sut = new DealTransaction(itemFactoryMock.Object, coinTransaction, coinTypeStore);
 
-        var itemToBuy = ItemTestData.CreateWeaponItem(10);
+        var itemToBuy = ItemTestDataBuilder.CreateWeaponItem(10);
 
         var shopperMock = new Mock<IShopperNpc>();
         shopperMock.Setup(x => x.CalculateCost(itemToBuy.Metadata, 3)).Returns(300);
 
-        var container = ItemTestData.CreateBackpack();
+        var container = ItemTestDataBuilder.CreateBackpack();
         container.AddItem(coin1);
         container.AddItem(coin2);
         container.AddItem(coin3);
@@ -115,12 +115,12 @@ public class DealTransactionTest
 
         var sut = new DealTransaction(itemFactoryMock.Object, coinTransaction, coinTypeStore);
 
-        var itemToBuy = ItemTestData.CreateWeaponItem(10);
+        var itemToBuy = ItemTestDataBuilder.CreateWeaponItem(10);
 
-        var container = ItemTestData.CreateBackpack();
-        container.AddItem(ItemTestData.CreateCoin(1, 100, 1));
-        container.AddItem(ItemTestData.CreateCoin(1, 100, 1));
-        container.AddItem(ItemTestData.CreateCoin(1, 100, 1));
+        var container = ItemTestDataBuilder.CreateBackpack();
+        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100, 1));
+        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100, 1));
+        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100, 1));
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000,
             inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
@@ -154,14 +154,15 @@ public class DealTransactionTest
 
         var sut = new DealTransaction(itemFactoryMock.Object, coinTransaction.Object, coinTypeStore);
 
-        var itemToBuy = ItemTestData.CreateBodyEquipmentItem(10, slot);
+        var itemToBuy = ItemTestDataBuilder.CreateBodyEquipmentItem(10, slot);
 
-        itemFactoryMock.Setup(x => x.Create(It.IsAny<ushort>(), It.IsAny<Location>(), null, null, null, null, null)).Returns(itemToBuy);
+        itemFactoryMock.Setup(x => x.Create(It.IsAny<ushort>(), It.IsAny<Location>(), null, null, null, null, null))
+            .Returns(itemToBuy);
 
-        var container = ItemTestData.CreateBackpack();
-        container.AddItem(ItemTestData.CreateCoin(1, 100, 1));
-        container.AddItem(ItemTestData.CreateCoin(1, 100, 1));
-        container.AddItem(ItemTestData.CreateCoin(1, 100, 1));
+        var container = ItemTestDataBuilder.CreateBackpack();
+        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100, 1));
+        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100, 1));
+        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100, 1));
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000,
             inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
@@ -186,9 +187,10 @@ public class DealTransactionTest
 
         var sut = new DealTransaction(itemFactoryMock.Object, coinTransaction.Object, coinTypeStore);
 
-        var itemToBuy = ItemTestData.CreateBackpack();
+        var itemToBuy = ItemTestDataBuilder.CreateBackpack();
 
-        itemFactoryMock.Setup(x => x.Create(It.IsAny<ushort>(), It.IsAny<Location>(), null, null, null, null, null)).Returns(itemToBuy);
+        itemFactoryMock.Setup(x => x.Create(It.IsAny<ushort>(), It.IsAny<Location>(), null, null, null, null, null))
+            .Returns(itemToBuy);
 
         var player =
             PlayerTestDataBuilder.Build(capacity: 1000,
@@ -219,15 +221,16 @@ public class DealTransactionTest
 
         var sut = new DealTransaction(itemFactoryMock.Object, coinTransaction.Object, coinTypeStore);
 
-        var itemToBuy = ItemTestData.CreateAmmo(1, bought);
+        var itemToBuy = ItemTestDataBuilder.CreateAmmo(1, bought);
 
-        itemFactoryMock.Setup(x => x.Create(It.IsAny<ushort>(), It.IsAny<Location>(), null, null, null, null, null)).Returns(itemToBuy);
+        itemFactoryMock.Setup(x => x.Create(It.IsAny<ushort>(), It.IsAny<Location>(), null, null, null, null, null))
+            .Returns(itemToBuy);
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000,
             inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
             {
-                { Slot.Ammo, (ItemTestData.CreateAmmo(1, current), 1) },
-                { Slot.Backpack, (ItemTestData.CreateBackpack(), 2) }
+                { Slot.Ammo, (ItemTestDataBuilder.CreateAmmo(1, current), 1) },
+                { Slot.Backpack, (ItemTestDataBuilder.CreateBackpack(), 2) }
             });
 
         player.LoadBank(500);
@@ -258,11 +261,12 @@ public class DealTransactionTest
 
         var sut = new DealTransaction(itemFactoryMock.Object, coinTransaction.Object, coinTypeStore);
 
-        var itemToBuy = ItemTestData.CreateBodyEquipmentItem(10, slot);
+        var itemToBuy = ItemTestDataBuilder.CreateBodyEquipmentItem(10, slot);
 
-        itemFactoryMock.Setup(x => x.Create(It.IsAny<ushort>(), It.IsAny<Location>(), null, null, null, null, null)).Returns(itemToBuy);
+        itemFactoryMock.Setup(x => x.Create(It.IsAny<ushort>(), It.IsAny<Location>(), null, null, null, null, null))
+            .Returns(itemToBuy);
 
-        var container = ItemTestData.CreateBackpack();
+        var container = ItemTestDataBuilder.CreateBackpack();
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000,
             inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
@@ -270,7 +274,7 @@ public class DealTransactionTest
                 { Slot.Backpack, (container, 2) },
                 {
                     itemToBuy.Metadata.BodyPosition,
-                    (ItemTestData.CreateBodyEquipmentItem(10, slot), 10)
+                    (ItemTestDataBuilder.CreateBodyEquipmentItem(10, slot), 10)
                 }
             });
 
@@ -301,11 +305,12 @@ public class DealTransactionTest
 
         var sut = new DealTransaction(itemFactoryMock.Object, coinTransaction.Object, coinTypeStore);
 
-        var itemToBuy = ItemTestData.CreateBodyEquipmentItem(10, slot);
+        var itemToBuy = ItemTestDataBuilder.CreateBodyEquipmentItem(10, slot);
 
-        itemFactoryMock.Setup(x => x.Create(It.IsAny<ushort>(), It.IsAny<Location>(), null, null, null, null, null)).Returns(itemToBuy);
+        itemFactoryMock.Setup(x => x.Create(It.IsAny<ushort>(), It.IsAny<Location>(), null, null, null, null, null))
+            .Returns(itemToBuy);
 
-        var container = ItemTestData.CreateBackpack();
+        var container = ItemTestDataBuilder.CreateBackpack();
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000,
             inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
@@ -343,11 +348,12 @@ public class DealTransactionTest
 
         var sut = new DealTransaction(itemFactoryMock.Object, coinTransaction.Object, coinTypeStore);
 
-        var itemToBuy = ItemTestData.CreateAmmo(10, bought);
+        var itemToBuy = ItemTestDataBuilder.CreateAmmo(10, bought);
 
-        itemFactoryMock.Setup(x => x.Create(It.IsAny<ushort>(), It.IsAny<Location>(), null, null, null, null, null)).Returns(itemToBuy);
+        itemFactoryMock.Setup(x => x.Create(It.IsAny<ushort>(), It.IsAny<Location>(), null, null, null, null, null))
+            .Returns(itemToBuy);
 
-        var container = ItemTestData.CreateBackpack();
+        var container = ItemTestDataBuilder.CreateBackpack();
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000,
             inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
@@ -355,7 +361,7 @@ public class DealTransactionTest
                 { Slot.Backpack, (container, 2) },
                 {
                     itemToBuy.Metadata.BodyPosition,
-                    (ItemTestData.CreateAmmo(10, currentOnInventory), 10)
+                    (ItemTestDataBuilder.CreateAmmo(10, currentOnInventory), 10)
                 }
             });
 
@@ -378,26 +384,26 @@ public class DealTransactionTest
 
         var coinTransaction = new CoinTransaction(itemFactoryMock.Object, coinTypeStore);
 
-        var platinum = ItemTestData.CreateCoin(1, 2, 100);
-        var gold = ItemTestData.CreateCoin(2, 1, 1);
+        var platinum = ItemTestDataBuilder.CreateCoin(1, 2, 100);
+        var gold = ItemTestDataBuilder.CreateCoin(2, 1, 1);
 
         coinTypeStore.AddOrUpdate(1, platinum.Metadata);
         coinTypeStore.AddOrUpdate(2, gold.Metadata);
 
         var sut = new DealTransaction(itemFactoryMock.Object, coinTransaction, coinTypeStore);
 
-        var itemToBuy = ItemTestData.CreateWeaponItem(10);
+        var itemToBuy = ItemTestDataBuilder.CreateWeaponItem(10);
 
         itemFactoryMock.Setup(x => x.Create(10, It.IsAny<Location>(), null, null, null, null, null)).Returns(itemToBuy);
 
         itemFactoryMock.Setup(x => x.CreateCoins(It.IsAny<ulong>())).Returns(new List<Coin>
-            { (Coin)ItemTestData.CreateCoin(1, 1, 100), (Coin)ItemTestData.CreateCoin(2, 70, 1) });
+            { (Coin)ItemTestDataBuilder.CreateCoin(1, 1, 100), (Coin)ItemTestDataBuilder.CreateCoin(2, 70, 1) });
 
         itemFactoryMock.Setup(x => x.Create(1, It.IsAny<Location>(), null, null, null, null, null)).Returns(platinum);
         itemFactoryMock.Setup(x => x.Create(2, It.IsAny<Location>(), null, null, null, null, null)).Returns(gold);
 
-        var container = ItemTestData.CreatePickupableContainer(2, backpack: true);
-        container.AddItem(ItemTestData.CreateWeaponItem(11, "axe"));
+        var container = ItemTestDataBuilder.CreatePickupableContainer(2, backpack: true);
+        container.AddItem(ItemTestDataBuilder.CreateWeaponItem(11, "axe"));
         container.AddItem(platinum);
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000,

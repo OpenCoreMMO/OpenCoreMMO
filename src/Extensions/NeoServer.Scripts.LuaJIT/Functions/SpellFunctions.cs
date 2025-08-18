@@ -1,6 +1,7 @@
 using LuaNET;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Spells;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Spells;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -126,7 +127,8 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             rune.SpellType = spellType;
             return 1;
         }
-        else if (spellType == SpellType.Instant)
+
+        if (spellType == SpellType.Instant)
         {
             var spell = new LuaInstantSpell(GetScriptEnv().GetScriptInterface());
             PushUserdata(lua, spell);
@@ -177,7 +179,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
     }
 
     public static int LuaSpellRegister(LuaState lua)
-    {	
+    {
         // spell:register()
         var spell = GetUserdata<LuaSpell>(lua, 1);
         if (spell is null)
@@ -245,7 +247,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 IsSelfTarget = rune.IsSelfTarget,
                 IsAggressive = rune.IsAggressive,
                 NeedLearn = rune.NeedLearn,
-                NeedWeapon = rune.NeedWeapon,
+                NeedWeapon = rune.NeedWeapon
             };
 
             ((RuneSpell)runeSpell).LuaRune = rune;
@@ -320,7 +322,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
     }
 
     public static int LuaSpellName(LuaState lua)
-    {	
+    {
         // spell:name(name)
         var spell = GetUserdata<LuaSpell>(lua, 1);
         if (spell is not null)
@@ -491,7 +493,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
     }
 
     public static int LuaSpellLevel(LuaState lua)
-    {	
+    {
         // spell:level(lvl)
         var spell = GetUserdata<LuaSpell>(lua, 1);
 
@@ -846,8 +848,9 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             if (Lua.GetTop(lua) == 1)
             {
                 Lua.CreateTable(lua, 0, 0);
-                int it = 0;
-                foreach (var id in spell.VocationIds) {
+                var it = 0;
+                foreach (var id in spell.VocationIds)
+                {
                     ++it;
                     var name = _vocationStore.Get(id).Name;
                     Lua.SetField(lua, it, name);
@@ -857,12 +860,12 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             }
             else
             {
-                var parameters = Lua.GetTop(lua) - 1; // // - 1 because self is a parameter aswell, which we want to skip ofc
+                var parameters =
+                    Lua.GetTop(lua) - 1; // // - 1 because self is a parameter aswell, which we want to skip ofc
 
                 var vocations = new List<byte>();
 
-                for (int i = 0; i < parameters; i++)
-                {
+                for (var i = 0; i < parameters; i++)
                     if (GetString(lua, 2 + i).Contains(';'))
                     {
                         var vocList = GetString(lua, 2 + i).Split(";");
@@ -871,7 +874,6 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                         if (vocList.Length > 0 && vocList[1] == "true")
                             vocations.Add(vocation.Id);
                     }
-                }
 
                 spell.VocationIds = vocations.Count > 0 ? vocations.ToArray() : null;
 
@@ -1111,7 +1113,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             }
             else
             {
-                rune.CheckLineOfSight = (GetBoolean(l, 2));
+                rune.CheckLineOfSight = GetBoolean(l, 2);
                 Lua.PushBoolean(l, true);
             }
         }
@@ -1119,6 +1121,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
         {
             Lua.PushNil(l);
         }
+
         return 1;
     }
 
@@ -1140,7 +1143,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             }
             else
             {
-                rune.CheckFloor = (GetBoolean(l, 2));
+                rune.CheckFloor = GetBoolean(l, 2);
                 Lua.PushBoolean(l, true);
             }
         }

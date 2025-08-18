@@ -243,7 +243,9 @@ public class DynamicTile : BaseTile, IDynamicTile
 
     public byte[] GetRaw(IPlayer playerRequesting)
     {
-        if (_cache != null && !(Creatures?.Any() ?? false)) return _cache;
+        // Only use the cache if there are no creatures (as they change frequently)
+        if (_cache != null && (Creatures == null || Creatures.Count == 0))
+            return _cache;
 
         Span<byte> stream = stackalloc byte[930]; //max possible length
 
@@ -296,8 +298,13 @@ public class DynamicTile : BaseTile, IDynamicTile
                 countBytes += raw.Length;
             }
 
-        _cache = stream[..countBytes].ToArray();
-        return _cache;
+        var result = stream[..countBytes].ToArray();
+
+        // Only caches if there are no creatures
+        if (Creatures == null || Creatures.Count == 0)
+            _cache = result;
+
+        return result;
     }
 
     public event AddCreatureToTile CreatureAdded;
@@ -509,10 +516,12 @@ public class DynamicTile : BaseTile, IDynamicTile
             return (uint)freeSpace;
         }
 
-        var possibleAmountToAdd = freeSpace * 100;
-        if (TopDownItemOnStack is ICumulative c && TopDownItemOnStack.ClientId == cumulative.ClientId)
-            possibleAmountToAdd += c.AmountToComplete;
+        if (TopDownItemOnStack is ICumulative c &&
+            TopDownItemOnStack.ClientId == cumulative.ClientId
+            && c.AmountToComplete > 0)
+            return c.AmountToComplete;
 
+        var possibleAmountToAdd = freeSpace * 100;
         return (uint)possibleAmountToAdd;
     }
 

@@ -1,4 +1,4 @@
-namespace NeoServer.Domain.Spells;
+namespace NeoServer.Domain.Spells.Entities;
 
 public enum MagicGroup
 {

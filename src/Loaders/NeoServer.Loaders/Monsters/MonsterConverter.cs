@@ -41,7 +41,7 @@ public class MonsterConverter(
             Race = ParseRace(monsterData.Race),
             TargetChance = new IntervalChance(System.Convert.ToUInt16(monsterData.TargetChange.Interval),
                 System.Convert.ToByte(monsterData.TargetChange.Chance)),
-            ManaCost = monsterData.ManaCost,
+            ManaCost = monsterData.ManaCost
         };
 
         //if (monster.Race == Race.None)
@@ -81,10 +81,8 @@ public class MonsterConverter(
             var creatureFlag = ParseCreatureFlag(flag.Key);
 
             if (creatureFlag == CreatureFlagAttribute.None)
-            {
                 //logger.Warning("{Monster} Flag: {FlagName} is not implemented", monsterData.Name, flag.Key);
                 continue;
-            }
 
             monster.Flags.Add(creatureFlag, flag.Value);
         }

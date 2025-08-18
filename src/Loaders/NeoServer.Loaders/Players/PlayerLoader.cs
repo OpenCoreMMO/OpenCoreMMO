@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NeoServer.Data.Entities;
+using NeoServer.Data.Extensions;
+using NeoServer.Data.Parsers;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Common;
@@ -14,6 +16,7 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
@@ -109,7 +112,7 @@ public class PlayerLoader : IPlayerLoader
                 Feet = (byte)playerEntity.LookFeet,
                 Head = (byte)playerEntity.LookHead,
                 Legs = (byte)playerEntity.LookLegs,
-                LookType = (byte)playerEntity.LookType
+                LookType = (ushort)playerEntity.LookType
             },
             0,
             playerLocation,
@@ -250,7 +253,7 @@ public class PlayerLoader : IPlayerLoader
         };
     }
 
-    protected Dictionary<int, int> ConvertToStorages(PlayerEntity playerRecord)
+    protected Dictionary<uint, int> ConvertToStorages(PlayerEntity playerRecord)
     {
         return playerRecord.PlayerStorages?.ToDictionary(c => c.Key, c => c.Value);
     }
@@ -266,7 +269,8 @@ public class PlayerLoader : IPlayerLoader
             var location = item.SlotId <= 10 ? Location.Inventory((Slot)item.SlotId) : Location.Container(0, 0);
 
             //todo: check this, if need pass Metadata to itemFactory.Create
-            var createdItem = ItemFactory.Create((ushort)item.ServerId, location, null, null, item.GetAttributes(), item.GetCustomAttributes());
+            var createdItem = ItemFactory.Create((ushort)item.ServerId, location, null, null, item.GetAttributes(),
+                item.GetCustomAttributes());
 
             var createdItemIsPickupable = createdItem?.IsPickupable ?? false;
 

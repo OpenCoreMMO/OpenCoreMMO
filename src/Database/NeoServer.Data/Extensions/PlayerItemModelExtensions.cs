@@ -1,7 +1,10 @@
-﻿using NeoServer.Data.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using NeoServer.Data.Entities;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Item;
+
+namespace NeoServer.Data.Extensions;
 
 public static class PlayerItemModelExtensions
 {
@@ -10,13 +13,9 @@ public static class PlayerItemModelExtensions
         var attributes = new Dictionary<ItemAttribute, IConvertible>();
 
         if (itemEntity.Attributes != null)
-        {
             foreach (var (key, value) in itemEntity.Attributes)
-            {
                 if (Enum.TryParse<ItemAttribute>(key, true, out var attr) && !attributes.ContainsKey(attr))
                     attributes[attr] = ParseValue(value);
-            }
-        }
 
         return attributes;
     }
@@ -26,13 +25,9 @@ public static class PlayerItemModelExtensions
         var customAttributes = new Dictionary<string, IConvertible>();
 
         if (itemEntity.Attributes != null)
-        {
             foreach (var (key, value) in itemEntity.Attributes)
-            {
                 if (!Enum.TryParse<ItemAttribute>(key, true, out _) && !customAttributes.ContainsKey(key))
                     customAttributes[key] = ParseValue(value);
-            }
-        }
 
         return customAttributes;
     }
@@ -42,13 +37,9 @@ public static class PlayerItemModelExtensions
         var attributes = new Dictionary<ItemAttribute, IConvertible>();
 
         if (itemEntity.Attributes != null)
-        {
             foreach (var (key, value) in itemEntity.Attributes)
-            {
                 if (Enum.TryParse<ItemAttribute>(key, true, out var attr) && !attributes.ContainsKey(attr))
                     attributes[attr] = ParseValue(value);
-            }
-        }
 
         return attributes;
     }
@@ -58,13 +49,9 @@ public static class PlayerItemModelExtensions
         var customAttributes = new Dictionary<string, IConvertible>();
 
         if (itemEntity.Attributes != null)
-        {
             foreach (var (key, value) in itemEntity.Attributes)
-            {
                 if (!Enum.TryParse<ItemAttribute>(key, true, out _) && !customAttributes.ContainsKey(key))
                     customAttributes[key] = ParseValue(value);
-            }
-        }
 
         return customAttributes;
     }
@@ -103,11 +90,9 @@ public static class PlayerItemModelExtensions
             return;
 
         foreach (var (key, value) in entity.Attributes)
-        {
             if (Enum.TryParse(typeof(ItemAttribute), key, true, out var attrEnum))
                 item.Attributes.SetAttribute((ItemAttribute)attrEnum, value);
             else
                 item.Attributes.SetCustomAttribute(key, value);
-        }
     }
 }

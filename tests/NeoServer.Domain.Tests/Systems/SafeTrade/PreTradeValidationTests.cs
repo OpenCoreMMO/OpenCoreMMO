@@ -23,7 +23,7 @@ public class PreTradeValidationTests
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
         var player = PlayerTestDataBuilder.Build();
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         //act
         var result = tradeSystem.Request(player, player, item);
@@ -42,7 +42,7 @@ public class PreTradeValidationTests
         var player = PlayerTestDataBuilder.Build();
         var secondPlayer = PlayerTestDataBuilder.Build();
 
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         tradeSystem.Request(player, secondPlayer, item);
 
@@ -82,13 +82,15 @@ public class PreTradeValidationTests
         var player = PlayerTestDataBuilder.Build();
         var secondPlayer = PlayerTestDataBuilder.Build();
 
-        var backpack1 = ItemTestData.CreatePickupableContainer(255);
-        var backpack2 = ItemTestData.CreatePickupableContainer(255);
+        var backpack1 = ItemTestDataBuilder.CreatePickupableContainer(255);
+        var backpack2 = ItemTestDataBuilder.CreatePickupableContainer(255);
 
-        Enumerable.Range(1, 200).ToList().ForEach(x => backpack1.AddItem(ItemTestData.CreateWeaponItem((ushort)x)));
+        Enumerable.Range(1, 200).ToList()
+            .ForEach(x => backpack1.AddItem(ItemTestDataBuilder.CreateWeaponItem((ushort)x)));
         backpack1.AddItem(backpack2);
 
-        Enumerable.Range(1, 200).ToList().ForEach(x => backpack2.AddItem(ItemTestData.CreateWeaponItem((ushort)x)));
+        Enumerable.Range(1, 200).ToList()
+            .ForEach(x => backpack2.AddItem(ItemTestDataBuilder.CreateWeaponItem((ushort)x)));
 
         //act
         var result = tradeSystem.Request(player, secondPlayer, backpack1);
@@ -108,7 +110,7 @@ public class PreTradeValidationTests
         var secondPlayer = PlayerTestDataBuilder.Build();
         var thirdPlayer = PlayerTestDataBuilder.Build();
 
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         tradeSystem.Request(player, secondPlayer, item);
 
@@ -132,7 +134,7 @@ public class PreTradeValidationTests
         var player = PlayerTestDataBuilder.Build();
         var secondPlayer = PlayerTestDataBuilder.Build();
 
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         tile.AddItem(item);
         tile2.AddCreature(player);
@@ -157,7 +159,7 @@ public class PreTradeValidationTests
         var player = PlayerTestDataBuilder.Build();
         var secondPlayer = PlayerTestDataBuilder.Build(name: "Player2");
 
-        var item = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         tile.AddCreature(player);
         tile2.AddCreature(secondPlayer);
@@ -183,8 +185,8 @@ public class PreTradeValidationTests
         var player = PlayerTestDataBuilder.Build();
         var secondPlayer = PlayerTestDataBuilder.Build(name: "Player2");
 
-        var item = ItemTestData.CreateWeaponItem(1);
-        var wall = ItemTestData.CreateTopItem(2, 1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
+        var wall = ItemTestDataBuilder.CreateTopItem(2, 1);
 
         wall.Metadata.Flags.Add(ItemFlag.Unpassable);
         wall.Metadata.Flags.Add(ItemFlag.BlockProjectTile);
@@ -212,8 +214,8 @@ public class PreTradeValidationTests
         var secondPlayer = PlayerTestDataBuilder.Build();
         var thirdPlayer = PlayerTestDataBuilder.Build();
 
-        var item = ItemTestData.CreateWeaponItem(1);
-        var item2 = ItemTestData.CreateWeaponItem(1);
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
+        var item2 = ItemTestDataBuilder.CreateWeaponItem(1);
 
         tradeSystem.Request(secondPlayer, thirdPlayer, item);
 
@@ -234,7 +236,7 @@ public class PreTradeValidationTests
         var player = PlayerTestDataBuilder.Build();
         var secondPlayer = PlayerTestDataBuilder.Build();
 
-        var item = ItemTestData.CreateUnpassableItem(1);
+        var item = ItemTestDataBuilder.CreateUnpassableItem(1);
 
         var error = string.Empty;
         OperationFailService.OnOperationFailed += (_, message, _) => error = message;

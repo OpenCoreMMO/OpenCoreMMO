@@ -1,6 +1,4 @@
 using NeoServer.Domain.Combat.Calculations;
-using NeoServer.Domain.Combat.Services.Attacks;
-using NeoServer.Domain.Combat.Services.Attacks.Events;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
@@ -30,7 +28,9 @@ public class SingleTargetAttackService(
         {
             PublishAttackEvent(attackInput, true);
             aggressor?.PreAttack(CreateCombatContext(attackInput));
-            return new CombatResult(0, Result.Success); //returns success because even if the attack missed, it was still a valid action
+            return
+                new CombatResult(0,
+                    Result.Success); //returns success because even if the attack missed, it was still a valid action
         }
 
         PublishAttackEvent(attackInput, false);
@@ -39,10 +39,7 @@ public class SingleTargetAttackService(
         var damage = DamageCalculation.Calculate(attackInput);
         var damageResult = PerformAttack(aggressor, target, damage);
 
-        if (attackInput.Parameters.FieldAttack)
-        {
-            CreateMagicField(attackInput);
-        }
+        if (attackInput.Parameters.FieldAttack) CreateMagicField(attackInput);
 
         if (damageResult.WasDamaged)
         {
@@ -89,9 +86,7 @@ public class SingleTargetAttackService(
     private static DamageResult PerformAttack(ICombatActor aggressor, IThing target, CalculatedAttackDamage damage)
     {
         if (target is not ICombatActor targetCreature || damage.MainDamage == null || Equals(target, aggressor))
-        {
             return new DamageResult(new CombatDamageList(), false);
-        }
 
         var unjustifiedAttack =
             target is IPlayer targetPlayer && aggressor is IPlayer playerAggressor &&
@@ -100,9 +95,7 @@ public class SingleTargetAttackService(
         var mainDamage = damage.MainDamage;
 
         if (mainDamage is null || mainDamage.Type is DamageType.None)
-        {
             return new DamageResult(new CombatDamageList(), false);
-        }
 
         mainDamage.Unjustified = unjustifiedAttack;
 

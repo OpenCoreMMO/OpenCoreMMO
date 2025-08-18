@@ -5,11 +5,11 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Conditions.Enums;
-using NeoServer.Domain.Spells.Entities;
 
-namespace NeoServer.Domain.Spells;
+namespace NeoServer.Domain.Spells.Entities;
 
-public class IllusionSpell(uint duration, string creatureName, IMonsterTypeStore monsterTypeStore, EffectT effect) : Spell<IllusionSpell>
+public class IllusionSpell(uint duration, string creatureName, IMonsterTypeStore monsterTypeStore, EffectT effect)
+    : Spell<IllusionSpell>
 {
     public override string Name => "Illusion";
     public override EffectT Effect { get; } = effect;

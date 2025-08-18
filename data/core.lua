@@ -1,4 +1,8 @@
-﻿logger.debug('Starting lua.')
+﻿---@diagnostic disable: missing-parameter
+---@diagnostic disable: param-type-mismatch
+---@diagnostic disable: undefined-global
+
+logger.debug('Starting lua.', '')
 logger.debug(tostring(os.getenv('LOCAL_LUA_DEBUGGER_VSCODE')))
 if os.getenv('LOCAL_LUA_DEBUGGER_VSCODE') == '1' then
     require('lldebugger').start()

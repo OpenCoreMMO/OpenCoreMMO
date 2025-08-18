@@ -8,7 +8,7 @@ combat:setArea(createCombatArea(AREA_WALLFIELD_ENERGY, AREADIAGONAL_WALLFIELD_EN
 local rune = Spell("rune")
 
 function rune.onCastSpell(creature, var, isHotkey)
-	return combat:execute(creature, var)
+    return combat:execute(creature, var)
 end
 
 rune:id(33)

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using LuaNET;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
@@ -116,11 +117,11 @@ public class LuaFunctionsLoader
                 break;
             case LuaVariantType.VARIANT_TARGETPOSITION:
             case LuaVariantType.VARIANT_POSITION:
-                {
-                    PushPosition(luaState, var.Pos);
-                    Lua.SetField(luaState, -2, "pos");
-                    break;
-                }
+            {
+                PushPosition(luaState, var.Pos);
+                Lua.SetField(luaState, -2, "pos");
+                break;
+            }
         }
 
         SetField(luaState, "instantName", var.InstantName);
@@ -372,7 +373,7 @@ public class LuaFunctionsLoader
             Body = GetField<byte>(luaState, arg, "lookBody"),
             Head = GetField<byte>(luaState, arg, "lookHead"),
 
-            LookType = GetField<byte>(luaState, arg, "lookType")
+            LookType = GetField<ushort>(luaState, arg, "lookType")
         };
 
         Lua.Pop(luaState, 6);
@@ -388,7 +389,7 @@ public class LuaFunctionsLoader
             { LookType.Legs, GetField<byte>(luaState, arg, "lookLegs") },
             { LookType.Body, GetField<byte>(luaState, arg, "lookBody") },
             { LookType.Head, GetField<byte>(luaState, arg, "lookHead") },
-            { LookType.Type, GetField<byte>(luaState, arg, "lookType") }
+            { LookType.Type, GetField<ushort>(luaState, arg, "lookType") }
         };
 
         Lua.Pop(luaState, 6);
@@ -462,9 +463,6 @@ public class LuaFunctionsLoader
                 case LuaDataType.Npc:
                     thing = GetUserdata<INpc>(luaState, arg, "Npc");
                     break;
-
-                default:
-                    break;
             }
         }
         else
@@ -480,7 +478,8 @@ public class LuaFunctionsLoader
         if (Lua.IsUserData(luaState, arg))
             return GetUserdata<ICreature>(luaState, arg, "Creature");
 
-        Server.Helpers.IoC.GetInstance<IGameCreatureManager>().TryGetCreature(GetNumber<uint>(luaState, arg), out var creature);
+        Server.Helpers.IoC.GetInstance<IGameCreatureManager>()
+            .TryGetCreature(GetNumber<uint>(luaState, arg), out var creature);
 
         return creature;
     }

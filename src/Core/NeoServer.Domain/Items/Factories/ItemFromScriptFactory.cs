@@ -11,7 +11,8 @@ namespace NeoServer.Domain.Items.Factories;
 /// </summary>
 public static class ItemFromScriptFactory
 {
-    private static readonly Dictionary<Type, Func<IItemType, Location, IDictionary<ItemTypeAttribute, IConvertible>, IItem>>
+    private static readonly
+        Dictionary<Type, Func<IItemType, Location, IDictionary<ItemTypeAttribute, IConvertible>, IItem>>
         ScriptFactoryMap = new();
 
     /// <summary>
@@ -43,7 +44,8 @@ public static class ItemFromScriptFactory
         return factory(itemType, location, attributes);
     }
 
-    private static Func<IItemType, Location, IDictionary<ItemTypeAttribute, IConvertible>, IItem> CreateFactory(Type type)
+    private static Func<IItemType, Location, IDictionary<ItemTypeAttribute, IConvertible>, IItem>
+        CreateFactory(Type type)
     {
         var itemTypeParam = Expression.Parameter(typeof(IItemType), "itemType");
         var locationParam = Expression.Parameter(typeof(Location), "location");

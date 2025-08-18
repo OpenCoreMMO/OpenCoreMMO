@@ -68,7 +68,7 @@ public class MonsterTypeFunctions : LuaScriptInterface, IMonsterTypeFunctions
         {
             monsterType = new MonsterType
             {
-                Name = monsterName,
+                Name = monsterName
             };
 
             _monsterTypeStore.AddOrUpdate(monsterName, monsterType);

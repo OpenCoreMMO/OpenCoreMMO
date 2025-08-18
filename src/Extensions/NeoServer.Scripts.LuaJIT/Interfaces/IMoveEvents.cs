@@ -2,6 +2,7 @@
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Scripts.LuaJIT.Enums;
 
 namespace NeoServer.Scripts.LuaJIT.Interfaces;
@@ -15,6 +16,8 @@ public interface IMoveEvents
     MoveEvent GetEvent(Location location, MoveEventType eventType);
     void OnItemMove(IItem item, ITile tile, bool isAdd);
     void OnCreatureMove(ICreature creature, Location fromLocation, Location toLocation);
+    bool? OnEquipItem(IPlayer player, IItem item, Slot slot, bool isChecks);
+    bool? OnDeEquipItem(IPlayer player, IItem item, Slot slot, bool isChecks);
 
     #region Functions
 

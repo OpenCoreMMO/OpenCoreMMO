@@ -65,8 +65,12 @@ public class ItemFactory : IItemFactory
 
         var createdItem = new LootContainer(itemType, location, loot);
 
-        if ( killer is ICreature creature)
-            createdItem.Attributes.SetAttribute(ItemAttribute.CorpseOwner, creature.CreatureId);
+        if (killer is ISummon summonKiller)
+            createdItem.Attributes.SetAttribute(
+                ItemAttribute.CorpseOwner, summonKiller.Master.CreatureId);
+        else if (killer is ICreature creatureKiller)
+            createdItem.Attributes.SetAttribute(
+                ItemAttribute.CorpseOwner, creatureKiller.CreatureId);
 
         SubscribeEvents(createdItem);
 
@@ -83,10 +87,11 @@ public class ItemFactory : IItemFactory
     {
         var itemTypeAttributes = new Dictionary<ItemTypeAttribute, IConvertible> { { ItemTypeAttribute.Count, count } };
 
-        var itemTypeCustomAttributes = new Dictionary<string, IConvertible> { };
-        var itemAttributes = new Dictionary<ItemAttribute, IConvertible> { };
-        var itemCustomAttributes = new Dictionary<string, IConvertible> { };
-        return Create(typeId, location, itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, children);
+        var itemTypeCustomAttributes = new Dictionary<string, IConvertible>();
+        var itemAttributes = new Dictionary<ItemAttribute, IConvertible>();
+        var itemCustomAttributes = new Dictionary<string, IConvertible>();
+        return Create(typeId, location, itemTypeAttributes, itemTypeCustomAttributes, itemAttributes,
+            itemCustomAttributes, children);
     }
 
     public IItem Create(
@@ -99,7 +104,7 @@ public class ItemFactory : IItemFactory
         IEnumerable<IItem> children = null)
     {
         if (!ItemTypeStore.TryGetValue(typeId, out var itemType)) return null;
-         
+
         var createdItem = CreateItem(itemType, location, itemTypeAttributes, itemAttributes, children);
 
         SetAttributes(itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, createdItem);
@@ -113,7 +118,8 @@ public class ItemFactory : IItemFactory
 
     public IItem Create(
         IItemType itemType,
-        Location location, IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
+        Location location,
+        IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes = null,
         IDictionary<string, IConvertible> itemTypeCustomAttributes = null,
         IDictionary<ItemAttribute, IConvertible> itemAttributes = null,
         IDictionary<string, IConvertible> itemCustomAttributes = null,
@@ -130,16 +136,15 @@ public class ItemFactory : IItemFactory
         return createdItem;
     }
 
-
     public IEnumerable<Coin> CreateCoins(ulong amount)
     {
         var coinsToAdd = CoinCalculator.Calculate(CoinTypeStore.Map, amount);
 
         foreach (var coinToAdd in coinsToAdd)
         {
-            var createdCoin = Create(coinToAdd.Item1, Location.Inventory(Slot.Backpack), null, null);
+            var createdCoin = Create(coinToAdd.Item1, Location.Inventory(Slot.Backpack), null);
             if (createdCoin is not Coin newCoin) continue;
-            newCoin.Amount = coinToAdd.Item2;
+            newCoin.SetAmount(coinToAdd.Item2);
 
             OnItemCreated?.Invoke(newCoin);
 
@@ -159,7 +164,10 @@ public class ItemFactory : IItemFactory
         var item = ItemTypeStore.All.FirstOrDefault(x =>
             x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
-        return item is null ? null : Create(item.ServerId, location, itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, children);
+        return item is null
+            ? null
+            : Create(item.ServerId, location, itemTypeAttributes, itemTypeCustomAttributes, itemAttributes,
+                itemCustomAttributes, children);
     }
 
     private static void SetAttributes(
@@ -183,6 +191,9 @@ public class ItemFactory : IItemFactory
 
         if (!Guard.IsNull(itemCustomAttributes) && itemCustomAttributes.Any())
             createdItem.Attributes.SetCustomAttribute(itemCustomAttributes);
+
+        if (!createdItem.Attributes.HasAttribute(ItemAttribute.Count))
+            createdItem.Attributes.SetAttribute(ItemAttribute.Count, 1);
     }
 
     private void SubscribeEvents(IItem createdItem)
@@ -216,23 +227,20 @@ public class ItemFactory : IItemFactory
                 return instance;
 
         if (DefenseEquipmentFactory?.Create(itemType, location) is { } equipment) return equipment;
-        if (WeaponFactory?.Create(itemType, location, itemTypeAttributes) is { } weapon) return weapon;
+        if (WeaponFactory?.Create(itemType, location, itemAttributes) is { } weapon) return weapon;
         if (ContainerFactory?.Create(itemType, location, children) is { } container) return container;
-        if (RuneFactory?.Create(itemType, location, itemTypeAttributes) is { } rune) return rune;
+        if (RuneFactory?.Create(itemType, location) is { } rune) return rune;
         if (GroundFactory?.Create(itemType, location) is { } ground) return ground;
 
-        if (CumulativeFactory?.Create(itemType, location, itemTypeAttributes) is { } cumulative) return cumulative;
+        if (CumulativeFactory?.Create(itemType, location) is { } cumulative) return cumulative;
 
-        if (LiquidPool.IsApplicable(itemType)) return new LiquidPool(itemType, location, itemTypeAttributes);
+        if (LiquidPool.IsApplicable(itemType)) return new LiquidPool(itemType, location);
         if (MagicField.IsApplicable(itemType)) return new MagicField(itemType, location);
         if (FloorChanger.IsApplicable(itemType)) return new FloorChanger(itemType, location);
 
-        if (itemAttributes != null)
-        {
-            if (TeleportItem.IsApplicable(itemType)) return new TeleportItem(itemType, location, itemAttributes);
-            if (Paper.IsApplicable(itemType)) return new Paper(itemType, location, itemAttributes);
-            if (Sign.IsApplicable(itemType, itemAttributes)) return new Sign(itemType, location, itemAttributes);
-        }
+        if (TeleportItem.IsApplicable(itemType)) return new TeleportItem(itemType, location);
+        if (Paper.IsApplicable(itemType)) return new Paper(itemType, location);
+        if (Sign.IsApplicable(itemType, itemAttributes)) return new Sign(itemType, location);
 
         if (UsableOnItem.IsApplicable(itemType))
         {

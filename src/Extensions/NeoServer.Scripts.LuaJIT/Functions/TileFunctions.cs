@@ -254,7 +254,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         // tile:getTopTopItem()
         var tile = GetUserdata<ITile>(luaState, 1);
 
-        if (tile is not IDynamicTile dynamicTile || 
+        if (tile is not IDynamicTile dynamicTile ||
             tile.TopTopItemOnStack == null)
         {
             Lua.PushNil(luaState);

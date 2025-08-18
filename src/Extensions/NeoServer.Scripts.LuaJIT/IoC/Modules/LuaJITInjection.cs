@@ -12,6 +12,7 @@ public static class LuaJitInjection
     {
         builder.AddSingleton<ILuaStartup, LuaStartup>();
         builder.AddSingleton<IConfigManager, ConfigManager>();
+        builder.AddSingleton<IReloadManager, ReloadManager>();
         builder.AddSingleton<ILuaEnvironment, LuaEnvironment>();
         builder.AddSingleton<IScripts, Scripts>();
         builder.AddSingleton<IActions, Actions>();
@@ -20,6 +21,7 @@ public static class LuaJitInjection
         builder.AddSingleton<IMoveEvents, MoveEvents>();
         builder.AddSingleton<INpcs, Npcs>();
         builder.AddSingleton<ITalkActions, TalkActions>();
+        builder.AddSingleton<IEventsCallbacks, EventsCallbacks>();
         builder.AddSingleton<LuaHelperService>();
 
         builder.AddSingleton<IActionFunctions, ActionFunctions>();
@@ -53,6 +55,8 @@ public static class LuaJitInjection
         builder.AddSingleton<ICombatFunctions, CombatFunctions>();
         builder.AddSingleton<IVariantFunctions, VariantFunctions>();
         builder.AddSingleton<IMonsterTypeFunctions, MonsterTypeFunctions>();
+        builder.AddSingleton<ITownFunctions, TownFunctions>();
+        builder.AddSingleton<IEventCallbackFunctions, EventCallbackFunctions>();
 
         builder.AddSingleton<LuaCombatService>();
         builder.AddSingleton<NonAggressiveCombatService>();

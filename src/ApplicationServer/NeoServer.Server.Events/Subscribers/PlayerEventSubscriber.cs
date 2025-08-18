@@ -40,7 +40,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         PlayerJoinedPartyEventHandler playerJoinedPartyEventHandler,
         PlayerPassedPartyLeadershipEventHandler playerPassedPartyLeadershipEventHandler,
         PlayerExhaustedEventHandler playerExhaustedEventHandler,
-        PlayerReadTextEventHandler playerReadTextEventHandler,
         PlayerLoggedInEventHandler playerLoggedInEventHandler,
         PlayerLoggedOutEventHandler playerLoggedOutEventHandler,
         PlayerSkullUpdatedEventHandler playerSkullUpdatedEventHandler)
@@ -73,7 +72,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         _playerJoinedPartyEventHandler = playerJoinedPartyEventHandler;
         _playerPassedPartyLeadershipEventHandler = playerPassedPartyLeadershipEventHandler;
         _playerExhaustedEventHandler = playerExhaustedEventHandler;
-        _playerReadTextEventHandler = playerReadTextEventHandler;
         _playerLoggedInEventHandler = playerLoggedInEventHandler;
         _playerLoggedOutEventHandler = playerLoggedOutEventHandler;
         _playerSkullUpdatedEventHandler = playerSkullUpdatedEventHandler;
@@ -140,7 +138,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         player.OnExhausted += _playerExhaustedEventHandler.Execute;
         player.OnAddedSkillBonus += _playerUpdatedSkillPointsEventHandler.Execute;
         player.OnRemovedSkillBonus += _playerUpdatedSkillPointsEventHandler.Execute;
-        player.OnReadText += _playerReadTextEventHandler.Execute;
     }
 
     public void Unsubscribe(ICreature creature)
@@ -202,7 +199,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
 
         player.OnAddedSkillBonus -= _playerUpdatedSkillPointsEventHandler.Execute;
         player.OnRemovedSkillBonus += _playerUpdatedSkillPointsEventHandler.Execute;
-        player.OnReadText -= _playerReadTextEventHandler.Execute;
         player.Inventory.OnWeightChanged -= _itemAddedToInventoryEventHandler.ExecuteOnWeightChanged;
     }
 
@@ -237,7 +233,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
     private readonly PlayerJoinedPartyEventHandler _playerJoinedPartyEventHandler;
     private readonly PlayerPassedPartyLeadershipEventHandler _playerPassedPartyLeadershipEventHandler;
     private readonly PlayerExhaustedEventHandler _playerExhaustedEventHandler;
-    private readonly PlayerReadTextEventHandler _playerReadTextEventHandler;
     private readonly PlayerLoggedInEventHandler _playerLoggedInEventHandler;
     private readonly PlayerLoggedOutEventHandler _playerLoggedOutEventHandler;
     private readonly PlayerSkullUpdatedEventHandler _playerSkullUpdatedEventHandler;

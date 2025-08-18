@@ -15,6 +15,10 @@ public class Dispatcher : IDispatcher
     private readonly ILogger _logger;
     private readonly ChannelReader<IEvent> _reader;
     private readonly ChannelWriter<IEvent> _writer;
+    private readonly CancellationTokenSource _internalCancellation = new();
+    
+    private Task _processingTask;
+    private volatile bool _isShuttingDown;
 
     /// <summary>
     ///     A queue responsible for process events
@@ -36,7 +40,17 @@ public class Dispatcher : IDispatcher
     /// <param name="evt"></param>
     public void AddEvent(IEvent evt)
     {
-        _writer.TryWrite(evt);
+        if (_isShuttingDown || evt?.Action is null)
+        {
+            if (evt?.Action is null)
+                _logger.Warning("Dispatcher: Attempted to add null event or event with null action");
+            return;
+        }
+
+        if (!_writer.TryWrite(evt))
+        {
+            _logger.Warning("Dispatcher: Failed to write event to channel - channel may be completed");
+        }
     }
 
     /// <summary>
@@ -45,29 +59,114 @@ public class Dispatcher : IDispatcher
     /// <param name="token"></param>
     public void Start(CancellationToken token)
     {
-        Task.Factory.StartNew(async () =>
+        if (_processingTask != null && !_processingTask.IsCompleted)
         {
-            while (await _reader.WaitToReadAsync(token))
+            _logger.Warning("Dispatcher: Already started");
+            return;
+        }
 
+        // Combine external cancellation with internal
+        var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(token, _internalCancellation.Token);
+
+        _processingTask = Task.Factory.StartNew(async () =>
+        {
+            _logger.Information("Dispatcher: Starting event processing loop");
+            var eventCount = 0L;
+            
+            try
             {
-                GlobalTime = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+                await foreach (var evt in _reader.ReadAllAsync(combinedCts.Token))
+                {
+                    GlobalTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    eventCount++;
 
-                if (token.IsCancellationRequested) _writer.Complete();
-                // Fast loop around available jobs
-                while (_reader.TryRead(out var evt))
+                    if (evt?.Action is null)
+                    {
+                        _logger.Warning("Dispatcher: Skipping event with null action");
+                        continue;
+                    }
+
                     if (!evt.HasExpired || evt.HasNoTimeout)
+                    {
+                        // Add timeout to prevent hanging during debugging
+                        using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
                         try
                         {
-                            evt.Action?.Invoke(); //execute event
-                            _eventAggregator.PropagateEvents(); //propagate events
-
-                            _logger.Verbose("Action: {Action}", evt.Action?.Target?.ToString());
+                            var eventTask = Task.Run(() => evt.Action.Invoke(), timeoutCts.Token);
+                            
+                            await eventTask;
+                            _eventAggregator.PropagateEvents();
+                            
+                            // Progress logging for debugging
+                            if (eventCount % 1000 == 0)
+                            {
+                                _logger.Debug("Dispatcher: Processed {EventCount} events", eventCount);
+                            }
+                        }
+                        catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
+                        {
+                            _logger.Warning("Dispatcher: Event execution timeout - possible deadlock during debugging");
+                            // Continue processing other events
                         }
                         catch (Exception ex)
                         {
-                            _logger.Error(ex, "Game event exception");
+                            _logger.Error(ex, "Dispatcher: Exception in event execution");
                         }
+                    }
+                    else
+                    {
+                        _logger.Debug("Dispatcher: Skipped expired event");
+                    }
+                }
             }
-        }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            catch (OperationCanceledException)
+            {
+                _logger.Information("Dispatcher: Cancelled after processing {EventCount} events", eventCount);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Dispatcher: Fatal error after processing {EventCount} events", eventCount);
+                throw;
+            }
+            finally
+            {
+                try { _writer.Complete(); }
+                catch (Exception ex) { _logger.Warning(ex, "Dispatcher: Error completing channel"); }
+                
+                _logger.Information("Dispatcher: Event processing loop ended. Total events processed: {EventCount}", eventCount);
+            }
+        }, combinedCts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
+    }
+
+    // Additional method to wait for dispatcher completion (useful for tests and shutdown)
+    public async Task WaitForCompletionAsync()
+    {
+        if (_processingTask == null) return;
+
+        try
+        {
+            await _processingTask.ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Dispatcher: Error during shutdown");
+        }
+    }
+
+    public void Shutdown()
+    {
+        if (_isShuttingDown) return;
+        
+        _isShuttingDown = true;
+        _logger.Information("Dispatcher: Initiating shutdown");
+        
+        _writer.TryComplete();
+        _internalCancellation.Cancel();
+    }
+
+    public void Dispose()
+    {
+        Shutdown();
+        _internalCancellation?.Dispose();
     }
 }

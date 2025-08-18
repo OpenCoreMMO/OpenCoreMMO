@@ -1,6 +1,5 @@
 using NeoServer.Domain.Combat.Calculations;
-using NeoServer.Domain.Combat.Services.Attacks;
-using NeoServer.Domain.Combat.Services.Attacks.Events;
+using NeoServer.Domain.Combat.Validations;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
@@ -23,13 +22,14 @@ public class AreaAttackService(
     IEventAggregator eventAggregator,
     IMap map,
     MagicFieldService magicFieldService,
-    ConditionAttackService conditionAttackService) : IAttackService
+    ConditionAttackService conditionAttackService,
+    AttackValidation attackValidation) : IAttackService
 {
     public CombatResult Execute(AttackInput attackInput)
     {
         var damage = DamageCalculation.Calculate(attackInput);
 
-        var totalDamage = (uint) PerformAreaAttack(attackInput, damage);
+        var totalDamage = (uint)PerformAreaAttack(attackInput, damage);
 
         return new CombatResult(totalDamage, Result.Success);
     }
@@ -43,7 +43,7 @@ public class AreaAttackService(
         var targetlocation = attackInput.Target?.Location ?? aggressor.Location;
 
         var area = attackInput.Parameters.CoordinateArea ??
-                       AreaEffect.Create(targetlocation, attackInput.Parameters.Area);
+                   AreaEffect.Create(targetlocation, attackInput.Parameters.Area);
 
         var affectedArea = new List<Location>(area.Length);
         var affectedCreatures = new List<ICreature>();
@@ -82,6 +82,13 @@ public class AreaAttackService(
             if (affectedCreature is not ICombatActor target) continue;
             if (affectedCreature.Equals(aggressor)) continue;
 
+            //Attack validation for each target
+            var attackValidationResult = attackValidation.Validate(new AttackInput(aggressor, target, attackInput.Parameters));
+            if (attackValidationResult.Failed)
+            {
+                continue;
+            }
+
             var unjustifiedAttack =
                 target is IPlayer targetPlayer && aggressor is IPlayer playerAggressor &&
                 playerAggressor.GetSkull(targetPlayer) is Skull.None;
@@ -95,7 +102,7 @@ public class AreaAttackService(
                 var damageResult = InflictDamage(damage, mainDamage, target, aggressor);
 
                 totalDamage += damageResult.DamageList.TotalDamage;
-                
+
                 if (damageResult.WasDamaged) conditionAttackService.Execute(attackInput);
             }
             else
@@ -120,7 +127,8 @@ public class AreaAttackService(
         magicFieldService.AddToGround(attackInput.Aggressor as ICreature, tile, magicFieldType);
     }
 
-    private static DamageResult InflictDamage(CalculatedAttackDamage damage, CombatDamage mainDamage, ICombatActor target,
+    private static DamageResult InflictDamage(CalculatedAttackDamage damage, CombatDamage mainDamage,
+        ICombatActor target,
         IThing aggressor)
     {
         if (damage.ExtraDamage is { Damage: > 0, Type: not DamageType.None })

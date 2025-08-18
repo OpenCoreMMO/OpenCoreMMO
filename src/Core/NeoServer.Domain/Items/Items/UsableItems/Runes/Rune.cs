@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Spells;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Player;
@@ -12,8 +13,7 @@ namespace NeoServer.Domain.Items.Items.UsableItems.Runes;
 
 public class Rune : Cumulative, IHasCooldown, IUsableRequirement
 {
-    public Rune(IItemType type, Location location, IDictionary<ItemTypeAttribute, IConvertible> attributes) : base(type,
-        location, attributes)
+    public Rune(IItemType type, Location location) : base(type, location)
     {
     }
 
@@ -31,10 +31,6 @@ public class Rune : Cumulative, IHasCooldown, IUsableRequirement
         Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.CasterNeedsTargetOrDirection);
 
     public bool NeedsTarget => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.NeedTarget);
-
-    public byte? Range => Metadata.Attributes.HasAttribute(ItemTypeAttribute.Range)
-        ? Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Range)
-        : null;
 
     public bool SelfTarget => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.SelfTarget);
 
@@ -80,7 +76,6 @@ public class Rune : Cumulative, IHasCooldown, IUsableRequirement
 
     public uint Cooldown => Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.CooldownTime);
 
-    public string Name => Metadata.Name;
     public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MinimumLevel);
     public ushort MinMagicLevel => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MinimumMagicLevel);
 
