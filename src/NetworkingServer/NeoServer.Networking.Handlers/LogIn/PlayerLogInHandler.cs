@@ -159,7 +159,7 @@ public class PlayerLogInHandler : PacketHandler
             return false;
         }
 
-        if (_serverConfiguration.Version != packet.Version)
+        if (packet.Version < _serverConfiguration.MinVersion || packet.Version > _serverConfiguration.Version)
         {
             Disconnect(connection, $"Only clients with protocol {_serverConfiguration.Version} allowed!");
             return false;

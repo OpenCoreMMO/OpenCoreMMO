@@ -29,7 +29,7 @@ public static class ConfigurationInjection
         IConfigurationRoot configuration)
     {
         ServerConfiguration serverConfiguration =
-            new(0, null, null, null, string.Empty, string.Empty, string.Empty, 7171, 7172, false,
+            new(0,0, null, null, null, string.Empty, string.Empty, string.Empty, 7171, 7172, false,
                 new SaveConfiguration(3600));
         GameConfiguration gameConfiguration = new();
         LogConfiguration logConfiguration = new(null);
@@ -61,6 +61,7 @@ public static class ConfigurationInjection
 
         serverConfiguration = new ServerConfiguration(
             serverConfiguration.Version,
+            serverConfiguration.MinVersion,
             serverConfiguration.OTBM,
             serverConfiguration.OTB,
             serverConfiguration.Data,

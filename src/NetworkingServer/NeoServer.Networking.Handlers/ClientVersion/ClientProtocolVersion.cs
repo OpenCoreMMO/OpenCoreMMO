@@ -16,7 +16,7 @@ public class ClientProtocolVersion
 
     public bool IsSupported(uint version)
     {
-        if (version == _serverConfiguration.Version) return true;
+        if (version >= _serverConfiguration.MinVersion && version <= _serverConfiguration.Version) return true;
 
         _logger.Warning("Client protocol version {Version} is not supported", version);
         return false;
