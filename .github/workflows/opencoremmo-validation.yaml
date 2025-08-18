@@ -1,6 +1,7 @@
 ﻿name: OpenCoreMMO Build & Test
 run-name: OpenCoreMMO Build Workflow
 on:
+  workflow_dispatch:  # Add this line to enable manual triggering
   push:
     branches: [ develop ]
   pull_request:
