@@ -25,7 +25,7 @@ public delegate void ChangeChaseMode(IPlayer player, ChaseMode oldChaseMode, Cha
 
 public delegate void ClosedContainer(IPlayer player, byte containerId, IContainer container);
 
-public delegate void ClosedDepot(IPlayer player, byte containerId, Depot.Depot container);
+public delegate void ClosedDepot(IPlayer player, byte containerId, Depot.Locker container);
 
 public delegate void OpenedContainer(IPlayer player, byte containerId, IContainer container);
 
