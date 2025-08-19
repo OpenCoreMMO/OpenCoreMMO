@@ -31,6 +31,7 @@ public static class ScriptManagerTestBuilder
     {
         return new ServerConfiguration(
             1,
+            1,
             "mock.otbm",
             "mock.otb",
             "/mock/data",
