@@ -2,22 +2,22 @@ namespace NeoServer.Domain.Depot;
 
 public class DepotManager
 {
-    private readonly Dictionary<uint, Depot> _depotMap = new();
+    private readonly Dictionary<uint, Locker> _depotMap = new();
 
-    public void Load(uint playerId, Depot depot)
+    public void Load(uint playerId, Locker locker)
     {
-        _depotMap.TryAdd(playerId, depot);
+        _depotMap.TryAdd(playerId, locker);
     }
 
-    public Depot Get(uint playerId)
+    public Locker Get(uint playerId)
     {
         _depotMap.TryGetValue(playerId, out var depot);
         return depot;
     }
 
-    public bool Get(uint playerId, out Depot depot)
+    public bool Get(uint playerId, out Locker locker)
     {
-        return _depotMap.TryGetValue(playerId, out depot);
+        return _depotMap.TryGetValue(playerId, out locker);
     }
 
     public void Unload(uint playerId)

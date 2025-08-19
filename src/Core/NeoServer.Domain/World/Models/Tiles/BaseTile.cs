@@ -122,7 +122,7 @@ public abstract class BaseTile : ITile
         // }
 
 
-        if (item is Depot.Depot) SetFlag(TileFlags.Depot);
+        if (item is Depot.Locker) SetFlag(TileFlags.Depot);
 
         if (item.Metadata.HasFlag(ItemFlag.Hangable)) //todo: might be wrong
             SetFlag(TileFlags.SupportsHangable);

@@ -3,7 +3,7 @@ using NeoServer.Domain.Tests.Helpers.Player;
 
 namespace NeoServer.Domain.Tests.Items.Container;
 
-public class DepotTests
+public class LockerTests
 {
     [Fact]
     public void Depot_doesnt_open_if_it_is_already_opened_by_another_player()
