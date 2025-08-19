@@ -123,12 +123,20 @@ public class PlayerLoader : IPlayerLoader
             AccountId = (uint)playerEntity.AccountId,
             WorldId = playerEntity.WorldId,
             Guild = GuildStore.Get((ushort)(playerEntity.GuildMember?.GuildId ?? 0)),
+            GuildId = (ushort)(playerEntity.GuildMember?.GuildId ?? 0),
             GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0)
         };
 
         player.PlayerSkull = new PlayerSkull(player, playerEntity.Skull, playerEntity.SkullEndsAt);
 
         player.SetCurrentTile(currentTile);
+
+        // Set GuildRank if player is in a guild
+        if (playerEntity.GuildMember?.Rank != null)
+        {
+            var guildRank = playerEntity.GuildMember.Rank;
+            player.GuildRank = new Domain.Guild.GuildRankInfo((ushort)guildRank.Id, guildRank.Name, (byte)guildRank.Level);
+        }
 
         AddRegenerationCondition(playerEntity, player);
 
