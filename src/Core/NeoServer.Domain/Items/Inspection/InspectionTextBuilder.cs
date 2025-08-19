@@ -16,6 +16,7 @@ public class InspectionTextBuilder
 
         AddItemName(item, showInternalDetails, inspectionText);
         AddEquipmentAttributes(item, inspectionText);
+        AddContainerVolume(item, inspectionText);
         inspectionText.AppendNewLine(".");
         AddRequirement(item, inspectionText);
 
@@ -25,6 +26,12 @@ public class InspectionTextBuilder
         var finalText = inspectionText.ToString().TrimNewLine().AddEndOfSentencePeriod();
 
         return $"{finalText}";
+    }
+
+    private static void AddContainerVolume(IItem item, StringBuilder inspectionText)
+    {
+        if (item is not IContainer container) return;
+        inspectionText.Append($" (Vol: {container.Capacity})");
     }
 
     public static bool IsApplicable(IThing thing)
