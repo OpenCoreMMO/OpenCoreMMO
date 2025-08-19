@@ -9,5 +9,5 @@ namespace NeoServer.Data.Interfaces;
 public interface IPlayerDepotItemRepository : IBaseRepositoryNeo<PlayerDepotItemEntity>
 {
     Task<IEnumerable<PlayerDepotItemEntity>> GetByPlayerId(uint id);
-    Task Save(IPlayer player, Depot depot);
+    Task Save(IPlayer player, Locker locker);
 }

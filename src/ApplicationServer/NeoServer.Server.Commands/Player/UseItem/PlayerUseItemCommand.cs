@@ -42,7 +42,7 @@ public class PlayerUseItemCommand : ICommand
         {
             case null:
                 return;
-            case Depot depot:
+            case Locker depot:
                 action = () => _playerOpenDepotCommand.Execute(player, depot, useItemPacket);
                 break;
             case IContainer container:

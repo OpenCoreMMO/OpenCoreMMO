@@ -17,7 +17,7 @@ public interface IThing : IUsable
     {
         if (thing is null) return false;
         if (Location.Type is not LocationType.Ground &&
-            this is IItem { CanBeMoved: true } item)
+            this is IItem item)
             return item.Owner?.Location.IsNextTo(thing.Location) ?? false;
 
         return Location.IsNextTo(thing.Location);
