@@ -15,7 +15,7 @@ namespace NeoServer.Server.Routines.Persistence;
 
 public class PlayerPersistenceRoutine
 {
-    private readonly DepotManager _depotManager;
+    private readonly LockerManager _lockerManager;
     private readonly IGameServer _gameServer;
     private readonly ILogger _logger;
     private readonly IPlayerDepotItemRepository _playerDepotItemRepository;
@@ -33,7 +33,7 @@ public class PlayerPersistenceRoutine
         IPlayerDepotItemRepository playerDepotItemRepository,
         IScriptManager scriptManager,
         ServerConfiguration serverConfiguration,
-        DepotManager depotManager)
+        LockerManager lockerManager)
     {
         _gameServer = gameServer;
         _playerRepository = playerRepository;
@@ -41,7 +41,7 @@ public class PlayerPersistenceRoutine
         _playerDepotItemRepository = playerDepotItemRepository;
         _scriptManager = scriptManager;
         _serverConfiguration = serverConfiguration;
-        _depotManager = depotManager;
+        _lockerManager = lockerManager;
     }
 
     public void Start(CancellationToken token)
@@ -84,7 +84,7 @@ public class PlayerPersistenceRoutine
 
         foreach (var player in players)
         {
-            if (!_depotManager.Get(player.Id, out var depot)) continue;
+            if (!_lockerManager.Get(player.Id, out var depot)) continue;
             depotSaveTasks.Add(_playerDepotItemRepository.Save(player, depot));
         }
 

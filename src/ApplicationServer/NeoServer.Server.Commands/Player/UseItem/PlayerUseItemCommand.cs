@@ -5,36 +5,23 @@ using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Depot;
 using NeoServer.Networking.Packets.Incoming;
+using NeoServer.Server.Commands.Player.UseItem.OpenLocker;
 using NeoServer.Server.Common.Contracts.Commands;
 using NeoServer.Server.Common.Contracts.Scripts;
 
 namespace NeoServer.Server.Commands.Player.UseItem;
 
-public class PlayerUseItemCommand : ICommand
+public class PlayerUseItemCommand(
+    PlayerOpenDepotCommand openDepotCommand,
+    IScriptManager scriptManager,
+    IWalkToMechanism walkToMechanism,
+    IPlayerUseService playerUseService,
+    PlayerOpenLockerCommand playerOpenLockerCommand,
+    ItemFinderService itemFinderService) : ICommand
 {
-    private readonly ItemFinderService _itemFinderService;
-    private readonly PlayerOpenDepotCommand _playerOpenDepotCommand;
-    private readonly IPlayerUseService _playerUseService;
-    private readonly IScriptManager _scriptManager;
-    private readonly IWalkToMechanism _walkToMechanism;
-
-    public PlayerUseItemCommand(
-        IPlayerUseService playerUseService,
-        PlayerOpenDepotCommand playerOpenDepotCommand,
-        ItemFinderService itemFinderService,
-        IScriptManager scriptManager,
-        IWalkToMechanism walkToMechanism)
-    {
-        _playerUseService = playerUseService;
-        _playerOpenDepotCommand = playerOpenDepotCommand;
-        _itemFinderService = itemFinderService;
-        _scriptManager = scriptManager;
-        _walkToMechanism = walkToMechanism;
-    }
-
     public void Execute(IPlayer player, UseItemPacket useItemPacket)
     {
-        var item = _itemFinderService.Find(player, useItemPacket.Location, useItemPacket.ClientId);
+        var item = itemFinderService.Find(player, useItemPacket.Location, useItemPacket.ClientId);
 
         Action action;
 
@@ -42,27 +29,34 @@ public class PlayerUseItemCommand : ICommand
         {
             case null:
                 return;
-            case Locker depot:
-                action = () => _playerOpenDepotCommand.Execute(player, depot, useItemPacket);
+            case Locker locker:
+                action = () => playerOpenLockerCommand.Execute(player, locker, useItemPacket);
                 break;
             case IContainer container:
-                action = () => _playerUseService.Use(player, container, useItemPacket.Index);
+
+                if (container.Owner is Locker && container.ServerId is 2594) //depot chest
+                {
+                    action = () => openDepotCommand.Execute(player, container, useItemPacket);
+                    break;
+                }
+
+                action = () => playerUseService.Use(player, container, useItemPacket.Index);
                 break;
             case IUsableOn usableOn:
-                action = () => _playerUseService.Use(player, usableOn, player);
+                action = () => playerUseService.Use(player, usableOn, player);
                 break;
             default:
-                action = () => _playerUseService.Use(player, item);
+                action = () => playerUseService.Use(player, item);
                 break;
         }
 
-        if (_scriptManager.Actions.HasAction(item))
-            action = () => _scriptManager.Actions.UseItem(player, useItemPacket.Location, useItemPacket.StackPosition,
+        if (scriptManager.Actions.HasAction(item))
+            action = () => scriptManager.Actions.UseItem(player, useItemPacket.Location, useItemPacket.StackPosition,
                 useItemPacket.Index, item);
 
         if (!player.Location.IsNextTo(item.Location))
         {
-            _walkToMechanism.WalkTo(player, action, item.Location);
+            walkToMechanism.WalkTo(player, action, item.Location);
             return;
         }
 

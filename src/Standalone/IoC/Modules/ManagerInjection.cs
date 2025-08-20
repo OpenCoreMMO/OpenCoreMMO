@@ -17,7 +17,7 @@ public static class ManagerInjection
 
 
         builder.AddSingleton<SpawnManager>();
-        builder.AddSingleton<DepotManager>();
+        builder.AddSingleton<LockerManager>();
         builder.AddSingleton<SpellListManager>();
         return builder;
     }
