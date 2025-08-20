@@ -3,7 +3,7 @@ namespace NeoServer.Domain.Depot;
 public class LockerManager
 {
     private readonly Dictionary<uint, Locker> _lockerMap = new();
-    private readonly Dictionary<uint, bool> _depotLoaded = new();
+    private readonly HashSet<uint> _depotLoaded = [];
 
     public void Load(uint playerId, Locker locker) => _lockerMap.TryAdd(playerId, locker);
 
@@ -21,6 +21,6 @@ public class LockerManager
         _depotLoaded.Remove(playerId);
     }
 
-    public void SetDepotAsLoaded(uint playerId) => _depotLoaded[playerId] = true;
-    public bool IsDepotLoaded(uint playerId) => _depotLoaded.TryGetValue(playerId, out var isLoaded) && isLoaded;
+    public void SetDepotAsLoaded(uint playerId) => _depotLoaded.Add(playerId);
+    public bool IsDepotLoaded(uint playerId) => _depotLoaded.Contains(playerId);
 }
