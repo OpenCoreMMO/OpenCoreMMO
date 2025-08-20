@@ -16,7 +16,6 @@ public class Locker : Container
     public override byte Capacity => 2;
     public bool IsAlreadyOpened { get; private set; }
 
-
     public override void ClosedBy(IPlayer player)
     {
         if (RootParent is not Locker || player.HasDepotOpened) return;

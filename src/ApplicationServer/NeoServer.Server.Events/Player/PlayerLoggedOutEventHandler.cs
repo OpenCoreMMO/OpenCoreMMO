@@ -7,17 +7,17 @@ namespace NeoServer.Server.Events.Player;
 
 public class PlayerLoggedOutEventHandler : IEventHandler
 {
-    private readonly DepotManager _depotManager;
+    private readonly LockerManager _lockerManager;
     private readonly IPlayerDepotItemRepository _playerDepotItemRepository;
     private readonly IPlayerRepository _playerRepository;
 
     public PlayerLoggedOutEventHandler(IPlayerRepository playerRepository,
         IPlayerDepotItemRepository playerDepotItemRepository,
-        DepotManager depotManager)
+        LockerManager lockerManager)
     {
         _playerRepository = playerRepository;
         _playerDepotItemRepository = playerDepotItemRepository;
-        _depotManager = depotManager;
+        _lockerManager = lockerManager;
     }
 
     public void Execute(IPlayer player)
@@ -34,9 +34,9 @@ public class PlayerLoggedOutEventHandler : IEventHandler
 
     private void SaveDepot(IPlayer player)
     {
-        if (!_depotManager.Get(player.Id, out var depot)) return;
+        if (!_lockerManager.Get(player.Id, out var depot)) return;
         _playerDepotItemRepository.Save(player, depot).Wait();
 
-        _depotManager.Unload(player.Id);
+        _lockerManager.Unload(player.Id);
     }
 }
