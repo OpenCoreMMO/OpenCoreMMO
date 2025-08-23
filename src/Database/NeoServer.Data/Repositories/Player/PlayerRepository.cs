@@ -173,7 +173,7 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository,
             var guildMembership = new GuildMembershipEntity
             {
                 PlayerId = (int)player.Id,
-                GuildId = (int)player.GuildId,
+                GuildId = player.GuildId,
                 RankId = player.GuildRank?.Id ?? 1, // Default to rank 1 (member) if no rank set
                 Nick = player.GuildNick ?? string.Empty
             };
@@ -191,7 +191,6 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository,
         
         await using var context = NewDbContext;
         
-        //todo: find a way to use invariant culture. it currently doesn't work with sqlite
         return (await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower()))?.Id ?? 0;
     }
 }

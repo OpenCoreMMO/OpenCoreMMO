@@ -7,11 +7,9 @@ using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
 using NeoServer.Data.Parsers;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Items.Items.Containers;
-using NeoServer.Domain.Locker;
 using NeoServer.Domain.Repositories;
 using Serilog;
 
@@ -81,8 +79,9 @@ public class PlayerMailItemRepository : BaseRepository<PlayerMailItemEntity>,
         await context.SaveChangesAsync();
     }
 
-    public Task<int> GetTotalNumberOfItemsInInbox(int playerId)
+    public async Task<int> GetInboxItemCount(int playerId)
     {
-        return Task.FromResult(1);
+        await using var context = NewDbContext;
+        return await context.PlayerMailItems.CountAsync(x => x.PlayerId == playerId && x.ParentId == 0);
     }
 }

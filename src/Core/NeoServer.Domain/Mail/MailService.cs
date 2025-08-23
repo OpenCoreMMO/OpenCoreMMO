@@ -25,7 +25,6 @@ public class MailService(
 
         if (item is Letter letter)
         {
-            //todo
             return SendLetter(sender, letter);
         }
 
@@ -78,7 +77,7 @@ public class MailService(
             return false;
         }
 
-        var numberOfItemsInInbox = mailRepository.GetTotalNumberOfItemsInInbox(playerId).Result;
+        var numberOfItemsInInbox = mailRepository.GetInboxItemCount(playerId).Result;
 
         if (numberOfItemsInInbox > GameConstants.MAX_NUMBER_OF_ITEMS_ON_INBOX)
         {
@@ -126,7 +125,7 @@ public class MailService(
             return false;
         }
 
-        var numberOfItemsInInbox = mailRepository.GetTotalNumberOfItemsInInbox(playerId).Result;
+        var numberOfItemsInInbox = mailRepository.GetInboxItemCount(playerId).Result;
 
         if (numberOfItemsInInbox > GameConstants.MAX_NUMBER_OF_ITEMS_ON_INBOX)
         {
