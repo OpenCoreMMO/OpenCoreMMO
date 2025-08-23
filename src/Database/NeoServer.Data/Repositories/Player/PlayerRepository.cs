@@ -15,7 +15,7 @@ using Serilog;
 
 namespace NeoServer.Data.Repositories.Player;
 
-public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
+public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository, Domain.Repositories.IPlayerRepository
 {
     #region constructors
 
@@ -180,5 +180,18 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
 
             await neoContext.GuildMemberships.AddAsync(guildMembership);
         }
+    }
+
+    public async Task<int> GetIdByName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return 0;
+        }
+        
+        await using var context = NewDbContext;
+        
+        //todo: find a way to use invariant culture. it currently doesn't work with sqlite
+        return (await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower()))?.Id ?? 0;
     }
 }

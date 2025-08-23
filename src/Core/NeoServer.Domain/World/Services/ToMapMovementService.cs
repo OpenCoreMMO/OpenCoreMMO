@@ -6,27 +6,18 @@ using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
+using NeoServer.Domain.Mail;
 using NeoServer.Domain.World.Algorithms;
 using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.World.Services;
 
-public class ToMapMovementService : IToMapMovementService
+public class ToMapMovementService(IMap map, IMapService mapService, IItemMovementService itemMovementService, IMailService mailService)
+    : IToMapMovementService
 {
-    private readonly IItemMovementService _itemMovementService;
-    private readonly IMap _map;
-    private readonly IMapService _mapService;
-
-    public ToMapMovementService(IMap map, IMapService mapService, IItemMovementService itemMovementService)
-    {
-        _map = map;
-        _mapService = mapService;
-        _itemMovementService = itemMovementService;
-    }
-
     public void Move(IPlayer player, MovementParams itemThrow)
     {
-        var finalTile = _mapService.GetFinalTile(itemThrow.ToLocation);
+        var finalTile = mapService.GetFinalTile(itemThrow.ToLocation);
 
         if (finalTile is not IDynamicTile)
         {
@@ -34,7 +25,7 @@ public class ToMapMovementService : IToMapMovementService
             return;
         }
 
-        if (!SightClear.IsSightClear(_map, player.Location, itemThrow.ToLocation, false))
+        if (!SightClear.IsSightClear(map, player.Location, itemThrow.ToLocation, false))
         {
             OperationFailService.Send(player.CreatureId, TextConstants.YOU_CANNOT_THROW_THERE);
             return;
@@ -49,35 +40,36 @@ public class ToMapMovementService : IToMapMovementService
     {
         if (movementParams.FromLocation.Type != LocationType.Ground) return;
 
-        if (_map[movementParams.FromLocation] is not DynamicTile fromTile) return;
-        if (_map[movementParams.ToLocation] is not DynamicTile toTile) return;
+        if (map[movementParams.FromLocation] is not DynamicTile fromTile) return;
+        if (map[movementParams.ToLocation] is not DynamicTile toTile) return;
 
         if (fromTile.TopDownItemOnStack is not { } item) return;
 
-        var finalTile = (DynamicTile)_mapService.GetFinalTile(toTile.Location);
+        var finalTile = (DynamicTile)mapService.GetFinalTile(toTile.Location);
 
-        _itemMovementService.Move(player, item, fromTile, finalTile, movementParams.Amount, 0, 0);
+        itemMovementService.Move(player, item, fromTile, finalTile, movementParams.Amount, 0, 0);
     }
 
     private void FromInventory(IPlayer player, MovementParams movementParams)
     {
         if (movementParams.FromLocation.Type is not LocationType.Slot) return;
-        if (_map[movementParams.ToLocation] is not IDynamicTile toTile) return;
+        if (map[movementParams.ToLocation] is not IDynamicTile toTile) return;
 
         var item = player.Inventory[movementParams.FromLocation.Slot];
         var itemIsPickupable = item?.IsPickupable ?? false;
         if (!itemIsPickupable) return;
 
-        var finalTile = (DynamicTile)_mapService.GetFinalTile(toTile.Location);
+        var finalTile = (DynamicTile)mapService.GetFinalTile(toTile.Location);
 
         player.MoveItem(item, player.Inventory, finalTile, movementParams.Amount,
             (byte)movementParams.FromLocation.Slot, 0);
+        
     }
 
     private void FromContainer(IPlayer player, MovementParams itemThrow)
     {
         if (itemThrow.FromLocation.Type is not LocationType.Container) return;
-        if (_map[itemThrow.ToLocation] is not IDynamicTile toTile) return;
+        if (map[itemThrow.ToLocation] is not IDynamicTile toTile) return;
 
         var container = player.Containers[itemThrow.FromLocation.ContainerId];
         var item = container[itemThrow.FromLocation.ContainerSlot];
@@ -85,9 +77,9 @@ public class ToMapMovementService : IToMapMovementService
 
         if (!itemIsPickupable) return;
 
-        var finalTile = (DynamicTile)_mapService.GetFinalTile(toTile.Location);
+        var finalTile = (DynamicTile)mapService.GetFinalTile(toTile.Location);
 
-        _itemMovementService.Move(player, item, container, finalTile, itemThrow.Amount,
+        itemMovementService.Move(player, item, container, finalTile, itemThrow.Amount,
             (byte)itemThrow.FromLocation.ContainerSlot, 0);
     }
 }

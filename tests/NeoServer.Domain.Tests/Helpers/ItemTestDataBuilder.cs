@@ -139,7 +139,7 @@ public class ItemTestDataBuilder
         return item;
     }
 
-    public static Depot.Locker CreateDepot(ushort id = 1, float weight = 20, List<IItem> items = null,
+    public static Locker.Locker CreateDepot(ushort id = 1, float weight = 20, List<IItem> items = null,
         (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
         (ItemAttribute, IConvertible)[] itemAttributes = null)
     {
@@ -157,7 +157,7 @@ public class ItemTestDataBuilder
 
         LoadItemTypeAttributes(itemType, itemTypeAttributes);
 
-        var item = new Depot.Locker(itemType, new Location(100, 100, 7), items);
+        var item = new Locker.Locker(itemType, new Location(100, 100, 7), items);
         LoadItemAttributes(item, itemAttributes);
         return item;
     }

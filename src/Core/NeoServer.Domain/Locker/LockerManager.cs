@@ -1,9 +1,10 @@
-namespace NeoServer.Domain.Depot;
+namespace NeoServer.Domain.Locker;
 
 public class LockerManager
 {
     private readonly Dictionary<uint, Locker> _lockerMap = new();
     private readonly HashSet<uint> _depotLoaded = [];
+    private readonly HashSet<uint> _mailInboxLoaded = [];
 
     public void Load(uint playerId, Locker locker) => _lockerMap.TryAdd(playerId, locker);
 
@@ -19,8 +20,11 @@ public class LockerManager
     {
         _lockerMap.Remove(playerId);
         _depotLoaded.Remove(playerId);
+        _mailInboxLoaded.Remove(playerId);
     }
 
     public void SetDepotAsLoaded(uint playerId) => _depotLoaded.Add(playerId);
     public bool IsDepotLoaded(uint playerId) => _depotLoaded.Contains(playerId);
+    public void SetMailboxAsLoaded(uint playerId) => _mailInboxLoaded.Add(playerId);
+    public bool IsMailboxLoaded(uint playerId) => _mailInboxLoaded.Contains(playerId);
 }

@@ -5,11 +5,11 @@ using NeoServer.Data.Extensions;
 
 namespace NeoServer.Data.Configurations;
 
-public class PlayerDepotItemEntitytConfiguration : IEntityTypeConfiguration<PlayerDepotItemEntity>
+public class PlayerMailItemEntityConfiguration : IEntityTypeConfiguration<PlayerMailItemEntity>
 {
-    public void Configure(EntityTypeBuilder<PlayerDepotItemEntity> entity)
+    public void Configure(EntityTypeBuilder<PlayerMailItemEntity> entity)
     {
-        entity.ToTable("PlayerDepotItem");
+        entity.ToTable("PlayerMailItem");
 
         entity.HasKey(x => x.Id);
 
@@ -35,9 +35,9 @@ public class PlayerDepotItemEntitytConfiguration : IEntityTypeConfiguration<Play
             .HasDefaultValueSql("0");
 
         entity.HasOne(d => d.Player)
-            .WithMany(p => p.PlayerDepotItems)
+            .WithMany(p => p.PlayerMailItems)
             .HasForeignKey(d => d.PlayerId)
-            .HasConstraintName("player_depot_items_ibfk_1");
+            .HasConstraintName("player_mail_items_ibfk_1");
 
         entity.Property(e => e.DecayTo)
             .HasColumnType("int");

@@ -11,6 +11,7 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.Items.Services.ItemTransform;
+using NeoServer.Domain.Mail;
 using NeoServer.Domain.Party;
 using NeoServer.Domain.SafeTrade;
 using NeoServer.Domain.SafeTrade.Operations;
@@ -54,6 +55,7 @@ public static class ServiceInjection
         builder.AddSingleton<ICreatureDeathService, CreatureDeathService>();
         builder.AddSingleton<IPlayerSkullService, PlayerSkullService>();
         builder.AddSingleton<ILootService, LootService>();
+        builder.AddSingleton<IMailService, MailService>();
 
         //Operations
         builder.AddSingleton<TradeItemExchanger>();

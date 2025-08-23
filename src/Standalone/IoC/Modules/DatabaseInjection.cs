@@ -29,7 +29,12 @@ public static class DatabaseInjection
         builder.AddSingleton<IWorldRepository, WorldRepository>();
         builder.AddSingleton<IPlayerDeathRepository, PlayerDeathRepository>();
         builder.AddSingleton<IReportBugRepository, ReportBugRepository>();
+        builder.AddSingleton<IPlayerMailItemRepository, PlayerMailItemRepository>();
         builder.AddSingleton(typeof(BaseRepository<>));
+        
+        //domain repositories
+        builder.AddSingleton<Domain.Repositories.IPlayerRepository, PlayerRepository>();
+        builder.AddSingleton<Domain.Repositories.IPlayerMailRepository, PlayerMailItemRepository>();
 
         return builder;
     }

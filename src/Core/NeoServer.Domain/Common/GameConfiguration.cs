@@ -14,7 +14,6 @@ public record GameConfiguration(
     CombatConfiguration Combat = null,
     ReportConfiguration Report = null
 );
-
 public record CombatConfiguration(
     bool InfiniteAmmo = false,
     bool InfiniteThrowingWeapon = false,

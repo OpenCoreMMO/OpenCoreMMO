@@ -4,7 +4,7 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Items.Items.Containers.Container;
 
-namespace NeoServer.Domain.Depot;
+namespace NeoServer.Domain.Locker;
 
 public class Locker : Container
 {
