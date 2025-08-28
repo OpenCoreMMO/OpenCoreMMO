@@ -14,13 +14,34 @@ public static class ContainerManager
     public static async Task Save<TPlayerItemEntity>(IPlayer player, IContainer container, NeoContext neoContext)
         where TPlayerItemEntity : PlayerItemBaseEntity, new()
     {
-        if (Guard.AnyNull(player, container)) return;
+        await Save<TPlayerItemEntity>((int)player.Id, container, neoContext);
+    }
 
-        if (container?.Items?.Count == 0) return;
+    public static async Task Save<TPlayerItemEntity>(int playerId, IContainer container, NeoContext neoContext, bool includeContainer = false)
+        where TPlayerItemEntity : PlayerItemBaseEntity, new()
+    {
+        if (playerId == 0) return;
+        if (Guard.AnyNull(container)) return;
+
+        if (container?.Items?.Count == 0 && !includeContainer) return;
 
         var containerId = 0;
         var containers = new Queue<(IContainer Container, int ParentId)>();
-        containers.Enqueue((container, containerId));
+        
+        // Save the container itself if includeContainer is true
+        if (includeContainer)
+        {
+            var containerEntity = ItemEntityParser.ToPlayerItemEntity<TPlayerItemEntity>(container);
+            if (containerEntity != null)
+            {
+                containerEntity.PlayerId = playerId;
+                containerEntity.ParentId = 0;
+                containerEntity.ContainerId = ++containerId;
+                await neoContext.AddAsync(containerEntity);
+            }
+        }
+
+        containers.Enqueue((container, includeContainer ? containerId : 0));
 
         while (containers.TryDequeue(out var dequeuedContainer))
         {
@@ -32,7 +53,7 @@ public static class ContainerManager
                 var itemModel = ItemEntityParser.ToPlayerItemEntity<TPlayerItemEntity>(item);
                 if (itemModel is null) continue;
 
-                itemModel.PlayerId = (int)player.Id;
+                itemModel.PlayerId = playerId;
                 itemModel.ParentId = dequeuedContainer.ParentId;
 
                 if (item is IContainer innerContainer)

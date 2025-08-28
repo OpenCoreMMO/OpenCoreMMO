@@ -26,7 +26,6 @@ public interface IItem : IThing, IHasDecay
     ushort ActionId { get; }
     uint UniqueId { get; }
     string Article { get; }
-    string Plural { get; }
 
     float Weight { get; }
 
@@ -97,6 +96,9 @@ public interface IItem : IThing, IHasDecay
             return Metadata.FullName;
         }
     }
+
+    string Plural { get; }
+    bool IsMailable { get; }
 
     void UpdateMetadata(IItemType newMetadata);
     void MarkAsDeleted();

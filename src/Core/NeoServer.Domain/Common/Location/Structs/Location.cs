@@ -24,6 +24,13 @@ public struct Location : IEquatable<Location>, IConvertible
         X = 0xFFFF;
         Y = (byte)slot;
     }
+    
+    public Location(int positionIndex)
+    {
+        X = 65535;
+        Y = 64;
+        Z = (byte)positionIndex;
+    }
 
     public void Update(ushort x, ushort y, byte z)
     {
@@ -78,6 +85,7 @@ public struct Location : IEquatable<Location>, IConvertible
         );
     }
 
+    public bool IsNone => X == 0 && Y == 0 && Z == 0;
     public Slot Slot => Y <= (ushort)Slot.TwoHanded ? (Slot)Convert.ToByte(Y) : Slot.None;
 
     // public byte Container => Convert.ToByte(Y - 0x40);

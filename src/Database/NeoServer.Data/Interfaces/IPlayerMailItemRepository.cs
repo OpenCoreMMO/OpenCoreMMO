@@ -7,8 +7,8 @@ using NeoServer.Domain.Locker;
 
 namespace NeoServer.Data.Interfaces;
 
-public interface IPlayerDepotItemRepository : IBaseRepositoryNeo<PlayerDepotItemEntity>
+public interface IPlayerMailItemRepository : IBaseRepositoryNeo<PlayerMailItemEntity>
 {
-    Task<IEnumerable<PlayerDepotItemEntity>> GetByPlayerId(uint id);
-    Task Save(IPlayer player, IContainer depotChest);
+    Task<IEnumerable<PlayerMailItemEntity>> GetByPlayerId(uint id);
+    Task Save(IPlayer player, IContainer locker);
 }

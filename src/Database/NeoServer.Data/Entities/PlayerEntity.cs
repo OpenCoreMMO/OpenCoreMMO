@@ -85,6 +85,7 @@ public sealed class PlayerEntity
 
     public ICollection<PlayerItemEntity> PlayerItems { get; set; }
     public ICollection<PlayerDepotItemEntity> PlayerDepotItems { get; set; }
+    public ICollection<PlayerMailItemEntity> PlayerMailItems { get; set; }
     public ICollection<PlayerInventoryItemEntity> PlayerInventoryItems { get; set; }
     public GuildMembershipEntity GuildMember { get; set; }
     public WorldEntity World { get; set; }

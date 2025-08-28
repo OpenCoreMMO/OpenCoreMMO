@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Domain.Depot;
+using NeoServer.Domain.Locker;
 using NeoServer.Domain.Spells;
 using NeoServer.Domain.World.Models.Spawns;
 using NeoServer.Server.Common.Contracts;

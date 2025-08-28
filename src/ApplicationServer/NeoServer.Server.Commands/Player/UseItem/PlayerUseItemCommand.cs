@@ -3,7 +3,8 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.Services;
-using NeoServer.Domain.Depot;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Locker;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Commands.Player.UseItem.OpenLocker;
 using NeoServer.Server.Common.Contracts.Commands;
@@ -13,6 +14,7 @@ namespace NeoServer.Server.Commands.Player.UseItem;
 
 public class PlayerUseItemCommand(
     PlayerOpenDepotCommand openDepotCommand,
+    PlayerOpenMailInboxCommand openMailInboxCommand,
     IScriptManager scriptManager,
     IWalkToMechanism walkToMechanism,
     IPlayerUseService playerUseService,
@@ -37,6 +39,12 @@ public class PlayerUseItemCommand(
                 if (container.Owner is Locker && container.ServerId is 2594) //depot chest
                 {
                     action = () => openDepotCommand.Execute(player, container, useItemPacket);
+                    break;
+                }
+                
+                if (container.Owner is Locker && container.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) is "mailbox")
+                {
+                    action = () => openMailInboxCommand.Execute(player, container, useItemPacket);
                     break;
                 }
 

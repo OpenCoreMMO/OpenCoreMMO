@@ -5,7 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Depot;
+using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Locker;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Configurations;
@@ -13,46 +14,29 @@ using Serilog;
 
 namespace NeoServer.Server.Routines.Persistence;
 
-public class PlayerPersistenceRoutine
+public class PlayerPersistenceRoutine(
+    IGameServer gameServer,
+    IPlayerRepository playerRepository,
+    ILogger logger,
+    IPlayerDepotItemRepository playerDepotItemRepository,
+    IPlayerMailItemRepository playerMailItemRepository,
+    IScriptManager scriptManager,
+    ServerConfiguration serverConfiguration,
+    LockerManager lockerManager)
 {
-    private readonly LockerManager _lockerManager;
-    private readonly IGameServer _gameServer;
-    private readonly ILogger _logger;
-    private readonly IPlayerDepotItemRepository _playerDepotItemRepository;
-    private readonly IPlayerRepository _playerRepository;
-    private readonly IScriptManager _scriptManager;
-    private readonly ServerConfiguration _serverConfiguration;
     private readonly Stopwatch _stopwatch = new();
 
     private int _saveInterval;
 
-    public PlayerPersistenceRoutine(
-        IGameServer gameServer,
-        IPlayerRepository playerRepository,
-        ILogger logger,
-        IPlayerDepotItemRepository playerDepotItemRepository,
-        IScriptManager scriptManager,
-        ServerConfiguration serverConfiguration,
-        LockerManager lockerManager)
-    {
-        _gameServer = gameServer;
-        _playerRepository = playerRepository;
-        _logger = logger;
-        _playerDepotItemRepository = playerDepotItemRepository;
-        _scriptManager = scriptManager;
-        _serverConfiguration = serverConfiguration;
-        _lockerManager = lockerManager;
-    }
-
     public void Start(CancellationToken token)
     {
-        _saveInterval = (int)(_serverConfiguration?.Save?.Players ?? (uint)_saveInterval);
+        _saveInterval = (int)(serverConfiguration?.Save?.Players ?? (uint)_saveInterval);
         _saveInterval = (_saveInterval == 0 ? 3600 : _saveInterval) * 1000;
         Task.Factory.StartNew(async () =>
         {
             while (!token.IsCancellationRequested)
             {
-                _gameServer.PersistenceDispatcher.AddEvent(async () => await SavePlayers());
+                gameServer.PersistenceDispatcher.AddEvent(async () => await SavePlayers());
                 await Task.Delay(_saveInterval, token);
             }
         }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
@@ -60,22 +44,23 @@ public class PlayerPersistenceRoutine
 
     public async Task SavePlayers()
     {
-        var players = _gameServer.CreatureManager.GetAllLoggedPlayers().ToList();
+        var players = gameServer.CreatureManager.GetAllLoggedPlayers().ToList();
 
         if (players.Count != 0)
         {
-            _logger.Information("Saving {NumPlayers} players...", players.Count);
+            logger.Information("Saving {NumPlayers} players...", players.Count);
             _stopwatch.Restart();
 
-            await _playerRepository.UpdatePlayers(players);
+            await playerRepository.UpdatePlayers(players);
 
             await SaveDepots(players);
+            await SaveMailInboxes(players);
 
-            _logger.Information("{NumPlayers} players saved in {Elapsed} ms", players.Count,
+            logger.Information("{NumPlayers} players saved in {Elapsed} ms", players.Count,
                 _stopwatch.ElapsedMilliseconds);
         }
 
-        _scriptManager.GlobalEvents.ExecuteSave();
+        scriptManager.GlobalEvents.ExecuteSave();
     }
 
     private async Task SaveDepots(List<IPlayer> players)
@@ -84,10 +69,29 @@ public class PlayerPersistenceRoutine
 
         foreach (var player in players)
         {
-            if (!_lockerManager.Get(player.Id, out var depot)) continue;
-            depotSaveTasks.Add(_playerDepotItemRepository.Save(player, depot));
+            if (!lockerManager.Get(player.Id, out var locker)) continue;
+
+            var depotChest = locker.Items.FirstOrDefault() as IContainer;
+            
+            depotSaveTasks.Add(playerDepotItemRepository.Save(player, depotChest));
         }
 
         await Task.WhenAll(depotSaveTasks);
+    }
+    
+    private async Task SaveMailInboxes(List<IPlayer> players)
+    {
+        var mailInboxSaveTasks = new List<Task>();
+
+        foreach (var player in players)
+        {
+            if (!lockerManager.Get(player.Id, out var locker)) continue;
+
+            var mailInbox = locker.Items.ElementAtOrDefault(1) as IContainer;
+            
+            mailInboxSaveTasks.Add(playerMailItemRepository.Save(player, mailInbox));
+        }
+
+        await Task.WhenAll(mailInboxSaveTasks);
     }
 }
