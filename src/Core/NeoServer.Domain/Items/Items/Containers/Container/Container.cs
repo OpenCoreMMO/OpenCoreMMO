@@ -43,6 +43,7 @@ public class Container : BaseItem, IContainer
     public List<IItem> Items { get; }
     public IItem this[int index] => Items.Count > index ? Items[index] : null;
     public bool HasItems => SlotsUsed > 0;
+    public bool CanMoveItemsToItself { get; init; } = true;
 
     /// <summary>
     ///     Gets all items recursively from this container, including the ones inside inner containers.

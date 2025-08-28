@@ -4,14 +4,14 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Items.Items.Containers.Container;
 
-namespace NeoServer.Domain.Depot;
+namespace NeoServer.Domain.Locker;
 
 public class Locker : Container
 {
     public Locker(IItemType type, Location location, IEnumerable<IItem> children) : base(type, location, children)
     {
     }
-    
+
     private uint OpenedBy { get; set; }
     public override byte Capacity => 2;
     public bool IsAlreadyOpened { get; private set; }

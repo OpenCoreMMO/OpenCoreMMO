@@ -1,4 +1,6 @@
 using System.Collections;
+using Moq;
+using NeoServer.Data.Repositories.Player;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
@@ -9,6 +11,9 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Items;
+using NeoServer.Domain.Locker;
+using NeoServer.Domain.Mail;
+using NeoServer.Domain.Repositories;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
@@ -262,9 +267,11 @@ public class TileTest
         var undergroundTile = (IDynamicTile)map[100, 100, 8];
 
         mapService.ReplaceGround(destinationTile.Location, hole);
+        
+        var mailService = new MailService(new Mock<IPlayerRepository>().Object, new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
 
         var itemMovementService =
-            new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler));
+            new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
 
         sourceTile.AddItem(item);
 
@@ -305,8 +312,10 @@ public class TileTest
         var destinationTile = (IDynamicTile)map[100, 100, 7];
         var undergroundTile = map[100, 100, 8];
 
+        var mailService = new MailService(new Mock<IPlayerRepository>().Object, new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
+
         var itemMovementService =
-            new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler));
+            new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
 
         var mapService = new MapService(map);
 
@@ -356,9 +365,11 @@ public class TileTest
         mapService.ReplaceGround(destinationTile.Location, hole);
 
         mapService.ReplaceGround(undergroundTile.Location, secondHole);
+        
+        var mailService = new MailService(new Mock<IPlayerRepository>().Object, new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
 
         var itemMovementService =
-            new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler));
+            new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
         var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService);
 
         //act

@@ -33,7 +33,7 @@ public class PlayerContainerList : IPlayerContainerList
         get
         {
             foreach (var container in openedContainers.Values)
-                if (container.Container.RootParent is Depot.Locker)
+                if (container.Container.RootParent is Locker.Locker)
                     return true;
             return false;
         }
@@ -82,7 +82,7 @@ public class PlayerContainerList : IPlayerContainerList
         PlayerContainer playerContainer = null;
         var location = containerToOpen.Location;
 
-        if (containerToOpen is Depot.Locker depot && !depot.CanBeOpenedBy(player))
+        if (containerToOpen is Locker.Locker depot && !depot.CanBeOpenedBy(player))
         {
             OperationFailService.Send(player.CreatureId, TextConstants.DEPOT_ALREADY_OPENED);
             return;
@@ -126,7 +126,7 @@ public class PlayerContainerList : IPlayerContainerList
 
         InsertOrOverrideOpenedContainer(containerLevel, playerContainer);
 
-        if (containerToOpen is Depot.Locker toOpen) toOpen.SetAsOpened(player);
+        if (containerToOpen is Locker.Locker toOpen) toOpen.SetAsOpened(player);
 
         OnOpenedContainer?.Invoke(player, playerContainer.Id, playerContainer.Container);
         playerContainer.Container.UpdateId(playerContainer.Id);
@@ -152,14 +152,14 @@ public class PlayerContainerList : IPlayerContainerList
         playerContainer.DetachContainerEvents();
         OnClosedContainer?.Invoke(player, containerId, playerContainer.Container);
 
-        if (playerContainer.Container is Depot.Locker depot)
+        if (playerContainer.Container is Locker.Locker depot)
             //call depot event if container is a depot
             OnClosedDepot?.Invoke(player, containerId, depot);
 
         playerContainer.Container.ClosedBy(player);
 
         //check if container is within a depot
-        if (playerContainer.Container.RootParent is Depot.Locker rootDepot && playerContainer.Container != rootDepot)
+        if (playerContainer.Container.RootParent is Locker.Locker rootDepot && playerContainer.Container != rootDepot)
         {
             //if so emit event and call ClosedBy method
             OnClosedDepot?.Invoke(player, containerId, rootDepot);
@@ -176,6 +176,12 @@ public class PlayerContainerList : IPlayerContainerList
         var containerLocation = container.RootParent?.Location;
 
         if (containerLocation is null) return;
+
+        if (containerLocation.Value.IsNone)
+        {
+            CloseContainer(containerId);
+            return;
+        }
 
         if (containerLocation.Value.Type == LocationType.Ground &&
             containerLocation.Value.IsNextTo(player.Location) is false)

@@ -4,22 +4,20 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
+using NeoServer.Domain.Items.Items.Containers;
+using NeoServer.Domain.Mail;
+using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Creatures.Services;
 
-public class ItemMovementService : IItemMovementService
+public class ItemMovementService(IWalkToMechanism walkToMechanism, IMailService mailService) : IItemMovementService
 {
-    private readonly IWalkToMechanism _walkToMechanism;
-
-    public ItemMovementService(IWalkToMechanism walkToMechanism)
-    {
-        _walkToMechanism = walkToMechanism;
-    }
-
     public Result<OperationResultList<IItem>> Move(IPlayer player, IItem item, IHasItem from, IHasItem destination,
         byte amount,
         byte fromPosition, byte? toPosition, bool walkTo = true)
@@ -43,12 +41,18 @@ public class ItemMovementService : IItemMovementService
 
         if (!item.IsCloseTo(player) && walkTo)
         {
-            _walkToMechanism.WalkTo(player,
+            walkToMechanism.WalkTo(player,
                 () => player.MoveItem(item, from, destination, amount, fromPosition, toPosition), item.Location);
             return Result<OperationResultList<IItem>>.Success;
         }
 
-        return player.MoveItem(item, from, destination, amount, fromPosition, toPosition);
+        if (destination is IDynamicTile finalTile && finalTile.HasFlag(TileFlags.MailBox) && !item.IsMailable)
+        {
+            OperationFailService.Send(player, InvalidOperation.NotPossible);
+            return Result<OperationResultList<IItem>>.NotPossible;
+        }
+
+        return Move(player, item, from, destination, amount, fromPosition, toPosition);
     }
 
 
@@ -68,6 +72,50 @@ public class ItemMovementService : IItemMovementService
         var removedItem = RemoveItem(item, from, amount, fromPosition, possibleAmountToAdd);
 
         var result = AddToDestination(removedItem, from, destination, toPosition);
+
+        if (result.Succeeded && item is IMovableThing movableThing && destination is IThing destinationThing)
+            movableThing.OnMoved(destinationThing);
+
+        var amountResult = (byte)Math.Max(0, amount - (int)possibleAmountToAdd);
+        return amountResult > 0 ? Move(item, from, destination, amountResult, fromPosition, toPosition) : result;
+    }
+
+    private Result<OperationResultList<IItem>> Move(IPlayer player, IItem item, IHasItem from, IHasItem destination,
+        byte amount,
+        byte fromPosition, byte? toPosition)
+    {
+        if (!item.CanBeMoved) return Result<OperationResultList<IItem>>.NotPossible;
+
+        if (!item.IsCloseTo(player)) return new Result<OperationResultList<IItem>>(InvalidOperation.TooFar);
+
+        var canAdd = destination.CanAddItem(item, amount, toPosition);
+        if (!canAdd.Succeeded) return new Result<OperationResultList<IItem>>(canAdd.Reason);
+
+        (destination, toPosition) = GetDestination(from, destination, toPosition);
+
+        var possibleAmountToAdd = destination.PossibleAmountToAdd(item, toPosition);
+        if (possibleAmountToAdd == 0) return new Result<OperationResultList<IItem>>(InvalidOperation.NotEnoughRoom);
+
+        var removedItem = RemoveItem(item, from, amount, fromPosition, possibleAmountToAdd);
+
+        var result = Result<OperationResultList<IItem>>.Success;
+        
+        var sendMailResult = Result.NotPossible;
+        
+        if (destination is IDynamicTile finalTile && finalTile.HasFlag(TileFlags.MailBox) && item.IsMailable)
+        {
+            sendMailResult = mailService.Send(player, item);
+            if (sendMailResult.Succeeded)
+            {
+                item.SetNewLocation(Location.Zero);
+                result = Result<OperationResultList<IItem>>.Success;
+            }
+        }
+        
+        if(sendMailResult.Failed)
+        {
+            result = AddToDestination(removedItem, from, destination, toPosition);
+        }
 
         if (result.Succeeded && item is IMovableThing movableThing && destination is IThing destinationThing)
             movableThing.OnMoved(destinationThing);

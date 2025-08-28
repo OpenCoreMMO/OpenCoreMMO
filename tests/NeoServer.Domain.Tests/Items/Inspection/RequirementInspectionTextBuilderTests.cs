@@ -101,7 +101,7 @@ public class RequirementInspectionTextBuilderTests
     [InlineData("", 0)]
     public void Build_ConsumableHasLevelAndVocations_ReturnText(string expected, int level, params string[] vocations)
     {
-        var item = ItemTestDataBuilder.CreatePot(1);
+        var item = ItemTestDataBuilder.CreatePotion(1);
         item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.MinimumLevel, level);
         item.Metadata.Attributes.SetAttribute(ItemTypeAttribute.VocationNames, vocations);
 
