@@ -11,8 +11,8 @@ namespace NeoServer.Server.Commands.Player.UseItem.OpenLocker;
 
 public class PlayerOpenLockerCommand : ICommand
 {
-    private readonly LockerManager _lockerManager;
     private readonly IItemFactory _itemFactory;
+    private readonly LockerManager _lockerManager;
     private readonly IPlayerUseService _playerUseService;
 
     public PlayerOpenLockerCommand(IPlayerUseService playerUseService, IItemFactory itemFactory,

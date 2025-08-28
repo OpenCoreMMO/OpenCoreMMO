@@ -6,13 +6,12 @@ using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
-using NeoServer.Domain.Mail;
 using NeoServer.Domain.World.Algorithms;
 using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.World.Services;
 
-public class ToMapMovementService(IMap map, IMapService mapService, IItemMovementService itemMovementService, IMailService mailService)
+public class ToMapMovementService(IMap map, IMapService mapService, IItemMovementService itemMovementService)
     : IToMapMovementService
 {
     public void Move(IPlayer player, MovementParams itemThrow)
