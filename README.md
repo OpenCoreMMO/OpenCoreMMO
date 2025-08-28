@@ -52,7 +52,7 @@ To connect to the self-hosted server for development, please use the following c
 
 ## What we have done so far
 
-- **Bank System**: :warning:
+- **Bank System**: :heavy_check_mark:
 - **C# Scripting**: :warning:
 - **Chats**: :heavy_check_mark:
 - **Combat**
