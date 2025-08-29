@@ -125,9 +125,42 @@ public class EventAggregator : IEventAggregator
         DeferredHandlersCache.Clear();
     }
 
+    /// <summary>
+    /// Invoke event immediately without deferring to the end of the process.
+    /// </summary>
+    /// <param name="event"></param>
+    public void InvokeEvent(IEvent @event)
+    {
+        var eventName = @event?.GetType().FullName;
+        if (string.IsNullOrWhiteSpace(eventName)) return;
+
+        // Process network handlers first
+        if (_networkHandlers.TryGetValue(eventName, out var networkHandlers))
+        {
+            foreach (var networkHandler in networkHandlers)
+            {
+                networkHandler?.Invoke(@event);
+            }
+        }
+
+        // Collect other handlers to execute later
+        if (_handlers.TryGetValue(eventName, out var otherHandlers))
+        {
+            foreach (var otherHandler in otherHandlers)
+            {
+                otherHandler?.Invoke(@event);
+            }
+        }
+    }
+
     public static void Publish(IEvent @event)
     {
         Instance?.Publish(@event);
+    }
+
+    public static void Invoke(IEvent @event)
+    {
+        Instance?.InvokeEvent(@event);
     }
 }
 

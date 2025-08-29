@@ -16,6 +16,6 @@ public sealed class PlayerPingResponseHandler : PacketHandler
 
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
-        _game.Dispatcher.AddEvent(new Event(() => connection.LastPingResponse = DateTime.Now.Ticks));
+        _game.Dispatcher.AddEvent(new Event(() => connection.LastPingResponse = DateTime.UtcNow.Ticks));
     }
 }

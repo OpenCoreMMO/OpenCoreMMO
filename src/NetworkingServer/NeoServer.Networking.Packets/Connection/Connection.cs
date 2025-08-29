@@ -37,7 +37,7 @@ public class Connection : IConnection
         IsAuthenticated = false;
         InMessage = new ReadOnlyNetworkMessage(new byte[16394], 0);
         _logger = logger;
-        LastPingResponse = DateTime.Now.Ticks;
+        LastPingResponse = DateTime.UtcNow.Ticks;
         RandomNumber = (byte)new Random().Next(byte.MinValue, byte.MaxValue);
         TimeStamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     }

@@ -64,13 +64,13 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         condition.Start(this);
         if (result == false) return;
 
-        EventAggregator.Publish(new CreatureConditionAddedEvent(this, condition));
+        EventAggregator.Invoke(new CreatureConditionAddedEvent(this, condition));
     }
 
     public void RemoveCondition(ICondition condition)
     {
         Conditions.Remove(condition.Type);
-        EventAggregator.Publish(new CreatureConditionRemovedEvent(this, condition));
+        EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
     }
 
     public void DisableCondition(ConditionType type)
@@ -78,7 +78,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         if (!Conditions.TryGetValue(type, out var condition)) return;
 
         condition.Disable();
-        EventAggregator.Publish(new CreatureConditionRemovedEvent(this, condition));
+        EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
     }
 
     public void EnableCondition(ConditionType type)
@@ -86,13 +86,13 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         if (!Conditions.TryGetValue(type, out var condition)) return;
 
         condition.Enable();
-        EventAggregator.Publish(new CreatureConditionAddedEvent(this, condition));
+        EventAggregator.Invoke(new CreatureConditionAddedEvent(this, condition));
     }
 
     public void RemoveCondition(ConditionType type)
     {
         if (Conditions.Remove(type, out var condition) is false) return;
-        EventAggregator.Publish(new CreatureConditionRemovedEvent(this, condition));
+        EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
     }
 
     public bool HasCondition(ConditionType type, out ICondition condition)
@@ -116,9 +116,9 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         Heal((ushort)MaxHealthPoints, this);
     }
 
-    public virtual void GainExperience(long exp)
+    public virtual void GainExperience(long experience)
     {
-        OnGainedExperience?.Invoke(this, exp);
+        OnGainedExperience?.Invoke(this, experience);
     }
 
     public virtual void LoseExperience(long exp)
@@ -331,7 +331,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         HealthPoints = HealthPoints + increasing >= MaxHealthPoints ? MaxHealthPoints : HealthPoints + increasing;
 
         OnHeal?.Invoke(this, healedBy, increasing);
-        EventAggregator.Publish(new CreatureHealthChangedEvent(this, oldHealthPoints, HealthPoints));
+        EventAggregator.Invoke(new CreatureHealthChangedEvent(this, oldHealthPoints, HealthPoints));
     }
 
     public virtual void TurnInvisible()
@@ -462,7 +462,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public virtual void Kill(ICombatActor enemy, bool lastHit = false, bool unjustified = false)
     {
-        EventAggregator.Publish(new CreatureKillEvent(this, enemy, lastHit, unjustified));
+        EventAggregator.Invoke(new CreatureKillEvent(this, enemy, lastHit, unjustified));
     }
 
     public virtual void PreAttack(CombatContext combatContext)
@@ -548,10 +548,10 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
             //todo: implements real damage
             OnBeforeDeath?.Invoke(this, combatActor, 0);
 
-        Dismiss();
-
         OnDeath?.Invoke(this, by);
-        EventAggregator.Publish(new CreatureDeathEvent(this, by));
+        EventAggregator.Invoke(new CreatureDeathEvent(this, by));
+        
+        Dismiss();
     }
 
     public virtual void Dismiss()
@@ -571,7 +571,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         ReceivedDamages.AddOrUpdateDamage(enemy, damages.TotalDamage, damages.Unjustified);
 
-        EventAggregator.Publish(new CreatureInjuredEvent(enemy, this, damages));
+        EventAggregator.Invoke(new CreatureInjuredEvent(enemy, this, damages));
 
         if (IsDead) Death(enemy);
     }

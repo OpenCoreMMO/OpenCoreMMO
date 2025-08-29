@@ -48,7 +48,10 @@ public class PlayerTests
             300,
             new Location(100, 100, 7),
             null,
-            null);
+            null)
+        {
+            LastLogOut = DateTime.UtcNow
+        };
 
         Assert.Equal(expected, sut.CanMoveThing(new Location(toX, toY, 7)));
     }
