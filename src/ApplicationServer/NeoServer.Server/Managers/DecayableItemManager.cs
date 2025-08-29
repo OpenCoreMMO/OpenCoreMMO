@@ -21,7 +21,7 @@ public class DecayableItemManager : IDecayableItemManager
     {
         if (item.Decay is null) return;
 
-        var expiresAt = DateTime.Now.AddSeconds(item.Decay.Remaining);
+        var expiresAt = DateTime.UtcNow.AddSeconds(item.Decay.Remaining);
         _items.Enqueue(item, expiresAt);
     }
 

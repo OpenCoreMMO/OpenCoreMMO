@@ -35,7 +35,10 @@ public static class PlayerTestDataBuilder
         IVocationStore vocationStore = null,
         IGroupStore groupStore = null,
         Guild.Guild guild = null,
-        ITown town = null)
+        ITown town = null,
+        ushort stamina = 42 * 60,
+        int premiumTime = 0,
+        int experience = 1)
     {
         if (vocationStore is null)
         {
@@ -81,7 +84,7 @@ public static class PlayerTestDataBuilder
             skills ?? new Dictionary<SkillType, ISkill>
             {
                 {
-                    SkillType.Level, new Skill(SkillType.Level, 10, 1)
+                    SkillType.Level, new Skill(SkillType.Level, 10, experience)
                     {
                         GetIncreaseRate = () => 1
                     }
@@ -106,7 +109,7 @@ public static class PlayerTestDataBuilder
                 }
             },
             storages ?? new Dictionary<uint, int>(),
-            300,
+            stamina,
             new Outfit(),
             speed,
             new Location(100, 100, 7),
@@ -114,7 +117,9 @@ public static class PlayerTestDataBuilder
             town ??= new Town { Id = 1, Name = "Teste", Coordinate = new Coordinate(1011, 1008, 7) }
         )
         {
-            Guild = guild
+            Guild = guild,
+            PremiumTime = premiumTime,
+            LastLogOut = DateTime.UtcNow
         };
 
         if (inventoryMap is not null)

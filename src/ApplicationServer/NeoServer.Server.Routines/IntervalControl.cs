@@ -14,11 +14,11 @@ public class IntervalControl
 
     public void MarkAsExecuted()
     {
-        lastRun = DateTime.Now;
+        lastRun = DateTime.UtcNow;
     }
 
     public bool CanExecuteNow()
     {
-        return DateTime.Now >= lastRun.AddMilliseconds(interval);
+        return DateTime.UtcNow >= lastRun.AddMilliseconds(interval);
     }
 }

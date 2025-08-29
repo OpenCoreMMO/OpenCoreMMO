@@ -67,7 +67,9 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         ConfigureProperty(entity, e => e.BankAmount, "numeric(20, 0)", "0");
         ConfigureProperty(entity, e => e.Skull, "int", "0");
         entity.Property(e => e.SkullEndsAt);
-
+        entity.Property(e => e.LastLogIn);
+        entity.Property(e => e.LastLogOut);
+        
         entity.Ignore(e => e.KillsLastMonth);
 
         entity.HasOne(d => d.Account)

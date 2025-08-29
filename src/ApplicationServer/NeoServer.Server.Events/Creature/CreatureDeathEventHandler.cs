@@ -31,9 +31,7 @@ public class CreatureDeathEventHandler(
         creatureDeathService.Handle(deadCreature, by, damageRecordResult.DamageRecords);
 
         experienceSharingService.Share(deadCreature);
-
-        // bloodPoolService.CreateSplash(deadCreature);
-
+        
         switch (deadCreature)
         {
             case IMonster monster:

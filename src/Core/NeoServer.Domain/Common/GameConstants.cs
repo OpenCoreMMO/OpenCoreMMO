@@ -11,4 +11,12 @@ public static class GameConstants
     
     public const ushort LETTER_SERVER_ID = 2597;
     public const ushort STAMPED_LETTER_SERVER_ID = 2598;
+    
+    //stamina
+    public const int STAMINA_MAX_MINUTES = 42 * 60; //42 hours
+    public const int STAMINA_BONUS_MINUTES = 39 * 60; //39 hours - +50% exp gain
+    public const int STAMINA_THRESHOLD_MINUTES = 14 * 60; //14 hours - -50% exp gain and no loot
+    public const int STAMINA_BONUS_EXP_PERCENTAGE = 50;
+    public const int STAMINA_THRESHOLD_EXP_PERCENTAGE = -50;
+    public const int STAMINA_REGENERATION_EACH_MINUTES = 3; //recover 1 minute of stamina each 3 minutes 
 }

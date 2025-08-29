@@ -216,7 +216,7 @@ public class GlobalEventFunctions : LuaScriptInterface, IGlobalEventFunctions
             //    difference += 86400;
             //}
 
-            var currentTime = DateTime.Now;
+            var currentTime = DateTime.UtcNow;
             var modifiedTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, (int)hour, (int)min,
                 (int)sec);
 

@@ -16,7 +16,7 @@ public class UserChat
     public int RemainingMutedSeconds => MutedForSeconds == 0
         ? 0
         : (int)Math.Round(
-            TimeSpan.FromTicks(LastMessage + TimeSpan.TicksPerSecond * MutedForSeconds - DateTime.Now.Ticks)
+            TimeSpan.FromTicks(LastMessage + TimeSpan.TicksPerSecond * MutedForSeconds - DateTime.UtcNow.Ticks)
                 .TotalSeconds, MidpointRounding.AwayFromZero);
 
     public IPlayer Player { get; init; }
@@ -26,14 +26,14 @@ public class UserChat
     public void UpdateLastMessage(MuteRule rule)
     {
         var secondsSinceFirstMessage =
-            (ushort)TimeSpan.FromTicks(DateTime.Now.Ticks - firstMessageBeforeMuted).Seconds;
+            (ushort)TimeSpan.FromTicks(DateTime.UtcNow.Ticks - firstMessageBeforeMuted).Seconds;
 
         if (secondsSinceFirstMessage > 0 && secondsSinceFirstMessage > rule.TimeToBlock) MessagesCount = 0;
 
         if (!IsMuted)
         {
             MessagesCount += 1;
-            LastMessage = DateTime.Now.Ticks;
+            LastMessage = DateTime.UtcNow.Ticks;
             if (MessagesCount == 1)
             {
                 firstMessageBeforeMuted = LastMessage;

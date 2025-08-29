@@ -51,7 +51,7 @@ public class InfoCommand : CommandSpell
         var serverConfiguration = IoC.GetInstance<ServerConfiguration>();
 
         window.WrittenBy = $"{serverConfiguration.ServerName} - SERVER";
-        window.WrittenOn = DateTime.Now;
+        window.WrittenOn = DateTime.UtcNow;
 
         var player = caster as IPlayer;
 
