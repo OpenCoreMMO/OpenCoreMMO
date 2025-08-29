@@ -52,7 +52,7 @@ To connect to the self-hosted server for development, please use the following c
 
 ## What we have done so far
 
-- **Bank System**: :warning:
+- **Bank System**: :heavy_check_mark:
 - **C# Scripting**: :warning:
 - **Chats**: :heavy_check_mark:
 - **Combat**
@@ -62,6 +62,7 @@ To connect to the self-hosted server for development, please use the following c
 - **Depot**: :heavy_check_mark:
 - **Guilds**: :heavy_check_mark:
 - **House System**: :warning:
+- **Royal Mail System**: :heavy_check_mark:
 - **Monsters**: :heavy_check_mark:
 - **NPC System**: :heavy_check_mark:
 - **Party**: :heavy_check_mark:
