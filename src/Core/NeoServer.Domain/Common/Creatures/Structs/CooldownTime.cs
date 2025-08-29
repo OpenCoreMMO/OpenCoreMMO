@@ -10,13 +10,13 @@ public struct CooldownTime
 
     public long Start { get; set; }
     public long Duration { get; set; }
-    public bool Expired => Start + Duration <= DateTime.Now.Ticks;
+    public bool Expired => Start + Duration <= DateTime.UtcNow.Ticks;
 
     public TimeSpan Remaining
     {
         get
         {
-            var remainingTicks = Start + Duration - DateTime.Now.Ticks;
+            var remainingTicks = Start + Duration - DateTime.UtcNow.Ticks;
             return remainingTicks > 0
                 ? TimeSpan.FromTicks(remainingTicks)
                 : TimeSpan.Zero;
@@ -25,6 +25,6 @@ public struct CooldownTime
 
     public void Reset()
     {
-        Start = DateTime.Now.Ticks;
+        Start = DateTime.UtcNow.Ticks;
     }
 }

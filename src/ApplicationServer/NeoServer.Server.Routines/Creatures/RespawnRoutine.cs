@@ -10,7 +10,7 @@ public static class RespawnRoutine
 
     public static void Execute(SpawnManager spawnManager)
     {
-        var now = DateTime.Now.Ticks;
+        var now = DateTime.UtcNow.Ticks;
         var remainingTime = TimeSpan.FromTicks(now - _lastRespawn).TotalMilliseconds;
 
         if (!(remainingTime >= INTERVAL)) return;

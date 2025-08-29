@@ -65,7 +65,7 @@ public class ForSqLiteAccountEntityConfiguration : IEntityTypeConfiguration<Acco
                 Id = 1,
                 EmailAddress = "1",
                 Password = "1",
-                PremiumTimeEndAt = DateTime.Now.AddDays(30),
+                PremiumTimeEndAt = DateTime.UtcNow.AddDays(30),
                 AllowManyOnline = true
             }
         );

@@ -25,7 +25,7 @@ public class CreatureGameInstance : ICreatureGameInstance
     {
         if (!monster.BornFromSpawn) return;
 
-        _killedMonsters.TryAdd(monster.CreatureId, new Tuple<IMonster, TimeSpan>(monster, DateTime.Now.TimeOfDay));
+        _killedMonsters.TryAdd(monster.CreatureId, new Tuple<IMonster, TimeSpan>(monster, DateTime.UtcNow.TimeOfDay));
     }
 
     public bool TryGetCreature(uint id, out ICreature creature)

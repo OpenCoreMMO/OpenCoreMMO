@@ -17,7 +17,7 @@ public class PlayerStatusRoutine(GameConfiguration gameConfiguration) : IRoutine
     {
         if (!player.HasCondition(ConditionType.LogoutBlock, out var logoutBlockCondition)) return;
 
-        var passedTicks = DateTime.Now.Ticks - logoutBlockCondition.StartedAt;
+        var passedTicks = DateTime.UtcNow.Ticks - logoutBlockCondition.StartedAt;
         var milliseconds = new TimeSpan(passedTicks).TotalMilliseconds;
 
         if (milliseconds >= gameConfiguration.LogoutBlockDuration) player.RemoveLogoutBlock();
@@ -27,7 +27,7 @@ public class PlayerStatusRoutine(GameConfiguration gameConfiguration) : IRoutine
     {
         if (!player.HasCondition(ConditionType.ProtectionZoneBlock, out var protectionZoneBlock)) return;
 
-        var passedTicks = DateTime.Now.Ticks - protectionZoneBlock.StartedAt;
+        var passedTicks = DateTime.UtcNow.Ticks - protectionZoneBlock.StartedAt;
         var milliseconds = new TimeSpan(passedTicks).TotalMilliseconds;
 
         if (milliseconds >= gameConfiguration.ProtectionZoneBlockDuration) player.RemoveProtectionZoneBlock();

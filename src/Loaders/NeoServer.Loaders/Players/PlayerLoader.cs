@@ -87,7 +87,7 @@ public class PlayerLoader : IPlayerLoader
 
         var premiumTimeDays = (ushort)(playerEntity.Account?.PremiumTimeEndAt is null
             ? 0
-            : (playerEntity.Account.PremiumTimeEndAt.Value - DateTime.Now).TotalDays);
+            : (playerEntity.Account.PremiumTimeEndAt.Value - DateTime.UtcNow).TotalDays);
 
         var player = new Player(
             (uint)playerEntity.Id,
@@ -127,8 +127,14 @@ public class PlayerLoader : IPlayerLoader
             WorldId = playerEntity.WorldId,
             Guild = GuildStore.Get((ushort)(playerEntity.GuildMember?.GuildId ?? 0)),
             GuildId = (ushort)(playerEntity.GuildMember?.GuildId ?? 0),
-            GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0)
+            GuildLevel = (ushort)(playerEntity.GuildMember?.RankId ?? 0),
+            LastLogOut = playerEntity.LastLogOut
         };
+
+        if (!_gameConfiguration.StaminaEnabled)
+        {
+            player.Group.EnableFlag(PlayerFlag.IgnoreStamina);
+        }
 
         player.PlayerSkull = new PlayerSkull(player, playerEntity.Skull, playerEntity.SkullEndsAt);
 
@@ -168,9 +174,9 @@ public class PlayerLoader : IPlayerLoader
         var killsLastMonth = 0;
         foreach (var kill in playerEntity.KillsLastMonth)
         {
-            if (kill.DeathDateTime >= DateTime.Now.AddDays(-1)) killsLastDay++;
-            if (kill.DeathDateTime >= DateTime.Now.AddDays(-7)) killsLastWeek++;
-            if (kill.DeathDateTime >= DateTime.Now.AddMonths(-1)) killsLastMonth++;
+            if (kill.DeathDateTime >= DateTime.UtcNow.AddDays(-1)) killsLastDay++;
+            if (kill.DeathDateTime >= DateTime.UtcNow.AddDays(-7)) killsLastWeek++;
+            if (kill.DeathDateTime >= DateTime.UtcNow.AddMonths(-1)) killsLastMonth++;
         }
 
         player.SetNumberOfKills(killsLastDay, killsLastWeek, killsLastMonth);

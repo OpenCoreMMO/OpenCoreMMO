@@ -149,6 +149,7 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository,
         playerEntity.Vocation = player.VocationType;
         playerEntity.Skull = player.Skull;
         playerEntity.SkullEndsAt = player.SkullEndsAt;
+        playerEntity.LastLogOut = player.LastLogOut;
 
         // Update guild membership
         await UpdateGuildMembership(player, neoContext);
@@ -161,7 +162,7 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository,
         // First, remove any existing guild membership for this player
         var existingMembership = await neoContext.GuildMemberships
             .FirstOrDefaultAsync(gm => gm.PlayerId == player.Id);
-        
+
         if (existingMembership != null)
         {
             neoContext.GuildMemberships.Remove(existingMembership);
@@ -188,9 +189,19 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository,
         {
             return 0;
         }
-        
+
         await using var context = NewDbContext;
-        
+
         return (await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower()))?.Id ?? 0;
+    }
+
+    public async Task UpdateLastLogInDate(int playerId, DateTime lastLogIn)
+    {
+        await using var context = NewDbContext;
+        var playerEntity = await context.Players.FindAsync(playerId);
+
+        if (playerEntity is null) return;
+        playerEntity.LastLogIn = lastLogIn;
+        await context.SaveChangesAsync();
     }
 }

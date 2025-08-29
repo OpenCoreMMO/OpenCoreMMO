@@ -22,7 +22,7 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
         if (!(gameConfiguration.PvP?.SkullSystemEnabled ?? false)) return;
 
         var whiteSkullEndingDate =
-            DateTime.Now.AddMinutes(gameConfiguration.PvP?.WhiteSkullDurationMinutes ??
+            DateTime.UtcNow.AddMinutes(gameConfiguration.PvP?.WhiteSkullDurationMinutes ??
                                     TimeSpan.FromMilliseconds(gameConfiguration.LogoutBlockDuration).TotalMinutes);
 
         //when aggressor has white skull
@@ -56,9 +56,9 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
         var pvpConfiguration = gameConfiguration.PvP;
 
         // Calculate the ending dates for each skull type
-        var backSkullEndingDate = DateTime.Now.AddDays(pvpConfiguration.BlackSkullDurationDays);
-        var redSkullEndingDate = DateTime.Now.AddDays(pvpConfiguration.RedSkullDurationDays);
-        var whiteSkullEndingDate = DateTime.Now.AddDays(pvpConfiguration.WhiteSkullDurationMinutes);
+        var backSkullEndingDate = DateTime.UtcNow.AddDays(pvpConfiguration.BlackSkullDurationDays);
+        var redSkullEndingDate = DateTime.UtcNow.AddDays(pvpConfiguration.RedSkullDurationDays);
+        var whiteSkullEndingDate = DateTime.UtcNow.AddDays(pvpConfiguration.WhiteSkullDurationMinutes);
 
         // Check the player's unjustified kills and set their skull accordingly
         if (aggressor.NumberOfUnjustifiedKillsLastDay >= pvpConfiguration.DayKillsToBlackSkull)
@@ -113,13 +113,13 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
 
         if (damageRecord is null)
         {
-            aggressor.SetSkull(Skull.Yellow, DateTime.Now.AddMilliseconds(logoutBlockDuration), victim);
+            aggressor.SetSkull(Skull.Yellow, DateTime.UtcNow.AddMilliseconds(logoutBlockDuration), victim);
             return;
         }
 
         if (damageRecord.LastDamageTime >=
-            DateTime.Now.Ticks - TimeSpan.FromMilliseconds(logoutBlockDuration).Ticks) return;
+            DateTime.UtcNow.Ticks - TimeSpan.FromMilliseconds(logoutBlockDuration).Ticks) return;
 
-        aggressor.SetSkull(Skull.Yellow, DateTime.Now.AddMilliseconds(logoutBlockDuration), victim);
+        aggressor.SetSkull(Skull.Yellow, DateTime.UtcNow.AddMilliseconds(logoutBlockDuration), victim);
     }
 }

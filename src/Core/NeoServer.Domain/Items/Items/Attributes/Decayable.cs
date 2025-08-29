@@ -43,7 +43,7 @@ public class Decayable : IDecay
             if (IsPaused) return _lastElapsed;
             var elapsedSeconds = _startedToDecayTime == 0
                 ? 0
-                : (uint)Math.Ceiling(((ulong)DateTime.Now.Ticks - _startedToDecayTime) /
+                : (uint)Math.Ceiling(((ulong)DateTime.UtcNow.Ticks - _startedToDecayTime) /
                                      (decimal)TimeSpan.TicksPerSecond);
 
             return _lastElapsed + elapsedSeconds;
@@ -57,7 +57,7 @@ public class Decayable : IDecay
     {
         if (Expired) return;
         IsPaused = false;
-        _startedToDecayTime = (ulong)DateTime.Now.Ticks;
+        _startedToDecayTime = (ulong)DateTime.UtcNow.Ticks;
 
         OnStarted?.Invoke(_item);
     }
@@ -66,7 +66,7 @@ public class Decayable : IDecay
     {
         if (_startedToDecayTime == 0) return;
         IsPaused = true;
-        _lastElapsed += (uint)(((ulong)DateTime.Now.Ticks - _startedToDecayTime) / TimeSpan.TicksPerSecond);
+        _lastElapsed += (uint)(((ulong)DateTime.UtcNow.Ticks - _startedToDecayTime) / TimeSpan.TicksPerSecond);
         OnPaused?.Invoke(this);
     }
 
