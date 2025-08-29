@@ -76,7 +76,7 @@ To connect to the self-hosted server for development, please use the following c
 - **Quest System**: :heavy_check_mark:
 - **Report System**: :heavy_check_mark:
 - **Safe Trade**: :heavy_check_mark:
-- **Stamina System**: :warning:
+- **Stamina System**: :heavy_check_mark:
 - **Summon**: :heavy_check_mark:
 - **War System**: :warning:
 - **Lua Scripting (Revscript)**: :arrows_counterclockwise:
