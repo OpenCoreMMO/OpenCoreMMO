@@ -128,6 +128,11 @@ public class PlayerLoader : IPlayerLoader
             LastLogOut = playerEntity.LastLogOut
         };
 
+        if (!_gameConfiguration.StaminaEnabled)
+        {
+            player.Group.EnableFlag(PlayerFlag.IgnoreStamina);
+        }
+
         player.PlayerSkull = new PlayerSkull(player, playerEntity.Skull, playerEntity.SkullEndsAt);
 
         player.SetCurrentTile(currentTile);

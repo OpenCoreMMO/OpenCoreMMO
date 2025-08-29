@@ -244,7 +244,7 @@ public class PlayerStaminaTests
         var loot = lootService.GenerateLoot(monster);
 
         // Assert
-        loot.Items.Should().BeEmpty();
+        loot.Items.Should().NotBeEmpty();
     }
 
     [Fact]

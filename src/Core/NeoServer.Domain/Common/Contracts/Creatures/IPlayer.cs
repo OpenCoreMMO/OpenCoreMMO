@@ -152,6 +152,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     bool IsPacified { get; }
     DateTime? LastLogIn { get; }
     DateTime? LastLogOut { get; set; }
+    bool IgnoreStamina { get; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 

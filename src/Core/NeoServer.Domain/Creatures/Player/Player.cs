@@ -213,7 +213,10 @@ public class Player : CombatActor, IPlayer
     public DateTime? SkullEndsAt => PlayerSkull.SkullEndsAt;
     public DateTime? LastLogIn { get; private set; }
     public required DateTime? LastLogOut { get; set; }
-    public uint LoggedOutTotalMinutes =>!LastLogIn.HasValue || !LastLogOut.HasValue ? 0 : (uint)  (LastLogIn.Value - LastLogOut.Value).TotalMinutes;
+
+    public uint LoggedOutTotalMinutes => !LastLogIn.HasValue || !LastLogOut.HasValue
+        ? 0
+        : (uint)(LastLogIn.Value - LastLogOut.Value).TotalMinutes;
 
     public bool Shopping => TradingWithNpc is not null;
 
@@ -226,21 +229,18 @@ public class Player : CombatActor, IPlayer
     public byte MaxSoulPoints { get; }
 
     public IInventory Inventory { get; private set; }
+
+    #region Stamina
+
     public ushort StaminaMinutes { get; private set; }
     public bool HasLowStamina => StaminaMinutes <= GameConstants.STAMINA_THRESHOLD_MINUTES;
     public bool HasStaminaBonus => StaminaMinutes >= GameConstants.STAMINA_BONUS_MINUTES;
     public bool HasNoStamina => StaminaMinutes <= 0;
+    public bool IgnoreStamina => Group.FlagIsEnabled(PlayerFlag.IgnoreStamina);
+
+    #endregion
+
     public long LastTimeExperienceGain { get; private set; }
-
-    public long ApplyExperienceBonus(long experience)
-    {
-        if (HasStaminaBonus && HasPremiumTime)
-        {
-            experience += experience * GameConstants.STAMINA_BONUS_EXP_PERCENTAGE / 100;
-        }
-
-        return experience;
-    }
 
     public uint Experience
     {
@@ -258,34 +258,50 @@ public class Player : CombatActor, IPlayer
 
     public byte LevelPercent => GetSkillPercent(SkillType.Level);
 
-    public override void GainExperience(long exp)
+    public override void GainExperience(long experience)
     {
-        if (exp == 0) return;
+        if (experience == 0) return;
 
-        if (HasLowStamina)
+        if (!IgnoreStamina)
         {
-            // Experience gain is halved when stamina is below threshold
-            exp += exp * GameConstants.STAMINA_THRESHOLD_EXP_PERCENTAGE / 100;
-        }
+            experience = ApplyStaminaEffectOnExperienceGain(experience);
 
-        if (HasNoStamina)
-        {
-            exp = 0;
-        }
+            var elapsedSecondsSinceLastGain =
+                (DateTime.UtcNow.Ticks - LastTimeExperienceGain) / TimeSpan.TicksPerSecond;
 
-        exp = ApplyExperienceBonus(exp);
-
-        var elapsedSecondsSinceLastGain = (DateTime.UtcNow.Ticks - LastTimeExperienceGain) / TimeSpan.TicksPerSecond;
-
-        if (elapsedSecondsSinceLastGain >= 60)
-        {
-            ConsumeStamina();
+            if (elapsedSecondsSinceLastGain >= 60)
+            {
+                ConsumeStamina();
+            }
         }
 
         LastTimeExperienceGain = DateTime.UtcNow.Ticks;
 
-        IncreaseSkillCounter(SkillType.Level, exp);
-        base.GainExperience(exp);
+        IncreaseSkillCounter(SkillType.Level, experience);
+        base.GainExperience(experience);
+    }
+
+    public long ApplyStaminaEffectOnExperienceGain(long experience)
+    {
+        
+        if (HasNoStamina)
+        {
+            return 0;
+        }
+        
+        if (HasLowStamina)
+        {
+            // Experience gain is halved when stamina is below threshold
+            experience += experience * GameConstants.STAMINA_THRESHOLD_EXP_PERCENTAGE / 100;
+            return experience;
+        }
+
+        if (HasStaminaBonus && HasPremiumTime)
+        {
+            experience += experience * GameConstants.STAMINA_BONUS_EXP_PERCENTAGE / 100;
+        }
+
+        return experience;
     }
 
     public override void LoseExperience(long exp)
@@ -303,16 +319,16 @@ public class Player : CombatActor, IPlayer
 
     public void RegenerateStamina()
     {
-        if (LastLogOut is null || LastLogIn is null) return;
+        if (LastLogOut is null || LastLogIn is null || IgnoreStamina) return;
 
         if (LoggedOutTotalMinutes <= 10) return;
 
         var multiplier = GameConstants.STAMINA_REGENERATION_EACH_MINUTES;
-        
-        if(HasStaminaBonus) multiplier *= 2;
+
+        if (HasStaminaBonus) multiplier *= 2;
 
         var minutesRecoveredSinceLoggedIn = Math.Abs((decimal)LoggedOutTotalMinutes / multiplier);
-        
+
         RecoverStamina((ushort)minutesRecoveredSinceLoggedIn);
     }
 
@@ -741,7 +757,7 @@ public class Player : CombatActor, IPlayer
         ChangeOnlineStatus(true);
         TogglePacifiedCondition(null, Tile);
         KnownCreatures.Clear();
-        
+
         LastLogIn = DateTime.UtcNow;
         RegenerateStamina();
 
