@@ -14,7 +14,7 @@ public class Event : IEvent
     public Event(int expirationMs, Action action)
     {
         Action = action;
-        ExpirationTime = DateTime.Now.AddMilliseconds(expirationMs).TimeOfDay;
+        ExpirationTime = DateTime.UtcNow.AddMilliseconds(expirationMs).TimeOfDay;
     }
 
     public TimeSpan ExpirationTime { get; }
@@ -32,7 +32,7 @@ public class Event : IEvent
     /// <summary>
     ///     Indicates whether event has expired
     /// </summary>
-    public bool HasExpired => DateTime.Now.TimeOfDay > ExpirationTime;
+    public bool HasExpired => DateTime.UtcNow.TimeOfDay > ExpirationTime;
 
     /// <summary>
     ///     Sets event to not expire

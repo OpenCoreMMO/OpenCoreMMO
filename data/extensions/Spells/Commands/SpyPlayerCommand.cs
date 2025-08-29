@@ -39,7 +39,7 @@ public class SpyPlayerCommand : CommandSpell
         var serverConfiguration = IoC.GetInstance<ServerConfiguration>();
 
         window.WrittenBy = $"{serverConfiguration.ServerName} - SERVER";
-        window.WrittenOn = DateTime.Now;
+        window.WrittenOn = DateTime.UtcNow;
 
         player.Read(window);
 

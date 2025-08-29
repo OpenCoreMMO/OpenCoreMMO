@@ -90,7 +90,7 @@ public class DamageRecordList
         {
             if (count >= deathConfiguration.MaxDeathRecords) break;
             if (record.NumberOfHits < deathConfiguration.DeathAssistCount) continue;
-            if (record.LastDamageTime >= DateTime.Now.Ticks - deathConfiguration.DeathListRequiredTime) continue;
+            if (record.LastDamageTime >= DateTime.UtcNow.Ticks - deathConfiguration.DeathListRequiredTime) continue;
 
             hasAnyUnjustifiedDamage = record.Unjustified || hasAnyUnjustifiedDamage;
 

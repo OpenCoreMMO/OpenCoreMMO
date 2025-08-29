@@ -150,6 +150,8 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     Skull Skull { get; }
     float DamageFactor { get; }
     bool IsPacified { get; }
+    DateTime? LastLogIn { get; }
+    DateTime? LastLogOut { get; set; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 
@@ -327,4 +329,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event WroteText OnWroteText;
 
     #endregion
+
+    void RegenerateStamina();
 }

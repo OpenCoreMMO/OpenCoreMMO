@@ -13,7 +13,7 @@ public static class PlayerSkullRoutine
 
     private static void RemoveYellowSkull(IPlayer player)
     {
-        if (player.PlayerSkull.YellowSkullEndsAt > DateTime.Now) return;
+        if (player.PlayerSkull.YellowSkullEndsAt > DateTime.UtcNow) return;
 
         player.PlayerSkull.RemoveYellowSkull();
     }
@@ -21,7 +21,7 @@ public static class PlayerSkullRoutine
     private static void RemoveSkull(IPlayer player)
     {
         if (player.SkullEndsAt is null) return;
-        if (player.SkullEndsAt > DateTime.Now) return;
+        if (player.SkullEndsAt > DateTime.UtcNow) return;
 
         player.RemoveSkull();
     }

@@ -114,7 +114,7 @@ public abstract class Equipment : BaseItem, IEquipment
         StartDecay();
         OnDressed?.Invoke(this);
         player.OnDressedItem(this);
-        EventAggregator.Publish(new PlayerInventoryUpdateEvent(player, this, Location.Slot, true));
+        EventAggregator.Invoke(new PlayerInventoryUpdateEvent(player, this, Location.Slot, true));
     }
 
     public void UndressFrom(IPlayer player)
@@ -128,7 +128,7 @@ public abstract class Equipment : BaseItem, IEquipment
         PlayerDressing = null;
         PauseDecay();
         OnUndressed?.Invoke(this);
-        EventAggregator.Publish(new PlayerInventoryUpdateEvent(player, this, Location.Slot, false));
+        EventAggregator.Invoke(new PlayerInventoryUpdateEvent(player, this, Location.Slot, false));
     }
 
     #endregion

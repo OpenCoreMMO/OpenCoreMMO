@@ -13,7 +13,7 @@ public class LootContainer : Container.Container, ILootContainer
     public LootContainer(IItemType type, Location location, Loot loot) : base(type, location)
     {
         Loot = loot;
-        _createdAt = DateTime.Now;
+        _createdAt = DateTime.UtcNow;
     }
 
     public Loot Loot { get; }
@@ -35,7 +35,7 @@ public class LootContainer : Container.Container, ILootContainer
 
         if (Loot.Owners.Contains(player)) return true;
 
-        if ((DateTime.Now - _createdAt).TotalSeconds > 10) return true; //todo: add 10 seconds to game configuration
+        if ((DateTime.UtcNow - _createdAt).TotalSeconds > 10) return true; //todo: add 10 seconds to game configuration
 
         return false;
     }

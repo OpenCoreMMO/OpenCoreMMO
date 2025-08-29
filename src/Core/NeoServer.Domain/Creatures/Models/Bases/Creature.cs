@@ -209,7 +209,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         LightColor = color;
         LightLevel = level;
 
-        EventAggregator.Publish(new CreatureChangedLightEvent(this));
+        EventAggregator.Invoke(new CreatureChangedLightEvent(this));
     }
 
     public void RemoveLight()

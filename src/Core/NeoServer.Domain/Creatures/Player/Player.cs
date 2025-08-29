@@ -170,6 +170,7 @@ public class Player : CombatActor, IPlayer
 
     public Gender Gender { get; set; }
     public int PremiumTime { get; init; }
+    public bool HasPremiumTime => PremiumTime > 0;
     public ITown Town { get; set; }
     public IVip Vip { get; }
     public override IOutfit Outfit { get; protected set; }
@@ -210,6 +211,9 @@ public class Player : CombatActor, IPlayer
     public IPlayerSkull PlayerSkull { get; set; }
     public Skull Skull => PlayerSkull.Skull;
     public DateTime? SkullEndsAt => PlayerSkull.SkullEndsAt;
+    public DateTime? LastLogIn { get; private set; }
+    public required DateTime? LastLogOut { get; set; }
+    public uint LoggedOutTotalMinutes =>!LastLogIn.HasValue || !LastLogOut.HasValue ? 0 : (uint)  (LastLogIn.Value - LastLogOut.Value).TotalMinutes;
 
     public bool Shopping => TradingWithNpc is not null;
 
@@ -222,7 +226,21 @@ public class Player : CombatActor, IPlayer
     public byte MaxSoulPoints { get; }
 
     public IInventory Inventory { get; private set; }
-    public ushort StaminaMinutes { get; }
+    public ushort StaminaMinutes { get; private set; }
+    public bool HasLowStamina => StaminaMinutes <= GameConstants.STAMINA_THRESHOLD_MINUTES;
+    public bool HasStaminaBonus => StaminaMinutes >= GameConstants.STAMINA_BONUS_MINUTES;
+    public bool HasNoStamina => StaminaMinutes <= 0;
+    public long LastTimeExperienceGain { get; private set; }
+
+    public long ApplyExperienceBonus(long experience)
+    {
+        if (HasStaminaBonus && HasPremiumTime)
+        {
+            experience += experience * GameConstants.STAMINA_BONUS_EXP_PERCENTAGE / 100;
+        }
+
+        return experience;
+    }
 
     public uint Experience
     {
@@ -244,6 +262,28 @@ public class Player : CombatActor, IPlayer
     {
         if (exp == 0) return;
 
+        if (HasLowStamina)
+        {
+            // Experience gain is halved when stamina is below threshold
+            exp += exp * GameConstants.STAMINA_THRESHOLD_EXP_PERCENTAGE / 100;
+        }
+
+        if (HasNoStamina)
+        {
+            exp = 0;
+        }
+
+        exp = ApplyExperienceBonus(exp);
+
+        var elapsedSecondsSinceLastGain = (DateTime.UtcNow.Ticks - LastTimeExperienceGain) / TimeSpan.TicksPerSecond;
+
+        if (elapsedSecondsSinceLastGain >= 60)
+        {
+            ConsumeStamina();
+        }
+
+        LastTimeExperienceGain = DateTime.UtcNow.Ticks;
+
         IncreaseSkillCounter(SkillType.Level, exp);
         base.GainExperience(exp);
     }
@@ -254,6 +294,31 @@ public class Player : CombatActor, IPlayer
 
         DecreaseSkillCounter(SkillType.Level, exp);
         base.LoseExperience(exp);
+    }
+
+    public void ConsumeStamina(ushort seconds = 60)
+    {
+        StaminaMinutes = (ushort)Math.Max(StaminaMinutes - seconds / TimeSpan.SecondsPerMinute, 0);
+    }
+
+    public void RegenerateStamina()
+    {
+        if (LastLogOut is null || LastLogIn is null) return;
+
+        if (LoggedOutTotalMinutes <= 10) return;
+
+        var multiplier = GameConstants.STAMINA_REGENERATION_EACH_MINUTES;
+        
+        if(HasStaminaBonus) multiplier *= 2;
+
+        var minutesRecoveredSinceLoggedIn = Math.Abs((decimal)LoggedOutTotalMinutes / multiplier);
+        
+        RecoverStamina((ushort)minutesRecoveredSinceLoggedIn);
+    }
+
+    public void RecoverStamina(uint staminaMinutes)
+    {
+        StaminaMinutes = (ushort)Math.Min(StaminaMinutes + staminaMinutes, GameConstants.STAMINA_MAX_MINUTES);
     }
 
     public override decimal AttackSpeed => Vocation.AttackSpeed == 0 ? base.AttackSpeed : Vocation.AttackSpeed;
@@ -399,7 +464,7 @@ public class Player : CombatActor, IPlayer
 
     public void AddKnownCreature(uint creatureId)
     {
-        KnownCreatures.TryAdd(creatureId, DateTime.Now.Ticks);
+        KnownCreatures.TryAdd(creatureId, DateTime.UtcNow.Ticks);
     }
 
     public uint ChooseToRemoveFromKnownSet()
@@ -433,7 +498,7 @@ public class Player : CombatActor, IPlayer
         Containers.CloseDistantContainers();
         base.OnMoved(fromTile, toTile, spectators);
 
-        EventAggregator.Publish(new PlayerWalkEvent(this, Direction));
+        EventAggregator.Invoke(new PlayerWalkEvent(this, Direction));
     }
 
     public override bool CanSee(ICreature otherCreature)
@@ -631,7 +696,7 @@ public class Player : CombatActor, IPlayer
 
     public void Read(IReadable readable)
     {
-        EventAggregator.Publish(new PlayerReadTextEvent(this, readable, readable.Text));
+        EventAggregator.Invoke(new PlayerReadTextEvent(this, readable, readable.Text));
     }
 
     public void Write(IReadable readable, string text)
@@ -648,7 +713,7 @@ public class Player : CombatActor, IPlayer
 
     public bool Logout(bool forced = false)
     {
-        if (CannotLogout && forced == false)
+        if (CannotLogout && !forced)
         {
             OperationFailService.Send(CreatureId, "You may not logout during or immediately after a fight");
             return false;
@@ -662,6 +727,7 @@ public class Player : CombatActor, IPlayer
         PlayerParty.LeaveParty();
         PlayerParty.RejectAllInvites();
         PlayerSkull.RemoveYellowSkull();
+        LastLogOut = DateTime.UtcNow;
 
         OnLoggedOut?.Invoke(this);
         return true;
@@ -675,7 +741,12 @@ public class Player : CombatActor, IPlayer
         ChangeOnlineStatus(true);
         TogglePacifiedCondition(null, Tile);
         KnownCreatures.Clear();
+        
+        LastLogIn = DateTime.UtcNow;
+        RegenerateStamina();
+
         OnLoggedIn?.Invoke(this);
+
 
         return true;
     }
@@ -1363,6 +1434,7 @@ public class Player : CombatActor, IPlayer
 
     private void TogglePacifiedCondition(IDynamicTile fromTile, IDynamicTile toTile)
     {
+        if (toTile is null) return;
         switch (fromTile?.ProtectionZone)
         {
             case null when toTile.ProtectionZone:
@@ -1492,12 +1564,12 @@ public class Player : CombatActor, IPlayer
         var oldValue = GetStorageValue(key);
         Storages.AddOrUpdate(key, value);
         //todo: implement current time
-        EventAggregator.Publish(new PlayerStorageUpdateEvent(this, key, value, oldValue, 0));
+        EventAggregator.Invoke(new PlayerStorageUpdateEvent(this, key, value, oldValue, 0));
     }
 
     public override void Think(int interval)
     {
-        EventAggregator.Publish(new PlayerThinkEvent(this, interval));
+        EventAggregator.Invoke(new PlayerThinkEvent(this, interval));
     }
 
     #endregion
@@ -1534,7 +1606,7 @@ public class Player : CombatActor, IPlayer
         if (Guild == guild) return;
 
         var oldGuild = Guild;
-        
+
         // Clear guild data
         GuildNick = string.Empty;
         Guild = null;
@@ -1545,7 +1617,7 @@ public class Player : CombatActor, IPlayer
             // Set new guild
             Guild = guild;
             GuildId = guild.Id;
-            
+
             // Get default rank (level 1)
             var defaultRank = guild.GetRankByLevel(1);
             if (defaultRank != null)

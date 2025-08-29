@@ -49,7 +49,7 @@ public class CharacterListPacket : OutgoingPacket
 
         var premiumTimeDays = (ushort)(_accountEntity.PremiumTimeEndAt is null
             ? 0
-            : (_accountEntity.PremiumTimeEndAt.Value - DateTime.Now).TotalDays);
+            : (_accountEntity.PremiumTimeEndAt.Value - DateTime.UtcNow).TotalDays);
         message.AddUInt16(premiumTimeDays);
     }
 
