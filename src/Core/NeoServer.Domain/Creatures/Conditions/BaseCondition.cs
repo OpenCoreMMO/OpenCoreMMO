@@ -28,7 +28,7 @@ public abstract class BaseCondition : ICondition
     public ConditionIconType Icons => 0;
 
     public abstract ConditionType Type { get; }
-    public long RemainingTime => (EndTime - DateTime.Now.Ticks) / TimeSpan.TicksPerMillisecond;
+    public long RemainingTime => (EndTime - DateTime.UtcNow.Ticks) / TimeSpan.TicksPerMillisecond;
 
     public FormulaValues FormulaValues { get; set; }
     public Dictionary<ConditionParamType, uint> Parameters { get; set; } = new();
@@ -64,10 +64,10 @@ public abstract class BaseCondition : ICondition
 
     public virtual bool Start(ICreature creature)
     {
-        StartedAt = DateTime.Now.Ticks;
-        EndTime = DateTime.Now.Ticks + Duration;
+        StartedAt = DateTime.UtcNow.Ticks;
+        EndTime = DateTime.UtcNow.Ticks + Duration;
         return true;
     }
 
-    public virtual bool HasExpired => IsPersistent is false && EndTime < DateTime.Now.Ticks;
+    public virtual bool HasExpired => IsPersistent is false && EndTime < DateTime.UtcNow.Ticks;
 }

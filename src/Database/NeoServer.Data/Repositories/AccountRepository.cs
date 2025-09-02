@@ -51,6 +51,8 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
             .ThenInclude(x => x.Player)
             .Include(x => x.GuildMember)
             .ThenInclude(x => x.Guild)
+            .Include(x => x.GuildMember)
+            .ThenInclude(x => x.Rank)
             .Include(x => x.PlayerStorages);
 
         if (includeDeathList)
@@ -63,7 +65,7 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
 
         if (includeKillsLastMonth)
         {
-            var lastMonth = DateTime.Now.AddMonths(-1).ToUniversalTime();
+            var lastMonth = DateTime.UtcNow.AddMonths(-1).ToUniversalTime();
             result.KillsLastMonth = await context.PlayerDeathKillers
                 .Include(x => x.PlayerDeath)
                 .Where(x => x.PlayerId == result.Id && x.PlayerDeath.DeathDateTime >= lastMonth)
@@ -116,7 +118,7 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
             .ExecuteUpdateAsync(x
                 => x.SetProperty(y => y.BannedBy, bannedByAccountId)
                     .SetProperty(y => y.BanishmentReason, reason)
-                    .SetProperty(y => y.BanishedAt, DateTime.Now));
+                    .SetProperty(y => y.BanishedAt, DateTime.UtcNow));
     }
 
     #endregion

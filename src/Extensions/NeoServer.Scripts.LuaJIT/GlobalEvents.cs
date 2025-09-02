@@ -36,7 +36,7 @@ public class GlobalEvents(
 
     public void Timer()
     {
-        var now = DateTime.Now;
+        var now = DateTime.UtcNow;
         var nextScheduledTime = long.MaxValue;
 
         foreach (var globalEvent in _timerMap.Values.ToList())

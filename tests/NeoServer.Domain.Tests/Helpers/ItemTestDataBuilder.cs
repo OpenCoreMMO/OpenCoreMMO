@@ -64,6 +64,32 @@ public class ItemTestDataBuilder
         return item;
     }
 
+    public static Parcel CreateParcel(byte capacity = 6, float weight = 0, string name = "bag",
+        IEnumerable<IItem> children = null, ushort id = 0,
+        (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
+        (ItemAttribute, IConvertible)[] itemAttributes = null)
+    {
+        var itemType = new ItemType();
+        itemType.SetId(id);
+        itemType.SetClientId(id);
+        itemType.SetName(name);
+        itemType.SetArticle("a");
+        itemType.Attributes.SetAttribute(ItemTypeAttribute.Capacity, capacity);
+        itemType.Attributes.SetAttribute(ItemTypeAttribute.Weight, weight);
+        itemType.SetFlag(ItemFlag.Movable);
+
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
+
+        LoadItemTypeAttributes(itemType, itemTypeAttributes);
+
+        var item = new Parcel(itemType, new Location(100, 100, 7), children);
+        LoadItemAttributes(item, itemAttributes);
+        return item;
+    }
     public static Container CreateLootContainer(byte capacity = 6, string name = "bag", Loot loot = null,
         (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
         (ItemAttribute, IConvertible)[] itemAttributes = null)
@@ -139,7 +165,7 @@ public class ItemTestDataBuilder
         return item;
     }
 
-    public static Depot.Depot CreateDepot(ushort id = 1, float weight = 20, List<IItem> items = null,
+    public static Locker.Locker CreateLocker(ushort id = 1, float weight = 20, List<IItem> items = null,
         (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
         (ItemAttribute, IConvertible)[] itemAttributes = null)
     {
@@ -157,7 +183,30 @@ public class ItemTestDataBuilder
 
         LoadItemTypeAttributes(itemType, itemTypeAttributes);
 
-        var item = new Depot.Depot(itemType, new Location(100, 100, 7), items);
+        var item = new Locker.Locker(itemType, new Location(100, 100, 7), items);
+        LoadItemAttributes(item, itemAttributes);
+        return item;
+    }
+    
+    public static Container CreateMailInbox(ushort id = 2593, float weight = 20, List<IItem> items = null,
+        (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
+        (ItemAttribute, IConvertible)[] itemAttributes = null)
+    {
+        var itemType = new ItemType();
+        itemType.SetClientId(id);
+        itemType.SetId(id);
+        itemType.Attributes.SetAttribute(ItemTypeAttribute.Capacity, 20);
+        itemType.Attributes.SetAttribute(ItemTypeAttribute.Weight, weight);
+
+        if (itemAttributes == null)
+            itemAttributes =
+            [
+                (ItemAttribute.Count, 1)
+            ];
+
+        LoadItemTypeAttributes(itemType, itemTypeAttributes);
+
+        var item = new Container(itemType, new Location(100, 100, 7), items);
         LoadItemAttributes(item, itemAttributes);
         return item;
     }
@@ -234,8 +283,19 @@ public class ItemTestDataBuilder
         LoadItemAttributes(item, itemAttributes);
         return item;
     }
+    
+    public static IItemType CreateMoveableItemMetadata(ushort id)
+    {
+        var type = new ItemType();
+        type.SetClientId(id);
+        type.SetId(id);
+        type.SetName("item");
+        type.Flags.Add(ItemFlag.Movable);
+        type.Attributes.SetAttribute(ItemTypeAttribute.Count, 1);
+        return type;
+    }
 
-    public static IItem CreatePot(ushort id,
+    public static IItem CreatePotion(ushort id,
         (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
         (ItemAttribute, IConvertible)[] itemAttributes = null)
     {

@@ -15,7 +15,7 @@ public static class PlayerPingRoutine
     {
         if (player.IsDead) return;
 
-        var now = DateTime.Now.Ticks;
+        var now = DateTime.UtcNow.Ticks;
 
         if (!game.CreatureManager.GetPlayerConnection(player.CreatureId, out var connection)) return;
 

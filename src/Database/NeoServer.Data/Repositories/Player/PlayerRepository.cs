@@ -15,7 +15,7 @@ using Serilog;
 
 namespace NeoServer.Data.Repositories.Player;
 
-public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
+public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository, Domain.Repositories.IPlayerRepository
 {
     #region constructors
 
@@ -149,7 +149,59 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository
         playerEntity.Vocation = player.VocationType;
         playerEntity.Skull = player.Skull;
         playerEntity.SkullEndsAt = player.SkullEndsAt;
+        playerEntity.LastLogOut = player.LastLogOut;
+
+        // Update guild membership
+        await UpdateGuildMembership(player, neoContext);
 
         neoContext.Update(playerEntity);
+    }
+
+    private static async Task UpdateGuildMembership(IPlayer player, NeoContext neoContext)
+    {
+        // First, remove any existing guild membership for this player
+        var existingMembership = await neoContext.GuildMemberships
+            .FirstOrDefaultAsync(gm => gm.PlayerId == player.Id);
+
+        if (existingMembership != null)
+        {
+            neoContext.GuildMemberships.Remove(existingMembership);
+        }
+
+        // If player has a guild, create new membership
+        if (player.Guild != null && player.GuildId != 0)
+        {
+            var guildMembership = new GuildMembershipEntity
+            {
+                PlayerId = (int)player.Id,
+                GuildId = player.GuildId,
+                RankId = player.GuildRank?.Id ?? 1, // Default to rank 1 (member) if no rank set
+                Nick = player.GuildNick ?? string.Empty
+            };
+
+            await neoContext.GuildMemberships.AddAsync(guildMembership);
+        }
+    }
+
+    public async Task<int> GetIdByName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return 0;
+        }
+
+        await using var context = NewDbContext;
+
+        return (await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower()))?.Id ?? 0;
+    }
+
+    public async Task UpdateLastLogInDate(int playerId, DateTime lastLogIn)
+    {
+        await using var context = NewDbContext;
+        var playerEntity = await context.Players.FindAsync(playerId);
+
+        if (playerEntity is null) return;
+        playerEntity.LastLogIn = lastLogIn;
+        await context.SaveChangesAsync();
     }
 }

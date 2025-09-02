@@ -8,13 +8,13 @@ public record GameConfiguration(
     int LogoutBlockDuration = 60 * 1000,
     int ProtectionZoneBlockDuration = 60 * 1000,
     bool InfiniteRuneCharges = false,
+    bool StaminaEnabled = true,
     Dictionary<string, double> SkillsRate = null,
     DeathConfiguration Death = null,
     PvPConfiguration PvP = null,
     CombatConfiguration Combat = null,
     ReportConfiguration Report = null
 );
-
 public record CombatConfiguration(
     bool InfiniteAmmo = false,
     bool InfiniteThrowingWeapon = false,

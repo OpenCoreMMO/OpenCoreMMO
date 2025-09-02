@@ -98,6 +98,11 @@ public abstract class BaseTile : ITile
             if (!item.CanBeMoved) SetFlag(TileFlags.ImmovableNoFieldBlockPath);
         }
 
+        if (item.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) == "mailbox")
+        {
+            SetFlag(TileFlags.MailBox);
+        }
+
         if (item.Metadata.HasFlag(ItemFlag.BlockProjectTile)) SetFlag(TileFlags.BlockProjecTile);
 
         if (item.Metadata.Attributes.TryGetAttribute(ItemTypeAttribute.BlockProjectTile, out int value) && value == 1)
@@ -122,7 +127,7 @@ public abstract class BaseTile : ITile
         // }
 
 
-        if (item is Depot.Depot) SetFlag(TileFlags.Depot);
+        if (item is Locker.Locker) SetFlag(TileFlags.Depot);
 
         if (item.Metadata.HasFlag(ItemFlag.Hangable)) //todo: might be wrong
             SetFlag(TileFlags.SupportsHangable);

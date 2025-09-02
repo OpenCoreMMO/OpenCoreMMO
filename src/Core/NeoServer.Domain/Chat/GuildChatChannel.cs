@@ -15,22 +15,57 @@ public class GuildChatChannel(ushort id, string name, Guild.Guild guild) : ChatC
 
     public override bool AddUser(IPlayer player)
     {
-        if (player.Guild is null) return false;
-        if (Guild is null) return false;
+        if (player.Guild is null) 
+        {
+            return false;
+        }
+        
+        if (Guild is null) 
+        {
+            return false;
+        }
 
-        if (!Guild.HasMember(player)) return false;
+        if (!Guild.HasMember(player)) 
+        {
+            return false;
+        }
 
-        return base.AddUser(player);
+        // Skip the base PlayerCanJoin validation and go directly to the core AddUser logic
+        if (HasUser(player)) 
+        {
+            return false;
+        }
+        
+        if (users.TryGetValue(player.Id, out var user))
+        {
+            if (user.Removed)
+            {
+                user.MarkAsAdded();
+                return true;
+            }
+            return false;
+        }
+
+        var success = users.TryAdd(player.Id, new UserChat { Player = player });
+        return success;
     }
 
     public override SpeechType GetTextColor(IPlayer player)
     {
-        if (Guild.GetMemberLevel(player) is not { } guildMember) return SpeechType.ChannelYellowText;
-
-        return guildMember.Level switch
+        var rank = player.GuildRank;
+        
+        // If rank is null, use default color
+        if (rank == null)
         {
-            GuildRank.Leader => SpeechType.ChannelOrangeText,
-            _ => SpeechType.ChannelYellowText
+            return SpeechType.ChannelYellowText; // Default to member color
+        }
+        
+        return rank.Level switch
+        {
+            3 => SpeechType.ChannelRed1Text,    // Leader - red color
+            2 => SpeechType.ChannelOrangeText,  // Vice-Leader - orange color  
+            1 => SpeechType.ChannelYellowText,  // Member - yellow color
+            _ => SpeechType.ChannelYellowText   // Default - yellow color
         };
     }
 }

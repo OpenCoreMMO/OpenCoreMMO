@@ -27,11 +27,37 @@ public class LootService(GameConfiguration gameConfiguration, IItemFactory itemF
     {
         lootRate = lootRate > 0 ? lootRate : gameConfiguration.LootRate;
 
-        var lootItems = GetMonsterLoot(monster.Metadata.Loot.Items, lootRate);
+        var aggressors = GetLootOwners(monster);
 
-        var enemies = GetLootOwners(monster);
+        var generateLoot = false;
 
-        var loot = new Loot(lootItems, enemies);
+        //Check stamina of players in the enemies list
+
+        foreach (var aggressor in aggressors)
+        {
+            var aggressorHasEnoughStamina =
+                aggressor is Player.Player { HasLowStamina: false } or Player.Player { IgnoreStamina: true };
+            
+            var summonOfAggressorHasEnoughStamina =
+                aggressor is ISummon { Master: Player.Player { HasLowStamina: false } }
+                    or ISummon { Master: Player.Player { IgnoreStamina: true } };
+
+            //If the aggressor has enough stamina, generate loot
+            if (aggressorHasEnoughStamina || summonOfAggressorHasEnoughStamina || aggressor is IMonster and not ISummon)
+            {
+                generateLoot = true;
+            }
+        }
+
+        LootItem[] lootItems = null;
+
+        //Only generate loot if there is at least one valid enemy with enough stamina
+        if (generateLoot)
+        {
+            lootItems = GetMonsterLoot(monster.Metadata.Loot.Items, lootRate);
+        }
+
+        var loot = new Loot(lootItems ?? [], aggressors);
 
         monster.RaiseDroppedLootEvent(monster, loot);
 

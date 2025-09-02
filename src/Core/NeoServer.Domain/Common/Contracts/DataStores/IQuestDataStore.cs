@@ -2,6 +2,6 @@
 
 namespace NeoServer.Domain.Common.Contracts.DataStores;
 
-public interface IQuestDataStore : IDataStore<(ushort ActionId, uint UniqueId), QuestData>
+public interface IQuestDataStore : IDataStore<uint, Quest.Quest>
 {
 }

@@ -32,7 +32,7 @@ public class PlayerChannel : IPlayerChannel
     {
         get
         {
-            if (_owner.HasGuild) yield return _owner.Guild?.Channel;
+            if (_owner.HasGuild && _owner.Guild?.Channel is not null) yield return _owner.Guild.Channel;
             if (_owner.PlayerParty.Party?.Channel is not null) yield return _owner.PlayerParty.Party.Channel;
         }
     }

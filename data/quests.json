@@ -1,10 +1,58 @@
 ﻿[
-	{ "name": "Chain Armor Quest", "aid": 2464, "uid": 60025 },
-	{ "name": "Brass Armor Quest", "aid": 2465, "uid": 60030 },
-	{ "name": null, "aid": 1990, "uid": 60023 },
-	{ "name": null, "aid": 0, "uid": 60027, "rewards": [{"id":1987, "items":[{"id":2148, "amount": 40 },{"id":2544, "amount": 12 }]}] },
-	{ "name": "Key 4601 Quest", "aid": 2089, "uid": 60026 },
-	{ "name": "Test Quest", "aid": 2090, "uid": 60031, "auto-load": false }
+	{
+		"name": "Dark Helmet Quest",
+		"startstorageid": 9003
+	},
+	{
+		"name": "Dwarven Shield Quest",
+		"startstorageid": 9002
+	},
+	{
+		"name": "Combat Knife Quest",
+		"startstorageid": 9004,
+		"startstoragevalue": 1,
+		"missions": [
+			{
+				"name": "Beat the Knife Master",
+				"storageid": 9004,
+				"startvalue": 1,
+				"endvalue": 3,
+				"ignoreendvalue": false,
+				"states": [
+					{
+						"id": 1,
+						"description": "Collect 3 Combat Knives"
+					},
+					{
+						"id": 2,
+						"description": "Return the knives to the quest giver"
+					},
+					{
+						"id": 3,
+						"description": "Defeat the Knife Master"
+					}
+				]
+			},
+			{
+				"name": "Return the Knives",
+				"storageid": 9004,
+				"startvalue": 4,
+				"endvalue": 5,
+				"states": [
+					{
+						"id": 1,
+						"description": "Collect 5 Combat Knives"
+					},
+					{
+						"id": 2,
+						"description": "Return the knives to the quest giver"
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": "Spike Sword Quest",
+		"startstorageid": 9001
+	}
 ]
-
-//auto-load: when true the quest aid,uid will be automatically registered

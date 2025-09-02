@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Domain.Depot;
+using NeoServer.Domain.Locker;
 using NeoServer.Domain.Spells;
 using NeoServer.Domain.World.Models.Spawns;
 using NeoServer.Server.Common.Contracts;
@@ -17,7 +17,7 @@ public static class ManagerInjection
 
 
         builder.AddSingleton<SpawnManager>();
-        builder.AddSingleton<DepotManager>();
+        builder.AddSingleton<LockerManager>();
         builder.AddSingleton<SpellListManager>();
         return builder;
     }

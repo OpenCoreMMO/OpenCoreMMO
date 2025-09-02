@@ -19,7 +19,7 @@ public class SchedulerEvent : Event, ISchedulerEvent
     /// </summary>
     public int ExpirationDelay { get; }
 
-    public double RemainingTime => ExpirationTime.Subtract(DateTime.Now.TimeOfDay).TotalMilliseconds;
+    public double RemainingTime => ExpirationTime.Subtract(DateTime.UtcNow.TimeOfDay).TotalMilliseconds;
 
     /// <summary>
     ///     Event's Id

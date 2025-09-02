@@ -6,7 +6,7 @@ public static class DateTimeHelper
 {
     public static DateTime FromUnixTime(int unixTime)
     {
-        if (unixTime <= 0) return DateTime.Now;
+        if (unixTime <= 0) return DateTime.UtcNow;
 
         var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         return epoch.AddSeconds(unixTime);
@@ -14,7 +14,7 @@ public static class DateTimeHelper
 
     public static DateTime FromUnixTime(long unixTime)
     {
-        if (unixTime <= 0) return DateTime.Now;
+        if (unixTime <= 0) return DateTime.UtcNow;
 
         var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         return epoch.AddSeconds(unixTime);
@@ -22,7 +22,7 @@ public static class DateTimeHelper
 
     public static int FromUnixTimeDaysPeriod(long unixTime)
     {
-        return DateTime.Now.Date.Subtract(FromUnixTime(unixTime).Date).Duration().Days + 1;
+        return DateTime.UtcNow.Date.Subtract(FromUnixTime(unixTime).Date).Duration().Days + 1;
     }
 
     public static int ToUnixTimeInt(DateTime date)

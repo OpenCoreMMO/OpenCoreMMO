@@ -58,7 +58,7 @@ public class ConditionDamage : BaseCondition
 
     public uint Interval
     {
-        set => _cooldown = new CooldownTime(DateTime.Now, value);
+        set => _cooldown = new CooldownTime(DateTime.UtcNow, value);
     }
 
     public override bool HasExpired => _damageQueue.Count <= 0;

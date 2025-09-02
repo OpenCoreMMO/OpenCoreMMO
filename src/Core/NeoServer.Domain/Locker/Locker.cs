@@ -4,22 +4,21 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Items.Items.Containers.Container;
 
-namespace NeoServer.Domain.Depot;
+namespace NeoServer.Domain.Locker;
 
-public class Depot : Container
+public class Locker : Container
 {
-    public Depot(IItemType type, Location location, IEnumerable<IItem> children) : base(type, location, children)
+    public Locker(IItemType type, Location location, IEnumerable<IItem> children) : base(type, location, children)
     {
     }
 
     private uint OpenedBy { get; set; }
-
+    public override byte Capacity => 2;
     public bool IsAlreadyOpened { get; private set; }
-
 
     public override void ClosedBy(IPlayer player)
     {
-        if (RootParent is not Depot || player.HasDepotOpened) return;
+        if (RootParent is not Locker || player.HasDepotOpened) return;
         SetAsClosed();
         base.ClosedBy(player);
     }

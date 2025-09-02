@@ -79,12 +79,15 @@ public sealed class PlayerEntity
 
     public Skull Skull { get; set; }
     public DateTime? SkullEndsAt { get; set; }
+    public DateTime? LastLogOut { get; set; }
+    public DateTime? LastLogIn { get; set; }
     public AccountEntity Account { get; set; }
     public ICollection<PlayerDeathEntity> Deaths { get; set; }
     public ICollection<PlayerDeathEntity> KillsLastMonth { get; set; }
 
     public ICollection<PlayerItemEntity> PlayerItems { get; set; }
     public ICollection<PlayerDepotItemEntity> PlayerDepotItems { get; set; }
+    public ICollection<PlayerMailItemEntity> PlayerMailItems { get; set; }
     public ICollection<PlayerInventoryItemEntity> PlayerInventoryItems { get; set; }
     public GuildMembershipEntity GuildMember { get; set; }
     public WorldEntity World { get; set; }

@@ -24,12 +24,16 @@ public class NeoContext : DbContext
     public DbSet<PlayerEntity> Players { get; set; }
     public DbSet<PlayerItemEntity> PlayerItems { get; set; }
     public DbSet<PlayerDepotItemEntity> PlayerDepotItems { get; set; }
+    public DbSet<PlayerMailItemEntity> PlayerMailItems { get; set; }
     public DbSet<PlayerInventoryItemEntity> PlayerInventoryItems { get; set; }
     public DbSet<AccountVipListEntity> AccountsVipList { get; set; }
     public DbSet<GuildEntity> Guilds { get; set; }
     public DbSet<GuildMembershipEntity> GuildMemberships { get; set; }
+    public DbSet<GuildRankEntity> GuildRanks { get; set; }
+    public DbSet<GuildWarEntity> GuildWars { get; set; }
+    public DbSet<GuildWarKillEntity> GuildWarKills { get; set; }
+    public DbSet<GuildInviteEntity> GuildInvites { get; set; }
     public DbSet<WorldEntity> Worlds { get; set; }
-    public DbSet<PlayerQuestEntity> PlayerQuests { get; set; }
     public DbSet<PlayerOutfitAddonEntity> PlayerOutfitAddons { get; set; }
     public DbSet<PlayerStorageEntity> PlayerStorages { get; set; }
     public DbSet<WorldRecordEntity> WorldRecords { get; set; }
@@ -58,6 +62,7 @@ public class NeoContext : DbContext
             modelBuilder.ApplyConfiguration(new ForSqLitePlayerInventoryItemEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLitePlayerItemEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLitePlayerDepotItemEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new ForSqLitePlayerMailItemEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLitePlayerEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLiteAccountEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLiteGuildEntityConfiguration());
@@ -72,7 +77,8 @@ public class NeoContext : DbContext
             modelBuilder.ApplyConfiguration(new AccountEntityConfiguration());
             modelBuilder.ApplyConfiguration(new PlayerInventoryItemEntityConfiguration());
             modelBuilder.ApplyConfiguration(new PlayerItemEntityConfiguration());
-            modelBuilder.ApplyConfiguration(new PlayerDepotItemEntitytConfiguration());
+            modelBuilder.ApplyConfiguration(new PlayerDepotItemEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new PlayerMailItemEntityConfiguration());
             modelBuilder.ApplyConfiguration(new PlayerEntityConfiguration());
             modelBuilder.ApplyConfiguration(new GuildEntityConfiguration());
             modelBuilder.ApplyConfiguration(new GuildRankEntityConfiguration());
@@ -82,10 +88,12 @@ public class NeoContext : DbContext
             modelBuilder.ApplyConfiguration(new PlayerDeathKillerEntityConfiguration());
         }
 
-        modelBuilder.ApplyConfiguration(new PlayerQuestEntityConfiguration());
         modelBuilder.ApplyConfiguration(new PlayerOutfitAddonEntityConfiguration());
         modelBuilder.ApplyConfiguration(new AccountVipListEntityConfiguration());
         modelBuilder.ApplyConfiguration(new GuildMembershipEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new GuildWarEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new GuildWarKillEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new GuildInviteEntityConfiguration());
         modelBuilder.ApplyConfiguration(new PlayerStorageEntityConfiguration());
         modelBuilder.ApplyConfiguration(new IpBanEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ReportBugEntityConfiguration());

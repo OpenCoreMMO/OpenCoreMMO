@@ -25,7 +25,7 @@ public delegate void ChangeChaseMode(IPlayer player, ChaseMode oldChaseMode, Cha
 
 public delegate void ClosedContainer(IPlayer player, byte containerId, IContainer container);
 
-public delegate void ClosedDepot(IPlayer player, byte containerId, Depot.Depot container);
+public delegate void ClosedDepot(IPlayer player, byte containerId, Locker.Locker container);
 
 public delegate void OpenedContainer(IPlayer player, byte containerId, IContainer container);
 
@@ -115,6 +115,9 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     Guild.Guild Guild { get; }
     ushort GuildId => Guild?.Id ?? default;
     bool HasGuild { get; }
+    void SetGuild(Guild.Guild guild);
+    Guild.GuildRankInfo GuildRank { get; set; }
+    string GuildNick { get; set; }
     bool Shopping { get; }
     ulong BankAmount { get; }
     IShopperNpc TradingWithNpc { get; }
@@ -147,6 +150,9 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     Skull Skull { get; }
     float DamageFactor { get; }
     bool IsPacified { get; }
+    DateTime? LastLogIn { get; }
+    DateTime? LastLogOut { get; set; }
+    bool IgnoreStamina { get; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 
@@ -324,4 +330,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event WroteText OnWroteText;
 
     #endregion
+
+    void RegenerateStamina();
 }

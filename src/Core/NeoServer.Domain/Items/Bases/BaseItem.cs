@@ -5,7 +5,9 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Items.Factories.AttributeFactory;
 using NeoServer.Domain.Items.Inspection;
+using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Items.Items.Attributes;
+using NeoServer.Domain.Items.Items.Containers;
 
 namespace NeoServer.Domain.Items.Bases;
 
@@ -30,6 +32,7 @@ public abstract class BaseItem : IItem
     public string Name => Attributes.GetAttribute(ItemAttribute.Name) ?? Metadata.Name;
     public string Article => Attributes.GetAttribute(ItemAttribute.Article) ?? Metadata.Article;
     public string Plural => Attributes.GetAttribute(ItemAttribute.PluralName) ?? Metadata.PluralName;
+    public virtual bool IsMailable => this is Parcel || this is Letter;
 
     public virtual float Weight =>
         Attributes.TryGetAttribute<float>(ItemAttribute.Weight, out var weight)
@@ -115,7 +118,9 @@ public abstract class BaseItem : IItem
             : $"You see {Article} {Name}.";
     }
 
-    public byte Amount => Attributes.GetAttribute<byte>(ItemAttribute.Count);
+    public byte Amount => Attributes.TryGetAttribute<byte>(ItemAttribute.Count, out var count)
+        ? count
+        : (byte)Metadata.Count;
 
     public virtual void Use(IPlayer usedBy)
     {

@@ -24,7 +24,7 @@ public class CooldownList
     public bool Start(CooldownType type, uint duration)
     {
         if (Expired(type)) Cooldowns.Remove(type);
-        return Cooldowns.TryAdd(type, new CooldownTime(DateTime.Now, duration));
+        return Cooldowns.TryAdd(type, new CooldownTime(DateTime.UtcNow, duration));
     }
 
     public bool Start(Guid id, uint duration)
@@ -33,7 +33,7 @@ public class CooldownList
         if (!Expired(id)) return false;
 
         GuidCooldowns.Remove(id);
-        GuidCooldowns.TryAdd(id, new CooldownTime(DateTime.Now, duration));
+        GuidCooldowns.TryAdd(id, new CooldownTime(DateTime.UtcNow, duration));
 
         return true;
     }
@@ -44,7 +44,7 @@ public class CooldownList
         if (!Expired(spell)) return false;
 
         GuidCooldowns.Remove(spell.CooldownId);
-        GuidCooldowns.TryAdd(spell.CooldownId, new CooldownTime(DateTime.Now, spell.Cooldown));
+        GuidCooldowns.TryAdd(spell.CooldownId, new CooldownTime(DateTime.UtcNow, spell.Cooldown));
 
         if (spell.HasAnyCooldownGroup) return true;
 
@@ -54,14 +54,14 @@ public class CooldownList
         {
             SpellGroupCooldowns.Remove(spell.PrimaryGroup.Id);
             SpellGroupCooldowns.TryAdd(spell.PrimaryGroup.Id,
-                new CooldownTime(DateTime.Now, spell.PrimaryGroup.Cooldown));
+                new CooldownTime(DateTime.UtcNow, spell.PrimaryGroup.Cooldown));
         }
 
         if (spell.SecondaryGroup.Id > 0 && GroupExpired(spell.SecondaryGroup.Id))
         {
             SpellGroupCooldowns.Remove(spell.SecondaryGroup.Id);
             SpellGroupCooldowns.TryAdd(spell.SecondaryGroup.Id,
-                new CooldownTime(DateTime.Now, spell.SecondaryGroup.Cooldown));
+                new CooldownTime(DateTime.UtcNow, spell.SecondaryGroup.Cooldown));
         }
 
         return true;
@@ -70,7 +70,7 @@ public class CooldownList
     public bool Start(ulong id, uint duration)
     {
         if (Expired(id)) CustomCooldowns.Remove(id);
-        return CustomCooldowns.TryAdd(id, new CooldownTime(DateTime.Now, duration));
+        return CustomCooldowns.TryAdd(id, new CooldownTime(DateTime.UtcNow, duration));
     }
 
     public bool Start(IMonsterSummon summon)
@@ -78,7 +78,7 @@ public class CooldownList
         SummonCooldowns ??= new Dictionary<string, CooldownTime>();
 
         if (Expired(summon)) SummonCooldowns.Remove(summon.Name);
-        return SummonCooldowns.TryAdd(summon.Name, new CooldownTime(DateTime.Now, summon.Interval));
+        return SummonCooldowns.TryAdd(summon.Name, new CooldownTime(DateTime.UtcNow, summon.Interval));
     }
 
     public bool Expired(CooldownType type)

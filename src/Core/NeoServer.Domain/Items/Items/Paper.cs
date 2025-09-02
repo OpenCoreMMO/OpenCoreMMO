@@ -35,7 +35,7 @@ public class Paper : BaseItem, IReadable
 
         Attributes.SetAttribute(ItemAttribute.Text, text);
         WrittenBy = writtenBy.Name;
-        WrittenOn = DateTime.Now;
+        WrittenOn = DateTime.UtcNow;
         return Result.Success;
     }
 

@@ -31,7 +31,7 @@ public class SpawnManager
             {
                 var spawnTime = TimeSpan.FromSeconds(monster.Spawn.SpawnTime);
 
-                if (DateTime.Now.TimeOfDay < deathTime + spawnTime) continue;
+                if (DateTime.UtcNow.TimeOfDay < deathTime + spawnTime) continue;
                 if (_map.ArePlayersAround(monster.Location)) continue;
             }
 

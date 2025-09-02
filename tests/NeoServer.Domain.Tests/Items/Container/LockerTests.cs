@@ -3,7 +3,7 @@ using NeoServer.Domain.Tests.Helpers.Player;
 
 namespace NeoServer.Domain.Tests.Items.Container;
 
-public class DepotTests
+public class LockerTests
 {
     [Fact]
     public void Depot_doesnt_open_if_it_is_already_opened_by_another_player()
@@ -12,7 +12,7 @@ public class DepotTests
         var player1 = PlayerTestDataBuilder.Build();
         var player2 = PlayerTestDataBuilder.Build(2);
 
-        var depot = ItemTestDataBuilder.CreateDepot();
+        var depot = ItemTestDataBuilder.CreateLocker();
 
         player1.Use(depot, 0);
 
@@ -31,7 +31,7 @@ public class DepotTests
         var player1 = PlayerTestDataBuilder.Build();
         var player2 = PlayerTestDataBuilder.Build(2);
 
-        var depot = ItemTestDataBuilder.CreateDepot();
+        var depot = ItemTestDataBuilder.CreateLocker();
 
         player1.Use(depot, 0);
 
@@ -58,7 +58,7 @@ public class DepotTests
         var player1 = PlayerTestDataBuilder.Build();
         var player2 = PlayerTestDataBuilder.Build(2);
 
-        var depot = ItemTestDataBuilder.CreateDepot();
+        var depot = ItemTestDataBuilder.CreateLocker();
         var backpack = ItemTestDataBuilder.CreateBackpack();
         depot.AddItem(backpack);
 

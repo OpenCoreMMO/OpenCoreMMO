@@ -41,5 +41,6 @@ public enum PlayerFlag : ulong
     CannotBeMuted = (ulong)1 << 36,
     IsAlwaysPremium = (ulong)1 << 37,
     IgnoreYellCheck = (ulong)1 << 38,
-    IgnoreSendPrivateCheck = (ulong)1 << 39
+    IgnoreSendPrivateCheck = (ulong)1 << 39,
+    IgnoreStamina = (ulong)1 << 40
 }
