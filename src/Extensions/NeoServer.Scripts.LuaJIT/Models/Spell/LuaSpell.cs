@@ -4,8 +4,8 @@ public abstract class LuaSpell(LuaScriptInterface scriptInterface) : Script(scri
 {
     public SpellType SpellType { get; set; }
     public int Id { get; set; }
-    public SpellGroup PrimaryGroup { get; set; }
-    public SpellGroup SecondaryGroup { get; set; }
+    public string PrimaryGroup { get; set; }
+    public string SecondaryGroup { get; set; }
     public string Name { get; set; }
     public ushort Level { get; set; }
     public ushort MagicLevel { get; set; }

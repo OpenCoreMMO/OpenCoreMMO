@@ -203,7 +203,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
 
             item.Attributes.SetAttribute(ItemTypeAttribute.CooldownTime, rune.Cooldown);
             item.Attributes.SetAttribute(ItemTypeAttribute.PrimaryGroupCooldown, rune.PrimaryGroupCooldown);
-            item.Attributes.SetAttribute(ItemTypeAttribute.PrimaryGroupCooldown, rune.SecondaryGroupCooldown);
+            item.Attributes.SetAttribute(ItemTypeAttribute.SecondaryGroupCooldown, rune.SecondaryGroupCooldown);
             item.Attributes.SetAttribute(ItemTypeAttribute.PrimaryGroup, rune.PrimaryGroup);
             item.Attributes.SetAttribute(ItemTypeAttribute.SecondaryGroup, rune.SecondaryGroup);
 
@@ -284,6 +284,9 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 instantSpell.NeedCasterTargetOrDirection = instant.NeedCasterTargetOrDirection;
                 instantSpell.NeedWeapon = instant.NeedWeapon;
                 instantSpell.HasParams = instant.HasParams;
+                instantSpell.Cooldown = instant.Cooldown;
+                instantSpell.PrimaryGroup = (instant.PrimaryGroup, instant.PrimaryGroupCooldown);
+                instantSpell.SecondaryGroup = (instant.SecondaryGroup, instant.SecondaryGroupCooldown);
             }
 
             instantSpell ??= new InstantSpell
@@ -310,7 +313,10 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 IsAggressive = instant.IsAggressive,
                 NeedCasterTargetOrDirection = instant.NeedCasterTargetOrDirection,
                 NeedWeapon = instant.NeedWeapon,
-                HasParams = instant.HasParams
+                HasParams = instant.HasParams,
+                Cooldown = instant.Cooldown,
+                PrimaryGroup = (instant.PrimaryGroup, instant.PrimaryGroupCooldown),
+                SecondaryGroup = (instant.SecondaryGroup, instant.SecondaryGroupCooldown)
             };
 
             ((InstantSpell)instantSpell).LuaInstantSpell = instant;
@@ -393,8 +399,8 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
 
         if (numberOfArgs == 0)
         {
-            Lua.PushNumber(lua, (int)spell.PrimaryGroup);
-            Lua.PushNumber(lua, (int)spell.SecondaryGroup);
+            Lua.PushString(lua, spell.PrimaryGroup);
+            Lua.PushString(lua, spell.SecondaryGroup);
             return 2;
         }
 
@@ -403,7 +409,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             if (IsNumber(lua, 2))
             {
                 var group = GetNumber<SpellGroup>(lua, 2);
-                spell.PrimaryGroup = group;
+                spell.PrimaryGroup = group.ToString();
                 PushBoolean(lua, true);
                 return 1;
             }
@@ -411,9 +417,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             if (IsString(lua, 2))
             {
                 var group = GetString(lua, 2);
-
-                //todo: LuaSpell other groups 
-                if (group == "attack") spell.PrimaryGroup = SpellGroup.Attack;
+                spell.PrimaryGroup = group;
 
                 PushBoolean(lua, true);
                 return 1;
@@ -422,10 +426,30 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
 
         if (numberOfArgs == 2)
         {
-            var primaryGroup = GetNumber<SpellGroup>(lua, 2);
-            var secondaryGroup = GetNumber<SpellGroup>(lua, 2);
-            spell.PrimaryGroup = primaryGroup;
-            spell.SecondaryGroup = secondaryGroup;
+            if (IsNumber(lua, 2))
+            {
+                var group = GetNumber<SpellGroup>(lua, 2);
+                spell.PrimaryGroup = group.ToString();
+            }
+
+            if (IsNumber(lua, 3))
+            {
+                var group = GetNumber<SpellGroup>(lua, 3);
+                spell.SecondaryGroup = group.ToString();
+            }
+
+            if (IsString(lua, 2))
+            {
+                var group = GetString(lua, 2);
+                spell.PrimaryGroup = group;
+            }
+
+            if (IsString(lua, 3))
+            {
+                var group = GetString(lua, 3);
+                spell.SecondaryGroup = group;
+            }
+
             PushBoolean(lua, true);
         }
 
