@@ -1,9 +1,9 @@
 ﻿using NeoServer.Domain.Common.Contracts.DataStores;
-using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Quest;
 
 namespace NeoServer.Data.InMemory.DataStores;
 
-public class QuestDataDataStore : DataStore<QuestDataDataStore, (ushort ActionId, uint UniqueId), QuestData>,
+public class QuestDataDataStore : DataStore<QuestDataDataStore, uint, Quest>,
     IQuestDataStore
 {
 }
