@@ -1,14 +1,14 @@
 namespace NeoServer.Domain.Spells.Entities;
 
-public enum MagicGroup
+public class MagicGroupConstants
 {
-    None = 0,
-    Attack = 1,
-    Healing = 2,
-    Support = 3,
-    Special = 4,
-    Conjure = 5, // Deprecated
-    Crippling = 6,
-    Focus = 7,
-    UltimateStrikes = 8
+    public const string NONE = "none";
+    public const string ATTACK = "attack";
+    public const string HEALING = "healing";
+    public const string SUPPORT = "support";
+    public const string SPECIAL = "special";
+    public const string CONJURE = "conjure"; // Deprecated
+    public const string CRIPPLING = "crippling";
+    public const string FOCUS = "focus";
+    public const string ULTIMATE_STRIKES = "ultimate_strikes";
 }

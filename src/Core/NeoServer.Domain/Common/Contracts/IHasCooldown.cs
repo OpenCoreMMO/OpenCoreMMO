@@ -3,13 +3,13 @@ namespace NeoServer.Domain.Common.Contracts;
 public interface IHasCooldown
 {
     public Guid CooldownId { get; }
-    public (int Id, uint Cooldown) PrimaryGroup { get; }
-    public (int Id, uint Cooldown) SecondaryGroup { get; }
-    public uint Cooldown { get; }
-    public bool HasAnyCooldownGroup => PrimaryGroup.Id != 0 || SecondaryGroup.Id != 0;
+    public (string Name, uint Cooldown) PrimaryGroup { get; set; }
+    public (string Name, uint Cooldown) SecondaryGroup { get; set; }
+    public uint Cooldown { get; set; }
+    public bool HasAnyCooldownGroup => !string.IsNullOrWhiteSpace(PrimaryGroup.Name) || !string.IsNullOrWhiteSpace(PrimaryGroup.Name);
 
-    public bool HasCooldownGroup(int id)
+    public bool HasCooldownGroup(string name)
     {
-        return PrimaryGroup.Id == id || SecondaryGroup.Id == id;
+        return PrimaryGroup.Name == name || SecondaryGroup.Name == name;
     }
 }
