@@ -18,8 +18,7 @@ public abstract class BaseSpell : ISpell
     public abstract uint Duration { get; }
 
     public abstract ConditionType ConditionType { get; }
-    public virtual MagicGroup[] Groups { get; }
-    public virtual uint[] GroupCooldown { get; }
+    public virtual string[] Groups { get; }
     public virtual bool NeedsTarget { get; set; }
 
     public virtual byte? Range { get; set; }
@@ -37,8 +36,8 @@ public abstract class BaseSpell : ISpell
     public virtual string[] Vocations { get; }
     public virtual byte[] VocationIds { get; set; }
     public Guid CooldownId { get; } = Guid.NewGuid();
-    public (int Id, uint Cooldown) PrimaryGroup { get; }
-    public (int Id, uint Cooldown) SecondaryGroup { get; }
+    public (string Name, uint Cooldown) PrimaryGroup { get; set; }
+    public (string Name, uint Cooldown) SecondaryGroup { get; set; }
     public virtual uint Cooldown { get; set; }
     public bool IsEnabled { get; set; }
     public bool IsSelfTarget { get; set; }
