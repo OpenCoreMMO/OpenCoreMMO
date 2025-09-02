@@ -66,15 +66,26 @@ public class Rune : Cumulative, IHasCooldown, IUsableRequirement
         }
     }
 
-    public (int Id, uint Cooldown) PrimaryGroup =>
-        (Metadata.Attributes.GetAttribute<int>(ItemTypeAttribute.PrimaryGroup),
+    public (string Name, uint Cooldown) PrimaryGroup
+    {
+        get => (Metadata.Attributes.GetAttribute<string>(ItemTypeAttribute.PrimaryGroup),
             Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.PrimaryGroupCooldown));
+        set => throw new NotSupportedException();
+    }
 
-    public (int Id, uint Cooldown) SecondaryGroup =>
-        (Metadata.Attributes.GetAttribute<int>(ItemTypeAttribute.SecondaryGroup),
-            Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.SecondaryGroupCooldown));
+    public (string Name, uint Cooldown) SecondaryGroup
+    {
+        get =>
+            (Metadata.Attributes.GetAttribute<string>(ItemTypeAttribute.SecondaryGroup),
+                Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.SecondaryGroupCooldown));
+        set => throw new NotSupportedException();
+    }
 
-    public uint Cooldown => Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.CooldownTime);
+    public uint Cooldown
+    {
+        get => Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.CooldownTime);
+        set => throw new NotSupportedException();
+    }
 
     public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MinimumLevel);
     public ushort MinMagicLevel => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MinimumMagicLevel);
