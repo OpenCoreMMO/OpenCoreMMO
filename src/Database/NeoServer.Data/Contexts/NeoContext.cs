@@ -34,7 +34,6 @@ public class NeoContext : DbContext
     public DbSet<GuildWarKillEntity> GuildWarKills { get; set; }
     public DbSet<GuildInviteEntity> GuildInvites { get; set; }
     public DbSet<WorldEntity> Worlds { get; set; }
-    public DbSet<PlayerQuestEntity> PlayerQuests { get; set; }
     public DbSet<PlayerOutfitAddonEntity> PlayerOutfitAddons { get; set; }
     public DbSet<PlayerStorageEntity> PlayerStorages { get; set; }
     public DbSet<WorldRecordEntity> WorldRecords { get; set; }
@@ -89,7 +88,6 @@ public class NeoContext : DbContext
             modelBuilder.ApplyConfiguration(new PlayerDeathKillerEntityConfiguration());
         }
 
-        modelBuilder.ApplyConfiguration(new PlayerQuestEntityConfiguration());
         modelBuilder.ApplyConfiguration(new PlayerOutfitAddonEntityConfiguration());
         modelBuilder.ApplyConfiguration(new AccountVipListEntityConfiguration());
         modelBuilder.ApplyConfiguration(new GuildMembershipEntityConfiguration());
