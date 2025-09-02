@@ -10,6 +10,7 @@ using NeoServer.Networking.Handlers.Player.Quest;
 using NeoServer.Networking.Handlers.Player.Store;
 using NeoServer.Networking.Handlers.Player.Movement;
 using NeoServer.Networking.Handlers.Player.Party;
+using NeoServer.Networking.Handlers.Player.Quest;
 using NeoServer.Networking.Handlers.Reports;
 using NeoServer.Networking.Handlers.Server;
 using NeoServer.Networking.Handlers.Shop;
@@ -84,6 +85,8 @@ public static class InputHandlerMap
             [GameIncomingPacketType.OpenStore] = typeof(OpenStoreHandler),
             [GameIncomingPacketType.RequestStoreOffers] = typeof(RequestStoreOffersHandler),
             [GameIncomingPacketType.Disconnect] = typeof(DisconnectHandler),
-            [GameIncomingPacketType.PingBack] = typeof(PlayerPingBackResponseHandler)
+            [GameIncomingPacketType.PingBack] = typeof(PlayerPingBackResponseHandler),
+            [GameIncomingPacketType.QuestLog] = typeof(PlayerQuestLogHandler),
+            [GameIncomingPacketType.QuestLine] = typeof(PlayerQuestLineHandler)
         };
 }

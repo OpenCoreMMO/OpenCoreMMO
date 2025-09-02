@@ -66,5 +66,7 @@ public enum GameOutgoingPacketType : byte
     TextWindow = 0x96,
     DailyRewardWindow = 0xE4, // Daily reward window
     NetworkPing = 0x40,
-    PingBack = 0x1E
+    PingBack = 0x1E,
+    QuestLog = 0xF0,
+    QuestLine = 0xF1
 }
