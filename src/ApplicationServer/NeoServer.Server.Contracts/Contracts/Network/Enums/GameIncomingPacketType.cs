@@ -83,5 +83,7 @@ public enum GameIncomingPacketType : byte
     ExtendedOpcode = 0x32,
     Disconnect = 0x0F,
     PingBack = 0x1D,
+    QuestLog = 0xF0,
+    QuestLine= 0xF1,
     Any = 0xFF // Do not send
 }

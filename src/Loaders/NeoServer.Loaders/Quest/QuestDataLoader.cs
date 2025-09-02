@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using NeoServer.Domain.Common.Contracts.DataStores;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Loaders.Helpers;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
@@ -32,39 +30,37 @@ public class QuestDataLoader
         {
             _questDataStore.Clear();
             var actions = GetQuests();
-            actions.ForEach(x => _questDataStore.AddOrUpdate(x.Key, x));
+            actions.ForEach(x => _questDataStore.AddOrUpdate(x.Id, x));
 
             return new object[] { actions.Count };
         });
     }
 
-    private List<QuestData> GetQuests()
+    private List<Domain.Quest.Quest> GetQuests()
     {
         var basePath = $"{_serverConfiguration.Data}";
         var jsonString = File.ReadAllText(Path.Combine(basePath, "quests.json"));
         var quests = JsonSerializer.Deserialize<List<QuestModel>>(jsonString, JsonSettings.Options);
 
-        return quests?.Select(x => new QuestData
+        return quests?.Select(x => new Domain.Quest.Quest
         {
-            Script = x.Script,
-            ActionId = x.ActionId,
-            UniqueId = x.UniqueId,
-            Rewards = MapRewards(x.Rewards),
             Name = x.Name,
-            Group = x.Group,
-            GroupKey = x.GroupKey,
-            AutoLoad = x.AutoLoad
+            StartId = x.StartId,
+            StartValue = x.StartValue,
+            Missions = x.Missions?.Select(m => new Domain.Quest.Mission
+            {
+                Id = m.Id,
+                Name = m.Name,
+                StartValue = m.StartValue,
+                EndValue = m.EndValue,
+                IgnoreEndValue = m.IgnoreEndValue,
+                Description = m.Description,
+                States = m.States?.Select(s => new Domain.Quest.MissionState
+                {
+                    Id = s.Id,
+                    Description = s.Description
+                }).ToList()
+            }).ToList()
         }).ToList();
-    }
-
-    private static QuestData.Reward[] MapRewards(List<QuestModel.Reward> rewards)
-    {
-        if (rewards is null) return Array.Empty<QuestData.Reward>();
-        return rewards.Select(r => new QuestData.Reward
-        {
-            Amount = r.Amount == 0 ? (byte)1 : r.Amount,
-            Children = MapRewards(r.Children),
-            ItemId = r.ItemId
-        }).ToArray();
     }
 }
