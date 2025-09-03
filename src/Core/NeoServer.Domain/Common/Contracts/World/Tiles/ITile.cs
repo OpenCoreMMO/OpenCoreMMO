@@ -38,4 +38,6 @@ public interface ITile : IThing
         if (!walkableCreature.TileEnterRule.CanEnter(this, creature)) return false;
         return true;
     }
+
+    IItem GetItemByIndex(int index);
 }

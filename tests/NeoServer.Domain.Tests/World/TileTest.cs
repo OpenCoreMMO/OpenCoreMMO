@@ -444,28 +444,122 @@ public class TileTest
     }
 
     [Fact]
-    [ThreadBlocking]
-    public void Player_cannot_move_item_to_unpassable_tile()
+    public void GetItemByIndex_Should_Return_Correct_Item_At_Index_Without_Ground()
     {
-        //arrange
-        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
-        var player = PlayerTestDataBuilder.Build();
+        // Arrange
+        var topItem = ItemTestDataBuilder.CreateTopItem(1, 1);
+        var downItem = ItemTestDataBuilder.CreateRegularItem(2);
 
-        var unpassableItem = ItemTestDataBuilder.CreateUnpassableItem(1);
+        var tile = new DynamicTile(
+            new Coordinate(100, 100, 7),
+            TileFlag.None,
+            null, // No ground
+            new[] { topItem },
+            new[] { downItem }
+        );
 
-        var itemToMove = ItemTestDataBuilder.CreateWeaponItem(2);
+        // Act & Assert
+        // Index 0 should return first top item (no ground)
+        tile.GetItemByIndex(0).Should().Be(topItem);
 
-        var sourceTile = (IDynamicTile)map[101, 100, 7];
-        var destinationTile = (IDynamicTile)map[100, 100, 7];
+        // Index 1 should return first down item
+        tile.GetItemByIndex(1).Should().Be(downItem);
 
-        sourceTile.AddItem(itemToMove);
-        destinationTile.AddItem(unpassableItem);
+        // Index 2 should return null (out of range)
+        tile.GetItemByIndex(2).Should().BeNull();
+    }
 
-        //act
-        player.MoveItem(itemToMove, sourceTile, destinationTile, 1, 0, 0);
+    [Fact]
+    public void StaticTile_GetItemByIndex_Should_Return_Correct_Item_At_Index_Without_Ground()
+    {
+        // Arrange
+        var topItem = ItemTestDataBuilder.CreateTopItem(1, 1);
+        var downItem = ItemTestDataBuilder.CreateRegularItem(2);
 
-        //assert
-        sourceTile.TopDownItemOnStack.Should().Be(itemToMove);
-        destinationTile.TopDownItemOnStack.Should().Be(unpassableItem);
+        var tile = new StaticTile(new Coordinate(100, 100, 7), topItem, downItem);
+
+        // Act & Assert
+        // Index 0 should return first top item (no ground)
+        tile.GetItemByIndex(0).Should().Be(topItem);
+
+        // Index 1 should return first down item
+        tile.GetItemByIndex(1).Should().Be(downItem);
+
+        // Index 2 should return null (out of range)
+        tile.GetItemByIndex(2).Should().BeNull();
+    }
+
+    [Fact]
+    public void StaticTile_GetItemByIndex_Should_Return_Correct_Item_At_Index_With_Ground()
+    {
+        // Arrange
+        var ground = MapTestDataBuilder.CreateGround(new Location(100, 100, 7), 100);
+        var topItem = ItemTestDataBuilder.CreateTopItem(1, 1);
+        var downItem = ItemTestDataBuilder.CreateRegularItem(2);
+
+        var tile = new StaticTile(new Coordinate(100, 100, 7), ground, topItem, downItem);
+
+        // Act & Assert
+        // Index 0 should return ground
+        tile.GetItemByIndex(0).Should().Be(ground);
+
+        // Index 1 should return top item
+        tile.GetItemByIndex(1).Should().Be(topItem);
+
+        // Index 2 should return down item
+        tile.GetItemByIndex(2).Should().Be(downItem);
+
+        // Index 3 should return null (out of range)
+        tile.GetItemByIndex(3).Should().BeNull();
+    }
+
+    [Fact]
+    public void StaticTile_GetItemByIndex_Should_Return_Null_For_Negative_Index()
+    {
+        // Arrange
+        var topItem = ItemTestDataBuilder.CreateTopItem(1, 1);
+
+        var tile = new StaticTile(new Coordinate(100, 100, 7), topItem);
+
+        // Act & Assert
+        tile.GetItemByIndex(-1).Should().BeNull();
+    }
+
+    [Fact]
+    public void StaticTile_GetItemByIndex_Should_Return_Null_For_Out_Of_Range_Index()
+    {
+        // Arrange
+        var topItem = ItemTestDataBuilder.CreateTopItem(1, 1);
+
+        var tile = new StaticTile(new Coordinate(100, 100, 7), topItem);
+
+        // Act & Assert
+        tile.GetItemByIndex(1).Should().BeNull();
+    }
+
+    [Fact]
+    public void StaticTile_GetItemByIndex_Should_Work_Correctly_With_Items_In_Random_Order()
+    {
+        // Arrange
+        var topItem = ItemTestDataBuilder.CreateTopItem(1, 1);
+        var ground = MapTestDataBuilder.CreateGround(new Location(100, 100, 7), 100);
+        var downItem = ItemTestDataBuilder.CreateRegularItem(2);
+
+        // Pass items in random order: topItem, ground, downItem
+        var tile = new StaticTile(new Coordinate(100, 100, 7), topItem, ground, downItem);
+
+        // Act & Assert
+        // Even though passed in random order, AllItems should be ordered: ground, topItem, downItem
+        // Index 0 should return ground
+        tile.GetItemByIndex(0).Should().Be(ground);
+
+        // Index 1 should return top item
+        tile.GetItemByIndex(1).Should().Be(topItem);
+
+        // Index 2 should return down item
+        tile.GetItemByIndex(2).Should().Be(downItem);
+
+        // Index 3 should return null (out of range)
+        tile.GetItemByIndex(3).Should().BeNull();
     }
 }

@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Locker;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Commands.Player.UseItem.OpenLocker;
@@ -23,7 +24,8 @@ public class PlayerUseItemCommand(
 {
     public void Execute(IPlayer player, UseItemPacket useItemPacket)
     {
-        var item = itemFinderService.Find(player, useItemPacket.Location, useItemPacket.ClientId);
+        var item = itemFinderService.Find(player, useItemPacket.Location, useItemPacket.ClientId,
+            useItemPacket.StackPosition, StackPositionType.UseItem);
 
         Action action;
 
@@ -41,8 +43,9 @@ public class PlayerUseItemCommand(
                     action = () => openDepotCommand.Execute(player, container, useItemPacket);
                     break;
                 }
-                
-                if (container.Owner is Locker && container.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) is "mailbox")
+
+                if (container.Owner is Locker &&
+                    container.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) is "mailbox")
                 {
                     action = () => openMailInboxCommand.Execute(player, container, useItemPacket);
                     break;
