@@ -151,4 +151,6 @@ public abstract class BaseTile : ITile
 
         foreach (var item in items) SetTileFlags(item);
     }
+
+    public abstract IItem GetItemByIndex(int index);
 }

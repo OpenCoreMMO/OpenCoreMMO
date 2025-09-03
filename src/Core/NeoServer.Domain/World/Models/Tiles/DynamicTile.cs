@@ -155,6 +155,48 @@ public class DynamicTile : BaseTile, IDynamicTile
         return false;
     }
 
+    public override IItem GetItemByIndex(int index)
+    {
+        // Check if ground exists and index is 0
+        if (Ground != null)
+        {
+            if (index == 0)
+            {
+                return Ground;
+            }
+            // Decrement index since we've accounted for ground
+            index--;
+        }
+
+        // Check top items
+        if (TopItems != null && TopItems.Count > 0)
+        {
+            if (index < TopItems.Count)
+            {
+                return TopItems.ElementAt(index);
+            }
+            // Decrement index by the number of top items
+            index -= TopItems.Count;
+        }
+
+        // Skip creatures in the index calculation since we're only returning items
+        // But we need to account for their presence in the stack
+        if (Creatures != null && Creatures.Count > 0)
+        {
+            // Decrement index by the number of creatures
+            index -= Creatures.Count;
+        }
+
+        // Check down items
+        if (DownItems != null && index >= 0 && index < DownItems.Count)
+        {
+            return DownItems.ElementAt(index);
+        }
+
+        // Index out of range
+        return null;
+    }
+
     public ICreature GetTopVisibleCreature(ICreature creature)
     {
         if (Creatures is null) return null;
