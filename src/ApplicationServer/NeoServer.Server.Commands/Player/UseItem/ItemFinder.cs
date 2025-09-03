@@ -1,5 +1,6 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Server.Common.Contracts;
@@ -17,15 +18,14 @@ public class ItemFinderService
         _gameServer = gameServer;
     }
 
-    public IItem Find(IPlayer player, Location itemLocation, ushort clientId)
+    public IItem Find(IPlayer player, Location itemLocation, ushort clientId, byte index,
+        StackPositionType stackPositionType)
     {
         if (itemLocation.IsHotkey) return _hotkeyService.GetItem(player, clientId);
 
         var itemFound = itemLocation switch
         {
-            _ when itemLocation.Type == LocationType.Ground => _gameServer.Map[itemLocation] is not { } tile
-                ? null
-                : tile.TopDownItemOnStack,
+            _ when itemLocation.Type == LocationType.Ground => GetItemFromGround(itemLocation, index, stackPositionType),
             _ when itemLocation.Type == LocationType.Slot => player.Inventory[itemLocation.Slot],
             _ when itemLocation.Type == LocationType.Container => player.Containers[itemLocation.ContainerId][
                 itemLocation.ContainerSlot],
@@ -34,5 +34,20 @@ public class ItemFinderService
 
         itemFound?.SetNewLocation(itemLocation, true);
         return itemFound;
+    }
+
+    private IItem GetItemFromGround(Location itemLocation, byte index, StackPositionType stackPositionType)
+    {
+        if (_gameServer.Map[itemLocation] is not { } tile)
+        {
+            return null;
+        }
+
+        if (stackPositionType == StackPositionType.UseItem)
+        {
+            return tile.GetItemByIndex(index);
+        }
+
+        return null;
     }
 }
