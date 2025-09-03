@@ -3,7 +3,7 @@ using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Common.Effects.Magical;
 
-public class SpreadEffect
+public static class SpreadEffect
 {
     /// <summary>
     ///     Creates a spread effect based on length
@@ -27,7 +27,24 @@ public class SpreadEffect
         for (var i = 0; i < length; i++)
         {
             var row = i + 1;
-            var cols = i < length / spread ? 0 : (i + 1) / (length / spread + 1);
+            int cols;
+            if (spread == 1)
+            {
+                cols = 0;
+            }
+            else
+            {
+                // Calculate which band this row belongs to
+                // Spread starts expanding when row reaches the spread value
+                if (row < spread)
+                {
+                    cols = 0;
+                }
+                else
+                {
+                    cols = (row - spread) / spread + 1;
+                }
+            }
             for (var c = 0 - cols; c <= 0 + cols; c++)
                 switch (direction)
                 {
