@@ -61,6 +61,6 @@ public class InstantSpell : ScriptedSpell
         LuaFunctionsLoader.PushVariant(luaState, variant);
         LuaFunctionsLoader.PushBoolean(luaState, isHotkey);
 
-        return LuaInstantSpell.GetScriptInterface().CallFunction(3) ? Result.Success : Result.NotApplicable;
+        return LuaInstantSpell.GetScriptInterface().CallFunction(3) ? Result.Success : Result.NotPossible;
     }
 }

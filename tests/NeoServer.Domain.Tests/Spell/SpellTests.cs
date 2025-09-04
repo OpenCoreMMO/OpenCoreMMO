@@ -19,6 +19,7 @@ public class SpellTests
 {
     private readonly Mock<IEventAggregator> _eventAggregatorMock;
     private readonly SpellService _spellService;
+    private readonly SpellListManager _spellListManager;
 
     public SpellTests()
     {
@@ -28,6 +29,7 @@ public class SpellTests
         var mapTool = new MapTool(map, pathFinder);
         var spellCastValidation = new SpellCastValidation(mapTool);
         _spellService = new  SpellService(spellCastValidation, _eventAggregatorMock.Object, map);
+        _spellListManager = new SpellListManager();
     }
 
     [Fact]
@@ -267,6 +269,77 @@ public class SpellTests
         _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
     }
 
+    [Fact]
+    public void TryGetInstantSpell_ExoriSpell_ReturnsCorrectSpell()
+    {
+        // Arrange
+        var exoriSpell = new TestSpell { Words = "exori", Name = "exori", HasParams = false };
+        _spellListManager.Add("exori", exoriSpell);
+
+        // Act & Assert
+        // words = "exori" returns exori
+        _spellListManager.TryGetInstantSpell("exori", out var spell).Should().BeTrue();
+        spell.Should().Be(exoriSpell);
+    }
+
+    [Fact]
+    public void TryGetInstantSpell_ExoriVisSpell_HandlesParametersAndInvalidInputs()
+    {
+        // Arrange
+        var exoriVisSpell = new TestSpell { Words = "exori vis", Name = "exori vis", HasParams = false };
+        _spellListManager.Add("exori vis", exoriVisSpell);
+
+        // Act & Assert
+        // words = "exori vis" returns exori vis spell
+        _spellListManager.TryGetInstantSpell("exori vis", out var spell1).Should().BeTrue();
+        spell1.Should().Be(exoriVisSpell);
+
+        // words = exori vis x returns null
+        _spellListManager.TryGetInstantSpell("exori vis x", out _).Should().BeFalse();
+
+        // words = exori vis "test" return exori vis spell with params "test"
+        _spellListManager.TryGetInstantSpell("exori vis \"test\"", out var spell3).Should().BeTrue();
+        spell3.Should().Be(exoriVisSpell);
+        spell3.Params.Should().BeEquivalentTo(["test"]);
+        
+        _spellListManager.TryGetInstantSpell("exori vis \"test", out var spell7).Should().BeTrue();
+        spell7.Should().Be(exoriVisSpell);
+        spell7.Params.Should().BeEquivalentTo(["test"]);
+
+        // words = exori vis "test return exori vis" return exori vis spell with params "test return exori vis"
+        _spellListManager.TryGetInstantSpell("exori vis \"test return exori vis\"", out var spell4).Should().BeTrue();
+        spell4.Should().Be(exoriVisSpell);
+        spell4.Params.Should().BeEquivalentTo(["test return exori vis"]);
+
+        // words = exori vis 'test' returns null
+        _spellListManager.TryGetInstantSpell("exori vis 'test'", out var spell5).Should().BeFalse();
+
+        // words = exori vis 'test returns null
+        _spellListManager.TryGetInstantSpell("exori vis 'test", out var spell6).Should().BeFalse();
+    }
+
+    [Fact]
+    public void TryGetInstantSpell_UtevoResSpell_RequiresValidParameters()
+    {
+        // Arrange
+        var utevoResSpell = new TestSpell { Words = "utevo res", Name = "utevo res", HasParams = true };
+        _spellListManager.Add("utevo res", utevoResSpell);
+
+        // Act & Assert
+        // words = utevo res return null
+        _spellListManager.TryGetInstantSpell("utevo res", out var spell1).Should().BeFalse();
+
+        // words = utevo res "rat" return spell with params "rat"
+        _spellListManager.TryGetInstantSpell("utevo res \"rat\"", out var spell2).Should().BeTrue();
+        spell2.Should().Be(utevoResSpell);
+        spell2.Params.Should().BeEquivalentTo(new[] { "rat" });
+
+        // words = utevo res "rat" return spell with params "rat"
+        _spellListManager.TryGetInstantSpell("utevo res \"rat", out var spell3).Should().BeTrue();
+        spell3.Should().Be(utevoResSpell);
+        spell3.Params.Should().BeEquivalentTo(new[] { "rat" });
+    }
+
     private class TestSpell : BaseSpell
     {
         public bool ShouldFailInvoke { get; set; }
@@ -275,6 +348,7 @@ public class SpellTests
         public override ConditionType ConditionType => ConditionType.None;
         public override EffectT Effect => EffectT.None;
         public override string Words { get; set; } = "test";
+        public override bool HasParams { get; set; }
 
         public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
         {
