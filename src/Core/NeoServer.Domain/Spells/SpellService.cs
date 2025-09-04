@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Spells.Events;
+using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Spells;
 
@@ -25,7 +26,7 @@ public class SpellService(
             if (spell.NeedDirection || spell.NeedCasterTargetOrDirection)
             {
                 var location = casterLocation.AddDirectionStep(caster.Direction);
-                target = map.GetTile(location);
+                target = map.GetTile(location) ?? new EmptyTile(location);
             }
         }
 
