@@ -202,7 +202,7 @@ public class CombatFunctions : LuaScriptInterface, ICombatFunctions
             _luaCombatService.Execute(combat, creature, variant);
         }
 
-        Lua.PushNil(lua);
+        PushBoolean(lua, true);
         return 1;
     }
 
