@@ -66,12 +66,8 @@ public class MonsterTypeFunctions : LuaScriptInterface, IMonsterTypeFunctions
 
         if (monsterType is null)
         {
-            monsterType = new MonsterType
-            {
-                Name = monsterName
-            };
-
-            _monsterTypeStore.AddOrUpdate(monsterName, monsterType);
+            Lua.PushNil(luaState);
+            return 1;
         }
 
         PushUserdata(luaState, monsterType);

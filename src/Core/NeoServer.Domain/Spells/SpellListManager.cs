@@ -52,7 +52,14 @@ public class SpellListManager
             return false;
 
         if (TryGet(words, out spell))
+        {
+            if (spell.HasParams) // Spell requires params but none were given
+            {
+                return false;
+            }
+            
             return true;
+        }
 
         var param = string.Empty;
         var spellWord = string.Empty;
@@ -60,12 +67,9 @@ public class SpellListManager
         var paramsIndex = words.IndexOf('"');
 
         if (paramsIndex < 0)
-            paramsIndex = words.IndexOf('\'');
-
-        if (paramsIndex < 0)
         {
             var lastSpaceIndex = words.LastIndexOf(' ');
-            if (lastSpaceIndex >= 0)
+            if (lastSpaceIndex >= 0 && words.StartsWith($"/"))
             {
                 spellWord = words[..lastSpaceIndex];
                 param = words[(lastSpaceIndex + 1)..];
@@ -78,7 +82,9 @@ public class SpellListManager
         }
         else
         {
-            param = words.Substring(paramsIndex, words.Length - 1 - paramsIndex);
+            var endOfParam = words.LastIndexOf('"');
+            var paramLength = endOfParam > -1 && endOfParam != paramsIndex ? endOfParam - paramsIndex : words.Length - paramsIndex;
+            param = words.Substring(paramsIndex, paramLength);
             spellWord = words[..paramsIndex];
         }
 
