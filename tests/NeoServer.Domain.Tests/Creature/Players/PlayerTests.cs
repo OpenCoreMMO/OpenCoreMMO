@@ -5,11 +5,13 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Creatures.Player.Vocation;
+using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 
 namespace NeoServer.Domain.Tests.Creature.Players;
@@ -193,5 +195,22 @@ public class PlayerTests
 
         var actual = sut.KnowsCreatureWithId(knownCreature);
         actual.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Player_direction_cannot_be_set_to_none()
+    {
+        //arrange
+        var sut = PlayerTestDataBuilder.Build();
+        sut.TurnTo(Direction.North);
+        
+        var fromTile = MapTestDataBuilder.CreateTile(new Location(100,100,7));
+        var toTile = MapTestDataBuilder.CreateTile(new Location(100,100,8));
+        
+        //act
+        sut.OnMoved(fromTile, toTile, []);
+        
+        //assert
+        sut.Direction.Should().Be(Direction.North);
     }
 }

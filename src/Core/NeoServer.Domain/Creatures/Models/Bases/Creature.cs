@@ -264,8 +264,9 @@ public abstract class Creature : IEquatable<Creature>, ICreature
 
     protected void SetDirection(Direction direction)
     {
+        if(direction == Direction.None) return;
         // LastDirection should only remember actual directions, so we're ignoring 'none'.
-        LastDirection = Direction == Direction.None ? LastDirection : Direction;
+        LastDirection =  Direction;
         Direction = direction;
     }
 
