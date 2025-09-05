@@ -28,7 +28,7 @@ public class SpellCastValidation(IMapTool mapTool)
         var result = spell.CanCast(caster, target);
         if (result.Failed) return result;
 
-        if (spell.Range.HasValue && !mapTool.CanThrowObjectTo(caster.Location, target.Location,
+        if (spell.Range.HasValue && target is not null && !mapTool.CanThrowObjectTo(caster.Location, target.Location,
                 SightLine.CheckSightLineAndFloor, spell.Range.Value, spell.Range.Value))
         {
             return Result.Fail(InvalidOperation.DestinationOutOfReach);

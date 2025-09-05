@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Models.Combat;
 using NeoServer.Server.Common.Contracts;
@@ -27,7 +28,7 @@ public class LuaCombatService(
         }
 
         //if variant is a position, get the target tile
-        if (variant.Type == LuaVariantType.VARIANT_POSITION) target = map.GetTile(variant.Pos);
+        if (variant.Type == LuaVariantType.VARIANT_POSITION) target = map.GetTile(variant.Pos) ?? new EmptyTile(variant.Pos);
 
         //if combat is not aggressive, execute non-aggressive combat
         if (combat.Parameters.TryGetValue(CombatParam.COMBAT_PARAM_AGGRESSIVE, out var aggressive) && aggressive == 0)
@@ -38,6 +39,9 @@ public class LuaCombatService(
 
         //execute aggressive combat
         var combatParameter = combat.BuildCombatParameter(actor as IPlayer, target);
-        attackService.Execute(new AttackInput(actor, target, combatParameter));
+        attackService.Execute(new AttackInput(actor, target, combatParameter)
+        {
+            
+        });
     }
 }
