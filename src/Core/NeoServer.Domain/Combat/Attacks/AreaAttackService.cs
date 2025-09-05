@@ -24,7 +24,8 @@ public class AreaAttackService(
     IMap map,
     MagicFieldService magicFieldService,
     ConditionAttackService conditionAttackService,
-    AttackValidation attackValidation) : IAttackService
+    AttackValidation attackValidation,
+    AreaCalculationService areaCalculationService) : IAttackService
 {
     public CombatResult Execute(AttackInput attackInput)
     {
@@ -46,44 +47,23 @@ public class AreaAttackService(
         var area = attackInput.Parameters.CoordinateArea ??
                    AreaEffect.Create(targetlocation, attackInput.Parameters.Area);
 
-        var affectedArea = new List<Location>(area.Length);
-        var affectedCreatures = new List<ICreature>();
-
-        foreach (var coordinate in area)
-        {
-            var location = coordinate.Location;
-            var tile = map[location] ?? new EmptyTile(location);
-
-            // Check if the tile is walkable and clear of obstacles
-            if (tile is IDynamicTile walkableTile && (walkableTile.HasFlag(TileFlags.Unpassable) ||
-                                                      walkableTile.ProtectionZone || walkableTile.HasHole ))
-            {
-                continue;
-            }
-
-            if (tile.BlockMissile) continue;
-            
-            // Check if the line of sight is clear between aggressor and target location
-            if (!SightClear.IsSightClear(map, attackInput.Aggressor.Location, tile.Location, false)) continue;
-
-            affectedArea.Add(location);
-
-            if (attackInput.Parameters.FieldAttack) CreateMagicField(attackInput, tile);
-
-            if (tile is not IDynamicTile targetTile)
-            {
-                continue;
-            }
-            
-            var targetCreatures = targetTile.Creatures?.ToArray();
-            if (targetCreatures is null or { Length: 0 }) continue;
-
-            affectedCreatures.AddRange(targetCreatures);
-        }
+        var originLocation = attackInput.Aggressor.Location;
+        var affectedTargets = areaCalculationService.CalculateAffectedTargets(originLocation, area);
+        var affectedArea = affectedTargets.Locations;
+        var affectedCreatures = affectedTargets.Creatures;
 
         eventAggregator.Publish(new CreatureAttackingEvent(aggressor, attackInput.Target,
             attackInput.Parameters.ShootType,
             attackInput.Parameters.Effect, false, affectedArea.ToArray()));
+
+        if (attackInput.Parameters.FieldAttack)
+        {
+            foreach (var location in affectedArea)
+            {
+                var tile = map[location];
+                if (tile != null) CreateMagicField(attackInput, tile);
+            }
+        }
 
         var totalDamage = 0;
 

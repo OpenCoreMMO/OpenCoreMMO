@@ -58,6 +58,7 @@ public static class ServiceInjection
         builder.AddSingleton<ILootService, LootService>();
         builder.AddSingleton<IMailService, MailService>();
         builder.AddSingleton<QuestService>();
+        builder.AddSingleton<AreaCalculationService>();
 
         //Operations
         builder.AddSingleton<TradeItemExchanger>();
