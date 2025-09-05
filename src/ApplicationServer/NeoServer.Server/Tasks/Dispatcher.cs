@@ -92,9 +92,7 @@ public class Dispatcher : IDispatcher
                         using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
                         try
                         {
-                            var eventTask = Task.Run(() => evt.Action.Invoke(), timeoutCts.Token);
-                            
-                            await eventTask;
+                            evt.Action.Invoke();
                             _eventAggregator.PropagateEvents();
                             
                             // Progress logging for debugging

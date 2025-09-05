@@ -46,11 +46,11 @@ public class InstantSpell : ScriptedSpell
         }
         else
         {
-            var pos = target is IDynamicTile targetTile ? targetTile.Location : caster.Location;
+            var pos = target is ITile targetTile ? targetTile.Location : caster.Location;
 
             variant = new LuaVariant
             {
-                Type = target is IDynamicTile ? LuaVariantType.VARIANT_POSITION : LuaVariantType.VARIANT_NUMBER,
+                Type = target is ITile ? LuaVariantType.VARIANT_POSITION : LuaVariantType.VARIANT_NUMBER,
                 Number = target is ICreature targetCreature ? targetCreature.CreatureId : 0,
                 Pos = pos,
                 InstantName = LuaInstantSpell.Name,
