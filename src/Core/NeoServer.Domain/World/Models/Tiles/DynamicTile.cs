@@ -696,6 +696,26 @@ public class DynamicTile : BaseTile, IDynamicTile
             new OperationResultList<ICreature>(Operation.Added, creature));
     }
 
+    public Result<OperationResultList<ICreature>> AddCreatureForced(ICreature creature)
+    {
+        if (creature is not IWalkableCreature walkableCreature)
+            return Result<OperationResultList<ICreature>>.NotPossible;
+
+        // Forced placement: bypass TileEnterRule and custom CanEnterFunction checks
+        Creatures ??= new List<IWalkableCreature>();
+        Creatures.Add(walkableCreature);
+
+        walkableCreature.SetCurrentTile(this);
+
+        SetCacheAsExpired();
+
+        CreatureAdded?.Invoke(walkableCreature, this);
+        Ground?.CreatureEntered(walkableCreature);
+
+        return new Result<OperationResultList<ICreature>>(
+            new OperationResultList<ICreature>(Operation.Added, creature));
+    }
+
     private OperationResultList<IItem> AddItemToTile(IItem item)
     {
         var operations = new OperationResultList<IItem>();

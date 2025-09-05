@@ -152,6 +152,27 @@ public class CylinderOperation
         cylinder = new Cylinder(creature, fromTile, toTile, Operation.Moved, spectators.ToArray());
         return result2;
     }
+
+    public static Result<OperationResultList<ICreature>> MoveCreatureForced(ICreature creature, IDynamicTile fromTile,
+        IDynamicTile toTile, byte amount, out ICylinder cylinder)
+    {
+        amount = amount == 0 ? (byte)1 : amount;
+
+        cylinder = null;
+
+        var specs = _map.GetSpectators(fromTile.Location, toTile.Location);
+        var spectators = GetSpectatorsStackPositions(creature, fromTile, specs);
+        var result = ((DynamicTile)fromTile).RemoveCreature(creature, out _);
+
+        if (result.Succeeded is false) return result;
+
+        _map.SwapCreatureBetweenSectors(creature, fromTile.Location, toTile.Location);
+
+        var result2 = ((DynamicTile)toTile).AddCreatureForced(creature);
+
+        cylinder = new Cylinder(creature, fromTile, toTile, Operation.Moved, spectators.ToArray());
+        return result2;
+    }
 }
 
 public class CylinderSpectator : IEqualityComparer<ICylinderSpectator>, ICylinderSpectator

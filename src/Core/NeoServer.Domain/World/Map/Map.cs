@@ -92,6 +92,45 @@ public class Map : IMap
         return true;
     }
 
+    public bool TryMoveCreatureForced(ICreature creature, Location toLocation)
+    {
+        if (creature is not IWalkableCreature walkableCreature) return false;
+
+        if (this[creature.Location] is not IDynamicTile fromTile)
+        {
+            OnThingMovedFailed?.Invoke(creature, InvalidOperation.NotPossible);
+            return false;
+        }
+
+        var tileDestination = this[toLocation];
+
+        if (tileDestination is not IDynamicTile toTile)
+        {
+            OnThingMovedFailed?.Invoke(creature, InvalidOperation.NotEnoughRoom);
+            return false;
+        }
+
+        var result = CylinderOperation.MoveCreatureForced(creature, fromTile, toTile, 1, out var cylinder);
+        if (result.Succeeded is false) return false;
+
+        walkableCreature.OnMoved(fromTile, toTile, cylinder.TileSpectators);
+        OnCreatureMoved?.Invoke(walkableCreature, cylinder);
+
+        if (toTile.HasTeleport(out var teleport) && teleport.HasDestination)
+        {
+            teleport.Teleport(walkableCreature);
+            return true;
+        }
+
+        tileDestination = GetTileDestination(tileDestination);
+
+        if (tileDestination is null || tileDestination.Location == toLocation) return true;
+
+        TryMoveCreatureForced(creature, tileDestination.Location);
+
+        return true;
+    }
+
     public bool TryMoveCreature(IWalkableCreature creature, Direction nextDirection)
     {
         if (nextDirection == Direction.None) return false;

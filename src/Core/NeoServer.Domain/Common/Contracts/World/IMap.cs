@@ -71,4 +71,5 @@ public interface IMap
     void MoveCreature(IWalkableCreature creature, Direction nextDirection);
     bool TryMoveCreature(ICreature creature, Location.Structs.Location toLocation);
     bool TryMoveCreature(IWalkableCreature creature, Direction nextDirection);
+    bool TryMoveCreatureForced(ICreature creature, Location.Structs.Location toLocation);
 }
