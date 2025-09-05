@@ -14,7 +14,6 @@ public enum DamageType : byte
     All,
     LifeDrain,
     ManaDrain,
-    FireField,
     Melee,
     Drown,
     Drunk,
