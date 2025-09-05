@@ -39,9 +39,6 @@ public class LuaCombatService(
 
         //execute aggressive combat
         var combatParameter = combat.BuildCombatParameter(actor as IPlayer, target);
-        attackService.Execute(new AttackInput(actor, target, combatParameter)
-        {
-            
-        });
+        attackService.Execute(new AttackInput(actor, target, combatParameter));
     }
 }

@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.World.Models;
+using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.World;
 
@@ -65,6 +66,9 @@ public class World
 
         tile = sector.GetTile(location);
         if (tile is null) return false;
+        
+        if(tile is StaticTile) tile.SetNewLocation(location, force: true); //static tiles are cached and have no location, the location will be always the same as the tile's map location
+        
         return true;
     }
 

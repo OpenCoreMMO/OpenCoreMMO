@@ -15,6 +15,7 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Services;
 using NeoServer.Domain.World.Algorithms;
+using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Combat.Attacks;
 
@@ -51,13 +52,17 @@ public class AreaAttackService(
         foreach (var coordinate in area)
         {
             var location = coordinate.Location;
-            var tile = map[location];
+            var tile = map[location] ?? new EmptyTile(location);
 
             // Check if the tile is walkable and clear of obstacles
-            if (tile is not IDynamicTile walkableTile || walkableTile.HasFlag(TileFlags.Unpassable) ||
-                walkableTile.ProtectionZone || walkableTile.HasHole)
+            if (tile is IDynamicTile walkableTile && (walkableTile.HasFlag(TileFlags.Unpassable) ||
+                                                      walkableTile.ProtectionZone || walkableTile.HasHole ))
+            {
                 continue;
+            }
 
+            if (tile.BlockMissile) continue;
+            
             // Check if the line of sight is clear between aggressor and target location
             if (!SightClear.IsSightClear(map, attackInput.Aggressor.Location, tile.Location, false)) continue;
 
@@ -65,7 +70,12 @@ public class AreaAttackService(
 
             if (attackInput.Parameters.FieldAttack) CreateMagicField(attackInput, tile);
 
-            var targetCreatures = walkableTile.Creatures?.ToArray();
+            if (tile is not IDynamicTile targetTile)
+            {
+                continue;
+            }
+            
+            var targetCreatures = targetTile.Creatures?.ToArray();
             if (targetCreatures is null or { Length: 0 }) continue;
 
             affectedCreatures.AddRange(targetCreatures);
