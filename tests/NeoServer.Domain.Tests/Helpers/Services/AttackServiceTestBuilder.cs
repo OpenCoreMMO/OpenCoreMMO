@@ -42,8 +42,10 @@ public class AttackServiceTestBuilder
 
         var conditionAttackService = new ConditionAttackService(monsterTypeStore);
 
+        var areaCalculationService = new AreaCalculationService(map);
+
         var areaAttackService =
-            new AreaAttackService(mockEventAggregator.Object, map, magicFieldService, conditionAttackService, attackValidation);
+            new AreaAttackService(mockEventAggregator.Object, map, magicFieldService, conditionAttackService, attackValidation, areaCalculationService);
 
         var singleTargetCombat =
             new SingleTargetAttackService(mockEventAggregator.Object, gameConfiguration.Combat, conditionAttackService,
