@@ -62,7 +62,7 @@ public class InspectionTextBuilder
     private static void AddItemName(IItem item, bool showInternalDetails, StringBuilder inspectionText)
     {
         if (showInternalDetails)
-            inspectionText.AppendNewLine($"Id: [{item.ServerId}] - Pos: {item.Location}");
+            inspectionText.AppendNewLine($"ServerId: [{item.ServerId}]\nClientId: [{item.ClientId}]\nPos: {item.Location}");
 
         inspectionText.Append("You see ");
         inspectionText.Append(item is ICumulative cumulative
