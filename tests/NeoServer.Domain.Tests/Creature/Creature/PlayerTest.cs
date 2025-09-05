@@ -1,9 +1,11 @@
 ﻿using Moq;
 using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player;
@@ -313,5 +315,24 @@ public class PlayerTest
         player.MoveToTemple();
 
         Assert.Equal(player.Location, townCoordinate.Location);
+    }
+
+    [Fact]
+    public void Player_With_CannotBeAttacked_Flag_Does_Not_Take_Damage()
+    {
+        var sut = PlayerTestDataBuilder.Build(hp: 100);
+        var enemy = PlayerTestDataBuilder.Build();
+
+        sut.Group.EnableFlag(PlayerFlag.CannotBeAttacked);
+
+        // Verify flag is enabled
+        Assert.True(sut.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked));
+
+        var initialHealth = sut.HealthPoints;
+        var damageList = new CombatDamageList(new CombatDamage(50, DamageType.Melee));
+        var result = sut.TakeDamage(enemy, damageList);
+
+        Assert.False(result.WasDamaged);
+        initialHealth.Should().Be(100); // Health should not change
     }
 }
