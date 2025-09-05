@@ -1,8 +1,11 @@
 using Moq;
 using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Spells;
@@ -340,6 +343,32 @@ public class SpellTests
         spell3.Params.Should().BeEquivalentTo(new[] { "rat" });
     }
 
+    [Fact]
+    public void Player_casts_spell_with_direction_to_no_tile_casts_spell()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 100, 100, 100, 7, 7); // Single tile map
+        var pathFinder = new PathFinder(map);
+        var mapTool = new MapTool(map, pathFinder);
+        var spellCastValidation = new SpellCastValidation(mapTool);
+        var spellService = new SpellService(spellCastValidation, _eventAggregatorMock.Object, map);
+
+        var player = PlayerTestDataBuilder.Build();
+        map.PlaceCreature(player); // Place player on the single tile
+
+        var spell = new DirectionDamageSpell();
+
+        // Act
+        var result = spellService.Cast(player, null, spell, false);
+
+        // Assert
+        result.Should().BeTrue();
+        spell.EffectSent.Should().BeTrue();
+        spell.DamageAttempted.Should().BeFalse();
+        _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+    }
+
+
     private class TestSpell : BaseSpell
     {
         public bool ShouldFailInvoke { get; set; }
@@ -353,6 +382,36 @@ public class SpellTests
         public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
         {
             return ShouldFailInvoke ? Result.Fail(InvalidOperation.NotEnoughMana) : Result.Success;
+        }
+    }
+
+    private class DirectionDamageSpell : BaseSpell
+    {
+        public bool EffectSent { get; private set; }
+        public bool DamageAttempted { get; private set; }
+
+        public override uint Duration => 0;
+        public override ConditionType ConditionType => ConditionType.None;
+        public override EffectT Effect => EffectT.None;
+        public override bool NeedDirection => true;
+        public override string Words { get; set; } = "test direction spell";
+
+        public override Result OnCast(ICombatActor caster, IThing target, bool isHotkey)
+        {
+            EffectSent = true;
+
+            if (target is IDynamicTile tile)
+            {
+                DamageAttempted = true;
+                var creature = tile.GetTopVisibleCreature(caster);
+                if (creature != null)
+                {
+                    // Apply damage logic here
+                    return Result.Success;
+                }
+            }
+
+            return Result.Success;
         }
     }
 }
