@@ -15,16 +15,14 @@ public class CreatureDeathService(
 {
     public void Handle(ICombatActor deadCreature, IThing by, List<DamageRecord> damageRecords)
     {
-        if (deadCreature is IMonster { IsSummon: true } summon)
+        if (deadCreature is IMonster { IsSummon: true }) //no need to create blood or corpse for summons
         {
-            //if summon just remove the creature from map
-            map.RemoveCreature(summon);
             return;
         }
 
-        ReplaceCreatureByCorpse(deadCreature, by);
         CreateBlood(deadCreature);
-
+        ReplaceCreatureByCorpse(deadCreature, by);
+        
         ProcessDamageRecords(deadCreature, by, damageRecords);
     }
 
