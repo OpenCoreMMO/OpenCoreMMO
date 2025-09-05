@@ -50,6 +50,12 @@ public abstract class BaseTile : ITile
 
     public void SetNewLocation(Location location, bool force = false)
     {
+        if (force)
+        {
+            Location = location;
+            return;       
+        }
+            
         if (Location != default) throw new InvalidOperationException();
         Location = location;
     }
