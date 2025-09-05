@@ -639,7 +639,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         stackPosition = default;
 
         var id = creature.CreatureId;
-        if (id == default) throw new ArgumentNullException(nameof(id));
+        if (id == 0) throw new ArgumentNullException(nameof(id));
 
         if (Ground?.ClientId != 0) stackPosition++;
 
