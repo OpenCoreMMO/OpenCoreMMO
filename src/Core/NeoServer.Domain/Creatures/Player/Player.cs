@@ -1590,6 +1590,16 @@ public class Player : CombatActor, IPlayer
 
     #endregion
 
+    public override DamageResult TakeDamage(IThing enemy, CombatDamageList damages)
+    {
+        if (Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))
+        {
+            return new DamageResult(new CombatDamageList(), false);
+        }
+        
+        return base.TakeDamage(enemy, damages);
+    }
+
     #region Guild
 
     public ushort? GuildId { get; set; }
