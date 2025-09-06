@@ -38,7 +38,7 @@ public class AttackService(
             uint totalDamage = 0;
             var result = Result.NotPossible;
 
-            foreach (var target in targetTile.Creatures)
+            foreach (var target in targetTile.Creatures.ToArray())
             {
                 if (target is not ICombatActor) continue;
                 var combatResult = Execute(new AttackInput(attackInput.Aggressor, target, attackInput.Parameters));
