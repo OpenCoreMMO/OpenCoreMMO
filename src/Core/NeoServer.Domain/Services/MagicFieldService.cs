@@ -48,7 +48,7 @@ public class MagicFieldService(IMap map, IItemFactory itemFactory, PvPConfigurat
 
         if (isNonPvpField || dynamicTile.CreaturesCount == 0) return Result<MagicField>.Ok(magicField);
 
-        foreach (var creature in dynamicTile.Creatures.ToList())
+        foreach (var creature in dynamicTile.Creatures.ToArray())
         {
             magicField.CauseDamage(creature);
         }
