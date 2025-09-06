@@ -17,7 +17,6 @@ public static class DamageTextColorParser
             DamageType.Physical => TextColor.Red,
             DamageType.MagicalPhysical => TextColor.Red,
             DamageType.ManaDrain => TextColor.Blue,
-            DamageType.FireField => TextColor.Orange,
             DamageType.Earth => TextColor.LightGreen,
             DamageType.Death => TextColor.DarkRed,
             DamageType.LifeDrain => TextColor.DarkRed,

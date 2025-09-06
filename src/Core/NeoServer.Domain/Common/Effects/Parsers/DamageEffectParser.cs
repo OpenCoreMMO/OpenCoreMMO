@@ -13,7 +13,6 @@ public static class DamageEffectParser
         {
             DamageType.Physical => EffectT.XBlood,
             DamageType.Fire => EffectT.Flame,
-            DamageType.FireField => EffectT.Flame,
             DamageType.Energy => EffectT.DamageEnergy,
             DamageType.Melee => EffectT.XBlood,
             DamageType.MagicalPhysical => EffectT.XGray,
