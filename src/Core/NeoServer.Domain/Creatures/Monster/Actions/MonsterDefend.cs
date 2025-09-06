@@ -44,7 +44,7 @@ internal static class MonsterDefend
 
         var valueToReduce = Math.Round(damage.Damage * (decimal)(resistance / 100f));
 
-        damage.IncreaseDamage((int)valueToReduce);
+        damage.IncreaseDamage((int)-valueToReduce);
 
         return damage;
     }
