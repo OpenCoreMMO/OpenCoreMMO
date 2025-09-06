@@ -17,6 +17,7 @@ using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster.Actions;
 using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Items.Items;
 
 namespace NeoServer.Domain.Creatures.Monster;
 
@@ -107,8 +108,8 @@ public class Monster : WalkableMonster, IMonster
     public override DamageResult TakeDamage(IThing enemy, CombatDamageList damages)
     {
         if (this is Summon.Summon { Master: IPlayer }) return base.TakeDamage(enemy, damages);
-
-        if (enemy is Summon.Summon { Master: IPlayer } or IPlayer)
+        
+        if (enemy is Summon.Summon { Master: IPlayer } or IPlayer or MagicField )
         {
             var damageResult = base.TakeDamage(enemy, damages);
             return damageResult;

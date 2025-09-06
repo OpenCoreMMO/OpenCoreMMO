@@ -54,7 +54,7 @@ public sealed class ItemTypeAttributeList : BaseAttributeList<ItemTypeAttribute>
                     ItemTypeAttribute.AbsorbPercentPhysical => (DamageType.Physical, Convert.ChangeType(value, type)),
                     ItemTypeAttribute.AbsorbPercentPoison => (DamageType.Earth, Convert.ChangeType(value, type)),
                     ItemTypeAttribute.AbsorbPercentFire => (DamageType.Fire, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.FieldAbsorbEercentFire => (DamageType.FireField, Convert.ChangeType(value, type)),
+                    ItemTypeAttribute.FieldAbsorbPercentFire => (DamageType.Fire, Convert.ChangeType(value, type)),
                     ItemTypeAttribute.AbsorbPercentDrown => (DamageType.Drown, Convert.ChangeType(value, type)),
                     ItemTypeAttribute.AbsorbPercentHoly => (DamageType.Holy, Convert.ChangeType(value, type)),
                     ItemTypeAttribute.AbsorbPercentIce => (DamageType.Ice, Convert.ChangeType(value, type)),

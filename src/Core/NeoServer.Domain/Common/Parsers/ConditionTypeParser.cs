@@ -10,7 +10,7 @@ public static class ConditionTypeParser
         return type switch
         {
             ConditionType.Poisoned => DamageType.Earth,
-            ConditionType.Burning => DamageType.FireField,
+            ConditionType.Burning => DamageType.Fire,
             ConditionType.Electrified => DamageType.Energy,
             ConditionType.Freezing => DamageType.Ice,
             ConditionType.Bleeding => DamageType.Physical,
@@ -26,7 +26,6 @@ public static class ConditionTypeParser
         return type switch
         {
             DamageType.Earth => ConditionType.Poisoned,
-            DamageType.FireField => ConditionType.Burning,
             DamageType.Fire => ConditionType.Burning,
             DamageType.Energy => ConditionType.Electrified,
             _ => ConditionType.None
