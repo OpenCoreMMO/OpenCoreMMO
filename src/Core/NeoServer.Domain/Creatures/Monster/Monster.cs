@@ -59,10 +59,9 @@ public class Monster : WalkableMonster, IMonster
         get
         {
             var fpp = base.PathSearchParams;
+            fpp.FullPathSearch = true;
             fpp.MaxTargetDist = TargetDistance;
             fpp.KeepDistance = TargetDistance > 1;
-            if (TargetDistance <= 1)
-                fpp.FullPathSearch = HasDistanceAttack;
             return fpp;
         }
     }
