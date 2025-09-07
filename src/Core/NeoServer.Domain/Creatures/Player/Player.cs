@@ -663,8 +663,6 @@ public class Player : CombatActor, IPlayer
         if (Level < minLevel)
         {
             var error = new StringBuilder($"You are not allowed to yell until you are level {minLevel}");
-            
-            OperationFailService.Send(this, $"You are not allowed to yell until you are level {minLevel}.");
 
             if (allowedWhenPremium && HasPremiumTime)
             {
@@ -674,6 +672,9 @@ public class Player : CombatActor, IPlayer
             }
             
             error.Append(" or have a premium account");
+            
+            OperationFailService.Send(this, error.ToString());
+
             return;
         }
 
