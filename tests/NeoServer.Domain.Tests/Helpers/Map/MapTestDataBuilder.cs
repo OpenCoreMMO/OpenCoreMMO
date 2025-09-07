@@ -58,7 +58,7 @@ public static class MapTestDataBuilder
             if (staticTiles.Contains(location)) world.AddTile(new StaticTile(new Coordinate(x, y, (sbyte)z)));
 
             world.AddTile(new DynamicTile(new Coordinate(x, y, (sbyte)z), TileFlag.None, ground,
-                items ?? Array.Empty<IItem>(), null));
+                items ?? [], null), location);
         }
 
         return map;

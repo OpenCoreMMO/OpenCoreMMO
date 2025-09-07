@@ -158,11 +158,15 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         Location = location;
     }
 
-    public virtual void Say(string message, SpeechType talkType, ICreature receiver = null)
+    public void Say(string message, SpeechType talkType, ICreature receiver = null)
     {
         if (string.IsNullOrWhiteSpace(message) || talkType == SpeechType.None) return;
         OnSay?.Invoke(this, talkType, message, receiver);
     }
+
+    public virtual void Yell(string message) => Say(message, SpeechType.Yell);
+
+    public virtual void Whisper(string message) => Say(message, SpeechType.Whisper);
 
     public virtual void Think(int interval)
     {

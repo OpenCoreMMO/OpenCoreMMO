@@ -38,8 +38,6 @@ public class PlayerSayCommand(
             return;
         }
 
-        //if (player.CastSpell(message)) return;
-
         switch (playerSayPacket.TalkType)
         {
             case SpeechType.None:
@@ -48,8 +46,10 @@ public class PlayerSayCommand(
                 player.Say(playerSayPacket.Message, playerSayPacket.TalkType);
                 break;
             case SpeechType.Whisper:
+                player.Whisper(playerSayPacket.Message);
                 break;
             case SpeechType.Yell:
+                player.Yell(playerSayPacket.Message);
                 break;
             case SpeechType.PrivatePlayerToNpc:
                 SendMessageToNpc(player, playerSayPacket, message);
