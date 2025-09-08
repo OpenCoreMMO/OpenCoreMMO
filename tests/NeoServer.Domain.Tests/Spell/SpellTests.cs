@@ -1,8 +1,10 @@
 using Moq;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
+using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location.Structs;
@@ -366,6 +368,50 @@ public class SpellTests
         spell.EffectSent.Should().BeTrue();
         spell.DamageAttempted.Should().BeFalse();
         _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+    }
+
+    [Fact]
+    public void Cast_When_Spell_Has_Cooldown_Starts_Player_Cooldown()
+    {
+        // Arrange
+        var player = PlayerTestDataBuilder.Build();
+        var target = PlayerTestDataBuilder.Build();
+        var spell = new TestSpell { NeedsTarget = true, Cooldown = 1000, MinLevel = 1 };
+
+        // Ensure cooldown is not active initially
+        player.CooldownHasExpired(spell).Should().BeTrue();
+
+        // Act
+        var result = _spellService.Cast(player, target, spell, false);
+
+        // Assert
+        result.Should().BeTrue();
+        // After casting, cooldown should be active
+        player.CooldownHasExpired(spell).Should().BeFalse();
+    }
+
+    [Fact]
+    public void Cast_When_Spell_Cooldown_Not_Expired_Returns_False()
+    {
+        // Arrange
+        var player = PlayerTestDataBuilder.Build();
+        var target = PlayerTestDataBuilder.Build();
+        var spell = new TestSpell { NeedsTarget = true, Cooldown = 1000, MinLevel = 1 };
+
+        // First cast to start cooldown
+        var firstResult = _spellService.Cast(player, target, spell, false);
+        firstResult.Should().BeTrue();
+
+        // Ensure cooldown is active
+        player.CooldownHasExpired(spell).Should().BeFalse();
+
+        // Act - Try to cast again while on cooldown
+        var secondResult = _spellService.Cast(player, target, spell, false);
+
+        // Assert
+        secondResult.Should().BeFalse();
+        _eventAggregatorMock.Verify(x => x.Publish(It.Is<SpellFailedToCastEvent>(e =>
+            e.Caster == player && e.Spell == spell)), Times.Once);
     }
 
 
