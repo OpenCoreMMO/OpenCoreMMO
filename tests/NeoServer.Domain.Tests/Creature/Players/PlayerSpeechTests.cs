@@ -1,4 +1,5 @@
 using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -36,8 +37,15 @@ public class PlayerSpeechTests
         listener1.OnHear += (_, _, _, _) => listener1Heard = true;
         listener2.OnHear += (_, _, _, _) => listener2Heard = true;
 
+        var yellConfiguration = new YellConfiguration()
+        {
+            YellAllowedPremium = true,
+            YellCooldownSeconds = 30_000,
+            YellMinimumLevel = 2
+        };
+
         //act
-        speaker.Yell("Test yell message");
+        speaker.Yell("Test yell message", yellConfiguration);
 
         //assert
         listener1Heard.Should().BeTrue("Listener within yell range should hear the yell");
@@ -138,8 +146,15 @@ public class PlayerSpeechTests
         var listenerHeard = false;
         listener.OnHear += (_, _, _, _) => listenerHeard = true;
 
+        var yellConfiguration = new YellConfiguration()
+        {
+            YellAllowedPremium = true,
+            YellCooldownSeconds = 30_000,
+            YellMinimumLevel = 2
+        };
+        
         //act
-        speaker.Yell("Test yell message");
+        speaker.Yell("Test yell message", yellConfiguration);
 
         //assert
         listenerHeard.Should().BeTrue("Listener on different floor should hear the yell");

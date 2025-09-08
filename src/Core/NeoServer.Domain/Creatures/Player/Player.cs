@@ -642,7 +642,7 @@ public class Player : CombatActor, IPlayer
         if (!string.IsNullOrWhiteSpace(spell.Words)) base.Say(spell.Words, talkType);
     }
 
-    public override void Yell(string message)
+    public void Yell(string message, YellConfiguration yellSettings)
     {
         message = message.ToUpper();
         if (Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck))
@@ -657,8 +657,8 @@ public class Player : CombatActor, IPlayer
             return;
         }
 
-        var minLevel = 2;
-        var allowedWhenPremium = true;
+        var minLevel = yellSettings?.YellMinimumLevel ?? 2;
+        var allowedWhenPremium = yellSettings?.YellAllowedPremium ?? true;
         
         if (Level < minLevel)
         {
@@ -679,7 +679,7 @@ public class Player : CombatActor, IPlayer
         }
 
         base.Yell(message);
-        Cooldowns.Start(CooldownType.Yell, 30_000); // 30 seconds cooldown
+        Cooldowns.Start(CooldownType.Yell, (uint)(yellSettings?.YellCooldownSeconds * 1000 ?? 30_000)); // 30 seconds cooldown
     }
 
     public void UpdateManaSpent(uint manaCost)
