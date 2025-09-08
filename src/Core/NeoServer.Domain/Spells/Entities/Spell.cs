@@ -58,9 +58,7 @@ public abstract class BaseSpell : ISpell
         }
 
         AddCondition(actor);
-
-        if (actor is IPlayer) AddCooldown(actor);
-
+        
         OnSpellInvoked?.Invoke(actor, this);
         return Result.Success;
     }
@@ -147,11 +145,6 @@ public abstract class BaseSpell : ISpell
         };
 
         actor.AddCondition(condition);
-    }
-
-    private void AddCooldown(ICombatActor actor)
-    {
-        actor.StartCooldown(this);
     }
 }
 

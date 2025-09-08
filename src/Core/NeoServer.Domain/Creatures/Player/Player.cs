@@ -637,6 +637,8 @@ public class Player : CombatActor, IPlayer
         if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteSoul)) ConsumeSoul(spell.SoulConsumption);
 
         UpdateManaSpent(spell.ManaConsumption);
+        
+        StartCooldown(spell);
 
         if (!spell.ShouldSay) return;
 
