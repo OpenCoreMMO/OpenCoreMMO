@@ -13,6 +13,7 @@ using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.World.Algorithms;
 using NeoServer.Domain.World.Models;
 using NeoServer.Domain.World.Models.Tiles;
+using MinMax = NeoServer.Domain.Common.MinMax;
 
 namespace NeoServer.Domain.World.Map;
 
@@ -310,6 +311,22 @@ public class Map : IMap
     public IEnumerable<ICreature> GetCreaturesAtPositionZone(Location location, bool onlyPlayers = false)
     {
         return GetSpectators(location, onlyPlayers);
+    }
+
+    public HashSet<ICreature> GetSpectators(Location location, bool multifloor, bool onlyPlayers,
+        MinMax rangeX, MinMax rangeY)
+    {
+        var search = new SpectatorSearch(ref location, multifloor, rangeX.Min, rangeY.Min,
+            rangeX.Max, rangeY.Max, onlyPlayers);
+        return world.GetSpectators(ref search).ToHashSet();
+    }
+
+    public HashSet<ICreature> GetSpectators(Location location, bool multifloor, bool onlyPlayers,
+        int minRangeX, int maxRangeX, int minRangeY, int maxRangeY)
+    {
+        var rangeX = new MinMax(minRangeX, maxRangeX);
+        var rangeY = new MinMax(minRangeY, maxRangeY);
+        return GetSpectators(location, multifloor, onlyPlayers, rangeX, rangeY);
     }
 
     public IList<byte> GetDescription(IThing thing, ushort fromX, ushort fromY, byte currentZ,
