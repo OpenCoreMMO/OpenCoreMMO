@@ -214,10 +214,11 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
 
     public static int LuaPositionGetNextPosition(LuaState luaState)
     {
-        // position:getNextPosition(direction)
+        // position:getNextPosition(direction, steps = 1)
         var direction = GetNumber<Direction>(luaState, 2);
+        var steps = GetNumber<ushort>(luaState, 3, 1);
         var position = GetPosition(luaState, 1);
-        PushPosition(luaState, position.GetNextLocation(direction));
+        PushPosition(luaState, position.GetNextLocation(direction, steps));
         return 1;
     }
 }
