@@ -61,16 +61,7 @@ public static class CreatureRaw
             cache.AddRange(creatureNameBytes);
         }
 
-        //todo: 1098 implements this
-        //if (creature->isHealthHidden())
-        //{
-        //    msg.addByte(0x00);
-        //}
-        //else
-        //{
-        cache.Add((byte)Math.Ceiling((double)creature.HealthPoints / Math.Max(creature.MaxHealthPoints, 1u) * 100));
-        //}
-
+        cache.Add((byte)Math.Ceiling((double)creature.HealthPoints / Math.Max(creature.MaxHealthPoints, 1) * 100));
         cache.Add((byte)creature.SafeDirection);
 
         if (playerRequesting.CanSee(creature))
