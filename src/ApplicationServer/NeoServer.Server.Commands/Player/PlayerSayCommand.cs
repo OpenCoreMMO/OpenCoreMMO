@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Spells;
@@ -17,7 +18,8 @@ public class PlayerSayCommand(
     IChatChannelStore chatChannelStore,
     IScriptManager scriptManager,
     SpellService spellService,
-    SpellListManager spellListManager)
+    SpellListManager spellListManager,
+    YellConfiguration yellConfiguration)
     : ICommand
 {
     public void Execute(IPlayer player, IConnection connection, PlayerSayPacket playerSayPacket)
@@ -38,8 +40,6 @@ public class PlayerSayCommand(
             return;
         }
 
-        //if (player.CastSpell(message)) return;
-
         switch (playerSayPacket.TalkType)
         {
             case SpeechType.None:
@@ -48,8 +48,10 @@ public class PlayerSayCommand(
                 player.Say(playerSayPacket.Message, playerSayPacket.TalkType);
                 break;
             case SpeechType.Whisper:
+                player.Whisper(playerSayPacket.Message);
                 break;
             case SpeechType.Yell:
+                player.Yell(playerSayPacket.Message, yellConfiguration);
                 break;
             case SpeechType.PrivatePlayerToNpc:
                 SendMessageToNpc(player, playerSayPacket, message);
