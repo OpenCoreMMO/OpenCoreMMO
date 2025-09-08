@@ -13,7 +13,8 @@ public record GameConfiguration(
     DeathConfiguration Death = null,
     PvPConfiguration PvP = null,
     CombatConfiguration Combat = null,
-    ReportConfiguration Report = null
+    ReportConfiguration Report = null,
+    YellConfiguration Yell = null
 );
 public record CombatConfiguration(
     bool InfiniteAmmo = false,
@@ -40,5 +41,7 @@ public record PvPConfiguration(
     int BlackSkullDurationDays = 45,
     int ProtectionLevel = 20
 );
+
+public record YellConfiguration(int YellCooldownSeconds = 30, int YellMinimumLevel = 2, bool YellAllowedPremium = true);
 
 public record ReportConfiguration(uint ReportMaxTime = 60);

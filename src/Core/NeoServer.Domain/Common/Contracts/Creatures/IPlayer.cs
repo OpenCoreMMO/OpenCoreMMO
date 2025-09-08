@@ -332,4 +332,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     #endregion
 
     void RegenerateStamina();
+    void Yell(string message, YellConfiguration yellSettings);
+    void Whisper(string message);
 }

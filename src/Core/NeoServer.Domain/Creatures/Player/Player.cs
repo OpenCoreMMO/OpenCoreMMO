@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat;
 using NeoServer.Domain.Combat.Attacks.Obsoletes;
@@ -283,12 +284,11 @@ public class Player : CombatActor, IPlayer
 
     public long ApplyStaminaEffectOnExperienceGain(long experience)
     {
-        
         if (HasNoStamina)
         {
             return 0;
         }
-        
+
         if (HasLowStamina)
         {
             // Experience gain is halved when stamina is below threshold
@@ -640,6 +640,46 @@ public class Player : CombatActor, IPlayer
         if (!spell.ShouldSay) return;
 
         if (!string.IsNullOrWhiteSpace(spell.Words)) base.Say(spell.Words, talkType);
+    }
+
+    public void Yell(string message, YellConfiguration yellSettings)
+    {
+        message = message.ToUpper();
+        if (Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck))
+        {
+            base.Yell(message);
+            return;
+        }
+        
+        if (!CooldownHasExpired(CooldownType.Yell))
+        {
+            OperationFailService.Send(this, InvalidOperation.Exhausted);
+            return;
+        }
+
+        var minLevel = yellSettings?.YellMinimumLevel ?? 2;
+        var allowedWhenPremium = yellSettings?.YellAllowedPremium ?? true;
+        
+        if (Level < minLevel)
+        {
+            var error = new StringBuilder($"You are not allowed to yell until you are level {minLevel}");
+
+            if (allowedWhenPremium && HasPremiumTime)
+            {
+                base.Yell(message);
+                Cooldowns.Start(CooldownType.Yell, 30_000); // 30 seconds cooldown
+                return;
+            }
+            
+            error.Append(" or have a premium account");
+            
+            OperationFailService.Send(this, error.ToString());
+
+            return;
+        }
+
+        base.Yell(message);
+        Cooldowns.Start(CooldownType.Yell, (uint)(yellSettings?.YellCooldownSeconds * 1000 ?? 30_000)); // 30 seconds cooldown
     }
 
     public void UpdateManaSpent(uint manaCost)
@@ -1596,7 +1636,7 @@ public class Player : CombatActor, IPlayer
         {
             return new DamageResult(new CombatDamageList(), false);
         }
-        
+
         return base.TakeDamage(enemy, damages);
     }
 

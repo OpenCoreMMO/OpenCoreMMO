@@ -30,7 +30,6 @@
 
     <ItemGroup>
         <Folder Include="Common\"/>
-        <Folder Include="Creature\Trade\"/>
     </ItemGroup>
 
     <ItemGroup>
