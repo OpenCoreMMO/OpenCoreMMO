@@ -15,7 +15,7 @@ function talkAction.onSay(player, words, param)
     end
 
     local position = player:getPosition()
-    position:getNextPosition(player:getDirection(), steps)
+    position = position:getNextPosition(player:getDirection(), steps)
 
     position = player:getClosestFreePosition(position, false)
     if position.x == 0 then
