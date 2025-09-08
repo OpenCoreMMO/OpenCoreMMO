@@ -207,8 +207,7 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
             item.Attributes.SetAttribute(ItemTypeAttribute.PrimaryGroup, rune.PrimaryGroup);
             item.Attributes.SetAttribute(ItemTypeAttribute.SecondaryGroup, rune.SecondaryGroup);
 
-            ISpell runeSpell = null;
-            if (_spellListManager.TryGet(rune.Name, out runeSpell))
+            if (_spellListManager.TryGet(rune.Name, out var runeSpell))
             {
                 runeSpell.ManaConsumption = rune.Mana;
                 runeSpell.ManaPercent = rune.ManaPercent;
@@ -227,6 +226,9 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 runeSpell.IsAggressive = rune.IsAggressive;
                 runeSpell.NeedLearn = rune.NeedLearn;
                 runeSpell.NeedWeapon = rune.NeedWeapon;
+                runeSpell.Cooldown = rune.Cooldown;
+                runeSpell.PrimaryGroup = (rune.PrimaryGroup, rune.PrimaryGroupCooldown);
+                runeSpell.SecondaryGroup = (rune.SecondaryGroup, rune.SecondaryGroupCooldown);
             }
 
             runeSpell ??= new RuneSpell
@@ -247,7 +249,10 @@ public class SpellFunctions : LuaScriptInterface, ISpellFunctions
                 IsSelfTarget = rune.IsSelfTarget,
                 IsAggressive = rune.IsAggressive,
                 NeedLearn = rune.NeedLearn,
-                NeedWeapon = rune.NeedWeapon
+                NeedWeapon = rune.NeedWeapon,
+                Cooldown = rune.Cooldown,
+                PrimaryGroup = (rune.PrimaryGroup, rune.PrimaryGroupCooldown),
+                SecondaryGroup = (rune.SecondaryGroup, rune.SecondaryGroupCooldown)
             };
 
             ((RuneSpell)runeSpell).LuaRune = rune;
