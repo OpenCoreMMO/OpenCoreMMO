@@ -295,6 +295,7 @@ public class PlayerAttackTests
         secondFloor.AddCreature(enemy);
 
         //act
+        Thread.Sleep(100);
         var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
