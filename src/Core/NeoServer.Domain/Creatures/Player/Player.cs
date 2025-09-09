@@ -1113,10 +1113,15 @@ public class Player : CombatActor, IPlayer
         return enemy is not IPlayer;
     }
 
-    public void PostAttack(CombatParameter combatParameter, CombatResult combatResult)
+    public void PostAttack(CombatParameter combatParameter, IThing target, CombatResult combatResult)
     {
         SetLogoutBlock();
-        SetProtectionZoneBlock();
+
+        if (target is IPlayer)
+        {
+            SetProtectionZoneBlock();
+        }
+        
         if (!combatParameter.UsingWeapon) return;
 
         Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);

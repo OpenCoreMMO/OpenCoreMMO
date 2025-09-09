@@ -304,7 +304,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     Result CanCastSpell(ISpell spell);
     void ConsumeSoul(ushort soul);
 
-    void PostAttack(CombatParameter combatParameter, CombatResult damages);
+    void PostAttack(CombatParameter combatParameter, IThing target, CombatResult damages);
     public void MoveToTemple();
 
     #region Events
