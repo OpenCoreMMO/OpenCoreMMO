@@ -90,10 +90,14 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
         if (!attackInput.HasTarget) return Result.Success;
 
         if (!aggressor.CanSee(target.Location) || !aggressor.Location.SameFloorAs(target.Location))
+        {
             return Result.Fail(InvalidOperation.TargetLost);
-        
-        if (!aggressor.CanSeeInvisible && !aggressor.CanSee(target as ICreature))
+        }
+
+        if (target is ICreature creatureTarget && !aggressor.CanSeeInvisible && !aggressor.CanSee(creatureTarget))
+        {
             return Result.Fail(InvalidOperation.TargetLost);
+        }
 
         switch (target)
         {
