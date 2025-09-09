@@ -6,6 +6,8 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.SafeTrade;
@@ -14,6 +16,7 @@ using NeoServer.Domain.SafeTrade.Validations;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Domain.Tests.Helpers.Services;
 using NeoServer.Domain.Tests.Server;
 using NeoServer.Domain.World.Models.Tiles;
 
@@ -519,6 +522,7 @@ public class TradeCancellationTests
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
+        var attackService = AttackServiceTestBuilder.Build(map);
 
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
@@ -538,7 +542,7 @@ public class TradeCancellationTests
 
         //act
         tradeSystem.Request(player, secondPlayer, distanceWeapon);
-        player.Attack(monster);
+        attackService.Execute(new AttackInput(player, monster, PlayerCombatParameterBuilder.Build(player, monster)));
 
         //assert
         AssertTradeIsCancelled(tradeSystem, map, secondPlayer);

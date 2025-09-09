@@ -10,6 +10,7 @@ using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
+using NeoServer.Domain.Creatures.Models.Bases;
 using NeoServer.Domain.Creatures.Player.Modes;
 using Serilog;
 
@@ -23,6 +24,19 @@ public class AttackService(
     ConditionAttackService conditionAttackService,
     AttackValidation attackValidation) : IAttackService
 {
+    private static readonly HashSet<InvalidOperation> OperationsThatStopAttack =
+    [
+        InvalidOperation.YouMayNotAttackThisPlayer,
+        InvalidOperation.NotPermittedInNoPvpZone,
+        InvalidOperation.CannotAttackPersonInProtectionZone,
+        InvalidOperation.YouMayNotAttackThisCreature,
+        InvalidOperation.CannotAttackWhileInProtectionZone,
+        InvalidOperation.TargetLost
+    ];
+
+    private static bool ShouldStopAttackOnValidationFailure(InvalidOperation operation) =>
+        OperationsThatStopAttack.Contains(operation);
+
     public CombatResult Execute(AttackInput attackInput)
     {
         if (Guard.IsNull(attackInput.Aggressor))
@@ -54,14 +68,29 @@ public class AttackService(
         }
 
         var attackValidationResult = attackValidation.Validate(attackInput);
-        if (attackValidationResult.Failed) return CombatResult.Fail(attackValidationResult);
+
+        if (attackValidationResult.Failed)
+        {
+            if (attackInput.Aggressor is CombatActor combatActor &&
+                ShouldStopAttackOnValidationFailure(attackValidationResult.Reason))
+            {
+                combatActor.StopAttack();
+            }
+
+            if (attackInput.Aggressor is IPlayer player)
+            {
+                OperationFailService.Send(player, attackValidationResult.Reason);
+            }
+
+            return CombatResult.Fail(attackValidationResult);
+        }
 
         var pvpCombatValidationResult = ValidatePvpCombat(attackInput);
         if (pvpCombatValidationResult.Failed) return CombatResult.Fail(pvpCombatValidationResult);
 
         playerSkullService.UpdateSkullOnAttack(attackInput.Aggressor as IPlayer, attackInput.Target as IPlayer);
 
-        if (DistanceAttackValidator.IsValid(attackInput) == false)
+        if (!DistanceAttackValidator.IsValid(attackInput))
             return CombatResult.Fail(Result.Fail(InvalidOperation.TooFar));
 
         UpdateParameters(attackInput);

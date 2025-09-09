@@ -38,14 +38,17 @@ public static class PlayerTestDataBuilder
         ITown town = null,
         ushort stamina = 42 * 60,
         int premiumTime = 0,
-        int experience = 1)
+        int experience = 1,
+        ushort level = 10,
+        ushort attackSpeed = 2000)
     {
         if (vocationStore is null)
         {
             var vocation = new Vocation
             {
                 Id = vocationType,
-                Name = "Knight"
+                Name = "Knight",
+                AttackSpeed = attackSpeed
             };
 
             vocationStore = new VocationStore();
@@ -84,7 +87,7 @@ public static class PlayerTestDataBuilder
             skills ?? new Dictionary<SkillType, ISkill>
             {
                 {
-                    SkillType.Level, new Skill(SkillType.Level, 10, experience)
+                    SkillType.Level, new Skill(SkillType.Level, level, experience)
                     {
                         GetIncreaseRate = () => 1
                     }

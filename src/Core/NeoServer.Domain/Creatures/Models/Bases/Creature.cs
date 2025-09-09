@@ -135,6 +135,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
 
     public virtual bool CanSee(ICreature otherCreature)
     {
+        if(otherCreature is null) return false;
         return !otherCreature.IsInvisible || CanSeeInvisible;
     }
 

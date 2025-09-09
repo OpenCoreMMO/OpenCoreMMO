@@ -38,7 +38,7 @@ public static class PlayerCombatParameterBuilder
             UsingWeapon = true,
             HitChance = HitChanceCalculation.GetHitChance(player.Inventory.Weapon,
                 player.GetSkillLevel(player.SkillInUse),
-                (byte)player.Location.GetSqmDistance(target.Location))
+                target is null ? (byte)0 : (byte)player.Location.GetSqmDistance(target.Location))
         };
     }
 

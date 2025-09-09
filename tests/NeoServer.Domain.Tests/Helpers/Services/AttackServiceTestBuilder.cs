@@ -23,7 +23,7 @@ public class AttackServiceTestBuilder
     {
         var gameConfiguration = new GameConfiguration
         {
-            PvP = new PvPConfiguration(pvpType),
+            PvP = new PvPConfiguration(pvpType, ProtectionLevel: 2),
             Combat = new CombatConfiguration(true, true)
         };
 
