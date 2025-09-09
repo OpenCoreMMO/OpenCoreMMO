@@ -1113,30 +1113,10 @@ public class Player : CombatActor, IPlayer
         return enemy is not IPlayer;
     }
 
-    public override Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks)
-    {
-        combatAttacks = new CombatAttackResult[1];
-
-        var canUse = true;
-
-        var combat = CombatAttackResult.None;
-
-        if (Inventory.IsUsingWeapon) canUse = Inventory.Weapon.Attack(this, enemy, out combat);
-
-        if (!Inventory.IsUsingWeapon) FistCombatAttack.Use(this, enemy, out combat);
-
-        if (canUse) IncreaseSkillCounter(SkillInUse, 1);
-
-        combatAttacks[0] = combat;
-
-        SetLogoutBlock();
-
-        return canUse ? Result.Success : Result.Fail(InvalidOperation.CannotUseWeapon);
-    }
-
     public void PostAttack(CombatParameter combatParameter, CombatResult combatResult)
     {
         SetLogoutBlock();
+        SetProtectionZoneBlock();
         if (!combatParameter.UsingWeapon) return;
 
         Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
