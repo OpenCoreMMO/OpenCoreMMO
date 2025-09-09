@@ -301,14 +301,7 @@ public class Monster : WalkableMonster, IMonster
                 _aliveSummons.TryAdd(summon.Name, 1);
         }
     }
-
-    [Obsolete]
-    public override Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks)
-    {
-        throw new NotSupportedException(
-            "Monsters cannot attack directly. Use the MonsterCombatService to handle attacks.");
-    }
-
+    
     public void PostAttack(MonsterCombatType type)
     {
         Cooldowns.Start(type.Id, type.Interval);
