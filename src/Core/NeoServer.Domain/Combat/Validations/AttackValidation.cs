@@ -79,7 +79,7 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
             {
                 if (!aggressor.Tile.PvpZone || !((ICreature)target).Tile.PvpZone)
                 {
-                    return Result.Fail(InvalidOperation.YouMayNotAttackThisCreature);
+                    return Result.Fail(InvalidOperation.YouMayNotAttackThisPlayer);
                 }
             }
         }
@@ -90,12 +90,19 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
         if (!attackInput.HasTarget) return Result.Success;
 
         if (!aggressor.CanSee(target.Location) || !aggressor.Location.SameFloorAs(target.Location))
-            return Result.Fail(InvalidOperation.CreatureIsNotReachable);
+        {
+            return Result.Fail(InvalidOperation.TargetLost);
+        }
+
+        if (target is ICreature creatureTarget && !aggressor.CanSeeInvisible && !aggressor.CanSee(creatureTarget))
+        {
+            return Result.Fail(InvalidOperation.TargetLost);
+        }
 
         switch (target)
         {
             case ICombatActor { IsDead: true }:
-                return Result.NotPossible;
+                return Result.Fail(InvalidOperation.CreatureIsDead);
             case ICombatActor victim when victim.Tile?.ProtectionZone ?? false:
             case ITile { ProtectionZone: true }:
                 return Result.Fail(InvalidOperation.CannotAttackPersonInProtectionZone);

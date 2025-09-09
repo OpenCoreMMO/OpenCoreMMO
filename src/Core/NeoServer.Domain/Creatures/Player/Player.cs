@@ -1,10 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat;
 using NeoServer.Domain.Combat.Attacks.Obsoletes;
-using NeoServer.Domain.Combat.Validation;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
@@ -890,9 +887,6 @@ public class Player : CombatActor, IPlayer
         if (onCreature is ICombatActor enemy)
             switch (item)
             {
-                case IUsableAttackOnCreature usableAttackOnCreature:
-                    itemUsed = Attack(enemy, usableAttackOnCreature);
-                    break;
                 case IUsableOnCreature usableOnCreature:
                     usableOnCreature.Use(this, onCreature);
                     itemUsed = true;
@@ -950,7 +944,6 @@ public class Player : CombatActor, IPlayer
 
         var result = item switch
         {
-            IUsableAttackOnTile usableAttackOnTile => Attack(targetTile, usableAttackOnTile),
             IUsableOnTile usableOnTile => usableOnTile.Use(this, targetTile),
             IUsableOnItem usableOnItem => usableOnItem.Use(this, onItem),
             _ => false
@@ -1170,28 +1163,7 @@ public class Player : CombatActor, IPlayer
         return result;
     }
 
-    public override Result Attack(ICombatActor enemy)
-    {
-        var canAttackResult = AttackValidation.CanAttack(this, enemy);
-        if (canAttackResult.Failed) return base.Attack(enemy);
 
-        if (enemy.IsInvisible)
-        {
-            StopAttack();
-            return Result.Fail(InvalidOperation.AttackTargetIsInvisible);
-        }
-
-        if (enemy is IPlayer) SetProtectionZoneBlock();
-
-        return base.Attack(enemy);
-    }
-
-    public override bool Attack(ICreature enemy, IUsableAttackOnCreature item)
-    {
-        SetLogoutBlock();
-        if (enemy is IPlayer) SetProtectionZoneBlock();
-        return base.Attack(enemy, item);
-    }
 
     public void StopAllActions()
     {

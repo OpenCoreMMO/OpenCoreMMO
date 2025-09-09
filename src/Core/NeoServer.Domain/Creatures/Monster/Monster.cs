@@ -16,6 +16,7 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster.Actions;
 using NeoServer.Domain.Creatures.Monster.Combat;
+using NeoServer.Domain.Creatures.Monster.Services;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Items.Items;
 
@@ -181,24 +182,24 @@ public class Monster : WalkableMonster, IMonster
 
     public virtual void UpdateState()
     {
-        TargetDetector.UpdateTargets(this, MapTool);
+        //TargetDetectorService.UpdateTargets(this, MapTool);
 
         if (!Targets.Any())
         {
             State = Cooldowns.Expired(CooldownType.Awaken) ? MonsterState.Sleeping : MonsterState.LookingForEnemy;
             return;
         }
-
-        if (!CanAttackAnyTarget)
-        {
-            State = MonsterState.LookingForEnemy;
-            return;
-        }
-
+        
         if (Metadata.Flags.TryGetValue(CreatureFlagAttribute.RunOnHealth, out var runOnHealth) &&
             runOnHealth >= HealthPoints)
         {
             State = MonsterState.Escaping;
+            return;
+        }
+
+        if (!CanAttackAnyTarget)
+        {
+            State = MonsterState.LookingForEnemy;
             return;
         }
 
@@ -223,7 +224,7 @@ public class Monster : WalkableMonster, IMonster
     {
         if (Attacking && !Cooldowns.Cooldowns[CooldownType.TargetChange].Expired) return;
 
-        TargetDetector.UpdateTargets(this, MapTool);
+        //TargetDetectorService.UpdateTargets(this, MapTool);
         var target = Targets.PossibleTargetToAttack;
 
         if (target is null) return;
