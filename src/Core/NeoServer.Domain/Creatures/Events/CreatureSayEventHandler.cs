@@ -2,19 +2,12 @@
 using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Domain.Creatures.Sound;
+using NeoServer.Domain.Common.Location;
 
 namespace NeoServer.Domain.Creatures.Events;
 
-public class CreatureSayEventHandler : IGameEventHandler
+public class CreatureSayEventHandler(IMap map) : IGameEventHandler
 {
-    private readonly IMap map;
-
-    public CreatureSayEventHandler(IMap map)
-    {
-        this.map = map;
-    }
-
     public void Execute(ICreature creature, SpeechType speechType, string message, ICreature receiver = null)
     {
         if (creature is null) return;
@@ -25,12 +18,21 @@ public class CreatureSayEventHandler : IGameEventHandler
             return;
         }
 
-        foreach (var spectator in map.GetCreaturesAtPositionZone(creature.Location))
+        var (maxDistanceX, maxDistanceY) = speechType switch
         {
-            if (!SoundRuleValidator.ShouldHear(creature, spectator, speechType)) continue;
+            SpeechType.Yell or SpeechType.MonsterYell => ((int)MapViewPort.MaxClientViewPortX * 2 + 2, (int)MapViewPort.MaxClientViewPortY * 2 + 2),
+            SpeechType.Whisper => (1, 1), // Adjacent squares only for whisper
+            _ => ((int)MapViewPort.MaxClientViewPortX, (int)MapViewPort.MaxClientViewPortY)
+        };
 
+        var multiFloor = speechType is SpeechType.Yell or SpeechType.MonsterYell;
+
+        foreach (var spectator in map.GetSpectators(creature.Location, multiFloor, true, maxDistanceX, maxDistanceX, maxDistanceY, maxDistanceY))
+        {
             if (spectator is ISociableCreature listener)
+            {
                 listener.Hear(creature, speechType, message);
+            }
         }
     }
 }

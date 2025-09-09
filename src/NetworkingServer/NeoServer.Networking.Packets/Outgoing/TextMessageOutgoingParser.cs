@@ -43,6 +43,7 @@ public static class TextMessageOutgoingParser
             InvalidOperation.CannotLeavePartyWhenInFight => "You cannot leave party when in fight.",
             InvalidOperation.NotInvited => "You are not invited.",
             InvalidOperation.TurnSecureModeToAttackUnmarkedPlayers => "Turn secure mode to attack unmarked players.",
+            InvalidOperation.TargetLost => "Target lost.",
             _ => string.Empty
         };
     }

@@ -53,5 +53,6 @@ public enum InvalidOperation
     NotEnoughSoul,
     DestinationOutOfReach,
     TurnSecureModeToAttackUnmarkedPlayers,
-    ItemCannotBeSend
+    ItemCannotBeSend,
+    TargetLost
 }

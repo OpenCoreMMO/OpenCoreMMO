@@ -21,7 +21,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         uint? houseId = null)
     {
         SetNewLocation(new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z));
-        Flags |= (byte)tileFlag;
+        Flags |= (uint)tileFlag;
         AddContent(ground, topItems, items);
         TileOperationEvent.OnLoaded(this);
         HouseId = houseId;

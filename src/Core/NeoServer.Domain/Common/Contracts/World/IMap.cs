@@ -1,3 +1,4 @@
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
@@ -5,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using MinMax = NeoServer.Domain.Common.MinMax;
 
 namespace NeoServer.Domain.Common.Contracts.World;
 
@@ -63,6 +65,8 @@ public interface IMap
         bool onlyPlayers = false);
 
     HashSet<ICreature> GetSpectators(Location.Structs.Location fromLocation, bool onlyPlayers = false);
+    HashSet<ICreature> GetSpectators(Location.Structs.Location location, bool multifloor, bool onlyPlayers, MinMax rangeX, MinMax rangeY);
+    HashSet<ICreature> GetSpectators(Location.Structs.Location location, bool multifloor, bool onlyPlayers, int minRangeX, int maxRangeX, int minRangeY, int maxRangeY);
     IEnumerable<ICreature> GetCreaturesAtPositionZone(Location.Structs.Location location, bool onlyPlayers = false);
     bool CanGoToDirection(ICreature creature, Direction direction, ITileEnterRule rule);
     ITile GetTile(Location.Structs.Location location);

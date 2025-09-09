@@ -1,17 +1,18 @@
 ﻿using NeoServer.Domain.Combat;
-using NeoServer.Domain.Combat.Validation;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 
-namespace NeoServer.Domain.Creatures.Monster.Combat;
+namespace NeoServer.Domain.Creatures.Monster.Services;
 
-internal static class TargetDetector
+public class TargetDetectorService(IMapTool mapTool)
 {
     /// <summary>
-    ///     Updates monster target list
+    /// Updates the monster's targets by checking their reachability and sight clearance.
     /// </summary>
-    public static void UpdateTargets(Monster monster, IMapTool mapTool)
+    /// <param name="monster"></param>
+    public void UpdateTargets(Monster monster)
     {
         if (monster.Targets.IsNull()) return;
 
@@ -43,7 +44,7 @@ internal static class TargetDetector
                 monster.Targets.NearestSightClearTarget = target;
             }
 
-            var targetIsUnreachable = IsTargetUnreachable(monster, target, mapTool);
+            var targetIsUnreachable = IsTargetUnreachable(monster, target);
             if (targetIsUnreachable.Unreachable) continue;
 
             target.SetAsReachable(targetIsUnreachable.Directions);
@@ -57,18 +58,43 @@ internal static class TargetDetector
         }
     }
 
-    private static (bool Unreachable, Direction[] Directions) IsTargetUnreachable(Monster monster, CombatTarget target,
-        IMapTool mapTool)
+    private (bool Unreachable, Direction[] Directions) IsTargetUnreachable(Monster monster, CombatTarget target)
     {
         var result = mapTool.PathFinder.Find(monster, target.Creature.Location, monster.PathSearchParams,
             monster.TileEnterRule);
 
         if (!result.Found) return (true, []);
 
-        if (AttackValidation.CanAttack(monster, target.Creature).Failed) return (true, []);
+        if (IgnoreTarget(monster, target.Creature))
+            return (true, []);
 
         if (target.Creature.IsInvisible && !monster.CanSeeInvisible) return (true, []);
 
         return (false, result.Directions);
+    }
+
+    private static bool IgnoreTarget(Monster monster, ICombatActor target)
+    {
+        // if the target is dead, we ignore it
+        if (target.IsDead) return true;
+
+        // if the target is in a protection zone, we ignore it
+        if (target.Tile?.ProtectionZone ?? false)
+        {
+            return true;
+        }
+        
+        // if the monster is in a protection zone, we ignore it
+        if (monster.Tile?.ProtectionZone ?? false)
+        {
+            return true;
+        }
+        
+        if (!monster.CanSee(target.Location)) return true;
+
+        // if the target is in the same floor as the monster, we ignore it
+        if (!monster.Location.SameFloorAs(target.Location)) return true;
+        
+        return false;
     }
 }

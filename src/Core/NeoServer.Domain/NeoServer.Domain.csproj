@@ -9,7 +9,6 @@
     <ItemGroup>
         <Folder Include="Common\Spell\"/>
         <Folder Include="Creatures\Group\"/>
-        <Folder Include="Creatures\Monster\Managers\"/>
     </ItemGroup>
 
     <ItemGroup>

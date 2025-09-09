@@ -33,7 +33,7 @@ public static class CreatureRaw
             cache.AddRange(creatureNameBytes);
         }
 
-        cache.Add((byte)Math.Min(100, creature.HealthPoints * 100 / creature.MaxHealthPoints));
+        cache.Add((byte)Math.Ceiling((double)creature.HealthPoints / Math.Max(creature.MaxHealthPoints, 1) * 100));
         cache.Add((byte)creature.SafeDirection);
 
         if (playerRequesting.CanSee(creature))

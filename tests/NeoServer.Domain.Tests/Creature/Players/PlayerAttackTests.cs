@@ -1,8 +1,12 @@
 ﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Domain.Tests.Helpers.Services;
 using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Tests.Creature.Players;
@@ -10,7 +14,7 @@ namespace NeoServer.Domain.Tests.Creature.Players;
 public class PlayerAttackTests
 {
     [Fact]
-    public void Player_cannot_set_attack_target_when_enemy_is_in_protection_zone()
+    public void Player_cannot_attack_target_when_enemy_is_in_protection_zone()
     {
         //arrange
         var location = new Location(100, 100, 7);
@@ -27,14 +31,18 @@ public class PlayerAttackTests
         regularTile.AddCreature(player);
 
         using var monitor = player.Monitor();
+        
+        var map = MapTestDataBuilder.Build(regularTile, protectionZoneTile);
+        var attackService = AttackServiceTestBuilder.Build(map);
 
         //act
-        var result = player.SetAttackTarget(enemy);
+        player.SetAttackTarget(enemy);
+        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
-        result.Reason.Should().Be(InvalidOperation.CannotAttackPersonInProtectionZone);
+        result.Result.Reason.Should().Be(InvalidOperation.CannotAttackPersonInProtectionZone);
 
-        monitor.Should().Raise(nameof(player.OnAttackCanceled));
+        monitor.Should().Raise(nameof(player.OnStoppedAttack));
         player.Attacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
@@ -59,14 +67,21 @@ public class PlayerAttackTests
         regularTile.AddCreature(enemy);
 
         using var monitor = player.Monitor();
+        
+        var map = MapTestDataBuilder.Build(regularTile, protectionZoneTile);
+        var attackService = AttackServiceTestBuilder.Build(map);
 
         //act
-        var result = player.SetAttackTarget(enemy);
+        
+        player.SetAttackTarget(enemy);
+        
+        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+
 
         //assert
-        result.Reason.Should().Be(InvalidOperation.CannotAttackWhileInProtectionZone);
+        result.Result.Reason.Should().Be(InvalidOperation.CannotAttackWhileInProtectionZone);
 
-        monitor.Should().Raise(nameof(player.OnAttackCanceled));
+        monitor.Should().Raise(nameof(player.OnStoppedAttack));
         player.Attacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
@@ -86,6 +101,9 @@ public class PlayerAttackTests
         var protectionZoneTile = new DynamicTile(new Coordinate(101, 100, 7), (TileFlag)TileFlags.ProtectionZone,
             ground, null, null);
 
+        var map = MapTestDataBuilder.Build(regularTile, regularTile2, protectionZoneTile);
+        var attackService = AttackServiceTestBuilder.Build(map);
+
         var player = PlayerTestDataBuilder.Build();
         var enemy = PlayerTestDataBuilder.Build();
 
@@ -101,10 +119,10 @@ public class PlayerAttackTests
 
         //act
 
-        var result = player.Attack(enemy);
+        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
-        result.Reason.Should().Be(InvalidOperation.CannotAttackPersonInProtectionZone);
+        result.Result.Failed.Should().BeTrue();
 
         monitor.Should().Raise(nameof(player.OnStoppedAttack));
 
@@ -127,6 +145,9 @@ public class PlayerAttackTests
         var protectionZoneTile = new DynamicTile(new Coordinate(101, 100, 7), (TileFlag)TileFlags.ProtectionZone,
             ground, null, null);
 
+        var map = MapTestDataBuilder.Build(regularTile, regularTile2, protectionZoneTile);
+        var attackService = AttackServiceTestBuilder.Build(map);
+
         var player = PlayerTestDataBuilder.Build();
         var enemy = PlayerTestDataBuilder.Build();
 
@@ -141,10 +162,10 @@ public class PlayerAttackTests
         protectionZoneTile.AddCreature(player);
 
         //act
-        var result = player.Attack(enemy);
+        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
-        result.Reason.Should().Be(InvalidOperation.CannotAttackWhileInProtectionZone);
+        result.Result.Reason.Should().Be(InvalidOperation.CannotAttackWhileInProtectionZone);
 
         monitor.Should().Raise(nameof(player.OnStoppedAttack));
 
@@ -158,31 +179,54 @@ public class PlayerAttackTests
     public void Player_cannot_attack_dead_enemy()
     {
         //arrange
+        var location = new Location(100, 100, 7);
+        var ground = MapTestDataBuilder.CreateGround(location);
+
+        var tile1 = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.None, ground, null, null);
+        var tile2 = new DynamicTile(new Coordinate(100, 101, 7), (TileFlag)TileFlags.None, ground, null, null);
+
+        var map = MapTestDataBuilder.Build(tile1, tile2);
+        var attackService = AttackServiceTestBuilder.Build(map);
+
         var player = PlayerTestDataBuilder.Build();
         var enemy = PlayerTestDataBuilder.Build(hp: 0);
+
+        tile1.AddCreature(player);
+        tile2.AddCreature(enemy);
+
         using var monitor = player.Monitor();
 
         //act
-        var result = player.Attack(enemy);
+        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
-        result.Reason.Should().Be(InvalidOperation.CreatureIsDead);
+        result.Result.Reason.Should().Be(InvalidOperation.CreatureIsDead);
     }
 
     [Fact]
     public void Player_cannot_attack_himself()
     {
         //arrange
+        var location = new Location(100, 100, 7);
+        var ground = MapTestDataBuilder.CreateGround(location);
+
+        var tile = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.None, ground, null, null);
+
+        var map = MapTestDataBuilder.Build(tile);
+        var attackService = AttackServiceTestBuilder.Build(map);
+
         var player = PlayerTestDataBuilder.Build();
+
+        tile.AddCreature(player);
+
         using var monitor = player.Monitor();
 
         //act
-        var result = player.Attack(player);
+        attackService.Execute(new AttackInput(player, player, PlayerCombatParameterBuilder.Build(player, player)));
 
         //assert
         monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
-        result.Reason.Should().Be(InvalidOperation.NotPossible);
     }
 
     [Fact]
@@ -195,6 +239,9 @@ public class PlayerAttackTests
         var regularTile = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.None, ground, null, null);
         var secondFloor = new DynamicTile(new Coordinate(100, 101, 6), (TileFlag)TileFlags.None, ground, null, null);
 
+        var map = MapTestDataBuilder.Build(regularTile, secondFloor);
+        var attackService = AttackServiceTestBuilder.Build(map);
+
         var player = PlayerTestDataBuilder.Build();
         var enemy = PlayerTestDataBuilder.Build();
 
@@ -204,10 +251,10 @@ public class PlayerAttackTests
         using var monitor = player.Monitor();
 
         //act
-        var result = player.Attack(enemy);
+        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
-        result.Reason.Should().Be(InvalidOperation.CreatureIsNotReachable);
+        result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
 
         monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
 
@@ -229,7 +276,10 @@ public class PlayerAttackTests
 
         var secondFloor = new DynamicTile(new Coordinate(100, 101, 6), (TileFlag)TileFlags.None, ground, null, null);
 
-        var player = PlayerTestDataBuilder.Build();
+        var map = MapTestDataBuilder.Build(regularTile, regularTile2, secondFloor);
+        var attackService = AttackServiceTestBuilder.Build(map);
+
+        var player = PlayerTestDataBuilder.Build(attackSpeed: 1);
         var enemy = PlayerTestDataBuilder.Build();
 
         regularTile.AddCreature(player);
@@ -237,16 +287,19 @@ public class PlayerAttackTests
 
         using var monitor = player.Monitor();
 
-        player.Attack(enemy);
+        player.SetAttackTarget(enemy);
+
+        attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         regularTile2.RemoveCreature(enemy, out _);
         secondFloor.AddCreature(enemy);
 
         //act
-        var result = player.Attack(enemy);
+        Thread.Sleep(100);
+        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
-        result.Reason.Should().Be(InvalidOperation.CreatureIsNotReachable);
+        result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
 
         monitor.Should().Raise(nameof(player.OnStoppedAttack));
 
@@ -266,6 +319,9 @@ public class PlayerAttackTests
         var regularTile = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.None, ground, null, null);
         var secondFloor = new DynamicTile(new Coordinate(100, 101, 8), (TileFlag)TileFlags.None, ground, null, null);
 
+        var map = MapTestDataBuilder.Build(regularTile, secondFloor);
+        var attackService = AttackServiceTestBuilder.Build(map);
+
         var player = PlayerTestDataBuilder.Build();
         var enemy = PlayerTestDataBuilder.Build();
 
@@ -275,10 +331,10 @@ public class PlayerAttackTests
         using var monitor = player.Monitor();
 
         //act
-        var result = player.Attack(enemy);
+        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
-        result.Reason.Should().Be(InvalidOperation.CreatureIsNotReachable);
+        result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
 
         monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
 
@@ -298,6 +354,9 @@ public class PlayerAttackTests
         var regularTile = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.None, ground, null, null);
         var secondFloor = new DynamicTile(new Coordinate(100, 150, 7), (TileFlag)TileFlags.None, ground, null, null);
 
+        var map = MapTestDataBuilder.Build(regularTile, secondFloor);
+        var attackService = AttackServiceTestBuilder.Build(map);
+
         var player = PlayerTestDataBuilder.Build();
         var enemy = PlayerTestDataBuilder.Build();
 
@@ -307,10 +366,10 @@ public class PlayerAttackTests
         using var monitor = player.Monitor();
 
         //act
-        var result = player.Attack(enemy);
+        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
-        result.Reason.Should().Be(InvalidOperation.CreatureIsNotReachable);
+        result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
 
         monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
 

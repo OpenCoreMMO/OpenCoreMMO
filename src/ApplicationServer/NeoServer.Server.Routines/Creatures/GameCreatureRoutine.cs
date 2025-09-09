@@ -10,31 +10,18 @@ using NeoServer.Server.Tasks;
 
 namespace NeoServer.Server.Routines.Creatures;
 
-public class GameCreatureRoutine
+public class GameCreatureRoutine(
+    IGameServer game,
+    SpawnManager spawnManager,
+    PlayerLogOutCommand playerLogOutCommand,
+    PlayerStatusRoutine playerStatusRoutine,
+    MonsterStateRoutine monsterStateRoutine)
 {
     private const ushort EVENT_CHECK_CREATURE_INTERVAL = 1000;
-    private readonly IGameServer _game;
-    private readonly PlayerLogOutCommand _playerLogOutCommand;
-    private readonly PlayerStatusRoutine _playerStatusRoutine;
-    private readonly SpawnManager _spawnManager;
-    private readonly ISummonService _summonService;
-
-    public GameCreatureRoutine(
-        IGameServer game,
-        SpawnManager spawnManager,
-        PlayerLogOutCommand playerLogOutCommand,
-        ISummonService summonService, PlayerStatusRoutine playerStatusRoutine)
-    {
-        _game = game;
-        _spawnManager = spawnManager;
-        _playerLogOutCommand = playerLogOutCommand;
-        _summonService = summonService;
-        _playerStatusRoutine = playerStatusRoutine;
-    }
 
     public void StartChecking()
     {
-        foreach (var creature in _game.CreatureManager.GetCreatures())
+        foreach (var creature in game.CreatureManager.GetCreatures())
         {
             if (creature is null or ICombatActor { IsDead: true }) continue;
             if (!creature.IsThinking()) continue;
@@ -46,10 +33,10 @@ public class GameCreatureRoutine
             CheckMonster(creature);
             CheckNpc(creature);
 
-            RespawnRoutine.Execute(_spawnManager);
+            RespawnRoutine.Execute(spawnManager);
         }
 
-        _game.Scheduler.AddEvent(new SchedulerEvent(EVENT_CHECK_CREATURE_INTERVAL, StartChecking));
+        game.Scheduler.AddEvent(new SchedulerEvent(EVENT_CHECK_CREATURE_INTERVAL, StartChecking));
     }
 
     private static void CheckCreature(ICreature creature)
@@ -66,8 +53,8 @@ public class GameCreatureRoutine
     {
         if (creature is not IMonster monster) return;
 
-        CreatureDefenseRoutine.Execute(monster, _game);
-        MonsterStateRoutine.Execute(monster, _summonService);
+        CreatureDefenseRoutine.Execute(monster, game);
+        monsterStateRoutine.Execute(monster);
         MonsterYellRoutine.Execute(monster);
     }
 
@@ -75,9 +62,9 @@ public class GameCreatureRoutine
     {
         if (creature is not IPlayer player) return;
 
-        PlayerPingRoutine.Execute(player, _playerLogOutCommand, _game);
+        PlayerPingRoutine.Execute(player, playerLogOutCommand, game);
         PlayerRecoveryRoutine.Execute(player);
         PlayerSkullRoutine.Execute(player);
-        _playerStatusRoutine.Execute(player);
+        playerStatusRoutine.Execute(player);
     }
 }
