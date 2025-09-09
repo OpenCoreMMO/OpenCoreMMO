@@ -213,11 +213,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         }
     }
 
-    public override void Disappear(Location location, ICylinderSpectator[] spectators)
-    {
-        base.Disappear(location, spectators);
-    }
-
     public abstract bool IsHostileTo(ICombatActor enemy);
 
     public void OnEnemyAppears(ICombatActor enemy)
@@ -338,8 +333,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     }
 
     public abstract void SetAsEnemy(ICreature actor);
-
-    public abstract Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks);
     
     public void DisableShieldDefense()
     {

@@ -1,9 +1,7 @@
 ﻿using NeoServer.Domain.Combat;
 using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Combat.Structs;
-using NeoServer.Domain.Common.Contracts.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
@@ -102,8 +100,6 @@ public interface ICombatActor : IWalkableCreature
     ICondition GetCondition(ConditionType type);
     void OnEnemyAppears(ICombatActor enemy);
     bool IsHostileTo(ICombatActor enemy);
-    Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks);
-
     event StopAttack OnAttackCanceled;
     void DisableShieldDefense();
     void EnableShieldDefense();
