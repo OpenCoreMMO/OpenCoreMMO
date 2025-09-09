@@ -8,6 +8,7 @@ using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Inspection;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Creatures.Monster.Services;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.Items.Services.ItemTransform;
@@ -59,6 +60,8 @@ public static class ServiceInjection
         builder.AddSingleton<IMailService, MailService>();
         builder.AddSingleton<QuestService>();
         builder.AddSingleton<AreaCalculationService>();
+        builder.AddSingleton<MonsterStateService>();
+        builder.AddSingleton<TargetDetectorService>();
 
         //Operations
         builder.AddSingleton<TradeItemExchanger>();

@@ -62,7 +62,6 @@ public interface ICombatActor : IWalkableCreature
     event GainExperience OnGainedExperience;
 
     int DefendUsingArmor(int attack);
-    Result Attack(ICombatActor enemy, ICombatAttack attack, CombatAttackValue value);
     void Heal(ushort increasing, ICreature healedBy);
     CombatDamage ReduceDamage(CombatDamage damage);
     Result SetAttackTarget(ICreature target);
@@ -84,9 +83,7 @@ public interface ICombatActor : IWalkableCreature
     DamageResult TakeDamage(IThing enemy, CombatDamageList damages);
 
     DamageResult TakeDamage(IThing enemy, CombatDamage damages);
-    Result Attack(ICombatActor creature);
     void PropagateAttack(AffectedLocation[] area, CombatDamage damage);
-    bool Attack(ICreature creature, IUsableAttackOnCreature item);
 
     /// <summary>
     ///     Set creature as enemy. If monster can't see creature it will be forgotten
@@ -103,7 +100,6 @@ public interface ICombatActor : IWalkableCreature
     bool HasCondition(ConditionType type, out ICondition condition);
     bool HasCondition(ConditionType type);
     ICondition GetCondition(ConditionType type);
-    void PropagateAttack(AffectedLocation area, CombatDamage damage);
     void OnEnemyAppears(ICombatActor enemy);
     bool IsHostileTo(ICombatActor enemy);
     Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks);

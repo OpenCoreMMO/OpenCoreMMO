@@ -1,6 +1,6 @@
 ﻿namespace NeoServer.Domain.Common.Location;
 
-public enum TileFlag : byte
+public enum TileFlag : uint
 {
     None = 0
 }
