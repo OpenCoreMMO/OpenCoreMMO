@@ -1,7 +1,9 @@
-﻿using NeoServer.Domain.Common.Contracts;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Services;
 
 namespace NeoServer.Domain.Creatures.Events;
 
@@ -13,9 +15,11 @@ public class CreatureMovedEventHandler : IGameEventHandler
         foreach (var cylinderSpectator in spectators)
         {
             var spectator = cylinderSpectator.Spectator;
-            if (creature == spectator) continue;
+            if (Equals(creature, spectator)) continue;
 
             if (spectator is ICombatActor { IsDead: true }) continue;
+            
+            spectator.OnSpectatorMoved(creature);
 
             if (CreatureOrSpectatorAreNpcs(creature, spectator)) continue;
             if (CreatureAndSpectatorAreBothPlayers(creature, spectator)) continue;
@@ -30,7 +34,10 @@ public class CreatureMovedEventHandler : IGameEventHandler
             SetCreatureAndSpectatorAsEnemies(creature, spectator);
         }
 
-        if (creature is ICombatActor combatActor) combatActor.Tile.MagicField?.CauseDamage(combatActor);
+        if (creature is ICombatActor combatActor)
+        {
+            combatActor.Tile.MagicField?.CauseDamage(combatActor);
+        }
     }
 
     private static void SetCreatureAndSpectatorAsEnemies(ICreature creature, ICreature spectator)

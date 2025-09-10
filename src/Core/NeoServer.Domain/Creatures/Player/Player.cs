@@ -134,7 +134,7 @@ public class Player : CombatActor, IPlayer
 
     public string CharacterName { get; }
     public Dictionary<uint, long> KnownCreatures { get; }
-    public bool Online { get; }
+    public bool Online { get; private set; }
 
     public int DefenseFactor => FightMode switch
     {
@@ -508,11 +508,35 @@ public class Player : CombatActor, IPlayer
 
     public override void OnMoved(IDynamicTile fromTile, IDynamicTile toTile, ICylinderSpectator[] spectators)
     {
+        if (IsTargetLost())
+        {
+            StopAttack();
+            OperationFailService.Send(this, InvalidOperation.TargetLost);
+        }
+        
         TogglePacifiedCondition(fromTile, toTile);
         Containers.CloseDistantContainers();
         base.OnMoved(fromTile, toTile, spectators);
 
         EventAggregator.Invoke(new PlayerWalkEvent(this, Direction));
+    }
+
+    public override void OnSpectatorMoved(ICreature creature)
+    {
+        if (creature is not ICombatActor target) return;
+        if (target.Equals(CurrentTarget))
+        {
+            HandleTargetLost();    
+        }
+        
+        base.OnSpectatorMoved(creature);
+    }
+
+    public void HandleTargetLost()
+    {
+        if (!IsTargetLost()) return;
+        StopAttack();
+        OperationFailService.Send(this, InvalidOperation.TargetLost);
     }
 
     public override bool CanSee(ICreature otherCreature)
@@ -634,7 +658,7 @@ public class Player : CombatActor, IPlayer
         if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteSoul)) ConsumeSoul(spell.SoulConsumption);
 
         UpdateManaSpent(spell.ManaConsumption);
-        
+
         StartCooldown(spell);
 
         if (!spell.ShouldSay) return;
@@ -650,7 +674,7 @@ public class Player : CombatActor, IPlayer
             base.Yell(message);
             return;
         }
-        
+
         if (!CooldownHasExpired(CooldownType.Yell))
         {
             OperationFailService.Send(this, InvalidOperation.Exhausted);
@@ -659,7 +683,7 @@ public class Player : CombatActor, IPlayer
 
         var minLevel = yellSettings?.YellMinimumLevel ?? 2;
         var allowedWhenPremium = yellSettings?.YellAllowedPremium ?? true;
-        
+
         if (Level < minLevel)
         {
             var error = new StringBuilder($"You are not allowed to yell until you are level {minLevel}");
@@ -670,16 +694,17 @@ public class Player : CombatActor, IPlayer
                 Cooldowns.Start(CooldownType.Yell, 30_000); // 30 seconds cooldown
                 return;
             }
-            
+
             error.Append(" or have a premium account");
-            
+
             OperationFailService.Send(this, error.ToString());
 
             return;
         }
 
         base.Yell(message);
-        Cooldowns.Start(CooldownType.Yell, (uint)(yellSettings?.YellCooldownSeconds * 1000 ?? 30_000)); // 30 seconds cooldown
+        Cooldowns.Start(CooldownType.Yell,
+            (uint)(yellSettings?.YellCooldownSeconds * 1000 ?? 30_000)); // 30 seconds cooldown
     }
 
     public void UpdateManaSpent(uint manaCost)
@@ -1121,7 +1146,7 @@ public class Player : CombatActor, IPlayer
         {
             SetProtectionZoneBlock();
         }
-        
+
         if (!combatParameter.UsingWeapon) return;
 
         Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
@@ -1147,7 +1172,6 @@ public class Player : CombatActor, IPlayer
 
         return result;
     }
-
 
 
     public void StopAllActions()
@@ -1526,6 +1550,7 @@ public class Player : CombatActor, IPlayer
 
     public void ChangeOnlineStatus(bool online)
     {
+        Online = online;
         OnChangedOnlineStatus?.Invoke(this, online);
     }
 
@@ -1606,7 +1631,14 @@ public class Player : CombatActor, IPlayer
 
     public override void Think(int interval)
     {
+        HandleTargetLost();
         EventAggregator.Invoke(new PlayerThinkEvent(this, interval));
+    }
+
+    public override bool IsTargetLost()
+    {
+        if (CurrentTarget?.Tile?.NoPvpZone ?? false) return true;
+        return base.IsTargetLost();
     }
 
     #endregion
