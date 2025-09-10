@@ -1528,7 +1528,7 @@ public class Player : CombatActor, IPlayer
 
     public void ChangeOnlineStatus(bool online)
     {
-        Online = false;
+        Online = online;
         OnChangedOnlineStatus?.Invoke(this, online);
     }
 
