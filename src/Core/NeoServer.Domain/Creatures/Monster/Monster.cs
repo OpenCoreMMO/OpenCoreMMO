@@ -51,7 +51,7 @@ public class Monster : WalkableMonster, IMonster
     private bool KeepDistance => TargetDistance > 1;
     private MonsterCombatType[] Attacks => Metadata.Attacks;
     internal ICombatDefense[] Defenses => Metadata.Defenses;
-    internal TargetList Targets { get; }
+    public TargetList Targets { get; }
     public override bool CanAttackAnyTarget => Targets.CanAttackAnyTarget;
     public bool HasDistanceAttack => Metadata.HasDistanceAttack;
 
@@ -89,6 +89,19 @@ public class Monster : WalkableMonster, IMonster
         OnWasBorn?.Invoke(this, location);
     }
 
+    public override void OnSpectatorMoved(ICreature creature)
+    {
+        if (IsDead) return;
+        if (creature is not ICombatActor target) return;
+
+        if (Targets.HasTarget(creature))
+        {
+            Targets.OnTargetMoved(target);
+        }
+
+        base.OnSpectatorMoved(creature);
+    }
+
     public void Reborn()
     {
         if (Spawn is null) return;
@@ -108,8 +121,8 @@ public class Monster : WalkableMonster, IMonster
     public override DamageResult TakeDamage(IThing enemy, CombatDamageList damages)
     {
         if (this is Summon.Summon { Master: IPlayer }) return base.TakeDamage(enemy, damages);
-        
-        if (enemy is Summon.Summon { Master: IPlayer } or IPlayer or MagicField )
+
+        if (enemy is Summon.Summon { Master: IPlayer } or IPlayer or MagicField)
         {
             var damageResult = base.TakeDamage(enemy, damages);
             return damageResult;
@@ -189,7 +202,7 @@ public class Monster : WalkableMonster, IMonster
             State = Cooldowns.Expired(CooldownType.Awaken) ? MonsterState.Sleeping : MonsterState.LookingForEnemy;
             return;
         }
-        
+
         if (Metadata.Flags.TryGetValue(CreatureFlagAttribute.RunOnHealth, out var runOnHealth) &&
             runOnHealth >= HealthPoints)
         {
@@ -301,7 +314,7 @@ public class Monster : WalkableMonster, IMonster
                 _aliveSummons.TryAdd(summon.Name, 1);
         }
     }
-    
+
     public void PostAttack(MonsterCombatType type)
     {
         Cooldowns.Start(type.Id, type.Interval);
@@ -386,7 +399,7 @@ public class Monster : WalkableMonster, IMonster
     {
         if (by is IPlayer player && ReferenceEquals(player.CurrentTarget, this))
             player.StopAttack();
-        
+
         base.Death(by);
     }
 

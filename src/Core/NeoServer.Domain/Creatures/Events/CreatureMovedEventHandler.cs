@@ -15,9 +15,11 @@ public class CreatureMovedEventHandler : IGameEventHandler
         foreach (var cylinderSpectator in spectators)
         {
             var spectator = cylinderSpectator.Spectator;
-            if (creature == spectator) continue;
+            if (Equals(creature, spectator)) continue;
 
             if (spectator is ICombatActor { IsDead: true }) continue;
+            
+            spectator.OnSpectatorMoved(creature);
 
             if (CreatureOrSpectatorAreNpcs(creature, spectator)) continue;
             if (CreatureAndSpectatorAreBothPlayers(creature, spectator)) continue;
@@ -31,19 +33,9 @@ public class CreatureMovedEventHandler : IGameEventHandler
 
             SetCreatureAndSpectatorAsEnemies(creature, spectator);
         }
-        
+
         if (creature is ICombatActor combatActor)
         {
-            if (combatActor.IsTargetLost())
-            {
-                combatActor.StopAttack();
-                
-                if (combatActor is IPlayer player)
-                {
-                    OperationFailService.Send(player, InvalidOperation.TargetLost);
-                }
-            }
-            
             combatActor.Tile.MagicField?.CauseDamage(combatActor);
         }
     }

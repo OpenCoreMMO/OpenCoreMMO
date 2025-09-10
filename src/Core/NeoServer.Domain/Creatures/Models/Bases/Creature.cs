@@ -120,6 +120,11 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         Outfit.Change(lookType, head, body, legs, feet, addon);
         OnChangedOutfit?.Invoke(this, Outfit);
     }
+    
+    public virtual void OnSpectatorMoved(ICreature creature)
+    {
+        
+    }
 
     public void BackToOldOutfit()
     {

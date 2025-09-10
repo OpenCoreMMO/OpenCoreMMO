@@ -231,4 +231,11 @@ public interface ICreature : IMovableThing
 
     void SetLight(byte color, byte level);
     void RemoveLight();
+    
+    /// <summary>
+    /// Event that is fired when a spectator moves.
+    /// </summary>
+    /// <param name="creature"></param>
+    void OnSpectatorMoved(ICreature creature);
+
 }

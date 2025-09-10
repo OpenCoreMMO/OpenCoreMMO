@@ -2,8 +2,6 @@
 using NeoServer.Domain.Combat;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Creatures.Monster.Combat;
 
@@ -19,6 +17,12 @@ public class TargetList : IEnumerable<CombatTarget>
 
     public CombatTarget NearestTarget { private get; set; }
     public CombatTarget NearestSightClearTarget { private get; set; }
+
+    public bool HasTarget(ICreature creature) => _targets.ContainsKey(creature.CreatureId);
+    public void OnTargetMoved(ICombatActor creature)
+    {
+        HandleTargetMoved(creature);
+    }
 
     public bool CanAttackAnyTarget
     {
@@ -60,7 +64,7 @@ public class TargetList : IEnumerable<CombatTarget>
 
     public void RemoveTarget(ICreature creature)
     {
-        if (creature is ICombatActor actor) DettachFromTargetEvents(actor);
+        if (creature is ICombatActor actor) DetachFromTargetEvents(actor);
 
         _targets?.Remove(creature.CreatureId);
 
@@ -90,15 +94,13 @@ public class TargetList : IEnumerable<CombatTarget>
     {
         creature.OnDeath += OnTargetDie;
         creature.OnChangedVisibility += OnTargetDisappeared;
-        creature.OnCreatureMoved += OnTargetMoved;
         if (creature is IPlayer player) player.OnLoggedOut += OnTargetRemoved;
     }
 
-    private void DettachFromTargetEvents(ICombatActor creature)
+    private void DetachFromTargetEvents(ICombatActor creature)
     {
         creature.OnDeath -= OnTargetDie;
         creature.OnChangedVisibility -= OnTargetDisappeared;
-        creature.OnCreatureMoved -= OnTargetMoved;
         if (creature is IPlayer player) player.OnLoggedOut -= OnTargetRemoved;
     }
 
@@ -113,15 +115,14 @@ public class TargetList : IEnumerable<CombatTarget>
         RemoveTarget(creature);
     }
 
-    private void HandleTargetMoved(IWalkableCreature creature, bool lastStep = false)
+    private void HandleTargetMoved(IWalkableCreature target)
     {
-        if (!_monster.CanSee(creature.Location)) RemoveTarget(creature);
-    }
-
-    private void OnTargetMoved(IWalkableCreature creature, Location fromLocation, Location toLocation,
-        ICylinderSpectator[] spectators)
-    {
-        HandleTargetMoved(creature);
+        if (target is null) return;
+        
+        if (target is ICombatActor combatTarget && combatTarget.IsTargetLost(target) || !_monster.CanSee(target.Location))
+        {
+            RemoveTarget(target);
+        }
     }
 
     private void OnTargetRemoved(ICreature creature)
