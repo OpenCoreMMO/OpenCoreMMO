@@ -119,6 +119,19 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
 
         return Result.Success;
     }
+    
+    private static readonly HashSet<InvalidOperation> OperationsThatStopAttack =
+    [
+        InvalidOperation.YouMayNotAttackThisPlayer,
+        InvalidOperation.NotPermittedInNoPvpZone,
+        InvalidOperation.CannotAttackPersonInProtectionZone,
+        InvalidOperation.YouMayNotAttackThisCreature,
+        InvalidOperation.CannotAttackWhileInProtectionZone,
+        InvalidOperation.TargetLost
+    ];
+    
+    public static bool ShouldStopAttackOnValidationFailure(InvalidOperation operation) =>
+        OperationsThatStopAttack.Contains(operation);
 
     private bool IsProtected(IPlayer playerAggressor, IPlayer playerTarget)
     {

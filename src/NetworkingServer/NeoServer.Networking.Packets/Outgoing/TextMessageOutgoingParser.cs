@@ -44,6 +44,7 @@ public static class TextMessageOutgoingParser
             InvalidOperation.NotInvited => "You are not invited.",
             InvalidOperation.TurnSecureModeToAttackUnmarkedPlayers => "Turn secure mode to attack unmarked players.",
             InvalidOperation.TargetLost => "Target lost.",
+            InvalidOperation.YouMayNotAttackThisPlayer => "You may not attack this person.",
             _ => string.Empty
         };
     }
