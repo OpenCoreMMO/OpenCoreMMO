@@ -24,19 +24,6 @@ public class AttackService(
     ConditionAttackService conditionAttackService,
     AttackValidation attackValidation) : IAttackService
 {
-    private static readonly HashSet<InvalidOperation> OperationsThatStopAttack =
-    [
-        InvalidOperation.YouMayNotAttackThisPlayer,
-        InvalidOperation.NotPermittedInNoPvpZone,
-        InvalidOperation.CannotAttackPersonInProtectionZone,
-        InvalidOperation.YouMayNotAttackThisCreature,
-        InvalidOperation.CannotAttackWhileInProtectionZone,
-        InvalidOperation.TargetLost
-    ];
-
-    private static bool ShouldStopAttackOnValidationFailure(InvalidOperation operation) =>
-        OperationsThatStopAttack.Contains(operation);
-
     public CombatResult Execute(AttackInput attackInput)
     {
         if (Guard.IsNull(attackInput.Aggressor))
@@ -71,13 +58,13 @@ public class AttackService(
 
         if (attackValidationResult.Failed)
         {
-            if (attackInput.Aggressor is CombatActor combatActor &&
-                ShouldStopAttackOnValidationFailure(attackValidationResult.Reason))
+            var shouldStopAttack = AttackValidation.ShouldStopAttackOnValidationFailure(attackValidationResult.Reason);
+            if (attackInput.Aggressor is CombatActor combatActor && shouldStopAttack)
             {
                 combatActor.StopAttack();
             }
 
-            if (attackInput.Aggressor is IPlayer player)
+            if (attackInput.Aggressor is IPlayer player && shouldStopAttack)
             {
                 OperationFailService.Send(player, attackValidationResult.Reason);
             }

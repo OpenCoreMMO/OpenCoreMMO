@@ -171,6 +171,23 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnStoppedAttack?.Invoke(this);
     }
 
+    public bool IsTargetLost()
+    {
+        if (CurrentTarget is null) return false;
+        
+        if (!CanSee(CurrentTarget.Location) || !Location.SameFloorAs(CurrentTarget.Location))
+        {
+            return true;
+        }
+
+        if (!CanSeeInvisible && !CanSee(CurrentTarget))
+        {
+            return true;
+        }
+
+        return false;
+    }
+    
     public virtual Result CanAttack(CombatParameter combatParameter)
     {
         if (IsDead) return Result.Fail(InvalidOperation.CreatureIsDead);

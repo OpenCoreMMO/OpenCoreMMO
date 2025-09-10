@@ -111,4 +111,5 @@ public interface ICombatActor : IWalkableCreature
     void PreAttack(CombatContext combatContext);
     Result CanAttack(CombatParameter combatParameter);
     void StartCooldown(Guid cooldownId, uint duration);
+    bool IsTargetLost();
 }

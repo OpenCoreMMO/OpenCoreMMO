@@ -1,7 +1,9 @@
-﻿using NeoServer.Domain.Common.Contracts;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Services;
 
 namespace NeoServer.Domain.Creatures.Events;
 
@@ -29,8 +31,21 @@ public class CreatureMovedEventHandler : IGameEventHandler
 
             SetCreatureAndSpectatorAsEnemies(creature, spectator);
         }
-
-        if (creature is ICombatActor combatActor) combatActor.Tile.MagicField?.CauseDamage(combatActor);
+        
+        if (creature is ICombatActor combatActor)
+        {
+            if (combatActor.IsTargetLost())
+            {
+                combatActor.StopAttack();
+                
+                if (combatActor is IPlayer player)
+                {
+                    OperationFailService.Send(player, InvalidOperation.TargetLost);
+                }
+            }
+            
+            combatActor.Tile.MagicField?.CauseDamage(combatActor);
+        }
     }
 
     private static void SetCreatureAndSpectatorAsEnemies(ICreature creature, ICreature spectator)
