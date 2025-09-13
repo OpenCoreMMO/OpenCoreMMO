@@ -439,8 +439,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         if (by is ICombatActor combatActor)
             //todo: implements real damage
             OnBeforeDeath?.Invoke(this, combatActor, 0);
-
-        OnDeath?.Invoke(this, by);
+        
         EventAggregator.Invoke(new CreatureDeathEvent(this, by));
         
         Dismiss();
@@ -483,7 +482,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public event BlockAttack OnBlockedAttack;
     public event Attack OnAttackEnemy;
     public event BeforeDeath OnBeforeDeath;
-    public event Death OnDeath;
     public event AttackTargetChange OnTargetChanged;
     public event ChangeVisibility OnChangedVisibility;
     public event PropagateAttack OnPropagateAttack;

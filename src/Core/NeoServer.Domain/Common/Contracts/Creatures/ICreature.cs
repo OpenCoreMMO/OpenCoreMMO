@@ -18,8 +18,6 @@ public delegate void StopWalk(IWalkableCreature creature);
 
 public delegate void BeforeDeath(ICombatActor creature, ICombatActor killer, int realDamage);
 
-public delegate void Death(ICombatActor creature, IThing by);
-
 public delegate void GainExperience(ICreature creature, long exp);
 
 public delegate void LoseExperience(ICreature creature, long exp);
