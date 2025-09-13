@@ -121,7 +121,12 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         OnChangedOutfit?.Invoke(this, Outfit);
     }
     
-    public virtual void OnSpectatorMoved(ICreature creature)
+    public virtual void OnSpectatorMoved(ICreature spectator)
+    {
+        
+    }
+
+    public virtual void OnSpectatorDies(ICombatActor spectator)
     {
         
     }

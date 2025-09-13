@@ -235,7 +235,14 @@ public interface ICreature : IMovableThing
     /// <summary>
     /// Event that is fired when a spectator moves.
     /// </summary>
-    /// <param name="creature"></param>
-    void OnSpectatorMoved(ICreature creature);
+    /// <param name="spectator"></param>
+    void OnSpectatorMoved(ICreature spectator);
+    
+    /// <summary>
+    /// Event that is fired when a spectator dies
+    /// </summary>
+    /// <param name="spectator"></param>
+    void OnSpectatorDies(ICombatActor spectator);
+
 
 }

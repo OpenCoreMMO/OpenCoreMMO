@@ -19,10 +19,6 @@ public class TargetList : IEnumerable<CombatTarget>
     public CombatTarget NearestSightClearTarget { private get; set; }
 
     public bool HasTarget(ICreature creature) => _targets.ContainsKey(creature.CreatureId);
-    public void OnTargetMoved(ICombatActor creature)
-    {
-        HandleTargetMoved(creature);
-    }
 
     public bool CanAttackAnyTarget
     {
@@ -92,21 +88,14 @@ public class TargetList : IEnumerable<CombatTarget>
 
     private void AttachToTargetEvents(ICombatActor creature)
     {
-        creature.OnDeath += OnTargetDie;
         creature.OnChangedVisibility += OnTargetDisappeared;
         if (creature is IPlayer player) player.OnLoggedOut += OnTargetRemoved;
     }
 
     private void DetachFromTargetEvents(ICombatActor creature)
     {
-        creature.OnDeath -= OnTargetDie;
         creature.OnChangedVisibility -= OnTargetDisappeared;
         if (creature is IPlayer player) player.OnLoggedOut -= OnTargetRemoved;
-    }
-
-    private void OnTargetDie(ICreature creature, IThing by)
-    {
-        RemoveTarget(creature);
     }
 
     private void OnTargetDisappeared(ICreature creature)
@@ -114,6 +103,9 @@ public class TargetList : IEnumerable<CombatTarget>
         if (_monster.CanSee(creature)) return;
         RemoveTarget(creature);
     }
+    
+    public void OnTargetMoved(ICombatActor creature) => HandleTargetMoved(creature);
+    public void OnTargetDies(ICombatActor spectator) => RemoveTarget(spectator);
 
     private void HandleTargetMoved(IWalkableCreature target)
     {
@@ -125,10 +117,7 @@ public class TargetList : IEnumerable<CombatTarget>
         }
     }
 
-    private void OnTargetRemoved(ICreature creature)
-    {
-        RemoveTarget(creature);
-    }
+    private void OnTargetRemoved(ICreature creature) => RemoveTarget(creature);
 
     #endregion
 
@@ -145,4 +134,6 @@ public class TargetList : IEnumerable<CombatTarget>
     }
 
     #endregion
+
+  
 }

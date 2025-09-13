@@ -89,17 +89,29 @@ public class Monster : WalkableMonster, IMonster
         OnWasBorn?.Invoke(this, location);
     }
 
-    public override void OnSpectatorMoved(ICreature creature)
+    public override void OnSpectatorMoved(ICreature spectator)
     {
         if (IsDead) return;
-        if (creature is not ICombatActor target) return;
+        if (spectator is not ICombatActor target) return;
 
-        if (Targets.HasTarget(creature))
+        if (Targets.HasTarget(spectator))
         {
             Targets.OnTargetMoved(target);
         }
 
-        base.OnSpectatorMoved(creature);
+        base.OnSpectatorMoved(spectator);
+    }
+
+    public override void OnSpectatorDies(ICombatActor spectator)
+    {
+        if (IsDead) return;
+
+        if (Targets.HasTarget(spectator))
+        {
+            Targets.OnTargetDies(spectator);
+        }
+
+        base.OnSpectatorDies(spectator);
     }
 
     public void Reborn()

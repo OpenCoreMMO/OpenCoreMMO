@@ -202,7 +202,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
         return IsTargetLost(CurrentTarget);
     }
-    
     public virtual Result CanAttack(CombatParameter combatParameter)
     {
         if (IsDead) return Result.Fail(InvalidOperation.CreatureIsDead);
@@ -359,10 +358,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnPropagateAttack?.Invoke(this, damage, area);
     }
 
-    public void PropagateAttack(AffectedLocation area, CombatDamage damage)
-    {
-        PropagateAttack(new[] { area }, damage);
-    }
+    public void PropagateAttack(AffectedLocation area, CombatDamage damage) => PropagateAttack([area], damage);
 
     public abstract void SetAsEnemy(ICreature actor);
     

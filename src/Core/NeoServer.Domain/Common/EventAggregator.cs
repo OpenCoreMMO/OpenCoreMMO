@@ -153,11 +153,6 @@ public class EventAggregator : IEventAggregator
         }
     }
 
-    public static void Publish(IEvent @event)
-    {
-        Instance?.Publish(@event);
-    }
-
     public static void Invoke(IEvent @event)
     {
         Instance?.InvokeEvent(@event);
