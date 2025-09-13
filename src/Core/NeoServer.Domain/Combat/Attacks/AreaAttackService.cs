@@ -52,7 +52,7 @@ public class AreaAttackService(
         var affectedArea = affectedTargets.Locations;
         var affectedCreatures = affectedTargets.Creatures;
 
-        eventAggregator.Publish(new CreatureAttackingEvent(aggressor, attackInput.Target,
+        eventAggregator.InvokeEvent(new CreatureAttackingEvent(aggressor, attackInput.Target,
             attackInput.Parameters.ShootType,
             attackInput.Parameters.Effect, false, affectedArea.ToArray()));
 

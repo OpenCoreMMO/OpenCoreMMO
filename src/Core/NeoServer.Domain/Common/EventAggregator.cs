@@ -174,6 +174,11 @@ public interface INetworkingEventHandler<in T> : IApplicationEventHandler<T> whe
 public interface IEventAggregator
 {
     void Initialize();
-    void Publish<TEvent>(TEvent @event) where TEvent : IEvent;
     void PropagateEvents();
+
+    /// <summary>
+    /// Invoke event immediately without deferring to the end of the process.
+    /// </summary>
+    /// <param name="event"></param>
+    void InvokeEvent(IEvent @event);
 }

@@ -218,10 +218,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return Result.Success;
     }
 
-    public DamageResult TakeDamage(IThing enemy, CombatDamage damages)
-    {
-        return TakeDamage(enemy, new CombatDamageList(damages));
-    }
+    public DamageResult TakeDamage(IThing enemy, CombatDamage damages) => TakeDamage(enemy, new CombatDamageList(damages));
 
     public override void Appear(Location location, ICylinderSpectator[] spectators)
     {
