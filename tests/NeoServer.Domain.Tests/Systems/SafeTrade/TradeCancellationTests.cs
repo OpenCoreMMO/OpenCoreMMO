@@ -118,7 +118,7 @@ public class TradeCancellationTests
         //act
         tradeSystem.Request(player, secondPlayer, item);
         player.TakeDamage(secondPlayer, new CombatDamage(100, DamageType.Melee));
-
+        
         //assert
         AssertTradeIsCancelled(tradeSystem, map, secondPlayer);
     }

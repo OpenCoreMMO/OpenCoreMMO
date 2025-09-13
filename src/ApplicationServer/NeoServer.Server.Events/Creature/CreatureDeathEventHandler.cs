@@ -16,6 +16,7 @@ public class CreatureDeathEventHandler(
     ICreatureDeathService creatureDeathService,
     IExperienceSharingService experienceSharingService,
     ILootService lootService,
+    ITradeService tradeService,
     GameConfiguration gameConfiguration,
     IMap map)
     : IApplicationEventHandler<CreatureDeathEvent>
@@ -45,6 +46,7 @@ public class CreatureDeathEventHandler(
                 OnMonsterKilled(monster);
                 break;
             case IPlayer player:
+                tradeService.Cancel(player);
                 player.MoveToTemple();
                 playerRepository.SavePlayer(player);
                 playerDeathRepository.Save(player, damageRecordResult);
