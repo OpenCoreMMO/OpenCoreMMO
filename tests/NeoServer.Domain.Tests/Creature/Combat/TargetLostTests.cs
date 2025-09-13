@@ -157,7 +157,7 @@ public class TargetLostTests
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
-        var monster = MonsterTestDataBuilder.Build(map: map) as Creatures.Monster.Monster;
+        var monster = MonsterTestDataBuilder.Build(map: map) as Domain.Creatures.Monster.Monster;
 
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(105, 105, 7));
@@ -182,7 +182,7 @@ public class TargetLostTests
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
-        var monster = MonsterTestDataBuilder.Build(map: map) as Creatures.Monster.Monster;
+        var monster = MonsterTestDataBuilder.Build(map: map) as Domain.Creatures.Monster.Monster;
         
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(105, 105, 7));

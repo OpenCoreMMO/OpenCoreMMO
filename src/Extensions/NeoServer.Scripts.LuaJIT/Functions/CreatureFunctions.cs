@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
@@ -537,7 +538,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         {
             _gameCreatureManager.RemovePlayer(player);
         }
-        else if (creature is ISummon summon)
+        else if (creature is Summon summon)
         {
             summon.Dismiss();
             Thread.Sleep(200);

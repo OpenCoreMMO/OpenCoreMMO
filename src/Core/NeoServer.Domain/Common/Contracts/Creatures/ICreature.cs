@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Creatures;
+using NeoServer.Domain.Creatures.Monster.Summon;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
@@ -140,7 +141,7 @@ public interface ICreature : IMovableThing
     /// <summary>
     ///     Summons of creature
     /// </summary>
-    IList<ISummon> Summons { get; }
+    IList<Summon> Summons { get; }
 
     /// <summary>
     ///     Fires when creature is removed from game
@@ -245,4 +246,5 @@ public interface ICreature : IMovableThing
     void OnSpectatorDies(ICombatActor spectator);
 
 
+    void OnSummonDie(Summon summon);
 }

@@ -28,7 +28,7 @@ public class MonsterStateService(ISummonService summonService, TargetDetectorSer
         if (monster.State == MonsterState.LookingForEnemy)
         {
             monster.LookForNewEnemy();
-            monster.Summon(summonService);
+            monster.CreateSummon(summonService);
         }
 
         if (monster.State == MonsterState.InCombat)
@@ -44,7 +44,7 @@ public class MonsterStateService(ISummonService summonService, TargetDetectorSer
             monster.TurnTo(monster.CurrentTarget);
             monster.Follow(monster.CurrentTarget);
 
-            monster.Summon(summonService);
+            monster.CreateSummon(summonService);
 
             if (monster.Metadata.TargetChance.Interval == 0) return;
 

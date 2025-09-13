@@ -33,6 +33,7 @@ using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Npcs;
 using NeoServer.Domain.Creatures.Player.Container;
 using NeoServer.Domain.Creatures.Player.Inventory;
@@ -1078,7 +1079,7 @@ public class Player : CombatActor, IPlayer
             return new Result(InvalidOperation.AttackTargetIsInvisible);
         }
 
-        if (Summons.Contains(target as ISummon))
+        if (Summons.Contains(target as Summon))
         {
             InvokeAttackCanceled();
             return Result.NotPossible;
@@ -1587,6 +1588,12 @@ public class Player : CombatActor, IPlayer
 
     public override void Death(IThing by)
     {
+        var summonsCopy = Summons.ToList();
+        foreach (var summon in summonsCopy)
+        {
+            summon.OnMasterKilled();
+        }
+
         base.Death(by);
 
         PlayerSkull.RemoveYellowSkull();

@@ -4,5 +4,5 @@ namespace NeoServer.Domain.Common.Contracts.Services;
 
 public interface ISummonService
 {
-    IMonster Summon(ICreature master, string summonName);
+    IMonster SpamSummon(ICreature master, string summonName);
 }
