@@ -66,7 +66,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeTrue();
-        _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeTrue();
-        _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeTrue();
-        _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeFalse();
-        _eventAggregatorMock.Verify(x => x.Publish(It.Is<SpellFailedToCastEvent>(e => 
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e => 
             e.Caster == player && e.Spell == spell)), Times.Once);
     }
 
@@ -129,7 +129,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeTrue();
-        _eventAggregatorMock.Verify(x => x.Publish(It.Is<SpellFailedToCastEvent>(e => 
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e => 
             e.Caster == player && e.Spell == spell)), Times.Once);
     }
 
@@ -146,7 +146,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeTrue();
-        _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
     }
 
     [Fact]
@@ -162,7 +162,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeTrue();
-        _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
     }
 
     [Fact]
@@ -178,7 +178,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeTrue();
-        _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
     }
 
     [Fact]
@@ -193,7 +193,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeTrue();
-        _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
     }
 
     [Fact]
@@ -208,7 +208,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeFalse();
-        _eventAggregatorMock.Verify(x => x.Publish(It.Is<SpellFailedToCastEvent>(e => 
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e => 
             e.Caster == player && e.Spell == spell)), Times.Once);
     }
 
@@ -224,7 +224,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeTrue();
-        _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
     }
 
     [Fact]
@@ -239,7 +239,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeTrue();
-        _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
     }
 
     [Fact]
@@ -255,7 +255,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeTrue();
-        _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
     }
 
     [Fact]
@@ -271,7 +271,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeTrue();
-        _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
     }
 
     [Fact]
@@ -367,7 +367,7 @@ public class SpellTests
         result.Should().BeTrue();
         spell.EffectSent.Should().BeTrue();
         spell.DamageAttempted.Should().BeFalse();
-        _eventAggregatorMock.Verify(x => x.Publish(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
     }
 
     [Fact]
@@ -410,7 +410,7 @@ public class SpellTests
 
         // Assert
         secondResult.Should().BeFalse();
-        _eventAggregatorMock.Verify(x => x.Publish(It.Is<SpellFailedToCastEvent>(e =>
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e =>
             e.Caster == player && e.Spell == spell)), Times.Once);
     }
 

@@ -8,6 +8,7 @@ using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
 using Serilog;
@@ -130,7 +131,7 @@ public class GameCreatureManager : IGameCreatureManager
 
         _creatureInstances.TryRemove(creature.CreatureId);
 
-        if (creature is ISummon summon)
+        if (creature is Summon summon)
             summon.Dismiss();
         else if (creature is IPlayer player)
             foreach (var summonPlayer in player.Summons)

@@ -8,6 +8,7 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Combat.Validations;
@@ -44,7 +45,7 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
                                                           TileFlags.ProtectionZone):
                         return Result.Fail(InvalidOperation.NotPermittedInNoPvpZone);
 
-                    case ISummon { Master: IPlayer masterPlayer }
+                    case Summon { Master: IPlayer masterPlayer }
                         when masterPlayer.Group.FlagIsEnabled(PlayerFlag.CannotAttackPlayer) ||
                              IsProtected(masterPlayer, targetPlayer):
                         return Result.Fail(InvalidOperation.YouMayNotAttackThisPlayer);
@@ -60,12 +61,12 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
                         when playerAggressor.Group.FlagIsEnabled(PlayerFlag.CannotAttackMonster):
                         return Result.Fail(InvalidOperation.YouMayNotAttackThisCreature);
                     //Player cannot attack monster in no pvp zone
-                    case IPlayer when monsterTarget is ISummon { Master: IPlayer } &&
+                    case IPlayer when monsterTarget is Summon { Master: IPlayer } &&
                                       (monsterTarget.Tile?.NoPvpZone ?? false):
                         return Result.Fail(InvalidOperation.NotPermittedInNoPvpZone);
                     //Monster cannot attack another monster or summons monster
                     case IMonster monsterAggressor
-                        when monsterTarget is ISummon { Master: IMonster }:
+                        when monsterTarget is Summon { Master: IMonster }:
                         return Result.Fail(InvalidOperation.YouMayNotAttackThisCreature);
                 }
 
@@ -74,8 +75,8 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
 
         if (pvpConfiguration.PvpType == PvpType.OptionalPvP)
         {
-            if (!Equals(aggressor, target) && aggressor is IPlayer or ISummon { Master: IPlayer } &&
-                target is IPlayer or ISummon { Master: IPlayer })
+            if (!Equals(aggressor, target) && aggressor is IPlayer or Summon { Master: IPlayer } &&
+                target is IPlayer or Summon { Master: IPlayer })
             {
                 if (!aggressor.Tile.PvpZone || !((ICreature)target).Tile.PvpZone)
                 {

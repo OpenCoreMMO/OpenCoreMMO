@@ -33,6 +33,7 @@ using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Npcs;
 using NeoServer.Domain.Creatures.Player.Container;
 using NeoServer.Domain.Creatures.Player.Inventory;
@@ -520,22 +521,39 @@ public class Player : CombatActor, IPlayer
         EventAggregator.Invoke(new PlayerWalkEvent(this, Direction));
     }
 
-    public override void OnSpectatorMoved(ICreature creature)
+    public override void OnSpectatorMoved(ICreature spectator)
     {
-        if (creature is not ICombatActor target) return;
+        if (spectator is not ICombatActor target) return;
         if (target.Equals(CurrentTarget))
         {
             HandleTargetLost();    
         }
         
-        base.OnSpectatorMoved(creature);
+        base.OnSpectatorMoved(spectator);
+    }
+
+    public override void OnSpectatorDies(ICombatActor spectator)
+    {
+        if (spectator.Equals(CurrentTarget))
+        {
+            HandleTargetLost();
+        }
+        
+        base.OnSpectatorDies(spectator);
     }
 
     public void HandleTargetLost()
     {
         if (!IsTargetLost()) return;
+
+        var showError = CurrentTarget is not ICombatActor { IsDead: true };
+        
         StopAttack();
-        OperationFailService.Send(this, InvalidOperation.TargetLost);
+
+        if (showError)
+        {
+            OperationFailService.Send(this, InvalidOperation.TargetLost);
+        }
     }
 
     public override bool CanSee(ICreature otherCreature)
@@ -1061,7 +1079,7 @@ public class Player : CombatActor, IPlayer
             return new Result(InvalidOperation.AttackTargetIsInvisible);
         }
 
-        if (Summons.Contains(target as ISummon))
+        if (Summons.Contains(target as Summon))
         {
             InvokeAttackCanceled();
             return Result.NotPossible;
@@ -1570,6 +1588,12 @@ public class Player : CombatActor, IPlayer
 
     public override void Death(IThing by)
     {
+        var summonsCopy = Summons.ToList();
+        foreach (var summon in summonsCopy)
+        {
+            summon.OnMasterKilled();
+        }
+
         base.Death(by);
 
         PlayerSkull.RemoveYellowSkull();
@@ -1615,7 +1639,7 @@ public class Player : CombatActor, IPlayer
 
     public override bool IsTargetLost()
     {
-        if (CurrentTarget?.Tile?.NoPvpZone ?? false) return true;
+        if (CurrentTarget is IPlayer && (CurrentTarget.Tile?.NoPvpZone ?? false)) return true;
         return base.IsTargetLost();
     }
 

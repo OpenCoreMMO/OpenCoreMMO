@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Monster;
+using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.World.Models.Spawns;
@@ -28,6 +29,7 @@ public static class MonsterTestDataBuilder
             Name = "Monster X",
             MaxHealth = maxHealth,
             Speed = speed,
+            TargetChance = new IntervalChance(1000, 50),
             Attacks =
             [
                 new MonsterCombatType
@@ -59,6 +61,7 @@ public static class MonsterTestDataBuilder
         {
             Name = "Monster X",
             MaxHealth = 100,
+            TargetChance = new IntervalChance(1000, 50),
             Attacks =
             [
                 new MonsterCombatType

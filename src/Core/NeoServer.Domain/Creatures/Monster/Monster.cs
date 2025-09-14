@@ -89,17 +89,29 @@ public class Monster : WalkableMonster, IMonster
         OnWasBorn?.Invoke(this, location);
     }
 
-    public override void OnSpectatorMoved(ICreature creature)
+    public override void OnSpectatorMoved(ICreature spectator)
     {
         if (IsDead) return;
-        if (creature is not ICombatActor target) return;
+        if (spectator is not ICombatActor target) return;
 
-        if (Targets.HasTarget(creature))
+        if (Targets.HasTarget(spectator))
         {
             Targets.OnTargetMoved(target);
         }
 
-        base.OnSpectatorMoved(creature);
+        base.OnSpectatorMoved(spectator);
+    }
+
+    public override void OnSpectatorDies(ICombatActor spectator)
+    {
+        if (IsDead) return;
+
+        if (Targets.HasTarget(spectator))
+        {
+            Targets.OnTargetDies(spectator);
+        }
+
+        base.OnSpectatorDies(spectator);
     }
 
     public void Reborn()
@@ -283,7 +295,7 @@ public class Monster : WalkableMonster, IMonster
         return defense.Interval;
     }
 
-    public void Summon(ISummonService summonService)
+    public void CreateSummon(ISummonService summonService)
     {
         if (IsDead) return;
         if ((_aliveSummons?.Count ?? 0) >= Metadata.MaxSummons) return;
@@ -300,13 +312,11 @@ public class Monster : WalkableMonster, IMonster
 
             if (foundAliveSummon && count >= summon.Max) continue;
 
-            var createdSummon = summonService.Summon(this, summon.Name);
+            var createdSummon = summonService.SpamSummon(this, summon.Name);
             if (createdSummon is null) continue;
 
             Cooldowns.Start(summon);
-
-            AttachToSummonEvents(createdSummon);
-
+            
             _aliveSummons ??= new Dictionary<string, byte>();
 
             if (foundAliveSummon) _aliveSummons[summon.Name] = (byte)(count + 1);
@@ -400,6 +410,12 @@ public class Monster : WalkableMonster, IMonster
         if (by is IPlayer player && ReferenceEquals(player.CurrentTarget, this))
             player.StopAttack();
 
+        var summonsCopy = Summons.ToList();
+        foreach (var summon in summonsCopy)
+        {
+            summon.OnMasterKilled();
+        }
+
         base.Death(by);
     }
 
@@ -428,24 +444,18 @@ public class Monster : WalkableMonster, IMonster
     }
 
     #region Summon Event Attachment
-
-    private void AttachToSummonEvents(IMonster monster)
+    public override void OnSummonDie(Summon.Summon summon)
     {
-        monster.OnDeath += OnSummonDie;
-    }
-
-    private void OnSummonDie(ICombatActor creature, IThing by)
-    {
-        creature.OnDeath -= OnSummonDie;
-        if (!_aliveSummons.TryGetValue(creature.Name, out var count)) return;
+        if (summon is null) return;
+        if (_aliveSummons is null || !_aliveSummons.TryGetValue(summon.Name, out var count)) return;
 
         if (count == 1)
         {
-            _aliveSummons.Remove(creature.Name);
+            _aliveSummons.Remove(summon.Name);
             return;
         }
 
-        _aliveSummons[creature.Name] = (byte)(count - 1);
+        _aliveSummons[summon.Name] = (byte)(count - 1);
     }
 
     public override bool IsHostileTo(ICombatActor enemy)
