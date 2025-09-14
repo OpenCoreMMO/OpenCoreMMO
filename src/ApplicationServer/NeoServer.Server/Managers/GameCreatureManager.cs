@@ -127,19 +127,12 @@ public class GameCreatureManager : IGameCreatureManager
     /// <returns></returns>
     public bool RemoveCreature(ICreature creature)
     {
-        if (creature is IWalkableCreature walkableCreature) _map.RemoveCreature(walkableCreature);
+        if (creature is IWalkableCreature walkableCreature)
+        {
+            _map.RemoveCreature(walkableCreature);
+        }
 
         _creatureInstances.TryRemove(creature.CreatureId);
-
-        if (creature is Summon summon)
-            summon.Dismiss();
-        else if (creature is IPlayer player)
-            foreach (var summonPlayer in player.Summons)
-            {
-                summonPlayer.Dismiss();
-                _map.RemoveCreature(summonPlayer);
-                _creatureInstances.TryRemove(summonPlayer.CreatureId);
-            }
 
         return true;
     }
