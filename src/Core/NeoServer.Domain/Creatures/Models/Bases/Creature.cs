@@ -137,6 +137,11 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         
     }
 
+    public virtual void OnSpectatorLoggedOut(ICreature spectator)
+    {
+        
+    }
+
     public void BackToOldOutfit()
     {
         Outfit = LastOutfit;

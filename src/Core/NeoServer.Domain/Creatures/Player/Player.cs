@@ -826,8 +826,13 @@ public class Player : CombatActor, IPlayer
         PlayerParty.RejectAllInvites();
         PlayerSkull.RemoveYellowSkull();
         LastLogOut = DateTime.UtcNow;
-
-        OnLoggedOut?.Invoke(this);
+        
+        var summonsCopy = Summons.ToList();
+        foreach (var summon in summonsCopy)
+        {
+            summon.OnMasterLogout();
+        }
+        
         return true;
     }
 
@@ -1588,12 +1593,6 @@ public class Player : CombatActor, IPlayer
 
     public override void Death(IThing by)
     {
-        var summonsCopy = Summons.ToList();
-        foreach (var summon in summonsCopy)
-        {
-            summon.OnMasterKilled();
-        }
-
         base.Death(by);
 
         PlayerSkull.RemoveYellowSkull();
@@ -1746,7 +1745,6 @@ public class Player : CombatActor, IPlayer
     public event UseSpell OnUsedSpell;
     public event UseItem OnUsedItem;
     public event LogIn OnLoggedIn;
-    public event LogOut OnLoggedOut;
     public event ChangeOnlineStatus OnChangedOnlineStatus;
     public event SendMessageTo OnSentMessage;
 

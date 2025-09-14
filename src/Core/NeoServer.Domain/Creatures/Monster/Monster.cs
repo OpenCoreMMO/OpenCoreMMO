@@ -101,6 +101,19 @@ public class Monster : WalkableMonster, IMonster
 
         base.OnSpectatorMoved(spectator);
     }
+    
+    public override void OnSpectatorLoggedOut(ICreature spectator)
+    {
+        if (IsDead) return;
+        if (spectator is not ICombatActor target) return;
+        
+        if (Targets.HasTarget(spectator))
+        {
+            Targets.RemoveTarget(target);
+        }
+        
+        base.OnSpectatorLoggedOut(spectator);
+    }
 
     public override void OnSpectatorDies(ICombatActor spectator)
     {
@@ -108,7 +121,7 @@ public class Monster : WalkableMonster, IMonster
 
         if (Targets.HasTarget(spectator))
         {
-            Targets.OnTargetDies(spectator);
+            Targets.RemoveTarget(spectator);
         }
 
         base.OnSpectatorDies(spectator);
@@ -409,12 +422,6 @@ public class Monster : WalkableMonster, IMonster
     {
         if (by is IPlayer player && ReferenceEquals(player.CurrentTarget, this))
             player.StopAttack();
-
-        var summonsCopy = Summons.ToList();
-        foreach (var summon in summonsCopy)
-        {
-            summon.OnMasterKilled();
-        }
 
         base.Death(by);
     }

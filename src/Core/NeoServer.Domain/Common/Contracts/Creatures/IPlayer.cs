@@ -45,8 +45,6 @@ public delegate void UseItem(IPlayer player, IThing thing, IUsableOn item);
 
 public delegate void LogIn(IPlayer player);
 
-public delegate void LogOut(IPlayer player);
-
 public delegate void AddToVipList(IPlayer player, uint vipPlayerId, string vipPlayerName);
 
 public delegate void PlayerLoadVipList(IPlayer player, IEnumerable<(uint, string)> vipList);
@@ -318,7 +316,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event UseSpell OnUsedSpell;
     public event UseItem OnUsedItem;
     public event LogIn OnLoggedIn;
-    public event LogOut OnLoggedOut;
     public event ChangeOnlineStatus OnChangedOnlineStatus;
     public event SendMessageTo OnSentMessage;
 

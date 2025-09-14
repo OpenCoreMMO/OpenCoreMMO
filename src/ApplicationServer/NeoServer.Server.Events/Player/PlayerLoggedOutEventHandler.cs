@@ -4,7 +4,9 @@ using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Events.Player;
+using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Locker;
 using NeoServer.Server.Common.Contracts;
 
@@ -15,18 +17,31 @@ public class PlayerLoggedOutEventHandler(
     IPlayerDepotItemRepository playerDepotItemRepository,
     IPlayerMailItemRepository playerMailItemRepository,
     LockerManager lockerManager,
-    ITradeService tradeService)
+    ITradeService tradeService,
+    PlayerChannelService playerChannelService,
+    IMap map)
     : IApplicationEventHandler<PlayerLogoutEvent>
 {
     public void Handle(PlayerLogoutEvent @event)
     {
+
+        foreach (var spectator in map.GetSpectators(@event.Player.Location))
+        {
+            spectator.OnSpectatorLoggedOut(spectator);
+        }
+        
+        //Exit all channels
+        playerChannelService.ExitChannels(@event.Player);
+        
+        //Cancel player trade
+        tradeService.Cancel(@event.Player);
+        
+        //Save player to database
         SavePlayer(@event.Player);
     }
 
     private void SavePlayer(IPlayer player)
     {
-        tradeService.Cancel(player);
-        
         playerRepository.SavePlayer(player);
         playerRepository.UpdatePlayerOnlineStatus(player.Id, false).Wait();
         
