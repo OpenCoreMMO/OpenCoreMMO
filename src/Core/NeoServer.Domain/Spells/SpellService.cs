@@ -34,7 +34,7 @@ public class SpellService(
 
         if (result.Failed && caster is IPlayer)
         {
-            eventAggregator.Publish(new SpellFailedToCastEvent(caster, spell, result.Reason));
+            eventAggregator.InvokeEvent(new SpellFailedToCastEvent(caster, spell, result.Reason));
             return false;
         }
 
@@ -42,7 +42,7 @@ public class SpellService(
 
         if (invokeResult.Failed && caster is IPlayer)
         {
-            eventAggregator.Publish(new SpellFailedToCastEvent(caster, spell, invokeResult.Reason));
+            eventAggregator.InvokeEvent(new SpellFailedToCastEvent(caster, spell, invokeResult.Reason));
             return true;
         }
 

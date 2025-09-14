@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Items.Items;
 
 namespace NeoServer.Domain.Services;
@@ -60,7 +61,7 @@ public class MagicFieldService(IMap map, IItemFactory itemFactory, PvPConfigurat
     {
         if (pvpConfiguration.PvpType != PvpType.OptionalPvP) return false;
 
-        if (actor is not (IPlayer or ISummon { Master: IPlayer })) return false;
+        if (actor is not (IPlayer or Summon { Master: IPlayer })) return false;
 
         return actor.Tile.PvpZone && target.PvpZone;
     }

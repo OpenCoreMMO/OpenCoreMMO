@@ -2,6 +2,7 @@ using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Server.Common.Contracts;
@@ -15,7 +16,9 @@ public class CreatureDeathEventHandler(
     ICreatureDeathService creatureDeathService,
     IExperienceSharingService experienceSharingService,
     ILootService lootService,
-    GameConfiguration gameConfiguration)
+    ITradeService tradeService,
+    GameConfiguration gameConfiguration,
+    IMap map)
     : IApplicationEventHandler<CreatureDeathEvent>
 {
     public void Handle(CreatureDeathEvent @event)
@@ -23,6 +26,11 @@ public class CreatureDeathEventHandler(
         var deadCreature = @event.DeadCreature;
         var by = @event.Attacker;
         //lua script can be added here to handle loot creation
+
+        foreach (var spectator in map.GetSpectators(deadCreature.Location))
+        {
+            spectator.OnSpectatorDies(deadCreature);
+        }
 
         _ = lootService.CreateLootContainer(deadCreature, by);
 
@@ -38,6 +46,7 @@ public class CreatureDeathEventHandler(
                 OnMonsterKilled(monster);
                 break;
             case IPlayer player:
+                tradeService.Cancel(player);
                 player.MoveToTemple();
                 playerRepository.SavePlayer(player);
                 playerDeathRepository.Save(player, damageRecordResult);

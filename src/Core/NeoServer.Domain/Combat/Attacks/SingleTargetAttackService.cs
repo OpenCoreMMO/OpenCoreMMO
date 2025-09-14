@@ -65,7 +65,7 @@ public class SingleTargetAttackService(
         AttackInput attackInput,
         bool attackMissed)
     {
-        eventAggregator.Publish(new CreatureAttackingEvent(
+        eventAggregator.InvokeEvent(new CreatureAttackingEvent(
             attackInput.Aggressor,
             attackInput.Target,
             attackInput.Parameters.ShootType,

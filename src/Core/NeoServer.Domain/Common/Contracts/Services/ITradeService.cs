@@ -1,6 +1,8 @@
-﻿namespace NeoServer.Domain.Common.Contracts.Services;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+
+namespace NeoServer.Domain.Common.Contracts.Services;
 
 public interface ITradeService
 {
-    // void Request(Player player, Player secondPlayer, IItem item);
+    void Cancel(IPlayer playerCanceling);
 }

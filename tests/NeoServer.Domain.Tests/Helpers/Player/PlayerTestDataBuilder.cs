@@ -71,7 +71,7 @@ public static class PlayerTestDataBuilder
         pathFinder ??= new PathFinder(map);
         var mapTool = new MapTool(map, pathFinder);
 
-        var player = new Creatures.Player.Player(
+        var player = new Domain.Creatures.Player.Player(
             id,
             name,
             ChaseMode.Stand,
