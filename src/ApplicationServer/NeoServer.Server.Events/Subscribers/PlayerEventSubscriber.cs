@@ -41,7 +41,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         PlayerPassedPartyLeadershipEventHandler playerPassedPartyLeadershipEventHandler,
         PlayerExhaustedEventHandler playerExhaustedEventHandler,
         PlayerLoggedInEventHandler playerLoggedInEventHandler,
-        PlayerLoggedOutEventHandler playerLoggedOutEventHandler,
         PlayerSkullUpdatedEventHandler playerSkullUpdatedEventHandler)
     {
         _playerWalkCancelledEventHandler = playerWalkCancelledEventHandler;
@@ -73,7 +72,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         _playerPassedPartyLeadershipEventHandler = playerPassedPartyLeadershipEventHandler;
         _playerExhaustedEventHandler = playerExhaustedEventHandler;
         _playerLoggedInEventHandler = playerLoggedInEventHandler;
-        _playerLoggedOutEventHandler = playerLoggedOutEventHandler;
         _playerSkullUpdatedEventHandler = playerSkullUpdatedEventHandler;
     }
 
@@ -120,7 +118,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         player.PlayerSkull.OnSkullUpdated += _playerSkullUpdatedEventHandler.Execute;
 
         player.OnLoggedIn += _playerLoggedInEventHandler.Execute;
-        player.OnLoggedOut += _playerLoggedOutEventHandler.Execute;
 
         player.Channels.OnJoinedChannel += _playerJoinedChannelEventHandler.Execute;
         player.Channels.OnExitedChannel += _playerExitedChannelEventHandler.Execute;
@@ -182,7 +179,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         player.PlayerSkull.OnSkullUpdated -= _playerSkullUpdatedEventHandler.Execute;
 
         player.OnLoggedIn -= _playerLoggedInEventHandler.Execute;
-        player.OnLoggedOut -= _playerLoggedOutEventHandler.Execute;
 
         player.Channels.OnJoinedChannel -= _playerJoinedChannelEventHandler.Execute;
         player.Channels.OnExitedChannel -= _playerExitedChannelEventHandler.Execute;
@@ -234,7 +230,6 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
     private readonly PlayerPassedPartyLeadershipEventHandler _playerPassedPartyLeadershipEventHandler;
     private readonly PlayerExhaustedEventHandler _playerExhaustedEventHandler;
     private readonly PlayerLoggedInEventHandler _playerLoggedInEventHandler;
-    private readonly PlayerLoggedOutEventHandler _playerLoggedOutEventHandler;
     private readonly PlayerSkullUpdatedEventHandler _playerSkullUpdatedEventHandler;
 
     #endregion

@@ -1,7 +1,9 @@
 ﻿using System.Linq;
 using NeoServer.Data.Interfaces;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Locker;
 using NeoServer.Server.Common.Contracts;
 
@@ -12,11 +14,11 @@ public class PlayerLoggedOutEventHandler(
     IPlayerDepotItemRepository playerDepotItemRepository,
     IPlayerMailItemRepository playerMailItemRepository,
     LockerManager lockerManager)
-    : IEventHandler
+    : IApplicationEventHandler<PlayerLogoutEvent>
 {
-    public void Execute(IPlayer player)
+    public void Handle(PlayerLogoutEvent @event)
     {
-        SavePlayer(player);
+        SavePlayer(@event.Player);
     }
 
     private void SavePlayer(IPlayer player)
