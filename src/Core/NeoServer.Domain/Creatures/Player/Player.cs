@@ -833,6 +833,8 @@ public class Player : CombatActor, IPlayer
             summon.OnMasterLogout();
         }
         
+        EventAggregator.Invoke(new PlayerLogoutEvent(this));
+        
         return true;
     }
 

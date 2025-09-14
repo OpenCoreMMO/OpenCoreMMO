@@ -24,7 +24,6 @@ public class PlayerLoggedOutEventHandler(
 {
     public void Handle(PlayerLogoutEvent @event)
     {
-
         foreach (var spectator in map.GetSpectators(@event.Player.Location))
         {
             spectator.OnSpectatorLoggedOut(spectator);

@@ -177,6 +177,7 @@ public class GameCreatureManager : IGameCreatureManager
     {
         if (_playersConnection.TryRemove(player.CreatureId, out var connection))
             connection.Disconnect();
+        
         _creatureInstances.TryRemoveFromLoggedPlayers(player.Id);
 
         RemoveCreature(player);
