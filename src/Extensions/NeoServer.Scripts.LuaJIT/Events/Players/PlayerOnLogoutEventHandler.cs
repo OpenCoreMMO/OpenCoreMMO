@@ -1,20 +1,10 @@
-﻿using NeoServer.Domain.Common.Contracts;
-using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Events.Players;
 
-public class PlayerOnLogoutEventHandler : IGameEventHandler
+public class PlayerOnLogoutEventHandler(ICreatureEvents creatureEvents) : IApplicationEventHandler<PlayerLogoutEvent>
 {
-    private readonly ICreatureEvents _creatureEvents;
-
-    public PlayerOnLogoutEventHandler(ICreatureEvents creatureEvents)
-    {
-        _creatureEvents = creatureEvents;
-    }
-
-    public void Execute(IPlayer player)
-    {
-        _creatureEvents.PlayerLogout(player);
-    }
+    public void Handle(PlayerLogoutEvent @event) => creatureEvents.PlayerLogout(@event.Player);
 }

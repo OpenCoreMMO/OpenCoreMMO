@@ -10,7 +10,6 @@ public class CreatureEventsSubscriber(
     CreatureOnThinkEventHandler creatureOnThinkEventHandler,
     CreatureOnPrepareDeathEventHandler creatureOnPrepareDeathEventHandler,
     PlayerOnLoginEventHandler playerOnLoginEventHandler,
-    PlayerOnLogoutEventHandler playerOnLogoutEventHandler,
     PlayerOnAdvanceEventHandler playerOnAdvanceEventHandler,
     PlayerOnTextEditEventHandler playerOnTextEditEventHandler,
     CreatureOnAppearEventHandler creatureOnAppearEventHandler,
@@ -30,7 +29,6 @@ public class CreatureEventsSubscriber(
         if (creature is IPlayer player)
         {
             player.OnLoggedIn += playerOnLoginEventHandler.Execute;
-            player.OnLoggedOut += playerOnLogoutEventHandler.Execute;
             player.OnLevelAdvanced += playerOnAdvanceEventHandler.Execute;
             player.OnWroteText += playerOnTextEditEventHandler.Execute;
         }
@@ -61,7 +59,6 @@ public class CreatureEventsSubscriber(
         if (creature is IPlayer player)
         {
             player.OnLoggedIn -= playerOnLoginEventHandler.Execute;
-            player.OnLoggedOut -= playerOnLogoutEventHandler.Execute;
             player.OnLevelAdvanced -= playerOnAdvanceEventHandler.Execute;
             player.OnWroteText -= playerOnTextEditEventHandler.Execute;
         }
