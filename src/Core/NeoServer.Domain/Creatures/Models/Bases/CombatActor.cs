@@ -1,23 +1,16 @@
 ﻿using NeoServer.Domain.Combat;
-using NeoServer.Domain.Combat.Validation;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts;
-using NeoServer.Domain.Common.Contracts.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Common.Services;
-using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Models.Bases.Events;
@@ -126,14 +119,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnLoseExperience?.Invoke(this, exp);
     }
 
-    public override void OnMoved(IDynamicTile fromTile, IDynamicTile toTile, ICylinderSpectator[] spectators)
-    {
-        base.OnMoved(fromTile, toTile, spectators);
-        if (CurrentTarget is null) return;
-
-        if (AttackValidation.CanAttack(this, CurrentTarget as ICombatActor).Failed) StopAttack();
-    }
-
     public virtual CombatDamage ReduceDamage(CombatDamage attack)
     {
         int damage = attack.Damage;
@@ -186,33 +171,37 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnStoppedAttack?.Invoke(this);
     }
 
-    public virtual bool Attack(ICreature creature, IUsableAttackOnCreature item)
+    public virtual bool IsTargetLost(ICreature target)
     {
-        if (creature is not ICombatActor enemy || enemy.IsDead || IsDead || !CanSee(creature.Location) ||
-            creature.Equals(this) || creature.IsInvisible)
+        if (target is null) return false;
+
+        if (target is CombatActor combatTarget)
         {
-            StopAttack();
-            return false;
+            if (combatTarget.IsDead) return true;
+            if (combatTarget.Tile?.ProtectionZone ?? false) return true; 
         }
 
-        if (creature.Tile.ProtectionZone || Tile.ProtectionZone)
+        if (target is Player.Player { Online: false })
         {
-            OperationFailService.Send(CreatureId, TextConstants.NOT_PERMITTED_IN_PROTECTION_ZONE);
-            return false;
+            return true;
+        }
+        
+        if (!CanSee(target.Location) || !Location.SameFloorAs(target.Location))
+        {
+            return true;
         }
 
-        if (item.NeedTarget && MapTool.SightClearChecker?.Invoke(Location, enemy.Location, true) == false)
+        if (!CanSeeInvisible && !CanSee(target))
         {
-            OperationFailService.Send(CreatureId, "You cannot throw there.");
-            return false;
+            return true;
         }
 
-        if (!item.Use(this, creature, out var combat)) return false;
-        OnAttackEnemy?.Invoke(this, enemy, new[] { combat });
-
-        return true;
+        return false;
     }
-
+    public virtual bool IsTargetLost()
+    {
+        return IsTargetLost(CurrentTarget);
+    }
     public virtual Result CanAttack(CombatParameter combatParameter)
     {
         if (IsDead) return Result.Fail(InvalidOperation.CreatureIsDead);
@@ -229,36 +218,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return Result.Success;
     }
 
-    public DamageResult TakeDamage(IThing enemy, CombatDamage damages)
-    {
-        return TakeDamage(enemy, new CombatDamageList(damages));
-    }
-
-    public virtual Result Attack(ICombatActor enemy)
-    {
-        var canAttackResult = AttackValidation.CanAttack(this, enemy);
-        if (canAttackResult.Failed)
-        {
-            StopAttack();
-            return canAttackResult;
-        }
-
-        if (!Cooldowns.Expired(CooldownType.WeaponAttack)) return Result.Fail(InvalidOperation.CannotAttackThatFast);
-
-        SetAttackTarget(enemy);
-
-        if (MapTool.SightClearChecker?.Invoke(Location, enemy.Location, true) == false)
-            return Result.Fail(InvalidOperation.CreatureIsNotReachable);
-
-        var attackResult = OnAttack(enemy, out var combat);
-        if (attackResult.Failed) return attackResult;
-
-        OnAttackEnemy?.Invoke(this, enemy, combat);
-
-        Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
-
-        return Result.Success;
-    }
+    public DamageResult TakeDamage(IThing enemy, CombatDamage damages) => TakeDamage(enemy, new CombatDamageList(damages));
 
     public override void Appear(Location location, ICylinderSpectator[] spectators)
     {
@@ -281,11 +241,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         }
     }
 
-    public override void Disappear(Location location, ICylinderSpectator[] spectators)
-    {
-        base.Disappear(location, spectators);
-    }
-
     public abstract bool IsHostileTo(ICombatActor enemy);
 
     public void OnEnemyAppears(ICombatActor enemy)
@@ -298,14 +253,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
         if (target is not ICombatActor enemy) return Result.NotPossible;
         if (target?.CreatureId == AutoAttackTargetId) return Result.NotPossible;
-
-        var canAttackResult = AttackValidation.CanAttack(this, enemy);
-
-        if (canAttackResult.Failed)
-        {
-            InvokeAttackCanceled();
-            return canAttackResult;
-        }
 
         var oldAttackTarget = AutoAttackTargetId;
         CurrentTarget = target;
@@ -408,33 +355,10 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnPropagateAttack?.Invoke(this, damage, area);
     }
 
-    public void PropagateAttack(AffectedLocation area, CombatDamage damage)
-    {
-        PropagateAttack(new[] { area }, damage);
-    }
+    public void PropagateAttack(AffectedLocation area, CombatDamage damage) => PropagateAttack([area], damage);
 
     public abstract void SetAsEnemy(ICreature actor);
-
-    public abstract Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks);
-
-    public Result Attack(ICombatActor enemy, ICombatAttack attack, CombatAttackValue value)
-    {
-        if (enemy?.IsInvisible ?? false) return Result.Fail(InvalidOperation.AttackTargetIsInvisible);
-
-        if (Guard.AnyNull(attack)) return Result.Fail(InvalidOperation.Impossible);
-
-        if (enemy is not null && !CanAttackEnemy(enemy)) return Result.Fail(InvalidOperation.Impossible);
-
-        if (enemy is not null && MapTool.SightClearChecker?.Invoke(Location, enemy.Location, true) == false)
-            return Result.Fail(InvalidOperation.CreatureIsNotReachable);
-
-        var result = attack.TryAttack(this, enemy, value, out var combatAttackType);
-        if (result is false) return Result.Fail(InvalidOperation.Impossible);
-
-        OnAttackEnemy?.Invoke(this, enemy, new[] { combatAttackType });
-        return Result.Success;
-    }
-
+    
     public void DisableShieldDefense()
     {
         IsShieldDefenseEnabled = false;
@@ -497,41 +421,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         _blockCount++;
     }
-
-    public bool Attack(ITile tile, IUsableAttackOnTile item)
-    {
-        if (tile.ProtectionZone || Tile.ProtectionZone)
-        {
-            OperationFailService.Send(CreatureId, TextConstants.NOT_PERMITTED_IN_PROTECTION_ZONE);
-            return false;
-        }
-
-        if (!CanSee(tile.Location)) return false;
-
-        if (MapTool.SightClearChecker?.Invoke(Location, tile.Location, true) == false)
-        {
-            OperationFailService.Send(CreatureId, TextConstants.YOU_CANNOT_THROW_THERE);
-            return false;
-        }
-
-        if (!item.Use(this, tile, out var combat)) return false;
-
-        var creature = tile is IDynamicTile t ? tile.TopCreatureOnStack : null;
-        OnAttackEnemy?.Invoke(this, creature, new[] { combat });
-
-        return true;
-    }
-
-    private bool CanAttackEnemy(ICombatActor enemy)
-    {
-        if (Guard.IsNull(enemy)) return false;
-        if (enemy.IsDead || IsDead || !CanSee(enemy.Location) || enemy.Equals(this) || enemy.Tile.ProtectionZone ||
-            Tile.ProtectionZone)
-            return false;
-
-        return true;
-    }
-
     protected void ReduceHealth(CombatDamage damage)
     {
         ReduceHealth(damage.Damage);
@@ -547,8 +436,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         if (by is ICombatActor combatActor)
             //todo: implements real damage
             OnBeforeDeath?.Invoke(this, combatActor, 0);
-
-        OnDeath?.Invoke(this, by);
+        
         EventAggregator.Invoke(new CreatureDeathEvent(this, by));
         
         Dismiss();
@@ -591,7 +479,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public event BlockAttack OnBlockedAttack;
     public event Attack OnAttackEnemy;
     public event BeforeDeath OnBeforeDeath;
-    public event Death OnDeath;
     public event AttackTargetChange OnTargetChanged;
     public event ChangeVisibility OnChangedVisibility;
     public event PropagateAttack OnPropagateAttack;

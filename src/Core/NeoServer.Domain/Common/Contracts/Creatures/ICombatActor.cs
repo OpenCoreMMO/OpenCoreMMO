@@ -1,9 +1,7 @@
 ﻿using NeoServer.Domain.Combat;
 using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Combat.Structs;
-using NeoServer.Domain.Common.Contracts.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
@@ -54,7 +52,6 @@ public interface ICombatActor : IWalkableCreature
     event BlockAttack OnBlockedAttack;
     event Heal OnHeal;
     event BeforeDeath OnBeforeDeath;
-    event Death OnDeath;
     event StopAttack OnStoppedAttack;
     event AttackTargetChange OnTargetChanged;
     event ChangeVisibility OnChangedVisibility;
@@ -62,7 +59,6 @@ public interface ICombatActor : IWalkableCreature
     event GainExperience OnGainedExperience;
 
     int DefendUsingArmor(int attack);
-    Result Attack(ICombatActor enemy, ICombatAttack attack, CombatAttackValue value);
     void Heal(ushort increasing, ICreature healedBy);
     CombatDamage ReduceDamage(CombatDamage damage);
     Result SetAttackTarget(ICreature target);
@@ -84,9 +80,7 @@ public interface ICombatActor : IWalkableCreature
     DamageResult TakeDamage(IThing enemy, CombatDamageList damages);
 
     DamageResult TakeDamage(IThing enemy, CombatDamage damages);
-    Result Attack(ICombatActor creature);
     void PropagateAttack(AffectedLocation[] area, CombatDamage damage);
-    bool Attack(ICreature creature, IUsableAttackOnCreature item);
 
     /// <summary>
     ///     Set creature as enemy. If monster can't see creature it will be forgotten
@@ -103,11 +97,8 @@ public interface ICombatActor : IWalkableCreature
     bool HasCondition(ConditionType type, out ICondition condition);
     bool HasCondition(ConditionType type);
     ICondition GetCondition(ConditionType type);
-    void PropagateAttack(AffectedLocation area, CombatDamage damage);
     void OnEnemyAppears(ICombatActor enemy);
     bool IsHostileTo(ICombatActor enemy);
-    Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks);
-
     event StopAttack OnAttackCanceled;
     void DisableShieldDefense();
     void EnableShieldDefense();
@@ -119,4 +110,6 @@ public interface ICombatActor : IWalkableCreature
     void PreAttack(CombatContext combatContext);
     Result CanAttack(CombatParameter combatParameter);
     void StartCooldown(Guid cooldownId, uint duration);
+    bool IsTargetLost();
+    bool IsTargetLost(ICreature target);
 }

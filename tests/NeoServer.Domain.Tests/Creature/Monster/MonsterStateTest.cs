@@ -3,10 +3,13 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Monster;
+using NeoServer.Domain.Creatures.Monster.Services;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
+using NeoServer.Domain.World.Services;
 
 namespace NeoServer.Domain.Tests.Creature.Monster;
 
@@ -55,10 +58,14 @@ public class MonsterStateTest
 
         var monster = MonsterTestDataBuilder.Build();
         var player = PlayerTestDataBuilder.Build();
+        
+        var map = MapTestDataBuilder.Build(monsterTile, playerTile);
 
         monsterTile.AddCreature(monster);
         playerTile.AddCreature(player);
         monster.SetAsEnemy(player);
+        
+        new TargetDetectorService(new MapTool(map, new PathFinder(map))).UpdateTargets(monster as Domain.Creatures.Monster.Monster);
 
         //act
         monster.UpdateState();
@@ -136,12 +143,15 @@ public class MonsterStateTest
                 AttackChance = 100
             }
         ];
+        
         monster.Metadata.MaxRangeDistanceAttack = 6;
 
         monsterTile.AddCreature(monster);
         playerTile.AddCreature(player);
 
         monster.SetAsEnemy(player);
+
+        new TargetDetectorService(new MapTool(map, new PathFinder(map))).UpdateTargets(monster as Domain.Creatures.Monster.Monster);
 
         //act
         monster.UpdateState();

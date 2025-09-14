@@ -1,14 +1,18 @@
 ﻿using Moq;
+using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Domain.Tests.Helpers.Services;
 using NeoServer.Domain.World.Models.Tiles;
 using PathFinder = NeoServer.Domain.World.Map.PathFinder;
 
@@ -258,6 +262,7 @@ public class PlayerTest
         //arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         var pathFinder = new PathFinder(map);
+        var attackService = AttackServiceTestBuilder.Build(map);
 
         var player = PlayerTestDataBuilder.Build(hp: 100, speed: 300, pathFinder: pathFinder);
 
@@ -272,7 +277,8 @@ public class PlayerTest
         player.OnStoppedAttack += _ => stoppedAttackEventEmitted = true;
 
         //act
-        player.Attack(monster);
+        player.SetAttackTarget(monster);
+        attackService.Execute(new AttackInput(player, monster, PlayerCombatParameterBuilder.Build(player, monster)));
         player.StopAllActions();
 
         Assert.False(player.HasNextStep);

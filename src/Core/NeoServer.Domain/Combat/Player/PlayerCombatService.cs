@@ -14,6 +14,6 @@ public class PlayerCombatService(IAttackService attackService)
 
         if (combatResult.Result.Failed) return;
 
-        player.PostAttack(combatParameter, combatResult);
+        player.PostAttack(combatParameter, target, combatResult);
     }
 }

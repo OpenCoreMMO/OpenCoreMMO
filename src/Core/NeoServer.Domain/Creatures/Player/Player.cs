@@ -1,10 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat;
 using NeoServer.Domain.Combat.Attacks.Obsoletes;
-using NeoServer.Domain.Combat.Validation;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
@@ -36,6 +33,7 @@ using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Npcs;
 using NeoServer.Domain.Creatures.Player.Container;
 using NeoServer.Domain.Creatures.Player.Inventory;
@@ -136,7 +134,7 @@ public class Player : CombatActor, IPlayer
 
     public string CharacterName { get; }
     public Dictionary<uint, long> KnownCreatures { get; }
-    public bool Online { get; }
+    public bool Online { get; private set; }
 
     public int DefenseFactor => FightMode switch
     {
@@ -510,11 +508,52 @@ public class Player : CombatActor, IPlayer
 
     public override void OnMoved(IDynamicTile fromTile, IDynamicTile toTile, ICylinderSpectator[] spectators)
     {
+        if (IsTargetLost())
+        {
+            StopAttack();
+            OperationFailService.Send(this, InvalidOperation.TargetLost);
+        }
+        
         TogglePacifiedCondition(fromTile, toTile);
         Containers.CloseDistantContainers();
         base.OnMoved(fromTile, toTile, spectators);
 
         EventAggregator.Invoke(new PlayerWalkEvent(this, Direction));
+    }
+
+    public override void OnSpectatorMoved(ICreature spectator)
+    {
+        if (spectator is not ICombatActor target) return;
+        if (target.Equals(CurrentTarget))
+        {
+            HandleTargetLost();    
+        }
+        
+        base.OnSpectatorMoved(spectator);
+    }
+
+    public override void OnSpectatorDies(ICombatActor spectator)
+    {
+        if (spectator.Equals(CurrentTarget))
+        {
+            HandleTargetLost();
+        }
+        
+        base.OnSpectatorDies(spectator);
+    }
+
+    public void HandleTargetLost()
+    {
+        if (!IsTargetLost()) return;
+
+        var showError = CurrentTarget is not ICombatActor { IsDead: true };
+        
+        StopAttack();
+
+        if (showError)
+        {
+            OperationFailService.Send(this, InvalidOperation.TargetLost);
+        }
     }
 
     public override bool CanSee(ICreature otherCreature)
@@ -637,6 +676,8 @@ public class Player : CombatActor, IPlayer
 
         UpdateManaSpent(spell.ManaConsumption);
 
+        StartCooldown(spell);
+
         if (!spell.ShouldSay) return;
 
         if (!string.IsNullOrWhiteSpace(spell.Words)) base.Say(spell.Words, talkType);
@@ -650,7 +691,7 @@ public class Player : CombatActor, IPlayer
             base.Yell(message);
             return;
         }
-        
+
         if (!CooldownHasExpired(CooldownType.Yell))
         {
             OperationFailService.Send(this, InvalidOperation.Exhausted);
@@ -659,7 +700,7 @@ public class Player : CombatActor, IPlayer
 
         var minLevel = yellSettings?.YellMinimumLevel ?? 2;
         var allowedWhenPremium = yellSettings?.YellAllowedPremium ?? true;
-        
+
         if (Level < minLevel)
         {
             var error = new StringBuilder($"You are not allowed to yell until you are level {minLevel}");
@@ -670,16 +711,17 @@ public class Player : CombatActor, IPlayer
                 Cooldowns.Start(CooldownType.Yell, 30_000); // 30 seconds cooldown
                 return;
             }
-            
+
             error.Append(" or have a premium account");
-            
+
             OperationFailService.Send(this, error.ToString());
 
             return;
         }
 
         base.Yell(message);
-        Cooldowns.Start(CooldownType.Yell, (uint)(yellSettings?.YellCooldownSeconds * 1000 ?? 30_000)); // 30 seconds cooldown
+        Cooldowns.Start(CooldownType.Yell,
+            (uint)(yellSettings?.YellCooldownSeconds * 1000 ?? 30_000)); // 30 seconds cooldown
     }
 
     public void UpdateManaSpent(uint manaCost)
@@ -887,9 +929,6 @@ public class Player : CombatActor, IPlayer
         if (onCreature is ICombatActor enemy)
             switch (item)
             {
-                case IUsableAttackOnCreature usableAttackOnCreature:
-                    itemUsed = Attack(enemy, usableAttackOnCreature);
-                    break;
                 case IUsableOnCreature usableOnCreature:
                     usableOnCreature.Use(this, onCreature);
                     itemUsed = true;
@@ -947,7 +986,6 @@ public class Player : CombatActor, IPlayer
 
         var result = item switch
         {
-            IUsableAttackOnTile usableAttackOnTile => Attack(targetTile, usableAttackOnTile),
             IUsableOnTile usableOnTile => usableOnTile.Use(this, targetTile),
             IUsableOnItem usableOnItem => usableOnItem.Use(this, onItem),
             _ => false
@@ -1041,7 +1079,7 @@ public class Player : CombatActor, IPlayer
             return new Result(InvalidOperation.AttackTargetIsInvisible);
         }
 
-        if (Summons.Contains(target as ISummon))
+        if (Summons.Contains(target as Summon))
         {
             InvokeAttackCanceled();
             return Result.NotPossible;
@@ -1117,30 +1155,15 @@ public class Player : CombatActor, IPlayer
         return enemy is not IPlayer;
     }
 
-    public override Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks)
-    {
-        combatAttacks = new CombatAttackResult[1];
-
-        var canUse = true;
-
-        var combat = CombatAttackResult.None;
-
-        if (Inventory.IsUsingWeapon) canUse = Inventory.Weapon.Attack(this, enemy, out combat);
-
-        if (!Inventory.IsUsingWeapon) FistCombatAttack.Use(this, enemy, out combat);
-
-        if (canUse) IncreaseSkillCounter(SkillInUse, 1);
-
-        combatAttacks[0] = combat;
-
-        SetLogoutBlock();
-
-        return canUse ? Result.Success : Result.Fail(InvalidOperation.CannotUseWeapon);
-    }
-
-    public void PostAttack(CombatParameter combatParameter, CombatResult combatResult)
+    public void PostAttack(CombatParameter combatParameter, IThing target, CombatResult combatResult)
     {
         SetLogoutBlock();
+
+        if (target is IPlayer)
+        {
+            SetProtectionZoneBlock();
+        }
+
         if (!combatParameter.UsingWeapon) return;
 
         Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
@@ -1167,28 +1190,6 @@ public class Player : CombatActor, IPlayer
         return result;
     }
 
-    public override Result Attack(ICombatActor enemy)
-    {
-        var canAttackResult = AttackValidation.CanAttack(this, enemy);
-        if (canAttackResult.Failed) return base.Attack(enemy);
-
-        if (enemy.IsInvisible)
-        {
-            StopAttack();
-            return Result.Fail(InvalidOperation.AttackTargetIsInvisible);
-        }
-
-        if (enemy is IPlayer) SetProtectionZoneBlock();
-
-        return base.Attack(enemy);
-    }
-
-    public override bool Attack(ICreature enemy, IUsableAttackOnCreature item)
-    {
-        SetLogoutBlock();
-        if (enemy is IPlayer) SetProtectionZoneBlock();
-        return base.Attack(enemy, item);
-    }
 
     public void StopAllActions()
     {
@@ -1545,6 +1546,7 @@ public class Player : CombatActor, IPlayer
 
     public void ChangeOnlineStatus(bool online)
     {
+        Online = online;
         OnChangedOnlineStatus?.Invoke(this, online);
     }
 
@@ -1586,6 +1588,12 @@ public class Player : CombatActor, IPlayer
 
     public override void Death(IThing by)
     {
+        var summonsCopy = Summons.ToList();
+        foreach (var summon in summonsCopy)
+        {
+            summon.OnMasterKilled();
+        }
+
         base.Death(by);
 
         PlayerSkull.RemoveYellowSkull();
@@ -1625,7 +1633,14 @@ public class Player : CombatActor, IPlayer
 
     public override void Think(int interval)
     {
+        HandleTargetLost();
         EventAggregator.Invoke(new PlayerThinkEvent(this, interval));
+    }
+
+    public override bool IsTargetLost()
+    {
+        if (CurrentTarget is IPlayer && (CurrentTarget.Tile?.NoPvpZone ?? false)) return true;
+        return base.IsTargetLost();
     }
 
     #endregion

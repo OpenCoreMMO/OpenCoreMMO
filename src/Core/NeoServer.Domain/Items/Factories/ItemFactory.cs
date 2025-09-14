@@ -7,6 +7,7 @@ using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Monster.Loot;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Items.Items.Containers;
@@ -66,7 +67,7 @@ public class ItemFactory : IItemFactory
 
         var createdItem = new LootContainer(itemType, location, loot);
 
-        if (killer is ISummon summonKiller)
+        if (killer is Summon summonKiller)
             createdItem.Attributes.SetAttribute(
                 ItemAttribute.CorpseOwner, summonKiller.Master.CreatureId);
         else if (killer is ICreature creatureKiller)

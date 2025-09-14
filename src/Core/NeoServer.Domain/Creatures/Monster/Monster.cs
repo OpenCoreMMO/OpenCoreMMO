@@ -16,6 +16,7 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster.Actions;
 using NeoServer.Domain.Creatures.Monster.Combat;
+using NeoServer.Domain.Creatures.Monster.Services;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Items.Items;
 
@@ -50,7 +51,7 @@ public class Monster : WalkableMonster, IMonster
     private bool KeepDistance => TargetDistance > 1;
     private MonsterCombatType[] Attacks => Metadata.Attacks;
     internal ICombatDefense[] Defenses => Metadata.Defenses;
-    internal TargetList Targets { get; }
+    public TargetList Targets { get; }
     public override bool CanAttackAnyTarget => Targets.CanAttackAnyTarget;
     public bool HasDistanceAttack => Metadata.HasDistanceAttack;
 
@@ -88,6 +89,31 @@ public class Monster : WalkableMonster, IMonster
         OnWasBorn?.Invoke(this, location);
     }
 
+    public override void OnSpectatorMoved(ICreature spectator)
+    {
+        if (IsDead) return;
+        if (spectator is not ICombatActor target) return;
+
+        if (Targets.HasTarget(spectator))
+        {
+            Targets.OnTargetMoved(target);
+        }
+
+        base.OnSpectatorMoved(spectator);
+    }
+
+    public override void OnSpectatorDies(ICombatActor spectator)
+    {
+        if (IsDead) return;
+
+        if (Targets.HasTarget(spectator))
+        {
+            Targets.OnTargetDies(spectator);
+        }
+
+        base.OnSpectatorDies(spectator);
+    }
+
     public void Reborn()
     {
         if (Spawn is null) return;
@@ -107,8 +133,8 @@ public class Monster : WalkableMonster, IMonster
     public override DamageResult TakeDamage(IThing enemy, CombatDamageList damages)
     {
         if (this is Summon.Summon { Master: IPlayer }) return base.TakeDamage(enemy, damages);
-        
-        if (enemy is Summon.Summon { Master: IPlayer } or IPlayer or MagicField )
+
+        if (enemy is Summon.Summon { Master: IPlayer } or IPlayer or MagicField)
         {
             var damageResult = base.TakeDamage(enemy, damages);
             return damageResult;
@@ -181,7 +207,7 @@ public class Monster : WalkableMonster, IMonster
 
     public virtual void UpdateState()
     {
-        TargetDetector.UpdateTargets(this, MapTool);
+        //TargetDetectorService.UpdateTargets(this, MapTool);
 
         if (!Targets.Any())
         {
@@ -189,16 +215,16 @@ public class Monster : WalkableMonster, IMonster
             return;
         }
 
-        if (!CanAttackAnyTarget)
-        {
-            State = MonsterState.LookingForEnemy;
-            return;
-        }
-
         if (Metadata.Flags.TryGetValue(CreatureFlagAttribute.RunOnHealth, out var runOnHealth) &&
             runOnHealth >= HealthPoints)
         {
             State = MonsterState.Escaping;
+            return;
+        }
+
+        if (!CanAttackAnyTarget)
+        {
+            State = MonsterState.LookingForEnemy;
             return;
         }
 
@@ -223,7 +249,7 @@ public class Monster : WalkableMonster, IMonster
     {
         if (Attacking && !Cooldowns.Cooldowns[CooldownType.TargetChange].Expired) return;
 
-        TargetDetector.UpdateTargets(this, MapTool);
+        //TargetDetectorService.UpdateTargets(this, MapTool);
         var target = Targets.PossibleTargetToAttack;
 
         if (target is null) return;
@@ -269,7 +295,7 @@ public class Monster : WalkableMonster, IMonster
         return defense.Interval;
     }
 
-    public void Summon(ISummonService summonService)
+    public void CreateSummon(ISummonService summonService)
     {
         if (IsDead) return;
         if ((_aliveSummons?.Count ?? 0) >= Metadata.MaxSummons) return;
@@ -286,26 +312,17 @@ public class Monster : WalkableMonster, IMonster
 
             if (foundAliveSummon && count >= summon.Max) continue;
 
-            var createdSummon = summonService.Summon(this, summon.Name);
+            var createdSummon = summonService.SpamSummon(this, summon.Name);
             if (createdSummon is null) continue;
 
             Cooldowns.Start(summon);
-
-            AttachToSummonEvents(createdSummon);
-
+            
             _aliveSummons ??= new Dictionary<string, byte>();
 
             if (foundAliveSummon) _aliveSummons[summon.Name] = (byte)(count + 1);
             else
                 _aliveSummons.TryAdd(summon.Name, 1);
         }
-    }
-
-    [Obsolete]
-    public override Result OnAttack(ICombatActor enemy, out CombatAttackResult[] combatAttacks)
-    {
-        throw new NotSupportedException(
-            "Monsters cannot attack directly. Use the MonsterCombatService to handle attacks.");
     }
 
     public void PostAttack(MonsterCombatType type)
@@ -392,7 +409,13 @@ public class Monster : WalkableMonster, IMonster
     {
         if (by is IPlayer player && ReferenceEquals(player.CurrentTarget, this))
             player.StopAttack();
-        
+
+        var summonsCopy = Summons.ToList();
+        foreach (var summon in summonsCopy)
+        {
+            summon.OnMasterKilled();
+        }
+
         base.Death(by);
     }
 
@@ -421,24 +444,18 @@ public class Monster : WalkableMonster, IMonster
     }
 
     #region Summon Event Attachment
-
-    private void AttachToSummonEvents(IMonster monster)
+    public override void OnSummonDie(Summon.Summon summon)
     {
-        monster.OnDeath += OnSummonDie;
-    }
-
-    private void OnSummonDie(ICombatActor creature, IThing by)
-    {
-        creature.OnDeath -= OnSummonDie;
-        if (!_aliveSummons.TryGetValue(creature.Name, out var count)) return;
+        if (summon is null) return;
+        if (_aliveSummons is null || !_aliveSummons.TryGetValue(summon.Name, out var count)) return;
 
         if (count == 1)
         {
-            _aliveSummons.Remove(creature.Name);
+            _aliveSummons.Remove(summon.Name);
             return;
         }
 
-        _aliveSummons[creature.Name] = (byte)(count - 1);
+        _aliveSummons[summon.Name] = (byte)(count - 1);
     }
 
     public override bool IsHostileTo(ICombatActor enemy)
