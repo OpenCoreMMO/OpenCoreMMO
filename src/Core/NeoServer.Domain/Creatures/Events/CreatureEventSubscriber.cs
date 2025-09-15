@@ -10,20 +10,18 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     private readonly CreaturePropagatedAttackEventHandler creaturePropagatedAttackEventHandler;
     private readonly CreatureSayEventHandler creatureSayEventHandler;
     private readonly CreatureTeleportedEventHandler creatureTeleportedEventHandler;
-    private readonly PlayerLoggedInEventHandler playerLoggedInEventHandler;
     private readonly PlayerOpenedContainerEventHandler playerOpenedContainerEventHandler;
 
     public CreatureEventSubscriber(
         CreaturePropagatedAttackEventHandler creaturePropagatedAttackEventHandler,
         CreatureTeleportedEventHandler creatureTeleportedEventHandler,
-        CreatureMovedEventHandler creatureMovedEventHandler, PlayerLoggedInEventHandler playerLoggedInEventHandler,
+        CreatureMovedEventHandler creatureMovedEventHandler,
         CreatureSayEventHandler creatureSayEventHandler,
         PlayerOpenedContainerEventHandler playerOpenedContainerEventHandler)
     {
         this.creaturePropagatedAttackEventHandler = creaturePropagatedAttackEventHandler;
         this.creatureTeleportedEventHandler = creatureTeleportedEventHandler;
         this.creatureMovedEventHandler = creatureMovedEventHandler;
-        this.playerLoggedInEventHandler = playerLoggedInEventHandler;
         this.creatureSayEventHandler = creatureSayEventHandler;
         this.playerOpenedContainerEventHandler = playerOpenedContainerEventHandler;
     }
@@ -41,7 +39,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
 
         if (creature is IPlayer player)
         {
-            player.OnLoggedIn += playerLoggedInEventHandler.Execute;
             player.Containers.OnOpenedContainer += playerOpenedContainerEventHandler.Execute;
         }
 
@@ -61,7 +58,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
 
         if (creature is IPlayer player)
         {
-            player.OnLoggedIn -= playerLoggedInEventHandler.Execute;
             player.Containers.OnOpenedContainer -= playerOpenedContainerEventHandler.Execute;
         }
 

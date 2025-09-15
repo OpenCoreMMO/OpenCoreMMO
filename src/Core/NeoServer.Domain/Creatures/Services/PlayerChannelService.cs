@@ -20,4 +20,19 @@ public class PlayerChannelService(IChatChannelStore chatChannelStore)
                 player.Channels.ExitChannel(channel);
         }
     }
+    
+    public void JoinChannels(IPlayer player)
+    {
+        var channels = chatChannelStore.All.Where(x => x.Opened);
+
+        channels = player.Channels.PersonalChannels is null
+            ? channels
+            : channels.Concat(player.Channels.PersonalChannels?.Where(x => x.Opened) ?? []);
+
+        channels = player.Channels.PrivateChannels is not { } privateChannels
+            ? channels
+            : channels.Concat(privateChannels.Where(x => x.Opened));
+
+        foreach (var channel in channels) player.Channels.JoinChannel(channel);
+    }
 }

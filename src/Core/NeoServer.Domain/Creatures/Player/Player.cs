@@ -1,7 +1,6 @@
 using System.Text;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat;
-using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
@@ -833,7 +832,7 @@ public class Player : CombatActor, IPlayer
             summon.OnMasterLogout();
         }
         
-        EventAggregator.Invoke(new PlayerLogoutEvent(this));
+        EventAggregator.Invoke(new PlayerLoggedOutEvent(this));
         
         return true;
     }
@@ -849,10 +848,8 @@ public class Player : CombatActor, IPlayer
 
         LastLogIn = DateTime.UtcNow;
         RegenerateStamina();
-
-        OnLoggedIn?.Invoke(this);
-
-
+        
+        EventAggregator.Invoke(new PlayerLoggedInEvent(this));
         return true;
     }
 

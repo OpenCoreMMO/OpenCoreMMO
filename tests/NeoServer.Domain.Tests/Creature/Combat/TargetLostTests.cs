@@ -1,14 +1,9 @@
-using System.Reflection;
-using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
-using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Tests.Creature.Combat;
 

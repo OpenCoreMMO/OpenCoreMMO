@@ -8,7 +8,6 @@ using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
 using Serilog;

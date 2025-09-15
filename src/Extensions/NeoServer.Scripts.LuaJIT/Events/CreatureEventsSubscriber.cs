@@ -9,7 +9,6 @@ namespace NeoServer.Scripts.LuaJIT.Events;
 public class CreatureEventsSubscriber(
     CreatureOnThinkEventHandler creatureOnThinkEventHandler,
     CreatureOnPrepareDeathEventHandler creatureOnPrepareDeathEventHandler,
-    PlayerOnLoginEventHandler playerOnLoginEventHandler,
     PlayerOnAdvanceEventHandler playerOnAdvanceEventHandler,
     PlayerOnTextEditEventHandler playerOnTextEditEventHandler,
     CreatureOnAppearEventHandler creatureOnAppearEventHandler,
@@ -28,7 +27,6 @@ public class CreatureEventsSubscriber(
 
         if (creature is IPlayer player)
         {
-            player.OnLoggedIn += playerOnLoginEventHandler.Execute;
             player.OnLevelAdvanced += playerOnAdvanceEventHandler.Execute;
             player.OnWroteText += playerOnTextEditEventHandler.Execute;
         }
@@ -58,7 +56,6 @@ public class CreatureEventsSubscriber(
 
         if (creature is IPlayer player)
         {
-            player.OnLoggedIn -= playerOnLoginEventHandler.Execute;
             player.OnLevelAdvanced -= playerOnAdvanceEventHandler.Execute;
             player.OnWroteText -= playerOnTextEditEventHandler.Execute;
         }

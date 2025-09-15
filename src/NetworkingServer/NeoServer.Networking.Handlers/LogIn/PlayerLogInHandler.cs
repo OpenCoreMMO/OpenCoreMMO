@@ -135,7 +135,9 @@ public class PlayerLogInHandler : PacketHandler
 
         if (player?.Name == packet.CharacterName)
         {
-            _playerLogOutCommand.Execute(player, true);
+            _game.CreatureManager.GetPlayerConnection(player.CreatureId, out var existingConnection);
+
+            existingConnection?.Disconnect();
             return Result.Success;
         }
 

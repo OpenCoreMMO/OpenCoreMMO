@@ -1,16 +1,11 @@
-using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
 using NeoServer.Domain.Combat;
 using NeoServer.Domain.Common;
-using NeoServer.Domain.Common.Combat.Structs;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Monster.Loot;
 using NeoServer.Domain.Items;
-using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Items.Items.Cumulatives;
 using NeoServer.Domain.Services;
 using NeoServer.Domain.Tests.Helpers;

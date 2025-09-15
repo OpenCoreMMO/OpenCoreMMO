@@ -274,7 +274,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         var tileToBorn = _map[position];
 
-        if (tileToBorn is IDynamicTile { HasCreature: false })
+        if (tileToBorn is IDynamicTile { HasAnyCreature: false })
         {
             if (tileToBorn.HasFlag(TileFlags.ProtectionZone))
             {
@@ -291,7 +291,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         }
 
         foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
-            if (_map[neighbour] is IDynamicTile { HasCreature: false })
+            if (_map[neighbour] is IDynamicTile { HasAnyCreature: false })
             {
                 monster.Born(neighbour);
 
@@ -326,7 +326,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         var tileToBorn = _map[position];
 
-        if (tileToBorn is IDynamicTile { HasCreature: false })
+        if (tileToBorn is IDynamicTile { HasAnyCreature: false })
         {
             if (tileToBorn.HasFlag(TileFlags.ProtectionZone))
             {
@@ -344,7 +344,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         }
 
         foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
-            if (_map[neighbour] is IDynamicTile { HasCreature: false })
+            if (_map[neighbour] is IDynamicTile { HasAnyCreature: false })
             {
                 npc.SetNewLocation(neighbour);
                 _map.PlaceCreature(npc);

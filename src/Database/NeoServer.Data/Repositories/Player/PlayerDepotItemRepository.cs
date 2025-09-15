@@ -7,7 +7,6 @@ using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items.Types;
-using NeoServer.Domain.Locker;
 using Serilog;
 
 namespace NeoServer.Data.Repositories.Player;

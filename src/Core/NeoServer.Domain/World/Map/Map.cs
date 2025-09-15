@@ -423,24 +423,39 @@ public class Map : IMap
         if (this[creature.Location] is not IDynamicTile tile) return;
 
         if (!tile.CanEnter(creature)) return;
+        var creatureAlreadyInTile = false;
 
-        if (tile.HasCreature)
-            foreach (var location in tile.Location.Neighbours)
-                if (this[location] is IDynamicTile { HasCreature: false } t
-                    && !t.HasFlag(TileFlags.Unpassable))
+        if (tile.HasAnyCreature)
+        {
+            creatureAlreadyInTile = tile.HasCreature(creature);
+
+            if (!creatureAlreadyInTile)
+            {
+                foreach (var location in tile.Location.Neighbours)
                 {
-                    tile = t;
-                    break;
+                    if (this[location] is IDynamicTile { HasAnyCreature: false } t
+                        && !t.HasFlag(TileFlags.Unpassable))
+                    {
+                        tile = t;
+                        break;
+                    }
                 }
+            }
+        }
 
         if (CylinderOperation.AddCreature(creature, tile, out var cylinder).Succeeded is false) return;
 
-        var sector = world.GetSector(creature.Location.X, creature.Location.Y);
-        sector.AddCreature(creature);
+        if (!creatureAlreadyInTile)
+        {
+            var sector = world.GetSector(creature.Location.X, creature.Location.Y);
+            sector.AddCreature(creature);
+            creature.Appear(tile.Location, cylinder.TileSpectators);
+        }
 
-        creature.Appear(tile.Location, cylinder.TileSpectators);
         if (creature is IWalkableCreature walkableCreature)
+        {
             OnCreatureAddedOnMap?.Invoke(walkableCreature, cylinder);
+        }
     }
 
     public void RemoveCreature(ICreature creature)
