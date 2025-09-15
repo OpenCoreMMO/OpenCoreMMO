@@ -31,7 +31,7 @@ public class PlayerLogOutCommand(
         // Notify spectators
         foreach (var spectator in map.GetSpectators(player.Location))
         {
-            spectator.OnSpectatorLoggedOut(spectator);
+            spectator.OnSpectatorLoggedOut(player);
         }
 
         // Exit all channels
