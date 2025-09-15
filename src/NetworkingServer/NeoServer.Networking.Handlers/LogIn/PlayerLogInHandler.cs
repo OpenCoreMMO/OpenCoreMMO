@@ -19,31 +19,29 @@ namespace NeoServer.Networking.Handlers.LogIn;
 
 public class PlayerLogInHandler : PacketHandler
 {
-    private readonly IAccountRepository _accountRepository;
+    private readonly IAccountRepository _accountAccountRepository;
     private readonly ClientConfiguration _clientConfiguration;
     private readonly IGameServer _game;
     private readonly IIpBansRepository _ipBansRepository;
     private readonly PlayerLogInCommand _playerLogInCommand;
-    private readonly PlayerLogOutCommand _playerLogOutCommand;
     private readonly ServerConfiguration _serverConfiguration;
     private readonly IWaitingQueueManager _waitingQueueManager;
 
-    public PlayerLogInHandler(IAccountRepository repositoryNeo,
+    public PlayerLogInHandler(IAccountRepository accountRepository,
         IGameServer game, ServerConfiguration serverConfiguration, PlayerLogInCommand playerLogInCommand,
-        PlayerLogOutCommand playerLogOutCommand, ClientConfiguration clientConfiguration,
+        ClientConfiguration clientConfiguration,
         IIpBansRepository ipBansRepository, IWaitingQueueManager waitingQueueManager)
     {
-        _accountRepository = repositoryNeo;
+        _accountAccountRepository = accountRepository;
         _game = game;
         _serverConfiguration = serverConfiguration;
         _playerLogInCommand = playerLogInCommand;
-        _playerLogOutCommand = playerLogOutCommand;
         _clientConfiguration = clientConfiguration;
         _ipBansRepository = ipBansRepository;
         _waitingQueueManager = waitingQueueManager;
     }
 
-    public override async void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
+    public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
         if (_game.State == GameState.Stopped) connection.Close();
 
@@ -55,31 +53,32 @@ public class PlayerLogInHandler : PacketHandler
 
         if (!Verify(connection, packet)) return;
 
-        var existBan = await _ipBansRepository.ExistBan(connection.Ip.Split(":")[0]);
+        var existBan = _ipBansRepository.ExistBan(connection.Ip.Split(":")[0]).Result;
 
         if (existBan is not null)
         {
             Disconnect(connection,
-                $"Your IP address {existBan.Ip} has been banished until {existBan.ExpiresAt.ToString("MM/dd/yyyy")}.\nReason: {existBan.Reason}");
+                $"Your IP address {existBan.Ip} has been banished until {existBan.ExpiresAt:MM/dd/yyyy}.\nReason: {existBan.Reason}");
             return;
         }
 
-        async void TryConnect()
-        {
-            await Connect(connection, packet);
-        }
-
         _game.Dispatcher.AddEvent(new Event(TryConnect));
+        return;
+
+        void TryConnect()
+        {
+            Connect(connection, packet).Wait();
+        }
     }
 
     private async Task Connect(IConnection connection, PlayerLogInPacket packet)
     {
-        var playerOnline = await _accountRepository.GetOnlinePlayer(packet.Account);
+        var playerOnline = await _accountAccountRepository.GetOnlinePlayer(packet.Account);
 
         if (ValidateOnlineStatus(connection, playerOnline, packet).Failed) return;
 
         var playerRecord =
-            await _accountRepository.GetPlayer(packet.Account, packet.Password, packet.CharacterName,
+            await _accountAccountRepository.GetPlayer(packet.Account, packet.Password, packet.CharacterName,
                 includeKillsLastMonth: true);
 
         if (playerRecord is null)
