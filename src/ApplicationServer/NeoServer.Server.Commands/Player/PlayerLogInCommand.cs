@@ -1,19 +1,23 @@
 using System;
 using System.Linq;
-using NeoServer.Data.Entities;
+using System.Threading.Tasks;
 using NeoServer.Data.Interfaces;
-using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Loaders.Guilds;
 using NeoServer.Loaders.Interfaces;
+using NeoServer.Networking.Packets.Outgoing.Custom;
+using NeoServer.Networking.Packets.Outgoing.Login;
+using NeoServer.Server.Commands.WaitingInLine;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Commands;
 using NeoServer.Server.Common.Contracts.Network;
 using NeoServer.Server.Common.Contracts.Scripts;
+using NeoServer.Server.Common.Enums;
+using NeoServer.Server.Configurations;
 using NeoServer.Server.Services;
+using OperatingSystem = NeoServer.Server.Common.Enums.OperatingSystem;
 using Serilog;
 
 namespace NeoServer.Server.Commands.Player;
@@ -27,15 +31,85 @@ public class PlayerLogInCommand(
     IScriptManager scriptManager,
     IPlayerRepository playerRepository,
     PlayerChannelService playerChannelService,
-    IMap map)
+    IMap map,
+    IAccountRepository accountRepository,
+    ServerConfiguration serverConfiguration,
+    ClientConfiguration clientConfiguration,
+    IIpBansRepository ipBansRepository,
+    IWaitingQueueManager waitingQueueManager)
     : ICommand
 {
-    public Result Execute(PlayerEntity playerRecord, IConnection connection)
+    public async Task<(bool Success, string Message)> Execute(PlayerLogInRequest request, IConnection connection)
     {
-        if (playerRecord is null)
+        connection.SetXtea(request.Xtea);
+
+        if (request.ChallengeTimeStamp != connection.TimeStamp || request.ChallengeNumber != connection.RandomNumber)
+            return (false, "Login challenge is not valid.");
+
+        if (string.IsNullOrWhiteSpace(request.Account))
+            return (false, "You must enter your account name.");
+
+        if (request.Version < serverConfiguration.MinVersion || request.Version > serverConfiguration.Version)
+            return (false, $"Only clients with protocol {serverConfiguration.Version} allowed!");
+
+        switch (game.State)
         {
-            //todo validations here
-            return Result.Fail(InvalidOperation.PlayerNotFound);
+            case GameState.Opening:
+                return (false, "Gameworld is starting up. Please wait.");
+            case GameState.Maintaining:
+                return (false, "Gameworld is under maintenance. Please re-connect in a while.");
+            case GameState.Closed:
+                return (false, "Server is currently closed.\nPlease try again later.");
+        }
+
+        var existBan = await ipBansRepository.ExistBan(connection.Ip.Split(":")[0]);
+        if (existBan is not null)
+            return (false, $"Your IP address {existBan.Ip} has been banished until {existBan.ExpiresAt:MM/dd/yyyy}.\nReason: {existBan.Reason}");
+
+        var playerOnline = await accountRepository.GetOnlinePlayer(request.Account);
+        if (playerOnline is not null)
+        {
+            game.CreatureManager.TryGetLoggedPlayer((uint)playerOnline.Id, out var existingPlayer);
+            if (existingPlayer?.Name == request.CharacterName)
+            {
+                game.CreatureManager.GetPlayerConnection(existingPlayer.CreatureId, out var existingConnection);
+                existingConnection?.Disconnect();
+            }
+            else if (!playerOnline.Account.AllowManyOnline)
+            {
+                return (false, "You may only login with one character of your account at the same time.");
+            }
+        }
+
+        var playerRecord = await accountRepository.GetPlayer(request.Account, request.Password, request.CharacterName, includeKillsLastMonth: true);
+        if (playerRecord is null)
+            return (false, "Account name or password is not correct.");
+
+        if (playerRecord.Account.BanishedAt is not null)
+            return (false, "Your account is banned.");
+
+        if (!waitingQueueManager.CanLogin(playerRecord, out var currentSlot))
+        {
+            var retryTime = waitingQueueManager.GetTime(currentSlot);
+            var message = $"There are too many players online.\nYou are at place {currentSlot} on waiting list.";
+            var waitingInLinePacket = new WaitingInLinePacket(message, retryTime);
+            connection.Send(waitingInLinePacket);
+            connection.Close();
+            return (false, message);
+        }
+
+        connection.OtcV8Version = request.OtcV8Version;
+        if (request.OtcV8Version > 0 || request.OperatingSystem >= OperatingSystem.OtcLinux)
+        {
+            if (request.OtcV8Version > 0)
+                connection.Send(new FeaturesPacket
+                {
+                    GameEnvironmentEffect = clientConfiguration.OtcV8.GameEnvironmentEffect,
+                    GameExtendedOpcode = clientConfiguration.OtcV8.GameExtendedOpcode,
+                    GameExtendedClientPing = clientConfiguration.OtcV8.GameExtendedClientPing,
+                    GameItemTooltip = clientConfiguration.OtcV8.GameItemTooltip
+                });
+            connection.Send(new OpcodeMessagePacket());
         }
 
         if (!game.CreatureManager.TryGetLoggedPlayer((uint)playerRecord.Id, out var player))
@@ -43,7 +117,7 @@ public class PlayerLogInCommand(
             guildLoader.Load(playerRecord.GuildMember?.Guild);
 
             var playerLocation = playerLocationResolver.GetPlayerLocation(playerRecord);
-            if (playerLocation == Location.Zero) return Result.Fail(InvalidOperation.PlayerLocationInvalid);
+            if (playerLocation == Location.Zero) return (false, "Player location invalid");
 
             playerRecord.PosX = playerLocation.X;
             playerRecord.PosY = playerLocation.Y;
@@ -56,21 +130,21 @@ public class PlayerLogInCommand(
 
         player.Login();
         player.Vip.LoadVipList(playerRecord.Account.VipList.Select(x => ((uint)x.PlayerId, x.Player?.Name)));
-      
+
         map.PlaceCreature(player);
 
         playerChannelService.JoinChannels(player);
-        
+
         logger.Information("Player {PlayerName} logged in", player.Name);
 
-        var (success, current, old) = game.CreatureManager.CheckPlayersRecord(player.WorldId).Result;
+        var (success, current, old) = await game.CreatureManager.CheckPlayersRecord(player.WorldId);
 
         if (success)
             scriptManager.GlobalEvents.ExecuteRecord(current, old);
-        
-        playerRepository.UpdatePlayerOnlineStatus(player.Id, true).Wait();
-        playerRepository.UpdateLastLogInDate((int)player.Id, player.LastLogIn ?? DateTime.UtcNow).Wait();
 
-        return Result.Success;
+        await playerRepository.UpdatePlayerOnlineStatus(player.Id, true);
+        await playerRepository.UpdateLastLogInDate((int)player.Id, player.LastLogIn ?? DateTime.UtcNow);
+
+        return (true, null);
     }
 }

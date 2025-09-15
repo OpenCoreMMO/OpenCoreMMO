@@ -7,7 +7,7 @@ This guide provides technical guidelines for implementing unit tests for the Neo
 - **FluentAssertions**: For expressive and readable assertions.
 
 ## Mocking Strategy
-- **Do not use mocks** for business logic classes, domain objects, or services.
+- **Do not use mocks** for business logic classes, domain objects, commands or services.
 - **Use mocks only** for repositories or database access layers (e.g., IAccountRepository, IIpBansRepository).
 - Test real implementations where possible to ensure integration and behavior accuracy.
 

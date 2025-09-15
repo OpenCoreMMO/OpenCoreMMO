@@ -1,6 +1,6 @@
-# Player Login E2E Test Plan
+# Player Login Test Plan
 
-Based on the analysis of the `PlayerLogInHandler.cs` and related components (including packet parsing, repository interfaces, waiting queue management, and login command execution), here is a comprehensive list of end-to-end (e2e) testing use cases for the login flow in the NeoServer application. The use cases cover happy path scenarios, edge cases, error conditions, security considerations, integration points, user type variations, network conditions, and failure modes. Each use case includes preconditions, steps, expected outcomes, and relevant assertions/validations.
+Based on the analysis of the `PlayerLogInCommand.cs` and related components (including request validation, repository interfaces, waiting queue management, and player loading), here is a comprehensive list of end-to-end (e2e) testing use cases for the login flow in the NeoServer application. The use cases cover happy path scenarios, edge cases, error conditions, security considerations, integration points, user type variations, network conditions, and failure modes. Each use case includes preconditions, steps, expected outcomes, and relevant assertions/validations.
 
 ## 1. Happy Path: Successful Login for Returning Player
 **Preconditions:**
@@ -15,8 +15,8 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Database and game server are operational.
 
 **Steps:**
-1. Client sends login packet with valid account, password, character name, correct challenge timestamp/number, supported version, and RSA-encrypted data.
-2. Handler verifies packet, checks IP ban (none), validates online status (not online), retrieves player record, checks waiting queue (allowed), sends OTC features if applicable, executes login command.
+1. Command receives PlayerLogInRequest with valid account, password, character name, correct challenge timestamp/number, supported version.
+2. Command validates request, checks IP ban (none), validates online status (not online), retrieves player record, checks waiting queue (allowed), sends OTC features if applicable, loads and places player.
 
 **Expected Outcomes:**
 - Player is loaded, added to game, placed on map, joins channels, online status updated in DB.
@@ -33,8 +33,8 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Same as Use Case 1, plus client is OTCv8 with valid version.
 
 **Steps:**
-1. Client sends packet with OtcV8Version > 0.
-2. Handler processes as in Use Case 1, additionally sending FeaturesPacket and OpcodeMessagePacket.
+1. Command receives request with OtcV8Version > 0.
+2. Command processes as in Use Case 1, additionally sending FeaturesPacket and OpcodeMessagePacket.
 
 **Expected Outcomes:**
 - Login succeeds with OTC features enabled.
@@ -48,8 +48,8 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Same as Use Case 1, plus client operating system >= OtcLinux.
 
 **Steps:**
-1. Client sends packet with OperatingSystem >= OperatingSystem.OtcLinux.
-2. Handler processes as in Use Case 1, sending OpcodeMessagePacket.
+1. Command receives request with OperatingSystem >= OperatingSystem.OtcLinux.
+2. Command processes as in Use Case 1, sending OpcodeMessagePacket.
 
 **Expected Outcomes:**
 - Login succeeds with OTC Linux features enabled.
@@ -63,8 +63,8 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Account allows multiple online (or same character reconnect).
 
 **Steps:**
-1. Client sends login packet for already-online character.
-2. Handler detects existing connection, disconnects old one, proceeds with login.
+1. Command receives request for already-online character.
+2. Command detects existing connection, disconnects old one, proceeds with login.
 
 **Expected Outcomes:**
 - Old connection closed; new login succeeds.
@@ -75,10 +75,10 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 
 ## 5. Edge Case: Empty Account Name
 **Preconditions:**
-- Packet has empty/whitespace account name.
+- Request has empty/whitespace account name.
 
 **Steps:**
-1. Client sends packet with invalid account.
+1. Command receives request with invalid account.
 
 **Expected Outcomes:**
 - Connection disconnected with message "You must enter your account name."
@@ -89,10 +89,10 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 
 ## 6. Edge Case: Empty Character Name
 **Preconditions:**
-- Packet has empty/whitespace character name.
+- Request has empty/whitespace character name.
 
 **Steps:**
-1. Client sends packet with valid account/password but empty character name.
+1. Command receives request with valid account/password but empty character name.
 
 **Expected Outcomes:**
 - Disconnected with "Account name or password is not correct." (since GetPlayer returns null).
@@ -105,7 +105,7 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Challenge timestamp or number does not match connection's values.
 
 **Steps:**
-1. Client sends packet with mismatched challenge.
+1. Command receives request with mismatched challenge.
 
 **Expected Outcomes:**
 - Disconnected with "Login challenge is not valid."
@@ -115,10 +115,10 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 
 ## 8. Edge Case: Unsupported Client Version (Too Low)
 **Preconditions:**
-- Packet version < server min version.
+- Request version < server min version.
 
 **Steps:**
-1. Client sends packet with old version.
+1. Command receives request with old version.
 
 **Expected Outcomes:**
 - Disconnected with "Only clients with protocol X allowed!"
@@ -128,7 +128,7 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 
 ## 9. Edge Case: Unsupported Client Version (Too High)
 **Preconditions:**
-- Packet version > server max version.
+- Request version > server max version.
 
 **Steps:**
 1. Same as above.
@@ -144,7 +144,7 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Game state = Stopped.
 
 **Steps:**
-1. Client sends login packet.
+1. Command receives login request.
 
 **Expected Outcomes:**
 - Immediate disconnect (no message).
@@ -157,7 +157,7 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Game state = Opening.
 
 **Steps:**
-1. Client sends packet.
+1. Command receives request.
 
 **Expected Outcomes:**
 - Disconnected with "Gameworld is starting up. Please wait."
@@ -170,7 +170,7 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Game state = Maintaining.
 
 **Steps:**
-1. Client sends packet.
+1. Command receives request.
 
 **Expected Outcomes:**
 - Disconnected with "Gameworld is under maintenance. Please re-connect in a while."
@@ -183,7 +183,7 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Game state = Closed.
 
 **Steps:**
-1. Client sends packet.
+1. Command receives request.
 
 **Expected Outcomes:**
 - Disconnected with "Server is currently closed.\nPlease try again later."
@@ -196,7 +196,7 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - IP exists in ban list with active ban.
 
 **Steps:**
-1. Client connects from banned IP.
+1. Command receives request from banned IP.
 
 **Expected Outcomes:**
 - Disconnected with ban message including expiry date and reason.
@@ -209,7 +209,7 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Account/password/character combination invalid.
 
 **Steps:**
-1. Client sends valid packet but wrong credentials.
+1. Command receives valid request but wrong credentials.
 
 **Expected Outcomes:**
 - Disconnected with "Account name or password is not correct."
@@ -261,10 +261,10 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Encrypted data corrupted or invalid RSA.
 
 **Steps:**
-1. Client sends packet with bad encrypted data.
+1. Command receives request with bad encrypted data.
 
 **Expected Outcomes:**
-- Packet parsing fails; handler may not proceed or disconnect.
+- Request validation fails; command may not proceed or disconnect.
 
 **Assertions/Validations:**
 - Verify no further processing; possible disconnect if verification fails.
@@ -274,7 +274,7 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - XTEA keys not set correctly.
 
 **Steps:**
-1. Packet sent without proper XTEA setup.
+1. Command receives request without proper XTEA setup.
 
 **Expected Outcomes:**
 - Potential failure in decryption or later communication.
@@ -287,7 +287,7 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Database unavailable during GetPlayer call.
 
 **Steps:**
-1. Valid packet sent.
+1. Command receives valid request.
 
 **Expected Outcomes:**
 - Exception or null return; disconnected with "Account name or password is not correct."
@@ -300,10 +300,10 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Database fails during GetOnlinePlayer.
 
 **Steps:**
-1. Valid packet.
+1. Command receives valid request.
 
 **Expected Outcomes:**
-- Possible exception; handler may crash or disconnect.
+- Possible exception; command may fail or disconnect.
 
 **Assertions/Validations:**
 - Verify error handling; connection closed.
@@ -349,7 +349,7 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 
 ## 26. Variation: Game Master Login
 **Preconditions:**
-- Packet has GameMaster = true.
+- Request has GameMaster = true.
 
 **Steps:**
 1. GM account login.
@@ -375,10 +375,10 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 
 ## 28. Network Condition: Packet Corruption (Incomplete Data)
 **Preconditions:**
-- Packet truncated or malformed.
+- Request truncated or malformed.
 
 **Steps:**
-1. Send corrupted packet.
+1. Command receives corrupted request.
 
 **Expected Outcomes:**
 - Parsing fails; possible exception or disconnect.
@@ -391,7 +391,7 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - Network delay causes timeout.
 
 **Steps:**
-1. Send packet; simulate delay.
+1. Command receives request; simulate delay.
 
 **Expected Outcomes:**
 - Connection may close before completion.
@@ -404,7 +404,7 @@ Based on the analysis of the `PlayerLogInHandler.cs` and related components (inc
 - PlayerLocationResolver returns Zero.
 
 **Steps:**
-1. Valid packet.
+1. Command receives valid request.
 
 **Expected Outcomes:**
 - Command fails; disconnected with error.

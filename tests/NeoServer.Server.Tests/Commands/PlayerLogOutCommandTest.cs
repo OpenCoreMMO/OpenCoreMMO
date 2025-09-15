@@ -77,7 +77,7 @@ public class PlayerLogOutCommandTest
             playerChannelService,
             map.Object);
 
-        // Act
+        // Acthealpers 
         command.Execute(player.Object);
 
         // Assert
