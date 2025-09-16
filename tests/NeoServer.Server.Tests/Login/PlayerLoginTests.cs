@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using NeoServer.Data.Contexts;
@@ -8,7 +9,16 @@ using NeoServer.Domain.Common.Location;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
+using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Common.Enums;
+using NeoServer.Loaders.Interfaces;
+using NeoServer.Loaders.Guilds;
+using NeoServer.Server.Services;
+using NeoServer.Domain.Creatures.Services;
+using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Server.Configurations;
+using NeoServer.Server.Commands.WaitingInLine;
+using Serilog;
 using Xunit;
 using Moq;
 using NeoServer.Networking.Packets.Outgoing;
@@ -16,6 +26,7 @@ using NeoServer.Networking.Packets.Outgoing.Login;
 using NeoServer.Networking.Packets.Outgoing.Custom;
 using FluentAssertions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OperatingSystem = NeoServer.Server.Common.Enums.OperatingSystem;
 
@@ -340,7 +351,7 @@ public class PlayerLoginTests
 
     [Fact]
     [Trait("Category", "ErrorCondition")]
-    public async Task Player_login_fails_when_server_is_stopped()
+    public async Task Player_login_fails_when_server_is_closed()
     {
         // Arrange
         if (_game is NeoServer.Server.GameServer gameServer)
@@ -389,7 +400,18 @@ public class PlayerLoginTests
         var connection = CreateMockConnection(timestamp, randomNumber);
 
         // Create PlayerLogInRequest
-        var request = CreatePlayerLogInRequest(timestamp, randomNumber);
+        var request = new PlayerLogInRequest
+        {
+            Account = "2",
+            Password = "2",
+            CharacterName = "Another Knight",
+            Xtea = [123456, 789012, 345678, 901234],
+            OtcV8Version = 0,
+            OperatingSystem = OperatingSystem.Windows,
+            Version = 860,
+            ChallengeTimeStamp = timestamp,
+            ChallengeNumber = randomNumber
+        };
 
         // Act
         var (success, message) = await _command.Execute(request, connection.Object);
@@ -401,6 +423,186 @@ public class PlayerLoginTests
         // Assert no packets sent (command doesn't send packets, handler does)
         connection.Verify(c => c.Send(It.IsAny<IOutgoingPacket>()), Times.Never);
         connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait("Category", "ErrorCondition")]
+    public async Task Player_login_fails_when_server_is_under_maintenance()
+    {
+        // Arrange
+        if (_game is NeoServer.Server.GameServer gameServer)
+        {
+            var stateProperty = typeof(NeoServer.Server.GameServer).GetProperty("State");
+            stateProperty.SetValue(gameServer, GameState.Maintaining);
+        }
+
+        // Create challenge values
+        var timestamp = (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        var randomNumber = (byte)123;
+
+        // Create mock connection
+        var connection = CreateMockConnection(timestamp, randomNumber);
+
+        // Create PlayerLogInRequest
+        var request = CreatePlayerLogInRequest(timestamp, randomNumber);
+
+        // Act
+        var (success, message) = await _command.Execute(request, connection.Object);
+
+        // Assert command execution
+        success.Should().BeFalse();
+        message.Should().Be("Gameworld is under maintenance. Please re-connect in a while.");
+
+        // Assert no packets sent (command doesn't send packets, handler does)
+        connection.Verify(c => c.Send(It.IsAny<IOutgoingPacket>()), Times.Never);
+        connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait("Category", "ErrorCondition")]
+    public async Task Player_login_fails_when_ip_is_banned()
+    {
+        // Arrange
+        _game.Open();
+
+        // Add IP ban to database
+        var banExpiresAt = new DateTime(2025, 9, 17);
+        _context.IpBans.Add(new IpBanEntity
+        {
+            Ip = "127.0.0.1",
+            Reason = "Test ban",
+            ExpiresAt = banExpiresAt
+        });
+        await _context.SaveChangesAsync();
+
+        // Create challenge values
+        var timestamp = (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        var randomNumber = (byte)123;
+
+        // Create mock connection
+        var connection = CreateMockConnection(timestamp, randomNumber);
+
+        // Create PlayerLogInRequest
+        var request = CreatePlayerLogInRequest(timestamp, randomNumber);
+
+        // Act
+        var (success, message) = await _command.Execute(request, connection.Object);
+
+        // Assert command execution
+        success.Should().BeFalse();
+        message.Should().Be("Your IP address 127.0.0.1 has been banished until 09/17/2025.\nReason: Test ban");
+
+        // Assert no packets sent (command doesn't send packets, handler does)
+        connection.Verify(c => c.Send(It.IsAny<IOutgoingPacket>()), Times.Never);
+        connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
+
+        // Undo the ban
+        _context.IpBans.RemoveRange(_context.IpBans.Where(b => b.Ip == "127.0.0.1"));
+        await _context.SaveChangesAsync();
+    }
+
+    [Fact]
+    [Trait("Category", "ErrorCondition")]
+    public async Task Player_login_fails_when_credentials_are_invalid()
+    {
+        // Arrange
+        _game.Open();
+
+        // Create challenge values
+        var timestamp = (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        var randomNumber = (byte)123;
+
+        // Create mock connection
+        var connection = CreateMockConnection(timestamp, randomNumber);
+
+        // Create PlayerLogInRequest with invalid password
+        var request = CreatePlayerLogInRequest(timestamp, randomNumber);
+        request.Password = "invalid";
+
+        // Act
+        var (success, message) = await _command.Execute(request, connection.Object);
+
+        // Assert command execution
+        success.Should().BeFalse();
+        message.Should().Be("Account name or password is not correct.");
+
+        // Assert no packets sent (command doesn't send packets, handler does)
+        connection.Verify(c => c.Send(It.IsAny<IOutgoingPacket>()), Times.Never);
+        connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait("Category", "ErrorCondition")]
+    public async Task Player_login_fails_when_account_is_banned()
+    {
+        // Arrange
+        _game.Open();
+
+        // Ban the account
+        var playerEntity = await _context.Players.Include(p => p.Account).FirstOrDefaultAsync(p => p.Id == 3);
+        playerEntity.Account.BanishedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        // Create challenge values
+        var timestamp = (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        var randomNumber = (byte)123;
+
+        // Create mock connection
+        var connection = CreateMockConnection(timestamp, randomNumber);
+
+        // Create PlayerLogInRequest
+        var request = CreatePlayerLogInRequest(timestamp, randomNumber);
+
+        // Act
+        var (success, message) = await _command.Execute(request, connection.Object);
+
+        // Assert command execution
+        success.Should().BeFalse();
+        message.Should().Be("Your account is banned.");
+
+        // Assert no packets sent (command doesn't send packets, handler does)
+        connection.Verify(c => c.Send(It.IsAny<IOutgoingPacket>()), Times.Never);
+        connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
+
+        // Undo the ban
+        playerEntity.Account.BanishedAt = null;
+        await _context.SaveChangesAsync();
+    }
+
+    [Fact]
+    [Trait("Category", "ErrorCondition")]
+    public async Task Player_login_fails_when_player_already_online_with_single_character_account()
+    {
+        //arrange
+        _game.Open();
+
+        // Ensure account allows many online for waiting queue test
+        var account = _context.Accounts.Find(1);
+        account.AllowManyOnline = false;
+        await _context.SaveChangesAsync();
+
+        // Login with first character
+        var timestamp = (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        var randomNumber = (byte)123;
+        var connection1 = CreateMockConnection(timestamp, randomNumber);
+        var request1 = CreatePlayerLogInRequest(timestamp, randomNumber);
+        await _command.Execute(request1, connection1.Object);
+
+        // Try to login with second character from same account
+        var connection2 = CreateMockConnection(timestamp, randomNumber);
+        var request2 = CreatePlayerLogInRequest(timestamp, randomNumber);
+        request2.CharacterName = "Druid Sample";
+
+        // Act
+        var (success, message) = await _command.Execute(request2, connection2.Object);
+
+        // Assert command execution
+        success.Should().BeFalse();
+        message.Should().Be("You may only login with one character of your account at the same time.");
+
+        // Assert no packets sent (command doesn't send packets, handler does)
+        connection2.Verify(c => c.Send(It.IsAny<IOutgoingPacket>()), Times.Never);
+        connection2.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
     }
 
     [Fact]
@@ -469,6 +671,65 @@ public class PlayerLoginTests
                 adjacentTile.TopCreatureOnStack.Should().NotBe(player);
             }
         }
+    }
+
+    [Fact]
+    [Trait("Category", "ErrorCondition")]
+    public async Task Player_login_fails_when_waiting_queue_is_full()
+    {
+        // Arrange
+        _game.Open();
+
+        // Set world capacity to 1
+        var world = _context.Worlds.First();
+        world.MaxCapacity = 1;
+        await _context.SaveChangesAsync();
+
+        // Add another account and player
+        var newAccount = new AccountEntity { Id = 2, AccountName = "2", Password = "2", EmailAddress = "2" };
+        _context.Accounts.Add(newAccount);
+        var newPlayer = new PlayerEntity
+        {
+            Id = 100,
+            Name = "Another Knight",
+            AccountId = 2,
+            WorldId = world.Id,
+            PosX = 100,
+            PosY = 100,
+            PosZ = 7
+        };
+        _context.Players.Add(newPlayer);
+        await _context.SaveChangesAsync();
+
+        // Login first player
+        var timestamp = (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        var randomNumber = (byte)123;
+        var connection1 = CreateMockConnection(timestamp, randomNumber);
+        var request1 = CreatePlayerLogInRequest(timestamp, randomNumber);
+        await _command.Execute(request1, connection1.Object);
+
+        // Now try to login second player
+        var connection2 = CreateMockConnection(timestamp, randomNumber);
+        var request2 = CreatePlayerLogInRequest(timestamp, randomNumber);
+        request2.Account = "2";
+        request2.Password = "2";
+        request2.CharacterName = "Another Knight";
+
+        // Act
+        var (success, message) = await _command.Execute(request2, connection2.Object);
+
+        // Assert command execution
+        success.Should().BeFalse();
+        message.Should().Contain("There are too many players online.");
+        message.Should().Contain("You are at place");
+
+        // Assert packet sent and connection closed
+        connection2.Verify(c => c.Send(It.IsAny<WaitingInLinePacket>()), Times.Once);
+        connection2.Verify(c => c.Close(It.IsAny<bool>()), Times.Once);
+
+        // Cleanup
+        world.MaxCapacity = 1000;
+        await _context.SaveChangesAsync();
     }
 
     #region Helper Methods
