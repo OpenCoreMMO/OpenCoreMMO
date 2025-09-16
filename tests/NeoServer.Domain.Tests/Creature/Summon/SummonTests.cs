@@ -1,9 +1,14 @@
+using Moq;
 using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Factories;
 using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
+using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
@@ -11,6 +16,7 @@ using NeoServer.Domain.World.Models.Spawns;
 using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Domain.World.Services;
 using PathFinder = NeoServer.Domain.World.Map.PathFinder;
+using TileFlags = NeoServer.Domain.Common.Location.TileFlags;
 
 namespace NeoServer.Domain.Tests.Creature.Summon;
 
@@ -131,5 +137,33 @@ public class SummonTests
         var pathParams = summon.PathSearchParams;
         pathParams.MaxTargetDist.Should().Be(4, "Summon should keep its TargetDistance when attacking enemy");
         pathParams.KeepDistance.Should().BeTrue("Summon should keep distance from enemy");
+    }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void SummonService_does_not_summon_on_unpassable_tile()
+    {
+        // Arrange
+        var ground = MapTestDataBuilder.CreateGround(new Location(100, 100, 7));
+        var masterTile = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.None, ground, null, null);
+        var unpassableTile = new DynamicTile(new Coordinate(101, 100, 7), (TileFlag)TileFlags.Unpassable, ground, null, null);
+        var map = MapTestDataBuilder.Build(masterTile, unpassableTile);
+
+        var master = PlayerTestDataBuilder.Build();
+        masterTile.AddCreature(master);
+
+        var summonToBeCreated = MonsterTestDataBuilder.BuildSummon(master);
+
+        var creatureFactory = new Mock<ICreatureFactory>();
+        creatureFactory.Setup(x => x.CreateSummon(It.IsAny<string>(), master)).Returns(summonToBeCreated);
+
+        // Create summon service
+        var summonService = new SummonService(creatureFactory.Object, map, null);
+
+        // Act
+        var summon = summonService.SpamSummon(master, "TestSummon");
+
+        // Assert
+        summon.Should().BeNull("Summon should not be created on unpassable tile");
     }
 }
