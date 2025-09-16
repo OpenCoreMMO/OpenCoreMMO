@@ -59,7 +59,7 @@ public class PlayerLogInCommand(
             case GameState.Maintaining:
                 return (false, "Gameworld is under maintenance. Please re-connect in a while.");
             case GameState.Closed:
-                return (false, "Server is currently closed.\nPlease try again later.");
+                return (false, "Server is currently closed. Please try again later.");
         }
 
         var existBan = await ipBansRepository.ExistBan(connection.Ip.Split(":")[0]);
