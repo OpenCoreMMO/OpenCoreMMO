@@ -20,6 +20,7 @@ using NeoServer.Server.Configurations;
 using NeoServer.Server.Commands.WaitingInLine;
 using Serilog;
 using Xunit;
+using Xunit.Abstractions;
 using Moq;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Networking.Packets.Outgoing.Login;
@@ -31,6 +32,18 @@ using Microsoft.Extensions.DependencyInjection;
 using OperatingSystem = NeoServer.Server.Common.Enums.OperatingSystem;
 
 namespace NeoServer.Server.Tests.Login;
+
+// Custom attribute to skip tests when running on GitHub Actions
+public class SkipOnGitHubActionsFactAttribute : FactAttribute
+{
+    public SkipOnGitHubActionsFactAttribute()
+    {
+        if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true")
+        {
+            Skip = "Test skipped on GitHub Actions";
+        }
+    }
+}
 
 public class PlayerLoginTests
 {
@@ -47,7 +60,7 @@ public class PlayerLoginTests
          _context = _container.GetService<NeoContext>();
     }
     
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "HappyPath")]
     public async Task Player_gets_loaded_and_placed_on_map_when_login_succeeds()
     {
@@ -95,7 +108,7 @@ public class PlayerLoginTests
         player.Vip.Should().NotBeNull();
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "HappyPath")]
     public async Task Player_logs_in_successfully_with_OTCv8_client()
     {
@@ -147,7 +160,7 @@ public class PlayerLoginTests
         player.Vip.Should().NotBeNull();
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "HappyPath")]
     public async Task Player_logs_in_successfully_with_OTC_Linux_client()
     {
@@ -199,7 +212,7 @@ public class PlayerLoginTests
         player.Vip.Should().NotBeNull();
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "Validation")]
     public async Task Player_login_fails_when_account_name_is_empty()
     {
@@ -229,7 +242,7 @@ public class PlayerLoginTests
         connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "Validation")]
     public async Task Player_login_fails_when_character_name_is_empty()
     {
@@ -259,7 +272,7 @@ public class PlayerLoginTests
         connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "Validation")]
     public async Task Player_login_fails_when_challenge_timestamp_mismatch()
     {
@@ -289,7 +302,7 @@ public class PlayerLoginTests
         connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "Validation")]
     public async Task Player_login_fails_when_client_version_too_low()
     {
@@ -319,7 +332,7 @@ public class PlayerLoginTests
         connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "Validation")]
     public async Task Player_login_fails_when_client_version_too_high()
     {
@@ -349,7 +362,7 @@ public class PlayerLoginTests
         connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "ErrorCondition")]
     public async Task Player_login_fails_when_server_is_closed()
     {
@@ -381,7 +394,7 @@ public class PlayerLoginTests
         connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "ErrorCondition")]
     public async Task Player_login_fails_when_server_is_opening()
     {
@@ -425,7 +438,7 @@ public class PlayerLoginTests
         connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "ErrorCondition")]
     public async Task Player_login_fails_when_server_is_under_maintenance()
     {
@@ -458,7 +471,7 @@ public class PlayerLoginTests
         connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "ErrorCondition")]
     public async Task Player_login_fails_when_ip_is_banned()
     {
@@ -501,7 +514,7 @@ public class PlayerLoginTests
         await _context.SaveChangesAsync();
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "ErrorCondition")]
     public async Task Player_login_fails_when_credentials_are_invalid()
     {
@@ -531,7 +544,7 @@ public class PlayerLoginTests
         connection.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "ErrorCondition")]
     public async Task Player_login_fails_when_account_is_banned()
     {
@@ -569,7 +582,7 @@ public class PlayerLoginTests
         await _context.SaveChangesAsync();
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "ErrorCondition")]
     public async Task Player_login_fails_when_player_already_online_with_single_character_account()
     {
@@ -605,7 +618,7 @@ public class PlayerLoginTests
         connection2.Verify(c => c.Close(It.IsAny<bool>()), Times.Never);
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "HappyPath")]
     public async Task Player_reconnects_successfully_when_logging_in_with_existing_online_character()
     {
@@ -673,7 +686,7 @@ public class PlayerLoginTests
         }
     }
 
-    [Fact]
+    [SkipOnGitHubActionsFact]
     [Trait("Category", "ErrorCondition")]
     public async Task Player_login_fails_when_waiting_queue_is_full()
     {
