@@ -10,9 +10,7 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
-using NeoServer.Domain.Items.Items.Containers;
 using NeoServer.Domain.Mail;
-using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Creatures.Services;
 

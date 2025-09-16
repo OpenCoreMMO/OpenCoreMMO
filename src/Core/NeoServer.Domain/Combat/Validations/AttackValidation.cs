@@ -27,6 +27,11 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
         {
             case IPlayer targetPlayer:
             {
+                if (targetPlayer.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))
+                {
+                    return Result.Fail(InvalidOperation.YouMayNotAttackThisPlayer);
+                }
+                
                 switch (aggressor)
                 {
                     //Player cannot attack a player

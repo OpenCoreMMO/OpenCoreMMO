@@ -1,20 +1,13 @@
-﻿using NeoServer.Domain.Common.Contracts;
-using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Events.Players;
 
-public class PlayerOnLoginEventHandler : IGameEventHandler
+public class PlayerOnLoginEventHandler(ICreatureEvents creatureEvents) : IApplicationEventHandler<PlayerLoggedInEvent>
 {
-    private readonly ICreatureEvents _creatureEvents;
-
-    public PlayerOnLoginEventHandler(ICreatureEvents creatureEvents)
+    public void Handle(PlayerLoggedInEvent @event)
     {
-        _creatureEvents = creatureEvents;
-    }
-
-    public void Execute(IPlayer player)
-    {
-        _creatureEvents.PlayerLogin(player);
+        creatureEvents.PlayerLogin(@event.Player);
     }
 }

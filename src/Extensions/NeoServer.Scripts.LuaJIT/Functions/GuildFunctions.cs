@@ -2,7 +2,6 @@ using LuaNET;
 using NeoServer.Data.Interfaces;
 using NeoServer.Data.Entities;
 using NeoServer.Domain.Common.Contracts.DataStores;
-using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Guild;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;

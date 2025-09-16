@@ -6,7 +6,6 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Items.Services;

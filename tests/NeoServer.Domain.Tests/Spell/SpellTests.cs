@@ -1,13 +1,9 @@
 using Moq;
 using NeoServer.Domain.Common;
-using NeoServer.Domain.Common.Combat.Enums;
-using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Spells;

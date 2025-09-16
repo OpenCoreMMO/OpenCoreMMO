@@ -10,26 +10,18 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
     private readonly CreaturePropagatedAttackEventHandler creaturePropagatedAttackEventHandler;
     private readonly CreatureSayEventHandler creatureSayEventHandler;
     private readonly CreatureTeleportedEventHandler creatureTeleportedEventHandler;
-    private readonly PlayerDisappearedEventHandler playerDisappearedEventHandler;
-    private readonly PlayerLoggedInEventHandler playerLoggedInEventHandler;
-    private readonly PlayerLoggedOutEventHandler playerLoggedOutEventHandler;
     private readonly PlayerOpenedContainerEventHandler playerOpenedContainerEventHandler;
 
     public CreatureEventSubscriber(
         CreaturePropagatedAttackEventHandler creaturePropagatedAttackEventHandler,
         CreatureTeleportedEventHandler creatureTeleportedEventHandler,
-        PlayerDisappearedEventHandler playerDisappearedEventHandler,
-        CreatureMovedEventHandler creatureMovedEventHandler, PlayerLoggedInEventHandler playerLoggedInEventHandler,
-        PlayerLoggedOutEventHandler playerLoggedOutEventHandler,
+        CreatureMovedEventHandler creatureMovedEventHandler,
         CreatureSayEventHandler creatureSayEventHandler,
         PlayerOpenedContainerEventHandler playerOpenedContainerEventHandler)
     {
         this.creaturePropagatedAttackEventHandler = creaturePropagatedAttackEventHandler;
         this.creatureTeleportedEventHandler = creatureTeleportedEventHandler;
-        this.playerDisappearedEventHandler = playerDisappearedEventHandler;
         this.creatureMovedEventHandler = creatureMovedEventHandler;
-        this.playerLoggedInEventHandler = playerLoggedInEventHandler;
-        this.playerLoggedOutEventHandler = playerLoggedOutEventHandler;
         this.creatureSayEventHandler = creatureSayEventHandler;
         this.playerOpenedContainerEventHandler = playerOpenedContainerEventHandler;
     }
@@ -47,9 +39,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
 
         if (creature is IPlayer player)
         {
-            player.OnLoggedOut += playerDisappearedEventHandler.Execute;
-            player.OnLoggedIn += playerLoggedInEventHandler.Execute;
-            player.OnLoggedOut += playerLoggedOutEventHandler.Execute;
             player.Containers.OnOpenedContainer += playerOpenedContainerEventHandler.Execute;
         }
 
@@ -69,9 +58,6 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
 
         if (creature is IPlayer player)
         {
-            player.OnLoggedOut -= playerDisappearedEventHandler.Execute;
-            player.OnLoggedIn -= playerLoggedInEventHandler.Execute;
-            player.OnLoggedOut -= playerLoggedOutEventHandler.Execute;
             player.Containers.OnOpenedContainer -= playerOpenedContainerEventHandler.Execute;
         }
 

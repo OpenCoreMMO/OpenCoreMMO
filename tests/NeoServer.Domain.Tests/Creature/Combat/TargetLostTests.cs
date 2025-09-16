@@ -1,14 +1,9 @@
-using System.Reflection;
-using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
-using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Tests.Creature.Combat;
 
@@ -206,24 +201,23 @@ public class TargetLostTests
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
-        var monster = MonsterTestDataBuilder.Build(map: map);
-        var targetList = new TargetList(monster);
+        var monster = MonsterTestDataBuilder.Build(map: map) as Domain.Creatures.Monster.Monster;
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(105, 105, 7));
 
         // Add player as target
-        targetList.AddTarget(player);
+        monster.Targets.AddTarget(player);
 
         //act
         // Player logs out
         player.Logout();
 
         // Trigger the logout event by calling OnSpectatorMoved (this should trigger the cleanup)
-        monster.OnSpectatorMoved(player);
+        monster.OnSpectatorLoggedOut(player);
 
         //assert
-        targetList.HasTarget(player).Should().BeFalse();
-        targetList.Any().Should().BeFalse();
+        monster.Targets.HasTarget(player).Should().BeFalse();
+        monster.Targets.Any().Should().BeFalse();
     }
 
     [Fact]

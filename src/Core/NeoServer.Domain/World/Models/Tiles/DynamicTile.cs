@@ -71,7 +71,7 @@ public class DynamicTile : BaseTile, IDynamicTile
     public IGround Ground { get; private set; }
     public List<IWalkableCreature> Creatures { get; private set; }
 
-    public bool HasCreature => (Creatures?.Count ?? 0) > 0;
+    public bool HasAnyCreature => (Creatures?.Count ?? 0) > 0;
 
     public bool HasCreatureOfType<T>() where T : ICreature
     {
@@ -81,6 +81,17 @@ public class DynamicTile : BaseTile, IDynamicTile
             if (creature is T)
                 return true;
 
+        return false;
+    }
+
+    public bool HasCreature(ICreature creature)
+    {
+        if (Creatures is null) return false;
+
+        foreach (var tileCreature in Creatures)
+        {
+            if (tileCreature.Equals(creature)) return true;
+        }
         return false;
     }
 

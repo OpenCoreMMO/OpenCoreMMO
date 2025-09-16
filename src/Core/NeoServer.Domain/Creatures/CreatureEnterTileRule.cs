@@ -20,7 +20,7 @@ public abstract class CreatureEnterTileRule<T> : ITileEnterRule
             dynamicTile.FloorDirection == FloorChangeDirection.None,
             !dynamicTile.HasBlockPathFinding,
             !dynamicTile.HasFlag(TileFlags.Unpassable),
-            !dynamicTile.HasCreature,
+            !dynamicTile.HasAnyCreature,
             dynamicTile.Ground is not null);
     }
 
@@ -29,7 +29,7 @@ public abstract class CreatureEnterTileRule<T> : ITileEnterRule
         if (tile is not IDynamicTile dynamicTile) return false;
 
         return ConditionEvaluation.And(
-            !dynamicTile.HasCreature,
+            !dynamicTile.HasAnyCreature,
             !dynamicTile.HasFlag(TileFlags.Unpassable),
             dynamicTile.Ground is not null);
     }
@@ -39,7 +39,7 @@ public abstract class CreatureEnterTileRule<T> : ITileEnterRule
         if (tile is not IDynamicTile dynamicTile) return false;
 
         return ConditionEvaluation.And(
-            !dynamicTile.HasCreature,
+            !dynamicTile.HasAnyCreature,
             !dynamicTile.HasFlag(TileFlags.Unpassable),
             dynamicTile.Ground is not null);
     }
@@ -54,7 +54,7 @@ public class PlayerEnterTileRule : CreatureEnterTileRule<PlayerEnterTileRule>
         return ConditionEvaluation.And(
             dynamicTile.FloorDirection == FloorChangeDirection.None,
             !dynamicTile.HasBlockPathFinding,
-            !dynamicTile.HasCreature,
+            !dynamicTile.HasAnyCreature,
             !dynamicTile.HasFlag(TileFlags.Unpassable),
             dynamicTile.Ground is not null,
             !dynamicTile.HasHole);
@@ -99,7 +99,7 @@ public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
         return ConditionEvaluation.And(
             dynamicTile.FloorDirection == FloorChangeDirection.None,
             monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushItems) || !dynamicTile.HasBlockPathFinding,
-            !dynamicTile.HasCreature,
+            !dynamicTile.HasAnyCreature,
             !dynamicTile.HasTeleport(out _),
             !dynamicTile.HasFlag(TileFlags.Unpassable),
             !dynamicTile.ProtectionZone,

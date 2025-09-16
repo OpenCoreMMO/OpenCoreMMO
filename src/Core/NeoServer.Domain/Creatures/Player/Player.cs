@@ -1,7 +1,6 @@
 using System.Text;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat;
-using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
@@ -827,8 +826,15 @@ public class Player : CombatActor, IPlayer
         PlayerParty.RejectAllInvites();
         PlayerSkull.RemoveYellowSkull();
         LastLogOut = DateTime.UtcNow;
-
-        OnLoggedOut?.Invoke(this);
+        
+        var summonsCopy = Summons.ToList();
+        foreach (var summon in summonsCopy)
+        {
+            summon.OnMasterLogout();
+        }
+        
+        EventAggregator.Invoke(new PlayerLoggedOutEvent(this));
+        
         return true;
     }
 
@@ -843,10 +849,8 @@ public class Player : CombatActor, IPlayer
 
         LastLogIn = DateTime.UtcNow;
         RegenerateStamina();
-
-        OnLoggedIn?.Invoke(this);
-
-
+        
+        EventAggregator.Invoke(new PlayerLoggedInEvent(this));
         return true;
     }
 
@@ -1610,12 +1614,6 @@ public class Player : CombatActor, IPlayer
 
     public override void Death(IThing by)
     {
-        var summonsCopy = Summons.ToList();
-        foreach (var summon in summonsCopy)
-        {
-            summon.OnMasterKilled();
-        }
-
         base.Death(by);
 
         PlayerSkull.RemoveYellowSkull();
@@ -1775,7 +1773,6 @@ public class Player : CombatActor, IPlayer
     public event UseSpell OnUsedSpell;
     public event UseItem OnUsedItem;
     public event LogIn OnLoggedIn;
-    public event LogOut OnLoggedOut;
     public event ChangeOnlineStatus OnChangedOnlineStatus;
     public event SendMessageTo OnSentMessage;
 
