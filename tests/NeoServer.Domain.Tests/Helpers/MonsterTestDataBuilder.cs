@@ -50,7 +50,7 @@ public static class MonsterTestDataBuilder
         return new Monster(monsterType, mapTool, spawnPoint);
     }
 
-    public static IMonster BuildSummon(ICreature master, ushort minDamage = 10, ushort maxDamage = 100)
+    public static IMonster BuildSummon(ICreature master, ushort minDamage = 10, ushort maxDamage = 100, byte targetDistance = 1)
     {
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         var pathFinder = new PathFinder(map);
@@ -79,6 +79,7 @@ public static class MonsterTestDataBuilder
         };
 
         monsterType.Flags.Add(CreatureFlagAttribute.Hostile, 1);
+        monsterType.Flags.Add(CreatureFlagAttribute.TargetDistance, targetDistance);
 
         return new Summon(monsterType, mapTool, master);
     }
