@@ -245,4 +245,5 @@ public interface ICreature : IMovableThing
 
 
     void OnSummonDie(Summon summon);
+    void OnSpectatorLoggedOut(ICreature spectator);
 }

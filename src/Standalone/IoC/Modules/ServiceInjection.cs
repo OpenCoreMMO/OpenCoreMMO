@@ -63,6 +63,7 @@ public static class ServiceInjection
         builder.AddSingleton<MonsterStateService>();
         builder.AddSingleton<TargetDetectorService>();
         builder.AddSingleton<ITradeService, SafeTradeSystem>();
+        builder.AddSingleton<PlayerChannelService>();
 
         //Operations
         builder.AddSingleton<TradeItemExchanger>();

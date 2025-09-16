@@ -6,7 +6,6 @@ using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Algorithms.AStar;
 using NeoServer.Domain.World.Models.Tiles;
-using NeoServer.Domain.World.Structures;
 
 namespace NeoServer.Domain.Tests.World;
 

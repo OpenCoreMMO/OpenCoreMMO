@@ -1,6 +1,5 @@
 using System.Collections;
 using Moq;
-using NeoServer.Data.Repositories.Player;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World.Tiles;

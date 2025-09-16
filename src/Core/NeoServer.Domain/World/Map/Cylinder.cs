@@ -99,9 +99,14 @@ public class CylinderOperation
         cylinder = null;
         if (toTile is not DynamicTile tile) return new Result<OperationResultList<ICreature>>();
 
-        var result = tile.AddCreature(creature);
+        var result = new Result<OperationResultList<ICreature>>(new OperationResultList<ICreature>(Operation.Added, creature));
+        
+        if (!toTile.HasCreature(creature))
+        {
+            result = tile.AddCreature(creature);
 
-        if (result.Succeeded is false) return result;
+            if (result.Succeeded is false) return result;
+        }
 
         var tileSpectators = GetSpectators(creature, tile);
 

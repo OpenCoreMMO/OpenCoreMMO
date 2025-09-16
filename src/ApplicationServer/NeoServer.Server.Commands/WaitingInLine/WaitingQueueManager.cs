@@ -26,7 +26,7 @@ public class WaitingQueueManager : IWaitingQueueManager
         var group = _groupStore.Get(player.Group);
 
         //todo: implement check if accountype is game master if true should be return true.
-        if (group.FlagIsEnabled(PlayerFlag.CanAlwaysLogin)) return true;
+        if (group?.FlagIsEnabled(PlayerFlag.CanAlwaysLogin) ?? false) return true;
 
         CleanupList(info.PriorityWaitList);
         CleanupList(info.WaitList);

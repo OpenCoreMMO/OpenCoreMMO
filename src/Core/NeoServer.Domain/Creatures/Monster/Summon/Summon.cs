@@ -19,11 +19,6 @@ public class Summon : Monster
                 actor.OnTargetChanged += OnMasterTargetChange;
                 actor.OnStoppedAttack += OnMasterStoppedAttack;
             }
-
-            if (master is IPlayer player)
-            {
-                player.OnLoggedOut += OnMasterLoggedOut;
-            }
         }
     }
 
@@ -74,11 +69,6 @@ public class Summon : Monster
                 actor.OnTargetChanged -= OnMasterTargetChange;
                 actor.OnStoppedAttack -= OnMasterStoppedAttack;
             }
-
-            if (Master is IPlayer player)
-            {
-                player.OnLoggedOut -= OnMasterLoggedOut;
-            }
         }
 
         base.Dismiss();
@@ -118,10 +108,9 @@ public class Summon : Monster
     }
 
 
-    public void OnMasterKilled()
-    {
-        Die();
-    }
+    public void OnMasterKilled() => Die();
+
+    public void OnMasterLogout() => Die();
 
     private void OnMasterTargetChange(ICombatActor actor, uint oldTargetId, uint newTargetId)
     {
@@ -134,11 +123,5 @@ public class Summon : Monster
     private void OnMasterStoppedAttack(ICombatActor actor)
     {
         StopAttack();
-    }
-
-
-    private void OnMasterLoggedOut(IPlayer player)
-    {
-        Die();
     }
 }

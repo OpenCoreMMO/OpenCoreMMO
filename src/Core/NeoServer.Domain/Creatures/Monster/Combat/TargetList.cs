@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using NeoServer.Domain.Combat;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.Items;
 
 namespace NeoServer.Domain.Creatures.Monster.Combat;
 
@@ -89,13 +88,11 @@ public class TargetList : IEnumerable<CombatTarget>
     private void AttachToTargetEvents(ICombatActor creature)
     {
         creature.OnChangedVisibility += OnTargetDisappeared;
-        if (creature is IPlayer player) player.OnLoggedOut += OnTargetRemoved;
     }
 
     private void DetachFromTargetEvents(ICombatActor creature)
     {
         creature.OnChangedVisibility -= OnTargetDisappeared;
-        if (creature is IPlayer player) player.OnLoggedOut -= OnTargetRemoved;
     }
 
     private void OnTargetDisappeared(ICreature creature)
@@ -105,7 +102,6 @@ public class TargetList : IEnumerable<CombatTarget>
     }
     
     public void OnTargetMoved(ICombatActor creature) => HandleTargetMoved(creature);
-    public void OnTargetDies(ICombatActor spectator) => RemoveTarget(spectator);
 
     private void HandleTargetMoved(IWalkableCreature target)
     {
@@ -116,9 +112,7 @@ public class TargetList : IEnumerable<CombatTarget>
             RemoveTarget(target);
         }
     }
-
-    private void OnTargetRemoved(ICreature creature) => RemoveTarget(creature);
-
+    
     #endregion
 
     #region IEnumerable Implementations

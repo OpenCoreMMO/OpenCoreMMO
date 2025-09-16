@@ -1,9 +1,7 @@
-﻿using NeoServer.Domain.Common;
-using NeoServer.Domain.Common.Contracts;
+﻿using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Common.Services;
 
 namespace NeoServer.Domain.Creatures.Events;
 
