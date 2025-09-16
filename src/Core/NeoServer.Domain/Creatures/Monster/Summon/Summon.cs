@@ -30,7 +30,10 @@ public class Summon : Monster
     {
         if (IsDead) return;
         if (Master is not null && Master.Equals(creature)) return;
-        if (creature is Summon summon && summon.Master is not null && summon.Master.Equals(Master)) return;
+        if (creature is Summon { Master: not null } summon && summon.Master.Equals(Master)) return;
+        
+        //Summon should not attack if the master has no target
+        if (Master is ICombatActor { CurrentTarget: null }) return;
 
         base.SetAsEnemy(creature);
     }
