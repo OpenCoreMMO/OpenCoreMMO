@@ -26,6 +26,17 @@ public class Summon : Monster
 
     public ICreature Master { get; }
 
+    public override FindPathParams PathSearchParams
+    {
+        get
+        {
+            var fpp = base.PathSearchParams;
+            fpp.MaxTargetDist = Equals(Following, Master) ? 1 : TargetDistance;
+            fpp.KeepDistance = TargetDistance > 1 && !Equals(Following, Master);
+            return fpp;
+        }
+    }
+
     public override void SetAsEnemy(ICreature creature)
     {
         if (IsDead) return;
