@@ -19,6 +19,7 @@ public record GameConfiguration(
 public record CombatConfiguration(
     bool InfiniteAmmo = false,
     bool InfiniteThrowingWeapon = false,
+    bool CanAttackOwnSummon = false,
     decimal AttackSpeedMultiplier = 1);
 
 public record DeathConfiguration(
