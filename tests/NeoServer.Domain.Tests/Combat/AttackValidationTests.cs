@@ -398,4 +398,56 @@ public class AttackValidationTests
         //assert
         result.Result.Succeeded.Should().BeTrue();
     }
+
+    [Fact]
+    public void Player_attacks_own_summon_when_can_attack_summon_is_enabled()
+    {
+        //arrange
+        var location = new Location(100, 100, 7);
+        var ground = MapTestDataBuilder.CreateGround(location);
+
+        var tile1 = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.None, ground, null, null);
+        var tile2 = new DynamicTile(new Coordinate(100, 101, 7), (TileFlag)TileFlags.None, ground, null, null);
+
+        var map = MapTestDataBuilder.Build(tile1, tile2);
+        var attackService = AttackServiceTestBuilder.Build(map, combatConfig: new CombatConfiguration(false, false, true));
+
+        var player = PlayerTestDataBuilder.Build();
+        var summon = MonsterTestDataBuilder.BuildSummon(player);
+
+        tile1.AddCreature(player);
+        tile2.AddCreature(summon);
+
+        //act
+        var result = attackService.Execute(new AttackInput(player, summon, PlayerCombatParameterBuilder.Build(player, summon)));
+
+        //assert
+        result.Result.Succeeded.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Player_fails_to_attack_own_summon_when_can_attack_summon_is_disabled()
+    {
+        //arrange
+        var location = new Location(100, 100, 7);
+        var ground = MapTestDataBuilder.CreateGround(location);
+
+        var tile1 = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.None, ground, null, null);
+        var tile2 = new DynamicTile(new Coordinate(100, 101, 7), (TileFlag)TileFlags.None, ground, null, null);
+
+        var map = MapTestDataBuilder.Build(tile1, tile2);
+        var attackService = AttackServiceTestBuilder.Build(map, combatConfig: new CombatConfiguration());
+
+        var player = PlayerTestDataBuilder.Build();
+        var summon = MonsterTestDataBuilder.BuildSummon(player);
+
+        tile1.AddCreature(player);
+        tile2.AddCreature(summon);
+
+        //act
+        var result = attackService.Execute(new AttackInput(player, summon, PlayerCombatParameterBuilder.Build(player, summon)));
+
+        //assert
+        result.Result.Reason.Should().Be(InvalidOperation.YouMayNotAttackThisCreature);
+    }
 }

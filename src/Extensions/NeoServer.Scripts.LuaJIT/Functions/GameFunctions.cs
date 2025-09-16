@@ -274,9 +274,9 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         var tileToBorn = _map[position];
 
-        if (tileToBorn is IDynamicTile { HasAnyCreature: false })
+        if (tileToBorn is IDynamicTile { HasAnyCreature: false } dynamicTile && dynamicTile.CanEnter(monster))
         {
-            if (tileToBorn.HasFlag(TileFlags.ProtectionZone))
+            if (dynamicTile.HasFlag(TileFlags.ProtectionZone))
             {
                 Lua.PushNil(luaState);
                 return 1;
@@ -291,7 +291,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         }
 
         foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
-            if (_map[neighbour] is IDynamicTile { HasAnyCreature: false })
+            if (_map[neighbour] is IDynamicTile { HasAnyCreature: false } neighbourTile && neighbourTile.CanEnter(monster))
             {
                 monster.Born(neighbour);
 
@@ -326,15 +326,15 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         var tileToBorn = _map[position];
 
-        if (tileToBorn is IDynamicTile { HasAnyCreature: false })
+        if (tileToBorn is IDynamicTile { HasAnyCreature: false } dynamicTile && dynamicTile.CanEnter(npc))
         {
-            if (tileToBorn.HasFlag(TileFlags.ProtectionZone))
+            if (dynamicTile.HasFlag(TileFlags.ProtectionZone))
             {
                 Lua.PushNil(luaState);
                 return 1;
             }
 
-            npc.SetNewLocation(tileToBorn.Location);
+            npc.SetNewLocation(dynamicTile.Location);
             _map.PlaceCreature(npc);
 
             PushUserdata(luaState, npc);
@@ -344,7 +344,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         }
 
         foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
-            if (_map[neighbour] is IDynamicTile { HasAnyCreature: false })
+            if (_map[neighbour] is IDynamicTile { HasAnyCreature: false } neighbourTile && neighbourTile.CanEnter(npc))
             {
                 npc.SetNewLocation(neighbour);
                 _map.PlaceCreature(npc);

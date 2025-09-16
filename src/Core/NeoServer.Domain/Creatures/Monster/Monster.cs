@@ -39,7 +39,7 @@ public class Monster : WalkableMonster, IMonster
         Targets = new TargetList(this);
     }
 
-    private byte TargetDistance =>
+    protected byte TargetDistance =>
         Metadata.Flags.TryGetValue(CreatureFlagAttribute.TargetDistance, out var targetDistance)
             ? (byte)targetDistance
             : (byte)1;
