@@ -2,7 +2,6 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Spells;
 using NeoServer.Domain.Spells.Entities;
 using NeoServer.Domain.World;
 using NeoServer.Server.Helpers;

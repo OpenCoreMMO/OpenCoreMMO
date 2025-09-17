@@ -5,31 +5,46 @@ using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Creatures.Monster.Summon;
 
-public class Summon : Monster, ISummon
+public class Summon : Monster
 {
     public Summon(IMonsterType type, IMapTool mapTool, ICreature master) : base(type, mapTool, null)
     {
         Master = master;
-        Master.Summons.Add(this);
+        if (master is not null)
+        {
+            Master.Summons.Add(this);
 
-        if (master is not ICombatActor actor) return;
-        actor.OnDeath += OnMasterKilled;
-        actor.OnTargetChanged += OnMasterTargetChange;
-        actor.OnStoppedAttack += OnMasterStoppedAttack;
-
-        if (master is not IPlayer player) return;
-        player.OnLoggedOut += OnMasterLoggedOut;
+            if (master is ICombatActor actor)
+            {
+                actor.OnTargetChanged += OnMasterTargetChange;
+                actor.OnStoppedAttack += OnMasterStoppedAttack;
+            }
+        }
     }
 
     public override bool IsSummon => true;
 
     public ICreature Master { get; }
 
+    public override FindPathParams PathSearchParams
+    {
+        get
+        {
+            var fpp = base.PathSearchParams;
+            fpp.MaxTargetDist = Equals(Following, Master) ? 1 : TargetDistance;
+            fpp.KeepDistance = TargetDistance > 1 && !Equals(Following, Master);
+            return fpp;
+        }
+    }
+
     public override void SetAsEnemy(ICreature creature)
     {
         if (IsDead) return;
-        if (Master.Equals(creature)) return;
-        if (creature is Summon summon && summon.Master.Equals(Master)) return;
+        if (Master is not null && Master.Equals(creature)) return;
+        if (creature is Summon { Master: not null } summon && summon.Master.Equals(Master)) return;
+        
+        //Summon should not attack if the master has no target
+        if (Master is ICombatActor { CurrentTarget: null }) return;
 
         base.SetAsEnemy(creature);
     }
@@ -59,15 +74,16 @@ public class Summon : Monster, ISummon
 
     public override void Dismiss()
     {
-        Master.Summons.Remove(this);
+        if (Master is not null)
+        {
+            Master.Summons.Remove(this);
 
-        if (Master is not ICombatActor actor) return;
-        actor.OnDeath -= OnMasterKilled;
-        actor.OnTargetChanged -= OnMasterTargetChange;
-        actor.OnStoppedAttack -= OnMasterStoppedAttack;
-
-        if (Master is not IPlayer player) return;
-        player.OnLoggedOut -= OnMasterLoggedOut;
+            if (Master is ICombatActor actor)
+            {
+                actor.OnTargetChanged -= OnMasterTargetChange;
+                actor.OnStoppedAttack -= OnMasterStoppedAttack;
+            }
+        }
 
         base.Dismiss();
     }
@@ -90,7 +106,11 @@ public class Summon : Monster, ISummon
     {
         base.Death(by);
 
-        Master.Summons.Remove(this);
+        if (Master is not null)
+        {
+            Master.OnSummonDie(this);
+            Master.Summons.Remove(this);
+        }
 
         Dismiss();
     }
@@ -102,10 +122,9 @@ public class Summon : Monster, ISummon
     }
 
 
-    private void OnMasterKilled(ICombatActor master, IThing by)
-    {
-        Die();
-    }
+    public void OnMasterKilled() => Die();
+
+    public void OnMasterLogout() => Die();
 
     private void OnMasterTargetChange(ICombatActor actor, uint oldTargetId, uint newTargetId)
     {
@@ -118,11 +137,5 @@ public class Summon : Monster, ISummon
     private void OnMasterStoppedAttack(ICombatActor actor)
     {
         StopAttack();
-    }
-
-
-    private void OnMasterLoggedOut(IPlayer player)
-    {
-        Die();
     }
 }

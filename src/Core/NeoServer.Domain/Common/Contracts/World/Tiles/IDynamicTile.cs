@@ -18,7 +18,7 @@ public interface IDynamicTile : ITile, IHasItem
     ushort StepSpeed { get; }
 
     FloorChangeDirection FloorDirection { get; }
-    bool HasCreature { get; }
+    bool HasAnyCreature { get; }
     MagicField MagicField { get; }
 
     bool HasBlockPathFinding { get; }
@@ -45,4 +45,5 @@ public interface IDynamicTile : ITile, IHasItem
     bool UpdateItemType(IItem fromItem, IItemType toItemType);
     IItem RemoveItem(IItem item);
     IItem RemoveItem(ItemGroup group);
+    bool HasCreature(ICreature creature);
 }

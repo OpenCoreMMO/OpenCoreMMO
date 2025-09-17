@@ -9,13 +9,9 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Effects.Magical;
 using NeoServer.Domain.Common.Item;
-using NeoServer.Domain.Common.Location;
-using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Services;
-using NeoServer.Domain.World.Algorithms;
-using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Combat.Attacks;
 
@@ -52,7 +48,7 @@ public class AreaAttackService(
         var affectedArea = affectedTargets.Locations;
         var affectedCreatures = affectedTargets.Creatures;
 
-        eventAggregator.Publish(new CreatureAttackingEvent(aggressor, attackInput.Target,
+        eventAggregator.InvokeEvent(new CreatureAttackingEvent(aggressor, attackInput.Target,
             attackInput.Parameters.ShootType,
             attackInput.Parameters.Effect, false, affectedArea.ToArray()));
 

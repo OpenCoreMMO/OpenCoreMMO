@@ -9,6 +9,7 @@ using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Events;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Player.Outfit;
 
 namespace NeoServer.Domain.Creatures.Models.Bases;
@@ -80,7 +81,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public abstract IOutfit Outfit { get; protected set; }
     public IOutfit LastOutfit { get; private set; }
     public Direction Direction { get; protected set; }
-    public IList<ISummon> Summons { get; protected set; } = new List<ISummon>();
+    public IList<Summon> Summons { get; protected set; } = new List<Summon>();
 
     public Direction SafeDirection
     {
@@ -119,6 +120,26 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         LastOutfit = Outfit.Clone();
         Outfit.Change(lookType, head, body, legs, feet, addon);
         OnChangedOutfit?.Invoke(this, Outfit);
+    }
+    
+    public virtual void OnSpectatorMoved(ICreature spectator)
+    {
+        
+    }
+
+    public virtual void OnSpectatorDies(ICombatActor spectator)
+    {
+        
+    }
+    
+    public virtual void OnSummonDie(Summon summon)
+    {
+        
+    }
+
+    public virtual void OnSpectatorLoggedOut(ICreature spectator)
+    {
+        
     }
 
     public void BackToOldOutfit()

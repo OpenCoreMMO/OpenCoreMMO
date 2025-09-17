@@ -19,19 +19,19 @@ namespace NeoServer.Domain.Tests.Helpers.Services;
 
 public class AttackServiceTestBuilder
 {
-    public static IAttackService Build(IMap map, PvpType pvpType = PvpType.OpenPvP)
+    public static IAttackService Build(IMap map, PvpType pvpType = PvpType.OpenPvP, CombatConfiguration combatConfig = null)
     {
         var gameConfiguration = new GameConfiguration
         {
             PvP = new PvPConfiguration(pvpType, ProtectionLevel: 2),
-            Combat = new CombatConfiguration(true, true)
+            Combat = combatConfig ?? new CombatConfiguration(true, true)
         };
 
         var skullService = new PlayerSkullService(gameConfiguration);
         var logger = new Mock<ILogger>();
         var mockEventAggregator = new Mock<IEventAggregator>();
 
-        var attackValidation = new AttackValidation(new MapTool(map, new PathFinder(map)), map, gameConfiguration.PvP);
+        var attackValidation = new AttackValidation(new MapTool(map, new PathFinder(map)), map, gameConfiguration.PvP, gameConfiguration.Combat);
 
         var itemTypeStore = ItemTypeStoreTestBuilder.Build(new ItemType().SetId(2019));
 

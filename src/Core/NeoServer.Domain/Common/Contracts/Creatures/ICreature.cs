@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Creatures;
+using NeoServer.Domain.Creatures.Monster.Summon;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
@@ -16,8 +17,6 @@ public delegate void RemoveCreature(ICreature creature);
 public delegate void StopWalk(IWalkableCreature creature);
 
 public delegate void BeforeDeath(ICombatActor creature, ICombatActor killer, int realDamage);
-
-public delegate void Death(ICombatActor creature, IThing by);
 
 public delegate void GainExperience(ICreature creature, long exp);
 
@@ -140,7 +139,7 @@ public interface ICreature : IMovableThing
     /// <summary>
     ///     Summons of creature
     /// </summary>
-    IList<ISummon> Summons { get; }
+    IList<Summon> Summons { get; }
 
     /// <summary>
     ///     Fires when creature is removed from game
@@ -231,4 +230,20 @@ public interface ICreature : IMovableThing
 
     void SetLight(byte color, byte level);
     void RemoveLight();
+    
+    /// <summary>
+    /// Event that is fired when a spectator moves.
+    /// </summary>
+    /// <param name="spectator"></param>
+    void OnSpectatorMoved(ICreature spectator);
+    
+    /// <summary>
+    /// Event that is fired when a spectator dies
+    /// </summary>
+    /// <param name="spectator"></param>
+    void OnSpectatorDies(ICombatActor spectator);
+
+
+    void OnSummonDie(Summon summon);
+    void OnSpectatorLoggedOut(ICreature spectator);
 }

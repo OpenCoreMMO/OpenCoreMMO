@@ -52,7 +52,6 @@ public interface ICombatActor : IWalkableCreature
     event BlockAttack OnBlockedAttack;
     event Heal OnHeal;
     event BeforeDeath OnBeforeDeath;
-    event Death OnDeath;
     event StopAttack OnStoppedAttack;
     event AttackTargetChange OnTargetChanged;
     event ChangeVisibility OnChangedVisibility;
@@ -111,4 +110,6 @@ public interface ICombatActor : IWalkableCreature
     void PreAttack(CombatContext combatContext);
     Result CanAttack(CombatParameter combatParameter);
     void StartCooldown(Guid cooldownId, uint duration);
+    bool IsTargetLost();
+    bool IsTargetLost(ICreature target);
 }

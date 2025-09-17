@@ -6,7 +6,6 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Items.Services;
@@ -118,7 +117,7 @@ public class TradeCancellationTests
         //act
         tradeSystem.Request(player, secondPlayer, item);
         player.TakeDamage(secondPlayer, new CombatDamage(100, DamageType.Melee));
-
+        
         //assert
         AssertTradeIsCancelled(tradeSystem, map, secondPlayer);
     }

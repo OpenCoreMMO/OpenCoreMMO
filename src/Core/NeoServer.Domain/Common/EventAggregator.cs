@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using NeoServer.Domain.Common.Helpers;
 
 namespace NeoServer.Domain.Common;
@@ -55,6 +56,7 @@ public class EventAggregator : IEventAggregator
                         var handleMethod = x.GetMethod(nameof(IApplicationEventHandler<IEvent>.Handle));
                         return (Action<IEvent>)HandlerDelegate;
 
+                        [DebuggerStepThrough]
                         void HandlerDelegate(IEvent @event)
                         {
                             handleMethod?.Invoke(handlerInstance, [@event]);
@@ -129,6 +131,7 @@ public class EventAggregator : IEventAggregator
     /// Invoke event immediately without deferring to the end of the process.
     /// </summary>
     /// <param name="event"></param>
+    [DebuggerStepThrough]
     public void InvokeEvent(IEvent @event)
     {
         var eventName = @event?.GetType().FullName;
@@ -153,11 +156,7 @@ public class EventAggregator : IEventAggregator
         }
     }
 
-    public static void Publish(IEvent @event)
-    {
-        Instance?.Publish(@event);
-    }
-
+    [DebuggerStepThrough]
     public static void Invoke(IEvent @event)
     {
         Instance?.InvokeEvent(@event);
@@ -179,6 +178,11 @@ public interface INetworkingEventHandler<in T> : IApplicationEventHandler<T> whe
 public interface IEventAggregator
 {
     void Initialize();
-    void Publish<TEvent>(TEvent @event) where TEvent : IEvent;
     void PropagateEvents();
+
+    /// <summary>
+    /// Invoke event immediately without deferring to the end of the process.
+    /// </summary>
+    /// <param name="event"></param>
+    void InvokeEvent(IEvent @event);
 }

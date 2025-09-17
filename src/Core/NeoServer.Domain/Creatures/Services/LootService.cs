@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Creatures.Monster.Loot;
+using NeoServer.Domain.Creatures.Monster.Summon;
 
 namespace NeoServer.Domain.Creatures.Services;
 
@@ -39,11 +40,11 @@ public class LootService(GameConfiguration gameConfiguration, IItemFactory itemF
                 aggressor is Player.Player { HasLowStamina: false } or Player.Player { IgnoreStamina: true };
             
             var summonOfAggressorHasEnoughStamina =
-                aggressor is ISummon { Master: Player.Player { HasLowStamina: false } }
-                    or ISummon { Master: Player.Player { IgnoreStamina: true } };
+                aggressor is Summon { Master: Player.Player { HasLowStamina: false } }
+                    or Summon { Master: Player.Player { IgnoreStamina: true } };
 
             //If the aggressor has enough stamina, generate loot
-            if (aggressorHasEnoughStamina || summonOfAggressorHasEnoughStamina || aggressor is IMonster and not ISummon)
+            if (aggressorHasEnoughStamina || summonOfAggressorHasEnoughStamina || aggressor is IMonster and not Summon)
             {
                 generateLoot = true;
             }

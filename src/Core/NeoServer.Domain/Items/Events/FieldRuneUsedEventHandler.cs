@@ -57,7 +57,7 @@ public class FieldRuneUsedEventHandler : IGameEventHandler
         if (item is not MagicField field) return;
         if (tile is not IDynamicTile onTile) return;
 
-        if (!onTile.HasCreature) return;
+        if (!onTile.HasAnyCreature) return;
 
         foreach (var creature in onTile.Creatures.ToArray()) field.CauseDamage(creature);
     }

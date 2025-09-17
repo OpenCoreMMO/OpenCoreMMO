@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Monster;
+using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.World.Models.Spawns;
@@ -28,6 +29,7 @@ public static class MonsterTestDataBuilder
             Name = "Monster X",
             MaxHealth = maxHealth,
             Speed = speed,
+            TargetChance = new IntervalChance(1000, 50),
             Attacks =
             [
                 new MonsterCombatType
@@ -48,7 +50,7 @@ public static class MonsterTestDataBuilder
         return new Monster(monsterType, mapTool, spawnPoint);
     }
 
-    public static IMonster BuildSummon(ICreature master, ushort minDamage = 10, ushort maxDamage = 100)
+    public static IMonster BuildSummon(ICreature master, ushort minDamage = 10, ushort maxDamage = 100, byte targetDistance = 1)
     {
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         var pathFinder = new PathFinder(map);
@@ -59,6 +61,7 @@ public static class MonsterTestDataBuilder
         {
             Name = "Monster X",
             MaxHealth = 100,
+            TargetChance = new IntervalChance(1000, 50),
             Attacks =
             [
                 new MonsterCombatType
@@ -76,6 +79,7 @@ public static class MonsterTestDataBuilder
         };
 
         monsterType.Flags.Add(CreatureFlagAttribute.Hostile, 1);
+        monsterType.Flags.Add(CreatureFlagAttribute.TargetDistance, targetDistance);
 
         return new Summon(monsterType, mapTool, master);
     }

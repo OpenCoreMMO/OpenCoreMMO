@@ -126,19 +126,12 @@ public class GameCreatureManager : IGameCreatureManager
     /// <returns></returns>
     public bool RemoveCreature(ICreature creature)
     {
-        if (creature is IWalkableCreature walkableCreature) _map.RemoveCreature(walkableCreature);
+        if (creature is IWalkableCreature walkableCreature)
+        {
+            _map.RemoveCreature(walkableCreature);
+        }
 
         _creatureInstances.TryRemove(creature.CreatureId);
-
-        if (creature is ISummon summon)
-            summon.Dismiss();
-        else if (creature is IPlayer player)
-            foreach (var summonPlayer in player.Summons)
-            {
-                summonPlayer.Dismiss();
-                _map.RemoveCreature(summonPlayer);
-                _creatureInstances.TryRemove(summonPlayer.CreatureId);
-            }
 
         return true;
     }
@@ -176,6 +169,7 @@ public class GameCreatureManager : IGameCreatureManager
     {
         if (_playersConnection.TryRemove(player.CreatureId, out var connection))
             connection.Disconnect();
+        
         _creatureInstances.TryRemoveFromLoggedPlayers(player.Id);
 
         RemoveCreature(player);

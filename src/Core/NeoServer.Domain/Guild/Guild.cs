@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using NeoServer.Domain.Chat;
+﻿using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Creatures;
 
 namespace NeoServer.Domain.Guild;

@@ -1,4 +1,3 @@
-using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
@@ -6,7 +5,6 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
-using MinMax = NeoServer.Domain.Common.MinMax;
 
 namespace NeoServer.Domain.Common.Contracts.World;
 
