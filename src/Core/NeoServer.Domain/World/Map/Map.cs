@@ -452,7 +452,7 @@ public class Map : IMap
             creature.Appear(tile.Location, cylinder.TileSpectators);
         }
 
-        if (creature is IWalkableCreature walkableCreature)
+        if (creature is IWalkableCreature walkableCreature && !creatureAlreadyInTile)
         {
             OnCreatureAddedOnMap?.Invoke(walkableCreature, cylinder);
         }
