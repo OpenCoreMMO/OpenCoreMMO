@@ -5,14 +5,12 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Creatures.Factories;
 using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
-using NeoServer.Domain.World.Models.Spawns;
 using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Domain.World.Services;
 using PathFinder = NeoServer.Domain.World.Map.PathFinder;
@@ -165,5 +163,85 @@ public class SummonTests
 
         // Assert
         summon.Should().BeNull("Summon should not be created on unpassable tile");
+    }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void Summon_disappears_when_master_moves_2_floors_up()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 5, 7, true);
+        var master = PlayerTestDataBuilder.Build();
+        var summon = MonsterTestDataBuilder.BuildSummon(master);
+
+        (map[105, 105, 7] as DynamicTile)?.AddCreature(master);
+        (map[104, 105, 7] as DynamicTile)?.AddCreature(summon);
+
+        // Act
+        // Move master 2 floors up (from 7 to 5)
+        map.TryMoveCreature(master, new Location(105, 105, 5));
+        summon.UpdateState();
+
+        // Assert
+        master.Summons.Should().NotContain(summon as NeoServer.Domain.Creatures.Monster.Summon.Summon, "Summon should be dismissed when master moves 2 floors up");
+    }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void Summon_disappears_when_master_moves_2_floors_down()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 9, true);
+        var master = PlayerTestDataBuilder.Build();
+        var summon = MonsterTestDataBuilder.BuildSummon(master);
+
+        (map[105, 105, 7] as DynamicTile)?.AddCreature(master);
+        (map[104, 105, 7] as DynamicTile)?.AddCreature(summon);
+
+        // Act
+        // Move master 2 floors down (from 7 to 9)
+        map.TryMoveCreature(master, new Location(105, 105, 9));
+        summon.UpdateState();
+
+        // Assert
+        master.Summons.Should().NotContain(summon as NeoServer.Domain.Creatures.Monster.Summon.Summon, "Summon should be dismissed when master moves 2 floors down");
+    }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void Summon_disappears_when_master_moves_more_than_40_sqms_away()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 150, 100, 150, 7, 7);
+        var master = PlayerTestDataBuilder.Build();
+        var summon = MonsterTestDataBuilder.BuildSummon(master);
+
+        (map[142, 100, 7] as DynamicTile)?.AddCreature(master);
+        (map[101, 100, 7] as DynamicTile)?.AddCreature(summon);
+
+        // Act
+        summon.UpdateState();
+
+        // Assert
+        master.Summons.Should().NotContain(summon as NeoServer.Domain.Creatures.Monster.Summon.Summon, "Summon should be dismissed when master is more than 40 sqms away");
+    }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void Summon_does_not_disappear_when_master_is_within_range()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 150, 100, 150, 7, 7);
+        var master = PlayerTestDataBuilder.Build();
+        var summon = MonsterTestDataBuilder.BuildSummon(master);
+
+        (map[120, 100, 7] as DynamicTile)?.AddCreature(master);
+        (map[101, 100, 7] as DynamicTile)?.AddCreature(summon);
+
+        // Act
+        summon.UpdateState();
+
+        // Assert
+        master.Summons.Should().Contain(summon as NeoServer.Domain.Creatures.Monster.Summon.Summon, "Summon should not be dismissed when master is within 40 sqms and same floor");
     }
 }
