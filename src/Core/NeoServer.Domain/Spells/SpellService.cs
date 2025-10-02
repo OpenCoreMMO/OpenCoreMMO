@@ -42,7 +42,6 @@ public class SpellService(
 
         if (invokeResult.Failed && caster is IPlayer)
         {
-            eventAggregator.InvokeEvent(new SpellFailedToCastEvent(caster, spell, invokeResult.Reason));
             return true;
         }
 
