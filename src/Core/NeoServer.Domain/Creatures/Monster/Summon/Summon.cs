@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using System;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Location.Structs;
@@ -57,6 +58,19 @@ public class Summon : Monster
 
     public override void UpdateState()
     {
+        // Check if summon should disappear due to distance or floor change
+        if (Master is ICombatActor { IsDead: false })
+        {
+            var floorDifference = Math.Abs(Master.Location.Z - Location.Z);
+            var distance = Master.Location.GetSqmDistance(Location);
+
+            if (floorDifference >= 2 || distance > 40)
+            {
+                Die();
+                return;
+            }
+        }
+
         if (Master is not IPlayer player)
         {
             base.UpdateState();
