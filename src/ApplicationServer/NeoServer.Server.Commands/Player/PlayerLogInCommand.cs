@@ -64,7 +64,8 @@ public class PlayerLogInCommand(
 
         var existBan = await ipBansRepository.ExistBan(connection.Ip.Split(":")[0]);
         if (existBan is not null)
-            return (false, $"Your IP address {existBan.Ip} has been banished until {existBan.ExpiresAt:MM/dd/yyyy}.\nReason: {existBan.Reason}");
+            return (false,
+                $"Your IP address {existBan.Ip} has been banished until {existBan.ExpiresAt:MM/dd/yyyy}.\nReason: {existBan.Reason}");
 
         var playerOnline = await accountRepository.GetOnlinePlayer(request.Account);
         if (playerOnline is not null)
@@ -81,7 +82,8 @@ public class PlayerLogInCommand(
             }
         }
 
-        var playerRecord = await accountRepository.GetPlayer(request.Account, request.Password, request.CharacterName, includeKillsLastMonth: true);
+        var playerRecord = await accountRepository.GetPlayer(request.Account, request.Password, request.CharacterName,
+            includeKillsLastMonth: true);
         if (playerRecord is null)
             return (false, "Account name or password is not correct.");
 
@@ -112,7 +114,9 @@ public class PlayerLogInCommand(
             connection.Send(new OpcodeMessagePacket());
         }
 
-        if (!game.CreatureManager.TryGetLoggedPlayer((uint)playerRecord.Id, out var player))
+        var playerAlreadyLoggedIn = game.CreatureManager.TryGetLoggedPlayer((uint)playerRecord.Id, out var player);
+
+        if (!playerAlreadyLoggedIn)
         {
             guildLoader.Load(playerRecord.GuildMember?.Guild);
 
@@ -127,11 +131,12 @@ public class PlayerLogInCommand(
         }
 
         game.CreatureManager.AddPlayer(player, connection);
-
+        
+        //player must be placed on map before login to avoid issues with map description packet
+        map.PlaceCreature(player);
+       
         player.Login();
         player.Vip.LoadVipList(playerRecord.Account.VipList.Select(x => ((uint)x.PlayerId, x.Player?.Name)));
-
-        map.PlaceCreature(player);
 
         playerChannelService.JoinChannels(player);
 

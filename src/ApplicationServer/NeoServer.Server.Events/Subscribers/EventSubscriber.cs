@@ -27,14 +27,12 @@ public sealed class EventSubscriber
     private readonly IGameServer _gameServer;
     private readonly ItemStartedDecayingEventHandler _itemStartedDecayingEventHandler;
     private readonly ItemUsedEventHandler _itemUsedEventHandler;
-    private readonly ItemUsedOnTileEventHandler _itemUsedOnTileEventHandler;
 
     private readonly IMap _map;
     private readonly SafeTradeSystem _tradeSystem;
 
     public EventSubscriber(IMap map, IGameServer gameServer, IServiceProvider container, SafeTradeSystem tradeSystem,
-        ItemStartedDecayingEventHandler itemStartedDecayingEventHandler,
-        ItemUsedOnTileEventHandler itemUsedOnTileEventHandler, FieldRuneUsedEventHandler fieldRuneUsedEventHandler,
+        ItemStartedDecayingEventHandler itemStartedDecayingEventHandler, FieldRuneUsedEventHandler fieldRuneUsedEventHandler,
         ItemUsedEventHandler itemUsedEventHandler)
     {
         _map = map;
@@ -42,7 +40,6 @@ public sealed class EventSubscriber
         _container = container;
         _tradeSystem = tradeSystem;
         _itemStartedDecayingEventHandler = itemStartedDecayingEventHandler;
-        _itemUsedOnTileEventHandler = itemUsedOnTileEventHandler;
         _fieldRuneUsedEventHandler = fieldRuneUsedEventHandler;
         _itemUsedEventHandler = itemUsedEventHandler;
     }
@@ -51,9 +48,6 @@ public sealed class EventSubscriber
     {
         _map.OnCreatureAddedOnMap += (creature, cylinder) =>
             _container.GetRequiredService<CreatureAddedOnMapEventHandler>().Execute(creature, cylinder);
-
-        _map.OnCreatureAddedOnMap += (creature, _) =>
-            _container.GetRequiredService<PlayerSelfAppearOnMapEventHandler>().Execute(creature);
 
         _map.OnThingRemovedFromTile += _container.GetRequiredService<ThingRemovedFromTileEventHandler>().Execute;
         _map.OnCreatureMoved += _container.GetRequiredService<CreatureMovedEventHandler>().Execute;
