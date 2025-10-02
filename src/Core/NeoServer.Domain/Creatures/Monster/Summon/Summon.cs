@@ -66,7 +66,7 @@ public class Summon : Monster
 
             if (floorDifference >= 2 || distance > 40)
             {
-                Dismiss();
+                Die();
                 return;
             }
         }
