@@ -216,8 +216,8 @@ public class SummonTests
         var master = PlayerTestDataBuilder.Build();
         var summon = MonsterTestDataBuilder.BuildSummon(master);
 
-        (map[142, 100, 7] as DynamicTile)?.AddCreature(master);
-        (map[101, 100, 7] as DynamicTile)?.AddCreature(summon);
+        (map[141, 100, 7] as DynamicTile)?.AddCreature(master);
+        (map[100, 100, 7] as DynamicTile)?.AddCreature(summon);
 
         // Act
         summon.UpdateState();
@@ -235,8 +235,8 @@ public class SummonTests
         var master = PlayerTestDataBuilder.Build();
         var summon = MonsterTestDataBuilder.BuildSummon(master);
 
-        (map[120, 100, 7] as DynamicTile)?.AddCreature(master);
-        (map[101, 100, 7] as DynamicTile)?.AddCreature(summon);
+        (map[140, 100, 7] as DynamicTile)?.AddCreature(master);
+        (map[100, 100, 7] as DynamicTile)?.AddCreature(summon);
 
         // Act
         summon.UpdateState();
