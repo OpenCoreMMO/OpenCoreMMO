@@ -2,17 +2,19 @@
 using System.Text.Json.Serialization;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Loaders.Converts;
 
 namespace NeoServer.Loaders.Vocations;
 
-public sealed class VocationData : IVocation
+public sealed class VocationData
 {
     public byte Id { get; set; }
 
     public string Name { get; set; }
 
-    public string FromVoc { get; set; }
+    [JsonConverter(typeof(ByteConverter))] 
+    public byte FromVoc { get; set; }
 
     [JsonConverter(typeof(UshortConverter))]
     public new ushort GainCap { get; set; }
@@ -43,7 +45,7 @@ public sealed class VocationData : IVocation
 
     public string Clientid { get; set; }
     public string Description { get; set; }
-    public IVocationFormula Formula { get; set; }
+    public VocationFormula Formula { get; set; }
 
     [JsonConverter(typeof(ByteConverter))] public new byte SoulMax { get; set; }
 

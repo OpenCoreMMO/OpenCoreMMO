@@ -17,6 +17,7 @@ using NeoServer.Domain.Creatures.Npcs;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Modes;
+using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Domain.Items.Items.UsableItems;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
@@ -104,7 +105,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     bool HasDepotOpened { get; }
     uint TotalCapacity { get; }
     bool Recovering { get; }
-    IVocation Vocation { get; }
+    Vocation Vocation { get; }
     byte VocationType => Vocation?.VocationType ?? default;
     Group Group { get; set; }
     byte GroupId => Group?.Id ?? default;
@@ -151,6 +152,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     DateTime? LastLogIn { get; }
     DateTime? LastLogOut { get; set; }
     bool IgnoreStamina { get; }
+    bool IsPromoted { get; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 
