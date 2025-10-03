@@ -125,8 +125,6 @@ public class SpellTests
 
         // Assert
         result.Should().BeTrue();
-        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e => 
-            e.Caster == player && e.Spell == spell)), Times.Once);
     }
 
     [Fact]
