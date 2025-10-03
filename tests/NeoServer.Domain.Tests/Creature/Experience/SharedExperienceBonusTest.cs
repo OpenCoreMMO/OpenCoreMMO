@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Experience;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Domain.Tests.Helpers.Player;
 
 namespace NeoServer.Domain.Tests.Creature.Experience;
@@ -301,8 +302,9 @@ public class SharedExperienceBonusTest
 
     private IPlayer MockPartyMember(byte vocation)
     {
+        var vocationObj = new Vocation { Id = vocation };
         var player = new Mock<IPlayer>();
-        player.Setup(x => x.Vocation.Id).Returns(vocation);
+        player.Setup(x => x.Vocation).Returns(vocationObj);
         player.Setup(x => x.PlayerParty.IsInParty).Returns(true);
         return player.Object;
     }
