@@ -48,7 +48,19 @@ public static class PlayerTestDataBuilder
             {
                 Id = vocationType,
                 Name = "Knight",
-                AttackSpeed = attackSpeed
+                AttackSpeed = attackSpeed,
+                FromVoc = vocationType switch
+                {
+                    1 => 1,
+                    2 => 2,
+                    3 => 3,
+                    4 => 4,
+                    5 => 1,
+                    6 => 2,
+                    7 => 3,
+                    8 => 4,
+                    _ => 0
+                }
             };
 
             vocationStore = new VocationStore();
