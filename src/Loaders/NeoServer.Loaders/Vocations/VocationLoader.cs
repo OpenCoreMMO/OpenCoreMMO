@@ -132,7 +132,6 @@ public class VocationLoader
             Converters =
             {
                 new SkillConverter(),
-               // new AbstractConverter<VocationFormula>()
             }
         });
 
