@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Guild;
 using NeoServer.Domain.Party;
 using System.Text;
+using NeoServer.Domain.Creatures.Monster.Summon;
 
 namespace NeoServer.Domain.Creatures;
 
@@ -31,7 +32,7 @@ public static class CreatureRaw
             creatureType = (byte)0x01;
         else if (creature is INpc)
             creatureType = (byte)0x02;
-        else if (creature is ISummon summon)
+        else if (creature is Summon summon)
         {
             if (summon.Master.CreatureId == playerRequesting.CreatureId)
                 creatureType = (byte)0x01;
