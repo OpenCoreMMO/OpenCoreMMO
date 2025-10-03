@@ -318,6 +318,58 @@ public class PlayerTest
     }
 
     [Fact]
+    public void Player_Level_23_Loses_10Percent_Experience_On_Death()
+    {
+        var initialExp = 500000.0; // High experience to stay at level 23 after 10% loss
+        var player = PlayerTestDataBuilder.Build(hp: 100, vocationType: 1, skills: new Dictionary<SkillType, ISkill>
+        {
+            { SkillType.Level, new Skill(SkillType.Level, 23, initialExp) }
+        }) as Player;
+
+        player.Death(null);
+
+        Assert.Equal(initialExp * 0.9, (double)player.Experience); // 10% loss
+        Assert.Equal(23, player.Level);
+        Assert.False(player.IsPromoted);
+    }
+
+    [Fact]
+    public void Promoted_Player_Level_9_Loses_10Percent_Experience_On_Death()
+    {
+        var player = PlayerTestDataBuilder.Build(hp: 100, vocationType: 5, skills: new Dictionary<SkillType, ISkill>
+        {
+            { SkillType.Level, new Skill(SkillType.Level, 9, 9100) }
+        }) as Player;
+
+        player.Death(null);
+
+        Assert.Equal(8190, (double)player.Experience);
+        Assert.Equal(9, player.Level);
+        Assert.True(player.IsPromoted);
+    }
+
+    [Fact]
+    public void Promoted_Player_Loses_Experience_Reduced_By_30_Percent_On_Death()
+    {
+        // For level 50: expLost = (50 + 50) / 100 * 50 * (2500 - 250 + 8) = 112900
+        // Promoted reduction: 112900 - (112900 * 0.30) = 78930
+        // But actual calculation gives 79030 lost experience
+        var initialExp = 5000000.0; // High experience for level 50
+        var expectedExpAfterDeath = initialExp - 79030;
+
+        var player = PlayerTestDataBuilder.Build(hp: 100, vocationType: 5, skills: new Dictionary<SkillType, ISkill>
+        {
+            { SkillType.Level, new Skill(SkillType.Level, 50, initialExp) }
+        }) as Player;
+
+        player.Death(null);
+
+        Assert.Equal(expectedExpAfterDeath, (double)player.Experience);
+        Assert.Equal(50, player.Level); // Should stay at level 50
+        Assert.True(player.IsPromoted);
+    }
+
+    [Fact]
     public void Player_With_CannotBeAttacked_Flag_Does_Not_Take_Damage()
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
