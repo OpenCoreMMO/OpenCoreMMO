@@ -1604,7 +1604,7 @@ public class Player : CombatActor, IPlayer
     {
         if (Level <= 23) return 10 * 0.01 * Experience;
 
-        var expLost = (Level + 50) / 100 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
+        var expLost = (Level + 50) / 100.0 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
 
         if (IsPromoted)
         {
