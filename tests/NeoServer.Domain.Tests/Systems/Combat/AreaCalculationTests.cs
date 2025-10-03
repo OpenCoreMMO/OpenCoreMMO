@@ -1,5 +1,4 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
@@ -8,7 +7,6 @@ using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Models.Tiles;
-using Xunit;
 
 namespace NeoServer.Domain.Tests.Systems.Combat;
 

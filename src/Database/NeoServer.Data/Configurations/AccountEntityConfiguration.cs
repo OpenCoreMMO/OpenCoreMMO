@@ -66,7 +66,7 @@ public class AccountEntityConfiguration : IEntityTypeConfiguration<AccountEntity
                 Password = "1",
                 PremiumTimeEndAt = DateTime.UtcNow.AddDays(30),
                 AllowManyOnline = true,
-                AccountName = "GOD"
+                AccountName = "Sample"
             }
         );
     }

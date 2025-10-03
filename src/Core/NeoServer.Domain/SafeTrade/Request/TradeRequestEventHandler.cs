@@ -28,7 +28,6 @@ internal static class TradeRequestEventHandler
         if (player is not null && !PlayerEventSubscription.Contains(player.CreatureId))
         {
             player.OnCreatureMoved += OnPlayerMoved;
-            player.OnLoggedOut += OnPlayerLogout;
 
             // Add player ID to the HashSet to prevent multiple subscriptions
             PlayerEventSubscription.Add(player.CreatureId);
@@ -69,7 +68,6 @@ internal static class TradeRequestEventHandler
         if (player is not null)
         {
             player.OnCreatureMoved -= OnPlayerMoved;
-            player.OnLoggedOut -= OnPlayerLogout;
 
             // Remove player ID from the HashSet to allow future subscriptions
             PlayerEventSubscription.Remove(player.CreatureId);
@@ -145,16 +143,7 @@ internal static class TradeRequestEventHandler
         var isFarFromSecondPlayer = creature.Location.GetMaxSqmDistance(tradeRequest.PlayerRequested.Location) > 2;
         if (isFarFromSecondPlayer) CancelTradeAction?.Invoke(tradeRequest);
     }
-
-    private static void OnPlayerLogout(IPlayer player)
-    {
-        var tradeRequest = TradeRequestTracker.GetTradeRequest(player);
-
-        if (tradeRequest is null) return;
-
-        CancelTradeAction?.Invoke(tradeRequest);
-    }
-
+    
     private static void ItemRemoved(IItem item, IThing _)
     {
         CancelTrade(item);

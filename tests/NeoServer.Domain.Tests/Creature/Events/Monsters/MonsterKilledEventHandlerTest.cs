@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Monster.Summon;
+using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Player;
@@ -160,7 +161,7 @@ public class MonsterKilledEventHandlerTest
     ///     Mocks a summon for the specified player.
     /// </summary>
     /// <param name="player">The master of the summon.</param>
-    private Summon MockSummon(IPlayer player)
+    private Domain.Creatures.Monster.Summon.Summon MockSummon(IPlayer player)
     {
         var monsterTypeMock = new Mock<IMonsterType>();
         var mapTool = new Mock<IMapTool>();
@@ -174,7 +175,7 @@ public class MonsterKilledEventHandlerTest
             { LookType.Legs, 0 }
         });
 
-        return new Summon(monsterTypeMock.Object, mapTool.Object, player);
+        return new Domain.Creatures.Monster.Summon.Summon(monsterTypeMock.Object, mapTool.Object, player);
     }
 
     /// <summary>
@@ -183,13 +184,10 @@ public class MonsterKilledEventHandlerTest
     private IVocationStore MockVocations(params int[] vocations)
     {
         var vocationStore = new VocationStore();
-        var mockedVocations = vocations.Select(x =>
+        var mockedVocations = vocations.Select(x => new Vocation
         {
-            var mock = new Mock<IVocation>();
-            mock.Setup(x => x.Id).Returns((byte)x);
-            mock.Setup(x => x.Name).Returns(x.ToString());
-            mock.Setup(x => x.VocationType).Returns((byte)x);
-            return mock.Object;
+            Id = (byte)x,
+            Name = x.ToString()
         });
 
         foreach (var vocation in mockedVocations) vocationStore.AddOrUpdate(vocation.VocationType, vocation);

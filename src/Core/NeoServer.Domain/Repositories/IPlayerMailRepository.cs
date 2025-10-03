@@ -1,5 +1,3 @@
-using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Items.Items.Containers;
 

@@ -13,7 +13,7 @@ using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Combat.Validations;
 
-public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpConfiguration)
+public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpConfiguration, CombatConfiguration combatConfiguration)
 {
     public Result Validate(AttackInput attackInput)
     {
@@ -27,6 +27,11 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
         {
             case IPlayer targetPlayer:
             {
+                if (targetPlayer.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))
+                {
+                    return Result.Fail(InvalidOperation.YouMayNotAttackThisPlayer);
+                }
+                
                 switch (aggressor)
                 {
                     //Player cannot attack a player
@@ -56,6 +61,11 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
             case IMonster monsterTarget:
                 switch (aggressor)
                 {
+                    //Player cannot attack his own summons when can attack summon configuration is disabled
+                    case IPlayer master when monsterTarget is Summon { Master: IPlayer summonMaster } &&
+                                          master.Equals(summonMaster) && !combatConfiguration.CanAttackOwnSummon:
+                        return Result.Fail(InvalidOperation.YouMayNotAttackThisCreature);
+                    
                     //Player cannot attack a monster
                     case IPlayer playerAggressor
                         when playerAggressor.Group.FlagIsEnabled(PlayerFlag.CannotAttackMonster):

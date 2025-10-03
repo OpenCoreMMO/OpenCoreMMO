@@ -1,7 +1,6 @@
 using System.Text;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Combat;
-using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
@@ -33,7 +32,6 @@ using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
-using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Npcs;
 using NeoServer.Domain.Creatures.Player.Container;
 using NeoServer.Domain.Creatures.Player.Inventory;
@@ -57,7 +55,7 @@ public class Player : CombatActor, IPlayer
         uint capacity,
         uint healthPoints,
         uint maxHealthPoints,
-        IVocation vocation,
+        Vocation.Vocation vocation,
         Group group,
         Gender gender,
         bool online,
@@ -173,7 +171,7 @@ public class Player : CombatActor, IPlayer
     public ITown Town { get; set; }
     public IVip Vip { get; }
     public override IOutfit Outfit { get; protected set; }
-    public IVocation Vocation { get; }
+    public Vocation.Vocation Vocation { get; }
     public Group Group { get; set; }
     public IPlayerChannel Channels { get; set; }
     public IPlayerParty PlayerParty { get; set; }
@@ -249,6 +247,8 @@ public class Player : CombatActor, IPlayer
             return 0;
         }
     }
+
+    public bool IsPromoted => Vocation.IsPromotion;
 
     public void AddInventory(IInventory inventory)
     {
@@ -513,7 +513,7 @@ public class Player : CombatActor, IPlayer
             StopAttack();
             OperationFailService.Send(this, InvalidOperation.TargetLost);
         }
-        
+
         TogglePacifiedCondition(fromTile, toTile);
         Containers.CloseDistantContainers();
         base.OnMoved(fromTile, toTile, spectators);
@@ -526,9 +526,9 @@ public class Player : CombatActor, IPlayer
         if (spectator is not ICombatActor target) return;
         if (target.Equals(CurrentTarget))
         {
-            HandleTargetLost();    
+            HandleTargetLost();
         }
-        
+
         base.OnSpectatorMoved(spectator);
     }
 
@@ -538,7 +538,7 @@ public class Player : CombatActor, IPlayer
         {
             HandleTargetLost();
         }
-        
+
         base.OnSpectatorDies(spectator);
     }
 
@@ -547,7 +547,7 @@ public class Player : CombatActor, IPlayer
         if (!IsTargetLost()) return;
 
         var showError = CurrentTarget is not ICombatActor { IsDead: true };
-        
+
         StopAttack();
 
         if (showError)
@@ -827,7 +827,14 @@ public class Player : CombatActor, IPlayer
         PlayerSkull.RemoveYellowSkull();
         LastLogOut = DateTime.UtcNow;
 
-        OnLoggedOut?.Invoke(this);
+        var summonsCopy = Summons.ToList();
+        foreach (var summon in summonsCopy)
+        {
+            summon.OnMasterLogout();
+        }
+
+        EventAggregator.Invoke(new PlayerLoggedOutEvent(this));
+
         return true;
     }
 
@@ -843,9 +850,7 @@ public class Player : CombatActor, IPlayer
         LastLogIn = DateTime.UtcNow;
         RegenerateStamina();
 
-        OnLoggedIn?.Invoke(this);
-
-
+        EventAggregator.Invoke(new PlayerLoggedInEvent(this));
         return true;
     }
 
@@ -1077,12 +1082,6 @@ public class Player : CombatActor, IPlayer
         {
             StopAttack();
             return new Result(InvalidOperation.AttackTargetIsInvisible);
-        }
-
-        if (Summons.Contains(target as Summon))
-        {
-            InvokeAttackCanceled();
-            return Result.NotPossible;
         }
 
         var result = base.SetAttackTarget(target);
@@ -1588,12 +1587,6 @@ public class Player : CombatActor, IPlayer
 
     public override void Death(IThing by)
     {
-        var summonsCopy = Summons.ToList();
-        foreach (var summon in summonsCopy)
-        {
-            summon.OnMasterKilled();
-        }
-
         base.Death(by);
 
         PlayerSkull.RemoveYellowSkull();
@@ -1610,7 +1603,15 @@ public class Player : CombatActor, IPlayer
     private double CalculateLostExperience()
     {
         if (Level <= 23) return 10 * 0.01 * Experience;
-        return (Level + 50) * .01 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
+
+        var expLost = (Level + 50) / 100.0 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
+
+        if (IsPromoted)
+        {
+            expLost -= expLost * .30;
+        }
+
+        return expLost;
     }
 
     #region Storage
@@ -1746,7 +1747,6 @@ public class Player : CombatActor, IPlayer
     public event UseSpell OnUsedSpell;
     public event UseItem OnUsedItem;
     public event LogIn OnLoggedIn;
-    public event LogOut OnLoggedOut;
     public event ChangeOnlineStatus OnChangedOnlineStatus;
     public event SendMessageTo OnSentMessage;
 

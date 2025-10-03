@@ -30,8 +30,8 @@ public class SummonService : ISummonService
         }
 
         foreach (var neighbour in master.Location.Neighbours)
-            if (_map[neighbour] is IDynamicTile { HasCreature: false } toTile &&
-                !toTile.HasFlag(TileFlags.Unpassable) && !toTile.HasTeleport(out _))
+            if (_map[neighbour] is IDynamicTile { HasAnyCreature: false } toTile &&
+                toTile.CanEnter(summon) && !toTile.HasTeleport(out _))
             {
                 summon.Born(toTile.Location);
                 return summon;

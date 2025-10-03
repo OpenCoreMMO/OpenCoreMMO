@@ -17,6 +17,7 @@ using NeoServer.Domain.Creatures.Npcs;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Modes;
+using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Domain.Items.Items.UsableItems;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
@@ -44,8 +45,6 @@ public delegate void PlayerGainSkillPoint(IPlayer player, SkillType type);
 public delegate void UseItem(IPlayer player, IThing thing, IUsableOn item);
 
 public delegate void LogIn(IPlayer player);
-
-public delegate void LogOut(IPlayer player);
 
 public delegate void AddToVipList(IPlayer player, uint vipPlayerId, string vipPlayerName);
 
@@ -106,7 +105,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     bool HasDepotOpened { get; }
     uint TotalCapacity { get; }
     bool Recovering { get; }
-    IVocation Vocation { get; }
+    Vocation Vocation { get; }
     byte VocationType => Vocation?.VocationType ?? default;
     Group Group { get; set; }
     byte GroupId => Group?.Id ?? default;
@@ -153,6 +152,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     DateTime? LastLogIn { get; }
     DateTime? LastLogOut { get; set; }
     bool IgnoreStamina { get; }
+    bool IsPromoted { get; }
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 
@@ -318,7 +318,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event UseSpell OnUsedSpell;
     public event UseItem OnUsedItem;
     public event LogIn OnLoggedIn;
-    public event LogOut OnLoggedOut;
     public event ChangeOnlineStatus OnChangedOnlineStatus;
     public event SendMessageTo OnSentMessage;
 

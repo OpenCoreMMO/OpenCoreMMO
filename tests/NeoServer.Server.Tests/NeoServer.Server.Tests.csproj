@@ -31,7 +31,14 @@
         <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Commands\NeoServer.Server.Commands.csproj"/>
         <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server.Events\NeoServer.Server.Events.csproj"/>
         <ProjectReference Include="..\..\src\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj"/>
+        <ProjectReference Include="..\..\src\Standalone\NeoServer.Server.Standalone.csproj" />
         <ProjectReference Include="..\NeoServer.Domain.Tests\NeoServer.Domain.Tests.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="appsettings.Test.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

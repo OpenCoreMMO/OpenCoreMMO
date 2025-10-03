@@ -1,7 +1,6 @@
 using Moq;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common;
-using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Creatures.Monster.Loot;
 using NeoServer.Domain.Creatures.Services;

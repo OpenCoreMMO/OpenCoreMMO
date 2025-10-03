@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using NeoServer.Domain.Common;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
@@ -11,14 +11,12 @@ using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Loaders.Converts;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
-using NeoServer.Server.Helpers.JsonConverters;
 using Serilog;
 
 namespace NeoServer.Loaders.Vocations;
 
 public class VocationLoader
 {
-    public static VocationLoader Instance;
     private readonly GameConfiguration _gameConfiguration;
 
     private readonly ILogger _logger;
@@ -32,7 +30,6 @@ public class VocationLoader
         _serverConfiguration = serverConfiguration;
         _vocationStore = vocationStore;
         _gameConfiguration = gameConfiguration;
-        Instance = this;
     }
 
     public void Load()
@@ -63,7 +60,7 @@ public class VocationLoader
         });
     }
 
-    private void AddOrUpdateVocation(List<VocationData> vocations)
+    private void AddOrUpdateVocation(List<Vocation> vocations)
     {
         foreach (var vocation in vocations)
         {
@@ -78,7 +75,7 @@ public class VocationLoader
         }
     }
 
-    private void UpdateVocation(IVocation existingVocation, IVocation vocation)
+    private void UpdateVocation(Vocation existingVocation, Vocation vocation)
     {
         existingVocation.Clientid = vocation.Clientid;
         existingVocation.Description = vocation.Description;
@@ -105,7 +102,7 @@ public class VocationLoader
         existingVocation.SoulMax = vocation.SoulMax;
     }
 
-    private static void UpdateFormula(IVocation existingVocation, IVocation vocation)
+    private static void UpdateFormula(Vocation existingVocation, Vocation vocation)
     {
         if (vocation.Formula is null) return;
 
@@ -117,7 +114,7 @@ public class VocationLoader
         existingVocation.Formula.MeleeDamage = (float)vocation.Formula?.MeleeDamage;
     }
 
-    private static void UpdateSkills(IVocation existingVocation, IVocation vocation)
+    private static void UpdateSkills(Vocation existingVocation, Vocation vocation)
     {
         if (vocation.Skills is null) return;
 
@@ -125,7 +122,7 @@ public class VocationLoader
         foreach (var (key, value) in vocation.Skills) existingVocation.Skills.AddOrUpdate(key, value);
     }
 
-    private List<VocationData> GetVocations()
+    private List<Vocation> GetVocations()
     {
         var basePath = $"{_serverConfiguration.Data}";
         var jsonString = File.ReadAllText(Path.Combine(basePath, "vocations.json"));
@@ -135,10 +132,30 @@ public class VocationLoader
             Converters =
             {
                 new SkillConverter(),
-                new AbstractConverter<VocationFormula, IVocationFormula>()
             }
         });
 
-        return vocations;
+        return vocations.Select(x=> new Vocation()
+        {
+            FromVoc = x.FromVoc,
+            GainCap = x.GainCap,
+            GainHp = x.GainHp,
+            GainHpAmount = x.GainHpAmount,
+            GainHpTicks = x.GainHpTicks,
+            GainMana = x.GainMana,
+            GainManaAmount = x.GainManaAmount,
+            GainManaTicks = x.GainManaTicks,
+            GainSoulTicks = x.GainSoulTicks,
+            Id = x.Id,
+            Inspect = x.Inspect,
+            Name = x.Name,
+            Description = x.Description,
+            SoulMax = x.SoulMax,
+            AttackSpeed = x.AttackSpeed,
+            BaseSpeed = x.BaseSpeed,
+            Clientid = x.Clientid,
+            Formula = x.Formula,
+            Skills = x.Skills
+        }).ToList();
     }
 }

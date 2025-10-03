@@ -4,15 +4,15 @@ using System.Text.Json.Serialization;
 
 namespace NeoServer.Server.Helpers.JsonConverters;
 
-public class AbstractConverter<TReal, TAbstract> : JsonConverter<TAbstract> where TReal : TAbstract
+public class AbstractConverter<TReal> : JsonConverter<TReal> where TReal : class
 {
-    public override TAbstract Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override TReal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         return JsonSerializer.Deserialize<TReal>(ref reader, options);
     }
 
-    public override void Write(Utf8JsonWriter writer, TAbstract value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, TReal value, JsonSerializerOptions options)
     {
-        JsonSerializer.Serialize(writer, (TReal)value, options);
+        JsonSerializer.Serialize(writer, value, options);
     }
 }

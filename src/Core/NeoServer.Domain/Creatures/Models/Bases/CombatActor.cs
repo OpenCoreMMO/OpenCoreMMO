@@ -433,6 +433,12 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public virtual void Death(IThing by)
     {
+        var summonsCopy = Summons.ToList();
+        foreach (var summon in summonsCopy)
+        {
+            summon.OnMasterKilled();
+        }
+        
         if (by is ICombatActor combatActor)
             //todo: implements real damage
             OnBeforeDeath?.Invoke(this, combatActor, 0);

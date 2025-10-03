@@ -1,18 +1,12 @@
 using Moq;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.Creatures.Monsters;
-using NeoServer.Domain.Common.Contracts.Services;
-using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
-using NeoServer.Domain.Creatures.Factories;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
-using NeoServer.Domain.World.Map;
-using NeoServer.Domain.World.Services;
 using Serilog;
 
 namespace NeoServer.Domain.Tests.Creatures.Monster;

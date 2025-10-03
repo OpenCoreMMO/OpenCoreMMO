@@ -16,7 +16,6 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster.Actions;
 using NeoServer.Domain.Creatures.Monster.Combat;
-using NeoServer.Domain.Creatures.Monster.Services;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Items.Items;
 
@@ -40,7 +39,7 @@ public class Monster : WalkableMonster, IMonster
         Targets = new TargetList(this);
     }
 
-    private byte TargetDistance =>
+    protected byte TargetDistance =>
         Metadata.Flags.TryGetValue(CreatureFlagAttribute.TargetDistance, out var targetDistance)
             ? (byte)targetDistance
             : (byte)1;
@@ -101,6 +100,19 @@ public class Monster : WalkableMonster, IMonster
 
         base.OnSpectatorMoved(spectator);
     }
+    
+    public override void OnSpectatorLoggedOut(ICreature spectator)
+    {
+        if (IsDead) return;
+        if (spectator is not ICombatActor target) return;
+        
+        if (Targets.HasTarget(spectator))
+        {
+            Targets.RemoveTarget(target);
+        }
+        
+        base.OnSpectatorLoggedOut(spectator);
+    }
 
     public override void OnSpectatorDies(ICombatActor spectator)
     {
@@ -108,7 +120,7 @@ public class Monster : WalkableMonster, IMonster
 
         if (Targets.HasTarget(spectator))
         {
-            Targets.OnTargetDies(spectator);
+            Targets.RemoveTarget(spectator);
         }
 
         base.OnSpectatorDies(spectator);
@@ -409,12 +421,6 @@ public class Monster : WalkableMonster, IMonster
     {
         if (by is IPlayer player && ReferenceEquals(player.CurrentTarget, this))
             player.StopAttack();
-
-        var summonsCopy = Summons.ToList();
-        foreach (var summon in summonsCopy)
-        {
-            summon.OnMasterKilled();
-        }
 
         base.Death(by);
     }

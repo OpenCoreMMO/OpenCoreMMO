@@ -23,6 +23,7 @@ using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Outfit;
+using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Loaders.Interfaces;
 using Serilog;
 
@@ -179,7 +180,7 @@ public class PlayerLoader : IPlayerLoader
         return town;
     }
 
-    protected IVocation GetVocation(PlayerEntity playerEntity)
+    protected Vocation GetVocation(PlayerEntity playerEntity)
     {
         if (!VocationStore.TryGetValue(playerEntity.Vocation, out var vocation))
             Logger.Error("Player vocation not found: {PlayerModelVocation}", playerEntity.Vocation);

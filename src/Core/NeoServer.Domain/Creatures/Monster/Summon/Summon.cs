@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using System;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Location.Structs;
@@ -19,11 +20,6 @@ public class Summon : Monster
                 actor.OnTargetChanged += OnMasterTargetChange;
                 actor.OnStoppedAttack += OnMasterStoppedAttack;
             }
-
-            if (master is IPlayer player)
-            {
-                player.OnLoggedOut += OnMasterLoggedOut;
-            }
         }
     }
 
@@ -31,11 +27,25 @@ public class Summon : Monster
 
     public ICreature Master { get; }
 
+    public override FindPathParams PathSearchParams
+    {
+        get
+        {
+            var fpp = base.PathSearchParams;
+            fpp.MaxTargetDist = Equals(Following, Master) ? 1 : TargetDistance;
+            fpp.KeepDistance = TargetDistance > 1 && !Equals(Following, Master);
+            return fpp;
+        }
+    }
+
     public override void SetAsEnemy(ICreature creature)
     {
         if (IsDead) return;
         if (Master is not null && Master.Equals(creature)) return;
-        if (creature is Summon summon && summon.Master is not null && summon.Master.Equals(Master)) return;
+        if (creature is Summon { Master: not null } summon && summon.Master.Equals(Master)) return;
+        
+        //Summon should not attack if the master has no target
+        if (Master is ICombatActor { CurrentTarget: null }) return;
 
         base.SetAsEnemy(creature);
     }
@@ -48,6 +58,19 @@ public class Summon : Monster
 
     public override void UpdateState()
     {
+        // Check if summon should disappear due to distance or floor change
+        if (Master is ICombatActor { IsDead: false })
+        {
+            var floorDifference = Math.Abs(Master.Location.Z - Location.Z);
+            var distance = Master.Location.GetSqmDistance(Location);
+
+            if (floorDifference >= 2 || distance > 40)
+            {
+                Die();
+                return;
+            }
+        }
+
         if (Master is not IPlayer player)
         {
             base.UpdateState();
@@ -73,11 +96,6 @@ public class Summon : Monster
             {
                 actor.OnTargetChanged -= OnMasterTargetChange;
                 actor.OnStoppedAttack -= OnMasterStoppedAttack;
-            }
-
-            if (Master is IPlayer player)
-            {
-                player.OnLoggedOut -= OnMasterLoggedOut;
             }
         }
 
@@ -118,10 +136,9 @@ public class Summon : Monster
     }
 
 
-    public void OnMasterKilled()
-    {
-        Die();
-    }
+    public void OnMasterKilled() => Die();
+
+    public void OnMasterLogout() => Die();
 
     private void OnMasterTargetChange(ICombatActor actor, uint oldTargetId, uint newTargetId)
     {
@@ -134,11 +151,5 @@ public class Summon : Monster
     private void OnMasterStoppedAttack(ICombatActor actor)
     {
         StopAttack();
-    }
-
-
-    private void OnMasterLoggedOut(IPlayer player)
-    {
-        Die();
     }
 }
