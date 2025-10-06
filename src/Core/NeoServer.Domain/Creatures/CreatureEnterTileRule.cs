@@ -4,6 +4,9 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Monster;
+using NeoServer.Domain.Creatures.Monster.Summon;
+using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Creatures;
 
@@ -91,18 +94,65 @@ public class PlayerEnterTileRule : CreatureEnterTileRule<PlayerEnterTileRule>
 
 public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
 {
+    private static bool HasBlockingCreatures(IMonster monster, IDynamicTile dynamicTile)
+    {
+        if (!dynamicTile.HasAnyCreature) return false;
+
+        foreach (var creature in dynamicTile.Creatures)
+        {
+            if (IsPushable(monster, creature)) continue;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsPushable(IMonster pusher, ICreature creature)
+    {
+        if (creature is not NeoServer.Domain.Creatures.Monster.Monster monster) return false;
+        if (creature is NeoServer.Domain.Creatures.Monster.Summon.Summon { Master: NeoServer.Domain.Creatures.Player.Player }) return false;
+        if (monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures)) return false;
+        return true;
+    }
+
     public override bool ShouldIgnore(ITile tile, ICreature creature)
     {
         if (tile is not IDynamicTile dynamicTile) return false;
         if (creature is not IMonster monster) return false;
 
+        var hasBlockingCreatures = HasBlockingCreatures(monster, dynamicTile);
+
         return ConditionEvaluation.And(
             dynamicTile.FloorDirection == FloorChangeDirection.None,
             monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushItems) || !dynamicTile.HasBlockPathFinding,
-            !dynamicTile.HasAnyCreature,
+            !hasBlockingCreatures,
             !dynamicTile.HasTeleport(out _),
             !dynamicTile.HasFlag(TileFlags.Unpassable),
             !dynamicTile.ProtectionZone,
+            dynamicTile.Ground is not null);
+    }
+
+    public override bool CanEnter(ITile tile, ICreature creature)
+    {
+        if (tile is not IDynamicTile dynamicTile) return false;
+        if (creature is not IMonster monster) return false;
+
+        var hasBlockingCreatures = HasBlockingCreatures(monster, dynamicTile);
+
+        return ConditionEvaluation.And(
+            !hasBlockingCreatures,
+            !dynamicTile.HasFlag(TileFlags.Unpassable),
+            dynamicTile.Ground is not null);
+    }
+
+    public override bool CanEnter(ITile tile, Location location)
+    {
+        if (tile is not IDynamicTile dynamicTile) return false;
+
+        // For location-based enter, assume no creature, since we don't have the creature here
+        return ConditionEvaluation.And(
+            !dynamicTile.HasAnyCreature,
+            !dynamicTile.HasFlag(TileFlags.Unpassable),
             dynamicTile.Ground is not null);
     }
 }

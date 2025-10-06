@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Combat.Structs;
+﻿using System.Collections.Generic;
+using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
@@ -16,7 +17,7 @@ namespace NeoServer.Domain.Tests.Helpers;
 
 public static class MonsterTestDataBuilder
 {
-    public static IMonster Build(uint maxHealth = 100, ushort speed = 200, IMap map = null, bool isHostile = true)
+    public static IMonster Build(uint maxHealth = 100, ushort speed = 200, IMap map = null, bool isHostile = true, Dictionary<CreatureFlagAttribute, ushort>? flags = null)
     {
         map ??= MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         var pathFinder = new PathFinder(map);
@@ -47,6 +48,15 @@ public static class MonsterTestDataBuilder
         };
 
         monsterType.Flags[CreatureFlagAttribute.Hostile] = (ushort)(isHostile ? 1 : 0);
+
+        if (flags != null)
+        {
+            foreach (var flag in flags)
+            {
+                monsterType.Flags[flag.Key] = flag.Value;
+            }
+        }
+
         return new Monster(monsterType, mapTool, spawnPoint);
     }
 

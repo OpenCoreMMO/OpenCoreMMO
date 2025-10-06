@@ -6,7 +6,7 @@ using NeoServer.Domain.Common.Location;
 
 namespace NeoServer.Domain.Creatures.Monster.Services;
 
-public class TargetDetectorService(IMapTool mapTool)
+public class TargetDetectorService(IMapTool mapTool, IMap map)
 {
     /// <summary>
     /// Updates the monster's targets by checking their reachability and sight clearance.
@@ -46,9 +46,7 @@ public class TargetDetectorService(IMapTool mapTool)
 
             var targetIsUnreachable = IsTargetUnreachable(monster, target);
             if (targetIsUnreachable.Unreachable) continue;
-
             target.SetAsReachable(targetIsUnreachable.Directions);
-
             var offset = monster.Location.GetSqmDistance(target.Creature.Location);
 
             if (offset >= nearest) continue;
@@ -75,6 +73,8 @@ public class TargetDetectorService(IMapTool mapTool)
 
     private static bool IgnoreTarget(Monster monster, ICombatActor target)
     {
+        if (target is null) return true;
+
         // if the target is dead, we ignore it
         if (target.IsDead) return true;
 
@@ -83,18 +83,85 @@ public class TargetDetectorService(IMapTool mapTool)
         {
             return true;
         }
-        
-        // if the monster is in a protection zone, we ignore it
-        if (monster.Tile?.ProtectionZone ?? false)
-        {
-            return true;
-        }
-        
+
         if (!monster.CanSee(target.Location)) return true;
 
         // if the target is in the same floor as the monster, we ignore it
         if (!monster.Location.SameFloorAs(target.Location)) return true;
-        
+
         return false;
+    }
+
+    /// <summary>
+    /// Gets the best target for the monster based on detection logic.
+    /// </summary>
+    /// <param name="monster"></param>
+    /// <returns>The selected target or null if no valid target found.</returns>
+    public ICombatActor GetTarget(Monster monster)
+    {
+        var spectators = map.GetSpectators(monster.Location, false, false,
+            -(int)MapViewPort.MaxClientViewPortX, (int)MapViewPort.MaxClientViewPortX,
+            -(int)MapViewPort.MaxClientViewPortY, (int)MapViewPort.MaxClientViewPortY);
+
+        if (spectators.Count == 0) return null;
+
+        var targets = new List<ICombatActor>();
+
+        foreach (var spectator in spectators)
+        {
+            var isPlayerOrPlayerSummon = spectator is IPlayer or Summon.Summon { Master: IPlayer };
+
+            if (!isPlayerOrPlayerSummon) continue;
+
+            if (!monster.CanSeeInvisible && spectator.IsInvisible) continue;
+
+            if (IgnoreTarget(monster, spectator as ICombatActor)) continue;
+
+            targets.Add(spectator as ICombatActor);
+        }
+
+        if (targets.Count == 1)
+        {
+            return targets[0];
+        }
+
+        ICombatActor priorityTarget = null;
+        var priorityValue = 0;
+
+        foreach (var target in targets)
+        {
+            var targetPriorityValue = 0;
+            
+            var result = mapTool.PathFinder.Find(monster, target.Location, monster.PathSearchParams,
+                monster.TileEnterRule);
+
+            if (result.Found)
+            {
+                targetPriorityValue += 1;
+            }
+
+            if (monster.PathSearchParams.KeepDistance)
+            {
+                var isClearSight = mapTool.IsClearSight(monster.Location, target.Location, checkFloor: false);
+                if (isClearSight)
+                {
+                    targetPriorityValue += 1;
+                }
+            }
+            else
+            {
+                targetPriorityValue += 1;
+            }
+
+            if (targetPriorityValue == 2) return target;
+
+            if (targetPriorityValue > priorityValue)
+            {
+                priorityTarget = target;
+                priorityValue = targetPriorityValue;
+            }
+        }
+
+        return priorityTarget;
     }
 }

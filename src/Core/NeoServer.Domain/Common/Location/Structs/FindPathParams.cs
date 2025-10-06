@@ -51,6 +51,7 @@ public struct FindPathParams
     public int MaxSearchDist { get; set; }
     public int MinTargetDist { get; set; }
     public int MaxTargetDist { get; set; }
+    public bool PushMonsters { get; set; }
 
     public bool CannotWalk(Location startPos, Location pos)
     {
