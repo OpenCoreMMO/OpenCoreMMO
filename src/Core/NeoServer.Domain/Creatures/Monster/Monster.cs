@@ -37,6 +37,20 @@ public class Monster : WalkableMonster, IMonster
 
         State = MonsterState.Sleeping;
         Targets = new TargetList(this);
+        MonsterTargets = new MonsterTargetList();
+    }
+
+    public MonsterTargetList MonsterTargets { get; set; }
+
+    /// <summary>
+    /// Adds a new target to the monster's tracking list.
+    /// Priority targets are placed at the front for immediate attention.
+    /// </summary>
+    /// <param name="target">The creature to track as a potential threat.</param>
+    /// <param name="hasPriority">Whether this target should be prioritized over others.</param>
+    public void AddTarget(ICombatActor target, bool hasPriority = false)
+    {
+        MonsterTargets.Add(target, hasPriority);
     }
 
     protected byte TargetDistance =>
@@ -94,24 +108,25 @@ public class Monster : WalkableMonster, IMonster
         if (IsDead) return;
         if (spectator is not ICombatActor target) return;
 
-        if (Targets.HasTarget(spectator))
+        if (CanSee(spectator.Location) && CanSee(spectator))
         {
-            Targets.OnTargetMoved(target);
+            MonsterTargets.Add(target, hasPriority: true);
         }
-
+        else
+        {
+            MonsterTargets.Remove(target);
+        }
+        
         base.OnSpectatorMoved(spectator);
     }
-    
+
     public override void OnSpectatorLoggedOut(ICreature spectator)
     {
         if (IsDead) return;
         if (spectator is not ICombatActor target) return;
-        
-        if (Targets.HasTarget(spectator))
-        {
-            Targets.RemoveTarget(target);
-        }
-        
+
+        MonsterTargets.Remove(target);
+
         base.OnSpectatorLoggedOut(spectator);
     }
 
@@ -119,12 +134,25 @@ public class Monster : WalkableMonster, IMonster
     {
         if (IsDead) return;
 
-        if (Targets.HasTarget(spectator))
-        {
-            Targets.RemoveTarget(spectator);
-        }
+        MonsterTargets.Remove(spectator);
 
         base.OnSpectatorDies(spectator);
+    }
+
+    public override void OnSpectatorChangedVisibility(ICreature spectator)
+    {
+        if(spectator is not ICombatActor target) return;
+        
+        if (CanSee(spectator))
+        {
+            MonsterTargets.Add(target, hasPriority: true);
+        }
+        else
+        {
+            MonsterTargets.Remove(target);       
+        }
+
+        base.OnSpectatorChangedVisibility(spectator);
     }
 
     public void Reborn()
@@ -329,7 +357,7 @@ public class Monster : WalkableMonster, IMonster
             if (createdSummon is null) continue;
 
             Cooldowns.Start(summon);
-            
+
             _aliveSummons ??= new Dictionary<string, byte>();
 
             if (foundAliveSummon) _aliveSummons[summon.Name] = (byte)(count + 1);
@@ -451,6 +479,7 @@ public class Monster : WalkableMonster, IMonster
     }
 
     #region Summon Event Attachment
+
     public override void OnSummonDie(Summon.Summon summon)
     {
         if (summon is null) return;

@@ -14,6 +14,7 @@ public class CombatTarget
     public Direction[] PathToCreature { get; private set; }
     public bool CanReachCreature { get; private set; } = true;
     public bool HasSightClear { get; private set; }
+    public LinkedListNode<CombatTarget> Node { get; set; }
 
     public bool IsInRange(IMonster monster)
     {

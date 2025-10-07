@@ -1,6 +1,8 @@
-﻿using NeoServer.Domain.Common.Contracts.Services;
+﻿using NeoServer.Domain.Combat;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Monster;
+using NeoServer.Domain.Creatures.Monster.Combat;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
@@ -50,6 +52,7 @@ public interface IMonster : IWalkableMonster, ICombatActor
     bool IsSummon { get; }
     bool IsHostile { get; }
     bool IsCurrentTargetUnreachable { get; }
+    MonsterTargetList MonsterTargets { get; set; }
     event Born OnWasBorn;
     event MonsterChangeState OnChangedState;
 

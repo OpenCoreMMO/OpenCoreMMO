@@ -284,7 +284,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public virtual void TurnInvisible()
     {
         IsInvisible = true;
-        OnChangedVisibility?.Invoke(this);
+        EventAggregator.Invoke(new CreatureChangedVisibilityEvent(this));
     }
 
     public override Direction GetNextStep()
@@ -296,7 +296,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public virtual void TurnVisible()
     {
         IsInvisible = false;
-        OnChangedVisibility?.Invoke(this);
+        EventAggregator.Invoke(new CreatureChangedVisibilityEvent(this));
     }
 
     public void StartCooldown(Guid cooldownId, uint duration)

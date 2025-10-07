@@ -6,6 +6,66 @@ using NeoServer.Domain.Common.Location;
 
 namespace NeoServer.Domain.Creatures.Monster.Services;
 
+public class MonsterTargetListService(IMap map)
+{
+    /// <summary>
+    /// Maintains the monster's combat focus by cleaning up its target list.
+    /// Removes targets that are no longer viable threats, such as dead creatures or those outside the monster's perception range.
+    /// This ensures the monster only pursues active, reachable enemies.
+    /// </summary>
+    /// <param name="monster">The monster whose target priorities need updating.</param>
+    public void Update(Monster monster)
+    {
+        // Begin checking from the monster's first tracked target
+        var current = monster.MonsterTargets.First;
+
+        // Review each target in the monster's list
+        while (current != null)
+        {
+            var target = current.Value;
+
+            // Determine if this target is still a valid threat
+            if (target.Creature.IsDead || !monster.CanSee(target.Creature) || !monster.CanSee(target.Creature.Location))
+            {
+                var next = current.Next; // Remember the next target before removing this one
+                monster.MonsterTargets.Remove(target.Creature); // Remove the invalid target from tracking
+                current = next;
+                continue; // Proceed to check the next target
+            }
+
+            current = current.Next;
+        }   
+        
+        // Scan nearby creatures to find new potential targets
+        var spectators = map.GetSpectators(monster.Location);
+
+        foreach (var spectator in spectators)
+        {
+            // Only consider players and their summons as valid targets
+            if (spectator is not ICombatActor target) continue;
+            var isPlayerOrPlayerSummon = spectator is IPlayer or Summon.Summon { Master: IPlayer };
+
+            if (!isPlayerOrPlayerSummon) continue;
+
+            // Skip dead creatures
+            if (target.IsDead) continue;
+
+            // Must be visible to the monster
+            if (!monster.CanSee(target.Location)) continue;
+            if (!monster.CanSee(target)) continue;
+
+            // Skip creatures in protection zones
+            if (target.Tile?.ProtectionZone ?? false) continue;
+
+            // Must be on the same floor
+            if (!monster.Location.SameFloorAs(target.Location)) continue;
+
+            // Add as a new target (MonsterTargetList handles duplicates)
+            monster.MonsterTargets.Add(target, false);
+        }
+    }
+}
+
 public class TargetDetectorService(IMapTool mapTool, IMap map)
 {
     /// <summary>
@@ -131,7 +191,7 @@ public class TargetDetectorService(IMapTool mapTool, IMap map)
         foreach (var target in targets)
         {
             var targetPriorityValue = 0;
-            
+
             var result = mapTool.PathFinder.Find(monster, target.Location, monster.PathSearchParams,
                 monster.TileEnterRule);
 

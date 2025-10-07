@@ -123,23 +123,23 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     }
     
     public virtual void OnSpectatorMoved(ICreature spectator)
-    {
-        
+    {   
     }
 
     public virtual void OnSpectatorDies(ICombatActor spectator)
-    {
-        
+    {   
     }
     
     public virtual void OnSummonDie(Summon summon)
     {
-        
     }
 
     public virtual void OnSpectatorLoggedOut(ICreature spectator)
+    {   
+    }
+
+    public virtual void OnSpectatorChangedVisibility(ICreature spectator)
     {
-        
     }
 
     public void BackToOldOutfit()

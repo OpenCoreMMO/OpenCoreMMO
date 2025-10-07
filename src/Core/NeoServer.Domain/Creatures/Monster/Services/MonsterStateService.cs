@@ -7,7 +7,7 @@ namespace NeoServer.Domain.Creatures.Monster.Services;
 /// <summary>
 /// Service responsible for updating the state of a monster based on its current situation.
 /// </summary>
-public class MonsterStateService(ISummonService summonService, TargetDetectorService targetDetectorService)
+public class MonsterStateService(ISummonService summonService, TargetDetectorService targetDetectorService, MonsterTargetListService monsterTargetListService)
 {
     public void UpdateState(IMonster monster)
     {
@@ -15,6 +15,8 @@ public class MonsterStateService(ISummonService summonService, TargetDetectorSer
         
         // Update the monster's targets before updating the state
         targetDetectorService.UpdateTargets(monster as Monster);
+        
+        monsterTargetListService.Update(monster as Monster);        
 
         // Update the monster's state based on its current situation
         monster.UpdateState();

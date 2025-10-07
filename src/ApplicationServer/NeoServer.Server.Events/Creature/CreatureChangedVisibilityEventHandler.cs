@@ -1,46 +1,18 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Networking.Packets.Outgoing.Creature;
-using NeoServer.Networking.Packets.Outgoing.Item;
-using NeoServer.Server.Common.Contracts;
+using NeoServer.Domain.Creatures.Events;
 
 namespace NeoServer.Server.Events.Creature;
 
-public class CreatureChangedVisibilityEventHandler
+public class CreatureChangedVisibilityEventHandler(IMap map)
+    : IApplicationEventHandler<CreatureChangedVisibilityEvent>
 {
-    private readonly IGameServer game;
-    private readonly IMap map;
-
-    public CreatureChangedVisibilityEventHandler(IMap map, IGameServer game)
+    public void Handle(CreatureChangedVisibilityEvent @event)
     {
-        this.map = map;
-        this.game = game;
-    }
-
-    public void Execute(IWalkableCreature creature)
-    {
-        foreach (var spectator in map.GetPlayersAtPositionZone(creature.Location))
+        var creature = @event.Creature;
+        foreach (var spectator in map.GetSpectators(creature.Location))
         {
-            if (ReferenceEquals(spectator, creature)) continue;
-
-            if (!game.CreatureManager.GetPlayerConnection(spectator.CreatureId, out var connection)) continue;
-
-            if (!creature.Tile.TryGetStackPositionOfThing((IPlayer)spectator, creature, out var stackPosition))
-                continue;
-
-            if (!spectator.CanSee(creature.Location)) continue;
-
-            if (creature.IsInvisible)
-            {
-                connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(creature.Tile, stackPosition));
-            }
-            else
-            {
-                connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(creature, stackPosition));
-                connection.OutgoingPackets.Enqueue(new AddCreaturePacket((IPlayer)spectator, creature));
-            }
-
-            connection.Send();
+            creature.OnSpectatorChangedVisibility(spectator);
         }
     }
 }
