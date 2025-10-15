@@ -61,9 +61,10 @@ public static class ServiceInjection
         builder.AddSingleton<QuestService>();
         builder.AddSingleton<AreaCalculationService>();
         builder.AddSingleton<MonsterStateService>();
-        builder.AddSingleton<TargetDetectorService>();
         builder.AddSingleton<ITradeService, SafeTradeSystem>();
         builder.AddSingleton<PlayerChannelService>();
+        builder.AddSingleton<MonsterStateService>();
+        builder.AddSingleton<MonsterTargetListService>();
 
         //Operations
         builder.AddSingleton<TradeItemExchanger>();

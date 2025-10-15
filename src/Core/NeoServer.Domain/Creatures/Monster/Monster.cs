@@ -36,11 +36,10 @@ public class Monster : WalkableMonster, IMonster
         Direction = spawn?.Direction ?? Direction.North;
 
         State = MonsterState.Sleeping;
-        Targets = new TargetList(this);
-        MonsterTargets = new MonsterTargetList();
+        Targets = new MonsterTargetList(this);
     }
 
-    public MonsterTargetList MonsterTargets { get; set; }
+    public MonsterTargetList Targets { get; set; }
 
     /// <summary>
     /// Adds a new target to the monster's tracking list.
@@ -50,7 +49,7 @@ public class Monster : WalkableMonster, IMonster
     /// <param name="hasPriority">Whether this target should be prioritized over others.</param>
     public void AddTarget(ICombatActor target, bool hasPriority = false)
     {
-        MonsterTargets.Add(target, hasPriority);
+        Targets.Add(target, hasPriority);
     }
 
     protected byte TargetDistance =>
@@ -64,8 +63,6 @@ public class Monster : WalkableMonster, IMonster
     private bool KeepDistance => TargetDistance > 1;
     private MonsterCombatType[] Attacks => Metadata.Attacks;
     internal ICombatDefense[] Defenses => Metadata.Defenses;
-    public TargetList Targets { get; }
-    public override bool CanAttackAnyTarget => Targets.CanAttackAnyTarget;
     public bool HasDistanceAttack => Metadata.HasDistanceAttack;
 
     public override FindPathParams PathSearchParams
@@ -110,11 +107,11 @@ public class Monster : WalkableMonster, IMonster
 
         if (CanSee(spectator.Location) && CanSee(spectator))
         {
-            MonsterTargets.Add(target, hasPriority: true);
+            Targets.Add(target, hasPriority: true);
         }
         else
         {
-            MonsterTargets.Remove(target);
+            Targets.Remove(target);
         }
         
         base.OnSpectatorMoved(spectator);
@@ -125,7 +122,7 @@ public class Monster : WalkableMonster, IMonster
         if (IsDead) return;
         if (spectator is not ICombatActor target) return;
 
-        MonsterTargets.Remove(target);
+        Targets.Remove(target);
 
         base.OnSpectatorLoggedOut(spectator);
     }
@@ -134,7 +131,7 @@ public class Monster : WalkableMonster, IMonster
     {
         if (IsDead) return;
 
-        MonsterTargets.Remove(spectator);
+        Targets.Remove(spectator);
 
         base.OnSpectatorDies(spectator);
     }
@@ -145,11 +142,11 @@ public class Monster : WalkableMonster, IMonster
         
         if (CanSee(spectator))
         {
-            MonsterTargets.Add(target, hasPriority: true);
+            Targets.Add(target, hasPriority: true);
         }
         else
         {
-            MonsterTargets.Remove(target);       
+            Targets.Remove(target);       
         }
 
         base.OnSpectatorChangedVisibility(spectator);
@@ -193,8 +190,6 @@ public class Monster : WalkableMonster, IMonster
     public ISpawnPoint Spawn { get; }
 
     public bool IsHostile => Metadata.HasFlag(CreatureFlagAttribute.Hostile);
-    public bool IsCurrentTargetUnreachable => Targets.IsCurrentTargetUnreachable;
-
     public uint Experience => Metadata.Experience;
     public bool IsInCombat => State == MonsterState.InCombat;
     public bool IsSleeping => State == MonsterState.Sleeping;
@@ -234,11 +229,11 @@ public class Monster : WalkableMonster, IMonster
 
         if (IsDead || !canSee)
         {
-            Targets.RemoveTarget(creature);
+            Targets.Remove(enemy);
             return;
         }
 
-        Targets.AddTarget(enemy);
+        Targets.Add(enemy);
     }
 
     public override bool CanSee(Location pos)
@@ -247,9 +242,7 @@ public class Monster : WalkableMonster, IMonster
     }
 
     public virtual void UpdateState()
-    {
-        //TargetDetectorService.UpdateTargets(this, MapTool);
-
+    {   
         if (!Targets.Any())
         {
             State = Cooldowns.Expired(CooldownType.Awaken) ? MonsterState.Sleeping : MonsterState.LookingForEnemy;
@@ -263,7 +256,7 @@ public class Monster : WalkableMonster, IMonster
             return;
         }
 
-        if (!CanAttackAnyTarget)
+        if (!HasFollowPath)
         {
             State = MonsterState.LookingForEnemy;
             return;
@@ -279,22 +272,19 @@ public class Monster : WalkableMonster, IMonster
 
     public void MoveAroundEnemy()
     {
-        if (!Targets.TryGetTarget(AutoAttackTargetId, out var combatTarget)) return;
+        if (!IsInPerfectPositionToCombat()) return;
 
-        if (!IsInPerfectPositionToCombat(combatTarget)) return;
-
-        MoveAroundEnemy(combatTarget);
+        MoveAroundEnemy(CurrentTarget);
     }
 
     public virtual void SelectTargetToAttack()
     {
-        if (Attacking && !Cooldowns.Cooldowns[CooldownType.TargetChange].Expired) return;
+        if (Attacking && HasFollowPath && !Cooldowns.Cooldowns[CooldownType.TargetChange].Expired) return;
 
-        //TargetDetectorService.UpdateTargets(this, MapTool);
-        var target = Targets.PossibleTargetToAttack;
+        var target = Targets.SearchTarget();
 
         if (target is null) return;
-        ChangeAttackTarget(target.Creature);
+        ChangeAttackTarget(target);
     }
 
     public void Sleep()
@@ -307,7 +297,7 @@ public class Monster : WalkableMonster, IMonster
 
     public void Escape()
     {
-        MonsterEscape.Escape(this);
+        EscapeFromEnemy();
     }
 
     public void Yell()
@@ -411,20 +401,25 @@ public class Monster : WalkableMonster, IMonster
         Cooldowns.Start(CooldownType.Awaken, 10000);
     }
 
-    public bool IsInPerfectPositionToCombat(CombatTarget target)
+    public bool IsInPerfectPositionToCombat()
     {
-        if (HasDistanceAttack && target.HasSightClear && !target.CanReachCreature && target.IsInRange(this))
+        var targetIsInRange = CurrentTarget.Location.GetSqmDistance(Location) <=
+            Metadata.MaxRangeDistanceAttack;
+        
+        var hasSightClear = MapTool.SightClearChecker?.Invoke(Location, CurrentTarget.Location, false) ?? false;
+        
+        if (HasDistanceAttack && hasSightClear && !HasFollowPath && targetIsInRange)
             return true;
 
         if (KeepDistance)
         {
-            if (target.Creature.Location.GetMaxSqmDistance(Location) == TargetDistance)
-                return target.CanReachCreature;
+            if (CurrentTarget.Location.GetMaxSqmDistance(Location) == TargetDistance && hasSightClear)
+                return true;
         }
         else
         {
-            if (target.Creature.Location.GetMaxSqmDistance(Location) <= TargetDistance)
-                return target.CanReachCreature;
+            if (CurrentTarget.Location.GetMaxSqmDistance(Location) <= TargetDistance && HasFollowPath && hasSightClear)
+                return true;
         }
 
         return false;
@@ -437,7 +432,7 @@ public class Monster : WalkableMonster, IMonster
 
     public override void OnWalkableCreatureDisappear(ICreature creature)
     {
-        Targets.RemoveTarget(creature);
+        Targets.Remove(creature as ICombatActor);
         SelectTargetToAttack();
     }
 
@@ -456,7 +451,7 @@ public class Monster : WalkableMonster, IMonster
 
     public override void Dismiss()
     {
-        Targets?.Clear();
+        Targets.Clear();
         StopDefending();
         base.Dismiss();
     }

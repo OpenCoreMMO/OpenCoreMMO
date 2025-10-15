@@ -2,5 +2,5 @@
 
 public interface IWalkableMonster
 {
-    bool LookForNewEnemy();
+    bool DoRandomStep();
 }

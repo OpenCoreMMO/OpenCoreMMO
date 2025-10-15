@@ -65,7 +65,7 @@ public class MonsterStateTest
         playerTile.AddCreature(player);
         monster.SetAsEnemy(player);
         
-        new TargetDetectorService(new MapTool(map, new PathFinder(map)), map).UpdateTargets(monster as Domain.Creatures.Monster.Monster);
+        new MonsterTargetListService(map).Update(monster as Domain.Creatures.Monster.Monster);
 
         //act
         monster.UpdateState();
@@ -151,7 +151,7 @@ public class MonsterStateTest
 
         monster.SetAsEnemy(player);
 
-        new TargetDetectorService(new MapTool(map, new PathFinder(map)), map).UpdateTargets(monster as Domain.Creatures.Monster.Monster);
+        new MonsterTargetListService(map).Update(monster as Domain.Creatures.Monster.Monster);
 
         //act
         monster.UpdateState();

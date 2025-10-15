@@ -158,7 +158,7 @@ public class TargetLostTests
         player.SetNewLocation(new Location(105, 105, 7));
 
         // Add player as target
-        monster.Targets.AddTarget(player);
+        monster.Targets.Add(player);
 
         //act
         // Move player out of sight
@@ -183,7 +183,7 @@ public class TargetLostTests
         player.SetNewLocation(new Location(105, 105, 7));
 
         // Add player as target
-        monster.Targets.AddTarget(player);
+        monster.Targets.Add(player);
 
         //act
         // Kill the player
@@ -206,7 +206,7 @@ public class TargetLostTests
         player.SetNewLocation(new Location(105, 105, 7));
 
         // Add player as target
-        monster.Targets.AddTarget(player);
+        monster.Targets.Add(player);
 
         //act
         // Player logs out

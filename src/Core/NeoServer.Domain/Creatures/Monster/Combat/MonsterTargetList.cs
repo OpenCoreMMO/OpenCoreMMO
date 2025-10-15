@@ -1,13 +1,22 @@
 using NeoServer.Domain.Combat;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Creatures.Monster.Combat;
+
+public enum TargetSearchType
+{
+    Default,
+    Nearest,
+    Random,
+    AttackRange
+}
 
 /// <summary>
 /// Manages a monster's target list with efficient add/remove operations.
 /// Uses a LinkedList for ordered storage and a Dictionary for O(1) lookups by creature ID.
 /// </summary>
-public class MonsterTargetList
+public class MonsterTargetList(IMonster monster)
 {
     private readonly LinkedList<CombatTarget> _list = [];
     private readonly Dictionary<uint, LinkedListNode<CombatTarget>> _nodeMap = new();
@@ -52,4 +61,116 @@ public class MonsterTargetList
     /// Checks if the list contains any targets.
     /// </summary>
     public bool Any() => _list.Count != 0;
+
+    /// <summary>
+    /// Searches for a suitable target based on the specified search type.
+    /// </summary>
+    /// <param name="searchType">The type of search to perform.</param>
+    /// <returns>The selected target or null if none found.</returns>
+    public ICombatActor SearchTarget(TargetSearchType searchType = TargetSearchType.Default)
+    {
+        var candidates = new List<CombatTarget>();
+        var myPos = monster.Location;
+
+        // Build a list of valid candidates
+        foreach (var combatTarget in _list)
+        {
+            var creature = combatTarget.Creature;
+            if (monster.AutoAttackTargetId == creature.CreatureId || !IsTarget(creature))
+                continue;
+
+            if (searchType == TargetSearchType.Random || CanUseAttack(myPos, creature))
+            {
+                candidates.Add(combatTarget);
+            }
+        }
+
+        CombatTarget selectedTarget = null;
+
+        // Select target based on a search type
+        switch (searchType)
+        {
+            case TargetSearchType.Nearest:
+                if (candidates.Count == 0)
+                {
+                    // Search all targets if no candidates
+                    foreach (var combatTarget in _list)
+                    {
+                        if (IsTarget(combatTarget.Creature))
+                        {
+                            candidates.Add(combatTarget);
+                        }
+                    }
+                }
+
+                var minDistance = int.MaxValue;
+                foreach (var candidate in candidates)
+                {
+                    var distance = Math.Max(Math.Abs(myPos.X - candidate.Creature.Location.X),
+                                           Math.Abs(myPos.Y - candidate.Creature.Location.Y));
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        selectedTarget = candidate;
+                    }
+                }
+                break;
+
+            case TargetSearchType.Random:
+            case TargetSearchType.Default:
+            case TargetSearchType.AttackRange:
+                if (candidates.Count > 0)
+                {
+                    selectedTarget = candidates[Random.Shared.Next(candidates.Count)];
+                }
+                break;
+        }
+
+        // Try to select the target
+        if (selectedTarget != null && SelectTarget(selectedTarget.Creature))
+        {
+            return selectedTarget.Creature;
+        }
+
+        // Fallback: pick the first available target
+        foreach (var combatTarget in _list)
+        {
+            if (monster.AutoAttackTargetId != combatTarget.Creature.CreatureId &&
+                SelectTarget(combatTarget.Creature))
+            {
+                return combatTarget.Creature;
+            }
+        }
+
+        return null;
+    }
+
+    private bool IsTarget(ICombatActor creature)
+    {
+        // Target must be alive and attackable
+        return !creature.IsDead && creature.CanBeAttacked;
+    }
+
+    private bool CanUseAttack(Location myPos, ICombatActor creature)
+    {
+        // Check if monster can attack the creature (basic range check)
+        var distance = myPos.GetSqmDistance(creature.Location);
+        return distance <= 1; // Simplified range check
+    }
+
+    private bool SelectTarget(ICombatActor target)
+    {
+        // Set the monster's attack target and start following
+        monster.SetAttackTarget(target);
+        monster.Follow(target);
+        return true;
+    }
+
+    public void Clear()
+    {
+        _list.Clear();
+        _nodeMap.Clear();
+    }
+
+    public bool HasTarget(ICreature player) => _nodeMap.ContainsKey(player.CreatureId);
 }

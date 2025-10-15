@@ -19,17 +19,16 @@ public abstract class WalkableMonster : CombatActor, IWalkableMonster
     }
 
     public virtual IMonsterType Metadata => CreatureType as IMonsterType;
-    public abstract bool CanAttackAnyTarget { get; }
     public override ITileEnterRule TileEnterRule => MonsterEnterTileRule.Rule;
 
-    public bool LookForNewEnemy()
+    public bool DoRandomStep()
     {
         StopFollowing();
-        StopAttack();
+        //StopAttack();
 
         Cooldowns.Start(CooldownType.Awaken, 10000);
 
-        if (IsDead || CanAttackAnyTarget) return false;
+        if (IsDead || HasFollowPath) return false;
 
         var direction = GetRandomStep();
 
@@ -40,21 +39,23 @@ public abstract class WalkableMonster : CombatActor, IWalkableMonster
         return true;
     }
 
-    internal void Escape(Location fromLocation)
+    internal void EscapeFromEnemy()
     {
         StopFollowing();
+        
+        if (CurrentTarget is null) return;
 
         if (IsDead) return;
         if (MapTool?.PathFinder is null) return;
 
-        var result = MapTool.PathFinder.Find(this, fromLocation, FindPathParams.EscapeParams, TileEnterRule);
+        var result = MapTool.PathFinder.Find(this, CurrentTarget.Location, FindPathParams.EscapeParams, TileEnterRule);
 
         if (!result.Found) return;
 
         TryWalkTo(result.Directions);
     }
 
-    public void MoveAroundEnemy(CombatTarget enemy)
+    public void MoveAroundEnemy(ICreature enemy)
     {
         if (!Attacking) return;
 
@@ -66,11 +67,13 @@ public abstract class WalkableMonster : CombatActor, IWalkableMonster
 
         var nextLocation = Location.GetNextLocation(direction);
 
-        var targetLocation = enemy.Creature.Location;
+        var targetLocation = enemy.Location;
 
         var tooFar = targetLocation.GetMaxSqmDistance(nextLocation) > Metadata.MaxRangeDistanceAttack;
+        
+        var hasSightClear = MapTool.SightClearChecker?.Invoke(Location, CurrentTarget.Location, false) ?? false;
 
-        if (Metadata.HasDistanceAttack && !enemy.CanReachCreature && enemy.HasSightClear && !tooFar)
+        if (Metadata.HasDistanceAttack && !HasFollowPath && hasSightClear && !tooFar)
         {
             TryWalkTo(direction);
             return;

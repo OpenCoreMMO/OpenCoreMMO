@@ -7,29 +7,27 @@ namespace NeoServer.Domain.Creatures.Monster.Services;
 /// <summary>
 /// Service responsible for updating the state of a monster based on its current situation.
 /// </summary>
-public class MonsterStateService(ISummonService summonService, TargetDetectorService targetDetectorService, MonsterTargetListService monsterTargetListService)
+public class MonsterStateService(ISummonService summonService, MonsterTargetListService monsterTargetListService)
 {
     public void UpdateState(IMonster monster)
     {
         if (monster.IsDead) return;
         
         // Update the monster's targets before updating the state
-        targetDetectorService.UpdateTargets(monster as Monster);
+        //targetDetectorService.UpdateTargets(monster as Monster);
         
         monsterTargetListService.Update(monster as Monster);        
+        
+        //Try to find a target to attack
+        monster.SelectTargetToAttack();
 
         // Update the monster's state based on its current situation
         monster.UpdateState();
-
-        // Stop attacking if the current target is unreachable
-        if (monster.IsCurrentTargetUnreachable)
-        {
-            monster.StopAttack();
-        }
         
         if (monster.State == MonsterState.LookingForEnemy)
         {
-            monster.LookForNewEnemy();
+            //Walk a random step
+            monster.DoRandomStep();
             monster.CreateSummon(summonService);
         }
 
