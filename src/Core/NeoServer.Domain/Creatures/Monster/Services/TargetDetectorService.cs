@@ -4,7 +4,7 @@ using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Creatures.Monster.Services;
 
-public class MonsterTargetListService(IMap map)
+public class TargetDetectorService(IMap map)
 {
     /// <summary>
     /// Maintains the monster's combat focus by cleaning up its target list.
@@ -41,10 +41,11 @@ public class MonsterTargetListService(IMap map)
         {
             // Only consider players and their summons as valid targets
             if (spectator is not ICombatActor target) continue;
-            
+
             // Skip players that are flagged as not being attackable
-            if (target is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked)) continue;
-            
+            if (target is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters))
+                continue;
+
             var isPlayerOrPlayerSummon = spectator is IPlayer or Summon.Summon { Master: IPlayer };
 
             if (!isPlayerOrPlayerSummon) continue;
@@ -55,10 +56,7 @@ public class MonsterTargetListService(IMap map)
             // Must be visible to the monster
             if (!monster.CanSee(target.Location)) continue;
             if (!monster.CanSee(target)) continue;
-
-            // Skip creatures in protection zones
-            if (target.Tile?.ProtectionZone ?? false) continue;
-
+            
             // Must be on the same floor
             if (!monster.Location.SameFloorAs(target.Location)) continue;
 

@@ -87,7 +87,7 @@ public class MonsterTargetList(IMonster monster)
 
         CombatTarget selectedTarget = null;
 
-        // Select target based on a search type
+        // Select a target based on a search type
         switch (searchType)
         {
             case TargetSearchType.Nearest:

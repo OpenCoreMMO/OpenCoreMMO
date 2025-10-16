@@ -506,7 +506,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public abstract ushort MinimumAttackPower { get; }
     public abstract bool UsingDistanceWeapon { get; }
     public uint AttackEvent { get; set; }
-    public virtual bool CanBeAttacked => true; //todo: set as a flag
+    public virtual bool CanBeAttacked => !Tile.ProtectionZone && !IsDead; //todo: set as a flag
 
     public IDictionary<ConditionType, ICondition> Conditions { get; set; } =
         new Dictionary<ConditionType, ICondition>();
