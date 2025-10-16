@@ -1,5 +1,6 @@
 using Moq;
 using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Creatures.Monster;
@@ -101,5 +102,42 @@ public class MonsterCombatTest
         monster.CurrentTarget.Should().BeNull();
         monster.IsFollowing.Should().BeFalse();
         monster.Attacking.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Monster_targets_closest_player_when_multiple_players_in_range()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7);
+
+        var closestPlayer = PlayerTestDataBuilder.Build();
+        closestPlayer.SetNewLocation(new Location(101, 102, 7));
+
+        var fartherPlayer = PlayerTestDataBuilder.Build();
+        fartherPlayer.SetNewLocation(new Location(105, 102, 7));
+
+        var evenFartherPlayer = PlayerTestDataBuilder.Build();
+        evenFartherPlayer.SetNewLocation(new Location(105, 102, 7));
+
+        var monster = MonsterTestDataBuilder.Build();
+        monster.Metadata.Flags[CreatureFlagAttribute.TargetDistance] = 2; // Set to use distance attack for the nearest targeting
+        monster.SetNewLocation(new Location(102, 102, 7));
+
+        map.PlaceCreature(closestPlayer);
+        map.PlaceCreature(fartherPlayer);
+        map.PlaceCreature(evenFartherPlayer);
+        map.PlaceCreature(monster);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+
+        //act
+        monsterStateService.UpdateState(monster);
+
+        //assert
+        monster.State.Should().Be(MonsterState.InCombat);
+        monster.CurrentTarget.Should().Be(closestPlayer);
+        monster.IsFollowing.Should().BeTrue();
+        monster.Attacking.Should().BeTrue();
     }
 }
