@@ -256,7 +256,7 @@ public class Player : CombatActor, IPlayer
     }
 
     public byte LevelPercent => GetSkillPercent(SkillType.Level);
-    public override bool CanBeAttacked => Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked) && base.CanBeAttacked;
+    public override bool CanBeAttacked => !Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked) && base.CanBeAttacked;
     public override void GainExperience(long experience)
     {
         if (experience == 0) return;
