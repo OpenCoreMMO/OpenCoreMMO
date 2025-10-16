@@ -127,7 +127,7 @@ public class MonsterTargetList(IMonster monster)
         }
 
         // Try to select the target
-        if (selectedTarget != null && SelectTarget(selectedTarget.Creature))
+        if (selectedTarget != null && CanSelectTarget(selectedTarget.Creature))
         {
             return selectedTarget.Creature;
         }
@@ -136,7 +136,7 @@ public class MonsterTargetList(IMonster monster)
         foreach (var combatTarget in _list)
         {
             if (monster.AutoAttackTargetId != combatTarget.Creature.CreatureId &&
-                SelectTarget(combatTarget.Creature))
+                CanSelectTarget(combatTarget.Creature))
             {
                 return combatTarget.Creature;
             }
@@ -158,11 +158,20 @@ public class MonsterTargetList(IMonster monster)
         return distance <= 1; // Simplified range check
     }
 
-    private bool SelectTarget(ICombatActor target)
+    private bool CanSelectTarget(ICombatActor target)
     {
-        // Set the monster's attack target and start following
-        monster.SetAttackTarget(target);
-        monster.Follow(target);
+        if(!IsTarget(target)) return false;
+
+        if (!HasTarget(target))
+        {
+            return false;
+        }
+
+        if (!monster.CanSee(target) || !monster.CanSee(target.Location))
+        {
+            return false;
+        }
+        
         return true;
     }
 
