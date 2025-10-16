@@ -167,12 +167,7 @@ public class MonsterTargetList(IMonster monster)
             return false;
         }
 
-        if (!monster.CanSee(target) || !monster.CanSee(target.Location))
-        {
-            return false;
-        }
-        
-        return true;
+        return monster.CanSee(target) && monster.CanSee(target.Location);
     }
 
     public void Clear()

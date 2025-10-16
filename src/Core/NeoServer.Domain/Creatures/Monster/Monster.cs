@@ -113,7 +113,7 @@ public class Monster : WalkableMonster, IMonster
         {
             Targets.Remove(target);
         }
-        
+
         base.OnSpectatorMoved(spectator);
     }
 
@@ -138,15 +138,15 @@ public class Monster : WalkableMonster, IMonster
 
     public override void OnSpectatorChangedVisibility(ICreature spectator)
     {
-        if(spectator is not ICombatActor target) return;
-        
+        if (spectator is not ICombatActor target) return;
+
         if (CanSee(spectator))
         {
             Targets.Add(target, hasPriority: true);
         }
         else
         {
-            Targets.Remove(target);       
+            Targets.Remove(target);
         }
 
         base.OnSpectatorChangedVisibility(spectator);
@@ -242,7 +242,7 @@ public class Monster : WalkableMonster, IMonster
     }
 
     public virtual void UpdateState()
-    {   
+    {
         if (!Targets.Any())
         {
             State = Cooldowns.Expired(CooldownType.Awaken) ? MonsterState.Sleeping : MonsterState.LookingForEnemy;
@@ -279,11 +279,24 @@ public class Monster : WalkableMonster, IMonster
 
     public virtual void SelectTargetToAttack()
     {
-        if (Attacking && HasFollowPath && !Cooldowns.Cooldowns[CooldownType.TargetChange].Expired) return;
+        var hasTargetChange = Metadata.TargetChance.Chance > 0;
 
-        var target = Targets.SearchTarget();
+        if (Attacking && HasFollowPath && !hasTargetChange) return;
 
-        if (target is null) return;
+        var searchMode = TargetSearchType.Default;
+
+        if (hasTargetChange)
+        {
+            searchMode = TargetDistance <= 1 ? TargetSearchType.Random : TargetSearchType.Nearest;
+        }
+
+        var target = Targets.SearchTarget(searchMode);
+
+        var shouldChangeTarget = Metadata.TargetChance.Chance > 0 &&
+                                 !Cooldowns.Cooldowns.TryGetValue(CooldownType.TargetChange, out var cooldown) &&
+                                 !cooldown.Expired;
+
+        if (target is null || shouldChangeTarget) return;
         ChangeAttackTarget(target);
     }
 
@@ -404,10 +417,10 @@ public class Monster : WalkableMonster, IMonster
     public bool IsInPerfectPositionToCombat()
     {
         var targetIsInRange = CurrentTarget.Location.GetSqmDistance(Location) <=
-            Metadata.MaxRangeDistanceAttack;
-        
+                              Metadata.MaxRangeDistanceAttack;
+
         var hasSightClear = MapTool.SightClearChecker?.Invoke(Location, CurrentTarget.Location, false) ?? false;
-        
+
         if (HasDistanceAttack && hasSightClear && !HasFollowPath && targetIsInRange)
             return true;
 

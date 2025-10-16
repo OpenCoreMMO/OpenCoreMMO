@@ -41,6 +41,7 @@ public class TargetDetectorService(IMap map)
         {
             // Only consider players and their summons as valid targets
             if (spectator is not ICombatActor target) continue;
+            if (ReferenceEquals(spectator, monster)) continue;
 
             // Skip players that are flagged as not being attackable
             if (target is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters))
