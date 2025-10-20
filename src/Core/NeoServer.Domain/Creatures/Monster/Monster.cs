@@ -246,6 +246,8 @@ public class Monster : WalkableMonster, IMonster
         if (!Targets.Any())
         {
             State = Cooldowns.Expired(CooldownType.Awaken) ? MonsterState.Sleeping : MonsterState.LookingForEnemy;
+            StopAttack();
+            StopFollowing();
             return;
         }
 
@@ -408,7 +410,7 @@ public class Monster : WalkableMonster, IMonster
         Cooldowns.Start(CooldownType.TargetChange, Metadata.TargetChance.Interval);
     }
 
-    protected void Awake()
+    public void Awake()
     {
         State = MonsterState.Awake;
         Cooldowns.Start(CooldownType.Awaken, 10000);

@@ -20,6 +20,8 @@ public class MonsterTargetList(IMonster monster)
 {
     private readonly LinkedList<CombatTarget> _list = [];
     private readonly Dictionary<uint, LinkedListNode<CombatTarget>> _nodeMap = new();
+    
+    public int Count => _list.Count;
 
     /// <summary>
     /// Adds a target to the list. Priority targets are placed at the front.

@@ -22,10 +22,10 @@ public class MonsterCombatTest
         var map = MapTestDataBuilder.Build(100, 102, 100, 102, 7, 7);
 
         var player = PlayerTestDataBuilder.Build();
-        player.SetNewLocation(new Location(100,100,7));
-        
+        player.SetNewLocation(new Location(100, 100, 7));
+
         var monster = MonsterTestDataBuilder.Build();
-        monster.SetNewLocation(new Location(101,100,7));
+        monster.SetNewLocation(new Location(101, 100, 7));
 
         map.PlaceCreature(player);
         map.PlaceCreature(monster);
@@ -88,7 +88,8 @@ public class MonsterCombatTest
         map.PlaceCreature(monster);
 
         // Set the player's tile as a protection zone using reflection
-        var flagsField = typeof(BaseTile).GetField("Flags", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var flagsField = typeof(BaseTile).GetField("Flags",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         flagsField.SetValue(map[100, 100, 7], (uint)TileFlags.ProtectionZone);
 
         var summonServiceMock = new Mock<ISummonService>();
@@ -120,7 +121,8 @@ public class MonsterCombatTest
         evenFartherPlayer.SetNewLocation(new Location(105, 102, 7));
 
         var monster = MonsterTestDataBuilder.Build();
-        monster.Metadata.Flags[CreatureFlagAttribute.TargetDistance] = 2; // Set to use distance attack for the nearest targeting
+        monster.Metadata.Flags[CreatureFlagAttribute.TargetDistance] =
+            2; // Set to use distance attack for the nearest targeting
         monster.SetNewLocation(new Location(102, 102, 7));
 
         map.PlaceCreature(closestPlayer);
@@ -139,5 +141,91 @@ public class MonsterCombatTest
         monster.CurrentTarget.Should().Be(closestPlayer);
         monster.IsFollowing.Should().BeTrue();
         monster.Attacking.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Monster_switches_to_another_nearby_enemy_when_current_target_becomes_unreachable()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 120, 100, 105, 7, 7);
+
+        var initialTarget = PlayerTestDataBuilder.Build(name:"Initial Target");
+        initialTarget.SetNewLocation(new Location(101, 102, 7));
+
+     
+
+        var monster = MonsterTestDataBuilder.Build();
+        monster.SetNewLocation(new Location(102, 102, 7));
+
+        map.PlaceCreature(initialTarget);
+        map.PlaceCreature(monster);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+
+        // Initial attack on first player
+        monsterStateService.UpdateState(monster);
+        
+        ((Domain.Creatures.Monster.Monster)monster).Targets.Count.Should().Be(1);
+        monster.State.Should().Be(MonsterState.InCombat);
+        monster.CurrentTarget.Should().Be(initialTarget);
+        
+        var nearbyPlayer = PlayerTestDataBuilder.Build(name: "Nearby Player");
+        nearbyPlayer.SetNewLocation(new Location(110, 105, 7));
+        map.PlaceCreature(nearbyPlayer);
+
+        // Make the initial target unreachable by moving it out of range
+
+        map.RemoveCreature(initialTarget);
+        initialTarget.SetNewLocation(new Location(120, 105, 7)); // Far away;
+        map.PlaceCreature(initialTarget);
+
+        //act
+        monsterStateService.UpdateState(monster);
+
+        //assert
+        monster.State.Should().Be(MonsterState.InCombat);
+        monster.CurrentTarget.Should().Be(nearbyPlayer);
+        monster.IsFollowing.Should().BeTrue();
+        monster.Attacking.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Monster_enters_looking_for_enemy_state_when_current_target_becomes_unreachable_and_no_other_targets()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 120, 100, 105, 7, 7);
+
+        var initialTarget = PlayerTestDataBuilder.Build();
+        initialTarget.SetNewLocation(new Location(101, 102, 7));
+
+        var monster = MonsterTestDataBuilder.Build() as Domain.Creatures.Monster.Monster;
+        monster.SetNewLocation(new Location(102, 102, 7));
+        monster.Awake();
+
+        map.PlaceCreature(initialTarget);
+        map.PlaceCreature(monster);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+
+        // Initial attack on player
+        monsterStateService.UpdateState(monster);
+        monster.State.Should().Be(MonsterState.InCombat);
+        monster.CurrentTarget.Should().Be(initialTarget);
+
+        // Make the target unreachable by moving it out of range
+        map.RemoveCreature(initialTarget);
+        initialTarget.SetNewLocation(new Location(120, 105, 7)); // Far away;
+        map.PlaceCreature(initialTarget);
+
+        //act
+        monsterStateService.UpdateState(monster);
+
+        //assert
+        monster.State.Should().Be(MonsterState.LookingForEnemy);
+        monster.CurrentTarget.Should().BeNull();
+        monster.IsFollowing.Should().BeFalse();
+        monster.Attacking.Should().BeFalse();
     }
 }
