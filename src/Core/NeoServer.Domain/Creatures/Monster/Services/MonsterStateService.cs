@@ -23,6 +23,13 @@ public class MonsterStateService(ISummonService summonService, TargetDetectorSer
 
         // Update the monster's state based on its current situation
         monster.UpdateState();
+
+        // If there are no targets, stop following and attacking
+        if (!monster.Targets.Any())
+        {
+            monster.StopAttack();
+            monster.StopFollowing();
+        }
         
         if (monster.State == MonsterState.LookingForEnemy)
         {

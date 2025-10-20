@@ -51,6 +51,7 @@ public interface IMonster : IWalkableMonster, ICombatActor
 
     bool IsSummon { get; }
     bool IsHostile { get; }
+    MonsterTargetList Targets { get; set; }
     event Born OnWasBorn;
     event MonsterChangeState OnChangedState;
 
