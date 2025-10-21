@@ -129,6 +129,11 @@ public class Monster : WalkableMonster, IMonster
         if (spectator is not ICombatActor target) return;
 
         Targets.Remove(target);
+        
+        if (Equals(target, CurrentTarget))
+        {
+            StopAttack();
+        }
 
         base.OnSpectatorLoggedOut(spectator);
     }
@@ -138,6 +143,11 @@ public class Monster : WalkableMonster, IMonster
         if (IsDead) return;
 
         Targets.Remove(spectator);
+        
+        if (Equals(spectator, CurrentTarget))
+        {
+            StopAttack();
+        }
 
         base.OnSpectatorDies(spectator);
     }
@@ -153,6 +163,12 @@ public class Monster : WalkableMonster, IMonster
         else
         {
             Targets.Remove(target);
+            
+            if (Equals(target, CurrentTarget))
+            {
+                StopAttack();
+            }
+            
         }
 
         base.OnSpectatorChangedVisibility(spectator);

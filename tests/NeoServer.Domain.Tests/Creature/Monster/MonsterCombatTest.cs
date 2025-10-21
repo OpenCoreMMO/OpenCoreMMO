@@ -368,4 +368,46 @@ public class MonsterCombatTest
         monster.IsFollowing.Should().BeFalse();
         monster.Attacking.Should().BeTrue(); // Current behavior: monster keeps attacking while fleeing
     }
+
+    [Fact]
+    public void Monster_enters_idle_state_when_all_nearby_enemies_die_or_leave()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7);
+
+        var player = PlayerTestDataBuilder.Build();
+        player.SetNewLocation(new Location(101, 102, 7));
+
+        var monster = MonsterTestDataBuilder.Build();
+        monster.SetNewLocation(new Location(102, 102, 7));
+
+        map.PlaceCreature(player);
+        map.PlaceCreature(monster);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+
+        // Initial state: monster should be in combat
+        monsterStateService.UpdateState(monster);
+        monster.State.Should().Be(MonsterState.InCombat);
+        monster.CurrentTarget.Should().Be(player);
+        monster.IsFollowing.Should().BeTrue();
+        monster.Attacking.Should().BeTrue();
+
+        // Simulate enemy leaving by removing the player from the map
+        map.RemoveCreature(player);
+
+        // Notify the monster that the spectator has left
+        monster.OnSpectatorLoggedOut(player);
+
+        //act - Update state after enemy leaves
+        monsterStateService.UpdateState(monster);
+
+        //assert - Monster should enter idle state, clear awareness of enemies
+        monster.State.Should().Be(MonsterState.Sleeping);
+        monster.CurrentTarget.Should().BeNull();
+        monster.IsFollowing.Should().BeFalse();
+        monster.Attacking.Should().BeFalse();
+        monster.Targets.Any().Should().BeFalse();
+    }
 }
