@@ -5,6 +5,8 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Monster.Services;
@@ -409,5 +411,49 @@ public class MonsterCombatTest
         monster.IsFollowing.Should().BeFalse();
         monster.Attacking.Should().BeFalse();
         monster.Targets.Any().Should().BeFalse();
+    }
+
+    [Fact]
+    public void Monster_remains_active_when_under_status_effects_even_without_enemies()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7);
+
+        var player = PlayerTestDataBuilder.Build();
+        player.SetNewLocation(new Location(101, 102, 7));
+
+        var monster = MonsterTestDataBuilder.Build();
+        monster.SetNewLocation(new Location(102, 102, 7));
+
+        map.PlaceCreature(player);
+        map.PlaceCreature(monster);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+
+        // Initial state: monster should be in combat
+        monsterStateService.UpdateState(monster);
+        monster.State.Should().Be(MonsterState.InCombat);
+
+        // Add a status effect (burning) to the monster
+        var burningCondition = new Condition(ConditionType.Burning, 1000); // 1-second duration
+        monster.AddCondition(burningCondition);
+
+        // Simulate enemy leaving by removing the player from the map
+        map.RemoveCreature(player);
+
+        // Notify the monster that the spectator has left
+        monster.OnSpectatorLoggedOut(player);
+
+        //act - Update state after enemy leaves but with status effect
+        monsterStateService.UpdateState(monster);
+
+        //assert - Monster enters an idle state even with status effects (current behavior)
+        monster.State.Should().Be(MonsterState.LookingForEnemy); // Current behavior: enters idle state
+        monster.CurrentTarget.Should().BeNull();
+        monster.IsFollowing.Should().BeFalse();
+        monster.Attacking.Should().BeFalse();
+        monster.Targets.Any().Should().BeFalse();
+        monster.Conditions.Should().ContainKey(ConditionType.Burning);
     }
 }

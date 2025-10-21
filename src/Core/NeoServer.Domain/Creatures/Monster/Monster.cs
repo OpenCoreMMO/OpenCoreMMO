@@ -267,6 +267,12 @@ public class Monster : WalkableMonster, IMonster
     {
         if (!Targets.Any())
         {
+            if (Conditions.Count > 0)
+            {
+                State = MonsterState.LookingForEnemy;
+                return;
+            }
+            
             State = Cooldowns.Expired(CooldownType.Awaken) ? MonsterState.Sleeping : MonsterState.LookingForEnemy;
             return;
         }
