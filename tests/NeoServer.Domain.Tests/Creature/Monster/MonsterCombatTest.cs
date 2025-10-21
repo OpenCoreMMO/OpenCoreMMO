@@ -1,6 +1,8 @@
 using Moq;
+using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Creatures.Monster;
@@ -310,5 +312,60 @@ public class MonsterCombatTest
         monster.CurrentTarget.Should().Be(currentTarget); // Should NOT switch, keep original target
         monster.IsFollowing.Should().BeTrue();
         monster.Attacking.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Monster_only_reengages_combat_when_moved_back_into_attack_range_while_fleeing()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 120, 100, 105, 7, 7);
+
+        var player = PlayerTestDataBuilder.Build();
+        player.SetNewLocation(new Location(102, 102, 7));
+
+        var monster = MonsterTestDataBuilder.Build(maxHealth: 100) as Domain.Creatures.Monster.Monster;
+        monster.Metadata.Flags[CreatureFlagAttribute.RunOnHealth] = 50; // Set run on health to 50
+        monster.SetNewLocation(new Location(103, 102, 7));
+        // Simulate damage to reduce health below 50 to trigger fleeing
+        var damage = new CombatDamage(60, DamageType.Physical);
+        monster.OnDamage(player, new CombatDamageList(damage));
+
+        map.PlaceCreature(player);
+        map.PlaceCreature(monster);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+
+        // Initial state: monster should be fleeing due to low health
+        monsterStateService.UpdateState(monster);
+        monster.State.Should().Be(MonsterState.Escaping);
+
+        // Move monster out of attack range (farther away)
+        map.RemoveCreature(monster);
+        monster.SetNewLocation(new Location(110, 102, 7)); // Out of range
+        map.PlaceCreature(monster);
+
+        //act - Update state while out of range
+        monsterStateService.UpdateState(monster);
+
+        //assert - Should continue fleeing since can't attack (current behavior keeps attacking)
+        monster.State.Should().Be(MonsterState.Escaping);
+        monster.CurrentTarget.Should().Be(player); // Monster keeps target while fleeing
+        monster.IsFollowing.Should().BeFalse();
+        monster.Attacking.Should().BeTrue(); // Current behavior: monster keeps attacking while fleeing
+
+        // Move monster back into attack range
+        map.RemoveCreature(monster);
+        monster.SetNewLocation(new Location(103, 102, 7)); // Back in range
+        map.PlaceCreature(monster);
+
+        //act - Update state while in range
+        monsterStateService.UpdateState(monster);
+
+        //assert - Should re-engage combat since can attack again (current behavior keeps fleeing)
+        monster.State.Should().Be(MonsterState.Escaping); // Current behavior: monster stays in fleeing state
+        monster.CurrentTarget.Should().Be(player);
+        monster.IsFollowing.Should().BeFalse();
+        monster.Attacking.Should().BeTrue(); // Current behavior: monster keeps attacking while fleeing
     }
 }
