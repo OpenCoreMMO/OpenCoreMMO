@@ -362,7 +362,7 @@ public class MonsterCombatTest
         //act - Update state while in range
         monsterStateService.UpdateState(monster);
 
-        //assert - Should re-engage combat since can attack again (current behavior keeps fleeing)
+        //assert - Should re-engage in combat since can attack again (current behavior keeps fleeing)
         monster.State.Should().Be(MonsterState.Escaping); // Current behavior: monster stays in fleeing state
         monster.CurrentTarget.Should().Be(player);
         monster.IsFollowing.Should().BeFalse();
