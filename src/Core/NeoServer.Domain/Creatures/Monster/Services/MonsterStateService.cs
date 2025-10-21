@@ -52,13 +52,6 @@ public class MonsterStateService(ISummonService summonService, TargetDetectorSer
             monster.Follow(monster.CurrentTarget);
 
             monster.CreateSummon(summonService);
-
-            if (monster.Metadata.TargetChance.Interval == 0) return;
-
-            if (monster.Attacking &&
-                monster.Metadata.TargetChance.Chance < GameRandom.Random.Next(1, maxValue: 100)) return;
-
-            monster.SelectTargetToAttack();
         }
 
         if (monster.State == MonsterState.Sleeping) monster.Sleep();

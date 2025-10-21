@@ -108,10 +108,16 @@ public class Monster : WalkableMonster, IMonster
         if (CanSee(spectator.Location) && CanSee(spectator))
         {
             Targets.Add(target, hasPriority: true);
+            base.OnSpectatorMoved(spectator);
+            
+            return;
         }
-        else
+
+        Targets.Remove(target);
+
+        if (Equals(target, CurrentTarget))
         {
-            Targets.Remove(target);
+            StopAttack();
         }
 
         base.OnSpectatorMoved(spectator);
@@ -290,14 +296,23 @@ public class Monster : WalkableMonster, IMonster
             searchMode = TargetDistance <= 1 ? TargetSearchType.Random : TargetSearchType.Nearest;
         }
 
-        var target = Targets.SearchTarget(searchMode);
+        if (!Attacking || !HasFollowPath)
+        {
+            var target = Targets.SearchTarget(searchMode);
+            ChangeAttackTarget(target);
+            return;
+        }
 
-        var shouldChangeTarget = Metadata.TargetChance.Chance > 0 &&
-                                 !Cooldowns.Cooldowns.TryGetValue(CooldownType.TargetChange, out var cooldown) &&
-                                 !cooldown.Expired;
+        var shouldChangeTarget = hasTargetChange &&
+                                 Cooldowns.Cooldowns.TryGetValue(CooldownType.TargetChange, out var cooldown) &&
+                                 cooldown.Expired &&
+                                 Metadata.TargetChance.Chance >= GameRandom.Random.Next(1, maxValue: 100);
 
-        if (target is null || shouldChangeTarget) return;
-        ChangeAttackTarget(target);
+        if (shouldChangeTarget)
+        {
+            var target = Targets.SearchTarget(searchMode);
+            ChangeAttackTarget(target);
+        }
     }
 
     public void Sleep()
@@ -481,6 +496,8 @@ public class Monster : WalkableMonster, IMonster
 
     protected void ChangeAttackTarget(ICreature creature)
     {
+        if (creature is null) return;
+
         Follow(creature);
         SetAttackTarget(creature);
         UpdateLastTargetChance();

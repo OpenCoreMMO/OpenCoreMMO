@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Creatures.Monster;
+using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Monster.Services;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers;
@@ -151,8 +152,9 @@ public class MonsterCombatTest
 
         var initialTarget = PlayerTestDataBuilder.Build(name:"Initial Target");
         initialTarget.SetNewLocation(new Location(101, 102, 7));
-
-     
+        
+        var nearbyPlayer = PlayerTestDataBuilder.Build(name: "Nearby Player");
+        nearbyPlayer.SetNewLocation(new Location(110, 105, 7));
 
         var monster = MonsterTestDataBuilder.Build();
         monster.SetNewLocation(new Location(102, 102, 7));
@@ -169,9 +171,7 @@ public class MonsterCombatTest
         ((Domain.Creatures.Monster.Monster)monster).Targets.Count.Should().Be(1);
         monster.State.Should().Be(MonsterState.InCombat);
         monster.CurrentTarget.Should().Be(initialTarget);
-        
-        var nearbyPlayer = PlayerTestDataBuilder.Build(name: "Nearby Player");
-        nearbyPlayer.SetNewLocation(new Location(110, 105, 7));
+     
         map.PlaceCreature(nearbyPlayer);
 
         // Make the initial target unreachable by moving it out of range
@@ -179,6 +179,8 @@ public class MonsterCombatTest
         map.RemoveCreature(initialTarget);
         initialTarget.SetNewLocation(new Location(120, 105, 7)); // Far away;
         map.PlaceCreature(initialTarget);
+        
+        monster.OnSpectatorMoved(initialTarget);
 
         //act
         monsterStateService.UpdateState(monster);
@@ -227,5 +229,86 @@ public class MonsterCombatTest
         monster.CurrentTarget.Should().BeNull();
         monster.IsFollowing.Should().BeFalse();
         monster.Attacking.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Monster_occasionally_switches_to_closest_enemy_during_combat()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 110, 100, 105, 7, 7);
+
+        var currentTarget = PlayerTestDataBuilder.Build(name: "Current Target");
+        currentTarget.SetNewLocation(new Location(103, 102, 7));
+
+        var closerPlayer = PlayerTestDataBuilder.Build(name: "Closer Player");
+        closerPlayer.SetNewLocation(new Location(105, 105, 7));
+
+        var monster = MonsterTestDataBuilder.Build() as Domain.Creatures.Monster.Monster;
+        monster.Metadata.TargetChance = new IntervalChance(200, 100); // A High chance to switch
+        monster.SetNewLocation(new Location(102, 102, 7));
+
+        map.PlaceCreature(currentTarget);
+        map.PlaceCreature(monster);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+
+        // Initial attack on farther player
+        monsterStateService.UpdateState(monster);
+        monster.State.Should().Be(MonsterState.InCombat);
+        monster.CurrentTarget.Should().Be(currentTarget);
+        
+        map.PlaceCreature(closerPlayer);
+        
+        //act
+        Thread.Sleep(200);
+        monsterStateService.UpdateState(monster);
+
+        //assert
+        monster.State.Should().Be(MonsterState.InCombat);
+        monster.CurrentTarget.Should().Be(closerPlayer); // Should switch to closest
+        monster.IsFollowing.Should().BeTrue();
+        monster.Attacking.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Monster_does_not_change_target_when_target_change_chance_is_zero()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 110, 100, 105, 7, 7);
+
+        var currentTarget = PlayerTestDataBuilder.Build();
+        currentTarget.SetNewLocation(new Location(103, 102, 7));
+
+        var closerPlayer = PlayerTestDataBuilder.Build();
+        closerPlayer.SetNewLocation(new Location(101, 102, 7));
+
+        var monster = MonsterTestDataBuilder.Build() as Domain.Creatures.Monster.Monster;
+        monster.Metadata.TargetChance = new IntervalChance(200, 0); // No chance to switch (0%)
+        monster.SetNewLocation(new Location(102, 102, 7));
+
+        map.PlaceCreature(currentTarget);
+       
+        map.PlaceCreature(monster);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+
+        // Initial attack on farther player
+        monsterStateService.UpdateState(monster);
+        monster.State.Should().Be(MonsterState.InCombat);
+        monster.CurrentTarget.Should().Be(currentTarget);
+        
+        map.PlaceCreature(closerPlayer);
+
+        //act
+        Thread.Sleep(200);
+        monsterStateService.UpdateState(monster);
+
+        //assert
+        monster.State.Should().Be(MonsterState.InCombat);
+        monster.CurrentTarget.Should().Be(currentTarget); // Should NOT switch, keep original target
+        monster.IsFollowing.Should().BeTrue();
+        monster.Attacking.Should().BeTrue();
     }
 }
