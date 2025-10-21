@@ -492,4 +492,42 @@ public class MonsterCombatTest
         monster.IsFollowing.Should().BeTrue();
         monster.Attacking.Should().BeTrue();
     }
+
+    [Fact]
+    public void Monster_enters_fleeing_state_when_health_drops_below_threshold()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7);
+
+        var player = PlayerTestDataBuilder.Build();
+        player.SetNewLocation(new Location(101, 102, 7));
+
+        var monster = MonsterTestDataBuilder.Build(maxHealth: 100) as Domain.Creatures.Monster.Monster;
+        monster.Metadata.Flags[CreatureFlagAttribute.RunOnHealth] = 50; // Set run on health to 50
+        monster.SetNewLocation(new Location(102, 102, 7));
+
+        map.PlaceCreature(player);
+        map.PlaceCreature(monster);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+
+        // Initial state: monster should be in combat
+        monsterStateService.UpdateState(monster);
+        monster.State.Should().Be(MonsterState.InCombat);
+        monster.CurrentTarget.Should().Be(player);
+
+        // Damage the monster to reduce health below 50 to trigger fleeing
+        var damage = new CombatDamage(60, DamageType.Physical);
+        monster.OnDamage(player, new CombatDamageList(damage));
+
+        //act - Update state after taking damage
+        monsterStateService.UpdateState(monster);
+
+        //assert - Monster should enter fleeing state, prioritizing distance from target
+        monster.State.Should().Be(MonsterState.Escaping);
+        monster.CurrentTarget.Should().Be(player); // Keeps target while fleeing
+        monster.IsFollowing.Should().BeFalse(); // Stops following to flee
+        monster.Attacking.Should().BeTrue(); // Current behavior: keeps attacking while fleeing
+    }
 }
