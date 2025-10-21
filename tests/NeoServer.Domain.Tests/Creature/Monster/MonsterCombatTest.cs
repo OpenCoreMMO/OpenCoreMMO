@@ -456,4 +456,40 @@ public class MonsterCombatTest
         monster.Targets.Any().Should().BeFalse();
         monster.Conditions.Should().ContainKey(ConditionType.Burning);
     }
+
+    [Fact]
+    public void Monster_exits_idle_state_when_new_enemy_enters_range()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7);
+
+        var monster = MonsterTestDataBuilder.Build();
+        monster.SetNewLocation(new Location(102, 102, 7));
+
+        map.PlaceCreature(monster);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+
+        // Ensure the monster is idle (no targets)
+        monsterStateService.UpdateState(monster);
+        monster.State.Should().Be(MonsterState.Sleeping);
+        monster.CurrentTarget.Should().BeNull();
+        monster.IsFollowing.Should().BeFalse();
+        monster.Attacking.Should().BeFalse();
+
+        // Add a new enemy (player) entering range
+        var player = PlayerTestDataBuilder.Build();
+        player.SetNewLocation(new Location(101, 102, 7));
+        map.PlaceCreature(player);
+
+        //act - Update state after a new enemy enters
+        monsterStateService.UpdateState(monster);
+
+        //assert - Monster should reactivate and pursue the new enemy
+        monster.State.Should().Be(MonsterState.InCombat);
+        monster.CurrentTarget.Should().Be(player);
+        monster.IsFollowing.Should().BeTrue();
+        monster.Attacking.Should().BeTrue();
+    }
 }
