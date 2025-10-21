@@ -74,6 +74,7 @@ public class Monster : WalkableMonster, IMonster
             fpp.MaxTargetDist = TargetDistance;
             fpp.KeepDistance = TargetDistance > 1;
             fpp.PushMonsters = Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures);
+            fpp.ClearSight = TargetDistance > 1;
             return fpp;
         }
     }

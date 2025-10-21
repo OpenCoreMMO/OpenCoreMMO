@@ -7,8 +7,6 @@ namespace NeoServer.Domain.Common.Contracts.World;
 
 public interface IPathFinder
 {
-    IMap Map { get; set; }
-
     (bool Found, Direction[] Directions) Find(Location.Structs.Location startPosition,
         Location.Structs.Location targetPosition,
         FindPathParams fpp);
