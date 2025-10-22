@@ -530,4 +530,61 @@ public class MonsterCombatTest
         monster.IsFollowing.Should().BeFalse(); // Stops following to flee
         monster.Attacking.Should().BeTrue(); // Current behavior: keeps attacking while fleeing
     }
+
+    [Fact]
+    public void Monster_only_targets_player_when_both_player_and_other_monster_are_present()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7);
+
+        var player = PlayerTestDataBuilder.Build();
+        player.SetNewLocation(new Location(101, 102, 7));
+
+        var otherMonster = MonsterTestDataBuilder.Build();
+        otherMonster.SetNewLocation(new Location(103, 102, 7));
+
+        var sut = MonsterTestDataBuilder.Build(); // System Under Test
+        sut.SetNewLocation(new Location(102, 102, 7));
+
+        map.PlaceCreature(player);
+        map.PlaceCreature(otherMonster);
+        map.PlaceCreature(sut);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+
+        //act
+        monsterStateService.UpdateState(sut);
+
+        //assert - Monster should only target the player, ignoring the other monster
+        sut.State.Should().Be(MonsterState.InCombat);
+        sut.CurrentTarget.Should().Be(player);
+        sut.IsFollowing.Should().BeTrue();
+        sut.Attacking.Should().BeTrue();
+        sut.Targets.Any().Should().BeTrue();
+        sut.Targets.HasTarget(otherMonster).Should().BeFalse(); // Should not have the other monster in the target list
+    }
+
+    [Fact]
+    public void Monster_does_not_add_other_monster_to_target_list_when_OnSpectatorMoved_is_fired()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7);
+
+        var spectatorMonster = MonsterTestDataBuilder.Build();
+        spectatorMonster.SetNewLocation(new Location(101, 102, 7));
+
+        var sut = MonsterTestDataBuilder.Build(); // System Under Test
+        sut.SetNewLocation(new Location(102, 102, 7));
+
+        map.PlaceCreature(spectatorMonster);
+        map.PlaceCreature(sut);
+
+        //act - Simulate the spectator monster moving (triggering OnSpectatorMoved)
+        sut.OnSpectatorMoved(spectatorMonster);
+
+        //assert - Monster should not add the other monster to its target list
+        sut.Targets.Any().Should().BeFalse(); // No targets should be added
+        sut.Targets.HasTarget(spectatorMonster).Should().BeFalse(); // Specifically, the spectator monster should not be in the list
+    }
 }

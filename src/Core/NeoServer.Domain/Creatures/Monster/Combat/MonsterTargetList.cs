@@ -1,6 +1,7 @@
 using NeoServer.Domain.Combat;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Creatures.Monster.Combat;
 
@@ -32,6 +33,11 @@ public class MonsterTargetList(IMonster monster)
     {
         if(target is null) return;
         if (_nodeMap.ContainsKey(target.CreatureId)) return; // Already tracking
+        
+        var isPlayerOrPlayerSummon = target is IPlayer or Summon.Summon { Master: IPlayer };
+
+        // Skip dead creatures and ignored players
+        if(!isPlayerOrPlayerSummon || target.IsDead || target == monster || target is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters)) return;
 
         var combatTarget = new CombatTarget(target);
 

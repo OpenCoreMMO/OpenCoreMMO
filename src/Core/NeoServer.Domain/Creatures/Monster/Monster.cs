@@ -40,18 +40,7 @@ public class Monster : WalkableMonster, IMonster
     }
 
     public MonsterTargetList Targets { get; set; }
-
-    /// <summary>
-    /// Adds a new target to the monster's tracking list.
-    /// Priority targets are placed at the front for immediate attention.
-    /// </summary>
-    /// <param name="target">The creature to track as a potential threat.</param>
-    /// <param name="hasPriority">Whether this target should be prioritized over others.</param>
-    public void AddTarget(ICombatActor target, bool hasPriority = false)
-    {
-        Targets.Add(target, hasPriority);
-    }
-
+    
     protected byte TargetDistance =>
         Metadata.Flags.TryGetValue(CreatureFlagAttribute.TargetDistance, out var targetDistance)
             ? (byte)targetDistance
