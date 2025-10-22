@@ -97,20 +97,25 @@ public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
     private static bool HasBlockingCreatures(IMonster monster, IDynamicTile dynamicTile)
     {
         if (!dynamicTile.HasAnyCreature) return false;
-
-        foreach (var creature in dynamicTile.Creatures)
+        
+        if (!monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures))
         {
-            if (IsPushable(monster, creature)) continue;
             return true;
         }
 
-        return false;
+        foreach (var creature in dynamicTile.Creatures)
+        {
+            if (IsPushable(creature)) continue;
+            return true;
+        }
+
+        return true;
     }
 
-    private static bool IsPushable(IMonster pusher, ICreature creature)
+    private static bool IsPushable(ICreature creature)
     {
         if (creature is not NeoServer.Domain.Creatures.Monster.Monster monster) return false;
-        if (creature is NeoServer.Domain.Creatures.Monster.Summon.Summon { Master: NeoServer.Domain.Creatures.Player.Player }) return false;
+        if (creature is Summon { Master: NeoServer.Domain.Creatures.Player.Player }) return false;
         if (monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures)) return false;
         return true;
     }
@@ -149,7 +154,7 @@ public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
     {
         if (tile is not IDynamicTile dynamicTile) return false;
 
-        // For location-based enter, assume no creature, since we don't have the creature here
+        // For location-based entering, assume no creature, since we don't have the creature here
         return ConditionEvaluation.And(
             !dynamicTile.HasAnyCreature,
             !dynamicTile.HasFlag(TileFlags.Unpassable),
