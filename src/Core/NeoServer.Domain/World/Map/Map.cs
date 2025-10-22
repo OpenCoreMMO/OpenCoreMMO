@@ -20,17 +20,19 @@ namespace NeoServer.Domain.World.Map;
 public class Map : IMap
 {
     private const int MAP_MAX_LAYERS = 16;
-    private readonly World world;
+    private readonly World _world;
+    private readonly CylinderOperation _cylinderOperation;
 
     public Map(World world)
     {
-        this.world = world;
-        CylinderOperation.Setup(this);
+        _world = world;
+        _cylinderOperation = new CylinderOperation(this);
         TileOperationEvent.OnTileChanged += OnTileChanged;
         TileOperationEvent.OnTileLoaded += OnTileLoaded;
 
         Instance = this;
     }
+
 
     public static IMap Instance { get; private set; }
 
@@ -41,7 +43,7 @@ public class Map : IMap
     public event MoveCreatureOnFloor OnCreatureMoved;
     public event FailedMoveThing OnThingMovedFailed;
 
-    public ITile this[Location location] => world.TryGetTile(ref location, out var tile) ? tile : null;
+    public ITile this[Location location] => _world.TryGetTile(ref location, out var tile) ? tile : null;
     public ITile this[ushort x, ushort y, byte z] => this[new Location(x, y, z)];
 
     public ITile GetTile(Location location)
@@ -51,7 +53,7 @@ public class Map : IMap
 
     public void ReplaceTile(ITile newTile)
     {
-        world.ReplaceTile(newTile);
+        _world.ReplaceTile(newTile);
     }
 
     public bool TryMoveCreature(ICreature creature, Location toLocation)
@@ -72,7 +74,7 @@ public class Map : IMap
             return false;
         }
 
-        var result = CylinderOperation.MoveCreature(creature, fromTile, toTile, 1, out var cylinder);
+        var result = _cylinderOperation.MoveCreature(creature, fromTile, toTile, 1, out var cylinder);
         if (result.Succeeded is false) return false;
 
         walkableCreature.OnMoved(fromTile, toTile, cylinder.TileSpectators);
@@ -145,8 +147,8 @@ public class Map : IMap
 
     public void SwapCreatureBetweenSectors(ICreature creature, Location fromLocation, Location toLocation)
     {
-        var oldSector = world.GetSector(fromLocation.X, fromLocation.Y);
-        var newSector = world.GetSector(toLocation.X, toLocation.Y);
+        var oldSector = _world.GetSector(fromLocation.X, fromLocation.Y);
+        var newSector = _world.GetSector(toLocation.X, toLocation.Y);
 
         if (oldSector != newSector)
         {
@@ -279,7 +281,7 @@ public class Map : IMap
 
             var search = new SpectatorSearch(ref fromLocation, true, minRangeX, minRangeY: minRangeY,
                 maxRangeX: maxRangeX, maxRangeY: maxRangeY, onlyPlayers: onlyPlayer);
-            return world.GetSpectators(ref search).ToHashSet();
+            return _world.GetSpectators(ref search).ToHashSet();
         }
 
         var oldSpecs = GetSpectators(fromLocation);
@@ -318,7 +320,7 @@ public class Map : IMap
     {
         var search = new SpectatorSearch(ref location, multifloor, rangeX.Min, rangeY.Min,
             rangeX.Max, rangeY.Max, onlyPlayers);
-        return world.GetSpectators(ref search).ToHashSet();
+        return _world.GetSpectators(ref search).ToHashSet();
     }
 
     public HashSet<ICreature> GetSpectators(Location location, bool multifloor, bool onlyPlayers,
@@ -443,11 +445,11 @@ public class Map : IMap
             }
         }
 
-        if (CylinderOperation.AddCreature(creature, tile, out var cylinder).Succeeded is false) return;
+        if (_cylinderOperation.AddCreature(creature, tile, out var cylinder).Succeeded is false) return;
 
         if (!creatureAlreadyInTile)
         {
-            var sector = world.GetSector(creature.Location.X, creature.Location.Y);
+            var sector = _world.GetSector(creature.Location.X, creature.Location.Y);
             sector.AddCreature(creature);
             creature.Appear(tile.Location, cylinder.TileSpectators);
         }
@@ -462,9 +464,9 @@ public class Map : IMap
     {
         if (this[creature.Location] is not DynamicTile tile) return;
 
-        CylinderOperation.RemoveCreature(creature, out var cylinder);
+        _cylinderOperation.RemoveCreature(creature, out var cylinder);
 
-        world.GetSector(tile.Location.X, tile.Location.Y).RemoveCreature(creature);
+        _world.GetSector(tile.Location.X, tile.Location.Y).RemoveCreature(creature);
 
         creature.Disappear(tile.Location, cylinder.TileSpectators);
         if (creature is IWalkableCreature walkableCreature)
@@ -562,17 +564,17 @@ public class Map : IMap
                     if (operation.Item1 is ICumulative cumulativeToRemove)
                         cumulativeToRemove.OnReduced -= OnItemReduced;
                     OnThingRemovedFromTile?.Invoke(operation.Item1,
-                        CylinderOperation.Removed(operation.Item1, operation.Item3));
+                        _cylinderOperation.Removed(operation.Item1, operation.Item3));
                     break;
                 case Operation.Updated:
                     if (operation.Item1 is ICumulative cumulativeToUpdate)
                         cumulativeToUpdate.OnReduced += OnItemReduced;
                     OnThingUpdatedOnTile?.Invoke(operation.Item1,
-                        CylinderOperation.Updated(operation.Item1, operation.Item1.Amount));
+                        _cylinderOperation.Updated(operation.Item1, operation.Item1.Amount));
                     break;
                 case Operation.Added:
                     if (operation.Item1 is ICumulative cumulativeToAdd) cumulativeToAdd.OnReduced += OnItemReduced;
-                    OnThingAddedToTile?.Invoke(operation.Item1, CylinderOperation.Added(operation.Item1));
+                    OnThingAddedToTile?.Invoke(operation.Item1, _cylinderOperation.Added(operation.Item1));
                     break;
             }
     }
@@ -593,7 +595,7 @@ public class Map : IMap
         if (item.Amount > 0)
         {
             tile.TryGetStackPositionOfItem(item, out var stackPosition);
-            OnThingUpdatedOnTile?.Invoke(item, CylinderOperation.Removed(item, stackPosition));
+            OnThingUpdatedOnTile?.Invoke(item, _cylinderOperation.Removed(item, stackPosition));
         }
     }
 }

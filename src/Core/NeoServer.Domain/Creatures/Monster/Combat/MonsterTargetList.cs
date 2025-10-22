@@ -143,8 +143,7 @@ public class MonsterTargetList(IMonster monster)
         // Fallback: pick the first available target
         foreach (var combatTarget in _list)
         {
-            if (monster.AutoAttackTargetId != combatTarget.Creature.CreatureId &&
-                CanSelectTarget(combatTarget.Creature))
+            if ( CanSelectTarget(combatTarget.Creature))
             {
                 return combatTarget.Creature;
             }

@@ -154,9 +154,9 @@ public class MonsterCombatTest
         //arrange
         var map = MapTestDataBuilder.Build(100, 120, 100, 105, 7, 7);
 
-        var initialTarget = PlayerTestDataBuilder.Build(name:"Initial Target");
+        var initialTarget = PlayerTestDataBuilder.Build(name: "Initial Target");
         initialTarget.SetNewLocation(new Location(101, 102, 7));
-        
+
         var nearbyPlayer = PlayerTestDataBuilder.Build(name: "Nearby Player");
         nearbyPlayer.SetNewLocation(new Location(110, 105, 7));
 
@@ -171,11 +171,11 @@ public class MonsterCombatTest
 
         // Initial attack on first player
         monsterStateService.UpdateState(monster);
-        
+
         ((Domain.Creatures.Monster.Monster)monster).Targets.Count.Should().Be(1);
         monster.State.Should().Be(MonsterState.InCombat);
         monster.CurrentTarget.Should().Be(initialTarget);
-     
+
         map.PlaceCreature(nearbyPlayer);
 
         // Make the initial target unreachable by moving it out of range
@@ -183,7 +183,7 @@ public class MonsterCombatTest
         map.RemoveCreature(initialTarget);
         initialTarget.SetNewLocation(new Location(120, 105, 7)); // Far away;
         map.PlaceCreature(initialTarget);
-        
+
         monster.OnSpectatorMoved(initialTarget);
 
         //act
@@ -261,9 +261,9 @@ public class MonsterCombatTest
         monsterStateService.UpdateState(monster);
         monster.State.Should().Be(MonsterState.InCombat);
         monster.CurrentTarget.Should().Be(currentTarget);
-        
+
         map.PlaceCreature(closerPlayer);
-        
+
         //act
         Thread.Sleep(200);
         monsterStateService.UpdateState(monster);
@@ -292,7 +292,7 @@ public class MonsterCombatTest
         monster.SetNewLocation(new Location(102, 102, 7));
 
         map.PlaceCreature(currentTarget);
-       
+
         map.PlaceCreature(monster);
 
         var summonServiceMock = new Mock<ISummonService>();
@@ -302,7 +302,7 @@ public class MonsterCombatTest
         monsterStateService.UpdateState(monster);
         monster.State.Should().Be(MonsterState.InCombat);
         monster.CurrentTarget.Should().Be(currentTarget);
-        
+
         map.PlaceCreature(closerPlayer);
 
         //act
@@ -380,7 +380,7 @@ public class MonsterCombatTest
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(101, 102, 7));
 
-        var monster = MonsterTestDataBuilder.Build();
+        var monster = MonsterTestDataBuilder.Build() as Domain.Creatures.Monster.Monster;
         monster.SetNewLocation(new Location(102, 102, 7));
 
         map.PlaceCreature(player);
@@ -404,7 +404,7 @@ public class MonsterCombatTest
 
         //act - Update state after enemy leaves
         monsterStateService.UpdateState(monster);
-
+        
         //assert - Monster should enter idle state, clear awareness of enemies
         monster.State.Should().Be(MonsterState.Sleeping);
         monster.CurrentTarget.Should().BeNull();
@@ -585,6 +585,63 @@ public class MonsterCombatTest
 
         //assert - Monster should not add the other monster to its target list
         sut.Targets.Any().Should().BeFalse(); // No targets should be added
-        sut.Targets.HasTarget(spectatorMonster).Should().BeFalse(); // Specifically, the spectator monster should not be in the list
+        sut.Targets.HasTarget(spectatorMonster).Should()
+            .BeFalse(); // Specifically, the spectator monster should not be in the list
+    }
+
+    [Fact]
+    public void Monster_targets_player_when_surrounding_monster_dies()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 115, 100, 115, 7, 7);
+
+        var player = PlayerTestDataBuilder.Build();
+        player.SetNewLocation(new Location(107, 107, 7));
+
+        // Place 8 monsters around the player
+        var surroundingMonsters = new List<NeoServer.Domain.Common.Contracts.Creatures.IMonster>();
+        var positions = new (int x, int y)[]
+        {
+            (106, 106), (107, 106), (108, 106),
+            (106, 107), (108, 107),
+            (106, 108), (107, 108), (108, 108)
+        };
+
+        for (int i = 0; i < 8; i++)
+        {
+            var monster = MonsterTestDataBuilder.Build(name: $"Surrounding Monster {i + 1}");
+            monster.SetNewLocation(new Location((ushort)positions[i].x, (ushort)positions[i].y, 7));
+            surroundingMonsters.Add(monster);
+            map.PlaceCreature(monster);
+        }
+
+        var sut = (Domain.Creatures.Monster.Monster)MonsterTestDataBuilder.Build(name: "Sut monster", map: map); // System Under Test
+        sut.SetNewLocation(new Location(109, 109, 7)); // Nearby but not attacking
+
+        map.PlaceCreature(sut);
+        map.PlaceCreature(player);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+
+        // Initial state: SUT might be targeting player yet
+        monsterStateService.UpdateState(sut);
+        sut.State.Should().Be(MonsterState.LookingForEnemy);
+        sut.CurrentTarget.Should().Be(player); // Assume targeting the player initially although not having follow path to him
+
+        //act - Kill one of the surrounding monsters
+        var deadMonster = surroundingMonsters[0];
+        map.RemoveCreature(deadMonster);
+        sut.OnSpectatorDies(deadMonster);
+
+        // Update state after the death
+        monsterStateService.UpdateState(sut);
+
+        //assert - SUT now targets the player
+        sut.State.Should().Be(MonsterState.InCombat);
+        sut.CurrentTarget.Should().Be(player);
+        sut.IsFollowing.Should().BeTrue();
+        sut.Attacking.Should().BeTrue();
+        sut.HasFollowPath.Should().BeTrue();
     }
 }

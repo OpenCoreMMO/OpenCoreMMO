@@ -49,7 +49,8 @@ public class TargetDetectorService(IMap map)
 
             var isPlayerOrPlayerSummon = spectator is IPlayer or Summon.Summon { Master: IPlayer };
 
-            if (!isPlayerOrPlayerSummon) continue;
+            if (!isPlayerOrPlayerSummon) 
+                continue;
 
             // Skip dead creatures
             if (target.IsDead) continue;
