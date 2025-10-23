@@ -100,16 +100,20 @@ public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
         
         if (!monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures))
         {
+            //the tile has a creature and the monster can't push creatures
             return true;
         }
 
         foreach (var creature in dynamicTile.Creatures)
         {
             if (IsPushable(creature)) continue;
+            
+            //the tile has a creature and the monster can't push it
             return true;
         }
 
-        return true;
+        //the tile has no creatures or the monster can push all creatures in the tile
+        return false;
     }
 
     private static bool IsPushable(ICreature creature)

@@ -19,7 +19,7 @@ public class PathFindingTests
         //arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
 
-        // Create start monster with push creatures flag at x=100, y=105
+        // Create a start monster with a push creatures flag at x=100, y=105
         var startMonster = MonsterTestDataBuilder.Build(flags: new Dictionary<CreatureFlagAttribute, ushort>
         {
             { CreatureFlagAttribute.CanPushCreatures, 1 }
@@ -27,11 +27,11 @@ public class PathFindingTests
         
         ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[100, 105, 7]).AddCreature(startMonster);
 
-        // Create target player at x=105, y=105
+        // Create a target player at x=105, y=105
         var targetPlayer = PlayerTestDataBuilder.Build();
         ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[105, 105, 7]).AddCreature(targetPlayer);
 
-        // Add non push creatures monsters around the player (8 blocking monsters)
+        // Add non-push creatures monsters around the player (8 blocking monsters)
         var blockingMonster1 = MonsterTestDataBuilder.Build();
         ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[104, 105, 7]).AddCreature(blockingMonster1); // west
 
