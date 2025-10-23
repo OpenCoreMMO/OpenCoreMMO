@@ -9,7 +9,6 @@ namespace NeoServer.Server.Common.Contracts.Scripts.Services;
 public interface IMoveEventsScriptService
 {
     void ItemMove(IItem item, ITile tile, bool isAdd);
-    void CreatureMove(ICreature creature, Location fromLocation, Location toLocation);
     bool? EquipItem(IPlayer player, IItem item, Slot slot, bool isChecks);
     bool? DeEquipItem(IPlayer player, IItem item, Slot slot, bool isChecks);
 }

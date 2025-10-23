@@ -11,6 +11,7 @@ using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Domain.World.Services;
 using PathFinder = NeoServer.Domain.World.Map.PathFinder;
@@ -48,9 +49,11 @@ public class SummonTests
         (map[104, 105, 7] as DynamicTile)?.AddCreature(summon);
         (map[106, 105, 7] as DynamicTile)?.AddCreature(playerB);
         
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        
         // Act
         // Move master to a position that triggers floor change to floor 6
-        var success = map.TryMoveCreature(master, new Location(105, 105, 6));
+        var success = creatureMovementService.MoveCreature(master, new Location(105, 105, 6));
         
         summon.SetAsEnemy(playerB);
         
@@ -176,10 +179,11 @@ public class SummonTests
 
         (map[105, 105, 7] as DynamicTile)?.AddCreature(master);
         (map[104, 105, 7] as DynamicTile)?.AddCreature(summon);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
 
         // Act
         // Move master 2 floors up (from 7 to 5)
-        map.TryMoveCreature(master, new Location(105, 105, 5));
+        creatureMovementService.MoveCreature(master, new Location(105, 105, 5));
         summon.UpdateState();
 
         // Assert
@@ -197,10 +201,11 @@ public class SummonTests
 
         (map[105, 105, 7] as DynamicTile)?.AddCreature(master);
         (map[104, 105, 7] as DynamicTile)?.AddCreature(summon);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
 
         // Act
         // Move master 2 floors down (from 7 to 9)
-        map.TryMoveCreature(master, new Location(105, 105, 9));
+        creatureMovementService.MoveCreature(master, new Location(105, 105, 9));
         summon.UpdateState();
 
         // Assert

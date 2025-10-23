@@ -3,10 +3,12 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Factories;
+using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
 using Serilog;
 
@@ -104,9 +106,11 @@ public class TileHeightTests
 
         tile1StFloor.AddCreature(player);
 
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+
         //act
         player.WalkTo(Direction.East);
-        map.MoveCreature(player);
+        creatureMovementService.MoveCreature(player);
 
         //assert
         player.Tile.Should().Be(tile2StFloor);
@@ -133,10 +137,12 @@ public class TileHeightTests
         var map = MapTestDataBuilder.Build(tile1StFloor, tile2StFloor);
 
         tile1StFloor.AddCreature(player);
-
+        
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        
         //act
         player.WalkTo(Direction.East);
-        map.MoveCreature(player);
+        creatureMovementService.MoveCreature(player);
 
         //assert
         player.Tile.Should().Be(tile1StFloor);
@@ -175,10 +181,11 @@ public class TileHeightTests
         }
 
         tile2StFloor.AddCreature(player);
-
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        
         //act
         player.WalkTo(Direction.West);
-        map.MoveCreature(player);
+        creatureMovementService.MoveCreature(player);
 
         //assert
         player.Tile.Should().Be(tile1StFloor);
@@ -206,10 +213,11 @@ public class TileHeightTests
         var map = MapTestDataBuilder.Build(tile1StFloor, tile2StFloor);
 
         tile2StFloor.AddCreature(player);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
 
         //act
         player.WalkTo(Direction.West);
-        map.MoveCreature(player);
+        creatureMovementService.MoveCreature(player);
 
         //assert
         player.Tile.Should().Be(tile2StFloor);

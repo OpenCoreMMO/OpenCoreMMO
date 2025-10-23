@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Events;
+using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -21,8 +22,10 @@ public class MapMoveCreatureTest
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(50, 50, 7));
         sut.PlaceCreature(player);
-
-        var result = sut.TryMoveCreature(player, new Location(51, 50, 7));
+        
+        var creatureMovementService = new CreatureMovementService(sut, new CylinderOperation(sut));
+        
+        var result = creatureMovementService.MoveCreature(player, new Location(51, 50, 7));
 
         Assert.True(result);
         Assert.Equal(new Location(51, 50, 7), player.Location);
@@ -37,7 +40,9 @@ public class MapMoveCreatureTest
         player.SetNewLocation(new Location(50, 50, 7));
         sut.PlaceCreature(player);
 
-        var result = sut.TryMoveCreature(player, new Location(53, 50, 7));
+        var creatureMovementService = new CreatureMovementService(sut, new CylinderOperation(sut));
+
+        var result = creatureMovementService.MoveCreature(player, new Location(53, 50, 7));
 
         Assert.True(result);
         Assert.Equal(new Location(53, 50, 7), player.Location);
@@ -62,10 +67,12 @@ public class MapMoveCreatureTest
         {
             //no destination
         };
+        
+        var creatureMovementService = new CreatureMovementService(sut, new CylinderOperation(sut));
 
         ((IDynamicTile)sut[teleportLocation]).AddItem(new TeleportItem(new ItemType(), teleportLocation));
 
-        player.OnStartedWalking += c => sut.MoveCreature(c);
+        player.OnStartedWalking += c => creatureMovementService.MoveCreature(c);
 
         //act
         player.WalkTo(Direction.East);
@@ -95,6 +102,8 @@ public class MapMoveCreatureTest
             {
                 [teleportLocation] = new IItem[] { teleport }
             });
+        
+        var creatureMovementService = new CreatureMovementService(sut, new CylinderOperation(sut));
 
         var pathFinder = new PathFinder(sut);
 
@@ -102,8 +111,8 @@ public class MapMoveCreatureTest
         player.SetCurrentTile((IDynamicTile)sut[100, 100, 7]);
         sut.PlaceCreature(player);
 
-        player.OnStartedWalking += c => sut.MoveCreature(c);
-        player.OnTeleported += (a, b) => new CreatureTeleportedEventHandler(sut).Execute(a, b);
+        player.OnStartedWalking += c => creatureMovementService.MoveCreature(c);
+        player.OnTeleported += (a, b) => new CreatureTeleportedEventHandler(sut, creatureMovementService).Execute(a, b);
 
         //act
         player.WalkTo(Direction.East);

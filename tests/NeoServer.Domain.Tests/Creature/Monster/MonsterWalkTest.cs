@@ -4,11 +4,13 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Bases;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Server;
+using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Server.Events.Creature;
 using xRetry;
@@ -55,7 +57,9 @@ public class MonsterWalkTest
         var gameServer = GameServerTestBuilder.Build(map);
         var cancellationToken = ServerTestHelper.StartThreads(gameServer);
 
-        sut.OnStartedWalking += new CreatureStartedWalkingEventHandler(gameServer).Execute;
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+
+        sut.OnStartedWalking += new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService).Execute;
 
         gameServer.Open();
         map.PlaceCreature(sut);
@@ -105,7 +109,9 @@ public class MonsterWalkTest
 
         var gameServer = GameServerTestBuilder.Build(map);
         var cancellationToken = ServerTestHelper.StartThreads(gameServer);
-        sut.OnStartedWalking += new CreatureStartedWalkingEventHandler(gameServer).Execute;
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+
+        sut.OnStartedWalking += new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService).Execute;
 
         gameServer.Open();
 

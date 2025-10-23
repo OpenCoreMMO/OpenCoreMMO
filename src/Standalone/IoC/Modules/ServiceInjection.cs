@@ -19,6 +19,7 @@ using NeoServer.Domain.SafeTrade;
 using NeoServer.Domain.SafeTrade.Operations;
 using NeoServer.Domain.Services;
 using NeoServer.Domain.Spells;
+using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Services;
 using NeoServer.Networking.EventHandlers.Creature;
 using NeoServer.Server.Commands.Player.UseItem;
@@ -65,6 +66,8 @@ public static class ServiceInjection
         builder.AddSingleton<PlayerChannelService>();
         builder.AddSingleton<MonsterStateService>();
         builder.AddSingleton<TargetDetectorService>();
+        builder.AddSingleton<ICreatureMovementService, CreatureMovementService>();
+        builder.AddSingleton<CylinderOperation>();
 
         //Operations
         builder.AddSingleton<TradeItemExchanger>();
