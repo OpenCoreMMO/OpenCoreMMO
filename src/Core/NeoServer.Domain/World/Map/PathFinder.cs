@@ -81,7 +81,7 @@ public class PathFinder(IMap map) : IPathFinder
     {
         var randomIndex = GameRandom.Random.Next(0, maxValue: 4);
 
-        var directions = new Direction[4] { Direction.East, Direction.North, Direction.South, Direction.West };
+        Span<Direction> directions = [Direction.East, Direction.North, Direction.South, Direction.West];
 
         for (var i = 0; i < 4; i++)
         {

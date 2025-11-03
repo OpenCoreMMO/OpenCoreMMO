@@ -21,6 +21,11 @@ public abstract class WalkableMonster : CombatActor, IWalkableMonster
     public virtual IMonsterType Metadata => CreatureType as IMonsterType;
     public override ITileEnterRule TileEnterRule => MonsterEnterTileRule.Rule;
 
+    protected override Direction GetRandomStep()
+    {
+        return MapTool.PathFinder.FindRandomStep(this, MonsterRandomStepEnterTileRule.Rule);
+    }
+
     public bool DoRandomStep()
     {
         StopFollowing();
@@ -42,7 +47,7 @@ public abstract class WalkableMonster : CombatActor, IWalkableMonster
     internal void EscapeFromEnemy()
     {
         StopFollowing();
-        
+
         if (CurrentTarget is null) return;
 
         if (IsDead) return;
@@ -70,7 +75,7 @@ public abstract class WalkableMonster : CombatActor, IWalkableMonster
         var targetLocation = enemy.Location;
 
         var tooFar = targetLocation.GetMaxSqmDistance(nextLocation) > Metadata.MaxRangeDistanceAttack;
-        
+
         var hasSightClear = MapTool.SightClearChecker?.Invoke(Location, CurrentTarget.Location, false) ?? false;
 
         if (Metadata.HasDistanceAttack && !HasFollowPath && hasSightClear && !tooFar)

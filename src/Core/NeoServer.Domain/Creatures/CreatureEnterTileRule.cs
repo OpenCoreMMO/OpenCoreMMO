@@ -165,6 +165,46 @@ public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
     }
 }
 
+public class MonsterRandomStepEnterTileRule : CreatureEnterTileRule<MonsterRandomStepEnterTileRule>
+{
+    public override bool ShouldIgnore(ITile tile, ICreature creature)
+    {
+        if (tile is not IDynamicTile dynamicTile) return false;
+        if (creature is not IMonster monster) return false;
+
+        return ConditionEvaluation.And(
+            dynamicTile.FloorDirection == FloorChangeDirection.None,
+            monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushItems) || !dynamicTile.HasBlockPathFinding,
+            !dynamicTile.HasAnyCreature, // Always ignore tiles with creatures, regardless of push ability
+            !dynamicTile.HasTeleport(out _),
+            !dynamicTile.HasFlag(TileFlags.Unpassable),
+            !dynamicTile.ProtectionZone,
+            dynamicTile.Ground is not null);
+    }
+
+    public override bool CanEnter(ITile tile, ICreature creature)
+    {
+        if (tile is not IDynamicTile dynamicTile) return false;
+        if (creature is not IMonster) return false;
+
+        return ConditionEvaluation.And(
+            !dynamicTile.HasAnyCreature, // Always block if any creature present
+            !dynamicTile.HasFlag(TileFlags.Unpassable),
+            dynamicTile.Ground is not null);
+    }
+
+    public override bool CanEnter(ITile tile, Location location)
+    {
+        if (tile is not IDynamicTile dynamicTile) return false;
+
+        return ConditionEvaluation.And(
+            !dynamicTile.HasAnyCreature,
+            !dynamicTile.HasFlag(TileFlags.Unpassable),
+            dynamicTile.Ground is not null);
+    }
+}
+
+
 public class NpcEnterTileRule : CreatureEnterTileRule<NpcEnterTileRule>
 {
     public override bool ShouldIgnore(ITile tile, ICreature creature)
