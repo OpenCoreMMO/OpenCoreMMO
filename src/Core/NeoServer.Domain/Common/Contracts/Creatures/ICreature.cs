@@ -204,9 +204,7 @@ public interface ICreature : IMovableThing
     void BackToOldOutfit();
 
     void Appear(Location.Structs.Location location, ICylinderSpectator[] spectators);
-
-    void Disappear(Location.Structs.Location location, ICylinderSpectator[] spectators);
-
+    
     /// <summary>
     ///     Says a message
     /// </summary>

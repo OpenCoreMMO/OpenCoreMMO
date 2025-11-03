@@ -42,7 +42,7 @@ public class Monster : WalkableMonster, IMonster
     }
 
     public MonsterTargetList Targets { get; set; }
-    
+
     protected byte TargetDistance =>
         Metadata.Flags.TryGetValue(CreatureFlagAttribute.TargetDistance, out var targetDistance)
             ? (byte)targetDistance
@@ -101,7 +101,7 @@ public class Monster : WalkableMonster, IMonster
         {
             Targets.Add(target, hasPriority: true);
             base.OnSpectatorMoved(spectator);
-            
+
             return;
         }
 
@@ -121,7 +121,7 @@ public class Monster : WalkableMonster, IMonster
         if (spectator is not ICombatActor target) return;
 
         Targets.Remove(target);
-        
+
         if (Equals(target, CurrentTarget))
         {
             StopAttack();
@@ -135,7 +135,7 @@ public class Monster : WalkableMonster, IMonster
         if (IsDead) return;
 
         Targets.Remove(spectator);
-        
+
         if (Equals(spectator, CurrentTarget))
         {
             StopAttack();
@@ -155,18 +155,17 @@ public class Monster : WalkableMonster, IMonster
         else
         {
             Targets.Remove(target);
-            
+
             if (Equals(target, CurrentTarget))
             {
                 StopAttack();
             }
-            
         }
 
         base.OnSpectatorChangedVisibility(spectator);
     }
 
-    
+
     /// <summary>
     /// Event is triggered before the monster is moved to a new tile.
     /// To get here, all the validation checks must be done.
@@ -174,23 +173,31 @@ public class Monster : WalkableMonster, IMonster
     /// <param name="toTile"></param>
     public override void OnMoving(ITile toTile)
     {
-        if (toTile is IDynamicTile dynamicTile && Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures))
+        if (Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures) && toTile is IDynamicTile { HasAnyCreature: true } destinationTile)
         {
-          //  KillBlockingCreatures(dynamicTile);
-        }
-        
-        base.OnMoving(toTile);
-    }
-
-    public void KillBlockingCreatures(IDynamicTile tile)
-    {
-        foreach (var creature in tile.Creatures)
-        {
-            if (creature is IMonster monster and not Summon.Summon { Master: IPlayer} && !monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures))
+            // find all the creatures that can be pushed
+            foreach (var blockingCreature in destinationTile.Creatures)
             {
-                monster.Kill(this);
+                if (blockingCreature is IMonster { IsPushable: false }) continue;
+
+                // find a random step to move the monster to the next available tile
+                var step = MapTool.PathFinder.FindRandomStep(blockingCreature, MonsterRandomStepEnterTileRule.Rule, true);
+
+                // first try to move the monster to the next available tile
+                if (step != Direction.None)
+                {
+                    //push the monster to the next available tile
+                    blockingCreature.WalkTo(step);
+                    continue;
+                }
+                
+                //if no available tile, dismiss the creature
+                ((Monster)blockingCreature).Dismiss();
             }
+            
         }
+
+        base.OnMoving(toTile);
     }
 
     public void Reborn()
@@ -291,7 +298,7 @@ public class Monster : WalkableMonster, IMonster
                 State = MonsterState.LookingForEnemy;
                 return;
             }
-            
+
             State = Cooldowns.Expired(CooldownType.Awaken) ? MonsterState.Sleeping : MonsterState.LookingForEnemy;
             return;
         }
@@ -317,7 +324,7 @@ public class Monster : WalkableMonster, IMonster
         return !IsSleeping;
     }
 
-    public bool IsPushable => Metadata.HasFlag(CreatureFlagAttribute.Pushable);// && Speed > 0;
+    public bool IsPushable => Metadata.HasFlag(CreatureFlagAttribute.Pushable); // && Speed > 0;
 
     public void MoveAroundEnemy()
     {
@@ -500,6 +507,7 @@ public class Monster : WalkableMonster, IMonster
     {
         return (Metadata.Immunities & (ushort)immunity) != 0;
     }
+
     public bool IsImmune(DamageType damageType)
     {
         var immunity = damageType.ToImmunity();

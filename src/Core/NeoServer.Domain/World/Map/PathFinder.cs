@@ -77,17 +77,20 @@ public class PathFinder(IMap map) : IPathFinder
         return Direction.None;
     }
 
-    public Direction FindRandomStep(ICreature creature, ITileEnterRule rule)
+    public Direction FindRandomStep(ICreature creature, ITileEnterRule rule, bool allowDiagonal = false)
     {
         var randomIndex = GameRandom.Random.Next(0, maxValue: 4);
 
-        Span<Direction> directions = [Direction.East, Direction.North, Direction.South, Direction.West];
+        Span<Direction> directions = allowDiagonal
+            ?
+            [
+                Direction.East, Direction.North, Direction.South, Direction.West, Direction.NorthEast,
+                Direction.NorthWest, Direction.SouthEast, Direction.SouthWest
+            ]
+            : [Direction.East, Direction.North, Direction.South, Direction.West];
 
-        for (var i = 0; i < 4; i++)
+        foreach (var direction in directions)
         {
-            randomIndex = randomIndex > 3 ? 0 : randomIndex;
-            var direction = directions[randomIndex++];
-
             if (map.CanGoToDirection(creature, direction, rule)) return direction;
         }
 
@@ -146,7 +149,7 @@ public class PathFinder(IMap map) : IPathFinder
             var next = start.GetNextLocation(direction);
             if (!map.CanGoToDirection(creature, direction, tileEnterRule))
                 continue;
-            
+
             // If clear sight is required, skip candidates that do not have a sight from 'next'
             if (fpp.ClearSight && !SightClear.IsSightClear(map, next, target, false))
                 continue;

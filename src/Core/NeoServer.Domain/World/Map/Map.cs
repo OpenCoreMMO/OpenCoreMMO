@@ -376,8 +376,11 @@ public class Map : IMap
         _cylinderOperation.RemoveCreature(creature, out var cylinder);
 
         _world.GetSector(tile.Location.X, tile.Location.Y).RemoveCreature(creature);
-
-        creature.Disappear(tile.Location, cylinder.TileSpectators);
+        
+        //Notify all spectators about the creature's disappearance
+        foreach (var cylinderSpectator in cylinder.TileSpectators)
+            cylinderSpectator.Spectator.OnCreatureDisappear(creature);
+        
         if (creature is IWalkableCreature walkableCreature)
             OnThingRemovedFromTile?.Invoke(walkableCreature, cylinder);
     }

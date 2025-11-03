@@ -210,13 +210,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         OnAppear?.Invoke(this, creature);
     }
-
-    public virtual void Disappear(Location location, ICylinderSpectator[] spectators)
-    {
-        foreach (var cylinderSpectator in spectators)
-            cylinderSpectator.Spectator.OnCreatureDisappear(this);
-    }
-
     public virtual void OnCreatureDisappear(ICreature creature)
     {
         OnDisappear?.Invoke(this, creature);
