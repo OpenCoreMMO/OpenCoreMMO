@@ -1462,7 +1462,7 @@ public class Player : CombatActor, IPlayer
         IncreaseMana(MaxMana);
     }
 
-    public override bool HasImmunity(Immunity immunity)
+    public override bool IsImmune(Immunity immunity)
     {
         return false;
         //todo: add immunity check
@@ -1538,7 +1538,7 @@ public class Player : CombatActor, IPlayer
 
     public override CombatDamage OnImmunityDefense(CombatDamage damage)
     {
-        if (!HasImmunity(damage.Type.ToImmunity())) return damage;
+        if (!IsImmune(damage.Type.ToImmunity())) return damage;
         damage.SetNewDamage(0);
         return damage;
     }

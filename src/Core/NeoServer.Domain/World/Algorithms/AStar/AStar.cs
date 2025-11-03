@@ -111,14 +111,14 @@ public static class AStar
 
         foreach (var creature in dynamicTile.Creatures)
         {
-            //if the creature is not monster, skip it
+            //if the creature is not a monster, skip it
             if (creature is not Monster monster) continue;
 
             //if the creature is player's summoned, skip it
             if (creature is Summon { Master: IPlayer }) continue;
 
             //if a creature can't be pushed, skip it
-            if (monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures)) continue;
+            if (monster.IsPushable) continue;
             
             return true;
         }
@@ -130,7 +130,7 @@ public static class AStar
     {
         if (neighborNode is not null) return neighborNode.ExtraCost;
 
-        if (!creature && tile is IDynamicTile walkableTile) return Node.GetTileWalkCost(creature, walkableTile);
+        if (tile is IDynamicTile walkableTile) return Node.GetTileWalkCost(creature, walkableTile);
 
         return 0;
     }

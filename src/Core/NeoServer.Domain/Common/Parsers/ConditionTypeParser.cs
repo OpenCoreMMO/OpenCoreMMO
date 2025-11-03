@@ -21,17 +21,6 @@ public static class ConditionTypeParser
         };
     }
 
-    public static ConditionType ToConditionType(this DamageType type)
-    {
-        return type switch
-        {
-            DamageType.Earth => ConditionType.Poisoned,
-            DamageType.Fire => ConditionType.Burning,
-            DamageType.Energy => ConditionType.Electrified,
-            _ => ConditionType.None
-        };
-    }
-
     public static ConditionType Parse(string type)
     {
         return type switch

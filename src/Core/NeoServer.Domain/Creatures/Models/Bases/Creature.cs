@@ -142,6 +142,11 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
     }
 
+    public virtual void OnMoving(ITile toTile)
+    {
+        
+    }
+
     public void BackToOldOutfit()
     {
         Outfit = LastOutfit;

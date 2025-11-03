@@ -1,6 +1,8 @@
 ﻿using NeoServer.Domain.Combat;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
 
@@ -52,6 +54,7 @@ public interface IMonster : IWalkableMonster, ICombatActor
     bool IsSummon { get; }
     bool IsHostile { get; }
     MonsterTargetList Targets { get; set; }
+    bool IsPushable { get; }
     event Born OnWasBorn;
     event MonsterChangeState OnChangedState;
 
@@ -85,4 +88,6 @@ public interface IMonster : IWalkableMonster, ICombatActor
     void Born(Location.Structs.Location location);
     void CreateSummon(ISummonService summonService);
     void PostAttack(MonsterCombatType type);
+    bool IsImmune(Immunity immunity);
+    bool IsImmune(DamageType damageType);
 }

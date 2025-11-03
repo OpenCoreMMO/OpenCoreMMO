@@ -92,6 +92,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         {
             if (tileCreature.Equals(creature)) return true;
         }
+
         return false;
     }
 
@@ -175,6 +176,7 @@ public class DynamicTile : BaseTile, IDynamicTile
             {
                 return Ground;
             }
+
             // Decrement index since we've accounted for ground
             index--;
         }
@@ -186,6 +188,7 @@ public class DynamicTile : BaseTile, IDynamicTile
             {
                 return TopItems.ElementAt(index);
             }
+
             // Decrement index by the number of top items
             index -= TopItems.Count;
         }
@@ -212,11 +215,8 @@ public class DynamicTile : BaseTile, IDynamicTile
     {
         if (Creatures is null) return null;
 
-        for (var i = Creatures.Count - 1; i > 0; i--)
+        foreach (var tileCreature in Creatures)
         {
-            var tileCreature = Creatures[i];
-
-            //var tileCreature = Creatures[creatureId];
             if (creature != null)
             {
                 if (creature.CanSee(tileCreature)) return tileCreature;
@@ -227,9 +227,10 @@ public class DynamicTile : BaseTile, IDynamicTile
 
                 var player = isPlayer ? tileCreature as IPlayer : null;
 
-                if (!tileCreature.IsInvisible)
-                    if (!isPlayer || !player.IsInvisible)
-                        return tileCreature;
+                if (!tileCreature.IsInvisible && (!isPlayer || !player.IsInvisible))
+                {
+                    return tileCreature;
+                }
             }
         }
 
@@ -693,7 +694,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         if (!CanEnterFunction?.Invoke(creature) ?? false) return Result<OperationResultList<ICreature>>.NotPossible;
 
-        Creatures ??= new List<IWalkableCreature>();
+        Creatures ??= [];
         Creatures.Add(walkableCreature);
 
         walkableCreature.SetCurrentTile(this);

@@ -120,8 +120,7 @@ public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
     {
         if (creature is not NeoServer.Domain.Creatures.Monster.Monster monster) return false;
         if (creature is Summon { Master: NeoServer.Domain.Creatures.Player.Player }) return false;
-        if (monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures)) return false;
-        return true;
+        return monster.IsPushable;
     }
 
     public override bool ShouldIgnore(ITile tile, ICreature creature)

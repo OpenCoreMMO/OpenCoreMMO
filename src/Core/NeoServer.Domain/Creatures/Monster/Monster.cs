@@ -7,11 +7,13 @@ using NeoServer.Domain.Common.Contracts.Inspection;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Parsers;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster.Actions;
@@ -164,6 +166,33 @@ public class Monster : WalkableMonster, IMonster
         base.OnSpectatorChangedVisibility(spectator);
     }
 
+    
+    /// <summary>
+    /// Event is triggered before the monster is moved to a new tile.
+    /// To get here, all the validation checks must be done.
+    /// </summary>
+    /// <param name="toTile"></param>
+    public override void OnMoving(ITile toTile)
+    {
+        if (toTile is IDynamicTile dynamicTile && Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures))
+        {
+          //  KillBlockingCreatures(dynamicTile);
+        }
+        
+        base.OnMoving(toTile);
+    }
+
+    public void KillBlockingCreatures(IDynamicTile tile)
+    {
+        foreach (var creature in tile.Creatures)
+        {
+            if (creature is IMonster monster and not Summon.Summon { Master: IPlayer} && !monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures))
+            {
+                monster.Kill(this);
+            }
+        }
+    }
+
     public void Reborn()
     {
         if (Spawn is null) return;
@@ -207,7 +236,7 @@ public class Monster : WalkableMonster, IMonster
     public bool IsSleeping => State == MonsterState.Sleeping;
     public bool Defending { get; private set; }
     public virtual bool IsSummon => false;
-    public override bool CanSeeInvisible => HasImmunity(Immunity.Invisibility); //todo: add invisibility flag
+    public override bool CanSeeInvisible => IsImmune(Immunity.Invisibility); //todo: add invisibility flag
     public override bool CanBeSeen => false;
 
     public override BloodType BloodType => Metadata.Race switch
@@ -287,6 +316,8 @@ public class Monster : WalkableMonster, IMonster
     {
         return !IsSleeping;
     }
+
+    public bool IsPushable => Metadata.HasFlag(CreatureFlagAttribute.Pushable);// && Speed > 0;
 
     public void MoveAroundEnemy()
     {
@@ -415,13 +446,13 @@ public class Monster : WalkableMonster, IMonster
     {
         switch (condition.Type)
         {
-            case ConditionType.Paralyze when HasImmunity(Immunity.Paralysis):
-            case ConditionType.Drowning when HasImmunity(Immunity.Drown):
-            case ConditionType.Electrified when HasImmunity(Immunity.Energy):
-            case ConditionType.Burning when HasImmunity(Immunity.Fire):
-            case ConditionType.Drunk when HasImmunity(Immunity.Drunkenness):
-            case ConditionType.Poisoned when HasImmunity(Immunity.Earth):
-            case ConditionType.Bleeding when HasImmunity(Immunity.Physical):
+            case ConditionType.Paralyze when IsImmune(Immunity.Paralysis):
+            case ConditionType.Drowning when IsImmune(Immunity.Drown):
+            case ConditionType.Electrified when IsImmune(Immunity.Energy):
+            case ConditionType.Burning when IsImmune(Immunity.Fire):
+            case ConditionType.Drunk when IsImmune(Immunity.Drunkenness):
+            case ConditionType.Poisoned when IsImmune(Immunity.Earth):
+            case ConditionType.Bleeding when IsImmune(Immunity.Physical):
                 return;
             default:
                 base.AddCondition(condition);
@@ -465,8 +496,13 @@ public class Monster : WalkableMonster, IMonster
         return false;
     }
 
-    public override bool HasImmunity(Immunity immunity)
+    public override bool IsImmune(Immunity immunity)
     {
+        return (Metadata.Immunities & (ushort)immunity) != 0;
+    }
+    public bool IsImmune(DamageType damageType)
+    {
+        var immunity = damageType.ToImmunity();
         return (Metadata.Immunities & (ushort)immunity) != 0;
     }
 

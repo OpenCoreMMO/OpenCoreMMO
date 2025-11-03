@@ -81,7 +81,7 @@ public interface ICreatureMovementService
                 if (map[newDestination] is IDynamicTile newDestinationTile) nextTile = newDestinationTile;
             }
 
-            // Handle upward movement when underground: if not on surface and no tile found, try moving up a floor
+            // Handle upward movement when underground: if not on the surface and no tile found, try moving up a floor
             // if there's a tile with height 3 (e.g., holes leading up).
             if (!creature.Location.IsSurface && nextTile is null)
             {
@@ -114,7 +114,7 @@ public interface ICreatureMovementService
                 return false;
             }
 
-            // Use creature's tile enter rule to check if it can enter the tile, then attempt the actual move.
+            // Use the creature's tile enter rule to check if it can enter the tile, then attempt the actual move.
             if (creature.TileEnterRule.CanEnter(nextTile, creature) &&
                 TryMoveCreature(creature, nextTile.Location)) return true;
 
@@ -141,6 +141,8 @@ public interface ICreatureMovementService
                 EventAggregator.Invoke(new ThingMovementFailedInTheMap(creature, InvalidOperation.NotEnoughRoom));
                 return false;
             }
+
+            creature.OnMoving(tileDestination);
 
             // Perform the movement using cylinder operation for atomic updates and spectator notifications.
             var result = cylinderOperation.MoveCreature(creature, fromTile, toTile, 1, out var cylinder);

@@ -399,7 +399,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return new CalculatedAttackDamage();
     }
 
-    public abstract bool HasImmunity(Immunity immunity);
+    public abstract bool IsImmune(Immunity immunity);
 
     public virtual bool CanBlock(DamageType damage)
     {

@@ -6,6 +6,7 @@ using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Algorithms.AStar;
+using NeoServer.Domain.World.Map;
 
 namespace NeoServer.Domain.Tests.World;
 
@@ -164,5 +165,74 @@ public class PathFindingTests
         //assert
         result.Found.Should().BeFalse();
         result.Directions.Should().BeEmpty();
+    }
+    
+    
+    [Fact]
+    [Trait("Category", "PathFinding")]
+    [ThreadBlocking]
+    public void Monster_finds_path_around_pushable_monster()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 102, 100, 101, 7, 7);
+
+        // Create sut monster with canpushcreatures flag at x=100, y=100
+        var sutMonster = MonsterTestDataBuilder.Build(flags: new Dictionary<CreatureFlagAttribute, ushort>
+        {
+            { CreatureFlagAttribute.CanPushCreatures, 1 }
+        }, name: "sutMonster");
+        
+        sutMonster.SetNewLocation(new Location(100,100,7));
+        map.PlaceCreature(sutMonster);
+        
+
+        // Create a target player at x=102, y=100
+        var targetPlayer = PlayerTestDataBuilder.Build();
+        targetPlayer.SetNewLocation(new Location(102, 100, 7));
+        map.PlaceCreature(targetPlayer);
+
+        // Add a pushable monster in the middle at x=101, y=100
+        var middleMonster = MonsterTestDataBuilder.Build(flags: new Dictionary<CreatureFlagAttribute, ushort>
+        {
+            { CreatureFlagAttribute.Pushable, 1 }
+        });
+        middleMonster.SetNewLocation(new Location(101, 100, 7));
+        map.PlaceCreature(middleMonster);
+
+        var fpp = new FindPathParams
+        {
+            AllowDiagonal = true,
+            ClearSight = true,
+            KeepDistance = false,
+            OneStep = false,
+            FullPathSearch = true,
+            MaxSearchDist = 12,
+            MaxTargetDist = 1,
+            MinTargetDist = 1,
+            PushMonsters = true
+        };
+        
+        //act
+        var result = new PathFinder(map).Find(sutMonster, targetPlayer.Location, fpp, sutMonster.TileEnterRule);
+
+        //assert
+        result.Found.Should().BeTrue();
+        result.Directions.Should().HaveCount(2);
+        
+        result.Directions[0].Should().Be(Direction.South);
+        result.Directions[1].Should().Be(Direction.East);
+
+        // Calculate path locations
+        var pathLocations = new List<Location> { sutMonster.Location };
+        foreach (var dir in result.Directions)
+        {
+            var next = pathLocations.Last().GetNextLocation(dir);
+            pathLocations.Add(next);
+        }
+
+        // Path should go through 100,101 and 101,101 without passing through 101,100
+        pathLocations.Should().Contain(new Location(100, 101, 7));
+        pathLocations.Should().Contain(new Location(101, 101, 7));
+        pathLocations.Should().NotContain(new Location(101, 100, 7));
     }
 }
