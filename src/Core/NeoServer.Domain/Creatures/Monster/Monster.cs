@@ -89,6 +89,7 @@ public class Monster : WalkableMonster, IMonster
         ResetHealthPoints();
         SetNewLocation(location);
         State = MonsterState.Sleeping;
+        KilledByAnotherMonster = false;
         OnWasBorn?.Invoke(this, location);
     }
 
@@ -173,32 +174,56 @@ public class Monster : WalkableMonster, IMonster
     /// <param name="toTile"></param>
     public override void OnMoving(ITile toTile)
     {
-        if (Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures) && toTile is IDynamicTile { HasAnyCreature: true } destinationTile)
-        {
-            // find all the creatures that can be pushed
-            foreach (var blockingCreature in destinationTile.Creatures)
+        if (Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures) && toTile is IDynamicTile
             {
-                if (blockingCreature is IMonster { IsPushable: false }) continue;
-
-                // find a random step to move the monster to the next available tile
-                var step = MapTool.PathFinder.FindRandomStep(blockingCreature, MonsterRandomStepEnterTileRule.Rule, true);
-
-                // first try to move the monster to the next available tile
-                if (step != Direction.None)
-                {
-                    //push the monster to the next available tile
-                    blockingCreature.WalkTo(step);
-                    continue;
-                }
-                
-                //if no available tile, dismiss the creature
-                ((Monster)blockingCreature).Dismiss();
-            }
-            
+                HasAnyCreature: true
+            } destinationTile)
+        {
+            PushCreatures(destinationTile);
         }
 
         base.OnMoving(toTile);
     }
+
+    private void PushCreatures(IDynamicTile destinationTile)
+    {
+        // find all the creatures that can be pushed
+        foreach (var blockingCreature in destinationTile.Creatures.ToList())
+        {
+            if (blockingCreature is IMonster { IsPushable: false } or Summon.Summon { Master: IPlayer }) continue;
+
+            // find a random step to move the monster to the next available tile
+            var step = MapTool.PathFinder.FindRandomStep(blockingCreature, MonsterRandomStepEnterTileRule.Rule, true);
+
+            // first try to move the monster to the next available tile
+            if (step != Direction.None)
+            {
+                //push the monster to the next available tile
+                blockingCreature.WalkTo(step);
+                continue;
+            }
+
+            //if no available tile, dismiss the creature
+            blockingCreature.HealthPoints = 0;
+
+            ((Monster)blockingCreature).Die(this);
+        }
+    }
+
+    private void Die(ICreature by)
+    {
+        if (by is IMonster and not Summon.Summon { Master: IPlayer } && (Monster)by != this )
+        {
+            KilledByAnotherMonster = true;
+        }
+        
+        HealthPoints = 0;
+        Death(by);
+    }
+
+    public bool KilledByAnotherMonster { get; private set; }
+
+    protected void Die() => Die(this);
 
     public void Reborn()
     {

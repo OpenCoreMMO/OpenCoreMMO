@@ -26,6 +26,9 @@ public class ExperienceSharingService : IExperienceSharingService
     {
         //TODO: implement player experience sharing for pvp enforced
         if (creature is not IMonster monster || monster.IsSummon) return;
+        
+        //do not create blood or corpse for monsters that are killed by another monster
+        //if(creature is IMonster && by is IMonster and not Summon { Master: IPlayer }) return;
 
         foreach (var damageRecord in monster.ReceivedDamages)
         {
