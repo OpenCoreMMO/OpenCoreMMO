@@ -37,7 +37,7 @@ public class TalkActions : ITalkActions
 
     public bool CheckWord(IPlayer player, SpeechType type, string words, string word, TalkAction talkActionPtr)
     {
-        var spacePos = words.IndexOfAny(new[] { ' ', '\t', '\n', '\r' });
+        var spacePos = words.IndexOfAny([' ', '\t', '\n', '\r']);
         var firstWord = spacePos != -1 ? words.Substring(0, spacePos) : words;
 
         // Check for exact equality from saying word and talkaction stored word

@@ -40,7 +40,7 @@ public class GroupLoader
             var groups = GetGroups();
             foreach (var group in groups) _groupStore.AddOrUpdate(group.Id, group);
 
-            return new object[] { groups.Count };
+            return [groups.Count];
         });
     }
 
@@ -50,7 +50,7 @@ public class GroupLoader
         {
             var groups = GetGroups();
             AddOrUpdateGroup(groups);
-            return new object[] { groups.Count };
+            return [groups.Count];
         });
     }
 

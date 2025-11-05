@@ -331,12 +331,12 @@ public class SpellTests
         // words = utevo res "rat" return spell with params "rat"
         _spellListManager.TryGetInstantSpell("utevo res \"rat\"", out var spell2).Should().BeTrue();
         spell2.Should().Be(utevoResSpell);
-        spell2.Params.Should().BeEquivalentTo(new[] { "rat" });
+        spell2.Params.Should().BeEquivalentTo(["rat"]);
 
         // words = utevo res "rat" return spell with params "rat"
         _spellListManager.TryGetInstantSpell("utevo res \"rat", out var spell3).Should().BeTrue();
         spell3.Should().Be(utevoResSpell);
-        spell3.Params.Should().BeEquivalentTo(new[] { "rat" });
+        spell3.Params.Should().BeEquivalentTo(["rat"]);
     }
 
     [Fact]

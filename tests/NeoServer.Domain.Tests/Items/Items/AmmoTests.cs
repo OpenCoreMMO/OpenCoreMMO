@@ -16,10 +16,9 @@ public class AmmoTests
     [InlineData(1, "(Atk: 1)")]
     public void InspectionText_ReturnsText(int attack, string expected)
     {
-        var sut = ItemTestDataBuilder.CreateAmmo(1, 10, new (ItemTypeAttribute, IConvertible)[]
-        {
+        var sut = ItemTestDataBuilder.CreateAmmo(1, 10, [
             (ItemTypeAttribute.Attack, attack)
-        });
+        ]);
 
         //assert
         sut.InspectionText.Should().Be(expected);
@@ -34,11 +33,10 @@ public class AmmoTests
     public void InspectionText_HasElementalDamage_ReturnsText(ItemTypeAttribute itemAttribute, int elementalDamage,
         string expected)
     {
-        var sut = (IEquipment)ItemTestDataBuilder.CreateAmmo(1, 10, new (ItemTypeAttribute, IConvertible)[]
-        {
+        var sut = (IEquipment)ItemTestDataBuilder.CreateAmmo(1, 10, [
             (ItemTypeAttribute.Attack, 6),
             (itemAttribute, elementalDamage)
-        });
+        ]);
 
         //assert
         sut.InspectionText.Should().Be(expected);
@@ -54,10 +52,9 @@ public class AmmoTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation);
-        var sut = (IEquipment)ItemTestDataBuilder.CreateAmmo(1, 100, new (ItemTypeAttribute, IConvertible)[]
-        {
+        var sut = (IEquipment)ItemTestDataBuilder.CreateAmmo(1, 100, [
             (ItemTypeAttribute.BodyPosition, "body")
-        });
+        ]);
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
@@ -81,11 +78,10 @@ public class AmmoTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = (IEquipment)ItemTestDataBuilder.CreateAmmo(1, 100, new (ItemTypeAttribute, IConvertible)[]
-        {
+        var sut = (IEquipment)ItemTestDataBuilder.CreateAmmo(1, 100, [
             (ItemTypeAttribute.BodyPosition, "body"),
             (ItemTypeAttribute.MinimumLevel, minLevel)
-        });
+        ]);
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
@@ -100,10 +96,9 @@ public class AmmoTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: 1);
-        var sut = (IEquipment)ItemTestDataBuilder.CreateAmmo(1, 100, new (ItemTypeAttribute, IConvertible)[]
-        {
+        var sut = (IEquipment)ItemTestDataBuilder.CreateAmmo(1, 100, [
             (ItemTypeAttribute.BodyPosition, "body")
-        });
+        ]);
 
         //act
         var actual = sut.CanBeDressed(player);

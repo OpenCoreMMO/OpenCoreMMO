@@ -79,7 +79,7 @@ public class BaseAttributeList<T> where T : Enum
         if (_defaultAttributes is null) return default;
 
         if (!_defaultAttributes.TryGetValue(attribute, out var value)) return default;
-        if (value.Item1 is not Array) return new[] { value.Item1 };
+        if (value.Item1 is not Array) return [value.Item1];
 
         var pool = ArrayPool<dynamic>.Shared;
         dynamic[] newArray = pool.Rent(value.Item1.Length);
@@ -138,7 +138,7 @@ public class BaseAttributeList<T> where T : Enum
 
         if (!_defaultAttributes.TryGetValue(attribute, out var value)) return default;
 
-        if (value.Item1 is not Array) return new[] { (TValue)value.Item1 };
+        if (value.Item1 is not Array) return [(TValue)value.Item1];
 
         var pool = ArrayPool<TValue>.Shared;
         TValue[] newArray = pool.Rent(value.Item1.Length);

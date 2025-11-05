@@ -25,14 +25,14 @@ public class ItemTestDataBuilder
     public static void LoadItemTypeAttributes(IItemType itemType,
         (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null)
     {
-        itemTypeAttributes ??= Array.Empty<(ItemTypeAttribute, IConvertible)>();
+        itemTypeAttributes ??= [];
         foreach (var (itemTypeAttribute, value) in itemTypeAttributes)
             itemType.Attributes.SetAttribute(itemTypeAttribute, value);
     }
 
     public static void LoadItemAttributes(IItem item, (ItemAttribute, IConvertible)[] itemAttributes = null)
     {
-        itemAttributes ??= Array.Empty<(ItemAttribute, IConvertible)>();
+        itemAttributes ??= [];
         foreach (var (itemAttribute, value) in itemAttributes)
             item.Attributes.SetAttribute(itemAttribute, value);
     }

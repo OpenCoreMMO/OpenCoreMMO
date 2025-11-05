@@ -7,7 +7,7 @@ public static partial class AreaEffect
 {
     public static Coordinate[] Create(Location.Structs.Location location, byte[,] areaTemplate)
     {
-        if (areaTemplate is null) return Array.Empty<Coordinate>();
+        if (areaTemplate is null) return [];
 
         var rows = areaTemplate.GetLength(0);
         var columns = areaTemplate.GetLength(1);

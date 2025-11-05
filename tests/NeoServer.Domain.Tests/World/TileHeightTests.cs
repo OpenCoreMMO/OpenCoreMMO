@@ -54,10 +54,10 @@ public class TileHeightTests
         depot.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "depot");
 
         IItem[] items =
-        {
+        [
             MapTestDataBuilder.CreateGround(new Location(100, 100, 7)),
             depot
-        };
+        ];
 
         var tile = (DynamicTile)tileFactory.CreateTile(new Coordinate(100, 100, 7), TileFlag.None, items);
 

@@ -33,7 +33,7 @@ public class TileRuleLoader : IStartupLoader
         {
             var count = LoadTileRules();
 
-            return new object[] { count };
+            return [count];
         });
     }
 

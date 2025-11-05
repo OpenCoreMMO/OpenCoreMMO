@@ -162,12 +162,12 @@ public struct Location : IEquatable<Location>, IConvertible
 
     public static long[] GetOffsetBetween(Location origin, Location targetLocation)
     {
-        return new[]
-        {
+        return
+        [
             (long)origin.X - targetLocation.X,
             (long)origin.Y - targetLocation.Y,
             (long)origin.Z - targetLocation.Z
-        };
+        ];
     }
 
     public bool IsDiagonalMovement(Location targetLocation)

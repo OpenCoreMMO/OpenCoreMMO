@@ -71,7 +71,7 @@ public class ItemTypeLoader
                     _coinTypeStore.AddOrUpdate(item.Key, item.Value);
             }
 
-            return new object[] { itemTypes.Count };
+            return [itemTypes.Count];
         });
     }
 
@@ -92,7 +92,7 @@ public class ItemTypeLoader
 
         var itemTypeMetadataParser = new ItemTypeMetadataParser(itemTypes);
 
-        (itemTypeMetadata ?? Array.Empty<ItemTypeMetadata>()).AsParallel().ForAll(metadata =>
+        (itemTypeMetadata ?? []).AsParallel().ForAll(metadata =>
         {
             if (metadata.Id.HasValue)
             {

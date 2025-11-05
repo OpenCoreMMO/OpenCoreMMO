@@ -16,7 +16,7 @@ public class ReadOnlyArrayTest
     [Fact]
     public void WrapCollection_NotNull_ReturnsInstance()
     {
-        var instance = ReadOnlyArray<int>.WrapCollection(new int[0]);
+        var instance = ReadOnlyArray<int>.WrapCollection([]);
         Assert.NotNull(instance);
         Assert.IsType<ReadOnlyArray<int>>(instance);
     }
@@ -24,7 +24,7 @@ public class ReadOnlyArrayTest
     [Fact]
     public void GetByIndex_ReturnsValue()
     {
-        var instance = ReadOnlyArray<int>.WrapCollection(new int[4] { 4, 7, 5, 1 });
+        var instance = ReadOnlyArray<int>.WrapCollection([4, 7, 5, 1]);
 
         Assert.Equal(5, instance[2]);
         Assert.Equal(7, instance[1]);
@@ -36,7 +36,7 @@ public class ReadOnlyArrayTest
     [Fact]
     public void GetCount_ReturnsArrayLength()
     {
-        var instance = ReadOnlyArray<int>.WrapCollection(new int[4] { 4, 7, 5, 1 });
+        var instance = ReadOnlyArray<int>.WrapCollection([4, 7, 5, 1]);
 
         Assert.Equal(4, instance.Count);
     }

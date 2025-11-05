@@ -38,7 +38,7 @@ public static class MapTestDataBuilder
         List<Location> staticTiles = null)
     {
         topItems ??= new Dictionary<Location, IItem[]>();
-        staticTiles ??= new List<Location>();
+        staticTiles ??= [];
 
         var world = new Domain.World.World();
         var map = new Domain.World.Map.Map(world);
@@ -78,8 +78,8 @@ public static class MapTestDataBuilder
         var random = new Random();
         var ground = CreateGround(location, (ushort)random.Next(1, ushort.MaxValue));
 
-        return new DynamicTile(new Coordinate(location), TileFlag.None, ground, Array.Empty<IItem>(),
-            Array.Empty<IItem>());
+        return new DynamicTile(new Coordinate(location), TileFlag.None, ground, [],
+            []);
     }
 
     public static IDynamicTile CreateTile(Location location, ushort id = 1, int speed = 50, params IItem[] downItems)
@@ -87,7 +87,7 @@ public static class MapTestDataBuilder
         var random = new Random();
         var ground = CreateGround(location, (ushort)random.Next(1, ushort.MaxValue));
 
-        return new DynamicTile(new Coordinate(location), TileFlag.None, ground, Array.Empty<IItem>(),
+        return new DynamicTile(new Coordinate(location), TileFlag.None, ground, [],
             downItems);
     }
 }

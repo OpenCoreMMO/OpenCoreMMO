@@ -10,14 +10,16 @@ public struct OperationResult : IOperationResult
 
     public void Add(Operation operation, IThing thing, byte stackPosition = 0)
     {
-        Operations = Operations ?? new List<(IThing, Operation, byte)>();
+        Operations = Operations ?? [];
         Operations.Add((thing, operation, stackPosition));
     }
 
     public OperationResult(Operation operation, IThing thing, byte stackPosition = 0)
     {
-        Operations = new List<(IThing, Operation, byte)>();
-        Operations.Add((thing, operation, stackPosition));
+        Operations =
+        [
+            (thing, operation, stackPosition)
+        ];
     }
 
     public bool HasAnyOperation => Operations?.Any() ?? false;

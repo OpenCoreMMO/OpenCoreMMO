@@ -99,7 +99,7 @@ public class DynamicTile : BaseTile, IDynamicTile
     {
         get
         {
-            if (Creatures is null) return new List<IPlayer>(0);
+            if (Creatures is null) return [];
             var players = new List<IPlayer>(Creatures.Count);
             foreach (var walkableCreature in Creatures)
             {
@@ -364,7 +364,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
     public IItem[] RemoveStaticItems()
     {
-        if (TopItems is null) return Array.Empty<IItem>();
+        if (TopItems is null) return [];
 
         var removedItems = new IItem[TopItems.Count];
 
@@ -416,7 +416,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
     public IItem[] RemoveAllItems()
     {
-        if (DownItems is null) return Array.Empty<IItem>();
+        if (DownItems is null) return [];
 
         var removedItems = new IItem[DownItems.Count];
 
@@ -432,7 +432,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
     public ICreature[] RemoveAllCreatures()
     {
-        if (Creatures is null) return Array.Empty<ICreature>();
+        if (Creatures is null) return [];
 
         var removedCreatures = new ICreature[Creatures.Count];
 
@@ -693,7 +693,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         if (!CanEnterFunction?.Invoke(creature) ?? false) return Result<OperationResultList<ICreature>>.NotPossible;
 
-        Creatures ??= new List<IWalkableCreature>();
+        Creatures ??= [];
         Creatures.Add(walkableCreature);
 
         walkableCreature.SetCurrentTile(this);
@@ -807,7 +807,7 @@ public class DynamicTile : BaseTile, IDynamicTile
     public Result<OperationResultList<ICreature>> RemoveCreature(ICreature creatureToRemove,
         out ICreature removedCreature)
     {
-        Creatures ??= new List<IWalkableCreature>();
+        Creatures ??= [];
         removedCreature = null;
 
         if (Creatures.Count == 0)

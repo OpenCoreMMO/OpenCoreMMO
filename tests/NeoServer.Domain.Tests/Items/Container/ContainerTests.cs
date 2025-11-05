@@ -860,13 +860,12 @@ public class ContainerTests
 
         var food = ItemTestDataBuilder.CreateCumulativeItem(1, 1, "meat");
 
-        var loot = new Loot(new[]
-        {
+        var loot = new Loot([
             new LootItem(ItemTestDataBuilder.CreateWeaponItem(1, name: "sabre").Metadata, 1, 1, null),
             new LootItem(ItemTestDataBuilder.CreateContainer(2).Metadata, 1, 1,
-                new[] { new LootItem(food.Metadata, 1, 1, null) }),
+                [new LootItem(food.Metadata, 1, 1, null)]),
             new LootItem(ItemTestDataBuilder.CreateAttackRune(3, amount: 55).Metadata, 55, 1, null)
-        }, new HashSet<ICreature>(0));
+        ], []);
 
         var sut = ItemTestDataBuilder.CreateLootContainer(5, loot: loot);
 
