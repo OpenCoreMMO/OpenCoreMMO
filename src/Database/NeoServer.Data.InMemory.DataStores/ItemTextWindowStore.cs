@@ -20,10 +20,7 @@ public class ItemTextWindowStore
             return (uint)items.Count - 1;
         }
 
-        playerItemsTextWindow.Add(player.Id, new List<IItem>
-        {
-            item
-        });
+        playerItemsTextWindow.Add(player.Id, [item]);
 
         return 0;
     }

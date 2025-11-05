@@ -14,11 +14,11 @@ public class MoveCumulativeItemTestData : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()
     {
-        yield return new object[]
-        {
+        yield return
+        [
             new Data(ItemTestDataBuilder.CreateCumulativeItem(5, 100), 40, new Location(101, 100, 7),
-                new List<IItem>(), new List<IItem>())
-        };
+                [], [])
+        ];
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -60,7 +60,7 @@ public class MoveCumulativeItemTestData : IEnumerable<object[]>
 
                 if (item.Location == new Location((ushort)x, (ushort)y, 7)) items.Add(item);
 
-                world.AddTile(new DynamicTile(new Coordinate(x, y, 7), TileFlag.None, null, new IItem[0],
+                world.AddTile(new DynamicTile(new Coordinate(x, y, 7), TileFlag.None, null, [],
                     items.ToArray()));
             }
 

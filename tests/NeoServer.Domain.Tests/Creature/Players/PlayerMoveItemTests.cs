@@ -26,8 +26,8 @@ public class PlayerMoveItemTests
 
         var item = ItemTestDataBuilder.CreateWeaponItem(100);
 
-        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            new[] { item });
+        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            [item]);
 
         //act
         var result = player.MoveItem(item, tile, inventory, 1, 0, (byte)Slot.Left);
@@ -50,8 +50,8 @@ public class PlayerMoveItemTests
 
         var item = ItemTestDataBuilder.CreateWeaponItem(100);
 
-        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            new[] { item });
+        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            [item]);
 
         //act
         var result = player.MoveItem(item, tile, inventory, 1, 0, (byte)Slot.Backpack);
@@ -76,8 +76,8 @@ public class PlayerMoveItemTests
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
         var inventory = InventoryTestDataBuilder.Build(player, dictionary);
         var item = ItemTestDataBuilder.CreateWeaponItem(100);
-        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            new[] { item });
+        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            [item]);
 
         //act
         var result = player.MoveItem(item, tile, inventory, 1, 0, (byte)Slot.Left);
@@ -98,8 +98,8 @@ public class PlayerMoveItemTests
             new Dictionary<Slot, (IItem Item, ushort Id)>());
 
         var item = ItemTestDataBuilder.CreateAmmo(100, 20);
-        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            new[] { item });
+        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            [item]);
 
         //act
         var result = player.MoveItem(tile.TopDownItemOnStack, tile, inventory, 20, 0, (byte)Slot.Ammo);
@@ -125,8 +125,8 @@ public class PlayerMoveItemTests
             });
 
         var item = ItemTestDataBuilder.CreateAmmo(100, 100);
-        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            new[] { item });
+        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            [item]);
 
         //act
         var result = player.MoveItem(tile.TopDownItemOnStack, tile, inventory, 100, 0, (byte)Slot.Ammo);
@@ -154,8 +154,8 @@ public class PlayerMoveItemTests
             });
 
         var item = ItemTestDataBuilder.CreateThrowableDistanceItem(200, 100);
-        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            new IItem[] { item });
+        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            [item]);
 
         //act
         var result = player.MoveItem(tile.TopDownItemOnStack, tile, inventory, 100, 0, (byte)Slot.Ammo);
@@ -182,8 +182,8 @@ public class PlayerMoveItemTests
             });
 
         var item = ItemTestDataBuilder.CreateAmmo(200, 100);
-        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            new[] { item });
+        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            [item]);
 
         //act
         var result = player.MoveItem(tile.TopDownItemOnStack, tile, inventory, 100, 0, (byte)Slot.Backpack);
@@ -208,8 +208,8 @@ public class PlayerMoveItemTests
             {
                 { Slot.Right, (item, 100) }
             });
-        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            new[] { item });
+        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            [item]);
 
         //act
         var result = player.MoveItem(item, inventory, tile, 1, (byte)Slot.Right, 0);
@@ -277,10 +277,10 @@ public class PlayerMoveItemTests
     public void Player_moves_item_from_tile_to_another_tile()
     {
         //arrange
-        IDynamicTile fromTile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            Array.Empty<IItem>());
-        IDynamicTile dest = new DynamicTile(new Coordinate(102, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            Array.Empty<IItem>());
+        IDynamicTile fromTile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            []);
+        IDynamicTile dest = new DynamicTile(new Coordinate(102, 100, 7), TileFlag.None, null, [],
+            []);
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
@@ -300,10 +300,10 @@ public class PlayerMoveItemTests
     public void Player_moves_cumulative_item_from_tile_to_another_tile()
     {
         //arrange
-        IDynamicTile fromTile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            Array.Empty<IItem>());
-        IDynamicTile dest = new DynamicTile(new Coordinate(102, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            Array.Empty<IItem>());
+        IDynamicTile fromTile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            []);
+        IDynamicTile dest = new DynamicTile(new Coordinate(102, 100, 7), TileFlag.None, null, [],
+            []);
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
         var item = ItemTestDataBuilder.CreateAmmo(100, 100);
@@ -327,10 +327,10 @@ public class PlayerMoveItemTests
     public void Player_moves_half_of_cumulative_item_from_tile_to_another_tile()
     {
         //arrange
-        IDynamicTile fromTile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            Array.Empty<IItem>());
-        IDynamicTile dest = new DynamicTile(new Coordinate(102, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            Array.Empty<IItem>());
+        IDynamicTile fromTile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            []);
+        IDynamicTile dest = new DynamicTile(new Coordinate(102, 100, 7), TileFlag.None, null, [],
+            []);
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
         var item = ItemTestDataBuilder.CreateAmmo(100, 100);
@@ -354,10 +354,10 @@ public class PlayerMoveItemTests
     public void Player_moves_part_of_cumulative_item_from_tile_to_join_in_another_tile()
     {
         //arrange
-        IDynamicTile fromTile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            Array.Empty<IItem>());
-        IDynamicTile dest = new DynamicTile(new Coordinate(102, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            new[] { ItemTestDataBuilder.CreateAmmo(100, 50) });
+        IDynamicTile fromTile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            []);
+        IDynamicTile dest = new DynamicTile(new Coordinate(102, 100, 7), TileFlag.None, null, [],
+            [ItemTestDataBuilder.CreateAmmo(100, 50)]);
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
         var item = ItemTestDataBuilder.CreateAmmo(100, 100);
@@ -400,8 +400,8 @@ public class PlayerMoveItemTests
         var child = ItemTestDataBuilder.CreateContainer(1);
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
 
-        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            Array.Empty<IItem>());
+        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            []);
 
         var itemOnChild = ItemTestDataBuilder.CreateCumulativeItem(100, 50);
         child.AddItem(itemOnChild);

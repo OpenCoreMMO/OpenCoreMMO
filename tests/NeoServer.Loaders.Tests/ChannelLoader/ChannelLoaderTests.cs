@@ -56,28 +56,28 @@ public class ChannelLoaderTests
 
     public static IEnumerable<object[]> DependenciesData()
     {
-        yield return new object[]
-        {
+        yield return
+        [
             null,
             new ChatChannelFactory(null, null, null),
             new ChatChannelStore(),
             "Server configuration not found"
-        };
+        ];
 
-        yield return new object[]
-        {
+        yield return
+        [
             new Fixture().Create<ServerConfiguration>(),
             null,
             new ChatChannelStore(),
             "ChatChannelFactory not found"
-        };
+        ];
 
-        yield return new object[]
-        {
+        yield return
+        [
             new Fixture().Create<ServerConfiguration>(),
             new ChatChannelFactory(null, null, null),
             null,
             "ChatChannelStore not found"
-        };
+        ];
     }
 }

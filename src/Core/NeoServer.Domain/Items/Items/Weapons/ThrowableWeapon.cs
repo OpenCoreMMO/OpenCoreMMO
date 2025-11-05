@@ -71,37 +71,7 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
         return false;
     }
 
-    public bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combatResult)
-    {
-        combatResult = new CombatAttackResult(Metadata.ShootType);
-
-        if (actor is not IPlayer player) return false;
-
-        var maxDamage = player.CalculateAttackPower(0.09f, AttackPower);
-        var combat = new CombatAttackValue(actor.MinimumAttackPower, maxDamage, Range, DamageType.Physical);
-
-        if (!DistanceCombatAttack.CanAttack(actor, enemy, combat)) return false;
-
-        if (BreakChance > 0 && GameRandom.Random.Next(1, maxValue: 100) <= BreakChance) Reduce();
-
-        var hitChance =
-            (byte)(DistanceHitChanceCalculation.CalculateFor1Hand(player.GetSkillLevel(player.SkillInUse), Range) +
-                   ExtraHitChance);
-        var missed = DistanceCombatAttack.MissedAttack(hitChance);
-
-        if (missed)
-        {
-            combatResult.Missed = true;
-            return true;
-        }
-
-        if (!DistanceCombatAttack.CalculateAttack(actor, enemy, combat, out var damage)) return false;
-
-        enemy.TakeDamage(actor, damage);
-
-        return true;
-    }
-
+  
     public void OnMoved(IThing to)
     {
     }

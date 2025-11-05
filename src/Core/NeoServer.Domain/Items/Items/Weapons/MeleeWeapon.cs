@@ -68,43 +68,7 @@ public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDe
         return false;
     }
 
-    public bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combatResult)
-    {
-        combatResult = new CombatAttackResult(DamageType.Melee);
-
-        if (actor is not IPlayer player) return false;
-
-        var result = false;
-
-        var attackPower = WeaponAttack.AttackPower + WeaponAttack.ElementalDamage.AttackPower;
-        var maxDamage = player.MaximumAttackPower;
-
-        if (CalculateRegularAttack(player, enemy, maxDamage, out var damage))
-        {
-            var attackPowerPercentageFromTotal = 100 - WeaponAttack.AttackPower * 100 / attackPower;
-            var realDamage = (ushort)(damage.Damage - damage.Damage * ((double)attackPowerPercentageFromTotal / 100));
-
-            damage.SetNewDamage(realDamage);
-            //  enemy.ReceiveAttackFrom(player, damage);
-
-            result = true;
-        }
-
-        if (CalculateElementalAttack(player, enemy, maxDamage, out var elementalDamage))
-        {
-            var attackPowerPercentageFromTotal = 100 - WeaponAttack.ElementalDamage.AttackPower * 100 / attackPower;
-            var realDamage = (ushort)(elementalDamage.Damage -
-                                      elementalDamage.Damage * ((double)attackPowerPercentageFromTotal / 100));
-
-            elementalDamage.SetNewDamage(realDamage);
-            //enemy.ReceiveAttackFrom(player, elementalDamage);
-
-            result = true;
-        }
-
-        return result;
-    }
-
+  
     public void OnMoved(IThing to)
     {
     }

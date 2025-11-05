@@ -23,7 +23,7 @@ public class MapTest
 
             if (item.Location == new Location((ushort)x, (ushort)y, 7)) items.Add(item);
 
-            world.AddTile(new DynamicTile(new Coordinate(x, y, 7), TileFlag.None, null, Array.Empty<IItem>(),
+            world.AddTile(new DynamicTile(new Coordinate(x, y, 7), TileFlag.None, null, [],
                 items.ToArray()));
         }
 

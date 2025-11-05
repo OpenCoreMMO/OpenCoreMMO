@@ -17,7 +17,7 @@ public class NpcTest
         var npcType = new Mock<INpcType>();
 
         npcType.Setup(x => x.Name).Returns("Eryn");
-        npcType.Setup(x => x.Marketings).Returns(new[] { "this is a advertise" });
+        npcType.Setup(x => x.Marketings).Returns(["this is a advertise"]);
 
         var advertise = "";
         var speechType = SpeechType.None;

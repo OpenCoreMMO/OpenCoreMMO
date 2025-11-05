@@ -94,7 +94,7 @@ public class PlayerVipListTests
     public void HasInVipList_ItemIsNotInVipList_ReturnsFalse()
     {
         var sut = PlayerTestDataBuilder.Build();
-        sut.Vip.LoadVipList(new (uint, string)[] { (1, "test") });
+        sut.Vip.LoadVipList([(1, "test")]);
         var result = sut.Vip.HasInVipList(2);
         result.Should().BeFalse();
     }
@@ -103,7 +103,7 @@ public class PlayerVipListTests
     public void HasInVipList_ItemInVipList_ReturnsTrue()
     {
         var sut = PlayerTestDataBuilder.Build();
-        sut.Vip.LoadVipList(new (uint, string)[] { (1, "test") });
+        sut.Vip.LoadVipList([(1, "test")]);
         var result = sut.Vip.HasInVipList(1);
         result.Should().BeTrue();
     }
@@ -132,7 +132,7 @@ public class PlayerVipListTests
         var eventCalled = false;
         sut.Vip.OnAddedToVipList += (_, _, _) => { eventCalled = true; };
 
-        sut.Vip.LoadVipList(new (uint, string)[] { (2, "player1") });
+        sut.Vip.LoadVipList([(2, "player1")]);
         var result = sut.Vip.AddToVip(player);
 
         result.Should().BeFalse();
@@ -146,7 +146,7 @@ public class PlayerVipListTests
         var sut = PlayerTestDataBuilder.Build();
         var player = PlayerTestDataBuilder.Build(2, "Player X");
 
-        sut.Vip.LoadVipList(new (uint, string)[] { (3, "player1") });
+        sut.Vip.LoadVipList([(3, "player1")]);
 
         var eventCalled = false;
         (uint, string) playerAdded = (0, string.Empty);
@@ -169,7 +169,7 @@ public class PlayerVipListTests
     {
         var sut = PlayerTestDataBuilder.Build();
 
-        sut.Vip.LoadVipList(new (uint, string)[] { (3, "player1") });
+        sut.Vip.LoadVipList([(3, "player1")]);
 
         sut.Vip.RemoveFromVip(2);
         sut.Vip.VipList.Should().ContainSingle();
@@ -180,7 +180,7 @@ public class PlayerVipListTests
     {
         var sut = PlayerTestDataBuilder.Build();
 
-        sut.Vip.LoadVipList(new (uint, string)[] { (2, "player1"), (3, "player1") });
+        sut.Vip.LoadVipList([(2, "player1"), (3, "player1")]);
 
         sut.Vip.RemoveFromVip(3);
         sut.Vip.VipList.Should().ContainSingle();
