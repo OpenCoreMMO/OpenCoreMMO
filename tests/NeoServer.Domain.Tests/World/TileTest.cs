@@ -28,12 +28,12 @@ public class RemoveThingTileTestData : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()
     {
-        yield return new object[] { ItemTestDataBuilder.CreateCumulativeItem(500, 100), 40, 500, 60 };
-        yield return new object[] { ItemTestDataBuilder.CreateCumulativeItem(500, 50), 49, 500, 1 };
-        yield return new object[] { ItemTestDataBuilder.CreateCumulativeItem(500, 50), 1, 500, 49 };
-        yield return new object[] { ItemTestDataBuilder.CreateCumulativeItem(500, 1), 1, 400, 32 };
-        yield return new object[] { ItemTestDataBuilder.CreateCumulativeItem(500, 100), 100, 400, 32 };
-        yield return new object[] { ItemTestDataBuilder.CreateCumulativeItem(500, 45), 45, 400, 32 };
+        yield return [ItemTestDataBuilder.CreateCumulativeItem(500, 100), 40, 500, 60];
+        yield return [ItemTestDataBuilder.CreateCumulativeItem(500, 50), 49, 500, 1];
+        yield return [ItemTestDataBuilder.CreateCumulativeItem(500, 50), 1, 500, 49];
+        yield return [ItemTestDataBuilder.CreateCumulativeItem(500, 1), 1, 400, 32];
+        yield return [ItemTestDataBuilder.CreateCumulativeItem(500, 100), 100, 400, 32];
+        yield return [ItemTestDataBuilder.CreateCumulativeItem(500, 45), 45, 400, 32];
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -49,43 +49,43 @@ public class TileTest
         {
             new object[]
             {
-                new DynamicTile(new Coordinate(101, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-                    Array.Empty<IItem>())
+                new DynamicTile(new Coordinate(101, 100, 7), TileFlag.None, null, [],
+                    [])
             },
             new object[]
             {
-                new DynamicTile(new Coordinate(101, 101, 7), TileFlag.None, null, Array.Empty<IItem>(),
-                    Array.Empty<IItem>())
+                new DynamicTile(new Coordinate(101, 101, 7), TileFlag.None, null, [],
+                    [])
             },
             new object[]
             {
-                new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, Array.Empty<IItem>(),
-                    Array.Empty<IItem>())
+                new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, [],
+                    [])
             },
             new object[]
             {
-                new DynamicTile(new Coordinate(99, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-                    Array.Empty<IItem>())
+                new DynamicTile(new Coordinate(99, 100, 7), TileFlag.None, null, [],
+                    [])
             },
             new object[]
             {
-                new DynamicTile(new Coordinate(100, 99, 7), TileFlag.None, null, Array.Empty<IItem>(),
-                    Array.Empty<IItem>())
+                new DynamicTile(new Coordinate(100, 99, 7), TileFlag.None, null, [],
+                    [])
             },
             new object[]
             {
-                new DynamicTile(new Coordinate(99, 99, 7), TileFlag.None, null, Array.Empty<IItem>(),
-                    Array.Empty<IItem>())
+                new DynamicTile(new Coordinate(99, 99, 7), TileFlag.None, null, [],
+                    [])
             },
             new object[]
             {
-                new DynamicTile(new Coordinate(101, 99, 7), TileFlag.None, null, Array.Empty<IItem>(),
-                    Array.Empty<IItem>())
+                new DynamicTile(new Coordinate(101, 99, 7), TileFlag.None, null, [],
+                    [])
             },
             new object[]
             {
-                new DynamicTile(new Coordinate(99, 101, 7), TileFlag.None, null, Array.Empty<IItem>(),
-                    Array.Empty<IItem>())
+                new DynamicTile(new Coordinate(99, 101, 7), TileFlag.None, null, [],
+                    [])
             }
         };
 
@@ -228,8 +228,8 @@ public class TileTest
     [MemberData(nameof(NextTilesTestData))]
     public void IsNextTo_When_1_Sqm_Distant_Returns_True(ITile dest)
     {
-        ITile sut = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            Array.Empty<IItem>());
+        ITile sut = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            []);
 
         Assert.True(sut.IsNextTo(dest));
     }
@@ -237,10 +237,10 @@ public class TileTest
     [Fact]
     public void IsNextTo_When_2_Or_More_Sqm_Distant_Returns_True()
     {
-        ITile sut = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            Array.Empty<IItem>());
-        ITile dest = new DynamicTile(new Coordinate(102, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            Array.Empty<IItem>());
+        ITile sut = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            []);
+        ITile dest = new DynamicTile(new Coordinate(102, 100, 7), TileFlag.None, null, [],
+            []);
 
         Assert.False(sut.IsNextTo(dest));
     }
@@ -294,10 +294,7 @@ public class TileTest
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8,
-            staticTiles: new List<Location>
-            {
-                new(100, 100, 8)
-            });
+            staticTiles: [new(100, 100, 8)]);
 
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(102, 100, 7));
@@ -461,8 +458,8 @@ public class TileTest
             new Coordinate(100, 100, 7),
             TileFlag.None,
             null, // No ground
-            new[] { topItem },
-            new[] { downItem }
+            [topItem],
+            [downItem]
         );
 
         // Act & Assert

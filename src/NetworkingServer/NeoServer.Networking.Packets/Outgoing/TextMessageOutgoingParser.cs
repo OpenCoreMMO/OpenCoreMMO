@@ -45,7 +45,7 @@ public static class TextMessageOutgoingParser
             InvalidOperation.TurnSecureModeToAttackUnmarkedPlayers => "Turn secure mode to attack unmarked players.",
             InvalidOperation.TargetLost => "Target lost.",
             InvalidOperation.YouMayNotAttackThisPlayer => "You may not attack this person.",
-            InvalidOperation.YouMayNotAttackThisCreature => "You may not attack this ceature.",
+            InvalidOperation.YouMayNotAttackThisCreature => "You may not attack this creature.",
             _ => string.Empty
         };
     }

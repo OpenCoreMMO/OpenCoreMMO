@@ -27,7 +27,7 @@ public class LootChannel : PersonalChatChannel
     {
         get => new()
         {
-            AllowedVocations = new[] { byte.MaxValue }
+            AllowedVocations = [byte.MaxValue]
         };
         init => base.WriteRule = value;
     }

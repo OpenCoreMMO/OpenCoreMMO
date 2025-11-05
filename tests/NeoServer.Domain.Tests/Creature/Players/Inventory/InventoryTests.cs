@@ -552,10 +552,10 @@ public class InventoryTests
         var sut = PlayerTestDataBuilder.Build(skills: skills);
 
         var bodyItemToAdd = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.MinimumLevel, 1000)
-            });
+            ]);
 
         //act
         var actual = sut.Inventory.AddItem(bodyItemToAdd, (byte)Slot.Body);
@@ -841,34 +841,34 @@ public class InventoryTests
                  })
         {
             if (slot != Slot.Body)
-                result.Add(new object[] { slot, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "body") });
+                result.Add([slot, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "body")]);
 
             if (slot != Slot.Ammo)
-                result.Add(new object[] { slot, ItemTestDataBuilder.CreateAmmo(100, 10) });
+                result.Add([slot, ItemTestDataBuilder.CreateAmmo(100, 10)]);
 
             if (slot != Slot.Legs)
-                result.Add(new object[] { slot, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "legs") });
+                result.Add([slot, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "legs")]);
 
             if (slot != Slot.Feet)
-                result.Add(new object[] { slot, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "feet") });
+                result.Add([slot, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "feet")]);
 
             if (slot != Slot.Right)
-                result.Add(new object[] { slot, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "", "shield") });
+                result.Add([slot, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "", "shield")]);
 
             if (slot != Slot.Left)
-                result.Add(new object[] { slot, ItemTestDataBuilder.CreateWeaponItem(100, "axe") });
+                result.Add([slot, ItemTestDataBuilder.CreateWeaponItem(100, "axe")]);
 
             if (slot != Slot.Ring)
-                result.Add(new object[] { slot, ItemTestDataBuilder.CreateDefenseEquipmentItem(100) });
+                result.Add([slot, ItemTestDataBuilder.CreateDefenseEquipmentItem(100)]);
 
             if (slot != Slot.Necklace)
-                result.Add(new object[] { slot, ItemTestDataBuilder.CreateDefenseEquipmentItem(100) });
+                result.Add([slot, ItemTestDataBuilder.CreateDefenseEquipmentItem(100)]);
 
             if (slot != Slot.Backpack)
-                result.Add(new object[] { slot, ItemTestDataBuilder.CreateBackpack() });
+                result.Add([slot, ItemTestDataBuilder.CreateBackpack()]);
 
             if (slot != Slot.Head)
-                result.Add(new object[] { slot, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "head") });
+                result.Add([slot, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "head")]);
         }
 
         return result;

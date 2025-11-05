@@ -13,7 +13,7 @@ public class MagicWeaponTests
     public void InspectionText_NoAttributeFound_ReturnsText()
     {
         var sut = ItemTestDataBuilder.CreateMagicWeapon(1,
-            itemTypeAttributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
+            itemTypeAttributes: []);
 
         //assert
         sut.InspectionText.Should().BeEmpty();
@@ -29,10 +29,10 @@ public class MagicWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation);
-        var sut = ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
+        var sut = ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes:
+        [
             (ItemTypeAttribute.BodyPosition, "body")
-        });
+        ]);
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
@@ -56,11 +56,11 @@ public class MagicWeaponTests
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
-        var sut = ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
+        var sut = ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes:
+        [
             (ItemTypeAttribute.BodyPosition, "body"),
             (ItemTypeAttribute.MinimumLevel, minLevel)
-        });
+        ]);
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
@@ -75,10 +75,10 @@ public class MagicWeaponTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: 1);
-        var sut = ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
+        var sut = ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes:
+        [
             (ItemTypeAttribute.BodyPosition, "body")
-        });
+        ]);
 
         //act
         var actual = sut.CanBeDressed(player);
