@@ -1167,15 +1167,17 @@ public class Player : CombatActor, IPlayer
 
         Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
 
-        if (combatResult.TotalDamage > 0)
+        if (combatResult.TotalDamage > 0 && SkillInUse != SkillType.Magic) //magic skill will be handled in the UpdateManaSpent method
         {
             IncreaseSkillCounter(SkillInUse, 1);
         }
 
         //the player cannot attack if he does not have enough mana to use the magic weapon
-        if (combatParameter.UsingWeapon && Inventory.Weapon is MagicWeapon magicWeapon)
+        if (combatParameter.UsingWeapon && Inventory.Weapon is MagicWeapon magicWeapon &&
+            !Group.FlagIsEnabled(PlayerFlag.HasInfiniteMana))
         {
             DecreaseMana(magicWeapon.ManaConsumption);
+            UpdateManaSpent(magicWeapon.ManaConsumption);
         }
     }
 
@@ -1204,7 +1206,6 @@ public class Player : CombatActor, IPlayer
 
         return result;
     }
-
 
     public void StopAllActions()
     {
