@@ -90,7 +90,9 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
             {
                 if (!aggressor.Tile.PvpZone || !((ICreature)target).Tile.PvpZone)
                 {
-                    return Result.Fail(InvalidOperation.YouMayNotAttackThisPlayer);
+                    // Determine the appropriate error based on target type
+                    var operation = target is Summon ? InvalidOperation.YouMayNotAttackThisCreature : InvalidOperation.YouMayNotAttackThisPlayer;
+                    return Result.Fail(operation);
                 }
             }
         }
