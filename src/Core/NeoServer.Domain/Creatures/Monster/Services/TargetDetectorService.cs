@@ -23,10 +23,10 @@ public class TargetDetectorService(IMap map)
             var target = current.Value;
 
             // Determine if this target is still a valid threat
-            if (target.Creature.IsDead || !monster.CanSee(target.Creature) || !monster.CanSee(target.Creature.Location))
+            if (target.IsDead || !monster.CanSee(target) || !monster.CanSee(target.Location))
             {
                 var next = current.Next; // Remember the next target before removing this one
-                monster.Targets.Remove(target.Creature); // Remove the invalid target from tracking
+                monster.Targets.Remove(target); // Remove the invalid target from tracking
                 current = next;
                 continue; // Proceed to check the next target
             }

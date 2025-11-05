@@ -212,11 +212,11 @@ public class Monster : WalkableMonster, IMonster
 
     private void Die(ICreature by)
     {
-        if (by is IMonster and not Summon.Summon { Master: IPlayer } && (Monster)by != this )
+        if (by is IMonster and not Summon.Summon { Master: IPlayer } && (Monster)by != this)
         {
             KilledByAnotherMonster = true;
         }
-        
+
         HealthPoints = 0;
         Death(by);
     }
@@ -573,6 +573,24 @@ public class Monster : WalkableMonster, IMonster
     public override void OnDamage(IThing enemy, CombatDamageList damages)
     {
         ReduceHealth(damages.TotalDamage.HealthDamage);
+    }
+
+    public override void Follow(ICreature creature)
+    {
+        base.Follow(creature);
+
+        Targets.Remove(creature as ICombatActor);
+
+        if (HasFollowPath)
+        {
+            Targets.Add(creature as ICombatActor, true);
+            return;
+        }
+
+        if (this is not Summon.Summon)
+        {
+            Targets.Add(creature as ICombatActor, false);
+        }
     }
 
     protected void ChangeAttackTarget(ICreature creature)

@@ -1,5 +1,6 @@
 using NeoServer.Domain.Combat;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player;
 
@@ -19,8 +20,8 @@ public enum TargetSearchType
 /// </summary>
 public class MonsterTargetList(IMonster monster)
 {
-    private readonly LinkedList<CombatTarget> _list = [];
-    private readonly Dictionary<uint, LinkedListNode<CombatTarget>> _nodeMap = new();
+    private readonly LinkedList<ICombatActor> _list = [];
+    private readonly Dictionary<uint, LinkedListNode<ICombatActor>> _nodeMap = new();
     
     public int Count => _list.Count;
 
@@ -38,10 +39,8 @@ public class MonsterTargetList(IMonster monster)
 
         // Skip dead creatures and ignored players
         if(!isPlayerOrPlayerSummon || target.IsDead || target == monster || target is IPlayer player && player.Group.FlagIsEnabled(PlayerFlag.IgnoredByMonsters)) return;
-
-        var combatTarget = new CombatTarget(target);
-
-        var node = hasPriority ? _list.AddFirst(combatTarget) : _list.AddLast(combatTarget);
+        
+        var node = hasPriority ? _list.AddFirst(target) : _list.AddLast(target);
 
         _nodeMap[target.CreatureId] = node;
     }
@@ -63,7 +62,7 @@ public class MonsterTargetList(IMonster monster)
     /// <summary>
     /// Gets the first node for iteration.
     /// </summary>
-    public LinkedListNode<CombatTarget> First => _list.First;
+    public LinkedListNode<ICombatActor> First => _list.First;
 
     /// <summary>
     /// Checks if the list contains any targets.
@@ -77,13 +76,13 @@ public class MonsterTargetList(IMonster monster)
     /// <returns>The selected target or null if none found.</returns>
     public ICombatActor SearchTarget(TargetSearchType searchType = TargetSearchType.Default)
     {
-        var candidates = new List<CombatTarget>();
+        var candidates = new List<ICombatActor>();
         var myPos = monster.Location;
 
         // Build a list of valid candidates
         foreach (var combatTarget in _list)
         {
-            var creature = combatTarget.Creature;
+            var creature = combatTarget;
             if (monster.AutoAttackTargetId == creature.CreatureId || !IsTarget(creature))
                 continue;
 
@@ -93,7 +92,7 @@ public class MonsterTargetList(IMonster monster)
             }
         }
 
-        CombatTarget selectedTarget = null;
+        ICombatActor selectedTarget = null;
 
         // Select a target based on a search type
         switch (searchType)
@@ -104,7 +103,7 @@ public class MonsterTargetList(IMonster monster)
                     // Search all targets if no candidates
                     foreach (var combatTarget in _list)
                     {
-                        if (IsTarget(combatTarget.Creature))
+                        if (IsTarget(combatTarget))
                         {
                             candidates.Add(combatTarget);
                         }
@@ -114,8 +113,8 @@ public class MonsterTargetList(IMonster monster)
                 var minDistance = int.MaxValue;
                 foreach (var candidate in candidates)
                 {
-                    var distance = Math.Max(Math.Abs(myPos.X - candidate.Creature.Location.X),
-                                           Math.Abs(myPos.Y - candidate.Creature.Location.Y));
+                    var distance = myPos.GetMaxSqmDistance(candidate.Location);
+                    
                     if (distance < minDistance)
                     {
                         minDistance = distance;
@@ -129,23 +128,23 @@ public class MonsterTargetList(IMonster monster)
             case TargetSearchType.AttackRange:
                 if (candidates.Count > 0)
                 {
-                    selectedTarget = candidates[Random.Shared.Next(candidates.Count)];
+                    selectedTarget = candidates[GameRandom.Random.Next(maxValue: candidates.Count)];
                 }
                 break;
         }
 
         // Try to select the target
-        if (selectedTarget != null && CanSelectTarget(selectedTarget.Creature))
+        if (selectedTarget != null && CanSelectTarget(selectedTarget))
         {
-            return selectedTarget.Creature;
+            return selectedTarget;
         }
 
         // Fallback: pick the first available target
         foreach (var combatTarget in _list)
         {
-            if ( CanSelectTarget(combatTarget.Creature))
+            if ( CanSelectTarget(combatTarget))
             {
-                return combatTarget.Creature;
+                return combatTarget;
             }
         }
 
@@ -162,6 +161,14 @@ public class MonsterTargetList(IMonster monster)
     {
         // Check if monster can attack the creature (basic range check)
         var distance = myPos.GetSqmDistance(creature.Location);
+
+        foreach (var attack in monster.Metadata.Attacks)
+        {
+            if (attack.CombatParameter.Range != 0 && distance <= attack.CombatParameter.Range)
+            {
+                
+            }
+        }
         return distance <= 1; // Simplified range check
     }
 

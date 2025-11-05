@@ -602,4 +602,60 @@ public class MonsterCombatTest
         sut.Attacking.Should().BeTrue();
         sut.HasFollowPath.Should().BeTrue();
     }
+
+    [Fact]
+    public void Monster_targets_unblocked_player_when_path_to_closer_player_is_blocked_by_non_pushable_monsters()
+    {
+        //arrange
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+
+        var playerA = PlayerTestDataBuilder.Build(name:"Player A");
+        playerA.SetNewLocation(new Location(102, 102, 7));
+
+        var playerB = PlayerTestDataBuilder.Build(name: "Player B");
+        playerB.SetNewLocation(new Location(106, 104, 7));
+
+        // Surround player A with 8 non pushable monsters
+        var positions = new (int x, int y)[]
+        {
+            (101, 101), (102, 101), (103, 101),
+            (101, 102), (103, 102),
+            (101, 103), (102, 103), (103, 103)
+        };
+        
+        map.PlaceCreature(playerA);
+
+        for (var i = 0; i < 8; i++)
+        {
+            var monster = MonsterTestDataBuilder.Build(name: $"monster-{i + 1}");
+            monster.Metadata.Flags[CreatureFlagAttribute.Pushable] = 0; // Set pushable to false
+            monster.SetNewLocation(new Location((ushort)positions[i].x, (ushort)positions[i].y, 7));
+            map.PlaceCreature(monster);
+        }
+
+        var sut = MonsterTestDataBuilder.Build(name: "monsterX", map: map);
+        sut.Metadata.Flags[CreatureFlagAttribute.TargetDistance] = 1; // Allow long-range targeting
+        sut.Metadata.TargetChance.Chance = 0;
+        
+        sut.SetNewLocation(new Location(100, 100, 7));
+
+        map.PlaceCreature(playerB);
+        
+        map.PlaceCreature(sut);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+        
+        //selects the player A as he is closer to the monster
+        monsterStateService.UpdateState(sut);
+
+        //act
+        monsterStateService.UpdateState(sut);
+
+        //assert
+        sut.State.Should().Be(MonsterState.InCombat);
+        sut.CurrentTarget.Should().Be(playerB); // Should target player B because the path to player A is blocked
+        sut.IsFollowing.Should().BeTrue();
+        sut.Attacking.Should().BeTrue();
+    }
 }
