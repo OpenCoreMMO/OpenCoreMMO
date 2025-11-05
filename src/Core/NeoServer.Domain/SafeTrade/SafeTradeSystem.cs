@@ -125,7 +125,7 @@ public class SafeTradeSystem : ITradeService
 
         // Unsubscribe both players from the trade request event.
         var itemFromPlayerRequesting = tradeRequest.Items;
-        var itemFromPlayerRequested = tradeFromPlayerRequested?.Items ?? Array.Empty<IItem>();
+        var itemFromPlayerRequested = tradeFromPlayerRequested?.Items ?? [];
 
         TradeRequestEventHandler.Unsubscribe(tradeRequest.PlayerRequesting, itemFromPlayerRequesting);
         TradeRequestEventHandler.Unsubscribe(tradeRequest.PlayerRequested, itemFromPlayerRequested);
@@ -148,7 +148,7 @@ public class SafeTradeSystem : ITradeService
 
     public static IItem[] GetTradedItems(IPlayer player)
     {
-        return TradeRequestTracker.GetTradeRequest(player)?.Items ?? Array.Empty<IItem>();
+        return TradeRequestTracker.GetTradeRequest(player)?.Items ?? [];
     }
 
     #region Events

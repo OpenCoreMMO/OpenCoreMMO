@@ -93,7 +93,7 @@ public class MapMoveCreatureTest
         var sut = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7, true,
             new Dictionary<Location, IItem[]>
             {
-                [teleportLocation] = new IItem[] { teleport }
+                [teleportLocation] = [teleport]
             });
 
         var pathFinder = new PathFinder(sut);

@@ -12,7 +12,7 @@ namespace NeoServer.Benchmarks.Networking;
 [SimpleJob(RunStrategy.ColdStart, 30)]
 public class XteaBenchmark
 {
-    private readonly uint[] keys = new uint[4] { 2742731963, 828439173, 895464428, 91929452 };
+    private readonly uint[] keys = [2742731963, 828439173, 895464428, 91929452];
 
     private INetworkMessage GetNetworkMessage()
     {

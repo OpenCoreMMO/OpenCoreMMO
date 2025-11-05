@@ -52,7 +52,7 @@ public struct CombatAttackResult
     {
         if (coordinates is null)
         {
-            Area = Array.Empty<AffectedLocation>();
+            Area = [];
             return;
         }
 

@@ -11,9 +11,9 @@ namespace NeoServer.Domain.World.Map;
 public class PathFinder : IPathFinder
 {
     public static readonly (bool Found, Direction[] Directions) FoundedButEmptyDirections =
-        (true, Array.Empty<Direction>());
+        (true, []);
 
-    public static readonly (bool Found, Direction[] Directions) NotFound = (false, Array.Empty<Direction>());
+    public static readonly (bool Found, Direction[] Directions) NotFound = (false, []);
 
     public PathFinder(IMap map)
     {

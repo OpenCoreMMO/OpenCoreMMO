@@ -133,8 +133,8 @@ public class PickupableContainerTest
     {
         var player = PlayerTestDataBuilder.Build();
 
-        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, Array.Empty<IItem>(),
-            Array.Empty<IItem>());
+        IDynamicTile tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [],
+            []);
 
         var sut = ItemTestDataBuilder.CreatePickupableContainer();
         var child = ItemTestDataBuilder.CreatePickupableContainer();

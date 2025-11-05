@@ -56,7 +56,7 @@ public class VocationLoader
         {
             var vocations = GetVocations();
             AddOrUpdateVocation(vocations);
-            return new object[] { vocations.Count };
+            return [vocations.Count];
         });
     }
 
