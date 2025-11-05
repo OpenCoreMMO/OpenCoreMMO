@@ -15,5 +15,4 @@ public interface IWeapon : IBodyEquipmentEquipment
     new Slot Slot => Slot.Left;
     public WeaponType Type => Metadata.WeaponType;
     public ushort? MinHitChance { get; }
-    bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combat);
 }

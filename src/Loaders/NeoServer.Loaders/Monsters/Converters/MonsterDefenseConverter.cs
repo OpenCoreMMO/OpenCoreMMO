@@ -13,7 +13,7 @@ public class MonsterDefenseConverter
 {
     public static ICombatDefense[] Convert(MonsterData data, IMonsterTypeStore monsterTypeStore)
     {
-        if (data.Defenses is null) return Array.Empty<ICombatDefense>();
+        if (data.Defenses is null) return [];
 
         var defenses = new List<ICombatDefense>();
 

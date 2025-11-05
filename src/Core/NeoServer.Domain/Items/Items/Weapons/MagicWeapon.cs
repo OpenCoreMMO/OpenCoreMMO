@@ -31,25 +31,6 @@ public class MagicWeapon : Equipment, IDistanceWeapon
     public ushort? MinHitChance => (ushort)(MaxHitChance / 2);
     public WeaponType WeaponType => WeaponType.Magical;
 
-    public bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combatResult)
-    {
-        combatResult = new CombatAttackResult(ShootType);
-
-        if (actor is not IPlayer player) return false;
-        if (!player.HasEnoughMana(ManaConsumption)) return false;
-
-        var combat = new CombatAttackValue((ushort)(MaxDamage / 2), MaxDamage, Range, DamageType);
-
-        if (DistanceCombatAttack.CalculateAttack(actor, enemy, combat, out var damage))
-        {
-            player.DecreaseMana(ManaConsumption);
-            enemy.TakeDamage(actor, damage);
-            return true;
-        }
-
-        return false;
-    }
-
     public override bool CanBeDressed(IPlayer player)
     {
         if (Guard.IsNullOrEmpty(Vocations)) return true;

@@ -1,10 +1,13 @@
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Parsers;
 using NeoServer.Domain.Combat;
 using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
@@ -450,4 +453,35 @@ public class AttackValidationTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.YouMayNotAttackThisCreature);
     }
+
+    [Fact]
+    public void Attack_fails_when_player_has_not_enough_mana_for_magic_weapon()
+    {
+        //arrange
+        var location = new Location(100, 100, 7);
+        var ground = MapTestDataBuilder.CreateGround(location);
+
+        var tile1 = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.None, ground, null, null);
+        var tile2 = new DynamicTile(new Coordinate(100, 101, 7), (TileFlag)TileFlags.None, ground, null, null);
+
+        var map = MapTestDataBuilder.Build(tile1, tile2);
+        var attackService = AttackServiceTestBuilder.Build(map);
+
+        var magicWeapon = ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes: [(ItemTypeAttribute.ManaUse, 50)]);
+        var player = PlayerTestDataBuilder.Build(mana: 30);
+        player.Inventory.AddItem(magicWeapon, Slot.Left);
+        
+        var enemy = MonsterTestDataBuilder.Build();
+
+        tile1.AddCreature(player);
+        tile2.AddCreature(enemy);
+
+        //act
+        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+
+        //assert
+        result.Result.Reason.Should().Be(InvalidOperation.NotEnoughMana);
+    }
+
+   
 }

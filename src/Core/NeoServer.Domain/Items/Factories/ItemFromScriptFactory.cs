@@ -51,10 +51,9 @@ public static class ItemFromScriptFactory
         var locationParam = Expression.Parameter(typeof(Location), "location");
         var attributesParam = Expression.Parameter(typeof(IDictionary<ItemTypeAttribute, IConvertible>), "attributes");
 
-        var constructorInfo = type.GetConstructor(new[]
-        {
+        var constructorInfo = type.GetConstructor([
             typeof(IItemType), typeof(Location), typeof(IDictionary<ItemTypeAttribute, IConvertible>)
-        });
+        ]);
 
         var newInstance = Expression.New(constructorInfo, itemTypeParam, locationParam, attributesParam);
 

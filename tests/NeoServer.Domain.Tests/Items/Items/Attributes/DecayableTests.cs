@@ -31,14 +31,14 @@ public class DecayableTests : IAsyncLifetime
         //arrange
 
         var item = ItemTestDataBuilder.CreateDefenseEquipmentItem(2,
-            itemTypeAttributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
+            itemTypeAttributes: []);
 
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 60),
                 (ItemTypeAttribute.ExpireTarget, 2)
-            });
+            ]);
         var sut = new Decayable(decayableItem);
 
         //assert
@@ -50,14 +50,14 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var item = ItemTestDataBuilder.CreateDefenseEquipmentItem(2,
-            itemTypeAttributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
+            itemTypeAttributes: []);
 
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 60),
                 (ItemTypeAttribute.ExpireTarget, 2)
-            });
+            ]);
         var sut = new Decayable(decayableItem);
 
         //act
@@ -73,14 +73,14 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var item = ItemTestDataBuilder.CreateDefenseEquipmentItem(2,
-            itemTypeAttributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
+            itemTypeAttributes: []);
 
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 2),
                 (ItemTypeAttribute.ExpireTarget, 2)
-            });
+            ]);
         var sut = new Decayable(decayableItem);
 
         //act
@@ -96,14 +96,14 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var item = ItemTestDataBuilder.CreateDefenseEquipmentItem(2,
-            itemTypeAttributes: Array.Empty<(ItemTypeAttribute, IConvertible)>());
+            itemTypeAttributes: []);
 
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 2),
                 (ItemTypeAttribute.ExpireTarget, 2)
-            });
+            ]);
         var sut = new Decayable(decayableItem);
 
         //act
@@ -119,11 +119,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 2),
                 (ItemTypeAttribute.ExpireTarget, 2)
-            });
+            ]);
         var sut = new Decayable(decayableItem);
 
         //assert
@@ -135,11 +135,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 20),
                 (ItemTypeAttribute.ExpireTarget, 2)
-            });
+            ]);
         var sut = new Decayable(decayableItem);
 
         //act
@@ -166,10 +166,10 @@ public class DecayableTests : IAsyncLifetime
         //arrange
 
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 20)
-            });
+            ]);
         var sut = new Decayable(decayableItem);
 
         //assert
@@ -181,11 +181,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 20),
                 (ItemTypeAttribute.ExpireTarget, 2)
-            });
+            ]);
         var sut = new Decayable(decayableItem);
 
         //assert
@@ -197,11 +197,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 20),
                 (ItemTypeAttribute.ExpireTarget, 2)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -219,11 +219,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 20),
                 (ItemTypeAttribute.ExpireTarget, 2)
-            });
+            ]);
         var sut = new Decayable(decayableItem);
 
         //act
@@ -241,11 +241,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 20),
                 (ItemTypeAttribute.ExpireTarget, 2)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -258,11 +258,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 20),
                 (ItemTypeAttribute.ExpireTarget, 2)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -280,11 +280,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 2),
                 (ItemTypeAttribute.ExpireTarget, 2)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -302,11 +302,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 2),
                 (ItemTypeAttribute.ExpireTarget, 2)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -326,11 +326,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 0),
                 (ItemTypeAttribute.ExpireTarget, 10)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -348,11 +348,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 2),
                 (ItemTypeAttribute.ExpireTarget, 10)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -369,11 +369,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 20),
                 (ItemTypeAttribute.ExpireTarget, 10)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -391,11 +391,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 20),
                 (ItemTypeAttribute.ExpireTarget, 10)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -413,11 +413,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 20),
                 (ItemTypeAttribute.ExpireTarget, 10)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -430,11 +430,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 180),
                 (ItemTypeAttribute.ExpireTarget, 10)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -450,11 +450,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 62),
                 (ItemTypeAttribute.ExpireTarget, 10)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -470,11 +470,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 1),
                 (ItemTypeAttribute.ExpireTarget, 10)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -490,12 +490,12 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 62),
                 (ItemTypeAttribute.ExpireTarget, 10),
                 (ItemTypeAttribute.ShowDuration, 0)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
         //act
@@ -509,11 +509,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 62),
                 (ItemTypeAttribute.ExpireTarget, 10)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -530,11 +530,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 62),
                 (ItemTypeAttribute.ExpireTarget, 10)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
         using var monitor = sut.Monitor();
@@ -553,11 +553,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 1),
                 (ItemTypeAttribute.ExpireTarget, 10)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -574,11 +574,11 @@ public class DecayableTests : IAsyncLifetime
     {
         //arrange
         var decayableItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 1),
                 (ItemTypeAttribute.ExpireTarget, 10)
-            });
+            ]);
 
         var sut = new Decayable(decayableItem);
 
@@ -598,16 +598,16 @@ public class DecayableTests : IAsyncLifetime
         var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
 
         var item1 = (IEquipment)ItemTestDataBuilder.CreateWeaponItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 1)
-            });
+            ]);
 
         var item2 = (IEquipment)ItemTestDataBuilder.CreateWeaponItem(2,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Duration, 3)
-            });
+            ]);
 
         ((IDynamicTile)map[100, 100, 7]).AddItem(item1);
         ((IDynamicTile)map[101, 100, 7]).AddItem(item2);

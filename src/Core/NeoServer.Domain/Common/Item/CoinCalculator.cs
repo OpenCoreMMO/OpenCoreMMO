@@ -19,7 +19,7 @@ public static class CoinCalculator
 
         coins ??= new List<(ushort, byte)>(10);
 
-        if (value == 0) return Array.Empty<(ushort, byte)>();
+        if (value == 0) return [];
 
         var (coinId, worth) = coinType;
 

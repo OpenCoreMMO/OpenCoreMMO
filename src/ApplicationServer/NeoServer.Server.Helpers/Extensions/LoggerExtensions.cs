@@ -30,7 +30,7 @@ public static class LoggerExtensions
                 Math.Round(Sw.ElapsedMilliseconds / 1000d, 2));
         else
             logger.Information($"{afterMessage} in {{elapsed}} secs",
-                @params.Concat(new object[] { Math.Round(Sw.ElapsedMilliseconds / 1000d, 2) }).ToArray());
+                @params.Concat([Math.Round(Sw.ElapsedMilliseconds / 1000d, 2)]).ToArray());
 
         SetCursorPosition(0, currentRow);
     }
@@ -56,7 +56,7 @@ public static class LoggerExtensions
                 Math.Round(Sw.ElapsedMilliseconds / 1000d, 2));
         else
             logger.Information($"{afterMessage} in {{elapsed}} secs",
-                @params.Concat(new object[] { Math.Round(Sw.ElapsedMilliseconds / 1000d, 2) }).ToArray());
+                @params.Concat([Math.Round(Sw.ElapsedMilliseconds / 1000d, 2)]).ToArray());
 
         SetCursorPosition(0, currentRow);
     }
@@ -79,7 +79,7 @@ public static class LoggerExtensions
                 Math.Round(Sw.ElapsedMilliseconds / 1000d, 2));
         else
             logger.Information($"{afterMessage} in {{elapsed}} secs",
-                @params.Concat(new object[] { Math.Round(Sw.ElapsedMilliseconds / 1000d, 2) }).ToArray());
+                @params.Concat([Math.Round(Sw.ElapsedMilliseconds / 1000d, 2)]).ToArray());
 
         SetCursorPosition(0, currentRow);
     }

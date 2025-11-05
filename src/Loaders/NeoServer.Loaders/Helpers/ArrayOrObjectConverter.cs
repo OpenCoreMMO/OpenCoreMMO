@@ -12,7 +12,7 @@ internal class ArrayOrObjectConverter<T> : JsonConverter
         var token = JToken.Load(reader);
         return token.Type == JTokenType.Array
             ? token.ToObject<List<T>>()
-            : new List<T> { token.ToObject<T>() };
+            : [token.ToObject<T>()];
     }
 
     public override bool CanConvert(Type objectType)

@@ -34,14 +34,14 @@ public class MonsterWalkTest
         var item = new Item(itemType, new Location(101, 100, 7));
 
         var destinationTile = new DynamicTile(new Coordinate(102, 100, 7), TileFlag.None,
-            MapTestDataBuilder.CreateGround(new Location(102, 100, 7)), Array.Empty<IItem>(), null);
+            MapTestDataBuilder.CreateGround(new Location(102, 100, 7)), [], null);
 
         var tiles = new ITile[]
         {
             new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None,
-                MapTestDataBuilder.CreateGround(new Location(100, 100, 7)), Array.Empty<IItem>(), null),
+                MapTestDataBuilder.CreateGround(new Location(100, 100, 7)), [], null),
             new DynamicTile(new Coordinate(101, 100, 7), TileFlag.None,
-                MapTestDataBuilder.CreateGround(new Location(101, 100, 7)), Array.Empty<IItem>(), new IItem[] { item }),
+                MapTestDataBuilder.CreateGround(new Location(101, 100, 7)), [], [item]),
             destinationTile
         };
 
@@ -85,15 +85,15 @@ public class MonsterWalkTest
         var item = new Item(itemType, new Location(101, 100, 7));
 
         var sourceTile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None,
-            MapTestDataBuilder.CreateGround(new Location(100, 100, 7)), Array.Empty<IItem>(), null);
+            MapTestDataBuilder.CreateGround(new Location(100, 100, 7)), [], null);
 
         var tiles = new ITile[]
         {
             sourceTile,
             new DynamicTile(new Coordinate(101, 100, 7), TileFlag.None,
-                MapTestDataBuilder.CreateGround(new Location(101, 100, 7)), Array.Empty<IItem>(), new IItem[] { item }),
+                MapTestDataBuilder.CreateGround(new Location(101, 100, 7)), [], [item]),
             new DynamicTile(new Coordinate(102, 100, 7), TileFlag.None,
-                MapTestDataBuilder.CreateGround(new Location(102, 100, 7)), Array.Empty<IItem>(), null)
+                MapTestDataBuilder.CreateGround(new Location(102, 100, 7)), [], null)
         };
 
         var map = MapTestDataBuilder.Build(tiles);

@@ -18,7 +18,7 @@ public class ReadOnlySpanVsSpanAllocBenchmark
     [Benchmark]
     public byte UsingReadOnlySpan()
     {
-        ReadOnlySpan<byte> array = new byte[] { 1, 2, 3, 4 };
+        ReadOnlySpan<byte> array = [1, 2, 3, 4];
         return array[0];
     }
 
@@ -32,7 +32,7 @@ public class ReadOnlySpanVsSpanAllocBenchmark
     [Benchmark]
     public byte UsingSpanWithStackalloc()
     {
-        Span<byte> array = stackalloc byte[] { 1, 2, 3, 4 };
+        Span<byte> array = [1, 2, 3, 4];
         return array[0];
     }
 }

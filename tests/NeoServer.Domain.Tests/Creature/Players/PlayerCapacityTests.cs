@@ -12,17 +12,15 @@ public class PlayerCapacityTests
         {
             new object[]
             {
-                Slot.Backpack, ItemTestDataBuilder.CreateBackpack(105, 20, new List<IItem>
-                {
+                Slot.Backpack, ItemTestDataBuilder.CreateBackpack(105, 20, [
                     ItemTestDataBuilder.CreateWeaponItem(100, weight: 10),
                     ItemTestDataBuilder.CreateWeaponItem(101, weight: 10),
                     ItemTestDataBuilder.CreateCumulativeItem(101, weight: 1, amount: 20),
-                    ItemTestDataBuilder.CreateBackpack(105, 20, new List<IItem>
-                    {
+                    ItemTestDataBuilder.CreateBackpack(105, 20, [
                         ItemTestDataBuilder.CreateWeaponItem(101, weight: 10),
                         ItemTestDataBuilder.CreateCumulativeItem(101, weight: 1, amount: 10)
-                    })
-                })
+                    ])
+                ])
             },
             new object[] { Slot.Ammo, ItemTestDataBuilder.CreateAmmo(100, 100, weight: 1) },
             new object[] { Slot.Head, ItemTestDataBuilder.CreateBodyEquipmentItem(100, "head", weight: 100) },

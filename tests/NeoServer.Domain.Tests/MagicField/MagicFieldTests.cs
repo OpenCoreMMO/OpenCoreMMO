@@ -227,7 +227,7 @@ public class MagicFieldTests
 
         public IEnumerable<Coin> CreateCoins(ulong amount)
         {
-            return Enumerable.Empty<Coin>();
+            return [];
         }
 
         public IItem CreateLootCorpse(ushort typeId, Location location, Loot loot, IThing killer)
