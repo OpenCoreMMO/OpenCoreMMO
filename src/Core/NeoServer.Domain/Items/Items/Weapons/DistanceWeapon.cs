@@ -54,55 +54,7 @@ public class DistanceWeapon(IItemType type, Location location)
         return false;
     }
 
-    public bool Attack(ICombatActor actor, ICombatActor enemy, out CombatAttackResult combatResult)
-    {
-        var result = false;
-        combatResult = new CombatAttackResult();
-
-        if (actor is not IPlayer player) return false;
-
-        if (player.Inventory[Slot.Ammo] is not Ammo ammo) return false;
-
-        if (ammo.AmmoType != Metadata.AmmoType) return false;
-
-        if (ammo.Amount <= 0) return false;
-
-        if (!DistanceCombatAttack.CanAttack(actor, enemy, Range)) return false;
-
-        var distance = (byte)actor.Location.GetSqmDistance(enemy.Location);
-
-        var hitChance =
-            (byte)(DistanceHitChanceCalculation.CalculateFor2Hands(player.GetSkillLevel(player.SkillInUse), distance) +
-                   ExtraHitChance);
-
-        combatResult.ShootType = ammo.ShootType;
-
-        var missed = DistanceCombatAttack.MissedAttack(hitChance);
-
-        if (missed)
-        {
-            combatResult.Missed = true;
-            ammo.Throw();
-            return true;
-        }
-
-        var maxDamage = player.CalculateAttackPower(0.09f, (ushort)(ammo.AttackPower + AttackPower));
-
-        var combat = new CombatAttackValue(actor.MinimumAttackPower, maxDamage, Range, DamageType.Physical);
-
-        if (DistanceCombatAttack.CalculateAttack(actor, enemy, combat, out var damage))
-        {
-            enemy.TakeDamage(actor, damage);
-            result = true;
-        }
-
-        UseElementalDamage(actor, enemy, ref combatResult, ref result, player, ammo, ref maxDamage, ref combat);
-
-        if (result) ammo.Throw();
-
-        return result;
-    }
-
+   
     public void OnMoved(IThing to)
     {
     }

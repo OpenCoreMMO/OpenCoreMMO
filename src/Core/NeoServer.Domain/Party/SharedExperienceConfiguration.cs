@@ -25,7 +25,7 @@ public class SharedExperienceConfiguration : ISharedExperienceConfiguration
         RequirePartyMemberParticipation = requirePartyMemberParticipation ?? true;
         MinimumMonsterExperienceToBeShared = minimumMonsterExperienceToBeShared ?? 20;
         LowestLevelSupportedMultipler = lowestLevelSupportedMultipler ?? 3 / 2;
-        UniqueVocationBonusExperienceFactor = uniqueVocationBonusExperienceFactor ?? new[] { 0.0, 0.2, 0.6, 1.0 };
+        UniqueVocationBonusExperienceFactor = uniqueVocationBonusExperienceFactor ?? [0.0, 0.2, 0.6, 1.0];
     }
 
     public bool IsSharedExperienceAlwaysOn { get; }

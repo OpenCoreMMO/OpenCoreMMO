@@ -26,8 +26,7 @@ public class OTBItemAttributeParserTest
     [Fact]
     public void Instance_Stream_ReturnsAllAttributes()
     {
-        var stream = new OtbParsingStream(new ReadOnlyMemory<byte>(new byte[]
-        {
+        var stream = new OtbParsingStream(new ReadOnlyMemory<byte>([
             0x10, //serverId
             0x02, //data length 2
             0x00,
@@ -59,7 +58,7 @@ public class OTBItemAttributeParserTest
             0x00,
             0x5A,
             0x00
-        }));
+        ]));
 
         var instance = new OtbParsingItemAttribute(stream);
 
@@ -80,8 +79,7 @@ public class OTBItemAttributeParserTest
     [Fact]
     public void Instance_DuplicatedAttributeStream_ReturnsAllSingleAttributes()
     {
-        var stream = new OtbParsingStream(new ReadOnlyMemory<byte>(new byte[]
-        {
+        var stream = new OtbParsingStream(new ReadOnlyMemory<byte>([
             0x10, //serverId
             0x02, //data length 2
             0x00,
@@ -120,7 +118,7 @@ public class OTBItemAttributeParserTest
             0x00,
             0x5A,
             0x00
-        }));
+        ]));
 
         var instance = new OtbParsingItemAttribute(stream);
 

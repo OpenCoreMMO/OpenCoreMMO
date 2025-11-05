@@ -1,4 +1,7 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Combat.Attacks;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
@@ -8,6 +11,7 @@ using NeoServer.Domain.Items.Items.Weapons;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Domain.Tests.Helpers.Services;
 using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Tests.Items.Items;
@@ -22,13 +26,13 @@ public class ThrowableWeaponTests
         string expected)
     {
         var sut = ItemTestDataBuilder.CreateThrowableDistanceItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Range, range),
                 (ItemTypeAttribute.Attack, attack),
                 (ItemTypeAttribute.Defense, defense),
                 (ItemTypeAttribute.HitChance, chance)
-            });
+            ]);
 
         //assert
         sut.InspectionText.Should().Be(expected);
@@ -43,12 +47,12 @@ public class ThrowableWeaponTests
     public void InspectionText_HasElementalDamage_ReturnsText(ItemTypeAttribute itemAttribute, int elementalDamage,
         string expected)
     {
-        var sut = ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
+        var sut = ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes:
+        [
             (ItemTypeAttribute.Attack, 6),
             (ItemTypeAttribute.Defense, 7),
             (itemAttribute, elementalDamage)
-        });
+        ]);
 
         //assert
         sut.InspectionText.Should().Be(expected);
@@ -59,20 +63,23 @@ public class ThrowableWeaponTests
     {
         //arrange
 
+
         var player = PlayerTestDataBuilder.Build();
         var enemy = MonsterTestDataBuilder.Build();
 
         var tile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
         var enemyTile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(101, 100, 7));
 
+        var map = MapTestDataBuilder.Build(tile, enemyTile);
+
         var spear = (ThrowableWeapon)ItemTestDataBuilder.CreateThrowableDistanceItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Attack, 6),
                 (ItemTypeAttribute.Defense, 7),
                 (ItemTypeAttribute.HitChance, 100),
                 (ItemTypeAttribute.Range, 3)
-            });
+            ]);
 
         spear.Metadata.Attributes.SetCustomAttribute("breakChance", 100);
 
@@ -80,12 +87,26 @@ public class ThrowableWeaponTests
 
         tile.AddCreature(player);
         enemyTile.AddCreature(enemy);
+        
+        var attackService = AttackServiceTestBuilder.Build(map, combatConfig: new CombatConfiguration()
+        {
+            InfiniteAmmo = false,
+            InfiniteThrowingWeapon = false
+        });
 
         //act
-        var result = spear.Attack(player, enemy, out var combatResult);
+
+        attackService.Execute(new AttackInput(player, enemy, new CombatParameter()
+        {
+            UsingWeapon = true,
+            DamageType = DamageType.Melee,
+            MaxDamage = 100,
+            MinDamage = 100,
+            HitChance = 100,
+            Range = 3,
+        }));
 
         //assert
-        result.Should().BeTrue();
         spear.Amount.Should().Be(0);
         player.Inventory[Slot.Left].Should().BeNull();
     }
@@ -94,32 +115,48 @@ public class ThrowableWeaponTests
     public void Player_cannot_throw_spear_when_farther_than_3_tiles()
     {
         //arrange
-
+        
         var player = PlayerTestDataBuilder.Build();
         var enemy = MonsterTestDataBuilder.Build();
-
+        
         var tile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
         var enemyTile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(104, 100, 7));
+        var map = MapTestDataBuilder.Build(tile, enemyTile);
 
         var spear = (ThrowableWeapon)ItemTestDataBuilder.CreateThrowableDistanceItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.Attack, 6),
                 (ItemTypeAttribute.Defense, 7),
                 (ItemTypeAttribute.HitChance, 100),
                 (ItemTypeAttribute.Range, 3)
-            });
-
+            ]);
+        
         player.Inventory.AddItem(spear, (byte)Slot.Left);
-
+        
         tile.AddCreature(player);
         enemyTile.AddCreature(enemy);
+        
+        var attackService = AttackServiceTestBuilder.Build(map, combatConfig: new CombatConfiguration()
+        {
+            InfiniteAmmo = false,
+            InfiniteThrowingWeapon = false
+        });
 
         //act
-        var result = spear.Attack(player, enemy, out var combatResult);
 
+        var result = attackService.Execute(new AttackInput(player, enemy, new CombatParameter()
+        {
+            UsingWeapon = true,
+            DamageType = DamageType.Melee,
+            MaxDamage = 100,
+            MinDamage = 100,
+            HitChance = 100,
+            Range = 3,
+        }));
+        
         //assert
-        result.Should().BeFalse();
+        result.Result.Failed.Should().BeTrue();
     }
 
     #region CanBeDressed Tests
@@ -133,10 +170,10 @@ public class ThrowableWeaponTests
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation);
         var sut = ItemTestDataBuilder.CreateThrowableDistanceItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.BodyPosition, "body")
-            });
+            ]);
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
@@ -161,11 +198,11 @@ public class ThrowableWeaponTests
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
         var sut = ItemTestDataBuilder.CreateThrowableDistanceItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.BodyPosition, "body"),
                 (ItemTypeAttribute.MinimumLevel, minLevel)
-            });
+            ]);
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
@@ -181,10 +218,10 @@ public class ThrowableWeaponTests
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: 1);
         var sut = ItemTestDataBuilder.CreateThrowableDistanceItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.BodyPosition, "body")
-            });
+            ]);
 
         //act
         var actual = sut.CanBeDressed(player);

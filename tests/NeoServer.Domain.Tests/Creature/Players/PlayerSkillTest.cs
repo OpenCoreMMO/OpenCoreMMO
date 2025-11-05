@@ -58,10 +58,10 @@ public class PlayerSkillTest
     {
         //arrange
         var necklace = ItemTestDataBuilder.CreateDefenseEquipmentItem(100, "necklace",
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.SkillAxe, 5)
-            });
+            ]);
 
         var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, ISkill>
         {

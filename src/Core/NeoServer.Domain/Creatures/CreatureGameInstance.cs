@@ -40,7 +40,7 @@ public class CreatureGameInstance : ICreatureGameInstance
 
     public IEnumerable<ICreature> All()
     {
-        return _creatures.Values.ToImmutableArray();
+        return [.._creatures.Values];
     }
 
     public IEnumerable<IPlayer> AllLoggedPlayers()

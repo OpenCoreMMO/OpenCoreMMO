@@ -19,12 +19,12 @@ public class MeleeWeaponTests
     [InlineData(0, 0, 0, "(Atk: 0, Def: 0)")]
     public void InspectionText_ReturnsText(int attack, int defense, int extraDef, string expected)
     {
-        var sut = ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
+        var sut = ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes:
+        [
             (ItemTypeAttribute.Attack, attack),
             (ItemTypeAttribute.Defense, defense),
             (ItemTypeAttribute.ExtraDefense, extraDef)
-        });
+        ]);
 
         //assert
         sut.InspectionText.Should().Be(expected);
@@ -39,13 +39,13 @@ public class MeleeWeaponTests
     public void InspectionText_HasElementalDamage_ReturnsText(ItemTypeAttribute itemAttribute, int elementalDamage,
         string expected)
     {
-        var sut = ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-        {
+        var sut = ItemTestDataBuilder.CreateWeaponItem(1, itemTypeAttributes:
+        [
             (ItemTypeAttribute.Attack, 6),
             (ItemTypeAttribute.Defense, 7),
             (ItemTypeAttribute.ExtraDefense, 10),
             (itemAttribute, elementalDamage)
-        });
+        ]);
 
         //assert
         sut.InspectionText.Should().Be(expected);
@@ -62,10 +62,10 @@ public class MeleeWeaponTests
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation);
         var sut = (IWeapon)ItemTestDataBuilder.CreateWeaponItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.BodyPosition, "body")
-            });
+            ]);
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
@@ -90,11 +90,11 @@ public class MeleeWeaponTests
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
         var sut = (IWeapon)ItemTestDataBuilder.CreateWeaponItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.BodyPosition, "body"),
                 (ItemTypeAttribute.MinimumLevel, minLevel)
-            });
+            ]);
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.Vocation, new[] { (byte)requiredVocation });
 
         //act
@@ -110,10 +110,10 @@ public class MeleeWeaponTests
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: 1);
         var sut = (IWeapon)ItemTestDataBuilder.CreateWeaponItem(1,
-            itemTypeAttributes: new (ItemTypeAttribute, IConvertible)[]
-            {
+            itemTypeAttributes:
+            [
                 (ItemTypeAttribute.BodyPosition, "body")
-            });
+            ]);
 
         //act
         var actual = sut.CanBeDressed(player);

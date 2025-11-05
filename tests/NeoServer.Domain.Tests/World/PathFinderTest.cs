@@ -44,10 +44,9 @@ public class PathFinderTest
 
         //assert
         result.Found.Should().BeTrue();
-        result.Directions.Should().BeEquivalentTo(new[]
-        {
+        result.Directions.Should().BeEquivalentTo([
             Direction.East, Direction.South, Direction.East, Direction.South, Direction.East
-        });
+        ]);
     }
 
     [Theory]

@@ -80,7 +80,7 @@ public class NetworkMessageTest
     public void AddBytes_Insert_Bytes()
     {
         var sut = new NetworkMessage();
-        sut.AddBytes(new byte[] { 194, 12, 13, 0 });
+        sut.AddBytes([194, 12, 13, 0]);
 
         var expected = new byte[] { 194, 12, 13, 0 };
 
@@ -101,7 +101,7 @@ public class NetworkMessageTest
     [Fact]
     public void AddLength_Insert_Length__In_Front_Of_Buffer()
     {
-        var sut = new NetworkMessage(new byte[6] { 0x33, 0x33, 0x33, 0x33, 0x33, 0x33 }, 6);
+        var sut = new NetworkMessage([0x33, 0x33, 0x33, 0x33, 0x33, 0x33], 6);
         sut.AddLength();
 
         var expected = new byte[8] { 6, 0, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33 };
@@ -115,7 +115,7 @@ public class NetworkMessageTest
         var sut = new NetworkMessage();
 
         sut.AddByte(0x12);
-        sut.AddBytes(new byte[3] { 0x23, 0xB1, 0x00 });
+        sut.AddBytes([0x23, 0xB1, 0x00]);
         sut.AddLocation(new Location { X = 432, Y = 343, Z = 10 });
         sut.AddPaddingBytes(3);
         sut.AddString("hello opencoremmo");

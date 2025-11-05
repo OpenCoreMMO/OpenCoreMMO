@@ -17,7 +17,7 @@ public class FloorChangerUsableItem : UsableOnItem, IUsableOnItem
     public virtual bool Use(ICreature usedBy, IItem onItem)
     {
         if (usedBy is not IPlayer player) return false;
-        var canUseOnItems = Metadata.OnUse?.GetAttributeArray<ushort>(ItemTypeAttribute.UseOn) ?? Array.Empty<ushort>();
+        var canUseOnItems = Metadata.OnUse?.GetAttributeArray<ushort>(ItemTypeAttribute.UseOn) ?? [];
 
         if (!canUseOnItems.Contains(onItem.Metadata.ServerId)) return false;
 

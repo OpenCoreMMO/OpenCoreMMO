@@ -1168,7 +1168,16 @@ public class Player : CombatActor, IPlayer
 
         Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
 
-        if (combatResult.TotalDamage > 0) IncreaseSkillCounter(SkillInUse, 1);
+        if (combatResult.TotalDamage > 0)
+        {
+            IncreaseSkillCounter(SkillInUse, 1);
+        }
+
+        //the player cannot attack if he does not have enough mana to use the magic weapon
+        if (combatParameter.UsingWeapon && Inventory.Weapon is MagicWeapon magicWeapon)
+        {
+            DecreaseMana(magicWeapon.ManaConsumption);
+        }
     }
 
     public override Result CanAttack(CombatParameter combatParameter)
@@ -1186,6 +1195,13 @@ public class Player : CombatActor, IPlayer
                             distanceWeapon.CanShootAmmunition(Inventory.Ammo);
 
         if (combatParameter.UsingWeapon && Inventory.Weapon is INeedsAmmo && !hasEnoughAmmo) return Result.NotPossible;
+
+        //the player cannot attack if he does not have enough mana to use the magic weapon
+        if (combatParameter.UsingWeapon && Inventory.Weapon is MagicWeapon magicWeapon &&
+            !HasEnoughMana(magicWeapon.ManaConsumption))
+        {
+            return new Result(InvalidOperation.NotEnoughMana);
+        }
 
         return result;
     }

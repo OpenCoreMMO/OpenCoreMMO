@@ -10,7 +10,7 @@ namespace NeoServer.Networking.Packets.Messages;
 
 public class ReadOnlyNetworkMessage : IReadOnlyNetworkMessage
 {
-    private static readonly byte[] EmptyBuffer = Array.Empty<byte>();
+    private static readonly byte[] EmptyBuffer = [];
     private static readonly Encoding Iso88591Encoding = Encoding.GetEncoding("iso-8859-1");
 
     public ReadOnlyNetworkMessage(byte[] buffer, int length)
