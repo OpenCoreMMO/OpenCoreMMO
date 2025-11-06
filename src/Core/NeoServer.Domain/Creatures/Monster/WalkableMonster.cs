@@ -29,7 +29,6 @@ public abstract class WalkableMonster : CombatActor, IWalkableMonster
     public bool DoRandomStep()
     {
         StopFollowing();
-        //StopAttack();
 
         Cooldowns.Start(CooldownType.Awaken, 10000);
 

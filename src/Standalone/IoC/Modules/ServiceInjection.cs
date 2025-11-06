@@ -61,10 +61,11 @@ public static class ServiceInjection
         builder.AddSingleton<IMailService, MailService>();
         builder.AddSingleton<QuestService>();
         builder.AddSingleton<AreaCalculationService>();
+        builder.AddSingleton<IMonsterTargetSearch, MonsterTargetSearch>();
+        builder.AddSingleton<IMonsterTargetingService, MonsterTargetingService>();
         builder.AddSingleton<MonsterStateService>();
         builder.AddSingleton<ITradeService, SafeTradeSystem>();
         builder.AddSingleton<PlayerChannelService>();
-        builder.AddSingleton<MonsterStateService>();
         builder.AddSingleton<TargetDetectorService>();
         builder.AddSingleton<ICreatureMovementService, CreatureMovementService>();
         builder.AddSingleton<CylinderOperation>();

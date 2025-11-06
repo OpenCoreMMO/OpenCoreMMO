@@ -61,11 +61,6 @@ public interface IMonster : IWalkableMonster, ICombatActor
     void Reborn();
 
     /// <summary>
-    ///     Select a target to attack
-    /// </summary>
-    void SelectTargetToAttack();
-
-    /// <summary>
     ///     Executes defense action
     /// </summary>
     /// <returns>interval</returns>

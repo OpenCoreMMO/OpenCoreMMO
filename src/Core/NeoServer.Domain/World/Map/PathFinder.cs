@@ -79,7 +79,6 @@ public class PathFinder(IMap map) : IPathFinder
 
     public Direction FindRandomStep(ICreature creature, ITileEnterRule rule, bool allowDiagonal = false)
     {
-        var randomIndex = GameRandom.Random.Next(0, maxValue: 4);
 
         Span<Direction> directions = allowDiagonal
             ?
@@ -89,8 +88,13 @@ public class PathFinder(IMap map) : IPathFinder
             ]
             : [Direction.East, Direction.North, Direction.South, Direction.West];
 
-        foreach (var direction in directions)
+        var randomIndex = GameRandom.Random.Next(0, maxValue: directions.Length);
+
+        for (var i = 0; i < directions.Length; i++)
         {
+            randomIndex = randomIndex >= directions.Length ? 0 : randomIndex;
+            
+            var direction = directions[randomIndex++];
             if (map.CanGoToDirection(creature, direction, rule)) return direction;
         }
 

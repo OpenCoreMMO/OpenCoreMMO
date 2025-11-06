@@ -358,38 +358,6 @@ public class Monster : WalkableMonster, IMonster
         MoveAroundEnemy(CurrentTarget);
     }
 
-    public virtual void SelectTargetToAttack()
-    {
-        var hasTargetChange = Metadata.TargetChance.Chance > 0;
-
-        if (Attacking && HasFollowPath && !hasTargetChange) return;
-
-        var searchMode = TargetSearchType.Default;
-
-        if (hasTargetChange)
-        {
-            searchMode = TargetDistance <= 1 ? TargetSearchType.Random : TargetSearchType.Nearest;
-        }
-
-        if (!Attacking || !HasFollowPath)
-        {
-            var target = Targets.SearchTarget(searchMode);
-            ChangeAttackTarget(target);
-            return;
-        }
-
-        var shouldChangeTarget = hasTargetChange &&
-                                 Cooldowns.Cooldowns.TryGetValue(CooldownType.TargetChange, out var cooldown) &&
-                                 cooldown.Expired &&
-                                 Metadata.TargetChance.Chance >= GameRandom.Random.Next(1, maxValue: 100);
-
-        if (shouldChangeTarget)
-        {
-            var target = Targets.SearchTarget(searchMode);
-            ChangeAttackTarget(target);
-        }
-    }
-
     public void Sleep()
     {
         State = MonsterState.Sleeping;
@@ -541,8 +509,14 @@ public class Monster : WalkableMonster, IMonster
 
     public override void OnWalkableCreatureDisappear(ICreature creature)
     {
-        Targets.Remove(creature as ICombatActor);
-        SelectTargetToAttack();
+        if (creature is not ICombatActor target) return;
+
+        Targets.Remove(target);
+
+        if (ReferenceEquals(CurrentTarget, creature))
+        {
+            StopAttack();
+        }
     }
 
     public void StopDefending()
@@ -593,7 +567,7 @@ public class Monster : WalkableMonster, IMonster
         }
     }
 
-    protected void ChangeAttackTarget(ICreature creature)
+    internal void ChangeAttackTarget(ICreature creature)
     {
         if (creature is null) return;
 

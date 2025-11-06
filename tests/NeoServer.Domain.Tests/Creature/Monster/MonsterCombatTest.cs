@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster;
@@ -14,7 +15,9 @@ using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
+using NeoServer.Domain.World.Services;
 
 namespace NeoServer.Domain.Tests.Creature.Monster;
 
@@ -35,8 +38,8 @@ public class MonsterCombatTest
         map.PlaceCreature(player);
         map.PlaceCreature(monster);
 
-        var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+    var summonServiceMock = new Mock<ISummonService>();
+    var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         //act
         monsterStateService.UpdateState(monster);
@@ -65,7 +68,7 @@ public class MonsterCombatTest
         map.PlaceCreature(monster);
 
         var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         //act
         monsterStateService.UpdateState(monster);
@@ -98,7 +101,7 @@ public class MonsterCombatTest
         flagsField.SetValue(map[100, 100, 7], (uint)TileFlags.ProtectionZone);
 
         var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         //act
         monsterStateService.UpdateState(monster);
@@ -136,7 +139,7 @@ public class MonsterCombatTest
         map.PlaceCreature(monster);
 
         var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+    var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         //act
         monsterStateService.UpdateState(monster);
@@ -167,7 +170,7 @@ public class MonsterCombatTest
         map.PlaceCreature(monster);
 
         var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         // Initial attack on first player
         monsterStateService.UpdateState(monster);
@@ -213,7 +216,7 @@ public class MonsterCombatTest
         map.PlaceCreature(monster);
 
         var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         // Initial attack on player
         monsterStateService.UpdateState(monster);
@@ -255,7 +258,7 @@ public class MonsterCombatTest
         map.PlaceCreature(monster);
 
         var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         // Initial attack on farther player
         monsterStateService.UpdateState(monster);
@@ -295,8 +298,9 @@ public class MonsterCombatTest
 
         map.PlaceCreature(monster);
 
-        var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+    var summonServiceMock = new Mock<ISummonService>();
+    var targetingService = new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, new PathFinder(map))));
+    var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map, targetingService);
 
         // Initial attack on farther player
         monsterStateService.UpdateState(monster);
@@ -336,7 +340,7 @@ public class MonsterCombatTest
         map.PlaceCreature(monster);
 
         var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         // Initial state: monster should be fleeing due to low health
         monsterStateService.UpdateState(monster);
@@ -387,7 +391,7 @@ public class MonsterCombatTest
         map.PlaceCreature(monster);
 
         var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         // Initial state: monster should be in combat
         monsterStateService.UpdateState(monster);
@@ -427,7 +431,7 @@ public class MonsterCombatTest
         map.PlaceCreature(monster);
 
         var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         // Ensure the monster is idle (no targets)
         monsterStateService.UpdateState(monster);
@@ -468,7 +472,7 @@ public class MonsterCombatTest
         map.PlaceCreature(monster);
 
         var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         // Initial state: monster should be in combat
         monsterStateService.UpdateState(monster);
@@ -509,7 +513,7 @@ public class MonsterCombatTest
         map.PlaceCreature(sut);
 
         var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         //act
         monsterStateService.UpdateState(sut);
@@ -580,7 +584,7 @@ public class MonsterCombatTest
         map.PlaceCreature(player);
 
         var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         // Initial state: SUT might be targeting player yet
         monsterStateService.UpdateState(sut);
@@ -644,7 +648,7 @@ public class MonsterCombatTest
         map.PlaceCreature(sut);
 
         var summonServiceMock = new Mock<ISummonService>();
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, new TargetDetectorService(map));
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
         
         //selects the player A as he is closer to the monster
         monsterStateService.UpdateState(sut);
@@ -657,5 +661,16 @@ public class MonsterCombatTest
         sut.CurrentTarget.Should().Be(playerB); // Should target player B because the path to player A is blocked
         sut.IsFollowing.Should().BeTrue();
         sut.Attacking.Should().BeTrue();
+    }
+
+    private static MonsterStateService BuildMonsterStateService(
+        ISummonService summonService,
+        IMap map,
+        IMonsterTargetingService targetingService = null,
+        TargetDetectorService targetDetectorService = null)
+    {
+        targetDetectorService ??= new TargetDetectorService(map);
+        targetingService ??= new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, new PathFinder(map))));
+        return new MonsterStateService(summonService, targetDetectorService, targetingService);
     }
 }
