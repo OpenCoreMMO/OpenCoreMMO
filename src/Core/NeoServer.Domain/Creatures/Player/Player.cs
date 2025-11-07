@@ -86,7 +86,6 @@ public class Player : CombatActor, IPlayer
         Id = id;
         CharacterName = characterName;
         ChaseMode = chaseMode;
-        TotalCapacity = capacity;
         Skills = skills;
         Storages = storages;
         Vocation = vocation;
@@ -102,6 +101,8 @@ public class Player : CombatActor, IPlayer
         Outfit = outfit;
         Speed = speed == 0 ? RawSpeed : speed;
         Inventory = new Inventory.Inventory(this, new Dictionary<Slot, (IItem Item, ushort Id)>());
+
+        TotalCapacity = Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity) ? uint.MaxValue : capacity;;
 
         Vip = new Vip(this);
         Channels = new PlayerChannel(this);
@@ -398,7 +399,7 @@ public class Player : CombatActor, IPlayer
 
     public override ushort ArmorRating => Inventory.TotalArmor;
     public PvpSecureMode SecureMode { get; private set; }
-    public float FreeCapacity => TotalCapacity - Inventory.TotalWeight;
+    public float FreeCapacity => Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity) ? float.MaxValue : TotalCapacity - Inventory.TotalWeight;
     public override bool UsingDistanceWeapon => Inventory.Weapon is IDistanceWeapon;
     public bool Recovering => HasCondition(ConditionType.Regeneration);
     public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
@@ -1342,6 +1343,9 @@ public class Player : CombatActor, IPlayer
 
     public override void AddCondition(ICondition condition)
     {
+        if (Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked) && condition.Type.ToDamageType() != DamageType.None)
+            return;
+
         switch (condition.Type)
         {
             case ConditionType.Drunk when Inventory.HasEquippedItemWithImmunity(Immunity.Drunkenness):
@@ -1447,7 +1451,8 @@ public class Player : CombatActor, IPlayer
             var levelDiff = toLevel - fromLevel;
             MaxHealthPoints += (uint)(levelDiff * Vocation.GainHp);
             MaxMana += (ushort)(levelDiff * Vocation.GainMana);
-            TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
+            if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity))
+                TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
             ResetHealthPoints();
             ResetMana();
             ChangeSpeedLevel(RawSpeed);
@@ -1463,7 +1468,8 @@ public class Player : CombatActor, IPlayer
             var levelDiff = toLevel - fromLevel;
             MaxHealthPoints += (uint)(levelDiff * Vocation.GainHp);
             MaxMana += (ushort)(levelDiff * Vocation.GainMana);
-            TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
+            if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity))
+                TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
             ResetHealthPoints();
             ResetMana();
             ChangeSpeedLevel(RawSpeed);
