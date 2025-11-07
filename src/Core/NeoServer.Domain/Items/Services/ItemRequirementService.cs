@@ -20,7 +20,7 @@ public class ItemRequirementService : IItemRequirementService
         if ((player.Skills[SkillType.Magic]?.Level ?? 0) < requirement.MinMagicLevel)
             return Result.Fail(InvalidOperation.NotEnoughMagicLevel);
 
-        if (player.PremiumTime <= 0 && requirement.RequirePremiumTime)
+        if (!player.HasPremiumTime && requirement.RequirePremiumTime)
             return Result.Fail(InvalidOperation.PremiumTimeIsRequired);
 
         return Result.Success;
@@ -30,7 +30,7 @@ public class ItemRequirementService : IItemRequirementService
     {
         if (player.Level < requirement.MinLevel) return Result.Fail(InvalidOperation.NotEnoughLevel);
 
-        if (player.PremiumTime <= 0 && requirement.RequirePremiumTime)
+        if (!player.HasPremiumTime && requirement.RequirePremiumTime)
             return Result.Fail(InvalidOperation.PremiumTimeIsRequired);
 
         var hasRequiredVocation = PlayerHasRequiredVocation(player, requirement);

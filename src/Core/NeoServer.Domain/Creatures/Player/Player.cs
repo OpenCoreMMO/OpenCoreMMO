@@ -167,8 +167,8 @@ public class Player : CombatActor, IPlayer
     public string GenderPronoun => Gender == Gender.Male ? "He" : "She";
 
     public Gender Gender { get; set; }
-    public int PremiumTime { get; init; }
-    public bool HasPremiumTime => PremiumTime > 0;
+    public int PremiumDays { get; init; }
+    public bool HasPremiumTime => PremiumDays > 0 || Group.FlagIsEnabled(PlayerFlag.IsAlwaysPremium);
     public ITown Town { get; set; }
     public IVip Vip { get; }
     public override IOutfit Outfit { get; protected set; }
@@ -1227,7 +1227,7 @@ public class Player : CombatActor, IPlayer
     public bool CanUseOutfit(IOutfit outfit)
     {
         if (string.IsNullOrEmpty(outfit.Name)) return false;
-        if (outfit.Premium && !(PremiumTime > 0)) return false;
+        if (outfit.Premium && !HasPremiumTime) return false;
 
         return outfit.Unlocked;
     }
@@ -1319,7 +1319,7 @@ public class Player : CombatActor, IPlayer
         if (!spell.VocationIds?.Contains(((IPlayer)this).VocationType) ?? false)
             return Result.Fail(InvalidOperation.VocationCannotUseSpell);
 
-        if (spell.NeedsPremium && PremiumTime <= 0) return Result.Fail(InvalidOperation.PremiumTimeIsRequired);
+        if (spell.NeedsPremium && !HasPremiumTime) return Result.Fail(InvalidOperation.PremiumTimeIsRequired);
 
         if (spell.IsAggressive && (spell.Range < 1 || (spell.Range > 0 && CurrentTarget is null)) &&
             Skull is Skull.Black)

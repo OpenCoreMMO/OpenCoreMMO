@@ -127,8 +127,8 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     IPlayerParty PlayerParty { get; set; }
     string GenderPronoun { get; }
     Gender Gender { get; set; }
-    int PremiumTime { get; }
-    bool HasPremiumTime => PremiumTime > 0;
+    int PremiumDays { get; }
+    bool HasPremiumTime { get; }
     IDictionary<SkillType, ISkill> Skills { get; }
     IDictionary<uint, int> Storages { get; }
 
