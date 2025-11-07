@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Combat.Structs;
+﻿using System.Collections.Generic;
+using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
@@ -16,7 +17,8 @@ namespace NeoServer.Domain.Tests.Helpers;
 
 public static class MonsterTestDataBuilder
 {
-    public static IMonster Build(uint maxHealth = 100, ushort speed = 200, IMap map = null, bool isHostile = true)
+    public static IMonster Build(uint maxHealth = 100, ushort speed = 200, IMap map = null, bool isHostile = true,
+        Dictionary<CreatureFlagAttribute, ushort>? flags = null, string name = null)
     {
         map ??= MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         var pathFinder = new PathFinder(map);
@@ -26,7 +28,7 @@ public static class MonsterTestDataBuilder
 
         var monsterType = new MonsterType
         {
-            Name = "Monster X",
+            Name = name ?? "Monster X",
             MaxHealth = maxHealth,
             Speed = speed,
             TargetChance = new IntervalChance(1000, 50),
@@ -43,14 +45,26 @@ public static class MonsterTestDataBuilder
                         DamageType = DamageType.Melee
                     }
                 }
-            ]
+            ],
+            Flags =
+            {
+                [CreatureFlagAttribute.Hostile] = (ushort)(isHostile ? 1 : 0)
+            }
         };
 
-        monsterType.Flags[CreatureFlagAttribute.Hostile] = (ushort)(isHostile ? 1 : 0);
+        if (flags != null)
+        {
+            foreach (var flag in flags)
+            {
+                monsterType.Flags[flag.Key] = flag.Value;
+            }
+        }
+
         return new Monster(monsterType, mapTool, spawnPoint);
     }
 
-    public static IMonster BuildSummon(ICreature master, ushort minDamage = 10, ushort maxDamage = 100, byte targetDistance = 1)
+    public static IMonster BuildSummon(ICreature master, ushort minDamage = 10, ushort maxDamage = 100,
+        byte targetDistance = 1)
     {
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         var pathFinder = new PathFinder(map);

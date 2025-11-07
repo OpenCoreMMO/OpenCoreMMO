@@ -4,34 +4,28 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.World.Algorithms;
 using NeoServer.Domain.World.Algorithms.AStar;
 
 namespace NeoServer.Domain.World.Map;
 
-public class PathFinder : IPathFinder
+public class PathFinder(IMap map) : IPathFinder
 {
     public static readonly (bool Found, Direction[] Directions) FoundedButEmptyDirections =
         (true, []);
 
     public static readonly (bool Found, Direction[] Directions) NotFound = (false, []);
 
-    public PathFinder(IMap map)
-    {
-        Map = map;
-    }
-
-    public IMap Map { get; set; }
-
     public (bool Found, Direction[] Directions) Find(Location startPosition, Location targetPosition,
         FindPathParams fpp)
     {
-        return AStar.GetPathMatching(Map, null, startPosition, targetPosition, fpp, null);
+        return AStar.GetPathMatching(map, null, startPosition, targetPosition, fpp, null);
     }
 
     public (bool Found, Direction[] Directions) Find(ICreature creature, Location target,
         ITileEnterRule tileEnterRule)
     {
-        return AStar.GetPathMatching(Map, creature, creature.Location, target, new FindPathParams(true), tileEnterRule);
+        return AStar.GetPathMatching(map, creature, creature.Location, target, new FindPathParams(true), tileEnterRule);
     }
 
     public (bool Found, Direction[] Directions) Find(ICreature creature, Location target, FindPathParams fpp,
@@ -53,10 +47,10 @@ public class PathFinder : IPathFinder
 
             return pathToKeepDistance.Found
                 ? (true, pathToKeepDistance.Directions)
-                : AStar.GetPathMatching(Map, creature, creature.Location, target, fpp, tileEnterRule);
+                : AStar.GetPathMatching(map, creature, creature.Location, target, fpp, tileEnterRule);
         }
 
-        return AStar.GetPathMatching(Map, creature, creature.Location, target, fpp, tileEnterRule);
+        return AStar.GetPathMatching(map, creature, creature.Location, target, fpp, tileEnterRule);
     }
 
     public Direction FindRandomStep(ICreature creature, ITileEnterRule rule, Location origin,
@@ -71,7 +65,7 @@ public class PathFinder : IPathFinder
             randomIndex = randomIndex > 3 ? 0 : randomIndex;
             var direction = directions[randomIndex++];
 
-            if (Map.CanGoToDirection(creature, direction, rule))
+            if (map.CanGoToDirection(creature, direction, rule))
             {
                 var nextLocation = creature.Location.GetNextLocation(direction);
                 if (nextLocation.GetMaxSqmDistance(origin) > maxStepsFromOrigin) continue;
@@ -83,18 +77,25 @@ public class PathFinder : IPathFinder
         return Direction.None;
     }
 
-    public Direction FindRandomStep(ICreature creature, ITileEnterRule rule)
+    public Direction FindRandomStep(ICreature creature, ITileEnterRule rule, bool allowDiagonal = false)
     {
-        var randomIndex = GameRandom.Random.Next(0, maxValue: 4);
 
-        var directions = new Direction[4] { Direction.East, Direction.North, Direction.South, Direction.West };
+        Span<Direction> directions = allowDiagonal
+            ?
+            [
+                Direction.East, Direction.North, Direction.South, Direction.West, Direction.NorthEast,
+                Direction.NorthWest, Direction.SouthEast, Direction.SouthWest
+            ]
+            : [Direction.East, Direction.North, Direction.South, Direction.West];
 
-        for (var i = 0; i < 4; i++)
+        var randomIndex = GameRandom.Random.Next(0, maxValue: directions.Length);
+
+        for (var i = 0; i < directions.Length; i++)
         {
-            randomIndex = randomIndex > 3 ? 0 : randomIndex;
+            randomIndex = randomIndex >= directions.Length ? 0 : randomIndex;
+            
             var direction = directions[randomIndex++];
-
-            if (Map.CanGoToDirection(creature, direction, rule)) return direction;
+            if (map.CanGoToDirection(creature, direction, rule)) return direction;
         }
 
         return Direction.None;
@@ -126,7 +127,12 @@ public class PathFinder : IPathFinder
 
         // Already at the desired distance — no need to move
         if (currentDistance == fpp.MaxTargetDist)
-            return FoundedButEmptyDirections;
+        {
+            if (!fpp.ClearSight || SightClear.IsSightClear(map, start, target, false))
+            {
+                return FoundedButEmptyDirections;
+            }
+        }
 
         var shouldMoveCloser = currentDistance > fpp.MaxTargetDist;
         var shouldMoveFarther = !shouldMoveCloser;
@@ -145,7 +151,11 @@ public class PathFinder : IPathFinder
         foreach (var direction in allDirections)
         {
             var next = start.GetNextLocation(direction);
-            if (!Map.CanGoToDirection(creature, direction, tileEnterRule))
+            if (!map.CanGoToDirection(creature, direction, tileEnterRule))
+                continue;
+
+            // If clear sight is required, skip candidates that do not have a sight from 'next'
+            if (fpp.ClearSight && !SightClear.IsSightClear(map, next, target, false))
                 continue;
 
             var nextDistance = next.GetMaxSqmDistance(target);
@@ -192,6 +202,6 @@ public class PathFinder : IPathFinder
             return (true, [randomDirection]);
         }
 
-        return FoundedButEmptyDirections;
+        return NotFound;
     }
 }

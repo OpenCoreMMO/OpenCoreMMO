@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Networking.Packets.Outgoing.Effect;
 using NeoServer.Networking.Packets.Outgoing.Item;
 using NeoServer.Server.Common.Contracts;
@@ -32,8 +33,17 @@ public class ThingRemovedFromTileEventHandler(IGameServer game, IScriptManager s
 
             var stackPosition = spectator.FromStackPosition;
 
+            // if the player is not dead, show a puff effect
             if (thing is IPlayer { IsDead: false } or IMonster { IsSummon: true })
+            {
                 connection.OutgoingPackets.Enqueue(new MagicEffectPacket(tile.Location, EffectT.Puff));
+            }
+
+            // if the monster was killed by another monster, show a puff effect
+            if (thing is Monster { KilledByAnotherMonster: true })
+            {
+                connection.OutgoingPackets.Enqueue(new MagicEffectPacket(tile.Location, EffectT.Puff));
+            }
 
             connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(tile, stackPosition));
 

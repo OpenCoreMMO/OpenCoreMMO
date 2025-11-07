@@ -15,12 +15,12 @@ public class CreatureKilledEventHandler(IGameServer game) : INetworkingEventHand
         ICombatActor creature = @event.DeadCreature;
         IThing by = @event.Attacker;
         
+        if (creature is not IPlayer ||
+            !game.CreatureManager.GetPlayerConnection(creature.CreatureId, out var connection)) return;
+        
         game.Scheduler.AddEvent(new SchedulerEvent(200, () =>
         {
             //send packets to killed player
-            if (creature is not IPlayer ||
-                !game.CreatureManager.GetPlayerConnection(creature.CreatureId, out var connection)) return;
-
             connection.OutgoingPackets.Enqueue(new ReLoginWindowOutgoingPacket());
             connection.Send();
         }));

@@ -1,5 +1,6 @@
 ﻿using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 
 namespace NeoServer.Domain.Common.Parsers;
 
@@ -67,6 +68,21 @@ public static class DamageTypeParser
             DamageType.LifeDrain => Immunity.LifeDrain,
             DamageType.Drunk => Immunity.Drunkenness,
             _ => Immunity.None
+        };
+    }
+
+    public static ConditionType ToCondition(this DamageType type)
+    {
+        return type switch
+        {
+            DamageType.Fire => ConditionType.Burning,
+            DamageType.Earth => ConditionType.Poisoned,
+            DamageType.Ice => ConditionType.Freezing,
+            DamageType.Energy => ConditionType.Electrified,
+            DamageType.Drown => ConditionType.Drowning,
+            DamageType.Death => ConditionType.Cursed,
+            DamageType.Drunk => ConditionType.Drunk,
+            _ => ConditionType.None
         };
     }
 }

@@ -256,7 +256,7 @@ public class Player : CombatActor, IPlayer
     }
 
     public byte LevelPercent => GetSkillPercent(SkillType.Level);
-
+    public override bool CanBeAttacked => !Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked) && base.CanBeAttacked;
     public override void GainExperience(long experience)
     {
         if (experience == 0) return;
@@ -630,8 +630,6 @@ public class Player : CombatActor, IPlayer
 
     public override int DefendUsingShield(int attack)
     {
-        if (!IsShieldDefenseEnabled) return attack;
-
         var defense = Inventory.TotalDefense * Skills[SkillType.Shielding].Level *
             (DefenseFactor / 100d) - attack / 100d * ArmorRating * (Vocation.Formula?.Defense ?? 1f);
 
@@ -1479,7 +1477,7 @@ public class Player : CombatActor, IPlayer
         IncreaseMana(MaxMana);
     }
 
-    public override bool HasImmunity(Immunity immunity)
+    public override bool IsImmune(Immunity immunity)
     {
         return false;
         //todo: add immunity check
@@ -1555,7 +1553,7 @@ public class Player : CombatActor, IPlayer
 
     public override CombatDamage OnImmunityDefense(CombatDamage damage)
     {
-        if (!HasImmunity(damage.Type.ToImmunity())) return damage;
+        if (!IsImmune(damage.Type.ToImmunity())) return damage;
         damage.SetNewDamage(0);
         return damage;
     }

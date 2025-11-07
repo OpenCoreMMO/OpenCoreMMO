@@ -17,6 +17,7 @@ using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.Tests.Server;
+using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Domain.World.Services;
 using NeoServer.Server.Commands.Movements;
@@ -252,7 +253,8 @@ public class TileTest
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(102, 100, 7));
 
-        var mapService = new MapService(map);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var mapService = new MapService(map, creatureMovementService);
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
@@ -313,7 +315,8 @@ public class TileTest
         var itemMovementService =
             new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
 
-        var mapService = new MapService(map);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var mapService = new MapService(map, creatureMovementService);
 
         mapService.ReplaceGround(destinationTile.Location, hole);
 
@@ -339,7 +342,8 @@ public class TileTest
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(102, 100, 7));
 
-        var mapService = new MapService(map);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var mapService = new MapService(map, creatureMovementService);
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
@@ -385,7 +389,9 @@ public class TileTest
         //arrange
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
         var player = PlayerTestDataBuilder.Build();
-        var mapService = new MapService(map);
+        
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var mapService = new MapService(map, creatureMovementService);
 
         player.SetNewLocation(new Location(102, 100, 7));
 
@@ -418,7 +424,9 @@ public class TileTest
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
-        var mapService = new MapService(map);
+        
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var mapService = new MapService(map, creatureMovementService);
 
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(100, 100, 7));
