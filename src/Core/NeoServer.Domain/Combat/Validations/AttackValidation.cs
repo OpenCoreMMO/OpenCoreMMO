@@ -66,6 +66,12 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
                                           master.Equals(summonMaster) && !combatConfiguration.CanAttackOwnSummon:
                         return Result.Fail(InvalidOperation.YouMayNotAttackThisCreature);
                     
+                    //Player cannot attack another player's summon if protection level applies
+                    case IPlayer playerAggressor when monsterTarget is Summon { Master: IPlayer summonMaster } &&
+                                                   !playerAggressor.Equals(summonMaster) &&
+                                                   IsProtected(playerAggressor, summonMaster):
+                        return Result.Fail(InvalidOperation.YouMayNotAttackThisCreature);
+                    
                     //Player cannot attack a monster
                     case IPlayer playerAggressor
                         when playerAggressor.Group.FlagIsEnabled(PlayerFlag.CannotAttackMonster):
