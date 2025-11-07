@@ -120,7 +120,7 @@ public class PlayerLoader : IPlayerLoader
             MapTool,
             town)
         {
-            PremiumTime = premiumTimeDays,
+            PremiumDays = premiumTimeDays,
             AccountId = (uint)playerEntity.AccountId,
             WorldId = playerEntity.WorldId,
             Guild = GuildStore.Get((ushort)(playerEntity.GuildMember?.GuildId ?? 0)),

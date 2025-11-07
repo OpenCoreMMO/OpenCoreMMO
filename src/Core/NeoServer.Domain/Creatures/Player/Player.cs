@@ -86,7 +86,6 @@ public class Player : CombatActor, IPlayer
         Id = id;
         CharacterName = characterName;
         ChaseMode = chaseMode;
-        TotalCapacity = capacity;
         Skills = skills;
         Storages = storages;
         Vocation = vocation;
@@ -102,6 +101,8 @@ public class Player : CombatActor, IPlayer
         Outfit = outfit;
         Speed = speed == 0 ? RawSpeed : speed;
         Inventory = new Inventory.Inventory(this, new Dictionary<Slot, (IItem Item, ushort Id)>());
+
+        TotalCapacity = Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity) ? uint.MaxValue : capacity;
 
         Vip = new Vip(this);
         Channels = new PlayerChannel(this);
@@ -146,7 +147,7 @@ public class Player : CombatActor, IPlayer
 
     public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
 
-    public override ushort RawSpeed => (ushort)(220 + 2 * (Level - 1));
+    public override ushort RawSpeed => Group.FlagIsEnabled(PlayerFlag.SetMaxSpeed) ? ushort.MaxValue : (ushort)(220 + 2 * (Level - 1));
 
     public float DamageFactor => FightMode switch
     {
@@ -166,8 +167,8 @@ public class Player : CombatActor, IPlayer
     public string GenderPronoun => Gender == Gender.Male ? "He" : "She";
 
     public Gender Gender { get; set; }
-    public int PremiumTime { get; init; }
-    public bool HasPremiumTime => PremiumTime > 0;
+    public int PremiumDays { get; init; }
+    public bool HasPremiumTime => PremiumDays > 0 || Group.FlagIsEnabled(PlayerFlag.IsAlwaysPremium);
     public ITown Town { get; set; }
     public IVip Vip { get; }
     public override IOutfit Outfit { get; protected set; }
@@ -260,6 +261,8 @@ public class Player : CombatActor, IPlayer
     public override void GainExperience(long experience)
     {
         if (experience == 0) return;
+
+        if (Group.FlagIsEnabled(PlayerFlag.NotGainExperience)) return;
 
         if (!IgnoreStamina)
         {
@@ -398,7 +401,7 @@ public class Player : CombatActor, IPlayer
 
     public override ushort ArmorRating => Inventory.TotalArmor;
     public PvpSecureMode SecureMode { get; private set; }
-    public float FreeCapacity => TotalCapacity - Inventory.TotalWeight;
+    public float FreeCapacity => Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity) ? float.MaxValue : TotalCapacity - Inventory.TotalWeight;
     public override bool UsingDistanceWeapon => Inventory.Weapon is IDistanceWeapon;
     public bool Recovering => HasCondition(ConditionType.Regeneration);
     public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
@@ -854,12 +857,21 @@ public class Player : CombatActor, IPlayer
 
     public void IncreaseMana(uint increasing)
     {
+        if (Group.FlagIsEnabled(PlayerFlag.NotGainMana)) return;
+
         if (increasing <= 0) return;
 
         if (Mana == MaxMana) return;
 
         Mana = Mana + increasing >= MaxMana ? MaxMana : Mana + increasing;
         OnStatusChanged?.Invoke(this);
+    }
+
+    public override void Heal(ushort increasing, ICreature healedBy)
+    {
+        if (Group.FlagIsEnabled(PlayerFlag.NotGainHealth)) return;
+
+        base.Heal(increasing, healedBy);
     }
 
     public void Recover()
@@ -1215,7 +1227,7 @@ public class Player : CombatActor, IPlayer
     public bool CanUseOutfit(IOutfit outfit)
     {
         if (string.IsNullOrEmpty(outfit.Name)) return false;
-        if (outfit.Premium && !(PremiumTime > 0)) return false;
+        if (outfit.Premium && !HasPremiumTime) return false;
 
         return outfit.Unlocked;
     }
@@ -1307,7 +1319,7 @@ public class Player : CombatActor, IPlayer
         if (!spell.VocationIds?.Contains(((IPlayer)this).VocationType) ?? false)
             return Result.Fail(InvalidOperation.VocationCannotUseSpell);
 
-        if (spell.NeedsPremium && PremiumTime <= 0) return Result.Fail(InvalidOperation.PremiumTimeIsRequired);
+        if (spell.NeedsPremium && !HasPremiumTime) return Result.Fail(InvalidOperation.PremiumTimeIsRequired);
 
         if (spell.IsAggressive && (spell.Range < 1 || (spell.Range > 0 && CurrentTarget is null)) &&
             Skull is Skull.Black)
@@ -1342,6 +1354,9 @@ public class Player : CombatActor, IPlayer
 
     public override void AddCondition(ICondition condition)
     {
+        if (Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked) && condition.Type.ToDamageType() != DamageType.None)
+            return;
+
         switch (condition.Type)
         {
             case ConditionType.Drunk when Inventory.HasEquippedItemWithImmunity(Immunity.Drunkenness):
@@ -1447,7 +1462,8 @@ public class Player : CombatActor, IPlayer
             var levelDiff = toLevel - fromLevel;
             MaxHealthPoints += (uint)(levelDiff * Vocation.GainHp);
             MaxMana += (ushort)(levelDiff * Vocation.GainMana);
-            TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
+            if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity))
+                TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
             ResetHealthPoints();
             ResetMana();
             ChangeSpeedLevel(RawSpeed);
@@ -1463,7 +1479,8 @@ public class Player : CombatActor, IPlayer
             var levelDiff = toLevel - fromLevel;
             MaxHealthPoints += (uint)(levelDiff * Vocation.GainHp);
             MaxMana += (ushort)(levelDiff * Vocation.GainMana);
-            TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
+            if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity))
+                TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
             ResetHealthPoints();
             ResetMana();
             ChangeSpeedLevel(RawSpeed);

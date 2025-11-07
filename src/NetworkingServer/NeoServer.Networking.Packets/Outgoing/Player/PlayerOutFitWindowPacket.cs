@@ -34,7 +34,7 @@ public class PlayerOutFitWindowPacket : OutgoingPacket
             message.AddByte(player.Outfit.Addon);
         }
 
-        var outfits = _outfits.Where(x => (!x.RequiresPremium || (player.PremiumTime > 0 && x.RequiresPremium)) &&
+        var outfits = _outfits.Where(x => (!x.RequiresPremium || (player.HasPremiumTime && x.RequiresPremium)) &&
                                           x.Enabled).ToList();
 
         message.AddByte((byte)outfits.Count);
@@ -43,7 +43,7 @@ public class PlayerOutFitWindowPacket : OutgoingPacket
 
         foreach (var outfit in outfits)
         {
-            if (player.PremiumTime <= 0 && outfit.RequiresPremium) continue;
+            if (!player.HasPremiumTime && outfit.RequiresPremium) continue;
 
             playerAddons.TryGetValue(outfit.LookType, out var addonLevel);
 

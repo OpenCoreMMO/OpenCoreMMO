@@ -40,7 +40,7 @@ public class InfoCommand : CommandSpell
              AccountId: {targetPlayer.AccountId}
              Position: {targetPlayer.Location.X}, {targetPlayer.Location.Y}, {targetPlayer.Location.Z}
              Capacity: {targetPlayer.TotalCapacity}
-             PremiumTime: {targetPlayer.PremiumTime}
+             PremiumTime: {targetPlayer.PremiumDays}
              Level: {targetPlayer.Level}
              Skills:
              {targetPlayer.Skills.Where(item => item.Key != SkillType.Level).Select(Item => "   * " + Item.Key + ": " + Item.Value.Level + "\n").Aggregate((a, b) => a + b)}
