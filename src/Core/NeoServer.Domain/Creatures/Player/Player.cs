@@ -262,6 +262,8 @@ public class Player : CombatActor, IPlayer
     {
         if (experience == 0) return;
 
+        if (Group.FlagIsEnabled(PlayerFlag.NotGainExperience)) return;
+
         if (!IgnoreStamina)
         {
             experience = ApplyStaminaEffectOnExperienceGain(experience);
