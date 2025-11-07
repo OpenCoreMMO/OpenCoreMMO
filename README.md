@@ -28,7 +28,7 @@
 > Modern, free, and open-source MMORPG server emulator written in C#.
 > 
 > It was written from scratch and development on the project began in January 2020.
-> <br>To connect to the server, you can use either [OTClient](https://github.com/edubart/otclient), [OTCv8](https://github.com/OTCv8/otclientv8) or [OTCR](https://github.com/mehah/otclient) for version 8.6.
+> <br>To connect to the server, you can use either [OTClient](https://github.com/edubart/otclient), [OTCv8](https://github.com/OTCv8/otclientv8) or [OTCR](https://github.com/mehah/otclient) for version 10.98.
 
 ## 📋 Project Management
 
