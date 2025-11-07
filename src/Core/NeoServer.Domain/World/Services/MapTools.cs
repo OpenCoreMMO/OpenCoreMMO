@@ -7,8 +7,11 @@ namespace NeoServer.Domain.World.Services;
 
 public class MapTool : IMapTool
 {
+    private readonly IMap _map;
+
     public MapTool(IMap map, IPathFinder pathFinder)
     {
+        _map = map;
         PathFinder = pathFinder;
         SightClearChecker = (from, to, checkFloor) =>
             SightClear.IsSightClear(map, from, to, checkFloor);
@@ -16,6 +19,8 @@ public class MapTool : IMapTool
 
     public IPathFinder PathFinder { get; }
     public Func<Location, Location, bool, bool> SightClearChecker { get; }
+
+    public bool IsClearSight(Location from, Location to, bool checkFloor) => SightClear.IsSightClear(_map, from, to, checkFloor);
 
     public bool CanThrowObjectTo(Location fromPosition, Location toPosition,
         SightLine sightLine = SightLine.CheckSightLine,

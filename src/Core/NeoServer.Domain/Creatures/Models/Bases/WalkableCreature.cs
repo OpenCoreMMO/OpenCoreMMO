@@ -347,7 +347,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         return true;
     }
 
-    protected Direction GetRandomStep()
+    protected virtual Direction GetRandomStep()
     {
         return MapTool.PathFinder.FindRandomStep(this, TileEnterRule);
     }

@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Monster.Loot;
+using NeoServer.Domain.Creatures.Monster.Summon;
 
 namespace NeoServer.Domain.Creatures.Services;
 
@@ -15,10 +16,13 @@ public class CreatureDeathService(
 {
     public void Handle(ICombatActor deadCreature, IThing by, List<DamageRecord> damageRecords)
     {
-        if (deadCreature is IMonster { IsSummon: true }) //no need to create blood or corpse for summons
+        if (deadCreature is IMonster { IsSummon: true }) //do not create blood or corpse for summons
         {
             return;
         }
+        
+        //do not create blood or corpse for monsters that are killed by another monster
+        if(deadCreature is IMonster && by is IMonster and not Summon { Master: IPlayer }) return;
 
         CreateBlood(deadCreature);
         ReplaceCreatureByCorpse(deadCreature, by);

@@ -12,13 +12,10 @@ public delegate void PlaceCreatureOnMap(IWalkableCreature creature, ICylinder cy
 
 public delegate void RemoveThingFromTile(IThing thing, ICylinder cylinder);
 
-public delegate void MoveCreatureOnFloor(IWalkableCreature creature, ICylinder cylinder);
 
 public delegate void AddThingToTile(IThing thing, ICylinder cylinder);
 
 public delegate void UpdateThingOnTile(IThing thing, ICylinder cylinder);
-
-public delegate void FailedMoveThing(IThing thing, InvalidOperation error);
 
 public interface IMap
 {
@@ -27,8 +24,6 @@ public interface IMap
 
     event PlaceCreatureOnMap OnCreatureAddedOnMap;
     event RemoveThingFromTile OnThingRemovedFromTile;
-    event MoveCreatureOnFloor OnCreatureMoved;
-    event FailedMoveThing OnThingMovedFailed;
     event AddThingToTile OnThingAddedToTile;
     event UpdateThingOnTile OnThingUpdatedOnTile;
 
@@ -51,7 +46,6 @@ public interface IMap
         Location.Structs.Location toLocation);
 
     void PropagateAttack(ICombatActor actor, CombatDamage damage, AffectedLocation[] area);
-    void MoveCreature(IWalkableCreature creature);
     void CreateBloodPool(ILiquid liquid, IDynamicTile tile);
     ITile GetTileDestination(ITile tile);
     void RemoveCreature(ICreature creature);
@@ -70,7 +64,4 @@ public interface IMap
     ITile GetTile(Location.Structs.Location location);
     ITile GetFinalTile(ITile toTile);
     void ReplaceTile(ITile newTile);
-    void MoveCreature(IWalkableCreature creature, Direction nextDirection);
-    bool TryMoveCreature(ICreature creature, Location.Structs.Location toLocation);
-    bool TryMoveCreature(IWalkableCreature creature, Direction nextDirection);
 }

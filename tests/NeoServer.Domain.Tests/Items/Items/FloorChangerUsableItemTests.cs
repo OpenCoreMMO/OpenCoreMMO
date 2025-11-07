@@ -4,11 +4,13 @@ using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Player.Inventory;
+using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Items.UsableItems;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Tests.Items.Items;
@@ -37,13 +39,14 @@ public class FloorChangerUsableItemTests
         var aboveTile = new DynamicTile(new Coordinate(101, 100, 6), TileFlag.None, ground, null, null);
 
         var map = MapTestDataBuilder.Build(tile, aboveTile);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
 
         backpack.AddItem(floorChangerItem);
         var player = PlayerTestDataBuilder.Build(inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
         {
             [Slot.Backpack] = new(backpack, 1)
         });
-        player.OnTeleported += new CreatureTeleportedEventHandler(map).Execute;
+        player.OnTeleported += new CreatureTeleportedEventHandler(map, creatureMovementService).Execute;
 
         tile.AddCreature(player);
 
@@ -72,13 +75,14 @@ public class FloorChangerUsableItemTests
         var aboveTile = new DynamicTile(new Coordinate(101, 100, 6), TileFlag.None, ground, null, null);
 
         var map = MapTestDataBuilder.Build(tile, aboveTile);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
 
         backpack.AddItem(floorChangerItem);
         var player = PlayerTestDataBuilder.Build(inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
         {
             [Slot.Backpack] = new(backpack, 1)
         });
-        player.OnTeleported += new CreatureTeleportedEventHandler(map).Execute;
+        player.OnTeleported += new CreatureTeleportedEventHandler(map, creatureMovementService).Execute;
 
         tile.AddCreature(player);
 
