@@ -857,6 +857,8 @@ public class Player : CombatActor, IPlayer
 
     public void IncreaseMana(uint increasing)
     {
+        if (Group.FlagIsEnabled(PlayerFlag.NotGainMana)) return;
+
         if (increasing <= 0) return;
 
         if (Mana == MaxMana) return;
