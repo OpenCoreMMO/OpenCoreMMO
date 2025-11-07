@@ -867,6 +867,13 @@ public class Player : CombatActor, IPlayer
         OnStatusChanged?.Invoke(this);
     }
 
+    public override void Heal(ushort increasing, ICreature healedBy)
+    {
+        if (Group.FlagIsEnabled(PlayerFlag.NotGainHealth)) return;
+
+        base.Heal(increasing, healedBy);
+    }
+
     public void Recover()
     {
         if (!Recovering) return;
