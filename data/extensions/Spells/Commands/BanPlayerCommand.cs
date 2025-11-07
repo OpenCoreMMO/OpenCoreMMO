@@ -2,6 +2,7 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Spells.Entities;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
@@ -26,6 +27,9 @@ public class BanPlayerCommand : CommandSpell
             return Result.NotApplicable;
 
         if (player is null || player.CreatureId == caster.CreatureId)
+            return Result.NotApplicable;
+
+        if (player.Group.FlagIsEnabled(PlayerFlag.CannotBeBanned))
             return Result.NotApplicable;
 
         var reason = Params[1]?.ToString() ?? BANISH_REASON;
