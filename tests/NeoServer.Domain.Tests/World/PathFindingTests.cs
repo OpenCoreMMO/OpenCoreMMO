@@ -34,27 +34,42 @@ public class PathFindingTests
 
         // Add non-push creatures monsters around the player (8 blocking monsters)
         var blockingMonster1 = MonsterTestDataBuilder.Build();
+        blockingMonster1.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
         ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[104, 105, 7]).AddCreature(blockingMonster1); // west
 
         var blockingMonster2 = MonsterTestDataBuilder.Build();
+        blockingMonster2.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
+
         ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[105, 104, 7]).AddCreature(blockingMonster2); // north
 
         var blockingMonster3 = MonsterTestDataBuilder.Build();
+        blockingMonster3.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
+
         ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[105, 106, 7]).AddCreature(blockingMonster3); // south
 
         var blockingMonster4 = MonsterTestDataBuilder.Build();
+        blockingMonster4.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
+
         ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[106, 105, 7]).AddCreature(blockingMonster4); // east
 
         var blockingMonster5 = MonsterTestDataBuilder.Build();
+        blockingMonster5.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
+
         ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[104, 104, 7]).AddCreature(blockingMonster5); // northwest
 
         var blockingMonster6 = MonsterTestDataBuilder.Build();
+        blockingMonster6.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
+
         ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[104, 106, 7]).AddCreature(blockingMonster6); // southwest
 
         var blockingMonster7 = MonsterTestDataBuilder.Build();
+        blockingMonster7.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
+
         ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[106, 104, 7]).AddCreature(blockingMonster7); // northeast
 
         var blockingMonster8 = MonsterTestDataBuilder.Build();
+        blockingMonster8.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
+
         ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[106, 106, 7]).AddCreature(blockingMonster8); // southeast
 
         var fpp = new FindPathParams

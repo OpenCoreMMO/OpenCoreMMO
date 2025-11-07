@@ -31,7 +31,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     {
     }
 
-    public bool IsShieldDefenseEnabled { get; private set; } = true;
     public byte DamageReceivedPercentage { get; private set; }
 
     public DamageRecordList ReceivedDamages { get; } = new();
@@ -358,16 +357,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public void PropagateAttack(AffectedLocation area, CombatDamage damage) => PropagateAttack([area], damage);
 
     public abstract void SetAsEnemy(ICreature actor);
-    
-    public void DisableShieldDefense()
-    {
-        IsShieldDefenseEnabled = false;
-    }
-
-    public void EnableShieldDefense()
-    {
-        IsShieldDefenseEnabled = true;
-    }
 
     public void IncreaseDamageReceived(byte percentage)
     {
@@ -404,7 +393,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public virtual bool CanBlock(DamageType damage)
     {
         if (damage != DamageType.Melee) return false;
-        if (!IsShieldDefenseEnabled) return false;
         var hasCoolDownExpired = Cooldowns.Expired(CooldownType.Block);
 
         if (!hasCoolDownExpired && _blockCount >= BLOCK_LIMIT) return false;
@@ -506,7 +494,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public abstract ushort MinimumAttackPower { get; }
     public abstract bool UsingDistanceWeapon { get; }
     public uint AttackEvent { get; set; }
-    public virtual bool CanBeAttacked => !Tile.ProtectionZone && !IsDead; //todo: set as a flag
+    public virtual bool CanBeAttacked => !(Tile?.ProtectionZone ?? false) && !IsDead; //todo: set as a flag
 
     public IDictionary<ConditionType, ICondition> Conditions { get; set; } =
         new Dictionary<ConditionType, ICondition>();

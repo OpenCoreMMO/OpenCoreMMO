@@ -1,4 +1,6 @@
-﻿using NeoServer.Domain.Common.Combat.Structs;
+﻿using Moq;
+using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
@@ -65,10 +67,14 @@ public class MonsterStateTest
         playerTile.AddCreature(player);
         monster.SetAsEnemy(player);
         
-        new TargetDetectorService(map).Update(monster as Domain.Creatures.Monster.Monster);
+        var targetDetectorService = new TargetDetectorService(map);
+        var monsterTargetingService =
+            new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, new PathFinder(map))));
+        
+        MonsterStateService monsterStateService = new MonsterStateService(new Mock<ISummonService>().Object,targetDetectorService, monsterTargetingService);
 
         //act
-        monster.UpdateState();
+        monsterStateService.UpdateState(monster);
 
         //assert
         monster.State.Should().Be(MonsterState.InCombat);
@@ -140,7 +146,11 @@ public class MonsterStateTest
         [
             new MonsterCombatType
             {
-                AttackChance = 100
+                AttackChance = 100,
+                CombatParameter = new CombatParameter()
+                {
+                    Range = 6
+                }
             }
         ];
         
@@ -151,10 +161,14 @@ public class MonsterStateTest
 
         monster.SetAsEnemy(player);
 
-        new TargetDetectorService(map).Update(monster as Domain.Creatures.Monster.Monster);
+        var targetDetectorService = new TargetDetectorService(map);
+        var monsterTargetingService =
+            new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, new PathFinder(map))));
+        
+        MonsterStateService monsterStateService = new MonsterStateService(new Mock<ISummonService>().Object,targetDetectorService, monsterTargetingService);
 
         //act
-        monster.UpdateState();
+        monsterStateService.UpdateState(monster);
 
         //assert
         monster.State.Should().Be(MonsterState.InCombat);

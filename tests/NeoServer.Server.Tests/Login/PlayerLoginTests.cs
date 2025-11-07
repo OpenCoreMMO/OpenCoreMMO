@@ -479,7 +479,7 @@ public class PlayerLoginTests
         _game.Open();
 
         // Add IP ban to database
-        var banExpiresAt = new DateTime(2025, 9, 17);
+        var banExpiresAt = new DateTime(2100, 9, 17);
         _context.IpBans.Add(new IpBanEntity
         {
             Ip = "127.0.0.1",
@@ -503,7 +503,7 @@ public class PlayerLoginTests
 
         // Assert command execution
         success.Should().BeFalse();
-        message.Should().Be("Your IP address 127.0.0.1 has been banished until 09/17/2025.\nReason: Test ban");
+        message.Should().Be("Your IP address 127.0.0.1 has been banished until 09/17/2100.\nReason: Test ban");
 
         // Assert no packets sent (command doesn't send packets, handler does)
         connection.Verify(c => c.Send(It.IsAny<IOutgoingPacket>()), Times.Never);

@@ -630,8 +630,6 @@ public class Player : CombatActor, IPlayer
 
     public override int DefendUsingShield(int attack)
     {
-        if (!IsShieldDefenseEnabled) return attack;
-
         var defense = Inventory.TotalDefense * Skills[SkillType.Shielding].Level *
             (DefenseFactor / 100d) - attack / 100d * ArmorRating * (Vocation.Formula?.Defense ?? 1f);
 
