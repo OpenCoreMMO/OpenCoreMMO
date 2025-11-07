@@ -204,9 +204,7 @@ public interface ICreature : IMovableThing
     void BackToOldOutfit();
 
     void Appear(Location.Structs.Location location, ICylinderSpectator[] spectators);
-
-    void Disappear(Location.Structs.Location location, ICylinderSpectator[] spectators);
-
+    
     /// <summary>
     ///     Says a message
     /// </summary>
@@ -246,4 +244,6 @@ public interface ICreature : IMovableThing
 
     void OnSummonDie(Summon summon);
     void OnSpectatorLoggedOut(ICreature spectator);
+    void OnSpectatorChangedVisibility(ICreature spectator);
+    void OnMoving(ITile toTile);
 }

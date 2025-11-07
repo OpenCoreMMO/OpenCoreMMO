@@ -3,22 +3,13 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.World.Services;
 
-public class MapService : IMapService
+public class MapService(IMap map, ICreatureMovementService creatureMovementService) : IMapService
 {
-    private readonly IMap map;
-
-    public MapService(IMap map)
-    {
-        this.map = map;
-    }
-
-    public static IMapService Instance { get; private set; }
-
-
     public void ReplaceGround(Location location, IGround ground)
     {
         if (map[location] is not DynamicTile tile) return;
@@ -35,7 +26,10 @@ public class MapService : IMapService
 
         toTile.AddItems(removedItems);
 
-        foreach (var removedCreature in removedCreatures) map.TryMoveCreature(removedCreature, toTile.Location);
+        foreach (var removedCreature in removedCreatures)
+        {
+            creatureMovementService.MoveCreature(removedCreature, toTile.Location);
+        }
     }
 
     public ITile GetFinalTile(Location location)

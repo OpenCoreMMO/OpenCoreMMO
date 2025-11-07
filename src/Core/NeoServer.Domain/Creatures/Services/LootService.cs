@@ -12,6 +12,12 @@ public class LootService(GameConfiguration gameConfiguration, IItemFactory itemF
 {
     public ILootContainer CreateLootContainer(ICreature deadCreature, IThing killer, decimal lootRate = 0)
     {
+        //do not create loot for summons
+        if (deadCreature is Summon) return null;
+        
+        //do not create loot for monsters that are killed by another monster
+        if(deadCreature is IMonster && killer is IMonster and not Summon { Master: IPlayer }) return null;
+
         var loot = GenerateLoot(deadCreature, lootRate);
         var corpse = itemFactory.CreateLootCorpse(deadCreature.CorpseType, deadCreature.Location, loot, killer);
         deadCreature.Corpse = corpse;
@@ -38,7 +44,7 @@ public class LootService(GameConfiguration gameConfiguration, IItemFactory itemF
         {
             var aggressorHasEnoughStamina =
                 aggressor is Player.Player { HasLowStamina: false } or Player.Player { IgnoreStamina: true };
-            
+
             var summonOfAggressorHasEnoughStamina =
                 aggressor is Summon { Master: Player.Player { HasLowStamina: false } }
                     or Summon { Master: Player.Player { IgnoreStamina: true } };

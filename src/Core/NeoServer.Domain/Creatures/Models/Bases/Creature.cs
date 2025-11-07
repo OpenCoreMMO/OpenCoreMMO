@@ -123,21 +123,26 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     }
     
     public virtual void OnSpectatorMoved(ICreature spectator)
-    {
-        
+    {   
     }
 
     public virtual void OnSpectatorDies(ICombatActor spectator)
-    {
-        
+    {   
     }
     
     public virtual void OnSummonDie(Summon summon)
     {
-        
     }
 
     public virtual void OnSpectatorLoggedOut(ICreature spectator)
+    {   
+    }
+
+    public virtual void OnSpectatorChangedVisibility(ICreature spectator)
+    {
+    }
+
+    public virtual void OnMoving(ITile toTile)
     {
         
     }
@@ -205,13 +210,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         OnAppear?.Invoke(this, creature);
     }
-
-    public virtual void Disappear(Location location, ICylinderSpectator[] spectators)
-    {
-        foreach (var cylinderSpectator in spectators)
-            cylinderSpectator.Spectator.OnCreatureDisappear(this);
-    }
-
     public virtual void OnCreatureDisappear(ICreature creature)
     {
         OnDisappear?.Invoke(this, creature);

@@ -129,13 +129,6 @@ public class Summon : Monster
         Dismiss();
     }
 
-    private void Die()
-    {
-        HealthPoints = 0;
-        Death(this);
-    }
-
-
     public void OnMasterKilled() => Die();
 
     public void OnMasterLogout() => Die();

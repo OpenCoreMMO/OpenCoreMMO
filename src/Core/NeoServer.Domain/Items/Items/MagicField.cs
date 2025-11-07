@@ -22,7 +22,7 @@ public class MagicField : BaseItem
     private byte DamageCount => Metadata.Attributes.GetInnerAttributes(ItemTypeAttribute.Field)
         ?.GetAttribute<byte>(ItemTypeAttribute.Count) ?? 0;
 
-    private DamageType DamageType => DamageTypeParser.Parse(Metadata.Attributes.GetAttribute(ItemTypeAttribute.Field));
+    public DamageType DamageType => DamageTypeParser.Parse(Metadata.Attributes.GetAttribute(ItemTypeAttribute.Field));
 
     private uint Interval =>
         Metadata.Attributes.GetInnerAttributes(ItemTypeAttribute.Field)?.GetAttribute<uint>(ItemTypeAttribute.Ticks) ??
@@ -51,7 +51,7 @@ public class MagicField : BaseItem
         var damages = Damage;
 
         if (damages.Max == 0) return;
-        var conditionType = DamageType.ToConditionType();
+        var conditionType = DamageType.ToCondition();
         actor.TakeDamage(this,
             new CombatDamage((ushort)damages.Max, DamageType) { Effect = DamageEffectParser.Parse(DamageType) });
 

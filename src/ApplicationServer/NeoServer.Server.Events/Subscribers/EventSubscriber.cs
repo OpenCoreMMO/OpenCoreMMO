@@ -50,8 +50,6 @@ public sealed class EventSubscriber
             _container.GetRequiredService<CreatureAddedOnMapEventHandler>().Execute(creature, cylinder);
 
         _map.OnThingRemovedFromTile += _container.GetRequiredService<ThingRemovedFromTileEventHandler>().Execute;
-        _map.OnCreatureMoved += _container.GetRequiredService<CreatureMovedEventHandler>().Execute;
-        _map.OnThingMovedFailed += _container.GetRequiredService<InvalidOperationEventHandler>().Execute;
         _map.OnThingAddedToTile += _container.GetRequiredService<ThingAddedToTileEventHandler>().Execute;
         _map.OnThingUpdatedOnTile += _container.GetRequiredService<ThingUpdatedOnTileEventHandler>().Execute;
 

@@ -32,7 +32,7 @@ internal static class MonsterDefend
     {
         if (damage.Damage <= 0) return damage;
 
-        if (monster.HasImmunity(damage.Type.ToImmunity()))
+        if (monster.IsImmune(damage.Type.ToImmunity()))
         {
             damage.SetNewDamage(0);
             return damage;

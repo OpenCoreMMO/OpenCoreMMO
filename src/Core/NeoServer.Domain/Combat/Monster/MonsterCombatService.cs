@@ -52,6 +52,8 @@ public class MonsterCombatService(IAttackService attackService, SpellService spe
         var combatParameter = type.CombatParameter;
 
         combatParameter.CoordinateArea = CreateArea(type, monster, target);
+        
+        monster.TurnTo(target);
 
         return attackService.Execute(new AttackInput(monster, type.NeedTarget ? target : null, combatParameter))
             .Result.Succeeded;

@@ -1,8 +1,11 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Monster;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using PathFinder = NeoServer.Domain.World.Map.PathFinder;
 
 namespace NeoServer.Domain.World.Algorithms.AStar;
@@ -69,6 +72,8 @@ public static class AStar
                     tileEnterRule != null &&
                     !tileEnterRule.ShouldIgnore(tile, creature)) continue;
 
+                if (neighborNode is null && pos.IsNextTo(targetPos) && !fpp.PushMonsters && HasPushableMonster(tile)) continue;
+
                 var extraCost = CalculateExtraCost(creature, neighborNode, tile);
                 var cost = bestNode.GetMapWalkCost(pos);
                 var newF = f + cost + extraCost;
@@ -99,11 +104,33 @@ public static class AStar
         return found is null ? PathFinder.NotFound : (true, AStarDirections.GetAll(found, startPos, endPos));
     }
 
+    private static bool HasPushableMonster(ITile tile)
+    {
+        if (tile is not IDynamicTile dynamicTile) return false;
+        if (!dynamicTile.HasAnyCreature) return false;
+
+        foreach (var creature in dynamicTile.Creatures)
+        {
+            //if the creature is not a monster, skip it
+            if (creature is not Monster monster) continue;
+
+            //if the creature is player's summoned, skip it
+            if (creature is Summon { Master: IPlayer }) continue;
+
+            //if a creature can't be pushed, skip it
+            if (monster.IsPushable) continue;
+            
+            return true;
+        }
+
+        return false;
+    }
+
     private static int CalculateExtraCost(ICreature creature, Node neighborNode, ITile tile)
     {
         if (neighborNode is not null) return neighborNode.ExtraCost;
 
-        if (!creature && tile is IDynamicTile walkableTile) return Node.GetTileWalkCost(creature, walkableTile);
+        if (tile is IDynamicTile walkableTile) return Node.GetTileWalkCost(creature, walkableTile);
 
         return 0;
     }

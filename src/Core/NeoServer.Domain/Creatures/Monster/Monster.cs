@@ -7,11 +7,13 @@ using NeoServer.Domain.Common.Contracts.Inspection;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Parsers;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster.Actions;
@@ -36,8 +38,10 @@ public class Monster : WalkableMonster, IMonster
         Direction = spawn?.Direction ?? Direction.North;
 
         State = MonsterState.Sleeping;
-        Targets = new TargetList(this);
+        Targets = new MonsterTargetList(this);
     }
+
+    public MonsterTargetList Targets { get; set; }
 
     protected byte TargetDistance =>
         Metadata.Flags.TryGetValue(CreatureFlagAttribute.TargetDistance, out var targetDistance)
@@ -50,8 +54,6 @@ public class Monster : WalkableMonster, IMonster
     private bool KeepDistance => TargetDistance > 1;
     private MonsterCombatType[] Attacks => Metadata.Attacks;
     internal ICombatDefense[] Defenses => Metadata.Defenses;
-    public TargetList Targets { get; }
-    public override bool CanAttackAnyTarget => Targets.CanAttackAnyTarget;
     public bool HasDistanceAttack => Metadata.HasDistanceAttack;
 
     public override FindPathParams PathSearchParams
@@ -62,6 +64,8 @@ public class Monster : WalkableMonster, IMonster
             fpp.FullPathSearch = true;
             fpp.MaxTargetDist = TargetDistance;
             fpp.KeepDistance = TargetDistance > 1;
+            fpp.PushMonsters = Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures);
+            fpp.ClearSight = TargetDistance > 1;
             return fpp;
         }
     }
@@ -85,6 +89,7 @@ public class Monster : WalkableMonster, IMonster
         ResetHealthPoints();
         SetNewLocation(location);
         State = MonsterState.Sleeping;
+        KilledByAnotherMonster = false;
         OnWasBorn?.Invoke(this, location);
     }
 
@@ -93,24 +98,36 @@ public class Monster : WalkableMonster, IMonster
         if (IsDead) return;
         if (spectator is not ICombatActor target) return;
 
-        if (Targets.HasTarget(spectator))
+        if (CanSee(spectator.Location) && CanSee(spectator))
         {
-            Targets.OnTargetMoved(target);
+            Targets.Add(target, hasPriority: true);
+            base.OnSpectatorMoved(spectator);
+
+            return;
+        }
+
+        Targets.Remove(target);
+
+        if (Equals(target, CurrentTarget))
+        {
+            StopAttack();
         }
 
         base.OnSpectatorMoved(spectator);
     }
-    
+
     public override void OnSpectatorLoggedOut(ICreature spectator)
     {
         if (IsDead) return;
         if (spectator is not ICombatActor target) return;
-        
-        if (Targets.HasTarget(spectator))
+
+        Targets.Remove(target);
+
+        if (Equals(target, CurrentTarget))
         {
-            Targets.RemoveTarget(target);
+            StopAttack();
         }
-        
+
         base.OnSpectatorLoggedOut(spectator);
     }
 
@@ -118,13 +135,95 @@ public class Monster : WalkableMonster, IMonster
     {
         if (IsDead) return;
 
-        if (Targets.HasTarget(spectator))
+        Targets.Remove(spectator);
+
+        if (Equals(spectator, CurrentTarget))
         {
-            Targets.RemoveTarget(spectator);
+            StopAttack();
         }
 
         base.OnSpectatorDies(spectator);
     }
+
+    public override void OnSpectatorChangedVisibility(ICreature spectator)
+    {
+        if (spectator is not ICombatActor target) return;
+
+        if (CanSee(spectator))
+        {
+            Targets.Add(target, hasPriority: true);
+        }
+        else
+        {
+            Targets.Remove(target);
+
+            if (Equals(target, CurrentTarget))
+            {
+                StopAttack();
+            }
+        }
+
+        base.OnSpectatorChangedVisibility(spectator);
+    }
+
+
+    /// <summary>
+    /// Event is triggered before the monster is moved to a new tile.
+    /// To get here, all the validation checks must be done.
+    /// </summary>
+    /// <param name="toTile"></param>
+    public override void OnMoving(ITile toTile)
+    {
+        if (Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures) && toTile is IDynamicTile
+            {
+                HasAnyCreature: true
+            } destinationTile)
+        {
+            PushCreatures(destinationTile);
+        }
+
+        base.OnMoving(toTile);
+    }
+
+    private void PushCreatures(IDynamicTile destinationTile)
+    {
+        // find all the creatures that can be pushed
+        foreach (var blockingCreature in destinationTile.Creatures.ToList())
+        {
+            if (blockingCreature is IMonster { IsPushable: false } or Summon.Summon { Master: IPlayer }) continue;
+
+            // find a random step to move the monster to the next available tile
+            var step = MapTool.PathFinder.FindRandomStep(blockingCreature, MonsterRandomStepEnterTileRule.Rule, true);
+
+            // first try to move the monster to the next available tile
+            if (step != Direction.None)
+            {
+                //push the monster to the next available tile
+                blockingCreature.WalkTo(step);
+                continue;
+            }
+
+            //if no available tile, dismiss the creature
+            blockingCreature.HealthPoints = 0;
+
+            ((Monster)blockingCreature).Die(this);
+        }
+    }
+
+    private void Die(ICreature by)
+    {
+        if (by is IMonster and not Summon.Summon { Master: IPlayer } && (Monster)by != this)
+        {
+            KilledByAnotherMonster = true;
+        }
+
+        HealthPoints = 0;
+        Death(by);
+    }
+
+    public bool KilledByAnotherMonster { get; private set; }
+
+    protected void Die() => Die(this);
 
     public void Reborn()
     {
@@ -164,14 +263,12 @@ public class Monster : WalkableMonster, IMonster
     public ISpawnPoint Spawn { get; }
 
     public bool IsHostile => Metadata.HasFlag(CreatureFlagAttribute.Hostile);
-    public bool IsCurrentTargetUnreachable => Targets.IsCurrentTargetUnreachable;
-
     public uint Experience => Metadata.Experience;
     public bool IsInCombat => State == MonsterState.InCombat;
     public bool IsSleeping => State == MonsterState.Sleeping;
     public bool Defending { get; private set; }
     public virtual bool IsSummon => false;
-    public override bool CanSeeInvisible => HasImmunity(Immunity.Invisibility); //todo: add invisibility flag
+    public override bool CanSeeInvisible => IsImmune(Immunity.Invisibility); //todo: add invisibility flag
     public override bool CanBeSeen => false;
 
     public override BloodType BloodType => Metadata.Race switch
@@ -205,11 +302,11 @@ public class Monster : WalkableMonster, IMonster
 
         if (IsDead || !canSee)
         {
-            Targets.RemoveTarget(creature);
+            Targets.Remove(enemy);
             return;
         }
 
-        Targets.AddTarget(enemy);
+        Targets.Add(enemy);
     }
 
     public override bool CanSee(Location pos)
@@ -219,10 +316,14 @@ public class Monster : WalkableMonster, IMonster
 
     public virtual void UpdateState()
     {
-        //TargetDetectorService.UpdateTargets(this, MapTool);
-
         if (!Targets.Any())
         {
+            if (Conditions.Count > 0)
+            {
+                State = MonsterState.LookingForEnemy;
+                return;
+            }
+
             State = Cooldowns.Expired(CooldownType.Awaken) ? MonsterState.Sleeping : MonsterState.LookingForEnemy;
             return;
         }
@@ -234,7 +335,7 @@ public class Monster : WalkableMonster, IMonster
             return;
         }
 
-        if (!CanAttackAnyTarget)
+        if (!HasFollowPath)
         {
             State = MonsterState.LookingForEnemy;
             return;
@@ -248,24 +349,13 @@ public class Monster : WalkableMonster, IMonster
         return !IsSleeping;
     }
 
+    public bool IsPushable => Metadata.HasFlag(CreatureFlagAttribute.Pushable); // && Speed > 0;
+
     public void MoveAroundEnemy()
     {
-        if (!Targets.TryGetTarget(AutoAttackTargetId, out var combatTarget)) return;
+        if (!IsInPerfectPositionToCombat()) return;
 
-        if (!IsInPerfectPositionToCombat(combatTarget)) return;
-
-        MoveAroundEnemy(combatTarget);
-    }
-
-    public virtual void SelectTargetToAttack()
-    {
-        if (Attacking && !Cooldowns.Cooldowns[CooldownType.TargetChange].Expired) return;
-
-        //TargetDetectorService.UpdateTargets(this, MapTool);
-        var target = Targets.PossibleTargetToAttack;
-
-        if (target is null) return;
-        ChangeAttackTarget(target.Creature);
+        MoveAroundEnemy(CurrentTarget);
     }
 
     public void Sleep()
@@ -278,7 +368,7 @@ public class Monster : WalkableMonster, IMonster
 
     public void Escape()
     {
-        MonsterEscape.Escape(this);
+        EscapeFromEnemy();
     }
 
     public void Yell()
@@ -328,7 +418,7 @@ public class Monster : WalkableMonster, IMonster
             if (createdSummon is null) continue;
 
             Cooldowns.Start(summon);
-            
+
             _aliveSummons ??= new Dictionary<string, byte>();
 
             if (foundAliveSummon) _aliveSummons[summon.Name] = (byte)(count + 1);
@@ -356,13 +446,13 @@ public class Monster : WalkableMonster, IMonster
     {
         switch (condition.Type)
         {
-            case ConditionType.Paralyze when HasImmunity(Immunity.Paralysis):
-            case ConditionType.Drowning when HasImmunity(Immunity.Drown):
-            case ConditionType.Electrified when HasImmunity(Immunity.Energy):
-            case ConditionType.Burning when HasImmunity(Immunity.Fire):
-            case ConditionType.Drunk when HasImmunity(Immunity.Drunkenness):
-            case ConditionType.Poisoned when HasImmunity(Immunity.Earth):
-            case ConditionType.Bleeding when HasImmunity(Immunity.Physical):
+            case ConditionType.Paralyze when IsImmune(Immunity.Paralysis):
+            case ConditionType.Drowning when IsImmune(Immunity.Drown):
+            case ConditionType.Electrified when IsImmune(Immunity.Energy):
+            case ConditionType.Burning when IsImmune(Immunity.Fire):
+            case ConditionType.Drunk when IsImmune(Immunity.Drunkenness):
+            case ConditionType.Poisoned when IsImmune(Immunity.Earth):
+            case ConditionType.Bleeding when IsImmune(Immunity.Physical):
                 return;
             default:
                 base.AddCondition(condition);
@@ -376,40 +466,57 @@ public class Monster : WalkableMonster, IMonster
         Cooldowns.Start(CooldownType.TargetChange, Metadata.TargetChance.Interval);
     }
 
-    protected void Awake()
+    public void Awake()
     {
         State = MonsterState.Awake;
         Cooldowns.Start(CooldownType.Awaken, 10000);
     }
 
-    public bool IsInPerfectPositionToCombat(CombatTarget target)
+    public bool IsInPerfectPositionToCombat()
     {
-        if (HasDistanceAttack && target.HasSightClear && !target.CanReachCreature && target.IsInRange(this))
+        var targetIsInRange = CurrentTarget.Location.GetSqmDistance(Location) <=
+                              Metadata.MaxRangeDistanceAttack;
+
+        var hasSightClear = MapTool.SightClearChecker?.Invoke(Location, CurrentTarget.Location, false) ?? false;
+
+        if (HasDistanceAttack && hasSightClear && !HasFollowPath && targetIsInRange)
             return true;
 
         if (KeepDistance)
         {
-            if (target.Creature.Location.GetMaxSqmDistance(Location) == TargetDistance)
-                return target.CanReachCreature;
+            if (CurrentTarget.Location.GetMaxSqmDistance(Location) == TargetDistance && hasSightClear)
+                return true;
         }
         else
         {
-            if (target.Creature.Location.GetMaxSqmDistance(Location) <= TargetDistance)
-                return target.CanReachCreature;
+            if (CurrentTarget.Location.GetMaxSqmDistance(Location) <= TargetDistance && HasFollowPath && hasSightClear)
+                return true;
         }
 
         return false;
     }
 
-    public override bool HasImmunity(Immunity immunity)
+    public override bool IsImmune(Immunity immunity)
     {
+        return (Metadata.Immunities & (ushort)immunity) != 0;
+    }
+
+    public bool IsImmune(DamageType damageType)
+    {
+        var immunity = damageType.ToImmunity();
         return (Metadata.Immunities & (ushort)immunity) != 0;
     }
 
     public override void OnWalkableCreatureDisappear(ICreature creature)
     {
-        Targets.RemoveTarget(creature);
-        SelectTargetToAttack();
+        if (creature is not ICombatActor target) return;
+
+        Targets.Remove(target);
+
+        if (ReferenceEquals(CurrentTarget, creature))
+        {
+            StopAttack();
+        }
     }
 
     public void StopDefending()
@@ -427,7 +534,7 @@ public class Monster : WalkableMonster, IMonster
 
     public override void Dismiss()
     {
-        Targets?.Clear();
+        Targets.Clear();
         StopDefending();
         base.Dismiss();
     }
@@ -442,14 +549,35 @@ public class Monster : WalkableMonster, IMonster
         ReduceHealth(damages.TotalDamage.HealthDamage);
     }
 
-    protected void ChangeAttackTarget(ICreature creature)
+    public override void Follow(ICreature creature)
     {
+        base.Follow(creature);
+
+        Targets.Remove(creature as ICombatActor);
+
+        if (HasFollowPath)
+        {
+            Targets.Add(creature as ICombatActor, true);
+            return;
+        }
+
+        if (this is not Summon.Summon)
+        {
+            Targets.Add(creature as ICombatActor, false);
+        }
+    }
+
+    internal void ChangeAttackTarget(ICreature creature)
+    {
+        if (creature is null) return;
+
         Follow(creature);
         SetAttackTarget(creature);
         UpdateLastTargetChance();
     }
 
     #region Summon Event Attachment
+
     public override void OnSummonDie(Summon.Summon summon)
     {
         if (summon is null) return;

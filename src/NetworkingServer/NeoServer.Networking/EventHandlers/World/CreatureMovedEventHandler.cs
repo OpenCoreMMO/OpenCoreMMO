@@ -1,24 +1,28 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.World.Events;
 using NeoServer.Networking.Packets.Outgoing.Creature;
 using NeoServer.Networking.Packets.Outgoing.Effect;
 using NeoServer.Networking.Packets.Outgoing.Item;
 using NeoServer.Networking.Packets.Outgoing.Map;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
-using NeoServer.Server.Common.Contracts.Scripts;
 
-namespace NeoServer.Server.Events.Creature;
+namespace NeoServer.Networking.EventHandlers.World;
 
-public class CreatureMovedEventHandler(IGameServer game, IScriptManager scriptManager)
+public class CreatureMovedEventHandler(IGameServer game): INetworkingEventHandler<CreatureMovedInTheMap>
 {
-    public void Execute(IWalkableCreature creature, ICylinder cylinder)
+    public void Handle(CreatureMovedInTheMap @event)
     {
+        var cylinder = @event.Cylinder;
+        var creature = @event.Creature;
+        
         if (cylinder.IsNull()) return;
         if (cylinder.TileSpectators.IsNull()) return;
         if (creature.IsNull()) return;
@@ -83,8 +87,6 @@ public class CreatureMovedEventHandler(IGameServer game, IScriptManager scriptMa
 
             connection.Send();
         }
-
-        scriptManager.MoveEvents.CreatureMove(creature, cylinder.FromTile.Location, cylinder.ToTile.Location);
     }
 
     private static void MoveCreature(IWalkableCreature creature, Location fromLocation, Location toLocation,

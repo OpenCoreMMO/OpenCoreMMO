@@ -1,6 +1,7 @@
 using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Events;
@@ -43,7 +44,7 @@ public class CreatureDeathEventHandler(
         switch (deadCreature)
         {
             case IMonster monster:
-                OnMonsterKilled(monster);
+                OnMonsterKilled(monster, by);
                 break;
             case IPlayer player:
                 tradeService.Cancel(player);
@@ -54,15 +55,21 @@ public class CreatureDeathEventHandler(
         }
     }
 
-    private void OnMonsterKilled(ICombatActor creature)
+    private void OnMonsterKilled(ICombatActor deadCreature, IThing by)
     {
-        if (creature is Summon summon)
+        if (deadCreature is Summon summon)
         {
             creatureManager.RemoveCreature(summon);
             return;
         }
+        
+        //do not create blood or corpse for monsters that are killed by another monster and remove from map
+        if (deadCreature is IMonster && by is IMonster and not Summon { Master: IPlayer })
+        {
+            map.RemoveCreature(deadCreature);
+        }
 
-        if (creature is not IMonster monster) return;
+        if (deadCreature is not IMonster monster) return;
         creatureManager.AddKilledMonsters(monster);
     }
 }

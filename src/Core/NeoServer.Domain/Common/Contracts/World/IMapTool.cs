@@ -11,4 +11,6 @@ public interface IMapTool
     bool CanThrowObjectTo(Location.Structs.Location fromPosition, Location.Structs.Location toPosition,
         SightLine sightLine = SightLine.CheckSightLine,
         int rangeX = (int)MapViewPort.MaxClientViewPortX, int rangeY = (int)MapViewPort.MaxClientViewPortY);
+
+    bool IsClearSight(Location.Structs.Location from, Location.Structs.Location to, bool checkFloor);
 }

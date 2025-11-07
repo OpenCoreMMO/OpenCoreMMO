@@ -100,8 +100,6 @@ public interface ICombatActor : IWalkableCreature
     void OnEnemyAppears(ICombatActor enemy);
     bool IsHostileTo(ICombatActor enemy);
     event StopAttack OnAttackCanceled;
-    void DisableShieldDefense();
-    void EnableShieldDefense();
     void IncreaseDamageReceived(byte percentage);
     void DecreaseDamageReceived(byte percentage);
     void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true);

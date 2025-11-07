@@ -8,6 +8,7 @@ using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
+using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.SafeTrade;
 using NeoServer.Domain.SafeTrade.Operations;
@@ -17,6 +18,7 @@ using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.Tests.Helpers.Services;
 using NeoServer.Domain.Tests.Server;
+using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Tests.Systems.SafeTrade;
@@ -64,10 +66,12 @@ public class TradeCancellationTests
         tradeSystem.Request(player, secondPlayer, item);
 
         player.WalkTo(new Location(104, 100, 7));
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+
 
         //player will walk 2 steps
-        map.MoveCreature(player);
-        map.MoveCreature(player);
+        creatureMovementService.MoveCreature(player);
+        creatureMovementService.MoveCreature(player);
 
         //assert
         AssertTradeIsCancelled(tradeSystem, map, player);
@@ -138,13 +142,15 @@ public class TradeCancellationTests
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
         ((DynamicTile)map[100, 100, 7]).AddItem(item);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+
 
         //act
         tradeSystem.Request(player, secondPlayer, item);
         player.WalkTo(Direction.East, Direction.East);
 
-        map.MoveCreature(player);
-        map.MoveCreature(player);
+        creatureMovementService.MoveCreature(player);
+        creatureMovementService.MoveCreature(player);
 
         //assert
         AssertTradeIsCancelled(tradeSystem, map, secondPlayer);
