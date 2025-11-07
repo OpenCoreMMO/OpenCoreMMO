@@ -147,7 +147,7 @@ public class Player : CombatActor, IPlayer
 
     public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
 
-    public override ushort RawSpeed => (ushort)(220 + 2 * (Level - 1));
+    public override ushort RawSpeed => Group.FlagIsEnabled(PlayerFlag.SetMaxSpeed) ? ushort.MaxValue : (ushort)(220 + 2 * (Level - 1));
 
     public float DamageFactor => FightMode switch
     {
