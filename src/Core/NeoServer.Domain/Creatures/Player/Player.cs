@@ -102,7 +102,7 @@ public class Player : CombatActor, IPlayer
         Speed = speed == 0 ? RawSpeed : speed;
         Inventory = new Inventory.Inventory(this, new Dictionary<Slot, (IItem Item, ushort Id)>());
 
-        TotalCapacity = Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity) ? uint.MaxValue : capacity;;
+        TotalCapacity = Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity) ? uint.MaxValue : capacity;
 
         Vip = new Vip(this);
         Channels = new PlayerChannel(this);
