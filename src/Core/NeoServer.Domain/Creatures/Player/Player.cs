@@ -1356,6 +1356,18 @@ public class Player : CombatActor, IPlayer
 
     public Result CanPushCreature(ICreature creature, ITile destination)
     {
+        // Basic null checks
+        if (creature is null || destination is null)
+        {
+            return Result.Fail(InvalidOperation.NotPossible);
+        }
+
+        // Cannot push yourself
+        if (ReferenceEquals(creature, this))
+        {
+            return Result.Fail(InvalidOperation.DestinationOutOfReach);
+        }
+
         // Check if the player can see the target creature
         if (!CanSee(creature))
         {
@@ -1375,6 +1387,12 @@ public class Player : CombatActor, IPlayer
             return Result.Fail(InvalidOperation.DestinationOutOfReach);
         }
 
+        // Cannot push to the same location where creature currently is
+        if (creature.Location == destination.Location)
+        {
+            return Result.Success; // Not an error, just no movement needed
+        }
+
         // Check if the destination tile has another creature
         if (destination is IDynamicTile { HasAnyCreature: true })
         {
@@ -1390,11 +1408,14 @@ public class Player : CombatActor, IPlayer
         // Check push permissions based on a creature type
         switch (creature)
         {
-            case IPlayer targetPlayer when targetPlayer.Group.FlagIsEnabled(PlayerFlag.CannotBePushed):
-                return Result.NotPossible;
-
             case IPlayer targetPlayer:
                 {
+                    // Check if the target player has CannotBePushed flag (with null safety)
+                    if (targetPlayer.Group?.FlagIsEnabled(PlayerFlag.CannotBePushed) == true)
+                    {
+                        return Result.Fail(InvalidOperation.NotPossible);
+                    }
+
                     // Cannot push players out of the protection zone
                     var pushingOutsideProtectionZone = destination is IDynamicTile { ProtectionZone: false } &&
                                                        (targetPlayer.Tile?.ProtectionZone ?? false);
