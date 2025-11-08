@@ -1361,11 +1361,24 @@ public class Player : CombatActor, IPlayer
         {
             return Result.Fail(InvalidOperation.NotPossible);
         }
+        
 
         // Cannot push yourself
         if (ReferenceEquals(creature, this))
         {
             return Result.Fail(InvalidOperation.DestinationOutOfReach);
+        }
+        
+        // Check if the player can push all creatures
+        if (Group.FlagIsEnabled(PlayerFlag.CanPushAllCreatures))
+        {
+            return Result.Success;
+        }
+        
+        // Check cooldown (only for non-admin players)
+        if (!CooldownHasExpired(CooldownType.PushCreature) && !Group.Access)
+        {
+            return Result.Fail(InvalidOperation.Exhausted);
         }
 
         // Check if the player can see the target creature
@@ -1453,12 +1466,6 @@ public class Player : CombatActor, IPlayer
                     }
                     break;
                 }
-        }
-
-        // Check cooldown (only for non-admin players)
-        if (!CooldownHasExpired(CooldownType.PushCreature) && !Group.Access)
-        {
-            return Result.Fail(InvalidOperation.Exhausted);
         }
 
         return Result.Success;
