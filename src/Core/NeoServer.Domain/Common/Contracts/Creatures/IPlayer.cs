@@ -302,6 +302,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     void PostSpellCast(ISpell spell);
     bool HasEnoughSoul(ushort soul);
     Result CanCastSpell(ISpell spell);
+    Result CanPushCreature(ICreature creature, ITile destination);
     void ConsumeSoul(ushort soul);
 
     void PostAttack(CombatParameter combatParameter, IThing target, CombatResult damages);

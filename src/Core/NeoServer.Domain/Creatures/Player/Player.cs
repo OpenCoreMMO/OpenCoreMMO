@@ -1354,6 +1354,95 @@ public class Player : CombatActor, IPlayer
         return Result.Success;
     }
 
+    public Result CanPushCreature(ICreature creature, ITile destination)
+    {
+        // Check if the player can see the target creature
+        if (!CanSee(creature))
+        {
+            return Result.NotPossible;
+        }
+
+        // Check if the target is close enough to push
+        if (!creature.IsCloseTo(this))
+        {
+            return Result.NotPossible;
+        }
+
+        // Check if the destination is within 1 tile of the target
+        var distance = creature.Location.GetMaxSqmDistance(destination.Location);
+        if (distance > 1)
+        {
+            return Result.Fail(InvalidOperation.DestinationOutOfReach);
+        }
+
+        // Check if the destination tile has another creature
+        if (destination is IDynamicTile { HasAnyCreature: true })
+        {
+            return Result.Fail(InvalidOperation.NotEnoughRoom);
+        }
+
+        // Check if destination tile blocks path
+        if (destination is IDynamicTile destinationTile && destinationTile.HasFlag(TileFlags.BlockPath))
+        {
+            return Result.NotPossible;
+        }
+
+        // Check push permissions based on a creature type
+        switch (creature)
+        {
+            case IPlayer targetPlayer when targetPlayer.Group.FlagIsEnabled(PlayerFlag.CannotBePushed):
+                return Result.NotPossible;
+
+            case IPlayer targetPlayer:
+                {
+                    // Cannot push players out of the protection zone
+                    var pushingOutsideProtectionZone = destination is IDynamicTile { ProtectionZone: false } &&
+                                                       (targetPlayer.Tile?.ProtectionZone ?? false);
+                    if (pushingOutsideProtectionZone)
+                    {
+                        return Result.NotPossible;
+                    }
+                    break;
+                }
+
+            case IMonster targetMonster:
+                {
+                    // Check if monster is pushable
+                    if (!targetMonster.IsPushable)
+                    {
+                        return Result.NotPossible;
+                    }
+
+                    // Cannot push monsters into protection zone
+                    var pushingToProtectionZone = destination is IDynamicTile { ProtectionZone: true };
+                    if (pushingToProtectionZone)
+                    {
+                        return Result.NotPossible;
+                    }
+                    break;
+                }
+
+            case INpc:
+                {
+                    // Cannot push NPCs into protection zone
+                    var pushingToProtectionZone = destination is IDynamicTile { ProtectionZone: true };
+                    if (pushingToProtectionZone)
+                    {
+                        return Result.NotPossible;
+                    }
+                    break;
+                }
+        }
+
+        // Check cooldown (only for non-admin players)
+        if (!CooldownHasExpired(CooldownType.PushCreature) && !Group.Access)
+        {
+            return Result.Fail(InvalidOperation.Exhausted);
+        }
+
+        return Result.Success;
+    }
+
     public override void AddCondition(ICondition condition)
     {
         if (Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked) && condition.Type.ToDamageType() != DamageType.None)
