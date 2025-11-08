@@ -54,7 +54,7 @@ public class ToMapMovementService(IMap map, IMapService mapService, IItemMovemen
         if (fromTile.TopCreatureOnStack is { } creature && !ReferenceEquals(creature, player))
         {
             var finalTile = (DynamicTile)mapService.GetFinalTile(toTile.Location);
-            creaturePushService.PushCreature(player, creature, finalTile.Location);
+            creaturePushService.PushCreature(player, creature, toTile);
         }
     }
 

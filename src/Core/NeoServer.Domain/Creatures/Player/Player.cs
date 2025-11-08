@@ -725,6 +725,8 @@ public class Player : CombatActor, IPlayer
             (uint)(yellSettings?.YellCooldownSeconds * 1000 ?? 30_000)); // 30 seconds cooldown
     }
 
+    public void StartCooldown(CooldownType cooldownType, uint cooldownTime) => Cooldowns.Start(cooldownType, cooldownTime);
+
     public void UpdateManaSpent(uint manaCost)
     {
         Skills.TryGetValue(SkillType.Magic, out var currentMagicLevel);
