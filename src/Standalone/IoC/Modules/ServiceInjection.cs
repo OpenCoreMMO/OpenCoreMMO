@@ -69,6 +69,7 @@ public static class ServiceInjection
         builder.AddSingleton<PlayerChannelService>();
         builder.AddSingleton<TargetDetectorService>();
         builder.AddSingleton<ICreatureMovementService, CreatureMovementService>();
+        builder.AddSingleton<CreatureMovementValidation>();
         builder.AddSingleton<CylinderOperation>();
 
         //Operations

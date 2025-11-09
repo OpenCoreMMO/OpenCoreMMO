@@ -66,7 +66,7 @@ public class TradeCancellationTests
         tradeSystem.Request(player, secondPlayer, item);
 
         player.WalkTo(new Location(104, 100, 7));
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
 
 
         //player will walk 2 steps
@@ -142,7 +142,7 @@ public class TradeCancellationTests
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
         ((DynamicTile)map[100, 100, 7]).AddItem(item);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
 
 
         //act

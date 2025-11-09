@@ -57,7 +57,7 @@ public class MonsterWalkTest
         var gameServer = GameServerTestBuilder.Build(map);
         var cancellationToken = ServerTestHelper.StartThreads(gameServer);
 
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
 
         sut.OnStartedWalking += new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService).Execute;
 
@@ -109,7 +109,7 @@ public class MonsterWalkTest
 
         var gameServer = GameServerTestBuilder.Build(map);
         var cancellationToken = ServerTestHelper.StartThreads(gameServer);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
 
         sut.OnStartedWalking += new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService).Execute;
 

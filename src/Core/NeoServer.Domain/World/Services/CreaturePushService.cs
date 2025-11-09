@@ -10,21 +10,21 @@ using NeoServer.Domain.Creatures.Services;
 namespace NeoServer.Domain.World.Services;
 
 public class CreaturePushService(
-    ICreatureMovementService creatureMovementService,
+    CreatureMovementValidation creatureMovementValidation,
     IWalkToMechanism walkToMechanism) : ICreaturePushService
 {
     public void PushCreature(IPlayer player, ICreature target, ITile toTile)
     {
-        // Handle the case where target is not close - use walk-to mechanism
-        if (!target.IsCloseTo(player))
+        // Handle the case where the target is not close - use walk-to mechanism
+        if (!target.IsCloseTo(player) && !player.Group.Access)
         {
             walkToMechanism.WalkTo(player, () => PushCreature(player, target, toTile), target.Location);
             return;
         }
-        
+
         // Use the new domain validation method
         var canPushResult = player.CanPushCreature(target, toTile);
-        
+
         if (canPushResult.Failed)
         {
             // Send the appropriate error message based on the validation result
@@ -43,24 +43,20 @@ public class CreaturePushService(
                     OperationFailService.Send(player.CreatureId, TextConstants.NOT_POSSIBLE);
                     break;
             }
+
             return;
         }
 
         // Start cooldown for the push action
         player.StartCooldown(CooldownType.PushCreature, 2_000);
 
-        // Perform the actual push based on a creature type
-        switch (target)
+        // Final validation before performing the push
+        if (!creatureMovementValidation.CanWalkTo(target as IWalkableCreature, toTile.Location).IsValid)
         {
-            case IWalkableCreature walkableTarget when target is IMonster or INpc:
-                // Use WalkTo for monsters and NPCs (sends messages)
-                walkableTarget.WalkTo(toTile.Location);
-                break;
-            
-            case IPlayer playerTarget:
-                // Use direct move for players (no messages sent to them)
-                creatureMovementService.MoveCreature(playerTarget, toTile.Location);
-                break;
+            return;
         }
+
+        // Perform the actual push 
+        (target as IWalkableCreature)?.WalkTo(target.Location.DirectionTo(toTile.Location, true));
     }
 }
