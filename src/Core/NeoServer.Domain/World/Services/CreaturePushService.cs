@@ -10,7 +10,7 @@ using NeoServer.Domain.Creatures.Services;
 namespace NeoServer.Domain.World.Services;
 
 public class CreaturePushService(
-    ICreatureMovementService creatureMovementService,
+    CreatureMovementValidation creatureMovementValidation,
     IWalkToMechanism walkToMechanism) : ICreaturePushService
 {
     public void PushCreature(IPlayer player, ICreature target, ITile toTile)
@@ -50,7 +50,13 @@ public class CreaturePushService(
         // Start cooldown for the push action
         player.StartCooldown(CooldownType.PushCreature, 2_000);
 
+        // Final validation before performing the push
+        if (!creatureMovementValidation.CanWalkTo(target as IWalkableCreature, toTile.Location).IsValid)
+        {
+            return;
+        }
+
         // Perform the actual push 
-        creatureMovementService.MoveCreature(target, toTile.Location);
+        (target as IWalkableCreature)?.WalkTo(target.Location.DirectionTo(toTile.Location, true));
     }
 }
