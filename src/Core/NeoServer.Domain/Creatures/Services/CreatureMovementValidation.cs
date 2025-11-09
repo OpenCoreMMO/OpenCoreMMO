@@ -62,7 +62,7 @@ public class CreatureMovementValidation(IMap map)
         if (nextTile is null)
             return new MovementValidationResult(false, MovementValidationFailureReason.TileNotFound, null);
 
-        if (!(nextTile is IDynamicTile dynamicTile))
+        if (nextTile is not IDynamicTile dynamicTile)
             return new MovementValidationResult(false, MovementValidationFailureReason.TileNotFound, nextTile);
 
         // Prevent players from entering protection zones if blocked (e.g., during combat).
