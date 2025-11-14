@@ -86,7 +86,6 @@ public class Player : CombatActor, IPlayer
         Id = id;
         CharacterName = characterName;
         ChaseMode = chaseMode;
-        TotalCapacity = capacity;
         Skills = skills;
         Storages = storages;
         Vocation = vocation;
@@ -102,6 +101,8 @@ public class Player : CombatActor, IPlayer
         Outfit = outfit;
         Speed = speed == 0 ? RawSpeed : speed;
         Inventory = new Inventory.Inventory(this, new Dictionary<Slot, (IItem Item, ushort Id)>());
+
+        TotalCapacity = Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity) ? uint.MaxValue : capacity;
 
         Vip = new Vip(this);
         Channels = new PlayerChannel(this);
@@ -146,7 +147,7 @@ public class Player : CombatActor, IPlayer
 
     public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
 
-    public override ushort RawSpeed => (ushort)(220 + 2 * (Level - 1));
+    public override ushort RawSpeed => Group.FlagIsEnabled(PlayerFlag.SetMaxSpeed) ? ushort.MaxValue : (ushort)(220 + 2 * (Level - 1));
 
     public float DamageFactor => FightMode switch
     {
@@ -166,8 +167,8 @@ public class Player : CombatActor, IPlayer
     public string GenderPronoun => Gender == Gender.Male ? "He" : "She";
 
     public Gender Gender { get; set; }
-    public int PremiumTime { get; init; }
-    public bool HasPremiumTime => PremiumTime > 0;
+    public int PremiumDays { get; init; }
+    public bool HasPremiumTime => PremiumDays > 0 || Group.FlagIsEnabled(PlayerFlag.IsAlwaysPremium);
     public ITown Town { get; set; }
     public IVip Vip { get; }
     public override IOutfit Outfit { get; protected set; }
@@ -260,6 +261,8 @@ public class Player : CombatActor, IPlayer
     public override void GainExperience(long experience)
     {
         if (experience == 0) return;
+
+        if (Group.FlagIsEnabled(PlayerFlag.NotGainExperience)) return;
 
         if (!IgnoreStamina)
         {
@@ -398,7 +401,7 @@ public class Player : CombatActor, IPlayer
 
     public override ushort ArmorRating => Inventory.TotalArmor;
     public PvpSecureMode SecureMode { get; private set; }
-    public float FreeCapacity => TotalCapacity - Inventory.TotalWeight;
+    public float FreeCapacity => Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity) ? float.MaxValue : TotalCapacity - Inventory.TotalWeight;
     public override bool UsingDistanceWeapon => Inventory.Weapon is IDistanceWeapon;
     public bool Recovering => HasCondition(ConditionType.Regeneration);
     public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
@@ -722,6 +725,8 @@ public class Player : CombatActor, IPlayer
             (uint)(yellSettings?.YellCooldownSeconds * 1000 ?? 30_000)); // 30 seconds cooldown
     }
 
+    public void StartCooldown(CooldownType cooldownType, uint cooldownTime) => Cooldowns.Start(cooldownType, cooldownTime);
+
     public void UpdateManaSpent(uint manaCost)
     {
         Skills.TryGetValue(SkillType.Magic, out var currentMagicLevel);
@@ -854,12 +859,21 @@ public class Player : CombatActor, IPlayer
 
     public void IncreaseMana(uint increasing)
     {
+        if (Group.FlagIsEnabled(PlayerFlag.NotGainMana)) return;
+
         if (increasing <= 0) return;
 
         if (Mana == MaxMana) return;
 
         Mana = Mana + increasing >= MaxMana ? MaxMana : Mana + increasing;
         OnStatusChanged?.Invoke(this);
+    }
+
+    public override void Heal(ushort increasing, ICreature healedBy)
+    {
+        if (Group.FlagIsEnabled(PlayerFlag.NotGainHealth)) return;
+
+        base.Heal(increasing, healedBy);
     }
 
     public void Recover()
@@ -1215,7 +1229,7 @@ public class Player : CombatActor, IPlayer
     public bool CanUseOutfit(IOutfit outfit)
     {
         if (string.IsNullOrEmpty(outfit.Name)) return false;
-        if (outfit.Premium && !(PremiumTime > 0)) return false;
+        if (outfit.Premium && !HasPremiumTime) return false;
 
         return outfit.Unlocked;
     }
@@ -1307,7 +1321,7 @@ public class Player : CombatActor, IPlayer
         if (!spell.VocationIds?.Contains(((IPlayer)this).VocationType) ?? false)
             return Result.Fail(InvalidOperation.VocationCannotUseSpell);
 
-        if (spell.NeedsPremium && PremiumTime <= 0) return Result.Fail(InvalidOperation.PremiumTimeIsRequired);
+        if (spell.NeedsPremium && !HasPremiumTime) return Result.Fail(InvalidOperation.PremiumTimeIsRequired);
 
         if (spell.IsAggressive && (spell.Range < 1 || (spell.Range > 0 && CurrentTarget is null)) &&
             Skull is Skull.Black)
@@ -1340,8 +1354,128 @@ public class Player : CombatActor, IPlayer
         return Result.Success;
     }
 
+    public Result CanPushCreature(ICreature creature, ITile destination)
+    {
+        // Basic null checks
+        if (creature is null || destination is null)
+        {
+            return Result.Fail(InvalidOperation.NotPossible);
+        }
+        
+
+        // Cannot push yourself
+        if (ReferenceEquals(creature, this))
+        {
+            return Result.Fail(InvalidOperation.DestinationOutOfReach);
+        }
+        
+        // Check if the player can push all creatures
+        if (Group.FlagIsEnabled(PlayerFlag.CanPushAllCreatures))
+        {
+            return Result.Success;
+        }
+        
+        // Check cooldown (only for non-admin players)
+        if (!CooldownHasExpired(CooldownType.PushCreature) && !Group.Access)
+        {
+            return Result.Fail(InvalidOperation.Exhausted);
+        }
+
+        // Check if the player can see the target creature
+        if (!CanSee(creature))
+        {
+            return Result.NotPossible;
+        }
+
+        // Check if the target is close enough to push
+        if (!creature.IsCloseTo(this))
+        {
+            return Result.NotPossible;
+        }
+
+        // Check if the destination is within 1 tile of the target
+        var distance = creature.Location.GetMaxSqmDistance(destination.Location);
+        if (distance > 1)
+        {
+            return Result.Fail(InvalidOperation.DestinationOutOfReach);
+        }
+
+        // Cannot push to the same location where creature currently is
+        if (creature.Location == destination.Location)
+        {
+            return Result.Success; // Not an error, just no movement needed
+        }
+
+        // Check if the destination tile has another creature
+        if (destination is IDynamicTile { HasAnyCreature: true })
+        {
+            return Result.Fail(InvalidOperation.NotEnoughRoom);
+        }
+
+        // Check if destination tile blocks path
+        if (destination is IDynamicTile destinationTile && destinationTile.HasFlag(TileFlags.BlockPath))
+        {
+            return Result.NotPossible;
+        }
+
+        // Check push permissions based on a creature type
+        switch (creature)
+        {
+            case IPlayer targetPlayer:
+                {
+                    // Check if the target player has CannotBePushed flag (with null safety)
+                    if (targetPlayer.Group?.FlagIsEnabled(PlayerFlag.CannotBePushed) == true)
+                    {
+                        return Result.Fail(InvalidOperation.NotPossible);
+                    }
+
+                    // Cannot push players out of the protection zone
+                    var pushingOutsideProtectionZone = destination is IDynamicTile { ProtectionZone: false } &&
+                                                       (targetPlayer.Tile?.ProtectionZone ?? false);
+                    if (pushingOutsideProtectionZone)
+                    {
+                        return Result.NotPossible;
+                    }
+                    break;
+                }
+
+            case IMonster targetMonster:
+                {
+                    // Check if monster is pushable
+                    if (!targetMonster.IsPushable)
+                    {
+                        return Result.NotPossible;
+                    }
+
+                    // Cannot push monsters into protection zone
+                    var pushingToProtectionZone = destination is IDynamicTile { ProtectionZone: true };
+                    if (pushingToProtectionZone)
+                    {
+                        return Result.NotPossible;
+                    }
+                    break;
+                }
+
+            case INpc:
+                {
+                    // Cannot push NPCs into protection zone
+                    var pushingToProtectionZone = destination is IDynamicTile { ProtectionZone: true };
+                    if (pushingToProtectionZone)
+                    {
+                        return Result.NotPossible;
+                    }
+                    break;
+                }
+        }
+
+        return Result.Success;
+    }
+
     public override void AddCondition(ICondition condition)
     {
+        if (Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked) && condition.Type.ToDamageType() != DamageType.None)
+            return;
+
         switch (condition.Type)
         {
             case ConditionType.Drunk when Inventory.HasEquippedItemWithImmunity(Immunity.Drunkenness):
@@ -1447,7 +1581,8 @@ public class Player : CombatActor, IPlayer
             var levelDiff = toLevel - fromLevel;
             MaxHealthPoints += (uint)(levelDiff * Vocation.GainHp);
             MaxMana += (ushort)(levelDiff * Vocation.GainMana);
-            TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
+            if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity))
+                TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
             ResetHealthPoints();
             ResetMana();
             ChangeSpeedLevel(RawSpeed);
@@ -1463,7 +1598,8 @@ public class Player : CombatActor, IPlayer
             var levelDiff = toLevel - fromLevel;
             MaxHealthPoints += (uint)(levelDiff * Vocation.GainHp);
             MaxMana += (ushort)(levelDiff * Vocation.GainMana);
-            TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
+            if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity))
+                TotalCapacity += (uint)(levelDiff * Vocation.GainCap);
             ResetHealthPoints();
             ResetMana();
             ChangeSpeedLevel(RawSpeed);

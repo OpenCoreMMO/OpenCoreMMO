@@ -127,8 +127,8 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     IPlayerParty PlayerParty { get; set; }
     string GenderPronoun { get; }
     Gender Gender { get; set; }
-    int PremiumTime { get; }
-    bool HasPremiumTime => PremiumTime > 0;
+    int PremiumDays { get; }
+    bool HasPremiumTime { get; }
     IDictionary<SkillType, ISkill> Skills { get; }
     IDictionary<uint, int> Storages { get; }
 
@@ -302,6 +302,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     void PostSpellCast(ISpell spell);
     bool HasEnoughSoul(ushort soul);
     Result CanCastSpell(ISpell spell);
+    Result CanPushCreature(ICreature creature, ITile destination);
     void ConsumeSoul(ushort soul);
 
     void PostAttack(CombatParameter combatParameter, IThing target, CombatResult damages);
@@ -333,4 +334,5 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     void RegenerateStamina();
     void Yell(string message, YellConfiguration yellSettings);
     void Whisper(string message);
+    void StartCooldown(CooldownType cooldownType, uint cooldownTime);
 }

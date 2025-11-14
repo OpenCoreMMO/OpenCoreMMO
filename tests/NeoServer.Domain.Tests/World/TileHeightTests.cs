@@ -106,7 +106,8 @@ public class TileHeightTests
 
         tile1StFloor.AddCreature(player);
 
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var validation = new CreatureMovementValidation(map);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
 
         //act
         player.WalkTo(Direction.East);
@@ -138,7 +139,8 @@ public class TileHeightTests
 
         tile1StFloor.AddCreature(player);
         
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var validation = new CreatureMovementValidation(map);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
         
         //act
         player.WalkTo(Direction.East);
@@ -181,7 +183,8 @@ public class TileHeightTests
         }
 
         tile2StFloor.AddCreature(player);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var validation = new CreatureMovementValidation(map);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
         
         //act
         player.WalkTo(Direction.West);
@@ -213,7 +216,8 @@ public class TileHeightTests
         var map = MapTestDataBuilder.Build(tile1StFloor, tile2StFloor);
 
         tile2StFloor.AddCreature(player);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var validation = new CreatureMovementValidation(map);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
 
         //act
         player.WalkTo(Direction.West);

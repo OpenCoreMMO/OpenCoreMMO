@@ -11,6 +11,7 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Creatures.Models.Bases;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Player.Modes;
 using Serilog;
 
@@ -75,7 +76,15 @@ public class AttackService(
         var pvpCombatValidationResult = ValidatePvpCombat(attackInput);
         if (pvpCombatValidationResult.Failed) return CombatResult.Fail(pvpCombatValidationResult);
 
-        playerSkullService.UpdateSkullOnAttack(attackInput.Aggressor as IPlayer, attackInput.Target as IPlayer);
+        // Update skull for direct player attacks or attacks on player summons
+        var targetPlayer = attackInput.Target switch
+        {
+            IPlayer player => player,
+            Summon { Master: IPlayer master } => master,
+            _ => null
+        };
+        
+        playerSkullService.UpdateSkullOnAttack(attackInput.Aggressor as IPlayer, targetPlayer);
 
         if (!DistanceAttackValidator.IsValid(attackInput))
             return CombatResult.Fail(Result.Fail(InvalidOperation.TooFar));
@@ -126,12 +135,27 @@ public class AttackService(
     private Result ValidatePvpCombat(AttackInput attackInput)
     {
         if (Equals(attackInput.Aggressor, attackInput.Target)) return Result.Success;
-        if (attackInput.Aggressor is not IPlayer playerAggressor ||
-            attackInput.Target is not IPlayer playerTarget)
-            //not pvp combat
+        
+        if (attackInput.Aggressor is not IPlayer playerAggressor)
             return Result.Success;
 
-        var targetHasSkull = playerTarget?.GetSkull(playerAggressor) is not Skull.None;
+        // Check if attacking own summon - allow regardless of secure mode
+        if (attackInput.Target is Summon { Master: IPlayer summonMaster } && 
+            playerAggressor.Equals(summonMaster))
+            return Result.Success;
+
+        // Get the target player - either direct attack or attack on player's summon
+        var playerTarget = attackInput.Target switch
+        {
+            IPlayer player => player,
+            Summon { Master: IPlayer master } => master,
+            _ => null
+        };
+
+        // If no player is involved as target, it's not pvp combat
+        if (playerTarget is null) return Result.Success;
+
+        var targetHasSkull = playerTarget.GetSkull(playerAggressor) is not Skull.None;
 
         var tryingToAttackWithPvpDisabled = !targetHasSkull && playerAggressor.SecureMode is PvpSecureMode.PvPDisabled;
 
@@ -139,10 +163,14 @@ public class AttackService(
         {
             playerAggressor.StopAttack(true);
 
-            OperationFailService.Send(playerAggressor,
-                InvalidOperation.AdjustCombatSettingsToAttackPlayer);
+            // Use different message for summon attacks vs direct player attacks
+            var operation = attackInput.Target is Summon 
+                ? InvalidOperation.AdjustCombatSettingsToAttackCreature 
+                : InvalidOperation.AdjustCombatSettingsToAttackPlayer;
 
-            return Result.Fail(InvalidOperation.AdjustCombatSettingsToAttackPlayer);
+            OperationFailService.Send(playerAggressor, operation);
+
+            return Result.Fail(operation);
         }
 
         return Result.Success;

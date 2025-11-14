@@ -2,6 +2,7 @@ using System.Collections;
 using Moq;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Item;
@@ -253,7 +254,8 @@ public class TileTest
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(102, 100, 7));
 
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var validation = new CreatureMovementValidation(map);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
         var mapService = new MapService(map, creatureMovementService);
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
@@ -276,7 +278,7 @@ public class TileTest
 
         sourceTile.AddItem(item);
 
-        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService);
+        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService, new Mock<ICreaturePushService>().Object);
 
         //act
         toMapMovementService.Move(player,
@@ -315,14 +317,15 @@ public class TileTest
         var itemMovementService =
             new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
 
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var validation = new CreatureMovementValidation(map);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
         var mapService = new MapService(map, creatureMovementService);
 
         mapService.ReplaceGround(destinationTile.Location, hole);
 
         sourceTile.AddItem(item);
 
-        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService);
+        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService, new Mock<ICreaturePushService>().Object);
 
         //act
         toMapMovementService.Move(player, new MovementParams(sourceTile.Location, destinationTile.Location, 1));
@@ -342,7 +345,8 @@ public class TileTest
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(102, 100, 7));
 
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var validation = new CreatureMovementValidation(map);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
         var mapService = new MapService(map, creatureMovementService);
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
@@ -370,7 +374,7 @@ public class TileTest
 
         var itemMovementService =
             new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
-        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService);
+        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService, new Mock<ICreaturePushService>().Object);
 
         //act
         toMapMovementService.Move(player, new MovementParams(sourceTile.Location, destinationTile.Location, 1));
@@ -390,7 +394,8 @@ public class TileTest
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
         var player = PlayerTestDataBuilder.Build();
         
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var validation = new CreatureMovementValidation(map);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
         var mapService = new MapService(map, creatureMovementService);
 
         player.SetNewLocation(new Location(102, 100, 7));
@@ -425,7 +430,8 @@ public class TileTest
         //arrange
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
         
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var validation = new CreatureMovementValidation(map);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
         var mapService = new MapService(map, creatureMovementService);
 
         var player = PlayerTestDataBuilder.Build();

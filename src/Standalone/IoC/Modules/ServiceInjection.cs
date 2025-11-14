@@ -46,6 +46,7 @@ public static class ServiceInjection
         builder.AddSingleton<IPartyInviteService, PartyInviteService>();
         builder.AddSingleton<ISummonService, SummonService>();
         builder.AddSingleton<IToMapMovementService, ToMapMovementService>();
+        builder.AddSingleton<ICreaturePushService, CreaturePushService>();
         builder.AddSingleton<IMapService, MapService>();
         builder.AddSingleton<IMapTool, MapTool>();
         builder.AddSingleton<IPlayerUseService, PlayerUseService>();
@@ -68,6 +69,7 @@ public static class ServiceInjection
         builder.AddSingleton<PlayerChannelService>();
         builder.AddSingleton<TargetDetectorService>();
         builder.AddSingleton<ICreatureMovementService, CreatureMovementService>();
+        builder.AddSingleton<CreatureMovementValidation>();
         builder.AddSingleton<CylinderOperation>();
 
         //Operations

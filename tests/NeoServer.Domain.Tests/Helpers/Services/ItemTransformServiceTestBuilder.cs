@@ -15,7 +15,7 @@ public static class ItemTransformServiceTestBuilder
 {
     public static ItemTransformService Build(IMap map, IItemTypeStore itemTypeStore)
     {
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map));
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
         var mapService = new MapService(map, creatureMovementService);
         var itemFactory = ItemFactoryTestBuilder.Build();
         return new ItemTransformService(itemFactory, map, mapService, itemTypeStore, null);

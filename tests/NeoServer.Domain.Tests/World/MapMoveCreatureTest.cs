@@ -23,7 +23,7 @@ public class MapMoveCreatureTest
         player.SetNewLocation(new Location(50, 50, 7));
         sut.PlaceCreature(player);
         
-        var creatureMovementService = new CreatureMovementService(sut, new CylinderOperation(sut));
+        var creatureMovementService = new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut));
         
         var result = creatureMovementService.MoveCreature(player, new Location(51, 50, 7));
 
@@ -40,7 +40,7 @@ public class MapMoveCreatureTest
         player.SetNewLocation(new Location(50, 50, 7));
         sut.PlaceCreature(player);
 
-        var creatureMovementService = new CreatureMovementService(sut, new CylinderOperation(sut));
+        var creatureMovementService = new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut));
 
         var result = creatureMovementService.MoveCreature(player, new Location(53, 50, 7));
 
@@ -68,7 +68,7 @@ public class MapMoveCreatureTest
             //no destination
         };
         
-        var creatureMovementService = new CreatureMovementService(sut, new CylinderOperation(sut));
+        var creatureMovementService = new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut));
 
         ((IDynamicTile)sut[teleportLocation]).AddItem(new TeleportItem(new ItemType(), teleportLocation));
 
@@ -103,7 +103,7 @@ public class MapMoveCreatureTest
                 [teleportLocation] = [teleport]
             });
         
-        var creatureMovementService = new CreatureMovementService(sut, new CylinderOperation(sut));
+        var creatureMovementService = new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut));
 
         var pathFinder = new PathFinder(sut);
 

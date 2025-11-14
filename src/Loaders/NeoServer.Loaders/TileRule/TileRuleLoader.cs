@@ -79,7 +79,7 @@ public class TileRuleLoader : IStartupLoader
 
         if (player.Level >= tileRule.MinLevel &&
             player.Level <= tileRule.MaxLevel &&
-            (!tileRule.RequiresPremium || (tileRule.RequiresPremium && player.PremiumTime > 0))) return true;
+            (!tileRule.RequiresPremium || (tileRule.RequiresPremium && player.HasPremiumTime))) return true;
 
         if (string.IsNullOrWhiteSpace(tileRule.Message)) return false;
 

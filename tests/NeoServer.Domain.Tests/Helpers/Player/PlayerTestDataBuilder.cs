@@ -133,7 +133,7 @@ public static class PlayerTestDataBuilder
         )
         {
             Guild = guild,
-            PremiumTime = premiumTime,
+            PremiumDays = premiumTime,
             LastLogOut = DateTime.UtcNow
         };
 
