@@ -121,6 +121,7 @@ networks:
     external: true
 
 volumes:
+  postgresql-data:
   pgadmin-data:
   mongodb-data:
   mongodb-config:
