@@ -1,5 +1,5 @@
 services:
-# PostgreSQL: https://hub.docker.com/_/postgres/
+  # PostgreSQL: https://hub.docker.com/_/postgres/
   postgres:
     image: postgres
     environment:
@@ -10,11 +10,11 @@ services:
       - "${POSTGRESQL_PORT}:${POSTGRESQL_PORT}"
     restart: "on-failure"
     volumes:
-      - postgresql-data:/var/lib/postgresql/data
+      - postgresql-data:/var/lib/postgresql
     networks:
       - opencoremmo
 
-# pgAdmin 4: https://hub.docker.com/r/dpage/pgadmin4
+  # pgAdmin 4: https://hub.docker.com/r/dpage/pgadmin4
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4
@@ -31,20 +31,20 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 
-# MongoDB: https://hub.docker.com/_/mongo/
+  # MongoDB: https://hub.docker.com/_/mongo/
   mongodb:
     image: "mongo:6.0.18"
     container_name: mongo
     ports:
-      - "27017:27017"   
+      - "27017:27017"
     restart: "on-failure"
     networks:
       - opencoremmo
     volumes:
       - "mongodb-data:/data/db"
-      - "mongodb-config:/data/configdb"  
+      - "mongodb-config:/data/configdb"
 
-# Graylog Data Node: https://hub.docker.com/r/graylog/graylog-datanode
+  # Graylog Data Node: https://hub.docker.com/r/graylog/graylog-datanode
   datanode:
     image: "graylog/graylog-datanode:6.1"
     container_name: datanode
@@ -62,16 +62,16 @@ services:
         soft: 65536
         hard: 65536
     ports:
-      - "8999:8999/tcp"   # DataNode API
+      - "8999:8999/tcp" # DataNode API
       - "9200:9200/tcp"
       - "9300:9300/tcp"
     networks:
-      - opencoremmo  
+      - opencoremmo
     volumes:
       - "graylog-datanode:/var/lib/graylog-datanode"
-    restart: "on-failure"  
+    restart: "on-failure"
 
-# Graylog: https://hub.docker.com/r/graylog/graylog/
+  # Graylog: https://hub.docker.com/r/graylog/graylog/
   graylog:
     hostname: "server"
     image: "graylog/graylog:6.1"
