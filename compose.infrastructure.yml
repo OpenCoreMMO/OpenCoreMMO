@@ -1,7 +1,7 @@
 services:
   # PostgreSQL: https://hub.docker.com/_/postgres/
   postgres:
-    image: postgres
+    image: postgres:17
     environment:
       POSTGRES_PASSWORD: "${POSTGRESQL_PASSWORD}"
       POSTGRES_USER: "${POSTGRESQL_USER}"
@@ -10,7 +10,7 @@ services:
       - "${POSTGRESQL_PORT}:${POSTGRESQL_PORT}"
     restart: "on-failure"
     volumes:
-      - postgresql-data:/var/lib/postgresql
+      - postgresql-data:/var/lib/postgresql/data
     networks:
       - opencoremmo
 
