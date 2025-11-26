@@ -54,16 +54,16 @@ public class PlayerSkull : IPlayerSkull
     }
 
 
-    public bool IsYellowSkull(IPlayer enemy)
+    public bool IsYellowSkull(IPlayer observer)
     {
-        return PlayersAttackedList.HasEnemy(enemy);
+        return PlayersAttackedList.HasEnemy(observer);
     }
 
-    public Skull GetSkull(IPlayer enemy)
+    public Skull GetSkull(IPlayer observer)
     {
-        if (enemy.CreatureId == Player.CreatureId) return Skull;
+        if (observer.CreatureId == Player.CreatureId) return Skull;
 
-        return IsYellowSkull(enemy) ? Skull.Yellow : Skull;
+        return IsYellowSkull(observer) ? Skull.Yellow : Skull;
     }
 
     public event SkullUpdated OnSkullUpdated;

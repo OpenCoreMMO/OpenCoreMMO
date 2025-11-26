@@ -1099,7 +1099,16 @@ public class Player : CombatActor, IPlayer
         var result = base.SetAttackTarget(target);
         if (result.Failed) return result;
 
+        //side effects
+        
         if (target.CreatureId != 0 && ChaseMode == ChaseMode.Follow) Follow(target, PathSearchParams);
+        
+        SetLogoutBlock();
+
+        if (target is IPlayer)
+        {
+            SetProtectionZoneBlock();
+        }
 
         return result;
     }
@@ -1284,9 +1293,9 @@ public class Player : CombatActor, IPlayer
         base.Kill(enemy, lastHit, unjustified);
     }
 
-    public Skull GetSkull(IPlayer enemy)
+    public Skull GetSkull(IPlayer observer)
     {
-        return PlayerSkull?.GetSkull(enemy) ?? Skull.None;
+        return PlayerSkull?.GetSkull(observer) ?? Skull.None;
     }
 
     public void SetSkull(Skull skull, DateTime? skullEndingDate = null, IPlayer enemy = null)

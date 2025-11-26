@@ -8,8 +8,10 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Player.Modes;
 
 namespace NeoServer.Domain.Combat.Validations;
 
@@ -139,6 +141,52 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
         return Result.Success;
     }
     
+    public Result ValidatePvpCombat(IPlayer aggressor, ICombatActor target)
+    {
+        if(Guard.AnyNull(aggressor, target)) return Result.Success;
+        if (Equals(aggressor, target)) return Result.Success;
+        
+        if (aggressor is not { } playerAggressor)
+            return Result.Success;
+
+        // Check if attacking own summon - allow regardless of secure mode
+        if (target is Summon { Master: IPlayer summonMaster } &&
+            playerAggressor.Equals(summonMaster))
+        {
+            return Result.Success;
+        }
+
+        // Get the target player - either direct attack or attack on player's summon
+        var playerTarget = target switch
+        {
+            IPlayer player => player,
+            Summon { Master: IPlayer master } => master,
+            _ => null
+        };
+
+        // If no player is involved as target, it's not pvp combat
+        if (playerTarget is null) return Result.Success;
+
+        var targetHasSkull = playerTarget.GetSkull(playerAggressor) is not Skull.None;
+
+        var tryingToAttackWithPvpDisabled = !targetHasSkull && playerAggressor.SecureMode is PvpSecureMode.PvPDisabled;
+
+        if (tryingToAttackWithPvpDisabled)
+        {
+            playerAggressor.StopAttack(true);
+
+            // Use different message for summoned attacks vs. direct player attacks
+            var operation = target is Summon 
+                ? InvalidOperation.AdjustCombatSettingsToAttackCreature 
+                : InvalidOperation.AdjustCombatSettingsToAttackPlayer;
+
+            OperationFailService.Send(playerAggressor, operation);
+
+            return Result.Fail(operation);
+        }
+
+        return Result.Success;
+    }
     private static readonly HashSet<InvalidOperation> OperationsThatStopAttack =
     [
         InvalidOperation.YouMayNotAttackThisPlayer,
@@ -148,6 +196,8 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
         InvalidOperation.CannotAttackWhileInProtectionZone,
         InvalidOperation.TargetLost
     ];
+    
+  
     
     public static bool ShouldStopAttackOnValidationFailure(InvalidOperation operation) =>
         OperationsThatStopAttack.Contains(operation);

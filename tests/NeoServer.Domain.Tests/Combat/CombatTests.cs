@@ -54,8 +54,7 @@ public class CombatTests
         var tile2 = new DynamicTile(new Coordinate(100, 101, 7), (TileFlag)TileFlags.None, ground, null, null);
 
         var map = MapTestDataBuilder.Build(tile1, tile2);
-        var attackService = AttackServiceTestBuilder.Build(map);
-        PlayerCombatService playerCombatService = new(attackService);
+        var playerCombatService = AttackServiceTestBuilder.BuildPlayerCombatService(map);
 
         var magicWeapon = ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes: [(ItemTypeAttribute.ManaUse, 50)]);
         var player = PlayerTestDataBuilder.Build(mana: 100);
@@ -86,8 +85,7 @@ public class CombatTests
         var tile2 = new DynamicTile(new Coordinate(100, 101, 7), (TileFlag)TileFlags.None, ground, null, null);
 
         var map = MapTestDataBuilder.Build(tile1, tile2);
-        var attackService = AttackServiceTestBuilder.Build(map);
-        PlayerCombatService playerCombatService = new(attackService);
+        var playerCombatService = AttackServiceTestBuilder.BuildPlayerCombatService(map);
 
         var magicWeapon = ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes: [(ItemTypeAttribute.ManaUse, 50)]);
         var skills = PlayerTestDataBuilder.GenerateSkills(10);

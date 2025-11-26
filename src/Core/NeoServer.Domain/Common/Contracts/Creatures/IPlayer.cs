@@ -271,7 +271,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     ushort GetRawSkillLevel(SkillType skillType);
     int GetStorageValue(uint key);
     void AddOrUpdateStorageValue(uint key, int value);
-    Skull GetSkull(IPlayer enemy);
+    Skull GetSkull(IPlayer observer);
     void SetSkull(Skull skull, DateTime? skullEndingDate = null, IPlayer enemy = null);
     void RemoveSkull();
     void SetNumberOfKills(int killsInLastDay, int killsInLastWeek, int killsInLastMonth);

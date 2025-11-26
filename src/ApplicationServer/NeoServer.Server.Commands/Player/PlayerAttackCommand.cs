@@ -1,3 +1,4 @@
+using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Combat.Validations;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -7,7 +8,8 @@ using NeoServer.Server.Common.Contracts.Commands;
 
 namespace NeoServer.Server.Commands.Player;
 
-public class PlayerAttackCommand(IGameCreatureManager gameCreatureManager, AttackValidation attackValidation) : ICommand
+public class PlayerAttackCommand(IGameCreatureManager gameCreatureManager, PlayerCombatService playerCombatService)
+    : ICommand
 {
     public void Execute(IPlayer player, uint targetId)
     {
@@ -19,15 +21,6 @@ public class PlayerAttackCommand(IGameCreatureManager gameCreatureManager, Attac
 
         if (!gameCreatureManager.TryGetCreature(targetId, out var target)) return;
 
-        var result = attackValidation.Validate(new AttackInput(player, target, new CombatParameter()));
-
-        if (AttackValidation.ShouldStopAttackOnValidationFailure(result.Reason))
-        {
-            player.StopAttack(true);
-            OperationFailService.Send(player, result.Reason);
-            return;
-        }
-
-        player.SetAttackTarget(target);
+        playerCombatService.SetAttackTarget(player, target as ICombatActor);
     }
 }

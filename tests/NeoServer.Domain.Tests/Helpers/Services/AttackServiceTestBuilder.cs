@@ -19,7 +19,8 @@ namespace NeoServer.Domain.Tests.Helpers.Services;
 
 public class AttackServiceTestBuilder
 {
-    public static IAttackService Build(IMap map, PvpType pvpType = PvpType.OpenPvP, CombatConfiguration combatConfig = null)
+    public static IAttackService Build(IMap map, PvpType pvpType = PvpType.OpenPvP,
+        CombatConfiguration combatConfig = null)
     {
         var gameConfiguration = new GameConfiguration
         {
@@ -27,11 +28,11 @@ public class AttackServiceTestBuilder
             Combat = combatConfig ?? new CombatConfiguration(true, true)
         };
 
-        var skullService = new PlayerSkullService(gameConfiguration);
         var logger = new Mock<ILogger>();
         var mockEventAggregator = new Mock<IEventAggregator>();
 
-        var attackValidation = new AttackValidation(new MapTool(map, new PathFinder(map)), map, gameConfiguration.PvP, gameConfiguration.Combat);
+        var attackValidation = new AttackValidation(new MapTool(map, new PathFinder(map)), map, gameConfiguration.PvP,
+            gameConfiguration.Combat);
 
         var itemTypeStore = ItemTypeStoreTestBuilder.Build(new ItemType().SetId(2019));
 
@@ -45,14 +46,33 @@ public class AttackServiceTestBuilder
         var areaCalculationService = new AreaCalculationService(map);
 
         var areaAttackService =
-            new AreaAttackService(mockEventAggregator.Object, map, magicFieldService, conditionAttackService, attackValidation, areaCalculationService);
+            new AreaAttackService(mockEventAggregator.Object, map, magicFieldService, conditionAttackService,
+                attackValidation, areaCalculationService);
 
         var singleTargetCombat =
             new SingleTargetAttackService(mockEventAggregator.Object, gameConfiguration.Combat, conditionAttackService,
                 magicFieldService);
 
-        return new AttackService(logger.Object, skullService, areaAttackService, singleTargetCombat,
+        return new AttackService(logger.Object, new PlayerSkullService(gameConfiguration), areaAttackService, singleTargetCombat,
             conditionAttackService, attackValidation);
+    }
+
+    public static PlayerCombatService BuildPlayerCombatService(IMap map, PvpType pvpType = PvpType.OpenPvP,
+        CombatConfiguration combatConfig = null)
+    {
+        var attackService = Build(map, pvpType, combatConfig);
+
+        var gameConfiguration = new GameConfiguration
+        {
+            PvP = new PvPConfiguration(pvpType, ProtectionLevel: 2),
+            Combat = combatConfig ?? new CombatConfiguration(true, true)
+        };
+        var skullService = new PlayerSkullService(gameConfiguration);
+
+        var attackValidation = new AttackValidation(new MapTool(map, new PathFinder(map)), map, gameConfiguration.PvP,
+            gameConfiguration.Combat);
+
+        return new PlayerCombatService(attackService, attackValidation, skullService);
     }
 }
 

@@ -1,6 +1,5 @@
 using NeoServer.Domain.Combat.Validations;
 using NeoServer.Domain.Common;
-using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
@@ -12,7 +11,6 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Creatures.Models.Bases;
 using NeoServer.Domain.Creatures.Monster.Summon;
-using NeoServer.Domain.Creatures.Player.Modes;
 using Serilog;
 
 namespace NeoServer.Domain.Combat.Attacks;
@@ -73,7 +71,7 @@ public class AttackService(
             return CombatResult.Fail(attackValidationResult);
         }
 
-        var pvpCombatValidationResult = ValidatePvpCombat(attackInput);
+        var pvpCombatValidationResult = attackValidation.ValidatePvpCombat(attackInput.Aggressor as IPlayer, attackInput.Target as ICombatActor);
         if (pvpCombatValidationResult.Failed) return CombatResult.Fail(pvpCombatValidationResult);
 
         // Update skull for direct player attacks or attacks on player summons
@@ -130,50 +128,6 @@ public class AttackService(
                 SkillType.Sword => ShootType.WhirlwindSword,
                 _ => ShootType.None
             };
-    }
-
-    private Result ValidatePvpCombat(AttackInput attackInput)
-    {
-        if (Equals(attackInput.Aggressor, attackInput.Target)) return Result.Success;
-        
-        if (attackInput.Aggressor is not IPlayer playerAggressor)
-            return Result.Success;
-
-        // Check if attacking own summon - allow regardless of secure mode
-        if (attackInput.Target is Summon { Master: IPlayer summonMaster } && 
-            playerAggressor.Equals(summonMaster))
-            return Result.Success;
-
-        // Get the target player - either direct attack or attack on player's summon
-        var playerTarget = attackInput.Target switch
-        {
-            IPlayer player => player,
-            Summon { Master: IPlayer master } => master,
-            _ => null
-        };
-
-        // If no player is involved as target, it's not pvp combat
-        if (playerTarget is null) return Result.Success;
-
-        var targetHasSkull = playerTarget.GetSkull(playerAggressor) is not Skull.None;
-
-        var tryingToAttackWithPvpDisabled = !targetHasSkull && playerAggressor.SecureMode is PvpSecureMode.PvPDisabled;
-
-        if (tryingToAttackWithPvpDisabled)
-        {
-            playerAggressor.StopAttack(true);
-
-            // Use different message for summon attacks vs direct player attacks
-            var operation = attackInput.Target is Summon 
-                ? InvalidOperation.AdjustCombatSettingsToAttackCreature 
-                : InvalidOperation.AdjustCombatSettingsToAttackPlayer;
-
-            OperationFailService.Send(playerAggressor, operation);
-
-            return Result.Fail(operation);
-        }
-
-        return Result.Success;
     }
 
     private static ExtraAttack CalculateElementalAttack(ICombatActor aggressor)

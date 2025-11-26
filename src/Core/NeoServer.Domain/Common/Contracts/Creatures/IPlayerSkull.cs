@@ -13,6 +13,6 @@ public interface IPlayerSkull
     void SetSkull(Skull skull, DateTime? endingDate = null, IPlayer enemy = null);
     void RemoveSkull();
     void RemoveYellowSkull();
-    bool IsYellowSkull(IPlayer enemy);
-    Skull GetSkull(IPlayer enemy);
+    bool IsYellowSkull(IPlayer observer);
+    Skull GetSkull(IPlayer observer);
 }
