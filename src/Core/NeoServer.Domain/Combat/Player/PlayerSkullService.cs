@@ -25,6 +25,11 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
             DateTime.UtcNow.AddMinutes(gameConfiguration.PvP?.WhiteSkullDurationMinutes ??
                                     TimeSpan.FromMilliseconds(gameConfiguration.LogoutBlockDuration).TotalMinutes);
 
+        if (victim.Tile?.PvpZone ?? false)
+        {
+            return;
+        }
+
         //when aggressor has white skull
         if (aggressor.HasSkull && aggressor.Skull is Skull.White)
         {

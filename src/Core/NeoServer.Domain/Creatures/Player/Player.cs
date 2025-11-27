@@ -147,7 +147,8 @@ public class Player : CombatActor, IPlayer
 
     public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
 
-    public override ushort RawSpeed => Group.FlagIsEnabled(PlayerFlag.SetMaxSpeed) ? ushort.MaxValue : (ushort)(220 + 2 * (Level - 1));
+    public override ushort RawSpeed =>
+        Group.FlagIsEnabled(PlayerFlag.SetMaxSpeed) ? ushort.MaxValue : (ushort)(220 + 2 * (Level - 1));
 
     public float DamageFactor => FightMode switch
     {
@@ -258,6 +259,7 @@ public class Player : CombatActor, IPlayer
 
     public byte LevelPercent => GetSkillPercent(SkillType.Level);
     public override bool CanBeAttacked => !Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked) && base.CanBeAttacked;
+
     public override void GainExperience(long experience)
     {
         if (experience == 0) return;
@@ -401,7 +403,11 @@ public class Player : CombatActor, IPlayer
 
     public override ushort ArmorRating => Inventory.TotalArmor;
     public PvpSecureMode SecureMode { get; private set; }
-    public float FreeCapacity => Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity) ? float.MaxValue : TotalCapacity - Inventory.TotalWeight;
+
+    public float FreeCapacity => Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity)
+        ? float.MaxValue
+        : TotalCapacity - Inventory.TotalWeight;
+
     public override bool UsingDistanceWeapon => Inventory.Weapon is IDistanceWeapon;
     public bool Recovering => HasCondition(ConditionType.Regeneration);
     public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
@@ -725,7 +731,8 @@ public class Player : CombatActor, IPlayer
             (uint)(yellSettings?.YellCooldownSeconds * 1000 ?? 30_000)); // 30 seconds cooldown
     }
 
-    public void StartCooldown(CooldownType cooldownType, uint cooldownTime) => Cooldowns.Start(cooldownType, cooldownTime);
+    public void StartCooldown(CooldownType cooldownType, uint cooldownTime) =>
+        Cooldowns.Start(cooldownType, cooldownTime);
 
     public void UpdateManaSpent(uint manaCost)
     {
@@ -1100,12 +1107,12 @@ public class Player : CombatActor, IPlayer
         if (result.Failed) return result;
 
         //side effects
-        
+
         if (target.CreatureId != 0 && ChaseMode == ChaseMode.Follow) Follow(target, PathSearchParams);
-        
+
         SetLogoutBlock();
 
-        if (target is IPlayer)
+        if (target is IPlayer targetPlayer && !(targetPlayer.Tile?.PvpZone ?? false))
         {
             SetProtectionZoneBlock();
         }
@@ -1179,7 +1186,7 @@ public class Player : CombatActor, IPlayer
     {
         SetLogoutBlock();
 
-        if (target is IPlayer)
+        if (target is IPlayer targetPlayer && !(targetPlayer.Tile?.PvpZone ?? false))
         {
             SetProtectionZoneBlock();
         }
@@ -1188,7 +1195,8 @@ public class Player : CombatActor, IPlayer
 
         Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
 
-        if (combatResult.TotalDamage > 0 && SkillInUse != SkillType.Magic) //magic skill will be handled in the UpdateManaSpent method
+        if (combatResult.TotalDamage > 0 &&
+            SkillInUse != SkillType.Magic) //magic skill will be handled in the UpdateManaSpent method
         {
             IncreaseSkillCounter(SkillInUse, 1);
         }
@@ -1370,20 +1378,20 @@ public class Player : CombatActor, IPlayer
         {
             return Result.Fail(InvalidOperation.NotPossible);
         }
-        
+
 
         // Cannot push yourself
         if (ReferenceEquals(creature, this))
         {
             return Result.Fail(InvalidOperation.DestinationOutOfReach);
         }
-        
+
         // Check if the player can push all creatures
         if (Group.FlagIsEnabled(PlayerFlag.CanPushAllCreatures))
         {
             return Result.Success;
         }
-        
+
         // Check cooldown (only for non-admin players)
         if (!CooldownHasExpired(CooldownType.PushCreature) && !Group.Access)
         {
@@ -1431,50 +1439,53 @@ public class Player : CombatActor, IPlayer
         switch (creature)
         {
             case IPlayer targetPlayer:
+            {
+                // Check if the target player has CannotBePushed flag (with null safety)
+                if (targetPlayer.Group?.FlagIsEnabled(PlayerFlag.CannotBePushed) == true)
                 {
-                    // Check if the target player has CannotBePushed flag (with null safety)
-                    if (targetPlayer.Group?.FlagIsEnabled(PlayerFlag.CannotBePushed) == true)
-                    {
-                        return Result.Fail(InvalidOperation.NotPossible);
-                    }
-
-                    // Cannot push players out of the protection zone
-                    var pushingOutsideProtectionZone = destination is IDynamicTile { ProtectionZone: false } &&
-                                                       (targetPlayer.Tile?.ProtectionZone ?? false);
-                    if (pushingOutsideProtectionZone)
-                    {
-                        return Result.NotPossible;
-                    }
-                    break;
+                    return Result.Fail(InvalidOperation.NotPossible);
                 }
+
+                // Cannot push players out of the protection zone
+                var pushingOutsideProtectionZone = destination is IDynamicTile { ProtectionZone: false } &&
+                                                   (targetPlayer.Tile?.ProtectionZone ?? false);
+                if (pushingOutsideProtectionZone)
+                {
+                    return Result.NotPossible;
+                }
+
+                break;
+            }
 
             case IMonster targetMonster:
+            {
+                // Check if monster is pushable
+                if (!targetMonster.IsPushable)
                 {
-                    // Check if monster is pushable
-                    if (!targetMonster.IsPushable)
-                    {
-                        return Result.NotPossible;
-                    }
-
-                    // Cannot push monsters into protection zone
-                    var pushingToProtectionZone = destination is IDynamicTile { ProtectionZone: true };
-                    if (pushingToProtectionZone)
-                    {
-                        return Result.NotPossible;
-                    }
-                    break;
+                    return Result.NotPossible;
                 }
+
+                // Cannot push monsters into protection zone
+                var pushingToProtectionZone = destination is IDynamicTile { ProtectionZone: true };
+                if (pushingToProtectionZone)
+                {
+                    return Result.NotPossible;
+                }
+
+                break;
+            }
 
             case INpc:
+            {
+                // Cannot push NPCs into protection zone
+                var pushingToProtectionZone = destination is IDynamicTile { ProtectionZone: true };
+                if (pushingToProtectionZone)
                 {
-                    // Cannot push NPCs into protection zone
-                    var pushingToProtectionZone = destination is IDynamicTile { ProtectionZone: true };
-                    if (pushingToProtectionZone)
-                    {
-                        return Result.NotPossible;
-                    }
-                    break;
+                    return Result.NotPossible;
                 }
+
+                break;
+            }
         }
 
         return Result.Success;

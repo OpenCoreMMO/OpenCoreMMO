@@ -1,5 +1,6 @@
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -321,5 +322,196 @@ public class PvPCombatTests
         
         playerA.HasCondition(ConditionType.LogoutBlock).Should().BeTrue("Player A should have LogoutBlock condition");
         playerC.HasCondition(ConditionType.LogoutBlock).Should().BeTrue("Player C should have LogoutBlock condition");
+    }
+
+    [Fact]
+    [Trait("Category", "PvP")]
+    public void Players_do_not_get_skull_or_pz_block_when_fighting_in_pvp_zone()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+
+        var playerAttackService = AttackServiceTestBuilder.BuildPlayerCombatService(map);
+
+        var playerA = PlayerTestDataBuilder.Build(id: 1, name: "PlayerA", level: 10, experience: 1000, vocationType: 1);
+        playerA.ChangeSecureMode(PvpSecureMode.PvPEnabled);
+
+        var playerB = PlayerTestDataBuilder.Build(id: 2, name: "PlayerB", level: 10, experience: 1000, vocationType: 1);
+        playerB.ChangeSecureMode(PvpSecureMode.PvPEnabled);
+
+        // Create tiles with PvpZone flag set
+        var tileA = map[100, 100, 7] as DynamicTile;
+        var tileB = map[100, 101, 7] as DynamicTile;
+
+        // Use reflection to set the PvpZone flag on both tiles
+        var flagsField = typeof(BaseTile).GetField("Flags", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        flagsField.SetValue(tileA, (uint)TileFlags.PvpZone);
+        flagsField.SetValue(tileB, (uint)TileFlags.PvpZone);
+
+        // Add players to PvP zone tiles
+        tileA?.AddCreature(playerA);
+        tileB?.AddCreature(playerB);
+
+        // Verify tiles are PvP zones
+        tileA.PvpZone.Should().BeTrue("Tile A should be a PvP zone");
+        tileB.PvpZone.Should().BeTrue("Tile B should be a PvP zone");
+
+        // Act - Step 1: Player A attacks Player B in PvP zone
+        playerAttackService.Attack(playerA, playerB);
+
+        // Assert after Step 1
+        playerA.Skull.Should().Be(Skull.None, "Player A should NOT receive any skull when attacking in PvP zone");
+        playerA.IsProtectionZoneBlocked.Should().BeFalse("Player A should NOT get PZ block when attacking in PvP zone");
+        
+        playerB.Skull.Should().Be(Skull.None, "Player B should remain without skull");
+        
+        // Act - Step 2: Player B attacks Player A in retaliation
+        playerAttackService.Attack(playerB, playerA);
+
+        // Assert after Step 2
+        playerB.Skull.Should().Be(Skull.None, "Player B should NOT receive any skull when attacking in PvP zone");
+        playerB.IsProtectionZoneBlocked.Should().BeFalse("Player B should NOT get PZ block when attacking in PvP zone");
+        
+        playerA.Skull.Should().Be(Skull.None, "Player A should remain without skull throughout the PvP zone combat");
+        
+        // Verify skull visibility - no skulls should be visible to any observer
+        playerA.GetSkull(observer: playerB).Should().Be(Skull.None, "Player B should see Player A with no skull");
+        playerB.GetSkull(observer: playerA).Should().Be(Skull.None, "Player A should see Player B with no skull");
+        
+        playerA.PlayerSkull.IsYellowSkull(observer: playerB).Should().BeFalse("Player A should not have yellow skull for Player B");
+        playerB.PlayerSkull.IsYellowSkull(observer: playerA).Should().BeFalse("Player B should not have yellow skull for Player A");
+        
+        // Combat conditions (LogoutBlock) may still apply, but PZ block should not
+        playerA.HasCondition(ConditionType.LogoutBlock).Should().BeTrue("Player A should have LogoutBlock condition (combat state)");
+        playerB.HasCondition(ConditionType.LogoutBlock).Should().BeTrue("Player B should have LogoutBlock condition (combat state)");
+    }
+
+    [Fact]
+    [Trait("Category", "PvP")]
+    public void Player_in_pvp_zone_gets_skull_and_pz_block_when_attacking_player_outside_pvp_zone()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+
+        var playerAttackService = AttackServiceTestBuilder.BuildPlayerCombatService(map);
+
+        var playerA = PlayerTestDataBuilder.Build(id: 1, name: "PlayerA", level: 10, experience: 1000, vocationType: 1);
+        playerA.ChangeSecureMode(PvpSecureMode.PvPEnabled);
+
+        var playerB = PlayerTestDataBuilder.Build(id: 2, name: "PlayerB", level: 10, experience: 1000, vocationType: 1);
+        playerB.ChangeSecureMode(PvpSecureMode.PvPEnabled);
+
+        // Create tiles - Player A in PvP zone, Player B in normal zone
+        var tileA = map[100, 100, 7] as DynamicTile;
+        var tileB = map[100, 101, 7] as DynamicTile;
+
+        // Use reflection to set the PvpZone flag only on tile A
+        var flagsField = typeof(BaseTile).GetField("Flags", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        flagsField.SetValue(tileA, (uint)TileFlags.PvpZone);
+
+        // Add players to their respective tiles
+        tileA?.AddCreature(playerA);
+        tileB?.AddCreature(playerB);
+
+        // Verify tile zones
+        tileA.PvpZone.Should().BeTrue("Tile A should be a PvP zone");
+        tileB.PvpZone.Should().BeFalse("Tile B should NOT be a PvP zone");
+
+        // Act - Step 1: Player A (in PvP zone) attacks Player B (not in PvP zone)
+        playerAttackService.Attack(playerA, playerB);
+
+        // Assert after Step 1
+        playerA.Skull.Should().Be(Skull.White, "Player A should receive white skull when attacking player outside PvP zone");
+        playerA.IsProtectionZoneBlocked.Should().BeTrue("Player A should get PZ block when attacking player outside PvP zone");
+        playerA.HasCondition(ConditionType.LogoutBlock).Should().BeTrue("Player A should have LogoutBlock condition");
+        
+        playerB.Skull.Should().Be(Skull.None, "Player B should remain without skull");
+        
+        // Verify skull visibility
+        playerA.GetSkull(observer: playerB).Should().Be(Skull.White, "Player B should see Player A with white skull");
+        playerA.PlayerSkull.IsYellowSkull(observer: playerB).Should().BeFalse("Player A should not have yellow skull for Player B");
+        
+        // Act - Step 2: Player B attacks Player A back
+        playerAttackService.Attack(playerB, playerA);
+
+        // Assert after Step 2
+        playerB.Skull.Should().Be(Skull.None, "Player B should NOT receive skull when retaliating against white skull attacker");
+        playerB.IsProtectionZoneBlocked.Should().BeFalse("Player B should not get PZ block after attacking");
+        playerB.HasCondition(ConditionType.LogoutBlock).Should().BeTrue("Player B should have LogoutBlock condition");
+        
+        // Player A should still have white skull
+        playerA.Skull.Should().Be(Skull.White, "Player A should keep white skull after being attacked");
+        playerA.GetSkull(observer: playerB).Should().Be(Skull.White, "Player B should still see Player A with white skull");
+        
+        // Verify Player B has no skull from any observer's perspective
+        playerB.GetSkull(observer: playerA).Should().Be(Skull.None, "Player A should see Player B with no skull");
+        playerB.GetSkull(observer: playerB).Should().Be(Skull.None, "Player B should see themselves with no skull");
+    }
+
+    [Fact]
+    [Trait("Category", "PvP")]
+    public void Player_outside_pvp_zone_does_not_get_skull_or_pz_block_when_attacking_player_inside_pvp_zone()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+
+        var playerAttackService = AttackServiceTestBuilder.BuildPlayerCombatService(map);
+
+        var playerA = PlayerTestDataBuilder.Build(id: 1, name: "PlayerA", level: 10, experience: 1000, vocationType: 1);
+        playerA.ChangeSecureMode(PvpSecureMode.PvPEnabled);
+
+        var playerB = PlayerTestDataBuilder.Build(id: 2, name: "PlayerB", level: 10, experience: 1000, vocationType: 1);
+        playerB.ChangeSecureMode(PvpSecureMode.PvPEnabled);
+
+        // Create tiles - Player A in PvP zone, Player B in normal zone
+        var tileA = map[100, 100, 7] as DynamicTile;
+        var tileB = map[100, 101, 7] as DynamicTile;
+
+        // Use reflection to set the PvpZone flag only on tile A
+        var flagsField = typeof(BaseTile).GetField("Flags", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        flagsField.SetValue(tileA, (uint)TileFlags.PvpZone);
+
+        // Add players to their respective tiles
+        tileA?.AddCreature(playerA);
+        tileB?.AddCreature(playerB);
+
+        // Verify tile zones
+        tileA.PvpZone.Should().BeTrue("Tile A should be a PvP zone");
+        tileB.PvpZone.Should().BeFalse("Tile B should NOT be a PvP zone");
+
+        // Act - Step 1: Player B (not in PvP zone) attacks Player A (in PvP zone)
+        playerAttackService.Attack(playerB, playerA);
+
+        // Assert after Step 1
+        playerB.Skull.Should().Be(Skull.None, "Player B should NOT receive white skull when attacking player in PvP zone");
+        playerB.IsProtectionZoneBlocked.Should().BeFalse("Player B should NOT get PZ block when attacking player in PvP zone");
+        playerB.HasCondition(ConditionType.LogoutBlock).Should().BeTrue("Player B should have LogoutBlock condition (combat state)");
+        
+        playerA.Skull.Should().Be(Skull.None, "Player A should remain without skull");
+        
+        // Verify skull visibility - no skulls yet
+        playerB.GetSkull(observer: playerA).Should().Be(Skull.None, "Player A should see Player B with no skull");
+        playerA.GetSkull(observer: playerB).Should().Be(Skull.None, "Player B should see Player A with no skull");
+        
+        // Act - Step 2: Player A (in PvP zone) attacks Player B (not in PvP zone) back
+        playerAttackService.Attack(playerA, playerB);
+
+        // Assert after Step 2
+        playerA.Skull.Should().Be(Skull.White, "Player A should receive white skull when attacking player outside PvP zone");
+        playerA.IsProtectionZoneBlocked.Should().BeTrue("Player A should get PZ block when attacking player outside PvP zone");
+        playerA.HasCondition(ConditionType.LogoutBlock).Should().BeTrue("Player A should have LogoutBlock condition");
+        
+        // Player B should still have no skull
+        playerB.Skull.Should().Be(Skull.None, "Player B should still have no skull");
+        playerB.GetSkull(observer: playerA).Should().Be(Skull.None, "Player A should see Player B with no skull");
+        playerB.GetSkull(observer: playerB).Should().Be(Skull.None, "Player B should see themselves with no skull");
+        
+        // Verify Player A's skull visibility
+        playerA.GetSkull(observer: playerB).Should().Be(Skull.White, "Player B should see Player A with white skull");
+        playerA.GetSkull(observer: playerA).Should().Be(Skull.White, "Player A should see themselves with white skull");
+        
+        // Verify no yellow skull tracking
+        playerA.PlayerSkull.IsYellowSkull(observer: playerB).Should().BeFalse("Player A should not have yellow skull for Player B");
+        playerB.PlayerSkull.IsYellowSkull(observer: playerA).Should().BeFalse("Player B should not have yellow skull for Player A");
     }
 }
