@@ -561,7 +561,7 @@ public class MonsterCombatTest
         player.SetNewLocation(new Location(107, 107, 7));
 
         // Place 8 monsters around the player
-        var surroundingMonsters = new List<NeoServer.Domain.Common.Contracts.Creatures.IMonster>();
+        var surroundingMonsters = new List<IMonster>();
         var positions = new (int x, int y)[]
         {
             (106, 106), (107, 106), (108, 106),

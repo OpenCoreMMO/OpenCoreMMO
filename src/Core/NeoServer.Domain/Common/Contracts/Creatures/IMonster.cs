@@ -1,7 +1,9 @@
 ﻿using NeoServer.Domain.Combat;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
@@ -76,7 +78,7 @@ public interface IMonster : IWalkableMonster, ICombatActor
     void UpdateState();
 
     void Escape();
-    void Born(Location.Structs.Location location);
+    void Born(Location location);
     void CreateSummon(ISummonService summonService);
     void PostAttack(MonsterCombatType type);
     bool IsImmune(Immunity immunity);
