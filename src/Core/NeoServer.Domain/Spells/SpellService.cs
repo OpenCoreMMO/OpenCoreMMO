@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Spells.Events;
 using NeoServer.Domain.World.Models.Tiles;
 
@@ -19,16 +20,7 @@ public class SpellService(
 
         var casterLocation = caster.Location;
 
-        if (target is null)
-        {
-            if (spell.NeedsTarget) target = caster.CurrentTarget;
-
-            if (spell.NeedDirection || spell.NeedCasterTargetOrDirection)
-            {
-                var location = casterLocation.AddDirectionStep(caster.Direction);
-                target = map.GetTile(location) ?? new EmptyTile(location);
-            }
-        }
+        target ??= GetTarget(caster, spell, casterLocation);
 
         var result = spellCastValidation.CanBeCastBy(caster, target, spell);
 
@@ -48,5 +40,26 @@ public class SpellService(
         if (caster is IPlayer player) player.PostSpellCast(spell);
 
         return true;
+    }
+
+    private IThing GetTarget(ICombatActor caster, ISpell spell, Location casterLocation)
+    {
+        if (spell.NeedsTarget)
+        {
+            return caster.CurrentTarget;
+        }
+        
+        if (spell.NeedDirection || spell.NeedCasterTargetOrDirection)
+        {
+            if (spell.NeedCasterTargetOrDirection && caster.CurrentTarget is not null)
+            {
+                return caster.CurrentTarget;
+            }
+
+            var location = casterLocation.AddDirectionStep(caster.Direction);
+            return map.GetTile(location) ?? new EmptyTile(location);
+        }
+
+        return null;
     }
 }
