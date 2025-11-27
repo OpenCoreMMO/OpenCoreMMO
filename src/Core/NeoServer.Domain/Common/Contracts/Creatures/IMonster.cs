@@ -6,7 +6,6 @@ using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
 
-namespace NeoServer.Domain.Common.Contracts.Creatures;
 
 
 public delegate void MonsterChangeState(IMonster monster, MonsterState fromState, MonsterState toState);
