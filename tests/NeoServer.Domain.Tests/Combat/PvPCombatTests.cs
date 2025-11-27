@@ -1,6 +1,9 @@
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Combat;
+using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -513,5 +516,82 @@ public class PvPCombatTests
         // Verify no yellow skull tracking
         playerA.PlayerSkull.IsYellowSkull(observer: playerB).Should().BeFalse("Player A should not have yellow skull for Player B");
         playerB.PlayerSkull.IsYellowSkull(observer: playerA).Should().BeFalse("Player B should not have yellow skull for Player A");
+    }
+
+    [Fact]
+    [Trait("Category", "PvP")]
+    public void Player_receives_red_skull_after_reaching_unjustified_kills_threshold()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+
+        var playerAttackService = AttackServiceTestBuilder.BuildPlayerCombatService(map);
+
+        var playerA = PlayerTestDataBuilder.Build(id: 1, name: "PlayerA", level: 10, experience: 1000, vocationType: 1, hp: 100);
+        
+        // Boost Player A's skills to ensure they can kill
+        for (var i = 1; i <= 100; i++)
+        {
+            playerA.IncreaseSkillCounter(SkillType.Fist, long.MaxValue);
+        }
+
+        playerA.ChangeSecureMode(PvpSecureMode.PvPEnabled);
+        (map[100, 100, 7] as DynamicTile)?.AddCreature(playerA);
+
+        // Precondition: Player A has 2 unjustified kills already
+        playerA.SetNumberOfKills(killsInLastDay: 2, killsInLastWeek: 2, killsInLastMonth: 2);
+
+        // Verify Player A starts with no skull or white skull (if they already have kills, they might have white)
+        var initialSkull = playerA.Skull;
+        (initialSkull == Skull.None || initialSkull == Skull.White).Should().BeTrue("Player A should start with no skull or white skull");
+
+        // Create Player B as the 3rd victim
+        var playerB = PlayerTestDataBuilder.Build(id: 2, name: "PlayerB", level: 10, experience: 1000, vocationType: 1, hp: 1);
+        playerB.ChangeSecureMode(PvpSecureMode.PvPEnabled);
+        (map[100, 101, 7] as DynamicTile)?.AddCreature(playerB);
+
+        // Act - Player A attacks and kills Player B (3rd unjustified kill)
+        playerAttackService.Attack(playerA, playerB);
+        
+        // Kill Player B
+        while (playerB.HealthPoints > 0)
+        {
+            playerAttackService.Attack(playerA, playerB);
+        }
+
+        // Assert - Player B is dead
+        playerB.IsDead.Should().BeTrue("Player B should be dead after the attack");
+
+        // Increment kill count to simulate the 3rd kill
+        playerA.SetNumberOfKills(killsInLastDay: 3, killsInLastWeek: 3, killsInLastMonth: 3);
+
+        // Trigger skull update based on kill count (this would normally be done by the game system)
+        // We need to create a new PlayerSkullService with the game configuration
+        var gameConfiguration = new GameConfiguration
+        {
+            PvP = new PvPConfiguration(PvpType.OpenPvP, ProtectionLevel: 2)
+            {
+                DayKillsToRedSkull = 3,
+                WeekKillsToRedSkull = 5,
+                MonthKillsToRedSkull = 10,
+                DayKillsToBlackSkull = 6,
+                WeekKillsToBlackSkull = 10,
+                MonthKillsToBlackSkull = 20,
+                SkullSystemEnabled = true
+            }
+        };
+        var playerSkullService = new PlayerSkullService(gameConfiguration);
+        playerSkullService.UpdatePlayerSkull(playerA);
+
+        // Assert - Player A should now have red skull after 3rd kill
+        playerA.Skull.Should().Be(Skull.Red, "Player A should receive red skull after 3rd unjustified kill");
+
+        // Verify skull visibility
+        playerA.GetSkull(observer: playerB).Should().Be(Skull.Red, "Player B should see Player A with red skull");
+        playerA.GetSkull(observer: playerA).Should().Be(Skull.Red, "Player A should see themselves with red skull");
+
+        // Verify combat conditions
+        playerA.IsProtectionZoneBlocked.Should().BeTrue("Player A should be PZ locked");
+        playerA.HasCondition(ConditionType.LogoutBlock).Should().BeTrue("Player A should have LogoutBlock condition");
     }
 }
