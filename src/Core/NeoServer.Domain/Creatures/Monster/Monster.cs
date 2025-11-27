@@ -16,6 +16,7 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Parsers;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Events.Monster;
 using NeoServer.Domain.Creatures.Monster.Actions;
 using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Player;
@@ -90,7 +91,18 @@ public class Monster : WalkableMonster, IMonster
         SetNewLocation(location);
         State = MonsterState.Sleeping;
         KilledByAnotherMonster = false;
-        OnWasBorn?.Invoke(this, location);
+        
+        EventAggregator.Invoke(new MonsterWasBornEvent(this, location));
+    }
+
+    public override void OnEnemyAppears(ICombatActor enemy)
+    {
+        if (IsDead) return;
+
+        if (!CanSee(enemy.Location) || !CanSee(enemy)) return;
+        
+        Targets.Add(enemy, hasPriority: true);
+        UpdateState();
     }
 
     public override void OnSpectatorMoved(ICreature spectator)
@@ -102,7 +114,8 @@ public class Monster : WalkableMonster, IMonster
         {
             Targets.Add(target, hasPriority: true);
             base.OnSpectatorMoved(spectator);
-
+            
+            UpdateState();
             return;
         }
 
@@ -114,6 +127,8 @@ public class Monster : WalkableMonster, IMonster
         }
 
         base.OnSpectatorMoved(spectator);
+        
+        UpdateState();
     }
 
     public override void OnSpectatorLoggedOut(ICreature spectator)
@@ -129,6 +144,7 @@ public class Monster : WalkableMonster, IMonster
         }
 
         base.OnSpectatorLoggedOut(spectator);
+        UpdateState();
     }
 
     public override void OnSpectatorDies(ICombatActor spectator)
@@ -143,6 +159,7 @@ public class Monster : WalkableMonster, IMonster
         }
 
         base.OnSpectatorDies(spectator);
+        UpdateState();
     }
 
     public override void OnSpectatorChangedVisibility(ICreature spectator)
@@ -164,8 +181,8 @@ public class Monster : WalkableMonster, IMonster
         }
 
         base.OnSpectatorChangedVisibility(spectator);
+        UpdateState();
     }
-
 
     /// <summary>
     /// Event is triggered before the monster is moved to a new tile.
@@ -601,7 +618,6 @@ public class Monster : WalkableMonster, IMonster
 
     #region Events
 
-    public event Born OnWasBorn;
     public event MonsterChangeState OnChangedState;
 
     #endregion
