@@ -242,7 +242,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
     public abstract bool IsHostileTo(ICombatActor enemy);
 
-    public void OnEnemyAppears(ICombatActor enemy)
+    public virtual void OnEnemyAppears(ICombatActor enemy)
     {
         if (!enemy.IsHostileTo(this)) return;
         SetAsEnemy(enemy);

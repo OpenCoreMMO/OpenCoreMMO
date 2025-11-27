@@ -8,7 +8,6 @@ using NeoServer.Domain.Creatures.Monster.Combat;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
-public delegate void Born(IMonster monster, Location.Structs.Location location);
 
 public delegate void MonsterChangeState(IMonster monster, MonsterState fromState, MonsterState toState);
 
@@ -55,7 +54,6 @@ public interface IMonster : IWalkableMonster, ICombatActor
     bool IsHostile { get; }
     MonsterTargetList Targets { get; set; }
     bool IsPushable { get; }
-    event Born OnWasBorn;
     event MonsterChangeState OnChangedState;
 
     void Reborn();
