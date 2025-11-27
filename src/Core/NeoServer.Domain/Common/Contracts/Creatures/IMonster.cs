@@ -7,7 +7,6 @@ using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
 
 
-
 public delegate void MonsterChangeState(IMonster monster, MonsterState fromState, MonsterState toState);
 
 public interface IMonster : IWalkableMonster, ICombatActor
