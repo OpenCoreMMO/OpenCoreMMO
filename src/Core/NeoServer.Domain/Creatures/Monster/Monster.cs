@@ -184,7 +184,6 @@ public class Monster : WalkableMonster, IMonster
         UpdateState();
     }
 
-
     /// <summary>
     /// Event is triggered before the monster is moved to a new tile.
     /// To get here, all the validation checks must be done.
