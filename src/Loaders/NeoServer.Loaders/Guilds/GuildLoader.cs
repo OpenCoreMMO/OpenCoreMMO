@@ -11,19 +11,9 @@ using Serilog;
 
 namespace NeoServer.Loaders.Guilds;
 
-public class GuildLoader : ICustomLoader
+public class GuildLoader(ILogger logger, ChatChannelFactory chatChannelFactory, IGuildStore guildStore)
+    : ICustomLoader
 {
-    private readonly ChatChannelFactory _chatChannelFactory;
-    private readonly IGuildStore _guildStore;
-    private readonly ILogger _logger;
-
-    public GuildLoader(ILogger logger, ChatChannelFactory chatChannelFactory, IGuildStore guildStore)
-    {
-        _logger = logger;
-        _chatChannelFactory = chatChannelFactory;
-        _guildStore = guildStore;
-    }
-
     public async Task<Guild> LoadAsync(GuildEntity guildEntity)
     {
         if (guildEntity is null) return null;
@@ -37,7 +27,7 @@ public class GuildLoader : ICustomLoader
                 guild.AddRank((ushort)rank.Id, rank.Name, (byte)rank.Level);
 
         // Guild already added to store in GetOrCreateGuildAsync
-        _logger.Debug("Guild {Guild} loaded with {MemberCount} members", guildEntity.Name, guild.MemberCount);
+        logger.Debug("Guild {Guild} loaded with {MemberCount} members", guildEntity.Name, guild.MemberCount);
 
         return guild;
     }
@@ -50,7 +40,7 @@ public class GuildLoader : ICustomLoader
 
     private async Task<Guild> GetOrCreateGuildAsync(GuildEntity guildEntity)
     {
-        var existingGuild = _guildStore.Get((ushort)guildEntity.Id);
+        var existingGuild = guildStore.Get((ushort)guildEntity.Id);
         if (existingGuild != null) return existingGuild;
 
         // Create guild with all properties first
@@ -67,10 +57,10 @@ public class GuildLoader : ICustomLoader
         };
 
         // Add guild to store first so CreateGuildChannel can find it
-        _guildStore.AddOrUpdate(guild.Id, guild);
+        guildStore.AddOrUpdate(guild.Id, guild);
 
         // Now create the guild channel with the complete guild
-        guild.Channel = _chatChannelFactory.CreateGuildChannel($"{guildEntity.Name ?? "Unknown Guild"}'s Channel",
+        guild.Channel = chatChannelFactory.CreateGuildChannel($"{guildEntity.Name ?? "Unknown Guild"}'s Channel",
             (ushort)guildEntity.Id);
 
         return guild;

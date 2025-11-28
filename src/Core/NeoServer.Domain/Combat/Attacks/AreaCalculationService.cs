@@ -7,16 +7,10 @@ using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Combat.Attacks;
 
-public class AffectedTargets
+public class AffectedTargets(List<Location> locations, List<ICreature> creatures)
 {
-    public AffectedTargets(List<Location> locations, List<ICreature> creatures)
-    {
-        Locations = locations;
-        Creatures = creatures;
-    }
-
-    public List<Location> Locations { get; }
-    public List<ICreature> Creatures { get; }
+    public List<Location> Locations { get; } = locations;
+    public List<ICreature> Creatures { get; } = creatures;
 }
 
 public class AreaCalculationService(IMap map)

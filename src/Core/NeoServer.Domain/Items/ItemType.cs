@@ -11,22 +11,14 @@ namespace NeoServer.Domain.Items;
 
 public class ItemType : IItemType
 {
-    public ItemType()
-    {
-        ServerId = 0;
-        Flags = new HashSet<ItemFlag>();
-        Attributes = new ItemTypeAttributeList();
-        Locked = false;
-    }
-
-    public bool Locked { get; private set; }
+    public bool Locked { get; private set; } = false;
     public ushort WareId { get; }
     public LightBlock LightBlock { get; private set; }
 
     /// <summary>
     ///     Server Id
     /// </summary>
-    public ushort ServerId { get; private set; }
+    public ushort ServerId { get; private set; } = 0;
 
     public ushort ClientId { get; private set; }
 
@@ -64,9 +56,9 @@ public class ItemType : IItemType
         ? $"{Name}"
         : $"{Article} {Name}";
 
-    public ISet<ItemFlag> Flags { get; set; }
+    public ISet<ItemFlag> Flags { get; set; } = new HashSet<ItemFlag>();
 
-    public ItemTypeAttributeList Attributes { get; set; }
+    public ItemTypeAttributeList Attributes { get; set; } = new();
     public ItemTypeAttributeList OnUse { get; private set; }
 
     public ushort TransformTo => Attributes.GetTransformationItem();

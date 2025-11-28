@@ -6,17 +6,11 @@ using NeoServer.Domain.Common.Parsers;
 
 namespace NeoServer.Domain.World.Algorithms.AStar;
 
-internal class Node
+internal class Node(ushort x, ushort y)
 {
-    public Node(ushort x, ushort y)
-    {
-        X = x;
-        Y = y;
-    }
-
     public int F { get; set; }
-    public ushort X { get; }
-    public ushort Y { get; }
+    public ushort X { get; } = x;
+    public ushort Y { get; } = y;
     public Node Parent { get; set; }
     public int Heuristic { get; init; }
     public byte ExtraCost { get; init; }

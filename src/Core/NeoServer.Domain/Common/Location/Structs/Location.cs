@@ -3,33 +3,18 @@ using NeoServer.Domain.Creatures.Player.Inventory;
 
 namespace NeoServer.Domain.Common.Location.Structs;
 
-public struct Location : IEquatable<Location>, IConvertible
+public struct Location(ushort x, ushort y, byte z) : IEquatable<Location>, IConvertible
 {
-    public Location(ushort x, ushort y, byte z)
+    public Location(Coordinate coordinate) : this((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z)
     {
-        X = x;
-        Y = y;
-        Z = z;
     }
 
-    public Location(Coordinate coordinate) : this()
+    public Location(Slot slot) : this(0xFFFF, (byte)slot, 0)
     {
-        X = (ushort)coordinate.X;
-        Y = (ushort)coordinate.Y;
-        Z = (byte)coordinate.Z;
     }
 
-    public Location(Slot slot) : this()
+    public Location(int positionIndex) : this(65535, 64, (byte)positionIndex)
     {
-        X = 0xFFFF;
-        Y = (byte)slot;
-    }
-
-    public Location(int positionIndex)
-    {
-        X = 65535;
-        Y = 64;
-        Z = (byte)positionIndex;
     }
 
     public void Update(ushort x, ushort y, byte z)
@@ -40,11 +25,11 @@ public struct Location : IEquatable<Location>, IConvertible
     }
 
     public bool IsHotkey => X == 0xFFFF && Y == 0 && Z == 0;
-    public ushort X { get; set; }
+    public ushort X { get; set; } = x;
 
-    public ushort Y { get; set; }
+    public ushort Y { get; set; } = y;
 
-    public byte Z { get; set; }
+    public byte Z { get; set; } = z;
 
     public bool IsUnderground => Z > 7;
     public bool IsAboveSurface => Z < 7;

@@ -153,18 +153,12 @@ public class CylinderOperation(IMap map)
     }
 }
 
-public class CylinderSpectator : IEqualityComparer<ICylinderSpectator>, ICylinderSpectator
+public class CylinderSpectator(ICreature spectator, byte fromStackPosition, byte toStackPosition)
+    : IEqualityComparer<ICylinderSpectator>, ICylinderSpectator
 {
-    public CylinderSpectator(ICreature spectator, byte fromStackPosition, byte toStackPosition)
-    {
-        FromStackPosition = fromStackPosition;
-        ToStackPosition = toStackPosition;
-        Spectator = spectator;
-    }
-
-    public byte FromStackPosition { get; set; }
-    public byte ToStackPosition { get; set; }
-    public ICreature Spectator { get; }
+    public byte FromStackPosition { get; set; } = fromStackPosition;
+    public byte ToStackPosition { get; set; } = toStackPosition;
+    public ICreature Spectator { get; } = spectator;
 
     public bool Equals(ICylinderSpectator x, ICylinderSpectator y)
     {

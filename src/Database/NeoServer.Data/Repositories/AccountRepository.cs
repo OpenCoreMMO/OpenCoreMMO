@@ -9,14 +9,11 @@ using Serilog;
 
 namespace NeoServer.Data.Repositories;
 
-public class AccountRepository : BaseRepository<AccountEntity>, IAccountRepository
+public class AccountRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger)
+    : BaseRepository<AccountEntity>(contextOptions,
+        logger), IAccountRepository
 {
     #region constructors
-
-    public AccountRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions,
-        logger)
-    {
-    }
 
     #endregion
 

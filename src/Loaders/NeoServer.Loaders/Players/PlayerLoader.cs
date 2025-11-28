@@ -30,41 +30,29 @@ using Serilog;
 
 namespace NeoServer.Loaders.Players;
 
-public class PlayerLoader : IPlayerLoader
+[method: SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
+public class PlayerLoader(
+    IItemFactory itemFactory,
+    ICreatureFactory creatureFactory,
+    ChatChannelFactory chatChannelFactory,
+    IGuildStore guildStore,
+    IVocationStore vocationStore,
+    IGroupStore groupStore,
+    IMapTool mapTool,
+    Domain.World.World world,
+    ILogger logger,
+    GameConfiguration gameConfiguration)
+    : IPlayerLoader
 {
-    private readonly GameConfiguration _gameConfiguration;
-    protected readonly ChatChannelFactory ChatChannelFactory;
-    protected readonly ICreatureFactory CreatureFactory;
-    protected readonly IGroupStore GroupStore;
-    protected readonly IGuildStore GuildStore;
-    protected readonly IItemFactory ItemFactory;
-    protected readonly ILogger Logger;
-    protected readonly IMapTool MapTool;
-    protected readonly IVocationStore VocationStore;
-    protected readonly Domain.World.World World;
-
-    [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
-    public PlayerLoader(IItemFactory itemFactory, ICreatureFactory creatureFactory,
-        ChatChannelFactory chatChannelFactory,
-        IGuildStore guildStore,
-        IVocationStore vocationStore,
-        IGroupStore groupStore,
-        IMapTool mapTool,
-        Domain.World.World world,
-        ILogger logger,
-        GameConfiguration gameConfiguration)
-    {
-        ItemFactory = itemFactory;
-        CreatureFactory = creatureFactory;
-        ChatChannelFactory = chatChannelFactory;
-        GuildStore = guildStore;
-        VocationStore = vocationStore;
-        GroupStore = groupStore;
-        MapTool = mapTool;
-        World = world;
-        Logger = logger;
-        _gameConfiguration = gameConfiguration;
-    }
+    protected readonly ChatChannelFactory ChatChannelFactory = chatChannelFactory;
+    protected readonly ICreatureFactory CreatureFactory = creatureFactory;
+    protected readonly IGroupStore GroupStore = groupStore;
+    protected readonly IGuildStore GuildStore = guildStore;
+    protected readonly IItemFactory ItemFactory = itemFactory;
+    protected readonly ILogger Logger = logger;
+    protected readonly IMapTool MapTool = mapTool;
+    protected readonly IVocationStore VocationStore = vocationStore;
+    protected readonly Domain.World.World World = world;
 
     public virtual bool IsApplicable(PlayerEntity player)
     {
@@ -130,7 +118,7 @@ public class PlayerLoader : IPlayerLoader
             LastLogOut = playerEntity.LastLogOut
         };
 
-        if (!_gameConfiguration.StaminaEnabled) player.Group.EnableFlag(PlayerFlag.IgnoreStamina);
+        if (!gameConfiguration.StaminaEnabled) player.Group.EnableFlag(PlayerFlag.IgnoreStamina);
 
         player.PlayerSkull = new PlayerSkull(player, playerEntity.Skull, playerEntity.SkullEndsAt);
 
@@ -234,35 +222,35 @@ public class PlayerLoader : IPlayerLoader
         return new Dictionary<SkillType, ISkill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, (ushort)playerRecord.SkillAxe, playerRecord.SkillAxeTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["axe"] },
+                { GetIncreaseRate = () => gameConfiguration.SkillsRate["axe"] },
 
             [SkillType.Club] = new Skill(SkillType.Club, (ushort)playerRecord.SkillClub, playerRecord.SkillClubTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["club"] },
+                { GetIncreaseRate = () => gameConfiguration.SkillsRate["club"] },
 
             [SkillType.Distance] = new Skill(SkillType.Distance, (ushort)playerRecord.SkillDist,
                     playerRecord.SkillDistTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["distance"] },
+                { GetIncreaseRate = () => gameConfiguration.SkillsRate["distance"] },
 
             [SkillType.Fishing] = new Skill(SkillType.Fishing, (ushort)playerRecord.SkillFishing,
                     playerRecord.SkillFishingTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["fishing"] },
+                { GetIncreaseRate = () => gameConfiguration.SkillsRate["fishing"] },
 
             [SkillType.Fist] = new Skill(SkillType.Fist, (ushort)playerRecord.SkillFist, playerRecord.SkillFistTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["fist"] },
+                { GetIncreaseRate = () => gameConfiguration.SkillsRate["fist"] },
 
             [SkillType.Shielding] = new Skill(SkillType.Shielding, (ushort)playerRecord.SkillShielding,
                     playerRecord.SkillShieldingTries)
-                { GetIncreaseRate = () => _gameConfiguration.SkillsRate["shielding"] },
+                { GetIncreaseRate = () => gameConfiguration.SkillsRate["shielding"] },
 
             [SkillType.Level] = new Skill(SkillType.Level, playerRecord.Level, playerRecord.Experience),
 
             [SkillType.Magic] =
                 new Skill(SkillType.Magic, (ushort)playerRecord.MagicLevel, playerRecord.MagicLevelTries)
-                    { GetIncreaseRate = () => _gameConfiguration.SkillsRate["magic"] },
+                    { GetIncreaseRate = () => gameConfiguration.SkillsRate["magic"] },
 
             [SkillType.Sword] =
                 new Skill(SkillType.Sword, (ushort)playerRecord.SkillSword, playerRecord.SkillSwordTries)
-                    { GetIncreaseRate = () => _gameConfiguration.SkillsRate["sword"] }
+                    { GetIncreaseRate = () => gameConfiguration.SkillsRate["sword"] }
         };
     }
 

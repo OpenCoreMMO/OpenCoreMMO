@@ -18,15 +18,12 @@ namespace NeoServer.Data.Repositories.Player;
 /// <summary>
 ///     Repository class for managing PlayerDepotItem entity.
 /// </summary>
-public class PlayerMailItemRepository : BaseRepository<PlayerMailItemEntity>,
-    IPlayerMailItemRepository, IPlayerMailRepository
+public class PlayerMailItemRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger)
+    : BaseRepository<PlayerMailItemEntity>(contextOptions,
+            logger),
+        IPlayerMailItemRepository, IPlayerMailRepository
 {
     #region constructors
-
-    public PlayerMailItemRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions,
-        logger)
-    {
-    }
 
     #endregion
 

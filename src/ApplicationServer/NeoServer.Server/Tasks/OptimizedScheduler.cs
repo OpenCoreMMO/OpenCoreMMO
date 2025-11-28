@@ -7,16 +7,11 @@ using NeoServer.Server.Common.Contracts.Tasks;
 
 namespace NeoServer.Server.Tasks;
 
-public class OptimizedScheduler : Scheduler
+public class OptimizedScheduler(IDispatcher dispatcher) : Scheduler(dispatcher)
 {
-    private readonly IDispatcher _dispatcher;
+    private readonly IDispatcher _dispatcher = dispatcher;
     private readonly ConcurrentQueue<ISchedulerEvent> _preQueue = new();
     private readonly SemaphoreSlim _preQueueSemaphore = new(0);
-
-    public OptimizedScheduler(IDispatcher dispatcher) : base(dispatcher)
-    {
-        _dispatcher = dispatcher;
-    }
 
     public override void Start(CancellationToken token)
     {

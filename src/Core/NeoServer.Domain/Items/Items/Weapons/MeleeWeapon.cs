@@ -15,16 +15,13 @@ using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items.Weapons;
 
-public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDefense
+public class MeleeWeapon(
+    IItemType itemType,
+    Location location,
+    IDictionary<ItemAttribute, IConvertible> itemAttributes = null)
+    : Equipment(itemType, location), IWeapon, IUsableOnItem, IHasAttack, IHasDefense
 {
-    public MeleeWeapon(
-        IItemType itemType,
-        Location location,
-        IDictionary<ItemAttribute, IConvertible> itemAttributes = null) : base(itemType, location)
-    {
-        //AllowedVocations  todo
-        WeaponAttack = new WeaponAttack(itemType, itemAttributes);
-    }
+    //AllowedVocations  todo
 
     protected override string PartialInspectionText
     {
@@ -41,7 +38,7 @@ public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDe
         }
     }
 
-    public WeaponAttack WeaponAttack { get; } //todo: rename to Attack
+    public WeaponAttack WeaponAttack { get; } = new(itemType, itemAttributes); //todo: rename to Attack
 
     public virtual bool CanUseOn(ushort[] items, IItem onItem)
     {
