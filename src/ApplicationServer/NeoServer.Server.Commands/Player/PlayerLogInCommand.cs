@@ -67,14 +67,16 @@ public class PlayerLogInCommand(
             return (false,
                 $"Your IP address {existBan.Ip} has been banished until {existBan.ExpiresAt:MM/dd/yyyy}.\nReason: {existBan.Reason}");
 
-        var playerOnline = await accountRepository.GetOnlinePlayer(request.Account);
-        if (playerOnline is not null)
+        var playersOnline = await accountRepository.GetOnlinePlayers(request.Account);
+
+        foreach (var playerOnline in playersOnline)
         {
             game.CreatureManager.TryGetLoggedPlayer((uint)playerOnline.Id, out var existingPlayer);
             if (existingPlayer?.Name == request.CharacterName)
             {
                 game.CreatureManager.GetPlayerConnection(existingPlayer.CreatureId, out var existingConnection);
                 existingConnection?.Disconnect();
+                logger.Warning("Player {PlayerName} logged out because of another login attempt", existingPlayer.Name);
             }
             else if (!playerOnline.Account.AllowManyOnline)
             {
@@ -118,7 +120,7 @@ public class PlayerLogInCommand(
 
         if (!playerAlreadyLoggedIn)
         {
-            guildLoader.Load(playerRecord.GuildMember?.Guild);
+            await guildLoader.LoadAsync(playerRecord.GuildMember?.Guild);
 
             var playerLocation = playerLocationResolver.GetPlayerLocation(playerRecord);
             if (playerLocation == Location.Zero) return (false, "Player location invalid");

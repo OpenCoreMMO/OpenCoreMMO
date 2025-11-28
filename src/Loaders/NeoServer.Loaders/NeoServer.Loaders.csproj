@@ -10,7 +10,6 @@
 
     <ItemGroup>
         <PackageReference Include="serilog" Version="4.3.0"/>
-        <PackageReference Include="System.Text.Json" Version="9.0.6"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -31,7 +30,7 @@
     </ItemGroup>
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Platforms>AnyCPU;x64</Platforms>
         <IsPublishable>false</IsPublishable>
     </PropertyGroup>

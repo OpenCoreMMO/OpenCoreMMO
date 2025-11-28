@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -70,14 +71,15 @@ public class AccountRepository(DbContextOptions<NeoContext> contextOptions, ILog
         return result;
     }
 
-    public async Task<PlayerEntity> GetOnlinePlayer(string accountName)
+    public async Task<IList<PlayerEntity>> GetOnlinePlayers(string accountName)
     {
         await using var context = NewDbContext;
 
         return await context.Players
             .Include(x => x.Account)
             .Where(x => x.Account.EmailAddress.Equals(accountName) && x.Online)
-            .FirstOrDefaultAsync();
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     #endregion

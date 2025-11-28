@@ -39,7 +39,7 @@
 ## Usage
 
 ```sh
-download and install .NET 9: https://dotnet.microsoft.com/download/dotnet/9.0
+download and install .NET 10: https://dotnet.microsoft.com/download/dotnet/10.0
 git clone https://github.com/OpenCoreMMO/OpenCoreMMO.git
 cd src
 dotnet run --project "Standalone"
@@ -139,7 +139,7 @@ To connect to the self-hosted server for development, please use the following c
 ## Links
 
 * Documentation: https://opencoremmo.gitbook.io/opencoremmo/
-* Discord Invite: https://discord.gg/Kazq9z2
+* Discord Invite: [https://discord.gg/Kazq9z2](https://discord.gg/XYkaxyxc)
 * Lua Scripting (Revscript) Functions Readme: https://github.com/OpenCoreMMO/OpenCoreMMO/tree/develop/data#readme
 
 ## Author

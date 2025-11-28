@@ -2,6 +2,7 @@
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Results;
 
 namespace NeoServer.Domain.Creatures.Monster.Summon;
 
@@ -47,6 +48,18 @@ public class Summon : Monster
         if (Master is ICombatActor { CurrentTarget: null }) return;
 
         base.SetAsEnemy(creature);
+    }
+
+    public override Result SetAttackTarget(ICreature target)
+    {
+        if (IsDead) return Result.NotPossible;
+        if (Master is not null && Master.Equals(target)) return Result.NotPossible;
+        if (target is Summon { Master: not null } summon && summon.Master.Equals(Master)) return Result.NotPossible;
+
+        //Summon should not attack if the master has no target
+        if (Master is ICombatActor { CurrentTarget: null }) return Result.NotPossible;
+        
+        return base.SetAttackTarget(target);
     }
 
     public override void Born(Location location)

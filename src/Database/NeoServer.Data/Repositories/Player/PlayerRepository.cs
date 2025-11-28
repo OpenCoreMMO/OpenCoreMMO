@@ -18,9 +18,9 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
     : BaseRepository<PlayerEntity>(contextOptions,
         logger), IPlayerRepository, Domain.Repositories.IPlayerRepository
 {
-    public async Task UpdateAllPlayersToOffline()
+    public async Task UpdateAllPlayersToOfflineAsync()
     {
-        const string sql = "UPDATE Player SET Online = 0";
+        const string sql = "UPDATE Player SET Online = false";
 
         await using var context = NewDbContext;
 
