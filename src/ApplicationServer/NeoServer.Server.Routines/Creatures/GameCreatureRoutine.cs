@@ -66,21 +66,6 @@ public class GameCreatureRoutine(
         }
 
         RespawnRoutine.Execute(spawnManager);
-
-        // foreach (var creature in game.CreatureManager.GetCreatures())
-        // {
-        //     if (creature is null or ICombatActor { IsDead: true }) continue;
-        //     if (!creature.IsThinking()) continue;
-        //
-        //     creature.Think(EVENT_CREATURE_THINK_INTERVAL);
-        //
-        //     CheckPlayer(creature);
-        //     CheckCreature(creature);
-        //     CheckMonster(creature);
-        //     CheckNpc(creature);
-        //
-        //     RespawnRoutine.Execute(spawnManager);
-        // }
     }
 
     private static void CheckCreature(ICreature creature)
