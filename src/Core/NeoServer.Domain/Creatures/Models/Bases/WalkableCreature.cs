@@ -14,6 +14,8 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
     protected readonly IMapTool MapTool;
     private uint _lastStepCost = 1;
+    private uint _walkUpdateTicks;
+    private bool _forceUpdateFollowPath;
 
     protected WalkableCreature(ICreatureType type,
         IMapTool mapTool,
@@ -100,7 +102,26 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
         Following = null;
         HasFollowPath = false;
+        _walkUpdateTicks = 0;
+        _forceUpdateFollowPath = false;
         StopWalking();
+    }
+
+    public override void Think(int interval)
+    {
+        base.Think(interval);
+
+        if (IsFollowing)
+        {
+            _walkUpdateTicks += (uint)interval;
+
+            if (_forceUpdateFollowPath || _walkUpdateTicks >= 2000)
+            {
+                _walkUpdateTicks = 0;
+                _forceUpdateFollowPath = false;
+                Follow(Following);
+            }
+        }
     }
 
     public virtual void Follow(ICreature creature)
@@ -119,6 +140,12 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         if (Speed == 0) return;
         if (creature is null) return;
 
+        if (!CanSee(creature.Location))
+        {
+            StopFollowing();
+            return;
+        }
+
         if (IsFollowing)
         {
             Following = creature;
@@ -127,6 +154,8 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         }
 
         Following = creature;
+        _forceUpdateFollowPath = false;
+        
         StartFollowing(creature);
         OnStartedFollowing?.Invoke(this, creature, fpp);
     }
@@ -273,12 +302,26 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         return MapTool.PathFinder.FindRandomStep(this, TileEnterRule, origin, maxStepsFromOrigin);
     }
 
+    public override void OnSpectatorMoved(ICreature spectator)
+    {
+        if (Equals(spectator, Following)) //followed creature moved
+        {
+            // If we have no more steps in our walk queue, immediately recalculate the follow path
+            if (!HasNextStep && HasFollowPath)
+            {
+                _forceUpdateFollowPath = false;
+                Follow(Following);
+            }
+            else
+            {
+                _forceUpdateFollowPath = true;
+            }
+        }
+    }
+
     public bool TryUpdatePath(Direction[] newPath)
     {
         if (newPath.Length == 0) return false;
-        if (!Cooldowns.Expired(CooldownType.UpdatePath)) return false;
-
-        Cooldowns.Start(CooldownType.UpdatePath, 1000);
 
         TryWalkTo(newPath);
 

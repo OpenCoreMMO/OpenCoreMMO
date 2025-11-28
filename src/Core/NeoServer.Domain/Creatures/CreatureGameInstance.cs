@@ -5,16 +5,25 @@ namespace NeoServer.Domain.Creatures;
 
 public class CreatureGameInstance : ICreatureGameInstance
 {
-    private readonly Dictionary<uint, ICreature> _creatures;
+    private readonly List<ICreature> _creaturesArray;
+    private readonly Dictionary<uint, int> _creatures;
 
-    private readonly Dictionary<uint, Tuple<IMonster, TimeSpan>> _killedMonsters;
-    private readonly Dictionary<uint, IPlayer> _playersLogged;
+    private readonly List<Tuple<IMonster, TimeSpan>> _killedMonstersArray;
+    private readonly Dictionary<uint, int> _killedMonsters;
+    
+    private readonly List<IPlayer> _playersLoggedArray;
+    private readonly Dictionary<uint, int> _playersLogged;
 
     public CreatureGameInstance()
     {
-        _creatures = new Dictionary<uint, ICreature>();
-        _killedMonsters = new Dictionary<uint, Tuple<IMonster, TimeSpan>>();
-        _playersLogged = new Dictionary<uint, IPlayer>();
+        _creaturesArray = new List<ICreature>();
+        _creatures = new Dictionary<uint, int>();
+        
+        _killedMonstersArray = new List<Tuple<IMonster, TimeSpan>>();
+        _killedMonsters = new Dictionary<uint, int>();
+        
+        _playersLoggedArray = new List<IPlayer>();
+        _playersLogged = new Dictionary<uint, int>();
 
         Instance ??= this;
     }
@@ -25,27 +34,44 @@ public class CreatureGameInstance : ICreatureGameInstance
     {
         if (!monster.BornFromSpawn) return;
 
-        _killedMonsters.TryAdd(monster.CreatureId, new Tuple<IMonster, TimeSpan>(monster, DateTime.UtcNow.TimeOfDay));
+        if (!_killedMonsters.ContainsKey(monster.CreatureId))
+        {
+            var tuple = new Tuple<IMonster, TimeSpan>(monster, DateTime.UtcNow.TimeOfDay);
+            _killedMonstersArray.Add(tuple);
+            _killedMonsters.TryAdd(monster.CreatureId, _killedMonstersArray.Count - 1);
+        }
     }
 
     public bool TryGetCreature(uint id, out ICreature creature)
     {
-        return _creatures.TryGetValue(id, out creature);
+        creature = null;
+        if (_creatures.TryGetValue(id, out var index) && index < _creaturesArray.Count)
+        {
+            creature = _creaturesArray[index];
+            return creature != null;
+        }
+        return false;
     }
 
     public bool TryGetPlayer(uint playerId, out IPlayer player)
     {
-        return _playersLogged.TryGetValue(playerId, out player);
+        player = null;
+        if (_playersLogged.TryGetValue(playerId, out var index) && index < _playersLoggedArray.Count)
+        {
+            player = _playersLoggedArray[index];
+            return player != null;
+        }
+        return false;
     }
 
     public IEnumerable<ICreature> All()
     {
-        return [.._creatures.Values];
+        return _creaturesArray;
     }
 
     public IEnumerable<IPlayer> AllLoggedPlayers()
     {
-        return _playersLogged.Values;
+        return _playersLoggedArray;
     }
 
     public int CountOnlinePlayers()
@@ -55,51 +81,111 @@ public class CreatureGameInstance : ICreatureGameInstance
 
     public ImmutableList<Tuple<IMonster, TimeSpan>> AllKilledMonsters()
     {
-        return _killedMonsters.Values.ToImmutableList();
+        return _killedMonstersArray.ToImmutableList();
     }
 
     public void Add(ICreature creature)
     {
-        if (!_creatures.TryAdd(creature.CreatureId, creature))
+        if (!_creatures.ContainsKey(creature.CreatureId))
+        {
+            _creaturesArray.Add(creature);
+            if (!_creatures.TryAdd(creature.CreatureId, _creaturesArray.Count - 1))
+                // TODO: proper logging
+                Console.WriteLine($"WARNING: Failed to add {creature.Name} to the global dictionary.");
+        }
+        else
+        {
             // TODO: proper logging
             Console.WriteLine($"WARNING: Failed to add {creature.Name} to the global dictionary.");
+        }
     }
 
     public void AddPlayer(IPlayer player)
     {
-        if (!_playersLogged.TryAdd(player.Id, player))
+        if (!_playersLogged.ContainsKey(player.Id))
+        {
+            _playersLoggedArray.Add(player);
+            if (!_playersLogged.TryAdd(player.Id, _playersLoggedArray.Count - 1))
+                // TODO: proper logging
+                Console.WriteLine($"WARNING: Failed to add {player.Name} to the global dictionary.");
+        }
+        else
+        {
             // TODO: proper logging
             Console.WriteLine($"WARNING: Failed to add {player.Name} to the global dictionary.");
+        }
     }
 
     public bool TryRemoveFromKilledMonsters(uint id)
     {
-        if (!_killedMonsters.Remove(id, out var creature))
+        if (_killedMonsters.TryGetValue(id, out var index))
         {
-            // TODO: proper logging
-            Console.WriteLine(
-                $"WARNING: Failed to remove {creature.Item1.Name} from the killed monsters dictionary.");
-            return false;
+            var lastIndex = _killedMonstersArray.Count - 1;
+            
+            if (index < lastIndex)
+            {
+                // Swap with last element
+                var lastItem = _killedMonstersArray[lastIndex];
+                _killedMonstersArray[index] = lastItem;
+                
+                // Update the dictionary for the swapped item
+                _killedMonsters[lastItem.Item1.CreatureId] = index;
+            }
+            
+            // Remove last element
+            _killedMonstersArray.RemoveAt(lastIndex);
+            _killedMonsters.Remove(id);
+            return true;
         }
-
-        return true;
+        
+        return false;
     }
 
     public bool TryRemove(uint id)
     {
-        if (!_creatures.Remove(id, out var creature))
-            // TODO: proper logging
-            // Console.WriteLine($"WARNING: Failed to remove {creature.Name} from the global dictionary.");
-            return false;
-        return true;
+        if (_creatures.TryGetValue(id, out var index))
+        {
+            var lastIndex = _creaturesArray.Count - 1;
+            
+            if (index < lastIndex)
+            {
+                // Swap with last element
+                var lastItem = _creaturesArray[lastIndex];
+                _creaturesArray[index] = lastItem;
+                
+                // Update the dictionary for the swapped item
+                _creatures[lastItem.CreatureId] = index;
+            }
+            
+            // Remove last element
+            _creaturesArray.RemoveAt(lastIndex);
+            _creatures.Remove(id);
+            return true;
+        }
+        return false;
     }
 
     public bool TryRemoveFromLoggedPlayers(uint id)
     {
-        if (!_playersLogged.Remove(id, out var player))
-            // TODO: proper logging
-            // Console.WriteLine($"WARNING: Failed to remove {creature.Name} from the global dictionary.");
-            return false;
-        return true;
+        if (_playersLogged.TryGetValue(id, out var index))
+        {
+            var lastIndex = _playersLoggedArray.Count - 1;
+            
+            if (index < lastIndex)
+            {
+                // Swap with last element
+                var lastItem = _playersLoggedArray[lastIndex];
+                _playersLoggedArray[index] = lastItem;
+                
+                // Update the dictionary for the swapped item
+                _playersLogged[lastItem.Id] = index;
+            }
+            
+            // Remove last element
+            _playersLoggedArray.RemoveAt(lastIndex);
+            _playersLogged.Remove(id);
+            return true;
+        }
+        return false;
     }
 }

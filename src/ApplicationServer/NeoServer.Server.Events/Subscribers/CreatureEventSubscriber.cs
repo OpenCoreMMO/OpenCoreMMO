@@ -12,7 +12,6 @@ public class CreatureEventSubscriber(
     CreatureStartedWalkingEventHandler creatureStartedWalkingEventHandler,
     CreatureHealedEventHandler creatureHealedEventHandler,
     CreatureChangedAttackTargetEventHandler creatureChangedAttackTargetEventHandler,
-    CreatureStartedFollowingEventHandler creatureStartedFollowingEventHandler,
     CreatureChangedSpeedEventHandler creatureChangedSpeedEventHandler,
     CreatureHearEventHandler creatureHearEventHandler,
     CreatureChangedOutfitEventHandler creatureChangedOutfitEventHandler,
@@ -39,7 +38,6 @@ public class CreatureEventSubscriber(
 
         if (creature is IWalkableCreature walkableCreature)
         {
-            walkableCreature.OnStartedFollowing += creatureStartedFollowingEventHandler.Execute;
             walkableCreature.OnChangedSpeed += creatureChangedSpeedEventHandler.Execute;
             walkableCreature.OnStartedWalking += creatureStartedWalkingEventHandler.Execute;
             walkableCreature.OnTurnedToDirection += creatureTurnToDirectionEventHandler.Execute;
@@ -61,7 +59,6 @@ public class CreatureEventSubscriber(
 
         if (creature is IWalkableCreature walkableCreature)
         {
-            walkableCreature.OnStartedFollowing -= creatureStartedFollowingEventHandler.Execute;
             walkableCreature.OnChangedSpeed -= creatureChangedSpeedEventHandler.Execute;
             walkableCreature.OnTurnedToDirection -= creatureTurnToDirectionEventHandler.Execute;
             walkableCreature.OnStartedWalking -= creatureStartedWalkingEventHandler.Execute;
