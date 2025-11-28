@@ -1,12 +1,14 @@
 using Moq;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
+using NeoServer.Domain.Creatures.Monster.Services;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -254,5 +256,37 @@ public class SummonTests
         // Assert
         master.Summons.Should().Contain(summon as Domain.Creatures.Monster.Summon.Summon,
             "Summon should not be dismissed when master is within 40 sqms and same floor");
+    }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void Summon_does_not_attack_master_when_set_as_enemy()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+        
+        var master = PlayerTestDataBuilder.Build();
+        master.SetNewLocation(new Location(105, 105, 7));
+        
+        var summon = MonsterTestDataBuilder.BuildSummon(master);
+        summon.SetNewLocation(new Location(104, 105, 7));
+
+        map.PlaceCreature(master);
+        map.PlaceCreature(summon);
+
+        var summonServiceMock = new Mock<ISummonService>();
+        var targetDetectorService = new TargetDetectorService(map);
+        var pathFinder = new PathFinder(map);
+        var monsterTargetingService = new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, pathFinder)));
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, targetDetectorService, monsterTargetingService);
+
+        // Act
+        monsterStateService.UpdateState(summon);
+        summon.SetAttackTarget(master);
+
+        // Assert
+        summon.Targets.HasTarget(master).Should().BeFalse("Summon should never add its master as a target");
+        summon.CurrentTarget.Should().NotBe(master, "Summon should never target its master");
+        summon.Attacking.Should().BeFalse("Summon should not be attacking when trying to attack master");
     }
 }
