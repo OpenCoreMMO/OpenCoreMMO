@@ -99,7 +99,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
                 return 1;
             }
         }
-        else if (dynamicTile.AllItems.Count() >= index + 1)
+        else if (dynamicTile.AllItems.Length >= index + 1)
         {
             var item = dynamicTile.AllItems[index];
 

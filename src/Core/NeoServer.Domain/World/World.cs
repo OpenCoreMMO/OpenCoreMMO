@@ -17,8 +17,8 @@ public class World
     private readonly ConcurrentDictionary<Coordinate, ITown> towns = new();
     private readonly ConcurrentDictionary<Coordinate, IWaypoint> waypoints = new();
     public int LoadedTilesCount { get; private set; }
-    public int LoadedTownsCount => towns.Count();
-    public int LoadedWaypointsCount => waypoints.Count();
+    public int LoadedTownsCount => towns.Count;
+    public int LoadedWaypointsCount => waypoints.Count;
 
     public ImmutableList<ISpawn> Spawns { get; private set; }
 

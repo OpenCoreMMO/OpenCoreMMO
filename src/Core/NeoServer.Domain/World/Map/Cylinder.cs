@@ -23,7 +23,7 @@ public class CylinderOperation(IMap map)
         var spectators = map.GetCreaturesAtPositionZone(thing.Location, thing.Location);
 
         var tile = map[thing.Location];
-        var tileSpectators = new ICylinderSpectator[spectators.Count()];
+        var tileSpectators = new ICylinderSpectator[spectators.Count];
 
         var index = 0;
         foreach (var spectator in spectators)
