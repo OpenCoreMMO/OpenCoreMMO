@@ -11,8 +11,6 @@ namespace NeoServer.Domain.Items.Factories;
 
 public class ContainerFactory : IFactory
 {
-    public event CreateItem OnItemCreated;
-
     public IItem Create(IItemType itemType, Location location, IEnumerable<IItem> children)
     {
         if (Locker.Locker.IsApplicable(itemType)) return new Locker.Locker(itemType, location, children);

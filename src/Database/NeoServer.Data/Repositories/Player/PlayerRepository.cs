@@ -18,10 +18,6 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
     : BaseRepository<PlayerEntity>(contextOptions,
         logger), IPlayerRepository, Domain.Repositories.IPlayerRepository
 {
-    #region constructors
-
-    #endregion
-
     public async Task UpdateAllPlayersToOffline()
     {
         const string sql = "UPDATE Player SET Online = 0";

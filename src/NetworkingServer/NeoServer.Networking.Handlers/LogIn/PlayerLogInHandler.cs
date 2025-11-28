@@ -6,11 +6,11 @@ using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
 using NeoServer.Server.Common.Enums;
 using NeoServer.Server.Tasks;
-using Serilog.Core;
+using Serilog;
 
 namespace NeoServer.Networking.Handlers.LogIn;
 
-public class PlayerLogInHandler(IGameServer game, PlayerLogInCommand playerLogInCommand, Logger logger) : PacketHandler
+public class PlayerLogInHandler(IGameServer game, PlayerLogInCommand playerLogInCommand, ILogger logger) : PacketHandler
 {
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {

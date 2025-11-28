@@ -464,10 +464,8 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, IOutfit 
     public event StopAttack OnStoppedAttack;
     public event StopAttack OnAttackCanceled;
     public event BlockAttack OnBlockedAttack;
-    public event Attack OnAttackEnemy;
     public event BeforeDeath OnBeforeDeath;
     public event AttackTargetChange OnTargetChanged;
-    public event ChangeVisibility OnChangedVisibility;
     public event PropagateAttack OnPropagateAttack;
     public event GainExperience OnGainedExperience;
     public event LoseExperience OnLoseExperience;

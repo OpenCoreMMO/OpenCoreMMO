@@ -28,7 +28,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
     internal CooldownList Cooldowns { get; } = new();
     public bool HasFollowPath { get; private set; }
-    public virtual FindPathParams PathSearchParams => new(!HasFollowPath, true, true, false, 12, 1, 1, false);
+    public virtual FindPathParams PathSearchParams => new(!HasFollowPath, true, true, false, 12, 1, 1);
     public virtual ushort RawSpeed { get; protected set; }
 
     public virtual ITileEnterRule TileEnterRule => PlayerEnterTileRule.Rule;

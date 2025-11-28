@@ -6,7 +6,9 @@ namespace NeoServer.Domain.Items;
 
 public class BaseAttributeList<T> where T : Enum
 {
-    protected readonly IDictionary<T, (dynamic, BaseAttributeList<T>)> _defaultAttributes = new Dictionary<T, (dynamic, BaseAttributeList<T>)>();
+    protected readonly IDictionary<T, (dynamic, BaseAttributeList<T>)> _defaultAttributes =
+        new Dictionary<T, (dynamic, BaseAttributeList<T>)>();
+
     protected IDictionary<string, (dynamic, BaseAttributeList<T>)> customAttributes;
 
     protected IDictionary<string, (dynamic, BaseAttributeList<T>)> _customAttributes

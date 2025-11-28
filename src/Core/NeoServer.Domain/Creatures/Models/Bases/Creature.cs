@@ -41,10 +41,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     protected virtual string CloseInspectionText => $"{Name}.";
     public Direction LastDirection { get; protected set; }
 
-    public byte Skull { get; protected set; } // TODO: implement.
-
-    public event RemoveCreature OnCreatureRemoved;
-
     public event ChangeOutfit OnChangedOutfit;
     public event Say OnSay;
 

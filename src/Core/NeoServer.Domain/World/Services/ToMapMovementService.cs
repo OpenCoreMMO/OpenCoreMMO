@@ -56,7 +56,7 @@ public class ToMapMovementService(
 
         if (fromTile.TopCreatureOnStack is { } creature && !ReferenceEquals(creature, player))
         {
-            var finalTile = (DynamicTile)mapService.GetFinalTile(toTile.Location);
+            _ = (DynamicTile)mapService.GetFinalTile(toTile.Location);
             creaturePushService.PushCreature(player, creature, toTile);
         }
     }

@@ -331,7 +331,7 @@ public class MonsterCombatTest
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(102, 102, 7));
 
-        var monster = MonsterTestDataBuilder.Build(100) as Domain.Creatures.Monster.Monster;
+        var monster = MonsterTestDataBuilder.Build() as Domain.Creatures.Monster.Monster;
         monster.Metadata.Flags[CreatureFlagAttribute.RunOnHealth] = 50; // Set run on health to 50
         monster.SetNewLocation(new Location(103, 102, 7));
         // Simulate damage to reduce health below 50 to trigger fleeing
@@ -466,7 +466,7 @@ public class MonsterCombatTest
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(101, 102, 7));
 
-        var monster = MonsterTestDataBuilder.Build(100) as Domain.Creatures.Monster.Monster;
+        var monster = MonsterTestDataBuilder.Build() as Domain.Creatures.Monster.Monster;
         monster.Metadata.Flags[CreatureFlagAttribute.RunOnHealth] = 50; // Set run on health to 50
         monster.SetNewLocation(new Location(102, 102, 7));
 

@@ -46,7 +46,7 @@ public class Player : CombatActor, IPlayer
 {
     private const int KNOWN_CREATURE_LIMIT = 250; //todo: for version 8.60
 
-    private uint _idleTime;
+
     private byte _soulPoints;
 
     public Player(
@@ -146,6 +146,7 @@ public class Player : CombatActor, IPlayer
 
     public IPlayerHand PlayerHand { get; }
 
+    public uint IdleTime { get; private set; }
     public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
 
     public uint LoggedOutTotalMinutes => !LastLogIn.HasValue || !LastLogOut.HasValue
@@ -1502,10 +1503,9 @@ public class Player : CombatActor, IPlayer
         RemoveCondition(ConditionType.Hungry);
     }
 
-
     public void ResetIdleTime()
     {
-        _idleTime = 0;
+        IdleTime = 0;
     }
 
     public bool CanMoveThing(Location location)
@@ -1826,11 +1826,8 @@ public class Player : CombatActor, IPlayer
     public event PlayerLevelRegress OnLevelRegressed;
     public event PlayerGainSkillPoint OnGainedSkillPoint;
     public event ReduceMana OnStatusChanged;
-    public event CannotUseSpell OnCannotUseSpell;
     public event LookAt OnLookedAt;
-    public event UseSpell OnUsedSpell;
     public event UseItem OnUsedItem;
-    public event LogIn OnLoggedIn;
     public event ChangeOnlineStatus OnChangedOnlineStatus;
     public event SendMessageTo OnSentMessage;
 

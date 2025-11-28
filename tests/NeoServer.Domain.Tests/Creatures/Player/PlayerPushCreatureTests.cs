@@ -17,8 +17,8 @@ public class PlayerPushCreatureTests
     {
         // Arrange
         var player = CreatePlayer();
-        var monster = CreateMockMonster(new Location(100, 101, 7), true);
-        var destination = CreateMockTile(new Location(100, 102, 7), false, false, false);
+        var monster = CreateMockMonster(new Location(100, 101, 7));
+        var destination = CreateMockTile(new Location(100, 102, 7));
 
         // Act
         var result = player.CanPushCreature(monster.Object, destination.Object);

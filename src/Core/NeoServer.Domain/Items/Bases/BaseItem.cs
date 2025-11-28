@@ -127,9 +127,9 @@ public abstract class BaseItem : IItem
         UseFunction?.Invoke(this, usedBy);
     }
 
-    public IThing Parent { get; private set; }
+    public IThing Parent { get; internal set; }
 
-    public void SetParent(IThing parent)
+    public virtual void SetParent(IThing parent)
     {
         Parent = parent;
     }

@@ -37,10 +37,6 @@ public class PathFinder(IMap map) : IPathFinder
 
         if (!fpp.KeepDistance && creature.Location.IsNextTo(target)) return FoundedButEmptyDirections;
 
-        //if (walkableCreature.Speed == 0) return NotFound;
-
-        if (fpp.OneStep) return FindStep(creature, target, fpp, tileEnterRule);
-
         if (fpp.MaxTargetDist > 1)
         {
             var pathToKeepDistance = FindPathToKeepDistance(creature, target, fpp, tileEnterRule);
@@ -98,21 +94,6 @@ public class PathFinder(IMap map) : IPathFinder
         }
 
         return Direction.None;
-    }
-
-    public (bool Found, Direction[] Directions) FindStep(ICreature creature, Location target, FindPathParams fpp,
-        ITileEnterRule tileEnterRule)
-    {
-        var startLocation = creature.Location;
-
-        var possibleDirections = new[]
-            { Direction.East, Direction.South, Direction.West, Direction.North, Direction.NorthEast };
-
-        foreach (var direction in possibleDirections)
-            if (startLocation.GetMaxSqmDistance(target) > fpp.MaxTargetDist)
-                continue;
-
-        return NotFound;
     }
 
     public (bool Found, Direction[] Directions) FindPathToKeepDistance(

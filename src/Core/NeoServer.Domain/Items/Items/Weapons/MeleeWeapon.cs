@@ -1,7 +1,5 @@
 ﻿using System.Collections;
-using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Common.Combat;
-using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
@@ -68,29 +66,6 @@ public class MeleeWeapon(
 
     public void OnMoved(IThing to)
     {
-    }
-
-    private bool CalculateRegularAttack(IPlayer player, ICombatActor enemy, ushort maxDamage, out CombatDamage damage)
-    {
-        damage = new CombatDamage();
-        if (WeaponAttack.AttackPower <= 0) return false;
-
-        var combat = new CombatAttackValue(player.MinimumAttackPower,
-            maxDamage, DamageType.Melee);
-
-        return MeleeCombatAttack.CalculateAttack(player, enemy, combat, out damage);
-    }
-
-    private bool CalculateElementalAttack(IPlayer player, ICombatActor enemy, ushort maxDamage, out CombatDamage damage)
-    {
-        damage = new CombatDamage();
-
-        if (WeaponAttack.ElementalDamage.AttackPower == 0) return false;
-
-        var combat =
-            new CombatAttackValue(player.MinimumAttackPower, maxDamage, WeaponAttack.ElementalDamage.DamageType);
-
-        return MeleeCombatAttack.CalculateAttack(player, enemy, combat, out damage);
     }
 
     public static bool IsApplicable(IItemType type)

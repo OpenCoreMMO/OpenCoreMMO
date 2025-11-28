@@ -12,13 +12,13 @@ namespace NeoServer.Domain.World;
 
 public class World
 {
-    private readonly Region region = new();
+    private readonly Region _region = new();
 
-    private readonly ConcurrentDictionary<Coordinate, ITown> towns = new();
-    private readonly ConcurrentDictionary<Coordinate, IWaypoint> waypoints = new();
+    private readonly ConcurrentDictionary<Coordinate, ITown> _towns = new();
+    private readonly ConcurrentDictionary<Coordinate, IWaypoint> _waypoints = new();
     public int LoadedTilesCount { get; private set; }
-    public int LoadedTownsCount => towns.Count();
-    public int LoadedWaypointsCount => waypoints.Count();
+    public int LoadedTownsCount => _towns.Count;
+    public int LoadedWaypointsCount => _waypoints.Count;
 
     public ImmutableList<ISpawn> Spawns { get; private set; }
 
@@ -26,7 +26,7 @@ public class World
 
     public void AddTile(ITile newTile, Location location)
     {
-        var sector = region.CreateSector(location.X, location.Y, out var created);
+        var sector = _region.CreateSector(location.X, location.Y, out _);
 
         sector.AddTile(newTile, location);
         LoadedTilesCount++;
@@ -34,7 +34,7 @@ public class World
 
     public void AddTile(ITile newTile)
     {
-        var sector = region.CreateSector(newTile.Location.X, newTile.Location.Y, out var created);
+        var sector = _region.CreateSector(newTile.Location.X, newTile.Location.Y, out _);
 
         sector.AddTile(newTile);
         LoadedTilesCount++;
@@ -42,10 +42,7 @@ public class World
 
     public void ReplaceTile(ITile newTile)
     {
-        var x = newTile.Location.X;
-        var y = newTile.Location.Y;
-
-        var sector = region.CreateSector(newTile.Location.X, newTile.Location.Y, out var created);
+        var sector = _region.CreateSector(newTile.Location.X, newTile.Location.Y, out _);
 
         sector.ReplaceTile(newTile);
         LoadedTilesCount++;
@@ -61,7 +58,7 @@ public class World
     public bool TryGetTile(ref Location location, out ITile tile)
     {
         tile = null;
-        var sector = region.GetSector(location.X, location.Y);
+        var sector = _region.GetSector(location.X, location.Y);
         if (sector is null) return false;
 
         tile = sector.GetTile(location);
@@ -76,28 +73,28 @@ public class World
 
     public Sector GetSector(ushort x, ushort y)
     {
-        return region.GetSector(x, y);
+        return _region.GetSector(x, y);
     }
 
     public IEnumerable<ICreature> GetSpectators(ref SpectatorSearch search)
     {
-        return region.GetSpectators(ref search);
+        return _region.GetSpectators(ref search);
     }
 
     public void AddTown(ITown town)
     {
         if (town.IsNull()) return;
-        towns[town.Coordinate] = town;
+        _towns[town.Coordinate] = town;
     }
 
     public bool TryGetTown(Location location, out ITown town)
     {
-        return towns.TryGetValue(new Coordinate(location.X, location.Y, (sbyte)location.Z), out town);
+        return _towns.TryGetValue(new Coordinate(location.X, location.Y, (sbyte)location.Z), out town);
     }
 
     public bool TryGetTown(uint id, out ITown town)
     {
-        foreach (var item in towns)
+        foreach (var item in _towns)
             if (item.Value.Id == id)
             {
                 town = item.Value;
@@ -110,7 +107,7 @@ public class World
 
     public bool TryGetTown(string name, out ITown town)
     {
-        foreach (var item in towns)
+        foreach (var item in _towns)
             if (item.Value.Name == name)
             {
                 town = item.Value;
@@ -125,11 +122,11 @@ public class World
     {
         if (waypoint.IsNull()) return;
 
-        waypoints[waypoint.Coordinate] = waypoint;
+        _waypoints[waypoint.Coordinate] = waypoint;
     }
 
-    public bool TryGetWaypoint(Location location, IWaypoint waypoint)
+    public bool TryGetWaypoint(Location location, out IWaypoint waypoint)
     {
-        return waypoints.TryGetValue(new Coordinate(location.X, location.Y, (sbyte)location.Z), out waypoint);
+        return _waypoints.TryGetValue(new Coordinate(location.X, location.Y, (sbyte)location.Z), out waypoint);
     }
 }

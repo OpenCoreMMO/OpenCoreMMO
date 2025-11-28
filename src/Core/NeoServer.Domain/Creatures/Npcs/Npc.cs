@@ -137,7 +137,6 @@ public class Npc : WalkableCreature, INpc
 
     public event Hear OnHear;
     public event PlayerCloseChannel OnPlayerCloseChannel;
-    public event CustomerLeft OnCustomerLeft;
 
     #endregion
 }

@@ -3,20 +3,16 @@ using NeoServer.Domain.Common.Contracts.Items;
 
 namespace NeoServer.Domain.World.Structures;
 
-public class TileStack<T> : IEnumerable<T> where T : IThing
+public class TileStack<T>(int size = 10) : IEnumerable<T>
+    where T : IThing
 {
-    private readonly List<T> items;
+    private readonly List<T> _items = new(size);
 
-    public TileStack(int size = 10)
-    {
-        items = new List<T>(size);
-    }
-
-    public int Count => items.Count;
+    public int Count => _items.Count;
 
     public IEnumerator<T> GetEnumerator()
     {
-        return Enumerable.Reverse(items).GetEnumerator();
+        return Enumerable.Reverse(_items).GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -26,30 +22,30 @@ public class TileStack<T> : IEnumerable<T> where T : IThing
 
     public void Push(T item)
     {
-        items.Add(item);
+        _items.Add(item);
     }
 
     public T Pop()
     {
-        if (items.Count == 0) return default;
+        if (_items.Count == 0) return default;
 
-        var temp = items[^1];
-        items.RemoveAt(items.Count - 1);
+        var temp = _items[^1];
+        _items.RemoveAt(_items.Count - 1);
         return temp;
     }
 
     public void Remove(int itemAtPosition)
     {
         if (itemAtPosition < 0) return;
-        items.RemoveAt(itemAtPosition);
+        _items.RemoveAt(itemAtPosition);
     }
 
     public bool TryPeek(out T item)
     {
         item = default;
 
-        if (items.Count == 0) return false;
-        item = items[^1];
+        if (_items.Count == 0) return false;
+        item = _items[^1];
         return true;
     }
 
@@ -57,14 +53,14 @@ public class TileStack<T> : IEnumerable<T> where T : IThing
     {
         item = default;
 
-        if (items.Count == 0) return false;
+        if (_items.Count == 0) return false;
         item = Pop();
         return true;
     }
 
     public bool Remove(T item)
     {
-        var index = items.IndexOf(item);
+        var index = _items.IndexOf(item);
         if (index < 0) return false;
 
         Remove(index);

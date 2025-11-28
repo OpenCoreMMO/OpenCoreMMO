@@ -655,7 +655,6 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         IPlayer toPlayer = null;
         ITile toTile = null;
 
-        ushort itemId = 0;
         if (Lua.IsUserData(luaState, 2))
         {
             var type = GetUserdataType(luaState, 2);

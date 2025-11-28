@@ -8,5 +8,5 @@ namespace NeoServer.Data.Interfaces;
 public interface IPlayerDeathRepository : IBaseRepositoryNeo<PlayerDeathEntity>
 {
     IEnumerable<PlayerDeathEntity> GetPlayerKills(int playerId);
-    new void Save(IPlayer deadPlayer, DamageRecordResult damageRecordResult);
+    void Save(IPlayer deadPlayer, DamageRecordResult damageRecordResult);
 }

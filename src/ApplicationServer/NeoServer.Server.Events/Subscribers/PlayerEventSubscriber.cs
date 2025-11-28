@@ -1,5 +1,4 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Networking.EventHandlers.Creature;
 using NeoServer.Networking.EventHandlers.Creature.Player;
 using NeoServer.Server.Events.Chat;
 using NeoServer.Server.Events.Combat;
@@ -20,7 +19,6 @@ public class PlayerEventSubscriber(
     CreatureStoppedAttackEventHandler creatureStoppedAttackEventHandler,
     PlayerGainedExperienceEventHandler playerGainedExperienceEventHandler,
     PlayerManaChangedEventHandler playerManaReducedEventHandler,
-    SpellInvokedEventHandler playerUsedSpellEventHandler,
     PlayerLevelAdvancedEventHandler playerLevelAdvancedEventHandler,
     PlayerLevelRegressedEventHandler playerLevelRegressedEventHandler,
     PlayerLookedAtEventHandler playerLookedAtEventHandler,
@@ -76,7 +74,6 @@ public class PlayerEventSubscriber(
         player.OnGainedExperience += playerGainedExperienceEventHandler.Execute;
 
         player.OnStatusChanged += playerManaReducedEventHandler.Execute;
-        player.OnUsedSpell += playerUsedSpellEventHandler.Execute;
         player.OnLevelAdvanced += playerLevelAdvancedEventHandler.Execute;
         player.OnLevelRegressed += playerLevelRegressedEventHandler.Execute;
         player.OnLookedAt += playerLookedAtEventHandler.Execute;
@@ -135,7 +132,6 @@ public class PlayerEventSubscriber(
         player.OnGainedExperience -= playerGainedExperienceEventHandler.Execute;
 
         player.OnStatusChanged -= playerManaReducedEventHandler.Execute;
-        player.OnUsedSpell -= playerUsedSpellEventHandler.Execute;
         player.OnLevelAdvanced -= playerLevelAdvancedEventHandler.Execute;
         player.OnLevelRegressed -= playerLevelRegressedEventHandler.Execute;
         player.OnLookedAt -= playerLookedAtEventHandler.Execute;
@@ -160,10 +156,4 @@ public class PlayerEventSubscriber(
         player.OnRemovedSkillBonus += playerUpdatedSkillPointsEventHandler.Execute;
         player.Inventory.OnWeightChanged -= itemAddedToInventoryEventHandler.ExecuteOnWeightChanged;
     }
-
-    #region event handlers
-
-    private readonly PlayerConditionChangedEventHandler _playerConditionChangedEventHandler;
-
-    #endregion
 }

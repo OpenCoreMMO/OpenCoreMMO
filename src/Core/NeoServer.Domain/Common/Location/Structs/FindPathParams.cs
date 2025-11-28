@@ -5,10 +5,10 @@ namespace NeoServer.Domain.Common.Location.Structs;
 [StructLayout(LayoutKind.Auto)]
 public struct FindPathParams
 {
-    public static FindPathParams EscapeParams => new(false, true, default, true, 12, 1, 12, false);
+    public static FindPathParams EscapeParams => new(false, true, default, true, 12, 1, 12);
 
     public FindPathParams(bool fullPathSearch, bool clearSight, bool allowDiagonal, bool keepDistance,
-        int maxSearchDist, int minTargetDist, int maxTargetDist, bool oneStep)
+        int maxSearchDist, int minTargetDist, int maxTargetDist)
     {
         FullPathSearch = fullPathSearch;
         ClearSight = clearSight;
@@ -17,7 +17,6 @@ public struct FindPathParams
         MaxSearchDist = maxSearchDist;
         MinTargetDist = minTargetDist;
         MaxTargetDist = maxTargetDist;
-        OneStep = oneStep;
     }
 
     public FindPathParams(bool useDefault)
@@ -29,7 +28,6 @@ public struct FindPathParams
         MaxSearchDist = default;
         MinTargetDist = default;
         MaxTargetDist = default;
-        OneStep = default;
 
         if (useDefault)
         {
@@ -47,7 +45,6 @@ public struct FindPathParams
     public bool ClearSight { get; set; }
     public bool AllowDiagonal { get; set; }
     public bool KeepDistance { get; set; }
-    public bool OneStep { get; set; }
     public int MaxSearchDist { get; set; }
     public int MinTargetDist { get; set; }
     public int MaxTargetDist { get; set; }

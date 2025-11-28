@@ -62,7 +62,7 @@ public class ContainerWeight
     private void SubscribeToEvents(IContainer container)
     {
         container.OnItemAdded += IncreaseWeight;
-        container.OnItemRemoved += DecreaseWeight;
+        container.OnItemRemovedEvent += DecreaseWeight;
         container.OnItemUpdated += UpdateWeight;
     }
 

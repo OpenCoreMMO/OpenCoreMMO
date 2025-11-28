@@ -20,8 +20,6 @@ public delegate void StopAttack(ICombatActor actor);
 
 public delegate void BlockAttack(ICombatActor creature, BlockType block);
 
-public delegate void Attack(ICombatActor creature, ICreature victim, CombatAttackResult[] combatAttacks);
-
 public delegate void UseSpell(ICreature creature, ISpell spell);
 
 public delegate void ChangeVisibility(ICombatActor actor);
@@ -48,13 +46,11 @@ public interface ICombatActor : IWalkableCreature
     ICreature CurrentTarget { get; }
     DamageRecordList ReceivedDamages { get; }
 
-    event Attack OnAttackEnemy;
     event BlockAttack OnBlockedAttack;
     event Heal OnHeal;
     event BeforeDeath OnBeforeDeath;
     event StopAttack OnStoppedAttack;
     event AttackTargetChange OnTargetChanged;
-    event ChangeVisibility OnChangedVisibility;
     event PropagateAttack OnPropagateAttack;
     event GainExperience OnGainedExperience;
 

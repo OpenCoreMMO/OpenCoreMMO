@@ -37,7 +37,6 @@ public class Container : BaseItem, IContainer
     public byte SlotsUsed { get; internal set; }
     public uint TotalOfFreeSlots => ContainerSlotsCalculation.CalculateFreeSlots(this);
     public bool IsFull => SlotsUsed >= Capacity;
-    public IThing Parent { get; internal set; }
     public bool HasParent => Parent != null;
     public virtual byte Capacity => Metadata.Attributes.GetAttribute<byte>(ItemTypeAttribute.Capacity);
     public List<IItem> Items { get; }
@@ -58,7 +57,7 @@ public class Container : BaseItem, IContainer
 
     public IDictionary<ushort, uint> Map => ContainerMapBuilder.Build(this);
 
-    public void SetParent(IThing parent)
+    public override void SetParent(IThing parent)
     {
         SetContainerParentOperation.SetParent(this, parent);
     }
@@ -127,7 +126,7 @@ public class Container : BaseItem, IContainer
     {
         container.OnItemUpdated -= OnItemUpdated;
         container.OnItemAdded -= OnItemAdded;
-        container.OnItemRemoved -= OnItemRemoved;
+        container.OnItemRemovedEvent -= OnItemRemovedEvent;
     }
 
     public override string ToString()
@@ -262,7 +261,7 @@ public class Container : BaseItem, IContainer
 
     #region Events
 
-    public event RemoveItem OnItemRemoved;
+    public event RemoveItem OnItemRemovedEvent;
     public event AddItem OnItemAdded;
     public event UpdateItem OnItemUpdated;
     public event Move OnContainerMoved;
@@ -274,7 +273,7 @@ public class Container : BaseItem, IContainer
 
     internal void InvokeItemRemovedEvent(byte slotIndex, IItem removedItem, byte amount)
     {
-        OnItemRemoved?.Invoke(this, slotIndex, removedItem, amount);
+        OnItemRemovedEvent?.Invoke(this, slotIndex, removedItem, amount);
     }
 
     internal void InvokeItemAddedEvent(IItem removedItem, IContainer container)

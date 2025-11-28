@@ -18,7 +18,6 @@ using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Spawns;
 using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Domain.World.Services;
-using CreateItem = NeoServer.Domain.Common.Contracts.Items.CreateItem;
 
 namespace NeoServer.Domain.Tests.MagicField;
 
@@ -37,7 +36,7 @@ public class MagicFieldTests
         var tile2 = (IDynamicTile)map[new Location(100, 101, 7)];
 
         // Actor and low-HP victims so they die on field damage
-        var actor = MonsterTestDataBuilder.Build(100, map: map);
+        var actor = MonsterTestDataBuilder.Build(map: map);
         var dying1 = MonsterTestDataBuilder.Build(5, map: map);
 
         ((DynamicTile)tile).AddCreature(actor);
@@ -66,8 +65,8 @@ public class MagicFieldTests
         var tile = (IDynamicTile)map[location];
         var actorTile = (IDynamicTile)map[new Location(105, 106, 7)];
 
-        var actor = MonsterTestDataBuilder.Build(100, map: map);
-        var healthy = MonsterTestDataBuilder.Build(100, map: map);
+        var actor = MonsterTestDataBuilder.Build(map: map);
+        var healthy = MonsterTestDataBuilder.Build(map: map);
         var dying1 = MonsterTestDataBuilder.Build(5, map: map);
         var dying2 = MonsterTestDataBuilder.Build(5, map: map);
 
@@ -101,7 +100,7 @@ public class MagicFieldTests
         // Mark tile as protection zone and ensure actor is on a tile
         var flagsField = typeof(BaseTile).GetField("Flags", BindingFlags.NonPublic | BindingFlags.Instance);
         flagsField.SetValue(tile, (uint)TileFlags.ProtectionZone);
-        var actor = MonsterTestDataBuilder.Build(100, map: map);
+        var actor = MonsterTestDataBuilder.Build(map: map);
         ((DynamicTile)tile).AddCreature(actor);
 
         // Act
@@ -124,7 +123,7 @@ public class MagicFieldTests
         var tile = (IDynamicTile)map[location];
         var actorTile = (IDynamicTile)map[new Location(105, 106, 7)];
 
-        var actor = MonsterTestDataBuilder.Build(100, map: map);
+        var actor = MonsterTestDataBuilder.Build(map: map);
         ((DynamicTile)actorTile).AddCreature(actor);
 
         // Create monster with fire resistance
@@ -167,7 +166,7 @@ public class MagicFieldTests
         var tile = (IDynamicTile)map[location];
         var actorTile = (IDynamicTile)map[new Location(105, 106, 7)];
 
-        var actor = MonsterTestDataBuilder.Build(100, map: map);
+        var actor = MonsterTestDataBuilder.Build(map: map);
         ((DynamicTile)actorTile).AddCreature(actor);
 
         // Create monster with fire weakness
@@ -200,9 +199,7 @@ public class MagicFieldTests
 
     private sealed class TestItemFactory : IItemFactory
     {
-        public event CreateItem OnItemCreated;
-
-        public IItem Create(ushort typeId, Location location, int count = 1, IEnumerable<IItem> children = null)
+        public IItem Create(ushort typeId, Location location, int count, IEnumerable<IItem> children = null)
         {
             return Create(typeId, location);
         }

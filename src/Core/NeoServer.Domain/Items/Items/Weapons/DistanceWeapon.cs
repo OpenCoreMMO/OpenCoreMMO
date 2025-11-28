@@ -1,7 +1,4 @@
 ﻿using System.Text;
-using NeoServer.Domain.Combat.Attacks.Obsoletes;
-using NeoServer.Domain.Common.Combat;
-using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
@@ -16,8 +13,6 @@ namespace NeoServer.Domain.Items.Items.Weapons;
 public class DistanceWeapon(IItemType type, Location location)
     : Equipment(type, location), IDistanceWeapon, IHasAttackBonus, INeedsAmmo
 {
-    public WeaponAttack WeaponAttack { get; }
-
     protected override string PartialInspectionText
     {
         get
@@ -65,22 +60,5 @@ public class DistanceWeapon(IItemType type, Location location)
     public static bool IsApplicable(IItemType type)
     {
         return type.Group is ItemGroup.DistanceWeapon;
-    }
-
-    private void UseElementalDamage(ICombatActor actor, ICombatActor enemy, ref CombatAttackResult combatResult,
-        ref bool result, IPlayer player, Ammo ammo, ref ushort maxDamage, ref CombatAttackValue combat)
-    {
-        if (!ammo.HasElementalDamage) return;
-
-        maxDamage = 100; //player.CalculateAttackPower(0.09f, (ushort)(ammo.ElementalDamage.Item2 + ExtraAttack)); //TODO
-        combat = new CombatAttackValue(actor.MinimumAttackPower, maxDamage, Range,
-            ammo.WeaponAttack.ElementalDamage.DamageType);
-
-        if (!DistanceCombatAttack.CalculateAttack(actor, enemy, combat, out var elementalDamage)) return;
-
-        combatResult.DamageType = ammo.WeaponAttack.ElementalDamage.DamageType;
-
-        //enemy.ReceiveAttackFrom(actor, elementalDamage);
-        result = true;
     }
 }

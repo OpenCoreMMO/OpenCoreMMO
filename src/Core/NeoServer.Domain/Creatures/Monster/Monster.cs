@@ -27,7 +27,6 @@ namespace NeoServer.Domain.Creatures.Monster;
 public class Monster : WalkableMonster, IMonster
 {
     // TODO: Organize the variables and properties
-    private readonly Dictionary<ICreature, ushort> _damages;
     private Dictionary<string, byte> _aliveSummons;
     private MonsterState _state;
 

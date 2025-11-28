@@ -10,7 +10,6 @@ namespace NeoServer.Domain.World.Models.Tiles;
 public class StaticTile : BaseTile, IStaticTile
 {
     private IItem _topDownItemOnStack;
-    private IItem _topTopItemOnStack;
 
     public StaticTile(Coordinate coordinate, params IItem[] items) : this(
         new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z), items)
@@ -29,7 +28,7 @@ public class StaticTile : BaseTile, IStaticTile
 
     public override int ThingsCount { get; }
     public byte[] Raw { get; }
-    public override IItem TopTopItemOnStack => _topTopItemOnStack;
+    public override IItem TopTopItemOnStack => null;
     public override IItem TopDownItemOnStack => _topDownItemOnStack;
     public override ICreature TopCreatureOnStack => null;
 
