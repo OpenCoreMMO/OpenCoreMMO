@@ -8,8 +8,6 @@ namespace NeoServer.Domain.Items.Factories;
 
 public class RuneFactory : IFactory
 {
-    public event CreateItem OnItemCreated;
-
     public IItem Create(IItemType itemType, Location location)
     {
         if (!ICumulative.IsApplicable(itemType)) return null;

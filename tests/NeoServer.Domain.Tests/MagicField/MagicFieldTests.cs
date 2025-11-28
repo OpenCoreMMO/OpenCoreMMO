@@ -18,7 +18,6 @@ using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Spawns;
 using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Domain.World.Services;
-using CreateItem = NeoServer.Domain.Common.Contracts.Items.CreateItem;
 
 namespace NeoServer.Domain.Tests.MagicField;
 
@@ -200,9 +199,7 @@ public class MagicFieldTests
 
     private sealed class TestItemFactory : IItemFactory
     {
-        public event CreateItem OnItemCreated;
-
-        public IItem Create(ushort typeId, Location location, int count = 1, IEnumerable<IItem> children = null)
+        public IItem Create(ushort typeId, Location location, int count, IEnumerable<IItem> children = null)
         {
             return Create(typeId, location);
         }

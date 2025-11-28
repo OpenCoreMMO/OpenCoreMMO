@@ -153,7 +153,7 @@ public abstract class Listener(int port, IProtocol protocol, ILogger logger)
         }
     }
 
-    public void Dispose()
+    public new void Dispose()
     {
         EndListening();
         _internalCancellation?.Dispose();

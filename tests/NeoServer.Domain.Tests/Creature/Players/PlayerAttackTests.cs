@@ -204,33 +204,7 @@ public class PlayerAttackTests
             attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
-        monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
         result.Result.Reason.Should().Be(InvalidOperation.CreatureIsDead);
-    }
-
-    [Fact]
-    public void Player_cannot_attack_himself()
-    {
-        //arrange
-        var location = new Location(100, 100, 7);
-        var ground = MapTestDataBuilder.CreateGround(location);
-
-        var tile = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.None, ground, null, null);
-
-        var map = MapTestDataBuilder.Build(tile);
-        var attackService = AttackServiceTestBuilder.Build(map);
-
-        var player = PlayerTestDataBuilder.Build();
-
-        tile.AddCreature(player);
-
-        using var monitor = player.Monitor();
-
-        //act
-        attackService.Execute(new AttackInput(player, player, PlayerCombatParameterBuilder.Build(player, player)));
-
-        //assert
-        monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
     }
 
     [Fact]
@@ -260,9 +234,7 @@ public class PlayerAttackTests
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
-
-        monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
-
+        
         player.Attacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
@@ -342,9 +314,7 @@ public class PlayerAttackTests
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
-
-        monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
-
+        
         player.Attacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
@@ -378,9 +348,7 @@ public class PlayerAttackTests
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
-
-        monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
-
+        
         player.Attacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);

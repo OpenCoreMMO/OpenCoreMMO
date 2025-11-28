@@ -142,11 +142,6 @@ public interface ICreature : IMovableThing
     IList<Summon> Summons { get; }
 
     /// <summary>
-    ///     Fires when creature is removed from game
-    /// </summary>
-    event RemoveCreature OnCreatureRemoved;
-
-    /// <summary>
     ///     Fires when creature says something
     /// </summary>
     event Say OnSay;

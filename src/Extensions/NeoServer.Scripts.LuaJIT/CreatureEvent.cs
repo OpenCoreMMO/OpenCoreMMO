@@ -12,9 +12,6 @@ namespace NeoServer.Scripts.LuaJIT;
 public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, IScripts scripts)
     : Script(scriptInterface)
 {
-    private ILogger _logger;
-    private IScripts _scripts;
-
     public string Name { get; set; }
     public CreatureEventType EventType { get; set; }
     public bool Loaded { get; set; }

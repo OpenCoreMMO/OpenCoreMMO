@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
-using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Creatures;
@@ -15,11 +14,10 @@ using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Spells;
 using NeoServer.Server.Helpers.Extensions;
-using Serilog;
 
 namespace NeoServer.Loaders.Monsters.Converters;
 
-public class MonsterAttackConverter(ILogger logger, SpellListManager spellListManager)
+public class MonsterAttackConverter(SpellListManager spellListManager)
 {
     private static readonly HashSet<string> SupportedAttackNames = new(StringComparer.InvariantCultureIgnoreCase)
     {
@@ -120,7 +118,7 @@ public class MonsterAttackConverter(ILogger logger, SpellListManager spellListMa
                 combatAttack.CombatParameter.MinDamage = (ushort)Math.Abs(min);
                 combatAttack.CombatParameter.MaxDamage = Math.Abs(max) > 0
                     ? (ushort)Math.Abs(max)
-                    : MeleeCombatAttack.CalculateMaxDamage(skill, attackValue);
+                    : (ushort)Math.Ceiling(skill * (attackValue * 0.05) + attackValue * 0.5);
 
 
                 if (attack.TryGetValue("fire", out ushort value))

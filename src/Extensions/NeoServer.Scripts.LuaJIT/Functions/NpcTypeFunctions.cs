@@ -20,7 +20,6 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
     private static IItemTypeStore _itemTypeStore;
     private static IScripts _scripts;
     private static INpcs _npcs;
-    private static INpcFactory _npcFactory;
 
     public NpcTypeFunctions(
         IGameCreatureManager gameCreatureManager,

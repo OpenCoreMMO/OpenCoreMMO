@@ -35,7 +35,7 @@ internal class PlayerContainer : IEquatable<PlayerContainer>
         AddItem?.Invoke(Player, Id, item);
     }
 
-    public void ItemRemoved(IContainer fromContainer, byte slotIndex, IItem item, byte amountReduced)
+    public void ItemRemovedEvent(IContainer fromContainer, byte slotIndex, IItem item, byte amountReduced)
     {
         RemoveItem?.Invoke(Player, Id, slotIndex, item);
     }
@@ -65,7 +65,7 @@ internal class PlayerContainer : IEquatable<PlayerContainer>
         if (eventsAttached) return;
 
         Container.OnItemAdded += ItemAdded;
-        Container.OnItemRemoved += ItemRemoved;
+        Container.OnItemRemovedEvent += ItemRemovedEvent;
         Container.OnItemUpdated += ItemUpdated;
         Container.OnContainerMoved += ContainerMoved;
 
@@ -74,7 +74,7 @@ internal class PlayerContainer : IEquatable<PlayerContainer>
 
     internal void DetachContainerEvents()
     {
-        Container.OnItemRemoved -= ItemRemoved;
+        Container.OnItemRemovedEvent -= ItemRemovedEvent;
         Container.OnItemAdded -= ItemAdded;
         Container.OnItemUpdated -= ItemUpdated;
         Container.OnContainerMoved -= ContainerMoved;

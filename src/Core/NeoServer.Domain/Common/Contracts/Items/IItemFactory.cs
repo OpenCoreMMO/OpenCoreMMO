@@ -4,8 +4,6 @@ using NeoServer.Domain.Items.Items.Cumulatives;
 
 namespace NeoServer.Domain.Common.Contracts.Items;
 
-public delegate void CreateItem(IItem item);
-
 public interface IItemFactory : IFactory
 {
     IItem Create(

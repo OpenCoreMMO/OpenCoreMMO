@@ -34,7 +34,6 @@ public interface IContainer : IInventoryEquipment, IHasItem
     bool HasParent { get; }
 
     byte SlotsUsed { get; }
-    IThing Parent { get; }
     bool IsFull { get; }
     bool HasItems { get; }
     IThing RootParent { get; }
@@ -60,14 +59,12 @@ public interface IContainer : IInventoryEquipment, IHasItem
         return RemoveItem(fromPosition, amount, out removedThing);
     }
 
-    event RemoveItem OnItemRemoved;
+    event RemoveItem OnItemRemovedEvent;
     event AddItem OnItemAdded;
     event UpdateItem OnItemUpdated;
     event Move OnContainerMoved;
 
     bool GetContainerAt(byte index, out IContainer container);
-    void SetParent(IThing parent);
-
     void Clear();
     void UpdateId(byte id);
     void RemoveId();

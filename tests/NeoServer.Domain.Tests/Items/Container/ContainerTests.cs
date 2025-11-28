@@ -533,7 +533,7 @@ public class ContainerTests
         Assert.Same(item2, removedItem);
 
         monitor.Should()
-            .Raise(nameof(sut.OnItemRemoved))
+            .Raise(nameof(sut.OnItemRemovedEvent))
             .WithArgs<IContainer, byte, IItem, byte>(
                 container => container == sut,
                 slotIndex => slotIndex == 0,
@@ -562,7 +562,7 @@ public class ContainerTests
         Assert.False(container.HasParent);
 
         monitor.Should()
-            .Raise(nameof(sut.OnItemRemoved))
+            .Raise(nameof(sut.OnItemRemovedEvent))
             .WithArgs<IContainer, byte, IItem, byte>(
                 containerArg => containerArg == sut,
                 slotIndex => slotIndex == 1,
@@ -629,7 +629,7 @@ public class ContainerTests
         Assert.Equal(item.ClientId, removedItem.ClientId);
 
         monitor.Should()
-            .Raise(nameof(sut.OnItemRemoved))
+            .Raise(nameof(sut.OnItemRemovedEvent))
             .WithArgs<IContainer, byte, IItem, byte>(
                 container => container == sut,
                 slotIndex => slotIndex == 0,

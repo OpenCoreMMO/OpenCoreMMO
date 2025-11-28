@@ -18,9 +18,11 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
     private static IItemTypeStore _itemTypeStore;
     private static IItemClientServerIdMapStore _itemClientServerIdMapStore;
 
-    public TileFunctions(IGameServer gameServer) : base(nameof(TileFunctions))
+    public TileFunctions(IGameServer gameServer, IItemClientServerIdMapStore itemClientServerIdMapStore, IItemTypeStore itemTypeStore) : base(nameof(TileFunctions))
     {
         _gameServer = gameServer;
+        _itemClientServerIdMapStore = itemClientServerIdMapStore;
+        _itemTypeStore = itemTypeStore;
     }
 
     public void Init(LuaState luaState)

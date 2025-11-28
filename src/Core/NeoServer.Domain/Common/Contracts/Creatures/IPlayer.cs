@@ -118,7 +118,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     GuildRankInfo GuildRank { get; set; }
     string GuildNick { get; set; }
     bool Shopping { get; }
-    ulong BankAmount { get; }
     IShopperNpc TradingWithNpc { get; }
 
     byte MaxSoulPoints { get; }
@@ -320,16 +319,12 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event PlayerLevelRegress OnLevelRegressed;
     public event PlayerGainSkillPoint OnGainedSkillPoint;
     public event ReduceMana OnStatusChanged;
-    public event CannotUseSpell OnCannotUseSpell;
     public event LookAt OnLookedAt;
-    public event UseSpell OnUsedSpell;
     public event UseItem OnUsedItem;
-    public event LogIn OnLoggedIn;
     public event ChangeOnlineStatus OnChangedOnlineStatus;
     public event SendMessageTo OnSentMessage;
 
     public event Exhaust OnExhausted;
-    public event Hear OnHear;
     public event ChangeChaseMode OnChangedChaseMode;
     public event AddSkillBonus OnAddedSkillBonus;
     public event RemoveSkillBonus OnRemovedSkillBonus;

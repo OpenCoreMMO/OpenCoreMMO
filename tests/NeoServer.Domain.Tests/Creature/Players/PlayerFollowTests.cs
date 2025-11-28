@@ -22,7 +22,7 @@ public class PlayerFollowTests
         var enemy = MonsterTestDataBuilder.Build(1);
         using var monitor = sut.Monitor();
 
-        var fpp = new FindPathParams(true, true, true, false, 12, 0, 12, false);
+        var fpp = new FindPathParams(true, true, true, false, 12, 0, 12);
 
         (map[100, 100, 7] as DynamicTile)?.AddCreature(sut);
         (map[100, 108, 7] as DynamicTile)?.AddCreature(enemy);
@@ -51,7 +51,7 @@ public class PlayerFollowTests
         var enemy = MonsterTestDataBuilder.Build(1);
         using var monitor = sut.Monitor();
 
-        var fpp = new FindPathParams(true, true, true, false, 12, 0, 12, false);
+        var fpp = new FindPathParams(true, true, true, false, 12, 0, 12);
 
         (map[100, 100, 7] as DynamicTile)?.AddCreature(sut);
         (map[100, 101, 7] as DynamicTile)?.AddCreature(enemy);
@@ -80,7 +80,7 @@ public class PlayerFollowTests
         var enemy = MonsterTestDataBuilder.Build(1000);
         using var monitor = sut.Monitor();
 
-        var fpp = new FindPathParams(true, true, true, false, 12, 0, 12, false);
+        var fpp = new FindPathParams(true, true, true, false, 12, 0, 12);
 
         (map[100, 100, 7] as DynamicTile)?.AddCreature(sut);
         (map[100, 109, 7] as DynamicTile)?.AddCreature(enemy);

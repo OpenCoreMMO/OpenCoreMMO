@@ -129,7 +129,7 @@ public class LuaFunctionsLoader
         SetMetatable(luaState, -1, "Variant");
     }
 
-    public static void PushThing(LuaState luaState, IThing? thing)
+    public static void PushThing(LuaState luaState, IThing thing)
     {
         if (ValidateDispatcherContext(nameof(PushThing))) return;
 
@@ -792,7 +792,7 @@ public class LuaFunctionsLoader
             //}
             //return 0;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             //Logger.GetInstance().Error($"Exception in GarbageCollection: {e.InnerException}");
         }
