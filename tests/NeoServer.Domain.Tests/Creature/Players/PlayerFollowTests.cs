@@ -25,7 +25,7 @@ public class PlayerFollowTests
         var fpp = new FindPathParams(true, true, true, false, 12, 0, 12);
 
         (map[100, 100, 7] as DynamicTile)?.AddCreature(sut);
-        (map[100, 108, 7] as DynamicTile)?.AddCreature(enemy);
+        (map[100, 107, 7] as DynamicTile)?.AddCreature(enemy);
 
         sut.Follow(enemy, fpp);
         enemy.TakeDamage(sut, new CombatDamage(200, DamageType.Melee));
@@ -83,12 +83,12 @@ public class PlayerFollowTests
         var fpp = new FindPathParams(true, true, true, false, 12, 0, 12);
 
         (map[100, 100, 7] as DynamicTile)?.AddCreature(sut);
-        (map[100, 109, 7] as DynamicTile)?.AddCreature(enemy);
+        (map[100, 107, 7] as DynamicTile)?.AddCreature(enemy);
 
         sut.Follow(enemy, fpp);
         enemy.TakeDamage(sut, new CombatDamage(200, DamageType.Melee));
 
-        (map[100, 109, 7] as DynamicTile)?.RemoveCreature(enemy, out _);
+        (map[100, 107, 7] as DynamicTile)?.RemoveCreature(enemy, out _);
         (map[100, 110, 7] as DynamicTile)?.AddCreature(enemy);
 
         //act
