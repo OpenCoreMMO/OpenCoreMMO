@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using NeoServer.Data.Entities;
 
 namespace NeoServer.Data.Interfaces;
@@ -12,6 +13,6 @@ public interface IAccountRepository : IBaseRepositoryNeo<AccountEntity>
     Task<PlayerEntity> GetPlayer(string accountName, string password, string charName, bool includeDeathList = false,
         bool includeKillsLastMonth = false);
 
-    Task<PlayerEntity> GetOnlinePlayer(string accountName);
+    Task<IList<PlayerEntity>> GetOnlinePlayers(string accountName);
     Task<int> Ban(uint accountId, string reason, uint bannedByAccountId);
 }

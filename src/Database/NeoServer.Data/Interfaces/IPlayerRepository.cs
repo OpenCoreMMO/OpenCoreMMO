@@ -8,7 +8,7 @@ namespace NeoServer.Data.Interfaces;
 
 public interface IPlayerRepository : IBaseRepositoryNeo<PlayerEntity>
 {
-    Task UpdateAllPlayersToOffline();
+    Task UpdateAllPlayersToOfflineAsync();
     Task<List<PlayerOutfitAddonEntity>> GetOutfitAddons(int playerId);
     Task UpdatePlayers(IEnumerable<IPlayer> players);
     Task UpdatePlayerOnlineStatus(uint playerId, bool status);

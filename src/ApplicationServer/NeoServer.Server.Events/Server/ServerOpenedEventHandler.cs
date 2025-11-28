@@ -1,18 +1,20 @@
-﻿using NeoServer.Data.Interfaces;
+﻿using System;
+using NeoServer.Data.Interfaces;
+using Serilog;
 
 namespace NeoServer.Server.Events.Server;
 
-public class ServerOpenedEventHandler
+public class ServerOpenedEventHandler(IPlayerRepository playerRepository, ILogger logger)
 {
-    private readonly IPlayerRepository _playerRepository;
-
-    public ServerOpenedEventHandler(IPlayerRepository playerRepository)
+    public async void Execute()
     {
-        _playerRepository = playerRepository;
-    }
-
-    public void Execute()
-    {
-        _playerRepository.UpdateAllPlayersToOffline();
+        try
+        {
+            await playerRepository.UpdateAllPlayersToOfflineAsync();
+        }
+        catch (Exception e)
+        {
+            logger.Error(e, "Error while updating all players to offline");
+        }
     }
 }
