@@ -1,5 +1,5 @@
-﻿# Use an official .NET 9 SDK as a parent image
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+﻿# Use an official .NET 10 SDK as a parent image
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 # Set the working directory to /app
 WORKDIR /app
@@ -21,8 +21,8 @@ RUN dotnet restore out/data/extensions/NeoServer.Extensions.csproj
 # Build the project
 RUN dotnet publish Standalone/NeoServer.Server.Standalone.csproj -c Release -o out
 
-# Use an official .NET 9 runtime as a parent image
-FROM mcr.microsoft.com/dotnet/runtime:9.0
+# Use an official .NET 10 runtime as a parent image
+FROM mcr.microsoft.com/dotnet/runtime:10.0
 
 # Set the working directory to /app
 WORKDIR /app
