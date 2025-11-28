@@ -20,7 +20,7 @@ public class PlayerChannelService(IChatChannelStore chatChannelStore)
                 player.Channels.ExitChannel(channel);
         }
     }
-    
+
     public void JoinChannels(IPlayer player)
     {
         var channels = chatChannelStore.All.Where(x => x.Opened);

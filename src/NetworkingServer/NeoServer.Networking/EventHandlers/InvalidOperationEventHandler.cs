@@ -9,6 +9,11 @@ namespace NeoServer.Networking.EventHandlers;
 
 public class InvalidOperationEventHandler(IGameServer game) : INetworkingEventHandler<ThingMovementFailedInTheMap>
 {
+    public void Handle(ThingMovementFailedInTheMap @event)
+    {
+        Execute(@event.Thing, @event.Error);
+    }
+
     private void Execute(IThing thing, InvalidOperation error)
     {
         if (thing is not IPlayer player) return;
@@ -18,6 +23,4 @@ public class InvalidOperationEventHandler(IGameServer game) : INetworkingEventHa
             TextMessageOutgoingType.Small));
         connection.Send();
     }
-
-    public void Handle(ThingMovementFailedInTheMap @event) => Execute(@event.Thing, @event.Error);
 }

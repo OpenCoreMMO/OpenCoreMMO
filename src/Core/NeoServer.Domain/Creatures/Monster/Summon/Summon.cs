@@ -1,5 +1,4 @@
-﻿using System;
-using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Location.Structs;
@@ -43,7 +42,7 @@ public class Summon : Monster
         if (IsDead) return;
         if (Master is not null && Master.Equals(creature)) return;
         if (creature is Summon { Master: not null } summon && summon.Master.Equals(Master)) return;
-        
+
         //Summon should not attack if the master has no target
         if (Master is ICombatActor { CurrentTarget: null }) return;
 
@@ -129,9 +128,15 @@ public class Summon : Monster
         Dismiss();
     }
 
-    public void OnMasterKilled() => Die();
+    public void OnMasterKilled()
+    {
+        Die();
+    }
 
-    public void OnMasterLogout() => Die();
+    public void OnMasterLogout()
+    {
+        Die();
+    }
 
     private void OnMasterTargetChange(ICombatActor actor, uint oldTargetId, uint newTargetId)
     {

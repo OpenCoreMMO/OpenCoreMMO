@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Combat;
-using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
@@ -21,11 +20,6 @@ public abstract class WalkableMonster : CombatActor, IWalkableMonster
     public virtual IMonsterType Metadata => CreatureType as IMonsterType;
     public override ITileEnterRule TileEnterRule => MonsterEnterTileRule.Rule;
 
-    protected override Direction GetRandomStep()
-    {
-        return MapTool.PathFinder.FindRandomStep(this, MonsterRandomStepEnterTileRule.Rule);
-    }
-
     public bool DoRandomStep()
     {
         StopFollowing();
@@ -41,6 +35,11 @@ public abstract class WalkableMonster : CombatActor, IWalkableMonster
         TryWalkTo(direction);
 
         return true;
+    }
+
+    protected override Direction GetRandomStep()
+    {
+        return MapTool.PathFinder.FindRandomStep(this, MonsterRandomStepEnterTileRule.Rule);
     }
 
     internal void EscapeFromEnemy()

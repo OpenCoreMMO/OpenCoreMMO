@@ -109,7 +109,7 @@ public static class ServiceInjection
         //spells
         builder.AddSingleton<SpellService>();
         builder.AddSingleton<SpellCastValidation>();
-        
+
         return builder;
     }
 }

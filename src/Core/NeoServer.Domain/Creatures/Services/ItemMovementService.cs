@@ -97,9 +97,9 @@ public class ItemMovementService(IWalkToMechanism walkToMechanism, IMailService 
         var removedItem = RemoveItem(item, from, amount, fromPosition, possibleAmountToAdd);
 
         var result = Result<OperationResultList<IItem>>.Success;
-        
+
         var sendMailResult = Result.NotPossible;
-        
+
         if (destination is IDynamicTile finalTile && finalTile.HasFlag(TileFlags.MailBox) && item.IsMailable)
         {
             sendMailResult = mailService.Send(player, item);
@@ -109,11 +109,8 @@ public class ItemMovementService(IWalkToMechanism walkToMechanism, IMailService 
                 result = Result<OperationResultList<IItem>>.Success;
             }
         }
-        
-        if(sendMailResult.Failed)
-        {
-            result = AddToDestination(removedItem, from, destination, toPosition);
-        }
+
+        if (sendMailResult.Failed) result = AddToDestination(removedItem, from, destination, toPosition);
 
         if (result.Succeeded && item is IMovableThing movableThing && destination is IThing destinationThing)
             movableThing.OnMoved(destinationThing);

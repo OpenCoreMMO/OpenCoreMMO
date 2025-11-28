@@ -60,15 +60,10 @@ public class AttackService(
         if (attackValidationResult.Failed)
         {
             var shouldStopAttack = AttackValidation.ShouldStopAttackOnValidationFailure(attackValidationResult.Reason);
-            if (attackInput.Aggressor is CombatActor combatActor && shouldStopAttack)
-            {
-                combatActor.StopAttack();
-            }
+            if (attackInput.Aggressor is CombatActor combatActor && shouldStopAttack) combatActor.StopAttack();
 
             if (attackInput.Aggressor is IPlayer player && shouldStopAttack)
-            {
                 OperationFailService.Send(player, attackValidationResult.Reason);
-            }
 
             return CombatResult.Fail(attackValidationResult);
         }
@@ -83,7 +78,7 @@ public class AttackService(
             Summon { Master: IPlayer master } => master,
             _ => null
         };
-        
+
         playerSkullService.UpdateSkullOnAttack(attackInput.Aggressor as IPlayer, targetPlayer);
 
         if (!DistanceAttackValidator.IsValid(attackInput))
@@ -135,12 +130,12 @@ public class AttackService(
     private Result ValidatePvpCombat(AttackInput attackInput)
     {
         if (Equals(attackInput.Aggressor, attackInput.Target)) return Result.Success;
-        
+
         if (attackInput.Aggressor is not IPlayer playerAggressor)
             return Result.Success;
 
         // Check if attacking own summon - allow regardless of secure mode
-        if (attackInput.Target is Summon { Master: IPlayer summonMaster } && 
+        if (attackInput.Target is Summon { Master: IPlayer summonMaster } &&
             playerAggressor.Equals(summonMaster))
             return Result.Success;
 
@@ -164,8 +159,8 @@ public class AttackService(
             playerAggressor.StopAttack(true);
 
             // Use different message for summon attacks vs direct player attacks
-            var operation = attackInput.Target is Summon 
-                ? InvalidOperation.AdjustCombatSettingsToAttackCreature 
+            var operation = attackInput.Target is Summon
+                ? InvalidOperation.AdjustCombatSettingsToAttackCreature
                 : InvalidOperation.AdjustCombatSettingsToAttackPlayer;
 
             OperationFailService.Send(playerAggressor, operation);

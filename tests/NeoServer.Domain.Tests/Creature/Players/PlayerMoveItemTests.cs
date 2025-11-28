@@ -225,7 +225,7 @@ public class PlayerMoveItemTests
     {
         //arrange
         var container = ItemTestDataBuilder.CreateContainer(2);
-        var ammo = ItemTestDataBuilder.CreateAmmo(100, 1);
+        var ammo = ItemTestDataBuilder.CreateAmmo(100);
         container.AddItem(ammo);
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
@@ -248,7 +248,7 @@ public class PlayerMoveItemTests
     {
         //arrange
         var backpack = ItemTestDataBuilder.CreateBackpack();
-        var ammo = ItemTestDataBuilder.CreateAmmo(100, 1);
+        var ammo = ItemTestDataBuilder.CreateAmmo(100);
         backpack.AddItem(ammo);
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);

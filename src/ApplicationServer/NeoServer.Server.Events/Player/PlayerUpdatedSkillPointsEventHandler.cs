@@ -34,14 +34,14 @@ public class PlayerUpdatedSkillPointsEventHandler
     public void Execute(IPlayer player, SkillType skill, sbyte increased)
     {
         if (!game.CreatureManager.GetPlayerConnection(player.CreatureId, out var connection)) return;
-        
+
         if (skill == SkillType.Magic)
         {
             connection.OutgoingPackets.Enqueue(new PlayerStatusPacket(player));
             connection.Send();
             return;
         }
-            
+
         connection.OutgoingPackets.Enqueue(new PlayerSkillsPacket(player));
         connection.Send();
     }

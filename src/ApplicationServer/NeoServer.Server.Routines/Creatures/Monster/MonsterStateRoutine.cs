@@ -1,9 +1,11 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Creatures.Monster.Services;
+﻿using NeoServer.Domain.Creatures.Monster.Services;
 
 namespace NeoServer.Server.Routines.Creatures.Monster;
 
-public class MonsterStateRoutine(MonsterStateService monsterStateService): IRoutine
+public class MonsterStateRoutine(MonsterStateService monsterStateService) : IRoutine
 {
-    public void Execute(IMonster monster) => monsterStateService.UpdateState(monster);
+    public void Execute(IMonster monster)
+    {
+        monsterStateService.UpdateState(monster);
+    }
 }

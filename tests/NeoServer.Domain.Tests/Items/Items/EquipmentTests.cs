@@ -325,7 +325,7 @@ public class EquipmentTests : IAsyncLifetime
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
         [
             (ItemTypeAttribute.AbsorbPercentEnergy, 100),
-                (ItemTypeAttribute.Duration, 1)
+            (ItemTypeAttribute.Duration, 1)
         ]);
         var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore();
         ItemTestDataBuilder.AddItemTypeStore(itemTypeStore, sut.Metadata);
@@ -362,8 +362,8 @@ public class EquipmentTests : IAsyncLifetime
         var transformToItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(2, "ring", 1,
         [
             (ItemTypeAttribute.AbsorbPercentEnergy, 100),
-                (ItemTypeAttribute.ShowDuration, 1),
-                (ItemTypeAttribute.Duration, 1800)
+            (ItemTypeAttribute.ShowDuration, 1),
+            (ItemTypeAttribute.Duration, 1800)
         ]);
 
         var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformToItem.Metadata);
@@ -371,8 +371,8 @@ public class EquipmentTests : IAsyncLifetime
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
         [
             (ItemTypeAttribute.AbsorbPercentEnergy, 100),
-                (ItemTypeAttribute.ShowDuration, 1),
-                (ItemTypeAttribute.TransformEquipTo, 2)
+            (ItemTypeAttribute.ShowDuration, 1),
+            (ItemTypeAttribute.TransformEquipTo, 2)
         ], null, itemTypeStore.Get);
 
         //assert
@@ -394,7 +394,7 @@ public class EquipmentTests : IAsyncLifetime
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
         [
             (ItemTypeAttribute.Duration, 1000),
-                (ItemTypeAttribute.ShowDuration, false)
+            (ItemTypeAttribute.ShowDuration, false)
         ]);
 
         //assert
@@ -417,8 +417,8 @@ public class EquipmentTests : IAsyncLifetime
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
         [
             (ItemTypeAttribute.Duration, 1000),
-                (ItemTypeAttribute.ShowDuration, false),
-                (ItemTypeAttribute.StopDecaying, 1)
+            (ItemTypeAttribute.ShowDuration, false),
+            (ItemTypeAttribute.StopDecaying, 1)
         ]);
 
         //assert
@@ -441,8 +441,8 @@ public class EquipmentTests : IAsyncLifetime
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
         [
             (ItemTypeAttribute.Duration, 1000),
-                (ItemTypeAttribute.ShowDuration, false),
-                (ItemTypeAttribute.StopDecaying, 0)
+            (ItemTypeAttribute.ShowDuration, false),
+            (ItemTypeAttribute.StopDecaying, 0)
         ]);
 
         //assert
@@ -465,7 +465,7 @@ public class EquipmentTests : IAsyncLifetime
         var transformToItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(2, "ring", 1,
         [
             (ItemTypeAttribute.Duration, 100),
-                (ItemTypeAttribute.ShowDuration, false)
+            (ItemTypeAttribute.ShowDuration, false)
         ]);
 
         var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore(transformToItem.Metadata);
@@ -473,8 +473,8 @@ public class EquipmentTests : IAsyncLifetime
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
         [
             (ItemTypeAttribute.Duration, 100),
-                (ItemTypeAttribute.ShowDuration, false),
-                (ItemTypeAttribute.TransformEquipTo, 2)
+            (ItemTypeAttribute.ShowDuration, false),
+            (ItemTypeAttribute.TransformEquipTo, 2)
         ], null, itemTypeStore.Get);
 
         //assert
@@ -506,8 +506,8 @@ public class EquipmentTests : IAsyncLifetime
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
         [
             (ItemTypeAttribute.Duration, 100),
-                (ItemTypeAttribute.ShowDuration, 1),
-                (ItemTypeAttribute.TransformDequipTo, 3)
+            (ItemTypeAttribute.ShowDuration, 1),
+            (ItemTypeAttribute.TransformDequipTo, 3)
         ], null, itemTypeStore.Get);
 
         //assert
@@ -531,15 +531,15 @@ public class EquipmentTests : IAsyncLifetime
         var transformToItem = ItemTestDataBuilder.CreateDefenseEquipmentItem(2, "ring", 1,
         [
             (ItemTypeAttribute.Duration, 100),
-                (ItemTypeAttribute.ShowDuration, false),
-                (ItemTypeAttribute.StopDecaying, 0)
+            (ItemTypeAttribute.ShowDuration, false),
+            (ItemTypeAttribute.StopDecaying, 0)
         ]);
 
         var transformToItemDequip = ItemTestDataBuilder.CreateDefenseEquipmentItem(3, "ring", 1,
         [
             (ItemTypeAttribute.Duration, 100),
-                (ItemTypeAttribute.ShowDuration, 1),
-                (ItemTypeAttribute.StopDecaying, 0)
+            (ItemTypeAttribute.ShowDuration, 1),
+            (ItemTypeAttribute.StopDecaying, 0)
         ]);
 
         var itemTypeStore =
@@ -548,9 +548,9 @@ public class EquipmentTests : IAsyncLifetime
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
         [
             (ItemTypeAttribute.Duration, 100),
-                (ItemTypeAttribute.ShowDuration, false),
-                (ItemTypeAttribute.TransformEquipTo, 2),
-                (ItemTypeAttribute.TransformDequipTo, 3)
+            (ItemTypeAttribute.ShowDuration, false),
+            (ItemTypeAttribute.TransformEquipTo, 2),
+            (ItemTypeAttribute.TransformDequipTo, 3)
         ], null, itemTypeStore.Get);
 
         //assert
@@ -581,8 +581,8 @@ public class EquipmentTests : IAsyncLifetime
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
         [
             (ItemTypeAttribute.Duration, 1),
-                (ItemTypeAttribute.ShowDuration, 1),
-                (ItemTypeAttribute.ExpireTarget, 3)
+            (ItemTypeAttribute.ShowDuration, 1),
+            (ItemTypeAttribute.ExpireTarget, 3)
         ], null, itemTypeStore.Get);
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
@@ -642,8 +642,8 @@ public class EquipmentTests : IAsyncLifetime
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
         [
             (ItemTypeAttribute.Duration, 1),
-                (ItemTypeAttribute.ShowDuration, 1),
-                (ItemTypeAttribute.ExpireTarget, 5)
+            (ItemTypeAttribute.ShowDuration, 1),
+            (ItemTypeAttribute.ExpireTarget, 5)
         ], null, itemTypeStore.Get);
 
         //act
@@ -677,8 +677,8 @@ public class EquipmentTests : IAsyncLifetime
         var item3 = ItemTestDataBuilder.CreateDefenseEquipmentItem(500, "ring", 1,
         [
             (ItemTypeAttribute.TransformEquipTo, 600),
-                (ItemTypeAttribute.StopDecaying, 1),
-                (ItemTypeAttribute.ShowDuration, 1)
+            (ItemTypeAttribute.StopDecaying, 1),
+            (ItemTypeAttribute.ShowDuration, 1)
         ], null, itemTypeStore.Get);
         var item2Equipped = ItemTestDataBuilder.CreateDefenseEquipmentItem(400, "ring",
             itemTypeAttributes:
@@ -692,8 +692,8 @@ public class EquipmentTests : IAsyncLifetime
         var item2 = ItemTestDataBuilder.CreateDefenseEquipmentItem(300, "ring", 1,
         [
             (ItemTypeAttribute.TransformEquipTo, 400),
-                (ItemTypeAttribute.StopDecaying, 1),
-                (ItemTypeAttribute.ShowDuration, 1)
+            (ItemTypeAttribute.StopDecaying, 1),
+            (ItemTypeAttribute.ShowDuration, 1)
         ], null, itemTypeStore.Get);
 
         var item1Equipped = ItemTestDataBuilder.CreateDefenseEquipmentItem(200, "ring",
@@ -708,8 +708,8 @@ public class EquipmentTests : IAsyncLifetime
         var item1 = ItemTestDataBuilder.CreateDefenseEquipmentItem(100, "ring", 1,
         [
             (ItemTypeAttribute.TransformEquipTo, 200),
-                (ItemTypeAttribute.StopDecaying, 1),
-                (ItemTypeAttribute.ShowDuration, 1)
+            (ItemTypeAttribute.StopDecaying, 1),
+            (ItemTypeAttribute.ShowDuration, 1)
         ], null, itemTypeStore.Get);
 
         ItemTestDataBuilder.AddItemTypeStore(itemTypeStore, item1.Metadata, item1Equipped.Metadata, item2.Metadata,

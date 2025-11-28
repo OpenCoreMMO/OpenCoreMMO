@@ -58,7 +58,7 @@ public abstract class BaseSpell : ISpell
         }
 
         AddCondition(actor);
-        
+
         OnSpellInvoked?.Invoke(actor, this);
         return Result.Success;
     }

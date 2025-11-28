@@ -41,7 +41,7 @@ public class ChatChannel
 
     public virtual bool HasUser(IPlayer player)
     {
-        return users.TryGetValue(player.Id, out var user) && user.Removed == false;
+        return users.TryGetValue(player.Id, out var user) && !user.Removed;
     }
 
     public virtual bool AddUser(IPlayer player)

@@ -72,6 +72,12 @@ public class StaticTile : BaseTile, IStaticTile
         return new StaticTile(location, AllItems);
     }
 
+    public override IItem GetItemByIndex(int index)
+    {
+        if (index < 0 || index >= AllItems.Length) return null;
+        return AllItems[index];
+    }
+
     public byte[] GetRaw(IItem[] items)
     {
         var ground = new List<byte>();
@@ -118,42 +124,24 @@ public class StaticTile : BaseTile, IStaticTile
         foreach (var item in items)
         {
             if (item is null) continue;
-            if (item is IGround)
-            {
-                orderedItems.Add(item);
-            }
+            if (item is IGround) orderedItems.Add(item);
         }
 
         // Then, add top items (IsAlwaysOnTop)
         foreach (var item in items)
         {
             if (item is null) continue;
-            if (item.IsAlwaysOnTop && item is not IGround)
-            {
-                orderedItems.Add(item);
-            }
+            if (item.IsAlwaysOnTop && item is not IGround) orderedItems.Add(item);
         }
 
         // Finally, add down items (everything else)
         foreach (var item in items)
         {
             if (item is null) continue;
-            if (!item.IsAlwaysOnTop && item is not IGround)
-            {
-                orderedItems.Add(item);
-            }
+            if (!item.IsAlwaysOnTop && item is not IGround) orderedItems.Add(item);
         }
 
         return orderedItems.ToArray();
-    }
-
-    public override IItem GetItemByIndex(int index)
-    {
-        if (index < 0 || index >= AllItems.Length)
-        {
-            return null;
-        }
-        return AllItems[index];
     }
 
     public override int GetHashCode()

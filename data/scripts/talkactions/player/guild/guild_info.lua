@@ -20,7 +20,7 @@ function guildInfo.onSay(player, words, param)
     local guildMotd = guild:getMotd()
     local memberCount = guild:getMemberCount()
     local onlineCount = guild:getMemberCountOnline()
-    
+
     -- Get player's guild level name
     local guildLevel = player:getGuildLevel()
     local levelName = "Member"
@@ -35,7 +35,7 @@ function guildInfo.onSay(player, words, param)
     message = message .. string.format("Name: %s\n", guildName)
     message = message .. string.format("Your Rank: %s\n", levelName)
     message = message .. string.format("Members: %d (%d online)\n", memberCount, onlineCount)
-    
+
     if guildMotd ~= "" then
         message = message .. string.format("Message of the Day: %s\n", guildMotd)
     else
@@ -48,7 +48,7 @@ function guildInfo.onSay(player, words, param)
     -- - Guild hall information if applicable
     -- - List of online members
     -- - War status
-    
+
     -- Show online members list if there are any
     if onlineCount > 0 then
         message = message .. "\nOnline Members:\n"
@@ -64,9 +64,9 @@ function guildInfo.onSay(player, words, param)
             message = message .. string.format("- %s (%s)\n", member:getName(), memberRank)
         end
     end
-    
+
     player:showTextDialog(1950, message) -- Using a scroll item ID for the dialog
-    
+
     return true
 end
 

@@ -87,7 +87,6 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
             .FirstOrDefaultAsync();
     }
 
-
     #endregion
 
     #region inserts

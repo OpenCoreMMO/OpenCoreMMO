@@ -36,7 +36,7 @@ public class SummonDeathHandlingTests
         var summon = MonsterTestDataBuilder.BuildSummon(master);
         var enemy = PlayerTestDataBuilder.Build();
         var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
-        
+
         master.Metadata.Summons =
         [
             new MonsterSummon("Test", 1, 100, 1)
@@ -44,10 +44,10 @@ public class SummonDeathHandlingTests
 
         var creatureFactory = new Mock<ICreatureFactory>();
         creatureFactory.Setup(x => x.CreateSummon("Test", master)).Returns(summon);
-        
-        var summonService = new SummonService(creatureFactory.Object ,map, new Mock<ILogger>().Object);
-        
-        
+
+        var summonService = new SummonService(creatureFactory.Object, map, new Mock<ILogger>().Object);
+
+
         // Ensure summon is in alive list
         master.CreateSummon(summonService); // This should add to alive summons
 

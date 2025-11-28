@@ -107,11 +107,8 @@ public class Skill : ISkill
 
     private double GetPointsForSkillLevel(int targetSkillLevel, float vocationRate)
     {
-        if (Type == SkillType.Magic)
-        {
-            return GetRequiredMana(targetSkillLevel, vocationRate);
-        }
-        
+        if (Type == SkillType.Magic) return GetRequiredMana(targetSkillLevel, vocationRate);
+
         return Math.Pow(vocationRate, targetSkillLevel - SkillOffset) / GetIncreaseRate();
     }
 
@@ -137,10 +134,7 @@ public class Skill : ISkill
             return CalculatePercentage(count - currentLevelExp, nextLevelExp - currentLevelExp);
         }
 
-        if (Type == SkillType.Magic)
-        {
-            return GetManaPercentage(count, rate);
-        }
+        if (Type == SkillType.Magic) return GetManaPercentage(count, rate);
 
         return CalculatePercentage(count, GetPointsForSkillLevel(Level + 1, rate));
     }
@@ -151,19 +145,15 @@ public class Skill : ISkill
 
         return CalculatePercentage(manaSpent, requiredMana);
     }
-    
+
     private double GetRequiredMana(int targetLevel, float vocationRate)
     {
         var reqMana = 1600 * Math.Pow(vocationRate, targetLevel);
         var modResult = reqMana % 20;
         if (modResult < 10)
-        {
             reqMana -= modResult;
-        }
         else
-        {
             reqMana -= modResult + 20;
-        }
 
         return reqMana;
     }

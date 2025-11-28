@@ -27,9 +27,7 @@ public class MapService(IMap map, ICreatureMovementService creatureMovementServi
         toTile.AddItems(removedItems);
 
         foreach (var removedCreature in removedCreatures)
-        {
             creatureMovementService.MoveCreature(removedCreature, toTile.Location);
-        }
     }
 
     public ITile GetFinalTile(Location location)

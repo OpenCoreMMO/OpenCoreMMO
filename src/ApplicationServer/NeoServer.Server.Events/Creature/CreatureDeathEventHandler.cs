@@ -28,10 +28,7 @@ public class CreatureDeathEventHandler(
         var by = @event.Attacker;
         //lua script can be added here to handle loot creation
 
-        foreach (var spectator in map.GetSpectators(deadCreature.Location))
-        {
-            spectator.OnSpectatorDies(deadCreature);
-        }
+        foreach (var spectator in map.GetSpectators(deadCreature.Location)) spectator.OnSpectatorDies(deadCreature);
 
         _ = lootService.CreateLootContainer(deadCreature, by);
 
@@ -40,7 +37,7 @@ public class CreatureDeathEventHandler(
         creatureDeathService.Handle(deadCreature, by, damageRecordResult.DamageRecords);
 
         experienceSharingService.Share(deadCreature);
-        
+
         switch (deadCreature)
         {
             case IMonster monster:
@@ -62,12 +59,10 @@ public class CreatureDeathEventHandler(
             creatureManager.RemoveCreature(summon);
             return;
         }
-        
+
         //do not create blood or corpse for monsters that are killed by another monster and remove from map
         if (deadCreature is IMonster && by is IMonster and not Summon { Master: IPlayer })
-        {
             map.RemoveCreature(deadCreature);
-        }
 
         if (deadCreature is not IMonster monster) return;
         creatureManager.AddKilledMonsters(monster);

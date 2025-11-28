@@ -19,14 +19,14 @@ public enum MovementValidationFailureReason
 public record MovementValidationResult(bool IsValid, MovementValidationFailureReason Reason, ITile DestinationTile);
 
 /// <summary>
-/// Service responsible for validating creature movement to a destination tile.
-/// Centralizes all pre-movement checks to ensure consistency and reusability.
+///     Service responsible for validating creature movement to a destination tile.
+///     Centralizes all pre-movement checks to ensure consistency and reusability.
 /// </summary>
 public class CreatureMovementValidation(IMap map)
 {
     /// <summary>
-    /// Validates if a walkable creature can move in the specified direction.
-    /// Performs all necessary checks including tile existence, height adjustments, protection zones, and entry rules.
+    ///     Validates if a walkable creature can move in the specified direction.
+    ///     Performs all necessary checks including tile existence, height adjustments, protection zones, and entry rules.
     /// </summary>
     /// <param name="creature">The creature attempting to move.</param>
     /// <param name="direction">The direction to move in.</param>
@@ -71,7 +71,8 @@ public class CreatureMovementValidation(IMap map)
 
         // Check tile-specific entry conditions (e.g., locked doors, special areas).
         if (!(dynamicTile.CanEnterFunction?.Invoke(creature) ?? true))
-            return new MovementValidationResult(false, MovementValidationFailureReason.CanEnterFunctionDenied, nextTile);
+            return new MovementValidationResult(false, MovementValidationFailureReason.CanEnterFunctionDenied,
+                nextTile);
 
         // Use the creature's tile enter rule to check if it can enter the tile.
         if (!creature.TileEnterRule.CanEnter(nextTile, creature))
@@ -81,8 +82,8 @@ public class CreatureMovementValidation(IMap map)
     }
 
     /// <summary>
-    /// Validates if a walkable creature can move to a specific location.
-    /// Computes the direction from the creature's current location and validates accordingly.
+    ///     Validates if a walkable creature can move to a specific location.
+    ///     Computes the direction from the creature's current location and validates accordingly.
     /// </summary>
     /// <param name="creature">The creature attempting to move.</param>
     /// <param name="location">The target location.</param>
@@ -90,9 +91,7 @@ public class CreatureMovementValidation(IMap map)
     public MovementValidationResult CanWalkTo(IWalkableCreature creature, Location location)
     {
         if (creature is null || location == Location.Zero)
-        {
             return new MovementValidationResult(false, MovementValidationFailureReason.InvalidDirection, null);
-        }
 
         var direction = creature.Location.DirectionTo(location);
         return CanWalkTo(creature, direction);

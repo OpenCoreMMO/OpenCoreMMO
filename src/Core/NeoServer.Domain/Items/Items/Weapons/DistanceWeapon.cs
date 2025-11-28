@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using NeoServer.Domain.Combat.Attacks.Obsoletes;
-using NeoServer.Domain.Combat.Calculations;
 using NeoServer.Domain.Common.Combat;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -10,7 +9,6 @@ using NeoServer.Domain.Common.Contracts.Items.Weapons.Attributes;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items.Weapons;
@@ -54,7 +52,7 @@ public class DistanceWeapon(IItemType type, Location location)
         return false;
     }
 
-   
+
     public void OnMoved(IThing to)
     {
     }

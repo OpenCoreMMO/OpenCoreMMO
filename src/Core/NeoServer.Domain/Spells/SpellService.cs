@@ -32,10 +32,7 @@ public class SpellService(
 
         var invokeResult = spell.Invoke(caster, target, isHotkey);
 
-        if (invokeResult.Failed && caster is IPlayer)
-        {
-            return true;
-        }
+        if (invokeResult.Failed && caster is IPlayer) return true;
 
         if (caster is IPlayer player) player.PostSpellCast(spell);
 
@@ -44,17 +41,11 @@ public class SpellService(
 
     private IThing GetTarget(ICombatActor caster, ISpell spell, Location casterLocation)
     {
-        if (spell.NeedsTarget)
-        {
-            return caster.CurrentTarget;
-        }
-        
+        if (spell.NeedsTarget) return caster.CurrentTarget;
+
         if (spell.NeedDirection || spell.NeedCasterTargetOrDirection)
         {
-            if (spell.NeedCasterTargetOrDirection && caster.CurrentTarget is not null)
-            {
-                return caster.CurrentTarget;
-            }
+            if (spell.NeedCasterTargetOrDirection && caster.CurrentTarget is not null) return caster.CurrentTarget;
 
             var location = casterLocation.AddDirectionStep(caster.Direction);
             return map.GetTile(location) ?? new EmptyTile(location);

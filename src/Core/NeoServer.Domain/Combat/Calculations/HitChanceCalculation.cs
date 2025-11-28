@@ -9,24 +9,17 @@ public static class HitChanceCalculation
     {
         byte hitChance = 100;
 
-        if (weapon is MagicWeapon)
-        {
-            return 100;
-        }
+        if (weapon is MagicWeapon) return 100;
 
         if (weapon is IDistanceWeapon distanceWeapon)
-        {
             hitChance =
                 (byte)(DistanceHitChanceCalculation.CalculateFor2Hands(skill, distance) +
                        distanceWeapon.ExtraHitChance);
-        }
 
         if (weapon is ThrowableWeapon throwableDistanceWeapon)
-        {
             hitChance =
                 (byte)(DistanceHitChanceCalculation.CalculateFor1Hand(skill, distance) +
                        throwableDistanceWeapon.ExtraHitChance);
-        }
 
         return hitChance;
     }

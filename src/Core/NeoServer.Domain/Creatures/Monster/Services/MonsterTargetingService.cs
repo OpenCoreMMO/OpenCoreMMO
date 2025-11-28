@@ -10,7 +10,7 @@ public interface IMonsterTargetingService
 }
 
 /// <summary>
-/// Applies targeting policies for a monster, deciding when to switch or acquire targets using the search strategies.
+///     Applies targeting policies for a monster, deciding when to switch or acquire targets using the search strategies.
 /// </summary>
 public class MonsterTargetingService(IMonsterTargetSearch targetSearch) : IMonsterTargetingService
 {
@@ -45,18 +45,12 @@ public class MonsterTargetingService(IMonsterTargetSearch targetSearch) : IMonst
                                  monster.Metadata.TargetChance.Chance >=
                                  GameRandom.Random.Next(1, maxValue: 100);
 
-        if (shouldChangeTarget)
-        {
-            monster.ChangeAttackTarget(candidate);
-        }
+        if (shouldChangeTarget) monster.ChangeAttackTarget(candidate);
     }
 
     private static byte GetTargetDistance(Monster monster)
     {
-        if (monster.Metadata.Flags.TryGetValue(CreatureFlagAttribute.TargetDistance, out var value))
-        {
-            return (byte)value;
-        }
+        if (monster.Metadata.Flags.TryGetValue(CreatureFlagAttribute.TargetDistance, out var value)) return (byte)value;
 
         return 1;
     }

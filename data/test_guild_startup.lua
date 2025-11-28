@@ -5,11 +5,11 @@ print("Testando se Guild() está disponível...")
 -- Teste 1: Verificar se Guild existe
 if Guild then
     print("✓ Função Guild está disponível")
-    
+
     -- Teste 2: Tentar criar uma guild
     local testName = "TestGuild"
     print("Tentando criar guild com nome: " .. testName)
-    
+
     local guild = Guild(testName)
     if guild then
         print("✓ Guild criada com sucesso!")

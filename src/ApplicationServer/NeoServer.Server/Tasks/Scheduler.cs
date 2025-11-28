@@ -15,7 +15,7 @@ public class Scheduler : IScheduler
     protected readonly ConcurrentDictionary<uint, byte> ActiveEventIds = new();
     protected readonly ConcurrentDictionary<uint, byte> CancelledEventIds = new();
     protected readonly ChannelReader<ISchedulerEvent> Reader;
-    
+
     private uint _lastEventId;
     protected ulong EventLength;
 
@@ -40,7 +40,7 @@ public class Scheduler : IScheduler
     {
         if (evt.EventId == default) evt.SetEventId(++_lastEventId);
 
-        if (ActiveEventIds.TryAdd(evt.EventId, default)) 
+        if (ActiveEventIds.TryAdd(evt.EventId, default))
             _writer.TryWrite(evt);
 
         return evt.EventId;
@@ -68,7 +68,7 @@ public class Scheduler : IScheduler
                             {
                                 if (!token.IsCancellationRequested)
                                 {
-                                    ActiveEventIds.TryRemove(evt.EventId, out var _);
+                                    ActiveEventIds.TryRemove(evt.EventId, out _);
                                     AddEvent(evt);
                                 }
                             }, TaskScheduler.Default);
@@ -93,7 +93,7 @@ public class Scheduler : IScheduler
     public virtual bool CancelEvent(uint eventId)
     {
         if (eventId == default) return false;
-        var removed = ActiveEventIds.TryRemove(eventId, out var _);
+        var removed = ActiveEventIds.TryRemove(eventId, out _);
         CancelledEventIds.TryAdd(eventId, default);
         return removed;
     }
@@ -115,7 +115,7 @@ public class Scheduler : IScheduler
         if (!EventIsCancelled(evt.EventId))
         {
             Interlocked.Increment(ref EventLength);
-            ActiveEventIds.TryRemove(evt.EventId, out var _);
+            ActiveEventIds.TryRemove(evt.EventId, out _);
             _dispatcher.AddEvent(evt);
             return true;
         }

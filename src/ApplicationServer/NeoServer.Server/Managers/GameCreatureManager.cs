@@ -126,10 +126,7 @@ public class GameCreatureManager : IGameCreatureManager
     /// <returns></returns>
     public bool RemoveCreature(ICreature creature)
     {
-        if (creature is IWalkableCreature walkableCreature)
-        {
-            _map.RemoveCreature(walkableCreature);
-        }
+        if (creature is IWalkableCreature walkableCreature) _map.RemoveCreature(walkableCreature);
 
         _creatureInstances.TryRemove(creature.CreatureId);
 
@@ -169,7 +166,7 @@ public class GameCreatureManager : IGameCreatureManager
     {
         if (_playersConnection.TryRemove(player.CreatureId, out var connection))
             connection.Disconnect();
-        
+
         _creatureInstances.TryRemoveFromLoggedPlayers(player.Id);
 
         RemoveCreature(player);

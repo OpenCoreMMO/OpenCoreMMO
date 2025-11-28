@@ -17,7 +17,7 @@ public class PlayerOpenQuestLineCommand(
         var quest = questService.GetQuest(questId);
 
         if (!gameCreatureManager.GetPlayerConnection(player.CreatureId, out var connection)) return;
-        
+
         var missions = quest.Missions
             ?.Where(m => questService.MissionIsStarted(player, m))
             .Select(m => new PlayerQuestLinePacket.Mission(m.Name, questService.GetMissionDescription(player, m), true))

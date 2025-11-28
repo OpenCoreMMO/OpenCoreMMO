@@ -11,7 +11,6 @@ namespace NeoServer.Domain.World.Map;
 
 public class CylinderOperation(IMap map)
 {
-
     /// <summary>
     ///     Creates a cylinder instance as removed
     /// </summary>
@@ -93,8 +92,9 @@ public class CylinderOperation(IMap map)
         cylinder = null;
         if (toTile is not DynamicTile tile) return new Result<OperationResultList<ICreature>>();
 
-        var result = new Result<OperationResultList<ICreature>>(new OperationResultList<ICreature>(Operation.Added, creature));
-        
+        var result =
+            new Result<OperationResultList<ICreature>>(new OperationResultList<ICreature>(Operation.Added, creature));
+
         if (!toTile.HasCreature(creature))
         {
             result = tile.AddCreature(creature);

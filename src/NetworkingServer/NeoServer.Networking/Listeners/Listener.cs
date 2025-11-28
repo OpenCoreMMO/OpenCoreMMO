@@ -12,11 +12,11 @@ namespace NeoServer.Networking.Listeners;
 
 public abstract class Listener : TcpListener, IListener
 {
+    private readonly CancellationTokenSource _internalCancellation = new();
     private readonly ILogger _logger;
     private readonly int _port;
     private readonly IProtocol _protocol;
-    private readonly CancellationTokenSource _internalCancellation = new();
-    
+
     private volatile bool _isShuttingDown;
 
     protected Listener(int port, IProtocol protocol, ILogger logger) : base(IPAddress.Any, port)
@@ -28,7 +28,8 @@ public abstract class Listener : TcpListener, IListener
 
     public void BeginListening(CancellationToken cancellationToken)
     {
-        var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _internalCancellation.Token);
+        var combinedCts =
+            CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _internalCancellation.Token);
 
         Task.Factory.StartNew(async () =>
         {
@@ -36,7 +37,6 @@ public abstract class Listener : TcpListener, IListener
             const int maxRetries = 5;
 
             while (!combinedCts.Token.IsCancellationRequested && retryCount < maxRetries)
-            {
                 try
                 {
                     Start();
@@ -46,12 +46,13 @@ public abstract class Listener : TcpListener, IListener
                 catch (SocketException ex)
                 {
                     retryCount++;
-                    _logger.Error(ex, "Could not start {Protocol} on port {Port} (attempt {Retry}/{MaxRetries})", 
+                    _logger.Error(ex, "Could not start {Protocol} on port {Port} (attempt {Retry}/{MaxRetries})",
                         _protocol, _port, retryCount, maxRetries);
-                    
+
                     if (retryCount >= maxRetries)
                     {
-                        _logger.Error("Failed to start {Protocol} after {MaxRetries} attempts. Giving up.", _protocol, maxRetries);
+                        _logger.Error("Failed to start {Protocol} after {MaxRetries} attempts. Giving up.", _protocol,
+                            maxRetries);
                         return;
                     }
 
@@ -63,9 +64,7 @@ public abstract class Listener : TcpListener, IListener
                     {
                         return;
                     }
-                    continue;
                 }
-            }
 
             _logger.Information("{Protocol} is online on port {Port}", _protocol, _port);
 
@@ -74,10 +73,7 @@ public abstract class Listener : TcpListener, IListener
                 while (!combinedCts.Token.IsCancellationRequested)
                 {
                     var connection = await CreateConnectionAsync(combinedCts.Token);
-                    if (connection != null)
-                    {
-                        _protocol.OnAccept(connection);
-                    }
+                    if (connection != null) _protocol.OnAccept(connection);
                 }
             }
             catch (OperationCanceledException)
@@ -105,10 +101,10 @@ public abstract class Listener : TcpListener, IListener
     public void EndListening()
     {
         if (_isShuttingDown) return;
-        
+
         _isShuttingDown = true;
         _internalCancellation.Cancel();
-        
+
         try
         {
             Stop();
@@ -130,7 +126,7 @@ public abstract class Listener : TcpListener, IListener
             connection.OnCloseEvent += OnConnectionClose;
             connection.OnProcessEvent += _protocol.ProcessMessage;
             connection.OnPostProcessEvent += _protocol.PostProcessMessage;
-            
+
             return connection;
         }
         catch (OperationCanceledException)

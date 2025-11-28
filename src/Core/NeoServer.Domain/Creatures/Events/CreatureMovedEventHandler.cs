@@ -16,7 +16,7 @@ public class CreatureMovedEventHandler : IGameEventHandler
             if (Equals(creature, spectator)) continue;
 
             if (spectator is ICombatActor { IsDead: true }) continue;
-            
+
             spectator.OnSpectatorMoved(creature);
 
             if (CreatureOrSpectatorAreNpcs(creature, spectator)) continue;
@@ -32,10 +32,7 @@ public class CreatureMovedEventHandler : IGameEventHandler
             SetCreatureAndSpectatorAsEnemies(creature, spectator);
         }
 
-        if (creature is ICombatActor combatActor)
-        {
-            combatActor.Tile.MagicField?.CauseDamage(combatActor);
-        }
+        if (creature is ICombatActor combatActor) combatActor.Tile.MagicField?.CauseDamage(combatActor);
     }
 
     private static void SetCreatureAndSpectatorAsEnemies(ICreature creature, ICreature spectator)

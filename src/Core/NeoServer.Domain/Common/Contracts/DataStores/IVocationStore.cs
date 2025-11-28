@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Creatures.Player.Vocation;
+﻿using NeoServer.Domain.Creatures.Player.Vocation;
 
 namespace NeoServer.Domain.Common.Contracts.DataStores;
 

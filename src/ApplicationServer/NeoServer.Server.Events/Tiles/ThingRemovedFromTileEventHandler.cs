@@ -35,15 +35,11 @@ public class ThingRemovedFromTileEventHandler(IGameServer game, IScriptManager s
 
             // if the player is not dead, show a puff effect
             if (thing is IPlayer { IsDead: false } or IMonster { IsSummon: true })
-            {
                 connection.OutgoingPackets.Enqueue(new MagicEffectPacket(tile.Location, EffectT.Puff));
-            }
 
             // if the monster was killed by another monster, show a puff effect
             if (thing is Monster { KilledByAnotherMonster: true })
-            {
                 connection.OutgoingPackets.Enqueue(new MagicEffectPacket(tile.Location, EffectT.Puff));
-            }
 
             connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(tile, stackPosition));
 

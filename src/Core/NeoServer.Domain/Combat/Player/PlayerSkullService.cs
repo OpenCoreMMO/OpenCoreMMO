@@ -23,7 +23,7 @@ public class PlayerSkullService(GameConfiguration gameConfiguration) : IPlayerSk
 
         var whiteSkullEndingDate =
             DateTime.UtcNow.AddMinutes(gameConfiguration.PvP?.WhiteSkullDurationMinutes ??
-                                    TimeSpan.FromMilliseconds(gameConfiguration.LogoutBlockDuration).TotalMinutes);
+                                       TimeSpan.FromMilliseconds(gameConfiguration.LogoutBlockDuration).TotalMinutes);
 
         //when aggressor has white skull
         if (aggressor.HasSkull && aggressor.Skull is Skull.White)

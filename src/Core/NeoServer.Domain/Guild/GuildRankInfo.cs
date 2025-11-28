@@ -2,10 +2,6 @@ namespace NeoServer.Domain.Guild;
 
 public class GuildRankInfo
 {
-    public ushort Id { get; set; }
-    public string Name { get; set; }
-    public byte Level { get; set; }
-
     public GuildRankInfo()
     {
     }
@@ -17,12 +13,13 @@ public class GuildRankInfo
         Level = level;
     }
 
+    public ushort Id { get; set; }
+    public string Name { get; set; }
+    public byte Level { get; set; }
+
     public override bool Equals(object obj)
     {
-        if (obj is GuildRankInfo other)
-        {
-            return Id == other.Id;
-        }
+        if (obj is GuildRankInfo other) return Id == other.Id;
         return false;
     }
 

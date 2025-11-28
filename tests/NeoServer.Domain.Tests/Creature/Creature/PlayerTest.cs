@@ -328,7 +328,7 @@ public class PlayerTest
 
         player.Death(null);
 
-        Assert.Equal(initialExp * 0.9, (double)player.Experience); // 10% loss
+        Assert.Equal(initialExp * 0.9, player.Experience); // 10% loss
         Assert.Equal(23, player.Level);
         Assert.False(player.IsPromoted);
     }
@@ -364,7 +364,7 @@ public class PlayerTest
 
         player.Death(null);
 
-        Assert.Equal(expectedExpAfterDeath, (double)player.Experience);
+        Assert.Equal(expectedExpAfterDeath, player.Experience);
         Assert.Equal(50, player.Level); // Should stay at level 50
         Assert.True(player.IsPromoted);
     }

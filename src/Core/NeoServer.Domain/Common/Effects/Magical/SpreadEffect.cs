@@ -37,14 +37,11 @@ public static class SpreadEffect
                 // Calculate which band this row belongs to
                 // Spread starts expanding when row reaches the spread value
                 if (row < spread)
-                {
                     cols = 0;
-                }
                 else
-                {
                     cols = (row - spread) / spread + 1;
-                }
             }
+
             for (var c = 0 - cols; c <= 0 + cols; c++)
                 switch (direction)
                 {

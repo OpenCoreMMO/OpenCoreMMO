@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Helpers;
@@ -13,7 +12,7 @@ public interface IMonsterTargetSearch
 }
 
 /// <summary>
-/// Evaluates the current target list and selects the best candidate according to the requested search strategy.
+///     Evaluates the current target list and selects the best candidate according to the requested search strategy.
 /// </summary>
 public class MonsterTargetSearch(IMapTool mapTool) : IMonsterTargetSearch
 {
@@ -26,31 +25,19 @@ public class MonsterTargetSearch(IMapTool mapTool) : IMonsterTargetSearch
 
         foreach (var combatTarget in monster.Targets.Enumerate())
         {
-            if (monster.AutoAttackTargetId == combatTarget.CreatureId || !IsTarget(combatTarget))
-            {
-                continue;
-            }
+            if (monster.AutoAttackTargetId == combatTarget.CreatureId || !IsTarget(combatTarget)) continue;
 
             if (searchType == TargetSearchType.Random || CanUseAttack(monster, monsterPosition, combatTarget))
-            {
                 candidates.Add(combatTarget);
-            }
         }
 
         var selectedTarget = SelectByStrategy(monster, monsterPosition, candidates, searchType);
 
-        if (selectedTarget is not null && CanSelectTarget(monster, selectedTarget))
-        {
-            return selectedTarget;
-        }
+        if (selectedTarget is not null && CanSelectTarget(monster, selectedTarget)) return selectedTarget;
 
         foreach (var fallbackTarget in monster.Targets.Enumerate())
-        {
             if (CanSelectTarget(monster, fallbackTarget))
-            {
                 return fallbackTarget;
-            }
-        }
 
         return null;
     }
@@ -62,15 +49,9 @@ public class MonsterTargetSearch(IMapTool mapTool) : IMonsterTargetSearch
         TargetSearchType searchType)
     {
         if (candidates.Count == 0 && searchType == TargetSearchType.Nearest)
-        {
             foreach (var target in monster.Targets.Enumerate())
-            {
                 if (IsTarget(target))
-                {
                     candidates.Add(target);
-                }
-            }
-        }
 
         return searchType switch
         {
@@ -127,12 +108,8 @@ public class MonsterTargetSearch(IMapTool mapTool) : IMonsterTargetSearch
         if (!monster.IsHostile) return true;
 
         foreach (var attack in monster.Metadata.Attacks)
-        {
             if (attack.CombatParameter.Range != 0 && distance <= attack.CombatParameter.Range)
-            {
                 return mapTool.IsClearSight(monsterPosition, target.Location, true);
-            }
-        }
 
         return false;
     }

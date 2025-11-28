@@ -38,7 +38,7 @@ function joinGuild.onSay(player, words, param)
     if guild:addMember(player) then
         player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have joined the guild '%s'!", param))
         player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
-        
+
         -- Notify other guild members
         for _, member in pairs(guild:getMembers()) do
             if member:isOnline() and member ~= player then
@@ -49,7 +49,7 @@ function joinGuild.onSay(player, words, param)
         player:sendCancelMessage("Failed to join guild. Please try again.")
         return false
     end
-    
+
     return true
 end
 

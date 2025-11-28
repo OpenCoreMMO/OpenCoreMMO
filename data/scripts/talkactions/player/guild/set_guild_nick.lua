@@ -18,7 +18,8 @@ function setGuildNick.onSay(player, words, param)
 
     -- Check if player has permission to set guild nicks (leader or vice-leader)
     local guildLevel = player:getGuildLevel()
-    if guildLevel < 2 then -- 1 = Member, 2 = Vice-Leader, 3 = Leader
+    if guildLevel < 2 then
+        -- 1 = Member, 2 = Vice-Leader, 3 = Leader
         player:sendCancelMessage("You don't have permission to set guild nicknames.")
         return false
     end
@@ -69,7 +70,7 @@ function setGuildNick.onSay(player, words, param)
     -- 1. Update target player's guild nick in database
     -- 2. Update target player's guild nick in game
     -- 3. Update player's display name/title
-    
+
     if guildNick == "" then
         player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have removed %s's guild nickname.", targetPlayer:getName()))
         targetPlayer:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("Your guild nickname has been removed by %s.", player:getName()))
@@ -77,10 +78,10 @@ function setGuildNick.onSay(player, words, param)
         player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have set %s's guild nickname to '%s'.", targetPlayer:getName(), guildNick))
         targetPlayer:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("Your guild nickname has been set to '%s' by %s.", guildNick, player:getName()))
     end
-    
+
     player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
     targetPlayer:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
-    
+
     return true
 end
 

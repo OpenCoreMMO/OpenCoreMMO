@@ -1,6 +1,5 @@
 ﻿using Moq;
 using NeoServer.Domain.Common.Combat;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Creatures.Experience;
 using NeoServer.Domain.Tests.Helpers.Player;
 

@@ -114,7 +114,7 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         player.OnGainedSkillPoint += _playerUpdatedSkillPointsEventHandler.Execute;
         player.OnUsedItem += _playerUsedItemEventHandler.Execute;
         player.PlayerSkull.OnSkullUpdated += _playerSkullUpdatedEventHandler.Execute;
-        
+
         player.Channels.OnJoinedChannel += _playerJoinedChannelEventHandler.Execute;
         player.Channels.OnExitedChannel += _playerExitedChannelEventHandler.Execute;
         player.Vip.OnAddedToVipList += _playerAddedToVipListEventHandler.Execute;
@@ -173,7 +173,7 @@ public class PlayerEventSubscriber : ICreatureEventSubscriber
         player.OnGainedSkillPoint -= _playerUpdatedSkillPointsEventHandler.Execute;
         player.OnUsedItem -= _playerUsedItemEventHandler.Execute;
         player.PlayerSkull.OnSkullUpdated -= _playerSkullUpdatedEventHandler.Execute;
-        
+
         player.Channels.OnJoinedChannel -= _playerJoinedChannelEventHandler.Execute;
         player.Channels.OnExitedChannel -= _playerExitedChannelEventHandler.Execute;
         player.Vip.OnAddedToVipList -= _playerAddedToVipListEventHandler.Execute;

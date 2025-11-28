@@ -10,8 +10,10 @@ using NeoServer.Data.Providers.PostgreSQL;
 using NeoServer.Data.Providers.SQLite;
 using NeoServer.Data.Repositories;
 using NeoServer.Data.Repositories.Player;
+using NeoServer.Domain.Repositories;
 using NeoServer.Server.Configurations;
 using Serilog;
+using IPlayerRepository = NeoServer.Data.Interfaces.IPlayerRepository;
 
 namespace NeoServer.Server.Standalone.IoC.Modules;
 
@@ -31,10 +33,10 @@ public static class DatabaseInjection
         builder.AddSingleton<IReportBugRepository, ReportBugRepository>();
         builder.AddSingleton<IPlayerMailItemRepository, PlayerMailItemRepository>();
         builder.AddSingleton(typeof(BaseRepository<>));
-        
+
         //domain repositories
         builder.AddSingleton<Domain.Repositories.IPlayerRepository, PlayerRepository>();
-        builder.AddSingleton<Domain.Repositories.IPlayerMailRepository, PlayerMailItemRepository>();
+        builder.AddSingleton<IPlayerMailRepository, PlayerMailItemRepository>();
 
         return builder;
     }

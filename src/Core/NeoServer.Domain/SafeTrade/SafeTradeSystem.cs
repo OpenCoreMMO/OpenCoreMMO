@@ -29,6 +29,17 @@ public class SafeTradeSystem : ITradeService
     }
 
     /// <summary>
+    ///     Cancels and closes a trade request
+    /// </summary>
+    /// <param name="playerCanceling">The trade request to cancel.</param>
+    public void Cancel(IPlayer playerCanceling)
+    {
+        var tradeRequest = TradeRequestTracker.GetTradeRequest(playerCanceling);
+
+        Cancel(tradeRequest);
+    }
+
+    /// <summary>
     ///     Requests a trade between two players.
     /// </summary>
     /// <param name="player">The player requesting the trade.</param>
@@ -59,17 +70,6 @@ public class SafeTradeSystem : ITradeService
         OnTradeRequest?.Invoke(tradeRequest);
 
         return SafeTradeError.None;
-    }
-
-    /// <summary>
-    ///     Cancels and closes a trade request
-    /// </summary>
-    /// <param name="playerCanceling">The trade request to cancel.</param>
-    public void Cancel(IPlayer playerCanceling)
-    {
-        var tradeRequest = TradeRequestTracker.GetTradeRequest(playerCanceling);
-
-        Cancel(tradeRequest);
     }
 
     public void Cancel(TradeRequest tradeRequest)

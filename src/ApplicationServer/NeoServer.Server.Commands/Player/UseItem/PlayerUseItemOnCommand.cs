@@ -83,7 +83,8 @@ public class PlayerUseItemOnCommand : ICommand
 
         if (onItem is null && onTile is null) return;
 
-        var thingToUse = _itemFinder.Find(player, useItemPacket.Location, useItemPacket.ClientId, useItemPacket.StackPosition,
+        var thingToUse = _itemFinder.Find(player, useItemPacket.Location, useItemPacket.ClientId,
+            useItemPacket.StackPosition,
             StackPositionType.UseItem);
 
         IThing onTarget = !onItem ? onTile : onItem;

@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Networking.Packets.Outgoing.Login;
 using NeoServer.Server.Common.Contracts;
@@ -12,12 +11,12 @@ public class CreatureKilledEventHandler(IGameServer game) : INetworkingEventHand
 {
     public void Handle(CreatureDeathEvent @event)
     {
-        ICombatActor creature = @event.DeadCreature;
-        IThing by = @event.Attacker;
-        
+        var creature = @event.DeadCreature;
+        var by = @event.Attacker;
+
         if (creature is not IPlayer ||
             !game.CreatureManager.GetPlayerConnection(creature.CreatureId, out var connection)) return;
-        
+
         game.Scheduler.AddEvent(new SchedulerEvent(200, () =>
         {
             //send packets to killed player

@@ -1,13 +1,14 @@
+using System.Reflection;
 using Moq;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
-using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Location;
-using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Domain.Creatures.Conditions.Implementations;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Monster.Services;
@@ -38,8 +39,8 @@ public class MonsterCombatTest
         map.PlaceCreature(player);
         map.PlaceCreature(monster);
 
-    var summonServiceMock = new Mock<ISummonService>();
-    var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
+        var summonServiceMock = new Mock<ISummonService>();
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         //act
         monsterStateService.UpdateState(monster);
@@ -97,7 +98,7 @@ public class MonsterCombatTest
 
         // Set the player's tile as a protection zone using reflection
         var flagsField = typeof(BaseTile).GetField("Flags",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            BindingFlags.NonPublic | BindingFlags.Instance);
         flagsField.SetValue(map[100, 100, 7], (uint)TileFlags.ProtectionZone);
 
         var summonServiceMock = new Mock<ISummonService>();
@@ -139,7 +140,7 @@ public class MonsterCombatTest
         map.PlaceCreature(monster);
 
         var summonServiceMock = new Mock<ISummonService>();
-    var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
 
         //act
         monsterStateService.UpdateState(monster);
@@ -298,9 +299,10 @@ public class MonsterCombatTest
 
         map.PlaceCreature(monster);
 
-    var summonServiceMock = new Mock<ISummonService>();
-    var targetingService = new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, new PathFinder(map))));
-    var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map, targetingService);
+        var summonServiceMock = new Mock<ISummonService>();
+        var targetingService =
+            new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, new PathFinder(map))));
+        var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map, targetingService);
 
         // Initial attack on farther player
         monsterStateService.UpdateState(monster);
@@ -329,7 +331,7 @@ public class MonsterCombatTest
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(102, 102, 7));
 
-        var monster = MonsterTestDataBuilder.Build(maxHealth: 100) as Domain.Creatures.Monster.Monster;
+        var monster = MonsterTestDataBuilder.Build(100) as Domain.Creatures.Monster.Monster;
         monster.Metadata.Flags[CreatureFlagAttribute.RunOnHealth] = 50; // Set run on health to 50
         monster.SetNewLocation(new Location(103, 102, 7));
         // Simulate damage to reduce health below 50 to trigger fleeing
@@ -464,7 +466,7 @@ public class MonsterCombatTest
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(101, 102, 7));
 
-        var monster = MonsterTestDataBuilder.Build(maxHealth: 100) as Domain.Creatures.Monster.Monster;
+        var monster = MonsterTestDataBuilder.Build(100) as Domain.Creatures.Monster.Monster;
         monster.Metadata.Flags[CreatureFlagAttribute.RunOnHealth] = 50; // Set run on health to 50
         monster.SetNewLocation(new Location(102, 102, 7));
 
@@ -569,7 +571,7 @@ public class MonsterCombatTest
             (106, 108), (107, 108), (108, 108)
         };
 
-        for (int i = 0; i < 8; i++)
+        for (var i = 0; i < 8; i++)
         {
             var monster = MonsterTestDataBuilder.Build(name: $"Surrounding Monster {i + 1}");
             monster.SetNewLocation(new Location((ushort)positions[i].x, (ushort)positions[i].y, 7));
@@ -577,7 +579,8 @@ public class MonsterCombatTest
             map.PlaceCreature(monster);
         }
 
-        var sut = (Domain.Creatures.Monster.Monster)MonsterTestDataBuilder.Build(name: "Sut monster", map: map); // System Under Test
+        var sut = (Domain.Creatures.Monster.Monster)MonsterTestDataBuilder.Build(name: "Sut monster",
+            map: map); // System Under Test
         sut.SetNewLocation(new Location(109, 109, 7)); // Nearby but not attacking
 
         map.PlaceCreature(sut);
@@ -589,7 +592,8 @@ public class MonsterCombatTest
         // Initial state: SUT might be targeting player yet
         monsterStateService.UpdateState(sut);
         sut.State.Should().Be(MonsterState.LookingForEnemy);
-        sut.CurrentTarget.Should().Be(player); // Assume targeting the player initially although not having follow path to him
+        sut.CurrentTarget.Should()
+            .Be(player); // Assume targeting the player initially although not having follow path to him
 
         //act - Kill one of the surrounding monsters
         var deadMonster = surroundingMonsters[0];
@@ -613,7 +617,7 @@ public class MonsterCombatTest
         //arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
 
-        var playerA = PlayerTestDataBuilder.Build(name:"Player A");
+        var playerA = PlayerTestDataBuilder.Build(name: "Player A");
         playerA.SetNewLocation(new Location(102, 102, 7));
 
         var playerB = PlayerTestDataBuilder.Build(name: "Player B");
@@ -626,7 +630,7 @@ public class MonsterCombatTest
             (101, 102), (103, 102),
             (101, 103), (102, 103), (103, 103)
         };
-        
+
         map.PlaceCreature(playerA);
 
         for (var i = 0; i < 8; i++)
@@ -640,16 +644,16 @@ public class MonsterCombatTest
         var sut = MonsterTestDataBuilder.Build(name: "monsterX", map: map);
         sut.Metadata.Flags[CreatureFlagAttribute.TargetDistance] = 1; // Allow long-range targeting
         sut.Metadata.TargetChance.Chance = 0;
-        
+
         sut.SetNewLocation(new Location(100, 100, 7));
 
         map.PlaceCreature(playerB);
-        
+
         map.PlaceCreature(sut);
 
         var summonServiceMock = new Mock<ISummonService>();
         var monsterStateService = BuildMonsterStateService(summonServiceMock.Object, map);
-        
+
         //selects the player A as he is closer to the monster
         monsterStateService.UpdateState(sut);
 
@@ -670,7 +674,8 @@ public class MonsterCombatTest
         TargetDetectorService targetDetectorService = null)
     {
         targetDetectorService ??= new TargetDetectorService(map);
-        targetingService ??= new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, new PathFinder(map))));
+        targetingService ??=
+            new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, new PathFinder(map))));
         return new MonsterStateService(summonService, targetDetectorService, targetingService);
     }
 }

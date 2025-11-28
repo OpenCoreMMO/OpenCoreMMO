@@ -1,8 +1,8 @@
-﻿using NeoServer.Domain.Common;
+﻿using NeoServer.Domain.Combat.Player;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.Tests.Helpers.Services;
@@ -30,13 +30,14 @@ public class PlayerAttackTests
         regularTile.AddCreature(player);
 
         using var monitor = player.Monitor();
-        
+
         var map = MapTestDataBuilder.Build(regularTile, protectionZoneTile);
         var attackService = AttackServiceTestBuilder.Build(map);
 
         //act
         player.SetAttackTarget(enemy);
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.CannotAttackPersonInProtectionZone);
@@ -66,15 +67,16 @@ public class PlayerAttackTests
         regularTile.AddCreature(enemy);
 
         using var monitor = player.Monitor();
-        
+
         var map = MapTestDataBuilder.Build(regularTile, protectionZoneTile);
         var attackService = AttackServiceTestBuilder.Build(map);
 
         //act
-        
+
         player.SetAttackTarget(enemy);
-        
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
 
         //assert
@@ -118,7 +120,8 @@ public class PlayerAttackTests
 
         //act
 
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Failed.Should().BeTrue();
@@ -161,7 +164,8 @@ public class PlayerAttackTests
         protectionZoneTile.AddCreature(player);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.CannotAttackWhileInProtectionZone);
@@ -196,7 +200,8 @@ public class PlayerAttackTests
         using var monitor = player.Monitor();
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         monitor.Should().NotRaise(nameof(player.OnAttackEnemy));
@@ -250,7 +255,8 @@ public class PlayerAttackTests
         using var monitor = player.Monitor();
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
@@ -295,7 +301,8 @@ public class PlayerAttackTests
 
         //act
         Thread.Sleep(100);
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
@@ -330,7 +337,8 @@ public class PlayerAttackTests
         using var monitor = player.Monitor();
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
@@ -365,7 +373,8 @@ public class PlayerAttackTests
         using var monitor = player.Monitor();
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);

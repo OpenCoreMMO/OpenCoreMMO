@@ -20,6 +20,7 @@ public interface IPlayerRepository : IBaseRepositoryNeo<PlayerEntity>
     /// <param name="player"></param>
     /// <returns></returns>
     Task SavePlayer(IPlayer player);
+
     Task<PlayerEntity> GetById(int id);
     Task UpdateLastLogInDate(int playerId, DateTime lastLogIn);
 }

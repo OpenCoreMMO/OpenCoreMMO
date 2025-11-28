@@ -7,9 +7,10 @@ namespace NeoServer.Domain.Creatures.Monster.Services;
 public class TargetDetectorService(IMap map)
 {
     /// <summary>
-    /// Maintains the monster's combat focus by cleaning up its target list.
-    /// Removes targets that are no longer viable threats, such as dead creatures or those outside the monster's perception range.
-    /// This ensures the monster only pursues active, reachable enemies.
+    ///     Maintains the monster's combat focus by cleaning up its target list.
+    ///     Removes targets that are no longer viable threats, such as dead creatures or those outside the monster's perception
+    ///     range.
+    ///     This ensures the monster only pursues active, reachable enemies.
     /// </summary>
     /// <param name="monster">The monster whose target priorities need updating.</param>
     public void Update(Monster monster)
@@ -49,7 +50,7 @@ public class TargetDetectorService(IMap map)
 
             var isPlayerOrPlayerSummon = spectator is IPlayer or Summon.Summon { Master: IPlayer };
 
-            if (!isPlayerOrPlayerSummon) 
+            if (!isPlayerOrPlayerSummon)
                 continue;
 
             // Skip dead creatures
@@ -58,12 +59,12 @@ public class TargetDetectorService(IMap map)
             // Must be visible to the monster
             if (!monster.CanSee(target.Location)) continue;
             if (!monster.CanSee(target)) continue;
-            
+
             // Must be on the same floor
             if (!monster.Location.SameFloorAs(target.Location)) continue;
 
             // Add as a new target (MonsterTargetList handles duplicates)
-            monster.Targets.Add(target, false);
+            monster.Targets.Add(target);
         }
     }
 }

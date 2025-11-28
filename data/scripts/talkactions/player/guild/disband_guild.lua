@@ -17,7 +17,8 @@ function disbandGuild.onSay(player, words, param)
     end
 
     -- Check if player is the guild leader
-    if player:getGuildLevel() ~= 3 then -- Only leaders can disband
+    if player:getGuildLevel() ~= 3 then
+        -- Only leaders can disband
         player:sendCancelMessage("Only the guild leader can disband the guild.")
         return false
     end
@@ -29,7 +30,7 @@ function disbandGuild.onSay(player, words, param)
     end
 
     local guildName = guild:getName()
-    
+
     -- Notify all online guild members first
     for _, member in pairs(guild:getMembers()) do
         if member:isOnline() then
@@ -39,7 +40,7 @@ function disbandGuild.onSay(player, words, param)
             end
         end
     end
-    
+
     -- Disband the guild
     if guild:disband() then
         player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have disbanded the guild '%s'. All members have been removed.", guildName))
@@ -48,7 +49,7 @@ function disbandGuild.onSay(player, words, param)
         player:sendCancelMessage("Failed to disband guild. Please try again.")
         return false
     end
-    
+
     return true
 end
 

@@ -18,7 +18,8 @@ function kickGuild.onSay(player, words, param)
 
     -- Check if player has permission to kick members (leader or vice-leader)
     local guildLevel = player:getGuildLevel()
-    if guildLevel < 2 then -- 1 = Member, 2 = Vice-Leader, 3 = Leader
+    if guildLevel < 2 then
+        -- 1 = Member, 2 = Vice-Leader, 3 = Leader
         player:sendCancelMessage("You don't have permission to kick members from the guild.")
         return false
     end
@@ -51,27 +52,29 @@ function kickGuild.onSay(player, words, param)
 
     -- Check permissions - vice-leaders cannot kick other vice-leaders or leaders
     local targetGuildLevel = targetPlayer:getGuildLevel()
-    if guildLevel == 2 and targetGuildLevel >= 2 then -- Vice-leader trying to kick vice-leader or leader
+    if guildLevel == 2 and targetGuildLevel >= 2 then
+        -- Vice-leader trying to kick vice-leader or leader
         player:sendCancelMessage("You cannot kick other vice-leaders or the guild leader.")
         return false
     end
 
     -- Leaders cannot kick other leaders (should transfer leadership first)
-    if targetGuildLevel == 3 then -- Target is leader
+    if targetGuildLevel == 3 then
+        -- Target is leader
         player:sendCancelMessage("You cannot kick the guild leader. Transfer leadership first.")
         return false
     end
 
     -- Remove player from guild
     local guildName = guild:getName()
-    
+
     if guild:removeMember(targetPlayer) then
         player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have kicked %s from %s.", targetPlayer:getName(), guildName))
         targetPlayer:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have been kicked from the guild '%s' by %s.", guildName, player:getName()))
-        
+
         player:getPosition():sendMagicEffect(CONST_ME_MAGIC_RED)
         targetPlayer:getPosition():sendMagicEffect(CONST_ME_MAGIC_RED)
-        
+
         -- Notify other guild members
         for _, member in pairs(guild:getMembers()) do
             if member:isOnline() and member ~= player and member ~= targetPlayer then
@@ -82,7 +85,7 @@ function kickGuild.onSay(player, words, param)
         player:sendCancelMessage("Failed to kick member. Please try again.")
         return false
     end
-    
+
     return true
 end
 

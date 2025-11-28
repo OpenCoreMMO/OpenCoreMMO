@@ -4,6 +4,9 @@ namespace NeoServer.Domain.Items.Mappers;
 
 public class LiquidTypeMap
 {
+    // Reverse mapping from enum values to keys
+    private readonly Dictionary<LiquidColor, byte> reverseTypes;
+
     private readonly Dictionary<byte, LiquidColor> types = new()
     {
         { 0, LiquidColor.Empty },
@@ -15,9 +18,6 @@ public class LiquidTypeMap
         { 6, LiquidColor.White },
         { 7, LiquidColor.Purple }
     };
-
-    // Reverse mapping from enum values to keys
-    private readonly Dictionary<LiquidColor, byte> reverseTypes;
 
     public LiquidTypeMap()
     {
@@ -35,11 +35,8 @@ public class LiquidTypeMap
 
     public byte GetReverseLiquidColor(LiquidColor liquidColor)
     {
-       //Get value from the reverse mapping
-        if (reverseTypes.TryGetValue(liquidColor, out var value))
-        {
-            return value;
-        }
+        //Get value from the reverse mapping
+        if (reverseTypes.TryGetValue(liquidColor, out var value)) return value;
         return 0; // Default to 0 if not found
     }
 }

@@ -66,9 +66,11 @@ public class World
 
         tile = sector.GetTile(location);
         if (tile is null) return false;
-        
-        if(tile is StaticTile) tile.SetNewLocation(location, force: true); //static tiles are cached and have no location, the location will be always the same as the tile's map location
-        
+
+        if (tile is StaticTile)
+            tile.SetNewLocation(location,
+                true); //static tiles are cached and have no location, the location will be always the same as the tile's map location
+
         return true;
     }
 

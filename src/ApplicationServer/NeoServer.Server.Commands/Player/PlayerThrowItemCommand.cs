@@ -57,8 +57,6 @@ public class PlayerThrowItemCommand(
         }
 
         if (InventoryToInventoryOperation.IsApplicable(itemThrow))
-        {
             InventoryToInventoryOperation.Execute(player, itemThrow);
-        }
     }
 }

@@ -51,10 +51,7 @@ public class CreaturePushService(
         player.StartCooldown(CooldownType.PushCreature, 2_000);
 
         // Final validation before performing the push
-        if (!creatureMovementValidation.CanWalkTo(target as IWalkableCreature, toTile.Location).IsValid)
-        {
-            return;
-        }
+        if (!creatureMovementValidation.CanWalkTo(target as IWalkableCreature, toTile.Location).IsValid) return;
 
         // Perform the actual push 
         (target as IWalkableCreature)?.WalkTo(target.Location.DirectionTo(toTile.Location, true));

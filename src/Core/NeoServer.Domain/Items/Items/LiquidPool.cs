@@ -43,7 +43,8 @@ public class LiquidPool : BaseItem, ILiquid
         if (!IsLiquidPool && !IsLiquidContainer) return 0x00;
         if (Attributes != null && Attributes.TryGetValue(ItemAttribute.Count, out var itemCount))
             return (LiquidColor)itemCount;
-        else if (Metadata.Attributes != null && Metadata.Attributes.TryGetValue(ItemTypeAttribute.Count, out var itemTypeCount))
+        if (Metadata.Attributes != null &&
+            Metadata.Attributes.TryGetValue(ItemTypeAttribute.Count, out var itemTypeCount))
             return (LiquidColor)itemTypeCount;
 
         return LiquidColor.Empty;

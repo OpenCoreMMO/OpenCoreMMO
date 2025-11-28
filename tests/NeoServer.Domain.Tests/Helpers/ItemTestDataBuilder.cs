@@ -90,6 +90,7 @@ public class ItemTestDataBuilder
         LoadItemAttributes(item, itemAttributes);
         return item;
     }
+
     public static Container CreateLootContainer(byte capacity = 6, string name = "bag", Loot loot = null,
         (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
         (ItemAttribute, IConvertible)[] itemAttributes = null)
@@ -187,7 +188,7 @@ public class ItemTestDataBuilder
         LoadItemAttributes(item, itemAttributes);
         return item;
     }
-    
+
     public static Container CreateMailInbox(ushort id = 2593, float weight = 20, List<IItem> items = null,
         (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
         (ItemAttribute, IConvertible)[] itemAttributes = null)
@@ -283,7 +284,7 @@ public class ItemTestDataBuilder
         LoadItemAttributes(item, itemAttributes);
         return item;
     }
-    
+
     public static IItemType CreateMoveableItemMetadata(ushort id)
     {
         var type = new ItemType();

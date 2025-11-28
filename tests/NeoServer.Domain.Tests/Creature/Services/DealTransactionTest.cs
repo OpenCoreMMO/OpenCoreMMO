@@ -70,9 +70,9 @@ public class DealTransactionTest
 
         var coinTypeStore = new CoinTypeStore();
 
-        var coin1 = ItemTestDataBuilder.CreateCoin(1, 100, 1);
-        var coin2 = ItemTestDataBuilder.CreateCoin(1, 100, 1);
-        var coin3 = ItemTestDataBuilder.CreateCoin(1, 100, 1);
+        var coin1 = ItemTestDataBuilder.CreateCoin(1, 100);
+        var coin2 = ItemTestDataBuilder.CreateCoin(1, 100);
+        var coin3 = ItemTestDataBuilder.CreateCoin(1, 100);
 
         coinTypeStore.AddOrUpdate(1, coin1.Metadata);
 
@@ -118,9 +118,9 @@ public class DealTransactionTest
         var itemToBuy = ItemTestDataBuilder.CreateWeaponItem(10);
 
         var container = ItemTestDataBuilder.CreateBackpack();
-        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100, 1));
-        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100, 1));
-        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100, 1));
+        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100));
+        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100));
+        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100));
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000,
             inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
@@ -160,9 +160,9 @@ public class DealTransactionTest
             .Returns(itemToBuy);
 
         var container = ItemTestDataBuilder.CreateBackpack();
-        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100, 1));
-        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100, 1));
-        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100, 1));
+        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100));
+        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100));
+        container.AddItem(ItemTestDataBuilder.CreateCoin(1, 100));
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000,
             inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
@@ -385,7 +385,7 @@ public class DealTransactionTest
         var coinTransaction = new CoinTransaction(itemFactoryMock.Object, coinTypeStore);
 
         var platinum = ItemTestDataBuilder.CreateCoin(1, 2, 100);
-        var gold = ItemTestDataBuilder.CreateCoin(2, 1, 1);
+        var gold = ItemTestDataBuilder.CreateCoin(2);
 
         coinTypeStore.AddOrUpdate(1, platinum.Metadata);
         coinTypeStore.AddOrUpdate(2, gold.Metadata);
@@ -397,7 +397,7 @@ public class DealTransactionTest
         itemFactoryMock.Setup(x => x.Create(10, It.IsAny<Location>(), null, null, null, null, null)).Returns(itemToBuy);
 
         itemFactoryMock.Setup(x => x.CreateCoins(It.IsAny<ulong>())).Returns(new List<Coin>
-            { (Coin)ItemTestDataBuilder.CreateCoin(1, 1, 100), (Coin)ItemTestDataBuilder.CreateCoin(2, 70, 1) });
+            { (Coin)ItemTestDataBuilder.CreateCoin(1, 1, 100), (Coin)ItemTestDataBuilder.CreateCoin(2, 70) });
 
         itemFactoryMock.Setup(x => x.Create(1, It.IsAny<Location>(), null, null, null, null, null)).Returns(platinum);
         itemFactoryMock.Setup(x => x.Create(2, It.IsAny<Location>(), null, null, null, null, null)).Returns(gold);

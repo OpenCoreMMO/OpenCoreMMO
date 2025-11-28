@@ -17,7 +17,8 @@ function leaveGuild.onSay(player, words, param)
     end
 
     -- Check if player is the guild leader
-    if player:getGuildLevel() == 3 then -- Leader level
+    if player:getGuildLevel() == 3 then
+        -- Leader level
         player:sendCancelMessage("You cannot leave the guild as a leader. Transfer leadership first or disband the guild.")
         return false
     end
@@ -29,12 +30,12 @@ function leaveGuild.onSay(player, words, param)
     end
 
     local guildName = guild:getName()
-    
+
     -- Remove player from guild
     if guild:removeMember(player) then
         player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have left the guild '%s'.", guildName))
         player:getPosition():sendMagicEffect(CONST_ME_MAGIC_RED)
-        
+
         -- Notify other guild members
         for _, member in pairs(guild:getMembers()) do
             if member:isOnline() then
@@ -45,7 +46,7 @@ function leaveGuild.onSay(player, words, param)
         player:sendCancelMessage("Failed to leave guild. Please try again.")
         return false
     end
-    
+
     return true
 end
 

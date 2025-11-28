@@ -5,8 +5,8 @@ using NeoServer.Domain.Common.Location.Structs;
 namespace NeoServer.Domain.World.Models.Tiles;
 
 /// <summary>
-/// Class representing an empty tile in the game world.
-/// An empty tile contains no items or creatures.
+///     Class representing an empty tile in the game world.
+///     An empty tile contains no items or creatures.
 /// </summary>
 public class EmptyTile : BaseTile
 {
@@ -14,6 +14,7 @@ public class EmptyTile : BaseTile
     {
         SetNewLocation(location);
     }
+
     public override int ItemsCount => 0;
     public override IItem[] AllItems => [];
     public override IItem TopTopItemOnStack => null;

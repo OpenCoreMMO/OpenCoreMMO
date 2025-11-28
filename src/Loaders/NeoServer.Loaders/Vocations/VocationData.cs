@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Loaders.Converts;
@@ -13,8 +12,7 @@ public sealed class VocationData
 
     public string Name { get; set; }
 
-    [JsonConverter(typeof(ByteConverter))] 
-    public byte FromVoc { get; set; }
+    [JsonConverter(typeof(ByteConverter))] public byte FromVoc { get; set; }
 
     [JsonConverter(typeof(UshortConverter))]
     public new ushort GainCap { get; set; }

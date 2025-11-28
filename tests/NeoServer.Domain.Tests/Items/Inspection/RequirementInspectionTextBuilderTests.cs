@@ -65,7 +65,7 @@ public class RequirementInspectionTextBuilderTests
     [Fact]
     public void Add_HasNoRequirement_ReturnEmpty()
     {
-        var item = ItemTestDataBuilder.CreateCoin(1, 10, 1);
+        var item = ItemTestDataBuilder.CreateCoin(1, 10);
         //act
         var actual = RequirementInspectionTextBuilder.Build(item);
 

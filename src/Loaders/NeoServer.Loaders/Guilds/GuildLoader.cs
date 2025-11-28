@@ -33,16 +33,12 @@ public class GuildLoader : ICustomLoader
 
         // Load ranks
         if (guildEntity.Ranks?.Any() == true)
-        {
             foreach (var rank in guildEntity.Ranks)
-            {
                 guild.AddRank((ushort)rank.Id, rank.Name, (byte)rank.Level);
-            }
-        }
 
         // Guild already added to store in GetOrCreateGuildAsync
         _logger.Debug("Guild {Guild} loaded with {MemberCount} members", guildEntity.Name, guild.MemberCount);
-        
+
         return guild;
     }
 

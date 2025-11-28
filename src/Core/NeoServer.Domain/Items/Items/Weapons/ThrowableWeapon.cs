@@ -1,8 +1,5 @@
 ﻿using System.Text;
-using NeoServer.Domain.Combat.Attacks.Obsoletes;
-using NeoServer.Domain.Combat.Calculations;
 using NeoServer.Domain.Common.Combat;
-using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
@@ -71,7 +68,7 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
         return false;
     }
 
-  
+
     public void OnMoved(IThing to)
     {
     }

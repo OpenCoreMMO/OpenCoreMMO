@@ -36,6 +36,7 @@ using NeoServer.Domain.Creatures.Npcs;
 using NeoServer.Domain.Creatures.Player.Container;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Modes;
+using NeoServer.Domain.Guild;
 using NeoServer.Domain.Items.Items.UsableItems;
 using NeoServer.Domain.Items.Items.Weapons;
 
@@ -147,7 +148,14 @@ public class Player : CombatActor, IPlayer
 
     public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
 
-    public override ushort RawSpeed => Group.FlagIsEnabled(PlayerFlag.SetMaxSpeed) ? ushort.MaxValue : (ushort)(220 + 2 * (Level - 1));
+    public uint LoggedOutTotalMinutes => !LastLogIn.HasValue || !LastLogOut.HasValue
+        ? 0
+        : (uint)(LastLogIn.Value - LastLogOut.Value).TotalMinutes;
+
+    public long LastTimeExperienceGain { get; private set; }
+
+    public override ushort RawSpeed =>
+        Group.FlagIsEnabled(PlayerFlag.SetMaxSpeed) ? ushort.MaxValue : (ushort)(220 + 2 * (Level - 1));
 
     public float DamageFactor => FightMode switch
     {
@@ -212,10 +220,6 @@ public class Player : CombatActor, IPlayer
     public DateTime? LastLogIn { get; private set; }
     public required DateTime? LastLogOut { get; set; }
 
-    public uint LoggedOutTotalMinutes => !LastLogIn.HasValue || !LastLogOut.HasValue
-        ? 0
-        : (uint)(LastLogIn.Value - LastLogOut.Value).TotalMinutes;
-
     public bool Shopping => TradingWithNpc is not null;
 
     public byte SoulPoints
@@ -227,18 +231,6 @@ public class Player : CombatActor, IPlayer
     public byte MaxSoulPoints { get; }
 
     public IInventory Inventory { get; private set; }
-
-    #region Stamina
-
-    public ushort StaminaMinutes { get; private set; }
-    public bool HasLowStamina => StaminaMinutes <= GameConstants.STAMINA_THRESHOLD_MINUTES;
-    public bool HasStaminaBonus => StaminaMinutes >= GameConstants.STAMINA_BONUS_MINUTES;
-    public bool HasNoStamina => StaminaMinutes <= 0;
-    public bool IgnoreStamina => Group.FlagIsEnabled(PlayerFlag.IgnoreStamina);
-
-    #endregion
-
-    public long LastTimeExperienceGain { get; private set; }
 
     public uint Experience
     {
@@ -258,6 +250,7 @@ public class Player : CombatActor, IPlayer
 
     public byte LevelPercent => GetSkillPercent(SkillType.Level);
     public override bool CanBeAttacked => !Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked) && base.CanBeAttacked;
+
     public override void GainExperience(long experience)
     {
         if (experience == 0) return;
@@ -271,10 +264,7 @@ public class Player : CombatActor, IPlayer
             var elapsedSecondsSinceLastGain =
                 (DateTime.UtcNow.Ticks - LastTimeExperienceGain) / TimeSpan.TicksPerSecond;
 
-            if (elapsedSecondsSinceLastGain >= 60)
-            {
-                ConsumeStamina();
-            }
+            if (elapsedSecondsSinceLastGain >= 60) ConsumeStamina();
         }
 
         LastTimeExperienceGain = DateTime.UtcNow.Ticks;
@@ -283,39 +273,12 @@ public class Player : CombatActor, IPlayer
         base.GainExperience(experience);
     }
 
-    public long ApplyStaminaEffectOnExperienceGain(long experience)
-    {
-        if (HasNoStamina)
-        {
-            return 0;
-        }
-
-        if (HasLowStamina)
-        {
-            // Experience gain is halved when stamina is below threshold
-            experience += experience * GameConstants.STAMINA_THRESHOLD_EXP_PERCENTAGE / 100;
-            return experience;
-        }
-
-        if (HasStaminaBonus && HasPremiumTime)
-        {
-            experience += experience * GameConstants.STAMINA_BONUS_EXP_PERCENTAGE / 100;
-        }
-
-        return experience;
-    }
-
     public override void LoseExperience(long exp)
     {
         if (exp == 0) return;
 
         DecreaseSkillCounter(SkillType.Level, exp);
         base.LoseExperience(exp);
-    }
-
-    public void ConsumeStamina(ushort seconds = 60)
-    {
-        StaminaMinutes = (ushort)Math.Max(StaminaMinutes - seconds / TimeSpan.SecondsPerMinute, 0);
     }
 
     public void RegenerateStamina()
@@ -331,11 +294,6 @@ public class Player : CombatActor, IPlayer
         var minutesRecoveredSinceLoggedIn = Math.Abs((decimal)LoggedOutTotalMinutes / multiplier);
 
         RecoverStamina((ushort)minutesRecoveredSinceLoggedIn);
-    }
-
-    public void RecoverStamina(uint staminaMinutes)
-    {
-        StaminaMinutes = (ushort)Math.Min(StaminaMinutes + staminaMinutes, GameConstants.STAMINA_MAX_MINUTES);
     }
 
     public override decimal AttackSpeed => Vocation.AttackSpeed == 0 ? base.AttackSpeed : Vocation.AttackSpeed;
@@ -401,7 +359,11 @@ public class Player : CombatActor, IPlayer
 
     public override ushort ArmorRating => Inventory.TotalArmor;
     public PvpSecureMode SecureMode { get; private set; }
-    public float FreeCapacity => Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity) ? float.MaxValue : TotalCapacity - Inventory.TotalWeight;
+
+    public float FreeCapacity => Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity)
+        ? float.MaxValue
+        : TotalCapacity - Inventory.TotalWeight;
+
     public override bool UsingDistanceWeapon => Inventory.Weapon is IDistanceWeapon;
     public bool Recovering => HasCondition(ConditionType.Regeneration);
     public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
@@ -527,36 +489,16 @@ public class Player : CombatActor, IPlayer
     public override void OnSpectatorMoved(ICreature spectator)
     {
         if (spectator is not ICombatActor target) return;
-        if (target.Equals(CurrentTarget))
-        {
-            HandleTargetLost();
-        }
+        if (target.Equals(CurrentTarget)) HandleTargetLost();
 
         base.OnSpectatorMoved(spectator);
     }
 
     public override void OnSpectatorDies(ICombatActor spectator)
     {
-        if (spectator.Equals(CurrentTarget))
-        {
-            HandleTargetLost();
-        }
+        if (spectator.Equals(CurrentTarget)) HandleTargetLost();
 
         base.OnSpectatorDies(spectator);
-    }
-
-    public void HandleTargetLost()
-    {
-        if (!IsTargetLost()) return;
-
-        var showError = CurrentTarget is not ICombatActor { IsDead: true };
-
-        StopAttack();
-
-        if (showError)
-        {
-            OperationFailService.Send(this, InvalidOperation.TargetLost);
-        }
     }
 
     public override bool CanSee(ICreature otherCreature)
@@ -681,7 +623,7 @@ public class Player : CombatActor, IPlayer
 
         if (!spell.ShouldSay) return;
 
-        if (!string.IsNullOrWhiteSpace(spell.Words)) base.Say(spell.Words, talkType);
+        if (!string.IsNullOrWhiteSpace(spell.Words)) Say(spell.Words, talkType);
     }
 
     public void Yell(string message, YellConfiguration yellSettings)
@@ -725,7 +667,10 @@ public class Player : CombatActor, IPlayer
             (uint)(yellSettings?.YellCooldownSeconds * 1000 ?? 30_000)); // 30 seconds cooldown
     }
 
-    public void StartCooldown(CooldownType cooldownType, uint cooldownTime) => Cooldowns.Start(cooldownType, cooldownTime);
+    public void StartCooldown(CooldownType cooldownType, uint cooldownTime)
+    {
+        Cooldowns.Start(cooldownType, cooldownTime);
+    }
 
     public void UpdateManaSpent(uint manaCost)
     {
@@ -831,10 +776,7 @@ public class Player : CombatActor, IPlayer
         LastLogOut = DateTime.UtcNow;
 
         var summonsCopy = Summons.ToList();
-        foreach (var summon in summonsCopy)
-        {
-            summon.OnMasterLogout();
-        }
+        foreach (var summon in summonsCopy) summon.OnMasterLogout();
 
         EventAggregator.Invoke(new PlayerLoggedOutEvent(this));
 
@@ -1170,19 +1112,15 @@ public class Player : CombatActor, IPlayer
     {
         SetLogoutBlock();
 
-        if (target is IPlayer)
-        {
-            SetProtectionZoneBlock();
-        }
+        if (target is IPlayer) SetProtectionZoneBlock();
 
         if (!combatParameter.UsingWeapon) return;
 
         Cooldowns.Start(CooldownType.WeaponAttack, (uint)AttackSpeed);
 
-        if (combatResult.TotalDamage > 0 && SkillInUse != SkillType.Magic) //magic skill will be handled in the UpdateManaSpent method
-        {
+        if (combatResult.TotalDamage > 0 &&
+            SkillInUse != SkillType.Magic) //magic skill will be handled in the UpdateManaSpent method
             IncreaseSkillCounter(SkillInUse, 1);
-        }
 
         //the player cannot attack if he does not have enough mana to use the magic weapon
         if (combatParameter.UsingWeapon && Inventory.Weapon is MagicWeapon magicWeapon &&
@@ -1212,9 +1150,7 @@ public class Player : CombatActor, IPlayer
         //the player cannot attack if he does not have enough mana to use the magic weapon
         if (combatParameter.UsingWeapon && Inventory.Weapon is MagicWeapon magicWeapon &&
             !HasEnoughMana(magicWeapon.ManaConsumption))
-        {
             return new Result(InvalidOperation.NotEnoughMana);
-        }
 
         return result;
     }
@@ -1357,115 +1293,73 @@ public class Player : CombatActor, IPlayer
     public Result CanPushCreature(ICreature creature, ITile destination)
     {
         // Basic null checks
-        if (creature is null || destination is null)
-        {
-            return Result.Fail(InvalidOperation.NotPossible);
-        }
-        
+        if (creature is null || destination is null) return Result.Fail(InvalidOperation.NotPossible);
+
 
         // Cannot push yourself
-        if (ReferenceEquals(creature, this))
-        {
-            return Result.Fail(InvalidOperation.DestinationOutOfReach);
-        }
-        
+        if (ReferenceEquals(creature, this)) return Result.Fail(InvalidOperation.DestinationOutOfReach);
+
         // Check if the player can push all creatures
-        if (Group.FlagIsEnabled(PlayerFlag.CanPushAllCreatures))
-        {
-            return Result.Success;
-        }
-        
+        if (Group.FlagIsEnabled(PlayerFlag.CanPushAllCreatures)) return Result.Success;
+
         // Check cooldown (only for non-admin players)
         if (!CooldownHasExpired(CooldownType.PushCreature) && !Group.Access)
-        {
             return Result.Fail(InvalidOperation.Exhausted);
-        }
 
         // Check if the player can see the target creature
-        if (!CanSee(creature))
-        {
-            return Result.NotPossible;
-        }
+        if (!CanSee(creature)) return Result.NotPossible;
 
         // Check if the target is close enough to push
-        if (!creature.IsCloseTo(this))
-        {
-            return Result.NotPossible;
-        }
+        if (!creature.IsCloseTo(this)) return Result.NotPossible;
 
         // Check if the destination is within 1 tile of the target
         var distance = creature.Location.GetMaxSqmDistance(destination.Location);
-        if (distance > 1)
-        {
-            return Result.Fail(InvalidOperation.DestinationOutOfReach);
-        }
+        if (distance > 1) return Result.Fail(InvalidOperation.DestinationOutOfReach);
 
         // Cannot push to the same location where creature currently is
-        if (creature.Location == destination.Location)
-        {
-            return Result.Success; // Not an error, just no movement needed
-        }
+        if (creature.Location == destination.Location) return Result.Success; // Not an error, just no movement needed
 
         // Check if the destination tile has another creature
-        if (destination is IDynamicTile { HasAnyCreature: true })
-        {
-            return Result.Fail(InvalidOperation.NotEnoughRoom);
-        }
+        if (destination is IDynamicTile { HasAnyCreature: true }) return Result.Fail(InvalidOperation.NotEnoughRoom);
 
         // Check if destination tile blocks path
         if (destination is IDynamicTile destinationTile && destinationTile.HasFlag(TileFlags.BlockPath))
-        {
             return Result.NotPossible;
-        }
 
         // Check push permissions based on a creature type
         switch (creature)
         {
             case IPlayer targetPlayer:
-                {
-                    // Check if the target player has CannotBePushed flag (with null safety)
-                    if (targetPlayer.Group?.FlagIsEnabled(PlayerFlag.CannotBePushed) == true)
-                    {
-                        return Result.Fail(InvalidOperation.NotPossible);
-                    }
+            {
+                // Check if the target player has CannotBePushed flag (with null safety)
+                if (targetPlayer.Group?.FlagIsEnabled(PlayerFlag.CannotBePushed) == true)
+                    return Result.Fail(InvalidOperation.NotPossible);
 
-                    // Cannot push players out of the protection zone
-                    var pushingOutsideProtectionZone = destination is IDynamicTile { ProtectionZone: false } &&
-                                                       (targetPlayer.Tile?.ProtectionZone ?? false);
-                    if (pushingOutsideProtectionZone)
-                    {
-                        return Result.NotPossible;
-                    }
-                    break;
-                }
+                // Cannot push players out of the protection zone
+                var pushingOutsideProtectionZone = destination is IDynamicTile { ProtectionZone: false } &&
+                                                   (targetPlayer.Tile?.ProtectionZone ?? false);
+                if (pushingOutsideProtectionZone) return Result.NotPossible;
+                break;
+            }
 
             case IMonster targetMonster:
-                {
-                    // Check if monster is pushable
-                    if (!targetMonster.IsPushable)
-                    {
-                        return Result.NotPossible;
-                    }
+            {
+                // Check if monster is pushable
+                if (!targetMonster.IsPushable) return Result.NotPossible;
 
-                    // Cannot push monsters into protection zone
-                    var pushingToProtectionZone = destination is IDynamicTile { ProtectionZone: true };
-                    if (pushingToProtectionZone)
-                    {
-                        return Result.NotPossible;
-                    }
-                    break;
-                }
+                // Cannot push monsters into protection zone
+                var pushingToProtectionZone = destination is IDynamicTile { ProtectionZone: true };
+                if (pushingToProtectionZone) return Result.NotPossible;
+                break;
+            }
 
             case INpc:
-                {
-                    // Cannot push NPCs into protection zone
-                    var pushingToProtectionZone = destination is IDynamicTile { ProtectionZone: true };
-                    if (pushingToProtectionZone)
-                    {
-                        return Result.NotPossible;
-                    }
-                    break;
-                }
+            {
+                // Cannot push NPCs into protection zone
+                var pushingToProtectionZone = destination is IDynamicTile { ProtectionZone: true };
+                if (pushingToProtectionZone) return Result.NotPossible;
+                break;
+            }
         }
 
         return Result.Success;
@@ -1490,6 +1384,51 @@ public class Player : CombatActor, IPlayer
     public void MoveToTemple()
     {
         SetNewLocation(new Location(Town.Coordinate));
+    }
+
+    public override DamageResult TakeDamage(IThing enemy, CombatDamageList damages)
+    {
+        if (Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked)) return new DamageResult(new CombatDamageList(), false);
+
+        return base.TakeDamage(enemy, damages);
+    }
+
+    public long ApplyStaminaEffectOnExperienceGain(long experience)
+    {
+        if (HasNoStamina) return 0;
+
+        if (HasLowStamina)
+        {
+            // Experience gain is halved when stamina is below threshold
+            experience += experience * GameConstants.STAMINA_THRESHOLD_EXP_PERCENTAGE / 100;
+            return experience;
+        }
+
+        if (HasStaminaBonus && HasPremiumTime)
+            experience += experience * GameConstants.STAMINA_BONUS_EXP_PERCENTAGE / 100;
+
+        return experience;
+    }
+
+    public void ConsumeStamina(ushort seconds = 60)
+    {
+        StaminaMinutes = (ushort)Math.Max(StaminaMinutes - seconds / TimeSpan.SecondsPerMinute, 0);
+    }
+
+    public void RecoverStamina(uint staminaMinutes)
+    {
+        StaminaMinutes = (ushort)Math.Min(StaminaMinutes + staminaMinutes, GameConstants.STAMINA_MAX_MINUTES);
+    }
+
+    public void HandleTargetLost()
+    {
+        if (!IsTargetLost()) return;
+
+        var showError = CurrentTarget is not ICombatActor { IsDead: true };
+
+        StopAttack();
+
+        if (showError) OperationFailService.Send(this, InvalidOperation.TargetLost);
     }
 
 
@@ -1757,13 +1696,20 @@ public class Player : CombatActor, IPlayer
 
         var expLost = (Level + 50) / 100.0 * 50 * (Math.Pow(Level, 2) - 5 * Level + 8);
 
-        if (IsPromoted)
-        {
-            expLost -= expLost * .30;
-        }
+        if (IsPromoted) expLost -= expLost * .30;
 
         return expLost;
     }
+
+    #region Stamina
+
+    public ushort StaminaMinutes { get; private set; }
+    public bool HasLowStamina => StaminaMinutes <= GameConstants.STAMINA_THRESHOLD_MINUTES;
+    public bool HasStaminaBonus => StaminaMinutes >= GameConstants.STAMINA_BONUS_MINUTES;
+    public bool HasNoStamina => StaminaMinutes <= 0;
+    public bool IgnoreStamina => Group.FlagIsEnabled(PlayerFlag.IgnoreStamina);
+
+    #endregion
 
     #region Storage
 
@@ -1797,16 +1743,6 @@ public class Player : CombatActor, IPlayer
 
     #endregion
 
-    public override DamageResult TakeDamage(IThing enemy, CombatDamageList damages)
-    {
-        if (Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))
-        {
-            return new DamageResult(new CombatDamageList(), false);
-        }
-
-        return base.TakeDamage(enemy, damages);
-    }
-
     #region Guild
 
     public ushort? GuildId { get; set; }
@@ -1814,8 +1750,8 @@ public class Player : CombatActor, IPlayer
     public string GuildNick { get; set; } = string.Empty;
     public bool HasGuild => Guild is not null;
     public Guild.Guild Guild { get; set; }
-    public Guild.GuildRankInfo GuildRank { get; set; }
-    public List<ushort> GuildWarList { get; private set; } = new();
+    public GuildRankInfo GuildRank { get; set; }
+    public List<ushort> GuildWarList { get; } = new();
 
     public bool IsGuildMate(IPlayer otherPlayer)
     {
@@ -1865,10 +1801,7 @@ public class Player : CombatActor, IPlayer
         }
 
         // Remove from old guild if switching
-        if (oldGuild != null && oldGuild != guild)
-        {
-            oldGuild.RemoveMember(this);
-        }
+        if (oldGuild != null && oldGuild != guild) oldGuild.RemoveMember(this);
     }
 
     #endregion

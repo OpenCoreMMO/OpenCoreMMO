@@ -1,10 +1,9 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.Services;
+﻿using NeoServer.Domain.Common.Contracts.Services;
 
 namespace NeoServer.Domain.Creatures.Monster.Services;
 
 /// <summary>
-/// Service responsible for updating the state of a monster based on its current situation.
+///     Service responsible for updating the state of a monster based on its current situation.
 /// </summary>
 public class MonsterStateService(
     ISummonService summonService,
@@ -15,11 +14,11 @@ public class MonsterStateService(
     {
         if (monster.IsDead) return;
         var monsterEntity = monster as Monster;
-        
+
         // Update the monster's targets before updating the state
         //targetDetectorService.UpdateTargets(monster as Monster);
-        
-        targetDetectorService.Update(monsterEntity);        
+
+        targetDetectorService.Update(monsterEntity);
 
         // Set a new target if the monster is not currently targeting one
         targetingService.SelectTarget(monsterEntity);
@@ -33,7 +32,7 @@ public class MonsterStateService(
             monster.StopAttack();
             monster.StopFollowing();
         }
-        
+
         if (monster.State == MonsterState.LookingForEnemy)
         {
             //Walk a random step
@@ -60,5 +59,4 @@ public class MonsterStateService(
         if (monster.State == MonsterState.Sleeping) monster.Sleep();
         if (monster.State == MonsterState.Escaping) monster.Escape();
     }
-
 }
