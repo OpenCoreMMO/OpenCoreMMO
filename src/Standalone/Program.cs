@@ -97,9 +97,7 @@ public class Program
         container.Resolve<IEnumerable<IStartupLoader>>().ToList().ForEach(x => x.Load());
 
         container.Resolve<IScriptManager>().Initialize();
-
-        container.Resolve<SpawnManager>().StartSpawn();
-
+        
         var scheduler = container.Resolve<IScheduler>();
         var dispatcher = container.Resolve<IDispatcher>();
         var persistenceDispatcher = container.Resolve<IPersistenceDispatcher>();
@@ -120,6 +118,8 @@ public class Program
         container.Resolve<IEnumerable<IStartup>>().ToList().ForEach(x => x.Run());
 
         container.Resolve<IEventAggregator>().Initialize();
+        
+        container.Resolve<SpawnManager>().StartSpawn();
 
         StartListening(container, _cancellationToken);
 
