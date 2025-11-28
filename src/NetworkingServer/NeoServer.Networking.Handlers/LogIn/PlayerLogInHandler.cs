@@ -1,14 +1,16 @@
-﻿using NeoServer.Networking.Packets.Incoming;
+﻿using System;
+using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
 using NeoServer.Server.Common.Enums;
 using NeoServer.Server.Tasks;
+using Serilog.Core;
 
 namespace NeoServer.Networking.Handlers.LogIn;
 
-public class PlayerLogInHandler(IGameServer game, PlayerLogInCommand playerLogInCommand) : PacketHandler
+public class PlayerLogInHandler(IGameServer game, PlayerLogInCommand playerLogInCommand, Logger logger) : PacketHandler
 {
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
@@ -29,10 +31,17 @@ public class PlayerLogInHandler(IGameServer game, PlayerLogInCommand playerLogIn
             ChallengeNumber = packet.ChallengeNumber
         };
 
-        game.Dispatcher.AddEvent(new Event(async () =>
+        game.Dispatcher.AddEvent(new Event(async void () =>
         {
-            var (success, message) = await playerLogInCommand.Execute(request, connection);
-            if (!success) Disconnect(connection, message);
+            try
+            {
+                var (success, resultMessage) = await playerLogInCommand.Execute(request, connection);
+                if (!success) Disconnect(connection, resultMessage);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, "Error processing player log in request: {PacketCharacterName}", packet.CharacterName);
+            }
         }));
     }
 
