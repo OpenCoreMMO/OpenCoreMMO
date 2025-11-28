@@ -14,14 +14,11 @@ using Serilog;
 
 namespace NeoServer.Data.Repositories.Player;
 
-public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository, Domain.Repositories.IPlayerRepository
+public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger)
+    : BaseRepository<PlayerEntity>(contextOptions,
+        logger), IPlayerRepository, Domain.Repositories.IPlayerRepository
 {
     #region constructors
-
-    public PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions,
-        logger)
-    {
-    }
 
     #endregion
 

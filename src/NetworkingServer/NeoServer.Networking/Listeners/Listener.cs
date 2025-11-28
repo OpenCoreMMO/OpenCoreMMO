@@ -10,21 +10,13 @@ using Serilog;
 
 namespace NeoServer.Networking.Listeners;
 
-public abstract class Listener : TcpListener, IListener
+public abstract class Listener(int port, IProtocol protocol, ILogger logger)
+    : TcpListener(IPAddress.Any, port), IListener
 {
     private readonly CancellationTokenSource _internalCancellation = new();
-    private readonly ILogger _logger;
-    private readonly int _port;
-    private readonly IProtocol _protocol;
+    private readonly int _port = port;
 
     private volatile bool _isShuttingDown;
-
-    protected Listener(int port, IProtocol protocol, ILogger logger) : base(IPAddress.Any, port)
-    {
-        _port = port;
-        _protocol = protocol;
-        _logger = logger;
-    }
 
     public void BeginListening(CancellationToken cancellationToken)
     {
@@ -46,12 +38,12 @@ public abstract class Listener : TcpListener, IListener
                 catch (SocketException ex)
                 {
                     retryCount++;
-                    _logger.Error(ex, "Could not start {Protocol} on port {Port} (attempt {Retry}/{MaxRetries})",
-                        _protocol, _port, retryCount, maxRetries);
+                    logger.Error(ex, "Could not start {Protocol} on port {Port} (attempt {Retry}/{MaxRetries})",
+                        protocol, _port, retryCount, maxRetries);
 
                     if (retryCount >= maxRetries)
                     {
-                        _logger.Error("Failed to start {Protocol} after {MaxRetries} attempts. Giving up.", _protocol,
+                        logger.Error("Failed to start {Protocol} after {MaxRetries} attempts. Giving up.", protocol,
                             maxRetries);
                         return;
                     }
@@ -66,23 +58,23 @@ public abstract class Listener : TcpListener, IListener
                     }
                 }
 
-            _logger.Information("{Protocol} is online on port {Port}", _protocol, _port);
+            logger.Information("{Protocol} is online on port {Port}", protocol, _port);
 
             try
             {
                 while (!combinedCts.Token.IsCancellationRequested)
                 {
                     var connection = await CreateConnectionAsync(combinedCts.Token);
-                    if (connection != null) _protocol.OnAccept(connection);
+                    if (connection != null) protocol.OnAccept(connection);
                 }
             }
             catch (OperationCanceledException)
             {
-                _logger.Information("{Protocol} listener on port {Port} stopped", _protocol, _port);
+                logger.Information("{Protocol} listener on port {Port} stopped", protocol, _port);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Unexpected error in {Protocol} listener on port {Port}", _protocol, _port);
+                logger.Error(ex, "Unexpected error in {Protocol} listener on port {Port}", protocol, _port);
             }
             finally
             {
@@ -92,7 +84,7 @@ public abstract class Listener : TcpListener, IListener
                 }
                 catch (Exception ex)
                 {
-                    _logger.Warning(ex, "Error stopping {Protocol} listener", _protocol);
+                    logger.Warning(ex, "Error stopping {Protocol} listener", protocol);
                 }
             }
         }, combinedCts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
@@ -111,7 +103,7 @@ public abstract class Listener : TcpListener, IListener
         }
         catch (Exception ex)
         {
-            _logger.Warning(ex, "Error during listener shutdown");
+            logger.Warning(ex, "Error during listener shutdown");
         }
     }
 
@@ -121,11 +113,11 @@ public abstract class Listener : TcpListener, IListener
         {
             var socket = await AcceptSocketAsync(cancellationToken).ConfigureAwait(false);
 
-            var connection = new Connection(socket, _logger);
+            var connection = new Connection(socket, logger);
 
             connection.OnCloseEvent += OnConnectionClose;
-            connection.OnProcessEvent += _protocol.ProcessMessage;
-            connection.OnPostProcessEvent += _protocol.PostProcessMessage;
+            connection.OnProcessEvent += protocol.ProcessMessage;
+            connection.OnPostProcessEvent += protocol.PostProcessMessage;
 
             return connection;
         }
@@ -141,7 +133,7 @@ public abstract class Listener : TcpListener, IListener
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Error creating connection for {Protocol}", _protocol);
+            logger.Error(ex, "Error creating connection for {Protocol}", protocol);
             return null;
         }
     }
@@ -152,12 +144,12 @@ public abstract class Listener : TcpListener, IListener
         {
             // De-subscribe to this event first.
             args.Connection.OnCloseEvent -= OnConnectionClose;
-            args.Connection.OnProcessEvent -= _protocol.ProcessMessage;
-            args.Connection.OnPostProcessEvent -= _protocol.PostProcessMessage;
+            args.Connection.OnProcessEvent -= protocol.ProcessMessage;
+            args.Connection.OnPostProcessEvent -= protocol.PostProcessMessage;
         }
         catch (Exception ex)
         {
-            _logger.Warning(ex, "Error during connection cleanup");
+            logger.Warning(ex, "Error during connection cleanup");
         }
     }
 

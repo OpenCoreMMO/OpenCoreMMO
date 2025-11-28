@@ -19,17 +19,13 @@ using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Creatures.Models.Bases;
 
-public abstract class CombatActor : WalkableCreature, ICombatActor
+public abstract class CombatActor(ICreatureType type, IMapTool mapTool, IOutfit outfit = null, uint healthPoints = 0)
+    : WalkableCreature(type, mapTool, outfit,
+        healthPoints), ICombatActor
 {
     private const byte BLOCK_LIMIT = 2;
 
     private byte _blockCount;
-
-    protected CombatActor(ICreatureType type, IMapTool mapTool, IOutfit outfit = null, uint healthPoints = 0) : base(
-        type, mapTool, outfit,
-        healthPoints)
-    {
-    }
 
     public byte DamageReceivedPercentage { get; private set; }
 

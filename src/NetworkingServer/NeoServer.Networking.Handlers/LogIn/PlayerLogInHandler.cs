@@ -8,20 +8,11 @@ using NeoServer.Server.Tasks;
 
 namespace NeoServer.Networking.Handlers.LogIn;
 
-public class PlayerLogInHandler : PacketHandler
+public class PlayerLogInHandler(IGameServer game, PlayerLogInCommand playerLogInCommand) : PacketHandler
 {
-    private readonly IGameServer _game;
-    private readonly PlayerLogInCommand _playerLogInCommand;
-
-    public PlayerLogInHandler(IGameServer game, PlayerLogInCommand playerLogInCommand)
-    {
-        _game = game;
-        _playerLogInCommand = playerLogInCommand;
-    }
-
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
-        if (_game.State == GameState.Stopped) connection.Close();
+        if (game.State == GameState.Stopped) connection.Close();
 
         var packet = new PlayerLogInPacket(message);
 
@@ -38,9 +29,9 @@ public class PlayerLogInHandler : PacketHandler
             ChallengeNumber = packet.ChallengeNumber
         };
 
-        _game.Dispatcher.AddEvent(new Event(async () =>
+        game.Dispatcher.AddEvent(new Event(async () =>
         {
-            var (success, message) = await _playerLogInCommand.Execute(request, connection);
+            var (success, message) = await playerLogInCommand.Execute(request, connection);
             if (!success) Disconnect(connection, message);
         }));
     }

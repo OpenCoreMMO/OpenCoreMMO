@@ -9,14 +9,14 @@ using NeoServer.Domain.Creatures.Models.Bases;
 
 namespace NeoServer.Domain.Creatures.Monster;
 
-public abstract class WalkableMonster : CombatActor, IWalkableMonster
+public abstract class WalkableMonster(
+    ICreatureType type,
+    IMapTool mapTool,
+    IOutfit outfit = null,
+    uint healthPoints = 0)
+    : CombatActor(type, mapTool, outfit,
+        healthPoints), IWalkableMonster
 {
-    protected WalkableMonster(ICreatureType type, IMapTool mapTool, IOutfit outfit = null, uint healthPoints = 0) :
-        base(type, mapTool, outfit,
-            healthPoints)
-    {
-    }
-
     public virtual IMonsterType Metadata => CreatureType as IMonsterType;
     public override ITileEnterRule TileEnterRule => MonsterEnterTileRule.Rule;
 
