@@ -113,7 +113,7 @@ public class ItemFactory : IItemFactory
         SubscribeEvents(createdItem);
 
         EventAggregator.Invoke(new ItemCreatedEvent(createdItem));
-        
+
         return createdItem;
     }
 

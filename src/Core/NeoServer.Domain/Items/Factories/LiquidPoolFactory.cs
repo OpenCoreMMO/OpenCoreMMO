@@ -17,7 +17,7 @@ public class LiquidPoolFactory : ILiquidPoolFactory
     {
         _itemTypeStore = itemTypeStore;
     }
-    
+
     public ILiquid Create(Location location, LiquidColor color)
     {
         if (!_itemTypeStore.TryGetValue(2016, out var itemType)) return null;
@@ -37,7 +37,7 @@ public class LiquidPoolFactory : ILiquidPoolFactory
 
         var item = new LiquidPool(itemType, location, color);
         EventAggregator.Invoke(new ItemCreatedEvent(item));
-        
+
         return item;
     }
 }

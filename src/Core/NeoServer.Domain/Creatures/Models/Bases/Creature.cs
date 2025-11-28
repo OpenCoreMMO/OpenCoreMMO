@@ -40,7 +40,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     protected virtual string InspectionText => $"{Name}.";
     protected virtual string CloseInspectionText => $"{Name}.";
     public Direction LastDirection { get; protected set; }
-    
+
     public event ChangeOutfit OnChangedOutfit;
     public event Say OnSay;
 

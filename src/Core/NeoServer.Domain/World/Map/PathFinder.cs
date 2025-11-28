@@ -36,7 +36,7 @@ public class PathFinder(IMap map) : IPathFinder
         if (!creature.Location.SameFloorAs(target)) return NotFound;
 
         if (!fpp.KeepDistance && creature.Location.IsNextTo(target)) return FoundedButEmptyDirections;
-        
+
         if (fpp.MaxTargetDist > 1)
         {
             var pathToKeepDistance = FindPathToKeepDistance(creature, target, fpp, tileEnterRule);
@@ -95,7 +95,7 @@ public class PathFinder(IMap map) : IPathFinder
 
         return Direction.None;
     }
-    
+
     public (bool Found, Direction[] Directions) FindPathToKeepDistance(
         ICreature creature,
         Location target,

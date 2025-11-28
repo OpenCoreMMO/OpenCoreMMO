@@ -23,10 +23,6 @@ public class PlayerMailItemRepository(DbContextOptions<NeoContext> contextOption
             logger),
         IPlayerMailItemRepository, IPlayerMailRepository
 {
-    #region constructors
-
-    #endregion
-
     public async Task AddParcelToInbox(int playerId, Parcel parcel)
     {
         await using var context = NewDbContext;

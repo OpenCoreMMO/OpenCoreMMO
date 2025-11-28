@@ -74,15 +74,15 @@ public readonly struct ItemNodeAttributeValue
 
             case ItemNodeAttribute.CustomAttributes:
                 throw new NotImplementedException(); //todo
-                // var size = stream.ReadUInt64();
-                // for (ulong i = 0; i < size; i++)
-                // {
-                //     CustomAttributes = new List<CustomAttribute>();
-                //
-                //     ((List<CustomAttribute>)Value).Add(new CustomAttribute(stream));
-                // }
-                //
-                // break;
+            // var size = stream.ReadUInt64();
+            // for (ulong i = 0; i < size; i++)
+            // {
+            //     CustomAttributes = new List<CustomAttribute>();
+            //
+            //     ((List<CustomAttribute>)Value).Add(new CustomAttribute(stream));
+            // }
+            //
+            // break;
         }
     }
 }

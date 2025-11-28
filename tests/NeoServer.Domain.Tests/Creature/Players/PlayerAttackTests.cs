@@ -234,7 +234,7 @@ public class PlayerAttackTests
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
-        
+
         player.Attacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
@@ -314,7 +314,7 @@ public class PlayerAttackTests
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
-        
+
         player.Attacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
@@ -348,7 +348,7 @@ public class PlayerAttackTests
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
-        
+
         player.Attacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);

@@ -19,7 +19,7 @@ public class WeaponFactory : IFactory
         _chargeableFactory = chargeableFactory;
         _itemTypeStore = itemTypeStore;
     }
-    
+
     public IItem Create(
         IItemType itemType,
         Location location,

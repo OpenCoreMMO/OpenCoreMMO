@@ -1503,7 +1503,10 @@ public class Player : CombatActor, IPlayer
         RemoveCondition(ConditionType.Hungry);
     }
 
-    public void ResetIdleTime() => IdleTime = 0;
+    public void ResetIdleTime()
+    {
+        IdleTime = 0;
+    }
 
     public bool CanMoveThing(Location location)
     {

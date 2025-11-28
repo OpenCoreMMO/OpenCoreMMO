@@ -1,5 +1,4 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Networking.EventHandlers.Creature;
 using NeoServer.Networking.EventHandlers.Creature.Player;
 using NeoServer.Server.Events.Chat;
 using NeoServer.Server.Events.Combat;

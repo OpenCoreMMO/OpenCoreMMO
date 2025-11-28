@@ -13,10 +13,6 @@ public class AccountRepository(DbContextOptions<NeoContext> contextOptions, ILog
     : BaseRepository<AccountEntity>(contextOptions,
         logger), IAccountRepository
 {
-    #region constructors
-
-    #endregion
-
     #region public methods implementation
 
     #region gets
