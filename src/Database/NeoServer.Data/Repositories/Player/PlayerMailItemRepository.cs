@@ -18,17 +18,35 @@ namespace NeoServer.Data.Repositories.Player;
 /// <summary>
 ///     Repository class for managing PlayerDepotItem entity.
 /// </summary>
-public class PlayerMailItemRepository : BaseRepository<PlayerMailItemEntity>,
-    IPlayerMailItemRepository, IPlayerMailRepository
+public class PlayerMailItemRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger)
+    : BaseRepository<PlayerMailItemEntity>(contextOptions,
+            logger),
+        IPlayerMailItemRepository, IPlayerMailRepository
 {
-    #region constructors
-
-    public PlayerMailItemRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions,
-        logger)
+    public async Task AddParcelToInbox(int playerId, Parcel parcel)
     {
+        await using var context = NewDbContext;
+        await ContainerManager.Save<PlayerMailItemEntity>(playerId, parcel, context, true);
+        await context.SaveChangesAsync();
     }
 
-    #endregion
+    public async Task AddLetterToInbox(int playerId, Letter letter)
+    {
+        await using var context = NewDbContext;
+
+        var itemModel = ItemEntityParser.ToPlayerItemEntity<PlayerMailItemEntity>(letter);
+        if (itemModel is null) return;
+
+        itemModel.PlayerId = playerId;
+        await context.AddAsync(itemModel);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task<int> GetInboxItemCount(int playerId)
+    {
+        await using var context = NewDbContext;
+        return await context.PlayerMailItems.CountAsync(x => x.PlayerId == playerId && x.ParentId == 0);
+    }
 
     #region public methods implementation
 
@@ -59,29 +77,4 @@ public class PlayerMailItemRepository : BaseRepository<PlayerMailItemEntity>,
     }
 
     #endregion
-
-    public async Task AddParcelToInbox(int playerId, Parcel parcel)
-    {
-        await using var context = NewDbContext;
-        await ContainerManager.Save<PlayerMailItemEntity>(playerId, parcel, context, includeContainer: true);
-        await context.SaveChangesAsync();
-    }
-    
-    public async Task AddLetterToInbox(int playerId, Letter letter)
-    {
-        await using var context = NewDbContext;
-        
-        var itemModel = ItemEntityParser.ToPlayerItemEntity<PlayerMailItemEntity>(letter);
-        if (itemModel is null) return;
-
-        itemModel.PlayerId = playerId;
-        await context.AddAsync(itemModel);
-        await context.SaveChangesAsync();
-    }
-
-    public async Task<int> GetInboxItemCount(int playerId)
-    {
-        await using var context = NewDbContext;
-        return await context.PlayerMailItems.CountAsync(x => x.PlayerId == playerId && x.ParentId == 0);
-    }
 }

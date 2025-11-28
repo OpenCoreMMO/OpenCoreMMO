@@ -1,8 +1,11 @@
 using LuaNET;
-using NeoServer.Data.Interfaces;
+using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
-using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Chat.Factory;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Creatures.Common;
 using NeoServer.Domain.Guild;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using Serilog;
@@ -43,7 +46,7 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
         RegisterMethod(luaState, "Guild", "promoteMember", LuaGuildPromoteMember);
         RegisterMethod(luaState, "Guild", "demoteMember", LuaGuildDemoteMember);
         RegisterMethod(luaState, "Guild", "disband", LuaGuildDisband);
-        
+
         // Register global function to check if guild exists
         RegisterGlobalMethod(luaState, "GuildExists", LuaGuildExists);
     }
@@ -69,7 +72,9 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             var existingGuild = guildRepository.GetByName(name).GetAwaiter().GetResult();
             if (existingGuild != null)
             {
-                _logger?.Warning("Guild creation failed: Guild with name '{GuildName}' already exists (ID: {ExistingGuildId})", name, existingGuild.Id);
+                _logger?.Warning(
+                    "Guild creation failed: Guild with name '{GuildName}' already exists (ID: {ExistingGuildId})", name,
+                    existingGuild.Id);
                 Lua.PushNil(luaState);
                 return 1;
             }
@@ -87,23 +92,23 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             _logger?.Information("Guild created successfully: '{GuildName}' with ID {GuildId}", name, guildEntity.Id);
 
             // Create default guild ranks in database
-            var dbContext = Server.Helpers.IoC.GetInstance<NeoServer.Data.Contexts.NeoContext>();
-            
-            var memberRank = new NeoServer.Data.Entities.GuildRankEntity
+            var dbContext = Server.Helpers.IoC.GetInstance<NeoContext>();
+
+            var memberRank = new GuildRankEntity
             {
                 GuildId = guildEntity.Id,
                 Name = "Member",
                 Level = 1
             };
-            
-            var viceLeaderRank = new NeoServer.Data.Entities.GuildRankEntity
+
+            var viceLeaderRank = new GuildRankEntity
             {
                 GuildId = guildEntity.Id,
-                Name = "Vice-Leader", 
+                Name = "Vice-Leader",
                 Level = 2
             };
-            
-            var leaderRank = new NeoServer.Data.Entities.GuildRankEntity
+
+            var leaderRank = new GuildRankEntity
             {
                 GuildId = guildEntity.Id,
                 Name = "Leader",
@@ -112,13 +117,14 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
 
             dbContext.GuildRanks.AddRange(memberRank, viceLeaderRank, leaderRank);
             dbContext.SaveChanges();
-            
+
             // Refresh entities to get auto-generated IDs
             dbContext.Entry(memberRank).Reload();
             dbContext.Entry(viceLeaderRank).Reload();
             dbContext.Entry(leaderRank).Reload();
-            
-            _logger?.Information("Default guild ranks created for guild '{GuildName}' - Member: {MemberId}, Vice: {ViceId}, Leader: {LeaderId}", 
+
+            _logger?.Information(
+                "Default guild ranks created for guild '{GuildName}' - Member: {MemberId}, Vice: {ViceId}, Leader: {LeaderId}",
                 name, memberRank.Id, viceLeaderRank.Id, leaderRank.Id);
 
             // Get chat channel factory to create guild channel
@@ -131,13 +137,13 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
                 Name = name,
                 CreatedDate = DateTime.UtcNow,
                 Motd = $"Welcome to {name}!",
-                Bank = new NeoServer.Domain.Creatures.Common.Bank(0) // Initialize required Bank property with 0 amount
+                Bank = new Bank(0) // Initialize required Bank property with 0 amount
             };
 
             // Add default guild ranks using the actual database IDs
-            guild.AddRank((ushort)memberRank.Id, "Member", 1);          // Member rank (level 1)
+            guild.AddRank((ushort)memberRank.Id, "Member", 1); // Member rank (level 1)
             guild.AddRank((ushort)viceLeaderRank.Id, "Vice-Leader", 2); // Vice-Leader rank (level 2)
-            guild.AddRank((ushort)leaderRank.Id, "Leader", 3);          // Leader rank (level 3)
+            guild.AddRank((ushort)leaderRank.Id, "Leader", 3); // Leader rank (level 3)
 
             // Add to guild store for runtime access first
             guildStore.AddOrUpdate(guild.Id, guild);
@@ -145,7 +151,8 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
 
             // Create guild channel automatically with guild object
             guild.Channel = chatChannelFactory.CreateGuildChannel($"{name}'s Channel", guild);
-            _logger?.Information("Guild channel created for '{GuildName}' with channel ID {ChannelId}", name, guild.Channel.Id);
+            _logger?.Information("Guild channel created for '{GuildName}' with channel ID {ChannelId}", name,
+                guild.Channel.Id);
 
             PushUserdata(luaState, guild);
             SetMetatable(luaState, -1, "Guild");
@@ -294,7 +301,7 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             return 1;
         }
 
-        var player = GetUserdata<NeoServer.Domain.Common.Contracts.Creatures.IPlayer>(luaState, 2);
+        var player = GetUserdata<IPlayer>(luaState, 2);
         if (player == null)
         {
             Lua.PushBoolean(luaState, false);
@@ -316,7 +323,7 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             return 1;
         }
 
-        var player = GetUserdata<NeoServer.Domain.Common.Contracts.Creatures.IPlayer>(luaState, 2);
+        var player = GetUserdata<IPlayer>(luaState, 2);
         if (player == null)
         {
             Lua.PushBoolean(luaState, false);
@@ -366,10 +373,10 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             return 1;
         }
 
-        var members = guild.Members ?? new List<NeoServer.Domain.Common.Contracts.Creatures.IPlayer>();
+        var members = guild.Members ?? new List<IPlayer>();
         Lua.CreateTable(luaState, members.Count, 0);
 
-        for (int i = 0; i < members.Count; i++)
+        for (var i = 0; i < members.Count; i++)
         {
             PushUserdata(luaState, members[i]);
             Lua.RawSetI(luaState, -2, i + 1);
@@ -388,7 +395,7 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             return 1;
         }
 
-        var player = GetUserdata<NeoServer.Domain.Common.Contracts.Creatures.IPlayer>(luaState, 2);
+        var player = GetUserdata<IPlayer>(luaState, 2);
         if (player == null)
         {
             Lua.PushBoolean(luaState, false);
@@ -410,7 +417,7 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             return 1;
         }
 
-        var player = GetUserdata<NeoServer.Domain.Common.Contracts.Creatures.IPlayer>(luaState, 2);
+        var player = GetUserdata<IPlayer>(luaState, 2);
         if (player == null)
         {
             Lua.PushBoolean(luaState, false);
@@ -432,7 +439,7 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             return 1;
         }
 
-        var player = GetUserdata<NeoServer.Domain.Common.Contracts.Creatures.IPlayer>(luaState, 2);
+        var player = GetUserdata<IPlayer>(luaState, 2);
         if (player == null)
         {
             Lua.PushBoolean(luaState, false);
@@ -454,7 +461,7 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             return 1;
         }
 
-        var player = GetUserdata<NeoServer.Domain.Common.Contracts.Creatures.IPlayer>(luaState, 2);
+        var player = GetUserdata<IPlayer>(luaState, 2);
         if (player == null)
         {
             Lua.PushBoolean(luaState, false);
@@ -476,16 +483,16 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             return 1;
         }
 
-        var player = GetUserdata<NeoServer.Domain.Common.Contracts.Creatures.IPlayer>(luaState, 2);
+        var player = GetUserdata<IPlayer>(luaState, 2);
         var newLevel = GetNumber<int>(luaState, 3);
-        
+
         if (player == null)
         {
             Lua.PushBoolean(luaState, false);
             return 1;
         }
 
-        var result = guild.PromoteMember(player, (int)newLevel);
+        var result = guild.PromoteMember(player, newLevel);
         Lua.PushBoolean(luaState, result);
         return 1;
     }
@@ -500,16 +507,16 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             return 1;
         }
 
-        var player = GetUserdata<NeoServer.Domain.Common.Contracts.Creatures.IPlayer>(luaState, 2);
+        var player = GetUserdata<IPlayer>(luaState, 2);
         var newLevel = GetNumber<int>(luaState, 3);
-        
+
         if (player == null)
         {
             Lua.PushBoolean(luaState, false);
             return 1;
         }
 
-        var result = guild.DemoteMember(player, (int)newLevel);
+        var result = guild.DemoteMember(player, newLevel);
         Lua.PushBoolean(luaState, result);
         return 1;
     }
@@ -543,7 +550,7 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
         {
             var guildRepository = Server.Helpers.IoC.GetInstance<IGuildRepository>();
             var existingGuild = guildRepository.GetByName(name).GetAwaiter().GetResult();
-            
+
             Lua.PushBoolean(luaState, existingGuild != null);
         }
         catch (Exception ex)
@@ -551,7 +558,7 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             _logger?.Error(ex, "Error checking if guild exists with name '{GuildName}'", name);
             Lua.PushBoolean(luaState, false);
         }
-        
+
         return 1;
     }
 }

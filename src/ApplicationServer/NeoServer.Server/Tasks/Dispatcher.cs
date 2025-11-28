@@ -12,13 +12,13 @@ namespace NeoServer.Server.Tasks;
 public class Dispatcher : IDispatcher
 {
     private readonly IEventAggregator _eventAggregator;
+    private readonly CancellationTokenSource _internalCancellation = new();
     private readonly ILogger _logger;
     private readonly ChannelReader<IEvent> _reader;
     private readonly ChannelWriter<IEvent> _writer;
-    private readonly CancellationTokenSource _internalCancellation = new();
-    
-    private Task _processingTask;
     private volatile bool _isShuttingDown;
+
+    private Task _processingTask;
 
     /// <summary>
     ///     A queue responsible for process events
@@ -48,9 +48,7 @@ public class Dispatcher : IDispatcher
         }
 
         if (!_writer.TryWrite(evt))
-        {
             _logger.Warning("Dispatcher: Failed to write event to channel - channel may be completed");
-        }
     }
 
     /// <summary>
@@ -72,7 +70,7 @@ public class Dispatcher : IDispatcher
         {
             _logger.Information("Dispatcher: Starting event processing loop");
             var eventCount = 0L;
-            
+
             try
             {
                 await foreach (var evt in _reader.ReadAllAsync(combinedCts.Token))
@@ -94,12 +92,10 @@ public class Dispatcher : IDispatcher
                         {
                             evt.Action.Invoke();
                             _eventAggregator.PropagateEvents();
-                            
+
                             // Progress logging for debugging
                             if (eventCount % 1000 == 0)
-                            {
                                 _logger.Debug("Dispatcher: Processed {EventCount} events", eventCount);
-                            }
                         }
                         catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
                         {
@@ -128,10 +124,17 @@ public class Dispatcher : IDispatcher
             }
             finally
             {
-                try { _writer.Complete(); }
-                catch (Exception ex) { _logger.Warning(ex, "Dispatcher: Error completing channel"); }
-                
-                _logger.Information("Dispatcher: Event processing loop ended. Total events processed: {EventCount}", eventCount);
+                try
+                {
+                    _writer.Complete();
+                }
+                catch (Exception ex)
+                {
+                    _logger.Warning(ex, "Dispatcher: Error completing channel");
+                }
+
+                _logger.Information("Dispatcher: Event processing loop ended. Total events processed: {EventCount}",
+                    eventCount);
             }
         }, combinedCts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
     }
@@ -151,20 +154,20 @@ public class Dispatcher : IDispatcher
         }
     }
 
-    public void Shutdown()
-    {
-        if (_isShuttingDown) return;
-        
-        _isShuttingDown = true;
-        _logger.Information("Dispatcher: Initiating shutdown");
-        
-        _writer.TryComplete();
-        _internalCancellation.Cancel();
-    }
-
     public void Dispose()
     {
         Shutdown();
         _internalCancellation?.Dispose();
+    }
+
+    public void Shutdown()
+    {
+        if (_isShuttingDown) return;
+
+        _isShuttingDown = true;
+        _logger.Information("Dispatcher: Initiating shutdown");
+
+        _writer.TryComplete();
+        _internalCancellation.Cancel();
     }
 }

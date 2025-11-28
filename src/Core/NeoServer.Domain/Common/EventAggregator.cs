@@ -93,11 +93,6 @@ public class EventAggregator : IEventAggregator
         }
     }
 
-    public void Publish<TEvent>(TEvent @event) where TEvent : IEvent
-    {
-        _eventQueue.Enqueue(@event);
-    }
-
     public void PropagateEvents()
     {
         if (_eventQueue.Count == 0) return;
@@ -128,7 +123,7 @@ public class EventAggregator : IEventAggregator
     }
 
     /// <summary>
-    /// Invoke event immediately without deferring to the end of the process.
+    ///     Invoke event immediately without deferring to the end of the process.
     /// </summary>
     /// <param name="event"></param>
     [DebuggerStepThrough]
@@ -139,21 +134,18 @@ public class EventAggregator : IEventAggregator
 
         // Process network handlers first
         if (_networkHandlers.TryGetValue(eventName, out var networkHandlers))
-        {
             foreach (var networkHandler in networkHandlers)
-            {
                 networkHandler?.Invoke(@event);
-            }
-        }
 
         // Collect other handlers to execute later
         if (_handlers.TryGetValue(eventName, out var otherHandlers))
-        {
             foreach (var otherHandler in otherHandlers)
-            {
                 otherHandler?.Invoke(@event);
-            }
-        }
+    }
+
+    public void Publish<TEvent>(TEvent @event) where TEvent : IEvent
+    {
+        _eventQueue.Enqueue(@event);
     }
 
     [DebuggerStepThrough]
@@ -181,7 +173,7 @@ public interface IEventAggregator
     void PropagateEvents();
 
     /// <summary>
-    /// Invoke event immediately without deferring to the end of the process.
+    ///     Invoke event immediately without deferring to the end of the process.
     /// </summary>
     /// <param name="event"></param>
     void InvokeEvent(IEvent @event);

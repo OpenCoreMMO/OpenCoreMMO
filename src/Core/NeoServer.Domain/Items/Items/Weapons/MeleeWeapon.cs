@@ -1,7 +1,5 @@
 ﻿using System.Collections;
-using NeoServer.Domain.Combat.Attacks.Obsoletes;
 using NeoServer.Domain.Common.Combat;
-using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
@@ -15,16 +13,13 @@ using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items.Weapons;
 
-public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDefense
+public class MeleeWeapon(
+    IItemType itemType,
+    Location location,
+    IDictionary<ItemAttribute, IConvertible> itemAttributes = null)
+    : Equipment(itemType, location), IWeapon, IUsableOnItem, IHasAttack, IHasDefense
 {
-    public MeleeWeapon(
-        IItemType itemType,
-        Location location,
-        IDictionary<ItemAttribute, IConvertible> itemAttributes = null) : base(itemType, location)
-    {
-        //AllowedVocations  todo
-        WeaponAttack = new WeaponAttack(itemType, itemAttributes);
-    }
+    //AllowedVocations  todo
 
     protected override string PartialInspectionText
     {
@@ -41,7 +36,7 @@ public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDe
         }
     }
 
-    public WeaponAttack WeaponAttack { get; } //todo: rename to Attack
+    public WeaponAttack WeaponAttack { get; } = new(itemType, itemAttributes); //todo: rename to Attack
 
     public virtual bool CanUseOn(ushort[] items, IItem onItem)
     {
@@ -68,32 +63,9 @@ public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDe
         return false;
     }
 
-  
+
     public void OnMoved(IThing to)
     {
-    }
-
-    private bool CalculateRegularAttack(IPlayer player, ICombatActor enemy, ushort maxDamage, out CombatDamage damage)
-    {
-        damage = new CombatDamage();
-        if (WeaponAttack.AttackPower <= 0) return false;
-
-        var combat = new CombatAttackValue(player.MinimumAttackPower,
-            maxDamage, DamageType.Melee);
-
-        return MeleeCombatAttack.CalculateAttack(player, enemy, combat, out damage);
-    }
-
-    private bool CalculateElementalAttack(IPlayer player, ICombatActor enemy, ushort maxDamage, out CombatDamage damage)
-    {
-        damage = new CombatDamage();
-
-        if (WeaponAttack.ElementalDamage.AttackPower == 0) return false;
-
-        var combat =
-            new CombatAttackValue(player.MinimumAttackPower, maxDamage, WeaponAttack.ElementalDamage.DamageType);
-
-        return MeleeCombatAttack.CalculateAttack(player, enemy, combat, out damage);
     }
 
     public static bool IsApplicable(IItemType type)

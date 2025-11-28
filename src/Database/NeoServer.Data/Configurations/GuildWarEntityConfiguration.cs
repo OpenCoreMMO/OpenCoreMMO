@@ -9,31 +9,31 @@ public class GuildWarEntityConfiguration : IEntityTypeConfiguration<GuildWarEnti
     public void Configure(EntityTypeBuilder<GuildWarEntity> builder)
     {
         builder.HasKey(e => e.Id);
-        
+
         builder.Property(e => e.Id)
             .ValueGeneratedOnAdd();
-            
+
         builder.Property(e => e.Guild1Id)
             .IsRequired();
-            
+
         builder.Property(e => e.Guild2Id)
             .IsRequired();
-            
+
         builder.Property(e => e.Guild1Name)
             .IsRequired()
             .HasMaxLength(255);
-            
+
         builder.Property(e => e.Guild2Name)
             .IsRequired()
             .HasMaxLength(255);
-            
+
         builder.Property(e => e.Status)
             .IsRequired()
             .HasDefaultValue(0);
-            
+
         builder.Property(e => e.StartedAt)
             .IsRequired();
-            
+
         builder.Property(e => e.EndedAt)
             .IsRequired(false);
 
@@ -41,7 +41,7 @@ public class GuildWarEntityConfiguration : IEntityTypeConfiguration<GuildWarEnti
             .WithMany()
             .HasForeignKey(e => e.Guild1Id)
             .OnDelete(DeleteBehavior.Restrict);
-            
+
         builder.HasOne(e => e.Guild2)
             .WithMany()
             .HasForeignKey(e => e.Guild2Id)

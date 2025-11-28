@@ -10,12 +10,10 @@ using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Loaders.Monsters.Converters;
-using Serilog;
 
 namespace NeoServer.Loaders.Monsters;
 
 public class MonsterConverter(
-    ILogger logger,
     MonsterAttackConverter monsterAttackConverter,
     IItemTypeStore itemTypeStore,
     IMonsterTypeStore monsterTypeStore,

@@ -18,7 +18,8 @@ function inviteGuild.onSay(player, words, param)
 
     -- Check if player has permission to invite (leader or vice-leader)
     local guildLevel = player:getGuildLevel()
-    if guildLevel < 2 then -- 1 = Member, 2 = Vice-Leader, 3 = Leader
+    if guildLevel < 2 then
+        -- 1 = Member, 2 = Vice-Leader, 3 = Leader
         player:sendCancelMessage("You don't have permission to invite players to the guild.")
         return false
     end
@@ -57,18 +58,18 @@ function inviteGuild.onSay(player, words, param)
 
     -- Send guild invitation
     local guildName = guild:getName()
-    
+
     if guild:invitePlayer(targetPlayer) then
         player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have invited %s to join %s.", targetPlayer:getName(), guildName))
         targetPlayer:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have been invited to join the guild '%s' by %s. Use '!joinguild %s' to accept.", guildName, player:getName(), guildName))
-        
+
         player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
         targetPlayer:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
     else
         player:sendCancelMessage("Failed to send invitation. Please try again.")
         return false
     end
-    
+
     return true
 end
 

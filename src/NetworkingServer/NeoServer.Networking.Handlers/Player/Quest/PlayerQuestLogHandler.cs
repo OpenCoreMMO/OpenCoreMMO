@@ -5,7 +5,8 @@ using NeoServer.Server.Tasks;
 
 namespace NeoServer.Networking.Handlers.Player.Quest;
 
-public class PlayerQuestLogHandler(IGameServer game, PlayerOpenQuestLogCommand playerOpenQuestLogCommand) : PacketHandler
+public class PlayerQuestLogHandler(IGameServer game, PlayerOpenQuestLogCommand playerOpenQuestLogCommand)
+    : PacketHandler
 {
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {

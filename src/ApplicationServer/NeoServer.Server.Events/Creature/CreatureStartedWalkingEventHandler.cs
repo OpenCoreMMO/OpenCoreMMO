@@ -30,13 +30,10 @@ public class CreatureStartedWalkingEventHandler(IGameServer game, ICreatureMovem
         if (creature.HasNextStep)
         {
             var nextStep = creature.GetNextStep();
-            if (nextStep.IsDrunk())
-            {
-                creature.Say("Hicks!", SpeechType.MonsterSay);
-            }
+            if (nextStep.IsDrunk()) creature.Say("Hicks!", SpeechType.MonsterSay);
 
             var nextDirection = nextStep.GetOriginalDirection();
-            
+
             creatureMovementService.MoveCreature(creature, nextDirection);
         }
 

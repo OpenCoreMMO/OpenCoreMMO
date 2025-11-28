@@ -1,6 +1,4 @@
-﻿using NeoServer.Domain.Combat.Attacks.Obsoletes;
-using NeoServer.Domain.Common.Combat.Structs;
-using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Helpers;
@@ -11,12 +9,8 @@ using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items.Weapons;
 
-public class MagicWeapon : Equipment, IDistanceWeapon
+public class MagicWeapon(IItemType type, Location location) : Equipment(type, location), IDistanceWeapon
 {
-    public MagicWeapon(IItemType type, Location location) : base(type, location)
-    {
-    }
-
     private ShootType ShootType => Metadata.ShootType;
 
     private DamageType DamageType => Metadata.Attributes.HasAttribute(ItemTypeAttribute.Damage)

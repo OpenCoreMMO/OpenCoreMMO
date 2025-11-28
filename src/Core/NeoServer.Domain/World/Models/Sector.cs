@@ -10,7 +10,7 @@ public class Sector
 {
     public const byte MAP_MAX_LAYERS = 16;
     public const byte SECTOR_MASK = Region.SECTOR_SIZE - 1;
-    private readonly ITile[,,] Tiles = new ITile[MAP_MAX_LAYERS, Region.SECTOR_SIZE, Region.SECTOR_SIZE];
+    private readonly ITile[,,] _tiles = new ITile[MAP_MAX_LAYERS, Region.SECTOR_SIZE, Region.SECTOR_SIZE];
 
     public Sector(Sector north, Sector south, Sector west, Sector east)
     {
@@ -20,8 +20,8 @@ public class Sector
     public Sector South { get; private set; }
     public Sector East { get; private set; }
     public uint Floors { get; private set; }
-    public HashSet<ICreature> Creatures { get; } = new();
-    public HashSet<ICreature> Players { get; } = new();
+    public HashSet<ICreature> Creatures { get; } = [];
+    public HashSet<ICreature> Players { get; } = [];
     public List<ICreature> SpectatorsCache { get; } = new(32);
 
     public void AddTile(ITile tile, Location location)
@@ -36,7 +36,7 @@ public class Sector
 
         if (GetTile(location) is not null) return;
 
-        Tiles[z, x & SECTOR_MASK, y & SECTOR_MASK] = tile;
+        _tiles[z, x & SECTOR_MASK, y & SECTOR_MASK] = tile;
     }
 
     public void AddTile(ITile tile)
@@ -51,7 +51,7 @@ public class Sector
 
         if (GetTile(tile.Location) is not null) return;
 
-        Tiles[z, x & SECTOR_MASK, y & SECTOR_MASK] = tile;
+        _tiles[z, x & SECTOR_MASK, y & SECTOR_MASK] = tile;
     }
 
     public void CreateFloor(byte z)
@@ -71,7 +71,7 @@ public class Sector
     {
         if (location.Z >= MAP_MAX_LAYERS) return null;
 
-        return Tiles[location.Z, location.X & SECTOR_MASK, location.Y & SECTOR_MASK];
+        return _tiles[location.Z, location.X & SECTOR_MASK, location.Y & SECTOR_MASK];
     }
 
     public void ReplaceTile(ITile newTile)
@@ -84,7 +84,7 @@ public class Sector
 
         CreateFloor(z);
 
-        Tiles[z, x & SECTOR_MASK, y & SECTOR_MASK] = newTile;
+        _tiles[z, x & SECTOR_MASK, y & SECTOR_MASK] = newTile;
     }
 
     public void AddCreature(ICreature creature)

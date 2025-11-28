@@ -23,7 +23,7 @@ public class Action(LuaScriptInterface scriptInterface) : Script(scriptInterface
 
     public List<Location> PositionsVector { get; } = [];
 
-    public bool ExecuteUse(IPlayer player, IItem item, Location fromPosition, IThing? target, Location toPosition,
+    public bool ExecuteUse(IPlayer player, IItem item, Location fromPosition, IThing target, Location toPosition,
         bool isHotkey)
     {
         // onUse(player, item, fromPosition, target, toPosition, isHotkey)

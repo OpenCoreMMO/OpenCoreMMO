@@ -5,11 +5,11 @@ namespace NeoServer.Domain.Guild;
 
 public class Guild : IBankable
 {
-    private readonly List<IPlayer> _membersOnline = new();
-    private readonly List<IPlayer> _members = new();
-    private readonly List<IPlayer> _invitedPlayers = new();
-    private readonly Dictionary<ushort, GuildRankInfo> _ranks = new();
     private readonly List<ushort> _guildWarList = new();
+    private readonly List<IPlayer> _invitedPlayers = new();
+    private readonly List<IPlayer> _members = new();
+    private readonly List<IPlayer> _membersOnline = new();
+    private readonly Dictionary<ushort, GuildRankInfo> _ranks = new();
 
     public ushort Id { get; init; }
     public string Name { get; set; }
@@ -22,13 +22,13 @@ public class Guild : IBankable
     public ushort OwnerId { get; set; }
     public IPlayer Leader { get; private set; }
 
-    public required IBank Bank { get; init; }
-    public ulong BankAmount => Bank?.Amount ?? 0;
-
     public IReadOnlyList<IPlayer> MembersOnline => _membersOnline.AsReadOnly();
     public IReadOnlyList<IPlayer> Members => _members.AsReadOnly();
     public IReadOnlyDictionary<ushort, GuildRankInfo> Ranks => _ranks.AsReadOnly();
     public IReadOnlyList<ushort> GuildWarList => _guildWarList.AsReadOnly();
+
+    public required IBank Bank { get; init; }
+    public ulong BankAmount => Bank?.Amount ?? 0;
 
     public bool HasMember(IPlayer player)
     {
@@ -54,17 +54,17 @@ public class Guild : IBankable
         if (!_membersOnline.Contains(player))
         {
             _membersOnline.Add(player);
-            
+
             // Also add to general members list if not already there
             if (!_members.Contains(player))
             {
                 _members.Add(player);
                 player.SetGuild(this);
             }
-            
+
             // Remove from invitations if they were invited
             _invitedPlayers.Remove(player);
-            
+
             // Update player helpers for all online members
             UpdateMemberHelpers();
         }
@@ -76,7 +76,7 @@ public class Guild : IBankable
         {
             _members.Remove(player);
             player.SetGuild(null);
-            
+
             // Update player helpers for all remaining online members
             UpdateMemberHelpers();
         }
@@ -117,16 +117,13 @@ public class Guild : IBankable
     public bool IsInWar(IPlayer otherPlayer)
     {
         if (otherPlayer?.GuildId == 0) return false;
-        return _guildWarList.Contains(otherPlayer.GuildId) && 
+        return _guildWarList.Contains(otherPlayer.GuildId) &&
                IsPlayerInWarList(otherPlayer, Id);
     }
 
     public void AddWarGuild(ushort guildId)
     {
-        if (!_guildWarList.Contains(guildId))
-        {
-            _guildWarList.Add(guildId);
-        }
+        if (!_guildWarList.Contains(guildId)) _guildWarList.Add(guildId);
     }
 
     public void RemoveWarGuild(ushort guildId)
@@ -137,34 +134,31 @@ public class Guild : IBankable
     public void SetLeader(IPlayer player)
     {
         if (player == null) return;
-        
+
         Leader = player;
         OwnerId = (ushort)player.Id;
-        
+
         // Add player to guild if not already a member
         if (!HasMember(player))
         {
             AddMember(player);
             _members.Add(player);
         }
-        
+
         // Set player's guild
         player.SetGuild(this);
-        
+
         // Set player's guild rank to Leader (level 3)
         var leaderRank = GetRankByLevel(3); // Leader rank
-        
-        if (leaderRank != null)
-        {
-            player.GuildRank = leaderRank;
-        }
+
+        if (leaderRank != null) player.GuildRank = leaderRank;
     }
 
     public bool InvitePlayer(IPlayer player)
     {
         if (player == null || HasMember(player) || _invitedPlayers.Contains(player))
             return false;
-            
+
         _invitedPlayers.Add(player);
         return true;
     }
@@ -183,7 +177,7 @@ public class Guild : IBankable
     {
         if (player == null || !HasMember(player) || newLevel < 1 || newLevel > 3)
             return false;
-            
+
         // TODO: Set guild level through proper domain method when available
         return true;
     }
@@ -192,7 +186,7 @@ public class Guild : IBankable
     {
         if (player == null || !HasMember(player) || newLevel < 1 || newLevel > 3)
             return false;
-            
+
         // TODO: Set guild level through proper domain method when available
         return true;
     }
@@ -200,20 +194,14 @@ public class Guild : IBankable
     public bool Disband()
     {
         // Remove all members
-        foreach (var member in _members.ToList())
-        {
-            member.SetGuild(null);
-        }
-        
-        foreach (var memberOnline in _membersOnline.ToList())
-        {
-            memberOnline.SetGuild(null);
-        }
-        
+        foreach (var member in _members.ToList()) member.SetGuild(null);
+
+        foreach (var memberOnline in _membersOnline.ToList()) memberOnline.SetGuild(null);
+
         _members.Clear();
         _membersOnline.Clear();
         _invitedPlayers.Clear();
-        
+
         return true;
     }
 

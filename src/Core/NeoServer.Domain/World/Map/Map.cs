@@ -1,4 +1,3 @@
-using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
@@ -8,10 +7,7 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
-using NeoServer.Domain.Common.Services;
-using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.World.Algorithms;
-using NeoServer.Domain.World.Events;
 using NeoServer.Domain.World.Models;
 using NeoServer.Domain.World.Models.Tiles;
 using MinMax = NeoServer.Domain.Common.MinMax;
@@ -21,8 +17,8 @@ namespace NeoServer.Domain.World.Map;
 public class Map : IMap
 {
     private const int MAP_MAX_LAYERS = 16;
-    private readonly World _world;
     private readonly CylinderOperation _cylinderOperation;
+    private readonly World _world;
 
     public Map(World world)
     {
@@ -341,17 +337,13 @@ public class Map : IMap
             creatureAlreadyInTile = tile.HasCreature(creature);
 
             if (!creatureAlreadyInTile)
-            {
                 foreach (var location in tile.Location.Neighbours)
-                {
                     if (this[location] is IDynamicTile { HasAnyCreature: false } t
                         && !t.HasFlag(TileFlags.Unpassable))
                     {
                         tile = t;
                         break;
                     }
-                }
-            }
         }
 
         if (_cylinderOperation.AddCreature(creature, tile, out var cylinder).Succeeded is false) return;
@@ -364,9 +356,7 @@ public class Map : IMap
         }
 
         if (creature is IWalkableCreature walkableCreature && !creatureAlreadyInTile)
-        {
             OnCreatureAddedOnMap?.Invoke(walkableCreature, cylinder);
-        }
     }
 
     public void RemoveCreature(ICreature creature)
@@ -376,11 +366,11 @@ public class Map : IMap
         _cylinderOperation.RemoveCreature(creature, out var cylinder);
 
         _world.GetSector(tile.Location.X, tile.Location.Y).RemoveCreature(creature);
-        
+
         //Notify all spectators about the creature's disappearance
         foreach (var cylinderSpectator in cylinder.TileSpectators)
             cylinderSpectator.Spectator.OnCreatureDisappear(creature);
-        
+
         if (creature is IWalkableCreature walkableCreature)
             OnThingRemovedFromTile?.Invoke(walkableCreature, cylinder);
     }
@@ -431,7 +421,7 @@ public class Map : IMap
             }
         }
     }
-    
+
     public void CreateBloodPool(ILiquid pool, IDynamicTile tile)
     {
         tile.RemoveItem(pool.Metadata.Group);

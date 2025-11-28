@@ -18,8 +18,6 @@ public class DefenseEquipmentFactory : IFactory
         _chargeableFactory = chargeableFactory;
     }
 
-    public event CreateItem OnItemCreated;
-
     public BodyDefenseEquipment Create(IItemType itemType, Location location)
     {
         var chargeable = _chargeableFactory.Create(itemType);

@@ -1,7 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
-using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Monster;
@@ -72,7 +71,8 @@ public static class AStar
                     tileEnterRule != null &&
                     !tileEnterRule.ShouldIgnore(tile, creature)) continue;
 
-                if (neighborNode is null && pos.IsNextTo(targetPos) && !fpp.PushMonsters && HasPushableMonster(tile)) continue;
+                if (neighborNode is null && pos.IsNextTo(targetPos) && !fpp.PushMonsters &&
+                    HasPushableMonster(tile)) continue;
 
                 var extraCost = CalculateExtraCost(creature, neighborNode, tile);
                 var cost = bestNode.GetMapWalkCost(pos);
@@ -119,7 +119,7 @@ public static class AStar
 
             //if a creature can't be pushed, skip it
             if (monster.IsPushable) continue;
-            
+
             return true;
         }
 

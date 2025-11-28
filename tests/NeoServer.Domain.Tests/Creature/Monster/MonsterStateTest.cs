@@ -60,18 +60,19 @@ public class MonsterStateTest
 
         var monster = MonsterTestDataBuilder.Build();
         var player = PlayerTestDataBuilder.Build();
-        
+
         var map = MapTestDataBuilder.Build(monsterTile, playerTile);
 
         monsterTile.AddCreature(monster);
         playerTile.AddCreature(player);
         monster.SetAsEnemy(player);
-        
+
         var targetDetectorService = new TargetDetectorService(map);
         var monsterTargetingService =
             new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, new PathFinder(map))));
-        
-        MonsterStateService monsterStateService = new MonsterStateService(new Mock<ISummonService>().Object,targetDetectorService, monsterTargetingService);
+
+        var monsterStateService = new MonsterStateService(new Mock<ISummonService>().Object, targetDetectorService,
+            monsterTargetingService);
 
         //act
         monsterStateService.UpdateState(monster);
@@ -147,13 +148,13 @@ public class MonsterStateTest
             new MonsterCombatType
             {
                 AttackChance = 100,
-                CombatParameter = new CombatParameter()
+                CombatParameter = new CombatParameter
                 {
                     Range = 6
                 }
             }
         ];
-        
+
         monster.Metadata.MaxRangeDistanceAttack = 6;
 
         monsterTile.AddCreature(monster);
@@ -164,8 +165,9 @@ public class MonsterStateTest
         var targetDetectorService = new TargetDetectorService(map);
         var monsterTargetingService =
             new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, new PathFinder(map))));
-        
-        MonsterStateService monsterStateService = new MonsterStateService(new Mock<ISummonService>().Object,targetDetectorService, monsterTargetingService);
+
+        var monsterStateService = new MonsterStateService(new Mock<ISummonService>().Object, targetDetectorService,
+            monsterTargetingService);
 
         //act
         monsterStateService.UpdateState(monster);

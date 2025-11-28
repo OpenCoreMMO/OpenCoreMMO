@@ -6,21 +6,14 @@ namespace NeoServer.Domain.Creatures.Experience;
 /// <summary>
 ///     The shared experience bonus applied to members of a party.
 /// </summary>
-public class SharedExperienceBonus : IExperienceBonus
+public class SharedExperienceBonus(ISharedExperienceConfiguration config) : IExperienceBonus
 {
-    private readonly ISharedExperienceConfiguration Configuration;
-
-    public SharedExperienceBonus(ISharedExperienceConfiguration config)
-    {
-        Configuration = config;
-    }
-
     public ExperienceBonusType BonusType => ExperienceBonusType.Standard;
     public string Name => "Party Shared Experience";
 
     public double GetBonusFactorAmount(IPlayer player, IMonster monster)
     {
-        if (player == null || player.PlayerParty.IsInParty == false) return 0.0;
+        if (player == null || !player.PlayerParty.IsInParty) return 0.0;
         return GetPartyBonusFactor(player.PlayerParty.Party);
     }
 
@@ -52,7 +45,7 @@ public class SharedExperienceBonus : IExperienceBonus
     /// <param name="party">The party to receive experience sharing bonus.</param>
     public bool IsExperienceSharingTurnedOn(IParty party)
     {
-        return Configuration.IsSharedExperienceAlwaysOn || party.IsSharedExperienceEnabled;
+        return config.IsSharedExperienceAlwaysOn || party.IsSharedExperienceEnabled;
     }
 
     /// <summary>
@@ -62,7 +55,7 @@ public class SharedExperienceBonus : IExperienceBonus
     /// <param name="monster">The creature defeated by the party.</param>
     public bool DoesMonsterQualify(IMonster monster)
     {
-        return monster.Experience >= Configuration.MinimumMonsterExperienceToBeShared;
+        return monster.Experience >= config.MinimumMonsterExperienceToBeShared;
     }
 
     /// <summary>
@@ -75,7 +68,7 @@ public class SharedExperienceBonus : IExperienceBonus
     /// <param name="party">The party to receive experience sharing bonus.</param>
     public bool ArePartyLevelsInProperRange(IParty party)
     {
-        if (Configuration.RequirePartyMemberLevelProximity == false) return true;
+        if (!config.RequirePartyMemberLevelProximity) return true;
 
         var lowestLevel = int.MaxValue;
         var highestLevel = 0;
@@ -87,7 +80,7 @@ public class SharedExperienceBonus : IExperienceBonus
             highestLevel = Math.Max(highestLevel, member.Level);
         }
 
-        return highestLevel <= lowestLevel * Configuration.LowestLevelSupportedMultipler;
+        return highestLevel <= lowestLevel * config.LowestLevelSupportedMultipler;
     }
 
     /// <summary>
@@ -97,7 +90,7 @@ public class SharedExperienceBonus : IExperienceBonus
     /// <param name="party">The party to receive experience sharing bonus.</param>
     public bool ArePartyCloseEnoughToEachOther(IParty party)
     {
-        if (Configuration.RequirePartyProximity == false) return true;
+        if (!config.RequirePartyProximity) return true;
 
         var members = party.Members;
 
@@ -107,10 +100,10 @@ public class SharedExperienceBonus : IExperienceBonus
             if (memberA == memberB) continue;
 
             var horizontalDistance = memberA.Location.GetSqmDistance(memberB.Location);
-            if (horizontalDistance > Configuration.MaximumPartyDistanceToReceiveExperienceSharing) return false;
+            if (horizontalDistance > config.MaximumPartyDistanceToReceiveExperienceSharing) return false;
 
             var verticalDistance = memberA.Location.GetOffSetZ(memberB.Location);
-            if (verticalDistance > Configuration.MaximumPartyVerticalDistanceToReceiveExperienceSharing) return false;
+            if (verticalDistance > config.MaximumPartyVerticalDistanceToReceiveExperienceSharing) return false;
         }
 
         return true;
@@ -124,13 +117,13 @@ public class SharedExperienceBonus : IExperienceBonus
     /// <param name="monster">The monster killed by the party.</param>
     public bool IsEveryMemberActive(IParty party, IMonster monster)
     {
-        if (Configuration.RequirePartyMemberParticipation == false) return true;
+        if (!config.RequirePartyMemberParticipation) return true;
 
         var members = party.Members;
         foreach (var member in members)
         {
             if (party.Heals.TryGetValue(member, out var lastHealedOn) &&
-                lastHealedOn.AddSeconds(Configuration.SecondsBetweenHealsToBeConsideredActive) >=
+                lastHealedOn.AddSeconds(config.SecondsBetweenHealsToBeConsideredActive) >=
                 DateTime.UtcNow) continue;
 
             var damageDealt = monster.ReceivedDamages.GetCreatureDamage(member)?.Damage ?? 0;
@@ -147,8 +140,8 @@ public class SharedExperienceBonus : IExperienceBonus
     /// <param name="party">The party to receive experience sharing bonus.</param>
     public double GetPartyBonusFactor(IParty party)
     {
-        var maxVocationCount = Configuration.UniqueVocationBonusExperienceFactor.Length;
+        var maxVocationCount = config.UniqueVocationBonusExperienceFactor.Length;
         var vocationCount = Math.Min(maxVocationCount, Math.Max(1, party.Members.GroupBy(x => x.Vocation.Id).Count()));
-        return Configuration.UniqueVocationBonusExperienceFactor[vocationCount - 1];
+        return config.UniqueVocationBonusExperienceFactor[vocationCount - 1];
     }
 }

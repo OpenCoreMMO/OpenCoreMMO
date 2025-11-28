@@ -16,10 +16,7 @@ public class QuestService(IQuestDataStore questDataStore)
         if (quest == null) return false;
 
         var storageValue = player.GetStorageValue(quest.Id);
-        if (storageValue != -1 || storageValue >= (int)quest.StartValue)
-        {
-            return true;
-        }
+        if (storageValue != -1 || storageValue >= (int)quest.StartValue) return true;
 
         return false;
     }
@@ -33,12 +30,8 @@ public class QuestService(IQuestDataStore questDataStore)
         if (missions == null) return true;
 
         foreach (var mission in missions)
-        {
-            if (!MissionIsCompleted(player,mission))
-            {
+            if (!MissionIsCompleted(player, mission))
                 return false;
-            }
-        }
 
         return true;
     }
@@ -49,15 +42,9 @@ public class QuestService(IQuestDataStore questDataStore)
 
         var value = player.GetStorageValue(mission.Id);
 
-        if (value == -1)
-        {
-            return false;
-        }
+        if (value == -1) return false;
 
-        if (mission.IgnoreEndValue)
-        {
-            return value >= mission.EndValue;
-        }
+        if (mission.IgnoreEndValue) return value >= mission.EndValue;
 
         return value == mission.EndValue;
     }
@@ -72,7 +59,7 @@ public class QuestService(IQuestDataStore questDataStore)
 
     public string GetMissionDescription(IPlayer player, Mission mission)
     {
-        int playerMissionStateId = player.GetStorageValue(mission.Id);
+        var playerMissionStateId = player.GetStorageValue(mission.Id);
 
         if (!string.IsNullOrEmpty(mission.Description))
         {

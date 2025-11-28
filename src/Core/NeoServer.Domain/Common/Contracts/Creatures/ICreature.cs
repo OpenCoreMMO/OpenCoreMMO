@@ -142,11 +142,6 @@ public interface ICreature : IMovableThing
     IList<Summon> Summons { get; }
 
     /// <summary>
-    ///     Fires when creature is removed from game
-    /// </summary>
-    event RemoveCreature OnCreatureRemoved;
-
-    /// <summary>
     ///     Fires when creature says something
     /// </summary>
     event Say OnSay;
@@ -204,7 +199,7 @@ public interface ICreature : IMovableThing
     void BackToOldOutfit();
 
     void Appear(Location.Structs.Location location, ICylinderSpectator[] spectators);
-    
+
     /// <summary>
     ///     Says a message
     /// </summary>
@@ -228,15 +223,15 @@ public interface ICreature : IMovableThing
 
     void SetLight(byte color, byte level);
     void RemoveLight();
-    
+
     /// <summary>
-    /// Event that is fired when a spectator moves.
+    ///     Event that is fired when a spectator moves.
     /// </summary>
     /// <param name="spectator"></param>
     void OnSpectatorMoved(ICreature spectator);
-    
+
     /// <summary>
-    /// Event that is fired when a spectator dies
+    ///     Event that is fired when a spectator dies
     /// </summary>
     /// <param name="spectator"></param>
     void OnSpectatorDies(ICombatActor spectator);

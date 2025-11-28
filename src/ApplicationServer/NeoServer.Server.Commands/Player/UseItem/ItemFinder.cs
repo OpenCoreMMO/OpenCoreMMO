@@ -24,7 +24,8 @@ public class ItemFinderService
 
         var itemFound = itemLocation switch
         {
-            _ when itemLocation.Type == LocationType.Ground => GetItemFromGround(itemLocation, index, stackPositionType),
+            _ when itemLocation.Type == LocationType.Ground =>
+                GetItemFromGround(itemLocation, index, stackPositionType),
             _ when itemLocation.Type == LocationType.Slot => player.Inventory[itemLocation.Slot],
             _ when itemLocation.Type == LocationType.Container => player.Containers[itemLocation.ContainerId][
                 itemLocation.ContainerSlot],
@@ -37,15 +38,9 @@ public class ItemFinderService
 
     private IItem GetItemFromGround(Location itemLocation, byte index, StackPositionType stackPositionType)
     {
-        if (_gameServer.Map[itemLocation] is not { } tile)
-        {
-            return null;
-        }
+        if (_gameServer.Map[itemLocation] is not { } tile) return null;
 
-        if (stackPositionType == StackPositionType.UseItem)
-        {
-            return tile.GetItemByIndex(index);
-        }
+        if (stackPositionType == StackPositionType.UseItem) return tile.GetItemByIndex(index);
 
         return null;
     }

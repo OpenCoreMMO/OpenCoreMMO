@@ -9,11 +9,11 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Monster.Loot;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Player.Inventory;
+using NeoServer.Domain.Items.Events;
 using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Items.Items.Containers;
 using NeoServer.Domain.Items.Items.Cumulatives;
 using NeoServer.Domain.Items.Items.UsableItems;
-using CreateItem = NeoServer.Domain.Common.Contracts.Items.CreateItem;
 
 namespace NeoServer.Domain.Items.Factories;
 
@@ -55,7 +55,6 @@ public class ItemFactory : IItemFactory
     public GenericItemFactory GenericItemFactory { get; set; }
     public IItemTypeStore ItemTypeStore { get; set; }
     public ICoinTypeStore CoinTypeStore { get; set; }
-    public event CreateItem OnItemCreated;
 
     public IItem CreateLootCorpse(
         ushort typeId,
@@ -76,7 +75,7 @@ public class ItemFactory : IItemFactory
 
         SubscribeEvents(createdItem);
 
-        OnItemCreated?.Invoke(createdItem);
+        EventAggregator.Invoke(new ItemCreatedEvent(createdItem));
 
         return createdItem;
     }
@@ -113,7 +112,7 @@ public class ItemFactory : IItemFactory
 
         SubscribeEvents(createdItem);
 
-        OnItemCreated?.Invoke(createdItem);
+        EventAggregator.Invoke(new ItemCreatedEvent(createdItem));
 
         return createdItem;
     }
@@ -133,7 +132,7 @@ public class ItemFactory : IItemFactory
 
         SubscribeEvents(createdItem);
 
-        OnItemCreated?.Invoke(createdItem);
+        EventAggregator.Invoke(new ItemCreatedEvent(createdItem));
 
         return createdItem;
     }
@@ -148,7 +147,7 @@ public class ItemFactory : IItemFactory
             if (createdCoin is not Coin newCoin) continue;
             newCoin.SetAmount(coinToAdd.Item2);
 
-            OnItemCreated?.Invoke(newCoin);
+            EventAggregator.Invoke(new ItemCreatedEvent(newCoin));
 
             yield return newCoin;
         }
@@ -241,16 +240,14 @@ public class ItemFactory : IItemFactory
         if (FloorChanger.IsApplicable(itemType)) return new FloorChanger(itemType, location);
 
         if (TeleportItem.IsApplicable(itemType)) return new TeleportItem(itemType, location);
-        
+
         if (Paper.IsApplicable(itemType))
-        {
             return itemType.ServerId switch
             {
                 GameConstants.LABEL_SERVER_ID => new Label(itemType, location),
                 GameConstants.LETTER_SERVER_ID => new Letter(itemType, location),
                 _ => new Paper(itemType, location)
             };
-        }
 
         if (Sign.IsApplicable(itemType, itemAttributes)) return new Sign(itemType, location);
 

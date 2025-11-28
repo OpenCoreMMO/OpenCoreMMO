@@ -10,7 +10,6 @@ namespace NeoServer.Domain.World.Models.Tiles;
 public class StaticTile : BaseTile, IStaticTile
 {
     private IItem _topDownItemOnStack;
-    private IItem _topTopItemOnStack;
 
     public StaticTile(Coordinate coordinate, params IItem[] items) : this(
         new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z), items)
@@ -29,7 +28,7 @@ public class StaticTile : BaseTile, IStaticTile
 
     public override int ThingsCount { get; }
     public byte[] Raw { get; }
-    public override IItem TopTopItemOnStack => _topTopItemOnStack;
+    public override IItem TopTopItemOnStack => null;
     public override IItem TopDownItemOnStack => _topDownItemOnStack;
     public override ICreature TopCreatureOnStack => null;
 
@@ -70,6 +69,12 @@ public class StaticTile : BaseTile, IStaticTile
             item.SetNewLocation(location, true);
 
         return new StaticTile(location, AllItems);
+    }
+
+    public override IItem GetItemByIndex(int index)
+    {
+        if (index < 0 || index >= AllItems.Length) return null;
+        return AllItems[index];
     }
 
     public byte[] GetRaw(IItem[] items)
@@ -118,42 +123,24 @@ public class StaticTile : BaseTile, IStaticTile
         foreach (var item in items)
         {
             if (item is null) continue;
-            if (item is IGround)
-            {
-                orderedItems.Add(item);
-            }
+            if (item is IGround) orderedItems.Add(item);
         }
 
         // Then, add top items (IsAlwaysOnTop)
         foreach (var item in items)
         {
             if (item is null) continue;
-            if (item.IsAlwaysOnTop && item is not IGround)
-            {
-                orderedItems.Add(item);
-            }
+            if (item.IsAlwaysOnTop && item is not IGround) orderedItems.Add(item);
         }
 
         // Finally, add down items (everything else)
         foreach (var item in items)
         {
             if (item is null) continue;
-            if (!item.IsAlwaysOnTop && item is not IGround)
-            {
-                orderedItems.Add(item);
-            }
+            if (!item.IsAlwaysOnTop && item is not IGround) orderedItems.Add(item);
         }
 
         return orderedItems.ToArray();
-    }
-
-    public override IItem GetItemByIndex(int index)
-    {
-        if (index < 0 || index >= AllItems.Length)
-        {
-            return null;
-        }
-        return AllItems[index];
     }
 
     public override int GetHashCode()

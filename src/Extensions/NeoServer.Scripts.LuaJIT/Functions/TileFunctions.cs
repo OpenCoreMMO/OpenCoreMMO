@@ -18,9 +18,12 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
     private static IItemTypeStore _itemTypeStore;
     private static IItemClientServerIdMapStore _itemClientServerIdMapStore;
 
-    public TileFunctions(IGameServer gameServer) : base(nameof(TileFunctions))
+    public TileFunctions(IGameServer gameServer, IItemClientServerIdMapStore itemClientServerIdMapStore,
+        IItemTypeStore itemTypeStore) : base(nameof(TileFunctions))
     {
         _gameServer = gameServer;
+        _itemClientServerIdMapStore = itemClientServerIdMapStore;
+        _itemTypeStore = itemTypeStore;
     }
 
     public void Init(LuaState luaState)
@@ -99,7 +102,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
                 return 1;
             }
         }
-        else if (dynamicTile.AllItems.Count() >= index + 1)
+        else if (dynamicTile.AllItems.Length >= index + 1)
         {
             var item = dynamicTile.AllItems[index];
 

@@ -15,35 +15,24 @@ using Serilog;
 
 namespace NeoServer.Loaders.Vocations;
 
-public class VocationLoader
+public class VocationLoader(
+    ILogger logger,
+    ServerConfiguration serverConfiguration,
+    IVocationStore vocationStore,
+    GameConfiguration gameConfiguration)
 {
-    private readonly GameConfiguration _gameConfiguration;
-
-    private readonly ILogger _logger;
-    private readonly ServerConfiguration _serverConfiguration;
-    private readonly IVocationStore _vocationStore;
-
-    public VocationLoader(ILogger logger,
-        ServerConfiguration serverConfiguration, IVocationStore vocationStore, GameConfiguration gameConfiguration)
-    {
-        _logger = logger;
-        _serverConfiguration = serverConfiguration;
-        _vocationStore = vocationStore;
-        _gameConfiguration = gameConfiguration;
-    }
-
     public void Load()
     {
-        _logger.Step("Loading vocations...", "{n} vocations loaded", () =>
+        logger.Step("Loading vocations...", "{n} vocations loaded", () =>
         {
-            _vocationStore.Clear();
+            vocationStore.Clear();
             var vocations = GetVocations();
 
             foreach (var vocation in vocations)
             {
                 vocation.AttackSpeed = (ushort)Math.Round(vocation.AttackSpeed /
-                                                          Math.Max(_gameConfiguration.Combat.AttackSpeedMultiplier, 1));
-                _vocationStore.AddOrUpdate(vocation.VocationType, vocation);
+                                                          Math.Max(gameConfiguration.Combat.AttackSpeedMultiplier, 1));
+                vocationStore.AddOrUpdate(vocation.VocationType, vocation);
             }
 
             return [vocations.Count];
@@ -52,7 +41,7 @@ public class VocationLoader
 
     public void Reload()
     {
-        _logger.Step("Reloading vocations...", "{n} vocations reloaded", () =>
+        logger.Step("Reloading vocations...", "{n} vocations reloaded", () =>
         {
             var vocations = GetVocations();
             AddOrUpdateVocation(vocations);
@@ -64,14 +53,14 @@ public class VocationLoader
     {
         foreach (var vocation in vocations)
         {
-            if (_vocationStore.TryGetValue(vocation.VocationType, out var existingVocation))
+            if (vocationStore.TryGetValue(vocation.VocationType, out var existingVocation))
             {
                 UpdateVocation(existingVocation, vocation);
 
                 continue;
             }
 
-            _vocationStore.AddOrUpdate(vocation.VocationType, vocation);
+            vocationStore.AddOrUpdate(vocation.VocationType, vocation);
         }
     }
 
@@ -88,7 +77,7 @@ public class VocationLoader
         UpdateSkills(existingVocation, vocation);
 
         existingVocation.AttackSpeed =
-            (ushort)Math.Round(vocation.AttackSpeed / Math.Max(_gameConfiguration.Combat.AttackSpeedMultiplier, 1));
+            (ushort)Math.Round(vocation.AttackSpeed / Math.Max(gameConfiguration.Combat.AttackSpeedMultiplier, 1));
         existingVocation.BaseSpeed = vocation.BaseSpeed;
         existingVocation.FromVoc = vocation.FromVoc;
         existingVocation.GainCap = vocation.GainCap;
@@ -124,18 +113,18 @@ public class VocationLoader
 
     private List<Vocation> GetVocations()
     {
-        var basePath = $"{_serverConfiguration.Data}";
+        var basePath = $"{serverConfiguration.Data}";
         var jsonString = File.ReadAllText(Path.Combine(basePath, "vocations.json"));
         var vocations = JsonSerializer.Deserialize<List<VocationData>>(jsonString, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
             Converters =
             {
-                new SkillConverter(),
+                new SkillConverter()
             }
         });
 
-        return vocations.Select(x=> new Vocation()
+        return vocations.Select(x => new Vocation
         {
             FromVoc = x.FromVoc,
             GainCap = x.GainCap,

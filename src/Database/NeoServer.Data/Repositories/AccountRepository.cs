@@ -9,17 +9,10 @@ using Serilog;
 
 namespace NeoServer.Data.Repositories;
 
-public class AccountRepository : BaseRepository<AccountEntity>, IAccountRepository
+public class AccountRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger)
+    : BaseRepository<AccountEntity>(contextOptions,
+        logger), IAccountRepository
 {
-    #region constructors
-
-    public AccountRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions,
-        logger)
-    {
-    }
-
-    #endregion
-
     #region public methods implementation
 
     #region gets
@@ -86,7 +79,6 @@ public class AccountRepository : BaseRepository<AccountEntity>, IAccountReposito
             .Where(x => x.Account.EmailAddress.Equals(accountName) && x.Online)
             .FirstOrDefaultAsync();
     }
-
 
     #endregion
 

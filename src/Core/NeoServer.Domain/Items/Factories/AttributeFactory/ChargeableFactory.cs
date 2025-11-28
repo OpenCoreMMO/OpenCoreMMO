@@ -7,8 +7,6 @@ namespace NeoServer.Domain.Items.Factories.AttributeFactory;
 
 public class ChargeableFactory : IFactory
 {
-    public event CreateItem OnItemCreated;
-
     public IChargeable Create(IItemType itemType)
     {
         if (!itemType.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.Charges, out var charges)) return null;

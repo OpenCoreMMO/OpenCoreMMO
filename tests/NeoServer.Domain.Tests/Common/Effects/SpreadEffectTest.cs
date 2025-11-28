@@ -104,8 +104,8 @@ public class SpreadEffectTest
         Assert.Contains(new Coordinate(0, -5, 0), coordinates);
         Assert.Contains(new Coordinate(1, -5, 0), coordinates);
     }
-    
-      [Fact]
+
+    [Fact]
     public void Create_South_When_Length_Is_5_And_Spread_Is_3_Should_Match_Expected_Pattern()
     {
         var coordinates = SpreadEffect.Create(Direction.South, 5, 3);
@@ -179,13 +179,13 @@ public class SpreadEffectTest
     {
         var coordinates = SpreadEffect.Create(Direction.North, 4, 3);
 
-                 Assert.Equal(8, coordinates.Length);
+        Assert.Equal(8, coordinates.Length);
 
         // Row 1: 010
         Assert.Contains(new Coordinate(0, -1, 0), coordinates);
 
-                 // Row 2: 010
-         Assert.Contains(new Coordinate(0, -2, 0), coordinates);
+        // Row 2: 010
+        Assert.Contains(new Coordinate(0, -2, 0), coordinates);
 
         // Row 3: 111
         Assert.Contains(new Coordinate(-1, -3, 0), coordinates);
@@ -203,7 +203,7 @@ public class SpreadEffectTest
     {
         var coordinates = SpreadEffect.Create(Direction.North, 5, 2);
 
-                 Assert.Equal(17, coordinates.Length);
+        Assert.Equal(17, coordinates.Length);
 
         // Row 1: 00100
         Assert.Contains(new Coordinate(0, -1, 0), coordinates);
@@ -238,7 +238,7 @@ public class SpreadEffectTest
     {
         var coordinates = SpreadEffect.Create(Direction.North, 7, 3);
 
-                 Assert.Equal(21, coordinates.Length);
+        Assert.Equal(21, coordinates.Length);
 
         // Row 1: 00100
         Assert.Contains(new Coordinate(0, -1, 0), coordinates);
@@ -281,7 +281,7 @@ public class SpreadEffectTest
     {
         var coordinates = SpreadEffect.Create(Direction.North, 9, 3);
 
-                 Assert.Equal(33, coordinates.Length);
+        Assert.Equal(33, coordinates.Length);
 
         // Row 1: 00100
         Assert.Contains(new Coordinate(0, -1, 0), coordinates);
@@ -338,7 +338,7 @@ public class SpreadEffectTest
     {
         var coordinates = SpreadEffect.Create(Direction.North, 7, 2);
 
-                 Assert.Equal(31, coordinates.Length);
+        Assert.Equal(31, coordinates.Length);
 
         // Row 1: 0001000
         Assert.Contains(new Coordinate(0, -1, 0), coordinates);
@@ -391,7 +391,7 @@ public class SpreadEffectTest
     {
         var coordinates = SpreadEffect.Create(Direction.North, 10, 3);
 
-                 Assert.Equal(40, coordinates.Length);
+        Assert.Equal(40, coordinates.Length);
 
         // Row 1: 010
         Assert.Contains(new Coordinate(0, -1, 0), coordinates);
@@ -486,31 +486,29 @@ public class SpreadEffectTest
     {
         var directions = new[] { Direction.North, Direction.South, Direction.East, Direction.West };
 
-        for (int size = 1; size <= 10; size++)
-        {
+        for (var size = 1; size <= 10; size++)
             foreach (var direction in directions)
             {
                 var coordinates = SpreadEffect.Create(direction, size, size);
-                
-                                 // For length = spread, the pattern follows the spread rules, not a square
-                 // Let me check what the current implementation actually produces for each size
-                 var expectedCount = size switch
-                 {
-                     1 => 1,  // 1 coordinate
-                     2 => 4,  // 010, 111 = 4 coordinates
-                     3 => 5,  // 010, 010, 111 = 5 coordinates
-                     4 => 6,  // 010, 010, 010, 111 = 6 coordinates
-                     5 => 7,  // 010, 010, 010, 010, 111 = 7 coordinates
-                     6 => 8,  // 010, 010, 010, 010, 010, 111 = 8 coordinates
-                     7 => 9,  // 010, 010, 010, 010, 010, 010, 111 = 9 coordinates
-                     8 => 10, // 010, 010, 010, 010, 010, 010, 010, 111 = 10 coordinates
-                     9 => 11, // 010, 010, 010, 010, 010, 010, 010, 010, 111 = 11 coordinates
-                     10 => 12, // 010, 010, 010, 010, 010, 010, 010, 010, 010, 111 = 12 coordinates
-                     _ => (size - 1) + (2 * (size - 1) + 1) // Default formula (shouldn't be reached)
-                 };
-                 Assert.Equal(expectedCount, coordinates.Length);
+
+                // For length = spread, the pattern follows the spread rules, not a square
+                // Let me check what the current implementation actually produces for each size
+                var expectedCount = size switch
+                {
+                    1 => 1, // 1 coordinate
+                    2 => 4, // 010, 111 = 4 coordinates
+                    3 => 5, // 010, 010, 111 = 5 coordinates
+                    4 => 6, // 010, 010, 010, 111 = 6 coordinates
+                    5 => 7, // 010, 010, 010, 010, 111 = 7 coordinates
+                    6 => 8, // 010, 010, 010, 010, 010, 111 = 8 coordinates
+                    7 => 9, // 010, 010, 010, 010, 010, 010, 111 = 9 coordinates
+                    8 => 10, // 010, 010, 010, 010, 010, 010, 010, 111 = 10 coordinates
+                    9 => 11, // 010, 010, 010, 010, 010, 010, 010, 010, 111 = 11 coordinates
+                    10 => 12, // 010, 010, 010, 010, 010, 010, 010, 010, 010, 111 = 12 coordinates
+                    _ => size - 1 + 2 * (size - 1) + 1 // Default formula (shouldn't be reached)
+                };
+                Assert.Equal(expectedCount, coordinates.Length);
             }
-        }
     }
 
     [Fact]
@@ -518,45 +516,31 @@ public class SpreadEffectTest
     {
         var directions = new[] { Direction.North, Direction.South, Direction.East, Direction.West };
 
-        for (int length = 1; length <= 8; length++)
-        {
+        for (var length = 1; length <= 8; length++)
             foreach (var direction in directions)
             {
                 var coordinates = SpreadEffect.Create(direction, length, 0);
-                
+
                 // Should create exactly 'length' number of coordinates
                 Assert.Equal(length, coordinates.Length);
-                
+
                 // All coordinates should be in a single column
                 switch (direction)
                 {
                     case Direction.North:
-                        for (int i = 0; i < length; i++)
-                        {
-                            Assert.Contains(new Coordinate(0, -(i + 1), 0), coordinates);
-                        }
+                        for (var i = 0; i < length; i++) Assert.Contains(new Coordinate(0, -(i + 1), 0), coordinates);
                         break;
                     case Direction.South:
-                        for (int i = 0; i < length; i++)
-                        {
-                            Assert.Contains(new Coordinate(0, i + 1, 0), coordinates);
-                        }
+                        for (var i = 0; i < length; i++) Assert.Contains(new Coordinate(0, i + 1, 0), coordinates);
                         break;
                     case Direction.East:
-                        for (int i = 0; i < length; i++)
-                        {
-                            Assert.Contains(new Coordinate(i + 1, 0, 0), coordinates);
-                        }
+                        for (var i = 0; i < length; i++) Assert.Contains(new Coordinate(i + 1, 0, 0), coordinates);
                         break;
                     case Direction.West:
-                        for (int i = 0; i < length; i++)
-                        {
-                            Assert.Contains(new Coordinate(-(i + 1), 0, 0), coordinates);
-                        }
+                        for (var i = 0; i < length; i++) Assert.Contains(new Coordinate(-(i + 1), 0, 0), coordinates);
                         break;
                 }
             }
-        }
     }
 
     [Fact]
@@ -564,16 +548,12 @@ public class SpreadEffectTest
     {
         var directions = new[] { Direction.North, Direction.South, Direction.East, Direction.West };
 
-        for (int length = 0; length <= 8; length++)
-        {
-            for (int spread = 0; spread <= 8; spread++)
+        for (var length = 0; length <= 8; length++)
+        for (var spread = 0; spread <= 8; spread++)
+            foreach (var direction in directions)
             {
-                foreach (var direction in directions)
-                {
-                    var exception = Record.Exception(() => SpreadEffect.Create(direction, length, spread));
-                    Assert.Null(exception);
-                }
+                var exception = Record.Exception(() => SpreadEffect.Create(direction, length, spread));
+                Assert.Null(exception);
             }
-        }
     }
 }

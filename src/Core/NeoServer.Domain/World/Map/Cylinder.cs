@@ -11,7 +11,6 @@ namespace NeoServer.Domain.World.Map;
 
 public class CylinderOperation(IMap map)
 {
-
     /// <summary>
     ///     Creates a cylinder instance as removed
     /// </summary>
@@ -24,7 +23,7 @@ public class CylinderOperation(IMap map)
         var spectators = map.GetCreaturesAtPositionZone(thing.Location, thing.Location);
 
         var tile = map[thing.Location];
-        var tileSpectators = new ICylinderSpectator[spectators.Count()];
+        var tileSpectators = new ICylinderSpectator[spectators.Count];
 
         var index = 0;
         foreach (var spectator in spectators)
@@ -93,8 +92,9 @@ public class CylinderOperation(IMap map)
         cylinder = null;
         if (toTile is not DynamicTile tile) return new Result<OperationResultList<ICreature>>();
 
-        var result = new Result<OperationResultList<ICreature>>(new OperationResultList<ICreature>(Operation.Added, creature));
-        
+        var result =
+            new Result<OperationResultList<ICreature>>(new OperationResultList<ICreature>(Operation.Added, creature));
+
         if (!toTile.HasCreature(creature))
         {
             result = tile.AddCreature(creature);
@@ -153,18 +153,12 @@ public class CylinderOperation(IMap map)
     }
 }
 
-public class CylinderSpectator : IEqualityComparer<ICylinderSpectator>, ICylinderSpectator
+public class CylinderSpectator(ICreature spectator, byte fromStackPosition, byte toStackPosition)
+    : IEqualityComparer<ICylinderSpectator>, ICylinderSpectator
 {
-    public CylinderSpectator(ICreature spectator, byte fromStackPosition, byte toStackPosition)
-    {
-        FromStackPosition = fromStackPosition;
-        ToStackPosition = toStackPosition;
-        Spectator = spectator;
-    }
-
-    public byte FromStackPosition { get; set; }
-    public byte ToStackPosition { get; set; }
-    public ICreature Spectator { get; }
+    public byte FromStackPosition { get; set; } = fromStackPosition;
+    public byte ToStackPosition { get; set; } = toStackPosition;
+    public ICreature Spectator { get; } = spectator;
 
     public bool Equals(ICylinderSpectator x, ICylinderSpectator y)
     {

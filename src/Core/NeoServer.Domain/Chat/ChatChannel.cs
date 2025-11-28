@@ -6,15 +6,9 @@ namespace NeoServer.Domain.Chat;
 public delegate void AddMessage(ISociableCreature creature, ChatChannel channel, SpeechType speechType,
     string message);
 
-public class ChatChannel
+public class ChatChannel(ushort id, string name)
 {
     protected IDictionary<uint, UserChat> users = new Dictionary<uint, UserChat>();
-
-    public ChatChannel(ushort id, string name)
-    {
-        Id = id;
-        Name = name;
-    }
 
     public ChannelRule JoinRule { get; init; }
     public virtual ChannelRule WriteRule { get; init; }
@@ -23,8 +17,8 @@ public class ChatChannel
 
     public Dictionary<byte, SpeechType> ChatColorByVocation { private get; init; }
 
-    public ushort Id { get; }
-    public virtual string Name { get; }
+    public ushort Id { get; } = id;
+    public virtual string Name { get; } = name;
     public string Description { get; init; }
     public virtual bool Opened { get; init; }
     public virtual IEnumerable<UserChat> Users => users.Values;
@@ -41,7 +35,7 @@ public class ChatChannel
 
     public virtual bool HasUser(IPlayer player)
     {
-        return users.TryGetValue(player.Id, out var user) && user.Removed == false;
+        return users.TryGetValue(player.Id, out var user) && !user.Removed;
     }
 
     public virtual bool AddUser(IPlayer player)

@@ -37,10 +37,6 @@ public class PathFinder(IMap map) : IPathFinder
 
         if (!fpp.KeepDistance && creature.Location.IsNextTo(target)) return FoundedButEmptyDirections;
 
-        //if (walkableCreature.Speed == 0) return NotFound;
-
-        if (fpp.OneStep) return FindStep(creature, target, fpp, tileEnterRule);
-
         if (fpp.MaxTargetDist > 1)
         {
             var pathToKeepDistance = FindPathToKeepDistance(creature, target, fpp, tileEnterRule);
@@ -79,7 +75,6 @@ public class PathFinder(IMap map) : IPathFinder
 
     public Direction FindRandomStep(ICreature creature, ITileEnterRule rule, bool allowDiagonal = false)
     {
-
         Span<Direction> directions = allowDiagonal
             ?
             [
@@ -93,27 +88,12 @@ public class PathFinder(IMap map) : IPathFinder
         for (var i = 0; i < directions.Length; i++)
         {
             randomIndex = randomIndex >= directions.Length ? 0 : randomIndex;
-            
+
             var direction = directions[randomIndex++];
             if (map.CanGoToDirection(creature, direction, rule)) return direction;
         }
 
         return Direction.None;
-    }
-
-    public (bool Found, Direction[] Directions) FindStep(ICreature creature, Location target, FindPathParams fpp,
-        ITileEnterRule tileEnterRule)
-    {
-        var startLocation = creature.Location;
-
-        var possibleDirections = new[]
-            { Direction.East, Direction.South, Direction.West, Direction.North, Direction.NorthEast };
-
-        foreach (var direction in possibleDirections)
-            if (startLocation.GetMaxSqmDistance(target) > fpp.MaxTargetDist)
-                continue;
-
-        return NotFound;
     }
 
     public (bool Found, Direction[] Directions) FindPathToKeepDistance(
@@ -127,12 +107,8 @@ public class PathFinder(IMap map) : IPathFinder
 
         // Already at the desired distance — no need to move
         if (currentDistance == fpp.MaxTargetDist)
-        {
             if (!fpp.ClearSight || SightClear.IsSightClear(map, start, target, false))
-            {
                 return FoundedButEmptyDirections;
-            }
-        }
 
         var shouldMoveCloser = currentDistance > fpp.MaxTargetDist;
         var shouldMoveFarther = !shouldMoveCloser;

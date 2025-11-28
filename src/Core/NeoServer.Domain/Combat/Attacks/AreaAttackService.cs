@@ -53,13 +53,11 @@ public class AreaAttackService(
             attackInput.Parameters.Effect, false, affectedArea.ToArray()));
 
         if (attackInput.Parameters.FieldAttack)
-        {
             foreach (var location in affectedArea)
             {
                 var tile = map[location];
                 if (tile != null) CreateMagicField(attackInput, tile);
             }
-        }
 
         var totalDamage = 0;
 
@@ -69,11 +67,9 @@ public class AreaAttackService(
             if (affectedCreature.Equals(aggressor)) continue;
 
             //Attack validation for each target
-            var attackValidationResult = attackValidation.Validate(new AttackInput(aggressor, target, attackInput.Parameters));
-            if (attackValidationResult.Failed)
-            {
-                continue;
-            }
+            var attackValidationResult =
+                attackValidation.Validate(new AttackInput(aggressor, target, attackInput.Parameters));
+            if (attackValidationResult.Failed) continue;
 
             var unjustifiedAttack =
                 target is IPlayer targetPlayer && aggressor is IPlayer playerAggressor &&

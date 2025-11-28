@@ -32,7 +32,7 @@ public class RemoveThingTileTestData : IEnumerable<object[]>
         yield return [ItemTestDataBuilder.CreateCumulativeItem(500, 100), 40, 500, 60];
         yield return [ItemTestDataBuilder.CreateCumulativeItem(500, 50), 49, 500, 1];
         yield return [ItemTestDataBuilder.CreateCumulativeItem(500, 50), 1, 500, 49];
-        yield return [ItemTestDataBuilder.CreateCumulativeItem(500, 1), 1, 400, 32];
+        yield return [ItemTestDataBuilder.CreateCumulativeItem(500), 1, 400, 32];
         yield return [ItemTestDataBuilder.CreateCumulativeItem(500, 100), 100, 400, 32];
         yield return [ItemTestDataBuilder.CreateCumulativeItem(500, 45), 45, 400, 32];
     }
@@ -270,15 +270,17 @@ public class TileTest
         var undergroundTile = (IDynamicTile)map[100, 100, 8];
 
         mapService.ReplaceGround(destinationTile.Location, hole);
-        
-        var mailService = new MailService(new Mock<IPlayerRepository>().Object, new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
+
+        var mailService = new MailService(new Mock<IPlayerRepository>().Object,
+            new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
 
         var itemMovementService =
             new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
 
         sourceTile.AddItem(item);
 
-        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService, new Mock<ICreaturePushService>().Object);
+        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService,
+            new Mock<ICreaturePushService>().Object);
 
         //act
         toMapMovementService.Move(player,
@@ -296,7 +298,7 @@ public class TileTest
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8,
-            staticTiles: [new(100, 100, 8)]);
+            staticTiles: [new Location(100, 100, 8)]);
 
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(102, 100, 7));
@@ -312,7 +314,8 @@ public class TileTest
         var destinationTile = (IDynamicTile)map[100, 100, 7];
         var undergroundTile = map[100, 100, 8];
 
-        var mailService = new MailService(new Mock<IPlayerRepository>().Object, new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
+        var mailService = new MailService(new Mock<IPlayerRepository>().Object,
+            new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
 
         var itemMovementService =
             new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
@@ -325,7 +328,8 @@ public class TileTest
 
         sourceTile.AddItem(item);
 
-        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService, new Mock<ICreaturePushService>().Object);
+        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService,
+            new Mock<ICreaturePushService>().Object);
 
         //act
         toMapMovementService.Move(player, new MovementParams(sourceTile.Location, destinationTile.Location, 1));
@@ -369,12 +373,14 @@ public class TileTest
         mapService.ReplaceGround(destinationTile.Location, hole);
 
         mapService.ReplaceGround(undergroundTile.Location, secondHole);
-        
-        var mailService = new MailService(new Mock<IPlayerRepository>().Object, new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
+
+        var mailService = new MailService(new Mock<IPlayerRepository>().Object,
+            new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
 
         var itemMovementService =
             new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
-        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService, new Mock<ICreaturePushService>().Object);
+        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService,
+            new Mock<ICreaturePushService>().Object);
 
         //act
         toMapMovementService.Move(player, new MovementParams(sourceTile.Location, destinationTile.Location, 1));
@@ -393,7 +399,7 @@ public class TileTest
         //arrange
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
         var player = PlayerTestDataBuilder.Build();
-        
+
         var validation = new CreatureMovementValidation(map);
         var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
         var mapService = new MapService(map, creatureMovementService);
@@ -429,7 +435,7 @@ public class TileTest
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
-        
+
         var validation = new CreatureMovementValidation(map);
         var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
         var mapService = new MapService(map, creatureMovementService);

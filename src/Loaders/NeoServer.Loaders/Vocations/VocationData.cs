@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Loaders.Converts;
@@ -13,46 +12,45 @@ public sealed class VocationData
 
     public string Name { get; set; }
 
-    [JsonConverter(typeof(ByteConverter))] 
-    public byte FromVoc { get; set; }
+    [JsonConverter(typeof(ByteConverter))] public byte FromVoc { get; set; }
 
     [JsonConverter(typeof(UshortConverter))]
-    public new ushort GainCap { get; set; }
+    public ushort GainCap { get; set; }
 
     [JsonConverter(typeof(UshortConverter))]
-    public new ushort GainHp { get; set; }
+    public ushort GainHp { get; set; }
 
     [JsonConverter(typeof(UshortConverter))]
     public ushort GainMana { get; set; }
 
-    [JsonConverter(typeof(ByteConverter))] public new byte GainHpTicks { get; set; }
+    [JsonConverter(typeof(ByteConverter))] public byte GainHpTicks { get; set; }
 
-    [JsonConverter(typeof(ByteConverter))] public new byte GainManaTicks { get; set; }
-
-    [JsonConverter(typeof(UshortConverter))]
-    public new ushort GainHpAmount { get; set; }
+    [JsonConverter(typeof(ByteConverter))] public byte GainManaTicks { get; set; }
 
     [JsonConverter(typeof(UshortConverter))]
-    public new ushort GainManaAmount { get; set; }
+    public ushort GainHpAmount { get; set; }
 
     [JsonConverter(typeof(UshortConverter))]
-    public new ushort AttackSpeed { get; set; }
+    public ushort GainManaAmount { get; set; }
+
+    [JsonConverter(typeof(UshortConverter))]
+    public ushort AttackSpeed { get; set; }
 
     public string Inspect { get; set; }
 
     [JsonConverter(typeof(UshortConverter))]
-    public new ushort BaseSpeed { get; set; }
+    public ushort BaseSpeed { get; set; }
 
     public string Clientid { get; set; }
     public string Description { get; set; }
     public VocationFormula Formula { get; set; }
 
-    [JsonConverter(typeof(ByteConverter))] public new byte SoulMax { get; set; }
+    [JsonConverter(typeof(ByteConverter))] public byte SoulMax { get; set; }
 
     public byte VocationType => Id; //(byte)NeoServer.Game.Common.Creatures.Players.VocationType.None : byte.Parse(Id);
 
-    [JsonConverter(typeof(ByteConverter))] public new byte GainSoulTicks { get; set; }
+    [JsonConverter(typeof(ByteConverter))] public byte GainSoulTicks { get; set; }
 
     [JsonConverter(typeof(SkillConverter))]
-    public new Dictionary<SkillType, float> Skills { get; set; }
+    public Dictionary<SkillType, float> Skills { get; set; }
 }

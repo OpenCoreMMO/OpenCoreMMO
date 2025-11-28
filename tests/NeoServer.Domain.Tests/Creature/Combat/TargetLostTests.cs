@@ -1,5 +1,4 @@
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -84,7 +83,7 @@ public class TargetLostTests
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(105, 105, 7));
-        var monster = (NeoServer.Domain.Creatures.Monster.Monster)MonsterTestDataBuilder.Build(map: map);
+        var monster = (Domain.Creatures.Monster.Monster)MonsterTestDataBuilder.Build(map: map);
 
         // Set monster as player's target
         player.SetAttackTarget(monster);
@@ -108,7 +107,7 @@ public class TargetLostTests
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(105, 105, 7));
-        var targetPlayer = PlayerTestDataBuilder.Build(id: 2, name: "TargetPlayer");
+        var targetPlayer = PlayerTestDataBuilder.Build(2, "TargetPlayer");
         targetPlayer.SetNewLocation(new Location(105, 106, 7));
 
         // Set target player as player's target
@@ -116,7 +115,7 @@ public class TargetLostTests
 
         //act
         // Target player logs out
-        targetPlayer.Logout(forced: true);
+        targetPlayer.Logout(true);
 
         player.Think(1);
 
@@ -178,7 +177,7 @@ public class TargetLostTests
         //arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         var monster = MonsterTestDataBuilder.Build(map: map) as Domain.Creatures.Monster.Monster;
-        
+
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(105, 105, 7));
 

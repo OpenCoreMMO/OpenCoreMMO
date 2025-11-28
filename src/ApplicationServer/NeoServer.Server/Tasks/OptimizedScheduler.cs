@@ -7,16 +7,11 @@ using NeoServer.Server.Common.Contracts.Tasks;
 
 namespace NeoServer.Server.Tasks;
 
-public class OptimizedScheduler : Scheduler
+public class OptimizedScheduler(IDispatcher dispatcher) : Scheduler(dispatcher)
 {
-    private readonly IDispatcher _dispatcher;
+    private readonly IDispatcher _dispatcher = dispatcher;
     private readonly ConcurrentQueue<ISchedulerEvent> _preQueue = new();
     private readonly SemaphoreSlim _preQueueSemaphore = new(0);
-    
-    public OptimizedScheduler(IDispatcher dispatcher) : base(dispatcher)
-    {
-        _dispatcher = dispatcher;
-    }
 
     public override void Start(CancellationToken token)
     {
@@ -31,7 +26,7 @@ public class OptimizedScheduler : Scheduler
                 {
                     if (EventIsCancelled(evt.EventId))
                     {
-                        CancelledEventIds.TryRemove(evt.EventId, out var _);
+                        CancelledEventIds.TryRemove(evt.EventId, out _);
                         continue;
                     }
 
@@ -55,7 +50,7 @@ public class OptimizedScheduler : Scheduler
                 while (!combinedCts.Token.IsCancellationRequested)
                 {
                     var nextDelay = baseDelay;
-                    
+
                     // Process all available events in pre-queue
                     while (_preQueue.TryDequeue(out var evt))
                     {
@@ -71,9 +66,9 @@ public class OptimizedScheduler : Scheduler
                     }
 
                     // Re-add events that haven't expired yet
-                    foreach (var action in replace) 
+                    foreach (var action in replace)
                         _preQueue.Enqueue(action);
-                    
+
                     replace.Clear();
 
                     // Wait using semaphore or timeout

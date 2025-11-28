@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Server.Commands.Player;
@@ -6,23 +6,15 @@ using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
 using NeoServer.Server.Common.Enums;
 using NeoServer.Server.Tasks;
+using Serilog;
 
 namespace NeoServer.Networking.Handlers.LogIn;
 
-public class PlayerLogInHandler : PacketHandler
+public class PlayerLogInHandler(IGameServer game, PlayerLogInCommand playerLogInCommand, ILogger logger) : PacketHandler
 {
-    private readonly IGameServer _game;
-    private readonly PlayerLogInCommand _playerLogInCommand;
-
-    public PlayerLogInHandler(IGameServer game, PlayerLogInCommand playerLogInCommand)
-    {
-        _game = game;
-        _playerLogInCommand = playerLogInCommand;
-    }
-
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
-        if (_game.State == GameState.Stopped) connection.Close();
+        if (game.State == GameState.Stopped) connection.Close();
 
         var packet = new PlayerLogInPacket(message);
 
@@ -39,10 +31,17 @@ public class PlayerLogInHandler : PacketHandler
             ChallengeNumber = packet.ChallengeNumber
         };
 
-        _game.Dispatcher.AddEvent(new Event(async () =>
+        game.Dispatcher.AddEvent(new Event(async void () =>
         {
-            var (success, message) = await _playerLogInCommand.Execute(request, connection);
-            if (!success) Disconnect(connection, message);
+            try
+            {
+                var (success, resultMessage) = await playerLogInCommand.Execute(request, connection);
+                if (!success) Disconnect(connection, resultMessage);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, "Error processing player log in request: {PacketCharacterName}", packet.CharacterName);
+            }
         }));
     }
 

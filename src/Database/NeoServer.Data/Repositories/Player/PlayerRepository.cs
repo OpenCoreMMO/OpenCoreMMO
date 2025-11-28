@@ -14,17 +14,10 @@ using Serilog;
 
 namespace NeoServer.Data.Repositories.Player;
 
-public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository, Domain.Repositories.IPlayerRepository
+public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger)
+    : BaseRepository<PlayerEntity>(contextOptions,
+        logger), IPlayerRepository, Domain.Repositories.IPlayerRepository
 {
-    #region constructors
-
-    public PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions,
-        logger)
-    {
-    }
-
-    #endregion
-
     public async Task UpdateAllPlayersToOffline()
     {
         const string sql = "UPDATE Player SET Online = 0";
@@ -92,6 +85,25 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository,
         await StorageManager.SaveStorages(player, neoContext);
 
         await neoContext.SaveChangesAsync();
+    }
+
+    public async Task<int> GetIdByName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return 0;
+
+        await using var context = NewDbContext;
+
+        return (await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower()))?.Id ?? 0;
+    }
+
+    public async Task UpdateLastLogInDate(int playerId, DateTime lastLogIn)
+    {
+        await using var context = NewDbContext;
+        var playerEntity = await context.Players.FindAsync(playerId);
+
+        if (playerEntity is null) return;
+        playerEntity.LastLogIn = lastLogIn;
+        await context.SaveChangesAsync();
     }
 
     private static async Task UpdatePlayer(IPlayer player, NeoContext neoContext)
@@ -162,10 +174,7 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository,
         var existingMembership = await neoContext.GuildMemberships
             .FirstOrDefaultAsync(gm => gm.PlayerId == player.Id);
 
-        if (existingMembership != null)
-        {
-            neoContext.GuildMemberships.Remove(existingMembership);
-        }
+        if (existingMembership != null) neoContext.GuildMemberships.Remove(existingMembership);
 
         // If player has a guild, create new membership
         if (player.Guild != null && player.GuildId != 0)
@@ -180,27 +189,5 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository,
 
             await neoContext.GuildMemberships.AddAsync(guildMembership);
         }
-    }
-
-    public async Task<int> GetIdByName(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            return 0;
-        }
-
-        await using var context = NewDbContext;
-
-        return (await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower()))?.Id ?? 0;
-    }
-
-    public async Task UpdateLastLogInDate(int playerId, DateTime lastLogIn)
-    {
-        await using var context = NewDbContext;
-        var playerEntity = await context.Players.FindAsync(playerId);
-
-        if (playerEntity is null) return;
-        playerEntity.LastLogIn = lastLogIn;
-        await context.SaveChangesAsync();
     }
 }

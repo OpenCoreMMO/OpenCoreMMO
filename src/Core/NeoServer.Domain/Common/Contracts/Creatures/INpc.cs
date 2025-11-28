@@ -26,7 +26,6 @@ public interface INpc : ISociableCreature
     event PlayerCloseChannel OnPlayerCloseChannel;
 
     void Advertise();
-    event CustomerLeft OnCustomerLeft;
     bool CanInteract(Location.Structs.Location location, int range = 4);
     void SetPlayerInteraction(IPlayer player, ushort topicId);
     void RemovePlayerInteraction(IPlayer player);

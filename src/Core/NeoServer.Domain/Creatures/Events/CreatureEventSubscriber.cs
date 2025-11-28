@@ -4,28 +4,14 @@ using NeoServer.Domain.Creatures.Events.Player;
 
 namespace NeoServer.Domain.Creatures.Events;
 
-public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubscriber
+public class CreatureEventSubscriber(
+    CreaturePropagatedAttackEventHandler creaturePropagatedAttackEventHandler,
+    CreatureTeleportedEventHandler creatureTeleportedEventHandler,
+    CreatureMovedEventHandler creatureMovedEventHandler,
+    CreatureSayEventHandler creatureSayEventHandler,
+    PlayerOpenedContainerEventHandler playerOpenedContainerEventHandler)
+    : ICreatureEventSubscriber, IGameEventSubscriber
 {
-    private readonly CreatureMovedEventHandler creatureMovedEventHandler;
-    private readonly CreaturePropagatedAttackEventHandler creaturePropagatedAttackEventHandler;
-    private readonly CreatureSayEventHandler creatureSayEventHandler;
-    private readonly CreatureTeleportedEventHandler creatureTeleportedEventHandler;
-    private readonly PlayerOpenedContainerEventHandler playerOpenedContainerEventHandler;
-
-    public CreatureEventSubscriber(
-        CreaturePropagatedAttackEventHandler creaturePropagatedAttackEventHandler,
-        CreatureTeleportedEventHandler creatureTeleportedEventHandler,
-        CreatureMovedEventHandler creatureMovedEventHandler,
-        CreatureSayEventHandler creatureSayEventHandler,
-        PlayerOpenedContainerEventHandler playerOpenedContainerEventHandler)
-    {
-        this.creaturePropagatedAttackEventHandler = creaturePropagatedAttackEventHandler;
-        this.creatureTeleportedEventHandler = creatureTeleportedEventHandler;
-        this.creatureMovedEventHandler = creatureMovedEventHandler;
-        this.creatureSayEventHandler = creatureSayEventHandler;
-        this.playerOpenedContainerEventHandler = playerOpenedContainerEventHandler;
-    }
-
     public void Subscribe(ICreature creature)
     {
         if (creature is ICombatActor combatActor)
@@ -38,9 +24,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
         }
 
         if (creature is IPlayer player)
-        {
             player.Containers.OnOpenedContainer += playerOpenedContainerEventHandler.Execute;
-        }
 
         creature.OnSay += creatureSayEventHandler.Execute;
     }
@@ -57,9 +41,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
         }
 
         if (creature is IPlayer player)
-        {
             player.Containers.OnOpenedContainer -= playerOpenedContainerEventHandler.Execute;
-        }
 
         creature.OnSay -= creatureSayEventHandler.Execute;
     }

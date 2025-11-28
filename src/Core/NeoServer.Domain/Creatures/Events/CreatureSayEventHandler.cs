@@ -20,19 +20,17 @@ public class CreatureSayEventHandler(IMap map) : IGameEventHandler
 
         var (maxDistanceX, maxDistanceY) = speechType switch
         {
-            SpeechType.Yell or SpeechType.MonsterYell => ((int)MapViewPort.MaxClientViewPortX * 2 + 2, (int)MapViewPort.MaxClientViewPortY * 2 + 2),
+            SpeechType.Yell or SpeechType.MonsterYell => ((int)MapViewPort.MaxClientViewPortX * 2 + 2,
+                (int)MapViewPort.MaxClientViewPortY * 2 + 2),
             SpeechType.Whisper => (1, 1), // Adjacent squares only for whisper
             _ => ((int)MapViewPort.MaxClientViewPortX, (int)MapViewPort.MaxClientViewPortY)
         };
 
         var multiFloor = speechType is SpeechType.Yell or SpeechType.MonsterYell;
 
-        foreach (var spectator in map.GetSpectators(creature.Location, multiFloor, true, maxDistanceX, maxDistanceX, maxDistanceY, maxDistanceY))
-        {
+        foreach (var spectator in map.GetSpectators(creature.Location, multiFloor, true, maxDistanceX, maxDistanceX,
+                     maxDistanceY, maxDistanceY))
             if (spectator is ISociableCreature listener)
-            {
                 listener.Hear(creature, speechType, message);
-            }
-        }
     }
 }

@@ -72,13 +72,13 @@ public class PlayerPersistenceRoutine(
             if (!lockerManager.Get(player.Id, out var locker)) continue;
 
             var depotChest = locker.Items.FirstOrDefault() as IContainer;
-            
+
             depotSaveTasks.Add(playerDepotItemRepository.Save(player, depotChest));
         }
 
         await Task.WhenAll(depotSaveTasks);
     }
-    
+
     private async Task SaveMailInboxes(List<IPlayer> players)
     {
         var mailInboxSaveTasks = new List<Task>();
@@ -88,7 +88,7 @@ public class PlayerPersistenceRoutine(
             if (!lockerManager.Get(player.Id, out var locker)) continue;
 
             var mailInbox = locker.Items.ElementAtOrDefault(1) as IContainer;
-            
+
             mailInboxSaveTasks.Add(playerMailItemRepository.Save(player, mailInbox));
         }
 

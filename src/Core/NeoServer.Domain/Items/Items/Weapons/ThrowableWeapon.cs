@@ -1,8 +1,5 @@
 ﻿using System.Text;
-using NeoServer.Domain.Combat.Attacks.Obsoletes;
-using NeoServer.Domain.Combat.Calculations;
 using NeoServer.Domain.Common.Combat;
-using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types.Body;
@@ -15,16 +12,12 @@ using NeoServer.Domain.Items.Bases;
 
 namespace NeoServer.Domain.Items.Items.Weapons;
 
-public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRange
+public class ThrowableWeapon(
+    IItemType itemType,
+    Location location,
+    IDictionary<ItemAttribute, IConvertible> itemAttributes)
+    : CumulativeEquipment(itemType, location), IWeapon, IHasAttack, IHasRange
 {
-    public ThrowableWeapon(
-        IItemType itemType,
-        Location location,
-        IDictionary<ItemAttribute, IConvertible> itemAttributes) : base(itemType, location)
-    {
-        WeaponAttack = new WeaponAttack(itemType, itemAttributes);
-    }
-
     private decimal BreakChance => Metadata.Attributes.HasCustomAttribute("breakChance")
         ? Metadata.Attributes.GetCustomAttribute<decimal>("breakChance")
         : 100;
@@ -56,7 +49,7 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
         }
     }
 
-    public WeaponAttack WeaponAttack { get; } //todo: rename to Attack
+    public WeaponAttack WeaponAttack { get; } = new(itemType, itemAttributes); //todo: rename to Attack
 
     public ushort? MinHitChance { get; }
 
@@ -71,7 +64,7 @@ public class ThrowableWeapon : CumulativeEquipment, IWeapon, IHasAttack, IHasRan
         return false;
     }
 
-  
+
     public void OnMoved(IThing to)
     {
     }

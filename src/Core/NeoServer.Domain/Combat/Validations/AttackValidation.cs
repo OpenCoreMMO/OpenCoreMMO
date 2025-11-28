@@ -13,8 +13,22 @@ using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Combat.Validations;
 
-public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpConfiguration, CombatConfiguration combatConfiguration)
+public class AttackValidation(
+    IMapTool mapTool,
+    IMap map,
+    PvPConfiguration pvpConfiguration,
+    CombatConfiguration combatConfiguration)
 {
+    private static readonly HashSet<InvalidOperation> OperationsThatStopAttack =
+    [
+        InvalidOperation.YouMayNotAttackThisPlayer,
+        InvalidOperation.NotPermittedInNoPvpZone,
+        InvalidOperation.CannotAttackPersonInProtectionZone,
+        InvalidOperation.YouMayNotAttackThisCreature,
+        InvalidOperation.CannotAttackWhileInProtectionZone,
+        InvalidOperation.TargetLost
+    ];
+
     public Result Validate(AttackInput attackInput)
     {
         var aggressor = attackInput.Aggressor as ICombatActor;
@@ -28,10 +42,8 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
             case IPlayer targetPlayer:
             {
                 if (targetPlayer.Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked))
-                {
                     return Result.Fail(InvalidOperation.YouMayNotAttackThisPlayer);
-                }
-                
+
                 switch (aggressor)
                 {
                     //Player cannot attack a player
@@ -63,15 +75,15 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
                 {
                     //Player cannot attack his own summons when can attack summon configuration is disabled
                     case IPlayer master when monsterTarget is Summon { Master: IPlayer summonMaster } &&
-                                          master.Equals(summonMaster) && !combatConfiguration.CanAttackOwnSummon:
+                                             master.Equals(summonMaster) && !combatConfiguration.CanAttackOwnSummon:
                         return Result.Fail(InvalidOperation.YouMayNotAttackThisCreature);
-                    
+
                     //Player cannot attack another player's summon if protection level applies
                     case IPlayer playerAggressor when monsterTarget is Summon { Master: IPlayer summonMaster } &&
-                                                   !playerAggressor.Equals(summonMaster) &&
-                                                   IsProtected(playerAggressor, summonMaster):
+                                                      !playerAggressor.Equals(summonMaster) &&
+                                                      IsProtected(playerAggressor, summonMaster):
                         return Result.Fail(InvalidOperation.YouMayNotAttackThisCreature);
-                    
+
                     //Player cannot attack a monster
                     case IPlayer playerAggressor
                         when playerAggressor.Group.FlagIsEnabled(PlayerFlag.CannotAttackMonster):
@@ -90,18 +102,16 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
         }
 
         if (pvpConfiguration.PvpType == PvpType.OptionalPvP)
-        {
             if (!Equals(aggressor, target) && aggressor is IPlayer or Summon { Master: IPlayer } &&
                 target is IPlayer or Summon { Master: IPlayer })
-            {
                 if (!aggressor.Tile.PvpZone || !((ICreature)target).Tile.PvpZone)
                 {
                     // Determine the appropriate error based on target type
-                    var operation = target is Summon ? InvalidOperation.YouMayNotAttackThisCreature : InvalidOperation.YouMayNotAttackThisPlayer;
+                    var operation = target is Summon
+                        ? InvalidOperation.YouMayNotAttackThisCreature
+                        : InvalidOperation.YouMayNotAttackThisPlayer;
                     return Result.Fail(operation);
                 }
-            }
-        }
 
         var attackValidationResult = aggressor.CanAttack(attackInput.Parameters);
         if (attackValidationResult.Failed) return attackValidationResult;
@@ -109,14 +119,10 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
         if (!attackInput.HasTarget) return Result.Success;
 
         if (!aggressor.CanSee(target.Location) || !aggressor.Location.SameFloorAs(target.Location))
-        {
             return Result.Fail(InvalidOperation.TargetLost);
-        }
 
         if (target is ICreature creatureTarget && !aggressor.CanSeeInvisible && !aggressor.CanSee(creatureTarget))
-        {
             return Result.Fail(InvalidOperation.TargetLost);
-        }
 
         switch (target)
         {
@@ -138,19 +144,11 @@ public class AttackValidation(IMapTool mapTool, IMap map, PvPConfiguration pvpCo
 
         return Result.Success;
     }
-    
-    private static readonly HashSet<InvalidOperation> OperationsThatStopAttack =
-    [
-        InvalidOperation.YouMayNotAttackThisPlayer,
-        InvalidOperation.NotPermittedInNoPvpZone,
-        InvalidOperation.CannotAttackPersonInProtectionZone,
-        InvalidOperation.YouMayNotAttackThisCreature,
-        InvalidOperation.CannotAttackWhileInProtectionZone,
-        InvalidOperation.TargetLost
-    ];
-    
-    public static bool ShouldStopAttackOnValidationFailure(InvalidOperation operation) =>
-        OperationsThatStopAttack.Contains(operation);
+
+    public static bool ShouldStopAttackOnValidationFailure(InvalidOperation operation)
+    {
+        return OperationsThatStopAttack.Contains(operation);
+    }
 
     private bool IsProtected(IPlayer playerAggressor, IPlayer playerTarget)
     {

@@ -6,7 +6,9 @@ public interface IHasCooldown
     public (string Name, uint Cooldown) PrimaryGroup { get; set; }
     public (string Name, uint Cooldown) SecondaryGroup { get; set; }
     public uint Cooldown { get; set; }
-    public bool HasAnyCooldownGroup => !string.IsNullOrWhiteSpace(PrimaryGroup.Name) || !string.IsNullOrWhiteSpace(PrimaryGroup.Name);
+
+    public bool HasAnyCooldownGroup =>
+        !string.IsNullOrWhiteSpace(PrimaryGroup.Name) || !string.IsNullOrWhiteSpace(PrimaryGroup.Name);
 
     public bool HasCooldownGroup(string name)
     {

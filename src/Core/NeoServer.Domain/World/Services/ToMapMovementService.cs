@@ -4,7 +4,6 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Location;
-using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.World.Algorithms;
@@ -12,7 +11,11 @@ using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.World.Services;
 
-public class ToMapMovementService(IMap map, IMapService mapService, IItemMovementService itemMovementService, ICreaturePushService creaturePushService)
+public class ToMapMovementService(
+    IMap map,
+    IMapService mapService,
+    IItemMovementService itemMovementService,
+    ICreaturePushService creaturePushService)
     : IToMapMovementService
 {
     public void Move(IPlayer player, MovementParams itemThrow)
@@ -50,10 +53,10 @@ public class ToMapMovementService(IMap map, IMapService mapService, IItemMovemen
             itemMovementService.Move(player, item, fromTile, finalTile, movementParams.Amount, 0, 0);
             return;
         }
-        
+
         if (fromTile.TopCreatureOnStack is { } creature && !ReferenceEquals(creature, player))
         {
-            var finalTile = (DynamicTile)mapService.GetFinalTile(toTile.Location);
+            _ = (DynamicTile)mapService.GetFinalTile(toTile.Location);
             creaturePushService.PushCreature(player, creature, toTile);
         }
     }
@@ -71,7 +74,6 @@ public class ToMapMovementService(IMap map, IMapService mapService, IItemMovemen
 
         player.MoveItem(item, player.Inventory, finalTile, movementParams.Amount,
             (byte)movementParams.FromLocation.Slot, 0);
-        
     }
 
     private void FromContainer(IPlayer player, MovementParams itemThrow)

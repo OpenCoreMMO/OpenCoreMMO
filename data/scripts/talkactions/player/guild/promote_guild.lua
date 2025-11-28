@@ -18,7 +18,8 @@ function promoteGuild.onSay(player, words, param)
 
     -- Check if player has permission to promote (only leaders)
     local guildLevel = player:getGuildLevel()
-    if guildLevel ~= 3 then -- Only leaders can promote
+    if guildLevel ~= 3 then
+        -- Only leaders can promote
         player:sendCancelMessage("Only the guild leader can promote members.")
         return false
     end
@@ -53,28 +54,31 @@ function promoteGuild.onSay(player, words, param)
     local targetGuildLevel = targetPlayer:getGuildLevel()
     local newLevel = targetGuildLevel
     local levelName = ""
-    
-    if targetGuildLevel == 1 then -- Member -> Vice-Leader
+
+    if targetGuildLevel == 1 then
+        -- Member -> Vice-Leader
         newLevel = 2
         levelName = "Vice-Leader"
-    elseif targetGuildLevel == 2 then -- Vice-Leader -> cannot promote further
+    elseif targetGuildLevel == 2 then
+        -- Vice-Leader -> cannot promote further
         player:sendCancelMessage(string.format("%s is already a Vice-Leader. Cannot promote further.", targetPlayer:getName()))
         return false
-    else -- Already leader
+    else
+        -- Already leader
         player:sendCancelMessage(string.format("%s is already the guild leader.", targetPlayer:getName()))
         return false
     end
 
     -- Promote the member
     local guildName = guild:getName()
-    
+
     if guild:promoteMember(targetPlayer, newLevel) then
         player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have promoted %s to %s in %s.", targetPlayer:getName(), levelName, guildName))
         targetPlayer:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have been promoted to %s in the guild '%s' by %s.", levelName, guildName, player:getName()))
-        
+
         player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
         targetPlayer:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
-        
+
         -- Notify other guild members
         for _, member in pairs(guild:getMembers()) do
             if member:isOnline() and member ~= player and member ~= targetPlayer then
@@ -85,7 +89,7 @@ function promoteGuild.onSay(player, words, param)
         player:sendCancelMessage("Failed to promote member. Please try again.")
         return false
     end
-    
+
     return true
 end
 

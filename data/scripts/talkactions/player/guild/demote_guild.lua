@@ -18,7 +18,8 @@ function demoteGuild.onSay(player, words, param)
 
     -- Check if player has permission to demote (only leaders)
     local guildLevel = player:getGuildLevel()
-    if guildLevel ~= 3 then -- Only leaders can demote
+    if guildLevel ~= 3 then
+        -- Only leaders can demote
         player:sendCancelMessage("Only the guild leader can demote members.")
         return false
     end
@@ -53,28 +54,31 @@ function demoteGuild.onSay(player, words, param)
     local targetGuildLevel = targetPlayer:getGuildLevel()
     local newLevel = targetGuildLevel
     local levelName = ""
-    
-    if targetGuildLevel == 2 then -- Vice-Leader -> Member
+
+    if targetGuildLevel == 2 then
+        -- Vice-Leader -> Member
         newLevel = 1
         levelName = "Member"
-    elseif targetGuildLevel == 1 then -- Already member
+    elseif targetGuildLevel == 1 then
+        -- Already member
         player:sendCancelMessage(string.format("%s is already a Member. Cannot demote further.", targetPlayer:getName()))
         return false
-    else -- Leader
+    else
+        -- Leader
         player:sendCancelMessage(string.format("%s is the guild leader. Cannot demote the leader.", targetPlayer:getName()))
         return false
     end
 
     -- Demote the member
     local guildName = guild:getName()
-    
+
     if guild:demoteMember(targetPlayer, newLevel) then
         player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have demoted %s to %s in %s.", targetPlayer:getName(), levelName, guildName))
         targetPlayer:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have been demoted to %s in the guild '%s' by %s.", levelName, guildName, player:getName()))
-        
+
         player:getPosition():sendMagicEffect(CONST_ME_MAGIC_RED)
         targetPlayer:getPosition():sendMagicEffect(CONST_ME_MAGIC_RED)
-        
+
         -- Notify other guild members
         for _, member in pairs(guild:getMembers()) do
             if member:isOnline() and member ~= player and member ~= targetPlayer then
@@ -85,7 +89,7 @@ function demoteGuild.onSay(player, words, param)
         player:sendCancelMessage("Failed to demote member. Please try again.")
         return false
     end
-    
+
     return true
 end
 

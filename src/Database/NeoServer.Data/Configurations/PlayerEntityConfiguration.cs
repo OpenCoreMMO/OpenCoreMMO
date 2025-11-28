@@ -69,7 +69,7 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         entity.Property(e => e.SkullEndsAt);
         entity.Property(e => e.LastLogIn);
         entity.Property(e => e.LastLogOut);
-        
+
         entity.Ignore(e => e.KillsLastMonth);
 
         entity.HasOne(d => d.Account)

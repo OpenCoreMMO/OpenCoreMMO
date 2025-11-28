@@ -1,9 +1,10 @@
+using System.Reflection;
+using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Models.Tiles;
@@ -22,7 +23,7 @@ public class AreaCalculationTests
 
         var tile = MapTestDataBuilder.CreateTile(targetLocation);
         var map = MapTestDataBuilder.Build(tile);
-        
+
         var service = new AreaCalculationService(map);
 
         // Act
@@ -44,13 +45,13 @@ public class AreaCalculationTests
         // Create a tile with protection zone flag
         var ground = MapTestDataBuilder.CreateGround(targetLocation);
         var tile = new DynamicTile(new Coordinate(targetLocation), TileFlag.None, ground, [], []);
-        
+
         // Use reflection to set the flag since SetFlag is protected
-        var flagsField = typeof(BaseTile).GetField("Flags", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var flagsField = typeof(BaseTile).GetField("Flags", BindingFlags.NonPublic | BindingFlags.Instance);
         flagsField.SetValue(tile, (uint)TileFlags.ProtectionZone);
-        
+
         var map = MapTestDataBuilder.Build(tile);
-        
+
         var service = new AreaCalculationService(map);
 
         // Act
@@ -71,11 +72,11 @@ public class AreaCalculationTests
         // Create a tile with hole by using floor change down attribute
         var ground = MapTestDataBuilder.CreateGround(targetLocation);
         ground.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
-        var tile = new DynamicTile(new Coordinate(targetLocation), TileFlag.None, ground, 
+        var tile = new DynamicTile(new Coordinate(targetLocation), TileFlag.None, ground,
             [], []);
-        
+
         var map = MapTestDataBuilder.Build(tile);
-        
+
         var service = new AreaCalculationService(map);
 
         // Act
@@ -95,15 +96,15 @@ public class AreaCalculationTests
 
         // Create a tile with block projectile flag
         var ground = MapTestDataBuilder.CreateGround(targetLocation);
-        var tile = new DynamicTile(new Coordinate(targetLocation), TileFlag.None, ground, 
+        var tile = new DynamicTile(new Coordinate(targetLocation), TileFlag.None, ground,
             [], []);
-        
+
         // Use reflection to set the flag since SetFlag is protected
-        var flagsField = typeof(BaseTile).GetField("Flags", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var flagsField = typeof(BaseTile).GetField("Flags", BindingFlags.NonPublic | BindingFlags.Instance);
         flagsField.SetValue(tile, (uint)TileFlags.BlockProjecTile);
-        
+
         var map = MapTestDataBuilder.Build(tile);
-        
+
         var service = new AreaCalculationService(map);
 
         // Act
@@ -126,14 +127,14 @@ public class AreaCalculationTests
 
         // Create a tile with creatures
         var ground = MapTestDataBuilder.CreateGround(targetLocation);
-        var tile = new DynamicTile(new Coordinate(targetLocation), TileFlag.None, ground, 
+        var tile = new DynamicTile(new Coordinate(targetLocation), TileFlag.None, ground,
             [], []);
-        
+
         // Add creatures to the tile
         tile.AddCreature(player);
-        
+
         var map = MapTestDataBuilder.Build(tile);
-        
+
         var service = new AreaCalculationService(map);
 
         // Act
@@ -154,9 +155,9 @@ public class AreaCalculationTests
         var area = new[] { new Coordinate(100, 100, 7) };
 
         var tile = MapTestDataBuilder.CreateTile(targetLocation);
-        
+
         var map = MapTestDataBuilder.Build(tile);
-        
+
         var service = new AreaCalculationService(map);
 
         // Act
@@ -183,9 +184,9 @@ public class AreaCalculationTests
         var tile1 = MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
         var tile2 = MapTestDataBuilder.CreateTile(new Location(101, 100, 7));
         var tile3 = MapTestDataBuilder.CreateTile(new Location(100, 101, 7));
-        
+
         var map = MapTestDataBuilder.Build(tile1, tile2, tile3);
-        
+
         var service = new AreaCalculationService(map);
 
         // Act
@@ -201,7 +202,7 @@ public class AreaCalculationTests
         // Arrange
         var originLocation = new Location(100, 100, 7);
         var area = Array.Empty<Coordinate>();
-        
+
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         var service = new AreaCalculationService(map);
 
@@ -221,7 +222,7 @@ public class AreaCalculationTests
         var area = new[] { new Coordinate(100, 100, 7) };
 
         var map = MapTestDataBuilder.Build(Array.Empty<ITile>());
-        
+
         var service = new AreaCalculationService(map);
 
         // Act

@@ -16,7 +16,8 @@ public class DecayableItemManagerTestBuilder
 {
     public static DecayableItemManager Build(IMap map, IItemTypeStore itemTypeStore)
     {
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+        var creatureMovementService =
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
 
         var mapService = new MapService(map, creatureMovementService);
         var itemFactory = ItemFactoryTestBuilder.Build();

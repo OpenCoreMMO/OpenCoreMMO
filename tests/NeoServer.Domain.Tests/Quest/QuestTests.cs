@@ -47,7 +47,7 @@ public class QuestTests
         // Arrange
         var quest = CreateTestQuest(1, "Test Quest", 0);
         _questDataStore.AddOrUpdate(1, quest);
-        
+
         var player = PlayerTestDataBuilder.Build(storages: new Dictionary<uint, int>
         {
             { 1, 0 } // Quest started with value 0
@@ -66,7 +66,7 @@ public class QuestTests
         // Arrange
         var quest = CreateTestQuest(1, "Test Quest", 0);
         _questDataStore.AddOrUpdate(1, quest);
-        
+
         var player = PlayerTestDataBuilder.Build(storages: new Dictionary<uint, int>
         {
             { 1, 5 } // Quest started with value 5
@@ -85,7 +85,7 @@ public class QuestTests
         // Arrange
         var quest = CreateTestQuest(1, "Test Quest", 0);
         _questDataStore.AddOrUpdate(1, quest);
-        
+
         var player = PlayerTestDataBuilder.Build(storages: new Dictionary<uint, int>
         {
             { 1, -1 } // Quest not started
@@ -117,7 +117,7 @@ public class QuestTests
         // Arrange
         var quest = CreateTestQuest(1, "Test Quest", 0);
         _questDataStore.AddOrUpdate(1, quest);
-        
+
         var player = PlayerTestDataBuilder.Build();
 
         // Act
@@ -138,11 +138,11 @@ public class QuestTests
             CreateTestMission(2, "Mission 2", 0, 1)
         ];
         _questDataStore.AddOrUpdate(1, quest);
-        
+
         var player = PlayerTestDataBuilder.Build(storages: new Dictionary<uint, int>
         {
             { 1, 1 }, // Mission 1 completed
-            { 2, 1 }  // Mission 2 completed
+            { 2, 1 } // Mission 2 completed
         });
 
         // Act
@@ -163,11 +163,11 @@ public class QuestTests
             CreateTestMission(2, "Mission 2", 0, 1)
         ];
         _questDataStore.AddOrUpdate(1, quest);
-        
+
         var player = PlayerTestDataBuilder.Build(storages: new Dictionary<uint, int>
         {
             { 1, 1 }, // Mission 1 completed
-            { 2, 0 }  // Mission 2 not completed
+            { 2, 0 } // Mission 2 not completed
         });
 
         // Act
@@ -465,8 +465,8 @@ public class QuestTests
         mission.Description = null;
         mission.States =
         [
-            new() { Id = 0, Description = "Not started" },
-            new() { Id = 1, Description = "Completed" }
+            new MissionState { Id = 0, Description = "Not started" },
+            new MissionState { Id = 1, Description = "Completed" }
         ];
         var player = PlayerTestDataBuilder.Build(storages: new Dictionary<uint, int>
         {
@@ -507,8 +507,8 @@ public class QuestTests
         mission.Description = "";
         mission.States =
         [
-            new() { Id = 0, Description = "Not started" },
-            new() { Id = 1, Description = "Completed" }
+            new MissionState { Id = 0, Description = "Not started" },
+            new MissionState { Id = 1, Description = "Completed" }
         ];
         var player = PlayerTestDataBuilder.Build(storages: new Dictionary<uint, int>
         {
@@ -533,7 +533,8 @@ public class QuestTests
         };
     }
 
-    private static Mission CreateTestMission(uint id, string name, uint startValue, uint endValue, bool ignoreEndValue = false)
+    private static Mission CreateTestMission(uint id, string name, uint startValue, uint endValue,
+        bool ignoreEndValue = false)
     {
         return new Mission
         {

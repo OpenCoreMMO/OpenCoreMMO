@@ -18,6 +18,7 @@ using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Creatures.Player.Vocation;
+using NeoServer.Domain.Guild;
 using NeoServer.Domain.Items.Items.UsableItems;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
@@ -114,11 +115,9 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     Guild.Guild Guild { get; }
     ushort GuildId => Guild?.Id ?? default;
     bool HasGuild { get; }
-    void SetGuild(Guild.Guild guild);
-    Guild.GuildRankInfo GuildRank { get; set; }
+    GuildRankInfo GuildRank { get; set; }
     string GuildNick { get; set; }
     bool Shopping { get; }
-    ulong BankAmount { get; }
     IShopperNpc TradingWithNpc { get; }
 
     byte MaxSoulPoints { get; }
@@ -153,6 +152,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     DateTime? LastLogOut { get; set; }
     bool IgnoreStamina { get; }
     bool IsPromoted { get; }
+    void SetGuild(Guild.Guild guild);
 
     ulong GetTotalMoney(ICoinTypeStore coinTypeStore);
 
@@ -308,31 +308,27 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     void PostAttack(CombatParameter combatParameter, IThing target, CombatResult damages);
     public void MoveToTemple();
 
+    void RegenerateStamina();
+    void Yell(string message, YellConfiguration yellSettings);
+    void Whisper(string message);
+    void StartCooldown(CooldownType cooldownType, uint cooldownTime);
+
     #region Events
 
     public event PlayerLevelAdvance OnLevelAdvanced;
     public event PlayerLevelRegress OnLevelRegressed;
     public event PlayerGainSkillPoint OnGainedSkillPoint;
     public event ReduceMana OnStatusChanged;
-    public event CannotUseSpell OnCannotUseSpell;
     public event LookAt OnLookedAt;
-    public event UseSpell OnUsedSpell;
     public event UseItem OnUsedItem;
-    public event LogIn OnLoggedIn;
     public event ChangeOnlineStatus OnChangedOnlineStatus;
     public event SendMessageTo OnSentMessage;
 
     public event Exhaust OnExhausted;
-    public event Hear OnHear;
     public event ChangeChaseMode OnChangedChaseMode;
     public event AddSkillBonus OnAddedSkillBonus;
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event WroteText OnWroteText;
 
     #endregion
-
-    void RegenerateStamina();
-    void Yell(string message, YellConfiguration yellSettings);
-    void Whisper(string message);
-    void StartCooldown(CooldownType cooldownType, uint cooldownTime);
 }

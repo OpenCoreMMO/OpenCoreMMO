@@ -39,7 +39,7 @@ public class Paper : BaseItem, IReadable
         return Result.Success;
     }
 
-    public void Use(IPlayer usedBy)
+    public override void Use(IPlayer usedBy)
     {
         usedBy.Read(this);
     }

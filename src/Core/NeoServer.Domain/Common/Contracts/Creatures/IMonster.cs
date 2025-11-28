@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Combat;
-using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Item;
@@ -7,7 +6,6 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Combat;
-
 
 public delegate void MonsterChangeState(IMonster monster, MonsterState fromState, MonsterState toState);
 

@@ -76,6 +76,6 @@ public enum GameIncomingPacketType : byte
     NewPing = 0x40,
     ExtendedOpcode = 0x32,
     QuestLog = 0xF0,
-    QuestLine= 0xF1,
+    QuestLine = 0xF1,
     Any = 0xFF // Do not send
 }

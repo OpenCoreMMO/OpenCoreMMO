@@ -7,16 +7,10 @@ using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Combat.Attacks;
 
-public class AffectedTargets
+public class AffectedTargets(List<Location> locations, List<ICreature> creatures)
 {
-    public List<Location> Locations { get; }
-    public List<ICreature> Creatures { get; }
-
-    public AffectedTargets(List<Location> locations, List<ICreature> creatures)
-    {
-        Locations = locations;
-        Creatures = creatures;
-    }
+    public List<Location> Locations { get; } = locations;
+    public List<ICreature> Creatures { get; } = creatures;
 }
 
 public class AreaCalculationService(IMap map)
@@ -32,20 +26,14 @@ public class AreaCalculationService(IMap map)
             var tile = map[location] ?? new EmptyTile(location);
 
             // Check if the tile is walkable and clear of obstacles
-            if (tile.ProtectionZone || tile.BlockMissile || tile is IDynamicTile { HasHole: true })
-            {
-                continue;
-            }
+            if (tile.ProtectionZone || tile.BlockMissile || tile is IDynamicTile { HasHole: true }) continue;
 
             // Check if the line of sight is clear between aggressor and target location
             if (!SightClear.IsSightClear(map, originLocation, tile.Location, false)) continue;
 
             affectedArea.Add(location);
 
-            if (tile is not IDynamicTile targetTile)
-            {
-                continue;
-            }
+            if (tile is not IDynamicTile targetTile) continue;
 
             var targetCreatures = targetTile.Creatures?.ToArray();
             if (targetCreatures is null or { Length: 0 }) continue;

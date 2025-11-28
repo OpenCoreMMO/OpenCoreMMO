@@ -1,18 +1,34 @@
-using FluentAssertions;
 using Moq;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
-using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Tests.Helpers.Player;
-using Xunit;
 
 namespace NeoServer.Domain.Tests.Creatures.Player;
 
 public class PlayerPushCreatureTests
 {
+    #region Integration Tests
+
+    [Fact]
+    [Trait("Category", "Integration")]
+    public void Player_can_push_creature_comprehensive_validation()
+    {
+        // Arrange
+        var player = CreatePlayer();
+        var monster = CreateMockMonster(new Location(100, 101, 7));
+        var destination = CreateMockTile(new Location(100, 102, 7));
+
+        // Act
+        var result = player.CanPushCreature(monster.Object, destination.Object);
+
+        // Assert
+        result.Succeeded.Should().BeTrue();
+    }
+
+    #endregion
+
     #region Test Data Builders
 
     private static IPlayer CreatePlayer()
@@ -24,17 +40,17 @@ public class PlayerPushCreatureTests
     {
         var player = new Mock<IPlayer>();
         var tile = new Mock<IDynamicTile>();
-        
+
         var actualLocation = location == default ? new Location(100, 101, 7) : location;
-        
+
         player.Setup(x => x.Location).Returns(actualLocation);
         player.Setup(x => x.IsCloseTo(It.IsAny<ICreature>())).Returns(true);
         player.Setup(x => x.Tile).Returns(tile.Object);
-        
+
         tile.Setup(x => x.ProtectionZone).Returns(inProtectionZone);
         tile.Setup(x => x.HasCreature(It.IsAny<ICreature>())).Returns(false);
         tile.Setup(x => x.Location).Returns(actualLocation);
-        
+
         return player;
     }
 
@@ -47,7 +63,8 @@ public class PlayerPushCreatureTests
         return monster;
     }
 
-    private static Mock<IDynamicTile> CreateMockTile(Location location = default, bool hasCreature = false, bool blocksPath = false, bool protectionZone = false)
+    private static Mock<IDynamicTile> CreateMockTile(Location location = default, bool hasCreature = false,
+        bool blocksPath = false, bool protectionZone = false)
     {
         var tile = new Mock<IDynamicTile>();
         tile.Setup(x => x.Location).Returns(location == default ? new Location(100, 102, 7) : location);
@@ -75,7 +92,7 @@ public class PlayerPushCreatureTests
 
         // Assert
         result.Failed.Should().BeTrue();
-        result.Reason.Should().Be(InvalidOperation.NotPossible); 
+        result.Reason.Should().Be(InvalidOperation.NotPossible);
     }
 
     [Fact]
@@ -151,7 +168,7 @@ public class PlayerPushCreatureTests
     public void Player_cannot_push_non_pushable_monster()
     {
         // Arrange
-        var player = CreatePlayer(); 
+        var player = CreatePlayer();
         var nonPushableMonster = CreateMockMonster(isPushable: false);
         var destination = CreateMockTile(hasCreature: false, blocksPath: false);
 
@@ -262,26 +279,6 @@ public class PlayerPushCreatureTests
 
         // Assert
         result.Succeeded.Should().BeTrue(); // Current implementation allows this as Success
-    }
-
-    #endregion
-
-    #region Integration Tests
-
-    [Fact]
-    [Trait("Category", "Integration")]
-    public void Player_can_push_creature_comprehensive_validation()
-    {
-        // Arrange
-        var player = CreatePlayer();
-        var monster = CreateMockMonster(new Location(100, 101, 7), isPushable: true);
-        var destination = CreateMockTile(new Location(100, 102, 7), hasCreature: false, blocksPath: false, protectionZone: false);
-
-        // Act
-        var result = player.CanPushCreature(monster.Object, destination.Object);
-
-        // Assert
-        result.Succeeded.Should().BeTrue();
     }
 
     #endregion

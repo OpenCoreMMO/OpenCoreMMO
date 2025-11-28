@@ -225,7 +225,7 @@ public class PlayerMoveItemTests
     {
         //arrange
         var container = ItemTestDataBuilder.CreateContainer(2);
-        var ammo = ItemTestDataBuilder.CreateAmmo(100, 1);
+        var ammo = ItemTestDataBuilder.CreateAmmo(100);
         container.AddItem(ammo);
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
@@ -248,7 +248,7 @@ public class PlayerMoveItemTests
     {
         //arrange
         var backpack = ItemTestDataBuilder.CreateBackpack();
-        var ammo = ItemTestDataBuilder.CreateAmmo(100, 1);
+        var ammo = ItemTestDataBuilder.CreateAmmo(100);
         backpack.AddItem(ammo);
 
         var player = PlayerTestDataBuilder.Build(capacity: 1000);
@@ -439,7 +439,7 @@ public class PlayerMoveItemTests
         var eventCalled = false;
         var childEventCalled = false;
 
-        fromContainer.OnItemRemoved += (_, _, _, _) => { eventCalled = true; };
+        fromContainer.OnItemRemovedEvent += (_, _, _, _) => { eventCalled = true; };
         child.OnItemAdded += (_, _) => { childEventCalled = true; };
 
         //act
@@ -473,7 +473,7 @@ public class PlayerMoveItemTests
         var eventCalled = false;
         var childEventCalled = false;
 
-        fromContainer.OnItemRemoved += (_, _, _, _) => { eventCalled = true; };
+        fromContainer.OnItemRemovedEvent += (_, _, _, _) => { eventCalled = true; };
         child.OnItemAdded += (_, _) => { childEventCalled = true; };
 
         //act

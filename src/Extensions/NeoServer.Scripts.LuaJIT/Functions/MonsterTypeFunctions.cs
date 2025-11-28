@@ -17,7 +17,6 @@ public class MonsterTypeFunctions : LuaScriptInterface, IMonsterTypeFunctions
     private static IItemTypeStore _itemTypeStore;
     private static IScripts _scripts;
     private static INpcs _npcs;
-    private static IMonsterFactory _monsterFactory;
 
     public MonsterTypeFunctions(
         IGameCreatureManager gameCreatureManager,

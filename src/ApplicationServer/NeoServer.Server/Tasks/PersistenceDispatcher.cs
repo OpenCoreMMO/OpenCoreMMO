@@ -9,13 +9,13 @@ namespace NeoServer.Server.Tasks;
 
 public class PersistenceDispatcher : IPersistenceDispatcher
 {
+    private readonly CancellationTokenSource _internalCancellation = new();
     private readonly ILogger _logger;
     private readonly ChannelReader<Func<Task>> _reader;
     private readonly ChannelWriter<Func<Task>> _writer;
-    private readonly CancellationTokenSource _internalCancellation = new();
-    
-    private Task _processingTask;
     private volatile bool _isShuttingDown;
+
+    private Task _processingTask;
 
     /// <summary>
     ///     A queue responsible for processing persistence events
@@ -42,9 +42,7 @@ public class PersistenceDispatcher : IPersistenceDispatcher
         }
 
         if (!_writer.TryWrite(evt))
-        {
             _logger.Warning("PersistenceDispatcher: Failed to write event to channel - channel may be completed");
-        }
     }
 
     /// <summary>
@@ -67,7 +65,7 @@ public class PersistenceDispatcher : IPersistenceDispatcher
         _processingTask = Task.Factory.StartNew(async () =>
         {
             var eventCount = 0L;
-            
+
             try
             {
                 await foreach (var evt in _reader.ReadAllAsync(combinedCts.Token))
@@ -75,23 +73,24 @@ public class PersistenceDispatcher : IPersistenceDispatcher
                     eventCount++;
 
                     // Add timeout to prevent hanging during debugging
-                    using var timeoutCts = new CancellationTokenSource(TimeSpan.FromMinutes(5)); // Longer timeout for DB operations
+                    using var timeoutCts =
+                        new CancellationTokenSource(TimeSpan.FromMinutes(5)); // Longer timeout for DB operations
 
                     try
                     {
                         var persistenceTask = Task.Run(async () => await evt().ConfigureAwait(false), timeoutCts.Token);
-                        
+
                         await persistenceTask;
-                        
+
                         // Progress logging for debugging
                         if (eventCount % 100 == 0)
-                        {
-                            _logger.Debug("PersistenceDispatcher: Processed {EventCount} persistence events", eventCount);
-                        }
+                            _logger.Debug("PersistenceDispatcher: Processed {EventCount} persistence events",
+                                eventCount);
                     }
                     catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
                     {
-                        _logger.Warning("PersistenceDispatcher: Persistence operation timeout - possible database deadlock during debugging");
+                        _logger.Warning(
+                            "PersistenceDispatcher: Persistence operation timeout - possible database deadlock during debugging");
                         // Continue processing other events
                     }
                     catch (Exception ex)
@@ -101,30 +100,36 @@ public class PersistenceDispatcher : IPersistenceDispatcher
                     }
                 }
 
-                _logger.Information("PersistenceDispatcher: Channel completed, stopping processing after {EventCount} events", eventCount);
+                _logger.Information(
+                    "PersistenceDispatcher: Channel completed, stopping processing after {EventCount} events",
+                    eventCount);
             }
             catch (OperationCanceledException)
             {
-                _logger.Information("PersistenceDispatcher: Cancelled after processing {EventCount} events", eventCount);
+                _logger.Information("PersistenceDispatcher: Cancelled after processing {EventCount} events",
+                    eventCount);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "PersistenceDispatcher: Fatal exception after processing {EventCount} events", eventCount);
+                _logger.Error(ex, "PersistenceDispatcher: Fatal exception after processing {EventCount} events",
+                    eventCount);
                 throw;
             }
             finally
             {
-                try 
-                { 
+                try
+                {
                     _writer.Complete();
                     _logger.Information("PersistenceDispatcher: Channel completed successfully");
                 }
-                catch (Exception ex) 
-                { 
-                    _logger.Warning(ex, "PersistenceDispatcher: Error completing channel"); 
+                catch (Exception ex)
+                {
+                    _logger.Warning(ex, "PersistenceDispatcher: Error completing channel");
                 }
-                
-                _logger.Information("PersistenceDispatcher: Processing loop ended. Total persistence events processed: {EventCount}", eventCount);
+
+                _logger.Information(
+                    "PersistenceDispatcher: Processing loop ended. Total persistence events processed: {EventCount}",
+                    eventCount);
             }
         }, combinedCts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
 
@@ -132,7 +137,7 @@ public class PersistenceDispatcher : IPersistenceDispatcher
     }
 
     /// <summary>
-    /// Wait for dispatcher completion (useful for tests and shutdown)
+    ///     Wait for dispatcher completion (useful for tests and shutdown)
     /// </summary>
     public async Task WaitForCompletionAsync()
     {
@@ -149,21 +154,21 @@ public class PersistenceDispatcher : IPersistenceDispatcher
     }
 
     /// <summary>
-    /// Initiate graceful shutdown of the persistence dispatcher
+    ///     Initiate graceful shutdown of the persistence dispatcher
     /// </summary>
     public void Shutdown()
     {
         if (_isShuttingDown) return;
-        
+
         _isShuttingDown = true;
         _logger.Information("PersistenceDispatcher: Initiating shutdown");
-        
+
         _writer.TryComplete();
         _internalCancellation.Cancel();
     }
 
     /// <summary>
-    /// Dispose resources
+    ///     Dispose resources
     /// </summary>
     public void Dispose()
     {

@@ -17,16 +17,14 @@ public class CreatureDeathService(
     public void Handle(ICombatActor deadCreature, IThing by, List<DamageRecord> damageRecords)
     {
         if (deadCreature is IMonster { IsSummon: true }) //do not create blood or corpse for summons
-        {
             return;
-        }
-        
+
         //do not create blood or corpse for monsters that are killed by another monster
-        if(deadCreature is IMonster && by is IMonster and not Summon { Master: IPlayer }) return;
+        if (deadCreature is IMonster && by is IMonster and not Summon { Master: IPlayer }) return;
 
         CreateBlood(deadCreature);
         ReplaceCreatureByCorpse(deadCreature, by);
-        
+
         ProcessDamageRecords(deadCreature, by, damageRecords);
     }
 
