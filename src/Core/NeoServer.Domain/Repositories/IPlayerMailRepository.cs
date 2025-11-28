@@ -6,7 +6,7 @@ namespace NeoServer.Domain.Repositories;
 public interface IPlayerMailRepository
 {
     /// <summary>
-    /// Get total numbers of items in the player's root inbox.
+    ///     Get total numbers of items in the player's root inbox.
     /// </summary>
     Task<int> GetInboxItemCount(int playerId);
 

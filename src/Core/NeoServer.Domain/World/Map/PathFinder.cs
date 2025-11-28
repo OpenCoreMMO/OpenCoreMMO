@@ -79,7 +79,6 @@ public class PathFinder(IMap map) : IPathFinder
 
     public Direction FindRandomStep(ICreature creature, ITileEnterRule rule, bool allowDiagonal = false)
     {
-
         Span<Direction> directions = allowDiagonal
             ?
             [
@@ -93,7 +92,7 @@ public class PathFinder(IMap map) : IPathFinder
         for (var i = 0; i < directions.Length; i++)
         {
             randomIndex = randomIndex >= directions.Length ? 0 : randomIndex;
-            
+
             var direction = directions[randomIndex++];
             if (map.CanGoToDirection(creature, direction, rule)) return direction;
         }
@@ -127,12 +126,8 @@ public class PathFinder(IMap map) : IPathFinder
 
         // Already at the desired distance — no need to move
         if (currentDistance == fpp.MaxTargetDist)
-        {
             if (!fpp.ClearSight || SightClear.IsSightClear(map, start, target, false))
-            {
                 return FoundedButEmptyDirections;
-            }
-        }
 
         var shouldMoveCloser = currentDistance > fpp.MaxTargetDist;
         var shouldMoveFarther = !shouldMoveCloser;

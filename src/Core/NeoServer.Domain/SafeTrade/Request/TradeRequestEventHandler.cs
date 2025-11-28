@@ -143,7 +143,7 @@ internal static class TradeRequestEventHandler
         var isFarFromSecondPlayer = creature.Location.GetMaxSqmDistance(tradeRequest.PlayerRequested.Location) > 2;
         if (isFarFromSecondPlayer) CancelTradeAction?.Invoke(tradeRequest);
     }
-    
+
     private static void ItemRemoved(IItem item, IThing _)
     {
         CancelTrade(item);

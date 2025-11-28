@@ -9,18 +9,16 @@ using NeoServer.Domain.Items.Items.Containers.Container;
 
 namespace NeoServer.Domain.Items.Factories;
 
-public class ContainerFactory() : IFactory
+public class ContainerFactory : IFactory
 {
     public event CreateItem OnItemCreated;
 
     public IItem Create(IItemType itemType, Location location, IEnumerable<IItem> children)
     {
-        if (Locker.Locker.IsApplicable(itemType))
-        {
-            return new Locker.Locker(itemType, location, children);
-        }
+        if (Locker.Locker.IsApplicable(itemType)) return new Locker.Locker(itemType, location, children);
 
-        if (itemType.Attributes.GetAttribute(ItemTypeAttribute.Type) == "mailbox" && location.Type != LocationType.Ground)
+        if (itemType.Attributes.GetAttribute(ItemTypeAttribute.Type) == "mailbox" &&
+            location.Type != LocationType.Ground)
         {
             itemType.Attributes.SetAttribute(ItemTypeAttribute.Capacity, (byte)30);
             return new Container(itemType, location, children)
@@ -29,15 +27,9 @@ public class ContainerFactory() : IFactory
             };
         }
 
-        if (itemType.ServerId == GameConstants.PARCEL_SERVER_ID)
-        {
-            return new Parcel(itemType, location, children);
-        }
+        if (itemType.ServerId == GameConstants.PARCEL_SERVER_ID) return new Parcel(itemType, location, children);
 
-        if (Container.IsApplicable(itemType))
-        {
-            return new Container(itemType, location, children);
-        }
+        if (Container.IsApplicable(itemType)) return new Container(itemType, location, children);
 
         return null;
     }

@@ -4,9 +4,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Creatures.Monster;
 using NeoServer.Domain.Creatures.Monster.Summon;
-using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Domain.Creatures;
 
@@ -97,17 +95,15 @@ public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
     private static bool HasBlockingCreatures(IMonster monster, IDynamicTile dynamicTile)
     {
         if (!dynamicTile.HasAnyCreature) return false;
-        
+
         if (!monster.Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures))
-        {
             //the tile has a creature and the monster can't push creatures
             return true;
-        }
 
         foreach (var creature in dynamicTile.Creatures)
         {
             if (IsPushable(creature)) continue;
-            
+
             //the tile has a creature and the monster can't push it
             return true;
         }
@@ -118,8 +114,8 @@ public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
 
     private static bool IsPushable(ICreature creature)
     {
-        if (creature is not NeoServer.Domain.Creatures.Monster.Monster monster) return false;
-        if (creature is Summon { Master: NeoServer.Domain.Creatures.Player.Player }) return false;
+        if (creature is not Monster.Monster monster) return false;
+        if (creature is Summon { Master: Player.Player }) return false;
         return monster.IsPushable;
     }
 
@@ -203,7 +199,6 @@ public class MonsterRandomStepEnterTileRule : CreatureEnterTileRule<MonsterRando
             dynamicTile.Ground is not null);
     }
 }
-
 
 public class NpcEnterTileRule : CreatureEnterTileRule<NpcEnterTileRule>
 {

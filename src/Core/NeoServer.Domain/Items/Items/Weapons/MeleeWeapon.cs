@@ -68,7 +68,7 @@ public class MeleeWeapon : Equipment, IWeapon, IUsableOnItem, IHasAttack, IHasDe
         return false;
     }
 
-  
+
     public void OnMoved(IThing to)
     {
     }

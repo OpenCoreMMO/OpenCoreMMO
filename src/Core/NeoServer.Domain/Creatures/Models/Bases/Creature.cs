@@ -121,21 +121,21 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         Outfit.Change(lookType, head, body, legs, feet, addon);
         OnChangedOutfit?.Invoke(this, Outfit);
     }
-    
+
     public virtual void OnSpectatorMoved(ICreature spectator)
-    {   
+    {
     }
 
     public virtual void OnSpectatorDies(ICombatActor spectator)
-    {   
+    {
     }
-    
+
     public virtual void OnSummonDie(Summon summon)
     {
     }
 
     public virtual void OnSpectatorLoggedOut(ICreature spectator)
-    {   
+    {
     }
 
     public virtual void OnSpectatorChangedVisibility(ICreature spectator)
@@ -144,7 +144,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
 
     public virtual void OnMoving(ITile toTile)
     {
-        
     }
 
     public void BackToOldOutfit()
@@ -161,7 +160,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
 
     public virtual bool CanSee(ICreature otherCreature)
     {
-        if(otherCreature is null) return false;
+        if (otherCreature is null) return false;
         return !otherCreature.IsInvisible || CanSeeInvisible;
     }
 
@@ -191,10 +190,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         OnSay?.Invoke(this, talkType, message, receiver);
     }
 
-    public virtual void Yell(string message) => Say(message, SpeechType.Yell);
-
-    public virtual void Whisper(string message) => Say(message, SpeechType.Whisper);
-
     public virtual void Think(int interval)
     {
         OnThink?.Invoke(this, interval);
@@ -210,6 +205,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         OnAppear?.Invoke(this, creature);
     }
+
     public virtual void OnCreatureDisappear(ICreature creature)
     {
         OnDisappear?.Invoke(this, creature);
@@ -244,6 +240,16 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public bool Equals([AllowNull] Creature other)
     {
         return this == other;
+    }
+
+    public virtual void Yell(string message)
+    {
+        Say(message, SpeechType.Yell);
+    }
+
+    public virtual void Whisper(string message)
+    {
+        Say(message, SpeechType.Whisper);
     }
 
     private IOutfit BuildOutfit(ICreatureType type)
@@ -288,9 +294,9 @@ public abstract class Creature : IEquatable<Creature>, ICreature
 
     protected void SetDirection(Direction direction)
     {
-        if(direction == Direction.None) return;
+        if (direction == Direction.None) return;
         // LastDirection should only remember actual directions, so we're ignoring 'none'.
-        LastDirection =  Direction;
+        LastDirection = Direction;
         Direction = direction;
     }
 

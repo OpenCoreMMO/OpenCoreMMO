@@ -78,11 +78,12 @@ public class Guard
                 return false;
         return true;
     }
-    
+
     public static void ThrowIfNull(object value)
     {
         ArgumentNullException.ThrowIfNull(value);
     }
+
     public static void ThrowIfNull(object value, object secondValue)
     {
         ArgumentNullException.ThrowIfNull(value);

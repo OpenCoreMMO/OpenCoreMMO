@@ -19,8 +19,8 @@ namespace NeoServer.Domain.Tests.Spell;
 public class SpellTests
 {
     private readonly Mock<IEventAggregator> _eventAggregatorMock;
-    private readonly SpellService _spellService;
     private readonly SpellListManager _spellListManager;
+    private readonly SpellService _spellService;
 
     public SpellTests()
     {
@@ -29,7 +29,7 @@ public class SpellTests
         var pathFinder = new PathFinder(map);
         var mapTool = new MapTool(map, pathFinder);
         var spellCastValidation = new SpellCastValidation(mapTool);
-        _spellService = new  SpellService(spellCastValidation, _eventAggregatorMock.Object, map);
+        _spellService = new SpellService(spellCastValidation, _eventAggregatorMock.Object, map);
         _spellListManager = new SpellListManager();
     }
 
@@ -54,7 +54,7 @@ public class SpellTests
         var player = PlayerTestDataBuilder.Build();
         var target = PlayerTestDataBuilder.Build();
         player.SetAttackTarget(target);
-        
+
         var spell = new TestSpell { NeedsTarget = true };
 
         // Act
@@ -108,7 +108,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeFalse();
-        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e => 
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e =>
             e.Caster == player && e.Spell == spell)), Times.Once);
     }
 
@@ -202,7 +202,7 @@ public class SpellTests
 
         // Assert
         result.Should().BeFalse();
-        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e => 
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e =>
             e.Caster == player && e.Spell == spell)), Times.Once);
     }
 
@@ -300,7 +300,7 @@ public class SpellTests
         _spellListManager.TryGetInstantSpell("exori vis \"test\"", out var spell3).Should().BeTrue();
         spell3.Should().Be(exoriVisSpell);
         spell3.Params.Should().BeEquivalentTo(["test"]);
-        
+
         _spellListManager.TryGetInstantSpell("exori vis \"test", out var spell7).Should().BeTrue();
         spell7.Should().Be(exoriVisSpell);
         spell7.Params.Should().BeEquivalentTo(["test"]);
@@ -445,10 +445,8 @@ public class SpellTests
                 DamageAttempted = true;
                 var creature = tile.GetTopVisibleCreature(caster);
                 if (creature != null)
-                {
                     // Apply damage logic here
                     return Result.Success;
-                }
             }
 
             return Result.Success;

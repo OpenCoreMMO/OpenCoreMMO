@@ -89,9 +89,8 @@ public class DynamicTile : BaseTile, IDynamicTile
         if (Creatures is null) return false;
 
         foreach (var tileCreature in Creatures)
-        {
-            if (tileCreature.Equals(creature)) return true;
-        }
+            if (tileCreature.Equals(creature))
+                return true;
 
         return false;
     }
@@ -172,10 +171,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         // Check if ground exists and index is 0
         if (Ground != null)
         {
-            if (index == 0)
-            {
-                return Ground;
-            }
+            if (index == 0) return Ground;
 
             // Decrement index since we've accounted for ground
             index--;
@@ -184,10 +180,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         // Check top items
         if (TopItems != null && TopItems.Count > 0)
         {
-            if (index < TopItems.Count)
-            {
-                return TopItems.ElementAt(index);
-            }
+            if (index < TopItems.Count) return TopItems.ElementAt(index);
 
             // Decrement index by the number of top items
             index -= TopItems.Count;
@@ -196,16 +189,11 @@ public class DynamicTile : BaseTile, IDynamicTile
         // Skip creatures in the index calculation since we're only returning items
         // But we need to account for their presence in the stack
         if (Creatures != null && Creatures.Count > 0)
-        {
             // Decrement index by the number of creatures
             index -= Creatures.Count;
-        }
 
         // Check down items
-        if (DownItems != null && index >= 0 && index < DownItems.Count)
-        {
-            return DownItems.ElementAt(index);
-        }
+        if (DownItems != null && index >= 0 && index < DownItems.Count) return DownItems.ElementAt(index);
 
         // Index out of range
         return null;
@@ -216,7 +204,6 @@ public class DynamicTile : BaseTile, IDynamicTile
         if (Creatures is null) return null;
 
         foreach (var tileCreature in Creatures)
-        {
             if (creature != null)
             {
                 if (creature.CanSee(tileCreature)) return tileCreature;
@@ -227,12 +214,8 @@ public class DynamicTile : BaseTile, IDynamicTile
 
                 var player = isPlayer ? tileCreature as IPlayer : null;
 
-                if (!tileCreature.IsInvisible && (!isPlayer || !player.IsInvisible))
-                {
-                    return tileCreature;
-                }
+                if (!tileCreature.IsInvisible && (!isPlayer || !player.IsInvisible)) return tileCreature;
             }
-        }
 
         return null;
     }

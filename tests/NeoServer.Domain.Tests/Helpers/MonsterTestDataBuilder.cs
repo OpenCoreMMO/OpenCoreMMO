@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using NeoServer.Domain.Common.Combat.Structs;
+﻿using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
@@ -53,12 +52,8 @@ public static class MonsterTestDataBuilder
         };
 
         if (flags != null)
-        {
             foreach (var flag in flags)
-            {
                 monsterType.Flags[flag.Key] = flag.Value;
-            }
-        }
 
         return new Monster(monsterType, mapTool, spawnPoint);
     }

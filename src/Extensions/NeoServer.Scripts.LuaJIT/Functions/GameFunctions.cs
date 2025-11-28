@@ -291,7 +291,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         }
 
         foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
-            if (_map[neighbour] is IDynamicTile { HasAnyCreature: false } neighbourTile && neighbourTile.CanEnter(monster))
+            if (_map[neighbour] is IDynamicTile { HasAnyCreature: false } neighbourTile &&
+                neighbourTile.CanEnter(monster))
             {
                 monster.Born(neighbour);
 

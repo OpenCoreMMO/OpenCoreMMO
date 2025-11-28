@@ -27,7 +27,7 @@ public class MonsterFactory : IMonsterFactory
     public IMonster CreateSummon(string name, ICreature master)
     {
         var result = _monsterTypeStore.TryGetValue(name, out var monsterType);
-        if (result == false)
+        if (!result)
         {
             _logger.Warning("Given monster name: {Name} is not loaded", name);
             return null;
@@ -41,7 +41,7 @@ public class MonsterFactory : IMonsterFactory
     public IMonster Create(string name, ISpawnPoint spawn = null)
     {
         var result = _monsterTypeStore.TryGetValue(name, out var monsterType);
-        if (result == false)
+        if (!result)
         {
             _logger.Warning("Given monster name: {Name} is not loaded", name);
             return null;

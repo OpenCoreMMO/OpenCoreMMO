@@ -24,6 +24,7 @@ using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Common.Contracts.Tasks;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Events.Subscribers;
+using NeoServer.Server.Helpers;
 using NeoServer.Server.Routines.Channels;
 using NeoServer.Server.Routines.Creatures;
 using NeoServer.Server.Routines.Items;
@@ -39,7 +40,7 @@ public class TestSetup
 {
     public static async Task<IServiceProvider> Setup()
     {
-        var container = TestSetup.BuildContainer();
+        var container = BuildContainer();
         var cancellationTokenSource = new CancellationTokenSource();
         var cancellationToken = cancellationTokenSource.Token;
         GameAssemblyCache.Load();
@@ -58,7 +59,7 @@ public class TestSetup
 
         container.Resolve<WorldLoader>().Load();
 
-        await TestSetup.LoadDatabase(container, logger, new CancellationToken(false));
+        await LoadDatabase(container, logger, new CancellationToken(false));
 
         container.Resolve<IEnumerable<IRunBeforeLoaders>>().ToList().ForEach(x => x.Run());
         container.Resolve<FactoryEventSubscriber>().AttachEvents();
@@ -114,7 +115,7 @@ public class TestSetup
         var container = Container.BuildConfigurations();
 
         container = Container.BuildAll();
-        Helpers.IoC.Initialize(container);
+        IoC.Initialize(container);
         return container;
     }
 

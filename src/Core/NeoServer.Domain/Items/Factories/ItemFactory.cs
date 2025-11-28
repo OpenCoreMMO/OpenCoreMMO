@@ -241,16 +241,14 @@ public class ItemFactory : IItemFactory
         if (FloorChanger.IsApplicable(itemType)) return new FloorChanger(itemType, location);
 
         if (TeleportItem.IsApplicable(itemType)) return new TeleportItem(itemType, location);
-        
+
         if (Paper.IsApplicable(itemType))
-        {
             return itemType.ServerId switch
             {
                 GameConstants.LABEL_SERVER_ID => new Label(itemType, location),
                 GameConstants.LETTER_SERVER_ID => new Letter(itemType, location),
                 _ => new Paper(itemType, location)
             };
-        }
 
         if (Sign.IsApplicable(itemType, itemAttributes)) return new Sign(itemType, location);
 

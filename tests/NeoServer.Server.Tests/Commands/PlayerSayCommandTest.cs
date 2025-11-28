@@ -48,7 +48,8 @@ public class PlayerSayCommandTest
         var game = new Mock<IGameServer>();
         game.Setup(x => x.CreatureManager.TryGetPlayer("receiver", out receiver)).Returns(true);
 
-        var sut = new PlayerSayCommand(game.Object, chatChannelStore, scriptManager, spellService, spellListManager, yellConfiguration: new YellConfiguration());
+        var sut = new PlayerSayCommand(game.Object, chatChannelStore, scriptManager, spellService, spellListManager,
+            new YellConfiguration());
 
         //act
         sut.Execute(player.Object, connection.Object, playerSayPacket.Object);

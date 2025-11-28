@@ -2,7 +2,6 @@
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
-using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using Serilog;
 

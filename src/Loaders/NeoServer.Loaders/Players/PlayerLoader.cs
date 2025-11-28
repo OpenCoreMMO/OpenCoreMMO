@@ -24,6 +24,7 @@ using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Creatures.Player.Vocation;
+using NeoServer.Domain.Guild;
 using NeoServer.Loaders.Interfaces;
 using Serilog;
 
@@ -129,10 +130,7 @@ public class PlayerLoader : IPlayerLoader
             LastLogOut = playerEntity.LastLogOut
         };
 
-        if (!_gameConfiguration.StaminaEnabled)
-        {
-            player.Group.EnableFlag(PlayerFlag.IgnoreStamina);
-        }
+        if (!_gameConfiguration.StaminaEnabled) player.Group.EnableFlag(PlayerFlag.IgnoreStamina);
 
         player.PlayerSkull = new PlayerSkull(player, playerEntity.Skull, playerEntity.SkullEndsAt);
 
@@ -142,7 +140,7 @@ public class PlayerLoader : IPlayerLoader
         if (playerEntity.GuildMember?.Rank != null)
         {
             var guildRank = playerEntity.GuildMember.Rank;
-            player.GuildRank = new Domain.Guild.GuildRankInfo((ushort)guildRank.Id, guildRank.Name, (byte)guildRank.Level);
+            player.GuildRank = new GuildRankInfo((ushort)guildRank.Id, guildRank.Name, (byte)guildRank.Level);
         }
 
         AddRegenerationCondition(playerEntity, player);

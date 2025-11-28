@@ -16,7 +16,6 @@ public delegate void Move(IContainer container);
 
 public interface IContainer : IInventoryEquipment, IHasItem
 {
-    
     IItem this[int index] { get; }
 
     /// <summary>
@@ -49,6 +48,7 @@ public interface IContainer : IInventoryEquipment, IHasItem
     ///     Number of free slots of this and inner containers
     /// </summary>
     uint TotalOfFreeSlots { get; }
+
     bool CanMoveItemsToItself { get; init; }
     new string InspectionText => $"(Vol:{Capacity})";
     new string CloseInspectionText => InspectionText;

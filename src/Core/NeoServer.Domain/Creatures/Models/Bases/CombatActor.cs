@@ -54,7 +54,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         var result = Conditions.TryAdd(condition.Type, condition);
         condition.Start(this);
-        if (result == false) return;
+        if (!result) return;
 
         EventAggregator.Invoke(new CreatureConditionAddedEvent(this, condition));
     }
@@ -177,30 +177,23 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         if (target is CombatActor combatTarget)
         {
             if (combatTarget.IsDead) return true;
-            if (combatTarget.Tile?.ProtectionZone ?? false) return true; 
+            if (combatTarget.Tile?.ProtectionZone ?? false) return true;
         }
 
-        if (target is Player.Player { Online: false })
-        {
-            return true;
-        }
-        
-        if (!CanSee(target.Location) || !Location.SameFloorAs(target.Location))
-        {
-            return true;
-        }
+        if (target is Player.Player { Online: false }) return true;
 
-        if (!CanSeeInvisible && !CanSee(target))
-        {
-            return true;
-        }
+        if (!CanSee(target.Location) || !Location.SameFloorAs(target.Location)) return true;
+
+        if (!CanSeeInvisible && !CanSee(target)) return true;
 
         return false;
     }
+
     public virtual bool IsTargetLost()
     {
         return IsTargetLost(CurrentTarget);
     }
+
     public virtual Result CanAttack(CombatParameter combatParameter)
     {
         if (IsDead) return Result.Fail(InvalidOperation.CreatureIsDead);
@@ -217,7 +210,10 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         return Result.Success;
     }
 
-    public DamageResult TakeDamage(IThing enemy, CombatDamage damages) => TakeDamage(enemy, new CombatDamageList(damages));
+    public DamageResult TakeDamage(IThing enemy, CombatDamage damages)
+    {
+        return TakeDamage(enemy, new CombatDamageList(damages));
+    }
 
     public override void Appear(Location location, ICylinderSpectator[] spectators)
     {
@@ -354,8 +350,6 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
         OnPropagateAttack?.Invoke(this, damage, area);
     }
 
-    public void PropagateAttack(AffectedLocation area, CombatDamage damage) => PropagateAttack([area], damage);
-
     public abstract void SetAsEnemy(ICreature actor);
 
     public void IncreaseDamageReceived(byte percentage)
@@ -381,6 +375,11 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public virtual void PreAttack(CombatContext combatContext)
     {
         Cooldowns.Start(combatContext.CombatParameters.CooldownType, combatContext.CombatParameters.CooldownDuration);
+    }
+
+    public void PropagateAttack(AffectedLocation area, CombatDamage damage)
+    {
+        PropagateAttack([area], damage);
     }
 
     public virtual CalculatedAttackDamage CalculateAttackDamage()
@@ -409,6 +408,7 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
 
         _blockCount++;
     }
+
     protected void ReduceHealth(CombatDamage damage)
     {
         ReduceHealth(damage.Damage);
@@ -422,17 +422,14 @@ public abstract class CombatActor : WalkableCreature, ICombatActor
     public virtual void Death(IThing by)
     {
         var summonsCopy = Summons.ToList();
-        foreach (var summon in summonsCopy)
-        {
-            summon.OnMasterKilled();
-        }
-        
+        foreach (var summon in summonsCopy) summon.OnMasterKilled();
+
         if (by is ICombatActor combatActor)
             //todo: implements real damage
             OnBeforeDeath?.Invoke(this, combatActor, 0);
-        
+
         EventAggregator.Invoke(new CreatureDeathEvent(this, by));
-        
+
         Dismiss();
     }
 

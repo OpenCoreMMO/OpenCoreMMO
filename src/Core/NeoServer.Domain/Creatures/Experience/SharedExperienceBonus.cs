@@ -20,7 +20,7 @@ public class SharedExperienceBonus : IExperienceBonus
 
     public double GetBonusFactorAmount(IPlayer player, IMonster monster)
     {
-        if (player == null || player.PlayerParty.IsInParty == false) return 0.0;
+        if (player == null || !player.PlayerParty.IsInParty) return 0.0;
         return GetPartyBonusFactor(player.PlayerParty.Party);
     }
 
@@ -75,7 +75,7 @@ public class SharedExperienceBonus : IExperienceBonus
     /// <param name="party">The party to receive experience sharing bonus.</param>
     public bool ArePartyLevelsInProperRange(IParty party)
     {
-        if (Configuration.RequirePartyMemberLevelProximity == false) return true;
+        if (!Configuration.RequirePartyMemberLevelProximity) return true;
 
         var lowestLevel = int.MaxValue;
         var highestLevel = 0;
@@ -97,7 +97,7 @@ public class SharedExperienceBonus : IExperienceBonus
     /// <param name="party">The party to receive experience sharing bonus.</param>
     public bool ArePartyCloseEnoughToEachOther(IParty party)
     {
-        if (Configuration.RequirePartyProximity == false) return true;
+        if (!Configuration.RequirePartyProximity) return true;
 
         var members = party.Members;
 
@@ -124,7 +124,7 @@ public class SharedExperienceBonus : IExperienceBonus
     /// <param name="monster">The monster killed by the party.</param>
     public bool IsEveryMemberActive(IParty party, IMonster monster)
     {
-        if (Configuration.RequirePartyMemberParticipation == false) return true;
+        if (!Configuration.RequirePartyMemberParticipation) return true;
 
         var members = party.Members;
         foreach (var member in members)

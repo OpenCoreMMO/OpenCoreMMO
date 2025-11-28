@@ -18,7 +18,8 @@ function guildMotd.onSay(player, words, param)
 
     -- Check if player has permission to change MOTD (leader or vice-leader)
     local guildLevel = player:getGuildLevel()
-    if guildLevel < 2 then -- 1 = Member, 2 = Vice-Leader, 3 = Leader
+    if guildLevel < 2 then
+        -- 1 = Member, 2 = Vice-Leader, 3 = Leader
         player:sendCancelMessage("You don't have permission to change the guild message of the day.")
         return false
     end
@@ -44,14 +45,14 @@ function guildMotd.onSay(player, words, param)
     -- 1. Update guild MOTD in database
     -- 2. Update guild object
     -- 3. Notify all online guild members
-    
+
     local guildName = guild:getName()
-    
+
     -- Set the new MOTD
     if guild:setMotd(param) then
         player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("Guild message of the day has been changed to: %s", param))
         player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
-        
+
         -- Notify all online guild members about MOTD change
         for _, member in pairs(guild:getMembers()) do
             if member:isOnline() and member ~= player then
@@ -62,7 +63,7 @@ function guildMotd.onSay(player, words, param)
         player:sendCancelMessage("Failed to update guild message of the day.")
         return false
     end
-    
+
     return true
 end
 

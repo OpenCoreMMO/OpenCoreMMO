@@ -38,9 +38,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
         }
 
         if (creature is IPlayer player)
-        {
             player.Containers.OnOpenedContainer += playerOpenedContainerEventHandler.Execute;
-        }
 
         creature.OnSay += creatureSayEventHandler.Execute;
     }
@@ -57,9 +55,7 @@ public class CreatureEventSubscriber : ICreatureEventSubscriber, IGameEventSubsc
         }
 
         if (creature is IPlayer player)
-        {
             player.Containers.OnOpenedContainer -= playerOpenedContainerEventHandler.Execute;
-        }
 
         creature.OnSay -= creatureSayEventHandler.Execute;
     }

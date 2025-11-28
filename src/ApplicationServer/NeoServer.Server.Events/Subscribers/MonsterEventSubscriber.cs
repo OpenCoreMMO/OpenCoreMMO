@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Server.Events.Combat;
-using NeoServer.Server.Events.Creature;
 
 namespace NeoServer.Server.Events.Subscribers;
 

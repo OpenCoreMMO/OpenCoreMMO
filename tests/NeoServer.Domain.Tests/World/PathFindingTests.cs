@@ -7,6 +7,7 @@ using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Algorithms.AStar;
 using NeoServer.Domain.World.Map;
+using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Tests.World;
 
@@ -25,52 +26,52 @@ public class PathFindingTests
         {
             { CreatureFlagAttribute.CanPushCreatures, 1 }
         });
-        
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[100, 105, 7]).AddCreature(startMonster);
+
+        ((DynamicTile)map[100, 105, 7]).AddCreature(startMonster);
 
         // Create a target player at x=105, y=105
         var targetPlayer = PlayerTestDataBuilder.Build();
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[105, 105, 7]).AddCreature(targetPlayer);
+        ((DynamicTile)map[105, 105, 7]).AddCreature(targetPlayer);
 
         // Add non-push creatures monsters around the player (8 blocking monsters)
         var blockingMonster1 = MonsterTestDataBuilder.Build();
         blockingMonster1.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[104, 105, 7]).AddCreature(blockingMonster1); // west
+        ((DynamicTile)map[104, 105, 7]).AddCreature(blockingMonster1); // west
 
         var blockingMonster2 = MonsterTestDataBuilder.Build();
         blockingMonster2.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
 
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[105, 104, 7]).AddCreature(blockingMonster2); // north
+        ((DynamicTile)map[105, 104, 7]).AddCreature(blockingMonster2); // north
 
         var blockingMonster3 = MonsterTestDataBuilder.Build();
         blockingMonster3.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
 
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[105, 106, 7]).AddCreature(blockingMonster3); // south
+        ((DynamicTile)map[105, 106, 7]).AddCreature(blockingMonster3); // south
 
         var blockingMonster4 = MonsterTestDataBuilder.Build();
         blockingMonster4.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
 
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[106, 105, 7]).AddCreature(blockingMonster4); // east
+        ((DynamicTile)map[106, 105, 7]).AddCreature(blockingMonster4); // east
 
         var blockingMonster5 = MonsterTestDataBuilder.Build();
         blockingMonster5.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
 
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[104, 104, 7]).AddCreature(blockingMonster5); // northwest
+        ((DynamicTile)map[104, 104, 7]).AddCreature(blockingMonster5); // northwest
 
         var blockingMonster6 = MonsterTestDataBuilder.Build();
         blockingMonster6.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
 
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[104, 106, 7]).AddCreature(blockingMonster6); // southwest
+        ((DynamicTile)map[104, 106, 7]).AddCreature(blockingMonster6); // southwest
 
         var blockingMonster7 = MonsterTestDataBuilder.Build();
         blockingMonster7.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
 
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[106, 104, 7]).AddCreature(blockingMonster7); // northeast
+        ((DynamicTile)map[106, 104, 7]).AddCreature(blockingMonster7); // northeast
 
         var blockingMonster8 = MonsterTestDataBuilder.Build();
         blockingMonster8.Metadata.Flags.Add(CreatureFlagAttribute.Pushable, 1);
 
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[106, 106, 7]).AddCreature(blockingMonster8); // southeast
+        ((DynamicTile)map[106, 106, 7]).AddCreature(blockingMonster8); // southeast
 
         var fpp = new FindPathParams
         {
@@ -88,7 +89,8 @@ public class PathFindingTests
         var tileEnterRule = MonsterEnterTileRule.Rule;
 
         //act
-        var result = AStar.GetPathMatching(map, startMonster, startMonster.Location, targetPlayer.Location, fpp, tileEnterRule);
+        var result = AStar.GetPathMatching(map, startMonster, startMonster.Location, targetPlayer.Location, fpp,
+            tileEnterRule);
 
         //assert
         result.Found.Should().BeTrue();
@@ -105,60 +107,60 @@ public class PathFindingTests
 
         // Create start monster without push creatures flag at x=100, y=105
         var startMonster = MonsterTestDataBuilder.Build();
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[100, 105, 7]).AddCreature(startMonster);
+        ((DynamicTile)map[100, 105, 7]).AddCreature(startMonster);
 
         // Create target player at x=105, y=105
         var targetPlayer = PlayerTestDataBuilder.Build();
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[105, 105, 7]).AddCreature(targetPlayer);
+        ((DynamicTile)map[105, 105, 7]).AddCreature(targetPlayer);
 
         // Add monsters with push creatures flag around the player (8 blocking monsters)
         var blockingMonster1 = MonsterTestDataBuilder.Build(flags: new Dictionary<CreatureFlagAttribute, ushort>
         {
             { CreatureFlagAttribute.CanPushCreatures, 1 }
         });
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[104, 105, 7]).AddCreature(blockingMonster1); // west
+        ((DynamicTile)map[104, 105, 7]).AddCreature(blockingMonster1); // west
 
         var blockingMonster2 = MonsterTestDataBuilder.Build(flags: new Dictionary<CreatureFlagAttribute, ushort>
         {
             { CreatureFlagAttribute.CanPushCreatures, 1 }
         });
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[105, 104, 7]).AddCreature(blockingMonster2); // north
+        ((DynamicTile)map[105, 104, 7]).AddCreature(blockingMonster2); // north
 
         var blockingMonster3 = MonsterTestDataBuilder.Build(flags: new Dictionary<CreatureFlagAttribute, ushort>
         {
             { CreatureFlagAttribute.CanPushCreatures, 1 }
         });
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[105, 106, 7]).AddCreature(blockingMonster3); // south
+        ((DynamicTile)map[105, 106, 7]).AddCreature(blockingMonster3); // south
 
         var blockingMonster4 = MonsterTestDataBuilder.Build(flags: new Dictionary<CreatureFlagAttribute, ushort>
         {
             { CreatureFlagAttribute.CanPushCreatures, 1 }
         });
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[106, 105, 7]).AddCreature(blockingMonster4); // east
+        ((DynamicTile)map[106, 105, 7]).AddCreature(blockingMonster4); // east
 
         var blockingMonster5 = MonsterTestDataBuilder.Build(flags: new Dictionary<CreatureFlagAttribute, ushort>
         {
             { CreatureFlagAttribute.CanPushCreatures, 1 }
         });
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[104, 104, 7]).AddCreature(blockingMonster5); // northwest
+        ((DynamicTile)map[104, 104, 7]).AddCreature(blockingMonster5); // northwest
 
         var blockingMonster6 = MonsterTestDataBuilder.Build(flags: new Dictionary<CreatureFlagAttribute, ushort>
         {
             { CreatureFlagAttribute.CanPushCreatures, 1 }
         });
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[104, 106, 7]).AddCreature(blockingMonster6); // southwest
+        ((DynamicTile)map[104, 106, 7]).AddCreature(blockingMonster6); // southwest
 
         var blockingMonster7 = MonsterTestDataBuilder.Build(flags: new Dictionary<CreatureFlagAttribute, ushort>
         {
             { CreatureFlagAttribute.CanPushCreatures, 1 }
         });
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[106, 104, 7]).AddCreature(blockingMonster7); // northeast
+        ((DynamicTile)map[106, 104, 7]).AddCreature(blockingMonster7); // northeast
 
         var blockingMonster8 = MonsterTestDataBuilder.Build(flags: new Dictionary<CreatureFlagAttribute, ushort>
         {
             { CreatureFlagAttribute.CanPushCreatures, 1 }
         });
-        ((NeoServer.Domain.World.Models.Tiles.DynamicTile)map[106, 106, 7]).AddCreature(blockingMonster8); // southeast
+        ((DynamicTile)map[106, 106, 7]).AddCreature(blockingMonster8); // southeast
 
         var fpp = new FindPathParams
         {
@@ -175,14 +177,15 @@ public class PathFindingTests
         var tileEnterRule = MonsterEnterTileRule.Rule;
 
         //act
-        var result = AStar.GetPathMatching(map, startMonster, startMonster.Location, targetPlayer.Location, fpp, tileEnterRule);
+        var result = AStar.GetPathMatching(map, startMonster, startMonster.Location, targetPlayer.Location, fpp,
+            tileEnterRule);
 
         //assert
         result.Found.Should().BeFalse();
         result.Directions.Should().BeEmpty();
     }
-    
-    
+
+
     [Fact]
     [Trait("Category", "PathFinding")]
     [ThreadBlocking]
@@ -196,10 +199,10 @@ public class PathFindingTests
         {
             { CreatureFlagAttribute.CanPushCreatures, 1 }
         }, name: "sutMonster");
-        
-        sutMonster.SetNewLocation(new Location(100,100,7));
+
+        sutMonster.SetNewLocation(new Location(100, 100, 7));
         map.PlaceCreature(sutMonster);
-        
+
 
         // Create a target player at x=102, y=100
         var targetPlayer = PlayerTestDataBuilder.Build();
@@ -226,14 +229,14 @@ public class PathFindingTests
             MinTargetDist = 1,
             PushMonsters = true
         };
-        
+
         //act
         var result = new PathFinder(map).Find(sutMonster, targetPlayer.Location, fpp, sutMonster.TileEnterRule);
 
         //assert
         result.Found.Should().BeTrue();
         result.Directions.Should().HaveCount(2);
-        
+
         result.Directions[0].Should().Be(Direction.South);
         result.Directions[1].Should().Be(Direction.East);
 

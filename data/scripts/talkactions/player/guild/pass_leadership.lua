@@ -17,7 +17,8 @@ function passLeadership.onSay(player, words, param)
     end
 
     -- Check if player is the guild leader
-    if player:getGuildLevel() ~= 3 then -- Only leaders can pass leadership
+    if player:getGuildLevel() ~= 3 then
+        -- Only leaders can pass leadership
         player:sendCancelMessage("Only the guild leader can pass leadership.")
         return false
     end
@@ -61,21 +62,21 @@ function passLeadership.onSay(player, words, param)
     -- 3. Update both players' guild levels in game
     -- 4. Update guild ownership information
     -- 5. Notify all guild members
-    
+
     local guildName = guild:getName()
-    
+
     player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have passed leadership of %s to %s. You are now a Vice-Leader.", guildName, targetPlayer:getName()))
     targetPlayer:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have received leadership of the guild '%s' from %s. You are now the Guild Leader.", guildName, player:getName()))
-    
+
     -- TODO: Notify all online guild members about leadership change
     -- for each online guild member:
     --     if member ~= player and member ~= targetPlayer then
     --         member:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("Guild leadership of '%s' has been passed from %s to %s.", guildName, player:getName(), targetPlayer:getName()))
     --     end
-    
+
     player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
     targetPlayer:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
-    
+
     return true
 end
 

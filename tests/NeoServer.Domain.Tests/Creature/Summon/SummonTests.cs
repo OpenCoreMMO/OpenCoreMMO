@@ -27,36 +27,34 @@ public class SummonTests
     {
         // Arrange
         // Create a map with multiple floors to test floor change
-        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 6, 7, true);
-        
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 6, 7);
+
         // Create master player A at position (105, 105, 7) - floor 7
-        var master = PlayerTestDataBuilder.Build(
-            id: 1,
-            name: "PlayerA",
-            hp: 150);
-        
+        var master = PlayerTestDataBuilder.Build(hp: 150);
+
         // Create player B (potential target) at position (106, 105, 6) - floor 6
         var playerB = PlayerTestDataBuilder.Build(
-            id: 2,
-            name: "PlayerB",
+            2,
+            "PlayerB",
             hp: 150);
-        
+
         // Create summon for master at position (104, 105, 7) - floor 7
-        var summon = MonsterTestDataBuilder.BuildSummon(master, 50, 100);
-        
+        var summon = MonsterTestDataBuilder.BuildSummon(master, 50);
+
         // Place creatures on the map
         (map[105, 105, 7] as DynamicTile)?.AddCreature(master);
         (map[104, 105, 7] as DynamicTile)?.AddCreature(summon);
         (map[106, 105, 7] as DynamicTile)?.AddCreature(playerB);
-        
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
-        
+
+        var creatureMovementService =
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+
         // Act
         // Move master to a position that triggers floor change to floor 6
         var success = creatureMovementService.MoveCreature(master, new Location(105, 105, 6));
-        
+
         summon.SetAsEnemy(playerB);
-        
+
         // Assert
         // The summon should not automatically attack player B just because master changed floors
         // The summon only attacks when the master has a target
@@ -100,7 +98,7 @@ public class SummonTests
         monsterType.Flags.Add(CreatureFlagAttribute.Hostile, 1);
         monsterType.Flags.Add(CreatureFlagAttribute.TargetDistance, 4);
 
-        var summon = new NeoServer.Domain.Creatures.Monster.Summon.Summon(monsterType, mapTool, master);
+        var summon = new Domain.Creatures.Monster.Summon.Summon(monsterType, mapTool, master);
 
         // Place creatures on the map
         (map[105, 105, 7] as DynamicTile)?.AddCreature(master);
@@ -125,7 +123,8 @@ public class SummonTests
         var enemy = PlayerTestDataBuilder.Build();
 
         // Create a distance monster summon (TargetDistance = 4)
-        var summon = (NeoServer.Domain.Creatures.Monster.Summon.Summon)MonsterTestDataBuilder.BuildSummon(master, targetDistance: 4);
+        var summon =
+            (Domain.Creatures.Monster.Summon.Summon)MonsterTestDataBuilder.BuildSummon(master, targetDistance: 4);
 
         // Set master to have a target
         master.SetAttackTarget(enemy);
@@ -147,7 +146,8 @@ public class SummonTests
         // Arrange
         var ground = MapTestDataBuilder.CreateGround(new Location(100, 100, 7));
         var masterTile = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.None, ground, null, null);
-        var unpassableTile = new DynamicTile(new Coordinate(101, 100, 7), (TileFlag)TileFlags.Unpassable, ground, null, null);
+        var unpassableTile =
+            new DynamicTile(new Coordinate(101, 100, 7), (TileFlag)TileFlags.Unpassable, ground, null, null);
         var map = MapTestDataBuilder.Build(masterTile, unpassableTile);
 
         var master = PlayerTestDataBuilder.Build();
@@ -173,13 +173,14 @@ public class SummonTests
     public void Summon_disappears_when_master_moves_2_floors_up()
     {
         // Arrange
-        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 5, 7, true);
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 5, 7);
         var master = PlayerTestDataBuilder.Build();
         var summon = MonsterTestDataBuilder.BuildSummon(master);
 
         (map[105, 105, 7] as DynamicTile)?.AddCreature(master);
         (map[104, 105, 7] as DynamicTile)?.AddCreature(summon);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+        var creatureMovementService =
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
 
         // Act
         // Move master 2 floors up (from 7 to 5)
@@ -187,7 +188,8 @@ public class SummonTests
         summon.UpdateState();
 
         // Assert
-        master.Summons.Should().NotContain(summon as NeoServer.Domain.Creatures.Monster.Summon.Summon, "Summon should be dismissed when master moves 2 floors up");
+        master.Summons.Should().NotContain(summon as Domain.Creatures.Monster.Summon.Summon,
+            "Summon should be dismissed when master moves 2 floors up");
     }
 
     [Fact]
@@ -195,13 +197,14 @@ public class SummonTests
     public void Summon_disappears_when_master_moves_2_floors_down()
     {
         // Arrange
-        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 9, true);
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 9);
         var master = PlayerTestDataBuilder.Build();
         var summon = MonsterTestDataBuilder.BuildSummon(master);
 
         (map[105, 105, 7] as DynamicTile)?.AddCreature(master);
         (map[104, 105, 7] as DynamicTile)?.AddCreature(summon);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+        var creatureMovementService =
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
 
         // Act
         // Move master 2 floors down (from 7 to 9)
@@ -209,7 +212,8 @@ public class SummonTests
         summon.UpdateState();
 
         // Assert
-        master.Summons.Should().NotContain(summon as NeoServer.Domain.Creatures.Monster.Summon.Summon, "Summon should be dismissed when master moves 2 floors down");
+        master.Summons.Should().NotContain(summon as Domain.Creatures.Monster.Summon.Summon,
+            "Summon should be dismissed when master moves 2 floors down");
     }
 
     [Fact]
@@ -228,7 +232,8 @@ public class SummonTests
         summon.UpdateState();
 
         // Assert
-        master.Summons.Should().NotContain(summon as NeoServer.Domain.Creatures.Monster.Summon.Summon, "Summon should be dismissed when master is more than 40 sqms away");
+        master.Summons.Should().NotContain(summon as Domain.Creatures.Monster.Summon.Summon,
+            "Summon should be dismissed when master is more than 40 sqms away");
     }
 
     [Fact]
@@ -247,6 +252,7 @@ public class SummonTests
         summon.UpdateState();
 
         // Assert
-        master.Summons.Should().Contain(summon as NeoServer.Domain.Creatures.Monster.Summon.Summon, "Summon should not be dismissed when master is within 40 sqms and same floor");
+        master.Summons.Should().Contain(summon as Domain.Creatures.Monster.Summon.Summon,
+            "Summon should not be dismissed when master is within 40 sqms and same floor");
     }
 }

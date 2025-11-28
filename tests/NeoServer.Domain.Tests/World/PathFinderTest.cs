@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Location;
+﻿using System.Reflection;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Tests.Helpers;
@@ -115,27 +116,31 @@ public class PathFinderTest
         // Make these tiles unpassable by setting them as blocking
         if (blockTile1 != null)
         {
-            var flagsField = typeof(BaseTile).GetField("Flags", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var flagsField = typeof(BaseTile).GetField("Flags", BindingFlags.NonPublic | BindingFlags.Instance);
             flagsField.SetValue(blockTile1, (uint)TileFlags.Unpassable);
         }
+
         if (blockTile2 != null)
         {
-            var flagsField = typeof(BaseTile).GetField("Flags", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var flagsField = typeof(BaseTile).GetField("Flags", BindingFlags.NonPublic | BindingFlags.Instance);
             flagsField.SetValue(blockTile2, (uint)TileFlags.Unpassable);
         }
+
         if (blockTile3 != null)
         {
-            var flagsField = typeof(BaseTile).GetField("Flags", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var flagsField = typeof(BaseTile).GetField("Flags", BindingFlags.NonPublic | BindingFlags.Instance);
             flagsField.SetValue(blockTile3, (uint)TileFlags.Unpassable);
         }
+
         if (blockTile4 != null)
         {
-            var flagsField = typeof(BaseTile).GetField("Flags", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var flagsField = typeof(BaseTile).GetField("Flags", BindingFlags.NonPublic | BindingFlags.Instance);
             flagsField.SetValue(blockTile4, (uint)TileFlags.Unpassable);
         }
+
         if (blockTile5 != null)
         {
-            var flagsField = typeof(BaseTile).GetField("Flags", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var flagsField = typeof(BaseTile).GetField("Flags", BindingFlags.NonPublic | BindingFlags.Instance);
             flagsField.SetValue(blockTile5, (uint)TileFlags.Unpassable);
         }
 

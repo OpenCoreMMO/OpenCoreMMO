@@ -1,10 +1,6 @@
-using NeoServer.Domain.Combat;
-using NeoServer.Domain.Common;
+using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Common.Combat.Enums;
 using NeoServer.Domain.Common.Combat.Structs;
-using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Combat.Attacks;
-using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -22,13 +18,13 @@ public class SkullTests
     {
         // Arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
-        var attackService = AttackServiceTestBuilder.Build(map, PvpType.OpenPvP);
+        var attackService = AttackServiceTestBuilder.Build(map);
 
-        var aggressor = PlayerTestDataBuilder.Build(id: 1, name: "Aggressor");
+        var aggressor = PlayerTestDataBuilder.Build(1, "Aggressor");
         aggressor.ChangeSecureMode(PvpSecureMode.PvPEnabled);
         (map[100, 100, 7] as DynamicTile)?.AddCreature(aggressor);
 
-        var summonMaster = PlayerTestDataBuilder.Build(id: 2, name: "SummonMaster");
+        var summonMaster = PlayerTestDataBuilder.Build(2, "SummonMaster");
 
         var summon = MonsterTestDataBuilder.BuildSummon(summonMaster);
         (map[100, 101, 7] as DynamicTile)?.AddCreature(summon);

@@ -6,7 +6,10 @@ using NeoServer.Domain.Creatures.Monster.Services;
 
 namespace NeoServer.Server.Events.Creature;
 
-public class MonsterWasBornEventHandler(IMap map, ICreatureGameInstance creatureGameInstance, MonsterStateService monsterStateService): IApplicationEventHandler<MonsterWasBornEvent>
+public class MonsterWasBornEventHandler(
+    IMap map,
+    ICreatureGameInstance creatureGameInstance,
+    MonsterStateService monsterStateService) : IApplicationEventHandler<MonsterWasBornEvent>
 {
     public void Handle(MonsterWasBornEvent @event)
     {

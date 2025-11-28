@@ -203,13 +203,13 @@ public class PlayerTests
         //arrange
         var sut = PlayerTestDataBuilder.Build();
         sut.TurnTo(Direction.North);
-        
-        var fromTile = MapTestDataBuilder.CreateTile(new Location(100,100,7));
-        var toTile = MapTestDataBuilder.CreateTile(new Location(100,100,8));
-        
+
+        var fromTile = MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
+        var toTile = MapTestDataBuilder.CreateTile(new Location(100, 100, 8));
+
         //act
         sut.OnMoved(fromTile, toTile, []);
-        
+
         //assert
         sut.Direction.Should().Be(Direction.North);
     }

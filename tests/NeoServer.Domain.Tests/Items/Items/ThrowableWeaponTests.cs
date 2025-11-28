@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Combat.Attacks;
-using NeoServer.Domain.Common;
+﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
@@ -87,8 +86,8 @@ public class ThrowableWeaponTests
 
         tile.AddCreature(player);
         enemyTile.AddCreature(enemy);
-        
-        var attackService = AttackServiceTestBuilder.Build(map, combatConfig: new CombatConfiguration()
+
+        var attackService = AttackServiceTestBuilder.Build(map, combatConfig: new CombatConfiguration
         {
             InfiniteAmmo = false,
             InfiniteThrowingWeapon = false
@@ -96,14 +95,14 @@ public class ThrowableWeaponTests
 
         //act
 
-        attackService.Execute(new AttackInput(player, enemy, new CombatParameter()
+        attackService.Execute(new AttackInput(player, enemy, new CombatParameter
         {
             UsingWeapon = true,
             DamageType = DamageType.Melee,
             MaxDamage = 100,
             MinDamage = 100,
             HitChance = 100,
-            Range = 3,
+            Range = 3
         }));
 
         //assert
@@ -115,10 +114,10 @@ public class ThrowableWeaponTests
     public void Player_cannot_throw_spear_when_farther_than_3_tiles()
     {
         //arrange
-        
+
         var player = PlayerTestDataBuilder.Build();
         var enemy = MonsterTestDataBuilder.Build();
-        
+
         var tile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
         var enemyTile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(104, 100, 7));
         var map = MapTestDataBuilder.Build(tile, enemyTile);
@@ -131,13 +130,13 @@ public class ThrowableWeaponTests
                 (ItemTypeAttribute.HitChance, 100),
                 (ItemTypeAttribute.Range, 3)
             ]);
-        
+
         player.Inventory.AddItem(spear, (byte)Slot.Left);
-        
+
         tile.AddCreature(player);
         enemyTile.AddCreature(enemy);
-        
-        var attackService = AttackServiceTestBuilder.Build(map, combatConfig: new CombatConfiguration()
+
+        var attackService = AttackServiceTestBuilder.Build(map, combatConfig: new CombatConfiguration
         {
             InfiniteAmmo = false,
             InfiniteThrowingWeapon = false
@@ -145,16 +144,16 @@ public class ThrowableWeaponTests
 
         //act
 
-        var result = attackService.Execute(new AttackInput(player, enemy, new CombatParameter()
+        var result = attackService.Execute(new AttackInput(player, enemy, new CombatParameter
         {
             UsingWeapon = true,
             DamageType = DamageType.Melee,
             MaxDamage = 100,
             MinDamage = 100,
             HitChance = 100,
-            Range = 3,
+            Range = 3
         }));
-        
+
         //assert
         result.Result.Failed.Should().BeTrue();
     }

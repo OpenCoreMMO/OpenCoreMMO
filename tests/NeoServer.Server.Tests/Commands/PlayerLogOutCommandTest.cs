@@ -6,8 +6,8 @@ using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Locker;
-using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Commands.Player;
+using NeoServer.Server.Common.Contracts;
 using Xunit;
 
 namespace NeoServer.Server.Tests.Commands;

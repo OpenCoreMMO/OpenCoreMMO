@@ -17,7 +17,8 @@ public static class ContainerManager
         await Save<TPlayerItemEntity>((int)player.Id, container, neoContext);
     }
 
-    public static async Task Save<TPlayerItemEntity>(int playerId, IContainer container, NeoContext neoContext, bool includeContainer = false)
+    public static async Task Save<TPlayerItemEntity>(int playerId, IContainer container, NeoContext neoContext,
+        bool includeContainer = false)
         where TPlayerItemEntity : PlayerItemBaseEntity, new()
     {
         if (playerId == 0) return;
@@ -27,7 +28,7 @@ public static class ContainerManager
 
         var containerId = 0;
         var containers = new Queue<(IContainer Container, int ParentId)>();
-        
+
         // Save the container itself if includeContainer is true
         if (includeContainer)
         {

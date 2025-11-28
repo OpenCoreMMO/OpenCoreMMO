@@ -53,9 +53,9 @@ public abstract class BaseTile : ITile
         if (force)
         {
             Location = location;
-            return;       
+            return;
         }
-            
+
         if (Location != default) throw new InvalidOperationException();
         Location = location;
     }
@@ -74,6 +74,8 @@ public abstract class BaseTile : ITile
     public void Use(IPlayer usedBy)
     {
     }
+
+    public abstract IItem GetItemByIndex(int index);
 
     protected void SetFlag(TileFlags flag)
     {
@@ -104,10 +106,7 @@ public abstract class BaseTile : ITile
             if (!item.CanBeMoved) SetFlag(TileFlags.ImmovableNoFieldBlockPath);
         }
 
-        if (item.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) == "mailbox")
-        {
-            SetFlag(TileFlags.MailBox);
-        }
+        if (item.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) == "mailbox") SetFlag(TileFlags.MailBox);
 
         if (item.Metadata.HasFlag(ItemFlag.BlockProjectTile)) SetFlag(TileFlags.BlockProjecTile);
 
@@ -157,6 +156,4 @@ public abstract class BaseTile : ITile
 
         foreach (var item in items) SetTileFlags(item);
     }
-
-    public abstract IItem GetItemByIndex(int index);
 }

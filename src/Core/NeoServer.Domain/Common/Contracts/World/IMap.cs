@@ -12,7 +12,6 @@ public delegate void PlaceCreatureOnMap(IWalkableCreature creature, ICylinder cy
 
 public delegate void RemoveThingFromTile(IThing thing, ICylinder cylinder);
 
-
 public delegate void AddThingToTile(IThing thing, ICylinder cylinder);
 
 public delegate void UpdateThingOnTile(IThing thing, ICylinder cylinder);
@@ -57,8 +56,13 @@ public interface IMap
         bool onlyPlayers = false);
 
     HashSet<ICreature> GetSpectators(Location.Structs.Location fromLocation, bool onlyPlayers = false);
-    HashSet<ICreature> GetSpectators(Location.Structs.Location location, bool multifloor, bool onlyPlayers, MinMax rangeX, MinMax rangeY);
-    HashSet<ICreature> GetSpectators(Location.Structs.Location location, bool multifloor, bool onlyPlayers, int minRangeX, int maxRangeX, int minRangeY, int maxRangeY);
+
+    HashSet<ICreature> GetSpectators(Location.Structs.Location location, bool multifloor, bool onlyPlayers,
+        MinMax rangeX, MinMax rangeY);
+
+    HashSet<ICreature> GetSpectators(Location.Structs.Location location, bool multifloor, bool onlyPlayers,
+        int minRangeX, int maxRangeX, int minRangeY, int maxRangeY);
+
     IEnumerable<ICreature> GetCreaturesAtPositionZone(Location.Structs.Location location, bool onlyPlayers = false);
     bool CanGoToDirection(ICreature creature, Direction direction, ITileEnterRule rule);
     ITile GetTile(Location.Structs.Location location);

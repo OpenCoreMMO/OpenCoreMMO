@@ -42,7 +42,7 @@ public class CombatTests
         //assert
         victim.HealthPoints.Should().Be(600);
     }
-    
+
     [Fact]
     public void Player_consumes_mana_when_attacking_with_magic_weapon()
     {
@@ -57,10 +57,11 @@ public class CombatTests
         var attackService = AttackServiceTestBuilder.Build(map);
         PlayerCombatService playerCombatService = new(attackService);
 
-        var magicWeapon = ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes: [(ItemTypeAttribute.ManaUse, 50)]);
+        var magicWeapon =
+            ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes: [(ItemTypeAttribute.ManaUse, 50)]);
         var player = PlayerTestDataBuilder.Build(mana: 100);
         player.Inventory.AddItem(magicWeapon, Slot.Left);
-        
+
         var enemy = MonsterTestDataBuilder.Build();
 
         tile1.AddCreature(player);
@@ -89,11 +90,12 @@ public class CombatTests
         var attackService = AttackServiceTestBuilder.Build(map);
         PlayerCombatService playerCombatService = new(attackService);
 
-        var magicWeapon = ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes: [(ItemTypeAttribute.ManaUse, 50)]);
+        var magicWeapon =
+            ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes: [(ItemTypeAttribute.ManaUse, 50)]);
         var skills = PlayerTestDataBuilder.GenerateSkills(10);
         var player = PlayerTestDataBuilder.Build(mana: 100, skills: skills);
         player.Inventory.AddItem(magicWeapon, Slot.Left);
-        
+
         var enemy = MonsterTestDataBuilder.Build();
 
         tile1.AddCreature(player);

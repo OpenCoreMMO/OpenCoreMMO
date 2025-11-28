@@ -1,11 +1,10 @@
+using NeoServer.Domain.Combat;
+using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Common.Parsers;
-using NeoServer.Domain.Combat;
-using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Tests.Helpers;
@@ -33,7 +32,8 @@ public class AttackValidationTests
         tile.AddCreature(enemy);
 
         //act
-        var result = attackService.Execute(new AttackInput(null, enemy, PlayerCombatParameterBuilder.Build(null, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(null, enemy, PlayerCombatParameterBuilder.Build(null, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.NotPossible);
@@ -60,7 +60,8 @@ public class AttackValidationTests
         tile2.AddCreature(enemy);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.YouMayNotAttackThisPlayer);
@@ -77,7 +78,7 @@ public class AttackValidationTests
         var tile2 = new DynamicTile(new Coordinate(100, 101, 7), (TileFlag)TileFlags.None, ground, null, null);
 
         var map = MapTestDataBuilder.Build(tile1, tile2);
-        var attackService = AttackServiceTestBuilder.Build(map, PvpType.OpenPvP);
+        var attackService = AttackServiceTestBuilder.Build(map);
 
         var player = PlayerTestDataBuilder.Build(level: 1); // Low level
         var enemy = PlayerTestDataBuilder.Build(level: 20); // Higher level
@@ -86,7 +87,8 @@ public class AttackValidationTests
         tile2.AddCreature(enemy);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.YouMayNotAttackThisPlayer);
@@ -103,7 +105,7 @@ public class AttackValidationTests
         var tile2 = new DynamicTile(new Coordinate(100, 101, 7), (TileFlag)TileFlags.NoPvpZone, ground, null, null);
 
         var map = MapTestDataBuilder.Build(tile1, tile2);
-        var attackService = AttackServiceTestBuilder.Build(map, PvpType.OpenPvP);
+        var attackService = AttackServiceTestBuilder.Build(map);
 
         var player = PlayerTestDataBuilder.Build(experience: 1000, vocationType: 1);
         var enemy = PlayerTestDataBuilder.Build(experience: 1000, vocationType: 1);
@@ -112,7 +114,8 @@ public class AttackValidationTests
         tile2.AddCreature(enemy);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.NotPermittedInNoPvpZone);
@@ -167,7 +170,8 @@ public class AttackValidationTests
         tile2.AddCreature(enemy);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.YouMayNotAttackThisCreature);
@@ -193,7 +197,8 @@ public class AttackValidationTests
         tile2.AddCreature(enemy);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.NotPermittedInNoPvpZone);
@@ -245,7 +250,8 @@ public class AttackValidationTests
         tile2.AddCreature(enemy);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.YouMayNotAttackThisPlayer);
@@ -266,7 +272,8 @@ public class AttackValidationTests
         tile.AddCreature(player);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, null, PlayerCombatParameterBuilder.Build(player, null)));
+        var result =
+            attackService.Execute(new AttackInput(player, null, PlayerCombatParameterBuilder.Build(player, null)));
 
         //assert
         result.Result.Succeeded.Should().BeTrue();
@@ -285,14 +292,15 @@ public class AttackValidationTests
         var map = MapTestDataBuilder.Build(tile1, tile2);
         var attackService = AttackServiceTestBuilder.Build(map);
 
-        var player = PlayerTestDataBuilder.Build(level:30);
-        var enemy = PlayerTestDataBuilder.Build(level:30);
+        var player = PlayerTestDataBuilder.Build(level: 30);
+        var enemy = PlayerTestDataBuilder.Build(level: 30);
 
         tile1.AddCreature(player);
         tile2.AddCreature(enemy);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
@@ -311,14 +319,15 @@ public class AttackValidationTests
         var map = MapTestDataBuilder.Build(tile1, tile2);
         var attackService = AttackServiceTestBuilder.Build(map);
 
-        var player = PlayerTestDataBuilder.Build(level:20);
-        var enemy = PlayerTestDataBuilder.Build(level:20);
+        var player = PlayerTestDataBuilder.Build(level: 20);
+        var enemy = PlayerTestDataBuilder.Build(level: 20);
 
         tile1.AddCreature(player);
         tile2.AddCreature(enemy);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
@@ -344,7 +353,8 @@ public class AttackValidationTests
         tile2.AddCreature(enemy);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.CreatureIsDead);
@@ -358,7 +368,8 @@ public class AttackValidationTests
         var ground = MapTestDataBuilder.CreateGround(location);
 
         var tile1 = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.None, ground, null, null);
-        var tile2 = new DynamicTile(new Coordinate(100, 101, 7), (TileFlag)TileFlags.ProtectionZone, ground, null, null);
+        var tile2 = new DynamicTile(new Coordinate(100, 101, 7), (TileFlag)TileFlags.ProtectionZone, ground, null,
+            null);
 
         var map = MapTestDataBuilder.Build(tile1, tile2);
         var attackService = AttackServiceTestBuilder.Build(map);
@@ -370,7 +381,8 @@ public class AttackValidationTests
         tile2.AddCreature(enemy);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.CannotAttackPersonInProtectionZone);
@@ -396,7 +408,8 @@ public class AttackValidationTests
         tile2.AddCreature(enemy);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Succeeded.Should().BeTrue();
@@ -413,7 +426,8 @@ public class AttackValidationTests
         var tile2 = new DynamicTile(new Coordinate(100, 101, 7), (TileFlag)TileFlags.None, ground, null, null);
 
         var map = MapTestDataBuilder.Build(tile1, tile2);
-        var attackService = AttackServiceTestBuilder.Build(map, combatConfig: new CombatConfiguration(false, false, true));
+        var attackService =
+            AttackServiceTestBuilder.Build(map, combatConfig: new CombatConfiguration(false, false, true));
 
         var player = PlayerTestDataBuilder.Build();
         var summon = MonsterTestDataBuilder.BuildSummon(player);
@@ -422,7 +436,8 @@ public class AttackValidationTests
         tile2.AddCreature(summon);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, summon, PlayerCombatParameterBuilder.Build(player, summon)));
+        var result =
+            attackService.Execute(new AttackInput(player, summon, PlayerCombatParameterBuilder.Build(player, summon)));
 
         //assert
         result.Result.Succeeded.Should().BeTrue();
@@ -448,7 +463,8 @@ public class AttackValidationTests
         tile2.AddCreature(summon);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, summon, PlayerCombatParameterBuilder.Build(player, summon)));
+        var result =
+            attackService.Execute(new AttackInput(player, summon, PlayerCombatParameterBuilder.Build(player, summon)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.YouMayNotAttackThisCreature);
@@ -467,21 +483,21 @@ public class AttackValidationTests
         var map = MapTestDataBuilder.Build(tile1, tile2);
         var attackService = AttackServiceTestBuilder.Build(map);
 
-        var magicWeapon = ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes: [(ItemTypeAttribute.ManaUse, 50)]);
+        var magicWeapon =
+            ItemTestDataBuilder.CreateMagicWeapon(1, itemTypeAttributes: [(ItemTypeAttribute.ManaUse, 50)]);
         var player = PlayerTestDataBuilder.Build(mana: 30);
         player.Inventory.AddItem(magicWeapon, Slot.Left);
-        
+
         var enemy = MonsterTestDataBuilder.Build();
 
         tile1.AddCreature(player);
         tile2.AddCreature(enemy);
 
         //act
-        var result = attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
+        var result =
+            attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
 
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.NotEnoughMana);
     }
-
-   
 }

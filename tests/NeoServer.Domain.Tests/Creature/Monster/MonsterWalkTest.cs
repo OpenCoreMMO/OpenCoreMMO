@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Common.Contracts.World.Tiles;
+﻿using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
@@ -57,7 +56,8 @@ public class MonsterWalkTest
         var gameServer = GameServerTestBuilder.Build(map);
         var cancellationToken = ServerTestHelper.StartThreads(gameServer);
 
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+        var creatureMovementService =
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
 
         sut.OnStartedWalking += new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService).Execute;
 
@@ -109,7 +109,8 @@ public class MonsterWalkTest
 
         var gameServer = GameServerTestBuilder.Build(map);
         var cancellationToken = ServerTestHelper.StartThreads(gameServer);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+        var creatureMovementService =
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
 
         sut.OnStartedWalking += new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService).Execute;
 

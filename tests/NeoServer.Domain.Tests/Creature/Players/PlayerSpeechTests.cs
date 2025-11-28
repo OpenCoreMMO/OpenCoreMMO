@@ -15,17 +15,17 @@ public class PlayerSpeechTests
         //arrange
         var map = MapTestDataBuilder.Build(100, 120, 100, 110, 7, 7);
 
-        var speaker = PlayerTestDataBuilder.Build(name:"Speaker");
-        speaker.SetNewLocation(new Location(105,105,7));
-        
+        var speaker = PlayerTestDataBuilder.Build(name: "Speaker");
+        speaker.SetNewLocation(new Location(105, 105, 7));
+
         var listener1 = PlayerTestDataBuilder.Build(name: "Listener1");
-        listener1.SetNewLocation(new Location(115,105,7));
-        
+        listener1.SetNewLocation(new Location(115, 105, 7));
+
         var listener2 = PlayerTestDataBuilder.Build(name: "Listener2");
-        listener2.SetNewLocation(new Location(120,105,7));
-        
+        listener2.SetNewLocation(new Location(120, 105, 7));
+
         map.PlaceCreature(speaker);
-        map.PlaceCreature(listener1); 
+        map.PlaceCreature(listener1);
         map.PlaceCreature(listener2);
 
         var creatureSayEventHandler = new CreatureSayEventHandler(map);
@@ -37,7 +37,7 @@ public class PlayerSpeechTests
         listener1.OnHear += (_, _, _, _) => listener1Heard = true;
         listener2.OnHear += (_, _, _, _) => listener2Heard = true;
 
-        var yellConfiguration = new YellConfiguration()
+        var yellConfiguration = new YellConfiguration
         {
             YellAllowedPremium = true,
             YellCooldownSeconds = 30_000,
@@ -63,9 +63,9 @@ public class PlayerSpeechTests
         var listener2 = PlayerTestDataBuilder.Build();
 
         // Place speaker at (105,105)
-        speaker.SetNewLocation(new Location(105,105,7));
-        listener1.SetNewLocation(new Location(106,105,7));
-        listener2.SetNewLocation(new Location(107,105,7));
+        speaker.SetNewLocation(new Location(105, 105, 7));
+        listener1.SetNewLocation(new Location(106, 105, 7));
+        listener2.SetNewLocation(new Location(107, 105, 7));
 
         map.PlaceCreature(speaker);
         map.PlaceCreature(listener1);
@@ -99,9 +99,9 @@ public class PlayerSpeechTests
         var listener2 = PlayerTestDataBuilder.Build();
 
         // Place speaker at (105,105)
-        speaker.SetNewLocation(new Location(105,105,7));
-        listener1.SetNewLocation(new Location(106,105,7));
-        listener2.SetNewLocation(new Location(120,105,7));
+        speaker.SetNewLocation(new Location(105, 105, 7));
+        listener1.SetNewLocation(new Location(106, 105, 7));
+        listener2.SetNewLocation(new Location(120, 105, 7));
 
         map.PlaceCreature(speaker);
         map.PlaceCreature(listener1);
@@ -134,8 +134,8 @@ public class PlayerSpeechTests
         var listener = PlayerTestDataBuilder.Build();
 
         // Place speaker at (105,105,7)
-        speaker.SetNewLocation(new Location(105,105,7));
-        listener.SetNewLocation(new Location(106,105,8));
+        speaker.SetNewLocation(new Location(105, 105, 7));
+        listener.SetNewLocation(new Location(106, 105, 8));
 
         map.PlaceCreature(speaker);
         map.PlaceCreature(listener);
@@ -146,13 +146,13 @@ public class PlayerSpeechTests
         var listenerHeard = false;
         listener.OnHear += (_, _, _, _) => listenerHeard = true;
 
-        var yellConfiguration = new YellConfiguration()
+        var yellConfiguration = new YellConfiguration
         {
             YellAllowedPremium = true,
             YellCooldownSeconds = 30_000,
             YellMinimumLevel = 2
         };
-        
+
         //act
         speaker.Yell("Test yell message", yellConfiguration);
 
@@ -170,8 +170,8 @@ public class PlayerSpeechTests
         var listener = PlayerTestDataBuilder.Build();
 
         // Place speaker at (105,105,7)
-        speaker.SetNewLocation(new Location(105,105,7));
-        listener.SetNewLocation(new Location(106,105,8));
+        speaker.SetNewLocation(new Location(105, 105, 7));
+        listener.SetNewLocation(new Location(106, 105, 8));
 
         map.PlaceCreature(speaker);
         map.PlaceCreature(listener);

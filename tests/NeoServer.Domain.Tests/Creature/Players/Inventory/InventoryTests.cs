@@ -311,7 +311,7 @@ public class InventoryTests
 
         var sut = InventoryTestDataBuilder.Build(player,
             new Dictionary<Slot, (IItem Item, ushort Id)>());
-        var initialItem = ItemTestDataBuilder.CreateAmmo(101, 1) as Ammo;
+        var initialItem = ItemTestDataBuilder.CreateAmmo(101) as Ammo;
         var item = ItemTestDataBuilder.CreateAmmo(100, 100) as Ammo;
 
         //act
@@ -640,7 +640,7 @@ public class InventoryTests
         //arrange
         var inventory = InventoryTestDataBuilder.Build();
 
-        var item = (ICumulative)ItemTestDataBuilder.CreateAmmo(1, 1);
+        var item = (ICumulative)ItemTestDataBuilder.CreateAmmo(1);
 
         inventory.AddItem(item, Slot.Ammo);
 

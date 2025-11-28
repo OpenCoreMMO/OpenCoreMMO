@@ -40,12 +40,8 @@ public class PlayerStatusRoutine(GameConfiguration gameConfiguration, IGameServe
         var spectators = gameServer.Map.GetSpectators(player.Location);
 
         foreach (var spectator in spectators)
-        {
             if (spectator is IMonster monster && monster.IsHostileTo(player))
-            {
                 return true;
-            }
-        }
 
         return false;
     }

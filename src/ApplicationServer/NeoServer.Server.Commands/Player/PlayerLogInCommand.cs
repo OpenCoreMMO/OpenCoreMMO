@@ -17,8 +17,8 @@ using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Common.Enums;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Services;
-using OperatingSystem = NeoServer.Server.Common.Enums.OperatingSystem;
 using Serilog;
+using OperatingSystem = NeoServer.Server.Common.Enums.OperatingSystem;
 
 namespace NeoServer.Server.Commands.Player;
 
@@ -131,10 +131,10 @@ public class PlayerLogInCommand(
         }
 
         game.CreatureManager.AddPlayer(player, connection);
-        
+
         //player must be placed on map before login to avoid issues with map description packet
         map.PlaceCreature(player);
-       
+
         player.Login();
         player.Vip.LoadVipList(playerRecord.Account.VipList.Select(x => ((uint)x.PlayerId, x.Player?.Name)));
 

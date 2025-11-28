@@ -1,34 +1,22 @@
 using System;
-using System.Linq;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
-using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Location;
+using NeoServer.Networking.Packets.Outgoing;
+using NeoServer.Networking.Packets.Outgoing.Custom;
+using NeoServer.Networking.Packets.Outgoing.Login;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
-using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Common.Enums;
-using NeoServer.Loaders.Interfaces;
-using NeoServer.Loaders.Guilds;
-using NeoServer.Server.Services;
-using NeoServer.Domain.Creatures.Services;
-using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Server.Configurations;
-using NeoServer.Server.Commands.WaitingInLine;
-using Serilog;
 using Xunit;
-using Xunit.Abstractions;
-using Moq;
-using NeoServer.Networking.Packets.Outgoing;
-using NeoServer.Networking.Packets.Outgoing.Login;
-using NeoServer.Networking.Packets.Outgoing.Custom;
-using FluentAssertions;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using OperatingSystem = NeoServer.Server.Common.Enums.OperatingSystem;
 
 namespace NeoServer.Server.Tests.Login;
@@ -38,35 +26,32 @@ public class SkipOnGitHubActionsFactAttribute : FactAttribute
 {
     public SkipOnGitHubActionsFactAttribute()
     {
-        if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true")
-        {
-            Skip = "Test skipped on GitHub Actions";
-        }
+        if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true") Skip = "Test skipped on GitHub Actions";
     }
 }
 
 public class PlayerLoginTests
 {
-    private readonly IServiceProvider _container;
     private readonly PlayerLogInCommand _command;
-    private readonly IGameServer _game;
+    private readonly IServiceProvider _container;
     private readonly NeoContext _context;
+    private readonly IGameServer _game;
 
     public PlayerLoginTests()
     {
-         _container = TestSetup.Setup().Result;
-         _command = _container.GetService<PlayerLogInCommand>();
-         _game = _container.GetService<IGameServer>();
-         _context = _container.GetService<NeoContext>();
+        _container = TestSetup.Setup().Result;
+        _command = _container.GetService<PlayerLogInCommand>();
+        _game = _container.GetService<IGameServer>();
+        _context = _container.GetService<NeoContext>();
     }
-    
+
     [SkipOnGitHubActionsFact]
     [Trait("Category", "HappyPath")]
     public async Task Player_gets_loaded_and_placed_on_map_when_login_succeeds()
     {
         // Arrange
         _game.Open();
-        
+
         // Create challenge values
         var timestamp = (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var randomNumber = (byte)123;
@@ -123,7 +108,7 @@ public class PlayerLoginTests
         var connection = CreateMockConnection(timestamp, randomNumber);
 
         // Create PlayerLogInRequest with valid data and OTCv8 enabled
-        var request = CreatePlayerLogInRequest(timestamp, randomNumber, otcV8Version: 1);
+        var request = CreatePlayerLogInRequest(timestamp, randomNumber, 1);
 
         // Act
         var (success, message) = await _command.Execute(request, connection.Object);
@@ -367,10 +352,7 @@ public class PlayerLoginTests
     public async Task Player_login_fails_when_server_is_closed()
     {
         // Arrange
-        if (_game is NeoServer.Server.GameServer gameServer)
-        {
-            gameServer.Close();
-        }
+        if (_game is GameServer gameServer) gameServer.Close();
 
         // Create challenge values
         var timestamp = (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -399,9 +381,9 @@ public class PlayerLoginTests
     public async Task Player_login_fails_when_server_is_opening()
     {
         // Arrange
-        if (_game is NeoServer.Server.GameServer gameServer)
+        if (_game is GameServer gameServer)
         {
-            var stateProperty = typeof(NeoServer.Server.GameServer).GetProperty("State");
+            var stateProperty = typeof(GameServer).GetProperty("State");
             stateProperty.SetValue(gameServer, GameState.Opening);
         }
 
@@ -443,9 +425,9 @@ public class PlayerLoginTests
     public async Task Player_login_fails_when_server_is_under_maintenance()
     {
         // Arrange
-        if (_game is NeoServer.Server.GameServer gameServer)
+        if (_game is GameServer gameServer)
         {
-            var stateProperty = typeof(NeoServer.Server.GameServer).GetProperty("State");
+            var stateProperty = typeof(GameServer).GetProperty("State");
             stateProperty.SetValue(gameServer, GameState.Maintaining);
         }
 
@@ -675,14 +657,15 @@ public class PlayerLoginTests
         player.Vip.Should().NotBeNull();
 
         // Verify player is not duplicated on adjacent tiles
-        var directions = new[] { Direction.North, Direction.South, Direction.East, Direction.West, Direction.NorthEast, Direction.NorthWest, Direction.SouthEast, Direction.SouthWest };
+        var directions = new[]
+        {
+            Direction.North, Direction.South, Direction.East, Direction.West, Direction.NorthEast, Direction.NorthWest,
+            Direction.SouthEast, Direction.SouthWest
+        };
         foreach (var direction in directions)
         {
             var adjacentTile = _game.Map.GetNextTile(player.Location, direction);
-            if (adjacentTile != null)
-            {
-                adjacentTile.TopCreatureOnStack.Should().NotBe(player);
-            }
+            if (adjacentTile != null) adjacentTile.TopCreatureOnStack.Should().NotBe(player);
         }
     }
 
@@ -754,11 +737,12 @@ public class PlayerLoginTests
         connection.SetupGet(c => c.TimeStamp).Returns(timestamp);
         connection.SetupGet(c => c.RandomNumber).Returns(randomNumber);
         connection.Setup(c => c.SetXtea(It.IsAny<uint[]>()));
-        connection.SetupGet(x=>x.OutgoingPackets).Returns(new Queue<IOutgoingPacket>());
+        connection.SetupGet(x => x.OutgoingPackets).Returns(new Queue<IOutgoingPacket>());
         return connection;
     }
-    
-    private static PlayerLogInRequest CreatePlayerLogInRequest(uint timestamp, byte randomNumber, byte otcV8Version = 0, OperatingSystem operatingSystem = OperatingSystem.Windows)
+
+    private static PlayerLogInRequest CreatePlayerLogInRequest(uint timestamp, byte randomNumber, byte otcV8Version = 0,
+        OperatingSystem operatingSystem = OperatingSystem.Windows)
     {
         return new PlayerLogInRequest
         {

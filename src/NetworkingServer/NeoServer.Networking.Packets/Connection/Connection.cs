@@ -20,9 +20,9 @@ public class Connection : IConnection
     private const byte HEADER_LENGTH = 2;
 
     private readonly ILogger _logger;
+    private readonly SemaphoreSlim _readSemaphore = new(1, 1);
     private readonly Socket _socket;
     private readonly NetworkStream _stream;
-    private readonly SemaphoreSlim _readSemaphore = new(1, 1);
     private readonly SemaphoreSlim _writeSemaphore = new(1, 1);
 
     private volatile bool _isDisposed;
@@ -64,93 +64,7 @@ public class Connection : IConnection
     {
         if (_isDisposed || _isReading) return;
 
-        _ = Task.Run(async () =>
-        {
-            await ReadLoopAsync();
-        });
-    }
-
-    private async Task ReadLoopAsync()
-    {
-        if (!await _readSemaphore.WaitAsync(100)) return;
-
-        try
-        {
-            _isReading = true;
-
-            while (!_isDisposed && _socket.Connected && !Disconnected)
-            {
-                try
-                {
-                    await ReadMessageAsync();
-                }
-                catch
-                {
-                    break;
-                }
-            }
-        }
-        finally
-        {
-            _isReading = false;
-            _readSemaphore.Release();
-        }
-    }
-
-    private async Task ReadMessageAsync()
-    {
-        // Read header first
-        var headerBuffer = new byte[HEADER_LENGTH];
-        await ReadExactAsync(headerBuffer, 0, HEADER_LENGTH);
-
-        var messageSize = BitConverter.ToUInt16(headerBuffer, 0) + 2;
-        
-        if (messageSize >= NETWORK_MESSAGE_MAXSIZE)
-        {
-            Close(true);
-            return;
-        }
-
-        // Copy header to main buffer
-        Array.Copy(headerBuffer, InMessage.Buffer, HEADER_LENGTH);
-
-        // Read remaining message if necessary
-        if (messageSize > HEADER_LENGTH)
-        {
-            var remainingSize = Math.Min(messageSize - HEADER_LENGTH, BUFFER_SIZE - HEADER_LENGTH);
-            await ReadExactAsync(InMessage.Buffer, HEADER_LENGTH, remainingSize);
-        }
-
-        InMessage.Resize(messageSize);
-
-        // Process message in dispatcher to avoid callback hell
-        var clientDisconnected = messageSize == 0;
-        if (clientDisconnected && !IsAuthenticated)
-        {
-            Close();
-            return;
-        }
-
-        if (clientDisconnected && IsAuthenticated) 
-        {
-            Disconnected = true;
-        }
-
-        var eventArgs = new ConnectionEventArgs(this);
-        OnProcessEvent?.Invoke(this, eventArgs);
-    }
-
-    private async Task ReadExactAsync(byte[] buffer, int offset, int count)
-    {
-        int totalRead = 0;
-        while (totalRead < count && !_isDisposed)
-        {
-            int bytesRead = await _stream.ReadAsync(buffer, offset + totalRead, count - totalRead);
-            if (bytesRead == 0)
-                throw new EndOfStreamException("Connection closed by remote host");
-
-            totalRead += bytesRead;
-        }
+        _ = Task.Run(async () => { await ReadLoopAsync(); });
     }
 
     public void SetXtea(uint[] xtea)
@@ -172,10 +86,7 @@ public class Connection : IConnection
                 return;
             }
 
-            if (OutgoingPackets == null || OutgoingPackets.Count == 0 || force)
-            {
-                CloseSocket();
-            }
+            if (OutgoingPackets == null || OutgoingPackets.Count == 0 || force) CloseSocket();
 
             OnCloseEvent?.Invoke(this, new ConnectionEventArgs(this));
         }
@@ -256,6 +167,92 @@ public class Connection : IConnection
         CreatureId = player.CreatureId;
     }
 
+    public void Dispose()
+    {
+        Close(true);
+        _readSemaphore?.Dispose();
+        _writeSemaphore?.Dispose();
+        _stream?.Dispose();
+    }
+
+    private async Task ReadLoopAsync()
+    {
+        if (!await _readSemaphore.WaitAsync(100)) return;
+
+        try
+        {
+            _isReading = true;
+
+            while (!_isDisposed && _socket.Connected && !Disconnected)
+                try
+                {
+                    await ReadMessageAsync();
+                }
+                catch
+                {
+                    break;
+                }
+        }
+        finally
+        {
+            _isReading = false;
+            _readSemaphore.Release();
+        }
+    }
+
+    private async Task ReadMessageAsync()
+    {
+        // Read header first
+        var headerBuffer = new byte[HEADER_LENGTH];
+        await ReadExactAsync(headerBuffer, 0, HEADER_LENGTH);
+
+        var messageSize = BitConverter.ToUInt16(headerBuffer, 0) + 2;
+
+        if (messageSize >= NETWORK_MESSAGE_MAXSIZE)
+        {
+            Close(true);
+            return;
+        }
+
+        // Copy header to main buffer
+        Array.Copy(headerBuffer, InMessage.Buffer, HEADER_LENGTH);
+
+        // Read remaining message if necessary
+        if (messageSize > HEADER_LENGTH)
+        {
+            var remainingSize = Math.Min(messageSize - HEADER_LENGTH, BUFFER_SIZE - HEADER_LENGTH);
+            await ReadExactAsync(InMessage.Buffer, HEADER_LENGTH, remainingSize);
+        }
+
+        InMessage.Resize(messageSize);
+
+        // Process message in dispatcher to avoid callback hell
+        var clientDisconnected = messageSize == 0;
+        if (clientDisconnected && !IsAuthenticated)
+        {
+            Close();
+            return;
+        }
+
+        if (clientDisconnected && IsAuthenticated) Disconnected = true;
+
+        var eventArgs = new ConnectionEventArgs(this);
+        OnProcessEvent?.Invoke(this, eventArgs);
+    }
+
+    private async Task ReadExactAsync(byte[] buffer, int offset, int count)
+    {
+        var totalRead = 0;
+        while (totalRead < count && !_isDisposed)
+        {
+            var bytesRead = await _stream.ReadAsync(buffer, offset + totalRead, count - totalRead);
+            if (bytesRead == 0)
+                throw new EndOfStreamException("Connection closed by remote host");
+
+            totalRead += bytesRead;
+        }
+    }
+
     private async Task SendMessageAsync(INetworkMessage message, bool addHeader = true)
     {
         if (!await _writeSemaphore.WaitAsync(1000))
@@ -302,13 +299,5 @@ public class Connection : IConnection
         {
             _logger.Warning(ex, "Unable to close socket gracefully");
         }
-    }
-
-    public void Dispose()
-    {
-        Close(true);
-        _readSemaphore?.Dispose();
-        _writeSemaphore?.Dispose();
-        _stream?.Dispose();
     }
 }

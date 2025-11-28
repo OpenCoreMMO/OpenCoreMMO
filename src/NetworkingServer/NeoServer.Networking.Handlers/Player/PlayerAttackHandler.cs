@@ -12,7 +12,7 @@ public class PlayerAttackHandler(IGameServer game, PlayerAttackCommand playerAtt
         var targetId = message.GetUInt32();
 
         if (!game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player)) return;
-        
+
         game.Scheduler.AddEvent(new SchedulerEvent(200, () => playerAttackCommand.Execute(player, targetId)));
     }
 }

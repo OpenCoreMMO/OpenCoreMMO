@@ -39,7 +39,8 @@ public class FloorChangerUsableItemTests
         var aboveTile = new DynamicTile(new Coordinate(101, 100, 6), TileFlag.None, ground, null, null);
 
         var map = MapTestDataBuilder.Build(tile, aboveTile);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+        var creatureMovementService =
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
 
         backpack.AddItem(floorChangerItem);
         var player = PlayerTestDataBuilder.Build(inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
@@ -75,7 +76,8 @@ public class FloorChangerUsableItemTests
         var aboveTile = new DynamicTile(new Coordinate(101, 100, 6), TileFlag.None, ground, null, null);
 
         var map = MapTestDataBuilder.Build(tile, aboveTile);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+        var creatureMovementService =
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
 
         backpack.AddItem(floorChangerItem);
         var player = PlayerTestDataBuilder.Build(inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>

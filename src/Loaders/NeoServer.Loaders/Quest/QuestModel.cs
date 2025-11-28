@@ -7,7 +7,10 @@ public class QuestModel
 {
     [JsonPropertyName("name")] public string Name { get; set; }
     [JsonPropertyName("startstorageid")] public uint StartId { get; set; }
-    [JsonPropertyName("startstoragevalue")] public uint StartValue { get; set; }
+
+    [JsonPropertyName("startstoragevalue")]
+    public uint StartValue { get; set; }
+
     [JsonPropertyName("missions")] public List<MissionModel> Missions { get; set; }
 }
 
@@ -19,7 +22,7 @@ public class MissionModel
     [JsonPropertyName("endvalue")] public uint EndValue { get; set; }
     [JsonPropertyName("ignoreendvalue")] public bool IgnoreEndValue { get; set; }
     [JsonPropertyName("states")] public List<MissionStateModel> States { get; set; }
-    [JsonPropertyName("description")]public string Description { get; set; }
+    [JsonPropertyName("description")] public string Description { get; set; }
 }
 
 public class MissionStateModel

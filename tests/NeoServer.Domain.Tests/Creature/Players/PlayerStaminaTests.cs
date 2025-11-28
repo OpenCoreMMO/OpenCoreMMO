@@ -60,7 +60,7 @@ public class PlayerStaminaTests
         var player =
             PlayerTestDataBuilder.Build(stamina: GameConstants.STAMINA_THRESHOLD_MINUTES); // Enough stamina
         var monster = MonsterTestDataBuilder.Build();
-        monster.ReceivedDamages.AddOrUpdateDamage(player, 100, unjustified: false);
+        monster.ReceivedDamages.AddOrUpdateDamage(player, 100, false);
 
         monster.Metadata.Loot = new Loot([new LootItem(expectedItem.Metadata, 1, uint.MaxValue, [])]);
 
@@ -85,7 +85,7 @@ public class PlayerStaminaTests
         var player =
             PlayerTestDataBuilder.Build(stamina: GameConstants.STAMINA_THRESHOLD_MINUTES + 1); // Enough stamina
         var monster = MonsterTestDataBuilder.Build();
-        monster.ReceivedDamages.AddOrUpdateDamage(player, 100, unjustified: false);
+        monster.ReceivedDamages.AddOrUpdateDamage(player, 100, false);
 
         monster.Metadata.Loot = new Loot([new LootItem(expectedItem.Metadata, 1, uint.MaxValue, [])]);
 
@@ -113,9 +113,9 @@ public class PlayerStaminaTests
         var player2 =
             PlayerTestDataBuilder.Build(stamina: GameConstants.STAMINA_THRESHOLD_MINUTES); // Enough stamina
 
-        var monster = MonsterTestDataBuilder.Build(maxHealth: 200);
-        monster.ReceivedDamages.AddOrUpdateDamage(player1, 100, unjustified: false);
-        monster.ReceivedDamages.AddOrUpdateDamage(player2, 100, unjustified: false);
+        var monster = MonsterTestDataBuilder.Build(200);
+        monster.ReceivedDamages.AddOrUpdateDamage(player1, 100, false);
+        monster.ReceivedDamages.AddOrUpdateDamage(player2, 100, false);
 
         var party = new Party.Party(player1, new ChatChannel(1, "party channel"));
         party.Invite(player1, player2);
@@ -147,9 +147,9 @@ public class PlayerStaminaTests
         var player2 =
             PlayerTestDataBuilder.Build(stamina: GameConstants.STAMINA_THRESHOLD_MINUTES); // Enough stamina
 
-        var monster = MonsterTestDataBuilder.Build(maxHealth: 200);
-        monster.ReceivedDamages.AddOrUpdateDamage(player1, 100, unjustified: false);
-        monster.ReceivedDamages.AddOrUpdateDamage(player2, 100, unjustified: false);
+        var monster = MonsterTestDataBuilder.Build(200);
+        monster.ReceivedDamages.AddOrUpdateDamage(player1, 100, false);
+        monster.ReceivedDamages.AddOrUpdateDamage(player2, 100, false);
 
         var party = new Party.Party(player1, new ChatChannel(1, "party channel"));
         party.Invite(player1, player2);
@@ -178,8 +178,8 @@ public class PlayerStaminaTests
         var monsterEnemy =
             MonsterTestDataBuilder.Build();
 
-        var monster = MonsterTestDataBuilder.Build(maxHealth: 200);
-        monster.ReceivedDamages.AddOrUpdateDamage(monsterEnemy, 200, unjustified: false);
+        var monster = MonsterTestDataBuilder.Build(200);
+        monster.ReceivedDamages.AddOrUpdateDamage(monsterEnemy, 200, false);
 
         monster.Metadata.Loot = new Loot([new LootItem(expectedItem.Metadata, 1, uint.MaxValue, [])]);
 
@@ -206,8 +206,8 @@ public class PlayerStaminaTests
         var summon =
             MonsterTestDataBuilder.BuildSummon(aggressor);
 
-        var monster = MonsterTestDataBuilder.Build(maxHealth: 200);
-        monster.ReceivedDamages.AddOrUpdateDamage(summon, 200, unjustified: false);
+        var monster = MonsterTestDataBuilder.Build(200);
+        monster.ReceivedDamages.AddOrUpdateDamage(summon, 200, false);
 
         monster.Metadata.Loot = new Loot([new LootItem(expectedItem.Metadata, 1, uint.MaxValue, [])]);
 
@@ -234,8 +234,8 @@ public class PlayerStaminaTests
         var summon =
             MonsterTestDataBuilder.BuildSummon(aggressor);
 
-        var monster = MonsterTestDataBuilder.Build(maxHealth: 200);
-        monster.ReceivedDamages.AddOrUpdateDamage(summon, 200, unjustified: false);
+        var monster = MonsterTestDataBuilder.Build(200);
+        monster.ReceivedDamages.AddOrUpdateDamage(summon, 200, false);
 
         monster.Metadata.Loot = new Loot([new LootItem(expectedItem.Metadata, 1, uint.MaxValue, [])]);
 
@@ -314,12 +314,13 @@ public class PlayerStaminaTests
         // Assert
         aggressor.StaminaMinutes.Should().Be(30 / GameConstants.STAMINA_REGENERATION_EACH_MINUTES);
     }
-    
+
     [Fact]
     public void Player_restores_10_minutes_of_stamina_when_60_minutes_logged_out_in_bonus_stamina()
     {
         // Arrange
-        var aggressor = PlayerTestDataBuilder.Build(stamina: GameConstants.STAMINA_BONUS_MINUTES, premiumTime: 1, experience: 0);
+        var aggressor = PlayerTestDataBuilder.Build(stamina: GameConstants.STAMINA_BONUS_MINUTES, premiumTime: 1,
+            experience: 0);
         aggressor.LastLogOut = DateTime.UtcNow.AddMinutes(-60);
 
         // Act
@@ -328,12 +329,13 @@ public class PlayerStaminaTests
         // Assert
         aggressor.StaminaMinutes.Should().Be(GameConstants.STAMINA_BONUS_MINUTES + 10);
     }
-    
+
     [Fact]
     public void Player_does_not_restore_stamina_when_10_minutes_logged_out_or_less()
     {
         // Arrange
-        var aggressor = PlayerTestDataBuilder.Build(stamina: GameConstants.STAMINA_BONUS_MINUTES, premiumTime: 1, experience: 0);
+        var aggressor = PlayerTestDataBuilder.Build(stamina: GameConstants.STAMINA_BONUS_MINUTES, premiumTime: 1,
+            experience: 0);
         aggressor.LastLogOut = DateTime.UtcNow.AddMinutes(-10);
 
         // Act

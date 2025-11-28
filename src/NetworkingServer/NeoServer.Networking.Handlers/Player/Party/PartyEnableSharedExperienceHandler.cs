@@ -17,7 +17,7 @@ public class PartyEnableSharedExperienceHandler : PacketHandler
     {
         var experienceSharingActive = message.GetByte() == 1;
         if (!_game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player)) return;
-        if (player == null || player.PlayerParty.IsInParty == false) return;
+        if (player == null || !player.PlayerParty.IsInParty) return;
         player.PlayerParty.Party.IsSharedExperienceEnabled = experienceSharingActive;
         connection.Send(new TextMessagePacket(
             $"Party experience sharing is now {(experienceSharingActive ? "enabled" : "disabled")}.",

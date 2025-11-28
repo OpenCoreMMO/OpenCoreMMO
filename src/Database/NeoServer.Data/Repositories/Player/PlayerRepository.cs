@@ -94,6 +94,25 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository,
         await neoContext.SaveChangesAsync();
     }
 
+    public async Task<int> GetIdByName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return 0;
+
+        await using var context = NewDbContext;
+
+        return (await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower()))?.Id ?? 0;
+    }
+
+    public async Task UpdateLastLogInDate(int playerId, DateTime lastLogIn)
+    {
+        await using var context = NewDbContext;
+        var playerEntity = await context.Players.FindAsync(playerId);
+
+        if (playerEntity is null) return;
+        playerEntity.LastLogIn = lastLogIn;
+        await context.SaveChangesAsync();
+    }
+
     private static async Task UpdatePlayer(IPlayer player, NeoContext neoContext)
     {
         var playerEntity = await neoContext.Players.FindAsync((int)player.Id);
@@ -162,10 +181,7 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository,
         var existingMembership = await neoContext.GuildMemberships
             .FirstOrDefaultAsync(gm => gm.PlayerId == player.Id);
 
-        if (existingMembership != null)
-        {
-            neoContext.GuildMemberships.Remove(existingMembership);
-        }
+        if (existingMembership != null) neoContext.GuildMemberships.Remove(existingMembership);
 
         // If player has a guild, create new membership
         if (player.Guild != null && player.GuildId != 0)
@@ -180,27 +196,5 @@ public class PlayerRepository : BaseRepository<PlayerEntity>, IPlayerRepository,
 
             await neoContext.GuildMemberships.AddAsync(guildMembership);
         }
-    }
-
-    public async Task<int> GetIdByName(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            return 0;
-        }
-
-        await using var context = NewDbContext;
-
-        return (await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower()))?.Id ?? 0;
-    }
-
-    public async Task UpdateLastLogInDate(int playerId, DateTime lastLogIn)
-    {
-        await using var context = NewDbContext;
-        var playerEntity = await context.Players.FindAsync(playerId);
-
-        if (playerEntity is null) return;
-        playerEntity.LastLogIn = lastLogIn;
-        await context.SaveChangesAsync();
     }
 }

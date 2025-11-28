@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Quest;
 using NeoServer.Loaders.Helpers;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
@@ -47,7 +48,7 @@ public class QuestDataLoader
             Name = x.Name,
             StartId = x.StartId,
             StartValue = x.StartValue,
-            Missions = x.Missions?.Select(m => new Domain.Quest.Mission
+            Missions = x.Missions?.Select(m => new Mission
             {
                 Id = m.Id,
                 Name = m.Name,
@@ -55,7 +56,7 @@ public class QuestDataLoader
                 EndValue = m.EndValue,
                 IgnoreEndValue = m.IgnoreEndValue,
                 Description = m.Description,
-                States = m.States?.Select(s => new Domain.Quest.MissionState
+                States = m.States?.Select(s => new MissionState
                 {
                     Id = s.Id,
                     Description = s.Description

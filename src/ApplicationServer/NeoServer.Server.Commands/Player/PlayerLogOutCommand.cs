@@ -29,10 +29,7 @@ public class PlayerLogOutCommand(
         gameServer.CreatureManager.RemovePlayer(player);
 
         // Notify spectators
-        foreach (var spectator in map.GetSpectators(player.Location))
-        {
-            spectator.OnSpectatorLoggedOut(player);
-        }
+        foreach (var spectator in map.GetSpectators(player.Location)) spectator.OnSpectatorLoggedOut(player);
 
         // Exit all channels
         playerChannelService.ExitChannels(player);

@@ -16,13 +16,13 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.EventHandlers.World;
 
-public class CreatureMovedEventHandler(IGameServer game): INetworkingEventHandler<CreatureMovedInTheMap>
+public class CreatureMovedEventHandler(IGameServer game) : INetworkingEventHandler<CreatureMovedInTheMap>
 {
     public void Handle(CreatureMovedInTheMap @event)
     {
         var cylinder = @event.Cylinder;
         var creature = @event.Creature;
-        
+
         if (cylinder.IsNull()) return;
         if (cylinder.TileSpectators.IsNull()) return;
         if (creature.IsNull()) return;

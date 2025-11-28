@@ -9,12 +9,8 @@ public class VocationStore : DataStore<VocationStore, byte, Vocation>, IVocation
     public Vocation GetByName(string name)
     {
         foreach (var vocation in All)
-        {
             if (vocation.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
-            {
                 return vocation;
-            }
-        }
 
         return null;
     }

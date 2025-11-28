@@ -6,5 +6,8 @@ namespace NeoServer.Scripts.LuaJIT.Events.Players;
 
 public class PlayerOnLogoutEventHandler(ICreatureEvents creatureEvents) : IApplicationEventHandler<PlayerLoggedOutEvent>
 {
-    public void Handle(PlayerLoggedOutEvent @event) => creatureEvents.PlayerLogout(@event.Player);
+    public void Handle(PlayerLoggedOutEvent @event)
+    {
+        creatureEvents.PlayerLogout(@event.Player);
+    }
 }

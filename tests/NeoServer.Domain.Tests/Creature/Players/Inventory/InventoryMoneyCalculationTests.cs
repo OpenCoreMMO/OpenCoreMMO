@@ -17,7 +17,7 @@ public class InventoryMoneyCalculationTests
         inventory.AddItem(backpack);
 
         var platinum = ItemTestDataBuilder.CreateCoin(1, 50, 100);
-        var gold = ItemTestDataBuilder.CreateCoin(2, 10, 1);
+        var gold = ItemTestDataBuilder.CreateCoin(2, 10);
         var crystal = ItemTestDataBuilder.CreateCoin(3, 2, 10_000);
 
         var bag = ItemTestDataBuilder.CreateBackpack(5);

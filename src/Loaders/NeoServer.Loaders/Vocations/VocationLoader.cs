@@ -131,11 +131,11 @@ public class VocationLoader
             PropertyNameCaseInsensitive = true,
             Converters =
             {
-                new SkillConverter(),
+                new SkillConverter()
             }
         });
 
-        return vocations.Select(x=> new Vocation()
+        return vocations.Select(x => new Vocation
         {
             FromVoc = x.FromVoc,
             GainCap = x.GainCap,

@@ -14,7 +14,7 @@ public class CreatureChangedVisibilityEventHandler(IMap map, IGameServer game)
     public void Handle(CreatureChangedVisibilityEvent @event)
     {
         var creature = @event.Creature;
-        
+
         foreach (var spectator in map.GetPlayersAtPositionZone(creature.Location))
         {
             if (ReferenceEquals(spectator, creature)) continue;
@@ -33,7 +33,8 @@ public class CreatureChangedVisibilityEventHandler(IMap map, IGameServer game)
             else
             {
                 connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(creature, stackPosition));
-                connection.OutgoingPackets.Enqueue(new AddCreaturePacket((IPlayer)spectator, creature as IWalkableCreature));
+                connection.OutgoingPackets.Enqueue(new AddCreaturePacket((IPlayer)spectator,
+                    creature as IWalkableCreature));
             }
 
             connection.Send();

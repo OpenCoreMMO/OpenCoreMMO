@@ -11,10 +11,7 @@ public class Parcel(IItemType type, Location location, IEnumerable<IItem> childr
     {
         get
         {
-            if (!HasItems)
-            {
-                return 0;
-            }
+            if (!HasItems) return 0;
 
             Map.TryGetValue(GameConstants.LABEL_SERVER_ID, out var numberOfLabels);
             return (int)numberOfLabels;

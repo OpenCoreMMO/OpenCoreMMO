@@ -24,7 +24,7 @@ public struct Location : IEquatable<Location>, IConvertible
         X = 0xFFFF;
         Y = (byte)slot;
     }
-    
+
     public Location(int positionIndex)
     {
         X = 65535;

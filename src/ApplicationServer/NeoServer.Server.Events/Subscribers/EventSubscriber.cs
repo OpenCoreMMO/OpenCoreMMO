@@ -32,7 +32,8 @@ public sealed class EventSubscriber
     private readonly SafeTradeSystem _tradeSystem;
 
     public EventSubscriber(IMap map, IGameServer gameServer, IServiceProvider container, SafeTradeSystem tradeSystem,
-        ItemStartedDecayingEventHandler itemStartedDecayingEventHandler, FieldRuneUsedEventHandler fieldRuneUsedEventHandler,
+        ItemStartedDecayingEventHandler itemStartedDecayingEventHandler,
+        FieldRuneUsedEventHandler fieldRuneUsedEventHandler,
         ItemUsedEventHandler itemUsedEventHandler)
     {
         _map = map;

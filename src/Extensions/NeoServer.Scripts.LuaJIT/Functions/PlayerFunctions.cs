@@ -83,7 +83,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(luaState, "Player", "feed", LuaPlayerFeed);
         RegisterMethod(luaState, "Player", "getLevel", LuaGetLevel);
         RegisterMethod(luaState, "Player", "getSlotItem", LuaPlayerGetSlotItem);
-        
+
         // Guild methods
         RegisterMethod(luaState, "Player", "getGuild", LuaPlayerGetGuild);
         RegisterMethod(luaState, "Player", "setGuild", LuaPlayerSetGuild);
@@ -845,13 +845,13 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         // Get guild parameter - can be nil to remove guild
         var guild = GetUserdata<Guild>(luaState, 2);
-        
+
         try
         {
             player.SetGuild(guild);
-            _logger?.Information("Player {PlayerName} joined guild {GuildName}", 
+            _logger?.Information("Player {PlayerName} joined guild {GuildName}",
                 player.Name, guild?.Name ?? "None");
-            
+
             Lua.PushBoolean(luaState, true);
         }
         catch (Exception ex)
@@ -905,7 +905,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         }
 
         var nick = GetString(luaState, 2);
-        
+
         // TODO: Implement guild nick setting in player entity
         // For now, just return true to indicate success
         Lua.PushBoolean(luaState, true);
@@ -939,7 +939,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         }
 
         var amount = GetNumber<ulong>(luaState, 2);
-        
+
         if (player.BankAmount >= amount)
         {
             player.WithdrawFromBank(amount);
@@ -949,7 +949,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         {
             Lua.PushBoolean(luaState, false);
         }
-        
+
         return 1;
     }
 
@@ -966,7 +966,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         var amount = GetNumber<ulong>(luaState, 2);
         player.Bank.Credit(amount);
         Lua.PushBoolean(luaState, true);
-        
+
         return 1;
     }
 
@@ -991,7 +991,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         // 1. Check if player has permission to invite (vice-leader or leader)
         // 2. Add invitation to player's pending invitations
         // 3. Notify invited player
-        
+
         Lua.PushBoolean(luaState, true);
         return 1;
     }
@@ -1018,7 +1018,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         // 2. Check if target rank is lower than kicker
         // 3. Remove target from guild
         // 4. Notify guild members
-        
+
         Lua.PushBoolean(luaState, true);
         return 1;
     }
@@ -1034,7 +1034,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         }
 
         var amount = GetNumber<ulong>(luaState, 2);
-        
+
         Lua.PushBoolean(luaState, player.BankAmount >= amount);
         return 1;
     }
@@ -1053,7 +1053,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         // For now, we'll return "Member" as default since we don't have
         // the guild level stored in the player entity yet
         var rankName = "Member";
-        
+
         PushString(luaState, rankName);
         return 1;
     }

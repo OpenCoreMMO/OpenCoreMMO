@@ -19,9 +19,10 @@ public interface ICreatureMovementService
 }
 
 /// <summary>
-/// Service responsible for handling creature movement in the game world.
-/// Manages pathfinding, collision detection, special tile interactions like teleports, height changes, and protection zones.
-/// Uses cylinder operations for atomic movement updates and event notifications.
+///     Service responsible for handling creature movement in the game world.
+///     Manages pathfinding, collision detection, special tile interactions like teleports, height changes, and protection
+///     zones.
+///     Uses cylinder operations for atomic movement updates and event notifications.
 /// </summary>
 public class CreatureMovementService(
     IMap map,
@@ -29,8 +30,8 @@ public class CreatureMovementService(
     CreatureMovementValidation movementValidation) : ICreatureMovementService
 {
     /// <summary>
-    /// Attempts to move a creature to a specific location.
-    /// If movement fails, sends a failure message to the creature.
+    ///     Attempts to move a creature to a specific location.
+    ///     If movement fails, sends a failure message to the creature.
     /// </summary>
     /// <param name="creature">The creature to move.</param>
     /// <param name="location">The target location.</param>
@@ -44,8 +45,8 @@ public class CreatureMovementService(
     }
 
     /// <summary>
-    /// Moves a walkable creature based on its internal pathfinding logic.
-    /// Retrieves the next step direction from the creature and attempts to move it.
+    ///     Moves a walkable creature based on its internal pathfinding logic.
+    ///     Retrieves the next step direction from the creature and attempts to move it.
     /// </summary>
     /// <param name="creature">The walkable creature to move.</param>
     public void MoveCreature(IWalkableCreature creature)
@@ -55,8 +56,8 @@ public class CreatureMovementService(
     }
 
     /// <summary>
-    /// Attempts to move a walkable creature in the specified direction.
-    /// If movement fails, sends a failure message to the creature.
+    ///     Attempts to move a walkable creature in the specified direction.
+    ///     If movement fails, sends a failure message to the creature.
     /// </summary>
     /// <param name="creature">The walkable creature to move.</param>
     /// <param name="nextDirection">The direction to move in.</param>
@@ -122,9 +123,12 @@ public class CreatureMovementService(
         return true;
     }
 
-    private static string GetFailureMessage(MovementValidationFailureReason reason) => reason switch
+    private static string GetFailureMessage(MovementValidationFailureReason reason)
     {
-        MovementValidationFailureReason.ProtectionZoneBlocked => TextConstants.YOU_CANNOT_ENTER_PROTECTION_ZONE,
-        _ => TextConstants.NOT_POSSIBLE
-    };
+        return reason switch
+        {
+            MovementValidationFailureReason.ProtectionZoneBlocked => TextConstants.YOU_CANNOT_ENTER_PROTECTION_ZONE,
+            _ => TextConstants.NOT_POSSIBLE
+        };
+    }
 }
