@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Server.Common.Contracts.Network;
@@ -20,4 +21,7 @@ public interface IGameCreatureManager
     bool TryGetPlayer(string name, out IPlayer player);
     bool TryGetPlayer(uint id, out IPlayer player);
     Task<(bool, int, int)> CheckPlayersRecord(int worldId);
+
+    List<ICreature> GetCreaturesToCheck(int index);
+    void RemoveCreatureFromCheck(int group, int index);
 }
