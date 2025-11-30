@@ -103,7 +103,7 @@ public class MonsterTargetSearch(IMapTool mapTool) : IMonsterTargetSearch
         if (!IsTarget(monster, target)) return false;
         if (!monster.Targets.HasTarget(target)) return false;
 
-        return monster.CanSee(target) && monster.CanSee(target.Location);
+        return monster.CanSee(target.Location);
     }
 
     private static bool IsTarget(Monster monster, ICombatActor creature)
