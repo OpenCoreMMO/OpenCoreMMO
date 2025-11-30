@@ -9,14 +9,21 @@ public class MonsterStateChangedEventHandler(ICreatureGameInstance creatureGameI
 {
     public void Handle(MonsterStateChangedEvent @event)
     {
-        if (@event.ToState == MonsterState.Sleeping)
-        {
-            creatureGameInstance.TryRemove(@event.Monster.CreatureId);
-        }
+        // Skip if state hasn't actually changed
+        if (@event.FromState == @event.ToState)
+            return;
         
+        // Monster waking up from sleep - add to game instance
         if (@event.FromState == MonsterState.Sleeping)
         {
             creatureGameInstance.Add(@event.Monster);
+            return;
+        }
+        
+        // Monster going to sleep - remove from game instance
+        if (@event.ToState == MonsterState.Sleeping)
+        {
+            creatureGameInstance.TryRemove(@event.Monster.CreatureId);
         }
     }
 }
