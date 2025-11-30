@@ -101,7 +101,7 @@ public class CreatureGameInstance : ICreatureGameInstance
     {
         if (!_killedMonsters.Remove(id, out var creature))
         {
-            _logger.Warning("WARNING: Failed to remove {Name} from the killed monsters dictionary", creature.Item1.Name);
+            _logger.Warning("Failed to remove creature with id {Id} from the killed monsters dictionary", id);
             return false;
         }
 
@@ -110,9 +110,9 @@ public class CreatureGameInstance : ICreatureGameInstance
 
     public bool TryRemove(uint id)
     {
-        if (!_creatures.Remove(id, out var creature))
+        if (!_creatures.Remove(id, out _))
         {
-            _logger.Warning("WARNING: Failed to remove {CreatureName} from the global dictionary", creature.Name);
+            _logger.Warning("Failed to remove creature with id {Id} from the global dictionary", id);
 
             return false;
         }
@@ -122,9 +122,9 @@ public class CreatureGameInstance : ICreatureGameInstance
 
     public bool TryRemoveFromLoggedPlayers(uint id)
     {
-        if (!_playersLogged.Remove(id, out var player))
+        if (!_playersLogged.Remove(id, out _))
         {
-            _logger.Warning("WARNING: Failed to remove player with id {PlayerId} from the global dictionary", id);
+            _logger.Warning("Failed to remove player with id {PlayerId} from the global dictionary", id);
             return false;
         }
 
