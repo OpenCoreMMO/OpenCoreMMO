@@ -86,7 +86,7 @@ public class CreatureGameInstance : ICreatureGameInstance
         var index = _creatureGroupRandom.Next(CREATURE_COUNT);
         _creaturesCheck[index] ??= [];
         
-        _creaturesCheck[index].Add(creature as Creature);
+        _creaturesCheck[index].Add(creature);
     }
 
     public void AddPlayer(IPlayer player)
