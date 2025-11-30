@@ -124,7 +124,7 @@ public class CreatureGameInstance : ICreatureGameInstance
     {
         if (!_playersLogged.Remove(id, out var player))
         {
-            _logger.Warning("WARNING: Failed to remove {PlayerName} from the global dictionary", player.Name);
+            _logger.Warning("WARNING: Failed to remove player with id {PlayerId} from the global dictionary", id);
             return false;
         }
 
