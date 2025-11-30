@@ -82,7 +82,8 @@ public class Monster : WalkableMonster, IMonster
             var oldState = _state;
             if (_state == value) return;
             _state = value;
-            OnChangedState?.Invoke(this, oldState, value);
+            
+            EventAggregator.Invoke(new MonsterStateChangedEvent(this, oldState, value));
         }
     }
 
@@ -90,7 +91,7 @@ public class Monster : WalkableMonster, IMonster
     {
         ResetHealthPoints();
         SetNewLocation(location);
-        State = MonsterState.Sleeping;
+        Sleep();
         KilledByAnotherMonster = false;
 
         EventAggregator.Invoke(new MonsterWasBornEvent(this, location));

@@ -132,7 +132,7 @@ public class ItemType : IItemType
 
     public void SetSpeed(ushort speed)
     {
-        Attributes.SetAttribute(ItemTypeAttribute.AttackSpeed, speed);
+        Attributes.SetAttribute(ItemTypeAttribute.Speed, speed);
         ThrowIfLocked();
     }
 

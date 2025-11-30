@@ -16,4 +16,6 @@ public interface ICreatureGameInstance
     bool TryRemoveFromLoggedPlayers(uint id);
     IEnumerable<IPlayer> AllLoggedPlayers();
     int CountOnlinePlayers();
+    List<ICreature> GetCreaturesToCheck(int index);
+    void RemoveCreatureFromCheck(int group, int index);
 }
