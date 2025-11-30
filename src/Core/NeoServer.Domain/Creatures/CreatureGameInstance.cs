@@ -1,77 +1,68 @@
 using System.Collections.Immutable;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Models.Bases;
+using Serilog;
 
 namespace NeoServer.Domain.Creatures;
 
 public class CreatureGameInstance : ICreatureGameInstance
 {
-    private readonly List<ICreature> _creaturesArray;
-    private readonly Dictionary<uint, int> _creatures;
-
-    private readonly List<Tuple<IMonster, TimeSpan>> _killedMonstersArray;
-    private readonly Dictionary<uint, int> _killedMonsters;
+    private readonly ILogger _logger;
+    public const ushort CREATURE_COUNT = 10;
     
-    private readonly List<IPlayer> _playersLoggedArray;
-    private readonly Dictionary<uint, int> _playersLogged;
+    private readonly Dictionary<uint, ICreature> _creatures;
+    private readonly Dictionary<uint, Tuple<IMonster, TimeSpan>> _killedMonsters;
+    private readonly Dictionary<uint, IPlayer> _playersLogged;
 
-    public CreatureGameInstance()
+    private readonly List<ICreature>[] _creaturesCheck;
+    private readonly Random _creatureGroupRandom = new();
+
+    public CreatureGameInstance(ILogger logger)
     {
-        _creaturesArray = new List<ICreature>();
-        _creatures = new Dictionary<uint, int>();
-        
-        _killedMonstersArray = new List<Tuple<IMonster, TimeSpan>>();
-        _killedMonsters = new Dictionary<uint, int>();
-        
-        _playersLoggedArray = new List<IPlayer>();
-        _playersLogged = new Dictionary<uint, int>();
+        _logger = logger;
+        _creatures = new Dictionary<uint, ICreature>();
+        _killedMonsters = new Dictionary<uint, Tuple<IMonster, TimeSpan>>();
+        _playersLogged = new Dictionary<uint, IPlayer>();
 
+        _creaturesCheck = new List<ICreature>[CREATURE_COUNT];
         Instance ??= this;
     }
 
     internal static CreatureGameInstance Instance { get; private set; }
 
+    public List<ICreature> GetCreaturesToCheck(int index) => _creaturesCheck[index];
+
+    public void RemoveCreatureFromCheck(int group, int index)
+    {
+        _creaturesCheck[group][index] = _creaturesCheck[group][^1];
+        _creaturesCheck[group].RemoveAt(_creaturesCheck[group].Count - 1);
+    }
+
     public void AddKilledMonsters(IMonster monster)
     {
         if (!monster.BornFromSpawn) return;
 
-        if (!_killedMonsters.ContainsKey(monster.CreatureId))
-        {
-            var tuple = new Tuple<IMonster, TimeSpan>(monster, DateTime.UtcNow.TimeOfDay);
-            _killedMonstersArray.Add(tuple);
-            _killedMonsters.TryAdd(monster.CreatureId, _killedMonstersArray.Count - 1);
-        }
+        _killedMonsters.TryAdd(monster.CreatureId, new Tuple<IMonster, TimeSpan>(monster, DateTime.UtcNow.TimeOfDay));
     }
 
     public bool TryGetCreature(uint id, out ICreature creature)
     {
-        creature = null;
-        if (_creatures.TryGetValue(id, out var index) && index < _creaturesArray.Count)
-        {
-            creature = _creaturesArray[index];
-            return creature != null;
-        }
-        return false;
+        return _creatures.TryGetValue(id, out creature);
     }
 
     public bool TryGetPlayer(uint playerId, out IPlayer player)
     {
-        player = null;
-        if (_playersLogged.TryGetValue(playerId, out var index) && index < _playersLoggedArray.Count)
-        {
-            player = _playersLoggedArray[index];
-            return player != null;
-        }
-        return false;
+        return _playersLogged.TryGetValue(playerId, out player);
     }
 
     public IEnumerable<ICreature> All()
     {
-        return _creaturesArray;
+        return [.._creatures.Values];
     }
 
     public IEnumerable<IPlayer> AllLoggedPlayers()
     {
-        return _playersLoggedArray;
+        return _playersLogged.Values;
     }
 
     public int CountOnlinePlayers()
@@ -81,111 +72,62 @@ public class CreatureGameInstance : ICreatureGameInstance
 
     public ImmutableList<Tuple<IMonster, TimeSpan>> AllKilledMonsters()
     {
-        return _killedMonstersArray.ToImmutableList();
+        return _killedMonsters.Values.ToImmutableList();
     }
 
     public void Add(ICreature creature)
     {
-        if (!_creatures.ContainsKey(creature.CreatureId))
+        if (!_creatures.TryAdd(creature.CreatureId, creature))
         {
-            _creaturesArray.Add(creature);
-            if (!_creatures.TryAdd(creature.CreatureId, _creaturesArray.Count - 1))
-                // TODO: proper logging
-                Console.WriteLine($"WARNING: Failed to add {creature.Name} to the global dictionary.");
+            _logger.Warning("Failed to add {CreatureName} to the global dictionary", creature.Name);
+            return;
         }
-        else
-        {
-            // TODO: proper logging
-            Console.WriteLine($"WARNING: Failed to add {creature.Name} to the global dictionary.");
-        }
+
+        var index = _creatureGroupRandom.Next(CREATURE_COUNT);
+        _creaturesCheck[index] ??= [];
+        
+        _creaturesCheck[index].Add(creature);
     }
 
     public void AddPlayer(IPlayer player)
     {
-        if (!_playersLogged.ContainsKey(player.Id))
+        if (!_playersLogged.TryAdd(player.Id, player))
         {
-            _playersLoggedArray.Add(player);
-            if (!_playersLogged.TryAdd(player.Id, _playersLoggedArray.Count - 1))
-                // TODO: proper logging
-                Console.WriteLine($"WARNING: Failed to add {player.Name} to the global dictionary.");
-        }
-        else
-        {
-            // TODO: proper logging
-            Console.WriteLine($"WARNING: Failed to add {player.Name} to the global dictionary.");
+            _logger.Warning("Failed to add {PlayerName} to the global dictionary", player.Name);
         }
     }
 
     public bool TryRemoveFromKilledMonsters(uint id)
     {
-        if (_killedMonsters.TryGetValue(id, out var index))
+        if (!_killedMonsters.Remove(id, out var creature))
         {
-            var lastIndex = _killedMonstersArray.Count - 1;
-            
-            if (index < lastIndex)
-            {
-                // Swap with last element
-                var lastItem = _killedMonstersArray[lastIndex];
-                _killedMonstersArray[index] = lastItem;
-                
-                // Update the dictionary for the swapped item
-                _killedMonsters[lastItem.Item1.CreatureId] = index;
-            }
-            
-            // Remove last element
-            _killedMonstersArray.RemoveAt(lastIndex);
-            _killedMonsters.Remove(id);
-            return true;
+            _logger.Warning("Failed to remove creature with id {Id} from the killed monsters dictionary", id);
+            return false;
         }
-        
-        return false;
+
+        return true;
     }
 
     public bool TryRemove(uint id)
     {
-        if (_creatures.TryGetValue(id, out var index))
+        if (!_creatures.Remove(id, out _))
         {
-            var lastIndex = _creaturesArray.Count - 1;
-            
-            if (index < lastIndex)
-            {
-                // Swap with last element
-                var lastItem = _creaturesArray[lastIndex];
-                _creaturesArray[index] = lastItem;
-                
-                // Update the dictionary for the swapped item
-                _creatures[lastItem.CreatureId] = index;
-            }
-            
-            // Remove last element
-            _creaturesArray.RemoveAt(lastIndex);
-            _creatures.Remove(id);
-            return true;
+            _logger.Warning("Failed to remove creature with id {Id} from the global dictionary", id);
+
+            return false;
         }
-        return false;
+
+        return true;
     }
 
     public bool TryRemoveFromLoggedPlayers(uint id)
     {
-        if (_playersLogged.TryGetValue(id, out var index))
+        if (!_playersLogged.Remove(id, out _))
         {
-            var lastIndex = _playersLoggedArray.Count - 1;
-            
-            if (index < lastIndex)
-            {
-                // Swap with last element
-                var lastItem = _playersLoggedArray[lastIndex];
-                _playersLoggedArray[index] = lastItem;
-                
-                // Update the dictionary for the swapped item
-                _playersLogged[lastItem.Id] = index;
-            }
-            
-            // Remove last element
-            _playersLoggedArray.RemoveAt(lastIndex);
-            _playersLogged.Remove(id);
-            return true;
+            _logger.Warning("Failed to remove player with id {PlayerId} from the global dictionary", id);
+            return false;
         }
-        return false;
+
+        return true;
     }
 }

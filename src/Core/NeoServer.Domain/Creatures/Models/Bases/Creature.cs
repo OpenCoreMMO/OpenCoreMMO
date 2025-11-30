@@ -165,11 +165,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         return CanSee(pos, (int)MapViewPort.MaxViewPortX, (int)MapViewPort.MaxViewPortY);
     }
 
-    public virtual bool IsThinking()
-    {
-        return true;
-    }
-
+    public virtual bool IsThinking() => true;
 
     public virtual byte Emblem { get; } // TODO: implement.
     public bool IsHealthHidden { get; set; }

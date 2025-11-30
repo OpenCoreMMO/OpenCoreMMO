@@ -55,8 +55,15 @@ public class MonsterStateService(
 
             monster.CreateSummon(summonService);
         }
-
-        if (monster.State == MonsterState.Sleeping) monster.Sleep();
-        if (monster.State == MonsterState.Escaping) monster.Escape();
+        
+        if (monster.State == MonsterState.Escaping)
+        {
+            monster.Escape();
+        }
+        
+        if (monster.State == MonsterState.Sleeping)
+        {
+            monster.Sleep();
+        }
     }
 }

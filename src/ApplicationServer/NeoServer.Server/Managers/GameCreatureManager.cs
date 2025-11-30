@@ -122,7 +122,7 @@ public class GameCreatureManager(
 
     /// <summary>
     ///     Adds player to game
-    ///     This methods also adds player to map and to connection pool
+    ///     This method also adds player to map and to connection pool
     /// </summary>
     /// <param name="player"></param>
     /// <param name="connection"></param>
@@ -213,4 +213,7 @@ public class GameCreatureManager(
     {
         return creatureInstances.AllKilledMonsters();
     }
+    
+    public List<ICreature> GetCreaturesToCheck(int index) => creatureInstances.GetCreaturesToCheck(index);
+    public void RemoveCreatureFromCheck(int group, int index) => creatureInstances.RemoveCreatureFromCheck(group, index);
 }
