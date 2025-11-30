@@ -80,13 +80,13 @@ public class CreatureGameInstance : ICreatureGameInstance
         if (!_creatures.TryAdd(creature.CreatureId, creature))
         {
             _logger.Warning("Failed to add {CreatureName} to the global dictionary", creature.Name);
+            return;
         }
 
         var index = _creatureGroupRandom.Next(CREATURE_COUNT);
         _creaturesCheck[index] ??= [];
         
         _creaturesCheck[index].Add(creature as Creature);
-        
     }
 
     public void AddPlayer(IPlayer player)
