@@ -93,7 +93,7 @@ public class CreatureGameInstance : ICreatureGameInstance
     {
         if (!_playersLogged.TryAdd(player.Id, player))
         {
-            _logger.Warning("WARNING: Failed to add {PlayerName} to the global dictionary", player.Name);
+            _logger.Warning("Failed to add {PlayerName} to the global dictionary", player.Name);
         }
     }
 
