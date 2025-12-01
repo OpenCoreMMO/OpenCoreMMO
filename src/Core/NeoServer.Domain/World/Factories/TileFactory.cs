@@ -76,7 +76,7 @@ public class TileFactory : ITileFactory
             !hasMoveableItem &&
             !hasTransformableItem && !hasHeight)
         {
-            var staticTile = new StaticTile(new Coordinate(), items);
+            var staticTile = new StaticTile(new Coordinate(), (uint)flag, items);
             _tileCache.TryAdd(hash, staticTile);
             return staticTile;
         }

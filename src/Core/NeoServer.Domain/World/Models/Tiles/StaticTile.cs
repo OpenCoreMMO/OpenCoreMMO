@@ -11,9 +11,10 @@ public class StaticTile : BaseTile, IStaticTile
 {
     private IItem _topDownItemOnStack;
 
-    public StaticTile(Coordinate coordinate, params IItem[] items) : this(
+    public StaticTile(Coordinate coordinate, uint flag = 0, params IItem[] items) : this(
         new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z), items)
     {
+        Flags |= flag;
     }
 
     public StaticTile(Location location, params IItem[] items)
