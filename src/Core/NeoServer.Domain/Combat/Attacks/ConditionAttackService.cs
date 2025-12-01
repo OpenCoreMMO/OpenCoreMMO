@@ -204,11 +204,11 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
     private static void AddParalyzeCondition(CombatParameter combatParameter, ICombatActor targetCreature,
         ConditionType conditionType, uint duration)
     {
-        targetCreature.DecreaseSpeed((ushort)Math.Abs((int)combatParameter.Condition.Value));
+        targetCreature.DecreaseSpeed((ushort)Math.Abs(Convert.ToInt32(combatParameter.Condition.Value)));
 
         targetCreature.AddCondition(new Condition(conditionType, duration)
         {
-            EndAction = () => targetCreature.IncreaseSpeed((ushort)Math.Abs((int)combatParameter.Condition.Value))
+            EndAction = () => targetCreature.IncreaseSpeed((ushort)Math.Abs(Convert.ToInt32(combatParameter.Condition.Value)))
         });
     }
 
