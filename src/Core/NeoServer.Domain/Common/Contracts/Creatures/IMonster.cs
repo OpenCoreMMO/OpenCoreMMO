@@ -52,7 +52,6 @@ public interface IMonster : IWalkableMonster, ICombatActor
     bool IsHostile { get; }
     MonsterTargetList Targets { get; set; }
     bool IsPushable { get; }
-    event MonsterChangeState OnChangedState;
 
     void Reborn();
 
