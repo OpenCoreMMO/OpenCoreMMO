@@ -451,12 +451,6 @@ public class Monster : WalkableMonster, IMonster
         if (this is not Summon.Summon) Targets.Add(creature as ICombatActor);
     }
 
-    #region Events
-
-    public event MonsterChangeState OnChangedState;
-
-    #endregion
-
     private void PushCreatures(IDynamicTile destinationTile)
     {
         // find all the creatures that can be pushed
