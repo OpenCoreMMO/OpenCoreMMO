@@ -2,6 +2,7 @@ using Moq;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Tests.Helpers;
@@ -171,8 +172,11 @@ public class SummonDeathHandlingTests
     {
         // Arrange
         var master = PlayerTestDataBuilder.Build();
+        master.SetNewLocation(new Location(100, 100, 7));
         var summon = MonsterTestDataBuilder.BuildSummon(master);
+        summon.SetNewLocation(new Location(100, 101, 7));
         var enemy = PlayerTestDataBuilder.Build();
+        summon.SetNewLocation(new Location(100, 102, 7));
 
         // Act
         master.SetAttackTarget(enemy); // This should trigger OnMasterTargetChange
@@ -218,9 +222,12 @@ public class SummonDeathHandlingTests
     {
         // Arrange
         var master = PlayerTestDataBuilder.Build();
+        master.SetNewLocation(new Location(100, 100, 7));
         var summon = MonsterTestDataBuilder.BuildSummon(master);
+        summon.SetNewLocation(new Location(100, 101, 7));
         var enemy = PlayerTestDataBuilder.Build();
-
+        summon.SetNewLocation(new Location(100, 102, 7));
+        
         // Act
         master.SetAttackTarget(enemy);
 

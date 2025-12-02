@@ -46,6 +46,11 @@ public class Summon : Monster
 
         //Summon should not attack if the master has no target
         if (Master is ICombatActor { CurrentTarget: null }) return;
+        
+        if (!CanSee(creature.Location))
+        {
+            return;
+        }
 
         base.SetAsEnemy(creature);
     }
@@ -58,6 +63,11 @@ public class Summon : Monster
 
         //Summon should not attack if the master has no target
         if (Master is ICombatActor { CurrentTarget: null }) return Result.NotPossible;
+
+        if (!CanSee(target.Location))
+        {
+            return Result.NotPossible;
+        }
         
         return base.SetAttackTarget(target);
     }
@@ -81,6 +91,18 @@ public class Summon : Monster
                 Die();
                 return;
             }
+        }
+
+        if (!CanSee(Master.Location))
+        {
+            Targets.Clear();
+            State = MonsterState.RandomlyWalking;
+            return;
+        }
+
+        if (CanSee(Master.Location) && State is MonsterState.RandomlyWalking)
+        {
+            State = MonsterState.Awake;
         }
 
         if (Master is not IPlayer player)
@@ -151,12 +173,17 @@ public class Summon : Monster
         Die();
     }
 
-    private void OnMasterTargetChange(ICombatActor actor, uint oldTargetId, uint newTargetId)
+    private void OnMasterTargetChange(ICombatActor master, uint oldTargetId, uint newTargetId)
     {
         Targets.Clear();
 
-        SetAsEnemy(actor.CurrentTarget);
-        ChangeAttackTarget(actor.CurrentTarget);
+        if (!CanSee(master.CurrentTarget?.Location ?? Location.Zero))
+        {
+            return;
+        }
+
+        SetAsEnemy(master.CurrentTarget);
+        ChangeAttackTarget(master.CurrentTarget);
     }
 
     private void OnMasterStoppedAttack(ICombatActor actor)

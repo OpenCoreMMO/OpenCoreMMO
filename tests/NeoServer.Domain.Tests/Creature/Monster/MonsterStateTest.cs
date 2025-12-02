@@ -48,7 +48,7 @@ public class MonsterStateTest
         monster.UpdateState();
 
         //assert
-        monster.State.Should().Be(MonsterState.LookingForEnemy);
+        monster.State.Should().Be(MonsterState.RandomlyWalking);
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public class MonsterStateTest
         monster.UpdateState();
 
         //assert
-        monster.State.Should().Be(MonsterState.LookingForEnemy);
+        monster.State.Should().Be(MonsterState.RandomlyWalking);
     }
 
     [Fact]

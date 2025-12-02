@@ -289,4 +289,58 @@ public class SummonTests
         summon.CurrentTarget.Should().NotBe(master, "Summon should never target its master");
         summon.Attacking.Should().BeFalse("Summon should not be attacking when trying to attack master");
     }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void Summon_looking_for_enemy_does_not_attack_floor7_creatures_when_master_has_target_on_floor8()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 8);
+
+        // Master will be on floor 8
+        var master = PlayerTestDataBuilder.Build();
+        master.SetNewLocation(new Location(105, 105, 8));
+
+        // Summon and other creatures on floor 7
+        var summon = MonsterTestDataBuilder.BuildSummon(master);
+        summon.SetNewLocation(new Location(104, 105, 7));
+
+        var monsterX = PlayerTestDataBuilder.Build(2, "MonsterX");
+        monsterX.SetNewLocation(new Location(106, 105, 7));
+
+        var playerY = PlayerTestDataBuilder.Build(3, "PlayerY");
+        playerY.SetNewLocation(new Location(107, 105, 7));
+
+        // Place creatures on the map
+        map.PlaceCreature(master);
+        map.PlaceCreature(summon);
+        map.PlaceCreature(monsterX);
+        map.PlaceCreature(playerY);
+
+        // Give the master a target on floor 8 (different creature)
+        var targetOnZ8 = PlayerTestDataBuilder.Build(4, "TargetZ8");
+        targetOnZ8.SetNewLocation(new Location(108, 108, 8));
+        map.PlaceCreature(targetOnZ8);
+        master.SetAttackTarget(targetOnZ8);
+
+        // Prepare services used to update monster/summon state
+        var summonServiceMock = new Mock<ISummonService>();
+        var targetDetectorService = new TargetDetectorService(map);
+        var pathFinder = new PathFinder(map);
+        var monsterTargetingService = new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, pathFinder)));
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, targetDetectorService, monsterTargetingService);
+
+        // Act
+        monsterStateService.UpdateState(summon);
+
+        // Assert
+        // Summon should not be attacking or have an auto-attack target just because master's target is on another floor
+        summon.State.Should().Be(MonsterState.RandomlyWalking);
+        summon.Attacking.Should().BeFalse();
+        summon.AutoAttackTargetId.Should().Be(0);
+
+        // Summon should not acquire targets that are on floor 7 (nearby creatures) when master is on floor 8
+        summon.Targets.HasTarget(monsterX).Should().BeFalse("Summon must not target nearby floor-7 monster when its master is on a different floor");
+        summon.Targets.HasTarget(playerY).Should().BeFalse("Summon must not target nearby floor-7 player when its master is on a different floor");
+    }
 }

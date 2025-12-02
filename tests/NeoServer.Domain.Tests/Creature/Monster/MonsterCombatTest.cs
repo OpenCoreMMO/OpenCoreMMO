@@ -108,7 +108,7 @@ public class MonsterCombatTest
         monsterStateService.UpdateState(monster);
 
         //assert
-        monster.State.Should().Be(MonsterState.LookingForEnemy);
+        monster.State.Should().Be(MonsterState.RandomlyWalking);
         monster.CurrentTarget.Should().BeNull();
         monster.IsFollowing.Should().BeFalse();
         monster.Attacking.Should().BeFalse();
@@ -233,7 +233,7 @@ public class MonsterCombatTest
         monsterStateService.UpdateState(monster);
 
         //assert
-        monster.State.Should().Be(MonsterState.LookingForEnemy);
+        monster.State.Should().Be(MonsterState.RandomlyWalking);
         monster.CurrentTarget.Should().BeNull();
         monster.IsFollowing.Should().BeFalse();
         monster.Attacking.Should().BeFalse();
@@ -413,7 +413,7 @@ public class MonsterCombatTest
         monsterStateService.UpdateState(monster);
 
         //assert - Monster enters an idle state even with status effects (current behavior)
-        monster.State.Should().Be(MonsterState.LookingForEnemy); // Current behavior: enters idle state
+        monster.State.Should().Be(MonsterState.RandomlyWalking); // Current behavior: enters idle state
         monster.CurrentTarget.Should().BeNull();
         monster.IsFollowing.Should().BeFalse();
         monster.Attacking.Should().BeFalse();
@@ -591,7 +591,7 @@ public class MonsterCombatTest
 
         // Initial state: SUT might be targeting player yet
         monsterStateService.UpdateState(sut);
-        sut.State.Should().Be(MonsterState.LookingForEnemy);
+        sut.State.Should().Be(MonsterState.RandomlyWalking);
         sut.CurrentTarget.Should()
             .Be(player); // Assume targeting the player initially although not having follow path to him
 

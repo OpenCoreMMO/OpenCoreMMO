@@ -33,7 +33,7 @@ public class MonsterStateService(
             monster.StopFollowing();
         }
 
-        if (monster.State == MonsterState.LookingForEnemy)
+        if (monster.State == MonsterState.RandomlyWalking)
         {
             //Walk a random step
             monster.DoRandomStep();

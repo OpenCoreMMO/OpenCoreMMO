@@ -77,7 +77,7 @@ public class Monster : WalkableMonster, IMonster
     public MonsterState State
     {
         get => _state;
-        private set
+        protected set
         {
             var oldState = _state;
             if (_state == value) return;
@@ -285,11 +285,11 @@ public class Monster : WalkableMonster, IMonster
         {
             if (Conditions.Count > 0)
             {
-                State = MonsterState.LookingForEnemy;
+                State = MonsterState.RandomlyWalking;
                 return;
             }
 
-            State = Cooldowns.Expired(CooldownType.Awaken) ? MonsterState.Sleeping : MonsterState.LookingForEnemy;
+            State = Cooldowns.Expired(CooldownType.Awaken) ? MonsterState.Sleeping : MonsterState.RandomlyWalking;
             return;
         }
 
@@ -302,7 +302,7 @@ public class Monster : WalkableMonster, IMonster
 
         if (!HasFollowPath)
         {
-            State = MonsterState.LookingForEnemy;
+            State = MonsterState.RandomlyWalking;
             return;
         }
 
