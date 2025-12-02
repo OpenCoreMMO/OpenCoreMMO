@@ -1268,7 +1268,7 @@ public class Player : CombatActor, IPlayer
 
         if (MagicLevel < spell.MinMagicLevel) return Result.Fail(InvalidOperation.NotEnoughLevel);
 
-        if (spell.IsAggressive && IsPacified) return Result.Fail(InvalidOperation.Exhausted);
+        if (spell.IsAggressive && IsPacified) return Result.Fail(InvalidOperation.NotPermittedInProtectionZone);
 
         if (spell.IsAggressive && !Group.FlagIsEnabled(PlayerFlag.IgnoreProtectionZone) && Tile.ProtectionZone)
             return Result.Fail(InvalidOperation.NotPermittedInProtectionZone);

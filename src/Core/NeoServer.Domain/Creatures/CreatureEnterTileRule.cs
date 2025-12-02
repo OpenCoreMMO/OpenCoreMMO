@@ -146,6 +146,7 @@ public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
         return ConditionEvaluation.And(
             !hasBlockingCreatures,
             !dynamicTile.HasFlag(TileFlags.Unpassable),
+            !dynamicTile.ProtectionZone,
             dynamicTile.Ground is not null);
     }
 
@@ -157,6 +158,7 @@ public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
         return ConditionEvaluation.And(
             !dynamicTile.HasAnyCreature,
             !dynamicTile.HasFlag(TileFlags.Unpassable),
+            !dynamicTile.ProtectionZone,
             dynamicTile.Ground is not null);
     }
 }

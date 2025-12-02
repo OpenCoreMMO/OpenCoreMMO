@@ -59,7 +59,7 @@ public class Monster : WalkableMonster, IMonster
         get
         {
             var fpp = base.PathSearchParams;
-            fpp.FullPathSearch = true;
+            fpp.FullPathSearch = TargetDistance <= 1;
             fpp.MaxTargetDist = TargetDistance;
             fpp.KeepDistance = TargetDistance > 1;
             fpp.PushMonsters = Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures);
@@ -568,6 +568,7 @@ public class Monster : WalkableMonster, IMonster
     internal void ChangeAttackTarget(ICreature creature)
     {
         if (creature is null) return;
+        if (creature.Equals(this)) return;
 
         Follow(creature);
         SetAttackTarget(creature);

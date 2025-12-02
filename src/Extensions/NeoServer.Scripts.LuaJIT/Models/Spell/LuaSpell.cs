@@ -24,7 +24,7 @@ public abstract class LuaSpell(LuaScriptInterface scriptInterface) : Script(scri
     public bool NeedLearn { get; set; }
     public bool IsSelfTarget { get; set; }
     public bool IsPremium { get; set; }
-    public bool IsAggressive { get; set; }
+    public bool IsAggressive { get; set; } = true;
     public bool IsLockedPz { get; set; }
     public byte[] VocationIds { get; set; }
 }

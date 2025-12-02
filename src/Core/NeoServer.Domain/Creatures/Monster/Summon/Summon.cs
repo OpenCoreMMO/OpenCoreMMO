@@ -32,9 +32,11 @@ public class Summon : Monster
         get
         {
             var fpp = base.PathSearchParams;
+            fpp.MinTargetDist = 1;
             fpp.MaxTargetDist = Equals(Following, Master) ? 2 : TargetDistance;
-            fpp.KeepDistance = TargetDistance > 1 || Equals(Following, Master);
             fpp.FullPathSearch = true;
+            fpp.KeepDistance = false;
+            fpp.ClearSight = true;
             return fpp;
         }
     }
@@ -43,6 +45,7 @@ public class Summon : Monster
     {
         if (IsDead) return;
         if (Master is not null && Master.Equals(creature)) return;
+        if (creature.Equals(this)) return;
         if (creature is Summon { Master: not null } summon && summon.Master.Equals(Master)) return;
 
         //Summon should not attack if the master has no target
@@ -61,7 +64,8 @@ public class Summon : Monster
         if (IsDead) return Result.NotPossible;
         if (Master is not null && Master.Equals(target)) return Result.NotPossible;
         if (target is Summon { Master: not null } summon && summon.Master.Equals(Master)) return Result.NotPossible;
-
+        if (target.Equals(this)) return Result.NotPossible;
+        
         //Summon should not attack if the master has no target
         if (Master is ICombatActor { CurrentTarget: null }) return Result.NotPossible;
 
