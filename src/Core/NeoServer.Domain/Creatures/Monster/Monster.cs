@@ -82,7 +82,7 @@ public class Monster : WalkableMonster, IMonster
             var oldState = _state;
             if (_state == value) return;
             _state = value;
-            
+
             EventAggregator.Invoke(new MonsterStateChangedEvent(this, oldState, value));
         }
     }
@@ -343,10 +343,10 @@ public class Monster : WalkableMonster, IMonster
 
     public ushort Defend()
     {
-        if (IsDead || !Defenses.Any())
+        if (IsSleeping || Defenses.Length == 0)
         {
             StopDefending();
-            return default;
+            return 0;
         }
 
         Defending = true;

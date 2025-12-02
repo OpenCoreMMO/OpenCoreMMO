@@ -11,7 +11,7 @@ internal static class MonsterYell
 
         if (metadata.Voices is null) return;
         if (metadata.VoiceConfig is null) return;
-        if (!metadata.Voices.Any()) return;
+        if (metadata.Voices.Length == 0) return;
 
         if (!monster.Cooldowns.Expired(CooldownType.Yell)) return;
         monster.Cooldowns.Start(CooldownType.Yell, monster.Metadata.VoiceConfig.Interval);

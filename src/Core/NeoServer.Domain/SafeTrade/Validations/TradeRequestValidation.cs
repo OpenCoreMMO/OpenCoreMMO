@@ -151,7 +151,7 @@ internal class TradeRequestValidation
 
     private static bool TradeHasNoItems(IPlayer player, IItem[] items)
     {
-        if (items is null || !items.Any())
+        if (items is null || items.Length == 0)
         {
             OperationFailService.Send(player.CreatureId, "You must select an item to trade.");
             return true;

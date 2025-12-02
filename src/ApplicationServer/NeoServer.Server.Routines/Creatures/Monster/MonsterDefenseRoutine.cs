@@ -1,15 +1,15 @@
 ﻿using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Tasks;
 
-namespace NeoServer.Server.Routines.Creatures;
+namespace NeoServer.Server.Routines.Creatures.Monster;
 
-public static class CreatureDefenseRoutine
+public static class MonsterDefenseRoutine
 {
     public static void Execute(IMonster monster, IGameServer game)
     {
         if (monster.IsDead) return;
 
-        if (!monster.IsInCombat || monster.Defending) return;
+        if (monster.IsSleeping || monster.Defending) return;
 
         var interval = monster.Defend();
 

@@ -68,7 +68,7 @@ public class GameCreatureRoutine(
     {
         if (creature is not IMonster monster) return;
 
-        CreatureDefenseRoutine.Execute(monster, game);
+        MonsterDefenseRoutine.Execute(monster, game);
         monsterStateRoutine.Execute(monster);
         MonsterYellRoutine.Execute(monster);
     }
