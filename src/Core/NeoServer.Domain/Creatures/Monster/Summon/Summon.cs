@@ -178,6 +178,12 @@ public class Summon : Monster
         Die();
     }
 
+    public override bool CanSee(Location location)
+    {
+        //summon should see what the master can see
+        return Master.CanSee(location);
+    }
+
     private void OnMasterTargetChange(ICombatActor master, uint oldTargetId, uint newTargetId)
     {
         Targets.Clear();
