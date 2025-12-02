@@ -66,83 +66,6 @@ public class SummonTests
 
     [Fact]
     [Trait("Category", "Summon")]
-    public void Summon_distance_monster_follows_master_closely_when_no_target()
-    {
-        // Arrange
-        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
-        var pathFinder = new PathFinder(map);
-        var mapTool = new MapTool(map, pathFinder);
-
-        var master = PlayerTestDataBuilder.Build();
-
-        var monsterType = new MonsterType
-        {
-            Name = "Monster X",
-            MaxHealth = 100,
-            Speed = 100,
-            TargetChance = new IntervalChance(1000, 50),
-            Attacks =
-            [
-                new MonsterCombatType
-                {
-                    Interval = 0,
-                    AttackChance = 100,
-                    CombatParameter = new CombatParameter
-                    {
-                        MinDamage = 10,
-                        MaxDamage = 100,
-                        DamageType = DamageType.Melee
-                    }
-                }
-            ]
-        };
-
-        monsterType.Flags.Add(CreatureFlagAttribute.Hostile, 1);
-        monsterType.Flags.Add(CreatureFlagAttribute.TargetDistance, 4);
-
-        var summon = new Domain.Creatures.Monster.Summon.Summon(monsterType, mapTool, master);
-
-        // Place creatures on the map
-        (map[105, 105, 7] as DynamicTile)?.AddCreature(master);
-        (map[109, 105, 7] as DynamicTile)?.AddCreature(summon);
-
-        // Act
-        // Set summon to follow master (no target scenario)
-        summon.Follow(master);
-
-        // Assert
-        var pathParams = summon.PathSearchParams;
-        pathParams.MaxTargetDist.Should().Be(1, "Summon should try to get close to master when following");
-        pathParams.KeepDistance.Should().BeFalse("Summon should not keep distance from master");
-    }
-
-    [Fact]
-    [Trait("Category", "Summon")]
-    public void Summon_distance_monster_keeps_distance_from_enemy_when_attacking()
-    {
-        // Arrange
-        var master = PlayerTestDataBuilder.Build();
-        var enemy = PlayerTestDataBuilder.Build();
-
-        // Create a distance monster summon (TargetDistance = 4)
-        var summon =
-            (Domain.Creatures.Monster.Summon.Summon)MonsterTestDataBuilder.BuildSummon(master, targetDistance: 4);
-
-        // Set master to have a target
-        master.SetAttackTarget(enemy);
-
-        // Act
-        // Update summon state to attack the master's target
-        summon.UpdateState();
-
-        // Assert
-        var pathParams = summon.PathSearchParams;
-        pathParams.MaxTargetDist.Should().Be(4, "Summon should keep its TargetDistance when attacking enemy");
-        pathParams.KeepDistance.Should().BeTrue("Summon should keep distance from enemy");
-    }
-
-    [Fact]
-    [Trait("Category", "Summon")]
     public void SummonService_does_not_summon_on_unpassable_tile()
     {
         // Arrange
@@ -288,5 +211,59 @@ public class SummonTests
         summon.Targets.HasTarget(master).Should().BeFalse("Summon should never add its master as a target");
         summon.CurrentTarget.Should().NotBe(master, "Summon should never target its master");
         summon.Attacking.Should().BeFalse("Summon should not be attacking when trying to attack master");
+    }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void Summon_looking_for_enemy_does_not_attack_floor7_creatures_when_master_has_target_on_floor8()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 8);
+
+        // Master will be on floor 8
+        var master = PlayerTestDataBuilder.Build();
+        master.SetNewLocation(new Location(105, 105, 8));
+
+        // Summon and other creatures on floor 7
+        var summon = MonsterTestDataBuilder.BuildSummon(master);
+        summon.SetNewLocation(new Location(104, 105, 7));
+
+        var monsterX = PlayerTestDataBuilder.Build(2, "MonsterX");
+        monsterX.SetNewLocation(new Location(106, 105, 7));
+
+        var playerY = PlayerTestDataBuilder.Build(3, "PlayerY");
+        playerY.SetNewLocation(new Location(107, 105, 7));
+
+        // Place creatures on the map
+        map.PlaceCreature(master);
+        map.PlaceCreature(summon);
+        map.PlaceCreature(monsterX);
+        map.PlaceCreature(playerY);
+
+        // Give the master a target on floor 8 (different creature)
+        var targetOnZ8 = PlayerTestDataBuilder.Build(4, "TargetZ8");
+        targetOnZ8.SetNewLocation(new Location(108, 108, 8));
+        map.PlaceCreature(targetOnZ8);
+        master.SetAttackTarget(targetOnZ8);
+
+        // Prepare services used to update monster/summon state
+        var summonServiceMock = new Mock<ISummonService>();
+        var targetDetectorService = new TargetDetectorService(map);
+        var pathFinder = new PathFinder(map);
+        var monsterTargetingService = new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, pathFinder)));
+        var monsterStateService = new MonsterStateService(summonServiceMock.Object, targetDetectorService, monsterTargetingService);
+
+        // Act
+        monsterStateService.UpdateState(summon);
+
+        // Assert
+        // Summon should not be attacking or have an auto-attack target just because master's target is on another floor
+        summon.State.Should().Be(MonsterState.RandomlyWalking);
+        summon.Attacking.Should().BeFalse();
+        summon.AutoAttackTargetId.Should().Be(0);
+
+        // Summon should not acquire targets that are on floor 7 (nearby creatures) when master is on floor 8
+        summon.Targets.HasTarget(monsterX).Should().BeFalse("Summon must not target nearby floor-7 monster when its master is on a different floor");
+        summon.Targets.HasTarget(playerY).Should().BeFalse("Summon must not target nearby floor-7 player when its master is on a different floor");
     }
 }

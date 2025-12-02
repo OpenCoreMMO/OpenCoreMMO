@@ -56,7 +56,7 @@ public class LootContainer : Container.Container, ILootContainer
     private string GetStringContent(LootItem[] items)
     {
         if (Loot is null) return null;
-        if (!items.Any()) return null;
+        if (items.Length == 0) return null;
 
         var stringBuilder = new StringBuilder();
 

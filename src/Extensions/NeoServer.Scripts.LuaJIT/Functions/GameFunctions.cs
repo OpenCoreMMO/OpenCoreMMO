@@ -9,6 +9,7 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Extensions;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -276,7 +277,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         if (tileToBorn is IDynamicTile { HasAnyCreature: false } dynamicTile && dynamicTile.CanEnter(monster))
         {
-            if (dynamicTile.HasFlag(TileFlags.ProtectionZone))
+            if (dynamicTile.ProtectionZone)
             {
                 Lua.PushNil(luaState);
                 return 1;
@@ -292,7 +293,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         foreach (var neighbour in extended ? position.ExtendedNeighbours : position.Neighbours)
             if (_map[neighbour] is IDynamicTile { HasAnyCreature: false } neighbourTile &&
-                neighbourTile.CanEnter(monster))
+                neighbourTile.CanEnter(monster) && MonsterEnterTileRule.Rule.CanEnter(neighbourTile, monster))
             {
                 monster.Born(neighbour);
 

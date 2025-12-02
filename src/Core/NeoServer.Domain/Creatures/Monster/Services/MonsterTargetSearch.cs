@@ -20,6 +20,9 @@ public class MonsterTargetSearch(IMapTool mapTool) : IMonsterTargetSearch
     {
         if (monster is null) return null;
 
+        //player summons only attacks the monsters that player is targeting
+        if (monster is Summon.Summon { Master: IPlayer }) return null;
+
         var candidates = new List<ICombatActor>();
         var monsterPosition = monster.Location;
 

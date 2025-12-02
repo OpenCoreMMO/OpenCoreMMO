@@ -32,8 +32,11 @@ public class Summon : Monster
         get
         {
             var fpp = base.PathSearchParams;
-            fpp.MaxTargetDist = Equals(Following, Master) ? 1 : TargetDistance;
-            fpp.KeepDistance = TargetDistance > 1 && !Equals(Following, Master);
+            fpp.MinTargetDist = 1;
+            fpp.MaxTargetDist = Equals(Following, Master) ? 2 : TargetDistance;
+            fpp.FullPathSearch = true;
+            fpp.KeepDistance = false;
+            fpp.ClearSight = true;
             return fpp;
         }
     }
@@ -42,10 +45,16 @@ public class Summon : Monster
     {
         if (IsDead) return;
         if (Master is not null && Master.Equals(creature)) return;
+        if (creature.Equals(this)) return;
         if (creature is Summon { Master: not null } summon && summon.Master.Equals(Master)) return;
 
         //Summon should not attack if the master has no target
         if (Master is ICombatActor { CurrentTarget: null }) return;
+        
+        if (!CanSee(creature.Location))
+        {
+            return;
+        }
 
         base.SetAsEnemy(creature);
     }
@@ -55,9 +64,15 @@ public class Summon : Monster
         if (IsDead) return Result.NotPossible;
         if (Master is not null && Master.Equals(target)) return Result.NotPossible;
         if (target is Summon { Master: not null } summon && summon.Master.Equals(Master)) return Result.NotPossible;
-
+        if (target.Equals(this)) return Result.NotPossible;
+        
         //Summon should not attack if the master has no target
         if (Master is ICombatActor { CurrentTarget: null }) return Result.NotPossible;
+
+        if (!CanSee(target.Location))
+        {
+            return Result.NotPossible;
+        }
         
         return base.SetAttackTarget(target);
     }
@@ -81,6 +96,18 @@ public class Summon : Monster
                 Die();
                 return;
             }
+        }
+
+        if (!CanSee(Master.Location))
+        {
+            Targets.Clear();
+            State = MonsterState.RandomlyWalking;
+            return;
+        }
+
+        if (CanSee(Master.Location) && State is MonsterState.RandomlyWalking)
+        {
+            State = MonsterState.Awake;
         }
 
         if (Master is not IPlayer player)
@@ -151,12 +178,17 @@ public class Summon : Monster
         Die();
     }
 
-    private void OnMasterTargetChange(ICombatActor actor, uint oldTargetId, uint newTargetId)
+    private void OnMasterTargetChange(ICombatActor master, uint oldTargetId, uint newTargetId)
     {
         Targets.Clear();
 
-        SetAsEnemy(actor.CurrentTarget);
-        ChangeAttackTarget(actor.CurrentTarget);
+        if (!CanSee(master.CurrentTarget?.Location ?? Location.Zero))
+        {
+            return;
+        }
+
+        SetAsEnemy(master.CurrentTarget);
+        ChangeAttackTarget(master.CurrentTarget);
     }
 
     private void OnMasterStoppedAttack(ICombatActor actor)

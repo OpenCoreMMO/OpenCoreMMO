@@ -27,13 +27,13 @@ public class MonsterStateService(
         monster.UpdateState();
 
         // If there are no targets, stop following and attacking
-        if (!monster.Targets.Any())
+        if (!monster.Targets.Any() && monster is not Summon.Summon)
         {
             monster.StopAttack();
             monster.StopFollowing();
         }
 
-        if (monster.State == MonsterState.LookingForEnemy)
+        if (monster.State == MonsterState.RandomlyWalking)
         {
             //Walk a random step
             monster.DoRandomStep();

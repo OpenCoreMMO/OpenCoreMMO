@@ -59,7 +59,7 @@ public class Monster : WalkableMonster, IMonster
         get
         {
             var fpp = base.PathSearchParams;
-            fpp.FullPathSearch = true;
+            fpp.FullPathSearch = TargetDistance <= 1;
             fpp.MaxTargetDist = TargetDistance;
             fpp.KeepDistance = TargetDistance > 1;
             fpp.PushMonsters = Metadata.HasFlag(CreatureFlagAttribute.CanPushCreatures);
@@ -77,12 +77,12 @@ public class Monster : WalkableMonster, IMonster
     public MonsterState State
     {
         get => _state;
-        private set
+        protected set
         {
             var oldState = _state;
             if (_state == value) return;
             _state = value;
-            
+
             EventAggregator.Invoke(new MonsterStateChangedEvent(this, oldState, value));
         }
     }
@@ -285,11 +285,11 @@ public class Monster : WalkableMonster, IMonster
         {
             if (Conditions.Count > 0)
             {
-                State = MonsterState.LookingForEnemy;
+                State = MonsterState.RandomlyWalking;
                 return;
             }
 
-            State = Cooldowns.Expired(CooldownType.Awaken) ? MonsterState.Sleeping : MonsterState.LookingForEnemy;
+            State = Cooldowns.Expired(CooldownType.Awaken) ? MonsterState.Sleeping : MonsterState.RandomlyWalking;
             return;
         }
 
@@ -302,7 +302,7 @@ public class Monster : WalkableMonster, IMonster
 
         if (!HasFollowPath)
         {
-            State = MonsterState.LookingForEnemy;
+            State = MonsterState.RandomlyWalking;
             return;
         }
 
@@ -343,10 +343,10 @@ public class Monster : WalkableMonster, IMonster
 
     public ushort Defend()
     {
-        if (IsDead || !Defenses.Any())
+        if (IsSleeping || Defenses.Length == 0)
         {
             StopDefending();
-            return default;
+            return 0;
         }
 
         Defending = true;
@@ -568,6 +568,7 @@ public class Monster : WalkableMonster, IMonster
     internal void ChangeAttackTarget(ICreature creature)
     {
         if (creature is null) return;
+        if (creature.Equals(this)) return;
 
         Follow(creature);
         SetAttackTarget(creature);

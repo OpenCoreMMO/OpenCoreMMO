@@ -20,6 +20,9 @@ public class MonsterTargetingService(IMonsterTargetSearch targetSearch) : IMonst
 
         var hasTargetChange = monster.Metadata.TargetChance.Chance > 0;
 
+        // players summons can't target players themselves
+        if (monster is Summon.Summon { Master: Player.Player }) return;
+
         if (monster.Attacking && monster.HasFollowPath && !hasTargetChange) return;
 
         var searchMode = TargetSearchType.Default;

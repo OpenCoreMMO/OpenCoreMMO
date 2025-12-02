@@ -113,7 +113,7 @@ public class Scripts : IScripts
 
         dir = Path.Combine(dir, coreFolder, "events", "scripts", "scheduler");
 
-        if (!Directory.Exists(dir) || !Directory.GetDirectories(dir).Any())
+        if (!Directory.Exists(dir) || Directory.GetDirectories(dir).Length == 0)
         {
             _logger.Warning(
                 "{LoadEventSchedulerScriptsName} - Can not load folder \'scheduler\' on {CoreFolder}/events/scripts\'",
@@ -156,7 +156,7 @@ public class Scripts : IScripts
 
         var searchOption = SearchOption.AllDirectories;
 
-        if (!Directory.GetDirectories(loadPath).Any())
+        if (Directory.GetDirectories(loadPath).Length == 0)
             searchOption = SearchOption.TopDirectoryOnly;
 
         foreach (var filePath in Directory.GetFiles(loadPath, "*.lua", searchOption))
