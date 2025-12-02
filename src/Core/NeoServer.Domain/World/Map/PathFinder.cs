@@ -31,19 +31,23 @@ public class PathFinder(IMap map) : IPathFinder
     public (bool Found, Direction[] Directions) Find(ICreature creature, Location target, FindPathParams fpp,
         ITileEnterRule tileEnterRule)
     {
-        if (creature is not IWalkableCreature walkableCreature) return NotFound;
+        if (creature is not IWalkableCreature) return NotFound;
 
         if (!creature.Location.SameFloorAs(target)) return NotFound;
 
-        if (!fpp.KeepDistance && creature.Location.IsNextTo(target)) return FoundedButEmptyDirections;
+        if (fpp is { KeepDistance: false, MaxTargetDist: <= 1 } && creature.Location.IsNextTo(target)) return FoundedButEmptyDirections;
 
-        if (fpp.MaxTargetDist > 1)
+        if (fpp is { MaxTargetDist: > 1, FullPathSearch: false })
         {
             var pathToKeepDistance = FindPathToKeepDistance(creature, target, fpp, tileEnterRule);
 
-            return pathToKeepDistance.Found
-                ? (true, pathToKeepDistance.Directions)
-                : AStar.GetPathMatching(map, creature, creature.Location, target, fpp, tileEnterRule);
+            if (pathToKeepDistance.Found)
+            {
+                return (true, pathToKeepDistance.Directions);
+            }
+
+            // If we couldn't find a path to keep distance, we can use full A* search'
+            fpp.FullPathSearch = true;
         }
 
         return AStar.GetPathMatching(map, creature, creature.Location, target, fpp, tileEnterRule);
