@@ -23,6 +23,8 @@ services:
     ports:
       - "${SERVER_LOGIN_PORT}:${SERVER_LOGIN_PORT}"
       - "${SERVER_GAME_PORT}:${SERVER_GAME_PORT}"
+    volumes:
+      - data:/app/data
     restart: "on-failure"
     networks:
       - opencoremmo
@@ -30,3 +32,7 @@ services:
 networks:
   opencoremmo:
     external: true
+
+volumes:
+  data:
+    driver: local

@@ -4,6 +4,8 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 # Set the working directory to /app
 WORKDIR /app
 
+# Expose a persistent data mount so data survives container removal
+VOLUME ["/app/data"]
 COPY data/. ./out/data
 
 # Copy the project files to the container
