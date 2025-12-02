@@ -32,8 +32,9 @@ public class Summon : Monster
         get
         {
             var fpp = base.PathSearchParams;
-            fpp.MaxTargetDist = Equals(Following, Master) ? 1 : TargetDistance;
-            fpp.KeepDistance = TargetDistance > 1 && !Equals(Following, Master);
+            fpp.MaxTargetDist = Equals(Following, Master) ? 2 : TargetDistance;
+            fpp.KeepDistance = TargetDistance > 1 || Equals(Following, Master);
+            fpp.FullPathSearch = true;
             return fpp;
         }
     }
