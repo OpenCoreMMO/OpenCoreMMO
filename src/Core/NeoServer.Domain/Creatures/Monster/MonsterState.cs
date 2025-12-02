@@ -8,6 +8,6 @@ public enum MonsterState
     Sleeping,
     InCombat,
     Escaping,
-    LookingForEnemy,
+    RandomlyWalking,
     Awake
 }
