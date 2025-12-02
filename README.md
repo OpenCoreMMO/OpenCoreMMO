@@ -139,7 +139,7 @@ To connect to the self-hosted server for development, please use the following c
 ## Links
 
 * Documentation: https://opencoremmo.gitbook.io/opencoremmo/
-* Discord Invite: [https://discord.gg/Kazq9z2](https://discord.gg/XYkaxyxc)
+* Discord Invite: https://discord.gg/Kazq9z2
 * Lua Scripting (Revscript) Functions Readme: https://github.com/OpenCoreMMO/OpenCoreMMO/tree/develop/data#readme
 
 ## Author

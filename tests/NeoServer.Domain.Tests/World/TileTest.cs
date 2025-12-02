@@ -492,7 +492,7 @@ public class TileTest
         var topItem = ItemTestDataBuilder.CreateTopItem(1, 1);
         var downItem = ItemTestDataBuilder.CreateRegularItem(2);
 
-        var tile = new StaticTile(new Coordinate(100, 100, 7), topItem, downItem);
+        var tile = new StaticTile(new Coordinate(100, 100, 7), 0, topItem, downItem);
 
         // Act & Assert
         // Index 0 should return first top item (no ground)
@@ -513,7 +513,7 @@ public class TileTest
         var topItem = ItemTestDataBuilder.CreateTopItem(1, 1);
         var downItem = ItemTestDataBuilder.CreateRegularItem(2);
 
-        var tile = new StaticTile(new Coordinate(100, 100, 7), ground, topItem, downItem);
+        var tile = new StaticTile(new Coordinate(100, 100, 7), 0, ground, topItem, downItem);
 
         // Act & Assert
         // Index 0 should return ground
@@ -535,7 +535,7 @@ public class TileTest
         // Arrange
         var topItem = ItemTestDataBuilder.CreateTopItem(1, 1);
 
-        var tile = new StaticTile(new Coordinate(100, 100, 7), topItem);
+        var tile = new StaticTile(new Coordinate(100, 100, 7), 0, topItem);
 
         // Act & Assert
         tile.GetItemByIndex(-1).Should().BeNull();
@@ -547,7 +547,7 @@ public class TileTest
         // Arrange
         var topItem = ItemTestDataBuilder.CreateTopItem(1, 1);
 
-        var tile = new StaticTile(new Coordinate(100, 100, 7), topItem);
+        var tile = new StaticTile(new Coordinate(100, 100, 7), 0, topItem);
 
         // Act & Assert
         tile.GetItemByIndex(1).Should().BeNull();
@@ -562,7 +562,7 @@ public class TileTest
         var downItem = ItemTestDataBuilder.CreateRegularItem(2);
 
         // Pass items in random order: topItem, ground, downItem
-        var tile = new StaticTile(new Coordinate(100, 100, 7), topItem, ground, downItem);
+        var tile = new StaticTile(new Coordinate(100, 100, 7), 0, topItem, ground, downItem);
 
         // Act & Assert
         // Even though passed in random order, AllItems should be ordered: ground, topItem, downItem

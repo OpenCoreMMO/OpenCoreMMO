@@ -23,6 +23,11 @@ public class SpellCastValidation(IMapTool mapTool)
         var result = spell.CanCast(caster, target);
         if (result.Failed) return result;
 
+        if ((caster.Tile?.ProtectionZone ?? false) && (spell.PrimaryGroup.Name == "attack" || spell.SecondaryGroup.Name == "Attack"))
+        {
+            return Result.Fail(InvalidOperation.NotPermittedInProtectionZone);
+        }
+
         if (spell.Range.HasValue && target is not null && !mapTool.CanThrowObjectTo(caster.Location, target.Location,
                 SightLine.CheckSightLineAndFloor, spell.Range.Value, spell.Range.Value))
             return Result.Fail(InvalidOperation.DestinationOutOfReach);
