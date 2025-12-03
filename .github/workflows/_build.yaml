@@ -67,6 +67,7 @@ jobs:
           directory: ${{ github.workspace }}/testresults
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
+          verbose: true
       
       - name: Publish
         working-directory: ${{ inputs.project }}
