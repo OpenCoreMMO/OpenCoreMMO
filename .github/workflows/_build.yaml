@@ -1,6 +1,9 @@
 ﻿name: _Template Build
 on:
   workflow_call:
+    secrets:
+        codecov_token:
+          required: true
     inputs:
       project:
         description: 'The *csproj project path passed from the caller workflow'
@@ -58,13 +61,14 @@ jobs:
           max_attempts: 3
           # Collect code coverage using the XPlat collector. Test results (including coverage)
           # are written to the `testresults` directory so the Codecov action can find them.
-          command: dotnet test ${{ inputs.test }} --no-restore --verbosity normal --collect:"XPlat Code Coverage" --results-directory $GITHUB_WORKSPACE/testresults
+          command: dotnet test ${{ inputs.test }} --no-restore --verbosity normal --collect:"XPlat Code Coverage" --results-directory testresults
 
       - name: Codecov
         uses: codecov/codecov-action@v5.5.1
+        if: ${{ matrix.os == 'windows-latest' }}
         with:
-          files: ${{ github.workspace }}/testresults/**/coverage.cobertura.xml
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.codecov_token }}
+          fail_ci_if_error: false
       
       - name: Publish
         working-directory: ${{ inputs.project }}
