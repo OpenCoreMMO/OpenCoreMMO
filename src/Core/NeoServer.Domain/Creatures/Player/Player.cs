@@ -1423,7 +1423,7 @@ public class Player : CombatActor, IPlayer
 
     public void HandleTargetLost()
     {
-        if (!IsTargetLost()) return;
+        if (!IsTargetLost() || CurrentTarget == null) return;
 
         var showError = CurrentTarget is not ICombatActor { IsDead: true };
 
