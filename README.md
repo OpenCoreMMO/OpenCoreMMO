@@ -34,7 +34,7 @@
 
 | Status |
 |--------|
-|[![OpenCoreMMO](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push&branch=version/860)](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
+|[![OpenCoreMMO Build & Test](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg)](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
 
 ## Usage
 
