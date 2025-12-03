@@ -1,6 +1,9 @@
 ﻿name: _Template Workflow
 on:
   workflow_call:
+    secrets:
+          codecov_token:
+            required: true
     inputs:
       path:
         description: 'The path passed from the caller workflow'
@@ -24,7 +27,7 @@ jobs:
     name: Build & Test
     uses: ./.github/workflows/_build.yaml
     secrets:
-      codecov_token: ${{ secrets.CODECOV_TOKEN }}
+      codecov_token: ${{ secrets.codecov_token }}
     with:
       project: ./${{ inputs.path }}/${{ inputs.project }}
       deploy: ${{ inputs.deploy }}
