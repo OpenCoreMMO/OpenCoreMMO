@@ -44,6 +44,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         RegisterMethod(luaState, "Item", "isContainer", LuaItemIsContainer);
 
         RegisterMethod(luaState, "Item", "getId", LuaItemGetId);
+        RegisterMethod(luaState, "Item", "getCount", LuaItemGetCount);
 
         RegisterMethod(luaState, "Item", "remove", LuaItemRemove);
 
@@ -118,6 +119,18 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         var item = GetUserdata<IItem>(luaState, 1);
         if (item != null)
             Lua.PushNumber(luaState, item.ServerId);
+        else
+            Lua.PushNil(luaState);
+
+        return 1;
+    }
+
+    public static int LuaItemGetCount(LuaState luaState)
+    {
+        // item:getCount()
+        var item = GetUserdata<IItem>(luaState, 1);
+        if (item != null)
+            Lua.PushNumber(luaState, item.Amount);
         else
             Lua.PushNil(luaState);
 
