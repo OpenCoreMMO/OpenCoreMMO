@@ -34,7 +34,7 @@
 
 | Status |
 |--------|
-|[![OpenCoreMMO](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push&branch=version/860)](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
+|[![OpenCoreMMO Build & Test](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg)](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
 
 ## Usage
 
@@ -148,6 +148,10 @@ To connect to the self-hosted server for development, please use the following c
 
 * Github: [@caioavidal](https://github.com/caioavidal)
 * LinkedIn: [https:\/\/www.linkedin.com\/in\/caiovidal](https:\/\/www.linkedin.com\/in\/caiovidal)
+  
+## Supporters
+
+<img width="169" height="44" alt="image" src="https://github.com/user-attachments/assets/88fe1a46-7c96-48b2-a9d1-a350a1433d3e" />
 
 ## Show your support
 
