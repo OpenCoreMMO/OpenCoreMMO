@@ -180,7 +180,7 @@ public class Summon : Monster
 
     public override bool CanSee(Location pos, int viewRangeX, int viewRangeY, int limitRangeOffset = 0)
     {
-        if (base.CanSee(Master.Location, viewRangeX, viewRangeY, limitRangeOffset))
+        if (base.CanSee(pos, viewRangeX, viewRangeY, limitRangeOffset))
         {
             return true;
         }
