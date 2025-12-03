@@ -241,4 +241,5 @@ public interface ICreature : IMovableThing
     void OnSpectatorLoggedOut(ICreature spectator);
     void OnSpectatorChangedVisibility(ICreature spectator);
     void OnMoving(ITile toTile);
+    bool CanSee(Location.Structs.Location pos, int viewRangeX, int viewRangeY, int limitRangeOffset = 0);
 }
