@@ -1,6 +1,9 @@
 ﻿name: _Template Build
 on:
   workflow_call:
+    secrets:
+        codecov_token:
+          required: true
     inputs:
       project:
         description: 'The *csproj project path passed from the caller workflow'
@@ -64,12 +67,8 @@ jobs:
         uses: codecov/codecov-action@v5.5.1
         if: ${{ matrix.os == 'windows-latest' }}
         with:
-          #directory: ${{ github.workspace }}/testresults
-          #token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.codecov_token }}
           fail_ci_if_error: false
-          verbose: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       
       - name: Publish
         working-directory: ${{ inputs.project }}

@@ -23,6 +23,8 @@ jobs:
   build:
     name: Build & Test
     uses: ./.github/workflows/_build.yaml
+    secrets:
+      codecov_token: ${{ secrets.CODECOV_TOKEN }}
     with:
       project: ./${{ inputs.path }}/${{ inputs.project }}
       deploy: ${{ inputs.deploy }}
