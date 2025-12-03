@@ -56,7 +56,12 @@ jobs:
         with:
           timeout_minutes: 20
           max_attempts: 3
-          command: dotnet test ${{ inputs.test }} --no-restore --verbosity normal
+          # Collect code coverage using the XPlat collector. Test results (including coverage)
+          # are written to the `testresults` directory so the Codecov action can find them.
+          command: dotnet test ${{ inputs.test }} --no-restore --verbosity normal --collect:"XPlat Code Coverage" --results-directory $GITHUB_WORKSPACE/testresults
+
+      - name: Codecov
+        uses: codecov/codecov-action@v5.5.1
 
       - name: Publish
         working-directory: ${{ inputs.project }}
