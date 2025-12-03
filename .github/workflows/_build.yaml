@@ -63,8 +63,9 @@ jobs:
       - name: Codecov
         uses: codecov/codecov-action@v5.5.1
         with:
-          files: ${{ github.workspace }}/testresults/**/coverage.cobertura.xml
+          directory: ${{ github.workspace }}/testresults
           token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
       
       - name: Publish
         working-directory: ${{ inputs.project }}
