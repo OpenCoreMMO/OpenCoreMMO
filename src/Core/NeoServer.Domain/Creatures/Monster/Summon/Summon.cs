@@ -50,7 +50,7 @@ public class Summon : Monster
 
         //Summon should not attack if the master has no target
         if (Master is ICombatActor { CurrentTarget: null }) return;
-        
+
         if (!CanSee(creature.Location))
         {
             return;
@@ -65,7 +65,7 @@ public class Summon : Monster
         if (Master is not null && Master.Equals(target)) return Result.NotPossible;
         if (target is Summon { Master: not null } summon && summon.Master.Equals(Master)) return Result.NotPossible;
         if (target.Equals(this)) return Result.NotPossible;
-        
+
         //Summon should not attack if the master has no target
         if (Master is ICombatActor { CurrentTarget: null }) return Result.NotPossible;
 
@@ -73,7 +73,7 @@ public class Summon : Monster
         {
             return Result.NotPossible;
         }
-        
+
         return base.SetAttackTarget(target);
     }
 
@@ -178,10 +178,37 @@ public class Summon : Monster
         Die();
     }
 
+    public override bool CanSee(Location pos, int viewRangeX, int viewRangeY, int limitRangeOffset = 0)
+    {
+        if (base.CanSee(Master.Location, viewRangeX, viewRangeY, limitRangeOffset))
+        {
+            return true;
+        }
+        
+        if (Master is null)
+        {
+            return false;
+        }
+        
+        //summon should see what the master can see as long he can see the master
+        return Master.CanSee(pos, viewRangeX, viewRangeY, limitRangeOffset) && base.CanSee(Master.Location, viewRangeX, viewRangeY, limitRangeOffset);
+    }
+
+
     public override bool CanSee(Location location)
     {
-        //summon should see what the master can see
-        return Master.CanSee(location);
+        if (base.CanSee(location))
+        {
+            return true;
+        }
+
+        if (Master is null)
+        {
+            return false;
+        }
+        
+        //summon should see what the master can see as long he can see the master
+        return Master.CanSee(location) && base.CanSee(Master.Location);
     }
 
     private void OnMasterTargetChange(ICombatActor master, uint oldTargetId, uint newTargetId)
