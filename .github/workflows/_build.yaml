@@ -65,9 +65,11 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         with:
           #directory: ${{ github.workspace }}/testresults
-          token: ${{ secrets.CODECOV_TOKEN }}
+          #token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
           verbose: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       
       - name: Publish
         working-directory: ${{ inputs.project }}
