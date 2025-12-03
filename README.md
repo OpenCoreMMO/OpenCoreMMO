@@ -3,9 +3,9 @@
   <br>
   OPENCOREMMO</h1>
 <p align="center">
-  <a href="https://codecov.io/gh/caioavidal/OpenCoreMMO">
-  <img align="center" src="https://codecov.io/gh/caioavidal/OpenCoreMMO/branch/develop/graph/badge.svg" />
-</a>
+ <a href="https://codecov.io/gh/OpenCoreMMO/OpenCoreMMO" > 
+ <img align="center" src="https://codecov.io/gh/OpenCoreMMO/OpenCoreMMO/graph/badge.svg?token=QP07XZ162J"/> 
+ </a>
 <a href="https://www.codefactor.io/repository/github/opencoremmo/opencoremmo"><img src="https://www.codefactor.io/repository/github/opencoremmo/opencoremmo/badge" align="center" alt="CodeFactor" /></a><a href="https://discord.gg/Kazq9z2">
   <img align="center" src="https://badgen.net/badge/icon/discord?icon=discord&label" />
 </a>
