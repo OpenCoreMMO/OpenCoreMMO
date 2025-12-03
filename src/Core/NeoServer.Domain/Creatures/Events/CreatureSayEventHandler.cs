@@ -28,7 +28,7 @@ public class CreatureSayEventHandler(IMap map) : IGameEventHandler
 
         var multiFloor = speechType is SpeechType.Yell or SpeechType.MonsterYell;
 
-        foreach (var spectator in map.GetSpectators(creature.Location, multiFloor, true, maxDistanceX, maxDistanceX,
+        foreach (var spectator in map.GetSpectators(creature.Location, multiFloor, false, maxDistanceX, maxDistanceX,
                      maxDistanceY, maxDistanceY))
             if (spectator is ISociableCreature listener)
                 listener.Hear(creature, speechType, message);
