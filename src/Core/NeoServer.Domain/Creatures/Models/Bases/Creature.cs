@@ -259,7 +259,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         };
     }
 
-    protected bool CanSee(Location pos, int viewRangeX, int viewRangeY, int limitRangeOffset = 0)
+    public virtual bool CanSee(Location pos, int viewRangeX, int viewRangeY, int limitRangeOffset = 0)
     {
         if (Location.IsSurface || Location.IsAboveSurface)
         {

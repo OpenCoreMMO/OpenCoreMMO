@@ -3,9 +3,9 @@
   <br>
   OPENCOREMMO</h1>
 <p align="center">
-  <a href="https://codecov.io/gh/caioavidal/OpenCoreMMO">
-  <img align="center" src="https://codecov.io/gh/caioavidal/OpenCoreMMO/branch/develop/graph/badge.svg" />
-</a>
+ <a href="https://codecov.io/gh/OpenCoreMMO/OpenCoreMMO" > 
+ <img align="center" src="https://codecov.io/gh/OpenCoreMMO/OpenCoreMMO/graph/badge.svg?token=QP07XZ162J"/> 
+ </a>
 <a href="https://www.codefactor.io/repository/github/opencoremmo/opencoremmo"><img src="https://www.codefactor.io/repository/github/opencoremmo/opencoremmo/badge" align="center" alt="CodeFactor" /></a><a href="https://discord.gg/Kazq9z2">
   <img align="center" src="https://badgen.net/badge/icon/discord?icon=discord&label" />
 </a>
@@ -34,7 +34,7 @@
 
 | Status |
 |--------|
-|[![OpenCoreMMO](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg?event=push&branch=version/860)](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
+|[![OpenCoreMMO Build & Test](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml/badge.svg)](https://github.com/OpenCoreMMO/OpenCoreMMO/actions/workflows/opencoremmo-validation.yaml)|
 
 ## Usage
 
@@ -148,12 +148,10 @@ To connect to the self-hosted server for development, please use the following c
 
 * Github: [@caioavidal](https://github.com/caioavidal)
 * LinkedIn: [https:\/\/www.linkedin.com\/in\/caiovidal](https:\/\/www.linkedin.com\/in\/caiovidal)
-* 
+  
 ## Supporters
 
 <img width="169" height="44" alt="image" src="https://github.com/user-attachments/assets/88fe1a46-7c96-48b2-a9d1-a350a1433d3e" />
-
-
 
 ## Show your support
 
