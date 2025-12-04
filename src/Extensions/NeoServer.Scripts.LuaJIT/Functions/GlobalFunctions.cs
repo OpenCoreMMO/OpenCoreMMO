@@ -55,6 +55,7 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         RegisterGlobalMethod(luaState, "getWorldTime", LuaGetWorldTime);
         RegisterGlobalMethod(luaState, "getWorldLight", LuaGetWorldLight);
         RegisterGlobalMethod(luaState, "createCombatArea", LuaCreateCombatArea);
+        RegisterGlobalMethod(luaState, "doTargetCombat", LuaDoTargetCombat);
         RegisterGlobalMethod(luaState, "doTargetCombatHealth", LuaDoTargetCombatHealth);
         RegisterGlobalMethod(luaState, "doTargetCombatMana", LuaDoTargetCombatMana);
     }
@@ -236,6 +237,87 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         }
         // Placeholder for actual combat execution
         // Combat::doCombatHealth(creature, target, damage, params);
+
+        PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaDoTargetCombat(LuaState luaState)
+    {
+        // doTargetCombat(cid, target, type, min, max, effect[, origin = ORIGIN_SPELL[, blockArmor = false[, blockShield = false[, ignoreResistances = false]]]])
+        var creature = GetUserdata<ICreature>(luaState, 1);
+
+        if (creature == null && (!Lua.IsNumber(luaState, 1) || GetNumber<uint>(luaState, 1) != 0))
+        {
+            _logger.Error("Creature not found");
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var target = GetUserdata<ICreature>(luaState, 2);
+        if (target == null)
+        {
+            _logger.Error("Target creature not found");
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var combatType = GetNumber<CombatType>(luaState, 3);
+
+        var min = GetNumber<int>(luaState, 4);
+        var max = GetNumber<int>(luaState, 5);
+        var effect = GetNumber<ushort>(luaState, 6);
+        var origin = GetNumber<uint>(luaState, 7, 1);
+
+        var blockArmor = GetNumber<bool>(luaState, 8, false);
+        var blockShield = GetNumber<bool>(luaState, 9, false);
+        var ignoreResistances = GetNumber<bool>(luaState, 10, false);
+
+        // Immediate support for healing and mana effects used by potions/scripts
+        if (combatType == CombatType.COMBAT_HEALING)
+        {
+            _healService.Heal(creature, target as ICombatActor, HealType.Health, (ushort)Math.Max(0, min), (ushort)Math.Max(0, max));
+            EffectService.Send(target.Location, (EffectT)effect);
+            PushBoolean(luaState, true);
+            return 1;
+        }
+
+        if (combatType == CombatType.COMBAT_MANADRAIN)
+        {
+            // treat positive values as mana gain (healing mana), negative as drain
+            var value = Random.Shared.Next(min, max + 1);
+            if (value > 0)
+            {
+                _healService.Heal(creature, target as ICombatActor, HealType.Mana, (ushort)Math.Max(0, min), (ushort)Math.Max(0, max));
+                EffectService.Send(target.Location, (EffectT)effect);
+            }
+            else
+            {
+                // TODO: proper mana drain implementation
+            }
+
+            PushBoolean(luaState, true);
+            return 1;
+        }
+
+        // For other combat types, build a lightweight LuaCombat and execute non-aggressive effects when appropriate
+        try
+        {
+            var luaCombat = new LuaCombat(GetScriptEnv().GetScriptInterface());
+            luaCombat.Parameters.TryAdd(CombatParam.COMBAT_PARAM_TYPE, (int)combatType);
+            luaCombat.Parameters.TryAdd(CombatParam.COMBAT_PARAM_EFFECT, effect);
+            luaCombat.Parameters.TryAdd(CombatParam.COMBAT_PARAM_BLOCKARMOR, blockArmor ? 1 : 0);
+            luaCombat.Parameters.TryAdd(CombatParam.COMBAT_PARAM_BLOCKSHIELD, blockShield ? 1 : 0);
+
+            // If not aggressive, mark as non-aggressive (0). Default to aggressive (1) unless explicitly set by script.
+            luaCombat.Parameters.TryAdd(CombatParam.COMBAT_PARAM_AGGRESSIVE, 1);
+
+            _nonAggressiveCombatService.Execute(luaCombat, creature, target);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Error executing doTargetCombat");
+        }
 
         PushBoolean(luaState, true);
         return 1;

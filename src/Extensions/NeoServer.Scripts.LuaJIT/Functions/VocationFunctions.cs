@@ -19,6 +19,7 @@ public class VocationFunctions : LuaScriptInterface, IVocationFunctions
         RegisterMetaMethod(luaState, "Vocation", "__eq", LuaUserdataCompare<Vocation>);
 
         RegisterMethod(luaState, "Vocation", "getBaseId", LuaVocationGetBaseId);
+        RegisterMethod(luaState, "Vocation", "getId", LuaVocationGetId);
     }
 
     public static int LuaCreateVocation(LuaState luaState)
@@ -55,6 +56,21 @@ public class VocationFunctions : LuaScriptInterface, IVocationFunctions
         if (vocation != null)
         {
             Lua.PushNumber(luaState, vocation.BaseId);
+        }
+        else
+        {
+            Lua.PushNil(luaState);
+        }
+        return 1;
+    }
+
+    private static int LuaVocationGetId(LuaState luaState)
+    {
+        // vocation:getId()
+        var vocation = GetUserdata<Vocation>(luaState, 1);
+        if (vocation != null)
+        {
+            Lua.PushNumber(luaState, vocation.Id);
         }
         else
         {

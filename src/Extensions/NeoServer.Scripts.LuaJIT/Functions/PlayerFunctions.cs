@@ -554,7 +554,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         return 1;
     }
 
-    private static int LuaPlayerAddItem(LuaState luaState)
+    public static int LuaPlayerAddItem(LuaState luaState)
     {
         // player:addItem(itemId, count = 1, canDropOnMap = true, subType = 1, slot = CONST_SLOT_BACKPACK)
 
