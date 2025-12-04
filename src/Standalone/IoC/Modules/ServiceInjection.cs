@@ -71,6 +71,7 @@ public static class ServiceInjection
         builder.AddSingleton<ICreatureMovementService, CreatureMovementService>();
         builder.AddSingleton<CreatureMovementValidation>();
         builder.AddSingleton<CylinderOperation>();
+        builder.AddSingleton<HealService>();
 
         //Operations
         builder.AddSingleton<TradeItemExchanger>();

@@ -44,6 +44,7 @@ public static class LuaJitInjection
         builder.AddSingleton<INpcFunctions, NpcFunctions>();
         builder.AddSingleton<INpcTypeFunctions, NpcTypeFunctions>();
         builder.AddSingleton<IPlayerFunctions, PlayerFunctions>();
+        builder.AddSingleton<IVocationFunctions, VocationFunctions>();
         builder.AddSingleton<IResultFunctions, ResultFunctions>();
         builder.AddSingleton<IPositionFunctions, PositionFunctions>();
         builder.AddSingleton<ITalkActionFunctions, TalkActionFunctions>();
