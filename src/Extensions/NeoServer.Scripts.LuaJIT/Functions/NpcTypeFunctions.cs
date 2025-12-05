@@ -150,7 +150,7 @@ public class NpcTypeFunctions : LuaScriptInterface, INpcTypeFunctions
         var npcType = GetUserdata<INpcType>(luaState, 1);
         if (npcType is not null)
         {
-            var eventType = GetNumber<NpcsEventType>(luaState, 2);
+            var eventType = GetNumber<NpcEventType>(luaState, 2);
             //todo:
             //npcType->info.eventType = GetNumber<NpcsEventType>(L, 2);
             _npcs.Add(npcType.Name, eventType, _scripts.GetScriptInterface());

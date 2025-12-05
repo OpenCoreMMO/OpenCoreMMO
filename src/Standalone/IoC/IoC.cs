@@ -9,7 +9,7 @@ using NeoServer.Domain.Creatures;
 using NeoServer.Domain.World;
 using NeoServer.Domain.World.Map;
 using NeoServer.Networking.Handlers;
-using NeoServer.Scripts.LuaJIT.IoC.Modules;
+using NeoServer.Scripts.LuaJIT.IoC;
 using NeoServer.Server.Commands.Movements;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Commands.WaitingInLine;

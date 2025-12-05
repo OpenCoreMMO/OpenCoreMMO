@@ -31,7 +31,7 @@ public class CreatureOnAppearEventHandler : IGameEventHandler
             if (npcEvent == null ||
                 npcEvent.Events == null ||
                 npcEvent.Events.Count == 0 ||
-                !npcEvent.Events.TryGetValue(NpcsEventType.NPCS_EVENT_APPEAR, out var onAppearEvent) ||
+                !npcEvent.Events.TryGetValue(NpcEventType.NPCS_EVENT_APPEAR, out var onAppearEvent) ||
                 !onAppearEvent.HasValue)
                 return;
 

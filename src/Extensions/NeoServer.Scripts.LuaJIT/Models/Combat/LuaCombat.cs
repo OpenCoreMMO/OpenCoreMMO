@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Location;
+using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Models.Callbacks;
 using NeoServer.Scripts.LuaJIT.Parsers;
 

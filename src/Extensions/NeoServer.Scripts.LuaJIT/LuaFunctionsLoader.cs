@@ -9,8 +9,8 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Items.Items;
-using NeoServer.Scripts.LuaJIT.Attributes;
 using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.Enums.Config;
 using NeoServer.Server.Common.Contracts;
 
 namespace NeoServer.Scripts.LuaJIT;

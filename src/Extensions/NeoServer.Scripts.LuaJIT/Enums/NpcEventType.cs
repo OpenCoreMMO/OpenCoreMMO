@@ -1,7 +1,7 @@
 ﻿namespace NeoServer.Scripts.LuaJIT.Enums;
 
 // Enums
-public enum NpcsEventType : byte
+public enum NpcEventType : byte
 {
     NPCS_EVENT_NONE = 0,
     NPCS_EVENT_THINK = 1,
