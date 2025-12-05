@@ -44,6 +44,7 @@ public static class LuaJitInjection
         builder.AddSingleton<INpcFunctions, NpcFunctions>();
         builder.AddSingleton<INpcTypeFunctions, NpcTypeFunctions>();
         builder.AddSingleton<IPlayerFunctions, PlayerFunctions>();
+        builder.AddSingleton<IVocationFunctions, VocationFunctions>();
         builder.AddSingleton<IResultFunctions, ResultFunctions>();
         builder.AddSingleton<IPositionFunctions, PositionFunctions>();
         builder.AddSingleton<ITalkActionFunctions, TalkActionFunctions>();
@@ -58,6 +59,7 @@ public static class LuaJitInjection
         builder.AddSingleton<IMonsterTypeFunctions, MonsterTypeFunctions>();
         builder.AddSingleton<ITownFunctions, TownFunctions>();
         builder.AddSingleton<IEventCallbackFunctions, EventCallbackFunctions>();
+        builder.AddSingleton<ConfigurationMap>();
 
         builder.AddSingleton<LuaCombatService>();
         builder.AddSingleton<NonAggressiveCombatService>();

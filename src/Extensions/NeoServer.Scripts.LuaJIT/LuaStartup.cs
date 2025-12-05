@@ -31,6 +31,7 @@ public class LuaStartup(
     INpcFunctions npcFunctions,
     INpcTypeFunctions npcTypeFunctions,
     IPlayerFunctions playerFunctions,
+    IVocationFunctions vocationFunctions,
     IPositionFunctions positionFunctions,
     IResultFunctions resultFunctions,
     ITalkActionFunctions talkActionFunctions,
@@ -90,6 +91,7 @@ public class LuaStartup(
         npcFunctions.Init(luaState);
         npcTypeFunctions.Init(luaState);
         playerFunctions.Init(luaState);
+        vocationFunctions.Init(luaState);
         teleportFunctions.Init(luaState);
         groupFunctions.Init(luaState);
         spellFunctions.Init(luaState);

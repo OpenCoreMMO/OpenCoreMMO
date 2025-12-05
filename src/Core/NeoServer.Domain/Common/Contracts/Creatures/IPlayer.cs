@@ -331,4 +331,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event WroteText OnWroteText;
 
     #endregion
+
+    void HealSoul(ushort increasing);
 }

@@ -27,4 +27,5 @@ public class Vocation
     public byte VocationType => Id;
     public bool IsPromotion => Id != FromVoc && Id > 0;
     public string InspectText => string.IsNullOrWhiteSpace(Inspect) ? $"is {Description.ToLower()}" : Inspect;
+    public byte BaseId => FromVoc == 0 ? Id : FromVoc;
 }

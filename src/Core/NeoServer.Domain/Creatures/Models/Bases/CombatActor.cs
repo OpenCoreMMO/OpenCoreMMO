@@ -262,11 +262,14 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, IOutfit 
     {
         if (increasing <= 0) return;
 
-        if (HealthPoints == MaxHealthPoints) return;
+        if (HealthPoints == MaxHealthPoints)
+        {
+            increasing = 0;
+        };
 
         var oldHealthPoints = HealthPoints;
 
-        HealthPoints = HealthPoints + increasing >= MaxHealthPoints ? MaxHealthPoints : HealthPoints + increasing;
+        HealthPoints = Math.Min(HealthPoints + increasing, MaxHealthPoints);
 
         OnHeal?.Invoke(this, healedBy, increasing);
         EventAggregator.Invoke(new CreatureHealthChangedEvent(this, oldHealthPoints, HealthPoints));
