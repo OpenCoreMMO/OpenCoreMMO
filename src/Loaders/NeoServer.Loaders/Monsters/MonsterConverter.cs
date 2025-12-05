@@ -17,6 +17,7 @@ public class MonsterConverter(
     MonsterAttackConverter monsterAttackConverter,
     IItemTypeStore itemTypeStore,
     IMonsterTypeStore monsterTypeStore,
+    MonsterDefenseConverter monsterDefenseConverter,
     GameConfiguration configuration)
 {
     public IMonsterType Convert(MonsterData monsterData)
@@ -66,7 +67,7 @@ public class MonsterConverter(
         monster.ElementResistance = MonsterResistanceConverter.Convert(monsterData).ToImmutableDictionary();
         monster.Immunities = MonsterImmunityConverter.Convert(monsterData);
 
-        monster.Defenses = MonsterDefenseConverter.Convert(monsterData, monsterTypeStore);
+        monster.Defenses = monsterDefenseConverter.Convert(monsterData, monsterTypeStore);
 
         monster.Loot = MonsterLootConverter.Convert(monsterData, itemTypeStore);
 
