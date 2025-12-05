@@ -1,4 +1,4 @@
-namespace NeoServer.Scripts.LuaJIT.Models;
+namespace NeoServer.Scripts.LuaJIT.Enums;
 
 public enum SoundEffect : ushort
 {
