@@ -123,7 +123,7 @@ public class LuaStartup(
 
     private void ModulesLoadHelper(bool loaded, string moduleName)
     {
-        logger.Information("Loaded {ModuleName}", moduleName);
+        logger.Debug("Loaded {ModuleName}", moduleName);
         if (!loaded)
             logger.Error("Cannot load: {ModuleName}", moduleName);
     }

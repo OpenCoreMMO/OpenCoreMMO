@@ -117,12 +117,9 @@ public class ItemTypeLoader
         });
     }
 
-    private static IEnumerable<ItemTypeMetadata> GetItemTypeMetadataList(string basePath)
+    private static List<ItemTypeMetadata> GetItemTypeMetadataList(string basePath)
     {
-        using var memoryMappedFile = MemoryMappedFile.CreateFromFile(Path.Combine(basePath, "items.json"));
-        using var stream = memoryMappedFile.CreateViewStream();
-        using var reader = new StreamReader(stream);
-
-        return JsonSerializer.Deserialize<IEnumerable<ItemTypeMetadata>>(reader.ReadToEnd().Trim('\0'), _jsonOptions);
+        using var stream = File.OpenRead(Path.Combine(basePath, "items.json"));
+        return JsonSerializer.Deserialize<List<ItemTypeMetadata>>(stream, _jsonOptions) ?? [];
     }
 }

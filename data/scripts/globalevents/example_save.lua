@@ -1,6 +1,6 @@
 ﻿local exampleSave = GlobalEvent("ExampleSave")
 function exampleSave.onSave()
-    logger.info('GlobalEvent exampleSave: onSave')
+    logger.debug('GlobalEvent exampleSave: onSave')
     return true
 end
 

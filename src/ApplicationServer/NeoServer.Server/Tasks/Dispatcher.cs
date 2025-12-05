@@ -68,7 +68,7 @@ public class Dispatcher : IDispatcher
 
         _processingTask = Task.Factory.StartNew(async () =>
         {
-            _logger.Information("Dispatcher: Starting event processing loop");
+            _logger.Debug("Dispatcher: Starting event processing loop");
             var eventCount = 0L;
 
             try
