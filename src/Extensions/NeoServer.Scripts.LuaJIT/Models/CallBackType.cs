@@ -1,4 +1,4 @@
-using NeoServer.Scripts.LuaJIT.Attributes;
+using NeoServer.Scripts.LuaJIT.Enums;
 
 namespace NeoServer.Scripts.LuaJIT.Models;
 
