@@ -36,7 +36,6 @@ public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
          RegisterEnumIn<StringConfigType>(luaState, "configKeys");
          RegisterEnumIn<IntegerConfigType>(luaState, "configKeys");
          RegisterEnumIn<FloatingConfigType>(luaState, "configKeys");
-        
 
         // foreach (var item in Enum.GetValues<BooleanConfigType>())
         //     RegisterVariable(luaState, "configKeys", item.ToString(), item);
