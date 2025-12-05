@@ -35,7 +35,7 @@ public class CreatureOnThinkEventHandler : IGameEventHandler
             if (npcEvent == null ||
                 npcEvent.Events == null ||
                 npcEvent.Events.Count == 0 ||
-                !npcEvent.Events.TryGetValue(NpcsEventType.NPCS_EVENT_THINK, out var onThinkEvent) ||
+                !npcEvent.Events.TryGetValue(NpcEventType.NPCS_EVENT_THINK, out var onThinkEvent) ||
                 !onThinkEvent.HasValue)
                 return;
 

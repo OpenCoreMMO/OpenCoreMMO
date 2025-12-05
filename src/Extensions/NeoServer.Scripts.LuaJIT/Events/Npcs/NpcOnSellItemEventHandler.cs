@@ -15,7 +15,7 @@ public class NpcOnSellItemEventHandler(INpcs npcs, ILogger logger) : IGameEventH
         if (npcEvent == null ||
             npcEvent.Events == null ||
             npcEvent.Events.Count == 0 ||
-            !npcEvent.Events.TryGetValue(NpcsEventType.NPCS_EVENT_PLAYER_SELL, out var onSellItemEvent) ||
+            !npcEvent.Events.TryGetValue(NpcEventType.NPCS_EVENT_PLAYER_SELL, out var onSellItemEvent) ||
             !onSellItemEvent.HasValue)
             return;
 

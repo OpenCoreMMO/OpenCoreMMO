@@ -36,7 +36,7 @@ public class CreatureOnMoveEventHandler : IGameEventHandler
             if (npcEvent == null ||
                 npcEvent.Events == null ||
                 npcEvent.Events.Count == 0 ||
-                !npcEvent.Events.TryGetValue(NpcsEventType.NPCS_EVENT_MOVE, out var onMoveEvent) ||
+                !npcEvent.Events.TryGetValue(NpcEventType.NPCS_EVENT_MOVE, out var onMoveEvent) ||
                 !onMoveEvent.HasValue)
                 return;
 
@@ -94,7 +94,7 @@ public class CreatureOnMoveEventHandler : IGameEventHandler
 
     private void OnPlayerCloseChannel(INpc npc, IPlayer player, NpcEvents npcEvent)
     {
-        if (!npcEvent.Events.TryGetValue(NpcsEventType.NPCS_EVENT_PLAYER_CLOSE_CHANNEL, out var onCloseChannelEvent) ||
+        if (!npcEvent.Events.TryGetValue(NpcEventType.NPCS_EVENT_PLAYER_CLOSE_CHANNEL, out var onCloseChannelEvent) ||
             !onCloseChannelEvent.HasValue)
             return;
 

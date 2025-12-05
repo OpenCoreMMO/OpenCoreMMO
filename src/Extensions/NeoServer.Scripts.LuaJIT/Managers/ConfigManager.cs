@@ -1,10 +1,9 @@
 ﻿using LuaNET;
-using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Enums.Config;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Managers;
 
 public class ConfigManager : IConfigManager
 {

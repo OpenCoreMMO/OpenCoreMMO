@@ -37,7 +37,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         RegisterEnum<MagicEffectClassesType>(luaState);
         RegisterEnum<SpeakClassesType>(luaState);
         RegisterEnum<MessageClassesType>(luaState);
-        RegisterEnum<NpcsEventType>(luaState);
+        RegisterEnum<NpcEventType>(luaState);
         RegisterEnumCustom<PlayerFlag>(luaState, false);
         RegisterEnumCustom<ReloadType>(luaState, true, true, "RELOAD_TYPE");
         RegisterEnum<ReturnValueType>(luaState);

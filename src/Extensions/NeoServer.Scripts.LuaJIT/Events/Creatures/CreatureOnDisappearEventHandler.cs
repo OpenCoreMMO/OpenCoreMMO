@@ -31,7 +31,7 @@ public class CreatureOnDisappearEventHandler : IGameEventHandler
             if (npcEvent == null ||
                 npcEvent.Events == null ||
                 npcEvent.Events.Count == 0 ||
-                !npcEvent.Events.TryGetValue(NpcsEventType.NPCS_EVENT_DISAPPEAR, out var onDisappearEvent) ||
+                !npcEvent.Events.TryGetValue(NpcEventType.NPCS_EVENT_DISAPPEAR, out var onDisappearEvent) ||
                 !onDisappearEvent.HasValue)
                 return;
 
