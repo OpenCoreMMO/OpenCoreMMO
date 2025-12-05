@@ -59,6 +59,7 @@ public static class LuaJitInjection
         builder.AddSingleton<IMonsterTypeFunctions, MonsterTypeFunctions>();
         builder.AddSingleton<ITownFunctions, TownFunctions>();
         builder.AddSingleton<IEventCallbackFunctions, EventCallbackFunctions>();
+        builder.AddSingleton<ConfigurationMap>();
 
         builder.AddSingleton<LuaCombatService>();
         builder.AddSingleton<NonAggressiveCombatService>();
