@@ -4,13 +4,8 @@ public static class DictionaryExtensions
 {
     public static bool AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> map, TKey key, TValue value)
     {
-        if (map.TryGetValue(key, out _))
-        {
-            map[key] = value;
-            return true;
-        }
-
-        return map.TryAdd(key, value);
+        map[key] = value;
+        return true;
     }
 
     public static bool AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> map, TKey key,

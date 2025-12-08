@@ -70,7 +70,9 @@ public class ItemTypeLoader
 
                 if (item.Value.Attributes.GetAttribute(ItemTypeAttribute.Type)
                         ?.Equals("coin", StringComparison.InvariantCultureIgnoreCase) ?? false)
+                {
                     _coinTypeStore.AddOrUpdate(item.Key, item.Value);
+                }
             }
 
             return [itemTypes.Count];
