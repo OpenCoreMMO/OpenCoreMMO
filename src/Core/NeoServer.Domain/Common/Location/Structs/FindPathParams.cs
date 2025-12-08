@@ -3,7 +3,7 @@
 namespace NeoServer.Domain.Common.Location.Structs;
 
 [StructLayout(LayoutKind.Auto)]
-public struct FindPathParams
+public class FindPathParams
 {
     public static FindPathParams EscapeParams => new(false, true, default, true, 12, 1, 12);
 

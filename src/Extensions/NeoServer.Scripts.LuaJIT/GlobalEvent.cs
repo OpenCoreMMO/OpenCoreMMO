@@ -4,7 +4,7 @@ using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT;
 
-public struct LightInfo(byte level, byte color)
+public class LightInfo(byte level, byte color)
 {
     public byte Level = level;
     public byte Color = color;

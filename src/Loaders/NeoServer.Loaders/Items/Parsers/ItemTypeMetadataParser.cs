@@ -10,11 +10,11 @@ namespace NeoServer.Loaders.Items.Parsers;
 
 public class ItemTypeMetadataParser
 {
-    private readonly IDictionary<ushort, IItemType> itemTypes;
+    private readonly IDictionary<ushort, IItemType> _itemTypes;
 
     public ItemTypeMetadataParser(IDictionary<ushort, IItemType> itemTypes)
     {
-        this.itemTypes = itemTypes;
+        _itemTypes = itemTypes;
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ public class ItemTypeMetadataParser
 
         if (id is > 30000 and < 30100) id -= 30000;
 
-        if (!itemTypes.TryGetValue(id, out var itemType)) return;
+        if (!_itemTypes.TryGetValue(id, out var itemType)) return;
 
         itemType.SetName(metadata.Name);
         itemType.SetArticle(metadata.Article);

@@ -31,12 +31,16 @@ public class MonsterLoader(
         {
             var monsters = GetMonsterDataListAsync().GetAwaiter().GetResult().ToList();
 
-            monsterTypeStore.AddOrUpdateRange(monsters);
+            foreach (var monster in monsters)
+            {
+                monsterTypeStore.AddOrUpdate(monster.Name, monster);
+            }
+
             return [monsters.Count];
         });
     }
 
-    private async Task<IEnumerable<(string, IMonsterType)>> GetMonsterDataListAsync()
+    private async Task<IEnumerable<IMonsterType>> GetMonsterDataListAsync()
     {
         var basePath = $"{serverConfiguration.Data}/monsters";
 
@@ -44,22 +48,28 @@ public class MonsterLoader(
             new FileStream(Path.Combine(basePath, "monsters.json"), FileMode.Open, FileAccess.Read);
 
         var monstersPath =
-            await JsonSerializer.DeserializeAsync<List<IDictionary<string, string>>>(fileStream, _jsonOptions);
+            await JsonSerializer.DeserializeAsync<List<MonstersFile>>(fileStream, _jsonOptions);
 
-        var tasks = monstersPath
-            .OrderBy(x => x["name"])
-            .Select(async x => (x["name"], await ConvertMonsterAsync(basePath, x)));
-
+        var monsters = monstersPath;
+        
+        var tasks = new List<Task<IMonsterType>>();
+        
+        foreach (var monster in monsters)
+        {
+            tasks.Add(ConvertMonsterAsync(basePath, monster.File));
+        }
+    
         return await Task.WhenAll(tasks);
     }
 
-    private async Task<IMonsterType> ConvertMonsterAsync(string basePath, IDictionary<string, string> monsterFile)
+    private async Task<IMonsterType> ConvertMonsterAsync(string basePath, string monsterFile)
     {
-        await using var fileStream =
-            new FileStream(Path.Combine(basePath, monsterFile["file"]), FileMode.Open, FileAccess.Read);
+        await using var fileStream = new FileStream(Path.Combine(basePath, monsterFile), FileMode.Open, FileAccess.Read);
 
         var monster = await JsonSerializer.DeserializeAsync<MonsterData>(fileStream, _jsonOptions);
 
         return monsterConverter.Convert(monster);
     }
 }
+
+public record MonstersFile(string Name, string File);

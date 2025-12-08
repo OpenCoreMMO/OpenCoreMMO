@@ -9,7 +9,7 @@ using NeoServer.Loaders.OTBM.Enums;
 
 namespace NeoServer.Loaders.OTBM.Structure.TileArea;
 
-public struct TileNode : ITileNode
+public class TileNode : ITileNode
 {
     public Coordinate Coordinate { get; set; }
     public NodeAttribute NodeAttribute { get; set; }

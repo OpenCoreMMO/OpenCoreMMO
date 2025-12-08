@@ -7,7 +7,7 @@ using NeoServer.Loaders.OTBM.Enums;
 
 namespace NeoServer.Loaders.OTBM.Structure.TileArea;
 
-public struct ItemNode
+public class ItemNode
 {
     public ushort ItemId { get; set; }
     public List<ItemNodeAttributeValue> ItemNodeAttributes { get; }

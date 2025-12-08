@@ -6,7 +6,7 @@ using NeoServer.Loaders.Converts;
 namespace NeoServer.Loaders.Items;
 
 [Serializable]
-public struct ItemTypeMetadata
+public class ItemTypeMetadata
 {
     [JsonConverter(typeof(UshortNullableConverter))]
     public ushort? Id { get; set; }
@@ -30,7 +30,7 @@ public struct ItemTypeMetadata
     public string[] Flags { get; set; }
 
     [Serializable]
-    public struct Attribute
+    public class Attribute
     {
         public string Key { get; set; }
         public dynamic Value { get; set; }
@@ -38,7 +38,7 @@ public struct ItemTypeMetadata
     }
 
     [Serializable]
-    public struct Requirement
+    public class Requirement
     {
         public string Vocation { get; set; }
         public ushort MinLevel { get; set; }

@@ -7,7 +7,7 @@ namespace NeoServer.Loaders.OTB.Structure;
 ///     OTB structure class.
 ///     OTB files only have Header and Items Node
 /// </summary>
-public struct Otb
+public class Otb
 {
     //todo: implement header class
 

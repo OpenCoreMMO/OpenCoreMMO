@@ -6,7 +6,7 @@ using NeoServer.Loaders.OTB.Structure;
 
 namespace NeoServer.Loaders.OTBM.Structure.TileArea;
 
-public struct TileArea
+public class TileArea
 {
     public TileArea(OtbNode node)
     {
