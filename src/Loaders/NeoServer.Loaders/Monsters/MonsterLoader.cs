@@ -22,14 +22,14 @@ public class MonsterLoader(
     {
         logger.Step("Loading monsters...", "{n} monsters loaded", () =>
         {
-            var monsters = GetMonsterDataListAsync().GetAwaiter().GetResult().ToList();
+            var monsters = GetMonsterDataListAsync().GetAwaiter().GetResult();
 
             foreach (var monster in monsters)
             {
                 monsterTypeStore.AddOrUpdate(monster.Name, monster);
             }
 
-            return [monsters.Count];
+            return [monsters.Length];
         });
     }
 
