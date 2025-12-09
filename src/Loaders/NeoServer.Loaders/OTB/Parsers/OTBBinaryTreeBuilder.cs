@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using NeoServer.Loaders.OTB.DataStructures;
 using NeoServer.Loaders.OTB.Enums;
 using NeoServer.Loaders.OTB.Structure;
@@ -14,39 +15,45 @@ public static class OtbBinaryTreeBuilder
     /// <returns></returns>
     public static OtbNode Deserialize(ReadOnlyMemory<byte> otbmStream)
     {
-        var serializedOtbmData = otbmStream.Slice(4);
+        var serializedOtbmData = otbmStream[4..];
         var memoryStream = new ReadOnlyMemoryStream(serializedOtbmData);
 
-        return BuildTree(new OtbNode(NodeType.NotSetYet), memoryStream).Children[0];
+        return BuildTree(new OtbNode(NodeType.NotSetYet), memoryStream).Children.Span[0];
     }
 
-    private static OtbNode
-        BuildTree(OtbNode node, ReadOnlyMemoryStream stream) //recursive method to create a binary tree
+    private static OtbNode BuildTree(OtbNode node, ReadOnlyMemoryStream stream)
     {
-        var currentByte = stream.ReadByte();
+        var nodeStack = new Stack<OtbNode>();
+        nodeStack.Push(node);
 
-        switch ((OtbMarkupByte)currentByte)
+        while (!stream.IsOver && nodeStack.Count > 0)
         {
-            case OtbMarkupByte.Start:
-                while (currentByte == (byte)OtbMarkupByte.Start)
-                {
+            var currentNode = nodeStack.Peek();
+            var currentByte = stream.ReadByte();
+
+            switch ((OtbMarkupByte)currentByte)
+            {
+                case OtbMarkupByte.Start:
                     var childNode = new OtbNode((NodeType)stream.ReadByte());
-                    node.AddChild(BuildTree(childNode, stream));
-                    if (stream.IsOver) break;
-                    currentByte = stream.ReadByte();
-                }
+                    currentNode.AddChild(childNode);
+                    nodeStack.Push(childNode);
+                    break;
 
-                return node;
+                case OtbMarkupByte.Escape:
+                    currentNode.AddData(currentByte);
+                    currentNode.AddData(stream.ReadByte());
+                    break;
 
-            case OtbMarkupByte.Escape:
-                node.AddData(currentByte);
-                node.AddData(stream.ReadByte());
-                return BuildTree(node, stream);
-            case OtbMarkupByte.End:
-                return node;
-            default:
-                node.AddData(currentByte);
-                return BuildTree(node, stream);
+                case OtbMarkupByte.End:
+                    nodeStack.Pop();
+                    break;
+
+                default:
+                    currentNode.AddData(currentByte);
+                    break;
+            }
         }
+
+        return node;
     }
 }

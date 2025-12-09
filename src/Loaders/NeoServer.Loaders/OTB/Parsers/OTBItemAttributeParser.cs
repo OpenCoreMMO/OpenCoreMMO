@@ -11,8 +11,7 @@ namespace NeoServer.Loaders.OTB.Parsers;
 /// </summary>
 public sealed class OtbParsingItemAttribute
 {
-    private readonly IDictionary<OtbItemAttribute, IConvertible> attributes =
-        new Dictionary<OtbItemAttribute, IConvertible>();
+    private readonly Dictionary<OtbItemAttribute, IConvertible> attributes = new();
 
     /// <summary>
     ///     Creates OTBParsingItemAttribute instance
@@ -22,14 +21,13 @@ public sealed class OtbParsingItemAttribute
     {
         if (stream.IsNull()) return;
         while (!stream.IsOver) Parse(stream);
-        Attributes = attributes.ToImmutableDictionary();
     }
 
     /// <summary>
     ///     Dictionary containing the otb item attributes and its respective values
     /// </summary>
     /// <value></value>
-    public ImmutableDictionary<OtbItemAttribute, IConvertible> Attributes { get; }
+    public Dictionary<OtbItemAttribute, IConvertible> Attributes  => attributes;
 
     private void Parse(OtbParsingStream stream)
     {

@@ -19,7 +19,7 @@ public class ItemTypeMetadata
     [JsonConverter(typeof(UshortNullableConverter))]
     public ushort? Toid { get; set; }
 
-    public IEnumerable<Attribute> Attributes { get; set; }
+    public Attribute[] Attributes { get; set; }
 
     [JsonPropertyName("onUse")] public IEnumerable<Attribute> OnUseEvent { get; set; }
 
@@ -34,7 +34,7 @@ public class ItemTypeMetadata
     {
         public string Key { get; set; }
         public dynamic Value { get; set; }
-        public IEnumerable<Attribute> Attributes { get; set; }
+        public Attribute[] Attributes { get; set; }
     }
 
     [Serializable]

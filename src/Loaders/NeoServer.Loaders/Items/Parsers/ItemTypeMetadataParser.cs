@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Items;
@@ -8,15 +7,8 @@ using NeoServer.Loaders.OTB.Parsers;
 
 namespace NeoServer.Loaders.Items.Parsers;
 
-public class ItemTypeMetadataParser
+public class ItemTypeMetadataParser(Dictionary<ushort, IItemType> itemTypes)
 {
-    private readonly IDictionary<ushort, IItemType> _itemTypes;
-
-    public ItemTypeMetadataParser(IDictionary<ushort, IItemType> itemTypes)
-    {
-        _itemTypes = itemTypes;
-    }
-
     /// <summary>
     ///     Parses ItemNode object to IItemType
     /// </summary>
@@ -27,18 +19,24 @@ public class ItemTypeMetadataParser
 
         if (id is > 30000 and < 30100) id -= 30000;
 
-        if (!_itemTypes.TryGetValue(id, out var itemType)) return;
+        if (!itemTypes.TryGetValue(id, out var itemType)) return;
 
         itemType.SetName(metadata.Name);
         itemType.SetArticle(metadata.Article);
         itemType.SetPlural(metadata.Plural);
 
         if (metadata.Flags != null)
+        {
             foreach (var flagName in metadata.Flags)
             {
-                if (!ItemAttributeTranslation.TranslateFlagName(flagName, out var flag)) continue;
+                if (!ItemAttributeTranslation.TranslateFlagName(flagName, out var flag))
+                {
+                    continue;
+                }
+
                 itemType.Flags.Add(flag);
             }
+        }
 
         if (metadata.Attributes == null)
         {
@@ -70,7 +68,7 @@ public class ItemTypeMetadataParser
         itemType.SetGroupIfNone();
     }
 
-    private static void SetAttributes(IEnumerable<ItemTypeMetadata.Attribute> metaAttributes,
+    private static void SetAttributes(ItemTypeMetadata.Attribute[] metaAttributes,
         ItemTypeAttributeList attributes)
     {
         foreach (var attribute in metaAttributes)
@@ -83,16 +81,14 @@ public class ItemTypeMetadataParser
                 ? int.Parse(originalValue) / 100f
                 : originalValue;
 
-            if (attribute.Attributes == null || !attribute.Attributes.Any())
+            if (attribute.Attributes == null || attribute.Attributes.Length == 0)
             {
                 if (JsonTextExtensions.IsJsonArray(attribute.Value))
                 {
-                    var arrayValues = value;
-
                     if (itemAttribute == ItemTypeAttribute.None)
-                        attributes.SetCustomAttribute(attribute.Key, values: arrayValues);
+                        attributes.SetCustomAttribute(attribute.Key, values: value);
                     else
-                        attributes.SetAttribute(itemAttribute, values: arrayValues);
+                        attributes.SetAttribute(itemAttribute, values: value);
                 }
                 else
                 {

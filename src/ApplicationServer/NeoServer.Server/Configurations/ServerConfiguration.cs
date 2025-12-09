@@ -24,6 +24,7 @@ public record ServerConfiguration(
     int ServerLoginPort,
     int ServerGamePort,
     bool AutoReloadScripts,
+    bool EnableStaticTileCaching,
     SaveConfiguration Save)
 {
 }

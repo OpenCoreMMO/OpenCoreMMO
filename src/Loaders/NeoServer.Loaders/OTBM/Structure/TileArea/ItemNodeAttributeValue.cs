@@ -10,13 +10,13 @@ public readonly struct ItemNodeAttributeValue
 {
     public ItemNodeAttribute AttributeName { get; }
     public IConvertible Value { get; }
-    public IEnumerable<CustomAttribute> CustomAttributes { get; }
+    //public IEnumerable<CustomAttribute> CustomAttributes { get; }
 
     public ItemNodeAttributeValue(ItemNodeAttribute attribute, OtbParsingStream stream)
     {
         Value = null;
         AttributeName = ItemNodeAttribute.None;
-        CustomAttributes = new List<CustomAttribute>();
+        //CustomAttributes = new List<CustomAttribute>();
 
         AttributeName = attribute;
 

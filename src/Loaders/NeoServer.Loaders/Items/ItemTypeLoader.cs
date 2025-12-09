@@ -1,77 +1,47 @@
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Item;
-using NeoServer.Domain.Items;
 using NeoServer.Loaders.Items.Parsers;
 using NeoServer.Loaders.OTB.Parsers;
 using NeoServer.Loaders.OTB.Structure;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
-using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.MemoryMappedFiles;
-using System.Linq;
 using System.Text.Json;
 
 namespace NeoServer.Loaders.Items;
 
-public class ItemTypeLoader
+public class ItemTypeLoader(
+    ILogger logger,
+    ServerConfiguration serverConfiguration,
+    IItemTypeStore itemTypeStore,
+    IItemClientServerIdMapStore itemClientServerIdMapStore,
+    ICoinTypeStore coinTypeStore)
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-        DefaultBufferSize = 4096,
-        AllowTrailingCommas = true,
-        ReadCommentHandling = JsonCommentHandling.Skip
-    };
-
-    private readonly ICoinTypeStore _coinTypeStore;
-
-    private readonly IItemClientServerIdMapStore _itemClientServerIdMapStore;
-
-    private readonly IItemTypeStore _itemTypeStore;
-    private readonly ILogger _logger;
-    private readonly ServerConfiguration _serverConfiguration;
-
-
-    public ItemTypeLoader(
-        ILogger logger,
-        ServerConfiguration serverConfiguration,
-        IItemTypeStore itemTypeStore,
-        IItemClientServerIdMapStore itemClientServerIdMapStore,
-        ICoinTypeStore coinTypeStore)
-    {
-        _logger = logger;
-        _serverConfiguration = serverConfiguration;
-        _itemTypeStore = itemTypeStore;
-        _itemClientServerIdMapStore = itemClientServerIdMapStore;
-        _coinTypeStore = coinTypeStore;
-    }
-
     /// <summary>
     ///     Loads the OTB and XML files into a collection of ItemType objects
     /// </summary>
     public void Load()
     {
-        _logger.Step("Loading items", "{n} items loaded", () =>
+        logger.Step("Loading items", "{n} item types loaded", () =>
         {
-            var basePath = $"{_serverConfiguration.Data}/items/";
+            var basePath = $"{serverConfiguration.Data}/items/";
             var itemTypes = LoadOtb(basePath);
 
-            LoadItemsJson(basePath, itemTypes, _logger);
+            LoadItemsJson(basePath, itemTypes, logger);
 
             foreach (var item in itemTypes)
             {
-                _itemTypeStore.AddOrUpdate(item.Key, item.Value);
-                _itemClientServerIdMapStore.AddOrUpdate(item.Value.ClientId, item.Key);
+                itemTypeStore.AddOrUpdate(item.Key, item.Value);
+                itemClientServerIdMapStore.AddOrUpdate(item.Value.ClientId, item.Key);
 
                 if (item.Value.Attributes.GetAttribute(ItemTypeAttribute.Type)
                         ?.Equals("coin", StringComparison.InvariantCultureIgnoreCase) ?? false)
                 {
-                    _coinTypeStore.AddOrUpdate(item.Key, item.Value);
+                    coinTypeStore.AddOrUpdate(item.Key, item.Value);
                 }
             }
 
@@ -81,13 +51,13 @@ public class ItemTypeLoader
 
     private Dictionary<ushort, IItemType> LoadOtb(string basePath)
     {
-        var fileStream = File.ReadAllBytes(Path.Combine(basePath, _serverConfiguration.OTB));
+        var fileStream = File.ReadAllBytes(Path.Combine(basePath, serverConfiguration.OTB));
 
         var otbNode = OtbBinaryTreeBuilder.Deserialize(fileStream);
         var otb = new Otb(otbNode);
 
         var items = otb.ItemNodes;
-        var itemTypes = new Dictionary<ushort, IItemType>(items.Count);
+        var itemTypes = new Dictionary<ushort, IItemType>(items.Length);
 
         foreach (var node in items)
         {
@@ -98,7 +68,7 @@ public class ItemTypeLoader
         return itemTypes;
     }
 
-    private static void LoadItemsJson(string basePath, IDictionary<ushort, IItemType> itemTypes, ILogger logger)
+    private static void LoadItemsJson(string basePath, Dictionary<ushort, IItemType> itemTypes, ILogger logger)
     {
         var itemTypeMetadata = GetItemTypeMetadataList(basePath);
 
@@ -128,7 +98,15 @@ public class ItemTypeLoader
 
     private static List<ItemTypeMetadata> GetItemTypeMetadataList(string basePath)
     {
+        var jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            DefaultBufferSize = 4096,
+            AllowTrailingCommas = true,
+            ReadCommentHandling = JsonCommentHandling.Skip
+        };
+        
         using var stream = File.OpenRead(Path.Combine(basePath, "items.json"));
-        return JsonSerializer.Deserialize<List<ItemTypeMetadata>>(stream, JsonOptions) ?? [];
+        return JsonSerializer.Deserialize<List<ItemTypeMetadata>>(stream, jsonOptions) ?? [];
     }
 }

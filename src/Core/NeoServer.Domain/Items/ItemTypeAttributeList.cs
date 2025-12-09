@@ -13,21 +13,21 @@ public sealed class ItemTypeAttributeList : BaseAttributeList<ItemTypeAttribute>
         {
             var dictionary = new Dictionary<SkillType, sbyte>();
 
-            foreach (var (attr, (value, list)) in _defaultAttributes)
+            foreach (var (attr, (value, _)) in _defaultAttributes)
             {
                 var type = typeof(sbyte);
                 var (skillType, bonus) = attr switch
                 {
-                    ItemTypeAttribute.SkillAxe => (SkillType.Axe, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.SkillClub => (SkillType.Club, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.SkillDistance => (SkillType.Distance, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.SkillFishing => (SkillType.Fishing, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.SkillFist => (SkillType.Fist, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.SkillShield => (SkillType.Shielding, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.SkillSword => (SkillType.Sword, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.Speed => (SkillType.Speed, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.MagicPoints => (SkillType.Magic, Convert.ChangeType(value, type)),
-                    _ => (SkillType.None, (byte)0)
+                    ItemTypeAttribute.SkillAxe => (SkillType.Axe, (sbyte)value),
+                    ItemTypeAttribute.SkillClub => (SkillType.Club, (sbyte)value),
+                    ItemTypeAttribute.SkillDistance => (SkillType.Distance, (sbyte)value),
+                    ItemTypeAttribute.SkillFishing => (SkillType.Fishing, (sbyte)value),
+                    ItemTypeAttribute.SkillFist => (SkillType.Fist, (sbyte)value),
+                    ItemTypeAttribute.SkillShield => (SkillType.Shielding, (sbyte)value),
+                    ItemTypeAttribute.SkillSword => (SkillType.Sword, (sbyte)value),
+                    ItemTypeAttribute.Speed => (SkillType.Speed, (sbyte)value),
+                    ItemTypeAttribute.MagicPoints => (SkillType.Magic, (sbyte)value),
+                    _ => (SkillType.None, (sbyte)0)
                 };
 
                 if (skillType == SkillType.None || bonus == 0) continue;
@@ -49,20 +49,20 @@ public sealed class ItemTypeAttributeList : BaseAttributeList<ItemTypeAttribute>
                 var type = typeof(sbyte);
                 var (damage, protection) = attr switch
                 {
-                    ItemTypeAttribute.AbsorbPercentDeath => (DamageType.Death, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.AbsorbPercentEnergy => (DamageType.Energy, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.AbsorbPercentPhysical => (DamageType.Physical, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.AbsorbPercentPoison => (DamageType.Earth, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.AbsorbPercentFire => (DamageType.Fire, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.FieldAbsorbPercentFire => (DamageType.Fire, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.AbsorbPercentDrown => (DamageType.Drown, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.AbsorbPercentHoly => (DamageType.Holy, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.AbsorbPercentIce => (DamageType.Ice, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.AbsorbPercentManaDrain => (DamageType.ManaDrain, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.AbsorbPercentLifeDrain => (DamageType.LifeDrain, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.AbsorbPercentMagic => (DamageType.Elemental, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.AbsorbPercentAll => (DamageType.All, Convert.ChangeType(value, type)),
-                    ItemTypeAttribute.AbsorbPercentElements => (DamageType.Elemental, Convert.ChangeType(value, type)),
+                    ItemTypeAttribute.AbsorbPercentDeath => (DamageType.Death, (sbyte)value),
+                    ItemTypeAttribute.AbsorbPercentEnergy => (DamageType.Energy, (sbyte)value),
+                    ItemTypeAttribute.AbsorbPercentPhysical => (DamageType.Physical, (sbyte)value),
+                    ItemTypeAttribute.AbsorbPercentPoison => (DamageType.Earth, (sbyte)value),
+                    ItemTypeAttribute.AbsorbPercentFire => (DamageType.Fire, (sbyte)value),
+                    ItemTypeAttribute.FieldAbsorbPercentFire => (DamageType.Fire, (sbyte)value),
+                    ItemTypeAttribute.AbsorbPercentDrown => (DamageType.Drown, (sbyte)value),
+                    ItemTypeAttribute.AbsorbPercentHoly => (DamageType.Holy, (sbyte)value),
+                    ItemTypeAttribute.AbsorbPercentIce => (DamageType.Ice, (sbyte)value),
+                    ItemTypeAttribute.AbsorbPercentManaDrain => (DamageType.ManaDrain, (sbyte)value),
+                    ItemTypeAttribute.AbsorbPercentLifeDrain => (DamageType.LifeDrain, (sbyte)value),
+                    ItemTypeAttribute.AbsorbPercentMagic => (DamageType.Elemental, (sbyte)value),
+                    ItemTypeAttribute.AbsorbPercentAll => (DamageType.All, (sbyte)value),
+                    ItemTypeAttribute.AbsorbPercentElements => (DamageType.Elemental, (sbyte)value),
                     _ => (DamageType.None, (sbyte)0)
                 };
 
