@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using NeoServer.Loaders.OTB.Enums;
 using NeoServer.Loaders.OTB.Parsers;
 using Xunit;
@@ -12,7 +13,7 @@ public class OTBItemAttributeParserTest
     public void Instance_StreamNull_Throws()
     {
         var sut = new OtbParsingItemAttribute(null);
-        Assert.Null(sut.Attributes);
+        sut.Attributes.Should().BeEmpty();
     }
 
     [Fact]
