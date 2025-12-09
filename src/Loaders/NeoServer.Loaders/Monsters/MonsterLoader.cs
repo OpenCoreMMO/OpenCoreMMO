@@ -40,7 +40,7 @@ public class MonsterLoader(
         });
     }
 
-    private async Task<IEnumerable<IMonsterType>> GetMonsterDataListAsync()
+    private async Task<IMonsterType[]> GetMonsterDataListAsync()
     {
         var basePath = $"{serverConfiguration.Data}/monsters";
 
@@ -50,11 +50,9 @@ public class MonsterLoader(
         var monstersPath =
             await JsonSerializer.DeserializeAsync<List<MonstersFile>>(fileStream, _jsonOptions);
 
-        var monsters = monstersPath;
-        
         var tasks = new List<Task<IMonsterType>>();
         
-        foreach (var monster in monsters)
+        foreach (var monster in monstersPath)
         {
             tasks.Add(ConvertMonsterAsync(basePath, monster.File));
         }

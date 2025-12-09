@@ -42,10 +42,7 @@ public class MonsterConverter(
                 System.Convert.ToByte(monsterData.TargetChange.Chance)),
             ManaCost = monsterData.ManaCost
         };
-
-        //if (monster.Race == Race.None)
-        //    logger.Warning("{Monster} Race: {RaceName} is not implemented", monsterData.Name, monsterData.Race);
-
+        
         if (monsterData.Voices != null)
         {
             monster.VoiceConfig = new IntervalChance(System.Convert.ToUInt16(monsterData.Voices.Interval),
@@ -80,8 +77,9 @@ public class MonsterConverter(
             var creatureFlag = ParseCreatureFlag(flag.Key);
 
             if (creatureFlag == CreatureFlagAttribute.None)
-                //logger.Warning("{Monster} Flag: {FlagName} is not implemented", monsterData.Name, flag.Key);
+            {
                 continue;
+            }
 
             monster.Flags.Add(creatureFlag, flag.Value);
         }
