@@ -122,8 +122,8 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     byte MaxSoulPoints { get; }
     IVip Vip { get; }
-    IPlayerChannel Channels { get; set; }
-    IPlayerParty PlayerParty { get; set; }
+    PlayerChannel Channels { get; set; }
+    PlayerParty PlayerParty { get; set; }
     string GenderPronoun { get; }
     Gender Gender { get; set; }
     int PremiumDays { get; }

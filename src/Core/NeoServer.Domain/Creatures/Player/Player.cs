@@ -144,7 +144,7 @@ public class Player : CombatActor, IPlayer
         _ => 7
     };
 
-    public IPlayerHand PlayerHand { get; }
+    public PlayerHand PlayerHand { get; }
 
     public uint IdleTime { get; private set; }
     public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
@@ -183,8 +183,8 @@ public class Player : CombatActor, IPlayer
     public override IOutfit Outfit { get; protected set; }
     public Vocation.Vocation Vocation { get; }
     public Group Group { get; set; }
-    public IPlayerChannel Channels { get; set; }
-    public IPlayerParty PlayerParty { get; set; }
+    public PlayerChannel Channels { get; set; }
+    public PlayerParty PlayerParty { get; set; }
     public IBank Bank { get; private set; }
     public ulong BankAmount => Bank?.Amount ?? 0;
 
