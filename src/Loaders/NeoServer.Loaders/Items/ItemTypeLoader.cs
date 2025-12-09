@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using NeoServer.Loaders.Helpers;
 
 namespace NeoServer.Loaders.Items;
 
@@ -98,15 +99,7 @@ public class ItemTypeLoader(
 
     private static ItemTypeMetadata[] GetItemTypeMetadataList(string basePath)
     {
-        var jsonOptions = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            DefaultBufferSize = 4096,
-            AllowTrailingCommas = true,
-            ReadCommentHandling = JsonCommentHandling.Skip
-        };
-        
         using var stream = File.OpenRead(Path.Combine(basePath, "items.json"));
-        return JsonSerializer.Deserialize<ItemTypeMetadata[]>(stream, jsonOptions) ?? [];
+        return JsonSerializer.Deserialize<ItemTypeMetadata[]>(stream, JsonSettings.Options) ?? [];
     }
 }

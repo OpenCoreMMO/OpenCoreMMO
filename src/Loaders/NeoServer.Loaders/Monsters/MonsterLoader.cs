@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Loaders.Helpers;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
 using Serilog;
@@ -17,14 +18,6 @@ public class MonsterLoader(
     ServerConfiguration serverConfiguration,
     MonsterConverter monsterConverter)
 {
-    private readonly JsonSerializerOptions _jsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-        DefaultBufferSize = 4096,
-        AllowTrailingCommas = true,
-        ReadCommentHandling = JsonCommentHandling.Skip
-    };
-
     public void Load()
     {
         logger.Step("Loading monsters...", "{n} monsters loaded", () =>
@@ -48,7 +41,7 @@ public class MonsterLoader(
             new FileStream(Path.Combine(basePath, "monsters.json"), FileMode.Open, FileAccess.Read);
 
         var monstersPath =
-            await JsonSerializer.DeserializeAsync<List<MonstersFile>>(fileStream, _jsonOptions);
+            await JsonSerializer.DeserializeAsync<List<MonstersFile>>(fileStream, JsonSettings.Options);
 
         var tasks = new List<Task<IMonsterType>>();
         
@@ -64,7 +57,7 @@ public class MonsterLoader(
     {
         await using var fileStream = new FileStream(Path.Combine(basePath, monsterFile), FileMode.Open, FileAccess.Read);
 
-        var monster = await JsonSerializer.DeserializeAsync<MonsterData>(fileStream, _jsonOptions);
+        var monster = await JsonSerializer.DeserializeAsync<MonsterData>(fileStream, JsonSettings.Options);
 
         return monsterConverter.Convert(monster);
     }
