@@ -19,5 +19,5 @@ public class PlayerChangeOutFitPacket : IncomingPacket
         };
     }
 
-    public IOutfit Outfit { get; set; }
+    public Outfit Outfit { get; set; }
 }

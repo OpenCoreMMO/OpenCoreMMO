@@ -1,5 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Networking.Packets.Outgoing.Creature;
 using NeoServer.Server.Common.Contracts;
 
@@ -16,7 +17,7 @@ public class CreatureChangedOutfitEventHandler
         this.game = game;
     }
 
-    public void Execute(ICreature creature, IOutfit outfit)
+    public void Execute(ICreature creature, Outfit outfit)
     {
         foreach (var spectator in map.GetPlayersAtPositionZone(creature.Location))
         {

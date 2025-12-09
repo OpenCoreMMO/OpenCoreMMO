@@ -18,6 +18,7 @@ using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Container;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Modes;
+using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Domain.Guild;
 using NeoServer.Domain.Items.Items.UsableItems;
@@ -266,7 +267,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
         byte fromPosition,
         byte? toPosition);
 
-    bool CanUseOutfit(IOutfit outFit);
+    bool CanUseOutfit(Outfit outFit);
     void SetAsHungry();
     void Use(IContainer item, byte openAtIndex);
     ushort GetRawSkillLevel(SkillType skillType);

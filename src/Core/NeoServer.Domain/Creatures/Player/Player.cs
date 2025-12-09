@@ -68,7 +68,7 @@ public class Player : CombatActor, IPlayer
         IDictionary<SkillType, ISkill> skills,
         IDictionary<uint, int> storages,
         ushort staminaMinutes,
-        IOutfit outfit,
+        Outfit.Outfit outfit,
         ushort speed,
         Location location,
         IMapTool mapTool, ITown town)
@@ -180,7 +180,7 @@ public class Player : CombatActor, IPlayer
     public bool HasPremiumTime => PremiumDays > 0 || Group.FlagIsEnabled(PlayerFlag.IsAlwaysPremium);
     public ITown Town { get; set; }
     public IVip Vip { get; }
-    public override IOutfit Outfit { get; protected set; }
+    public override Outfit.Outfit Outfit { get; protected set; }
     public Vocation.Vocation Vocation { get; }
     public Group Group { get; set; }
     public PlayerChannel Channels { get; set; }
@@ -1163,7 +1163,7 @@ public class Player : CombatActor, IPlayer
         StopFollowing();
     }
 
-    public bool CanUseOutfit(IOutfit outfit)
+    public bool CanUseOutfit(Outfit.Outfit outfit)
     {
         if (string.IsNullOrEmpty(outfit.Name)) return false;
         if (outfit.Premium && !HasPremiumTime) return false;
@@ -1171,7 +1171,7 @@ public class Player : CombatActor, IPlayer
         return outfit.Unlocked;
     }
 
-    public override void ChangeOutfit(IOutfit outfit)
+    public override void ChangeOutfit(Outfit.Outfit outfit)
     {
         if (!CanUseOutfit(outfit)) return;
         if (IsInvisible) return;

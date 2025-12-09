@@ -4,12 +4,13 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player.Inventory;
+using NeoServer.Domain.Creatures.Player.Outfit;
 
 namespace NeoServer.Domain.Creatures.Npcs.Shop;
 
 public class ShopperNpc : Npc, IShopperNpc
 {
-    internal ShopperNpc(INpcType type, IMapTool mapTool, ISpawnPoint spawnPoint, IOutfit outfit = null,
+    internal ShopperNpc(INpcType type, IMapTool mapTool, ISpawnPoint spawnPoint, Outfit outfit = null,
         uint healthPoints = 0) : base(
         type, mapTool, spawnPoint, outfit, healthPoints)
     {

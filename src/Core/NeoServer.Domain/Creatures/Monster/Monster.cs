@@ -20,6 +20,7 @@ using NeoServer.Domain.Creatures.Events.Monster;
 using NeoServer.Domain.Creatures.Monster.Actions;
 using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Items.Items;
 
 namespace NeoServer.Domain.Creatures.Monster;
@@ -220,7 +221,7 @@ public class Monster : WalkableMonster, IMonster
     }
 
     public override ushort ArmorRating => Metadata.Armor;
-    public override IOutfit Outfit { get; protected set; }
+    public override Outfit Outfit { get; protected set; }
     public override ushort MinimumAttackPower => 0;
     public override bool UsingDistanceWeapon => TargetDistance > 1;
     public override ushort MaximumAttackPower { get; } = 100;

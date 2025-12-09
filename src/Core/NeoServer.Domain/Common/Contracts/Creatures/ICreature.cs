@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Monster.Summon;
+using NeoServer.Domain.Creatures.Player.Outfit;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
@@ -28,7 +29,7 @@ public delegate void Say(ICreature creature, SpeechType type, string message, IC
 
 public delegate void AddCondition(ICreature creature, ICondition condition);
 
-public delegate void ChangeOutfit(ICreature creature, IOutfit outfit);
+public delegate void ChangeOutfit(ICreature creature, Outfit outfit);
 
 public delegate void Think(ICreature creature, int interval);
 
@@ -94,7 +95,7 @@ public interface ICreature : IMovableThing
     /// <summary>
     ///     Creature's outfit
     /// </summary>
-    IOutfit Outfit { get; }
+    Outfit Outfit { get; }
 
     /// <summary>
     ///     Creature's Emblem
@@ -124,7 +125,7 @@ public interface ICreature : IMovableThing
     /// <summary>
     ///     Last outfit creature used
     /// </summary>
-    IOutfit LastOutfit { get; }
+    Outfit LastOutfit { get; }
 
     /// <summary>
     ///     Tile which creature is on
@@ -191,7 +192,7 @@ public interface ICreature : IMovableThing
     /// <summary>
     ///     Change creature outfit
     /// </summary>
-    void ChangeOutfit(IOutfit outfit);
+    void ChangeOutfit(Outfit outfit);
 
     /// <summary>
     ///     Set old outfit to current
