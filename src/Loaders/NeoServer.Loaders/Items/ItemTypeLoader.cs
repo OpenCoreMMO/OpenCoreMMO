@@ -96,7 +96,7 @@ public class ItemTypeLoader(
         }
     }
 
-    private static List<ItemTypeMetadata> GetItemTypeMetadataList(string basePath)
+    private static ItemTypeMetadata[] GetItemTypeMetadataList(string basePath)
     {
         var jsonOptions = new JsonSerializerOptions
         {
@@ -107,6 +107,6 @@ public class ItemTypeLoader(
         };
         
         using var stream = File.OpenRead(Path.Combine(basePath, "items.json"));
-        return JsonSerializer.Deserialize<List<ItemTypeMetadata>>(stream, jsonOptions) ?? [];
+        return JsonSerializer.Deserialize<ItemTypeMetadata[]>(stream, jsonOptions) ?? [];
     }
 }
