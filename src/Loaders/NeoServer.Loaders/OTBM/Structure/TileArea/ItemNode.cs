@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using NeoServer.Loaders.OTB.DataStructures;
 using NeoServer.Loaders.OTB.Enums;
 using NeoServer.Loaders.OTB.Parsers;
 using NeoServer.Loaders.OTB.Structure;
@@ -7,25 +9,27 @@ using NeoServer.Loaders.OTBM.Enums;
 
 namespace NeoServer.Loaders.OTBM.Structure.TileArea;
 
-public struct ItemNode
+public class ItemNode
 {
-    public ushort ItemId { get; set; }
+    public ushort ItemId { get; }
     public List<ItemNodeAttributeValue> ItemNodeAttributes { get; }
     public List<ItemNode> Children { get; }
 
     public ItemNode(OtbParsingStream stream)
     {
-        ItemNodeAttributes = default;
-        ItemId = default;
-        Children = new List<ItemNode>(0);
+        ItemNodeAttributes = null;
+        ItemId = 0;
+        Children = [];
         ItemId = ParseItemId(stream);
     }
 
     public ItemNode(TileNode tile, OtbNode node)
     {
-        ItemNodeAttributes = new List<ItemNodeAttributeValue>();
-        ItemId = default;
-        Children = new List<ItemNode>(0);
+        ItemNodeAttributes = [];
+        ItemId = 0;
+        
+        var nodeChildren = node.Children;
+        Children = new List<ItemNode>(nodeChildren.Length);
 
         if (node.Type != NodeType.Item) throw new Exception($"{tile.Coordinate}: Unknown node type");
 
@@ -35,12 +39,12 @@ public struct ItemNode
 
         ParseAttributes(stream);
 
-        AddChildren(tile, node);
+        AddChildren(tile, nodeChildren.Span);
     }
 
-    private void AddChildren(TileNode tileNode, OtbNode node)
+    private void AddChildren(TileNode tileNode, ReadOnlySpan<OtbNode> nodeChildren)
     {
-        foreach (var nodeChild in node.Children)
+        foreach (var nodeChild in nodeChildren)
         {
             if (nodeChild.Type is not NodeType.Item) continue;
 
@@ -48,41 +52,22 @@ public struct ItemNode
         }
     }
 
-    private ushort ParseItemId(OtbParsingStream stream)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static ushort ParseItemId(OtbParsingStream stream)
     {
         var originalItemId = stream.ReadUInt16();
-        var parsedItemId = originalItemId;
 
-        switch (originalItemId)
+        var parsedItemId = originalItemId switch
         {
-            case (ushort)OTBMWorldItemId.FireFieldPvpLarge:
-                parsedItemId = (ushort)OTBMWorldItemId.FireFieldPersistentLarge;
-                break;
-
-            case (ushort)OTBMWorldItemId.FireFieldPvpMedium:
-                parsedItemId = (ushort)OTBMWorldItemId.FireFieldPersistentMedium;
-                break;
-
-            case (ushort)OTBMWorldItemId.FireFieldPvpSmall:
-                parsedItemId = (ushort)OTBMWorldItemId.FireFieldPersistentSmall;
-                break;
-
-            case (ushort)OTBMWorldItemId.EnergyFieldPvp:
-                parsedItemId = (ushort)OTBMWorldItemId.EnergyFieldPersistent;
-                break;
-
-            case (ushort)OTBMWorldItemId.PoisonFieldPvp:
-                parsedItemId = (ushort)OTBMWorldItemId.PoisonFieldPersistent;
-                break;
-
-            case (ushort)OTBMWorldItemId.MagicWall:
-                parsedItemId = (ushort)OTBMWorldItemId.MagicWallPersistent;
-                break;
-
-            case (ushort)OTBMWorldItemId.WildGrowth:
-                parsedItemId = (ushort)OTBMWorldItemId.WildGrowthPersistent;
-                break;
-        }
+            (ushort)OTBMWorldItemId.FireFieldPvpLarge => (ushort)OTBMWorldItemId.FireFieldPersistentLarge,
+            (ushort)OTBMWorldItemId.FireFieldPvpMedium => (ushort)OTBMWorldItemId.FireFieldPersistentMedium,
+            (ushort)OTBMWorldItemId.FireFieldPvpSmall => (ushort)OTBMWorldItemId.FireFieldPersistentSmall,
+            (ushort)OTBMWorldItemId.EnergyFieldPvp => (ushort)OTBMWorldItemId.EnergyFieldPersistent,
+            (ushort)OTBMWorldItemId.PoisonFieldPvp => (ushort)OTBMWorldItemId.PoisonFieldPersistent,
+            (ushort)OTBMWorldItemId.MagicWall => (ushort)OTBMWorldItemId.MagicWallPersistent,
+            (ushort)OTBMWorldItemId.WildGrowth => (ushort)OTBMWorldItemId.WildGrowthPersistent,
+            _ => originalItemId
+        };
 
         return parsedItemId;
     }

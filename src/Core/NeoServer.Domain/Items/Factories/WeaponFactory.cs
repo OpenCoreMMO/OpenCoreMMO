@@ -25,32 +25,46 @@ public class WeaponFactory : IFactory
         Location location,
         IDictionary<ItemAttribute, IConvertible> itemAttributes)
     {
-        var chargeable = _chargeableFactory.Create(itemType);
-
         if (MeleeWeapon.IsApplicable(itemType))
+        {
+            var chargeable = _chargeableFactory.Create(itemType);
             return new MeleeWeapon(itemType, location, itemAttributes)
             {
                 Chargeable = chargeable,
                 ItemTypeFinder = _itemTypeStore.Get
             };
+        }
+
         if (DistanceWeapon.IsApplicable(itemType))
+        {
+            var chargeable = _chargeableFactory.Create(itemType);
             return new DistanceWeapon(itemType, location)
             {
                 ItemTypeFinder = _itemTypeStore.Get,
                 Chargeable = chargeable
             };
+        }
+
         if (MagicWeapon.IsApplicable(itemType))
+        {
+            var chargeable = _chargeableFactory.Create(itemType);
             return new MagicWeapon(itemType, location)
             {
                 ItemTypeFinder = _itemTypeStore.Get,
                 Chargeable = chargeable
             };
+        }
 
         if (ICumulative.IsApplicable(itemType))
         {
             if (ThrowableWeapon.IsApplicable(itemType))
+            {
                 return new ThrowableWeapon(itemType, location, itemAttributes);
-            if (Ammo.IsApplicable(itemType)) return new Ammo(itemType, location, itemAttributes);
+            }
+            if (Ammo.IsApplicable(itemType))
+            {
+                return new Ammo(itemType, location, itemAttributes);
+            }
         }
 
         return null;

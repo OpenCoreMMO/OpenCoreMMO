@@ -1,11 +1,18 @@
 ﻿using LuaNET;
 using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Creatures.Services;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Scripts.LuaJIT.Models.Combat;
+using NeoServer.Scripts.LuaJIT.Services;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Tasks;
+using NeoServer.Server.Services;
 using NeoServer.Server.Tasks;
 using Serilog;
 
@@ -18,12 +25,16 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
     private static IScheduler _scheduler;
     private static IChatChannelStore _chatChannelStore;
     private static IGameServer _gameServer;
+    private static HealService _healService;
+    private static NonAggressiveCombatService _nonAggressiveCombatService;
 
     public GlobalFunctions(
         ILuaEnvironment luaEnvironment,
         ILogger logger,
         IScheduler scheduler,
         IChatChannelStore chatChannelStore,
+        HealService healService,
+        NonAggressiveCombatService nonAggressiveCombatService,
         IGameServer gameServer) : base(nameof(GlobalFunctions))
     {
         _luaEnvironment = luaEnvironment;
@@ -31,6 +42,8 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         _scheduler = scheduler;
         _chatChannelStore = chatChannelStore;
         _gameServer = gameServer;
+        _healService = healService;
+        _nonAggressiveCombatService = nonAggressiveCombatService;
     }
 
     public void Init(LuaState luaState)
@@ -42,6 +55,9 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         RegisterGlobalMethod(luaState, "getWorldTime", LuaGetWorldTime);
         RegisterGlobalMethod(luaState, "getWorldLight", LuaGetWorldLight);
         RegisterGlobalMethod(luaState, "createCombatArea", LuaCreateCombatArea);
+        RegisterGlobalMethod(luaState, "doTargetCombat", LuaDoTargetCombat);
+        RegisterGlobalMethod(luaState, "doTargetCombatHealth", LuaDoTargetCombatHealth);
+        RegisterGlobalMethod(luaState, "doTargetCombatMana", LuaDoTargetCombatMana);
     }
 
     private static int HandleCreateCombatFunction(LuaState L)
@@ -172,5 +188,192 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
     {
         // createCombatArea( {area}, <optional> {extArea} )
         return Lua.GetTop(L);
+    }
+
+    private static int LuaDoTargetCombatHealth(LuaState luaState)
+    {
+        // doTargetCombatHealth(cid, target, type, min, max, effect[, origin = ORIGIN_SPELL])
+        var creature = GetUserdata<ICreature>(luaState, 1);
+
+        if (creature == null && (!Lua.IsNumber(luaState, 1) || GetNumber<uint>(luaState, 1) != 0))
+        {
+            _logger.Error("Creature not found");
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var target = GetUserdata<ICreature>(luaState, 2);
+        if (target == null)
+        {
+            _logger.Error("Target creature not found");
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var combatType = GetNumber<CombatType>(luaState, 3);
+
+        var min = GetNumber<int>(luaState, 4);
+        var max = GetNumber<int>(luaState, 5);
+        var effect = GetNumber<ushort>(luaState, 6);
+        var origin = GetNumber<uint>(luaState, 7, 1); // Default to 1 (assuming ORIGIN_SPELL is 1)
+
+        var instantSpellName = GetString(luaState, 9);
+        var runeSpellName = GetString(luaState, 10);
+
+        // For simplicity, assume CombatParams and CombatDamage are available
+        // This is a placeholder implementation - actual combat logic needs domain integration
+        var damageValue = Random.Shared.Next(min, max + 1);
+
+        // Check if it's healing
+        var isHealing = combatType == CombatType.COMBAT_HEALING ||
+                        (combatType == CombatType.COMBAT_MANADRAIN && damageValue > 0);
+
+        //todo: need to support other parameters
+
+        if (combatType == CombatType.COMBAT_HEALING)
+        {
+            _healService.Heal(creature, target as ICombatActor, HealType.Health, (ushort)min, (ushort)max);
+            EffectService.Send(target.Location, (EffectT)effect);
+        }
+        // Placeholder for actual combat execution
+        // Combat::doCombatHealth(creature, target, damage, params);
+
+        PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaDoTargetCombat(LuaState luaState)
+    {
+        // doTargetCombat(cid, target, type, min, max, effect[, origin = ORIGIN_SPELL[, blockArmor = false[, blockShield = false[, ignoreResistances = false]]]])
+        var creature = GetUserdata<ICreature>(luaState, 1);
+
+        if (creature == null && (!Lua.IsNumber(luaState, 1) || GetNumber<uint>(luaState, 1) != 0))
+        {
+            _logger.Error("Creature not found");
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var target = GetUserdata<ICreature>(luaState, 2);
+        if (target == null)
+        {
+            _logger.Error("Target creature not found");
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var combatType = GetNumber<CombatType>(luaState, 3);
+
+        var min = GetNumber<int>(luaState, 4);
+        var max = GetNumber<int>(luaState, 5);
+        var effect = GetNumber<ushort>(luaState, 6);
+        var origin = GetNumber<uint>(luaState, 7, 1);
+
+        var blockArmor = GetNumber<bool>(luaState, 8, false);
+        var blockShield = GetNumber<bool>(luaState, 9, false);
+        var ignoreResistances = GetNumber<bool>(luaState, 10, false);
+
+        // Immediate support for healing and mana effects used by potions/scripts
+        if (combatType == CombatType.COMBAT_HEALING)
+        {
+            _healService.Heal(creature, target as ICombatActor, HealType.Health, (ushort)Math.Max(0, min), (ushort)Math.Max(0, max));
+            EffectService.Send(target.Location, (EffectT)effect);
+            PushBoolean(luaState, true);
+            return 1;
+        }
+
+        if (combatType == CombatType.COMBAT_MANADRAIN)
+        {
+            // treat positive values as mana gain (healing mana), negative as drain
+            var value = Random.Shared.Next(min, max + 1);
+            if (value > 0)
+            {
+                _healService.Heal(creature, target as ICombatActor, HealType.Mana, (ushort)Math.Max(0, min), (ushort)Math.Max(0, max));
+                EffectService.Send(target.Location, (EffectT)effect);
+            }
+            else
+            {
+                // TODO: proper mana drain implementation
+            }
+
+            PushBoolean(luaState, true);
+            return 1;
+        }
+
+        // For other combat types, build a lightweight LuaCombat and execute non-aggressive effects when appropriate
+        try
+        {
+            var luaCombat = new LuaCombat(GetScriptEnv().GetScriptInterface());
+            luaCombat.Parameters.TryAdd(CombatParam.COMBAT_PARAM_TYPE, (int)combatType);
+            luaCombat.Parameters.TryAdd(CombatParam.COMBAT_PARAM_EFFECT, effect);
+            luaCombat.Parameters.TryAdd(CombatParam.COMBAT_PARAM_BLOCKARMOR, blockArmor ? 1 : 0);
+            luaCombat.Parameters.TryAdd(CombatParam.COMBAT_PARAM_BLOCKSHIELD, blockShield ? 1 : 0);
+
+            // If not aggressive, mark as non-aggressive (0). Default to aggressive (1) unless explicitly set by script.
+            luaCombat.Parameters.TryAdd(CombatParam.COMBAT_PARAM_AGGRESSIVE, 1);
+
+            _nonAggressiveCombatService.Execute(luaCombat, creature, target);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Error executing doTargetCombat");
+        }
+
+        PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaDoTargetCombatMana(LuaState luaState)
+    {
+        // doTargetCombatMana(cid, target, min, max, effect[, origin = ORIGIN_SPELL])
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (creature == null && (!Lua.IsNumber(luaState, 1) || GetNumber<uint>(luaState, 1) != 0))
+        {
+            _logger.Error("Creature not found");
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var target = GetUserdata<ICreature>(luaState, 2);
+        if (target == null)
+        {
+            _logger.Error("Target creature not found");
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var minval = GetNumber<int>(luaState, 3);
+        var maxval = GetNumber<int>(luaState, 4);
+        var effect = GetNumber<ushort>(luaState, 5);
+        var origin = GetNumber<uint>(luaState, 6, 1); // Default to 1 (assuming ORIGIN_SPELL is 1)
+
+        var instantSpellName = GetString(luaState, 7);
+        var runeSpellName = GetString(luaState, 8);
+
+        // For simplicity, assume CombatParams and CombatDamage are available
+        // This is a placeholder implementation - actual combat logic needs domain integration
+        var damageValue = Random.Shared.Next(minval, maxval + 1);
+
+        // Set aggressive based on minval + maxval < 0
+        var aggressive = minval + maxval < 0;
+
+        // Placeholder for actual combat execution
+        // Combat::doCombatMana(creature, target, damage, params);
+
+        // For now, if it's mana gain (positive), perhaps heal mana
+        if (damageValue > 0)
+        {
+            // Assuming mana gain
+            _healService.Heal(creature, target as ICombatActor, HealType.Mana, (ushort)minval, (ushort)maxval);
+            EffectService.Send(target.Location, (EffectT)effect);
+        }
+        else
+        {
+            // Mana drain - placeholder
+            // Need to implement mana drain logic
+        }
+
+        PushBoolean(luaState, true);
+        return 1;
     }
 }

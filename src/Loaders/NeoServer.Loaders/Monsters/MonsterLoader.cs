@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Loaders.Helpers;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
 using Serilog;
@@ -17,26 +18,22 @@ public class MonsterLoader(
     ServerConfiguration serverConfiguration,
     MonsterConverter monsterConverter)
 {
-    private readonly JsonSerializerOptions _jsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-        DefaultBufferSize = 4096,
-        AllowTrailingCommas = true,
-        ReadCommentHandling = JsonCommentHandling.Skip
-    };
-
     public void Load()
     {
         logger.Step("Loading monsters...", "{n} monsters loaded", () =>
         {
-            var monsters = GetMonsterDataListAsync().GetAwaiter().GetResult().ToList();
+            var monsters = GetMonsterDataListAsync().GetAwaiter().GetResult();
 
-            monsterTypeStore.AddOrUpdateRange(monsters);
-            return [monsters.Count];
+            foreach (var monster in monsters)
+            {
+                monsterTypeStore.AddOrUpdate(monster.Name, monster);
+            }
+
+            return [monsters.Length];
         });
     }
 
-    private async Task<IEnumerable<(string, IMonsterType)>> GetMonsterDataListAsync()
+    private async Task<IMonsterType[]> GetMonsterDataListAsync()
     {
         var basePath = $"{serverConfiguration.Data}/monsters";
 
@@ -44,22 +41,27 @@ public class MonsterLoader(
             new FileStream(Path.Combine(basePath, "monsters.json"), FileMode.Open, FileAccess.Read);
 
         var monstersPath =
-            await JsonSerializer.DeserializeAsync<List<IDictionary<string, string>>>(fileStream, _jsonOptions);
+            await JsonSerializer.DeserializeAsync<List<MonstersFile>>(fileStream, JsonSettings.Options);
 
-        var tasks = monstersPath
-            .OrderBy(x => x["name"])
-            .Select(async x => (x["name"], await ConvertMonsterAsync(basePath, x)));
-
+        var tasks = new List<Task<IMonsterType>>();
+        
+        foreach (var monster in monstersPath)
+        {
+            tasks.Add(ConvertMonsterAsync(basePath, monster.File));
+        }
+    
         return await Task.WhenAll(tasks);
     }
 
-    private async Task<IMonsterType> ConvertMonsterAsync(string basePath, IDictionary<string, string> monsterFile)
+    private Task<IMonsterType> ConvertMonsterAsync(string basePath, string monsterFile)
     {
-        await using var fileStream =
-            new FileStream(Path.Combine(basePath, monsterFile["file"]), FileMode.Open, FileAccess.Read);
-
-        var monster = await JsonSerializer.DeserializeAsync<MonsterData>(fileStream, _jsonOptions);
-
-        return monsterConverter.Convert(monster);
+        return Task.Run(() =>
+        {
+            using var fileStream = File.OpenRead(Path.Combine(basePath, monsterFile));
+            var monster = JsonSerializer.Deserialize<MonsterData>(fileStream, JsonSettings.Options);
+            return monsterConverter.Convert(monster);
+        });
     }
 }
+
+public record MonstersFile(string Name, string File);

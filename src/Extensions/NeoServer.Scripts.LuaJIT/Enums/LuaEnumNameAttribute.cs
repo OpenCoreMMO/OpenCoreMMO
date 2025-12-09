@@ -1,4 +1,4 @@
-namespace NeoServer.Scripts.LuaJIT.Attributes;
+namespace NeoServer.Scripts.LuaJIT.Enums;
 
 [AttributeUsage(AttributeTargets.Field)]
 public class LuaEnumNameAttribute(string name) : Attribute

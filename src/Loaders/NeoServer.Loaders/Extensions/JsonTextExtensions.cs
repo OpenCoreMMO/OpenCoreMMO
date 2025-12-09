@@ -72,18 +72,21 @@ public static class JsonTextExtensions
         };
     }
 
-    public static dynamic ParseFromJson(object value)
+    public static object ParseFromJson(object value)
     {
-        return value switch
+        if (value is not JsonElement jsonElement)
+            return value;
+
+        return jsonElement.ValueKind switch
         {
-            JsonElement { ValueKind: JsonValueKind.Array } jsonElement => jsonElement.GetArrayFromJson(),
-            JsonElement { ValueKind: JsonValueKind.String } jsonElement => jsonElement.GetString(),
-            JsonElement { ValueKind: JsonValueKind.Number } jsonElement => jsonElement.TryGetInt64(out var intValue)
+            JsonValueKind.Array => jsonElement.GetArrayFromJson(),
+            JsonValueKind.String => jsonElement.GetString(),
+            JsonValueKind.Number => jsonElement.TryGetInt64(out var intValue)
                 ? intValue
                 : jsonElement.GetDouble(),
-            JsonElement { ValueKind: JsonValueKind.True } => true,
-            JsonElement { ValueKind: JsonValueKind.False } => false,
-            JsonElement { ValueKind: JsonValueKind.Null } => null,
+            JsonValueKind.True => true,
+            JsonValueKind.False => false,
+            JsonValueKind.Null => null,
             _ => value
         };
     }

@@ -16,7 +16,7 @@ public class NpcOnBuyItemEventHandler(INpcs npcs, ILogger logger) : IGameEventHa
         if (npcEvent == null ||
             npcEvent.Events == null ||
             npcEvent.Events.Count == 0 ||
-            !npcEvent.Events.TryGetValue(NpcsEventType.NPCS_EVENT_PLAYER_BUY, out var onBuyItemEvent) ||
+            !npcEvent.Events.TryGetValue(NpcEventType.NPCS_EVENT_PLAYER_BUY, out var onBuyItemEvent) ||
             !onBuyItemEvent.HasValue)
             return;
 

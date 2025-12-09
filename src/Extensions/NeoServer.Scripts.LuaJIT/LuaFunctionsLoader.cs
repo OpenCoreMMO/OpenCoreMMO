@@ -10,6 +10,7 @@ using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Items.Items;
 using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.Enums.Config;
 using NeoServer.Server.Common.Contracts;
 
 namespace NeoServer.Scripts.LuaJIT;
@@ -647,6 +648,26 @@ public class LuaFunctionsLoader
         // _G[tableName] = {}
         Lua.NewTable(luaState);
         Lua.SetGlobal(luaState, tableName);
+    }
+
+    public static void RegisterEnumIn<T>(LuaState luaState, string tableName) where T : Enum
+    {
+        var type = typeof(T);
+        foreach (var item in Enum.GetValues(type))
+        {
+            var memberName = item.ToString();
+            var memberInfo = type.GetMember(memberName).FirstOrDefault();
+
+            // Default name is the enum member name
+            var luaName = memberName;
+
+            // Try to get the attribute
+            if (memberInfo?.GetCustomAttributes(typeof(LuaEnumNameAttribute), false)
+                    .FirstOrDefault() is LuaEnumNameAttribute attr)
+                luaName = attr.Name;
+
+            RegisterVariable(luaState, tableName, luaName, Convert.ToUInt32(item));
+        }
     }
 
     public static void RegisterMetaMethod(LuaState luaState, string className, string methodName, LuaFunction func)

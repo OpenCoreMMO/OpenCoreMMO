@@ -9,7 +9,7 @@ using NeoServer.Domain.Creatures;
 using NeoServer.Domain.World;
 using NeoServer.Domain.World.Map;
 using NeoServer.Networking.Handlers;
-using NeoServer.Scripts.LuaJIT.IoC.Modules;
+using NeoServer.Scripts.LuaJIT.IoC;
 using NeoServer.Server.Commands.Movements;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Commands.WaitingInLine;
@@ -22,15 +22,18 @@ namespace NeoServer.Server.Standalone.IoC;
 
 public static class Container
 {
-    internal static Assembly[] AssemblyCache => AppDomain.CurrentDomain.GetAssemblies().AsParallel().Where(assembly =>
-        !assembly.IsDynamic &&
-        !assembly.FullName.StartsWith("System.") &&
-        !assembly.FullName.StartsWith("Microsoft.") &&
-        !assembly.FullName.StartsWith("Windows.") &&
-        !assembly.FullName.StartsWith("mscorlib,") &&
-        !assembly.FullName.StartsWith("Serilog,") &&
-        !assembly.FullName.StartsWith("Autofac,") &&
-        !assembly.FullName.StartsWith("netstandard,")).ToArray();
+    private static readonly Lazy<Assembly[]> _assemblyCacheLazy = new(() =>
+        AppDomain.CurrentDomain.GetAssemblies().AsParallel().Where(assembly =>
+            !assembly.IsDynamic &&
+            !assembly.FullName.StartsWith("System.") &&
+            !assembly.FullName.StartsWith("Microsoft.") &&
+            !assembly.FullName.StartsWith("Windows.") &&
+            !assembly.FullName.StartsWith("mscorlib,") &&
+            !assembly.FullName.StartsWith("Serilog,") &&
+            !assembly.FullName.StartsWith("Autofac,") &&
+            !assembly.FullName.StartsWith("netstandard,")).ToArray());
+    
+    internal static Assembly[] AssemblyCache => _assemblyCacheLazy.Value;
 
     public static IServiceProvider BuildConfigurations()
     {
@@ -81,7 +84,6 @@ public static class Container
             .AddLua()
             .Register()
             .AddJobs()
-            .AddCommands()
             .AddRoutines()
             .AddDataStores();
 
