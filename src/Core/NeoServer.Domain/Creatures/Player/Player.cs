@@ -204,7 +204,7 @@ public class Player : CombatActor, IPlayer
 
     public uint AccountId { get; init; }
     public int WorldId { get; init; }
-    public IPlayerContainerList Containers { get; }
+    public PlayerContainerList Containers { get; }
     public bool HasDepotOpened => Containers.HasAnyDepotOpened;
     public IShopperNpc TradingWithNpc { get; private set; }
     public ChaseMode ChaseMode { get; private set; }
@@ -215,7 +215,7 @@ public class Player : CombatActor, IPlayer
     public uint ManaSpent { get; private set; }
     public uint MaxMana { get; private set; }
     public FightMode FightMode { get; private set; }
-    public IPlayerSkull PlayerSkull { get; set; }
+    public PlayerSkull PlayerSkull { get; set; }
     public Skull Skull => PlayerSkull.Skull;
     public DateTime? SkullEndsAt => PlayerSkull.SkullEndsAt;
     public DateTime? LastLogIn { get; private set; }

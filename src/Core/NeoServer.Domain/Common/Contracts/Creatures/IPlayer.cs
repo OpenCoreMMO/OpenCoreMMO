@@ -15,6 +15,7 @@ using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Npcs;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Player.Container;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Creatures.Player.Vocation;
@@ -87,7 +88,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     FightMode FightMode { get; }
     ChaseMode ChaseMode { get; }
     PvpSecureMode SecureMode { get; }
-    IPlayerContainerList Containers { get; }
+    PlayerContainerList Containers { get; }
 
     ITown Town { get; set; }
 
@@ -137,7 +138,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     /// <summary>
     ///     Indicates Skull showed on creature
     /// </summary>
-    IPlayerSkull PlayerSkull { get; }
+    PlayerSkull PlayerSkull { get; }
 
     bool HasSkull { get; }
     int NumberOfUnjustifiedKillsLastDay { get; }
