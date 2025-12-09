@@ -277,7 +277,7 @@ public class PlayerTest
     [Fact]
     public void Player_Lost_Experience_On_Death()
     {
-        var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, ISkill>
+        var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, Skill>
         {
             { SkillType.Level, new Skill(SkillType.Level, 9, 9100) }
         }) as Player;
@@ -291,7 +291,7 @@ public class PlayerTest
     [Fact]
     public void Player_Lost_Level_On_Death()
     {
-        var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, ISkill>
+        var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, Skill>
         {
             { SkillType.Level, new Skill(SkillType.Level, 9, 6500) }
         }) as Player;
@@ -321,7 +321,7 @@ public class PlayerTest
     public void Player_Level_23_Loses_10Percent_Experience_On_Death()
     {
         var initialExp = 500000.0; // High experience to stay at level 23 after 10% loss
-        var player = PlayerTestDataBuilder.Build(hp: 100, vocationType: 1, skills: new Dictionary<SkillType, ISkill>
+        var player = PlayerTestDataBuilder.Build(hp: 100, vocationType: 1, skills: new Dictionary<SkillType, Skill>
         {
             { SkillType.Level, new Skill(SkillType.Level, 23, initialExp) }
         }) as Player;
@@ -336,7 +336,7 @@ public class PlayerTest
     [Fact]
     public void Promoted_Player_Level_9_Loses_10Percent_Experience_On_Death()
     {
-        var player = PlayerTestDataBuilder.Build(hp: 100, vocationType: 5, skills: new Dictionary<SkillType, ISkill>
+        var player = PlayerTestDataBuilder.Build(hp: 100, vocationType: 5, skills: new Dictionary<SkillType, Skill>
         {
             { SkillType.Level, new Skill(SkillType.Level, 9, 9100) }
         }) as Player;
@@ -357,7 +357,7 @@ public class PlayerTest
         var initialExp = 5000000.0; // High experience for level 50
         var expectedExpAfterDeath = initialExp - 79030;
 
-        var player = PlayerTestDataBuilder.Build(hp: 100, vocationType: 5, skills: new Dictionary<SkillType, ISkill>
+        var player = PlayerTestDataBuilder.Build(hp: 100, vocationType: 5, skills: new Dictionary<SkillType, Skill>
         {
             { SkillType.Level, new Skill(SkillType.Level, 50, initialExp) }
         }) as Player;

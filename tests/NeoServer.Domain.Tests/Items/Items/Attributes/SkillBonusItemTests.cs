@@ -243,7 +243,7 @@ public class SkillBonusItemTests
     public void Player_loose_skill_bonus_when_dress_a_negative_skill_bonus_item()
     {
         //arrange
-        var player = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var player = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, 10),
             [SkillType.Sword] = new Skill(SkillType.Sword, 10)
@@ -271,7 +271,7 @@ public class SkillBonusItemTests
     public void Player_add_back_skill_when_undress_a_negative_skill_bonus_item()
     {
         //arrange
-        var player = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var player = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, 10),
             [SkillType.Sword] = new Skill(SkillType.Sword, 10)

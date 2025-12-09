@@ -65,7 +65,7 @@ public class Player : CombatActor, IPlayer
         FightMode fightMode,
         byte soulPoints,
         byte soulMax,
-        IDictionary<SkillType, ISkill> skills,
+        IDictionary<SkillType, Skill> skills,
         IDictionary<uint, int> storages,
         ushort staminaMinutes,
         Outfit.Outfit outfit,
@@ -168,7 +168,7 @@ public class Player : CombatActor, IPlayer
 
     public bool IsPacified => Conditions.ContainsKey(ConditionType.Pacified);
 
-    public IDictionary<SkillType, ISkill> Skills { get; }
+    public IDictionary<SkillType, Skill> Skills { get; }
 
     /// <summary>
     ///     Gender pronoun: He/She

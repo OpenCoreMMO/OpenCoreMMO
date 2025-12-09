@@ -130,7 +130,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     Gender Gender { get; set; }
     int PremiumDays { get; }
     bool HasPremiumTime { get; }
-    IDictionary<SkillType, ISkill> Skills { get; }
+    IDictionary<SkillType, Skill> Skills { get; }
     IDictionary<uint, int> Storages { get; }
 
     bool CanSeeInspectionDetails { get; }

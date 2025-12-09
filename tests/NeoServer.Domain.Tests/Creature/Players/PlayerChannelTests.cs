@@ -77,7 +77,7 @@ public class PlayerChannelTests
     public void Player_cannot_join_channel_with_unmeeting_rules()
     {
         //arrange
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Level] = new Skill(SkillType.Level, 1)
         });
@@ -107,7 +107,7 @@ public class PlayerChannelTests
     public void Player_joins_channel()
     {
         //arrange
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Level] = new Skill(SkillType.Level, 101)
         });

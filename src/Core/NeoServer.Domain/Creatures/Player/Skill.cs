@@ -3,7 +3,10 @@ using NeoServer.Domain.Common.Creatures;
 
 namespace NeoServer.Domain.Creatures.Player;
 
-public class Skill : ISkill
+public delegate void LevelAdvance(SkillType skillType, int fromLevel, int toLevel);
+public delegate void LevelRegress(SkillType skillType, int fromLevel, int toLevel);
+public delegate void IncreaseSkillPoints(SkillType skillType);
+public class Skill
 {
     private static readonly Dictionary<SkillType, byte> SkillOffsetMap = new()
     {
