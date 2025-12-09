@@ -34,11 +34,12 @@ public class ItemTypeLoader(
         {
             var basePath = $"{serverConfiguration.Data}/items/";
 
+            //Preload items json
             var itemTypeMetadataList = GetItemTypeMetadataListAsync(basePath);
 
             var itemTypes = LoadOtb(basePath);
 
-            LoadItemsJson(basePath, itemTypes, logger, itemTypeMetadataList.GetAwaiter().GetResult());
+            LoadItemsJson(itemTypes, logger, itemTypeMetadataList.GetAwaiter().GetResult());
 
             foreach (var item in itemTypes)
             {
@@ -75,7 +76,7 @@ public class ItemTypeLoader(
         return itemTypes;
     }
 
-    private static void LoadItemsJson(string basePath, Dictionary<ushort, IItemType> itemTypes, ILogger logger, ItemTypeMetadata[] itemTypeMetadataList)
+    private static void LoadItemsJson(Dictionary<ushort, IItemType> itemTypes, ILogger logger, ItemTypeMetadata[] itemTypeMetadataList)
     {
         var itemTypeMetadataParser = new ItemTypeMetadataParser(itemTypes);
 

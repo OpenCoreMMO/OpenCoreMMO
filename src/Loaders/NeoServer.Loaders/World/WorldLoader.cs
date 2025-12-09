@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
@@ -42,20 +44,10 @@ public class WorldLoader
         _itemTypeStore = itemTypeStore;
     }
 
-    public void Load()
+    public void Load(Otbm otbm)
     {
         logger.Step("Loading world...", "{tiles} tiles, {towns} towns and {waypoints} waypoints loaded", () =>
-        {
-            using var fileStream = new FileStream($"{serverConfiguration.Data}/world/{serverConfiguration.OTBM}",
-                FileMode.Open, FileAccess.Read);
-
-            var fileBytes = new byte[fileStream.Length];
-            fileStream.ReadExactly(fileBytes, 0, fileBytes.Length);
-
-            var otbmNode = OtbBinaryTreeBuilder.Deserialize(fileBytes);
-
-            var otbm = new OTBMNodeParser().Parse(otbmNode);
-
+        { 
             LoadTiles(otbm);
 
             foreach (var townNode in otbm.Towns)
@@ -77,27 +69,52 @@ public class WorldLoader
         });
     }
 
+    public static Task<Otbm> PreLoadOtbm(ServerConfiguration serverConfiguration, CancellationToken cancellationToken)
+    {
+        return Task.Run(() =>
+        {
+            using var fileStream = new FileStream($"{serverConfiguration.Data}/world/{serverConfiguration.OTBM}",
+                    FileMode.Open, FileAccess.Read);
+
+            var fileBytes = new byte[fileStream.Length];
+            fileStream.ReadExactly(fileBytes, 0, fileBytes.Length);
+
+            var otbmNode = OtbBinaryTreeBuilder.Deserialize(fileBytes);
+
+            return new OTBMNodeParser().Parse(otbmNode);
+        }, cancellationToken);
+    }
+
     private void LoadTiles(Otbm otbm)
     {
-        foreach (var tileNode in otbm.TileAreas.SelectMany(t => t.Tiles)) LoadTile(tileNode);
+        foreach (var tileArea in otbm.TileAreas)
+        {
+            foreach (var tileNode in tileArea.Tiles)
+            {
+                LoadTile(tileNode);
+            }
+        }
     }
 
     private void LoadTile(TileNode tileNode)
     {
-        Span<byte> raw = stackalloc byte[tileNode.Items.Count * sizeof(ushort)];
-        LoadClientIdsStream(tileNode, ref raw);
-
-        var cachedTile = _tileFactory.GetTileFromCache(tileNode.Coordinate, ref raw);
-
-        if (cachedTile is not null)
+        if (serverConfiguration.EnableStaticTileCaching)
         {
-            world.AddTile(cachedTile, tileNode.Coordinate.Location);
-            return;
+            Span<byte> raw = stackalloc byte[tileNode.Items.Count * sizeof(ushort)];
+            LoadClientIdsStream(tileNode, ref raw);
+
+            var cachedTile = _tileFactory.GetTileFromCache(tileNode.Coordinate, ref raw);
+
+            if (cachedTile is not null)
+            {
+                world.AddTile(cachedTile, tileNode.Coordinate.Location);
+                return;
+            }
         }
 
         var items = GetItemsOnTile(tileNode).ToArray();
 
-        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items, false,
+        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items, serverConfiguration.EnableStaticTileCaching,
             tileNode.HouseId);
 
         if (tile is IStaticTile)
@@ -206,7 +223,7 @@ public class WorldLoader
     private IEnumerable<IItem> CreateChildrenItems(TileNode tileNode, ItemNode itemNode,
         IDictionary<ItemAttribute, IConvertible> attributes)
     {
-        var items = new List<IItem>();
+        var items = new List<IItem>(itemNode.Children.Count);
         foreach (var child in itemNode.Children)
         {
             var children = CreateChildrenItems(tileNode, child, attributes);
