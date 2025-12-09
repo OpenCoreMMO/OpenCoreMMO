@@ -25,7 +25,7 @@ public class ItemTypeLoader(
     ICoinTypeStore coinTypeStore)
 {
     /// <summary>
-    ///     Loads the OTB and XML files into a collection of ItemType objects
+    /// Loads the OTB and XML files into a collection of ItemType objects
     /// </summary>
     public void Load()
     {
