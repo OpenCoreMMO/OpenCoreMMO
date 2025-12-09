@@ -80,7 +80,7 @@ public class ItemTypeLoader(
     {
         var itemTypeMetadataParser = new ItemTypeMetadataParser(itemTypes);
 
-        foreach (var metadata in itemTypeMetadataList)
+        foreach (var metadata in itemTypeMetadataList)/**/
         {
             if (metadata.Id.HasValue)
             {

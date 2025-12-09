@@ -58,7 +58,7 @@ public class Program
         var (serverConfiguration, _, logConfiguration) = (container.Resolve<ServerConfiguration>(),
             container.Resolve<GameConfiguration>(), container.Resolve<LogConfiguration>());
 
-        // Pre-load OTBM to speed up world loading
+        // Preload OTBM to speed up world loading
         var otbmLoadTask = WorldLoader.PreLoadOtbm(serverConfiguration, _cancellationToken);
 
         var (logger, _) = (container.Resolve<ILogger>(), container.Resolve<LoggerConfiguration>());
