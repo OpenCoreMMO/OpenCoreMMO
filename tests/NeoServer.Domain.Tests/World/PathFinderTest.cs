@@ -25,7 +25,7 @@ public class PathFinderTest
 
         ((DynamicTile)map[32090, 32202, 7]).AddCreature(player);
 
-        var fpp = new FindPathParams
+        var fpp = new FindPathParams(true)
         {
             AllowDiagonal = true,
             ClearSight = true,
@@ -62,7 +62,7 @@ public class PathFinderTest
 
         ((DynamicTile)map[32093, 32204, 7]).AddCreature(player);
 
-        var fpp = new FindPathParams
+        var fpp = new FindPathParams(true)
         {
             AllowDiagonal = true,
             ClearSight = true,
@@ -142,7 +142,7 @@ public class PathFinderTest
             flagsField.SetValue(blockTile5, (uint)TileFlags.Unpassable);
         }
 
-        var fpp = new FindPathParams
+        var fpp = new FindPathParams(true)
         {
             AllowDiagonal = true,
             ClearSight = true,

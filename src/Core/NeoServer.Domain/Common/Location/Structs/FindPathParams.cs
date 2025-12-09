@@ -2,10 +2,9 @@
 
 namespace NeoServer.Domain.Common.Location.Structs;
 
-[StructLayout(LayoutKind.Auto)]
 public class FindPathParams
 {
-    public static FindPathParams EscapeParams => new(false, true, default, true, 12, 1, 12);
+    public static FindPathParams EscapeParams => new(false, true, false, true, 12, 1, 12);
 
     public FindPathParams(bool fullPathSearch, bool clearSight, bool allowDiagonal, bool keepDistance,
         int maxSearchDist, int minTargetDist, int maxTargetDist)
@@ -21,13 +20,13 @@ public class FindPathParams
 
     public FindPathParams(bool useDefault)
     {
-        FullPathSearch = default;
-        ClearSight = default;
-        AllowDiagonal = default;
-        KeepDistance = default;
-        MaxSearchDist = default;
-        MinTargetDist = default;
-        MaxTargetDist = default;
+        FullPathSearch = false;
+        ClearSight = false;
+        AllowDiagonal = false;
+        KeepDistance = false;
+        MaxSearchDist = 0;
+        MinTargetDist = 0;
+        MaxTargetDist = 0;
 
         if (useDefault)
         {
