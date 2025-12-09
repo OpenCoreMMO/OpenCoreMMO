@@ -58,6 +58,9 @@ public class Program
         var (serverConfiguration, _, logConfiguration) = (container.Resolve<ServerConfiguration>(),
             container.Resolve<GameConfiguration>(), container.Resolve<LogConfiguration>());
 
+        // Preload OTBM to speed up world loading
+        var otbmLoadTask = WorldLoader.PreLoadOtbm(serverConfiguration, _cancellationToken);
+
         var (logger, _) = (container.Resolve<ILogger>(), container.Resolve<LoggerConfiguration>());
 
         logger.Information("Welcome to OpenCoreMMO Server!");
@@ -84,15 +87,16 @@ public class Program
 
         container.Resolve<QuestDataLoader>().Load();
 
-        container.Resolve<WorldLoader>().Load();
-
-        container.Resolve<SpawnLoader>().Load();
-
         container.Resolve<VocationLoader>().Load();
+
         container.Resolve<SpellLoader>().Load();
 
-        container.Resolve<MonsterLoader>().Load();
         container.Resolve<GroupLoader>().Load();
+
+        container.Resolve<MonsterLoader>().Load();
+
+        container.Resolve<WorldLoader>().Load(await otbmLoadTask);
+        container.Resolve<SpawnLoader>().Load();
 
         container.Resolve<IEnumerable<IStartupLoader>>().ToList().ForEach(x => x.Load());
 

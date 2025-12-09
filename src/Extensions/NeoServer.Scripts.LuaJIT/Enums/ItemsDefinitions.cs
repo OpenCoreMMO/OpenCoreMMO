@@ -575,7 +575,7 @@ public enum ItemParseAttributesType
     ITEM_PARSE_PRIMARYTYPE
 }
 
-public struct ImbuementInfo
+public class ImbuementInfo
 {
     //Imbuement* imbuement;
     //uint duration = 0;

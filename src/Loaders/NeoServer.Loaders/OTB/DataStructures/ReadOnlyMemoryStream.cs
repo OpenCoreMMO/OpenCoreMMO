@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers.Binary;
+using System.Runtime.CompilerServices;
 using NeoServer.Domain.Common.Helpers;
 
 namespace NeoServer.Loaders.OTB.DataStructures;
@@ -15,9 +16,8 @@ public sealed class ReadOnlyMemoryStream
     /// <param name="position"></param>
     public ReadOnlyMemoryStream(ReadOnlyMemory<byte> buffer, int position = 0)
     {
-        if (buffer.IsNull()) return;
-        if (position.IsLessThanZero()) return;
-        if (position.ThrowIfBiggerThan(buffer.Length)) return;
+        if (position < 0) return;
+        if (position > buffer.Length) return;
 
         _buffer = buffer;
         Position = position;
@@ -40,9 +40,10 @@ public sealed class ReadOnlyMemoryStream
     ///     Returns the value currently pointed by the stream, without moving
     ///     the stream forward.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public byte PeakByte()
     {
-        if (IsOver)
+        if (Position >= _buffer.Length)
             throw new InvalidOperationException();
 
         return _buffer.Span[Position];
@@ -51,52 +52,55 @@ public sealed class ReadOnlyMemoryStream
     /// <summary>
     ///     Reads 1 byte from the stream.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public byte ReadByte()
     {
-        if (IsOver)
+        if (Position >= _buffer.Length)
             throw new InvalidOperationException();
 
-        var data = _buffer.Span[Position];
-        Position++;
-        return data;
+        return _buffer.Span[Position++];
     }
 
     /// <summary>
     ///     Reads two bytes from the stream and parses them as a UInt16.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ushort ReadUInt16()
     {
-        if (BytesLeftToRead < sizeof(ushort))
+        var newPosition = Position + sizeof(ushort);
+        if (newPosition > _buffer.Length)
             throw new InvalidOperationException();
 
-        var parsedData = BinaryPrimitives.ReadUInt16LittleEndian(_buffer.Span[Position..(Position + sizeof(ushort))]);
-        Position += sizeof(ushort);
-        return parsedData;
+        var result = BinaryPrimitives.ReadUInt16LittleEndian(_buffer.Span.Slice(Position, sizeof(ushort)));
+        Position = newPosition;
+        return result;
     }
 
     /// <summary>
     ///     Reads 4 bytes from the stream and parses them as a UInt32.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public uint ReadUInt32()
     {
-        if (BytesLeftToRead < sizeof(uint))
+        var newPosition = Position + sizeof(uint);
+        if (newPosition > _buffer.Length)
             throw new InvalidOperationException();
 
-        var parsedData = BinaryPrimitives.ReadUInt32LittleEndian(_buffer.Span[Position..(Position + sizeof(uint))]);
-        Position += sizeof(uint);
-        return parsedData;
+        var result = BinaryPrimitives.ReadUInt32LittleEndian(_buffer.Span.Slice(Position, sizeof(uint)));
+        Position = newPosition;
+        return result;
     }
 
     /// <summary>
     ///     Moves the stream forward <paramref name="byteCount" /> bytes.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Skip(int byteCount = 1)
     {
-        if (byteCount <= 0)
-            throw new ArgumentOutOfRangeException(nameof(byteCount));
-        if (BytesLeftToRead < byteCount)
+        var newPosition = Position + byteCount;
+        if (byteCount <= 0 || newPosition > _buffer.Length)
             throw new ArgumentOutOfRangeException(nameof(byteCount));
 
-        Position += byteCount;
+        Position = newPosition;
     }
 }

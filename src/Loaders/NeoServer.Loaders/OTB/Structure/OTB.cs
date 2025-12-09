@@ -1,13 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace NeoServer.Loaders.OTB.Structure;
 
 /// <summary>
 ///     OTB structure class.
 ///     OTB files only have Header and Items Node
 /// </summary>
-public struct Otb
+public class Otb
 {
     //todo: implement header class
 
@@ -15,7 +12,7 @@ public struct Otb
     ///     Item nodes data of this OTB structure
     /// </summary>
     /// <value></value>
-    public IReadOnlyCollection<ItemNode> ItemNodes { get; set; }
+    public ItemNode[] ItemNodes { get; }
 
     /// <summary>
     ///     Creates a new instance of a <see cref="Otb" />.
@@ -23,6 +20,12 @@ public struct Otb
     /// <param name="node"></param>
     public Otb(OtbNode node)
     {
-        ItemNodes = node.Children.AsParallel().Select(c => new ItemNode(c)).ToList();
+        ItemNodes = new ItemNode[node.Children.Length];
+        
+        for (var i = 0; i < node.Children.Length; i++)
+        {
+            var child = node.Children.Span[i];
+            ItemNodes[i] = new ItemNode(child);
+        }
     }
 }

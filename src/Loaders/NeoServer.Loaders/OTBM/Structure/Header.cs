@@ -6,7 +6,7 @@ namespace NeoServer.Loaders.OTBM.Structure;
 /// <summary>
 ///     OTBM Header data
 /// </summary>
-public struct Header
+public class Header
 {
     /// <summary>
     ///     OTBM version

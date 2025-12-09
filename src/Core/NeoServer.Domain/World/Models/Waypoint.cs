@@ -3,7 +3,7 @@ using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.World.Models;
 
-public struct Waypoint : IWaypoint
+public class Waypoint : IWaypoint
 {
     public string Name { get; set; }
     public Coordinate Coordinate { get; set; }

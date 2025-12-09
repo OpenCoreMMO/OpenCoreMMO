@@ -6,12 +6,20 @@ using NeoServer.Domain.Combat.Defenses;
 using NeoServer.Domain.Common.Contracts.Combat;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Server.Helpers.Extensions;
+using Serilog;
 
 namespace NeoServer.Loaders.Monsters.Converters;
 
 public class MonsterDefenseConverter
 {
-    public static ICombatDefense[] Convert(MonsterData data, IMonsterTypeStore monsterTypeStore)
+    private readonly ILogger _logger;
+
+    public MonsterDefenseConverter(ILogger logger)
+    {
+        _logger = logger;
+    }
+
+    public ICombatDefense[] Convert(MonsterData data, IMonsterTypeStore monsterTypeStore)
     {
         if (data.Defenses is null) return [];
 
@@ -91,7 +99,7 @@ public class MonsterDefenseConverter
             }
             else
             {
-                Console.WriteLine($"{defenseName} defense was not created on monster: {data.Name}");
+                _logger.Warning($"{defenseName} defense was not created on monster: {data.Name}");
             }
         }
 

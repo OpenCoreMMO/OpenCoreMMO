@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Buffers.Binary;
+using System.Runtime.CompilerServices;
 using System.Text;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Loaders.OTB.DataStructures;
@@ -10,7 +12,7 @@ public sealed class OtbParsingStream
 {
     private readonly ReadOnlyMemoryStream _underlyingStream;
 
-    private byte[] _parsingBuffer;
+    private byte[] _stringParsingBuffer;
 
     /// <summary>
     ///     Creates a new instance of <see cref="OtbParsingStream" />.
@@ -19,9 +21,8 @@ public sealed class OtbParsingStream
     {
         _underlyingStream = new ReadOnlyMemoryStream(otbData);
 
-        // The buffer must be at least as big as the largest non-string
-        // object we can parse. Currently it's a UInt64.
-        _parsingBuffer = new byte[sizeof(ulong)];
+        // Initial buffer for string parsing only
+        _stringParsingBuffer = new byte[256];
     }
 
     public int CurrentPosition => _underlyingStream.Position;
@@ -45,6 +46,7 @@ public sealed class OtbParsingStream
     /// <summary>
     ///     Reads a byte from the underlaying stream, considering OTB's escape values.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public byte ReadByte()
     {
         var value = _underlyingStream.ReadByte();
@@ -67,12 +69,14 @@ public sealed class OtbParsingStream
     ///     Reads a bytes from the underlaying stream, considering OTB's escape values,
     ///     until enough bytes were read to parse them as a UInt16.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ushort ReadUInt16()
     {
+        Span<byte> buffer = stackalloc byte[sizeof(ushort)];
         for (var i = 0; i < sizeof(ushort); i++)
-            _parsingBuffer[i] = ReadByte();
+            buffer[i] = ReadByte();
 
-        return BitConverter.ToUInt16(_parsingBuffer, 0);
+        return BinaryPrimitives.ReadUInt16LittleEndian(buffer);
     }
 
     public Coordinate ReadCoordinate()
@@ -88,40 +92,46 @@ public sealed class OtbParsingStream
     ///     Reads a bytes from the underlaying stream, considering OTB's escape values,
     ///     until enough bytes were read to parse them as a UInt32.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public uint ReadUInt32()
     {
+        Span<byte> buffer = stackalloc byte[sizeof(uint)];
         for (var i = 0; i < sizeof(uint); i++)
-            _parsingBuffer[i] = ReadByte();
+            buffer[i] = ReadByte();
 
-        return BitConverter.ToUInt32(_parsingBuffer, 0);
+        return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
     }
 
     /// <summary>
     ///     Reads a bytes from the underlaying stream, considering OTB's escape values,
     ///     until enough bytes were read to parse them as a UInt64.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ulong ReadUInt64()
     {
+        Span<byte> buffer = stackalloc byte[sizeof(ulong)];
         for (var i = 0; i < sizeof(ulong); i++)
-            _parsingBuffer[i] = ReadByte();
+            buffer[i] = ReadByte();
 
-        return BitConverter.ToUInt64(_parsingBuffer, 0);
+        return BinaryPrimitives.ReadUInt64LittleEndian(buffer);
     }
 
     /// <summary>
-    ///     Reads a bytes from the underlaying stream, considering OTB's escape values,
+    ///     Reads bytes from the underlying stream, considering OTB's escape values,
     ///     until enough bytes were read to parse them as a double.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public double ReadDouble()
     {
+        Span<byte> buffer = stackalloc byte[sizeof(double)];
         for (var i = 0; i < sizeof(double); i++)
-            _parsingBuffer[i] = ReadByte();
+            buffer[i] = ReadByte();
 
-        return BitConverter.ToDouble(_parsingBuffer, 0);
+        return BinaryPrimitives.ReadDoubleLittleEndian(buffer);
     }
 
     /// <summary>
-    ///     Reads a bytes from the underlaying stream, considering OTB's escape values,
+    ///     Reads a byte from the underlying stream, considering OTB's escape values,
     ///     until enough bytes were read to parse them as a ASCII-encoded string.
     ///     The first 2 bytes read (considering OTB's escape values) represent the string length.
     /// </summary>
@@ -129,15 +139,25 @@ public sealed class OtbParsingStream
     {
         var stringLength = ReadUInt16();
 
+        // Use stack allocation for small strings, heap for larger ones
+        if (stringLength <= 256)
+        {
+            Span<byte> buffer = stackalloc byte[stringLength];
+            for (var i = 0; i < stringLength; i++)
+                buffer[i] = ReadByte();
+            
+            return Encoding.ASCII.GetString(buffer);
+        }
+
         // "Resize" our buffer, iff necessary
-        if (stringLength > _parsingBuffer.Length)
-            _parsingBuffer = new byte[stringLength];
+        if (stringLength > _stringParsingBuffer.Length)
+            _stringParsingBuffer = new byte[stringLength];
 
         for (var i = 0; i < stringLength; i++)
-            _parsingBuffer[i] = ReadByte();
+            _stringParsingBuffer[i] = ReadByte();
 
         // When in C land, use C encoding...
-        return Encoding.ASCII.GetString(_parsingBuffer, 0, stringLength);
+        return Encoding.ASCII.GetString(_stringParsingBuffer, 0, stringLength);
     }
 
     /// <summary>

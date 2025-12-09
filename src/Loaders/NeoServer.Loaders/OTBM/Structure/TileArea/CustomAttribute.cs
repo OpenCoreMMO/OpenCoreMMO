@@ -2,7 +2,7 @@ using NeoServer.Loaders.OTB.Parsers;
 
 namespace NeoServer.Loaders.OTBM.Structure.TileArea;
 
-public struct CustomAttribute
+public class CustomAttribute
 {
     public string Key { get; set; }
     public object Value { get; set; }

@@ -30,7 +30,7 @@ public static class ConfigurationInjection
     {
         ServerConfiguration serverConfiguration =
             new(0, 0, null, null, null, string.Empty, string.Empty, string.Empty, 7171, 7172, false,
-                new SaveConfiguration(3600));
+                false, new SaveConfiguration(3600));
         GameConfiguration gameConfiguration = new();
         LogConfiguration logConfiguration = new(null);
         ClientConfiguration clientConfiguration = new(null);
@@ -49,7 +49,7 @@ public static class ConfigurationInjection
         builder.AddSingleton(gameConfiguration.PvP);
         builder.AddSingleton(gameConfiguration.Combat);
         builder.AddSingleton(gameConfiguration.Yell);
-        
+
         builder.AddSingleton<IConfiguration>(configuration);
 
 
@@ -61,20 +61,18 @@ public static class ConfigurationInjection
         var serverLoginPort = Environment.GetEnvironmentVariable("SERVER_LOGIN_PORT");
         var serverGamePort = Environment.GetEnvironmentVariable("SERVER_GAME_PORT");
         var serverGameName = Environment.GetEnvironmentVariable("SERVER_GAME_NAME");
-        var serverGameIP = Environment.GetEnvironmentVariable("SERVER_GAME_IP");
+        var serverGameIp = Environment.GetEnvironmentVariable("SERVER_GAME_IP");
 
-        serverConfiguration = new ServerConfiguration(
-            serverConfiguration.Version,
-            serverConfiguration.MinVersion,
-            serverConfiguration.OTBM,
-            serverConfiguration.OTB,
-            serverConfiguration.Data,
-            string.IsNullOrEmpty(serverGameName) ? serverConfiguration.ServerName : serverGameName,
-            string.IsNullOrEmpty(serverGameIP) ? serverConfiguration.ServerIp : serverGameIP,
-            serverConfiguration.Extensions,
-            string.IsNullOrEmpty(serverLoginPort) ? serverConfiguration.ServerLoginPort : int.Parse(serverLoginPort),
-            string.IsNullOrEmpty(serverGamePort) ? serverConfiguration.ServerGamePort : int.Parse(serverGamePort),
-            serverConfiguration.AutoReloadScripts,
-            serverConfiguration.Save);
+        serverConfiguration = serverConfiguration with
+        {
+            ServerName = string.IsNullOrEmpty(serverGameName) ? serverConfiguration.ServerName : serverGameName,
+            ServerIp = string.IsNullOrEmpty(serverGameIp) ? serverConfiguration.ServerIp : serverGameIp,
+            ServerLoginPort = string.IsNullOrEmpty(serverLoginPort)
+                ? serverConfiguration.ServerLoginPort
+                : int.Parse(serverLoginPort),
+            ServerGamePort = string.IsNullOrEmpty(serverGamePort)
+                ? serverConfiguration.ServerGamePort
+                : int.Parse(serverGamePort)
+        };
     }
 }

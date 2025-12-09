@@ -374,7 +374,7 @@ public enum EventCallbackType : ushort
 }
 
 // Struct
-public struct LuaVariant
+public class LuaVariant
 {
     public LuaVariantType Type = LuaVariantType.VARIANT_NONE;
     public string Text;
@@ -388,7 +388,7 @@ public struct LuaVariant
     }
 }
 
-public struct LuaTimerEventDesc
+public class LuaTimerEventDesc
 {
     public int ScriptId = -1;
     public string ScriptName;

@@ -1,5 +1,8 @@
+using System;
+
 namespace NeoServer.Loaders.OTBM.Enums;
 
+[Flags]
 public enum OTBMTileFlags : uint
 {
     ProtectionZone = 0b0001, // OTBM_TILEFLAG_PROTECTIONZONE

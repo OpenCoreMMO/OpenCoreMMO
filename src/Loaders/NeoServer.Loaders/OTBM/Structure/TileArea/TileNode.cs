@@ -9,27 +9,25 @@ using NeoServer.Loaders.OTBM.Enums;
 
 namespace NeoServer.Loaders.OTBM.Structure.TileArea;
 
-public struct TileNode : ITileNode
+public class TileNode : ITileNode
 {
-    public Coordinate Coordinate { get; set; }
-    public NodeAttribute NodeAttribute { get; set; }
-
-    public uint HouseId { get; set; }
-
-    public bool IsFlag => NodeAttribute == NodeAttribute.TileFlags;
-    public bool IsItem => NodeAttribute == NodeAttribute.Item;
+    public Coordinate Coordinate { get; }
     public NodeType NodeType { get; }
-    public TileFlags Flag { get; set; }
-    public List<ItemNode> Items { get; set; }
+    public TileFlags Flag { get; private set; }
+    public List<ItemNode> Items { get; }
+    public uint HouseId { get; }
 
-    // public abstract void LoadTile(OTBParsingStream stream); //template method
-
+    private NodeAttribute NodeAttribute { get; set; }
+    private bool IsFlag => NodeAttribute == NodeAttribute.TileFlags;
+    private bool IsItem => NodeAttribute == NodeAttribute.Item;
+    
     public TileNode(TileArea tileArea, OtbNode node)
     {
-        Items = new List<ItemNode>();
+        var children = node.Children;
+        Items = new List<ItemNode>(children.Length);
         NodeAttribute = NodeAttribute.None;
         Flag = TileFlags.None;
-        HouseId = default;
+        HouseId = 0;
 
         var stream = new OtbParsingStream(node.Data);
 
@@ -44,9 +42,10 @@ public struct TileNode : ITileNode
 
         ParseAttributes(stream);
 
-        var tileNode = this;
-
-        foreach (var c in node.Children) Items.Add(new ItemNode(tileNode, c));
+        foreach (var child in children.Span)
+        {
+            Items.Add(new ItemNode(this, child));
+        }
     }
 
     private void ParseAttributes(OtbParsingStream stream)
@@ -56,15 +55,21 @@ public struct TileNode : ITileNode
             NodeAttribute = (NodeAttribute)stream.ReadByte();
 
             if (IsFlag)
+            {
                 Flag = ParseTileFlags((OTBMTileFlags)stream.ReadUInt32());
+            }
             else if (IsItem)
+            {
                 Items.Add(new ItemNode(stream));
+            }
             else
+            {
                 throw new Exception($"{Coordinate}: Unknown tile attribute");
+            }
         }
     }
 
-    private TileFlags ParseTileFlags(OTBMTileFlags newFlags)
+    private static TileFlags ParseTileFlags(OTBMTileFlags newFlags)
     {
         var oldFlags = TileFlags.None;
 

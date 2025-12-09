@@ -32,8 +32,8 @@ public class SpellLoader(
         {
             var path = Path.Combine(serverConfiguration.Data, "spells", "spells.json");
             var jsonString = File.ReadAllText(path);
-            var spells = JsonSerializer.Deserialize<List<IDictionary<string, JsonElement>>>(jsonString)?.ToList() ??
-                         [];
+            var spells = JsonSerializer.Deserialize<List<IDictionary<string, JsonElement>>>(jsonString) ?? [];
+            
             var types = ScriptSearch.All
                 .Where(x => typeof(ISpell).IsAssignableFrom(x) && !x.IsAbstract && !x.IsInterface).ToList();
 

@@ -20,9 +20,9 @@ public class DefenseEquipmentFactory : IFactory
 
     public BodyDefenseEquipment Create(IItemType itemType, Location location)
     {
-        var chargeable = _chargeableFactory.Create(itemType);
-
         if (!BodyDefenseEquipment.IsApplicable(itemType)) return null;
+
+        var chargeable = _chargeableFactory.Create(itemType);
 
         return new BodyDefenseEquipment(itemType, location)
         {

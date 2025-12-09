@@ -60,7 +60,7 @@ public class PersistenceDispatcher : IPersistenceDispatcher
         // Combine external cancellation with internal
         var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(token, _internalCancellation.Token);
 
-        _logger.Information("PersistenceDispatcher: Starting persistence processing loop");
+        _logger.Debug("PersistenceDispatcher: Starting persistence processing loop");
 
         _processingTask = Task.Factory.StartNew(async () =>
         {
@@ -100,13 +100,13 @@ public class PersistenceDispatcher : IPersistenceDispatcher
                     }
                 }
 
-                _logger.Information(
+                _logger.Debug(
                     "PersistenceDispatcher: Channel completed, stopping processing after {EventCount} events",
                     eventCount);
             }
             catch (OperationCanceledException)
             {
-                _logger.Information("PersistenceDispatcher: Cancelled after processing {EventCount} events",
+                _logger.Error("PersistenceDispatcher: Cancelled after processing {EventCount} events",
                     eventCount);
             }
             catch (Exception ex)
@@ -120,20 +120,20 @@ public class PersistenceDispatcher : IPersistenceDispatcher
                 try
                 {
                     _writer.Complete();
-                    _logger.Information("PersistenceDispatcher: Channel completed successfully");
+                    _logger.Debug("PersistenceDispatcher: Channel completed successfully");
                 }
                 catch (Exception ex)
                 {
-                    _logger.Warning(ex, "PersistenceDispatcher: Error completing channel");
+                    _logger.Error(ex, "PersistenceDispatcher: Error completing channel");
                 }
 
-                _logger.Information(
+                _logger.Debug(
                     "PersistenceDispatcher: Processing loop ended. Total persistence events processed: {EventCount}",
                     eventCount);
             }
         }, combinedCts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
 
-        _logger.Information("PersistenceDispatcher: Started successfully");
+        _logger.Debug("PersistenceDispatcher: Started successfully");
     }
 
     /// <summary>

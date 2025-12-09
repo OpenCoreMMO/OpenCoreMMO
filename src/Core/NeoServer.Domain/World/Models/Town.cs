@@ -3,7 +3,7 @@ using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.World.Models;
 
-public struct Town : ITown
+public class Town : ITown
 {
     public uint Id { get; set; }
     public string Name { get; set; }
