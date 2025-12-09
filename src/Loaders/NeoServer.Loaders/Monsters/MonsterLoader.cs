@@ -53,13 +53,14 @@ public class MonsterLoader(
         return await Task.WhenAll(tasks);
     }
 
-    private async Task<IMonsterType> ConvertMonsterAsync(string basePath, string monsterFile)
+    private Task<IMonsterType> ConvertMonsterAsync(string basePath, string monsterFile)
     {
-        await using var fileStream = new FileStream(Path.Combine(basePath, monsterFile), FileMode.Open, FileAccess.Read);
-
-        var monster = await JsonSerializer.DeserializeAsync<MonsterData>(fileStream, JsonSettings.Options);
-
-        return monsterConverter.Convert(monster);
+        return Task.Run(() =>
+        {
+            using var fileStream = File.OpenRead(Path.Combine(basePath, monsterFile));
+            var monster = JsonSerializer.Deserialize<MonsterData>(fileStream, JsonSettings.Options);
+            return monsterConverter.Convert(monster);
+        });
     }
 }
 

@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using NeoServer.Loaders.Helpers;
+using System.Threading.Tasks;
 
 namespace NeoServer.Loaders.Items;
 
@@ -32,9 +33,12 @@ public class ItemTypeLoader(
         logger.Step("Loading items", "{n} item types loaded", () =>
         {
             var basePath = $"{serverConfiguration.Data}/items/";
+
+            var itemTypeMetadataList = GetItemTypeMetadataListAsync(basePath);
+
             var itemTypes = LoadOtb(basePath);
 
-            LoadItemsJson(basePath, itemTypes, logger);
+            LoadItemsJson(basePath, itemTypes, logger, itemTypeMetadataList.GetAwaiter().GetResult());
 
             foreach (var item in itemTypes)
             {
@@ -71,13 +75,11 @@ public class ItemTypeLoader(
         return itemTypes;
     }
 
-    private static void LoadItemsJson(string basePath, Dictionary<ushort, IItemType> itemTypes, ILogger logger)
+    private static void LoadItemsJson(string basePath, Dictionary<ushort, IItemType> itemTypes, ILogger logger, ItemTypeMetadata[] itemTypeMetadataList)
     {
-        var itemTypeMetadata = GetItemTypeMetadataList(basePath);
-
         var itemTypeMetadataParser = new ItemTypeMetadataParser(itemTypes);
 
-        foreach (var metadata in itemTypeMetadata)
+        foreach (var metadata in itemTypeMetadataList)
         {
             if (metadata.Id.HasValue)
             {
@@ -99,9 +101,12 @@ public class ItemTypeLoader(
         }
     }
 
-    private static ItemTypeMetadata[] GetItemTypeMetadataList(string basePath)
+    private static Task<ItemTypeMetadata[]> GetItemTypeMetadataListAsync(string basePath)
     {
-        using var stream = File.OpenRead(Path.Combine(basePath, "items.json"));
-        return JsonSerializer.Deserialize<ItemTypeMetadata[]>(stream, JsonSettings.Options) ?? [];
+        return Task.Run(() =>
+        {
+            using var stream = File.OpenRead(Path.Combine(basePath, "items.json"));
+            return JsonSerializer.Deserialize<ItemTypeMetadata[]>(stream, JsonSettings.Options) ?? [];
+        });
     }
 }
