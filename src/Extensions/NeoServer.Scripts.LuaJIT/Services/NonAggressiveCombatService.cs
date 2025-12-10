@@ -55,6 +55,9 @@ public class NonAggressiveCombatService
 
             if (condition.Type is ConditionType.Invisible)
                 targetCreature.AddCondition(new ConditionInvisible(duration));
+
+            if (condition.Type is ConditionType.ManaShield)
+                targetCreature.AddCondition(new Condition(ConditionType.ManaShield, duration));
         }
     }
 }
