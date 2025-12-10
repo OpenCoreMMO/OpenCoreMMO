@@ -1,6 +1,4 @@
-using NeoServer.Scripts.LuaJIT.Attributes;
-
-namespace NeoServer.Scripts.LuaJIT.Models;
+namespace NeoServer.Scripts.LuaJIT.Enums;
 
 public enum CallBackType
 {

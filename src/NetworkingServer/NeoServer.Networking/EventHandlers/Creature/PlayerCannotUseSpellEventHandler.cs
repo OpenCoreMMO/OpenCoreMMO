@@ -16,8 +16,13 @@ public class PlayerCannotUseSpellEventHandler(IGameServer game) : INetworkingEve
             if (!game.CreatureManager.GetPlayerConnection(spectator.CreatureId, out var connection)) continue;
 
             connection.OutgoingPackets.Enqueue(new MagicEffectPacket(@event.Caster.Location, EffectT.Puff));
-            connection.OutgoingPackets.Enqueue(new TextMessagePacket(TextMessageOutgoingParser.Parse(@event.Error),
-                TextMessageOutgoingType.MESSAGE_STATUS_DEFAULT));
+
+            if (Equals(spectator, @event.Caster))
+            {
+                connection.OutgoingPackets.Enqueue(new TextMessagePacket(TextMessageOutgoingParser.Parse(@event.Error),
+                    TextMessageOutgoingType.MESSAGE_STATUS_DEFAULT));
+            }
+            
             connection.Send();
         }
     }

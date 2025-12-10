@@ -2,26 +2,24 @@
 
 public static class DictionaryExtensions
 {
-    public static bool AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> map, TKey key, TValue value)
+    extension<TKey, TValue>(IDictionary<TKey, TValue> map)
     {
-        if (map.TryGetValue(key, out _))
+        public bool AddOrUpdate(TKey key, TValue value)
         {
             map[key] = value;
             return true;
         }
 
-        return map.TryAdd(key, value);
-    }
-
-    public static bool AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> map, TKey key,
-        Func<TValue, TValue> funcValue)
-    {
-        if (map.TryGetValue(key, out var currentValue))
+        public bool AddOrUpdate(TKey key,
+            Func<TValue, TValue> funcValue)
         {
-            map[key] = funcValue.Invoke(currentValue);
-            return true;
-        }
+            if (map.TryGetValue(key, out var currentValue))
+            {
+                map[key] = funcValue.Invoke(currentValue);
+                return true;
+            }
 
-        return map.TryAdd(key, funcValue.Invoke(currentValue));
+            return map.TryAdd(key, funcValue.Invoke(currentValue));
+        }
     }
 }

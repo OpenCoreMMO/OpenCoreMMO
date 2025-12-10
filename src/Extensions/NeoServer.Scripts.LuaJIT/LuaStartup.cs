@@ -1,6 +1,7 @@
 ﻿using LuaNET;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
+using NeoServer.Scripts.LuaJIT.Managers;
 using NeoServer.Server.Configurations;
 using Serilog;
 
@@ -31,6 +32,7 @@ public class LuaStartup(
     INpcFunctions npcFunctions,
     INpcTypeFunctions npcTypeFunctions,
     IPlayerFunctions playerFunctions,
+    IVocationFunctions vocationFunctions,
     IPositionFunctions positionFunctions,
     IResultFunctions resultFunctions,
     ITalkActionFunctions talkActionFunctions,
@@ -90,6 +92,7 @@ public class LuaStartup(
         npcFunctions.Init(luaState);
         npcTypeFunctions.Init(luaState);
         playerFunctions.Init(luaState);
+        vocationFunctions.Init(luaState);
         teleportFunctions.Init(luaState);
         groupFunctions.Init(luaState);
         spellFunctions.Init(luaState);
@@ -120,7 +123,7 @@ public class LuaStartup(
 
     private void ModulesLoadHelper(bool loaded, string moduleName)
     {
-        logger.Information("Loaded {ModuleName}", moduleName);
+        logger.Debug("Loaded {ModuleName}", moduleName);
         if (!loaded)
             logger.Error("Cannot load: {ModuleName}", moduleName);
     }

@@ -5,7 +5,7 @@ using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Configurations;
 using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Managers;
 
 public class ReloadManager(
     ILogger logger,

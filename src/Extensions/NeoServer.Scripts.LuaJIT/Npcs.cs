@@ -9,11 +9,11 @@ public class NpcEvents
 {
     public NpcEvents()
     {
-        Events = new Dictionary<NpcsEventType, int?>();
+        Events = new Dictionary<NpcEventType, int?>();
     }
 
     public LuaScriptInterface LuaScriptInterface { get; set; }
-    public Dictionary<NpcsEventType, int?> Events { get; set; }
+    public Dictionary<NpcEventType, int?> Events { get; set; }
 }
 
 public class Npcs : INpcs
@@ -38,7 +38,7 @@ public class Npcs : INpcs
 
     #region Public Methods
 
-    public void Add(string npcName, NpcsEventType eventType, LuaScriptInterface luaScriptInterface)
+    public void Add(string npcName, NpcEventType eventType, LuaScriptInterface luaScriptInterface)
     {
         if (!_npcEventsMap.TryGetValue(npcName, out var npcEvents))
             npcEvents = new NpcEvents { LuaScriptInterface = luaScriptInterface };

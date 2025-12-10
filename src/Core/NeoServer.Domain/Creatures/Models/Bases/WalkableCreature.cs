@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Player.Outfit;
 
 namespace NeoServer.Domain.Creatures.Models.Bases;
 
@@ -19,7 +20,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
     protected WalkableCreature(ICreatureType type,
         IMapTool mapTool,
-        IOutfit outfit = null,
+        Outfit outfit = null,
         uint healthPoints = 0) : base(type, outfit, healthPoints)
     {
         MapTool = mapTool;

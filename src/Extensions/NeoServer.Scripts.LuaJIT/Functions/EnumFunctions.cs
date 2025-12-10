@@ -6,7 +6,6 @@ using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
-using NeoServer.Scripts.LuaJIT.Attributes;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
@@ -38,7 +37,7 @@ public class EnumFunctions : LuaScriptInterface, IEnumFunctions
         RegisterEnum<MagicEffectClassesType>(luaState);
         RegisterEnum<SpeakClassesType>(luaState);
         RegisterEnum<MessageClassesType>(luaState);
-        RegisterEnum<NpcsEventType>(luaState);
+        RegisterEnum<NpcEventType>(luaState);
         RegisterEnumCustom<PlayerFlag>(luaState, false);
         RegisterEnumCustom<ReloadType>(luaState, true, true, "RELOAD_TYPE");
         RegisterEnum<ReturnValueType>(luaState);

@@ -17,7 +17,7 @@ public abstract class Equipment : BaseItem, IEquipment
 {
     protected Equipment(IItemType type, Location location) : base(type, location)
     {
-        if (type.Attributes.SkillBonuses?.Any() ?? false) SkillBonus = new SkillBonus(this);
+        SkillBonus = new SkillBonus(this);
         Protection = ProtectionFactory.Create(this);
     }
 
@@ -167,7 +167,7 @@ public abstract class Equipment : BaseItem, IEquipment
         var before = Metadata;
         UpdateMetadata(TransformEquipItem);
 
-        if (Metadata.Attributes.SkillBonuses is not null) SkillBonus ??= new SkillBonus(this);
+        SkillBonus ??= new SkillBonus(this);
         Decay ??= DecayableFactory.CreateIfItemIsDecayable(this);
         Protection ??= ProtectionFactory.Create(this);
 

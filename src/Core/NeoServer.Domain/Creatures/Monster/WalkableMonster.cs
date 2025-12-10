@@ -6,13 +6,14 @@ using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Models.Bases;
+using NeoServer.Domain.Creatures.Player.Outfit;
 
 namespace NeoServer.Domain.Creatures.Monster;
 
 public abstract class WalkableMonster(
     ICreatureType type,
     IMapTool mapTool,
-    IOutfit outfit = null,
+    Outfit outfit = null,
     uint healthPoints = 0)
     : CombatActor(type, mapTool, outfit,
         healthPoints), IWalkableMonster

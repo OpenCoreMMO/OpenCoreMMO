@@ -15,8 +15,10 @@ using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Npcs;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Player.Container;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Modes;
+using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Domain.Guild;
 using NeoServer.Domain.Items.Items.UsableItems;
@@ -87,7 +89,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     FightMode FightMode { get; }
     ChaseMode ChaseMode { get; }
     PvpSecureMode SecureMode { get; }
-    IPlayerContainerList Containers { get; }
+    PlayerContainerList Containers { get; }
 
     ITown Town { get; set; }
 
@@ -122,13 +124,13 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     byte MaxSoulPoints { get; }
     IVip Vip { get; }
-    IPlayerChannel Channels { get; set; }
-    IPlayerParty PlayerParty { get; set; }
+    PlayerChannel Channels { get; set; }
+    PlayerParty PlayerParty { get; set; }
     string GenderPronoun { get; }
     Gender Gender { get; set; }
     int PremiumDays { get; }
     bool HasPremiumTime { get; }
-    IDictionary<SkillType, ISkill> Skills { get; }
+    IDictionary<SkillType, Skill> Skills { get; }
     IDictionary<uint, int> Storages { get; }
 
     bool CanSeeInspectionDetails { get; }
@@ -137,7 +139,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     /// <summary>
     ///     Indicates Skull showed on creature
     /// </summary>
-    IPlayerSkull PlayerSkull { get; }
+    PlayerSkull PlayerSkull { get; }
 
     bool HasSkull { get; }
     int NumberOfUnjustifiedKillsLastDay { get; }
@@ -265,7 +267,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
         byte fromPosition,
         byte? toPosition);
 
-    bool CanUseOutfit(IOutfit outFit);
+    bool CanUseOutfit(Outfit outFit);
     void SetAsHungry();
     void Use(IContainer item, byte openAtIndex);
     ushort GetRawSkillLevel(SkillType skillType);
@@ -331,4 +333,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event WroteText OnWroteText;
 
     #endregion
+
+    void HealSoul(ushort increasing);
 }

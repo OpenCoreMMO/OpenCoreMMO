@@ -5,7 +5,7 @@ using NeoServer.Server.Common.Contracts.Scripts.Services;
 using NeoServer.Server.Configurations;
 using Serilog;
 
-namespace NeoServer.Scripts.LuaJIT;
+namespace NeoServer.Scripts.LuaJIT.Managers;
 
 public class LuaScriptManager(
     ILuaStartup luaStartup,

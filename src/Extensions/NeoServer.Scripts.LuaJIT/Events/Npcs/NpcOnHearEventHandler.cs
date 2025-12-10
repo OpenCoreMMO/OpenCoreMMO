@@ -15,7 +15,7 @@ public class NpcOnHearEventHandler(INpcs npcs, ILogger logger) : IGameEventHandl
         if (npcEvent == null ||
             npcEvent.Events == null ||
             npcEvent.Events.Count == 0 ||
-            !npcEvent.Events.TryGetValue(NpcsEventType.NPCS_EVENT_SAY, out var onSayEvent) ||
+            !npcEvent.Events.TryGetValue(NpcEventType.NPCS_EVENT_SAY, out var onSayEvent) ||
             !onSayEvent.HasValue)
             return;
 

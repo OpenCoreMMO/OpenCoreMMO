@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using NeoServer.Loaders.OTB.Enums;
 using NeoServer.Loaders.OTB.Parsers;
@@ -7,7 +8,7 @@ namespace NeoServer.Loaders.OTB.Structure;
 
 public class ItemNode
 {
-    private readonly ImmutableDictionary<OtbItemAttribute, IConvertible> _attributes;
+    private readonly Dictionary<OtbItemAttribute, IConvertible> _attributes;
 
     /// <summary>
     ///     Creates ItemNode instance

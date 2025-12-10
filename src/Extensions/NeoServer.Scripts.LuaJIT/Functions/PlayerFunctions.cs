@@ -54,6 +54,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         RegisterMethod(luaState, "Player", "getSex", LuaPlayerGetSex);
         RegisterMethod(luaState, "Player", "setSex", LuaPlayerSetSex);
+        RegisterMethod(luaState, "Player", "getVocation", LuaPlayerGetVocation);
 
         RegisterMethod(luaState, "Player", "getMana", LuaPlayerGetMana);
         RegisterMethod(luaState, "Player", "addMana", LuaPlayerAddMana);
@@ -553,7 +554,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         return 1;
     }
 
-    private static int LuaPlayerAddItem(LuaState luaState)
+    public static int LuaPlayerAddItem(LuaState luaState)
     {
         // player:addItem(itemId, count = 1, canDropOnMap = true, subType = 1, slot = CONST_SLOT_BACKPACK)
 
@@ -1055,6 +1056,27 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         var rankName = "Member";
 
         PushString(luaState, rankName);
+        return 1;
+    }
+
+    private static int LuaPlayerGetVocation(LuaState luaState)
+    {
+        // player:getVocation()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player != null)
+        {
+            var vocation = player.Vocation;
+            if (vocation != null)
+            {
+                PushUserdata(luaState, vocation);
+                SetMetatable(luaState, -1, "Vocation");
+            }
+            else
+                Lua.PushNil(luaState);
+        }
+        else
+            Lua.PushNil(luaState);
+
         return 1;
     }
 }

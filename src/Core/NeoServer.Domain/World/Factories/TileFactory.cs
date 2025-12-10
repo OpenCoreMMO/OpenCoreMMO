@@ -10,22 +10,19 @@ using Serilog;
 
 namespace NeoServer.Domain.World.Factories;
 
-public class TileFactory : ITileFactory
+public class TileFactory(ILogger logger) : ITileFactory
 {
-    private readonly ILogger _logger;
-    private readonly IDictionary<string, IStaticTile> _tileCache = new Dictionary<string, IStaticTile>();
-
-    public TileFactory(ILogger logger)
-    {
-        _logger = logger;
-    }
+    private readonly Dictionary<string, IStaticTile> _tileCache = new();
 
     public ITile CreateTile(Coordinate coordinate, TileFlag flag, IItem[] items, bool useCache = true,
         uint? houseId = null)
     {
-        var hash = GetTileHash(items);
-
-        if (useCache && _tileCache.TryGetValue(hash, out var tile)) return tile;
+        string tileHash = null;
+        if (useCache)
+        {
+            tileHash = GetTileHash(items);
+            if (_tileCache.TryGetValue(tileHash, out var tile)) return tile;
+        }
 
         var isHouseTile = houseId is > 0;
 
@@ -46,7 +43,7 @@ public class TileFactory : ITileFactory
 
             if (item.CanBeMoved && isHouseTile)
             {
-                _logger.Warning("Item {ItemClientId} is moveable and is on a house tile. This is not allowed",
+                logger.Warning("Item {ItemClientId} is moveable and is on a house tile. This is not allowed",
                     item.ClientId);
                 continue;
             }
@@ -77,7 +74,12 @@ public class TileFactory : ITileFactory
             !hasTransformableItem && !hasHeight)
         {
             var staticTile = new StaticTile(new Coordinate(), (uint)flag, items);
-            _tileCache.TryAdd(hash, staticTile);
+
+            if (useCache)
+            {
+                _tileCache.TryAdd(tileHash, staticTile);
+            }
+
             return staticTile;
         }
 
@@ -88,7 +90,7 @@ public class TileFactory : ITileFactory
     {
         var hash = GetTileHash(ref clientIds);
 
-        return _tileCache.TryGetValue(hash, out var tile) ? tile : null;
+        return _tileCache.GetValueOrDefault(hash);
     }
 
     public ITile CreateDynamicTile(Coordinate coordinate, TileFlag flag, IItem[] items)

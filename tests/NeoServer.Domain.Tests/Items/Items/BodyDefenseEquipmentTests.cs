@@ -117,7 +117,7 @@ public class BodyDefenseEquipmentTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation,
-            skills: new Dictionary<SkillType, ISkill>
+            skills: new Dictionary<SkillType, Skill>
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
@@ -145,7 +145,7 @@ public class BodyDefenseEquipmentTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation,
-            skills: new Dictionary<SkillType, ISkill>
+            skills: new Dictionary<SkillType, Skill>
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
@@ -172,7 +172,7 @@ public class BodyDefenseEquipmentTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: 1,
-            skills: new Dictionary<SkillType, ISkill>
+            skills: new Dictionary<SkillType, Skill>
             {
                 [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
             });
@@ -198,7 +198,7 @@ public class BodyDefenseEquipmentTests
     {
         //arrange
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation,
-            skills: new Dictionary<SkillType, ISkill>
+            skills: new Dictionary<SkillType, Skill>
             {
                 [SkillType.Level] = new Skill(SkillType.Level, 1)
             });

@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using NeoServer.Loaders.OTB.Enums;
 using NeoServer.Loaders.OTB.Structure;
 using NeoServer.Loaders.OTBM.Structure;
@@ -13,13 +13,6 @@ namespace NeoServer.Loaders.OTBM.Loaders;
 /// </summary>
 public sealed class OTBMNodeParser
 {
-    private readonly Otbm _otbm;
-
-    public OTBMNodeParser()
-    {
-        _otbm = new Otbm();
-    }
-
     /// <summary>
     ///     Parses the OTBNode binary tree structure to a OTBM instance <see cref="Otbm.Structure.OTBM"></see>
     /// </summary>
@@ -27,27 +20,57 @@ public sealed class OTBMNodeParser
     /// <returns></returns>
     public Otbm Parse(OtbNode node)
     {
-        _otbm.Header = new Header(node);
+        Otbm otbm = new()
+        {
+            Header = new Header(node)
+        };
+        
+        var children = node.Children;
+        if (children.Length == 0) return otbm;
 
-        var mapData = node.Children.SingleOrDefault();
+        var mapData = children.Span[0];
+        otbm.MapData = GetMapData(mapData);
 
-        if (mapData is null) return _otbm;
+        var mapDataChildren = mapData.Children;
+        var childrenCount = mapDataChildren.Length;
 
-        _otbm.MapData = GetMapData(mapData);
+        var tileAreas = new List<TileArea>(childrenCount);
+        var towns = new List<TownNode>(childrenCount);
+        var waypoints = new List<WaypointNode>(childrenCount);
 
-        _otbm.TileAreas = mapData.Children.Where(c => c.Type == NodeType.TileArea)
-            .Select(c => new TileArea(c));
+        var checkWaypoints = otbm.Header.Version > 1;
 
-        _otbm.Towns = mapData.Children.Where(c => c.Type == NodeType.TownCollection)
-            .SelectMany(c => c.Children)
-            .Select(c => new TownNode(c));
+        foreach (var child in mapDataChildren.Span)
+        {
+            switch (child.Type)
+            {
+                case NodeType.TileArea:
+                    tileAreas.Add(new TileArea(child));
+                    break;
 
-        _otbm.Waypoints = mapData.Children
-            .Where(c => c.Type == NodeType.WayPointCollection && _otbm.Header.Version > 1)
-            .SelectMany(c => c.Children)
-            .Select(c => new WaypointNode(c));
+                case NodeType.TownCollection:
+                    var townChildren = child.Children;
+                    for (int i = 0; i < townChildren.Length; i++)
+                    {
+                        towns.Add(new TownNode(townChildren.Span[i]));
+                    }
+                    break;
 
-        return _otbm;
+                case NodeType.WayPointCollection when checkWaypoints:
+                    var waypointChildren = child.Children;
+                    for (int i = 0; i < waypointChildren.Length; i++)
+                    {
+                        waypoints.Add(new WaypointNode(waypointChildren.Span[i]));
+                    }
+                    break;
+            }
+        }
+
+        otbm.TileAreas = tileAreas;
+        otbm.Towns = towns;
+        otbm.Waypoints = waypoints;
+
+        return otbm;
     }
 
     private static MapData GetMapData(OtbNode mapData)

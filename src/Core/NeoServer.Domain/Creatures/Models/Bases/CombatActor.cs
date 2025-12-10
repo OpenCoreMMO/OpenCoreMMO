@@ -16,10 +16,11 @@ using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Models.Bases.Events;
 using NeoServer.Domain.Creatures.Monster.Loot;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Creatures.Player.Outfit;
 
 namespace NeoServer.Domain.Creatures.Models.Bases;
 
-public abstract class CombatActor(ICreatureType type, IMapTool mapTool, IOutfit outfit = null, uint healthPoints = 0)
+public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit outfit = null, uint healthPoints = 0)
     : WalkableCreature(type, mapTool, outfit,
         healthPoints), ICombatActor
 {
@@ -262,11 +263,14 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, IOutfit 
     {
         if (increasing <= 0) return;
 
-        if (HealthPoints == MaxHealthPoints) return;
+        if (HealthPoints == MaxHealthPoints)
+        {
+            increasing = 0;
+        };
 
         var oldHealthPoints = HealthPoints;
 
-        HealthPoints = HealthPoints + increasing >= MaxHealthPoints ? MaxHealthPoints : HealthPoints + increasing;
+        HealthPoints = Math.Min(HealthPoints + increasing, MaxHealthPoints);
 
         OnHeal?.Invoke(this, healedBy, increasing);
         EventAggregator.Invoke(new CreatureHealthChangedEvent(this, oldHealthPoints, HealthPoints));

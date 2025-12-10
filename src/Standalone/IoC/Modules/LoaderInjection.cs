@@ -24,7 +24,8 @@ public static class LoaderInjection
         builder
             .AddSingleton<MonsterLoader>()
             .AddSingleton<MonsterConverter>()
-            .AddSingleton<MonsterAttackConverter>();
+            .AddSingleton<MonsterAttackConverter>()
+            .AddSingleton<MonsterDefenseConverter>();
 
         builder.AddSingleton<VocationLoader>();
         builder.RegisterPlayerLoaders();

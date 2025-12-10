@@ -112,7 +112,7 @@ public readonly struct ExtraAttack
     public bool IsMagicalAttack { get; init; }
 }
 
-public struct AreaAttackParameter
+public class AreaAttackParameter
 {
     public void SetArea(Coordinate[] coordinates, EffectT effect, bool excludeOrigin = false)
     {

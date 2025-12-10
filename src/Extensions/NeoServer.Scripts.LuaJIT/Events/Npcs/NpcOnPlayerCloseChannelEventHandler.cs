@@ -14,7 +14,7 @@ public class NpcOnPlayerCloseChannelEventHandler(INpcs npcs, ILogger logger) : I
         if (npcEvent == null ||
             npcEvent.Events == null ||
             npcEvent.Events.Count == 0 ||
-            !npcEvent.Events.TryGetValue(NpcsEventType.NPCS_EVENT_PLAYER_CLOSE_CHANNEL,
+            !npcEvent.Events.TryGetValue(NpcEventType.NPCS_EVENT_PLAYER_CLOSE_CHANNEL,
                 out var onPlayerCloseChannelEvent) ||
             !onPlayerCloseChannelEvent.HasValue)
             return;

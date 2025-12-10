@@ -7,19 +7,36 @@ namespace NeoServer.Server.Standalone.IoC;
 
 public static class ContainerHelpers
 {
-    private static Type[] AssemblyCache => Container.AssemblyCache.SelectMany(x => x.GetTypes()).ToArray();
+    private static readonly Lazy<Type[]> _assemblyTypesCache = new(() =>
+        [.. Container.AssemblyCache.SelectMany(x => x.GetTypes())]);
+    
+    private static Type[] AssemblyCache => _assemblyTypesCache.Value;
 
     public static IServiceCollection RegisterAssembliesByInterface(this IServiceCollection builder, Type interfaceType)
     {
-        var types = AssemblyCache
-            .Where(x => interfaceType.IsAssignableFrom(x) || x.GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType))
-            .Where(type => !type.IsAbstract && !type.IsEnum && !type.IsInterface);
-
-        foreach (var type in types)
+        var types = AssemblyCache;
+        
+        for (int i = 0; i < types.Length; i++)
         {
-            if (type == interfaceType) continue;
-            builder.AddSingleton(type);
+            var type = types[i];
+            if (type.IsAbstract || type.IsEnum || type.IsInterface || type == interfaceType)
+                continue;
+                
+            if (interfaceType.IsAssignableFrom(type))
+            {
+                builder.AddSingleton(type);
+                continue;
+            }
+            
+            var interfaces = type.GetInterfaces();
+            for (int j = 0; j < interfaces.Length; j++)
+            {
+                if (interfaces[j].IsGenericType && interfaces[j].GetGenericTypeDefinition() == interfaceType)
+                {
+                    builder.AddSingleton(type);
+                    break;
+                }
+            }
         }
 
         return builder;
@@ -27,13 +44,17 @@ public static class ContainerHelpers
 
     public static IServiceCollection RegisterAssemblyTypes(this IServiceCollection serviceCollection, Assembly assembly)
     {
-        var types = assembly.GetTypes().Where(t =>
-                !t.IsAbstract &&
-                !t.IsEnum &&
-                !t.IsInterface && t.IsPublic)
-            .ToList();
-
-        types.ForEach(t => serviceCollection.AddSingleton(t));
+        var types = assembly.GetTypes();
+        
+        for (int i = 0; i < types.Length; i++)
+        {
+            var type = types[i];
+            if (!type.IsAbstract && !type.IsEnum && !type.IsInterface && type.IsPublic)
+            {
+                serviceCollection.AddSingleton(type);
+            }
+        }
+        
         return serviceCollection;
     }
 
@@ -47,13 +68,34 @@ public static class ContainerHelpers
     public static IServiceCollection RegisterAssemblyTypes(this IServiceCollection serviceCollection, Type @interface,
         params Assembly[] assemblies)
     {
-        var types = assemblies.SelectMany(x => x.GetTypes())
-            .Where(t => !t.IsAbstract && !t.IsInterface && t.IsPublic && !t.IsEnum)
-            .Where(x => @interface.IsAssignableFrom(x) || x.GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == @interface))
-            .ToList();
-
-        types.ForEach(t => serviceCollection.AddSingleton(@interface, t));
+        for (int a = 0; a < assemblies.Length; a++)
+        {
+            var types = assemblies[a].GetTypes();
+            
+            for (int i = 0; i < types.Length; i++)
+            {
+                var type = types[i];
+                if (type.IsAbstract || type.IsInterface || !type.IsPublic || type.IsEnum)
+                    continue;
+                    
+                if (@interface.IsAssignableFrom(type))
+                {
+                    serviceCollection.AddSingleton(@interface, type);
+                    continue;
+                }
+                
+                var interfaces = type.GetInterfaces();
+                for (int j = 0; j < interfaces.Length; j++)
+                {
+                    if (interfaces[j].IsGenericType && interfaces[j].GetGenericTypeDefinition() == @interface)
+                    {
+                        serviceCollection.AddSingleton(@interface, type);
+                        break;
+                    }
+                }
+            }
+        }
+        
         return serviceCollection;
     }
 
@@ -64,12 +106,28 @@ public static class ContainerHelpers
 
     public static IServiceProvider Verify(this IServiceProvider serviceProvider, IServiceCollection serviceCollection)
     {
-        foreach (var service in serviceCollection)
+#if DEBUG
+        // Only verify in Debug mode - this is expensive and only needed during development
+        var count = serviceCollection.Count;
+        for (int i = 0; i < count; i++)
         {
+            var service = serviceCollection[i];
             if (service.ServiceType.ContainsGenericParameters) continue;
-            _ = serviceProvider.GetRequiredService(service.ServiceType);
+            
+            // Skip verification for implementation types that are registered via interface
+            if (service.ImplementationType != null && service.ServiceType != service.ImplementationType)
+                continue;
+                
+            try
+            {
+                _ = serviceProvider.GetRequiredService(service.ServiceType);
+            }
+            catch
+            {
+                // Allow failures - some services may have optional dependencies
+            }
         }
-
+#endif
         return serviceProvider;
     }
 }

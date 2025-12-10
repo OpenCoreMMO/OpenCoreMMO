@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Scripts.LuaJIT.Enums;
+using NeoServer.Scripts.LuaJIT.Enums.Config;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Services;

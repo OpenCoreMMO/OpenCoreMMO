@@ -73,7 +73,7 @@ public class PathFindingTests
 
         ((DynamicTile)map[106, 106, 7]).AddCreature(blockingMonster8); // southeast
 
-        var fpp = new FindPathParams
+        var fpp = new FindPathParams(true)
         {
             AllowDiagonal = true,
             ClearSight = true,
@@ -161,7 +161,7 @@ public class PathFindingTests
         });
         ((DynamicTile)map[106, 106, 7]).AddCreature(blockingMonster8); // southeast
 
-        var fpp = new FindPathParams
+        var fpp = new FindPathParams(true)
         {
             AllowDiagonal = true,
             ClearSight = true,
@@ -215,7 +215,7 @@ public class PathFindingTests
         middleMonster.SetNewLocation(new Location(101, 100, 7));
         map.PlaceCreature(middleMonster);
 
-        var fpp = new FindPathParams
+        var fpp = new FindPathParams(true)
         {
             AllowDiagonal = true,
             ClearSight = true,

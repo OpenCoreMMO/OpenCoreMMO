@@ -12,7 +12,6 @@ namespace NeoServer.Domain.Items;
 public class ItemType : IItemType
 {
     public bool Locked { get; private set; }
-    public ushort WareId { get; }
     public LightBlock LightBlock { get; private set; }
 
     /// <summary>

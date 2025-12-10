@@ -4,7 +4,7 @@ using NeoServer.Domain.Common.Results;
 
 namespace NeoServer.Domain.World.Models.Tiles;
 
-public struct OperationResult : IOperationResult
+public class OperationResult : IOperationResult
 {
     public List<(IThing, Operation, byte)> Operations { get; private set; }
 
