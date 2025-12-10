@@ -7,7 +7,8 @@ using NeoServer.Domain.Common.Texts;
 
 namespace NeoServer.Domain.Creatures.Player;
 
-public class PlayerParty : IPlayerParty
+
+public class PlayerParty
 {
     private readonly IPlayer _player;
     private HashSet<IParty> _partyInvites;
@@ -178,3 +179,15 @@ public class PlayerParty : IPlayerParty
         LeaveParty();
     }
 }
+
+public delegate void InviteToParty(IPlayer leader, IPlayer invited, IParty party);
+
+public delegate void RevokePartyInvite(IPlayer leader, IPlayer invited, IParty party);
+
+public delegate void RejectPartyInvite(IPlayer invited, IParty party);
+
+public delegate void JoinParty(IPlayer player, IParty party);
+
+public delegate void LeaveParty(IPlayer player, IParty party);
+
+public delegate void PassPartyLeadership(IPlayer leader, IPlayer newLeader, IParty party);

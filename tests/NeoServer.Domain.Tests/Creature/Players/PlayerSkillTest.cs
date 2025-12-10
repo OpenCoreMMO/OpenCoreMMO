@@ -14,7 +14,7 @@ public class PlayerSkillTest
     [Fact]
     public void GetSkillLevel_When_Has_No_Skill_Returns_1()
     {
-        var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, ISkill>
+        var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, Skill>
         {
             { SkillType.Axe, new Skill(SkillType.Axe, 12) }
         });
@@ -26,7 +26,7 @@ public class PlayerSkillTest
     [Fact]
     public void GetSkillLevel_When_Has_Skill_Returns_Level()
     {
-        var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, ISkill>
+        var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, Skill>
         {
             { SkillType.Axe, new Skill(SkillType.Axe, 12) }
         });
@@ -38,7 +38,7 @@ public class PlayerSkillTest
     [Fact]
     public void Player_wearing_a_non_skill_bonus_item_skill_remains_the_same()
     {
-        var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, ISkill>
+        var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, Skill>
         {
             { SkillType.Axe, new Skill(SkillType.Axe, 12) }
         }, inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
@@ -63,7 +63,7 @@ public class PlayerSkillTest
                 (ItemTypeAttribute.SkillAxe, 5)
             ]);
 
-        var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, ISkill>
+        var player = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, Skill>
         {
             { SkillType.Axe, new Skill(SkillType.Axe, 12) }
         }, inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>

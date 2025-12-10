@@ -9,7 +9,13 @@ using NeoServer.Domain.Creatures.Player.Inventory;
 
 namespace NeoServer.Domain.Creatures.Player.Container;
 
-public class PlayerContainerList : IPlayerContainerList
+public delegate void RemoveItemFromOpenedContainer(IPlayer player, byte containerId, byte slotIndex, IItem item);
+public delegate void AddItemOnOpenedContainer(IPlayer player, byte containerId, IItem item);
+public delegate void UpdateItemOnOpenedContainer(IPlayer player, byte containerId, byte slotIndex, IItem item,
+    sbyte amount);
+
+public delegate void MoveOpenedContainer(byte containerId, IContainer container);
+public class PlayerContainerList
 {
     private readonly Dictionary<byte, PlayerContainer> openedContainers = new();
     private readonly IPlayer player;

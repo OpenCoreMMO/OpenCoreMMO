@@ -2,13 +2,14 @@
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Tests.Helpers;
 
 namespace NeoServer.Domain.Tests.Creature.Npcs;
 
 public class NpcTest
 {
-    private readonly Mock<IOutfit> outfit = new();
+    private readonly Mock<Outfit> outfit = new();
     private readonly Mock<ISpawnPoint> spawnPoint = new();
 
     [Fact]
