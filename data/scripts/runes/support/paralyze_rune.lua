@@ -2,7 +2,8 @@ local combat = Combat()
 combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_RED)
 combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_UNDEFINEDDAMAGE)
 
-local condition = Condition(CONDITION_PARALYZE)
+-- Usa CONDITION_HASTE com fórmula negativa para evitar dependência de Condition.Value no motor
+local condition = Condition(CONDITION_HASTE)
 condition:setParameter(CONDITION_PARAM_TICKS, 6000)
 condition:setFormula(-1, 0, -1, 0)
 combat:addCondition(condition)
