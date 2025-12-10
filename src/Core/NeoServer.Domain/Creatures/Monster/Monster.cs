@@ -505,6 +505,7 @@ public class Monster : WalkableMonster, IMonster
 
     public bool IsInPerfectPositionToCombat()
     {
+        if (CurrentTarget is null) return false;
         var targetIsInRange = CurrentTarget.Location.GetSqmDistance(Location) <=
                               Metadata.MaxRangeDistanceAttack;
 
