@@ -27,7 +27,7 @@ public static class PlayerTestDataBuilder
         ushort mana = 30,
         ushort speed = 200,
         Dictionary<Slot, (IItem Item, ushort Id)> inventoryMap = null,
-        Dictionary<SkillType, ISkill> skills = null,
+        Dictionary<SkillType, Skill> skills = null,
         Dictionary<uint, int> storages = null,
         byte vocationType = 1,
         byte groupId = 1,
@@ -96,7 +96,7 @@ public static class PlayerTestDataBuilder
             mana,
             FightMode.Attack,
             100, 100,
-            skills ?? new Dictionary<SkillType, ISkill>
+            skills ?? new Dictionary<SkillType, Skill>
             {
                 {
                     SkillType.Level, new Skill(SkillType.Level, level, experience)
@@ -146,9 +146,9 @@ public static class PlayerTestDataBuilder
         return player;
     }
 
-    public static Dictionary<SkillType, ISkill> GenerateSkills(ushort level)
+    public static Dictionary<SkillType, Skill> GenerateSkills(ushort level)
     {
-        return new Dictionary<SkillType, ISkill>
+        return new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, level),
             [SkillType.Sword] = new Skill(SkillType.Sword, level),

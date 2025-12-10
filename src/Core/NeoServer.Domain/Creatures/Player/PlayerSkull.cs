@@ -3,7 +3,9 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 
 namespace NeoServer.Domain.Creatures.Player;
 
-public class PlayerSkull : IPlayerSkull
+public delegate void SkullUpdated(IPlayer player);
+
+public class PlayerSkull
 {
     public PlayerSkull(IPlayer player, Skull skull = Skull.None, DateTime? skullEndsAt = null)
     {

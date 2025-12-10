@@ -533,7 +533,7 @@ public class LuaFunctionsLoader
         SetMetatable(luaState, -1, "Position");
     }
 
-    public static void PushOutfit(LuaState luaState, IOutfit outfit)
+    public static void PushOutfit(LuaState luaState, Outfit outfit)
     {
         if (ValidateDispatcherContext(nameof(PushOutfit)))
             return;

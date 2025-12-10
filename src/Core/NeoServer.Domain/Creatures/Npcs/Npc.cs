@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Models.Bases;
+using NeoServer.Domain.Creatures.Player.Outfit;
 
 namespace NeoServer.Domain.Creatures.Npcs;
 
@@ -16,7 +17,7 @@ public class Npc : WalkableCreature, INpc
     private readonly IList<IPlayer> _playerInteractionsOrder = new List<IPlayer>();
     public readonly Dictionary<string, Func<string, INpc, ISociableCreature, string>> KeywordReplacementMap;
 
-    public Npc(INpcType type, IMapTool mapTool, ISpawnPoint spawnPoint, IOutfit outfit = null,
+    public Npc(INpcType type, IMapTool mapTool, ISpawnPoint spawnPoint, Outfit outfit = null,
         uint healthPoints = 0) : base(type,
         mapTool, outfit, healthPoints)
     {
@@ -38,7 +39,7 @@ public class Npc : WalkableCreature, INpc
     public KeywordReplacement ReplaceKeywords { get; set; }
 
     public ISpawnPoint SpawnPoint { get; }
-    public override IOutfit Outfit { get; protected set; }
+    public override Outfit Outfit { get; protected set; }
     public INpcType Metadata { get; }
 
     public override bool CanSeeInvisible => false;

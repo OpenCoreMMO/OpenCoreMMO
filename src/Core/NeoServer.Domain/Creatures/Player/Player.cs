@@ -65,10 +65,10 @@ public class Player : CombatActor, IPlayer
         FightMode fightMode,
         byte soulPoints,
         byte soulMax,
-        IDictionary<SkillType, ISkill> skills,
+        IDictionary<SkillType, Skill> skills,
         IDictionary<uint, int> storages,
         ushort staminaMinutes,
-        IOutfit outfit,
+        Outfit.Outfit outfit,
         ushort speed,
         Location location,
         IMapTool mapTool, ITown town)
@@ -144,7 +144,7 @@ public class Player : CombatActor, IPlayer
         _ => 7
     };
 
-    public IPlayerHand PlayerHand { get; }
+    public PlayerHand PlayerHand { get; }
 
     public uint IdleTime { get; private set; }
     public List<RegenerationBonus> RegenerationBonusList { get; private set; } = new();
@@ -168,7 +168,7 @@ public class Player : CombatActor, IPlayer
 
     public bool IsPacified => Conditions.ContainsKey(ConditionType.Pacified);
 
-    public IDictionary<SkillType, ISkill> Skills { get; }
+    public IDictionary<SkillType, Skill> Skills { get; }
 
     /// <summary>
     ///     Gender pronoun: He/She
@@ -180,11 +180,11 @@ public class Player : CombatActor, IPlayer
     public bool HasPremiumTime => PremiumDays > 0 || Group.FlagIsEnabled(PlayerFlag.IsAlwaysPremium);
     public ITown Town { get; set; }
     public IVip Vip { get; }
-    public override IOutfit Outfit { get; protected set; }
+    public override Outfit.Outfit Outfit { get; protected set; }
     public Vocation.Vocation Vocation { get; }
     public Group Group { get; set; }
-    public IPlayerChannel Channels { get; set; }
-    public IPlayerParty PlayerParty { get; set; }
+    public PlayerChannel Channels { get; set; }
+    public PlayerParty PlayerParty { get; set; }
     public IBank Bank { get; private set; }
     public ulong BankAmount => Bank?.Amount ?? 0;
 
@@ -204,7 +204,7 @@ public class Player : CombatActor, IPlayer
 
     public uint AccountId { get; init; }
     public int WorldId { get; init; }
-    public IPlayerContainerList Containers { get; }
+    public PlayerContainerList Containers { get; }
     public bool HasDepotOpened => Containers.HasAnyDepotOpened;
     public IShopperNpc TradingWithNpc { get; private set; }
     public ChaseMode ChaseMode { get; private set; }
@@ -215,7 +215,7 @@ public class Player : CombatActor, IPlayer
     public uint ManaSpent { get; private set; }
     public uint MaxMana { get; private set; }
     public FightMode FightMode { get; private set; }
-    public IPlayerSkull PlayerSkull { get; set; }
+    public PlayerSkull PlayerSkull { get; set; }
     public Skull Skull => PlayerSkull.Skull;
     public DateTime? SkullEndsAt => PlayerSkull.SkullEndsAt;
     public DateTime? LastLogIn { get; private set; }
@@ -1163,7 +1163,7 @@ public class Player : CombatActor, IPlayer
         StopFollowing();
     }
 
-    public bool CanUseOutfit(IOutfit outfit)
+    public bool CanUseOutfit(Outfit.Outfit outfit)
     {
         if (string.IsNullOrEmpty(outfit.Name)) return false;
         if (outfit.Premium && !HasPremiumTime) return false;
@@ -1171,7 +1171,7 @@ public class Player : CombatActor, IPlayer
         return outfit.Unlocked;
     }
 
-    public override void ChangeOutfit(IOutfit outfit)
+    public override void ChangeOutfit(Outfit.Outfit outfit)
     {
         if (!CanUseOutfit(outfit)) return;
         if (IsInvisible) return;

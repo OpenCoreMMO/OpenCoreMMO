@@ -9,7 +9,7 @@ using NeoServer.Domain.Common.Results;
 
 namespace NeoServer.Domain.Creatures.Player;
 
-public class PlayerHand : IPlayerHand
+public class PlayerHand
 {
     private readonly IPlayer _player;
 

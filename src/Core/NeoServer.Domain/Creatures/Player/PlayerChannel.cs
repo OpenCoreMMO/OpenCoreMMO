@@ -7,33 +7,29 @@ using NeoServer.Domain.Common.Services;
 
 namespace NeoServer.Domain.Creatures.Player;
 
-public class PlayerChannel : IPlayerChannel
-{
-    private readonly IPlayer _owner;
+public delegate void PlayerJoinChannel(IPlayer player, ChatChannel channel);
 
+public delegate void PlayerExitChannel(IPlayer player, ChatChannel channel);
+public class PlayerChannel(IPlayer owner)
+{
     private IDictionary<ushort, ChatChannel> _personalChannels;
 
-    public PlayerChannel(IPlayer owner)
-    {
-        _owner = owner;
-    }
-
-    private uint CreatureId => _owner.CreatureId;
+    private uint CreatureId => owner.CreatureId;
 
     public IEnumerable<ChatChannel> PersonalChannels => _personalChannels?.Values;
 
     public bool CanEnterOnChannel(ushort channelId, IChatChannelStore chatChannelStore)
     {
         var channel = chatChannelStore.Get(channelId);
-        return channel?.PlayerCanJoin(_owner) ?? false;
+        return channel?.PlayerCanJoin(owner) ?? false;
     }
 
     public IEnumerable<ChatChannel> PrivateChannels
     {
         get
         {
-            if (_owner.HasGuild && _owner.Guild?.Channel is not null) yield return _owner.Guild.Channel;
-            if (_owner.PlayerParty.Party?.Channel is not null) yield return _owner.PlayerParty.Party.Channel;
+            if (owner.HasGuild && owner.Guild?.Channel is not null) yield return owner.Guild.Channel;
+            if (owner.PlayerParty.Party?.Channel is not null) yield return owner.PlayerParty.Party.Channel;
         }
     }
 
@@ -49,19 +45,19 @@ public class PlayerChannel : IPlayerChannel
     {
         if (channel is null) return false;
 
-        if (channel.HasUser(_owner))
+        if (channel.HasUser(owner))
         {
             OperationFailService.Send(CreatureId, "You've already joined this chat channel");
             return false;
         }
 
-        if (!channel.AddUser(_owner))
+        if (!channel.AddUser(owner))
         {
             OperationFailService.Send(CreatureId, "You cannot join this chat channel");
             return false;
         }
 
-        OnJoinedChannel?.Invoke(_owner, channel);
+        OnJoinedChannel?.Invoke(owner, channel);
         return true;
     }
 
@@ -69,20 +65,20 @@ public class PlayerChannel : IPlayerChannel
     {
         if (channel is null) return false;
 
-        if (!channel.HasUser(_owner)) return false;
-        if (!channel.RemoveUser(_owner))
+        if (!channel.HasUser(owner)) return false;
+        if (!channel.RemoveUser(owner))
         {
             OperationFailService.Send(CreatureId, "You cannot exit this chat channel");
             return false;
         }
 
-        OnExitedChannel?.Invoke(_owner, channel);
+        OnExitedChannel?.Invoke(owner, channel);
         return true;
     }
 
     public bool SendMessage(ChatChannel channel, string message)
     {
-        if (!channel.WriteMessage(_owner, message, out var cancelMessage))
+        if (!channel.WriteMessage(owner, message, out var cancelMessage))
         {
             OperationFailService.Send(CreatureId, cancelMessage);
             return false;

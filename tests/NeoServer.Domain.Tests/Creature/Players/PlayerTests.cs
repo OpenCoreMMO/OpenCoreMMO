@@ -40,7 +40,7 @@ public class PlayerTests
             FightMode.Attack,
             100,
             100,
-            new Dictionary<SkillType, ISkill>
+            new Dictionary<SkillType, Skill>
             {
                 { SkillType.Axe, new Skill(SkillType.Axe, 10) }
             },
