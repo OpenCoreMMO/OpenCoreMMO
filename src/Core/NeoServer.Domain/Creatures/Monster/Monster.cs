@@ -344,7 +344,7 @@ public class Monster : WalkableMonster, IMonster
 
     public ushort Defend()
     {
-        if (IsSleeping || Defenses.Length == 0)
+        if (IsDead || IsSleeping || Defenses.Length == 0)
         {
             StopDefending();
             return 0;
