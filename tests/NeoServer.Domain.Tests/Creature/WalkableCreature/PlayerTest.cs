@@ -22,7 +22,7 @@ public class PlayerTest
     [Fact]
     public void HasNextStep_Returns_True_When_Player_Has_Steps_To_Walk()
     {
-        var sut = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, Skill>
         {
             { SkillType.Level, new Skill(SkillType.Level, 100) }
         });
@@ -41,7 +41,7 @@ public class PlayerTest
         pathFinder.Setup(x => x.Find(It.IsAny<ICreature>(), It.IsAny<Location>(), It.IsAny<FindPathParams>(),
             It.IsAny<ITileEnterRule>())).Returns((true, directions));
 
-        var sut = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(hp: 100, skills: new Dictionary<SkillType, Skill>
         {
             { SkillType.Level, new Skill(SkillType.Level, 100) }
         }, pathFinder: pathFinder.Object);

@@ -35,7 +35,7 @@ public class PlayerStatsTests
     [InlineData(0, 0)]
     public void HasEnoughLevel_ReturnsTrue(ushort level, ushort required)
     {
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             { SkillType.Level, new Skill(SkillType.Level, level) }
         });
@@ -48,7 +48,7 @@ public class PlayerStatsTests
     [InlineData(0, 1)]
     public void HasEnoughLevel_ReturnsFalse(ushort level, ushort required)
     {
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             { SkillType.Level, new Skill(SkillType.Level, level) }
         });

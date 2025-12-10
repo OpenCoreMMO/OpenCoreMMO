@@ -217,9 +217,9 @@ public class PlayerLoader(
         }
     }
 
-    protected Dictionary<SkillType, ISkill> ConvertToSkills(PlayerEntity playerRecord)
+    protected Dictionary<SkillType, Skill> ConvertToSkills(PlayerEntity playerRecord)
     {
-        return new Dictionary<SkillType, ISkill>
+        return new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, (ushort)playerRecord.SkillAxe, playerRecord.SkillAxeTries)
                 { GetIncreaseRate = () => gameConfiguration.SkillsRate["axe"] },

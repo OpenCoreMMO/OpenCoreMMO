@@ -10,7 +10,7 @@ public class PlayerSkillBonusesTests
     [Fact]
     public void AddSkillBonus_0_KeepBonusTheSame()
     {
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, 10)
         });
@@ -23,7 +23,7 @@ public class PlayerSkillBonusesTests
     [Fact]
     public void AddSkillBonus_Add10ButMissingSkill_CreateOneAndAdd()
     {
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, 10)
         });
@@ -36,7 +36,7 @@ public class PlayerSkillBonusesTests
     [Fact]
     public void AddSkillBonus_0_DoNotCallEvent()
     {
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, 10)
         });
@@ -52,7 +52,7 @@ public class PlayerSkillBonusesTests
     [Fact]
     public void AddSkillBonus_10_IncreaseBonusBy10()
     {
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, 10)
         });
@@ -67,7 +67,7 @@ public class PlayerSkillBonusesTests
     [Fact]
     public void AddSkillBonus_10_CallEvent()
     {
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, 10)
         });
@@ -91,7 +91,7 @@ public class PlayerSkillBonusesTests
     [Fact]
     public void RemoveSkillBonus_0_KeepBonusTheSame()
     {
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, 10)
         });
@@ -104,7 +104,7 @@ public class PlayerSkillBonusesTests
     [Fact]
     public void RemoveSkillBonus_0_DoNotCallEvent()
     {
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, 10)
         });
@@ -120,7 +120,7 @@ public class PlayerSkillBonusesTests
     [Fact]
     public void RemoveSkillBonus_50_DecreaseBonusBy50()
     {
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, 10)
         });
@@ -134,7 +134,7 @@ public class PlayerSkillBonusesTests
     [Fact]
     public void RemoveSkillBonus_5_CallEvent()
     {
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, 10)
         });
@@ -157,7 +157,7 @@ public class PlayerSkillBonusesTests
     [Fact]
     public void Skill_bonus_negative_should_remain_negative()
     {
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, 10)
         });
@@ -171,7 +171,7 @@ public class PlayerSkillBonusesTests
     [Fact]
     public void Add_negative_skill_bonus_never_turn_skill_to_negative()
     {
-        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, ISkill>
+        var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
             [SkillType.Axe] = new Skill(SkillType.Axe, 10)
         });

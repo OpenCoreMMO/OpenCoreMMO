@@ -20,7 +20,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
 
     private IDynamicTile tile;
 
-    public Creature(ICreatureType type, IOutfit outfit = null, uint healthPoints = 0)
+    public Creature(ICreatureType type, Outfit outfit = null, uint healthPoints = 0)
     {
         if (string.IsNullOrWhiteSpace(type.Name)) throw new ArgumentNullException(nameof(type.Name));
         MaxHealthPoints = type.MaxHealth;
@@ -74,8 +74,8 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public IThing Corpse { get; set; }
     public virtual BloodType BloodType => BloodType.Blood;
     public abstract bool CanBeSeen { get; }
-    public abstract IOutfit Outfit { get; protected set; }
-    public IOutfit LastOutfit { get; private set; }
+    public abstract Outfit Outfit { get; protected set; }
+    public Outfit LastOutfit { get; private set; }
     public Direction Direction { get; protected set; }
     public IList<Summon> Summons { get; protected set; } = new List<Summon>();
 
@@ -102,7 +102,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         }
     }
 
-    public virtual void ChangeOutfit(IOutfit outfit)
+    public virtual void ChangeOutfit(Outfit outfit)
     {
         LastOutfit = null;
         Outfit.Change(outfit.LookType, outfit.Head, outfit.Body, outfit.Legs, outfit.Feet, outfit.Addon);
@@ -244,7 +244,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         Say(message, SpeechType.Whisper);
     }
 
-    private IOutfit BuildOutfit(ICreatureType type)
+    private Outfit BuildOutfit(ICreatureType type)
     {
         if (type?.Look is null) return new Outfit();
 

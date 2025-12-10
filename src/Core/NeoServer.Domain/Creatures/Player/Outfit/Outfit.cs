@@ -1,8 +1,6 @@
-using NeoServer.Domain.Common.Contracts.Creatures;
-
 namespace NeoServer.Domain.Creatures.Player.Outfit;
 
-public class Outfit : IOutfit
+public class Outfit
 {
     public ushort LookType { get; set; }
 
@@ -15,15 +13,15 @@ public class Outfit : IOutfit
     public byte Feet { get; set; }
     public byte Addon { get; set; }
 
-    Gender IOutfit.Type { get; set; }
+    public Gender Type { get; private set; }
 
-    string IOutfit.Name { get; set; }
+    public string Name { get; private set; }
 
-    bool IOutfit.Premium { get; set; }
+    public bool Premium { get; private set; }
 
-    bool IOutfit.Unlocked { get; set; }
+    public bool Unlocked { get; private set; }
 
-    bool IOutfit.Enabled { get; set; }
+    public bool Enabled { get; private set; }
 
     public void Change(ushort lookType, byte head, byte body, byte legs, byte feet, byte addon)
     {
@@ -34,9 +32,38 @@ public class Outfit : IOutfit
         Feet = feet;
         Addon = addon;
     }
-
-    public IOutfit Clone()
+    public Outfit SetName(string name)
     {
-        return (IOutfit)MemberwiseClone();
+        Name = name;
+        return this;
+    }
+
+    public Outfit SetPremium(bool premium)
+    {
+        Premium = premium;
+        return this;
+    }
+
+    public Outfit SetEnabled(bool enabled)
+    {
+        Enabled = enabled;
+        return this;
+    }
+
+    public Outfit SetGender(Gender type)
+    {
+        Type = type;
+        return this;
+    }
+
+    public Outfit SetUnlocked(bool unlocked)
+    {
+        Unlocked = unlocked;
+        return this;
+    }
+
+    public Outfit Clone()
+    {
+        return (Outfit)MemberwiseClone();
     }
 }
