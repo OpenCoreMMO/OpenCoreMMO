@@ -299,8 +299,8 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         var item = GetUserdata<IItem>(luaState, 1);
         if (item != null)
         {
-            var property = GetNumber<ItemFlag>(luaState, 2);
-            Lua.PushBoolean(luaState, item.Metadata.HasFlag(property));
+            var property = GetNumber<ItemPropertyType>(luaState, 2);
+            Lua.PushBoolean(luaState, item.Metadata.HasFlag(property.ToItemFlag()));
         }
         else
         {

@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
@@ -117,7 +118,7 @@ public class MapMoveCreatureTest
         player.SetCurrentTile((IDynamicTile)sut[100, 100, 7]);
         sut.PlaceCreature(player);
         
-        var staticToDynamicTileServiceMock = new Mock<StaticToDynamicTileService>();
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
 
         player.OnStartedWalking += c => creatureMovementService.MoveCreature(c);
         player.OnTeleported += (a, b) => new CreatureTeleportedEventHandler(sut, creatureMovementService, staticToDynamicTileServiceMock.Object).Execute(a, b);
