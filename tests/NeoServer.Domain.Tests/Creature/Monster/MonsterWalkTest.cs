@@ -1,4 +1,6 @@
-﻿using NeoServer.Domain.Common.Contracts.World.Tiles;
+﻿using Moq;
+using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
@@ -56,8 +58,10 @@ public class MonsterWalkTest
         var gameServer = GameServerTestBuilder.Build(map);
         var cancellationToken = ServerTestHelper.StartThreads(gameServer);
 
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService =
-            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
+                staticToDynamicTileServiceMock.Object);
 
         sut.OnStartedWalking += new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService).Execute;
 
@@ -109,8 +113,10 @@ public class MonsterWalkTest
 
         var gameServer = GameServerTestBuilder.Build(map);
         var cancellationToken = ServerTestHelper.StartThreads(gameServer);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService =
-            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
+                staticToDynamicTileServiceMock.Object);
 
         sut.OnStartedWalking += new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService).Execute;
 

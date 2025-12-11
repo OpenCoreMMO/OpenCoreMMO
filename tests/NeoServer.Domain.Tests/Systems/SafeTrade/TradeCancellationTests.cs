@@ -1,8 +1,10 @@
-﻿using NeoServer.Data.InMemory.DataStores;
+﻿using Moq;
+using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Domain.Combat.Player;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
@@ -66,9 +68,10 @@ public class TradeCancellationTests
         tradeSystem.Request(player, secondPlayer, item);
 
         player.WalkTo(new Location(104, 100, 7));
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService =
-            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
-
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
+                staticToDynamicTileServiceMock.Object);
 
         //player will walk 2 steps
         creatureMovementService.MoveCreature(player);
@@ -143,9 +146,10 @@ public class TradeCancellationTests
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
         ((DynamicTile)map[100, 100, 7]).AddItem(item);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService =
-            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
-
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
+                staticToDynamicTileServiceMock.Object);
 
         //act
         tradeSystem.Request(player, secondPlayer, item);

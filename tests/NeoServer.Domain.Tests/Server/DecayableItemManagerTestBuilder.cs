@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items.Services;
@@ -16,8 +17,10 @@ public class DecayableItemManagerTestBuilder
 {
     public static DecayableItemManager Build(IMap map, IItemTypeStore itemTypeStore)
     {
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService =
-            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
+                staticToDynamicTileServiceMock.Object);
 
         var mapService = new MapService(map, creatureMovementService);
         var itemFactory = ItemFactoryTestBuilder.Build();

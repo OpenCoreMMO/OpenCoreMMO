@@ -255,7 +255,10 @@ public class TileTest
         player.SetNewLocation(new Location(102, 100, 7));
 
         var validation = new CreatureMovementValidation(map);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
+
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
+            staticToDynamicTileServiceMock.Object);
         var mapService = new MapService(map, creatureMovementService);
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
@@ -319,9 +322,12 @@ public class TileTest
 
         var itemMovementService =
             new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
+        
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
 
         var validation = new CreatureMovementValidation(map);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
+            staticToDynamicTileServiceMock.Object);
         var mapService = new MapService(map, creatureMovementService);
 
         mapService.ReplaceGround(destinationTile.Location, hole);
@@ -350,7 +356,9 @@ public class TileTest
         player.SetNewLocation(new Location(102, 100, 7));
 
         var validation = new CreatureMovementValidation(map);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
+            staticToDynamicTileServiceMock.Object);
         var mapService = new MapService(map, creatureMovementService);
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
@@ -401,7 +409,9 @@ public class TileTest
         var player = PlayerTestDataBuilder.Build();
 
         var validation = new CreatureMovementValidation(map);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
+            staticToDynamicTileServiceMock.Object);
         var mapService = new MapService(map, creatureMovementService);
 
         player.SetNewLocation(new Location(102, 100, 7));
@@ -437,7 +447,9 @@ public class TileTest
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
 
         var validation = new CreatureMovementValidation(map);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
+            staticToDynamicTileServiceMock.Object);
         var mapService = new MapService(map, creatureMovementService);
 
         var player = PlayerTestDataBuilder.Build();

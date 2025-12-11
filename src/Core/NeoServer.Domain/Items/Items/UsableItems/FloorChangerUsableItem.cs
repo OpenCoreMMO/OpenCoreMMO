@@ -6,7 +6,6 @@ using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Items.Items.UsableItems;
 
-[Obsolete]
 public class FloorChangerUsableItem : UsableOnItem, IUsableOnItem
 {
     public FloorChangerUsableItem(IItemType type, Location location) : base(type, location)
@@ -15,7 +14,6 @@ public class FloorChangerUsableItem : UsableOnItem, IUsableOnItem
 
     public override bool AllowUseOnDistance => false;
 
-    [Obsolete]
     public virtual bool Use(ICreature usedBy, IItem onItem)
     {
         Console.WriteLine("FloorChangerUsableItem.Use is obsolete. Implement lua script instead");

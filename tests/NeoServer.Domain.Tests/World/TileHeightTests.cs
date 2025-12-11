@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
@@ -107,7 +108,9 @@ public class TileHeightTests
         tile1StFloor.AddCreature(player);
 
         var validation = new CreatureMovementValidation(map);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
+            staticToDynamicTileServiceMock.Object);
 
         //act
         player.WalkTo(Direction.East);
@@ -140,7 +143,9 @@ public class TileHeightTests
         tile1StFloor.AddCreature(player);
 
         var validation = new CreatureMovementValidation(map);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
+            staticToDynamicTileServiceMock.Object);
 
         //act
         player.WalkTo(Direction.East);
@@ -184,7 +189,9 @@ public class TileHeightTests
 
         tile2StFloor.AddCreature(player);
         var validation = new CreatureMovementValidation(map);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
+            staticToDynamicTileServiceMock.Object);
 
         //act
         player.WalkTo(Direction.West);
@@ -217,7 +224,9 @@ public class TileHeightTests
 
         tile2StFloor.AddCreature(player);
         var validation = new CreatureMovementValidation(map);
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
+        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
+            staticToDynamicTileServiceMock.Object);
 
         //act
         player.WalkTo(Direction.West);

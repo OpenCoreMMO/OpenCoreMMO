@@ -1,5 +1,6 @@
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
@@ -8,6 +9,7 @@ using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.World.Events;
 using NeoServer.Domain.World.Map;
+using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Creatures.Services;
 
@@ -15,7 +17,7 @@ public interface ICreatureMovementService
 {
     bool MoveCreature(IWalkableCreature creature, Direction nextDirection);
     void MoveCreature(IWalkableCreature creature);
-    bool MoveCreature(ICreature creature, Location location, bool forced = false);
+    bool MoveCreature(ICreature creature, Location location, bool forced = false, bool isTeleport = false);
 }
 
 /// <summary>
@@ -27,7 +29,8 @@ public interface ICreatureMovementService
 public class CreatureMovementService(
     IMap map,
     CylinderOperation cylinderOperation,
-    CreatureMovementValidation movementValidation) : ICreatureMovementService
+    CreatureMovementValidation movementValidation,
+    IStaticToDynamicTileService staticToDynamicTileService) : ICreatureMovementService
 {
     /// <summary>
     ///     Attempts to move a creature to a specific location.
@@ -36,10 +39,11 @@ public class CreatureMovementService(
     /// <param name="creature">The creature to move.</param>
     /// <param name="location">The target location.</param>
     /// <param name="forced"></param>
+    /// <param name="isTeleport"></param>
     /// <returns>True if movement succeeded, false otherwise.</returns>
-    public bool MoveCreature(ICreature creature, Location location, bool forced = false)
+    public bool MoveCreature(ICreature creature, Location location, bool forced = false, bool isTeleport = false)
     {
-        if (TryMoveCreature(creature, location, forced: forced)) return true;
+        if (TryMoveCreature(creature, location, forced: forced, isTeleport: isTeleport)) return true;
 
         OperationFailService.Send(creature.CreatureId, TextConstants.NOT_POSSIBLE);
         return false;
@@ -76,7 +80,7 @@ public class CreatureMovementService(
         return TryMoveCreature(creature, validation.DestinationTile.Location);
     }
 
-    private bool TryMoveCreature(ICreature creature, Location toLocation, bool forced = false)
+    private bool TryMoveCreature(ICreature creature, Location toLocation, bool forced = false, bool isTeleport = false)
     {
         if (creature is not IWalkableCreature walkableCreature) return false;
 
@@ -88,6 +92,12 @@ public class CreatureMovementService(
         }
 
         var tileDestination = map[toLocation];
+
+        if (tileDestination is StaticTile staticTile)
+        {
+            staticToDynamicTileService.TransformIntoDynamicTile(staticTile);
+            tileDestination = map[toLocation];
+        }
 
         // Immutable tiles cannot be modified, so movement fails.
         if (tileDestination is not IDynamicTile toTile)
@@ -109,7 +119,7 @@ public class CreatureMovementService(
         // Handle teleports: if the destination tile has a teleport, execute it.
         if (toTile.HasTeleport(out var teleport) && teleport.HasDestination)
         {
-            teleport.Teleport(walkableCreature);
+            TryMoveCreature(creature, teleport.Destination, true, true);
             return true;
         }
 
@@ -118,8 +128,11 @@ public class CreatureMovementService(
 
         if (tileDestination is null || tileDestination.Location == toLocation) return true;
 
+        //when creatures are sent to another place from a teleport, they should not be moved again to another place.
+        if (isTeleport) return true;
+
         // If there's a redirect destination, recursively attempt to move there.
-        TryMoveCreature(creature, tileDestination.Location);
+        TryMoveCreature(creature, tileDestination.Location, forced: true);
 
         return true;
     }
