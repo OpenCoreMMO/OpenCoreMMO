@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Contracts.Items;
+﻿using Moq;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
@@ -10,6 +11,7 @@ using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Map;
+using NeoServer.Domain.World.Services;
 
 namespace NeoServer.Domain.Tests.World;
 
@@ -114,9 +116,11 @@ public class MapMoveCreatureTest
         var player = PlayerTestDataBuilder.Build(pathFinder: pathFinder);
         player.SetCurrentTile((IDynamicTile)sut[100, 100, 7]);
         sut.PlaceCreature(player);
+        
+        var staticToDynamicTileServiceMock = new Mock<StaticToDynamicTileService>();
 
         player.OnStartedWalking += c => creatureMovementService.MoveCreature(c);
-        player.OnTeleported += (a, b) => new CreatureTeleportedEventHandler(sut, creatureMovementService).Execute(a, b);
+        player.OnTeleported += (a, b) => new CreatureTeleportedEventHandler(sut, creatureMovementService, staticToDynamicTileServiceMock.Object).Execute(a, b);
 
         //act
         player.WalkTo(Direction.East);
