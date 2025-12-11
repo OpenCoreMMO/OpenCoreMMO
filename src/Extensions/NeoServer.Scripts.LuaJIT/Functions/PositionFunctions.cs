@@ -81,15 +81,12 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
     {
         // positionValue = position + positionEx
         var position = GetPosition(luaState, 1, out var stackpos);
-        Location positionEx;
-        if (stackpos == 0)
-            positionEx = GetPosition(luaState, 2, out stackpos);
-        else
-            positionEx = GetPosition(luaState, 2);
 
-        position.X += positionEx.X;
-        position.Y += positionEx.Y;
-        position.Z += positionEx.Z;
+        var positionEx = stackpos == 0 ? GetPositionOffset(luaState, 2, out stackpos) : GetPositionOffset(luaState, 2);
+
+        position.X = (ushort)(position.X + positionEx.X);
+        position.Y = (ushort)(position.Y + positionEx.Y);
+        position.Z = (byte)(position.Z + positionEx.Z);
 
         PushPosition(luaState, position, stackpos);
 

@@ -334,12 +334,40 @@ public class LuaFunctionsLoader
         return cStr;
     }
 
+    public static (int X, int Y, int Z) GetPositionOffset(LuaState luaState, int arg, out int stackpos)
+    {
+        var position = (
+            GetField<int>(luaState, arg, "x"),
+            GetField<int>(luaState, arg, "y"),
+            GetField<int>(luaState, arg, "z")
+        );
+
+        Lua.GetField(luaState, arg, "stackpos");
+        stackpos = Lua.IsNil(luaState, -1) ? 0 : GetNumber<int>(luaState, -1);
+
+        Lua.Pop(luaState, 4);
+        return position;
+    }
+    
+    public static (int X, int Y, int Z) GetPositionOffset(LuaState luaState, int arg)
+    {
+        var position = (
+            GetField<int>(luaState, arg, "x"),
+            GetField<int>(luaState, arg, "y"),
+            GetField<int>(luaState, arg, "z")
+        );
+
+        Lua.Pop(luaState, 3);
+        return position;
+    }
+
+    
     public static Location GetPosition(LuaState luaState, int arg, out int stackpos)
     {
         var position = new Location
         {
-            X = GetField<ushort>(luaState, arg, "x"),
-            Y = GetField<ushort>(luaState, arg, "y"),
+            X = (ushort)GetField<int>(luaState, arg, "x"),
+            Y = (ushort)GetField<int>(luaState, arg, "y"),
             Z = GetField<byte>(luaState, arg, "z")
         };
 

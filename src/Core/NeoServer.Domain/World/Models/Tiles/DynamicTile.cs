@@ -667,15 +667,22 @@ public class DynamicTile : BaseTile, IDynamicTile
         TileOperationEvent.OnChanged(this, ground, operations);
     }
 
-    public Result<OperationResultList<ICreature>> AddCreature(ICreature creature)
+    public Result<OperationResultList<ICreature>> AddCreature(ICreature creature, bool forced = false)
     {
         if (creature is not IWalkableCreature walkableCreature)
+        {
             return Result<OperationResultList<ICreature>>.NotPossible;
+        }
 
-        if (!walkableCreature.TileEnterRule.CanEnter(this, creature))
+        if (!forced && !walkableCreature.TileEnterRule.CanEnter(this, creature))
+        {
             return Result<OperationResultList<ICreature>>.NotPossible;
+        }
 
-        if (!CanEnterFunction?.Invoke(creature) ?? false) return Result<OperationResultList<ICreature>>.NotPossible;
+        if (!forced && (!CanEnterFunction?.Invoke(creature) ?? false))
+        {
+            return Result<OperationResultList<ICreature>>.NotPossible;
+        }
 
         Creatures ??= [];
         Creatures.Add(walkableCreature);

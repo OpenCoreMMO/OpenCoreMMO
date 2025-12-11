@@ -1,4 +1,6 @@
-﻿using NeoServer.Domain.Common.Contracts.Items;
+﻿using Moq;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
@@ -36,7 +38,7 @@ public class FloorChangerUsableItemTests
         var location = new Location(100, 100, 7);
         var ground = MapTestDataBuilder.CreateGround(location, 100);
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, ground, null, null);
-        var aboveTile = new DynamicTile(new Coordinate(101, 100, 6), TileFlag.None, ground, null, null);
+        var aboveTile = new DynamicTile(new Coordinate(100, 100, 6), TileFlag.None, ground, null, null);
 
         var map = MapTestDataBuilder.Build(tile, aboveTile);
         var creatureMovementService =
@@ -47,7 +49,10 @@ public class FloorChangerUsableItemTests
         {
             [Slot.Backpack] = new(backpack, 1)
         });
-        player.OnTeleported += new CreatureTeleportedEventHandler(map, creatureMovementService).Execute;
+
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
+        
+        player.OnTeleported += new CreatureTeleportedEventHandler(map, creatureMovementService, staticToDynamicTileServiceMock.Object).Execute;
 
         tile.AddCreature(player);
 
@@ -84,7 +89,10 @@ public class FloorChangerUsableItemTests
         {
             [Slot.Backpack] = new(backpack, 1)
         });
-        player.OnTeleported += new CreatureTeleportedEventHandler(map, creatureMovementService).Execute;
+        
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
+
+        player.OnTeleported += new CreatureTeleportedEventHandler(map, creatureMovementService, staticToDynamicTileServiceMock.Object).Execute;
 
         tile.AddCreature(player);
 
