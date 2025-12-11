@@ -69,7 +69,7 @@ public class CombatDamage
     /// <summary>
     ///     Type of the damage (physical, fire...)
     /// </summary>
-    public DamageType Type { get; }
+    public DamageType Type { get; private set; }
 
     /// <summary>
     ///     Origin of the damage (condition, spell...)
@@ -80,6 +80,7 @@ public class CombatDamage
 
     public bool Unjustified { get; set; }
 
+    public void ChangeDamageType(DamageType newType) => Type = newType;
 
     /// <summary>
     ///     Sets a new damage

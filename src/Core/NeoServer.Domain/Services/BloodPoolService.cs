@@ -17,7 +17,6 @@ public class BloodPoolService(IMap map, ILiquidPoolFactory liquidPoolFactory)
         {
             BloodType.Blood => LiquidColor.Red,
             BloodType.Slime => LiquidColor.Green,
-
             _ => LiquidColor.Red
         };
 
@@ -29,7 +28,7 @@ public class BloodPoolService(IMap map, ILiquidPoolFactory liquidPoolFactory)
     public void CreateSplash(ICreature creature, CombatDamage damage)
     {
         if (creature is not ICombatActor victim) return;
-
+        
         if (damage?.IsElementalDamage ?? false) return;
         if (damage?.Damage <= 0) return;
         if (victim.IsDead) return;
