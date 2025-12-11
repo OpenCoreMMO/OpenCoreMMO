@@ -21,17 +21,32 @@ public readonly struct CombatDamageList
         _multipleDamages = damages;
 
         foreach (var damage in damages)
-            if (damage != null && damage.Unjustified)
+        {
+            if (damage is { Unjustified: true })
             {
                 Unjustified = true;
                 break;
             }
+        }
     }
 
     public bool IsSingle => _multipleDamages.IsDefaultOrEmpty;
     public int Count => IsSingle ? 1 : _multipleDamages.Length;
 
     public bool Unjustified { get; }
+
+    public void SetDamagesAsManaDrain()
+    {
+        _singleDamage?.ChangeDamageType(DamageType.ManaDrain);
+
+        if (_multipleDamages != null)
+        {
+            foreach (var multipleDamage in _multipleDamages)
+            {
+                multipleDamage.ChangeDamageType(DamageType.ManaDrain);
+            }
+        }
+    }
 
     public Damage TotalDamage
     {
@@ -59,7 +74,7 @@ public readonly struct CombatDamageList
         get
         {
             foreach (var damage in this)
-                if (damage != null && damage is { IsElementalDamage: false, Damage: > 0 })
+                if (damage is { IsElementalDamage: false, Damage: > 0 })
                     return damage;
 
             return new CombatDamage();
@@ -71,7 +86,7 @@ public readonly struct CombatDamageList
         get
         {
             foreach (var damage in this)
-                if (damage != null && damage is { IsElementalDamage: true, NoEffect: false, Damage: > 0 })
+                if (damage is { IsElementalDamage: true, NoEffect: false, Damage: > 0 })
                     return damage;
 
             return new CombatDamage();

@@ -1669,6 +1669,7 @@ public class Player : CombatActor, IPlayer
         if (IsManaShieldEnabled)
         {
             DecreaseMana(totalDamage.HealthDamage);
+            damages.SetDamagesAsManaDrain();
             return;
         }
 

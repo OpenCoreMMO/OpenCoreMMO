@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Effects.Parsers;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Networking.Packets.Outgoing.Creature;
@@ -80,7 +81,7 @@ public class CreatureInjuredEventHandler(IMap map, IGameCreatureManager gameCrea
             connection.OutgoingPackets.Enqueue(new MagicEffectPacket(victim.Location, damageEffect));
             return;
         }
-
+        
         if (damages.TotalDamage > 0)
             connection.OutgoingPackets.Enqueue(new MagicEffectPacket(victim.Location, EffectT.XBlood));
     }
