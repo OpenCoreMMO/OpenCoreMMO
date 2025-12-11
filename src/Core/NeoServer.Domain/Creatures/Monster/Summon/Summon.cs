@@ -105,18 +105,18 @@ public class Summon : Monster
             return;
         }
 
+        if (Master is IMonster { State: MonsterState.RandomlyWalking })
+        {
+            State = MonsterState.Awake;
+            return;
+        }
+
         if (CanSee(Master.Location) && State is MonsterState.RandomlyWalking)
         {
             State = MonsterState.Awake;
         }
 
-        if (Master is not IPlayer player)
-        {
-            base.UpdateState();
-            return;
-        }
-
-        if (player.CurrentTarget is not null)
+        if (Master is IPlayer { CurrentTarget: not null } player)
         {
             ChangeAttackTarget(player.CurrentTarget);
             return;
