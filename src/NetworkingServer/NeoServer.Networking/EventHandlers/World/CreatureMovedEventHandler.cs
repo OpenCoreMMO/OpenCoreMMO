@@ -60,6 +60,8 @@ public class CreatureMovedEventHandler(IGameServer game) : INetworkingEventHandl
                 player.CanSee(toLocation)) //spectator can see old and new location
             {
                 MoveCreature(creature, fromLocation, toLocation, connection, fromTile, cylinderSpectator, player);
+                
+                SendTeleportMagicEffect(cylinder, fromTile, connection, toLocation);
 
                 connection.Send();
 
@@ -84,8 +86,22 @@ public class CreatureMovedEventHandler(IGameServer game) : INetworkingEventHandl
                 cylinderSpectator.ToStackPosition));
 
             connection.OutgoingPackets.Enqueue(new AddCreaturePacket(player, creature));
+            
+            SendTeleportMagicEffect(cylinder, fromTile, connection, toLocation);
 
             connection.Send();
+        }
+    }
+
+    private static void SendTeleportMagicEffect(ICylinder cylinder, ITile fromTile, IConnection connection,
+        Location toLocation)
+    {
+        if (cylinder.IsTeleport)
+        {
+            if (fromTile is IDynamicTile fromDynamicTile && fromDynamicTile.HasTeleport(out _))
+            {
+                connection.OutgoingPackets.Enqueue(new MagicEffectPacket(toLocation, EffectT.BubbleBlue));
+            }
         }
     }
 
@@ -128,7 +144,9 @@ public class CreatureMovedEventHandler(IGameServer game) : INetworkingEventHandl
             connection.OutgoingPackets.Enqueue(new MapDescriptionPacket(player, game.Map));
 
             if (fromTile is IDynamicTile fromDynamicTile && fromDynamicTile.HasTeleport(out _))
+            {
                 connection.OutgoingPackets.Enqueue(new MagicEffectPacket(toLocation, EffectT.BubbleBlue));
+            }
 
             connection.Send();
             return true;

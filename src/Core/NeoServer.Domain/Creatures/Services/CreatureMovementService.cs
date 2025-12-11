@@ -15,7 +15,7 @@ public interface ICreatureMovementService
 {
     bool MoveCreature(IWalkableCreature creature, Direction nextDirection);
     void MoveCreature(IWalkableCreature creature);
-    bool MoveCreature(ICreature creature, Location location);
+    bool MoveCreature(ICreature creature, Location location, bool forced = false);
 }
 
 /// <summary>
@@ -35,10 +35,11 @@ public class CreatureMovementService(
     /// </summary>
     /// <param name="creature">The creature to move.</param>
     /// <param name="location">The target location.</param>
+    /// <param name="forced"></param>
     /// <returns>True if movement succeeded, false otherwise.</returns>
-    public bool MoveCreature(ICreature creature, Location location)
+    public bool MoveCreature(ICreature creature, Location location, bool forced = false)
     {
-        if (TryMoveCreature(creature, location)) return true;
+        if (TryMoveCreature(creature, location, forced: forced)) return true;
 
         OperationFailService.Send(creature.CreatureId, TextConstants.NOT_POSSIBLE);
         return false;
@@ -75,7 +76,7 @@ public class CreatureMovementService(
         return TryMoveCreature(creature, validation.DestinationTile.Location);
     }
 
-    private bool TryMoveCreature(ICreature creature, Location toLocation)
+    private bool TryMoveCreature(ICreature creature, Location toLocation, bool forced = false)
     {
         if (creature is not IWalkableCreature walkableCreature) return false;
 
@@ -98,7 +99,7 @@ public class CreatureMovementService(
         creature.OnMoving(tileDestination);
 
         // Perform the movement using cylinder operation for atomic updates and spectator notifications.
-        var result = cylinderOperation.MoveCreature(creature, fromTile, toTile, 1, out var cylinder);
+        var result = cylinderOperation.MoveCreature(creature, fromTile, toTile, 1, forced: forced, out var cylinder);
         if (!result.Succeeded) return false;
 
         // Notify the creature and spectators of the movement.
