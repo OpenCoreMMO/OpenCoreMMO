@@ -12,7 +12,7 @@ public class TeleportItem : BaseItem
     {
     }
 
-    private Location Destination =>
+    public Location Destination =>
         Attributes.TryGetValue(ItemAttribute.TeleportDestination, out var destination) &&
         destination is Location destLocation
             ? destLocation

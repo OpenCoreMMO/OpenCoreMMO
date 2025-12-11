@@ -26,7 +26,7 @@ public class CreatureTeleportedEventHandler(IMap map, ICreatureMovementService c
 
         if (map[location] is DynamicTile dynamicTile)
         {
-            creatureMovementService.MoveCreature(creature, dynamicTile.Location, forced: true);
+            creatureMovementService.MoveCreature(creature, dynamicTile.Location, forced: true, isTeleport: true);
         }
     }
 }
