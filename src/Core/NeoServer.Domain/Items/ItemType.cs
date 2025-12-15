@@ -173,7 +173,7 @@ public class ItemType : IItemType
         Flags.Add(flag);
     }
 
-    public void ParseOTFlags(uint flags)
+    public void ParseFlags(uint flags)
     {
         if (HasOTFlag(flags, 1 << 0)) // blockSolid
             SetFlag(ItemFlag.Unpassable);
@@ -237,4 +237,12 @@ public class ItemType : IItemType
     {
         return (flags & flag) != 0;
     }
+
+    public void SetTopOrder(byte topOrder)
+    {
+        TopOrder = topOrder;
+        ThrowIfLocked();
+    }
+
+    public byte TopOrder { get; set; }
 }

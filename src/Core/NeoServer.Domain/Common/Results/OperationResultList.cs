@@ -1,8 +1,13 @@
 ﻿namespace NeoServer.Domain.Common.Results;
 
-public struct OperationResultList<T>
+public class OperationResultList<T>
 {
     public List<(T, Operation, byte)> Operations { get; private set; }
+
+    public OperationResultList()
+    {
+        Operations = null;
+    }
 
     public void Add(Operation operation, T thing, byte position = 0)
     {
@@ -20,5 +25,5 @@ public struct OperationResultList<T>
         Operations = [(value, Operation.None, 0)];
     }
 
-    public bool HasAnyOperation => Operations?.Any() ?? false;
+    public bool HasAnyOperation => Operations is { Count: > 0 };
 }

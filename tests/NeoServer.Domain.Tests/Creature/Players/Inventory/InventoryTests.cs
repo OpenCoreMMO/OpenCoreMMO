@@ -242,7 +242,7 @@ public class InventoryTests
         var result = sut.AddItem(item, slot);
 
         //assert
-        result.Value.HasAnyOperation.Should().BeFalse();
+        (result.Value?.HasAnyOperation ?? false).Should().BeFalse();
 
         //act
         result = sut.AddItem(newItem, slot);
@@ -266,7 +266,7 @@ public class InventoryTests
         var result = sut.AddItem(item, slot);
 
         //assert
-        result.Value.HasAnyOperation.Should().BeFalse();
+        (result.Value?.HasAnyOperation ?? false).Should().BeFalse();
 
         //act
         sut.AddItem(newItem, slot);
@@ -370,7 +370,7 @@ public class InventoryTests
         var result = sut.AddItem(ItemTestDataBuilder.CreateAmmo(100, 50), Slot.Ammo);
 
         //assert
-        result.Value.HasAnyOperation.Should().BeFalse();
+        (result.Value?.HasAnyOperation ?? false).Should().BeFalse();
 
         //act
         result = sut.AddItem(ItemTestDataBuilder.CreateAmmo(100, 80), Slot.Ammo);
@@ -394,7 +394,7 @@ public class InventoryTests
         var result = sut.AddItem(item, Slot.Backpack);
 
         //assert
-        result.Value.HasAnyOperation.Should().BeFalse();
+        (result.Value?.HasAnyOperation ?? false).Should().BeFalse();
 
         sut[Slot.Backpack].Should().Be(backpack);
         backpack.SlotsUsed.Should().Be(1);

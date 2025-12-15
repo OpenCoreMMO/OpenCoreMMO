@@ -51,7 +51,7 @@ public class CylinderOperation(IMap map)
 
         foreach (var spectator in spectators)
         {
-            byte stackPosition = default;
+            byte stackPosition = 0;
             if (spectator is IPlayer player) tile.TryGetStackPositionOfThing(player, thing, out stackPosition);
 
             tileSpectators[index++] = new CylinderSpectator(spectator, stackPosition, stackPosition);

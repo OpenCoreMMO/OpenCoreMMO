@@ -445,7 +445,7 @@ public class Map : IMap
 
     private void OnTileChanged(ITile tile, IItem item, OperationResultList<IItem> resultList)
     {
-        if (!resultList.HasAnyOperation) return;
+        if (!(resultList?.HasAnyOperation ?? false)) return;
 
         foreach (var operation in resultList.Operations)
             switch (operation.Item2)

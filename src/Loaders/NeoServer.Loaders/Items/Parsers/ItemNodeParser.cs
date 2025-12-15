@@ -21,8 +21,9 @@ public static class ItemNodeParser
         itemType.SetSpeed(itemNode.Speed);
         itemType.SetLight(new LightBlock(itemNode.LightLevel, itemNode.LightColor));
         itemType.SetGroup((byte)itemNode.Type);
+        itemType.SetTopOrder(itemNode.TopOrder);
 
-        itemType.ParseOTFlags(itemNode.Flags);
+        itemType.ParseFlags(itemNode.Flags);
 
         return itemType;
     }
