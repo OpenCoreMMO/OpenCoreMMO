@@ -240,8 +240,8 @@ public class ItemType : IItemType
 
     public void SetTopOrder(byte topOrder)
     {
-        TopOrder = topOrder;
         ThrowIfLocked();
+        TopOrder = topOrder;
     }
 
     public byte TopOrder { get; set; }
