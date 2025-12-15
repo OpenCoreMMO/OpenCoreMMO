@@ -20,7 +20,7 @@ public class TileStack<T>(int size = 10) : IEnumerable<T>
         return GetEnumerator();
     }
     
-    public List<T> Values => _items;
+    public IReadOnlyList<T> Values => _items;
 
     public void Push(T item)
     {
