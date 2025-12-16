@@ -1095,7 +1095,7 @@ public class Player : CombatActor, IPlayer
                 var result = Inventory.AddItem(item);
                 if (result.Succeeded)
                 {
-                    if (!result.Value.HasAnyOperation) continue;
+                    if (!(result.Value?.HasAnyOperation ?? false)) continue;
                     if (result.Value.Operations[0].Item2 != Operation.Removed) continue;
                 }
             }
@@ -1669,6 +1669,7 @@ public class Player : CombatActor, IPlayer
         if (IsManaShieldEnabled)
         {
             DecreaseMana(totalDamage.HealthDamage);
+            damages.SetDamagesAsManaDrain();
             return;
         }
 

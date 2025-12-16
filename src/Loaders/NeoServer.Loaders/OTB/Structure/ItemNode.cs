@@ -52,7 +52,7 @@ public class ItemNode
 
     public byte LightLevel => GetValue<byte>(OtbItemAttribute.LightLevel);
     public byte LightColor => GetValue<byte>(OtbItemAttribute.LightColor);
-    public byte AlwaysOnTop => GetValue<byte>(OtbItemAttribute.TopOrder);
+    public byte TopOrder => GetValue<byte>(OtbItemAttribute.TopOrder);
 
     /// <summary>
     ///     Gets the item's type

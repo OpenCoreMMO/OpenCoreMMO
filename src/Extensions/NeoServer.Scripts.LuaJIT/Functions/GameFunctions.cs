@@ -275,7 +275,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
 
         var tileToBorn = _map[position];
 
-        if (tileToBorn is IDynamicTile { HasAnyCreature: false } dynamicTile && dynamicTile.CanEnter(monster))
+        if (tileToBorn is IDynamicTile { HasAnyCreature: false } dynamicTile && dynamicTile.CanEnter(monster)
+            && MonsterEnterTileRule.Rule.CanEnter(tileToBorn, monster))
         {
             if (dynamicTile.ProtectionZone)
             {

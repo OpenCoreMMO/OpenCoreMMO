@@ -48,8 +48,10 @@ public class SummonTests
         (map[104, 105, 7] as DynamicTile)?.AddCreature(summon);
         (map[106, 105, 7] as DynamicTile)?.AddCreature(playerB);
 
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService =
-            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
+                staticToDynamicTileServiceMock.Object);
 
         // Act
         // Move master to a position that triggers floor change to floor 6
@@ -104,8 +106,10 @@ public class SummonTests
 
         (map[105, 105, 7] as DynamicTile)?.AddCreature(master);
         (map[104, 105, 7] as DynamicTile)?.AddCreature(summon);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService =
-            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
+                staticToDynamicTileServiceMock.Object);
 
         // Act
         // Move master 2 floors up (from 7 to 5)
@@ -128,8 +132,10 @@ public class SummonTests
 
         (map[105, 105, 7] as DynamicTile)?.AddCreature(master);
         (map[104, 105, 7] as DynamicTile)?.AddCreature(summon);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService =
-            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
+                staticToDynamicTileServiceMock.Object);
 
         // Act
         // Move master 2 floors down (from 7 to 9)

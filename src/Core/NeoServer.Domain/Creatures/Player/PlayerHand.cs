@@ -76,7 +76,7 @@ public class PlayerHand
 
         var result = destination.AddItem(thing, toPosition);
 
-        if (!result.Value.HasAnyOperation) return result;
+        if (!(result.Value?.HasAnyOperation ?? false)) return result;
 
         foreach (var operation in result.Value.Operations)
             if (operation.Item2 == Operation.Removed)

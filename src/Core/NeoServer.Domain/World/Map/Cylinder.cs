@@ -51,7 +51,7 @@ public class CylinderOperation(IMap map)
 
         foreach (var spectator in spectators)
         {
-            byte stackPosition = default;
+            byte stackPosition = 0;
             if (spectator is IPlayer player) tile.TryGetStackPositionOfThing(player, thing, out stackPosition);
 
             tileSpectators[index++] = new CylinderSpectator(spectator, stackPosition, stackPosition);
@@ -132,7 +132,7 @@ public class CylinderOperation(IMap map)
     }
 
     public Result<OperationResultList<ICreature>> MoveCreature(ICreature creature, IDynamicTile fromTile,
-        IDynamicTile toTile, byte amount, out ICylinder cylinder)
+        IDynamicTile toTile, byte amount, bool forced, out ICylinder cylinder)
     {
         amount = amount == 0 ? (byte)1 : amount;
 
@@ -146,7 +146,7 @@ public class CylinderOperation(IMap map)
 
         map.SwapCreatureBetweenSectors(creature, fromTile.Location, toTile.Location);
 
-        var result2 = ((DynamicTile)toTile).AddCreature(creature);
+        var result2 = ((DynamicTile)toTile).AddCreature(creature, forced: forced);
 
         cylinder = new Cylinder(creature, fromTile, toTile, Operation.Moved, spectators.ToArray());
         return result2;

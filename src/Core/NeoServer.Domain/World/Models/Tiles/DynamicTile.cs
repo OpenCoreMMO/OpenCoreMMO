@@ -168,7 +168,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
     public override IItem GetItemByIndex(int index)
     {
-        // Check if ground exists and index is 0
+        // Check if ground exists and the index is 0
         if (Ground != null)
         {
             if (index == 0) return Ground;
@@ -178,9 +178,9 @@ public class DynamicTile : BaseTile, IDynamicTile
         }
 
         // Check top items
-        if (TopItems != null && TopItems.Count > 0)
+        if (TopItems is { Count: > 0 })
         {
-            if (index < TopItems.Count) return TopItems.ElementAt(index);
+            if (index < TopItems.Count) return TopItems.Values.ElementAt(index);
 
             // Decrement index by the number of top items
             index -= TopItems.Count;
@@ -188,7 +188,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         // Skip creatures in the index calculation since we're only returning items
         // But we need to account for their presence in the stack
-        if (Creatures != null && Creatures.Count > 0)
+        if (Creatures is { Count: > 0 })
             // Decrement index by the number of creatures
             index -= Creatures.Count;
 
@@ -237,14 +237,14 @@ public class DynamicTile : BaseTile, IDynamicTile
         stackPosition = 0;
 
         var id = item.ClientId;
-        if (id == default) throw new ArgumentNullException(nameof(id));
+        if (id == 0) throw new ArgumentNullException(nameof(id));
 
         if (Ground?.ClientId == id) return true;
         if (Ground?.ClientId != 0) ++stackPosition;
 
         if (item.IsAlwaysOnTop && TopItems is not null)
         {
-            foreach (var topItem in TopItems)
+            foreach (var topItem in TopItems.Values)
             {
                 if (id == topItem.ClientId) return true;
                 if (++stackPosition == 10) return false;
@@ -298,7 +298,8 @@ public class DynamicTile : BaseTile, IDynamicTile
         }
 
         if (TopItems is not null)
-            foreach (var item in TopItems.Reverse()) //todo: remove reverse
+        {
+            foreach (var item in TopItems.Values) //todo: remove reverse
             {
                 if (countThings == 9) break;
 
@@ -308,6 +309,7 @@ public class DynamicTile : BaseTile, IDynamicTile
                 countThings++;
                 countBytes += raw.Length;
             }
+        }
 
         if (Creatures is not null)
             foreach (var creature in Creatures)
@@ -573,7 +575,7 @@ public class DynamicTile : BaseTile, IDynamicTile
     public Result<OperationResultList<IItem>> AddItem(IItem item, byte? position = null)
     {
         var operations = AddItemToTile(item);
-        if (operations.HasAnyOperation)
+        if (operations?.HasAnyOperation ?? false)
         {
             item.SetNewLocation(Location);
             item.SetOwner(null);
@@ -667,15 +669,22 @@ public class DynamicTile : BaseTile, IDynamicTile
         TileOperationEvent.OnChanged(this, ground, operations);
     }
 
-    public Result<OperationResultList<ICreature>> AddCreature(ICreature creature)
+    public Result<OperationResultList<ICreature>> AddCreature(ICreature creature, bool forced = false)
     {
         if (creature is not IWalkableCreature walkableCreature)
+        {
             return Result<OperationResultList<ICreature>>.NotPossible;
+        }
 
-        if (!walkableCreature.TileEnterRule.CanEnter(this, creature))
+        if (!forced && !walkableCreature.TileEnterRule.CanEnter(this, creature))
+        {
             return Result<OperationResultList<ICreature>>.NotPossible;
+        }
 
-        if (!CanEnterFunction?.Invoke(creature) ?? false) return Result<OperationResultList<ICreature>>.NotPossible;
+        if (!forced && (!CanEnterFunction?.Invoke(creature) ?? false))
+        {
+            return Result<OperationResultList<ICreature>>.NotPossible;
+        }
 
         Creatures ??= [];
         Creatures.Add(walkableCreature);
@@ -705,17 +714,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         {
             if (item.IsAlwaysOnTop)
             {
-                TopItems ??= new TileStack<IItem>();
-
-                if (TopItems.TryPeek(out var topItem) && topItem.ClientId == item.ClientId)
-                {
-                    operations.Add(Operation.Added, item);
-                }
-                else
-                {
-                    TopItems.Push(item);
-                    operations.Add(Operation.Added, item);
-                }
+                AddTopItem(item, operations);
             }
             else
             {
@@ -757,6 +756,32 @@ public class DynamicTile : BaseTile, IDynamicTile
         return operations;
     }
 
+    private void AddTopItem(IItem item, OperationResultList<IItem> operations)
+    {
+        TopItems ??= new TileStack<IItem>();
+
+        if (TopItems.TryPeek(out var topItem) && topItem.ClientId == item.ClientId)
+        {
+            operations.Add(Operation.Added, item);
+            return;
+        }
+
+        //loop stack from beginning to the end in ascending order
+        foreach (var itemOnStack in TopItems.Values)
+        {
+            if (item.Metadata.TopOrder <= itemOnStack.Metadata.TopOrder)
+            {
+                //item will be inserted before itemOnStack
+                TopItems.Insert(item, beforeItem: itemOnStack);
+                operations.Add(Operation.Added, item);
+                return;
+            }
+        }
+            
+        TopItems.Push(item);
+        operations.Add(Operation.Added, item);
+    }
+
     private void AddContent(IGround ground, IItem[] topItems, IItem[] items)
     {
         if (topItems?.Length > 0) TopItems = new TileStack<IItem>();
@@ -769,18 +794,22 @@ public class DynamicTile : BaseTile, IDynamicTile
         }
 
         if (topItems is not null)
-            foreach (var item in topItems)
+        {
+            foreach (var item in topItems.OrderBy(i => i.Metadata.TopOrder))
             {
                 TopItems.Push(item);
                 SetTileFlags(item);
             }
+        }
 
         if (items is not null)
+        {
             foreach (var item in items)
             {
                 DownItems.Push(item);
                 SetTileFlags(item);
             }
+        }
     }
 
     private void SetCacheAsExpired()

@@ -1,4 +1,6 @@
-﻿using NeoServer.Domain.Common.Contracts.Items;
+﻿using Moq;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
@@ -36,18 +38,21 @@ public class FloorChangerUsableItemTests
         var location = new Location(100, 100, 7);
         var ground = MapTestDataBuilder.CreateGround(location, 100);
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, ground, null, null);
-        var aboveTile = new DynamicTile(new Coordinate(101, 100, 6), TileFlag.None, ground, null, null);
+        var aboveTile = new DynamicTile(new Coordinate(100, 100, 6), TileFlag.None, ground, null, null);
 
         var map = MapTestDataBuilder.Build(tile, aboveTile);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService =
-            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
+                staticToDynamicTileServiceMock.Object);
 
         backpack.AddItem(floorChangerItem);
         var player = PlayerTestDataBuilder.Build(inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
         {
             [Slot.Backpack] = new(backpack, 1)
         });
-        player.OnTeleported += new CreatureTeleportedEventHandler(map, creatureMovementService).Execute;
+        
+        player.OnTeleported += new CreatureTeleportedEventHandler(map, creatureMovementService, staticToDynamicTileServiceMock.Object).Execute;
 
         tile.AddCreature(player);
 
@@ -76,15 +81,18 @@ public class FloorChangerUsableItemTests
         var aboveTile = new DynamicTile(new Coordinate(101, 100, 6), TileFlag.None, ground, null, null);
 
         var map = MapTestDataBuilder.Build(tile, aboveTile);
+        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService =
-            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map));
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
+                staticToDynamicTileServiceMock.Object);
 
         backpack.AddItem(floorChangerItem);
         var player = PlayerTestDataBuilder.Build(inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
         {
             [Slot.Backpack] = new(backpack, 1)
         });
-        player.OnTeleported += new CreatureTeleportedEventHandler(map, creatureMovementService).Execute;
+
+        player.OnTeleported += new CreatureTeleportedEventHandler(map, creatureMovementService, staticToDynamicTileServiceMock.Object).Execute;
 
         tile.AddCreature(player);
 

@@ -64,7 +64,9 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
     public void TurnTo(Direction direction)
     {
+        if (direction is Direction.None) return;
         if (direction == Direction) return;
+        
         SetDirection(direction);
         OnTurnedToDirection?.Invoke(this, direction);
     }

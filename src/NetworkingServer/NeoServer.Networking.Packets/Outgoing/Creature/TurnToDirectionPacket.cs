@@ -19,6 +19,8 @@ public class TurnToDirectionPacket : OutgoingPacket
 
     public override void WriteToMessage(INetworkMessage message)
     {
+        if (direction is Direction.None) return;
+        
         message.AddByte((byte)GameOutgoingPacketType.TransformThing);
         message.AddLocation(creature.Location);
         message.AddByte(stackPosition);

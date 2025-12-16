@@ -16,6 +16,7 @@ public class FloorChangerUsableItem : UsableOnItem, IUsableOnItem
 
     public virtual bool Use(ICreature usedBy, IItem onItem)
     {
+        Console.WriteLine("FloorChangerUsableItem.Use is obsolete. Implement lua script instead");
         if (usedBy is not IPlayer player) return false;
         var canUseOnItems = Metadata.OnUse?.GetAttributeArray<ushort>(ItemTypeAttribute.UseOn) ?? [];
 

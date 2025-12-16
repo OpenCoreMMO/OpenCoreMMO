@@ -147,6 +147,7 @@ public class MonsterEnterTileRule : CreatureEnterTileRule<MonsterEnterTileRule>
             !hasBlockingCreatures,
             !dynamicTile.HasFlag(TileFlags.Unpassable),
             !dynamicTile.ProtectionZone,
+            !dynamicTile.HasTeleport(out _),
             dynamicTile.Ground is not null);
     }
 
