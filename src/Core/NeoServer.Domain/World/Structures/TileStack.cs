@@ -19,10 +19,19 @@ public class TileStack<T>(int size = 10) : IEnumerable<T>
     {
         return GetEnumerator();
     }
+    
+    public IReadOnlyList<T> Values => _items;
 
     public void Push(T item)
     {
         _items.Add(item);
+    }
+
+    public void Insert(T item, T beforeItem)
+    {
+        var index = _items.IndexOf(beforeItem);
+        if (index < 0) return;
+        _items.Insert(index, item);
     }
 
     public T Pop()

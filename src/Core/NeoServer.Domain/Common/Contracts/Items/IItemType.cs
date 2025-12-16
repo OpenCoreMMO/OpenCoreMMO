@@ -45,6 +45,7 @@ public interface IItemType
     ItemTypeAttributeList OnUse { get; }
     DamageType DamageType { get; }
     EffectT EffectT { get; }
+    byte TopOrder { get; set; }
 
     void SetName(string value);
     void SetArticle(string article);
