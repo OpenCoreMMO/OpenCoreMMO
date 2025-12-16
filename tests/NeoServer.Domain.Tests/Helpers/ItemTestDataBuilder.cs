@@ -674,16 +674,12 @@ public class ItemTestDataBuilder
         type.SetClientId(id);
         type.SetId(id);
         type.SetName("item");
-        if (topOrder == 1)
-            type.SetFlag(ItemFlag.AlwaysOnTop);
-        else
-            type.SetFlag(ItemFlag.Bottom);
+        type.SetFlag(topOrder == 1 ? ItemFlag.AlwaysOnTop : ItemFlag.Bottom);
 
-        if (itemAttributes == null)
-            itemAttributes =
-            [
-                (ItemAttribute.Count, 1)
-            ];
+        itemAttributes ??=
+        [
+            (ItemAttribute.Count, 1)
+        ];
 
         LoadItemTypeAttributes(type, itemTypeAttributes);
 

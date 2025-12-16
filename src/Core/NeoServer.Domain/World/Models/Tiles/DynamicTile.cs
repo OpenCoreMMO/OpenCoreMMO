@@ -298,7 +298,8 @@ public class DynamicTile : BaseTile, IDynamicTile
         }
 
         if (TopItems is not null)
-            foreach (var item in TopItems.Reverse()) //todo: remove reverse
+        {
+            foreach (var item in TopItems.Values) //todo: remove reverse
             {
                 if (countThings == 9) break;
 
@@ -308,6 +309,7 @@ public class DynamicTile : BaseTile, IDynamicTile
                 countThings++;
                 countBytes += raw.Length;
             }
+        }
 
         if (Creatures is not null)
             foreach (var creature in Creatures)
@@ -792,18 +794,22 @@ public class DynamicTile : BaseTile, IDynamicTile
         }
 
         if (topItems is not null)
-            foreach (var item in topItems)
+        {
+            foreach (var item in topItems.OrderBy(i => i.Metadata.TopOrder))
             {
                 TopItems.Push(item);
                 SetTileFlags(item);
             }
+        }
 
         if (items is not null)
+        {
             foreach (var item in items)
             {
                 DownItems.Push(item);
                 SetTileFlags(item);
             }
+        }
     }
 
     private void SetCacheAsExpired()
