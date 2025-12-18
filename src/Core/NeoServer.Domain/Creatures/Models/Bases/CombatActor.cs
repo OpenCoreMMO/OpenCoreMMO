@@ -416,6 +416,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     protected void ReduceHealth(ushort damage)
     {
+        if (damage == 0) return;
         HealthPoints = damage > HealthPoints ? 0 : HealthPoints - damage;
     }
 
