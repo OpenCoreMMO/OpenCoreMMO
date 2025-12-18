@@ -495,15 +495,15 @@ public class DynamicTile : BaseTile, IDynamicTile
         var downItemToRemove = DownItems?.FirstOrDefault(c => c.ServerId == fromItem.ServerId);
         var topItemToRemove = TopItems?.FirstOrDefault(c => c.ServerId == fromItem.ServerId);
 
-        var isRemoved = downItemToRemove != null ? DownItems.Remove(downItemToRemove) : false;
-        if (!isRemoved) isRemoved = topItemToRemove != null ? TopItems.Remove(topItemToRemove) : false;
+        var isRemoved = downItemToRemove != null && DownItems.Remove(downItemToRemove);
+        if (!isRemoved) isRemoved = topItemToRemove != null && TopItems.Remove(topItemToRemove);
 
         if (!isRemoved) return;
 
         if (toItem is null) return;
 
-        if (toItem.IsAlwaysOnTop) TopItems.Push(toItem);
-        else DownItems.Push(toItem);
+        if (toItem.IsAlwaysOnTop) TopItems?.Push(toItem);
+        else DownItems?.Push(toItem);
 
         TryGetStackPositionOfItem(toItem, out var stackPosition);
 
@@ -535,7 +535,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         if (removed is null) return;
 
         if (toItem.IsAlwaysOnTop) TopItems.Push(toItem);
-        else DownItems.Push(toItem);
+        else DownItems?.Push(toItem);
 
         TryGetStackPositionOfItem(toItem, out var stackPosition);
 
@@ -633,7 +633,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
     private bool TryGetStackPositionOfCreature(IPlayer observer, ICreature creature, out byte stackPosition)
     {
-        stackPosition = default;
+        stackPosition = 0;
 
         var id = creature.CreatureId;
         if (id == 0) throw new ArgumentNullException(nameof(id));
@@ -856,9 +856,9 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         if (itemToRemove.IsAlwaysOnTop)
         {
-            TopItems.TryPop(out var item);
-            operations.Add(Operation.Removed, item, stackPosition);
-            removedItem = item;
+            TopItems.Remove(itemToRemove);
+            operations.Add(Operation.Removed, itemToRemove, stackPosition);
+            removedItem = itemToRemove;
         }
         else if (DownItems is not null && DownItems.TryPeek(out var topStackItem))
         {

@@ -48,7 +48,7 @@ public class TileStack<T>(int size = 10) : IEnumerable<T>
         if (itemAtPosition < 0) return;
         _items.RemoveAt(itemAtPosition);
     }
-
+    
     public bool TryPeek(out T item)
     {
         item = default;
