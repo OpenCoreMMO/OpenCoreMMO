@@ -2,7 +2,7 @@
 
 public enum DamageType : byte
 {
-    None = default,
+    None = 0,
     Ice,
     Fire,
     Physical,

@@ -79,6 +79,71 @@ public class PlayerTests
     }
 
     [Fact]
+    public void OnDamage_With_ManaShield_Enabled_When_Damage_Less_Than_Mana_Reduce_Only_Mana()
+    {
+        var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 100) as Player;
+        var enemy = PlayerTestDataBuilder.Build() as Player;
+        sut.EnableManaShield();
+        
+        sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(50, DamageType.Melee)));
+
+        Assert.Equal((uint)50, sut.Mana);
+        Assert.Equal((uint)100, sut.HealthPoints);
+    }
+
+    [Fact]
+    public void OnDamage_With_ManaShield_Enabled_When_Damage_Greater_Than_Mana_Reduce_Mana_And_Health()
+    {
+        var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 100) as Player;
+        var enemy = PlayerTestDataBuilder.Build() as Player;
+        sut.EnableManaShield();
+        
+        sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(150, DamageType.Melee)));
+
+        Assert.Equal((uint)0, sut.Mana);
+        Assert.Equal((uint)50, sut.HealthPoints);
+    }
+
+    [Fact]
+    public void OnDamage_With_ManaShield_Enabled_When_Damage_Equal_To_Mana_Reduce_Only_Mana()
+    {
+        var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 100) as Player;
+        var enemy = PlayerTestDataBuilder.Build() as Player;
+        sut.EnableManaShield();
+        
+        sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(100, DamageType.Melee)));
+
+        Assert.Equal((uint)0, sut.Mana);
+        Assert.Equal((uint)100, sut.HealthPoints);
+    }
+
+    [Fact]
+    public void OnDamage_With_ManaShield_Enabled_When_Receiving_Melee_And_ManaDrain_Reduce_Mana()
+    {
+        var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 100) as Player;
+        var enemy = PlayerTestDataBuilder.Build() as Player;
+        sut.EnableManaShield();
+        
+        sut.OnDamage(enemy, new CombatDamageList([new CombatDamage(50, DamageType.Melee), new CombatDamage(50, DamageType.ManaDrain)]));
+
+        Assert.Equal((uint)0, sut.Mana);
+        Assert.Equal((uint)100, sut.HealthPoints);
+    }
+
+    [Fact]
+    public void OnDamage_With_ManaShield_Enabled_And_Zero_Mana_When_Receiving_Melee_And_ManaDrain_Reduce_Health()
+    {
+        var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 0) as Player;
+        var enemy = PlayerTestDataBuilder.Build() as Player;
+        sut.EnableManaShield();
+        
+        sut.OnDamage(enemy, new CombatDamageList([new CombatDamage(50, DamageType.Melee), new CombatDamage(50, DamageType.ManaDrain)]));
+
+        Assert.Equal((uint)0, sut.Mana);
+        Assert.Equal((uint)50, sut.HealthPoints);
+    }
+
+    [Fact]
     public void FlagIsEnabled_Enabled_ReturnsTrue()
     {
         var sut = PlayerTestDataBuilder.Build();

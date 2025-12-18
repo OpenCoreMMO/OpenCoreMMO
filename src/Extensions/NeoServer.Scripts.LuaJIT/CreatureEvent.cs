@@ -316,8 +316,8 @@ public class CreatureEvent(LuaScriptInterface scriptInterface, ILogger logger, I
         LuaScriptInterface.SetMetatable(luaState, -1, "Creature");
 
         //Primary damage
-        Lua.PushNumber(luaState, (byte)combatDamageList.Damage.Type);
-        Lua.PushNumber(luaState, combatDamageList.Damage.Damage);
+        Lua.PushNumber(luaState, (byte)combatDamageList.RegularDamage.Type);
+        Lua.PushNumber(luaState, combatDamageList.RegularDamage.Damage);
 
         //Secondary damage
         Lua.PushNumber(luaState, (byte)combatDamageList.ElementalDamage.Type);

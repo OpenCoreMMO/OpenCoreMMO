@@ -1,81 +1,101 @@
+using System.Collections;
 using System.Collections.Immutable;
 using NeoServer.Domain.Common.Item;
 
 namespace NeoServer.Domain.Common.Combat.Structs;
 
-public readonly struct CombatDamageList
+public class CombatDamageList : IEnumerable<CombatDamage>
 {
-    private readonly CombatDamage _singleDamage;
-    private readonly ImmutableArray<CombatDamage> _multipleDamages;
+    private readonly Dictionary<DamageType, CombatDamage> _damages = new(3);
+
+    public CombatDamageList()
+    {
+    }
 
     public CombatDamageList(CombatDamage damage)
     {
-        _singleDamage = damage;
-        _multipleDamages = default;
         Unjustified = damage.Unjustified;
+        AddDamage(damage);
     }
 
-    public CombatDamageList(ImmutableArray<CombatDamage> damages)
+    public CombatDamageList(CombatDamage[] damages)
     {
-        _singleDamage = null;
-        _multipleDamages = damages;
-
         foreach (var damage in damages)
         {
+            AddDamage(damage);
+
             if (damage is { Unjustified: true })
             {
                 Unjustified = true;
-                break;
             }
         }
     }
 
-    public bool IsSingle => _multipleDamages.IsDefaultOrEmpty;
-    public int Count => IsSingle ? 1 : _multipleDamages.Length;
+    public void AddDamage(CombatDamage damage)
+    {
+        if (_damages.TryGetValue(damage.Type, out var existingDamage))
+        {
+            existingDamage.IncreaseDamage(damage.Damage);
+        }
+        else
+        {
+            _damages[damage.Type] = damage;
+        }
+
+        if (damage.Type is DamageType.ManaDrain)
+        {
+            return;
+        }
+    }
+
+    public void ReduceHealthDamage(int damage)
+    {
+        foreach (var damageRecord in _damages.Values)
+        {
+            if (damageRecord.Type is not DamageType.ManaDrain)
+            {
+                damageRecord.IncreaseDamage(-damage);
+            }
+        }
+    }
+
+    public int Count => _damages.Count;
 
     public bool Unjustified { get; }
 
-    public void SetDamagesAsManaDrain()
-    {
-        _singleDamage?.ChangeDamageType(DamageType.ManaDrain);
+    public Damage TotalDamage {
 
-        if (_multipleDamages != null)
-        {
-            foreach (var multipleDamage in _multipleDamages)
-            {
-                multipleDamage.ChangeDamageType(DamageType.ManaDrain);
-            }
-        }
-    }
-
-    public Damage TotalDamage
-    {
         get
         {
-            ushort health = 0, mana = 0;
-
-            foreach (var damage in this)
+            var manaDamage = 0;
+            var healthDamage = 0;
+            
+            foreach (var damage in _damages.Values)
             {
-                if (damage == null)
-                    continue;
-
                 if (damage.Type is DamageType.ManaDrain)
-                    mana += damage.Damage;
-                else
-                    health += damage.Damage;
+                {
+                    manaDamage += damage.Damage;
+                    continue;
+                }
+                
+                healthDamage += damage.Damage;
             }
-
-            return new Damage(health, mana);
+            
+            return new Damage((ushort)Math.Max(0, healthDamage), (ushort)Math.Max(0, manaDamage)); 
         }
     }
 
-    public CombatDamage Damage
+public CombatDamage RegularDamage
     {
         get
         {
             foreach (var damage in this)
+            {
                 if (damage is { IsElementalDamage: false, Damage: > 0 })
+                {
                     return damage;
+                }
+            }
 
             return new CombatDamage();
         }
@@ -93,30 +113,13 @@ public readonly struct CombatDamageList
         }
     }
 
-    // Enumerator struct — no allocation
-    public Enumerator GetEnumerator()
+    public IEnumerator<CombatDamage> GetEnumerator()
     {
-        return new Enumerator(this);
+        return _damages.Values.GetEnumerator();
     }
 
-    public ref struct Enumerator(CombatDamageList list)
+    IEnumerator IEnumerable.GetEnumerator()
     {
-        private int _index = -1;
-
-        public CombatDamage Current
-        {
-            get
-            {
-                if (list.IsSingle)
-                    return list._singleDamage;
-                return list._multipleDamages[_index];
-            }
-        }
-
-        public bool MoveNext()
-        {
-            _index++;
-            return list._multipleDamages.IsDefaultOrEmpty ? _index == 0 : _index < list._multipleDamages.Length;
-        }
+        return GetEnumerator();
     }
 }

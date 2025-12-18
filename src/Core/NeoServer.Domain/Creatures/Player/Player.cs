@@ -1663,14 +1663,17 @@ public class Player : CombatActor, IPlayer
         if (totalDamage.ManaDamage > 0)
         {
             DecreaseMana(totalDamage.ManaDamage);
-            return;
         }
 
-        if (IsManaShieldEnabled)
+        if (IsManaShieldEnabled && Mana > 0)
         {
-            DecreaseMana(totalDamage.HealthDamage);
-            damages.SetDamagesAsManaDrain();
-            return;
+            var totalHealthDamage = Math.Min(totalDamage.HealthDamage, (int)Mana);
+            damages.ReduceHealthDamage(totalHealthDamage);
+          
+            DecreaseMana((uint)totalHealthDamage);
+            damages.AddDamage(new CombatDamage((ushort)totalHealthDamage, DamageType.ManaDrain));
+            
+            totalDamage = damages.TotalDamage;
         }
 
         ReduceHealth(totalDamage.HealthDamage);
