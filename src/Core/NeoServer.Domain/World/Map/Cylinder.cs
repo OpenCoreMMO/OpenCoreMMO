@@ -29,9 +29,10 @@ public class CylinderOperation(IMap map)
         {
             var fromStackPosition = stackPosition;
 
-            if (spectator is IPlayer player)
-                if (thing is IItem { IsAlwaysOnTop: false } and not IGround)
-                    fromStackPosition = (byte)(tile.GetCreatureStackPositionIndex(player) + stackPosition);
+            if (spectator is IPlayer player && thing is IItem { IsAlwaysOnTop: false } and not IGround)
+            {
+                fromStackPosition = (byte)(tile.GetCreatureStackPositionIndex(player) + stackPosition);
+            }
 
             tileSpectators[index++] = new CylinderSpectator(spectator, fromStackPosition, fromStackPosition);
         }
@@ -42,6 +43,11 @@ public class CylinderOperation(IMap map)
     public Cylinder Added(IThing thing)
     {
         var tile = map[thing.Location];
+
+        if (tile is null)
+        {
+            return new Cylinder(thing, tile, tile, Operation.None, []);
+        }
 
         var spectators = map.GetCreaturesAtPositionZone(tile.Location, tile.Location);
 

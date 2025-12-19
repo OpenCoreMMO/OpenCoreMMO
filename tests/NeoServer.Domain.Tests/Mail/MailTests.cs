@@ -51,7 +51,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 
@@ -108,7 +108,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 
@@ -160,7 +160,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 
@@ -210,7 +210,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 
@@ -270,7 +270,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 
@@ -327,7 +327,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 
@@ -383,7 +383,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 
@@ -436,7 +436,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 
@@ -490,7 +490,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 
@@ -544,7 +544,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 
@@ -604,7 +604,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 
@@ -665,7 +665,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 
@@ -722,7 +722,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 
@@ -774,7 +774,7 @@ public class MailTests
         var from = new Mock<IDynamicTile>();
         from.Setup(x => x.Location).Returns(new Location(100, 100, 7));
 
-        var mailBoxMetadata = new ItemType();
+        var mailBoxMetadata = new ItemType().SetClientId(1);
         mailBoxMetadata.Attributes.SetAttribute(ItemTypeAttribute.Type, "mailbox");
         var mailBox = new Item(mailBoxMetadata, new Location(100, 101, 7));
 

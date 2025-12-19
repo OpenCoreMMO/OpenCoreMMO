@@ -19,13 +19,14 @@ public class TileLoadTests
         // Arrange
         var mockEventAggregator = new Mock<IEventAggregator>();
         var food = ItemTestDataBuilder.CreateFood(1, 2);
-
-        var world = new Domain.World.World();
-        var tile = MapTestDataBuilder.CreateTile(new Location(100, 100, 7), downItems: food);
-        world.AddTile(tile, new Location(100, 100, 7));
         
-        var map = new Map(world, mockEventAggregator.Object);
-
+        IDynamicTile TileFunc()
+        {
+            return MapTestDataBuilder.CreateTile(new Location(100, 100, 7), downItems: food);
+        }
+        
+        var map = MapTestDataBuilder.Build(mockEventAggregator.Object, (Func<IDynamicTile>)TileFunc);
+        
         // Act
         food.Reduce();
 

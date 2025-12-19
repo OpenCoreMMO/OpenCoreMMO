@@ -26,10 +26,12 @@ public class BloodPoolServiceTests
     {
         var splashItemType = new ItemType();
         splashItemType.SetId(2019);
+        splashItemType.SetClientId(2019);
         splashItemType.SetGroup((byte)ItemGroup.Splash);
 
         var poolItemType = new ItemType();
         poolItemType.SetId(2016);
+        splashItemType.SetClientId(2016);
         poolItemType.SetGroup((byte)ItemGroup.Splash);
 
         var itemTypeStore = ItemTypeStoreTestBuilder.Build(splashItemType, poolItemType);
@@ -49,7 +51,7 @@ public class BloodPoolServiceTests
         var liquidPoolFactory = CreateLiquidPoolFactory();
         var service = new BloodPoolService(liquidPoolFactory);
 
-        var player = PlayerTestDataBuilder.Build();
+        var player = PlayerTestDataBuilder.Build(map: map);
         player.SetNewLocation(new Location(105, 105, 7));
 
         var tile = map[105, 105, 7] as DynamicTile;
@@ -72,7 +74,7 @@ public class BloodPoolServiceTests
         var liquidPoolFactory = CreateLiquidPoolFactory();
         var service = new BloodPoolService(liquidPoolFactory);
 
-        var player = PlayerTestDataBuilder.Build(); // Players have BloodType.Blood by default
+        var player = PlayerTestDataBuilder.Build(map: map); // Players have BloodType.Blood by default
         player.SetNewLocation(new Location(105, 105, 7));
 
         var tile = map[105, 105, 7] as DynamicTile;
@@ -125,7 +127,7 @@ public class BloodPoolServiceTests
         var liquidPoolFactory = CreateLiquidPoolFactory();
         var service = new BloodPoolService(liquidPoolFactory);
 
-        var player = PlayerTestDataBuilder.Build(hp: 200);
+        var player = PlayerTestDataBuilder.Build(hp: 200, map: map);
         player.SetNewLocation(new Location(105, 105, 7));
 
         var tile = map[105, 105, 7] as DynamicTile;
@@ -150,7 +152,7 @@ public class BloodPoolServiceTests
         var liquidPoolFactory = CreateLiquidPoolFactory();
         var service = new BloodPoolService(liquidPoolFactory);
 
-        var player = PlayerTestDataBuilder.Build(hp: 200);
+        var player = PlayerTestDataBuilder.Build(hp: 200, map: map);
         player.SetNewLocation(new Location(105, 105, 7));
 
         var tile = map[105, 105, 7] as DynamicTile;
@@ -179,7 +181,7 @@ public class BloodPoolServiceTests
         var liquidPoolFactory = CreateLiquidPoolFactory();
         var service = new BloodPoolService(liquidPoolFactory);
 
-        var player = PlayerTestDataBuilder.Build();
+        var player = PlayerTestDataBuilder.Build(map: map);
         player.SetNewLocation(new Location(105, 105, 7));
 
         var tile = map[105, 105, 7] as DynamicTile;
@@ -202,7 +204,7 @@ public class BloodPoolServiceTests
         var liquidPoolFactory = CreateLiquidPoolFactory();
         var service = new BloodPoolService(liquidPoolFactory);
 
-        var player = PlayerTestDataBuilder.Build();
+        var player = PlayerTestDataBuilder.Build(map: map);
         player.SetNewLocation(new Location(105, 105, 7));
 
         var tile = map[105, 105, 7] as DynamicTile;
@@ -246,4 +248,3 @@ public class BloodPoolServiceTests
 
     #endregion
 }
-

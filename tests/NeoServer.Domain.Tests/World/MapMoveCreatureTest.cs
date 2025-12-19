@@ -22,7 +22,7 @@ public class MapMoveCreatureTest
     public void TryMoveCreature_Should_Move_Creature()
     {
         var sut = MapTestDataBuilder.Build(1, 101, 1, 101, 6, 9);
-        var player = PlayerTestDataBuilder.Build();
+        var player = PlayerTestDataBuilder.Build(map: sut);
         player.SetNewLocation(new Location(50, 50, 7));
         sut.PlaceCreature(player);
         
@@ -41,7 +41,7 @@ public class MapMoveCreatureTest
     public void TryMoveCreature_When_Teleport_Should_Move_Creature()
     {
         var sut = MapTestDataBuilder.Build(1, 101, 1, 101, 6, 9);
-        var player = PlayerTestDataBuilder.Build();
+        var player = PlayerTestDataBuilder.Build(map: sut);
 
         player.SetNewLocation(new Location(50, 50, 7));
         sut.PlaceCreature(player);
@@ -65,7 +65,7 @@ public class MapMoveCreatureTest
         var sut = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7);
         var pathFinder = new PathFinder(sut);
 
-        var player = PlayerTestDataBuilder.Build(pathFinder: pathFinder);
+        var player = PlayerTestDataBuilder.Build(map: sut, pathFinder: pathFinder);
 
         player.SetCurrentTile((IDynamicTile)sut[100, 100, 7]);
         sut.PlaceCreature(player);
@@ -82,7 +82,7 @@ public class MapMoveCreatureTest
         var creatureMovementService =
             new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut), staticToDynamicTileServiceMock.Object);
 
-        ((IDynamicTile)sut[teleportLocation]).AddItem(new TeleportItem(new ItemType(), teleportLocation));
+        ((IDynamicTile)sut[teleportLocation]).AddItem(new TeleportItem(new ItemType().SetClientId(1), teleportLocation));
 
         player.OnStartedWalking += c => creatureMovementService.MoveCreature(c);
 
@@ -105,7 +105,7 @@ public class MapMoveCreatureTest
             [ItemAttribute.TeleportDestination] = new Location(105, 105, 7)
         };
 
-        var teleport = new TeleportItem(new ItemType(), teleportLocation);
+        var teleport = new TeleportItem(new ItemType().SetClientId(10), teleportLocation);
 
         teleport.Attributes.SetAttribute(teleportAttrs);
 
@@ -122,7 +122,7 @@ public class MapMoveCreatureTest
 
         var pathFinder = new PathFinder(sut);
 
-        var player = PlayerTestDataBuilder.Build(pathFinder: pathFinder);
+        var player = PlayerTestDataBuilder.Build(map: sut, pathFinder: pathFinder);
         player.SetCurrentTile((IDynamicTile)sut[100, 100, 7]);
         sut.PlaceCreature(player);
         

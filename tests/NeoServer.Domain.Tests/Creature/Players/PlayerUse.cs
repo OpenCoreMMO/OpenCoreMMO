@@ -15,12 +15,12 @@ public class PlayerUse
     public void Player_uses_food_when_close_to_it()
     {
         //arrange
-        var player = PlayerTestDataBuilder.Build();
-
         var tile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
         var secondTile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(101, 100, 7));
 
         var map = MapTestDataBuilder.Build(tile, secondTile);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
 
         var food = ItemTestDataBuilder.CreateFood(2);
 

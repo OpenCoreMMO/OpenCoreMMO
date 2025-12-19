@@ -264,7 +264,7 @@ public class TileTest
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
-        var hole = new Ground(new ItemType(), new Location(100, 100, 7));
+        var hole = new Ground(new ItemType().SetClientId(1), new Location(100, 100, 7));
         hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         map.PlaceCreature(player);
@@ -309,7 +309,7 @@ public class TileTest
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
-        var hole = new Ground(new ItemType(), new Location(100, 100, 7));
+        var hole = new Ground(new ItemType().SetClientId(1), new Location(100, 100, 7));
         hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         map.PlaceCreature(player);
@@ -353,7 +353,7 @@ public class TileTest
         //arrange
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 9);
 
-        var player = PlayerTestDataBuilder.Build();
+        var player = PlayerTestDataBuilder.Build(map: map);
         player.SetNewLocation(new Location(102, 100, 7));
 
         var validation = new CreatureMovementValidation(map);
@@ -364,12 +364,12 @@ public class TileTest
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
-        var hole = new Ground(new ItemType(), new Location(100, 100, 7));
+        var hole = new Ground(new ItemType().SetClientId(1), new Location(100, 100, 7));
         hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         map.PlaceCreature(player);
 
-        var secondHole = new Ground(new ItemType(), new Location(100, 100, 8));
+        var secondHole = new Ground(new ItemType().SetClientId(1), new Location(100, 100, 8));
         secondHole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         var sourceTile = (IDynamicTile)map[101, 100, 7];
@@ -419,7 +419,7 @@ public class TileTest
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
-        var hole = new Ground(new ItemType(), new Location(100, 100, 7));
+        var hole = new Ground(new ItemType().SetClientId(1), new Location(100, 100, 7));
         hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         map.PlaceCreature(player);
@@ -456,7 +456,7 @@ public class TileTest
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(100, 100, 7));
 
-        var hole = new Ground(new ItemType(), new Location(100, 100, 7));
+        var hole = new Ground(new ItemType().SetClientId(1), new Location(100, 100, 7));
         hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         var tile = (IDynamicTile)map[100, 100, 7];

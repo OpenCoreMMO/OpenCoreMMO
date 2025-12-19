@@ -25,10 +25,10 @@ public static class MapTestDataBuilder
         return map;
     }
 
-    public static IMap Build(params Func<ITile>[] tiles)
+    public static IMap Build( IEventAggregator eventAggregator, params Func<ITile>[] tiles)
     {
         var world = new Domain.World.World();
-        var map = new Domain.World.Map.Map(world, new Mock<IEventAggregator>().Object);
+        var map = new Domain.World.Map.Map(world, eventAggregator);
 
         foreach (var tile in tiles) world.AddTile(tile?.Invoke());
 
@@ -53,7 +53,7 @@ public static class MapTestDataBuilder
 
             var location = new Location((ushort)x, (ushort)y, (byte)z);
 
-            if (addGround) ground = new Ground(new ItemType(), new Location((ushort)x, (ushort)y, (byte)z));
+            if (addGround) ground = new Ground(new ItemType().SetClientId(1), new Location((ushort)x, (ushort)y, (byte)z));
 
             topItems.TryGetValue(location, out var items);
 
@@ -70,6 +70,7 @@ public static class MapTestDataBuilder
     {
         var itemType = new ItemType();
         itemType.SetId(id);
+        itemType.SetClientId(id);
         itemType.Attributes?.SetAttribute(ItemTypeAttribute.Speed, speed);
 
         return new Ground(itemType, location);

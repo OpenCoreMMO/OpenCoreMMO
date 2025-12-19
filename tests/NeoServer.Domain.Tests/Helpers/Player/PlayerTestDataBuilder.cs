@@ -40,7 +40,8 @@ public static class PlayerTestDataBuilder
         int premiumTime = 0,
         int experience = 1,
         ushort level = 10,
-        ushort attackSpeed = 2000)
+        ushort attackSpeed = 2000,
+        IMap map = null)
     {
         if (vocationStore is null)
         {
@@ -79,7 +80,7 @@ public static class PlayerTestDataBuilder
             groupStore.AddOrUpdate(groupId, group);
         }
 
-        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+        map ??= MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         pathFinder ??= new PathFinder(map);
         var mapTool = new MapTool(map, pathFinder);
 
