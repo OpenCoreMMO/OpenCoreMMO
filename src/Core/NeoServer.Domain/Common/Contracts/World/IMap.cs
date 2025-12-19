@@ -26,15 +26,10 @@ public interface IMap
     event AddThingToTile OnThingAddedToTile;
     event UpdateThingOnTile OnThingUpdatedOnTile;
 
-    IList<byte> GetDescription(IThing thing, ushort fromX, ushort fromY, byte currentZ,
-        byte windowSizeX = 18, byte windowSizeY = 14);
 
     bool ArePlayersAround(Location.Structs.Location location);
     void PlaceCreature(ICreature creature);
     ITile GetNextTile(Location.Structs.Location fromLocation, Direction direction);
-
-    IList<byte> GetFloorDescription(IThing thing, ushort fromX, ushort fromY, byte currentZ, byte width,
-        byte height, int verticalOffset, ref int skip);
 
     HashSet<ICreature> GetPlayersAtPositionZone(Location.Structs.Location location);
 
