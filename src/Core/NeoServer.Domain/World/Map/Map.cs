@@ -15,6 +15,10 @@ using MinMax = NeoServer.Domain.Common.MinMax;
 
 namespace NeoServer.Domain.World.Map;
 
+/// <summary>
+/// Represents the map within the world structure which provides access and operations
+/// related to tiles, creatures, and spectators in the game world.
+/// </summary>
 public class Map : IMap
 {
     private readonly CylinderOperation _cylinderOperation;
@@ -26,22 +30,32 @@ public class Map : IMap
         _world = world;
         _eventAggregator = eventAggregator;
         _cylinderOperation = new CylinderOperation(this);
+        
         TileOperationEvent.OnTileChanged += OnTileChanged;
         TileOperationEvent.OnTileLoaded += OnTileLoaded;
-
-        Instance = this;
     }
-
-    public static IMap Instance { get; private set; }
-
+    
     public ITile this[Location location] => _world.TryGetTile(ref location, out var tile) ? tile : null;
+    
     public ITile this[ushort x, ushort y, byte z] => this[new Location(x, y, z)];
 
+    /// <summary>
+    /// Retrieves the tile located at the specified position within the map.
+    /// </summary>
+    /// <param name="location">The location specifying the coordinates of the desired tile.</param>
+    /// <returns>Returns the <see cref="ITile"/> corresponding to the provided location.</returns>
     public ITile GetTile(Location location)
     {
         return this[location];
     }
 
+
+    /// <summary>
+    /// Transfers a creature from one sector to another within the map.
+    /// </summary>
+    /// <param name="creature">The creature to be moved between sectors.</param>
+    /// <param name="fromLocation">The initial location of the creature.</param>
+    /// <param name="toLocation">The destination location where the creature will be moved.</param>
     public void SwapCreatureBetweenSectors(ICreature creature, Location fromLocation, Location toLocation) =>
         _world.SwapCreatureBetweenSectors(creature, fromLocation, toLocation);
 
