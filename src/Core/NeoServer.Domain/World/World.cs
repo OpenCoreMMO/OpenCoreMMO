@@ -129,4 +129,16 @@ public class World
     {
         return _waypoints.TryGetValue(new Coordinate(location.X, location.Y, (sbyte)location.Z), out waypoint);
     }
+    
+    public void SwapCreatureBetweenSectors(ICreature creature, Location fromLocation, Location toLocation)
+    {
+        var oldSector = GetSector(fromLocation.X, fromLocation.Y);
+        var newSector = GetSector(toLocation.X, toLocation.Y);
+
+        if (oldSector != newSector)
+        {
+            oldSector.RemoveCreature(creature);
+            newSector.AddCreature(creature);
+        }
+    }
 }

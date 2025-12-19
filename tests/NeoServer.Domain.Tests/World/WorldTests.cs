@@ -1,6 +1,8 @@
 using FluentAssertions;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.World.Models.Tiles;
 using Xunit;
 
@@ -26,6 +28,11 @@ public class WorldTests
     private static Location CreateLocation(ushort x = 100, ushort y = 100, byte z = 7)
     {
         return new Location(x, y, z);
+    }
+
+    private static IMonster CreateMonster(string name = "TestMonster", uint health = 100)
+    {
+        return MonsterTestDataBuilder.Build(maxHealth: health, name: name);
     }
 
     [Fact]
@@ -176,5 +183,206 @@ public class WorldTests
 
         world.TryGetTile(ref location2, out var retrieved2).Should().BeTrue();
         retrieved2.Should().BeSameAs(tile2);
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void World_swaps_creature_when_moving_between_different_sectors()
+    {
+        // Arrange
+        var world = CreateWorld();
+        var creature = CreateMonster();
+        
+        // Sector 1 coordinates (32, 32) - different from Sector 2
+        var fromLocation = CreateLocation(x: 32, y: 32, z: 7);
+        // Sector 2 coordinates (96, 96) - 64+ tiles away to ensure different sector
+        var toLocation = CreateLocation(x: 96, y: 96, z: 7);
+
+        // Create sectors by adding tiles
+        world.AddTile(CreateStaticTile(fromLocation), fromLocation);
+        world.AddTile(CreateStaticTile(toLocation), toLocation);
+
+        var fromSector = world.GetSector(fromLocation.X, fromLocation.Y);
+        var toSector = world.GetSector(toLocation.X, toLocation.Y);
+
+        fromSector.AddCreature(creature);
+
+        // Act
+        world.SwapCreatureBetweenSectors(creature, fromLocation, toLocation);
+
+        // Assert
+        fromSector.Creatures.Should().NotContain(creature);
+        toSector.Creatures.Should().Contain(creature);
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void World_does_not_swap_creature_when_moving_within_same_sector()
+    {
+        // Arrange
+        var world = CreateWorld();
+        var creature = CreateMonster();
+        
+        // Both locations in same sector (within 32 tile range)
+        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
+        var toLocation = CreateLocation(x: 110, y: 110, z: 7);
+
+        // Create sector by adding tile
+        world.AddTile(CreateStaticTile(fromLocation), fromLocation);
+
+        var sector = world.GetSector(fromLocation.X, fromLocation.Y);
+        sector.AddCreature(creature);
+        var initialCreatureCount = sector.Creatures.Count;
+
+        // Act
+        world.SwapCreatureBetweenSectors(creature, fromLocation, toLocation);
+
+        // Assert
+        sector.Creatures.Should().Contain(creature);
+        sector.Creatures.Count.Should().Be(initialCreatureCount);
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void World_removes_creature_from_old_sector_when_swapping()
+    {
+        // Arrange
+        var world = CreateWorld();
+        var creature = CreateMonster();
+        
+        var fromLocation = CreateLocation(x: 32, y: 32, z: 7);
+        var toLocation = CreateLocation(x: 128, y: 128, z: 7);
+
+        // Create sectors by adding tiles
+        world.AddTile(CreateStaticTile(fromLocation), fromLocation);
+        world.AddTile(CreateStaticTile(toLocation), toLocation);
+
+        var fromSector = world.GetSector(fromLocation.X, fromLocation.Y);
+        fromSector.AddCreature(creature);
+
+        // Act
+        world.SwapCreatureBetweenSectors(creature, fromLocation, toLocation);
+
+        // Assert
+        fromSector.Creatures.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void World_adds_creature_to_new_sector_when_swapping()
+    {
+        // Arrange
+        var world = CreateWorld();
+        var creature = CreateMonster();
+        
+        var fromLocation = CreateLocation(x: 32, y: 32, z: 7);
+        var toLocation = CreateLocation(x: 128, y: 128, z: 7);
+
+        // Create sectors by adding tiles
+        world.AddTile(CreateStaticTile(fromLocation), fromLocation);
+        world.AddTile(CreateStaticTile(toLocation), toLocation);
+
+        var fromSector = world.GetSector(fromLocation.X, fromLocation.Y);
+        var toSector = world.GetSector(toLocation.X, toLocation.Y);
+        
+        fromSector.AddCreature(creature);
+        var initialToSectorCount = toSector.Creatures.Count;
+
+        // Act
+        world.SwapCreatureBetweenSectors(creature, fromLocation, toLocation);
+
+        // Assert
+        toSector.Creatures.Should().Contain(creature);
+        toSector.Creatures.Count.Should().Be(initialToSectorCount + 1);
+    }
+
+    [Fact]
+    [Trait("Category", "EdgeCase")]
+    public void World_swaps_creature_between_diagonal_sectors()
+    {
+        // Arrange
+        var world = CreateWorld();
+        var creature = CreateMonster();
+        
+        var fromLocation = CreateLocation(x: 0, y: 0, z: 7);
+        var toLocation = CreateLocation(x: 192, y: 192, z: 7);
+
+        // Create sectors by adding tiles
+        world.AddTile(CreateStaticTile(fromLocation), fromLocation);
+        world.AddTile(CreateStaticTile(toLocation), toLocation);
+
+        var fromSector = world.GetSector(fromLocation.X, fromLocation.Y);
+        var toSector = world.GetSector(toLocation.X, toLocation.Y);
+        
+        fromSector.AddCreature(creature);
+
+        // Act
+        world.SwapCreatureBetweenSectors(creature, fromLocation, toLocation);
+
+        // Assert
+        fromSector.Creatures.Should().NotContain(creature);
+        toSector.Creatures.Should().Contain(creature);
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void World_swaps_multiple_creatures_between_sectors()
+    {
+        // Arrange
+        var world = CreateWorld();
+        var creature1 = CreateMonster(name: "Monster1");
+        var creature2 = CreateMonster(name: "Monster2");
+        
+        var fromLocation = CreateLocation(x: 50, y: 50, z: 7);
+        var toLocation = CreateLocation(x: 150, y: 150, z: 7);
+
+        // Create sectors by adding tiles
+        world.AddTile(CreateStaticTile(fromLocation), fromLocation);
+        world.AddTile(CreateStaticTile(toLocation), toLocation);
+
+        var fromSector = world.GetSector(fromLocation.X, fromLocation.Y);
+        var toSector = world.GetSector(toLocation.X, toLocation.Y);
+        
+        fromSector.AddCreature(creature1);
+        fromSector.AddCreature(creature2);
+
+        // Act
+        world.SwapCreatureBetweenSectors(creature1, fromLocation, toLocation);
+        world.SwapCreatureBetweenSectors(creature2, fromLocation, toLocation);
+
+        // Assert
+        fromSector.Creatures.Should().BeEmpty();
+        toSector.Creatures.Should().HaveCount(2);
+        toSector.Creatures.Should().Contain(creature1);
+        toSector.Creatures.Should().Contain(creature2);
+    }
+
+    [Fact]
+    [Trait("Category", "EdgeCase")]
+    public void World_swaps_creature_at_sector_boundary()
+    {
+        // Arrange
+        var world = CreateWorld();
+        var creature = CreateMonster();
+        
+        // Test at sector boundary (32-tile boundary)
+        var fromLocation = CreateLocation(x: 31, y: 31, z: 7);
+        var toLocation = CreateLocation(x: 64, y: 64, z: 7);
+
+        // Create sectors by adding tiles
+        world.AddTile(CreateStaticTile(fromLocation), fromLocation);
+        world.AddTile(CreateStaticTile(toLocation), toLocation);
+
+        var fromSector = world.GetSector(fromLocation.X, fromLocation.Y);
+        var toSector = world.GetSector(toLocation.X, toLocation.Y);
+        
+        fromSector.AddCreature(creature);
+
+        // Act
+        world.SwapCreatureBetweenSectors(creature, fromLocation, toLocation);
+
+        // Assert
+        fromSector.Creatures.Should().NotContain(creature);
+        toSector.Creatures.Should().Contain(creature);
     }
 }

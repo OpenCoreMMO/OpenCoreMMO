@@ -45,18 +45,17 @@ public class Map : IMap
         return this[location];
     }
 
-    public void SwapCreatureBetweenSectors(ICreature creature, Location fromLocation, Location toLocation)
-    {
-        var oldSector = _world.GetSector(fromLocation.X, fromLocation.Y);
-        var newSector = _world.GetSector(toLocation.X, toLocation.Y);
+    public void SwapCreatureBetweenSectors(ICreature creature, Location fromLocation, Location toLocation) => _world.SwapCreatureBetweenSectors(creature, fromLocation, toLocation);
 
-        if (oldSector != newSector)
-        {
-            oldSector.RemoveCreature(creature);
-            newSector.AddCreature(creature);
-        }
-    }
-
+    /// <summary>
+    /// Determines whether the current location is within a valid range of the target location
+    /// based on the specified start location and path search parameters.
+    /// </summary>
+    /// <param name="start">The starting location for the range check.</param>
+    /// <param name="current">The current location to validate.</param>
+    /// <param name="target">The target location to check the range against.</param>
+    /// <param name="fpp">The path search parameters that define range constraints.</param>
+    /// <returns>Returns true if the current location is within the valid range of the target location; otherwise, false.</returns>
     public bool IsInRange(Location start, Location current, Location target, FindPathParams fpp)
     {
         if (fpp.FullPathSearch)
