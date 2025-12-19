@@ -27,7 +27,7 @@ public static class EventInjection
 
     private static void RegisterServerEvents(this IServiceCollection builder)
     {
-        var assembly = Assembly.GetAssembly(typeof(CreatureAddedOnMapEventHandler));
+        var assembly = Assembly.GetAssembly(typeof(CreatureChangedVisibilityEventHandler));
         builder.RegisterAssemblyTypes(assembly);
     }
 
