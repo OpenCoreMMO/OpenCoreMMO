@@ -36,7 +36,7 @@ public interface IMap
     IList<byte> GetFloorDescription(IThing thing, ushort fromX, ushort fromY, byte currentZ, byte width,
         byte height, int verticalOffset, ref int skip);
 
-    IEnumerable<ICreature> GetPlayersAtPositionZone(Location.Structs.Location location);
+    HashSet<ICreature> GetPlayersAtPositionZone(Location.Structs.Location location);
 
     bool IsInRange(Location.Structs.Location start, Location.Structs.Location current, Location.Structs.Location target,
         FindPathParams fpp);
@@ -63,7 +63,7 @@ public interface IMap
     HashSet<ICreature> GetSpectators(Location.Structs.Location location, bool multifloor, bool onlyPlayers,
         int minRangeX, int maxRangeX, int minRangeY, int maxRangeY);
 
-    IEnumerable<ICreature> GetCreaturesAtPositionZone(Location.Structs.Location location, bool onlyPlayers = false);
+    HashSet<ICreature> GetCreaturesAtPositionZone(Location.Structs.Location location, bool onlyPlayers = false);
     bool CanGoToDirection(ICreature creature, Direction direction, ITileEnterRule rule);
     ITile GetTile(Location.Structs.Location location);
     ITile GetFinalTile(ITile toTile);

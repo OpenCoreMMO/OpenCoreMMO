@@ -76,7 +76,7 @@ public class World
         return _region.GetSector(x, y);
     }
 
-    public IEnumerable<ICreature> GetSpectators(ref SpectatorSearch search)
+    internal IEnumerable<ICreature> QuerySpectators(ref SpectatorSearch search)
     {
         return _region.GetSpectators(ref search);
     }
