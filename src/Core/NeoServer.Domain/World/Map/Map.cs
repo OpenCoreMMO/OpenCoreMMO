@@ -1,3 +1,4 @@
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
@@ -7,6 +8,7 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.World.Algorithms;
 using NeoServer.Domain.World.Models;
 using NeoServer.Domain.World.Models.Tiles;
@@ -19,10 +21,12 @@ public class Map : IMap
     private const int MAP_MAX_LAYERS = 16;
     private readonly CylinderOperation _cylinderOperation;
     private readonly World _world;
+    private readonly IEventAggregator _eventAggregator;
 
-    public Map(World world)
+    public Map(World world, IEventAggregator eventAggregator)
     {
         _world = world;
+        _eventAggregator = eventAggregator;
         _cylinderOperation = new CylinderOperation(this);
         TileOperationEvent.OnTileChanged += OnTileChanged;
         TileOperationEvent.OnTileLoaded += OnTileLoaded;
@@ -32,7 +36,6 @@ public class Map : IMap
 
     public static IMap Instance { get; private set; }
 
-    public event PlaceCreatureOnMap OnCreatureAddedOnMap;
     public event RemoveThingFromTile OnThingRemovedFromTile;
     public event AddThingToTile OnThingAddedToTile;
     public event UpdateThingOnTile OnThingUpdatedOnTile;
@@ -45,7 +48,8 @@ public class Map : IMap
         return this[location];
     }
 
-    public void SwapCreatureBetweenSectors(ICreature creature, Location fromLocation, Location toLocation) => _world.SwapCreatureBetweenSectors(creature, fromLocation, toLocation);
+    public void SwapCreatureBetweenSectors(ICreature creature, Location fromLocation, Location toLocation) =>
+        _world.SwapCreatureBetweenSectors(creature, fromLocation, toLocation);
 
     /// <summary>
     /// Determines whether the current location is within a valid range of the target location
@@ -282,7 +286,12 @@ public class Map : IMap
         return GetSpectators(location, multifloor, onlyPlayers, rangeX, rangeY);
     }
 
-
+    /// <summary>
+    /// Retrieves the next tile in the specified direction from the given location.
+    /// </summary>
+    /// <param name="fromLocation">The starting location from which to determine the next tile.</param>
+    /// <param name="direction">The direction in which to locate the next tile.</param>
+    /// <returns>Returns the tile located in the specified direction from the given location.</returns>
     public ITile GetNextTile(Location fromLocation, Direction direction)
     {
         var toLocation = fromLocation.GetNextLocation(direction);
@@ -301,13 +310,16 @@ public class Map : IMap
             creatureAlreadyInTile = tile.HasCreature(creature);
 
             if (!creatureAlreadyInTile)
+            {
                 foreach (var location in tile.Location.Neighbours)
-                    if (this[location] is IDynamicTile { HasAnyCreature: false } t
-                        && !t.HasFlag(TileFlags.Unpassable))
+                {
+                    if (this[location] is IDynamicTile { HasAnyCreature: false } t)
                     {
                         tile = t;
                         break;
                     }
+                }
+            }
         }
 
         if (_cylinderOperation.AddCreature(creature, tile, out var cylinder).Succeeded is false) return;
@@ -320,7 +332,9 @@ public class Map : IMap
         }
 
         if (creature is IWalkableCreature walkableCreature && !creatureAlreadyInTile)
-            OnCreatureAddedOnMap?.Invoke(walkableCreature, cylinder);
+        {
+            _eventAggregator.InvokeEvent(new CreatureAddedOnMapEvent(walkableCreature, cylinder));
+        }
     }
 
     public void RemoveCreature(ICreature creature)

@@ -8,8 +8,6 @@ using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Common.Contracts.World;
 
-public delegate void PlaceCreatureOnMap(IWalkableCreature creature, ICylinder cylinder);
-
 public delegate void RemoveThingFromTile(IThing thing, ICylinder cylinder);
 
 public delegate void AddThingToTile(IThing thing, ICylinder cylinder);
@@ -21,7 +19,6 @@ public interface IMap
     ITile this[Location.Structs.Location location] { get; }
     ITile this[ushort x, ushort y, byte z] { get; }
 
-    event PlaceCreatureOnMap OnCreatureAddedOnMap;
     event RemoveThingFromTile OnThingRemovedFromTile;
     event AddThingToTile OnThingAddedToTile;
     event UpdateThingOnTile OnThingUpdatedOnTile;

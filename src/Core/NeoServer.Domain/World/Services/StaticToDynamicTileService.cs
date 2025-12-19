@@ -13,8 +13,7 @@ public class StaticToDynamicTileService(
     IItemClientServerIdMapStore itemClientServerIdMapStore,
     IItemFactory itemFactory,
     ITileFactory tileFactory,
-    World world,
-    IMap map)
+    World world)
     : IStaticToDynamicTileService
 {
 

@@ -1,4 +1,6 @@
-﻿using NeoServer.Domain.Common.Contracts.Items;
+﻿using Moq;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
@@ -16,7 +18,7 @@ public static class MapTestDataBuilder
     public static IMap Build(params ITile[] tiles)
     {
         var world = new Domain.World.World();
-        var map = new Domain.World.Map.Map(world);
+        var map = new Domain.World.Map.Map(world, new Mock<IEventAggregator>().Object);
 
         foreach (var tile in tiles) world.AddTile(tile);
 
@@ -26,7 +28,7 @@ public static class MapTestDataBuilder
     public static IMap Build(params Func<ITile>[] tiles)
     {
         var world = new Domain.World.World();
-        var map = new Domain.World.Map.Map(world);
+        var map = new Domain.World.Map.Map(world, new Mock<IEventAggregator>().Object);
 
         foreach (var tile in tiles) world.AddTile(tile?.Invoke());
 
@@ -41,7 +43,7 @@ public static class MapTestDataBuilder
         staticTiles ??= [];
 
         var world = new Domain.World.World();
-        var map = new Domain.World.Map.Map(world);
+        var map = new Domain.World.Map.Map(world, new Mock<IEventAggregator>().Object);
 
         for (var x = fromX; x <= toX; x++)
         for (var y = fromY; y <= toY; y++)

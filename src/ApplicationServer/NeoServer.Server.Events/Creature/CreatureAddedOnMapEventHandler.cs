@@ -1,7 +1,9 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Networking.Packets.Outgoing.Creature;
 using NeoServer.Networking.Packets.Outgoing.Effect;
 using NeoServer.Networking.Packets.Outgoing.Item;
@@ -10,7 +12,7 @@ using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Server.Events.Creature;
 
-public class CreatureAddedOnMapEventHandler : IEventHandler
+public class CreatureAddedOnMapEventHandler : INetworkingEventHandler<CreatureAddedOnMapEvent>
 {
     private readonly IGameServer game;
 
@@ -19,7 +21,12 @@ public class CreatureAddedOnMapEventHandler : IEventHandler
         this.game = game;
     }
 
-    public void Execute(IWalkableCreature creature, ICylinder cylinder)
+    public void Handle(CreatureAddedOnMapEvent @event)
+    {
+        Execute(@event.Creature, @event.Cylinder);
+    }
+
+    private void Execute(IWalkableCreature creature, ICylinder cylinder)
     {
         if (Guard.AnyNull(cylinder, cylinder.TileSpectators, creature)) return;
 
