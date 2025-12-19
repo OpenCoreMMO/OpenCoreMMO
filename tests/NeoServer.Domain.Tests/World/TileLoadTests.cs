@@ -1,7 +1,12 @@
-﻿using NeoServer.Domain.Common.Contracts.World.Tiles;
+﻿using Moq;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Items.Events;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
+using NeoServer.Domain.World.Map;
+using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Tests.World;
 
@@ -10,22 +15,22 @@ public class TileLoadTests
     [Fact]
     public void Food_when_loaded_from_map_will_fire_map_event()
     {
-        //arrange
+        // Arrange
+        var mockEventAggregator = new Mock<IEventAggregator>();
         var food = ItemTestDataBuilder.CreateFood(1, 2);
 
-        IDynamicTile TileFunc()
-        {
-            return MapTestDataBuilder.CreateTile(new Location(100, 100, 7), downItems: food);
-        }
+        var world = new Domain.World.World();
+        var tile = MapTestDataBuilder.CreateTile(new Location(100, 100, 7), downItems: food);
+        world.AddTile(tile, new Location(100, 100, 7));
+        
+        var map = new Map(world, mockEventAggregator.Object);
 
-        var map = MapTestDataBuilder.Build((Func<IDynamicTile>)TileFunc);
-
-        using var monitor = map.Monitor();
-
-        //act
+        // Act
         food.Reduce();
 
-        //assert
-        monitor.Should().Raise(nameof(map.OnThingUpdatedOnTile));
+        // Assert
+        mockEventAggregator.Verify(
+            ea => ea.InvokeEvent(It.IsAny<ThingUpdatedOnTileEvent>()),
+            Times.AtLeastOnce);
     }
 }

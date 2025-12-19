@@ -47,9 +47,6 @@ public sealed class EventSubscriber
 
     public void AttachEvents()
     {
-        _map.OnThingAddedToTile += _container.GetRequiredService<ThingAddedToTileEventHandler>().Execute;
-        _map.OnThingUpdatedOnTile += _container.GetRequiredService<ThingUpdatedOnTileEventHandler>().Execute;
-
         BaseSpell.OnSpellInvoked += _container.GetRequiredService<SpellInvokedEventHandler>().Execute;
 
         OperationFailService.OnOperationFailed +=

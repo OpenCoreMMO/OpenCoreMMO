@@ -5,20 +5,12 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
-
 namespace NeoServer.Domain.Common.Contracts.World;
-
-public delegate void AddThingToTile(IThing thing, ICylinder cylinder);
-
-public delegate void UpdateThingOnTile(IThing thing, ICylinder cylinder);
 
 public interface IMap
 {
     ITile this[Location.Structs.Location location] { get; }
     ITile this[ushort x, ushort y, byte z] { get; }
-
-    event AddThingToTile OnThingAddedToTile;
-    event UpdateThingOnTile OnThingUpdatedOnTile;
 
 
     bool ArePlayersAround(Location.Structs.Location location);
@@ -53,5 +45,4 @@ public interface IMap
     HashSet<ICreature> GetCreaturesAtPositionZone(Location.Structs.Location location, bool onlyPlayers = false);
     bool CanGoToDirection(ICreature creature, Direction direction, ITileEnterRule rule);
     ITile GetTile(Location.Structs.Location location);
-    ITile GetFinalTile(ITile toTile);
 }

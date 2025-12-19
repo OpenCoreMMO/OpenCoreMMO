@@ -37,9 +37,6 @@ public class Map : IMap
 
     public static IMap Instance { get; private set; }
 
-    public event AddThingToTile OnThingAddedToTile;
-    public event UpdateThingOnTile OnThingUpdatedOnTile;
-
     public ITile this[Location location] => _world.TryGetTile(ref location, out var tile) ? tile : null;
     public ITile this[ushort x, ushort y, byte z] => this[new Location(x, y, z)];
 
@@ -384,19 +381,17 @@ public class Map : IMap
         return false;
     }
 
+    /// <summary>
+    /// Determines whether the specified creature can move in the given direction based on the provided tile enter rule.
+    /// </summary>
+    /// <param name="creature">The creature attempting to move.</param>
+    /// <param name="direction">The direction in which the creature intends to move.</param>
+    /// <param name="rule">The rule used to evaluate whether the creature is allowed to enter the target tile.</param>
+    /// <returns>Returns true if the creature is allowed to move to the tile in the specified direction; otherwise, false.</returns>
     public bool CanGoToDirection(ICreature creature, Direction direction, ITileEnterRule rule)
     {
         var tile = GetNextTile(creature.Location, direction);
         return rule.ShouldIgnore(tile, creature);
-    }
-
-    public ITile GetFinalTile(ITile toTile)
-    {
-        if (toTile is not IDynamicTile destination) return toTile;
-
-        if (destination.HasHole) return GetFinalTile(this[destination.Location.AddFloors(1)]);
-
-        return toTile;
     }
 
     private void OnTileChanged(ITile tile, IItem item, OperationResultList<IItem> resultList)
@@ -415,12 +410,12 @@ public class Map : IMap
                 case Operation.Updated:
                     if (operation.Item1 is ICumulative cumulativeToUpdate)
                         cumulativeToUpdate.OnReduced += OnItemReduced;
-                    OnThingUpdatedOnTile?.Invoke(operation.Item1,
-                        _cylinderOperation.Updated(operation.Item1, operation.Item1.Amount));
+                    _eventAggregator.InvokeEvent(new ThingUpdatedOnTileEvent(operation.Item1,
+                        _cylinderOperation.Updated(operation.Item1, operation.Item1.Amount)));
                     break;
                 case Operation.Added:
                     if (operation.Item1 is ICumulative cumulativeToAdd) cumulativeToAdd.OnReduced += OnItemReduced;
-                    OnThingAddedToTile?.Invoke(operation.Item1, _cylinderOperation.Added(operation.Item1));
+                    _eventAggregator.InvokeEvent(new ThingAddedToTileEvent(operation.Item1, _cylinderOperation.Added(operation.Item1)));
                     break;
             }
     }
@@ -441,7 +436,7 @@ public class Map : IMap
         if (item.Amount > 0)
         {
             tile.TryGetStackPositionOfItem(item, out var stackPosition);
-            OnThingUpdatedOnTile?.Invoke(item, _cylinderOperation.Removed(item, stackPosition));
+            _eventAggregator.InvokeEvent(new ThingUpdatedOnTileEvent(item, _cylinderOperation.Removed(item, stackPosition)));
         }
     }
 }
