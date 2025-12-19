@@ -45,11 +45,6 @@ public class Map : IMap
         return this[location];
     }
 
-    public void ReplaceTile(ITile newTile)
-    {
-        _world.ReplaceTile(newTile);
-    }
-
     public void SwapCreatureBetweenSectors(ICreature creature, Location fromLocation, Location toLocation)
     {
         var oldSector = _world.GetSector(fromLocation.X, fromLocation.Y);

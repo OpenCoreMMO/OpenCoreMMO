@@ -67,5 +67,4 @@ public interface IMap
     bool CanGoToDirection(ICreature creature, Direction direction, ITileEnterRule rule);
     ITile GetTile(Location.Structs.Location location);
     ITile GetFinalTile(ITile toTile);
-    void ReplaceTile(ITile newTile);
 }
