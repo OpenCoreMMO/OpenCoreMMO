@@ -8,6 +8,7 @@ using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Events;
+using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items.Events;
 using NeoServer.Domain.World.Models;
 using NeoServer.Domain.World.Models.Tiles;
@@ -169,6 +170,18 @@ public class Map : IMap
         }
 
         return tile;
+    }
+
+    /// <summary>
+    /// Retrieves the destination tile of the specified location, considering dynamic tile mechanics.
+    /// </summary>
+    /// <returns>Returns the destination <see cref="ITile"/> if the input is dynamic; otherwise, returns the original tile.</returns>
+    public ITile GetTileDestination(Location location)
+    {
+        var toTile = this[location];
+        if (toTile is not IDynamicTile destination) return toTile;
+
+        return GetTileDestination(destination);
     }
 
     /// <summary>

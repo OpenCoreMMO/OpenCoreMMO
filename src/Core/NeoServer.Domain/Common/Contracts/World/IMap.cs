@@ -12,7 +12,6 @@ public interface IMap
     ITile this[Location.Structs.Location location] { get; }
     ITile this[ushort x, ushort y, byte z] { get; }
 
-
     bool ArePlayersAround(Location.Structs.Location location);
     void PlaceCreature(ICreature creature);
     ITile GetNextTile(Location.Structs.Location fromLocation, Direction direction);
