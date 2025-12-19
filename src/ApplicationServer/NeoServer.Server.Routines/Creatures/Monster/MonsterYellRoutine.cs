@@ -1,4 +1,6 @@
-﻿namespace NeoServer.Server.Routines.Creatures.Monster;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+
+namespace NeoServer.Server.Routines.Creatures.Monster;
 
 public static class MonsterYellRoutine
 {

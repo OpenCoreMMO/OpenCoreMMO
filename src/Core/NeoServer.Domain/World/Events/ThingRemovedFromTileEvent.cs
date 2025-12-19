@@ -2,7 +2,7 @@ using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 
-namespace NeoServer.Domain.Items.Events;
+namespace NeoServer.Domain.World.Events;
 
 /// <summary>
 /// Event raised when a thing (item or creature) is removed from a tile.

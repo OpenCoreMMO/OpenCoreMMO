@@ -8,6 +8,7 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Domain.World.Events;
 using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
 

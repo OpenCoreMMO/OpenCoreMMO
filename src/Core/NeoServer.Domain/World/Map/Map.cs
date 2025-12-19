@@ -10,6 +10,7 @@ using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items.Events;
+using NeoServer.Domain.World.Events;
 using NeoServer.Domain.World.Models;
 using NeoServer.Domain.World.Models.Tiles;
 using MinMax = NeoServer.Domain.Common.MinMax;

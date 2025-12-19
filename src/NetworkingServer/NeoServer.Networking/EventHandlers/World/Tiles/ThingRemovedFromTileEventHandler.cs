@@ -5,13 +5,13 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Creatures.Monster;
-using NeoServer.Domain.Items.Events;
+using NeoServer.Domain.World.Events;
 using NeoServer.Networking.Packets.Outgoing.Effect;
 using NeoServer.Networking.Packets.Outgoing.Item;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Scripts;
 
-namespace NeoServer.Server.Events.Tiles;
+namespace NeoServer.Networking.EventHandlers.World.Tiles;
 
 public class ThingRemovedFromTileEventHandler(IGameServer game, IScriptManager scriptManager)
     : INetworkingEventHandler<ThingRemovedFromTileEvent>

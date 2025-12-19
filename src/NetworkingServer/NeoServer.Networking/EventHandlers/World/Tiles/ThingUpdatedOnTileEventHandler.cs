@@ -2,11 +2,11 @@
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Helpers;
-using NeoServer.Domain.Items.Events;
+using NeoServer.Domain.World.Events;
 using NeoServer.Networking.Packets.Outgoing.Item;
 using NeoServer.Server.Common.Contracts;
 
-namespace NeoServer.Server.Events.Tiles;
+namespace NeoServer.Networking.EventHandlers.World.Tiles;
 
 public class ThingUpdatedOnTileEventHandler : INetworkingEventHandler<ThingUpdatedOnTileEvent>
 {
