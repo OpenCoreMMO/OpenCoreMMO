@@ -1,5 +1,4 @@
 using NeoServer.Domain.Common;
-using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
@@ -10,7 +9,6 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Items.Events;
-using NeoServer.Domain.World.Algorithms;
 using NeoServer.Domain.World.Models;
 using NeoServer.Domain.World.Models.Tiles;
 using MinMax = NeoServer.Domain.Common.MinMax;
@@ -19,7 +17,6 @@ namespace NeoServer.Domain.World.Map;
 
 public class Map : IMap
 {
-    private const int MAP_MAX_LAYERS = 16;
     private readonly CylinderOperation _cylinderOperation;
     private readonly World _world;
     private readonly IEventAggregator _eventAggregator;
