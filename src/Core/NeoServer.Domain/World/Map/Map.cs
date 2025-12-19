@@ -9,6 +9,7 @@ using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Events;
+using NeoServer.Domain.Items.Events;
 using NeoServer.Domain.World.Algorithms;
 using NeoServer.Domain.World.Models;
 using NeoServer.Domain.World.Models.Tiles;
@@ -36,7 +37,6 @@ public class Map : IMap
 
     public static IMap Instance { get; private set; }
 
-    public event RemoveThingFromTile OnThingRemovedFromTile;
     public event AddThingToTile OnThingAddedToTile;
     public event UpdateThingOnTile OnThingUpdatedOnTile;
 
@@ -298,6 +298,10 @@ public class Map : IMap
         return this[toLocation];
     }
 
+    /// <summary>
+    /// Places a specified creature on the map if the conditions for placement are met.
+    /// </summary>
+    /// <param name="creature">The creature to be placed on the map.</param>
     public void PlaceCreature(ICreature creature)
     {
         if (this[creature.Location] is not IDynamicTile tile) return;
@@ -337,6 +341,11 @@ public class Map : IMap
         }
     }
 
+    /// <summary>
+    /// Removes the specified creature from the map, updating its location, notifying relevant spectators,
+    /// and invoking any necessary events for walkable creatures.
+    /// </summary>
+    /// <param name="creature">The creature instance to be removed from the map.</param>
     public void RemoveCreature(ICreature creature)
     {
         if (this[creature.Location] is not DynamicTile tile) return;
@@ -347,57 +356,32 @@ public class Map : IMap
 
         //Notify all spectators about the creature's disappearance
         foreach (var cylinderSpectator in cylinder.TileSpectators)
+        {
             cylinderSpectator.Spectator.OnCreatureDisappear(creature);
+        }
 
         if (creature is IWalkableCreature walkableCreature)
-            OnThingRemovedFromTile?.Invoke(walkableCreature, cylinder);
+        {
+            _eventAggregator.InvokeEvent(new ThingRemovedFromTileEvent(walkableCreature, cylinder));
+        }
     }
 
+    /// <summary>
+    /// Checks if there are any players around the specified location who can see it.
+    /// </summary>
+    /// <param name="location">The location to check for nearby players.</param>
+    /// <returns>Returns true if there are players around the location who can see it; otherwise, false.</returns>
     public bool ArePlayersAround(Location location)
     {
         foreach (var player in GetPlayersAtPositionZone(location))
-            if (player.CanSee(location))
-                return true;
-        return false;
-    }
-
-    public void PropagateAttack(ICombatActor actor, CombatDamage damage, AffectedLocation[] area)
-    {
-        foreach (var coordinate in area)
         {
-            var location = coordinate.Point.Location;
-            var tile = this[location];
-
-            if (tile is not IDynamicTile walkableTile || walkableTile.HasFlag(TileFlags.Unpassable) ||
-                walkableTile.ProtectionZone)
+            if (player.CanSee(location))
             {
-                coordinate.MarkAsMissed();
-                continue;
-            }
-
-            if (!SightClear.IsSightClear(this, actor.Location, location, false))
-            {
-                coordinate.MarkAsMissed();
-                continue;
-            }
-
-            var targetCreatures = walkableTile.Creatures?.ToArray();
-
-            if (targetCreatures is null) continue;
-
-            foreach (var target in targetCreatures)
-            {
-                if (actor == target) continue;
-
-                if (target is not ICombatActor targetCreature)
-                {
-                    coordinate.MarkAsMissed();
-                    continue;
-                }
-
-                targetCreature.TakeDamage(actor, damage);
+                return true;
             }
         }
+
+        return false;
     }
 
     public void CreateBloodPool(ILiquid pool, IDynamicTile tile)
@@ -431,8 +415,8 @@ public class Map : IMap
                 case Operation.Removed:
                     if (operation.Item1 is ICumulative cumulativeToRemove)
                         cumulativeToRemove.OnReduced -= OnItemReduced;
-                    OnThingRemovedFromTile?.Invoke(operation.Item1,
-                        _cylinderOperation.Removed(operation.Item1, operation.Item3));
+                    _eventAggregator.InvokeEvent(new ThingRemovedFromTileEvent(operation.Item1,
+                        _cylinderOperation.Removed(operation.Item1, operation.Item3)));
                     break;
                 case Operation.Updated:
                     if (operation.Item1 is ICumulative cumulativeToUpdate)

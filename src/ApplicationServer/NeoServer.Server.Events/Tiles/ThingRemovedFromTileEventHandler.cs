@@ -1,9 +1,11 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Creatures.Monster;
+using NeoServer.Domain.Items.Events;
 using NeoServer.Networking.Packets.Outgoing.Effect;
 using NeoServer.Networking.Packets.Outgoing.Item;
 using NeoServer.Server.Common.Contracts;
@@ -12,8 +14,14 @@ using NeoServer.Server.Common.Contracts.Scripts;
 namespace NeoServer.Server.Events.Tiles;
 
 public class ThingRemovedFromTileEventHandler(IGameServer game, IScriptManager scriptManager)
+    : INetworkingEventHandler<ThingRemovedFromTileEvent>
 {
-    public void Execute(IThing thing, ICylinder cylinder)
+    public void Handle(ThingRemovedFromTileEvent @event)
+    {
+        Execute(@event.Thing, @event.Cylinder);
+    }
+
+    private void Execute(IThing thing, ICylinder cylinder)
     {
         if (Guard.AnyNull(cylinder, cylinder.TileSpectators, thing)) return;
 

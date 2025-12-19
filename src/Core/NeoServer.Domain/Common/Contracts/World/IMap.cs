@@ -8,8 +8,6 @@ using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Domain.Common.Contracts.World;
 
-public delegate void RemoveThingFromTile(IThing thing, ICylinder cylinder);
-
 public delegate void AddThingToTile(IThing thing, ICylinder cylinder);
 
 public delegate void UpdateThingOnTile(IThing thing, ICylinder cylinder);
@@ -19,7 +17,6 @@ public interface IMap
     ITile this[Location.Structs.Location location] { get; }
     ITile this[ushort x, ushort y, byte z] { get; }
 
-    event RemoveThingFromTile OnThingRemovedFromTile;
     event AddThingToTile OnThingAddedToTile;
     event UpdateThingOnTile OnThingUpdatedOnTile;
 
@@ -36,7 +33,6 @@ public interface IMap
     HashSet<ICreature> GetCreaturesAtPositionZone(Location.Structs.Location location,
         Location.Structs.Location toLocation);
 
-    void PropagateAttack(ICombatActor actor, CombatDamage damage, AffectedLocation[] area);
     void CreateBloodPool(ILiquid liquid, IDynamicTile tile);
     ITile GetTileDestination(ITile tile);
     void RemoveCreature(ICreature creature);

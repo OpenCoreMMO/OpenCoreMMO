@@ -47,7 +47,6 @@ public sealed class EventSubscriber
 
     public void AttachEvents()
     {
-        _map.OnThingRemovedFromTile += _container.GetRequiredService<ThingRemovedFromTileEventHandler>().Execute;
         _map.OnThingAddedToTile += _container.GetRequiredService<ThingAddedToTileEventHandler>().Execute;
         _map.OnThingUpdatedOnTile += _container.GetRequiredService<ThingUpdatedOnTileEventHandler>().Execute;
 

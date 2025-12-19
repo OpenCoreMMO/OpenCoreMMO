@@ -341,15 +341,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
         return new DamageResult(damages, wasDamaged);
     }
-
-    public void PropagateAttack(AffectedLocation[] area, CombatDamage damage)
-    {
-        if (IsDead) return;
-        if (damage.Damage <= 0) return;
-
-        OnPropagateAttack?.Invoke(this, damage, area);
-    }
-
+    
     public abstract void SetAsEnemy(ICreature actor);
 
     public void IncreaseDamageReceived(byte percentage)
@@ -375,11 +367,6 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     public virtual void PreAttack(CombatContext combatContext)
     {
         Cooldowns.Start(combatContext.CombatParameters.CooldownType, combatContext.CombatParameters.CooldownDuration);
-    }
-
-    public void PropagateAttack(AffectedLocation area, CombatDamage damage)
-    {
-        PropagateAttack([area], damage);
     }
 
     public virtual CalculatedAttackDamage CalculateAttackDamage()
@@ -471,7 +458,6 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     public event BlockAttack OnBlockedAttack;
     public event BeforeDeath OnBeforeDeath;
     public event AttackTargetChange OnTargetChanged;
-    public event PropagateAttack OnPropagateAttack;
     public event GainExperience OnGainedExperience;
     public event LoseExperience OnLoseExperience;
     public event DropLoot OnDroppedLoot;

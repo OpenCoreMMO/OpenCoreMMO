@@ -24,8 +24,6 @@ public delegate void UseSpell(ICreature creature, ISpell spell);
 
 public delegate void ChangeVisibility(ICombatActor actor);
 
-public delegate void PropagateAttack(ICombatActor actor, CombatDamage damage, AffectedLocation[] area);
-
 public delegate void DropLoot(ICombatActor actor, Loot loot);
 
 public interface ICombatActor : IWalkableCreature
@@ -51,7 +49,6 @@ public interface ICombatActor : IWalkableCreature
     event BeforeDeath OnBeforeDeath;
     event StopAttack OnStoppedAttack;
     event AttackTargetChange OnTargetChanged;
-    event PropagateAttack OnPropagateAttack;
     event GainExperience OnGainedExperience;
 
     int DefendUsingArmor(int attack);
@@ -76,7 +73,6 @@ public interface ICombatActor : IWalkableCreature
     DamageResult TakeDamage(IThing enemy, CombatDamageList damages);
 
     DamageResult TakeDamage(IThing enemy, CombatDamage damages);
-    void PropagateAttack(AffectedLocation[] area, CombatDamage damage);
 
     /// <summary>
     ///     Set creature as enemy. If monster can't see creature it will be forgotten
