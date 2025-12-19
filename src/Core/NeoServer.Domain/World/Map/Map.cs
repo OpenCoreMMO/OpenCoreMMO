@@ -384,12 +384,6 @@ public class Map : IMap
         return false;
     }
 
-    public void CreateBloodPool(ILiquid pool, IDynamicTile tile)
-    {
-        tile.RemoveItem(pool.Metadata.Group);
-        tile.AddItem(pool);
-    }
-
     public bool CanGoToDirection(ICreature creature, Direction direction, ITileEnterRule rule)
     {
         var tile = GetNextTile(creature.Location, direction);

@@ -546,6 +546,17 @@ public class DynamicTile : BaseTile, IDynamicTile
             new OperationResultList<IItem>(Operation.Updated, toItem, stackPosition));
     }
 
+    /// <summary>
+    /// Replaces an existing item on the tile by removing all items belonging to the same group
+    /// and then adding the specified item.
+    /// </summary>
+    /// <param name="item">The item to add, which will replace any existing items of the same group.</param>
+    public void ReplaceItemByGroup(IItem item)
+    {
+        RemoveItem(item.Metadata.Group);
+        AddItem(item);
+    }
+
     public uint PossibleAmountToAdd(IItem thing, byte? toPosition = null)
     {
         var freeSpace = 10 - (DownItems?.Count ?? 0);

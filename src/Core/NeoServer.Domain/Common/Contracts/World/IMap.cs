@@ -33,7 +33,6 @@ public interface IMap
     HashSet<ICreature> GetCreaturesAtPositionZone(Location.Structs.Location location,
         Location.Structs.Location toLocation);
 
-    void CreateBloodPool(ILiquid liquid, IDynamicTile tile);
     ITile GetTileDestination(ITile tile);
     void RemoveCreature(ICreature creature);
 
