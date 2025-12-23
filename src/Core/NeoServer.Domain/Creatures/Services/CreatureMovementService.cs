@@ -43,7 +43,7 @@ public class CreatureMovementService(
     /// <returns>True if movement succeeded, false otherwise.</returns>
     public bool MoveCreature(ICreature creature, Location location, bool forced = false, bool isTeleport = false)
     {
-        if (TryMoveCreature(creature, location, forced: forced, isTeleport: isTeleport)) return true;
+        if (TryMoveCreature(creature, location, forced, isTeleport)) return true;
 
         OperationFailService.Send(creature.CreatureId, TextConstants.NOT_POSSIBLE);
         return false;
@@ -109,7 +109,7 @@ public class CreatureMovementService(
         creature.OnMoving(tileDestination);
 
         // Perform the movement using cylinder operation for atomic updates and spectator notifications.
-        var result = cylinderOperation.MoveCreature(creature, fromTile, toTile, 1, forced: forced, out var cylinder);
+        var result = cylinderOperation.MoveCreature(creature, fromTile, toTile, 1, forced, out var cylinder);
         if (!result.Succeeded) return false;
 
         // Notify the creature and spectators of the movement.
@@ -132,7 +132,7 @@ public class CreatureMovementService(
         if (isTeleport) return true;
 
         // If there's a redirect destination, recursively attempt to move there.
-        TryMoveCreature(creature, tileDestination.Location, forced: true);
+        TryMoveCreature(creature, tileDestination.Location, true);
 
         return true;
     }

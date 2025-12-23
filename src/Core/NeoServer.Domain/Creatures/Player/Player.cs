@@ -1394,6 +1394,16 @@ public class Player : CombatActor, IPlayer
         return base.TakeDamage(enemy, damages);
     }
 
+    public void HealSoul(ushort increasing)
+    {
+        if (increasing <= 0) return;
+
+        if (SoulPoints == MaxSoulPoints) return;
+
+        SoulPoints = SoulPoints + increasing >= MaxSoulPoints ? MaxSoulPoints : (byte)(SoulPoints + increasing);
+        OnStatusChanged?.Invoke(this);
+    }
+
     public long ApplyStaminaEffectOnExperienceGain(long experience)
     {
         if (HasNoStamina) return 0;
@@ -1644,35 +1654,22 @@ public class Player : CombatActor, IPlayer
         return Inventory.HasShield && base.CanBlock(damage);
     }
 
-    public void HealSoul(ushort increasing)
-    {
-        if (increasing <= 0) return;
-
-        if (SoulPoints == MaxSoulPoints) return;
-
-        SoulPoints = SoulPoints + increasing >= MaxSoulPoints ? MaxSoulPoints : (byte)(SoulPoints + increasing);
-        OnStatusChanged?.Invoke(this);
-    }
-
     public override void OnDamage(IThing enemy, CombatDamageList damages)
     {
         SetLogoutBlock();
 
         var totalDamage = damages.TotalDamage;
 
-        if (totalDamage.ManaDamage > 0)
-        {
-            DecreaseMana(totalDamage.ManaDamage);
-        }
+        if (totalDamage.ManaDamage > 0) DecreaseMana(totalDamage.ManaDamage);
 
         if (IsManaShieldEnabled && Mana > 0)
         {
             var totalHealthDamage = Math.Min(totalDamage.HealthDamage, (int)Mana);
             damages.ReduceHealthDamage(totalHealthDamage);
-          
+
             DecreaseMana((uint)totalHealthDamage);
             damages.AddDamage(new CombatDamage((ushort)totalHealthDamage, DamageType.ManaDrain));
-            
+
             totalDamage = damages.TotalDamage;
         }
 

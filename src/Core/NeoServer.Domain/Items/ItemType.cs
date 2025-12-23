@@ -129,6 +129,8 @@ public class ItemType : IItemType
         if (Locked) throw new InvalidOperationException("This ItemType is locked and cannot be altered.");
     }
 
+    public byte TopOrder { get; set; }
+
     public void SetSpeed(ushort speed)
     {
         Attributes.SetAttribute(ItemTypeAttribute.Speed, speed);
@@ -244,6 +246,4 @@ public class ItemType : IItemType
         ThrowIfLocked();
         TopOrder = topOrder;
     }
-
-    public byte TopOrder { get; set; }
 }

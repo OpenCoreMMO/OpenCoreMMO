@@ -44,7 +44,7 @@ public class TestSetup
         var cancellationTokenSource = new CancellationTokenSource();
         var cancellationToken = cancellationTokenSource.Token;
         GameAssemblyCache.Load();
-        
+
         var (serverConfiguration, _, logConfiguration) = (container.Resolve<ServerConfiguration>(),
             container.Resolve<GameConfiguration>(), container.Resolve<LogConfiguration>());
 
@@ -66,13 +66,13 @@ public class TestSetup
 
         container.Resolve<ItemTypeLoader>().Load();
         container.Resolve<QuestDataLoader>().Load();
-        
+
         container.Resolve<VocationLoader>().Load();
         container.Resolve<SpellLoader>().Load();
 
         container.Resolve<MonsterLoader>().Load();
         container.Resolve<GroupLoader>().Load();
-        
+
         container.Resolve<WorldLoader>().Load(await otbmLoadTask);
         container.Resolve<SpawnLoader>().Load();
 

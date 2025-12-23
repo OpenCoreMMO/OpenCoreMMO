@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Creatures;
+﻿using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers.Player;
 

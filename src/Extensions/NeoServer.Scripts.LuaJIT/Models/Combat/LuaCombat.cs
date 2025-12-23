@@ -8,6 +8,7 @@ using NeoServer.Domain.Common.Location;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Models.Callbacks;
 using NeoServer.Scripts.LuaJIT.Parsers;
+using ShootType = NeoServer.Domain.Common.Item.ShootType;
 
 namespace NeoServer.Scripts.LuaJIT.Models.Combat;
 
@@ -75,7 +76,7 @@ public class LuaCombat : Script
         {
             DamageType = ((CombatType)combatType).ToDamageType(),
             Effect = (EffectT)effect,
-            ShootType = (Domain.Common.Item.ShootType)shootType,
+            ShootType = (ShootType)shootType,
             MinDamage = (ushort)damageValues.Min,
             MaxDamage = (ushort)damageValues.Max,
             Range = 7,

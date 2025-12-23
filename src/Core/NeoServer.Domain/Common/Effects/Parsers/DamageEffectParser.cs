@@ -38,10 +38,7 @@ public static class DamageEffectParser
                 _ => EffectT.XBlood
             };
 
-        if (creature is IPlayer { IsManaShieldEnabled: true })
-        {
-            return EffectT.RingsBlue;
-        }
+        if (creature is IPlayer { IsManaShieldEnabled: true }) return EffectT.RingsBlue;
 
         return Parse(damageType);
     }

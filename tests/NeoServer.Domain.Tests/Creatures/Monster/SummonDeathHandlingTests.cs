@@ -227,7 +227,7 @@ public class SummonDeathHandlingTests
         summon.SetNewLocation(new Location(100, 101, 7));
         var enemy = PlayerTestDataBuilder.Build();
         summon.SetNewLocation(new Location(100, 102, 7));
-        
+
         // Act
         master.SetAttackTarget(enemy);
 

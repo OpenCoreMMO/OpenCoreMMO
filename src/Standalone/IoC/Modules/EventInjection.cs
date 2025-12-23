@@ -5,7 +5,6 @@ using NeoServer.Domain.Common.Contracts.Chats;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Networking.EventHandlers;
-using NeoServer.Networking.EventHandlers.World;
 using NeoServer.Server.Events.Creature;
 using NeoServer.Server.Events.Subscribers;
 

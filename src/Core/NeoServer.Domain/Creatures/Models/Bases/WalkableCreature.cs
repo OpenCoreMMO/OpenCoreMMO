@@ -14,9 +14,9 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     private readonly Queue<Direction> _walkingQueue = new();
 
     protected readonly IMapTool MapTool;
+    private bool _forceUpdateFollowPath;
     private uint _lastStepCost = 1;
     private uint _walkUpdateTicks;
-    private bool _forceUpdateFollowPath;
 
     protected WalkableCreature(ICreatureType type,
         IMapTool mapTool,
@@ -66,7 +66,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     {
         if (direction is Direction.None) return;
         if (direction == Direction) return;
-        
+
         SetDirection(direction);
         OnTurnedToDirection?.Invoke(this, direction);
     }
@@ -158,7 +158,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
         Following = creature;
         _forceUpdateFollowPath = false;
-        
+
         StartFollowing(creature);
         OnStartedFollowing?.Invoke(this, creature, fpp);
     }
@@ -238,6 +238,23 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         ChangeSpeedLevel(Math.Max(0, Speed - speedBoost));
     }
 
+    public override void OnSpectatorMoved(ICreature spectator)
+    {
+        if (Equals(spectator, Following)) //followed creature moved
+        {
+            // If we have no more steps in our walk queue, immediately recalculate the follow path
+            if (!HasNextStep && HasFollowPath)
+            {
+                _forceUpdateFollowPath = false;
+                Follow(Following);
+            }
+            else
+            {
+                _forceUpdateFollowPath = true;
+            }
+        }
+    }
+
     protected bool WalkRandomStep(Location origin, int maxStepsFromOrigin = 1)
     {
         var direction = GetRandomStep(origin, maxStepsFromOrigin);
@@ -303,23 +320,6 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     private Direction GetRandomStep(Location origin, int maxStepsFromOrigin = 1)
     {
         return MapTool.PathFinder.FindRandomStep(this, TileEnterRule, origin, maxStepsFromOrigin);
-    }
-
-    public override void OnSpectatorMoved(ICreature spectator)
-    {
-        if (Equals(spectator, Following)) //followed creature moved
-        {
-            // If we have no more steps in our walk queue, immediately recalculate the follow path
-            if (!HasNextStep && HasFollowPath)
-            {
-                _forceUpdateFollowPath = false;
-                Follow(Following);
-            }
-            else
-            {
-                _forceUpdateFollowPath = true;
-            }
-        }
     }
 
     public bool TryUpdatePath(Direction[] newPath)

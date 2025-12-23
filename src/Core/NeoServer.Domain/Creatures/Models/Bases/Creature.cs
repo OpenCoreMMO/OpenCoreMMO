@@ -165,7 +165,10 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         return CanSee(pos, (int)MapViewPort.MaxViewPortX, (int)MapViewPort.MaxViewPortY);
     }
 
-    public virtual bool IsThinking() => true;
+    public virtual bool IsThinking()
+    {
+        return true;
+    }
 
     public virtual byte Emblem { get; } // TODO: implement.
     public bool IsHealthHidden { get; set; }
@@ -229,6 +232,25 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         SetLight(0, 0);
     }
 
+    public virtual bool CanSee(Location pos, int viewRangeX, int viewRangeY, int limitRangeOffset = 0)
+    {
+        if (Location.IsSurface || Location.IsAboveSurface)
+        {
+            if (pos.IsUnderground) return false;
+        }
+        else if (Location.IsUnderground)
+        {
+            if (Math.Abs(Location.Z - pos.Z) > 2) return false;
+        }
+
+        var offsetZ = Location.Z - pos.Z;
+
+        return pos.X >= Location.X - viewRangeX + offsetZ &&
+               pos.X <= Location.X + viewRangeX + limitRangeOffset + offsetZ &&
+               pos.Y >= Location.Y - viewRangeY + offsetZ &&
+               pos.Y <= Location.Y + viewRangeY + limitRangeOffset + offsetZ;
+    }
+
     public bool Equals([AllowNull] Creature other)
     {
         return this == other;
@@ -257,25 +279,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
             Head = type.Look.TryGetValue(LookType.Head, out var head) ? (byte)head : default,
             Legs = type.Look.TryGetValue(LookType.Legs, out var legs) ? (byte)legs : default
         };
-    }
-
-    public virtual bool CanSee(Location pos, int viewRangeX, int viewRangeY, int limitRangeOffset = 0)
-    {
-        if (Location.IsSurface || Location.IsAboveSurface)
-        {
-            if (pos.IsUnderground) return false;
-        }
-        else if (Location.IsUnderground)
-        {
-            if (Math.Abs(Location.Z - pos.Z) > 2) return false;
-        }
-
-        var offsetZ = Location.Z - pos.Z;
-
-        return pos.X >= Location.X - viewRangeX + offsetZ &&
-               pos.X <= Location.X + viewRangeX + limitRangeOffset + offsetZ &&
-               pos.Y >= Location.Y - viewRangeY + offsetZ &&
-               pos.Y <= Location.Y + viewRangeY + limitRangeOffset + offsetZ;
     }
 
     protected void ExecuteNextAction(ICreature creature)

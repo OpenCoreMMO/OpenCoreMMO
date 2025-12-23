@@ -24,7 +24,7 @@ spell:name("Desintegrate")
 spell:words("adito tera")
 spell:group("support")
 spell:vocation("none;true", "knight;true", "elite knight;true", "paladin;true", "royal paladin;true", "sorcerer;true",
-    "master sorcerer;true", "druid;true", "elder druid;true")
+        "master sorcerer;true", "druid;true", "elder druid;true")
 spell:id(207)
 spell:cooldown(2 * 1000)
 spell:groupCooldown(2 * 1000)

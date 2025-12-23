@@ -114,17 +114,17 @@ public readonly struct ExtraAttack
 
 public class AreaAttackParameter
 {
+    public Coordinate[] Coordinates { get; private set; }
+    public EffectT Effect { get; private set; }
+    public bool ExcludeOrigin { get; private set; }
+    public bool IsEmpty => (Coordinates?.Length ?? 0) == 0;
+
     public void SetArea(Coordinate[] coordinates, EffectT effect, bool excludeOrigin = false)
     {
         Coordinates = coordinates;
         Effect = effect;
         ExcludeOrigin = false;
     }
-
-    public Coordinate[] Coordinates { get; private set; }
-    public EffectT Effect { get; private set; }
-    public bool ExcludeOrigin { get; private set; }
-    public bool IsEmpty => (Coordinates?.Length ?? 0) == 0;
 }
 
 public readonly struct AffectedLocation2(Coordinate coordinate, bool missed)

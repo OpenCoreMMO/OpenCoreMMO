@@ -376,25 +376,21 @@ public enum EventCallbackType : ushort
 // Struct
 public class LuaVariant
 {
-    public LuaVariantType Type = LuaVariantType.VARIANT_NONE;
-    public string Text;
     public string InstantName;
-    public string RuneName;
-    public Location Pos;
     public uint Number = 0;
-
-    public LuaVariant()
-    {
-    }
+    public Location Pos;
+    public string RuneName;
+    public string Text;
+    public LuaVariantType Type = LuaVariantType.VARIANT_NONE;
 }
 
 public class LuaTimerEventDesc
 {
-    public int ScriptId = -1;
-    public string ScriptName;
+    public uint EventId;
     public int Function = -1;
     public List<int> Parameters;
-    public uint EventId = 0;
+    public int ScriptId = -1;
+    public string ScriptName;
 
     public LuaTimerEventDesc()
     {

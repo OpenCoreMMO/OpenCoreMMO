@@ -1,10 +1,8 @@
-using FluentAssertions;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.World.Models.Tiles;
-using Xunit;
 
 namespace NeoServer.Domain.Tests.World;
 
@@ -32,7 +30,7 @@ public class WorldTests
 
     private static IMonster CreateMonster(string name = "TestMonster", uint health = 100)
     {
-        return MonsterTestDataBuilder.Build(maxHealth: health, name: name);
+        return MonsterTestDataBuilder.Build(health, name: name);
     }
 
     [Fact]
@@ -62,7 +60,7 @@ public class WorldTests
     {
         // Arrange
         var world = CreateWorld();
-        var location = CreateLocation(x: 500, y: 500, z: 7);
+        var location = CreateLocation(500, 500, 7);
         var tile = CreateDynamicTile(location);
 
         // Act
@@ -101,7 +99,7 @@ public class WorldTests
         // Arrange
         var world = CreateWorld();
         var locationZ7 = CreateLocation(z: 7);
-        var locationZ8 = CreateLocation(x: 100, y: 100, z: 8);
+        var locationZ8 = CreateLocation(100, 100, 8);
         var tileZ7 = CreateStaticTile(locationZ7);
         var tileZ8 = CreateDynamicTile(locationZ8);
 
@@ -145,7 +143,7 @@ public class WorldTests
     {
         // Arrange
         var world = CreateWorld();
-        var location = CreateLocation(x: ushort.MaxValue, y: ushort.MaxValue, z: 15);
+        var location = CreateLocation(ushort.MaxValue, ushort.MaxValue, 15);
         var originalTile = CreateStaticTile(location);
         var replacementTile = CreateDynamicTile(location);
 
@@ -165,8 +163,8 @@ public class WorldTests
     {
         // Arrange
         var world = CreateWorld();
-        var location1 = CreateLocation(x: 100, y: 100, z: 7);
-        var location2 = CreateLocation(x: 200, y: 200, z: 7);
+        var location1 = CreateLocation(100, 100, 7);
+        var location2 = CreateLocation(200, 200, 7);
         var tile1 = CreateStaticTile(location1);
         var tile2 = CreateDynamicTile(location2);
         var replacementTile1 = CreateDynamicTile(location1);
@@ -192,11 +190,11 @@ public class WorldTests
         // Arrange
         var world = CreateWorld();
         var creature = CreateMonster();
-        
+
         // Sector 1 coordinates (32, 32) - different from Sector 2
-        var fromLocation = CreateLocation(x: 32, y: 32, z: 7);
+        var fromLocation = CreateLocation(32, 32, 7);
         // Sector 2 coordinates (96, 96) - 64+ tiles away to ensure different sector
-        var toLocation = CreateLocation(x: 96, y: 96, z: 7);
+        var toLocation = CreateLocation(96, 96, 7);
 
         // Create sectors by adding tiles
         world.AddTile(CreateStaticTile(fromLocation), fromLocation);
@@ -222,10 +220,10 @@ public class WorldTests
         // Arrange
         var world = CreateWorld();
         var creature = CreateMonster();
-        
+
         // Both locations in same sector (within 32 tile range)
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 110, y: 110, z: 7);
+        var fromLocation = CreateLocation(100, 100, 7);
+        var toLocation = CreateLocation(110, 110, 7);
 
         // Create sector by adding tile
         world.AddTile(CreateStaticTile(fromLocation), fromLocation);
@@ -249,9 +247,9 @@ public class WorldTests
         // Arrange
         var world = CreateWorld();
         var creature = CreateMonster();
-        
-        var fromLocation = CreateLocation(x: 32, y: 32, z: 7);
-        var toLocation = CreateLocation(x: 128, y: 128, z: 7);
+
+        var fromLocation = CreateLocation(32, 32, 7);
+        var toLocation = CreateLocation(128, 128, 7);
 
         // Create sectors by adding tiles
         world.AddTile(CreateStaticTile(fromLocation), fromLocation);
@@ -274,9 +272,9 @@ public class WorldTests
         // Arrange
         var world = CreateWorld();
         var creature = CreateMonster();
-        
-        var fromLocation = CreateLocation(x: 32, y: 32, z: 7);
-        var toLocation = CreateLocation(x: 128, y: 128, z: 7);
+
+        var fromLocation = CreateLocation(32, 32, 7);
+        var toLocation = CreateLocation(128, 128, 7);
 
         // Create sectors by adding tiles
         world.AddTile(CreateStaticTile(fromLocation), fromLocation);
@@ -284,7 +282,7 @@ public class WorldTests
 
         var fromSector = world.GetSector(fromLocation.X, fromLocation.Y);
         var toSector = world.GetSector(toLocation.X, toLocation.Y);
-        
+
         fromSector.AddCreature(creature);
         var initialToSectorCount = toSector.Creatures.Count;
 
@@ -303,9 +301,9 @@ public class WorldTests
         // Arrange
         var world = CreateWorld();
         var creature = CreateMonster();
-        
-        var fromLocation = CreateLocation(x: 0, y: 0, z: 7);
-        var toLocation = CreateLocation(x: 192, y: 192, z: 7);
+
+        var fromLocation = CreateLocation(0, 0, 7);
+        var toLocation = CreateLocation(192, 192, 7);
 
         // Create sectors by adding tiles
         world.AddTile(CreateStaticTile(fromLocation), fromLocation);
@@ -313,7 +311,7 @@ public class WorldTests
 
         var fromSector = world.GetSector(fromLocation.X, fromLocation.Y);
         var toSector = world.GetSector(toLocation.X, toLocation.Y);
-        
+
         fromSector.AddCreature(creature);
 
         // Act
@@ -330,11 +328,11 @@ public class WorldTests
     {
         // Arrange
         var world = CreateWorld();
-        var creature1 = CreateMonster(name: "Monster1");
-        var creature2 = CreateMonster(name: "Monster2");
-        
-        var fromLocation = CreateLocation(x: 50, y: 50, z: 7);
-        var toLocation = CreateLocation(x: 150, y: 150, z: 7);
+        var creature1 = CreateMonster("Monster1");
+        var creature2 = CreateMonster("Monster2");
+
+        var fromLocation = CreateLocation(50, 50, 7);
+        var toLocation = CreateLocation(150, 150, 7);
 
         // Create sectors by adding tiles
         world.AddTile(CreateStaticTile(fromLocation), fromLocation);
@@ -342,7 +340,7 @@ public class WorldTests
 
         var fromSector = world.GetSector(fromLocation.X, fromLocation.Y);
         var toSector = world.GetSector(toLocation.X, toLocation.Y);
-        
+
         fromSector.AddCreature(creature1);
         fromSector.AddCreature(creature2);
 
@@ -364,10 +362,10 @@ public class WorldTests
         // Arrange
         var world = CreateWorld();
         var creature = CreateMonster();
-        
+
         // Test at sector boundary (32-tile boundary)
-        var fromLocation = CreateLocation(x: 31, y: 31, z: 7);
-        var toLocation = CreateLocation(x: 64, y: 64, z: 7);
+        var fromLocation = CreateLocation(31, 31, 7);
+        var toLocation = CreateLocation(64, 64, 7);
 
         // Create sectors by adding tiles
         world.AddTile(CreateStaticTile(fromLocation), fromLocation);
@@ -375,7 +373,7 @@ public class WorldTests
 
         var fromSector = world.GetSector(fromLocation.X, fromLocation.Y);
         var toSector = world.GetSector(toLocation.X, toLocation.Y);
-        
+
         fromSector.AddCreature(creature);
 
         // Act

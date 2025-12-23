@@ -12,7 +12,6 @@ using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Map;
-using NeoServer.Domain.World.Services;
 
 namespace NeoServer.Domain.Tests.World;
 
@@ -25,11 +24,12 @@ public class MapMoveCreatureTest
         var player = PlayerTestDataBuilder.Build(map: sut);
         player.SetNewLocation(new Location(50, 50, 7));
         sut.PlaceCreature(player);
-        
+
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
 
         var creatureMovementService =
-            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut), staticToDynamicTileServiceMock.Object);
+            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut),
+                staticToDynamicTileServiceMock.Object);
 
         var result = creatureMovementService.MoveCreature(player, new Location(51, 50, 7));
 
@@ -45,11 +45,12 @@ public class MapMoveCreatureTest
 
         player.SetNewLocation(new Location(50, 50, 7));
         sut.PlaceCreature(player);
-        
+
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
 
         var creatureMovementService =
-            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut), staticToDynamicTileServiceMock.Object);
+            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut),
+                staticToDynamicTileServiceMock.Object);
 
         var result = creatureMovementService.MoveCreature(player, new Location(53, 50, 7));
 
@@ -80,9 +81,11 @@ public class MapMoveCreatureTest
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
 
         var creatureMovementService =
-            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut), staticToDynamicTileServiceMock.Object);
+            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut),
+                staticToDynamicTileServiceMock.Object);
 
-        ((IDynamicTile)sut[teleportLocation]).AddItem(new TeleportItem(new ItemType().SetClientId(1), teleportLocation));
+        ((IDynamicTile)sut[teleportLocation]).AddItem(new TeleportItem(new ItemType().SetClientId(1),
+            teleportLocation));
 
         player.OnStartedWalking += c => creatureMovementService.MoveCreature(c);
 
@@ -114,20 +117,23 @@ public class MapMoveCreatureTest
             {
                 [teleportLocation] = [teleport]
             });
-        
+
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
-        
+
         var creatureMovementService =
-            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut), staticToDynamicTileServiceMock.Object);
+            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut),
+                staticToDynamicTileServiceMock.Object);
 
         var pathFinder = new PathFinder(sut);
 
         var player = PlayerTestDataBuilder.Build(map: sut, pathFinder: pathFinder);
         player.SetCurrentTile((IDynamicTile)sut[100, 100, 7]);
         sut.PlaceCreature(player);
-        
+
         player.OnStartedWalking += c => creatureMovementService.MoveCreature(c);
-        player.OnTeleported += (a, b) => new CreatureTeleportedEventHandler(sut, creatureMovementService, staticToDynamicTileServiceMock.Object).Execute(a, b);
+        player.OnTeleported += (a, b) =>
+            new CreatureTeleportedEventHandler(sut, creatureMovementService, staticToDynamicTileServiceMock.Object)
+                .Execute(a, b);
 
         //act
         player.WalkTo(Direction.East);

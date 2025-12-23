@@ -10,11 +10,14 @@ using NeoServer.Domain.Creatures.Player.Inventory;
 namespace NeoServer.Domain.Creatures.Player.Container;
 
 public delegate void RemoveItemFromOpenedContainer(IPlayer player, byte containerId, byte slotIndex, IItem item);
+
 public delegate void AddItemOnOpenedContainer(IPlayer player, byte containerId, IItem item);
+
 public delegate void UpdateItemOnOpenedContainer(IPlayer player, byte containerId, byte slotIndex, IItem item,
     sbyte amount);
 
 public delegate void MoveOpenedContainer(byte containerId, IContainer container);
+
 public class PlayerContainerList
 {
     private readonly Dictionary<byte, PlayerContainer> openedContainers = new();
@@ -27,9 +30,6 @@ public class PlayerContainerList
     }
 
     public MoveOpenedContainer MoveOpenedContainer { get; }
-    public event ClosedContainer OnClosedContainer;
-    public event ClosedDepot OnClosedDepot;
-    public event OpenedContainer OnOpenedContainer;
     public RemoveItemFromOpenedContainer RemoveItemAction { get; set; }
     public AddItemOnOpenedContainer AddItemAction { get; set; }
     public UpdateItemOnOpenedContainer UpdateItemAction { get; set; }
@@ -44,6 +44,11 @@ public class PlayerContainerList
             return false;
         }
     }
+
+    public IContainer this[byte id] => openedContainers.ContainsKey(id) ? openedContainers[id]?.Container : null;
+    public event ClosedContainer OnClosedContainer;
+    public event ClosedDepot OnClosedDepot;
+    public event OpenedContainer OnOpenedContainer;
 
     public bool IsOpened(byte containerId)
     {
@@ -61,8 +66,6 @@ public class PlayerContainerList
         if (openedContainers.Count == 0) return;
         foreach (var container in openedContainers.Values) CloseContainer(container.Id);
     }
-
-    public IContainer this[byte id] => openedContainers.ContainsKey(id) ? openedContainers[id]?.Container : null;
 
     public void GoBackContainer(byte containerId)
     {

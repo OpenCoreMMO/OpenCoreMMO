@@ -208,7 +208,8 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
 
         targetCreature.AddCondition(new Condition(conditionType, duration)
         {
-            EndAction = () => targetCreature.IncreaseSpeed((ushort)Math.Abs(Convert.ToInt32(combatParameter.Condition.Value)))
+            EndAction = () =>
+                targetCreature.IncreaseSpeed((ushort)Math.Abs(Convert.ToInt32(combatParameter.Condition.Value)))
         });
     }
 

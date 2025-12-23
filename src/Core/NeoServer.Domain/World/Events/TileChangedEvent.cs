@@ -6,7 +6,7 @@ using NeoServer.Domain.Common.Results;
 namespace NeoServer.Domain.World.Events;
 
 /// <summary>
-/// Event raised when items on a tile change (added, removed, or updated).
+///     Event raised when items on a tile change (added, removed, or updated).
 /// </summary>
 /// <param name="Tile">The tile where the change occurred.</param>
 /// <param name="Item">The item that was changed.</param>

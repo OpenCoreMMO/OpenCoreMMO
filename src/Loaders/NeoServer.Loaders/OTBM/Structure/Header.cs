@@ -8,6 +8,20 @@ namespace NeoServer.Loaders.OTBM.Structure;
 /// </summary>
 public class Header
 {
+    public Header(OtbNode node)
+    {
+        var stream = new OtbParsingStream(node.Data);
+
+        Version = stream.ReadUInt32();
+        Width = stream.ReadUInt16();
+        Heigth = stream.ReadUInt16();
+        MajorVersionItems = stream.ReadByte();
+        stream.Skip(3);
+        MinorVersionItems = stream.ReadUInt32();
+
+        //todo: needs version validation 
+    }
+
     /// <summary>
     ///     OTBM version
     /// </summary>
@@ -32,18 +46,4 @@ public class Header
     ///     Map height
     /// </summary>
     public ushort Heigth { get; set; }
-
-    public Header(OtbNode node)
-    {
-        var stream = new OtbParsingStream(node.Data);
-
-        Version = stream.ReadUInt32();
-        Width = stream.ReadUInt16();
-        Heigth = stream.ReadUInt16();
-        MajorVersionItems = stream.ReadByte();
-        stream.Skip(3);
-        MinorVersionItems = stream.ReadUInt32();
-
-        //todo: needs version validation 
-    }
 }

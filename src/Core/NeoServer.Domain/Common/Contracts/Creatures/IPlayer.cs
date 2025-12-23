@@ -315,6 +315,8 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     void Whisper(string message);
     void StartCooldown(CooldownType cooldownType, uint cooldownTime);
 
+    void HealSoul(ushort increasing);
+
     #region Events
 
     public event PlayerLevelAdvance OnLevelAdvanced;
@@ -333,6 +335,4 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event WroteText OnWroteText;
 
     #endregion
-
-    void HealSoul(ushort increasing);
 }

@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Creatures;
+﻿using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
@@ -245,8 +244,8 @@ public class SkillBonusItemTests
         //arrange
         var player = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
-            [SkillType.Axe] = new Skill(SkillType.Axe, 10),
-            [SkillType.Sword] = new Skill(SkillType.Sword, 10)
+            [SkillType.Axe] = new(SkillType.Axe, 10),
+            [SkillType.Sword] = new(SkillType.Sword, 10)
         });
 
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1,
@@ -273,8 +272,8 @@ public class SkillBonusItemTests
         //arrange
         var player = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
-            [SkillType.Axe] = new Skill(SkillType.Axe, 10),
-            [SkillType.Sword] = new Skill(SkillType.Sword, 10)
+            [SkillType.Axe] = new(SkillType.Axe, 10),
+            [SkillType.Sword] = new(SkillType.Sword, 10)
         });
 
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "body",

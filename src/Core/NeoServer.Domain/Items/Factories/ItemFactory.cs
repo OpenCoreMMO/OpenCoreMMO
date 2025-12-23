@@ -224,10 +224,8 @@ public class ItemFactory : IItemFactory
         if (itemType.Group == ItemGroup.Deprecated) return null;
 
         if (itemType.Attributes.GetAttribute(ItemTypeAttribute.Script) is { } script)
-        {
             if (ItemFromScriptFactory.Create(itemType, location, itemTypeAttributes, script) is { } instance)
                 return instance;
-        }
 
         if (DefenseEquipmentFactory?.Create(itemType, location) is { } equipment) return equipment;
         if (WeaponFactory?.Create(itemType, location, itemAttributes) is { } weapon) return weapon;

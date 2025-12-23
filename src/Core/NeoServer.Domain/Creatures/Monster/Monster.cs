@@ -113,10 +113,7 @@ public class Monster : WalkableMonster, IMonster
         if (IsDead) return;
         if (spectator is not ICombatActor target) return;
 
-        if (Equals(CurrentTarget, spectator))
-        {
-            TurnTo(spectator);
-        }
+        if (Equals(CurrentTarget, spectator)) TurnTo(spectator);
 
         if (CanSee(spectator.Location) && CanSee(spectator))
         {

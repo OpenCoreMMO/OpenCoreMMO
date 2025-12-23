@@ -1,13 +1,9 @@
 using Moq;
-using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
-using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Monster;
-using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Monster.Services;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Tests.Helpers;
@@ -193,10 +189,10 @@ public class SummonTests
     {
         // Arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
-        
+
         var master = PlayerTestDataBuilder.Build();
         master.SetNewLocation(new Location(105, 105, 7));
-        
+
         var summon = MonsterTestDataBuilder.BuildSummon(master);
         summon.SetNewLocation(new Location(104, 105, 7));
 
@@ -206,8 +202,10 @@ public class SummonTests
         var summonServiceMock = new Mock<ISummonService>();
         var targetDetectorService = new TargetDetectorService(map);
         var pathFinder = new PathFinder(map);
-        var monsterTargetingService = new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, pathFinder)));
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, targetDetectorService, monsterTargetingService);
+        var monsterTargetingService =
+            new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, pathFinder)));
+        var monsterStateService =
+            new MonsterStateService(summonServiceMock.Object, targetDetectorService, monsterTargetingService);
 
         // Act
         monsterStateService.UpdateState(summon);
@@ -256,8 +254,10 @@ public class SummonTests
         var summonServiceMock = new Mock<ISummonService>();
         var targetDetectorService = new TargetDetectorService(map);
         var pathFinder = new PathFinder(map);
-        var monsterTargetingService = new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, pathFinder)));
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, targetDetectorService, monsterTargetingService);
+        var monsterTargetingService =
+            new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, pathFinder)));
+        var monsterStateService =
+            new MonsterStateService(summonServiceMock.Object, targetDetectorService, monsterTargetingService);
 
         // Act
         monsterStateService.UpdateState(summon);
@@ -269,7 +269,9 @@ public class SummonTests
         summon.AutoAttackTargetId.Should().Be(0);
 
         // Summon should not acquire targets that are on floor 7 (nearby creatures) when master is on floor 8
-        summon.Targets.HasTarget(monsterX).Should().BeFalse("Summon must not target nearby floor-7 monster when its master is on a different floor");
-        summon.Targets.HasTarget(playerY).Should().BeFalse("Summon must not target nearby floor-7 player when its master is on a different floor");
+        summon.Targets.HasTarget(monsterX).Should()
+            .BeFalse("Summon must not target nearby floor-7 monster when its master is on a different floor");
+        summon.Targets.HasTarget(playerY).Should()
+            .BeFalse("Summon must not target nearby floor-7 player when its master is on a different floor");
     }
 }

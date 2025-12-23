@@ -4,9 +4,6 @@ namespace NeoServer.Loaders.OTBM.Structure.TileArea;
 
 public class CustomAttribute
 {
-    public string Key { get; set; }
-    public object Value { get; set; }
-
     public CustomAttribute(OtbParsingStream stream)
     {
         Key = stream.ReadString();
@@ -32,4 +29,7 @@ public class CustomAttribute
                 break;
         }
     }
+
+    public string Key { get; set; }
+    public object Value { get; set; }
 }

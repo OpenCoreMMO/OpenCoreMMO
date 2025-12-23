@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Chat.Rules;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Creatures.Common;
 using NeoServer.Domain.Creatures.Player;
@@ -79,7 +78,7 @@ public class PlayerChannelTests
         //arrange
         var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
-            [SkillType.Level] = new Skill(SkillType.Level, 1)
+            [SkillType.Level] = new(SkillType.Level, 1)
         });
 
         using var sutMonitor = sut.Channels.Monitor();
@@ -109,7 +108,7 @@ public class PlayerChannelTests
         //arrange
         var sut = PlayerTestDataBuilder.Build(skills: new Dictionary<SkillType, Skill>
         {
-            [SkillType.Level] = new Skill(SkillType.Level, 101)
+            [SkillType.Level] = new(SkillType.Level, 101)
         });
 
         using var sutMonitor = sut.Channels.Monitor();

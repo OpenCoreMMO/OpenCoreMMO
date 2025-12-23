@@ -48,8 +48,8 @@ public interface IDynamicTile : ITile, IHasItem
     bool HasCreature(ICreature creature);
 
     /// <summary>
-    /// Replaces an existing item on the tile by removing all items belonging to the same group
-    /// and then adding the specified item.
+    ///     Replaces an existing item on the tile by removing all items belonging to the same group
+    ///     and then adding the specified item.
     /// </summary>
     /// <param name="item">The item to add, which will replace any existing items of the same group.</param>
     void ReplaceItemByGroup(IItem item);

@@ -54,7 +54,8 @@ public class CreatureMovedDownPacket : OutgoingPacket
 
         //east
         message.AddByte((byte)GameOutgoingPacketType.MapSliceEast);
-        message.AddBytes(MapDescriptionBuilder.GetDescription(_map, _creature, (ushort)(_fromLocation.X + MapViewPort.MaxClientViewPortX + 1),
+        message.AddBytes(MapDescriptionBuilder.GetDescription(_map, _creature,
+            (ushort)(_fromLocation.X + MapViewPort.MaxClientViewPortX + 1),
             (ushort)(y - 1), _toLocation.Z, 1).ToArray());
 
         //south

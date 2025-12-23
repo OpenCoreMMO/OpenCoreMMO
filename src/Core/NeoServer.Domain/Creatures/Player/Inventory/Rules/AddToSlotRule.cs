@@ -17,7 +17,7 @@ internal static class AddToSlotRule
 
         if (!CanCarryItem(inventory, item, slot, amount)) return Result.Fail(InvalidOperation.TooHeavy);
 
-        return CanAddItemToSlot(inventory, slot, item);
+        return inventory.CanAddItemToSlot(slot, item);
     }
 
     private static Result CanAddItemToSlot(this Inventory inventory, Slot slot, IItem item)

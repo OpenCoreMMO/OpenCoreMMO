@@ -53,11 +53,13 @@ public class CreatureMovedUpPacket : OutgoingPacket
 
         //west
         message.AddByte((byte)GameOutgoingPacketType.MapSliceWest);
-        message.AddBytes(MapDescriptionBuilder.GetDescription(_map, _creature, x, (ushort)(y + 1), _toLocation.Z, 1).ToArray());
+        message.AddBytes(MapDescriptionBuilder.GetDescription(_map, _creature, x, (ushort)(y + 1), _toLocation.Z, 1)
+            .ToArray());
 
         //north
         message.AddByte((byte)GameOutgoingPacketType.MapSliceNorth);
         message.AddBytes(MapDescriptionBuilder
-            .GetDescription(_map, _creature, x, y, _toLocation.Z, (byte)MapViewPort.MaxClientViewPortX * 2 + 2, 1).ToArray());
+            .GetDescription(_map, _creature, x, y, _toLocation.Z, (byte)MapViewPort.MaxClientViewPortX * 2 + 2, 1)
+            .ToArray());
     }
 }

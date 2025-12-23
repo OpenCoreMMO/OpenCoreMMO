@@ -39,11 +39,8 @@ public class MonsterTargetList(IMonster monster)
         if (_nodeMap.ContainsKey(target.CreatureId)) return; // Already tracking
 
         //summon cannot add his own master to the target list
-        if (monster is Summon.Summon summon && Equals(summon.Master, target))
-        {
-            return;
-        }
-        
+        if (monster is Summon.Summon summon && Equals(summon.Master, target)) return;
+
         var isPlayerOrPlayerSummon = target is IPlayer or Summon.Summon { Master: IPlayer };
 
         // Skip dead creatures and ignored players

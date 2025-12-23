@@ -8,8 +8,8 @@ using NeoServer.Domain.World.Map;
 namespace NeoServer.Server.Events.World;
 
 /// <summary>
-/// Handles tile change events (added, removed, updated items) for the map.
-/// Manages cumulative item subscriptions and publishes networking events.
+///     Handles tile change events (added, removed, updated items) for the map.
+///     Manages cumulative item subscriptions and publishes networking events.
 /// </summary>
 public class TileChangedEventHandler(IMap map, IEventAggregator eventAggregator, CylinderOperation cylinderOperation)
     : IApplicationEventHandler<TileChangedEvent>
@@ -35,7 +35,8 @@ public class TileChangedEventHandler(IMap map, IEventAggregator eventAggregator,
                     break;
                 case Operation.Added:
                     if (operation.Item1 is ICumulative cumulativeToAdd) cumulativeToAdd.OnReduced += map.OnItemReduced;
-                    eventAggregator.InvokeEvent(new ThingAddedToTileEvent(operation.Item1, cylinderOperation.Added(operation.Item1)));
+                    eventAggregator.InvokeEvent(new ThingAddedToTileEvent(operation.Item1,
+                        cylinderOperation.Added(operation.Item1)));
                     break;
             }
     }
