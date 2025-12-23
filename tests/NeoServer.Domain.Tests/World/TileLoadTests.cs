@@ -6,6 +6,7 @@ using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.World.Events;
 using NeoServer.Domain.World.Map;
+using NeoServer.Server.Events.World;
 
 namespace NeoServer.Domain.Tests.World;
 

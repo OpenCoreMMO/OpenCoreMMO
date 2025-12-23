@@ -1,12 +1,11 @@
 using NeoServer.Domain.Common;
-using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.World.Events;
+using NeoServer.Domain.World.Map;
 
-namespace NeoServer.Domain.World.Map;
+namespace NeoServer.Server.Events.World;
 
 /// <summary>
 /// Handles tile change events (added, removed, updated items) for the map.

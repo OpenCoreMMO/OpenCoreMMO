@@ -14,10 +14,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Application\Creature\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <Compile Remove="EventAggregator.cs"/>
     </ItemGroup>
 

@@ -4,7 +4,7 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.World.Events;
 
-namespace NeoServer.Domain.World.Map;
+namespace NeoServer.Server.Events.World;
 
 /// <summary>
 /// Handles tile loaded events, subscribing to cumulative item reduced events.
