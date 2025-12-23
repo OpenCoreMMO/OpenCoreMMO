@@ -6,15 +6,8 @@ using NeoServer.Server.Common.Contracts;
 
 namespace NeoServer.Server.Events.Combat;
 
-public class CreatureBlockedAttackEventHandler
+public class CreatureBlockedAttackEventHandler(IGameServer game)
 {
-    private readonly IGameServer game;
-
-    public CreatureBlockedAttackEventHandler(IGameServer game)
-    {
-        this.game = game;
-    }
-
     public void Execute(ICreature creature, BlockType blockType)
     {
         foreach (var spectator in game.Map.GetPlayersAtPositionZone(creature.Location))

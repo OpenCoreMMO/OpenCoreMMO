@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using Moq;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World;
@@ -64,7 +66,7 @@ public class MoveCumulativeItemTestData : IEnumerable<object[]>
                     items.ToArray()));
             }
 
-            return new Map(world);
+            return new Map(world, new Mock<IEventAggregator>().Object);
         }
     }
 }

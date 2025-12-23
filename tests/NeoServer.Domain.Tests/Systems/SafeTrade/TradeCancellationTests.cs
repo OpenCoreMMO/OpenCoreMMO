@@ -29,7 +29,7 @@ public class TradeCancellationTests
 {
     private void AssertTradeIsCancelled(SafeTradeSystem tradeSystem, IMap map, IPlayer player)
     {
-        var secondPlayer = PlayerTestDataBuilder.Build();
+        var secondPlayer = PlayerTestDataBuilder.Build( map: map);
 
         var x = (ushort)(player.Location.X + 1);
 
@@ -174,8 +174,8 @@ public class TradeCancellationTests
 
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
-        var player = PlayerTestDataBuilder.Build(hp: 10);
-        var secondPlayer = PlayerTestDataBuilder.Build();
+        var player = PlayerTestDataBuilder.Build(hp: 10, map: map);
+        var secondPlayer = PlayerTestDataBuilder.Build( map: map);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(secondPlayer);
         ((DynamicTile)map[101, 100, 7]).AddCreature(player);

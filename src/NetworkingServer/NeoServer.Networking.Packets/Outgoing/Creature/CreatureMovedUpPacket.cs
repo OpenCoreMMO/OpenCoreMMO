@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Networking.Packets.Outgoing.Map;
 using NeoServer.Server.Common.Contracts.Network;
 
 namespace NeoServer.Networking.Packets.Outgoing.Creature;
@@ -33,12 +34,12 @@ public class CreatureMovedUpPacket : OutgoingPacket
         //going from surface to underground
         if (_toLocation.Z == 7)
             for (var i = 5; i >= 0; --i)
-                message.AddBytes(_map.GetFloorDescription(_creature, x, y, (byte)i,
+                message.AddBytes(MapDescriptionBuilder.GetFloorDescription(_map, _creature, x, y, (byte)i,
                     (byte)MapViewPort.MaxClientViewPortX * 2 + 2,
                     (byte)MapViewPort.MaxClientViewPortY * 2 + 2, 8 - i, ref skip).ToArray());
 
         if (_toLocation.Z > 7)
-            message.AddBytes(_map.GetFloorDescription(_creature,
+            message.AddBytes(MapDescriptionBuilder.GetFloorDescription(_map, _creature,
                 (ushort)(_fromLocation.X - MapViewPort.MaxClientViewPortX),
                 (ushort)(_fromLocation.Y - MapViewPort.MaxClientViewPortY),
                 (byte)(_fromLocation.Z - 3), (byte)MapViewPort.MaxClientViewPortX * 2 + 2,
@@ -52,11 +53,11 @@ public class CreatureMovedUpPacket : OutgoingPacket
 
         //west
         message.AddByte((byte)GameOutgoingPacketType.MapSliceWest);
-        message.AddBytes(_map.GetDescription(_creature, x, (ushort)(y + 1), _toLocation.Z, 1).ToArray());
+        message.AddBytes(MapDescriptionBuilder.GetDescription(_map, _creature, x, (ushort)(y + 1), _toLocation.Z, 1).ToArray());
 
         //north
         message.AddByte((byte)GameOutgoingPacketType.MapSliceNorth);
-        message.AddBytes(_map
-            .GetDescription(_creature, x, y, _toLocation.Z, (byte)MapViewPort.MaxClientViewPortX * 2 + 2, 1).ToArray());
+        message.AddBytes(MapDescriptionBuilder
+            .GetDescription(_map, _creature, x, y, _toLocation.Z, (byte)MapViewPort.MaxClientViewPortX * 2 + 2, 1).ToArray());
     }
 }

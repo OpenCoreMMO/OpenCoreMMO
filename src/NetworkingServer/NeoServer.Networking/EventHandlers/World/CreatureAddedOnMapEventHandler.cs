@@ -1,25 +1,25 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.World.Events;
 using NeoServer.Networking.Packets.Outgoing.Creature;
 using NeoServer.Networking.Packets.Outgoing.Effect;
 using NeoServer.Networking.Packets.Outgoing.Item;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
 
-namespace NeoServer.Server.Events.Creature;
+namespace NeoServer.Networking.EventHandlers.World;
 
-public class CreatureAddedOnMapEventHandler : IEventHandler
+public class CreatureAddedOnMapEventHandler(IGameServer game) : INetworkingEventHandler<CreatureAddedOnMapEvent>
 {
-    private readonly IGameServer game;
-
-    public CreatureAddedOnMapEventHandler(IGameServer game)
+    public void Handle(CreatureAddedOnMapEvent @event)
     {
-        this.game = game;
+        Execute(@event.Creature, @event.Cylinder);
     }
 
-    public void Execute(IWalkableCreature creature, ICylinder cylinder)
+    private void Execute(IWalkableCreature creature, ICylinder cylinder)
     {
         if (Guard.AnyNull(cylinder, cylinder.TileSpectators, creature)) return;
 

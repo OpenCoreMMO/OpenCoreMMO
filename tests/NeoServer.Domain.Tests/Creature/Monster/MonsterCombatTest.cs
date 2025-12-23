@@ -1,6 +1,7 @@
 using System.Reflection;
 using Moq;
 using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
@@ -16,9 +17,9 @@ using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
-using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Domain.World.Services;
+using PathFinder = NeoServer.Domain.World.Map.PathFinder;
 
 namespace NeoServer.Domain.Tests.Creature.Monster;
 

@@ -15,7 +15,6 @@ using NeoServer.Server.Events.Items;
 using NeoServer.Server.Events.Player;
 using NeoServer.Server.Events.Player.Trade;
 using NeoServer.Server.Events.Server;
-using NeoServer.Server.Events.Tiles;
 using NeoServer.Server.Services;
 
 namespace NeoServer.Server.Events.Subscribers;
@@ -47,13 +46,6 @@ public sealed class EventSubscriber
 
     public void AttachEvents()
     {
-        _map.OnCreatureAddedOnMap += (creature, cylinder) =>
-            _container.GetRequiredService<CreatureAddedOnMapEventHandler>().Execute(creature, cylinder);
-
-        _map.OnThingRemovedFromTile += _container.GetRequiredService<ThingRemovedFromTileEventHandler>().Execute;
-        _map.OnThingAddedToTile += _container.GetRequiredService<ThingAddedToTileEventHandler>().Execute;
-        _map.OnThingUpdatedOnTile += _container.GetRequiredService<ThingUpdatedOnTileEventHandler>().Execute;
-
         BaseSpell.OnSpellInvoked += _container.GetRequiredService<SpellInvokedEventHandler>().Execute;
 
         OperationFailService.OnOperationFailed +=

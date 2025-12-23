@@ -56,11 +56,11 @@ public class TradeCompletionTests
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
         var inventory = InventoryTestDataBuilder.GenerateInventory();
-        var player = PlayerTestDataBuilder.Build(capacity: 1000, inventoryMap: inventory);
-        var secondPlayer = PlayerTestDataBuilder.Build(capacity: 1000);
+        var player = PlayerTestDataBuilder.Build(capacity: 1000, inventoryMap: inventory, map: map);
+        var secondPlayer = PlayerTestDataBuilder.Build(capacity: 1000, map: map);
 
-        var item1 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
-        var item2 = ItemTestDataBuilder.CreateWeaponItem(1, weight: 100);
+        var item1 = ItemTestDataBuilder.CreateWeaponItem(20, weight: 100);
+        var item2 = ItemTestDataBuilder.CreateWeaponItem(21, weight: 100);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(player);
         ((DynamicTile)map[101, 100, 7]).AddCreature(secondPlayer);
@@ -129,8 +129,8 @@ public class TradeCompletionTests
         var inventory = InventoryTestDataBuilder.GenerateInventory();
         inventory[Slot.Left] = (ItemTestDataBuilder.CreateThrowableDistanceItem(1, 50, 1), 1);
 
-        var player = PlayerTestDataBuilder.Build(capacity: 1000, inventoryMap: inventory);
-        var secondPlayer = PlayerTestDataBuilder.Build(capacity: 1000);
+        var player = PlayerTestDataBuilder.Build(capacity: 1000, inventoryMap: inventory, map: map);
+        var secondPlayer = PlayerTestDataBuilder.Build(capacity: 1000, map: map);
 
         player.Inventory.RemoveItem(Slot.Backpack, 1);
 

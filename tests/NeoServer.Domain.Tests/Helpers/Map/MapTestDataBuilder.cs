@@ -1,4 +1,6 @@
-﻿using NeoServer.Domain.Common.Contracts.Items;
+﻿using Moq;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
@@ -16,17 +18,17 @@ public static class MapTestDataBuilder
     public static IMap Build(params ITile[] tiles)
     {
         var world = new Domain.World.World();
-        var map = new Domain.World.Map.Map(world);
+        var map = new Domain.World.Map.Map(world, new Mock<IEventAggregator>().Object);
 
         foreach (var tile in tiles) world.AddTile(tile);
 
         return map;
     }
 
-    public static IMap Build(params Func<ITile>[] tiles)
+    public static IMap Build( IEventAggregator eventAggregator, params Func<ITile>[] tiles)
     {
         var world = new Domain.World.World();
-        var map = new Domain.World.Map.Map(world);
+        var map = new Domain.World.Map.Map(world, eventAggregator);
 
         foreach (var tile in tiles) world.AddTile(tile?.Invoke());
 
@@ -41,7 +43,7 @@ public static class MapTestDataBuilder
         staticTiles ??= [];
 
         var world = new Domain.World.World();
-        var map = new Domain.World.Map.Map(world);
+        var map = new Domain.World.Map.Map(world, new Mock<IEventAggregator>().Object);
 
         for (var x = fromX; x <= toX; x++)
         for (var y = fromY; y <= toY; y++)
@@ -51,7 +53,7 @@ public static class MapTestDataBuilder
 
             var location = new Location((ushort)x, (ushort)y, (byte)z);
 
-            if (addGround) ground = new Ground(new ItemType(), new Location((ushort)x, (ushort)y, (byte)z));
+            if (addGround) ground = new Ground(new ItemType().SetClientId(1), new Location((ushort)x, (ushort)y, (byte)z));
 
             topItems.TryGetValue(location, out var items);
 
@@ -68,6 +70,7 @@ public static class MapTestDataBuilder
     {
         var itemType = new ItemType();
         itemType.SetId(id);
+        itemType.SetClientId(id);
         itemType.Attributes?.SetAttribute(ItemTypeAttribute.Speed, speed);
 
         return new Ground(itemType, location);

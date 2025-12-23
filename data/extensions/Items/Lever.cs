@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Items.Bases;
 using NeoServer.Domain.Items.Factories;
 using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
+using NeoServer.Server.Helpers;
 
 namespace NeoServer.Extensions.Items;
 
@@ -25,7 +27,8 @@ public class Lever : BaseItem
 
     public void SwitchLever()
     {
-        if (Map.Instance[Location] is not DynamicTile dynamicTile) return;
+        var map = IoC.GetInstance<IMap>();
+        if (map[Location] is not DynamicTile dynamicTile) return;
 
         var newLeverId = (ushort)(Metadata.ServerId == 1946 ? 1945 : 1946);
         var newLever = ItemFactory.Instance.Create(newLeverId, Location,

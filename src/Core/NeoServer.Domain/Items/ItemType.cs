@@ -161,9 +161,10 @@ public class ItemType : IItemType
         return this;
     }
 
-    public void SetClientId(ushort clientId)
+    public IItemType SetClientId(ushort clientId)
     {
         ClientId = clientId;
+        return this;
     }
 
     public void SetFlag(ItemFlag flag)

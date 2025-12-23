@@ -1,16 +1,24 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.World.Events;
 using NeoServer.Networking.Packets.Outgoing.Item;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Scripts;
 
-namespace NeoServer.Server.Events.Tiles;
+namespace NeoServer.Networking.EventHandlers.World.Tiles;
 
 public class ThingAddedToTileEventHandler(IGameServer game, IScriptManager scriptManager)
+    : INetworkingEventHandler<ThingAddedToTileEvent>
 {
-    public void Execute(IThing thing, ICylinder cylinder)
+    public void Handle(ThingAddedToTileEvent @event)
+    {
+        Execute(@event.Thing, @event.Cylinder);
+    }
+
+    private void Execute(IThing thing, ICylinder cylinder)
     {
         if (Guard.AnyNull(cylinder, cylinder.TileSpectators, thing)) return;
         var tile = cylinder.ToTile;

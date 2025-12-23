@@ -5,7 +5,6 @@ using NeoServer.Domain.Creatures.Events.Player;
 namespace NeoServer.Domain.Creatures.Events;
 
 public class CreatureEventSubscriber(
-    CreaturePropagatedAttackEventHandler creaturePropagatedAttackEventHandler,
     CreatureTeleportedEventHandler creatureTeleportedEventHandler,
     CreatureMovedEventHandler creatureMovedEventHandler,
     CreatureSayEventHandler creatureSayEventHandler,
@@ -14,9 +13,6 @@ public class CreatureEventSubscriber(
 {
     public void Subscribe(ICreature creature)
     {
-        if (creature is ICombatActor combatActor)
-            combatActor.OnPropagateAttack += creaturePropagatedAttackEventHandler.Execute;
-
         if (creature is IWalkableCreature walkableCreature)
         {
             walkableCreature.OnTeleported += creatureTeleportedEventHandler.Execute;
@@ -31,9 +27,6 @@ public class CreatureEventSubscriber(
 
     public void Unsubscribe(ICreature creature)
     {
-        if (creature is ICombatActor combatActor)
-            combatActor.OnPropagateAttack -= creaturePropagatedAttackEventHandler.Execute;
-
         if (creature is IWalkableCreature walkableCreature)
         {
             walkableCreature.OnTeleported -= creatureTeleportedEventHandler.Execute;

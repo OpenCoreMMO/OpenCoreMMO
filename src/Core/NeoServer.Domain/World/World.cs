@@ -76,7 +76,7 @@ public class World
         return _region.GetSector(x, y);
     }
 
-    public IEnumerable<ICreature> GetSpectators(ref SpectatorSearch search)
+    internal IEnumerable<ICreature> QuerySpectators(ref SpectatorSearch search)
     {
         return _region.GetSpectators(ref search);
     }
@@ -128,5 +128,17 @@ public class World
     public bool TryGetWaypoint(Location location, out IWaypoint waypoint)
     {
         return _waypoints.TryGetValue(new Coordinate(location.X, location.Y, (sbyte)location.Z), out waypoint);
+    }
+    
+    public void SwapCreatureBetweenSectors(ICreature creature, Location fromLocation, Location toLocation)
+    {
+        var oldSector = GetSector(fromLocation.X, fromLocation.Y);
+        var newSector = GetSector(toLocation.X, toLocation.Y);
+
+        if (oldSector != newSector)
+        {
+            oldSector.RemoveCreature(creature);
+            newSector.AddCreature(creature);
+        }
     }
 }

@@ -245,6 +245,7 @@ public class MagicFieldTests
         {
             var itemType = new ItemType();
             itemType.SetId(typeId);
+            itemType.SetClientId(typeId);
             itemType.SetGroup((byte)ItemGroup.MagicField);
 
             // Configure damage high enough to kill low-HP monsters

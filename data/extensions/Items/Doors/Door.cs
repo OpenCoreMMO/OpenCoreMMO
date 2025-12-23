@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Services;
@@ -11,6 +12,7 @@ using NeoServer.Domain.Items.Bases;
 using NeoServer.Domain.Items.Factories;
 using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
+using NeoServer.Server.Helpers;
 
 namespace NeoServer.Extensions.Items.Doors;
 
@@ -29,7 +31,9 @@ public class Door : BaseItem
             return;
         }
 
-        if (Map.Instance[Location] is not DynamicTile tile) return;
+        var map = IoC.GetInstance<IMap>();
+
+        if (map[Location] is not DynamicTile tile) return;
 
         var containsLockedOnDescription =
             Metadata.Description?.Contains("locked", StringComparison.InvariantCultureIgnoreCase) ?? false;

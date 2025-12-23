@@ -28,7 +28,7 @@ public class MapDescriptionPacket : OutgoingPacket
     private static byte[] GetMapDescription(IPlayer player, IMap map)
     {
         var location = player.Location;
-        return map.GetDescription(player, (ushort)(location.X - MapViewPort.MaxClientViewPortX),
+        return MapDescriptionBuilder.GetDescription(map, player, (ushort)(location.X - MapViewPort.MaxClientViewPortX),
             (ushort)(location.Y - MapViewPort.MaxClientViewPortY), location.Z).ToArray();
     }
 }
