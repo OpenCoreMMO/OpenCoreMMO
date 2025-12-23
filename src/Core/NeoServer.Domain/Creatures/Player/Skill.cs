@@ -1,11 +1,13 @@
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 
 namespace NeoServer.Domain.Creatures.Player;
 
 public delegate void LevelAdvance(SkillType skillType, int fromLevel, int toLevel);
+
 public delegate void LevelRegress(SkillType skillType, int fromLevel, int toLevel);
+
 public delegate void IncreaseSkillPoints(SkillType skillType);
+
 public class Skill
 {
     private static readonly Dictionary<SkillType, byte> SkillOffsetMap = new()
@@ -30,11 +32,17 @@ public class Skill
 
     public byte SkillOffset => SkillOffsetMap[Type];
 
+    public sbyte Bonus { get; private set; }
+
+    public SkillType Type { get; }
+    public ushort Level { get; private set; }
+    public double Count { get; private set; }
+
+    public Func<double> GetIncreaseRate { get; init; }
+
     public event LevelAdvance OnAdvance;
     public event LevelRegress OnRegress;
     public event IncreaseSkillPoints OnIncreaseSkillPoints;
-
-    public sbyte Bonus { get; private set; }
 
     public void AddBonus(sbyte increase)
     {
@@ -45,12 +53,6 @@ public class Skill
     {
         Bonus = (sbyte)(Bonus - decrease);
     }
-
-    public SkillType Type { get; }
-    public ushort Level { get; private set; }
-    public double Count { get; private set; }
-
-    public Func<double> GetIncreaseRate { get; init; }
 
     public double GetPercentage(float rate)
     {

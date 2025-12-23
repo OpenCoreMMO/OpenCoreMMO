@@ -299,7 +299,6 @@ public class DynamicTile : BaseTile, IDynamicTile
         }
 
         if (TopItems is not null)
-        {
             foreach (var item in TopItems.Values) //todo: remove reverse
             {
                 if (countThings == 9) break;
@@ -310,7 +309,6 @@ public class DynamicTile : BaseTile, IDynamicTile
                 countThings++;
                 countBytes += raw.Length;
             }
-        }
 
         if (Creatures is not null)
             foreach (var creature in Creatures)
@@ -548,8 +546,8 @@ public class DynamicTile : BaseTile, IDynamicTile
     }
 
     /// <summary>
-    /// Replaces an existing item on the tile by removing all items belonging to the same group
-    /// and then adding the specified item.
+    ///     Replaces an existing item on the tile by removing all items belonging to the same group
+    ///     and then adding the specified item.
     /// </summary>
     /// <param name="item">The item to add, which will replace any existing items of the same group.</param>
     public void ReplaceItemByGroup(IItem item)
@@ -684,19 +682,13 @@ public class DynamicTile : BaseTile, IDynamicTile
     public Result<OperationResultList<ICreature>> AddCreature(ICreature creature, bool forced = false)
     {
         if (creature is not IWalkableCreature walkableCreature)
-        {
             return Result<OperationResultList<ICreature>>.NotPossible;
-        }
 
         if (!forced && !walkableCreature.TileEnterRule.CanEnter(this, creature))
-        {
             return Result<OperationResultList<ICreature>>.NotPossible;
-        }
 
         if (!forced && (!CanEnterFunction?.Invoke(creature) ?? false))
-        {
             return Result<OperationResultList<ICreature>>.NotPossible;
-        }
 
         Creatures ??= [];
         Creatures.Add(walkableCreature);
@@ -780,16 +772,14 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         //loop stack from beginning to the end in ascending order
         foreach (var itemOnStack in TopItems.Values)
-        {
             if (item.Metadata.TopOrder <= itemOnStack.Metadata.TopOrder)
             {
                 //item will be inserted before itemOnStack
-                TopItems.Insert(item, beforeItem: itemOnStack);
+                TopItems.Insert(item, itemOnStack);
                 operations.Add(Operation.Added, item);
                 return;
             }
-        }
-            
+
         TopItems.Push(item);
         operations.Add(Operation.Added, item);
     }
@@ -806,22 +796,18 @@ public class DynamicTile : BaseTile, IDynamicTile
         }
 
         if (topItems is not null)
-        {
             foreach (var item in topItems.OrderBy(i => i.Metadata.TopOrder))
             {
                 TopItems.Push(item);
                 SetTileFlags(item);
             }
-        }
 
         if (items is not null)
-        {
             foreach (var item in items)
             {
                 DownItems.Push(item);
                 SetTileFlags(item);
             }
-        }
     }
 
     private void SetCacheAsExpired()

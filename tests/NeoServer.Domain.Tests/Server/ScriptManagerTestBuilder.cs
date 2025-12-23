@@ -1,6 +1,5 @@
 ﻿using Moq;
 using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Scripts.LuaJIT;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Scripts.LuaJIT.Managers;
 using NeoServer.Server.Common.Contracts.Scripts;

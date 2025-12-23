@@ -10,7 +10,6 @@ using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Items.Bases;
 using NeoServer.Domain.Items.Factories;
-using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Server.Helpers;
 

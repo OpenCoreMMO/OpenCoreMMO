@@ -35,16 +35,14 @@ public class PathFinder(IMap map) : IPathFinder
 
         if (!creature.Location.SameFloorAs(target)) return NotFound;
 
-        if (fpp is { KeepDistance: false, MaxTargetDist: <= 1 } && creature.Location.IsNextTo(target)) return FoundedButEmptyDirections;
+        if (fpp is { KeepDistance: false, MaxTargetDist: <= 1 } && creature.Location.IsNextTo(target))
+            return FoundedButEmptyDirections;
 
         if (fpp is { MaxTargetDist: > 1, FullPathSearch: false })
         {
             var pathToKeepDistance = FindPathToKeepDistance(creature, target, fpp, tileEnterRule);
 
-            if (pathToKeepDistance.Found)
-            {
-                return (true, pathToKeepDistance.Directions);
-            }
+            if (pathToKeepDistance.Found) return (true, pathToKeepDistance.Directions);
 
             // If we couldn't find a path to keep distance, we can use full A* search'
             fpp.FullPathSearch = true;

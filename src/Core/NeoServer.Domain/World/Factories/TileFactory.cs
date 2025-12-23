@@ -75,10 +75,7 @@ public class TileFactory(ILogger logger) : ITileFactory
         {
             var staticTile = new StaticTile(new Coordinate(), (uint)flag, items);
 
-            if (useCache)
-            {
-                _tileCache.TryAdd(tileHash, staticTile);
-            }
+            if (useCache) _tileCache.TryAdd(tileHash, staticTile);
 
             return staticTile;
         }

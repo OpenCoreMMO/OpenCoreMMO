@@ -8,8 +8,8 @@ public class HealService
     public void Heal(ICreature actor, ICombatActor target, HealType healType, ushort min, ushort max)
     {
         if (target is null) return;
-        
-        var value = (ushort)GameRandom.Random.Next(minValue: min, maxValue: max);
+
+        var value = (ushort)GameRandom.Random.Next(min, maxValue: max);
 
         if (healType is HealType.Health)
         {
@@ -18,7 +18,6 @@ public class HealService
         }
 
         if (target is IPlayer targetPlayer)
-        {
             switch (healType)
             {
                 case HealType.Mana:
@@ -28,7 +27,6 @@ public class HealService
                     targetPlayer.HealSoul(value);
                     break;
             }
-        }
     }
 }
 

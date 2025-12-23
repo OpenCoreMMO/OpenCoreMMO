@@ -25,7 +25,7 @@ public static class MapTestDataBuilder
         return map;
     }
 
-    public static IMap Build( IEventAggregator eventAggregator, params Func<ITile>[] tiles)
+    public static IMap Build(IEventAggregator eventAggregator, params Func<ITile>[] tiles)
     {
         var world = new Domain.World.World();
         var map = new Domain.World.Map.Map(world, eventAggregator);
@@ -53,7 +53,8 @@ public static class MapTestDataBuilder
 
             var location = new Location((ushort)x, (ushort)y, (byte)z);
 
-            if (addGround) ground = new Ground(new ItemType().SetClientId(1), new Location((ushort)x, (ushort)y, (byte)z));
+            if (addGround)
+                ground = new Ground(new ItemType().SetClientId(1), new Location((ushort)x, (ushort)y, (byte)z));
 
             topItems.TryGetValue(location, out var items);
 

@@ -51,10 +51,7 @@ public class Summon : Monster
         //Summon should not attack if the master has no target
         if (Master is ICombatActor { CurrentTarget: null }) return;
 
-        if (!CanSee(creature.Location))
-        {
-            return;
-        }
+        if (!CanSee(creature.Location)) return;
 
         base.SetAsEnemy(creature);
     }
@@ -69,10 +66,7 @@ public class Summon : Monster
         //Summon should not attack if the master has no target
         if (Master is ICombatActor { CurrentTarget: null }) return Result.NotPossible;
 
-        if (!CanSee(target.Location))
-        {
-            return Result.NotPossible;
-        }
+        if (!CanSee(target.Location)) return Result.NotPossible;
 
         return base.SetAttackTarget(target);
     }
@@ -111,10 +105,7 @@ public class Summon : Monster
             return;
         }
 
-        if (CanSee(Master.Location) && State is MonsterState.RandomlyWalking)
-        {
-            State = MonsterState.Awake;
-        }
+        if (CanSee(Master.Location) && State is MonsterState.RandomlyWalking) State = MonsterState.Awake;
 
         if (Master is IPlayer { CurrentTarget: not null } player)
         {
@@ -180,33 +171,22 @@ public class Summon : Monster
 
     public override bool CanSee(Location pos, int viewRangeX, int viewRangeY, int limitRangeOffset = 0)
     {
-        if (base.CanSee(pos, viewRangeX, viewRangeY, limitRangeOffset))
-        {
-            return true;
-        }
-        
-        if (Master is null)
-        {
-            return false;
-        }
-        
+        if (base.CanSee(pos, viewRangeX, viewRangeY, limitRangeOffset)) return true;
+
+        if (Master is null) return false;
+
         //summon should see what the master can see as long he can see the master
-        return Master.CanSee(pos, viewRangeX, viewRangeY, limitRangeOffset) && base.CanSee(Master.Location, viewRangeX, viewRangeY, limitRangeOffset);
+        return Master.CanSee(pos, viewRangeX, viewRangeY, limitRangeOffset) &&
+               base.CanSee(Master.Location, viewRangeX, viewRangeY, limitRangeOffset);
     }
 
 
     public override bool CanSee(Location location)
     {
-        if (base.CanSee(location))
-        {
-            return true;
-        }
+        if (base.CanSee(location)) return true;
 
-        if (Master is null)
-        {
-            return false;
-        }
-        
+        if (Master is null) return false;
+
         //summon should see what the master can see as long he can see the master
         return Master.CanSee(location) && base.CanSee(Master.Location);
     }
@@ -215,10 +195,7 @@ public class Summon : Monster
     {
         Targets.Clear();
 
-        if (!CanSee(master.CurrentTarget?.Location ?? Location.Zero))
-        {
-            return;
-        }
+        if (!CanSee(master.CurrentTarget?.Location ?? Location.Zero)) return;
 
         SetAsEnemy(master.CurrentTarget);
         ChangeAttackTarget(master.CurrentTarget);

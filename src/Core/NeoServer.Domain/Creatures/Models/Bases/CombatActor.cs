@@ -263,10 +263,8 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     {
         if (increasing <= 0) return;
 
-        if (HealthPoints == MaxHealthPoints)
-        {
-            increasing = 0;
-        };
+        if (HealthPoints == MaxHealthPoints) increasing = 0;
+        ;
 
         var oldHealthPoints = HealthPoints;
 
@@ -341,7 +339,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
         return new DamageResult(damages, wasDamaged);
     }
-    
+
     public abstract void SetAsEnemy(ICreature actor);
 
     public void IncreaseDamageReceived(byte percentage)

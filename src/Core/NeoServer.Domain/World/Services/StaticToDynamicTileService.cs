@@ -1,7 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
-using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
@@ -16,7 +15,6 @@ public class StaticToDynamicTileService(
     World world)
     : IStaticToDynamicTileService
 {
-
     public ITile TransformIntoDynamicTile(ITile tile)
     {
         if (!tile.Location) return tile;

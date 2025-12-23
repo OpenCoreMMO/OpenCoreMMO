@@ -1,21 +1,20 @@
 using System.Collections.Immutable;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Creatures.Models.Bases;
 using Serilog;
 
 namespace NeoServer.Domain.Creatures;
 
 public class CreatureGameInstance : ICreatureGameInstance
 {
-    private readonly ILogger _logger;
     public const ushort CREATURE_COUNT = 10;
-    
+    private readonly Random _creatureGroupRandom = new();
+
     private readonly Dictionary<uint, ICreature> _creatures;
-    private readonly Dictionary<uint, Tuple<IMonster, TimeSpan>> _killedMonsters;
-    private readonly Dictionary<uint, IPlayer> _playersLogged;
 
     private readonly List<ICreature>[] _creaturesCheck;
-    private readonly Random _creatureGroupRandom = new();
+    private readonly Dictionary<uint, Tuple<IMonster, TimeSpan>> _killedMonsters;
+    private readonly ILogger _logger;
+    private readonly Dictionary<uint, IPlayer> _playersLogged;
 
     public CreatureGameInstance(ILogger logger)
     {
@@ -30,7 +29,10 @@ public class CreatureGameInstance : ICreatureGameInstance
 
     internal static CreatureGameInstance Instance { get; private set; }
 
-    public List<ICreature> GetCreaturesToCheck(int index) => _creaturesCheck[index];
+    public List<ICreature> GetCreaturesToCheck(int index)
+    {
+        return _creaturesCheck[index];
+    }
 
     public void RemoveCreatureFromCheck(int group, int index)
     {
@@ -85,16 +87,14 @@ public class CreatureGameInstance : ICreatureGameInstance
 
         var index = _creatureGroupRandom.Next(CREATURE_COUNT);
         _creaturesCheck[index] ??= [];
-        
+
         _creaturesCheck[index].Add(creature);
     }
 
     public void AddPlayer(IPlayer player)
     {
         if (!_playersLogged.TryAdd(player.Id, player))
-        {
             _logger.Warning("Failed to add {PlayerName} to the global dictionary", player.Name);
-        }
     }
 
     public bool TryRemoveFromKilledMonsters(uint id)

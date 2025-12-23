@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using NeoServer.Loaders.OTB.Enums;
 using NeoServer.Loaders.OTB.Parsers;
 using NeoServer.Loaders.OTB.Structure;
@@ -27,9 +26,7 @@ public class TileArea
             var child = nodeChildren.Span[i];
 
             if (child.Type is not NodeType.HouseTile && child.Type is not NodeType.NormalTile)
-            {
                 throw new Exception("unknown tile nodes found.");
-            }
 
             var tileNode = new TileNode(tileArea, child);
 

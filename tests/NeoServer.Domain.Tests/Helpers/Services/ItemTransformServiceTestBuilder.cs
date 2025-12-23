@@ -17,7 +17,8 @@ public static class ItemTransformServiceTestBuilder
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
 
         var creatureMovementService =
-            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map), staticToDynamicTileServiceMock.Object);
+            new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
+                staticToDynamicTileServiceMock.Object);
         var mapService = new MapService(map, creatureMovementService);
         var itemFactory = ItemFactoryTestBuilder.Build();
         return new ItemTransformService(itemFactory, map, mapService, itemTypeStore, null);

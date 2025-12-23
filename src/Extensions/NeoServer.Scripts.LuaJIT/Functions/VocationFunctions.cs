@@ -1,6 +1,6 @@
 using LuaNET;
-using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Creatures.Player.Vocation;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
@@ -13,6 +13,7 @@ public class VocationFunctions : LuaScriptInterface, IVocationFunctions
     {
         _vocationStore = vocationStore;
     }
+
     public void Init(LuaState luaState)
     {
         RegisterSharedClass(luaState, "Vocation", "", LuaCreateVocation);
@@ -46,6 +47,7 @@ public class VocationFunctions : LuaScriptInterface, IVocationFunctions
         {
             Lua.PushNil(luaState);
         }
+
         return 1;
     }
 
@@ -54,13 +56,9 @@ public class VocationFunctions : LuaScriptInterface, IVocationFunctions
         // vocation:getBaseId()
         var vocation = GetUserdata<Vocation>(luaState, 1);
         if (vocation != null)
-        {
             Lua.PushNumber(luaState, vocation.BaseId);
-        }
         else
-        {
             Lua.PushNil(luaState);
-        }
         return 1;
     }
 
@@ -69,13 +67,9 @@ public class VocationFunctions : LuaScriptInterface, IVocationFunctions
         // vocation:getId()
         var vocation = GetUserdata<Vocation>(luaState, 1);
         if (vocation != null)
-        {
             Lua.PushNumber(luaState, vocation.Id);
-        }
         else
-        {
             Lua.PushNil(luaState);
-        }
         return 1;
     }
 }

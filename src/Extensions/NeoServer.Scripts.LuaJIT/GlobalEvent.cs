@@ -6,8 +6,8 @@ namespace NeoServer.Scripts.LuaJIT;
 
 public class LightInfo(byte level, byte color)
 {
-    public byte Level = level;
     public byte Color = color;
+    public byte Level = level;
 
     public LightInfo() : this(0, 255)
     {

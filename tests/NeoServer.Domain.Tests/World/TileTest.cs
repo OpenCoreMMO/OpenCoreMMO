@@ -323,7 +323,7 @@ public class TileTest
 
         var itemMovementService =
             new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
-        
+
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
 
         var validation = new CreatureMovementValidation(map);
@@ -615,7 +615,7 @@ public class TileTest
         type.SetName($"item{id}");
         type.SetFlag(ItemFlag.AlwaysOnTop);
         type.SetTopOrder(topOrder);
-        
+
         var item = new Item(type, new Location(100, 100, 7));
         item.Attributes.SetAttribute(ItemAttribute.Count, 1);
         return item;
@@ -626,7 +626,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         // Create items with different TopOrder values (lower value = higher priority)
         var itemTopOrder3 = CreateTopItemWithTopOrder(1, 3);
         var itemTopOrder1 = CreateTopItemWithTopOrder(2, 1);
@@ -646,7 +646,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var itemTopOrder5 = CreateTopItemWithTopOrder(1, 5);
         var itemTopOrder2 = CreateTopItemWithTopOrder(2, 2);
         var itemTopOrder8 = CreateTopItemWithTopOrder(3, 8);
@@ -671,7 +671,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var item1 = CreateTopItemWithTopOrder(1, 3);
         var item2 = CreateTopItemWithTopOrder(2, 3); // Same TopOrder
 
@@ -690,7 +690,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var item1 = CreateTopItemWithTopOrder(100, 3);
         var item2 = CreateTopItemWithTopOrder(100, 3); // Same ClientId
 
@@ -708,7 +708,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var itemTopOrder1 = CreateTopItemWithTopOrder(1, 1);
         var itemTopOrder10 = CreateTopItemWithTopOrder(2, 10);
         var itemTopOrder5 = CreateTopItemWithTopOrder(3, 5);
@@ -720,8 +720,8 @@ public class TileTest
 
         // Assert
         tile.TopItems.Count.Should().Be(3);
-        tile.TopItems.Values[0].Should().Be(itemTopOrder1);  // TopOrder 1
-        tile.TopItems.Values[1].Should().Be(itemTopOrder5);  // TopOrder 5
+        tile.TopItems.Values[0].Should().Be(itemTopOrder1); // TopOrder 1
+        tile.TopItems.Values[1].Should().Be(itemTopOrder5); // TopOrder 5
         tile.TopItems.Values[2].Should().Be(itemTopOrder10); // TopOrder 10
     }
 
@@ -730,7 +730,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var itemTopOrder1 = CreateTopItemWithTopOrder(1, 1);
         var itemTopOrder5 = CreateTopItemWithTopOrder(2, 5);
         var itemTopOrder10 = CreateTopItemWithTopOrder(3, 10);
@@ -750,7 +750,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var itemTopOrder5 = CreateTopItemWithTopOrder(1, 5);
         var itemTopOrder10 = CreateTopItemWithTopOrder(2, 10);
         var itemTopOrder1 = CreateTopItemWithTopOrder(3, 1);
@@ -772,7 +772,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var item1 = CreateTopItemWithTopOrder(1, 5);
         var item2 = CreateTopItemWithTopOrder(2, 5);
         var item3 = CreateTopItemWithTopOrder(3, 5);
@@ -794,34 +794,29 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         // Create a complex scenario with various TopOrder values
         var items = new List<IItem>();
         var topOrders = new byte[] { 5, 2, 8, 2, 1, 10, 5, 3 };
-        
-        for (int i = 0; i < topOrders.Length; i++)
+
+        for (var i = 0; i < topOrders.Length; i++)
         {
             var item = CreateTopItemWithTopOrder((ushort)(i + 1), topOrders[i]);
             items.Add(item);
         }
 
         // Act - Add all items
-        foreach (var item in items)
-        {
-            tile.AddItem(item);
-        }
+        foreach (var item in items) tile.AddItem(item);
 
         // Assert - Items should be ordered by TopOrder (lower first), with equal values in reverse insertion order
         tile.TopItems.Count.Should().Be(items.Count);
-        
+
         // Extract TopOrder values from the result
         var resultTopOrders = tile.TopItems.Values.Select(i => i.Metadata.TopOrder).ToList();
-        
+
         // Verify ordering is maintained (non-descending)
-        for (int i = 0; i < resultTopOrders.Count - 1; i++)
-        {
+        for (var i = 0; i < resultTopOrders.Count - 1; i++)
             resultTopOrders[i].Should().BeLessThanOrEqualTo(resultTopOrders[i + 1]);
-        }
     }
 
     [Fact]
@@ -829,7 +824,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var itemTopOrder5 = CreateTopItemWithTopOrder(1, 5);
         var itemTopOrder0 = CreateTopItemWithTopOrder(2, 0);
 

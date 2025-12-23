@@ -9,14 +9,14 @@ using NeoServer.Domain.Common.Location;
 namespace NeoServer.Networking.Packets.Outgoing.Map;
 
 /// <summary>
-/// Provides static methods for building map description byte arrays for the game protocol.
-/// This handles the serialization of map tiles into the wire format required by the client.
+///     Provides static methods for building map description byte arrays for the game protocol.
+///     This handles the serialization of map tiles into the wire format required by the client.
 /// </summary>
 public static class MapDescriptionBuilder
 {
     /// <summary>
-    /// Builds a complete map description starting from the specified coordinates.
-    /// Returns the raw bytes that represent all visible tiles from the player's perspective.
+    ///     Builds a complete map description starting from the specified coordinates.
+    ///     Returns the raw bytes that represent all visible tiles from the player's perspective.
     /// </summary>
     /// <param name="map">The map instance to query tiles from.</param>
     /// <param name="thing">The thing (usually player) requesting the description.</param>
@@ -67,8 +67,8 @@ public static class MapDescriptionBuilder
     }
 
     /// <summary>
-    /// Builds a description for a single floor of the map.
-    /// Returns the raw bytes representing all tiles on the specified floor within the viewing area.
+    ///     Builds a description for a single floor of the map.
+    ///     Returns the raw bytes representing all tiles on the specified floor within the viewing area.
     /// </summary>
     /// <param name="map">The map instance to query tiles from.</param>
     /// <param name="thing">The thing (usually player) requesting the description.</param>
@@ -80,7 +80,8 @@ public static class MapDescriptionBuilder
     /// <param name="verticalOffset">Vertical offset for multi-floor viewing.</param>
     /// <param name="skip">Reference to skip counter for protocol optimization.</param>
     /// <returns>List of bytes representing the floor description in protocol format.</returns>
-    public static IList<byte> GetFloorDescription(IMap map, IThing thing, ushort fromX, ushort fromY, byte currentZ, byte width,
+    public static IList<byte> GetFloorDescription(IMap map, IThing thing, ushort fromX, ushort fromY, byte currentZ,
+        byte width,
         byte height, int verticalOffset, ref int skip)
     {
         var tempBytes = new List<byte>();

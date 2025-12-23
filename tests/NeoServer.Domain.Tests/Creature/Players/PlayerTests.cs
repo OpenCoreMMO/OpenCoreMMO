@@ -1,7 +1,6 @@
 using AutoFixture;
 using Moq;
 using NeoServer.Domain.Common.Combat.Structs;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
@@ -84,7 +83,7 @@ public class PlayerTests
         var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 100) as Player;
         var enemy = PlayerTestDataBuilder.Build() as Player;
         sut.EnableManaShield();
-        
+
         sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(50, DamageType.Melee)));
 
         Assert.Equal((uint)50, sut.Mana);
@@ -97,7 +96,7 @@ public class PlayerTests
         var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 100) as Player;
         var enemy = PlayerTestDataBuilder.Build() as Player;
         sut.EnableManaShield();
-        
+
         sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(150, DamageType.Melee)));
 
         Assert.Equal((uint)0, sut.Mana);
@@ -110,7 +109,7 @@ public class PlayerTests
         var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 100) as Player;
         var enemy = PlayerTestDataBuilder.Build() as Player;
         sut.EnableManaShield();
-        
+
         sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(100, DamageType.Melee)));
 
         Assert.Equal((uint)0, sut.Mana);
@@ -123,8 +122,9 @@ public class PlayerTests
         var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 100) as Player;
         var enemy = PlayerTestDataBuilder.Build() as Player;
         sut.EnableManaShield();
-        
-        sut.OnDamage(enemy, new CombatDamageList([new CombatDamage(50, DamageType.Melee), new CombatDamage(50, DamageType.ManaDrain)]));
+
+        sut.OnDamage(enemy,
+            new CombatDamageList([new CombatDamage(50, DamageType.Melee), new CombatDamage(50, DamageType.ManaDrain)]));
 
         Assert.Equal((uint)0, sut.Mana);
         Assert.Equal((uint)100, sut.HealthPoints);
@@ -136,8 +136,9 @@ public class PlayerTests
         var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 0) as Player;
         var enemy = PlayerTestDataBuilder.Build() as Player;
         sut.EnableManaShield();
-        
-        sut.OnDamage(enemy, new CombatDamageList([new CombatDamage(50, DamageType.Melee), new CombatDamage(50, DamageType.ManaDrain)]));
+
+        sut.OnDamage(enemy,
+            new CombatDamageList([new CombatDamage(50, DamageType.Melee), new CombatDamage(50, DamageType.ManaDrain)]));
 
         Assert.Equal((uint)0, sut.Mana);
         Assert.Equal((uint)50, sut.HealthPoints);

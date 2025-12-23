@@ -1,11 +1,10 @@
 using Microsoft.Extensions.Configuration;
-using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Enums.Config;
 
 namespace NeoServer.Scripts.LuaJIT;
 
 /// <summary>
-/// Configuration map for Lua scripts
+///     Configuration map for Lua scripts
 /// </summary>
 public class ConfigurationMap(IConfiguration configuration)
 {
@@ -14,5 +13,8 @@ public class ConfigurationMap(IConfiguration configuration)
         [BooleanConfigType.REMOVE_POTION_CHARGES] = "game:enablePotionCharges"
     };
 
-    public bool GetBoolean(BooleanConfigType config) => BooleanMap.TryGetValue(config, out var configKey) && configuration.GetValue(configKey, defaultValue: false);
+    public bool GetBoolean(BooleanConfigType config)
+    {
+        return BooleanMap.TryGetValue(config, out var configKey) && configuration.GetValue(configKey, false);
+    }
 }

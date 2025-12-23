@@ -9,7 +9,6 @@ using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
-using NeoServer.Scripts.LuaJIT.Models;
 using NeoServer.Scripts.LuaJIT.Models.Combat;
 using Serilog;
 

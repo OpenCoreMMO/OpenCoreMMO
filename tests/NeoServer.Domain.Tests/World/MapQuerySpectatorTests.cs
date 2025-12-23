@@ -12,7 +12,7 @@ public class MapQuerySpectatorTests
     private static Map CreateMapWithCreatures(params (Location location, ICreature creature)[] creatures)
     {
         var map = (Map)MapTestDataBuilder.Build(50, 200, 50, 200, 7, 9);
-        
+
         foreach (var (location, creature) in creatures)
         {
             creature.SetNewLocation(location);
@@ -48,9 +48,9 @@ public class MapQuerySpectatorTests
     public void Map_returns_spectators_when_locations_are_near()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 105, y: 105, z: 7);
-        var creature = CreateMonster(location: CreateLocation(x: 102, y: 102, z: 7));
+        var fromLocation = CreateLocation(100, 100, 7);
+        var toLocation = CreateLocation(105, 105, 7);
+        var creature = CreateMonster(location: CreateLocation(102, 102, 7));
 
         var map = CreateMapWithCreatures((creature.Location, creature));
 
@@ -66,15 +66,15 @@ public class MapQuerySpectatorTests
     public void Map_returns_only_players_when_onlyPlayer_is_true()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 105, y: 105, z: 7);
-        var player = CreatePlayer(location: CreateLocation(x: 102, y: 102, z: 7));
-        var monster = CreateMonster(location: CreateLocation(x: 103, y: 103, z: 7));
+        var fromLocation = CreateLocation(100, 100, 7);
+        var toLocation = CreateLocation(105, 105, 7);
+        var player = CreatePlayer(location: CreateLocation(102, 102, 7));
+        var monster = CreateMonster(location: CreateLocation(103, 103, 7));
 
         var map = CreateMapWithCreatures((player.Location, player), (monster.Location, monster));
 
         // Act
-        var spectators = map.GetSpectators(fromLocation, toLocation, onlyPlayer: true);
+        var spectators = map.GetSpectators(fromLocation, toLocation, true);
 
         // Assert
         spectators.Should().Contain(player);
@@ -86,15 +86,15 @@ public class MapQuerySpectatorTests
     public void Map_returns_all_creatures_when_onlyPlayer_is_false()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 105, y: 105, z: 7);
-        var player = CreatePlayer(location: CreateLocation(x: 102, y: 102, z: 7));
-        var monster = CreateMonster(location: CreateLocation(x: 103, y: 103, z: 7));
+        var fromLocation = CreateLocation(100, 100, 7);
+        var toLocation = CreateLocation(105, 105, 7);
+        var player = CreatePlayer(location: CreateLocation(102, 102, 7));
+        var monster = CreateMonster(location: CreateLocation(103, 103, 7));
 
         var map = CreateMapWithCreatures((player.Location, player), (monster.Location, monster));
 
         // Act
-        var spectators = map.GetSpectators(fromLocation, toLocation, onlyPlayer: false);
+        var spectators = map.GetSpectators(fromLocation, toLocation, false);
 
         // Assert
         spectators.Should().Contain(player);
@@ -106,9 +106,9 @@ public class MapQuerySpectatorTests
     public void Map_returns_empty_set_when_no_creatures_in_range()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 105, y: 105, z: 7);
-        var creature = CreateMonster(location: CreateLocation(x: 150, y: 150, z: 7));
+        var fromLocation = CreateLocation(100, 100, 7);
+        var toLocation = CreateLocation(105, 105, 7);
+        var creature = CreateMonster(location: CreateLocation(150, 150, 7));
 
         var map = CreateMapWithCreatures((creature.Location, creature));
 
@@ -124,10 +124,10 @@ public class MapQuerySpectatorTests
     public void Map_returns_spectators_from_both_locations_when_far_apart()
     {
         // Arrange - locations more than MaxViewPort apart (11 tiles)
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 130, y: 130, z: 7);
-        var creature1 = CreateMonster(name: "Monster1", location: CreateLocation(x: 102, y: 102, z: 7));
-        var creature2 = CreateMonster(name: "Monster2", location: CreateLocation(x: 128, y: 128, z: 7));
+        var fromLocation = CreateLocation(100, 100, 7);
+        var toLocation = CreateLocation(130, 130, 7);
+        var creature1 = CreateMonster("Monster1", CreateLocation(102, 102, 7));
+        var creature2 = CreateMonster("Monster2", CreateLocation(128, 128, 7));
 
         var map = CreateMapWithCreatures((creature1.Location, creature1), (creature2.Location, creature2));
 
@@ -144,9 +144,9 @@ public class MapQuerySpectatorTests
     public void Map_returns_spectators_when_locations_on_same_floor()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 105, y: 105, z: 7);
-        var creature = CreateMonster(location: CreateLocation(x: 102, y: 102, z: 7));
+        var fromLocation = CreateLocation(100, 100, 7);
+        var toLocation = CreateLocation(105, 105, 7);
+        var creature = CreateMonster(location: CreateLocation(102, 102, 7));
 
         var map = CreateMapWithCreatures((creature.Location, creature));
 
@@ -162,10 +162,10 @@ public class MapQuerySpectatorTests
     public void Map_returns_spectators_when_locations_on_different_floors()
     {
         // Arrange - different floors should use union of both location spectators
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 100, y: 100, z: 8);
-        var creature1 = CreateMonster(name: "Monster1", location: CreateLocation(x: 102, y: 102, z: 7));
-        var creature2 = CreateMonster(name: "Monster2", location: CreateLocation(x: 102, y: 102, z: 8));
+        var fromLocation = CreateLocation(100, 100, 7);
+        var toLocation = CreateLocation(100, 100, 8);
+        var creature1 = CreateMonster("Monster1", CreateLocation(102, 102, 7));
+        var creature2 = CreateMonster("Monster2", CreateLocation(102, 102, 8));
 
         var map = CreateMapWithCreatures((creature1.Location, creature1), (creature2.Location, creature2));
 
@@ -182,10 +182,10 @@ public class MapQuerySpectatorTests
     public void Map_returns_unique_spectators_when_creature_visible_from_both_locations()
     {
         // Arrange - locations far apart but creature visible from both
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 130, y: 130, z: 7); // 30 tiles away (far apart)
-        var creature1 = CreateMonster(name: "Monster1", location: CreateLocation(x: 105, y: 105, z: 7)); // Near first location
-        var creature2 = CreateMonster(name: "Monster2", location: CreateLocation(x: 125, y: 125, z: 7)); // Near second location
+        var fromLocation = CreateLocation(100, 100, 7);
+        var toLocation = CreateLocation(130, 130, 7); // 30 tiles away (far apart)
+        var creature1 = CreateMonster("Monster1", CreateLocation(105, 105, 7)); // Near first location
+        var creature2 = CreateMonster("Monster2", CreateLocation(125, 125, 7)); // Near second location
 
         var map = CreateMapWithCreatures((creature1.Location, creature1), (creature2.Location, creature2));
 
@@ -203,9 +203,9 @@ public class MapQuerySpectatorTests
     public void Map_returns_spectators_at_exact_viewport_boundary()
     {
         // Arrange - MaxViewPortX/Y is 11
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 111, y: 100, z: 7); // Exactly 11 tiles away
-        var creature = CreateMonster(location: CreateLocation(x: 105, y: 100, z: 7));
+        var fromLocation = CreateLocation(100, 100, 7);
+        var toLocation = CreateLocation(111, 100, 7); // Exactly 11 tiles away
+        var creature = CreateMonster(location: CreateLocation(105, 100, 7));
 
         var map = CreateMapWithCreatures((creature.Location, creature));
 
@@ -221,17 +221,17 @@ public class MapQuerySpectatorTests
     public void Map_handles_multiple_creatures_in_spectator_range()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 105, y: 105, z: 7);
+        var fromLocation = CreateLocation(100, 100, 7);
+        var toLocation = CreateLocation(105, 105, 7);
         var creatures = new ICreature[]
         {
-            CreateMonster(name: "Monster1", location: CreateLocation(x: 101, y: 101, z: 7)),
-            CreateMonster(name: "Monster2", location: CreateLocation(x: 102, y: 102, z: 7)),
-            CreateMonster(name: "Monster3", location: CreateLocation(x: 103, y: 103, z: 7)),
-            CreateMonster(name: "Monster4", location: CreateLocation(x: 104, y: 104, z: 7))
+            CreateMonster("Monster1", CreateLocation(101, 101, 7)),
+            CreateMonster("Monster2", CreateLocation(102, 102, 7)),
+            CreateMonster("Monster3", CreateLocation(103, 103, 7)),
+            CreateMonster("Monster4", CreateLocation(104, 104, 7))
         };
 
-        var creatureTuples = creatures.Select(c => (c.Location, (ICreature)c)).ToArray();
+        var creatureTuples = creatures.Select(c => (c.Location, c)).ToArray();
         var map = CreateMapWithCreatures(creatureTuples);
 
         // Act
@@ -239,10 +239,7 @@ public class MapQuerySpectatorTests
 
         // Assert
         spectators.Should().HaveCount(4);
-        foreach (var creature in creatures)
-        {
-            spectators.Should().Contain(creature);
-        }
+        foreach (var creature in creatures) spectators.Should().Contain(creature);
     }
 
     [Fact]
@@ -250,9 +247,9 @@ public class MapQuerySpectatorTests
     public void Map_adjusts_range_when_fromLocation_north_of_toLocation()
     {
         // Arrange - from.Y > to.Y means moving north
-        var fromLocation = CreateLocation(x: 100, y: 105, z: 7);
-        var toLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var creature = CreateMonster(location: CreateLocation(x: 100, y: 103, z: 7));
+        var fromLocation = CreateLocation(100, 105);
+        var toLocation = CreateLocation();
+        var creature = CreateMonster(location: CreateLocation(100, 103));
 
         var map = CreateMapWithCreatures((creature.Location, creature));
 
@@ -268,9 +265,9 @@ public class MapQuerySpectatorTests
     public void Map_adjusts_range_when_fromLocation_west_of_toLocation()
     {
         // Arrange - from.X > to.X means moving west
-        var fromLocation = CreateLocation(x: 105, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var creature = CreateMonster(location: CreateLocation(x: 103, y: 100, z: 7));
+        var fromLocation = CreateLocation(105);
+        var toLocation = CreateLocation();
+        var creature = CreateMonster(location: CreateLocation(103));
 
         var map = CreateMapWithCreatures((creature.Location, creature));
 
@@ -286,8 +283,8 @@ public class MapQuerySpectatorTests
     public void Map_returns_spectators_when_locations_are_identical()
     {
         // Arrange
-        var location = CreateLocation(x: 100, y: 100, z: 7);
-        var creature = CreateMonster(location: CreateLocation(x: 102, y: 102, z: 7));
+        var location = CreateLocation();
+        var creature = CreateMonster(location: CreateLocation(102, 102));
 
         var map = CreateMapWithCreatures((creature.Location, creature));
 
@@ -303,12 +300,12 @@ public class MapQuerySpectatorTests
     public void Map_filters_players_correctly_in_mixed_creature_group()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 105, y: 105, z: 7);
-        var player1 = CreatePlayer(name: "Player1", location: CreateLocation(x: 101, y: 101, z: 7));
-        var player2 = CreatePlayer(name: "Player2", location: CreateLocation(x: 102, y: 102, z: 7));
-        var monster1 = CreateMonster(name: "Monster1", location: CreateLocation(x: 103, y: 103, z: 7));
-        var monster2 = CreateMonster(name: "Monster2", location: CreateLocation(x: 104, y: 104, z: 7));
+        var fromLocation = CreateLocation();
+        var toLocation = CreateLocation(105, 105);
+        var player1 = CreatePlayer("Player1", CreateLocation(101, 101));
+        var player2 = CreatePlayer("Player2", CreateLocation(102, 102));
+        var monster1 = CreateMonster("Monster1", CreateLocation(103, 103));
+        var monster2 = CreateMonster("Monster2", CreateLocation(104, 104));
 
         var map = CreateMapWithCreatures(
             (player1.Location, player1),
@@ -318,7 +315,7 @@ public class MapQuerySpectatorTests
         );
 
         // Act
-        var spectators = map.GetSpectators(fromLocation, toLocation, onlyPlayer: true);
+        var spectators = map.GetSpectators(fromLocation, toLocation, true);
 
         // Assert
         spectators.Should().HaveCount(2);
@@ -333,8 +330,8 @@ public class MapQuerySpectatorTests
     public void Map_returns_creatures_at_single_location_when_both_locations_are_same()
     {
         // Arrange
-        var location = CreateLocation(x: 100, y: 100, z: 7);
-        var creature = CreateMonster(location: CreateLocation(x: 102, y: 102, z: 7));
+        var location = CreateLocation();
+        var creature = CreateMonster(location: CreateLocation(102, 102));
 
         var map = CreateMapWithCreatures((creature.Location, creature));
 
@@ -350,10 +347,10 @@ public class MapQuerySpectatorTests
     public void Map_returns_creatures_from_both_zones_when_locations_differ()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 130, y: 130, z: 7);
-        var creature1 = CreateMonster(name: "Monster1", location: CreateLocation(x: 102, y: 102, z: 7));
-        var creature2 = CreateMonster(name: "Monster2", location: CreateLocation(x: 128, y: 128, z: 7));
+        var fromLocation = CreateLocation();
+        var toLocation = CreateLocation(130, 130);
+        var creature1 = CreateMonster("Monster1", CreateLocation(102, 102));
+        var creature2 = CreateMonster("Monster2", CreateLocation(128, 128));
 
         var map = CreateMapWithCreatures((creature1.Location, creature1), (creature2.Location, creature2));
 
@@ -371,9 +368,9 @@ public class MapQuerySpectatorTests
     public void Map_returns_empty_when_no_creatures_in_zone()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 105, y: 105, z: 7);
-        var creature = CreateMonster(location: CreateLocation(x: 150, y: 150, z: 7)); // Far away
+        var fromLocation = CreateLocation();
+        var toLocation = CreateLocation(105, 105);
+        var creature = CreateMonster(location: CreateLocation(150, 150)); // Far away
 
         var map = CreateMapWithCreatures((creature.Location, creature));
 
@@ -389,10 +386,10 @@ public class MapQuerySpectatorTests
     public void Map_returns_both_players_and_monsters_in_zone()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 105, y: 105, z: 7);
-        var player = CreatePlayer(location: CreateLocation(x: 102, y: 102, z: 7));
-        var monster = CreateMonster(location: CreateLocation(x: 103, y: 103, z: 7));
+        var fromLocation = CreateLocation();
+        var toLocation = CreateLocation(105, 105);
+        var player = CreatePlayer(location: CreateLocation(102, 102));
+        var monster = CreateMonster(location: CreateLocation(103, 103));
 
         var map = CreateMapWithCreatures((player.Location, player), (monster.Location, monster));
 
@@ -410,10 +407,10 @@ public class MapQuerySpectatorTests
     public void Map_returns_unique_creatures_when_visible_from_both_zones()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 130, y: 130, z: 7);
-        var creature1 = CreateMonster(name: "Monster1", location: CreateLocation(x: 105, y: 105, z: 7));
-        var creature2 = CreateMonster(name: "Monster2", location: CreateLocation(x: 125, y: 125, z: 7));
+        var fromLocation = CreateLocation();
+        var toLocation = CreateLocation(130, 130);
+        var creature1 = CreateMonster("Monster1", CreateLocation(105, 105));
+        var creature2 = CreateMonster("Monster2", CreateLocation(125, 125));
 
         var map = CreateMapWithCreatures((creature1.Location, creature1), (creature2.Location, creature2));
 
@@ -431,10 +428,10 @@ public class MapQuerySpectatorTests
     public void Map_returns_creatures_from_different_floors_in_zone()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 100, y: 100, z: 8);
-        var creature1 = CreateMonster(name: "Monster1", location: CreateLocation(x: 102, y: 102, z: 7));
-        var creature2 = CreateMonster(name: "Monster2", location: CreateLocation(x: 102, y: 102, z: 8));
+        var fromLocation = CreateLocation();
+        var toLocation = CreateLocation(100, 100, 8);
+        var creature1 = CreateMonster("Monster1", CreateLocation(102, 102));
+        var creature2 = CreateMonster("Monster2", CreateLocation(102, 102, 8));
 
         var map = CreateMapWithCreatures((creature1.Location, creature1), (creature2.Location, creature2));
 
@@ -452,10 +449,10 @@ public class MapQuerySpectatorTests
     public void Map_returns_creatures_when_zones_far_apart()
     {
         // Arrange - Very far locations
-        var fromLocation = CreateLocation(x: 50, y: 50, z: 7);
-        var toLocation = CreateLocation(x: 180, y: 180, z: 7);
-        var creature1 = CreateMonster(name: "Monster1", location: CreateLocation(x: 55, y: 55, z: 7));
-        var creature2 = CreateMonster(name: "Monster2", location: CreateLocation(x: 175, y: 175, z: 7));
+        var fromLocation = CreateLocation(50, 50);
+        var toLocation = CreateLocation(180, 180);
+        var creature1 = CreateMonster("Monster1", CreateLocation(55, 55));
+        var creature2 = CreateMonster("Monster2", CreateLocation(175, 175));
 
         var map = CreateMapWithCreatures((creature1.Location, creature1), (creature2.Location, creature2));
 
@@ -473,14 +470,14 @@ public class MapQuerySpectatorTests
     public void Map_returns_multiple_creatures_from_same_zone()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 105, y: 105, z: 7);
+        var fromLocation = CreateLocation();
+        var toLocation = CreateLocation(105, 105);
         var creatures = new ICreature[]
         {
-            CreateMonster(name: "Monster1", location: CreateLocation(x: 101, y: 101, z: 7)),
-            CreateMonster(name: "Monster2", location: CreateLocation(x: 102, y: 102, z: 7)),
-            CreateMonster(name: "Monster3", location: CreateLocation(x: 103, y: 103, z: 7)),
-            CreatePlayer(name: "Player1", location: CreateLocation(x: 104, y: 104, z: 7))
+            CreateMonster("Monster1", CreateLocation(101, 101)),
+            CreateMonster("Monster2", CreateLocation(102, 102)),
+            CreateMonster("Monster3", CreateLocation(103, 103)),
+            CreatePlayer("Player1", CreateLocation(104, 104))
         };
 
         var creatureTuples = creatures.Select(c => (c.Location, c)).ToArray();
@@ -491,10 +488,7 @@ public class MapQuerySpectatorTests
 
         // Assert
         result.Should().HaveCount(4);
-        foreach (var creature in creatures)
-        {
-            result.Should().Contain(creature);
-        }
+        foreach (var creature in creatures) result.Should().Contain(creature);
     }
 
     [Fact]
@@ -502,9 +496,9 @@ public class MapQuerySpectatorTests
     public void Map_returns_creatures_only_from_first_zone_when_second_zone_empty()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 180, y: 180, z: 7);
-        var creature = CreateMonster(location: CreateLocation(x: 102, y: 102, z: 7));
+        var fromLocation = CreateLocation();
+        var toLocation = CreateLocation(180, 180);
+        var creature = CreateMonster(location: CreateLocation(102, 102));
 
         var map = CreateMapWithCreatures((creature.Location, creature));
 
@@ -521,9 +515,9 @@ public class MapQuerySpectatorTests
     public void Map_returns_creatures_only_from_second_zone_when_first_zone_empty()
     {
         // Arrange
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 180, y: 180, z: 7);
-        var creature = CreateMonster(location: CreateLocation(x: 178, y: 178, z: 7));
+        var fromLocation = CreateLocation();
+        var toLocation = CreateLocation(180, 180);
+        var creature = CreateMonster(location: CreateLocation(178, 178));
 
         var map = CreateMapWithCreatures((creature.Location, creature));
 
@@ -540,9 +534,9 @@ public class MapQuerySpectatorTests
     public void Map_returns_creatures_at_zone_boundary()
     {
         // Arrange - Creatures at viewport boundary
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 111, y: 100, z: 7); // Exactly 11 tiles away
-        var creature = CreateMonster(location: CreateLocation(x: 105, y: 100, z: 7));
+        var fromLocation = CreateLocation();
+        var toLocation = CreateLocation(111); // Exactly 11 tiles away
+        var creature = CreateMonster(location: CreateLocation(105));
 
         var map = CreateMapWithCreatures((creature.Location, creature));
 
@@ -558,10 +552,10 @@ public class MapQuerySpectatorTests
     public void Map_combines_creatures_from_adjacent_zones()
     {
         // Arrange - Adjacent but separate zones
-        var fromLocation = CreateLocation(x: 100, y: 100, z: 7);
-        var toLocation = CreateLocation(x: 115, y: 115, z: 7);
-        var creature1 = CreateMonster(name: "Monster1", location: CreateLocation(x: 102, y: 102, z: 7));
-        var creature2 = CreateMonster(name: "Monster2", location: CreateLocation(x: 113, y: 113, z: 7));
+        var fromLocation = CreateLocation();
+        var toLocation = CreateLocation(115, 115);
+        var creature1 = CreateMonster("Monster1", CreateLocation(102, 102));
+        var creature2 = CreateMonster("Monster2", CreateLocation(113, 113));
 
         var map = CreateMapWithCreatures((creature1.Location, creature1), (creature2.Location, creature2));
 

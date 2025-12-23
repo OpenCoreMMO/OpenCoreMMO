@@ -221,35 +221,35 @@ public class PlayerLoader(
     {
         return new Dictionary<SkillType, Skill>
         {
-            [SkillType.Axe] = new Skill(SkillType.Axe, (ushort)playerRecord.SkillAxe, playerRecord.SkillAxeTries)
+            [SkillType.Axe] = new(SkillType.Axe, (ushort)playerRecord.SkillAxe, playerRecord.SkillAxeTries)
                 { GetIncreaseRate = () => gameConfiguration.SkillsRate["axe"] },
 
-            [SkillType.Club] = new Skill(SkillType.Club, (ushort)playerRecord.SkillClub, playerRecord.SkillClubTries)
+            [SkillType.Club] = new(SkillType.Club, (ushort)playerRecord.SkillClub, playerRecord.SkillClubTries)
                 { GetIncreaseRate = () => gameConfiguration.SkillsRate["club"] },
 
-            [SkillType.Distance] = new Skill(SkillType.Distance, (ushort)playerRecord.SkillDist,
+            [SkillType.Distance] = new(SkillType.Distance, (ushort)playerRecord.SkillDist,
                     playerRecord.SkillDistTries)
                 { GetIncreaseRate = () => gameConfiguration.SkillsRate["distance"] },
 
-            [SkillType.Fishing] = new Skill(SkillType.Fishing, (ushort)playerRecord.SkillFishing,
+            [SkillType.Fishing] = new(SkillType.Fishing, (ushort)playerRecord.SkillFishing,
                     playerRecord.SkillFishingTries)
                 { GetIncreaseRate = () => gameConfiguration.SkillsRate["fishing"] },
 
-            [SkillType.Fist] = new Skill(SkillType.Fist, (ushort)playerRecord.SkillFist, playerRecord.SkillFistTries)
+            [SkillType.Fist] = new(SkillType.Fist, (ushort)playerRecord.SkillFist, playerRecord.SkillFistTries)
                 { GetIncreaseRate = () => gameConfiguration.SkillsRate["fist"] },
 
-            [SkillType.Shielding] = new Skill(SkillType.Shielding, (ushort)playerRecord.SkillShielding,
+            [SkillType.Shielding] = new(SkillType.Shielding, (ushort)playerRecord.SkillShielding,
                     playerRecord.SkillShieldingTries)
                 { GetIncreaseRate = () => gameConfiguration.SkillsRate["shielding"] },
 
-            [SkillType.Level] = new Skill(SkillType.Level, playerRecord.Level, playerRecord.Experience),
+            [SkillType.Level] = new(SkillType.Level, playerRecord.Level, playerRecord.Experience),
 
             [SkillType.Magic] =
-                new Skill(SkillType.Magic, (ushort)playerRecord.MagicLevel, playerRecord.MagicLevelTries)
+                new(SkillType.Magic, (ushort)playerRecord.MagicLevel, playerRecord.MagicLevelTries)
                     { GetIncreaseRate = () => gameConfiguration.SkillsRate["magic"] },
 
             [SkillType.Sword] =
-                new Skill(SkillType.Sword, (ushort)playerRecord.SkillSword, playerRecord.SkillSwordTries)
+                new(SkillType.Sword, (ushort)playerRecord.SkillSword, playerRecord.SkillSwordTries)
                     { GetIncreaseRate = () => gameConfiguration.SkillsRate["sword"] }
         };
     }

@@ -12,28 +12,17 @@ public class NonAggressiveCombatService
     {
         target ??= caster;
 
-        if (target is ICombatActor targetCreature)
-        {
-            AddConditions(combat, targetCreature);
-        }
+        if (target is ICombatActor targetCreature) AddConditions(combat, targetCreature);
     }
 
     private static void HealCondition(LuaCombat combat, ICombatActor targetCreature)
     {
-        if (!combat.Parameters.TryGetValue(CombatParam.COMBAT_PARAM_TYPE, out var type))
-        {
-            return;
-        }
+        if (!combat.Parameters.TryGetValue(CombatParam.COMBAT_PARAM_TYPE, out var type)) return;
 
-        if ((CombatType)type != CombatType.COMBAT_HEALING)
-        {
-            return;
-        }
+        if ((CombatType)type != CombatType.COMBAT_HEALING) return;
 
         if (combat.Parameters.TryGetValue(CombatParam.COMBAT_PARAM_DISPEL, out var condition))
-        {
             targetCreature.RemoveCondition((ConditionType)condition);
-        }
     }
 
     private static void AddConditions(LuaCombat combat, ICombatActor targetCreature)

@@ -1,7 +1,6 @@
 using System.Reflection;
 using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
@@ -221,7 +220,7 @@ public class AreaCalculationTests
         var originLocation = new Location(100, 100, 7);
         var area = new[] { new Coordinate(100, 100, 7) };
 
-        var map = MapTestDataBuilder.Build(Array.Empty<ITile>());
+        var map = MapTestDataBuilder.Build();
 
         var service = new AreaCalculationService(map);
 

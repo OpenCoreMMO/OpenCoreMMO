@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -24,10 +23,7 @@ public class MonsterLoader(
         {
             var monsters = GetMonsterDataListAsync().GetAwaiter().GetResult();
 
-            foreach (var monster in monsters)
-            {
-                monsterTypeStore.AddOrUpdate(monster.Name, monster);
-            }
+            foreach (var monster in monsters) monsterTypeStore.AddOrUpdate(monster.Name, monster);
 
             return [monsters.Length];
         });
@@ -44,12 +40,9 @@ public class MonsterLoader(
             await JsonSerializer.DeserializeAsync<List<MonstersFile>>(fileStream, JsonSettings.Options);
 
         var tasks = new List<Task<IMonsterType>>();
-        
-        foreach (var monster in monstersPath)
-        {
-            tasks.Add(ConvertMonsterAsync(basePath, monster.File));
-        }
-    
+
+        foreach (var monster in monstersPath) tasks.Add(ConvertMonsterAsync(basePath, monster.File));
+
         return await Task.WhenAll(tasks);
     }
 

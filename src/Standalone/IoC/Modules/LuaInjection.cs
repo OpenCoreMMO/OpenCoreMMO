@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NeoServer.Scripts.LuaJIT;
 using NeoServer.Scripts.LuaJIT.Managers;
 using NeoServer.Scripts.LuaJIT.ScriptServices;
 using NeoServer.Server.Common.Contracts.Scripts;

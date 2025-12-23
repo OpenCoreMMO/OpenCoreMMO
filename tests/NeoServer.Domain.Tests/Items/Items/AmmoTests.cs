@@ -1,5 +1,4 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.Items;
+﻿using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Player;
@@ -76,7 +75,7 @@ public class AmmoTests
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation,
             skills: new Dictionary<SkillType, Skill>
             {
-                [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
+                [SkillType.Level] = new(SkillType.Level, (ushort)playerLevel)
             });
         var sut = (IEquipment)ItemTestDataBuilder.CreateAmmo(1, 100, [
             (ItemTypeAttribute.BodyPosition, "body"),

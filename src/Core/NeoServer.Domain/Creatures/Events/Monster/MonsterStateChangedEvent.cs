@@ -4,4 +4,4 @@ using NeoServer.Domain.Creatures.Monster;
 
 namespace NeoServer.Domain.Creatures.Events.Monster;
 
-public record MonsterStateChangedEvent(IMonster Monster, MonsterState FromState, MonsterState ToState):IEvent;
+public record MonsterStateChangedEvent(IMonster Monster, MonsterState FromState, MonsterState ToState) : IEvent;

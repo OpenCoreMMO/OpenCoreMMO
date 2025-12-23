@@ -12,11 +12,11 @@ namespace NeoServer.Domain.World.Map;
 public class CylinderOperation(IMap map)
 {
     /// <summary>
-    /// Creates a cylinder instance with the operation status set to removed.
+    ///     Creates a cylinder instance with the operation status set to removed.
     /// </summary>
     /// <param name="thing">The item or entity that is being removed.</param>
     /// <param name="stackPosition">The stack position of the item or entity being removed.</param>
-    /// <returns>A new instance of <see cref="Cylinder"/> representing the removed operation.</returns>
+    /// <returns>A new instance of <see cref="Cylinder" /> representing the removed operation.</returns>
     public Cylinder Removed(IThing thing, byte stackPosition)
     {
         var spectators = map.GetCreaturesAtPositionZone(thing.Location, thing.Location);
@@ -30,9 +30,7 @@ public class CylinderOperation(IMap map)
             var fromStackPosition = stackPosition;
 
             if (spectator is IPlayer player && thing is IItem { IsAlwaysOnTop: false } and not IGround)
-            {
                 fromStackPosition = (byte)(tile.GetCreatureStackPositionIndex(player) + stackPosition);
-            }
 
             tileSpectators[index++] = new CylinderSpectator(spectator, fromStackPosition, fromStackPosition);
         }
@@ -44,10 +42,7 @@ public class CylinderOperation(IMap map)
     {
         var tile = map[thing.Location];
 
-        if (tile is null)
-        {
-            return new Cylinder(thing, tile, tile, Operation.None, []);
-        }
+        if (tile is null) return new Cylinder(thing, tile, tile, Operation.None, []);
 
         var spectators = map.GetCreaturesAtPositionZone(tile.Location, tile.Location);
 
@@ -151,7 +146,7 @@ public class CylinderOperation(IMap map)
 
         map.SwapCreatureBetweenSectors(creature, fromTile.Location, toTile.Location);
 
-        var result2 = ((DynamicTile)toTile).AddCreature(creature, forced: forced);
+        var result2 = ((DynamicTile)toTile).AddCreature(creature, forced);
 
         cylinder = new Cylinder(creature, fromTile, toTile, Operation.Moved, spectators.ToArray());
         return result2;

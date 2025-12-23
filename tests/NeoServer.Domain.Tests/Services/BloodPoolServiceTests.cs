@@ -14,9 +14,9 @@ using NeoServer.Domain.World.Models.Tiles;
 namespace NeoServer.Domain.Tests.Services;
 
 /// <summary>
-/// Unit tests for BloodPoolService.
-/// Tests cover: splash creation on tile, damage-based splash creation, pool creation,
-/// blood type color mapping, and edge cases.
+///     Unit tests for BloodPoolService.
+///     Tests cover: splash creation on tile, damage-based splash creation, pool creation,
+///     blood type color mapping, and edge cases.
 /// </summary>
 public class BloodPoolServiceTests
 {
@@ -36,6 +36,33 @@ public class BloodPoolServiceTests
 
         var itemTypeStore = ItemTypeStoreTestBuilder.Build(splashItemType, poolItemType);
         return new LiquidPoolFactory(itemTypeStore);
+    }
+
+    #endregion
+
+    #region Monster Blood Type Tests
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void BloodPoolService_creates_splash_on_monster_tile()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+        var liquidPoolFactory = CreateLiquidPoolFactory();
+        var service = new BloodPoolService(liquidPoolFactory);
+
+        var monster = MonsterTestDataBuilder.Build(map: map);
+        monster.SetNewLocation(new Location(105, 105, 7));
+
+        var tile = map[105, 105, 7] as DynamicTile;
+        tile!.AddCreature(monster);
+
+        // Act
+        service.CreateSplash(monster);
+
+        // Assert
+        var hasLiquid = tile.AllItems.Any(item => item is ILiquid);
+        hasLiquid.Should().BeTrue("monsters should also create blood splashes");
     }
 
     #endregion
@@ -217,33 +244,6 @@ public class BloodPoolServiceTests
         var liquid = tile.AllItems.OfType<ILiquid>().FirstOrDefault();
         liquid.Should().NotBeNull();
         liquid!.LiquidColor.Should().Be(LiquidColor.Red, "blood type creatures should create red pools");
-    }
-
-    #endregion
-
-    #region Monster Blood Type Tests
-
-    [Fact]
-    [Trait("Category", "HappyPath")]
-    public void BloodPoolService_creates_splash_on_monster_tile()
-    {
-        // Arrange
-        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
-        var liquidPoolFactory = CreateLiquidPoolFactory();
-        var service = new BloodPoolService(liquidPoolFactory);
-
-        var monster = MonsterTestDataBuilder.Build(map: map);
-        monster.SetNewLocation(new Location(105, 105, 7));
-
-        var tile = map[105, 105, 7] as DynamicTile;
-        tile!.AddCreature(monster);
-
-        // Act
-        service.CreateSplash(monster);
-
-        // Assert
-        var hasLiquid = tile.AllItems.Any(item => item is ILiquid);
-        hasLiquid.Should().BeTrue("monsters should also create blood splashes");
     }
 
     #endregion

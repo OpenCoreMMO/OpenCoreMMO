@@ -10,7 +10,6 @@ using NeoServer.Domain.SafeTrade;
 using NeoServer.Domain.Spells.Entities;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Events.Combat;
-using NeoServer.Server.Events.Creature;
 using NeoServer.Server.Events.Items;
 using NeoServer.Server.Events.Player;
 using NeoServer.Server.Events.Player.Trade;

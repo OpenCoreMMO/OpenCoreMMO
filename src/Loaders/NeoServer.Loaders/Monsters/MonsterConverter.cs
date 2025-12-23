@@ -42,7 +42,7 @@ public class MonsterConverter(
                 System.Convert.ToByte(monsterData.TargetChange.Chance)),
             ManaCost = monsterData.ManaCost
         };
-        
+
         if (monsterData.Voices != null)
         {
             monster.VoiceConfig = new IntervalChance(System.Convert.ToUInt16(monsterData.Voices.Interval),
@@ -76,10 +76,7 @@ public class MonsterConverter(
         {
             var creatureFlag = ParseCreatureFlag(flag.Key);
 
-            if (creatureFlag == CreatureFlagAttribute.None)
-            {
-                continue;
-            }
+            if (creatureFlag == CreatureFlagAttribute.None) continue;
 
             monster.Flags.Add(creatureFlag, flag.Value);
         }

@@ -348,7 +348,7 @@ public class LuaFunctionsLoader
         Lua.Pop(luaState, 4);
         return position;
     }
-    
+
     public static (int X, int Y, int Z) GetPositionOffset(LuaState luaState, int arg)
     {
         var position = (
@@ -361,7 +361,7 @@ public class LuaFunctionsLoader
         return position;
     }
 
-    
+
     public static Location GetPosition(LuaState luaState, int arg, out int stackpos)
     {
         var position = new Location

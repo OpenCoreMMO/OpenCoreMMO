@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Immutable;
 using NeoServer.Domain.Common.Item;
 
 namespace NeoServer.Domain.Common.Combat.Structs;
@@ -24,38 +23,7 @@ public class CombatDamageList : IEnumerable<CombatDamage>
         {
             AddDamage(damage);
 
-            if (damage is { Unjustified: true })
-            {
-                Unjustified = true;
-            }
-        }
-    }
-
-    public void AddDamage(CombatDamage damage)
-    {
-        if (_damages.TryGetValue(damage.Type, out var existingDamage))
-        {
-            existingDamage.IncreaseDamage(damage.Damage);
-        }
-        else
-        {
-            _damages[damage.Type] = damage;
-        }
-
-        if (damage.Type is DamageType.ManaDrain)
-        {
-            return;
-        }
-    }
-
-    public void ReduceHealthDamage(int damage)
-    {
-        foreach (var damageRecord in _damages.Values)
-        {
-            if (damageRecord.Type is not DamageType.ManaDrain)
-            {
-                damageRecord.IncreaseDamage(-damage);
-            }
+            if (damage is { Unjustified: true }) Unjustified = true;
         }
     }
 
@@ -63,13 +31,13 @@ public class CombatDamageList : IEnumerable<CombatDamage>
 
     public bool Unjustified { get; }
 
-    public Damage TotalDamage {
-
+    public Damage TotalDamage
+    {
         get
         {
             var manaDamage = 0;
             var healthDamage = 0;
-            
+
             foreach (var damage in _damages.Values)
             {
                 if (damage.Type is DamageType.ManaDrain)
@@ -77,25 +45,21 @@ public class CombatDamageList : IEnumerable<CombatDamage>
                     manaDamage += damage.Damage;
                     continue;
                 }
-                
+
                 healthDamage += damage.Damage;
             }
-            
-            return new Damage((ushort)Math.Max(0, healthDamage), (ushort)Math.Max(0, manaDamage)); 
+
+            return new Damage((ushort)Math.Max(0, healthDamage), (ushort)Math.Max(0, manaDamage));
         }
     }
 
-public CombatDamage RegularDamage
+    public CombatDamage RegularDamage
     {
         get
         {
             foreach (var damage in this)
-            {
                 if (damage is { IsElementalDamage: false, Damage: > 0 })
-                {
                     return damage;
-                }
-            }
 
             return new CombatDamage();
         }
@@ -121,5 +85,24 @@ public CombatDamage RegularDamage
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
+    }
+
+    public void AddDamage(CombatDamage damage)
+    {
+        if (_damages.TryGetValue(damage.Type, out var existingDamage))
+            existingDamage.IncreaseDamage(damage.Damage);
+        else
+            _damages[damage.Type] = damage;
+
+        if (damage.Type is DamageType.ManaDrain)
+        {
+        }
+    }
+
+    public void ReduceHealthDamage(int damage)
+    {
+        foreach (var damageRecord in _damages.Values)
+            if (damageRecord.Type is not DamageType.ManaDrain)
+                damageRecord.IncreaseDamage(-damage);
     }
 }

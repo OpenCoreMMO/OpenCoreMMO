@@ -43,7 +43,7 @@ public class PlayerTest
 
         sut.OnChangedOutfit += (_, _) => changedOutfit = true;
 
-        Outfit outfit = new Outfit();
+        var outfit = new Outfit();
         outfit.Addon = 3;
         outfit.LookType = 12;
         outfit.Feet = 1;

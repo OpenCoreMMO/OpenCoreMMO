@@ -32,7 +32,7 @@ public static class Container
             !assembly.FullName.StartsWith("Serilog,") &&
             !assembly.FullName.StartsWith("Autofac,") &&
             !assembly.FullName.StartsWith("netstandard,")).ToArray());
-    
+
     internal static Assembly[] AssemblyCache => _assemblyCacheLazy.Value;
 
     public static IServiceProvider BuildConfigurations()

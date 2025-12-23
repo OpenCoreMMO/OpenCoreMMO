@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NeoServer.Domain.Common.Contracts.DataStores;
@@ -47,7 +46,7 @@ public class WorldLoader
     public void Load(Otbm otbm)
     {
         logger.Step("Loading world...", "{tiles} tiles, {towns} towns and {waypoints} waypoints loaded", () =>
-        { 
+        {
             LoadTiles(otbm);
 
             foreach (var townNode in otbm.Towns)
@@ -74,7 +73,7 @@ public class WorldLoader
         return Task.Run(() =>
         {
             using var fileStream = new FileStream($"{serverConfiguration.Data}/world/{serverConfiguration.OTBM}",
-                    FileMode.Open, FileAccess.Read);
+                FileMode.Open, FileAccess.Read);
 
             var fileBytes = new byte[fileStream.Length];
             fileStream.ReadExactly(fileBytes, 0, fileBytes.Length);
@@ -88,12 +87,8 @@ public class WorldLoader
     private void LoadTiles(Otbm otbm)
     {
         foreach (var tileArea in otbm.TileAreas)
-        {
-            foreach (var tileNode in tileArea.Tiles)
-            {
-                LoadTile(tileNode);
-            }
-        }
+        foreach (var tileNode in tileArea.Tiles)
+            LoadTile(tileNode);
     }
 
     private void LoadTile(TileNode tileNode)
@@ -114,7 +109,8 @@ public class WorldLoader
 
         var items = GetItemsOnTile(tileNode).ToArray();
 
-        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items, serverConfiguration.EnableStaticTileCaching,
+        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items,
+            serverConfiguration.EnableStaticTileCaching,
             tileNode.HouseId);
 
         if (tile is IStaticTile)

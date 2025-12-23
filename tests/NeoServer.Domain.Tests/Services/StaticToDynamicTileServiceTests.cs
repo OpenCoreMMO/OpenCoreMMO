@@ -12,8 +12,8 @@ using NeoServer.Domain.World.Services;
 namespace NeoServer.Domain.Tests.Services;
 
 /// <summary>
-/// Unit tests for StaticToDynamicTileService.
-/// Tests cover: transforming static tiles to dynamic tiles, handling items, edge cases with invalid tiles.
+///     Unit tests for StaticToDynamicTileService.
+///     Tests cover: transforming static tiles to dynamic tiles, handling items, edge cases with invalid tiles.
 /// </summary>
 public class StaticToDynamicTileServiceTests
 {
@@ -37,19 +37,18 @@ public class StaticToDynamicTileServiceTests
             world);
     }
 
-    private static IItemClientServerIdMapStore CreateItemClientServerIdMapStore(params (ushort clientId, ushort serverId)[] mappings)
+    private static IItemClientServerIdMapStore CreateItemClientServerIdMapStore(
+        params (ushort clientId, ushort serverId)[] mappings)
     {
         var mock = new Mock<IItemClientServerIdMapStore>();
 
         foreach (var (clientId, serverId) in mappings)
-        {
             mock.Setup(x => x.TryGetValue(clientId, out It.Ref<ushort>.IsAny))
                 .Returns((ushort key, out ushort value) =>
                 {
                     value = serverId;
                     return true;
                 });
-        }
 
         return mock.Object;
     }
@@ -66,8 +65,10 @@ public class StaticToDynamicTileServiceTests
                 It.IsAny<IDictionary<ItemAttribute, IConvertible>>(),
                 It.IsAny<IDictionary<string, IConvertible>>(),
                 It.IsAny<IEnumerable<IItem>>()))
-            .Returns((ushort serverId, Location location, IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes, 
-                IDictionary<string, IConvertible> itemTypeCustomAttributes, IDictionary<ItemAttribute, IConvertible> itemAttributes,
+            .Returns((ushort serverId, Location location,
+                IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
+                IDictionary<string, IConvertible> itemTypeCustomAttributes,
+                IDictionary<ItemAttribute, IConvertible> itemAttributes,
                 IDictionary<string, IConvertible> itemCustomAttributes, IEnumerable<IItem> children) =>
             {
                 return ItemTestDataBuilder.CreateRegularItem(serverId);
@@ -128,7 +129,7 @@ public class StaticToDynamicTileServiceTests
 
         var itemClientServerIdMapStore = CreateItemClientServerIdMapStore();
         var service = CreateService(
-            itemClientServerIdMapStore: itemClientServerIdMapStore,
+            itemClientServerIdMapStore,
             world: world);
 
         // Act
@@ -214,7 +215,8 @@ public class StaticToDynamicTileServiceTests
                 It.IsAny<IDictionary<string, IConvertible>>(),
                 It.IsAny<IEnumerable<IItem>>()))
             .Returns((ushort serverId, Location loc, IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
-                IDictionary<string, IConvertible> itemTypeCustomAttributes, IDictionary<ItemAttribute, IConvertible> itemAttributes,
+                IDictionary<string, IConvertible> itemTypeCustomAttributes,
+                IDictionary<ItemAttribute, IConvertible> itemAttributes,
                 IDictionary<string, IConvertible> itemCustomAttributes, IEnumerable<IItem> children) =>
             {
                 var item = ItemTestDataBuilder.CreateRegularItem(serverId);
@@ -233,21 +235,21 @@ public class StaticToDynamicTileServiceTests
             });
 
         var service = CreateService(
-            itemClientServerIdMapStore: itemClientServerIdMapStoreMock.Object,
-            itemFactory: itemFactoryMock.Object,
-            tileFactory: tileFactoryMock.Object,
-            world: world);
+            itemClientServerIdMapStoreMock.Object,
+            itemFactoryMock.Object,
+            tileFactoryMock.Object,
+            world);
 
         // Act
         var result = service.TransformIntoDynamicTile(staticTile);
 
         // Assert
         itemFactoryMock.Verify(x => x.Create(
-            It.IsAny<ushort>(),
-            It.IsAny<Location>(),
-            It.IsAny<IDictionary<ItemTypeAttribute, IConvertible>>()), 
+                It.IsAny<ushort>(),
+                It.IsAny<Location>(),
+                It.IsAny<IDictionary<ItemTypeAttribute, IConvertible>>()),
             Times.Exactly(staticTile.AllClientIdItems.Length));
-        
+
         createdItems.Should().HaveCount(staticTile.AllClientIdItems.Length);
     }
 
@@ -331,7 +333,8 @@ public class StaticToDynamicTileServiceTests
                 It.IsAny<IDictionary<string, IConvertible>>(),
                 It.IsAny<IEnumerable<IItem>>()))
             .Returns((ushort serverId, Location loc, IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
-                IDictionary<string, IConvertible> itemTypeCustomAttributes, IDictionary<ItemAttribute, IConvertible> itemAttributes,
+                IDictionary<string, IConvertible> itemTypeCustomAttributes,
+                IDictionary<ItemAttribute, IConvertible> itemAttributes,
                 IDictionary<string, IConvertible> itemCustomAttributes, IEnumerable<IItem> children) =>
             {
                 var item = ItemTestDataBuilder.CreateRegularItem(serverId);
@@ -340,8 +343,8 @@ public class StaticToDynamicTileServiceTests
             });
 
         var service = CreateService(
-            itemClientServerIdMapStore: itemClientServerIdMapStoreMock.Object,
-            itemFactory: itemFactoryMock.Object,
+            itemClientServerIdMapStoreMock.Object,
+            itemFactoryMock.Object,
             world: world);
 
         // Act
@@ -349,11 +352,11 @@ public class StaticToDynamicTileServiceTests
 
         // Assert
         itemFactoryMock.Verify(x => x.Create(
-            It.IsAny<ushort>(),
-            It.IsAny<Location>(),
-            It.IsAny<IDictionary<ItemTypeAttribute, IConvertible>>()), 
+                It.IsAny<ushort>(),
+                It.IsAny<Location>(),
+                It.IsAny<IDictionary<ItemTypeAttribute, IConvertible>>()),
             Times.Exactly(2)); // Only 2 items should be created (item2 is skipped)
-        
+
         createdItems.Should().HaveCount(2);
     }
 
@@ -370,7 +373,7 @@ public class StaticToDynamicTileServiceTests
         var itemFactoryMock = new Mock<IItemFactory>();
         var tileFactoryMock = new Mock<ITileFactory>();
         IItem[] capturedItems = null;
-        
+
         tileFactoryMock.Setup(x => x.CreateDynamicTile(
                 It.IsAny<Coordinate>(),
                 It.IsAny<TileFlag>(),
@@ -393,11 +396,11 @@ public class StaticToDynamicTileServiceTests
         result.Should().NotBeNull();
         result.Should().BeAssignableTo<IDynamicTile>();
         itemFactoryMock.Verify(x => x.Create(
-            It.IsAny<ushort>(),
-            It.IsAny<Location>(),
-            It.IsAny<IDictionary<ItemTypeAttribute, IConvertible>>()), 
+                It.IsAny<ushort>(),
+                It.IsAny<Location>(),
+                It.IsAny<IDictionary<ItemTypeAttribute, IConvertible>>()),
             Times.Never());
-        
+
         capturedItems.Should().NotBeNull();
         capturedItems.Should().BeEmpty();
     }
@@ -431,15 +434,16 @@ public class StaticToDynamicTileServiceTests
                 It.IsAny<IDictionary<string, IConvertible>>(),
                 It.IsAny<IEnumerable<IItem>>()))
             .Returns((ushort serverId, Location loc, IDictionary<ItemTypeAttribute, IConvertible> itemTypeAttributes,
-                IDictionary<string, IConvertible> itemTypeCustomAttributes, IDictionary<ItemAttribute, IConvertible> itemAttributes,
+                IDictionary<string, IConvertible> itemTypeCustomAttributes,
+                IDictionary<ItemAttribute, IConvertible> itemAttributes,
                 IDictionary<string, IConvertible> itemCustomAttributes, IEnumerable<IItem> children) =>
             {
                 return ItemTestDataBuilder.CreateRegularItem(serverId);
             });
 
         var service = CreateService(
-            itemClientServerIdMapStore: itemClientServerIdMapStoreMock.Object,
-            itemFactory: itemFactoryMock.Object,
+            itemClientServerIdMapStoreMock.Object,
+            itemFactoryMock.Object,
             world: world);
 
         // Act
@@ -447,9 +451,9 @@ public class StaticToDynamicTileServiceTests
 
         // Assert
         itemFactoryMock.Verify(x => x.Create(
-            1100,
-            It.Is<Location>(l => l.X == 150 && l.Y == 250 && l.Z == 5),
-            It.IsAny<IDictionary<ItemTypeAttribute, IConvertible>>()), 
+                1100,
+                It.Is<Location>(l => l.X == 150 && l.Y == 250 && l.Z == 5),
+                It.IsAny<IDictionary<ItemTypeAttribute, IConvertible>>()),
             Times.Once());
     }
 
@@ -482,9 +486,9 @@ public class StaticToDynamicTileServiceTests
 
         // Assert
         tileFactoryMock.Verify(x => x.CreateDynamicTile(
-            It.Is<Coordinate>(c => c.X == 123 && c.Y == 456 && c.Z == 9),
-            TileFlag.None,
-            It.IsAny<IItem[]>()), 
+                It.Is<Coordinate>(c => c.X == 123 && c.Y == 456 && c.Z == 9),
+                TileFlag.None,
+                It.IsAny<IItem[]>()),
             Times.Once());
     }
 
@@ -500,7 +504,7 @@ public class StaticToDynamicTileServiceTests
 
         var tileFactoryMock = new Mock<ITileFactory>();
         var createdDynamicTile = CreateDynamicTile(location);
-        
+
         tileFactoryMock.Setup(x => x.CreateDynamicTile(
                 It.IsAny<Coordinate>(),
                 It.IsAny<TileFlag>(),

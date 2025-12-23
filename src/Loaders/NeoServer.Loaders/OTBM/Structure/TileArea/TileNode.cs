@@ -11,16 +11,6 @@ namespace NeoServer.Loaders.OTBM.Structure.TileArea;
 
 public class TileNode : ITileNode
 {
-    public Coordinate Coordinate { get; }
-    public NodeType NodeType { get; }
-    public TileFlags Flag { get; private set; }
-    public List<ItemNode> Items { get; }
-    public uint HouseId { get; }
-
-    private NodeAttribute NodeAttribute { get; set; }
-    private bool IsFlag => NodeAttribute == NodeAttribute.TileFlags;
-    private bool IsItem => NodeAttribute == NodeAttribute.Item;
-    
     public TileNode(TileArea tileArea, OtbNode node)
     {
         var children = node.Children;
@@ -42,11 +32,18 @@ public class TileNode : ITileNode
 
         ParseAttributes(stream);
 
-        foreach (var child in children.Span)
-        {
-            Items.Add(new ItemNode(this, child));
-        }
+        foreach (var child in children.Span) Items.Add(new ItemNode(this, child));
     }
+
+    public Coordinate Coordinate { get; }
+    public NodeType NodeType { get; }
+    public TileFlags Flag { get; private set; }
+    public List<ItemNode> Items { get; }
+    public uint HouseId { get; }
+
+    private NodeAttribute NodeAttribute { get; set; }
+    private bool IsFlag => NodeAttribute == NodeAttribute.TileFlags;
+    private bool IsItem => NodeAttribute == NodeAttribute.Item;
 
     private void ParseAttributes(OtbParsingStream stream)
     {
@@ -55,17 +52,11 @@ public class TileNode : ITileNode
             NodeAttribute = (NodeAttribute)stream.ReadByte();
 
             if (IsFlag)
-            {
                 Flag = ParseTileFlags((OTBMTileFlags)stream.ReadUInt32());
-            }
             else if (IsItem)
-            {
                 Items.Add(new ItemNode(stream));
-            }
             else
-            {
                 throw new Exception($"{Coordinate}: Unknown tile attribute");
-            }
         }
     }
 

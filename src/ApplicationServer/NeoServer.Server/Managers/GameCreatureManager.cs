@@ -194,6 +194,16 @@ public class GameCreatureManager(
         return (false, 0, 0);
     }
 
+    public List<ICreature> GetCreaturesToCheck(int index)
+    {
+        return creatureInstances.GetCreaturesToCheck(index);
+    }
+
+    public void RemoveCreatureFromCheck(int group, int index)
+    {
+        creatureInstances.RemoveCreatureFromCheck(group, index);
+    }
+
     /// <summary>
     ///     Adds creature to game and to map
     /// </summary>
@@ -213,7 +223,4 @@ public class GameCreatureManager(
     {
         return creatureInstances.AllKilledMonsters();
     }
-    
-    public List<ICreature> GetCreaturesToCheck(int index) => creatureInstances.GetCreaturesToCheck(index);
-    public void RemoveCreatureFromCheck(int group, int index) => creatureInstances.RemoveCreatureFromCheck(group, index);
 }

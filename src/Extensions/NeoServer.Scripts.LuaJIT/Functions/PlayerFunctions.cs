@@ -1072,10 +1072,14 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
                 SetMetatable(luaState, -1, "Vocation");
             }
             else
+            {
                 Lua.PushNil(luaState);
+            }
         }
         else
+        {
             Lua.PushNil(luaState);
+        }
 
         return 1;
     }

@@ -26,17 +26,12 @@ public class ItemTypeMetadataParser(Dictionary<ushort, IItemType> itemTypes)
         itemType.SetPlural(metadata.Plural);
 
         if (metadata.Flags != null)
-        {
             foreach (var flagName in metadata.Flags)
             {
-                if (!ItemAttributeTranslation.TranslateFlagName(flagName, out var flag))
-                {
-                    continue;
-                }
+                if (!ItemAttributeTranslation.TranslateFlagName(flagName, out var flag)) continue;
 
                 itemType.Flags.Add(flag);
             }
-        }
 
         if (metadata.Attributes == null)
         {
