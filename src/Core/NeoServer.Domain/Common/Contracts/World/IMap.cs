@@ -44,4 +44,5 @@ public interface IMap
     HashSet<ICreature> GetCreaturesAtPositionZone(Location.Structs.Location location, bool onlyPlayers = false);
     bool CanGoToDirection(ICreature creature, Direction direction, ITileEnterRule rule);
     ITile GetTile(Location.Structs.Location location);
+    void OnItemReduced(ICumulative item, byte amount);
 }

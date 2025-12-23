@@ -9,6 +9,7 @@ using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Items.Items;
+using NeoServer.Domain.World.Events;
 using NeoServer.Domain.World.Structures;
 
 namespace NeoServer.Domain.World.Models.Tiles;
@@ -23,7 +24,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         SetNewLocation(new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z));
         Flags |= (uint)tileFlag;
         AddContent(ground, topItems, items);
-        TileOperationEvent.OnLoaded(this);
+        EventAggregator.Invoke(new TileLoadedEvent(this));
         HouseId = houseId;
     }
 
@@ -478,8 +479,8 @@ public class DynamicTile : BaseTile, IDynamicTile
         ResetTileFlags();
         SetTileFlags(fromItem);
 
-        TileOperationEvent.OnChanged(this, fromItem,
-            new OperationResultList<IItem>(Operation.Updated, fromItem, stackPosition));
+        EventAggregator.Invoke(new TileChangedEvent(this, fromItem,
+            new OperationResultList<IItem>(Operation.Updated, fromItem, stackPosition)));
 
         return true;
     }
@@ -510,8 +511,8 @@ public class DynamicTile : BaseTile, IDynamicTile
         ResetTileFlags();
         SetTileFlags(toItem);
 
-        TileOperationEvent.OnChanged(this, toItem,
-            new OperationResultList<IItem>(Operation.Updated, toItem, stackPosition));
+        EventAggregator.Invoke(new TileChangedEvent(this, toItem,
+            new OperationResultList<IItem>(Operation.Updated, toItem, stackPosition)));
     }
 
     public void ReplaceItem(ushort fromId, IItem toItem)
@@ -542,8 +543,8 @@ public class DynamicTile : BaseTile, IDynamicTile
         ResetTileFlags();
         SetTileFlags(toItem);
 
-        TileOperationEvent.OnChanged(this, toItem,
-            new OperationResultList<IItem>(Operation.Updated, toItem, stackPosition));
+        EventAggregator.Invoke(new TileChangedEvent(this, toItem,
+            new OperationResultList<IItem>(Operation.Updated, toItem, stackPosition)));
     }
 
     /// <summary>
@@ -594,7 +595,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         if (item is IContainer container) container.SetParent(this);
 
-        TileOperationEvent.OnChanged(this, item, operations);
+        EventAggregator.Invoke(new TileChangedEvent(this, item, operations));
         return new Result<OperationResultList<IItem>>(operations);
     }
 
@@ -677,7 +678,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         Ground = ground;
         FloorDirection = ground.FloorDirection;
 
-        TileOperationEvent.OnChanged(this, ground, operations);
+        EventAggregator.Invoke(new TileChangedEvent(this, ground, operations));
     }
 
     public Result<OperationResultList<ICreature>> AddCreature(ICreature creature, bool forced = false)
@@ -908,7 +909,7 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         itemToRemove.OnItemRemoved(this);
 
-        TileOperationEvent.OnChanged(this, itemToRemove, operations);
+        EventAggregator.Invoke(new TileChangedEvent(this, itemToRemove, operations));
         return new Result<OperationResultList<IItem>>(operations);
     }
 

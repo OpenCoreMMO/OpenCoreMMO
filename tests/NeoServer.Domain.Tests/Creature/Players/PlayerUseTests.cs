@@ -4,12 +4,14 @@ using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.Tests.Server;
+using NeoServer.Domain.World.Events;
+using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Server.Commands.Movements;
 
 namespace NeoServer.Domain.Tests.Creature.Players;
 
-public class PlayerUse
+public class PlayerUseTests
 {
     [Fact]
     public void Player_uses_food_when_close_to_it()
@@ -26,6 +28,8 @@ public class PlayerUse
 
         tile.AddCreature(player);
         secondTile.AddItem(food);
+        
+        new TileLoadedEventHandler(map).Handle(new TileLoadedEvent(secondTile));
 
         var playerUseService =
             new PlayerUseService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), map);

@@ -6,7 +6,6 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.World.Events;
 using NeoServer.Domain.World.Models;
 using NeoServer.Domain.World.Models.Tiles;
@@ -29,9 +28,6 @@ public class Map : IMap
         _world = world;
         _eventAggregator = eventAggregator;
         _cylinderOperation = new CylinderOperation(this);
-        
-        TileOperationEvent.OnTileChanged += OnTileChanged;
-        TileOperationEvent.OnTileLoaded += OnTileLoaded;
     }
     
     public ITile this[Location location] => _world.TryGetTile(ref location, out var tile) ? tile : null;
@@ -415,42 +411,8 @@ public class Map : IMap
         var tile = GetNextTile(creature.Location, direction);
         return rule.ShouldIgnore(tile, creature);
     }
-
-    private void OnTileChanged(ITile tile, IItem item, OperationResultList<IItem> resultList)
-    {
-        if (!(resultList?.HasAnyOperation ?? false)) return;
-
-        foreach (var operation in resultList.Operations)
-            switch (operation.Item2)
-            {
-                case Operation.Removed:
-                    if (operation.Item1 is ICumulative cumulativeToRemove)
-                        cumulativeToRemove.OnReduced -= OnItemReduced;
-                    _eventAggregator.InvokeEvent(new ThingRemovedFromTileEvent(operation.Item1,
-                        _cylinderOperation.Removed(operation.Item1, operation.Item3)));
-                    break;
-                case Operation.Updated:
-                    if (operation.Item1 is ICumulative cumulativeToUpdate)
-                        cumulativeToUpdate.OnReduced += OnItemReduced;
-                    _eventAggregator.InvokeEvent(new ThingUpdatedOnTileEvent(operation.Item1,
-                        _cylinderOperation.Updated(operation.Item1, operation.Item1.Amount)));
-                    break;
-                case Operation.Added:
-                    if (operation.Item1 is ICumulative cumulativeToAdd) cumulativeToAdd.OnReduced += OnItemReduced;
-                    _eventAggregator.InvokeEvent(new ThingAddedToTileEvent(operation.Item1, _cylinderOperation.Added(operation.Item1)));
-                    break;
-            }
-    }
-
-    private void OnTileLoaded(ITile tile)
-    {
-        if (tile is not IDynamicTile dynamicTile) return;
-        foreach (var item in dynamicTile.AllItems)
-            if (item is ICumulative cumulative)
-                cumulative.OnReduced += OnItemReduced;
-    }
-
-    private void OnItemReduced(ICumulative item, byte amount)
+    
+    public void OnItemReduced(ICumulative item, byte amount)
     {
         if (this[item.Location] is not IDynamicTile tile) return;
         if (item.Amount == 0)
