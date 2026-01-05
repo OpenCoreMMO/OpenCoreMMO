@@ -567,6 +567,10 @@ public class Monster : WalkableMonster, IMonster
     public override void OnDamage(IThing enemy, CombatDamageList damages)
     {
         ReduceHealth(damages.TotalDamage.HealthDamage);
+        if (damages.TotalDamage.HealthDamage > 0)
+        {
+          TurnVisible();
+        }
     }
 
     internal void ChangeAttackTarget(ICreature creature)

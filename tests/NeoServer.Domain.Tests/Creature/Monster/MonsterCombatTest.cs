@@ -668,6 +668,60 @@ public class MonsterCombatTest
         sut.Attacking.Should().BeTrue();
     }
 
+    [Fact]
+    public void Monster_becomes_visible_when_receives_damage()
+    {
+        // Given
+        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7);
+
+        var player = PlayerTestDataBuilder.Build();
+        player.SetNewLocation(new Location(101, 102, 7));
+
+        var monster = MonsterTestDataBuilder.Build();
+        monster.SetNewLocation(new Location(102, 102, 7));
+        monster.TurnInvisible(); // Monster starts invisible
+
+        map.PlaceCreature(player);
+        map.PlaceCreature(monster);
+
+        // Verify monster is initially invisible
+        monster.IsInvisible.Should().BeTrue();
+
+        // When
+        var damage = new CombatDamage(10, DamageType.Physical);
+        monster.TakeDamage(player, new CombatDamageList(damage));
+
+        // Then
+        monster.IsInvisible.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Monster_remains_invisible_when_receives_zero_damage()
+    {
+        // Given
+        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7);
+
+        var player = PlayerTestDataBuilder.Build();
+        player.SetNewLocation(new Location(101, 102, 7));
+
+        var monster = MonsterTestDataBuilder.Build();
+        monster.SetNewLocation(new Location(102, 102, 7));
+        monster.TurnInvisible(); // Monster starts invisible
+
+        map.PlaceCreature(player);
+        map.PlaceCreature(monster);
+
+        // Verify monster is initially invisible
+        monster.IsInvisible.Should().BeTrue();
+
+        // When
+        var damage = new CombatDamage(0, DamageType.Physical);
+        monster.TakeDamage(player, new CombatDamageList(damage));
+
+        // Then
+        monster.IsInvisible.Should().BeTrue();
+    }
+
     private static MonsterStateService BuildMonsterStateService(
         ISummonService summonService,
         IMap map,
