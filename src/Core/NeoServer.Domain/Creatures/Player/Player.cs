@@ -495,6 +495,16 @@ public class Player : CombatActor, IPlayer
         base.OnSpectatorMoved(spectator);
     }
 
+    public override void OnSpectatorChangedVisibility(ICreature spectator)
+    {
+        if (spectator is IMonster && spectator.CreatureId == Following.CreatureId && spectator.IsInvisible)
+        {
+            StopFollowing();
+        }
+        
+        base.OnSpectatorChangedVisibility(spectator);
+    }
+
     public override void OnSpectatorDies(ICombatActor spectator)
     {
         if (spectator.Equals(CurrentTarget)) HandleTargetLost();
