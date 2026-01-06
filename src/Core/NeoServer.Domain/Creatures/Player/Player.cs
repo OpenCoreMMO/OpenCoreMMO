@@ -497,6 +497,7 @@ public class Player : CombatActor, IPlayer
 
     public override void OnSpectatorChangedVisibility(ICreature spectator)
     {
+        // If the spectator is an invisible monster that the player is following, stop following it.
         if (spectator is IMonster && spectator.CreatureId == Following.CreatureId && spectator.IsInvisible)
         {
             StopFollowing();
@@ -1448,6 +1449,7 @@ public class Player : CombatActor, IPlayer
         var showError = CurrentTarget is not ICombatActor { IsDead: true };
 
         StopAttack();
+        StopFollowing();
 
         if (showError) OperationFailService.Send(this, InvalidOperation.TargetLost);
     }

@@ -12,7 +12,7 @@ public class PlayerFollowHandler(IGameServer game, PlayerFollowCommand playerFol
         var targetId = message.GetUInt32();
 
         if (!game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player)) return;
-        if (!game.CreatureManager.TryGetCreature(targetId, out var target)) return;
+        game.CreatureManager.TryGetCreature(targetId, out var target);
         
         game.Scheduler.AddEvent(new SchedulerEvent(200, () =>
         {
