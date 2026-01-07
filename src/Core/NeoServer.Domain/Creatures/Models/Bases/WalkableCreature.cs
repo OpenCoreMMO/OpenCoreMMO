@@ -1,10 +1,12 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Player.Outfit;
 
 namespace NeoServer.Domain.Creatures.Models.Bases;
@@ -37,8 +39,8 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     public virtual ITileEnterRule TileEnterRule => PlayerEnterTileRule.Rule;
     public virtual ushort Speed { get; protected set; }
 
-    public ICreature Following { get; private set; }
-    public bool IsFollowing => Following is not null;
+    public ICreature FollowCreature { get; private set; }
+    public bool IsFollowing => FollowCreature is not null;
     public bool HasNextStep => _walkingQueue.Count > 0;
 
     public virtual void OnMoved(IDynamicTile fromTile, IDynamicTile toTile, ICylinderSpectator[] spectators)
@@ -103,10 +105,13 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     {
         if (!IsFollowing) return;
 
-        Following = null;
+        FollowCreature = null;
         HasFollowPath = false;
         _walkUpdateTicks = 0;
         _forceUpdateFollowPath = false;
+
+        EventAggregator.Invoke(new StoppedFollowEvent(this));
+        
         StopWalking();
     }
 
@@ -122,7 +127,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
             {
                 _walkUpdateTicks = 0;
                 _forceUpdateFollowPath = false;
-                Follow(Following);
+                Follow(FollowCreature);
             }
         }
     }
@@ -151,12 +156,12 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
         if (IsFollowing)
         {
-            Following = creature;
+            FollowCreature = creature;
             StartFollowing(creature);
             return;
         }
 
-        Following = creature;
+        FollowCreature = creature;
         _forceUpdateFollowPath = false;
 
         StartFollowing(creature);
@@ -240,13 +245,13 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
     public override void OnSpectatorMoved(ICreature spectator)
     {
-        if (Equals(spectator, Following)) //followed creature moved
+        if (Equals(spectator, FollowCreature)) //followed creature moved
         {
             // If we have no more steps in our walk queue, immediately recalculate the follow path
             if (!HasNextStep && HasFollowPath)
             {
                 _forceUpdateFollowPath = false;
-                Follow(Following);
+                Follow(FollowCreature);
             }
             else
             {
@@ -284,6 +289,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         if (!result.Found)
         {
             HasFollowPath = false;
+            StopWalking();
             return;
         }
 

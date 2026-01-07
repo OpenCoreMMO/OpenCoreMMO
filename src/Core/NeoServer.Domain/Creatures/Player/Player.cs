@@ -492,12 +492,33 @@ public class Player : CombatActor, IPlayer
         if (spectator is not ICombatActor target) return;
         if (target.Equals(CurrentTarget)) HandleTargetLost();
 
+        // If the spectator is the creature being followed and the player can no longer see it, stop following.
+        if (Equals(spectator, FollowCreature) && !CanSee(spectator.Location))
+        {
+            StopFollowing();
+        }
+
         base.OnSpectatorMoved(spectator);
+    }
+
+    public override void OnSpectatorLoggedOut(ICreature spectator)
+    {
+        if (spectator is not ICombatActor target) return;
+        if (target.Equals(CurrentTarget)) HandleTargetLost();
+
+        // If the spectator is the creature being followed, stop following.
+        if (Equals(spectator, FollowCreature))
+        {
+            StopFollowing();
+        }
+        
+        base.OnSpectatorLoggedOut(spectator);
     }
 
     public override void OnSpectatorChangedVisibility(ICreature spectator)
     {
-        if (spectator is IMonster && spectator.CreatureId == Following.CreatureId && spectator.IsInvisible)
+        // If the spectator is an invisible monster that the player is following, stop following it.
+        if (spectator is IMonster && Equals(spectator, FollowCreature) && spectator.IsInvisible)
         {
             StopFollowing();
         }
@@ -508,6 +529,12 @@ public class Player : CombatActor, IPlayer
     public override void OnSpectatorDies(ICombatActor spectator)
     {
         if (spectator.Equals(CurrentTarget)) HandleTargetLost();
+        
+        // If the spectator is the creature being followed, stop following.
+        if (Equals(spectator, FollowCreature))
+        {
+            StopFollowing();
+        }
 
         base.OnSpectatorDies(spectator);
     }
@@ -568,13 +595,16 @@ public class Player : CombatActor, IPlayer
         var oldChaseMode = ChaseMode;
         ChaseMode = mode;
 
-        if (ChaseMode == ChaseMode.Follow && CurrentTarget is not null)
+        if (CurrentTarget is not null)
         {
-            Follow(CurrentTarget as IWalkableCreature, PathSearchParams);
-            return;
+            if (ChaseMode == ChaseMode.Follow && CurrentTarget is not null)
+            {
+                Follow(CurrentTarget as IWalkableCreature, PathSearchParams);
+                return;
+            }
+            
+            StopFollowing();
         }
-
-        StopFollowing();
 
         OnChangedChaseMode?.Invoke(this, oldChaseMode, mode);
     }
@@ -1448,6 +1478,7 @@ public class Player : CombatActor, IPlayer
         var showError = CurrentTarget is not ICombatActor { IsDead: true };
 
         StopAttack();
+        StopFollowing();
 
         if (showError) OperationFailService.Send(this, InvalidOperation.TargetLost);
     }
@@ -1743,6 +1774,7 @@ public class Player : CombatActor, IPlayer
     public override void Think(int interval)
     {
         HandleTargetLost();
+        base.Think(interval);
         EventAggregator.Invoke(new PlayerThinkEvent(this, interval));
     }
 

@@ -35,7 +35,7 @@ internal static class PlayerModelSeed
             AccountId = accountId,
             TownId = 1,
             Name = name,
-            ChaseMode = ChaseMode.Follow,
+            ChaseMode = ChaseMode.Stand,
             Capacity = CalculateCapacity(vocation),
             Level = level,
             Health = health,

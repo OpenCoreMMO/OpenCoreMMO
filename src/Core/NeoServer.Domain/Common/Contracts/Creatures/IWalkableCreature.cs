@@ -23,7 +23,7 @@ public delegate void Moved(IWalkableCreature creature, Location.Structs.Location
 
 public interface IWalkableCreature : ICreature
 {
-    ICreature Following { get; }
+    ICreature FollowCreature { get; }
     bool HasNextStep { get; }
     bool IsFollowing { get; }
     ushort RawSpeed { get; }

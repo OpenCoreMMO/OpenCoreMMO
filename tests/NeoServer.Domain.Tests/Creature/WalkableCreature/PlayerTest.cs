@@ -115,7 +115,7 @@ public class PlayerTest
         sut.Follow(creature.Object);
 
         Assert.True(sut.IsFollowing);
-        Assert.Equal(creature.Object, sut.Following);
+        Assert.Equal(creature.Object, sut.FollowCreature);
         Assert.True(followEventEmitted);
         Assert.True(walkEventEmitted);
         Assert.Equal(Direction.North, sut.GetNextStep());
@@ -149,7 +149,7 @@ public class PlayerTest
 
         //assert
         Assert.False(sut.IsFollowing);
-        Assert.Null(sut.Following);
+        Assert.Null(sut.FollowCreature);
         Assert.True(stoppedWalkEventEmitted);
         Assert.Equal(Direction.None, sut.GetNextStep());
     }
@@ -216,7 +216,7 @@ public class PlayerTest
         //assert
         Assert.False(sut.HasNextStep);
         Assert.False(sut.IsFollowing);
-        Assert.Null(sut.Following);
+        Assert.Null(sut.FollowCreature);
         Assert.False(sut.Attacking);
         Assert.True(stoppedWalkEventEmitted);
         Assert.Equal(Direction.None, sut.GetNextStep());
@@ -249,7 +249,7 @@ public class PlayerTest
 
         Assert.False(sut.HasNextStep);
         Assert.False(sut.IsFollowing);
-        Assert.Null(sut.Following);
+        Assert.Null(sut.FollowCreature);
         Assert.False(sut.Attacking);
         Assert.True(stoppedWalkEventEmitted);
         Assert.Equal(Direction.None, sut.GetNextStep());
@@ -282,7 +282,7 @@ public class PlayerTest
 
         Assert.False(player.HasNextStep);
         Assert.False(player.IsFollowing);
-        Assert.Null(player.Following);
+        Assert.Null(player.FollowCreature);
         Assert.False(player.Attacking);
         Assert.True(stoppedAttackEventEmitted);
         Assert.Equal(Direction.None, player.GetNextStep());
