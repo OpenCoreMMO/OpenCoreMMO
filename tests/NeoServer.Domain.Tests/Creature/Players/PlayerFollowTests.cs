@@ -35,7 +35,7 @@ public class PlayerFollowTests
 
         //assert
         sut.IsFollowing.Should().BeFalse();
-        sut.Following.Should().BeNull();
+        sut.FollowCreature.Should().BeNull();
         sut.HasNextStep.Should().BeFalse();
         monitor.Should().Raise(nameof(sut.OnStoppedWalking));
     }
@@ -64,7 +64,7 @@ public class PlayerFollowTests
 
         //assert
         sut.IsFollowing.Should().BeFalse();
-        sut.Following.Should().BeNull();
+        sut.FollowCreature.Should().BeNull();
         sut.HasNextStep.Should().BeFalse();
         monitor.Should().NotRaise(nameof(sut.OnStoppedWalking));
     }
@@ -96,7 +96,7 @@ public class PlayerFollowTests
 
         //assert
         sut.IsFollowing.Should().BeFalse();
-        sut.Following.Should().BeNull();
+        sut.FollowCreature.Should().BeNull();
         sut.HasNextStep.Should().BeFalse();
         monitor.Should().Raise(nameof(sut.OnStoppedWalking));
     }
