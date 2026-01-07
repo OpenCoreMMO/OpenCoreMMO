@@ -11,7 +11,7 @@ internal static class PlayerModelSeed
     {
         builder.HasData(
             CreatePlayerEntity(1, "GOD", 11, 6, 1000, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 75),
-            CreatePlayerEntity(2, "Sorcerer Sample", 1, 1, 8, 2645, 2645, 14850, 14850, 1020, 1022, 7, 2520, 130, 69,
+            CreatePlayerEntity(2, "Sorcerer Sample", 1, 1, 500, 2645, 2645, 14850, 14850, 1020, 1022, 7, 2520, 130, 69,
                 95, 78, 58),
             CreatePlayerEntity(3, "Knight Sample", 4, 1, 500, 4440, 4440, 1750, 1750, 1020, 1022, 7, 2520, 131, 69, 95,
                 78, 58),
