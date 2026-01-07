@@ -11,6 +11,6 @@ public class CreatureChangedVisibilityEventHandler(IMap map)
     {
         var creature = @event.Creature;
         foreach (var spectator in map.GetSpectators(creature.Location))
-            creature.OnSpectatorChangedVisibility(spectator);
+            spectator.OnSpectatorChangedVisibility(creature);
     }
 }

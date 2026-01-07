@@ -518,7 +518,7 @@ public class Player : CombatActor, IPlayer
     public override void OnSpectatorChangedVisibility(ICreature spectator)
     {
         // If the spectator is an invisible monster that the player is following, stop following it.
-        if (spectator is IMonster && spectator.CreatureId == FollowCreature.CreatureId && spectator.IsInvisible)
+        if (spectator is IMonster && Equals(spectator, FollowCreature) && spectator.IsInvisible)
         {
             StopFollowing();
         }
