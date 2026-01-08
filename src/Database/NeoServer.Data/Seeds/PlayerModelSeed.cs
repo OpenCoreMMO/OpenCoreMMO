@@ -42,7 +42,6 @@ internal static class PlayerModelSeed
             MaxHealth = maxHealth,
             Vocation = vocation,
             Gender = GetGender(vocation),
-            Speed = 800,
             Online = false,
             Mana = mana,
             MaxMana = maxMana,

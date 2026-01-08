@@ -31,7 +31,6 @@ public sealed class PlayerEntity
     public uint MaxHealth { get; set; }
     public byte Soul { get; set; }
     public byte MaxSoul { get; set; }
-    public ushort Speed { get; set; }
     public ushort StaminaMinutes { get; set; }
     public bool Online { get; set; }
 

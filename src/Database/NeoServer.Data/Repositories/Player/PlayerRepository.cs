@@ -121,7 +121,6 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         playerEntity.MaxHealth = player.MaxHealthPoints;
         playerEntity.Soul = player.SoulPoints;
         playerEntity.MaxSoul = player.MaxSoulPoints;
-        playerEntity.Speed = player.Speed;
         playerEntity.StaminaMinutes = player.StaminaMinutes;
 
         playerEntity.LookAddons = player.Outfit.Addon;
