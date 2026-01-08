@@ -119,10 +119,15 @@ public class AttackValidation(
         if (!attackInput.HasTarget) return Result.Success;
 
         if (!aggressor.CanSee(target.Location) || !aggressor.Location.SameFloorAs(target.Location))
+        {
             return Result.Fail(InvalidOperation.TargetLost);
+        }
 
-        if (target is ICreature creatureTarget && !aggressor.CanSeeInvisible && !aggressor.CanSee(creatureTarget))
+        // Extra check for area attacks to ensure visibility of creatures
+        if (!attackInput.Parameters.IsAttackInArea && target is ICreature creatureTarget && !aggressor.CanSee(creatureTarget))
+        {
             return Result.Fail(InvalidOperation.TargetLost);
+        }
 
         switch (target)
         {

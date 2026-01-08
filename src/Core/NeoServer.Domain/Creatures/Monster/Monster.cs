@@ -236,8 +236,7 @@ public class Monster : WalkableMonster, IMonster
     public bool IsSleeping => State == MonsterState.Sleeping;
     public bool Defending { get; private set; }
     public virtual bool IsSummon => false;
-    public override bool CanSeeInvisible => IsImmune(Immunity.Invisibility); //todo: add invisibility flag
-    public override bool CanBeSeen => false;
+    public override bool CanSeeInvisible => IsImmune(Immunity.Invisibility); 
 
     public override BloodType BloodType => Metadata.Race switch
     {

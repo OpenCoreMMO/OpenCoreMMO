@@ -43,9 +43,7 @@ public class Npc : WalkableCreature, INpc
     public INpcType Metadata { get; }
 
     public override bool CanSeeInvisible => false;
-
-    public override bool CanBeSeen => true;
-
+    
     public void Advertise()
     {
         if (!Metadata.Marketings?.Any() ?? true) return;

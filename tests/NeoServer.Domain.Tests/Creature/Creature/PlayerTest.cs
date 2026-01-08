@@ -160,11 +160,15 @@ public class PlayerTest
     }
 
     [Fact]
-    public void Player_sees_invisible_player_when_invisible_player()
+    public void Player_sees_invisible_players()
     {
         // Arrange
-        var playerA = PlayerTestDataBuilder.Build(hp: 100);
-        var playerB = PlayerTestDataBuilder.Build(hp: 100);
+        var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
+        var playerA = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        var playerB = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        
+        (map[100, 100, 7] as DynamicTile)?.AddCreature(playerA);
+        (map[100, 101, 7] as DynamicTile)?.AddCreature(playerB);
 
         playerB.TurnInvisible();
 
@@ -174,7 +178,29 @@ public class PlayerTest
         // Assert
         result.Should().BeTrue();
         playerB.IsInvisible.Should().BeTrue();
-        playerB.CanBeSeen.Should().BeTrue();
+    }
+    
+    [Fact]
+    public void Player_cannot_see_invisible_player_that_are_immune_to_invisibility()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
+        var playerA = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        
+        var playerB = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        playerB.Group.EnableFlag(PlayerFlag.CanSenseInvisibility);
+        
+        (map[100, 100, 7] as DynamicTile)?.AddCreature(playerA);
+        (map[100, 101, 7] as DynamicTile)?.AddCreature(playerB);
+
+        playerB.TurnInvisible();
+
+        // Act
+        var result = playerA.CanSee(playerB);
+
+        // Assert
+        result.Should().BeFalse();
+        playerB.IsInvisible.Should().BeTrue();
     }
 
     [Fact]
@@ -186,7 +212,7 @@ public class PlayerTest
         var monsterA = MonsterTestDataBuilder.Build(map: map);
 
         (map[100, 100, 7] as DynamicTile)?.AddCreature(playerA);
-        (map[100, 101, 7] as DynamicTile)?.AddCreature(monsterA); // Far enough that location isn't visible
+        (map[100, 101, 7] as DynamicTile)?.AddCreature(monsterA);
 
         monsterA.TurnInvisible();
 
@@ -268,18 +294,6 @@ public class PlayerTest
         Assert.Null(messageEmitted);
         Assert.Equal(SpeechType.None, speechTypeEmitted);
         Assert.Null(to);
-    }
-
-    [Fact]
-    public void CanBeSeen_Returns_True_Or_False_Depending_On_Flag_State()
-    {
-        var sut = PlayerTestDataBuilder.Build(hp: 100);
-
-        sut.Group.EnableFlag(PlayerFlag.IgnoreYellCheck);
-        Assert.True(sut.CanBeSeen);
-
-        sut.Group.DisableFlag(PlayerFlag.IgnoreYellCheck);
-        Assert.False(sut.CanBeSeen);
     }
 
     [Fact]

@@ -73,7 +73,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public ushort CorpseType => CreatureType.Look[LookType.Corpse];
     public IThing Corpse { get; set; }
     public virtual BloodType BloodType => BloodType.Blood;
-    public abstract bool CanBeSeen { get; }
     public abstract Outfit Outfit { get; protected set; }
     public Outfit LastOutfit { get; private set; }
     public Direction Direction { get; protected set; }
