@@ -100,6 +100,7 @@ public class Player : CombatActor, IPlayer
         SoulPoints = soulPoints;
         StaminaMinutes = staminaMinutes;
         Outfit = outfit;
+        OriginalOutfit = outfit.Clone();
         Speed = speed == 0 ? RawSpeed : speed;
         Inventory = new Inventory.Inventory(this, new Dictionary<Slot, (IItem Item, ushort Id)>());
 
@@ -825,7 +826,7 @@ public class Player : CombatActor, IPlayer
         foreach (var summon in summonsCopy) summon.OnMasterLogout();
 
         EventAggregator.Invoke(new PlayerLoggedOutEvent(this));
-
+        
         return true;
     }
 

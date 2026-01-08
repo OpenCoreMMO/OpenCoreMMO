@@ -30,12 +30,12 @@ public class ThingRemovedFromTileEventHandler(IGameServer game, IScriptManager s
 
         foreach (var spectator in cylinder.TileSpectators)
         {
-            var creature = spectator.Spectator;
+            var spectatorCreature = spectator.Spectator;
 
-            if (creature is not IPlayer player) continue;
-            if (!creature.CanSee(thing.Location)) continue;
+            if (spectatorCreature is not IPlayer player) continue;
+            if (!spectatorCreature.CanSee(thing.Location)) continue;
 
-            if (!game.CreatureManager.GetPlayerConnection(creature.CreatureId, out var connection)) continue;
+            if (!game.CreatureManager.GetPlayerConnection(spectatorCreature.CreatureId, out var connection)) continue;
 
             if (player.IsDead && !Equals(thing, player)) continue;
 
@@ -43,13 +43,20 @@ public class ThingRemovedFromTileEventHandler(IGameServer game, IScriptManager s
 
             // if the player is not dead, show a puff effect
             if (thing is IPlayer { IsDead: false } or IMonster { IsSummon: true })
+            {
                 connection.OutgoingPackets.Enqueue(new MagicEffectPacket(tile.Location, EffectT.Puff));
+            }
 
             // if the monster was killed by another monster, show a puff effect
             if (thing is Monster { KilledByAnotherMonster: true })
+            {
                 connection.OutgoingPackets.Enqueue(new MagicEffectPacket(tile.Location, EffectT.Puff));
+            }
 
-            connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(tile, stackPosition));
+            if (thing is ICreature creatureThing && spectatorCreature.CanSee(creatureThing))
+            {
+                connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(tile, stackPosition));
+            }
 
             connection.Send();
         }
