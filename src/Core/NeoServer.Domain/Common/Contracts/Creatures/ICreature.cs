@@ -133,11 +133,6 @@ public interface ICreature : IMovableThing
     IDynamicTile Tile { get; }
 
     /// <summary>
-    ///     Checks if creature can be seen by others
-    /// </summary>
-    bool CanBeSeen { get; }
-
-    /// <summary>
     ///     Summons of creature
     /// </summary>
     IList<Summon> Summons { get; }

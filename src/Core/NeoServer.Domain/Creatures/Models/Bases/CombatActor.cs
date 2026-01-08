@@ -276,6 +276,8 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual void TurnInvisible()
     {
+        if (IsInvisible) return;
+        
         IsInvisible = true;
         EventAggregator.Invoke(new CreatureChangedVisibilityEvent(this));
     }

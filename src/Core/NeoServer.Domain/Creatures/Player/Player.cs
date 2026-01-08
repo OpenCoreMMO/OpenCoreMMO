@@ -368,7 +368,6 @@ public class Player : CombatActor, IPlayer
     public override bool UsingDistanceWeapon => Inventory.Weapon is IDistanceWeapon;
     public bool Recovering => HasCondition(ConditionType.Regeneration);
     public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
-    public override bool CanBeSeen => Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
     public virtual bool CanSeeInspectionDetails => Group.Access;
 
     public override ushort MaximumElementalAttackPower =>
@@ -543,11 +542,17 @@ public class Player : CombatActor, IPlayer
     {
         if (otherCreature is null) return false;
 
-        if (!otherCreature.IsInvisible ||
-            (otherCreature is IPlayer && otherCreature.CanBeSeen) ||
-            CanSeeInvisible)
-            return true;
+        // if the other creature is not invisible, we can see it
+        if (!otherCreature.IsInvisible) return true;
 
+        //  players can always see other players
+        if (otherCreature is IPlayer && !otherCreature.CanSeeInvisible) return true;
+
+        // if we can see invisible creatures, we can see it
+        if (CanSeeInvisible) return true;
+
+        if (otherCreature.IsInvisible) return false;
+        
         return CanSee(otherCreature.Location);
     }
 

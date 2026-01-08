@@ -11,9 +11,11 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Services;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Models;
+using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Tests.Creature.Creature;
 
@@ -158,6 +160,72 @@ public class PlayerTest
     }
 
     [Fact]
+    public void Player_sees_invisible_players()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
+        var playerA = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        var playerB = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        
+        (map[100, 100, 7] as DynamicTile)?.AddCreature(playerA);
+        (map[100, 101, 7] as DynamicTile)?.AddCreature(playerB);
+
+        playerB.TurnInvisible();
+
+        // Act
+        var result = playerA.CanSee(playerB);
+
+        // Assert
+        result.Should().BeTrue();
+        playerB.IsInvisible.Should().BeTrue();
+    }
+    
+    [Fact]
+    public void Player_cannot_see_invisible_player_that_are_immune_to_invisibility()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
+        var playerA = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        
+        var playerB = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        playerB.Group.EnableFlag(PlayerFlag.CanSenseInvisibility);
+        
+        (map[100, 100, 7] as DynamicTile)?.AddCreature(playerA);
+        (map[100, 101, 7] as DynamicTile)?.AddCreature(playerB);
+
+        playerB.TurnInvisible();
+
+        // Act
+        var result = playerA.CanSee(playerB);
+
+        // Assert
+        result.Should().BeFalse();
+        playerB.IsInvisible.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Player_does_not_see_monster_when_monster_is_invisible_and_player_cannot_see_invisible()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
+        var playerA = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        var monsterA = MonsterTestDataBuilder.Build(map: map);
+
+        (map[100, 100, 7] as DynamicTile)?.AddCreature(playerA);
+        (map[100, 101, 7] as DynamicTile)?.AddCreature(monsterA);
+
+        monsterA.TurnInvisible();
+
+        // Act
+        var result = playerA.CanSee(monsterA);
+
+        // Assert
+        result.Should().BeFalse();
+        playerA.CanSeeInvisible.Should().BeFalse();
+        monsterA.IsInvisible.Should().BeTrue();
+    }
+
+    [Fact]
     public void Say_Should_Emit_Event()
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
@@ -226,18 +294,6 @@ public class PlayerTest
         Assert.Null(messageEmitted);
         Assert.Equal(SpeechType.None, speechTypeEmitted);
         Assert.Null(to);
-    }
-
-    [Fact]
-    public void CanBeSeen_Returns_True_Or_False_Depending_On_Flag_State()
-    {
-        var sut = PlayerTestDataBuilder.Build(hp: 100);
-
-        sut.Group.EnableFlag(PlayerFlag.IgnoreYellCheck);
-        Assert.True(sut.CanBeSeen);
-
-        sut.Group.DisableFlag(PlayerFlag.IgnoreYellCheck);
-        Assert.False(sut.CanBeSeen);
     }
 
     [Fact]
