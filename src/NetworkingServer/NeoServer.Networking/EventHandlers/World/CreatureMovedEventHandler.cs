@@ -31,20 +31,16 @@ public class CreatureMovedEventHandler(IGameServer game) : INetworkingEventHandl
         var fromTile = cylinder.FromTile;
         if (toTile.IsNull()) return;
         if (fromTile.IsNull()) return;
-
-        var toDirection = fromTile.Location.DirectionTo(toTile.Location, true);
-
-        MoveCreature(toDirection, creature, cylinder);
+        
+        MoveCreature(creature, cylinder);
     }
 
-    private void MoveCreature(Direction toDirection, IWalkableCreature creature, ICylinder cylinder)
+    private void MoveCreature(IWalkableCreature creature, ICylinder cylinder)
     {
         var fromLocation = cylinder.FromTile.Location;
         var toLocation = cylinder.ToTile.Location;
         var fromTile = cylinder.FromTile;
-
-        if (creature is IMonster && creature.IsInvisible) return;
-
+        
         foreach (var cylinderSpectator in cylinder.TileSpectators)
         {
             var spectator = cylinderSpectator.Spectator;

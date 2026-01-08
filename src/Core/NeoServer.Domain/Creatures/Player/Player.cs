@@ -543,12 +543,16 @@ public class Player : CombatActor, IPlayer
     {
         if (otherCreature is null) return false;
 
-        if (!otherCreature.IsInvisible ||
-            (otherCreature is IPlayer && otherCreature.CanBeSeen) ||
-            CanSeeInvisible)
-            return true;
+        // if the other creature is not invisible, we can see it
+        if (!otherCreature.IsInvisible) return true;
 
-        return CanSee(otherCreature.Location);
+        //  players can always see other players if they are not invisible
+        if (otherCreature is IPlayer && otherCreature.CanBeSeen) return true;
+
+        // if we can see invisible creatures, we can see it
+        if (CanSeeInvisible) return true;
+        
+        return CanSee(otherCreature.Location) && otherCreature.CanBeSeen;
     }
 
     public override bool CanSee(Location pos)

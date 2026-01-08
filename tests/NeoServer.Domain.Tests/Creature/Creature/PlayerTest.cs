@@ -11,9 +11,11 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Services;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Models;
+using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Tests.Creature.Creature;
 
@@ -155,6 +157,46 @@ public class PlayerTest
         var result = sut.CanSee(creature.Object);
 
         Assert.True(result);
+    }
+
+    [Fact]
+    public void Player_sees_invisible_player_when_invisible_player()
+    {
+        // Arrange
+        var playerA = PlayerTestDataBuilder.Build(hp: 100);
+        var playerB = PlayerTestDataBuilder.Build(hp: 100);
+
+        playerB.TurnInvisible();
+
+        // Act
+        var result = playerA.CanSee(playerB);
+
+        // Assert
+        result.Should().BeTrue();
+        playerB.IsInvisible.Should().BeTrue();
+        playerB.CanBeSeen.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Player_does_not_see_monster_when_monster_is_invisible_and_player_cannot_see_invisible()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
+        var playerA = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        var monsterA = MonsterTestDataBuilder.Build(map: map);
+
+        (map[100, 100, 7] as DynamicTile)?.AddCreature(playerA);
+        (map[100, 101, 7] as DynamicTile)?.AddCreature(monsterA); // Far enough that location isn't visible
+
+        monsterA.TurnInvisible();
+
+        // Act
+        var result = playerA.CanSee(monsterA);
+
+        // Assert
+        result.Should().BeFalse();
+        playerA.CanSeeInvisible.Should().BeFalse();
+        monsterA.IsInvisible.Should().BeTrue();
     }
 
     [Fact]

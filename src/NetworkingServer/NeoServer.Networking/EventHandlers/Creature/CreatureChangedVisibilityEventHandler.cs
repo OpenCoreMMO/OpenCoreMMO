@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common;
+﻿using System;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Events;
@@ -26,11 +27,16 @@ public class CreatureChangedVisibilityEventHandler(IMap map, IGameServer game)
 
             if (!spectator.CanSee(creature.Location)) continue;
 
-            if (creature.IsInvisible)
+            if (spectator.CanSeeInvisible) continue;
+            
+            Console.WriteLine(creature.Location);
+
+            if (creature.IsInvisible && !spectator.CanSee(creature))
             {
                 connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(creature.Tile, stackPosition));
             }
-            else
+            
+            if(!creature.IsInvisible && spectator.CanSee(creature))
             {
                 connection.OutgoingPackets.Enqueue(new AddAtStackPositionPacket(creature, stackPosition));
                 connection.OutgoingPackets.Enqueue(new AddCreaturePacket((IPlayer)spectator,
