@@ -74,6 +74,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public IThing Corpse { get; set; }
     public virtual BloodType BloodType => BloodType.Blood;
     public abstract Outfit Outfit { get; protected set; }
+    public Outfit OriginalOutfit { get; set; }
     public Outfit LastOutfit { get; private set; }
     public Direction Direction { get; protected set; }
     public IList<Summon> Summons { get; protected set; } = new List<Summon>();
@@ -105,6 +106,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         LastOutfit = null;
         Outfit.Change(outfit.LookType, outfit.Head, outfit.Body, outfit.Legs, outfit.Feet, outfit.Addon);
+        OriginalOutfit = Outfit.Clone();
 
         OnChangedOutfit?.Invoke(this, Outfit);
     }

@@ -123,12 +123,12 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         playerEntity.MaxSoul = player.MaxSoulPoints;
         playerEntity.StaminaMinutes = player.StaminaMinutes;
 
-        playerEntity.LookAddons = player.Outfit.Addon;
-        playerEntity.LookBody = player.Outfit.Body;
-        playerEntity.LookFeet = player.Outfit.Feet;
-        playerEntity.LookHead = player.Outfit.Head;
-        playerEntity.LookLegs = player.Outfit.Legs;
-        playerEntity.LookType = player.Outfit.LookType;
+        playerEntity.LookAddons = player.OriginalOutfit?.Addon ?? player.Outfit.Addon;
+        playerEntity.LookBody = player.OriginalOutfit?.Body ?? player.Outfit.Body;
+        playerEntity.LookFeet = player.OriginalOutfit?.Feet ?? player.Outfit.Feet;
+        playerEntity.LookHead = player.OriginalOutfit?.Head ?? player.Outfit.Head;
+        playerEntity.LookLegs = player.OriginalOutfit?.Legs ?? player.Outfit.Legs;
+        playerEntity.LookType = player.OriginalOutfit?.LookType ?? player.Outfit.LookType;
         playerEntity.PosX = player.Location.X;
         playerEntity.PosY = player.Location.Y;
         playerEntity.PosZ = player.Location.Z;

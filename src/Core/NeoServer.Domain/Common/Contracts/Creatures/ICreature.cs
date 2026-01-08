@@ -137,6 +137,8 @@ public interface ICreature : IMovableThing
     /// </summary>
     IList<Summon> Summons { get; }
 
+    Outfit OriginalOutfit { get; set; }
+
     /// <summary>
     ///     Fires when creature says something
     /// </summary>
