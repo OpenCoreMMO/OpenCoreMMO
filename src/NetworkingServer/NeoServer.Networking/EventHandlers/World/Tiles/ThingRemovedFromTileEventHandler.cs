@@ -53,7 +53,7 @@ public class ThingRemovedFromTileEventHandler(IGameServer game, IScriptManager s
                 connection.OutgoingPackets.Enqueue(new MagicEffectPacket(tile.Location, EffectT.Puff));
             }
 
-            if (thing is ICreature creatureThing && spectatorCreature.CanSee(creatureThing))
+            if (thing is not ICreature || (thing is ICreature creatureThing && spectatorCreature.CanSee(creatureThing)))
             {
                 connection.OutgoingPackets.Enqueue(new RemoveTileThingPacket(tile, stackPosition));
             }
