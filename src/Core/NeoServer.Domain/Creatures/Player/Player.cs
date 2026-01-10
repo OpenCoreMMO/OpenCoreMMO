@@ -1513,8 +1513,11 @@ public class Player : CombatActor, IPlayer
                 ? ammo.WeaponAttack.ElementalAttackPowerPercentage
                 : ammo.WeaponAttack.AttackPowerPercentage;
 
-        var maximumAttack = (ushort)(Inventory.AttackRate * DamageFactor * attackPower * Skills[SkillInUse].Level +
-                                     Level / 5 * damageMultiplier);
+        const float PrecisionBonus = 1.03f;
+        var levelContribution = Level / 5f;
+        var skillContribution = (Skills[SkillInUse].Level / 4f) + 1;
+        var weaponContribution = attackPower / 3f * PrecisionBonus;
+        var maximumAttack = (levelContribution + skillContribution) * weaponContribution / DamageFactor * damageMultiplier;
 
         return (ushort)(maximumAttack * attackPercentage / 100);
     }
