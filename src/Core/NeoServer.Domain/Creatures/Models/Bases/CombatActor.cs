@@ -380,7 +380,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual bool CanBlock(DamageType damage)
     {
-        if (damage != DamageType.Melee) return false;
+        if (damage != DamageType.Melee && damage != DamageType.Physical) return false;
         var hasCoolDownExpired = Cooldowns.Expired(CooldownType.Block);
 
         if (!hasCoolDownExpired && _blockCount >= BLOCK_LIMIT) return false;

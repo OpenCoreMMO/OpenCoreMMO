@@ -1513,10 +1513,20 @@ public class Player : CombatActor, IPlayer
                 ? ammo.WeaponAttack.ElementalAttackPowerPercentage
                 : ammo.WeaponAttack.AttackPowerPercentage;
 
-        var maximumAttack = (ushort)(Inventory.AttackRate * DamageFactor * attackPower * Skills[SkillInUse].Level +
-                                     Level / 5 * damageMultiplier);
+        if (!Skills.TryGetValue(SkillInUse, out var skill) || skill is null)
+            return 0;
 
-        return (ushort)(maximumAttack * attackPercentage / 100);
+        const float PrecisionBonus = 1.03f;
+        var levelContribution = Level / 5f;
+        var skillContribution = (skill.Level / 4f) + 1f;
+        var weaponContribution = attackPower / 3f;
+        var attackFactor = Math.Max(DamageFactor, float.Epsilon);
+
+        var baseMaximumAttack = levelContribution + (skillContribution * weaponContribution * PrecisionBonus) / attackFactor;
+        var adjustedMaximumAttack = baseMaximumAttack * damageMultiplier;
+        var scaledAttack = adjustedMaximumAttack * attackPercentage / 100f;
+
+        return (ushort)Math.Clamp(MathF.Round(scaledAttack, MidpointRounding.AwayFromZero), 0f, ushort.MaxValue);
     }
 
     public override CalculatedAttackDamage CalculateAttackDamage()
