@@ -52,15 +52,16 @@ internal sealed class PlayerItemSeed
                 Amount = 10
             }
         );
-        int id = -6;
-        for (int playerId = 1; playerId <= 5; playerId++)
+        
+        var id = -6;
+        for (var playerId = 1; playerId <= 5; playerId++)
         {
             builder.HasData(new PlayerItemEntity
                 {
                     Id = id--,
                     PlayerId = playerId,
                     ParentId = 0,
-                    ServerId = 2554,
+                    ServerId = 2554, //shovel
                     Amount = 1
                 },
                 new PlayerItemEntity
@@ -68,7 +69,7 @@ internal sealed class PlayerItemSeed
                     Id =  id--,
                     PlayerId = playerId,
                     ParentId = 0,
-                    ServerId = 2120,
+                    ServerId = 2120, //rope
                     Amount = 1
                 });
         }

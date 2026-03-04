@@ -101,25 +101,10 @@ public static class ContainerHelpers
     public static IServiceProvider Verify(this IServiceProvider serviceProvider, IServiceCollection serviceCollection)
     {
 #if DEBUG
-        // Only verify in Debug mode - this is expensive and only needed during development
-        var count = serviceCollection.Count;
-        for (var i = 0; i < count; i++)
+        foreach (var service in serviceCollection)
         {
-            var service = serviceCollection[i];
             if (service.ServiceType.ContainsGenericParameters) continue;
-
-            // Skip verification for implementation types that are registered via interface
-            if (service.ImplementationType != null && service.ServiceType != service.ImplementationType)
-                continue;
-
-            try
-            {
-                _ = serviceProvider.GetRequiredService(service.ServiceType);
-            }
-            catch
-            {
-                // Allow failures - some services may have optional dependencies
-            }
+            _ = serviceProvider.GetRequiredService(service.ServiceType);
         }
 #endif
         return serviceProvider;
