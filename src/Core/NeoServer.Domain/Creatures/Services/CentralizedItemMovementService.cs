@@ -80,6 +80,11 @@ public class CentralizedItemMovementService(
             return Result<OperationResultList<IItem>>.Success;
         }
 
+        // --- Liquid source (water) / trash holder handling ---
+        // Items thrown onto water or trash-holder tiles are consumed: removed from source but not placed on the tile.
+        if (destination is IDynamicTile trashTile && trashTile.HasFlag(TileFlags.TrashHolder))
+            return ConsumeItem(item, from, amount, fromPosition);
+
         // --- Mail box handling ---
         if (destination is IDynamicTile mailTile && mailTile.HasFlag(TileFlags.MailBox))
         {
@@ -145,6 +150,17 @@ public class CentralizedItemMovementService(
     #endregion
 
     #region Core Move Mechanics
+
+    /// <summary>
+    ///     Consumes an item by removing it from the source without placing it anywhere.
+    ///     Used for water / trash-holder tiles.
+    /// </summary>
+    private static Result<OperationResultList<IItem>> ConsumeItem(IItem item, IHasItem from, byte amount,
+        byte fromPosition)
+    {
+        from.RemoveItem(item, amount, fromPosition, out _);
+        return Result<OperationResultList<IItem>>.Success;
+    }
 
     /// <summary>
     ///     Handles moving an item to a mailbox tile. If the mail send succeeds, the item

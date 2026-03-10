@@ -121,9 +121,10 @@ public abstract class BaseTile : ITile
         //     setFlag(TILESTATE_MAILBOX);
         // }
 
-        // if (item->getTrashHolder()) { //todo
-        //     setFlag(TILESTATE_TRASHHOLDER);
-        // }
+        if (item.Metadata.HasFlag(ItemFlag.LiquidSource)) SetFlag(TileFlags.TrashHolder);
+
+        if (item.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) == "trashholder")
+            SetFlag(TileFlags.TrashHolder);
 
         if (item.Metadata.HasFlag(ItemFlag.Unpassable)) SetFlag(TileFlags.Unpassable);
 

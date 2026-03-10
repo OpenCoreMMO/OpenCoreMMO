@@ -9,6 +9,7 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
+using Serilog;
 
 namespace NeoServer.Domain.Tests.World.TestData;
 
@@ -66,7 +67,7 @@ public class MoveCumulativeItemTestData : IEnumerable<object[]>
                     items.ToArray()));
             }
 
-            return new Map(world, new Mock<IEventAggregator>().Object);
+            return new Map(world, new Mock<IEventAggregator>().Object, new Mock<ILogger>().Object);
         }
     }
 }

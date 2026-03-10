@@ -410,6 +410,65 @@ public class CentralizedItemMovementServiceTests
     }
 
     [Fact]
+    public void Given_water_at_101_100_7_When_item_moved_to_water_Then_item_is_removed_from_source_and_not_at_destination()
+    {
+        // GIVEN
+        var fromLocation = new Location(100, 100, 7);
+        var waterLocation = new Location(101, 100, 7);
+
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 7, 7);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        GetTile(map, fromLocation).AddItem(item);
+
+        // Replace the tile's ground with water ground (LiquidSource flag)
+        var waterType = new ItemType().SetFlag(ItemFlag.LiquidSource).SetClientId(2); 
+        var waterGround = new Ground(waterType, waterLocation);
+        GetTile(map, waterLocation).ReplaceGround(waterGround);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN
+        var result = sut.Move(player, item, GetTile(map, fromLocation), GetTile(map, waterLocation), 1, 0, 0);
+
+        // THEN – item is consumed by the water: removed from source, not placed on the water tile
+        result.Succeeded.Should().BeTrue();
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().NotBe(item);
+        GetTile(map, waterLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    [Fact]
+    public void Given_trashholder_at_101_100_7_When_item_moved_to_trashholder_Then_item_is_removed_from_source_and_not_at_destination()
+    {
+        // GIVEN
+        var fromLocation = new Location(100, 100, 7);
+        var trashLocation = new Location(101, 100, 7);
+
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 7, 7);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        GetTile(map, fromLocation).AddItem(item);
+
+        // A dustbin — AlwaysOnTop item with type="trashholder" — triggers TileFlags.TrashHolder
+        var trashType = new ItemType().SetFlag(ItemFlag.AlwaysOnTop).SetClientId(2);
+        trashType.Attributes.SetAttribute(ItemTypeAttribute.Type, "trashholder");
+        var dustbin = new Item(trashType, trashLocation);
+        GetTile(map, trashLocation).AddItem(dustbin);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN
+        var result = sut.Move(player, item, GetTile(map, fromLocation), GetTile(map, trashLocation), 1, 0, 0);
+
+        // THEN – item is consumed: removed from source, not placed on the trash holder tile
+        result.Succeeded.Should().BeTrue();
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().NotBe(item);
+        GetTile(map, trashLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    [Fact]
     public void Given_hole_at_101_100_7_When_item_moved_to_hole_Then_item_ends_up_one_floor_below()
     {
         // GIVEN

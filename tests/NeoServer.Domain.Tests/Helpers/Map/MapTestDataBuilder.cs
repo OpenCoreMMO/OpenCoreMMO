@@ -10,6 +10,7 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Items;
 using NeoServer.Domain.World.Models.Tiles;
+using Serilog;
 
 namespace NeoServer.Domain.Tests.Helpers.Map;
 
@@ -18,7 +19,7 @@ public static class MapTestDataBuilder
     public static IMap Build(params ITile[] tiles)
     {
         var world = new Domain.World.World();
-        var map = new Domain.World.Map.Map(world, new Mock<IEventAggregator>().Object);
+        var map = new Domain.World.Map.Map(world, new Mock<IEventAggregator>().Object, new Mock<ILogger>().Object);
 
         foreach (var tile in tiles) world.AddTile(tile);
 
@@ -28,7 +29,7 @@ public static class MapTestDataBuilder
     public static IMap Build(IEventAggregator eventAggregator, params Func<ITile>[] tiles)
     {
         var world = new Domain.World.World();
-        var map = new Domain.World.Map.Map(world, eventAggregator);
+        var map = new Domain.World.Map.Map(world, eventAggregator, new Mock<ILogger>().Object);
 
         foreach (var tile in tiles) world.AddTile(tile?.Invoke());
 
@@ -43,7 +44,7 @@ public static class MapTestDataBuilder
         staticTiles ??= [];
 
         var world = new Domain.World.World();
-        var map = new Domain.World.Map.Map(world, new Mock<IEventAggregator>().Object);
+        var map = new Domain.World.Map.Map(world, new Mock<IEventAggregator>().Object,  new Mock<ILogger>().Object);
 
         for (var x = fromX; x <= toX; x++)
         for (var y = fromY; y <= toY; y++)

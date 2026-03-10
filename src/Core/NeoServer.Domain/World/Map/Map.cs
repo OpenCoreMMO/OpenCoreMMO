@@ -8,6 +8,7 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.World.Events;
 using NeoServer.Domain.World.Models;
 using NeoServer.Domain.World.Models.Tiles;
+using Serilog;
 using MinMax = NeoServer.Domain.Common.MinMax;
 
 namespace NeoServer.Domain.World.Map;
@@ -20,12 +21,14 @@ public class Map : IMap
 {
     private readonly CylinderOperation _cylinderOperation;
     private readonly IEventAggregator _eventAggregator;
+    private readonly ILogger _logger;
     private readonly World _world;
 
-    public Map(World world, IEventAggregator eventAggregator)
+    public Map(World world, IEventAggregator eventAggregator, ILogger logger)
     {
         _world = world;
         _eventAggregator = eventAggregator;
+        _logger = logger;
         _cylinderOperation = new CylinderOperation(this);
     }
 
@@ -485,7 +488,10 @@ public class Map : IMap
             if (destinationTile.HasTeleport(out var teleport))
             {
                 if (!visited.Add(teleport.Destination))
+                {
+                    _logger.Warning("Teleport with infinite loop found at {Location}", toTile.Location);
                     return this[location]; // circular chain detected — stay on the original tile
+                }
 
                 toTile = this[teleport.Destination];
                 continue;

@@ -30,11 +30,12 @@ public class TileFactory(ILogger logger) : ITileFactory
         var hasMoveableItem = false;
         var hasTransformableItem = false;
         var hasHeight = false;
+        var hasTrashHolder = false;
         IGround ground = null;
 
         var topItems = new List<IItem>();
         var downItems = new List<IItem>();
-
+      
         foreach (var item in items)
         {
             if (item is null) continue;
@@ -60,6 +61,11 @@ public class TileFactory(ILogger logger) : ITileFactory
                 continue;
             }
 
+            if (item.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) == "trashholder")
+            {
+                hasTrashHolder = true;
+            }
+
             if (item is IGround groundItem)
             {
                 ground = groundItem;
@@ -71,7 +77,9 @@ public class TileFactory(ILogger logger) : ITileFactory
 
         if (hasUnpassableItem &&
             !hasMoveableItem &&
-            !hasTransformableItem && !hasHeight)
+            !hasTransformableItem && 
+            !hasHeight && 
+            !hasTrashHolder)
         {
             var staticTile = new StaticTile(new Coordinate(), (uint)flag, items);
 

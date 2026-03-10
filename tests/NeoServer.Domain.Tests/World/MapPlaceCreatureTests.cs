@@ -9,6 +9,7 @@ using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Events;
 using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
+using Serilog;
 
 namespace NeoServer.Domain.Tests.World;
 
@@ -23,7 +24,7 @@ public class MapPlaceCreatureTests
         Mock<IEventAggregator> mockEventAggregator)
     {
         var world = new Domain.World.World();
-        var map = new Map(world, mockEventAggregator.Object);
+        var map = new Map(world, mockEventAggregator.Object, new Mock<ILogger>().Object);
 
         for (var x = fromX; x <= toX; x++)
         for (var y = fromY; y <= toY; y++)
