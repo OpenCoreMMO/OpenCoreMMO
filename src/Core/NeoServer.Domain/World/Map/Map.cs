@@ -478,7 +478,7 @@ public class Map : IMap
 
             if (destinationTile.HasHole)
             {
-                toTile = destinationTile;
+                toTile = GetTileDestination(destinationTile);
                 continue;
             }
 

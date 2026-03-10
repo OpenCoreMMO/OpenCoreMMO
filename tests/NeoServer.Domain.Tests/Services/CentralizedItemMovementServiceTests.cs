@@ -440,5 +440,43 @@ public class CentralizedItemMovementServiceTests
         GetTile(map, holeLocation).TopDownItemOnStack.Should().NotBe(item);
         GetTile(map, fromLocation).TopDownItemOnStack.Should().NotBe(item);
     }
-}
 
+    [Fact]
+    public void Given_hole_at_101_100_7_and_hole_at_101_100_8_When_item_moved_to_hole_Then_item_ends_up_at_101_100_9()
+    {
+        // GIVEN
+        var fromLocation = new Location(100, 100, 7);
+        var hole1Location = new Location(101, 100, 7);
+        var hole2Location = new Location(101, 100, 8);
+        var finalLocation = new Location(101, 100, 9);
+
+        // Map must include floors 7, 8, and 9
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 7, 9);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        GetTile(map, fromLocation).AddItem(item);
+
+        // First hole: 101,100,7 → drops to floor 8
+        var holeGround1 = new Ground(new ItemType().SetClientId(2), hole1Location);
+        holeGround1.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
+        GetTile(map, hole1Location).ReplaceGround(holeGround1);
+
+        // Second hole: 101,100,8 → drops to floor 9
+        var holeGround2 = new Ground(new ItemType().SetClientId(2), hole2Location);
+        holeGround2.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
+        GetTile(map, hole2Location).ReplaceGround(holeGround2);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN – player moves an item onto the first hole tile
+        var result = sut.Move(player, item, GetTile(map, fromLocation), GetTile(map, hole1Location), 1, 0, 0);
+
+        // THEN – item falls through both holes and lands two floors down at 101,100,9
+        result.Succeeded.Should().BeTrue();
+        GetTile(map, finalLocation).TopDownItemOnStack.Should().Be(item);
+        GetTile(map, hole2Location).TopDownItemOnStack.Should().NotBe(item);
+        GetTile(map, hole1Location).TopDownItemOnStack.Should().NotBe(item);
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+}
