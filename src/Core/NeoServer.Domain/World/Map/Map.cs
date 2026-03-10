@@ -461,6 +461,7 @@ public class Map : IMap
     
     /// <summary>
     /// Retrieves the destination tile of the specified location, considering teleports, holes, and stairs.
+    /// Detects circular teleport chains and returns the original tile when a loop is encountered.
     /// </summary>
     public ITile GetFinalDestination(Location location)
     {
@@ -468,6 +469,8 @@ public class Map : IMap
         if (toTile is not IDynamicTile destination) return toTile;
 
         toTile = GetTileDestination(destination);
+
+        var visited = new HashSet<Location> { location };
 
         while (true)
         {
@@ -481,6 +484,9 @@ public class Map : IMap
 
             if (destinationTile.HasTeleport(out var teleport))
             {
+                if (!visited.Add(teleport.Destination))
+                    return this[location]; // circular chain detected — stay on the original tile
+
                 toTile = this[teleport.Destination];
                 continue;
             }

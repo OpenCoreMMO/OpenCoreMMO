@@ -364,6 +364,52 @@ public class CentralizedItemMovementServiceTests
     }
 
     [Fact]
+    public void Given_circular_teleport_chain_When_item_moved_to_teleport1_Then_item_stays_on_teleport1_tile()
+    {
+        // GIVEN
+        // T1 (101,100,7) → T2 (102,100,7) → T3 (103,100,7) → T1 (101,100,7)  — circular loop
+        var fromLocation = new Location(100, 100, 7);
+        var t1Location = new Location(101, 100, 7);
+        var t2Location = new Location(102, 100, 7);
+        var t3Location = new Location(103, 100, 7);
+
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 7, 7);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        GetTile(map, fromLocation).AddItem(item);
+
+        var itemType = new ItemType().SetFlag(ItemFlag.AlwaysOnTop).SetClientId(10);
+
+        var t1 = new TeleportItem(itemType, t1Location);
+        t1.Attributes.SetAttribute(new Dictionary<ItemAttribute, IConvertible>
+            { [ItemAttribute.TeleportDestination] = t2Location });
+        GetTile(map, t1Location).AddItem(t1);
+
+        var t2 = new TeleportItem(itemType, t2Location);
+        t2.Attributes.SetAttribute(new Dictionary<ItemAttribute, IConvertible>
+            { [ItemAttribute.TeleportDestination] = t3Location });
+        GetTile(map, t2Location).AddItem(t2);
+
+        var t3 = new TeleportItem(itemType, t3Location);
+        t3.Attributes.SetAttribute(new Dictionary<ItemAttribute, IConvertible>
+            { [ItemAttribute.TeleportDestination] = t1Location });
+        GetTile(map, t3Location).AddItem(t3);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN
+        var result = sut.Move(player, item, GetTile(map, fromLocation), GetTile(map, t1Location), 1, 0, 0);
+
+        // THEN – the circular chain is detected; the item lands on T1 and does not loop forever
+        result.Succeeded.Should().BeTrue();
+        GetTile(map, t1Location).TopDownItemOnStack.Should().Be(item);
+        GetTile(map, t2Location).TopDownItemOnStack.Should().NotBe(item);
+        GetTile(map, t3Location).TopDownItemOnStack.Should().NotBe(item);
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    [Fact]
     public void Given_hole_at_101_100_7_When_item_moved_to_hole_Then_item_ends_up_one_floor_below()
     {
         // GIVEN
