@@ -13,14 +13,14 @@ namespace NeoServer.Domain.World.Services;
 
 public class ToMapMovementService(
     IMap map,
-    IMapService mapService,
     IItemMovementService itemMovementService,
-    ICreaturePushService creaturePushService)
+    ICreaturePushService creaturePushService,
+    ICentralizedItemMovementService centralizedItemMovementService)
     : IToMapMovementService
 {
     public void Move(IPlayer player, MovementParams itemThrow)
     {
-        var finalTile = mapService.GetFinalTile(itemThrow.ToLocation);
+        var finalTile = map.GetTileDestination(itemThrow.ToLocation);
 
         if (finalTile is not IDynamicTile)
         {
@@ -49,14 +49,14 @@ public class ToMapMovementService(
         // Move item if present, otherwise push creature if present
         if (fromTile.TopDownItemOnStack is { CanBeMoved: true } item)
         {
-            var finalTile = (DynamicTile)mapService.GetFinalTile(toTile.Location);
-            itemMovementService.Move(player, item, fromTile, finalTile, movementParams.Amount, 0, 0);
+            //var finalTile = (DynamicTile)map.GetTileDestination(toTile.Location);
+            centralizedItemMovementService.Move(player, item, fromTile, toTile, movementParams.Amount, 0, 0);
             return;
         }
 
         if (fromTile.TopCreatureOnStack is { } creature && !ReferenceEquals(creature, player))
         {
-            _ = (DynamicTile)mapService.GetFinalTile(toTile.Location);
+            _ = (DynamicTile)map.GetTileDestination(toTile.Location);
             creaturePushService.PushCreature(player, creature, toTile);
         }
     }
@@ -70,10 +70,11 @@ public class ToMapMovementService(
         var itemIsPickupable = item?.IsPickupable ?? false;
         if (!itemIsPickupable) return;
 
-        var finalTile = (DynamicTile)mapService.GetFinalTile(toTile.Location);
+        var finalTile = (DynamicTile)map.GetTileDestination(toTile.Location);
 
-        player.MoveItem(item, player.Inventory, finalTile, movementParams.Amount,
-            (byte)movementParams.FromLocation.Slot, 0);
+        itemMovementService.Move(player, item, player.Inventory, finalTile,  movementParams.Amount,
+             (byte)movementParams.FromLocation.Slot, 0);
+        
     }
 
     private void FromContainer(IPlayer player, MovementParams itemThrow)
@@ -87,9 +88,9 @@ public class ToMapMovementService(
 
         if (!itemIsPickupable) return;
 
-        var finalTile = (DynamicTile)mapService.GetFinalTile(toTile.Location);
+        var finalTile = (DynamicTile)map.GetTileDestination(toTile.Location);
 
         itemMovementService.Move(player, item, container, finalTile, itemThrow.Amount,
-            (byte)itemThrow.FromLocation.ContainerSlot, 0);
+             (byte)itemThrow.FromLocation.ContainerSlot, 0);
     }
 }

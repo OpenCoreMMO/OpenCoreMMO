@@ -408,8 +408,12 @@ public class Map : IMap
     public void OnItemReduced(ICumulative item, byte amount)
     {
         if (this[item.Location] is not IDynamicTile tile) return;
+        
         if (item.Amount == 0)
+        {
             tile.RemoveItem(item, amount, 0, out var removedThing);
+        }
+
         if (item.Amount > 0)
         {
             tile.TryGetStackPositionOfItem(item, out var stackPosition);
@@ -428,5 +432,62 @@ public class Map : IMap
         if (toTile is not IDynamicTile destination) return toTile;
 
         return GetTileDestination(destination);
+    }
+
+    /// <summary>
+    /// Finds an available neighboring tile that meets the specified criteria.
+    /// </summary>
+    /// <param name="location">The starting location to search for neighboring tiles.</param>
+    /// <param name="creature">The creature attempting to enter a tile.</param>
+    /// <param name="rule">The rule that determines whether a tile can be entered.</param>
+    /// <param name="foundTile">An output parameter that receives the available neighboring tile if one is found.</param>
+    /// <returns>Returns <c>true</c> if an available neighboring tile is found; otherwise, <c>false</c>.</returns>
+    public bool GetNeighbourAvailableTile(Location location, ICreature creature, ITileEnterRule rule,
+        out ITile foundTile)
+    {
+        foundTile = null;
+
+        foreach (var neighbour in location.Neighbours)
+        {
+            if (this[neighbour] is not IDynamicTile tile) continue;
+            if (!rule.ShouldIgnore(tile, creature)) continue;
+
+            foundTile = tile;
+            return true;
+        }
+
+        return false;
+    }
+    
+    /// <summary>
+    /// Retrieves the destination tile of the specified location, considering teleports, holes, and stairs.
+    /// </summary>
+    public ITile GetFinalDestination(Location location)
+    {
+        var toTile = this[location];
+        if (toTile is not IDynamicTile destination) return toTile;
+
+        toTile = GetTileDestination(destination);
+
+        while (true)
+        {
+            if(toTile is not IDynamicTile destinationTile) return toTile;
+
+            if (destinationTile.HasHole)
+            {
+                toTile = destinationTile;
+                continue;
+            }
+
+            if (destinationTile.HasTeleport(out var teleport))
+            {
+                toTile = this[teleport.Destination];
+                continue;
+            }
+
+            break;
+        }
+
+        return toTile;
     }
 }

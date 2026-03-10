@@ -1,0 +1,398 @@
+using Moq;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Items;
+using NeoServer.Domain.Items.Items;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Services;
+using NeoServer.Domain.Items.Bases;
+using NeoServer.Domain.Mail;
+using NeoServer.Domain.Tests.Helpers;
+using NeoServer.Domain.Tests.Helpers.Map;
+using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Domain.World.Services;
+
+namespace NeoServer.Domain.Tests.Services;
+
+public class CentralizedItemMovementServiceTests
+{
+    // ------------------------------------------------------------------
+    // Factory helpers
+    // ------------------------------------------------------------------
+
+    private static CentralizedItemMovementService BuildService(NeoServer.Domain.Common.Contracts.World.IMap map)
+    {
+        var walkTo = new Mock<IWalkToMechanism>();
+        var validator = new ItemThrowValidator(map);
+        var mail = new Mock<IMailService>();
+
+        return new CentralizedItemMovementService(map, walkTo.Object, validator, mail.Object);
+    }
+
+    private static IDynamicTile GetTile(NeoServer.Domain.Common.Contracts.World.IMap map, Location location)
+        => (IDynamicTile)map[location];
+
+    // ------------------------------------------------------------------
+    // Basic Movement
+    // ------------------------------------------------------------------
+
+    [Fact]
+    public void Given_item_on_ground_at_100_100_7_When_moved_to_101_100_7_Then_item_appears_at_destination()
+    {
+        // GIVEN
+        var fromLocation = new Location(100, 100, 7);
+        var toLocation = new Location(101, 100, 7);
+
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 7, 7);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        var fromTile = GetTile(map, fromLocation);
+        fromTile.AddItem(item);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        var toTile = GetTile(map, toLocation);
+
+        // WHEN
+        var result = sut.Move(player, item, fromTile, toTile, 1, 0, 0);
+
+        // THEN
+        result.Succeeded.Should().BeTrue();
+        toTile.TopDownItemOnStack.Should().Be(item);
+        fromTile.TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    [Fact]
+    public void Given_cumulative_item_amount_100_at_100_100_7_When_40_moved_to_101_100_7_Then_40_at_destination_and_60_remain()
+    {
+        // GIVEN
+        var fromLocation = new Location(100, 100, 7);
+        var toLocation = new Location(101, 100, 7);
+
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 7, 7);
+
+        var item = ItemTestDataBuilder.CreateCumulativeItem(100, amount: 100);
+        var fromTile = GetTile(map, fromLocation);
+        fromTile.AddItem(item);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN
+        var result = sut.Move(player, item, fromTile, GetTile(map, toLocation), 40, 0, 0);
+
+        // THEN
+        result.Succeeded.Should().BeTrue();
+        GetTile(map, toLocation).TopDownItemOnStack.Should().NotBeNull();
+        GetTile(map, toLocation).TopDownItemOnStack.Amount.Should().Be(40);
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().NotBeNull();
+        GetTile(map, fromLocation).TopDownItemOnStack.Amount.Should().Be(60);
+    }
+
+    [Fact]
+    public void Given_cumulative_item_amount_100_at_100_100_7_When_100_moved_to_101_100_7_Then_100_at_destination_and_nothing_remains()
+    {
+        // GIVEN
+        var fromLocation = new Location(100, 100, 7);
+        var toLocation = new Location(101, 100, 7);
+
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 7, 7);
+
+        var item = ItemTestDataBuilder.CreateCumulativeItem(100, amount: 100);
+        var fromTile = GetTile(map, fromLocation);
+        fromTile.AddItem(item);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN
+        var result = sut.Move(player, item, fromTile, GetTile(map, toLocation), 100, 0, 0);
+
+        // THEN
+        result.Succeeded.Should().BeTrue();
+        GetTile(map, toLocation).TopDownItemOnStack.Should().Be(item);
+        GetTile(map, toLocation).TopDownItemOnStack.Amount.Should().Be(100);
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    [Fact]
+    public void Given_unmovable_item_at_100_100_7_When_moved_to_101_100_7_Then_fails_with_NotPossible()
+    {
+        // GIVEN
+        var fromLocation = new Location(100, 100, 7);
+        var toLocation = new Location(101, 100, 7);
+
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 7, 7);
+
+        // CreateRegularItem has no Movable flag
+        var item = ItemTestDataBuilder.CreateRegularItem(100);
+        var fromTile = GetTile(map, fromLocation);
+        fromTile.AddItem(item);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN
+        var result = sut.Move(player, item, fromTile, GetTile(map, toLocation), 1, 0, 0);
+
+        // THEN
+        result.Failed.Should().BeTrue();
+        result.Error.Should().Be(InvalidOperation.NotPossible);
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().Be(item);
+        GetTile(map, toLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    // ------------------------------------------------------------------
+    // Distance Validation
+    // ------------------------------------------------------------------
+
+    [Fact]
+    public void Given_item_at_100_100_7_When_moved_to_107_100_7_distance_7_Then_succeeds()
+    {
+        // GIVEN
+        var fromLocation = new Location(100, 100, 7);
+        var toLocation = new Location(107, 100, 7);
+
+        var map = MapTestDataBuilder.Build(99, 115, 99, 110, 7, 7);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        var fromTile = GetTile(map, fromLocation);
+        fromTile.AddItem(item);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN
+        var result = sut.Move(player, item, fromTile, GetTile(map, toLocation), 1, 0, 0);
+
+        // THEN
+        result.Succeeded.Should().BeTrue();
+        GetTile(map, toLocation).TopDownItemOnStack.Should().Be(item);
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    [Fact]
+    public void Given_item_at_100_100_7_When_moved_to_108_100_7_distance_8_Then_fails_with_TooFar()
+    {
+        // GIVEN
+        var fromLocation = new Location(100, 100, 7);
+        var toLocation = new Location(108, 100, 7);
+
+        var map = MapTestDataBuilder.Build(99, 115, 99, 110, 7, 7);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        var fromTile = GetTile(map, fromLocation);
+        fromTile.AddItem(item);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN
+        var result = sut.Move(player, item, fromTile, GetTile(map, toLocation), 1, 0, 0);
+
+        // THEN
+        result.Failed.Should().BeTrue();
+        result.Error.Should().Be(InvalidOperation.TooFar);
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().Be(item);
+        GetTile(map, toLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    // ------------------------------------------------------------------
+    // Floor Validation
+    // ------------------------------------------------------------------
+
+    [Fact]
+    public void Given_item_at_100_100_7_and_player_at_100_100_8_When_moved_Then_fails_with_first_go_upstairs()
+    {
+        // GIVEN – item on floor 7, player one floor below (Z=8 is deeper underground in Tibia)
+        var fromLocation = new Location(100, 100, 7);
+        var toLocation = new Location(101, 100, 7);
+
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 7, 8);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        var fromTile = GetTile(map, fromLocation);
+        fromTile.AddItem(item);
+
+        // Place the player on the Z=8 tile so their location becomes (100,100,8)
+        var player = PlayerTestDataBuilder.Build(map: map);
+        player.SetNewLocation(new Location(100, 100, 8));
+        map.PlaceCreature(player);
+
+        var sut = BuildService(map);
+
+        // WHEN
+        var result = sut.Move(player, item, fromTile, GetTile(map, toLocation), 1, 0, 0);
+
+        // THEN – item.Location.Z (7) < player.Location.Z (8) → "First go upstairs"
+        result.Failed.Should().BeTrue();
+        result.Error.Should().Be(InvalidOperation.NotPossible);
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().Be(item);
+        GetTile(map, toLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    [Fact]
+    public void Given_item_at_100_100_8_and_player_at_100_100_7_When_moved_Then_fails_with_first_go_downstairs()
+    {
+        // GIVEN – item on floor 8 (underground), player one floor above (Z=7)
+        var fromLocation = new Location(100, 100, 8);
+        var toLocation = new Location(101, 100, 8);
+
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 7, 8);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        var fromTile = GetTile(map, fromLocation);
+        fromTile.AddItem(item);
+
+        // Player stays at default location (100,100,7)
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN
+        var result = sut.Move(player, item, fromTile, GetTile(map, toLocation), 1, 0, 0);
+
+        // THEN – item.Location.Z (8) > player.Location.Z (7) → "First go downstairs"
+        result.Failed.Should().BeTrue();
+        result.Error.Should().Be(InvalidOperation.NotPossible);
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().Be(item);
+        GetTile(map, toLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    [Fact]
+    public void Given_item_at_100_100_7_and_player_at_100_100_7_When_moved_to_101_100_6_different_floor_Then_fails_with_NotPossible()
+    {
+        // GIVEN – item and player on floor 7, destination on floor 6
+        var fromLocation = new Location(100, 100, 7);
+        var toLocation = new Location(101, 100, 6);
+
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 6, 7);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        var fromTile = GetTile(map, fromLocation);
+        fromTile.AddItem(item);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN
+        var result = sut.Move(player, item, fromTile, GetTile(map, toLocation), 1, 0, 0);
+
+        // THEN – ItemThrowValidator: fromLocation.Z != toLocation.Z → NotPossible
+        result.Failed.Should().BeTrue();
+        result.Error.Should().Be(InvalidOperation.NotPossible);
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().Be(item);
+        GetTile(map, toLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    // ------------------------------------------------------------------
+    // Sight Validation
+    // ------------------------------------------------------------------
+
+    [Fact]
+    public void Given_wall_at_101_100_7_blocking_sight_When_item_moved_from_100_100_7_to_103_100_7_Then_fails_with_NotPossible()
+    {
+        // GIVEN
+        var fromLocation = new Location(100, 100, 7);
+        var wallLocation = new Location(101, 100, 7);
+        var toLocation = new Location(103, 100, 7);
+
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 7, 7);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        GetTile(map, fromLocation).AddItem(item);
+
+        // A wall with BlockProjectTile blocks the sight ray between from and to
+        var wall = ItemTestDataBuilder.CreateRegularItem(200);
+        wall.Metadata.Flags.Add(ItemFlag.BlockProjectTile);
+        GetTile(map, wallLocation).AddItem(wall);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN
+        var result = sut.Move(player, item, GetTile(map, fromLocation), GetTile(map, toLocation), 1, 0, 0);
+
+        // THEN – SightClear returns false → NotPossible
+        result.Failed.Should().BeTrue();
+        result.Error.Should().Be(InvalidOperation.NotPossible);
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().Be(item);
+        GetTile(map, toLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    // ------------------------------------------------------------------
+    // Special Tile Exemptions
+    // ------------------------------------------------------------------
+
+    [Fact]
+    public void Given_teleport_at_101_100_7_with_destination_115_100_7_When_item_moved_to_teleport_Then_succeeds_bypassing_distance_check()
+    {
+        // GIVEN
+        var fromLocation = new Location(100, 100, 7);
+        var teleportLocation = new Location(101, 100, 7);
+        var teleportDestination = new Location(115, 100, 7);
+
+        // Map must cover both teleport location and the teleport's destination tile
+        var map = MapTestDataBuilder.Build(99, 120, 99, 110, 7, 7);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        GetTile(map, fromLocation).AddItem(item);
+
+        var teleportItem = new TeleportItem(new ItemType().SetFlag(ItemFlag.AlwaysOnTop).SetClientId(10), teleportLocation);
+        teleportItem.Attributes.SetAttribute(new Dictionary<ItemAttribute, IConvertible>
+        {
+            [ItemAttribute.TeleportDestination] = teleportDestination
+        });
+        GetTile(map, teleportLocation).AddItem(teleportItem);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN – distance from player (100,100,7) to teleport (101,100,7) is 1; teleport bypasses
+        //        the >7-tile distance restriction to its destination (115,100,7)
+        var result = sut.Move(player, item, GetTile(map, fromLocation), GetTile(map, teleportLocation), 1, 0, 0);
+
+        // THEN – move succeeds, and the item ends up at the teleport's destination, not the teleport tile
+        result.Succeeded.Should().BeTrue();
+        GetTile(map, teleportDestination).TopDownItemOnStack.Should().Be(item);
+        GetTile(map, teleportLocation).TopDownItemOnStack.Should().NotBe(item);
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    [Fact]
+    public void Given_hole_at_101_100_7_When_item_moved_to_hole_Then_item_ends_up_one_floor_below()
+    {
+        // GIVEN
+        var fromLocation = new Location(100, 100, 7);
+        var holeLocation = new Location(101, 100, 7);
+        var belowLocation = new Location(101, 100, 8);
+
+        // Map must include floor 8 so the resolved tile exists
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 7, 8);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        GetTile(map, fromLocation).AddItem(item);
+
+        // Replace the ground at holeLocation with a Ground that has FloorChange "down"
+        var holeGround = new Ground(new ItemType().SetClientId(2), holeLocation);
+        holeGround.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
+        GetTile(map, holeLocation).ReplaceGround(holeGround);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN – player moves an item onto the hole tile
+        var result = sut.Move(player, item, GetTile(map, fromLocation), GetTile(map, holeLocation), 1, 0, 0);
+
+        // THEN – move succeeds and the item falls through to the floor below
+        result.Succeeded.Should().BeTrue();
+        GetTile(map, belowLocation).TopDownItemOnStack.Should().Be(item);
+        GetTile(map, holeLocation).TopDownItemOnStack.Should().NotBe(item);
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+}
+

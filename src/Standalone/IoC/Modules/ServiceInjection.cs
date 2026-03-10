@@ -12,6 +12,7 @@ using NeoServer.Domain.Creatures.Monster.Services;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.Items.Services.ItemTransform;
+using NeoServer.Domain.Items.Services.ItemTransform.Operations;
 using NeoServer.Domain.Mail;
 using NeoServer.Domain.Party;
 using NeoServer.Domain.Quest;
@@ -47,10 +48,11 @@ public static class ServiceInjection
         builder.AddSingleton<ISummonService, SummonService>();
         builder.AddSingleton<IToMapMovementService, ToMapMovementService>();
         builder.AddSingleton<ICreaturePushService, CreaturePushService>();
-        builder.AddSingleton<IMapService, MapService>();
         builder.AddSingleton<IMapTool, MapTool>();
         builder.AddSingleton<IPlayerUseService, PlayerUseService>();
         builder.AddSingleton<IItemMovementService, ItemMovementService>();
+        builder.AddSingleton<ICentralizedItemMovementService, CentralizedItemMovementService>();
+        builder.AddSingleton<IItemThrowValidator, ItemThrowValidator>();
         builder.AddSingleton<IItemService, ItemService>();
         builder.AddSingleton<IStaticToDynamicTileService, StaticToDynamicTileService>();
         builder.AddSingleton<SafeTradeSystem>();
@@ -79,6 +81,8 @@ public static class ServiceInjection
         //Items
         builder.AddSingleton<IDecayService, DecayService>();
         builder.AddSingleton<IItemTransformService, ItemTransformService>();
+        builder.AddSingleton<ReplaceGroundOperation>();
+
         builder.AddSingleton<IItemRemoveService, ItemRemoveService>();
         builder.AddSingleton<IItemAbilityApplierService, ItemAbilityApplierService>();
         builder.AddSingleton<ItemUseValidation>();

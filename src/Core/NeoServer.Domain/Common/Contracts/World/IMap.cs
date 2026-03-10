@@ -44,4 +44,15 @@ public interface IMap
     bool CanGoToDirection(ICreature creature, Direction direction, ITileEnterRule rule);
     ITile GetTile(Location.Structs.Location location);
     void OnItemReduced(ICumulative item, byte amount);
+
+    /// <summary>
+    ///     Retrieves the destination tile of the specified location, considering dynamic tile mechanics.
+    /// </summary>
+    /// <returns>Returns the destination <see cref="ITile" /> if the input is dynamic; otherwise, returns the original tile.</returns>
+    ITile GetTileDestination(Location.Structs.Location location);
+
+    /// <summary>
+    /// Retrieves the destination tile of the specified location, considering teleports, holes, and stairs.
+    /// </summary>
+    ITile GetFinalDestination(Location.Structs.Location location);
 }

@@ -12,6 +12,7 @@ using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Bases;
 using NeoServer.Domain.Items.Items;
+using NeoServer.Domain.Items.Services.ItemTransform.Operations;
 using NeoServer.Domain.Locker;
 using NeoServer.Domain.Mail;
 using NeoServer.Domain.Repositories;
@@ -260,7 +261,8 @@ public class TileTest
 
         var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
             staticToDynamicTileServiceMock.Object);
-        var mapService = new MapService(map, creatureMovementService);
+
+        var replaceGroundOperation = new ReplaceGroundOperation(creatureMovementService, map);
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
@@ -273,7 +275,7 @@ public class TileTest
         var destinationTile = (IDynamicTile)map[100, 100, 7];
         var undergroundTile = (IDynamicTile)map[100, 100, 8];
 
-        mapService.ReplaceGround(destinationTile.Location, hole);
+        replaceGroundOperation.ReplaceGround(destinationTile.Location, hole);
 
         var mailService = new MailService(new Mock<IPlayerRepository>().Object,
             new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
@@ -283,8 +285,8 @@ public class TileTest
 
         sourceTile.AddItem(item);
 
-        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService,
-            new Mock<ICreaturePushService>().Object);
+        var toMapMovementService = new ToMapMovementService(map, itemMovementService,
+            new Mock<ICreaturePushService>().Object, new Mock<ICentralizedItemMovementService>().Object);
 
         //act
         toMapMovementService.Move(player,
@@ -329,14 +331,15 @@ public class TileTest
         var validation = new CreatureMovementValidation(map);
         var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
             staticToDynamicTileServiceMock.Object);
-        var mapService = new MapService(map, creatureMovementService);
 
-        mapService.ReplaceGround(destinationTile.Location, hole);
+        var replaceGroundOperation = new ReplaceGroundOperation(creatureMovementService, map);
+
+        replaceGroundOperation.ReplaceGround(destinationTile.Location, hole);
 
         sourceTile.AddItem(item);
 
-        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService,
-            new Mock<ICreaturePushService>().Object);
+        var toMapMovementService = new ToMapMovementService(map, itemMovementService,
+            new Mock<ICreaturePushService>().Object, new Mock<ICentralizedItemMovementService>().Object);
 
         //act
         toMapMovementService.Move(player, new MovementParams(sourceTile.Location, destinationTile.Location, 1));
@@ -360,7 +363,6 @@ public class TileTest
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
             staticToDynamicTileServiceMock.Object);
-        var mapService = new MapService(map, creatureMovementService);
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
@@ -378,18 +380,20 @@ public class TileTest
         var secondFloor = (IDynamicTile)map[100, 100, 9];
 
         sourceTile.AddItem(item);
+        
+        var replaceGroundOperation = new ReplaceGroundOperation(creatureMovementService, map);
 
-        mapService.ReplaceGround(destinationTile.Location, hole);
+        replaceGroundOperation.ReplaceGround(destinationTile.Location, hole);
 
-        mapService.ReplaceGround(undergroundTile.Location, secondHole);
+        replaceGroundOperation.ReplaceGround(undergroundTile.Location, secondHole);
 
         var mailService = new MailService(new Mock<IPlayerRepository>().Object,
             new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
 
         var itemMovementService =
             new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
-        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService,
-            new Mock<ICreaturePushService>().Object);
+        var toMapMovementService = new ToMapMovementService(map, itemMovementService,
+            new Mock<ICreaturePushService>().Object, new Mock<ICentralizedItemMovementService>().Object);
 
         //act
         toMapMovementService.Move(player, new MovementParams(sourceTile.Location, destinationTile.Location, 1));
@@ -413,7 +417,6 @@ public class TileTest
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
             staticToDynamicTileServiceMock.Object);
-        var mapService = new MapService(map, creatureMovementService);
 
         player.SetNewLocation(new Location(102, 100, 7));
 
@@ -432,8 +435,10 @@ public class TileTest
 
         player.MoveItem(item, sourceTile, destinationTile, 1, 0, 0);
 
+        var replaceGroundOperation = new ReplaceGroundOperation(creatureMovementService, map);
+
         //act
-        mapService.ReplaceGround(destinationTile.Location, hole);
+        replaceGroundOperation.ReplaceGround(destinationTile.Location, hole);
 
         //assert
         sourceTile.TopDownItemOnStack.Should().NotBe(item);
@@ -451,8 +456,9 @@ public class TileTest
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
             staticToDynamicTileServiceMock.Object);
-        var mapService = new MapService(map, creatureMovementService);
-
+        
+        var replaceGroundOperation = new ReplaceGroundOperation(creatureMovementService, map);
+        
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(100, 100, 7));
 
@@ -465,7 +471,7 @@ public class TileTest
         map.PlaceCreature(player);
 
         //act
-        mapService.ReplaceGround(tile.Location, hole);
+        replaceGroundOperation.ReplaceGround(tile.Location, hole);
 
         //assert
         tile.TopCreatureOnStack.Should().NotBe(player);
@@ -836,5 +842,54 @@ public class TileTest
         tile.TopItems.Count.Should().Be(2);
         tile.TopItems.Values[0].Should().Be(itemTopOrder0); // TopOrder 0 at beginning
         tile.TopItems.Values[1].Should().Be(itemTopOrder5);
+    }
+
+    [Fact]
+    public void Item_moved_to_teleport_goes_to_teleport_destination()
+    {
+        //arrange
+        var teleportLocation = new Location(100, 100, 7);
+        var destinationLocation = new Location(100, 102, 7);
+
+        var teleportItem = new TeleportItem(new ItemType().SetClientId(10), teleportLocation);
+        teleportItem.Attributes.SetAttribute(new Dictionary<ItemAttribute, IConvertible>
+        {
+            [ItemAttribute.TeleportDestination] = destinationLocation
+        });
+
+        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7, true,
+            topItems: new Dictionary<Location, IItem[]>
+            {
+                [teleportLocation] = [teleportItem]
+            });
+
+        var player = PlayerTestDataBuilder.Build();
+        player.SetNewLocation(new Location(102, 100, 7));
+        map.PlaceCreature(player);
+
+        var item = ItemTestDataBuilder.CreateWeaponItem(1);
+
+        var sourceTile = (IDynamicTile)map[101, 100, 7];
+        var teleportTile = (IDynamicTile)map[100, 100, 7];
+        var destinationTile = (IDynamicTile)map[100, 102, 7];
+
+        sourceTile.AddItem(item);
+
+        var mailService = new MailService(new Mock<IPlayerRepository>().Object,
+            new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
+
+        var itemMovementService =
+            new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
+
+        var toMapMovementService = new ToMapMovementService(map, itemMovementService,
+            new Mock<ICreaturePushService>().Object, new Mock<ICentralizedItemMovementService>().Object);
+
+        //act
+        toMapMovementService.Move(player, new MovementParams(sourceTile.Location, teleportTile.Location, 1));
+
+        //assert
+        sourceTile.TopDownItemOnStack.Should().NotBe(item);
+        teleportTile.TopDownItemOnStack.Should().NotBe(item);
+        destinationTile.TopDownItemOnStack.Should().Be(item);
     }
 }
