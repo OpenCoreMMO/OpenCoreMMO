@@ -25,8 +25,6 @@ public class StaticTile : BaseTile, IStaticTile
         AllItems = OrderItems(items);
     }
 
-    public IItem[] Items { get; }
-
     public override int ThingsCount { get; }
     public byte[] Raw { get; }
     public override IItem TopTopItemOnStack => null;
@@ -123,6 +121,7 @@ public class StaticTile : BaseTile, IStaticTile
         // First, add ground items
         foreach (var item in items)
         {
+            SetTileFlags(item);
             if (item is null) continue;
             if (item is IGround) orderedItems.Add(item);
         }

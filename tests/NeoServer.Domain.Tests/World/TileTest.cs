@@ -286,7 +286,7 @@ public class TileTest
         sourceTile.AddItem(item);
 
         var toMapMovementService = new ToMapMovementService(map, itemMovementService,
-            new Mock<ICreaturePushService>().Object, new Mock<ICentralizedItemMovementService>().Object);
+            new Mock<ICreaturePushService>().Object, new Mock<IMapItemMovementService>().Object);
 
         //act
         toMapMovementService.Move(player,
@@ -339,7 +339,7 @@ public class TileTest
         sourceTile.AddItem(item);
 
         var toMapMovementService = new ToMapMovementService(map, itemMovementService,
-            new Mock<ICreaturePushService>().Object, new Mock<ICentralizedItemMovementService>().Object);
+            new Mock<ICreaturePushService>().Object, new Mock<IMapItemMovementService>().Object);
 
         //act
         toMapMovementService.Move(player, new MovementParams(sourceTile.Location, destinationTile.Location, 1));
@@ -393,7 +393,7 @@ public class TileTest
         var itemMovementService =
             new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
         var toMapMovementService = new ToMapMovementService(map, itemMovementService,
-            new Mock<ICreaturePushService>().Object, new Mock<ICentralizedItemMovementService>().Object);
+            new Mock<ICreaturePushService>().Object, new Mock<IMapItemMovementService>().Object);
 
         //act
         toMapMovementService.Move(player, new MovementParams(sourceTile.Location, destinationTile.Location, 1));
@@ -882,7 +882,7 @@ public class TileTest
             new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
 
         var toMapMovementService = new ToMapMovementService(map, itemMovementService,
-            new Mock<ICreaturePushService>().Object, new Mock<ICentralizedItemMovementService>().Object);
+            new Mock<ICreaturePushService>().Object, new Mock<IMapItemMovementService>().Object);
 
         //act
         toMapMovementService.Move(player, new MovementParams(sourceTile.Location, teleportTile.Location, 1));

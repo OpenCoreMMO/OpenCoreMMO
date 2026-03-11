@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.World.Algorithms;
 using Location = NeoServer.Domain.Common.Location.Structs.Location;
@@ -30,7 +31,7 @@ public class ItemThrowValidator(IMap map) : IItemThrowValidator
     ///     Validation order:
     ///     <list type="number">
     ///         <item>Must be on the same floor (Z axis).</item>
-    ///         <item>Must have clear line-of-sight.</item>
+    ///         <item>Must have a clear line-of-sight.</item>
     ///         <item>
     ///             Distance must be within <see cref="MaxThrowDistance"/> unless the destination
     ///             tile is a teleport, hole, or floor-change tile.
@@ -38,7 +39,7 @@ public class ItemThrowValidator(IMap map) : IItemThrowValidator
     ///     </list>
     /// </remarks>
     public Result Validate(IPlayer player, Location fromLocation, Location toLocation,
-        IDynamicTile destinationTile)
+        ITile destinationTile)
     {
         if (player is null)
             return Result.NotPossible;
@@ -46,7 +47,12 @@ public class ItemThrowValidator(IMap map) : IItemThrowValidator
         if (destinationTile is null)
             return Result.NotPossible;
 
-        // Items cannot be thrown across floors directly by a player.
+        if (destinationTile is not IDynamicTile && !destinationTile.HasFlag(TileFlags.TrashHolder))
+        {
+            return Result.Fail(InvalidOperation.CannotThrowThere);
+        }
+
+        // A player cannot throw items across floors directly.
         if (fromLocation.Z != toLocation.Z)
             return Result.Fail(InvalidOperation.NotPossible);
 
@@ -70,18 +76,20 @@ public class ItemThrowValidator(IMap map) : IItemThrowValidator
     ///     Determines if the destination tile has a special property (teleport, hole, or
     ///     floor-change direction) that allows items to bypass the max throw distance rule.
     /// </summary>
-    private static bool IsSpecialDestination(IDynamicTile tile)
+    private static bool IsSpecialDestination(ITile tile)
     {
+        if (tile is not IDynamicTile dynamicTile) return false;
+        
         // Tile has a teleport item on it.
-        if (tile.HasTeleport(out _))
+        if (dynamicTile.HasTeleport(out _))
             return true;
 
         // Tile is a hole (down floor change).
-        if (tile.HasHole)
+        if (dynamicTile.HasHole)
             return true;
 
         // Tile has any floor-change direction (stairs, ramps, etc.).
-        if (tile.FloorDirection != default)
+        if (dynamicTile.FloorDirection != default)
             return true;
 
         return false;

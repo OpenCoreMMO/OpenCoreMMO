@@ -51,7 +51,7 @@ public static class ServiceInjection
         builder.AddSingleton<IMapTool, MapTool>();
         builder.AddSingleton<IPlayerUseService, PlayerUseService>();
         builder.AddSingleton<IItemMovementService, ItemMovementService>();
-        builder.AddSingleton<ICentralizedItemMovementService, CentralizedItemMovementService>();
+        builder.AddSingleton<IMapItemMovementService, MapItemMovementService>();
         builder.AddSingleton<IItemThrowValidator, ItemThrowValidator>();
         builder.AddSingleton<IItemService, ItemService>();
         builder.AddSingleton<IStaticToDynamicTileService, StaticToDynamicTileService>();

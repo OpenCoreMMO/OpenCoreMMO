@@ -1,5 +1,6 @@
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts;
+using NeoServer.Domain.World.Events;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
@@ -16,28 +17,26 @@ using Location = NeoServer.Domain.Common.Location.Structs.Location;
 namespace NeoServer.Domain.Creatures.Services;
 
 /// <summary>
-///     Centralized service that handles all item movement operations.
-///     This consolidates the logic previously scattered across
-///     <c>ToMapMovementService</c>, <c>ItemMovementService</c>, and <c>PlayerHand</c>
-///     into a single, consistent pipeline:
+///     Service that handles item movement between map tiles.
+///     Executes a single, consistent pipeline:
 ///     <list type="number">
 ///         <item>Throw validation (distance, line-of-sight, special tile exemptions)</item>
 ///         <item>Walk-to mechanism (if the source item is too far from the player)</item>
 ///         <item>Destination resolution (teleports, holes, floor changes)</item>
-///         <item>Core item transfer (remove from source, add to destination)</item>
+///         <item>Core item transfer (remove from the source tile, add to the destination tile)</item>
 ///     </list>
 /// </summary>
-public class CentralizedItemMovementService(
+public class MapItemMovementService(
     IMap map,
     IWalkToMechanism walkToMechanism,
     IItemThrowValidator itemThrowValidator,
-    IMailService mailService) : ICentralizedItemMovementService
+    IMailService mailService) : IMapItemMovementService
 {
     /// <summary>
-    ///     Moves an item from any source to a destination, performing all validations.
+    ///     Moves an item from one map tile to another, performing all validations.
     /// </summary>
-    public Result<OperationResultList<IItem>> Move(IPlayer player, IItem item, IHasItem from,
-        IHasItem destination, byte amount, byte fromPosition, byte? toPosition)
+    public Result<OperationResultList<IItem>> Move(IPlayer player, IItem item, IDynamicTile from,
+        ITile destination, byte amount, byte fromPosition, byte? toPosition)
     {
         if (player is null || item is null || !item.CanBeMoved)
             return Result<OperationResultList<IItem>>.NotPossible;
@@ -82,11 +81,14 @@ public class CentralizedItemMovementService(
 
         // --- Liquid source (water) / trash holder handling ---
         // Items thrown onto water or trash-holder tiles are consumed: removed from source but not placed on the tile.
-        if (destination is IDynamicTile trashTile && trashTile.HasFlag(TileFlags.TrashHolder))
+        if (destination.HasFlag(TileFlags.TrashHolder))
+        {
+            EventAggregator.Invoke(new ItemMovedToTrashHolder(item, destination));
             return ConsumeItem(item, from, amount, fromPosition);
+        }
 
         // --- Mail box handling ---
-        if (destination is IDynamicTile mailTile && mailTile.HasFlag(TileFlags.MailBox))
+        if (destination.HasFlag(TileFlags.MailBox) && destination is IDynamicTile mailBoxTile)
         {
             if (!item.IsMailable)
             {
@@ -94,25 +96,22 @@ public class CentralizedItemMovementService(
                 return Result<OperationResultList<IItem>>.NotPossible;
             }
 
-            return HandleMailBoxMove(player, item, from, destination, amount, fromPosition, toPosition);
+            return HandleMailBoxMove(player, item, from, mailBoxTile, amount, fromPosition, toPosition);
         }
 
         // --- Core move ---
-        return ExecuteMove(item, from, destination, amount, fromPosition, toPosition);
+        return ExecuteMove(item, from, destination as IDynamicTile, amount, fromPosition, toPosition);
     }
 
     #region Validation
 
     /// <summary>
-    ///     Validates the throw using <see cref="IItemThrowValidator" /> when the destination
-    ///     is a map tile. Non-ground destinations (containers, slots) skip throw validation.
+    ///     Validates the throw using <see cref="IItemThrowValidator" /> (distance, line-of-sight,
+    ///     special tile exemptions).
     /// </summary>
-    private Result ValidateThrow(IPlayer player, IItem item, IHasItem destination)
+    private Result ValidateThrow(IPlayer player, IItem item, ITile destination)
     {
-        if (destination is not IDynamicTile destinationTile)
-            return Result.Success;
-
-        return itemThrowValidator.Validate(player, item.Location, destinationTile.Location, destinationTile);
+        return itemThrowValidator.Validate(player, item.Location, destination.Location, destination);
     }
 
     /// <summary>
@@ -136,12 +135,12 @@ public class CentralizedItemMovementService(
     #region Destination Resolution
 
     /// <summary>
-    ///     If the destination is a map tile, resolves the final destination by following
-    ///     teleports, holes, and floor-change tiles via <see cref="IMap.GetTileDestination(ITile)" />.
+    ///     Resolves the final destination tile by following teleports, holes, and floor-change
+    ///     tiles via <see cref="IMap.GetFinalDestination" />.
     /// </summary>
-    private IHasItem ResolveDestination(IHasItem destination)
+    private ITile ResolveDestination(ITile destination)
     {
-        if (destination is ITile tile && map.GetFinalDestination(tile.Location) is IDynamicTile dynamicTile)
+        if (map.GetFinalDestination(destination.Location) is IDynamicTile dynamicTile)
             return dynamicTile;
 
         return destination;

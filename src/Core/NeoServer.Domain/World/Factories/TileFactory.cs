@@ -51,7 +51,7 @@ public class TileFactory(ILogger logger) : ITileFactory
 
             if (item.CanBeMoved && !isHouseTile) hasMoveableItem = true;
 
-            if (item.IsTransformable) hasTransformableItem = true;
+            //if (item.IsTransformable) hasTransformableItem = true;
 
             if (item.Metadata.HasFlag(ItemFlag.HasHeight)) hasHeight = true;
 
@@ -61,10 +61,10 @@ public class TileFactory(ILogger logger) : ITileFactory
                 continue;
             }
 
-            if (item.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) == "trashholder")
-            {
-                hasTrashHolder = true;
-            }
+            // if (item.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) == "trashholder")
+            // {
+            //     hasTrashHolder = true;
+            // }
 
             if (item is IGround groundItem)
             {

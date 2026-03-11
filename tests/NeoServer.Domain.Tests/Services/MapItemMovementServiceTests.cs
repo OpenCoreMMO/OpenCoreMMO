@@ -18,19 +18,19 @@ using NeoServer.Domain.World.Services;
 
 namespace NeoServer.Domain.Tests.Services;
 
-public class CentralizedItemMovementServiceTests
+public class MapItemMovementServiceTests
 {
     // ------------------------------------------------------------------
     // Factory helpers
     // ------------------------------------------------------------------
 
-    private static CentralizedItemMovementService BuildService(NeoServer.Domain.Common.Contracts.World.IMap map)
+    private static MapItemMovementService BuildService(NeoServer.Domain.Common.Contracts.World.IMap map)
     {
         var walkTo = new Mock<IWalkToMechanism>();
         var validator = new ItemThrowValidator(map);
         var mail = new Mock<IMailService>();
 
-        return new CentralizedItemMovementService(map, walkTo.Object, validator, mail.Object);
+        return new MapItemMovementService(map, walkTo.Object, validator, mail.Object);
     }
 
     private static IDynamicTile GetTile(NeoServer.Domain.Common.Contracts.World.IMap map, Location location)
