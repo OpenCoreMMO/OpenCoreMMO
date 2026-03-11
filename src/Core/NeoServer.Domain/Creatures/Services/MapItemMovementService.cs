@@ -99,7 +99,7 @@ public class MapItemMovementService(
 
             return HandleMailBoxMove(player, item, from, mailBoxTile, amount, fromPosition, toPosition);
         }
-
+        
         // --- Core move ---
         return ExecuteMove(item, from, destination as IDynamicTile, amount, fromPosition, toPosition);
     }
@@ -139,13 +139,7 @@ public class MapItemMovementService(
     ///     Resolves the final destination tile by following teleports, holes, and floor-change
     ///     tiles via <see cref="IMap.GetFinalDestination" />.
     /// </summary>
-    private ITile ResolveDestination(ITile destination)
-    {
-        if (map.GetFinalDestination(destination.Location) is IDynamicTile dynamicTile)
-            return dynamicTile;
-
-        return destination;
-    }
+    private ITile ResolveDestination(ITile destination) => map.GetFinalDestination(destination.Location);
 
     #endregion
 
@@ -211,6 +205,11 @@ public class MapItemMovementService(
     private Result<OperationResultList<IItem>> ExecuteMove(IItem item, IHasItem from,
         IHasItem destination, byte amount, byte fromPosition, byte? toPosition)
     {
+        if(destination is null)
+        {
+            return Result<OperationResultList<IItem>>.NotPossible;
+        }
+
         var canAdd = destination.CanAddItem(item, amount, toPosition);
         if (!canAdd.Succeeded) return new Result<OperationResultList<IItem>>(canAdd.Reason);
 
