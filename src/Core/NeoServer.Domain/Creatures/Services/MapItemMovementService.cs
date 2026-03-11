@@ -56,10 +56,19 @@ public class MapItemMovementService(
                 return Result<OperationResultList<IItem>>.NotPossible;
             }
         }
+        
+        // --- Walk-to if the source item is not close to the player ---
+        if (!item.IsCloseTo(player))
+        {
+            walkToMechanism.WalkTo(player,
+                () => Move(player, item, from, destination, amount, fromPosition, toPosition),
+                item.Location);
+            return Result<OperationResultList<IItem>>.Success;
+        }
 
         // --- Throw validation (distance + line-of-sight + special tile exemptions) ---
         // Validation must happen against the ORIGINAL destination so that special tiles
-        // (teleport, hole, floor-change) are recognised before they get resolved away.
+        // (teleport, hole, floor-change) are recognized before they get resolved away.
         var throwValidation = ValidateThrow(player, item, destination);
         if (throwValidation.Failed)
         {
@@ -70,14 +79,6 @@ public class MapItemMovementService(
         // --- Resolve destination tile for map targets ---
         destination = ResolveDestination(destination);
 
-        // --- Walk-to if the source item is not close to the player ---
-        if (!item.IsCloseTo(player))
-        {
-            walkToMechanism.WalkTo(player,
-                () => Move(player, item, from, destination, amount, fromPosition, toPosition),
-                item.Location);
-            return Result<OperationResultList<IItem>>.Success;
-        }
 
         // --- Liquid source (water) / trash holder handling ---
         // Items thrown onto water or trash-holder tiles are consumed: removed from source but not placed on the tile.

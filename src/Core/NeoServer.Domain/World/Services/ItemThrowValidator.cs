@@ -49,7 +49,7 @@ public class ItemThrowValidator(IMap map) : IItemThrowValidator
 
         if (destinationTile is not IDynamicTile && !destinationTile.HasFlag(TileFlags.TrashHolder))
         {
-            return Result.Fail(InvalidOperation.CannotThrowThere);
+            return Result.Fail(InvalidOperation.NotEnoughRoom);
         }
 
         // A player cannot throw items across floors directly.
@@ -58,7 +58,7 @@ public class ItemThrowValidator(IMap map) : IItemThrowValidator
 
         // Sight must be clear between origin and target.
         if (!SightClear.IsSightClear(map, fromLocation, toLocation, false))
-            return Result.Fail(InvalidOperation.NotPossible);
+            return Result.Fail(InvalidOperation.CannotThrowThere);
 
         // If the destination is a special tile (teleport, hole, floor change),
         // the item is allowed to go anywhere — skip distance check.

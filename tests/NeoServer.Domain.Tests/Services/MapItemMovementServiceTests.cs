@@ -14,6 +14,7 @@ using NeoServer.Domain.Mail;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Domain.World.Services;
 
 namespace NeoServer.Domain.Tests.Services;
@@ -422,7 +423,8 @@ public class MapItemMovementServiceTests
         GetTile(map, fromLocation).AddItem(item);
 
         // Replace the tile's ground with water ground (LiquidSource flag)
-        var waterType = new ItemType().SetFlag(ItemFlag.LiquidSource).SetClientId(2); 
+        var waterType = new ItemType().SetClientId(2);
+        waterType.Attributes.SetAttribute(ItemTypeAttribute.Type, "trashholder");
         var waterGround = new Ground(waterType, waterLocation);
         GetTile(map, waterLocation).ReplaceGround(waterGround);
 
@@ -432,7 +434,7 @@ public class MapItemMovementServiceTests
         // WHEN
         var result = sut.Move(player, item, GetTile(map, fromLocation), GetTile(map, waterLocation), 1, 0, 0);
 
-        // THEN – item is consumed by the water: removed from source, not placed on the water tile
+        // THEN – the water consumes item: removed from the source, not placed on the water tile
         result.Succeeded.Should().BeTrue();
         GetTile(map, fromLocation).TopDownItemOnStack.Should().NotBe(item);
         GetTile(map, waterLocation).TopDownItemOnStack.Should().NotBe(item);
@@ -537,5 +539,34 @@ public class MapItemMovementServiceTests
         GetTile(map, hole2Location).TopDownItemOnStack.Should().NotBe(item);
         GetTile(map, hole1Location).TopDownItemOnStack.Should().NotBe(item);
         GetTile(map, fromLocation).TopDownItemOnStack.Should().NotBe(item);
+    }
+
+    // ------------------------------------------------------------------
+    // Static Tile
+    // ------------------------------------------------------------------
+
+    [Fact]
+    public void Given_item_on_ground_at_100_100_7_and_static_tile_at_101_100_7_When_item_moved_to_static_tile_Then_move_fails_and_item_remains_at_source()
+    {
+        // GIVEN
+        var fromLocation = new Location(100, 100, 7);
+        var toLocation = new Location(101, 100, 7);
+
+        var map = MapTestDataBuilder.Build(99, 110, 99, 110, 7, 7);
+
+        var item = ItemTestDataBuilder.CreateMoveableItem(100);
+        GetTile(map, fromLocation).AddItem(item);
+
+        var staticTile = new StaticTile(toLocation);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+        var sut = BuildService(map);
+
+        // WHEN
+        var result = sut.Move(player, item, GetTile(map, fromLocation), staticTile, 1, 0, 0);
+
+        // THEN
+        result.Failed.Should().BeTrue();
+        GetTile(map, fromLocation).TopDownItemOnStack.Should().Be(item);
     }
 }

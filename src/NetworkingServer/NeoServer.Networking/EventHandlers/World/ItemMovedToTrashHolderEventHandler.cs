@@ -22,6 +22,7 @@ public class ItemMovedToTrashHolderEventHandler(IMap map, IGameCreatureManager g
 
             if (!gameCreatureManager.GetPlayerConnection(player.CreatureId, out var connection)) continue;
 
+            // If the tile is a liquid source, show a blue ring effect to the player
             if (@event.Tile.HasFlag(TileFlags.LiquidSource))
             {
                 connection.OutgoingPackets.Enqueue(new MagicEffectPacket(@event.Tile.Location, EffectT.RingsBlue));
