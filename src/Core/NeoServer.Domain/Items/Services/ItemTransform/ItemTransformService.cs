@@ -9,52 +9,38 @@ using NeoServer.Domain.Items.Services.ItemTransform.Operations;
 
 namespace NeoServer.Domain.Items.Services.ItemTransform;
 
-public class ItemTransformService : IItemTransformService
+public class ItemTransformService(
+    IItemFactory itemFactory,
+    IMap map,
+    IItemTypeStore itemTypeStore,
+    IStaticToDynamicTileService staticToDynamicTileService,
+    ReplaceGroundOperation replaceGroundOperation)
+    : IItemTransformService
 {
-    private readonly IItemFactory _itemFactory;
-    private readonly IItemTypeStore _itemTypeStore;
-    private readonly IMap _map;
-    private readonly IMapService _mapService;
-    private readonly IStaticToDynamicTileService _staticToDynamicTileService;
-
-    public ItemTransformService(
-        IItemFactory itemFactory,
-        IMap map,
-        IMapService mapService,
-        IItemTypeStore itemTypeStore,
-        IStaticToDynamicTileService staticToDynamicTileService)
-    {
-        _itemFactory = itemFactory;
-        _map = map;
-        _mapService = mapService;
-        _itemTypeStore = itemTypeStore;
-        _staticToDynamicTileService = staticToDynamicTileService;
-    }
-
     public Result<IItem> Transform(IPlayer by, IItem fromItem, ushort toItem)
     {
-        _itemTypeStore.TryGetValue(toItem, out var toItemType);
+        itemTypeStore.TryGetValue(toItem, out var toItemType);
 
         Result<IItem> result;
 
         switch (fromItem.Location.Type)
         {
             case LocationType.Container:
-                result = ReplaceItemOnContainerOperation.Execute(by, _itemFactory, fromItem, toItemType);
+                result = ReplaceItemOnContainerOperation.Execute(by, itemFactory, fromItem, toItemType);
                 if (!result.IsNotApplicable) return result;
                 break;
             case LocationType.Slot:
-                result = ReplaceItemOnInventoryOperation.Execute(_itemFactory, fromItem, toItemType);
+                result = ReplaceItemOnInventoryOperation.Execute(itemFactory, fromItem, toItemType);
                 if (!result.IsNotApplicable) return result;
                 break;
             case LocationType.Ground:
                 result =
-                    ReplaceItemFromGroundOperation.Execute(_map, _staticToDynamicTileService, _itemFactory, fromItem,
+                    ReplaceItemFromGroundOperation.Execute(map, staticToDynamicTileService, itemFactory, fromItem,
                         toItemType);
                 if (!result.IsNotApplicable) return result;
 
-                var createdItem = _itemFactory.Create(toItem, fromItem.Location, null);
-                result = ReplaceGroundOperation.Execute(_map, _mapService, fromItem, createdItem);
+                var createdItem = itemFactory.Create(toItem, fromItem.Location, null);
+                result = replaceGroundOperation.Execute(fromItem, createdItem);
                 if (!result.IsNotApplicable) return result;
                 break;
         }

@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.Items.Services.ItemTransform;
+using NeoServer.Domain.Items.Services.ItemTransform.Operations;
 using NeoServer.Domain.World.Factories;
 using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Services;
@@ -22,11 +23,10 @@ public class DecayableItemManagerTestBuilder
             new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
                 staticToDynamicTileServiceMock.Object);
 
-        var mapService = new MapService(map, creatureMovementService);
         var itemFactory = ItemFactoryTestBuilder.Build();
         var looger = new Mock<ILogger>();
         var tileFactory = new TileFactory(looger.Object);
-        var itemTransformService = new ItemTransformService(itemFactory, map, mapService, itemTypeStore, null);
+        var itemTransformService = new ItemTransformService(itemFactory, map, itemTypeStore, null, new ReplaceGroundOperation(creatureMovementService, map));
         var decayService = new DecayService(itemTransformService);
         return new DecayableItemManager(decayService);
     }

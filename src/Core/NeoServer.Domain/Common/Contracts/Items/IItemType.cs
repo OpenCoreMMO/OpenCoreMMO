@@ -91,5 +91,16 @@ public interface IItemType
         return IsFluidContainer() || IsSplash() || IsStackable() || Charges != 0;
     }
 
+    bool IsTrashHolder()
+    {
+        return Attributes.HasAttribute(ItemTypeAttribute.Type) && Attributes.GetAttribute(ItemTypeAttribute.Type)
+            .Equals("trashholder", StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    bool IsFluidSource()
+    {
+        return Attributes.HasAttribute(ItemTypeAttribute.SourceLiquidType);
+    }
+
     void ThrowIfLocked();
 }

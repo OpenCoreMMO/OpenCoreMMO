@@ -13,4 +13,9 @@
     <ItemGroup>
         <PackageReference Include="Serilog" Version="4.3.0"/>
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Common\Contracts\World\IMapService.cs" />
+      <Compile Remove="World\Services\MapService.cs" />
+    </ItemGroup>
 </Project>

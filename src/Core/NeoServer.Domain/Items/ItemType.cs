@@ -169,11 +169,12 @@ public class ItemType : IItemType
         return this;
     }
 
-    public void SetFlag(ItemFlag flag)
+    public ItemType SetFlag(ItemFlag flag)
     {
         ThrowIfLocked();
 
         Flags.Add(flag);
+        return this;
     }
 
     public void ParseFlags(uint flags)

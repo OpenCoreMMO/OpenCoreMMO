@@ -8,6 +8,7 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.World.Events;
 using NeoServer.Domain.World.Models;
 using NeoServer.Domain.World.Models.Tiles;
+using Serilog;
 using MinMax = NeoServer.Domain.Common.MinMax;
 
 namespace NeoServer.Domain.World.Map;
@@ -20,12 +21,14 @@ public class Map : IMap
 {
     private readonly CylinderOperation _cylinderOperation;
     private readonly IEventAggregator _eventAggregator;
+    private readonly ILogger _logger;
     private readonly World _world;
 
-    public Map(World world, IEventAggregator eventAggregator)
+    public Map(World world, IEventAggregator eventAggregator, ILogger logger)
     {
         _world = world;
         _eventAggregator = eventAggregator;
+        _logger = logger;
         _cylinderOperation = new CylinderOperation(this);
     }
 
@@ -408,8 +411,12 @@ public class Map : IMap
     public void OnItemReduced(ICumulative item, byte amount)
     {
         if (this[item.Location] is not IDynamicTile tile) return;
+        
         if (item.Amount == 0)
+        {
             tile.RemoveItem(item, amount, 0, out var removedThing);
+        }
+
         if (item.Amount > 0)
         {
             tile.TryGetStackPositionOfItem(item, out var stackPosition);
@@ -428,5 +435,71 @@ public class Map : IMap
         if (toTile is not IDynamicTile destination) return toTile;
 
         return GetTileDestination(destination);
+    }
+
+    /// <summary>
+    /// Finds an available neighboring tile that meets the specified criteria.
+    /// </summary>
+    /// <param name="location">The starting location to search for neighboring tiles.</param>
+    /// <param name="creature">The creature attempting to enter a tile.</param>
+    /// <param name="rule">The rule that determines whether a tile can be entered.</param>
+    /// <param name="foundTile">An output parameter that receives the available neighboring tile if one is found.</param>
+    /// <returns>Returns <c>true</c> if an available neighboring tile is found; otherwise, <c>false</c>.</returns>
+    public bool GetNeighbourAvailableTile(Location location, ICreature creature, ITileEnterRule rule,
+        out ITile foundTile)
+    {
+        foundTile = null;
+
+        foreach (var neighbour in location.Neighbours)
+        {
+            if (this[neighbour] is not IDynamicTile tile) continue;
+            if (!rule.ShouldIgnore(tile, creature)) continue;
+
+            foundTile = tile;
+            return true;
+        }
+
+        return false;
+    }
+    
+    /// <summary>
+    /// Retrieves the destination tile of the specified location, considering teleports, holes, and stairs.
+    /// Detects circular teleport chains and returns the original tile when a loop is encountered.
+    /// </summary>
+    public ITile GetFinalDestination(Location location)
+    {
+        var toTile = this[location];
+        if (toTile is not IDynamicTile destination) return toTile;
+
+        toTile = GetTileDestination(destination);
+
+        var visited = new HashSet<Location> { location };
+
+        while (true)
+        {
+            if(toTile is not IDynamicTile destinationTile) return toTile;
+
+            if (destinationTile.HasHole)
+            {
+                toTile = GetTileDestination(destinationTile);
+                continue;
+            }
+
+            if (destinationTile.HasTeleport(out var teleport))
+            {
+                if (!visited.Add(teleport.Destination))
+                {
+                    _logger.Warning("Teleport with infinite loop found at {Location}", toTile.Location);
+                    return this[location]; // circular chain detected — stay on the original tile
+                }
+
+                toTile = this[teleport.Destination];
+                continue;
+            }
+
+            break;
+        }
+
+        return toTile;
     }
 }
