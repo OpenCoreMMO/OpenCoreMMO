@@ -20,7 +20,7 @@ public class Spawn : ISpawn
 
 public class SpawnPoint : ISpawnPoint
 {
-    public SpawnPoint(Location location, ushort spawnTime, Direction direction = Direction.North)
+    public SpawnPoint(Location location, int spawnTime, Direction direction = Direction.North)
     {
         Location = location;
         SpawnTime = spawnTime;
@@ -28,6 +28,6 @@ public class SpawnPoint : ISpawnPoint
     }
 
     public Location Location { get; }
-    public ushort SpawnTime { get; }
+    public int SpawnTime { get; }
     public Direction Direction { get; set; }
 }

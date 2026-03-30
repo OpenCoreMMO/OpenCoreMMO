@@ -18,6 +18,6 @@ public interface ISpawn
 public interface ISpawnPoint
 {
     Location.Structs.Location Location { get; }
-    ushort SpawnTime { get; }
+    int SpawnTime { get; }
     Direction Direction { get; set; }
 }
