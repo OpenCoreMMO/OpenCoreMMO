@@ -33,6 +33,59 @@ public class MapItemMovementService(
     IMailService mailService) : IMapItemMovementService
 {
     /// <summary>
+    ///     Moves an item from the player's inventory or an open container to a map tile,
+    ///     performing throw validation (from the player's current position) and destination resolution.
+    /// </summary>
+    public Result<OperationResultList<IItem>> Move(IPlayer player, IItem item, IHasItem from,
+        ITile destination, byte amount, byte fromPosition, byte? toPosition)
+    {
+        if (player is null || item is null || !item.CanBeMoved)
+            return Result<OperationResultList<IItem>>.NotPossible;
+
+        // --- Throw validation from the player's location (item is in inventory, not on the ground) ---
+        var throwValidation = itemThrowValidator.Validate(player, player.Location, destination.Location, destination);
+        if (throwValidation.Failed)
+        {
+            // If destination is out of reach, walk toward it and retry.
+            if (throwValidation.Reason == InvalidOperation.TooFar)
+            {
+                walkToMechanism.WalkTo(player,
+                    () => Move(player, item, from, destination, amount, fromPosition, toPosition),
+                    destination.Location);
+                return Result<OperationResultList<IItem>>.Success;
+            }
+
+            SendThrowError(player, throwValidation.Reason);
+            return new Result<OperationResultList<IItem>>(throwValidation.Reason);
+        }
+
+        // --- Resolve destination tile (teleports, holes, floor changes) ---
+        destination = ResolveDestination(destination);
+
+        // --- Trash holder / liquid source handling ---
+        if (destination.HasFlag(TileFlags.TrashHolder))
+        {
+            EventAggregator.Invoke(new ItemMovedToTrashHolder(item, destination));
+            return ConsumeItem(item, from, amount, fromPosition);
+        }
+
+        // --- Mail box handling ---
+        if (destination.HasFlag(TileFlags.MailBox) && destination is IDynamicTile mailBoxTile)
+        {
+            if (!item.IsMailable)
+            {
+                OperationFailService.Send(player, InvalidOperation.NotPossible);
+                return Result<OperationResultList<IItem>>.NotPossible;
+            }
+
+            return HandleMailBoxMove(player, item, from, mailBoxTile, amount, fromPosition, toPosition);
+        }
+
+        // --- Core move ---
+        return ExecuteMove(item, from, destination as IDynamicTile, amount, fromPosition, toPosition);
+    }
+
+    /// <summary>
     ///     Moves an item from one map tile to another, performing all validations.
     /// </summary>
     public Result<OperationResultList<IItem>> Move(IPlayer player, IItem item, IDynamicTile from,

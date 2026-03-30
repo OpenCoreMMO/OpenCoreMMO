@@ -51,12 +51,9 @@ public class ToMapMovementService(
         var item = player.Inventory[movementParams.FromLocation.Slot];
         var itemIsPickupable = item?.IsPickupable ?? false;
         if (!itemIsPickupable) return;
-
-        var finalTile = (DynamicTile)map.GetTileDestination(toTile.Location);
-
-        itemMovementService.Move(player, item, player.Inventory, finalTile,  movementParams.Amount,
-             (byte)movementParams.FromLocation.Slot, 0);
         
+        mapItemMovementService.Move(player, item, player.Inventory, toTile,  movementParams.Amount,
+             (byte)movementParams.FromLocation.Slot, 0);
     }
 
     private void FromContainer(IPlayer player, MovementParams itemThrow)
