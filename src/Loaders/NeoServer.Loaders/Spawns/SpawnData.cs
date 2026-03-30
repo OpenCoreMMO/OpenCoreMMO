@@ -44,7 +44,7 @@ public class SpawnData
         public int X { get; set; }
         public int Y { get; set; }
         public byte Z { get; set; }
-        public ushort SpawnTime { get; set; }
+        public int SpawnTime { get; set; }
         public Direction Direction { get; set; }
     }
 }
