@@ -1,11 +1,12 @@
-﻿using System.Security.Cryptography;
-
-namespace NeoServer.Domain.Common.Location.Structs.Helpers;
+﻿namespace NeoServer.Domain.Common.Location.Structs.Helpers;
 
 public static class HashHelper
 {
     public const int START = 1610612741;
-    private static readonly SHA256 Sha256 = SHA256.Create(); // Reused instance
+
+    // FNV-1a 64-bit constants
+    private const ulong FnvOffsetBasis = 14695981039346656037UL;
+    private const ulong FnvPrime = 1099511628211UL;
 
     /// <summary>
     ///     Combines the current hashcode with the hashcode of another object.
@@ -18,11 +19,19 @@ public static class HashHelper
         }
     }
 
-    public static string ComputeContentHash(ref Span<byte> data)
+    /// <summary>
+    ///     Computes a fast 64-bit FNV-1a hash over the supplied byte span.
+    ///     Not cryptographic - intended for cache keying only.
+    /// </summary>
+    public static ulong ComputeContentHash(ref Span<byte> data)
     {
-        Span<byte> hashBytes = stackalloc byte[32]; // SHA256 produces a 256-bit (32-byte) hash
-        if (!Sha256.TryComputeHash(data, hashBytes, out _))
-            throw new InvalidOperationException("Hash computation failed.");
-        return Convert.ToHexString(hashBytes);
+        var hash = FnvOffsetBasis;
+        foreach (var b in data)
+        {
+            hash ^= b;
+            hash *= FnvPrime;
+        }
+
+        return hash;
     }
 }

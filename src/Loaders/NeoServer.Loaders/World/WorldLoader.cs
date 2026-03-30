@@ -107,7 +107,7 @@ public class WorldLoader
             }
         }
 
-        var items = GetItemsOnTile(tileNode).ToArray();
+        var items = GetItemsOnTile(tileNode);
 
         var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items,
             serverConfiguration.EnableStaticTileCaching,
@@ -139,16 +139,16 @@ public class WorldLoader
         }
     }
 
-    private Span<IItem> GetItemsOnTile(TileNode tileNode)
+    private IItem[] GetItemsOnTile(TileNode tileNode)
     {
-        Span<IItem> items = new IItem[tileNode.Items.Count];
+        var items = new IItem[tileNode.Items.Count];
         var i = 0;
         foreach (var itemNode in tileNode.Items)
         {
             IDictionary<ItemAttribute, IConvertible> attributes = null;
-            if (itemNode.ItemNodeAttributes != null)
+            if (itemNode.ItemNodeAttributes?.Count > 0)
             {
-                attributes = new Dictionary<ItemAttribute, IConvertible>();
+                attributes = new Dictionary<ItemAttribute, IConvertible>(itemNode.ItemNodeAttributes.Count);
                 foreach (var attr in itemNode.ItemNodeAttributes)
                 {
                     var mappedAttr = MapAttribute(attr.AttributeName);
@@ -219,6 +219,9 @@ public class WorldLoader
     private IEnumerable<IItem> CreateChildrenItems(TileNode tileNode, ItemNode itemNode,
         IDictionary<ItemAttribute, IConvertible> attributes)
     {
+        if (itemNode.Children.Count == 0)
+            return Array.Empty<IItem>();
+
         var items = new List<IItem>(itemNode.Children.Count);
         foreach (var child in itemNode.Children)
         {
