@@ -10,7 +10,6 @@ namespace NeoServer.Domain.World.Services;
 
 public class ToMapMovementService(
     IMap map,
-    IItemMovementService itemMovementService,
     ICreaturePushService creaturePushService,
     IMapItemMovementService mapItemMovementService)
     : IToMapMovementService
@@ -66,10 +65,8 @@ public class ToMapMovementService(
         var itemIsPickupable = item?.IsPickupable ?? false;
 
         if (!itemIsPickupable) return;
-
-        var finalTile = (DynamicTile)map.GetTileDestination(toTile.Location);
-
-        itemMovementService.Move(player, item, container, finalTile, itemThrow.Amount,
+        
+        mapItemMovementService.Move(player, item, container, toTile, itemThrow.Amount,
              (byte)itemThrow.FromLocation.ContainerSlot, 0);
     }
 }
