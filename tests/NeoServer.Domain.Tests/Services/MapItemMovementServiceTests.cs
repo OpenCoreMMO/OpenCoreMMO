@@ -320,7 +320,7 @@ public class MapItemMovementServiceTests
 
         // THEN – SightClear returns false → NotPossible
         result.Failed.Should().BeTrue();
-        result.Error.Should().Be(InvalidOperation.NotPossible);
+        result.Error.Should().Be(InvalidOperation.CannotThrowThere);
         GetTile(map, fromLocation).TopDownItemOnStack.Should().Be(item);
         GetTile(map, toLocation).TopDownItemOnStack.Should().NotBe(item);
     }

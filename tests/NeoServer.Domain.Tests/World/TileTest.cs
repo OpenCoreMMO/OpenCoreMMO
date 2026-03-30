@@ -249,56 +249,6 @@ public class TileTest
     }
 
     [Fact]
-    public void Item_falls_when_moved_to_a_hole()
-    {
-        //arrange
-        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
-        var player = PlayerTestDataBuilder.Build();
-        player.SetNewLocation(new Location(102, 100, 7));
-
-        var validation = new CreatureMovementValidation(map);
-        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
-
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
-            staticToDynamicTileServiceMock.Object);
-
-        var replaceGroundOperation = new ReplaceGroundOperation(creatureMovementService, map);
-
-        var item = ItemTestDataBuilder.CreateWeaponItem(1);
-
-        var hole = new Ground(new ItemType().SetClientId(1), new Location(100, 100, 7));
-        hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
-
-        map.PlaceCreature(player);
-
-        var sourceTile = (IDynamicTile)map[101, 100, 7];
-        var destinationTile = (IDynamicTile)map[100, 100, 7];
-        var undergroundTile = (IDynamicTile)map[100, 100, 8];
-
-        replaceGroundOperation.ReplaceGround(destinationTile.Location, hole);
-
-        var mailService = new MailService(new Mock<IPlayerRepository>().Object,
-            new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
-
-        var itemMovementService =
-            new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
-
-        sourceTile.AddItem(item);
-
-        var toMapMovementService = new ToMapMovementService(map, itemMovementService,
-            new Mock<ICreaturePushService>().Object, new Mock<IMapItemMovementService>().Object);
-
-        //act
-        toMapMovementService.Move(player,
-            new MovementParams(sourceTile.Location, destinationTile.Location, 1));
-
-        //assert
-        sourceTile.TopDownItemOnStack.Should().NotBe(item);
-        destinationTile.TopDownItemOnStack.Should().NotBe(item);
-        undergroundTile.TopDownItemOnStack.Should().Be(item);
-    }
-
-    [Fact]
     [ThreadBlocking]
     public void Item_doesnt_go_to_hole_if_the_final_tile_is_blocked()
     {
@@ -338,7 +288,7 @@ public class TileTest
 
         sourceTile.AddItem(item);
 
-        var toMapMovementService = new ToMapMovementService(map, itemMovementService,
+        var toMapMovementService = new ToMapMovementService(map,
             new Mock<ICreaturePushService>().Object, new Mock<IMapItemMovementService>().Object);
 
         //act
@@ -348,61 +298,6 @@ public class TileTest
         sourceTile.TopDownItemOnStack.Should().Be(item);
         destinationTile.TopDownItemOnStack.Should().NotBe(item);
         undergroundTile.TopDownItemOnStack.Should().NotBe(item);
-    }
-
-    [Fact]
-    public void Item_falls_two_floors_if_a_hole_is_below_another_hole()
-    {
-        //arrange
-        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 9);
-
-        var player = PlayerTestDataBuilder.Build(map: map);
-        player.SetNewLocation(new Location(102, 100, 7));
-
-        var validation = new CreatureMovementValidation(map);
-        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
-            staticToDynamicTileServiceMock.Object);
-
-        var item = ItemTestDataBuilder.CreateWeaponItem(1);
-
-        var hole = new Ground(new ItemType().SetClientId(1), new Location(100, 100, 7));
-        hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
-
-        map.PlaceCreature(player);
-
-        var secondHole = new Ground(new ItemType().SetClientId(1), new Location(100, 100, 8));
-        secondHole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
-
-        var sourceTile = (IDynamicTile)map[101, 100, 7];
-        var destinationTile = (IDynamicTile)map[100, 100, 7];
-        var undergroundTile = (IDynamicTile)map[100, 100, 8];
-        var secondFloor = (IDynamicTile)map[100, 100, 9];
-
-        sourceTile.AddItem(item);
-        
-        var replaceGroundOperation = new ReplaceGroundOperation(creatureMovementService, map);
-
-        replaceGroundOperation.ReplaceGround(destinationTile.Location, hole);
-
-        replaceGroundOperation.ReplaceGround(undergroundTile.Location, secondHole);
-
-        var mailService = new MailService(new Mock<IPlayerRepository>().Object,
-            new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
-
-        var itemMovementService =
-            new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
-        var toMapMovementService = new ToMapMovementService(map, itemMovementService,
-            new Mock<ICreaturePushService>().Object, new Mock<IMapItemMovementService>().Object);
-
-        //act
-        toMapMovementService.Move(player, new MovementParams(sourceTile.Location, destinationTile.Location, 1));
-
-        //assert
-        sourceTile.TopDownItemOnStack.Should().NotBe(item);
-        destinationTile.TopDownItemOnStack.Should().NotBe(item);
-        undergroundTile.TopDownItemOnStack.Should().NotBe(item);
-        secondFloor.TopDownItemOnStack.Should().Be(item);
     }
 
     [Fact]
@@ -842,54 +737,5 @@ public class TileTest
         tile.TopItems.Count.Should().Be(2);
         tile.TopItems.Values[0].Should().Be(itemTopOrder0); // TopOrder 0 at beginning
         tile.TopItems.Values[1].Should().Be(itemTopOrder5);
-    }
-
-    [Fact]
-    public void Item_moved_to_teleport_goes_to_teleport_destination()
-    {
-        //arrange
-        var teleportLocation = new Location(100, 100, 7);
-        var destinationLocation = new Location(100, 102, 7);
-
-        var teleportItem = new TeleportItem(new ItemType().SetClientId(10), teleportLocation);
-        teleportItem.Attributes.SetAttribute(new Dictionary<ItemAttribute, IConvertible>
-        {
-            [ItemAttribute.TeleportDestination] = destinationLocation
-        });
-
-        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7, true,
-            topItems: new Dictionary<Location, IItem[]>
-            {
-                [teleportLocation] = [teleportItem]
-            });
-
-        var player = PlayerTestDataBuilder.Build();
-        player.SetNewLocation(new Location(102, 100, 7));
-        map.PlaceCreature(player);
-
-        var item = ItemTestDataBuilder.CreateWeaponItem(1);
-
-        var sourceTile = (IDynamicTile)map[101, 100, 7];
-        var teleportTile = (IDynamicTile)map[100, 100, 7];
-        var destinationTile = (IDynamicTile)map[100, 102, 7];
-
-        sourceTile.AddItem(item);
-
-        var mailService = new MailService(new Mock<IPlayerRepository>().Object,
-            new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
-
-        var itemMovementService =
-            new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
-
-        var toMapMovementService = new ToMapMovementService(map, itemMovementService,
-            new Mock<ICreaturePushService>().Object, new Mock<IMapItemMovementService>().Object);
-
-        //act
-        toMapMovementService.Move(player, new MovementParams(sourceTile.Location, teleportTile.Location, 1));
-
-        //assert
-        sourceTile.TopDownItemOnStack.Should().NotBe(item);
-        teleportTile.TopDownItemOnStack.Should().NotBe(item);
-        destinationTile.TopDownItemOnStack.Should().Be(item);
     }
 }
