@@ -45,6 +45,7 @@ public class LuaCombat : Script
         Parameters.TryGetValue(CombatParam.COMBAT_PARAM_TYPE, out var combatType);
         Parameters.TryGetValue(CombatParam.COMBAT_PARAM_EFFECT, out var effect);
         Parameters.TryGetValue(CombatParam.COMBAT_PARAM_DISTANCEEFFECT, out var shootType);
+        Parameters.TryGetValue(CombatParam.COMBAT_PARAM_CREATEITEM, out var createItemId);
 
         var damageValues = new MinMax(0, 0);
 
@@ -72,6 +73,23 @@ public class LuaCombat : Script
                 direction = player.Direction;
         }
 
+        var magicFieldIds = new HashSet<ItemIdType>
+        {
+            ItemIdType.ITEM_FIREFIELD_PVP_FULL,
+            ItemIdType.ITEM_FIREFIELD_PVP_MEDIUM,
+            ItemIdType.ITEM_FIREFIELD_PVP_SMALL,
+            ItemIdType.ITEM_FIREFIELD_PERSISTENT_FULL,
+            ItemIdType.ITEM_FIREFIELD_PERSISTENT_MEDIUM,
+            ItemIdType.ITEM_FIREFIELD_PERSISTENT_SMALL,
+            ItemIdType.ITEM_FIREFIELD_NOPVP,
+            ItemIdType.ITEM_POISONFIELD_PVP,
+            ItemIdType.ITEM_POISONFIELD_PERSISTENT,
+            ItemIdType.ITEM_POISONFIELD_NOPVP,
+            ItemIdType.ITEM_ENERGYFIELD_PVP,
+            ItemIdType.ITEM_ENERGYFIELD_PERSISTENT,
+            ItemIdType.ITEM_ENERGYFIELD_NOPVP,
+        };
+
         return new CombatParameter
         {
             DamageType = ((CombatType)combatType).ToDamageType(),
@@ -81,7 +99,8 @@ public class LuaCombat : Script
             MaxDamage = (ushort)damageValues.Max,
             Range = 7,
             Area = Areas.Count != 0 ? Areas[direction] : null,
-            Conditions = Conditions
+            Conditions = Conditions,
+            FieldAttack = magicFieldIds.Contains((ItemIdType)createItemId),
         };
     }
 }
