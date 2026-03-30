@@ -178,6 +178,9 @@ public class MapItemMovementService(
             case InvalidOperation.TooFar:
                 OperationFailService.Send(player.CreatureId, TextConstants.DESTINATION_IS_OUT_OF_REACH);
                 break;
+            case InvalidOperation.NotEnoughRoom:
+                OperationFailService.Send(player.CreatureId, TextConstants.NOT_ENOUGH_ROOM);
+                break;
             default:
                 OperationFailService.Send(player.CreatureId, TextConstants.YOU_CANNOT_THROW_THERE);
                 break;

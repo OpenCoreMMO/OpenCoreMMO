@@ -163,6 +163,7 @@ public abstract class BaseTile : ITile
         RemoveFlag(TileFlags.MailBox);
         RemoveFlag(TileFlags.TrashHolder);
         RemoveFlag(TileFlags.Bed);
+        RemoveFlag(TileFlags.LiquidSource);
 
         foreach (var item in items) SetTileFlags(item);
     }
