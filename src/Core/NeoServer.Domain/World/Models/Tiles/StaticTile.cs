@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using System.Runtime.CompilerServices;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
@@ -10,11 +11,16 @@ namespace NeoServer.Domain.World.Models.Tiles;
 public class StaticTile : BaseTile, IStaticTile
 {
     private IItem _topDownItemOnStack;
+    private ushort[] _cachedClientIdItems;
 
-    public StaticTile(Coordinate coordinate, uint flag = 0, params IItem[] items) : this(
-        new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z), items)
+    public StaticTile(Coordinate coordinate, uint flag = 0, params IItem[] items)
     {
+        var location = new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z);
+        SetNewLocation(location);
         Flags |= flag;
+        Raw = GetRaw(items);
+        ThingsCount = items.Length;
+        AllItems = OrderItems(items);
     }
 
     public StaticTile(Location location, params IItem[] items)
@@ -49,98 +55,151 @@ public class StaticTile : BaseTile, IStaticTile
     {
         get
         {
+            if (_cachedClientIdItems != null) return _cachedClientIdItems;
+            
             var itemsId = new ushort[Raw.Length / 2];
-            var index = 0;
-
-            for (var i = 0; i < Raw.Length; i += 2)
+            var span = Raw.AsSpan();
+            
+            for (var i = 0; i < itemsId.Length; i++)
             {
-                var final = i + 2;
-                itemsId[index++] = BitConverter.ToUInt16(Raw.AsSpan()[i..final]);
+                itemsId[i] = BitConverter.ToUInt16(span.Slice(i * 2, 2));
             }
-
-            return itemsId;
+            
+            _cachedClientIdItems = itemsId;
+            return _cachedClientIdItems;
         }
     }
 
     public IStaticTile CreateClone(Location location)
     {
-        foreach (var item in AllItems)
+        var clonedItems = new IItem[AllItems.Length];
+        for (var i = 0; i < AllItems.Length; i++)
+        {
+            var item = AllItems[i];
             item.SetNewLocation(location, true);
+            clonedItems[i] = item;
+        }
 
-        return new StaticTile(location, AllItems);
+        return new StaticTile(location, clonedItems);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override IItem GetItemByIndex(int index)
     {
-        if (index < 0 || index >= AllItems.Length) return null;
+        if ((uint)index >= (uint)AllItems.Length) return null;
         return AllItems[index];
     }
 
     public byte[] GetRaw(IItem[] items)
     {
-        var ground = new List<byte>();
-        var top1 = new List<byte>();
-        var downRawItems = new List<byte>();
-
+        if (items == null || items.Length == 0) return Array.Empty<byte>();
+        
+        var capacity = items.Length * 2;
+        var result = new byte[capacity];
+        var groundPos = 0;
+        var topPos = 0;
+        var downPos = 0;
+        
+        // Count categories first
+        var groundCount = 0;
+        var topCount = 0;
+        
         foreach (var item in items)
         {
             if (item is null) continue;
-
+            if (item is IGround) groundCount++;
+            else if (item.IsAlwaysOnTop) topCount++;
+        }
+        
+        var topStart = groundCount * 2;
+        var downStart = topStart + topCount * 2;
+        
+        foreach (var item in items)
+        {
+            if (item is null) continue;
+            
+            var clientIdBytes = BitConverter.GetBytes(item.ClientId);
+            
             if (item is IGround groundItem)
             {
                 _topDownItemOnStack = groundItem;
-                ground.AddRange(BitConverter.GetBytes(item.ClientId));
+                result[groundPos++] = clientIdBytes[0];
+                result[groundPos++] = clientIdBytes[1];
                 continue;
             }
-
+            
             if (item.IsAlwaysOnTop)
             {
                 if (item.FloorDirection != default) FloorDirection = item.FloorDirection;
-
                 _topDownItemOnStack = item;
-                top1.AddRange(BitConverter.GetBytes(item.ClientId));
+                result[topStart + topPos++] = clientIdBytes[0];
+                result[topStart + topPos++] = clientIdBytes[1];
             }
             else
             {
                 _topDownItemOnStack = item;
-                downRawItems.InsertRange(0, BitConverter.GetBytes(item.ClientId));
+                result[downStart + downPos++] = clientIdBytes[0];
+                result[downStart + downPos++] = clientIdBytes[1];
             }
-
+            
             SetTileFlags(item);
         }
-
-        return ground.Concat(top1).Concat(downRawItems).ToArray();
+        
+        var actualSize = groundPos + topPos + downPos;
+        if (actualSize < capacity)
+        {
+            Array.Resize(ref result, actualSize);
+        }
+        
+        return result;
     }
 
     private IItem[] OrderItems(IItem[] items)
     {
-        if (items == null) return null;
-
-        var orderedItems = new List<IItem>();
-
-        // First, add ground items
-        foreach (var item in items)
-        {
-            SetTileFlags(item);
-            if (item is null) continue;
-            if (item is IGround) orderedItems.Add(item);
-        }
-
-        // Then, add top items (IsAlwaysOnTop)
+        if (items == null || items.Length == 0) return Array.Empty<IItem>();
+        
+        var orderedItems = new IItem[items.Length];
+        var groundIndex = 0;
+        var topIndex = 0;
+        var downIndex = 0;
+        
+        // Count categories in single pass
         foreach (var item in items)
         {
             if (item is null) continue;
-            if (item.IsAlwaysOnTop && item is not IGround) orderedItems.Add(item);
+            if (item is IGround) groundIndex++;
+            else if (item.IsAlwaysOnTop) topIndex++;
+            else downIndex++;
         }
-
-        // Finally, add down items (everything else)
+        
+        var topStart = groundIndex;
+        var downStart = groundIndex + topIndex;
+        
+        groundIndex = 0;
+        topIndex = topStart;
+        downIndex = downStart;
+        
+        // Single pass to order items
         foreach (var item in items)
         {
             if (item is null) continue;
-            if (!item.IsAlwaysOnTop && item is not IGround) orderedItems.Add(item);
+            
+            if (item is IGround)
+                orderedItems[groundIndex++] = item;
+            else if (item.IsAlwaysOnTop)
+                orderedItems[topIndex++] = item;
+            else
+                orderedItems[downIndex++] = item;
         }
-
-        return orderedItems.ToArray();
+        
+        // Trim array if there were null items
+        var actualCount = groundIndex + (topIndex - topStart) + (downIndex - downStart);
+        if (actualCount < items.Length)
+        {
+            Array.Resize(ref orderedItems, actualCount);
+        }
+        
+        return orderedItems;
     }
 
     public override int GetHashCode()
