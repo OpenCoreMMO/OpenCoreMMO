@@ -12,12 +12,12 @@ namespace NeoServer.Domain.World.Factories;
 
 public class TileFactory(ILogger logger) : ITileFactory
 {
-    private readonly Dictionary<ulong, IStaticTile> _tileCache = new();
+    private readonly Dictionary<(ulong Low, ulong High), IStaticTile> _tileCache = new();
 
     public ITile CreateTile(Coordinate coordinate, TileFlag flag, IItem[] items, bool useCache = true,
         uint? houseId = null)
     {
-        ulong tileHash = 0;
+        (ulong Low, ulong High) tileHash = default;
         if (useCache)
         {
             tileHash = GetTileHash(items);
@@ -127,7 +127,7 @@ public class TileFactory(ILogger logger) : ITileFactory
         return new DynamicTile(coordinate, flag, ground, topItems.ToArray(), downItems.ToArray());
     }
 
-    private static ulong GetTileHash(IItem[] items)
+    private static (ulong Low, ulong High) GetTileHash(IItem[] items)
     {
         Span<byte> raw = stackalloc byte[items.Length * sizeof(ushort)];
         var index = 0;
@@ -139,10 +139,11 @@ public class TileFactory(ILogger logger) : ITileFactory
             raw[index++] = (byte)((item.ClientId >> 8) & 0xFF);
         }
 
-        return HashHelper.ComputeContentHash(ref raw);
+        var written = raw[..index];
+        return HashHelper.ComputeContentHash(ref written);
     }
 
-    private static ulong GetTileHash(ref Span<byte> clientIds)
+    private static (ulong Low, ulong High) GetTileHash(ref Span<byte> clientIds)
     {
         return HashHelper.ComputeContentHash(ref clientIds);
     }
