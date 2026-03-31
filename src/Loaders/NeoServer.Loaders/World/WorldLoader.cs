@@ -96,9 +96,10 @@ public class WorldLoader
         if (serverConfiguration.EnableStaticTileCaching)
         {
             Span<byte> raw = stackalloc byte[tileNode.Items.Count * sizeof(ushort)];
-            LoadClientIdsStream(tileNode, ref raw);
+            var written = LoadClientIdsStream(tileNode, ref raw);
+            var writtenSpan = raw[..written];
 
-            var cachedTile = _tileFactory.GetTileFromCache(tileNode.Coordinate, ref raw);
+            var cachedTile = _tileFactory.GetTileFromCache(tileNode.Coordinate, ref writtenSpan);
 
             if (cachedTile is not null)
             {
@@ -122,7 +123,7 @@ public class WorldLoader
         world.AddTile(tile);
     }
 
-    private void LoadClientIdsStream(TileNode tileNode, ref Span<byte> clientIds)
+    private int LoadClientIdsStream(TileNode tileNode, ref Span<byte> clientIds)
     {
         var index = 0;
 
@@ -137,6 +138,8 @@ public class WorldLoader
             clientIds[index++] = (byte)(clientId & 0xFF);
             clientIds[index++] = (byte)((clientId >> 8) & 0xFF);
         }
+
+        return index;
     }
 
     private IItem[] GetItemsOnTile(TileNode tileNode)
