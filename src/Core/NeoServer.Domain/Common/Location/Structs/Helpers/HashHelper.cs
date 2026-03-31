@@ -24,9 +24,10 @@ public static class HashHelper
 
     /// <summary>
     ///     Computes a 128-bit content hash over the supplied byte span.
-    ///     Two structurally independent 64-bit algorithms (FNV-1a and DJB2) run
-    ///     in a single pass, making collision probability negligible (~2^-128).
-    ///     Not cryptographic - intended for cache keying only.
+    ///     Uses two 64-bit non-cryptographic hash functions (FNV-1a and DJB2)
+    ///     in a single pass and returns their combined result as a 128-bit value.
+    ///     Intended for non-security-sensitive scenarios such as cache keying; do not
+    ///     rely on this method for cryptographic collision resistance or security.
     /// </summary>
     public static (ulong Low, ulong High) ComputeContentHash(ref Span<byte> data)
     {
