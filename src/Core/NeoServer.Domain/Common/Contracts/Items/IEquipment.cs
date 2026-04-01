@@ -8,6 +8,4 @@ public interface IEquipment : IDecay, ISkillBonus, IDressable, IProtection, ITra
     IEquipmentRequirement
 {
     IPlayer PlayerDressing { get; }
-    event Action<IEquipment> OnDressed;
-    event Action<IEquipment> OnUndressed;
 }

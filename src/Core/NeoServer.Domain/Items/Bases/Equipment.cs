@@ -10,6 +10,7 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Items.Factories.AttributeFactory;
 using NeoServer.Domain.Items.Items.Attributes;
+using NeoServer.Domain.Items.Events;
 
 namespace NeoServer.Domain.Items.Bases;
 
@@ -29,8 +30,7 @@ public abstract class Equipment : BaseItem, IEquipment
     public Func<ushort, IItemType> ItemTypeFinder { get; init; }
     public IPlayer PlayerDressing { get; set; }
 
-    public event Action<IEquipment> OnDressed;
-    public event Action<IEquipment> OnUndressed;
+    // OnEquip/OnDequip events removed — use EventAggregator events instead
 
     public string InspectionText
     {
@@ -112,7 +112,7 @@ public abstract class Equipment : BaseItem, IEquipment
         PlayerDressing = player;
         AddSkillBonus(player);
         StartDecay();
-        OnDressed?.Invoke(this);
+        EventAggregator.Invoke(new EquipmentEquippedEvent(player, this, Location.Slot));
         player.OnDressedItem(this);
         EventAggregator.Invoke(new PlayerInventoryUpdateEvent(player, this, Location.Slot, true));
     }
@@ -127,7 +127,7 @@ public abstract class Equipment : BaseItem, IEquipment
 
         PlayerDressing = null;
         PauseDecay();
-        OnUndressed?.Invoke(this);
+        EventAggregator.Invoke(new EquipmentUnequippedEvent(player, this, Location.Slot));
         EventAggregator.Invoke(new PlayerInventoryUpdateEvent(player, this, Location.Slot, false));
     }
 
