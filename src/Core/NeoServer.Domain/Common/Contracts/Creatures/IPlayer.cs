@@ -20,6 +20,7 @@ using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Creatures.Player.Vocation;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Guild;
 using NeoServer.Domain.Items.Items.UsableItems;
 
@@ -299,8 +300,8 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     void AddRegenerationBonus(RegenerationBonus regenerationBonus);
     void RemoveRegenerationBonus(RegenerationBonus regenerationBonus);
-    void OnDressedItem(IItem item);
-    void OnUndressedItem(IItem item);
+    void OnEquippedItem(IItem item);
+    void OnUnquippedItem(IItem item);
     void PostSpellCast(ISpell spell);
     bool HasEnoughSoul(ushort soul);
     Result CanCastSpell(ISpell spell);
@@ -335,4 +336,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event WroteText OnWroteText;
 
     #endregion
+
+    void RemovePersistentCondition(ICondition condition);
+    void RemovePersistentCondition(ConditionType type);
 }

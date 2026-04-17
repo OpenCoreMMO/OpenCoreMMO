@@ -235,6 +235,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
     public void IncreaseSpeed(ushort speed)
     {
+        if (speed == 0) return;
         ChangeSpeedLevel(speed + Speed);
     }
 

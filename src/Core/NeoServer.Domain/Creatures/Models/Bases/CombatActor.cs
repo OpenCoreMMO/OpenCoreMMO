@@ -12,6 +12,7 @@ using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Models.Bases.Events;
 using NeoServer.Domain.Creatures.Monster.Loot;
@@ -56,7 +57,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         EventAggregator.Invoke(new CreatureConditionAddedEvent(this, condition));
     }
 
-    public void RemoveCondition(ICondition condition)
+    public virtual void RemoveCondition(ICondition condition)
     {
         Conditions.Remove(condition.Type);
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
@@ -78,18 +79,20 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         EventAggregator.Invoke(new CreatureConditionAddedEvent(this, condition));
     }
 
-    public void RemoveCondition(ConditionType type)
+    public virtual void RemoveCondition(ConditionType type)
     {
         if (Conditions.Remove(type, out var condition) is false) return;
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
     }
 
-    public bool HasCondition(ConditionType type, out ICondition condition)
+    public virtual List<ICondition> GetConditions() => ConditionList;
+
+    public virtual bool HasCondition(ConditionType type, out ICondition condition)
     {
         return Conditions.TryGetValue(type, out condition) && !condition.IsDisabled;
     }
 
-    public bool HasCondition(ConditionType type)
+    public virtual bool HasCondition(ConditionType type)
     {
         return Conditions.TryGetValue(type, out var condition) && !condition.IsDisabled;
     }
@@ -485,6 +488,11 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public abstract ushort MaximumAttackPower { get; }
     public abstract ushort MaximumElementalAttackPower { get; }
+    
+    /// <summary>
+    /// Conditions list cache
+    /// </summary>
+    protected List<ICondition> ConditionList { get; } = new();
 
     #endregion
 }

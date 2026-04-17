@@ -113,7 +113,7 @@ public abstract class Equipment : BaseItem, IEquipment
         AddSkillBonus(player);
         StartDecay();
         EventAggregator.Invoke(new EquipmentEquippedEvent(player, this, Location.Slot));
-        player.OnDressedItem(this);
+        player.OnEquippedItem(this);
         EventAggregator.Invoke(new PlayerInventoryUpdateEvent(player, this, Location.Slot, true));
     }
 
@@ -122,11 +122,14 @@ public abstract class Equipment : BaseItem, IEquipment
         if (Guard.AnyNull(player)) return;
 
         RemoveSkillBonus(player);
+        
+        player.OnUnquippedItem(this);
 
         TransformOnDequip();
 
         PlayerDressing = null;
         PauseDecay();
+        
         EventAggregator.Invoke(new EquipmentUnequippedEvent(player, this, Location.Slot));
         EventAggregator.Invoke(new PlayerInventoryUpdateEvent(player, this, Location.Slot, false));
     }

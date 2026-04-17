@@ -84,7 +84,7 @@ public static class ServiceInjection
         builder.AddSingleton<ReplaceGroundOperation>();
 
         builder.AddSingleton<IItemRemoveService, ItemRemoveService>();
-        builder.AddSingleton<IItemAbilityApplierService, ItemAbilityApplierService>();
+        //builder.AddSingleton<IItemAbilityApplierService, ItemAbilityApplierService>();
         builder.AddSingleton<ItemUseValidation>();
 
         builder.AddSingleton<MagicFieldService>();
