@@ -1480,18 +1480,6 @@ public class Player : CombatActor, IPlayer
         RemovePersistentCondition(condition);
     }
 
-    public override List<ICondition> GetConditions()
-    {
-        ConditionList.Clear();
-
-        foreach (var condition in Conditions)
-        {
-            ConditionList.Add(condition.Value);
-        }
-
-        return ConditionList;
-    }
-
     public void MoveToTemple()
     {
         SetNewLocation(new Location(Town.Coordinate));

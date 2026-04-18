@@ -85,7 +85,17 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
     }
 
-    public virtual List<ICondition> GetConditions() => ConditionList;
+    public virtual List<ICondition> GetConditions()
+    {
+        ConditionList.Clear();
+
+        foreach (var condition in Conditions)
+        {
+            ConditionList.Add(condition.Value);
+        }
+
+        return ConditionList;
+    }
 
     public virtual bool HasCondition(ConditionType type, out ICondition condition)
     {
