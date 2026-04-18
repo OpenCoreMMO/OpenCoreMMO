@@ -136,6 +136,9 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     bool CanSeeInspectionDetails { get; }
     bool IsManaShieldEnabled { get; }
+    void AddConditionSuppression(ConditionType conditionType);
+    void RemoveConditionSuppression(ConditionType conditionType);
+    int GetConditionSuppressionCount(ConditionType conditionType);
 
     /// <summary>
     ///     Indicates Skull showed on creature

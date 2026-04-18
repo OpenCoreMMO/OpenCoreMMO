@@ -47,11 +47,8 @@ public interface IInventory : IHasItem
     Result<OperationResultList<IItem>> AddItem(IItem item, Slot slot = Slot.None);
 
     bool UpdateItem(IItem item, IItemType newType);
-
     void Protect(CombatDamage damage);
-
-    bool HasEquippedItemWithImmunity(Immunity immunity);
-
+    
     #region Events
 
     event AddItemToSlot OnItemAddedToSlot;

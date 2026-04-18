@@ -108,21 +108,20 @@ public static class ItemAbilityApplier
         return Result.Success;
     }
 
-    private static void ToggleConditions(IPlayer player, IItem item, bool supress)
+    private static void ToggleConditions(IPlayer player, IItem item, bool suppress)
     {
         ReadOnlySpan<ItemTypeAttribute> suppressAttributes =
         [
             ItemTypeAttribute.SuppressDrown, ItemTypeAttribute.SuppressDrunk,
             ItemTypeAttribute.SuppressCurse, ItemTypeAttribute.SuppressDazzle,
             ItemTypeAttribute.SuppressEnergy, ItemTypeAttribute.SuppressFire,
-            ItemTypeAttribute.SuppressFreeze, ItemTypeAttribute.SuppressPhysical,
-            ItemTypeAttribute.SuppressPoison
+            ItemTypeAttribute.SuppressFreeze, ItemTypeAttribute.SuppressPoison
         ];
 
         foreach (var suppressAttribute in suppressAttributes)
         {
-            if (!item.Metadata.Attributes.TryGetAttribute<bool>(suppressAttribute, out var suppress)) continue;
-            if (!suppress) continue;
+            if (!item.Metadata.Attributes.TryGetAttribute<bool>(suppressAttribute, out var suppressCondition)) continue;
+            if (!suppressCondition) continue;
 
             var condition = suppressAttribute switch
             {
@@ -133,18 +132,27 @@ public static class ItemAbilityApplier
                 ItemTypeAttribute.SuppressEnergy => ConditionType.Electrified,
                 ItemTypeAttribute.SuppressFire => ConditionType.Burning,
                 ItemTypeAttribute.SuppressFreeze => ConditionType.Freezing,
-                ItemTypeAttribute.SuppressPhysical => ConditionType.None,
                 ItemTypeAttribute.SuppressPoison => ConditionType.Poisoned,
                 _ => ConditionType.None
             };
 
             if (condition == ConditionType.None) continue;
 
-            if (supress)
+            if (suppress)
             {
+                player.AddConditionSuppression(condition);
+
+                if (player.GetConditionSuppressionCount(condition) > 1)
+                    return;
+
                 player.DisableCondition(condition);
                 return;
             }
+
+            player.RemoveConditionSuppression(condition);
+
+            if (player.GetConditionSuppressionCount(condition) > 0)
+                return;
 
             player.EnableCondition(condition);
         }
