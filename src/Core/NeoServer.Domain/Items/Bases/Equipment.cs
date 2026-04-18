@@ -29,9 +29,7 @@ public abstract class Equipment : BaseItem, IEquipment
     protected abstract string PartialInspectionText { get; }
     public Func<ushort, IItemType> ItemTypeFinder { get; init; }
     public IPlayer PlayerDressing { get; set; }
-
-    // OnEquip/OnDequip events removed — use EventAggregator events instead
-
+    
     public string InspectionText
     {
         get
