@@ -121,7 +121,7 @@ public abstract class Equipment : BaseItem, IEquipment
 
         RemoveSkillBonus(player);
         
-        player.OnUnquippedItem(this);
+        player.OnUnequippedItem(this);
 
         TransformOnDequip();
 

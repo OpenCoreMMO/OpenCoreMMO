@@ -1933,7 +1933,7 @@ public class Player : CombatActor, IPlayer
         EventAggregator.Invoke(new PlayerEquippedItemEvent(this, item));
     }
 
-    public void OnUnquippedItem(IItem item)
+    public void OnUnequippedItem(IItem item)
     {
         ItemAbilityApplier.RemoveAbilities(this, item);
         EventAggregator.Invoke(new PlayerUnequippedItemEvent(this, item));

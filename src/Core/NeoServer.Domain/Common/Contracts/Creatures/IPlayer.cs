@@ -301,7 +301,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     void AddRegenerationBonus(RegenerationBonus regenerationBonus);
     void RemoveRegenerationBonus(RegenerationBonus regenerationBonus);
     void OnEquippedItem(IItem item);
-    void OnUnquippedItem(IItem item);
+    void OnUnequippedItem(IItem item);
     void PostSpellCast(ISpell spell);
     bool HasEnoughSoul(ushort soul);
     Result CanCastSpell(ISpell spell);
