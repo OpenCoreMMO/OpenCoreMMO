@@ -25,7 +25,7 @@ public abstract class BaseCondition : ICondition
     public long StartedAt { get; private set; }
     public bool IsDisabled { get; private set; }
 
-    public int PersistentCounter { get; private set; }
+    private int _persistentCounter;
 
     public ConditionIconType Icons => 0;
 
@@ -75,9 +75,11 @@ public abstract class BaseCondition : ICondition
 
     public virtual bool HasExpired => !IsPersistent && EndTime < DateTime.UtcNow.Ticks;
      
-    public void IncreasePersistentCounter() => PersistentCounter++;
+    public void IncreasePersistentCounter() => _persistentCounter++;
 
-    public void ReducePersistentCounter() => PersistentCounter--;
+    public void ReducePersistentCounter() => _persistentCounter--;
+    
+    public bool HasPersistentCounter => _persistentCounter > 0;
 
     /// <summary>
     /// Updates the duration of the condition by setting a new value.

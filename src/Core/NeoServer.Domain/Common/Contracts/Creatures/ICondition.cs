@@ -23,8 +23,8 @@ public interface ICondition
 
     bool IsDisabled { get; }
     bool IsPersistent { get; }
-    int PersistentCounter { get; }
     long Duration { get; }
+    bool HasPersistentCounter { get; }
 
     bool Start(ICreature creature);
     void End();

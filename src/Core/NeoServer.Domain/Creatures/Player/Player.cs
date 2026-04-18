@@ -1450,7 +1450,7 @@ public class Player : CombatActor, IPlayer
 
     public override void RemoveCondition(ICondition condition)
     {
-        if (condition.PersistentCounter > 0) return;
+        if (condition.HasPersistentCounter) return;
         base.RemoveCondition(condition);
     }
 
@@ -1466,7 +1466,7 @@ public class Player : CombatActor, IPlayer
     {
         condition.ReducePersistentCounter();
 
-        if (condition.PersistentCounter <= 0 && (condition.IsPersistent  || condition.HasExpired))
+        if (!condition.HasPersistentCounter && (condition.IsPersistent  || condition.HasExpired))
         {
             base.RemoveCondition(condition);
         }
