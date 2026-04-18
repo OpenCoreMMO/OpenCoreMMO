@@ -8,7 +8,7 @@ using NeoServer.Domain.Tests.Helpers.Player;
 
 namespace NeoServer.Domain.Tests.Creature.Players;
 
-public class PlayerEquipmentSupressConditionTest
+public class PlayerEquipmentSuppressConditionTest
 {
     [Fact]
     public void Player_loses_drunk_condition_when_equipping_ring_with_suppress_drunk_attribute()
