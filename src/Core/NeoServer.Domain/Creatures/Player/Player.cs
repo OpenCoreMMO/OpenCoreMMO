@@ -32,6 +32,7 @@ using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
+using NeoServer.Domain.Creatures.Models.Bases.Events;
 using NeoServer.Domain.Creatures.Npcs;
 using NeoServer.Domain.Creatures.Player.Container;
 using NeoServer.Domain.Creatures.Player.Inventory;
@@ -39,6 +40,7 @@ using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Guild;
 using NeoServer.Domain.Items.Items.UsableItems;
 using NeoServer.Domain.Items.Items.Weapons;
+using NeoServer.Domain.Items.Services;
 
 namespace NeoServer.Domain.Creatures.Player;
 
@@ -511,7 +513,7 @@ public class Player : CombatActor, IPlayer
         {
             StopFollowing();
         }
-        
+
         base.OnSpectatorLoggedOut(spectator);
     }
 
@@ -522,14 +524,14 @@ public class Player : CombatActor, IPlayer
         {
             StopFollowing();
         }
-        
+
         base.OnSpectatorChangedVisibility(spectator);
     }
 
     public override void OnSpectatorDies(ICombatActor spectator)
     {
         if (spectator.Equals(CurrentTarget)) HandleTargetLost();
-        
+
         // If the spectator is the creature being followed, stop following.
         if (Equals(spectator, FollowCreature))
         {
@@ -553,7 +555,7 @@ public class Player : CombatActor, IPlayer
         if (CanSeeInvisible) return true;
 
         if (otherCreature.IsInvisible) return false;
-        
+
         return CanSee(otherCreature.Location);
     }
 
@@ -608,7 +610,7 @@ public class Player : CombatActor, IPlayer
                 Follow(CurrentTarget as IWalkableCreature, PathSearchParams);
                 return;
             }
-            
+
             StopFollowing();
         }
 
@@ -826,7 +828,7 @@ public class Player : CombatActor, IPlayer
         foreach (var summon in summonsCopy) summon.OnMasterLogout();
 
         EventAggregator.Invoke(new PlayerLoggedOutEvent(this));
-        
+
         return true;
     }
 
@@ -1417,6 +1419,24 @@ public class Player : CombatActor, IPlayer
         if (Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked) && condition.Type.ToDamageType() != DamageType.None)
             return;
 
+        if (Conditions.TryGetValue(condition.Type, out var existingCondition))
+        {
+            if (condition.IsPersistent)
+            {
+                existingCondition.IncreasePersistentCounter();
+                return;
+            }
+
+            existingCondition.SetNewDuration(condition.Duration);
+
+            condition = existingCondition;
+        }
+
+        if (condition.IsPersistent)
+        {
+            condition.IncreasePersistentCounter();
+        }
+
         switch (condition.Type)
         {
             case ConditionType.Drunk when Inventory.HasEquippedItemWithImmunity(Immunity.Drunkenness):
@@ -1426,6 +1446,38 @@ public class Player : CombatActor, IPlayer
                 base.AddCondition(condition);
                 break;
         }
+    }
+
+    public override void RemoveCondition(ICondition condition)
+    {
+        if (condition.HasPersistentCounter) return;
+        base.RemoveCondition(condition);
+    }
+
+    public override void RemoveCondition(ConditionType type)
+    {
+        Conditions.TryGetValue(type, out var condition);
+        if (condition is null) return;
+        
+        base.RemoveCondition(type);
+    }
+
+    public void RemovePersistentCondition(ICondition condition)
+    {
+        condition.ReducePersistentCounter();
+
+        if (!condition.HasPersistentCounter && (condition.IsPersistent  || condition.HasExpired))
+        {
+            base.RemoveCondition(condition);
+        }
+    }
+
+    public void RemovePersistentCondition(ConditionType type)
+    {
+        Conditions.TryGetValue(type, out var condition);
+        if (condition is null) return;
+
+        RemovePersistentCondition(condition);
     }
 
     public void MoveToTemple()
@@ -1522,16 +1574,12 @@ public class Player : CombatActor, IPlayer
         var weaponContribution = attackPower / 3f;
         var attackFactor = Math.Max(DamageFactor, float.Epsilon);
 
-        var baseMaximumAttack = levelContribution + (skillContribution * weaponContribution * PrecisionBonus) / attackFactor;
+        var baseMaximumAttack =
+            levelContribution + (skillContribution * weaponContribution * PrecisionBonus) / attackFactor;
         var adjustedMaximumAttack = baseMaximumAttack * damageMultiplier;
         var scaledAttack = adjustedMaximumAttack * attackPercentage / 100f;
 
         return (ushort)Math.Clamp(MathF.Round(scaledAttack, MidpointRounding.AwayFromZero), 0f, ushort.MaxValue);
-    }
-
-    public override CalculatedAttackDamage CalculateAttackDamage()
-    {
-        return base.CalculateAttackDamage();
     }
 
     private Result CanUseItem(IUsableOn item, Location onLocation)
@@ -1867,14 +1915,16 @@ public class Player : CombatActor, IPlayer
 
     #region Equip/DeEquip
 
-    public void OnDressedItem(IItem item)
+    public void OnEquippedItem(IItem item)
     {
-        OnEquipItem?.Invoke(this, item, true);
+        ItemAbilityApplier.ApplyAbilities(this, item);
+        EventAggregator.Invoke(new PlayerEquippedItemEvent(this, item));
     }
 
-    public void OnUndressedItem(IItem item)
+    public void OnUnequippedItem(IItem item)
     {
-        OnDeEquipItem?.Invoke(this, item, true);
+        ItemAbilityApplier.RemoveAbilities(this, item);
+        EventAggregator.Invoke(new PlayerUnequippedItemEvent(this, item));
     }
 
     #endregion
@@ -1896,8 +1946,6 @@ public class Player : CombatActor, IPlayer
     public event AddSkillBonus OnAddedSkillBonus;
     public event RemoveSkillBonus OnRemovedSkillBonus;
     public event WroteText OnWroteText;
-    public event EquipItem OnEquipItem;
-    public event DeEquipItem OnDeEquipItem;
 
     #endregion
 }

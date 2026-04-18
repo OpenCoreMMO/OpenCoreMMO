@@ -25,6 +25,8 @@ public abstract class BaseCondition : ICondition
     public long StartedAt { get; private set; }
     public bool IsDisabled { get; private set; }
 
+    private int _persistentCounter;
+
     public ConditionIconType Icons => 0;
 
     public abstract ConditionType Type { get; }
@@ -64,10 +66,30 @@ public abstract class BaseCondition : ICondition
 
     public virtual bool Start(ICreature creature)
     {
+        if (Duration == 0) return true;
+        
         StartedAt = DateTime.UtcNow.Ticks;
-        EndTime = DateTime.UtcNow.Ticks + Duration;
+        EndTime = StartedAt + Duration;
         return true;
     }
 
-    public virtual bool HasExpired => IsPersistent is false && EndTime < DateTime.UtcNow.Ticks;
+    public virtual bool HasExpired => !IsPersistent && EndTime < DateTime.UtcNow.Ticks;
+     
+    public void IncreasePersistentCounter() => _persistentCounter++;
+
+    public void ReducePersistentCounter() => _persistentCounter--;
+    
+    public bool HasPersistentCounter => _persistentCounter > 0;
+
+    /// <summary>
+    /// Updates the duration of the condition by setting a new value.
+    /// </summary>
+    /// <param name="duration">The new duration in milliseconds. This value is converted to ticks internally.</param>
+    public void SetNewDuration(uint duration) => Duration = duration * TimeSpan.TicksPerMillisecond;
+
+    /// <summary>
+    /// Updates the duration of the condition by setting a new value.
+    /// </summary>
+    /// <param name="duration">The new duration in ticks.</param>
+    public void SetNewDuration(long duration) => Duration = duration;
 }

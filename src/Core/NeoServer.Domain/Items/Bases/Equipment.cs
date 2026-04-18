@@ -10,6 +10,7 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Items.Factories.AttributeFactory;
 using NeoServer.Domain.Items.Items.Attributes;
+using NeoServer.Domain.Items.Events;
 
 namespace NeoServer.Domain.Items.Bases;
 
@@ -28,10 +29,7 @@ public abstract class Equipment : BaseItem, IEquipment
     protected abstract string PartialInspectionText { get; }
     public Func<ushort, IItemType> ItemTypeFinder { get; init; }
     public IPlayer PlayerDressing { get; set; }
-
-    public event Action<IEquipment> OnDressed;
-    public event Action<IEquipment> OnUndressed;
-
+    
     public string InspectionText
     {
         get
@@ -112,8 +110,8 @@ public abstract class Equipment : BaseItem, IEquipment
         PlayerDressing = player;
         AddSkillBonus(player);
         StartDecay();
-        OnDressed?.Invoke(this);
-        player.OnDressedItem(this);
+        EventAggregator.Invoke(new EquipmentEquippedEvent(player, this, Location.Slot));
+        player.OnEquippedItem(this);
         EventAggregator.Invoke(new PlayerInventoryUpdateEvent(player, this, Location.Slot, true));
     }
 
@@ -122,12 +120,15 @@ public abstract class Equipment : BaseItem, IEquipment
         if (Guard.AnyNull(player)) return;
 
         RemoveSkillBonus(player);
+        
+        player.OnUnequippedItem(this);
 
         TransformOnDequip();
 
         PlayerDressing = null;
         PauseDecay();
-        OnUndressed?.Invoke(this);
+        
+        EventAggregator.Invoke(new EquipmentUnequippedEvent(player, this, Location.Slot));
         EventAggregator.Invoke(new PlayerInventoryUpdateEvent(player, this, Location.Slot, false));
     }
 

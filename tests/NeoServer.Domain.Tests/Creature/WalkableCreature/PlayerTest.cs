@@ -72,10 +72,10 @@ public class PlayerTest
     }
 
     [Theory]
-    [InlineData(100, 400)]
-    [InlineData(0, 300)]
-    [InlineData(300, 600)]
-    public void IncreaseSpeed_Should_Increase_Speed_Value(ushort increase, ushort expected)
+    [InlineData(100, 400, true)]
+    [InlineData(0, 300, false)]
+    [InlineData(300, 600, true)]
+    public void IncreaseSpeed_Should_Increase_Speed_Value(ushort increase, ushort expected, bool emitEvent)
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100, speed: 300);
         var emittedEvent = false;
@@ -84,7 +84,7 @@ public class PlayerTest
         sut.IncreaseSpeed(increase);
 
         Assert.Equal(expected, sut.Speed);
-        Assert.True(emittedEvent);
+        Assert.Equal(emitEvent, emittedEvent);
     }
 
     [Fact]

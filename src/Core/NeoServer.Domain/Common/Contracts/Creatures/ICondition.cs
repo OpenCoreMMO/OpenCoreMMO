@@ -22,6 +22,9 @@ public interface ICondition
     long StartedAt { get; }
 
     bool IsDisabled { get; }
+    bool IsPersistent { get; }
+    long Duration { get; }
+    bool HasPersistentCounter { get; }
 
     bool Start(ICreature creature);
     void End();
@@ -35,4 +38,18 @@ public interface ICondition
 
     void Disable();
     void Enable();
+    void IncreasePersistentCounter();
+    void ReducePersistentCounter();
+
+    /// <summary>
+    /// Updates the duration of the condition by setting a new value.
+    /// </summary>
+    /// <param name="duration">The new duration in milliseconds. This value is converted to ticks internally.</param>
+    void SetNewDuration(uint duration);
+
+    /// <summary>
+    /// Updates the duration of the condition by setting a new value.
+    /// </summary>
+    /// <param name="duration">The new duration in ticks.</param>
+    void SetNewDuration(long duration);
 }

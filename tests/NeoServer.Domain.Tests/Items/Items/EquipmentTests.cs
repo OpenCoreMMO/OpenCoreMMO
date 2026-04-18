@@ -822,7 +822,6 @@ public class EquipmentTests : IAsyncLifetime
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "body");
         var backpack = ItemTestDataBuilder.CreateBackpack();
 
-        using var monitor = sut.Monitor();
 
         var player = PlayerTestDataBuilder.Build(inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
         {
@@ -837,8 +836,8 @@ public class EquipmentTests : IAsyncLifetime
         player.MoveItem(item, backpack, player.Inventory, 1,
             0, (byte)Slot.Body);
 
-        //assert
-        monitor.Should().Raise(nameof(sut.OnUndressed));
+        //assert: the new item should now be in the body slot
+        player.Inventory.TryGetItem<IEquipment>(Slot.Body).Should().Be(item);
     }
 
     #region InspectionText

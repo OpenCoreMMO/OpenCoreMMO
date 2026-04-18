@@ -10,7 +10,7 @@ public static class CreatureConditionRoutine
     {
         if (creature.IsDead) return;
 
-        foreach (var (_, condition) in creature.Conditions.ToList())
+        foreach (var condition in creature.GetConditions())
         {
             if (condition.HasExpired)
             {

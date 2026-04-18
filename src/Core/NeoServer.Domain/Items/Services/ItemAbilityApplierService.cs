@@ -6,15 +6,16 @@ using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 
 namespace NeoServer.Domain.Items.Services;
 
-public class ItemAbilityApplierService : IItemAbilityApplierService
+public static class ItemAbilityApplier
 {
-    public Result ApplyAbilities(IPlayer player, IItem item)
+    public static Result ApplyAbilities(IPlayer player, IItem item)
     {
         if (Guard.AnyNull(player, item))
-            throw new ArgumentException($"[{nameof(ItemAbilityApplierService)}] Player or item cannot be null");
+            throw new ArgumentException($"[{nameof(ItemAbilityApplier)}] Player or item cannot be null");
 
         if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.Speed, out var speed))
             player.IncreaseSpeed(speed);
@@ -22,9 +23,11 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
         if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.Invisible, out var invisible) && invisible)
             player.TurnInvisible();
 
-        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.ManaShield, out var manaShield) &&
-            manaShield)
-            player.EnableManaShield();
+        if (item.Metadata.Attributes.TryGetAttribute<int>(ItemTypeAttribute.ManaShield, out var manaShield) &&
+            manaShield == 1)
+        {
+            player.AddCondition(new Condition(ConditionType.ManaShield));
+        }
 
         if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.HealthGain, out var healthGain) &&
             healthGain > 0)
@@ -57,10 +60,10 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
         return Result.Success;
     }
 
-    public Result RemoveAbilities(IPlayer player, IItem item)
+    public static Result RemoveAbilities(IPlayer player, IItem item)
     {
         if (Guard.AnyNull(player, item))
-            throw new ArgumentException($"[{nameof(ItemAbilityApplierService)}] Player or item cannot be null");
+            throw new ArgumentException($"[{nameof(ItemAbilityApplier)}] Player or item cannot be null");
 
         if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.Speed, out var speed))
             player.DecreaseSpeed(speed);
@@ -68,9 +71,11 @@ public class ItemAbilityApplierService : IItemAbilityApplierService
         if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.Invisible, out var invisible) && invisible)
             player.TurnVisible();
 
-        if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.ManaShield, out var manaShield) &&
-            manaShield)
-            player.DisableManaShield();
+        if (item.Metadata.Attributes.TryGetAttribute<int>(ItemTypeAttribute.ManaShield, out var manaShield) &&
+            manaShield == 1)
+        {
+            player.RemovePersistentCondition(ConditionType.ManaShield);
+        }
 
         if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.HealthGain, out var healthGain) &&
             healthGain > 0)
