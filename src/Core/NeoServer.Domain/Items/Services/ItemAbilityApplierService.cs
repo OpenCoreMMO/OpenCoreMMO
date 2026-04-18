@@ -108,7 +108,7 @@ public static class ItemAbilityApplier
         return Result.Success;
     }
 
-    private static void ToggleConditions(IPlayer player, IItem item, bool supress)
+    private static void ToggleConditions(IPlayer player, IItem item, bool suppress)
     {
         ReadOnlySpan<ItemTypeAttribute> suppressAttributes =
         [
@@ -120,8 +120,8 @@ public static class ItemAbilityApplier
 
         foreach (var suppressAttribute in suppressAttributes)
         {
-            if (!item.Metadata.Attributes.TryGetAttribute<bool>(suppressAttribute, out var suppress)) continue;
-            if (!suppress) continue;
+            if (!item.Metadata.Attributes.TryGetAttribute<bool>(suppressAttribute, out var suppressCondition)) continue;
+            if (!suppressCondition) continue;
 
             var condition = suppressAttribute switch
             {
@@ -138,7 +138,7 @@ public static class ItemAbilityApplier
 
             if (condition == ConditionType.None) continue;
 
-            if (supress)
+            if (suppress)
             {
                 player.AddConditionSuppression(condition);
 
