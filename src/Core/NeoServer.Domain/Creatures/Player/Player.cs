@@ -49,6 +49,7 @@ public class Player : CombatActor, IPlayer
     private const int KNOWN_CREATURE_LIMIT = 250; //todo: for version 8.60
 
 
+    private readonly Dictionary<ConditionType, int> _conditionSuppressions = new();
     private byte _soulPoints;
 
     public Player(
@@ -1044,6 +1045,35 @@ public class Player : CombatActor, IPlayer
 
     public bool IsManaShieldEnabled => HasCondition(ConditionType.ManaShield);
 
+    public void AddConditionSuppression(ConditionType conditionType)
+    {
+        if (_conditionSuppressions.TryGetValue(conditionType, out var suppressionCount))
+        {
+            _conditionSuppressions[conditionType] = suppressionCount + 1;
+            return;
+        }
+
+        _conditionSuppressions[conditionType] = 1;
+    }
+
+    public void RemoveConditionSuppression(ConditionType conditionType)
+    {
+        if (!_conditionSuppressions.TryGetValue(conditionType, out var suppressionCount)) return;
+
+        if (suppressionCount <= 1)
+        {
+            _conditionSuppressions.Remove(conditionType);
+            return;
+        }
+
+        _conditionSuppressions[conditionType] = suppressionCount - 1;
+    }
+
+    public int GetConditionSuppressionCount(ConditionType conditionType)
+    {
+        return _conditionSuppressions.TryGetValue(conditionType, out var suppressionCount) ? suppressionCount : 0;
+    }
+
     public void EnableManaShield(uint duration)
     {
         AddCondition(new Condition(ConditionType.ManaShield, duration,
@@ -1439,8 +1469,8 @@ public class Player : CombatActor, IPlayer
 
         switch (condition.Type)
         {
-            case ConditionType.Drunk when Inventory.HasEquippedItemWithImmunity(Immunity.Drunkenness):
-            case ConditionType.Drowning when Inventory.HasEquippedItemWithImmunity(Immunity.Drown):
+            case ConditionType.Drunk when GetConditionSuppressionCount(ConditionType.Drunk) > 0:
+            case ConditionType.Drowning when GetConditionSuppressionCount(ConditionType.Drowning) > 0:
                 return;
             default:
                 base.AddCondition(condition);

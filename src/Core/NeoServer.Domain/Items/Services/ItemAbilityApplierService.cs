@@ -115,8 +115,7 @@ public static class ItemAbilityApplier
             ItemTypeAttribute.SuppressDrown, ItemTypeAttribute.SuppressDrunk,
             ItemTypeAttribute.SuppressCurse, ItemTypeAttribute.SuppressDazzle,
             ItemTypeAttribute.SuppressEnergy, ItemTypeAttribute.SuppressFire,
-            ItemTypeAttribute.SuppressFreeze, ItemTypeAttribute.SuppressPhysical,
-            ItemTypeAttribute.SuppressPoison
+            ItemTypeAttribute.SuppressFreeze, ItemTypeAttribute.SuppressPoison
         ];
 
         foreach (var suppressAttribute in suppressAttributes)
@@ -133,7 +132,6 @@ public static class ItemAbilityApplier
                 ItemTypeAttribute.SuppressEnergy => ConditionType.Electrified,
                 ItemTypeAttribute.SuppressFire => ConditionType.Burning,
                 ItemTypeAttribute.SuppressFreeze => ConditionType.Freezing,
-                ItemTypeAttribute.SuppressPhysical => ConditionType.None,
                 ItemTypeAttribute.SuppressPoison => ConditionType.Poisoned,
                 _ => ConditionType.None
             };
@@ -142,9 +140,19 @@ public static class ItemAbilityApplier
 
             if (supress)
             {
+                player.AddConditionSuppression(condition);
+
+                if (player.GetConditionSuppressionCount(condition) > 1)
+                    return;
+
                 player.DisableCondition(condition);
                 return;
             }
+
+            player.RemoveConditionSuppression(condition);
+
+            if (player.GetConditionSuppressionCount(condition) > 0)
+                return;
 
             player.EnableCondition(condition);
         }
