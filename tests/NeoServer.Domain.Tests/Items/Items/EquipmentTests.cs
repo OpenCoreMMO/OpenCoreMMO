@@ -823,7 +823,6 @@ public class EquipmentTests : IAsyncLifetime
         var backpack = ItemTestDataBuilder.CreateBackpack();
 
 
-
         var player = PlayerTestDataBuilder.Build(inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
         {
             [Slot.Backpack] = new(backpack, 3),
