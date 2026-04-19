@@ -1538,10 +1538,6 @@ public class Player : CombatActor, IPlayer
                 SetLight((byte)light.Color, (byte)light.ColorLevel);
                 light.EndAction = RemoveLight;
                 break;
-            case ConditionInvisible conditionInvisible:
-                TurnInvisible();
-                conditionInvisible.EndAction = TurnVisible;
-                break;
             case Condition { Type: ConditionType.Regeneration } generic:
                 generic.EndAction = SetAsHungry;
                 break;
