@@ -122,6 +122,8 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         playerEntity.Soul = player.SoulPoints;
         playerEntity.MaxSoul = player.MaxSoulPoints;
         playerEntity.StaminaMinutes = player.StaminaMinutes;
+        playerEntity.LightLevel = player.LightLevel;
+        playerEntity.LightColor = player.LightColor;
 
         playerEntity.LookAddons = player.OriginalOutfit?.Addon ?? player.Outfit.Addon;
         playerEntity.LookBody = player.OriginalOutfit?.Body ?? player.Outfit.Body;
@@ -136,7 +138,7 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         playerEntity.SkillFist = player.GetRawSkillLevel(SkillType.Fist);
         playerEntity.SkillFishingTries = player.GetSkillTries(SkillType.Fist);
         playerEntity.SkillClub = player.GetRawSkillLevel(SkillType.Club);
-        playerEntity.SkillFishingTries = player.GetSkillTries(SkillType.Club);
+        playerEntity.SkillClubTries = player.GetSkillTries(SkillType.Club);
         playerEntity.SkillSword = player.GetRawSkillLevel(SkillType.Sword);
         playerEntity.SkillSwordTries = player.GetSkillTries(SkillType.Sword);
         playerEntity.SkillAxe = player.GetRawSkillLevel(SkillType.Axe);
