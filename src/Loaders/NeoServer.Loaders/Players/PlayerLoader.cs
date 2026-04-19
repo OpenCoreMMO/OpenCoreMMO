@@ -102,10 +102,12 @@ public class PlayerLoader(
                 Legs = (byte)playerEntity.LookLegs,
                 LookType = (ushort)playerEntity.LookType
             },
-            0,
+            speed: 0,
             playerLocation,
             MapTool,
-            town)
+            town,
+            lightLevel: playerEntity.LightLevel,
+            lightColor: playerEntity.LightColor)
         {
             PremiumDays = premiumTimeDays,
             AccountId = (uint)playerEntity.AccountId,
@@ -119,7 +121,6 @@ public class PlayerLoader(
         if (!gameConfiguration.StaminaEnabled) player.Group.EnableFlag(PlayerFlag.IgnoreStamina);
 
         player.PlayerSkull = new PlayerSkull(player, playerEntity.Skull, playerEntity.SkullEndsAt);
-        player.SetLight(playerEntity.LightColor, playerEntity.LightLevel);
 
         player.SetCurrentTile(currentTile);
 

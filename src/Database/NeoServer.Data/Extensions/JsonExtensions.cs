@@ -106,8 +106,8 @@ public static class JsonExtensions
                     light.Duration == 0 ? 0 : (uint)(light.Duration / TimeSpan.TicksPerMillisecond),
                     light.ColorLevel,
                     light.Color,
-                    light.InternalLightTicks,
                     light.LightChangeInterval,
+                    light.CurrentColorLevel,
                     light.Effect))),
             ConditionInvisible invisible => new ConditionSnapshot(
                 invisible.GetType().FullName,
@@ -205,9 +205,9 @@ public static class JsonExtensions
         var state = snapshot.State.Deserialize<ConditionLightState>();
         if (state is null) return null;
 
-        var condition = new ConditionLight(state.Interval, state.ColorLevel, state.Color, state.Effect);
-        SetPropertyValue(condition, nameof(ConditionLight.InternalLightTicks), state.InternalLightTicks);
+        var condition = new ConditionLight(state.Interval, state.CurrentColorLevel, state.Color, state.Effect);
         SetPropertyValue(condition, nameof(ConditionLight.LightChangeInterval), state.LightChangeInterval);
+       
         return condition;
     }
 
@@ -313,8 +313,8 @@ public static class JsonExtensions
         uint Interval,
         uint ColorLevel,
         uint Color,
-        uint InternalLightTicks,
         uint LightChangeInterval,
+        byte CurrentColorLevel,
         EffectT Effect);
 
     private sealed record ConditionInvisibleState(

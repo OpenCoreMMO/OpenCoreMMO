@@ -74,7 +74,9 @@ public class Player : CombatActor, IPlayer
         Outfit.Outfit outfit,
         ushort speed,
         Location location,
-        IMapTool mapTool, ITown town)
+        IMapTool mapTool, ITown town,
+        byte lightLevel = 0,
+        byte lightColor = 0)
         : base(
             new CreatureType(
                 characterName,
@@ -105,6 +107,8 @@ public class Player : CombatActor, IPlayer
         Outfit = outfit;
         OriginalOutfit = outfit.Clone();
         Speed = speed == 0 ? RawSpeed : speed;
+        LightLevel = lightLevel;
+        LightColor = lightColor;
         Inventory = new Inventory.Inventory(this, new Dictionary<Slot, (IItem Item, ushort Id)>());
 
         TotalCapacity = Group.FlagIsEnabled(PlayerFlag.HasInfiniteCapacity) ? uint.MaxValue : capacity;
@@ -1457,9 +1461,11 @@ public class Player : CombatActor, IPlayer
                 return;
             }
 
-            existingCondition.SetNewDuration(condition.Duration);
-
-            condition = existingCondition;
+            if (existingCondition.IsPersistent)
+            {
+                existingCondition.SetNewDuration(condition.Duration);
+                condition = existingCondition;
+            }
         }
 
         if (condition.IsPersistent)

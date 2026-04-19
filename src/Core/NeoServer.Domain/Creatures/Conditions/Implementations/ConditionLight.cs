@@ -20,19 +20,23 @@ public class ConditionLight : BaseCondition
     public override ConditionType Type => ConditionType.Light;
     public EffectT Effect { get; }
     public uint ColorLevel { get; }
+    
+    public byte CurrentColorLevel { get; private set; }
     public uint Color { get; }
-    public uint InternalLightTicks { get; private set; }
     public uint LightChangeInterval { get; set; }
+    
+    private uint _lightTicksInterval;
 
     public override bool Start(ICreature creature)
     {
         if (!base.Start(creature))
             return false;
-
-        InternalLightTicks = 0;
+        
+        _lightTicksInterval = 0;
         LightChangeInterval = Duration == 0
             ? 0
             : (uint)(Duration / TimeSpan.TicksPerMillisecond) / ColorLevel;
+        
         creature.SetLight((byte)Color, (byte)ColorLevel);
 
         EndAction = creature.RemoveLight;
@@ -45,16 +49,18 @@ public class ConditionLight : BaseCondition
         if (ColorLevel == 0 || creature.LightLevel == 0)
             return;
 
-        InternalLightTicks += (uint)Math.Max(0, interval);
+        _lightTicksInterval += (uint)Math.Max(0, interval);
 
-        if (InternalLightTicks < LightChangeInterval)
+        if (_lightTicksInterval < LightChangeInterval)
             return;
 
-        InternalLightTicks = 0;
+        _lightTicksInterval = 0;
 
         if (creature.LightLevel == 0)
             return;
 
-        creature.SetLight((byte)Color, (byte)(creature.LightLevel - 1));
+        CurrentColorLevel = (byte)(creature.LightLevel - 1);
+
+        creature.SetLight((byte)Color, CurrentColorLevel);
     }
 }

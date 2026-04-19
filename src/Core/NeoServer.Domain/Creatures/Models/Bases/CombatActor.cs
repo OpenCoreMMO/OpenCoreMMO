@@ -48,6 +48,10 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
                 Conditions.TryGetValue(ConditionType.Haste, out var hasteCondition);
                 hasteCondition?.End();
                 break;
+            case ConditionType.Light:
+                condition.End();
+                Conditions.Remove(condition.Type);
+                break;
         }
 
         var result = Conditions.TryAdd(condition.Type, condition);
