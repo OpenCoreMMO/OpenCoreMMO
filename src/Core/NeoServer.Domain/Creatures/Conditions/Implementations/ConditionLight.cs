@@ -30,11 +30,31 @@ public class ConditionLight : BaseCondition
             return false;
 
         InternalLightTicks = 0;
-        LightChangeInterval = (uint)Duration / ColorLevel;
+        LightChangeInterval = Duration == 0
+            ? 0
+            : (uint)(Duration / TimeSpan.TicksPerMillisecond) / ColorLevel;
         creature.SetLight((byte)Color, (byte)ColorLevel);
 
-        EndAction = () => creature.RemoveLight();
+        EndAction = creature.RemoveLight;
 
         return true;
+    }
+
+    public void Execute(ICreature creature, int interval)
+    {
+        if (ColorLevel == 0 || creature.LightLevel == 0)
+            return;
+
+        InternalLightTicks += (uint)Math.Max(0, interval);
+
+        if (InternalLightTicks < LightChangeInterval)
+            return;
+
+        InternalLightTicks = 0;
+
+        if (creature.LightLevel == 0)
+            return;
+
+        creature.SetLight((byte)Color, (byte)(creature.LightLevel - 1));
     }
 }
