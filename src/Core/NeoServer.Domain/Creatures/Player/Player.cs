@@ -1707,6 +1707,12 @@ public class Player : CombatActor, IPlayer
     {
         if (Group.FlagIsEnabled(PlayerFlag.NotGainInFight)) return;
 
+        if (Tile?.ProtectionZone ?? false)
+        {
+            RemoveLogoutBlock();
+            return;
+        }
+
         if (IsPacified) return;
 
         if (HasCondition(ConditionType.LogoutBlock, out var condition))
@@ -1729,6 +1735,7 @@ public class Player : CombatActor, IPlayer
         switch (fromTile?.ProtectionZone)
         {
             case null when toTile.ProtectionZone:
+                RemoveLogoutBlock();
                 AddCondition(new Condition(ConditionType.Pacified, 0));
                 RemoveProtectionZoneBlock();
                 break;

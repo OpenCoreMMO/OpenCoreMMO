@@ -179,6 +179,29 @@ public class PlayerAttackTests
     }
 
     [Fact]
+    public void Player_does_not_get_logout_block_on_protection_zone_tile()
+    {
+        //arrange
+        var location = new Location(100, 100, 7);
+        var ground = MapTestDataBuilder.CreateGround(location);
+
+        var protectionZoneTile = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.ProtectionZone,
+            ground, null, null);
+
+        var map = MapTestDataBuilder.Build(protectionZoneTile);
+        var player = (NeoServer.Domain.Creatures.Player.Player)PlayerTestDataBuilder.Build(map: map);
+
+        protectionZoneTile.AddCreature(player);
+
+        //act
+        player.SetLogoutBlock();
+
+        //assert
+        player.IsLogoutBlocked.Should().BeFalse();
+        player.CannotLogout.Should().BeFalse();
+    }
+
+    [Fact]
     public void Player_cannot_attack_dead_enemy()
     {
         //arrange
