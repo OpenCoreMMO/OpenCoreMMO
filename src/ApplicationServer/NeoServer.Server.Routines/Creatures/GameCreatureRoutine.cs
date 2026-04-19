@@ -54,7 +54,7 @@ public class GameCreatureRoutine(
 
     private static void CheckCreature(ICreature creature)
     {
-        if (creature is ICombatActor combatActor) CreatureConditionRoutine.Execute(combatActor);
+        if (creature is ICombatActor combatActor) CreatureConditionRoutine.Execute(combatActor, EVENT_CREATURE_THINK_INTERVAL);
     }
 
     private static void CheckNpc(ICreature creature)
