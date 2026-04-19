@@ -33,6 +33,8 @@ public sealed class PlayerEntity
     public byte MaxSoul { get; set; }
     public ushort StaminaMinutes { get; set; }
     public bool Online { get; set; }
+    public byte LightLevel { get; set; }
+    public byte LightColor { get; set; }
 
     public int LookAddons { get; set; }
     public int LookBody { get; set; }

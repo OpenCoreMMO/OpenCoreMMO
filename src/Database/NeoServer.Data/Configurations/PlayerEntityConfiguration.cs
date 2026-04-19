@@ -39,6 +39,8 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         ConfigureProperty(entity, e => e.LookHead, "int", "0");
         ConfigureProperty(entity, e => e.LookLegs, "int", "0");
         ConfigureProperty(entity, e => e.LookType, "int", "136");
+        ConfigureProperty(entity, e => e.LightLevel, null, "0");
+        ConfigureProperty(entity, e => e.LightColor, null, "0");
         ConfigureProperty(entity, e => e.Mana, "int", "0");
         ConfigureProperty(entity, e => e.MaxMana, "int", "0");
         ConfigureProperty(entity, e => e.ManaSpent, "int", "0");

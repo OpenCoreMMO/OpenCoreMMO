@@ -58,6 +58,8 @@ internal static class PlayerModelSeed
             LookHead = lookHead,
             LookLegs = lookLegs,
             LookAddons = lookAddons,
+            LightLevel = 0,
+            LightColor = 0,
             SkillAxe = 60,
             SkillSword = 60,
             SkillClub = 60,

@@ -41,6 +41,8 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
         ConfigureProperty(entity, e => e.LookHead, "int(11)", "0");
         ConfigureProperty(entity, e => e.LookLegs, "int(11)", "0");
         ConfigureProperty(entity, e => e.LookType, "int(11)", "136");
+        ConfigureProperty(entity, e => e.LightLevel, null, "0");
+        ConfigureProperty(entity, e => e.LightColor, null, "0");
         ConfigureProperty(entity, e => e.Mana, "int(11)", "0");
         ConfigureProperty(entity, e => e.MaxMana, "int(11)", "0");
         ConfigureProperty(entity, e => e.ManaSpent, "int(11)", "0");
