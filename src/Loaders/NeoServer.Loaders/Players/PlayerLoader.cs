@@ -18,8 +18,6 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
-using NeoServer.Domain.Creatures.Conditions.Enums;
-using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Outfit;
@@ -131,7 +129,7 @@ public class PlayerLoader(
             player.GuildRank = new GuildRankInfo((ushort)guildRank.Id, guildRank.Name, (byte)guildRank.Level);
         }
 
-        AddRegenerationCondition(playerEntity, player);
+        player.LoadConditions(JsonExtensions.DeserializeConditions(playerEntity.Conditions));
 
         player.AddInventory(ConvertToInventory(player, playerEntity));
 
@@ -184,19 +182,6 @@ public class PlayerLoader(
     {
         World.TryGetTile(ref location, out var dynamicTile);
         return dynamicTile as IDynamicTile;
-    }
-
-    private static void AddRegenerationCondition(PlayerEntity playerEntity, IPlayer player)
-    {
-        if (playerEntity.RemainingRecoverySeconds != 0)
-        {
-            player.AddCondition(
-                new Condition(ConditionType.Regeneration, (uint)(playerEntity.RemainingRecoverySeconds * 1000),
-                    player.SetAsHungry));
-            return;
-        }
-
-        player.SetAsHungry();
     }
 
     /// <summary>

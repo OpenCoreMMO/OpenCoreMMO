@@ -20,6 +20,7 @@ public class ConditionSpeed : BaseCondition
     public override ConditionType Type => ConditionType.Haste;
     public EffectT Effect { get; }
     public uint Interval { get; }
+    public ushort SpeedChange { get; private set; }
 
     public override bool Start(ICreature creature)
     {
@@ -38,9 +39,10 @@ public class ConditionSpeed : BaseCondition
         var randomSpeed = random.Next((int)min, (int)max);
         var speed = randomSpeed - baseSpeed;
 
+        SpeedChange = (ushort)speed;
         walkableCreature.IncreaseSpeed((ushort)speed);
 
-        EndAction = () => walkableCreature.DecreaseSpeed((ushort)speed);
+        EndAction = () => walkableCreature.DecreaseSpeed(SpeedChange);
 
         return true;
     }

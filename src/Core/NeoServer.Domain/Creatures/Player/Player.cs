@@ -1510,6 +1510,47 @@ public class Player : CombatActor, IPlayer
         RemovePersistentCondition(condition);
     }
 
+    public void LoadConditions(IEnumerable<ICondition> conditions)
+    {
+        Conditions = new Dictionary<ConditionType, ICondition>();
+
+        if (conditions is null) return;
+
+        foreach (var condition in conditions)
+        {
+            if (condition is null) continue;
+
+            ApplyLoadedCondition(condition);
+            Conditions[condition.Type] = condition;
+            condition.Start(this);
+        }
+    }
+
+    private void ApplyLoadedCondition(ICondition condition)
+    {
+        switch (condition)
+        {
+            case ConditionSpeed { SpeedChange: > 0 } speed:
+                IncreaseSpeed(speed.SpeedChange);
+                speed.EndAction = () => DecreaseSpeed(speed.SpeedChange);
+                break;
+            case ConditionLight light:
+                SetLight((byte)light.Color, (byte)light.ColorLevel);
+                light.EndAction = RemoveLight;
+                break;
+            case ConditionInvisible conditionInvisible:
+                TurnInvisible();
+                conditionInvisible.EndAction = TurnVisible;
+                break;
+            case Condition { Type: ConditionType.Regeneration } generic:
+                generic.EndAction = SetAsHungry;
+                break;
+            case Condition { Type: ConditionType.ManaShield } generic:
+                generic.EndAction = () => RemoveCondition(ConditionType.ManaShield);
+                break;
+        }
+    }
+
     public void MoveToTemple()
     {
         SetNewLocation(new Location(Town.Coordinate));

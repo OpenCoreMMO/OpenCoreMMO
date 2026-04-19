@@ -6,10 +6,10 @@ using Dapper;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
+using NeoServer.Data.Extensions;
 using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Creatures.Conditions.Enums;
 using Serilog;
 
 namespace NeoServer.Data.Repositories.Player;
@@ -152,10 +152,7 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         playerEntity.Experience = player.Experience;
         playerEntity.ChaseMode = player.ChaseMode;
         playerEntity.FightMode = player.FightMode;
-        playerEntity.RemainingRecoverySeconds =
-            (int)(player.Conditions.TryGetValue(ConditionType.Regeneration, out var condition)
-                ? condition.RemainingTime / TimeSpan.TicksPerMillisecond
-                : 0);
+        playerEntity.Conditions = JsonExtensions.SerializeConditions(player.Conditions?.Values);
         playerEntity.Vocation = player.VocationType;
         playerEntity.Skull = player.Skull;
         playerEntity.SkullEndsAt = player.SkullEndsAt;

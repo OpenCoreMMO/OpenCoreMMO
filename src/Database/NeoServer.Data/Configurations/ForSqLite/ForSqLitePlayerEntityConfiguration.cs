@@ -68,6 +68,7 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
         ConfigureProperty(entity, e => e.RemainingRecoverySeconds, "int(11)", "0");
         ConfigureProperty(entity, e => e.BankAmount, "int(11)", "0");
         ConfigureProperty(entity, e => e.Skull, "int(11)", "0");
+        ConfigureProperty(entity, e => e.Conditions, "TEXT");
         entity.Property(e => e.SkullEndsAt);
         entity.Property(e => e.LastLogIn);
         entity.Property(e => e.LastLogOut);

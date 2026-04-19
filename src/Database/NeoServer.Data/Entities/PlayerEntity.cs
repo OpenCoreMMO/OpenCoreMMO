@@ -80,6 +80,7 @@ public sealed class PlayerEntity
     public DateTime? SkullEndsAt { get; set; }
     public DateTime? LastLogOut { get; set; }
     public DateTime? LastLogIn { get; set; }
+    public string Conditions { get; set; }
     public AccountEntity Account { get; set; }
     public ICollection<PlayerDeathEntity> Deaths { get; set; }
     public ICollection<PlayerDeathEntity> KillsLastMonth { get; set; }

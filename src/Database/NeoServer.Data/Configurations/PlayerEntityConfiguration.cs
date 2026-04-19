@@ -66,6 +66,7 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         ConfigureProperty(entity, e => e.RemainingRecoverySeconds, "int", "0");
         ConfigureProperty(entity, e => e.BankAmount, "numeric(20, 0)", "0");
         ConfigureProperty(entity, e => e.Skull, "int", "0");
+        ConfigureProperty(entity, e => e.Conditions, "jsonb");
         entity.Property(e => e.SkullEndsAt);
         entity.Property(e => e.LastLogIn);
         entity.Property(e => e.LastLogOut);
