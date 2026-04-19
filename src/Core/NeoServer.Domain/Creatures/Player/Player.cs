@@ -1534,10 +1534,6 @@ public class Player : CombatActor, IPlayer
                 IncreaseSpeed(speed.SpeedChange);
                 speed.EndAction = () => DecreaseSpeed(speed.SpeedChange);
                 break;
-            case ConditionLight light:
-                SetLight((byte)light.Color, (byte)light.ColorLevel);
-                light.EndAction = RemoveLight;
-                break;
             case Condition { Type: ConditionType.Regeneration } generic:
                 generic.EndAction = SetAsHungry;
                 break;
