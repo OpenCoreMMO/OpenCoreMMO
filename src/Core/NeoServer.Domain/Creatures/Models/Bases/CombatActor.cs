@@ -38,6 +38,13 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual void AddCondition(ICondition condition)
     {
+        var damageConditions = new HashSet<ConditionType>
+        {
+            ConditionType.Bleeding, ConditionType.Burning, ConditionType.Poisoned, ConditionType.Electrified,
+            ConditionType.Cursed, ConditionType.Drowning,
+            ConditionType.Dazzled, ConditionType.Freezing
+        };
+
         switch (condition.Type)
         {
             case ConditionType.Haste:
@@ -60,6 +67,12 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
                 Conditions.EndConditions(ConditionType.Pacified);
                 Conditions.EndConditions(ConditionType.ProtectionZoneBlock);
                 break;
+        }
+
+        //damage conditions are overriden when new condition with same type is added
+        if (damageConditions.Contains(condition.Type))
+        {
+            Conditions.EndConditions(condition.Type);
         }
 
         Conditions.Add(condition);
