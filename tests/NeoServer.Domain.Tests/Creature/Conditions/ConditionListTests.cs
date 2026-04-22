@@ -14,7 +14,7 @@ public class ConditionListTests
     {
         var conditionList = new ConditionList();
         var firstCondition = CreateCondition(ConditionType.Burning);
-        var secondCondition = CreateCondition(ConditionType.Burning);
+        var secondCondition = CreateCondition(ConditionType.Burning, 0);
 
         conditionList.Add(firstCondition);
 
