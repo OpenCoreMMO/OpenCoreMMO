@@ -31,6 +31,21 @@ public class ConditionList : IEnumerable<ICondition>
             Conditions[condition.Type] = conditions;
         }
 
+        // Remove any existing non-persistent conditions of the same type
+        if (!condition.IsPersistent)
+        {
+            for (int i = 0; i < conditions.Count; i++)
+            {
+                var existingCondition = conditions[i];
+                if (!existingCondition.IsPersistent)
+                {
+                    condition.End();
+                    conditions.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
         conditions.Add(condition);
 
         InvalidateCache();
