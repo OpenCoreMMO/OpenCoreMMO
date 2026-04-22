@@ -83,6 +83,12 @@ public class ConditionDamage : BaseCondition
 
         _minDamage = minDamage;
         _maxDamage = maxDamage;
+        
+        //End any existing conditions of this type
+        if (creature is ICombatActor combatActor)
+        {
+            combatActor.Conditions.EndConditions(Type);
+        }
 
         Start(creature);
         return true;

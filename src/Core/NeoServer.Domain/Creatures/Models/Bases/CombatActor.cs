@@ -38,19 +38,8 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual void AddCondition(ICondition condition)
     {
-        var damageConditions = new HashSet<ConditionType>
-        {
-            ConditionType.Bleeding, ConditionType.Burning, ConditionType.Poisoned, ConditionType.Electrified,
-            ConditionType.Cursed, ConditionType.Drowning,
-            ConditionType.Dazzled, ConditionType.Freezing
-        };
-
         switch (condition.Type)
         {
-            case ConditionType.Haste:
-                Conditions.EndConditions(ConditionType.Paralyze);
-                Conditions.EndConditions(ConditionType.Haste); //the new condition will replace the existing ones
-                break;
             case ConditionType.Paralyze:
                 Conditions.EndConditions(ConditionType.Haste);
                 break;
@@ -67,16 +56,13 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
                 Conditions.EndConditions(ConditionType.Pacified);
                 Conditions.EndConditions(ConditionType.ProtectionZoneBlock);
                 break;
+            case ConditionType.Outfit:
+                Conditions.EndConditions(ConditionType.Outfit);
+                break;
         }
 
-        //damage conditions are overriden when new condition with same type is added
-        if (damageConditions.Contains(condition.Type))
-        {
-            Conditions.EndConditions(condition.Type);
-        }
-
-        Conditions.Add(condition);
         condition.Start(this);
+        Conditions.Add(condition);
 
         EventAggregator.Invoke(new CreatureConditionAddedEvent(this, condition));
     }
