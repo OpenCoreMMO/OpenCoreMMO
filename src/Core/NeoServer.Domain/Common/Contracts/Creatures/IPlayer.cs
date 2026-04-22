@@ -340,6 +340,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     #endregion
 
-    void RemovePersistentCondition(ICondition condition);
-    void RemovePersistentCondition(ConditionType type);
+    void AddEquipmentCondition(Slot slot, ICondition condition);
+    void RemoveEquipmentCondition(Slot slot, ConditionType conditionType);
 }

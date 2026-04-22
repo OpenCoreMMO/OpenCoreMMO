@@ -5,7 +5,9 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Monster.Loot;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
@@ -40,7 +42,7 @@ public interface ICombatActor : IWalkableCreature
     bool UsingDistanceWeapon { get; }
     uint AttackEvent { get; set; }
     bool CanBeAttacked { get; }
-    IDictionary<ConditionType, ICondition> Conditions { get; set; }
+    ConditionList Conditions { get; }
     ICreature CurrentTarget { get; }
     DamageRecordList ReceivedDamages { get; }
 

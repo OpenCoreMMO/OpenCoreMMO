@@ -170,7 +170,7 @@ public class Player : CombatActor, IPlayer
         _ => 0.75f
     };
 
-    public bool IsPacified => Conditions.ContainsKey(ConditionType.Pacified);
+    public bool IsPacified => Conditions.HasAnyConditionOf(ConditionType.Pacified);
 
     public IDictionary<SkillType, Skill> Skills { get; }
 
@@ -1011,7 +1011,7 @@ public class Player : CombatActor, IPlayer
         var regenerationMs = (uint)duration * 1000;
         const uint maxRegenerationTime = (uint)1200 * 1000; //20 minutes
 
-        if (Conditions.TryGetValue(ConditionType.Regeneration, out var condition))
+        if (Conditions.GetFirstConditionOfType(ConditionType.Regeneration, out var condition))
         {
             if (condition.RemainingTime + regenerationMs >=
                 maxRegenerationTime) //todo: this number should be configurable
@@ -1069,10 +1069,43 @@ public class Player : CombatActor, IPlayer
         _conditionSuppressions[conditionType] = suppressionCount - 1;
     }
 
-    public int GetConditionSuppressionCount(ConditionType conditionType)
+    private readonly Dictionary<Slot, List<ICondition>> _equipmentCondition = new();
+
+    public void AddEquipmentCondition(Slot slot, ICondition condition)
     {
-        return _conditionSuppressions.TryGetValue(conditionType, out var suppressionCount) ? suppressionCount : 0;
+        if (slot is Slot.None || condition is null) return;
+        
+        if (!_equipmentCondition.TryGetValue(slot, out var conditions))
+        {
+            conditions = [];
+            _equipmentCondition[slot] = conditions;
+        }
+
+        conditions.Add(condition);
+
+        AddCondition(condition);
     }
+
+    public void RemoveEquipmentCondition(Slot slot, ConditionType conditionType)
+    {
+        if (slot == Slot.None || conditionType is ConditionType.None) return;
+
+        if (!_equipmentCondition.TryGetValue(slot, out var conditions)) return;
+
+        for (var i = 0; i < conditions.Count; i++)
+        {
+            var condition = conditions[i];
+
+            if (condition.Type != conditionType) continue;
+            
+            RemoveCondition(condition);
+            _equipmentCondition[slot]?.Remove(condition);
+            break;
+        }
+    }
+
+
+    public int GetConditionSuppressionCount(ConditionType conditionType) => _conditionSuppressions.GetValueOrDefault(conditionType, 0);
 
     public void EnableManaShield(uint duration)
     {
@@ -1080,15 +1113,9 @@ public class Player : CombatActor, IPlayer
             () => { RemoveCondition(ConditionType.ManaShield); }));
     }
 
-    public void EnableManaShield()
-    {
-        AddCondition(new Condition(ConditionType.ManaShield));
-    }
+    public void EnableManaShield() => AddCondition(new Condition(ConditionType.ManaShield));
 
-    public void DisableManaShield()
-    {
-        RemoveCondition(ConditionType.ManaShield);
-    }
+    public void DisableManaShield() => RemoveCondition(ConditionType.ManaShield);
 
     public Result<OperationResultList<IItem>> PickItemFromGround(IItem item, ITile tile, byte amount = 1)
     {
@@ -1449,24 +1476,6 @@ public class Player : CombatActor, IPlayer
         if (Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked) && condition.Type.ToDamageType() != DamageType.None)
             return;
 
-        if (Conditions.TryGetValue(condition.Type, out var existingCondition))
-        {
-            if (condition.IsPersistent)
-            {
-                existingCondition.IncreasePersistentCounter();
-                return;
-            }
-
-            existingCondition.SetNewDuration(condition.Duration);
-
-            condition = existingCondition;
-        }
-
-        if (condition.IsPersistent)
-        {
-            condition.IncreasePersistentCounter();
-        }
-
         switch (condition.Type)
         {
             case ConditionType.Drunk when GetConditionSuppressionCount(ConditionType.Drunk) > 0:
@@ -1476,38 +1485,6 @@ public class Player : CombatActor, IPlayer
                 base.AddCondition(condition);
                 break;
         }
-    }
-
-    public override void RemoveCondition(ICondition condition)
-    {
-        if (condition.HasPersistentCounter) return;
-        base.RemoveCondition(condition);
-    }
-
-    public override void RemoveCondition(ConditionType type)
-    {
-        Conditions.TryGetValue(type, out var condition);
-        if (condition is null) return;
-        
-        base.RemoveCondition(type);
-    }
-
-    public void RemovePersistentCondition(ICondition condition)
-    {
-        condition.ReducePersistentCounter();
-
-        if (!condition.HasPersistentCounter && (condition.IsPersistent  || condition.HasExpired))
-        {
-            base.RemoveCondition(condition);
-        }
-    }
-
-    public void RemovePersistentCondition(ConditionType type)
-    {
-        Conditions.TryGetValue(type, out var condition);
-        if (condition is null) return;
-
-        RemovePersistentCondition(condition);
     }
 
     public void MoveToTemple()
