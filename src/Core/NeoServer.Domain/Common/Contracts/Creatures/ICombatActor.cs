@@ -104,5 +104,5 @@ public interface ICombatActor : IWalkableCreature
     void StartCooldown(Guid cooldownId, uint duration);
     bool IsTargetLost();
     bool IsTargetLost(ICreature target);
-    List<ICondition> GetConditions();
+    IReadOnlyList<ICondition> GetConditions();
 }

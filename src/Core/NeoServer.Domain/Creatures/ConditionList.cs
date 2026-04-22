@@ -66,7 +66,7 @@ public class ConditionList : IEnumerable<ICondition>
 
     public void RemoveByType(ConditionType type)
     {
-        var conditions = GetByType(type);
+        if (!Conditions.TryGetValue(type, out var conditions)) return;
 
         if (conditions.Count == 0)
         {
@@ -77,7 +77,7 @@ public class ConditionList : IEnumerable<ICondition>
         InvalidateCache();
     }
 
-    public List<ICondition> GetByType(ConditionType conditionType) =>
+    public IReadOnlyList<ICondition> GetByType(ConditionType conditionType) =>
         Conditions.TryGetValue(conditionType, out var conditions) ? conditions : [];
 
     public int GetCount()
@@ -92,13 +92,13 @@ public class ConditionList : IEnumerable<ICondition>
         return count;
     }
 
-    public List<ICondition> GetAll()
+    public IReadOnlyList<ICondition> GetAll()
     {
         if (_conditionsCache.Count > 0)
         {
             // _allConditions.Clear();
             // _allConditions.AddRange(_conditionsCache);
-            return _conditionsCache.ToList();
+            return _conditionsCache.AsReadOnly();
         }
 
         foreach (var conditions in Conditions.Values)
@@ -109,7 +109,7 @@ public class ConditionList : IEnumerable<ICondition>
             }
         }
 
-        return _conditionsCache.ToList();
+        return _conditionsCache.AsReadOnly();
     }
 
     public ICondition GetFirstConditionOfType(ConditionType conditionType) =>
@@ -123,12 +123,13 @@ public class ConditionList : IEnumerable<ICondition>
 
     public void EndConditions(ConditionType conditionType, bool remove = true)
     {
-        var conditions = GetByType(conditionType);
+        if (!Conditions.TryGetValue(conditionType, out var conditions)) return;
 
         if (conditions.Count == 0) return;
 
-        foreach (var condition in conditions)
+        for (var i = 0; i < conditions.Count; i++)
         {
+            var condition = conditions[i];
             condition?.End();
         }
 
@@ -176,7 +177,7 @@ public class ConditionList : IEnumerable<ICondition>
         return condition != null;
     }
 
-    public bool HasAnyConditionOf(ConditionType conditionType, out List<ICondition> conditions)
+    public bool HasAnyConditionOf(ConditionType conditionType, out IReadOnlyList<ICondition> conditions)
     {
         conditions = GetByType(conditionType);
         return conditions.Count > 0;

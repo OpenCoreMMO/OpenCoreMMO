@@ -31,7 +31,7 @@ public class ConditionListTests
         conditionList.GetFirstConditionOfType(ConditionType.Burning, out var firstConditionOfType).Should().BeTrue();
         firstConditionOfType.Should().Be(firstCondition);
         conditionList.HasAnyConditionOf(ConditionType.Burning).Should().BeTrue();
-        conditionList.HasAnyConditionOf(ConditionType.Burning, out List<ICondition> conditionsByTypeOut).Should().BeTrue();
+        conditionList.HasAnyConditionOf(ConditionType.Burning, out IReadOnlyList<ICondition> conditionsByTypeOut).Should().BeTrue();
         conditionsByTypeOut.Should().Equal(firstCondition, secondCondition);
 
         var allConditions = conditionList.GetAll();
@@ -52,7 +52,7 @@ public class ConditionListTests
         conditionList.GetFirstConditionOfType(ConditionType.Drunk, out var firstCondition).Should().BeFalse();
         firstCondition.Should().BeNull();
         conditionList.HasAnyConditionOf(ConditionType.Drunk).Should().BeFalse();
-        conditionList.HasAnyConditionOf(ConditionType.Drunk, out List<ICondition> conditions).Should().BeFalse();
+        conditionList.HasAnyConditionOf(ConditionType.Drunk, out IReadOnlyList<ICondition> conditions).Should().BeFalse();
         conditions.Should().BeEmpty();
 
         conditionList.Invoking(x => x.Remove(CreateCondition(ConditionType.Drunk))).Should().NotThrow();
@@ -100,7 +100,7 @@ public class ConditionListTests
         conditionList.GetByType(ConditionType.Burning).Should().BeEmpty();
         conditionList.GetFirstConditionOfType(ConditionType.Burning).Should().BeNull();
         conditionList.HasAnyConditionOf(ConditionType.Burning).Should().BeFalse();
-        conditionList.HasAnyConditionOf(ConditionType.Burning, out List<ICondition> burningConditions).Should().BeFalse();
+        conditionList.HasAnyConditionOf(ConditionType.Burning, out IReadOnlyList<ICondition> burningConditions).Should().BeFalse();
         burningConditions.Should().BeEmpty();
         conditionList.GetByType(ConditionType.Drunk).Should().ContainSingle().Which.Should().Be(drunkCondition);
     }
