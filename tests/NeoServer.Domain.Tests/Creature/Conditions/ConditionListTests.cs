@@ -194,6 +194,91 @@ public class ConditionListTests
         conditionList.GetAll().Should().ContainSingle().Which.Should().Be(firstCondition);
     }
 
+    [Fact]
+    public void Add_replaces_an_existing_condition_of_the_same_type_and_ends_the_replaced_condition()
+    {
+        var conditionList = new ConditionList();
+        var endCount = 0;
+        var originalCondition = new Condition(ConditionType.Burning, 100, () => endCount++);
+        var replacementCondition = CreateCondition(ConditionType.Burning);
+        var drunkCondition = CreateCondition(ConditionType.Drunk);
+
+        conditionList.Add(originalCondition);
+        conditionList.Add(drunkCondition);
+
+        conditionList.Add(replacementCondition);
+
+        endCount.Should().Be(1);
+        conditionList.Count.Should().Be(2);
+        conditionList.GetByType(ConditionType.Burning).Should().ContainSingle().Which.Should().Be(replacementCondition);
+        conditionList.GetByType(ConditionType.Drunk).Should().ContainSingle().Which.Should().Be(drunkCondition);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetConditionRemovalScenarios))]
+    public void Removing_conditions_ends_the_conditions_that_were_removed(
+        Action<ConditionList, Condition, Condition> removeConditions,
+        int expectedEndCount,
+        int expectedCountAfterRemoval,
+        ConditionType expectedRemainingType)
+    {
+        var conditionList = new ConditionList();
+        var endCount = 0;
+        var burningCondition = new Condition(ConditionType.Burning, 100, () => endCount++);
+        var drunkCondition = new Condition(ConditionType.Drunk, 100, () => endCount++);
+
+        conditionList.Add(burningCondition);
+        conditionList.Add(drunkCondition);
+
+        removeConditions(conditionList, burningCondition, drunkCondition);
+
+        endCount.Should().Be(expectedEndCount);
+        conditionList.Count.Should().Be(expectedCountAfterRemoval);
+        conditionList.GetAll().Should().OnlyContain(condition => condition.Type == expectedRemainingType);
+    }
+
+    public static IEnumerable<object[]> GetConditionRemovalScenarios()
+    {
+        yield return [
+            new Action<ConditionList, Condition, Condition>((conditionList, burningCondition, _) => conditionList.Remove(burningCondition)),
+            1,
+            1,
+            ConditionType.Drunk
+        ];
+
+        yield return [
+            new Action<ConditionList, Condition, Condition>((conditionList, burningCondition, _) => conditionList.RemoveByType(burningCondition.Type)),
+            1,
+            1,
+            ConditionType.Drunk
+        ];
+
+        yield return [
+            new Action<ConditionList, Condition, Condition>((conditionList, burningCondition, _) => conditionList.EndConditions(burningCondition.Type)),
+            1,
+            1,
+            ConditionType.Drunk
+        ];
+    }
+
+    [Fact]
+    public void Clear_ends_all_conditions_before_removing_them()
+    {
+        var conditionList = new ConditionList();
+        var endCount = 0;
+        var burningCondition = new Condition(ConditionType.Burning, 100, () => endCount++);
+        var drunkCondition = new Condition(ConditionType.Drunk, 100, () => endCount++);
+
+        conditionList.Add(burningCondition);
+        conditionList.Add(drunkCondition);
+
+        conditionList.Clear();
+
+        endCount.Should().Be(2);
+        conditionList.Count.Should().Be(0);
+        conditionList.GetAll().Should().BeEmpty();
+    }
+
     private static Condition CreateCondition(ConditionType type, uint duration = 100) =>
         new(type, duration);
 }
