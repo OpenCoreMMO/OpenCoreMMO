@@ -30,20 +30,19 @@ public class ConditionLight : BaseCondition
             return false;
 
         InternalLightTicks = 0;
-        LightChangeInterval = Duration == 0
-            ? 0
-            : (uint)(Duration / TimeSpan.TicksPerMillisecond) / ColorLevel;
-        
+
         var previousLight = creature.LightLevel;
-        
+
         if (creature is ICombatActor combatActor)
         {
             //End existing light conditions
             combatActor.Conditions.EndConditions(ConditionType.Light);
         }
-        
+
         ColorLevel = Math.Max(previousLight, ColorLevel);
-        
+        LightChangeInterval = Duration == 0 || ColorLevel == 0
+            ? 0
+            : (uint)(Duration / TimeSpan.TicksPerMillisecond) / ColorLevel;
         creature.SetLight((byte)Color, (byte)ColorLevel);
 
         EndAction = creature.RemoveLight;
