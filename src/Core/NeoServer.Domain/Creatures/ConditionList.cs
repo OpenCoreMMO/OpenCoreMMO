@@ -11,10 +11,9 @@ namespace NeoServer.Domain.Creatures;
 public class ConditionList : IEnumerable<ICondition>
 {
     private Dictionary<ConditionType, List<ICondition>> Conditions { get; } = new();
-    private readonly List<ICondition> _conditionsCache = [];
-    private readonly List<ICondition> _allConditions = [];
-    
-    private bool IsCacheValid => _conditionsCache.Count > 0;
+    private IReadOnlyList<ICondition> _conditionsCache;
+
+    private bool IsCacheValid => _conditionsCache is not null;
 
     public int Count => IsCacheValid ? _conditionsCache.Count : GetCount();
 
@@ -95,20 +94,23 @@ public class ConditionList : IEnumerable<ICondition>
 
     public IReadOnlyList<ICondition> GetAll()
     {
-        if (_conditionsCache.Count > 0)
+        if (_conditionsCache is not null)
         {
-            return _conditionsCache.AsReadOnly();
+            return _conditionsCache;
         }
+
+        var list = new List<ICondition>();
 
         foreach (var conditions in Conditions.Values)
         {
             foreach (var condition in conditions)
             {
-                _conditionsCache.Add(condition);
+                list.Add(condition);
             }
         }
 
-        return _conditionsCache.AsReadOnly();
+        _conditionsCache = list.AsReadOnly();
+        return _conditionsCache;
     }
 
     public ICondition GetFirstConditionOfType(ConditionType conditionType) =>
@@ -182,7 +184,7 @@ public class ConditionList : IEnumerable<ICondition>
         return conditions.Count > 0;
     }
 
-    private void InvalidateCache() => _conditionsCache.Clear();
+    private void InvalidateCache() => _conditionsCache = null;
     public void Clear()
     {
         Conditions.Clear();
