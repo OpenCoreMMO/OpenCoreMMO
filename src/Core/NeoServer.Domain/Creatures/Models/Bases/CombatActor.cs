@@ -101,7 +101,12 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual bool HasCondition(ConditionType type, out ICondition condition)
     {
-        return Conditions.HasAnyConditionOf(type, out condition);
+        if (!Conditions.HasAnyConditionOf(type, out condition))
+        {
+            return false;
+        }
+
+        return !condition.IsDisabled;
     }
 
     public virtual bool HasCondition(ConditionType type)
