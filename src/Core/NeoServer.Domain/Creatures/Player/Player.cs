@@ -1109,8 +1109,9 @@ public class Player : CombatActor, IPlayer
 
     public void EnableManaShield(uint duration)
     {
-        AddCondition(new Condition(ConditionType.ManaShield, duration,
-            () => { RemoveCondition(ConditionType.ManaShield); }));
+        var condition = new Condition(ConditionType.ManaShield, duration);
+        condition.EndAction = () => RemoveCondition(condition);
+        AddCondition(condition);
     }
 
     public void EnableManaShield() => AddCondition(new Condition(ConditionType.ManaShield));

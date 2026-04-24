@@ -60,6 +60,7 @@ public class ConditionList : IEnumerable<ICondition>
     {
         if (Conditions.TryGetValue(condition.Type, out var conditions) && conditions.Remove(condition))
         {
+            condition.End();
             InvalidateCache();
         }
     }
@@ -75,6 +76,11 @@ public class ConditionList : IEnumerable<ICondition>
         if (conditions.Count == 0)
         {
             return;
+        }
+
+        foreach (var condition in conditions)
+        {
+            condition?.End();
         }
 
         conditions.Clear();
