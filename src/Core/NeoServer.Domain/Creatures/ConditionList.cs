@@ -20,7 +20,8 @@ public class ConditionList : IEnumerable<ICondition>
 
     /// <summary>
     /// Adds the specified condition to the condition list. If the condition type has not been encountered before,
-    /// a new entry is created in the condition list. The cache of conditions is invalidated after the addition.
+    /// a new collection entry is created for that type in the condition list. Non-persistent conditions of the same type
+    /// are removed before the addition. The condition cache is marked as invalid after the addition.
     /// </summary>
     /// <param name="condition">The condition to be added to the condition list.</param>
     public void Add(ICondition condition)
@@ -39,7 +40,7 @@ public class ConditionList : IEnumerable<ICondition>
                 var existingCondition = conditions[i];
                 if (!existingCondition.IsPersistent)
                 {
-                    condition.End();
+                    existingCondition.End();
                     conditions.RemoveAt(i);
                     break;
                 }
@@ -96,8 +97,6 @@ public class ConditionList : IEnumerable<ICondition>
     {
         if (_conditionsCache.Count > 0)
         {
-            // _allConditions.Clear();
-            // _allConditions.AddRange(_conditionsCache);
             return _conditionsCache.AsReadOnly();
         }
 

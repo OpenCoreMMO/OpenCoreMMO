@@ -76,6 +76,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     public void DisableCondition(ConditionType type)
     {
         var firstCondition = Conditions.GetByType(type).FirstOrDefault();
+        if (firstCondition is null) return;
         Conditions.DisableConditions(type);
 
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, firstCondition));
@@ -84,6 +85,8 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     public void EnableCondition(ConditionType type)
     {
         var firstCondition = Conditions.GetByType(type).FirstOrDefault();
+        if (firstCondition is null) return;
+        
         Conditions.EnableConditions(type);
 
         EventAggregator.Invoke(new CreatureConditionAddedEvent(this, firstCondition));
@@ -92,6 +95,8 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     public virtual void RemoveCondition(ConditionType type)
     {
         var firstCondition = Conditions.GetByType(type).FirstOrDefault();
+        if (firstCondition is null) return;
+        
         Conditions.RemoveByType(type);
 
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, firstCondition));
