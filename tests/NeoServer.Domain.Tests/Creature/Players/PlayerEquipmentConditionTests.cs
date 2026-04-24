@@ -288,9 +288,8 @@ public class PlayerEquipmentConditionTests
     private static void ExecuteConditionTick(ICombatActor creature)
     {
         var conditions = creature.GetConditions();
-        for (var i = 0; i < conditions.Count; i++)
+        foreach (var condition in conditions)
         {
-            var condition = conditions[i];
             if (!condition.HasExpired) continue;
 
             condition.End();

@@ -165,6 +165,35 @@ public class ConditionListTests
         ((IEnumerable)conditionList).Cast<ICondition>().Should().BeEmpty();
     }
 
+    [Fact]
+    public void GetAll_allows_removing_a_not_yet_processed_condition_while_iterating_without_throwing()
+    {
+        var conditionList = new ConditionList();
+        var firstCondition = CreateCondition(ConditionType.Burning);
+        var secondCondition = CreateCondition(ConditionType.Drunk);
+        var visitedConditions = new List<ICondition>();
+
+        conditionList.Add(firstCondition);
+        conditionList.Add(secondCondition);
+
+        conditionList.Invoking(x =>
+        {
+            foreach (var condition in x.GetAll())
+            {
+                visitedConditions.Add(condition);
+
+                if (condition == firstCondition)
+                {
+                    x.Remove(secondCondition);
+                }
+            }
+        }).Should().NotThrow();
+
+        visitedConditions.Should().Equal(firstCondition, secondCondition);
+        conditionList.Count.Should().Be(1);
+        conditionList.GetAll().Should().ContainSingle().Which.Should().Be(firstCondition);
+    }
+
     private static Condition CreateCondition(ConditionType type, uint duration = 100) =>
         new(type, duration);
 }

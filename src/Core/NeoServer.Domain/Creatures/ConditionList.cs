@@ -64,6 +64,10 @@ public class ConditionList : IEnumerable<ICondition>
         }
     }
 
+    /// <summary>
+    /// Removes all conditions of the specified condition type from the condition list. If there are no conditions of the specified type, the method does nothing. The cache of conditions is invalidated after the removal.
+    /// </summary>
+    /// <param name="type"></param>
     public void RemoveByType(ConditionType type)
     {
         if (!Conditions.TryGetValue(type, out var conditions)) return;
@@ -77,13 +81,22 @@ public class ConditionList : IEnumerable<ICondition>
         InvalidateCache();
     }
 
+    /// <summary>
+    /// Retrieves all conditions of the specified condition type from the condition list. If there are no conditions of the specified type, the method returns an empty list.
+    /// </summary>
+    /// <param name="conditionType"></param>
+    /// <returns></returns>
     public IReadOnlyList<ICondition> GetByType(ConditionType conditionType) =>
         Conditions.TryGetValue(conditionType, out var conditions) ? conditions : [];
 
+    /// <summary>
+    /// Calculates the total number of conditions in the condition list by iterating through all collections of conditions by type and summing their counts. This method is used when the cache of conditions is not valid to provide an accurate count of conditions without relying on the cache.
+    /// </summary>
+    /// <returns></returns>
     public int GetCount()
     {
         var count = 0;
-        
+
         foreach (var conditions in Conditions.Values)
         {
             count += conditions.Count;
@@ -92,6 +105,10 @@ public class ConditionList : IEnumerable<ICondition>
         return count;
     }
 
+    /// <summary>
+    /// Retrieves all conditions from the condition list. The method returns a read-only list of all conditions currently present in the condition list. If the cache of conditions is valid, it is returned; otherwise, a new list is created by iterating through all collections of conditions by type, and the cache is updated with this new list before returning it.
+    /// </summary>
+    /// <returns></returns>
     public IReadOnlyList<ICondition> GetAll()
     {
         if (_conditionsCache is not null)
@@ -113,15 +130,31 @@ public class ConditionList : IEnumerable<ICondition>
         return _conditionsCache;
     }
 
+    /// <summary>
+    /// Retrieves the first condition of the specified condition type from the condition list. If there are no conditions of the specified type, the method returns null.
+    /// </summary>
+    /// <param name="conditionType"></param>
+    /// <returns></returns>
     public ICondition GetFirstConditionOfType(ConditionType conditionType) =>
         GetByType(conditionType).FirstOrDefault();
 
+    /// <summary>
+    /// Checks if there is at least one condition of the specified condition type in the condition list. If such a condition exists, the method returns true and outputs the first found condition; otherwise, it returns false and outputs null.
+    /// </summary>
+    /// <param name="conditionType"></param>
+    /// <param name="condition"></param>
+    /// <returns></returns>
     public bool GetFirstConditionOfType(ConditionType conditionType, out ICondition condition)
     {
         condition = GetByType(conditionType).FirstOrDefault();
         return condition != null;
     }
 
+    /// <summary>
+    /// Ends all conditions of the specified condition type. For each condition of the specified type, the <see cref="ICondition.End"/> method is called. If the remove parameter is set to true (which is the default value), all conditions of the specified type are removed from the condition list after being ended; otherwise, they remain in the list but are considered ended. The cache of conditions is invalidated after the operation.
+    /// </summary>
+    /// <param name="conditionType"></param>
+    /// <param name="remove"></param>
     public void EndConditions(ConditionType conditionType, bool remove = true)
     {
         if (!Conditions.TryGetValue(conditionType, out var conditions)) return;
@@ -158,6 +191,10 @@ public class ConditionList : IEnumerable<ICondition>
         }
     }
 
+    /// <summary>
+    /// Enables all conditions of the specified condition type. For each condition of the specified type,
+    /// </summary>
+    /// <param name="conditionType"></param>
     public void EnableConditions(ConditionType conditionType)
     {
         var conditions = GetByType(conditionType);
@@ -170,24 +207,97 @@ public class ConditionList : IEnumerable<ICondition>
         }
     }
 
+    /// <summary>
+    /// Checks if there is at least one condition of the specified condition type in the condition list. If such a condition exists, the method returns true; otherwise, it returns false.
+    /// </summary>
+    /// <param name="conditionType"></param>
+    /// <returns></returns>
     public bool HasAnyConditionOf(ConditionType conditionType) => GetByType(conditionType).Count > 0;
 
+    /// <summary>
+    /// Checks if there is at least one condition of the specified condition type in the condition list. If such a condition exists, the method returns true and outputs the first found condition; otherwise, it returns false and outputs null.
+    /// </summary>
+    /// <param name="conditionType"></param>
+    /// <param name="condition"></param>
+    /// <returns></returns>
     public bool HasAnyConditionOf(ConditionType conditionType, out ICondition condition)
     {
         condition = GetByType(conditionType).FirstOrDefault();
         return condition != null;
     }
 
+    /// <summary>
+    /// Checks if there is at least one condition of the specified condition type in the condition list. If such conditions exist, the method returns true and outputs the list of conditions; otherwise, it returns false and outputs an empty list.
+    /// </summary>
+    /// <param name="conditionType"></param>
+    /// <param name="conditions"></param>
+    /// <returns></returns>
     public bool HasAnyConditionOf(ConditionType conditionType, out IReadOnlyList<ICondition> conditions)
     {
         conditions = GetByType(conditionType);
         return conditions.Count > 0;
     }
 
+    /// <summary>
+    /// Checks if there is at least one enabled condition of the specified condition type in the condition list. If such a condition exists, the method returns true; otherwise, it returns false.
+    /// </summary>
+    /// <param name="conditionType"></param>
+    /// <returns></returns>
+    public bool HasAnyEnabledConditionOf(ConditionType conditionType)
+    {
+        if (!Conditions.TryGetValue(conditionType, out var conditions)) return false;
+
+        foreach (var condition in conditions)
+        {
+            if (!condition.IsDisabled)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Checks if there is at least one enabled condition of the specified condition type in the condition list. If such a condition exists,
+    /// </summary>
+    /// <param name="conditionType"></param>
+    /// <param name="condition"></param>
+    /// <returns></returns>
+    public bool HasAnyEnabledConditionOf(ConditionType conditionType, out ICondition condition)
+    {
+        condition = null;
+        if (!Conditions.TryGetValue(conditionType, out var conditions)) return false;
+
+        foreach (var c in conditions)
+        {
+            if (!c.IsDisabled)
+            {
+                condition = c;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void InvalidateCache() => _conditionsCache = null;
+
+    /// <summary>
+    /// Clears all conditions from the condition list. For each condition in the condition list, the <see cref="ICondition.End"/> method is called to end the condition before it is removed from the list. After all conditions have been ended and removed, the cache of conditions is invalidated.
+    /// </summary>
     public void Clear()
     {
+        foreach (var conditions in Conditions.Values)
+        {
+            foreach (var condition in conditions)
+            {
+                condition?.End();
+            }
+        }
+
         Conditions.Clear();
+
         InvalidateCache();
     }
 

@@ -104,19 +104,11 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual IReadOnlyList<ICondition> GetConditions() => Conditions.GetAll();
 
-    public virtual bool HasCondition(ConditionType type, out ICondition condition)
-    {
-        if (!Conditions.HasAnyConditionOf(type, out condition))
-        {
-            return false;
-        }
-
-        return !condition.IsDisabled;
-    }
+    public virtual bool HasCondition(ConditionType type, out ICondition condition) => Conditions.HasAnyEnabledConditionOf(type, out condition);
 
     public virtual bool HasCondition(ConditionType type)
     {
-        return Conditions.HasAnyConditionOf(type, out ICondition condition) && !condition.IsDisabled;
+        return Conditions.HasAnyEnabledConditionOf(type);
     }
 
     public ICondition GetCondition(ConditionType type) => Conditions.GetFirstConditionOfType(type);
