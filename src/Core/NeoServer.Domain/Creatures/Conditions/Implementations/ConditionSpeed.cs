@@ -28,6 +28,13 @@ public class ConditionSpeed : BaseCondition
 
         if (creature is not IWalkableCreature walkableCreature)
             return false;
+        
+        //End any existing haste conditions
+        if (creature is ICombatActor combatActor)
+        {
+            combatActor.Conditions.EndConditions(Type);
+            combatActor.Conditions.EndConditions(ConditionType.Paralyze);
+        }
 
         var baseSpeed = walkableCreature.RawSpeed;
 

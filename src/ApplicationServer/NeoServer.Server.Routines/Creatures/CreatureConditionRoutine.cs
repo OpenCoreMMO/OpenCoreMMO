@@ -9,11 +9,14 @@ public static class CreatureConditionRoutine
     public static void Execute(ICombatActor creature, int interval)
     {
         if (creature.IsDead) return;
-
-        foreach (var condition in creature.GetConditions())
+        var conditions = creature.GetConditions();
+        for (var i = 0; i < conditions.Count; i++)
         {
+            var condition = conditions[i]; 
             if (condition is ConditionLight lightCondition)
+            {
                 lightCondition.Execute(creature, interval);
+            }
 
             if (condition.HasExpired)
             {
@@ -21,7 +24,10 @@ public static class CreatureConditionRoutine
                 creature.RemoveCondition(condition);
             }
 
-            if (condition is ConditionDamage damageCondition) damageCondition.Execute(creature);
+            if (condition is ConditionDamage damageCondition)
+            {
+                damageCondition.Execute(creature);
+            }
         }
     }
 }

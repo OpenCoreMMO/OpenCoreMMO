@@ -24,7 +24,6 @@ public interface ICondition
     bool IsDisabled { get; }
     bool IsPersistent { get; }
     long Duration { get; }
-    bool HasPersistentCounter { get; }
 
     bool Start(ICreature creature);
     void End();
@@ -38,8 +37,6 @@ public interface ICondition
 
     void Disable();
     void Enable();
-    void IncreasePersistentCounter();
-    void ReducePersistentCounter();
 
     /// <summary>
     /// Updates the duration of the condition by setting a new value.

@@ -1,5 +1,6 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Items.Types.Body;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Helpers;
@@ -7,6 +8,7 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
+using NeoServer.Domain.Creatures.Player.Inventory;
 
 namespace NeoServer.Domain.Items.Services;
 
@@ -23,10 +25,17 @@ public static class ItemAbilityApplier
         if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.Invisible, out var invisible) && invisible)
             player.TurnInvisible();
 
+        var slot = Slot.None;
+
+        if (item is IBodyEquipmentEquipment equipment)
+        {
+            slot = equipment.Slot;
+        }
+
         if (item.Metadata.Attributes.TryGetAttribute<int>(ItemTypeAttribute.ManaShield, out var manaShield) &&
             manaShield == 1)
         {
-            player.AddCondition(new Condition(ConditionType.ManaShield));
+            player.AddEquipmentCondition(slot, new Condition(ConditionType.ManaShield));
         }
 
         if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.HealthGain, out var healthGain) &&
@@ -71,10 +80,17 @@ public static class ItemAbilityApplier
         if (item.Metadata.Attributes.TryGetAttribute<bool>(ItemTypeAttribute.Invisible, out var invisible) && invisible)
             player.TurnVisible();
 
+        var slot = Slot.None;
+
+        if (item is IBodyEquipmentEquipment equipment)
+        {
+            slot = equipment.Slot;
+        }
+
         if (item.Metadata.Attributes.TryGetAttribute<int>(ItemTypeAttribute.ManaShield, out var manaShield) &&
             manaShield == 1)
         {
-            player.RemovePersistentCondition(ConditionType.ManaShield);
+            player.RemoveEquipmentCondition(slot, ConditionType.ManaShield);
         }
 
         if (item.Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.HealthGain, out var healthGain) &&

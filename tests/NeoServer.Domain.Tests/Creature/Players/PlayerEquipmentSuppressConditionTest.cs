@@ -153,7 +153,8 @@ public class PlayerEquipmentSuppressConditionTest
 
     private static void ExecuteConditionTick(ICombatActor creature)
     {
-        foreach (var condition in creature.GetConditions())
+        var conditions = creature.GetConditions();
+        foreach (var condition in conditions)
         {
             if (!condition.HasExpired) continue;
 

@@ -40,78 +40,78 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     {
         switch (condition.Type)
         {
-            case ConditionType.Haste:
-                Conditions.TryGetValue(ConditionType.Paralyze, out var paralyzeCondition);
-                paralyzeCondition?.End();
-                break;
             case ConditionType.Paralyze:
-                Conditions.TryGetValue(ConditionType.Haste, out var hasteCondition);
-                hasteCondition?.End();
+                Conditions.EndConditions(ConditionType.Haste);
+                break;
+            case ConditionType.Pacified:
+                Conditions.EndConditions(ConditionType.LogoutBlock);
+                Conditions.EndConditions(ConditionType.Pacified);
+                Conditions.EndConditions(ConditionType.ProtectionZoneBlock);
+                break;
+            case ConditionType.LogoutBlock:
+                Conditions.EndConditions(ConditionType.Pacified);
+                Conditions.EndConditions(ConditionType.LogoutBlock);
+                break;
+            case ConditionType.ProtectionZoneBlock:
+                Conditions.EndConditions(ConditionType.Pacified);
+                Conditions.EndConditions(ConditionType.ProtectionZoneBlock);
+                break;
+            case ConditionType.Outfit:
+                Conditions.EndConditions(ConditionType.Outfit);
                 break;
         }
 
-        var result = Conditions.TryAdd(condition.Type, condition);
         condition.Start(this);
-        if (!result) return;
+        Conditions.Add(condition);
 
         EventAggregator.Invoke(new CreatureConditionAddedEvent(this, condition));
     }
 
     public virtual void RemoveCondition(ICondition condition)
     {
-        Conditions.Remove(condition.Type);
+        Conditions.Remove(condition);
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
     }
 
     public void DisableCondition(ConditionType type)
     {
-        if (!Conditions.TryGetValue(type, out var condition)) return;
+        var firstCondition = Conditions.GetByType(type).FirstOrDefault();
+        if (firstCondition is null) return;
+        Conditions.DisableConditions(type);
 
-        condition.Disable();
-        EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
+        EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, firstCondition));
     }
 
     public void EnableCondition(ConditionType type)
     {
-        if (!Conditions.TryGetValue(type, out var condition)) return;
+        var firstCondition = Conditions.GetByType(type).FirstOrDefault();
+        if (firstCondition is null) return;
+        
+        Conditions.EnableConditions(type);
 
-        condition.Enable();
-        EventAggregator.Invoke(new CreatureConditionAddedEvent(this, condition));
+        EventAggregator.Invoke(new CreatureConditionAddedEvent(this, firstCondition));
     }
 
     public virtual void RemoveCondition(ConditionType type)
     {
-        if (Conditions.Remove(type, out var condition) is false) return;
-        EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
+        var firstCondition = Conditions.GetByType(type).FirstOrDefault();
+        if (firstCondition is null) return;
+        
+        Conditions.RemoveByType(type);
+
+        EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, firstCondition));
     }
 
-    public virtual List<ICondition> GetConditions()
-    {
-        ConditionList.Clear();
+    public virtual IReadOnlyList<ICondition> GetConditions() => Conditions.GetAll();
 
-        foreach (var condition in Conditions)
-        {
-            ConditionList.Add(condition.Value);
-        }
-
-        return ConditionList;
-    }
-
-    public virtual bool HasCondition(ConditionType type, out ICondition condition)
-    {
-        return Conditions.TryGetValue(type, out condition) && !condition.IsDisabled;
-    }
+    public virtual bool HasCondition(ConditionType type, out ICondition condition) => Conditions.HasAnyEnabledConditionOf(type, out condition);
 
     public virtual bool HasCondition(ConditionType type)
     {
-        return Conditions.TryGetValue(type, out var condition) && !condition.IsDisabled;
+        return Conditions.HasAnyEnabledConditionOf(type);
     }
 
-    public ICondition GetCondition(ConditionType type)
-    {
-        Conditions.TryGetValue(type, out var condition);
-        return condition;
-    }
+    public ICondition GetCondition(ConditionType type) => Conditions.GetFirstConditionOfType(type);
 
     public void ResetHealthPoints()
     {
@@ -290,7 +290,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     public virtual void TurnInvisible()
     {
         if (IsInvisible) return;
-        
+
         IsInvisible = true;
         EventAggregator.Invoke(new CreatureChangedVisibilityEvent(this));
     }
@@ -304,7 +304,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     public virtual void TurnVisible()
     {
         if (!IsInvisible) return;
-        
+
         IsInvisible = false;
         EventAggregator.Invoke(new CreatureChangedVisibilityEvent(this));
     }
@@ -493,16 +493,13 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     public uint AttackEvent { get; set; }
     public virtual bool CanBeAttacked => !(Tile?.ProtectionZone ?? false) && !IsDead; //todo: set as a flag
 
-    public IDictionary<ConditionType, ICondition> Conditions { get; set; } =
-        new Dictionary<ConditionType, ICondition>();
+    // public IDictionary<ConditionType, ICondition> Conditions { get; set; } =
+    //     new Dictionary<ConditionType, ICondition>();
+
+    public ConditionList Conditions { get; } = new();
 
     public abstract ushort MaximumAttackPower { get; }
     public abstract ushort MaximumElementalAttackPower { get; }
-    
-    /// <summary>
-    /// Conditions list cache
-    /// </summary>
-    protected List<ICondition> ConditionList { get; } = new();
 
     #endregion
 }

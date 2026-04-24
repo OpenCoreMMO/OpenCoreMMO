@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster.Loot;
 
@@ -40,7 +41,7 @@ public interface ICombatActor : IWalkableCreature
     bool UsingDistanceWeapon { get; }
     uint AttackEvent { get; set; }
     bool CanBeAttacked { get; }
-    IDictionary<ConditionType, ICondition> Conditions { get; set; }
+    ConditionList Conditions { get; }
     ICreature CurrentTarget { get; }
     DamageRecordList ReceivedDamages { get; }
 
@@ -102,5 +103,5 @@ public interface ICombatActor : IWalkableCreature
     void StartCooldown(Guid cooldownId, uint duration);
     bool IsTargetLost();
     bool IsTargetLost(ICreature target);
-    List<ICondition> GetConditions();
+    IReadOnlyList<ICondition> GetConditions();
 }
