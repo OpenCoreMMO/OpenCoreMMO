@@ -1,9 +1,9 @@
-﻿using System.Reflection;
-using NeoServer.Domain.Common;
+﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Player;
 
 namespace NeoServer.Domain.Tests.Creature.Players;
@@ -45,7 +45,7 @@ public class PlayerSkillBonusesTests
         });
 
         var captured = new List<PlayerAddedSkillBonusEvent>();
-        SetupEventAggregator<PlayerAddedSkillBonusEvent>(e => captured.Add(e));
+        EventAggregatorTestHelper.SetupEventAggregator<PlayerAddedSkillBonusEvent>(e => captured.Add(e));
 
         sut.AddSkillBonus(SkillType.Axe, 0);
 
@@ -79,7 +79,7 @@ public class PlayerSkillBonusesTests
         sut.GetSkillBonus(SkillType.Axe).Should().Be(10);
 
         var captured = new List<PlayerAddedSkillBonusEvent>();
-        SetupEventAggregator<PlayerAddedSkillBonusEvent>(e => captured.Add(e));
+        EventAggregatorTestHelper.SetupEventAggregator<PlayerAddedSkillBonusEvent>(e => captured.Add(e));
 
         sut.AddSkillBonus(SkillType.Axe, 5);
 
@@ -111,7 +111,7 @@ public class PlayerSkillBonusesTests
         });
 
         var captured = new List<PlayerRemovedSkillBonusEvent>();
-        SetupEventAggregator<PlayerRemovedSkillBonusEvent>(e => captured.Add(e));
+        EventAggregatorTestHelper.SetupEventAggregator<PlayerRemovedSkillBonusEvent>(e => captured.Add(e));
 
         sut.RemoveSkillBonus(SkillType.Axe, 0);
 
@@ -143,7 +143,7 @@ public class PlayerSkillBonusesTests
         sut.AddSkillBonus(SkillType.Axe, 100);
 
         var captured = new List<PlayerRemovedSkillBonusEvent>();
-        SetupEventAggregator<PlayerRemovedSkillBonusEvent>(e => captured.Add(e));
+        EventAggregatorTestHelper.SetupEventAggregator<PlayerRemovedSkillBonusEvent>(e => captured.Add(e));
 
         sut.RemoveSkillBonus(SkillType.Axe, 5);
 
@@ -180,25 +180,5 @@ public class PlayerSkillBonusesTests
         sut.RemoveSkillBonus(SkillType.Axe, 20);
         sut.GetSkillBonus(SkillType.Axe).Should().Be(-10);
         sut.GetSkillLevel(SkillType.Axe).Should().Be(0);
-    }
-    
-    private static EventAggregator SetupEventAggregator<TEvent>(Action<TEvent> onEvent) where TEvent : IEvent
-    {
-        var sp = new TestServiceProvider();
-        var aggregator = new EventAggregator(sp);
-
-        typeof(EventAggregator).GetProperty("Instance", BindingFlags.NonPublic | BindingFlags.Static)
-            ?.SetValue(null, aggregator);
-
-        var handlersField = typeof(EventAggregator).GetField("_handlers", BindingFlags.NonPublic | BindingFlags.Instance);
-        var handlers = (Dictionary<string, List<Action<IEvent>>>)handlersField?.GetValue(aggregator);
-        handlers[typeof(TEvent).FullName] = new List<Action<IEvent>> { e => onEvent((TEvent)e) };
-
-        return aggregator;
-    }
-
-    private class TestServiceProvider : IServiceProvider
-    {
-        public object GetService(Type serviceType) => null;
     }
 }
