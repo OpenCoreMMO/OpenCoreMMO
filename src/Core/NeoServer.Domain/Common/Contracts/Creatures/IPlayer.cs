@@ -42,13 +42,6 @@ public delegate void AddToVipList(IPlayer player, uint vipPlayerId, string vipPl
 
 public delegate void PlayerLoadVipList(IPlayer player, IEnumerable<(uint, string)> vipList);
 
-public delegate void ChangeOnlineStatus(IPlayer player, bool online);
-
-public delegate void SendMessageTo(ISociableCreature from, ISociableCreature to, SpeechType speechType,
-    string message);
-
-public delegate void Exhaust(IPlayer player);
-
 public delegate void AddSkillBonus(IPlayer player, SkillType skillType, sbyte increased);
 
 public delegate void ReadText(IPlayer player, IReadable readable, string text);
@@ -309,10 +302,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     #region Events
 
-    public event ChangeOnlineStatus OnChangedOnlineStatus;
-    public event SendMessageTo OnSentMessage;
-
-    public event Exhaust OnExhausted;
     public event ChangeChaseMode OnChangedChaseMode;
     public event AddSkillBonus OnAddedSkillBonus;
     public event WroteText OnWroteText;

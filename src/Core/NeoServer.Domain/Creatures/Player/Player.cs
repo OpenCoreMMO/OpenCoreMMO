@@ -656,7 +656,7 @@ public class Player : CombatActor, IPlayer
     {
         if (string.IsNullOrWhiteSpace(message)) return;
 
-        OnSentMessage?.Invoke(this, to, speechType, message);
+        EventAggregator.Invoke(new PlayerSentMessageEvent(this, to, speechType, message));
     }
 
     public void PostSpellCast(ISpell spell)
@@ -979,7 +979,7 @@ public class Player : CombatActor, IPlayer
     {
         if (!Cooldowns.Expired(CooldownType.UseItem))
         {
-            OnExhausted?.Invoke(this);
+            EventAggregator.Invoke(new PlayerExhaustedEvent(this));
             return Result.NotPossible;
         }
 
@@ -1594,7 +1594,7 @@ public class Player : CombatActor, IPlayer
     {
         if (!Cooldowns.Expired(CooldownType.UseItem))
         {
-            OnExhausted?.Invoke(this);
+            EventAggregator.Invoke(new PlayerExhaustedEvent(this));
             {
                 return Result.Fail(InvalidOperation.Exhausted);
             }
@@ -1766,7 +1766,7 @@ public class Player : CombatActor, IPlayer
     public void ChangeOnlineStatus(bool online)
     {
         Online = online;
-        OnChangedOnlineStatus?.Invoke(this, online);
+        EventAggregator.Invoke(new PlayerChangedOnlineStatusEvent(this, online));
     }
 
     public override bool CanBlock(DamageType damage)
@@ -1946,10 +1946,6 @@ public class Player : CombatActor, IPlayer
 
     #region Events
 
-    public event ChangeOnlineStatus OnChangedOnlineStatus;
-    public event SendMessageTo OnSentMessage;
-
-    public event Exhaust OnExhausted;
     public event Hear OnHear;
     public event ChangeChaseMode OnChangedChaseMode;
     public event AddSkillBonus OnAddedSkillBonus;

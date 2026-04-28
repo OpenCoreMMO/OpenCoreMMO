@@ -23,15 +23,12 @@ public class PlayerEventSubscriber(
     PlayerExitedChannelEventHandler playerExitedChannelEventHandler,
     PlayerAddToVipListEventHandler playerAddedToVipListEventHandler,
     PlayerLoadedVipListEventHandler playerLoadedVipListEvent,
-    PlayerChangedOnlineStatusEventHandler playerChangedOnlineStatusEventHandler,
-    PlayerSentMessageEventHandler playerSentMessageEventHandler,
     PlayerInviteToPartyEventHandler playerInviteToPartyEventHandler,
     PlayerRevokedPartyInviteEventHandler playerRevokedPartyInviteEventHandler,
     PlayerLeftPartyEventHandler playerLeftPartyEventHandler,
     PlayerInvitedToPartyEventHandler playerInvitedToPartyEventHandler,
     PlayerJoinedPartyEventHandler playerJoinedPartyEventHandler,
     PlayerPassedPartyLeadershipEventHandler playerPassedPartyLeadershipEventHandler,
-    PlayerExhaustedEventHandler playerExhaustedEventHandler,
     PlayerSkullUpdatedEventHandler playerSkullUpdatedEventHandler)
     : ICreatureEventSubscriber
 {
@@ -74,8 +71,6 @@ public class PlayerEventSubscriber(
         player.Channels.OnExitedChannel += playerExitedChannelEventHandler.Execute;
         player.Vip.OnAddedToVipList += playerAddedToVipListEventHandler.Execute;
         player.Vip.OnLoadedVipList += playerLoadedVipListEvent.Execute;
-        player.OnChangedOnlineStatus += playerChangedOnlineStatusEventHandler.Execute;
-        player.OnSentMessage += playerSentMessageEventHandler.Execute;
         player.PlayerParty.OnInviteToParty += playerInviteToPartyEventHandler.Execute;
         player.PlayerParty.OnRevokePartyInvite += playerRevokedPartyInviteEventHandler.Execute;
         player.PlayerParty.OnLeftParty += playerLeftPartyEventHandler.Execute;
@@ -83,7 +78,6 @@ public class PlayerEventSubscriber(
         player.PlayerParty.OnRejectedPartyInvite += playerLeftPartyEventHandler.Execute;
         player.PlayerParty.OnJoinedParty += playerJoinedPartyEventHandler.Execute;
         player.PlayerParty.OnPassedPartyLeadership += playerPassedPartyLeadershipEventHandler.Execute;
-        player.OnExhausted += playerExhaustedEventHandler.Execute;
         player.OnAddedSkillBonus += playerUpdatedSkillPointsEventHandler.Execute;
     }
 
@@ -125,8 +119,6 @@ public class PlayerEventSubscriber(
         player.Channels.OnExitedChannel -= playerExitedChannelEventHandler.Execute;
         player.Vip.OnAddedToVipList -= playerAddedToVipListEventHandler.Execute;
         player.Vip.OnLoadedVipList -= playerLoadedVipListEvent.Execute;
-        player.OnChangedOnlineStatus -= playerChangedOnlineStatusEventHandler.Execute;
-        player.OnSentMessage -= playerSentMessageEventHandler.Execute;
         player.PlayerParty.OnInviteToParty -= playerInviteToPartyEventHandler.Execute;
         player.PlayerParty.OnRevokePartyInvite -= playerRevokedPartyInviteEventHandler.Execute;
         player.PlayerParty.OnLeftParty -= playerLeftPartyEventHandler.Execute;
