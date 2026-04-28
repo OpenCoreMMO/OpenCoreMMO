@@ -752,7 +752,7 @@ public class Player : CombatActor, IPlayer
         if (!HasEnoughMana(mana)) return;
 
         Mana -= mana;
-        OnStatusChanged?.Invoke(this);
+        EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 
     public void ConsumeSoul(ushort soul)
@@ -761,7 +761,7 @@ public class Player : CombatActor, IPlayer
         if (!HasEnoughSoul(soul)) return;
 
         Mana -= soul;
-        OnStatusChanged?.Invoke(this);
+        EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 
     public bool HasEnoughLevel(ushort level)
@@ -858,7 +858,7 @@ public class Player : CombatActor, IPlayer
         if (Mana == MaxMana) return;
 
         Mana = Mana + increasing >= MaxMana ? MaxMana : Mana + increasing;
-        OnStatusChanged?.Invoke(this);
+        EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 
     public override void Heal(ushort increasing, ICreature healedBy)
@@ -1507,7 +1507,7 @@ public class Player : CombatActor, IPlayer
         if (SoulPoints == MaxSoulPoints) return;
 
         SoulPoints = SoulPoints + increasing >= MaxSoulPoints ? MaxSoulPoints : (byte)(SoulPoints + increasing);
-        OnStatusChanged?.Invoke(this);
+        EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 
     public long ApplyStaminaEffectOnExperienceGain(long experience)
@@ -1946,7 +1946,6 @@ public class Player : CombatActor, IPlayer
 
     #region Events
 
-    public event ReduceMana OnStatusChanged;
     public event LookAt OnLookedAt;
     public event UseItem OnUsedItem;
     public event ChangeOnlineStatus OnChangedOnlineStatus;

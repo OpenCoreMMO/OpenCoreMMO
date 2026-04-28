@@ -34,8 +34,6 @@ public delegate void ClosedDepot(IPlayer player, byte containerId, Locker.Locker
 
 public delegate void OpenedContainer(IPlayer player, byte containerId, IContainer container);
 
-public delegate void ReduceMana(IPlayer player);
-
 public delegate void CannotUseSpell(IPlayer player, ISpell spell, InvalidOperation error);
 
 public delegate void LookAt(IPlayer player, IThing thing, bool isClose);
@@ -315,7 +313,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     #region Events
 
-    public event ReduceMana OnStatusChanged;
     public event LookAt OnLookedAt;
     public event UseItem OnUsedItem;
     public event ChangeOnlineStatus OnChangedOnlineStatus;
