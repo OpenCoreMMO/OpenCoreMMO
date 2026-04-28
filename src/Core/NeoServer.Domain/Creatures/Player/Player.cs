@@ -29,6 +29,7 @@ using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Common;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
@@ -1157,7 +1158,7 @@ public class Player : CombatActor, IPlayer
     {
         if (from is null || speechType == SpeechType.None || string.IsNullOrWhiteSpace(message)) return;
 
-        OnHear?.Invoke(from, this, speechType, message);
+        EventAggregator.Invoke(new CreatureHearEvent(from, this, speechType, message));
     }
 
     public void ReceivePayment(IEnumerable<IItem> coins, ulong total)
@@ -1946,7 +1947,6 @@ public class Player : CombatActor, IPlayer
 
     #region Events
 
-    public event Hear OnHear;
     public event ChangeChaseMode OnChangedChaseMode;
     public event AddSkillBonus OnAddedSkillBonus;
     public event WroteText OnWroteText;

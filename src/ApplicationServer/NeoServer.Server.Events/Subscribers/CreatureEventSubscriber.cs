@@ -2,7 +2,6 @@
 using NeoServer.Server.Events.Combat;
 using NeoServer.Server.Events.Creature;
 using NeoServer.Server.Events.Creature.Npcs;
-using NeoServer.Server.Events.Talks;
 
 namespace NeoServer.Server.Events.Subscribers;
 
@@ -13,7 +12,6 @@ public class CreatureEventSubscriber(
     CreatureHealedEventHandler creatureHealedEventHandler,
     CreatureChangedAttackTargetEventHandler creatureChangedAttackTargetEventHandler,
     CreatureChangedSpeedEventHandler creatureChangedSpeedEventHandler,
-    CreatureHearEventHandler creatureHearEventHandler,
     CreatureChangedOutfitEventHandler creatureChangedOutfitEventHandler,
     NpcShowShopEventHandler npcShowShopEventHandler,
     NpcCloseShopEventHandler npcCloseShopEventHandler)
@@ -22,9 +20,6 @@ public class CreatureEventSubscriber(
     public void Subscribe(ICreature creature)
     {
         creature.OnChangedOutfit += creatureChangedOutfitEventHandler.Execute;
-
-        if (creature is ISociableCreature sociableCreature)
-            sociableCreature.OnHear += creatureHearEventHandler.Execute;
 
         SubscribeToCombatActor(creature);
 
@@ -64,8 +59,6 @@ public class CreatureEventSubscriber(
             walkableCreature.OnStartedWalking -= creatureStartedWalkingEventHandler.Execute;
         }
 
-        if (creature is ISociableCreature sociableCreature)
-            sociableCreature.OnHear -= creatureHearEventHandler.Execute;
         if (creature is IShopperNpc shopperNpc) shopperNpc.OnShowShop -= npcShowShopEventHandler.Execute;
     }
 

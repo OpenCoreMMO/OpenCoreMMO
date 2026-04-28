@@ -13,7 +13,6 @@ public class CreatureEventsSubscriber(
     CreatureOnAppearEventHandler creatureOnAppearEventHandler,
     CreatureOnDisappearEventHandler creatureOnDisappearEventHandler,
     CreatureOnMoveEventHandler creatureOnMoveEventHandler,
-    NpcOnHearEventHandler npcOnDeEquipEventHandler,
     NpcOnPlayerCloseChannelEventHandler npcOnPlayerCloseChannelEventHandler,
     NpcOnSellItemEventHandler npcOnSellItemEventHandler,
     NpcOnBuyItemEventHandler npcOnBuyItemEventHandler) : ICreatureEventSubscriber, IGameEventSubscriber
@@ -35,7 +34,6 @@ public class CreatureEventsSubscriber(
             npc.OnDisappear += creatureOnDisappearEventHandler.Execute;
             npc.OnCreatureMove += creatureOnMoveEventHandler.Execute;
 
-            npc.OnHear += npcOnDeEquipEventHandler.Execute;
             npc.OnPlayerCloseChannel += npcOnPlayerCloseChannelEventHandler.Execute;
         }
 
@@ -63,7 +61,6 @@ public class CreatureEventsSubscriber(
             npc.OnDisappear -= creatureOnDisappearEventHandler.Execute;
             npc.OnCreatureMove -= creatureOnMoveEventHandler.Execute;
 
-            npc.OnHear -= npcOnDeEquipEventHandler.Execute;
             npc.OnPlayerCloseChannel -= npcOnPlayerCloseChannelEventHandler.Execute;
         }
 
