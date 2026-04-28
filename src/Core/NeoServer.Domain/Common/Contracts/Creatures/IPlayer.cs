@@ -40,8 +40,6 @@ public delegate void CannotUseSpell(IPlayer player, ISpell spell, InvalidOperati
 
 public delegate void LookAt(IPlayer player, IThing thing, bool isClose);
 
-public delegate void PlayerGainSkillPoint(IPlayer player, SkillType type);
-
 public delegate void UseItem(IPlayer player, IThing thing, IUsableOn item);
 
 public delegate void LogIn(IPlayer player);
@@ -319,7 +317,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     #region Events
 
-    public event PlayerGainSkillPoint OnGainedSkillPoint;
     public event ReduceMana OnStatusChanged;
     public event LookAt OnLookedAt;
     public event UseItem OnUsedItem;

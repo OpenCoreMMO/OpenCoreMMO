@@ -127,7 +127,7 @@ public class Player : CombatActor, IPlayer
         {
             skill.OnAdvance += OnLevelAdvance;
             skill.OnRegress += OnLevelRegress;
-            skill.OnIncreaseSkillPoints += skill => OnGainedSkillPoint?.Invoke(this, skill);
+            skill.OnIncreaseSkillPoints += skill => EventAggregator.Invoke(new PlayerGainedSkillPointEvent(this, skill));
         }
     }
 
@@ -1946,7 +1946,6 @@ public class Player : CombatActor, IPlayer
 
     #region Events
 
-    public event PlayerGainSkillPoint OnGainedSkillPoint;
     public event ReduceMana OnStatusChanged;
     public event LookAt OnLookedAt;
     public event UseItem OnUsedItem;

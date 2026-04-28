@@ -73,7 +73,6 @@ public class PlayerEventSubscriber(
 
         player.OnStatusChanged += playerManaReducedEventHandler.Execute;
         player.OnLookedAt += playerLookedAtEventHandler.Execute;
-        player.OnGainedSkillPoint += playerUpdatedSkillPointsEventHandler.Execute;
         player.OnUsedItem += playerUsedItemEventHandler.Execute;
         player.PlayerSkull.OnSkullUpdated += playerSkullUpdatedEventHandler.Execute;
 
@@ -129,7 +128,6 @@ public class PlayerEventSubscriber(
 
         player.OnStatusChanged -= playerManaReducedEventHandler.Execute;
         player.OnLookedAt -= playerLookedAtEventHandler.Execute;
-        player.OnGainedSkillPoint -= playerUpdatedSkillPointsEventHandler.Execute;
         player.OnUsedItem -= playerUsedItemEventHandler.Execute;
         player.PlayerSkull.OnSkullUpdated -= playerSkullUpdatedEventHandler.Execute;
 
