@@ -18,7 +18,6 @@ public class PlayerEventSubscriber(
     InvalidOperationEventHandler invalidOperationEventHandler,
     CreatureStoppedAttackEventHandler creatureStoppedAttackEventHandler,
     PlayerGainedExperienceEventHandler playerGainedExperienceEventHandler,
-    PlayerUpdatedSkillPointsEventHandler playerUpdatedSkillPointsEventHandler,
     PlayerJoinedChannelEventHandler playerJoinedChannelEventHandler,
     PlayerExitedChannelEventHandler playerExitedChannelEventHandler,
     PlayerAddToVipListEventHandler playerAddedToVipListEventHandler,
@@ -78,7 +77,6 @@ public class PlayerEventSubscriber(
         player.PlayerParty.OnRejectedPartyInvite += playerLeftPartyEventHandler.Execute;
         player.PlayerParty.OnJoinedParty += playerJoinedPartyEventHandler.Execute;
         player.PlayerParty.OnPassedPartyLeadership += playerPassedPartyLeadershipEventHandler.Execute;
-        player.OnAddedSkillBonus += playerUpdatedSkillPointsEventHandler.Execute;
     }
 
     public void Unsubscribe(ICreature creature)
@@ -126,7 +124,6 @@ public class PlayerEventSubscriber(
         player.PlayerParty.OnJoinedParty -= playerJoinedPartyEventHandler.Execute;
         player.PlayerParty.OnPassedPartyLeadership -= playerPassedPartyLeadershipEventHandler.Execute;
 
-        player.OnAddedSkillBonus -= playerUpdatedSkillPointsEventHandler.Execute;
         player.Inventory.OnWeightChanged -= itemAddedToInventoryEventHandler.ExecuteOnWeightChanged;
     }
 }

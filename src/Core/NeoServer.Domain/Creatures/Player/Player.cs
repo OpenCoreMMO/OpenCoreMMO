@@ -423,7 +423,7 @@ public class Player : CombatActor, IPlayer
             Skills.Add(skillType, new Skill(skillType, 1, 1)); //todo: review those skill values
 
         Skills[skillType]?.AddBonus(increase);
-        OnAddedSkillBonus?.Invoke(this, skillType, increase);
+        EventAggregator.Invoke(new PlayerAddedSkillBonusEvent(this, skillType, increase));
     }
 
     public void RemoveSkillBonus(SkillType skillType, sbyte decrease)
@@ -1946,8 +1946,6 @@ public class Player : CombatActor, IPlayer
     #endregion
 
     #region Events
-
-    public event AddSkillBonus OnAddedSkillBonus;
 
     #endregion
 }

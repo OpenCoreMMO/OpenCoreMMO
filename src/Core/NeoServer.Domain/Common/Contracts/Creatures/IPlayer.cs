@@ -40,8 +40,6 @@ public delegate void AddToVipList(IPlayer player, uint vipPlayerId, string vipPl
 
 public delegate void PlayerLoadVipList(IPlayer player, IEnumerable<(uint, string)> vipList);
 
-public delegate void AddSkillBonus(IPlayer player, SkillType skillType, sbyte increased);
-
 public delegate void ReadText(IPlayer player, IReadable readable, string text);
 
 public delegate void EquipItem(IPlayer player, IItem item, bool isCheck);
@@ -297,8 +295,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     void HealSoul(ushort increasing);
 
     #region Events
-
-    public event AddSkillBonus OnAddedSkillBonus;
 
     #endregion
 

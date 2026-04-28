@@ -44,12 +44,12 @@ public class PlayerSkillBonusesTests
             [SkillType.Axe] = new(SkillType.Axe, 10)
         });
 
-        var called = false;
-        sut.OnAddedSkillBonus += (_, _, _) => { called = true; };
+        var captured = new List<PlayerAddedSkillBonusEvent>();
+        SetupEventAggregator<PlayerAddedSkillBonusEvent>(e => captured.Add(e));
 
         sut.AddSkillBonus(SkillType.Axe, 0);
 
-        called.Should().BeFalse();
+        captured.Should().BeEmpty();
     }
 
     [Fact]
@@ -78,17 +78,15 @@ public class PlayerSkillBonusesTests
         sut.AddSkillBonus(SkillType.Axe, 10);
         sut.GetSkillBonus(SkillType.Axe).Should().Be(10);
 
-        var eventEncreased = 0;
-        IPlayer eventPlayer = null;
-        sut.OnAddedSkillBonus += (player, _, increased) =>
-        {
-            eventPlayer = player;
-            eventEncreased = increased;
-        };
+        var captured = new List<PlayerAddedSkillBonusEvent>();
+        SetupEventAggregator<PlayerAddedSkillBonusEvent>(e => captured.Add(e));
 
         sut.AddSkillBonus(SkillType.Axe, 5);
-        eventEncreased.Should().Be(5);
-        eventPlayer.Should().BeEquivalentTo(sut);
+
+        captured.Should().HaveCount(1);
+        captured[0].Increase.Should().Be(5);
+        captured[0].Player.Should().BeEquivalentTo(sut);
+        captured[0].Type.Should().Be(SkillType.Axe);
     }
 
     [Fact]
