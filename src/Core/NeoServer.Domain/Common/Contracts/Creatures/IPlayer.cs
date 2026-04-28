@@ -26,27 +26,13 @@ using NeoServer.Domain.Items.Items.UsableItems;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
-public delegate void ChangeChaseMode(IPlayer player, ChaseMode oldChaseMode, ChaseMode newChaseMode);
-
 public delegate void ClosedContainer(IPlayer player, byte containerId, IContainer container);
 
 public delegate void ClosedDepot(IPlayer player, byte containerId, Locker.Locker container);
 
 public delegate void OpenedContainer(IPlayer player, byte containerId, IContainer container);
 
-public delegate void ReduceMana(IPlayer player);
-
 public delegate void CannotUseSpell(IPlayer player, ISpell spell, InvalidOperation error);
-
-public delegate void PlayerLevelAdvance(IPlayer player, SkillType type, int fromLevel, int toLevel);
-
-public delegate void PlayerLevelRegress(IPlayer player, SkillType type, int fromLevel, int toLevel);
-
-public delegate void LookAt(IPlayer player, IThing thing, bool isClose);
-
-public delegate void PlayerGainSkillPoint(IPlayer player, SkillType type);
-
-public delegate void UseItem(IPlayer player, IThing thing, IUsableOn item);
 
 public delegate void LogIn(IPlayer player);
 
@@ -54,20 +40,7 @@ public delegate void AddToVipList(IPlayer player, uint vipPlayerId, string vipPl
 
 public delegate void PlayerLoadVipList(IPlayer player, IEnumerable<(uint, string)> vipList);
 
-public delegate void ChangeOnlineStatus(IPlayer player, bool online);
-
-public delegate void SendMessageTo(ISociableCreature from, ISociableCreature to, SpeechType speechType,
-    string message);
-
-public delegate void Exhaust(IPlayer player);
-
-public delegate void AddSkillBonus(IPlayer player, SkillType skillType, sbyte increased);
-
-public delegate void RemoveSkillBonus(IPlayer player, SkillType skillType, sbyte decreased);
-
 public delegate void ReadText(IPlayer player, IReadable readable, string text);
-
-public delegate void WroteText(IPlayer player, IReadable readable, string text);
 
 public delegate void EquipItem(IPlayer player, IItem item, bool isCheck);
 
@@ -320,25 +293,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     void StartCooldown(CooldownType cooldownType, uint cooldownTime);
 
     void HealSoul(ushort increasing);
-
-    #region Events
-
-    public event PlayerLevelAdvance OnLevelAdvanced;
-    public event PlayerLevelRegress OnLevelRegressed;
-    public event PlayerGainSkillPoint OnGainedSkillPoint;
-    public event ReduceMana OnStatusChanged;
-    public event LookAt OnLookedAt;
-    public event UseItem OnUsedItem;
-    public event ChangeOnlineStatus OnChangedOnlineStatus;
-    public event SendMessageTo OnSentMessage;
-
-    public event Exhaust OnExhausted;
-    public event ChangeChaseMode OnChangedChaseMode;
-    public event AddSkillBonus OnAddedSkillBonus;
-    public event RemoveSkillBonus OnRemovedSkillBonus;
-    public event WroteText OnWroteText;
-
-    #endregion
 
     void AddEquipmentCondition(Slot slot, ICondition condition);
     void RemoveEquipmentCondition(Slot slot, ConditionType conditionType);

@@ -29,6 +29,7 @@ using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Common;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
@@ -127,7 +128,7 @@ public class Player : CombatActor, IPlayer
         {
             skill.OnAdvance += OnLevelAdvance;
             skill.OnRegress += OnLevelRegress;
-            skill.OnIncreaseSkillPoints += skill => OnGainedSkillPoint?.Invoke(this, skill);
+            skill.OnIncreaseSkillPoints += skill => EventAggregator.Invoke(new PlayerGainedSkillPointEvent(this, skill));
         }
     }
 
@@ -422,7 +423,7 @@ public class Player : CombatActor, IPlayer
             Skills.Add(skillType, new Skill(skillType, 1, 1)); //todo: review those skill values
 
         Skills[skillType]?.AddBonus(increase);
-        OnAddedSkillBonus?.Invoke(this, skillType, increase);
+        EventAggregator.Invoke(new PlayerAddedSkillBonusEvent(this, skillType, increase));
     }
 
     public void RemoveSkillBonus(SkillType skillType, sbyte decrease)
@@ -430,7 +431,7 @@ public class Player : CombatActor, IPlayer
         if (decrease == 0) return;
 
         Skills[skillType]?.RemoveBonus(decrease);
-        OnRemovedSkillBonus?.Invoke(this, skillType, decrease);
+        EventAggregator.Invoke(new PlayerRemovedSkillBonusEvent(this, skillType, decrease));
     }
 
     public byte GetSkillPercent(SkillType skill)
@@ -615,7 +616,7 @@ public class Player : CombatActor, IPlayer
             StopFollowing();
         }
 
-        OnChangedChaseMode?.Invoke(this, oldChaseMode, mode);
+        EventAggregator.Invoke(new PlayerChangedChaseModeEvent(this, oldChaseMode, mode));
     }
 
     public void ChangeSecureMode(PvpSecureMode mode)
@@ -656,7 +657,7 @@ public class Player : CombatActor, IPlayer
     {
         if (string.IsNullOrWhiteSpace(message)) return;
 
-        OnSentMessage?.Invoke(this, to, speechType, message);
+        EventAggregator.Invoke(new PlayerSentMessageEvent(this, to, speechType, message));
     }
 
     public void PostSpellCast(ISpell spell)
@@ -752,7 +753,7 @@ public class Player : CombatActor, IPlayer
         if (!HasEnoughMana(mana)) return;
 
         Mana -= mana;
-        OnStatusChanged?.Invoke(this);
+        EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 
     public void ConsumeSoul(ushort soul)
@@ -761,7 +762,7 @@ public class Player : CombatActor, IPlayer
         if (!HasEnoughSoul(soul)) return;
 
         Mana -= soul;
-        OnStatusChanged?.Invoke(this);
+        EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 
     public bool HasEnoughLevel(ushort level)
@@ -775,19 +776,19 @@ public class Player : CombatActor, IPlayer
         if (tile.TopCreatureOnStack is null && tile.TopDownItemOnStack is null) return;
 
         IThing thing = tile.TopCreatureOnStack is null ? tile.TopDownItemOnStack : tile.TopCreatureOnStack;
-        OnLookedAt?.Invoke(this, thing, isClose);
+        EventAggregator.Invoke(new PlayerLookedAtEvent(this, thing, isClose));
     }
 
     public void LookAt(byte containerId, sbyte containerSlot)
     {
         if (Containers[containerId][containerSlot] is not IThing thing) return;
-        OnLookedAt?.Invoke(this, thing, true);
+        EventAggregator.Invoke(new PlayerLookedAtEvent(this, thing, true));
     }
 
     public void LookAt(Slot slot)
     {
         if (Inventory[slot] is not IThing thing) return;
-        OnLookedAt?.Invoke(this, thing, true);
+        EventAggregator.Invoke(new PlayerLookedAtEvent(this, thing, true));
     }
 
     public void Read(IReadable readable)
@@ -804,7 +805,7 @@ public class Player : CombatActor, IPlayer
             return;
         }
 
-        OnWroteText?.Invoke(this, readable, readable.Text);
+        EventAggregator.Invoke(new PlayerWroteTextEvent(this, readable, readable.Text));
     }
 
     public bool Logout(bool forced = false)
@@ -858,7 +859,7 @@ public class Player : CombatActor, IPlayer
         if (Mana == MaxMana) return;
 
         Mana = Mana + increasing >= MaxMana ? MaxMana : Mana + increasing;
-        OnStatusChanged?.Invoke(this);
+        EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 
     public override void Heal(ushort increasing, ICreature healedBy)
@@ -952,7 +953,7 @@ public class Player : CombatActor, IPlayer
 
         if (itemUsed)
         {
-            OnUsedItem?.Invoke(this, onCreature, item);
+            EventAggregator.Invoke(new PlayerUsedItemEvent(this, onCreature, item));
             Cooldowns.Start(CooldownType.UseItem, (uint)item.CooldownTime);
             return Result.Success;
         }
@@ -969,7 +970,7 @@ public class Player : CombatActor, IPlayer
         if (item is not IUsableOnItem usableOnItem) return Result.Fail(InvalidOperation.CannotUseSpells);
 
         usableOnItem.Use(this, onItem);
-        OnUsedItem?.Invoke(this, onItem, item);
+        EventAggregator.Invoke(new PlayerUsedItemEvent(this, onItem, item));
         Cooldowns.Start(CooldownType.UseItem, 1000);
 
         return Result.Success;
@@ -979,7 +980,7 @@ public class Player : CombatActor, IPlayer
     {
         if (!Cooldowns.Expired(CooldownType.UseItem))
         {
-            OnExhausted?.Invoke(this);
+            EventAggregator.Invoke(new PlayerExhaustedEvent(this));
             return Result.NotPossible;
         }
 
@@ -1000,7 +1001,7 @@ public class Player : CombatActor, IPlayer
             _ => false
         };
 
-        if (result) OnUsedItem?.Invoke(this, onItem, item);
+        if (result) EventAggregator.Invoke(new PlayerUsedItemEvent(this, onItem, item));
         Cooldowns.Start(CooldownType.UseItem, 1000);
 
         return Result.Success;
@@ -1157,7 +1158,7 @@ public class Player : CombatActor, IPlayer
     {
         if (from is null || speechType == SpeechType.None || string.IsNullOrWhiteSpace(message)) return;
 
-        OnHear?.Invoke(from, this, speechType, message);
+        EventAggregator.Invoke(new CreatureHearEvent(from, this, speechType, message));
     }
 
     public void ReceivePayment(IEnumerable<IItem> coins, ulong total)
@@ -1507,7 +1508,7 @@ public class Player : CombatActor, IPlayer
         if (SoulPoints == MaxSoulPoints) return;
 
         SoulPoints = SoulPoints + increasing >= MaxSoulPoints ? MaxSoulPoints : (byte)(SoulPoints + increasing);
-        OnStatusChanged?.Invoke(this);
+        EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 
     public long ApplyStaminaEffectOnExperienceGain(long experience)
@@ -1594,7 +1595,7 @@ public class Player : CombatActor, IPlayer
     {
         if (!Cooldowns.Expired(CooldownType.UseItem))
         {
-            OnExhausted?.Invoke(this);
+            EventAggregator.Invoke(new PlayerExhaustedEvent(this));
             {
                 return Result.Fail(InvalidOperation.Exhausted);
             }
@@ -1650,7 +1651,7 @@ public class Player : CombatActor, IPlayer
             ChangeSpeedLevel(RawSpeed);
         }
 
-        OnLevelAdvanced?.Invoke(this, type, fromLevel, toLevel);
+        EventAggregator.Invoke(new PlayerLevelAdvancedEvent(this, type, fromLevel, toLevel));
     }
 
     private void OnLevelRegress(SkillType type, int fromLevel, int toLevel)
@@ -1667,7 +1668,7 @@ public class Player : CombatActor, IPlayer
             ChangeSpeedLevel(RawSpeed);
         }
 
-        OnLevelRegressed?.Invoke(this, type, fromLevel, toLevel);
+        EventAggregator.Invoke(new PlayerLevelRegressedEvent(this, type, fromLevel, toLevel));
     }
 
     public void ResetMana()
@@ -1766,7 +1767,7 @@ public class Player : CombatActor, IPlayer
     public void ChangeOnlineStatus(bool online)
     {
         Online = online;
-        OnChangedOnlineStatus?.Invoke(this, online);
+        EventAggregator.Invoke(new PlayerChangedOnlineStatusEvent(this, online));
     }
 
     public override bool CanBlock(DamageType damage)
@@ -1945,22 +1946,6 @@ public class Player : CombatActor, IPlayer
     #endregion
 
     #region Events
-
-    public event PlayerLevelAdvance OnLevelAdvanced;
-    public event PlayerLevelRegress OnLevelRegressed;
-    public event PlayerGainSkillPoint OnGainedSkillPoint;
-    public event ReduceMana OnStatusChanged;
-    public event LookAt OnLookedAt;
-    public event UseItem OnUsedItem;
-    public event ChangeOnlineStatus OnChangedOnlineStatus;
-    public event SendMessageTo OnSentMessage;
-
-    public event Exhaust OnExhausted;
-    public event Hear OnHear;
-    public event ChangeChaseMode OnChangedChaseMode;
-    public event AddSkillBonus OnAddedSkillBonus;
-    public event RemoveSkillBonus OnRemovedSkillBonus;
-    public event WroteText OnWroteText;
 
     #endregion
 }

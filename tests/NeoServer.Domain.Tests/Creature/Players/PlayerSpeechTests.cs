@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Events;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 
@@ -31,11 +34,8 @@ public class PlayerSpeechTests
         var creatureSayEventHandler = new CreatureSayEventHandler(map);
         speaker.OnSay += creatureSayEventHandler.Execute;
 
-        var listener1Heard = false;
-        var listener2Heard = false;
-
-        listener1.OnHear += (_, _, _, _) => listener1Heard = true;
-        listener2.OnHear += (_, _, _, _) => listener2Heard = true;
+        var heardEvents = new List<CreatureHearEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureHearEvent>(e => heardEvents.Add(e));
 
         var yellConfiguration = new YellConfiguration
         {
@@ -48,8 +48,8 @@ public class PlayerSpeechTests
         speaker.Yell("Test yell message", yellConfiguration);
 
         //assert
-        listener1Heard.Should().BeTrue("Listener within yell range should hear the yell");
-        listener2Heard.Should().BeFalse("Listener outside yell range should not hear the yell");
+        heardEvents.Should().Contain(e => e.Receiver == listener1, "Listener within yell range should hear the yell");
+        heardEvents.Should().NotContain(e => e.Receiver == listener2, "Listener outside yell range should not hear the yell");
     }
 
     [Fact]
@@ -74,18 +74,15 @@ public class PlayerSpeechTests
         var creatureSayEventHandler = new CreatureSayEventHandler(map);
         speaker.OnSay += creatureSayEventHandler.Execute;
 
-        var listener1Heard = false;
-        var listener2Heard = false;
-
-        listener1.OnHear += (_, _, _, _) => listener1Heard = true;
-        listener2.OnHear += (_, _, _, _) => listener2Heard = true;
+        var heardEvents = new List<CreatureHearEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureHearEvent>(e => heardEvents.Add(e));
 
         //act
         speaker.Whisper("Test whisper message");
 
         //assert
-        listener1Heard.Should().BeTrue("Listener within whisper range should hear the whisper");
-        listener2Heard.Should().BeFalse("Listener outside whisper range should not hear the whisper");
+        heardEvents.Should().Contain(e => e.Receiver == listener1, "Listener within whisper range should hear the whisper");
+        heardEvents.Should().NotContain(e => e.Receiver == listener2, "Listener outside whisper range should not hear the whisper");
     }
 
     [Fact]
@@ -110,18 +107,15 @@ public class PlayerSpeechTests
         var creatureSayEventHandler = new CreatureSayEventHandler(map);
         speaker.OnSay += creatureSayEventHandler.Execute;
 
-        var listener1Heard = false;
-        var listener2Heard = false;
-
-        listener1.OnHear += (_, _, _, _) => listener1Heard = true;
-        listener2.OnHear += (_, _, _, _) => listener2Heard = true;
+        var heardEvents = new List<CreatureHearEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureHearEvent>(e => heardEvents.Add(e));
 
         //act
         speaker.Say("Test say message", SpeechType.Say);
 
         //assert
-        listener1Heard.Should().BeTrue("Listener within say range and visible should hear the message");
-        listener2Heard.Should().BeFalse("Listener outside say range should not hear the message");
+        heardEvents.Should().Contain(e => e.Receiver == listener1, "Listener within say range and visible should hear the message");
+        heardEvents.Should().NotContain(e => e.Receiver == listener2, "Listener outside say range should not hear the message");
     }
 
     [Fact]
@@ -143,8 +137,8 @@ public class PlayerSpeechTests
         var creatureSayEventHandler = new CreatureSayEventHandler(map);
         speaker.OnSay += creatureSayEventHandler.Execute;
 
-        var listenerHeard = false;
-        listener.OnHear += (_, _, _, _) => listenerHeard = true;
+        var heardEvents = new List<CreatureHearEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureHearEvent>(e => heardEvents.Add(e));
 
         var yellConfiguration = new YellConfiguration
         {
@@ -157,7 +151,7 @@ public class PlayerSpeechTests
         speaker.Yell("Test yell message", yellConfiguration);
 
         //assert
-        listenerHeard.Should().BeTrue("Listener on different floor should hear the yell");
+        heardEvents.Should().Contain(e => e.Receiver == listener, "Listener on different floor should hear the yell");
     }
 
     [Fact]
@@ -179,13 +173,14 @@ public class PlayerSpeechTests
         var creatureSayEventHandler = new CreatureSayEventHandler(map);
         speaker.OnSay += creatureSayEventHandler.Execute;
 
-        var listenerHeard = false;
-        listener.OnHear += (_, _, _, _) => listenerHeard = true;
+        var heardEvents = new List<CreatureHearEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureHearEvent>(e => heardEvents.Add(e));
 
         //act
         speaker.Whisper("Test whisper message");
 
         //assert
-        listenerHeard.Should().BeFalse("Listener on different floor should not hear the whisper");
+        heardEvents.Should().NotContain(e => e.Receiver == listener, "Listener on different floor should not hear the whisper");
     }
+
 }

@@ -1,6 +1,9 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Creatures.Player;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Player;
 
 namespace NeoServer.Domain.Tests.Creature.Players;
@@ -41,12 +44,12 @@ public class PlayerSkillBonusesTests
             [SkillType.Axe] = new(SkillType.Axe, 10)
         });
 
-        var called = false;
-        sut.OnAddedSkillBonus += (_, _, _) => { called = true; };
+        var captured = new List<PlayerAddedSkillBonusEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<PlayerAddedSkillBonusEvent>(e => captured.Add(e));
 
         sut.AddSkillBonus(SkillType.Axe, 0);
 
-        called.Should().BeFalse();
+        captured.Should().BeEmpty();
     }
 
     [Fact]
@@ -75,17 +78,15 @@ public class PlayerSkillBonusesTests
         sut.AddSkillBonus(SkillType.Axe, 10);
         sut.GetSkillBonus(SkillType.Axe).Should().Be(10);
 
-        var eventEncreased = 0;
-        IPlayer eventPlayer = null;
-        sut.OnAddedSkillBonus += (player, _, increased) =>
-        {
-            eventPlayer = player;
-            eventEncreased = increased;
-        };
+        var captured = new List<PlayerAddedSkillBonusEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<PlayerAddedSkillBonusEvent>(e => captured.Add(e));
 
         sut.AddSkillBonus(SkillType.Axe, 5);
-        eventEncreased.Should().Be(5);
-        eventPlayer.Should().BeEquivalentTo(sut);
+
+        captured.Should().HaveCount(1);
+        captured[0].Increase.Should().Be(5);
+        captured[0].Player.Should().BeEquivalentTo(sut);
+        captured[0].Type.Should().Be(SkillType.Axe);
     }
 
     [Fact]
@@ -109,12 +110,12 @@ public class PlayerSkillBonusesTests
             [SkillType.Axe] = new(SkillType.Axe, 10)
         });
 
-        var called = false;
-        sut.OnRemovedSkillBonus += (_, _, _) => { called = true; };
+        var captured = new List<PlayerRemovedSkillBonusEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<PlayerRemovedSkillBonusEvent>(e => captured.Add(e));
 
         sut.RemoveSkillBonus(SkillType.Axe, 0);
 
-        called.Should().BeFalse();
+        captured.Should().BeEmpty();
     }
 
     [Fact]
@@ -141,17 +142,15 @@ public class PlayerSkillBonusesTests
 
         sut.AddSkillBonus(SkillType.Axe, 100);
 
-        var eventDecreased = 0;
-        IPlayer eventPlayer = null;
-        sut.OnRemovedSkillBonus += (player, _, decreased) =>
-        {
-            eventPlayer = player;
-            eventDecreased = decreased;
-        };
+        var captured = new List<PlayerRemovedSkillBonusEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<PlayerRemovedSkillBonusEvent>(e => captured.Add(e));
 
         sut.RemoveSkillBonus(SkillType.Axe, 5);
-        eventDecreased.Should().Be(5);
-        eventPlayer.Should().BeEquivalentTo(sut);
+
+        captured.Should().HaveCount(1);
+        captured[0].Decrease.Should().Be(5);
+        captured[0].Player.Should().BeEquivalentTo(sut);
+        captured[0].Type.Should().Be(SkillType.Axe);
     }
 
     [Fact]

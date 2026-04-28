@@ -18,25 +18,16 @@ public class PlayerEventSubscriber(
     InvalidOperationEventHandler invalidOperationEventHandler,
     CreatureStoppedAttackEventHandler creatureStoppedAttackEventHandler,
     PlayerGainedExperienceEventHandler playerGainedExperienceEventHandler,
-    PlayerManaChangedEventHandler playerManaReducedEventHandler,
-    PlayerLevelAdvancedEventHandler playerLevelAdvancedEventHandler,
-    PlayerLevelRegressedEventHandler playerLevelRegressedEventHandler,
-    PlayerLookedAtEventHandler playerLookedAtEventHandler,
-    PlayerUpdatedSkillPointsEventHandler playerUpdatedSkillPointsEventHandler,
-    PlayerUsedItemEventHandler playerUsedItemEventHandler,
     PlayerJoinedChannelEventHandler playerJoinedChannelEventHandler,
     PlayerExitedChannelEventHandler playerExitedChannelEventHandler,
     PlayerAddToVipListEventHandler playerAddedToVipListEventHandler,
     PlayerLoadedVipListEventHandler playerLoadedVipListEvent,
-    PlayerChangedOnlineStatusEventHandler playerChangedOnlineStatusEventHandler,
-    PlayerSentMessageEventHandler playerSentMessageEventHandler,
     PlayerInviteToPartyEventHandler playerInviteToPartyEventHandler,
     PlayerRevokedPartyInviteEventHandler playerRevokedPartyInviteEventHandler,
     PlayerLeftPartyEventHandler playerLeftPartyEventHandler,
     PlayerInvitedToPartyEventHandler playerInvitedToPartyEventHandler,
     PlayerJoinedPartyEventHandler playerJoinedPartyEventHandler,
     PlayerPassedPartyLeadershipEventHandler playerPassedPartyLeadershipEventHandler,
-    PlayerExhaustedEventHandler playerExhaustedEventHandler,
     PlayerSkullUpdatedEventHandler playerSkullUpdatedEventHandler)
     : ICreatureEventSubscriber
 {
@@ -73,20 +64,12 @@ public class PlayerEventSubscriber(
         player.OnAttackCanceled += creatureStoppedAttackEventHandler.Execute;
         player.OnGainedExperience += playerGainedExperienceEventHandler.Execute;
 
-        player.OnStatusChanged += playerManaReducedEventHandler.Execute;
-        player.OnLevelAdvanced += playerLevelAdvancedEventHandler.Execute;
-        player.OnLevelRegressed += playerLevelRegressedEventHandler.Execute;
-        player.OnLookedAt += playerLookedAtEventHandler.Execute;
-        player.OnGainedSkillPoint += playerUpdatedSkillPointsEventHandler.Execute;
-        player.OnUsedItem += playerUsedItemEventHandler.Execute;
         player.PlayerSkull.OnSkullUpdated += playerSkullUpdatedEventHandler.Execute;
 
         player.Channels.OnJoinedChannel += playerJoinedChannelEventHandler.Execute;
         player.Channels.OnExitedChannel += playerExitedChannelEventHandler.Execute;
         player.Vip.OnAddedToVipList += playerAddedToVipListEventHandler.Execute;
         player.Vip.OnLoadedVipList += playerLoadedVipListEvent.Execute;
-        player.OnChangedOnlineStatus += playerChangedOnlineStatusEventHandler.Execute;
-        player.OnSentMessage += playerSentMessageEventHandler.Execute;
         player.PlayerParty.OnInviteToParty += playerInviteToPartyEventHandler.Execute;
         player.PlayerParty.OnRevokePartyInvite += playerRevokedPartyInviteEventHandler.Execute;
         player.PlayerParty.OnLeftParty += playerLeftPartyEventHandler.Execute;
@@ -94,9 +77,6 @@ public class PlayerEventSubscriber(
         player.PlayerParty.OnRejectedPartyInvite += playerLeftPartyEventHandler.Execute;
         player.PlayerParty.OnJoinedParty += playerJoinedPartyEventHandler.Execute;
         player.PlayerParty.OnPassedPartyLeadership += playerPassedPartyLeadershipEventHandler.Execute;
-        player.OnExhausted += playerExhaustedEventHandler.Execute;
-        player.OnAddedSkillBonus += playerUpdatedSkillPointsEventHandler.Execute;
-        player.OnRemovedSkillBonus += playerUpdatedSkillPointsEventHandler.Execute;
     }
 
     public void Unsubscribe(ICreature creature)
@@ -131,20 +111,12 @@ public class PlayerEventSubscriber(
         player.OnAttackCanceled -= creatureStoppedAttackEventHandler.Execute;
         player.OnGainedExperience -= playerGainedExperienceEventHandler.Execute;
 
-        player.OnStatusChanged -= playerManaReducedEventHandler.Execute;
-        player.OnLevelAdvanced -= playerLevelAdvancedEventHandler.Execute;
-        player.OnLevelRegressed -= playerLevelRegressedEventHandler.Execute;
-        player.OnLookedAt -= playerLookedAtEventHandler.Execute;
-        player.OnGainedSkillPoint -= playerUpdatedSkillPointsEventHandler.Execute;
-        player.OnUsedItem -= playerUsedItemEventHandler.Execute;
         player.PlayerSkull.OnSkullUpdated -= playerSkullUpdatedEventHandler.Execute;
 
         player.Channels.OnJoinedChannel -= playerJoinedChannelEventHandler.Execute;
         player.Channels.OnExitedChannel -= playerExitedChannelEventHandler.Execute;
         player.Vip.OnAddedToVipList -= playerAddedToVipListEventHandler.Execute;
         player.Vip.OnLoadedVipList -= playerLoadedVipListEvent.Execute;
-        player.OnChangedOnlineStatus -= playerChangedOnlineStatusEventHandler.Execute;
-        player.OnSentMessage -= playerSentMessageEventHandler.Execute;
         player.PlayerParty.OnInviteToParty -= playerInviteToPartyEventHandler.Execute;
         player.PlayerParty.OnRevokePartyInvite -= playerRevokedPartyInviteEventHandler.Execute;
         player.PlayerParty.OnLeftParty -= playerLeftPartyEventHandler.Execute;
@@ -152,8 +124,6 @@ public class PlayerEventSubscriber(
         player.PlayerParty.OnJoinedParty -= playerJoinedPartyEventHandler.Execute;
         player.PlayerParty.OnPassedPartyLeadership -= playerPassedPartyLeadershipEventHandler.Execute;
 
-        player.OnAddedSkillBonus -= playerUpdatedSkillPointsEventHandler.Execute;
-        player.OnRemovedSkillBonus += playerUpdatedSkillPointsEventHandler.Execute;
         player.Inventory.OnWeightChanged -= itemAddedToInventoryEventHandler.ExecuteOnWeightChanged;
     }
 }

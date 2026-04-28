@@ -1,6 +1,8 @@
 ﻿using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
@@ -71,7 +73,7 @@ public class Npc : WalkableCreature, INpc
     public void Hear(ICreature from, SpeechType speechType, string message)
     {
         if (from is null || speechType == SpeechType.None || string.IsNullOrWhiteSpace(message)) return;
-        OnHear?.Invoke(from, this, speechType, message);
+        EventAggregator.Invoke(new CreatureHearEvent(from, this, speechType, message));
     }
 
     public void PlayerCloseChannel(IPlayer player)
@@ -134,7 +136,6 @@ public class Npc : WalkableCreature, INpc
 
     #region Events
 
-    public event Hear OnHear;
     public event PlayerCloseChannel OnPlayerCloseChannel;
 
     #endregion
