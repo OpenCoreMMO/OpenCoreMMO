@@ -616,7 +616,7 @@ public class Player : CombatActor, IPlayer
             StopFollowing();
         }
 
-        OnChangedChaseMode?.Invoke(this, oldChaseMode, mode);
+        EventAggregator.Invoke(new PlayerChangedChaseModeEvent(this, oldChaseMode, mode));
     }
 
     public void ChangeSecureMode(PvpSecureMode mode)
@@ -805,7 +805,7 @@ public class Player : CombatActor, IPlayer
             return;
         }
 
-        OnWroteText?.Invoke(this, readable, readable.Text);
+        EventAggregator.Invoke(new PlayerWroteTextEvent(this, readable, readable.Text));
     }
 
     public bool Logout(bool forced = false)
@@ -1947,9 +1947,7 @@ public class Player : CombatActor, IPlayer
 
     #region Events
 
-    public event ChangeChaseMode OnChangedChaseMode;
     public event AddSkillBonus OnAddedSkillBonus;
-    public event WroteText OnWroteText;
 
     #endregion
 }

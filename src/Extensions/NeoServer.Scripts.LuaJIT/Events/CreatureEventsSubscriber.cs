@@ -2,14 +2,12 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Scripts.LuaJIT.Events.Creatures;
 using NeoServer.Scripts.LuaJIT.Events.Npcs;
-using NeoServer.Scripts.LuaJIT.Events.Players;
 
 namespace NeoServer.Scripts.LuaJIT.Events;
 
 public class CreatureEventsSubscriber(
     CreatureOnThinkEventHandler creatureOnThinkEventHandler,
     CreatureOnPrepareDeathEventHandler creatureOnPrepareDeathEventHandler,
-    PlayerOnTextEditEventHandler playerOnTextEditEventHandler,
     CreatureOnAppearEventHandler creatureOnAppearEventHandler,
     CreatureOnDisappearEventHandler creatureOnDisappearEventHandler,
     CreatureOnMoveEventHandler creatureOnMoveEventHandler,
@@ -22,11 +20,6 @@ public class CreatureEventsSubscriber(
         creature.OnThink += creatureOnThinkEventHandler.Execute;
 
         if (creature is ICombatActor actor) actor.OnBeforeDeath += creatureOnPrepareDeathEventHandler.Execute;
-
-        if (creature is IPlayer player)
-        {
-            player.OnWroteText += playerOnTextEditEventHandler.Execute;
-        }
 
         if (creature is INpc npc)
         {
@@ -49,11 +42,6 @@ public class CreatureEventsSubscriber(
         creature.OnThink -= creatureOnThinkEventHandler.Execute;
 
         if (creature is ICombatActor actor) actor.OnBeforeDeath -= creatureOnPrepareDeathEventHandler.Execute;
-
-        if (creature is IPlayer player)
-        {
-            player.OnWroteText -= playerOnTextEditEventHandler.Execute;
-        }
 
         if (creature is INpc npc)
         {
