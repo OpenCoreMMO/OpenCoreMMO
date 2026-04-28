@@ -1,5 +1,8 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using System.Reflection;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers.Player;
 
@@ -109,12 +112,12 @@ public class PlayerSkillBonusesTests
             [SkillType.Axe] = new(SkillType.Axe, 10)
         });
 
-        var called = false;
-        sut.OnRemovedSkillBonus += (_, _, _) => { called = true; };
+        var captured = new List<PlayerRemovedSkillBonusEvent>();
+        SetupEventAggregator<PlayerRemovedSkillBonusEvent>(e => captured.Add(e));
 
         sut.RemoveSkillBonus(SkillType.Axe, 0);
 
-        called.Should().BeFalse();
+        captured.Should().BeEmpty();
     }
 
     [Fact]
@@ -141,17 +144,15 @@ public class PlayerSkillBonusesTests
 
         sut.AddSkillBonus(SkillType.Axe, 100);
 
-        var eventDecreased = 0;
-        IPlayer eventPlayer = null;
-        sut.OnRemovedSkillBonus += (player, _, decreased) =>
-        {
-            eventPlayer = player;
-            eventDecreased = decreased;
-        };
+        var captured = new List<PlayerRemovedSkillBonusEvent>();
+        SetupEventAggregator<PlayerRemovedSkillBonusEvent>(e => captured.Add(e));
 
         sut.RemoveSkillBonus(SkillType.Axe, 5);
-        eventDecreased.Should().Be(5);
-        eventPlayer.Should().BeEquivalentTo(sut);
+
+        captured.Should().HaveCount(1);
+        captured[0].Decrease.Should().Be(5);
+        captured[0].Player.Should().BeEquivalentTo(sut);
+        captured[0].Type.Should().Be(SkillType.Axe);
     }
 
     [Fact]
@@ -181,5 +182,25 @@ public class PlayerSkillBonusesTests
         sut.RemoveSkillBonus(SkillType.Axe, 20);
         sut.GetSkillBonus(SkillType.Axe).Should().Be(-10);
         sut.GetSkillLevel(SkillType.Axe).Should().Be(0);
+    }
+    
+    private static EventAggregator SetupEventAggregator<TEvent>(Action<TEvent> onEvent) where TEvent : IEvent
+    {
+        var sp = new TestServiceProvider();
+        var aggregator = new EventAggregator(sp);
+
+        typeof(EventAggregator).GetProperty("Instance", BindingFlags.NonPublic | BindingFlags.Static)
+            ?.SetValue(null, aggregator);
+
+        var handlersField = typeof(EventAggregator).GetField("_handlers", BindingFlags.NonPublic | BindingFlags.Instance);
+        var handlers = (Dictionary<string, List<Action<IEvent>>>)handlersField?.GetValue(aggregator);
+        handlers[typeof(TEvent).FullName] = new List<Action<IEvent>> { e => onEvent((TEvent)e) };
+
+        return aggregator;
+    }
+
+    private class TestServiceProvider : IServiceProvider
+    {
+        public object GetService(Type serviceType) => null;
     }
 }
