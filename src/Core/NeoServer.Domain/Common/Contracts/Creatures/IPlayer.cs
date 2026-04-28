@@ -38,8 +38,6 @@ public delegate void ReduceMana(IPlayer player);
 
 public delegate void CannotUseSpell(IPlayer player, ISpell spell, InvalidOperation error);
 
-public delegate void PlayerLevelAdvance(IPlayer player, SkillType type, int fromLevel, int toLevel);
-
 public delegate void PlayerLevelRegress(IPlayer player, SkillType type, int fromLevel, int toLevel);
 
 public delegate void LookAt(IPlayer player, IThing thing, bool isClose);
@@ -323,7 +321,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     #region Events
 
-    public event PlayerLevelAdvance OnLevelAdvanced;
     public event PlayerLevelRegress OnLevelRegressed;
     public event PlayerGainSkillPoint OnGainedSkillPoint;
     public event ReduceMana OnStatusChanged;

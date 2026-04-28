@@ -1650,7 +1650,7 @@ public class Player : CombatActor, IPlayer
             ChangeSpeedLevel(RawSpeed);
         }
 
-        OnLevelAdvanced?.Invoke(this, type, fromLevel, toLevel);
+        EventAggregator.Invoke(new PlayerLevelAdvancedEvent(this, type, fromLevel, toLevel));
     }
 
     private void OnLevelRegress(SkillType type, int fromLevel, int toLevel)
@@ -1946,7 +1946,6 @@ public class Player : CombatActor, IPlayer
 
     #region Events
 
-    public event PlayerLevelAdvance OnLevelAdvanced;
     public event PlayerLevelRegress OnLevelRegressed;
     public event PlayerGainSkillPoint OnGainedSkillPoint;
     public event ReduceMana OnStatusChanged;
