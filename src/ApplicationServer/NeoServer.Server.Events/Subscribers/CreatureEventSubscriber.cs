@@ -12,15 +12,12 @@ public class CreatureEventSubscriber(
     CreatureHealedEventHandler creatureHealedEventHandler,
     CreatureChangedAttackTargetEventHandler creatureChangedAttackTargetEventHandler,
     CreatureChangedSpeedEventHandler creatureChangedSpeedEventHandler,
-    CreatureChangedOutfitEventHandler creatureChangedOutfitEventHandler,
     NpcShowShopEventHandler npcShowShopEventHandler,
     NpcCloseShopEventHandler npcCloseShopEventHandler)
     : ICreatureEventSubscriber
 {
     public void Subscribe(ICreature creature)
     {
-        creature.OnChangedOutfit += creatureChangedOutfitEventHandler.Execute;
-
         SubscribeToCombatActor(creature);
 
         if (creature is IShopperNpc shopperNpc)
@@ -43,8 +40,6 @@ public class CreatureEventSubscriber(
 
     public void Unsubscribe(ICreature creature)
     {
-        creature.OnChangedOutfit -= creatureChangedOutfitEventHandler.Execute;
-
         if (creature is ICombatActor combatActor)
         {
             combatActor.OnTargetChanged -= creatureChangedAttackTargetEventHandler.Execute;

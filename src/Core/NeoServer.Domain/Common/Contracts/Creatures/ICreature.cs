@@ -29,20 +29,6 @@ public delegate void Say(ICreature creature, SpeechType type, string message, IC
 
 public delegate void AddCondition(ICreature creature, ICondition condition);
 
-public delegate void ChangeOutfit(ICreature creature, Outfit outfit);
-
-public delegate void Think(ICreature creature, int interval);
-
-public delegate void Appear(ICreature self, ICreature creature);
-
-public delegate void Disappear(ICreature self, ICreature creature);
-
-public delegate void CreatureMove(
-    ICreature self,
-    ICreature creature,
-    Location.Structs.Location fromLocation,
-    Location.Structs.Location toLocation);
-
 public interface ICreature : IMovableThing
 {
     /// <summary>
@@ -143,31 +129,6 @@ public interface ICreature : IMovableThing
     ///     Fires when creature says something
     /// </summary>
     event Say OnSay;
-
-    /// <summary>
-    ///     Fires when creature thinks something
-    /// </summary>
-    event Think OnThink;
-
-    /// <summary>
-    ///     Fires when creature appear
-    /// </summary>
-    event Appear OnAppear;
-
-    /// <summary>
-    ///     Fires when creature disappear
-    /// </summary>
-    event Disappear OnDisappear;
-
-    /// <summary>
-    ///     Fires when creature changes outfit
-    /// </summary>
-    event ChangeOutfit OnChangedOutfit;
-
-    /// <summary>
-    ///     Fires when creature move
-    /// </summary>
-    event CreatureMove OnCreatureMove;
 
     /// <summary>
     ///     Checks if creature can see other creature
