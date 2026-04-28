@@ -294,10 +294,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     void HealSoul(ushort increasing);
 
-    #region Events
-
-    #endregion
-
     void AddEquipmentCondition(Slot slot, ICondition condition);
     void RemoveEquipmentCondition(Slot slot, ConditionType conditionType);
 }
