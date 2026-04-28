@@ -19,7 +19,6 @@ public class PlayerEventSubscriber(
     CreatureStoppedAttackEventHandler creatureStoppedAttackEventHandler,
     PlayerGainedExperienceEventHandler playerGainedExperienceEventHandler,
     PlayerManaChangedEventHandler playerManaReducedEventHandler,
-    PlayerLevelRegressedEventHandler playerLevelRegressedEventHandler,
     PlayerLookedAtEventHandler playerLookedAtEventHandler,
     PlayerUpdatedSkillPointsEventHandler playerUpdatedSkillPointsEventHandler,
     PlayerUsedItemEventHandler playerUsedItemEventHandler,
@@ -73,7 +72,6 @@ public class PlayerEventSubscriber(
         player.OnGainedExperience += playerGainedExperienceEventHandler.Execute;
 
         player.OnStatusChanged += playerManaReducedEventHandler.Execute;
-        player.OnLevelRegressed += playerLevelRegressedEventHandler.Execute;
         player.OnLookedAt += playerLookedAtEventHandler.Execute;
         player.OnGainedSkillPoint += playerUpdatedSkillPointsEventHandler.Execute;
         player.OnUsedItem += playerUsedItemEventHandler.Execute;
@@ -130,7 +128,6 @@ public class PlayerEventSubscriber(
         player.OnGainedExperience -= playerGainedExperienceEventHandler.Execute;
 
         player.OnStatusChanged -= playerManaReducedEventHandler.Execute;
-        player.OnLevelRegressed -= playerLevelRegressedEventHandler.Execute;
         player.OnLookedAt -= playerLookedAtEventHandler.Execute;
         player.OnGainedSkillPoint -= playerUpdatedSkillPointsEventHandler.Execute;
         player.OnUsedItem -= playerUsedItemEventHandler.Execute;

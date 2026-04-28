@@ -1667,7 +1667,7 @@ public class Player : CombatActor, IPlayer
             ChangeSpeedLevel(RawSpeed);
         }
 
-        OnLevelRegressed?.Invoke(this, type, fromLevel, toLevel);
+        EventAggregator.Invoke(new PlayerLevelRegressedEvent(this, type, fromLevel, toLevel));
     }
 
     public void ResetMana()
@@ -1946,7 +1946,6 @@ public class Player : CombatActor, IPlayer
 
     #region Events
 
-    public event PlayerLevelRegress OnLevelRegressed;
     public event PlayerGainSkillPoint OnGainedSkillPoint;
     public event ReduceMana OnStatusChanged;
     public event LookAt OnLookedAt;
