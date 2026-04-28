@@ -91,7 +91,6 @@ public class PlayerEventSubscriber(
         player.PlayerParty.OnPassedPartyLeadership += playerPassedPartyLeadershipEventHandler.Execute;
         player.OnExhausted += playerExhaustedEventHandler.Execute;
         player.OnAddedSkillBonus += playerUpdatedSkillPointsEventHandler.Execute;
-        player.OnRemovedSkillBonus += playerUpdatedSkillPointsEventHandler.Execute;
     }
 
     public void Unsubscribe(ICreature creature)
@@ -145,7 +144,6 @@ public class PlayerEventSubscriber(
         player.PlayerParty.OnPassedPartyLeadership -= playerPassedPartyLeadershipEventHandler.Execute;
 
         player.OnAddedSkillBonus -= playerUpdatedSkillPointsEventHandler.Execute;
-        player.OnRemovedSkillBonus += playerUpdatedSkillPointsEventHandler.Execute;
         player.Inventory.OnWeightChanged -= itemAddedToInventoryEventHandler.ExecuteOnWeightChanged;
     }
 }

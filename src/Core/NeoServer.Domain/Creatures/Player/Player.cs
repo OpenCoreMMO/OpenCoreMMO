@@ -430,7 +430,7 @@ public class Player : CombatActor, IPlayer
         if (decrease == 0) return;
 
         Skills[skillType]?.RemoveBonus(decrease);
-        OnRemovedSkillBonus?.Invoke(this, skillType, decrease);
+        EventAggregator.Invoke(new PlayerRemovedSkillBonusEvent(this, skillType, decrease));
     }
 
     public byte GetSkillPercent(SkillType skill)
@@ -1956,7 +1956,6 @@ public class Player : CombatActor, IPlayer
     public event Hear OnHear;
     public event ChangeChaseMode OnChangedChaseMode;
     public event AddSkillBonus OnAddedSkillBonus;
-    public event RemoveSkillBonus OnRemovedSkillBonus;
     public event WroteText OnWroteText;
 
     #endregion

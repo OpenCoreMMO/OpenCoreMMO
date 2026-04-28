@@ -57,8 +57,6 @@ public delegate void Exhaust(IPlayer player);
 
 public delegate void AddSkillBonus(IPlayer player, SkillType skillType, sbyte increased);
 
-public delegate void RemoveSkillBonus(IPlayer player, SkillType skillType, sbyte decreased);
-
 public delegate void ReadText(IPlayer player, IReadable readable, string text);
 
 public delegate void WroteText(IPlayer player, IReadable readable, string text);
@@ -326,7 +324,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public event Exhaust OnExhausted;
     public event ChangeChaseMode OnChangedChaseMode;
     public event AddSkillBonus OnAddedSkillBonus;
-    public event RemoveSkillBonus OnRemovedSkillBonus;
     public event WroteText OnWroteText;
 
     #endregion
