@@ -36,8 +36,6 @@ public delegate void OpenedContainer(IPlayer player, byte containerId, IContaine
 
 public delegate void CannotUseSpell(IPlayer player, ISpell spell, InvalidOperation error);
 
-public delegate void UseItem(IPlayer player, IThing thing, IUsableOn item);
-
 public delegate void LogIn(IPlayer player);
 
 public delegate void AddToVipList(IPlayer player, uint vipPlayerId, string vipPlayerName);
@@ -311,7 +309,6 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     #region Events
 
-    public event UseItem OnUsedItem;
     public event ChangeOnlineStatus OnChangedOnlineStatus;
     public event SendMessageTo OnSentMessage;
 

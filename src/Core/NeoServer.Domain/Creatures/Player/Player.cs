@@ -952,7 +952,7 @@ public class Player : CombatActor, IPlayer
 
         if (itemUsed)
         {
-            OnUsedItem?.Invoke(this, onCreature, item);
+            EventAggregator.Invoke(new PlayerUsedItemEvent(this, onCreature, item));
             Cooldowns.Start(CooldownType.UseItem, (uint)item.CooldownTime);
             return Result.Success;
         }
@@ -969,7 +969,7 @@ public class Player : CombatActor, IPlayer
         if (item is not IUsableOnItem usableOnItem) return Result.Fail(InvalidOperation.CannotUseSpells);
 
         usableOnItem.Use(this, onItem);
-        OnUsedItem?.Invoke(this, onItem, item);
+        EventAggregator.Invoke(new PlayerUsedItemEvent(this, onItem, item));
         Cooldowns.Start(CooldownType.UseItem, 1000);
 
         return Result.Success;
@@ -1000,7 +1000,7 @@ public class Player : CombatActor, IPlayer
             _ => false
         };
 
-        if (result) OnUsedItem?.Invoke(this, onItem, item);
+        if (result) EventAggregator.Invoke(new PlayerUsedItemEvent(this, onItem, item));
         Cooldowns.Start(CooldownType.UseItem, 1000);
 
         return Result.Success;
@@ -1946,7 +1946,6 @@ public class Player : CombatActor, IPlayer
 
     #region Events
 
-    public event UseItem OnUsedItem;
     public event ChangeOnlineStatus OnChangedOnlineStatus;
     public event SendMessageTo OnSentMessage;
 

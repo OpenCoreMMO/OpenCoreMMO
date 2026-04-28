@@ -19,7 +19,6 @@ public class PlayerEventSubscriber(
     CreatureStoppedAttackEventHandler creatureStoppedAttackEventHandler,
     PlayerGainedExperienceEventHandler playerGainedExperienceEventHandler,
     PlayerUpdatedSkillPointsEventHandler playerUpdatedSkillPointsEventHandler,
-    PlayerUsedItemEventHandler playerUsedItemEventHandler,
     PlayerJoinedChannelEventHandler playerJoinedChannelEventHandler,
     PlayerExitedChannelEventHandler playerExitedChannelEventHandler,
     PlayerAddToVipListEventHandler playerAddedToVipListEventHandler,
@@ -69,7 +68,6 @@ public class PlayerEventSubscriber(
         player.OnAttackCanceled += creatureStoppedAttackEventHandler.Execute;
         player.OnGainedExperience += playerGainedExperienceEventHandler.Execute;
 
-        player.OnUsedItem += playerUsedItemEventHandler.Execute;
         player.PlayerSkull.OnSkullUpdated += playerSkullUpdatedEventHandler.Execute;
 
         player.Channels.OnJoinedChannel += playerJoinedChannelEventHandler.Execute;
@@ -121,7 +119,6 @@ public class PlayerEventSubscriber(
         player.OnAttackCanceled -= creatureStoppedAttackEventHandler.Execute;
         player.OnGainedExperience -= playerGainedExperienceEventHandler.Execute;
 
-        player.OnUsedItem -= playerUsedItemEventHandler.Execute;
         player.PlayerSkull.OnSkullUpdated -= playerSkullUpdatedEventHandler.Execute;
 
         player.Channels.OnJoinedChannel -= playerJoinedChannelEventHandler.Execute;
