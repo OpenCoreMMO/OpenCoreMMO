@@ -775,19 +775,19 @@ public class Player : CombatActor, IPlayer
         if (tile.TopCreatureOnStack is null && tile.TopDownItemOnStack is null) return;
 
         IThing thing = tile.TopCreatureOnStack is null ? tile.TopDownItemOnStack : tile.TopCreatureOnStack;
-        OnLookedAt?.Invoke(this, thing, isClose);
+        EventAggregator.Invoke(new PlayerLookedAtEvent(this, thing, isClose));
     }
 
     public void LookAt(byte containerId, sbyte containerSlot)
     {
         if (Containers[containerId][containerSlot] is not IThing thing) return;
-        OnLookedAt?.Invoke(this, thing, true);
+        EventAggregator.Invoke(new PlayerLookedAtEvent(this, thing, true));
     }
 
     public void LookAt(Slot slot)
     {
         if (Inventory[slot] is not IThing thing) return;
-        OnLookedAt?.Invoke(this, thing, true);
+        EventAggregator.Invoke(new PlayerLookedAtEvent(this, thing, true));
     }
 
     public void Read(IReadable readable)
@@ -1946,7 +1946,6 @@ public class Player : CombatActor, IPlayer
 
     #region Events
 
-    public event LookAt OnLookedAt;
     public event UseItem OnUsedItem;
     public event ChangeOnlineStatus OnChangedOnlineStatus;
     public event SendMessageTo OnSentMessage;

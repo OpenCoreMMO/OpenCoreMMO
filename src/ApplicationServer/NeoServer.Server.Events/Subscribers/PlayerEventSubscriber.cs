@@ -18,7 +18,6 @@ public class PlayerEventSubscriber(
     InvalidOperationEventHandler invalidOperationEventHandler,
     CreatureStoppedAttackEventHandler creatureStoppedAttackEventHandler,
     PlayerGainedExperienceEventHandler playerGainedExperienceEventHandler,
-    PlayerLookedAtEventHandler playerLookedAtEventHandler,
     PlayerUpdatedSkillPointsEventHandler playerUpdatedSkillPointsEventHandler,
     PlayerUsedItemEventHandler playerUsedItemEventHandler,
     PlayerJoinedChannelEventHandler playerJoinedChannelEventHandler,
@@ -70,7 +69,6 @@ public class PlayerEventSubscriber(
         player.OnAttackCanceled += creatureStoppedAttackEventHandler.Execute;
         player.OnGainedExperience += playerGainedExperienceEventHandler.Execute;
 
-        player.OnLookedAt += playerLookedAtEventHandler.Execute;
         player.OnUsedItem += playerUsedItemEventHandler.Execute;
         player.PlayerSkull.OnSkullUpdated += playerSkullUpdatedEventHandler.Execute;
 
@@ -123,7 +121,6 @@ public class PlayerEventSubscriber(
         player.OnAttackCanceled -= creatureStoppedAttackEventHandler.Execute;
         player.OnGainedExperience -= playerGainedExperienceEventHandler.Execute;
 
-        player.OnLookedAt -= playerLookedAtEventHandler.Execute;
         player.OnUsedItem -= playerUsedItemEventHandler.Execute;
         player.PlayerSkull.OnSkullUpdated -= playerSkullUpdatedEventHandler.Execute;
 
