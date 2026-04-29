@@ -1,11 +1,14 @@
 using AutoFixture;
 using Moq;
 using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Creatures.Player.Outfit;
@@ -278,5 +281,45 @@ public class PlayerTests
 
         //assert
         sut.Direction.Should().Be(Direction.North);
+    }
+
+    [Fact]
+    public void SetAsHungry_replaces_regeneration_with_hungry_condition()
+    {
+        var sut = PlayerTestDataBuilder.Build();
+        var regenerationCondition = new Condition(ConditionType.Regeneration, 10000);
+        sut.AddCondition(regenerationCondition);
+
+        sut.SetAsHungry();
+
+        sut.HasCondition(ConditionType.Regeneration).Should().BeFalse();
+        sut.HasCondition(ConditionType.Hungry).Should().BeTrue();
+    }
+
+    [Fact]
+    public void SetAsHungry_does_not_invoke_endaction_of_removed_regeneration_condition()
+    {
+        var endActionInvoked = false;
+        var sut = PlayerTestDataBuilder.Build();
+        var regenerationCondition = new Condition(ConditionType.Regeneration, 10000, () => endActionInvoked = true);
+        sut.AddCondition(regenerationCondition);
+
+        sut.SetAsHungry();
+
+        endActionInvoked.Should().BeFalse();
+    }
+
+    [Fact]
+    public void SetAsHungry_does_not_stack_overflow_when_regeneration_has_endaction_set_to_setashungry()
+    {
+        var sut = PlayerTestDataBuilder.Build();
+        var regenerationCondition = new Condition(ConditionType.Regeneration, 10000, sut.SetAsHungry);
+        sut.AddCondition(regenerationCondition);
+
+        var act = () => sut.SetAsHungry();
+
+        act.Should().NotThrow<StackOverflowException>();
+        sut.HasCondition(ConditionType.Regeneration).Should().BeFalse();
+        sut.HasCondition(ConditionType.Hungry).Should().BeTrue();
     }
 }

@@ -69,7 +69,7 @@ public class ConditionList : IEnumerable<ICondition>
     /// Removes all conditions of the specified condition type from the condition list. If there are no conditions of the specified type, the method does nothing. The cache of conditions is invalidated after the removal.
     /// </summary>
     /// <param name="type"></param>
-    public void RemoveByType(ConditionType type)
+    public void RemoveByType(ConditionType type, bool endCondition = true)
     {
         if (!Conditions.TryGetValue(type, out var conditions)) return;
 
@@ -78,9 +78,12 @@ public class ConditionList : IEnumerable<ICondition>
             return;
         }
 
-        foreach (var condition in conditions)
+        if (endCondition)
         {
-            condition?.End();
+            foreach (var condition in conditions)
+            {
+                condition?.End();
+            }
         }
 
         conditions.Clear();

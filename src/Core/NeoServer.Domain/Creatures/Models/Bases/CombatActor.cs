@@ -92,12 +92,12 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         EventAggregator.Invoke(new CreatureConditionAddedEvent(this, firstCondition));
     }
 
-    public virtual void RemoveCondition(ConditionType type)
+    public virtual void RemoveCondition(ConditionType type, bool endCondition = true)
     {
         var firstCondition = Conditions.GetByType(type).FirstOrDefault();
         if (firstCondition is null) return;
         
-        Conditions.RemoveByType(type);
+        Conditions.RemoveByType(type, endCondition);
 
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, firstCondition));
     }
