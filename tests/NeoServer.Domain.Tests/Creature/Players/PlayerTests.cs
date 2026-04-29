@@ -316,9 +316,7 @@ public class PlayerTests
         var regenerationCondition = new Condition(ConditionType.Regeneration, 10000, sut.SetAsHungry);
         sut.AddCondition(regenerationCondition);
 
-        var act = () => sut.SetAsHungry();
-
-        act.Should().NotThrow<StackOverflowException>();
+        sut.SetAsHungry();
         sut.HasCondition(ConditionType.Regeneration).Should().BeFalse();
         sut.HasCondition(ConditionType.Hungry).Should().BeTrue();
     }
