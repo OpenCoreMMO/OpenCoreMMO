@@ -13,10 +13,6 @@ public delegate bool CanGoToDirection(ICreature creature, Location.Structs.Locat
 
 public delegate void TeleportTo(IWalkableCreature creature, Location.Structs.Location location);
 
-public delegate void Moved(IWalkableCreature creature, Location.Structs.Location fromLocation,
-    Location.Structs.Location toLocation,
-    ICylinderSpectator[] spectators);
-
 public interface IWalkableCreature : ICreature
 {
     ICreature FollowCreature { get; }
@@ -29,7 +25,6 @@ public interface IWalkableCreature : ICreature
     ITileEnterRule TileEnterRule { get; }
 
     event TeleportTo OnTeleported;
-    public event Moved OnCreatureMoved;
 
     /// <summary>
     ///     Decreases creature speed

@@ -1,15 +1,22 @@
-﻿using NeoServer.Domain.Common.Contracts;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
+using NeoServer.Domain.SafeTrade.Request;
 
-namespace NeoServer.Domain.Creatures.Events;
+namespace NeoServer.Server.Events.Creature;
 
-public class CreatureMovedEventHandler : IGameEventHandler
+public class CreatureMovedEventHandler : IApplicationEventHandler<CreatureMovedEvent>
 {
-    public void Execute(ICreature creature, Location fromLocation, Location toLocation,
-        ICylinderSpectator[] spectators)
+    public void Handle(CreatureMovedEvent @event)
     {
+        if (@event is null) return;
+
+        var creature = @event.Creature;
+        var fromLocation = @event.FromLocation;
+        var toLocation = @event.ToLocation;
+        var spectators = @event.Spectators;
+
         foreach (var cylinderSpectator in spectators)
         {
             var spectator = cylinderSpectator.Spectator;
@@ -33,6 +40,8 @@ public class CreatureMovedEventHandler : IGameEventHandler
         }
 
         if (creature is ICombatActor combatActor) combatActor.Tile.MagicField?.CauseDamage(combatActor);
+
+        TradeRequestEventHandler.OnPlayerMoved(creature, fromLocation, toLocation, spectators);
     }
 
     private static void SetCreatureAndSpectatorAsEnemies(ICreature creature, ICreature spectator)

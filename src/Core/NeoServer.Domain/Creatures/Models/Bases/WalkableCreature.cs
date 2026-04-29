@@ -56,7 +56,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
             ExecuteNextAction(this);
         }
         
-        OnCreatureMoved?.Invoke(this, fromTile.Location, toTile.Location, spectators);
+        EventAggregator.Invoke(new CreatureMovedEvent(this, fromTile.Location, toTile.Location, spectators));
 
         foreach (var spectator in spectators)
             spectator.Spectator.OnMove(this, fromTile, toTile);
@@ -364,7 +364,6 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     #region Events
 
     public event TeleportTo OnTeleported;
-    public event Moved OnCreatureMoved;
 
     #endregion
 }
