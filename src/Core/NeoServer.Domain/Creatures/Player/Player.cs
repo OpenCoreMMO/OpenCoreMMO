@@ -1040,7 +1040,7 @@ public class Player : CombatActor, IPlayer
 
     public void SetAsHungry()
     {
-        RemoveCondition(ConditionType.Regeneration);
+        RemoveCondition(ConditionType.Regeneration, false);
         AddCondition(new Condition(ConditionType.Hungry, uint.MaxValue));
     }
 
