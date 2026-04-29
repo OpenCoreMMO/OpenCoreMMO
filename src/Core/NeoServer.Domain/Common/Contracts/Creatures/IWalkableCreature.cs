@@ -28,7 +28,6 @@ public interface IWalkableCreature : ICreature
     bool FirstStep { get; } //remove
     ITileEnterRule TileEnterRule { get; }
 
-    event StopWalk OnCompleteWalking;
     event TeleportTo OnTeleported;
     public event Moved OnCreatureMoved;
 

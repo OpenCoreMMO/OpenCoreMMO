@@ -28,7 +28,6 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         MapTool = mapTool;
         Speed = type.Speed;
         RawSpeed = type.Speed;
-        OnCompleteWalking += ExecuteNextAction;
     }
 
     internal CooldownList Cooldowns { get; } = new();
@@ -51,7 +50,12 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
             _lastStepCost = 2;
         SetDirection(fromTile.Location.DirectionTo(toTile.Location));
 
-        if (_walkingQueue.IsEmpty()) OnCompleteWalking?.Invoke(this);
+        if (_walkingQueue.IsEmpty())
+        {
+            EventAggregator.Invoke(new CreatureCompletedWalkingEvent(this));
+            ExecuteNextAction(this);
+        }
+        
         OnCreatureMoved?.Invoke(this, fromTile.Location, toTile.Location, spectators);
 
         foreach (var spectator in spectators)
@@ -359,7 +363,6 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
     #region Events
 
-    public event StopWalk OnCompleteWalking;
     public event TeleportTo OnTeleported;
     public event Moved OnCreatureMoved;
 

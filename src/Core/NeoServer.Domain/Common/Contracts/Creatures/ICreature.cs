@@ -13,8 +13,6 @@ public delegate void CreatureStateChange();
 
 public delegate void RemoveCreature(ICreature creature);
 
-public delegate void StopWalk(IWalkableCreature creature);
-
 public delegate void Say(ICreature creature, SpeechType type, string message, ICreature receiver = null);
 
 public delegate void AddCondition(ICreature creature, ICondition condition);

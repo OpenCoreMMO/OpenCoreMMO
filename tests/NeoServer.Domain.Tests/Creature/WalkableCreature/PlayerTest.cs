@@ -106,7 +106,7 @@ public class PlayerTest
         var followEvents = new List<CreatureStartedFollowingEvent>();
         var walkEvents = new List<CreatureStartedWalkingEvent>();
         EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedFollowingEvent>(e => followEvents.Add(e));
-        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedWalkingEvent>(e => walkEvents.Add(e));
+        EventAggregatorTestHelper.AddHandler<CreatureStartedWalkingEvent>(e => walkEvents.Add(e));
 
         var creature = new Mock<ICreature>();
         creature.Setup(x => x.Location).Returns(new Location(100, 105, 7));
