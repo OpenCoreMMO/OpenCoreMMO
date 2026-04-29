@@ -11,8 +11,6 @@ namespace NeoServer.Domain.Common.Contracts.Creatures;
 
 public delegate void CreatureStateChange();
 
-public delegate void TurnedToDirection(IWalkableCreature creature, Direction direction);
-
 public delegate void RemoveCreature(ICreature creature);
 
 public delegate void StopWalk(IWalkableCreature creature);
@@ -22,8 +20,6 @@ public delegate void BeforeDeath(ICombatActor creature, ICombatActor killer, int
 public delegate void GainExperience(ICreature creature, long exp);
 
 public delegate void LoseExperience(ICreature creature, long exp);
-
-public delegate void StartWalk(IWalkableCreature creature);
 
 public delegate void Say(ICreature creature, SpeechType type, string message, ICreature receiver = null);
 

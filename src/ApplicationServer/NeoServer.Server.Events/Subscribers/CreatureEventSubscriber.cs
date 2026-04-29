@@ -7,11 +7,8 @@ namespace NeoServer.Server.Events.Subscribers;
 
 public class CreatureEventSubscriber(
     CreatureBlockedAttackEventHandler creatureBlockedAttackEventHandler,
-    CreatureTurnedToDirectionEventHandler creatureTurnToDirectionEventHandler,
-    CreatureStartedWalkingEventHandler creatureStartedWalkingEventHandler,
     CreatureHealedEventHandler creatureHealedEventHandler,
     CreatureChangedAttackTargetEventHandler creatureChangedAttackTargetEventHandler,
-    CreatureChangedSpeedEventHandler creatureChangedSpeedEventHandler,
     NpcShowShopEventHandler npcShowShopEventHandler,
     NpcCloseShopEventHandler npcCloseShopEventHandler)
     : ICreatureEventSubscriber
@@ -25,17 +22,6 @@ public class CreatureEventSubscriber(
             shopperNpc.OnShowShop += npcShowShopEventHandler.Execute;
             shopperNpc.OnCloseShop += npcCloseShopEventHandler.Execute;
         }
-
-        #region WalkableEvents
-
-        if (creature is IWalkableCreature walkableCreature)
-        {
-            walkableCreature.OnChangedSpeed += creatureChangedSpeedEventHandler.Execute;
-            walkableCreature.OnStartedWalking += creatureStartedWalkingEventHandler.Execute;
-            walkableCreature.OnTurnedToDirection += creatureTurnToDirectionEventHandler.Execute;
-        }
-
-        #endregion
     }
 
     public void Unsubscribe(ICreature creature)
@@ -45,13 +31,6 @@ public class CreatureEventSubscriber(
             combatActor.OnTargetChanged -= creatureChangedAttackTargetEventHandler.Execute;
             combatActor.OnBlockedAttack -= creatureBlockedAttackEventHandler.Execute;
             combatActor.OnHeal -= creatureHealedEventHandler.Execute;
-        }
-
-        if (creature is IWalkableCreature walkableCreature)
-        {
-            walkableCreature.OnChangedSpeed -= creatureChangedSpeedEventHandler.Execute;
-            walkableCreature.OnTurnedToDirection -= creatureTurnToDirectionEventHandler.Execute;
-            walkableCreature.OnStartedWalking -= creatureStartedWalkingEventHandler.Execute;
         }
 
         if (creature is IShopperNpc shopperNpc) shopperNpc.OnShowShop -= npcShowShopEventHandler.Execute;

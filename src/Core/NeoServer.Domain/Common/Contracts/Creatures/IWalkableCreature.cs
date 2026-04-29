@@ -8,10 +8,6 @@ namespace NeoServer.Domain.Common.Contracts.Creatures;
 public delegate bool PathFinder(IWalkableCreature creature, Location.Structs.Location target, FindPathParams options,
     ITileEnterRule tileEnterRule, out Direction[] directions);
 
-public delegate void StartFollow(IWalkableCreature creature, ICreature following, FindPathParams fpp);
-
-public delegate void ChangeSpeed(IWalkableCreature creature, ushort speed);
-
 public delegate bool CanGoToDirection(ICreature creature, Location.Structs.Location location, Direction direction,
     ITileEnterRule rule);
 
@@ -32,11 +28,6 @@ public interface IWalkableCreature : ICreature
     bool FirstStep { get; } //remove
     ITileEnterRule TileEnterRule { get; }
 
-    event StartWalk OnStartedWalking;
-    event StopWalk OnStoppedWalking;
-    event TurnedToDirection OnTurnedToDirection;
-    event StartFollow OnStartedFollowing;
-    event ChangeSpeed OnChangedSpeed;
     event StopWalk OnCompleteWalking;
     event TeleportTo OnTeleported;
     public event Moved OnCreatureMoved;
@@ -121,6 +112,4 @@ public interface IWalkableCreature : ICreature
     void TurnTo(Direction direction);
     void Follow(ICreature creature);
     void CancelWalk();
-
-    event StopWalk OnCancelledWalking;
 }

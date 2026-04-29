@@ -70,7 +70,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         if (direction == Direction) return;
 
         SetDirection(direction);
-        OnTurnedToDirection?.Invoke(this, direction);
+        EventAggregator.Invoke(new CreatureTurnedToDirectionEvent(this, direction));
     }
 
     public int StepDelay
@@ -92,13 +92,13 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         if (!HasNextStep) return;
 
         _walkingQueue.Clear();
-        OnStoppedWalking?.Invoke(this);
+        EventAggregator.Invoke(new CreatureStoppedWalkingEvent(this));
     }
-
+    
     public void CancelWalk()
     {
         _walkingQueue.Clear();
-        OnCancelledWalking?.Invoke(this);
+        EventAggregator.Invoke(new CreatureCancelledWalkingEvent(this));
     }
 
     public void StopFollowing()
@@ -165,7 +165,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         _forceUpdateFollowPath = false;
 
         StartFollowing(creature);
-        OnStartedFollowing?.Invoke(this, creature, fpp);
+        EventAggregator.Invoke(new CreatureStartedFollowingEvent(this, creature, fpp));
     }
 
     public virtual bool WalkTo(params Direction[] directions)
@@ -315,7 +315,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
         if (_walkingQueue.IsEmpty()) return true;
 
-        OnStartedWalking?.Invoke(this);
+        EventAggregator.Invoke(new CreatureStartedWalkingEvent(this));
         return true;
     }
 
@@ -354,20 +354,14 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     public void ChangeSpeedLevel(int newSpeed)
     {
         Speed = (ushort)newSpeed;
-        OnChangedSpeed?.Invoke(this, Speed);
+        EventAggregator.Invoke(new CreatureChangedSpeedEvent(this, Speed));
     }
 
     #region Events
 
     public event StopWalk OnCompleteWalking;
-    public event StartWalk OnStartedWalking;
-    public event TurnedToDirection OnTurnedToDirection;
-    public event StartFollow OnStartedFollowing;
-    public event ChangeSpeed OnChangedSpeed;
     public event TeleportTo OnTeleported;
     public event Moved OnCreatureMoved;
-    public event StopWalk OnStoppedWalking;
-    public event StopWalk OnCancelledWalking;
 
     #endregion
 }

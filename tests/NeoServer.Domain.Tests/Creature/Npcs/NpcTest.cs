@@ -2,6 +2,7 @@
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Tests.Helpers;
 
@@ -47,11 +48,10 @@ public class NpcTest
         npcType.Setup(x => x.Name).Returns("Eryn");
         npcType.Setup(x => x.Speed).Returns(200);
 
-        var startedWalking = false;
-
         var sut = NpcTestDataBuilder.Build("Eryn", npcType.Object);
 
-        sut.OnStartedWalking += _ => startedWalking = true;
+        var startedWalkingEvents = new List<CreatureStartedWalkingEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedWalkingEvent>(e => startedWalkingEvents.Add(e));
 
         Thread.Sleep(5_000); //todo: try remove this
 
@@ -59,7 +59,7 @@ public class NpcTest
         var result = sut.WalkRandomStep();
 
         //assert
-        Assert.True(startedWalking);
+        startedWalkingEvents.Should().NotBeEmpty();
         Assert.True(result);
     }
 }

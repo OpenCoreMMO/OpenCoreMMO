@@ -1,6 +1,7 @@
 ﻿using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
@@ -20,7 +21,8 @@ public class PlayerFollowTests
 
         var sut = PlayerTestDataBuilder.Build(hp: 200);
         var enemy = MonsterTestDataBuilder.Build(1);
-        using var monitor = sut.Monitor();
+        var stoppedEvents = new List<CreatureStoppedWalkingEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStoppedWalkingEvent>(e => stoppedEvents.Add(e));
 
         var fpp = new FindPathParams(true, true, true, false, 12, 0, 12);
 
@@ -37,7 +39,7 @@ public class PlayerFollowTests
         sut.IsFollowing.Should().BeFalse();
         sut.FollowCreature.Should().BeNull();
         sut.HasNextStep.Should().BeFalse();
-        monitor.Should().Raise(nameof(sut.OnStoppedWalking));
+        stoppedEvents.Should().NotBeEmpty();
     }
 
     [Fact]
@@ -49,7 +51,8 @@ public class PlayerFollowTests
 
         var sut = PlayerTestDataBuilder.Build(hp: 200);
         var enemy = MonsterTestDataBuilder.Build(1);
-        using var monitor = sut.Monitor();
+        var stoppedEvents = new List<CreatureStoppedWalkingEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStoppedWalkingEvent>(e => stoppedEvents.Add(e));
 
         var fpp = new FindPathParams(true, true, true, false, 12, 0, 12);
 
@@ -66,7 +69,7 @@ public class PlayerFollowTests
         sut.IsFollowing.Should().BeFalse();
         sut.FollowCreature.Should().BeNull();
         sut.HasNextStep.Should().BeFalse();
-        monitor.Should().NotRaise(nameof(sut.OnStoppedWalking));
+        stoppedEvents.Should().BeEmpty();
     }
 
     [Fact]
@@ -78,7 +81,8 @@ public class PlayerFollowTests
 
         var sut = PlayerTestDataBuilder.Build(hp: 200);
         var enemy = MonsterTestDataBuilder.Build(1000);
-        using var monitor = sut.Monitor();
+        var stoppedEvents = new List<CreatureStoppedWalkingEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStoppedWalkingEvent>(e => stoppedEvents.Add(e));
 
         var fpp = new FindPathParams(true, true, true, false, 12, 0, 12);
 
@@ -98,7 +102,7 @@ public class PlayerFollowTests
         sut.IsFollowing.Should().BeFalse();
         sut.FollowCreature.Should().BeNull();
         sut.HasNextStep.Should().BeFalse();
-        monitor.Should().Raise(nameof(sut.OnStoppedWalking));
+        stoppedEvents.Should().NotBeEmpty();
     }
 
     [Fact]
@@ -110,7 +114,8 @@ public class PlayerFollowTests
 
         var sut = PlayerTestDataBuilder.Build(hp: 200);
         var enemy = MonsterTestDataBuilder.Build(100);
-        using var monitor = sut.Monitor();
+        var stoppedEvents = new List<CreatureStoppedWalkingEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStoppedWalkingEvent>(e => stoppedEvents.Add(e));
 
         var fpp = new FindPathParams(true, true, true, false, 12, 0, 12);
 
@@ -125,7 +130,7 @@ public class PlayerFollowTests
         //assert
         sut.IsFollowing.Should().BeFalse();
         sut.FollowCreature.Should().BeNull();
-        monitor.Should().Raise(nameof(sut.OnStoppedWalking));
+        stoppedEvents.Should().NotBeEmpty();
     }
 
     [Fact]
@@ -137,7 +142,8 @@ public class PlayerFollowTests
 
         var sut = PlayerTestDataBuilder.Build(hp: 200);
         var enemy = MonsterTestDataBuilder.Build(100);
-        using var monitor = sut.Monitor();
+        var stoppedEvents = new List<CreatureStoppedWalkingEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStoppedWalkingEvent>(e => stoppedEvents.Add(e));
 
         var fpp = new FindPathParams(true, true, true, false, 12, 0, 12);
 
@@ -154,7 +160,7 @@ public class PlayerFollowTests
         //assert
         sut.IsFollowing.Should().BeFalse();
         sut.FollowCreature.Should().BeNull();
-        monitor.Should().Raise(nameof(sut.OnStoppedWalking));
+        stoppedEvents.Should().NotBeEmpty();
     }
 
     [Fact]
@@ -166,7 +172,8 @@ public class PlayerFollowTests
 
         var sut = PlayerTestDataBuilder.Build(hp: 200);
         var otherPlayer = PlayerTestDataBuilder.Build(hp: 200);
-        using var monitor = sut.Monitor();
+        var stoppedEvents = new List<CreatureStoppedWalkingEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStoppedWalkingEvent>(e => stoppedEvents.Add(e));
 
         var fpp = new FindPathParams(true, true, true, false, 12, 0, 12);
 
@@ -183,7 +190,7 @@ public class PlayerFollowTests
         //assert
         sut.IsFollowing.Should().BeFalse();
         sut.FollowCreature.Should().BeNull();
-        monitor.Should().Raise(nameof(sut.OnStoppedWalking));
+        stoppedEvents.Should().NotBeEmpty();
     }
 
     [Fact]
@@ -195,7 +202,8 @@ public class PlayerFollowTests
 
         var sut = PlayerTestDataBuilder.Build(hp: 200);
         var enemy = MonsterTestDataBuilder.Build(100);
-        using var monitor = sut.Monitor();
+        var stoppedEvents = new List<CreatureStoppedWalkingEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStoppedWalkingEvent>(e => stoppedEvents.Add(e));
 
         var fpp = new FindPathParams(true, true, true, false, 12, 0, 12);
 
@@ -212,6 +220,6 @@ public class PlayerFollowTests
         //assert
         sut.IsFollowing.Should().BeFalse();
         sut.FollowCreature.Should().BeNull();
-        monitor.Should().Raise(nameof(sut.OnStoppedWalking));
+        stoppedEvents.Should().NotBeEmpty();
     }
 }

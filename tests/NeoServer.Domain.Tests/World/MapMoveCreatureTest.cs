@@ -9,6 +9,7 @@ using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Items;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Map;
@@ -87,7 +88,7 @@ public class MapMoveCreatureTest
         ((IDynamicTile)sut[teleportLocation]).AddItem(new TeleportItem(new ItemType().SetClientId(1),
             teleportLocation));
 
-        player.OnStartedWalking += c => creatureMovementService.MoveCreature(c);
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedWalkingEvent>(e => creatureMovementService.MoveCreature(e.Creature));
 
         //act
         player.WalkTo(Direction.East);
@@ -130,7 +131,7 @@ public class MapMoveCreatureTest
         player.SetCurrentTile((IDynamicTile)sut[100, 100, 7]);
         sut.PlaceCreature(player);
 
-        player.OnStartedWalking += c => creatureMovementService.MoveCreature(c);
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedWalkingEvent>(e => creatureMovementService.MoveCreature(e.Creature));
         player.OnTeleported += (a, b) =>
             new CreatureTeleportedEventHandler(sut, creatureMovementService, staticToDynamicTileServiceMock.Object)
                 .Execute(a, b);

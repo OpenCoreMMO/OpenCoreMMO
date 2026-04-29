@@ -10,7 +10,6 @@ using NeoServer.Server.Events.Player.Party;
 namespace NeoServer.Server.Events.Subscribers;
 
 public class PlayerEventSubscriber(
-    PlayerWalkCancelledEventHandler playerWalkCancelledEventHandler,
     PlayerClosedContainerEventHandler playerClosedContainerEventHandler,
     PlayerOpenedContainerEventHandler playerOpenedContainerEventHandler,
     ContentModifiedOnContainerEventHandler contentModifiedOnContainerEventHandler,
@@ -35,8 +34,6 @@ public class PlayerEventSubscriber(
     {
         if (creature is not IPlayer player) return;
 
-        player.OnStoppedWalking += playerWalkCancelledEventHandler.Execute;
-        player.OnCancelledWalking += playerWalkCancelledEventHandler.Execute;
         player.Containers.OnClosedContainer += playerClosedContainerEventHandler.Execute;
         player.Containers.OnOpenedContainer += playerOpenedContainerEventHandler.Execute;
 
@@ -82,9 +79,6 @@ public class PlayerEventSubscriber(
     public void Unsubscribe(ICreature creature)
     {
         if (creature is not IPlayer player) return;
-
-        player.OnStoppedWalking -= playerWalkCancelledEventHandler.Execute;
-        player.OnCancelledWalking -= playerWalkCancelledEventHandler.Execute;
 
         player.Containers.OnClosedContainer -= playerClosedContainerEventHandler.Execute;
         player.Containers.OnOpenedContainer -= playerOpenedContainerEventHandler.Execute;

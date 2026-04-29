@@ -1,11 +1,15 @@
 using AutoFixture;
 using Moq;
 using NeoServer.Domain.Common.Combat.Structs;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Creatures.Player.Outfit;
@@ -194,7 +198,7 @@ public class PlayerTests
         var enemy = PlayerTestDataBuilder.Build();
 
         var called = false;
-        sut.OnStartedFollowing += (_, _, _) => { called = true; };
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedFollowingEvent>(_ => called = true);
 
         sut.ChangeChaseMode(ChaseMode.Stand);
 
