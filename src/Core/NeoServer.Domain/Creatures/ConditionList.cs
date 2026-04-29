@@ -66,10 +66,16 @@ public class ConditionList : IEnumerable<ICondition>
     }
 
     /// <summary>
-    /// Removes all conditions of the specified condition type from the condition list. If there are no conditions of the specified type, the method does nothing. The cache of conditions is invalidated after the removal.
+    /// Removes all conditions of the specified condition type from the condition list.
+    /// If there are no conditions of the specified type, the method does nothing.
+    /// The cache of conditions is invalidated after the removal.
     /// </summary>
-    /// <param name="type"></param>
-    public void RemoveByType(ConditionType type)
+    /// <param name="type">The type of conditions to remove from the condition list.</param>
+    /// <param name="endCondition">
+    /// <see langword="true"/> to invoke <see cref="ICondition.End()"/> for each removed condition before clearing them;
+    /// otherwise, <see langword="false"/> to remove the conditions without invoking their end actions.
+    /// </param>
+    public void RemoveByType(ConditionType type, bool endCondition = true)
     {
         if (!Conditions.TryGetValue(type, out var conditions)) return;
 
@@ -78,9 +84,12 @@ public class ConditionList : IEnumerable<ICondition>
             return;
         }
 
-        foreach (var condition in conditions)
+        if (endCondition)
         {
-            condition?.End();
+            foreach (var condition in conditions)
+            {
+                condition?.End();
+            }
         }
 
         conditions.Clear();
