@@ -6,7 +6,6 @@ using NeoServer.Server.Events.Creature.Npcs;
 namespace NeoServer.Server.Events.Subscribers;
 
 public class CreatureEventSubscriber(
-    CreatureBlockedAttackEventHandler creatureBlockedAttackEventHandler,
     CreatureHealedEventHandler creatureHealedEventHandler,
     CreatureChangedAttackTargetEventHandler creatureChangedAttackTargetEventHandler,
     NpcShowShopEventHandler npcShowShopEventHandler,
@@ -29,7 +28,6 @@ public class CreatureEventSubscriber(
         if (creature is ICombatActor combatActor)
         {
             combatActor.OnTargetChanged -= creatureChangedAttackTargetEventHandler.Execute;
-            combatActor.OnBlockedAttack -= creatureBlockedAttackEventHandler.Execute;
             combatActor.OnHeal -= creatureHealedEventHandler.Execute;
         }
 
@@ -41,7 +39,6 @@ public class CreatureEventSubscriber(
         if (creature is not ICombatActor combatActor) return;
 
         combatActor.OnTargetChanged += creatureChangedAttackTargetEventHandler.Execute;
-        combatActor.OnBlockedAttack += creatureBlockedAttackEventHandler.Execute;
         combatActor.OnHeal += creatureHealedEventHandler.Execute;
     }
 }

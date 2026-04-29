@@ -1,25 +1,26 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Texts;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Networking.Packets.Outgoing;
 using NeoServer.Networking.Packets.Outgoing.Effect;
 using NeoServer.Networking.Packets.Outgoing.Player;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Network;
 
-namespace NeoServer.Server.Events.Player;
+namespace NeoServer.Networking.EventHandlers.Combat;
 
-public class PlayerGainedExperienceEventHandler
+public class PlayerGainedExperienceEventHandler(IGameServer game)
+    : INetworkingEventHandler<CreatureGainedExperienceEvent>
 {
-    private readonly IGameServer game;
-
-    public PlayerGainedExperienceEventHandler(IGameServer game)
+    public void Handle(CreatureGainedExperienceEvent @event)
     {
-        this.game = game;
-    }
+        if (@event is null) return;
 
-    public void Execute(ICreature player, long experience)
-    {
+        var player = @event.Creature;
+        var experience = @event.Experience;
         var experienceText = experience.ToString();
+
         foreach (var spectator in game.Map.GetPlayersAtPositionZone(player.Location))
         {
             if (!game.CreatureManager.GetPlayerConnection(spectator.CreatureId, out var connection)) continue;

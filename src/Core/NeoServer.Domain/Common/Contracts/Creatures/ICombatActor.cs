@@ -19,13 +19,9 @@ public delegate void Heal(ICombatActor healedCreature, ICreature healingCreature
 
 public delegate void StopAttack(ICombatActor actor);
 
-public delegate void BlockAttack(ICombatActor creature, BlockType block);
-
 public delegate void UseSpell(ICreature creature, ISpell spell);
 
 public delegate void ChangeVisibility(ICombatActor actor);
-
-public delegate void DropLoot(ICombatActor actor, Loot loot);
 
 public interface ICombatActor : IWalkableCreature
 {
@@ -45,12 +41,9 @@ public interface ICombatActor : IWalkableCreature
     ICreature CurrentTarget { get; }
     DamageRecordList ReceivedDamages { get; }
 
-    event BlockAttack OnBlockedAttack;
     event Heal OnHeal;
-    event BeforeDeath OnBeforeDeath;
     event StopAttack OnStoppedAttack;
     event AttackTargetChange OnTargetChanged;
-    event GainExperience OnGainedExperience;
 
     int DefendUsingArmor(int attack);
     void Heal(ushort increasing, ICreature healedBy);
@@ -92,12 +85,10 @@ public interface ICombatActor : IWalkableCreature
     ICondition GetCondition(ConditionType type);
     void OnEnemyAppears(ICombatActor enemy);
     bool IsHostileTo(ICombatActor enemy);
-    event StopAttack OnAttackCanceled;
     void IncreaseDamageReceived(byte percentage);
     void DecreaseDamageReceived(byte percentage);
     void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true);
     void RaiseDroppedLootEvent(ICombatActor actor, Loot loot);
-    event DropLoot OnDroppedLoot;
     void PreAttack(CombatContext combatContext);
     Result CanAttack(CombatParameter combatParameter);
     void StartCooldown(Guid cooldownId, uint duration);

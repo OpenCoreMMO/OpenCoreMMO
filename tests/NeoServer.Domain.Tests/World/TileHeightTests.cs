@@ -74,6 +74,7 @@ public class TileHeightTests
         tile.TopDownItemOnStack.Should().Be(weapon);
     }
 
+    [ThreadBlocking]
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -120,6 +121,7 @@ public class TileHeightTests
         player.Tile.Should().Be(tile2StFloor);
     }
 
+    [ThreadBlocking]
     [Theory]
     [InlineData(2)]
     [InlineData(1)]

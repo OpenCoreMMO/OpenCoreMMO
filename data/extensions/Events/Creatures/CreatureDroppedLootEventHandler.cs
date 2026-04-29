@@ -1,16 +1,21 @@
-﻿using NeoServer.Domain.Common.Contracts;
+﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Creatures.Monster.Loot;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Extensions.Chat;
 using NeoServer.Server.Services;
 
 namespace NeoServer.Extensions.Events.Creatures;
 
-public class CreatureDroppedLootEventHandler : IGameEventHandler
+public class CreatureDroppedLootEventHandler : IApplicationEventHandler<CreatureDroppedLootEvent>
 {
-    public void Execute(ICombatActor deadCreature, Loot loot)
+    public void Handle(CreatureDroppedLootEvent @event)
     {
+        if (@event is null) return;
+
+        var deadCreature = @event.Actor;
+        var loot = @event.Loot;
+
         if (deadCreature is Summon) return;
         if (loot?.Owners is null) return;
 
