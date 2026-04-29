@@ -9,11 +9,13 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.SafeTrade;
 using NeoServer.Domain.SafeTrade.Operations;
+using NeoServer.Domain.SafeTrade.Request;
 using NeoServer.Domain.SafeTrade.Validations;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -66,6 +68,9 @@ public class TradeCancellationTests
 
         //act
         tradeSystem.Request(player, secondPlayer, item);
+
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureMovedEvent>(e =>
+            TradeRequestEventHandler.OnPlayerMoved(e.Creature, e.FromLocation, e.ToLocation, e.Spectators));
 
         player.WalkTo(new Location(104, 100, 7));
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
@@ -153,6 +158,10 @@ public class TradeCancellationTests
 
         //act
         tradeSystem.Request(player, secondPlayer, item);
+
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureMovedEvent>(e =>
+            TradeRequestEventHandler.OnPlayerMoved(e.Creature, e.FromLocation, e.ToLocation, e.Spectators));
+
         player.WalkTo(Direction.East, Direction.East);
 
         creatureMovementService.MoveCreature(player);

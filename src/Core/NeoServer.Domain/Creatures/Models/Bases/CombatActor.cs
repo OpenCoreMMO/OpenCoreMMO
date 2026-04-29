@@ -120,12 +120,12 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual void GainExperience(long experience)
     {
-        OnGainedExperience?.Invoke(this, experience);
+        EventAggregator.Invoke(new CreatureGainedExperienceEvent(this, experience));
     }
 
     public virtual void LoseExperience(long exp)
     {
-        OnLoseExperience?.Invoke(this, exp);
+        EventAggregator.Invoke(new CreatureLoseExperienceEvent(this, exp));
     }
 
     public virtual CombatDamage ReduceDamage(CombatDamage attack)
@@ -143,7 +143,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
                 damage = 0;
 
                 Block();
-                OnBlockedAttack?.Invoke(this, BlockType.Shield);
+                EventAggregator.Invoke(new CreatureBlockedAttackEvent(this, BlockType.Shield));
                 attack.SetNewDamage((ushort)damage);
                 return attack;
             }
@@ -156,7 +156,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
             if (damage <= 0)
             {
                 damage = 0;
-                OnBlockedAttack?.Invoke(this, BlockType.Armor);
+                EventAggregator.Invoke(new CreatureBlockedAttackEvent(this, BlockType.Armor));
             }
         }
 
@@ -166,7 +166,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
         attack = OnImmunityDefense(attack);
 
-        if (attack.Damage <= 0) OnBlockedAttack?.Invoke(this, BlockType.Armor);
+        if (attack.Damage <= 0) EventAggregator.Invoke(new CreatureBlockedAttackEvent(this, BlockType.Armor));
 
         return attack;
     }
@@ -371,7 +371,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public void RaiseDroppedLootEvent(ICombatActor actor, Loot loot)
     {
-        OnDroppedLoot?.Invoke(actor, loot);
+        EventAggregator.Invoke(new CreatureDroppedLootEvent(actor, loot));
     }
 
     public virtual void Kill(ICombatActor enemy, bool lastHit = false, bool unjustified = false)
@@ -428,8 +428,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         foreach (var summon in summonsCopy) summon.OnMasterKilled();
 
         if (by is ICombatActor combatActor)
-            //todo: implements real damage
-            OnBeforeDeath?.Invoke(this, combatActor, 0);
+            EventAggregator.Invoke(new CreatureBeforeDeathEvent(this, combatActor, 0));
 
         EventAggregator.Invoke(new CreatureDeathEvent(this, by));
 
@@ -462,20 +461,14 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     protected void InvokeAttackCanceled()
     {
-        OnAttackCanceled?.Invoke(this);
+        EventAggregator.Invoke(new CreatureAttackCanceledEvent(this));
     }
 
     #region Events
 
     public event Heal OnHeal;
     public event StopAttack OnStoppedAttack;
-    public event StopAttack OnAttackCanceled;
-    public event BlockAttack OnBlockedAttack;
-    public event BeforeDeath OnBeforeDeath;
     public event AttackTargetChange OnTargetChanged;
-    public event GainExperience OnGainedExperience;
-    public event LoseExperience OnLoseExperience;
-    public event DropLoot OnDroppedLoot;
 
     #endregion
 

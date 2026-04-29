@@ -8,6 +8,7 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Services;
@@ -37,13 +38,14 @@ public class PlayerTest
         Assert.Equal(expected, sut.SafeDirection);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void ChangeOutfit_Changes_Outfit_And_Emit_Event()
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
         var changedOutfit = false;
 
-        sut.OnChangedOutfit += (_, _) => changedOutfit = true;
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureChangedOutfitEvent>(_ => changedOutfit = true);
 
         var outfit = new Outfit();
         outfit.Addon = 3;
@@ -70,13 +72,14 @@ public class PlayerTest
         Assert.True(changedOutfit);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void SetTemporaryOutfit_Store_Current_To_LastOutfit_And_Changes_Outfit()
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
         var changedOutfit = false;
 
-        sut.OnChangedOutfit += (_, _) => changedOutfit = true;
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureChangedOutfitEvent>(_ => changedOutfit = true);
 
         sut.SetTemporaryOutfit(1, 1, 1, 1, 1, 1);
 
@@ -96,6 +99,7 @@ public class PlayerTest
         Assert.Equal(0, sut.LastOutfit.Legs);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void BackToOldOutfit_Sets_LastOutfit_To_Outfit_And_Changes_Outfit()
     {
@@ -104,7 +108,7 @@ public class PlayerTest
 
         sut.SetTemporaryOutfit(1, 1, 1, 1, 1, 1);
 
-        sut.OnChangedOutfit += (_, _) => changedOutfit = true;
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureChangedOutfitEvent>(_ => changedOutfit = true);
 
         sut.BackToOldOutfit();
 

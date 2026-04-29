@@ -6,7 +6,6 @@ namespace NeoServer.Domain.Creatures.Events;
 
 public class CreatureEventSubscriber(
     CreatureTeleportedEventHandler creatureTeleportedEventHandler,
-    CreatureMovedEventHandler creatureMovedEventHandler,
     CreatureSayEventHandler creatureSayEventHandler,
     PlayerOpenedContainerEventHandler playerOpenedContainerEventHandler)
     : ICreatureEventSubscriber, IGameEventSubscriber
@@ -16,7 +15,6 @@ public class CreatureEventSubscriber(
         if (creature is IWalkableCreature walkableCreature)
         {
             walkableCreature.OnTeleported += creatureTeleportedEventHandler.Execute;
-            walkableCreature.OnCreatureMoved += creatureMovedEventHandler.Execute;
         }
 
         if (creature is IPlayer player)
@@ -30,7 +28,6 @@ public class CreatureEventSubscriber(
         if (creature is IWalkableCreature walkableCreature)
         {
             walkableCreature.OnTeleported -= creatureTeleportedEventHandler.Execute;
-            walkableCreature.OnCreatureMoved -= creatureMovedEventHandler.Execute;
         }
 
         if (creature is IPlayer player)

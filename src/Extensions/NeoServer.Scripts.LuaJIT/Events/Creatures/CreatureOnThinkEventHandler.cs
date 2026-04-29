@@ -1,36 +1,33 @@
-﻿using NeoServer.Domain.Common.Contracts;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Events.Creatures;
 
-public class CreatureOnThinkEventHandler : IGameEventHandler
+public class CreatureOnThinkEventHandler(
+    ICreatureEvents creatureEvents,
+    INpcs npcs,
+    ILogger logger)
+    : IApplicationEventHandler<CreatureThinkEvent>
 {
-    private readonly ICreatureEvents _creatureEvents;
-    private readonly ILogger _logger;
-    private readonly INpcs _npcs;
-
-    public CreatureOnThinkEventHandler(
-        ICreatureEvents creatureEvents,
-        INpcs npcs,
-        ILogger logger)
+    public void Handle(CreatureThinkEvent @event)
     {
-        _creatureEvents = creatureEvents;
-        _npcs = npcs;
-        _logger = logger;
-    }
+        if (@event is null) return;
 
-    public void Execute(ICreature creature, int interval)
-    {
-        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(creature.CreatureId,
+        var creature = @event.Creature;
+        var interval = @event.Interval;
+
+        foreach (var creatureEvent in creatureEvents.GetCreatureEvents(creature.CreatureId,
                      CreatureEventType.CREATURE_EVENT_THINK))
             creatureEvent.ExecuteOnThink(creature, interval);
 
         if (creature is INpc npc)
         {
-            var npcEvent = _npcs.GetEvents(npc.Name);
+            var npcEvent = npcs.GetEvents(npc.Name);
 
             if (npcEvent == null ||
                 npcEvent.Events == null ||
@@ -39,8 +36,7 @@ public class CreatureOnThinkEventHandler : IGameEventHandler
                 !onThinkEvent.HasValue)
                 return;
 
-            // onThink(self, interval)
-            var callback = new CreatureCallback(npcEvent.LuaScriptInterface, creature, _logger);
+            var callback = new CreatureCallback(npcEvent.LuaScriptInterface, creature, logger);
             if (callback.StartScriptInterface(onThinkEvent.Value))
             {
                 callback.PushSpecificCreature(creature);

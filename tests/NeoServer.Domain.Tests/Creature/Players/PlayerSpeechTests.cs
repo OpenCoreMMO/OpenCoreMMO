@@ -12,6 +12,7 @@ namespace NeoServer.Domain.Tests.Creature.Players;
 
 public class PlayerSpeechTests
 {
+    [ThreadBlocking]
     [Fact]
     public void Player_yell_should_be_heard_by_creatures_within_range()
     {
@@ -52,6 +53,7 @@ public class PlayerSpeechTests
         heardEvents.Should().NotContain(e => e.Receiver == listener2, "Listener outside yell range should not hear the yell");
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_whisper_should_be_heard_by_creatures_within_range()
     {
@@ -85,6 +87,7 @@ public class PlayerSpeechTests
         heardEvents.Should().NotContain(e => e.Receiver == listener2, "Listener outside whisper range should not hear the whisper");
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_say_should_be_heard_by_visible_creatures()
     {
@@ -118,6 +121,7 @@ public class PlayerSpeechTests
         heardEvents.Should().NotContain(e => e.Receiver == listener2, "Listener outside say range should not hear the message");
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_yell_should_be_heard_across_floors()
     {
@@ -154,6 +158,7 @@ public class PlayerSpeechTests
         heardEvents.Should().Contain(e => e.Receiver == listener, "Listener on different floor should hear the yell");
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_whisper_should_not_be_heard_across_floors()
     {

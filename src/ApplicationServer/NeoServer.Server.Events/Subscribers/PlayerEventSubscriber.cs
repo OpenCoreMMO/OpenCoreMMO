@@ -10,14 +10,12 @@ using NeoServer.Server.Events.Player.Party;
 namespace NeoServer.Server.Events.Subscribers;
 
 public class PlayerEventSubscriber(
-    PlayerWalkCancelledEventHandler playerWalkCancelledEventHandler,
     PlayerClosedContainerEventHandler playerClosedContainerEventHandler,
     PlayerOpenedContainerEventHandler playerOpenedContainerEventHandler,
     ContentModifiedOnContainerEventHandler contentModifiedOnContainerEventHandler,
     PlayerChangedInventoryEventHandler itemAddedToInventoryEventHandler,
     InvalidOperationEventHandler invalidOperationEventHandler,
     CreatureStoppedAttackEventHandler creatureStoppedAttackEventHandler,
-    PlayerGainedExperienceEventHandler playerGainedExperienceEventHandler,
     PlayerJoinedChannelEventHandler playerJoinedChannelEventHandler,
     PlayerExitedChannelEventHandler playerExitedChannelEventHandler,
     PlayerAddToVipListEventHandler playerAddedToVipListEventHandler,
@@ -35,8 +33,6 @@ public class PlayerEventSubscriber(
     {
         if (creature is not IPlayer player) return;
 
-        player.OnStoppedWalking += playerWalkCancelledEventHandler.Execute;
-        player.OnCancelledWalking += playerWalkCancelledEventHandler.Execute;
         player.Containers.OnClosedContainer += playerClosedContainerEventHandler.Execute;
         player.Containers.OnOpenedContainer += playerOpenedContainerEventHandler.Execute;
 
@@ -61,8 +57,6 @@ public class PlayerEventSubscriber(
 
         player.Inventory.OnFailedToAddToSlot += invalidOperationEventHandler.Execute;
         player.OnStoppedAttack += creatureStoppedAttackEventHandler.Execute;
-        player.OnAttackCanceled += creatureStoppedAttackEventHandler.Execute;
-        player.OnGainedExperience += playerGainedExperienceEventHandler.Execute;
 
         player.PlayerSkull.OnSkullUpdated += playerSkullUpdatedEventHandler.Execute;
 
@@ -82,9 +76,6 @@ public class PlayerEventSubscriber(
     public void Unsubscribe(ICreature creature)
     {
         if (creature is not IPlayer player) return;
-
-        player.OnStoppedWalking -= playerWalkCancelledEventHandler.Execute;
-        player.OnCancelledWalking -= playerWalkCancelledEventHandler.Execute;
 
         player.Containers.OnClosedContainer -= playerClosedContainerEventHandler.Execute;
         player.Containers.OnOpenedContainer -= playerOpenedContainerEventHandler.Execute;
@@ -108,8 +99,6 @@ public class PlayerEventSubscriber(
 
         player.Inventory.OnFailedToAddToSlot -= invalidOperationEventHandler.Execute;
         player.OnStoppedAttack -= creatureStoppedAttackEventHandler.Execute;
-        player.OnAttackCanceled -= creatureStoppedAttackEventHandler.Execute;
-        player.OnGainedExperience -= playerGainedExperienceEventHandler.Execute;
 
         player.PlayerSkull.OnSkullUpdated -= playerSkullUpdatedEventHandler.Execute;
 

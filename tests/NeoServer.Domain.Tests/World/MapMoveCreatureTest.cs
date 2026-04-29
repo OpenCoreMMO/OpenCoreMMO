@@ -9,6 +9,7 @@ using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Items;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Map;
@@ -58,6 +59,7 @@ public class MapMoveCreatureTest
         Assert.Equal(new Location(53, 50, 7), player.Location);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_dont_teleport_when_tile_has_teleport_without_destination()
     {
@@ -87,7 +89,7 @@ public class MapMoveCreatureTest
         ((IDynamicTile)sut[teleportLocation]).AddItem(new TeleportItem(new ItemType().SetClientId(1),
             teleportLocation));
 
-        player.OnStartedWalking += c => creatureMovementService.MoveCreature(c);
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedWalkingEvent>(e => creatureMovementService.MoveCreature(e.Creature));
 
         //act
         player.WalkTo(Direction.East);
@@ -98,6 +100,7 @@ public class MapMoveCreatureTest
         player.Location.Z.Should().Be(7);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_teleports_when_tile_has_teleport_with_a_destination()
     {
@@ -130,7 +133,7 @@ public class MapMoveCreatureTest
         player.SetCurrentTile((IDynamicTile)sut[100, 100, 7]);
         sut.PlaceCreature(player);
 
-        player.OnStartedWalking += c => creatureMovementService.MoveCreature(c);
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedWalkingEvent>(e => creatureMovementService.MoveCreature(e.Creature));
         player.OnTeleported += (a, b) =>
             new CreatureTeleportedEventHandler(sut, creatureMovementService, staticToDynamicTileServiceMock.Object)
                 .Execute(a, b);

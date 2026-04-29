@@ -1,37 +1,29 @@
-﻿using NeoServer.Domain.Common.Contracts;
+﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Events.Creatures;
 
-public class CreatureOnMoveEventHandler : IGameEventHandler
+public class CreatureOnMoveEventHandler(
+    INpcs npcs,
+    ILogger logger)
+    : IApplicationEventHandler<CreatureMoveEvent>
 {
-    private readonly ICreatureEvents _creatureEvents;
-    private readonly ILogger _logger;
-    private readonly INpcs _npcs;
-
-    public CreatureOnMoveEventHandler(
-        ICreatureEvents creatureEvents,
-        INpcs npcs,
-        ILogger logger)
+    public void Handle(CreatureMoveEvent @event)
     {
-        _creatureEvents = creatureEvents;
-        _npcs = npcs;
-        _logger = logger;
-    }
+        if (@event is null) return;
 
-    public void Execute(
-        ICreature self,
-        ICreature creature,
-        Location fromLocation,
-        Location toLocation)
-    {
+        var self = @event.Self;
+        var creature = @event.Creature;
+        var fromLocation = @event.FromLocation;
+        var toLocation = @event.ToLocation;
+
         if (self is INpc npc)
         {
-            var npcEvent = _npcs.GetEvents(npc.Name);
+            var npcEvent = npcs.GetEvents(npc.Name);
 
             if (npcEvent == null ||
                 npcEvent.Events == null ||
@@ -40,8 +32,7 @@ public class CreatureOnMoveEventHandler : IGameEventHandler
                 !onMoveEvent.HasValue)
                 return;
 
-            // onCreatureMove(self, creature, oldPosition, newPosition)
-            var callback = new CreatureCallback(npcEvent.LuaScriptInterface, self, _logger);
+            var callback = new CreatureCallback(npcEvent.LuaScriptInterface, self, logger);
             if (callback.StartScriptInterface(onMoveEvent.Value))
             {
                 callback.PushSpecificCreature(self);
@@ -63,7 +54,6 @@ public class CreatureOnMoveEventHandler : IGameEventHandler
                         player.StopShopping();
                     }
 
-                    //onPlayerCloseChannel
                     OnPlayerCloseChannel(npc, player, npcEvent);
                 }
                 else if (npc.CanInteract(toLocation) && npc.IsInteractingWithPlayer(player))
@@ -73,16 +63,6 @@ public class CreatureOnMoveEventHandler : IGameEventHandler
 
                 if (npc.CanSee(player))
                 {
-                    //todo: develop this?
-                    //onPlayerAppear
-                    //void Npc::onPlayerAppear(const std::shared_ptr<Player> &player) {
-                    //if (player->hasFlag(PlayerFlags_t::IgnoredByNpcs) || playerSpectators.contains(player))
-                    //{
-                    //    return;
-                    //}
-                    //playerSpectators.emplace(player);
-                    //manageIdle();
-                    //}
                 }
                 else
                 {
@@ -98,7 +78,7 @@ public class CreatureOnMoveEventHandler : IGameEventHandler
             !onCloseChannelEvent.HasValue)
             return;
 
-        var callback = new CreatureCallback(npcEvent.LuaScriptInterface, npc, _logger);
+        var callback = new CreatureCallback(npcEvent.LuaScriptInterface, npc, logger);
         if (callback.StartScriptInterface(onCloseChannelEvent.Value))
         {
             callback.PushSpecificCreature(npc);

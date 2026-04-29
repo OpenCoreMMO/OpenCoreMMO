@@ -41,14 +41,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     protected virtual string CloseInspectionText => $"{Name}.";
     public Direction LastDirection { get; protected set; }
 
-    public event ChangeOutfit OnChangedOutfit;
     public event Say OnSay;
-
-    public event Think OnThink;
-
-    public event Appear OnAppear;
-    public event Disappear OnDisappear;
-    public event CreatureMove OnCreatureMove;
 
     public IDynamicTile Tile
     {
@@ -108,7 +101,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         Outfit.Change(outfit.LookType, outfit.Head, outfit.Body, outfit.Legs, outfit.Feet, outfit.Addon);
         OriginalOutfit = Outfit.Clone();
 
-        OnChangedOutfit?.Invoke(this, Outfit);
+        EventAggregator.Invoke(new CreatureChangedOutfitEvent(this, Outfit));
     }
 
     public void SetTemporaryOutfit(ushort lookType, byte head, byte body, byte legs, byte feet,
@@ -116,7 +109,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         LastOutfit = Outfit.Clone();
         Outfit.Change(lookType, head, body, legs, feet, addon);
-        OnChangedOutfit?.Invoke(this, Outfit);
+        EventAggregator.Invoke(new CreatureChangedOutfitEvent(this, Outfit));
     }
 
     public virtual void OnSpectatorMoved(ICreature spectator)
@@ -147,7 +140,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         Outfit = LastOutfit;
         LastOutfit = null;
-        OnChangedOutfit?.Invoke(this, Outfit);
+        EventAggregator.Invoke(new CreatureChangedOutfitEvent(this, Outfit));
     }
 
     public byte LightLevel { get; protected set; }
@@ -188,7 +181,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
 
     public virtual void Think(int interval)
     {
-        OnThink?.Invoke(this, interval);
+        EventAggregator.Invoke(new CreatureThinkEvent(this, interval));
     }
 
     public virtual void Appear(Location location, ICylinderSpectator[] spectators)
@@ -199,17 +192,17 @@ public abstract class Creature : IEquatable<Creature>, ICreature
 
     public void OnCreatureAppear(ICreature creature)
     {
-        OnAppear?.Invoke(this, creature);
+        EventAggregator.Invoke(new CreatureAppearEvent(this, creature));
     }
 
     public virtual void OnCreatureDisappear(ICreature creature)
     {
-        OnDisappear?.Invoke(this, creature);
+        EventAggregator.Invoke(new CreatureDisappearEvent(this, creature));
     }
 
     public void OnMove(IWalkableCreature creature, IDynamicTile fromTile, IDynamicTile toTile)
     {
-        OnCreatureMove?.Invoke(this, creature, fromTile.Location, toTile.Location);
+        EventAggregator.Invoke(new CreatureMoveEvent(this, creature, fromTile.Location, toTile.Location));
     }
 
     public void OnMoved(IThing to)

@@ -1,32 +1,27 @@
-﻿using NeoServer.Domain.Common.Contracts;
+﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Events.Creatures;
 
-public class CreatureOnDisappearEventHandler : IGameEventHandler
+public class CreatureOnDisappearEventHandler(
+    INpcs npcs,
+    ILogger logger)
+    : IApplicationEventHandler<CreatureDisappearEvent>
 {
-    private readonly ICreatureEvents _creatureEvents;
-    private readonly ILogger _logger;
-    private readonly INpcs _npcs;
-
-    public CreatureOnDisappearEventHandler(
-        ICreatureEvents creatureEvents,
-        INpcs npcs,
-        ILogger logger)
+    public void Handle(CreatureDisappearEvent @event)
     {
-        _creatureEvents = creatureEvents;
-        _npcs = npcs;
-        _logger = logger;
-    }
+        if (@event is null) return;
 
-    public void Execute(ICreature self, ICreature creature)
-    {
+        var self = @event.Self;
+        var creature = @event.Creature;
+
         if (self is INpc npc)
         {
-            var npcEvent = _npcs.GetEvents(npc.Name);
+            var npcEvent = npcs.GetEvents(npc.Name);
 
             if (npcEvent == null ||
                 npcEvent.Events == null ||
@@ -35,8 +30,7 @@ public class CreatureOnDisappearEventHandler : IGameEventHandler
                 !onDisappearEvent.HasValue)
                 return;
 
-            // onCreatureDisappear(self, creature)
-            var callback = new CreatureCallback(npcEvent.LuaScriptInterface, self, _logger);
+            var callback = new CreatureCallback(npcEvent.LuaScriptInterface, self, logger);
             if (callback.StartScriptInterface(onDisappearEvent.Value))
             {
                 callback.PushSpecificCreature(self);

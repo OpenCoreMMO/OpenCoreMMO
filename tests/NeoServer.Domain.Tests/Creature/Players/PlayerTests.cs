@@ -3,10 +3,13 @@ using Moq;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Player;
@@ -190,6 +193,7 @@ public class PlayerTests
         sut.ChaseMode.Should().Be(ChaseMode.Follow);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void ChangeChaseMode_Follow_InvokeFollow()
     {
@@ -197,7 +201,7 @@ public class PlayerTests
         var enemy = PlayerTestDataBuilder.Build();
 
         var called = false;
-        sut.OnStartedFollowing += (_, _, _) => { called = true; };
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedFollowingEvent>(_ => called = true);
 
         sut.ChangeChaseMode(ChaseMode.Stand);
 
