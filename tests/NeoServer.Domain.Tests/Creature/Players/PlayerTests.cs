@@ -191,6 +191,7 @@ public class PlayerTests
         sut.ChaseMode.Should().Be(ChaseMode.Follow);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void ChangeChaseMode_Follow_InvokeFollow()
     {

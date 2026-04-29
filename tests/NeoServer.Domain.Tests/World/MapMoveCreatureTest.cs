@@ -59,6 +59,7 @@ public class MapMoveCreatureTest
         Assert.Equal(new Location(53, 50, 7), player.Location);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_dont_teleport_when_tile_has_teleport_without_destination()
     {
@@ -99,6 +100,7 @@ public class MapMoveCreatureTest
         player.Location.Z.Should().Be(7);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_teleports_when_tile_has_teleport_with_a_destination()
     {

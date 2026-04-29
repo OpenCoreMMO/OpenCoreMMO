@@ -56,6 +56,7 @@ public class PlayerTest
         Assert.True(sut.IsFollowing);
     }
 
+    [ThreadBlocking]
     [Theory]
     [InlineData(100, 200)]
     [InlineData(300, 0)]
@@ -72,6 +73,7 @@ public class PlayerTest
         captured.Should().NotBeEmpty();
     }
 
+    [ThreadBlocking]
     [Theory]
     [InlineData(100, 400, true)]
     [InlineData(0, 300, false)]
@@ -125,6 +127,7 @@ public class PlayerTest
         Assert.Equal(Direction.East, sut.GetNextStep());
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Stop_following_interrupts_player_walk()
     {
@@ -189,6 +192,7 @@ public class PlayerTest
 
     #region StopAllActions
 
+    [ThreadBlocking]
     [Fact]
     public void Stop_All_Actions_When_IsFollowing()
     {

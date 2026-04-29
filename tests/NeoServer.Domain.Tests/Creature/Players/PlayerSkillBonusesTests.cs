@@ -36,6 +36,7 @@ public class PlayerSkillBonusesTests
         sut.GetSkillBonus(SkillType.Sword).Should().Be(10);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void AddSkillBonus_0_DoNotCallEvent()
     {
@@ -67,6 +68,7 @@ public class PlayerSkillBonusesTests
         sut.GetSkillBonus(SkillType.Axe).Should().Be(15);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void AddSkillBonus_10_CallEvent()
     {
@@ -102,6 +104,7 @@ public class PlayerSkillBonusesTests
         sut.GetSkillBonus(SkillType.Axe).Should().Be(0);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void RemoveSkillBonus_0_DoNotCallEvent()
     {
@@ -132,6 +135,7 @@ public class PlayerSkillBonusesTests
         sut.GetSkillBonus(SkillType.Axe).Should().Be(50);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void RemoveSkillBonus_5_CallEvent()
     {

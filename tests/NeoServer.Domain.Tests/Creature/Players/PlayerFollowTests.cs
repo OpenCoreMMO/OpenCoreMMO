@@ -42,6 +42,7 @@ public class PlayerFollowTests
         stoppedEvents.Should().NotBeEmpty();
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_does_not_emit_stopped_follow_event_if_has_no_further_step()
     {
@@ -72,6 +73,7 @@ public class PlayerFollowTests
         stoppedEvents.Should().BeEmpty();
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_does_not_follow_if_creature_disappears()
     {
@@ -105,6 +107,7 @@ public class PlayerFollowTests
         stoppedEvents.Should().NotBeEmpty();
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_stops_following_when_followed_creature_dies()
     {
@@ -133,6 +136,7 @@ public class PlayerFollowTests
         stoppedEvents.Should().NotBeEmpty();
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_stops_following_when_followed_creature_becomes_invisible()
     {
@@ -163,6 +167,7 @@ public class PlayerFollowTests
         stoppedEvents.Should().NotBeEmpty();
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_stops_following_when_followed_player_logs_out()
     {
@@ -193,6 +198,7 @@ public class PlayerFollowTests
         stoppedEvents.Should().NotBeEmpty();
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_stops_following_when_followed_creature_moves_away()
     {

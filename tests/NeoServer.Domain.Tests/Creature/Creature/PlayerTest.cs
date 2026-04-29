@@ -38,6 +38,7 @@ public class PlayerTest
         Assert.Equal(expected, sut.SafeDirection);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void ChangeOutfit_Changes_Outfit_And_Emit_Event()
     {
@@ -71,6 +72,7 @@ public class PlayerTest
         Assert.True(changedOutfit);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void SetTemporaryOutfit_Store_Current_To_LastOutfit_And_Changes_Outfit()
     {
@@ -97,6 +99,7 @@ public class PlayerTest
         Assert.Equal(0, sut.LastOutfit.Legs);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void BackToOldOutfit_Sets_LastOutfit_To_Outfit_And_Changes_Outfit()
     {

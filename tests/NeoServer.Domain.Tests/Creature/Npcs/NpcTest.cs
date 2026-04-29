@@ -39,6 +39,7 @@ public class NpcTest
         Assert.Equal(SpeechType.Say, speechType);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void WalkRandomStep_Should_Emit_OnStartedWalking()
     {

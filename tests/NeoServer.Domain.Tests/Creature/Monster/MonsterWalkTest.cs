@@ -21,6 +21,7 @@ namespace NeoServer.Domain.Tests.Creature.Monster;
 
 public class MonsterWalkTest
 {
+    [ThreadBlocking]
     [RetryFact(100)]
     public void Monster_that_has_CanPushItems_flag_ignores_objects_in_the_way()
     {
@@ -79,6 +80,7 @@ public class MonsterWalkTest
         sut.Tile.Should().Be(destinationTile);
     }
 
+    [ThreadBlocking]
     [Fact]
     public async Task Monster_without_can_push_items_flag_do_not_walk()
     {
