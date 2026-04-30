@@ -588,7 +588,7 @@ public class Monster : WalkableMonster, IMonster
         }
     }
 
-    internal void ChangeAttackTarget(ICreature creature)
+    public void ChangeAttackTarget(ICreature creature)
     {
         if (creature is null) return;
         if (creature.Equals(this)) return;

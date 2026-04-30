@@ -11,8 +11,6 @@ using NeoServer.Domain.Creatures.Monster.Loot;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
-public delegate void AttackTargetChange(ICombatActor actor, uint oldTargetId, uint newTargetId);
-
 public delegate void ManaChange(ICombatActor actor, ICreature attacker, CombatDamage damage);
 
 public delegate void UseSpell(ICreature creature, ISpell spell);
@@ -36,8 +34,6 @@ public interface ICombatActor : IWalkableCreature
     ConditionList Conditions { get; }
     ICreature CurrentTarget { get; }
     DamageRecordList ReceivedDamages { get; }
-
-    event AttackTargetChange OnTargetChanged;
 
     int DefendUsingArmor(int attack);
     void Heal(ushort increasing, ICreature healedBy);

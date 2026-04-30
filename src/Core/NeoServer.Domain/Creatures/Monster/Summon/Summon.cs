@@ -14,11 +14,6 @@ public class Summon : Monster
         if (master is not null)
         {
             Master.Summons.Add(this);
-
-            if (master is ICombatActor actor)
-            {
-                actor.OnTargetChanged += OnMasterTargetChange;
-            }
         }
     }
 
@@ -120,11 +115,6 @@ public class Summon : Monster
         if (Master is not null)
         {
             Master.Summons.Remove(this);
-
-            if (Master is ICombatActor actor)
-            {
-                actor.OnTargetChanged -= OnMasterTargetChange;
-            }
         }
 
         base.Dismiss();
@@ -189,7 +179,7 @@ public class Summon : Monster
         return Master.CanSee(location) && base.CanSee(Master.Location);
     }
 
-    private void OnMasterTargetChange(ICombatActor master, uint oldTargetId, uint newTargetId)
+    public void OnMasterChangeTarget(ICombatActor master)
     {
         Targets.Clear();
 

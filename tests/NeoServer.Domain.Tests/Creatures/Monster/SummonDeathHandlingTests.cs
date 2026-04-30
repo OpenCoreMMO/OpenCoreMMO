@@ -1,13 +1,16 @@
 using Moq;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Server.Events.Combat;
 using Serilog;
 
 namespace NeoServer.Domain.Tests.Creatures.Monster;
@@ -179,7 +182,7 @@ public class SummonDeathHandlingTests
         summon.SetNewLocation(new Location(100, 102, 7));
 
         // Act
-        master.SetAttackTarget(enemy); // This should trigger OnMasterTargetChange
+        master.SetAttackTarget(enemy);
 
         // Assert
         summon.IsAttacking.Should().BeTrue();
