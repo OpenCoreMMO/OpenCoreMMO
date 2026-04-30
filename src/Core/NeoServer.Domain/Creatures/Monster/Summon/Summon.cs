@@ -69,6 +69,12 @@ public class Summon : Monster
     {
         base.Born(location);
         Awake();
+
+        if (Master is ICombatActor { CurrentTarget: not null } combatMaster)
+        {
+            SetAsEnemy(combatMaster.CurrentTarget);
+            ChangeAttackTarget(combatMaster.CurrentTarget);
+        }
     }
 
     public override void UpdateState()
@@ -101,9 +107,9 @@ public class Summon : Monster
 
         if (CanSee(Master.Location) && State is MonsterState.RandomlyWalking) State = MonsterState.Awake;
 
-        if (Master is IPlayer { CurrentTarget: not null } player)
+        if (Master is ICombatActor { CurrentTarget: not null } combatMaster)
         {
-            ChangeAttackTarget(player.CurrentTarget);
+            ChangeAttackTarget(combatMaster.CurrentTarget);
             return;
         }
 
