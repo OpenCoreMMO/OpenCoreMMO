@@ -8,11 +8,12 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Services;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts;
-using NeoServer.Server.Events.Creature;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -20,20 +21,17 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 {
     private static IGameCreatureManager _gameCreatureManager;
     private static ICreatureEvents _creatureEvents;
-    private static CreatureHealedEventHandler _creatureHealedEventHandler;
     private static ICreatureMovementService _creatureMovementService;
     private static IMap _map;
 
     public CreatureFunctions(
         IGameCreatureManager gameCreatureManager,
         ICreatureEvents creatureEvents,
-        CreatureHealedEventHandler creatureHealedEventHandler,
         ICreatureMovementService creatureMovementService,
         IMap map) : base(nameof(CreatureFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
         _creatureEvents = creatureEvents;
-        _creatureHealedEventHandler = creatureHealedEventHandler;
         _creatureMovementService = creatureMovementService;
         _map = map;
     }
@@ -286,7 +284,8 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         var health = GetNumber<uint>(luaState, 2);
         creature.HealthPoints = Math.Min(health, creature.MaxHealthPoints);
 
-        _creatureHealedEventHandler.Execute(creature, null, 0);
+        if (creature is ICombatActor combatActor)
+            EventAggregator.Invoke(new CreatureHealedEvent(combatActor, null, 0));
 
         Lua.PushBoolean(luaState, true);
         return 1;
@@ -334,7 +333,8 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         creature.HealthPoints = maxHealth;
         creature.HealthPoints = Math.Min(creature.HealthPoints, creature.MaxHealthPoints);
 
-        _creatureHealedEventHandler.Execute(creature, null, 0);
+        if (creature is ICombatActor combatActor)
+            EventAggregator.Invoke(new CreatureHealedEvent(combatActor, null, 0));
 
         Lua.PushBoolean(luaState, true);
         return 1;
@@ -347,7 +347,8 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         if (creature is not null)
         {
             creature.IsHealthHidden = GetBoolean(luaState, 2);
-            _creatureHealedEventHandler.Execute(creature, null, 0);
+            if (creature is ICombatActor combatActor)
+                EventAggregator.Invoke(new CreatureHealedEvent(combatActor, null, 0));
             Lua.PushBoolean(luaState, true);
             return 1;
         }
