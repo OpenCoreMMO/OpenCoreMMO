@@ -274,4 +274,82 @@ public class SummonTests
         summon.Targets.HasTarget(playerY).Should()
             .BeFalse("Summon must not target nearby floor-7 player when its master is on a different floor");
     }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void Monster_summon_follows_master_when_master_has_no_target()
+    {
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+
+        var master = MonsterTestDataBuilder.Build(map: map);
+        master.SetNewLocation(new Location(105, 105, 7));
+
+        var summon = MonsterTestDataBuilder.BuildSummon(master);
+        summon.SetNewLocation(new Location(104, 105, 7));
+
+        map.PlaceCreature(master);
+        map.PlaceCreature(summon);
+
+        ((Domain.Creatures.Monster.Monster)master).Awake();
+        master.UpdateState();
+
+        summon.UpdateState();
+
+        summon.IsAttacking.Should().BeFalse();
+        ((Domain.Creatures.Monster.Summon.Summon)summon).FollowCreature.Should().Be(master);
+    }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void Monster_summon_attacks_master_target_when_master_has_target()
+    {
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+
+        var master = MonsterTestDataBuilder.Build(map: map);
+        master.SetNewLocation(new Location(105, 105, 7));
+
+        var target = PlayerTestDataBuilder.Build(2, "Target");
+        target.SetNewLocation(new Location(106, 105, 7));
+
+        var summon = MonsterTestDataBuilder.BuildSummon(master);
+        summon.SetNewLocation(new Location(104, 105, 7));
+
+        map.PlaceCreature(master);
+        map.PlaceCreature(target);
+        map.PlaceCreature(summon);
+
+        master.SetAsEnemy(target);
+        ((Domain.Creatures.Monster.Monster)master).ChangeAttackTarget(target);
+
+        summon.UpdateState();
+
+        summon.CurrentTarget.Should().Be(target);
+        summon.IsAttacking.Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void Monster_summon_born_attacks_master_existing_target()
+    {
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+
+        var master = MonsterTestDataBuilder.Build(map: map);
+        master.SetNewLocation(new Location(105, 105, 7));
+
+        var target = PlayerTestDataBuilder.Build(2, "Target");
+        target.SetNewLocation(new Location(106, 105, 7));
+
+        var summon = MonsterTestDataBuilder.BuildSummon(master);
+
+        map.PlaceCreature(master);
+        map.PlaceCreature(target);
+
+        master.SetAsEnemy(target);
+        ((Domain.Creatures.Monster.Monster)master).ChangeAttackTarget(target);
+
+        summon.Born(new Location(104, 105, 7));
+
+        summon.CurrentTarget.Should().Be(target);
+        summon.IsAttacking.Should().BeTrue();
+    }
 }

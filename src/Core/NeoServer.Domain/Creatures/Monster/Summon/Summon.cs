@@ -102,7 +102,6 @@ public class Summon : Monster
         if (Master is IMonster { State: MonsterState.RandomlyWalking })
         {
             State = MonsterState.Awake;
-            return;
         }
 
         if (CanSee(Master.Location) && State is MonsterState.RandomlyWalking) State = MonsterState.Awake;
