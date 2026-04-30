@@ -65,7 +65,7 @@ public static class MonsterCombatServiceTestBuilder
     {
         var attackService = AttackServiceTestBuilder.Build(map, pvpType);
         var mapTool = new MapTool(map, new PathFinder(map));
-        var spellService = new SpellService(new SpellCastValidation(mapTool), new Mock<IEventAggregator>().Object, map);
+        var spellService = new SpellService(new SpellCastValidation(mapTool), new Mock<IEventAggregator>().Object, new CreatureSpeechService(map), map);
         var logger = new Mock<ILogger>();
         return new MonsterCombatService(attackService, spellService, logger.Object);
     }

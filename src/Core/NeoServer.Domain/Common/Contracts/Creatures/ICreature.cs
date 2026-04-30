@@ -13,8 +13,6 @@ public delegate void CreatureStateChange();
 
 public delegate void RemoveCreature(ICreature creature);
 
-public delegate void Say(ICreature creature, SpeechType type, string message, ICreature receiver = null);
-
 public delegate void AddCondition(ICreature creature, ICondition condition);
 
 public interface ICreature : IMovableThing
@@ -114,11 +112,6 @@ public interface ICreature : IMovableThing
     Outfit OriginalOutfit { get; set; }
 
     /// <summary>
-    ///     Fires when creature says something
-    /// </summary>
-    event Say OnSay;
-
-    /// <summary>
     ///     Checks if creature can see other creature
     /// </summary>
     bool CanSee(ICreature otherCreature);
@@ -146,11 +139,6 @@ public interface ICreature : IMovableThing
     void BackToOldOutfit();
 
     void Appear(Location.Structs.Location location, ICylinderSpectator[] spectators);
-
-    /// <summary>
-    ///     Says a message
-    /// </summary>
-    void Say(string message, SpeechType talkType, ICreature receiver = null);
 
     /// <summary>
     ///     Thinks something
@@ -189,4 +177,6 @@ public interface ICreature : IMovableThing
     void OnSpectatorChangedVisibility(ICreature spectator);
     void OnMoving(ITile toTile);
     bool CanSee(Location.Structs.Location pos, int viewRangeX, int viewRangeY, int limitRangeOffset = 0);
+    void Say(string message, SpeechType talkType, ICreature receiver);
+    void Say(string message, SpeechType talkType, List<ICreature> receivers);
 }

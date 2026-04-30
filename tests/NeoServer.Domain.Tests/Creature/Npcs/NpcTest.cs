@@ -5,6 +5,7 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Tests.Helpers;
+using NeoServer.Domain.Tests.Helpers.Player;
 
 namespace NeoServer.Domain.Tests.Creature.Npcs;
 
@@ -26,24 +27,25 @@ public class NpcTest
 
         var sut = NpcTestDataBuilder.Build("Eryn", npcType.Object);
 
-        sut.OnSay += (_, b, message, _) =>
+        var listener = PlayerTestDataBuilder.Build(name: "Listener");
+
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureSayEvent>(e =>
         {
-            advertise = message;
-            speechType = b;
-        };
+            advertise = e.Message;
+            speechType = e.SpeechType;
+        });
 
         Thread.Sleep(10_000); //todo: try remove this
-        sut.Advertise();
+        sut.Advertise([listener]);
 
-        Assert.Equal("this is a advertise", advertise);
-        Assert.Equal(SpeechType.Say, speechType);
+        advertise.Should().Be("this is a advertise");
+        speechType.Should().Be(SpeechType.Say);
     }
 
     [ThreadBlocking]
     [Fact]
     public void WalkRandomStep_Should_Emit_OnStartedWalking()
     {
-        //arrange
         var npcType = new Mock<INpcType>();
 
         npcType.Setup(x => x.Name).Returns("Eryn");
@@ -56,10 +58,8 @@ public class NpcTest
 
         Thread.Sleep(5_000); //todo: try remove this
 
-        //act
         var result = sut.WalkRandomStep();
 
-        //assert
         startedWalkingEvents.Should().NotBeEmpty();
         Assert.True(result);
     }

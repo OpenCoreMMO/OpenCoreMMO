@@ -3,6 +3,7 @@ using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Services;
 using NeoServer.Domain.Spells;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Server;
@@ -32,8 +33,9 @@ public class PlayerSayCommandTest
 
         var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
         var mapTool = new MapTool(map, new PathFinder(map));
+        var creatureSpeechService = new CreatureSpeechService(map);
 
-        var spellService = new SpellService(new SpellCastValidation(mapTool), new Mock<IEventAggregator>().Object, map);
+        var spellService = new SpellService(new SpellCastValidation(mapTool), new Mock<IEventAggregator>().Object, creatureSpeechService, map);
 
         var playerSayPacket = new Mock<PlayerSayPacket>(network.Object);
         playerSayPacket.SetupGet(x => x.TalkType).Returns(SpeechType.Private);
@@ -49,7 +51,7 @@ public class PlayerSayCommandTest
         game.Setup(x => x.CreatureManager.TryGetPlayer("receiver", out receiver)).Returns(true);
 
         var sut = new PlayerSayCommand(game.Object, chatChannelStore, scriptManager, spellService, spellListManager,
-            new YellConfiguration());
+            new YellConfiguration(), creatureSpeechService);
 
         //act
         sut.Execute(player.Object, connection.Object, playerSayPacket.Object);

@@ -662,8 +662,6 @@ public class Player : CombatActor, IPlayer
 
     public void PostSpellCast(ISpell spell)
     {
-        const SpeechType talkType = SpeechType.MonsterSay;
-
         if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteMana)) DecreaseMana(spell.ManaConsumption);
 
         if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteSoul)) ConsumeSoul(spell.SoulConsumption);
@@ -671,18 +669,18 @@ public class Player : CombatActor, IPlayer
         UpdateManaSpent(spell.ManaConsumption);
 
         StartCooldown(spell);
-
-        if (!spell.ShouldSay) return;
-
-        if (!string.IsNullOrWhiteSpace(spell.Words)) Say(spell.Words, talkType);
     }
 
-    public void Yell(string message, YellConfiguration yellSettings)
+    public void Yell(string message, List<ICreature> listenersToYell, YellConfiguration yellSettings)
     {
+        if (listenersToYell is null) return;
+
+        if (string.IsNullOrWhiteSpace(message)) return;
+        
         message = message.ToUpper();
         if (Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck))
         {
-            base.Yell(message);
+            base.Yell(message, listenersToYell);
             return;
         }
 
@@ -701,7 +699,7 @@ public class Player : CombatActor, IPlayer
 
             if (allowedWhenPremium && HasPremiumTime)
             {
-                base.Yell(message);
+                base.Yell(message, listenersToYell);
                 Cooldowns.Start(CooldownType.Yell, 30_000); // 30 seconds cooldown
                 return;
             }
@@ -713,7 +711,7 @@ public class Player : CombatActor, IPlayer
             return;
         }
 
-        base.Yell(message);
+        base.Yell(message, listenersToYell);
         Cooldowns.Start(CooldownType.Yell,
             (uint)(yellSettings?.YellCooldownSeconds * 1000 ?? 30_000)); // 30 seconds cooldown
     }

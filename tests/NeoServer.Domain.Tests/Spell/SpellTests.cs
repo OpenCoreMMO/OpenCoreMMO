@@ -2,10 +2,12 @@ using Moq;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Services;
 using NeoServer.Domain.Spells;
 using NeoServer.Domain.Spells.Entities;
 using NeoServer.Domain.Spells.Events;
@@ -29,7 +31,7 @@ public class SpellTests
         var pathFinder = new PathFinder(map);
         var mapTool = new MapTool(map, pathFinder);
         var spellCastValidation = new SpellCastValidation(mapTool);
-        _spellService = new SpellService(spellCastValidation, _eventAggregatorMock.Object, map);
+        _spellService = new SpellService(spellCastValidation, _eventAggregatorMock.Object, new CreatureSpeechService(map), map);
         _spellListManager = new SpellListManager();
     }
 
@@ -347,7 +349,7 @@ public class SpellTests
         var pathFinder = new PathFinder(map);
         var mapTool = new MapTool(map, pathFinder);
         var spellCastValidation = new SpellCastValidation(mapTool);
-        var spellService = new SpellService(spellCastValidation, _eventAggregatorMock.Object, map);
+        var spellService = new SpellService(spellCastValidation, _eventAggregatorMock.Object, new CreatureSpeechService(map), map);
 
         var player = PlayerTestDataBuilder.Build();
         map.PlaceCreature(player); // Place player on the single tile

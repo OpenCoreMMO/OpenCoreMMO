@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System.Linq;
+using Moq;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -235,69 +236,61 @@ public class PlayerTest
         var sut = PlayerTestDataBuilder.Build(hp: 100);
         var messageEmitted = "";
         var speechTypeEmitted = SpeechType.None;
+        var receiver = PlayerTestDataBuilder.Build();
 
         sut.SetTemporaryOutfit(1, 1, 1, 1, 1, 1);
 
-        sut.OnSay += (_, type, message, _) =>
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureSayEvent>(e =>
         {
-            messageEmitted = message;
-            speechTypeEmitted = type;
-        };
+            messageEmitted = e.Message;
+            speechTypeEmitted = e.SpeechType;
+        });
 
-        sut.Say("Hello", SpeechType.Say);
+        sut.Say("Hello", SpeechType.Say, receiver);
 
-        Assert.Equal("Hello", messageEmitted);
-        Assert.Equal(SpeechType.Say, speechTypeEmitted);
+        messageEmitted.Should().Be("Hello");
+        speechTypeEmitted.Should().Be(SpeechType.Say);
     }
 
     [Fact]
     public void Say_To_Receiver_Should_Emit_Event()
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
-        var receiver = new Mock<ICreature>();
+        var receiver = PlayerTestDataBuilder.Build();
         var messageEmitted = "";
         var speechTypeEmitted = SpeechType.None;
         ICreature to = null;
 
         sut.SetTemporaryOutfit(1, 1, 1, 1, 1, 1);
 
-        sut.OnSay += (_, type, message, receiver) =>
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureSayEvent>(e =>
         {
-            messageEmitted = message;
-            speechTypeEmitted = type;
-            to = receiver;
-        };
+            messageEmitted = e.Message;
+            speechTypeEmitted = e.SpeechType;
+            to = e.Receivers?.FirstOrDefault();
+        });
 
-        sut.Say("Hello", SpeechType.Private, receiver.Object);
+        sut.Say("Hello", SpeechType.Private, receiver);
 
-        Assert.Equal("Hello", messageEmitted);
-        Assert.Equal(SpeechType.Private, speechTypeEmitted);
-        Assert.Equal(receiver.Object, to);
+        messageEmitted.Should().Be("Hello");
+        speechTypeEmitted.Should().Be(SpeechType.Private);
+        to.Should().Be(receiver);
     }
 
     [Fact]
     public void Say_Empty_Message_Dont_Emit_Event()
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
-        var receiver = new Mock<ICreature>();
-        string messageEmitted = null;
-        var speechTypeEmitted = SpeechType.None;
-        ICreature to = null;
+        var receiver = PlayerTestDataBuilder.Build();
+        var eventFired = false;
 
         sut.SetTemporaryOutfit(1, 1, 1, 1, 1, 1);
 
-        sut.OnSay += (_, type, message, receiver) =>
-        {
-            messageEmitted = message;
-            speechTypeEmitted = type;
-            to = receiver;
-        };
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureSayEvent>(_ => eventFired = true);
 
-        sut.Say("", SpeechType.Private, receiver.Object);
+        sut.Say("", SpeechType.Private, receiver);
 
-        Assert.Null(messageEmitted);
-        Assert.Equal(SpeechType.None, speechTypeEmitted);
-        Assert.Null(to);
+        eventFired.Should().BeFalse();
     }
 
     [Fact]

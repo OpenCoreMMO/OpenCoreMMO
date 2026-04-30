@@ -71,9 +71,12 @@ public static class ServiceInjection
         builder.AddSingleton<PlayerChannelService>();
         builder.AddSingleton<TargetDetectorService>();
         builder.AddSingleton<ICreatureMovementService, CreatureMovementService>();
+        builder.AddSingleton<ICreatureSpeechService, CreatureSpeechService>();
         builder.AddSingleton<CreatureMovementValidation>();
         builder.AddSingleton<CylinderOperation>();
         builder.AddSingleton<HealService>();
+        builder.AddSingleton<NpcAdvertiseService>();
+        builder.AddSingleton<MonsterYellService>();
 
         //Operations
         builder.AddSingleton<TradeItemExchanger>();
