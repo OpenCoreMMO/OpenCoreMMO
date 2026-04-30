@@ -61,7 +61,7 @@ public abstract class WalkableMonster(
 
     public void MoveAroundEnemy(ICreature enemy)
     {
-        if (!Attacking) return;
+        if (!IsAttacking) return;
 
         if (!Cooldowns.Expired(CooldownType.MoveAroundEnemy)) return;
         Cooldowns.Start(CooldownType.MoveAroundEnemy, (uint)GameRandom.Random.Next(3000, maxValue: 5000));

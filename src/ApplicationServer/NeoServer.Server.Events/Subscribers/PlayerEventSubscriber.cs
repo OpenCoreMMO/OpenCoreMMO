@@ -1,7 +1,6 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Networking.EventHandlers.Creature.Player;
 using NeoServer.Server.Events.Chat;
-using NeoServer.Server.Events.Combat;
 using NeoServer.Server.Events.Items;
 using NeoServer.Server.Events.Player;
 using NeoServer.Server.Events.Player.Containers;
@@ -15,7 +14,6 @@ public class PlayerEventSubscriber(
     ContentModifiedOnContainerEventHandler contentModifiedOnContainerEventHandler,
     PlayerChangedInventoryEventHandler itemAddedToInventoryEventHandler,
     InvalidOperationEventHandler invalidOperationEventHandler,
-    CreatureStoppedAttackEventHandler creatureStoppedAttackEventHandler,
     PlayerJoinedChannelEventHandler playerJoinedChannelEventHandler,
     PlayerExitedChannelEventHandler playerExitedChannelEventHandler,
     PlayerAddToVipListEventHandler playerAddedToVipListEventHandler,
@@ -56,8 +54,6 @@ public class PlayerEventSubscriber(
         player.Inventory.OnWeightChanged += itemAddedToInventoryEventHandler.ExecuteOnWeightChanged;
 
         player.Inventory.OnFailedToAddToSlot += invalidOperationEventHandler.Execute;
-        player.OnStoppedAttack += creatureStoppedAttackEventHandler.Execute;
-
         player.PlayerSkull.OnSkullUpdated += playerSkullUpdatedEventHandler.Execute;
 
         player.Channels.OnJoinedChannel += playerJoinedChannelEventHandler.Execute;
@@ -98,8 +94,6 @@ public class PlayerEventSubscriber(
             itemAddedToInventoryEventHandler.Execute;
 
         player.Inventory.OnFailedToAddToSlot -= invalidOperationEventHandler.Execute;
-        player.OnStoppedAttack -= creatureStoppedAttackEventHandler.Execute;
-
         player.PlayerSkull.OnSkullUpdated -= playerSkullUpdatedEventHandler.Execute;
 
         player.Channels.OnJoinedChannel -= playerJoinedChannelEventHandler.Execute;

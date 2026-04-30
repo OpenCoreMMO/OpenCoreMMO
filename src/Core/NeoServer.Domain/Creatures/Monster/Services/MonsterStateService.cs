@@ -45,7 +45,7 @@ public class MonsterStateService(
         {
             monster.MoveAroundEnemy();
 
-            if (!monster.Attacking)
+            if (!monster.IsAttacking)
             {
                 targetingService.SelectTarget(monsterEntity);
                 return;

@@ -50,7 +50,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.InCombat);
         monster.CurrentTarget.Should().Be(player);
         monster.IsFollowing.Should().BeTrue();
-        monster.Attacking.Should().BeTrue();
+        monster.IsAttacking.Should().BeTrue();
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.Sleeping);
         monster.CurrentTarget.Should().BeNull();
         monster.IsFollowing.Should().BeFalse();
-        monster.Attacking.Should().BeFalse();
+        monster.IsAttacking.Should().BeFalse();
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.RandomlyWalking);
         monster.CurrentTarget.Should().BeNull();
         monster.IsFollowing.Should().BeFalse();
-        monster.Attacking.Should().BeFalse();
+        monster.IsAttacking.Should().BeFalse();
     }
 
     [Fact]
@@ -150,7 +150,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.InCombat);
         monster.CurrentTarget.Should().Be(closestPlayer);
         monster.IsFollowing.Should().BeTrue();
-        monster.Attacking.Should().BeTrue();
+        monster.IsAttacking.Should().BeTrue();
     }
 
     [Fact]
@@ -198,7 +198,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.InCombat);
         monster.CurrentTarget.Should().Be(nearbyPlayer);
         monster.IsFollowing.Should().BeTrue();
-        monster.Attacking.Should().BeTrue();
+        monster.IsAttacking.Should().BeTrue();
     }
 
     [Fact]
@@ -237,7 +237,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.RandomlyWalking);
         monster.CurrentTarget.Should().BeNull();
         monster.IsFollowing.Should().BeFalse();
-        monster.Attacking.Should().BeFalse();
+        monster.IsAttacking.Should().BeFalse();
     }
 
     [Fact]
@@ -277,7 +277,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.InCombat);
         monster.CurrentTarget.Should().Be(closerPlayer); // Should switch to closest
         monster.IsFollowing.Should().BeTrue();
-        monster.Attacking.Should().BeTrue();
+        monster.IsAttacking.Should().BeTrue();
     }
 
     [Fact]
@@ -320,7 +320,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.InCombat);
         monster.CurrentTarget.Should().Be(currentTarget); // Should NOT switch, keep original target
         monster.IsFollowing.Should().BeTrue();
-        monster.Attacking.Should().BeTrue();
+        monster.IsAttacking.Should().BeTrue();
     }
 
     [Fact]
@@ -361,7 +361,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.Escaping);
         monster.CurrentTarget.Should().Be(player); // Monster keeps target while fleeing
         monster.IsFollowing.Should().BeFalse();
-        monster.Attacking.Should().BeTrue(); // Current behavior: monster keeps attacking while fleeing
+        monster.IsAttacking.Should().BeTrue(); // Current behavior: monster keeps attacking while fleeing
 
         // Move monster back into attack range
         map.RemoveCreature(monster);
@@ -375,7 +375,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.Escaping); // Current behavior: monster stays in fleeing state
         monster.CurrentTarget.Should().Be(player);
         monster.IsFollowing.Should().BeFalse();
-        monster.Attacking.Should().BeTrue(); // Current behavior: monster keeps attacking while fleeing
+        monster.IsAttacking.Should().BeTrue(); // Current behavior: monster keeps attacking while fleeing
     }
 
     [Fact]
@@ -417,7 +417,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.RandomlyWalking); // Current behavior: enters idle state
         monster.CurrentTarget.Should().BeNull();
         monster.IsFollowing.Should().BeFalse();
-        monster.Attacking.Should().BeFalse();
+        monster.IsAttacking.Should().BeFalse();
         monster.Targets.Any().Should().BeFalse();
         monster.Conditions.HasAnyConditionOf(ConditionType.Burning).Should().BeTrue();
     }
@@ -441,7 +441,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.Sleeping);
         monster.CurrentTarget.Should().BeNull();
         monster.IsFollowing.Should().BeFalse();
-        monster.Attacking.Should().BeFalse();
+        monster.IsAttacking.Should().BeFalse();
 
         // Add a new enemy (player) entering range
         var player = PlayerTestDataBuilder.Build();
@@ -455,7 +455,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.InCombat);
         monster.CurrentTarget.Should().Be(player);
         monster.IsFollowing.Should().BeTrue();
-        monster.Attacking.Should().BeTrue();
+        monster.IsAttacking.Should().BeTrue();
     }
 
     [Fact]
@@ -493,7 +493,7 @@ public class MonsterCombatTest
         monster.State.Should().Be(MonsterState.Escaping);
         monster.CurrentTarget.Should().Be(player); // Keeps target while fleeing
         monster.IsFollowing.Should().BeFalse(); // Stops following to flee
-        monster.Attacking.Should().BeTrue(); // Current behavior: keeps attacking while fleeing
+        monster.IsAttacking.Should().BeTrue(); // Current behavior: keeps attacking while fleeing
     }
 
     [Fact]
@@ -525,7 +525,7 @@ public class MonsterCombatTest
         sut.State.Should().Be(MonsterState.InCombat);
         sut.CurrentTarget.Should().Be(player);
         sut.IsFollowing.Should().BeTrue();
-        sut.Attacking.Should().BeTrue();
+        sut.IsAttacking.Should().BeTrue();
         sut.Targets.Any().Should().BeTrue();
         sut.Targets.HasTarget(otherMonster).Should().BeFalse(); // Should not have the other monster in the target list
     }
@@ -608,7 +608,7 @@ public class MonsterCombatTest
         sut.State.Should().Be(MonsterState.InCombat);
         sut.CurrentTarget.Should().Be(player);
         sut.IsFollowing.Should().BeTrue();
-        sut.Attacking.Should().BeTrue();
+        sut.IsAttacking.Should().BeTrue();
         sut.HasFollowPath.Should().BeTrue();
     }
 
@@ -665,7 +665,7 @@ public class MonsterCombatTest
         sut.State.Should().Be(MonsterState.InCombat);
         sut.CurrentTarget.Should().Be(playerB); // Should target player B because the path to player A is blocked
         sut.IsFollowing.Should().BeTrue();
-        sut.Attacking.Should().BeTrue();
+        sut.IsAttacking.Should().BeTrue();
     }
 
     [Fact]

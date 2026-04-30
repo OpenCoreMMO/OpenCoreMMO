@@ -221,7 +221,7 @@ public class PlayerTest
         Assert.False(sut.HasNextStep);
         Assert.False(sut.IsFollowing);
         Assert.Null(sut.FollowCreature);
-        Assert.False(sut.Attacking);
+        Assert.False(sut.IsAttacking);
         stoppedEvents.Should().NotBeEmpty();
         Assert.Equal(Direction.None, sut.GetNextStep());
     }
@@ -253,7 +253,7 @@ public class PlayerTest
         Assert.False(sut.HasNextStep);
         Assert.False(sut.IsFollowing);
         Assert.Null(sut.FollowCreature);
-        Assert.False(sut.Attacking);
+        Assert.False(sut.IsAttacking);
         stoppedEvents.Should().NotBeEmpty();
         Assert.Equal(Direction.None, sut.GetNextStep());
     }
@@ -274,10 +274,6 @@ public class PlayerTest
         (map[100, 100, 7] as DynamicTile)?.AddCreature(monster);
         (map[101, 100, 7] as DynamicTile)?.AddCreature(player);
 
-        var stoppedAttackEventEmitted = false;
-
-        player.OnStoppedAttack += _ => stoppedAttackEventEmitted = true;
-
         //act
         player.SetAttackTarget(monster);
         attackService.Execute(new AttackInput(player, monster, PlayerCombatParameterBuilder.Build(player, monster)));
@@ -286,8 +282,7 @@ public class PlayerTest
         Assert.False(player.HasNextStep);
         Assert.False(player.IsFollowing);
         Assert.Null(player.FollowCreature);
-        Assert.False(player.Attacking);
-        Assert.True(stoppedAttackEventEmitted);
+        Assert.False(player.IsAttacking);
         Assert.Equal(Direction.None, player.GetNextStep());
     }
 

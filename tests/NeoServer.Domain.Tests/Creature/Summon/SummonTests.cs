@@ -58,7 +58,7 @@ public class SummonTests
         // Assert
         // The summon should not automatically attack player B just because master changed floors
         // The summon only attacks when the master has a target
-        summon.Attacking.Should().BeFalse();
+        summon.IsAttacking.Should().BeFalse();
         summon.AutoAttackTargetId.Should().Be(0);
     }
 
@@ -214,7 +214,7 @@ public class SummonTests
         // Assert
         summon.Targets.HasTarget(master).Should().BeFalse("Summon should never add its master as a target");
         summon.CurrentTarget.Should().NotBe(master, "Summon should never target its master");
-        summon.Attacking.Should().BeFalse("Summon should not be attacking when trying to attack master");
+        summon.IsAttacking.Should().BeFalse("Summon should not be attacking when trying to attack master");
     }
 
     [Fact]
@@ -265,7 +265,7 @@ public class SummonTests
         // Assert
         // Summon should not be attacking or have an auto-attack target just because master's target is on another floor
         summon.State.Should().Be(MonsterState.RandomlyWalking);
-        summon.Attacking.Should().BeFalse();
+        summon.IsAttacking.Should().BeFalse();
         summon.AutoAttackTargetId.Should().Be(0);
 
         // Summon should not acquire targets that are on floor 7 (nearby creatures) when master is on floor 8

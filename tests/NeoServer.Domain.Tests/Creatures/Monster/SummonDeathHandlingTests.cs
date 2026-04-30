@@ -182,7 +182,7 @@ public class SummonDeathHandlingTests
         master.SetAttackTarget(enemy); // This should trigger OnMasterTargetChange
 
         // Assert
-        summon.Attacking.Should().BeTrue();
+        summon.IsAttacking.Should().BeTrue();
         summon.AutoAttackTargetId.Should().Be(enemy.CreatureId);
     }
 
@@ -197,7 +197,7 @@ public class SummonDeathHandlingTests
         summon.SetAsEnemy(master);
 
         // Assert
-        summon.Attacking.Should().BeFalse();
+        summon.IsAttacking.Should().BeFalse();
         summon.AutoAttackTargetId.Should().Be(0);
     }
 
@@ -213,7 +213,7 @@ public class SummonDeathHandlingTests
         summon1.SetAsEnemy(summon2);
 
         // Assert
-        summon1.Attacking.Should().BeFalse();
+        summon1.IsAttacking.Should().BeFalse();
         summon1.AutoAttackTargetId.Should().Be(0);
     }
 
