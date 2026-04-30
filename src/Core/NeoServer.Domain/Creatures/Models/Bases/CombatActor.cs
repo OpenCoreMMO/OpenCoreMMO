@@ -280,7 +280,15 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
             StopFollowing();
         }
 
-        OnTargetChanged?.Invoke(this, oldAttackTarget, (uint)target?.CreatureId);
+        if (Summons is not null && Summons.Count > 0)
+        {
+            foreach (var summon in Summons)
+            {
+                summon.OnMasterChangeTarget(this);
+            }
+        }
+
+        EventAggregator.Invoke(new CreatureChangedAttackTargetEvent(this, oldAttackTarget, (uint)target?.CreatureId));
         return Result.Success;
     }
 
@@ -476,8 +484,6 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     }
 
     #region Events
-
-    public event AttackTargetChange OnTargetChanged;
 
     #endregion
 
