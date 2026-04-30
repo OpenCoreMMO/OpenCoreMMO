@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -40,8 +41,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     protected virtual string InspectionText => $"{Name}.";
     protected virtual string CloseInspectionText => $"{Name}.";
     public Direction LastDirection { get; protected set; }
-
-    public event Say OnSay;
 
     public IDynamicTile Tile
     {
@@ -173,10 +172,31 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         Location = location;
     }
 
-    public void Say(string message, SpeechType talkType, ICreature receiver = null)
+    public void Say(string message, SpeechType talkType, ICreature receiver)
     {
-        if (string.IsNullOrWhiteSpace(message) || talkType == SpeechType.None) return;
-        OnSay?.Invoke(this, talkType, message, receiver);
+        if (string.IsNullOrWhiteSpace(message) || talkType == SpeechType.None || receiver == null) return;
+
+        if (receiver is not ISociableCreature sociableCreature) return;
+
+        sociableCreature.Hear(this, talkType, message);
+        EventAggregator.Invoke(new CreatureSayEvent(this, talkType, message,
+            [sociableCreature]));
+    }
+
+    public void Say(string message, SpeechType talkType, List<ICreature> receivers)
+    {
+        if (string.IsNullOrWhiteSpace(message) || talkType == SpeechType.None || receivers == null ||
+            receivers.Count == 0) return;
+
+        foreach (var receiver in receivers)
+        {
+            if (receiver is ISociableCreature sociableCreature)
+            {
+                sociableCreature.Hear(this, talkType, message);
+            }
+        }
+
+        EventAggregator.Invoke(new CreatureSayEvent(this, talkType, message, receivers));
     }
 
     public virtual void Think(int interval)
@@ -250,15 +270,9 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         return this == other;
     }
 
-    public virtual void Yell(string message)
-    {
-        Say(message, SpeechType.Yell);
-    }
+    public virtual void Yell(string message, List<ICreature> listenersToYell) => Say(message, SpeechType.Yell, listenersToYell);
 
-    public virtual void Whisper(string message)
-    {
-        Say(message, SpeechType.Whisper);
-    }
+    public virtual void Whisper(string message, List<ICreature> listenersToWhisper) => Say(message, SpeechType.Whisper, listenersToWhisper);
 
     private Outfit BuildOutfit(ICreatureType type)
     {

@@ -3,6 +3,7 @@ using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Spells;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Networking.Packets.Outgoing;
@@ -19,7 +20,8 @@ public class PlayerSayCommand(
     IScriptManager scriptManager,
     SpellService spellService,
     SpellListManager spellListManager,
-    YellConfiguration yellConfiguration)
+    YellConfiguration yellConfiguration,
+    ICreatureSpeechService creatureSpeechService)
     : ICommand
 {
     public void Execute(IPlayer player, IConnection connection, PlayerSayPacket playerSayPacket)
@@ -45,13 +47,15 @@ public class PlayerSayCommand(
             case SpeechType.None:
                 break;
             case SpeechType.Say:
-                player.Say(playerSayPacket.Message, playerSayPacket.TalkType);
+                creatureSpeechService.Speak(player, playerSayPacket.Message,
+                    playerSayPacket.TalkType);
                 break;
             case SpeechType.Whisper:
-                player.Whisper(playerSayPacket.Message);
+                creatureSpeechService.Speak(player, playerSayPacket.Message, SpeechType.Whisper);
                 break;
             case SpeechType.Yell:
-                player.Yell(playerSayPacket.Message, yellConfiguration);
+                var spectators = creatureSpeechService.GetYellSpectators(player);
+                player.Yell(playerSayPacket.Message, spectators, yellConfiguration);
                 break;
             case SpeechType.PrivatePlayerToNpc:
                 SendMessageToNpc(player, playerSayPacket, message);

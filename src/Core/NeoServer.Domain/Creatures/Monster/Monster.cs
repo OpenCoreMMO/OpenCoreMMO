@@ -338,9 +338,25 @@ public class Monster : WalkableMonster, IMonster
         EscapeFromEnemy();
     }
 
-    public void Yell()
+    public void Yell(List<ICreature> listenersToYell)
     {
-        MonsterYell.Yell(this);
+        if (IsDead) return;
+        
+        var metadata = Metadata;
+        
+        if (metadata.Voices is null) return;
+        if (metadata.VoiceConfig is null) return;
+        if (metadata.Voices.Length == 0) return;
+        
+        if (!Cooldowns.Expired(CooldownType.Yell)) return;
+        Cooldowns.Start(CooldownType.Yell, Metadata.VoiceConfig.Interval);
+
+        if (metadata.VoiceConfig.Chance < GameRandom.Random.Next(1, maxValue: 100)) return;
+
+        var voiceIndex = GameRandom.Random.Next(0, maxValue: metadata.Voices.Length - 1);
+
+        var voice = metadata.Voices[voiceIndex];
+        Say(voice.Sentence, voice.SpeechType, listenersToYell);
     }
 
     public ushort Defend()

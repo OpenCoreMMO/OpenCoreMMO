@@ -9,6 +9,7 @@ using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Bases;
+using NeoServer.Domain.Services;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Server;
@@ -65,7 +66,7 @@ public class MonsterWalkTest
             new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
                 staticToDynamicTileServiceMock.Object);
 
-        var startedWalkingHandler = new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService);
+        var startedWalkingHandler = new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService, new CreatureSpeechService(map));
         EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedWalkingEvent>(e => startedWalkingHandler.Handle(e));
 
         gameServer.Open();
@@ -122,7 +123,7 @@ public class MonsterWalkTest
             new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
                 staticToDynamicTileServiceMock.Object);
 
-        var startedWalkingHandler = new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService);
+        var startedWalkingHandler = new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService, new CreatureSpeechService(map));
         EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedWalkingEvent>(e => startedWalkingHandler.Handle(e));
 
         gameServer.Open();

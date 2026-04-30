@@ -4,6 +4,7 @@ using NeoServer.Domain.Common.Contracts;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types.Usable;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
@@ -14,12 +15,14 @@ namespace NeoServer.Domain.Items.Events;
 public class ItemUsedEventHandler : IGameEventHandler
 {
     private readonly IItemFactory itemFactory;
+    private readonly ICreatureSpeechService _creatureSpeechService;
     private readonly IMap map;
 
-    public ItemUsedEventHandler(IMap map, IItemFactory itemFactory)
+    public ItemUsedEventHandler(IMap map, IItemFactory itemFactory, ICreatureSpeechService creatureSpeechService)
     {
         this.map = map;
         this.itemFactory = itemFactory;
+        _creatureSpeechService = creatureSpeechService;
     }
 
     public void Execute(ICreature usedBy, ICreature creature, IItem item)
@@ -50,6 +53,8 @@ public class ItemUsedEventHandler : IGameEventHandler
     private void Say(ICreature creature, IItem item)
     {
         if (item is IConsumable consumable && !string.IsNullOrWhiteSpace(consumable.Sentence))
-            creature.Say(consumable.Sentence, SpeechType.MonsterSay);
+        {
+            _creatureSpeechService.Speak(creature, consumable.Sentence, SpeechType.MonsterSay);
+        }
     }
 }

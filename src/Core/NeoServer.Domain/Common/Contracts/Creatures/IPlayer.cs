@@ -288,8 +288,15 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public void MoveToTemple();
 
     void RegenerateStamina();
-    void Yell(string message, YellConfiguration yellSettings);
-    void Whisper(string message);
+
+    /// <summary>
+    /// Sends a message as a yell to a list of listeners based on the provided yell settings.
+    /// </summary>
+    /// <param name="message">The message to be yelled.</param>
+    /// <param name="listenersToYell">The list of creatures that will receive the yelled message.</param>
+    /// <param name="yellSettings">The configuration settings that define the behavior and constraints of the yell action.</param>
+    void Yell(string message, List<ICreature> listenersToYell, YellConfiguration yellSettings);
+    void Whisper(string message, List<ICreature> listenersToWhisper);
     void StartCooldown(CooldownType cooldownType, uint cooldownTime);
 
     void HealSoul(ushort increasing);

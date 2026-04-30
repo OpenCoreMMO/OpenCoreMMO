@@ -61,11 +61,12 @@ public interface IMonster : IWalkableMonster, ICombatActor
 
     void MoveAroundEnemy();
     void Sleep();
-
+    
     /// <summary>
-    ///     Monster yells a sentence
+    /// Emits a yell that can be heard by a specified list of creatures.
     /// </summary>
-    void Yell();
+    /// <param name="listenersToYell">The list of creatures that can hear the yell.</param>
+    void Yell(List<ICreature> listenersToYell);
 
     /// <summary>
     ///     Changes monster's state based on targets and condition

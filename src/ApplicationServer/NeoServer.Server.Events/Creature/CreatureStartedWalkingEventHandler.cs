@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Creatures.Events;
@@ -13,7 +14,7 @@ using NeoServer.Server.Common.Contracts.Tasks;
 
 namespace NeoServer.Server.Events.Creature;
 
-public class CreatureStartedWalkingEventHandler(IGameServer game, ICreatureMovementService creatureMovementService)
+public class CreatureStartedWalkingEventHandler(IGameServer game, ICreatureMovementService creatureMovementService, ICreatureSpeechService creatureSpeechService)
     : IApplicationEventHandler<CreatureStartedWalkingEvent>
 {
     private readonly IDictionary<uint, uint> _eventWalks = new Dictionary<uint, uint>();
@@ -38,7 +39,10 @@ public class CreatureStartedWalkingEventHandler(IGameServer game, ICreatureMovem
         if (creature.HasNextStep)
         {
             var nextStep = creature.GetNextStep();
-            if (nextStep.IsDrunk()) creature.Say("Hicks!", SpeechType.MonsterSay);
+            if (nextStep.IsDrunk())
+            {
+                creatureSpeechService.Speak(creature, "Hicks!", SpeechType.MonsterSay);
+            }
             var nextDirection = nextStep.GetOriginalDirection();
             creatureMovementService.MoveCreature(creature, nextDirection);
         }

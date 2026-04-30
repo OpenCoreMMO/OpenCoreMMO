@@ -45,13 +45,23 @@ public class Npc : WalkableCreature, INpc
     public INpcType Metadata { get; }
 
     public override bool CanSeeInvisible => false;
-    
-    public void Advertise()
+
+    /// <summary>
+    /// Allows the NPC to advertise its marketing messages to a list of sociable creatures (receivers), if applicable.
+    /// </summary>
+    /// <param name="receivers">The list of creatures that will receive the advertisement message.</param>
+    /// <remarks>
+    /// The method ensures that the NPC has marketing messages available and checks if the advertisement
+    /// cooldown has expired before proceeding. It then selects a random marketing message and broadcasts
+    /// it to the specified receivers, also resetting the cooldown timer for advertising.
+    /// </remarks>
+    public void Advertise(List<ICreature> receivers)
     {
-        if (!Metadata.Marketings?.Any() ?? true) return;
+        if ((Metadata.Marketings?.Length ?? 0) <= 0) return;
 
         if (!Cooldowns.Cooldowns[CooldownType.Advertise].Expired) return;
-        Say(GameRandom.Random.Next(Metadata.Marketings), SpeechType.Say);
+        
+        Say(GameRandom.Random.Next(Metadata.Marketings), SpeechType.Say, receivers);
         Cooldowns.Start(CooldownType.Advertise, 10_000);
     }
 
