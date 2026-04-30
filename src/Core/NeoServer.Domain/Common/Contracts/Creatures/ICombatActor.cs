@@ -15,8 +15,6 @@ public delegate void AttackTargetChange(ICombatActor actor, uint oldTargetId, ui
 
 public delegate void ManaChange(ICombatActor actor, ICreature attacker, CombatDamage damage);
 
-public delegate void Heal(ICombatActor healedCreature, ICreature healingCreature, ushort amount);
-
 public delegate void StopAttack(ICombatActor actor);
 
 public delegate void UseSpell(ICreature creature, ISpell spell);
@@ -41,7 +39,6 @@ public interface ICombatActor : IWalkableCreature
     ICreature CurrentTarget { get; }
     DamageRecordList ReceivedDamages { get; }
 
-    event Heal OnHeal;
     event StopAttack OnStoppedAttack;
     event AttackTargetChange OnTargetChanged;
 

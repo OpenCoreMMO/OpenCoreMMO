@@ -277,13 +277,12 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         if (increasing <= 0) return;
 
         if (HealthPoints == MaxHealthPoints) increasing = 0;
-        ;
-
+        
         var oldHealthPoints = HealthPoints;
 
         HealthPoints = Math.Min(HealthPoints + increasing, MaxHealthPoints);
 
-        OnHeal?.Invoke(this, healedBy, increasing);
+        EventAggregator.Invoke(new CreatureHealedEvent(this, healedBy, increasing));
         EventAggregator.Invoke(new CreatureHealthChangedEvent(this, oldHealthPoints, HealthPoints));
     }
 
@@ -466,7 +465,6 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     #region Events
 
-    public event Heal OnHeal;
     public event StopAttack OnStoppedAttack;
     public event AttackTargetChange OnTargetChanged;
 
