@@ -141,11 +141,6 @@ public interface ICreature : IMovableThing
     void Appear(Location.Structs.Location location, ICylinderSpectator[] spectators);
 
     /// <summary>
-    ///     Says a message
-    /// </summary>
-    //void Say(string message, SpeechType talkType, ICreature receiver = null);
-
-    /// <summary>
     ///     Thinks something
     /// </summary>
     void Think(int interval);
