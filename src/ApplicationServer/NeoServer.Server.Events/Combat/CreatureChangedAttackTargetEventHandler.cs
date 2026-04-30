@@ -25,7 +25,7 @@ public class CreatureChangedAttackTargetEventHandler(
     {
         var result = Result.NotPossible;
 
-        if (actor.Attacking)
+        if (actor.IsAttacking)
         {
             game.CreatureManager.TryGetCreature(actor.AutoAttackTargetId, out var creature);
 

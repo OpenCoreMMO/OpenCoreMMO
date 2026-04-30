@@ -29,8 +29,6 @@ public class PlayerAttackTests
         protectionZoneTile.AddCreature(enemy);
         regularTile.AddCreature(player);
 
-        using var monitor = player.Monitor();
-
         var map = MapTestDataBuilder.Build(regularTile, protectionZoneTile);
         var attackService = AttackServiceTestBuilder.Build(map);
 
@@ -42,8 +40,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.CannotAttackPersonInProtectionZone);
 
-        monitor.Should().Raise(nameof(player.OnStoppedAttack));
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
@@ -66,8 +63,6 @@ public class PlayerAttackTests
         protectionZoneTile.AddCreature(player);
         regularTile.AddCreature(enemy);
 
-        using var monitor = player.Monitor();
-
         var map = MapTestDataBuilder.Build(regularTile, protectionZoneTile);
         var attackService = AttackServiceTestBuilder.Build(map);
 
@@ -82,8 +77,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.CannotAttackWhileInProtectionZone);
 
-        monitor.Should().Raise(nameof(player.OnStoppedAttack));
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
@@ -111,8 +105,6 @@ public class PlayerAttackTests
         regularTile.AddCreature(player);
         regularTile2.AddCreature(enemy);
 
-        using var monitor = player.Monitor();
-
         player.SetAttackTarget(enemy);
 
         regularTile2.RemoveCreature(enemy, out _);
@@ -126,9 +118,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Failed.Should().BeTrue();
 
-        monitor.Should().Raise(nameof(player.OnStoppedAttack));
-
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
@@ -156,8 +146,6 @@ public class PlayerAttackTests
         regularTile.AddCreature(player);
         regularTile2.AddCreature(enemy);
 
-        using var monitor = player.Monitor();
-
         player.SetAttackTarget(enemy);
 
         regularTile.RemoveCreature(player, out _);
@@ -170,9 +158,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.CannotAttackWhileInProtectionZone);
 
-        monitor.Should().Raise(nameof(player.OnStoppedAttack));
-
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
@@ -258,7 +244,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
 
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
@@ -285,8 +271,6 @@ public class PlayerAttackTests
         regularTile.AddCreature(player);
         regularTile2.AddCreature(enemy);
 
-        using var monitor = player.Monitor();
-
         player.SetAttackTarget(enemy);
 
         attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
@@ -302,9 +286,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
 
-        monitor.Should().Raise(nameof(player.OnStoppedAttack));
-
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
@@ -338,7 +320,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
 
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
@@ -372,7 +354,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
 
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();

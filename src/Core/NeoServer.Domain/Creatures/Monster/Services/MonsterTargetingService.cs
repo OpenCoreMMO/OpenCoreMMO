@@ -23,7 +23,7 @@ public class MonsterTargetingService(IMonsterTargetSearch targetSearch) : IMonst
         // players summons can't target players themselves
         if (monster is Summon.Summon { Master: Player.Player }) return;
 
-        if (monster.Attacking && monster.HasFollowPath && !hasTargetChange) return;
+        if (monster.IsAttacking && monster.HasFollowPath && !hasTargetChange) return;
 
         var searchMode = TargetSearchType.Default;
 
@@ -35,7 +35,7 @@ public class MonsterTargetingService(IMonsterTargetSearch targetSearch) : IMonst
 
         var candidate = targetSearch.Search(monster, searchMode);
 
-        if (!monster.Attacking || !monster.HasFollowPath)
+        if (!monster.IsAttacking || !monster.HasFollowPath)
         {
             monster.ChangeAttackTarget(candidate);
             return;

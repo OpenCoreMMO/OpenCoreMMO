@@ -15,8 +15,6 @@ public delegate void AttackTargetChange(ICombatActor actor, uint oldTargetId, ui
 
 public delegate void ManaChange(ICombatActor actor, ICreature attacker, CombatDamage damage);
 
-public delegate void StopAttack(ICombatActor actor);
-
 public delegate void UseSpell(ICreature creature, ISpell spell);
 
 public delegate void ChangeVisibility(ICombatActor actor);
@@ -24,7 +22,7 @@ public delegate void ChangeVisibility(ICombatActor actor);
 public interface ICombatActor : IWalkableCreature
 {
     ushort ArmorRating { get; }
-    bool Attacking { get; }
+    bool IsAttacking { get; }
     uint AutoAttackTargetId { get; }
     decimal AttackSpeed { get; }
     decimal BaseDefenseSpeed { get; }
@@ -39,7 +37,6 @@ public interface ICombatActor : IWalkableCreature
     ICreature CurrentTarget { get; }
     DamageRecordList ReceivedDamages { get; }
 
-    event StopAttack OnStoppedAttack;
     event AttackTargetChange OnTargetChanged;
 
     int DefendUsingArmor(int attack);

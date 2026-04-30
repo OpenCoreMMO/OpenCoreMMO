@@ -18,7 +18,6 @@ public class Summon : Monster
             if (master is ICombatActor actor)
             {
                 actor.OnTargetChanged += OnMasterTargetChange;
-                actor.OnStoppedAttack += OnMasterStoppedAttack;
             }
         }
     }
@@ -125,7 +124,6 @@ public class Summon : Monster
             if (Master is ICombatActor actor)
             {
                 actor.OnTargetChanged -= OnMasterTargetChange;
-                actor.OnStoppedAttack -= OnMasterStoppedAttack;
             }
         }
 
@@ -201,8 +199,4 @@ public class Summon : Monster
         ChangeAttackTarget(master.CurrentTarget);
     }
 
-    private void OnMasterStoppedAttack(ICombatActor actor)
-    {
-        StopAttack();
-    }
 }

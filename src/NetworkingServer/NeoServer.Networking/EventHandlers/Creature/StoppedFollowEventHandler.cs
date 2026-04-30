@@ -14,7 +14,7 @@ public class StoppedFollowEventHandler(IGameServer game) : INetworkingEventHandl
         if (!game.CreatureManager.GetPlayerConnection(player.CreatureId, out var connection)) return;
         
         // If the player is attacking, do not cancel the target when stopped follow.
-        if (player.Attacking)
+        if (player.IsAttacking)
         {
             return;
         }

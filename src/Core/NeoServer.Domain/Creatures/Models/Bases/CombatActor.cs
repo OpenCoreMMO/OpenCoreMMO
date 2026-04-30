@@ -16,6 +16,7 @@ using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Models.Bases.Events;
 using NeoServer.Domain.Creatures.Monster.Loot;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Outfit;
 
@@ -171,13 +172,24 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         return attack;
     }
 
-    public void StopAttack(bool force = false)
+    public virtual void StopAttack(bool force = false)
     {
-        if (force is false && !Attacking) return;
+        if (force is false && !IsAttacking) return;
 
         StopFollowing();
         CurrentTarget = null;
-        OnStoppedAttack?.Invoke(this);
+
+        if (Summons is { Count: > 0 })
+        {
+            foreach (var summon in Summons)
+            {
+                if (!summon.IsAttacking) continue;
+
+                summon.StopAttack();
+            }
+        }
+
+        EventAggregator.Invoke(new CreatureStoppedAttackEvent(this));
     }
 
     public virtual bool IsTargetLost(ICreature target)
@@ -465,7 +477,6 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     #region Events
 
-    public event StopAttack OnStoppedAttack;
     public event AttackTargetChange OnTargetChanged;
 
     #endregion
@@ -478,7 +489,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     public abstract ushort ArmorRating { get; }
     public uint AutoAttackTargetId => CurrentTarget?.CreatureId ?? default;
     public ICreature CurrentTarget { get; private set; }
-    public bool Attacking => AutoAttackTargetId > 0;
+    public bool IsAttacking => AutoAttackTargetId > 0;
     public abstract ushort MinimumAttackPower { get; }
     public abstract bool UsingDistanceWeapon { get; }
     public uint AttackEvent { get; set; }
