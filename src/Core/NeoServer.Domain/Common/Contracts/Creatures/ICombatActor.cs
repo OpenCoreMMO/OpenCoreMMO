@@ -31,7 +31,6 @@ public interface ICombatActor : IWalkableCreature
     bool UsingDistanceWeapon { get; }
     uint AttackEvent { get; set; }
     bool CanBeAttacked { get; }
-    ConditionList Conditions { get; }
     ICreature CurrentTarget { get; }
     DamageRecordList ReceivedDamages { get; }
 

@@ -155,7 +155,7 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         playerEntity.ChaseMode = player.ChaseMode;
         playerEntity.FightMode = player.FightMode;
         playerEntity.RemainingRecoverySeconds =
-            (int)(player.Conditions.GetFirstConditionOfType(ConditionType.Regeneration, out var condition)
+            (int)(player.GetCondition(ConditionType.Regeneration) is { } condition
                 ? condition.RemainingTime / TimeSpan.TicksPerMillisecond
                 : 0);
         playerEntity.Vocation = player.VocationType;

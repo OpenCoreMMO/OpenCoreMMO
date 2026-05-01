@@ -36,7 +36,7 @@ public class ConditionLight : BaseCondition
         if (creature is ICombatActor combatActor)
         {
             //End existing light conditions
-            combatActor.Conditions.EndConditions(ConditionType.Light);
+            combatActor.RemoveCondition(ConditionType.Light);
         }
 
         ColorLevel = Math.Max(previousLight, ColorLevel);

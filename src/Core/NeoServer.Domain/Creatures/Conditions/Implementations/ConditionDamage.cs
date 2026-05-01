@@ -87,7 +87,7 @@ public class ConditionDamage : BaseCondition
         //End any existing conditions of this type
         if (creature is ICombatActor combatActor)
         {
-            combatActor.Conditions.EndConditions(Type);
+            combatActor.RemoveCondition(Type);
         }
 
         Start(creature);

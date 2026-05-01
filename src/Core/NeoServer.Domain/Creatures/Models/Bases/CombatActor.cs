@@ -504,7 +504,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     // public IDictionary<ConditionType, ICondition> Conditions { get; set; } =
     //     new Dictionary<ConditionType, ICondition>();
 
-    public ConditionList Conditions { get; } = new();
+    protected ConditionList Conditions { get; } = new();
 
     public abstract ushort MaximumAttackPower { get; }
     public abstract ushort MaximumElementalAttackPower { get; }

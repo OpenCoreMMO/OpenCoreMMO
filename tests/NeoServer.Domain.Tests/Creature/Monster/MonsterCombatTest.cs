@@ -419,7 +419,7 @@ public class MonsterCombatTest
         monster.IsFollowing.Should().BeFalse();
         monster.IsAttacking.Should().BeFalse();
         monster.Targets.Any().Should().BeFalse();
-        monster.Conditions.HasAnyConditionOf(ConditionType.Burning).Should().BeTrue();
+        monster.HasCondition(ConditionType.Burning).Should().BeTrue();
     }
 
     [Fact]
