@@ -34,15 +34,20 @@ public class ConditionList : IEnumerable<ICondition>
         // Remove any existing non-persistent conditions of the same type
         if (!condition.IsPersistent)
         {
-            for (int i = 0; i < conditions.Count; i++)
+            ICondition toRemove = null;
+            foreach (var existingCondition in conditions)
             {
-                var existingCondition = conditions[i];
                 if (!existingCondition.IsPersistent)
                 {
-                    existingCondition.End();
-                    conditions.RemoveAt(i);
+                    toRemove = existingCondition;
                     break;
                 }
+            }
+
+            if (toRemove is not null)
+            {
+                toRemove.End();
+                conditions.Remove(toRemove);
             }
         }
 

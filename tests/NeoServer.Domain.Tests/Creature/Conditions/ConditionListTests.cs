@@ -195,6 +195,28 @@ public class ConditionListTests
     }
 
     [Fact]
+    public void Add_handles_reentrancy_when_endaction_removes_same_condition_type()
+    {
+        var conditionList = new ConditionList();
+        var endCount = 0;
+
+        var originalCondition = new Condition(ConditionType.Burning, 100, () =>
+        {
+            endCount++;
+            conditionList.RemoveByType(ConditionType.Burning, false);
+        });
+        conditionList.Add(originalCondition);
+
+        var replacementCondition = new Condition(ConditionType.Burning, 200);
+
+        conditionList.Invoking(x => x.Add(replacementCondition)).Should().NotThrow();
+
+        endCount.Should().Be(1);
+        conditionList.Count.Should().Be(1);
+        conditionList.GetByType(ConditionType.Burning).Should().ContainSingle().Which.Should().Be(replacementCondition);
+    }
+
+    [Fact]
     public void Add_replaces_an_existing_condition_of_the_same_type_and_ends_the_replaced_condition()
     {
         var conditionList = new ConditionList();

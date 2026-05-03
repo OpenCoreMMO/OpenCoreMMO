@@ -288,6 +288,43 @@ public class PlayerTests
     }
 
     [Fact]
+    public void Feed_creates_condition_regeneration_when_no_existing()
+    {
+        var sut = PlayerTestDataBuilder.Build();
+        sut.SetAsHungry();
+
+        sut.Feed(10);
+
+        sut.HasCondition(ConditionType.Regeneration).Should().BeTrue();
+        sut.HasCondition(ConditionType.Hungry).Should().BeFalse();
+    }
+
+    [Fact]
+    public void Feed_extends_existing_regeneration()
+    {
+        var sut = PlayerTestDataBuilder.Build();
+
+        sut.Feed(10);
+        var timeAfterFirstFeed = sut.GetCondition(ConditionType.Regeneration).RemainingTime;
+
+        sut.Feed(10);
+        var timeAfterSecondFeed = sut.GetCondition(ConditionType.Regeneration).RemainingTime;
+
+        timeAfterSecondFeed.Should().BeGreaterThan(timeAfterFirstFeed);
+    }
+
+    [Fact]
+    public void Feed_returns_false_when_player_is_full()
+    {
+        var sut = PlayerTestDataBuilder.Build();
+        sut.Feed(1199);
+
+        var result = sut.Feed(10);
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
     public void SetAsHungry_replaces_regeneration_with_hungry_condition()
     {
         var sut = PlayerTestDataBuilder.Build();

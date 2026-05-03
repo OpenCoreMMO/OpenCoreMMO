@@ -1008,23 +1008,19 @@ public class Player : CombatActor, IPlayer
     public bool Feed(int duration)
     {
         var regenerationMs = (uint)duration * 1000;
-        const uint maxRegenerationTime = (uint)1200 * 1000; //20 minutes
 
-        if (Conditions.GetFirstConditionOfType(ConditionType.Regeneration, out var condition))
+        if (GetCondition(ConditionType.Regeneration) is ConditionRegeneration regen)
         {
-            if (condition.RemainingTime + regenerationMs >=
-                maxRegenerationTime) //todo: this number should be configurable
+            if (!regen.TryExtend(regenerationMs))
             {
                 OperationFailService.Send(CreatureId, TextConstants.YOU_ARE_FULL);
                 return false;
             }
-
-            condition.Extend(regenerationMs, maxRegenerationTime);
         }
         else
         {
             RemoveHungry();
-            AddCondition(new Condition(ConditionType.Regeneration, regenerationMs, SetAsHungry));
+            AddCondition(new ConditionRegeneration(regenerationMs, SetAsHungry));
         }
 
         return true;

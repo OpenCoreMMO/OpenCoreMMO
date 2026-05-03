@@ -33,7 +33,7 @@ public abstract class BaseCondition : ICondition
     public FormulaValues FormulaValues { get; set; }
     public Dictionary<ConditionParamType, uint> Parameters { get; set; } = new();
 
-    public void End()
+    public virtual void End()
     {
         if (IsPersistent) return;
 
