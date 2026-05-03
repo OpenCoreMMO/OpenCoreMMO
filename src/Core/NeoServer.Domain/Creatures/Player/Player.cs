@@ -759,7 +759,7 @@ public class Player : CombatActor, IPlayer
         if (soul == 0) return;
         if (!HasEnoughSoul(soul)) return;
 
-        Mana -= soul;
+        SoulPoints -= (byte)soul;
         EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 

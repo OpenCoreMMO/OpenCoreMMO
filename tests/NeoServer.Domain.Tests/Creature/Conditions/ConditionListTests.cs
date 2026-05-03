@@ -301,6 +301,31 @@ public class ConditionListTests
         conditionList.GetAll().Should().BeEmpty();
     }
 
+    [Fact]
+    public void Add_null_throws_ArgumentNullException()
+    {
+        var conditionList = new ConditionList();
+
+        conditionList.Invoking(x => x.Add(null)).Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Clear_does_not_crash_when_EndAction_reenters_ConditionList()
+    {
+        var conditionList = new ConditionList();
+
+        var reentrantCondition = new Condition(ConditionType.Burning, 100, () =>
+        {
+            conditionList.Add(new Condition(ConditionType.Drunk, 100));
+        });
+
+        conditionList.Add(reentrantCondition);
+
+        conditionList.Invoking(x => x.Clear()).Should().NotThrow();
+        conditionList.GetByType(ConditionType.Burning).Should().BeEmpty();
+        conditionList.GetByType(ConditionType.Drunk).Should().ContainSingle();
+    }
+
     private static Condition CreateCondition(ConditionType type, uint duration = 100) =>
         new(type, duration);
 }

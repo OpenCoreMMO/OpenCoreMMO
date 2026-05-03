@@ -25,6 +25,8 @@ public class ConditionList : IEnumerable<ICondition>
     /// <param name="condition">The condition to be added to the condition list.</param>
     public void Add(ICondition condition)
     {
+        ArgumentNullException.ThrowIfNull(condition);
+
         if (!Conditions.TryGetValue(condition.Type, out var conditions))
         {
             conditions = [];
@@ -107,7 +109,7 @@ public class ConditionList : IEnumerable<ICondition>
     /// <param name="conditionType"></param>
     /// <returns></returns>
     public IReadOnlyList<ICondition> GetByType(ConditionType conditionType) =>
-        Conditions.TryGetValue(conditionType, out var conditions) ? conditions : [];
+        Conditions.TryGetValue(conditionType, out var conditions) ? conditions.AsReadOnly() : [];
 
     /// <summary>
     /// Calculates the total number of conditions in the condition list by iterating through all collections of conditions by type and summing their counts. This method is used when the cache of conditions is not valid to provide an accurate count of conditions without relying on the cache.
@@ -155,8 +157,19 @@ public class ConditionList : IEnumerable<ICondition>
     /// </summary>
     /// <param name="conditionType"></param>
     /// <returns></returns>
-    public ICondition GetFirstConditionOfType(ConditionType conditionType) =>
-        GetByType(conditionType).FirstOrDefault();
+    public ICondition GetFirstConditionOfType(ConditionType conditionType)
+    {
+        if (Conditions.TryGetValue(conditionType, out var conditions))
+        {
+            for (var i = 0; i < conditions.Count; i++)
+            {
+                var condition = conditions[i];
+                if (condition is not null) return condition;
+            }
+        }
+
+        return null;
+    }
 
     /// <summary>
     /// Checks if there is at least one condition of the specified condition type in the condition list. If such a condition exists, the method returns true and outputs the first found condition; otherwise, it returns false and outputs null.
@@ -166,8 +179,21 @@ public class ConditionList : IEnumerable<ICondition>
     /// <returns></returns>
     public bool GetFirstConditionOfType(ConditionType conditionType, out ICondition condition)
     {
-        condition = GetByType(conditionType).FirstOrDefault();
-        return condition != null;
+        if (Conditions.TryGetValue(conditionType, out var conditions))
+        {
+            for (var i = 0; i < conditions.Count; i++)
+            {
+                var c = conditions[i];
+                if (c is not null)
+                {
+                    condition = c;
+                    return true;
+                }
+            }
+        }
+
+        condition = null;
+        return false;
     }
 
     /// <summary>
@@ -195,35 +221,29 @@ public class ConditionList : IEnumerable<ICondition>
     }
 
     /// <summary>
-    /// Disables all conditions of the specified condition type. For each condition of the specified type,
-    /// the <see cref="ICondition.Disable"/> method is called.
+    /// Disables all conditions of the specified type. Disabled conditions remain in the list
+    /// but are not considered active by <see cref="HasAnyEnabledConditionOf"/>.
     /// </summary>
-    /// <param name="conditionType">The type of the conditions to be disabled.</param>
     public void DisableConditions(ConditionType conditionType)
     {
-        var conditions = GetByType(conditionType);
-
-        if (conditions.Count == 0) return;
+        if (!Conditions.TryGetValue(conditionType, out var conditions)) return;
 
         foreach (var condition in conditions)
         {
-            condition?.Disable();
+            condition.Disable();
         }
     }
 
     /// <summary>
-    /// Enables all conditions of the specified condition type. For each condition of the specified type,
+    /// Re-enables all conditions of the specified type that were previously disabled.
     /// </summary>
-    /// <param name="conditionType"></param>
     public void EnableConditions(ConditionType conditionType)
     {
-        var conditions = GetByType(conditionType);
-
-        if (conditions.Count == 0) return;
+        if (!Conditions.TryGetValue(conditionType, out var conditions)) return;
 
         foreach (var condition in conditions)
         {
-            condition?.Enable();
+            condition.Enable();
         }
     }
 
@@ -242,8 +262,21 @@ public class ConditionList : IEnumerable<ICondition>
     /// <returns></returns>
     public bool HasAnyConditionOf(ConditionType conditionType, out ICondition condition)
     {
-        condition = GetByType(conditionType).FirstOrDefault();
-        return condition != null;
+        if (Conditions.TryGetValue(conditionType, out var conditions))
+        {
+            for (var i = 0; i < conditions.Count; i++)
+            {
+                var c = conditions[i];
+                if (c is not null)
+                {
+                    condition = c;
+                    return true;
+                }
+            }
+        }
+
+        condition = null;
+        return false;
     }
 
     /// <summary>
@@ -308,17 +341,28 @@ public class ConditionList : IEnumerable<ICondition>
     /// </summary>
     public void Clear()
     {
-        foreach (var conditions in Conditions.Values)
+        var total = 0;
+        foreach (var list in Conditions.Values)
         {
-            foreach (var condition in conditions)
+            total += list.Count;
+        }
+
+        var snapshot = new List<ICondition>(total);
+        foreach (var list in Conditions.Values)
+        {
+            foreach (var condition in list)
             {
-                condition?.End();
+                snapshot.Add(condition);
             }
         }
 
         Conditions.Clear();
-
         InvalidateCache();
+
+        for (var i = 0; i < snapshot.Count; i++)
+        {
+            snapshot[i].End();
+        }
     }
 
     IEnumerator<ICondition> IEnumerable<ICondition>.GetEnumerator() => GetAll().GetEnumerator();
