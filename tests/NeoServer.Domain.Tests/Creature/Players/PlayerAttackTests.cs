@@ -3,6 +3,8 @@ using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.Tests.Helpers.Services;
@@ -358,5 +360,26 @@ public class PlayerAttackTests
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
+    }
+
+    [Fact]
+    public void RemoveLogoutBlock_removes_condition()
+    {
+        var player = (NeoServer.Domain.Creatures.Player.Player)PlayerTestDataBuilder.Build();
+        player.AddCondition(new CombatBlockCondition(ConditionType.LogoutBlock));
+        player.IsLogoutBlocked.Should().BeTrue();
+
+        player.RemoveLogoutBlock();
+
+        player.IsLogoutBlocked.Should().BeFalse();
+    }
+
+    [Fact]
+    public void RemoveLogoutBlock_does_nothing_when_not_blocked()
+    {
+        var player = (NeoServer.Domain.Creatures.Player.Player)PlayerTestDataBuilder.Build();
+
+        player.Invoking(x => x.RemoveLogoutBlock()).Should().NotThrow();
+        player.IsLogoutBlocked.Should().BeFalse();
     }
 }
