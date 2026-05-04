@@ -39,13 +39,6 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual void AddCondition(ICondition condition)
     {
-        switch (condition.Type)
-        {
-            case ConditionType.Outfit:
-                Conditions.EndConditions(ConditionType.Outfit);
-                break;
-        }
-
         condition.Start(this);
         Conditions.Add(condition);
 

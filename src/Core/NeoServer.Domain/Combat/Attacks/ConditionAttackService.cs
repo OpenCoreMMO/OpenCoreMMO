@@ -210,11 +210,6 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
         monster.Look.TryGetValue(LookType.Legs, out var legs);
         monster.Look.TryGetValue(LookType.Feet, out var feet);
 
-        targetCreature.SetTemporaryOutfit(lookType, (byte)head, (byte)body, (byte)legs, (byte)feet, (byte)addon);
-
-        targetCreature.AddCondition(new Condition(conditionType, duration)
-        {
-            EndAction = targetCreature.BackToOldOutfit
-        });
+        targetCreature.AddCondition(new OutfitCondition(duration, lookType, (byte)head, (byte)body, (byte)legs, (byte)feet, (byte)addon));
     }
 }
