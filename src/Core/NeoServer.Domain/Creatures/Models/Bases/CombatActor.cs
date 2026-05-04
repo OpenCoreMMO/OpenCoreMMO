@@ -45,9 +45,9 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         EventAggregator.Invoke(new CreatureConditionAddedEvent(this, condition));
     }
 
-    public virtual void RemoveCondition(ICondition condition)
+    public virtual void RemoveCondition(ICondition condition, bool endCondition = true)
     {
-        Conditions.Remove(condition);
+        Conditions.Remove(condition, endCondition);
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
     }
 

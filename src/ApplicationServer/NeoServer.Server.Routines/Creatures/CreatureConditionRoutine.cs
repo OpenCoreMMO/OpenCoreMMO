@@ -20,8 +20,7 @@ public static class CreatureConditionRoutine
 
             if (condition.HasExpired)
             {
-                condition.End();
-                creature.RemoveCondition(condition);
+                creature.RemoveCondition(condition, endCondition: true);
             }
 
             if (condition is ConditionDamage damageCondition)

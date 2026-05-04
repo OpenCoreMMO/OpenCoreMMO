@@ -48,10 +48,9 @@ public abstract class BaseCondition : ICondition
         var maxDurationTicks = maxDuration * TimeSpan.TicksPerMillisecond;
         var durationTicks = duration * TimeSpan.TicksPerMillisecond;
 
+        if (Duration + durationTicks > maxDurationTicks) return;
+
         Duration += durationTicks;
-
-        if (Duration > maxDurationTicks) return;
-
         EndTime += durationTicks;
     }
 
@@ -77,14 +76,24 @@ public abstract class BaseCondition : ICondition
     public virtual bool HasExpired => !IsPersistent && EndTime < DateTime.UtcNow.Ticks;
     
     /// <summary>
-    /// Updates the duration of the condition by setting a new value.
+    ///     Updates the duration of the condition. If the condition has already started,
+    ///     the end time is recalculated from the new duration.
     /// </summary>
-    /// <param name="duration">The new duration in milliseconds. This value is converted to ticks internally.</param>
-    public void SetNewDuration(uint duration) => Duration = duration * TimeSpan.TicksPerMillisecond;
+    /// <param name="duration">The new duration in milliseconds.</param>
+    public void SetNewDuration(uint duration)
+    {
+        Duration = duration * TimeSpan.TicksPerMillisecond;
+        if (StartedAt > 0) EndTime = StartedAt + Duration;
+    }
 
     /// <summary>
-    /// Updates the duration of the condition by setting a new value.
+    ///     Updates the duration of the condition. If the condition has already started,
+    ///     the end time is recalculated from the new duration.
     /// </summary>
     /// <param name="duration">The new duration in ticks.</param>
-    public void SetNewDuration(long duration) => Duration = duration;
+    public void SetNewDuration(long duration)
+    {
+        Duration = duration;
+        if (StartedAt > 0) EndTime = StartedAt + Duration;
+    }
 }

@@ -63,11 +63,16 @@ public class ConditionList : IEnumerable<ICondition>
     /// The cache of conditions is invalidated after the removal.
     /// </summary>
     /// <param name="condition">The condition to be removed from the condition list.</param>
-    public void Remove(ICondition condition)
+    /// <param name="endCondition"></param>
+    public void Remove(ICondition condition, bool endCondition = true)
     {
         if (Conditions.TryGetValue(condition.Type, out var conditions) && conditions.Remove(condition))
         {
-            condition.End();
+            if (endCondition)
+            {
+                condition.End();
+            }
+
             InvalidateCache();
         }
     }
