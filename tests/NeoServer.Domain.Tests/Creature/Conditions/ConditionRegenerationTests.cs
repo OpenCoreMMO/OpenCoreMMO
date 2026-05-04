@@ -76,8 +76,10 @@ public class ConditionRegenerationTests
         var sut = new ConditionRegeneration(10000, () => { });
         sut.Start(null);
 
-        sut.TryExtend(1_190_000);
+        var result = sut.TryExtend(1_189_000);
 
+        result.Should().BeTrue();
         sut.RemainingTime.Should().BeLessThan(1_200_000);
+        sut.RemainingTime.Should().BeGreaterThan(1_198_000);
     }
 }
