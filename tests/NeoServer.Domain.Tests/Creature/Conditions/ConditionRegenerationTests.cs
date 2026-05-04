@@ -82,4 +82,25 @@ public class ConditionRegenerationTests
         sut.RemainingTime.Should().BeLessThan(1_200_000);
         sut.RemainingTime.Should().BeGreaterThan(1_198_000);
     }
+
+    [Fact]
+    public void TryExtend_treats_negative_remaining_time_as_zero()
+    {
+        var sut = new ConditionRegeneration(10000, () => { });
+
+        var result = sut.TryExtend(1_189_000);
+
+        result.Should().BeTrue();
+        sut.RemainingTime.Should().BeGreaterThan(1_188_000);
+    }
+
+    [Fact]
+    public void TryExtend_returns_false_when_clamped_remaining_plus_additional_exceeds_max()
+    {
+        var sut = new ConditionRegeneration(10000, () => { });
+
+        var result = sut.TryExtend(1_200_001);
+
+        result.Should().BeFalse();
+    }
 }

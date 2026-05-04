@@ -16,7 +16,11 @@ public class ConditionRegeneration : BaseCondition
 
     public bool TryExtend(uint additionalMs)
     {
-        if (RemainingTime + additionalMs >= MaxDurationMs) return false;
+        var effectiveRemainingMs = Math.Max(0, RemainingTime);
+        if (effectiveRemainingMs + additionalMs >= MaxDurationMs) return false;
+
+        if (EndTime == 0 && Duration > 0) Start(null);
+
         Extend(additionalMs, MaxDurationMs);
         return true;
     }
