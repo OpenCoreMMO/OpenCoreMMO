@@ -73,4 +73,16 @@ public class MonsterConditionImmunityTests
 
         monster.HasCondition(ConditionType.Paralyze).Should().BeTrue();
     }
+
+    [Fact]
+    public void Monster_dismiss_clears_conditions()
+    {
+        var monster = MonsterTestDataBuilder.Build();
+        monster.AddCondition(new Condition(ConditionType.Burning, 1000));
+        monster.HasCondition(ConditionType.Burning).Should().BeTrue();
+
+        ((NeoServer.Domain.Creatures.Monster.Monster)monster).Dismiss();
+
+        monster.HasCondition(ConditionType.Burning).Should().BeFalse();
+    }
 }
