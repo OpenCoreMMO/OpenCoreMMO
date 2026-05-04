@@ -41,19 +41,6 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     {
         switch (condition.Type)
         {
-            case ConditionType.Pacified:
-                Conditions.EndConditions(ConditionType.LogoutBlock);
-                Conditions.EndConditions(ConditionType.Pacified);
-                Conditions.EndConditions(ConditionType.ProtectionZoneBlock);
-                break;
-            case ConditionType.LogoutBlock:
-                Conditions.EndConditions(ConditionType.Pacified);
-                Conditions.EndConditions(ConditionType.LogoutBlock);
-                break;
-            case ConditionType.ProtectionZoneBlock:
-                Conditions.EndConditions(ConditionType.Pacified);
-                Conditions.EndConditions(ConditionType.ProtectionZoneBlock);
-                break;
             case ConditionType.Outfit:
                 Conditions.EndConditions(ConditionType.Outfit);
                 break;

@@ -310,14 +310,9 @@ public class Player : CombatActor, IPlayer
     {
         if (IsPacified) return;
 
-        if (HasCondition(ConditionType.ProtectionZoneBlock, out var condition))
-        {
-            condition.Start(this);
-            return;
-        }
+        if (HasCondition(ConditionType.ProtectionZoneBlock)) return;
 
-        //protection zone block is persistent, this will be removed elsewhere
-        AddCondition(new Condition(ConditionType.ProtectionZoneBlock, 0));
+        AddCondition(new CombatBlockCondition(ConditionType.ProtectionZoneBlock));
     }
 
     public void RemoveProtectionZoneBlock()
@@ -1688,18 +1683,12 @@ public class Player : CombatActor, IPlayer
 
         if (IsPacified) return;
 
-        if (HasCondition(ConditionType.LogoutBlock, out var condition))
-        {
-            condition.Start(this);
-            return;
-        }
+        if (HasCondition(ConditionType.LogoutBlock)) return;
 
         if (IsProtectionZoneBlocked)
-            //resets protection zone block time
             SetProtectionZoneBlock();
 
-        //logout is persistent, this will be removed elsewhere
-        AddCondition(new Condition(ConditionType.LogoutBlock, 0));
+        AddCondition(new CombatBlockCondition(ConditionType.LogoutBlock));
     }
 
     private void TogglePacifiedCondition(IDynamicTile fromTile, IDynamicTile toTile)
@@ -1709,13 +1698,13 @@ public class Player : CombatActor, IPlayer
         {
             case null when toTile.ProtectionZone:
                 RemoveLogoutBlock();
-                AddCondition(new Condition(ConditionType.Pacified, 0));
+                AddCondition(new PacifiedCondition());
                 RemoveProtectionZoneBlock();
                 break;
             case false when toTile.ProtectionZone:
                 RemoveLogoutBlock();
                 RemoveProtectionZoneBlock();
-                AddCondition(new Condition(ConditionType.Pacified, 0));
+                AddCondition(new PacifiedCondition());
                 break;
             case true when toTile.ProtectionZone is false:
                 RemoveCondition(ConditionType.Pacified);
