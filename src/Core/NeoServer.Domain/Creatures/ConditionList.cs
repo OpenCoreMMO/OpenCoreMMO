@@ -93,9 +93,10 @@ public class ConditionList : IEnumerable<ICondition>
 
         if (endCondition)
         {
-            foreach (var condition in conditions)
+            var snapshot = new List<ICondition>(conditions);
+            foreach (var condition in snapshot)
             {
-                condition?.End();
+                condition.End();
             }
         }
 

@@ -122,7 +122,7 @@ public class ConditionListTests
 
         conditionList.EndConditions(ConditionType.Haste);
 
-        endCount.Should().Be(2);
+        endCount.Should().Be(1);
         conditionList.Count.Should().Be(0);
         conditionList.GetByType(ConditionType.Haste).Should().BeEmpty();
         conditionList.GetFirstConditionOfType(ConditionType.Haste).Should().BeNull();

@@ -77,7 +77,7 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
 
             if (conditionType is ConditionType.Paralyze)
             {
-                AddParalyzeCondition(combatParameter, targetCreature, conditionType, duration, condition);
+                AddParalyzeCondition(combatParameter, targetCreature, duration);
                 return new CombatResult(0, Result.Success);
             }
 
@@ -105,7 +105,7 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
         {
             if (conditionType is ConditionType.Paralyze)
             {
-                AddParalyzeCondition(combatParameter, targetCreature, conditionType, duration);
+                AddParalyzeCondition(combatParameter, targetCreature, duration);
                 return new CombatResult(0, Result.Success);
             }
 
@@ -187,31 +187,16 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
     private static void AddSpeedCondition(CombatParameter combatParameter, ICombatActor targetCreature,
         ConditionType conditionType, uint duration, ICondition condition)
     {
-        targetCreature.AddCondition(new ConditionSpeed(duration, condition.FormulaValues));
+        targetCreature.AddCondition(new HasteCondition(duration, condition.FormulaValues));
     }
 
     private static void AddParalyzeCondition(CombatParameter combatParameter, ICombatActor targetCreature,
-        ConditionType conditionType, uint duration, ICondition condition)
+        uint duration)
     {
-        targetCreature.DecreaseSpeed((ushort)Math.Abs((int)combatParameter.Condition.Value));
-
-        targetCreature.AddCondition(new Condition(conditionType, duration)
-        {
-            EndAction = () => targetCreature.IncreaseSpeed((ushort)Math.Abs((int)combatParameter.Condition.Value))
-        });
+        var speedReduction = (ushort)Math.Abs((int)combatParameter.Condition.Value);
+        targetCreature.AddCondition(new ParalyzeCondition(duration, speedReduction));
     }
 
-    private static void AddParalyzeCondition(CombatParameter combatParameter, ICombatActor targetCreature,
-        ConditionType conditionType, uint duration)
-    {
-        targetCreature.DecreaseSpeed((ushort)Math.Abs(Convert.ToInt32(combatParameter.Condition.Value)));
-
-        targetCreature.AddCondition(new Condition(conditionType, duration)
-        {
-            EndAction = () =>
-                targetCreature.IncreaseSpeed((ushort)Math.Abs(Convert.ToInt32(combatParameter.Condition.Value)))
-        });
-    }
 
     private void AddOutfitCondition(CombatParameter combatParameter, ICombatActor targetCreature,
         ConditionType conditionType, uint duration)

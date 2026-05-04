@@ -32,7 +32,7 @@ public class NonAggressiveCombatService
             condition.Parameters.TryGetValue(ConditionParamType.Ticks, out var duration);
 
             if (condition.Type is ConditionType.Haste)
-                targetCreature.AddCondition(new ConditionSpeed(duration, condition.FormulaValues));
+                targetCreature.AddCondition(new HasteCondition(duration, condition.FormulaValues));
 
             if (condition.Type is ConditionType.Light)
             {

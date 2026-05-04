@@ -41,9 +41,6 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     {
         switch (condition.Type)
         {
-            case ConditionType.Paralyze:
-                Conditions.EndConditions(ConditionType.Haste);
-                break;
             case ConditionType.Pacified:
                 Conditions.EndConditions(ConditionType.LogoutBlock);
                 Conditions.EndConditions(ConditionType.Pacified);

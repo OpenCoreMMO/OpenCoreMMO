@@ -5,9 +5,9 @@ using NeoServer.Domain.Creatures.Conditions.Enums;
 
 namespace NeoServer.Domain.Creatures.Conditions.Implementations;
 
-public class ConditionSpeed : BaseCondition
+public class HasteCondition : BaseCondition
 {
-    public ConditionSpeed(
+    public HasteCondition(
         uint interval,
         FormulaValues formulaValues,
         EffectT effect = EffectT.None) : base(interval)

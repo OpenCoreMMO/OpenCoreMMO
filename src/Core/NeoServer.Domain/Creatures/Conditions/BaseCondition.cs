@@ -33,9 +33,12 @@ public abstract class BaseCondition : ICondition
     public FormulaValues FormulaValues { get; set; }
     public Dictionary<ConditionParamType, uint> Parameters { get; set; } = new();
 
+    private bool _hasEnded;
+
     public virtual void End()
     {
-        if (IsPersistent) return;
+        if (_hasEnded || IsPersistent) return;
+        _hasEnded = true;
 
         EndAction?.Invoke();
     }
