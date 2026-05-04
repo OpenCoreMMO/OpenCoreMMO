@@ -39,4 +39,25 @@ public class PlayerProtectionZoneBlockTests
         var conditions = player.GetConditions();
         conditions.Should().ContainSingle(c => c.Type == ConditionType.ProtectionZoneBlock);
     }
+
+    [Fact]
+    public void RemoveProtectionZoneBlock_removes_condition()
+    {
+        var player = PlayerTestDataBuilder.Build();
+        player.SetProtectionZoneBlock();
+        player.IsProtectionZoneBlocked.Should().BeTrue();
+
+        player.RemoveProtectionZoneBlock();
+
+        player.IsProtectionZoneBlocked.Should().BeFalse();
+    }
+
+    [Fact]
+    public void RemoveProtectionZoneBlock_does_nothing_when_not_blocked()
+    {
+        var player = PlayerTestDataBuilder.Build();
+
+        player.Invoking(x => x.RemoveProtectionZoneBlock()).Should().NotThrow();
+        player.IsProtectionZoneBlocked.Should().BeFalse();
+    }
 }
