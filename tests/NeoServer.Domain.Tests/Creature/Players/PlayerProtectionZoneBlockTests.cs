@@ -60,4 +60,14 @@ public class PlayerProtectionZoneBlockTests
         player.Invoking(x => x.RemoveProtectionZoneBlock()).Should().NotThrow();
         player.IsProtectionZoneBlocked.Should().BeFalse();
     }
+
+    [Fact]
+    public void Repeated_combat_block_keeps_only_one_condition()
+    {
+        var player = PlayerTestDataBuilder.Build();
+        player.AddCondition(new CombatBlockCondition(ConditionType.ProtectionZoneBlock));
+        player.AddCondition(new CombatBlockCondition(ConditionType.ProtectionZoneBlock));
+
+        player.GetConditions().Should().ContainSingle(c => c.Type == ConditionType.ProtectionZoneBlock);
+    }
 }

@@ -69,6 +69,16 @@ public class PlayerPacifiedConditionTests
     }
 
     [Fact]
+    public void Repeated_pacified_keeps_only_one_condition()
+    {
+        var player = PlayerTestDataBuilder.Build();
+        player.AddCondition(new PacifiedCondition());
+        player.AddCondition(new PacifiedCondition());
+
+        player.GetConditions().Should().ContainSingle(c => c.Type == ConditionType.Pacified);
+    }
+
+    [Fact]
     public void Pacified_end_does_not_restore_logout_block()
     {
         var player = PlayerTestDataBuilder.Build();

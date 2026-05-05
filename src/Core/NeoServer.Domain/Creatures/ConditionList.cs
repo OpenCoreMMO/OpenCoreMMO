@@ -6,8 +6,7 @@ using NeoServer.Domain.Creatures.Conditions.Enums;
 namespace NeoServer.Domain.Creatures;
 
 /// <summary>
-/// Represents a collection of conditions categorized by their type, allowing for
-/// management, retrieval, and modification of conditions.
+/// A collection of conditions grouped by <see cref="ConditionType"/> with an internal read cache.
 /// </summary>
 internal class ConditionList : IEnumerable<ICondition>
 {
@@ -19,11 +18,9 @@ internal class ConditionList : IEnumerable<ICondition>
     public int Count => IsCacheValid ? _conditionsCache.Count : GetCount();
 
     /// <summary>
-    /// Adds the specified condition to the condition list. If the condition type has not been encountered before,
-    /// a new collection entry is created for that type in the condition list. Non-persistent conditions of the same type
-    /// are removed before the addition. The condition cache is marked as invalid after the addition.
+    /// Adds a condition to the per-type list and invalidates the read cache.
     /// </summary>
-    /// <param name="condition">The condition to be added to the condition list.</param>
+    /// <param name="condition">The condition to add.</param>
     public void Add(ICondition condition)
     {
         ArgumentNullException.ThrowIfNull(condition);
@@ -40,10 +37,9 @@ internal class ConditionList : IEnumerable<ICondition>
     }
 
     /// <summary>
-    /// Removes the specified condition from the condition list if it exists.
-    /// The cache of conditions is invalidated after the removal.
+    /// Removes a specific condition instance from the list and invalidates the cache.
     /// </summary>
-    /// <param name="condition">The condition to be removed from the condition list.</param>
+    /// <param name="condition">The condition to remove.</param>
     public void Remove(ICondition condition)
     {
         if (Conditions.TryGetValue(condition.Type, out var conditions) && conditions.Remove(condition))
@@ -53,15 +49,9 @@ internal class ConditionList : IEnumerable<ICondition>
     }
 
     /// <summary>
-    /// Removes all conditions of the specified condition type from the condition list.
-    /// If there are no conditions of the specified type, the method does nothing.
-    /// The cache of conditions is invalidated after the removal.
+    /// Removes all conditions of the given type and invalidates the cache.
     /// </summary>
-    /// <param name="type">The type of conditions to remove from the condition list.</param>
-    /// <param name="endCondition">
-    /// <see langword="true"/> to invoke <see cref="ICondition.End()"/> for each removed condition before clearing them;
-    /// otherwise, <see langword="false"/> to remove the conditions without invoking their end actions.
-    /// </param>
+    /// <param name="type">The condition type to clear.</param>
     public void RemoveByType(ConditionType type, bool endCondition = true)
     {
         if (!Conditions.TryGetValue(type, out var conditions)) return;
@@ -76,17 +66,15 @@ internal class ConditionList : IEnumerable<ICondition>
     }
 
     /// <summary>
-    /// Retrieves all conditions of the specified condition type from the condition list. If there are no conditions of the specified type, the method returns an empty list.
+    /// Returns all conditions of the given type, or an empty list if none exist.
     /// </summary>
-    /// <param name="conditionType"></param>
-    /// <returns></returns>
+    /// <param name="conditionType">The condition type to look up.</param>
     public IReadOnlyList<ICondition> GetByType(ConditionType conditionType) =>
         Conditions.TryGetValue(conditionType, out var conditions) ? conditions.AsReadOnly() : [];
 
     /// <summary>
-    /// Calculates the total number of conditions in the condition list by iterating through all collections of conditions by type and summing their counts. This method is used when the cache of conditions is not valid to provide an accurate count of conditions without relying on the cache.
+    /// Calculates the total number of conditions across all types, used when the cache is invalid.
     /// </summary>
-    /// <returns></returns>
     public int GetCount()
     {
         var count = 0;
@@ -100,9 +88,8 @@ internal class ConditionList : IEnumerable<ICondition>
     }
 
     /// <summary>
-    /// Retrieves all conditions from the condition list. The method returns a read-only list of all conditions currently present in the condition list. If the cache of conditions is valid, it is returned; otherwise, a new list is created by iterating through all collections of conditions by type, and the cache is updated with this new list before returning it.
+    /// Returns all conditions as a read-only list, using the cache if valid.
     /// </summary>
-    /// <returns></returns>
     public IReadOnlyList<ICondition> GetAll()
     {
         if (_conditionsCache is not null)
@@ -125,10 +112,9 @@ internal class ConditionList : IEnumerable<ICondition>
     }
 
     /// <summary>
-    /// Retrieves the first condition of the specified condition type from the condition list. If there are no conditions of the specified type, the method returns null.
+    /// Returns the first non-null condition of the given type, or null if none exist.
     /// </summary>
-    /// <param name="conditionType"></param>
-    /// <returns></returns>
+    /// <param name="conditionType">The condition type to look up.</param>
     public ICondition GetFirstConditionOfType(ConditionType conditionType)
     {
         if (Conditions.TryGetValue(conditionType, out var conditions))
@@ -144,11 +130,11 @@ internal class ConditionList : IEnumerable<ICondition>
     }
 
     /// <summary>
-    /// Checks if there is at least one condition of the specified condition type in the condition list. If such a condition exists, the method returns true and outputs the first found condition; otherwise, it returns false and outputs null.
+    /// Checks if there is at least one condition of the given type and outputs the first one found.
     /// </summary>
-    /// <param name="conditionType"></param>
-    /// <param name="condition"></param>
-    /// <returns></returns>
+    /// <param name="conditionType">The condition type to look up.</param>
+    /// <param name="condition">The first condition found, or null.</param>
+    /// <returns>True if a condition exists.</returns>
     public bool GetFirstConditionOfType(ConditionType conditionType, out ICondition condition)
     {
         if (Conditions.TryGetValue(conditionType, out var conditions))
@@ -169,18 +155,18 @@ internal class ConditionList : IEnumerable<ICondition>
     }
     
     /// <summary>
-    /// Checks if there is at least one condition of the specified condition type in the condition list. If such a condition exists, the method returns true; otherwise, it returns false.
+    /// Checks if at least one condition of the given type exists.
     /// </summary>
-    /// <param name="conditionType"></param>
-    /// <returns></returns>
+    /// <param name="conditionType">The condition type to check.</param>
+    /// <returns>True if any condition of that type is present.</returns>
     public bool HasAnyConditionOf(ConditionType conditionType) => GetByType(conditionType).Count > 0;
 
     /// <summary>
-    /// Checks if there is at least one condition of the specified condition type in the condition list. If such a condition exists, the method returns true and outputs the first found condition; otherwise, it returns false and outputs null.
+    /// Checks if at least one condition of the given type exists and outputs the first one found.
     /// </summary>
-    /// <param name="conditionType"></param>
-    /// <param name="condition"></param>
-    /// <returns></returns>
+    /// <param name="conditionType">The condition type to check.</param>
+    /// <param name="condition">The first condition found, or null.</param>
+    /// <returns>True if a condition exists.</returns>
     public bool HasAnyConditionOf(ConditionType conditionType, out ICondition condition)
     {
         if (Conditions.TryGetValue(conditionType, out var conditions))
@@ -201,11 +187,11 @@ internal class ConditionList : IEnumerable<ICondition>
     }
 
     /// <summary>
-    /// Checks if there is at least one condition of the specified condition type in the condition list. If such conditions exist, the method returns true and outputs the list of conditions; otherwise, it returns false and outputs an empty list.
+    /// Checks if at least one condition of the given type exists and outputs all of them.
     /// </summary>
-    /// <param name="conditionType"></param>
-    /// <param name="conditions"></param>
-    /// <returns></returns>
+    /// <param name="conditionType">The condition type to check.</param>
+    /// <param name="conditions">All conditions of that type, or an empty list.</param>
+    /// <returns>True if any condition of that type exists.</returns>
     public bool HasAnyConditionOf(ConditionType conditionType, out IReadOnlyList<ICondition> conditions)
     {
         conditions = GetByType(conditionType);
@@ -213,10 +199,10 @@ internal class ConditionList : IEnumerable<ICondition>
     }
 
     /// <summary>
-    /// Checks if there is at least one enabled condition of the specified condition type in the condition list. If such a condition exists, the method returns true; otherwise, it returns false.
+    /// Checks if at least one enabled condition of the given type exists.
     /// </summary>
-    /// <param name="conditionType"></param>
-    /// <returns></returns>
+    /// <param name="conditionType">The condition type to check.</param>
+    /// <returns>True if a non-disabled condition exists.</returns>
     public bool HasAnyEnabledConditionOf(ConditionType conditionType)
     {
         if (!Conditions.TryGetValue(conditionType, out var conditions)) return false;
@@ -233,11 +219,11 @@ internal class ConditionList : IEnumerable<ICondition>
     }
 
     /// <summary>
-    /// Checks if there is at least one enabled condition of the specified condition type in the condition list. If such a condition exists,
+    /// Checks if there is at least one enabled condition of the given type and outputs the first one found.
     /// </summary>
-    /// <param name="conditionType"></param>
-    /// <param name="condition"></param>
-    /// <returns></returns>
+    /// <param name="conditionType">The condition type to check.</param>
+    /// <param name="condition">The first enabled condition found, or null.</param>
+    /// <returns>True if an enabled condition exists.</returns>
     public bool HasAnyEnabledConditionOf(ConditionType conditionType, out ICondition condition)
     {
         condition = null;
@@ -282,7 +268,7 @@ internal class ConditionList : IEnumerable<ICondition>
     private void InvalidateCache() => _conditionsCache = null;
 
     /// <summary>
-    /// Clears all conditions from the condition list. For each condition in the condition list, the <see cref="ICondition.End"/> method is called to end the condition before it is removed from the list. After all conditions have been ended and removed, the cache of conditions is invalidated.
+    /// Removes all conditions from every type and invalidates the cache.
     /// </summary>
     public void Clear()
     {

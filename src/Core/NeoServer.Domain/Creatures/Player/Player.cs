@@ -171,7 +171,7 @@ public class Player : CombatActor, IPlayer
         _ => 0.75f
     };
 
-    public bool IsPacified => Conditions.HasAnyConditionOf(ConditionType.Pacified);
+    public bool IsPacified => HasCondition(ConditionType.Pacified);
 
     public IDictionary<SkillType, Skill> Skills { get; }
 
@@ -1471,6 +1471,9 @@ public class Player : CombatActor, IPlayer
             case ConditionType.Drunk when GetConditionSuppressionCount(ConditionType.Drunk) > 0:
             case ConditionType.Drowning when GetConditionSuppressionCount(ConditionType.Drowning) > 0:
                 return;
+            case ConditionType.Pacified or ConditionType.ProtectionZoneBlock or ConditionType.LogoutBlock
+                when HasCondition(condition.Type):
+                break;
             default:
                 base.AddCondition(condition);
                 break;

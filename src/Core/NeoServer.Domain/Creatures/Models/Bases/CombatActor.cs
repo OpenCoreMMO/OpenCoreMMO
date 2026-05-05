@@ -140,6 +140,8 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         return Conditions.HasAnyEnabledConditionOf(type);
     }
 
+    public virtual bool HasAnyCondition() => Conditions.Count > 0;
+
     public ICondition GetCondition(ConditionType type) => Conditions.GetFirstConditionOfType(type);
 
     public void ResetHealthPoints()
@@ -532,7 +534,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     // public IDictionary<ConditionType, ICondition> Conditions { get; set; } =
     //     new Dictionary<ConditionType, ICondition>();
 
-    internal ConditionList Conditions { get; } = new();
+    private ConditionList Conditions { get; } = new();
 
     public abstract ushort MaximumAttackPower { get; }
     public abstract ushort MaximumElementalAttackPower { get; }
