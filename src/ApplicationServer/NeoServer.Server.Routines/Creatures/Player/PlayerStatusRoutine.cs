@@ -2,6 +2,7 @@ using System;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Server.Common.Contracts;
 
 namespace NeoServer.Server.Routines.Creatures.Player;
@@ -27,7 +28,8 @@ public class PlayerStatusRoutine(GameConfiguration gameConfiguration, IGameServe
             if (HasHostileMonstersNearby(player))
             {
                 // Reset the logout block condition to extend its duration
-                player.RestartCondition(logoutBlockCondition);
+                player.RemoveCondition(logoutBlockCondition);
+                player.AddCondition(new CombatBlockCondition(ConditionType.LogoutBlock));
                 return;
             }
 

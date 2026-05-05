@@ -52,7 +52,7 @@ internal class ConditionList : IEnumerable<ICondition>
     /// Removes all conditions of the given type and invalidates the cache.
     /// </summary>
     /// <param name="type">The condition type to clear.</param>
-    public void RemoveByType(ConditionType type, bool endCondition = true)
+    public void RemoveByType(ConditionType type)
     {
         if (!Conditions.TryGetValue(type, out var conditions)) return;
 
@@ -272,21 +272,6 @@ internal class ConditionList : IEnumerable<ICondition>
     /// </summary>
     public void Clear()
     {
-        var total = 0;
-        foreach (var list in Conditions.Values)
-        {
-            total += list.Count;
-        }
-
-        var snapshot = new List<ICondition>(total);
-        foreach (var list in Conditions.Values)
-        {
-            foreach (var condition in list)
-            {
-                snapshot.Add(condition);
-            }
-        }
-
         Conditions.Clear();
         InvalidateCache();
     }

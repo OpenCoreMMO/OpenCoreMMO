@@ -61,40 +61,33 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
         var conditionType = condition.Type;
         condition.Parameters.TryGetValue(ConditionParamType.Ticks, out var duration);
 
-        if (!targetCreature.HasCondition(condition.Type, out var existentCondition))
+        targetCreature.RemoveCondition(condition.Type);
+
+        if (conditionType is ConditionType.Light)
         {
-            if (conditionType is ConditionType.Light)
-            {
-                AddLightCondition(targetCreature, duration, condition);
-                return new CombatResult(0, Result.Success);
-            }
-
-            if (conditionType is ConditionType.Haste)
-            {
-                AddSpeedCondition(targetCreature, duration, condition);
-                return new CombatResult(0, Result.Success);
-            }
-
-            if (conditionType is ConditionType.Paralyze)
-            {
-                AddParalyzeCondition(combatParameter, targetCreature, duration);
-                return new CombatResult(0, Result.Success);
-            }
-
-            if (conditionType is ConditionType.Outfit)
-            {
-                AddOutfitCondition(combatParameter, targetCreature, conditionType, duration);
-                return new CombatResult(0, Result.Success);
-            }
-
-            targetCreature.AddCondition(new Condition(conditionType, duration));
-
+            AddLightCondition(targetCreature, duration, condition);
             return new CombatResult(0, Result.Success);
         }
 
-        //re-add condition
-        targetCreature.RestartCondition(existentCondition);
+        if (conditionType is ConditionType.Haste)
+        {
+            AddSpeedCondition(targetCreature, duration, condition);
+            return new CombatResult(0, Result.Success);
+        }
 
+        if (conditionType is ConditionType.Paralyze)
+        {
+            AddParalyzeCondition(combatParameter, targetCreature, duration);
+            return new CombatResult(0, Result.Success);
+        }
+
+        if (conditionType is ConditionType.Outfit)
+        {
+            AddOutfitCondition(combatParameter, targetCreature, conditionType, duration);
+            return new CombatResult(0, Result.Success);
+        }
+
+        targetCreature.AddCondition(new Condition(conditionType, duration));
 
         return new CombatResult(0, Result.Success);
     }
@@ -104,27 +97,21 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
         var conditionType = combatParameter.Condition.Type;
         var duration = combatParameter.Condition.Duration;
 
-        if (!targetCreature.HasCondition(combatParameter.Condition.Type, out var condition))
+        targetCreature.RemoveCondition(conditionType);
+
+        if (conditionType is ConditionType.Paralyze)
         {
-            if (conditionType is ConditionType.Paralyze)
-            {
-                AddParalyzeCondition(combatParameter, targetCreature, duration);
-                return new CombatResult(0, Result.Success);
-            }
-
-            if (conditionType is ConditionType.Outfit)
-            {
-                AddOutfitCondition(combatParameter, targetCreature, conditionType, duration);
-                return new CombatResult(0, Result.Success);
-            }
-
-            targetCreature.AddCondition(new Condition(conditionType, duration));
-
+            AddParalyzeCondition(combatParameter, targetCreature, duration);
             return new CombatResult(0, Result.Success);
         }
 
-        //re-add condition
-        targetCreature.RestartCondition(condition);
+        if (conditionType is ConditionType.Outfit)
+        {
+            AddOutfitCondition(combatParameter, targetCreature, conditionType, duration);
+            return new CombatResult(0, Result.Success);
+        }
+
+        targetCreature.AddCondition(new Condition(conditionType, duration));
 
         return new CombatResult(0, Result.Success);
     }

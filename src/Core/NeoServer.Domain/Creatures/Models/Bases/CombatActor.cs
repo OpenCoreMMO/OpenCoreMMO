@@ -73,6 +73,18 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
     }
 
+    public void RemoveAllConditions()
+    {
+        foreach (var condition in Conditions.GetAll())
+        {
+            if (condition is BaseCondition conditionToRemove)
+            {
+                conditionToRemove.End();
+            }
+        }
+        Conditions.Clear();
+    }
+
     public void DisableCondition(ConditionType type)
     {
         ICondition firstCondition = null;
@@ -118,16 +130,6 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
         Conditions.RemoveByType(type);
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, snapshot[0]));
-    }
-
-    public virtual void RestartCondition(ICondition condition)
-    {
-        if (condition is not BaseCondition conditionToRestart)
-        {
-            return;
-        }
-
-        conditionToRestart.Restart(this);
     }
 
     public virtual IReadOnlyList<ICondition> GetConditions() => Conditions.GetAll();
@@ -489,7 +491,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         StopAttack();
         StopFollowing();
         StopWalking();
-        Conditions.Clear();
+        RemoveAllConditions();
         ReceivedDamages.Clear();
     }
 

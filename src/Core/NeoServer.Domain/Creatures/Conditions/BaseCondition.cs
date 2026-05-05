@@ -73,13 +73,6 @@ public abstract class BaseCondition : ICondition
         return true;
     }
 
-    internal virtual bool Restart(ICreature creature)
-    {
-        _hasEnded = false;
-        Start(creature);
-        return true;
-    }
-
     public virtual bool HasExpired => !IsPersistent && EndTime < DateTime.UtcNow.Ticks;
     
     /// <summary>
