@@ -1,5 +1,6 @@
 using System.Collections;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Conditions;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 
 namespace NeoServer.Domain.Creatures;
@@ -8,7 +9,7 @@ namespace NeoServer.Domain.Creatures;
 /// Represents a collection of conditions categorized by their type, allowing for
 /// management, retrieval, and modification of conditions.
 /// </summary>
-public class ConditionList : IEnumerable<ICondition>
+internal class ConditionList : IEnumerable<ICondition>
 {
     private Dictionary<ConditionType, List<ICondition>> Conditions { get; } = new();
     private IReadOnlyList<ICondition> _conditionsCache;
@@ -33,26 +34,6 @@ public class ConditionList : IEnumerable<ICondition>
             Conditions[condition.Type] = conditions;
         }
 
-        // Remove any existing non-persistent conditions of the same type
-        if (!condition.IsPersistent)
-        {
-            ICondition toRemove = null;
-            foreach (var existingCondition in conditions)
-            {
-                if (!existingCondition.IsPersistent)
-                {
-                    toRemove = existingCondition;
-                    break;
-                }
-            }
-
-            if (toRemove is not null)
-            {
-                toRemove.End();
-                conditions.Remove(toRemove);
-            }
-        }
-
         conditions.Add(condition);
 
         InvalidateCache();
@@ -63,16 +44,10 @@ public class ConditionList : IEnumerable<ICondition>
     /// The cache of conditions is invalidated after the removal.
     /// </summary>
     /// <param name="condition">The condition to be removed from the condition list.</param>
-    /// <param name="endCondition"></param>
-    public void Remove(ICondition condition, bool endCondition = true)
+    public void Remove(ICondition condition)
     {
         if (Conditions.TryGetValue(condition.Type, out var conditions) && conditions.Remove(condition))
         {
-            if (endCondition)
-            {
-                condition.End();
-            }
-
             InvalidateCache();
         }
     }
@@ -95,16 +70,7 @@ public class ConditionList : IEnumerable<ICondition>
         {
             return;
         }
-
-        if (endCondition)
-        {
-            var snapshot = new List<ICondition>(conditions);
-            foreach (var condition in snapshot)
-            {
-                condition.End();
-            }
-        }
-
+        
         conditions.Clear();
         InvalidateCache();
     }
@@ -201,58 +167,7 @@ public class ConditionList : IEnumerable<ICondition>
         condition = null;
         return false;
     }
-
-    /// <summary>
-    /// Ends all conditions of the specified condition type. For each condition of the specified type, the <see cref="ICondition.End"/> method is called. If the remove parameter is set to true (which is the default value), all conditions of the specified type are removed from the condition list after being ended; otherwise, they remain in the list but are considered ended. The cache of conditions is invalidated after the operation.
-    /// </summary>
-    /// <param name="conditionType"></param>
-    /// <param name="remove"></param>
-    public void EndConditions(ConditionType conditionType, bool remove = true)
-    {
-        if (!Conditions.TryGetValue(conditionType, out var conditions)) return;
-
-        if (conditions.Count == 0) return;
-
-        for (var i = 0; i < conditions.Count; i++)
-        {
-            var condition = conditions[i];
-            condition?.End();
-        }
-
-        if (remove)
-        {
-            conditions.Clear();
-            InvalidateCache();
-        }
-    }
-
-    /// <summary>
-    /// Disables all conditions of the specified type. Disabled conditions remain in the list
-    /// but are not considered active by <see cref="HasAnyEnabledConditionOf"/>.
-    /// </summary>
-    public void DisableConditions(ConditionType conditionType)
-    {
-        if (!Conditions.TryGetValue(conditionType, out var conditions)) return;
-
-        foreach (var condition in conditions)
-        {
-            condition.Disable();
-        }
-    }
-
-    /// <summary>
-    /// Re-enables all conditions of the specified type that were previously disabled.
-    /// </summary>
-    public void EnableConditions(ConditionType conditionType)
-    {
-        if (!Conditions.TryGetValue(conditionType, out var conditions)) return;
-
-        foreach (var condition in conditions)
-        {
-            condition.Enable();
-        }
-    }
-
+    
     /// <summary>
     /// Checks if there is at least one condition of the specified condition type in the condition list. If such a condition exists, the method returns true; otherwise, it returns false.
     /// </summary>
@@ -340,6 +255,30 @@ public class ConditionList : IEnumerable<ICondition>
         return false;
     }
 
+    /// <summary>
+    /// Removes all non-persistent conditions of the specified type from the condition list.
+    /// Persistent conditions are left unchanged. The cache is invalidated if any removal occurs.
+    /// </summary>
+    public ICondition RemoveNonPersistentByType(ConditionType type)
+    {
+        if (!Conditions.TryGetValue(type, out var conditions)) return null;
+
+        var removed = false;
+        ICondition removedCondition = null;
+        for (var i = conditions.Count - 1; i >= 0; i--)
+        {
+            if (!conditions[i].IsPersistent)
+            {
+                removedCondition = conditions[i];
+                conditions.RemoveAt(i);
+                removed = true;
+            }
+        }
+
+        if (removed) InvalidateCache();
+        return removedCondition;
+    }
+
     private void InvalidateCache() => _conditionsCache = null;
 
     /// <summary>
@@ -364,11 +303,6 @@ public class ConditionList : IEnumerable<ICondition>
 
         Conditions.Clear();
         InvalidateCache();
-
-        for (var i = 0; i < snapshot.Count; i++)
-        {
-            snapshot[i].End();
-        }
     }
 
     IEnumerator<ICondition> IEnumerable<ICondition>.GetEnumerator() => GetAll().GetEnumerator();

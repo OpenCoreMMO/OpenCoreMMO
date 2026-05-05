@@ -35,12 +35,12 @@ public abstract class BaseCondition : ICondition
 
     private bool _hasEnded;
 
-    public virtual void End()
+    internal virtual void End()
     {
         if (_hasEnded || IsPersistent) return;
         _hasEnded = true;
 
-        EndAction?.Invoke();
+        EndAction?.Invoke(); //can cause side effect
     }
 
     public virtual void Extend(uint duration, uint maxDuration = uint.MaxValue)
@@ -64,12 +64,19 @@ public abstract class BaseCondition : ICondition
         IsDisabled = false;
     }
 
-    public virtual bool Start(ICreature creature)
+    internal virtual bool Start(ICreature creature)
     {
         if (Duration == 0) return true;
         
         StartedAt = DateTime.UtcNow.Ticks;
         EndTime = StartedAt + Duration;
+        return true;
+    }
+
+    internal virtual bool Restart(ICreature creature)
+    {
+        _hasEnded = false;
+        Start(creature);
         return true;
     }
 

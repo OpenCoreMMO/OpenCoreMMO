@@ -325,7 +325,7 @@ public class PlayerTests
     }
 
     [Fact]
-    public void SetAsHungry_replaces_regeneration_with_hungry_condition()
+    public void SetAsHungry_adds_hungry_condition()
     {
         var sut = PlayerTestDataBuilder.Build();
         var regenerationCondition = new Condition(ConditionType.Regeneration, 10000);
@@ -333,12 +333,12 @@ public class PlayerTests
 
         sut.SetAsHungry();
 
-        sut.HasCondition(ConditionType.Regeneration).Should().BeFalse();
+        sut.HasCondition(ConditionType.Regeneration).Should().BeTrue();
         sut.HasCondition(ConditionType.Hungry).Should().BeTrue();
     }
 
     [Fact]
-    public void SetAsHungry_does_not_invoke_endaction_of_removed_regeneration_condition()
+    public void SetAsHungry_does_not_invoke_endaction_of_regeneration_condition()
     {
         var endActionInvoked = false;
         var sut = PlayerTestDataBuilder.Build();
@@ -358,7 +358,7 @@ public class PlayerTests
         sut.AddCondition(regenerationCondition);
 
         sut.SetAsHungry();
-        sut.HasCondition(ConditionType.Regeneration).Should().BeFalse();
+        sut.HasCondition(ConditionType.Regeneration).Should().BeTrue();
         sut.HasCondition(ConditionType.Hungry).Should().BeTrue();
     }
 }

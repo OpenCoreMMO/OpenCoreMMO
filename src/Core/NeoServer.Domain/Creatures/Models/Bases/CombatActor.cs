@@ -11,6 +11,7 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Conditions;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Events;
@@ -39,50 +40,100 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual void AddCondition(ICondition condition)
     {
-        condition.Start(this);
-        Conditions.Add(condition);
+        if (condition is not BaseCondition conditionToAdd)
+        {
+            return;
+        }
+
+        if (!condition.IsPersistent)
+        {
+            var conditionRemoved = Conditions.RemoveNonPersistentByType(condition.Type);
+            if (conditionRemoved is BaseCondition conditionBaseRemoved)
+            {
+                conditionBaseRemoved.End();
+            }
+        }
+
+        conditionToAdd.Start(this);
+        Conditions.Add(conditionToAdd);
 
         EventAggregator.Invoke(new CreatureConditionAddedEvent(this, condition));
     }
 
-    public virtual void RemoveCondition(ICondition condition, bool endCondition = true)
+    public virtual void RemoveCondition(ICondition condition)
     {
-        Conditions.Remove(condition, endCondition);
+        if (condition is not BaseCondition conditionToRemove)
+        {
+            return;
+        }
+
+        Conditions.Remove(conditionToRemove);
+        conditionToRemove.End();
+
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
     }
 
     public void DisableCondition(ConditionType type)
     {
-        var firstCondition = Conditions.GetByType(type).FirstOrDefault();
-        if (firstCondition is null) return;
-        Conditions.DisableConditions(type);
+        ICondition firstCondition = null;
+        foreach (var condition in Conditions.GetByType(type))
+        {
+            firstCondition ??= condition;
+            condition.Disable();
+        }
 
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, firstCondition));
     }
 
     public void EnableCondition(ConditionType type)
     {
-        var firstCondition = Conditions.GetByType(type).FirstOrDefault();
-        if (firstCondition is null) return;
-        
-        Conditions.EnableConditions(type);
+        ICondition firstCondition = null;
+        foreach (var condition in Conditions.GetByType(type))
+        {
+            firstCondition ??= condition;
+            condition.Enable();
+        }
 
         EventAggregator.Invoke(new CreatureConditionAddedEvent(this, firstCondition));
     }
 
-    public virtual void RemoveCondition(ConditionType type, bool endCondition = true)
+    public virtual void RemoveCondition(ConditionType type)
     {
-        var firstCondition = Conditions.GetByType(type).FirstOrDefault();
-        if (firstCondition is null) return;
-        
-        Conditions.RemoveByType(type, endCondition);
+        var toRemove = Conditions.GetByType(type);
+        if (toRemove.Count == 0) return;
 
-        EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, firstCondition));
+        var snapshot = new List<ICondition>(toRemove.Count);
+        for (var i = 0; i < toRemove.Count; i++)
+        {
+            snapshot.Add(toRemove[i]);
+        }
+
+        foreach (var condition in snapshot)
+        {
+            if (condition is BaseCondition conditionToRemove)
+            {
+                conditionToRemove.End();
+            }
+        }
+
+        Conditions.RemoveByType(type);
+        EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, snapshot[0]));
+    }
+
+    public virtual void RestartCondition(ICondition condition)
+    {
+        if (condition is not BaseCondition conditionToRestart)
+        {
+            return;
+        }
+
+        conditionToRestart.Restart(this);
     }
 
     public virtual IReadOnlyList<ICondition> GetConditions() => Conditions.GetAll();
 
-    public virtual bool HasCondition(ConditionType type, out ICondition condition) => Conditions.HasAnyEnabledConditionOf(type, out condition);
+    public virtual bool HasCondition(ConditionType type, out ICondition condition) =>
+        Conditions.HasAnyEnabledConditionOf(type, out condition);
 
     public virtual bool HasCondition(ConditionType type)
     {
@@ -274,7 +325,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         if (increasing <= 0) return;
 
         if (HealthPoints == MaxHealthPoints) increasing = 0;
-        
+
         var oldHealthPoints = HealthPoints;
 
         HealthPoints = Math.Min(HealthPoints + increasing, MaxHealthPoints);
@@ -481,7 +532,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     // public IDictionary<ConditionType, ICondition> Conditions { get; set; } =
     //     new Dictionary<ConditionType, ICondition>();
 
-    protected ConditionList Conditions { get; } = new();
+    internal ConditionList Conditions { get; } = new();
 
     public abstract ushort MaximumAttackPower { get; }
     public abstract ushort MaximumElementalAttackPower { get; }

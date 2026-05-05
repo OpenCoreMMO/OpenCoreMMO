@@ -1,5 +1,6 @@
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Conditions;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Player.Inventory;
@@ -292,7 +293,6 @@ public class PlayerEquipmentConditionTests
         {
             if (!condition.HasExpired) continue;
 
-            condition.End();
             creature.RemoveCondition(condition);
         }
     }

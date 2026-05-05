@@ -11,7 +11,7 @@ public class PacifiedCondition : BaseCondition
     {
     }
 
-    public override bool Start(ICreature creature)
+    internal override bool Start(ICreature creature)
     {
         if (!base.Start(creature)) return false;
 
@@ -19,7 +19,6 @@ public class PacifiedCondition : BaseCondition
         {
             combatActor.RemoveCondition(ConditionType.LogoutBlock);
             combatActor.RemoveCondition(ConditionType.ProtectionZoneBlock);
-            combatActor.RemoveCondition(ConditionType.Pacified);
         }
 
         return true;

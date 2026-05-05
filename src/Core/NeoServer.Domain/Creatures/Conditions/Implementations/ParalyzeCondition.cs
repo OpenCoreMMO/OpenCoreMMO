@@ -14,21 +14,21 @@ public class ParalyzeCondition : BaseCondition
         _speedReduction = speedReduction;
     }
 
-    public override bool Start(ICreature creature)
+    internal override bool Start(ICreature creature)
     {
         if (!base.Start(creature)) return false;
 
         if (creature is not IWalkableCreature walkable) return true;
-
-        walkable.DecreaseSpeed(_speedReduction);
-
-        EndAction = () => walkable.IncreaseSpeed(_speedReduction);
-
+        
         if (creature is ICombatActor combatActor)
         {
             combatActor.RemoveCondition(ConditionType.Haste);
         }
 
+        walkable.DecreaseSpeed(_speedReduction);
+
+        EndAction = () => walkable.IncreaseSpeed(_speedReduction);
+        
         return true;
     }
 }

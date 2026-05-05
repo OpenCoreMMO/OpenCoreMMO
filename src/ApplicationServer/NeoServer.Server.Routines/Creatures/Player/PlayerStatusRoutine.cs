@@ -27,7 +27,7 @@ public class PlayerStatusRoutine(GameConfiguration gameConfiguration, IGameServe
             if (HasHostileMonstersNearby(player))
             {
                 // Reset the logout block condition to extend its duration
-                logoutBlockCondition.Start(player);
+                player.RestartCondition(logoutBlockCondition);
                 return;
             }
 

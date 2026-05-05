@@ -65,13 +65,13 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
         {
             if (conditionType is ConditionType.Light)
             {
-                AddLightCondition(combatParameter, targetCreature, conditionType, duration, condition);
+                AddLightCondition(targetCreature, duration, condition);
                 return new CombatResult(0, Result.Success);
             }
 
             if (conditionType is ConditionType.Haste)
             {
-                AddSpeedCondition(combatParameter, targetCreature, conditionType, duration, condition);
+                AddSpeedCondition(targetCreature, duration, condition);
                 return new CombatResult(0, Result.Success);
             }
 
@@ -92,7 +92,10 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
             return new CombatResult(0, Result.Success);
         }
 
-        existentCondition.Start(targetCreature);
+        //re-add condition
+        targetCreature.RestartCondition(existentCondition);
+
+
         return new CombatResult(0, Result.Success);
     }
 
@@ -120,7 +123,9 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
             return new CombatResult(0, Result.Success);
         }
 
-        condition.Start(targetCreature);
+        //re-add condition
+        targetCreature.RestartCondition(condition);
+
         return new CombatResult(0, Result.Success);
     }
 
@@ -136,17 +141,11 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
         if (combatParameter.MinDamage is 0 || combatParameter.MaxDamage is 0)
             return CombatResult.Fail(Result.NotPossible);
 
-        if (!targetCreature.HasCondition(condition.Type, out var existentCondition))
-        {
-            targetCreature.AddCondition(new ConditionDamage(aggressor, conditionType, duration,
-                combatParameter.MinDamage,
-                combatParameter.MaxDamage));
+        targetCreature.RemoveCondition(conditionType);
+        targetCreature.AddCondition(new ConditionDamage(aggressor, conditionType, duration,
+            combatParameter.MinDamage,
+            combatParameter.MaxDamage));
 
-            return new CombatResult(0, Result.Success);
-        }
-
-        (existentCondition as ConditionDamage)?.Start(targetCreature, combatParameter.MinDamage,
-            combatParameter.MaxDamage);
         return new CombatResult(0, Result.Success);
     }
 
@@ -159,21 +158,15 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
         if (combatParameter.MinDamage is 0 || combatParameter.MaxDamage is 0)
             return CombatResult.Fail(Result.NotPossible);
 
-        if (!targetCreature.HasCondition(combatParameter.Condition.Type, out var condition))
-        {
-            targetCreature.AddCondition(new ConditionDamage(aggressor, conditionType, interval,
-                combatParameter.MinDamage,
-                combatParameter.MaxDamage));
+        targetCreature.RemoveCondition(conditionType);
+        targetCreature.AddCondition(new ConditionDamage(aggressor, conditionType, interval,
+            combatParameter.MinDamage,
+            combatParameter.MaxDamage));
 
-            return new CombatResult(0, Result.Success);
-        }
-
-        (condition as ConditionDamage)?.Start(targetCreature, combatParameter.MinDamage, combatParameter.MaxDamage);
         return new CombatResult(0, Result.Success);
     }
 
-    private static void AddLightCondition(CombatParameter combatParameter, ICombatActor targetCreature,
-        ConditionType conditionType, uint duration, ICondition condition)
+    private static void AddLightCondition(ICombatActor targetCreature, uint duration, ICondition condition)
     {
         condition.Parameters.TryGetValue(ConditionParamType.LightLevel, out var lightLevel);
         condition.Parameters.TryGetValue(ConditionParamType.LightColor, out var lightColor);
@@ -184,8 +177,7 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
         });
     }
 
-    private static void AddSpeedCondition(CombatParameter combatParameter, ICombatActor targetCreature,
-        ConditionType conditionType, uint duration, ICondition condition)
+    private static void AddSpeedCondition(ICombatActor targetCreature, uint duration, ICondition condition)
     {
         targetCreature.AddCondition(new HasteCondition(duration, condition.FormulaValues));
     }
@@ -210,6 +202,7 @@ public class ConditionAttackService(IMonsterTypeStore monsterTypeStore) : IAttac
         monster.Look.TryGetValue(LookType.Legs, out var legs);
         monster.Look.TryGetValue(LookType.Feet, out var feet);
 
-        targetCreature.AddCondition(new OutfitCondition(duration, lookType, (byte)head, (byte)body, (byte)legs, (byte)feet, (byte)addon));
+        targetCreature.AddCondition(new OutfitCondition(duration, lookType, (byte)head, (byte)body, (byte)legs,
+            (byte)feet, (byte)addon));
     }
 }

@@ -15,8 +15,8 @@ public class ConditionDamage : BaseCondition
 {
     private CooldownTime _cooldown;
     private Queue<ushort> _damageQueue;
-    private ushort _maxDamage;
-    private ushort _minDamage;
+    private readonly ushort _maxDamage;
+    private readonly ushort _minDamage;
 
     public ConditionDamage(
         IThing cause,
@@ -76,25 +76,8 @@ public class ConditionDamage : BaseCondition
 
         creature.TakeDamage(Cause, new CombatDamage(damage, DamageType, DamageEffectParser.Parse(DamageType)));
     }
-
-    public bool Start(ICreature creature, ushort minDamage, ushort maxDamage)
-    {
-        if (maxDamage < _maxDamage) return false;
-
-        _minDamage = minDamage;
-        _maxDamage = maxDamage;
-        
-        //End any existing conditions of this type
-        if (creature is ICombatActor combatActor)
-        {
-            combatActor.RemoveCondition(Type);
-        }
-
-        Start(creature);
-        return true;
-    }
-
-    public override bool Start(ICreature creature)
+    
+    internal override bool Start(ICreature creature)
     {
         if (Amount == 0)
             GenerateDamageList();
@@ -102,13 +85,6 @@ public class ConditionDamage : BaseCondition
             GenerateDamageList(Amount);
 
         base.Start(creature);
-        return true;
-    }
-
-    public bool Restart(byte amount)
-    {
-        GenerateDamageList(amount);
-
         return true;
     }
 

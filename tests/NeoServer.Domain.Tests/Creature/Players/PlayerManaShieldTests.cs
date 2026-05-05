@@ -1,4 +1,5 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Conditions;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Player;
@@ -38,11 +39,9 @@ public class PlayerManaShieldTests
         for (var i = 0; i < conditions.Count; i++)
         {
             var condition = conditions[i];
-            if (condition.HasExpired)
-            {
-                condition.End();
-                creature.RemoveCondition(condition);
-            }
+
+            creature.RemoveCondition(condition);
+
         }
     }
 }

@@ -21,7 +21,7 @@ public class HasteCondition : BaseCondition
     public EffectT Effect { get; }
     public uint Interval { get; }
 
-    public override bool Start(ICreature creature)
+    internal override bool Start(ICreature creature)
     {
         if (!base.Start(creature))
             return false;
@@ -29,10 +29,9 @@ public class HasteCondition : BaseCondition
         if (creature is not IWalkableCreature walkableCreature)
             return false;
         
-        //End any existing haste conditions
+        //End any existing paralyze conditions
         if (creature is ICombatActor combatActor)
         {
-            combatActor.RemoveCondition(Type);
             combatActor.RemoveCondition(ConditionType.Paralyze);
         }
 

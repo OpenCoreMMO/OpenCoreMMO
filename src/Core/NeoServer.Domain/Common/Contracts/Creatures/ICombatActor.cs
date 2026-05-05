@@ -67,8 +67,8 @@ public interface ICombatActor : IWalkableCreature
     void AddCondition(ICondition condition);
     void DisableCondition(ConditionType type);
     void EnableCondition(ConditionType type);
-    void RemoveCondition(ICondition condition, bool endCondition = true);
-    void RemoveCondition(ConditionType type, bool endCondition = true);
+    void RemoveCondition(ICondition condition);
+    void RemoveCondition(ConditionType type);
     bool HasCondition(ConditionType type, out ICondition condition);
     bool HasCondition(ConditionType type);
     ICondition GetCondition(ConditionType type);
@@ -84,4 +84,5 @@ public interface ICombatActor : IWalkableCreature
     bool IsTargetLost();
     bool IsTargetLost(ICreature target);
     IReadOnlyList<ICondition> GetConditions();
+    void RestartCondition(ICondition condition);
 }

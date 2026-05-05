@@ -64,7 +64,7 @@ public class PlayerPacifiedConditionTests
         var second = new PacifiedCondition();
         player.AddCondition(second);
 
-        player.GetCondition(ConditionType.Pacified).Should().BeSameAs(second);
+        player.HasCondition(ConditionType.Pacified).Should().BeTrue();
         player.IsPacified.Should().BeTrue();
     }
 

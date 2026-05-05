@@ -16,7 +16,7 @@ public class ConditionInvisible : BaseCondition
     public override ConditionType Type => ConditionType.Invisible;
     public EffectT Effect { get; }
 
-    public override bool Start(ICreature creature)
+    internal override bool Start(ICreature creature)
     {
         if (!base.Start(creature))
             return false;

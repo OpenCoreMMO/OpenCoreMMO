@@ -25,15 +25,10 @@ public class OutfitCondition : BaseCondition
         _addon = addon;
     }
 
-    public override bool Start(ICreature creature)
+    internal override bool Start(ICreature creature)
     {
         if (!base.Start(creature)) return false;
-
-        if (creature is ICombatActor combatActor)
-        {
-            combatActor.RemoveCondition(ConditionType.Outfit);
-        }
-
+        
         creature.SetTemporaryOutfit(_lookType, _head, _body, _legs, _feet, _addon);
         EndAction = creature.BackToOldOutfit;
 
