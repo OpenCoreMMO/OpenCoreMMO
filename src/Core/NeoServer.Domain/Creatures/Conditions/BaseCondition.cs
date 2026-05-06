@@ -66,10 +66,13 @@ public abstract class BaseCondition : ICondition
 
     internal virtual bool Start(ICreature creature)
     {
-        if (Duration == 0) return true;
-        
         StartedAt = DateTime.UtcNow.Ticks;
-        EndTime = StartedAt + Duration;
+
+        if (Duration > 0)
+        {
+            EndTime = StartedAt + Duration;
+        }
+
         return true;
     }
 
