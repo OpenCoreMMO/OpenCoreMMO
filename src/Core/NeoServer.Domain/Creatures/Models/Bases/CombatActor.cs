@@ -94,6 +94,8 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
             condition.Disable();
         }
 
+        if (firstCondition is null) return;
+
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, firstCondition));
     }
 
@@ -105,6 +107,8 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
             firstCondition ??= condition;
             condition.Enable();
         }
+
+        if (firstCondition is null) return;
 
         EventAggregator.Invoke(new CreatureConditionAddedEvent(this, firstCondition));
     }
