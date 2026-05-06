@@ -59,7 +59,7 @@ public class LogoutBlockConditionTests
     }
 
     [SkipOnGitHubActionsFact]
-    [Trait("Category", "Condition")]
+    [Trait("Category", "Integration")]
     public void Player_gets_logout_block_when_attacking_and_cannot_logout()
     {
         _player.IsLogoutBlocked.Should().BeFalse();
@@ -76,7 +76,7 @@ public class LogoutBlockConditionTests
     }
 
     [SkipOnGitHubActionsFact]
-    [Trait("Category", "Condition")]
+    [Trait("Category", "Integration")]
     public void Player_can_logout_after_logout_block_expires()
     {
         AttackThroughHandler();
@@ -96,7 +96,7 @@ public class LogoutBlockConditionTests
     }
 
     [SkipOnGitHubActionsFact]
-    [Trait("Category", "Condition")]
+    [Trait("Category", "Integration")]
     public void Player_logout_block_refreshes_when_hostile_monster_nearby()
     {
         AttackThroughHandler();
@@ -114,7 +114,7 @@ public class LogoutBlockConditionTests
     }
 
     [SkipOnGitHubActionsFact]
-    [Trait("Category", "Condition")]
+    [Trait("Category", "Integration")]
     public void Player_can_logout_after_monster_removed()
     {
         AttackThroughHandler();
@@ -138,7 +138,7 @@ public class LogoutBlockConditionTests
     }
 
     [SkipOnGitHubActionsFact]
-    [Trait("Category", "Condition")]
+    [Trait("Category", "Integration")]
     public void Player_logout_block_removed_when_entering_protection_zone()
     {
         AttackThroughHandler();
@@ -171,7 +171,9 @@ public class LogoutBlockConditionTests
         var handler = new PlayerAutoWalkHandler(_game);
         handler.HandleMessage(messageMock.Object, _playerConnection.Object);
 
-        WaitFor(() => _player.IsPacified, timeoutMs: 5000);
+        WaitFor(() => _player.IsPacified, timeoutMs: 5000)
+            .Should()
+            .BeTrue("entering a protection zone should apply pacified condition");
 
         _player.IsLogoutBlocked.Should().BeFalse();
         _player.IsPacified.Should().BeTrue();
@@ -201,17 +203,21 @@ public class LogoutBlockConditionTests
         var handler = new PlayerAttackHandler(_game, _attackCommand);
         handler.HandleMessage(messageMock.Object, _playerConnection.Object);
 
-        WaitFor(() => _player.IsLogoutBlocked, timeoutMs: 5000);
+        WaitFor(() => _player.IsLogoutBlocked, timeoutMs: 5000)
+            .Should()
+            .BeTrue("attacking should apply a logout block condition");
     }
 
-    private static void WaitFor(Func<bool> condition, int timeoutMs = 5000, int pollIntervalMs = 50)
+    private static bool WaitFor(Func<bool> condition, int timeoutMs = 5000, int pollIntervalMs = 50)
     {
         var start = DateTime.UtcNow;
         while (DateTime.UtcNow.Subtract(start).TotalMilliseconds < timeoutMs)
         {
-            if (condition()) return;
+            if (condition()) return true;
             Thread.Sleep(pollIntervalMs);
         }
+
+        return false;
     }
 
     private IMonster TryPlaceMonsterNearPlayer()
@@ -245,12 +251,6 @@ public class LogoutBlockConditionTests
             new Location(playerLocation.X, (ushort)(playerLocation.Y - 1), playerLocation.Z),
             new Location(playerLocation.X, playerLocation.Y, playerLocation.Z)
         ];
-    }
-
-    private static IDynamicTile CreateRegularTile(Location location)
-    {
-        var ground = MapTestDataBuilder.CreateGround(location, 1);
-        return new DynamicTile(new Coordinate(location), TileFlag.None, ground, [], []);
     }
 
     private static IDynamicTile CreateProtectionZoneTile(Location location)
