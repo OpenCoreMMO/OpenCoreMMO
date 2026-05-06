@@ -24,10 +24,7 @@ public interface ICondition
     bool IsDisabled { get; }
     bool IsPersistent { get; }
     long Duration { get; }
-
-    bool Start(ICreature creature);
-    void End();
-
+    
     /// <summary>
     ///     Extends condition duration in milliseconds
     /// </summary>

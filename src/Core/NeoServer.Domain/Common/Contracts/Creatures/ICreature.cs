@@ -9,12 +9,6 @@ using NeoServer.Domain.Creatures.Player.Outfit;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
-public delegate void CreatureStateChange();
-
-public delegate void RemoveCreature(ICreature creature);
-
-public delegate void AddCondition(ICreature creature, ICondition condition);
-
 public interface ICreature : IMovableThing
 {
     /// <summary>

@@ -5,9 +5,9 @@ using NeoServer.Domain.Creatures.Conditions.Enums;
 
 namespace NeoServer.Domain.Creatures.Conditions.Implementations;
 
-public class ConditionSpeed : BaseCondition
+public class HasteCondition : BaseCondition
 {
-    public ConditionSpeed(
+    public HasteCondition(
         uint interval,
         FormulaValues formulaValues,
         EffectT effect = EffectT.None) : base(interval)
@@ -21,7 +21,7 @@ public class ConditionSpeed : BaseCondition
     public EffectT Effect { get; }
     public uint Interval { get; }
 
-    public override bool Start(ICreature creature)
+    internal override bool Start(ICreature creature)
     {
         if (!base.Start(creature))
             return false;
@@ -29,11 +29,10 @@ public class ConditionSpeed : BaseCondition
         if (creature is not IWalkableCreature walkableCreature)
             return false;
         
-        //End any existing haste conditions
+        //End any existing paralyze conditions
         if (creature is ICombatActor combatActor)
         {
-            combatActor.Conditions.EndConditions(Type);
-            combatActor.Conditions.EndConditions(ConditionType.Paralyze);
+            combatActor.RemoveCondition(ConditionType.Paralyze);
         }
 
         var baseSpeed = walkableCreature.RawSpeed;

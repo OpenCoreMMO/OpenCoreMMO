@@ -171,7 +171,7 @@ public class Player : CombatActor, IPlayer
         _ => 0.75f
     };
 
-    public bool IsPacified => Conditions.HasAnyConditionOf(ConditionType.Pacified);
+    public bool IsPacified => HasCondition(ConditionType.Pacified);
 
     public IDictionary<SkillType, Skill> Skills { get; }
 
@@ -310,14 +310,9 @@ public class Player : CombatActor, IPlayer
     {
         if (IsPacified) return;
 
-        if (HasCondition(ConditionType.ProtectionZoneBlock, out var condition))
-        {
-            condition.Start(this);
-            return;
-        }
+        if (HasCondition(ConditionType.ProtectionZoneBlock)) return;
 
-        //protection zone block is persistent, this will be removed elsewhere
-        AddCondition(new Condition(ConditionType.ProtectionZoneBlock, 0));
+        AddCondition(new CombatBlockCondition(ConditionType.ProtectionZoneBlock));
     }
 
     public void RemoveProtectionZoneBlock()
@@ -759,7 +754,7 @@ public class Player : CombatActor, IPlayer
         if (soul == 0) return;
         if (!HasEnoughSoul(soul)) return;
 
-        Mana -= soul;
+        SoulPoints -= (byte)soul;
         EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 
@@ -1008,23 +1003,19 @@ public class Player : CombatActor, IPlayer
     public bool Feed(int duration)
     {
         var regenerationMs = (uint)duration * 1000;
-        const uint maxRegenerationTime = (uint)1200 * 1000; //20 minutes
 
-        if (Conditions.GetFirstConditionOfType(ConditionType.Regeneration, out var condition))
+        if (GetCondition(ConditionType.Regeneration) is ConditionRegeneration regen)
         {
-            if (condition.RemainingTime + regenerationMs >=
-                maxRegenerationTime) //todo: this number should be configurable
+            if (!regen.TryExtend(regenerationMs))
             {
                 OperationFailService.Send(CreatureId, TextConstants.YOU_ARE_FULL);
                 return false;
             }
-
-            condition.Extend(regenerationMs, maxRegenerationTime);
         }
         else
         {
             RemoveHungry();
-            AddCondition(new Condition(ConditionType.Regeneration, regenerationMs, SetAsHungry));
+            AddCondition(new ConditionRegeneration(regenerationMs, SetAsHungry));
         }
 
         return true;
@@ -1038,7 +1029,6 @@ public class Player : CombatActor, IPlayer
 
     public void SetAsHungry()
     {
-        RemoveCondition(ConditionType.Regeneration, false);
         AddCondition(new Condition(ConditionType.Hungry, uint.MaxValue));
     }
 
@@ -1481,6 +1471,9 @@ public class Player : CombatActor, IPlayer
             case ConditionType.Drunk when GetConditionSuppressionCount(ConditionType.Drunk) > 0:
             case ConditionType.Drowning when GetConditionSuppressionCount(ConditionType.Drowning) > 0:
                 return;
+            case ConditionType.Pacified or ConditionType.ProtectionZoneBlock or ConditionType.LogoutBlock
+                when HasCondition(condition.Type):
+                break;
             default:
                 base.AddCondition(condition);
                 break;
@@ -1692,18 +1685,12 @@ public class Player : CombatActor, IPlayer
 
         if (IsPacified) return;
 
-        if (HasCondition(ConditionType.LogoutBlock, out var condition))
-        {
-            condition.Start(this);
-            return;
-        }
+        if (HasCondition(ConditionType.LogoutBlock)) return;
 
         if (IsProtectionZoneBlocked)
-            //resets protection zone block time
             SetProtectionZoneBlock();
 
-        //logout is persistent, this will be removed elsewhere
-        AddCondition(new Condition(ConditionType.LogoutBlock, 0));
+        AddCondition(new CombatBlockCondition(ConditionType.LogoutBlock));
     }
 
     private void TogglePacifiedCondition(IDynamicTile fromTile, IDynamicTile toTile)
@@ -1713,13 +1700,13 @@ public class Player : CombatActor, IPlayer
         {
             case null when toTile.ProtectionZone:
                 RemoveLogoutBlock();
-                AddCondition(new Condition(ConditionType.Pacified, 0));
+                AddCondition(new PacifiedCondition());
                 RemoveProtectionZoneBlock();
                 break;
             case false when toTile.ProtectionZone:
                 RemoveLogoutBlock();
                 RemoveProtectionZoneBlock();
-                AddCondition(new Condition(ConditionType.Pacified, 0));
+                AddCondition(new PacifiedCondition());
                 break;
             case true when toTile.ProtectionZone is false:
                 RemoveCondition(ConditionType.Pacified);

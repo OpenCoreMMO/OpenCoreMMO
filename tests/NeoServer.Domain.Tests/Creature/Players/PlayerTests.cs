@@ -288,7 +288,44 @@ public class PlayerTests
     }
 
     [Fact]
-    public void SetAsHungry_replaces_regeneration_with_hungry_condition()
+    public void Feed_creates_condition_regeneration_when_no_existing()
+    {
+        var sut = PlayerTestDataBuilder.Build();
+        sut.SetAsHungry();
+
+        sut.Feed(10);
+
+        sut.HasCondition(ConditionType.Regeneration).Should().BeTrue();
+        sut.HasCondition(ConditionType.Hungry).Should().BeFalse();
+    }
+
+    [Fact]
+    public void Feed_extends_existing_regeneration()
+    {
+        var sut = PlayerTestDataBuilder.Build();
+
+        sut.Feed(10);
+        var timeAfterFirstFeed = sut.GetCondition(ConditionType.Regeneration).RemainingTime;
+
+        sut.Feed(10);
+        var timeAfterSecondFeed = sut.GetCondition(ConditionType.Regeneration).RemainingTime;
+
+        timeAfterSecondFeed.Should().BeGreaterThan(timeAfterFirstFeed);
+    }
+
+    [Fact]
+    public void Feed_returns_false_when_player_is_full()
+    {
+        var sut = PlayerTestDataBuilder.Build();
+        sut.Feed(1199);
+
+        var result = sut.Feed(10);
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public void SetAsHungry_adds_hungry_condition()
     {
         var sut = PlayerTestDataBuilder.Build();
         var regenerationCondition = new Condition(ConditionType.Regeneration, 10000);
@@ -296,12 +333,12 @@ public class PlayerTests
 
         sut.SetAsHungry();
 
-        sut.HasCondition(ConditionType.Regeneration).Should().BeFalse();
+        sut.HasCondition(ConditionType.Regeneration).Should().BeTrue();
         sut.HasCondition(ConditionType.Hungry).Should().BeTrue();
     }
 
     [Fact]
-    public void SetAsHungry_does_not_invoke_endaction_of_removed_regeneration_condition()
+    public void SetAsHungry_does_not_invoke_endaction_of_regeneration_condition()
     {
         var endActionInvoked = false;
         var sut = PlayerTestDataBuilder.Build();
@@ -321,7 +358,7 @@ public class PlayerTests
         sut.AddCondition(regenerationCondition);
 
         sut.SetAsHungry();
-        sut.HasCondition(ConditionType.Regeneration).Should().BeFalse();
+        sut.HasCondition(ConditionType.Regeneration).Should().BeTrue();
         sut.HasCondition(ConditionType.Hungry).Should().BeTrue();
     }
 }

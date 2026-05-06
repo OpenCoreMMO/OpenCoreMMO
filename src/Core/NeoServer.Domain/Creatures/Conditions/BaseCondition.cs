@@ -33,11 +33,14 @@ public abstract class BaseCondition : ICondition
     public FormulaValues FormulaValues { get; set; }
     public Dictionary<ConditionParamType, uint> Parameters { get; set; } = new();
 
-    public void End()
-    {
-        if (IsPersistent) return;
+    private bool _hasEnded;
 
-        EndAction?.Invoke();
+    internal virtual void End()
+    {
+        if (_hasEnded || IsPersistent) return;
+        _hasEnded = true;
+
+        EndAction?.Invoke(); //can cause side effect
     }
 
     public virtual void Extend(uint duration, uint maxDuration = uint.MaxValue)
@@ -45,10 +48,9 @@ public abstract class BaseCondition : ICondition
         var maxDurationTicks = maxDuration * TimeSpan.TicksPerMillisecond;
         var durationTicks = duration * TimeSpan.TicksPerMillisecond;
 
+        if (Duration + durationTicks > maxDurationTicks) return;
+
         Duration += durationTicks;
-
-        if (Duration > maxDurationTicks) return;
-
         EndTime += durationTicks;
     }
 
@@ -62,26 +64,39 @@ public abstract class BaseCondition : ICondition
         IsDisabled = false;
     }
 
-    public virtual bool Start(ICreature creature)
+    internal virtual bool Start(ICreature creature)
     {
-        if (Duration == 0) return true;
-        
         StartedAt = DateTime.UtcNow.Ticks;
-        EndTime = StartedAt + Duration;
+
+        if (Duration > 0)
+        {
+            EndTime = StartedAt + Duration;
+        }
+
         return true;
     }
 
     public virtual bool HasExpired => !IsPersistent && EndTime < DateTime.UtcNow.Ticks;
     
     /// <summary>
-    /// Updates the duration of the condition by setting a new value.
+    ///     Updates the duration of the condition. If the condition has already started,
+    ///     the end time is recalculated from the new duration.
     /// </summary>
-    /// <param name="duration">The new duration in milliseconds. This value is converted to ticks internally.</param>
-    public void SetNewDuration(uint duration) => Duration = duration * TimeSpan.TicksPerMillisecond;
+    /// <param name="duration">The new duration in milliseconds.</param>
+    public void SetNewDuration(uint duration)
+    {
+        Duration = duration * TimeSpan.TicksPerMillisecond;
+        if (StartedAt > 0) EndTime = StartedAt + Duration;
+    }
 
     /// <summary>
-    /// Updates the duration of the condition by setting a new value.
+    ///     Updates the duration of the condition. If the condition has already started,
+    ///     the end time is recalculated from the new duration.
     /// </summary>
     /// <param name="duration">The new duration in ticks.</param>
-    public void SetNewDuration(long duration) => Duration = duration;
+    public void SetNewDuration(long duration)
+    {
+        Duration = duration;
+        if (StartedAt > 0) EndTime = StartedAt + Duration;
+    }
 }

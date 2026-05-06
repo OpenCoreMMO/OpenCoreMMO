@@ -24,7 +24,7 @@ public class ConditionLight : BaseCondition
     public uint InternalLightTicks { get; private set; }
     public uint LightChangeInterval { get; set; }
 
-    public override bool Start(ICreature creature)
+    internal override bool Start(ICreature creature)
     {
         if (!base.Start(creature))
             return false;
@@ -32,13 +32,7 @@ public class ConditionLight : BaseCondition
         InternalLightTicks = 0;
 
         var previousLight = creature.LightLevel;
-
-        if (creature is ICombatActor combatActor)
-        {
-            //End existing light conditions
-            combatActor.Conditions.EndConditions(ConditionType.Light);
-        }
-
+        
         ColorLevel = Math.Max(previousLight, ColorLevel);
         LightChangeInterval = Duration == 0 || ColorLevel == 0
             ? 0

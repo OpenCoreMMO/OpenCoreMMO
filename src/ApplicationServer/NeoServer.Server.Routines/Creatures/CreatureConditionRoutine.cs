@@ -13,15 +13,16 @@ public static class CreatureConditionRoutine
         for (var i = 0; i < conditions.Count; i++)
         {
             var condition = conditions[i]; 
-            if (condition is ConditionLight lightCondition)
-            {
-                lightCondition.Execute(creature, interval);
-            }
 
             if (condition.HasExpired)
             {
-                condition.End();
                 creature.RemoveCondition(condition);
+                continue;
+            }
+
+            if (condition is ConditionLight lightCondition)
+            {
+                lightCondition.Execute(creature, interval);
             }
 
             if (condition is ConditionDamage damageCondition)

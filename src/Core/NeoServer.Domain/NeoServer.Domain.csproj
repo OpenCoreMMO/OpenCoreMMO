@@ -18,4 +18,10 @@
       <Compile Remove="Common\Contracts\World\IMapService.cs" />
       <Compile Remove="World\Services\MapService.cs" />
     </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>NeoServer.Domain.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
 </Project>

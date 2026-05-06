@@ -285,7 +285,7 @@ public class Monster : WalkableMonster, IMonster
     {
         if (!Targets.Any())
         {
-            if (Conditions.Count > 0)
+            if (HasAnyCondition())
             {
                 State = MonsterState.RandomlyWalking;
                 return;

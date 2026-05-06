@@ -192,7 +192,7 @@ public class PlayerLoader(
         if (playerEntity.RemainingRecoverySeconds != 0)
         {
             player.AddCondition(
-                new Condition(ConditionType.Regeneration, (uint)(playerEntity.RemainingRecoverySeconds * 1000),
+                new ConditionRegeneration((uint)(playerEntity.RemainingRecoverySeconds * 1000),
                     player.SetAsHungry));
             return;
         }

@@ -31,7 +31,6 @@ public interface ICombatActor : IWalkableCreature
     bool UsingDistanceWeapon { get; }
     uint AttackEvent { get; set; }
     bool CanBeAttacked { get; }
-    ConditionList Conditions { get; }
     ICreature CurrentTarget { get; }
     DamageRecordList ReceivedDamages { get; }
 
@@ -66,10 +65,10 @@ public interface ICombatActor : IWalkableCreature
     void GainExperience(long experience);
     void LoseExperience(long exp);
     void AddCondition(ICondition condition);
-    void RemoveCondition(ICondition condition);
     void DisableCondition(ConditionType type);
     void EnableCondition(ConditionType type);
-    void RemoveCondition(ConditionType type, bool endCondition = true);
+    void RemoveCondition(ICondition condition);
+    void RemoveCondition(ConditionType type);
     bool HasCondition(ConditionType type, out ICondition condition);
     bool HasCondition(ConditionType type);
     ICondition GetCondition(ConditionType type);

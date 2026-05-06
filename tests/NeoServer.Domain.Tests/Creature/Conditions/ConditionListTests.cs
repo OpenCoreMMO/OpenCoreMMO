@@ -57,9 +57,6 @@ public class ConditionListTests
 
         conditionList.Invoking(x => x.Remove(CreateCondition(ConditionType.Drunk))).Should().NotThrow();
         conditionList.Invoking(x => x.RemoveByType(ConditionType.Drunk)).Should().NotThrow();
-        conditionList.Invoking(x => x.EndConditions(ConditionType.Drunk)).Should().NotThrow();
-        conditionList.Invoking(x => x.DisableConditions(ConditionType.Drunk)).Should().NotThrow();
-        conditionList.Invoking(x => x.EnableConditions(ConditionType.Drunk)).Should().NotThrow();
     }
 
     [Fact]
@@ -103,47 +100,6 @@ public class ConditionListTests
         conditionList.HasAnyConditionOf(ConditionType.Burning, out IReadOnlyList<ICondition> burningConditions).Should().BeFalse();
         burningConditions.Should().BeEmpty();
         conditionList.GetByType(ConditionType.Drunk).Should().ContainSingle().Which.Should().Be(drunkCondition);
-    }
-
-    [Fact]
-    public void EndConditions_ends_conditions_and_can_keep_them_when_requested()
-    {
-        var conditionList = new ConditionList();
-        var endCount = 0;
-        var condition = new Condition(ConditionType.Haste, 100, () => endCount++);
-
-        conditionList.Add(condition);
-
-        conditionList.EndConditions(ConditionType.Haste, remove: false);
-
-        endCount.Should().Be(1);
-        conditionList.Count.Should().Be(1);
-        conditionList.HasAnyConditionOf(ConditionType.Haste).Should().BeTrue();
-
-        conditionList.EndConditions(ConditionType.Haste);
-
-        endCount.Should().Be(2);
-        conditionList.Count.Should().Be(0);
-        conditionList.GetByType(ConditionType.Haste).Should().BeEmpty();
-        conditionList.GetFirstConditionOfType(ConditionType.Haste).Should().BeNull();
-        conditionList.HasAnyConditionOf(ConditionType.Haste).Should().BeFalse();
-    }
-
-    [Fact]
-    public void DisableConditions_and_EnableConditions_toggle_condition_state()
-    {
-        var conditionList = new ConditionList();
-        var condition = CreateCondition(ConditionType.Poisoned);
-
-        conditionList.Add(condition);
-
-        conditionList.DisableConditions(ConditionType.Poisoned);
-
-        condition.IsDisabled.Should().BeTrue();
-
-        conditionList.EnableConditions(ConditionType.Poisoned);
-
-        condition.IsDisabled.Should().BeFalse();
     }
 
     [Fact]
@@ -195,88 +151,139 @@ public class ConditionListTests
     }
 
     [Fact]
-    public void Add_replaces_an_existing_condition_of_the_same_type_and_ends_the_replaced_condition()
+    public void Add_accumulates_conditions_of_same_type()
     {
         var conditionList = new ConditionList();
-        var endCount = 0;
-        var originalCondition = new Condition(ConditionType.Burning, 100, () => endCount++);
+        var originalCondition = CreateCondition(ConditionType.Burning);
         var replacementCondition = CreateCondition(ConditionType.Burning);
         var drunkCondition = CreateCondition(ConditionType.Drunk);
 
         conditionList.Add(originalCondition);
         conditionList.Add(drunkCondition);
-
         conditionList.Add(replacementCondition);
 
-        endCount.Should().Be(1);
-        conditionList.Count.Should().Be(2);
-        conditionList.GetByType(ConditionType.Burning).Should().ContainSingle().Which.Should().Be(replacementCondition);
+        conditionList.Count.Should().Be(3);
+        conditionList.GetByType(ConditionType.Burning).Should().HaveCount(2);
         conditionList.GetByType(ConditionType.Drunk).Should().ContainSingle().Which.Should().Be(drunkCondition);
     }
 
-    [Theory]
-    [MemberData(nameof(GetConditionRemovalScenarios))]
-    public void Removing_conditions_ends_the_conditions_that_were_removed(
-        Action<ConditionList, Condition, Condition> removeConditions,
-        int expectedEndCount,
-        int expectedCountAfterRemoval,
-        ConditionType expectedRemainingType)
+    [Fact]
+    public void Removing_using_Remove_removes_condition_from_list()
     {
         var conditionList = new ConditionList();
-        var endCount = 0;
-        var burningCondition = new Condition(ConditionType.Burning, 100, () => endCount++);
-        var drunkCondition = new Condition(ConditionType.Drunk, 100, () => endCount++);
+        var burningCondition = CreateCondition(ConditionType.Burning);
+        var drunkCondition = CreateCondition(ConditionType.Drunk);
 
         conditionList.Add(burningCondition);
         conditionList.Add(drunkCondition);
 
-        removeConditions(conditionList, burningCondition, drunkCondition);
+        conditionList.Remove(burningCondition);
 
-        endCount.Should().Be(expectedEndCount);
-        conditionList.Count.Should().Be(expectedCountAfterRemoval);
-        conditionList.GetAll().Should().OnlyContain(condition => condition.Type == expectedRemainingType);
-    }
-
-    public static IEnumerable<object[]> GetConditionRemovalScenarios()
-    {
-        yield return [
-            new Action<ConditionList, Condition, Condition>((conditionList, burningCondition, _) => conditionList.Remove(burningCondition)),
-            1,
-            1,
-            ConditionType.Drunk
-        ];
-
-        yield return [
-            new Action<ConditionList, Condition, Condition>((conditionList, burningCondition, _) => conditionList.RemoveByType(burningCondition.Type)),
-            1,
-            1,
-            ConditionType.Drunk
-        ];
-
-        yield return [
-            new Action<ConditionList, Condition, Condition>((conditionList, burningCondition, _) => conditionList.EndConditions(burningCondition.Type)),
-            1,
-            1,
-            ConditionType.Drunk
-        ];
+        conditionList.Count.Should().Be(1);
+        conditionList.GetAll().Should().OnlyContain(condition => condition.Type == ConditionType.Drunk);
     }
 
     [Fact]
-    public void Clear_ends_all_conditions_before_removing_them()
+    public void Removing_using_RemoveByType_removes_all_matching_conditions()
     {
         var conditionList = new ConditionList();
-        var endCount = 0;
-        var burningCondition = new Condition(ConditionType.Burning, 100, () => endCount++);
-        var drunkCondition = new Condition(ConditionType.Drunk, 100, () => endCount++);
+        var burningCondition = CreateCondition(ConditionType.Burning);
+        var drunkCondition = CreateCondition(ConditionType.Drunk);
 
         conditionList.Add(burningCondition);
         conditionList.Add(drunkCondition);
 
-        conditionList.Clear();
+        conditionList.RemoveByType(ConditionType.Burning);
 
-        endCount.Should().Be(2);
+        conditionList.Count.Should().Be(1);
+        conditionList.GetAll().Should().OnlyContain(condition => condition.Type == ConditionType.Drunk);
+    }
+
+    [Fact]
+    public void Clear_does_not_throw()
+    {
+        var conditionList = new ConditionList();
+        var burningCondition = CreateCondition(ConditionType.Burning);
+
+        conditionList.Add(burningCondition);
+
+        conditionList.Invoking(x => x.Clear()).Should().NotThrow();
         conditionList.Count.Should().Be(0);
-        conditionList.GetAll().Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Add_null_throws_ArgumentNullException()
+    {
+        var conditionList = new ConditionList();
+
+        conditionList.Invoking(x => x.Add(null)).Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Clear_does_not_throw_when_called()
+    {
+        var conditionList = new ConditionList();
+        var burningCondition = new Condition(ConditionType.Burning, 100);
+        conditionList.Add(burningCondition);
+
+        conditionList.Invoking(x => x.Clear()).Should().NotThrow();
+        conditionList.Count.Should().Be(0);
+    }
+
+    [Fact]
+    public void RemoveNonPersistentByType_removes_non_persistent_conditions()
+    {
+        var conditionList = new ConditionList();
+        conditionList.Add(new Condition(ConditionType.Burning, 100));
+        conditionList.Add(new Condition(ConditionType.Burning, 200));
+
+        conditionList.RemoveNonPersistentByType(ConditionType.Burning);
+
+        conditionList.HasAnyConditionOf(ConditionType.Burning).Should().BeFalse();
+    }
+
+    [Fact]
+    public void RemoveNonPersistentByType_keeps_persistent_conditions()
+    {
+        var conditionList = new ConditionList();
+        conditionList.Add(new Condition(ConditionType.Burning, 0));
+        conditionList.Add(new Condition(ConditionType.Burning, 100));
+
+        conditionList.RemoveNonPersistentByType(ConditionType.Burning);
+
+        conditionList.HasAnyConditionOf(ConditionType.Burning).Should().BeTrue();
+        conditionList.GetFirstConditionOfType(ConditionType.Burning).IsPersistent.Should().BeTrue();
+    }
+
+    [Fact]
+    public void RemoveNonPersistentByType_does_not_affect_other_types()
+    {
+        var conditionList = new ConditionList();
+        conditionList.Add(new Condition(ConditionType.Burning, 100));
+        conditionList.Add(new Condition(ConditionType.Drunk, 100));
+
+        conditionList.RemoveNonPersistentByType(ConditionType.Burning);
+
+        conditionList.HasAnyConditionOf(ConditionType.Drunk).Should().BeTrue();
+    }
+
+    [Fact]
+    public void RemoveNonPersistentByType_does_nothing_when_no_conditions_of_type()
+    {
+        var conditionList = new ConditionList();
+
+        conditionList.Invoking(x => x.RemoveNonPersistentByType(ConditionType.Drunk)).Should().NotThrow();
+    }
+
+    [Fact]
+    public void RemoveNonPersistentByType_does_nothing_when_all_persistent()
+    {
+        var conditionList = new ConditionList();
+        conditionList.Add(new Condition(ConditionType.Burning, 0));
+
+        conditionList.RemoveNonPersistentByType(ConditionType.Burning);
+
+        conditionList.HasAnyConditionOf(ConditionType.Burning).Should().BeTrue();
     }
 
     private static Condition CreateCondition(ConditionType type, uint duration = 100) =>
