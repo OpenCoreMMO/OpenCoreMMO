@@ -17,6 +17,7 @@ public static class CreatureConditionRoutine
             if (condition.HasExpired)
             {
                 creature.RemoveCondition(condition);
+                continue;
             }
 
             if (condition is ConditionLight lightCondition)
