@@ -9,6 +9,7 @@ using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -22,18 +23,19 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
     private static IGameCreatureManager _gameCreatureManager;
     private static ICreatureEvents _creatureEvents;
     private static ICreatureMovementService _creatureMovementService;
-    private static IMap _map;
+    private static ICreatureSpeechService _creatureSpeechService;
 
     public CreatureFunctions(
         IGameCreatureManager gameCreatureManager,
         ICreatureEvents creatureEvents,
         ICreatureMovementService creatureMovementService,
-        IMap map) : base(nameof(CreatureFunctions))
+        ICreatureSpeechService creatureSpeechService
+        ) : base(nameof(CreatureFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
         _creatureEvents = creatureEvents;
         _creatureMovementService = creatureMovementService;
-        _map = map;
+        _creatureSpeechService = creatureSpeechService;
     }
 
     public void Init(LuaState luaState)
@@ -453,7 +455,15 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 
         if (creature != null)
         {
-            creature.Say(text, (SpeechType)type, target);
+            if (target is null)
+            {
+                _creatureSpeechService.Speak(creature, text, (SpeechType)type);
+            }
+            else
+            {
+                creature.Say(text, (SpeechType)type, target);
+            }
+
             PushBoolean(luaState, true);
             return 1;
         }
