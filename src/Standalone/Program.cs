@@ -79,6 +79,8 @@ public class Program
         await LoadDatabase(container, logger, _cancellationToken);
 
         Rsa.LoadPem(serverConfiguration.Data);
+        
+        container.Resolve<IEventAggregator>().Initialize();
 
         container.Resolve<IEnumerable<IRunBeforeLoaders>>().ToList().ForEach(x => x.Run());
         container.Resolve<FactoryEventSubscriber>().AttachEvents();
@@ -120,9 +122,7 @@ public class Program
 
         container.Resolve<EventSubscriber>().AttachEvents();
         container.Resolve<IEnumerable<IStartup>>().ToList().ForEach(x => x.Run());
-
-        container.Resolve<IEventAggregator>().Initialize();
-
+        
         container.Resolve<SpawnManager>().StartSpawn();
 
         StartListening(container, _cancellationToken);

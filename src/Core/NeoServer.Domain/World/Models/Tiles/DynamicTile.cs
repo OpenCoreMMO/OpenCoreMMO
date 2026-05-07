@@ -24,8 +24,9 @@ public class DynamicTile : BaseTile, IDynamicTile
         SetNewLocation(new Location((ushort)coordinate.X, (ushort)coordinate.Y, (byte)coordinate.Z));
         Flags |= (uint)tileFlag;
         AddContent(ground, topItems, items);
-        EventAggregator.Invoke(new TileLoadedEvent(this));
         HouseId = houseId;
+        
+        EventAggregator.Invoke(new TileLoadedEvent(this));
     }
 
     public byte MovementPenalty => Ground.MovementPenalty;
