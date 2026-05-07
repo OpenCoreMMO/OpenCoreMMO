@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading.Tasks;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -174,14 +173,14 @@ public class GameCreatureManager(
         return _playersConnection.TryGetValue(playerId, out connection);
     }
 
-    public async Task<(bool, int, int)> CheckPlayersRecord(int worldId)
+    public (bool, int, int) CheckPlayersRecord(int worldId)
     {
         var actualCount = creatureInstances.AllLoggedPlayers().Count();
-        var lastWorldRecord = await worldRecordRepository.GetLastFromWord(worldId);
+        var lastWorldRecord = worldRecordRepository.GetLastFromWord(worldId);
 
         if (lastWorldRecord is null || actualCount > lastWorldRecord.Record)
         {
-            await worldRecordRepository.Insert(new WorldRecordEntity
+            worldRecordRepository.Insert(new WorldRecordEntity
             {
                 CreatedAt = DateTime.UtcNow,
                 Record = actualCount,

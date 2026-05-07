@@ -2,5 +2,5 @@ namespace NeoServer.Domain.Repositories;
 
 public interface IPlayerRepository
 {
-    Task<int> GetIdByName(string name);
+    int GetIdByName(string name);
 }

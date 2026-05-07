@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using NeoServer.Data.Entities;
 using NeoServer.Domain.Chat.Factory;
 using NeoServer.Domain.Common.Contracts.DataStores;
@@ -14,11 +13,11 @@ namespace NeoServer.Loaders.Guilds;
 public class GuildLoader(ILogger logger, ChatChannelFactory chatChannelFactory, IGuildStore guildStore)
     : ICustomLoader
 {
-    public async Task<Guild> LoadAsync(GuildEntity guildEntity)
+    public Guild Load(GuildEntity guildEntity)
     {
         if (guildEntity is null) return null;
 
-        var guild = await GetOrCreateGuildAsync(guildEntity);
+        var guild = GetOrCreateGuild(guildEntity);
         if (guild == null) return null;
 
         // Load ranks
@@ -26,19 +25,13 @@ public class GuildLoader(ILogger logger, ChatChannelFactory chatChannelFactory, 
             foreach (var rank in guildEntity.Ranks)
                 guild.AddRank((ushort)rank.Id, rank.Name, (byte)rank.Level);
 
-        // Guild already added to store in GetOrCreateGuildAsync
+        // Guild already added to store in GetOrCreateGuild
         logger.Debug("Guild {Guild} loaded with {MemberCount} members", guildEntity.Name, guild.MemberCount);
 
         return guild;
     }
 
-    public Guild Load(GuildEntity guildEntity)
-    {
-        // Synchronous wrapper for backward compatibility
-        return LoadAsync(guildEntity).GetAwaiter().GetResult();
-    }
-
-    private async Task<Guild> GetOrCreateGuildAsync(GuildEntity guildEntity)
+    private Guild GetOrCreateGuild(GuildEntity guildEntity)
     {
         var existingGuild = guildStore.Get((ushort)guildEntity.Id);
         if (existingGuild != null) return existingGuild;

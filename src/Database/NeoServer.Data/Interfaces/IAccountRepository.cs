@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+
 using NeoServer.Data.Entities;
 
 namespace NeoServer.Data.Interfaces;
 
 public interface IAccountRepository : IBaseRepositoryNeo<AccountEntity>
 {
-    Task<AccountEntity> GetAccount(string name, string password);
-    Task AddPlayerToVipList(int accountId, int playerId);
-    Task RemoveFromVipList(int accountId, int playerId);
+    AccountEntity GetAccount(string name, string password);
+    void AddPlayerToVipList(int accountId, int playerId);
+    void RemoveFromVipList(int accountId, int playerId);
 
-    Task<PlayerEntity> GetPlayer(string accountName, string password, string charName, bool includeDeathList = false,
+    PlayerEntity GetPlayer(string accountName, string password, string charName, bool includeDeathList = false,
         bool includeKillsLastMonth = false);
 
-    Task<IList<PlayerEntity>> GetOnlinePlayers(string accountName);
-    Task<int> Ban(uint accountId, string reason, uint bannedByAccountId);
+    IList<PlayerEntity> GetOnlinePlayers(string accountName);
+    int Ban(uint accountId, string reason, uint bannedByAccountId);
 }

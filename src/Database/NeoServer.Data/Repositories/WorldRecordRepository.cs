@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
@@ -19,11 +18,11 @@ public class WorldRecordRepository : BaseRepository<WorldRecordEntity>, IWorldRe
 
     #endregion
 
-    public async Task<WorldRecordEntity> GetLastFromWord(int worldId)
+    public WorldRecordEntity GetLastFromWord(int worldId)
     {
-        await using var context = NewDbContext;
-        return await context.WorldRecords
+        using var context = NewDbContext;
+        return context.WorldRecords
             .OrderBy(c => c.CreatedAt)
-            .LastOrDefaultAsync(c => c.WorldId == worldId);
+            .LastOrDefault(c => c.WorldId == worldId);
     }
 }

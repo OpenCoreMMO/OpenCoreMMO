@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
@@ -12,7 +11,7 @@ namespace NeoServer.Data.Repositories.Player;
 
 internal static class InventoryManager
 {
-    public static async Task SaveBackpack(IPlayer player, NeoContext neoContext)
+    public static void SaveBackpack(IPlayer player, NeoContext neoContext)
     {
         if (Guard.AnyNull(player, player.Inventory?.BackpackSlot)) return;
 
@@ -20,15 +19,15 @@ internal static class InventoryManager
 
         neoContext.PlayerItems.RemoveRange(neoContext.PlayerItems.Where(x => x.PlayerId == player.Id));
 
-        await ContainerManager.Save<PlayerItemEntity>(player, player.Inventory?.BackpackSlot, neoContext);
+        ContainerManager.Save<PlayerItemEntity>(player, player.Inventory?.BackpackSlot, neoContext);
     }
 
-    public static async Task SavePlayerInventory(IPlayer player, NeoContext neoContext)
+    public static void SavePlayerInventory(IPlayer player, NeoContext neoContext)
     {
-        var playerInventory = await neoContext
+        var playerInventory = neoContext
             .PlayerInventoryItems
             .Where(x => x.PlayerId == player.Id)
-            .ToDictionaryAsync(x => x.SlotId);
+            .ToDictionary(x => x.SlotId);
 
         foreach (var slot in new[]
                  {
@@ -50,7 +49,7 @@ internal static class InventoryManager
                 continue;
             }
 
-            await neoContext.PlayerInventoryItems.AddAsync(new PlayerInventoryItemEntity
+            neoContext.PlayerInventoryItems.Add(new PlayerInventoryItemEntity
             {
                 Amount = item?.Amount ?? 0,
                 PlayerId = (int)player.Id,

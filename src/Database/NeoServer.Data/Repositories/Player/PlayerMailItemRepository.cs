@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
@@ -23,57 +22,57 @@ public class PlayerMailItemRepository(DbContextOptions<NeoContext> contextOption
             logger),
         IPlayerMailItemRepository, IPlayerMailRepository
 {
-    public async Task AddParcelToInbox(int playerId, Parcel parcel)
+    public void AddParcelToInbox(int playerId, Parcel parcel)
     {
-        await using var context = NewDbContext;
-        await ContainerManager.Save<PlayerMailItemEntity>(playerId, parcel, context, true);
-        await context.SaveChangesAsync();
+        using var context = NewDbContext;
+        ContainerManager.Save<PlayerMailItemEntity>(playerId, parcel, context, true);
+        context.SaveChanges();
     }
 
-    public async Task AddLetterToInbox(int playerId, Letter letter)
+    public void AddLetterToInbox(int playerId, Letter letter)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
 
         var itemModel = ItemEntityParser.ToPlayerItemEntity<PlayerMailItemEntity>(letter);
         if (itemModel is null) return;
 
         itemModel.PlayerId = playerId;
-        await context.AddAsync(itemModel);
-        await context.SaveChangesAsync();
+        context.Add(itemModel);
+        context.SaveChanges();
     }
 
-    public async Task<int> GetInboxItemCount(int playerId)
+    public int GetInboxItemCount(int playerId)
     {
-        await using var context = NewDbContext;
-        return await context.PlayerMailItems.CountAsync(x => x.PlayerId == playerId && x.ParentId == 0);
+        using var context = NewDbContext;
+        return context.PlayerMailItems.Count(x => x.PlayerId == playerId && x.ParentId == 0);
     }
 
     #region public methods implementation
 
-    public async Task<IEnumerable<PlayerMailItemEntity>> GetByPlayerId(uint id)
+    public IEnumerable<PlayerMailItemEntity> GetByPlayerId(uint id)
     {
-        await using var context = NewDbContext;
-        return await context.PlayerMailItems
+        using var context = NewDbContext;
+        return context.PlayerMailItems
             .Where(c => c.PlayerId == id)
-            .ToListAsync();
+            .ToList();
     }
 
-    private static async Task DeleteAll(uint playerId, NeoContext neoContext)
+    private static void DeleteAll(uint playerId, NeoContext neoContext)
     {
-        var items = await neoContext.PlayerMailItems.Where(x => x.PlayerId == playerId).ToListAsync();
+        var items = neoContext.PlayerMailItems.Where(x => x.PlayerId == playerId).ToList();
         neoContext.PlayerMailItems.RemoveRange(items);
     }
 
-    public async Task Save(IPlayer player, IContainer mailInbox)
+    public void Save(IPlayer player, IContainer mailInbox)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
 
-        await DeleteAll(player.Id, context);
+        DeleteAll(player.Id, context);
 
         if (mailInbox is null) return;
 
-        await ContainerManager.Save<PlayerMailItemEntity>(player, mailInbox, context);
-        await context.SaveChangesAsync();
+        ContainerManager.Save<PlayerMailItemEntity>(player, mailInbox, context);
+        context.SaveChanges();
     }
 
     #endregion

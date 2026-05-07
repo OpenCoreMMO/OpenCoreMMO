@@ -21,7 +21,7 @@ public class AccountLoginHandler : PacketHandler
         _clientProtocolVersion = clientProtocolVersion;
     }
 
-    public override async void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
+    public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
         var account = new AccountLoginPacket(message);
         connection.SetXtea(account.Xtea);
@@ -45,7 +45,7 @@ public class AccountLoginHandler : PacketHandler
             return;
         }
 
-        var foundedAccount = await _repositoryNeo.GetAccount(account.Account, account.Password);
+        var foundedAccount = _repositoryNeo.GetAccount(account.Account, account.Password);
 
         if (foundedAccount == null)
         {

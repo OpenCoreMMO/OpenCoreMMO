@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Parsers;
@@ -11,13 +10,13 @@ namespace NeoServer.Data.Repositories.Player;
 
 public static class ContainerManager
 {
-    public static async Task Save<TPlayerItemEntity>(IPlayer player, IContainer container, NeoContext neoContext)
+    public static void Save<TPlayerItemEntity>(IPlayer player, IContainer container, NeoContext neoContext)
         where TPlayerItemEntity : PlayerItemBaseEntity, new()
     {
-        await Save<TPlayerItemEntity>((int)player.Id, container, neoContext);
+        Save<TPlayerItemEntity>((int)player.Id, container, neoContext);
     }
 
-    public static async Task Save<TPlayerItemEntity>(int playerId, IContainer container, NeoContext neoContext,
+    public static void Save<TPlayerItemEntity>(int playerId, IContainer container, NeoContext neoContext,
         bool includeContainer = false)
         where TPlayerItemEntity : PlayerItemBaseEntity, new()
     {
@@ -29,7 +28,6 @@ public static class ContainerManager
         var containerId = 0;
         var containers = new Queue<(IContainer Container, int ParentId)>();
 
-        // Save the container itself if includeContainer is true
         if (includeContainer)
         {
             var containerEntity = ItemEntityParser.ToPlayerItemEntity<TPlayerItemEntity>(container);
@@ -38,7 +36,7 @@ public static class ContainerManager
                 containerEntity.PlayerId = playerId;
                 containerEntity.ParentId = 0;
                 containerEntity.ContainerId = ++containerId;
-                await neoContext.AddAsync(containerEntity);
+                neoContext.Add(containerEntity);
             }
         }
 
@@ -63,7 +61,7 @@ public static class ContainerManager
                     containers.Enqueue((innerContainer, itemModel.ContainerId));
                 }
 
-                await neoContext.AddAsync(itemModel);
+                neoContext.Add(itemModel);
             }
         }
     }

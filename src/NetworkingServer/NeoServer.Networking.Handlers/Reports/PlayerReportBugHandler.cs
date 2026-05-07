@@ -14,13 +14,13 @@ public class PlayerReportBugHandler(
     IGameCreatureManager creatureManager,
     GameConfiguration gameConfiguration) : PacketHandler
 {
-    public override async void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
+    public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
         var playerReportBug = new PlayerReportBugPacket(message);
 
         if (!creatureManager.TryGetPlayer(connection.CreatureId, out var player)) return;
 
-        var reportBugEntity = await reportBugRepository.GetLatestReportPendingByPlayerIdAsync(player.Id);
+        var reportBugEntity = reportBugRepository.GetLatestReportPendingByPlayerId(player.Id);
 
         if (reportBugEntity != null)
         {
@@ -34,7 +34,7 @@ public class PlayerReportBugHandler(
             }
         }
 
-        await reportBugRepository.Insert(new ReportBugEntity
+        reportBugRepository.Insert(new ReportBugEntity
         {
             PlayerId = player.Id,
             Reason = playerReportBug.Reason,

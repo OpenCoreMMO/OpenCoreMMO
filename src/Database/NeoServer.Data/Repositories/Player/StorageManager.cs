@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Threading.Tasks;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -9,7 +8,7 @@ namespace NeoServer.Data.Repositories.Player;
 
 internal static class StorageManager
 {
-    public static async Task SaveStorages(IPlayer player, NeoContext neoContext)
+    public static void SaveStorages(IPlayer player, NeoContext neoContext)
     {
         if (Guard.AnyNull(player, player.Storages)) return;
 
@@ -26,7 +25,7 @@ internal static class StorageManager
                 Value = storage.Value
             };
 
-            await neoContext.AddAsync(playerStorage);
+            neoContext.Add(playerStorage);
         }
     }
 }

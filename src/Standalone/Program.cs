@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using NeoServer.Data.Contexts;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Helpers;
@@ -43,7 +42,7 @@ public class Program
     private static CancellationTokenSource _cancellationTokenSource;
     private static CancellationToken _cancellationToken;
 
-    public static async Task Main()
+    public static void Main()
     {
         Console.Title = "OpenCoreMMO Server";
 
@@ -59,7 +58,7 @@ public class Program
             container.Resolve<GameConfiguration>(), container.Resolve<LogConfiguration>());
 
         // Preload OTBM to speed up world loading
-        var otbmLoadTask = WorldLoader.PreLoadOtbm(serverConfiguration, _cancellationToken);
+        var otbm = WorldLoader.PreLoadOtbm(serverConfiguration);
 
         var (logger, _) = (container.Resolve<ILogger>(), container.Resolve<LoggerConfiguration>());
 
@@ -76,7 +75,7 @@ public class Program
 
         GameAssemblyCache.Load();
 
-        await LoadDatabase(container, logger, _cancellationToken);
+        LoadDatabase(container, logger, _cancellationToken);
 
         Rsa.LoadPem(serverConfiguration.Data);
         
@@ -97,7 +96,7 @@ public class Program
 
         container.Resolve<MonsterLoader>().Load();
 
-        container.Resolve<WorldLoader>().Load(await otbmLoadTask);
+        container.Resolve<WorldLoader>().Load(otbm);
         container.Resolve<SpawnLoader>().Load();
 
         container.Resolve<IEnumerable<IStartupLoader>>().ToList().ForEach(x => x.Load());
@@ -146,10 +145,7 @@ public class Program
 
         try
         {
-            await Task.Delay(Timeout.Infinite, _cancellationToken);
-        }
-        catch (TaskCanceledException)
-        {
+            _cancellationToken.WaitHandle.WaitOne();
         }
         catch (Exception ex)
         {
@@ -157,7 +153,7 @@ public class Program
         }
         finally
         {
-            await Shutdown(logger, container);
+            Shutdown(logger, container);
         }
     }
 
@@ -174,29 +170,29 @@ public class Program
             if (_cancellationTokenSource.IsCancellationRequested)
                 return;
 
-            Shutdown(logger, container).Wait();
+            Shutdown(logger, container);
             _cancellationTokenSource.Cancel();
         };
     }
 
-    private static async Task Shutdown(ILogger logger, IServiceProvider container)
+    private static void Shutdown(ILogger logger, IServiceProvider container)
     {
         logger.Warning("Server is in Shutdown...");
 
         container.Resolve<IScriptManager>().GlobalEvents.ExecuteShutdown();
-        await container.Resolve<PlayerPersistenceRoutine>().SavePlayers();
+        container.Resolve<PlayerPersistenceRoutine>().SavePlayers();
 
         container.Resolve<LoginListener>().Dispose();
         container.Resolve<GameListener>().Dispose();
 
-        await container.Resolve<IDispatcher>().WaitForCompletionAsync();
+        container.Resolve<IDispatcher>().WaitForCompletion();
         container.Resolve<IDispatcher>().Dispose();
 
-        await container.Resolve<IPersistenceDispatcher>().WaitForCompletionAsync();
+        container.Resolve<IPersistenceDispatcher>().WaitForCompletion();
         container.Resolve<IPersistenceDispatcher>().Dispose();
     }
 
-    private static async Task LoadDatabase(IServiceProvider container, ILogger logger,
+    private static void LoadDatabase(IServiceProvider container, ILogger logger,
         CancellationToken cancellationToken)
     {
         var (_, databaseName) = container.Resolve<DatabaseConfiguration>();
@@ -206,7 +202,7 @@ public class Program
 
         try
         {
-            await context.Database.EnsureCreatedAsync(cancellationToken);
+            context.Database.EnsureCreated();
         }
         catch (Exception ex)
         {

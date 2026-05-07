@@ -8,7 +8,7 @@ public delegate void AddMessage(ISociableCreature creature, ChatChannel channel,
 
 public class ChatChannel(ushort id, string name)
 {
-    protected IDictionary<uint, UserChat> users = new Dictionary<uint, UserChat>();
+    protected Dictionary<uint, UserChat> users = [];
 
     public ChannelRule JoinRule { get; init; }
     public virtual ChannelRule WriteRule { get; init; }

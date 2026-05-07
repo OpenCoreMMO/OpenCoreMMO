@@ -58,10 +58,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName("Recipient")).ReturnsAsync(1);
+        playerRepository.Setup(r => r.GetIdByName("Recipient")).Returns(1);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(1)).ReturnsAsync(0);
+        mailRepository.Setup(r => r.GetInboxItemCount(1)).Returns(0);
 
         var lockerManager = new LockerManager();
         var itemTypeStore =
@@ -115,10 +115,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName("Recipient")).ReturnsAsync(1);
+        playerRepository.Setup(r => r.GetIdByName("Recipient")).Returns(1);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(1)).ReturnsAsync(0);
+        mailRepository.Setup(r => r.GetInboxItemCount(1)).Returns(0);
 
         var lockerManager = new LockerManager();
         var itemTypeStore =
@@ -167,10 +167,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName("Recipient")).ReturnsAsync(1);
+        playerRepository.Setup(r => r.GetIdByName("Recipient")).Returns(1);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(1)).ReturnsAsync(0);
+        mailRepository.Setup(r => r.GetInboxItemCount(1)).Returns(0);
 
         var lockerManager = new LockerManager();
         var itemTypeStore =
@@ -217,10 +217,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName("Recipient")).ReturnsAsync(1);
+        playerRepository.Setup(r => r.GetIdByName("Recipient")).Returns(1);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(1)).ReturnsAsync(0);
+        mailRepository.Setup(r => r.GetInboxItemCount(1)).Returns(0);
 
         var lockerManager = new LockerManager();
         var itemTypeStore =
@@ -277,10 +277,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName("Recipient1")).ReturnsAsync(1);
+        playerRepository.Setup(r => r.GetIdByName("Recipient1")).Returns(1);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(1)).ReturnsAsync(0);
+        mailRepository.Setup(r => r.GetInboxItemCount(1)).Returns(0);
 
         var lockerManager = new LockerManager();
         var itemTypeStore =
@@ -334,10 +334,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName("UnknownRecipient")).ReturnsAsync(0);
+        playerRepository.Setup(r => r.GetIdByName("UnknownRecipient")).Returns(0);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(0)).ReturnsAsync(0);
+        mailRepository.Setup(r => r.GetInboxItemCount(0)).Returns(0);
 
         var lockerManager = new LockerManager();
         var itemTypeStore =
@@ -390,10 +390,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName("Recipient")).ReturnsAsync(1);
+        playerRepository.Setup(r => r.GetIdByName("Recipient")).Returns(1);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(1)).ReturnsAsync(GameConstants.MAX_NUMBER_OF_ITEMS_ON_INBOX);
+        mailRepository.Setup(r => r.GetInboxItemCount(1)).Returns(GameConstants.MAX_NUMBER_OF_ITEMS_ON_INBOX);
 
         var lockerManager = new LockerManager();
         var itemTypeStore =
@@ -443,10 +443,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName(It.IsAny<string>())).ReturnsAsync(0);
+        playerRepository.Setup(r => r.GetIdByName(It.IsAny<string>())).Returns(0);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(0)).ReturnsAsync(0);
+        mailRepository.Setup(r => r.GetInboxItemCount(0)).Returns(0);
 
         var lockerManager = new LockerManager();
         var itemTypeStore =
@@ -497,10 +497,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName("UnknownRecipient")).ReturnsAsync(0);
+        playerRepository.Setup(r => r.GetIdByName("UnknownRecipient")).Returns(0);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(0)).ReturnsAsync(0);
+        mailRepository.Setup(r => r.GetInboxItemCount(0)).Returns(0);
 
         var lockerManager = new LockerManager();
         var itemTypeStore =
@@ -551,10 +551,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName("Recipient")).ReturnsAsync(1);
+        playerRepository.Setup(r => r.GetIdByName("Recipient")).Returns(1);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(1)).ReturnsAsync(GameConstants.MAX_NUMBER_OF_ITEMS_ON_INBOX);
+        mailRepository.Setup(r => r.GetInboxItemCount(1)).Returns(GameConstants.MAX_NUMBER_OF_ITEMS_ON_INBOX);
 
         var lockerManager = new LockerManager();
         var itemTypeStore =
@@ -611,10 +611,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName("Recipient")).ReturnsAsync(6);
+        playerRepository.Setup(r => r.GetIdByName("Recipient")).Returns(6);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(6)).ReturnsAsync(0);
+        mailRepository.Setup(r => r.GetInboxItemCount(6)).Returns(0);
 
         // create real locker manager and locker
         var lockerManager = new LockerManager();
@@ -672,10 +672,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName("Recipient")).ReturnsAsync(6);
+        playerRepository.Setup(r => r.GetIdByName("Recipient")).Returns(6);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(6)).ReturnsAsync(0);
+        mailRepository.Setup(r => r.GetInboxItemCount(6)).Returns(0);
 
         // create real locker manager and locker
         var lockerManager = new LockerManager();
@@ -729,10 +729,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName("Recipient")).ReturnsAsync(1);
+        playerRepository.Setup(r => r.GetIdByName("Recipient")).Returns(1);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(1)).ReturnsAsync(0);
+        mailRepository.Setup(r => r.GetInboxItemCount(1)).Returns(0);
 
         var lockerManager = new LockerManager();
         var itemTypeStore =
@@ -781,10 +781,10 @@ public class MailTests
         var mailboxTile = new DynamicTile(new Coordinate(100, 101, 7), TileFlag.None, null, null, [mailBox]);
 
         var playerRepository = new Mock<IPlayerRepository>();
-        playerRepository.Setup(r => r.GetIdByName("Recipient")).ReturnsAsync(1);
+        playerRepository.Setup(r => r.GetIdByName("Recipient")).Returns(1);
 
         var mailRepository = new Mock<IPlayerMailRepository>();
-        mailRepository.Setup(r => r.GetInboxItemCount(1)).ReturnsAsync(0);
+        mailRepository.Setup(r => r.GetInboxItemCount(1)).Returns(0);
 
         var lockerManager = new LockerManager();
         var itemTypeStore =

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Interfaces;
@@ -38,10 +38,10 @@ public class BaseRepository<TEntity> : IBaseRepositoryNeo<TEntity>
     ///     This method is responsible for save changes in database.
     /// </summary>
     /// <returns></returns>
-    public async Task CommitChanges(DbContext context)
+    public void CommitChanges(DbContext context)
     {
         if (context is null) return;
-        await context.SaveChangesAsync();
+        context.SaveChanges();
     }
 
     #endregion
@@ -52,60 +52,60 @@ public class BaseRepository<TEntity> : IBaseRepositoryNeo<TEntity>
     ///     This method is responsible for insert generic entity in database.
     /// </summary>
     /// <param name="entity">The generic entity to insert.</param>
-    public async Task Insert(TEntity entity)
+    public void Insert(TEntity entity)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
         context.Add(entity);
-        await CommitChanges(context);
+        CommitChanges(context);
     }
 
     /// <summary>
     ///     This method is responsible for update generic entity in database.
     /// </summary>
     /// <param name="entity">The generic entity to update.</param>
-    public async Task Update(TEntity entity)
+    public void Update(TEntity entity)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
         context.Update(entity);
-        await CommitChanges(context);
+        CommitChanges(context);
     }
 
     /// <summary>
     ///     This method is responsible for insert generic entity in database.
     /// </summary>
     /// <param name="entity">The generic entity to insert.</param>
-    public async Task Delete(TEntity entity)
+    public void Delete(TEntity entity)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
         context.Remove(entity);
-        await CommitChanges(context);
+        CommitChanges(context);
     }
 
     /// <summary>
     ///     This method is responsible for get all registers from entity table.
     /// </summary>
-    public async Task<IList<TEntity>> GetAllAsync()
+    public IList<TEntity> GetAll()
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
         var entity = context.Set<TEntity>();
-        return await entity.ToListAsync();
+        return entity.ToList();
     }
 
     /// <summary>
     ///     This method is responsible for get all registers from entity table.
     /// </summary>
-    public async Task<TEntity> GetAsync(int id)
+    public TEntity Get(int id)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
         var entity = context.Set<TEntity>();
-        return await entity.FindAsync(id);
+        return entity.Find(id);
     }
 
-    public async Task<int> CountAllAsync(Expression<Func<TEntity, bool>> filter)
+    public int CountAll(Expression<Func<TEntity, bool>> filter)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
         var entity = context.Set<TEntity>();
-        return await entity.CountAsync(filter);
+        return entity.Count(filter);
     }
 
     #endregion

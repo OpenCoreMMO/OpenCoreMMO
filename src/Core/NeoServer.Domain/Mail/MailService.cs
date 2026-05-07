@@ -72,11 +72,11 @@ public class MailService(
 
         if (!label.HasDestination) return false;
 
-        playerId = playerRepository.GetIdByName(label.Destination).Result;
+        playerId = playerRepository.GetIdByName(label.Destination);
 
         if (playerId == 0) return false;
 
-        var numberOfItemsInInbox = mailRepository.GetInboxItemCount(playerId).Result;
+        var numberOfItemsInInbox = mailRepository.GetInboxItemCount(playerId);
 
         if (numberOfItemsInInbox > GameConstants.MAX_NUMBER_OF_ITEMS_ON_INBOX) return false;
 
@@ -108,11 +108,11 @@ public class MailService(
         playerId = 0;
         if (!letter.HasDestination) return false;
 
-        playerId = playerRepository.GetIdByName(letter.Destination).Result;
+        playerId = playerRepository.GetIdByName(letter.Destination);
 
         if (playerId == 0) return false;
 
-        var numberOfItemsInInbox = mailRepository.GetInboxItemCount(playerId).Result;
+        var numberOfItemsInInbox = mailRepository.GetInboxItemCount(playerId);
 
         if (numberOfItemsInInbox > GameConstants.MAX_NUMBER_OF_ITEMS_ON_INBOX) return false;
 

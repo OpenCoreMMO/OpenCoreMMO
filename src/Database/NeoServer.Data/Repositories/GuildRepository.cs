@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
@@ -19,24 +19,24 @@ public class GuildRepository : BaseRepository<GuildEntity>, IGuildRepository
 
     #endregion
 
-    public async Task<IEnumerable<GuildEntity>> GetAll()
+    public new IEnumerable<GuildEntity> GetAll()
     {
-        await using var context = NewDbContext;
-        return await context.Guilds.Include(x => x.Members).ThenInclude(x => x.Rank).ToListAsync();
+        using var context = NewDbContext;
+        return context.Guilds.Include(x => x.Members).ThenInclude(x => x.Rank).ToList();
     }
 
-    public async Task<GuildEntity> GetByName(string name)
+    public GuildEntity GetByName(string name)
     {
-        await using var context = NewDbContext;
-        return await context.Guilds.FirstOrDefaultAsync(x => x.Name == name);
+        using var context = NewDbContext;
+        return context.Guilds.FirstOrDefault(x => x.Name == name);
     }
 
-    public async Task<GuildEntity> GetById(int id)
+    public GuildEntity GetById(int id)
     {
-        await using var context = NewDbContext;
-        return await context.Guilds
+        using var context = NewDbContext;
+        return context.Guilds
             .Include(x => x.Members)
             .ThenInclude(x => x.Rank)
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .FirstOrDefault(x => x.Id == id);
     }
 }

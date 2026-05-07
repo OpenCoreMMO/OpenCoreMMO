@@ -140,13 +140,13 @@ public class Dispatcher : IDispatcher
     }
 
     // Additional method to wait for dispatcher completion (useful for tests and shutdown)
-    public async Task WaitForCompletionAsync()
+    public void WaitForCompletion()
     {
         if (_processingTask == null) return;
 
         try
         {
-            await _processingTask.ConfigureAwait(false);
+            _processingTask.GetAwaiter().GetResult();
         }
         catch (Exception ex)
         {

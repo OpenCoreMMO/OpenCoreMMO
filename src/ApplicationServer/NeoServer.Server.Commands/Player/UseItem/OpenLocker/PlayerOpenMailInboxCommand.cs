@@ -47,9 +47,7 @@ public class PlayerOpenMailInboxCommand(
 
         var mailbox = (IContainer)locker.Items[1];
 
-        var mailRecordTask = playerMailItemRepository.GetByPlayerId(player.Id);
-
-        var mailRecords = mailRecordTask.Result.ToList();
+        var mailRecords = playerMailItemRepository.GetByPlayerId(player.Id).ToList();
 
         var mailItemModels = mailRecords.ToList();
 

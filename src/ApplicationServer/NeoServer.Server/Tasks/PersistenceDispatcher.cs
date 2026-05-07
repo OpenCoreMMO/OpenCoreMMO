@@ -11,8 +11,8 @@ public class PersistenceDispatcher : IPersistenceDispatcher
 {
     private readonly CancellationTokenSource _internalCancellation = new();
     private readonly ILogger _logger;
-    private readonly ChannelReader<Func<Task>> _reader;
-    private readonly ChannelWriter<Func<Task>> _writer;
+    private readonly ChannelReader<Action> _reader;
+    private readonly ChannelWriter<Action> _writer;
     private volatile bool _isShuttingDown;
 
     private Task _processingTask;
@@ -22,7 +22,7 @@ public class PersistenceDispatcher : IPersistenceDispatcher
     /// </summary>
     public PersistenceDispatcher(ILogger logger)
     {
-        var channel = Channel.CreateUnbounded<Func<Task>>(new UnboundedChannelOptions { SingleReader = true });
+        var channel = Channel.CreateUnbounded<Action>(new UnboundedChannelOptions { SingleReader = true });
         _reader = channel.Reader;
         _writer = channel.Writer;
         _logger = logger;
@@ -32,7 +32,7 @@ public class PersistenceDispatcher : IPersistenceDispatcher
     ///     Adds a persistence event to the dispatcher queue
     /// </summary>
     /// <param name="evt"></param>
-    public void AddEvent(Func<Task> evt)
+    public void AddEvent(Action evt)
     {
         if (_isShuttingDown || evt is null)
         {
@@ -57,46 +57,37 @@ public class PersistenceDispatcher : IPersistenceDispatcher
             return;
         }
 
-        // Combine external cancellation with internal
         var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(token, _internalCancellation.Token);
 
         _logger.Debug("PersistenceDispatcher: Starting persistence processing loop");
 
-        _processingTask = Task.Factory.StartNew(async () =>
+        _processingTask = Task.Factory.StartNew(() =>
         {
             var eventCount = 0L;
 
             try
             {
-                await foreach (var evt in _reader.ReadAllAsync(combinedCts.Token))
+                while (!combinedCts.Token.IsCancellationRequested)
                 {
-                    eventCount++;
+                    if (!_reader.TryRead(out var evt))
+                    {
+                        Thread.Sleep(10);
+                        continue;
+                    }
 
-                    // Add timeout to prevent hanging during debugging
-                    using var timeoutCts =
-                        new CancellationTokenSource(TimeSpan.FromMinutes(5)); // Longer timeout for DB operations
+                    eventCount++;
 
                     try
                     {
-                        var persistenceTask = Task.Run(async () => await evt().ConfigureAwait(false), timeoutCts.Token);
+                        evt();
 
-                        await persistenceTask;
-
-                        // Progress logging for debugging
                         if (eventCount % 100 == 0)
                             _logger.Debug("PersistenceDispatcher: Processed {EventCount} persistence events",
                                 eventCount);
                     }
-                    catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
-                    {
-                        _logger.Warning(
-                            "PersistenceDispatcher: Persistence operation timeout - possible database deadlock during debugging");
-                        // Continue processing other events
-                    }
                     catch (Exception ex)
                     {
                         _logger.Error(ex, "PersistenceDispatcher: Error during persistence operation");
-                        // Continue processing other events instead of crashing
                     }
                 }
 
@@ -131,7 +122,7 @@ public class PersistenceDispatcher : IPersistenceDispatcher
                     "PersistenceDispatcher: Processing loop ended. Total persistence events processed: {EventCount}",
                     eventCount);
             }
-        }, combinedCts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
+        }, combinedCts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
         _logger.Debug("PersistenceDispatcher: Started successfully");
     }
@@ -139,13 +130,13 @@ public class PersistenceDispatcher : IPersistenceDispatcher
     /// <summary>
     ///     Wait for dispatcher completion (useful for tests and shutdown)
     /// </summary>
-    public async Task WaitForCompletionAsync()
+    public void WaitForCompletion()
     {
         if (_processingTask == null) return;
 
         try
         {
-            await _processingTask.ConfigureAwait(false);
+            _processingTask.Wait();
         }
         catch (Exception ex)
         {

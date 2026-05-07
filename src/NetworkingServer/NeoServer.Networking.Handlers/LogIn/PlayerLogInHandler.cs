@@ -31,17 +31,10 @@ public class PlayerLogInHandler(IGameServer game, PlayerLogInCommand playerLogIn
             ChallengeNumber = packet.ChallengeNumber
         };
 
-        game.Dispatcher.AddEvent(new Event(async void () =>
+        game.Dispatcher.AddEvent(new Event(() =>
         {
-            try
-            {
-                var (success, resultMessage) = await playerLogInCommand.Execute(request, connection);
-                if (!success) Disconnect(connection, resultMessage);
-            }
-            catch (Exception e)
-            {
-                logger.Error(e, "Error processing player log in request: {PacketCharacterName}", packet.CharacterName);
-            }
+            var (success, resultMessage) = playerLogInCommand.Execute(request, connection);
+            if (!success) Disconnect(connection, resultMessage);
         }));
     }
 

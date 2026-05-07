@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
@@ -18,21 +17,21 @@ public class AccountRepository(DbContextOptions<NeoContext> contextOptions, ILog
 
     #region gets
 
-    public async Task<AccountEntity> GetAccount(string name, string password)
+    public AccountEntity GetAccount(string name, string password)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
 
-        return await context.Accounts
+        return context.Accounts
             .Where(x => (x.EmailAddress.Equals(name) || x.AccountName.Equals(name)) && x.Password.Equals(password))
             .Include(x => x.Players)
             .ThenInclude(x => x.World)
-            .SingleOrDefaultAsync();
+            .SingleOrDefault();
     }
 
-    public async Task<PlayerEntity> GetPlayer(string accountName, string password, string charName,
+    public PlayerEntity GetPlayer(string accountName, string password, string charName,
         bool includeDeathList = false, bool includeKillsLastMonth = false)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
 
         var query = context.Players.Where(x => x.Account.EmailAddress.Equals(accountName) &&
                                                x.Account.Password.Equals(password) &&
@@ -53,63 +52,63 @@ public class AccountRepository(DbContextOptions<NeoContext> contextOptions, ILog
             query.Include(x => x.Deaths)
                 .ThenInclude(x => x.Killers);
 
-        var result = await query.AsNoTracking().SingleOrDefaultAsync();
+        var result = query.AsNoTracking().SingleOrDefault();
 
         if (result is null) return null;
 
         if (includeKillsLastMonth)
         {
             var lastMonth = DateTime.UtcNow.AddMonths(-1).ToUniversalTime();
-            result.KillsLastMonth = await context.PlayerDeathKillers
+            result.KillsLastMonth = context.PlayerDeathKillers
                 .Include(x => x.PlayerDeath)
                 .Where(x => x.PlayerId == result.Id && x.PlayerDeath.DeathDateTime >= lastMonth)
                 .Select(x => x.PlayerDeath)
                 .AsNoTracking()
-                .ToListAsync();
+                .ToList();
         }
 
         return result;
     }
 
-    public async Task<IList<PlayerEntity>> GetOnlinePlayers(string accountName)
+    public IList<PlayerEntity> GetOnlinePlayers(string accountName)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
 
-        return await context.Players
+        return context.Players
             .Include(x => x.Account)
             .Where(x => x.Account.EmailAddress.Equals(accountName) && x.Online)
             .AsNoTracking()
-            .ToListAsync();
+            .ToList();
     }
 
     #endregion
 
     #region inserts
 
-    public async Task AddPlayerToVipList(int accountId, int playerId)
+    public void AddPlayerToVipList(int accountId, int playerId)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
 
-        await context.AccountsVipList.AddAsync(new AccountVipListEntity
+        context.AccountsVipList.Add(new AccountVipListEntity
         {
             AccountId = accountId,
             PlayerId = playerId
         });
 
-        await CommitChanges(context);
+        CommitChanges(context);
     }
 
     #endregion
 
     #region updates
 
-    public async Task<int> Ban(uint accountId, string reason, uint bannedByAccountId)
+    public int Ban(uint accountId, string reason, uint bannedByAccountId)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
 
-        return await context.Accounts
+        return context.Accounts
             .Where(x => x.Id == accountId)
-            .ExecuteUpdateAsync(x
+            .ExecuteUpdate(x
                 => x.SetProperty(y => y.BannedBy, bannedByAccountId)
                     .SetProperty(y => y.BanishmentReason, reason)
                     .SetProperty(y => y.BanishedAt, DateTime.UtcNow));
@@ -119,17 +118,17 @@ public class AccountRepository(DbContextOptions<NeoContext> contextOptions, ILog
 
     #region deletes
 
-    public async Task RemoveFromVipList(int accountId, int playerId)
+    public void RemoveFromVipList(int accountId, int playerId)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
 
-        var item = await context.AccountsVipList.SingleOrDefaultAsync(x =>
+        var item = context.AccountsVipList.SingleOrDefault(x =>
             x.PlayerId == playerId && x.AccountId == accountId);
 
         if (item is null) return;
 
         context.AccountsVipList.Remove(item);
-        await CommitChanges(context);
+        CommitChanges(context);
     }
 
     #endregion

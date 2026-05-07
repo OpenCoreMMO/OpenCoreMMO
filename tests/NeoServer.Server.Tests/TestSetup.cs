@@ -49,7 +49,7 @@ public class TestSetup
             container.Resolve<GameConfiguration>(), container.Resolve<LogConfiguration>());
 
         // Preload OTBM to speed up world loading
-        var otbmLoadTask = WorldLoader.PreLoadOtbm(serverConfiguration, cancellationToken);
+        var otbmLoadTask = WorldLoader.PreLoadOtbm(serverConfiguration);
 
         var context = container.GetService<NeoContext>();
         var command = container.GetService<PlayerLogInCommand>();
@@ -73,7 +73,7 @@ public class TestSetup
         container.Resolve<MonsterLoader>().Load();
         container.Resolve<GroupLoader>().Load();
 
-        container.Resolve<WorldLoader>().Load(await otbmLoadTask);
+        container.Resolve<WorldLoader>().Load(otbmLoadTask);
         container.Resolve<SpawnLoader>().Load();
 
         container.Resolve<IEnumerable<IStartupLoader>>().ToList().ForEach(x => x.Load());

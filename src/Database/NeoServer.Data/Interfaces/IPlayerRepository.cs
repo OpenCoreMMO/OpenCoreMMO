@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+
 using NeoServer.Data.Entities;
 using NeoServer.Domain.Common.Contracts.Creatures;
 
@@ -8,19 +8,19 @@ namespace NeoServer.Data.Interfaces;
 
 public interface IPlayerRepository : IBaseRepositoryNeo<PlayerEntity>
 {
-    Task UpdateAllPlayersToOfflineAsync();
-    Task<List<PlayerOutfitAddonEntity>> GetOutfitAddons(int playerId);
-    Task UpdatePlayers(IEnumerable<IPlayer> players);
-    Task UpdatePlayerOnlineStatus(uint playerId, bool status);
-    Task<PlayerEntity> GetByName(string playerName);
+    void UpdateAllPlayersToOffline();
+    List<PlayerOutfitAddonEntity> GetOutfitAddons(int playerId);
+    void UpdatePlayers(IEnumerable<IPlayer> players);
+    void UpdatePlayerOnlineStatus(uint playerId, bool status);
+    PlayerEntity GetByName(string playerName);
 
     /// <summary>
     ///     Save player info, inventory, backpack and depot
     /// </summary>
     /// <param name="player"></param>
     /// <returns></returns>
-    Task SavePlayer(IPlayer player);
+    void SavePlayer(IPlayer player);
 
-    Task<PlayerEntity> GetById(int id);
-    Task UpdateLastLogInDate(int playerId, DateTime lastLogIn);
+    PlayerEntity GetById(int id);
+    void UpdateLastLogInDate(int playerId, DateTime lastLogIn);
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Location.Structs;
@@ -39,7 +38,7 @@ public class PlayerLogInCommand(
     IWaitingQueueManager waitingQueueManager)
     : ICommand
 {
-    public async Task<(bool Success, string Message)> Execute(PlayerLogInRequest request, IConnection connection)
+    public (bool Success, string Message) Execute(PlayerLogInRequest request, IConnection connection)
     {
         connection.SetXtea(request.Xtea);
 
@@ -62,12 +61,12 @@ public class PlayerLogInCommand(
                 return (false, "Server is currently closed. Please try again later.");
         }
 
-        var existBan = await ipBansRepository.ExistBan(connection.Ip.Split(":")[0]);
+        var existBan = ipBansRepository.ExistBan(connection.Ip.Split(":")[0]);
         if (existBan is not null)
             return (false,
                 $"Your IP address {existBan.Ip} has been banished until {existBan.ExpiresAt:MM/dd/yyyy}.\nReason: {existBan.Reason}");
 
-        var playersOnline = await accountRepository.GetOnlinePlayers(request.Account);
+        var playersOnline = accountRepository.GetOnlinePlayers(request.Account);
 
         foreach (var playerOnline in playersOnline)
         {
@@ -84,7 +83,7 @@ public class PlayerLogInCommand(
             }
         }
 
-        var playerRecord = await accountRepository.GetPlayer(request.Account, request.Password, request.CharacterName,
+        var playerRecord = accountRepository.GetPlayer(request.Account, request.Password, request.CharacterName,
             includeKillsLastMonth: true);
         if (playerRecord is null)
             return (false, "Account name or password is not correct.");
@@ -120,7 +119,7 @@ public class PlayerLogInCommand(
 
         if (!playerAlreadyLoggedIn)
         {
-            await guildLoader.LoadAsync(playerRecord.GuildMember?.Guild);
+            guildLoader.Load(playerRecord.GuildMember?.Guild);
 
             var playerLocation = playerLocationResolver.GetPlayerLocation(playerRecord);
             if (playerLocation == Location.Zero) return (false, "Player location invalid");
@@ -144,13 +143,13 @@ public class PlayerLogInCommand(
 
         logger.Information("Player {PlayerName} logged in", player.Name);
 
-        var (success, current, old) = await game.CreatureManager.CheckPlayersRecord(player.WorldId);
+        var (success, current, old) = game.CreatureManager.CheckPlayersRecord(player.WorldId);
 
         if (success)
             scriptManager.GlobalEvents.ExecuteRecord(current, old);
 
-        await playerRepository.UpdatePlayerOnlineStatus(player.Id, true);
-        await playerRepository.UpdateLastLogInDate((int)player.Id, player.LastLogIn ?? DateTime.UtcNow);
+        playerRepository.UpdatePlayerOnlineStatus(player.Id, true);
+        playerRepository.UpdateLastLogInDate((int)player.Id, player.LastLogIn ?? DateTime.UtcNow);
 
         return (true, null);
     }

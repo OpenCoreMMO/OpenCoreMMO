@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
@@ -16,12 +15,12 @@ public class IpBansRepository : BaseRepository<IpBanEntity>, IIpBansRepository
     {
     }
 
-    public async Task<IpBanEntity> ExistBan(string Ip)
+    public IpBanEntity ExistBan(string Ip)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
 
-        return await context.IpBans
+        return context.IpBans
             .Where(x => x.Ip.Equals(Ip) && x.ExpiresAt.Date >= DateTime.UtcNow.Date)
-            .SingleOrDefaultAsync();
+            .SingleOrDefault();
     }
 }

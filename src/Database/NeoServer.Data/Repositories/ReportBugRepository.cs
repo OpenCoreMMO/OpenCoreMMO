@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
@@ -15,12 +14,12 @@ public class ReportBugRepository : BaseRepository<ReportBugEntity>, IReportBugRe
     {
     }
 
-    public async Task<ReportBugEntity> GetLatestReportPendingByPlayerIdAsync(uint playerId)
+    public ReportBugEntity GetLatestReportPendingByPlayerId(uint playerId)
     {
-        await using var context = NewDbContext;
-        return await context.ReportBugs
+        using var context = NewDbContext;
+        return context.ReportBugs
             .Where(x => x.PlayerId == playerId && x.ClosedAt == null)
             .OrderByDescending(x => x.CreatedAt)
-            .FirstOrDefaultAsync();
+            .FirstOrDefault();
     }
 }

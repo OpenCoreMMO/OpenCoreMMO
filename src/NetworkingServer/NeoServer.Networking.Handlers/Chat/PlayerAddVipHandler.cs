@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -32,7 +31,7 @@ public class PlayerAddVipHandler : PacketHandler
         _logger = logger;
     }
 
-    public override async void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
+    public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
         if (Guard.AnyNull(connection, message)) return;
 
@@ -42,7 +41,7 @@ public class PlayerAddVipHandler : PacketHandler
 
         if (addVipPacket.Name?.Length > 20) return;
 
-        var vipPlayer = await GetVipPlayer(addVipPacket);
+        var vipPlayer = GetVipPlayer(addVipPacket);
 
         if (vipPlayer is null)
         {
@@ -54,14 +53,14 @@ public class PlayerAddVipHandler : PacketHandler
         _game.Dispatcher.AddEvent(new Event(() => player.Vip.AddToVip(vipPlayer)));
     }
 
-    private async Task<IPlayer> GetVipPlayer(AddVipPacket addVipPacket)
+    private IPlayer GetVipPlayer(AddVipPacket addVipPacket)
     {
         if (Guard.IsNull(addVipPacket)) return null;
 
         //return player if it is already loaded in the game
         if (_game.CreatureManager.TryGetPlayer(addVipPacket.Name, out var vipPlayer)) return vipPlayer;
 
-        var playerRecord = await GetPlayerRecord(addVipPacket);
+        var playerRecord = GetPlayerRecord(addVipPacket);
         if (playerRecord is null) return null;
 
         if (_playerLoaders.FirstOrDefault(x => x.IsApplicable(playerRecord)) is not { } playerLoader)
@@ -72,13 +71,13 @@ public class PlayerAddVipHandler : PacketHandler
         return vipPlayer;
     }
 
-    private async Task<PlayerEntity> GetPlayerRecord(AddVipPacket addVipPacket)
+    private PlayerEntity GetPlayerRecord(AddVipPacket addVipPacket)
     {
         PlayerEntity playerRecord = null;
 
         try
         {
-            playerRecord = await _playerRepository.GetByName(addVipPacket.Name);
+            playerRecord = _playerRepository.GetByName(addVipPacket.Name);
         }
         catch (Exception ex)
         {

@@ -63,7 +63,7 @@ public class PlayerLoginTests
         var request = CreatePlayerLogInRequest(timestamp, randomNumber);
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeTrue();
@@ -111,7 +111,7 @@ public class PlayerLoginTests
         var request = CreatePlayerLogInRequest(timestamp, randomNumber, 1);
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeTrue();
@@ -163,7 +163,7 @@ public class PlayerLoginTests
         var request = CreatePlayerLogInRequest(timestamp, randomNumber, operatingSystem: OperatingSystem.OtcLinux);
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeTrue();
@@ -199,7 +199,7 @@ public class PlayerLoginTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "Validation")]
-    public async Task Player_login_fails_when_account_name_is_empty()
+    public void Player_login_fails_when_account_name_is_empty()
     {
         // Arrange
         _game.Open();
@@ -216,7 +216,7 @@ public class PlayerLoginTests
         request.Account = "";
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeFalse();
@@ -229,7 +229,7 @@ public class PlayerLoginTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "Validation")]
-    public async Task Player_login_fails_when_character_name_is_empty()
+    public void Player_login_fails_when_character_name_is_empty()
     {
         // Arrange
         _game.Open();
@@ -246,7 +246,7 @@ public class PlayerLoginTests
         request.CharacterName = "";
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeFalse();
@@ -259,7 +259,7 @@ public class PlayerLoginTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "Validation")]
-    public async Task Player_login_fails_when_challenge_timestamp_mismatch()
+    public void Player_login_fails_when_challenge_timestamp_mismatch()
     {
         // Arrange
         _game.Open();
@@ -276,7 +276,7 @@ public class PlayerLoginTests
         request.ChallengeTimeStamp = timestamp + 1; // Mismatch
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeFalse();
@@ -289,7 +289,7 @@ public class PlayerLoginTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "Validation")]
-    public async Task Player_login_fails_when_client_version_too_low()
+    public void Player_login_fails_when_client_version_too_low()
     {
         // Arrange
         _game.Open();
@@ -306,7 +306,7 @@ public class PlayerLoginTests
         request.Version = 850; // Too low
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeFalse();
@@ -319,7 +319,7 @@ public class PlayerLoginTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "Validation")]
-    public async Task Player_login_fails_when_client_version_too_high()
+    public void Player_login_fails_when_client_version_too_high()
     {
         // Arrange
         _game.Open();
@@ -336,7 +336,7 @@ public class PlayerLoginTests
         request.Version = 870; // Too high
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeFalse();
@@ -349,7 +349,7 @@ public class PlayerLoginTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "ErrorCondition")]
-    public async Task Player_login_fails_when_server_is_closed()
+    public void Player_login_fails_when_server_is_closed()
     {
         // Arrange
         if (_game is GameServer gameServer) gameServer.Close();
@@ -365,7 +365,7 @@ public class PlayerLoginTests
         var request = CreatePlayerLogInRequest(timestamp, randomNumber);
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeFalse();
@@ -378,7 +378,7 @@ public class PlayerLoginTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "ErrorCondition")]
-    public async Task Player_login_fails_when_server_is_opening()
+    public void Player_login_fails_when_server_is_opening()
     {
         // Arrange
         if (_game is GameServer gameServer)
@@ -409,7 +409,7 @@ public class PlayerLoginTests
         };
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeFalse();
@@ -422,7 +422,7 @@ public class PlayerLoginTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "ErrorCondition")]
-    public async Task Player_login_fails_when_server_is_under_maintenance()
+    public void Player_login_fails_when_server_is_under_maintenance()
     {
         // Arrange
         if (_game is GameServer gameServer)
@@ -442,7 +442,7 @@ public class PlayerLoginTests
         var request = CreatePlayerLogInRequest(timestamp, randomNumber);
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeFalse();
@@ -481,7 +481,7 @@ public class PlayerLoginTests
         var request = CreatePlayerLogInRequest(timestamp, randomNumber);
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeFalse();
@@ -498,7 +498,7 @@ public class PlayerLoginTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "ErrorCondition")]
-    public async Task Player_login_fails_when_credentials_are_invalid()
+    public void Player_login_fails_when_credentials_are_invalid()
     {
         // Arrange
         _game.Open();
@@ -515,7 +515,7 @@ public class PlayerLoginTests
         request.Password = "invalid";
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeFalse();
@@ -549,7 +549,7 @@ public class PlayerLoginTests
         var request = CreatePlayerLogInRequest(timestamp, randomNumber);
 
         // Act
-        var (success, message) = await _command.Execute(request, connection.Object);
+        var (success, message) = _command.Execute(request, connection.Object);
 
         // Assert command execution
         success.Should().BeFalse();
@@ -581,7 +581,7 @@ public class PlayerLoginTests
         var randomNumber = (byte)123;
         var connection1 = CreateMockConnection(timestamp, randomNumber);
         var request1 = CreatePlayerLogInRequest(timestamp, randomNumber);
-        await _command.Execute(request1, connection1.Object);
+        _command.Execute(request1, connection1.Object);
 
         // Try to login with second character from same account
         var connection2 = CreateMockConnection(timestamp, randomNumber);
@@ -589,7 +589,7 @@ public class PlayerLoginTests
         request2.CharacterName = "Druid Sample";
 
         // Act
-        var (success, message) = await _command.Execute(request2, connection2.Object);
+        var (success, message) = _command.Execute(request2, connection2.Object);
 
         // Assert command execution
         success.Should().BeFalse();
@@ -614,7 +614,7 @@ public class PlayerLoginTests
         // Create first connection and login
         var connection1 = CreateMockConnection(timestamp, randomNumber);
         var request = CreatePlayerLogInRequest(timestamp, randomNumber);
-        await _command.Execute(request, connection1.Object);
+        _command.Execute(request, connection1.Object);
 
         // Get the player after first login
         _game.CreatureManager.TryGetLoggedPlayer(3, out var originalPlayer).Should().BeTrue();
@@ -623,7 +623,7 @@ public class PlayerLoginTests
         var connection2 = CreateMockConnection(timestamp, randomNumber);
 
         // Act - reconnect with the same character
-        var (success, message) = await _command.Execute(request, connection2.Object);
+        var (success, message) = _command.Execute(request, connection2.Object);
 
         // Assert command execution
         success.Should().BeTrue();
@@ -702,7 +702,7 @@ public class PlayerLoginTests
         var randomNumber = (byte)123;
         var connection1 = CreateMockConnection(timestamp, randomNumber);
         var request1 = CreatePlayerLogInRequest(timestamp, randomNumber);
-        await _command.Execute(request1, connection1.Object);
+        _command.Execute(request1, connection1.Object);
 
         // Now try to login second player
         var connection2 = CreateMockConnection(timestamp, randomNumber);
@@ -712,7 +712,7 @@ public class PlayerLoginTests
         request2.CharacterName = "Another Knight";
 
         // Act
-        var (success, message) = await _command.Execute(request2, connection2.Object);
+        var (success, message) = _command.Execute(request2, connection2.Object);
 
         // Assert command execution
         success.Should().BeFalse();

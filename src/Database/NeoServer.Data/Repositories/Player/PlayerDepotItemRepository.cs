@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
@@ -28,30 +27,30 @@ public class PlayerDepotItemRepository : BaseRepository<PlayerDepotItemEntity>,
 
     #region public methods implementation
 
-    public async Task<IEnumerable<PlayerDepotItemEntity>> GetByPlayerId(uint id)
+    public IEnumerable<PlayerDepotItemEntity> GetByPlayerId(uint id)
     {
-        await using var context = NewDbContext;
-        return await context.PlayerDepotItems
+        using var context = NewDbContext;
+        return context.PlayerDepotItems
             .Where(c => c.PlayerId == id)
-            .ToListAsync();
+            .ToList();
     }
 
-    private static async Task DeleteAll(uint playerId, NeoContext neoContext)
+    private static void DeleteAll(uint playerId, NeoContext neoContext)
     {
-        var items = await neoContext.PlayerDepotItems.Where(x => x.PlayerId == playerId).ToListAsync();
+        var items = neoContext.PlayerDepotItems.Where(x => x.PlayerId == playerId).ToList();
         neoContext.PlayerDepotItems.RemoveRange(items);
     }
 
-    public async Task Save(IPlayer player, IContainer depotChest)
+    public void Save(IPlayer player, IContainer depotChest)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
 
-        await DeleteAll(player.Id, context);
+        DeleteAll(player.Id, context);
 
         if (depotChest is null) return;
 
-        await ContainerManager.Save<PlayerDepotItemEntity>(player, depotChest, context);
-        await context.SaveChangesAsync();
+        ContainerManager.Save<PlayerDepotItemEntity>(player, depotChest, context);
+        context.SaveChanges();
     }
 
     #endregion

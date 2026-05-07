@@ -8,8 +8,8 @@ public interface IPlayerMailRepository
     /// <summary>
     ///     Get total numbers of items in the player's root inbox.
     /// </summary>
-    Task<int> GetInboxItemCount(int playerId);
+    int GetInboxItemCount(int playerId);
 
-    Task AddParcelToInbox(int playerId, Parcel parcel);
-    Task AddLetterToInbox(int playerId, Letter letter);
+    void AddParcelToInbox(int playerId, Parcel parcel);
+    void AddLetterToInbox(int playerId, Letter letter);
 }

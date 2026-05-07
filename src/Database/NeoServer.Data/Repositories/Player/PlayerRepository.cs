@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
@@ -18,97 +17,92 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
     : BaseRepository<PlayerEntity>(contextOptions,
         logger), IPlayerRepository, Domain.Repositories.IPlayerRepository
 {
-    public async Task UpdateAllPlayersToOfflineAsync()
+    public void UpdateAllPlayersToOffline()
     {
         const string sql = "UPDATE Player SET Online = false";
 
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
 
         if (!context.Database.IsRelational()) return;
 
-        await using var connection = context.Database.GetDbConnection();
+        using var connection = context.Database.GetDbConnection();
 
-        await connection.ExecuteAsync(sql);
+        connection.Execute(sql);
     }
 
-    public async Task<List<PlayerOutfitAddonEntity>> GetOutfitAddons(int playerId)
+    public List<PlayerOutfitAddonEntity> GetOutfitAddons(int playerId)
     {
-        await using var context = NewDbContext;
-        return await context.PlayerOutfitAddons.Where(x => x.PlayerId == playerId).ToListAsync();
+        using var context = NewDbContext;
+        return context.PlayerOutfitAddons.Where(x => x.PlayerId == playerId).ToList();
     }
 
-    public async Task<PlayerEntity> GetByName(string playerName)
+    public PlayerEntity GetByName(string playerName)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
         //todo: find a way to use invariant culture. it currently doesn't work with sqlite
-        return await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == playerName.ToLower());
+        return context.Players.FirstOrDefault(x => x.Name.ToLower() == playerName.ToLower());
     }
 
-    public async Task<PlayerEntity> GetById(int id)
+    public PlayerEntity GetById(int id)
     {
-        await using var context = NewDbContext;
-        return await context.Players.FirstOrDefaultAsync(x => x.Id == id);
+        using var context = NewDbContext;
+        return context.Players.FirstOrDefault(x => x.Id == id);
     }
 
-    public async Task UpdatePlayers(IEnumerable<IPlayer> players)
+    public void UpdatePlayers(IEnumerable<IPlayer> players)
     {
-        var tasks = new List<Task>();
-
         foreach (var player in players)
         {
-            tasks.Clear();
-            tasks.Add(SavePlayer(player));
+            SavePlayer(player);
         }
-
-        await Task.WhenAll(tasks);
     }
 
-    public async Task UpdatePlayerOnlineStatus(uint playerId, bool status)
+    public void UpdatePlayerOnlineStatus(uint playerId, bool status)
     {
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
 
-        var player = await context.Players.SingleOrDefaultAsync(x => x.Id == playerId);
+        var player = context.Players.SingleOrDefault(x => x.Id == playerId);
         if (player is null) return;
 
         player.Online = status;
 
-        await context.SaveChangesAsync();
+        context.SaveChanges();
     }
 
-    public async Task SavePlayer(IPlayer player)
+    public void SavePlayer(IPlayer player)
     {
-        await using var neoContext = NewDbContext;
+        using var neoContext = NewDbContext;
 
-        await UpdatePlayer(player, neoContext);
-        await InventoryManager.SavePlayerInventory(player, neoContext);
-        await InventoryManager.SaveBackpack(player, neoContext);
-        await StorageManager.SaveStorages(player, neoContext);
+        UpdatePlayer(player, neoContext);
+        InventoryManager.SavePlayerInventory(player, neoContext);
+        InventoryManager.SaveBackpack(player, neoContext);
+        StorageManager.SaveStorages(player, neoContext);
 
-        await neoContext.SaveChangesAsync();
+        neoContext.SaveChanges();
     }
 
-    public async Task<int> GetIdByName(string name)
+    public int GetIdByName(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return 0;
 
-        await using var context = NewDbContext;
+        using var context = NewDbContext;
 
-        return (await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower()))?.Id ?? 0;
+        return context.Players.FirstOrDefault(x => x.Name.ToLower() == name.ToLower())?.Id ?? 0;
     }
 
-    public async Task UpdateLastLogInDate(int playerId, DateTime lastLogIn)
+    public void UpdateLastLogInDate(int playerId, DateTime lastLogIn)
     {
-        await using var context = NewDbContext;
-        var playerEntity = await context.Players.FindAsync(playerId);
+        using var context = NewDbContext;
+        var playerEntity = context.Players.Find(playerId);
 
         if (playerEntity is null) return;
         playerEntity.LastLogIn = lastLogIn;
-        await context.SaveChangesAsync();
+        context.SaveChanges();
     }
 
-    private static async Task UpdatePlayer(IPlayer player, NeoContext neoContext)
+    private static void UpdatePlayer(IPlayer player, NeoContext neoContext)
     {
-        var playerEntity = await neoContext.Players.FindAsync((int)player.Id);
+        var playerEntity = neoContext.Players.Find((int)player.Id);
 
         if (playerEntity is null) return;
 
@@ -164,16 +158,16 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         playerEntity.LastLogOut = player.LastLogOut;
 
         // Update guild membership
-        await UpdateGuildMembership(player, neoContext);
+        UpdateGuildMembership(player, neoContext);
 
         neoContext.Update(playerEntity);
     }
 
-    private static async Task UpdateGuildMembership(IPlayer player, NeoContext neoContext)
+    private static void UpdateGuildMembership(IPlayer player, NeoContext neoContext)
     {
         // First, remove any existing guild membership for this player
-        var existingMembership = await neoContext.GuildMemberships
-            .FirstOrDefaultAsync(gm => gm.PlayerId == player.Id);
+        var existingMembership = neoContext.GuildMemberships
+            .FirstOrDefault(gm => gm.PlayerId == player.Id);
 
         if (existingMembership != null) neoContext.GuildMemberships.Remove(existingMembership);
 
@@ -188,7 +182,7 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
                 Nick = player.GuildNick ?? string.Empty
             };
 
-            await neoContext.GuildMemberships.AddAsync(guildMembership);
+            neoContext.GuildMemberships.Add(guildMembership);
         }
     }
 }

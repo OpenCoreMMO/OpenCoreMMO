@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
@@ -68,20 +66,17 @@ public class WorldLoader
         });
     }
 
-    public static Task<Otbm> PreLoadOtbm(ServerConfiguration serverConfiguration, CancellationToken cancellationToken)
+    public static Otbm PreLoadOtbm(ServerConfiguration serverConfiguration)
     {
-        return Task.Run(() =>
-        {
-            using var fileStream = new FileStream($"{serverConfiguration.Data}/world/{serverConfiguration.OTBM}",
-                FileMode.Open, FileAccess.Read);
+        using var fileStream = new FileStream($"{serverConfiguration.Data}/world/{serverConfiguration.OTBM}",
+            FileMode.Open, FileAccess.Read);
 
-            var fileBytes = new byte[fileStream.Length];
-            fileStream.ReadExactly(fileBytes, 0, fileBytes.Length);
+        var fileBytes = new byte[fileStream.Length];
+        fileStream.ReadExactly(fileBytes, 0, fileBytes.Length);
 
-            var otbmNode = OtbBinaryTreeBuilder.Deserialize(fileBytes);
+        var otbmNode = OtbBinaryTreeBuilder.Deserialize(fileBytes);
 
-            return new OTBMNodeParser().Parse(otbmNode);
-        }, cancellationToken);
+        return new OTBMNodeParser().Parse(otbmNode);
     }
 
     private void LoadTiles(Otbm otbm)

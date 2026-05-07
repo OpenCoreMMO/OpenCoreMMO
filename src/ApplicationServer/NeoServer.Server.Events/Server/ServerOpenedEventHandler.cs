@@ -6,11 +6,11 @@ namespace NeoServer.Server.Events.Server;
 
 public class ServerOpenedEventHandler(IPlayerRepository playerRepository, ILogger logger)
 {
-    public async void Execute()
+    public void Execute()
     {
         try
         {
-            await playerRepository.UpdateAllPlayersToOfflineAsync();
+            playerRepository.UpdateAllPlayersToOffline();
         }
         catch (Exception e)
         {

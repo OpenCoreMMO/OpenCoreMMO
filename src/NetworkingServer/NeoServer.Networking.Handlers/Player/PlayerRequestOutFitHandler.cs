@@ -29,7 +29,7 @@ public class PlayerRequestOutFitHandler : PacketHandler
 
         var outfits = _playerOutFitStore.Get(player.Gender);
 
-        var playerAddons = _playerRepository.GetOutfitAddons((int)player.Id).Result;
+        var playerAddons = _playerRepository.GetOutfitAddons((int)player.Id);
 
         connection.OutgoingPackets.Enqueue(new PlayerOutFitWindowPacket(player, outfits, playerAddons));
         connection.Send();

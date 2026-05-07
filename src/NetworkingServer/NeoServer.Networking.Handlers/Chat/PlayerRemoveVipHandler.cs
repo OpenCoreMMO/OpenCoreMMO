@@ -17,7 +17,7 @@ public class PlayerRemoveVipHandler : PacketHandler
         _accountRepository = accountRepository;
     }
 
-    public override async void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
+    public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
         if (!_game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player)) return;
 
@@ -25,6 +25,6 @@ public class PlayerRemoveVipHandler : PacketHandler
 
         _game.Dispatcher.AddEvent(new Event(() => player.Vip.RemoveFromVip(removeVipPacket.PlayerId)));
 
-        await _accountRepository.RemoveFromVipList((int)player.AccountId, (int)removeVipPacket.PlayerId);
+        _accountRepository.RemoveFromVipList((int)player.AccountId, (int)removeVipPacket.PlayerId);
     }
 }

@@ -45,9 +45,7 @@ public class PlayerOpenDepotCommand(
 
         var chest = (IContainer)locker.Items[0];
 
-        var depotRecordsTask = playerDepotItemRepository.GetByPlayerId(player.Id);
-
-        var depotRecords = depotRecordsTask.Result.ToList();
+        var depotRecords = playerDepotItemRepository.GetByPlayerId(player.Id).ToList();
 
         var depotItemModels = depotRecords.ToList();
 

@@ -52,7 +52,7 @@ public class DBFunctions : LuaScriptInterface, IDBFunctions
     {
         // db.queryAsync(query)
         var query = GetString(luaState, -1);
-        var result = _dbContext.Database.ExecuteSqlRawAsync(query).Result;
+        var result = _dbContext.Database.ExecuteSqlRaw(query);
         PushBoolean(luaState, result != 0);
         return 1;
     }
@@ -76,10 +76,10 @@ public class DBFunctions : LuaScriptInterface, IDBFunctions
         // db.asyncStoreQueryAsync(query)
         var query = GetString(luaState, -1);
 
-        var dbResult = _dbContext.ExecuteQueryAsync(query);
+        var dbResult = _dbContext.ExecuteQuery(query);
 
         if (dbResult != null)
-            Lua.PushNumber(luaState, GetScriptEnv().AddResult(dbResult.Result));
+            Lua.PushNumber(luaState, GetScriptEnv().AddResult(dbResult));
         else
             PushBoolean(luaState, false);
 

@@ -16,11 +16,11 @@ public class PlayerAddToVipListEventHandler
         this.accountRepository = accountRepository;
     }
 
-    public async void Execute(IPlayer player, uint vipPlayerId, string vipPlayerName)
+    public void Execute(IPlayer player, uint vipPlayerId, string vipPlayerName)
     {
         if (!game.CreatureManager.GetPlayerConnection(player.CreatureId, out var connection)) return;
 
-        await accountRepository.AddPlayerToVipList((int)player.AccountId, (int)vipPlayerId);
+        accountRepository.AddPlayerToVipList((int)player.AccountId, (int)vipPlayerId);
 
         var isOnline = game.CreatureManager.TryGetLoggedPlayer(vipPlayerId, out _);
 

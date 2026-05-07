@@ -69,7 +69,7 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             var guildStore = Server.Helpers.IoC.GetInstance<IGuildStore>();
 
             // Check if guild with this name already exists
-            var existingGuild = guildRepository.GetByName(name).GetAwaiter().GetResult();
+            var existingGuild = guildRepository.GetByName(name);
             if (existingGuild != null)
             {
                 _logger?.Warning(
@@ -88,7 +88,7 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
             };
 
             // Save to database
-            guildRepository.Insert(guildEntity).GetAwaiter().GetResult();
+            guildRepository.Insert(guildEntity);
             _logger?.Information("Guild created successfully: '{GuildName}' with ID {GuildId}", name, guildEntity.Id);
 
             // Create default guild ranks in database
@@ -549,7 +549,7 @@ public class GuildFunctions : LuaScriptInterface, IGuildFunctions
         try
         {
             var guildRepository = Server.Helpers.IoC.GetInstance<IGuildRepository>();
-            var existingGuild = guildRepository.GetByName(name).GetAwaiter().GetResult();
+            var existingGuild = guildRepository.GetByName(name);
 
             Lua.PushBoolean(luaState, existingGuild != null);
         }

@@ -36,7 +36,7 @@ public class LuaHelperService(
 
         if (IsString(lua, arg))
         {
-            var guildRecord = guildRepository.GetByName(GetString(lua, arg)).Result;
+            var guildRecord = guildRepository.GetByName(GetString(lua, arg));
 
             if (guildRecord is null) return null;
             var guild = guildStore.Get((ushort)guildRecord.Id);
@@ -53,7 +53,7 @@ public class LuaHelperService(
 
         Guild LoadGuild(int id)
         {
-            var guildRecord = guildRepository.GetById(id).Result;
+            var guildRecord = guildRepository.GetById(id);
             if (guildRecord is null) return null;
 
             return guildLoader.Load(guildRecord);
@@ -77,7 +77,7 @@ public class LuaHelperService(
 
         if (IsString(lua, arg))
         {
-            var playerEntity = playerRepository.GetByName(GetString(lua, arg)).Result;
+            var playerEntity = playerRepository.GetByName(GetString(lua, arg));
 
             if (playerEntity is null) return null;
 
@@ -95,7 +95,7 @@ public class LuaHelperService(
 
         IPlayer LoadPlayer(int id)
         {
-            var playerRecord = playerRepository.GetById(id).Result;
+            var playerRecord = playerRepository.GetById(id);
             if (playerRecord is null) return null;
 
             return playerLoader.Load(playerRecord);
