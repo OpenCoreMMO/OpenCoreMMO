@@ -9,6 +9,7 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.World.Models.Tiles;
 using NeoServer.Networking.Handlers.Player;
@@ -60,6 +61,7 @@ public class LogoutBlockConditionTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "Integration")]
+    [ThreadBlocking]
     public void Player_gets_logout_block_when_attacking_and_cannot_logout()
     {
         _player.IsLogoutBlocked.Should().BeFalse();
@@ -77,6 +79,7 @@ public class LogoutBlockConditionTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "Integration")]
+    [ThreadBlocking]
     public void Player_can_logout_after_logout_block_expires()
     {
         AttackThroughHandler();
@@ -97,6 +100,7 @@ public class LogoutBlockConditionTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "Integration")]
+    [ThreadBlocking]
     public void Player_logout_block_refreshes_when_hostile_monster_nearby()
     {
         AttackThroughHandler();
@@ -115,6 +119,7 @@ public class LogoutBlockConditionTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "Integration")]
+    [ThreadBlocking]
     public void Player_can_logout_after_monster_removed()
     {
         AttackThroughHandler();
@@ -139,6 +144,7 @@ public class LogoutBlockConditionTests
 
     [SkipOnGitHubActionsFact]
     [Trait("Category", "Integration")]
+    [ThreadBlocking]
     public void Player_logout_block_removed_when_entering_protection_zone()
     {
         AttackThroughHandler();
@@ -206,6 +212,9 @@ public class LogoutBlockConditionTests
         WaitFor(() => _player.IsLogoutBlocked, timeoutMs: 5000)
             .Should()
             .BeTrue("attacking should apply a logout block condition");
+
+        _creatureInstance.TryRemove(monster.CreatureId);
+        _game.Map.RemoveCreature(monster);
     }
 
     private static bool WaitFor(Func<bool> condition, int timeoutMs = 5000, int pollIntervalMs = 50)
