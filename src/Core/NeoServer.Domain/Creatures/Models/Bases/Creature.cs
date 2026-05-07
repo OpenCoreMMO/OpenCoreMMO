@@ -174,7 +174,13 @@ public abstract class Creature : IEquatable<Creature>, ICreature
 
     public void Say(string message, SpeechType talkType, ICreature receiver)
     {
-        if (string.IsNullOrWhiteSpace(message) || talkType == SpeechType.None || receiver == null) return;
+        ArgumentException.ThrowIfNullOrWhiteSpace(message);
+        ArgumentNullException.ThrowIfNull(receiver);
+
+        if (talkType == SpeechType.None)
+        {
+            throw new ArgumentException("Talk type cannot be None.", nameof(talkType));
+        }
 
         if (receiver is not ISociableCreature sociableCreature) return;
 
@@ -185,8 +191,15 @@ public abstract class Creature : IEquatable<Creature>, ICreature
 
     public void Say(string message, SpeechType talkType, List<ICreature> receivers)
     {
-        if (string.IsNullOrWhiteSpace(message) || talkType == SpeechType.None || receivers == null ||
-            receivers.Count == 0) return;
+        ArgumentException.ThrowIfNullOrWhiteSpace(message);
+        ArgumentNullException.ThrowIfNull(receivers);
+
+        if (talkType == SpeechType.None)
+        {
+            throw new ArgumentException("Talk type cannot be None.", nameof(talkType));
+        }
+
+        if (receivers.Count == 0) return;
 
         foreach (var receiver in receivers)
         {
@@ -270,9 +283,11 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         return this == other;
     }
 
-    public virtual void Yell(string message, List<ICreature> listenersToYell) => Say(message, SpeechType.Yell, listenersToYell);
+    public virtual void Yell(string message, List<ICreature> listenersToYell) =>
+        Say(message, SpeechType.Yell, listenersToYell);
 
-    public virtual void Whisper(string message, List<ICreature> listenersToWhisper) => Say(message, SpeechType.Whisper, listenersToWhisper);
+    public virtual void Whisper(string message, List<ICreature> listenersToWhisper) =>
+        Say(message, SpeechType.Whisper, listenersToWhisper);
 
     private Outfit BuildOutfit(ICreatureType type)
     {
