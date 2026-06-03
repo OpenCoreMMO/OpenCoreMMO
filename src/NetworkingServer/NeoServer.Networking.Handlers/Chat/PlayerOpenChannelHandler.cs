@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Networking.Packets.Incoming.Chat;
@@ -34,6 +35,10 @@ public class PlayerOpenChannelHandler : PacketHandler
 
         if (channel is null) return;
 
-        _game.Dispatcher.AddEvent(new Event(() => player.Channels.JoinChannel(channel)));
+        _game.Dispatcher.AddEvent(new Event(() =>
+        {
+            if (channel.HasUser(player)) return;
+            player.Channels.JoinChannel(channel);
+        }));
     }
 }

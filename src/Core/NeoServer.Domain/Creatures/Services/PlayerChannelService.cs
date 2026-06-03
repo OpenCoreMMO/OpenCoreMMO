@@ -35,8 +35,8 @@ public class PlayerChannelService(IChatChannelStore chatChannelStore)
 
         foreach (var channel in channels)
         {
-            if (!channel.HasUser(player))
-                player.Channels.JoinChannel(channel);
+            if (channel.HasUser(player)) continue;
+            player.Channels.JoinChannel(channel);
         }
     }
 }
