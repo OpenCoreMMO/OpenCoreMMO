@@ -288,7 +288,7 @@ public class PlayerTest
 
         EventAggregatorTestHelper.SetupEventAggregator<CreatureSayEvent>(_ => eventFired = true);
 
-        sut.Say("", SpeechType.Private, receiver);
+        Assert.Throws<ArgumentException>(()=> sut.Say(string.Empty, SpeechType.Private, receiver));
 
         eventFired.Should().BeFalse();
     }
