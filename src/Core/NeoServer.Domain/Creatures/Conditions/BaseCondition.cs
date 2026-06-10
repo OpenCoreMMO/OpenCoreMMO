@@ -28,7 +28,7 @@ public abstract class BaseCondition : ICondition
     public ConditionIconType Icons => 0;
 
     public abstract ConditionType Type { get; }
-    public long RemainingTime => (EndTime - DateTime.UtcNow.Ticks) / TimeSpan.TicksPerMillisecond;
+    public long RemainingTime => EndTime == 0 ? Duration / TimeSpan.TicksPerMillisecond : (EndTime - DateTime.UtcNow.Ticks) / TimeSpan.TicksPerMillisecond;
 
     public FormulaValues FormulaValues { get; set; }
     public Dictionary<ConditionParamType, uint> Parameters { get; set; } = new();
@@ -76,7 +76,7 @@ public abstract class BaseCondition : ICondition
         return true;
     }
 
-    public virtual bool HasExpired => !IsPersistent && EndTime < DateTime.UtcNow.Ticks;
+    public virtual bool HasExpired => !IsPersistent && RemainingTime <= 0;
     
     /// <summary>
     ///     Updates the duration of the condition. If the condition has already started,

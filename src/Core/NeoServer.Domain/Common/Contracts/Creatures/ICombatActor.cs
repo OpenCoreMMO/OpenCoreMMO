@@ -84,4 +84,5 @@ public interface ICombatActor : IWalkableCreature
     bool IsTargetLost();
     bool IsTargetLost(ICreature target);
     IReadOnlyList<ICondition> GetConditions();
+    IReadOnlyList<ICondition> GetFiniteConditions();
 }

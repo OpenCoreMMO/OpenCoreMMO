@@ -30,7 +30,7 @@ public class ConditionParserTest
         // Assert
         json.Should().NotBeNullOrWhiteSpace();
         json.Should().Contain("\"Type\":2"); // Burning = 1 << 1
-        json.Should().Contain("\"Duration\":5000");
+        json.Should().Contain("\"RemainingTime\":5000");
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public class ConditionParserTest
 
         // Assert
         json.Should().NotBeNullOrWhiteSpace();
-        json.Should().Contain("\"Duration\":0");
+        json.Should().Contain("\"RemainingTime\":0");
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public class ConditionParserTest
 
     [Fact]
     [Trait("Category", "HappyPath")]
-    public void ConditionParser_serializes_started_condition_with_started_at()
+    public void ConditionParser_serializes_started_condition_with_remaining_time()
     {
         // Arrange
         var condition = new Condition(ConditionType.Burning, 5000);
@@ -176,8 +176,10 @@ public class ConditionParserTest
 
         // Assert
         var doc = JsonDocument.Parse(json);
-        doc.RootElement.GetProperty("StartedAt").GetInt64().Should().Be(startedAt);
-        doc.RootElement.GetProperty("Duration").GetUInt32().Should().Be(5000);
+        var remainingTime = doc.RootElement.GetProperty("RemainingTime").GetUInt32();
+        remainingTime.Should().BeLessThan(5000u);
+        remainingTime.Should().BeGreaterThan(0);
+        remainingTime.Should().BeCloseTo(4900u, 100u);
     }
 
     #endregion
@@ -277,16 +279,13 @@ public class ConditionParserTest
 
     [Fact]
     [Trait("Category", "EdgeCase")]
-    public void ConditionParser_deserializes_adjusts_remaining_time_when_condition_was_started()
+    public void ConditionParser_deserializes_condition_with_stored_remaining_time()
     {
-        // Arrange — craft JSON with a StartedAt that is ~100ms in the past
-        var elapsedMs = 100u;
-        var pastStartedAt = DateTime.UtcNow.Ticks - (elapsedMs * TimeSpan.TicksPerMillisecond);
+        // Arrange — craft JSON with a RemainingTime of 900ms
         var json = $$"""
             {
                 "Type": 2,
-                "Duration": 1000,
-                "StartedAt": {{pastStartedAt}},
+                "RemainingTime": 900,
                 "FormulaValues": {
                     "FormulaType": 0,
                     "MinA": 0,
@@ -301,24 +300,20 @@ public class ConditionParserTest
         // Act
         var result = ConditionParser.Deserialize(json);
 
-        // Assert — remaining duration should be close to 900ms (1000 - ~100)
+        // Assert — remaining duration should be exactly the stored 900ms
         var remainingMs = result.Duration / TimeSpan.TicksPerMillisecond;
-        remainingMs.Should().BeLessThan(1000u);
-        remainingMs.Should().BeGreaterThan(0);
-        remainingMs.Should().BeCloseTo(1000u - elapsedMs, 50u);
+        remainingMs.Should().Be(900u);
     }
 
     [Fact]
     [Trait("Category", "EdgeCase")]
     public void ConditionParser_deserializes_expired_condition_returns_zero_duration()
     {
-        // Arrange — craft JSON with a StartedAt far in the past so condition is expired
-        var pastStartedAt = DateTime.UtcNow.Ticks - (10_000 * TimeSpan.TicksPerMillisecond); // 10 seconds ago
+        // Arrange — craft JSON with RemainingTime = 0
         var json = $$"""
             {
                 "Type": 2,
-                "Duration": 5000,
-                "StartedAt": {{pastStartedAt}},
+                "RemainingTime": 0,
                 "FormulaValues": {
                     "FormulaType": 0,
                     "MinA": 0,
@@ -372,14 +367,11 @@ public class ConditionParserTest
     [Trait("Category", "Validation")]
     public void ConditionParser_deserializes_condition_with_partially_expired_time()
     {
-        // Arrange — craft JSON where half the duration has elapsed
-        var halfDurationMs = 500u;
-        var pastStartedAt = DateTime.UtcNow.Ticks - (halfDurationMs * TimeSpan.TicksPerMillisecond);
+        // Arrange — craft JSON with RemainingTime set to 500ms
         var json = $$"""
             {
                 "Type": 4,
-                "Duration": 1000,
-                "StartedAt": {{pastStartedAt}},
+                "RemainingTime": 500,
                 "FormulaValues": {
                     "FormulaType": 0,
                     "MinA": 0,
@@ -394,11 +386,9 @@ public class ConditionParserTest
         // Act
         var result = ConditionParser.Deserialize(json);
 
-        // Assert — approximately half the duration remains
+        // Assert — exactly 500ms remaining
         var remainingMs = result.Duration / TimeSpan.TicksPerMillisecond;
-        remainingMs.Should().BeLessThan(1000u);
-        remainingMs.Should().BeGreaterThan(0);
-        remainingMs.Should().BeCloseTo(500u, 100u);
+        remainingMs.Should().Be(500u);
     }
 
     [Fact]
@@ -434,35 +424,7 @@ public class ConditionParserTest
         act.Should().Throw<JsonException>();
     }
 
-    [Fact]
-    [Trait("Category", "EdgeCase")]
-    public void ConditionParser_deserialize_handles_future_started_at_gracefully()
-    {
-        // Arrange — craft JSON with a StartedAt in the future (simulates system clock regression)
-        var futureStartedAt = DateTime.UtcNow.Ticks + (60_000 * TimeSpan.TicksPerMillisecond); // 1 min in the future
-        var json = $$"""
-            {
-                "Type": 2,
-                "Duration": 5000,
-                "StartedAt": {{futureStartedAt}},
-                "FormulaValues": {
-                    "FormulaType": 0,
-                    "MinA": 0,
-                    "MinB": 0,
-                    "MaxA": 0,
-                    "MaxB": 0
-                },
-                "Parameters": {}
-            }
-            """;
 
-        // Act
-        var result = ConditionParser.Deserialize(json);
-
-        // Assert — should not produce a duration larger than the original
-        var remainingMs = result.Duration / TimeSpan.TicksPerMillisecond;
-        remainingMs.Should().Be(5000); // no time has elapsed — elapsedTicks was clamped to 0
-    }
 
     #endregion
 
@@ -500,7 +462,7 @@ public class ConditionParserTest
         // Assert
         result.Type.Should().Be(ConditionType.Electrified);
 
-        // Duration: when not started, startedAt = 0, so duration is preserved exactly
+        // Duration: the full duration is preserved exactly (condition was not started)
         var expectedDurationTicks = 15000u * TimeSpan.TicksPerMillisecond;
         result.Duration.Should().Be(expectedDurationTicks);
 

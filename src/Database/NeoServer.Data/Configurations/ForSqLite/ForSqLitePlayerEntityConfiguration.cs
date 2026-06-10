@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NeoServer.Data.Entities;
+using NeoServer.Data.Helpers.ConditionParsers;
 using NeoServer.Data.Seeds;
 
 namespace NeoServer.Data.Configurations.ForSqLite;
@@ -74,7 +75,12 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
         entity.Property(e => e.LastLogIn);
         entity.Property(e => e.LastLogOut);
 
-        entity.Property(e => e.Conditions);
+        entity.Property(e => e.Conditions)
+            .HasColumnType("TEXT")
+            .HasConversion(
+                v => ConditionListParser.Serialize(v),
+                v => ConditionListParser.Deserialize(v)
+            );;
 
         entity.HasOne(d => d.Account)
             .WithMany(p => p.Players)

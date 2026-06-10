@@ -112,6 +112,29 @@ internal class ConditionList : IEnumerable<ICondition>
     }
 
     /// <summary>
+    /// Returns all finite (non-persistent) conditions, i.e. conditions that have a
+    /// limited duration and are expected to expire. Uses the cached <see cref="GetAll"/> list internally.
+    /// </summary>
+    public IReadOnlyList<ICondition> GetFiniteConditions()
+    {
+        var all = GetAll();
+
+        if (all.Count == 0) return [];
+
+        var finite = new List<ICondition>(all.Count);
+
+        foreach (var condition in all)
+        {
+            if (!condition.IsPersistent)
+            {
+                finite.Add(condition);
+            }
+        }
+
+        return finite.AsReadOnly();
+    }
+
+    /// <summary>
     /// Returns the first non-null condition of the given type, or null if none exist.
     /// </summary>
     /// <param name="conditionType">The condition type to look up.</param>
