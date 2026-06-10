@@ -133,6 +133,7 @@ public class PlayerLoader(
         }
 
         AddRegenerationCondition(playerEntity, player);
+        LoadConditions(playerEntity, player);
 
         player.AddInventory(ConvertToInventory(player, playerEntity));
 
@@ -198,6 +199,25 @@ public class PlayerLoader(
         }
 
         player.SetAsHungry();
+    }
+
+    /// <summary>
+    ///     Loads all persisted conditions from the player entity into the player instance.
+    ///     Conditions that have already expired are skipped.
+    /// </summary>
+    /// <param name="playerEntity">The entity containing the persisted conditions.</param>
+    /// <param name="player">The player instance to load conditions into.</param>
+    private static void LoadConditions(PlayerEntity playerEntity, IPlayer player)
+    {
+        if (playerEntity.Conditions is null || playerEntity.Conditions.Count == 0)
+            return;
+
+        foreach (var condition in playerEntity.Conditions)
+        {
+            if (condition.HasExpired) continue;
+
+            player.AddCondition(condition);
+        }
     }
 
     /// <summary>

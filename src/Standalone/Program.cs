@@ -199,13 +199,18 @@ public class Program
     private static async Task LoadDatabase(IServiceProvider container, ILogger logger,
         CancellationToken cancellationToken)
     {
-        var (_, databaseName) = container.Resolve<DatabaseConfiguration>();
+        var (_, databaseName, dropOnStartup) = container.Resolve<DatabaseConfiguration>();
         var context = container.Resolve<NeoContext>();
 
         logger.Information("Loading database: {Db}", databaseName);
 
         try
         {
+            if (dropOnStartup)
+            {
+                await context.Database.EnsureDeletedAsync(cancellationToken);
+            }
+            
             await context.Database.EnsureCreatedAsync(cancellationToken);
         }
         catch (Exception ex)

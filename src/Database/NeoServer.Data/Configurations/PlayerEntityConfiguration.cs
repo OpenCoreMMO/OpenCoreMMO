@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NeoServer.Data.Entities;
+using NeoServer.Data.Helpers.ConditionParsers;
 using NeoServer.Data.Seeds;
 
 namespace NeoServer.Data.Configurations;
@@ -71,6 +72,13 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         entity.Property(e => e.SkullEndsAt);
         entity.Property(e => e.LastLogIn);
         entity.Property(e => e.LastLogOut);
+
+        entity.Property(e => e.Conditions)
+            .HasColumnType("jsonb")
+            .HasConversion(
+                v => ConditionListParser.Serialize(v),
+                v => ConditionListParser.Deserialize(v)
+            );
 
         entity.Ignore(e => e.KillsLastMonth);
 

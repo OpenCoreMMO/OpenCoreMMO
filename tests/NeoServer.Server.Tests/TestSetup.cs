@@ -120,7 +120,7 @@ public class TestSetup
     private static async Task LoadDatabase(IServiceProvider container, ILogger logger,
         CancellationToken cancellationToken)
     {
-        var (_, databaseName) = container.Resolve<DatabaseConfiguration>();
+        var (_, databaseName, _) = container.Resolve<DatabaseConfiguration>();
         var context = container.Resolve<NeoContext>();
 
         logger.Information("Loading database: {Db}", databaseName);

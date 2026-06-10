@@ -162,6 +162,7 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         playerEntity.Skull = player.Skull;
         playerEntity.SkullEndsAt = player.SkullEndsAt;
         playerEntity.LastLogOut = player.LastLogOut;
+        playerEntity.Conditions = player.GetFiniteConditions().AsList();
 
         // Update guild membership
         await UpdateGuildMembership(player, neoContext);

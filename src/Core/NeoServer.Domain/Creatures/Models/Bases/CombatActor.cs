@@ -138,6 +138,8 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual IReadOnlyList<ICondition> GetConditions() => Conditions.GetAll();
 
+    public virtual IReadOnlyList<ICondition> GetFiniteConditions() => Conditions.GetFiniteConditions();
+
     public virtual bool HasCondition(ConditionType type, out ICondition condition) =>
         Conditions.HasAnyEnabledConditionOf(type, out condition);
 

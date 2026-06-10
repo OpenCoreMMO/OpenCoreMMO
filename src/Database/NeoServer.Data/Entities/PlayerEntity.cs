@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NeoServer.Domain.Common.Combat.Enums;
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Modes;
 
@@ -94,4 +95,10 @@ public sealed class PlayerEntity
     public WorldEntity World { get; set; }
     public int WorldId { get; set; }
     public ICollection<PlayerStorageEntity> PlayerStorages { get; set; }
+    
+    /// <summary>
+    ///     JSON-serialized array of player condition objects (e.g., regeneration, haste, paralyze).
+    ///     Deserialized at login and serialized on save.
+    /// </summary>
+    public List<ICondition> Conditions { get; set; }
 }
