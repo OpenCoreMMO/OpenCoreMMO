@@ -71,7 +71,8 @@ internal static class PlayerModelSeed
             Experience = 2058474800,
             FightMode = FightMode.Attack,
             WorldId = 1,
-            BankAmount = 10000000 // 10kk para garantir testes de guild
+            BankAmount = 10000000, // 10kk para garantir testes de guild
+            Conditions = null
         };
     }
 

@@ -94,4 +94,10 @@ public sealed class PlayerEntity
     public WorldEntity World { get; set; }
     public int WorldId { get; set; }
     public ICollection<PlayerStorageEntity> PlayerStorages { get; set; }
+    
+    /// <summary>
+    ///     JSON-serialized array of player condition objects (e.g., regeneration, haste, paralyze).
+    ///     Deserialized at login and serialized on save.
+    /// </summary>
+    public string Conditions { get; set; }
 }

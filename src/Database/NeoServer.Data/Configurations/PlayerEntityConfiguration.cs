@@ -72,6 +72,9 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         entity.Property(e => e.LastLogIn);
         entity.Property(e => e.LastLogOut);
 
+        entity.Property(e => e.Conditions)
+            .HasColumnType("jsonb");
+
         entity.Ignore(e => e.KillsLastMonth);
 
         entity.HasOne(d => d.Account)

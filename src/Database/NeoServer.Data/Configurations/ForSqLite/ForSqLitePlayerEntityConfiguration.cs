@@ -74,6 +74,8 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
         entity.Property(e => e.LastLogIn);
         entity.Property(e => e.LastLogOut);
 
+        entity.Property(e => e.Conditions);
+
         entity.HasOne(d => d.Account)
             .WithMany(p => p.Players)
             .HasForeignKey(d => d.AccountId)
