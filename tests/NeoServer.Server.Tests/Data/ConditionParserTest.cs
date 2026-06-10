@@ -425,7 +425,6 @@ public class ConditionParserTest
     }
 
 
-
     #endregion
 
     #region Round-Trip
