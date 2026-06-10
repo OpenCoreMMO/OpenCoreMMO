@@ -80,7 +80,7 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
             .HasConversion(
                 v => ConditionListParser.Serialize(v),
                 v => ConditionListParser.Deserialize(v)
-            );;
+            );
 
         entity.HasOne(d => d.Account)
             .WithMany(p => p.Players)
