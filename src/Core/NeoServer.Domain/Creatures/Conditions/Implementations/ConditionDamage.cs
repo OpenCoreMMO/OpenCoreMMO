@@ -50,6 +50,8 @@ public class ConditionDamage : BaseCondition
         Amount = amount;
     }
 
+    public override bool IsPersistent => false;
+
     public IThing Cause { get; }
     public byte Amount { get; }
     public override ConditionType Type { get; }
