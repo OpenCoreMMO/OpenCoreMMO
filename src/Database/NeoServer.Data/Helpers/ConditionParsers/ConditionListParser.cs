@@ -4,11 +4,10 @@ using System.Text.Json;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
-using NeoServer.Domain.Creatures.Player;
 
 namespace NeoServer.Data.Helpers.ConditionParsers;
 
-public class ConditionListParser
+public static class ConditionListParser
 {
     public static string Serialize(IReadOnlyList<ICondition> conditions)
     {
@@ -16,7 +15,7 @@ public class ConditionListParser
 
         foreach (var condition in conditions)
         {
-            if (condition.Type == ConditionType.ManaShield)
+            if (condition.Type is ConditionType.ManaShield or ConditionType.Drunk)
             {
                 serializedConditions.Add(ConditionParser.Serialize((Condition)condition));
             }
@@ -45,7 +44,7 @@ public class ConditionListParser
             
             var conditionType = (ConditionType)typeProperty.GetUInt32();
             
-            if (conditionType is ConditionType.ManaShield)
+            if (conditionType is ConditionType.ManaShield or ConditionType.Drunk)
             {
                 var conditionJson = element.GetRawText();
                 var condition = ConditionParser.Deserialize(conditionJson);
