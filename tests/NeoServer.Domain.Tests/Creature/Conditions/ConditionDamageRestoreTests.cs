@@ -238,11 +238,10 @@ public class ConditionDamageRestoreTests
         // Act
         var executeAction = () => condition.Execute(creature);
 
-        // Assert — DamageRecordList.AddOrUpdateDamage throws
-        // ArgumentNullException when Cause is null because it
-        // cannot track the damage source. This proves that the
-        // Restore-with-null-cause path is NOT safe at the point
-        // where damage is actually applied.
+        // Assert — Execute() gracefully handles a null Cause
+        // by falling back to a generic DamageElement source,
+        // confirming the Restore-with-null-cause path is safe
+        // at the point where damage is actually applied.
         executeAction.Should().NotThrow();
     }
 }
