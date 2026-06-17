@@ -19,6 +19,11 @@ public static class ConditionListParser
             {
                 serializedConditions.Add(ConditionParser.Serialize((Condition)condition));
             }
+            
+            if (ConditionDamageParser.CanHandle(condition.Type) && condition is ConditionDamage damageCondition)
+            {
+                serializedConditions.Add(ConditionDamageParser.Serialize(damageCondition));
+            }
         }
 
         return $"[{string.Join(",", serializedConditions)}]";
@@ -43,15 +48,21 @@ public static class ConditionListParser
             }
             
             var conditionType = (ConditionType)typeProperty.GetUInt32();
-            
+            var conditionJson = element.GetRawText();
+
             if (conditionType is ConditionType.ManaShield or ConditionType.Drunk)
             {
-                var conditionJson = element.GetRawText();
                 var condition = ConditionParser.Deserialize(conditionJson);
+                conditions.Add(condition);
+            }
+
+            if (ConditionDamageParser.CanHandle(conditionType))
+            {
+                var condition = ConditionDamageParser.Deserialize(conditionJson);
                 conditions.Add(condition);
             }
         }
 
         return conditions;
-    }
+}
 }
