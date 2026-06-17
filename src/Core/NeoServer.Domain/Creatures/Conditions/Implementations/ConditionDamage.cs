@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Effects.Parsers;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Parsers;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 
@@ -28,7 +29,7 @@ public class ConditionDamage : BaseCondition
     {
         Cause = cause;
         Type = type;
-        Interval = interval;
+        SetInterval(interval);
         DamageType = type.ToDamageType();
         _maxDamage = maxDamage;
         _minDamage = minDamage;
@@ -42,7 +43,7 @@ public class ConditionDamage : BaseCondition
 
         Cause = cause;
         Type = type;
-        Interval = interval;
+        SetInterval(interval);
         DamageType = type.ToDamageType();
         _maxDamage = damage;
         _minDamage = damage;
@@ -50,18 +51,73 @@ public class ConditionDamage : BaseCondition
         Amount = amount;
     }
 
+    private ConditionDamage(
+        IThing cause,
+        ConditionType type,
+        DamageType damageType,
+        uint interval,
+        byte amount,
+        ushort minDamage,
+        ushort maxDamage,
+        EffectT effect,
+        IEnumerable<ushort> remainingDamages,
+        long remainingCooldownMilliseconds) : base(0)
+    {
+        Cause = cause;
+        Type = type;
+        DamageType = damageType;
+        Effect = effect;
+        Amount = amount;
+        _minDamage = minDamage;
+        _maxDamage = maxDamage;
+        _damageQueue = new Queue<ushort>(remainingDamages ?? Array.Empty<ushort>());
+
+        RestoreInterval(interval, remainingCooldownMilliseconds);
+    }
+
+    public override bool IsPersistent => false;
+
     public IThing Cause { get; }
     public byte Amount { get; }
     public override ConditionType Type { get; }
     public DamageType DamageType { get; set; }
     public EffectT Effect { get; }
 
-    public uint Interval
+    public uint Interval { get; private set; }
+
+    private void SetInterval(uint interval)
     {
-        set => _cooldown = new CooldownTime(DateTime.UtcNow, value);
+        Interval = interval;
+        _cooldown = new CooldownTime(DateTime.UtcNow, interval);
     }
 
-    public override bool HasExpired => _damageQueue.Count <= 0;
+    private void RestoreInterval(uint interval, long remainingCooldownMilliseconds)
+    {
+        Interval = interval;
+
+        var clampedRemaining = Math.Clamp(remainingCooldownMilliseconds, 0L, (long)interval);
+        var elapsedMilliseconds = (long)interval - clampedRemaining;
+
+        _cooldown = new CooldownTime(
+            DateTime.UtcNow.AddMilliseconds(-elapsedMilliseconds),
+            interval);
+    }
+
+    public ConditionDamageState CaptureState()
+    {
+        return new ConditionDamageState(
+            Type,
+            DamageType,
+            Effect,
+            Interval,
+            Math.Max(0, (long)_cooldown.Remaining.TotalMilliseconds),
+            _damageQueue?.ToArray() ?? [],
+            Amount,
+            _minDamage,
+            _maxDamage);
+    }
+
+    public override bool HasExpired => _damageQueue is { Count: <= 0 };
 
     public void Execute(ICombatActor creature)
     {
@@ -74,15 +130,35 @@ public class ConditionDamage : BaseCondition
             return;
         }
 
-        creature.TakeDamage(Cause, new CombatDamage(damage, DamageType, DamageEffectParser.Parse(DamageType)));
+        var cause = new DamageElement(DamageType, creature.Location);
+
+        creature.TakeDamage(cause, new CombatDamage(damage, DamageType, DamageEffectParser.Parse(DamageType)));
+    }
+
+    public static ConditionDamage Restore(ConditionDamageState state)
+    {
+        return new ConditionDamage(
+            null,
+            state.Type,
+            state.DamageType,
+            state.Interval,
+            state.Amount,
+            state.MinDamage,
+            state.MaxDamage,
+            state.Effect,
+            state.RemainingDamages,
+            state.RemainingCooldownMilliseconds);
     }
     
     internal override bool Start(ICreature creature)
     {
-        if (Amount == 0)
-            GenerateDamageList();
-        else
-            GenerateDamageList(Amount);
+        if (_damageQueue is null)
+        {
+            if (Amount == 0)
+                GenerateDamageList();
+            else
+                GenerateDamageList(Amount);
+        }
 
         base.Start(creature);
         return true;
@@ -103,7 +179,11 @@ public class ConditionDamage : BaseCondition
     private void GenerateDamageList(byte amount)
     {
         _damageQueue ??= new Queue<ushort>();
-        for (var i = 0; i < amount - _damageQueue.Count; i++) _damageQueue.Enqueue(_maxDamage);
+        var amountToAdd = amount - _damageQueue.Count;
+        for (var i = 0; i < amountToAdd; i++)
+        {
+            _damageQueue.Enqueue(_maxDamage);
+        }
     }
 
     private void GenerateDamageList()
@@ -135,3 +215,33 @@ public class ConditionDamage : BaseCondition
         }
     }
 }
+
+public record DamageElement : IThing
+{
+    public DamageElement(DamageType damageType, Location location)
+    {
+        Location = location;
+        Name = DamageTypeParser.Parse(damageType);
+    }
+    public void Use(IPlayer usedBy)
+    {
+        throw new NotImplementedException();
+    }
+
+    public string Name { get; }
+    public Location Location { get; private set; }
+    public string GetLookText(bool isClose = false, bool showInternalDetails = false) => Name;
+
+    public void SetNewLocation(Location location, bool force = false) => Location = location;
+}
+
+public sealed record ConditionDamageState(
+    ConditionType Type,
+    DamageType DamageType,
+    EffectT Effect,
+    uint Interval,
+    long RemainingCooldownMilliseconds,
+    ushort[] RemainingDamages,
+    byte Amount,
+    ushort MinDamage,
+    ushort MaxDamage);

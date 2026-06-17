@@ -21,7 +21,7 @@ public abstract class BaseCondition : ICondition
     public long Duration { get; private set; }
     public long EndTime { get; private set; }
 
-    public bool IsPersistent => Duration == 0;
+    public virtual bool IsPersistent => Duration == 0;
     public long StartedAt { get; private set; }
     public bool IsDisabled { get; private set; }
     
