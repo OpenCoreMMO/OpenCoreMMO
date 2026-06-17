@@ -28,7 +28,7 @@ public class ConditionDamage : BaseCondition
     {
         Cause = cause;
         Type = type;
-        Interval = interval;
+        SetInterval(interval);
         DamageType = type.ToDamageType();
         _maxDamage = maxDamage;
         _minDamage = minDamage;
@@ -42,7 +42,7 @@ public class ConditionDamage : BaseCondition
 
         Cause = cause;
         Type = type;
-        Interval = interval;
+        SetInterval(interval);
         DamageType = type.ToDamageType();
         _maxDamage = damage;
         _minDamage = damage;
@@ -58,9 +58,12 @@ public class ConditionDamage : BaseCondition
     public DamageType DamageType { get; set; }
     public EffectT Effect { get; }
 
-    public uint Interval
+    public uint Interval { get; private set; }
+
+    private void SetInterval(uint interval)
     {
-        set => _cooldown = new CooldownTime(DateTime.UtcNow, value);
+        Interval = interval;
+        _cooldown = new CooldownTime(DateTime.UtcNow, interval);
     }
 
     public override bool HasExpired => _damageQueue.Count <= 0;
