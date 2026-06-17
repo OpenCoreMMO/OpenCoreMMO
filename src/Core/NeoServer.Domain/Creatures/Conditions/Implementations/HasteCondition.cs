@@ -21,6 +21,8 @@ public class HasteCondition : BaseCondition
     public EffectT Effect { get; }
     public uint Interval { get; }
 
+    internal ushort SpeedBoost { get; private set; }
+
     internal override bool Start(ICreature creature)
     {
         if (!base.Start(creature))
@@ -35,19 +37,61 @@ public class HasteCondition : BaseCondition
             combatActor.RemoveCondition(ConditionType.Paralyze);
         }
 
-        var baseSpeed = walkableCreature.RawSpeed;
+        if (SpeedBoost == 0) // not yet set; generate
+        {
+            var baseSpeed = walkableCreature.RawSpeed;
 
-        var min = walkableCreature.RawSpeed * FormulaValues.MinA + FormulaValues.MinB;
-        var max = walkableCreature.RawSpeed * FormulaValues.MaxA + FormulaValues.MaxB;
+            var min = walkableCreature.RawSpeed * FormulaValues.MinA + FormulaValues.MinB;
+            var max = walkableCreature.RawSpeed * FormulaValues.MaxA + FormulaValues.MaxB;
 
-        var random = Random.Shared;
-        var randomSpeed = random.Next((int)min, (int)max);
-        var speed = randomSpeed - baseSpeed;
+            var random = Random.Shared;
+            var randomSpeed = random.Next((int)min, (int)max);
+            SpeedBoost = (ushort)(randomSpeed - baseSpeed);
+        }
 
-        walkableCreature.IncreaseSpeed((ushort)speed);
+        walkableCreature.IncreaseSpeed(SpeedBoost);
 
-        EndAction = () => walkableCreature.DecreaseSpeed((ushort)speed);
+        EndAction = () => walkableCreature.DecreaseSpeed(SpeedBoost);
 
         return true;
     }
+
+    public HasteConditionState CaptureState()
+    {
+        return new HasteConditionState(
+            Type,
+            Effect,
+            SpeedBoost,
+            Math.Max(0, RemainingTime),
+            Duration,
+            FormulaValues);
+    }
+
+    public static HasteCondition Restore(HasteConditionState state)
+    {
+        // Use remaining time so the condition expires at the correct moment.
+        // If remaining is 0 (expired), fall back to 1ms
+        // as a reasonable default.
+        var durationMs = state.RemainingTimeMilliseconds > 0
+            ? state.RemainingTimeMilliseconds
+            : 1;
+
+        var condition = new HasteCondition(
+            (uint)durationMs,
+            state.FormulaValues,
+            state.Effect)
+        {
+            SpeedBoost = state.SpeedBoost
+        };
+
+        return condition;
+    }
 }
+
+public sealed record HasteConditionState(
+    ConditionType Type,
+    EffectT Effect,
+    ushort SpeedBoost,
+    long RemainingTimeMilliseconds,
+    long Duration,
+    FormulaValues FormulaValues);
