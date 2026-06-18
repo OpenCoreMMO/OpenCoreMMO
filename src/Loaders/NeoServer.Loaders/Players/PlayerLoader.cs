@@ -132,7 +132,6 @@ public class PlayerLoader(
             player.GuildRank = new GuildRankInfo((ushort)guildRank.Id, guildRank.Name, (byte)guildRank.Level);
         }
 
-        AddRegenerationCondition(playerEntity, player);
         LoadConditions(playerEntity, player);
 
         player.AddInventory(ConvertToInventory(player, playerEntity));
@@ -188,36 +187,25 @@ public class PlayerLoader(
         return dynamicTile as IDynamicTile;
     }
 
-    private static void AddRegenerationCondition(PlayerEntity playerEntity, IPlayer player)
-    {
-        if (playerEntity.RemainingRecoverySeconds != 0)
-        {
-            player.AddCondition(
-                new ConditionRegeneration((uint)(playerEntity.RemainingRecoverySeconds * 1000),
-                    player.SetAsHungry));
-            return;
-        }
-
-        player.SetAsHungry();
-    }
-
-    /// <summary>
-    ///     Loads all persisted conditions from the player entity into the player instance.
-    ///     Conditions that have already expired are skipped.
-    /// </summary>
-    /// <param name="playerEntity">The entity containing the persisted conditions.</param>
-    /// <param name="player">The player instance to load conditions into.</param>
     private static void LoadConditions(PlayerEntity playerEntity, IPlayer player)
     {
         if (playerEntity.Conditions is null || playerEntity.Conditions.Count == 0)
+        {
+            player.SetAsHungry();
             return;
+        }
+
+        var hadRegeneration = false;
 
         foreach (var condition in playerEntity.Conditions)
         {
             if (condition.HasExpired) continue;
-
+            if (condition is ConditionRegeneration) hadRegeneration = true;
             player.AddCondition(condition);
         }
+
+        if (!hadRegeneration)
+            player.SetAsHungry();
     }
 
     /// <summary>

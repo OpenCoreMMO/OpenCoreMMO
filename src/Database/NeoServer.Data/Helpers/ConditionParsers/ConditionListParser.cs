@@ -44,6 +44,11 @@ public static class ConditionListParser
             {
                 serializedConditions.Add(OutfitConditionParser.Serialize(outfitCondition));
             }
+
+            if (ConditionRegenerationParser.CanHandle(condition.Type) && condition is ConditionRegeneration regenCondition)
+            {
+                serializedConditions.Add(ConditionRegenerationParser.Serialize(regenCondition));
+            }
         }
 
         return $"[{string.Join(",", serializedConditions)}]";
@@ -114,6 +119,15 @@ public static class ConditionListParser
                 // Restore returns null for expired conditions; silently skip those
                 // to avoid persisting a never-expiring outfit.
                 var condition = OutfitConditionParser.Deserialize(conditionJson);
+                if (condition is not null)
+                    conditions.Add(condition);
+            }
+
+            if (ConditionRegenerationParser.CanHandle(conditionType))
+            {
+                // Restore returns null for expired conditions; silently skip those
+                // to avoid persisting a never-expiring regeneration.
+                var condition = ConditionRegenerationParser.Deserialize(conditionJson);
                 if (condition is not null)
                     conditions.Add(condition);
             }

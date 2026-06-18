@@ -357,5 +357,113 @@ public class ConditionListParserTest
         restored.Should().BeEmpty();
     }
 
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void Serialize_Deserialize_round_trips_regeneration_condition()
+    {
+        // Arrange
+        var regenState = new ConditionRegenerationState(
+            ConditionType.Regeneration,
+            RemainingTimeMilliseconds: 90_000);
+
+        var conditions = new List<ICondition>
+        {
+            ConditionRegeneration.Restore(regenState)!
+        };
+
+        // Act
+        var json = ConditionListParser.Serialize(conditions);
+        var restored = ConditionListParser.Deserialize(json);
+
+        // Assert
+        restored.Should().HaveCount(1);
+        restored[0].Type.Should().Be(ConditionType.Regeneration);
+        restored[0].Should().BeOfType<ConditionRegeneration>();
+        restored[0].RemainingTime.Should().Be(90_000);
+    }
+
+    [Fact]
+    [Trait("Category", "EdgeCase")]
+    public void Serialize_Deserialize_skips_expired_regeneration()
+    {
+        // Arrange — expired regeneration (zero remaining time)
+        var expiredRegen = new ConditionRegeneration(0);
+
+        var conditions = new List<ICondition>
+        {
+            expiredRegen
+        };
+
+        // Act
+        var json = ConditionListParser.Serialize(conditions);
+        var restored = ConditionListParser.Deserialize(json);
+
+        // Assert — expired regeneration is filtered out
+        restored.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void Serialize_Deserialize_round_trips_mixed_with_regeneration()
+    {
+        // Arrange — one condition of each parser path including Regeneration
+        var manaShield = new Condition(ConditionType.ManaShield, 30_000);
+
+        var hasteState = new HasteConditionState(
+            ConditionType.Haste,
+            EffectT.GlitterBlue,
+            SpeedBoost: 180,
+            RemainingTimeMilliseconds: 25_000,
+            Duration: 60_000 * TimeSpan.TicksPerMillisecond,
+            new FormulaValues());
+
+        var paralyzeState = new ParalyzeConditionState(
+            ConditionType.Paralyze,
+            SpeedReduction: 120,
+            RemainingTimeMilliseconds: 15_000);
+
+        var invisibleState = new ConditionInvisibleState(
+            ConditionType.Invisible,
+            EffectT.GlitterBlue,
+            RemainingTimeMilliseconds: 75_000);
+
+        var outfitState = new OutfitConditionState(
+            ConditionType.Outfit,
+            LookType: 128,
+            Head: 1,
+            Body: 2,
+            Legs: 3,
+            Feet: 4,
+            Addon: 0,
+            RemainingTimeMilliseconds: 60_000);
+
+        var regenState = new ConditionRegenerationState(
+            ConditionType.Regeneration,
+            RemainingTimeMilliseconds: 45_000);
+
+        var conditions = new List<ICondition>
+        {
+            manaShield,
+            HasteCondition.Restore(hasteState)!,
+            ParalyzeCondition.Restore(paralyzeState)!,
+            ConditionInvisible.Restore(invisibleState)!,
+            OutfitCondition.Restore(outfitState)!,
+            ConditionRegeneration.Restore(regenState)!
+        };
+
+        // Act
+        var json = ConditionListParser.Serialize(conditions);
+        var restored = ConditionListParser.Deserialize(json);
+
+        // Assert — all six conditions survive the round-trip
+        restored.Should().HaveCount(6);
+        restored[0].Type.Should().Be(ConditionType.ManaShield);
+        restored[1].Type.Should().Be(ConditionType.Haste);
+        restored[2].Type.Should().Be(ConditionType.Paralyze);
+        restored[3].Type.Should().Be(ConditionType.Invisible);
+        restored[4].Type.Should().Be(ConditionType.Outfit);
+        restored[5].Type.Should().Be(ConditionType.Regeneration);
+    }
+
     #endregion
 }
