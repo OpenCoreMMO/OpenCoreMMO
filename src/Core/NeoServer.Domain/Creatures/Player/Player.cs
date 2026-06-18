@@ -1025,7 +1025,7 @@ public class Player : CombatActor, IPlayer
         else
         {
             RemoveHungry();
-            AddCondition(new ConditionRegeneration(regenerationMs, SetAsHungry));
+            AddCondition(new ConditionRegeneration(regenerationMs));
         }
 
         return true;

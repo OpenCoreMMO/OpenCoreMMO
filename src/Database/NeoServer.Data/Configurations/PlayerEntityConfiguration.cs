@@ -66,7 +66,6 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         ConfigureProperty(entity, e => e.SkillSword, null, "10");
         ConfigureProperty(entity, e => e.SkillSwordTries, null, "0");
         ConfigureProperty(entity, e => e.Vocation, "int", "0");
-        ConfigureProperty(entity, e => e.RemainingRecoverySeconds, "int", "0");
         ConfigureProperty(entity, e => e.BankAmount, "numeric(20, 0)", "0");
         ConfigureProperty(entity, e => e.Skull, "int", "0");
         entity.Property(e => e.SkullEndsAt);

@@ -77,8 +77,6 @@ public sealed class PlayerEntity
     public FightMode FightMode { get; set; }
     public Gender Gender { get; set; }
     public byte Vocation { get; set; }
-    public int RemainingRecoverySeconds { get; set; }
-
     public Skull Skull { get; set; }
     public DateTime? SkullEndsAt { get; set; }
     public DateTime? LastLogOut { get; set; }
