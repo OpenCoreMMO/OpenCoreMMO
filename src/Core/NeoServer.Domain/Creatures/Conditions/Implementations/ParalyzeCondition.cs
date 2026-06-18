@@ -1,3 +1,4 @@
+#nullable enable
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 
@@ -5,13 +6,13 @@ namespace NeoServer.Domain.Creatures.Conditions.Implementations;
 
 public class ParalyzeCondition : BaseCondition
 {
-    private readonly ushort _speedReduction;
+    internal ushort SpeedReduction { get; private set; }
 
     public override ConditionType Type => ConditionType.Paralyze;
 
     public ParalyzeCondition(uint duration, ushort speedReduction) : base(duration)
     {
-        _speedReduction = speedReduction;
+        SpeedReduction = speedReduction;
     }
 
     internal override bool Start(ICreature creature)
@@ -25,10 +26,35 @@ public class ParalyzeCondition : BaseCondition
             combatActor.RemoveCondition(ConditionType.Haste);
         }
 
-        walkable.DecreaseSpeed(_speedReduction);
+        walkable.DecreaseSpeed(SpeedReduction);
 
-        EndAction = () => walkable.IncreaseSpeed(_speedReduction);
+        EndAction = () => walkable.IncreaseSpeed(SpeedReduction);
         
         return true;
     }
+
+    public ParalyzeConditionState CaptureState()
+    {
+        return new ParalyzeConditionState(
+            Type,
+            SpeedReduction,
+            Math.Max(0, RemainingTime));
+    }
+
+    public static ParalyzeCondition? Restore(ParalyzeConditionState state)
+    {
+        var durationMs = Math.Max(0, state.RemainingTimeMilliseconds);
+
+        if (durationMs <= 0)
+            return null;
+
+        return new ParalyzeCondition(
+            (uint)durationMs,
+            state.SpeedReduction);
+    }
 }
+
+public sealed record ParalyzeConditionState(
+    ConditionType Type,
+    ushort SpeedReduction,
+    long RemainingTimeMilliseconds);

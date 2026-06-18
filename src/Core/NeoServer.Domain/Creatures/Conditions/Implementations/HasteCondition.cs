@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿#nullable enable
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Creatures.Conditions.Enums;
@@ -69,11 +70,12 @@ public class HasteCondition : BaseCondition
             FormulaValues);
     }
 
-    public static HasteCondition Restore(HasteConditionState state)
+    public static HasteCondition? Restore(HasteConditionState state)
     {
-        // Use remaining time so the condition expires at the correct moment.
-        // Zero remaining time is preserved as-is (an expired condition).
         var durationMs = Math.Max(0, state.RemainingTimeMilliseconds);
+
+        if (durationMs <= 0)
+            return null;
 
         var condition = new HasteCondition(
             (uint)durationMs,
