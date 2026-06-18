@@ -153,9 +153,9 @@ public class HasteConditionParserTest
 
     [Fact]
     [Trait("Category", "EdgeCase")]
-    public void Serialize_handles_expired_condition_with_zero_remaining_time()
+    public void Restore_returns_null_when_remaining_time_is_zero()
     {
-        // Arrange - when RemainingTimeMilliseconds is 0, Restore falls back to Duration
+        // Arrange - when RemainingTimeMilliseconds is 0, Restore returns null
         var state = new HasteConditionState(
             ConditionType.Haste,
             EffectT.None,
@@ -164,15 +164,11 @@ public class HasteConditionParserTest
             Duration: 0,
             new FormulaValues());
 
+        // Act
         var condition = HasteCondition.Restore(state);
 
-        // Act
-        var json = HasteConditionParser.Serialize(condition);
-
-        // Assert - serialization should still produce valid JSON
-        json.Should().NotBeNullOrWhiteSpace();
-        using var doc = JsonDocument.Parse(json);
-        doc.RootElement.GetProperty("RemainingTimeMilliseconds").GetInt64().Should().Be(0);
+        // Assert
+        condition.Should().BeNull();
     }
 
     [Fact]
@@ -272,9 +268,11 @@ public class HasteConditionParserTest
 
     [Fact]
     [Trait("Category", "EdgeCase")]
-    public void Deserialize_preserves_zero_remaining_time()
+    public void Deserialize_returns_null_for_expired_haste()
     {
-        // Arrange - RemainingTimeMilliseconds of 0 is preserved as-is (an expired condition)
+        // Arrange - expired condition with zero remaining time.
+        // The parser must not throw; it should silently skip expired
+        // records so player materialisation does not fail.
         var json = $$"""
             {
                 "Type": {{(uint)ConditionType.Haste}},
@@ -296,10 +294,7 @@ public class HasteConditionParserTest
         var condition = HasteConditionParser.Deserialize(json);
 
         // Assert
-        condition.Type.Should().Be(ConditionType.Haste);
-        var captured = condition.CaptureState();
-        captured.SpeedBoost.Should().Be(50);
-        captured.RemainingTimeMilliseconds.Should().Be(0);
+        condition.Should().BeNull();
     }
 
     [Fact]

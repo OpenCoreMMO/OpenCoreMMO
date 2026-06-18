@@ -6,9 +6,9 @@ using NeoServer.Domain.Creatures.Conditions.Implementations;
 
 namespace NeoServer.Data.Helpers.ConditionParsers;
 
-public static class HasteConditionParser
+public static class ParalyzeConditionParser
 {
-    public static string Serialize(HasteCondition condition)
+    public static string Serialize(ParalyzeCondition condition)
     {
         ArgumentNullException.ThrowIfNull(condition);
 
@@ -16,23 +16,23 @@ public static class HasteConditionParser
         return JsonSerializer.Serialize(state);
     }
 
-    public static HasteCondition? Deserialize(string json)
+    public static ParalyzeCondition? Deserialize(string json)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(json);
 
-        var state = JsonSerializer.Deserialize<HasteConditionState>(json);
+        var state = JsonSerializer.Deserialize<ParalyzeConditionState>(json);
 
         if (state is null)
-            throw new InvalidOperationException("Failed to deserialize haste condition: JSON was null.");
+            throw new InvalidOperationException("Failed to deserialize paralyze condition: JSON was null.");
 
         // Restore returns null when the condition has expired (RemainingTimeMilliseconds <= 0).
-        // The caller (ConditionListParser) skips null entries, so expired haste records
+        // The caller (ConditionListParser) skips null entries, so expired paralyze records
         // are silently ignored rather than failing player materialization.
-        return HasteCondition.Restore(state);
+        return ParalyzeCondition.Restore(state);
     }
 
     public static bool CanHandle(ConditionType type)
     {
-        return type is ConditionType.Haste;
+        return type is ConditionType.Paralyze;
     }
 }

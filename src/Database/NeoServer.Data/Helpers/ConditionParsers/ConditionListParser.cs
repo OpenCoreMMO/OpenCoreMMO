@@ -29,6 +29,11 @@ public static class ConditionListParser
             {
                 serializedConditions.Add(HasteConditionParser.Serialize(hasteCondition));
             }
+
+            if (ParalyzeConditionParser.CanHandle(condition.Type) && condition is ParalyzeCondition paralyzeCondition)
+            {
+                serializedConditions.Add(ParalyzeConditionParser.Serialize(paralyzeCondition));
+            }
         }
 
         return $"[{string.Join(",", serializedConditions)}]";
@@ -69,8 +74,20 @@ public static class ConditionListParser
 
             if (HasteConditionParser.CanHandle(conditionType))
             {
+                // Restore returns null for expired conditions; silently skip those
+                // to avoid persisting a never-expiring haste.
                 var condition = HasteConditionParser.Deserialize(conditionJson);
-                conditions.Add(condition);
+                if (condition is not null)
+                    conditions.Add(condition);
+            }
+
+            if (ParalyzeConditionParser.CanHandle(conditionType))
+            {
+                // Restore returns null for expired conditions; silently skip those
+                // to avoid persisting a never-expiring paralyze.
+                var condition = ParalyzeConditionParser.Deserialize(conditionJson);
+                if (condition is not null)
+                    conditions.Add(condition);
             }
         }
 
