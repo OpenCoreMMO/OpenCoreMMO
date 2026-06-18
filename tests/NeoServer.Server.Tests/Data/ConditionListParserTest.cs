@@ -149,6 +149,97 @@ public class ConditionListParserTest
 
     [Fact]
     [Trait("Category", "HappyPath")]
+    public void Serialize_Deserialize_round_trips_invisible_condition()
+    {
+        // Arrange — build a ConditionInvisible with a known remaining time
+        var invisibleState = new ConditionInvisibleState(
+            ConditionType.Invisible,
+            EffectT.GlitterBlue,
+            RemainingTimeMilliseconds: 75_000);
+
+        var conditions = new List<ICondition>
+        {
+            ConditionInvisible.Restore(invisibleState)!
+        };
+
+        // Act
+        var json = ConditionListParser.Serialize(conditions);
+        var restored = ConditionListParser.Deserialize(json);
+
+        // Assert
+        restored.Should().HaveCount(1);
+        restored[0].Type.Should().Be(ConditionType.Invisible);
+        restored[0].Should().BeOfType<ConditionInvisible>();
+        ((ConditionInvisible)restored[0]).Effect.Should().Be(EffectT.GlitterBlue);
+    }
+
+    [Fact]
+    [Trait("Category", "EdgeCase")]
+    public void Serialize_Deserialize_skips_expired_invisible()
+    {
+        // Arrange — expired invisible (zero remaining time)
+        var expiredInvisible = new ConditionInvisible(0, EffectT.None);
+
+        var conditions = new List<ICondition>
+        {
+            expiredInvisible
+        };
+
+        // Act
+        var json = ConditionListParser.Serialize(conditions);
+        var restored = ConditionListParser.Deserialize(json);
+
+        // Assert — expired invisible is filtered out
+        restored.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void Serialize_Deserialize_round_trips_mixed_with_invisible()
+    {
+        // Arrange — one condition of each parser path including Invisible
+        var manaShield = new Condition(ConditionType.ManaShield, 30_000);
+
+        var hasteState = new HasteConditionState(
+            ConditionType.Haste,
+            EffectT.GlitterBlue,
+            SpeedBoost: 180,
+            RemainingTimeMilliseconds: 25_000,
+            Duration: 60_000 * TimeSpan.TicksPerMillisecond,
+            new FormulaValues());
+
+        var paralyzeState = new ParalyzeConditionState(
+            ConditionType.Paralyze,
+            SpeedReduction: 120,
+            RemainingTimeMilliseconds: 15_000);
+
+        var invisibleState = new ConditionInvisibleState(
+            ConditionType.Invisible,
+            EffectT.GlitterBlue,
+            RemainingTimeMilliseconds: 75_000);
+
+        var conditions = new List<ICondition>
+        {
+            manaShield,
+            HasteCondition.Restore(hasteState)!,
+            ParalyzeCondition.Restore(paralyzeState)!,
+            ConditionInvisible.Restore(invisibleState)!
+        };
+
+        // Act
+        var json = ConditionListParser.Serialize(conditions);
+        var restored = ConditionListParser.Deserialize(json);
+
+        // Assert — all four conditions survive the round-trip
+        restored.Should().HaveCount(4);
+        restored[0].Type.Should().Be(ConditionType.ManaShield);
+        restored[1].Type.Should().Be(ConditionType.Haste);
+        restored[2].Type.Should().Be(ConditionType.Paralyze);
+        restored[3].Type.Should().Be(ConditionType.Invisible);
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
     public void Serialize_Deserialize_handles_empty_list()
     {
         // Arrange

@@ -34,6 +34,11 @@ public static class ConditionListParser
             {
                 serializedConditions.Add(ParalyzeConditionParser.Serialize(paralyzeCondition));
             }
+
+            if (ConditionInvisibleParser.CanHandle(condition.Type) && condition is ConditionInvisible invisibleCondition)
+            {
+                serializedConditions.Add(ConditionInvisibleParser.Serialize(invisibleCondition));
+            }
         }
 
         return $"[{string.Join(",", serializedConditions)}]";
@@ -86,6 +91,15 @@ public static class ConditionListParser
                 // Restore returns null for expired conditions; silently skip those
                 // to avoid persisting a never-expiring paralyze.
                 var condition = ParalyzeConditionParser.Deserialize(conditionJson);
+                if (condition is not null)
+                    conditions.Add(condition);
+            }
+
+            if (ConditionInvisibleParser.CanHandle(conditionType))
+            {
+                // Restore returns null for expired conditions; silently skip those
+                // to avoid persisting a never-expiring invisible.
+                var condition = ConditionInvisibleParser.Deserialize(conditionJson);
                 if (condition is not null)
                     conditions.Add(condition);
             }
