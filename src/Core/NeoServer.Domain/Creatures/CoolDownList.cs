@@ -138,4 +138,15 @@ public class CooldownList
         if (CustomCooldowns.TryGetValue(id, out var cooldown)) return cooldown.Expired;
         return true;
     }
+
+    public TimeSpan Remaining(CooldownType type)
+    {
+        if (Cooldowns.TryGetValue(type, out var cooldown)) return cooldown.Remaining;
+        return TimeSpan.Zero;
+    }
+
+    public void Restart(CooldownType type, uint duration)
+    {
+        Cooldowns[type] = new CooldownTime(DateTime.UtcNow, duration);
+    }
 }

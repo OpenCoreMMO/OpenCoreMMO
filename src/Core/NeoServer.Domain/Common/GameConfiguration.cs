@@ -7,6 +7,7 @@ public record GameConfiguration(
     decimal LootRate = 1,
     int LogoutBlockDuration = 60 * 1000,
     int ProtectionZoneBlockDuration = 60 * 1000,
+    int LogoutCooldownSeconds = 0,
     bool InfiniteRuneCharges = false,
     bool RemovePotionCharges = true,
     bool StaminaEnabled = true,

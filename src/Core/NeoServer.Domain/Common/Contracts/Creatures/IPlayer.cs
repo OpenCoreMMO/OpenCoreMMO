@@ -218,7 +218,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     Result Use(IUsableOn item, ICreature onCreature);
     void Use(IThing item);
     Result Use(IUsableOn item, IItem onItem);
-    bool Login();
+    bool Login(uint logoutCooldownMilliseconds = 0);
 
     void SendMessageTo(ISociableCreature creature, SpeechType type, string message);
     void StartShopping(IShopperNpc npc);
