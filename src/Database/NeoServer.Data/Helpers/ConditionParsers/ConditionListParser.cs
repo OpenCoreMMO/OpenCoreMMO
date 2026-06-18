@@ -24,6 +24,11 @@ public static class ConditionListParser
             {
                 serializedConditions.Add(ConditionDamageParser.Serialize(damageCondition));
             }
+
+            if (HasteConditionParser.CanHandle(condition.Type) && condition is HasteCondition hasteCondition)
+            {
+                serializedConditions.Add(HasteConditionParser.Serialize(hasteCondition));
+            }
         }
 
         return $"[{string.Join(",", serializedConditions)}]";
@@ -59,6 +64,12 @@ public static class ConditionListParser
             if (ConditionDamageParser.CanHandle(conditionType))
             {
                 var condition = ConditionDamageParser.Deserialize(conditionJson);
+                conditions.Add(condition);
+            }
+
+            if (HasteConditionParser.CanHandle(conditionType))
+            {
+                var condition = HasteConditionParser.Deserialize(conditionJson);
                 conditions.Add(condition);
             }
         }
