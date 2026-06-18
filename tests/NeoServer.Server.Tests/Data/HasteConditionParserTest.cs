@@ -272,9 +272,9 @@ public class HasteConditionParserTest
 
     [Fact]
     [Trait("Category", "EdgeCase")]
-    public void Deserialize_with_zero_remaining_time_falls_back_to_duration()
+    public void Deserialize_preserves_zero_remaining_time()
     {
-        // Arrange - HasteCondition.Restore uses Duration when RemainingTimeMilliseconds == 0
+        // Arrange - RemainingTimeMilliseconds of 0 is preserved as-is (an expired condition)
         var json = $$"""
             {
                 "Type": {{(uint)ConditionType.Haste}},
@@ -295,10 +295,11 @@ public class HasteConditionParserTest
         // Act
         var condition = HasteConditionParser.Deserialize(json);
 
-        // Assert - the condition should have a non-expired duration (fell back to 10000ms)
+        // Assert
         condition.Type.Should().Be(ConditionType.Haste);
         var captured = condition.CaptureState();
         captured.SpeedBoost.Should().Be(50);
+        captured.RemainingTimeMilliseconds.Should().Be(0);
     }
 
     [Fact]

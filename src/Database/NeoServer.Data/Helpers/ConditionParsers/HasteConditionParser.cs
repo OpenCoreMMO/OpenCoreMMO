@@ -23,12 +23,7 @@ public static class HasteConditionParser
 
         if (state is null)
             throw new InvalidOperationException("Failed to deserialize haste condition: JSON was null.");
-
-        if(state.RemainingTimeMilliseconds <= 0)
-        {
-            throw new InvalidOperationException("Failed to deserialize haste condition: Remaining time must be greater than zero.");
-        }
-
+        
         return HasteCondition.Restore(state);
     }
 

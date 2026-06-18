@@ -22,6 +22,7 @@ public class HasteCondition : BaseCondition
     public uint Interval { get; }
 
     internal ushort SpeedBoost { get; private set; }
+    private bool _speedBoostInitialized;
 
     internal override bool Start(ICreature creature)
     {
@@ -37,7 +38,7 @@ public class HasteCondition : BaseCondition
             combatActor.RemoveCondition(ConditionType.Paralyze);
         }
 
-        if (SpeedBoost == 0) // not yet set; generate
+        if (!_speedBoostInitialized) // not yet set; generate
         {
             var baseSpeed = walkableCreature.RawSpeed;
 
@@ -47,6 +48,7 @@ public class HasteCondition : BaseCondition
             var random = Random.Shared;
             var randomSpeed = random.Next((int)min, (int)max);
             SpeedBoost = (ushort)(randomSpeed - baseSpeed);
+            _speedBoostInitialized = true;
         }
 
         walkableCreature.IncreaseSpeed(SpeedBoost);
@@ -70,18 +72,16 @@ public class HasteCondition : BaseCondition
     public static HasteCondition Restore(HasteConditionState state)
     {
         // Use remaining time so the condition expires at the correct moment.
-        // If remaining is 0 (expired), fall back to 1ms
-        // as a reasonable default.
-        var durationMs = state.RemainingTimeMilliseconds > 0
-            ? state.RemainingTimeMilliseconds
-            : 1;
+        // Zero remaining time is preserved as-is (an expired condition).
+        var durationMs = Math.Max(0, state.RemainingTimeMilliseconds);
 
         var condition = new HasteCondition(
             (uint)durationMs,
             state.FormulaValues,
             state.Effect)
         {
-            SpeedBoost = state.SpeedBoost
+            SpeedBoost = state.SpeedBoost,
+            _speedBoostInitialized = true
         };
 
         return condition;
