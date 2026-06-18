@@ -38,8 +38,7 @@ public class ParalyzeCondition : BaseCondition
         return new ParalyzeConditionState(
             Type,
             SpeedReduction,
-            Math.Max(0, RemainingTime),
-            Duration);
+            Math.Max(0, RemainingTime));
     }
 
     public static ParalyzeCondition? Restore(ParalyzeConditionState state)
@@ -58,5 +57,4 @@ public class ParalyzeCondition : BaseCondition
 public sealed record ParalyzeConditionState(
     ConditionType Type,
     ushort SpeedReduction,
-    long RemainingTimeMilliseconds,
-    long Duration);
+    long RemainingTimeMilliseconds);

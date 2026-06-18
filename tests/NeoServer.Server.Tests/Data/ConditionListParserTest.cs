@@ -37,8 +37,7 @@ public class ConditionListParserTest
         var paralyzeState = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: 15_000,
-            Duration: 60_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 15_000);
 
         var conditions = new List<ICondition>
         {
@@ -78,8 +77,7 @@ public class ConditionListParserTest
         var expiredParalyzeState = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 80,
-            RemainingTimeMilliseconds: 0,
-            Duration: 0);
+            RemainingTimeMilliseconds: 0);
 
         // HasteCondition.Restore returns null for expired; use the constructor
         // to create one that is already expired for serialization.
@@ -111,8 +109,7 @@ public class ConditionListParserTest
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 50,
-            RemainingTimeMilliseconds: 10_000,
-            Duration: 30_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 10_000);
 
         var conditions = new List<ICondition>
         {

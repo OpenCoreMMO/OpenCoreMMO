@@ -56,8 +56,7 @@ public class ParalyzeConditionParserTest
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: 30_000,
-            Duration: 60_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 30_000);
 
         var condition = ParalyzeCondition.Restore(state);
 
@@ -71,8 +70,6 @@ public class ParalyzeConditionParserTest
         doc.RootElement.GetProperty("Type").GetUInt32().Should().Be((uint)ConditionType.Paralyze);
         doc.RootElement.GetProperty("SpeedReduction").GetUInt32().Should().Be(120u);
         doc.RootElement.GetProperty("RemainingTimeMilliseconds").GetInt64().Should().BeGreaterThan(0);
-        // After Restore, Duration is based on RemainingTimeMilliseconds (30_000 ms = 300_000_000 ticks)
-        doc.RootElement.GetProperty("Duration").GetInt64().Should().Be(30_000 * TimeSpan.TicksPerMillisecond);
     }
 
     [Fact]
@@ -83,8 +80,7 @@ public class ParalyzeConditionParserTest
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: 25_000,
-            Duration: 60_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 25_000);
 
         var condition = ParalyzeCondition.Restore(state);
 
@@ -105,8 +101,7 @@ public class ParalyzeConditionParserTest
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: ushort.MaxValue,
-            RemainingTimeMilliseconds: 30_000,
-            Duration: 60_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 30_000);
 
         var condition = ParalyzeCondition.Restore(state);
 
@@ -132,8 +127,7 @@ public class ParalyzeConditionParserTest
             {
                 "Type": {{(uint)ConditionType.Paralyze}},
                 "SpeedReduction": 120,
-                "RemainingTimeMilliseconds": 30000,
-                "Duration": {{60000 * TimeSpan.TicksPerMillisecond}}
+                "RemainingTimeMilliseconds": 30000
             }
             """;
 
@@ -157,8 +151,7 @@ public class ParalyzeConditionParserTest
             {
                 "Type": {{(uint)ConditionType.Paralyze}},
                 "SpeedReduction": 75,
-                "RemainingTimeMilliseconds": 15000,
-                "Duration": {{30000 * TimeSpan.TicksPerMillisecond}}
+                "RemainingTimeMilliseconds": 15000
             }
             """;
 
@@ -204,8 +197,7 @@ public class ParalyzeConditionParserTest
             {
                 "Type": {{(uint)ConditionType.Paralyze}},
                 "SpeedReduction": 120,
-                "RemainingTimeMilliseconds": -1,
-                "Duration": 0
+                "RemainingTimeMilliseconds": -1
             }
             """;
 
@@ -269,8 +261,7 @@ public class ParalyzeConditionParserTest
         var json = """
             {
                 "SpeedReduction": 120,
-                "RemainingTimeMilliseconds": 10000,
-                "Duration": 300000000
+                "RemainingTimeMilliseconds": 10000
             }
             """;
 
@@ -293,8 +284,7 @@ public class ParalyzeConditionParserTest
         var originalState = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: 45_000,
-            Duration: 60_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 45_000);
 
         var condition = ParalyzeCondition.Restore(originalState);
 
@@ -317,8 +307,7 @@ public class ParalyzeConditionParserTest
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: 4950,
-            Duration: 10_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 4950);
 
         var condition = ParalyzeCondition.Restore(state);
 
@@ -346,8 +335,7 @@ public class ParalyzeConditionParserTest
         var originalState = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 200,
-            RemainingTimeMilliseconds: 30_000,
-            Duration: 60_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 30_000);
 
         var condition = ParalyzeCondition.Restore(originalState);
 
@@ -368,8 +356,7 @@ public class ParalyzeConditionParserTest
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 50,
-            RemainingTimeMilliseconds: 1,
-            Duration: 1000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 1);
 
         var condition = ParalyzeCondition.Restore(state);
 
@@ -391,8 +378,7 @@ public class ParalyzeConditionParserTest
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 250,
-            RemainingTimeMilliseconds: int.MaxValue,
-            Duration: uint.MaxValue * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: int.MaxValue);
 
         var condition = ParalyzeCondition.Restore(state);
 

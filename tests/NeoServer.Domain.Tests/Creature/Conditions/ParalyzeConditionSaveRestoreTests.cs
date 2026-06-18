@@ -21,7 +21,6 @@ public class ParalyzeConditionSaveRestoreTests
         state.Type.Should().Be(ConditionType.Paralyze);
         state.SpeedReduction.Should().Be(120);
         state.RemainingTimeMilliseconds.Should().BeGreaterThan(0);
-        state.Duration.Should().Be(10_000 * TimeSpan.TicksPerMillisecond);
     }
 
     [Fact]
@@ -34,7 +33,6 @@ public class ParalyzeConditionSaveRestoreTests
 
         state.SpeedReduction.Should().Be(120);
         state.RemainingTimeMilliseconds.Should().Be(10_000);
-        state.Duration.Should().Be(10_000 * TimeSpan.TicksPerMillisecond);
     }
 
     [Fact]
@@ -55,8 +53,7 @@ public class ParalyzeConditionSaveRestoreTests
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: 30_000,
-            Duration: 60_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 30_000);
 
         var condition = ParalyzeCondition.Restore(state);
 
@@ -72,8 +69,7 @@ public class ParalyzeConditionSaveRestoreTests
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: 30_000,
-            Duration: 60_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 30_000);
 
         var condition = ParalyzeCondition.Restore(state);
         player.AddCondition(condition!);
@@ -92,8 +88,7 @@ public class ParalyzeConditionSaveRestoreTests
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: 30_000,
-            Duration: 60_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 30_000);
 
         var condition = ParalyzeCondition.Restore(state);
         player.AddCondition(condition!);
@@ -109,8 +104,7 @@ public class ParalyzeConditionSaveRestoreTests
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: 30_000,
-            Duration: 60_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 30_000);
 
         var condition = ParalyzeCondition.Restore(state);
 
@@ -125,8 +119,7 @@ public class ParalyzeConditionSaveRestoreTests
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: 30_000,
-            Duration: 60_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 30_000);
 
         var condition = ParalyzeCondition.Restore(state);
         player.AddCondition(condition!);
@@ -135,8 +128,6 @@ public class ParalyzeConditionSaveRestoreTests
 
         recaptured.SpeedReduction.Should().Be(120);
         recaptured.Type.Should().Be(ConditionType.Paralyze);
-        // Remaining time must be close to the saved value (30_000 ms),
-        // not the full Duration (60_000 ms).
         recaptured.RemainingTimeMilliseconds.Should().BeInRange(29_000, 30_001);
     }
 
@@ -147,8 +138,7 @@ public class ParalyzeConditionSaveRestoreTests
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: 5_000,
-            Duration: 30_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 5_000);
 
         var action = () => ParalyzeCondition.Restore(state);
 
@@ -191,14 +181,11 @@ public class ParalyzeConditionSaveRestoreTests
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: 30_000,
-            Duration: 60_000 * TimeSpan.TicksPerMillisecond);
+            RemainingTimeMilliseconds: 30_000);
 
         var restored = ParalyzeCondition.Restore(state);
         player.AddCondition(restored!);
 
-        // The previous paralyze (200 reduction) should be gone,
-        // only the restored one (120 reduction) should apply.
         player.HasCondition(ConditionType.Paralyze).Should().BeTrue();
         player.Speed.Should().Be(280);
     }
@@ -210,13 +197,10 @@ public class ParalyzeConditionSaveRestoreTests
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: 0,
-            Duration: 0);
+            RemainingTimeMilliseconds: 0);
 
         var condition = ParalyzeCondition.Restore(state);
 
-        // Restore returns null for expired conditions to avoid
-        // creating a persistent (never-expiring) paralyze.
         condition.Should().BeNull();
     }
 
@@ -227,8 +211,7 @@ public class ParalyzeConditionSaveRestoreTests
         var state = new ParalyzeConditionState(
             ConditionType.Paralyze,
             SpeedReduction: 120,
-            RemainingTimeMilliseconds: -1,
-            Duration: 0);
+            RemainingTimeMilliseconds: -1);
 
         var condition = ParalyzeCondition.Restore(state);
 
