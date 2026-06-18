@@ -809,6 +809,13 @@ public class Player : CombatActor, IPlayer
             return false;
         }
 
+        if (!CooldownHasExpired(CooldownType.Logout) && !forced)
+        {
+            var seconds = (int)Math.Ceiling(GetCooldownRemaining(CooldownType.Logout).TotalSeconds);
+            OperationFailService.Send(CreatureId, $"You can logout in {seconds} seconds.");
+            return false;
+        }
+
         StopAttack();
         StopFollowing();
         StopWalking();
@@ -827,7 +834,7 @@ public class Player : CombatActor, IPlayer
         return true;
     }
 
-    public bool Login()
+    public bool Login(uint logoutCooldownMilliseconds = 0)
     {
         StopAttack();
         StopFollowing();
@@ -838,6 +845,9 @@ public class Player : CombatActor, IPlayer
 
         LastLogIn = DateTime.UtcNow;
         RegenerateStamina();
+
+        if (logoutCooldownMilliseconds > 0)
+            Cooldowns.Restart(CooldownType.Logout, logoutCooldownMilliseconds);
 
         EventAggregator.Invoke(new PlayerLoggedInEvent(this));
         return true;

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using NeoServer.Data.Interfaces;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Services;
@@ -36,7 +37,8 @@ public class PlayerLogInCommand(
     ServerConfiguration serverConfiguration,
     ClientConfiguration clientConfiguration,
     IIpBansRepository ipBansRepository,
-    IWaitingQueueManager waitingQueueManager)
+    IWaitingQueueManager waitingQueueManager,
+    GameConfiguration gameConfiguration)
     : ICommand
 {
     public async Task<(bool Success, string Message)> Execute(PlayerLogInRequest request, IConnection connection)
@@ -137,7 +139,8 @@ public class PlayerLogInCommand(
         //player must be placed on map before login to avoid issues with map description packet
         map.PlaceCreature(player);
 
-        player.Login();
+        var logoutCooldownMs = (uint)(gameConfiguration.LogoutCooldownSeconds * 1000);
+        player.Login(logoutCooldownMs);
         player.Vip.LoadVipList(playerRecord.Account.VipList.Select(x => ((uint)x.PlayerId, x.Player?.Name)));
 
         playerChannelService.JoinChannels(player);

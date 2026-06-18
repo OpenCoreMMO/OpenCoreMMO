@@ -27,5 +27,6 @@ public enum CooldownType
     WalkAround,
     UseItem,
     SupportSpell,
-    PushCreature
+    PushCreature,
+    Logout
 }

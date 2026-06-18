@@ -46,6 +46,7 @@ public interface ICombatActor : IWalkableCreature
     void StartCooldown(IHasCooldown cooldown);
     bool CooldownHasExpired(IHasCooldown cooldown);
     bool CooldownHasExpired(CooldownType type);
+    TimeSpan GetCooldownRemaining(CooldownType type);
 
     /// <summary>
     ///     Creature receive attack damage from enemy

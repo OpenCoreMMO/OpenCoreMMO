@@ -386,6 +386,11 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         return Cooldowns.Expired(type);
     }
 
+    public TimeSpan GetCooldownRemaining(CooldownType type)
+    {
+        return Cooldowns.Remaining(type);
+    }
+
     public virtual DamageResult TakeDamage(IThing enemy, CombatDamageList damages)
     {
         if (enemy?.Equals(this) ?? false) return new DamageResult(damages, false);
