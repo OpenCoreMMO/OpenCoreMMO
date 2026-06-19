@@ -75,10 +75,14 @@ New folder: `src/Core/NeoServer.Domain/Houses/`.
 - **`CanKick(caster, target)`** — pure check: returns `bool` (caster `>= SubOwner` and
   `level(caster) > level(target)`, never the owner, target in this house).
   `HouseService` teleports target on success.
-- **`PayRent(owner, ICoinTypeStore, now, rentPeriodSeconds)`** (ports `payHouses`): returns
+- **`PayRent(owner, now, rentPeriodSeconds)`** (ports `payHouses`): returns
   `HouseRentResult { NotDue, Paid, Warned, Evicted }`. Not due / rent 0 / unowned → `NotDue`.
   Sufficient bank → withdraw, advance `PaidUntil`, reset warnings → `Paid`. Insufficient → increment
   warnings; on 7th → returns `Evicted`. No I/O inside the aggregate. `HouseService` raises events and persists.
+  > **Note (m2):** `ICoinTypeStore` was intentionally removed from this signature in Phase 1.
+  > Rent is collected from `owner.Bank.Debit(Rent)` (bank-balance based, mirroring forgottenserver
+  > `payHouses`). If a future phase needs coin-specific rent, re-introduce the store at the service
+  > layer, not the aggregate.
 
 ### Domain events
 - `HouseOwnerChangedEvent(House, oldOwnerGuid, newOwnerGuid)` — raised by `House.SetNewOwner`.
@@ -184,7 +188,10 @@ parse contents like a normal tile; surface `NodeType.HouseTile` and `HouseId` on
 `__eq`, and methods: `getId`, `getName`, `getTown`, `getExitPosition`, `getOwnerName`, `getOwnerGuid`,
 `getOwnerAccountId`, `setOwnerGuid`, `getRent`/`setRent`, `getPaidUntil`/`setPaidUntil`,
 `getPayRentWarnings`/`setPayRentWarnings`, `getTiles`/`getTileCount`, `getDoors`/`getDoorCount`,
-`getDoorIdByPosition`, `getBeds`/`getBedCount`, `getItems`, `canEditAccessList(listId, player)`,
+`getDoorIdByPosition` (Phase-3 dependency: requires reverse `Dictionary<Location, uint>` map
+populated at Phase-2 door-location linkage — deferred from Phase 1 because door `Location` is
+not reliably available before world-attach; see `domain-tests.md` Deferred section),
+`getBeds`/`getBedCount`, `getItems`, `canEditAccessList(listId, player)`,
 `getAccessList(listId)`, `setAccessList(listId, text)`, `startTrade(player, partner)`,
 `kickPlayer(caster, target)`, `save`.
 

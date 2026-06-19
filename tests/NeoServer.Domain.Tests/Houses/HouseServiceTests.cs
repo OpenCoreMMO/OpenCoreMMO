@@ -1,7 +1,6 @@
 using Moq;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location.Structs;
@@ -150,7 +149,7 @@ public class HouseServiceTests
 
         var service = CreateService();
 
-        service.PayRent(house, player, new Mock<ICoinTypeStore>().Object, now, 86400);
+        service.PayRent(house, player, now, 86400);
 
         capturedEvent.Should().NotBeNull();
         capturedEvent.House.Should().Be(house);
@@ -169,7 +168,7 @@ public class HouseServiceTests
 
         var service = CreateService();
 
-        service.PayRent(house, player, new Mock<ICoinTypeStore>().Object, now, 86400);
+        service.PayRent(house, player, now, 86400);
 
         capturedEvent.Should().NotBeNull();
         capturedEvent.House.Should().Be(house);
@@ -185,7 +184,7 @@ public class HouseServiceTests
         var repoMock = new Mock<IHouseRepository>();
         var service = CreateService(repo: repoMock);
 
-        service.PayRent(house, player, new Mock<ICoinTypeStore>().Object, now, 86400);
+        service.PayRent(house, player, now, 86400);
 
         repoMock.Verify(x => x.Save(house), Times.Once);
     }

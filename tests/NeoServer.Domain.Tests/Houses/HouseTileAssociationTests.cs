@@ -58,13 +58,38 @@ public class HouseTileAssociationTests
     }
 
     [Fact]
-    public void LinkTile_SameTileToTwoHouses_Throws()
+    public void LinkTile_SetsProtectionZoneFlag()
+    {
+        var tileMock = HouseTestDataBuilder.CreateTileMock();
+        var house = HouseTestDataBuilder.Build();
+
+        house.LinkTile(tileMock.Object);
+
+        tileMock.Object.HasFlag(TileFlags.ProtectionZone).Should().BeTrue();
+    }
+
+    [Fact]
+    public void LinkTile_SameTileToSameHouseTwice_Throws()
     {
         var tileMock = HouseTestDataBuilder.CreateTileMock();
         var house = HouseTestDataBuilder.Build();
         house.LinkTile(tileMock.Object);
 
         Action act = () => house.LinkTile(tileMock.Object);
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void LinkTile_SameTileToTwoDifferentHouses_Throws()
+    {
+        var tileMock = HouseTestDataBuilder.CreateTileMock();
+        var houseA = HouseTestDataBuilder.Build(id: 1);
+        var houseB = HouseTestDataBuilder.Build(id: 2);
+
+        houseA.LinkTile(tileMock.Object);
+
+        // CanEnterFunction is now set by houseA; houseB must reject this tile.
+        Action act = () => houseB.LinkTile(tileMock.Object);
         act.Should().Throw<InvalidOperationException>();
     }
 }

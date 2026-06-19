@@ -78,7 +78,14 @@ public static class HouseTestDataBuilder
         tileMock.Setup(x => x.Location).Returns(new Location(100, 100, 7));
         tileMock.Setup(x => x.Players).Returns(players ?? new List<IPlayer>());
         tileMock.Setup(x => x.AllItems).Returns(items?.ToArray() ?? Array.Empty<IItem>());
-        tileMock.Setup(x => x.HasFlag(It.IsAny<TileFlags>())).Returns(false);
+
+        // Track which flags have been set so HasFlag reads true after SetAsProtectionZone is called.
+        var setFlags = new HashSet<TileFlags>();
+        tileMock.Setup(x => x.HasFlag(It.IsAny<TileFlags>()))
+            .Returns((TileFlags f) => setFlags.Contains(f));
+        tileMock.Setup(x => x.SetAsProtectionZone())
+            .Callback(() => setFlags.Add(TileFlags.ProtectionZone));
+
         tileMock.SetupProperty(x => x.CanEnterFunction);
         return tileMock;
     }

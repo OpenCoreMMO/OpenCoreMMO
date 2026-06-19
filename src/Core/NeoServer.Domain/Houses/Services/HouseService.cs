@@ -1,6 +1,5 @@
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location.Structs;
@@ -69,9 +68,9 @@ public class HouseService(
     }
 
     /// <summary>Collect rent from owner's bank. Raises warning or eviction events based on result.</summary>
-    public HouseRentResult PayRent(House house, IPlayer owner, ICoinTypeStore coinTypeStore, DateTime now, uint rentPeriodSeconds)
+    public HouseRentResult PayRent(House house, IPlayer owner, DateTime now, uint rentPeriodSeconds)
     {
-        var result = house.PayRent(owner, coinTypeStore, now, rentPeriodSeconds);
+        var result = house.PayRent(owner, now, rentPeriodSeconds);
 
         houseRepository.Save(house);
 

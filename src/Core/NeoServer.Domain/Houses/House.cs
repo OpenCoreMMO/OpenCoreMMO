@@ -1,5 +1,4 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
@@ -43,7 +42,14 @@ public class House
         if (_tiles.Contains(tile))
             throw new InvalidOperationException("Tile already belongs to this house.");
 
+        // Assumption: house linking is the sole writer of CanEnterFunction on tiles.
+        // A non-null CanEnterFunction on a different house's tile means it was already claimed.
+        // Phase 2 should upgrade this to a HouseId-based check once map<->DB house ids are reconciled.
+        if (tile.CanEnterFunction is not null)
+            throw new InvalidOperationException("Tile already belongs to another house.");
+
         _tiles.Add(tile);
+        tile.SetAsProtectionZone();
         tile.CanEnterFunction = c => c is IPlayer p && GetAccessLevel(p) != HouseAccessLevel.NotInvited;
 
         if (EntryPosition is null)
@@ -156,7 +162,10 @@ public class House
         return true;
     }
 
-    public HouseRentResult PayRent(IPlayer owner, ICoinTypeStore coinTypeStore, DateTime now, uint rentPeriodSeconds)
+    // Rent is collected from the player's bank balance (owner.Bank.Debit). A coin-store parameter
+    // was intentionally removed (Phase 1); if a future phase needs coin-specific rent, re-introduce
+    // it at the service layer, not the aggregate.
+    public HouseRentResult PayRent(IPlayer owner, DateTime now, uint rentPeriodSeconds)
     {
         if (OwnerGuid == 0) return HouseRentResult.NotDue;
         if (Rent == 0) return HouseRentResult.NotDue;

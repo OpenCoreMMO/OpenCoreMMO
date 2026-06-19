@@ -1,6 +1,5 @@
 using Moq;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Houses;
 using NeoServer.Domain.Tests.Helpers.House;
 
@@ -15,7 +14,7 @@ public class HouseRentTests
         var player = HouseTestDataBuilder.CreatePlayerWithBank(id: 1, bankAmount: 10000);
         var house = HouseTestDataBuilder.Build(ownerGuid: 1, paidUntil: now.AddDays(10));
 
-        var result = house.PayRent(player, new Mock<ICoinTypeStore>().Object, now, 86400);
+        var result = house.PayRent(player, now, 86400);
 
         result.Should().Be(HouseRentResult.NotDue);
     }
@@ -34,7 +33,7 @@ public class HouseRentTests
 
         var house = HouseTestDataBuilder.Build(ownerGuid: 1, paidUntil: now.AddDays(-1));
 
-        var result = house.PayRent(playerMock.Object, new Mock<ICoinTypeStore>().Object, now, 86400);
+        var result = house.PayRent(playerMock.Object, now, 86400);
 
         result.Should().Be(HouseRentResult.Paid);
         bankMock.Verify(x => x.Debit(1000), Times.Once);
@@ -48,7 +47,7 @@ public class HouseRentTests
         var player = HouseTestDataBuilder.CreatePlayerWithBank(id: 1, bankAmount: 10000);
         var house = HouseTestDataBuilder.Build(ownerGuid: 1, paidUntil: now.AddDays(-1), payRentWarnings: 3);
 
-        var result = house.PayRent(player, new Mock<ICoinTypeStore>().Object, now, 86400);
+        var result = house.PayRent(player, now, 86400);
 
         result.Should().Be(HouseRentResult.Paid);
         house.PayRentWarnings.Should().Be(0);
@@ -61,7 +60,7 @@ public class HouseRentTests
         var player = HouseTestDataBuilder.CreatePlayerWithBank(id: 1, bankAmount: 0);
         var house = HouseTestDataBuilder.Build(ownerGuid: 1, paidUntil: now.AddDays(-1));
 
-        var result = house.PayRent(player, new Mock<ICoinTypeStore>().Object, now, 86400);
+        var result = house.PayRent(player, now, 86400);
 
         result.Should().Be(HouseRentResult.Warned);
         house.PayRentWarnings.Should().Be(1);
@@ -74,7 +73,7 @@ public class HouseRentTests
         var player = HouseTestDataBuilder.CreatePlayerWithBank(id: 1, bankAmount: 0);
         var house = HouseTestDataBuilder.Build(ownerGuid: 1, paidUntil: now.AddDays(-1), payRentWarnings: 6);
 
-        var result = house.PayRent(player, new Mock<ICoinTypeStore>().Object, now, 86400);
+        var result = house.PayRent(player, now, 86400);
 
         result.Should().Be(HouseRentResult.Evicted);
         house.OwnerGuid.Should().Be(0);
@@ -87,7 +86,7 @@ public class HouseRentTests
         var player = HouseTestDataBuilder.CreatePlayerWithBank(id: 1, bankAmount: 0);
         var house = HouseTestDataBuilder.Build(ownerGuid: 1, rent: 0, paidUntil: now.AddDays(-1));
 
-        var result = house.PayRent(player, new Mock<ICoinTypeStore>().Object, now, 86400);
+        var result = house.PayRent(player, now, 86400);
 
         result.Should().Be(HouseRentResult.NotDue);
     }
@@ -99,7 +98,7 @@ public class HouseRentTests
         var player = HouseTestDataBuilder.CreatePlayerWithBank(id: 1, bankAmount: 0);
         var house = HouseTestDataBuilder.Build();
 
-        var result = house.PayRent(player, new Mock<ICoinTypeStore>().Object, now, 86400);
+        var result = house.PayRent(player, now, 86400);
 
         result.Should().Be(HouseRentResult.NotDue);
     }

@@ -557,6 +557,9 @@ public class DynamicTile : BaseTile, IDynamicTile
         AddItem(item);
     }
 
+    /// <inheritdoc/>
+    public void SetAsProtectionZone() => SetFlag(TileFlags.ProtectionZone);
+
     public uint PossibleAmountToAdd(IItem thing, byte? toPosition = null)
     {
         var freeSpace = 10 - (DownItems?.Count ?? 0);

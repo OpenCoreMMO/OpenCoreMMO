@@ -53,4 +53,7 @@ public interface IDynamicTile : ITile, IHasItem
     /// </summary>
     /// <param name="item">The item to add, which will replace any existing items of the same group.</param>
     void ReplaceItemByGroup(IItem item);
+
+    /// <summary>Marks this tile as a protection zone. Called by <see cref="Houses.House.LinkTile"/> at attach time.</summary>
+    void SetAsProtectionZone();
 }
