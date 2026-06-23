@@ -98,28 +98,10 @@ public struct Location(ushort x, ushort y, byte z) : IEquatable<Location>, IConv
     }
 
     public static bool operator ==(Location origin, Location targetLocation)
-    {
-        try
-        {
-            return origin.X == targetLocation.X && origin.Y == targetLocation.Y && origin.Z == targetLocation.Z;
-        }
-        catch (NullReferenceException)
-        {
-            return false;
-        }
-    }
+        => origin.X == targetLocation.X && origin.Y == targetLocation.Y && origin.Z == targetLocation.Z;
 
     public static bool operator !=(Location origin, Location targetLocation)
-    {
-        try
-        {
-            return origin.X != targetLocation.X || origin.Y != targetLocation.Y || origin.Z != targetLocation.Z;
-        }
-        catch (NullReferenceException)
-        {
-            return false;
-        }
-    }
+        => !(origin == targetLocation);
 
     public static bool operator >(Location first, Location second)
     {
@@ -402,7 +384,7 @@ public struct Location(ushort x, ushort y, byte z) : IEquatable<Location>, IConv
 
     public override bool Equals(object obj)
     {
-        return obj is Location && Equals(obj);
+        return obj is Location other && Equals(other);
     }
 
     public Coordinate Translate()
