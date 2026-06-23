@@ -12,7 +12,7 @@ public class HouseAccessList
     private readonly HashSet<string> _playerNames = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<ushort> _guildIds = new();
     private readonly List<(ushort GuildId, byte RankLevel)> _guildRanks = new();
-    private bool _wildcard;
+    private bool _allowEveryone;
 
     /// <summary>Let this player enter.</summary>
     public void AddPlayer(string name)
@@ -33,9 +33,9 @@ public class HouseAccessList
     }
 
     /// <summary>Open the house to everyone.</summary>
-    public void AllowAll()
+    public void AllowEveryone()
     {
-        _wildcard = true;
+        _allowEveryone = true;
     }
 
     /// <summary>Remove all entries. House becomes locked to everyone.</summary>
@@ -44,13 +44,13 @@ public class HouseAccessList
         _playerNames.Clear();
         _guildIds.Clear();
         _guildRanks.Clear();
-        _wildcard = false;
+        _allowEveryone = false;
     }
 
     /// <summary>Check if this player is on the access list.</summary>
     public bool IsInList(IPlayer player)
     {
-        if (_wildcard) return true;
+        if (_allowEveryone) return true;
 
         if (_playerNames.Contains(player.Name)) return true;
 

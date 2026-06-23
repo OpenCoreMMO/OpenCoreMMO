@@ -49,6 +49,7 @@ public static class ConfigurationInjection
         builder.AddSingleton(gameConfiguration.PvP);
         builder.AddSingleton(gameConfiguration.Combat);
         builder.AddSingleton(gameConfiguration.Yell);
+        builder.AddSingleton(gameConfiguration.House);
 
         builder.AddSingleton<IConfiguration>(configuration);
 

@@ -16,7 +16,8 @@ public record GameConfiguration(
     PvPConfiguration PvP = null,
     CombatConfiguration Combat = null,
     ReportConfiguration Report = null,
-    YellConfiguration Yell = null
+    YellConfiguration Yell = null,
+    HouseConfiguration House = null
 );
 
 public record CombatConfiguration(
@@ -49,3 +50,5 @@ public record PvPConfiguration(
 public record YellConfiguration(int YellCooldownSeconds = 30, int YellMinimumLevel = 2, bool YellAllowedPremium = true);
 
 public record ReportConfiguration(uint ReportMaxTime = 60);
+
+public record HouseConfiguration(bool TransferItemsToDepotOnOwnershipChange = true);

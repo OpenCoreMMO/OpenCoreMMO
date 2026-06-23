@@ -238,12 +238,14 @@ public class HouseServiceTests
         Mock<IHouseRepository> repo = null,
         Mock<IHouseEviction> eviction = null,
         Mock<IHouseBedWaker> bedWaker = null,
-        Mock<IHouseDepotTransfer> depotTransfer = null)
+        Mock<IHouseDepotTransfer> depotTransfer = null,
+        HouseConfiguration houseConfiguration = null)
     {
         return new HouseService(
             repo?.Object ?? new Mock<IHouseRepository>().Object,
             eviction?.Object ?? new Mock<IHouseEviction>().Object,
             bedWaker?.Object ?? new Mock<IHouseBedWaker>().Object,
-            depotTransfer?.Object ?? new Mock<IHouseDepotTransfer>().Object);
+            depotTransfer?.Object ?? new Mock<IHouseDepotTransfer>().Object,
+            houseConfiguration ?? new HouseConfiguration());
     }
 }

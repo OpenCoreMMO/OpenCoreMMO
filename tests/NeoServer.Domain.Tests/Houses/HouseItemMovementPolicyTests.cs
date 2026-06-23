@@ -68,12 +68,12 @@ public class HouseItemMovementPolicyTests
     }
 
     [Fact]
-    public void CanMoveItem_NullTile_ReturnsTrue()
+    public void CanMoveItem_NullTile_ReturnsFalse()
     {
         var storeMock = new Mock<IHouseStore>();
         var policy = new HouseItemMovementPolicy(storeMock.Object);
         var player = HouseTestDataBuilder.CreatePlayer();
 
-        policy.CanMoveItem(player, null).Should().BeTrue();
+        policy.CanMoveItem(player, null).Should().BeFalse();
     }
 }

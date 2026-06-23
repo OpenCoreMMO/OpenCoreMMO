@@ -18,10 +18,10 @@ public class HouseAccessListTests
     }
 
     [Fact]
-    public void AllowAll_MakesAnyPlayerInList()
+    public void AllowEveryone_MakesAnyPlayerInList()
     {
         var list = new HouseAccessList();
-        list.AllowAll();
+        list.AllowEveryone();
 
         var player = HouseTestDataBuilder.CreatePlayer(name: "AnyPlayer");
         list.IsInList(player).Should().BeTrue();
@@ -64,7 +64,7 @@ public class HouseAccessListTests
     {
         var list = new HouseAccessList();
         list.AddPlayer("PlayerA");
-        list.AllowAll();
+        list.AllowEveryone();
         list.Clear();
 
         var player = HouseTestDataBuilder.CreatePlayer(name: "PlayerA");

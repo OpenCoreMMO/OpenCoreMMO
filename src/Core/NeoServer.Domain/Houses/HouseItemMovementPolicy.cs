@@ -19,7 +19,7 @@ public class HouseItemMovementPolicy(IHouseStore houseStore) : IHouseItemMovemen
 {
     public bool CanMoveItem(IPlayer player, ITile tile)
     {
-        if (tile is null) return true;           // no tile context — don't block
+        if (tile is null) return false;           // no tile context — can't move anything
 
         var house = houseStore.GetByTile(tile);
         if (house is null) return true;          // not a house tile — unrestricted

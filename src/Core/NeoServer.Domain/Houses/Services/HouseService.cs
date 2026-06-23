@@ -16,7 +16,8 @@ public class HouseService(
     IHouseRepository houseRepository,
     IHouseEviction eviction,
     IHouseBedWaker bedWaker,
-    IHouseDepotTransfer depotTransfer) : IHouseService
+    IHouseDepotTransfer depotTransfer,
+    HouseConfiguration houseConfiguration) : IHouseService
 {
     /// <summary>Transfer house to a new owner. Evicts old occupants, wakes beds, moves items to old owner depot.</summary>
     public void SetOwner(House house, uint guid, string name, int accountId, bool updatePaidUntil, DateTime now, uint rentPeriodSeconds)
@@ -44,22 +45,11 @@ public class HouseService(
 
             bedWaker.WakeAll(house.Beds);
 
-            var pickupableItems = new List<IItem>();
-            foreach (var tile in house.Tiles)
+            if (houseConfiguration.TransferItemsToDepotOnOwnershipChange)
             {
-                if (tile.AllItems is null) continue;
-                foreach (var item in tile.AllItems)
-                {
-                    if (item is not null && item.IsPickupable)
-                    {
-                        pickupableItems.Add(item);
-                    }
-                }
-            }
-
-            if (pickupableItems.Count > 0)
-            {
-                depotTransfer.TransferToOwnerDepot(oldOwnerAccountId, house.TownId, pickupableItems);
+                var pickupableItems = house.PickupableItems;
+                if (pickupableItems.Count > 0)
+                    depotTransfer.TransferToOwnerDepot(oldOwnerAccountId, house.TownId, pickupableItems);
             }
         }
 
@@ -70,6 +60,7 @@ public class HouseService(
     /// <summary>Collect rent from owner's bank. Raises warning or eviction events based on result.</summary>
     public HouseRentResult PayRent(House house, IPlayer owner, DateTime now, uint rentPeriodSeconds)
     {
+        var oldOwnerAccountId = house.OwnerAccountId;
         var result = house.PayRent(owner, now, rentPeriodSeconds);
 
         houseRepository.Save(house);
@@ -78,7 +69,13 @@ public class HouseService(
             EventAggregator.Invoke(new HouseRentWarningEvent(house, owner, house.PayRentWarnings));
 
         if (result == HouseRentResult.Evicted)
+        {
+            var pickupableItems = house.PickupableItems;
+            if (pickupableItems.Count > 0)
+                depotTransfer.TransferToOwnerDepot(oldOwnerAccountId, house.TownId, pickupableItems);
+
             EventAggregator.Invoke(new HouseEvictedEvent(house));
+        }
 
         return result;
     }
@@ -93,4 +90,5 @@ public class HouseService(
         houseRepository.Save(house);
         return true;
     }
+
 }

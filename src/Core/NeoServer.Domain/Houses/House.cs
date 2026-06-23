@@ -37,6 +37,24 @@ public class House
     public int DoorCount => _doors.Count;
     public int BedCount => _beds.Count;
 
+    public List<IItem> PickupableItems
+    {
+        get
+        {
+            var items = new List<IItem>();
+            foreach (var tile in _tiles)
+            {
+                if (tile.AllItems is null) continue;
+                foreach (var item in tile.AllItems)
+                {
+                    if (item is not null && item.IsPickupable)
+                        items.Add(item);
+                }
+            }
+            return items;
+        }
+    }
+
     public void LinkTile(IDynamicTile tile)
     {
         if (_tiles.Contains(tile))
@@ -50,7 +68,7 @@ public class House
 
         _tiles.Add(tile);
         tile.SetAsProtectionZone();
-        tile.CanEnterFunction = c => c is IPlayer p && GetAccessLevel(p) != HouseAccessLevel.NotInvited;
+        tile.CanEnterFunction = c => c is IPlayer p && IsInvited(p);
 
         if (EntryPosition is null)
             EntryPosition = tile.Location;
