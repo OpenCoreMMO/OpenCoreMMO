@@ -259,6 +259,104 @@ Use the PR template with:
 - **Types of Changes** — Bug fix, new feature, breaking change, documentation, refactoring, merge down
 - **Test Case** — How the change was tested
 
+## Performance Guidelines
+
+### Philosophy
+
+The server is a high-throughput, low-latency application. Write allocation-conscious code by default. Readability matters, but not at the cost of predictable GC pressure or CPU overhead in hot paths.
+
+### Prefer Explicit Loops Over LINQ
+
+Use `for` / `foreach` instead of LINQ methods in performance-sensitive code. LINQ allocates iterators, closures, and intermediate collections.
+
+**Discouraged:**
+```csharp
+var items = tiles.Where(t => t.AllItems is not null).SelectMany(t => t.AllItems).Where(i => i.IsPickupable).ToList();
+```
+
+**Preferred:**
+```csharp
+var items = new List<IItem>();
+foreach (var tile in tiles)
+{
+    if (tile.AllItems is null) continue;
+    foreach (var item in tile.AllItems)
+    {
+        if (item is not null && item.IsPickupable)
+            items.Add(item);
+    }
+}
+```
+
+### Avoid Specific LINQ Methods Without Justification
+
+`Where`, `Select`, `Any`, `Count`, `FirstOrDefault`, `SingleOrDefault`, `ToList`, `ToArray` — none of these should appear in hot paths unless a comment explains why the allocation is acceptable.
+
+### Avoid Lambda Expressions in Hot Paths
+
+Lambdas (including those passed to LINQ methods, event handlers, and async continuations) capture variables and allocate closures on the heap. In tight loops or frequently-called code, extract the logic into a local method or a static method instead.
+
+### Avoid `yield return` and Iterator Methods
+
+Iterator methods (those using `yield return`) generate compiler-backed state machine objects. Every call allocates a new enumerator. Return a concrete collection (`List<T>`, array) directly instead.
+
+**Discouraged:**
+```csharp
+public IEnumerable<IItem> PickupableItems
+{
+    get
+    {
+        foreach (var tile in _tiles)
+            if (tile.AllItems is not null)
+                foreach (var item in tile.AllItems)
+                    if (item.IsPickupable)
+                        yield return item;
+    }
+}
+```
+
+**Preferred:**
+```csharp
+public List<IItem> PickupableItems
+{
+    get
+    {
+        var items = new List<IItem>();
+        foreach (var tile in _tiles)
+        {
+            if (tile.AllItems is null) continue;
+            foreach (var item in tile.AllItems)
+            {
+                if (item is not null && item.IsPickupable)
+                    items.Add(item);
+            }
+        }
+        return items;
+    }
+}
+```
+
+### Pre-Allocate Collections When Possible
+
+When the size is known or bounded, pre-allocate to avoid growth-induced reallocations:
+
+```csharp
+var items = new List<IItem>(capacity: 16);
+```
+
+### Minimize Allocations
+
+- Avoid creating intermediate collections (e.g., `.ToList()` just to iterate).
+- Avoid boxing — prefer generic collections and avoid `object` parameters.
+- Use `ArrayPool<T>` for large temporary buffers.
+- Pool frequently-allocated objects where appropriate.
+
+### Benchmark New Abstractions
+
+Any abstraction that may impact performance (new interface dispatch layer, reflection-based registration, dynamic code paths) must be validated with benchmarks before being merged into `develop`.
+
+---
+
 ## Testing
 
 ### Framework & Libraries
