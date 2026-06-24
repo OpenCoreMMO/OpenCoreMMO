@@ -108,6 +108,20 @@
 - CanKick_Success_TeleportsTargetAndPersists → eviction seam called + repository.Save.
 - CanKick_Failure_NoSideEffects → no eviction or persist calls.
 
+## HousePremiumValidationTests
+
+> Tests for `HouseService.CanPlayerOwnHouse(IPlayer)`. Validates that the centralized
+> premium check respects the `HouseConfiguration.RequirePremiumAccount` flag in both states.
+> Default config (`new HouseConfiguration()`) defaults to `RequirePremiumAccount: true`.
+
+- CanPlayerOwnHouse_WhenRequirePremiumIsFalse_ReturnsTrueForNonPremiumPlayer → non-premium player allowed when flag is false.
+- CanPlayerOwnHouse_WhenRequirePremiumIsFalse_ReturnsTrueForPremiumPlayer → premium player allowed when flag is false.
+- CanPlayerOwnHouse_WhenRequirePremiumIsTrue_ReturnsFalseForNonPremiumPlayer → non-premium player rejected when flag is true.
+- CanPlayerOwnHouse_WhenRequirePremiumIsTrue_ReturnsTrueForPremiumPlayer → premium player allowed when flag is true.
+- CanPlayerOwnHouse_WhenRequirePremiumIsTrue_ReturnsFalseForNullPlayer → null player rejected when flag is true.
+- CanPlayerOwnHouse_WhenRequirePremiumIsFalse_ReturnsFalseForNullPlayer → null player rejected when flag is false.
+- CanPlayerOwnHouse_DefaultConfig_RequiresPremium → default HouseConfiguration enforces premium (non-premium rejected, premium allowed).
+
 ---
 
 ## LocationEqualityTests (Common/Structs)
