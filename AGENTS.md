@@ -253,11 +253,12 @@ Types: `fix`, `feat`, `build`, `chore`, `ci`, `docs`, `style`, `refactor`, `perf
 
 ### Pull Requests
 
-Use the PR template with:
-- **Description** — Short summary of changes
-- **Key Changes** — Bullet points of important changes
-- **Types of Changes** — Bug fix, new feature, breaking change, documentation, refactoring, merge down
-- **Test Case** — How the change was tested
+Use the **Pull Request Skill** (`.agents/skills/pull-request/SKILL.md`) for all PRs. Load it via `skill pull-request` before creating or reviewing a pull request. The skill covers:
+
+- **Branch naming** — `feat/`, `fix/`, `refactor/` prefixed branches from `develop`
+- **PR title** — domain/feature-oriented, not implementation-oriented
+- **PR template** — Description, Key Changes, Types of Changes, Test Case
+- **PR creation** — `github_create_pull_request` with the required parameters
 
 ## Performance Guidelines
 
@@ -359,59 +360,14 @@ Any abstraction that may impact performance (new interface dispatch layer, refle
 
 ## Testing
 
-### Framework & Libraries
+Use the **Unit Testing Skill** (`.agents/skills/unit-testing/SKILL.md`) for all testing work. Load it via `skill unit-testing` before writing, fixing, or reviewing tests. The skill covers:
 
-- **xUnit** — Primary testing framework
-- **FluentAssertions** — Expressive assertion library
-- No mocking framework for business logic; mocks only for repositories/database access
-
-### Test Projects
-
-```
-tests/
-├── NeoServer.Domain.Tests        # Domain logic tests (largest)
-├── NeoServer.Game.Chats.Tests    # Chat system tests
-├── NeoServer.Game.Creatures.Tests # Creature behavior tests
-├── NeoServer.Game.Items.Tests    # Item system tests
-├── NeoServer.Game.Model.Tests    # Game model tests
-├── NeoServer.Game.Systems.Tests  # Game systems tests
-├── NeoServer.Game.Tests          # General game tests
-├── NeoServer.Game.World.Tests    # World/map tests
-├── NeoServer.Loaders.Tests       # Data loader tests
-├── NeoServer.Networking.Tests    # Network protocol tests
-├── NeoServer.Server.Tests        # Server logic tests
-└── NeoServer.WebApi.Tests        # API tests
-```
-
-### Test Conventions
-
-- **Naming**: `Actor_does_something_when_something_happens` (e.g., `Player_gets_disconnected_when_game_is_stopped`)
-- **Structure**: Arrange-Act-Assert (AAA)
-- **Isolation**: Do NOT share objects between tests. Each test creates its own instances.
-- **Mocking**: Only mock repositories and database access layers. Use real implementations for all other classes.
-- **Helpers**: Use static helper methods for building test instances with optional parameters
-- **One behavior per test**: Each test verifies a single behavior
-
-Example:
-
-```csharp
-[Fact]
-public void Player_gets_disconnected_when_game_is_stopped()
-{
-    // Arrange
-    var game = CreateGameServer(state: GameState.Stopped);
-    var handler = CreateHandler(game: game);
-    var connection = CreateConnection();
-    var packet = CreateValidLoginPacket();
-
-    // Act
-    handler.HandleMessage(packet, connection);
-
-    // Assert
-    connection.ReceivedDisconnectPacket.Should().BeTrue();
-    connection.IsClosed.Should().BeTrue();
-}
-```
+- **Framework & mocking** — xUnit, FluentAssertions, Moq (repositories only)
+- **Test conventions** — naming, AAA structure, isolation, one behavior per test
+- **Test builders** — `PlayerTestDataBuilder`, `ItemTestDataBuilder`, `MapTestDataBuilder`, and others
+- **Traits** — `Category` values: `HappyPath`, `Validation`, `EdgeCase`, `ErrorCondition`, `Integration`, `PathFinding`, `Proximity`, `Tile`
+- **Custom attributes** — `[SkipOnGitHubActionsFact]`, `[ThreadBlocking]`
+- **Running tests** — `dotnet test tests/`, per-project, by category
 
 ## CI/CD Pipeline
 
