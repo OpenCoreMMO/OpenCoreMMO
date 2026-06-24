@@ -91,4 +91,13 @@ public class HouseService(
         return true;
     }
 
+    /// <summary>Returns false when premium is required and the player lacks premium time.</summary>
+    public bool CanPlayerOwnHouse(IPlayer player)
+    {
+        if (!houseConfiguration.RequirePremiumAccount)
+            return true;
+
+        return player.HasPremiumTime;
+    }
+
 }
