@@ -42,6 +42,14 @@ invited-entry enforcement, eviction, rent cycle with 7-warning eviction. Auction
 
 4. **Mirror Guild** for every infrastructure piece so the PR reads idiomatically.
 
+5. **Premium requirement is configurable, not hardcoded.** Whether a player must have premium
+   account status to own or purchase a house is controlled by a single boolean flag in
+   `HouseConfiguration.RequirePremiumAccount`, defaulting to `true` to preserve the
+   historical behavior. The validation is centralized in the domain service layer
+   (`IHouseService.CanPlayerOwnHouse`) so that buy, sell, transfer, and rent operations
+   all route through the same check. When the flag is `false`, all premium checks for
+   houses are bypassed and any player may own houses.
+
 ---
 
 ## Phase 1 — Domain + unit tests
@@ -94,7 +102,7 @@ Events are for player notifications, not for DB persistence. `HouseService` call
 
 ### HouseService (domain service, mirrors MailService)
 - `Houses/Services/IHouseService.cs` + `HouseService.cs`. Constructor takes
-  `IHouseRepository`, `IHouseEviction`, `IHouseBedWaker`, `IHouseDepotTransfer`.
+  `IHouseRepository`, `IHouseEviction`, `IHouseBedWaker`, `IHouseDepotTransfer`, `HouseConfiguration`.
 - `SetOwner(House, guid, name, accountId, updatePaidUntil, now, rentPeriodSeconds)` — calls
   `House.SetNewOwner(...)`, then iterates `House.Tiles` to evict now-uninvited players (via
   `IHouseEviction`), wake beds (`IHouseBedWaker`), transfer pickupable items to old owner depot
@@ -103,6 +111,10 @@ Events are for player notifications, not for DB persistence. `HouseService` call
   raises `HouseRentWarningEvent` or `HouseEvictedEvent` as needed.
 - `KickPlayer(House, caster, target)` — calls `House.KickPlayer(...)`, on success teleports target
   via `IHouseEviction` and persists via `IHouseRepository`.
+- `CanPlayerOwnHouse(IPlayer)` — centralized premium validation. Returns `false` when
+  `RequirePremiumAccount` is `true` and the player lacks premium time; returns `true` in
+  all other cases (null guarded). Callers (Lua, talkactions, transfer logic) must check this
+  before any ownership-change operation.
 
 ### Stores / factory
 - `Common/Contracts/DataStores/IHouseStore.cs` : `IDataStore<uint, House>` + `GetByTile(ITile)`
@@ -213,6 +225,9 @@ not reliably available before world-attach; see `domain-tests.md` Deferred secti
 ---
 
 ## DI wiring (exact modules)
+- `ConfigurationInjection.cs` → registers `gameConfiguration.House` (`HouseConfiguration`) as a
+  singleton (already done via `builder.AddSingleton(gameConfiguration.House)`). The
+  `RequirePremiumAccount` property is bound from `appsettings.json:game.house.requirePremiumAccount`.
 - `DataStoreInjection.cs` → `IHouseStore, HouseStore`
 - `DatabaseInjection.cs` → `IHouseRepository, HouseRepository`
 - `FactoryInjection.cs` → `IHouseFactory, HouseFactory`
@@ -237,6 +252,9 @@ not reliably available before world-attach; see `domain-tests.md` Deferred secti
 5. Guilds must load before houses for access-list guild/rank resolution.
 6. Domain must stay EF-free (events/delegates for save + letters).
 7. Migration spans SQLite + Postgres (InMemory ignores).
+8. **Premium bypass on startup.** When `RequirePremiumAccount` is toggled in config, existing
+   house ownership is never retroactively revoked — the flag only gates *new* purchases and
+   transfers. A future phase may add a startup reconciliation step if needed.
 
 ## Verification
 - **Phase 1:** `dotnet test tests/NeoServer.Domain.Tests` — all `Houses/` tests green;
