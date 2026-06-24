@@ -51,4 +51,4 @@ public record YellConfiguration(int YellCooldownSeconds = 30, int YellMinimumLev
 
 public record ReportConfiguration(uint ReportMaxTime = 60);
 
-public record HouseConfiguration(bool TransferItemsToDepotOnOwnershipChange = true);
+public record HouseConfiguration(bool TransferItemsToDepotOnOwnershipChange = true, bool RequirePremiumAccount = true);
