@@ -17,10 +17,12 @@ public class HouseService(
     IHouseEviction eviction,
     IHouseBedWaker bedWaker,
     IHouseDepotTransfer depotTransfer,
+    ICreatureGameInstance creatureGameInstance,
     HouseConfiguration houseConfiguration) : IHouseService
 {
-    /// <summary>Transfer house to a new owner. Evicts old occupants, wakes beds, moves items to old owner depot.</summary>
-    public void SetOwner(House house, uint guid, string name, int accountId, bool updatePaidUntil, DateTime now, uint rentPeriodSeconds)
+    /// <summary>Transfer house to a new owner. Evicts old occupants, wakes beds, moves items to the old owner depot.</summary>
+    public void SetOwner(House house, uint guid, string name, int accountId, bool updatePaidUntil, DateTime now,
+        uint rentPeriodSeconds)
     {
         var oldOwnerGuid = house.OwnerGuid;
         var oldOwnerAccountId = house.OwnerAccountId;
@@ -47,9 +49,8 @@ public class HouseService(
 
             if (houseConfiguration.TransferItemsToDepotOnOwnershipChange)
             {
-                var pickupableItems = house.PickupableItems;
-                if (pickupableItems.Count > 0)
-                    depotTransfer.TransferToOwnerDepot(oldOwnerAccountId, house.TownId, pickupableItems);
+                creatureGameInstance.TryGetPlayer(oldOwnerGuid, out var oldOwnerPlayer);
+                depotTransfer.TransferToOwnerDepot(house, oldOwnerPlayer);
             }
         }
 
@@ -70,10 +71,7 @@ public class HouseService(
 
         if (result == HouseRentResult.Evicted)
         {
-            var pickupableItems = house.PickupableItems;
-            if (pickupableItems.Count > 0)
-                depotTransfer.TransferToOwnerDepot(oldOwnerAccountId, house.TownId, pickupableItems);
-
+            depotTransfer.TransferToOwnerDepot(house, owner);
             EventAggregator.Invoke(new HouseEvictedEvent(house));
         }
 
@@ -99,5 +97,4 @@ public class HouseService(
 
         return player.HasPremiumTime;
     }
-
 }

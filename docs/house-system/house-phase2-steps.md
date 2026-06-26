@@ -381,7 +381,7 @@ loaders, then world attach, then orchestration, then DI.
 | OTBM | stub removed + parser test | `TileNode.HouseId` read correctly; flags/items intact |
 | Entity | `HouseEntity` renamed + new cols | `owner_guid`/`paid_until`/`owner_name`/`owner_account_id`/`entry_*`; auction cols intact |
 | Config | EF configs updated | `OwnerGuid`/`TownId` indexes; `(HouseId,ListId)` PK present |
-| Repo | `HouseRepository` (Data + Domain ifaces) | `GetAll`/`GetById` include lists; `Save`/`SaveAccessList` round-trip; Domain EF-free |
+| Repo | `HouseRepository` (Domain `IHouseRepository`) | `GetAll`/`GetById` return `House` (via `IHouseFactory`); `Save`/`SaveAccessList` round-trip; Domain EF-free |
 | Loader | `HouseLoader` | `IHouseStore` populated with owners + access lists |
 | Loader | `HouseAccessListLoader` | `*`/player/guild/guild-rank/unknown lines handled |
 | World | `WorldLoader` attach + cache-skip | tiles linked, ProtectionZone+closure set, doors/beds linked, no cached house tile |
@@ -395,7 +395,7 @@ loaders, then world attach, then orchestration, then DI.
 - [ ] Step 1 -- dead OTBM stub removed + parser regression test green.
 - [ ] Step 2 -- `HouseEntity` renamed (`OwnerGuid`/`PaidUntil`) + `OwnerName`/`OwnerAccountId`/`EntryX/Y/Z`.
 - [ ] Step 3 -- EF configs updated; `(HouseId, ListId)` index confirmed.
-- [ ] Step 4 -- Domain `IHouseRepository` (+`SaveAccessList`) + Data `IHouseRepository` (`GetAll`/`GetById`) + `HouseRepository` impl; round-trip test.
+- [ ] Step 4 -- Domain `IHouseRepository` (`Save`/`SaveAccessList`/`GetAll`/`GetById`) + `HouseRepository` impl (injects `IHouseFactory`); round-trip test. No separate Data interface.
 - [ ] Step 5 -- `HouseAccessListLoader` with guild-by-name resolution; parse tests.
 - [ ] Step 6 -- `HouseLoader` populates the store.
 - [ ] Step 7 -- `WorldLoader` attach + double cache-skip (`WorldLoader` + `TileFactory`).
@@ -404,3 +404,17 @@ loaders, then world attach, then orchestration, then DI.
 - [ ] Step 10 -- loader/repo/attach tests green across providers.
 - [ ] Step 11 -- build clean, Domain EF-free, manual boot verified on SQLite + Postgres.
 - [ ] **Open PR2.**
+
+---
+
+## Revisions
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-06-24 | Step 2: `HouseEntity.PaidUntil` changed from `long` (unix seconds) to `DateTime?` (nullable datetime). Added `using System;`. | Domain `House.PaidUntil` already `DateTime?`; no unix conversion needed; human-readable in DB. `EnsureCreated` maps `DateTime?` to proper datetime column. Null = never paid (replaces 0). |
+| 2026-06-24 | Step 2/3: `HouseEntity.OwnerGuid` → `OwnerId`; `HouseEntityConfiguration` index updated accordingly. | Project convention: use `Id` suffix, not `Guid`, for FK columns. |
+| 2026-06-24 | Step 4: Merged Data `IHouseRepository` into Domain `IHouseRepository`. Removed `Data/Interfaces/IHouseRepository.cs`. `GetAll()`/`GetById()` return `House` (domain type) instead of `HouseEntity`. `HouseRepository` now injects `IHouseFactory` for entity→domain mapping. | Single interface avoids namespace collision and unnecessary split. Repository handles conversion internally; loaders get domain objects directly. |
+| 2026-06-24 | Step 5: `HouseAccessList` rewritten — single ordered `List<Entry>`, first-match-wins, custom `MatchGlob` (char-by-char, case-insensitive, no regex/allocation). Guild/rank compared by name string, not ID. `AddGuild`/`AddGuildRank` take strings. | Removes regex dependency, avoids DB lookup for guild resolution at load time. Sequential evaluation matches Tibia house-list semantics (top-to-bottom, first match wins). 100-entry scan with custom glob is negligible (~1μs per check). |
+| 2026-06-24 | Step 5: `HouseAccessListParser` `ParseResult` changed to single ordered `Entries` list with discriminated `ListEntry` kinds (`AllowAll`, `InvitePlayer`, `ExcludePlayer`, `GuildAll`, `GuildRank`). `ParseResult` no longer wraps `HouseAccessList`. | Preserves line order for sequential evaluation. Parser is pure text → raw entries; builder converts to `HouseAccessList`. |
+| 2026-06-24 | Step 5: `HouseAccessListLoader` dropped `IGuildRepository`, guild cache, rank-level resolution. Only depends on `HouseAccessListParser`. | Guild names resolved at runtime via `player.Guild.Name` string comparison — no DB needed at boot. |
+| 2026-06-24 | Step 5: `HouseTestDataBuilder.CreatePlayer` added `guildName` parameter. Domain tests updated: `AddGuild(100)` → `AddGuild("MyGuild")`, 13 new tests for guild/rank/ordering/wildcard scenarios. | String-based guild API required updated test infrastructure. |

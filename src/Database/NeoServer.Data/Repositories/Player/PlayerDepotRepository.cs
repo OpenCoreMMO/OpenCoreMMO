@@ -5,8 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Interfaces;
+using NeoServer.Data.Parsers;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Repositories;
 using Serilog;
 
 namespace NeoServer.Data.Repositories.Player;
@@ -14,14 +18,18 @@ namespace NeoServer.Data.Repositories.Player;
 /// <summary>
 ///     Repository class for managing PlayerDepotItem entity.
 /// </summary>
-public class PlayerDepotItemRepository : BaseRepository<PlayerDepotItemEntity>,
-    IPlayerDepotItemRepository
+public class PlayerDepotRepository : BaseRepository<PlayerDepotItemEntity>,
+    //IPlayerDepotItemRepository, 
+    IPlayerDepotRepository
 {
+    private readonly IItemFactory _itemFactory;
+
     #region constructors
 
-    public PlayerDepotItemRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger) : base(contextOptions,
+    public PlayerDepotRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger, IItemFactory itemFactory) : base(contextOptions,
         logger)
     {
+        _itemFactory = itemFactory;
     }
 
     #endregion
@@ -34,6 +42,14 @@ public class PlayerDepotItemRepository : BaseRepository<PlayerDepotItemEntity>,
         return await context.PlayerDepotItems
             .Where(c => c.PlayerId == id)
             .ToListAsync();
+    }
+    
+    public async Task LoadDepotChest(IContainer chest, Location depotLocation, uint playerId)
+    {
+        var depotRecords = await GetByPlayerId(playerId);
+        var depotItemModels = depotRecords.ToList();
+
+        ItemEntityParser.BuildContainer(chest, depotItemModels, depotLocation, _itemFactory);
     }
 
     private static async Task DeleteAll(uint playerId, NeoContext neoContext)

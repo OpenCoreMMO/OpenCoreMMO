@@ -1,69 +1,131 @@
+using System;
+using System.Collections.Generic;
 using NeoServer.Domain.Common.Contracts.Creatures;
 
 namespace NeoServer.Domain.Houses.AccessList;
 
 /// <summary>
-/// Who may enter the house. Lists invited players, guilds,
-/// guild ranks, or allows everyone. Each house door and access
-/// list (guest, sub-owner) has its own instance.
+///     Ordered access list evaluated top-to-bottom, first-match-wins.
+///     Supports player wildcards (<c>*</c>, <c>?</c>), guild names,
+///     and guild-rank names. No external DB lookups — all comparisons
+///     are string-based at runtime.
 /// </summary>
 public class HouseAccessList
 {
-    private readonly HashSet<string> _playerNames = new(StringComparer.OrdinalIgnoreCase);
-    private readonly HashSet<ushort> _guildIds = new();
-    private readonly List<(ushort GuildId, byte RankLevel)> _guildRanks = new();
-    private bool _allowEveryone;
+    private readonly List<Entry> _entries = new();
 
-    /// <summary>Let this player enter.</summary>
-    public void AddPlayer(string name)
-    {
-        _playerNames.Add(name);
-    }
+    /// <summary>Gets or sets the raw text representation of this access list.</summary>
+    public string RawText { get; set; } = string.Empty; // raw text from persistence, used to detect edits
 
-    /// <summary>Let all members of this guild enter.</summary>
-    public void AddGuild(ushort guildId)
-    {
-        _guildIds.Add(guildId);
-    }
+    /// <summary>Open the house to everyone (matches before any later exclusion).</summary>
+    public void AllowEveryone() => _entries.Add(new Entry(EntryType.AllowAll));
 
-    /// <summary>Let guild members at or above this rank enter.</summary>
-    public void AddGuildRank(ushort guildId, byte rankLevel)
-    {
-        _guildRanks.Add((guildId, rankLevel));
-    }
+    /// <summary>Invite a player matching the pattern. Wildcards <c>*</c> and <c>?</c> supported.</summary>
+    public void AddPlayer(string pattern) => _entries.Add(new Entry(EntryType.InvitePlayer, pattern));
 
-    /// <summary>Open the house to everyone.</summary>
-    public void AllowEveryone()
-    {
-        _allowEveryone = true;
-    }
+    /// <summary>Exclude a player matching the pattern. Wildcards <c>*</c> and <c>?</c> supported.</summary>
+    public void AddExcludedPlayer(string pattern) => _entries.Add(new Entry(EntryType.ExcludePlayer, pattern));
 
-    /// <summary>Remove all entries. House becomes locked to everyone.</summary>
-    public void Clear()
-    {
-        _playerNames.Clear();
-        _guildIds.Clear();
-        _guildRanks.Clear();
-        _allowEveryone = false;
-    }
+    /// <summary>Invite all members of the given guild.</summary>
+    public void AddGuild(string guildName) => _entries.Add(new Entry(EntryType.GuildAll, guildName));
 
-    /// <summary>Check if this player is on the access list.</summary>
+    /// <summary>Invite guild members with a specific rank name.</summary>
+    public void AddGuildRank(string guildName, string rankName) =>
+        _entries.Add(new Entry(EntryType.GuildRank, guildName, rankName));
+
+    /// <summary>Remove all entries.</summary>
+    public void Clear() => _entries.Clear();
+
+    /// <summary>
+    ///     Check if the player is allowed entry.
+    ///     Evaluates entries top-to-bottom; the first matching entry decides.
+    /// </summary>
     public bool IsInList(IPlayer player)
     {
-        if (_allowEveryone) return true;
-
-        if (_playerNames.Contains(player.Name)) return true;
-
-        if (player.HasGuild)
+        foreach (var entry in _entries)
         {
-            if (_guildIds.Contains(player.GuildId)) return true;
-
-            if (player.GuildRank is not null)
+            switch (entry.Type)
             {
-                return _guildRanks.Any(r => r.GuildId == player.GuildId && player.GuildRank.Level >= r.RankLevel);
+                case EntryType.AllowAll:
+                    return true;
+
+                case EntryType.InvitePlayer:
+                    if (MatchGlob(player.Name.AsSpan(), entry.Pattern.AsSpan()))
+                        return true;
+                    break;
+
+                case EntryType.ExcludePlayer:
+                    if (MatchGlob(player.Name.AsSpan(), entry.Pattern.AsSpan()))
+                        return false;
+                    break;
+
+                case EntryType.GuildAll:
+                    if (player.HasGuild &&
+                        string.Equals(player.Guild?.Name, entry.Pattern, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                    break;
+
+                case EntryType.GuildRank:
+                    if (player.HasGuild &&
+                        string.Equals(player.Guild?.Name, entry.Pattern, StringComparison.OrdinalIgnoreCase) &&
+                        string.Equals(player.GuildRank?.Name, entry.RankName, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                    break;
             }
         }
 
         return false;
+    }
+
+    /// <summary>
+    ///     Glob pattern matcher. Supports <c>*</c> (any sequence) and
+    ///     <c>?</c> (single character). Char-by-char, no regex, no allocation.
+    /// </summary>
+    private static bool MatchGlob(ReadOnlySpan<char> name, ReadOnlySpan<char> pattern)
+    {
+        int nameIndex = 0, patternIndex = 0;
+        int starNameIndex = -1, starPatternIndex = -1;
+
+        while (nameIndex < name.Length)
+        {
+            if (patternIndex < pattern.Length &&
+                (pattern[patternIndex] == '?' ||
+                 char.ToLowerInvariant(pattern[patternIndex]) == char.ToLowerInvariant(name[nameIndex])))
+            {
+                nameIndex++;
+                patternIndex++;
+            }
+            else if (patternIndex < pattern.Length && pattern[patternIndex] == '*')
+            {
+                starNameIndex = nameIndex;
+                starPatternIndex = patternIndex;
+                patternIndex++;
+            }
+            else if (starPatternIndex >= 0)
+            {
+                nameIndex = ++starNameIndex;
+                patternIndex = starPatternIndex + 1;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        while (patternIndex < pattern.Length && pattern[patternIndex] == '*')
+            patternIndex++;
+
+        return patternIndex == pattern.Length;
+    }
+
+    private readonly record struct Entry(EntryType Type, string Pattern = "", string RankName = "");
+
+    private enum EntryType : byte
+    {
+        AllowAll,
+        InvitePlayer,
+        ExcludePlayer,
+        GuildAll,
+        GuildRank
     }
 }

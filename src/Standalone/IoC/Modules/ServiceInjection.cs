@@ -10,6 +10,7 @@ using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Monster.Services;
 using NeoServer.Domain.Creatures.Services;
+using NeoServer.Domain.Houses.Services;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.Items.Services.ItemTransform;
 using NeoServer.Domain.Items.Services.ItemTransform.Operations;
@@ -116,6 +117,12 @@ public static class ServiceInjection
         //spells
         builder.AddSingleton<SpellService>();
         builder.AddSingleton<SpellCastValidation>();
+
+        //house services
+        builder.AddSingleton<IHouseService, HouseService>();
+        builder.AddSingleton<IHouseEviction, HouseEvictionService>();
+        builder.AddSingleton<IHouseBedWaker, HouseBedWakerService>();
+        builder.AddSingleton<IHouseDepotTransfer, HouseDepotTransferService>();
 
         return builder;
     }

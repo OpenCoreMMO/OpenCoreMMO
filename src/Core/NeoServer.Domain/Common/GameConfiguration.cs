@@ -51,4 +51,9 @@ public record YellConfiguration(int YellCooldownSeconds = 30, int YellMinimumLev
 
 public record ReportConfiguration(uint ReportMaxTime = 60);
 
-public record HouseConfiguration(bool TransferItemsToDepotOnOwnershipChange = true, bool RequirePremiumAccount = true);
+public record HouseConfiguration(
+    bool TransferItemsToDepotOnOwnershipChange = true,
+    bool RequirePremiumAccount = true,
+    int MaxAccessListLength = 1999,
+    int MaxAccessListLines = 100
+);

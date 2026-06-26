@@ -179,7 +179,6 @@ public class House
 
         return true;
     }
-
     // Rent is collected from the player's bank balance (owner.Bank.Debit). A coin-store parameter
     // was intentionally removed (Phase 1); if a future phase needs coin-specific rent, re-introduce
     // it at the service layer, not the aggregate.
