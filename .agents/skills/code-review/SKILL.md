@@ -19,6 +19,15 @@ This skill enforces the conventions documented in `AGENTS.md` during code review
 - Checking whether a change follows project architecture
 - Writing a PR review comment that cites project policy
 
+## Policy
+
+**The review never modifies code.** It only produces feedback:
+
+| Mode | Where feedback goes |
+|---|---|
+| **Review PR** | Inline comments on each changed file **plus** a general summary comment on the PR |
+| **Review Staging** | A temporary `review.md` file outside the project folder (system temp directory) |
+
 ## Cross-References
 
 For deeper guidance on specific areas, use these sibling skills:
@@ -44,17 +53,24 @@ Pick one before starting:
 
 ### Review PR
 
+Feedback goes to **each changed file** (inline) **plus** a general summary on the PR. Will never modify code.
+
 - [ ] 1. **Fetch the PR** — `gh pr checkout <number>`
 - [ ] 2. **Build** — `dotnet build src/Standalone --configuration Release`
 - [ ] 3. **Run tests** — `dotnet test tests/` (or single project if the change is scoped)
-- [ ] 4. **Walk the checklist** below
-- [ ] 5. **Submit review** — `gh pr review <number> --approve|--comment|--request-changes --body "$(cat review.md)"`
+- [ ] 4. **Get changed files** — `gh pr view <number> --json files --jq '.files[].path'`
+- [ ] 5. **Walk the checklist** below. For each finding, record:
+     - File path and line number
+     - Which checklist item was violated
+     - Suggestion (reference a template from Common Review Comments)
+- [ ] 6. **Post inline comments** per file via `gh api` (see CLI Reference)
+- [ ] 7. **Post general summary** on the PR via `gh pr review <number> --comment --body "$(cat review-summary.md)"`
 
 ---
 
 ### Review Staging
 
-Use before committing to catch issues early. Works on staged and/or unstaged changes.
+Use before committing to catch issues early. Works on staged and/or unstaged changes. Writes feedback to a temp file — never modifies project files.
 
 - [ ] 1. **Check status** — `git status` to see what's staged and unstaged
 - [ ] 2. **Review the diff**
@@ -65,14 +81,20 @@ Use before committing to catch issues early. Works on staged and/or unstaged cha
 - [ ] 4. **Build** — `dotnet build src/Standalone --configuration Release`
 - [ ] 5. **Run tests** — `dotnet test tests/` (or the relevant project)
 - [ ] 6. **Walk the checklist** below against the diff
-- [ ] 7. **Fix issues** or commit if clean
-
-> Pro tip: pipe the diff into a file and annotate it with checklist findings:
-> ```bash
-> git diff HEAD > review.diff
-> # walk checklist, annotate review.diff, then:
-> git commit -m "feat: ..."
-> ```
+- [ ] 7. **Write feedback** to a temp file outside the project:
+     ```bash
+     # Windows
+     echo "# Review Findings - $(date)" > "%TEMP%\review-opencoremmo.md"
+     echo. >> "%TEMP%\review-opencoremmo.md"
+     git diff HEAD >> "%TEMP%\review-opencoremmo.md"
+     # then append findings from the checklist walk
+     
+     # Linux/macOS
+     echo "# Review Findings - $(date)" > /tmp/review-opencoremmo.md
+     echo "" >> /tmp/review-opencoremmo.md
+     git diff HEAD >> /tmp/review-opencoremmo.md
+     ```
+     The file is disposable — read it, address issues locally, then delete.
 
 ---
 
@@ -169,11 +191,15 @@ All game services are **singletons**.
 
 ## Common Review Comments
 
-Use these as templates for `gh pr review <number> --request-changes --body "$(...)"` or `--comment --body "$(...)"`.
+These templates work for both delivery paths:
+
+- **Per-file (inline)** — Replace `[file]` and `[line]` with the actual location, post via `gh api`
+- **General summary** — Collect all findings into one markdown block, post via `gh pr review --comment --body`
+- **Staging temp file** — Paste findings into `review-opencoremmo.md`
 
 ### Domain dependency leak
 
-> **Architecture:** `NeoServer.Domain` must not depend on infrastructure projects. The reference to `NeoServer.Data` / `NeoServer.Networking` in [file] violates DDD layering. Move this logic to an application service or inject the dependency via an interface defined in the domain.
+> **Architecture:** `NeoServer.Domain` must not depend on infrastructure projects. The reference to `NeoServer.Data` / `NeoServer.Networking` in `[file]` violates DDD layering. Move this logic to an application service or inject the dependency via an interface defined in the domain.
 
 ### Missing factory usage
 
@@ -215,44 +241,69 @@ Use these as templates for `gh pr review <number> --request-changes --body "$(..
 
 ## CLI Reference
 
-### PR Review
+### PR Review — Inline Comments (per file)
+
+Use `gh api` to post inline review comments on specific lines of specific files. Requires the PR number, commit SHA, file path, line number, and comment body.
 
 ```bash
-# Checkout the PR locally
-gh pr checkout <number>
+# Get the latest commit SHA on the PR
+SHA=$(gh pr view <number> --json headRefOid --jq '.headRefOid')
 
-# View changes
-gh pr diff <number>
-gh pr diff <number> --name-only
+# Post one inline comment per API call
+gh api repos/:owner/:repo/pulls/<number>/comments \
+  --field body="**Architecture:** `NeoServer.Domain` must not depend on infrastructure..." \
+  --field commit_id="$SHA" \
+  --field path="src/NeoServer.Domain/SomeEntity.cs" \
+  --field line=42
 
-# Get structured data (files changed, status checks, etc.)
-gh pr view <number> --json title,body,files,additions,deletions,reviews,statusCheckRollup
+# For multi-line, add --field start_line=41 --field start_side="RIGHT" --field side="RIGHT"
+```
 
-# See only files changed with line counts
-gh pr view <number> --json files --jq '.files[] | {path, additions, deletions, status}'
+Key fields:
 
-# Submit review
-gh pr review <number> --approve --body "LGTM. All checks pass."
-gh pr review <number> --comment --body "$(cat review-notes.md)"
-gh pr review <number> --request-changes --body "$(cat review-issues.md)"
+| Field | Value |
+|---|---|
+| `body` | Comment text (use template from Common Review Comments) |
+| `commit_id` | SHA of the commit the file is at (use `headRefOid`) |
+| `path` | File path relative to repo root |
+| `line` | Line number the comment targets |
+| `side` | `LEFT` (old) or `RIGHT` (new diff side) |
+| `start_line` | For multi-line comments, the first line |
+
+### PR Review — General Summary
+
+```bash
+# Post a single general summary comment on the PR
+gh pr review <number> --comment --body "$(cat review-summary.md)"
+
+# Or approve with summary
+gh pr review <number> --approve --body "$(cat review-summary.md)"
+
+# Or request changes with summary
+gh pr review <number> --request-changes --body "$(cat review-summary.md)"
 
 # Check CI status
 gh pr checks <number>
 ```
 
-Pro tip: run `gh pr view <number> --json files --jq '.files[].path'` for a quick file list, then cross-reference with the checklist.
+### Quick file list
 
-### Staging Review
+```bash
+gh pr view <number> --json files --jq '.files[].path'
+gh pr view <number> --json files --jq '.files[] | {path, additions, deletions, status}'
+```
+
+### Staging Review — Temp File
 
 ```bash
 # What's changed
 git status
-git diff --name-status HEAD     # all changed files
+git diff --name-status HEAD
 
-# Full diff
-git diff --staged               # only staged (about to commit)
-git diff                         # only unstaged
-git diff HEAD                   # all changes since last commit
+# Full diffs
+git diff --staged               # staged only
+git diff                         # unstaged only
+git diff HEAD                   # all changes
 
 # New untracked files
 git ls-files --others --exclude-standard
@@ -260,7 +311,37 @@ git ls-files --others --exclude-standard
 # Per-file review
 git diff HEAD -- src/NeoServer.Domain/SomeFile.cs
 
-# Reset if something is wrong
-git restore --staged <file>     # unstage
-git checkout -- <file>          # discard unstaged changes
+# Write review feedback to temp file (outside project)
+# Windows:
+set "OUTFILE=%TEMP%\review-opencoremmo.md"
+(
+  echo # Review Findings - %DATE%
+  echo.
+  echo ## Files Changed
+  echo.
+  git diff --name-status HEAD
+  echo.
+  echo ## Findings
+  echo.
+  echo - Architecture: OK
+  echo - Naming: OK
+  echo - Testing: Missing tests for new service
+) > "%OUTFILE%"
+
+# Linux/macOS:
+OUTFILE=/tmp/review-opencoremmo.md
+cat > $OUTFILE << 'EOF'
+# Review Findings
+
+## Files Changed
+
+## Findings
+
+- Architecture: OK
+- Naming: OK
+- Testing: Missing tests for new service
+EOF
+
+# Read the file, act on findings, then delete
+rm "%TEMP%\review-opencoremmo.md" 2>nul
 ```
