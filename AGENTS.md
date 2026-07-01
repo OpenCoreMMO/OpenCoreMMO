@@ -224,6 +224,17 @@ Supported databases: **InMemory** (default for dev), **SQLite**, **PostgreSQL**.
 - Domain logic must not depend on infrastructure (networking, database, IoC)
 - Use `record` types for event definitions (DTOs implementing `IEvent`)
 - Prefer **composition over inheritance** for entity behavior
+- **Avoid variable abbreviations** — use descriptive names like `player` instead of `p`, `container` instead of `cont`, `experience` instead of `exp`. Abbreviations hurt readability and make code harder to search.
+  - Acceptable exceptions: common loop variables (`i`, `j`, `k`), widely known acronyms (`Rsa`, `Http`, `Json`, `Xml`), and lambda parameters in trivial expressions (`x => x.Name`)
+  - Do NOT abbreviate domain concepts (`creature`, `item`, `tile`, `player`)
+- **Avoid `else`** — prefer early returns and guard clauses to reduce nesting and improve readability. An `else` often indicates the happy path isn't clearly separated from edge cases.
+  - Discouraged: `if (condition) { ... } else { ... }`
+  - Preferred: `if (condition) return ...;` / `if (!condition) return ...;` then proceed with the main flow
+- **Use braces on all control flow statements** (`if`, `for`, `foreach`, `while`, `do`) — except when the body is a single `return;`. Always use `{ }` for any other single-statement body to prevent bugs when adding lines later.
+  - Allowed: `if (condition) return;`
+  - Required braces: `if (condition) DoSomething();` ❌ → `if (condition) { DoSomething(); }` ✅
+- **Use primary constructors when possible** — prefer the concise `class Service(IType dep)` syntax over explicit field backing for simple dependency injection and immutable state.
+- **Use the latest C# language features** — the project targets .NET 10, so use the latest available features (file-scoped namespaces, collection expressions, `List<string>`, primary constructors, raw string literals, etc.) unless there is a specific compatibility or readability reason not to.
 
 ### Naming
 
@@ -253,67 +264,121 @@ Types: `fix`, `feat`, `build`, `chore`, `ci`, `docs`, `style`, `refactor`, `perf
 
 ### Pull Requests
 
-Use the PR template with:
-- **Description** — Short summary of changes
-- **Key Changes** — Bullet points of important changes
-- **Types of Changes** — Bug fix, new feature, breaking change, documentation, refactoring, merge down
-- **Test Case** — How the change was tested
+Use the **Pull Request Skill** (`.agents/skills/pull-request/SKILL.md`) for all PRs. Load it via `skill pull-request` before creating or reviewing a pull request. The skill covers:
+
+- **Branch naming** — `feat/`, `fix/`, `refactor/` prefixed branches from `develop`
+- **PR title** — domain/feature-oriented, not implementation-oriented
+- **PR template** — Description, Key Changes, Types of Changes, Test Case
+- **PR creation** — `github_create_pull_request` with the required parameters
+
+## Performance Guidelines
+
+### Philosophy
+
+The server is a high-throughput, low-latency application. Write allocation-conscious code by default. Readability matters, but not at the cost of predictable GC pressure or CPU overhead in hot paths.
+
+### Prefer Explicit Loops Over LINQ
+
+Use `for` / `foreach` instead of LINQ methods in performance-sensitive code. LINQ allocates iterators, closures, and intermediate collections.
+
+**Discouraged:**
+```csharp
+var items = tiles.Where(t => t.AllItems is not null).SelectMany(t => t.AllItems).Where(i => i.IsPickupable).ToList();
+```
+
+**Preferred:**
+```csharp
+var items = new List<IItem>();
+foreach (var tile in tiles)
+{
+    if (tile.AllItems is null) continue;
+    foreach (var item in tile.AllItems)
+    {
+        if (item is not null && item.IsPickupable)
+            items.Add(item);
+    }
+}
+```
+
+### Avoid Specific LINQ Methods Without Justification
+
+`Where`, `Select`, `Any`, `Count`, `FirstOrDefault`, `SingleOrDefault`, `ToList`, `ToArray` — none of these should appear in hot paths unless a comment explains why the allocation is acceptable.
+
+### Avoid Lambda Expressions in Hot Paths
+
+Lambdas (including those passed to LINQ methods, event handlers, and async continuations) capture variables and allocate closures on the heap. In tight loops or frequently-called code, extract the logic into a local method or a static method instead.
+
+### Avoid `yield return` and Iterator Methods
+
+Iterator methods (those using `yield return`) generate compiler-backed state machine objects. Every call allocates a new enumerator. Return a concrete collection (`List<T>`, array) directly instead.
+
+**Discouraged:**
+```csharp
+public IEnumerable<IItem> PickupableItems
+{
+    get
+    {
+        foreach (var tile in _tiles)
+            if (tile.AllItems is not null)
+                foreach (var item in tile.AllItems)
+                    if (item.IsPickupable)
+                        yield return item;
+    }
+}
+```
+
+**Preferred:**
+```csharp
+public List<IItem> PickupableItems
+{
+    get
+    {
+        var items = new List<IItem>();
+        foreach (var tile in _tiles)
+        {
+            if (tile.AllItems is null) continue;
+            foreach (var item in tile.AllItems)
+            {
+                if (item is not null && item.IsPickupable)
+                    items.Add(item);
+            }
+        }
+        return items;
+    }
+}
+```
+
+### Pre-Allocate Collections When Possible
+
+When the size is known or bounded, pre-allocate to avoid growth-induced reallocations:
+
+```csharp
+var items = new List<IItem>(capacity: 16);
+```
+
+### Minimize Allocations
+
+- Avoid creating intermediate collections (e.g., `.ToList()` just to iterate).
+- Avoid boxing — prefer generic collections and avoid `object` parameters.
+- Use `ArrayPool<T>` for large temporary buffers.
+- Pool frequently-allocated objects where appropriate.
+
+### Benchmark New Abstractions
+
+Any abstraction that may impact performance (new interface dispatch layer, reflection-based registration, dynamic code paths) must be validated with benchmarks before being merged into `develop`.
+
+---
 
 ## Testing
 
-### Framework & Libraries
+Use the **Unit Testing Skill** (`.agents/skills/unit-testing/SKILL.md`) for all testing work. Load it via `skill unit-testing` before writing, fixing, or reviewing tests. The skill covers:
 
-- **xUnit** — Primary testing framework
-- **FluentAssertions** — Expressive assertion library
-- No mocking framework for business logic; mocks only for repositories/database access
-
-### Test Projects
-
-```
-tests/
-├── NeoServer.Domain.Tests        # Domain logic tests (largest)
-├── NeoServer.Game.Chats.Tests    # Chat system tests
-├── NeoServer.Game.Creatures.Tests # Creature behavior tests
-├── NeoServer.Game.Items.Tests    # Item system tests
-├── NeoServer.Game.Model.Tests    # Game model tests
-├── NeoServer.Game.Systems.Tests  # Game systems tests
-├── NeoServer.Game.Tests          # General game tests
-├── NeoServer.Game.World.Tests    # World/map tests
-├── NeoServer.Loaders.Tests       # Data loader tests
-├── NeoServer.Networking.Tests    # Network protocol tests
-├── NeoServer.Server.Tests        # Server logic tests
-└── NeoServer.WebApi.Tests        # API tests
-```
-
-### Test Conventions
-
-- **Naming**: `Actor_does_something_when_something_happens` (e.g., `Player_gets_disconnected_when_game_is_stopped`)
-- **Structure**: Arrange-Act-Assert (AAA)
-- **Isolation**: Do NOT share objects between tests. Each test creates its own instances.
-- **Mocking**: Only mock repositories and database access layers. Use real implementations for all other classes.
-- **Helpers**: Use static helper methods for building test instances with optional parameters
-- **One behavior per test**: Each test verifies a single behavior
-
-Example:
-
-```csharp
-[Fact]
-public void Player_gets_disconnected_when_game_is_stopped()
-{
-    // Arrange
-    var game = CreateGameServer(state: GameState.Stopped);
-    var handler = CreateHandler(game: game);
-    var connection = CreateConnection();
-    var packet = CreateValidLoginPacket();
-
-    // Act
-    handler.HandleMessage(packet, connection);
-
-    // Assert
-    connection.ReceivedDisconnectPacket.Should().BeTrue();
-    connection.IsClosed.Should().BeTrue();
-}
-```
+- **Framework & mocking** — xUnit, FluentAssertions, Moq (repositories only)
+- **Test conventions** — naming, AAA structure, isolation, one behavior per test
+- **Test builders** — `PlayerTestDataBuilder`, `ItemTestDataBuilder`, `MapTestDataBuilder`, and others
+- **Traits** — `Category` values: `HappyPath`, `Validation`, `EdgeCase`, `ErrorCondition`, `Integration`, `PathFinding`, `Proximity`, `Tile`
+- **Custom attributes** — `[SkipOnGitHubActionsFact]`, `[ThreadBlocking]`
+- **Running tests** — `dotnet test tests/`, per-project, by category
 
 ## CI/CD Pipeline
 
