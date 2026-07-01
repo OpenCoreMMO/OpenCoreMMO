@@ -31,13 +31,48 @@ For deeper guidance on specific areas, use these sibling skills:
 
 ---
 
-## Review Workflow
+## Choosing a Mode
+
+Pick one before starting:
+
+| Mode | When to use |
+|---|---|
+| **Review PR** | Someone opened a pull request. You fetch it, inspect, and leave feedback. |
+| **Review Staging** | You have local changes (staged or unstaged) and want to audit them before committing. |
+
+---
+
+### Review PR
 
 - [ ] 1. **Fetch the PR** — `gh pr checkout <number>`
 - [ ] 2. **Build** — `dotnet build src/Standalone --configuration Release`
 - [ ] 3. **Run tests** — `dotnet test tests/` (or single project if the change is scoped)
 - [ ] 4. **Walk the checklist** below
 - [ ] 5. **Submit review** — `gh pr review <number> --approve|--comment|--request-changes --body "$(cat review.md)"`
+
+---
+
+### Review Staging
+
+Use before committing to catch issues early. Works on staged and/or unstaged changes.
+
+- [ ] 1. **Check status** — `git status` to see what's staged and unstaged
+- [ ] 2. **Review the diff**
+     - Staged: `git diff --staged`
+     - Unstaged: `git diff`
+     - Both: `git diff HEAD`
+- [ ] 3. **List new files** — `git diff --staged --name-status` or `git ls-files --others --exclude-standard` for untracked
+- [ ] 4. **Build** — `dotnet build src/Standalone --configuration Release`
+- [ ] 5. **Run tests** — `dotnet test tests/` (or the relevant project)
+- [ ] 6. **Walk the checklist** below against the diff
+- [ ] 7. **Fix issues** or commit if clean
+
+> Pro tip: pipe the diff into a file and annotate it with checklist findings:
+> ```bash
+> git diff HEAD > review.diff
+> # walk checklist, annotate review.diff, then:
+> git commit -m "feat: ..."
+> ```
 
 ---
 
@@ -178,7 +213,9 @@ Use these as templates for `gh pr review <number> --request-changes --body "$(..
 
 ---
 
-## PR Review via CLI
+## CLI Reference
+
+### PR Review
 
 ```bash
 # Checkout the PR locally
@@ -203,4 +240,27 @@ gh pr review <number> --request-changes --body "$(cat review-issues.md)"
 gh pr checks <number>
 ```
 
-Pro tip: run `gh pr view <number> --json files --jq '.files[].path'` to get a quick file list, then cross-reference with the checklist above.
+Pro tip: run `gh pr view <number> --json files --jq '.files[].path'` for a quick file list, then cross-reference with the checklist.
+
+### Staging Review
+
+```bash
+# What's changed
+git status
+git diff --name-status HEAD     # all changed files
+
+# Full diff
+git diff --staged               # only staged (about to commit)
+git diff                         # only unstaged
+git diff HEAD                   # all changes since last commit
+
+# New untracked files
+git ls-files --others --exclude-standard
+
+# Per-file review
+git diff HEAD -- src/NeoServer.Domain/SomeFile.cs
+
+# Reset if something is wrong
+git restore --staged <file>     # unstage
+git checkout -- <file>          # discard unstaged changes
+```
