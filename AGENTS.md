@@ -224,6 +224,17 @@ Supported databases: **InMemory** (default for dev), **SQLite**, **PostgreSQL**.
 - Domain logic must not depend on infrastructure (networking, database, IoC)
 - Use `record` types for event definitions (DTOs implementing `IEvent`)
 - Prefer **composition over inheritance** for entity behavior
+- **Avoid variable abbreviations** — use descriptive names like `player` instead of `p`, `container` instead of `cont`, `experience` instead of `exp`. Abbreviations hurt readability and make code harder to search.
+  - Acceptable exceptions: common loop variables (`i`, `j`, `k`), widely known acronyms (`Rsa`, `Http`, `Json`, `Xml`), and lambda parameters in trivial expressions (`x => x.Name`)
+  - Do NOT abbreviate domain concepts (`creature`, `item`, `tile`, `player`)
+- **Avoid `else`** — prefer early returns and guard clauses to reduce nesting and improve readability. An `else` often indicates the happy path isn't clearly separated from edge cases.
+  - Discouraged: `if (condition) { ... } else { ... }`
+  - Preferred: `if (condition) return ...;` / `if (!condition) return ...;` then proceed with the main flow
+- **Use braces on all control flow statements** (`if`, `for`, `foreach`, `while`, `do`) — except when the body is a single `return;`. Always use `{ }` for any other single-statement body to prevent bugs when adding lines later.
+  - Allowed: `if (condition) return;`
+  - Required braces: `if (condition) DoSomething();` ❌ → `if (condition) { DoSomething(); }` ✅
+- **Use primary constructors when possible** — prefer the concise `class Service(IType dep)` syntax over explicit field backing for simple dependency injection and immutable state.
+- **Use the latest C# language features** — the project targets .NET 10, so use the latest available features (file-scoped namespaces, collection expressions, `List<string>`, primary constructors, raw string literals, etc.) unless there is a specific compatibility or readability reason not to.
 
 ### Naming
 
