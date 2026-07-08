@@ -36,6 +36,7 @@ public static class LoaderInjection
         builder.AddSingleton<GroupLoader>();
         builder.AddSingleton<HouseLoader>();
         builder.AddSingleton<HouseAccessListLoader>();
+        builder.AddSingleton<HouseXmlParser>();
 
         builder.RegisterCustomLoaders();
 

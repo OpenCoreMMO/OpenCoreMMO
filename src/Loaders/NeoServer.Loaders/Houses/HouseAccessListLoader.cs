@@ -11,7 +11,7 @@ public class HouseAccessListLoader : ICustomLoader
     /// <summary>
     ///     Builds and attaches access lists to a House from raw list data.
     /// </summary>
-    public async Task Load(House house, IEnumerable<(uint ListId, string ListText)> accessLists)
+    public Task Load(House house, IEnumerable<(uint ListId, string ListText)> accessLists)
     {
         foreach (var (listId, listText) in accessLists)
         {
@@ -20,6 +20,8 @@ public class HouseAccessListLoader : ICustomLoader
             list.RawText = listText;
             house.SetAccessList(listId, list);
         }
+
+        return Task.CompletedTask;
     }
 
     private static HouseAccessList BuildAccessList(ParseResult parsed)
