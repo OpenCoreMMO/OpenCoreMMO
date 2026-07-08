@@ -12,6 +12,7 @@ using NeoServer.Domain.World.Models.Spawns;
 using NeoServer.Loaders.Groups;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Loaders.Items;
+using NeoServer.Loaders.Houses;
 using NeoServer.Loaders.Monsters;
 using NeoServer.Loaders.Quest;
 using NeoServer.Loaders.Spawns;
@@ -96,6 +97,8 @@ public class Program
         container.Resolve<GroupLoader>().Load();
 
         container.Resolve<MonsterLoader>().Load();
+
+        await container.Resolve<HouseLoader>().Load();
 
         container.Resolve<WorldLoader>().Load(await otbmLoadTask);
         container.Resolve<SpawnLoader>().Load();

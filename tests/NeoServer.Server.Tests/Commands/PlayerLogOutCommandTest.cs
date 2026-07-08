@@ -6,9 +6,11 @@ using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Locker;
+using NeoServer.Domain.Repositories;
 using NeoServer.Server.Commands.Player;
 using NeoServer.Server.Common.Contracts;
 using Xunit;
+using IPlayerRepository = NeoServer.Data.Interfaces.IPlayerRepository;
 
 namespace NeoServer.Server.Tests.Commands;
 
@@ -20,7 +22,7 @@ public class PlayerLogOutCommandTest
         // Arrange
         var gameServer = new Mock<IGameServer>();
         var playerRepository = new Mock<IPlayerRepository>();
-        var playerDepotItemRepository = new Mock<IPlayerDepotItemRepository>();
+        var playerDepotItemRepository = new Mock<IPlayerDepotRepository>();
         var playerMailItemRepository = new Mock<IPlayerMailItemRepository>();
         var lockerManager = new Mock<LockerManager>();
         var tradeService = new Mock<ITradeService>();
@@ -55,7 +57,7 @@ public class PlayerLogOutCommandTest
         // Arrange
         var gameServer = new Mock<IGameServer>();
         var playerRepository = new Mock<IPlayerRepository>();
-        var playerDepotItemRepository = new Mock<IPlayerDepotItemRepository>();
+        var playerDepotItemRepository = new Mock<IPlayerDepotRepository>();
         var playerMailItemRepository = new Mock<IPlayerMailItemRepository>();
         var lockerManager = new Mock<LockerManager>();
         var tradeService = new Mock<ITradeService>();
@@ -77,7 +79,7 @@ public class PlayerLogOutCommandTest
             playerChannelService,
             map.Object);
 
-        // Acthealpers 
+        // Act
         command.Execute(player.Object);
 
         // Assert

@@ -76,12 +76,19 @@ public class HouseServiceTests
             tiles: new List<Mock<IDynamicTile>> { tileMock });
 
         var depotMock = new Mock<IHouseDepotTransfer>();
-        var service = CreateService(depotTransfer: depotMock);
+        var oldOwnerPlayer = HouseTestDataBuilder.CreatePlayer(id: 1);
+        var creatureGameInstanceMock = new Mock<ICreatureGameInstance>();
+        var outPlayer = oldOwnerPlayer;
+        creatureGameInstanceMock
+            .Setup(x => x.TryGetPlayer(1, out outPlayer))
+            .Returns(true);
+
+        var service = CreateService(depotTransfer: depotMock, creatureGameInstance: creatureGameInstanceMock);
 
         service.SetOwner(house, 10, "NewOwner", 100, false, now, 86400);
 
-        depotMock.Verify(x => x.TransferToOwnerDepot(50, 2,
-            It.Is<IEnumerable<IItem>>(items => items.Contains(pickupableItem.Object) && !items.Contains(nonPickupableItem.Object))),
+        depotMock.Verify(x => x.TransferToOwnerDepot(house,
+            It.Is<IPlayer>(p => p.Id == 1)),
             Times.Once);
     }
 
@@ -98,12 +105,19 @@ public class HouseServiceTests
             tiles: new List<Mock<IDynamicTile>> { tileMock });
 
         var depotMock = new Mock<IHouseDepotTransfer>();
-        var service = CreateService(depotTransfer: depotMock);
+        var oldOwnerPlayer = HouseTestDataBuilder.CreatePlayer(id: 1);
+        var creatureGameInstanceMock = new Mock<ICreatureGameInstance>();
+        var outPlayer = oldOwnerPlayer;
+        creatureGameInstanceMock
+            .Setup(x => x.TryGetPlayer(1, out outPlayer))
+            .Returns(true);
+
+        var service = CreateService(depotTransfer: depotMock, creatureGameInstance: creatureGameInstanceMock);
 
         service.SetOwner(house, 10, "NewOwner", 100, false, now, 86400);
 
-        depotMock.Verify(x => x.TransferToOwnerDepot(It.IsAny<int>(), It.IsAny<ushort>(),
-            It.IsAny<IEnumerable<IItem>>()), Times.Never);
+        depotMock.Verify(x => x.TransferToOwnerDepot(house,
+            It.Is<IPlayer>(p => p.Id == 1)), Times.Once);
     }
 
     [Fact]
@@ -239,6 +253,7 @@ public class HouseServiceTests
         Mock<IHouseEviction> eviction = null,
         Mock<IHouseBedWaker> bedWaker = null,
         Mock<IHouseDepotTransfer> depotTransfer = null,
+        Mock<ICreatureGameInstance> creatureGameInstance = null,
         HouseConfiguration houseConfiguration = null)
     {
         return new HouseService(
@@ -246,6 +261,7 @@ public class HouseServiceTests
             eviction?.Object ?? new Mock<IHouseEviction>().Object,
             bedWaker?.Object ?? new Mock<IHouseBedWaker>().Object,
             depotTransfer?.Object ?? new Mock<IHouseDepotTransfer>().Object,
+            creatureGameInstance?.Object ?? new Mock<ICreatureGameInstance>().Object,
             houseConfiguration ?? new HouseConfiguration());
     }
 }

@@ -32,6 +32,8 @@ public static class DataStoreInjection
 
         builder.AddSingleton<IGroupStore, GroupStore>();
 
+        builder.AddSingleton<IHouseStore, HouseStore>();
+
         return builder;
     }
 }

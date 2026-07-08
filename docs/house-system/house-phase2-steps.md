@@ -104,56 +104,56 @@ ownership/access mutations persisting through `HouseRepository` on SQLite, Postg
 Confirm these exist with the exact members named -- they are Phase 1 / existing infra Phase 2 builds on.
 
 **Phase 1 outputs (already merged):**
-- [ ] `src/Core/NeoServer.Domain/Houses/House.cs` -- `LinkTile(IDynamicTile)` (throws on re-link / non-null
+- [x] `src/Core/NeoServer.Domain/Houses/House.cs` -- `LinkTile(IDynamicTile)` (throws on re-link / non-null
       `CanEnterFunction`), `LinkDoor(uint, IItem)`, `LinkBed(IItem)`, `SetAccessList(uint, HouseAccessList)`,
       `EntryPosition` (`Location?`), `Tiles`/`Doors`/`Beds`, `OwnerGuid/OwnerName/OwnerAccountId`,
       `PaidUntil` (`DateTime?`), `PayRentWarnings`, `Rent`, `TownId`, `PickupableItems`.
-- [ ] `src/Core/NeoServer.Domain/Houses/IHouseFactory.cs` --
+- [x] `src/Core/NeoServer.Domain/Houses/IHouseFactory.cs` --
       `Create(uint id, string name, ushort townId, uint rent, uint ownerGuid, string ownerName,
       int ownerAccountId, DateTime? paidUntil, byte payRentWarnings)`. (Maps primitives, **not** `HouseEntity`
       -- keeps Domain EF-free.)
-- [ ] `src/Core/NeoServer.Domain/Houses/AccessList/HouseAccessList.cs` --
+- [x] `src/Core/NeoServer.Domain/Houses/AccessList/HouseAccessList.cs` --
       `AddPlayer(string)`, `AddGuild(ushort)`, `AddGuildRank(ushort, byte)`, `AllowEveryone()`,
       `Clear()`, `IsInList(IPlayer)`.
-- [ ] `src/Core/NeoServer.Domain/Houses/HouseListId.cs` -- `GuestList = 0x100`, `SubOwnerList = 0x101`,
+- [x] `src/Core/NeoServer.Domain/Houses/HouseListId.cs` -- `GuestList = 0x100`, `SubOwnerList = 0x101`,
       `IsDoorList(uint) => listId <= 254`.
-- [ ] `src/Core/NeoServer.Domain/Repositories/IHouseRepository.cs` -- currently `Save(House)` only.
-- [ ] `src/Core/NeoServer.Domain/Common/Contracts/DataStores/IHouseStore.cs` -- `IDataStore<uint, House>`
+- [x] `src/Core/NeoServer.Domain/Repositories/IHouseRepository.cs` -- currently `Save(House)` only.
+- [x] `src/Core/NeoServer.Domain/Common/Contracts/DataStores/IHouseStore.cs` -- `IDataStore<uint, House>`
       + `GetByTile(ITile)` + `GetByHouseId(uint)`.
-- [ ] `src/Database/NeoServer.Data.InMemory.DataStores/HouseStore.cs` -- impl (reads `(tile as DynamicTile)?.HouseId`).
-- [ ] `src/Core/NeoServer.Domain/Houses/Services/HouseService.cs` + `IHouseService.cs` -- ctor
+- [x] `src/Database/NeoServer.Data.InMemory.DataStores/HouseStore.cs` -- impl (reads `(tile as DynamicTile)?.HouseId`).
+- [x] `src/Core/NeoServer.Domain/Houses/Services/HouseService.cs` + `IHouseService.cs` -- ctor
       `(IHouseRepository, IHouseEviction, IHouseBedWaker, IHouseDepotTransfer, HouseConfiguration)`.
-- [ ] `src/Core/NeoServer.Domain/Houses/Services/{IHouseEviction,IHouseBedWaker,IHouseDepotTransfer}.cs`
+- [x] `src/Core/NeoServer.Domain/Houses/Services/{IHouseEviction,IHouseBedWaker,IHouseDepotTransfer}.cs`
       -- seam interfaces with **no concrete impls yet** (Phase 1 only mocked them). Step 8 ships impls.
-- [ ] `src/Core/NeoServer.Domain/Common/GameConfiguration.cs:54` -- `record HouseConfiguration(...)`.
+- [x] `src/Core/NeoServer.Domain/Common/GameConfiguration.cs:54` -- `record HouseConfiguration(...)`.
 
 **Existing infra:**
-- [ ] `src/Loaders/NeoServer.Loaders/OTBM/Structure/TileArea/TileNode.cs:29,38-42` -- `HouseId`,
+- [x] `src/Loaders/NeoServer.Loaders/OTBM/Structure/TileArea/TileNode.cs:29,38-42` -- `HouseId`,
       `NodeType`, parse order (house id read before attributes).
-- [ ] `src/Loaders/NeoServer.Loaders/OTB/Enums/NodeType.cs:19` -- `HouseTile = 14`.
-- [ ] `src/Loaders/NeoServer.Loaders/OTB/Parsers/OTBParsingStream.cs:96` -- `ReadUInt32()` (escape-aware).
-- [ ] `src/Loaders/NeoServer.Loaders/World/WorldLoader.cs` -- ctor (no `IHouseStore` yet),
+- [x] `src/Loaders/NeoServer.Loaders/OTB/Enums/NodeType.cs:19` -- `HouseTile = 14`.
+- [x] `src/Loaders/NeoServer.Loaders/OTB/Parsers/OTBParsingStream.cs:96` -- `ReadUInt32()` (escape-aware).
+- [x] `src/Loaders/NeoServer.Loaders/World/WorldLoader.cs` -- ctor (no `IHouseStore` yet),
       `LoadTile` (cache fast-path `:96-109`, `CreateTile` call `:113-115`, `GetItemsOnTile`).
-- [ ] `src/Core/NeoServer.Domain/World/Factories/TileFactory.cs:17-92` -- `CreateTile(... uint? houseId)`;
+- [x] `src/Core/NeoServer.Domain/World/Factories/TileFactory.cs:17-92` -- `CreateTile(... uint? houseId)`;
       cache check at `:21-25` runs **before** `isHouseTile` is computed (`:27`) -- see Risk R2.
-- [ ] `src/Core/NeoServer.Domain/Common/Contracts/World/Tiles/IDynamicTile.cs` -- `CanEnterFunction`
+- [x] `src/Core/NeoServer.Domain/Common/Contracts/World/Tiles/IDynamicTile.cs` -- `CanEnterFunction`
       (`:27`), `SetAsProtectionZone()` (`:58`), `Players` (`:26`), `AllItems`.
-- [ ] `src/Database/NeoServer.Data/Repositories/BaseRepository.cs` -- `NewDbContext`, `Insert/Update/Delete`.
-- [ ] `src/Database/NeoServer.Data/Contexts/NeoContext.cs:49-50` -- `DbSet<HouseEntity> Houses`,
+- [x] `src/Database/NeoServer.Data/Repositories/BaseRepository.cs` -- `NewDbContext`, `Insert/Update/Delete`.
+- [x] `src/Database/NeoServer.Data/Contexts/NeoContext.cs:49-50` -- `DbSet<HouseEntity> Houses`,
       `DbSet<HouseListEntity> HouseList`; `OnModelCreating` applies `HouseEntityConfiguration` +
       `HouseListEntityConfiguration` (`:100-101`) and snake_cases all columns (`:103-115`).
-- [ ] `src/Database/NeoServer.Data/Entities/HouseEntity.cs` (cols `Onwer`, `Paid`, `Warnings`, `Rent`,
+- [x] `src/Database/NeoServer.Data/Entities/HouseEntity.cs` (cols `Onwer`, `Paid`, `Warnings`, `Rent`,
       `TownId`, auction cols, `Size`, `Beds`, `HouseLists`) + `HouseListEntity.cs` (`HouseId`, `ListId`,
       `List`, `House`).
-- [ ] `src/Database/NeoServer.Data/Configurations/HouseEntityConfiguration.cs` (indexes `Onwer`+`TownId`)
+- [x] `src/Database/NeoServer.Data/Configurations/HouseEntityConfiguration.cs` (indexes `Onwer`+`TownId`)
       + `HouseListEntityConfiguration.cs` (composite key `(HouseId, ListId)`).
-- [ ] `src/Database/NeoServer.Data/Repositories/GuildRepository.cs:28` -- `GetByName(string)`;
+- [x] `src/Database/NeoServer.Data/Repositories/GuildRepository.cs:28` -- `GetByName(string)`;
       `src/Database/NeoServer.Data/Interfaces/IGuildRepository.cs` -- confirm `GetByName`/`GetAll`.
-- [ ] `src/Standalone/Program.cs:88-103` -- explicit loader call sequence;
+- [x] `src/Standalone/Program.cs:88-103` -- explicit loader call sequence;
       `src/Standalone/IoC/Modules/{DataStoreInjection,DatabaseInjection,FactoryInjection,ServiceInjection,
       LoaderInjection}.cs` -- registration idioms (note Mail's double-registration at
       `DatabaseInjection.cs:34,39`).
-- [ ] Item detection: `ItemTypeAttribute.Type == "door"` (`data/extensions/Items/Doors/Door.cs:108`),
+- [x] Item detection: `ItemTypeAttribute.Type == "door"` (`data/extensions/Items/Doors/Door.cs:108`),
       `ItemAttribute.DoorId`, `ItemFlag.Bed` (`Common/Item/ItemFlag.cs:43`).
 
 > If any name differs, adjust the signature -- the **logic and ordering** are what matter.
@@ -381,7 +381,7 @@ loaders, then world attach, then orchestration, then DI.
 | OTBM | stub removed + parser test | `TileNode.HouseId` read correctly; flags/items intact |
 | Entity | `HouseEntity` renamed + new cols | `owner_guid`/`paid_until`/`owner_name`/`owner_account_id`/`entry_*`; auction cols intact |
 | Config | EF configs updated | `OwnerGuid`/`TownId` indexes; `(HouseId,ListId)` PK present |
-| Repo | `HouseRepository` (Data + Domain ifaces) | `GetAll`/`GetById` include lists; `Save`/`SaveAccessList` round-trip; Domain EF-free |
+| Repo | `HouseRepository` (Domain `IHouseRepository`) | `GetAll`/`GetById` return `House` (via `IHouseFactory`); `Save`/`SaveAccessList` round-trip; Domain EF-free |
 | Loader | `HouseLoader` | `IHouseStore` populated with owners + access lists |
 | Loader | `HouseAccessListLoader` | `*`/player/guild/guild-rank/unknown lines handled |
 | World | `WorldLoader` attach + cache-skip | tiles linked, ProtectionZone+closure set, doors/beds linked, no cached house tile |
@@ -395,7 +395,7 @@ loaders, then world attach, then orchestration, then DI.
 - [ ] Step 1 -- dead OTBM stub removed + parser regression test green.
 - [ ] Step 2 -- `HouseEntity` renamed (`OwnerGuid`/`PaidUntil`) + `OwnerName`/`OwnerAccountId`/`EntryX/Y/Z`.
 - [ ] Step 3 -- EF configs updated; `(HouseId, ListId)` index confirmed.
-- [ ] Step 4 -- Domain `IHouseRepository` (+`SaveAccessList`) + Data `IHouseRepository` (`GetAll`/`GetById`) + `HouseRepository` impl; round-trip test.
+- [ ] Step 4 -- Domain `IHouseRepository` (`Save`/`SaveAccessList`/`GetAll`/`GetById`) + `HouseRepository` impl (injects `IHouseFactory`); round-trip test. No separate Data interface.
 - [ ] Step 5 -- `HouseAccessListLoader` with guild-by-name resolution; parse tests.
 - [ ] Step 6 -- `HouseLoader` populates the store.
 - [ ] Step 7 -- `WorldLoader` attach + double cache-skip (`WorldLoader` + `TileFactory`).
@@ -404,3 +404,17 @@ loaders, then world attach, then orchestration, then DI.
 - [ ] Step 10 -- loader/repo/attach tests green across providers.
 - [ ] Step 11 -- build clean, Domain EF-free, manual boot verified on SQLite + Postgres.
 - [ ] **Open PR2.**
+
+---
+
+## Revisions
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-06-24 | Step 2: `HouseEntity.PaidUntil` changed from `long` (unix seconds) to `DateTime?` (nullable datetime). Added `using System;`. | Domain `House.PaidUntil` already `DateTime?`; no unix conversion needed; human-readable in DB. `EnsureCreated` maps `DateTime?` to proper datetime column. Null = never paid (replaces 0). |
+| 2026-06-24 | Step 2/3: `HouseEntity.OwnerGuid` → `OwnerId`; `HouseEntityConfiguration` index updated accordingly. | Project convention: use `Id` suffix, not `Guid`, for FK columns. |
+| 2026-06-24 | Step 4: Merged Data `IHouseRepository` into Domain `IHouseRepository`. Removed `Data/Interfaces/IHouseRepository.cs`. `GetAll()`/`GetById()` return `House` (domain type) instead of `HouseEntity`. `HouseRepository` now injects `IHouseFactory` for entity→domain mapping. | Single interface avoids namespace collision and unnecessary split. Repository handles conversion internally; loaders get domain objects directly. |
+| 2026-06-24 | Step 5: `HouseAccessList` rewritten — single ordered `List<Entry>`, first-match-wins, custom `MatchGlob` (char-by-char, case-insensitive, no regex/allocation). Guild/rank compared by name string, not ID. `AddGuild`/`AddGuildRank` take strings. | Removes regex dependency, avoids DB lookup for guild resolution at load time. Sequential evaluation matches Tibia house-list semantics (top-to-bottom, first match wins). 100-entry scan with custom glob is negligible (~1μs per check). |
+| 2026-06-24 | Step 5: `HouseAccessListParser` `ParseResult` changed to single ordered `Entries` list with discriminated `ListEntry` kinds (`AllowAll`, `InvitePlayer`, `ExcludePlayer`, `GuildAll`, `GuildRank`). `ParseResult` no longer wraps `HouseAccessList`. | Preserves line order for sequential evaluation. Parser is pure text → raw entries; builder converts to `HouseAccessList`. |
+| 2026-06-24 | Step 5: `HouseAccessListLoader` dropped `IGuildRepository`, guild cache, rank-level resolution. Only depends on `HouseAccessListParser`. | Guild names resolved at runtime via `player.Guild.Name` string comparison — no DB needed at boot. |
+| 2026-06-24 | Step 5: `HouseTestDataBuilder.CreatePlayer` added `guildName` parameter. Domain tests updated: `AddGuild(100)` → `AddGuild("MyGuild")`, 13 new tests for guild/rank/ordering/wildcard scenarios. | String-based guild API required updated test infrastructure. |

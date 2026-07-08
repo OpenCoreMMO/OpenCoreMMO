@@ -96,6 +96,15 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         return (await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower()))?.Id ?? 0;
     }
 
+    public async Task UpdateBankAmount(int playerId, ulong amount)
+    {
+        await using var context = NewDbContext;
+        var playerEntity = await context.Players.FindAsync(playerId);
+        if (playerEntity is null) return;
+        playerEntity.BankAmount = amount;
+        await context.SaveChangesAsync();
+    }
+
     public async Task UpdateLastLogInDate(int playerId, DateTime lastLogIn)
     {
         await using var context = NewDbContext;

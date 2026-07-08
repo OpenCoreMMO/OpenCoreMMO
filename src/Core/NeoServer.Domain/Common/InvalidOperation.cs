@@ -55,5 +55,6 @@ public enum InvalidOperation
     DestinationOutOfReach,
     TurnSecureModeToAttackUnmarkedPlayers,
     ItemCannotBeSend,
-    TargetLost
+    TargetLost,
+    InsufficientBalance
 }

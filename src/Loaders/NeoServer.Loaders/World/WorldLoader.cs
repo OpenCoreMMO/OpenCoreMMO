@@ -31,9 +31,11 @@ public class WorldLoader
     private readonly ILogger logger;
     private readonly ServerConfiguration serverConfiguration;
     private readonly Domain.World.World world;
+    private readonly IHouseStore _houseStore;
 
     public WorldLoader(Domain.World.World world, ILogger logger, IItemFactory itemFactory,
-        ServerConfiguration serverConfiguration, ITileFactory tileFactory, IItemTypeStore itemTypeStore)
+        ServerConfiguration serverConfiguration, ITileFactory tileFactory, IItemTypeStore itemTypeStore,
+        IHouseStore houseStore)
     {
         this.world = world;
         this.logger = logger;
@@ -41,6 +43,7 @@ public class WorldLoader
         this.serverConfiguration = serverConfiguration;
         _tileFactory = tileFactory;
         _itemTypeStore = itemTypeStore;
+        _houseStore = houseStore;
     }
 
     public void Load(Otbm otbm)
@@ -93,7 +96,10 @@ public class WorldLoader
 
     private void LoadTile(TileNode tileNode)
     {
-        if (serverConfiguration.EnableStaticTileCaching)
+        var isHouseTile = tileNode.HouseId > 0;
+
+        // House tiles must never be served from the static cache.
+        if (!isHouseTile && serverConfiguration.EnableStaticTileCaching)
         {
             Span<byte> raw = stackalloc byte[tileNode.Items.Count * sizeof(ushort)];
             var written = LoadClientIdsStream(tileNode, ref raw);
@@ -110,8 +116,8 @@ public class WorldLoader
 
         var items = GetItemsOnTile(tileNode);
 
-        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items,
-            serverConfiguration.EnableStaticTileCaching,
+        var useCache = !isHouseTile && serverConfiguration.EnableStaticTileCaching;
+        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items, useCache,
             tileNode.HouseId);
 
         if (tile is IStaticTile)
@@ -121,6 +127,50 @@ public class WorldLoader
         }
 
         world.AddTile(tile);
+
+        // Link house tiles, doors, and beds
+        if (isHouseTile && tile is IDynamicTile dynamicTile)
+        {
+            var house = _houseStore.GetByHouseId(tileNode.HouseId);
+            if (house is null)
+            {
+                logger.Warning("Orphan house tile at {Coordinate}: house id {HouseId} not found in store",
+                    tileNode.Coordinate, tileNode.HouseId);
+                return;
+            }
+
+            try
+            {
+                house.LinkTile(dynamicTile);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to link tile at {Coordinate} to house {HouseId}",
+                    tileNode.Coordinate, tileNode.HouseId);
+                return;
+            }
+
+            // Link doors and beds
+            foreach (var item in dynamicTile.AllItems)
+            {
+                if (item is null) continue;
+
+                if (item.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) == "door")
+                {
+                    if (item.Attributes is not null &&
+                        item.Attributes.TryGetAttribute(ItemAttribute.DoorId, out string doorIdStr) &&
+                        uint.TryParse(doorIdStr, out var doorId))
+                    {
+                        house.LinkDoor(doorId, item);
+                    }
+                }
+
+                if (item.Metadata.HasFlag(ItemFlag.Bed))
+                {
+                    house.LinkBed(item);
+                }
+            }
+        }
     }
 
     private int LoadClientIdsStream(TileNode tileNode, ref Span<byte> clientIds)

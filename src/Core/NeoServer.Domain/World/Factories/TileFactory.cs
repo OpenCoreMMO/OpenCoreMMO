@@ -17,14 +17,17 @@ public class TileFactory(ILogger logger) : ITileFactory
     public ITile CreateTile(Coordinate coordinate, TileFlag flag, IItem[] items, bool useCache = true,
         uint? houseId = null)
     {
+        var isHouseTile = houseId is > 0;
+
+        // House tiles must never be cached as StaticTile — they are always DynamicTile.
+        if (isHouseTile) useCache = false;
+
         (ulong Low, ulong High) tileHash = default;
         if (useCache)
         {
             tileHash = GetTileHash(items);
             if (_tileCache.TryGetValue(tileHash, out var tile)) return tile;
         }
-
-        var isHouseTile = houseId is > 0;
 
         var hasUnpassableItem = false;
         var hasMoveableItem = false;

@@ -1,5 +1,6 @@
 using Moq;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Common;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
@@ -98,23 +99,40 @@ public static class HouseTestDataBuilder
         return itemMock;
     }
 
-    public static IPlayer CreatePlayer(uint id = 1, ushort level = 10, uint guildId = 0, GuildRankInfo guildRank = null, string name = "Player")
+    public static IPlayer CreatePlayer(uint id = 1, ushort level = 10, uint guildId = 0, GuildRankInfo guildRank = null, string name = "Player", string guildName = null)
     {
         var playerMock = new Mock<IPlayer>();
         playerMock.Setup(x => x.Id).Returns(id);
         playerMock.Setup(x => x.Level).Returns(level);
         playerMock.Setup(x => x.Name).Returns(name);
-        playerMock.Setup(x => x.HasGuild).Returns(guildId != 0);
+        playerMock.Setup(x => x.HasGuild).Returns(guildId != 0 || guildName is not null);
         playerMock.Setup(x => x.GuildId).Returns((ushort)guildId);
         playerMock.Setup(x => x.GuildRank).Returns(guildRank);
         playerMock.Setup(x => x.AccountId).Returns(id);
+
+        if (guildName is not null)
+        {
+            var guild = new NeoServer.Domain.Guild.Guild
+            {
+                Name = guildName,
+                Id = (ushort)guildId,
+                Bank = new NeoServer.Domain.Creatures.Common.Bank(0)
+            };
+            playerMock.Setup(x => x.Guild).Returns(guild);
+        }
+
         return playerMock.Object;
     }
 
-    public static IPlayer CreatePlayerWithBank(uint id = 1, ulong bankAmount = 0, string name = "Player")
+    public static IPlayer CreatePlayerWithBank(uint id = 1, ulong bankAmount = 0, string name = "Player", bool hasPremiumTime = true)
     {
+        var balance = bankAmount;
         var bankMock = new Mock<IBank>();
-        bankMock.Setup(x => x.Amount).Returns(bankAmount);
+        bankMock.Setup(x => x.Amount).Returns(() => balance);
+        bankMock.Setup(x => x.Debit(It.IsAny<ulong>()))
+            .Callback<ulong>(a => balance -= Math.Min(a, balance));
+        bankMock.Setup(x => x.Credit(It.IsAny<ulong>()))
+            .Callback<ulong>(a => balance += a);
 
         var playerMock = new Mock<IPlayer>();
         playerMock.Setup(x => x.Id).Returns(id);
@@ -122,6 +140,7 @@ public static class HouseTestDataBuilder
         playerMock.Setup(x => x.Bank).Returns(bankMock.Object);
         playerMock.Setup(x => x.BankAmount).Returns(bankAmount);
         playerMock.Setup(x => x.AccountId).Returns(id);
+        playerMock.Setup(x => x.HasPremiumTime).Returns(hasPremiumTime);
         return playerMock.Object;
     }
 
