@@ -144,6 +144,10 @@ public class HouseRepository : BaseRepository<HouseEntity>, IHouseRepository
 
     public async Task SaveTilesAsync(House house)
     {
+        // Skip houses with no linked tiles — avoids wiping persisted items
+        // when tile linking failed at boot (e.g., OTBM/XML mismatch).
+        if (house.TileCount == 0) return;
+
         await using var context = NewDbContext;
 
         var existingTiles = await context.HouseTiles
@@ -161,9 +165,22 @@ public class HouseRepository : BaseRepository<HouseEntity>, IHouseRepository
     {
         if (houses is null || houses.Count == 0) return;
 
+        // Skip houses with no linked tiles — this is the critical guard.
+        // Houses are added to the store before tile linking (HouseLoader.cs:86),
+        // so a house whose tiles failed to link would otherwise have its DB rows
+        // deleted with nothing re-inserted, permanently wiping stored items.
+        var linkedHouses = new List<House>(houses.Count);
+        foreach (var house in houses)
+        {
+            if (house.TileCount > 0)
+                linkedHouses.Add(house);
+        }
+
+        if (linkedHouses.Count == 0) return;
+
         await using var context = NewDbContext;
 
-        var houseIds = houses.Select(h => (int)h.Id).ToList();
+        var houseIds = linkedHouses.Select(h => (int)h.Id).ToList();
 
         var existingTiles = await context.HouseTiles
             .Where(ht => houseIds.Contains(ht.HouseId))
@@ -171,7 +188,7 @@ public class HouseRepository : BaseRepository<HouseEntity>, IHouseRepository
 
         context.HouseTiles.RemoveRange(existingTiles);
 
-        foreach (var house in houses)
+        foreach (var house in linkedHouses)
         {
             AddHouseTileEntities(house, context);
         }

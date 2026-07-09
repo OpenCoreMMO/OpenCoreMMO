@@ -46,12 +46,32 @@ public class HouseTilePersistenceRoutine(
 
             if (houses is null || houses.Count == 0) return;
 
-            logger.Information("Saving tile data for {Count} houses...", houses.Count);
+            // Filter out houses with no linked tiles — prevents deleting persisted
+            // house tile data when a house's tiles failed to link at boot.
+            var linkedHouses = new List<House>(houses.Count);
+            foreach (var house in houses)
+            {
+                if (house.TileCount > 0)
+                {
+                    linkedHouses.Add(house);
+                    continue;
+                }
+                
+                logger.Warning("House {HouseId} ({HouseName}) has no linked tiles", house.Id, house.Name);
+            }
+
+            if (linkedHouses.Count == 0)
+            {
+                logger.Information("No houses with linked tiles to save");
+                return;
+            }
+            
+            logger.Information("Saving tile data for {Count} houses...", linkedHouses.Count);
             _stopwatch.Restart();
 
-            await houseRepository.SaveTilesAsync(houses);
+            await houseRepository.SaveTilesAsync(linkedHouses);
 
-            logger.Information("Tile data for {Count} houses saved in {Elapsed} ms", houses.Count, _stopwatch.ElapsedMilliseconds);
+            logger.Information("Tile data for {Count} houses saved in {Elapsed} ms", linkedHouses.Count, _stopwatch.ElapsedMilliseconds);
         }
         catch (Exception e)
         {
