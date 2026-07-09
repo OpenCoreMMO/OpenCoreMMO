@@ -17,6 +17,7 @@ namespace NeoServer.Server.Tests.Data;
 public class HouseTileItemSerializerTest
 {
     [Fact]
+    [Trait("Category", "HappyPath")]
     public void HouseTileItemSerializer_round_trips_tile_with_sword()
     {
         // Arrange
@@ -55,6 +56,7 @@ public class HouseTileItemSerializerTest
     }
 
     [Fact]
+    [Trait("Category", "HappyPath")]
     public void HouseTileItemSerializer_preserves_item_amount_when_serializing_and_deserializing()
     {
         // Arrange
@@ -93,6 +95,7 @@ public class HouseTileItemSerializerTest
     }
 
     [Fact]
+    [Trait("Category", "HappyPath")]
     public void HouseTileItemSerializer_preserves_item_charges_when_serializing_and_deserializing()
     {
         // Arrange
@@ -132,6 +135,7 @@ public class HouseTileItemSerializerTest
     }
 
     [Fact]
+    [Trait("Category", "HappyPath")]
     public void HouseTileItemSerializer_preserves_decay_attributes_when_serializing_and_deserializing()
     {
         // Arrange
