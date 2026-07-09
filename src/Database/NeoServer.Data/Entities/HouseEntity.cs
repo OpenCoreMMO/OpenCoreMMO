@@ -21,4 +21,5 @@ public sealed class HouseEntity
     public int Beds { get; set; }
 
     public ICollection<HouseListEntity> HouseLists { get; set; }
+    public ICollection<HouseTileEntity> HouseTiles { get; set; }
 }

@@ -2,6 +2,7 @@ using Moq;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers.House;
 
 namespace NeoServer.Domain.Tests.Houses;
@@ -43,6 +44,32 @@ public class HouseTileAssociationTests
 
         var creatureMock = new Mock<ICreature>();
         var canEnter = tileMock.Object.CanEnterFunction(creatureMock.Object);
+        canEnter.Should().BeFalse();
+    }
+
+    [Fact]
+    public void LinkTile_CanEnterFunction_AllowsPlayerWithAdminGroup()
+    {
+        var tileMock = HouseTestDataBuilder.CreateTileMock();
+        var house = HouseTestDataBuilder.Build();
+        house.LinkTile(tileMock.Object);
+
+        var adminGroup = new Group { Id = 6, Name = "god", Access = true };
+        var adminPlayer = HouseTestDataBuilder.CreatePlayer(name: "God", group: adminGroup);
+        var canEnter = tileMock.Object.CanEnterFunction(adminPlayer);
+        canEnter.Should().BeTrue();
+    }
+
+    [Fact]
+    public void LinkTile_CanEnterFunction_BlocksPlayerWithNonAdminGroup()
+    {
+        var tileMock = HouseTestDataBuilder.CreateTileMock();
+        var house = HouseTestDataBuilder.Build();
+        house.LinkTile(tileMock.Object);
+
+        var normalGroup = new Group { Id = 1, Name = "player", Access = false };
+        var normalPlayer = HouseTestDataBuilder.CreatePlayer(name: "Regular", group: normalGroup);
+        var canEnter = tileMock.Object.CanEnterFunction(normalPlayer);
         canEnter.Should().BeFalse();
     }
 

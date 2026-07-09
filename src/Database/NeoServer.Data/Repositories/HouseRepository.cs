@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
+using NeoServer.Data.Serializers;
+using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Houses;
 using NeoServer.Domain.Repositories;
 using Serilog;
@@ -15,11 +18,13 @@ namespace NeoServer.Data.Repositories;
 public class HouseRepository : BaseRepository<HouseEntity>, IHouseRepository
 {
     private readonly IHouseFactory _houseFactory;
+    private readonly IItemFactory _itemFactory;
 
-    public HouseRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger, IHouseFactory houseFactory)
+    public HouseRepository(DbContextOptions<NeoContext> contextOptions, ILogger logger, IHouseFactory houseFactory, IItemFactory itemFactory)
         : base(contextOptions, logger)
     {
         _houseFactory = houseFactory;
+        _itemFactory = itemFactory;
     }
 
     public async Task<IEnumerable<House>> GetAll()
@@ -101,7 +106,7 @@ public class HouseRepository : BaseRepository<HouseEntity>, IHouseRepository
     {
         SaveAsync(house).GetAwaiter().GetResult();
     }
-
+    
     private async Task SaveAsync(House house)
     {
         await using var context = NewDbContext;
@@ -135,6 +140,100 @@ public class HouseRepository : BaseRepository<HouseEntity>, IHouseRepository
     public void SaveAccessList(uint houseId, uint listId, string text)
     {
         SaveAccessListAsync(houseId, listId, text).GetAwaiter().GetResult();
+    }
+
+    public async Task SaveTilesAsync(House house)
+    {
+        await using var context = NewDbContext;
+
+        var existingTiles = await context.HouseTiles
+            .Where(ht => ht.HouseId == (int)house.Id)
+            .ToListAsync();
+
+        context.HouseTiles.RemoveRange(existingTiles);
+
+        AddHouseTileEntities(house, context);
+
+        await context.SaveChangesAsync();
+    }
+
+    public async Task SaveTilesAsync(List<House> houses)
+    {
+        if (houses is null || houses.Count == 0) return;
+
+        await using var context = NewDbContext;
+
+        var houseIds = houses.Select(h => (int)h.Id).ToList();
+
+        var existingTiles = await context.HouseTiles
+            .Where(ht => houseIds.Contains(ht.HouseId))
+            .ToListAsync();
+
+        context.HouseTiles.RemoveRange(existingTiles);
+
+        foreach (var house in houses)
+        {
+            AddHouseTileEntities(house, context);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private static void AddHouseTileEntities(House house, NeoContext context)
+    {
+        if (house.Tiles is null) return;
+
+        foreach (var tile in house.Tiles)
+        {
+            if (tile.AllItems is null) continue;
+
+            var pickupableItems = new List<IItem>(tile.AllItems.Length);
+            foreach (var item in tile.AllItems)
+            {
+                if (item is not null && item.IsPickupable)
+                    pickupableItems.Add(item);
+            }
+
+            if (pickupableItems.Count == 0) continue;
+
+            var data = HouseTileItemSerializer.Serialize(pickupableItems);
+
+            var entity = new HouseTileEntity
+            {
+                HouseId = (int)house.Id,
+                TileX = tile.Location.X,
+                TileY = tile.Location.Y,
+                TileZ = tile.Location.Z,
+                Data = data
+            };
+            context.HouseTiles.Add(entity);
+        }
+    }
+
+    public async Task<IReadOnlyDictionary<uint, List<(Location Location, List<IItem> Items)>>> GetAllTileDataAsync()
+    {
+        await using var context = NewDbContext;
+        var entities = await context.HouseTiles.ToListAsync();
+
+        var result = new Dictionary<uint, List<(Location, List<IItem>)>>();
+        foreach (var entity in entities)
+        {
+            var houseId = (uint)entity.HouseId;
+            var location = new Location((ushort)entity.TileX, (ushort)entity.TileY, (byte)entity.TileZ);
+            var items = HouseTileItemSerializer.Deserialize(entity.Data, _itemFactory, location);
+
+            if (items.Count == 0) continue;
+
+            if (!result.TryGetValue(houseId, out var list))
+            {
+                list = new List<(Location, List<IItem>)>();
+                result[houseId] = list;
+            }
+
+            list.Add((location, items));
+        }
+
+        return new ReadOnlyDictionary<uint, List<(Location, List<IItem>)>>(result);
     }
 
     private async Task SaveAccessListAsync(uint houseId, uint listId, string text)

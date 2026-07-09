@@ -38,8 +38,8 @@ public class PlayerPersistenceRoutine(
         {
             while (!token.IsCancellationRequested)
             {
-                gameServer.PersistenceDispatcher.AddEvent(async () => await SavePlayers());
                 await Task.Delay(_saveInterval, token);
+                gameServer.PersistenceDispatcher.AddEvent(async () => await SavePlayers());
             }
         }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }

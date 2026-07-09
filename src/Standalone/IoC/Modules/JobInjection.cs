@@ -16,6 +16,7 @@ public static class JobInjection
         builder.AddSingleton<GameItemRoutine>();
         builder.AddSingleton<GameChatChannelRoutine>();
         builder.AddSingleton<PlayerPersistenceRoutine>();
+        builder.AddSingleton<HouseTilePersistenceRoutine>();
         builder.AddSingleton<GameWorldRoutine>();
         return builder;
     }

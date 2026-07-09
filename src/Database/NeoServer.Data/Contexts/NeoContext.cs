@@ -48,6 +48,7 @@ public class NeoContext : DbContext
 
     public DbSet<HouseEntity> Houses { get; set; }
     public DbSet<HouseListEntity> HouseList { get; set; }
+    public DbSet<HouseTileEntity> HouseTiles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -71,6 +72,7 @@ public class NeoContext : DbContext
             modelBuilder.ApplyConfiguration(new ForSqLiteAccountPremiumHistoryEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLitePlayerDeathEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ForSqLitePlayerDeathKillerEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new ForSqLiteHouseTileEntityConfiguration());
         }
         else
         {
@@ -99,6 +101,7 @@ public class NeoContext : DbContext
         modelBuilder.ApplyConfiguration(new ReportBugEntityConfiguration());
         modelBuilder.ApplyConfiguration(new HouseEntityConfiguration());
         modelBuilder.ApplyConfiguration(new HouseListEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new HouseTileEntityConfiguration());
 
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {

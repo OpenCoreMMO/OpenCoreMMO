@@ -31,11 +31,10 @@ public class WorldLoader
     private readonly ILogger logger;
     private readonly ServerConfiguration serverConfiguration;
     private readonly Domain.World.World world;
-    private readonly IHouseStore _houseStore;
+    private readonly Dictionary<uint, List<IDynamicTile>> _houseTiles = new();
 
     public WorldLoader(Domain.World.World world, ILogger logger, IItemFactory itemFactory,
-        ServerConfiguration serverConfiguration, ITileFactory tileFactory, IItemTypeStore itemTypeStore,
-        IHouseStore houseStore)
+        ServerConfiguration serverConfiguration, ITileFactory tileFactory, IItemTypeStore itemTypeStore)
     {
         this.world = world;
         this.logger = logger;
@@ -43,8 +42,10 @@ public class WorldLoader
         this.serverConfiguration = serverConfiguration;
         _tileFactory = tileFactory;
         _itemTypeStore = itemTypeStore;
-        _houseStore = houseStore;
     }
+
+    /// <summary>House tiles collected during world loading, keyed by house id.</summary>
+    public IReadOnlyDictionary<uint, List<IDynamicTile>> HouseTiles => _houseTiles;
 
     public void Load(Otbm otbm)
     {
@@ -128,48 +129,16 @@ public class WorldLoader
 
         world.AddTile(tile);
 
-        // Link house tiles, doors, and beds
+        // Collect house tiles for linking in HouseLoader
         if (isHouseTile && tile is IDynamicTile dynamicTile)
         {
-            var house = _houseStore.GetByHouseId(tileNode.HouseId);
-            if (house is null)
+            if (!_houseTiles.TryGetValue(tileNode.HouseId, out var list))
             {
-                logger.Warning("Orphan house tile at {Coordinate}: house id {HouseId} not found in store",
-                    tileNode.Coordinate, tileNode.HouseId);
-                return;
+                list = new List<IDynamicTile>();
+                _houseTiles[tileNode.HouseId] = list;
             }
 
-            try
-            {
-                house.LinkTile(dynamicTile);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Failed to link tile at {Coordinate} to house {HouseId}",
-                    tileNode.Coordinate, tileNode.HouseId);
-                return;
-            }
-
-            // Link doors and beds
-            foreach (var item in dynamicTile.AllItems)
-            {
-                if (item is null) continue;
-
-                if (item.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) == "door")
-                {
-                    if (item.Attributes is not null &&
-                        item.Attributes.TryGetAttribute(ItemAttribute.DoorId, out string doorIdStr) &&
-                        uint.TryParse(doorIdStr, out var doorId))
-                    {
-                        house.LinkDoor(doorId, item);
-                    }
-                }
-
-                if (item.Metadata.HasFlag(ItemFlag.Bed))
-                {
-                    house.LinkBed(item);
-                }
-            }
+            list.Add(dynamicTile);
         }
     }
 
