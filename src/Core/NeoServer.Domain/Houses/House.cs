@@ -68,7 +68,7 @@ public class House
 
         _tiles.Add(tile);
         tile.SetAsProtectionZone();
-        tile.CanEnterFunction = c => c is IPlayer p && IsInvited(p);
+        tile.CanEnterFunction = c => c is IPlayer p && (IsInvited(p) || p.Group?.Access == true);
 
         if (EntryPosition is null)
             EntryPosition = tile.Location;

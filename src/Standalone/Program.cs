@@ -98,10 +98,10 @@ public class Program
 
         container.Resolve<MonsterLoader>().Load();
 
-        await container.Resolve<HouseLoader>().Load();
-
         container.Resolve<WorldLoader>().Load(await otbmLoadTask);
         container.Resolve<SpawnLoader>().Load();
+
+        await container.Resolve<HouseLoader>().Load();
 
         container.Resolve<IEnumerable<IStartupLoader>>().ToList().ForEach(x => x.Load());
 
@@ -122,6 +122,7 @@ public class Program
             container.Resolve<GameWorldRoutine>().StartChecking));
 
         container.Resolve<PlayerPersistenceRoutine>().Start(_cancellationToken);
+        container.Resolve<HouseTilePersistenceRoutine>().Start(_cancellationToken);
 
         container.Resolve<EventSubscriber>().AttachEvents();
         container.Resolve<IEnumerable<IStartup>>().ToList().ForEach(x => x.Run());
@@ -188,6 +189,7 @@ public class Program
 
         container.Resolve<IScriptManager>().GlobalEvents.ExecuteShutdown();
         await container.Resolve<PlayerPersistenceRoutine>().SavePlayers();
+        await container.Resolve<HouseTilePersistenceRoutine>().SaveHouseTiles();
 
         container.Resolve<LoginListener>().Dispose();
         container.Resolve<GameListener>().Dispose();

@@ -30,7 +30,7 @@ public static class ConfigurationInjection
     {
         ServerConfiguration serverConfiguration =
             new(0, 0, null, null, null, string.Empty, string.Empty, string.Empty, 7171, 7172, false,
-                false, new SaveConfiguration(3600));
+                false, new SaveConfiguration(3600, 60));
         GameConfiguration gameConfiguration = new();
         LogConfiguration logConfiguration = new(null);
         ClientConfiguration clientConfiguration = new(null);
