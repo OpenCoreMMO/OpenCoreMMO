@@ -10,6 +10,7 @@ namespace NeoServer.Domain.Tests.Houses;
 public class HouseTileAssociationTests
 {
     [Fact]
+    [Trait("Category", "HappyPath")]
     public void LinkTile_InstallsCanEnterFunction_BlockingUninvitedPlayer()
     {
         var tileMock = HouseTestDataBuilder.CreateTileMock();
@@ -23,6 +24,7 @@ public class HouseTileAssociationTests
     }
 
     [Fact]
+    [Trait("Category", "HappyPath")]
     public void LinkTile_CanEnterFunction_AllowsInvitedPlayer()
     {
         var tileMock = HouseTestDataBuilder.CreateTileMock();
@@ -36,6 +38,7 @@ public class HouseTileAssociationTests
     }
 
     [Fact]
+    [Trait("Category", "EdgeCase")]
     public void LinkTile_NonPlayerCreature_CanEnterFalse()
     {
         var tileMock = HouseTestDataBuilder.CreateTileMock();
@@ -48,6 +51,7 @@ public class HouseTileAssociationTests
     }
 
     [Fact]
+    [Trait("Category", "HappyPath")]
     public void LinkTile_CanEnterFunction_AllowsPlayerWithAdminGroup()
     {
         var tileMock = HouseTestDataBuilder.CreateTileMock();
@@ -61,6 +65,7 @@ public class HouseTileAssociationTests
     }
 
     [Fact]
+    [Trait("Category", "Validation")]
     public void LinkTile_CanEnterFunction_BlocksPlayerWithNonAdminGroup()
     {
         var tileMock = HouseTestDataBuilder.CreateTileMock();
@@ -74,6 +79,7 @@ public class HouseTileAssociationTests
     }
 
     [Fact]
+    [Trait("Category", "HappyPath")]
     public void GetTileCount_AfterLinkingTiles_ReturnsCount()
     {
         var house = HouseTestDataBuilder.Build();
@@ -85,6 +91,7 @@ public class HouseTileAssociationTests
     }
 
     [Fact]
+    [Trait("Category", "HappyPath")]
     public void LinkTile_SetsProtectionZoneFlag()
     {
         var tileMock = HouseTestDataBuilder.CreateTileMock();
@@ -96,6 +103,7 @@ public class HouseTileAssociationTests
     }
 
     [Fact]
+    [Trait("Category", "ErrorCondition")]
     public void LinkTile_SameTileToSameHouseTwice_Throws()
     {
         var tileMock = HouseTestDataBuilder.CreateTileMock();
@@ -107,6 +115,7 @@ public class HouseTileAssociationTests
     }
 
     [Fact]
+    [Trait("Category", "ErrorCondition")]
     public void LinkTile_SameTileToTwoDifferentHouses_Throws()
     {
         var tileMock = HouseTestDataBuilder.CreateTileMock();
