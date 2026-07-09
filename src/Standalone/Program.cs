@@ -189,6 +189,7 @@ public class Program
 
         container.Resolve<IScriptManager>().GlobalEvents.ExecuteShutdown();
         await container.Resolve<PlayerPersistenceRoutine>().SavePlayers();
+        await container.Resolve<HouseTilePersistenceRoutine>().SaveHouseTiles();
 
         container.Resolve<LoginListener>().Dispose();
         container.Resolve<GameListener>().Dispose();

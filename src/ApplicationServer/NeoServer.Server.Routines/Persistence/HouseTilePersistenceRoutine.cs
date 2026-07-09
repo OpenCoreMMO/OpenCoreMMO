@@ -38,7 +38,7 @@ public class HouseTilePersistenceRoutine(
         }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
 
-    private async Task SaveHouseTiles()
+    public async Task SaveHouseTiles()
     {
         try
         {
