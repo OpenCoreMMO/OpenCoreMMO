@@ -78,7 +78,8 @@ public class TileFactory(ILogger logger) : ITileFactory
             downItems.Add(item);
         }
 
-        if (hasUnpassableItem &&
+        if (!isHouseTile &&
+            hasUnpassableItem &&
             !hasMoveableItem &&
             !hasTransformableItem && 
             !hasHeight && 
