@@ -46,12 +46,12 @@ public class HouseTilePersistenceRoutine(
 
             if (houses is null || houses.Count == 0) return;
 
-            logger.Information("Saving {Count} house tiles...", houses.Count);
+            logger.Information("Saving tile data for {Count} houses...", houses.Count);
             _stopwatch.Restart();
 
             await houseRepository.SaveTilesAsync(houses);
 
-            logger.Information("{Count} house tiles saved in {Elapsed} ms", houses.Count, _stopwatch.ElapsedMilliseconds);
+            logger.Information("Tile data for {Count} houses saved in {Elapsed} ms", houses.Count, _stopwatch.ElapsedMilliseconds);
         }
         catch (Exception e)
         {
