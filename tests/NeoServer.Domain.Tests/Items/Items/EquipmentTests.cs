@@ -97,7 +97,7 @@ public class EquipmentTests : IAsyncLifetime
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.AbsorbPercentEnergy, 10);
 
         //assert
-        sut.NoCharges.Should().BeFalse();
+        sut.Charges.IsEmpty.Should().BeFalse();
     }
 
     [Fact]
@@ -108,10 +108,10 @@ public class EquipmentTests : IAsyncLifetime
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.AbsorbPercentEnergy, 10);
 
         //act
-        sut.DecreaseCharges();
+        sut.Charges.DecreaseAmount();
 
         //assert
-        sut.NoCharges.Should().BeTrue();
+        sut.Charges.IsEmpty.Should().BeTrue();
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public class EquipmentTests : IAsyncLifetime
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.AbsorbPercentEnergy, 10);
 
         //assert
-        sut.NoCharges.Should().BeFalse();
+        (sut.Charges?.IsEmpty ?? false).Should().BeFalse();
     }
 
     [Fact]
@@ -853,9 +853,9 @@ public class EquipmentTests : IAsyncLifetime
 
         //assert
         sut.InspectionText.Should().Be(" that has 2 charges left");
-        sut.DecreaseCharges();
+        sut.Charges.DecreaseAmount();
         sut.InspectionText.Should().Be(" that has 1 charge left");
-        sut.DecreaseCharges();
+        sut.Charges.DecreaseAmount();
         sut.InspectionText.Should().Be(" that has no charges left");
     }
 

@@ -12,16 +12,16 @@ public static class ItemFactoryTestBuilder
     {
         var itemTypeStore = ItemTypeStoreTestBuilder.Build(itemTypes);
 
-        return new ItemFactory(null, null, new WeaponFactory(new ChargeableFactory(), itemTypeStore), null, null, null,
+        return new ItemFactory(null, null, new WeaponFactory(new ChargeCounterFactory(), itemTypeStore), null, null, null,
             null, null, itemTypeStore, null);
     }
 
     public static IItemFactory Build(IItemTypeStore itemTypeStore, IMap map = null)
     {
-        var chargeableFactory = new ChargeableFactory();
+        var chargeableFactory = new ChargeCounterFactory();
 
         return new ItemFactory(null, new DefenseEquipmentFactory(itemTypeStore, chargeableFactory),
-            new WeaponFactory(new ChargeableFactory(), itemTypeStore), null, null, null, null, null, itemTypeStore,
+            new WeaponFactory(new ChargeCounterFactory(), itemTypeStore), null, null, null, null, null, itemTypeStore,
             null);
     }
 }

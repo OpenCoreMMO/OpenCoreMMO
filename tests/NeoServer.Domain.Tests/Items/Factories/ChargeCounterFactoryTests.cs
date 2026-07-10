@@ -5,7 +5,7 @@ using NeoServer.Domain.Items.Items.Attributes;
 
 namespace NeoServer.Domain.Tests.Items.Factories;
 
-public class ChargeableFactoryTests
+public class ChargeCounterFactoryTests
 {
     [Fact]
     [Trait("Category", "HappyPath")]
@@ -15,15 +15,15 @@ public class ChargeableFactoryTests
         var itemType = new ItemType();
         itemType.Attributes.SetAttribute(ItemTypeAttribute.Charges, (ushort)200);
         itemType.Attributes.SetAttribute(ItemTypeAttribute.ShowCharges, (ushort)1);
-        var sut = new ChargeableFactory();
+        var sut = new ChargeCounterFactory();
 
         // Act
         var chargeable = sut.Create(itemType);
 
         // Assert
         chargeable.Should().NotBeNull();
-        chargeable.Charges.Should().Be(200);
-        chargeable.ShowCharges.Should().BeTrue();
+        chargeable.Amount.Should().Be(200);
+        chargeable.ShowAmount.Should().BeTrue();
     }
 
     [Fact]
@@ -34,15 +34,15 @@ public class ChargeableFactoryTests
         var itemType = new ItemType();
         itemType.Attributes.SetAttribute(ItemTypeAttribute.Charges, (ushort)200);
         itemType.Attributes.SetAttribute(ItemTypeAttribute.ShowCharges, (ushort)1);
-        var sut = new ChargeableFactory();
+        var sut = new ChargeCounterFactory();
 
         // Act
         var chargeable = sut.Create(itemType, overrideCharges: 150);
 
         // Assert
         chargeable.Should().NotBeNull();
-        chargeable.Charges.Should().Be(150);
-        chargeable.ShowCharges.Should().BeTrue();
+        chargeable.Amount.Should().Be(150);
+        chargeable.ShowAmount.Should().BeTrue();
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class ChargeableFactoryTests
     {
         // Arrange
         var itemType = new ItemType();
-        var sut = new ChargeableFactory();
+        var sut = new ChargeCounterFactory();
 
         // Act
         var chargeable = sut.Create(itemType);
@@ -66,14 +66,14 @@ public class ChargeableFactoryTests
     {
         // Arrange
         var itemType = new ItemType();
-        var sut = new ChargeableFactory();
+        var sut = new ChargeCounterFactory();
 
         // Act
         var chargeable = sut.Create(itemType, overrideCharges: 99);
 
         // Assert
         chargeable.Should().NotBeNull();
-        chargeable.Charges.Should().Be(99);
+        chargeable.Amount.Should().Be(99);
     }
 
     [Fact]
@@ -84,15 +84,15 @@ public class ChargeableFactoryTests
         var itemType = new ItemType();
         itemType.Attributes.SetAttribute(ItemTypeAttribute.Charges, (ushort)50);
         itemType.Attributes.SetAttribute(ItemTypeAttribute.ShowCharges, (ushort)0);
-        var sut = new ChargeableFactory();
+        var sut = new ChargeCounterFactory();
 
         // Act
         var chargeable = sut.Create(itemType);
 
         // Assert
         chargeable.Should().NotBeNull();
-        chargeable.Charges.Should().Be(50);
-        chargeable.ShowCharges.Should().BeFalse();
+        chargeable.Amount.Should().Be(50);
+        chargeable.ShowAmount.Should().BeFalse();
     }
 
     [Fact]
@@ -102,15 +102,15 @@ public class ChargeableFactoryTests
         // Arrange
         var itemType = new ItemType();
         itemType.Attributes.SetAttribute(ItemTypeAttribute.Charges, (ushort)50);
-        var sut = new ChargeableFactory();
+        var sut = new ChargeCounterFactory();
 
         // Act
         var chargeable = sut.Create(itemType);
 
         // Assert
         chargeable.Should().NotBeNull();
-        chargeable.Charges.Should().Be(50);
-        chargeable.ShowCharges.Should().BeTrue();
+        chargeable.Amount.Should().Be(50);
+        chargeable.ShowAmount.Should().BeTrue();
     }
 
     [Fact]
@@ -120,14 +120,14 @@ public class ChargeableFactoryTests
         // Arrange
         var itemType = new ItemType();
         itemType.Attributes.SetAttribute(ItemTypeAttribute.Charges, (ushort)200);
-        var sut = new ChargeableFactory();
+        var sut = new ChargeCounterFactory();
 
         // Act
         var chargeable = sut.Create(itemType, overrideCharges: 0);
 
         // Assert
         chargeable.Should().NotBeNull();
-        chargeable.Charges.Should().Be(0);
-        chargeable.NoCharges.Should().BeTrue();
+        chargeable.Amount.Should().Be(0);
+        chargeable.IsEmpty.Should().BeTrue();
     }
 }

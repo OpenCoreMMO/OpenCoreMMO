@@ -21,7 +21,7 @@ public static class ItemEntityParser
             DecayTo = item.Decay?.DecaysTo,
             DecayDuration = item.Decay?.Duration,
             DecayElapsed = item.Decay?.Elapsed,
-            Charges = item is IChargeable chargeable ? chargeable.Charges : null,
+            Charges = item.Charges?.Amount,
             Attributes = item.ExtractAllAttributes()
         };
 
