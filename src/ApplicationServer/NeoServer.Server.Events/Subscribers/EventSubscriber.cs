@@ -55,7 +55,7 @@ public sealed class EventSubscriber
             _container.GetRequiredService<NotificationSentEventHandler>().Execute;
         _gameServer.OnOpened += _container.GetRequiredService<ServerOpenedEventHandler>().Execute;
 
-        Decayable.OnStarted += _itemStartedDecayingEventHandler.Execute;
+        DecayTracker.OnStarted += _itemStartedDecayingEventHandler.Execute;
 
         IConsumable.OnUsed += _itemUsedEventHandler.Execute;
         FieldRune.OnUsedOnTile += _fieldRuneUsedEventHandler.Execute;

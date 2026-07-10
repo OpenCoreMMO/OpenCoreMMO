@@ -158,7 +158,7 @@ public abstract class Equipment : BaseItem, IEquipment
         UpdateMetadata(TransformEquipItem);
 
         SkillBonus ??= new SkillBonus(this);
-        Decay ??= DecayableFactory.CreateIfItemIsDecayable(this);
+        Decay ??= DecayTrackerFactory.CreateIfItemIsDecayable(this);
         Protection ??= ProtectionFactory.Create(this);
 
         OnTransformed?.Invoke(before, Metadata);

@@ -3,36 +3,28 @@ using NeoServer.Domain.Common.Item;
 
 namespace NeoServer.Domain.Items.Items.Attributes;
 
-public delegate void PauseDecay(Decayable item);
+public delegate void PauseDecay(DecayTracker item);
 
 public delegate void StartDecay(IItem item);
 
-public class Decayable : IDecay
+public class DecayTracker(IItem item) : IDecay
 {
-    private readonly IItem _item;
-
     private uint _duration;
 
-    private uint _lastElapsed;
+    private uint _lastElapsed = item.Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.DecayElapsed);
     private ulong _startedToDecayTime;
 
-    public Decayable(IItem item)
-    {
-        _lastElapsed = item.Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.DecayElapsed);
-        _item = item;
-    }
-
     private bool ShowDuration =>
-        !_item.Metadata.Attributes.TryGetAttribute<byte>(ItemTypeAttribute.ShowDuration, out var showDuration) ||
+        !item.Metadata.Attributes.TryGetAttribute<byte>(ItemTypeAttribute.ShowDuration, out var showDuration) ||
         showDuration == 1;
 
     public bool StartedToDecay => _startedToDecayTime != default;
     public bool IsPaused { get; private set; } = true;
-    public ushort DecaysTo => _item.Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.ExpireTarget);
+    public ushort DecaysTo => item.Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.ExpireTarget);
 
-    public uint Duration => _duration = _item.Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.Duration) == 0
+    public uint Duration => _duration = item.Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.Duration) == 0
         ? _duration
-        : _item.Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.Duration);
+        : item.Metadata.Attributes.GetAttribute<uint>(ItemTypeAttribute.Duration);
 
     public uint Remaining => Duration <= Elapsed ? 0 : Math.Max(0, Duration - Elapsed);
 
@@ -53,13 +45,19 @@ public class Decayable : IDecay
     public bool Expired => Elapsed >= Duration;
     public bool ShouldDisappear => DecaysTo == default;
 
+    internal void SetElapsed(uint elapsed)
+    {
+        if (_startedToDecayTime != default) return;
+        _lastElapsed = elapsed;
+    }
+
     public void StartDecay()
     {
         if (Expired) return;
         IsPaused = false;
         _startedToDecayTime = (ulong)DateTime.UtcNow.Ticks;
 
-        OnStarted?.Invoke(_item);
+        OnStarted?.Invoke(item);
     }
 
     public void PauseDecay()

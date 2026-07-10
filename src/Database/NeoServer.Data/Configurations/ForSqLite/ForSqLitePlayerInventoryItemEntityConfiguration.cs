@@ -25,6 +25,15 @@ public class ForSqLitePlayerInventoryItemEntityConfiguration : IEntityTypeConfig
         entity.Property(e => e.Charges)
             .HasColumnType("int");
 
+        entity.Property(e => e.DecayTo)
+            .HasColumnType("int");
+
+        entity.Property(e => e.DecayDuration)
+            .HasColumnType("int");
+
+        entity.Property(e => e.DecayElapsed)
+            .HasColumnType("int");
+
         entity.Property(e => e.SlotId)
             .IsRequired();
 
