@@ -23,11 +23,12 @@ public class WeaponFactory : IFactory
     public IItem Create(
         IItemType itemType,
         Location location,
-        IDictionary<ItemAttribute, IConvertible> itemAttributes)
+        IDictionary<ItemAttribute, IConvertible> itemAttributes,
+        ushort? overrideCharges = null)
     {
         if (MeleeWeapon.IsApplicable(itemType))
         {
-            var chargeable = _chargeableFactory.Create(itemType);
+            var chargeable = _chargeableFactory.Create(itemType, overrideCharges);
             return new MeleeWeapon(itemType, location, itemAttributes)
             {
                 Chargeable = chargeable,
@@ -37,7 +38,7 @@ public class WeaponFactory : IFactory
 
         if (DistanceWeapon.IsApplicable(itemType))
         {
-            var chargeable = _chargeableFactory.Create(itemType);
+            var chargeable = _chargeableFactory.Create(itemType, overrideCharges);
             return new DistanceWeapon(itemType, location)
             {
                 ItemTypeFinder = _itemTypeStore.Get,
@@ -47,7 +48,7 @@ public class WeaponFactory : IFactory
 
         if (MagicWeapon.IsApplicable(itemType))
         {
-            var chargeable = _chargeableFactory.Create(itemType);
+            var chargeable = _chargeableFactory.Create(itemType, overrideCharges);
             return new MagicWeapon(itemType, location)
             {
                 ItemTypeFinder = _itemTypeStore.Get,
