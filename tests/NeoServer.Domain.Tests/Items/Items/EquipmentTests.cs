@@ -22,7 +22,7 @@ public class EquipmentTests : IAsyncLifetime
     public Task DisposeAsync()
     {
         // Cleanup logic after each test
-        EventSubscriptionCleanUp.CleanUp<Decayable>(nameof(Decayable.OnStarted));
+        EventSubscriptionCleanUp.CleanUp<DecayTracker>(nameof(DecayTracker.OnStarted));
         return Task.CompletedTask;
     }
 
@@ -339,7 +339,7 @@ public class EquipmentTests : IAsyncLifetime
         };
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
-        Decayable.OnStarted += decayableItemManager.Add;
+        DecayTracker.OnStarted += decayableItemManager.Add;
 
         //act
         player.Inventory.AddItem(sut, (byte)Slot.Ring);
@@ -586,7 +586,7 @@ public class EquipmentTests : IAsyncLifetime
         ], null, itemTypeStore.Get);
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
-        Decayable.OnStarted += decayableItemManager.Add;
+        DecayTracker.OnStarted += decayableItemManager.Add;
 
         //act
         player.Inventory.AddItem(sut, (byte)Slot.Ring);
@@ -637,7 +637,7 @@ public class EquipmentTests : IAsyncLifetime
 
         var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore();
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
-        Decayable.OnStarted += decayableItemManager.Add;
+        DecayTracker.OnStarted += decayableItemManager.Add;
 
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
         [
@@ -716,7 +716,7 @@ public class EquipmentTests : IAsyncLifetime
             item2Equipped.Metadata, item3.Metadata, item3Equipped.Metadata);
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(map, itemTypeStore);
-        Decayable.OnStarted += decayableItemManager.Add;
+        DecayTracker.OnStarted += decayableItemManager.Add;
 
         //assert first item
         item1.Decay?.Duration.Should().Be(0);

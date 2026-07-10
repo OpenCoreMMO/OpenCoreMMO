@@ -2,7 +2,7 @@
 
 namespace NeoServer.Domain.Common.Contracts.Items;
 
-public delegate void PauseDecay(Decayable item);
+public delegate void PauseDecay(DecayTracker item);
 
 public delegate void StartDecay(IItem item);
 
@@ -14,5 +14,5 @@ public interface IDecay
 
 public interface IHasDecay
 {
-    public Decayable Decay { get; }
+    public DecayTracker Decay { get; }
 }

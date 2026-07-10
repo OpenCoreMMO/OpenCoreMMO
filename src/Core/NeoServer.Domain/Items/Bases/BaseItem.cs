@@ -149,7 +149,7 @@ public abstract class BaseItem : IItem
 
     #region Decay
 
-    public Decayable Decay { get; protected set; }
+    public DecayTracker Decay { get; protected set; }
 
     #endregion
 

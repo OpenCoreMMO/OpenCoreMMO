@@ -62,7 +62,7 @@ internal static class InventoryManager
                 SlotId = (int)slot,
                 ServerId = item?.Metadata?.ServerId ?? 0,
                 Attributes = item.ExtractAllAttributes(),
-                Charges = item?.Charges?.Amount
+                Charges = item?.Charges?.Amount,
                 DecayTo = item?.Decay?.DecaysTo,
                 DecayDuration = item?.Decay?.Duration,
                 DecayElapsed = item?.Decay?.Elapsed

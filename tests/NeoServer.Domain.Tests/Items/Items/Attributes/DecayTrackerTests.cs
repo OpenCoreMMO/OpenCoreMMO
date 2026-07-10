@@ -8,7 +8,7 @@ using NeoServer.Domain.Tests.Server;
 
 namespace NeoServer.Domain.Tests.Items.Items.Attributes;
 
-public class DecayableTests : IAsyncLifetime
+public class DecayTrackerTests : IAsyncLifetime
 {
     public Task InitializeAsync()
     {
@@ -19,7 +19,7 @@ public class DecayableTests : IAsyncLifetime
     {
         ThreadBlocking.Wait();
         // Cleanup logic after each test
-        EventSubscriptionCleanUp.CleanUp<Decayable>(nameof(Decayable.OnStarted));
+        EventSubscriptionCleanUp.CleanUp<DecayTracker>(nameof(DecayTracker.OnStarted));
 
         ThreadBlocking.Release();
         return Task.CompletedTask;
@@ -39,7 +39,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.Duration, 60),
                 (ItemTypeAttribute.ExpireTarget, 2)
             ]);
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //assert
         sut.Expired.Should().BeFalse();
@@ -58,7 +58,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.Duration, 60),
                 (ItemTypeAttribute.ExpireTarget, 2)
             ]);
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -81,7 +81,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.Duration, 2),
                 (ItemTypeAttribute.ExpireTarget, 2)
             ]);
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -104,7 +104,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.Duration, 2),
                 (ItemTypeAttribute.ExpireTarget, 2)
             ]);
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -124,7 +124,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.Duration, 2),
                 (ItemTypeAttribute.ExpireTarget, 2)
             ]);
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //assert
         sut.StartedToDecay.Should().BeFalse();
@@ -140,7 +140,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.Duration, 20),
                 (ItemTypeAttribute.ExpireTarget, 2)
             ]);
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -170,7 +170,7 @@ public class DecayableTests : IAsyncLifetime
             [
                 (ItemTypeAttribute.Duration, 20)
             ]);
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //assert
         sut.ShouldDisappear.Should().BeTrue();
@@ -186,7 +186,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.Duration, 20),
                 (ItemTypeAttribute.ExpireTarget, 2)
             ]);
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //assert
         sut.ShouldDisappear.Should().BeFalse();
@@ -203,7 +203,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 2)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -224,7 +224,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.Duration, 20),
                 (ItemTypeAttribute.ExpireTarget, 2)
             ]);
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -247,7 +247,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 2)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //assert
         sut.Remaining.Should().Be(20);
@@ -264,7 +264,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 2)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -286,7 +286,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 2)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -308,7 +308,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 2)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         var emitted = false;
         sut.OnPaused += _ => emitted = true;
@@ -332,10 +332,10 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 10)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         var emitted = false;
-        Decayable.OnStarted += _ => emitted = true;
+        DecayTracker.OnStarted += _ => emitted = true;
         //act
         sut.StartDecay();
         //assert
@@ -354,10 +354,10 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 10)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         var emitted = false;
-        Decayable.OnStarted += _ => emitted = true;
+        DecayTracker.OnStarted += _ => emitted = true;
         //act
         sut.StartDecay();
         //assert
@@ -375,7 +375,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 10)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -397,7 +397,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 10)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -419,7 +419,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 10)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //assert
         sut.ToString().Should().Be("is brand-new");
@@ -436,7 +436,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 10)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -456,7 +456,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 10)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -476,7 +476,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 10)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -497,7 +497,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ShowDuration, 0)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
         //act
         sut.StartDecay();
         //assert
@@ -515,7 +515,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 10)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -536,7 +536,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 10)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
         using var monitor = sut.Monitor();
 
 
@@ -559,7 +559,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 10)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -580,7 +580,7 @@ public class DecayableTests : IAsyncLifetime
                 (ItemTypeAttribute.ExpireTarget, 10)
             ]);
 
-        var sut = new Decayable(decayableItem);
+        var sut = new DecayTracker(decayableItem);
 
         //act
         sut.StartDecay();
@@ -617,7 +617,7 @@ public class DecayableTests : IAsyncLifetime
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(map, itemTypeStore);
 
-        Decayable.OnStarted += decayableItemManager.Add;
+        DecayTracker.OnStarted += decayableItemManager.Add;
 
         //act
         item1.StartDecay();
