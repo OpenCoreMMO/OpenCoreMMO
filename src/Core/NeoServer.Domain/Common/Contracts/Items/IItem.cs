@@ -122,6 +122,9 @@ public interface IItem : IThing, IHasDecay
             return count;
         }
 
+        if (this is IChargeable chargeable)
+            return chargeable.Charges;
+
         var charges = Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.Charges);
         return charges;
     }

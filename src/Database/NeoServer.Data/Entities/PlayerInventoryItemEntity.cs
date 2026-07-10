@@ -9,6 +9,7 @@ public sealed class PlayerInventoryItemEntity
     public int ServerId { get; set; }
     public int SlotId { get; set; }
     public short Amount { get; set; }
+    public ushort? Charges { get; set; }
 
     public Dictionary<string, string> Attributes { get; set; } = new();
 

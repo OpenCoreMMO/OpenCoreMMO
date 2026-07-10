@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Extensions;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Data.Parsers;
@@ -43,7 +45,14 @@ public static class ItemEntityParser
             foreach (var itemRecord in containerItemsRecords)
             {
                 //todo: check this, if need pass Metadata to itemFactory.Create
-                var item = itemFactory.Create((ushort)itemRecord.ServerId, location, null, null,
+                var itemTypeAttributes = itemRecord.Charges.HasValue
+                    ? new Dictionary<ItemTypeAttribute, IConvertible>
+                    {
+                        { ItemTypeAttribute.Charges, itemRecord.Charges.Value }
+                    }
+                    : null;
+
+                var item = itemFactory.Create((ushort)itemRecord.ServerId, location, itemTypeAttributes, null,
                     itemRecord.GetAttributes(), itemRecord.GetCustomAttributes());
 
                 if (item is ICumulative cumulativeItem && itemRecord.Amount > 1)

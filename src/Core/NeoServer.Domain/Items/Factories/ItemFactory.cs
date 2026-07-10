@@ -227,8 +227,15 @@ public class ItemFactory : IItemFactory
             if (ItemFromScriptFactory.Create(itemType, location, itemTypeAttributes, script) is { } instance)
                 return instance;
 
-        if (DefenseEquipmentFactory?.Create(itemType, location) is { } equipment) return equipment;
-        if (WeaponFactory?.Create(itemType, location, itemAttributes) is { } weapon) return weapon;
+        ushort? chargesOverride = null;
+        if (itemTypeAttributes?.TryGetValue(ItemTypeAttribute.Charges, out var chargesVal) == true)
+        {
+            chargesOverride = Convert.ToUInt16(chargesVal);
+            itemTypeAttributes.Remove(ItemTypeAttribute.Charges);
+        }
+
+        if (DefenseEquipmentFactory?.Create(itemType, location, chargesOverride) is { } equipment) return equipment;
+        if (WeaponFactory?.Create(itemType, location, itemAttributes, chargesOverride) is { } weapon) return weapon;
         if (ContainerFactory?.Create(itemType, location, children) is { } container) return container;
         if (RuneFactory?.Create(itemType, location) is { } rune) return rune;
         if (GroundFactory?.Create(itemType, location) is { } ground) return ground;

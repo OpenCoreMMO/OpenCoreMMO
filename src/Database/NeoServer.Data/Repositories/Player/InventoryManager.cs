@@ -5,6 +5,7 @@ using NeoServer.Data.Contexts;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Extensions;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Creatures.Player.Inventory;
 
@@ -45,6 +46,7 @@ internal static class InventoryManager
                 playerInventoryItemEntity.PlayerId = (int)player.Id;
                 playerInventoryItemEntity.SlotId = (int)slot;
                 playerInventoryItemEntity.Attributes = item.ExtractAllAttributes();
+                playerInventoryItemEntity.Charges = (item as IChargeable)?.Charges;
 
                 neoContext.PlayerInventoryItems.Update(playerInventoryItemEntity);
                 continue;
@@ -56,7 +58,8 @@ internal static class InventoryManager
                 PlayerId = (int)player.Id,
                 SlotId = (int)slot,
                 ServerId = item?.Metadata?.ServerId ?? 0,
-                Attributes = item.ExtractAllAttributes()
+                Attributes = item.ExtractAllAttributes(),
+                Charges = (item as IChargeable)?.Charges
             });
         }
     }

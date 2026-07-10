@@ -7,9 +7,18 @@ namespace NeoServer.Domain.Items.Factories.AttributeFactory;
 
 public class ChargeableFactory : IFactory
 {
-    public IChargeable Create(IItemType itemType)
+    public IChargeable Create(IItemType itemType, ushort? overrideCharges = null)
     {
-        if (!itemType.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.Charges, out var charges)) return null;
+        ushort charges;
+        if (overrideCharges.HasValue)
+        {
+            charges = overrideCharges.Value;
+        }
+        else
+        {
+            if (!itemType.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.Charges, out charges)) return null;
+        }
+
         if (!itemType.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ShowCharges, out var showCharges))
             return new Chargeable(charges, true);
 

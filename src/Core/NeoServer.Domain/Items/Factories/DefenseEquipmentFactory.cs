@@ -18,11 +18,11 @@ public class DefenseEquipmentFactory : IFactory
         _chargeableFactory = chargeableFactory;
     }
 
-    public BodyDefenseEquipment Create(IItemType itemType, Location location)
+    public BodyDefenseEquipment Create(IItemType itemType, Location location, ushort? overrideCharges = null)
     {
         if (!BodyDefenseEquipment.IsApplicable(itemType)) return null;
 
-        var chargeable = _chargeableFactory.Create(itemType);
+        var chargeable = _chargeableFactory.Create(itemType, overrideCharges);
 
         return new BodyDefenseEquipment(itemType, location)
         {

@@ -22,6 +22,9 @@ public class ForSqLitePlayerInventoryItemEntityConfiguration : IEntityTypeConfig
             .IsRequired()
             .HasDefaultValueSql("1");
 
+        entity.Property(e => e.Charges)
+            .HasColumnType("int");
+
         entity.Property(e => e.SlotId)
             .IsRequired();
 
