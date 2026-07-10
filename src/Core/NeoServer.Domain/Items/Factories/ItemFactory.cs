@@ -231,7 +231,6 @@ public class ItemFactory : IItemFactory
         if (itemTypeAttributes?.TryGetValue(ItemTypeAttribute.Charges, out var chargesVal) == true)
         {
             chargesOverride = Convert.ToUInt16(chargesVal);
-            itemTypeAttributes.Remove(ItemTypeAttribute.Charges);
         }
 
         if (DefenseEquipmentFactory?.Create(itemType, location, chargesOverride) is { } equipment) return equipment;
