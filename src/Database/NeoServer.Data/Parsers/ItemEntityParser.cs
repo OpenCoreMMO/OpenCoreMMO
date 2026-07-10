@@ -45,12 +45,15 @@ public static class ItemEntityParser
             foreach (var itemRecord in containerItemsRecords)
             {
                 //todo: check this, if need pass Metadata to itemFactory.Create
-                var itemTypeAttributes = itemRecord.Charges.HasValue
-                    ? new Dictionary<ItemTypeAttribute, IConvertible>
-                    {
-                        { ItemTypeAttribute.Charges, itemRecord.Charges.Value }
-                    }
-                    : null;
+                var itemTypeAttributes = new Dictionary<ItemTypeAttribute, IConvertible>();
+                if (itemRecord.Charges.HasValue)
+                    itemTypeAttributes[ItemTypeAttribute.Charges] = itemRecord.Charges.Value;
+                if (itemRecord.DecayElapsed.HasValue && itemRecord.DecayElapsed.Value > 0)
+                    itemTypeAttributes[ItemTypeAttribute.DecayElapsed] = itemRecord.DecayElapsed.Value;
+                if (itemRecord.DecayDuration.HasValue && itemRecord.DecayDuration.Value > 0)
+                    itemTypeAttributes[ItemTypeAttribute.Duration] = itemRecord.DecayDuration.Value;
+                if (itemTypeAttributes.Count == 0)
+                    itemTypeAttributes = null;
 
                 var item = itemFactory.Create((ushort)itemRecord.ServerId, location, itemTypeAttributes, null,
                     itemRecord.GetAttributes(), itemRecord.GetCustomAttributes());

@@ -276,12 +276,15 @@ public class PlayerLoader(
         {
             var location = item.SlotId <= 10 ? Location.Inventory((Slot)item.SlotId) : Location.Container(0, 0);
 
-            var itemTypeAttributes = item.Charges.HasValue
-                ? new Dictionary<ItemTypeAttribute, IConvertible>
-                {
-                    { ItemTypeAttribute.Charges, item.Charges.Value }
-                }
-                : null;
+            var itemTypeAttributes = new Dictionary<ItemTypeAttribute, IConvertible>();
+            if (item.Charges.HasValue)
+                itemTypeAttributes[ItemTypeAttribute.Charges] = item.Charges.Value;
+            if (item.DecayElapsed.HasValue && item.DecayElapsed.Value > 0)
+                itemTypeAttributes[ItemTypeAttribute.DecayElapsed] = item.DecayElapsed.Value;
+            if (item.DecayDuration.HasValue && item.DecayDuration.Value > 0)
+                itemTypeAttributes[ItemTypeAttribute.Duration] = item.DecayDuration.Value;
+            if (itemTypeAttributes.Count == 0)
+                itemTypeAttributes = null;
 
             //todo: check this, if need pass Metadata to itemFactory.Create
             var createdItem = ItemFactory.Create((ushort)item.ServerId, location, itemTypeAttributes, null, item.GetAttributes(),

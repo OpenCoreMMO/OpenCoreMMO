@@ -47,6 +47,9 @@ internal static class InventoryManager
                 playerInventoryItemEntity.SlotId = (int)slot;
                 playerInventoryItemEntity.Attributes = item.ExtractAllAttributes();
                 playerInventoryItemEntity.Charges = (item as IChargeable)?.Charges;
+                playerInventoryItemEntity.DecayTo = item?.Decay?.DecaysTo;
+                playerInventoryItemEntity.DecayDuration = item?.Decay?.Duration;
+                playerInventoryItemEntity.DecayElapsed = item?.Decay?.Elapsed;
 
                 neoContext.PlayerInventoryItems.Update(playerInventoryItemEntity);
                 continue;
@@ -59,7 +62,10 @@ internal static class InventoryManager
                 SlotId = (int)slot,
                 ServerId = item?.Metadata?.ServerId ?? 0,
                 Attributes = item.ExtractAllAttributes(),
-                Charges = (item as IChargeable)?.Charges
+                Charges = (item as IChargeable)?.Charges,
+                DecayTo = item?.Decay?.DecaysTo,
+                DecayDuration = item?.Decay?.Duration,
+                DecayElapsed = item?.Decay?.Elapsed
             });
         }
     }

@@ -53,6 +53,12 @@ public class Decayable : IDecay
     public bool Expired => Elapsed >= Duration;
     public bool ShouldDisappear => DecaysTo == default;
 
+    internal void SetElapsed(uint elapsed)
+    {
+        if (_startedToDecayTime != default) return;
+        _lastElapsed = elapsed;
+    }
+
     public void StartDecay()
     {
         if (Expired) return;
