@@ -11,47 +11,48 @@ namespace NeoServer.Domain.Items.Factories;
 
 public class WeaponFactory : IFactory
 {
-    private readonly ChargeableFactory _chargeableFactory;
+    private readonly ChargeCounterFactory _chargeCounterFactory;
     private readonly IItemTypeStore _itemTypeStore;
 
-    public WeaponFactory(ChargeableFactory chargeableFactory, IItemTypeStore itemTypeStore)
+    public WeaponFactory(ChargeCounterFactory chargeCounterFactory, IItemTypeStore itemTypeStore)
     {
-        _chargeableFactory = chargeableFactory;
+        _chargeCounterFactory = chargeCounterFactory;
         _itemTypeStore = itemTypeStore;
     }
 
     public IItem Create(
         IItemType itemType,
         Location location,
-        IDictionary<ItemAttribute, IConvertible> itemAttributes)
+        IDictionary<ItemAttribute, IConvertible> itemAttributes,
+        ushort? overrideCharges = null)
     {
         if (MeleeWeapon.IsApplicable(itemType))
         {
-            var chargeable = _chargeableFactory.Create(itemType);
+            var chargeCounter = _chargeCounterFactory.Create(itemType, overrideCharges);
             return new MeleeWeapon(itemType, location, itemAttributes)
             {
-                Chargeable = chargeable,
+                Charges = chargeCounter,
                 ItemTypeFinder = _itemTypeStore.Get
             };
         }
 
         if (DistanceWeapon.IsApplicable(itemType))
         {
-            var chargeable = _chargeableFactory.Create(itemType);
+            var chargeCounter = _chargeCounterFactory.Create(itemType, overrideCharges);
             return new DistanceWeapon(itemType, location)
             {
                 ItemTypeFinder = _itemTypeStore.Get,
-                Chargeable = chargeable
+                Charges = chargeCounter
             };
         }
 
         if (MagicWeapon.IsApplicable(itemType))
         {
-            var chargeable = _chargeableFactory.Create(itemType);
+            var chargeCounter = _chargeCounterFactory.Create(itemType, overrideCharges);
             return new MagicWeapon(itemType, location)
             {
                 ItemTypeFinder = _itemTypeStore.Get,
-                Chargeable = chargeable
+                Charges = chargeCounter
             };
         }
 

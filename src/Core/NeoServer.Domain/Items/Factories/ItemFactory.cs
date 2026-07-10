@@ -106,9 +106,17 @@ public class ItemFactory : IItemFactory
     {
         if (!ItemTypeStore.TryGetValue(typeId, out var itemType)) return null;
 
+        uint? decayElapsedOverride = null;
+        if (itemTypeAttributes?.TryGetValue(ItemTypeAttribute.DecayElapsed, out var decayElapsedVal) == true)
+        {
+            decayElapsedOverride = Convert.ToUInt32(decayElapsedVal);
+        }
+
         var createdItem = CreateItem(itemType, location, itemTypeAttributes, itemAttributes, children);
 
         SetAttributes(itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, createdItem);
+
+        ApplyDecayElapsed(createdItem, decayElapsedOverride);
 
         SubscribeEvents(createdItem);
 
@@ -126,9 +134,17 @@ public class ItemFactory : IItemFactory
         IDictionary<string, IConvertible> itemCustomAttributes = null,
         IEnumerable<IItem> children = null)
     {
+        uint? decayElapsedOverride = null;
+        if (itemTypeAttributes?.TryGetValue(ItemTypeAttribute.DecayElapsed, out var decayElapsedVal) == true)
+        {
+            decayElapsedOverride = Convert.ToUInt32(decayElapsedVal);
+        }
+
         var createdItem = CreateItem(itemType, location, itemTypeAttributes, itemAttributes, children);
 
         SetAttributes(itemTypeAttributes, itemTypeCustomAttributes, itemAttributes, itemCustomAttributes, createdItem);
+
+        ApplyDecayElapsed(createdItem, decayElapsedOverride);
 
         SubscribeEvents(createdItem);
 
@@ -169,6 +185,12 @@ public class ItemFactory : IItemFactory
             ? null
             : Create(item.ServerId, location, itemTypeAttributes, itemTypeCustomAttributes, itemAttributes,
                 itemCustomAttributes, children);
+    }
+
+    private static void ApplyDecayElapsed(IItem item, uint? decayElapsedOverride)
+    {
+        if (decayElapsedOverride.HasValue && item.Decay is not null)
+            item.Decay.SetElapsed(decayElapsedOverride.Value);
     }
 
     private static void SetAttributes(
@@ -227,8 +249,14 @@ public class ItemFactory : IItemFactory
             if (ItemFromScriptFactory.Create(itemType, location, itemTypeAttributes, script) is { } instance)
                 return instance;
 
-        if (DefenseEquipmentFactory?.Create(itemType, location) is { } equipment) return equipment;
-        if (WeaponFactory?.Create(itemType, location, itemAttributes) is { } weapon) return weapon;
+        ushort? chargesOverride = null;
+        if (itemTypeAttributes?.TryGetValue(ItemTypeAttribute.Charges, out var chargesVal) == true)
+        {
+            chargesOverride = Convert.ToUInt16(chargesVal);
+        }
+
+        if (DefenseEquipmentFactory?.Create(itemType, location, chargesOverride) is { } equipment) return equipment;
+        if (WeaponFactory?.Create(itemType, location, itemAttributes, chargesOverride) is { } weapon) return weapon;
         if (ContainerFactory?.Create(itemType, location, children) is { } container) return container;
         if (RuneFactory?.Create(itemType, location) is { } rune) return rune;
         if (GroundFactory?.Create(itemType, location) is { } ground) return ground;

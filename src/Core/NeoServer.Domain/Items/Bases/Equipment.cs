@@ -24,7 +24,6 @@ public abstract class Equipment : BaseItem, IEquipment
 
     public IProtection Protection { get; private set; }
     public ISkillBonus SkillBonus { get; private set; }
-    public IChargeable Chargeable { get; init; }
 
     protected abstract string PartialInspectionText { get; }
     public Func<ushort, IItemType> ItemTypeFinder { get; init; }
@@ -49,7 +48,7 @@ public abstract class Equipment : BaseItem, IEquipment
             if (attributeStringBuilder.Length > 0) stringBuilder.Append($"({attributeStringBuilder.Remove(0, 2)})");
 
             if (Decay is not null) stringBuilder.Append($" that {Decay}");
-            if (Chargeable is not null && Chargeable.ShowCharges) stringBuilder.Append($" that {Chargeable}");
+            if (Charges is not null && Charges.ShowAmount) stringBuilder.Append($" that {Charges}");
             return stringBuilder.ToString();
         }
     }
@@ -60,9 +59,12 @@ public abstract class Equipment : BaseItem, IEquipment
 
     public bool Protect(CombatDamage damage)
     {
-        if (NoCharges) return false;
+        if (Charges?.IsEmpty ?? false) return false;
         var @protected = Protection?.Protect(damage) ?? false;
-        if (@protected) DecreaseCharges();
+        if (@protected)
+        {
+            Charges?.DecreaseAmount();
+        }
         return true;
     }
 
@@ -71,19 +73,6 @@ public abstract class Equipment : BaseItem, IEquipment
     public abstract bool CanBeDressed(IPlayer player);
     public byte[] Vocations => Metadata.Attributes.GetRequiredVocations();
     public ushort MinLevel => Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.MinimumLevel);
-
-    #region Charges
-
-    public ushort Charges => Chargeable?.Charges ?? 0;
-    public bool NoCharges => Chargeable?.NoCharges ?? false;
-    public bool ShowCharges => Chargeable?.ShowCharges ?? false;
-
-    public void DecreaseCharges()
-    {
-        Chargeable?.DecreaseCharges();
-    }
-
-    #endregion
 
     #region Skill Bonus
 
@@ -169,7 +158,7 @@ public abstract class Equipment : BaseItem, IEquipment
         UpdateMetadata(TransformEquipItem);
 
         SkillBonus ??= new SkillBonus(this);
-        Decay ??= DecayableFactory.CreateIfItemIsDecayable(this);
+        Decay ??= DecayTrackerFactory.CreateIfItemIsDecayable(this);
         Protection ??= ProtectionFactory.Create(this);
 
         OnTransformed?.Invoke(before, Metadata);

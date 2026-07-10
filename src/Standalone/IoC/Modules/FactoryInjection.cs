@@ -26,9 +26,9 @@ public static class FactoryInjection
         builder.AddSingleton<GenericItemFactory>();
 
         builder.AddSingleton<ProtectionFactory>();
-        builder.AddSingleton<DecayableFactory>();
+        builder.AddSingleton<DecayTrackerFactory>();
         builder.AddSingleton<SkillBonusFactory>();
-        builder.AddSingleton<ChargeableFactory>();
+        builder.AddSingleton<ChargeCounterFactory>();
 
         builder.AddSingleton<ChatChannelFactory>();
 

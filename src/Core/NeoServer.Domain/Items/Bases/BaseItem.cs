@@ -20,7 +20,7 @@ public abstract class BaseItem : IItem
         Location = location;
         Metadata = metadata;
 
-        Decay = DecayableFactory.CreateIfItemIsDecayable(this);
+        Decay = DecayTrackerFactory.CreateIfItemIsDecayable(this);
         Attributes = new ItemAttributeList();
     }
 
@@ -88,6 +88,8 @@ public abstract class BaseItem : IItem
         OnDeleted?.Invoke(this);
     }
 
+    public ChargeCounter Charges { get; init; }
+
     public bool IsDeleted { get; private set; }
 
     public void OnItemRemoved(IThing from)
@@ -147,7 +149,7 @@ public abstract class BaseItem : IItem
 
     #region Decay
 
-    public Decayable Decay { get; protected set; }
+    public DecayTracker Decay { get; protected set; }
 
     #endregion
 
