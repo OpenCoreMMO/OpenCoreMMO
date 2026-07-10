@@ -46,7 +46,7 @@ internal static class InventoryManager
                 playerInventoryItemEntity.PlayerId = (int)player.Id;
                 playerInventoryItemEntity.SlotId = (int)slot;
                 playerInventoryItemEntity.Attributes = item.ExtractAllAttributes();
-                playerInventoryItemEntity.Charges = (item as IChargeable)?.Charges;
+                playerInventoryItemEntity.Charges = item?.Charges?.Amount;
 
                 neoContext.PlayerInventoryItems.Update(playerInventoryItemEntity);
                 continue;
@@ -59,7 +59,7 @@ internal static class InventoryManager
                 SlotId = (int)slot,
                 ServerId = item?.Metadata?.ServerId ?? 0,
                 Attributes = item.ExtractAllAttributes(),
-                Charges = (item as IChargeable)?.Charges
+                Charges = item?.Charges?.Amount
             });
         }
     }

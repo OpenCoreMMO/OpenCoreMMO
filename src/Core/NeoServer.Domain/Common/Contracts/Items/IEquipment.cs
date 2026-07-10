@@ -3,7 +3,7 @@ using NeoServer.Domain.Common.Contracts.Items.Types;
 
 namespace NeoServer.Domain.Common.Contracts.Items;
 
-public interface IEquipment : IDecay, ISkillBonus, IDressable, IProtection, ITransformableEquipment, IChargeable,
+public interface IEquipment : IDecay, ISkillBonus, IDressable, IProtection, ITransformableEquipment,
     IHasDecay,
     IEquipmentRequirement
 {

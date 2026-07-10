@@ -88,6 +88,8 @@ public abstract class BaseItem : IItem
         OnDeleted?.Invoke(this);
     }
 
+    public ChargeCounter Charges { get; init; }
+
     public bool IsDeleted { get; private set; }
 
     public void OnItemRemoved(IThing from)
