@@ -4,7 +4,7 @@ using NeoServer.Domain.Items.Items.Attributes;
 
 namespace NeoServer.Domain.Items.Factories.AttributeFactory;
 
-public class DecayableFactory
+public class DecayTrackerFactory
 {
     public static DecayTracker CreateIfItemIsDecayable(IItem item)
     {

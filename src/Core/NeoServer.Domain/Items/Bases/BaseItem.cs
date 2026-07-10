@@ -20,7 +20,7 @@ public abstract class BaseItem : IItem
         Location = location;
         Metadata = metadata;
 
-        Decay = DecayableFactory.CreateIfItemIsDecayable(this);
+        Decay = DecayTrackerFactory.CreateIfItemIsDecayable(this);
         Attributes = new ItemAttributeList();
     }
 
