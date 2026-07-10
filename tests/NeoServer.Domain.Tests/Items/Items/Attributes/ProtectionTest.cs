@@ -156,7 +156,7 @@ public class ProtectionTest
         defender.TakeDamage(enemy, damage);
 
         //assert
-        sut.Charges.Should().Be(49);
+        sut.Charges.Amount.Should().Be(49);
     }
 
     [Fact]
@@ -186,7 +186,7 @@ public class ProtectionTest
         defender.TakeDamage(attacker, damage);
 
         //assert
-        sut.Charges.Should().Be(50);
+        sut.Charges.Amount.Should().Be(50);
     }
 
     [Fact]
@@ -237,7 +237,7 @@ public class ProtectionTest
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, charges: 1, slot: "body");
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.AbsorbPercentEnergy, 100);
 
-        sut.DecreaseCharges();
+        sut.Charges.DecreaseAmount();
 
         defender.Inventory.AddItem(sut, Slot.Body);
         sut.DressedIn(defender);

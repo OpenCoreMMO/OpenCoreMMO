@@ -51,7 +51,7 @@ public class ItemFactoryChargesTests
         var itemTypeStore = new ItemTypeStore();
         itemTypeStore.AddOrUpdate(itemType.ServerId, itemType);
 
-        var chargeableFactory = new ChargeableFactory();
+        var chargeableFactory = new ChargeCounterFactory();
         var sut = new ItemFactory(
             null,
             new DefenseEquipmentFactory(itemTypeStore, chargeableFactory),
@@ -68,8 +68,8 @@ public class ItemFactoryChargesTests
 
         // Assert
         createdItem.Should().NotBeNull();
-        createdItem.Should().BeAssignableTo<IChargeable>();
-        ((IChargeable)createdItem).Charges.Should().Be(150);
+        createdItem.Charges.Should().NotBeNull();
+        createdItem.Charges.Amount.Should().Be(150);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class ItemFactoryChargesTests
         var itemTypeStore = new ItemTypeStore();
         itemTypeStore.AddOrUpdate(itemType.ServerId, itemType);
 
-        var chargeableFactory = new ChargeableFactory();
+        var chargeableFactory = new ChargeCounterFactory();
         var sut = new ItemFactory(
             null,
             new DefenseEquipmentFactory(itemTypeStore, chargeableFactory),
@@ -93,8 +93,8 @@ public class ItemFactoryChargesTests
 
         // Assert
         createdItem.Should().NotBeNull();
-        createdItem.Should().BeAssignableTo<IChargeable>();
-        ((IChargeable)createdItem).Charges.Should().Be(200);
+        createdItem.Charges.Should().NotBeNull();
+        createdItem.Charges.Amount.Should().Be(200);
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class ItemFactoryChargesTests
         var itemTypeStore = new ItemTypeStore();
         itemTypeStore.AddOrUpdate(itemType.ServerId, itemType);
 
-        var chargeableFactory = new ChargeableFactory();
+        var chargeableFactory = new ChargeCounterFactory();
         var sut = new ItemFactory(
             null,
             null,
@@ -124,8 +124,8 @@ public class ItemFactoryChargesTests
         // Assert
         createdItem.Should().NotBeNull();
         createdItem.Should().BeOfType<MeleeWeapon>();
-        createdItem.Should().BeAssignableTo<IChargeable>();
-        ((IChargeable)createdItem).Charges.Should().Be(75);
+        createdItem.Charges.Should().NotBeNull();
+        createdItem.Charges.Amount.Should().Be(75);
     }
 
     [Fact]
@@ -137,7 +137,7 @@ public class ItemFactoryChargesTests
         var itemTypeStore = new ItemTypeStore();
         itemTypeStore.AddOrUpdate(itemType.ServerId, itemType);
 
-        var chargeableFactory = new ChargeableFactory();
+        var chargeableFactory = new ChargeCounterFactory();
         var sut = new ItemFactory(
             null,
             null,
@@ -150,8 +150,8 @@ public class ItemFactoryChargesTests
         // Assert
         createdItem.Should().NotBeNull();
         createdItem.Should().BeOfType<MeleeWeapon>();
-        createdItem.Should().BeAssignableTo<IChargeable>();
-        ((IChargeable)createdItem).Charges.Should().Be(100);
+        createdItem.Charges.Should().NotBeNull();
+        createdItem.Charges.Amount.Should().Be(100);
     }
 
     [Fact]
@@ -163,7 +163,7 @@ public class ItemFactoryChargesTests
         var itemTypeStore = new ItemTypeStore();
         itemTypeStore.AddOrUpdate(itemType.ServerId, itemType);
 
-        var chargeableFactory = new ChargeableFactory();
+        var chargeableFactory = new ChargeCounterFactory();
         var sut = new ItemFactory(
             null,
             new DefenseEquipmentFactory(itemTypeStore, chargeableFactory),
@@ -180,9 +180,9 @@ public class ItemFactoryChargesTests
 
         // Assert
         createdItem.Should().NotBeNull();
-        createdItem.Should().BeAssignableTo<IChargeable>();
-        ((IChargeable)createdItem).Charges.Should().Be(0);
-        ((IChargeable)createdItem).NoCharges.Should().BeTrue();
+        createdItem.Charges.Should().NotBeNull();
+        createdItem.Charges.Amount.Should().Be(0);
+        createdItem.Charges.IsEmpty.Should().BeTrue();
     }
 
     [Fact]
@@ -198,7 +198,7 @@ public class ItemFactoryChargesTests
         var itemTypeStore = new ItemTypeStore();
         itemTypeStore.AddOrUpdate(itemType.ServerId, itemType);
 
-        var chargeableFactory = new ChargeableFactory();
+        var chargeableFactory = new ChargeCounterFactory();
         var sut = new ItemFactory(
             null,
             null,

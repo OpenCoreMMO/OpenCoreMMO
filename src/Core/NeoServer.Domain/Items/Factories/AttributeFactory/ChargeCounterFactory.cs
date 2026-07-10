@@ -5,9 +5,9 @@ using NeoServer.Domain.Items.Items.Attributes;
 
 namespace NeoServer.Domain.Items.Factories.AttributeFactory;
 
-public class ChargeableFactory : IFactory
+public class ChargeCounterFactory : IFactory
 {
-    public IChargeable Create(IItemType itemType, ushort? overrideCharges = null)
+    public ChargeCounter Create(IItemType itemType, ushort? overrideCharges = null)
     {
         ushort charges;
         if (overrideCharges.HasValue)
@@ -16,12 +16,12 @@ public class ChargeableFactory : IFactory
         }
         else
         {
-            if (!itemType.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.Charges, out charges)) return null;
+            if (!itemType.Attributes.TryGetAttribute(ItemTypeAttribute.Charges, out charges)) return null;
         }
 
         if (!itemType.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.ShowCharges, out var showCharges))
-            return new Chargeable(charges, true);
+            return new ChargeCounter(charges, true);
 
-        return new Chargeable(charges, showCharges == 1);
+        return new ChargeCounter(charges, showCharges == 1);
     }
 }

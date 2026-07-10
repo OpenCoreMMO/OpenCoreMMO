@@ -349,8 +349,8 @@ public class ItemTestDataBuilder
 
         var item = new MagicWeapon(type, new Location(100, 100, 7))
         {
-            Chargeable = charges > 0
-                ? new Chargeable(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
+            Charges = charges > 0
+                ? new ChargeCounter(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
                 : null,
             ItemTypeFinder = itemTypeFinder
         };
@@ -387,8 +387,8 @@ public class ItemTestDataBuilder
 
         var item = new MeleeWeapon(type, new Location(100, 100, 7))
         {
-            Chargeable = charges > 0
-                ? new Chargeable(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
+            Charges = charges > 0
+                ? new ChargeCounter(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
                 : null,
             ItemTypeFinder = itemTypeFinder
         };
@@ -421,8 +421,8 @@ public class ItemTestDataBuilder
 
         var item = new DistanceWeapon(type, new Location(100, 100, 7))
         {
-            Chargeable = charges > 0
-                ? new Chargeable(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
+            Charges = charges > 0
+                ? new ChargeCounter(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
                 : null,
             ItemTypeFinder = itemTypeFinder
         };
@@ -464,7 +464,7 @@ public class ItemTestDataBuilder
             new Location(100, 100, 7),
             itemAttributes != null ? itemAttributes.ToDictionary() : null)
         {
-            Chargeable = null,
+            Charges = null,
             ItemTypeFinder = itemTypeFinder
         };
 
@@ -497,8 +497,8 @@ public class ItemTestDataBuilder
 
         var item = new BodyDefenseEquipment(type, new Location(100, 100, 7))
         {
-            Chargeable = charges > 0
-                ? new Chargeable(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
+            Charges = charges > 0
+                ? new ChargeCounter(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
                 : null,
             ItemTypeFinder = itemTypeFinder
         };
@@ -564,7 +564,7 @@ public class ItemTestDataBuilder
             new Location(100, 100, 7),
             itemAttributes != null ? itemAttributes.ToDictionary() : null)
         {
-            Chargeable = null,
+            Charges = null,
             ItemTypeFinder = itemTypeFinder
         };
 
