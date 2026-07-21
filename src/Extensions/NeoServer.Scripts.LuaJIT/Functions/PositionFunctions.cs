@@ -34,7 +34,7 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
         RegisterSharedClass(luaState, "Position", "", LuaCreatePosition);
         RegisterMetaMethod(luaState, "Position", "__add", LuaPositionAdd);
         RegisterMetaMethod(luaState, "Position", "__sub", LuaPositionSub);
-        RegisterMetaMethod(luaState, "Position", "__eq", LuaUserdataCompareStruct<Location>);
+        RegisterMetaMethod(luaState, "Position", "__eq", LuaPositionEqual);
 
         RegisterMethod(luaState, "Position", "getDistance", LuaPositionGetDistance);
         RegisterMethod(luaState, "Position", "getPathTo", LuaPositionGetPathTo);
@@ -109,6 +109,14 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
 
         PushPosition(luaState, position, stackpos);
 
+        return 1;
+    }
+
+    public static int LuaPositionEqual(LuaState luaState)
+    {
+        var left = GetPosition(luaState, 1);
+        var right = GetPosition(luaState, 2);
+        PushBoolean(luaState, left == right);
         return 1;
     }
 

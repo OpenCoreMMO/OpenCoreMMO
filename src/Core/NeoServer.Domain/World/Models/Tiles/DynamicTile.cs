@@ -59,7 +59,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         }
     }
 
-    public override int ThingsCount => Creatures?.Count ?? 0 + ItemsCount;
+    public override int ThingsCount => (Creatures?.Count ?? 0) + ItemsCount;
 
     public ushort StepSpeed => Ground.StepSpeed;
 
