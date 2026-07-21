@@ -115,6 +115,12 @@ function Creature:getSummons() end
 ---@return number
 function Creature:move(directionOrTile, flags) end
 
+---Teleports the creature to a position.
+---@param position Position
+---@param pushMovement? boolean
+---@return boolean
+function Creature:teleportTo(position, pushMovement) end
+
 ---Removes the creature.
 ---@param forced? boolean
 ---@return boolean

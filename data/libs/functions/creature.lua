@@ -52,6 +52,14 @@ function Creature.getPlayer(self)
     return self:isPlayer() and self or nil
 end
 
+function Creature.canAccessPz(self)
+    if self:isMonster() then
+        return false
+    end
+    local player = self:getPlayer()
+    return player and not player:isPzLocked()
+end
+
 function Creature.isContainer(self)
     return false
 end

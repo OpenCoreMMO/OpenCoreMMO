@@ -211,7 +211,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
                 if (tile is IDynamicTile dynamicTile)
                     result = dynamicTile.AddItem(item).Succeeded;
 
-                if (result)
+                if (!result)
                 {
                     if (!hasTable) Lua.PushNil(luaState);
                     continue;

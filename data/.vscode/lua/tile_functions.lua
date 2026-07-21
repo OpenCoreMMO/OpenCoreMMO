@@ -27,6 +27,10 @@ function Tile:getThingCount() end
 ---@return number
 function Tile:getCreatureCount() end
 
+---Gets all creatures on the tile.
+---@return Creature[]|nil
+function Tile:getCreatures() end
+
 ---Gets the top visible thing for a given creature.
 ---@param creature Creature
 ---@return Creature|Item|nil
