@@ -113,10 +113,14 @@ public static class HouseTileItemSerializer
             itemAttributes[ItemAttribute.UniqueId] = reader.ReadUInt32();
 
         if ((flags & FlagCharges) != 0)
-            itemAttributes[ItemAttribute.Charges] = reader.ReadUInt16();
+        {
+            var charges = reader.ReadUInt16();
+            itemAttributes[ItemAttribute.Charges] = charges;
+            itemTypeAttributes[ItemTypeAttribute.Charges] = charges;
+        }
 
         if ((flags & FlagDecay) != 0)
-            ReadDecay(reader, itemAttributes);
+            ReadDecay(reader, itemAttributes, itemTypeAttributes);
 
         if ((flags & FlagFluidType) != 0)
             itemAttributes[ItemAttribute.FluidType] = reader.ReadUInt16();
@@ -170,24 +174,37 @@ public static class HouseTileItemSerializer
     }
 
     private static bool HasCharges(IItem item) =>
+        item.Charges is not null ||
         item.Attributes.HasAttribute(ItemAttribute.Charges);
 
-    private static ushort GetCharges(IItem item) =>
-        item.Attributes.GetAttribute<ushort>(ItemAttribute.Charges);
+    private static ushort GetCharges(IItem item)
+    {
+        if (item.Charges is not null) return item.Charges.Amount;
+        return item.Attributes.GetAttribute<ushort>(ItemAttribute.Charges);
+    }
 
     private static bool HasDecay(IItem item) =>
+        item.Decay is not null ||
         item.Attributes.HasAttribute(ItemAttribute.DecayTo) ||
         item.Attributes.HasAttribute(ItemAttribute.Duration) ||
         item.Attributes.HasAttribute(ItemAttribute.DecayState);
 
     private static void WriteDecay(BinaryWriter writer, IItem item)
     {
-        writer.Write(item.Attributes.TryGetAttribute<ushort>(ItemAttribute.DecayTo, out var decayTo) ? decayTo : (ushort)0);
-        writer.Write(item.Attributes.TryGetAttribute<uint>(ItemAttribute.Duration, out var duration) ? duration : 0u);
-        writer.Write(item.Attributes.TryGetAttribute<uint>(ItemAttribute.DecayState, out var elapsed) ? elapsed : 0u);
+        var decayTo = item.Decay?.DecaysTo ??
+            (item.Attributes.TryGetAttribute<ushort>(ItemAttribute.DecayTo, out var dt) ? dt : (ushort)0);
+        var duration = item.Decay?.Duration ??
+            (item.Attributes.TryGetAttribute<uint>(ItemAttribute.Duration, out var d) ? d : 0u);
+        var elapsed = item.Decay?.Elapsed ??
+            (item.Attributes.TryGetAttribute<uint>(ItemAttribute.DecayState, out var e) ? e : 0u);
+
+        writer.Write(decayTo);
+        writer.Write(duration);
+        writer.Write(elapsed);
     }
 
-    private static void ReadDecay(BinaryReader reader, Dictionary<ItemAttribute, IConvertible> attributes)
+    private static void ReadDecay(BinaryReader reader, Dictionary<ItemAttribute, IConvertible> attributes,
+        Dictionary<ItemTypeAttribute, IConvertible> typeAttributes)
     {
         var decayTo = reader.ReadUInt16();
         var duration = reader.ReadUInt32();
@@ -196,6 +213,9 @@ public static class HouseTileItemSerializer
         if (decayTo != 0)   attributes[ItemAttribute.DecayTo] = decayTo;
         if (duration != 0)  attributes[ItemAttribute.Duration] = duration;
         if (elapsed != 0)   attributes[ItemAttribute.DecayState] = elapsed;
+
+        if (duration != 0)  typeAttributes[ItemTypeAttribute.Duration] = duration;
+        if (elapsed != 0)   typeAttributes[ItemTypeAttribute.DecayElapsed] = elapsed;
     }
 
     private static bool HasFluidType(IItem item) =>
