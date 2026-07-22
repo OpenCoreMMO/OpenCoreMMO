@@ -31,11 +31,13 @@ public class TileFactory(ILogger logger) : ITileFactory
         var hasTransformableItem = false;
         var hasHeight = false;
         var hasTrashHolder = false;
+        var hasDoor = false;
+        var hasMapAttributes = false;
         IGround ground = null;
 
         var topItems = new List<IItem>(items.Length);
         var downItems = new List<IItem>(items.Length);
-      
+
         foreach (var item in items)
         {
             if (item is null) continue;
@@ -52,6 +54,12 @@ public class TileFactory(ILogger logger) : ITileFactory
             if (item.CanBeMoved && !isHouseTile) hasMoveableItem = true;
 
             if (item.IsTransformable) hasTransformableItem = true;
+
+            if (item.IsDoor) hasDoor = true;
+
+            // ActionId/UniqueId are per-instance; static tile cache keys only ClientIds, so these
+            // must stay on DynamicTile or map attrs would be shared across tiles.
+            if (item.ActionId != 0 || item.UniqueId != 0) hasMapAttributes = true;
 
             if (item.Metadata.HasFlag(ItemFlag.HasHeight)) hasHeight = true;
 
@@ -75,11 +83,15 @@ public class TileFactory(ILogger logger) : ITileFactory
             downItems.Add(item);
         }
 
+        // Doors / keyed map objects must be DynamicTile
+        // without a static→dynamic conversion that recreates items.
         if (hasUnpassableItem &&
             !hasMoveableItem &&
-            !hasTransformableItem && 
-            !hasHeight && 
-            !hasTrashHolder)
+            !hasTransformableItem &&
+            !hasHeight &&
+            !hasTrashHolder &&
+            !hasDoor &&
+            !hasMapAttributes)
         {
             var staticTile = new StaticTile(new Coordinate(), (uint)flag, items);
 

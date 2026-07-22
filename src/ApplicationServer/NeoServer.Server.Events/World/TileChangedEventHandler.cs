@@ -18,25 +18,34 @@ public class TileChangedEventHandler(IMap map, IEventAggregator eventAggregator,
     {
         if (@event.Operations?.HasAnyOperation != true) return;
 
-        foreach (var operation in @event.Operations.Operations)
-            switch (operation.Item2)
+        foreach (var (thing, operationType, stackPosition) in @event.Operations.Operations)
+            switch (operationType)
             {
                 case Operation.Removed:
-                    if (operation.Item1 is ICumulative cumulativeToRemove)
+                    if (thing is ICumulative cumulativeToRemove)
+                    {
                         cumulativeToRemove.OnReduced -= map.OnItemReduced;
-                    eventAggregator.InvokeEvent(new ThingRemovedFromTileEvent(operation.Item1,
-                        cylinderOperation.Removed(operation.Item1, operation.Item3)));
+                    }
+
+                    eventAggregator.InvokeEvent(new ThingRemovedFromTileEvent(thing,
+                        cylinderOperation.Removed(thing, stackPosition)));
                     break;
                 case Operation.Updated:
-                    if (operation.Item1 is ICumulative cumulativeToUpdate)
+                    if (thing is ICumulative cumulativeToUpdate)
+                    {
                         cumulativeToUpdate.OnReduced += map.OnItemReduced;
-                    eventAggregator.InvokeEvent(new ThingUpdatedOnTileEvent(operation.Item1,
-                        cylinderOperation.Updated(operation.Item1, operation.Item1.Amount)));
+                    }
+
+                    eventAggregator.InvokeEvent(new ThingUpdatedOnTileEvent(thing,
+                        cylinderOperation.Updated(thing, stackPosition)));
                     break;
                 case Operation.Added:
-                    if (operation.Item1 is ICumulative cumulativeToAdd) cumulativeToAdd.OnReduced += map.OnItemReduced;
-                    eventAggregator.InvokeEvent(new ThingAddedToTileEvent(operation.Item1,
-                        cylinderOperation.Added(operation.Item1)));
+                    if (thing is ICumulative cumulativeToAdd)
+                    {
+                        cumulativeToAdd.OnReduced += map.OnItemReduced;
+                    }
+                    eventAggregator.InvokeEvent(new ThingAddedToTileEvent(thing,
+                        cylinderOperation.Added(thing)));
                     break;
             }
     }
