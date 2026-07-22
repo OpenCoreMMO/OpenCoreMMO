@@ -587,6 +587,7 @@ public class TileTest
     }
 
     [Fact]
+    [Trait("Category", "Tile")]
     public void AddTopItem_WithSameClientId_StillAddsItem()
     {
         // Arrange — TFS Tile::addThing always inserts AlwaysOnTop items; it does not

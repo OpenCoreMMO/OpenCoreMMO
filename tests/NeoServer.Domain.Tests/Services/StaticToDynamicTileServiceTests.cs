@@ -391,7 +391,7 @@ public class StaticToDynamicTileServiceTests
 
     [Fact]
     [Trait("Category", "Validation")]
-    public void Service_calls_item_factory_with_correct_parameters()
+    public void Service_creates_item_with_correct_server_id_and_location()
     {
         // Arrange — clone path uses original.ServerId and tile location.
         var location = CreateLocation(150, 250, 5);
