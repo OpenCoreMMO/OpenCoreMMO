@@ -60,17 +60,29 @@ public class CylinderOperation(IMap map)
         return new Cylinder(thing, tile, tile, Operation.Added, tileSpectators);
     }
 
-    public Cylinder Updated(IThing thing, byte amount)
+    public Cylinder Updated(IThing thing, byte stackPosition)
     {
         var tile = map[thing.Location];
 
         var spectators = new HashSet<ICylinderSpectator>();
-        foreach (var spec in Removed(thing, amount).TileSpectators) spectators.Add(spec);
-        foreach (var spec in Added(thing).TileSpectators)
-            if (spectators.TryGetValue(spec, out var spectator))
-                spectator.ToStackPosition = spec.ToStackPosition;
+        
+        foreach (var spectator in Removed(thing, stackPosition).TileSpectators)
+        {
+            spectators.Add(spectator);
+        }
+
+        foreach (var cylinderSpectator in Added(thing).TileSpectators)
+        {
+            if (spectators.TryGetValue(cylinderSpectator, out var spectator))
+            {
+                spectator.ToStackPosition = cylinderSpectator.ToStackPosition;
+            }
             else
-                spectators.Add(spec);
+            {
+                spectators.Add(cylinderSpectator);
+            }
+        }
+
         return new Cylinder(thing, tile, tile, Operation.Updated, spectators.ToArray());
     }
 

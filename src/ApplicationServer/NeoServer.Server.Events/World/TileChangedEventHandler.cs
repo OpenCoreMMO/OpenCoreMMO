@@ -37,7 +37,7 @@ public class TileChangedEventHandler(IMap map, IEventAggregator eventAggregator,
                     }
 
                     eventAggregator.InvokeEvent(new ThingUpdatedOnTileEvent(thing,
-                        cylinderOperation.Updated(thing, stackPosition)));
+                        cylinderOperation.Updated(thing, stackPosition: stackPosition)));
                     break;
                 case Operation.Added:
                     if (thing is ICumulative cumulativeToAdd)
