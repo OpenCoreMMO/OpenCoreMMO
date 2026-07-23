@@ -85,7 +85,7 @@ public class CreatureMovementService(
         if (creature is not IWalkableCreature walkableCreature) return false;
 
         // Ensure the creature is on a dynamic tile that can be modified.
-        if (map[creature.Location] is not IDynamicTile fromTile)
+        if (map[creature.Location] is not DynamicTile fromTile)
         {
             EventAggregator.Invoke(new ThingMovementFailedInTheMap(creature, InvalidOperation.NotPossible));
             return false;
