@@ -76,20 +76,11 @@ public class Door : BaseItem
 
     private void OpenDoor(DynamicTile dynamicTile)
     {
-        var wallId = Metadata.Attributes.GetCustomAttribute<ushort>("wall");
-
         if (!Metadata.Attributes.TryGetAttribute<ushort>(ItemTypeAttribute.TransformTo, out var doorId)) return;
 
         var door = ItemFactory.Instance.Create(doorId, Location, null);
 
         dynamicTile.RemoveItem(this, 1, out _);
-
-        if (wallId != default)
-        {
-            var wall = dynamicTile.TopItems?.ToList()?.FirstOrDefault(x => x.ServerId == wallId);
-            if (wall is not null) dynamicTile.RemoveItem(wall, 1, out _);
-        }
-
         dynamicTile.AddItem(door);
     }
 

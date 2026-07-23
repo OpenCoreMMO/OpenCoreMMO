@@ -64,14 +64,17 @@ public class PositionFunctions : LuaScriptInterface, IPositionFunctions
         }
         else
         {
-            var x = GetNumber<ushort>(luaState, 2, 0);
-            var y = GetNumber<ushort>(luaState, 3, 0);
-            var z = GetNumber<byte>(luaState, 4, 0);
+            var x = GetNumber<int>(luaState, 2, 0);
+            var y = GetNumber<int>(luaState, 3, 0);
+            var z = GetNumber<int>(luaState, 4, 0);
             stackpos = GetNumber(luaState, 5, 0);
 
-            var position = new Location(x, y, z);
-
-            PushPosition(luaState, position);
+            Lua.CreateTable(luaState, 0, 4);
+            SetField(luaState, "x", x);
+            SetField(luaState, "y", y);
+            SetField(luaState, "z", z);
+            SetField(luaState, "stackpos", stackpos);
+            SetMetatable(luaState, -1, "Position");
         }
 
         return 1;

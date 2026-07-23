@@ -289,10 +289,10 @@ public class StaticToDynamicTileServiceTests
     }
 
     [Fact]
-    [Trait("Category", "EdgeCase")]
-    public void Service_skips_items_without_server_id_mapping()
+    [Trait("Category", "HappyPath")]
+    public void Service_clones_all_items_using_server_id_when_static_tile_has_item_instances()
     {
-        // Arrange
+        // Arrange — CloneItems uses original.ServerId; client-id map is not consulted.
         var location = CreateLocation();
         var world = CreateWorld();
         var item1 = ItemTestDataBuilder.CreateRegularItem(100);
@@ -300,27 +300,6 @@ public class StaticToDynamicTileServiceTests
         var item3 = ItemTestDataBuilder.CreateRegularItem(300);
         var staticTile = CreateStaticTile(location, item1, item2, item3);
         world.AddTile(staticTile, location);
-
-        // Setup: Only map item1 and item3, skip item2
-        var itemClientServerIdMapStoreMock = new Mock<IItemClientServerIdMapStore>();
-        itemClientServerIdMapStoreMock.Setup(x => x.TryGetValue(100, out It.Ref<ushort>.IsAny))
-            .Returns((ushort key, out ushort value) =>
-            {
-                value = 1100;
-                return true;
-            });
-        itemClientServerIdMapStoreMock.Setup(x => x.TryGetValue(200, out It.Ref<ushort>.IsAny))
-            .Returns((ushort key, out ushort value) =>
-            {
-                value = default;
-                return false; // No mapping for this client ID
-            });
-        itemClientServerIdMapStoreMock.Setup(x => x.TryGetValue(300, out It.Ref<ushort>.IsAny))
-            .Returns((ushort key, out ushort value) =>
-            {
-                value = 1300;
-                return true;
-            });
 
         var itemFactoryMock = new Mock<IItemFactory>();
         var createdItems = new List<IItem>();
@@ -343,21 +322,26 @@ public class StaticToDynamicTileServiceTests
             });
 
         var service = CreateService(
-            itemClientServerIdMapStoreMock.Object,
-            itemFactoryMock.Object,
+            itemFactory: itemFactoryMock.Object,
             world: world);
 
         // Act
-        var result = service.TransformIntoDynamicTile(staticTile);
+        service.TransformIntoDynamicTile(staticTile);
 
         // Assert
         itemFactoryMock.Verify(x => x.Create(
                 It.IsAny<ushort>(),
                 It.IsAny<Location>(),
                 It.IsAny<IDictionary<ItemTypeAttribute, IConvertible>>()),
-            Times.Exactly(2)); // Only 2 items should be created (item2 is skipped)
+            Times.Exactly(3));
 
-        createdItems.Should().HaveCount(2);
+        createdItems.Should().HaveCount(3);
+        itemFactoryMock.Verify(x => x.Create(100, It.IsAny<Location>(),
+            It.IsAny<IDictionary<ItemTypeAttribute, IConvertible>>()), Times.Once);
+        itemFactoryMock.Verify(x => x.Create(200, It.IsAny<Location>(),
+            It.IsAny<IDictionary<ItemTypeAttribute, IConvertible>>()), Times.Once);
+        itemFactoryMock.Verify(x => x.Create(300, It.IsAny<Location>(),
+            It.IsAny<IDictionary<ItemTypeAttribute, IConvertible>>()), Times.Once);
     }
 
     [Fact]
@@ -407,22 +391,14 @@ public class StaticToDynamicTileServiceTests
 
     [Fact]
     [Trait("Category", "Validation")]
-    public void Service_calls_item_factory_with_correct_parameters()
+    public void Service_creates_item_with_correct_server_id_and_location()
     {
-        // Arrange
+        // Arrange — clone path uses original.ServerId and tile location.
         var location = CreateLocation(150, 250, 5);
         var world = CreateWorld();
         var item = ItemTestDataBuilder.CreateRegularItem(100);
         var staticTile = CreateStaticTile(location, item);
         world.AddTile(staticTile, location);
-
-        var itemClientServerIdMapStoreMock = new Mock<IItemClientServerIdMapStore>();
-        itemClientServerIdMapStoreMock.Setup(x => x.TryGetValue(100, out It.Ref<ushort>.IsAny))
-            .Returns((ushort key, out ushort value) =>
-            {
-                value = 1100;
-                return true;
-            });
 
         var itemFactoryMock = new Mock<IItemFactory>();
         itemFactoryMock.Setup(x => x.Create(
@@ -442,16 +418,15 @@ public class StaticToDynamicTileServiceTests
             });
 
         var service = CreateService(
-            itemClientServerIdMapStoreMock.Object,
-            itemFactoryMock.Object,
+            itemFactory: itemFactoryMock.Object,
             world: world);
 
         // Act
-        var result = service.TransformIntoDynamicTile(staticTile);
+        service.TransformIntoDynamicTile(staticTile);
 
         // Assert
         itemFactoryMock.Verify(x => x.Create(
-                1100,
+                100,
                 It.Is<Location>(l => l.X == 150 && l.Y == 250 && l.Z == 5),
                 It.IsAny<IDictionary<ItemTypeAttribute, IConvertible>>()),
             Times.Once());

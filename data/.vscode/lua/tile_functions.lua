@@ -31,8 +31,8 @@ function Tile:getCreatureCount() end
 ---@return Creature[]|nil
 function Tile:getCreatures() end
 
----Gets the top visible thing for a given creature.
----@param creature Creature
+---Gets the top visible thing. Optional creature is the observer (TFS: canSeeCreature).
+---@param creature? Creature
 ---@return Creature|Item|nil
 function Tile:getTopVisibleThing(creature) end
 
@@ -51,6 +51,12 @@ function Tile:getTopDownItem() end
 ---Gets all items on the tile.
 ---@return Item[]
 function Tile:getItems() end
+
+---Gets an item on the tile by id.
+---@param itemId number
+---@param subType? number
+---@return Item|nil
+function Tile:getItemById(itemId, subType) end
 
 ---Gets the total number of items on the tile.
 ---@return number
