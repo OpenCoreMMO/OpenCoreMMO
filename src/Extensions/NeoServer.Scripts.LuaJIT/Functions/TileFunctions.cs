@@ -180,22 +180,28 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
     public static int LuaTileGetTopVisibleThing(LuaState luaState)
     {
         // tile:getTopVisibleThing([creature])
-        // TFS: top visible creature, then down items, then top items, then ground.
-        // Optional creature observer is reserved for canSeeCreature parity.
         var tile = GetUserdata<ITile>(luaState, 1);
+
         if (tile is null)
         {
             Lua.PushNil(luaState);
             return 1;
         }
 
-        if (tile is IDynamicTile dynamicTile && dynamicTile.Creatures is { Count: > 0 })
+        if (Lua.GetTop(luaState) >= 2 &&
+            tile is IDynamicTile dynamicTile)
         {
-            // Full canSeeCreature / ghost parity can come later; doors call without creature.
-            var tileCreature = dynamicTile.Creatures[0];
-            PushUserdata(luaState, tileCreature);
-            SetCreatureMetatable(luaState, -1, tileCreature);
-            return 1;
+            var observer = GetUserdata<ICreature>(luaState, 2);
+            if (observer is not null)
+            {
+                var tileCreature = dynamicTile.GetTopVisibleCreature(observer);
+                if (tileCreature is not null)
+                {
+                    PushUserdata(luaState, tileCreature);
+                    SetCreatureMetatable(luaState, -1, tileCreature);
+                    return 1;
+                }
+            }
         }
 
         // DynamicTile.TopDownItemOnStack: down → top → ground.
