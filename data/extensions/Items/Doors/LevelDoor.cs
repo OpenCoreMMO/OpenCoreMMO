@@ -63,13 +63,7 @@ public class LevelDoor : Door
     public override string GetLookText(
         bool isClose = false, bool showInternalDetails = false)
     {
-        Attributes.TryGetAttribute(ItemAttribute.ActionId, out int actionId);
-
-        var minLevel = Math.Max(0, actionId - 1000);
-
-        return minLevel == 0
-            ? "You see a gate of expertise for any level."
-            : $"You see a gate of expertise for level {minLevel}.\nOnly the worthy may pass.";
+        return base.GetLookText(isClose, showInternalDetails);
     }
 
     public new static bool IsApplicable(IItemType type)
