@@ -148,7 +148,7 @@ public static class ServerBootstrap
         catch (Exception ex)
         {
             logger.Error(ex, "Unable to connect to database");
-            Environment.Exit(0);
+            throw new InvalidOperationException("Unable to connect to database.", ex);
         }
 
         logger.Information("{Db} database loaded", databaseName);
