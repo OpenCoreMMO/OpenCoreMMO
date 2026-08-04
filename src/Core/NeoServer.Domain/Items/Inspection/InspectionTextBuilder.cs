@@ -21,7 +21,7 @@ public class InspectionTextBuilder
         AddRequirement(item, inspectionText);
 
         AddWeight(item, isClose, inspectionText);
-        AddDescription(item, inspectionText);
+        AddDescription(item, isClose, inspectionText);
 
         var finalText = inspectionText.ToString().TrimNewLine().AddEndOfSentencePeriod();
 
@@ -46,10 +46,20 @@ public class InspectionTextBuilder
         inspectionText.AppendNewLine(result);
     }
 
-    private static void AddDescription(IItem item, StringBuilder inspectionText)
+    private static void AddDescription(IItem item, bool isClose, StringBuilder inspectionText)
     {
-        if (!string.IsNullOrWhiteSpace(item.Metadata.Description))
-            inspectionText.AppendNewLine(item.Metadata.Description);
+        var worthyLine = GateOfExpertiseInspectionTextBuilder.BuildWorthyLine(item, isClose);
+        if (!string.IsNullOrWhiteSpace(worthyLine))
+        {
+            inspectionText.AppendNewLine(worthyLine);
+        }
+
+        if (string.IsNullOrWhiteSpace(item.Metadata.Description))
+        {
+            return;
+        }
+
+        inspectionText.AppendNewLine(item.Metadata.Description);
     }
 
     private static void AddWeight(IItem item, bool isClose, StringBuilder inspectionText)
@@ -69,6 +79,7 @@ public class InspectionTextBuilder
         inspectionText.Append(item is ICumulative cumulative
             ? $"{cumulative.Amount} {item.Name}{(cumulative.Amount > 1 ? "s" : "")}"
             : $"{item.Metadata.Article} {item.Name}");
+        inspectionText.Append(GateOfExpertiseInspectionTextBuilder.BuildLevelSuffix(item));
     }
 
     private static void AddEquipmentAttributes(IItem item, StringBuilder inspectionText)

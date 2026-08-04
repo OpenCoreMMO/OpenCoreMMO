@@ -43,7 +43,6 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMetaMethod(luaState, "Player", "__eq", LuaUserdataCompare<IPlayer>);
 
         RegisterMethod(luaState, "Player", "isPlayer", LuaPlayerIsPlayer);
-        RegisterMethod(luaState, "Player", "teleportTo", LuaTeleportTo);
         RegisterMethod(luaState, "Player", "getFreeCapacity", LuaPlayerGetFreeCapacity);
 
         RegisterMethod(luaState, "Player", "getSkillLevel", LuaPlayerGetSkillLevel);
@@ -166,28 +165,6 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             Lua.PushNil(luaState);
         }
 
-        return 1;
-    }
-
-    private static int LuaTeleportTo(LuaState luaState)
-    {
-        // player:teleportTo(position[, pushMovement = false])
-        var pushMovement = GetBoolean(luaState, 3, false);
-
-        var position = GetPosition(luaState, 2);
-
-        var creature = GetUserdata<IPlayer>(luaState, 1);
-
-        if (creature == null)
-        {
-            ReportError(nameof(LuaTeleportTo), GetErrorDesc(ErrorCodeType.LUA_ERROR_CREATURE_NOT_FOUND));
-            PushBoolean(luaState, false);
-            return 1;
-        }
-
-        creature.TeleportTo(position);
-
-        PushBoolean(luaState, true);
         return 1;
     }
 

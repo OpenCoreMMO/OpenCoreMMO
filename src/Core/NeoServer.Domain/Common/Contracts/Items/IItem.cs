@@ -63,6 +63,10 @@ public interface IItem : IThing, IHasDecay
     bool IsContainer => Metadata.Group == ItemGroup.Container;
     bool IsTeleport => Metadata.Group == ItemGroup.Teleport;
 
+    bool IsDoor =>
+        Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type)
+            ?.Equals("door", StringComparison.OrdinalIgnoreCase) ?? false;
+
     bool AllowFarUse => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.AllowFarUse);
 
     FloorChangeDirection FloorDirection => Metadata.Attributes.GetFloorChangeDirection();

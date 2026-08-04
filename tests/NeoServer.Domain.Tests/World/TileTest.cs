@@ -8,6 +8,7 @@ using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Bases;
@@ -587,21 +588,24 @@ public class TileTest
     }
 
     [Fact]
-    public void AddTopItem_WithSameClientId_DoesNotDuplicateItem()
+    [Trait("Category", "Tile")]
+    public void AddTopItem_WithSameClientId_StillAddsItem()
     {
-        // Arrange
+        // Arrange — TFS Tile::addThing always inserts AlwaysOnTop items; it does not
+        // skip when ClientId matches the current top (that old early-return lost items).
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
 
         var item1 = CreateTopItemWithTopOrder(100, 3);
         var item2 = CreateTopItemWithTopOrder(100, 3); // Same ClientId
 
-        // Act - Add both items
+        // Act
         tile.AddItem(item1);
         tile.AddItem(item2);
 
-        // Assert - Second item should not be added (early return when ClientId matches top item)
-        tile.TopItems.Count.Should().Be(1);
-        tile.TopItems.Values[0].Should().Be(item1);
+        // Assert — both items remain on the stack (same TopOrder inserts before existing)
+        tile.TopItems.Count.Should().Be(2);
+        tile.TopItems.Values[0].Should().Be(item2);
+        tile.TopItems.Values[1].Should().Be(item1);
     }
 
     [Fact]
@@ -737,5 +741,88 @@ public class TileTest
         tile.TopItems.Count.Should().Be(2);
         tile.TopItems.Values[0].Should().Be(itemTopOrder0); // TopOrder 0 at beginning
         tile.TopItems.Values[1].Should().Be(itemTopOrder5);
+    }
+
+    [Fact]
+    [Trait("Category", "Tile")]
+    public void UpdateItemType_WhenAlwaysOnTopFlips_MovesItemBetweenStacks()
+    {
+        var ground = MapTestDataBuilder.CreateGround(new Location(100, 100, 7), 100);
+        var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, ground, [], []);
+
+        var closedDoorType = new ItemType();
+        closedDoorType.SetId(5099);
+        closedDoorType.SetClientId(5098);
+        closedDoorType.SetName("closed door");
+
+        var openDoorType = new ItemType();
+        openDoorType.SetId(5100);
+        openDoorType.SetClientId(5099);
+        openDoorType.SetName("open door");
+        openDoorType.SetFlag(ItemFlag.AlwaysOnTop);
+        openDoorType.SetTopOrder(3);
+
+        var door = new Item(closedDoorType, tile.Location);
+        tile.AddItem(door);
+
+        tile.DownItems.Should().Contain(door);
+
+        tile.UpdateItemType(door, openDoorType).Should().BeTrue();
+
+        door.Metadata.ServerId.Should().Be((ushort)5100);
+        tile.TopItems.Should().Contain(door);
+        tile.DownItems.Should().NotContain(door);
+
+        tile.UpdateItemType(door, closedDoorType).Should().BeTrue();
+
+        door.Metadata.ServerId.Should().Be((ushort)5099);
+        tile.DownItems.Should().Contain(door);
+        tile.TopItems.Should().NotContain(door);
+    }
+
+    [Fact]
+    [Trait("Category", "Tile")]
+    public void RemoveItem_RemovesSpecificDownItem_NotOnlyTopOfStack()
+    {
+        var ground = MapTestDataBuilder.CreateGround(new Location(100, 100, 7), 100);
+        var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, ground, [], []);
+
+        var bottom = ItemTestDataBuilder.CreateUnpassableItem(1);
+        var top = ItemTestDataBuilder.CreateUnpassableItem(2);
+        tile.AddItem(bottom);
+        tile.AddItem(top);
+
+        tile.RemoveItem(bottom, 1, out var removed);
+
+        removed.Should().Be(bottom);
+        tile.DownItems.Should().Contain(top);
+        tile.DownItems.Should().NotContain(bottom);
+    }
+
+    [Fact]
+    [Trait("Category", "EdgeCase")]
+    public void AddItem_records_updated_stackpos_before_overflow_remainder_is_pushed()
+    {
+        var ground = MapTestDataBuilder.CreateGround(new Location(100, 100, 7), 100);
+        var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, ground, [], []);
+
+        var fullPile = (ICumulative)ItemTestDataBuilder.CreateAmmo(2547, 100);
+        var overflow = (ICumulative)ItemTestDataBuilder.CreateAmmo(2547, 30);
+
+        tile.AddItem(fullPile);
+
+        var result = tile.AddItem(overflow);
+
+        result.Succeeded.Should().BeTrue();
+
+        var updated = result.Value.Operations.Single(op => op.Item2 == Operation.Updated);
+        updated.Item1.Should().Be(fullPile);
+        updated.Item3.Should().Be(1);
+
+        var added = result.Value.Operations.Single(op => op.Item2 == Operation.Added);
+        added.Item1.Amount.Should().Be(30);
+
+        tile.TryGetStackPositionOfItem(fullPile, out var buriedStackPosition).Should().BeTrue();
+        buriedStackPosition.Should().Be(2);
     }
 }

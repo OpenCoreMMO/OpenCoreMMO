@@ -27138,10 +27138,6 @@
 				"value": "door"
 			},
 			{
-				"key": "script",
-				"value": "Door"
-			},
-			{
 				"key": "blockprojectile",
 				"value": "1"
 			},
@@ -27161,10 +27157,6 @@
 				"value": "door"
 			},
 			{
-				"key": "script",
-				"value": "Door"
-			},
-			{
 				"key": "blockprojectile",
 				"value": "1"
 			}
@@ -27178,10 +27170,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -27197,10 +27185,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -27212,10 +27196,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -27261,10 +27241,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -27276,10 +27252,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -27299,10 +27271,6 @@
 			{
 				"key": "description",
 				"value": "It is locked."
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -27318,10 +27286,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -27333,10 +27297,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -27352,10 +27312,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -27367,10 +27323,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -27416,10 +27368,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -27431,10 +27379,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -32694,10 +32638,6 @@
 			{
 				"key": "description",
 				"value": "It is locked."
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -32713,10 +32653,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -32747,10 +32683,6 @@
 			{
 				"key": "description",
 				"value": "It is locked."
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -32766,10 +32698,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -32781,10 +32709,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33214,10 +33138,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33229,10 +33149,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33248,10 +33164,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33263,10 +33175,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33401,10 +33309,6 @@
 				"value": "It is locked."
 			},
 			{
-				"key": "script",
-				"value": "Door"
-			},
-			{
 				"key": "mode",
 				"value": "closed"
 			}
@@ -33432,10 +33336,6 @@
 				"value": "1"
 			},
 			{
-				"key": "script",
-				"value": "Door"
-			},
-			{
 				"key": "mode",
 				"value": "closed"
 			}
@@ -33455,10 +33355,6 @@
 				"value": "opened"
 			},
 			{
-				"key": "script",
-				"value": "Door"
-			},
-			{
 				"key": "transformTo",
 				"value": "5099"
 			}
@@ -33476,10 +33372,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33491,10 +33383,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33510,10 +33398,6 @@
 			{
 				"key": "leveldoor",
 				"value": "1000"
-			},
-			{
-				"key": "script",
-				"value": "LevelDoor"
 			},
 			{
 				"key": "blockprojectile",
@@ -33548,10 +33432,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33590,10 +33470,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33613,10 +33489,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33632,10 +33504,6 @@
 			{
 				"key": "transformTo",
 				"value": "5108"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33655,10 +33523,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33674,10 +33538,6 @@
 			{
 				"key": "transformTo",
 				"value": "5110"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33697,10 +33557,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "LevelDoor"
 			},
 			{
 				"key": "orientation",
@@ -33731,10 +33587,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33746,10 +33598,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33773,10 +33621,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33792,10 +33636,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33807,10 +33647,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33826,10 +33662,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33841,10 +33673,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33890,10 +33718,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33905,10 +33729,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33932,10 +33752,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33951,10 +33767,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33966,10 +33778,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -33985,10 +33793,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34000,10 +33804,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34049,10 +33849,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34064,10 +33860,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34091,10 +33883,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34110,10 +33898,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34125,10 +33909,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34152,10 +33932,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34171,10 +33947,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34186,10 +33958,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34213,10 +33981,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34232,10 +33996,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34247,10 +34007,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34274,10 +34030,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34293,10 +34045,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34308,10 +34056,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34413,10 +34157,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34432,10 +34172,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34447,10 +34183,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34474,10 +34206,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34493,10 +34221,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34508,10 +34232,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34527,10 +34247,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34542,10 +34258,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34561,10 +34273,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34576,10 +34284,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34595,10 +34299,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34610,10 +34310,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34629,10 +34325,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -34644,10 +34336,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -35366,10 +35054,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -35381,10 +35065,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -35400,10 +35080,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -35415,10 +35091,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -36746,10 +36418,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -36761,10 +36429,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -36776,10 +36440,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -36799,10 +36459,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -36818,10 +36474,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -36833,10 +36485,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -36901,10 +36549,6 @@
 			{
 				"key": "description",
 				"value": "The door seems to be sealed against unwanted intruders."
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -36920,10 +36564,6 @@
 			{
 				"key": "description",
 				"value": "The door seems to be sealed against unwanted intruders."
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -36948,10 +36588,6 @@
 			{
 				"key": "description",
 				"value": "The door seems to be sealed against unwanted intruders."
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -36967,10 +36603,6 @@
 			{
 				"key": "description",
 				"value": "The door seems to be sealed against unwanted intruders."
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42604,10 +42236,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42623,10 +42251,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42638,10 +42262,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42665,10 +42285,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42684,10 +42300,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42699,10 +42311,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42718,10 +42326,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42733,10 +42337,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42752,10 +42352,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42767,10 +42363,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42786,10 +42378,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42801,10 +42389,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42820,10 +42404,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42835,10 +42415,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42961,10 +42537,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42980,10 +42552,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -42995,10 +42563,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -43022,10 +42586,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -43041,10 +42601,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -43056,10 +42612,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -43075,10 +42627,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -43090,10 +42638,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -43109,10 +42653,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -43124,10 +42664,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -43143,10 +42679,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -43158,10 +42690,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -43177,10 +42705,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -43192,10 +42716,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47054,10 +46574,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47073,10 +46589,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47088,10 +46600,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47107,10 +46615,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47122,10 +46626,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47171,10 +46671,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47186,10 +46682,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47213,10 +46705,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47232,10 +46720,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47247,10 +46731,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47266,10 +46746,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47281,10 +46757,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47330,10 +46802,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47345,10 +46813,6 @@
 			{
 				"key": "type",
 				"value": "door"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47626,10 +47090,6 @@
 			{
 				"key": "locked",
 				"value": true
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
@@ -47645,10 +47105,6 @@
 			{
 				"key": "blockprojectile",
 				"value": "1"
-			},
-			{
-				"key": "script",
-				"value": "Door"
 			}
 		]
 	},
