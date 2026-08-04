@@ -70,6 +70,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 
         RegisterMethod(luaState, "Creature", "getSummons", LuaCreatureGetSummons);
         RegisterMethod(luaState, "Creature", "move", LuaCreatureMove);
+        RegisterMethod(luaState, "Creature", "teleportTo", LuaCreatureTeleportTo);
         RegisterMethod(luaState, "Creature", "remove", LuaCreatureRemove);
     }
 
@@ -535,6 +536,47 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
                 result ? (int)ReturnValueType.RETURNVALUE_NOERROR : (int)ReturnValueType.RETURNVALUE_NOTPOSSIBLE);
         }
 
+        return 1;
+    }
+
+    private static int LuaCreatureTeleportTo(LuaState luaState)
+    {
+        // creature:teleportTo(position[, pushMovement = false])
+        var pushMovement = GetBoolean(luaState, 3, false);
+        var position = GetPosition(luaState, 2);
+        var creature = GetUserdata<ICreature>(luaState, 1);
+
+        if (creature is not IWalkableCreature walkableCreature)
+        {
+            if (creature is null)
+            {
+                ReportError(nameof(LuaCreatureTeleportTo), GetErrorDesc(ErrorCodeType.LUA_ERROR_CREATURE_NOT_FOUND));
+            }
+
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var oldPosition = walkableCreature.Location;
+        if (oldPosition == position)
+        {
+            PushBoolean(luaState, true);
+            return 1;
+        }
+
+        var succeeded = _creatureMovementService.MoveCreature(walkableCreature, position, forced: true, isTeleport: true);
+        if (!succeeded)
+        {
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        if (pushMovement)
+        {
+            walkableCreature.TurnTo(oldPosition.DirectionTo(position));
+        }
+
+        PushBoolean(luaState, true);
         return 1;
     }
 

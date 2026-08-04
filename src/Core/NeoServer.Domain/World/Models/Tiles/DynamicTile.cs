@@ -59,7 +59,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         }
     }
 
-    public override int ThingsCount => Creatures?.Count ?? 0 + ItemsCount;
+    public override int ThingsCount => (Creatures?.Count ?? 0) + ItemsCount;
 
     public ushort StepSpeed => Ground.StepSpeed;
 
@@ -237,32 +237,38 @@ public class DynamicTile : BaseTile, IDynamicTile
     public bool TryGetStackPositionOfItem(IItem item, out byte stackPosition)
     {
         stackPosition = 0;
+        if (item is null) return false;
 
-        var id = item.ClientId;
-        if (id == 0) throw new ArgumentNullException(nameof(id));
 
-        if (Ground?.ClientId == id) return true;
-        if (Ground?.ClientId != 0) ++stackPosition;
-
-        if (item.IsAlwaysOnTop && TopItems is not null)
+        if (Ground is not null)
         {
+            if (ReferenceEquals(Ground, item)) return true;
+            stackPosition++;
+        }
+
+        if (item.IsAlwaysOnTop)
+        {
+            if (TopItems is null) return false;
+
             foreach (var topItem in TopItems.Values)
             {
-                if (id == topItem.ClientId) return true;
-                if (++stackPosition == 10) return false;
+                if (ReferenceEquals(topItem, item)) return true;
+                if (++stackPosition >= 10) return false;
             }
-        }
-        else
-        {
-            stackPosition += (byte)(TopItems?.Count ?? 0);
-            if (stackPosition >= 10) return false;
+
+            return false;
         }
 
-        if (!item.IsAlwaysOnTop && DownItems is not null)
-            foreach (var downItem in DownItems)
-                if (id == downItem.ClientId)
-                    return true;
-                else if (++stackPosition >= 10) return false;
+        stackPosition += (byte)(TopItems?.Count ?? 0);
+        if (stackPosition >= 10) return false;
+
+        if (DownItems is null) return false;
+
+        foreach (var downItem in DownItems)
+        {
+            if (ReferenceEquals(downItem, item)) return true;
+            if (++stackPosition >= 10) return false;
+        }
 
         return false;
     }
@@ -471,9 +477,28 @@ public class DynamicTile : BaseTile, IDynamicTile
         var item = FindItem(fromItem);
         if (item is null) return false;
 
-        item.UpdateMetadata(toItemType);
+        // TransformThing cannot express a layer change. Remove then re-add so clients get
+        // correct stack positions (0x6C + 0x6A). Same-layer transforms keep an in-place update.
+        var wasAlwaysOnTop = fromItem.IsAlwaysOnTop;
+        var willBeAlwaysOnTop = toItemType.HasFlag(ItemFlag.AlwaysOnTop) || toItemType.HasFlag(ItemFlag.Hangable);
+        var alwaysOnTopChanged = wasAlwaysOnTop != willBeAlwaysOnTop;
+
+        if (alwaysOnTopChanged)
+        {
+            RemoveItem(item, item.Amount == 0 ? (byte)1 : item.Amount, out var removedItem);
+            if (removedItem is null)
+            {
+                return false;
+            }
+
+            removedItem.UpdateMetadata(toItemType);
+            AddItem(removedItem);
+            return true;
+        }
 
         TryGetStackPositionOfItem(fromItem, out var stackPosition);
+
+        item.UpdateMetadata(toItemType);
 
         ResetTileFlags();
         SetTileFlags(fromItem);
@@ -492,23 +517,47 @@ public class DynamicTile : BaseTile, IDynamicTile
             return;
         }
 
-        var downItemToRemove = DownItems?.FirstOrDefault(c => c.ServerId == fromItem.ServerId);
-        var topItemToRemove = TopItems?.FirstOrDefault(c => c.ServerId == fromItem.ServerId);
+        // Prefer exact instance; fall back to ServerId for static→dynamic recreate mismatches.
+        IItem itemToRemove = FindItem(fromItem);
+        if (itemToRemove is null)
+        {
+            itemToRemove = DownItems?.FirstOrDefault(c => c.ServerId == fromItem.ServerId)
+                           ?? TopItems?.FirstOrDefault(c => c.ServerId == fromItem.ServerId);
+        }
 
-        var isRemoved = downItemToRemove != null && DownItems.Remove(downItemToRemove);
-        if (!isRemoved) isRemoved = topItemToRemove != null && TopItems.Remove(topItemToRemove);
+        if (itemToRemove is null) return;
 
-        if (!isRemoved) return;
+        var alwaysOnTopChanged = toItem is not null && itemToRemove.IsAlwaysOnTop != toItem.IsAlwaysOnTop;
 
-        if (toItem is null) return;
+        // Layer changes must Remove+Add (TFS). Same-layer can update in place.
+        if (alwaysOnTopChanged || toItem is null)
+        {
+            RemoveItem(itemToRemove, itemToRemove.Amount == 0 ? (byte)1 : itemToRemove.Amount, out _);
+            if (toItem is not null)
+            {
+                AddItem(toItem);
+            }
 
-        if (toItem.IsAlwaysOnTop) TopItems?.Push(toItem);
-        else DownItems?.Push(toItem);
+            return;
+        }
 
+        if (itemToRemove.IsAlwaysOnTop)
+        {
+            if (TopItems is null || !TopItems.Remove(itemToRemove)) return;
+            TopItems.Push(toItem);
+        }
+        else
+        {
+            if (DownItems is null || !DownItems.Remove(itemToRemove)) return;
+            DownItems.Push(toItem);
+        }
+
+        toItem.SetNewLocation(Location);
         TryGetStackPositionOfItem(toItem, out var stackPosition);
 
         ResetTileFlags();
         SetTileFlags(toItem);
+        SetCacheAsExpired();
 
         EventAggregator.Invoke(new TileChangedEvent(this, toItem,
             new OperationResultList<IItem>(Operation.Updated, toItem, stackPosition)));
@@ -633,16 +682,17 @@ public class DynamicTile : BaseTile, IDynamicTile
 
     private bool TryGetStackPositionOfItem(IPlayer observer, IItem item, out byte stackPosition)
     {
-        TryGetStackPositionOfItem(item, out stackPosition);
+        if (!TryGetStackPositionOfItem(item, out stackPosition) || stackPosition >= 10)
+        {
+            return false;
+        }
 
-        if (stackPosition >= 10) return false;
+        if (!item.IsAlwaysOnTop && item is not IGround)
+        {
+            stackPosition = (byte)(stackPosition + GetCreatureStackPositionIndex(observer));
+        }
 
-        stackPosition = (byte)(stackPosition +
-                               (item.IsAlwaysOnTop || item is IGround
-                                   ? 0
-                                   : GetCreatureStackPositionIndex(observer)));
-
-        return false;
+        return true;
     }
 
     private bool TryGetStackPositionOfCreature(IPlayer observer, ICreature creature, out byte stackPosition)
@@ -652,7 +702,7 @@ public class DynamicTile : BaseTile, IDynamicTile
         var id = creature.CreatureId;
         if (id == 0) throw new ArgumentNullException(nameof(id));
 
-        if (Ground?.ClientId != 0) stackPosition++;
+        if (Ground is not null) stackPosition++;
 
         if (TopItems is not null)
         {
@@ -664,7 +714,7 @@ public class DynamicTile : BaseTile, IDynamicTile
             foreach (var c in Creatures)
                 if (ReferenceEquals(c, creature))
                     return true;
-                else if (observer.CanSee(creature))
+                else if (observer.CanSee(c))
                     if (++stackPosition >= 10)
                         return false;
         return false;
@@ -738,7 +788,9 @@ public class DynamicTile : BaseTile, IDynamicTile
                          topStackItem.ClientId == cumulative.ClientId &&
                          topCumulative.TryJoin(ref cumulative))
                 {
-                    operations.Add(Operation.Updated, topCumulative);
+                    // Capture stackpos before any overflow remainder is pushed (TFS updateThing-before-addThing).
+                    TryGetStackPositionOfItem(topCumulative, out var stackPosition);
+                    operations.Add(Operation.Updated, topCumulative, stackPosition);
 
                     if (cumulative is not null)
                     {
@@ -767,12 +819,6 @@ public class DynamicTile : BaseTile, IDynamicTile
     private void AddTopItem(IItem item, OperationResultList<IItem> operations)
     {
         TopItems ??= new TileStack<IItem>();
-
-        if (TopItems.TryPeek(out var topItem) && topItem.ClientId == item.ClientId)
-        {
-            operations.Add(Operation.Added, item);
-            return;
-        }
 
         //loop stack from beginning to the end in ascending order
         foreach (var itemOnStack in TopItems.Values)
@@ -858,39 +904,55 @@ public class DynamicTile : BaseTile, IDynamicTile
 
         if (itemToRemove.IsAlwaysOnTop)
         {
-            TopItems.Remove(itemToRemove);
+            if (TopItems is null || !TopItems.Remove(itemToRemove))
+            {
+                // Fall back if flag/stack disagree (e.g. after a prior bad transform).
+                if (DownItems is null || !DownItems.Remove(itemToRemove))
+                {
+                    return new Result<OperationResultList<IItem>>(operations);
+                }
+            }
+
             operations.Add(Operation.Removed, itemToRemove, stackPosition);
             removedItem = itemToRemove;
         }
-        else if (DownItems is not null && DownItems.TryPeek(out var topStackItem))
+        else if (DownItems is not null && DownItems.TryPeek(out var topStackItem) &&
+                 itemToRemove is ICumulative && topStackItem is ICumulative topCumulative &&
+                 ReferenceEquals(topStackItem, itemToRemove))
         {
-            if (itemToRemove is ICumulative && topStackItem is ICumulative topCumulative)
-            {
-                var amountBeforeSplit = topCumulative.Amount;
-                removedItem = topCumulative.Split(amount);
+            var amountBeforeSplit = topCumulative.Amount;
+            removedItem = topCumulative.Split(amount);
 
-                if ((removedItem?.Amount ?? 0) == amountBeforeSplit)
-                {
-                    DownItems.TryPop(out var item);
-                    operations.Add(Operation.Removed, item, stackPosition);
-                }
-                else
-                {
-                    operations.Add(Operation.Updated, topCumulative);
-                }
-            }
-            else
+            if ((removedItem?.Amount ?? 0) == amountBeforeSplit)
             {
                 DownItems.TryPop(out var item);
                 operations.Add(Operation.Removed, item, stackPosition);
-                removedItem = item;
             }
+            else
+            {
+                operations.Add(Operation.Updated, topCumulative, stackPosition);
+            }
+        }
+        else if (DownItems is not null && DownItems.Remove(itemToRemove))
+        {
+            operations.Add(Operation.Removed, itemToRemove, stackPosition);
+            removedItem = itemToRemove;
+        }
+        else if (TopItems is not null && TopItems.Remove(itemToRemove))
+        {
+            operations.Add(Operation.Removed, itemToRemove, stackPosition);
+            removedItem = itemToRemove;
         }
         else if (itemToRemove == Ground)
         {
             Ground = null;
             operations.Add(Operation.Removed, itemToRemove, stackPosition);
             removedItem = itemToRemove;
+        }
+
+        if (removedItem is null && operations.HasAnyOperation is false)
+        {
+            return new Result<OperationResultList<IItem>>(operations);
         }
 
         SetCacheAsExpired();

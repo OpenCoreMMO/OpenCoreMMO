@@ -12,7 +12,7 @@ namespace NeoServer.Domain.World.Map;
 public class CylinderOperation(IMap map)
 {
     /// <summary>
-    ///     Creates a cylinder instance with the operation status set to removed.
+    /// Creates a cylinder instance with the operation status set to removed.
     /// </summary>
     /// <param name="thing">The item or entity that is being removed.</param>
     /// <param name="stackPosition">The stack position of the item or entity being removed.</param>
@@ -30,7 +30,9 @@ public class CylinderOperation(IMap map)
             var fromStackPosition = stackPosition;
 
             if (spectator is IPlayer player && thing is IItem { IsAlwaysOnTop: false } and not IGround)
+            {
                 fromStackPosition = (byte)(tile.GetCreatureStackPositionIndex(player) + stackPosition);
+            }
 
             tileSpectators[index++] = new CylinderSpectator(spectator, fromStackPosition, fromStackPosition);
         }
@@ -42,7 +44,10 @@ public class CylinderOperation(IMap map)
     {
         var tile = map[thing.Location];
 
-        if (tile is null) return new Cylinder(thing, tile, tile, Operation.None, []);
+        if (tile is null)
+        {
+            return new Cylinder(thing, null, null, Operation.None, []);
+        }
 
         var spectators = map.GetCreaturesAtPositionZone(tile.Location, tile.Location);
 
@@ -52,7 +57,10 @@ public class CylinderOperation(IMap map)
         foreach (var spectator in spectators)
         {
             byte stackPosition = 0;
-            if (spectator is IPlayer player) tile.TryGetStackPositionOfThing(player, thing, out stackPosition);
+            if (spectator is IPlayer player)
+            {
+                tile.TryGetStackPositionOfThing(player, thing, out stackPosition);
+            }
 
             tileSpectators[index++] = new CylinderSpectator(spectator, stackPosition, stackPosition);
         }
@@ -60,18 +68,12 @@ public class CylinderOperation(IMap map)
         return new Cylinder(thing, tile, tile, Operation.Added, tileSpectators);
     }
 
-    public Cylinder Updated(IThing thing, byte amount)
+    public Cylinder Updated(IThing thing, byte stackPosition)
     {
-        var tile = map[thing.Location];
-
-        var spectators = new HashSet<ICylinderSpectator>();
-        foreach (var spec in Removed(thing, amount).TileSpectators) spectators.Add(spec);
-        foreach (var spec in Added(thing).TileSpectators)
-            if (spectators.TryGetValue(spec, out var spectator))
-                spectator.ToStackPosition = spec.ToStackPosition;
-            else
-                spectators.Add(spec);
-        return new Cylinder(thing, tile, tile, Operation.Updated, spectators.ToArray());
+        // In-place update: From and To are the same captured stackpos (TFS updateThing).
+        // Do not recompute via Added() — a later overflow Push would bury the updated item.
+        var removed = Removed(thing, stackPosition);
+        return new Cylinder(thing, removed.FromTile, removed.ToTile, Operation.Updated, removed.TileSpectators);
     }
 
     public Result<OperationResultList<ICreature>> RemoveCreature(ICreature creature, out ICylinder cylinder)
@@ -108,13 +110,13 @@ public class CylinderOperation(IMap map)
         return result;
     }
 
-    private ICylinderSpectator[] GetSpectators(IThing thing, ITile tile)
+    private ICylinderSpectator[] GetSpectators(IThing thing, DynamicTile tile)
     {
         var spectators = map.GetCreaturesAtPositionZone(tile.Location, tile.Location);
         return GetSpectatorsStackPositions(thing, tile, spectators);
     }
 
-    private ICylinderSpectator[] GetSpectatorsStackPositions(IThing thing, ITile tile,
+    private static ICylinderSpectator[] GetSpectatorsStackPositions(IThing thing, DynamicTile tile,
         HashSet<ICreature> spectators)
     {
         var tileSpectators = new ICylinderSpectator[spectators.Count];
@@ -122,8 +124,11 @@ public class CylinderOperation(IMap map)
 
         foreach (var spectator in spectators)
         {
-            byte stackPosition = default;
-            if (spectator is IPlayer player) tile.TryGetStackPositionOfThing(player, thing, out stackPosition);
+            byte stackPosition = 0;
+            if (spectator is IPlayer player)
+            {
+                tile.TryGetStackPositionOfThing(player, thing, out stackPosition);
+            }
 
             tileSpectators[index++] = new CylinderSpectator(spectator, stackPosition, 0xFF);
         }
@@ -131,7 +136,7 @@ public class CylinderOperation(IMap map)
         return tileSpectators;
     }
 
-    public Result<OperationResultList<ICreature>> MoveCreature(ICreature creature, IDynamicTile fromTile,
+    public Result<OperationResultList<ICreature>> MoveCreature(ICreature creature, DynamicTile fromTile,
         IDynamicTile toTile, byte amount, bool forced, out ICylinder cylinder)
     {
         amount = amount == 0 ? (byte)1 : amount;
@@ -140,9 +145,9 @@ public class CylinderOperation(IMap map)
 
         var specs = map.GetSpectators(fromTile.Location, toTile.Location);
         var spectators = GetSpectatorsStackPositions(creature, fromTile, specs);
-        var result = ((DynamicTile)fromTile).RemoveCreature(creature, out _);
+        var result = fromTile.RemoveCreature(creature, out _);
 
-        if (result.Succeeded is false) return result;
+        if (!result.Succeeded) return result;
 
         map.SwapCreatureBetweenSectors(creature, fromTile.Location, toTile.Location);
 
@@ -162,7 +167,7 @@ public class CylinderSpectator(ICreature spectator, byte fromStackPosition, byte
 
     public bool Equals(ICylinderSpectator x, ICylinderSpectator y)
     {
-        return Equals(x.Spectator, y.Spectator);
+        return Equals(x?.Spectator, y?.Spectator);
     }
 
     public int GetHashCode([DisallowNull] ICylinderSpectator obj)
