@@ -86,6 +86,9 @@ public class House
 
     public HouseAccessLevel GetAccessLevel(IPlayer player)
     {
+        if (player.Group?.Access == true)
+            return HouseAccessLevel.Owner;
+
         if (OwnerGuid != 0 && player.Id == OwnerGuid)
             return HouseAccessLevel.Owner;
 
@@ -96,6 +99,15 @@ public class House
             return HouseAccessLevel.Guest;
 
         return HouseAccessLevel.NotInvited;
+    }
+
+    public bool CanUseDoor(IPlayer player, uint doorId)
+    {
+        if (GetAccessLevel(player) >= HouseAccessLevel.SubOwner)
+            return true;
+
+        var list = GetAccessList(doorId);
+        return list is not null && list.IsInList(player);
     }
 
     public bool IsInvited(IPlayer player)
@@ -149,7 +161,6 @@ public class House
         if (OwnerGuid != 0)
         {
             _accessLists.Clear();
-            _doors.Clear();
         }
 
         OwnerGuid = guid;

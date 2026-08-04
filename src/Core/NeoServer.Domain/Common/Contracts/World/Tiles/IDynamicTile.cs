@@ -25,6 +25,10 @@ public interface IDynamicTile : ITile, IHasItem
     bool HasHole { get; }
     List<IPlayer> Players { get; }
     Func<ICreature, bool> CanEnterFunction { get; set; }
+
+    /// <summary>House id from OTBM when this tile belongs to a house; otherwise null.</summary>
+    uint? HouseId { get; }
+
     bool HasTeleport(out TeleportItem teleport);
 
     byte[] GetRaw(IPlayer playerRequesting = null);

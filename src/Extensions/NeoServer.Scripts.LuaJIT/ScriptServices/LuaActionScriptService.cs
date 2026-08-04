@@ -1,7 +1,13 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Services;
+using NeoServer.Domain.Houses;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts.Scripts.Services;
 using Serilog;
@@ -14,11 +20,14 @@ public class LuaActionScriptService : IActionScriptService
 
     public LuaActionScriptService(
         ILogger logger,
-        IActions actions)
+        IActions actions,
+        IHouseStore houseStore,
+        IMap map)
     {
         _logger = logger;
-
         _actions = actions;
+        _houseStore = houseStore;
+        _map = map;
     }
 
     #endregion
@@ -34,6 +43,16 @@ public class LuaActionScriptService : IActionScriptService
     ///     A reference to the <see cref="IActions" /> instance in use.
     /// </summary>
     private readonly IActions _actions;
+
+    /// <summary>
+    ///     A reference to the <see cref="IHouseStore" /> instance in use.
+    /// </summary>
+    private readonly IHouseStore _houseStore;
+
+    /// <summary>
+    ///     A reference to the <see cref="IMap" /> instance in use.
+    /// </summary>
+    private readonly IMap _map;
 
     #endregion
 
@@ -70,15 +89,73 @@ public class LuaActionScriptService : IActionScriptService
             }
         }
 
-        if (action != null)
-            return action.ExecuteUse(
-                player,
-                item,
-                fromPos,
-                target,
-                toPos,
-                isHotkey);
-        _logger.Warning("Action with item id {ItemServerId} has not found into LuaJIT Scripts", item.ServerId);
+        if (action is null)
+        {
+            _logger.Warning("Action with item id {ItemServerId} has not found into LuaJIT Scripts", item.ServerId);
+            return false;
+        }
+
+        if (!CanUseHouseDoor(player, item))
+        {
+            OperationFailService.Send(player, InvalidOperation.NotInvited);
+            return false;
+        }
+
+        return action.ExecuteUse(
+            player,
+            item,
+            fromPos,
+            target,
+            toPos,
+            isHotkey);
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    /// <summary>
+    ///     House door access gate. Non-house doors are always allowed.
+    ///     House doors without a DoorId fail closed for guests/strangers (owners/subowners/GM still allowed).
+    /// </summary>
+    private bool CanUseHouseDoor(IPlayer player, IItem item)
+    {
+        if (!item.IsDoor) return true;
+
+        var tile = item.Parent as ITile ?? item.Owner as ITile ?? _map.GetTile(item.Location);
+        if (tile is null) return true;
+
+        var house = _houseStore.GetByTile(tile);
+        if (house is null) return true;
+
+        if (!TryGetDoorId(item, out var doorId))
+        {
+            _logger.Warning(
+                "House door at {Location} (item {ItemServerId}) has no DoorId; denying use for non-subowners",
+                item.Location,
+                item.ServerId);
+            return house.GetAccessLevel(player) >= HouseAccessLevel.SubOwner;
+        }
+
+        return house.CanUseDoor(player, doorId);
+    }
+
+    private static bool TryGetDoorId(IItem item, out uint doorId)
+    {
+        doorId = 0;
+        if (item.Attributes is null) return false;
+
+        if (item.Attributes.TryGetAttribute<byte>(ItemAttribute.DoorId, out var doorIdByte))
+        {
+            doorId = doorIdByte;
+            return true;
+        }
+
+        if (item.Attributes.TryGetAttribute(ItemAttribute.DoorId, out string doorIdStr) &&
+            uint.TryParse(doorIdStr, out doorId))
+        {
+            return true;
+        }
 
         return false;
     }

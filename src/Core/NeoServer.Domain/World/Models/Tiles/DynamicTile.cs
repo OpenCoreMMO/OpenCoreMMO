@@ -742,7 +742,12 @@ public class DynamicTile : BaseTile, IDynamicTile
             return Result<OperationResultList<ICreature>>.NotPossible;
 
         if (!forced && (!CanEnterFunction?.Invoke(creature) ?? false))
+        {
+            if (HouseId is > 0 && creature is IPlayer)
+                return Result<OperationResultList<ICreature>>.Fail(InvalidOperation.NotInvited);
+
             return Result<OperationResultList<ICreature>>.NotPossible;
+        }
 
         Creatures ??= [];
         Creatures.Add(walkableCreature);

@@ -142,6 +142,7 @@ public class CreatureMovementService(
         return reason switch
         {
             MovementValidationFailureReason.ProtectionZoneBlocked => TextConstants.YOU_CANNOT_ENTER_PROTECTION_ZONE,
+            MovementValidationFailureReason.NotInvitedToHouse => TextConstants.YOU_ARE_NOT_INVITED,
             _ => TextConstants.NOT_POSSIBLE
         };
     }

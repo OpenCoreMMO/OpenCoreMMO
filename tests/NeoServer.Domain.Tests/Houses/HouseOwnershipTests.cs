@@ -75,6 +75,21 @@ public class HouseOwnershipTests
     }
 
     [Fact]
+    [Trait("Category", "HappyPath")]
+    public void SetNewOwner_ChangingOwner_KeepsLinkedDoors()
+    {
+        var door = HouseTestDataBuilder.CreateItemMock(serverId: 1219);
+        var house = HouseTestDataBuilder.Build(
+            ownerGuid: 1,
+            doors: [(1, door)]);
+
+        house.SetNewOwner(10, "NewOwner", 100, false, DateTime.UtcNow, 86400);
+
+        house.DoorCount.Should().Be(1);
+        house.Doors[1].Should().BeSameAs(door.Object);
+    }
+
+    [Fact]
     public void SetNewOwner_ToZeroGuid_MarksHouseUnowned()
     {
         var house = HouseTestDataBuilder.Build(
