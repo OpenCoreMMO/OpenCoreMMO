@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System.Linq;
+using Moq;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -8,12 +9,15 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Services;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Models;
+using NeoServer.Domain.World.Models.Tiles;
 
 namespace NeoServer.Domain.Tests.Creature.Creature;
 
@@ -35,15 +39,16 @@ public class PlayerTest
         Assert.Equal(expected, sut.SafeDirection);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void ChangeOutfit_Changes_Outfit_And_Emit_Event()
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
         var changedOutfit = false;
 
-        sut.OnChangedOutfit += (_, _) => changedOutfit = true;
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureChangedOutfitEvent>(_ => changedOutfit = true);
 
-        Outfit outfit = new Outfit();
+        var outfit = new Outfit();
         outfit.Addon = 3;
         outfit.LookType = 12;
         outfit.Feet = 1;
@@ -68,13 +73,14 @@ public class PlayerTest
         Assert.True(changedOutfit);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void SetTemporaryOutfit_Store_Current_To_LastOutfit_And_Changes_Outfit()
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
         var changedOutfit = false;
 
-        sut.OnChangedOutfit += (_, _) => changedOutfit = true;
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureChangedOutfitEvent>(_ => changedOutfit = true);
 
         sut.SetTemporaryOutfit(1, 1, 1, 1, 1, 1);
 
@@ -94,6 +100,7 @@ public class PlayerTest
         Assert.Equal(0, sut.LastOutfit.Legs);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void BackToOldOutfit_Sets_LastOutfit_To_Outfit_And_Changes_Outfit()
     {
@@ -102,7 +109,7 @@ public class PlayerTest
 
         sut.SetTemporaryOutfit(1, 1, 1, 1, 1, 1);
 
-        sut.OnChangedOutfit += (_, _) => changedOutfit = true;
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureChangedOutfitEvent>(_ => changedOutfit = true);
 
         sut.BackToOldOutfit();
 
@@ -158,86 +165,132 @@ public class PlayerTest
     }
 
     [Fact]
+    public void Player_sees_invisible_players()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
+        var playerA = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        var playerB = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        
+        (map[100, 100, 7] as DynamicTile)?.AddCreature(playerA);
+        (map[100, 101, 7] as DynamicTile)?.AddCreature(playerB);
+
+        playerB.TurnInvisible();
+
+        // Act
+        var result = playerA.CanSee(playerB);
+
+        // Assert
+        result.Should().BeTrue();
+        playerB.IsInvisible.Should().BeTrue();
+    }
+    
+    [Fact]
+    public void Player_cannot_see_invisible_player_that_are_immune_to_invisibility()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
+        var playerA = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        
+        var playerB = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        playerB.Group.EnableFlag(PlayerFlag.CanSenseInvisibility);
+        
+        (map[100, 100, 7] as DynamicTile)?.AddCreature(playerA);
+        (map[100, 101, 7] as DynamicTile)?.AddCreature(playerB);
+
+        playerB.TurnInvisible();
+
+        // Act
+        var result = playerA.CanSee(playerB);
+
+        // Assert
+        result.Should().BeFalse();
+        playerB.IsInvisible.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Player_does_not_see_monster_when_monster_is_invisible_and_player_cannot_see_invisible()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(100, 101, 100, 101, 7, 7);
+        var playerA = PlayerTestDataBuilder.Build(hp: 100, map: map);
+        var monsterA = MonsterTestDataBuilder.Build(map: map);
+
+        (map[100, 100, 7] as DynamicTile)?.AddCreature(playerA);
+        (map[100, 101, 7] as DynamicTile)?.AddCreature(monsterA);
+
+        monsterA.TurnInvisible();
+
+        // Act
+        var result = playerA.CanSee(monsterA);
+
+        // Assert
+        result.Should().BeFalse();
+        playerA.CanSeeInvisible.Should().BeFalse();
+        monsterA.IsInvisible.Should().BeTrue();
+    }
+
+    [Fact]
     public void Say_Should_Emit_Event()
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
         var messageEmitted = "";
         var speechTypeEmitted = SpeechType.None;
+        var receiver = PlayerTestDataBuilder.Build();
 
         sut.SetTemporaryOutfit(1, 1, 1, 1, 1, 1);
 
-        sut.OnSay += (_, type, message, _) =>
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureSayEvent>(e =>
         {
-            messageEmitted = message;
-            speechTypeEmitted = type;
-        };
+            messageEmitted = e.Message;
+            speechTypeEmitted = e.SpeechType;
+        });
 
-        sut.Say("Hello", SpeechType.Say);
+        sut.Say("Hello", SpeechType.Say, receiver);
 
-        Assert.Equal("Hello", messageEmitted);
-        Assert.Equal(SpeechType.Say, speechTypeEmitted);
+        messageEmitted.Should().Be("Hello");
+        speechTypeEmitted.Should().Be(SpeechType.Say);
     }
 
     [Fact]
     public void Say_To_Receiver_Should_Emit_Event()
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
-        var receiver = new Mock<ICreature>();
+        var receiver = PlayerTestDataBuilder.Build();
         var messageEmitted = "";
         var speechTypeEmitted = SpeechType.None;
         ICreature to = null;
 
         sut.SetTemporaryOutfit(1, 1, 1, 1, 1, 1);
 
-        sut.OnSay += (_, type, message, receiver) =>
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureSayEvent>(e =>
         {
-            messageEmitted = message;
-            speechTypeEmitted = type;
-            to = receiver;
-        };
+            messageEmitted = e.Message;
+            speechTypeEmitted = e.SpeechType;
+            to = e.Receivers?.FirstOrDefault();
+        });
 
-        sut.Say("Hello", SpeechType.Private, receiver.Object);
+        sut.Say("Hello", SpeechType.Private, receiver);
 
-        Assert.Equal("Hello", messageEmitted);
-        Assert.Equal(SpeechType.Private, speechTypeEmitted);
-        Assert.Equal(receiver.Object, to);
+        messageEmitted.Should().Be("Hello");
+        speechTypeEmitted.Should().Be(SpeechType.Private);
+        to.Should().Be(receiver);
     }
 
     [Fact]
     public void Say_Empty_Message_Dont_Emit_Event()
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100);
-        var receiver = new Mock<ICreature>();
-        string messageEmitted = null;
-        var speechTypeEmitted = SpeechType.None;
-        ICreature to = null;
+        var receiver = PlayerTestDataBuilder.Build();
+        var eventFired = false;
 
         sut.SetTemporaryOutfit(1, 1, 1, 1, 1, 1);
 
-        sut.OnSay += (_, type, message, receiver) =>
-        {
-            messageEmitted = message;
-            speechTypeEmitted = type;
-            to = receiver;
-        };
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureSayEvent>(_ => eventFired = true);
 
-        sut.Say("", SpeechType.Private, receiver.Object);
+        Assert.Throws<ArgumentException>(()=> sut.Say(string.Empty, SpeechType.Private, receiver));
 
-        Assert.Null(messageEmitted);
-        Assert.Equal(SpeechType.None, speechTypeEmitted);
-        Assert.Null(to);
-    }
-
-    [Fact]
-    public void CanBeSeen_Returns_True_Or_False_Depending_On_Flag_State()
-    {
-        var sut = PlayerTestDataBuilder.Build(hp: 100);
-
-        sut.Group.EnableFlag(PlayerFlag.IgnoreYellCheck);
-        Assert.True(sut.CanBeSeen);
-
-        sut.Group.DisableFlag(PlayerFlag.IgnoreYellCheck);
-        Assert.False(sut.CanBeSeen);
+        eventFired.Should().BeFalse();
     }
 
     [Fact]

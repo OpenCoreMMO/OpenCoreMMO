@@ -10,6 +10,8 @@ public class TileStack<T>(int size = 10) : IEnumerable<T>
 
     public int Count => _items.Count;
 
+    public IReadOnlyList<T> Values => _items;
+
     public IEnumerator<T> GetEnumerator()
     {
         return Enumerable.Reverse(_items).GetEnumerator();
@@ -19,8 +21,6 @@ public class TileStack<T>(int size = 10) : IEnumerable<T>
     {
         return GetEnumerator();
     }
-    
-    public IReadOnlyList<T> Values => _items;
 
     public void Push(T item)
     {

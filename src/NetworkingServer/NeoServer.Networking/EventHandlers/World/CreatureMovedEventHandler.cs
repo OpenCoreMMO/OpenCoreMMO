@@ -31,20 +31,16 @@ public class CreatureMovedEventHandler(IGameServer game) : INetworkingEventHandl
         var fromTile = cylinder.FromTile;
         if (toTile.IsNull()) return;
         if (fromTile.IsNull()) return;
-
-        var toDirection = fromTile.Location.DirectionTo(toTile.Location, true);
-
-        MoveCreature(toDirection, creature, cylinder);
+        
+        MoveCreature(creature, cylinder);
     }
 
-    private void MoveCreature(Direction toDirection, IWalkableCreature creature, ICylinder cylinder)
+    private void MoveCreature(IWalkableCreature creature, ICylinder cylinder)
     {
         var fromLocation = cylinder.FromTile.Location;
         var toLocation = cylinder.ToTile.Location;
         var fromTile = cylinder.FromTile;
-
-        if (creature is IMonster && creature.IsInvisible) return;
-
+        
         foreach (var cylinderSpectator in cylinder.TileSpectators)
         {
             var spectator = cylinderSpectator.Spectator;
@@ -60,7 +56,7 @@ public class CreatureMovedEventHandler(IGameServer game) : INetworkingEventHandl
                 player.CanSee(toLocation)) //spectator can see old and new location
             {
                 MoveCreature(creature, fromLocation, toLocation, connection, fromTile, cylinderSpectator, player);
-                
+
                 SendTeleportMagicEffect(cylinder, fromTile, connection, toLocation);
 
                 connection.Send();
@@ -86,7 +82,7 @@ public class CreatureMovedEventHandler(IGameServer game) : INetworkingEventHandl
                 cylinderSpectator.ToStackPosition));
 
             connection.OutgoingPackets.Enqueue(new AddCreaturePacket(player, creature));
-            
+
             SendTeleportMagicEffect(cylinder, fromTile, connection, toLocation);
 
             connection.Send();
@@ -97,12 +93,8 @@ public class CreatureMovedEventHandler(IGameServer game) : INetworkingEventHandl
         Location toLocation)
     {
         if (cylinder.IsTeleport)
-        {
             if (fromTile is IDynamicTile fromDynamicTile && fromDynamicTile.HasTeleport(out _))
-            {
                 connection.OutgoingPackets.Enqueue(new MagicEffectPacket(toLocation, EffectT.BubbleBlue));
-            }
-        }
     }
 
     private static void MoveCreature(IWalkableCreature creature, Location fromLocation, Location toLocation,
@@ -144,9 +136,7 @@ public class CreatureMovedEventHandler(IGameServer game) : INetworkingEventHandl
             connection.OutgoingPackets.Enqueue(new MapDescriptionPacket(player, game.Map));
 
             if (fromTile is IDynamicTile fromDynamicTile && fromDynamicTile.HasTeleport(out _))
-            {
                 connection.OutgoingPackets.Enqueue(new MagicEffectPacket(toLocation, EffectT.BubbleBlue));
-            }
 
             connection.Send();
             return true;

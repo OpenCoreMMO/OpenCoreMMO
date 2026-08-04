@@ -11,10 +11,13 @@ using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures.Conditions;
 using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Models.Bases.Events;
 using NeoServer.Domain.Creatures.Monster.Loot;
+using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Outfit;
 
@@ -37,68 +40,117 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual void AddCondition(ICondition condition)
     {
-        switch (condition.Type)
+        if (condition is not BaseCondition conditionToAdd)
         {
-            case ConditionType.Haste:
-                Conditions.TryGetValue(ConditionType.Paralyze, out var paralyzeCondition);
-                paralyzeCondition?.End();
-                break;
-            case ConditionType.Paralyze:
-                Conditions.TryGetValue(ConditionType.Haste, out var hasteCondition);
-                hasteCondition?.End();
-                break;
+            return;
         }
 
-        var result = Conditions.TryAdd(condition.Type, condition);
-        condition.Start(this);
-        if (!result) return;
+        if (!condition.IsPersistent)
+        {
+            var conditionRemoved = Conditions.RemoveNonPersistentByType(condition.Type);
+            if (conditionRemoved is BaseCondition conditionBaseRemoved)
+            {
+                conditionBaseRemoved.End();
+            }
+        }
+
+        conditionToAdd.Start(this);
+        Conditions.Add(conditionToAdd);
 
         EventAggregator.Invoke(new CreatureConditionAddedEvent(this, condition));
     }
 
-    public void RemoveCondition(ICondition condition)
+    public virtual void RemoveCondition(ICondition condition)
     {
-        Conditions.Remove(condition.Type);
+        if (condition is not BaseCondition conditionToRemove)
+        {
+            return;
+        }
+
+        Conditions.Remove(conditionToRemove);
+        conditionToRemove.End();
+
         EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
+    }
+
+    public void RemoveAllConditions()
+    {
+        foreach (var condition in Conditions.GetAll())
+        {
+            if (condition is BaseCondition conditionToRemove)
+            {
+                conditionToRemove.End();
+            }
+        }
+        Conditions.Clear();
     }
 
     public void DisableCondition(ConditionType type)
     {
-        if (!Conditions.TryGetValue(type, out var condition)) return;
+        ICondition firstCondition = null;
+        foreach (var condition in Conditions.GetByType(type))
+        {
+            firstCondition ??= condition;
+            condition.Disable();
+        }
 
-        condition.Disable();
-        EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
+        if (firstCondition is null) return;
+
+        EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, firstCondition));
     }
 
     public void EnableCondition(ConditionType type)
     {
-        if (!Conditions.TryGetValue(type, out var condition)) return;
+        ICondition firstCondition = null;
+        foreach (var condition in Conditions.GetByType(type))
+        {
+            firstCondition ??= condition;
+            condition.Enable();
+        }
 
-        condition.Enable();
-        EventAggregator.Invoke(new CreatureConditionAddedEvent(this, condition));
+        if (firstCondition is null) return;
+
+        EventAggregator.Invoke(new CreatureConditionAddedEvent(this, firstCondition));
     }
 
-    public void RemoveCondition(ConditionType type)
+    public virtual void RemoveCondition(ConditionType type)
     {
-        if (Conditions.Remove(type, out var condition) is false) return;
-        EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, condition));
+        var toRemove = Conditions.GetByType(type);
+        if (toRemove.Count == 0) return;
+
+        var snapshot = new List<ICondition>(toRemove.Count);
+        for (var i = 0; i < toRemove.Count; i++)
+        {
+            snapshot.Add(toRemove[i]);
+        }
+
+        foreach (var condition in snapshot)
+        {
+            if (condition is BaseCondition conditionToRemove)
+            {
+                conditionToRemove.End();
+            }
+        }
+
+        Conditions.RemoveByType(type);
+        EventAggregator.Invoke(new CreatureConditionRemovedEvent(this, snapshot[0]));
     }
 
-    public bool HasCondition(ConditionType type, out ICondition condition)
+    public virtual IReadOnlyList<ICondition> GetConditions() => Conditions.GetAll();
+
+    public virtual IReadOnlyList<ICondition> GetFiniteConditions() => Conditions.GetFiniteConditions();
+
+    public virtual bool HasCondition(ConditionType type, out ICondition condition) =>
+        Conditions.HasAnyEnabledConditionOf(type, out condition);
+
+    public virtual bool HasCondition(ConditionType type)
     {
-        return Conditions.TryGetValue(type, out condition) && !condition.IsDisabled;
+        return Conditions.HasAnyEnabledConditionOf(type);
     }
 
-    public bool HasCondition(ConditionType type)
-    {
-        return Conditions.TryGetValue(type, out var condition) && !condition.IsDisabled;
-    }
+    public virtual bool HasAnyCondition() => Conditions.Count > 0;
 
-    public ICondition GetCondition(ConditionType type)
-    {
-        Conditions.TryGetValue(type, out var condition);
-        return condition;
-    }
+    public ICondition GetCondition(ConditionType type) => Conditions.GetFirstConditionOfType(type);
 
     public void ResetHealthPoints()
     {
@@ -107,12 +159,12 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual void GainExperience(long experience)
     {
-        OnGainedExperience?.Invoke(this, experience);
+        EventAggregator.Invoke(new CreatureGainedExperienceEvent(this, experience));
     }
 
     public virtual void LoseExperience(long exp)
     {
-        OnLoseExperience?.Invoke(this, exp);
+        EventAggregator.Invoke(new CreatureLoseExperienceEvent(this, exp));
     }
 
     public virtual CombatDamage ReduceDamage(CombatDamage attack)
@@ -130,7 +182,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
                 damage = 0;
 
                 Block();
-                OnBlockedAttack?.Invoke(this, BlockType.Shield);
+                EventAggregator.Invoke(new CreatureBlockedAttackEvent(this, BlockType.Shield));
                 attack.SetNewDamage((ushort)damage);
                 return attack;
             }
@@ -143,7 +195,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
             if (damage <= 0)
             {
                 damage = 0;
-                OnBlockedAttack?.Invoke(this, BlockType.Armor);
+                EventAggregator.Invoke(new CreatureBlockedAttackEvent(this, BlockType.Armor));
             }
         }
 
@@ -153,18 +205,29 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
         attack = OnImmunityDefense(attack);
 
-        if (attack.Damage <= 0) OnBlockedAttack?.Invoke(this, BlockType.Armor);
+        if (attack.Damage <= 0) EventAggregator.Invoke(new CreatureBlockedAttackEvent(this, BlockType.Armor));
 
         return attack;
     }
 
-    public void StopAttack(bool force = false)
+    public virtual void StopAttack(bool force = false)
     {
-        if (force is false && !Attacking) return;
+        if (force is false && !IsAttacking) return;
 
         StopFollowing();
         CurrentTarget = null;
-        OnStoppedAttack?.Invoke(this);
+
+        if (Summons is { Count: > 0 })
+        {
+            foreach (var summon in Summons)
+            {
+                if (!summon.IsAttacking) continue;
+
+                summon.StopAttack();
+            }
+        }
+
+        EventAggregator.Invoke(new CreatureStoppedAttackEvent(this));
     }
 
     public virtual bool IsTargetLost(ICreature target)
@@ -255,7 +318,15 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
             StopFollowing();
         }
 
-        OnTargetChanged?.Invoke(this, oldAttackTarget, (uint)target?.CreatureId);
+        if (Summons is not null && Summons.Count > 0)
+        {
+            foreach (var summon in Summons)
+            {
+                summon.OnMasterChangeTarget(this);
+            }
+        }
+
+        EventAggregator.Invoke(new CreatureChangedAttackTargetEvent(this, oldAttackTarget, (uint)target?.CreatureId));
         return Result.Success;
     }
 
@@ -263,21 +334,20 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     {
         if (increasing <= 0) return;
 
-        if (HealthPoints == MaxHealthPoints)
-        {
-            increasing = 0;
-        };
+        if (HealthPoints == MaxHealthPoints) increasing = 0;
 
         var oldHealthPoints = HealthPoints;
 
         HealthPoints = Math.Min(HealthPoints + increasing, MaxHealthPoints);
 
-        OnHeal?.Invoke(this, healedBy, increasing);
+        EventAggregator.Invoke(new CreatureHealedEvent(this, healedBy, increasing));
         EventAggregator.Invoke(new CreatureHealthChangedEvent(this, oldHealthPoints, HealthPoints));
     }
 
     public virtual void TurnInvisible()
     {
+        if (IsInvisible) return;
+
         IsInvisible = true;
         EventAggregator.Invoke(new CreatureChangedVisibilityEvent(this));
     }
@@ -290,6 +360,8 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual void TurnVisible()
     {
+        if (!IsInvisible) return;
+
         IsInvisible = false;
         EventAggregator.Invoke(new CreatureChangedVisibilityEvent(this));
     }
@@ -312,6 +384,11 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     public bool CooldownHasExpired(CooldownType type)
     {
         return Cooldowns.Expired(type);
+    }
+
+    public TimeSpan GetCooldownRemaining(CooldownType type)
+    {
+        return Cooldowns.Remaining(type);
     }
 
     public virtual DamageResult TakeDamage(IThing enemy, CombatDamageList damages)
@@ -342,14 +419,6 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         return new DamageResult(damages, wasDamaged);
     }
 
-    public void PropagateAttack(AffectedLocation[] area, CombatDamage damage)
-    {
-        if (IsDead) return;
-        if (damage.Damage <= 0) return;
-
-        OnPropagateAttack?.Invoke(this, damage, area);
-    }
-
     public abstract void SetAsEnemy(ICreature actor);
 
     public void IncreaseDamageReceived(byte percentage)
@@ -364,7 +433,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public void RaiseDroppedLootEvent(ICombatActor actor, Loot loot)
     {
-        OnDroppedLoot?.Invoke(actor, loot);
+        EventAggregator.Invoke(new CreatureDroppedLootEvent(actor, loot));
     }
 
     public virtual void Kill(ICombatActor enemy, bool lastHit = false, bool unjustified = false)
@@ -377,11 +446,6 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         Cooldowns.Start(combatContext.CombatParameters.CooldownType, combatContext.CombatParameters.CooldownDuration);
     }
 
-    public void PropagateAttack(AffectedLocation area, CombatDamage damage)
-    {
-        PropagateAttack([area], damage);
-    }
-
     public virtual CalculatedAttackDamage CalculateAttackDamage()
     {
         return new CalculatedAttackDamage();
@@ -391,7 +455,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     public virtual bool CanBlock(DamageType damage)
     {
-        if (damage != DamageType.Melee) return false;
+        if (damage != DamageType.Melee && damage != DamageType.Physical) return false;
         var hasCoolDownExpired = Cooldowns.Expired(CooldownType.Block);
 
         if (!hasCoolDownExpired && _blockCount >= BLOCK_LIMIT) return false;
@@ -416,6 +480,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     protected void ReduceHealth(ushort damage)
     {
+        if (damage == 0) return;
         HealthPoints = damage > HealthPoints ? 0 : HealthPoints - damage;
     }
 
@@ -425,8 +490,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         foreach (var summon in summonsCopy) summon.OnMasterKilled();
 
         if (by is ICombatActor combatActor)
-            //todo: implements real damage
-            OnBeforeDeath?.Invoke(this, combatActor, 0);
+            EventAggregator.Invoke(new CreatureBeforeDeathEvent(this, combatActor, 0));
 
         EventAggregator.Invoke(new CreatureDeathEvent(this, by));
 
@@ -438,7 +502,7 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
         StopAttack();
         StopFollowing();
         StopWalking();
-        Conditions.Clear();
+        RemoveAllConditions();
         ReceivedDamages.Clear();
     }
 
@@ -459,21 +523,10 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
 
     protected void InvokeAttackCanceled()
     {
-        OnAttackCanceled?.Invoke(this);
+        EventAggregator.Invoke(new CreatureAttackCanceledEvent(this));
     }
 
     #region Events
-
-    public event Heal OnHeal;
-    public event StopAttack OnStoppedAttack;
-    public event StopAttack OnAttackCanceled;
-    public event BlockAttack OnBlockedAttack;
-    public event BeforeDeath OnBeforeDeath;
-    public event AttackTargetChange OnTargetChanged;
-    public event PropagateAttack OnPropagateAttack;
-    public event GainExperience OnGainedExperience;
-    public event LoseExperience OnLoseExperience;
-    public event DropLoot OnDroppedLoot;
 
     #endregion
 
@@ -485,14 +538,16 @@ public abstract class CombatActor(ICreatureType type, IMapTool mapTool, Outfit o
     public abstract ushort ArmorRating { get; }
     public uint AutoAttackTargetId => CurrentTarget?.CreatureId ?? default;
     public ICreature CurrentTarget { get; private set; }
-    public bool Attacking => AutoAttackTargetId > 0;
+    public bool IsAttacking => AutoAttackTargetId > 0;
     public abstract ushort MinimumAttackPower { get; }
     public abstract bool UsingDistanceWeapon { get; }
     public uint AttackEvent { get; set; }
     public virtual bool CanBeAttacked => !(Tile?.ProtectionZone ?? false) && !IsDead; //todo: set as a flag
 
-    public IDictionary<ConditionType, ICondition> Conditions { get; set; } =
-        new Dictionary<ConditionType, ICondition>();
+    // public IDictionary<ConditionType, ICondition> Conditions { get; set; } =
+    //     new Dictionary<ConditionType, ICondition>();
+
+    private ConditionList Conditions { get; } = new();
 
     public abstract ushort MaximumAttackPower { get; }
     public abstract ushort MaximumElementalAttackPower { get; }

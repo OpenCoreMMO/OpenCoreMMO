@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NeoServer.Data.Entities;
 using NeoServer.Data.Extensions;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 
 namespace NeoServer.Data.Parsers;
@@ -19,7 +21,7 @@ public static class ItemEntityParser
             DecayTo = item.Decay?.DecaysTo,
             DecayDuration = item.Decay?.Duration,
             DecayElapsed = item.Decay?.Elapsed,
-            Charges = item is IChargeable chargeable ? chargeable.Charges : null,
+            Charges = item.Charges?.Amount,
             Attributes = item.ExtractAllAttributes()
         };
 
@@ -43,7 +45,17 @@ public static class ItemEntityParser
             foreach (var itemRecord in containerItemsRecords)
             {
                 //todo: check this, if need pass Metadata to itemFactory.Create
-                var item = itemFactory.Create((ushort)itemRecord.ServerId, location, null, null,
+                var itemTypeAttributes = new Dictionary<ItemTypeAttribute, IConvertible>();
+                if (itemRecord.Charges.HasValue)
+                    itemTypeAttributes[ItemTypeAttribute.Charges] = itemRecord.Charges.Value;
+                if (itemRecord.DecayElapsed.HasValue && itemRecord.DecayElapsed.Value > 0)
+                    itemTypeAttributes[ItemTypeAttribute.DecayElapsed] = itemRecord.DecayElapsed.Value;
+                if (itemRecord.DecayDuration.HasValue && itemRecord.DecayDuration.Value > 0)
+                    itemTypeAttributes[ItemTypeAttribute.Duration] = itemRecord.DecayDuration.Value;
+                if (itemTypeAttributes.Count == 0)
+                    itemTypeAttributes = null;
+
+                var item = itemFactory.Create((ushort)itemRecord.ServerId, location, itemTypeAttributes, null,
                     itemRecord.GetAttributes(), itemRecord.GetCustomAttributes());
 
                 if (item is ICumulative cumulativeItem && itemRecord.Amount > 1)

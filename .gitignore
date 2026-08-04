@@ -62,3 +62,7 @@ c4/icon.png
 /src/Loaders/NeoServer.OTBM/Properties/launchSettings.json
 /data/.env
 *.env
+
+# AI agent artifacts
+.codegraph/
+.reasonix/

@@ -9,11 +9,13 @@ using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.SafeTrade;
 using NeoServer.Domain.SafeTrade.Operations;
+using NeoServer.Domain.SafeTrade.Request;
 using NeoServer.Domain.SafeTrade.Validations;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -29,7 +31,7 @@ public class TradeCancellationTests
 {
     private void AssertTradeIsCancelled(SafeTradeSystem tradeSystem, IMap map, IPlayer player)
     {
-        var secondPlayer = PlayerTestDataBuilder.Build();
+        var secondPlayer = PlayerTestDataBuilder.Build(map: map);
 
         var x = (ushort)(player.Location.X + 1);
 
@@ -66,6 +68,9 @@ public class TradeCancellationTests
 
         //act
         tradeSystem.Request(player, secondPlayer, item);
+
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureMovedEvent>(e =>
+            TradeRequestEventHandler.OnPlayerMoved(e.Creature, e.FromLocation, e.ToLocation, e.Spectators));
 
         player.WalkTo(new Location(104, 100, 7));
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
@@ -153,6 +158,10 @@ public class TradeCancellationTests
 
         //act
         tradeSystem.Request(player, secondPlayer, item);
+
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureMovedEvent>(e =>
+            TradeRequestEventHandler.OnPlayerMoved(e.Creature, e.FromLocation, e.ToLocation, e.Spectators));
+
         player.WalkTo(Direction.East, Direction.East);
 
         creatureMovementService.MoveCreature(player);
@@ -174,8 +183,8 @@ public class TradeCancellationTests
 
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
-        var player = PlayerTestDataBuilder.Build(hp: 10);
-        var secondPlayer = PlayerTestDataBuilder.Build();
+        var player = PlayerTestDataBuilder.Build(hp: 10, map: map);
+        var secondPlayer = PlayerTestDataBuilder.Build(map: map);
 
         ((DynamicTile)map[100, 100, 7]).AddCreature(secondPlayer);
         ((DynamicTile)map[101, 100, 7]).AddCreature(player);

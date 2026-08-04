@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NeoServer.Data.Entities;
+using NeoServer.Data.Helpers.ConditionParsers;
 using NeoServer.Data.Seeds;
 
 namespace NeoServer.Data.Configurations.ForSqLite;
@@ -41,6 +42,8 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
         ConfigureProperty(entity, e => e.LookHead, "int(11)", "0");
         ConfigureProperty(entity, e => e.LookLegs, "int(11)", "0");
         ConfigureProperty(entity, e => e.LookType, "int(11)", "136");
+        ConfigureProperty(entity, e => e.LightLevel, null, "0");
+        ConfigureProperty(entity, e => e.LightColor, null, "0");
         ConfigureProperty(entity, e => e.Mana, "int(11)", "0");
         ConfigureProperty(entity, e => e.MaxMana, "int(11)", "0");
         ConfigureProperty(entity, e => e.ManaSpent, "int(11)", "0");
@@ -65,12 +68,18 @@ public class ForSqLitePlayerEntityConfiguration : IEntityTypeConfiguration<Playe
         ConfigureProperty(entity, e => e.SkillSword, null, "10");
         ConfigureProperty(entity, e => e.SkillSwordTries, null, "0");
         ConfigureProperty(entity, e => e.Vocation, "int(11)", "0");
-        ConfigureProperty(entity, e => e.RemainingRecoverySeconds, "int(11)", "0");
         ConfigureProperty(entity, e => e.BankAmount, "int(11)", "0");
         ConfigureProperty(entity, e => e.Skull, "int(11)", "0");
         entity.Property(e => e.SkullEndsAt);
         entity.Property(e => e.LastLogIn);
         entity.Property(e => e.LastLogOut);
+
+        entity.Property(e => e.Conditions)
+            .HasColumnType("TEXT")
+            .HasConversion(
+                v => ConditionListParser.Serialize(v),
+                v => ConditionListParser.Deserialize(v)
+            );
 
         entity.HasOne(d => d.Account)
             .WithMany(p => p.Players)

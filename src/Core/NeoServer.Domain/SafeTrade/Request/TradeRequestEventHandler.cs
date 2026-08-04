@@ -7,7 +7,7 @@ using NeoServer.Domain.SafeTrade.Trackers;
 
 namespace NeoServer.Domain.SafeTrade.Request;
 
-internal static class TradeRequestEventHandler
+public static class TradeRequestEventHandler
 {
     private static Action<TradeRequest> CancelTradeAction { get; set; }
     private static HashSet<uint> PlayerEventSubscription { get; } = new();
@@ -27,8 +27,6 @@ internal static class TradeRequestEventHandler
     {
         if (player is not null && !PlayerEventSubscription.Contains(player.CreatureId))
         {
-            player.OnCreatureMoved += OnPlayerMoved;
-
             // Add player ID to the HashSet to prevent multiple subscriptions
             PlayerEventSubscription.Add(player.CreatureId);
         }
@@ -67,8 +65,6 @@ internal static class TradeRequestEventHandler
     {
         if (player is not null)
         {
-            player.OnCreatureMoved -= OnPlayerMoved;
-
             // Remove player ID from the HashSet to allow future subscriptions
             PlayerEventSubscription.Remove(player.CreatureId);
         }
@@ -118,7 +114,7 @@ internal static class TradeRequestEventHandler
 
 
     //Cancel the trade if player moves from a location that is more than one SQM away from the other player
-    private static void OnPlayerMoved(IWalkableCreature creature, Location fromLocation, Location toLocation,
+    public static void OnPlayerMoved(IWalkableCreature creature, Location fromLocation, Location toLocation,
         ICylinderSpectator[] spectators)
     {
         if (creature is not IPlayer player) return;

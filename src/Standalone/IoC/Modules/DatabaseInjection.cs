@@ -50,7 +50,7 @@ public static class DatabaseInjection
         IConfiguration configuration)
         where TContext : DbContext
     {
-        DatabaseConfiguration config = new(null, DatabaseType.INMEMORY);
+        DatabaseConfiguration config = new(null, DatabaseType.INMEMORY, false);
 
         configuration.GetSection("database").Bind(config);
 
@@ -98,6 +98,6 @@ public static class DatabaseInjection
         if (!string.IsNullOrEmpty(activeDatabase) && Enum.TryParse(activeDatabase, out DatabaseType databaseType))
             active = databaseType;
 
-        databaseConfiguration = new DatabaseConfiguration(dbConnections, active);
+        databaseConfiguration = new DatabaseConfiguration(dbConnections, active, databaseConfiguration.DropOnStartup);
     }
 }

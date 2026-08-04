@@ -1,6 +1,4 @@
 ﻿using LuaNET;
-using Microsoft.Extensions.Configuration;
-using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Enums.Config;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
@@ -32,11 +30,11 @@ public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
         RegisterMethod(luaState, "configManager", "getBoolean", LuaConfigManagerGetBoolean);
         RegisterMethod(luaState, "configManager", "getFloat", LuaConfigManagerGetFloat);
 
-         RegisterTable(luaState, "configKeys");
-         RegisterEnumIn<BooleanConfigType>(luaState, "configKeys");
-         RegisterEnumIn<StringConfigType>(luaState, "configKeys");
-         RegisterEnumIn<IntegerConfigType>(luaState, "configKeys");
-         RegisterEnumIn<FloatingConfigType>(luaState, "configKeys");
+        RegisterTable(luaState, "configKeys");
+        RegisterEnumIn<BooleanConfigType>(luaState, "configKeys");
+        RegisterEnumIn<StringConfigType>(luaState, "configKeys");
+        RegisterEnumIn<IntegerConfigType>(luaState, "configKeys");
+        RegisterEnumIn<FloatingConfigType>(luaState, "configKeys");
 
         // foreach (var item in Enum.GetValues<BooleanConfigType>())
         //     RegisterVariable(luaState, "configKeys", item.ToString(), item);
@@ -80,7 +78,7 @@ public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
         var config = GetNumber<BooleanConfigType>(luaState, -1);
 
         var configValue = _configurationMap.GetBoolean(config);
-        
+
         PushBoolean(luaState, configValue);
         return 1;
     }

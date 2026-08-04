@@ -1,6 +1,8 @@
+using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Location.Structs;
@@ -12,6 +14,7 @@ namespace NeoServer.Domain.Spells;
 public class SpellService(
     SpellCastValidation spellCastValidation,
     IEventAggregator eventAggregator,
+    ICreatureSpeechService creatureSpeechService,
     IMap map)
 {
     public bool Cast(ICombatActor caster, IThing target, ISpell spell, bool isHotkey)
@@ -34,8 +37,18 @@ public class SpellService(
 
         if (invokeResult.Failed && caster is IPlayer) return true;
 
-        if (caster is IPlayer player) player.PostSpellCast(spell);
+        if (caster is IPlayer player)
+        {
+            player.PostSpellCast(spell);
+            
+            if (!spell.ShouldSay) return true;
 
+            if (!string.IsNullOrWhiteSpace(spell.Words))
+            {
+                creatureSpeechService.Speak(caster, spell.Words, SpeechType.MonsterSay);
+            }
+        }
+        
         return true;
     }
 

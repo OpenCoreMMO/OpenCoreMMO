@@ -1,13 +1,16 @@
 using Moq;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Server.Events.Combat;
 using Serilog;
 
 namespace NeoServer.Domain.Tests.Creatures.Monster;
@@ -179,10 +182,10 @@ public class SummonDeathHandlingTests
         summon.SetNewLocation(new Location(100, 102, 7));
 
         // Act
-        master.SetAttackTarget(enemy); // This should trigger OnMasterTargetChange
+        master.SetAttackTarget(enemy);
 
         // Assert
-        summon.Attacking.Should().BeTrue();
+        summon.IsAttacking.Should().BeTrue();
         summon.AutoAttackTargetId.Should().Be(enemy.CreatureId);
     }
 
@@ -197,7 +200,7 @@ public class SummonDeathHandlingTests
         summon.SetAsEnemy(master);
 
         // Assert
-        summon.Attacking.Should().BeFalse();
+        summon.IsAttacking.Should().BeFalse();
         summon.AutoAttackTargetId.Should().Be(0);
     }
 
@@ -213,7 +216,7 @@ public class SummonDeathHandlingTests
         summon1.SetAsEnemy(summon2);
 
         // Assert
-        summon1.Attacking.Should().BeFalse();
+        summon1.IsAttacking.Should().BeFalse();
         summon1.AutoAttackTargetId.Should().Be(0);
     }
 
@@ -227,7 +230,7 @@ public class SummonDeathHandlingTests
         summon.SetNewLocation(new Location(100, 101, 7));
         var enemy = PlayerTestDataBuilder.Build();
         summon.SetNewLocation(new Location(100, 102, 7));
-        
+
         // Act
         master.SetAttackTarget(enemy);
 

@@ -1,13 +1,9 @@
 using Moq;
-using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
-using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Monster;
-using NeoServer.Domain.Creatures.Monster.Combat;
 using NeoServer.Domain.Creatures.Monster.Services;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Tests.Helpers;
@@ -62,7 +58,7 @@ public class SummonTests
         // Assert
         // The summon should not automatically attack player B just because master changed floors
         // The summon only attacks when the master has a target
-        summon.Attacking.Should().BeFalse();
+        summon.IsAttacking.Should().BeFalse();
         summon.AutoAttackTargetId.Should().Be(0);
     }
 
@@ -193,10 +189,10 @@ public class SummonTests
     {
         // Arrange
         var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
-        
+
         var master = PlayerTestDataBuilder.Build();
         master.SetNewLocation(new Location(105, 105, 7));
-        
+
         var summon = MonsterTestDataBuilder.BuildSummon(master);
         summon.SetNewLocation(new Location(104, 105, 7));
 
@@ -206,8 +202,10 @@ public class SummonTests
         var summonServiceMock = new Mock<ISummonService>();
         var targetDetectorService = new TargetDetectorService(map);
         var pathFinder = new PathFinder(map);
-        var monsterTargetingService = new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, pathFinder)));
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, targetDetectorService, monsterTargetingService);
+        var monsterTargetingService =
+            new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, pathFinder)));
+        var monsterStateService =
+            new MonsterStateService(summonServiceMock.Object, targetDetectorService, monsterTargetingService);
 
         // Act
         monsterStateService.UpdateState(summon);
@@ -216,7 +214,7 @@ public class SummonTests
         // Assert
         summon.Targets.HasTarget(master).Should().BeFalse("Summon should never add its master as a target");
         summon.CurrentTarget.Should().NotBe(master, "Summon should never target its master");
-        summon.Attacking.Should().BeFalse("Summon should not be attacking when trying to attack master");
+        summon.IsAttacking.Should().BeFalse("Summon should not be attacking when trying to attack master");
     }
 
     [Fact]
@@ -256,8 +254,10 @@ public class SummonTests
         var summonServiceMock = new Mock<ISummonService>();
         var targetDetectorService = new TargetDetectorService(map);
         var pathFinder = new PathFinder(map);
-        var monsterTargetingService = new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, pathFinder)));
-        var monsterStateService = new MonsterStateService(summonServiceMock.Object, targetDetectorService, monsterTargetingService);
+        var monsterTargetingService =
+            new MonsterTargetingService(new MonsterTargetSearch(new MapTool(map, pathFinder)));
+        var monsterStateService =
+            new MonsterStateService(summonServiceMock.Object, targetDetectorService, monsterTargetingService);
 
         // Act
         monsterStateService.UpdateState(summon);
@@ -265,11 +265,91 @@ public class SummonTests
         // Assert
         // Summon should not be attacking or have an auto-attack target just because master's target is on another floor
         summon.State.Should().Be(MonsterState.RandomlyWalking);
-        summon.Attacking.Should().BeFalse();
+        summon.IsAttacking.Should().BeFalse();
         summon.AutoAttackTargetId.Should().Be(0);
 
         // Summon should not acquire targets that are on floor 7 (nearby creatures) when master is on floor 8
-        summon.Targets.HasTarget(monsterX).Should().BeFalse("Summon must not target nearby floor-7 monster when its master is on a different floor");
-        summon.Targets.HasTarget(playerY).Should().BeFalse("Summon must not target nearby floor-7 player when its master is on a different floor");
+        summon.Targets.HasTarget(monsterX).Should()
+            .BeFalse("Summon must not target nearby floor-7 monster when its master is on a different floor");
+        summon.Targets.HasTarget(playerY).Should()
+            .BeFalse("Summon must not target nearby floor-7 player when its master is on a different floor");
+    }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void Monster_summon_follows_master_when_master_has_no_target()
+    {
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+
+        var master = MonsterTestDataBuilder.Build(map: map);
+        master.SetNewLocation(new Location(105, 105, 7));
+
+        var summon = MonsterTestDataBuilder.BuildSummon(master);
+        summon.SetNewLocation(new Location(104, 105, 7));
+
+        map.PlaceCreature(master);
+        map.PlaceCreature(summon);
+
+        ((Domain.Creatures.Monster.Monster)master).Awake();
+        master.UpdateState();
+
+        summon.UpdateState();
+
+        summon.IsAttacking.Should().BeFalse();
+        ((Domain.Creatures.Monster.Summon.Summon)summon).FollowCreature.Should().Be(master);
+    }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void Monster_summon_attacks_master_target_when_master_has_target()
+    {
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+
+        var master = MonsterTestDataBuilder.Build(map: map);
+        master.SetNewLocation(new Location(105, 105, 7));
+
+        var target = PlayerTestDataBuilder.Build(2, "Target");
+        target.SetNewLocation(new Location(106, 105, 7));
+
+        var summon = MonsterTestDataBuilder.BuildSummon(master);
+        summon.SetNewLocation(new Location(104, 105, 7));
+
+        map.PlaceCreature(master);
+        map.PlaceCreature(target);
+        map.PlaceCreature(summon);
+
+        master.SetAsEnemy(target);
+        ((Domain.Creatures.Monster.Monster)master).ChangeAttackTarget(target);
+
+        summon.UpdateState();
+
+        summon.CurrentTarget.Should().Be(target);
+        summon.IsAttacking.Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait("Category", "Summon")]
+    public void Monster_summon_born_attacks_master_existing_target()
+    {
+        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+
+        var master = MonsterTestDataBuilder.Build(map: map);
+        master.SetNewLocation(new Location(105, 105, 7));
+
+        var target = PlayerTestDataBuilder.Build(2, "Target");
+        target.SetNewLocation(new Location(106, 105, 7));
+
+        var summon = MonsterTestDataBuilder.BuildSummon(master);
+
+        map.PlaceCreature(master);
+        map.PlaceCreature(target);
+
+        master.SetAsEnemy(target);
+        ((Domain.Creatures.Monster.Monster)master).ChangeAttackTarget(target);
+
+        summon.Born(new Location(104, 105, 7));
+
+        summon.CurrentTarget.Should().Be(target);
+        summon.IsAttacking.Should().BeTrue();
     }
 }

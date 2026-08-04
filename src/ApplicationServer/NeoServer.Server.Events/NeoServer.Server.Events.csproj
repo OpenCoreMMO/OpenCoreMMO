@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <PackageReference Include="Serilog" Version="4.3.0"/>
+        <PackageReference Include="Serilog" Version="4.3.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -11,10 +11,6 @@
         <ProjectReference Include="..\..\ApplicationServer\NeoServer.Server\NeoServer.Server.csproj"/>
         <ProjectReference Include="..\..\NetworkingServer\NeoServer.Networking\NeoServer.Networking.csproj"/>
         <ProjectReference Include="..\NeoServer.Server.Contracts\NeoServer.Server.Common.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Application\Creature\"/>
     </ItemGroup>
 
     <ItemGroup>

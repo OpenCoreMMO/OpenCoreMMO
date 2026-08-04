@@ -29,9 +29,11 @@ using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures.Common;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Conditions.Implementations;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Domain.Creatures.Models;
 using NeoServer.Domain.Creatures.Models.Bases;
+using NeoServer.Domain.Creatures.Models.Bases.Events;
 using NeoServer.Domain.Creatures.Npcs;
 using NeoServer.Domain.Creatures.Player.Container;
 using NeoServer.Domain.Creatures.Player.Inventory;
@@ -39,6 +41,7 @@ using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Guild;
 using NeoServer.Domain.Items.Items.UsableItems;
 using NeoServer.Domain.Items.Items.Weapons;
+using NeoServer.Domain.Items.Services;
 
 namespace NeoServer.Domain.Creatures.Player;
 
@@ -47,6 +50,7 @@ public class Player : CombatActor, IPlayer
     private const int KNOWN_CREATURE_LIMIT = 250; //todo: for version 8.60
 
 
+    private readonly Dictionary<ConditionType, int> _conditionSuppressions = new();
     private byte _soulPoints;
 
     public Player(
@@ -100,6 +104,7 @@ public class Player : CombatActor, IPlayer
         SoulPoints = soulPoints;
         StaminaMinutes = staminaMinutes;
         Outfit = outfit;
+        OriginalOutfit = outfit.Clone();
         Speed = speed == 0 ? RawSpeed : speed;
         Inventory = new Inventory.Inventory(this, new Dictionary<Slot, (IItem Item, ushort Id)>());
 
@@ -123,7 +128,7 @@ public class Player : CombatActor, IPlayer
         {
             skill.OnAdvance += OnLevelAdvance;
             skill.OnRegress += OnLevelRegress;
-            skill.OnIncreaseSkillPoints += skill => OnGainedSkillPoint?.Invoke(this, skill);
+            skill.OnIncreaseSkillPoints += skill => EventAggregator.Invoke(new PlayerGainedSkillPointEvent(this, skill));
         }
     }
 
@@ -166,7 +171,7 @@ public class Player : CombatActor, IPlayer
         _ => 0.75f
     };
 
-    public bool IsPacified => Conditions.ContainsKey(ConditionType.Pacified);
+    public bool IsPacified => HasCondition(ConditionType.Pacified);
 
     public IDictionary<SkillType, Skill> Skills { get; }
 
@@ -305,14 +310,9 @@ public class Player : CombatActor, IPlayer
     {
         if (IsPacified) return;
 
-        if (HasCondition(ConditionType.ProtectionZoneBlock, out var condition))
-        {
-            condition.Start(this);
-            return;
-        }
+        if (HasCondition(ConditionType.ProtectionZoneBlock)) return;
 
-        //protection zone block is persistent, this will be removed elsewhere
-        AddCondition(new Condition(ConditionType.ProtectionZoneBlock, 0));
+        AddCondition(new CombatBlockCondition(ConditionType.ProtectionZoneBlock));
     }
 
     public void RemoveProtectionZoneBlock()
@@ -368,7 +368,6 @@ public class Player : CombatActor, IPlayer
     public override bool UsingDistanceWeapon => Inventory.Weapon is IDistanceWeapon;
     public bool Recovering => HasCondition(ConditionType.Regeneration);
     public override bool CanSeeInvisible => Group.FlagIsEnabled(PlayerFlag.CanSenseInvisibility);
-    public override bool CanBeSeen => Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck);
     public virtual bool CanSeeInspectionDetails => Group.Access;
 
     public override ushort MaximumElementalAttackPower =>
@@ -419,7 +418,7 @@ public class Player : CombatActor, IPlayer
             Skills.Add(skillType, new Skill(skillType, 1, 1)); //todo: review those skill values
 
         Skills[skillType]?.AddBonus(increase);
-        OnAddedSkillBonus?.Invoke(this, skillType, increase);
+        EventAggregator.Invoke(new PlayerAddedSkillBonusEvent(this, skillType, increase));
     }
 
     public void RemoveSkillBonus(SkillType skillType, sbyte decrease)
@@ -427,7 +426,7 @@ public class Player : CombatActor, IPlayer
         if (decrease == 0) return;
 
         Skills[skillType]?.RemoveBonus(decrease);
-        OnRemovedSkillBonus?.Invoke(this, skillType, decrease);
+        EventAggregator.Invoke(new PlayerRemovedSkillBonusEvent(this, skillType, decrease));
     }
 
     public byte GetSkillPercent(SkillType skill)
@@ -492,12 +491,49 @@ public class Player : CombatActor, IPlayer
         if (spectator is not ICombatActor target) return;
         if (target.Equals(CurrentTarget)) HandleTargetLost();
 
+        // If the spectator is the creature being followed and the player can no longer see it, stop following.
+        if (Equals(spectator, FollowCreature) && !CanSee(spectator.Location))
+        {
+            StopFollowing();
+        }
+
         base.OnSpectatorMoved(spectator);
+    }
+
+    public override void OnSpectatorLoggedOut(ICreature spectator)
+    {
+        if (spectator is not ICombatActor target) return;
+        if (target.Equals(CurrentTarget)) HandleTargetLost();
+
+        // If the spectator is the creature being followed, stop following.
+        if (Equals(spectator, FollowCreature))
+        {
+            StopFollowing();
+        }
+
+        base.OnSpectatorLoggedOut(spectator);
+    }
+
+    public override void OnSpectatorChangedVisibility(ICreature spectator)
+    {
+        // If the spectator is an invisible monster that the player is following, stop following it.
+        if (spectator is IMonster && Equals(spectator, FollowCreature) && spectator.IsInvisible)
+        {
+            StopFollowing();
+        }
+
+        base.OnSpectatorChangedVisibility(spectator);
     }
 
     public override void OnSpectatorDies(ICombatActor spectator)
     {
         if (spectator.Equals(CurrentTarget)) HandleTargetLost();
+
+        // If the spectator is the creature being followed, stop following.
+        if (Equals(spectator, FollowCreature))
+        {
+            StopFollowing();
+        }
 
         base.OnSpectatorDies(spectator);
     }
@@ -506,10 +542,16 @@ public class Player : CombatActor, IPlayer
     {
         if (otherCreature is null) return false;
 
-        if (!otherCreature.IsInvisible ||
-            (otherCreature is IPlayer && otherCreature.CanBeSeen) ||
-            CanSeeInvisible)
-            return true;
+        // if the other creature is not invisible, we can see it
+        if (!otherCreature.IsInvisible) return true;
+
+        //  players can always see other players
+        if (otherCreature is IPlayer && !otherCreature.CanSeeInvisible) return true;
+
+        // if we can see invisible creatures, we can see it
+        if (CanSeeInvisible) return true;
+
+        if (otherCreature.IsInvisible) return false;
 
         return CanSee(otherCreature.Location);
     }
@@ -558,15 +600,18 @@ public class Player : CombatActor, IPlayer
         var oldChaseMode = ChaseMode;
         ChaseMode = mode;
 
-        if (ChaseMode == ChaseMode.Follow && CurrentTarget is not null)
+        if (CurrentTarget is not null)
         {
-            Follow(CurrentTarget as IWalkableCreature, PathSearchParams);
-            return;
+            if (ChaseMode == ChaseMode.Follow && CurrentTarget is not null)
+            {
+                Follow(CurrentTarget as IWalkableCreature, PathSearchParams);
+                return;
+            }
+
+            StopFollowing();
         }
 
-        StopFollowing();
-
-        OnChangedChaseMode?.Invoke(this, oldChaseMode, mode);
+        EventAggregator.Invoke(new PlayerChangedChaseModeEvent(this, oldChaseMode, mode));
     }
 
     public void ChangeSecureMode(PvpSecureMode mode)
@@ -607,13 +652,11 @@ public class Player : CombatActor, IPlayer
     {
         if (string.IsNullOrWhiteSpace(message)) return;
 
-        OnSentMessage?.Invoke(this, to, speechType, message);
+        EventAggregator.Invoke(new PlayerSentMessageEvent(this, to, speechType, message));
     }
 
     public void PostSpellCast(ISpell spell)
     {
-        const SpeechType talkType = SpeechType.MonsterSay;
-
         if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteMana)) DecreaseMana(spell.ManaConsumption);
 
         if (!Group.FlagIsEnabled(PlayerFlag.HasInfiniteSoul)) ConsumeSoul(spell.SoulConsumption);
@@ -621,18 +664,18 @@ public class Player : CombatActor, IPlayer
         UpdateManaSpent(spell.ManaConsumption);
 
         StartCooldown(spell);
-
-        if (!spell.ShouldSay) return;
-
-        if (!string.IsNullOrWhiteSpace(spell.Words)) Say(spell.Words, talkType);
     }
 
-    public void Yell(string message, YellConfiguration yellSettings)
+    public void Yell(string message, List<ICreature> listenersToYell, YellConfiguration yellSettings)
     {
+        if (listenersToYell is null) return;
+
+        if (string.IsNullOrWhiteSpace(message)) return;
+        
         message = message.ToUpper();
         if (Group.FlagIsEnabled(PlayerFlag.IgnoreYellCheck))
         {
-            base.Yell(message);
+            base.Yell(message, listenersToYell);
             return;
         }
 
@@ -651,7 +694,7 @@ public class Player : CombatActor, IPlayer
 
             if (allowedWhenPremium && HasPremiumTime)
             {
-                base.Yell(message);
+                base.Yell(message, listenersToYell);
                 Cooldowns.Start(CooldownType.Yell, 30_000); // 30 seconds cooldown
                 return;
             }
@@ -663,7 +706,7 @@ public class Player : CombatActor, IPlayer
             return;
         }
 
-        base.Yell(message);
+        base.Yell(message, listenersToYell);
         Cooldowns.Start(CooldownType.Yell,
             (uint)(yellSettings?.YellCooldownSeconds * 1000 ?? 30_000)); // 30 seconds cooldown
     }
@@ -703,7 +746,7 @@ public class Player : CombatActor, IPlayer
         if (!HasEnoughMana(mana)) return;
 
         Mana -= mana;
-        OnStatusChanged?.Invoke(this);
+        EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 
     public void ConsumeSoul(ushort soul)
@@ -711,8 +754,8 @@ public class Player : CombatActor, IPlayer
         if (soul == 0) return;
         if (!HasEnoughSoul(soul)) return;
 
-        Mana -= soul;
-        OnStatusChanged?.Invoke(this);
+        SoulPoints -= (byte)soul;
+        EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 
     public bool HasEnoughLevel(ushort level)
@@ -726,19 +769,19 @@ public class Player : CombatActor, IPlayer
         if (tile.TopCreatureOnStack is null && tile.TopDownItemOnStack is null) return;
 
         IThing thing = tile.TopCreatureOnStack is null ? tile.TopDownItemOnStack : tile.TopCreatureOnStack;
-        OnLookedAt?.Invoke(this, thing, isClose);
+        EventAggregator.Invoke(new PlayerLookedAtEvent(this, thing, isClose));
     }
 
     public void LookAt(byte containerId, sbyte containerSlot)
     {
         if (Containers[containerId][containerSlot] is not IThing thing) return;
-        OnLookedAt?.Invoke(this, thing, true);
+        EventAggregator.Invoke(new PlayerLookedAtEvent(this, thing, true));
     }
 
     public void LookAt(Slot slot)
     {
         if (Inventory[slot] is not IThing thing) return;
-        OnLookedAt?.Invoke(this, thing, true);
+        EventAggregator.Invoke(new PlayerLookedAtEvent(this, thing, true));
     }
 
     public void Read(IReadable readable)
@@ -755,7 +798,7 @@ public class Player : CombatActor, IPlayer
             return;
         }
 
-        OnWroteText?.Invoke(this, readable, readable.Text);
+        EventAggregator.Invoke(new PlayerWroteTextEvent(this, readable, readable.Text));
     }
 
     public bool Logout(bool forced = false)
@@ -763,6 +806,13 @@ public class Player : CombatActor, IPlayer
         if (CannotLogout && !forced)
         {
             OperationFailService.Send(CreatureId, "You may not logout during or immediately after a fight");
+            return false;
+        }
+
+        if (!CooldownHasExpired(CooldownType.Logout) && !forced)
+        {
+            var seconds = (int)Math.Ceiling(GetCooldownRemaining(CooldownType.Logout).TotalSeconds);
+            OperationFailService.Send(CreatureId, $"You can logout in {seconds} seconds.");
             return false;
         }
 
@@ -784,7 +834,7 @@ public class Player : CombatActor, IPlayer
         return true;
     }
 
-    public bool Login()
+    public bool Login(uint logoutCooldownMilliseconds = 0)
     {
         StopAttack();
         StopFollowing();
@@ -795,6 +845,9 @@ public class Player : CombatActor, IPlayer
 
         LastLogIn = DateTime.UtcNow;
         RegenerateStamina();
+
+        if (logoutCooldownMilliseconds > 0)
+            Cooldowns.Restart(CooldownType.Logout, logoutCooldownMilliseconds);
 
         EventAggregator.Invoke(new PlayerLoggedInEvent(this));
         return true;
@@ -809,7 +862,7 @@ public class Player : CombatActor, IPlayer
         if (Mana == MaxMana) return;
 
         Mana = Mana + increasing >= MaxMana ? MaxMana : Mana + increasing;
-        OnStatusChanged?.Invoke(this);
+        EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 
     public override void Heal(ushort increasing, ICreature healedBy)
@@ -903,7 +956,7 @@ public class Player : CombatActor, IPlayer
 
         if (itemUsed)
         {
-            OnUsedItem?.Invoke(this, onCreature, item);
+            EventAggregator.Invoke(new PlayerUsedItemEvent(this, onCreature, item));
             Cooldowns.Start(CooldownType.UseItem, (uint)item.CooldownTime);
             return Result.Success;
         }
@@ -920,7 +973,7 @@ public class Player : CombatActor, IPlayer
         if (item is not IUsableOnItem usableOnItem) return Result.Fail(InvalidOperation.CannotUseSpells);
 
         usableOnItem.Use(this, onItem);
-        OnUsedItem?.Invoke(this, onItem, item);
+        EventAggregator.Invoke(new PlayerUsedItemEvent(this, onItem, item));
         Cooldowns.Start(CooldownType.UseItem, 1000);
 
         return Result.Success;
@@ -930,7 +983,7 @@ public class Player : CombatActor, IPlayer
     {
         if (!Cooldowns.Expired(CooldownType.UseItem))
         {
-            OnExhausted?.Invoke(this);
+            EventAggregator.Invoke(new PlayerExhaustedEvent(this));
             return Result.NotPossible;
         }
 
@@ -951,7 +1004,7 @@ public class Player : CombatActor, IPlayer
             _ => false
         };
 
-        if (result) OnUsedItem?.Invoke(this, onItem, item);
+        if (result) EventAggregator.Invoke(new PlayerUsedItemEvent(this, onItem, item));
         Cooldowns.Start(CooldownType.UseItem, 1000);
 
         return Result.Success;
@@ -960,23 +1013,19 @@ public class Player : CombatActor, IPlayer
     public bool Feed(int duration)
     {
         var regenerationMs = (uint)duration * 1000;
-        const uint maxRegenerationTime = (uint)1200 * 1000; //20 minutes
 
-        if (Conditions.TryGetValue(ConditionType.Regeneration, out var condition))
+        if (GetCondition(ConditionType.Regeneration) is ConditionRegeneration regen)
         {
-            if (condition.RemainingTime + regenerationMs >=
-                maxRegenerationTime) //todo: this number should be configurable
+            if (!regen.TryExtend(regenerationMs))
             {
                 OperationFailService.Send(CreatureId, TextConstants.YOU_ARE_FULL);
                 return false;
             }
-
-            condition.Extend(regenerationMs, maxRegenerationTime);
         }
         else
         {
             RemoveHungry();
-            AddCondition(new Condition(ConditionType.Regeneration, regenerationMs, SetAsHungry));
+            AddCondition(new ConditionRegeneration(regenerationMs));
         }
 
         return true;
@@ -990,27 +1039,83 @@ public class Player : CombatActor, IPlayer
 
     public void SetAsHungry()
     {
-        RemoveCondition(ConditionType.Regeneration);
         AddCondition(new Condition(ConditionType.Hungry, uint.MaxValue));
     }
 
     public bool IsManaShieldEnabled => HasCondition(ConditionType.ManaShield);
 
+    public void AddConditionSuppression(ConditionType conditionType)
+    {
+        if (_conditionSuppressions.TryGetValue(conditionType, out var suppressionCount))
+        {
+            _conditionSuppressions[conditionType] = suppressionCount + 1;
+            return;
+        }
+
+        _conditionSuppressions[conditionType] = 1;
+    }
+
+    public void RemoveConditionSuppression(ConditionType conditionType)
+    {
+        if (!_conditionSuppressions.TryGetValue(conditionType, out var suppressionCount)) return;
+
+        if (suppressionCount <= 1)
+        {
+            _conditionSuppressions.Remove(conditionType);
+            return;
+        }
+
+        _conditionSuppressions[conditionType] = suppressionCount - 1;
+    }
+
+    private readonly Dictionary<Slot, List<ICondition>> _equipmentCondition = new();
+
+    public void AddEquipmentCondition(Slot slot, ICondition condition)
+    {
+        if (slot is Slot.None || condition is null) return;
+        
+        if (!_equipmentCondition.TryGetValue(slot, out var conditions))
+        {
+            conditions = [];
+            _equipmentCondition[slot] = conditions;
+        }
+
+        conditions.Add(condition);
+
+        AddCondition(condition);
+    }
+
+    public void RemoveEquipmentCondition(Slot slot, ConditionType conditionType)
+    {
+        if (slot == Slot.None || conditionType is ConditionType.None) return;
+
+        if (!_equipmentCondition.TryGetValue(slot, out var conditions)) return;
+
+        for (var i = 0; i < conditions.Count; i++)
+        {
+            var condition = conditions[i];
+
+            if (condition.Type != conditionType) continue;
+            
+            RemoveCondition(condition);
+            _equipmentCondition[slot]?.Remove(condition);
+            break;
+        }
+    }
+
+
+    public int GetConditionSuppressionCount(ConditionType conditionType) => _conditionSuppressions.GetValueOrDefault(conditionType, 0);
+
     public void EnableManaShield(uint duration)
     {
-        AddCondition(new Condition(ConditionType.ManaShield, duration,
-            () => { RemoveCondition(ConditionType.ManaShield); }));
+        var condition = new Condition(ConditionType.ManaShield, duration);
+        condition.EndAction = () => RemoveCondition(condition);
+        AddCondition(condition);
     }
 
-    public void EnableManaShield()
-    {
-        AddCondition(new Condition(ConditionType.ManaShield));
-    }
+    public void EnableManaShield() => AddCondition(new Condition(ConditionType.ManaShield));
 
-    public void DisableManaShield()
-    {
-        RemoveCondition(ConditionType.ManaShield);
-    }
+    public void DisableManaShield() => RemoveCondition(ConditionType.ManaShield);
 
     public Result<OperationResultList<IItem>> PickItemFromGround(IItem item, ITile tile, byte amount = 1)
     {
@@ -1051,7 +1156,7 @@ public class Player : CombatActor, IPlayer
     {
         if (from is null || speechType == SpeechType.None || string.IsNullOrWhiteSpace(message)) return;
 
-        OnHear?.Invoke(from, this, speechType, message);
+        EventAggregator.Invoke(new CreatureHearEvent(from, this, speechType, message));
     }
 
     public void ReceivePayment(IEnumerable<IItem> coins, ulong total)
@@ -1373,9 +1478,12 @@ public class Player : CombatActor, IPlayer
 
         switch (condition.Type)
         {
-            case ConditionType.Drunk when Inventory.HasEquippedItemWithImmunity(Immunity.Drunkenness):
-            case ConditionType.Drowning when Inventory.HasEquippedItemWithImmunity(Immunity.Drown):
+            case ConditionType.Drunk when GetConditionSuppressionCount(ConditionType.Drunk) > 0:
+            case ConditionType.Drowning when GetConditionSuppressionCount(ConditionType.Drowning) > 0:
                 return;
+            case ConditionType.Pacified or ConditionType.ProtectionZoneBlock or ConditionType.LogoutBlock
+                when HasCondition(condition.Type):
+                break;
             default:
                 base.AddCondition(condition);
                 break;
@@ -1392,6 +1500,16 @@ public class Player : CombatActor, IPlayer
         if (Group.FlagIsEnabled(PlayerFlag.CannotBeAttacked)) return new DamageResult(new CombatDamageList(), false);
 
         return base.TakeDamage(enemy, damages);
+    }
+
+    public void HealSoul(ushort increasing)
+    {
+        if (increasing <= 0) return;
+
+        if (SoulPoints == MaxSoulPoints) return;
+
+        SoulPoints = SoulPoints + increasing >= MaxSoulPoints ? MaxSoulPoints : (byte)(SoulPoints + increasing);
+        EventAggregator.Invoke(new PlayerStatusChangedEvent(this));
     }
 
     public long ApplyStaminaEffectOnExperienceGain(long experience)
@@ -1428,6 +1546,7 @@ public class Player : CombatActor, IPlayer
         var showError = CurrentTarget is not ICombatActor { IsDead: true };
 
         StopAttack();
+        StopFollowing();
 
         if (showError) OperationFailService.Send(this, InvalidOperation.TargetLost);
     }
@@ -1456,22 +1575,28 @@ public class Player : CombatActor, IPlayer
                 ? ammo.WeaponAttack.ElementalAttackPowerPercentage
                 : ammo.WeaponAttack.AttackPowerPercentage;
 
-        var maximumAttack = (ushort)(Inventory.AttackRate * DamageFactor * attackPower * Skills[SkillInUse].Level +
-                                     Level / 5 * damageMultiplier);
+        if (!Skills.TryGetValue(SkillInUse, out var skill) || skill is null)
+            return 0;
 
-        return (ushort)(maximumAttack * attackPercentage / 100);
-    }
+        const float PrecisionBonus = 1.03f;
+        var levelContribution = Level / 5f;
+        var skillContribution = (skill.Level / 4f) + 1f;
+        var weaponContribution = attackPower / 3f;
+        var attackFactor = Math.Max(DamageFactor, float.Epsilon);
 
-    public override CalculatedAttackDamage CalculateAttackDamage()
-    {
-        return base.CalculateAttackDamage();
+        var baseMaximumAttack =
+            levelContribution + (skillContribution * weaponContribution * PrecisionBonus) / attackFactor;
+        var adjustedMaximumAttack = baseMaximumAttack * damageMultiplier;
+        var scaledAttack = adjustedMaximumAttack * attackPercentage / 100f;
+
+        return (ushort)Math.Clamp(MathF.Round(scaledAttack, MidpointRounding.AwayFromZero), 0f, ushort.MaxValue);
     }
 
     private Result CanUseItem(IUsableOn item, Location onLocation)
     {
         if (!Cooldowns.Expired(CooldownType.UseItem))
         {
-            OnExhausted?.Invoke(this);
+            EventAggregator.Invoke(new PlayerExhaustedEvent(this));
             {
                 return Result.Fail(InvalidOperation.Exhausted);
             }
@@ -1527,7 +1652,7 @@ public class Player : CombatActor, IPlayer
             ChangeSpeedLevel(RawSpeed);
         }
 
-        OnLevelAdvanced?.Invoke(this, type, fromLevel, toLevel);
+        EventAggregator.Invoke(new PlayerLevelAdvancedEvent(this, type, fromLevel, toLevel));
     }
 
     private void OnLevelRegress(SkillType type, int fromLevel, int toLevel)
@@ -1544,7 +1669,7 @@ public class Player : CombatActor, IPlayer
             ChangeSpeedLevel(RawSpeed);
         }
 
-        OnLevelRegressed?.Invoke(this, type, fromLevel, toLevel);
+        EventAggregator.Invoke(new PlayerLevelRegressedEvent(this, type, fromLevel, toLevel));
     }
 
     public void ResetMana()
@@ -1562,20 +1687,20 @@ public class Player : CombatActor, IPlayer
     {
         if (Group.FlagIsEnabled(PlayerFlag.NotGainInFight)) return;
 
-        if (IsPacified) return;
-
-        if (HasCondition(ConditionType.LogoutBlock, out var condition))
+        if (Tile?.ProtectionZone ?? false)
         {
-            condition.Start(this);
+            RemoveLogoutBlock();
             return;
         }
 
+        if (IsPacified) return;
+
+        if (HasCondition(ConditionType.LogoutBlock)) return;
+
         if (IsProtectionZoneBlocked)
-            //resets protection zone block time
             SetProtectionZoneBlock();
 
-        //logout is persistent, this will be removed elsewhere
-        AddCondition(new Condition(ConditionType.LogoutBlock, 0));
+        AddCondition(new CombatBlockCondition(ConditionType.LogoutBlock));
     }
 
     private void TogglePacifiedCondition(IDynamicTile fromTile, IDynamicTile toTile)
@@ -1584,13 +1709,14 @@ public class Player : CombatActor, IPlayer
         switch (fromTile?.ProtectionZone)
         {
             case null when toTile.ProtectionZone:
-                AddCondition(new Condition(ConditionType.Pacified, 0));
+                RemoveLogoutBlock();
+                AddCondition(new PacifiedCondition());
                 RemoveProtectionZoneBlock();
                 break;
             case false when toTile.ProtectionZone:
                 RemoveLogoutBlock();
                 RemoveProtectionZoneBlock();
-                AddCondition(new Condition(ConditionType.Pacified, 0));
+                AddCondition(new PacifiedCondition());
                 break;
             case true when toTile.ProtectionZone is false:
                 RemoveCondition(ConditionType.Pacified);
@@ -1636,22 +1762,12 @@ public class Player : CombatActor, IPlayer
     public void ChangeOnlineStatus(bool online)
     {
         Online = online;
-        OnChangedOnlineStatus?.Invoke(this, online);
+        EventAggregator.Invoke(new PlayerChangedOnlineStatusEvent(this, online));
     }
 
     public override bool CanBlock(DamageType damage)
     {
         return Inventory.HasShield && base.CanBlock(damage);
-    }
-
-    public void HealSoul(ushort increasing)
-    {
-        if (increasing <= 0) return;
-
-        if (SoulPoints == MaxSoulPoints) return;
-
-        SoulPoints = SoulPoints + increasing >= MaxSoulPoints ? MaxSoulPoints : (byte)(SoulPoints + increasing);
-        OnStatusChanged?.Invoke(this);
     }
 
     public override void OnDamage(IThing enemy, CombatDamageList damages)
@@ -1660,17 +1776,17 @@ public class Player : CombatActor, IPlayer
 
         var totalDamage = damages.TotalDamage;
 
-        if (totalDamage.ManaDamage > 0)
-        {
-            DecreaseMana(totalDamage.ManaDamage);
-            return;
-        }
+        if (totalDamage.ManaDamage > 0) DecreaseMana(totalDamage.ManaDamage);
 
-        if (IsManaShieldEnabled)
+        if (IsManaShieldEnabled && Mana > 0)
         {
-            DecreaseMana(totalDamage.HealthDamage);
-            damages.SetDamagesAsManaDrain();
-            return;
+            var totalHealthDamage = Math.Min(totalDamage.HealthDamage, (int)Mana);
+            damages.ReduceHealthDamage(totalHealthDamage);
+
+            DecreaseMana((uint)totalHealthDamage);
+            damages.AddDamage(new CombatDamage((ushort)totalHealthDamage, DamageType.ManaDrain));
+
+            totalDamage = damages.TotalDamage;
         }
 
         ReduceHealth(totalDamage.HealthDamage);
@@ -1733,6 +1849,7 @@ public class Player : CombatActor, IPlayer
     public override void Think(int interval)
     {
         HandleTargetLost();
+        base.Think(interval);
         EventAggregator.Invoke(new PlayerThinkEvent(this, interval));
     }
 
@@ -1809,37 +1926,21 @@ public class Player : CombatActor, IPlayer
 
     #region Equip/DeEquip
 
-    public void OnDressedItem(IItem item)
+    public void OnEquippedItem(IItem item)
     {
-        OnEquipItem?.Invoke(this, item, true);
+        ItemAbilityApplier.ApplyAbilities(this, item);
+        EventAggregator.Invoke(new PlayerEquippedItemEvent(this, item));
     }
 
-    public void OnUndressedItem(IItem item)
+    public void OnUnequippedItem(IItem item)
     {
-        OnDeEquipItem?.Invoke(this, item, true);
+        ItemAbilityApplier.RemoveAbilities(this, item);
+        EventAggregator.Invoke(new PlayerUnequippedItemEvent(this, item));
     }
 
     #endregion
 
     #region Events
-
-    public event PlayerLevelAdvance OnLevelAdvanced;
-    public event PlayerLevelRegress OnLevelRegressed;
-    public event PlayerGainSkillPoint OnGainedSkillPoint;
-    public event ReduceMana OnStatusChanged;
-    public event LookAt OnLookedAt;
-    public event UseItem OnUsedItem;
-    public event ChangeOnlineStatus OnChangedOnlineStatus;
-    public event SendMessageTo OnSentMessage;
-
-    public event Exhaust OnExhausted;
-    public event Hear OnHear;
-    public event ChangeChaseMode OnChangedChaseMode;
-    public event AddSkillBonus OnAddedSkillBonus;
-    public event RemoveSkillBonus OnRemovedSkillBonus;
-    public event WroteText OnWroteText;
-    public event EquipItem OnEquipItem;
-    public event DeEquipItem OnDeEquipItem;
 
     #endregion
 }

@@ -17,77 +17,77 @@
 
 local potions = {
     [6558] = { -- concentrated demonic blood
-        transform = {7588, 7589},
+        transform = { 7588, 7589 },
         effect = CONST_ME_DRAWBLOOD
     },
     [7439] = { -- berserk potion
         condition = berserk,
-        vocations = {4, 8},
+        vocations = { 4, 8 },
         effect = CONST_ME_MAGIC_RED,
         description = "Only knights may drink this potion.",
         text = "You feel stronger."
     },
     [7440] = { -- mastermind potion
         condition = mastermind,
-        vocations = {1, 2, 5, 6},
+        vocations = { 1, 2, 5, 6 },
         effect = CONST_ME_MAGIC_BLUE,
         description = "Only sorcerers and druids may drink this potion.",
         text = "You feel smarter."
     },
     [7443] = { -- bullseye potion
         condition = bullseye,
-        vocations = {3, 7},
+        vocations = { 3, 7 },
         effect = CONST_ME_MAGIC_GREEN,
         description = "Only paladins may drink this potion.",
         text = "You feel more accurate."
     },
     [7588] = { -- strong health potion
-        health = {250, 350},
-        vocations = {3, 4, 7, 8},
+        health = { 250, 350 },
+        vocations = { 3, 4, 7, 8 },
         level = 50,
         flask = 7634,
         description = "Only knights and paladins of level 50 or above may drink this fluid."
     },
     [7589] = { -- strong mana potion
-        mana = {115, 185},
-        vocations = {1, 2, 3, 5, 6, 7},
+        mana = { 115, 185 },
+        vocations = { 1, 2, 3, 5, 6, 7 },
         level = 50,
         flask = 7634,
         description = "Only sorcerers, druids and paladins of level 50 or above may drink this fluid."
     },
     [7590] = { -- great mana potion
-        mana = {150, 250},
-        vocations = {1, 2, 5, 6},
+        mana = { 150, 250 },
+        vocations = { 1, 2, 5, 6 },
         level = 80,
         flask = 7635,
         description = "Only druids and sorcerers of level 80 or above may drink this fluid."
     },
     [7591] = { -- great health potion
-        health = {425, 575},
-        vocations = {4, 8},
+        health = { 425, 575 },
+        vocations = { 4, 8 },
         level = 80,
         flask = 7635,
         description = "Only knights of level 80 or above may drink this fluid."
     },
     [7618] = { -- health potion
-        health = {125, 175},
+        health = { 125, 175 },
         flask = 7636
     },
     [7620] = { -- mana potion
-        mana = {75, 125},
+        mana = { 75, 125 },
         flask = 7636
     },
     [8472] = { -- great spirit potion
-        health = {250, 350},
-        mana = {100, 200},
-        vocations = {3, 7},
+        health = { 250, 350 },
+        mana = { 100, 200 },
+        vocations = { 3, 7 },
         level = 80,
         flask = 7635,
         description = "Only paladins of level 80 or above may drink this fluid."
     },
     [8473] = { -- ultimate health potion
-        health = {650, 850},
-        vocations = {4, 8},
+        health = { 650, 850 },
+        vocations = { 4, 8 },
         level = 130,
         flask = 7635,
         description = "Only knights of level 130 or above may drink this fluid."
@@ -97,7 +97,7 @@ local potions = {
         flask = 7636
     },
     [8704] = { -- small health potion
-        health = {60, 90},
+        health = { 60, 90 },
         flask = 7636
     }
 }
@@ -111,7 +111,7 @@ function flaskPotion.onUse(player, item, fromPosition, target, toPosition, isHot
 
     local potion = potions[item:getId()]
     if potion.level and player:getLevel() < potion.level or potion.vocations and
-        not table.contains(potion.vocations, player:getVocation():getId()) then
+            not table.contains(potion.vocations, player:getVocation():getId()) then
         player:say(potion.description, TALKTYPE_MONSTER_SAY)
         return true
     end

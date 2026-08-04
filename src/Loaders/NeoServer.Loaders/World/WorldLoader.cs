@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NeoServer.Domain.Common.Contracts.DataStores;
@@ -47,7 +46,7 @@ public class WorldLoader
     public void Load(Otbm otbm)
     {
         logger.Step("Loading world...", "{tiles} tiles, {towns} towns and {waypoints} waypoints loaded", () =>
-        { 
+        {
             LoadTiles(otbm);
 
             foreach (var townNode in otbm.Towns)
@@ -74,7 +73,7 @@ public class WorldLoader
         return Task.Run(() =>
         {
             using var fileStream = new FileStream($"{serverConfiguration.Data}/world/{serverConfiguration.OTBM}",
-                    FileMode.Open, FileAccess.Read);
+                FileMode.Open, FileAccess.Read);
 
             var fileBytes = new byte[fileStream.Length];
             fileStream.ReadExactly(fileBytes, 0, fileBytes.Length);
@@ -88,12 +87,8 @@ public class WorldLoader
     private void LoadTiles(Otbm otbm)
     {
         foreach (var tileArea in otbm.TileAreas)
-        {
-            foreach (var tileNode in tileArea.Tiles)
-            {
-                LoadTile(tileNode);
-            }
-        }
+        foreach (var tileNode in tileArea.Tiles)
+            LoadTile(tileNode);
     }
 
     private void LoadTile(TileNode tileNode)
@@ -101,9 +96,10 @@ public class WorldLoader
         if (serverConfiguration.EnableStaticTileCaching)
         {
             Span<byte> raw = stackalloc byte[tileNode.Items.Count * sizeof(ushort)];
-            LoadClientIdsStream(tileNode, ref raw);
+            var written = LoadClientIdsStream(tileNode, ref raw);
+            var writtenSpan = raw[..written];
 
-            var cachedTile = _tileFactory.GetTileFromCache(tileNode.Coordinate, ref raw);
+            var cachedTile = _tileFactory.GetTileFromCache(tileNode.Coordinate, ref writtenSpan);
 
             if (cachedTile is not null)
             {
@@ -112,9 +108,10 @@ public class WorldLoader
             }
         }
 
-        var items = GetItemsOnTile(tileNode).ToArray();
+        var items = GetItemsOnTile(tileNode);
 
-        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items, serverConfiguration.EnableStaticTileCaching,
+        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items,
+            serverConfiguration.EnableStaticTileCaching,
             tileNode.HouseId);
 
         if (tile is IStaticTile)
@@ -126,7 +123,7 @@ public class WorldLoader
         world.AddTile(tile);
     }
 
-    private void LoadClientIdsStream(TileNode tileNode, ref Span<byte> clientIds)
+    private int LoadClientIdsStream(TileNode tileNode, ref Span<byte> clientIds)
     {
         var index = 0;
 
@@ -141,18 +138,20 @@ public class WorldLoader
             clientIds[index++] = (byte)(clientId & 0xFF);
             clientIds[index++] = (byte)((clientId >> 8) & 0xFF);
         }
+
+        return index;
     }
 
-    private Span<IItem> GetItemsOnTile(TileNode tileNode)
+    private IItem[] GetItemsOnTile(TileNode tileNode)
     {
-        Span<IItem> items = new IItem[tileNode.Items.Count];
+        var items = new IItem[tileNode.Items.Count];
         var i = 0;
         foreach (var itemNode in tileNode.Items)
         {
             IDictionary<ItemAttribute, IConvertible> attributes = null;
-            if (itemNode.ItemNodeAttributes != null)
+            if (itemNode.ItemNodeAttributes?.Count > 0)
             {
-                attributes = new Dictionary<ItemAttribute, IConvertible>();
+                attributes = new Dictionary<ItemAttribute, IConvertible>(itemNode.ItemNodeAttributes.Count);
                 foreach (var attr in itemNode.ItemNodeAttributes)
                 {
                     var mappedAttr = MapAttribute(attr.AttributeName);
@@ -223,6 +222,9 @@ public class WorldLoader
     private IEnumerable<IItem> CreateChildrenItems(TileNode tileNode, ItemNode itemNode,
         IDictionary<ItemAttribute, IConvertible> attributes)
     {
+        if (itemNode.Children.Count == 0)
+            return Array.Empty<IItem>();
+
         var items = new List<IItem>(itemNode.Children.Count);
         foreach (var child in itemNode.Children)
         {

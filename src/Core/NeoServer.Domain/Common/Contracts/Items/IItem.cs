@@ -1,6 +1,7 @@
 ﻿using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Items;
+using NeoServer.Domain.Items.Items.Attributes;
 
 namespace NeoServer.Domain.Common.Contracts.Items;
 
@@ -62,6 +63,10 @@ public interface IItem : IThing, IHasDecay
     bool IsContainer => Metadata.Group == ItemGroup.Container;
     bool IsTeleport => Metadata.Group == ItemGroup.Teleport;
 
+    bool IsDoor =>
+        Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type)
+            ?.Equals("door", StringComparison.OrdinalIgnoreCase) ?? false;
+
     bool AllowFarUse => Metadata.Attributes.GetAttribute<bool>(ItemTypeAttribute.AllowFarUse);
 
     FloorChangeDirection FloorDirection => Metadata.Attributes.GetFloorChangeDirection();
@@ -102,6 +107,9 @@ public interface IItem : IThing, IHasDecay
         return BitConverter.GetBytes(ClientId);
     }
 
+    ChargeCounter Charges { get; }
+    bool CanUseCharges => Charges is not null;
+
     void SetOwner(IThing owner);
     event ItemDelete OnDeleted;
     void SetParent(IThing parent);
@@ -121,6 +129,9 @@ public interface IItem : IThing, IHasDecay
             var count = Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.Count);
             return count;
         }
+
+        if (CanUseCharges)
+            return Charges.Amount;
 
         var charges = Metadata.Attributes.GetAttribute<ushort>(ItemTypeAttribute.Charges);
         return charges;

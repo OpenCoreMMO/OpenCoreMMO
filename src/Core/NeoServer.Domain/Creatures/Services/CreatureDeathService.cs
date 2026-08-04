@@ -3,16 +3,16 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Creatures.Monster.Loot;
 using NeoServer.Domain.Creatures.Monster.Summon;
+using NeoServer.Domain.Services;
 
 namespace NeoServer.Domain.Creatures.Services;
 
 public class CreatureDeathService(
     IItemFactory itemFactory,
     IMap map,
-    ILiquidPoolFactory liquidPoolFactory) : ICreatureDeathService
+    BloodPoolService bloodPoolService) : ICreatureDeathService
 {
     public void Handle(ICombatActor deadCreature, IThing by, List<DamageRecord> damageRecords)
     {
@@ -22,7 +22,7 @@ public class CreatureDeathService(
         //do not create blood or corpse for monsters that are killed by another monster
         if (deadCreature is IMonster && by is IMonster and not Summon { Master: IPlayer }) return;
 
-        CreateBlood(deadCreature);
+        bloodPoolService.CreatePool(deadCreature);
         ReplaceCreatureByCorpse(deadCreature, by);
 
         ProcessDamageRecords(deadCreature, by, damageRecords);
@@ -57,20 +57,5 @@ public class CreatureDeathService(
         }
 
         corpse.Decay?.StartDecay();
-    }
-
-    private void CreateBlood(ICreature creature)
-    {
-        if (creature is not ICombatActor victim) return;
-        var liquidColor = victim.BloodType switch
-        {
-            BloodType.Blood => LiquidColor.Red,
-            BloodType.Slime => LiquidColor.Green,
-            _ => LiquidColor.Red
-        };
-
-        var pool = liquidPoolFactory.Create(victim.Location, liquidColor);
-
-        map.CreateBloodPool(pool, victim.Tile);
     }
 }

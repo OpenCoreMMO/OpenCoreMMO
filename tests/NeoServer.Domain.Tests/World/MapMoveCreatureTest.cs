@@ -9,10 +9,10 @@ using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Items;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Map;
-using NeoServer.Domain.World.Services;
 
 namespace NeoServer.Domain.Tests.World;
 
@@ -22,14 +22,15 @@ public class MapMoveCreatureTest
     public void TryMoveCreature_Should_Move_Creature()
     {
         var sut = MapTestDataBuilder.Build(1, 101, 1, 101, 6, 9);
-        var player = PlayerTestDataBuilder.Build();
+        var player = PlayerTestDataBuilder.Build(map: sut);
         player.SetNewLocation(new Location(50, 50, 7));
         sut.PlaceCreature(player);
-        
+
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
 
         var creatureMovementService =
-            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut), staticToDynamicTileServiceMock.Object);
+            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut),
+                staticToDynamicTileServiceMock.Object);
 
         var result = creatureMovementService.MoveCreature(player, new Location(51, 50, 7));
 
@@ -41,15 +42,16 @@ public class MapMoveCreatureTest
     public void TryMoveCreature_When_Teleport_Should_Move_Creature()
     {
         var sut = MapTestDataBuilder.Build(1, 101, 1, 101, 6, 9);
-        var player = PlayerTestDataBuilder.Build();
+        var player = PlayerTestDataBuilder.Build(map: sut);
 
         player.SetNewLocation(new Location(50, 50, 7));
         sut.PlaceCreature(player);
-        
+
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
 
         var creatureMovementService =
-            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut), staticToDynamicTileServiceMock.Object);
+            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut),
+                staticToDynamicTileServiceMock.Object);
 
         var result = creatureMovementService.MoveCreature(player, new Location(53, 50, 7));
 
@@ -57,6 +59,7 @@ public class MapMoveCreatureTest
         Assert.Equal(new Location(53, 50, 7), player.Location);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_dont_teleport_when_tile_has_teleport_without_destination()
     {
@@ -65,7 +68,7 @@ public class MapMoveCreatureTest
         var sut = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 7);
         var pathFinder = new PathFinder(sut);
 
-        var player = PlayerTestDataBuilder.Build(pathFinder: pathFinder);
+        var player = PlayerTestDataBuilder.Build(map: sut, pathFinder: pathFinder);
 
         player.SetCurrentTile((IDynamicTile)sut[100, 100, 7]);
         sut.PlaceCreature(player);
@@ -80,11 +83,13 @@ public class MapMoveCreatureTest
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
 
         var creatureMovementService =
-            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut), staticToDynamicTileServiceMock.Object);
+            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut),
+                staticToDynamicTileServiceMock.Object);
 
-        ((IDynamicTile)sut[teleportLocation]).AddItem(new TeleportItem(new ItemType(), teleportLocation));
+        ((IDynamicTile)sut[teleportLocation]).AddItem(new TeleportItem(new ItemType().SetClientId(1),
+            teleportLocation));
 
-        player.OnStartedWalking += c => creatureMovementService.MoveCreature(c);
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedWalkingEvent>(e => creatureMovementService.MoveCreature(e.Creature));
 
         //act
         player.WalkTo(Direction.East);
@@ -95,6 +100,7 @@ public class MapMoveCreatureTest
         player.Location.Z.Should().Be(7);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Player_teleports_when_tile_has_teleport_with_a_destination()
     {
@@ -105,7 +111,7 @@ public class MapMoveCreatureTest
             [ItemAttribute.TeleportDestination] = new Location(105, 105, 7)
         };
 
-        var teleport = new TeleportItem(new ItemType(), teleportLocation);
+        var teleport = new TeleportItem(new ItemType().SetClientId(10), teleportLocation);
 
         teleport.Attributes.SetAttribute(teleportAttrs);
 
@@ -114,20 +120,23 @@ public class MapMoveCreatureTest
             {
                 [teleportLocation] = [teleport]
             });
-        
+
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
-        
+
         var creatureMovementService =
-            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut), staticToDynamicTileServiceMock.Object);
+            new CreatureMovementService(sut, new CylinderOperation(sut), new CreatureMovementValidation(sut),
+                staticToDynamicTileServiceMock.Object);
 
         var pathFinder = new PathFinder(sut);
 
-        var player = PlayerTestDataBuilder.Build(pathFinder: pathFinder);
+        var player = PlayerTestDataBuilder.Build(map: sut, pathFinder: pathFinder);
         player.SetCurrentTile((IDynamicTile)sut[100, 100, 7]);
         sut.PlaceCreature(player);
-        
-        player.OnStartedWalking += c => creatureMovementService.MoveCreature(c);
-        player.OnTeleported += (a, b) => new CreatureTeleportedEventHandler(sut, creatureMovementService, staticToDynamicTileServiceMock.Object).Execute(a, b);
+
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedWalkingEvent>(e => creatureMovementService.MoveCreature(e.Creature));
+        player.OnTeleported += (a, b) =>
+            new CreatureTeleportedEventHandler(sut, creatureMovementService, staticToDynamicTileServiceMock.Object)
+                .Execute(a, b);
 
         //act
         player.WalkTo(Direction.East);

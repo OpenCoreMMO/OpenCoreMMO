@@ -129,6 +129,8 @@ public class ItemType : IItemType
         if (Locked) throw new InvalidOperationException("This ItemType is locked and cannot be altered.");
     }
 
+    public byte TopOrder { get; set; }
+
     public void SetSpeed(ushort speed)
     {
         Attributes.SetAttribute(ItemTypeAttribute.Speed, speed);
@@ -161,16 +163,18 @@ public class ItemType : IItemType
         return this;
     }
 
-    public void SetClientId(ushort clientId)
+    public IItemType SetClientId(ushort clientId)
     {
         ClientId = clientId;
+        return this;
     }
 
-    public void SetFlag(ItemFlag flag)
+    public ItemType SetFlag(ItemFlag flag)
     {
         ThrowIfLocked();
 
         Flags.Add(flag);
+        return this;
     }
 
     public void ParseFlags(uint flags)
@@ -243,6 +247,4 @@ public class ItemType : IItemType
         ThrowIfLocked();
         TopOrder = topOrder;
     }
-
-    public byte TopOrder { get; set; }
 }

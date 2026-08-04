@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using NeoServer.Loaders.OTB.DataStructures;
 using NeoServer.Loaders.OTB.Enums;
 using NeoServer.Loaders.OTB.Parsers;
 using NeoServer.Loaders.OTB.Structure;
@@ -11,10 +10,6 @@ namespace NeoServer.Loaders.OTBM.Structure.TileArea;
 
 public class ItemNode
 {
-    public ushort ItemId { get; }
-    public List<ItemNodeAttributeValue> ItemNodeAttributes { get; }
-    public List<ItemNode> Children { get; }
-
     public ItemNode(OtbParsingStream stream)
     {
         ItemNodeAttributes = null;
@@ -27,7 +22,7 @@ public class ItemNode
     {
         ItemNodeAttributes = [];
         ItemId = 0;
-        
+
         var nodeChildren = node.Children;
         Children = new List<ItemNode>(nodeChildren.Length);
 
@@ -41,6 +36,10 @@ public class ItemNode
 
         AddChildren(tile, nodeChildren.Span);
     }
+
+    public ushort ItemId { get; }
+    public List<ItemNodeAttributeValue> ItemNodeAttributes { get; }
+    public List<ItemNode> Children { get; }
 
     private void AddChildren(TileNode tileNode, ReadOnlySpan<OtbNode> nodeChildren)
     {

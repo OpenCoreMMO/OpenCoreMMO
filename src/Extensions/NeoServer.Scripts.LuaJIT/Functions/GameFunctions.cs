@@ -211,7 +211,7 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
                 if (tile is IDynamicTile dynamicTile)
                     result = dynamicTile.AddItem(item).Succeeded;
 
-                if (result)
+                if (!result)
                 {
                     if (!hasTable) Lua.PushNil(luaState);
                     continue;
@@ -276,7 +276,8 @@ public class GameFunctions : LuaScriptInterface, IGameFunctions
         var tileToBorn = _map[position];
 
         if (tileToBorn is IDynamicTile { HasAnyCreature: false } dynamicTile && dynamicTile.CanEnter(monster)
-            && MonsterEnterTileRule.Rule.CanEnter(tileToBorn, monster))
+                                                                             && MonsterEnterTileRule.Rule.CanEnter(
+                                                                                 tileToBorn, monster))
         {
             if (dynamicTile.ProtectionZone)
             {

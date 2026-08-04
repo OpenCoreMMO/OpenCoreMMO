@@ -1,11 +1,7 @@
-﻿using System.Runtime.InteropServices;
-
-namespace NeoServer.Domain.Common.Location.Structs;
+﻿namespace NeoServer.Domain.Common.Location.Structs;
 
 public class FindPathParams
 {
-    public static FindPathParams EscapeParams => new(false, true, false, true, 12, 1, 12);
-
     public FindPathParams(bool fullPathSearch, bool clearSight, bool allowDiagonal, bool keepDistance,
         int maxSearchDist, int minTargetDist, int maxTargetDist)
     {
@@ -39,6 +35,8 @@ public class FindPathParams
             MaxTargetDist = 1;
         }
     }
+
+    public static FindPathParams EscapeParams => new(false, true, false, true, 12, 1, 12);
 
     public bool FullPathSearch { get; set; }
     public bool ClearSight { get; set; }

@@ -103,17 +103,6 @@ public class Inventory : IInventory
         return PossibleAmountToAddCalculation.Calculate(this, item, toPosition);
     }
 
-    public bool HasEquippedItemWithImmunity(Immunity immunity)
-    {
-        foreach (var (item, _) in InventoryMap.Items)
-            if (immunity is Immunity.Drunkenness &&
-                item.Metadata.Attributes.TryGetAttribute(ItemTypeAttribute.SuppressDrunk, out byte suppressDrunk) &&
-                suppressDrunk == 1)
-                return true;
-
-        return false;
-    }
-
     private void AddItemsToInventory(IDictionary<Slot, (IItem Item, ushort Id)> items)
     {
         foreach (var (slot, (item, _)) in items) TryAddItemToSlot(slot, item);

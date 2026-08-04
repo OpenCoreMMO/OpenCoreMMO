@@ -19,6 +19,10 @@ public class PlayerAutoWalkHandler : PacketHandler
         var autoWalk = new AutoWalkPacket(message);
 
         if (_game.CreatureManager.TryGetPlayer(connection.CreatureId, out var player))
-            _game.Dispatcher.AddEvent(new Event(() => player.WalkTo(autoWalk.Steps)));
+            _game.Dispatcher.AddEvent(new Event(() =>
+            {
+                player.StopFollowing();
+                player.WalkTo(autoWalk.Steps);
+            }));
     }
 }

@@ -1,4 +1,3 @@
-using FluentAssertions;
 using Moq;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.World.Structures;
@@ -180,7 +179,7 @@ public class TileStackTests
         // Arrange
         var stack = new TileStack<IThing>();
         var items = new List<IThing>();
-        for (int i = 0; i < 5; i++)
+        for (var i = 0; i < 5; i++)
         {
             var item = CreateMockThing($"item{i}").Object;
             items.Add(item);
@@ -208,7 +207,7 @@ public class TileStackTests
     {
         // Arrange
         var stack = new TileStack<IThing>();
-        var item = CreateMockThing("item").Object;
+        var item = CreateMockThing().Object;
         var newItem = CreateMockThing("newItem").Object;
 
         stack.Push(item);
@@ -216,7 +215,7 @@ public class TileStackTests
         // Act & Assert - Should handle null gracefully
         var act = () => stack.Insert(newItem, null);
         act.Should().NotThrow();
-        
+
         // Item should not be inserted when beforeItem is null (IndexOf returns -1)
         stack.Count.Should().Be(1);
     }

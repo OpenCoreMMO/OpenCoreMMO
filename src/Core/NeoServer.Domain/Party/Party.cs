@@ -103,7 +103,6 @@ public class Party : IParty
 
         player.Channels.JoinChannel(Channel);
         OnPlayerJoin?.Invoke(this, player);
-        player.OnHeal += TrackPlayerHeal;
         return Result.Success;
     }
 
@@ -138,7 +137,6 @@ public class Party : IParty
         _members.Remove(player.CreatureId);
         player.Channels.ExitChannel(Channel);
 
-        player.OnHeal -= TrackPlayerHeal;
         OnPlayerLeave?.Invoke(this, player);
         if (IsOver) OnPartyOver?.Invoke(this);
     }
@@ -174,17 +172,9 @@ public class Party : IParty
             $"{player.GenderPronoun} is in a party with {_memberCount} members and {_invites.Count} pending invitations.";
     }
 
-    /// <summary>
-    ///     When a player heals another party member the time is tracked to know how recently they've healed.
-    /// </summary>
-    /// <param name="healedCreature">The one that received the healing.</param>
-    /// <param name="healerCreature">The one that caused the healing.</param>
-    /// <param name="amount">Amount the creature was healed.</param>
-    private void TrackPlayerHeal(ICombatActor healedCreature, ICreature healerCreature, ushort amount)
+    public void TrackHeal(IPlayer healer, IPlayer healed, ushort amount)
     {
         if (amount <= 0) return;
-        if (healedCreature is not IPlayer healed) return;
-        if (healerCreature is not IPlayer healer) return;
         if (healed == healer) return;
 
         if (Heals.TryGetValue(healer, out _))

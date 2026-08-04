@@ -107,7 +107,7 @@ public class MapPartialDescriptionPacket : OutgoingPacket
         }
 
         return
-            map.GetDescription(thing, newLocation.X,
+            MapDescriptionBuilder.GetDescription(map, thing, newLocation.X,
                 newLocation.Y,
                 toLocation.Z, width, height).ToArray();
     }

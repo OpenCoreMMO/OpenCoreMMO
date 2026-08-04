@@ -37,7 +37,19 @@ public class MagicField : BaseItem
 
             var values = attributes.GetAttributeArray(ItemTypeAttribute.Damage);
 
-            if ((values?.Length ?? 0) < 2) return new MinMax(0, 0);
+            if ((values?.Length ?? 0) == 0) return new MinMax(0, 0);
+
+            if (values.Length == 1)
+            {
+                ushort fieldDamage = 0;
+                if (values[0] is string && ushort.TryParse(values[0].ToString(), out fieldDamage))
+                {
+                    return new MinMax(fieldDamage, fieldDamage);
+                }
+
+                fieldDamage = (ushort)values[0];
+                return new MinMax(fieldDamage, fieldDamage);
+            }
 
             return new MinMax(Math.Min((ushort)values[0], (ushort)values[1]),
                 Math.Max((ushort)values[0], (ushort)values[1]));
@@ -55,20 +67,18 @@ public class MagicField : BaseItem
         actor.TakeDamage(this,
             new CombatDamage((ushort)damages.Max, DamageType) { Effect = DamageEffectParser.Parse(DamageType) });
 
-        if (actor.HasCondition(conditionType, out var condition) && condition is ConditionDamage damageCondition)
+        actor.RemoveCondition(conditionType);
+
+        if (DamageCount == 0)
         {
-            if (DamageCount == 0) damageCondition.Start(toCreature, (ushort)damages.Min, (ushort)damages.Max);
-            else damageCondition.Restart(DamageCount);
+            actor.AddCondition(new ConditionDamage(this, conditionType, Interval, (ushort)damages.Min,
+                (ushort)damages.Max));
+            
+            return;
         }
-        else
-        {
-            if (DamageCount == 0)
-                actor.AddCondition(new ConditionDamage(this, conditionType, Interval, (ushort)damages.Min,
-                    (ushort)damages.Max));
-            else
-                actor.AddCondition(new ConditionDamage(this, conditionType, Interval, DamageCount,
-                    (ushort)damages.Min));
-        }
+
+        actor.AddCondition(new ConditionDamage(this, conditionType, Interval, DamageCount,
+            (ushort)damages.Min));
     }
 
     public static bool IsApplicable(IItemType type)

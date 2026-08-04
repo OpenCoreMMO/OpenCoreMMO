@@ -51,8 +51,10 @@ public class FloorChangerUsableItemTests
         {
             [Slot.Backpack] = new(backpack, 1)
         });
-        
-        player.OnTeleported += new CreatureTeleportedEventHandler(map, creatureMovementService, staticToDynamicTileServiceMock.Object).Execute;
+
+        player.OnTeleported +=
+            new CreatureTeleportedEventHandler(map, creatureMovementService, staticToDynamicTileServiceMock.Object)
+                .Execute;
 
         tile.AddCreature(player);
 
@@ -92,7 +94,9 @@ public class FloorChangerUsableItemTests
             [Slot.Backpack] = new(backpack, 1)
         });
 
-        player.OnTeleported += new CreatureTeleportedEventHandler(map, creatureMovementService, staticToDynamicTileServiceMock.Object).Execute;
+        player.OnTeleported +=
+            new CreatureTeleportedEventHandler(map, creatureMovementService, staticToDynamicTileServiceMock.Object)
+                .Execute;
 
         tile.AddCreature(player);
 

@@ -35,14 +35,13 @@ internal static class PlayerModelSeed
             AccountId = accountId,
             TownId = 1,
             Name = name,
-            ChaseMode = ChaseMode.Follow,
+            ChaseMode = ChaseMode.Stand,
             Capacity = CalculateCapacity(vocation),
             Level = level,
             Health = health,
             MaxHealth = maxHealth,
             Vocation = vocation,
             Gender = GetGender(vocation),
-            Speed = 800,
             Online = false,
             Mana = mana,
             MaxMana = maxMana,
@@ -59,6 +58,8 @@ internal static class PlayerModelSeed
             LookHead = lookHead,
             LookLegs = lookLegs,
             LookAddons = lookAddons,
+            LightLevel = 0,
+            LightColor = 0,
             SkillAxe = 60,
             SkillSword = 60,
             SkillClub = 60,
@@ -70,7 +71,8 @@ internal static class PlayerModelSeed
             Experience = 2058474800,
             FightMode = FightMode.Attack,
             WorldId = 1,
-            BankAmount = 10000000 // 10kk para garantir testes de guild
+            BankAmount = 10000000, // 10kk para garantir testes de guild
+            Conditions = null
         };
     }
 

@@ -145,7 +145,7 @@ public sealed class OtbParsingStream
             Span<byte> buffer = stackalloc byte[stringLength];
             for (var i = 0; i < stringLength; i++)
                 buffer[i] = ReadByte();
-            
+
             return Encoding.ASCII.GetString(buffer);
         }
 

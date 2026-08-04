@@ -3,7 +3,6 @@ using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
@@ -269,14 +268,15 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
         var effect = GetNumber<ushort>(luaState, 6);
         var origin = GetNumber<uint>(luaState, 7, 1);
 
-        var blockArmor = GetNumber<bool>(luaState, 8, false);
-        var blockShield = GetNumber<bool>(luaState, 9, false);
-        var ignoreResistances = GetNumber<bool>(luaState, 10, false);
+        var blockArmor = GetNumber(luaState, 8, false);
+        var blockShield = GetNumber(luaState, 9, false);
+        var ignoreResistances = GetNumber(luaState, 10, false);
 
         // Immediate support for healing and mana effects used by potions/scripts
         if (combatType == CombatType.COMBAT_HEALING)
         {
-            _healService.Heal(creature, target as ICombatActor, HealType.Health, (ushort)Math.Max(0, min), (ushort)Math.Max(0, max));
+            _healService.Heal(creature, target as ICombatActor, HealType.Health, (ushort)Math.Max(0, min),
+                (ushort)Math.Max(0, max));
             EffectService.Send(target.Location, (EffectT)effect);
             PushBoolean(luaState, true);
             return 1;
@@ -288,14 +288,12 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
             var value = Random.Shared.Next(min, max + 1);
             if (value > 0)
             {
-                _healService.Heal(creature, target as ICombatActor, HealType.Mana, (ushort)Math.Max(0, min), (ushort)Math.Max(0, max));
+                _healService.Heal(creature, target as ICombatActor, HealType.Mana, (ushort)Math.Max(0, min),
+                    (ushort)Math.Max(0, max));
                 EffectService.Send(target.Location, (EffectT)effect);
             }
-            else
-            {
-                // TODO: proper mana drain implementation
-            }
 
+            // TODO: proper mana drain implementation
             PushBoolean(luaState, true);
             return 1;
         }
@@ -367,12 +365,9 @@ public class GlobalFunctions : LuaScriptInterface, IGlobalFunctions
             _healService.Heal(creature, target as ICombatActor, HealType.Mana, (ushort)minval, (ushort)maxval);
             EffectService.Send(target.Location, (EffectT)effect);
         }
-        else
-        {
-            // Mana drain - placeholder
-            // Need to implement mana drain logic
-        }
 
+        // Mana drain - placeholder
+        // Need to implement mana drain logic
         PushBoolean(luaState, true);
         return 1;
     }

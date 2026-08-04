@@ -121,15 +121,16 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         playerEntity.MaxHealth = player.MaxHealthPoints;
         playerEntity.Soul = player.SoulPoints;
         playerEntity.MaxSoul = player.MaxSoulPoints;
-        playerEntity.Speed = player.Speed;
         playerEntity.StaminaMinutes = player.StaminaMinutes;
+        playerEntity.LightLevel = player.LightLevel;
+        playerEntity.LightColor = player.LightColor;
 
-        playerEntity.LookAddons = player.Outfit.Addon;
-        playerEntity.LookBody = player.Outfit.Body;
-        playerEntity.LookFeet = player.Outfit.Feet;
-        playerEntity.LookHead = player.Outfit.Head;
-        playerEntity.LookLegs = player.Outfit.Legs;
-        playerEntity.LookType = player.Outfit.LookType;
+        playerEntity.LookAddons = player.OriginalOutfit?.Addon ?? player.Outfit.Addon;
+        playerEntity.LookBody = player.OriginalOutfit?.Body ?? player.Outfit.Body;
+        playerEntity.LookFeet = player.OriginalOutfit?.Feet ?? player.Outfit.Feet;
+        playerEntity.LookHead = player.OriginalOutfit?.Head ?? player.Outfit.Head;
+        playerEntity.LookLegs = player.OriginalOutfit?.Legs ?? player.Outfit.Legs;
+        playerEntity.LookType = player.OriginalOutfit?.LookType ?? player.Outfit.LookType;
         playerEntity.PosX = player.Location.X;
         playerEntity.PosY = player.Location.Y;
         playerEntity.PosZ = player.Location.Z;
@@ -137,7 +138,7 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         playerEntity.SkillFist = player.GetRawSkillLevel(SkillType.Fist);
         playerEntity.SkillFishingTries = player.GetSkillTries(SkillType.Fist);
         playerEntity.SkillClub = player.GetRawSkillLevel(SkillType.Club);
-        playerEntity.SkillFishingTries = player.GetSkillTries(SkillType.Club);
+        playerEntity.SkillClubTries = player.GetSkillTries(SkillType.Club);
         playerEntity.SkillSword = player.GetRawSkillLevel(SkillType.Sword);
         playerEntity.SkillSwordTries = player.GetSkillTries(SkillType.Sword);
         playerEntity.SkillAxe = player.GetRawSkillLevel(SkillType.Axe);
@@ -153,14 +154,11 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         playerEntity.Experience = player.Experience;
         playerEntity.ChaseMode = player.ChaseMode;
         playerEntity.FightMode = player.FightMode;
-        playerEntity.RemainingRecoverySeconds =
-            (int)(player.Conditions.TryGetValue(ConditionType.Regeneration, out var condition)
-                ? condition.RemainingTime / TimeSpan.TicksPerMillisecond
-                : 0);
         playerEntity.Vocation = player.VocationType;
         playerEntity.Skull = player.Skull;
         playerEntity.SkullEndsAt = player.SkullEndsAt;
         playerEntity.LastLogOut = player.LastLogOut;
+        playerEntity.Conditions = player.GetFiniteConditions().AsList();
 
         // Update guild membership
         await UpdateGuildMembership(player, neoContext);

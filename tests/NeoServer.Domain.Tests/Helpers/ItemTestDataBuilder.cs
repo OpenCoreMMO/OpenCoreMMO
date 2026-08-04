@@ -38,7 +38,7 @@ public class ItemTestDataBuilder
     }
 
     public static Container CreateContainer(byte capacity = 6, float weight = 0, string name = "bag",
-        IEnumerable<IItem> children = null, ushort id = 0,
+        IEnumerable<IItem> children = null, ushort id = 200,
         (ItemTypeAttribute, IConvertible)[] itemTypeAttributes = null,
         (ItemAttribute, IConvertible)[] itemAttributes = null)
     {
@@ -97,6 +97,8 @@ public class ItemTestDataBuilder
     {
         var itemType = new ItemType();
         itemType.SetName(name);
+        itemType.SetClientId(15);
+        itemType.SetId(15);
         itemType.SetArticle("a");
         itemType.Attributes.SetAttribute(ItemTypeAttribute.Capacity, capacity);
         itemType.SetFlag(ItemFlag.Movable);
@@ -124,6 +126,8 @@ public class ItemTestDataBuilder
         itemType.Attributes.SetAttribute(ItemTypeAttribute.Weight, 20);
         itemType.Flags.Add(ItemFlag.Pickupable);
         itemType.Flags.Add(ItemFlag.Movable);
+        itemType.SetClientId(5);
+        itemType.SetId(5);
         if (backpack)
             itemType.Attributes.SetAttribute(ItemTypeAttribute.BodyPosition, "backpack");
 
@@ -345,8 +349,8 @@ public class ItemTestDataBuilder
 
         var item = new MagicWeapon(type, new Location(100, 100, 7))
         {
-            Chargeable = charges > 0
-                ? new Chargeable(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
+            Charges = charges > 0
+                ? new ChargeCounter(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
                 : null,
             ItemTypeFinder = itemTypeFinder
         };
@@ -383,8 +387,8 @@ public class ItemTestDataBuilder
 
         var item = new MeleeWeapon(type, new Location(100, 100, 7))
         {
-            Chargeable = charges > 0
-                ? new Chargeable(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
+            Charges = charges > 0
+                ? new ChargeCounter(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
                 : null,
             ItemTypeFinder = itemTypeFinder
         };
@@ -417,8 +421,8 @@ public class ItemTestDataBuilder
 
         var item = new DistanceWeapon(type, new Location(100, 100, 7))
         {
-            Chargeable = charges > 0
-                ? new Chargeable(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
+            Charges = charges > 0
+                ? new ChargeCounter(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
                 : null,
             ItemTypeFinder = itemTypeFinder
         };
@@ -460,7 +464,7 @@ public class ItemTestDataBuilder
             new Location(100, 100, 7),
             itemAttributes != null ? itemAttributes.ToDictionary() : null)
         {
-            Chargeable = null,
+            Charges = null,
             ItemTypeFinder = itemTypeFinder
         };
 
@@ -493,8 +497,8 @@ public class ItemTestDataBuilder
 
         var item = new BodyDefenseEquipment(type, new Location(100, 100, 7))
         {
-            Chargeable = charges > 0
-                ? new Chargeable(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
+            Charges = charges > 0
+                ? new ChargeCounter(charges, type.Attributes.GetAttribute<bool>(ItemTypeAttribute.ShowCharges))
                 : null,
             ItemTypeFinder = itemTypeFinder
         };
@@ -560,7 +564,7 @@ public class ItemTestDataBuilder
             new Location(100, 100, 7),
             itemAttributes != null ? itemAttributes.ToDictionary() : null)
         {
-            Chargeable = null,
+            Charges = null,
             ItemTypeFinder = itemTypeFinder
         };
 

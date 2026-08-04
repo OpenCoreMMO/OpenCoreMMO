@@ -39,5 +39,6 @@ public enum TileFlags : uint
     HasHeight = 1 << 28,
 
     FloorChange = FloorChangeNorth | FloorChangeDown | FloorChangeSouth | FloorChangeEast | FloorChangeWest |
-                  FloorChangeEastAlternative | FloorChangeSouthAlternative
+                  FloorChangeEastAlternative | FloorChangeSouthAlternative,
+    LiquidSource = 1 << 29
 }

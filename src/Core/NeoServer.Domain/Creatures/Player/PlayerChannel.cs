@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.Creatures.Players;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Services;
@@ -10,6 +9,7 @@ namespace NeoServer.Domain.Creatures.Player;
 public delegate void PlayerJoinChannel(IPlayer player, ChatChannel channel);
 
 public delegate void PlayerExitChannel(IPlayer player, ChatChannel channel);
+
 public class PlayerChannel(IPlayer owner)
 {
     private IDictionary<ushort, ChatChannel> _personalChannels;
@@ -18,12 +18,6 @@ public class PlayerChannel(IPlayer owner)
 
     public IEnumerable<ChatChannel> PersonalChannels => _personalChannels?.Values;
 
-    public bool CanEnterOnChannel(ushort channelId, IChatChannelStore chatChannelStore)
-    {
-        var channel = chatChannelStore.Get(channelId);
-        return channel?.PlayerCanJoin(owner) ?? false;
-    }
-
     public IEnumerable<ChatChannel> PrivateChannels
     {
         get
@@ -31,6 +25,12 @@ public class PlayerChannel(IPlayer owner)
             if (owner.HasGuild && owner.Guild?.Channel is not null) yield return owner.Guild.Channel;
             if (owner.PlayerParty.Party?.Channel is not null) yield return owner.PlayerParty.Party.Channel;
         }
+    }
+
+    public bool CanEnterOnChannel(ushort channelId, IChatChannelStore chatChannelStore)
+    {
+        var channel = chatChannelStore.Get(channelId);
+        return channel?.PlayerCanJoin(owner) ?? false;
     }
 
     public void AddPersonalChannel(ChatChannel channel)

@@ -16,14 +16,6 @@ local fruits = { 2673, 2674, 2675, 2676, 2677, 2678, 2679, 2680, 2681, 2682, 268
 
 local ropeSpots = { 384, 418, 8278, 8592 }
 
-local actionIds = {
-    sandHole = 100, -- hidden sand hole
-    pickHole = 105, -- hidden mud hole
-    levelDoor = 1000, -- level door
-    citizenship = 30020, -- citizenship teleport
-    citizenshipLast = 30050, -- citizenship teleport last
-}
-
 function destroyItem(player, target, toPosition)
     if type(target) ~= "userdata" or not target:isItem() then
         return false

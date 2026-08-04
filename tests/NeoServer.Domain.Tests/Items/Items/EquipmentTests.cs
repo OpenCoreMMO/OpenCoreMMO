@@ -22,7 +22,7 @@ public class EquipmentTests : IAsyncLifetime
     public Task DisposeAsync()
     {
         // Cleanup logic after each test
-        EventSubscriptionCleanUp.CleanUp<Decayable>(nameof(Decayable.OnStarted));
+        EventSubscriptionCleanUp.CleanUp<DecayTracker>(nameof(DecayTracker.OnStarted));
         return Task.CompletedTask;
     }
 
@@ -97,7 +97,7 @@ public class EquipmentTests : IAsyncLifetime
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.AbsorbPercentEnergy, 10);
 
         //assert
-        sut.NoCharges.Should().BeFalse();
+        sut.Charges.IsEmpty.Should().BeFalse();
     }
 
     [Fact]
@@ -108,10 +108,10 @@ public class EquipmentTests : IAsyncLifetime
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.AbsorbPercentEnergy, 10);
 
         //act
-        sut.DecreaseCharges();
+        sut.Charges.DecreaseAmount();
 
         //assert
-        sut.NoCharges.Should().BeTrue();
+        sut.Charges.IsEmpty.Should().BeTrue();
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public class EquipmentTests : IAsyncLifetime
         sut.Metadata.Attributes.SetAttribute(ItemTypeAttribute.AbsorbPercentEnergy, 10);
 
         //assert
-        sut.NoCharges.Should().BeFalse();
+        (sut.Charges?.IsEmpty ?? false).Should().BeFalse();
     }
 
     [Fact]
@@ -339,7 +339,7 @@ public class EquipmentTests : IAsyncLifetime
         };
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
-        Decayable.OnStarted += decayableItemManager.Add;
+        DecayTracker.OnStarted += decayableItemManager.Add;
 
         //act
         player.Inventory.AddItem(sut, (byte)Slot.Ring);
@@ -586,7 +586,7 @@ public class EquipmentTests : IAsyncLifetime
         ], null, itemTypeStore.Get);
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
-        Decayable.OnStarted += decayableItemManager.Add;
+        DecayTracker.OnStarted += decayableItemManager.Add;
 
         //act
         player.Inventory.AddItem(sut, (byte)Slot.Ring);
@@ -637,7 +637,7 @@ public class EquipmentTests : IAsyncLifetime
 
         var itemTypeStore = ItemTestDataBuilder.GetItemTypeStore();
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(null, itemTypeStore);
-        Decayable.OnStarted += decayableItemManager.Add;
+        DecayTracker.OnStarted += decayableItemManager.Add;
 
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "ring", 1,
         [
@@ -716,7 +716,7 @@ public class EquipmentTests : IAsyncLifetime
             item2Equipped.Metadata, item3.Metadata, item3Equipped.Metadata);
 
         var decayableItemManager = DecayableItemManagerTestBuilder.Build(map, itemTypeStore);
-        Decayable.OnStarted += decayableItemManager.Add;
+        DecayTracker.OnStarted += decayableItemManager.Add;
 
         //assert first item
         item1.Decay?.Duration.Should().Be(0);
@@ -822,7 +822,6 @@ public class EquipmentTests : IAsyncLifetime
         var sut = ItemTestDataBuilder.CreateDefenseEquipmentItem(1, "body");
         var backpack = ItemTestDataBuilder.CreateBackpack();
 
-        using var monitor = sut.Monitor();
 
         var player = PlayerTestDataBuilder.Build(inventoryMap: new Dictionary<Slot, (IItem Item, ushort Id)>
         {
@@ -837,8 +836,8 @@ public class EquipmentTests : IAsyncLifetime
         player.MoveItem(item, backpack, player.Inventory, 1,
             0, (byte)Slot.Body);
 
-        //assert
-        monitor.Should().Raise(nameof(sut.OnUndressed));
+        //assert: the new item should now be in the body slot
+        player.Inventory.TryGetItem<IEquipment>(Slot.Body).Should().Be(item);
     }
 
     #region InspectionText
@@ -854,9 +853,9 @@ public class EquipmentTests : IAsyncLifetime
 
         //assert
         sut.InspectionText.Should().Be(" that has 2 charges left");
-        sut.DecreaseCharges();
+        sut.Charges.DecreaseAmount();
         sut.InspectionText.Should().Be(" that has 1 charge left");
-        sut.DecreaseCharges();
+        sut.Charges.DecreaseAmount();
         sut.InspectionText.Should().Be(" that has no charges left");
     }
 

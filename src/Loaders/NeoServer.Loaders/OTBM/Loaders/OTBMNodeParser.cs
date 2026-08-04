@@ -24,7 +24,7 @@ public sealed class OTBMNodeParser
         {
             Header = new Header(node)
         };
-        
+
         var children = node.Children;
         if (children.Length == 0) return otbm;
 
@@ -41,7 +41,6 @@ public sealed class OTBMNodeParser
         var checkWaypoints = otbm.Header.Version > 1;
 
         foreach (var child in mapDataChildren.Span)
-        {
             switch (child.Type)
             {
                 case NodeType.TileArea:
@@ -50,21 +49,15 @@ public sealed class OTBMNodeParser
 
                 case NodeType.TownCollection:
                     var townChildren = child.Children;
-                    for (int i = 0; i < townChildren.Length; i++)
-                    {
-                        towns.Add(new TownNode(townChildren.Span[i]));
-                    }
+                    for (var i = 0; i < townChildren.Length; i++) towns.Add(new TownNode(townChildren.Span[i]));
                     break;
 
                 case NodeType.WayPointCollection when checkWaypoints:
                     var waypointChildren = child.Children;
-                    for (int i = 0; i < waypointChildren.Length; i++)
-                    {
+                    for (var i = 0; i < waypointChildren.Length; i++)
                         waypoints.Add(new WaypointNode(waypointChildren.Span[i]));
-                    }
                     break;
             }
-        }
 
         otbm.TileAreas = tileAreas;
         otbm.Towns = towns;

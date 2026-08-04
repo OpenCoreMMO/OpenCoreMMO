@@ -184,14 +184,15 @@ public class MoveEvent : Script
 
         if (!GetScriptInterface().InternalReserveScriptEnv())
         {
+            var eventPos = EventType == MoveEventType.MOVE_EVENT_STEP_OUT ? fromPos : toPos;
             if (item is not null)
                 _logger.Error(
                     "[MoveEvent::ExecuteStep - Creature {CreatureName}, item {ItemName}, position {Pos}] Call stack overflow. Too many lua script calls being nested",
-                    creature.Name, item.Name, toPos.ToString(CultureInfo.InvariantCulture));
+                    creature.Name, item.Name, eventPos.ToString(CultureInfo.InvariantCulture));
             else
                 _logger.Error(
                     "[MoveEvent::ExecuteStep - Creature {CreatureName}, position {Pos}] Call stack overflow. Too many lua script calls being nested",
-                    creature.Name, toPos.ToString(CultureInfo.InvariantCulture));
+                    creature.Name, eventPos.ToString(CultureInfo.InvariantCulture));
             return false;
         }
 
@@ -202,10 +203,14 @@ public class MoveEvent : Script
         var L = GetScriptInterface().GetLuaState();
         GetScriptInterface().PushFunction(GetScriptId());
 
+        // TFS: pos = tile of the event (new tile for StepIn, old tile for StepOut);
+        // fromPosition = creature last position (old tile for both).
+        var position = EventType == MoveEventType.MOVE_EVENT_STEP_OUT ? fromPos : toPos;
+
         LuaScriptInterface.PushUserdata(L, creature);
         LuaScriptInterface.SetCreatureMetatable(L, -1, creature);
         LuaScriptInterface.PushThing(L, item);
-        LuaScriptInterface.PushPosition(L, toPos);
+        LuaScriptInterface.PushPosition(L, position);
         LuaScriptInterface.PushPosition(L, fromPos);
 
         return GetScriptInterface().CallFunction(4);

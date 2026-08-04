@@ -80,7 +80,10 @@ public class CombatDamage
 
     public bool Unjustified { get; set; }
 
-    public void ChangeDamageType(DamageType newType) => Type = newType;
+    public void ChangeDamageType(DamageType newType)
+    {
+        Type = newType;
+    }
 
     /// <summary>
     ///     Sets a new damage

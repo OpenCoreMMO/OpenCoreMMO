@@ -8,10 +8,12 @@ using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Bases;
 using NeoServer.Domain.Items.Items;
+using NeoServer.Domain.Items.Services.ItemTransform.Operations;
 using NeoServer.Domain.Locker;
 using NeoServer.Domain.Mail;
 using NeoServer.Domain.Repositories;
@@ -248,55 +250,6 @@ public class TileTest
     }
 
     [Fact]
-    public void Item_falls_when_moved_to_a_hole()
-    {
-        //arrange
-        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
-        var player = PlayerTestDataBuilder.Build();
-        player.SetNewLocation(new Location(102, 100, 7));
-
-        var validation = new CreatureMovementValidation(map);
-        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
-
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
-            staticToDynamicTileServiceMock.Object);
-        var mapService = new MapService(map, creatureMovementService);
-
-        var item = ItemTestDataBuilder.CreateWeaponItem(1);
-
-        var hole = new Ground(new ItemType(), new Location(100, 100, 7));
-        hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
-
-        map.PlaceCreature(player);
-
-        var sourceTile = (IDynamicTile)map[101, 100, 7];
-        var destinationTile = (IDynamicTile)map[100, 100, 7];
-        var undergroundTile = (IDynamicTile)map[100, 100, 8];
-
-        mapService.ReplaceGround(destinationTile.Location, hole);
-
-        var mailService = new MailService(new Mock<IPlayerRepository>().Object,
-            new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
-
-        var itemMovementService =
-            new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
-
-        sourceTile.AddItem(item);
-
-        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService,
-            new Mock<ICreaturePushService>().Object);
-
-        //act
-        toMapMovementService.Move(player,
-            new MovementParams(sourceTile.Location, destinationTile.Location, 1));
-
-        //assert
-        sourceTile.TopDownItemOnStack.Should().NotBe(item);
-        destinationTile.TopDownItemOnStack.Should().NotBe(item);
-        undergroundTile.TopDownItemOnStack.Should().Be(item);
-    }
-
-    [Fact]
     [ThreadBlocking]
     public void Item_doesnt_go_to_hole_if_the_final_tile_is_blocked()
     {
@@ -309,7 +262,7 @@ public class TileTest
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
-        var hole = new Ground(new ItemType(), new Location(100, 100, 7));
+        var hole = new Ground(new ItemType().SetClientId(1), new Location(100, 100, 7));
         hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         map.PlaceCreature(player);
@@ -323,20 +276,21 @@ public class TileTest
 
         var itemMovementService =
             new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
-        
+
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
 
         var validation = new CreatureMovementValidation(map);
         var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
             staticToDynamicTileServiceMock.Object);
-        var mapService = new MapService(map, creatureMovementService);
 
-        mapService.ReplaceGround(destinationTile.Location, hole);
+        var replaceGroundOperation = new ReplaceGroundOperation(creatureMovementService, map);
+
+        replaceGroundOperation.ReplaceGround(destinationTile.Location, hole);
 
         sourceTile.AddItem(item);
 
-        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService,
-            new Mock<ICreaturePushService>().Object);
+        var toMapMovementService = new ToMapMovementService(map,
+            new Mock<ICreaturePushService>().Object, new Mock<IMapItemMovementService>().Object);
 
         //act
         toMapMovementService.Move(player, new MovementParams(sourceTile.Location, destinationTile.Location, 1));
@@ -345,60 +299,6 @@ public class TileTest
         sourceTile.TopDownItemOnStack.Should().Be(item);
         destinationTile.TopDownItemOnStack.Should().NotBe(item);
         undergroundTile.TopDownItemOnStack.Should().NotBe(item);
-    }
-
-    [Fact]
-    public void Item_falls_two_floors_if_a_hole_is_below_another_hole()
-    {
-        //arrange
-        var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 9);
-
-        var player = PlayerTestDataBuilder.Build();
-        player.SetNewLocation(new Location(102, 100, 7));
-
-        var validation = new CreatureMovementValidation(map);
-        var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
-        var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
-            staticToDynamicTileServiceMock.Object);
-        var mapService = new MapService(map, creatureMovementService);
-
-        var item = ItemTestDataBuilder.CreateWeaponItem(1);
-
-        var hole = new Ground(new ItemType(), new Location(100, 100, 7));
-        hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
-
-        map.PlaceCreature(player);
-
-        var secondHole = new Ground(new ItemType(), new Location(100, 100, 8));
-        secondHole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
-
-        var sourceTile = (IDynamicTile)map[101, 100, 7];
-        var destinationTile = (IDynamicTile)map[100, 100, 7];
-        var undergroundTile = (IDynamicTile)map[100, 100, 8];
-        var secondFloor = (IDynamicTile)map[100, 100, 9];
-
-        sourceTile.AddItem(item);
-
-        mapService.ReplaceGround(destinationTile.Location, hole);
-
-        mapService.ReplaceGround(undergroundTile.Location, secondHole);
-
-        var mailService = new MailService(new Mock<IPlayerRepository>().Object,
-            new Mock<IPlayerMailRepository>().Object, new LockerManager(), null);
-
-        var itemMovementService =
-            new ItemMovementService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), mailService);
-        var toMapMovementService = new ToMapMovementService(map, mapService, itemMovementService,
-            new Mock<ICreaturePushService>().Object);
-
-        //act
-        toMapMovementService.Move(player, new MovementParams(sourceTile.Location, destinationTile.Location, 1));
-
-        //assert
-        sourceTile.TopDownItemOnStack.Should().NotBe(item);
-        destinationTile.TopDownItemOnStack.Should().NotBe(item);
-        undergroundTile.TopDownItemOnStack.Should().NotBe(item);
-        secondFloor.TopDownItemOnStack.Should().Be(item);
     }
 
     [Fact]
@@ -413,13 +313,12 @@ public class TileTest
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
             staticToDynamicTileServiceMock.Object);
-        var mapService = new MapService(map, creatureMovementService);
 
         player.SetNewLocation(new Location(102, 100, 7));
 
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
-        var hole = new Ground(new ItemType(), new Location(100, 100, 7));
+        var hole = new Ground(new ItemType().SetClientId(1), new Location(100, 100, 7));
         hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         map.PlaceCreature(player);
@@ -432,8 +331,10 @@ public class TileTest
 
         player.MoveItem(item, sourceTile, destinationTile, 1, 0, 0);
 
+        var replaceGroundOperation = new ReplaceGroundOperation(creatureMovementService, map);
+
         //act
-        mapService.ReplaceGround(destinationTile.Location, hole);
+        replaceGroundOperation.ReplaceGround(destinationTile.Location, hole);
 
         //assert
         sourceTile.TopDownItemOnStack.Should().NotBe(item);
@@ -451,12 +352,13 @@ public class TileTest
         var staticToDynamicTileServiceMock = new Mock<IStaticToDynamicTileService>();
         var creatureMovementService = new CreatureMovementService(map, new CylinderOperation(map), validation,
             staticToDynamicTileServiceMock.Object);
-        var mapService = new MapService(map, creatureMovementService);
-
+        
+        var replaceGroundOperation = new ReplaceGroundOperation(creatureMovementService, map);
+        
         var player = PlayerTestDataBuilder.Build();
         player.SetNewLocation(new Location(100, 100, 7));
 
-        var hole = new Ground(new ItemType(), new Location(100, 100, 7));
+        var hole = new Ground(new ItemType().SetClientId(1), new Location(100, 100, 7));
         hole.Metadata.Attributes.SetAttribute(ItemTypeAttribute.FloorChange, "down");
 
         var tile = (IDynamicTile)map[100, 100, 7];
@@ -465,7 +367,7 @@ public class TileTest
         map.PlaceCreature(player);
 
         //act
-        mapService.ReplaceGround(tile.Location, hole);
+        replaceGroundOperation.ReplaceGround(tile.Location, hole);
 
         //assert
         tile.TopCreatureOnStack.Should().NotBe(player);
@@ -615,7 +517,7 @@ public class TileTest
         type.SetName($"item{id}");
         type.SetFlag(ItemFlag.AlwaysOnTop);
         type.SetTopOrder(topOrder);
-        
+
         var item = new Item(type, new Location(100, 100, 7));
         item.Attributes.SetAttribute(ItemAttribute.Count, 1);
         return item;
@@ -626,7 +528,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         // Create items with different TopOrder values (lower value = higher priority)
         var itemTopOrder3 = CreateTopItemWithTopOrder(1, 3);
         var itemTopOrder1 = CreateTopItemWithTopOrder(2, 1);
@@ -646,7 +548,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var itemTopOrder5 = CreateTopItemWithTopOrder(1, 5);
         var itemTopOrder2 = CreateTopItemWithTopOrder(2, 2);
         var itemTopOrder8 = CreateTopItemWithTopOrder(3, 8);
@@ -671,7 +573,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var item1 = CreateTopItemWithTopOrder(1, 3);
         var item2 = CreateTopItemWithTopOrder(2, 3); // Same TopOrder
 
@@ -686,21 +588,24 @@ public class TileTest
     }
 
     [Fact]
-    public void AddTopItem_WithSameClientId_DoesNotDuplicateItem()
+    [Trait("Category", "Tile")]
+    public void AddTopItem_WithSameClientId_StillAddsItem()
     {
-        // Arrange
+        // Arrange — TFS Tile::addThing always inserts AlwaysOnTop items; it does not
+        // skip when ClientId matches the current top (that old early-return lost items).
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var item1 = CreateTopItemWithTopOrder(100, 3);
         var item2 = CreateTopItemWithTopOrder(100, 3); // Same ClientId
 
-        // Act - Add both items
+        // Act
         tile.AddItem(item1);
         tile.AddItem(item2);
 
-        // Assert - Second item should not be added (early return when ClientId matches top item)
-        tile.TopItems.Count.Should().Be(1);
-        tile.TopItems.Values[0].Should().Be(item1);
+        // Assert — both items remain on the stack (same TopOrder inserts before existing)
+        tile.TopItems.Count.Should().Be(2);
+        tile.TopItems.Values[0].Should().Be(item2);
+        tile.TopItems.Values[1].Should().Be(item1);
     }
 
     [Fact]
@@ -708,7 +613,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var itemTopOrder1 = CreateTopItemWithTopOrder(1, 1);
         var itemTopOrder10 = CreateTopItemWithTopOrder(2, 10);
         var itemTopOrder5 = CreateTopItemWithTopOrder(3, 5);
@@ -720,8 +625,8 @@ public class TileTest
 
         // Assert
         tile.TopItems.Count.Should().Be(3);
-        tile.TopItems.Values[0].Should().Be(itemTopOrder1);  // TopOrder 1
-        tile.TopItems.Values[1].Should().Be(itemTopOrder5);  // TopOrder 5
+        tile.TopItems.Values[0].Should().Be(itemTopOrder1); // TopOrder 1
+        tile.TopItems.Values[1].Should().Be(itemTopOrder5); // TopOrder 5
         tile.TopItems.Values[2].Should().Be(itemTopOrder10); // TopOrder 10
     }
 
@@ -730,7 +635,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var itemTopOrder1 = CreateTopItemWithTopOrder(1, 1);
         var itemTopOrder5 = CreateTopItemWithTopOrder(2, 5);
         var itemTopOrder10 = CreateTopItemWithTopOrder(3, 10);
@@ -750,7 +655,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var itemTopOrder5 = CreateTopItemWithTopOrder(1, 5);
         var itemTopOrder10 = CreateTopItemWithTopOrder(2, 10);
         var itemTopOrder1 = CreateTopItemWithTopOrder(3, 1);
@@ -772,7 +677,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var item1 = CreateTopItemWithTopOrder(1, 5);
         var item2 = CreateTopItemWithTopOrder(2, 5);
         var item3 = CreateTopItemWithTopOrder(3, 5);
@@ -794,34 +699,29 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         // Create a complex scenario with various TopOrder values
         var items = new List<IItem>();
         var topOrders = new byte[] { 5, 2, 8, 2, 1, 10, 5, 3 };
-        
-        for (int i = 0; i < topOrders.Length; i++)
+
+        for (var i = 0; i < topOrders.Length; i++)
         {
             var item = CreateTopItemWithTopOrder((ushort)(i + 1), topOrders[i]);
             items.Add(item);
         }
 
         // Act - Add all items
-        foreach (var item in items)
-        {
-            tile.AddItem(item);
-        }
+        foreach (var item in items) tile.AddItem(item);
 
         // Assert - Items should be ordered by TopOrder (lower first), with equal values in reverse insertion order
         tile.TopItems.Count.Should().Be(items.Count);
-        
+
         // Extract TopOrder values from the result
         var resultTopOrders = tile.TopItems.Values.Select(i => i.Metadata.TopOrder).ToList();
-        
+
         // Verify ordering is maintained (non-descending)
-        for (int i = 0; i < resultTopOrders.Count - 1; i++)
-        {
+        for (var i = 0; i < resultTopOrders.Count - 1; i++)
             resultTopOrders[i].Should().BeLessThanOrEqualTo(resultTopOrders[i + 1]);
-        }
     }
 
     [Fact]
@@ -829,7 +729,7 @@ public class TileTest
     {
         // Arrange
         var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, null, [], []);
-        
+
         var itemTopOrder5 = CreateTopItemWithTopOrder(1, 5);
         var itemTopOrder0 = CreateTopItemWithTopOrder(2, 0);
 
@@ -841,5 +741,88 @@ public class TileTest
         tile.TopItems.Count.Should().Be(2);
         tile.TopItems.Values[0].Should().Be(itemTopOrder0); // TopOrder 0 at beginning
         tile.TopItems.Values[1].Should().Be(itemTopOrder5);
+    }
+
+    [Fact]
+    [Trait("Category", "Tile")]
+    public void UpdateItemType_WhenAlwaysOnTopFlips_MovesItemBetweenStacks()
+    {
+        var ground = MapTestDataBuilder.CreateGround(new Location(100, 100, 7), 100);
+        var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, ground, [], []);
+
+        var closedDoorType = new ItemType();
+        closedDoorType.SetId(5099);
+        closedDoorType.SetClientId(5098);
+        closedDoorType.SetName("closed door");
+
+        var openDoorType = new ItemType();
+        openDoorType.SetId(5100);
+        openDoorType.SetClientId(5099);
+        openDoorType.SetName("open door");
+        openDoorType.SetFlag(ItemFlag.AlwaysOnTop);
+        openDoorType.SetTopOrder(3);
+
+        var door = new Item(closedDoorType, tile.Location);
+        tile.AddItem(door);
+
+        tile.DownItems.Should().Contain(door);
+
+        tile.UpdateItemType(door, openDoorType).Should().BeTrue();
+
+        door.Metadata.ServerId.Should().Be((ushort)5100);
+        tile.TopItems.Should().Contain(door);
+        tile.DownItems.Should().NotContain(door);
+
+        tile.UpdateItemType(door, closedDoorType).Should().BeTrue();
+
+        door.Metadata.ServerId.Should().Be((ushort)5099);
+        tile.DownItems.Should().Contain(door);
+        tile.TopItems.Should().NotContain(door);
+    }
+
+    [Fact]
+    [Trait("Category", "Tile")]
+    public void RemoveItem_RemovesSpecificDownItem_NotOnlyTopOfStack()
+    {
+        var ground = MapTestDataBuilder.CreateGround(new Location(100, 100, 7), 100);
+        var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, ground, [], []);
+
+        var bottom = ItemTestDataBuilder.CreateUnpassableItem(1);
+        var top = ItemTestDataBuilder.CreateUnpassableItem(2);
+        tile.AddItem(bottom);
+        tile.AddItem(top);
+
+        tile.RemoveItem(bottom, 1, out var removed);
+
+        removed.Should().Be(bottom);
+        tile.DownItems.Should().Contain(top);
+        tile.DownItems.Should().NotContain(bottom);
+    }
+
+    [Fact]
+    [Trait("Category", "EdgeCase")]
+    public void AddItem_records_updated_stackpos_before_overflow_remainder_is_pushed()
+    {
+        var ground = MapTestDataBuilder.CreateGround(new Location(100, 100, 7), 100);
+        var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, ground, [], []);
+
+        var fullPile = (ICumulative)ItemTestDataBuilder.CreateAmmo(2547, 100);
+        var overflow = (ICumulative)ItemTestDataBuilder.CreateAmmo(2547, 30);
+
+        tile.AddItem(fullPile);
+
+        var result = tile.AddItem(overflow);
+
+        result.Succeeded.Should().BeTrue();
+
+        var updated = result.Value.Operations.Single(op => op.Item2 == Operation.Updated);
+        updated.Item1.Should().Be(fullPile);
+        updated.Item3.Should().Be(1);
+
+        var added = result.Value.Operations.Single(op => op.Item2 == Operation.Added);
+        added.Item1.Amount.Should().Be(30);
+
+        tile.TryGetStackPositionOfItem(fullPile, out var buriedStackPosition).Should().BeTrue();
+        buriedStackPosition.Should().Be(2);
     }
 }

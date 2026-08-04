@@ -21,23 +21,26 @@ public abstract class BaseCondition : ICondition
     public long Duration { get; private set; }
     public long EndTime { get; private set; }
 
-    public bool IsPersistent => Duration == 0;
+    public virtual bool IsPersistent => Duration == 0;
     public long StartedAt { get; private set; }
     public bool IsDisabled { get; private set; }
-
+    
     public ConditionIconType Icons => 0;
 
     public abstract ConditionType Type { get; }
-    public long RemainingTime => (EndTime - DateTime.UtcNow.Ticks) / TimeSpan.TicksPerMillisecond;
+    public long RemainingTime => EndTime == 0 ? Duration / TimeSpan.TicksPerMillisecond : (EndTime - DateTime.UtcNow.Ticks) / TimeSpan.TicksPerMillisecond;
 
     public FormulaValues FormulaValues { get; set; }
     public Dictionary<ConditionParamType, uint> Parameters { get; set; } = new();
 
-    public void End()
-    {
-        if (IsPersistent) return;
+    private bool _hasEnded;
 
-        EndAction?.Invoke();
+    internal virtual void End()
+    {
+        if (_hasEnded || IsPersistent) return;
+        _hasEnded = true;
+
+        EndAction?.Invoke(); //can cause side effect
     }
 
     public virtual void Extend(uint duration, uint maxDuration = uint.MaxValue)
@@ -45,10 +48,9 @@ public abstract class BaseCondition : ICondition
         var maxDurationTicks = maxDuration * TimeSpan.TicksPerMillisecond;
         var durationTicks = duration * TimeSpan.TicksPerMillisecond;
 
+        if (Duration + durationTicks > maxDurationTicks) return;
+
         Duration += durationTicks;
-
-        if (Duration > maxDurationTicks) return;
-
         EndTime += durationTicks;
     }
 
@@ -62,12 +64,39 @@ public abstract class BaseCondition : ICondition
         IsDisabled = false;
     }
 
-    public virtual bool Start(ICreature creature)
+    internal virtual bool Start(ICreature creature)
     {
         StartedAt = DateTime.UtcNow.Ticks;
-        EndTime = DateTime.UtcNow.Ticks + Duration;
+
+        if (Duration > 0)
+        {
+            EndTime = StartedAt + Duration;
+        }
+
         return true;
     }
 
-    public virtual bool HasExpired => IsPersistent is false && EndTime < DateTime.UtcNow.Ticks;
+    public virtual bool HasExpired => !IsPersistent && RemainingTime <= 0;
+    
+    /// <summary>
+    ///     Updates the duration of the condition. If the condition has already started,
+    ///     the end time is recalculated from the new duration.
+    /// </summary>
+    /// <param name="duration">The new duration in milliseconds.</param>
+    public void SetNewDuration(uint duration)
+    {
+        Duration = duration * TimeSpan.TicksPerMillisecond;
+        if (StartedAt > 0) EndTime = StartedAt + Duration;
+    }
+
+    /// <summary>
+    ///     Updates the duration of the condition. If the condition has already started,
+    ///     the end time is recalculated from the new duration.
+    /// </summary>
+    /// <param name="duration">The new duration in ticks.</param>
+    public void SetNewDuration(long duration)
+    {
+        Duration = duration;
+        if (StartedAt > 0) EndTime = StartedAt + Duration;
+    }
 }

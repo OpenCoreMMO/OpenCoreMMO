@@ -25,7 +25,16 @@ public interface INpc : ISociableCreature
     KeywordReplacement ReplaceKeywords { get; set; }
     event PlayerCloseChannel OnPlayerCloseChannel;
 
-    void Advertise();
+    /// <summary>
+    /// Allows the NPC to advertise its marketing messages to a list of sociable creatures (receivers), if applicable.
+    /// </summary>
+    /// <param name="receivers">The list of creatures that will receive the advertisement message.</param>
+    /// <remarks>
+    /// The method ensures that the NPC has marketing messages available and checks if the advertisement
+    /// cooldown has expired before proceeding. It then selects a random marketing message and broadcasts
+    /// it to the specified receivers, also resetting the cooldown timer for advertising.
+    /// </remarks>
+    public void Advertise(List<ICreature> receivers);
     bool CanInteract(Location.Structs.Location location, int range = 4);
     void SetPlayerInteraction(IPlayer player, ushort topicId);
     void RemovePlayerInteraction(IPlayer player);

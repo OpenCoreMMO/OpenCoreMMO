@@ -1,10 +1,12 @@
 ﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Player.Outfit;
 
 namespace NeoServer.Domain.Creatures.Models.Bases;
@@ -14,9 +16,9 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     private readonly Queue<Direction> _walkingQueue = new();
 
     protected readonly IMapTool MapTool;
+    private bool _forceUpdateFollowPath;
     private uint _lastStepCost = 1;
     private uint _walkUpdateTicks;
-    private bool _forceUpdateFollowPath;
 
     protected WalkableCreature(ICreatureType type,
         IMapTool mapTool,
@@ -26,7 +28,6 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         MapTool = mapTool;
         Speed = type.Speed;
         RawSpeed = type.Speed;
-        OnCompleteWalking += ExecuteNextAction;
     }
 
     internal CooldownList Cooldowns { get; } = new();
@@ -37,8 +38,8 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     public virtual ITileEnterRule TileEnterRule => PlayerEnterTileRule.Rule;
     public virtual ushort Speed { get; protected set; }
 
-    public ICreature Following { get; private set; }
-    public bool IsFollowing => Following is not null;
+    public ICreature FollowCreature { get; private set; }
+    public bool IsFollowing => FollowCreature is not null;
     public bool HasNextStep => _walkingQueue.Count > 0;
 
     public virtual void OnMoved(IDynamicTile fromTile, IDynamicTile toTile, ICylinderSpectator[] spectators)
@@ -49,8 +50,13 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
             _lastStepCost = 2;
         SetDirection(fromTile.Location.DirectionTo(toTile.Location));
 
-        if (_walkingQueue.IsEmpty()) OnCompleteWalking?.Invoke(this);
-        OnCreatureMoved?.Invoke(this, fromTile.Location, toTile.Location, spectators);
+        if (_walkingQueue.IsEmpty())
+        {
+            EventAggregator.Invoke(new CreatureCompletedWalkingEvent(this));
+            ExecuteNextAction(this);
+        }
+        
+        EventAggregator.Invoke(new CreatureMovedEvent(this, fromTile.Location, toTile.Location, spectators));
 
         foreach (var spectator in spectators)
             spectator.Spectator.OnMove(this, fromTile, toTile);
@@ -66,9 +72,9 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     {
         if (direction is Direction.None) return;
         if (direction == Direction) return;
-        
+
         SetDirection(direction);
-        OnTurnedToDirection?.Invoke(this, direction);
+        EventAggregator.Invoke(new CreatureTurnedToDirectionEvent(this, direction));
     }
 
     public int StepDelay
@@ -90,23 +96,26 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         if (!HasNextStep) return;
 
         _walkingQueue.Clear();
-        OnStoppedWalking?.Invoke(this);
+        EventAggregator.Invoke(new CreatureStoppedWalkingEvent(this));
     }
-
+    
     public void CancelWalk()
     {
         _walkingQueue.Clear();
-        OnCancelledWalking?.Invoke(this);
+        EventAggregator.Invoke(new CreatureCancelledWalkingEvent(this));
     }
 
     public void StopFollowing()
     {
         if (!IsFollowing) return;
 
-        Following = null;
+        FollowCreature = null;
         HasFollowPath = false;
         _walkUpdateTicks = 0;
         _forceUpdateFollowPath = false;
+
+        EventAggregator.Invoke(new StoppedFollowEvent(this));
+        
         StopWalking();
     }
 
@@ -122,7 +131,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
             {
                 _walkUpdateTicks = 0;
                 _forceUpdateFollowPath = false;
-                Follow(Following);
+                Follow(FollowCreature);
             }
         }
     }
@@ -151,16 +160,16 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
         if (IsFollowing)
         {
-            Following = creature;
+            FollowCreature = creature;
             StartFollowing(creature);
             return;
         }
 
-        Following = creature;
+        FollowCreature = creature;
         _forceUpdateFollowPath = false;
-        
+
         StartFollowing(creature);
-        OnStartedFollowing?.Invoke(this, creature, fpp);
+        EventAggregator.Invoke(new CreatureStartedFollowingEvent(this, creature, fpp));
     }
 
     public virtual bool WalkTo(params Direction[] directions)
@@ -230,12 +239,30 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
     public void IncreaseSpeed(ushort speed)
     {
+        if (speed == 0) return;
         ChangeSpeedLevel(speed + Speed);
     }
 
     public void DecreaseSpeed(ushort speedBoost)
     {
         ChangeSpeedLevel(Math.Max(0, Speed - speedBoost));
+    }
+
+    public override void OnSpectatorMoved(ICreature spectator)
+    {
+        if (Equals(spectator, FollowCreature)) //followed creature moved
+        {
+            // If we have no more steps in our walk queue, immediately recalculate the follow path
+            if (!HasNextStep && HasFollowPath)
+            {
+                _forceUpdateFollowPath = false;
+                Follow(FollowCreature);
+            }
+            else
+            {
+                _forceUpdateFollowPath = true;
+            }
+        }
     }
 
     protected bool WalkRandomStep(Location origin, int maxStepsFromOrigin = 1)
@@ -267,6 +294,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
         if (!result.Found)
         {
             HasFollowPath = false;
+            StopWalking();
             return;
         }
 
@@ -291,7 +319,7 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
 
         if (_walkingQueue.IsEmpty()) return true;
 
-        OnStartedWalking?.Invoke(this);
+        EventAggregator.Invoke(new CreatureStartedWalkingEvent(this));
         return true;
     }
 
@@ -303,23 +331,6 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     private Direction GetRandomStep(Location origin, int maxStepsFromOrigin = 1)
     {
         return MapTool.PathFinder.FindRandomStep(this, TileEnterRule, origin, maxStepsFromOrigin);
-    }
-
-    public override void OnSpectatorMoved(ICreature spectator)
-    {
-        if (Equals(spectator, Following)) //followed creature moved
-        {
-            // If we have no more steps in our walk queue, immediately recalculate the follow path
-            if (!HasNextStep && HasFollowPath)
-            {
-                _forceUpdateFollowPath = false;
-                Follow(Following);
-            }
-            else
-            {
-                _forceUpdateFollowPath = true;
-            }
-        }
     }
 
     public bool TryUpdatePath(Direction[] newPath)
@@ -347,20 +358,12 @@ public abstract class WalkableCreature : Creature, IWalkableCreature
     public void ChangeSpeedLevel(int newSpeed)
     {
         Speed = (ushort)newSpeed;
-        OnChangedSpeed?.Invoke(this, Speed);
+        EventAggregator.Invoke(new CreatureChangedSpeedEvent(this, Speed));
     }
 
     #region Events
 
-    public event StopWalk OnCompleteWalking;
-    public event StartWalk OnStartedWalking;
-    public event TurnedToDirection OnTurnedToDirection;
-    public event StartFollow OnStartedFollowing;
-    public event ChangeSpeed OnChangedSpeed;
     public event TeleportTo OnTeleported;
-    public event Moved OnCreatureMoved;
-    public event StopWalk OnStoppedWalking;
-    public event StopWalk OnCancelledWalking;
 
     #endregion
 }

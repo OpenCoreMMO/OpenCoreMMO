@@ -121,6 +121,7 @@ public class PlayerLoader(
         if (!gameConfiguration.StaminaEnabled) player.Group.EnableFlag(PlayerFlag.IgnoreStamina);
 
         player.PlayerSkull = new PlayerSkull(player, playerEntity.Skull, playerEntity.SkullEndsAt);
+        player.SetLight(playerEntity.LightColor, playerEntity.LightLevel);
 
         player.SetCurrentTile(currentTile);
 
@@ -131,7 +132,7 @@ public class PlayerLoader(
             player.GuildRank = new GuildRankInfo((ushort)guildRank.Id, guildRank.Name, (byte)guildRank.Level);
         }
 
-        AddRegenerationCondition(playerEntity, player);
+        LoadConditions(playerEntity, player);
 
         player.AddInventory(ConvertToInventory(player, playerEntity));
 
@@ -186,17 +187,25 @@ public class PlayerLoader(
         return dynamicTile as IDynamicTile;
     }
 
-    private static void AddRegenerationCondition(PlayerEntity playerEntity, IPlayer player)
+    private static void LoadConditions(PlayerEntity playerEntity, IPlayer player)
     {
-        if (playerEntity.RemainingRecoverySeconds != 0)
+        if (playerEntity.Conditions is null || playerEntity.Conditions.Count == 0)
         {
-            player.AddCondition(
-                new Condition(ConditionType.Regeneration, (uint)(playerEntity.RemainingRecoverySeconds * 1000),
-                    player.SetAsHungry));
+            player.SetAsHungry();
             return;
         }
 
-        player.SetAsHungry();
+        var hadRegeneration = false;
+
+        foreach (var condition in playerEntity.Conditions)
+        {
+            if (condition.HasExpired) continue;
+            if (condition is ConditionRegeneration) hadRegeneration = true;
+            player.AddCondition(condition);
+        }
+
+        if (!hadRegeneration)
+            player.SetAsHungry();
     }
 
     /// <summary>
@@ -221,35 +230,35 @@ public class PlayerLoader(
     {
         return new Dictionary<SkillType, Skill>
         {
-            [SkillType.Axe] = new Skill(SkillType.Axe, (ushort)playerRecord.SkillAxe, playerRecord.SkillAxeTries)
+            [SkillType.Axe] = new(SkillType.Axe, (ushort)playerRecord.SkillAxe, playerRecord.SkillAxeTries)
                 { GetIncreaseRate = () => gameConfiguration.SkillsRate["axe"] },
 
-            [SkillType.Club] = new Skill(SkillType.Club, (ushort)playerRecord.SkillClub, playerRecord.SkillClubTries)
+            [SkillType.Club] = new(SkillType.Club, (ushort)playerRecord.SkillClub, playerRecord.SkillClubTries)
                 { GetIncreaseRate = () => gameConfiguration.SkillsRate["club"] },
 
-            [SkillType.Distance] = new Skill(SkillType.Distance, (ushort)playerRecord.SkillDist,
+            [SkillType.Distance] = new(SkillType.Distance, (ushort)playerRecord.SkillDist,
                     playerRecord.SkillDistTries)
                 { GetIncreaseRate = () => gameConfiguration.SkillsRate["distance"] },
 
-            [SkillType.Fishing] = new Skill(SkillType.Fishing, (ushort)playerRecord.SkillFishing,
+            [SkillType.Fishing] = new(SkillType.Fishing, (ushort)playerRecord.SkillFishing,
                     playerRecord.SkillFishingTries)
                 { GetIncreaseRate = () => gameConfiguration.SkillsRate["fishing"] },
 
-            [SkillType.Fist] = new Skill(SkillType.Fist, (ushort)playerRecord.SkillFist, playerRecord.SkillFistTries)
+            [SkillType.Fist] = new(SkillType.Fist, (ushort)playerRecord.SkillFist, playerRecord.SkillFistTries)
                 { GetIncreaseRate = () => gameConfiguration.SkillsRate["fist"] },
 
-            [SkillType.Shielding] = new Skill(SkillType.Shielding, (ushort)playerRecord.SkillShielding,
+            [SkillType.Shielding] = new(SkillType.Shielding, (ushort)playerRecord.SkillShielding,
                     playerRecord.SkillShieldingTries)
                 { GetIncreaseRate = () => gameConfiguration.SkillsRate["shielding"] },
 
-            [SkillType.Level] = new Skill(SkillType.Level, playerRecord.Level, playerRecord.Experience),
+            [SkillType.Level] = new(SkillType.Level, playerRecord.Level, playerRecord.Experience),
 
             [SkillType.Magic] =
-                new Skill(SkillType.Magic, (ushort)playerRecord.MagicLevel, playerRecord.MagicLevelTries)
+                new(SkillType.Magic, (ushort)playerRecord.MagicLevel, playerRecord.MagicLevelTries)
                     { GetIncreaseRate = () => gameConfiguration.SkillsRate["magic"] },
 
             [SkillType.Sword] =
-                new Skill(SkillType.Sword, (ushort)playerRecord.SkillSword, playerRecord.SkillSwordTries)
+                new(SkillType.Sword, (ushort)playerRecord.SkillSword, playerRecord.SkillSwordTries)
                     { GetIncreaseRate = () => gameConfiguration.SkillsRate["sword"] }
         };
     }
@@ -262,15 +271,23 @@ public class PlayerLoader(
     protected IInventory ConvertToInventory(IPlayer player, PlayerEntity playerRecord)
     {
         var inventory = new Dictionary<Slot, (IItem Item, ushort Id)>();
-        var attrs = new Dictionary<ItemTypeAttribute, IConvertible> { { ItemTypeAttribute.Count, 0 } };
 
         foreach (var item in playerRecord.PlayerInventoryItems)
         {
-            attrs[ItemTypeAttribute.Count] = (byte)item.Amount;
             var location = item.SlotId <= 10 ? Location.Inventory((Slot)item.SlotId) : Location.Container(0, 0);
 
+            var itemTypeAttributes = new Dictionary<ItemTypeAttribute, IConvertible>();
+            if (item.Charges.HasValue)
+                itemTypeAttributes[ItemTypeAttribute.Charges] = item.Charges.Value;
+            if (item.DecayElapsed.HasValue && item.DecayElapsed.Value > 0)
+                itemTypeAttributes[ItemTypeAttribute.DecayElapsed] = item.DecayElapsed.Value;
+            if (item.DecayDuration.HasValue && item.DecayDuration.Value > 0)
+                itemTypeAttributes[ItemTypeAttribute.Duration] = item.DecayDuration.Value;
+            if (itemTypeAttributes.Count == 0)
+                itemTypeAttributes = null;
+
             //todo: check this, if need pass Metadata to itemFactory.Create
-            var createdItem = ItemFactory.Create((ushort)item.ServerId, location, null, null, item.GetAttributes(),
+            var createdItem = ItemFactory.Create((ushort)item.ServerId, location, itemTypeAttributes, null, item.GetAttributes(),
                 item.GetCustomAttributes());
 
             var createdItemIsPickupable = createdItem?.IsPickupable ?? false;

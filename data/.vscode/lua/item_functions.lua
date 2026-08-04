@@ -40,6 +40,10 @@ function Item:setActionId(id) end
 ---@return number
 function Item:getSubType() end
 
+---Gets the fluid type of the item.
+---@return number
+function Item:getFluidType() end
+
 ---Gets the name of the item.
 ---@return string
 function Item:getName() end

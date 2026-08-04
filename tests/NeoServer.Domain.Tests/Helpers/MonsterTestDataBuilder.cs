@@ -71,6 +71,7 @@ public static class MonsterTestDataBuilder
         {
             Name = "Monster X",
             MaxHealth = 100,
+            Speed = 200,
             TargetChance = new IntervalChance(1000, 50),
             Attacks =
             [

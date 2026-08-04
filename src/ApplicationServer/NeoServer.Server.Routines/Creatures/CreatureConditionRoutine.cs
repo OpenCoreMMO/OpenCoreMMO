@@ -6,19 +6,29 @@ namespace NeoServer.Server.Routines.Creatures;
 
 public static class CreatureConditionRoutine
 {
-    public static void Execute(ICombatActor creature)
+    public static void Execute(ICombatActor creature, int interval)
     {
         if (creature.IsDead) return;
-
-        foreach (var (_, condition) in creature.Conditions.ToList())
+        var conditions = creature.GetConditions();
+        for (var i = 0; i < conditions.Count; i++)
         {
+            var condition = conditions[i]; 
+
             if (condition.HasExpired)
             {
-                condition.End();
                 creature.RemoveCondition(condition);
+                continue;
             }
 
-            if (condition is ConditionDamage damageCondition) damageCondition.Execute(creature);
+            if (condition is ConditionLight lightCondition)
+            {
+                lightCondition.Execute(creature, interval);
+            }
+
+            if (condition is ConditionDamage damageCondition)
+            {
+                damageCondition.Execute(creature);
+            }
         }
     }
 }

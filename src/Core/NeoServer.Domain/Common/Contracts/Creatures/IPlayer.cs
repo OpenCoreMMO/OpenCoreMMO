@@ -20,12 +20,11 @@ using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Creatures.Player.Vocation;
+using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Guild;
 using NeoServer.Domain.Items.Items.UsableItems;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
-
-public delegate void ChangeChaseMode(IPlayer player, ChaseMode oldChaseMode, ChaseMode newChaseMode);
 
 public delegate void ClosedContainer(IPlayer player, byte containerId, IContainer container);
 
@@ -33,19 +32,7 @@ public delegate void ClosedDepot(IPlayer player, byte containerId, Locker.Locker
 
 public delegate void OpenedContainer(IPlayer player, byte containerId, IContainer container);
 
-public delegate void ReduceMana(IPlayer player);
-
 public delegate void CannotUseSpell(IPlayer player, ISpell spell, InvalidOperation error);
-
-public delegate void PlayerLevelAdvance(IPlayer player, SkillType type, int fromLevel, int toLevel);
-
-public delegate void PlayerLevelRegress(IPlayer player, SkillType type, int fromLevel, int toLevel);
-
-public delegate void LookAt(IPlayer player, IThing thing, bool isClose);
-
-public delegate void PlayerGainSkillPoint(IPlayer player, SkillType type);
-
-public delegate void UseItem(IPlayer player, IThing thing, IUsableOn item);
 
 public delegate void LogIn(IPlayer player);
 
@@ -53,20 +40,7 @@ public delegate void AddToVipList(IPlayer player, uint vipPlayerId, string vipPl
 
 public delegate void PlayerLoadVipList(IPlayer player, IEnumerable<(uint, string)> vipList);
 
-public delegate void ChangeOnlineStatus(IPlayer player, bool online);
-
-public delegate void SendMessageTo(ISociableCreature from, ISociableCreature to, SpeechType speechType,
-    string message);
-
-public delegate void Exhaust(IPlayer player);
-
-public delegate void AddSkillBonus(IPlayer player, SkillType skillType, sbyte increased);
-
-public delegate void RemoveSkillBonus(IPlayer player, SkillType skillType, sbyte decreased);
-
 public delegate void ReadText(IPlayer player, IReadable readable, string text);
-
-public delegate void WroteText(IPlayer player, IReadable readable, string text);
 
 public delegate void EquipItem(IPlayer player, IItem item, bool isCheck);
 
@@ -135,6 +109,9 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     bool CanSeeInspectionDetails { get; }
     bool IsManaShieldEnabled { get; }
+    void AddConditionSuppression(ConditionType conditionType);
+    void RemoveConditionSuppression(ConditionType conditionType);
+    int GetConditionSuppressionCount(ConditionType conditionType);
 
     /// <summary>
     ///     Indicates Skull showed on creature
@@ -241,7 +218,7 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     Result Use(IUsableOn item, ICreature onCreature);
     void Use(IThing item);
     Result Use(IUsableOn item, IItem onItem);
-    bool Login();
+    bool Login(uint logoutCooldownMilliseconds = 0);
 
     void SendMessageTo(ISociableCreature creature, SpeechType type, string message);
     void StartShopping(IShopperNpc npc);
@@ -299,8 +276,8 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
 
     void AddRegenerationBonus(RegenerationBonus regenerationBonus);
     void RemoveRegenerationBonus(RegenerationBonus regenerationBonus);
-    void OnDressedItem(IItem item);
-    void OnUndressedItem(IItem item);
+    void OnEquippedItem(IItem item);
+    void OnUnequippedItem(IItem item);
     void PostSpellCast(ISpell spell);
     bool HasEnoughSoul(ushort soul);
     Result CanCastSpell(ISpell spell);
@@ -311,28 +288,19 @@ public interface IPlayer : ICombatActor, ISociableCreature, IBankable
     public void MoveToTemple();
 
     void RegenerateStamina();
-    void Yell(string message, YellConfiguration yellSettings);
-    void Whisper(string message);
+
+    /// <summary>
+    /// Sends a message as a yell to a list of listeners based on the provided yell settings.
+    /// </summary>
+    /// <param name="message">The message to be yelled.</param>
+    /// <param name="listenersToYell">The list of creatures that will receive the yelled message.</param>
+    /// <param name="yellSettings">The configuration settings that define the behavior and constraints of the yell action.</param>
+    void Yell(string message, List<ICreature> listenersToYell, YellConfiguration yellSettings);
+    void Whisper(string message, List<ICreature> listenersToWhisper);
     void StartCooldown(CooldownType cooldownType, uint cooldownTime);
 
-    #region Events
-
-    public event PlayerLevelAdvance OnLevelAdvanced;
-    public event PlayerLevelRegress OnLevelRegressed;
-    public event PlayerGainSkillPoint OnGainedSkillPoint;
-    public event ReduceMana OnStatusChanged;
-    public event LookAt OnLookedAt;
-    public event UseItem OnUsedItem;
-    public event ChangeOnlineStatus OnChangedOnlineStatus;
-    public event SendMessageTo OnSentMessage;
-
-    public event Exhaust OnExhausted;
-    public event ChangeChaseMode OnChangedChaseMode;
-    public event AddSkillBonus OnAddedSkillBonus;
-    public event RemoveSkillBonus OnRemovedSkillBonus;
-    public event WroteText OnWroteText;
-
-    #endregion
-
     void HealSoul(ushort increasing);
+
+    void AddEquipmentCondition(Slot slot, ICondition condition);
+    void RemoveEquipmentCondition(Slot slot, ConditionType conditionType);
 }

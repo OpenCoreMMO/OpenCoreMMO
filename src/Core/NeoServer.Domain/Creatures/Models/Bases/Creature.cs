@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using NeoServer.Domain.Chat;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -41,15 +42,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     protected virtual string CloseInspectionText => $"{Name}.";
     public Direction LastDirection { get; protected set; }
 
-    public event ChangeOutfit OnChangedOutfit;
-    public event Say OnSay;
-
-    public event Think OnThink;
-
-    public event Appear OnAppear;
-    public event Disappear OnDisappear;
-    public event CreatureMove OnCreatureMove;
-
     public IDynamicTile Tile
     {
         get => tile;
@@ -73,8 +65,8 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     public ushort CorpseType => CreatureType.Look[LookType.Corpse];
     public IThing Corpse { get; set; }
     public virtual BloodType BloodType => BloodType.Blood;
-    public abstract bool CanBeSeen { get; }
     public abstract Outfit Outfit { get; protected set; }
+    public Outfit OriginalOutfit { get; set; }
     public Outfit LastOutfit { get; private set; }
     public Direction Direction { get; protected set; }
     public IList<Summon> Summons { get; protected set; } = new List<Summon>();
@@ -106,8 +98,9 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         LastOutfit = null;
         Outfit.Change(outfit.LookType, outfit.Head, outfit.Body, outfit.Legs, outfit.Feet, outfit.Addon);
+        OriginalOutfit = Outfit.Clone();
 
-        OnChangedOutfit?.Invoke(this, Outfit);
+        EventAggregator.Invoke(new CreatureChangedOutfitEvent(this, Outfit));
     }
 
     public void SetTemporaryOutfit(ushort lookType, byte head, byte body, byte legs, byte feet,
@@ -115,7 +108,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         LastOutfit = Outfit.Clone();
         Outfit.Change(lookType, head, body, legs, feet, addon);
-        OnChangedOutfit?.Invoke(this, Outfit);
+        EventAggregator.Invoke(new CreatureChangedOutfitEvent(this, Outfit));
     }
 
     public virtual void OnSpectatorMoved(ICreature spectator)
@@ -146,7 +139,7 @@ public abstract class Creature : IEquatable<Creature>, ICreature
     {
         Outfit = LastOutfit;
         LastOutfit = null;
-        OnChangedOutfit?.Invoke(this, Outfit);
+        EventAggregator.Invoke(new CreatureChangedOutfitEvent(this, Outfit));
     }
 
     public byte LightLevel { get; protected set; }
@@ -165,7 +158,10 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         return CanSee(pos, (int)MapViewPort.MaxViewPortX, (int)MapViewPort.MaxViewPortY);
     }
 
-    public virtual bool IsThinking() => true;
+    public virtual bool IsThinking()
+    {
+        return true;
+    }
 
     public virtual byte Emblem { get; } // TODO: implement.
     public bool IsHealthHidden { get; set; }
@@ -176,15 +172,49 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         Location = location;
     }
 
-    public void Say(string message, SpeechType talkType, ICreature receiver = null)
+    public void Say(string message, SpeechType talkType, ICreature receiver)
     {
-        if (string.IsNullOrWhiteSpace(message) || talkType == SpeechType.None) return;
-        OnSay?.Invoke(this, talkType, message, receiver);
+        ArgumentException.ThrowIfNullOrWhiteSpace(message);
+        ArgumentNullException.ThrowIfNull(receiver);
+
+        if (talkType == SpeechType.None)
+        {
+            throw new ArgumentException("Talk type cannot be None.", nameof(talkType));
+        }
+
+        if (receiver is not ISociableCreature sociableCreature) return;
+
+        sociableCreature.Hear(this, talkType, message);
+        EventAggregator.Invoke(new CreatureSayEvent(this, talkType, message,
+            [sociableCreature]));
+    }
+
+    public void Say(string message, SpeechType talkType, List<ICreature> receivers)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(message);
+        ArgumentNullException.ThrowIfNull(receivers);
+
+        if (talkType == SpeechType.None)
+        {
+            throw new ArgumentException("Talk type cannot be None.", nameof(talkType));
+        }
+
+        if (receivers.Count == 0) return;
+
+        foreach (var receiver in receivers)
+        {
+            if (receiver is ISociableCreature sociableCreature)
+            {
+                sociableCreature.Hear(this, talkType, message);
+            }
+        }
+
+        EventAggregator.Invoke(new CreatureSayEvent(this, talkType, message, receivers));
     }
 
     public virtual void Think(int interval)
     {
-        OnThink?.Invoke(this, interval);
+        EventAggregator.Invoke(new CreatureThinkEvent(this, interval));
     }
 
     public virtual void Appear(Location location, ICylinderSpectator[] spectators)
@@ -195,17 +225,17 @@ public abstract class Creature : IEquatable<Creature>, ICreature
 
     public void OnCreatureAppear(ICreature creature)
     {
-        OnAppear?.Invoke(this, creature);
+        EventAggregator.Invoke(new CreatureAppearEvent(this, creature));
     }
 
     public virtual void OnCreatureDisappear(ICreature creature)
     {
-        OnDisappear?.Invoke(this, creature);
+        EventAggregator.Invoke(new CreatureDisappearEvent(this, creature));
     }
 
     public void OnMove(IWalkableCreature creature, IDynamicTile fromTile, IDynamicTile toTile)
     {
-        OnCreatureMove?.Invoke(this, creature, fromTile.Location, toTile.Location);
+        EventAggregator.Invoke(new CreatureMoveEvent(this, creature, fromTile.Location, toTile.Location));
     }
 
     public void OnMoved(IThing to)
@@ -229,36 +259,6 @@ public abstract class Creature : IEquatable<Creature>, ICreature
         SetLight(0, 0);
     }
 
-    public bool Equals([AllowNull] Creature other)
-    {
-        return this == other;
-    }
-
-    public virtual void Yell(string message)
-    {
-        Say(message, SpeechType.Yell);
-    }
-
-    public virtual void Whisper(string message)
-    {
-        Say(message, SpeechType.Whisper);
-    }
-
-    private Outfit BuildOutfit(ICreatureType type)
-    {
-        if (type?.Look is null) return new Outfit();
-
-        return new Outfit
-        {
-            Addon = type.Look.TryGetValue(LookType.Addon, out var addon) ? (byte)addon : default,
-            LookType = type.Look.TryGetValue(LookType.Type, out var lookType) ? lookType : default,
-            Body = type.Look.TryGetValue(LookType.Body, out var body) ? (byte)body : default,
-            Feet = type.Look.TryGetValue(LookType.Feet, out var feet) ? (byte)feet : default,
-            Head = type.Look.TryGetValue(LookType.Head, out var head) ? (byte)head : default,
-            Legs = type.Look.TryGetValue(LookType.Legs, out var legs) ? (byte)legs : default
-        };
-    }
-
     public virtual bool CanSee(Location pos, int viewRangeX, int viewRangeY, int limitRangeOffset = 0)
     {
         if (Location.IsSurface || Location.IsAboveSurface)
@@ -276,6 +276,32 @@ public abstract class Creature : IEquatable<Creature>, ICreature
                pos.X <= Location.X + viewRangeX + limitRangeOffset + offsetZ &&
                pos.Y >= Location.Y - viewRangeY + offsetZ &&
                pos.Y <= Location.Y + viewRangeY + limitRangeOffset + offsetZ;
+    }
+
+    public bool Equals([AllowNull] Creature other)
+    {
+        return this == other;
+    }
+
+    public virtual void Yell(string message, List<ICreature> listenersToYell) =>
+        Say(message, SpeechType.Yell, listenersToYell);
+
+    public virtual void Whisper(string message, List<ICreature> listenersToWhisper) =>
+        Say(message, SpeechType.Whisper, listenersToWhisper);
+
+    private Outfit BuildOutfit(ICreatureType type)
+    {
+        if (type?.Look is null) return new Outfit();
+
+        return new Outfit
+        {
+            Addon = type.Look.TryGetValue(LookType.Addon, out var addon) ? (byte)addon : default,
+            LookType = type.Look.TryGetValue(LookType.Type, out var lookType) ? lookType : default,
+            Body = type.Look.TryGetValue(LookType.Body, out var body) ? (byte)body : default,
+            Feet = type.Look.TryGetValue(LookType.Feet, out var feet) ? (byte)feet : default,
+            Head = type.Look.TryGetValue(LookType.Head, out var head) ? (byte)head : default,
+            Legs = type.Look.TryGetValue(LookType.Legs, out var legs) ? (byte)legs : default
+        };
     }
 
     protected void ExecuteNextAction(ICreature creature)

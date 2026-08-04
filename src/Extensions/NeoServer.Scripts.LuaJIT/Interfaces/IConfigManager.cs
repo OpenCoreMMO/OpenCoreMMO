@@ -1,5 +1,4 @@
 ﻿using LuaNET;
-using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Enums.Config;
 
 namespace NeoServer.Scripts.LuaJIT.Interfaces;

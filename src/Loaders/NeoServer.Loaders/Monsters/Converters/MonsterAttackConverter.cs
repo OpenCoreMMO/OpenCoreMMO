@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -22,7 +21,7 @@ public class MonsterAttackConverter(SpellListManager spellListManager)
 {
     private static readonly HashSet<string> SupportedAttackNames = new(StringComparer.InvariantCultureIgnoreCase)
     {
-        "lifedrain", 
+        "lifedrain",
         "manadrain",
         "melee",
         "physical",

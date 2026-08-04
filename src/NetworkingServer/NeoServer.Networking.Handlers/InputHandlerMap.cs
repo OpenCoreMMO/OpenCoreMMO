@@ -75,6 +75,7 @@ public static class InputHandlerMap
             [GameIncomingPacketType.ExtendedOpcode] = typeof(ExtendedOpcodeHandler),
             [GameIncomingPacketType.ReportBug] = typeof(PlayerReportBugHandler),
             [GameIncomingPacketType.QuestLog] = typeof(PlayerQuestLogHandler),
-            [GameIncomingPacketType.QuestLine] = typeof(PlayerQuestLineHandler)
+            [GameIncomingPacketType.QuestLine] = typeof(PlayerQuestLineHandler),
+            [GameIncomingPacketType.Follow] = typeof(PlayerFollowHandler)
         };
 }

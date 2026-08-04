@@ -5,33 +5,22 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Spells;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
+using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster.Loot;
 
 namespace NeoServer.Domain.Common.Contracts.Creatures;
 
-public delegate void AttackTargetChange(ICombatActor actor, uint oldTargetId, uint newTargetId);
-
 public delegate void ManaChange(ICombatActor actor, ICreature attacker, CombatDamage damage);
-
-public delegate void Heal(ICombatActor healedCreature, ICreature healingCreature, ushort amount);
-
-public delegate void StopAttack(ICombatActor actor);
-
-public delegate void BlockAttack(ICombatActor creature, BlockType block);
 
 public delegate void UseSpell(ICreature creature, ISpell spell);
 
 public delegate void ChangeVisibility(ICombatActor actor);
 
-public delegate void PropagateAttack(ICombatActor actor, CombatDamage damage, AffectedLocation[] area);
-
-public delegate void DropLoot(ICombatActor actor, Loot loot);
-
 public interface ICombatActor : IWalkableCreature
 {
     ushort ArmorRating { get; }
-    bool Attacking { get; }
+    bool IsAttacking { get; }
     uint AutoAttackTargetId { get; }
     decimal AttackSpeed { get; }
     decimal BaseDefenseSpeed { get; }
@@ -42,17 +31,8 @@ public interface ICombatActor : IWalkableCreature
     bool UsingDistanceWeapon { get; }
     uint AttackEvent { get; set; }
     bool CanBeAttacked { get; }
-    IDictionary<ConditionType, ICondition> Conditions { get; set; }
     ICreature CurrentTarget { get; }
     DamageRecordList ReceivedDamages { get; }
-
-    event BlockAttack OnBlockedAttack;
-    event Heal OnHeal;
-    event BeforeDeath OnBeforeDeath;
-    event StopAttack OnStoppedAttack;
-    event AttackTargetChange OnTargetChanged;
-    event PropagateAttack OnPropagateAttack;
-    event GainExperience OnGainedExperience;
 
     int DefendUsingArmor(int attack);
     void Heal(ushort increasing, ICreature healedBy);
@@ -66,6 +46,7 @@ public interface ICombatActor : IWalkableCreature
     void StartCooldown(IHasCooldown cooldown);
     bool CooldownHasExpired(IHasCooldown cooldown);
     bool CooldownHasExpired(CooldownType type);
+    TimeSpan GetCooldownRemaining(CooldownType type);
 
     /// <summary>
     ///     Creature receive attack damage from enemy
@@ -76,7 +57,6 @@ public interface ICombatActor : IWalkableCreature
     DamageResult TakeDamage(IThing enemy, CombatDamageList damages);
 
     DamageResult TakeDamage(IThing enemy, CombatDamage damages);
-    void PropagateAttack(AffectedLocation[] area, CombatDamage damage);
 
     /// <summary>
     ///     Set creature as enemy. If monster can't see creature it will be forgotten
@@ -86,24 +66,24 @@ public interface ICombatActor : IWalkableCreature
     void GainExperience(long experience);
     void LoseExperience(long exp);
     void AddCondition(ICondition condition);
-    void RemoveCondition(ICondition condition);
     void DisableCondition(ConditionType type);
     void EnableCondition(ConditionType type);
+    void RemoveCondition(ICondition condition);
     void RemoveCondition(ConditionType type);
     bool HasCondition(ConditionType type, out ICondition condition);
     bool HasCondition(ConditionType type);
     ICondition GetCondition(ConditionType type);
     void OnEnemyAppears(ICombatActor enemy);
     bool IsHostileTo(ICombatActor enemy);
-    event StopAttack OnAttackCanceled;
     void IncreaseDamageReceived(byte percentage);
     void DecreaseDamageReceived(byte percentage);
     void Kill(ICombatActor enemy, bool lastHit = false, bool justified = true);
     void RaiseDroppedLootEvent(ICombatActor actor, Loot loot);
-    event DropLoot OnDroppedLoot;
     void PreAttack(CombatContext combatContext);
     Result CanAttack(CombatParameter combatParameter);
     void StartCooldown(Guid cooldownId, uint duration);
     bool IsTargetLost();
     bool IsTargetLost(ICreature target);
+    IReadOnlyList<ICondition> GetConditions();
+    IReadOnlyList<ICondition> GetFiniteConditions();
 }

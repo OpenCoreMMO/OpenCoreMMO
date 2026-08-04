@@ -7,6 +7,7 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -55,6 +56,7 @@ public class PlayerTest
         Assert.True(sut.IsFollowing);
     }
 
+    [ThreadBlocking]
     [Theory]
     [InlineData(100, 200)]
     [InlineData(300, 0)]
@@ -62,29 +64,33 @@ public class PlayerTest
     public void DecreaseSpeed_Should_Decrease_Speed_Value(ushort decrease, ushort expected)
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100, speed: 300);
-        var emittedEvent = false;
-        sut.OnChangedSpeed += (_, _) => emittedEvent = true;
+        var captured = new List<CreatureChangedSpeedEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureChangedSpeedEvent>(e => captured.Add(e));
 
         sut.DecreaseSpeed(decrease);
 
         Assert.Equal(expected, sut.Speed);
-        Assert.True(emittedEvent);
+        captured.Should().NotBeEmpty();
     }
 
+    [ThreadBlocking]
     [Theory]
-    [InlineData(100, 400)]
-    [InlineData(0, 300)]
-    [InlineData(300, 600)]
-    public void IncreaseSpeed_Should_Increase_Speed_Value(ushort increase, ushort expected)
+    [InlineData(100, 400, true)]
+    [InlineData(0, 300, false)]
+    [InlineData(300, 600, true)]
+    public void IncreaseSpeed_Should_Increase_Speed_Value(ushort increase, ushort expected, bool emitEvent)
     {
         var sut = PlayerTestDataBuilder.Build(hp: 100, speed: 300);
-        var emittedEvent = false;
-        sut.OnChangedSpeed += (_, _) => emittedEvent = true;
+        var captured = new List<CreatureChangedSpeedEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureChangedSpeedEvent>(e => captured.Add(e));
 
         sut.IncreaseSpeed(increase);
 
         Assert.Equal(expected, sut.Speed);
-        Assert.True(emittedEvent);
+        if (emitEvent)
+            captured.Should().NotBeEmpty();
+        else
+            captured.Should().BeEmpty();
     }
 
     [Fact]
@@ -97,11 +103,10 @@ public class PlayerTest
             It.IsAny<ITileEnterRule>())).Returns((true, directions));
 
         var sut = PlayerTestDataBuilder.Build(hp: 100, speed: 300, pathFinder: pathFinder.Object);
-        var followEventEmitted = false;
-        var walkEventEmitted = false;
-
-        sut.OnStartedWalking += _ => walkEventEmitted = true;
-        sut.OnStartedFollowing += (_, _, _) => followEventEmitted = true;
+        var followEvents = new List<CreatureStartedFollowingEvent>();
+        var walkEvents = new List<CreatureStartedWalkingEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedFollowingEvent>(e => followEvents.Add(e));
+        EventAggregatorTestHelper.AddHandler<CreatureStartedWalkingEvent>(e => walkEvents.Add(e));
 
         var creature = new Mock<ICreature>();
         creature.Setup(x => x.Location).Returns(new Location(100, 105, 7));
@@ -115,13 +120,14 @@ public class PlayerTest
         sut.Follow(creature.Object);
 
         Assert.True(sut.IsFollowing);
-        Assert.Equal(creature.Object, sut.Following);
-        Assert.True(followEventEmitted);
-        Assert.True(walkEventEmitted);
+        Assert.Equal(creature.Object, sut.FollowCreature);
+        followEvents.Should().NotBeEmpty();
+        walkEvents.Should().NotBeEmpty();
         Assert.Equal(Direction.North, sut.GetNextStep());
         Assert.Equal(Direction.East, sut.GetNextStep());
     }
 
+    [ThreadBlocking]
     [Fact]
     public void Stop_following_interrupts_player_walk()
     {
@@ -130,9 +136,8 @@ public class PlayerTest
         var pathFinder = new PathFinder(map);
 
         var sut = PlayerTestDataBuilder.Build(hp: 100, speed: 300, pathFinder: pathFinder);
-        var stoppedWalkEventEmitted = false;
-
-        sut.OnStoppedWalking += _ => stoppedWalkEventEmitted = true;
+        var stoppedEvents = new List<CreatureStoppedWalkingEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStoppedWalkingEvent>(e => stoppedEvents.Add(e));
 
         var creature = new Mock<ICreature>();
         creature.Setup(x => x.Location).Returns(new Location(100, 105, 7));
@@ -149,8 +154,8 @@ public class PlayerTest
 
         //assert
         Assert.False(sut.IsFollowing);
-        Assert.Null(sut.Following);
-        Assert.True(stoppedWalkEventEmitted);
+        Assert.Null(sut.FollowCreature);
+        stoppedEvents.Should().NotBeEmpty();
         Assert.Equal(Direction.None, sut.GetNextStep());
     }
 
@@ -165,9 +170,8 @@ public class PlayerTest
 
         var sut = PlayerTestDataBuilder.Build(hp: 100, speed: 300, pathFinder: pathFinder.Object);
 
-        var stoppedWalkingEvent = false;
-
-        sut.OnStoppedWalking += _ => stoppedWalkingEvent = true;
+        var stoppedEvents = new List<CreatureStoppedWalkingEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStoppedWalkingEvent>(e => stoppedEvents.Add(e));
 
         var tile = new Mock<IDynamicTile>();
         tile.Setup(x => x.Ground.StepSpeed).Returns(100);
@@ -181,13 +185,14 @@ public class PlayerTest
         sut.WalkTo(new Location(102, 100, 7));
 
         Assert.True(sut.HasNextStep);
-        Assert.True(stoppedWalkingEvent);
+        stoppedEvents.Should().NotBeEmpty();
         Assert.Equal(Direction.North, sut.GetNextStep());
         Assert.Equal(Direction.East, sut.GetNextStep());
     }
 
     #region StopAllActions
 
+    [ThreadBlocking]
     [Fact]
     public void Stop_All_Actions_When_IsFollowing()
     {
@@ -196,9 +201,8 @@ public class PlayerTest
         var pathFinder = new PathFinder(map);
 
         var sut = PlayerTestDataBuilder.Build(hp: 100, speed: 300, pathFinder: pathFinder);
-        var stoppedWalkEventEmitted = false;
-
-        sut.OnStoppedWalking += _ => stoppedWalkEventEmitted = true;
+        var stoppedEvents = new List<CreatureStoppedWalkingEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStoppedWalkingEvent>(e => stoppedEvents.Add(e));
 
         var creature = new Mock<ICreature>();
         creature.Setup(x => x.Location).Returns(new Location(100, 105, 7));
@@ -216,9 +220,9 @@ public class PlayerTest
         //assert
         Assert.False(sut.HasNextStep);
         Assert.False(sut.IsFollowing);
-        Assert.Null(sut.Following);
-        Assert.False(sut.Attacking);
-        Assert.True(stoppedWalkEventEmitted);
+        Assert.Null(sut.FollowCreature);
+        Assert.False(sut.IsAttacking);
+        stoppedEvents.Should().NotBeEmpty();
         Assert.Equal(Direction.None, sut.GetNextStep());
     }
 
@@ -233,9 +237,8 @@ public class PlayerTest
 
         var sut = PlayerTestDataBuilder.Build(hp: 100, speed: 300, pathFinder: pathFinder.Object);
 
-        var stoppedWalkEventEmitted = false;
-
-        sut.OnStoppedWalking += _ => stoppedWalkEventEmitted = true;
+        var stoppedEvents = new List<CreatureStoppedWalkingEvent>();
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStoppedWalkingEvent>(e => stoppedEvents.Add(e));
 
         var tile = new Mock<IDynamicTile>();
         tile.Setup(x => x.Ground.StepSpeed).Returns(100);
@@ -249,9 +252,9 @@ public class PlayerTest
 
         Assert.False(sut.HasNextStep);
         Assert.False(sut.IsFollowing);
-        Assert.Null(sut.Following);
-        Assert.False(sut.Attacking);
-        Assert.True(stoppedWalkEventEmitted);
+        Assert.Null(sut.FollowCreature);
+        Assert.False(sut.IsAttacking);
+        stoppedEvents.Should().NotBeEmpty();
         Assert.Equal(Direction.None, sut.GetNextStep());
     }
 
@@ -271,10 +274,6 @@ public class PlayerTest
         (map[100, 100, 7] as DynamicTile)?.AddCreature(monster);
         (map[101, 100, 7] as DynamicTile)?.AddCreature(player);
 
-        var stoppedAttackEventEmitted = false;
-
-        player.OnStoppedAttack += _ => stoppedAttackEventEmitted = true;
-
         //act
         player.SetAttackTarget(monster);
         attackService.Execute(new AttackInput(player, monster, PlayerCombatParameterBuilder.Build(player, monster)));
@@ -282,9 +281,8 @@ public class PlayerTest
 
         Assert.False(player.HasNextStep);
         Assert.False(player.IsFollowing);
-        Assert.Null(player.Following);
-        Assert.False(player.Attacking);
-        Assert.True(stoppedAttackEventEmitted);
+        Assert.Null(player.FollowCreature);
+        Assert.False(player.IsAttacking);
         Assert.Equal(Direction.None, player.GetNextStep());
     }
 

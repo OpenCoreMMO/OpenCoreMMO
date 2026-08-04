@@ -3,10 +3,15 @@ using Moq;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
+using NeoServer.Domain.Tests.Helpers;
+using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Modes;
 using NeoServer.Domain.Creatures.Player.Outfit;
@@ -79,6 +84,73 @@ public class PlayerTests
     }
 
     [Fact]
+    public void OnDamage_With_ManaShield_Enabled_When_Damage_Less_Than_Mana_Reduce_Only_Mana()
+    {
+        var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 100) as Player;
+        var enemy = PlayerTestDataBuilder.Build() as Player;
+        sut.EnableManaShield();
+
+        sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(50, DamageType.Melee)));
+
+        Assert.Equal((uint)50, sut.Mana);
+        Assert.Equal((uint)100, sut.HealthPoints);
+    }
+
+    [Fact]
+    public void OnDamage_With_ManaShield_Enabled_When_Damage_Greater_Than_Mana_Reduce_Mana_And_Health()
+    {
+        var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 100) as Player;
+        var enemy = PlayerTestDataBuilder.Build() as Player;
+        sut.EnableManaShield();
+
+        sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(150, DamageType.Melee)));
+
+        Assert.Equal((uint)0, sut.Mana);
+        Assert.Equal((uint)50, sut.HealthPoints);
+    }
+
+    [Fact]
+    public void OnDamage_With_ManaShield_Enabled_When_Damage_Equal_To_Mana_Reduce_Only_Mana()
+    {
+        var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 100) as Player;
+        var enemy = PlayerTestDataBuilder.Build() as Player;
+        sut.EnableManaShield();
+
+        sut.OnDamage(enemy, new CombatDamageList(new CombatDamage(100, DamageType.Melee)));
+
+        Assert.Equal((uint)0, sut.Mana);
+        Assert.Equal((uint)100, sut.HealthPoints);
+    }
+
+    [Fact]
+    public void OnDamage_With_ManaShield_Enabled_When_Receiving_Melee_And_ManaDrain_Reduce_Mana()
+    {
+        var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 100) as Player;
+        var enemy = PlayerTestDataBuilder.Build() as Player;
+        sut.EnableManaShield();
+
+        sut.OnDamage(enemy,
+            new CombatDamageList([new CombatDamage(50, DamageType.Melee), new CombatDamage(50, DamageType.ManaDrain)]));
+
+        Assert.Equal((uint)0, sut.Mana);
+        Assert.Equal((uint)100, sut.HealthPoints);
+    }
+
+    [Fact]
+    public void OnDamage_With_ManaShield_Enabled_And_Zero_Mana_When_Receiving_Melee_And_ManaDrain_Reduce_Health()
+    {
+        var sut = PlayerTestDataBuilder.Build(hp: 100, mana: 0) as Player;
+        var enemy = PlayerTestDataBuilder.Build() as Player;
+        sut.EnableManaShield();
+
+        sut.OnDamage(enemy,
+            new CombatDamageList([new CombatDamage(50, DamageType.Melee), new CombatDamage(50, DamageType.ManaDrain)]));
+
+        Assert.Equal((uint)0, sut.Mana);
+        Assert.Equal((uint)50, sut.HealthPoints);
+    }
+
+    [Fact]
     public void FlagIsEnabled_Enabled_ReturnsTrue()
     {
         var sut = PlayerTestDataBuilder.Build();
@@ -121,6 +193,7 @@ public class PlayerTests
         sut.ChaseMode.Should().Be(ChaseMode.Follow);
     }
 
+    [ThreadBlocking]
     [Fact]
     public void ChangeChaseMode_Follow_InvokeFollow()
     {
@@ -128,7 +201,7 @@ public class PlayerTests
         var enemy = PlayerTestDataBuilder.Build();
 
         var called = false;
-        sut.OnStartedFollowing += (_, _, _) => { called = true; };
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedFollowingEvent>(_ => called = true);
 
         sut.ChangeChaseMode(ChaseMode.Stand);
 
@@ -212,5 +285,80 @@ public class PlayerTests
 
         //assert
         sut.Direction.Should().Be(Direction.North);
+    }
+
+    [Fact]
+    public void Feed_creates_condition_regeneration_when_no_existing()
+    {
+        var sut = PlayerTestDataBuilder.Build();
+        sut.SetAsHungry();
+
+        sut.Feed(10);
+
+        sut.HasCondition(ConditionType.Regeneration).Should().BeTrue();
+        sut.HasCondition(ConditionType.Hungry).Should().BeFalse();
+    }
+
+    [Fact]
+    public void Feed_extends_existing_regeneration()
+    {
+        var sut = PlayerTestDataBuilder.Build();
+
+        sut.Feed(10);
+        var timeAfterFirstFeed = sut.GetCondition(ConditionType.Regeneration).RemainingTime;
+
+        sut.Feed(10);
+        var timeAfterSecondFeed = sut.GetCondition(ConditionType.Regeneration).RemainingTime;
+
+        timeAfterSecondFeed.Should().BeGreaterThan(timeAfterFirstFeed);
+    }
+
+    [Fact]
+    public void Feed_returns_false_when_player_is_full()
+    {
+        var sut = PlayerTestDataBuilder.Build();
+        sut.Feed(1199);
+
+        var result = sut.Feed(10);
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public void SetAsHungry_adds_hungry_condition()
+    {
+        var sut = PlayerTestDataBuilder.Build();
+        var regenerationCondition = new Condition(ConditionType.Regeneration, 10000);
+        sut.AddCondition(regenerationCondition);
+
+        sut.SetAsHungry();
+
+        sut.HasCondition(ConditionType.Regeneration).Should().BeTrue();
+        sut.HasCondition(ConditionType.Hungry).Should().BeTrue();
+    }
+
+    [Fact]
+    public void SetAsHungry_does_not_invoke_endaction_of_regeneration_condition()
+    {
+        var endActionInvoked = false;
+        var sut = PlayerTestDataBuilder.Build();
+        var regenerationCondition = new Condition(ConditionType.Regeneration, 10000, () => endActionInvoked = true);
+        sut.AddCondition(regenerationCondition);
+
+        sut.SetAsHungry();
+
+        endActionInvoked.Should().BeFalse();
+    }
+
+    [Fact]
+    public void SetAsHungry_does_not_stack_overflow_when_regeneration_has_endaction_set_to_setashungry()
+    {
+        var sut = PlayerTestDataBuilder.Build();
+        var regenerationCondition = new Condition(ConditionType.Regeneration, 10000, sut.SetAsHungry);
+        sut.AddCondition(regenerationCondition);
+
+        sut.SetAsHungry();
+        sut.HasCondition(ConditionType.Regeneration).Should().BeTrue();
+        sut.HasCondition(ConditionType.Hungry).Should().BeTrue();
     }
 }

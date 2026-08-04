@@ -1,21 +1,14 @@
-﻿using NeoServer.Domain.Common.Contracts;
-using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Creatures;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Events.Players;
 
-public class PlayerOnAdvanceEventHandler : IGameEventHandler
+public class PlayerOnAdvanceEventHandler(ICreatureEvents creatureEvents) : IApplicationEventHandler<PlayerLevelAdvancedEvent>
 {
-    private readonly ICreatureEvents _creatureEvents;
-
-    public PlayerOnAdvanceEventHandler(ICreatureEvents creatureEvents)
+    public void Handle(PlayerLevelAdvancedEvent @event)
     {
-        _creatureEvents = creatureEvents;
-    }
-
-    public void Execute(IPlayer player, SkillType skill, int oldValue, int newValue)
-    {
-        _creatureEvents.PlayerAdvance(player, skill, oldValue, newValue);
+        if (@event is null) return;
+        creatureEvents.PlayerAdvance(@event.Player, @event.Type, @event.FromLevel, @event.ToLevel);
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using Dapper;
-using NeoServer.Domain.Common.Contracts.Creatures;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Creatures;
 using NeoServer.Domain.World.Models.Spawns;
 using NeoServer.Server.Commands.Player;
@@ -17,7 +15,9 @@ public class GameCreatureRoutine(
     SpawnManager spawnManager,
     PlayerLogOutCommand playerLogOutCommand,
     PlayerStatusRoutine playerStatusRoutine,
-    MonsterStateRoutine monsterStateRoutine)
+    MonsterStateRoutine monsterStateRoutine,
+    NpcRoutine npcRoutine,
+    MonsterYellRoutine monsterYellRoutine)
 {
     private const ushort EVENT_CREATURE_COUNT = CreatureGameInstance.CREATURE_COUNT;
     private const ushort EVENT_CREATURE_THINK_INTERVAL = 1000;
@@ -56,12 +56,15 @@ public class GameCreatureRoutine(
 
     private static void CheckCreature(ICreature creature)
     {
-        if (creature is ICombatActor combatActor) CreatureConditionRoutine.Execute(combatActor);
+        if (creature is ICombatActor combatActor) CreatureConditionRoutine.Execute(combatActor, EVENT_CREATURE_THINK_INTERVAL);
     }
 
-    private static void CheckNpc(ICreature creature)
+    private void CheckNpc(ICreature creature)
     {
-        if (creature is INpc npc) NpcRoutine.Execute(npc);
+        if (creature is INpc npc)
+        {
+            npcRoutine.Execute(npc);
+        }
     }
 
     private void CheckMonster(ICreature creature)
@@ -70,7 +73,7 @@ public class GameCreatureRoutine(
 
         MonsterDefenseRoutine.Execute(monster, game);
         monsterStateRoutine.Execute(monster);
-        MonsterYellRoutine.Execute(monster);
+        monsterYellRoutine.Execute(monster);
     }
 
     private void CheckPlayer(ICreature creature)

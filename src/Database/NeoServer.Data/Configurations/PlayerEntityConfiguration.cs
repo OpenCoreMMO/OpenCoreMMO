@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NeoServer.Data.Entities;
+using NeoServer.Data.Helpers.ConditionParsers;
 using NeoServer.Data.Seeds;
 
 namespace NeoServer.Data.Configurations;
@@ -39,6 +40,8 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         ConfigureProperty(entity, e => e.LookHead, "int", "0");
         ConfigureProperty(entity, e => e.LookLegs, "int", "0");
         ConfigureProperty(entity, e => e.LookType, "int", "136");
+        ConfigureProperty(entity, e => e.LightLevel, null, "0");
+        ConfigureProperty(entity, e => e.LightColor, null, "0");
         ConfigureProperty(entity, e => e.Mana, "int", "0");
         ConfigureProperty(entity, e => e.MaxMana, "int", "0");
         ConfigureProperty(entity, e => e.ManaSpent, "int", "0");
@@ -63,12 +66,18 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
         ConfigureProperty(entity, e => e.SkillSword, null, "10");
         ConfigureProperty(entity, e => e.SkillSwordTries, null, "0");
         ConfigureProperty(entity, e => e.Vocation, "int", "0");
-        ConfigureProperty(entity, e => e.RemainingRecoverySeconds, "int", "0");
         ConfigureProperty(entity, e => e.BankAmount, "numeric(20, 0)", "0");
         ConfigureProperty(entity, e => e.Skull, "int", "0");
         entity.Property(e => e.SkullEndsAt);
         entity.Property(e => e.LastLogIn);
         entity.Property(e => e.LastLogOut);
+
+        entity.Property(e => e.Conditions)
+            .HasColumnType("jsonb")
+            .HasConversion(
+                v => ConditionListParser.Serialize(v),
+                v => ConditionListParser.Deserialize(v)
+            );
 
         entity.Ignore(e => e.KillsLastMonth);
 

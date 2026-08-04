@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Contracts.Services;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.Services;
 
 namespace NeoServer.Domain.Creatures.Monster.Services;
 
@@ -44,7 +45,7 @@ public class MonsterStateService(
         {
             monster.MoveAroundEnemy();
 
-            if (!monster.Attacking)
+            if (!monster.IsAttacking)
             {
                 targetingService.SelectTarget(monsterEntity);
                 return;
@@ -55,15 +56,9 @@ public class MonsterStateService(
 
             monster.CreateSummon(summonService);
         }
-        
-        if (monster.State == MonsterState.Escaping)
-        {
-            monster.Escape();
-        }
-        
-        if (monster.State == MonsterState.Sleeping)
-        {
-            monster.Sleep();
-        }
+
+        if (monster.State == MonsterState.Escaping) monster.Escape();
+
+        if (monster.State == MonsterState.Sleeping) monster.Sleep();
     }
 }

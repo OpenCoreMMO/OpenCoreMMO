@@ -1,24 +1,17 @@
-﻿using NeoServer.Domain.Common.Contracts;
-using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Scripts.LuaJIT.Enums;
+﻿using NeoServer.Domain.Common;
+using NeoServer.Domain.Creatures.Events.Player;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Events.Players;
 
-public class PlayerOnTextEditEventHandler : IGameEventHandler
+public class PlayerOnTextEditEventHandler(ICreatureEvents creatureEvents) : IApplicationEventHandler<PlayerWroteTextEvent>
 {
-    private readonly ICreatureEvents _creatureEvents;
-
-    public PlayerOnTextEditEventHandler(ICreatureEvents creatureEvents)
+    public void Handle(PlayerWroteTextEvent @event)
     {
-        _creatureEvents = creatureEvents;
-    }
+        if (@event is null) return;
 
-    public void Execute(IPlayer player, IItem item, string text)
-    {
-        foreach (var creatureEvent in _creatureEvents.GetCreatureEvents(player.CreatureId,
-                     CreatureEventType.CREATURE_EVENT_TEXTEDIT))
-            creatureEvent.ExecuteOnTextEdit(player, item, text);
+        foreach (var creatureEvent in creatureEvents.GetCreatureEvents(@event.Player.CreatureId,
+                     Enums.CreatureEventType.CREATURE_EVENT_TEXTEDIT))
+            creatureEvent.ExecuteOnTextEdit(@event.Player, @event.Readable, @event.Text);
     }
 }

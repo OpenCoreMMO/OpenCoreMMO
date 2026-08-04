@@ -28,6 +28,7 @@ public class PlayerAttackCommand(IGameCreatureManager gameCreatureManager, Attac
             return;
         }
 
+        player.StopFollowing();
         player.SetAttackTarget(target);
     }
 }

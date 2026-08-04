@@ -1,11 +1,14 @@
-﻿namespace NeoServer.Server.Routines.Creatures.Monster;
+﻿using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Monster.Services;
 
-public static class MonsterYellRoutine
+namespace NeoServer.Server.Routines.Creatures.Monster;
+
+public class MonsterYellRoutine(MonsterYellService monsterYellService): IRoutine
 {
-    public static void Execute(IMonster monster)
+    public void Execute(IMonster monster)
     {
         if (monster.IsDead) return;
 
-        monster.Yell();
+        monsterYellService.Yell(monster);
     }
 }

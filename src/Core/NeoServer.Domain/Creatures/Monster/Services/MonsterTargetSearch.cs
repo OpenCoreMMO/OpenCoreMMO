@@ -39,12 +39,8 @@ public class MonsterTargetSearch(IMapTool mapTool) : IMonsterTargetSearch
         if (selectedTarget is not null && CanSelectTarget(monster, selectedTarget)) return selectedTarget;
 
         foreach (var fallbackTarget in monster.Targets.Enumerate())
-        {
             if (CanSelectTarget(monster, fallbackTarget))
-            {
                 return fallbackTarget;
-            }
-        }
 
         return null;
     }
@@ -56,15 +52,9 @@ public class MonsterTargetSearch(IMapTool mapTool) : IMonsterTargetSearch
         TargetSearchType searchType)
     {
         if (candidates.Count == 0 && searchType == TargetSearchType.Nearest)
-        {
             foreach (var target in monster.Targets.Enumerate())
-            {
                 if (IsTarget(monster, target))
-                {
                     candidates.Add(target);
-                }
-            }
-        }
 
         return searchType switch
         {
@@ -111,7 +101,8 @@ public class MonsterTargetSearch(IMapTool mapTool) : IMonsterTargetSearch
 
     private static bool IsTarget(Monster monster, ICombatActor creature)
     {
-        return !creature.IsDead && creature.CanBeAttacked && monster.CanSee(creature) && monster.Location.SameFloorAs(creature.Location);
+        return !creature.IsDead && creature.CanBeAttacked && monster.CanSee(creature) &&
+               monster.Location.SameFloorAs(creature.Location);
     }
 
     private bool CanUseAttack(Monster monster, Location monsterPosition, ICombatActor target)
@@ -121,10 +112,8 @@ public class MonsterTargetSearch(IMapTool mapTool) : IMonsterTargetSearch
         if (!monster.IsHostile) return true;
 
         foreach (var attack in monster.Metadata.Attacks)
-        {
             if (attack.CombatParameter.Range != 0 && distance <= attack.CombatParameter.Range)
                 return mapTool.IsClearSight(monsterPosition, target.Location, true);
-        }
 
         return false;
     }

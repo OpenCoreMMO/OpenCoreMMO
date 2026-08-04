@@ -1,4 +1,5 @@
-﻿using NeoServer.Domain.Common.Contracts.Creatures;
+﻿#nullable enable
+using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 
@@ -16,7 +17,7 @@ public class ConditionInvisible : BaseCondition
     public override ConditionType Type => ConditionType.Invisible;
     public EffectT Effect { get; }
 
-    public override bool Start(ICreature creature)
+    internal override bool Start(ICreature creature)
     {
         if (!base.Start(creature))
             return false;
@@ -30,4 +31,29 @@ public class ConditionInvisible : BaseCondition
 
         return true;
     }
+
+    public ConditionInvisibleState CaptureState()
+    {
+        return new ConditionInvisibleState(
+            Type,
+            Effect,
+            Math.Max(0, RemainingTime));
+    }
+
+    public static ConditionInvisible? Restore(ConditionInvisibleState state)
+    {
+        var durationMs = Math.Max(0, state.RemainingTimeMilliseconds);
+
+        if (durationMs <= 0)
+            return null;
+
+        return new ConditionInvisible(
+            (uint)durationMs,
+            state.Effect);
+    }
 }
+
+public sealed record ConditionInvisibleState(
+    ConditionType Type,
+    EffectT Effect,
+    long RemainingTimeMilliseconds);

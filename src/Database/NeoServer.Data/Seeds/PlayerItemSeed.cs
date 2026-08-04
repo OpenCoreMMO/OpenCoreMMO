@@ -7,6 +7,8 @@ internal sealed class PlayerItemSeed
 {
     public static void Seed(EntityTypeBuilder<PlayerItemEntity> builder)
     {
+       
+        
         builder.HasData(
             new PlayerItemEntity
             {
@@ -50,5 +52,26 @@ internal sealed class PlayerItemSeed
                 Amount = 10
             }
         );
+        
+        var id = -6;
+        for (var playerId = 1; playerId <= 5; playerId++)
+        {
+            builder.HasData(new PlayerItemEntity
+                {
+                    Id = id--,
+                    PlayerId = playerId,
+                    ParentId = 0,
+                    ServerId = 2554, //shovel
+                    Amount = 1
+                },
+                new PlayerItemEntity
+                {
+                    Id =  id--,
+                    PlayerId = playerId,
+                    ParentId = 0,
+                    ServerId = 2120, //rope
+                    Amount = 1
+                });
+        }
     }
 }

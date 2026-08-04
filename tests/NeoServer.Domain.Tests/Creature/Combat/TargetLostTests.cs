@@ -135,14 +135,14 @@ public class TargetLostTests
 
         // Set monster as player's target and start attacking
         player.SetAttackTarget(monster);
-        player.Attacking.Should().BeTrue();
+        player.IsAttacking.Should().BeTrue();
 
         //act
         // Simulate target being lost
         player.HandleTargetLost();
 
         //assert
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
     }
 

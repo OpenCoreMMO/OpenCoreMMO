@@ -31,7 +31,7 @@ public class ThingTests
     {
         //arrange
         var map = MapTestDataBuilder.Build(100, 105, 100, 105, 7, 8);
-        var player = PlayerTestDataBuilder.Build();
+        var player = PlayerTestDataBuilder.Build(map: map);
         var item = ItemTestDataBuilder.CreateWeaponItem(1);
 
         ((IDynamicTile)map[100, 102, 8]).AddItem(item);

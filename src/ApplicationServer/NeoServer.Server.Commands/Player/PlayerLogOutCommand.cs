@@ -43,8 +43,8 @@ public class PlayerLogOutCommand(
 
     private void SavePlayer(IPlayer player)
     {
-        playerRepository.SavePlayer(player);
-        playerRepository.UpdatePlayerOnlineStatus(player.Id, false).Wait();
+        playerRepository.SavePlayer(player).GetAwaiter().GetResult();
+        playerRepository.UpdatePlayerOnlineStatus(player.Id, false).GetAwaiter().GetResult();
 
         SaveDepot(player);
         SaveMailInbox(player);
@@ -57,7 +57,7 @@ public class PlayerLogOutCommand(
         if (!lockerManager.Get(player.Id, out var locker)) return;
 
         var depotChest = locker.Items.FirstOrDefault() as IContainer;
-        playerDepotItemRepository.Save(player, depotChest).Wait();
+        playerDepotItemRepository.Save(player, depotChest).GetAwaiter().GetResult();
     }
 
     private void SaveMailInbox(IPlayer player)
@@ -65,6 +65,6 @@ public class PlayerLogOutCommand(
         if (!lockerManager.Get(player.Id, out var locker)) return;
 
         var mailInbox = locker.Items.ElementAtOrDefault(1) as IContainer;
-        playerMailItemRepository.Save(player, mailInbox).Wait();
+        playerMailItemRepository.Save(player, mailInbox).GetAwaiter().GetResult();
     }
 }

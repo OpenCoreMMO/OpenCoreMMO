@@ -40,7 +40,8 @@ public static class PlayerTestDataBuilder
         int premiumTime = 0,
         int experience = 1,
         ushort level = 10,
-        ushort attackSpeed = 2000)
+        ushort attackSpeed = 2000,
+        IMap map = null)
     {
         if (vocationStore is null)
         {
@@ -79,7 +80,7 @@ public static class PlayerTestDataBuilder
             groupStore.AddOrUpdate(groupId, group);
         }
 
-        var map = MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
+        map ??= MapTestDataBuilder.Build(100, 110, 100, 110, 7, 7);
         pathFinder ??= new PathFinder(map);
         var mapTool = new MapTool(map, pathFinder);
 
@@ -150,16 +151,16 @@ public static class PlayerTestDataBuilder
     {
         return new Dictionary<SkillType, Skill>
         {
-            [SkillType.Axe] = new Skill(SkillType.Axe, level),
-            [SkillType.Sword] = new Skill(SkillType.Sword, level),
-            [SkillType.Club] = new Skill(SkillType.Club, level),
-            [SkillType.Distance] = new Skill(SkillType.Distance, level),
-            [SkillType.Fishing] = new Skill(SkillType.Fishing, level),
-            [SkillType.Fist] = new Skill(SkillType.Fist, level),
-            [SkillType.Level] = new Skill(SkillType.Level, level),
-            [SkillType.Magic] = new Skill(SkillType.Magic, level),
-            [SkillType.Shielding] = new Skill(SkillType.Shielding, level),
-            [SkillType.Speed] = new Skill(SkillType.Speed, level)
+            [SkillType.Axe] = new(SkillType.Axe, level),
+            [SkillType.Sword] = new(SkillType.Sword, level),
+            [SkillType.Club] = new(SkillType.Club, level),
+            [SkillType.Distance] = new(SkillType.Distance, level),
+            [SkillType.Fishing] = new(SkillType.Fishing, level),
+            [SkillType.Fist] = new(SkillType.Fist, level),
+            [SkillType.Level] = new(SkillType.Level, level),
+            [SkillType.Magic] = new(SkillType.Magic, level),
+            [SkillType.Shielding] = new(SkillType.Shielding, level),
+            [SkillType.Speed] = new(SkillType.Speed, level)
         };
     }
 

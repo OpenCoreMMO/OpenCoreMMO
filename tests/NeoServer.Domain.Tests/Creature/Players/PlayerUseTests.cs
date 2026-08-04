@@ -1,0 +1,43 @@
+﻿using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Services;
+using NeoServer.Domain.Tests.Helpers;
+using NeoServer.Domain.Tests.Helpers.Map;
+using NeoServer.Domain.Tests.Helpers.Player;
+using NeoServer.Domain.Tests.Server;
+using NeoServer.Domain.World.Events;
+using NeoServer.Domain.World.Models.Tiles;
+using NeoServer.Server.Commands.Movements;
+using NeoServer.Server.Events.World;
+
+namespace NeoServer.Domain.Tests.Creature.Players;
+
+public class PlayerUseTests
+{
+    [Fact]
+    public void Player_uses_food_when_close_to_it()
+    {
+        //arrange
+        var tile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
+        var secondTile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(101, 100, 7));
+
+        var map = MapTestDataBuilder.Build(tile, secondTile);
+
+        var player = PlayerTestDataBuilder.Build(map: map);
+
+        var food = ItemTestDataBuilder.CreateFood(2);
+
+        tile.AddCreature(player);
+        secondTile.AddItem(food);
+
+        new TileLoadedEventHandler(map).Handle(new TileLoadedEvent(secondTile));
+
+        var playerUseService =
+            new PlayerUseService(new WalkToMechanism(GameServerTestBuilder.Build(map).Scheduler), map);
+
+        //act
+        playerUseService.Use(player, food, player);
+
+        //assert
+        secondTile.DownItems.Should().BeEmpty();
+    }
+}

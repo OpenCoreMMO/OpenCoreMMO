@@ -35,8 +35,8 @@ public class AreaCalculationService(IMap map)
 
             if (tile is not IDynamicTile targetTile) continue;
 
-            var targetCreatures = targetTile.Creatures?.ToArray();
-            if (targetCreatures is null or { Length: 0 }) continue;
+            var targetCreatures = targetTile.Creatures;
+            if (targetCreatures is null or { Count: 0 }) continue;
 
             affectedCreatures.AddRange(targetCreatures);
         }

@@ -32,6 +32,7 @@ public class Outfit
         Feet = feet;
         Addon = addon;
     }
+
     public Outfit SetName(string name)
     {
         Name = name;

@@ -5,9 +5,11 @@ using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Bases;
+using NeoServer.Domain.Services;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Server;
@@ -20,6 +22,7 @@ namespace NeoServer.Domain.Tests.Creature.Monster;
 
 public class MonsterWalkTest
 {
+    [ThreadBlocking]
     [RetryFact(100)]
     public void Monster_that_has_CanPushItems_flag_ignores_objects_in_the_way()
     {
@@ -63,7 +66,8 @@ public class MonsterWalkTest
             new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
                 staticToDynamicTileServiceMock.Object);
 
-        sut.OnStartedWalking += new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService).Execute;
+        var startedWalkingHandler = new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService, new CreatureSpeechService(map));
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedWalkingEvent>(e => startedWalkingHandler.Handle(e));
 
         gameServer.Open();
         map.PlaceCreature(sut);
@@ -77,6 +81,7 @@ public class MonsterWalkTest
         sut.Tile.Should().Be(destinationTile);
     }
 
+    [ThreadBlocking]
     [Fact]
     public async Task Monster_without_can_push_items_flag_do_not_walk()
     {
@@ -118,7 +123,8 @@ public class MonsterWalkTest
             new CreatureMovementService(map, new CylinderOperation(map), new CreatureMovementValidation(map),
                 staticToDynamicTileServiceMock.Object);
 
-        sut.OnStartedWalking += new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService).Execute;
+        var startedWalkingHandler = new CreatureStartedWalkingEventHandler(gameServer, creatureMovementService, new CreatureSpeechService(map));
+        EventAggregatorTestHelper.SetupEventAggregator<CreatureStartedWalkingEvent>(e => startedWalkingHandler.Handle(e));
 
         gameServer.Open();
 

@@ -1,6 +1,8 @@
 ﻿using NeoServer.Domain.Chat;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.World;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Helpers;
@@ -44,14 +46,22 @@ public class Npc : WalkableCreature, INpc
 
     public override bool CanSeeInvisible => false;
 
-    public override bool CanBeSeen => true;
-
-    public void Advertise()
+    /// <summary>
+    /// Allows the NPC to advertise its marketing messages to a list of sociable creatures (receivers), if applicable.
+    /// </summary>
+    /// <param name="receivers">The list of creatures that will receive the advertisement message.</param>
+    /// <remarks>
+    /// The method ensures that the NPC has marketing messages available and checks if the advertisement
+    /// cooldown has expired before proceeding. It then selects a random marketing message and broadcasts
+    /// it to the specified receivers, also resetting the cooldown timer for advertising.
+    /// </remarks>
+    public void Advertise(List<ICreature> receivers)
     {
-        if (!Metadata.Marketings?.Any() ?? true) return;
+        if ((Metadata.Marketings?.Length ?? 0) <= 0) return;
 
         if (!Cooldowns.Cooldowns[CooldownType.Advertise].Expired) return;
-        Say(GameRandom.Random.Next(Metadata.Marketings), SpeechType.Say);
+        
+        Say(GameRandom.Random.Next(Metadata.Marketings), SpeechType.Say, receivers);
         Cooldowns.Start(CooldownType.Advertise, 10_000);
     }
 
@@ -73,7 +83,7 @@ public class Npc : WalkableCreature, INpc
     public void Hear(ICreature from, SpeechType speechType, string message)
     {
         if (from is null || speechType == SpeechType.None || string.IsNullOrWhiteSpace(message)) return;
-        OnHear?.Invoke(from, this, speechType, message);
+        EventAggregator.Invoke(new CreatureHearEvent(from, this, speechType, message));
     }
 
     public void PlayerCloseChannel(IPlayer player)
@@ -136,7 +146,6 @@ public class Npc : WalkableCreature, INpc
 
     #region Events
 
-    public event Hear OnHear;
     public event PlayerCloseChannel OnPlayerCloseChannel;
 
     #endregion

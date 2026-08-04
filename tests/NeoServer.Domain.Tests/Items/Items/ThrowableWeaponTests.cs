@@ -1,6 +1,5 @@
 ﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
-using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
@@ -194,7 +193,7 @@ public class ThrowableWeaponTests
         var player = PlayerTestDataBuilder.Build(vocationType: (byte)playerVocation,
             skills: new Dictionary<SkillType, Skill>
             {
-                [SkillType.Level] = new Skill(SkillType.Level, (ushort)playerLevel)
+                [SkillType.Level] = new(SkillType.Level, (ushort)playerLevel)
             });
         var sut = ItemTestDataBuilder.CreateThrowableDistanceItem(1,
             itemTypeAttributes:

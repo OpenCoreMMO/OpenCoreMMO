@@ -1,4 +1,6 @@
-﻿using NeoServer.Domain.Common.Item;
+﻿using Moq;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Items.Services;
@@ -10,6 +12,7 @@ using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
+using Serilog;
 
 namespace NeoServer.Domain.Tests.Systems.SafeTrade;
 
@@ -19,7 +22,7 @@ public class PreTradeValidationTests
     public void Trade_fails_when_player_tries_to_trade_with_himself()
     {
         //arrange
-        var map = new Map(new Domain.World.World());
+        var map = new Map(new Domain.World.World(), new Mock<IEventAggregator>().Object,  new Mock<ILogger>().Object);
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
         var player = PlayerTestDataBuilder.Build();
@@ -36,7 +39,7 @@ public class PreTradeValidationTests
     public void Trade_fails_when_player_is_already_trading()
     {
         //arrange
-        var map = new Map(new Domain.World.World());
+        var map = new Map(new Domain.World.World(), new Mock<IEventAggregator>().Object, new Mock<ILogger>().Object);
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
         var player = PlayerTestDataBuilder.Build();
@@ -57,7 +60,7 @@ public class PreTradeValidationTests
     public void Trade_fails_when_player_trades_an_item_from_another_player()
     {
         //arrange
-        var map = new Map(new Domain.World.World());
+        var map = new Map(new Domain.World.World(), new Mock<IEventAggregator>().Object, new Mock<ILogger>().Object);
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
         var player = PlayerTestDataBuilder.Build();
@@ -76,7 +79,7 @@ public class PreTradeValidationTests
     public void Trade_fails_when_it_has_more_than_255_items()
     {
         //arrange
-        var map = new Map(new Domain.World.World());
+        var map = new Map(new Domain.World.World(), new Mock<IEventAggregator>().Object, new Mock<ILogger>().Object);
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
         var player = PlayerTestDataBuilder.Build();
@@ -103,7 +106,7 @@ public class PreTradeValidationTests
     public void Trade_fails_when_item_is_already_being_traded()
     {
         //arrange
-        var map = new Map(new Domain.World.World());
+        var map = new Map(new Domain.World.World(), new Mock<IEventAggregator>().Object, new Mock<ILogger>().Object);
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
         var player = PlayerTestDataBuilder.Build();
@@ -125,7 +128,7 @@ public class PreTradeValidationTests
     public void Trade_fails_when_player_is_not_close_to_item()
     {
         //arrange
-        var map = new Map(new Domain.World.World());
+        var map = new Map(new Domain.World.World(), new Mock<IEventAggregator>().Object, new Mock<ILogger>().Object);
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
         var tile = MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
@@ -150,7 +153,7 @@ public class PreTradeValidationTests
     public void Trade_fails_when_player_is_not_close_enough_to_second_player()
     {
         //arrange
-        var map = new Map(new Domain.World.World());
+        var map = new Map(new Domain.World.World(), new Mock<IEventAggregator>().Object, new Mock<ILogger>().Object);
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
         var tile = (DynamicTile)MapTestDataBuilder.CreateTile(new Location(100, 100, 7));
@@ -207,7 +210,7 @@ public class PreTradeValidationTests
     public void Trade_fails_when_second_player_is_already_trading()
     {
         //arrange
-        var map = new Map(new Domain.World.World());
+        var map = new Map(new Domain.World.World(), new Mock<IEventAggregator>().Object, new Mock<ILogger>().Object);
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
         var player = PlayerTestDataBuilder.Build();
@@ -230,7 +233,7 @@ public class PreTradeValidationTests
     public void Trade_fails_when_item_traded_is_not_pickupable()
     {
         //arrange
-        var map = new Map(new Domain.World.World());
+        var map = new Map(new Domain.World.World(), new Mock<IEventAggregator>().Object, new Mock<ILogger>().Object);
         var tradeSystem = new SafeTradeSystem(new TradeItemExchanger(new ItemRemoveService(map)), map);
 
         var player = PlayerTestDataBuilder.Build();

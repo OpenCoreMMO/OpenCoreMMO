@@ -113,10 +113,7 @@ public class Monster : WalkableMonster, IMonster
         if (IsDead) return;
         if (spectator is not ICombatActor target) return;
 
-        if (Equals(CurrentTarget, spectator))
-        {
-            TurnTo(spectator);
-        }
+        if (Equals(CurrentTarget, spectator)) TurnTo(spectator);
 
         if (CanSee(spectator.Location) && CanSee(spectator))
         {
@@ -239,8 +236,7 @@ public class Monster : WalkableMonster, IMonster
     public bool IsSleeping => State == MonsterState.Sleeping;
     public bool Defending { get; private set; }
     public virtual bool IsSummon => false;
-    public override bool CanSeeInvisible => IsImmune(Immunity.Invisibility); //todo: add invisibility flag
-    public override bool CanBeSeen => false;
+    public override bool CanSeeInvisible => IsImmune(Immunity.Invisibility); 
 
     public override BloodType BloodType => Metadata.Race switch
     {
@@ -289,7 +285,7 @@ public class Monster : WalkableMonster, IMonster
     {
         if (!Targets.Any())
         {
-            if (Conditions.Count > 0)
+            if (HasAnyCondition())
             {
                 State = MonsterState.RandomlyWalking;
                 return;
@@ -342,9 +338,25 @@ public class Monster : WalkableMonster, IMonster
         EscapeFromEnemy();
     }
 
-    public void Yell()
+    public void Yell(List<ICreature> listenersToYell)
     {
-        MonsterYell.Yell(this);
+        if (IsDead) return;
+        
+        var metadata = Metadata;
+        
+        if (metadata.Voices is null) return;
+        if (metadata.VoiceConfig is null) return;
+        if (metadata.Voices.Length == 0) return;
+        
+        if (!Cooldowns.Expired(CooldownType.Yell)) return;
+        Cooldowns.Start(CooldownType.Yell, Metadata.VoiceConfig.Interval);
+
+        if (metadata.VoiceConfig.Chance < GameRandom.Random.Next(1, maxValue: 100)) return;
+
+        var voiceIndex = GameRandom.Random.Next(0, maxValue: metadata.Voices.Length - 1);
+
+        var voice = metadata.Voices[voiceIndex];
+        Say(voice.Sentence, voice.SpeechType, listenersToYell);
     }
 
     public ushort Defend()
@@ -570,9 +582,13 @@ public class Monster : WalkableMonster, IMonster
     public override void OnDamage(IThing enemy, CombatDamageList damages)
     {
         ReduceHealth(damages.TotalDamage.HealthDamage);
+        if (damages.TotalDamage.HealthDamage > 0)
+        {
+          TurnVisible();
+        }
     }
 
-    internal void ChangeAttackTarget(ICreature creature)
+    public void ChangeAttackTarget(ICreature creature)
     {
         if (creature is null) return;
         if (creature.Equals(this)) return;

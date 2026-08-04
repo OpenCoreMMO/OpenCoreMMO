@@ -9,24 +9,24 @@ namespace NeoServer.Domain.Items.Factories;
 
 public class DefenseEquipmentFactory : IFactory
 {
-    private readonly ChargeableFactory _chargeableFactory;
+    private readonly ChargeCounterFactory _chargeCounterFactory;
     private readonly IItemTypeStore _itemTypeStore;
 
-    public DefenseEquipmentFactory(IItemTypeStore itemTypeStore, ChargeableFactory chargeableFactory)
+    public DefenseEquipmentFactory(IItemTypeStore itemTypeStore, ChargeCounterFactory chargeCounterFactory)
     {
         _itemTypeStore = itemTypeStore;
-        _chargeableFactory = chargeableFactory;
+        _chargeCounterFactory = chargeCounterFactory;
     }
 
-    public BodyDefenseEquipment Create(IItemType itemType, Location location)
+    public BodyDefenseEquipment Create(IItemType itemType, Location location, ushort? overrideCharges = null)
     {
         if (!BodyDefenseEquipment.IsApplicable(itemType)) return null;
 
-        var chargeable = _chargeableFactory.Create(itemType);
+        var chargeCounter = _chargeCounterFactory.Create(itemType, overrideCharges);
 
         return new BodyDefenseEquipment(itemType, location)
         {
-            Chargeable = chargeable,
+            Charges = chargeCounter,
             ItemTypeFinder = _itemTypeStore.Get
         };
     }

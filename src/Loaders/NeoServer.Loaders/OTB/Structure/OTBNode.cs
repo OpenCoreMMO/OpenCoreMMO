@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using NeoServer.Loaders.OTB.DataStructures;
 using NeoServer.Loaders.OTB.Enums;
 
 namespace NeoServer.Loaders.OTB.Structure;
 
 public class OtbNode
 {
-    private OtbNode[] _children;
-    private int _childrenCount;
-    private byte[] _data;
-    private int _dataCount;
-
     /// <summary>
     ///     The type of the node.
     /// </summary>
     public readonly NodeType Type;
+
+    private OtbNode[] _children;
+    private int _childrenCount;
+    private byte[] _data;
+    private int _dataCount;
 
     /// <summary>
     ///     Creates a new instance of a <see cref="OtbNode" />.
@@ -45,10 +43,7 @@ public class OtbNode
     /// <param name="node"></param>
     public void AddChild(OtbNode node)
     {
-        if (_childrenCount >= _children.Length)
-        {
-            Array.Resize(ref _children, _children.Length * 2);
-        }
+        if (_childrenCount >= _children.Length) Array.Resize(ref _children, _children.Length * 2);
         _children[_childrenCount++] = node;
     }
 
@@ -58,10 +53,7 @@ public class OtbNode
     /// <param name="b">The byte data to add</param>
     public void AddData(byte b)
     {
-        if (_dataCount >= _data.Length)
-        {
-            Array.Resize(ref _data, _data.Length * 2);
-        }
+        if (_dataCount >= _data.Length) Array.Resize(ref _data, _data.Length * 2);
         _data[_dataCount++] = b;
     }
 
@@ -73,10 +65,10 @@ public class OtbNode
     {
         if (bytes.IsEmpty) return;
 
-        int requiredSize = _dataCount + bytes.Length;
+        var requiredSize = _dataCount + bytes.Length;
         if (requiredSize > _data.Length)
         {
-            int newCapacity = Math.Max(_data.Length * 2, requiredSize);
+            var newCapacity = Math.Max(_data.Length * 2, requiredSize);
             Array.Resize(ref _data, newCapacity);
         }
 

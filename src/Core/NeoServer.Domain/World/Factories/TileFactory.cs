@@ -12,12 +12,12 @@ namespace NeoServer.Domain.World.Factories;
 
 public class TileFactory(ILogger logger) : ITileFactory
 {
-    private readonly Dictionary<string, IStaticTile> _tileCache = new();
+    private readonly Dictionary<(ulong Low, ulong High), IStaticTile> _tileCache = new();
 
     public ITile CreateTile(Coordinate coordinate, TileFlag flag, IItem[] items, bool useCache = true,
         uint? houseId = null)
     {
-        string tileHash = null;
+        (ulong Low, ulong High) tileHash = default;
         if (useCache)
         {
             tileHash = GetTileHash(items);
@@ -30,10 +30,13 @@ public class TileFactory(ILogger logger) : ITileFactory
         var hasMoveableItem = false;
         var hasTransformableItem = false;
         var hasHeight = false;
+        var hasTrashHolder = false;
+        var hasDoor = false;
+        var hasMapAttributes = false;
         IGround ground = null;
 
-        var topItems = new List<IItem>();
-        var downItems = new List<IItem>();
+        var topItems = new List<IItem>(items.Length);
+        var downItems = new List<IItem>(items.Length);
 
         foreach (var item in items)
         {
@@ -52,12 +55,23 @@ public class TileFactory(ILogger logger) : ITileFactory
 
             if (item.IsTransformable) hasTransformableItem = true;
 
+            if (item.IsDoor) hasDoor = true;
+
+            // ActionId/UniqueId are per-instance; static tile cache keys only ClientIds, so these
+            // must stay on DynamicTile or map attrs would be shared across tiles.
+            if (item.ActionId != 0 || item.UniqueId != 0) hasMapAttributes = true;
+
             if (item.Metadata.HasFlag(ItemFlag.HasHeight)) hasHeight = true;
 
             if (item.IsAlwaysOnTop)
             {
                 topItems.Add(item);
                 continue;
+            }
+
+            if (item.Metadata.IsTrashHolder())
+            {
+                hasTrashHolder = true;
             }
 
             if (item is IGround groundItem)
@@ -69,16 +83,19 @@ public class TileFactory(ILogger logger) : ITileFactory
             downItems.Add(item);
         }
 
+        // Doors / keyed map objects must be DynamicTile
+        // without a static→dynamic conversion that recreates items.
         if (hasUnpassableItem &&
             !hasMoveableItem &&
-            !hasTransformableItem && !hasHeight)
+            !hasTransformableItem &&
+            !hasHeight &&
+            !hasTrashHolder &&
+            !hasDoor &&
+            !hasMapAttributes)
         {
             var staticTile = new StaticTile(new Coordinate(), (uint)flag, items);
 
-            if (useCache)
-            {
-                _tileCache.TryAdd(tileHash, staticTile);
-            }
+            if (useCache) _tileCache.TryAdd(tileHash, staticTile);
 
             return staticTile;
         }
@@ -97,8 +114,8 @@ public class TileFactory(ILogger logger) : ITileFactory
     {
         IGround ground = null;
 
-        var topItems = new List<IItem>();
-        var downItems = new List<IItem>();
+        var topItems = new List<IItem>(items.Length);
+        var downItems = new List<IItem>(items.Length);
 
         foreach (var item in items)
         {
@@ -122,7 +139,7 @@ public class TileFactory(ILogger logger) : ITileFactory
         return new DynamicTile(coordinate, flag, ground, topItems.ToArray(), downItems.ToArray());
     }
 
-    private static string GetTileHash(IItem[] items)
+    private static (ulong Low, ulong High) GetTileHash(IItem[] items)
     {
         Span<byte> raw = stackalloc byte[items.Length * sizeof(ushort)];
         var index = 0;
@@ -134,10 +151,11 @@ public class TileFactory(ILogger logger) : ITileFactory
             raw[index++] = (byte)((item.ClientId >> 8) & 0xFF);
         }
 
-        return HashHelper.ComputeContentHash(ref raw);
+        var written = raw[..index];
+        return HashHelper.ComputeContentHash(ref written);
     }
 
-    private static string GetTileHash(ref Span<byte> clientIds)
+    private static (ulong Low, ulong High) GetTileHash(ref Span<byte> clientIds)
     {
         return HashHelper.ComputeContentHash(ref clientIds);
     }

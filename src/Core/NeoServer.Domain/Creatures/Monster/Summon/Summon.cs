@@ -14,12 +14,6 @@ public class Summon : Monster
         if (master is not null)
         {
             Master.Summons.Add(this);
-
-            if (master is ICombatActor actor)
-            {
-                actor.OnTargetChanged += OnMasterTargetChange;
-                actor.OnStoppedAttack += OnMasterStoppedAttack;
-            }
         }
     }
 
@@ -33,7 +27,7 @@ public class Summon : Monster
         {
             var fpp = base.PathSearchParams;
             fpp.MinTargetDist = 1;
-            fpp.MaxTargetDist = Equals(Following, Master) ? 2 : TargetDistance;
+            fpp.MaxTargetDist = Equals(FollowCreature, Master) ? 2 : TargetDistance;
             fpp.FullPathSearch = true;
             fpp.KeepDistance = false;
             fpp.ClearSight = true;
@@ -51,10 +45,7 @@ public class Summon : Monster
         //Summon should not attack if the master has no target
         if (Master is ICombatActor { CurrentTarget: null }) return;
 
-        if (!CanSee(creature.Location))
-        {
-            return;
-        }
+        if (!CanSee(creature.Location)) return;
 
         base.SetAsEnemy(creature);
     }
@@ -69,10 +60,7 @@ public class Summon : Monster
         //Summon should not attack if the master has no target
         if (Master is ICombatActor { CurrentTarget: null }) return Result.NotPossible;
 
-        if (!CanSee(target.Location))
-        {
-            return Result.NotPossible;
-        }
+        if (!CanSee(target.Location)) return Result.NotPossible;
 
         return base.SetAttackTarget(target);
     }
@@ -81,6 +69,12 @@ public class Summon : Monster
     {
         base.Born(location);
         Awake();
+
+        if (Master is ICombatActor { CurrentTarget: not null } combatMaster)
+        {
+            SetAsEnemy(combatMaster.CurrentTarget);
+            ChangeAttackTarget(combatMaster.CurrentTarget);
+        }
     }
 
     public override void UpdateState()
@@ -108,17 +102,13 @@ public class Summon : Monster
         if (Master is IMonster { State: MonsterState.RandomlyWalking })
         {
             State = MonsterState.Awake;
-            return;
         }
 
-        if (CanSee(Master.Location) && State is MonsterState.RandomlyWalking)
-        {
-            State = MonsterState.Awake;
-        }
+        if (CanSee(Master.Location) && State is MonsterState.RandomlyWalking) State = MonsterState.Awake;
 
-        if (Master is IPlayer { CurrentTarget: not null } player)
+        if (Master is ICombatActor { CurrentTarget: not null } combatMaster)
         {
-            ChangeAttackTarget(player.CurrentTarget);
+            ChangeAttackTarget(combatMaster.CurrentTarget);
             return;
         }
 
@@ -130,12 +120,6 @@ public class Summon : Monster
         if (Master is not null)
         {
             Master.Summons.Remove(this);
-
-            if (Master is ICombatActor actor)
-            {
-                actor.OnTargetChanged -= OnMasterTargetChange;
-                actor.OnStoppedAttack -= OnMasterStoppedAttack;
-            }
         }
 
         base.Dismiss();
@@ -180,52 +164,34 @@ public class Summon : Monster
 
     public override bool CanSee(Location pos, int viewRangeX, int viewRangeY, int limitRangeOffset = 0)
     {
-        if (base.CanSee(pos, viewRangeX, viewRangeY, limitRangeOffset))
-        {
-            return true;
-        }
-        
-        if (Master is null)
-        {
-            return false;
-        }
-        
+        if (base.CanSee(pos, viewRangeX, viewRangeY, limitRangeOffset)) return true;
+
+        if (Master is null) return false;
+
         //summon should see what the master can see as long he can see the master
-        return Master.CanSee(pos, viewRangeX, viewRangeY, limitRangeOffset) && base.CanSee(Master.Location, viewRangeX, viewRangeY, limitRangeOffset);
+        return Master.CanSee(pos, viewRangeX, viewRangeY, limitRangeOffset) &&
+               base.CanSee(Master.Location, viewRangeX, viewRangeY, limitRangeOffset);
     }
 
 
     public override bool CanSee(Location location)
     {
-        if (base.CanSee(location))
-        {
-            return true;
-        }
+        if (base.CanSee(location)) return true;
 
-        if (Master is null)
-        {
-            return false;
-        }
-        
+        if (Master is null) return false;
+
         //summon should see what the master can see as long he can see the master
         return Master.CanSee(location) && base.CanSee(Master.Location);
     }
 
-    private void OnMasterTargetChange(ICombatActor master, uint oldTargetId, uint newTargetId)
+    public void OnMasterChangeTarget(ICombatActor master)
     {
         Targets.Clear();
 
-        if (!CanSee(master.CurrentTarget?.Location ?? Location.Zero))
-        {
-            return;
-        }
+        if (!CanSee(master.CurrentTarget?.Location ?? Location.Zero)) return;
 
         SetAsEnemy(master.CurrentTarget);
         ChangeAttackTarget(master.CurrentTarget);
     }
 
-    private void OnMasterStoppedAttack(ICombatActor actor)
-    {
-        StopAttack();
-    }
 }

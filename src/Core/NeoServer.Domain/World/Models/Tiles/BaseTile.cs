@@ -106,24 +106,34 @@ public abstract class BaseTile : ITile
             if (!item.CanBeMoved) SetFlag(TileFlags.ImmovableNoFieldBlockPath);
         }
 
-        if (item.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) == "mailbox") SetFlag(TileFlags.MailBox);
+        if (item.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) == "mailbox")
+        {
+            SetFlag(TileFlags.MailBox);
+        }
 
-        if (item.Metadata.HasFlag(ItemFlag.BlockProjectTile)) SetFlag(TileFlags.BlockProjecTile);
+        if (item.Metadata.HasFlag(ItemFlag.BlockProjectTile))
+        {
+            SetFlag(TileFlags.BlockProjecTile);
+        }
 
         if (item.Metadata.Attributes.TryGetAttribute(ItemTypeAttribute.BlockProjectTile, out int value) && value == 1)
+        {
             SetFlag(TileFlags.BlockProjecTile);
+        }
 
         if (item is TeleportItem) SetFlag(TileFlags.Teleport);
 
         if (item is MagicField) SetFlag(TileFlags.MagicField);
 
-        // if (item->getMailbox()) { //todo
-        //     setFlag(TILESTATE_MAILBOX);
-        // }
+        if (item.Metadata.IsFluidSource())
+        {
+            SetFlag(TileFlags.LiquidSource);
+        }
 
-        // if (item->getTrashHolder()) { //todo
-        //     setFlag(TILESTATE_TRASHHOLDER);
-        // }
+        if (item.Metadata.IsTrashHolder())
+        {
+            SetFlag(TileFlags.TrashHolder);
+        }
 
         if (item.Metadata.HasFlag(ItemFlag.Unpassable)) SetFlag(TileFlags.Unpassable);
 
@@ -153,6 +163,7 @@ public abstract class BaseTile : ITile
         RemoveFlag(TileFlags.MailBox);
         RemoveFlag(TileFlags.TrashHolder);
         RemoveFlag(TileFlags.Bed);
+        RemoveFlag(TileFlags.LiquidSource);
 
         foreach (var item in items) SetTileFlags(item);
     }

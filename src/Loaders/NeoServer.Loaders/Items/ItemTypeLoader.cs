@@ -1,20 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Item;
+using NeoServer.Loaders.Helpers;
 using NeoServer.Loaders.Items.Parsers;
 using NeoServer.Loaders.OTB.Parsers;
 using NeoServer.Loaders.OTB.Structure;
 using NeoServer.Server.Configurations;
 using NeoServer.Server.Helpers.Extensions;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using NeoServer.Loaders.Helpers;
-using System.Threading.Tasks;
 
 namespace NeoServer.Loaders.Items;
 
@@ -26,7 +24,7 @@ public class ItemTypeLoader(
     ICoinTypeStore coinTypeStore)
 {
     /// <summary>
-    /// Loads the OTB and XML files into a collection of ItemType objects
+    ///     Loads the OTB and XML files into a collection of ItemType objects
     /// </summary>
     public void Load()
     {
@@ -48,9 +46,7 @@ public class ItemTypeLoader(
 
                 if (item.Value.Attributes.GetAttribute(ItemTypeAttribute.Type)
                         ?.Equals("coin", StringComparison.InvariantCultureIgnoreCase) ?? false)
-                {
                     coinTypeStore.AddOrUpdate(item.Key, item.Value);
-                }
             }
 
             return [itemTypes.Count];
@@ -76,27 +72,31 @@ public class ItemTypeLoader(
         return itemTypes;
     }
 
-    private static void LoadItemsJson(Dictionary<ushort, IItemType> itemTypes, ILogger logger, ItemTypeMetadata[] itemTypeMetadataList)
+    private static void LoadItemsJson(Dictionary<ushort, IItemType> itemTypes, ILogger logger,
+        ItemTypeMetadata[] itemTypeMetadataList)
     {
         var itemTypeMetadataParser = new ItemTypeMetadataParser(itemTypes);
 
-        foreach (var metadata in itemTypeMetadataList)/**/
+        foreach (var metadata in itemTypeMetadataList) /**/
         {
             if (metadata.Id.HasValue)
             {
                 itemTypeMetadataParser.AddMetadata(metadata, metadata.Id.Value);
                 continue;
             }
+
             if (metadata.Fromid == null)
             {
                 logger.Warning("No item found");
                 continue;
             }
+
             if (metadata.Toid == null)
             {
                 logger.Warning("fromId ({MetadataFromId}) without toId", metadata.Fromid);
                 continue;
             }
+
             var id = metadata.Fromid.Value;
             while (id <= metadata.Toid) itemTypeMetadataParser.AddMetadata(metadata, id++);
         }

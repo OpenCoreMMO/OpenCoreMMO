@@ -1,32 +1,34 @@
-﻿using NeoServer.Domain.Chat;
-using NeoServer.Domain.Common.Contracts;
+﻿using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using Serilog;
 
 namespace NeoServer.Scripts.LuaJIT.Events.Npcs;
 
-public class NpcOnHearEventHandler(INpcs npcs, ILogger logger) : IGameEventHandler
+public class NpcOnHearEventHandler(INpcs npcs, ILogger logger) : IApplicationEventHandler<CreatureHearEvent>
 {
-    public void Execute(ICreature from, ISociableCreature receiver, SpeechType speechType, string message)
+    public void Handle(CreatureHearEvent @event)
     {
-        var npcEvent = npcs.GetEvents(receiver.Name);
-        if (npcEvent == null ||
-            npcEvent.Events == null ||
+        if (@event is null) return;
+
+        if (@event.Receiver is not INpc npc) return;
+
+        var npcEvent = npcs.GetEvents(npc.Name);
+        if (npcEvent?.Events is null ||
             npcEvent.Events.Count == 0 ||
             !npcEvent.Events.TryGetValue(NpcEventType.NPCS_EVENT_SAY, out var onSayEvent) ||
             !onSayEvent.HasValue)
             return;
 
-        // onCreatureSay(self, creature, type, message)
-        var callback = new CreatureCallback(npcEvent.LuaScriptInterface, receiver, logger);
+        var callback = new CreatureCallback(npcEvent.LuaScriptInterface, npc, logger);
         if (callback.StartScriptInterface(onSayEvent.Value))
         {
-            callback.PushSpecificCreature(receiver as INpc);
-            callback.PushCreature(from);
-            callback.PushNumber((int)speechType);
-            callback.PushString(message);
+            callback.PushSpecificCreature(npc);
+            callback.PushCreature(@event.From);
+            callback.PushNumber((int)@event.SpeechType);
+            callback.PushString(@event.Message);
         }
 
         if (callback.PersistLuaState())

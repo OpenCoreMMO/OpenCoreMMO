@@ -1,9 +1,12 @@
-﻿using NeoServer.Domain.Common.Contracts.Items;
+﻿using Moq;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.World.Map;
 using NeoServer.Domain.World.Models.Tiles;
+using Serilog;
 
 namespace NeoServer.Domain.Tests.World;
 
@@ -27,6 +30,6 @@ public class MapTest
                 items.ToArray()));
         }
 
-        return new Map(world);
+        return new Map(world, new Mock<IEventAggregator>().Object, new Mock<ILogger>().Object);
     }
 }

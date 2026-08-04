@@ -3,6 +3,8 @@ using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Combat.Structs;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Conditions.Implementations;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.Tests.Helpers.Services;
@@ -29,8 +31,6 @@ public class PlayerAttackTests
         protectionZoneTile.AddCreature(enemy);
         regularTile.AddCreature(player);
 
-        using var monitor = player.Monitor();
-
         var map = MapTestDataBuilder.Build(regularTile, protectionZoneTile);
         var attackService = AttackServiceTestBuilder.Build(map);
 
@@ -42,8 +42,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.CannotAttackPersonInProtectionZone);
 
-        monitor.Should().Raise(nameof(player.OnStoppedAttack));
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
@@ -66,8 +65,6 @@ public class PlayerAttackTests
         protectionZoneTile.AddCreature(player);
         regularTile.AddCreature(enemy);
 
-        using var monitor = player.Monitor();
-
         var map = MapTestDataBuilder.Build(regularTile, protectionZoneTile);
         var attackService = AttackServiceTestBuilder.Build(map);
 
@@ -82,8 +79,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.CannotAttackWhileInProtectionZone);
 
-        monitor.Should().Raise(nameof(player.OnStoppedAttack));
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
@@ -111,8 +107,6 @@ public class PlayerAttackTests
         regularTile.AddCreature(player);
         regularTile2.AddCreature(enemy);
 
-        using var monitor = player.Monitor();
-
         player.SetAttackTarget(enemy);
 
         regularTile2.RemoveCreature(enemy, out _);
@@ -126,9 +120,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Failed.Should().BeTrue();
 
-        monitor.Should().Raise(nameof(player.OnStoppedAttack));
-
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
@@ -156,8 +148,6 @@ public class PlayerAttackTests
         regularTile.AddCreature(player);
         regularTile2.AddCreature(enemy);
 
-        using var monitor = player.Monitor();
-
         player.SetAttackTarget(enemy);
 
         regularTile.RemoveCreature(player, out _);
@@ -170,12 +160,33 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.CannotAttackWhileInProtectionZone);
 
-        monitor.Should().Raise(nameof(player.OnStoppedAttack));
-
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Player_does_not_get_logout_block_on_protection_zone_tile()
+    {
+        //arrange
+        var location = new Location(100, 100, 7);
+        var ground = MapTestDataBuilder.CreateGround(location);
+
+        var protectionZoneTile = new DynamicTile(new Coordinate(100, 100, 7), (TileFlag)TileFlags.ProtectionZone,
+            ground, null, null);
+
+        var map = MapTestDataBuilder.Build(protectionZoneTile);
+        var player = (NeoServer.Domain.Creatures.Player.Player)PlayerTestDataBuilder.Build(map: map);
+
+        protectionZoneTile.AddCreature(player);
+
+        //act
+        player.SetLogoutBlock();
+
+        //assert
+        player.IsLogoutBlocked.Should().BeFalse();
+        player.CannotLogout.Should().BeFalse();
     }
 
     [Fact]
@@ -235,7 +246,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
 
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
@@ -262,8 +273,6 @@ public class PlayerAttackTests
         regularTile.AddCreature(player);
         regularTile2.AddCreature(enemy);
 
-        using var monitor = player.Monitor();
-
         player.SetAttackTarget(enemy);
 
         attackService.Execute(new AttackInput(player, enemy, PlayerCombatParameterBuilder.Build(player, enemy)));
@@ -279,9 +288,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
 
-        monitor.Should().Raise(nameof(player.OnStoppedAttack));
-
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
@@ -315,7 +322,7 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
 
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
@@ -349,9 +356,30 @@ public class PlayerAttackTests
         //assert
         result.Result.Reason.Should().Be(InvalidOperation.TargetLost);
 
-        player.Attacking.Should().BeFalse();
+        player.IsAttacking.Should().BeFalse();
         player.CurrentTarget.Should().BeNull();
         player.AutoAttackTargetId.Should().Be(0);
         player.IsFollowing.Should().BeFalse();
+    }
+
+    [Fact]
+    public void RemoveLogoutBlock_removes_condition()
+    {
+        var player = (NeoServer.Domain.Creatures.Player.Player)PlayerTestDataBuilder.Build();
+        player.AddCondition(new CombatBlockCondition(ConditionType.LogoutBlock));
+        player.IsLogoutBlocked.Should().BeTrue();
+
+        player.RemoveLogoutBlock();
+
+        player.IsLogoutBlocked.Should().BeFalse();
+    }
+
+    [Fact]
+    public void RemoveLogoutBlock_does_nothing_when_not_blocked()
+    {
+        var player = (NeoServer.Domain.Creatures.Player.Player)PlayerTestDataBuilder.Build();
+
+        player.Invoking(x => x.RemoveLogoutBlock()).Should().NotThrow();
+        player.IsLogoutBlocked.Should().BeFalse();
     }
 }

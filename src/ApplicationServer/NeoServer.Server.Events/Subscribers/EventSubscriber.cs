@@ -10,12 +10,10 @@ using NeoServer.Domain.SafeTrade;
 using NeoServer.Domain.Spells.Entities;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Events.Combat;
-using NeoServer.Server.Events.Creature;
 using NeoServer.Server.Events.Items;
 using NeoServer.Server.Events.Player;
 using NeoServer.Server.Events.Player.Trade;
 using NeoServer.Server.Events.Server;
-using NeoServer.Server.Events.Tiles;
 using NeoServer.Server.Services;
 
 namespace NeoServer.Server.Events.Subscribers;
@@ -47,13 +45,6 @@ public sealed class EventSubscriber
 
     public void AttachEvents()
     {
-        _map.OnCreatureAddedOnMap += (creature, cylinder) =>
-            _container.GetRequiredService<CreatureAddedOnMapEventHandler>().Execute(creature, cylinder);
-
-        _map.OnThingRemovedFromTile += _container.GetRequiredService<ThingRemovedFromTileEventHandler>().Execute;
-        _map.OnThingAddedToTile += _container.GetRequiredService<ThingAddedToTileEventHandler>().Execute;
-        _map.OnThingUpdatedOnTile += _container.GetRequiredService<ThingUpdatedOnTileEventHandler>().Execute;
-
         BaseSpell.OnSpellInvoked += _container.GetRequiredService<SpellInvokedEventHandler>().Execute;
 
         OperationFailService.OnOperationFailed +=
@@ -64,7 +55,7 @@ public sealed class EventSubscriber
             _container.GetRequiredService<NotificationSentEventHandler>().Execute;
         _gameServer.OnOpened += _container.GetRequiredService<ServerOpenedEventHandler>().Execute;
 
-        Decayable.OnStarted += _itemStartedDecayingEventHandler.Execute;
+        DecayTracker.OnStarted += _itemStartedDecayingEventHandler.Execute;
 
         IConsumable.OnUsed += _itemUsedEventHandler.Execute;
         FieldRune.OnUsedOnTile += _fieldRuneUsedEventHandler.Execute;

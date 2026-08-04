@@ -27,8 +27,11 @@ public class PlayerConditionChangedEventHandler(IGameServer game)
 
         ushort icons = 0;
 
-        foreach (var condition in player.Conditions) icons |= (ushort)ConditionIconParser.Parse(condition.Key);
-
+        foreach (var condition in player.GetConditions())
+        {
+            icons |= (ushort)ConditionIconParser.Parse(condition.Type);
+        }
+     
         connection.OutgoingPackets.Enqueue(new ConditionIconPacket(icons));
         connection.Send();
     }

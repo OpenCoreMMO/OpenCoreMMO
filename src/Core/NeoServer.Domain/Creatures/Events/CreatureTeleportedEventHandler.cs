@@ -2,16 +2,15 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
-using NeoServer.Domain.Common.Contracts.World.Tiles;
-using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.World.Models.Tiles;
-using NeoServer.Domain.World.Services;
 
 namespace NeoServer.Domain.Creatures.Events;
 
-public class CreatureTeleportedEventHandler(IMap map, ICreatureMovementService creatureMovementService, 
+public class CreatureTeleportedEventHandler(
+    IMap map,
+    ICreatureMovementService creatureMovementService,
     IStaticToDynamicTileService staticToDynamicTileService)
     : IGameEventHandler
 {
@@ -19,14 +18,9 @@ public class CreatureTeleportedEventHandler(IMap map, ICreatureMovementService c
     {
         if (creature.Location == location) return;
 
-        if (map[location] is StaticTile staticTile)
-        {
-            staticToDynamicTileService.TransformIntoDynamicTile(staticTile);
-        }
+        if (map[location] is StaticTile staticTile) staticToDynamicTileService.TransformIntoDynamicTile(staticTile);
 
         if (map[location] is DynamicTile dynamicTile)
-        {
-            creatureMovementService.MoveCreature(creature, dynamicTile.Location, forced: true, isTeleport: true);
-        }
+            creatureMovementService.MoveCreature(creature, dynamicTile.Location, true, true);
     }
 }

@@ -33,6 +33,10 @@ public class PlayerChannelService(IChatChannelStore chatChannelStore)
             ? channels
             : channels.Concat(privateChannels.Where(x => x.Opened));
 
-        foreach (var channel in channels) player.Channels.JoinChannel(channel);
+        foreach (var channel in channels)
+        {
+            if (channel.HasUser(player)) continue;
+            player.Channels.JoinChannel(channel);
+        }
     }
 }

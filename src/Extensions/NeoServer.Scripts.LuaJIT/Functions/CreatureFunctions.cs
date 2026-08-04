@@ -8,11 +8,13 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Creatures.Monster.Summon;
 using NeoServer.Domain.Creatures.Services;
+using NeoServer.Domain.Common;
+using NeoServer.Domain.Common.Contracts.Services;
+using NeoServer.Domain.Creatures.Events;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
 using NeoServer.Server.Common.Contracts;
-using NeoServer.Server.Events.Creature;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
@@ -20,22 +22,20 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 {
     private static IGameCreatureManager _gameCreatureManager;
     private static ICreatureEvents _creatureEvents;
-    private static CreatureHealedEventHandler _creatureHealedEventHandler;
     private static ICreatureMovementService _creatureMovementService;
-    private static IMap _map;
+    private static ICreatureSpeechService _creatureSpeechService;
 
     public CreatureFunctions(
         IGameCreatureManager gameCreatureManager,
         ICreatureEvents creatureEvents,
-        CreatureHealedEventHandler creatureHealedEventHandler,
         ICreatureMovementService creatureMovementService,
-        IMap map) : base(nameof(CreatureFunctions))
+        ICreatureSpeechService creatureSpeechService
+        ) : base(nameof(CreatureFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
         _creatureEvents = creatureEvents;
-        _creatureHealedEventHandler = creatureHealedEventHandler;
         _creatureMovementService = creatureMovementService;
-        _map = map;
+        _creatureSpeechService = creatureSpeechService;
     }
 
     public void Init(LuaState luaState)
@@ -70,6 +70,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 
         RegisterMethod(luaState, "Creature", "getSummons", LuaCreatureGetSummons);
         RegisterMethod(luaState, "Creature", "move", LuaCreatureMove);
+        RegisterMethod(luaState, "Creature", "teleportTo", LuaCreatureTeleportTo);
         RegisterMethod(luaState, "Creature", "remove", LuaCreatureRemove);
     }
 
@@ -286,7 +287,8 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         var health = GetNumber<uint>(luaState, 2);
         creature.HealthPoints = Math.Min(health, creature.MaxHealthPoints);
 
-        _creatureHealedEventHandler.Execute(creature, null, 0);
+        if (creature is ICombatActor combatActor)
+            EventAggregator.Invoke(new CreatureHealedEvent(combatActor, null, 0));
 
         Lua.PushBoolean(luaState, true);
         return 1;
@@ -334,7 +336,8 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         creature.HealthPoints = maxHealth;
         creature.HealthPoints = Math.Min(creature.HealthPoints, creature.MaxHealthPoints);
 
-        _creatureHealedEventHandler.Execute(creature, null, 0);
+        if (creature is ICombatActor combatActor)
+            EventAggregator.Invoke(new CreatureHealedEvent(combatActor, null, 0));
 
         Lua.PushBoolean(luaState, true);
         return 1;
@@ -347,7 +350,8 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         if (creature is not null)
         {
             creature.IsHealthHidden = GetBoolean(luaState, 2);
-            _creatureHealedEventHandler.Execute(creature, null, 0);
+            if (creature is ICombatActor combatActor)
+                EventAggregator.Invoke(new CreatureHealedEvent(combatActor, null, 0));
             Lua.PushBoolean(luaState, true);
             return 1;
         }
@@ -452,7 +456,15 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
 
         if (creature != null)
         {
-            creature.Say(text, (SpeechType)type, target);
+            if (target is null)
+            {
+                _creatureSpeechService.Speak(creature, text, (SpeechType)type);
+            }
+            else
+            {
+                creature.Say(text, (SpeechType)type, target);
+            }
+
             PushBoolean(luaState, true);
             return 1;
         }
@@ -524,6 +536,47 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
                 result ? (int)ReturnValueType.RETURNVALUE_NOERROR : (int)ReturnValueType.RETURNVALUE_NOTPOSSIBLE);
         }
 
+        return 1;
+    }
+
+    private static int LuaCreatureTeleportTo(LuaState luaState)
+    {
+        // creature:teleportTo(position[, pushMovement = false])
+        var pushMovement = GetBoolean(luaState, 3, false);
+        var position = GetPosition(luaState, 2);
+        var creature = GetUserdata<ICreature>(luaState, 1);
+
+        if (creature is not IWalkableCreature walkableCreature)
+        {
+            if (creature is null)
+            {
+                ReportError(nameof(LuaCreatureTeleportTo), GetErrorDesc(ErrorCodeType.LUA_ERROR_CREATURE_NOT_FOUND));
+            }
+
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var oldPosition = walkableCreature.Location;
+        if (oldPosition == position)
+        {
+            PushBoolean(luaState, true);
+            return 1;
+        }
+
+        var succeeded = _creatureMovementService.MoveCreature(walkableCreature, position, forced: true, isTeleport: true);
+        if (!succeeded)
+        {
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        if (pushMovement)
+        {
+            walkableCreature.TurnTo(oldPosition.DirectionTo(position));
+        }
+
+        PushBoolean(luaState, true);
         return 1;
     }
 

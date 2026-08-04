@@ -53,6 +53,7 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         RegisterMethod(luaState, "Item", "setActionId", LuaItemSetActionId);
 
         RegisterMethod(luaState, "Item", "getSubType", LuaItemGetSubType);
+        RegisterMethod(luaState, "Item", "getFluidType", LuaItemGetFluidType);
 
         RegisterMethod(luaState, "Item", "getName", LuaItemGetName);
         RegisterMethod(luaState, "Item", "getPluralName", LuaItemGetPluralName);
@@ -224,6 +225,32 @@ public class ItemFunctions : LuaScriptInterface, IItemFunctions
         else
             Lua.PushNil(luaState);
 
+        return 1;
+    }
+
+    public static int LuaItemGetFluidType(LuaState luaState)
+    {
+        // item:getFluidType()
+        var item = GetUserdata<IItem>(luaState, 1);
+        if (item is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        if (item.Attributes.TryGetAttribute(ItemAttribute.FluidType, out int fluidType))
+        {
+            Lua.PushNumber(luaState, fluidType);
+            return 1;
+        }
+
+        if (item is ILiquid liquid)
+        {
+            Lua.PushNumber(luaState, (int)liquid.LiquidColor);
+            return 1;
+        }
+
+        Lua.PushNumber(luaState, 0);
         return 1;
     }
 
