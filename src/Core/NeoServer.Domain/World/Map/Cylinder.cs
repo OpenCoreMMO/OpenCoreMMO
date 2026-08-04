@@ -70,28 +70,10 @@ public class CylinderOperation(IMap map)
 
     public Cylinder Updated(IThing thing, byte stackPosition)
     {
-        var tile = map[thing.Location];
-
-        var spectators = new HashSet<ICylinderSpectator>();
-        
-        foreach (var spectator in Removed(thing, stackPosition).TileSpectators)
-        {
-            spectators.Add(spectator);
-        }
-
-        foreach (var cylinderSpectator in Added(thing).TileSpectators)
-        {
-            if (spectators.TryGetValue(cylinderSpectator, out var spectator))
-            {
-                spectator.ToStackPosition = cylinderSpectator.ToStackPosition;
-            }
-            else
-            {
-                spectators.Add(cylinderSpectator);
-            }
-        }
-
-        return new Cylinder(thing, tile, tile, Operation.Updated, spectators.ToArray());
+        // In-place update: From and To are the same captured stackpos (TFS updateThing).
+        // Do not recompute via Added() — a later overflow Push would bury the updated item.
+        var removed = Removed(thing, stackPosition);
+        return new Cylinder(thing, removed.FromTile, removed.ToTile, Operation.Updated, removed.TileSpectators);
     }
 
     public Result<OperationResultList<ICreature>> RemoveCreature(ICreature creature, out ICylinder cylinder)

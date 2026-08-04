@@ -8,6 +8,7 @@ using NeoServer.Domain.Common.Creatures.Structs;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Items;
 using NeoServer.Domain.Items.Bases;
@@ -796,5 +797,32 @@ public class TileTest
         removed.Should().Be(bottom);
         tile.DownItems.Should().Contain(top);
         tile.DownItems.Should().NotContain(bottom);
+    }
+
+    [Fact]
+    [Trait("Category", "EdgeCase")]
+    public void AddItem_records_updated_stackpos_before_overflow_remainder_is_pushed()
+    {
+        var ground = MapTestDataBuilder.CreateGround(new Location(100, 100, 7), 100);
+        var tile = new DynamicTile(new Coordinate(100, 100, 7), TileFlag.None, ground, [], []);
+
+        var fullPile = (ICumulative)ItemTestDataBuilder.CreateAmmo(2547, 100);
+        var overflow = (ICumulative)ItemTestDataBuilder.CreateAmmo(2547, 30);
+
+        tile.AddItem(fullPile);
+
+        var result = tile.AddItem(overflow);
+
+        result.Succeeded.Should().BeTrue();
+
+        var updated = result.Value.Operations.Single(op => op.Item2 == Operation.Updated);
+        updated.Item1.Should().Be(fullPile);
+        updated.Item3.Should().Be(1);
+
+        var added = result.Value.Operations.Single(op => op.Item2 == Operation.Added);
+        added.Item1.Amount.Should().Be(30);
+
+        tile.TryGetStackPositionOfItem(fullPile, out var buriedStackPosition).Should().BeTrue();
+        buriedStackPosition.Should().Be(2);
     }
 }

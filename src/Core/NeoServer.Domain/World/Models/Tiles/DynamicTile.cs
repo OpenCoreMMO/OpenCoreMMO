@@ -785,7 +785,9 @@ public class DynamicTile : BaseTile, IDynamicTile
                          topStackItem.ClientId == cumulative.ClientId &&
                          topCumulative.TryJoin(ref cumulative))
                 {
-                    operations.Add(Operation.Updated, topCumulative);
+                    // Capture stackpos before any overflow remainder is pushed (TFS updateThing-before-addThing).
+                    TryGetStackPositionOfItem(topCumulative, out var stackPosition);
+                    operations.Add(Operation.Updated, topCumulative, stackPosition);
 
                     if (cumulative is not null)
                     {
@@ -925,7 +927,7 @@ public class DynamicTile : BaseTile, IDynamicTile
             }
             else
             {
-                operations.Add(Operation.Updated, topCumulative);
+                operations.Add(Operation.Updated, topCumulative, stackPosition);
             }
         }
         else if (DownItems is not null && DownItems.Remove(itemToRemove))
