@@ -60,6 +60,7 @@ public class HouseEvictionTests
     }
 
     [Fact]
+    [Trait("Category", "Validation")]
     public void CanKick_NonPremiumSubownerKicksGuest_ReturnsFalse()
     {
         var tileMock = HouseTestDataBuilder.CreateTileMock();
@@ -80,6 +81,7 @@ public class HouseEvictionTests
     }
 
     [Fact]
+    [Trait("Category", "HappyPath")]
     public void CanKick_NonPremiumSubownerKicksGuest_WhenPremiumNotRequired_ReturnsTrue()
     {
         var tileMock = HouseTestDataBuilder.CreateTileMock();
