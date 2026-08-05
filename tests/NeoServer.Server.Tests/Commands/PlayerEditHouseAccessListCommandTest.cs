@@ -18,7 +18,8 @@ namespace NeoServer.Server.Tests.Commands;
 
 public class PlayerEditHouseAccessListCommandTest
 {
-    [Fact]
+[Fact]
+[Trait("Category", "HappyPath")]
     public void Execute_GuestListRemovesOnlineGuest_KicksUninvitedPlayer()
     {
         // Arrange
