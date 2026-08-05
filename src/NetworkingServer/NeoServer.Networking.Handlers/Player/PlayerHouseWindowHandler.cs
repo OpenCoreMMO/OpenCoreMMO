@@ -1,3 +1,4 @@
+using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Networking.Packets.Incoming;
 using NeoServer.Server.Commands.Player.House;
@@ -9,7 +10,8 @@ namespace NeoServer.Networking.Handlers.Player;
 
 public class PlayerHouseWindowHandler(
     IGameServer game,
-    PlayerEditHouseAccessListCommand editHouseAccessListCommand) : PacketHandler
+    PlayerEditHouseAccessListCommand editHouseAccessListCommand,
+    IHouseEditWindowStore houseEditWindowStore) : PacketHandler
 {
     public override void HandleMessage(IReadOnlyNetworkMessage message, IConnection connection)
     {
@@ -23,11 +25,11 @@ public class PlayerHouseWindowHandler(
         // Packet door byte must be 0; the edited list comes from setEditHouse state.
         if (packet.DoorId != 0)
         {
-            HouseEditWindowStore.Clear(player);
+            houseEditWindowStore.Clear(player);
             return;
         }
 
-        if (!HouseEditWindowStore.TryGet(player, packet.WindowTextId, out var houseId, out var listId))
+        if (!houseEditWindowStore.TryGet(player, packet.WindowTextId, out var houseId, out var listId))
         {
             return;
         }
@@ -37,7 +39,7 @@ public class PlayerHouseWindowHandler(
         game.Dispatcher.AddEvent(new Event(() =>
         {
             editHouseAccessListCommand.Execute(player, houseId, listId, text);
-            HouseEditWindowStore.Clear(player);
+            houseEditWindowStore.Clear(player);
         }));
     }
 }

@@ -122,15 +122,16 @@ public class PlayerEditHouseAccessListCommandTest
     [Fact]
     public void HouseEditWindowStore_MismatchedWindowId_ReturnsFalse()
     {
+        var store = new HouseEditWindowStore();
         var player = HouseTestDataBuilder.CreatePlayer(id: 5, name: "Owner");
-        var windowId = HouseEditWindowStore.SetEditHouse(player, houseId: 1, listId: HouseListId.GuestList);
+        var windowId = store.SetEditHouse(player, houseId: 1, listId: HouseListId.GuestList);
 
-        HouseEditWindowStore.TryGet(player, windowId + 1, out _, out _).Should().BeFalse();
-        HouseEditWindowStore.TryGet(player, windowId, out var houseId, out var listId).Should().BeTrue();
+        store.TryGet(player, windowId + 1, out _, out _).Should().BeFalse();
+        store.TryGet(player, windowId, out var houseId, out var listId).Should().BeTrue();
         houseId.Should().Be(1u);
         listId.Should().Be(HouseListId.GuestList);
 
-        HouseEditWindowStore.Clear(player);
+        store.Clear(player);
     }
 
     private static PlayerEditHouseAccessListCommand CreateCommand(

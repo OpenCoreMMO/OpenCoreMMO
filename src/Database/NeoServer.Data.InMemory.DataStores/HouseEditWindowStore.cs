@@ -1,37 +1,36 @@
-using System.Collections.Generic;
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Common.Contracts.DataStores;
 
 namespace NeoServer.Data.InMemory.DataStores;
 
 /// <summary>
-///     Tracks the active house access-list edit session per player (window id, house, list).
+///     Tracks the active house access-list edit session per player.
 ///     Keeps UI edit state out of the domain Player.
 /// </summary>
-public static class HouseEditWindowStore
+public class HouseEditWindowStore : DataStore<HouseEditWindowStore, uint, HouseEditWindowSession>, IHouseEditWindowStore
 {
-    private static readonly Dictionary<uint, EditSession> Sessions = new();
-
-    public static uint SetEditHouse(IPlayer player, uint houseId, uint listId)
+    public uint SetEditHouse(IPlayer player, uint houseId, uint listId)
     {
-        if (!Sessions.TryGetValue(player.Id, out var session))
+        var playerId = player.Id;
+        var windowTextId = 1u;
+
+        if (TryGetValue(playerId, out var session))
         {
-            session = new EditSession();
-            Sessions[player.Id] = session;
+            windowTextId = session.WindowTextId + 1;
         }
 
-        session.WindowTextId++;
-        session.HouseId = houseId;
-        session.ListId = listId;
-        return session.WindowTextId;
+        var updated = new HouseEditWindowSession(windowTextId, houseId, listId);
+        AddOrUpdate(playerId, updated);
+        return windowTextId;
     }
 
-    public static bool TryGetCurrent(IPlayer player, out uint windowTextId, out uint houseId, out uint listId)
+    public bool TryGetCurrent(IPlayer player, out uint windowTextId, out uint houseId, out uint listId)
     {
         windowTextId = 0;
         houseId = 0;
         listId = 0;
 
-        if (!Sessions.TryGetValue(player.Id, out var session) || session.WindowTextId == 0)
+        if (!TryGetValue(player.Id, out var session) || session.WindowTextId == 0)
         {
             return false;
         }
@@ -42,12 +41,12 @@ public static class HouseEditWindowStore
         return true;
     }
 
-    public static bool TryGet(IPlayer player, uint windowTextId, out uint houseId, out uint listId)
+    public bool TryGet(IPlayer player, uint windowTextId, out uint houseId, out uint listId)
     {
         houseId = 0;
         listId = 0;
 
-        if (!Sessions.TryGetValue(player.Id, out var session))
+        if (!TryGetValue(player.Id, out var session))
         {
             return false;
         }
@@ -62,15 +61,8 @@ public static class HouseEditWindowStore
         return true;
     }
 
-    public static void Clear(IPlayer player)
+    public void Clear(IPlayer player)
     {
-        Sessions.Remove(player.Id);
-    }
-
-    private sealed class EditSession
-    {
-        public uint WindowTextId;
-        public uint HouseId;
-        public uint ListId;
+        Map.Remove(player.Id);
     }
 }

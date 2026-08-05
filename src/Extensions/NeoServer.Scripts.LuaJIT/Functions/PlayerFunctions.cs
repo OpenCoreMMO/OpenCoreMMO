@@ -26,17 +26,20 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
     private static IGameCreatureManager _gameCreatureManager;
     private static IItemFactory _itemFactory;
     private static IItemTypeStore _itemTypeStore;
+    private static IHouseEditWindowStore _houseEditWindowStore;
     private static ILogger _logger;
 
     public PlayerFunctions(
         IGameCreatureManager gameCreatureManager,
         IItemFactory itemFactory,
         IItemTypeStore itemTypeStore,
+        IHouseEditWindowStore houseEditWindowStore,
         ILogger logger) : base(nameof(PlayerFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
         _itemFactory = itemFactory;
         _itemTypeStore = itemTypeStore;
+        _houseEditWindowStore = houseEditWindowStore;
         _logger = logger;
     }
 
@@ -549,7 +552,7 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
             return 1;
         }
 
-        HouseEditWindowStore.SetEditHouse(player, house.Id, listId);
+        _houseEditWindowStore.SetEditHouse(player, house.Id, listId);
         PushBoolean(luaState, true);
         return 1;
     }
@@ -574,11 +577,11 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         }
 
         // Prefer existing setEditHouse session; otherwise open a new one.
-        if (!HouseEditWindowStore.TryGetCurrent(player, out var windowTextId, out var sessionHouseId, out var sessionListId) ||
+        if (!_houseEditWindowStore.TryGetCurrent(player, out var windowTextId, out var sessionHouseId, out var sessionListId) ||
             sessionHouseId != house.Id ||
             sessionListId != listId)
         {
-            windowTextId = HouseEditWindowStore.SetEditHouse(player, house.Id, listId);
+            windowTextId = _houseEditWindowStore.SetEditHouse(player, house.Id, listId);
         }
 
         var text = house.GetAccessList(listId)?.RawText ?? string.Empty;
