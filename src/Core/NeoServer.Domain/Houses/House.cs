@@ -30,6 +30,13 @@ public class House
     public int OwnerAccountId { get; set; }
     public Location? EntryPosition { get; set; }
 
+    /// <summary>
+    ///     When true, only players with an active Premium Account may exercise
+    ///     sub-owner rights. Free-account characters keep their slot on the
+    ///     sub-owner list but are inactive until premium is restored.
+    /// </summary>
+    public bool RequirePremiumForSubOwners { get; set; } = true;
+
     public IReadOnlyCollection<IDynamicTile> Tiles => _tiles.AsReadOnly();
     public IReadOnlyDictionary<uint, IItem> Doors => _doors.AsReadOnly();
     public IReadOnlyCollection<IItem> Beds => _beds.AsReadOnly();
@@ -92,7 +99,9 @@ public class House
         if (OwnerGuid != 0 && player.Id == OwnerGuid)
             return HouseAccessLevel.Owner;
 
-        if (_accessLists.TryGetValue(HouseListId.SubOwnerList, out var subOwnerList) && subOwnerList.IsInList(player))
+        if (_accessLists.TryGetValue(HouseListId.SubOwnerList, out var subOwnerList) &&
+            subOwnerList.IsInList(player) &&
+            IsActiveSubOwner(player))
             return HouseAccessLevel.SubOwner;
 
         if (_accessLists.TryGetValue(HouseListId.GuestList, out var guestList) && guestList.IsInList(player))
@@ -100,6 +109,14 @@ public class House
 
         return HouseAccessLevel.NotInvited;
     }
+
+    /// <summary>
+    ///     Whether the player may exercise sub-owner rights. Free-account characters
+    ///     keep their slot on the sub-owner list but lose all sub-owner abilities
+    ///     until premium is restored.
+    /// </summary>
+    private bool IsActiveSubOwner(IPlayer player) =>
+        !RequirePremiumForSubOwners || player.HasPremiumTime;
 
     public bool CanUseDoor(IPlayer player, uint doorId)
     {

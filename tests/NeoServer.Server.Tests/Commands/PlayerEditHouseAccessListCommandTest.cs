@@ -71,6 +71,48 @@ public class PlayerEditHouseAccessListCommandTest
 
     [Fact]
     [Trait("Category", "HappyPath")]
+    public void Execute_SubOwnerListRemovesOnlineSubOwner_KicksRemovedPlayer()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(1, 101, 1, 101, 7, 7);
+        var subOwner = PlayerTestDataBuilder.Build(id: 2, name: "SubOwner", map: map, premiumTime: 30);
+        var subOwnerTile = (IDynamicTile)map[50, 49, 7];
+
+        var subOwnerList = HouseTestDataBuilder.CreateAccessList("SubOwner");
+        subOwnerList.RawText = "SubOwner";
+
+        var house = HouseTestDataBuilder.Build(
+            id: 10,
+            ownerGuid: 1,
+            entryPosition: new Location(50, 50, 7),
+            realTiles: [subOwnerTile],
+            accessLists: new Dictionary<uint, Domain.Houses.AccessList.HouseAccessList>
+            {
+                { HouseListId.SubOwnerList, subOwnerList }
+            });
+
+        subOwner.SetNewLocation(new Location(50, 49, 7));
+        map.PlaceCreature(subOwner);
+
+        var houseStore = new HouseStore();
+        houseStore.AddOrUpdate(10, house);
+
+        var houseRepository = new Mock<IHouseRepository>();
+        var eviction = new HouseEvictionService(CreateMovementService(map));
+        var command = CreateCommand(houseStore, houseRepository.Object, eviction);
+
+        var owner = PlayerTestDataBuilder.Build(id: 1, name: "Owner", map: map);
+
+        // Act
+        command.Execute(owner, houseId: 10, HouseListId.SubOwnerList, text: string.Empty);
+
+        // Assert
+        houseRepository.Verify(x => x.SaveAccessList(10, HouseListId.SubOwnerList, string.Empty), Times.Once);
+        subOwner.Location.Should().Be(new Location(50, 50, 7));
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
     public void Execute_DoorListEdit_DoesNotKick()
     {
         // Arrange
@@ -108,6 +150,97 @@ public class PlayerEditHouseAccessListCommandTest
         // Assert
         houseRepository.Verify(x => x.SaveAccessList(10, 1, string.Empty), Times.Once);
         guest.Location.Should().Be(new Location(50, 49, 7));
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void Execute_SubOwnerListWithElevenEntries_DoesNotSave()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(1, 101, 1, 101, 7, 7);
+        var house = HouseTestDataBuilder.Build(id: 10, ownerGuid: 1);
+
+        var houseStore = new HouseStore();
+        houseStore.AddOrUpdate(10, house);
+
+        var houseRepository = new Mock<IHouseRepository>();
+        var eviction = new HouseEvictionService(CreateMovementService(map));
+        var command = CreateCommand(houseStore, houseRepository.Object, eviction);
+        var owner = PlayerTestDataBuilder.Build(id: 1, name: "Owner", map: map);
+
+        var names = new List<string>(11);
+        for (var i = 1; i <= 11; i++)
+        {
+            names.Add($"Sub{i}");
+        }
+
+        // Act
+        command.Execute(owner, houseId: 10, HouseListId.SubOwnerList, string.Join('\n', names));
+
+        // Assert
+        houseRepository.Verify(
+            x => x.SaveAccessList(It.IsAny<uint>(), It.IsAny<uint>(), It.IsAny<string>()),
+            Times.Never);
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void Execute_SubOwnerListWithTenEntries_Saves()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(1, 101, 1, 101, 7, 7);
+        var house = HouseTestDataBuilder.Build(id: 10, ownerGuid: 1);
+
+        var houseStore = new HouseStore();
+        houseStore.AddOrUpdate(10, house);
+
+        var houseRepository = new Mock<IHouseRepository>();
+        var eviction = new HouseEvictionService(CreateMovementService(map));
+        var command = CreateCommand(houseStore, houseRepository.Object, eviction);
+        var owner = PlayerTestDataBuilder.Build(id: 1, name: "Owner", map: map);
+
+        var names = new List<string>(10);
+        for (var i = 1; i <= 10; i++)
+        {
+            names.Add($"Sub{i}");
+        }
+        var text = string.Join('\n', names);
+
+        // Act
+        command.Execute(owner, houseId: 10, HouseListId.SubOwnerList, text);
+
+        // Assert
+        houseRepository.Verify(x => x.SaveAccessList(10, HouseListId.SubOwnerList, text), Times.Once);
+    }
+
+    [Fact]
+    [Trait("Category", "EdgeCase")]
+    public void Execute_SubOwnerListExclusionsDoNotCountTowardLimit_Saves()
+    {
+        // Arrange
+        var map = MapTestDataBuilder.Build(1, 101, 1, 101, 7, 7);
+        var house = HouseTestDataBuilder.Build(id: 10, ownerGuid: 1);
+
+        var houseStore = new HouseStore();
+        houseStore.AddOrUpdate(10, house);
+
+        var houseRepository = new Mock<IHouseRepository>();
+        var eviction = new HouseEvictionService(CreateMovementService(map));
+        var command = CreateCommand(houseStore, houseRepository.Object, eviction);
+        var owner = PlayerTestDataBuilder.Build(id: 1, name: "Owner", map: map);
+
+        var lines = new List<string>(12) { "!Excluded", "# comment" };
+        for (var i = 1; i <= 10; i++)
+        {
+            lines.Add($"Sub{i}");
+        }
+        var text = string.Join('\n', lines);
+
+        // Act
+        command.Execute(owner, houseId: 10, HouseListId.SubOwnerList, text);
+
+        // Assert
+        houseRepository.Verify(x => x.SaveAccessList(10, HouseListId.SubOwnerList, text), Times.Once);
     }
 
     [Fact]

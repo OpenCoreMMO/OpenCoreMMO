@@ -29,6 +29,44 @@ public class HouseAccessLevelTests
     }
 
     [Fact]
+    public void GetAccessLevel_NonPremiumSubOwner_ReturnsNotInvited()
+    {
+        var player = HouseTestDataBuilder.CreatePlayer(name: "Sub", hasPremiumTime: false);
+        var house = HouseTestDataBuilder.Build(accessLists: new Dictionary<uint, HouseAccessList>
+        {
+            { HouseListId.SubOwnerList, HouseTestDataBuilder.CreateAccessList("Sub") }
+        });
+
+        house.GetAccessLevel(player).Should().Be(HouseAccessLevel.NotInvited);
+    }
+
+    [Fact]
+    public void GetAccessLevel_NonPremiumSubOwnerInGuestList_ReturnsGuest()
+    {
+        var player = HouseTestDataBuilder.CreatePlayer(name: "Sub", hasPremiumTime: false);
+        var house = HouseTestDataBuilder.Build(accessLists: new Dictionary<uint, HouseAccessList>
+        {
+            { HouseListId.SubOwnerList, HouseTestDataBuilder.CreateAccessList("Sub") },
+            { HouseListId.GuestList, HouseTestDataBuilder.CreateAccessList("Sub") }
+        });
+
+        house.GetAccessLevel(player).Should().Be(HouseAccessLevel.Guest);
+    }
+
+    [Fact]
+    public void GetAccessLevel_NonPremiumSubOwner_WhenPremiumNotRequired_ReturnsSubOwner()
+    {
+        var player = HouseTestDataBuilder.CreatePlayer(name: "Sub", hasPremiumTime: false);
+        var house = HouseTestDataBuilder.Build(accessLists: new Dictionary<uint, HouseAccessList>
+        {
+            { HouseListId.SubOwnerList, HouseTestDataBuilder.CreateAccessList("Sub") }
+        });
+        house.RequirePremiumForSubOwners = false;
+
+        house.GetAccessLevel(player).Should().Be(HouseAccessLevel.SubOwner);
+    }
+
+    [Fact]
     public void GetAccessLevel_PlayerInGuestListOnly_ReturnsGuest()
     {
         var player = HouseTestDataBuilder.CreatePlayer(name: "Guest");

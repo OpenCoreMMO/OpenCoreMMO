@@ -55,6 +55,14 @@ public class PlayerEditHouseAccessListCommand(
             return;
         }
 
+        if (listId == HouseListId.SubOwnerList &&
+            CountSubOwners(text) > houseConfiguration.MaxSubOwnerCount)
+        {
+            OperationFailService.Send(player,
+                $"The sub-owner list may contain at most {houseConfiguration.MaxSubOwnerCount} characters.");
+            return;
+        }
+
         // Reload the access list using the loader so parsing is consistent
         accessListLoader
             .Load(house, [(listId, text)])
@@ -64,5 +72,23 @@ public class PlayerEditHouseAccessListCommand(
         houseRepository.SaveAccessList(houseId, listId, text);
 
         houseEviction.KickUninvited(house, listId);
+    }
+
+    /// <summary>
+    ///     Counts how many sub-owners the given list text would grant access to.
+    ///     Only entries that invite players (exact names, wildcards, guilds, or
+    ///     allow-all) occupy a sub-owner slot; exclusions and comments do not.
+    /// </summary>
+    private static int CountSubOwners(string text)
+    {
+        var count = 0;
+        foreach (var entry in HouseAccessListParser.Parse(text).Entries)
+        {
+            if (entry.Kind != ListEntryKind.ExcludePlayer)
+            {
+                count++;
+            }
+        }
+        return count;
     }
 }

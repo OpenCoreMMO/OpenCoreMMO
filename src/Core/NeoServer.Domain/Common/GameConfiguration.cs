@@ -54,6 +54,8 @@ public record ReportConfiguration(uint ReportMaxTime = 60);
 public record HouseConfiguration(
     bool TransferItemsToDepotOnOwnershipChange = true,
     bool RequirePremiumAccount = true,
+    bool RequirePremiumForSubOwners = true,
     int MaxAccessListLength = 1999,
-    int MaxAccessListLines = 100
+    int MaxAccessListLines = 100,
+    int MaxSubOwnerCount = 10
 );

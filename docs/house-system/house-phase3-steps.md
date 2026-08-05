@@ -41,9 +41,29 @@ Reference behavior: guest-list spell + house window packets `0x97` / `0x8A`.
 
 ---
 
+## Slice 2 — `aleta som` (House Subowner List) — DONE
+
+### What shipped
+
+- `data/scripts/spells/house/invite_subowners.lua` — words `aleta som`, spell id **251**, `SUBOWNER_LIST` access list
+- Owner-only behavior enforced by existing domain rule `House.CanEditAccessList` (owner can edit subowner list; subowner cannot)
+- Save path already kicks uninvited occupants after subowner list updates via `IHouseEviction` (`HouseEvictionService.KickUninvited`)
+- **Max 10 sub-owners** — `HouseConfiguration.MaxSubOwnerCount` (default 10) enforced in `PlayerEditHouseAccessListCommand`; exclusions/comments don't occupy a slot
+- **Premium-gated sub-owner abilities** — `House.RequirePremiumForSubOwners` (wired from `HouseConfiguration.RequirePremiumForSubOwners`, default true): free-account characters keep their slot on the list but lose all sub-owner rights (guest-list editing, kicking, door access, entry) until premium is restored. Independent from `RequirePremiumAccount` (ownership).
+
+### In-game smoke checklist
+
+- [ ] Owner on house tile casts `aleta som` → subowner list window opens
+- [ ] Subowner casts `aleta som` → cancel + POFF
+- [ ] Guest / stranger / outside house cast → cancel + POFF
+- [ ] Owner removes a subowner name and saves → that player (if inside) teleported to exit; list persists
+- [ ] Owner saves an 11th subowner → rejected with "may contain at most 10 characters"
+- [ ] Free-account character on the subowner list loses entry + subowner abilities; regains them when premium is restored
+
+---
+
 ## Later slices (not started)
 
-- [ ] `aleta som` — House Subowner List (`invite_subowners.lua`)
 - [ ] `aleta grav` — House Door List (`edit_door.lua` + `getDoorIdByPosition`)
 - [ ] `alana sio` — House Kick (`kick_guest.lua`)
 - [ ] Talkactions: `buyhouse` / `leavehouse` / `sellhouse`
