@@ -31,8 +31,8 @@ public class HouseDoorAccessTests
     }
 
     [Fact]
-    [Trait("Category", "Validation")]
-    public void House_denies_door_use_when_player_is_guest_only()
+    [Trait("Category", "HappyPath")]
+    public void House_allows_door_use_when_player_is_guest_and_door_list_not_configured()
     {
         var player = HouseTestDataBuilder.CreatePlayer(name: "Guest");
         var house = HouseTestDataBuilder.Build(accessLists: new Dictionary<uint, HouseAccessList>
@@ -40,7 +40,7 @@ public class HouseDoorAccessTests
             { HouseListId.GuestList, HouseTestDataBuilder.CreateAccessList("Guest") }
         });
 
-        house.CanUseDoor(player, doorId: 1).Should().BeFalse();
+        house.CanUseDoor(player, doorId: 1).Should().BeTrue();
     }
 
     [Fact]
@@ -71,10 +71,24 @@ public class HouseDoorAccessTests
 
     [Fact]
     [Trait("Category", "Validation")]
-    public void House_denies_door_use_when_door_list_is_null()
+    public void House_denies_door_use_when_door_list_is_null_and_player_not_invited()
     {
         var player = HouseTestDataBuilder.CreatePlayer(name: "Stranger");
         var house = HouseTestDataBuilder.Build();
+
+        house.CanUseDoor(player, doorId: 1).Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void House_denies_door_use_when_door_list_is_empty_and_player_is_guest_only()
+    {
+        var player = HouseTestDataBuilder.CreatePlayer(name: "Guest");
+        var house = HouseTestDataBuilder.Build(accessLists: new Dictionary<uint, HouseAccessList>
+        {
+            { HouseListId.GuestList, HouseTestDataBuilder.CreateAccessList("Guest") },
+            { 1, new HouseAccessList() }
+        });
 
         house.CanUseDoor(player, doorId: 1).Should().BeFalse();
     }

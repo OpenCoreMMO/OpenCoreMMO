@@ -116,7 +116,7 @@ public class LuaActionScriptService : IActionScriptService
 
     /// <summary>
     ///     House door access gate. Non-house doors are always allowed.
-    ///     House doors without a DoorId fail closed for guests/strangers (owners/subowners/GM still allowed).
+    ///     House doors without a DoorId allow any invited character when no per-door list exists.
     /// </summary>
     private bool CanUseHouseDoor(IPlayer player, IItem item)
     {
@@ -130,11 +130,8 @@ public class LuaActionScriptService : IActionScriptService
 
         if (!TryGetDoorId(item, out var doorId))
         {
-            _logger.Warning(
-                "House door at {Location} (item {ItemServerId}) has no DoorId; denying use for non-subowners",
-                item.Location,
-                item.ServerId);
-            return house.GetAccessLevel(player) >= HouseAccessLevel.SubOwner;
+            // Door without a DoorId: allow any invited character (matches unset per-door list).
+            return house.IsInvited(player);
         }
 
         return house.CanUseDoor(player, doorId);

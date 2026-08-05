@@ -107,7 +107,13 @@ public class House
             return true;
 
         var list = GetAccessList(doorId);
-        return list is not null && list.IsInList(player);
+
+        // No per-door list configured yet — any invited character may use the door.
+        // Once a door list exists (even empty), it alone decides access for guests.
+        if (list is null)
+            return IsInvited(player);
+
+        return list.IsInList(player);
     }
 
     public bool IsInvited(IPlayer player)

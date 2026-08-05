@@ -169,9 +169,7 @@ public class HouseLoader(
 
                     if (item.Metadata.Attributes.GetAttribute(ItemTypeAttribute.Type) == "door")
                     {
-                        if (item.Attributes is not null &&
-                            item.Attributes.TryGetAttribute(ItemAttribute.DoorId, out string doorIdStr) &&
-                            uint.TryParse(doorIdStr, out var doorId))
+                        if (item.Attributes is not null && TryGetDoorId(item, out var doorId))
                         {
                             house.LinkDoor(doorId, item);
                         }
@@ -184,5 +182,28 @@ public class HouseLoader(
                 }
             }
         }
+    }
+
+    private static bool TryGetDoorId(IItem item, out uint doorId)
+    {
+        doorId = 0;
+        if (item.Attributes is null)
+        {
+            return false;
+        }
+
+        if (item.Attributes.TryGetAttribute<byte>(ItemAttribute.DoorId, out var doorIdByte))
+        {
+            doorId = doorIdByte;
+            return true;
+        }
+
+        if (item.Attributes.TryGetAttribute(ItemAttribute.DoorId, out string doorIdStr) &&
+            uint.TryParse(doorIdStr, out doorId))
+        {
+            return true;
+        }
+
+        return false;
     }
 }
