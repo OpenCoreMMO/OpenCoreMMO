@@ -29,6 +29,7 @@ public class HouseAccessLevelTests
     }
 
     [Fact]
+    [Trait("Category", "Validation")]
     public void GetAccessLevel_NonPremiumSubOwner_ReturnsNotInvited()
     {
         var player = HouseTestDataBuilder.CreatePlayer(name: "Sub", hasPremiumTime: false);
@@ -41,6 +42,7 @@ public class HouseAccessLevelTests
     }
 
     [Fact]
+    [Trait("Category", "EdgeCase")]
     public void GetAccessLevel_NonPremiumSubOwnerInGuestList_ReturnsGuest()
     {
         var player = HouseTestDataBuilder.CreatePlayer(name: "Sub", hasPremiumTime: false);
@@ -54,6 +56,7 @@ public class HouseAccessLevelTests
     }
 
     [Fact]
+    [Trait("Category", "HappyPath")]
     public void GetAccessLevel_NonPremiumSubOwner_WhenPremiumNotRequired_ReturnsSubOwner()
     {
         var player = HouseTestDataBuilder.CreatePlayer(name: "Sub", hasPremiumTime: false);
