@@ -106,7 +106,7 @@ public static class HouseTestDataBuilder
         return itemMock;
     }
 
-    public static IPlayer CreatePlayer(uint id = 1, ushort level = 10, uint guildId = 0, GuildRankInfo guildRank = null, string name = "Player", string guildName = null, Group group = null)
+    public static IPlayer CreatePlayer(uint id = 1, ushort level = 10, uint guildId = 0, GuildRankInfo guildRank = null, string name = "Player", string guildName = null, Group group = null, bool hasPremiumTime = true)
     {
         var playerMock = new Mock<IPlayer>();
         playerMock.Setup(x => x.Id).Returns(id);
@@ -117,6 +117,7 @@ public static class HouseTestDataBuilder
         playerMock.Setup(x => x.GuildRank).Returns(guildRank);
         playerMock.Setup(x => x.AccountId).Returns(id);
         playerMock.Setup(x => x.Group).Returns(group);
+        playerMock.Setup(x => x.HasPremiumTime).Returns(hasPremiumTime);
 
         if (guildName is not null)
         {

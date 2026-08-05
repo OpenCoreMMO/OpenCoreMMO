@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
@@ -25,6 +26,7 @@ public class HouseLoader(
     HouseAccessListLoader accessListLoader,
     HouseXmlParser houseXmlParser,
     ServerConfiguration serverConfiguration,
+    HouseConfiguration houseConfiguration,
     ILogger logger,
     WorldLoader worldLoader) : ICustomLoader
 {
@@ -61,6 +63,7 @@ public class HouseLoader(
             {
                 var house = houseFactory.Create(data.Id, data.Name, data.TownId, data.Rent,
                     0, string.Empty, 0, null, 0);
+                house.RequirePremiumForSubOwners = houseConfiguration.RequirePremiumForSubOwners;
 
                 if (data.EntryX != 0 || data.EntryY != 0 || data.EntryZ != 0)
                 {

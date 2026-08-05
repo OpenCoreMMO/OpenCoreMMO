@@ -60,6 +60,49 @@ public class HouseEvictionTests
     }
 
     [Fact]
+    [Trait("Category", "Validation")]
+    public void CanKick_NonPremiumSubownerKicksGuest_ReturnsFalse()
+    {
+        var tileMock = HouseTestDataBuilder.CreateTileMock();
+        var guest = HouseTestDataBuilder.CreatePlayer(id: 3, level: 5);
+        var guestMock = Mock.Get(guest);
+        guestMock.Setup(x => x.Tile).Returns(tileMock.Object);
+
+        var house = HouseTestDataBuilder.Build(
+            tiles: new List<Mock<IDynamicTile>> { tileMock },
+            accessLists: new Dictionary<uint, HouseAccessList>
+            {
+                { HouseListId.SubOwnerList, HouseTestDataBuilder.CreateAccessList("Sub") }
+            });
+
+        var subowner = HouseTestDataBuilder.CreatePlayer(id: 2, level: 50, name: "Sub", hasPremiumTime: false);
+
+        house.CanKick(subowner, guest).Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void CanKick_NonPremiumSubownerKicksGuest_WhenPremiumNotRequired_ReturnsTrue()
+    {
+        var tileMock = HouseTestDataBuilder.CreateTileMock();
+        var guest = HouseTestDataBuilder.CreatePlayer(id: 3, level: 5);
+        var guestMock = Mock.Get(guest);
+        guestMock.Setup(x => x.Tile).Returns(tileMock.Object);
+
+        var house = HouseTestDataBuilder.Build(
+            tiles: new List<Mock<IDynamicTile>> { tileMock },
+            accessLists: new Dictionary<uint, HouseAccessList>
+            {
+                { HouseListId.SubOwnerList, HouseTestDataBuilder.CreateAccessList("Sub") }
+            });
+        house.RequirePremiumForSubOwners = false;
+
+        var subowner = HouseTestDataBuilder.CreatePlayer(id: 2, level: 50, name: "Sub", hasPremiumTime: false);
+
+        house.CanKick(subowner, guest).Should().BeTrue();
+    }
+
+    [Fact]
     public void CanKick_GuestKicksAnyone_ReturnsFalse()
     {
         var tileMock = HouseTestDataBuilder.CreateTileMock();
