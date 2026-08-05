@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
@@ -64,49 +63,6 @@ public class PlayerEditHouseAccessListCommand(
 
         houseRepository.SaveAccessList(houseId, listId, text);
 
-        KickUninvitedPlayers(house, listId);
-    }
-
-    /// <summary>
-    ///     After guest/subowner list changes, kick anyone no longer invited.
-    ///     Door-list edits do not kick.
-    /// </summary>
-    private void KickUninvitedPlayers(Domain.Houses.House house, uint listId)
-    {
-        if (listId != HouseListId.GuestList && listId != HouseListId.SubOwnerList)
-        {
-            return;
-        }
-
-        var entryPosition = house.EntryPosition.GetValueOrDefault();
-        var playersToKick = new List<IPlayer>();
-
-        foreach (var tile in house.Tiles)
-        {
-            if (tile.Players is null)
-            {
-                continue;
-            }
-
-            foreach (var occupant in tile.Players)
-            {
-                if (occupant is null)
-                {
-                    continue;
-                }
-
-                if (house.IsInvited(occupant))
-                {
-                    continue;
-                }
-
-                playersToKick.Add(occupant);
-            }
-        }
-
-        foreach (var occupant in playersToKick)
-        {
-            houseEviction.TeleportToExit(occupant, entryPosition);
-        }
+        houseEviction.KickUninvited(house, listId);
     }
 }

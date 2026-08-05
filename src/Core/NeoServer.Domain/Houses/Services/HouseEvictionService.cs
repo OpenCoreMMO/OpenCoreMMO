@@ -1,3 +1,4 @@
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Services;
@@ -17,5 +18,24 @@ public class HouseEvictionService(ICreatureMovementService movementService) : IH
     public void TeleportToExit(IPlayer player, Location exit)
     {
         movementService.MoveCreature(player, exit, forced: true, isTeleport: true);
+    }
+
+    /// <summary>
+    ///     Evicts every occupant who is no longer invited after a guest/subowner list change.
+    ///     Door-list edits do not kick.
+    /// </summary>
+    public void KickUninvited(House house, uint listId)
+    {
+        if (listId != HouseListId.GuestList && listId != HouseListId.SubOwnerList)
+        {
+            return;
+        }
+
+        var exit = house.EntryPosition.GetValueOrDefault();
+
+        foreach (var occupant in house.GetUninvitedOccupants())
+        {
+            TeleportToExit(occupant, exit);
+        }
     }
 }

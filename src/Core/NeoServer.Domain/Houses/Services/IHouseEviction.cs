@@ -7,4 +7,10 @@ namespace NeoServer.Domain.Houses.Services;
 public interface IHouseEviction
 {
     void TeleportToExit(IPlayer player, Location exit);
+
+    /// <summary>
+    ///     After guest/subowner list changes, evicts every occupant no longer invited.
+    ///     Door-list edits do not kick.
+    /// </summary>
+    void KickUninvited(House house, uint listId);
 }
