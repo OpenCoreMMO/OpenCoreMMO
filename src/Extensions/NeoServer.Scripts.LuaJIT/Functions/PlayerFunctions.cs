@@ -9,7 +9,9 @@ using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Guild;
+using NeoServer.Domain.Houses;
 using NeoServer.Networking.Packets.Outgoing;
+using NeoServer.Networking.Packets.Outgoing.Window;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Common.Contracts;
@@ -23,17 +25,20 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
     private static IGameCreatureManager _gameCreatureManager;
     private static IItemFactory _itemFactory;
     private static IItemTypeStore _itemTypeStore;
+    private static IHouseEditWindowStore _houseEditWindowStore;
     private static ILogger _logger;
 
     public PlayerFunctions(
         IGameCreatureManager gameCreatureManager,
         IItemFactory itemFactory,
         IItemTypeStore itemTypeStore,
+        IHouseEditWindowStore houseEditWindowStore,
         ILogger logger) : base(nameof(PlayerFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
         _itemFactory = itemFactory;
         _itemTypeStore = itemTypeStore;
+        _houseEditWindowStore = houseEditWindowStore;
         _logger = logger;
     }
 
@@ -71,6 +76,8 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(luaState, "Player", "setStorageValue", LuaPlayerSetStorageValue);
 
         RegisterMethod(luaState, "Player", "showTextDialog", LuaPlayerShowTextDialog);
+        RegisterMethod(luaState, "Player", "setEditHouse", LuaPlayerSetEditHouse);
+        RegisterMethod(luaState, "Player", "sendHouseWindow", LuaPlayerSendHouseWindow);
 
         RegisterMethod(luaState, "Player", "addItem", LuaPlayerAddItem);
         RegisterMethod(luaState, "Player", "removeItem", LuaPlayerRemoveItem);
@@ -528,6 +535,60 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         player.Read(reliableItem);
 
+        return 1;
+    }
+
+    private static int LuaPlayerSetEditHouse(LuaState luaState)
+    {
+        // player:setEditHouse(house, listId)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        var house = GetUserdata<House>(luaState, 2);
+        var listId = GetNumber<uint>(luaState, 3);
+
+        if (player is null || house is null)
+        {
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        _houseEditWindowStore.SetEditHouse(player, house.Id, listId);
+        PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaPlayerSendHouseWindow(LuaState luaState)
+    {
+        // player:sendHouseWindow(house, listId)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        var house = GetUserdata<House>(luaState, 2);
+        var listId = GetNumber<uint>(luaState, 3);
+
+        if (player is null || house is null)
+        {
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        if (!_gameCreatureManager.GetPlayerConnection(player.CreatureId, out var connection))
+        {
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        // Prefer existing setEditHouse session; otherwise open a new one.
+        if (!_houseEditWindowStore.TryGetCurrent(player, out var windowTextId, out var sessionHouseId, out var sessionListId) ||
+            sessionHouseId != house.Id ||
+            sessionListId != listId)
+        {
+            windowTextId = _houseEditWindowStore.SetEditHouse(player, house.Id, listId);
+        }
+
+        var text = house.GetAccessList(listId)?.RawText ?? string.Empty;
+
+        connection.OutgoingPackets.Enqueue(new HouseWindowPacket(windowTextId, text));
+        connection.Send();
+
+        PushBoolean(luaState, true);
         return 1;
     }
 

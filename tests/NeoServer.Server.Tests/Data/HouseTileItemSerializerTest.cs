@@ -31,7 +31,7 @@ public class HouseTileItemSerializerTest
         swordType.SetGroup((byte)ItemGroup.MeleeWeapon);
 
         var itemTypeStore = ItemTypeStoreTestBuilder.Build(sword.Metadata);
-        var chargeableFactory = new ChargeableFactory();
+        var chargeableFactory = new ChargeCounterFactory();
         var factory = new ItemFactory(
             null,
             null,
@@ -70,7 +70,7 @@ public class HouseTileItemSerializerTest
         itemType.SetGroup((byte)ItemGroup.Cumulative);
 
         var itemTypeStore = ItemTypeStoreTestBuilder.Build(item.Metadata);
-        var chargeableFactory = new ChargeableFactory();
+        var chargeableFactory = new ChargeCounterFactory();
         var factory = new ItemFactory(
             null,
             null,

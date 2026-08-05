@@ -53,6 +53,7 @@ public static class LuaJitInjection
         builder.AddSingleton<ITileFunctions, TileFunctions>();
         builder.AddSingleton<IBankFunctions, BankFunctions>();
         builder.AddSingleton<IGuildFunctions, GuildFunctions>();
+        builder.AddSingleton<IHouseFunctions, HouseFunctions>();
 
         builder.AddSingleton<ISpellFunctions, SpellFunctions>();
         builder.AddSingleton<ICombatFunctions, CombatFunctions>();

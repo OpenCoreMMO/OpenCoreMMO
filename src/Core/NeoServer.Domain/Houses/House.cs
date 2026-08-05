@@ -107,7 +107,13 @@ public class House
             return true;
 
         var list = GetAccessList(doorId);
-        return list is not null && list.IsInList(player);
+
+        // No per-door list configured yet — any invited character may use the door.
+        // Once a door list exists (even empty), it alone decides access for guests.
+        if (list is null)
+            return IsInvited(player);
+
+        return list.IsInList(player);
     }
 
     public bool IsInvited(IPlayer player)
@@ -189,6 +195,35 @@ public class House
             return false;
 
         return true;
+    }
+
+    /// <summary>
+    ///     Returns players currently inside the house who are no longer invited.
+    ///     Used after guest/subowner list changes to evict removed occupants.
+    /// </summary>
+    public List<IPlayer> GetUninvitedOccupants()
+    {
+        var uninvited = new List<IPlayer>();
+
+        foreach (var tile in _tiles)
+        {
+            if (tile.Players is null)
+            {
+                continue;
+            }
+
+            foreach (var occupant in tile.Players)
+            {
+                if (occupant is null || IsInvited(occupant))
+                {
+                    continue;
+                }
+
+                uninvited.Add(occupant);
+            }
+        }
+
+        return uninvited;
     }
     // Rent is collected from the player's bank balance (owner.Bank.Debit). A coin-store parameter
     // was intentionally removed (Phase 1); if a future phase needs coin-specific rent, re-introduce

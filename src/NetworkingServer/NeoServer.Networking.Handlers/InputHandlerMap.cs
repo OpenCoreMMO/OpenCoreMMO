@@ -66,6 +66,7 @@ public static class InputHandlerMap
             [GameIncomingPacketType.PartyPassLeadership] = typeof(PlayerPassPartyLeadershipHandler),
             [GameIncomingPacketType.EnableSharedExp] = typeof(PartyEnableSharedExperienceHandler),
             [GameIncomingPacketType.WindowText] = typeof(PlayerWriteEventHandler),
+            [GameIncomingPacketType.WindowHouse] = typeof(PlayerHouseWindowHandler),
             [GameIncomingPacketType.OutfitChangeRequest] = typeof(PlayerRequestOutFitHandler),
             [GameIncomingPacketType.OutfitChangeCompleted] = typeof(PlayerChangeCompletedOutFitHandler),
             [GameIncomingPacketType.TradeRequest] = typeof(TradeRequestHandler),
