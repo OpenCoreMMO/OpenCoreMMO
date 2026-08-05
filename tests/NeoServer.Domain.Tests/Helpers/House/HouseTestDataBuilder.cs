@@ -26,6 +26,7 @@ public static class HouseTestDataBuilder
         byte payRentWarnings = 0,
         Location? entryPosition = null,
         List<Mock<IDynamicTile>> tiles = null,
+        List<IDynamicTile> realTiles = null,
         List<(uint DoorId, Mock<IItem> Item)> doors = null,
         List<Mock<IItem>> beds = null,
         Dictionary<uint, HouseAccessList> accessLists = null)
@@ -44,7 +45,12 @@ public static class HouseTestDataBuilder
             EntryPosition = entryPosition
         };
 
-        if (tiles is not null)
+        if (realTiles is not null)
+        {
+            foreach (var tile in realTiles)
+                house.LinkTile(tile);
+        }
+        else if (tiles is not null)
         {
             foreach (var tileMock in tiles)
             {
