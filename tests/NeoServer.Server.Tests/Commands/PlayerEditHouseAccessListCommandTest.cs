@@ -5,7 +5,9 @@ using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Houses;
 using NeoServer.Domain.Houses.Services;
 using NeoServer.Domain.Repositories;
@@ -18,8 +20,8 @@ namespace NeoServer.Server.Tests.Commands;
 
 public class PlayerEditHouseAccessListCommandTest
 {
-[Fact]
-[Trait("Category", "HappyPath")]
+    [Fact]
+    [Trait("Category", "HappyPath")]
     public void Execute_GuestListRemovesOnlineGuest_KicksUninvitedPlayer()
     {
         // Arrange
@@ -46,8 +48,9 @@ public class PlayerEditHouseAccessListCommandTest
         houseStore.Setup(x => x.GetByHouseId(10)).Returns(house);
 
         var houseRepository = new Mock<IHouseRepository>();
-        var eviction = new Mock<IHouseEviction>();
-        var command = CreateCommand(houseStore.Object, houseRepository.Object, eviction.Object);
+        var movementService = new FakeCreatureMovementService();
+        var eviction = new HouseEvictionService(movementService);
+        var command = CreateCommand(houseStore.Object, houseRepository.Object, eviction);
 
         var owner = HouseTestDataBuilder.CreatePlayer(id: 1, name: "Owner");
 
@@ -56,12 +59,14 @@ public class PlayerEditHouseAccessListCommandTest
 
         // Assert
         houseRepository.Verify(x => x.SaveAccessList(10, HouseListId.GuestList, string.Empty), Times.Once);
-        eviction.Verify(
-            x => x.TeleportToExit(guest, It.Is<Location>(l => l.X == 50 && l.Y == 50 && l.Z == 7)),
-            Times.Once);
+
+        var teleport = movementService.TeleportedPlayers.Should().ContainSingle().Subject;
+        teleport.Player.Should().BeSameAs(guest);
+        teleport.Location.Should().Be(new Location(50, 50, 7));
     }
 
     [Fact]
+    [Trait("Category", "HappyPath")]
     public void Execute_DoorListEdit_DoesNotKick()
     {
         // Arrange
@@ -84,19 +89,21 @@ public class PlayerEditHouseAccessListCommandTest
         houseStore.Setup(x => x.GetByHouseId(10)).Returns(house);
 
         var houseRepository = new Mock<IHouseRepository>();
-        var eviction = new Mock<IHouseEviction>();
-        var command = CreateCommand(houseStore.Object, houseRepository.Object, eviction.Object);
+        var movementService = new FakeCreatureMovementService();
+        var eviction = new HouseEvictionService(movementService);
+        var command = CreateCommand(houseStore.Object, houseRepository.Object, eviction);
         var owner = HouseTestDataBuilder.CreatePlayer(id: 1, name: "Owner");
 
         // Act
         command.Execute(owner, houseId: 10, listId: 1, text: string.Empty);
 
         // Assert
-        eviction.Verify(x => x.TeleportToExit(It.IsAny<IPlayer>(), It.IsAny<Location>()), Times.Never);
+        movementService.TeleportedPlayers.Should().BeEmpty();
         houseRepository.Verify(x => x.SaveAccessList(10, 1, string.Empty), Times.Once);
     }
 
     [Fact]
+    [Trait("Category", "Validation")]
     public void Execute_PlayerCannotEdit_DoesNotSave()
     {
         // Arrange
@@ -105,8 +112,9 @@ public class PlayerEditHouseAccessListCommandTest
         houseStore.Setup(x => x.GetByHouseId(10)).Returns(house);
 
         var houseRepository = new Mock<IHouseRepository>();
-        var eviction = new Mock<IHouseEviction>();
-        var command = CreateCommand(houseStore.Object, houseRepository.Object, eviction.Object);
+        var movementService = new FakeCreatureMovementService();
+        var eviction = new HouseEvictionService(movementService);
+        var command = CreateCommand(houseStore.Object, houseRepository.Object, eviction);
         var stranger = HouseTestDataBuilder.CreatePlayer(id: 99, name: "Stranger");
 
         // Act
@@ -116,10 +124,11 @@ public class PlayerEditHouseAccessListCommandTest
         houseRepository.Verify(
             x => x.SaveAccessList(It.IsAny<uint>(), It.IsAny<uint>(), It.IsAny<string>()),
             Times.Never);
-        eviction.Verify(x => x.TeleportToExit(It.IsAny<IPlayer>(), It.IsAny<Location>()), Times.Never);
+        movementService.TeleportedPlayers.Should().BeEmpty();
     }
 
     [Fact]
+    [Trait("Category", "Validation")]
     public void HouseEditWindowStore_MismatchedWindowId_ReturnsFalse()
     {
         var store = new HouseEditWindowStore();
@@ -132,6 +141,31 @@ public class PlayerEditHouseAccessListCommandTest
         listId.Should().Be(HouseListId.GuestList);
 
         store.Clear(player);
+    }
+
+    /// <summary>
+    ///     Stub movement service that records teleport requests without moving
+    ///     anything, so tests can assert on the real eviction flow.
+    /// </summary>
+    private sealed class FakeCreatureMovementService : ICreatureMovementService
+    {
+        public List<(IPlayer Player, Location Location)> TeleportedPlayers { get; } = [];
+
+        public bool MoveCreature(IWalkableCreature creature, Direction nextDirection) => true;
+
+        public void MoveCreature(IWalkableCreature creature)
+        {
+        }
+
+        public bool MoveCreature(ICreature creature, Location location, bool forced = false, bool isTeleport = false)
+        {
+            if (isTeleport && creature is IPlayer player)
+            {
+                TeleportedPlayers.Add((player, location));
+            }
+
+            return true;
+        }
     }
 
     private static PlayerEditHouseAccessListCommand CreateCommand(
