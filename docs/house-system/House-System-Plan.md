@@ -72,7 +72,8 @@ New folder: `src/Core/NeoServer.Domain/Houses/`.
   `LinkTile(IDynamicTile)` → adds tile, sets `ProtectionZone` flag, installs
   `CanEnterFunction = c => c is IPlayer p && GetAccessLevel(p) != NotInvited`;
   `LinkDoor(uint doorId, IDoorItem)`; `LinkBed(IBedItem)`. Throws if a tile is linked to two houses.
-- **Access:** `GetAccessLevel(IPlayer)`, `IsInvited`, `CanEnter(ICreature)`,
+- **Access:** `GetAccessLevel(IPlayer)` (Owner if `Group.Access` or `CanEditHouses`, else guid /
+  subowner / guest / not invited), `IsInvited`, `CanEnter(ICreature)`,
   `CanEditAccessList(listId, IPlayer)` (owner edits subowner list; owner+subowner edit guest list/doors),
   `GetAccessList(listId)` / `SetAccessList(listId, HouseAccessList)`.
 - **`SetNewOwner(guid, name, accountId, updatePaidUntil, now, rentPeriodSeconds)`** (ports `House::setOwner`):
@@ -80,9 +81,9 @@ New folder: `src/Core/NeoServer.Domain/Houses/`.
   (0/empty = unowned); if `updatePaidUntil && guid != 0` set `PaidUntil = now + rentPeriod` and
   reset warnings. Same-guid = no-op except paidUntil. No eviction/wake/depot — `HouseService`
   reads `Tiles`/`Players`/`Beds`/`AllItems` after calling this and performs side effects.
-- **`CanKick(caster, target)`** — pure check: returns `bool` (caster `>= SubOwner` and
-  `level(caster) > level(target)`, never the owner, target in this house).
-  `HouseService` teleports target on success.
+- **`CanKick(caster, target)`** — pure check: returns `bool` when the target is on a house tile,
+  caster access is not lower than target access, and the target does not have `CanEditHouses`.
+  Self-kick is allowed (equal access). `HouseService` teleports target on success.
 - **`PayRent(owner, now, rentPeriodSeconds)`** (ports `payHouses`): returns
   `HouseRentResult { NotDue, Paid, Warned, Evicted }`. Not due / rent 0 / unowned → `NotDue`.
   Sufficient bank → withdraw, advance `PaidUntil`, reset warnings → `Paid`. Insufficient → increment
@@ -139,11 +140,12 @@ Add `Helpers/House/HouseTestDataBuilder.cs`; reuse `PlayerTestDataBuilder` and
   same-guid → no evict/clear; raises `HouseOwnerChangedEvent` once.
 - **HouseAccessListTests:** `AddPlayer` (case-insensitive), `AddGuild`, `AddGuildRank` (rank `>=` match),
   `AllowAll`, `Clear` resets state, `IsInList` combinations.
-- **HouseAccessLevelTests:** owner/subowner/guest/none resolution; both-lists → SubOwner wins;
-  `IsInvited` true/false; `CanEnter` invited/uninvited; non-player → true; `CanEditAccessList`
-  owner-vs-subowner-list, subowner-vs-guest-list, guest-edits-anything-false.
-- **HouseEvictionTests:** owner/subowner kicks guest → exit; guest kicks → fail; kick owner → fail;
-  target not in house → fail; `KickOccupants` only moves now-uninvited.
+- **HouseAccessLevelTests:** owner/subowner/guest/none resolution; `CanEditHouses` → Owner;
+  both-lists → SubOwner wins; `IsInvited` true/false; `CanEnter` invited/uninvited; non-player → true;
+  `CanEditAccessList` owner-vs-subowner-list, subowner-vs-guest-list, guest-edits-anything-false.
+- **HouseEvictionTests:** owner/subowner kicks guest → allowed; guest kicks other guest / self →
+  allowed; guest kicks subowner or owner → fail; cannot kick `CanEditHouses`; `CanEditHouses` can
+  kick owner; target not in house → fail; `KickOccupants` only moves now-uninvited.
 - **HouseRentTests:** not due → NotDue/no deduction; due+funds → deduct + advance + reset warnings;
   due+no funds → increment warnings + letter event; 7th warning → evict + unown; rent 0 / unowned →
   NotDue; warnings above cap clamp to 7.
@@ -205,7 +207,7 @@ populated at Phase-2 door-location linkage — deferred from Phase 1 because doo
 not reliably available before world-attach; see `domain-tests.md` Deferred section),
 `getBeds`/`getBedCount`, `getItems`, `canEditAccessList(listId, player)`,
 `getAccessList(listId)`, `setAccessList(listId, text)`, `startTrade(player, partner)`,
-`kickPlayer(caster, target)`, `save`.
+`kickPlayer(caster, target)` (relative access via `CanKick`; `CanEditHouses` cannot be kicked), `save`.
 
 ### Extend existing function classes (don't add new Tile/Player classes)
 - `TileFunctions.Init`: add `Tile:getHouse()` → `houseStore.GetByTile(tile)`.

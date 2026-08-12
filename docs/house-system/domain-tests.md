@@ -25,6 +25,7 @@
 
 ## HouseAccessLevelTests
 - GetAccessLevel_Owner_ReturnsOwner → Owner.
+- GetAccessLevel_CanEditHouses_ReturnsOwner → Owner.
 - GetAccessLevel_PlayerInSubownerList_ReturnsSubOwner → SubOwner.
 - GetAccessLevel_PlayerInGuestListOnly_ReturnsGuest → Guest.
 - GetAccessLevel_PlayerInBothLists_ReturnsSubOwner → SubOwner (higher wins).
@@ -40,10 +41,14 @@
 - CanEditAccessList_GuestEditsAnyList_ReturnsFalse → false for guest/subowner/door lists.
 
 ## HouseEvictionTests
-- CanKick_OwnerKicksGuest_ReturnsTrue → true (caster >= SubOwner, level > target, target on house tile).
+- CanKick_OwnerKicksGuest_ReturnsTrue → true (caster access >= target, target on house tile).
 - CanKick_SubownerKicksGuest_ReturnsTrue → true.
-- CanKick_GuestKicksAnyone_ReturnsFalse → false (caster access too low).
-- CanKick_AnyoneKicksOwner_ReturnsFalse → false (cannot kick owner).
+- CanKick_GuestKicksOtherGuest_ReturnsTrue → true (equal access).
+- CanKick_GuestKicksSelf_ReturnsTrue → true.
+- CanKick_GuestKicksSubowner_ReturnsFalse → false (caster access too low).
+- CanKick_SubownerKicksOwner_ReturnsFalse → false (cannot kick higher access).
+- CanKick_CannotKickPlayerWithCanEditHouses_ReturnsFalse → false.
+- CanKick_CanEditHousesKicksOwner_ReturnsTrue → true.
 - CanKick_TargetNotInHouse_ReturnsFalse → false (target.Tile not in house tiles).
 
 ## HouseRentTests

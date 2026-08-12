@@ -1,4 +1,5 @@
 using NeoServer.Domain.Common.Contracts.Creatures;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Tests.Helpers.House;
 using NeoServer.Domain.Houses;
 using NeoServer.Domain.Houses.AccessList;
@@ -11,6 +12,18 @@ public class HouseAccessLevelTests
     public void GetAccessLevel_Owner_ReturnsOwner()
     {
         var player = HouseTestDataBuilder.CreatePlayer(id: 1);
+        var house = HouseTestDataBuilder.Build(ownerGuid: 1);
+
+        house.GetAccessLevel(player).Should().Be(HouseAccessLevel.Owner);
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void GetAccessLevel_CanEditHouses_ReturnsOwner()
+    {
+        var group = new Group();
+        group.EnableFlag(PlayerFlag.CanEditHouses);
+        var player = HouseTestDataBuilder.CreatePlayer(id: 99, group: group);
         var house = HouseTestDataBuilder.Build(ownerGuid: 1);
 
         house.GetAccessLevel(player).Should().Be(HouseAccessLevel.Owner);

@@ -62,10 +62,46 @@ Reference behavior: guest-list spell + house window packets `0x97` / `0x8A`.
 
 ---
 
+## Slice 2 — `alana sio` (House Kick) — DONE
+
+Reference behavior: TFS `kick_guest.lua` (words `alana sio`).
+
+### What shipped
+
+1. **Lua binding** — `house:kickPlayer(caster, target) -> bool` in `HouseFunctions`
+   - Injects `IHouseService` (same static-field pattern as `_houseStore`)
+   - Verifies the target stands on a tile that belongs to the house (`IHouseStore.GetByTile`)
+   - Delegates to `HouseService.KickPlayer` (no self-kick bypass). `CanKick` matches TFS
+     `House::kickPlayer`: target on a house tile, caster access is not lower than target access,
+     target does not have `CanEditHouses`. Persists via `IHouseRepository.Save`.
+   - Returns a bool only — no `OperationFailService` messages (Lua owns cancel/POFF)
+
+2. **Missing `sendCancelMessage` binding** (needed for the spell's cancel path, also used by `aleta sio`)
+   - `Player:sendCancelMessage` / `Creature:sendCancelMessage`
+   - Accepts a literal string or a `RETURNVALUE_*` constant; routes through `OperationFailService`
+
+3. **Spell**
+   - `data/scripts/spells/house/kick_guest.lua` — words `alana sio`, `hasParams(true)`, no `needTarget` (unlimited range: house resolved from the **target's** tile)
+   - No name param → target falls back to the caster (self-kick)
+
+4. **Command tests**
+   - `PlayerKickFromHouseCommandTest`: self-kick, owner kicks guest, guest kicks other guest, guest cannot kick owner, target not in house
+
+### In-game smoke checklist
+
+- [ ] Inside a house, cast `alana sio` with no name → caster is teleported to the house exit
+- [ ] Owner / subowner casts `alana sio "Name"` on an online guest inside the house → guest teleported to exit
+- [ ] Guest casts `alana sio` on another guest → target teleported to exit
+- [ ] Guest kicks a subowner / anyone kicks the owner → cancel + POFF, target stays
+- [ ] Owner cannot kick a player with `CanEditHouses`; that player can kick the owner
+- [ ] Remote kick: subowner outside the house kicks a guest inside → works (unlimited range)
+- [ ] Target not inside a house → cancel + POFF
+
+---
+
 ## Later slices (not started)
 
 - [ ] `aleta grav` — House Door List (`edit_door.lua` + `getDoorIdByPosition`)
-- [ ] `alana sio` — House Kick (`kick_guest.lua`)
 - [ ] Talkactions: `buyhouse` / `leavehouse` / `sellhouse`
 - [ ] Full `HouseFunctions` surface (tiles, doors, beds, rent, trade, save)
 - [ ] Rent warning letters

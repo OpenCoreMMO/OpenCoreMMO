@@ -320,15 +320,17 @@ public class SpellTests
     }
 
     [Fact]
-    public void TryGetInstantSpell_UtevoResSpell_RequiresValidParameters()
+    public void TryGetInstantSpell_UtevoResSpell_SupportsOptionalParameters()
     {
         // Arrange
         var utevoResSpell = new TestSpell { Words = "utevo res", Name = "utevo res", HasParams = true };
         _spellListManager.Add("utevo res", utevoResSpell);
 
         // Act & Assert
-        // words = utevo res return null
-        _spellListManager.TryGetInstantSpell("utevo res", out var spell1).Should().BeFalse();
+        // words without params still resolve; script validates empty param
+        _spellListManager.TryGetInstantSpell("utevo res", out var spell1).Should().BeTrue();
+        spell1.Should().Be(utevoResSpell);
+        spell1.Params.Should().BeEmpty();
 
         // words = utevo res "rat" return spell with params "rat"
         _spellListManager.TryGetInstantSpell("utevo res \"rat\"", out var spell2).Should().BeTrue();
@@ -339,6 +341,10 @@ public class SpellTests
         _spellListManager.TryGetInstantSpell("utevo res \"rat", out var spell3).Should().BeTrue();
         spell3.Should().Be(utevoResSpell);
         spell3.Params.Should().BeEquivalentTo(["rat"]);
+
+        // casting without params again clears leftover params from prior cast
+        _spellListManager.TryGetInstantSpell("utevo res", out var spell4).Should().BeTrue();
+        spell4.Params.Should().BeEmpty();
     }
 
     [Fact]

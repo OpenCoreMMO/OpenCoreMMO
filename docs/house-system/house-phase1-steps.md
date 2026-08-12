@@ -108,7 +108,7 @@ last from primitives so tests can target each piece in isolation.
 
 ### Step 7 — Access resolution
 - **What:** On `House`:
-  - `HouseAccessLevel GetAccessLevel(IPlayer)` → Owner if guid match (and owner≠0); else SubOwner if in subowner list; else Guest if in guest list; else NotInvited.
+  - `HouseAccessLevel GetAccessLevel(IPlayer)` → Owner if `Group.Access` or `CanEditHouses`; else Owner if guid match (and owner≠0); else SubOwner if in subowner list and premium (when required); else Guest if in guest list; else NotInvited.
   - `bool IsInvited(IPlayer)` ⇒ `GetAccessLevel != NotInvited`.
   - `bool CanEnter(ICreature)` ⇒ non-players true; players ⇒ `IsInvited`.
   - `bool CanEditAccessList(uint listId, IPlayer)` ⇒ subowner list requires Owner; guest list / door lists require `>= SubOwner`.
@@ -131,9 +131,10 @@ last from primitives so tests can target each piece in isolation.
 - **Done-when:** `HouseOwnershipTests` pass (owner state changes, lists cleared).
 
 ### Step 9 — Kick / eviction (pure check)
-- **What:** `bool CanKick(IPlayer caster, IPlayer target)` → returns true if caster `>= SubOwner`
-  and `level(caster) > level(target)`, never the owner, target must be in this house. Pure check —
-  no teleport inside aggregate. `HouseService` calls `IHouseEviction` on success.
+- **What:** `bool CanKick(IPlayer caster, IPlayer target)` → returns true when the target is on a
+  house tile, `GetAccessLevel(caster) >= GetAccessLevel(target)`, and the target does not have
+  `CanEditHouses`. Pure check — no teleport inside aggregate. `HouseService` calls `IHouseEviction`
+  on success.
 - **Where:** `Houses/House.cs`
 - **Depends on:** Steps 7.
 - **Done-when:** `HouseEvictionTests` pass.
@@ -230,6 +231,7 @@ Each row: **Test → Expected output**. Groups map to the Step-12 test classes.
 
 ## HouseAccessLevelTests
 - GetAccessLevel_Owner_ReturnsOwner → Owner.
+- GetAccessLevel_CanEditHouses_ReturnsOwner → Owner.
 - GetAccessLevel_PlayerInSubownerList_ReturnsSubOwner → SubOwner.
 - GetAccessLevel_PlayerInGuestListOnly_ReturnsGuest → Guest.
 - GetAccessLevel_PlayerInBothLists_ReturnsSubOwner → SubOwner (higher wins).
@@ -247,8 +249,12 @@ Each row: **Test → Expected output**. Groups map to the Step-12 test classes.
 ## HouseEvictionTests (pure aggregate checks)
 - CanKick_OwnerKicksGuest_ReturnsTrue → returns true.
 - CanKick_SubownerKicksGuest_ReturnsTrue → returns true.
-- CanKick_GuestKicksAnyone_ReturnsFalse → returns false.
-- CanKick_AnyoneKicksOwner_ReturnsFalse → returns false.
+- CanKick_GuestKicksOtherGuest_ReturnsTrue → true (equal access).
+- CanKick_GuestKicksSelf_ReturnsTrue → true.
+- CanKick_GuestKicksSubowner_ReturnsFalse → false (caster access too low).
+- CanKick_SubownerKicksOwner_ReturnsFalse → false (cannot kick higher access).
+- CanKick_CannotKickPlayerWithCanEditHouses_ReturnsFalse → false.
+- CanKick_CanEditHousesKicksOwner_ReturnsTrue → true (staff counts as owner access).
 - CanKick_TargetNotInHouse_ReturnsFalse → returns false.
 - Note: teleport side effect tested in HouseServiceTests.
 

@@ -6,6 +6,7 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Common.Texts;
 using NeoServer.Domain.Creatures;
 using NeoServer.Domain.Creatures.Player.Outfit;
 using NeoServer.Domain.Items.Items;
@@ -951,6 +952,29 @@ public class LuaFunctionsLoader
         if (parameters == 0 || arg > parameters) return defaultValue;
 
         return Lua.ToBoolean(luaState, arg);
+    }
+
+    /// <summary>
+    ///     Resolves a cancel message argument for sendCancelMessage.
+    ///     Accepts a literal string or a ReturnValueType number; unknown return
+    ///     values fall back to the generic "Sorry, not possible." message.
+    /// </summary>
+    public static string GetCancelMessage(LuaState luaState, int arg)
+    {
+        if (IsNumber(luaState, arg))
+        {
+            var returnValue = GetNumber<ReturnValueType>(luaState, arg);
+            return returnValue switch
+            {
+                ReturnValueType.RETURNVALUE_NOTPOSSIBLE => TextConstants.NOT_POSSIBLE,
+                ReturnValueType.RETURNVALUE_NOTENOUGHROOM => TextConstants.NOT_ENOUGH_ROOM,
+                ReturnValueType.RETURNVALUE_PLAYERISNOTINVITED => TextConstants.YOU_ARE_NOT_INVITED,
+                _ => TextConstants.NOT_POSSIBLE
+            };
+        }
+
+        var message = GetString(luaState, arg);
+        return string.IsNullOrEmpty(message) ? TextConstants.NOT_POSSIBLE : message;
     }
 
     public static string GetString(LuaState luaState, int arg, string defaultValue)

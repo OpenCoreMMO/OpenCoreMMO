@@ -2,6 +2,7 @@ using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Services;
+using NeoServer.Domain.Houses.Events;
 
 namespace NeoServer.Domain.Houses.Services;
 
@@ -17,7 +18,13 @@ public class HouseEvictionService(ICreatureMovementService movementService) : IH
     /// </summary>
     public void TeleportToExit(IPlayer player, Location exit)
     {
-        movementService.MoveCreature(player, exit, forced: true, isTeleport: true);
+        var oldPosition = player.Location;
+        if (!movementService.MoveCreature(player, exit, forced: true, isTeleport: true))
+        {
+            return;
+        }
+
+        EventAggregator.Invoke(new PlayerKickedFromHouseEvent(player, oldPosition, exit));
     }
 
     /// <summary>

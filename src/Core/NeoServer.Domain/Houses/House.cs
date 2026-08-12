@@ -3,6 +3,7 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Location.Structs;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Houses.AccessList;
 
 namespace NeoServer.Domain.Houses;
@@ -93,7 +94,8 @@ public class House
 
     public HouseAccessLevel GetAccessLevel(IPlayer player)
     {
-        if (player.Group?.Access == true)
+        if (player.Group?.Access == true ||
+            player.Group?.FlagIsEnabled(PlayerFlag.CanEditHouses) == true)
             return HouseAccessLevel.Owner;
 
         if (OwnerGuid != 0 && player.Id == OwnerGuid)
@@ -199,16 +201,13 @@ public class House
 
     public bool CanKick(IPlayer caster, IPlayer target)
     {
-        if (GetAccessLevel(caster) < HouseAccessLevel.SubOwner)
-            return false;
-
-        if (OwnerGuid != 0 && target.Id == OwnerGuid)
-            return false;
-
-        if (caster.Level <= target.Level)
-            return false;
-
         if (!_tiles.Contains(target.Tile))
+            return false;
+
+        if (GetAccessLevel(caster) < GetAccessLevel(target))
+            return false;
+
+        if (target.Group?.FlagIsEnabled(PlayerFlag.CanEditHouses) == true)
             return false;
 
         return true;
