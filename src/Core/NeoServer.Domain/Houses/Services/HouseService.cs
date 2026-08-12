@@ -85,7 +85,6 @@ public class HouseService(
             return false;
 
         eviction.TeleportToExit(target, house.EntryPosition.GetValueOrDefault());
-        houseRepository.Save(house);
         return true;
     }
 

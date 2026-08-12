@@ -114,15 +114,7 @@ public class HouseFunctions : LuaScriptInterface, IHouseFunctions
             return 1;
         }
 
-        // The target must be standing on a tile that belongs to this house.
-        if (_houseStore.GetByTile(target.Tile)?.Id != house.Id)
-        {
-            PushBoolean(luaState, false);
-            return 1;
-        }
-
-        // HouseService validates CanKick (relative access, CanEditHouses, tile)
-        // and persists via IHouseRepository.Save on success.
+        // HouseService validates CanKick (relative access, CanEditHouses, tile).
         PushBoolean(luaState, _houseService.KickPlayer(house, caster, target));
         return 1;
     }

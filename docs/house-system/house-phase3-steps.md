@@ -70,10 +70,9 @@ Reference behavior: TFS `kick_guest.lua` (words `alana sio`).
 
 1. **Lua binding** — `house:kickPlayer(caster, target) -> bool` in `HouseFunctions`
    - Injects `IHouseService` (same static-field pattern as `_houseStore`)
-   - Verifies the target stands on a tile that belongs to the house (`IHouseStore.GetByTile`)
    - Delegates to `HouseService.KickPlayer` (no self-kick bypass). `CanKick` matches TFS
      `House::kickPlayer`: target on a house tile, caster access is not lower than target access,
-     target does not have `CanEditHouses`. Persists via `IHouseRepository.Save`.
+     target does not have `CanEditHouses`. Kick does not persist — it mutates no house state.
    - Returns a bool only — no `OperationFailService` messages (Lua owns cancel/POFF)
 
 2. **Missing `sendCancelMessage` binding** (needed for the spell's cancel path, also used by `aleta sio`)

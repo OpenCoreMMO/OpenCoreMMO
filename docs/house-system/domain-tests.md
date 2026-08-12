@@ -110,7 +110,7 @@
 - PayRent_Warned_RaisesHouseRentWarningEvent → warning event raised with house, owner, warning number.
 - PayRent_Evicted_RaisesHouseEvictedEvent → eviction event raised with house.
 - PayRent_Paid_PersistsHouseState → repository.Save called after successful payment.
-- CanKick_Success_TeleportsTargetAndPersists → eviction seam called + repository.Save.
+- CanKick_Success_TeleportsTargetWithoutPersisting → eviction seam called; no repository.Save (kick mutates no house state).
 - CanKick_Failure_NoSideEffects → no eviction or persist calls.
 
 ## HousePremiumValidationTests

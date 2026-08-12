@@ -204,7 +204,7 @@ public class HouseServiceTests
     }
 
     [Fact]
-    public void CanKick_Success_TeleportsTargetAndPersists()
+    public void CanKick_Success_TeleportsTargetWithoutPersisting()
     {
         var tileMock = HouseTestDataBuilder.CreateTileMock();
         var target = HouseTestDataBuilder.CreatePlayer(id: 2, level: 5);
@@ -228,7 +228,7 @@ public class HouseServiceTests
 
         evictionMock.Verify(x => x.TeleportToExit(target,
             It.Is<Location>(l => l.X == 100 && l.Y == 100 && l.Z == 7)), Times.Once);
-        repoMock.Verify(x => x.Save(house), Times.Once);
+        repoMock.Verify(x => x.Save(It.IsAny<House>()), Times.Never);
     }
 
     [Fact]

@@ -159,8 +159,8 @@ last from primitives so tests can target each piece in isolation.
     (`IHouseDepotTransfer`). Persists via `IHouseRepository`. Raises `HouseOwnerChangedEvent`.
   - `PayRent(House, owner)` → calls `House.PayRent(...)`, persists via `IHouseRepository`,
     raises `HouseRentWarningEvent` / `HouseEvictedEvent` based on result.
-  - `KickPlayer(House, caster, target)` → calls `House.KickPlayer(...)`, on success teleports
-    target via `IHouseEviction` and persists via `IHouseRepository`.
+  - `KickPlayer(House, caster, target)` → calls `House.CanKick(...)`, on success teleports
+    target via `IHouseEviction`. Does not persist: kick mutates no house state.
 - **Where:** `Houses/Services/`
 - **Depends on:** Steps 5, 8, 10, and `IHouseRepository` contract.
 - **Done-when:** service compiles; ownership/rent/eviction DB flow verified via mocks.
@@ -303,7 +303,7 @@ Each row: **Test → Expected output**. Groups map to the Step-12 test classes.
 - PayRent_Warned_RaisesHouseRentWarningEvent → event published when PayRent returns Warned.
 - PayRent_Evicted_RaisesHouseEvictedEvent → event published when PayRent returns Evicted.
 - PayRent_Paid_PersistsHouseState → repository.Save called.
-- CanKick_Success_TeleportsTargetAndPersists → eviction seam called + repository.Save.
+- CanKick_Success_TeleportsTargetWithoutPersisting → eviction seam called; no repository.Save.
 - CanKick_Failure_NoSideEffects → no eviction or persist called.
 ```
 

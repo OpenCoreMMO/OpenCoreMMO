@@ -110,8 +110,8 @@ Events are for player notifications, not for DB persistence. `HouseService` call
   (`IHouseDepotTransfer`). Persists via `IHouseRepository`. Raises `HouseOwnerChangedEvent`.
 - `PayRent(House, owner)` — calls `House.PayRent(...)`, persists via `IHouseRepository`,
   raises `HouseRentWarningEvent` or `HouseEvictedEvent` as needed.
-- `KickPlayer(House, caster, target)` — calls `House.KickPlayer(...)`, on success teleports target
-  via `IHouseEviction` and persists via `IHouseRepository`.
+- `KickPlayer(House, caster, target)` — calls `House.CanKick(...)`, on success teleports target
+  via `IHouseEviction`. Does not persist: kick mutates no house state.
 - `CanPlayerOwnHouse(IPlayer)` — centralized premium validation. Returns `false` when
   `RequirePremiumAccount` is `true` and the player lacks premium time; returns `true` in
   all other cases (null guarded). Callers (Lua, talkactions, transfer logic) must check this
