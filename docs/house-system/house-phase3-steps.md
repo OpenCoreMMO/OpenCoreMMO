@@ -84,8 +84,8 @@ Reference behavior: TFS `kick_guest.lua` (words `alana sio`).
    - `data/scripts/spells/house/kick_guest.lua` — words `alana sio`, `hasParams(true)`, no `needTarget` (unlimited range: house resolved from the **target's** tile)
    - No name param → target falls back to the caster (self-kick)
 
-4. **Command tests**
-   - `PlayerKickFromHouseCommandTest`: self-kick, owner kicks guest, guest kicks other guest, guest cannot kick owner, target not in house
+4. **Domain tests**
+   - `HouseEvictionTests` / `HouseServiceTests.CanKick`: self-kick, owner kicks guest, guest kicks other guest, guest cannot kick owner, target not in house
 
 ### In-game smoke checklist
 
