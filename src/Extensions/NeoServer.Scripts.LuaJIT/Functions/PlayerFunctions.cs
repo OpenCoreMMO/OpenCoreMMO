@@ -4,7 +4,6 @@ using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Common.Creatures;
-using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player;
@@ -84,7 +83,6 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(luaState, "Player", "removeItem", LuaPlayerRemoveItem);
 
         RegisterMethod(luaState, "Player", "sendTextMessage", LuaPlayerSendTextMessage);
-        RegisterMethod(luaState, "Player", "sendCancelMessage", LuaPlayerSendCancelMessage);
 
         RegisterMethod(luaState, "Player", "isPzLocked", LuaPlayerIsPzLocked);
 
@@ -780,21 +778,6 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         NotificationSenderService.Send(player, messageText, (TextMessageOutgoingType)messageType);
         PushBoolean(luaState, true);
 
-        return 1;
-    }
-
-    private static int LuaPlayerSendCancelMessage(LuaState luaState)
-    {
-        // player:sendCancelMessage(message or returnValue)
-        var player = GetUserdata<IPlayer>(luaState, 1);
-        if (player is null)
-        {
-            PushBoolean(luaState, false);
-            return 1;
-        }
-
-        OperationFailService.Send(player, GetCancelMessage(luaState, 2));
-        PushBoolean(luaState, true);
         return 1;
     }
 

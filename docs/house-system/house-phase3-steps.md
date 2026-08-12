@@ -75,9 +75,11 @@ Reference behavior: TFS `kick_guest.lua` (words `alana sio`).
      target does not have `CanEditHouses`. Kick does not persist — it mutates no house state.
    - Returns a bool only — no `OperationFailService` messages (Lua owns cancel/POFF)
 
-2. **Missing `sendCancelMessage` binding** (needed for the spell's cancel path, also used by `aleta sio`)
-   - `Player:sendCancelMessage` / `Creature:sendCancelMessage`
-   - Accepts a literal string or a `RETURNVALUE_*` constant; routes through `OperationFailService`
+2. **Cancel path** uses the existing Lua `Player.sendCancelMessage` helper
+   (`data/libs/functions/player.lua`), same as TFS. Spell scripts may call
+   `creature:sendCancelMessage` because a player caster is pushed with the Player
+   metatable. Accepts a literal string or a `RETURNVALUE_*` constant via
+   `Game.getReturnMessage`.
 
 3. **Spell**
    - `data/scripts/spells/house/kick_guest.lua` — words `alana sio`, `hasParams(true)`, no `needTarget` (unlimited range: house resolved from the **target's** tile)

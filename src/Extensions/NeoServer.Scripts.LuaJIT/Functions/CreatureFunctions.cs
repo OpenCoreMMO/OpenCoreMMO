@@ -11,7 +11,6 @@ using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Creatures.Events;
-using NeoServer.Domain.Common.Services;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
@@ -69,7 +68,6 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         RegisterMethod(luaState, "Creature", "hasCondition", LuaCreatureHasCondition);
 
         RegisterMethod(luaState, "Creature", "say", LuaCreatureSay);
-        RegisterMethod(luaState, "Creature", "sendCancelMessage", LuaCreatureSendCancelMessage);
 
         RegisterMethod(luaState, "Creature", "getSummons", LuaCreatureGetSummons);
         RegisterMethod(luaState, "Creature", "move", LuaCreatureMove);
@@ -488,21 +486,6 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         }
 
         PushBoolean(luaState, false);
-        return 1;
-    }
-
-    private static int LuaCreatureSendCancelMessage(LuaState luaState)
-    {
-        // creature:sendCancelMessage(message or returnValue)
-        var creature = GetUserdata<ICreature>(luaState, 1);
-        if (creature is not IPlayer player)
-        {
-            PushBoolean(luaState, false);
-            return 1;
-        }
-
-        OperationFailService.Send(player, GetCancelMessage(luaState, 2));
-        PushBoolean(luaState, true);
         return 1;
     }
 
