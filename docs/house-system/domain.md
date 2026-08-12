@@ -295,7 +295,7 @@ Having a house offers many great advantages, here are a few of them:
 **Main Flow:**
 1. Sub-Owner enters the house.
 2. Sub-Owner may edit the guest list (UC-17).
-3. Sub-Owner may kick other characters out of the house.
+3. Sub-Owner may kick characters whose house access is not higher than their own (guests, other sub-owners, uninvited occupants). They cannot kick the owner or a player with `CanEditHouses`.
 
 **Alternate Flow:**
 - Sub-Owner's Premium Account expires → character remains on the sub-owner list but loses all sub-owner abilities until Premium is restored.
@@ -370,22 +370,26 @@ Having a house offers many great advantages, here are a few of them:
 
 #### UC-25: Cast alana sio "character" — Kick Character
 
-**Actor:** House Owner, Sub-Owner, or the target character themselves
+**Actor:** Any player whose house access is not lower than the target's
 
-**Precondition:** Target character is inside a house the actor has rights to.
+**Precondition:** Target character is standing on a tile of the house.
 
 **Main Flow:**
-1. Actor casts alana sio "character", replacing character with the target's name.
-2. System teleports the target character to the front door of the house.
+1. Actor casts alana sio "character", replacing character with the target's name. With no name, the caster is the target.
+2. System resolves the house from the **target's** tile (not the caster's).
+3. If the caster's house access is not lower than the target's, and the target does not have `CanEditHouses`, the system teleports the target to the house front door (entry).
+4. Otherwise the cast fails (cancel + POFF). The target stays put.
 
 **Alternate Flow — Self-Kick:**
-1. Any character inside a house casts the spell targeting themselves.
-2. System moves them to the front door.
+1. A character inside a house casts the spell with no name, or targeting themselves.
+2. Access levels are equal, so the kick succeeds unless they have `CanEditHouses`.
+3. System moves them to the front door.
 
 **Business Rules:**
-- Owners and Sub-Owners can kick any other player inside their house.
-- Any character can cast this spell on themselves.
-- The spell has unlimited range — it can be cast from anywhere in the game world, as long as the caster has rights to the house where the target is located.
+- Kick is allowed when `GetAccessLevel(caster) >= GetAccessLevel(target)` and the target does not have `CanEditHouses`.
+- Equal access can kick (guest kicks guest; self-kick). Lower access cannot (guest cannot kick sub-owner or owner; sub-owner cannot kick owner).
+- Players with `CanEditHouses` cannot be kicked. They count as house owner access, so they can kick the recorded owner.
+- The spell has unlimited range and can be cast from outside the house — anywhere in the game world — as long as the target is inside a house the caster has sufficient access to.
 
 #### UC-26: Cast aleta grav — Edit Door Access List
 

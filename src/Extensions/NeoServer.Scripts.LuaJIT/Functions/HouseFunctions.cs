@@ -2,21 +2,25 @@ using LuaNET;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Houses;
+using NeoServer.Domain.Houses.Services;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
 /// <summary>
-///     Minimal House Lua bindings for Phase 3 spell slice (aleta sio).
+///     Minimal House Lua bindings for Phase 3 spell slices (aleta sio, alana sio).
 ///     Full HouseFunctions surface (doors, trade, rent, etc.) comes in later slices.
 /// </summary>
 public class HouseFunctions : LuaScriptInterface, IHouseFunctions
 {
     private static IHouseStore _houseStore;
+    private static IHouseService _houseService;
 
-    public HouseFunctions(IHouseStore houseStore) : base(nameof(HouseFunctions))
+    public HouseFunctions(IHouseStore houseStore, IHouseService houseService) :
+        base(nameof(HouseFunctions))
     {
         _houseStore = houseStore;
+        _houseService = houseService;
     }
 
     public void Init(LuaState luaState)
@@ -27,6 +31,7 @@ public class HouseFunctions : LuaScriptInterface, IHouseFunctions
         RegisterMethod(luaState, "House", "getId", LuaHouseGetId);
         RegisterMethod(luaState, "House", "canEditAccessList", LuaHouseCanEditAccessList);
         RegisterMethod(luaState, "House", "getAccessList", LuaHouseGetAccessList);
+        RegisterMethod(luaState, "House", "kickPlayer", LuaHouseKickPlayer);
 
         RegisterGlobalVariable(luaState, "GUEST_LIST", HouseListId.GuestList);
         RegisterGlobalVariable(luaState, "SUBOWNER_LIST", HouseListId.SubOwnerList);
@@ -93,6 +98,24 @@ public class HouseFunctions : LuaScriptInterface, IHouseFunctions
 
         var list = house.GetAccessList(listId);
         Lua.PushString(luaState, list?.RawText ?? string.Empty);
+        return 1;
+    }
+
+    private static int LuaHouseKickPlayer(LuaState luaState)
+    {
+        // house:kickPlayer(caster, target) -> bool
+        var house = GetUserdata<House>(luaState, 1);
+        var caster = GetUserdata<IPlayer>(luaState, 2);
+        var target = GetUserdata<IPlayer>(luaState, 3);
+
+        if (house is null || caster is null || target is null)
+        {
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        // HouseService validates CanKick (relative access, CanEditHouses, tile).
+        PushBoolean(luaState, _houseService.KickPlayer(house, caster, target));
         return 1;
     }
 }
