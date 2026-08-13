@@ -1,8 +1,6 @@
-using NeoServer.Data.InMemory.DataStores;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Houses;
-using NeoServer.Domain.World.Models.Tiles;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("NeoServer.Domain.Tests")]
 
@@ -12,8 +10,10 @@ public class HouseStore : DataStore<HouseStore, uint, House>, IHouseStore
 {
     public House GetByTile(ITile tile)
     {
-        var houseId = (tile as DynamicTile)?.HouseId;
-        return houseId.HasValue ? Get(houseId.Value) : null;
+        if (tile is not IDynamicTile dynamicTile || dynamicTile.HouseId is not > 0)
+            return null;
+
+        return Get(dynamicTile.HouseId.Value);
     }
 
     public House GetByHouseId(uint houseId)

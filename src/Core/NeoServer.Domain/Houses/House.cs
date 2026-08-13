@@ -122,17 +122,88 @@ public class House
 
     public bool CanUseDoor(IPlayer player, uint doorId)
     {
+        _doors.TryGetValue(doorId, out var door);
+        return CanUseDoor(player, door?.Location ?? default, doorId);
+    }
+
+    /// <summary>
+    ///     Invited players may open/close the house entry door. Internal doors require
+    ///     sub-owner access or an explicit per-door list entry.
+    /// </summary>
+    public bool CanUseDoor(IPlayer player, Location doorLocation, uint? doorId = null)
+    {
         if (GetAccessLevel(player) >= HouseAccessLevel.SubOwner)
             return true;
 
-        var list = GetAccessList(doorId);
+        if (IsInvited(player) && IsEntryDoor(doorLocation, doorId))
+            return true;
 
-        // No per-door list configured yet — any invited character may use the door.
-        // Once a door list exists (even empty), it alone decides access for guests.
-        if (list is null)
-            return IsInvited(player);
+        if (doorId is null)
+            return false;
 
-        return list.IsInList(player);
+        var list = GetAccessList(doorId.Value);
+        return list is not null && list.IsInList(player);
+    }
+
+    /// <summary>
+    ///     The entry door is the house door on or adjacent to <see cref="EntryPosition"/>
+    ///     (the kick/exit tile). When several doors qualify, the closest one wins.
+    /// </summary>
+    public bool IsEntryDoor(Location doorLocation, uint? doorId = null)
+    {
+        if (EntryPosition is null)
+            return false;
+
+        var entry = EntryPosition.Value;
+        if (doorLocation.Z != entry.Z)
+            return false;
+
+        var entryDoorId = FindEntryDoorId();
+        if (entryDoorId is not null)
+        {
+            if (doorId is not null)
+                return doorId == entryDoorId;
+
+            if (_doors.TryGetValue(entryDoorId.Value, out var entryDoor) && entryDoor is not null)
+                return entryDoor.Location == doorLocation;
+        }
+
+        return doorLocation.GetMaxSqmDistance(entry) <= 1;
+    }
+
+    private uint? FindEntryDoorId()
+    {
+        if (EntryPosition is null)
+            return null;
+
+        var entry = EntryPosition.Value;
+        uint? bestId = null;
+        var bestDistance = int.MaxValue;
+
+        foreach (var (id, door) in _doors)
+        {
+            if (door is null)
+                continue;
+
+            var location = door.Location;
+            if (location.Z != entry.Z)
+                continue;
+
+            var distance = location.GetMaxSqmDistance(entry);
+            if (distance > 1)
+                continue;
+
+            if (distance > bestDistance)
+                continue;
+
+            if (distance < bestDistance || bestId is null || id < bestId)
+            {
+                bestDistance = distance;
+                bestId = id;
+            }
+        }
+
+        return bestId;
     }
 
     public bool IsInvited(IPlayer player)

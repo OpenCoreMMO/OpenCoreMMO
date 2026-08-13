@@ -1,3 +1,4 @@
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Houses;
 using NeoServer.Domain.Houses.AccessList;
@@ -31,8 +32,8 @@ public class HouseDoorAccessTests
     }
 
     [Fact]
-    [Trait("Category", "HappyPath")]
-    public void House_allows_door_use_when_player_is_guest_and_door_list_not_configured()
+    [Trait("Category", "Validation")]
+    public void House_denies_door_use_when_player_is_guest_only()
     {
         var player = HouseTestDataBuilder.CreatePlayer(name: "Guest");
         var house = HouseTestDataBuilder.Build(accessLists: new Dictionary<uint, HouseAccessList>
@@ -40,7 +41,7 @@ public class HouseDoorAccessTests
             { HouseListId.GuestList, HouseTestDataBuilder.CreateAccessList("Guest") }
         });
 
-        house.CanUseDoor(player, doorId: 1).Should().BeTrue();
+        house.CanUseDoor(player, doorId: 1).Should().BeFalse();
     }
 
     [Fact]
@@ -71,7 +72,7 @@ public class HouseDoorAccessTests
 
     [Fact]
     [Trait("Category", "Validation")]
-    public void House_denies_door_use_when_door_list_is_null_and_player_not_invited()
+    public void House_denies_door_use_when_door_list_is_null()
     {
         var player = HouseTestDataBuilder.CreatePlayer(name: "Stranger");
         var house = HouseTestDataBuilder.Build();
@@ -142,5 +143,75 @@ public class HouseDoorAccessTests
         });
 
         house.CanUseDoor(player, doorId: 0).Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void House_allows_door_use_when_guest_uses_entry_door()
+    {
+        var entry = new Location(100, 100, 7);
+        var door = HouseTestDataBuilder.CreateItemMock(location: new Location(100, 99, 7));
+        var player = HouseTestDataBuilder.CreatePlayer(name: "Guest");
+        var house = HouseTestDataBuilder.Build(
+            entryPosition: entry,
+            doors: [(1, door)],
+            accessLists: new Dictionary<uint, HouseAccessList>
+            {
+                { HouseListId.GuestList, HouseTestDataBuilder.CreateAccessList("Guest") }
+            });
+
+        house.CanUseDoor(player, doorId: 1).Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void House_allows_door_use_when_guest_uses_entry_door_by_location()
+    {
+        var entry = new Location(100, 100, 7);
+        var doorLocation = new Location(100, 99, 7);
+        var door = HouseTestDataBuilder.CreateItemMock(location: doorLocation);
+        var player = HouseTestDataBuilder.CreatePlayer(name: "Guest");
+        var house = HouseTestDataBuilder.Build(
+            entryPosition: entry,
+            doors: [(1, door)],
+            accessLists: new Dictionary<uint, HouseAccessList>
+            {
+                { HouseListId.GuestList, HouseTestDataBuilder.CreateAccessList("Guest") }
+            });
+
+        house.CanUseDoor(player, doorLocation).Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void House_denies_door_use_when_guest_uses_internal_door()
+    {
+        var entry = new Location(100, 100, 7);
+        var entryDoor = HouseTestDataBuilder.CreateItemMock(location: new Location(100, 99, 7));
+        var internalDoor = HouseTestDataBuilder.CreateItemMock(location: new Location(100, 95, 7));
+        var player = HouseTestDataBuilder.CreatePlayer(name: "Guest");
+        var house = HouseTestDataBuilder.Build(
+            entryPosition: entry,
+            doors: [(1, entryDoor), (2, internalDoor)],
+            accessLists: new Dictionary<uint, HouseAccessList>
+            {
+                { HouseListId.GuestList, HouseTestDataBuilder.CreateAccessList("Guest") }
+            });
+
+        house.CanUseDoor(player, doorId: 2).Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void House_denies_door_use_when_stranger_uses_entry_door()
+    {
+        var entry = new Location(100, 100, 7);
+        var door = HouseTestDataBuilder.CreateItemMock(location: new Location(100, 99, 7));
+        var player = HouseTestDataBuilder.CreatePlayer(name: "Stranger");
+        var house = HouseTestDataBuilder.Build(
+            entryPosition: entry,
+            doors: [(1, door)]);
+
+        house.CanUseDoor(player, doorId: 1).Should().BeFalse();
     }
 }

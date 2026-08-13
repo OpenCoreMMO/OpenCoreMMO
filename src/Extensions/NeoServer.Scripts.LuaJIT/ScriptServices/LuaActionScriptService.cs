@@ -116,25 +116,23 @@ public class LuaActionScriptService : IActionScriptService
 
     /// <summary>
     ///     House door access gate. Non-house doors are always allowed.
-    ///     House doors without a DoorId allow any invited character when no per-door list exists.
+    ///     Invited players may use the entry door; internal doors require
+    ///     sub-owner access or an explicit per-door list entry.
     /// </summary>
     private bool CanUseHouseDoor(IPlayer player, IItem item)
     {
         if (!item.IsDoor) return true;
 
         var tile = item.Parent as ITile ?? item.Owner as ITile ?? _map.GetTile(item.Location);
-        if (tile is null) return true;
+        if (tile is not IDynamicTile dynamicTile || dynamicTile.HouseId is not > 0)
+            return true;
 
-        var house = _houseStore.GetByTile(tile);
-        if (house is null) return true;
+        var house = _houseStore.GetByHouseId(dynamicTile.HouseId.Value) ?? _houseStore.GetByTile(tile);
+        if (house is null)
+            return false;
 
-        if (!TryGetDoorId(item, out var doorId))
-        {
-            // Door without a DoorId: allow any invited character (matches unset per-door list).
-            return house.IsInvited(player);
-        }
-
-        return house.CanUseDoor(player, doorId);
+        uint? doorId = TryGetDoorId(item, out var parsedDoorId) ? parsedDoorId : null;
+        return house.CanUseDoor(player, item.Location, doorId);
     }
 
     private static bool TryGetDoorId(IItem item, out uint doorId)
