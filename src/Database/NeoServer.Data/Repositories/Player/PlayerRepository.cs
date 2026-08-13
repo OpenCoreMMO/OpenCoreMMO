@@ -56,7 +56,6 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
 
         foreach (var player in players)
         {
-            tasks.Clear();
             tasks.Add(SavePlayer(player));
         }
 
@@ -161,6 +160,7 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         playerEntity.MagicLevel = player.GetRawSkillLevel(SkillType.Magic);
         playerEntity.MagicLevelTries = player.GetSkillTries(SkillType.Magic);
         playerEntity.Experience = player.Experience;
+        playerEntity.BankAmount = player.BankAmount;
         playerEntity.ChaseMode = player.ChaseMode;
         playerEntity.FightMode = player.FightMode;
         playerEntity.Vocation = player.VocationType;

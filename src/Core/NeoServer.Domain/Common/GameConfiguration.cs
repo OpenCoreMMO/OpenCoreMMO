@@ -1,4 +1,4 @@
-﻿using NeoServer.Domain.Combat;
+using NeoServer.Domain.Combat;
 
 namespace NeoServer.Domain.Common;
 
@@ -57,5 +57,32 @@ public record HouseConfiguration(
     bool RequirePremiumForSubOwners = true,
     int MaxAccessListLength = 1999,
     int MaxAccessListLines = 100,
-    int MaxSubOwnerCount = 10
-);
+    int MaxSubOwnerCount = 10,
+    int PricePerSqm = 1000,
+    string RentPeriod = "monthly"
+)
+{
+    /// <summary>
+    ///     Seconds in one rent period. daily/weekly/monthly/yearly match the usual
+    ///     house rent cycle; any other value (including "never") is 0 and skips PaidUntil updates.
+    /// </summary>
+    public uint RentPeriodSeconds
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(RentPeriod))
+            {
+                return 0;
+            }
+
+            return RentPeriod.ToLowerInvariant() switch
+            {
+                "daily" => 24 * 60 * 60,
+                "weekly" => 24 * 60 * 60 * 7,
+                "monthly" => 24 * 60 * 60 * 30,
+                "yearly" => 24 * 60 * 60 * 365,
+                _ => 0
+            };
+        }
+    }
+}

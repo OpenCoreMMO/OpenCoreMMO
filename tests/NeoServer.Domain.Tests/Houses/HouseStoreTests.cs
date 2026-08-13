@@ -46,4 +46,37 @@ public class HouseStoreTests
 
         store.GetByTile(tileMock.Object).Should().BeNull();
     }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void GetByOwnerGuid_returns_house_when_owner_matches()
+    {
+        var house = HouseTestDataBuilder.Build(id: 5, ownerGuid: 42);
+        var store = new HouseStore();
+        store.AddOrUpdate(5, house);
+
+        store.GetByOwnerGuid(42).Should().BeSameAs(house);
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void GetByOwnerGuid_returns_null_when_owner_is_unknown()
+    {
+        var house = HouseTestDataBuilder.Build(id: 5, ownerGuid: 42);
+        var store = new HouseStore();
+        store.AddOrUpdate(5, house);
+
+        store.GetByOwnerGuid(99).Should().BeNull();
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void GetByOwnerGuid_returns_null_when_owner_guid_is_zero()
+    {
+        var house = HouseTestDataBuilder.Build(id: 5, ownerGuid: 0);
+        var store = new HouseStore();
+        store.AddOrUpdate(5, house);
+
+        store.GetByOwnerGuid(0).Should().BeNull();
+    }
 }

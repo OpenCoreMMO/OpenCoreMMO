@@ -7,4 +7,5 @@ public interface IHouseStore : IDataStore<uint, House>
 {
     House GetByTile(ITile tile);
     House GetByHouseId(uint houseId);
+    House GetByOwnerGuid(uint ownerGuid);
 }

@@ -18,6 +18,6 @@ public interface IHouseService
     /// <summary>Kick a player out of the house. Only subowners or higher can kick lower-level players.</summary>
     bool KickPlayer(House house, IPlayer caster, IPlayer target);
 
-    /// <summary>Returns false when premium is required and the player lacks premium time.</summary>
+    /// <summary>Returns false when the player is null, or when premium is required and the player lacks premium time.</summary>
     bool CanPlayerOwnHouse(IPlayer player);
 }
