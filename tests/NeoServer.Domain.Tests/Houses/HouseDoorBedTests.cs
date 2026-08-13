@@ -1,6 +1,7 @@
 using Moq;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
+using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Tests.Helpers.House;
 using NeoServer.Domain.Houses.AccessList;
 
@@ -16,6 +17,30 @@ public class HouseDoorBedTests
         house.LinkDoor(2, new Mock<IItem>().Object);
 
         house.DoorCount.Should().Be(2);
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void House_returns_door_id_when_position_matches_linked_door()
+    {
+        var doorLocation = new Location(101, 100, 7);
+        var door = HouseTestDataBuilder.CreateItemMock(location: doorLocation);
+        var house = HouseTestDataBuilder.Build();
+
+        house.LinkDoor(3, door.Object);
+
+        house.GetDoorIdByPosition(doorLocation).Should().Be(3u);
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void House_returns_null_when_no_door_at_position()
+    {
+        var door = HouseTestDataBuilder.CreateItemMock(location: new Location(101, 100, 7));
+        var house = HouseTestDataBuilder.Build();
+        house.LinkDoor(3, door.Object);
+
+        house.GetDoorIdByPosition(new Location(102, 100, 7)).Should().BeNull();
     }
 
     [Fact]

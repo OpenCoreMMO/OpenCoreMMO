@@ -403,6 +403,7 @@ Having a house offers many great advantages, here are a few of them:
 3. Owner adds or removes characters from that door's access list.
 
 **Business Rules:**
+- Only the main Owner can cast this spell — Sub-Owners cannot edit door access lists.
 - When a door is open, all characters on the house invite list may pass through, even without explicit door rights.
 - When a door is closed, only characters on that door's access list can open or close it.
 

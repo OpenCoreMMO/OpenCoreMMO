@@ -5,12 +5,15 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Services;
 using NeoServer.Domain.Spells;
 using NeoServer.Domain.Spells.Entities;
 using NeoServer.Domain.Spells.Events;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Services;
@@ -416,6 +419,94 @@ public class SpellTests
             e.Caster == player && e.Spell == spell)), Times.Once);
     }
 
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void Spell_casts_when_facing_blocked_tile_and_not_blocking_solid()
+    {
+        var map = MapTestDataBuilder.Build(100, 102, 100, 102, 7, 7);
+        var pathFinder = new PathFinder(map);
+        var mapTool = new MapTool(map, pathFinder);
+        var spellService = new SpellService(
+            new SpellCastValidation(mapTool),
+            _eventAggregatorMock.Object,
+            new CreatureSpeechService(map),
+            map);
+
+        var player = PlayerTestDataBuilder.Build();
+        map.PlaceCreature(player);
+        player.TurnTo(Direction.East);
+
+        var door = ItemTestDataBuilder.CreateUnpassableItem(1210);
+        door.Metadata.Flags.Add(ItemFlag.BlockProjectTile);
+        ((IDynamicTile)map[101, 100, 7]).AddItem(door);
+
+        var spell = new TestSpell { NeedCasterTargetOrDirection = true, BlockingSolid = false, IsAggressive = false };
+
+        var result = spellService.Cast(player, null, spell, false);
+
+        result.Should().BeTrue();
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void Spell_fails_with_not_enough_room_when_aggressive_and_facing_blocked_tile()
+    {
+        var map = MapTestDataBuilder.Build(100, 102, 100, 102, 7, 7);
+        var pathFinder = new PathFinder(map);
+        var mapTool = new MapTool(map, pathFinder);
+        var spellService = new SpellService(
+            new SpellCastValidation(mapTool),
+            _eventAggregatorMock.Object,
+            new CreatureSpeechService(map),
+            map);
+
+        var player = PlayerTestDataBuilder.Build();
+        map.PlaceCreature(player);
+        player.TurnTo(Direction.East);
+
+        var door = ItemTestDataBuilder.CreateUnpassableItem(1210);
+        door.Metadata.Flags.Add(ItemFlag.BlockProjectTile);
+        ((IDynamicTile)map[101, 100, 7]).AddItem(door);
+
+        var spell = new TestSpell { NeedCasterTargetOrDirection = true, IsAggressive = true };
+
+        var result = spellService.Cast(player, null, spell, false);
+
+        result.Should().BeFalse();
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e =>
+            e.Caster == player && e.Spell == spell && e.Error == InvalidOperation.NotEnoughRoom)), Times.Once);
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void Spell_fails_with_not_enough_room_when_blocking_solid_and_facing_unpassable_tile()
+    {
+        var map = MapTestDataBuilder.Build(100, 102, 100, 102, 7, 7);
+        var pathFinder = new PathFinder(map);
+        var mapTool = new MapTool(map, pathFinder);
+        var spellService = new SpellService(
+            new SpellCastValidation(mapTool),
+            _eventAggregatorMock.Object,
+            new CreatureSpeechService(map),
+            map);
+
+        var player = PlayerTestDataBuilder.Build();
+        map.PlaceCreature(player);
+        player.TurnTo(Direction.East);
+
+        var door = ItemTestDataBuilder.CreateUnpassableItem(1210);
+        door.Metadata.Flags.Add(ItemFlag.BlockProjectTile);
+        ((IDynamicTile)map[101, 100, 7]).AddItem(door);
+
+        var spell = new TestSpell { NeedCasterTargetOrDirection = true, BlockingSolid = true };
+
+        var result = spellService.Cast(player, null, spell, false);
+
+        result.Should().BeFalse();
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e =>
+            e.Caster == player && e.Spell == spell && e.Error == InvalidOperation.NotEnoughRoom)), Times.Once);
+    }
 
     private class TestSpell : BaseSpell
     {

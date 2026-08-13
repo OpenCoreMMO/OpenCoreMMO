@@ -100,9 +100,42 @@ Reference behavior: TFS `kick_guest.lua` (words `alana sio`).
 
 ---
 
+## Slice 3 — `aleta grav` (House Door List) — DONE
+
+Reference behavior: TFS `edit_door.lua` (words `aleta grav`) plus wiki targeting (standing in the doorway or facing the door from either side).
+
+### What shipped
+
+1. **Domain**
+   - `House.GetDoorIdByPosition(Location)` — reverse `Dictionary<Location, uint>` filled in `LinkDoor` (survives door open/close transform)
+   - Returns `null` when no door is at that position (door id `0` is a valid list id)
+   - `CanEditAccessList` matches TFS: owner may edit any list; subowner may edit the guest list only (not door lists)
+
+2. **Lua binding** — `house:getDoorIdByPosition(position)` in `HouseFunctions` (number or `nil`)
+
+3. **Spell**
+   - `data/scripts/spells/house/edit_door.lua` — words `aleta grav`, spell id **253**, `needCasterTargetOrDirection(true)`
+   - Tries the facing tile first, then the caster's tile; house is resolved from the **door** tile so facing from outside works
+   - Save path is the existing house window (`0x97` / `0x8A`); door-list edits do not kick occupants
+
+4. **Domain tests**
+   - `HouseDoorBedTests`: known door / no door at position
+   - `HouseAccessLevelTests`: owner may edit a door list; subowner may not
+
+### In-game smoke checklist
+
+- [ ] Owner faces a house door and casts `aleta grav` → that door's access list window opens
+- [ ] Owner standing on an open doorway casts `aleta grav` → that door's window opens
+- [ ] Owner faces the door from outside the house → window opens
+- [ ] Subowner / guest / stranger cast → cancel + POFF
+- [ ] Cast not facing a house door and not standing on one → cancel + POFF
+- [ ] Owner saves a name on the door list → persists; occupants are not kicked
+- [ ] Guest not on that door list cannot open/close the door; invited guests can still walk through while it is open
+
+---
+
 ## Later slices (not started)
 
-- [ ] `aleta grav` — House Door List (`edit_door.lua` + `getDoorIdByPosition`)
 - [ ] Talkactions: `buyhouse` / `leavehouse` / `sellhouse`
 - [ ] Full `HouseFunctions` surface (tiles, doors, beds, rent, trade, save)
 - [ ] Rent warning letters

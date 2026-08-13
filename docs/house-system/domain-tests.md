@@ -39,6 +39,8 @@
 - CanEditAccessList_SubownerEditsSubownerList_ReturnsFalse → false.
 - CanEditAccessList_SubownerEditsGuestList_ReturnsTrue → true.
 - CanEditAccessList_GuestEditsAnyList_ReturnsFalse → false for guest/subowner/door lists.
+- House_allows_owner_to_edit_door_list → true.
+- House_denies_subowner_editing_door_list → false.
 
 ## HouseEvictionTests
 - CanKick_OwnerKicksGuest_ReturnsTrue → true (caster access >= target, target on house tile).
@@ -81,6 +83,8 @@
 
 ## HouseDoorBedTests
 - GetDoorCount_AfterLinking_ReturnsCount → DoorCount matches linked doors.
+- House_returns_door_id_when_position_matches_linked_door → linked door id.
+- House_returns_null_when_no_door_at_position → null (not 0; door id 0 is a valid list id).
 - LinkBed_AddsBedToHouse_GetBedCountReflects → BedCount matches linked beds.
 - SetAccessList_DoorListId_UpdatesThatDoorOnly → only that door's list changes, other doors unaffected.
 - EntryPosition_DefaultsToFirstTileLocation → EntryPosition == first linked tile's Location.
@@ -148,15 +152,6 @@
 
 The following cases are planned but not implemented in Phase 1. They are listed here to document
 their target phase explicitly — none were silently dropped.
-
-### GetDoorIdByPosition (Phase 3 dependency — m4)
-- `GetDoorIdByPosition_KnownDoor_ReturnsDoorId` — deferred to Phase 3.
-  Requires a reverse `Dictionary<Location, uint>` map populated at `LinkDoor` time.
-  A door item's `Location` is only reliably available after the Phase-2 world-attach step
-  (doors receive their location when linked from the map). Implementing in Phase 1 would require
-  storing a `Location` per door at link time without a reliable source for it.
-  See `House-System-Plan.md` Phase 3, `HouseFunctions.getDoorIdByPosition`.
-- `GetDoorIdByPosition_NoDoorAtPosition_ReturnsZero` — same blocker; deferred to Phase 3.
 
 ### Factory access-list and door seeding (Phase 2 — HouseAccessListLoader)
 - `Create_FromEntity_SeedsGuestList_*`, `Create_FromEntity_SeedsSubownerList_*`,

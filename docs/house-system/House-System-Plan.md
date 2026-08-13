@@ -74,7 +74,7 @@ New folder: `src/Core/NeoServer.Domain/Houses/`.
   `LinkDoor(uint doorId, IDoorItem)`; `LinkBed(IBedItem)`. Throws if a tile is linked to two houses.
 - **Access:** `GetAccessLevel(IPlayer)` (Owner if `Group.Access` or `CanEditHouses`, else guid /
   subowner / guest / not invited), `IsInvited`, `CanEnter(ICreature)`,
-  `CanEditAccessList(listId, IPlayer)` (owner edits subowner list; owner+subowner edit guest list/doors),
+  `CanEditAccessList(listId, IPlayer)` (owner edits any list; subowner edits guest list only, not door lists),
   `GetAccessList(listId)` / `SetAccessList(listId, HouseAccessList)`.
 - **`SetNewOwner(guid, name, accountId, updatePaidUntil, now, rentPeriodSeconds)`** (ports `House::setOwner`):
   pure domain state change. On owner *change* → clear all access + door lists; set owner fields
@@ -142,7 +142,7 @@ Add `Helpers/House/HouseTestDataBuilder.cs`; reuse `PlayerTestDataBuilder` and
   `AllowAll`, `Clear` resets state, `IsInList` combinations.
 - **HouseAccessLevelTests:** owner/subowner/guest/none resolution; `CanEditHouses` → Owner;
   both-lists → SubOwner wins; `IsInvited` true/false; `CanEnter` invited/uninvited; non-player → true;
-  `CanEditAccessList` owner-vs-subowner-list, subowner-vs-guest-list, guest-edits-anything-false.
+  `CanEditAccessList` owner-vs-subowner-list, subowner-vs-guest-list, owner-vs-door-list, subowner-cannot-edit-door-list, guest-edits-anything-false.
 - **HouseEvictionTests:** owner/subowner kicks guest → allowed; guest kicks other guest / self →
   allowed; guest kicks subowner or owner → fail; cannot kick `CanEditHouses`; `CanEditHouses` can
   kick owner; target not in house → fail; `KickOccupants` only moves now-uninvited.
