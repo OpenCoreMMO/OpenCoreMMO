@@ -98,11 +98,13 @@ public static class HouseTestDataBuilder
         return tileMock;
     }
 
-    public static Mock<IItem> CreateItemMock(bool isPickupable = true, ushort serverId = 100)
+    public static Mock<IItem> CreateItemMock(bool isPickupable = true, ushort serverId = 100, Location? location = null)
     {
         var itemMock = new Mock<IItem>();
         itemMock.Setup(x => x.IsPickupable).Returns(isPickupable);
         itemMock.Setup(x => x.ServerId).Returns(serverId);
+        if (location is not null)
+            itemMock.Setup(x => x.Location).Returns(location.Value);
         return itemMock;
     }
 
