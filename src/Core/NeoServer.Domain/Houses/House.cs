@@ -12,6 +12,7 @@ public class House
 {
     private readonly List<IDynamicTile> _tiles = new();
     private readonly Dictionary<uint, IItem> _doors = new();
+    private readonly Dictionary<Location, uint> _doorIdsByPosition = new();
     private readonly List<IItem> _beds = new();
     private readonly Dictionary<uint, HouseAccessList> _accessLists = new();
 
@@ -84,7 +85,29 @@ public class House
 
     public void LinkDoor(uint doorId, IItem door)
     {
+        if (_doors.TryGetValue(doorId, out var existing) &&
+            _doorIdsByPosition.TryGetValue(existing.Location, out var mappedId) &&
+            mappedId == doorId)
+        {
+            _doorIdsByPosition.Remove(existing.Location);
+        }
+
         _doors[doorId] = door;
+        _doorIdsByPosition[door.Location] = doorId;
+    }
+
+    /// <summary>
+    ///     Door id at <paramref name="position"/>, or null when no door is linked there.
+    ///     Null (not 0) means miss — door id 0 is a valid list id.
+    /// </summary>
+    public uint? GetDoorIdByPosition(Location position)
+    {
+        if (_doorIdsByPosition.TryGetValue(position, out var doorId))
+        {
+            return doorId;
+        }
+
+        return null;
     }
 
     public void LinkBed(IItem bed)
@@ -220,11 +243,15 @@ public class House
     {
         var level = GetAccessLevel(player);
 
-        if (listId == HouseListId.SubOwnerList)
-            return level == HouseAccessLevel.Owner;
+        if (level == HouseAccessLevel.Owner)
+        {
+            return true;
+        }
 
-        if (listId == HouseListId.GuestList || HouseListId.IsDoorList(listId))
-            return level >= HouseAccessLevel.SubOwner;
+        if (level == HouseAccessLevel.SubOwner)
+        {
+            return listId == HouseListId.GuestList;
+        }
 
         return false;
     }

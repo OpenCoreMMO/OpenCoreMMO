@@ -111,7 +111,7 @@ last from primitives so tests can target each piece in isolation.
   - `HouseAccessLevel GetAccessLevel(IPlayer)` → Owner if `Group.Access` or `CanEditHouses`; else Owner if guid match (and owner≠0); else SubOwner if in subowner list and premium (when required); else Guest if in guest list; else NotInvited.
   - `bool IsInvited(IPlayer)` ⇒ `GetAccessLevel != NotInvited`.
   - `bool CanEnter(ICreature)` ⇒ non-players true; players ⇒ `IsInvited`.
-  - `bool CanEditAccessList(uint listId, IPlayer)` ⇒ subowner list requires Owner; guest list / door lists require `>= SubOwner`.
+  - `bool CanEditAccessList(uint listId, IPlayer)` ⇒ owner edits any list; subowner edits guest list only (not door lists).
   - `string GetAccessList(uint listId)` / `void SetAccessList(uint listId, HouseAccessList list)` (store structured list; door listId updates only that door's list).
 - **Where:** `Houses/House.cs`
 - **Depends on:** Steps 3, 6.
@@ -245,6 +245,8 @@ Each row: **Test → Expected output**. Groups map to the Step-12 test classes.
 - CanEditAccessList_SubownerEditsSubownerList_ReturnsFalse → false.
 - CanEditAccessList_SubownerEditsGuestList_ReturnsTrue → true.
 - CanEditAccessList_GuestEditsAnyList_ReturnsFalse → false.
+- House_allows_owner_to_edit_door_list → true.
+- House_denies_subowner_editing_door_list → false.
 
 ## HouseEvictionTests (pure aggregate checks)
 - CanKick_OwnerKicksGuest_ReturnsTrue → returns true.
@@ -279,8 +281,8 @@ Each row: **Test → Expected output**. Groups map to the Step-12 test classes.
 - LinkTile_SameTileToTwoHouses_Throws → throws.
 
 ## HouseDoorBedTests
-- GetDoorIdByPosition_KnownDoor_ReturnsDoorId → expected door id.
-- GetDoorIdByPosition_NoDoorAtPosition_ReturnsZeroOrNil → 0/none.
+- House_returns_door_id_when_position_matches_linked_door → expected door id.
+- House_returns_null_when_no_door_at_position → null.
 - SetAccessList_DoorListId_UpdatesThatDoorOnly → only that door's list changes.
 - GetDoorCount_AfterLinking_ReturnsCount → count matches.
 - LinkBed_AddsBedToHouse_GetBedCountReflects → count matches.

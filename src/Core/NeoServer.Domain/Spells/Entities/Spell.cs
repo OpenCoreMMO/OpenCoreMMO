@@ -96,12 +96,15 @@ public abstract class BaseSpell : ISpell
 
         if (target is IDynamicTile targetTile)
         {
-            if (targetTile.HasFlag(TileFlags.BlockProjecTile) || targetTile.HasFlag(TileFlags.FloorChange) ||
-                targetTile.HasTeleport(out _))
-                return Result.Fail(InvalidOperation.NotEnoughRoom);
+            if (IsAggressive)
+            {
+                if (targetTile.HasFlag(TileFlags.BlockProjecTile) || targetTile.HasFlag(TileFlags.FloorChange) ||
+                    targetTile.HasTeleport(out _))
+                    return Result.Fail(InvalidOperation.NotEnoughRoom);
 
-            if (IsAggressive && targetTile.HasFlag(TileFlags.ProtectionZone))
-                return Result.Fail(InvalidOperation.NotPermittedInProtectionZone);
+                if (targetTile.HasFlag(TileFlags.ProtectionZone))
+                    return Result.Fail(InvalidOperation.NotPermittedInProtectionZone);
+            }
 
             if (BlockingSolid && targetTile.HasFlag(TileFlags.Unpassable))
                 return Result.Fail(InvalidOperation.NotEnoughRoom);

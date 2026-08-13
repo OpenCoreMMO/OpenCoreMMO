@@ -210,4 +210,27 @@ public class HouseAccessLevelTests
         house.CanEditAccessList(HouseListId.SubOwnerList, player).Should().BeFalse();
         house.CanEditAccessList(1, player).Should().BeFalse();
     }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void House_allows_owner_to_edit_door_list()
+    {
+        var player = HouseTestDataBuilder.CreatePlayer(id: 1);
+        var house = HouseTestDataBuilder.Build(ownerGuid: 1);
+
+        house.CanEditAccessList(1, player).Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void House_denies_subowner_editing_door_list()
+    {
+        var player = HouseTestDataBuilder.CreatePlayer(name: "Sub");
+        var house = HouseTestDataBuilder.Build(accessLists: new Dictionary<uint, HouseAccessList>
+        {
+            { HouseListId.SubOwnerList, HouseTestDataBuilder.CreateAccessList("Sub") }
+        });
+
+        house.CanEditAccessList(1, player).Should().BeFalse();
+    }
 }

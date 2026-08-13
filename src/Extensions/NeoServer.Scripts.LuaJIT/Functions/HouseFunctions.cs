@@ -8,8 +8,8 @@ using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
 /// <summary>
-///     Minimal House Lua bindings for Phase 3 spell slices (aleta sio, alana sio).
-///     Full HouseFunctions surface (doors, trade, rent, etc.) comes in later slices.
+///     Minimal House Lua bindings for Phase 3 spell slices (aleta sio, aleta som, alana sio, aleta grav).
+///     Full HouseFunctions surface (tiles, beds, rent, trade, save) comes in later slices.
 /// </summary>
 public class HouseFunctions : LuaScriptInterface, IHouseFunctions
 {
@@ -31,6 +31,7 @@ public class HouseFunctions : LuaScriptInterface, IHouseFunctions
         RegisterMethod(luaState, "House", "getId", LuaHouseGetId);
         RegisterMethod(luaState, "House", "canEditAccessList", LuaHouseCanEditAccessList);
         RegisterMethod(luaState, "House", "getAccessList", LuaHouseGetAccessList);
+        RegisterMethod(luaState, "House", "getDoorIdByPosition", LuaHouseGetDoorIdByPosition);
         RegisterMethod(luaState, "House", "kickPlayer", LuaHouseKickPlayer);
 
         RegisterGlobalVariable(luaState, "GUEST_LIST", HouseListId.GuestList);
@@ -98,6 +99,28 @@ public class HouseFunctions : LuaScriptInterface, IHouseFunctions
 
         var list = house.GetAccessList(listId);
         Lua.PushString(luaState, list?.RawText ?? string.Empty);
+        return 1;
+    }
+
+    private static int LuaHouseGetDoorIdByPosition(LuaState luaState)
+    {
+        // house:getDoorIdByPosition(position)
+        var house = GetUserdata<House>(luaState, 1);
+        if (house is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var position = GetPosition(luaState, 2);
+        var doorId = house.GetDoorIdByPosition(position);
+        if (doorId is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        Lua.PushNumber(luaState, doorId.Value);
         return 1;
     }
 
