@@ -1,4 +1,5 @@
 using LuaNET;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Houses;
@@ -8,19 +9,27 @@ using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
 /// <summary>
-///     Minimal House Lua bindings for Phase 3 spell slices (aleta sio, aleta som, alana sio, aleta grav).
+///     House Lua bindings for Phase 3 (access-list spells, kick, and !buyhouse).
 ///     Full HouseFunctions surface (tiles, beds, rent, trade, save) comes in later slices.
 /// </summary>
 public class HouseFunctions : LuaScriptInterface, IHouseFunctions
 {
     private static IHouseStore _houseStore;
     private static IHouseService _houseService;
+    private static ICreatureGameInstance _creatureGameInstance;
+    private static HouseConfiguration _houseConfiguration;
 
-    public HouseFunctions(IHouseStore houseStore, IHouseService houseService) :
+    public HouseFunctions(
+        IHouseStore houseStore,
+        IHouseService houseService,
+        ICreatureGameInstance creatureGameInstance,
+        HouseConfiguration houseConfiguration) :
         base(nameof(HouseFunctions))
     {
         _houseStore = houseStore;
         _houseService = houseService;
+        _creatureGameInstance = creatureGameInstance;
+        _houseConfiguration = houseConfiguration ?? new HouseConfiguration();
     }
 
     public void Init(LuaState luaState)
@@ -29,6 +38,9 @@ public class HouseFunctions : LuaScriptInterface, IHouseFunctions
         RegisterMetaMethod(luaState, "House", "__eq", LuaUserdataCompare<House>);
 
         RegisterMethod(luaState, "House", "getId", LuaHouseGetId);
+        RegisterMethod(luaState, "House", "getOwnerGuid", LuaHouseGetOwnerGuid);
+        RegisterMethod(luaState, "House", "setOwnerGuid", LuaHouseSetOwnerGuid);
+        RegisterMethod(luaState, "House", "getTileCount", LuaHouseGetTileCount);
         RegisterMethod(luaState, "House", "canEditAccessList", LuaHouseCanEditAccessList);
         RegisterMethod(luaState, "House", "getAccessList", LuaHouseGetAccessList);
         RegisterMethod(luaState, "House", "getDoorIdByPosition", LuaHouseGetDoorIdByPosition);
@@ -65,6 +77,60 @@ public class HouseFunctions : LuaScriptInterface, IHouseFunctions
         }
 
         Lua.PushNumber(luaState, house.Id);
+        return 1;
+    }
+
+    private static int LuaHouseGetOwnerGuid(LuaState luaState)
+    {
+        // house:getOwnerGuid()
+        var house = GetUserdata<House>(luaState, 1);
+        if (house is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        Lua.PushNumber(luaState, house.OwnerGuid);
+        return 1;
+    }
+
+    private static int LuaHouseSetOwnerGuid(LuaState luaState)
+    {
+        // house:setOwnerGuid(guid[, updateDatabase = true])
+        var house = GetUserdata<House>(luaState, 1);
+        if (house is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var guid = GetNumber<uint>(luaState, 2);
+        var name = string.Empty;
+        var accountId = 0;
+        if (guid != 0 && _creatureGameInstance.TryGetPlayer(guid, out var player) && player is not null)
+        {
+            name = player.Name;
+            accountId = (int)player.AccountId;
+        }
+
+        var rentPeriodSeconds = _houseConfiguration.RentPeriodSeconds;
+        var updatePaidUntil = rentPeriodSeconds != 0;
+        _houseService.SetOwner(house, guid, name, accountId, updatePaidUntil, DateTime.UtcNow, rentPeriodSeconds);
+        PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaHouseGetTileCount(LuaState luaState)
+    {
+        // house:getTileCount()
+        var house = GetUserdata<House>(luaState, 1);
+        if (house is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        Lua.PushNumber(luaState, house.TileCount);
         return 1;
     }
 

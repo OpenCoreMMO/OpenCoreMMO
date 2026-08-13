@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,7 +49,7 @@ public static class ConfigurationInjection
         builder.AddSingleton(gameConfiguration.PvP);
         builder.AddSingleton(gameConfiguration.Combat);
         builder.AddSingleton(gameConfiguration.Yell);
-        builder.AddSingleton(gameConfiguration.House);
+        builder.AddSingleton(gameConfiguration.House ?? new HouseConfiguration());
 
         builder.AddSingleton<IConfiguration>(configuration);
 

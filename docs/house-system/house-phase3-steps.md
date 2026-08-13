@@ -134,8 +134,30 @@ Reference behavior: TFS `edit_door.lua` (words `aleta grav`) plus wiki targeting
 
 ---
 
+## Slice 4 — `!buyhouse` (House Purchase) — DONE
+
+Reference behavior: TFS `buyhouse.lua` (words `!buyhouse`). Player must face the house door. Price is `tileCount * pricePerSqm`. `-1` price disables the command (speech falls through as chat).
+
+### What shipped
+
+1. **Config** — `HouseConfiguration.PricePerSqm` (default 1000, `-1` disables) and `RentPeriod` (default `monthly`). Lua `configKeys.HOUSE_PRICE` aliases `HOUSE_PRICE_PER_SQM` and reads `PricePerSqm`.
+2. **Lua House** — `getOwnerGuid`, `getTileCount`, `setOwnerGuid(guid)` → `HouseService.SetOwner` (PaidUntil from rent period; unowned → owned skips eviction).
+3. **Lua Player** — `getGuid` (database id), `getHouse`, `isPremium`, `canOwnHouse` (`CanPlayerOwnHouse`), `getMoney` / `removeMoney`, `getBankBalance` / `setBankBalance`.
+4. **Money** — `Player.removeTotalMoney` in `data/libs/functions/player.lua` (inventory first, then bank).
+5. **Talkaction** — `data/scripts/talkactions/house/buyhouse.lua`. OpenCoreMMO talkaction `true` swallows chat (opposite of TFS booleans). Premium uses `canOwnHouse` so `RequirePremiumAccount` remains the switch.
+
+### In-game smoke checklist
+
+- [ ] Face an unowned house door, premium, enough money → owner set, money taken, success text
+- [ ] `pricePerSqm: -1` → `!buyhouse` appears as normal speech
+- [ ] Not facing a house door / already owned / already own a house / too poor / no premium / low level → matching cancel, no ownership change
+- [ ] Inventory coins first, then bank (bank message when bank is used)
+- [ ] Second `!buyhouse` on another house → already own a house
+
+---
+
 ## Later slices (not started)
 
-- [ ] Talkactions: `buyhouse` / `leavehouse` / `sellhouse`
+- [ ] Talkactions: `leavehouse` / `sellhouse`
 - [ ] Full `HouseFunctions` surface (tiles, doors, beds, rent, trade, save)
 - [ ] Rent warning letters

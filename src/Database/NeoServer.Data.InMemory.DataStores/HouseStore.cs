@@ -20,4 +20,20 @@ public class HouseStore : DataStore<HouseStore, uint, House>, IHouseStore
     {
         return Get(houseId);
     }
+
+    public House GetByOwnerGuid(uint ownerGuid)
+    {
+        if (ownerGuid == 0)
+        {
+            return null;
+        }
+
+        foreach (var house in All)
+        {
+            if (house.OwnerGuid == ownerGuid)
+                return house;
+        }
+
+        return null;
+    }
 }

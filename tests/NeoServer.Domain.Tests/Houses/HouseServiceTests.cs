@@ -248,6 +248,76 @@ public class HouseServiceTests
         repoMock.Verify(x => x.Save(It.IsAny<House>()), Times.Never);
     }
 
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void CanPlayerOwnHouse_WhenRequirePremiumIsFalse_ReturnsTrueForNonPremiumPlayer()
+    {
+        var service = CreateService(houseConfiguration: new HouseConfiguration(RequirePremiumAccount: false));
+        var player = HouseTestDataBuilder.CreatePlayer(hasPremiumTime: false);
+
+        service.CanPlayerOwnHouse(player).Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void CanPlayerOwnHouse_WhenRequirePremiumIsFalse_ReturnsTrueForPremiumPlayer()
+    {
+        var service = CreateService(houseConfiguration: new HouseConfiguration(RequirePremiumAccount: false));
+        var player = HouseTestDataBuilder.CreatePlayer(hasPremiumTime: true);
+
+        service.CanPlayerOwnHouse(player).Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void CanPlayerOwnHouse_WhenRequirePremiumIsTrue_ReturnsFalseForNonPremiumPlayer()
+    {
+        var service = CreateService(houseConfiguration: new HouseConfiguration(RequirePremiumAccount: true));
+        var player = HouseTestDataBuilder.CreatePlayer(hasPremiumTime: false);
+
+        service.CanPlayerOwnHouse(player).Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void CanPlayerOwnHouse_WhenRequirePremiumIsTrue_ReturnsTrueForPremiumPlayer()
+    {
+        var service = CreateService(houseConfiguration: new HouseConfiguration(RequirePremiumAccount: true));
+        var player = HouseTestDataBuilder.CreatePlayer(hasPremiumTime: true);
+
+        service.CanPlayerOwnHouse(player).Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void CanPlayerOwnHouse_WhenRequirePremiumIsTrue_ReturnsFalseForNullPlayer()
+    {
+        var service = CreateService(houseConfiguration: new HouseConfiguration(RequirePremiumAccount: true));
+
+        service.CanPlayerOwnHouse(null).Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void CanPlayerOwnHouse_WhenRequirePremiumIsFalse_ReturnsFalseForNullPlayer()
+    {
+        var service = CreateService(houseConfiguration: new HouseConfiguration(RequirePremiumAccount: false));
+
+        service.CanPlayerOwnHouse(null).Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void CanPlayerOwnHouse_DefaultConfig_RequiresPremium()
+    {
+        var service = CreateService();
+        var freePlayer = HouseTestDataBuilder.CreatePlayer(hasPremiumTime: false);
+        var premiumPlayer = HouseTestDataBuilder.CreatePlayer(hasPremiumTime: true);
+
+        service.CanPlayerOwnHouse(freePlayer).Should().BeFalse();
+        service.CanPlayerOwnHouse(premiumPlayer).Should().BeTrue();
+    }
+
     private static HouseService CreateService(
         Mock<IHouseRepository> repo = null,
         Mock<IHouseEviction> eviction = null,
