@@ -138,4 +138,27 @@ public class HouseOwnershipTests
 
         house.PaidUntil.Should().Be(now.AddSeconds(86400));
     }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void SetNewOwner_ChangingOwner_WithoutUpdatePaidUntil_ResetsPayRentWarnings()
+    {
+        var house = HouseTestDataBuilder.Build(ownerGuid: 1, payRentWarnings: 5);
+
+        house.SetNewOwner(10, "NewOwner", 100, false, DateTime.UtcNow, 86400);
+
+        house.PayRentWarnings.Should().Be(0);
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void SetNewOwner_ChangingOwner_WithoutUpdatePaidUntil_KeepsPaidUntil()
+    {
+        var paidUntil = new DateTime(2025, 6, 1, 0, 0, 0, DateTimeKind.Utc);
+        var house = HouseTestDataBuilder.Build(ownerGuid: 1, paidUntil: paidUntil);
+
+        house.SetNewOwner(10, "NewOwner", 100, false, DateTime.UtcNow, 86400);
+
+        house.PaidUntil.Should().Be(paidUntil);
+    }
 }

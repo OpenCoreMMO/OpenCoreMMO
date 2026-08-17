@@ -63,19 +63,48 @@ public class TradeItemExchanger
     {
         if (Guard.AnyNull(itemFromPlayerRequested, playerRequesting, itemFromPlayerRequesting, playerRequested)) return;
 
+        var houseTransferFromRequestingPlayer = itemFromPlayerRequesting as Houses.HouseTransferItem;
+        var houseTransferFromRequestedPlayer = itemFromPlayerRequested as Houses.HouseTransferItem;
+        
+        // A house sale has exactly one transfer document (seller) and one payment (buyer).
+        // Both sides offering a document is invalid and cannot be completed safely.
+        if (houseTransferFromRequestingPlayer is not null && houseTransferFromRequestedPlayer is not null)
+        {
+            return;
+        }
+
+        if (houseTransferFromRequestingPlayer is not null)
+        {
+            ExchangeOfferedItem(playerRequesting, itemFromPlayerRequested, itemFromPlayerRequesting);
+            houseTransferFromRequestingPlayer.Complete(playerRequested);
+            return;
+        }
+
+        if (houseTransferFromRequestedPlayer is not null)
+        {
+            ExchangeOfferedItem(playerRequested, itemFromPlayerRequesting, itemFromPlayerRequested);
+            houseTransferFromRequestedPlayer.Complete(playerRequesting);
+            return;
+        }
+
         var playerRequestingSlotDestination =
             TradeSlotDestinationQuery.Get(playerRequesting, itemFromPlayerRequested, itemFromPlayerRequesting);
 
         var playerRequestedSlotDestination =
             TradeSlotDestinationQuery.Get(playerRequested, itemFromPlayerRequesting, itemFromPlayerRequested);
 
-        // Remove the items from their previous locations
         _itemRemoveService.Remove(itemFromPlayerRequesting);
         _itemRemoveService.Remove(itemFromPlayerRequested);
 
-        // Add the items to each player's inventory
         AddItemToInventory(playerRequesting, itemFromPlayerRequested, playerRequestingSlotDestination);
         AddItemToInventory(playerRequested, itemFromPlayerRequesting, playerRequestedSlotDestination);
+    }
+
+    private void ExchangeOfferedItem(IPlayer receiver, IItem offeredItem, IItem transferDocument)
+    {
+        var slotDestination = TradeSlotDestinationQuery.Get(receiver, offeredItem, transferDocument);
+        _itemRemoveService.Remove(offeredItem);
+        AddItemToInventory(receiver, offeredItem, slotDestination);
     }
 
     private static void AddItemToInventory(IPlayer player, IItem item, Slot slot)

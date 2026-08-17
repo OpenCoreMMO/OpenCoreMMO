@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Combat.Monster;
@@ -68,7 +68,7 @@ public static class ServiceInjection
         builder.AddSingleton<IMonsterTargetSearch, MonsterTargetSearch>();
         builder.AddSingleton<IMonsterTargetingService, MonsterTargetingService>();
         builder.AddSingleton<MonsterStateService>();
-        builder.AddSingleton<ITradeService, SafeTradeSystem>();
+        builder.AddSingleton<ITradeService>(sp => sp.GetRequiredService<SafeTradeSystem>());
         builder.AddSingleton<PlayerChannelService>();
         builder.AddSingleton<TargetDetectorService>();
         builder.AddSingleton<ICreatureMovementService, CreatureMovementService>();
@@ -120,6 +120,7 @@ public static class ServiceInjection
 
         //house services
         builder.AddSingleton<IHouseService, HouseService>();
+        builder.AddSingleton<IHouseTradeService, HouseTradeService>();
         builder.AddSingleton<IHouseEviction, HouseEvictionService>();
         builder.AddSingleton<IHouseBedWaker, HouseBedWakerService>();
         builder.AddSingleton<IHouseDepotTransfer, HouseDepotTransferService>();
