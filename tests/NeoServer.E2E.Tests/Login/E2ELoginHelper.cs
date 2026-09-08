@@ -3,8 +3,6 @@ using NeoServer.E2E.Tests.Client;
 using NeoServer.E2E.Tests.Client.Protocol;
 using NeoServer.E2E.Tests.Harness;
 using NeoServer.Networking.Packets.Outgoing;
-using NeoServer.Server.Configurations;
-using NeoServer.Server.Standalone.IoC;
 
 namespace NeoServer.E2E.Tests.Login;
 
@@ -14,16 +12,12 @@ internal static class E2ELoginHelper
         E2EServerHost host,
         CancellationToken cancellationToken = default)
     {
-        var serverConfiguration = host.Services.Resolve<ServerConfiguration>();
-        var dataPath = serverConfiguration.Data;
-
         await using var loginClient = new ProtocolTestClient("127.0.0.1", host.LoginPort);
         await loginClient.ConnectAsync(cancellationToken);
 
         var (accountLoginPacket, loginXteaKey) = LoginPacketBuilder.BuildAccountLogin(
             LoginTestCredentials.Account,
-            LoginTestCredentials.Password,
-            dataPath);
+            LoginTestCredentials.Password);
 
         await loginClient.SendAsync(accountLoginPacket, cancellationToken);
         loginClient.SetXteaKey(loginXteaKey);
@@ -48,8 +42,7 @@ internal static class E2ELoginHelper
             LoginTestCredentials.Password,
             LoginTestCredentials.CharacterName,
             challengeTimeStamp,
-            challengeNumber,
-            dataPath);
+            challengeNumber);
 
         await gameClient.SendAsync(gameLoginPacket, cancellationToken);
         gameClient.SetXteaKey(gameXteaKey);

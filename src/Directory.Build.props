@@ -30,9 +30,6 @@
         <SerilogSettingsConfiguration_Version>3.3.0</SerilogSettingsConfiguration_Version>
         <SerilogSinkConsole_Version>4.0.1</SerilogSinkConsole_Version>
 
-        <!--BouncyCastle-->
-        <BouncyCastleNetCore_Version>1.8.10</BouncyCastleNetCore_Version>
-
         <!--Newtonsoft.Json-->
         <NewtonsoftJson_Version>13.0.1</NewtonsoftJson_Version>
 
