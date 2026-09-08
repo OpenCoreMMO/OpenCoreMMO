@@ -4,9 +4,8 @@ namespace NeoServer.E2E.Tests.Client.Protocol;
 
 internal static class RsaEncryptor
 {
-    public static byte[] Encrypt(ReadOnlySpan<byte> data, string dataPath)
+    public static byte[] Encrypt(ReadOnlySpan<byte> data)
     {
-        Rsa.LoadPem(dataPath);
         return Rsa.Encrypt(data);
     }
 }

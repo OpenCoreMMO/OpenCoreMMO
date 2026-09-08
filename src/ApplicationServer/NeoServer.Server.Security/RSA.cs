@@ -69,48 +69,32 @@ public static class Rsa
 
     private static byte[] ConvertDecryptOutput(BigInteger value)
     {
-        var output = value.ToByteArray(isUnsigned: true, isBigEndian: true);
-
-        if (output.Length == 0)
-        {
-            return new byte[PlaintextLength];
-        }
-
-        if (output.Length > PlaintextLength && output[0] == 0)
-        {
-            var trimmed = new byte[output.Length - 1];
-            Buffer.BlockCopy(output, 1, trimmed, 0, trimmed.Length);
-            output = trimmed;
-        }
-
-        if (output.Length >= PlaintextLength)
-        {
-            return output;
-        }
-
-        var padded = new byte[PlaintextLength];
-        Buffer.BlockCopy(output, 0, padded, PlaintextLength - output.Length, output.Length);
-        return padded;
+        return ToFixedLength(value, PlaintextLength);
     }
 
     private static byte[] ConvertEncryptOutput(BigInteger value)
     {
+        return ToFixedLength(value, LENGTH);
+    }
+
+    private static byte[] ToFixedLength(BigInteger value, int length)
+    {
         var output = value.ToByteArray(isUnsigned: true, isBigEndian: true);
 
-        if (output.Length == LENGTH)
+        if (output.Length == length)
         {
             return output;
         }
 
-        if (output.Length > LENGTH)
+        if (output.Length > length)
         {
-            var trimmed = new byte[LENGTH];
-            Buffer.BlockCopy(output, output.Length - LENGTH, trimmed, 0, LENGTH);
+            var trimmed = new byte[length];
+            Buffer.BlockCopy(output, output.Length - length, trimmed, 0, length);
             return trimmed;
         }
 
-        var padded = new byte[LENGTH];
-        Buffer.BlockCopy(output, 0, padded, LENGTH - output.Length, output.Length);
+        var padded = new byte[length];
+        Buffer.BlockCopy(output, 0, padded, length - output.Length, output.Length);
         return padded;
     }
 }

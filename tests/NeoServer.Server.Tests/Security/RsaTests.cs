@@ -56,9 +56,34 @@ public class RsaTests
 
     [Fact]
     [Trait("Category", "HappyPath")]
+    public void Rsa_decrypts_legacy_bouncycastle_ciphertext_from_default_key()
+    {
+        var dataPath = ResolveDataPath();
+        File.Exists(Path.Combine(dataPath, "key.pem")).Should().BeTrue();
+        Rsa.LoadPem(dataPath);
+
+        var payload = new byte[] { 0x10, 0x20, 0x30, 0x40, 0x50 };
+        var ciphertext = Convert.FromHexString(
+            "4B83336C57B62B6F3B6E477326899C218513B5FF1F94CFC1418E5C402C321757" +
+            "F2AAD8B9F105FA00633EA73C17275287ECEDE144755C4673F402FA3F40F788CC" +
+            "28E928D8C85775E269709220A6BEB563384E383540D1DA6BC5B48E216A534FEB" +
+            "0CECE4C2EE6AB1947583A6F9CF9AFD00D5604002CEC03CE647FDE9D625CF6CE4");
+
+        var decrypted = Rsa.Decrypt(ciphertext);
+
+        decrypted.Should().NotBeNull();
+        decrypted.Should().HaveCount(127);
+        decrypted.AsSpan(0, payload.Length).ToArray().Should().Equal(payload);
+        decrypted[payload.Length].Should().Be(0x33);
+        decrypted[^1].Should().Be(0x00);
+        Rsa.Encrypt(payload).Should().Equal(ciphertext);
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
     public void Rsa_roundtrips_with_default_server_key_pem()
     {
-        var dataPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "data"));
+        var dataPath = ResolveDataPath();
         File.Exists(Path.Combine(dataPath, "key.pem")).Should().BeTrue();
 
         Rsa.LoadPem(dataPath);
@@ -115,6 +140,27 @@ public class RsaTests
         {
             Directory.Delete(keyDirectory, recursive: true);
         }
+    }
+
+    [Fact]
+    [Trait("Category", "EdgeCase")]
+    public void Rsa_decrypts_full_block_to_exactly_127_bytes()
+    {
+        var dataPath = ResolveDataPath();
+        Rsa.LoadPem(dataPath);
+
+        var ciphertext = new byte[Rsa.LENGTH];
+        ciphertext[^1] = 0x01;
+
+        var decrypted = Rsa.Decrypt(ciphertext);
+
+        decrypted.Should().NotBeNull();
+        decrypted.Should().HaveCount(127);
+    }
+
+    private static string ResolveDataPath()
+    {
+        return Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "data"));
     }
 
     private static string CreateTempKeyDirectory()
