@@ -7,10 +7,12 @@ using NeoServer.Data.Interfaces;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items.Types;
 using NeoServer.Domain.Locker;
+using NeoServer.Domain.Repositories;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Scripts;
 using NeoServer.Server.Configurations;
 using Serilog;
+using IPlayerRepository = NeoServer.Data.Interfaces.IPlayerRepository;
 
 namespace NeoServer.Server.Routines.Persistence;
 
@@ -18,7 +20,7 @@ public class PlayerPersistenceRoutine(
     IGameServer gameServer,
     IPlayerRepository playerRepository,
     ILogger logger,
-    IPlayerDepotItemRepository playerDepotItemRepository,
+    IPlayerDepotRepository playerDepotItemRepository,
     IPlayerMailItemRepository playerMailItemRepository,
     IScriptManager scriptManager,
     ServerConfiguration serverConfiguration,
@@ -36,8 +38,8 @@ public class PlayerPersistenceRoutine(
         {
             while (!token.IsCancellationRequested)
             {
-                gameServer.PersistenceDispatcher.AddEvent(async () => await SavePlayers());
                 await Task.Delay(_saveInterval, token);
+                gameServer.PersistenceDispatcher.AddEvent(async () => await SavePlayers());
             }
         }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }

@@ -9,6 +9,7 @@ using NeoServer.Domain.Common.Helpers;
 using NeoServer.Domain.World;
 using NeoServer.Domain.World.Models.Spawns;
 using NeoServer.Loaders.Groups;
+using NeoServer.Loaders.Houses;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Loaders.Items;
 using NeoServer.Loaders.Monsters;
@@ -81,6 +82,8 @@ public static class ServerBootstrap
         container.Resolve<MonsterLoader>().Load();
         container.Resolve<WorldLoader>().Load(await otbmLoadTask);
         container.Resolve<SpawnLoader>().Load();
+        await container.Resolve<HouseLoader>().Load();
+        
         container.Resolve<IEnumerable<IStartupLoader>>().ToList().ForEach(x => x.Load());
         container.Resolve<IScriptManager>().Initialize();
 
@@ -99,6 +102,7 @@ public static class ServerBootstrap
             container.Resolve<GameWorldRoutine>().StartChecking));
 
         container.Resolve<PlayerPersistenceRoutine>().Start(cancellationToken);
+        container.Resolve<HouseTilePersistenceRoutine>().Start(cancellationToken);
         container.Resolve<EventSubscriber>().AttachEvents();
         container.Resolve<IEnumerable<IStartup>>().ToList().ForEach(x => x.Run());
         container.Resolve<SpawnManager>().StartSpawn();
@@ -117,6 +121,7 @@ public static class ServerBootstrap
 
         container.Resolve<IScriptManager>().GlobalEvents.ExecuteShutdown();
         await container.Resolve<PlayerPersistenceRoutine>().SavePlayers();
+        await container.Resolve<HouseTilePersistenceRoutine>().SaveHouseTiles();
 
         container.Resolve<LoginListener>().Dispose();
         container.Resolve<GameListener>().Dispose();

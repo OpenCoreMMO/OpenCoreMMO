@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Loaders.Groups;
+using NeoServer.Loaders.Houses;
 using NeoServer.Loaders.Interfaces;
 using NeoServer.Loaders.Items;
 using NeoServer.Loaders.Monsters;
@@ -33,6 +34,9 @@ public static class LoaderInjection
         builder.AddSingleton<SpellLoader>();
         builder.AddSingleton<QuestDataLoader>();
         builder.AddSingleton<GroupLoader>();
+        builder.AddSingleton<HouseLoader>();
+        builder.AddSingleton<HouseAccessListLoader>();
+        builder.AddSingleton<HouseXmlParser>();
 
         builder.RegisterCustomLoaders();
 

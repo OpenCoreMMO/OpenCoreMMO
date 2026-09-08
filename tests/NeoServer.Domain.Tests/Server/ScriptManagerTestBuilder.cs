@@ -42,7 +42,7 @@ public static class ScriptManagerTestBuilder
             7172,
             true,
             false,
-            new SaveConfiguration(100)
+            new SaveConfiguration(100, 60)
         );
     }
 }

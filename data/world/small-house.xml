@@ -1,2 +1,4 @@
 <?xml version="1.0"?>
-<houses />
+<houses>
+	<house name="OpenCore House #1" houseid="1" entryx="1015" entryy="1016" entryz="7" rent="1000" townid="1" size="20" />
+</houses>

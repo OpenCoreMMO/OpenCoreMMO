@@ -56,7 +56,6 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
 
         foreach (var player in players)
         {
-            tasks.Clear();
             tasks.Add(SavePlayer(player));
         }
 
@@ -94,6 +93,15 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         await using var context = NewDbContext;
 
         return (await context.Players.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower()))?.Id ?? 0;
+    }
+
+    public async Task UpdateBankAmount(int playerId, ulong amount)
+    {
+        await using var context = NewDbContext;
+        var playerEntity = await context.Players.FindAsync(playerId);
+        if (playerEntity is null) return;
+        playerEntity.BankAmount = amount;
+        await context.SaveChangesAsync();
     }
 
     public async Task UpdateLastLogInDate(int playerId, DateTime lastLogIn)
@@ -152,6 +160,7 @@ public class PlayerRepository(DbContextOptions<NeoContext> contextOptions, ILogg
         playerEntity.MagicLevel = player.GetRawSkillLevel(SkillType.Magic);
         playerEntity.MagicLevelTries = player.GetSkillTries(SkillType.Magic);
         playerEntity.Experience = player.Experience;
+        playerEntity.BankAmount = player.BankAmount;
         playerEntity.ChaseMode = player.ChaseMode;
         playerEntity.FightMode = player.FightMode;
         playerEntity.Vocation = player.VocationType;

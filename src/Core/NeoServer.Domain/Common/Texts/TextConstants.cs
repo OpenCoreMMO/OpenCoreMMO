@@ -13,6 +13,7 @@ public static class TextConstants
     public const string YOU_ARE_EXHAUSTED = "You are exhausted";
     public const string YOU_CANNOT_THROW_THERE = "You cannot throw there";
     public const string NOT_POSSIBLE = "Sorry, not possible.";
+    public const string YOU_ARE_NOT_INVITED = "You are not invited.";
     public const string NOT_ENOUGH_ROOM = "There is not enough room.";
     public const string CANNOT_THROW_THERE = "You cannot throw there.";
     public const string THERE_IS_NO_WAY = "There is no way.";

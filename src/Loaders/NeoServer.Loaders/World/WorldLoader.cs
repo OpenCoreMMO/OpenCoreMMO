@@ -31,6 +31,7 @@ public class WorldLoader
     private readonly ILogger logger;
     private readonly ServerConfiguration serverConfiguration;
     private readonly Domain.World.World world;
+    private readonly Dictionary<uint, List<IDynamicTile>> _houseTiles = new();
 
     public WorldLoader(Domain.World.World world, ILogger logger, IItemFactory itemFactory,
         ServerConfiguration serverConfiguration, ITileFactory tileFactory, IItemTypeStore itemTypeStore)
@@ -42,6 +43,9 @@ public class WorldLoader
         _tileFactory = tileFactory;
         _itemTypeStore = itemTypeStore;
     }
+
+    /// <summary>House tiles collected during world loading, keyed by house id.</summary>
+    public IReadOnlyDictionary<uint, List<IDynamicTile>> HouseTiles => _houseTiles;
 
     public void Load(Otbm otbm)
     {
@@ -93,7 +97,10 @@ public class WorldLoader
 
     private void LoadTile(TileNode tileNode)
     {
-        if (serverConfiguration.EnableStaticTileCaching)
+        var isHouseTile = tileNode.HouseId > 0;
+
+        // House tiles must never be served from the static cache.
+        if (!isHouseTile && serverConfiguration.EnableStaticTileCaching)
         {
             Span<byte> raw = stackalloc byte[tileNode.Items.Count * sizeof(ushort)];
             var written = LoadClientIdsStream(tileNode, ref raw);
@@ -110,8 +117,8 @@ public class WorldLoader
 
         var items = GetItemsOnTile(tileNode);
 
-        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items,
-            serverConfiguration.EnableStaticTileCaching,
+        var useCache = !isHouseTile && serverConfiguration.EnableStaticTileCaching;
+        var tile = _tileFactory.CreateTile(tileNode.Coordinate, (TileFlag)tileNode.Flag, items, useCache,
             tileNode.HouseId);
 
         if (tile is IStaticTile)
@@ -121,6 +128,18 @@ public class WorldLoader
         }
 
         world.AddTile(tile);
+
+        // Collect house tiles for linking in HouseLoader
+        if (isHouseTile && tile is IDynamicTile dynamicTile)
+        {
+            if (!_houseTiles.TryGetValue(tileNode.HouseId, out var list))
+            {
+                list = new List<IDynamicTile>();
+                _houseTiles[tileNode.HouseId] = list;
+            }
+
+            list.Add(dynamicTile);
+        }
     }
 
     private int LoadClientIdsStream(TileNode tileNode, ref Span<byte> clientIds)

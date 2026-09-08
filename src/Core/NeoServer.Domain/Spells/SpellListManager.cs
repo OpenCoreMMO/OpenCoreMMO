@@ -53,9 +53,9 @@ public class SpellListManager
 
         if (TryGet(words, out spell))
         {
-            if (spell.HasParams) // Spell requires params but none were given
-                return false;
-
+            // HasParams means params are supported, not required (e.g. house kick self-cast).
+            // Clear any leftover params from a previous cast on this singleton spell instance.
+            spell.Params = [];
             return true;
         }
 
@@ -93,7 +93,7 @@ public class SpellListManager
 
         param = param.Replace("\"", "").Replace("\'", "").Trim();
 
-        if (!string.IsNullOrWhiteSpace(param)) spell.Params = [param];
+        spell.Params = string.IsNullOrWhiteSpace(param) ? [] : [param];
 
         return true;
     }

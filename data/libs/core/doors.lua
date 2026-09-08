@@ -1,5 +1,4 @@
--- Door item IDs ported from TFS global.lua, filtered for OpenCoreMMO 8.60 (items.json).
--- House door tables (openHouseDoors / closedHouseDoors) are excluded.
+-- Door item IDs filtered for OpenCoreMMO 8.60 (items.json).
 -- LuaFormatter off
 keys = {
 	2086, 2087, 2088, 2089, 2090, 2091, 2092, 10032
@@ -32,6 +31,18 @@ openExtraDoors = {
 
 closedExtraDoors = {
 	1539, 1541, 6795, 6797, 6799, 6801, 6959, 6961, 7054, 7056
+}
+
+openHouseDoors = {
+	1220, 1222, 1238, 1240, 3539, 3548, 5083, 5085, 5102, 5111, 5120, 5129, 5285, 5287, 5516, 5518,
+	6199, 6201, 6256, 6258, 6895, 6904, 7037, 7046, 8548, 8550, 9172, 9174, 9274, 9276, 10275, 10277,
+	10472, 10481
+}
+
+closedHouseDoors = {
+	1219, 1221, 1237, 1239, 3538, 3547, 5082, 5084, 5101, 5110, 5119, 5128, 5284, 5286, 5515, 5517,
+	6198, 6200, 6255, 6257, 6894, 6903, 7036, 7045, 8547, 8549, 9171, 9173, 9273, 9275, 10274, 10276,
+	10471, 10480
 }
 
 openQuestDoors = {

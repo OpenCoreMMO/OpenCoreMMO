@@ -18,6 +18,8 @@ public static class ManagerInjection
 
         builder.AddSingleton<SpawnManager>();
         builder.AddSingleton<LockerManager>();
+        builder.AddSingleton<LockerLoaderService>();
+        builder.AddSingleton<DepotLoaderService>();
         builder.AddSingleton<SpellListManager>();
         return builder;
     }

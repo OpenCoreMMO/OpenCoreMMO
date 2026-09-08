@@ -606,6 +606,9 @@ public class DynamicTile : BaseTile, IDynamicTile
         AddItem(item);
     }
 
+    /// <inheritdoc/>
+    public void SetAsProtectionZone() => SetFlag(TileFlags.ProtectionZone);
+
     public uint PossibleAmountToAdd(IItem thing, byte? toPosition = null)
     {
         var freeSpace = 10 - (DownItems?.Count ?? 0);
@@ -739,7 +742,12 @@ public class DynamicTile : BaseTile, IDynamicTile
             return Result<OperationResultList<ICreature>>.NotPossible;
 
         if (!forced && (!CanEnterFunction?.Invoke(creature) ?? false))
+        {
+            if (HouseId is > 0 && creature is IPlayer)
+                return Result<OperationResultList<ICreature>>.Fail(InvalidOperation.NotInvited);
+
             return Result<OperationResultList<ICreature>>.NotPossible;
+        }
 
         Creatures ??= [];
         Creatures.Add(walkableCreature);

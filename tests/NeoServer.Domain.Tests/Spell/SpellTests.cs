@@ -5,12 +5,15 @@ using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
+using NeoServer.Domain.Common.Item;
+using NeoServer.Domain.Common.Location;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
 using NeoServer.Domain.Services;
 using NeoServer.Domain.Spells;
 using NeoServer.Domain.Spells.Entities;
 using NeoServer.Domain.Spells.Events;
+using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.Map;
 using NeoServer.Domain.Tests.Helpers.Player;
 using NeoServer.Domain.World.Services;
@@ -320,15 +323,17 @@ public class SpellTests
     }
 
     [Fact]
-    public void TryGetInstantSpell_UtevoResSpell_RequiresValidParameters()
+    public void TryGetInstantSpell_UtevoResSpell_SupportsOptionalParameters()
     {
         // Arrange
         var utevoResSpell = new TestSpell { Words = "utevo res", Name = "utevo res", HasParams = true };
         _spellListManager.Add("utevo res", utevoResSpell);
 
         // Act & Assert
-        // words = utevo res return null
-        _spellListManager.TryGetInstantSpell("utevo res", out var spell1).Should().BeFalse();
+        // words without params still resolve; script validates empty param
+        _spellListManager.TryGetInstantSpell("utevo res", out var spell1).Should().BeTrue();
+        spell1.Should().Be(utevoResSpell);
+        spell1.Params.Should().BeEmpty();
 
         // words = utevo res "rat" return spell with params "rat"
         _spellListManager.TryGetInstantSpell("utevo res \"rat\"", out var spell2).Should().BeTrue();
@@ -339,6 +344,10 @@ public class SpellTests
         _spellListManager.TryGetInstantSpell("utevo res \"rat", out var spell3).Should().BeTrue();
         spell3.Should().Be(utevoResSpell);
         spell3.Params.Should().BeEquivalentTo(["rat"]);
+
+        // casting without params again clears leftover params from prior cast
+        _spellListManager.TryGetInstantSpell("utevo res", out var spell4).Should().BeTrue();
+        spell4.Params.Should().BeEmpty();
     }
 
     [Fact]
@@ -410,6 +419,94 @@ public class SpellTests
             e.Caster == player && e.Spell == spell)), Times.Once);
     }
 
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void Spell_casts_when_facing_blocked_tile_and_not_blocking_solid()
+    {
+        var map = MapTestDataBuilder.Build(100, 102, 100, 102, 7, 7);
+        var pathFinder = new PathFinder(map);
+        var mapTool = new MapTool(map, pathFinder);
+        var spellService = new SpellService(
+            new SpellCastValidation(mapTool),
+            _eventAggregatorMock.Object,
+            new CreatureSpeechService(map),
+            map);
+
+        var player = PlayerTestDataBuilder.Build();
+        map.PlaceCreature(player);
+        player.TurnTo(Direction.East);
+
+        var door = ItemTestDataBuilder.CreateUnpassableItem(1210);
+        door.Metadata.Flags.Add(ItemFlag.BlockProjectTile);
+        ((IDynamicTile)map[101, 100, 7]).AddItem(door);
+
+        var spell = new TestSpell { NeedCasterTargetOrDirection = true, BlockingSolid = false, IsAggressive = false };
+
+        var result = spellService.Cast(player, null, spell, false);
+
+        result.Should().BeTrue();
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.IsAny<SpellFailedToCastEvent>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void Spell_fails_with_not_enough_room_when_aggressive_and_facing_blocked_tile()
+    {
+        var map = MapTestDataBuilder.Build(100, 102, 100, 102, 7, 7);
+        var pathFinder = new PathFinder(map);
+        var mapTool = new MapTool(map, pathFinder);
+        var spellService = new SpellService(
+            new SpellCastValidation(mapTool),
+            _eventAggregatorMock.Object,
+            new CreatureSpeechService(map),
+            map);
+
+        var player = PlayerTestDataBuilder.Build();
+        map.PlaceCreature(player);
+        player.TurnTo(Direction.East);
+
+        var door = ItemTestDataBuilder.CreateUnpassableItem(1210);
+        door.Metadata.Flags.Add(ItemFlag.BlockProjectTile);
+        ((IDynamicTile)map[101, 100, 7]).AddItem(door);
+
+        var spell = new TestSpell { NeedCasterTargetOrDirection = true, IsAggressive = true };
+
+        var result = spellService.Cast(player, null, spell, false);
+
+        result.Should().BeFalse();
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e =>
+            e.Caster == player && e.Spell == spell && e.Error == InvalidOperation.NotEnoughRoom)), Times.Once);
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void Spell_fails_with_not_enough_room_when_blocking_solid_and_facing_unpassable_tile()
+    {
+        var map = MapTestDataBuilder.Build(100, 102, 100, 102, 7, 7);
+        var pathFinder = new PathFinder(map);
+        var mapTool = new MapTool(map, pathFinder);
+        var spellService = new SpellService(
+            new SpellCastValidation(mapTool),
+            _eventAggregatorMock.Object,
+            new CreatureSpeechService(map),
+            map);
+
+        var player = PlayerTestDataBuilder.Build();
+        map.PlaceCreature(player);
+        player.TurnTo(Direction.East);
+
+        var door = ItemTestDataBuilder.CreateUnpassableItem(1210);
+        door.Metadata.Flags.Add(ItemFlag.BlockProjectTile);
+        ((IDynamicTile)map[101, 100, 7]).AddItem(door);
+
+        var spell = new TestSpell { NeedCasterTargetOrDirection = true, BlockingSolid = true };
+
+        var result = spellService.Cast(player, null, spell, false);
+
+        result.Should().BeFalse();
+        _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e =>
+            e.Caster == player && e.Spell == spell && e.Error == InvalidOperation.NotEnoughRoom)), Times.Once);
+    }
 
     private class TestSpell : BaseSpell
     {

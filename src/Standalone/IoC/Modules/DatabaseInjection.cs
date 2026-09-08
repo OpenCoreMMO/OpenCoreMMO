@@ -25,7 +25,7 @@ public static class DatabaseInjection
         builder.AddSingleton<IAccountPremiumHistoryRepository, AccountPremiumHistoryRepository>();
         builder.AddSingleton<IIpBansRepository, IpBansRepository>();
         builder.AddSingleton<IGuildRepository, GuildRepository>();
-        builder.AddSingleton<IPlayerDepotItemRepository, PlayerDepotItemRepository>();
+        builder.AddSingleton<IPlayerDepotRepository, PlayerDepotRepository>();
         builder.AddSingleton<IPlayerRepository, PlayerRepository>();
         builder.AddSingleton<IWorldRecordRepository, WorldRecordRepository>();
         builder.AddSingleton<IWorldRepository, WorldRepository>();
@@ -37,6 +37,7 @@ public static class DatabaseInjection
         //domain repositories
         builder.AddSingleton<Domain.Repositories.IPlayerRepository, PlayerRepository>();
         builder.AddSingleton<IPlayerMailRepository, PlayerMailItemRepository>();
+        builder.AddSingleton<IHouseRepository, HouseRepository>();
 
         return builder;
     }
