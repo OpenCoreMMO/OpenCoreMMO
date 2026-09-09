@@ -4,30 +4,34 @@ using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Houses;
 using NeoServer.Domain.Houses.Services;
+using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
 /// <summary>
-///     House Lua bindings for Phase 3 (access-list spells, kick, and !buyhouse).
-///     Full HouseFunctions surface (tiles, beds, rent, trade, save) comes in later slices.
+///     House Lua bindings for Phase 3 (access-list spells, kick, !buyhouse, and !sellhouse).
+///     Full HouseFunctions surface (tiles, beds, rent, save) comes in later slices.
 /// </summary>
 public class HouseFunctions : LuaScriptInterface, IHouseFunctions
 {
     private static IHouseStore _houseStore;
     private static IHouseService _houseService;
+    private static IHouseTradeService _houseTradeService;
     private static ICreatureGameInstance _creatureGameInstance;
     private static HouseConfiguration _houseConfiguration;
 
     public HouseFunctions(
         IHouseStore houseStore,
         IHouseService houseService,
+        IHouseTradeService houseTradeService,
         ICreatureGameInstance creatureGameInstance,
         HouseConfiguration houseConfiguration) :
         base(nameof(HouseFunctions))
     {
         _houseStore = houseStore;
         _houseService = houseService;
+        _houseTradeService = houseTradeService;
         _creatureGameInstance = creatureGameInstance;
         _houseConfiguration = houseConfiguration ?? new HouseConfiguration();
     }
@@ -45,6 +49,7 @@ public class HouseFunctions : LuaScriptInterface, IHouseFunctions
         RegisterMethod(luaState, "House", "getAccessList", LuaHouseGetAccessList);
         RegisterMethod(luaState, "House", "getDoorIdByPosition", LuaHouseGetDoorIdByPosition);
         RegisterMethod(luaState, "House", "kickPlayer", LuaHouseKickPlayer);
+        RegisterMethod(luaState, "House", "startTrade", LuaHouseStartTrade);
 
         RegisterGlobalVariable(luaState, "GUEST_LIST", HouseListId.GuestList);
         RegisterGlobalVariable(luaState, "SUBOWNER_LIST", HouseListId.SubOwnerList);
@@ -206,5 +211,37 @@ public class HouseFunctions : LuaScriptInterface, IHouseFunctions
         // HouseService validates CanKick (relative access, CanEditHouses, tile).
         PushBoolean(luaState, _houseService.KickPlayer(house, caster, target));
         return 1;
+    }
+
+    private static int LuaHouseStartTrade(LuaState luaState)
+    {
+        // house:startTrade(player, tradePartner)
+        var house = GetUserdata<House>(luaState, 1);
+        var player = GetUserdata<IPlayer>(luaState, 2);
+        var tradePartner = GetUserdata<IPlayer>(luaState, 3);
+
+        if (house is null || player is null || tradePartner is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var result = _houseTradeService.StartTrade(house, player, tradePartner);
+        Lua.PushNumber(luaState, (int)ToReturnValue(result));
+        return 1;
+    }
+
+    private static ReturnValueType ToReturnValue(HouseTradeResult result)
+    {
+        return result switch
+        {
+            HouseTradeResult.NoError => ReturnValueType.RETURNVALUE_NOERROR,
+            HouseTradeResult.TradePlayerFarAway => ReturnValueType.RETURNVALUE_TRADEPLAYERFARAWAY,
+            HouseTradeResult.YouDontOwnThisHouse => ReturnValueType.RETURNVALUE_YOUDONTOWNTHISHOUSE,
+            HouseTradeResult.TradePlayerAlreadyOwnsAHouse => ReturnValueType.RETURNVALUE_TRADEPLAYERALREADYOWNSAHOUSE,
+            HouseTradeResult.TradePlayerHighestBidder => ReturnValueType.RETURNVALUE_TRADEPLAYERHIGHESTBIDDER,
+            HouseTradeResult.YouCannotTradeThisHouse => ReturnValueType.RETURNVALUE_YOUCANNOTTRADETHISHOUSE,
+            _ => ReturnValueType.RETURNVALUE_NOTPOSSIBLE
+        };
     }
 }

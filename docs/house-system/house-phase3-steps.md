@@ -156,8 +156,37 @@ Reference behavior: TFS `buyhouse.lua` (words `!buyhouse`). Player must face the
 
 ---
 
+## Slice 5 — `!sellhouse` (House Sale via Trade) — DONE
+
+Full plan: [`house-sellhouse-steps.md`](house-sellhouse-steps.md).
+
+Reference behavior: TFS `sellhouse.lua` + `house:startTrade` (phantom `ITEM_DOCUMENT_RO` in the safe-trade window). Completing the trade calls `SetOwner(buyer)` with `paidUntil` preserved.
+
+### What shipped
+
+1. **Domain** — `House` pending-transfer pointer (`TryAttachTransfer` / `ResetTransfer` / `ExecuteTransfer`). `SetNewOwner` always zeroes `PayRentWarnings` on a real owner change and only refreshes `PaidUntil` when `updatePaidUntil` is true.
+2. **`HouseTransferItem`** — item 1968, not on the map; look text `It is a house transfer document for '{name}'`.
+3. **`HouseTradeService.StartTrade`** — TFS check order (range 2/2/0, owner, partner already owns a house, pending transfer). No premium/sight/auction checks.
+4. **SafeTrade** — skip sight/next-to for the document; on accept move only the buyer’s offer and `SetOwner(buyer, updatePaidUntil: false)`; on cancel drop the pending pointer.
+5. **Lua** — `house:startTrade(player, partner)` and `data/scripts/talkactions/house/sellhouse.lua` (`!sellhouse`, always `return true`).
+
+### In-game smoke checklist
+
+- [ ] Owner inside house, partner online within 2 sqm same floor: `!sellhouse Name` opens trade showing a document
+- [ ] Partner offers gold, both accept → partner owns the house; gold is in the seller’s inventory; document is gone; lists empty; `PaidUntil` unchanged
+- [ ] `!sellhouse` with no name / unknown / self → “Trade player not found.”
+- [ ] Not standing in a house → “You must stand in your house to initiate the trade.”
+- [ ] Subowner inside the house → “You don't own this house.”
+- [ ] Partner already owns a house → “Trade player already owns a house.”
+- [ ] Partner 3 sqm away or different floor → “Trade player is too far away.”
+- [ ] Second `!sellhouse` while the first window is open → “You can not trade this house.”
+- [ ] Cancel or walk > 2 sqm from partner → trade closes, owner unchanged
+- [ ] Command text is not shown in public chat
+
+---
+
 ## Later slices (not started)
 
-- [ ] Talkactions: `leavehouse` / `sellhouse`
+- [ ] Talkaction: `leavehouse`
 - [ ] Full `HouseFunctions` surface (tiles, doors, beds, rent, trade, save)
 - [ ] Rent warning letters

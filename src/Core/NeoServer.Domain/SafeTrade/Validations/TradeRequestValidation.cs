@@ -36,12 +36,15 @@ internal class TradeRequestValidation
 
         if (ItemIsAlreadyBeingTraded(firstPlayer, items)) return SafeTradeError.ItemAlreadyBeingTraded;
 
-        if (PlayerIsNotNextToItem(firstPlayer, items)) return SafeTradeError.PlayerNotCloseToItem;
+        var isHouseTransfer = items[0] is Houses.HouseTransferItem;
+
+        if (!isHouseTransfer && PlayerIsNotNextToItem(firstPlayer, items)) return SafeTradeError.PlayerNotCloseToItem;
 
         // Ensure that both players are close enough to each other
         if (PlayerIsNotCloseEnough(firstPlayer, secondPlayer)) return SafeTradeError.PlayersNotCloseToEachOther;
 
-        if (!HasSightClearToSecondPlayer(firstPlayer, secondPlayer)) return SafeTradeError.HasNoSightClearToPlayer;
+        if (!isHouseTransfer && !HasSightClearToSecondPlayer(firstPlayer, secondPlayer))
+            return SafeTradeError.HasNoSightClearToPlayer;
 
         // Ensure that the second player is not already in a trade with someone else
         if (SecondPlayerIsAlreadyTrading(firstPlayer, secondPlayer)) return SafeTradeError.SecondPlayerAlreadyTrading;

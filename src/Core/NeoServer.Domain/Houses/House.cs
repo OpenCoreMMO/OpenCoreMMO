@@ -290,11 +290,51 @@ public class House
         OwnerName = guid != 0 ? name : string.Empty;
         OwnerAccountId = guid != 0 ? accountId : 0;
 
+        PayRentWarnings = 0;
+
         if (updatePaidUntil && guid != 0)
         {
             PaidUntil = now.AddSeconds(rentPeriodSeconds);
-            PayRentWarnings = 0;
         }
+    }
+
+    public HouseTransferItem PendingTransfer { get; private set; }
+
+    public bool TryAttachTransfer(HouseTransferItem item)
+    {
+        if (item is null)
+        {
+            return false;
+        }
+
+        if (PendingTransfer is not null)
+        {
+            return false;
+        }
+
+        PendingTransfer = item;
+        return true;
+    }
+
+    public void ResetTransfer()
+    {
+        PendingTransfer = null;
+    }
+
+    public bool ExecuteTransfer(HouseTransferItem item)
+    {
+        if (item is null || PendingTransfer is null)
+        {
+            return false;
+        }
+
+        if (!ReferenceEquals(PendingTransfer, item))
+        {
+            return false;
+        }
+
+        PendingTransfer = null;
+        return true;
     }
 
     public bool CanKick(IPlayer caster, IPlayer target)
