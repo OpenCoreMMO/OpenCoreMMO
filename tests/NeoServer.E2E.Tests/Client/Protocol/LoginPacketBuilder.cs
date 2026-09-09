@@ -9,12 +9,11 @@ internal static class LoginPacketBuilder
 
     public static (byte[] Packet, uint[] XteaKey) BuildAccountLogin(
         string account,
-        string password,
-        string dataPath)
+        string password)
     {
         var xteaKey = GenerateXteaKey();
         var rsaPayload = BuildAccountRsaPayload(xteaKey, account, password);
-        var encryptedRsa = RsaEncryptor.Encrypt(rsaPayload, dataPath);
+        var encryptedRsa = RsaEncryptor.Encrypt(rsaPayload);
 
         var message = new NetworkMessage();
         message.AddByte((byte)GameIncomingPacketType.PlayerLoginRequest);
@@ -31,8 +30,7 @@ internal static class LoginPacketBuilder
         string password,
         string characterName,
         uint challengeTimeStamp,
-        byte challengeNumber,
-        string dataPath)
+        byte challengeNumber)
     {
         var xteaKey = GenerateXteaKey();
         var rsaPayload = BuildGameRsaPayload(
@@ -42,7 +40,7 @@ internal static class LoginPacketBuilder
             characterName,
             challengeTimeStamp,
             challengeNumber);
-        var encryptedRsa = RsaEncryptor.Encrypt(rsaPayload, dataPath);
+        var encryptedRsa = RsaEncryptor.Encrypt(rsaPayload);
 
         var message = new NetworkMessage();
         message.AddByte((byte)GameIncomingPacketType.PlayerLogIn);
