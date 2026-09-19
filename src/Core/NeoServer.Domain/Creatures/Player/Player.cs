@@ -663,7 +663,7 @@ public class Player : CombatActor, IPlayer
 
         UpdateManaSpent(spell.ManaConsumption);
 
-        StartCooldown(spell);
+        if (!Group.FlagIsEnabled(PlayerFlag.HasNoExhaustion)) StartCooldown(spell);
     }
 
     public void Yell(string message, List<ICreature> listenersToYell, YellConfiguration yellSettings)
@@ -1391,7 +1391,8 @@ public class Player : CombatActor, IPlayer
             throw new NotImplementedException();
 
 
-        if (!CooldownHasExpired(spell)) return Result.Fail(InvalidOperation.Exhausted);
+        if (!Group.FlagIsEnabled(PlayerFlag.HasNoExhaustion) && !CooldownHasExpired(spell))
+            return Result.Fail(InvalidOperation.Exhausted);
 
         return Result.Success;
     }

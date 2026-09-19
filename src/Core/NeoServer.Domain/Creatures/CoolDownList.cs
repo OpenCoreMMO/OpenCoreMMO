@@ -13,7 +13,8 @@ public class CooldownList
     private Dictionary<ulong, CooldownTime> CustomCooldowns { get; } = new();
 
     private Dictionary<Guid, CooldownTime> GuidCooldowns { get; } = new();
-    private Dictionary<string, CooldownTime> SpellGroupCooldowns { get; } = new();
+    private Dictionary<string, CooldownTime> SpellGroupCooldowns { get; } =
+        new(StringComparer.OrdinalIgnoreCase);
     private Dictionary<string, CooldownTime> SummonCooldowns { get; set; }
 
     /// <summary>
@@ -38,31 +39,16 @@ public class CooldownList
         return true;
     }
 
-    public bool Start(IHasCooldown spell)
+    public bool Start(IHasCooldown cooldown)
     {
         // Start new cooldown only if previous has expired
-        if (!Expired(spell)) return false;
+        if (!Expired(cooldown)) return false;
 
-        GuidCooldowns.Remove(spell.CooldownId);
-        GuidCooldowns.TryAdd(spell.CooldownId, new CooldownTime(DateTime.UtcNow, spell.Cooldown));
+        var start = DateTime.UtcNow;
+        GuidCooldowns[cooldown.CooldownId] = new CooldownTime(start, cooldown.Cooldown);
 
-        if (spell.HasAnyCooldownGroup) return true;
-
-        // Handle group cooldowns
-
-        if (!string.IsNullOrWhiteSpace(spell.PrimaryGroup.Name) && GroupExpired(spell.PrimaryGroup.Name))
-        {
-            SpellGroupCooldowns.Remove(spell.PrimaryGroup.Name);
-            SpellGroupCooldowns.TryAdd(spell.PrimaryGroup.Name,
-                new CooldownTime(DateTime.UtcNow, spell.PrimaryGroup.Cooldown));
-        }
-
-        if (!string.IsNullOrWhiteSpace(spell.SecondaryGroup.Name) && GroupExpired(spell.SecondaryGroup.Name))
-        {
-            SpellGroupCooldowns.Remove(spell.SecondaryGroup.Name);
-            SpellGroupCooldowns.TryAdd(spell.SecondaryGroup.Name,
-                new CooldownTime(DateTime.UtcNow, spell.SecondaryGroup.Cooldown));
-        }
+        StartGroupCooldown(cooldown.PrimaryGroup, start);
+        StartGroupCooldown(cooldown.SecondaryGroup, start);
 
         return true;
     }
@@ -101,36 +87,27 @@ public class CooldownList
         return spellExpired;
     }
 
-    public bool Expired(IHasCooldown spell)
+    public bool Expired(IHasCooldown cooldown)
     {
         // Check individual spell cooldown first
-        var spellExpired = !GuidCooldowns.TryGetValue(spell.CooldownId, out var cooldown) || cooldown.Expired;
-        if (!spellExpired) return false;
+        if (!Expired(cooldown.CooldownId)) return false;
+        if (!GroupExpired(cooldown.PrimaryGroup.Name)) return false;
 
-        if (spell.HasAnyCooldownGroup) return true;
-
-        // Check all spell group cooldowns
-        var groupsExpired = true;
-
-        if (!string.IsNullOrWhiteSpace(spell.PrimaryGroup.Name) && GroupExpired(spell.PrimaryGroup.Name))
-        {
-            SpellGroupCooldowns.TryGetValue(spell.PrimaryGroup.Name, out var cooldownTime);
-            groupsExpired &= cooldownTime.Expired;
-        }
-
-        if (!string.IsNullOrWhiteSpace(spell.SecondaryGroup.Name) && GroupExpired(spell.SecondaryGroup.Name))
-        {
-            SpellGroupCooldowns.TryGetValue(spell.SecondaryGroup.Name, out var cooldownTime);
-            groupsExpired &= cooldownTime.Expired;
-        }
-
-        return groupsExpired;
+        return GroupExpired(cooldown.SecondaryGroup.Name);
     }
 
     public bool GroupExpired(string groupName)
     {
+        if (string.IsNullOrWhiteSpace(groupName)) return true;
         if (SpellGroupCooldowns.TryGetValue(groupName, out var cooldown)) return cooldown.Expired;
         return true;
+    }
+
+    private void StartGroupCooldown((string Name, uint Cooldown) group, DateTime start)
+    {
+        if (string.IsNullOrWhiteSpace(group.Name)) return;
+
+        SpellGroupCooldowns[group.Name] = new CooldownTime(start, group.Cooldown);
     }
 
     public bool Expired(ulong id)
