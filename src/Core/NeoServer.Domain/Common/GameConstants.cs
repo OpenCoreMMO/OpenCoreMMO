@@ -12,6 +12,9 @@ public static class GameConstants
     public const ushort LETTER_SERVER_ID = 2597;
     public const ushort STAMPED_LETTER_SERVER_ID = 2598;
 
+    public const ushort BACKPACK_SERVER_ID = 1988;
+    public const ushort DEPOT_CHEST_SERVER_ID = 2594;
+
     //stamina
     public const int STAMINA_MAX_MINUTES = 42 * 60; //42 hours
     public const int STAMINA_BONUS_MINUTES = 39 * 60; //39 hours - +50% exp gain

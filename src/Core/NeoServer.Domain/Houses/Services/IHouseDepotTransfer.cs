@@ -1,11 +1,11 @@
-using NeoServer.Domain.Common.Contracts.Creatures;
-using NeoServer.Domain.Common.Contracts.Items;
-using NeoServer.Domain.Creatures.Player;
-
 namespace NeoServer.Domain.Houses.Services;
 
-/// <summary>Moves items from a house to the old owner's depot on ownership change.</summary>
+/// <summary>Moves items from a house into the previous owner's shared depot on ownership change.</summary>
 public interface IHouseDepotTransfer
 {
-    void TransferToOwnerDepot(House house, IPlayer player);
+    /// <summary>
+    ///     Packs transferable house items into a new backpack in the depot of <paramref name="ownerId" />.
+    ///     The depot is shared across towns.
+    /// </summary>
+    void TransferToOwnerDepot(House house, uint ownerId);
 }
