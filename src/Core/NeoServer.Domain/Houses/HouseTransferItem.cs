@@ -58,19 +58,20 @@ public class HouseTransferItem : Paper
         return $"{lookText}\n{description}";
     }
 
-    public void Complete(IPlayer newOwner)
+    public bool Complete(IPlayer newOwner)
     {
         if (newOwner is null)
         {
-            return;
+            return false;
         }
 
         if (!House.ExecuteTransfer(this))
         {
-            return;
+            return false;
         }
 
         _onComplete?.Invoke(newOwner);
+        return true;
     }
 
     public void Cancel()

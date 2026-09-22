@@ -11,6 +11,7 @@ using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.Repositories;
 using NeoServer.Domain.SafeTrade;
 using NeoServer.Domain.SafeTrade.Operations;
+using NeoServer.Domain.SafeTrade.Validations;
 using NeoServer.Domain.Tests.Helpers;
 using NeoServer.Domain.Tests.Helpers.House;
 using NeoServer.Domain.Tests.Helpers.Map;
@@ -144,7 +145,7 @@ public class HouseTradeServiceTests
         context.SafeTrade.AcceptTrade(context.Seller);
         var result = context.SafeTrade.AcceptTrade(context.Partner);
 
-        result.Should().Be(NeoServer.Domain.SafeTrade.Validations.SafeTradeError.None);
+        result.Should().Be(SafeTradeError.None);
         context.House.OwnerGuid.Should().Be(context.Partner.Id);
         context.House.OwnerName.Should().Be(context.Partner.Name);
         context.House.PaidUntil.Should().Be(paidUntil);
@@ -168,6 +169,68 @@ public class HouseTradeServiceTests
 
         context.House.OwnerGuid.Should().Be(context.Seller.Id);
         context.House.PendingTransfer.Should().BeNull();
+    }
+
+    [Fact]
+    [ThreadBlocking]
+    [Trait("Category", "ErrorCondition")]
+    public void Accepting_trade_does_not_move_payment_when_pending_transfer_was_reset()
+    {
+        var context = CreateContext();
+        PlaceAdjacent(context);
+
+        var payment = ItemTestDataBuilder.CreateWeaponItem(20, weight: 10);
+        context.Partner.Inventory.AddItem(payment, Slot.Left);
+
+        context.TradeService.StartTrade(context.House, context.Seller, context.Partner);
+        context.SafeTrade.Request(context.Partner, context.Seller, payment);
+        context.House.ResetTransfer();
+
+        context.SafeTrade.AcceptTrade(context.Seller);
+        var result = context.SafeTrade.AcceptTrade(context.Partner);
+
+        result.Should().Be(SafeTradeError.InvalidParameters);
+        context.House.OwnerGuid.Should().Be(context.Seller.Id);
+        context.House.PendingTransfer.Should().BeNull();
+        context.Partner.Inventory[Slot.Left].Should().Be(payment);
+        context.Seller.Inventory[Slot.Left].Should().BeNull();
+    }
+
+    [Fact]
+    [ThreadBlocking]
+    [Trait("Category", "Validation")]
+    public void Accepting_trade_fails_when_both_sides_offer_a_house_transfer_document()
+    {
+        var context = CreateContext();
+        PlaceAdjacent(context);
+
+        var partnerHouse = HouseTestDataBuilder.Build(id: 2, ownerGuid: context.Partner.Id, ownerName: context.Partner.Name);
+        context.HouseStore.AddOrUpdate(partnerHouse.Id, partnerHouse);
+
+        var sellerDocument = HouseTransferItem.Create(
+            HouseTransferItem.CreateMetadata(),
+            context.House,
+            context.Seller,
+            _ => throw new InvalidOperationException("seller transfer should not complete"));
+        var partnerDocument = HouseTransferItem.Create(
+            HouseTransferItem.CreateMetadata(),
+            partnerHouse,
+            context.Partner,
+            _ => throw new InvalidOperationException("partner transfer should not complete"));
+
+        context.House.TryAttachTransfer(sellerDocument).Should().BeTrue();
+        partnerHouse.TryAttachTransfer(partnerDocument).Should().BeTrue();
+
+        context.SafeTrade.Request(context.Seller, context.Partner, sellerDocument);
+        context.SafeTrade.Request(context.Partner, context.Seller, partnerDocument);
+        context.SafeTrade.AcceptTrade(context.Seller);
+        var result = context.SafeTrade.AcceptTrade(context.Partner);
+
+        result.Should().Be(SafeTradeError.InvalidParameters);
+        context.House.OwnerGuid.Should().Be(context.Seller.Id);
+        partnerHouse.OwnerGuid.Should().Be(context.Partner.Id);
+        context.House.PendingTransfer.Should().BeNull();
+        partnerHouse.PendingTransfer.Should().BeNull();
     }
 
     private static void PlaceAdjacent(TradeContext context)

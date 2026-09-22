@@ -69,6 +69,26 @@ public class HouseTransferTests
     }
 
     [Fact]
+    [Trait("Category", "ErrorCondition")]
+    public void Complete_returns_false_when_pending_transfer_was_reset()
+    {
+        var house = HouseTestDataBuilder.Build(ownerGuid: 1);
+        var buyer = PlayerTestDataBuilder.Build(id: 2);
+        var completed = false;
+        var item = HouseTransferItem.Create(
+            HouseTransferItem.CreateMetadata(),
+            house,
+            PlayerTestDataBuilder.Build(id: 1),
+            _ => completed = true);
+        house.TryAttachTransfer(item);
+        house.ResetTransfer();
+
+        item.Complete(buyer).Should().BeFalse();
+        completed.Should().BeFalse();
+        house.OwnerGuid.Should().Be(1u);
+    }
+
+    [Fact]
     [Trait("Category", "HappyPath")]
     public void Transfer_document_look_text_includes_house_name()
     {

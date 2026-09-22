@@ -2,7 +2,9 @@
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Creatures.Player.Inventory;
+using NeoServer.Domain.Houses;
 using NeoServer.Domain.SafeTrade.Request;
 using NeoServer.Domain.SafeTrade.Trackers;
 using NeoServer.Domain.SafeTrade.Validations;
@@ -53,38 +55,43 @@ public class TradeItemExchanger
         //untrack items before exchanging them
         ItemTradedTracker.UntrackItems(tradeRequest.Items.Concat(secondTradeRequest.Items));
 
-        ExchangeItem(playerRequesting, playerRequested, itemFromPlayerRequested, itemFromPlayerRequesting);
-
-        return SafeTradeError.None;
+        return ExchangeItem(playerRequesting, playerRequested, itemFromPlayerRequested, itemFromPlayerRequesting);
     }
 
-    private void ExchangeItem(IPlayer playerRequesting, IPlayer playerRequested, IItem itemFromPlayerRequested,
+    private SafeTradeError ExchangeItem(IPlayer playerRequesting, IPlayer playerRequested, IItem itemFromPlayerRequested,
         IItem itemFromPlayerRequesting)
     {
-        if (Guard.AnyNull(itemFromPlayerRequested, playerRequesting, itemFromPlayerRequesting, playerRequested)) return;
+        if (Guard.AnyNull(itemFromPlayerRequested, playerRequesting, itemFromPlayerRequesting, playerRequested))
+        {
+            return SafeTradeError.InvalidParameters;
+        }
 
-        var houseTransferFromRequestingPlayer = itemFromPlayerRequesting as Houses.HouseTransferItem;
-        var houseTransferFromRequestedPlayer = itemFromPlayerRequested as Houses.HouseTransferItem;
-        
-        // A house sale has exactly one transfer document (seller) and one payment (buyer).
-        // Both sides offering a document is invalid and cannot be completed safely.
+        var houseTransferFromRequestingPlayer = itemFromPlayerRequesting as HouseTransferItem;
+        var houseTransferFromRequestedPlayer = itemFromPlayerRequested as HouseTransferItem;
+
         if (houseTransferFromRequestingPlayer is not null && houseTransferFromRequestedPlayer is not null)
         {
-            return;
+            return SafeTradeError.InvalidParameters;
         }
 
         if (houseTransferFromRequestingPlayer is not null)
         {
-            ExchangeOfferedItem(playerRequesting, itemFromPlayerRequested, itemFromPlayerRequesting);
-            houseTransferFromRequestingPlayer.Complete(playerRequested);
-            return;
+            return CompleteHouseTransfer(
+                houseTransferFromRequestingPlayer,
+                playerRequested,
+                playerRequesting,
+                itemFromPlayerRequested,
+                itemFromPlayerRequesting);
         }
 
         if (houseTransferFromRequestedPlayer is not null)
         {
-            ExchangeOfferedItem(playerRequested, itemFromPlayerRequesting, itemFromPlayerRequested);
-            houseTransferFromRequestedPlayer.Complete(playerRequesting);
-            return;
+            return CompleteHouseTransfer(
+                houseTransferFromRequestedPlayer,
+                playerRequesting,
+                playerRequested,
+                itemFromPlayerRequesting,
+                itemFromPlayerRequested);
         }
 
         var playerRequestingSlotDestination =
@@ -98,6 +105,25 @@ public class TradeItemExchanger
 
         AddItemToInventory(playerRequesting, itemFromPlayerRequested, playerRequestingSlotDestination);
         AddItemToInventory(playerRequested, itemFromPlayerRequesting, playerRequestedSlotDestination);
+        return SafeTradeError.None;
+    }
+
+    private SafeTradeError CompleteHouseTransfer(
+        HouseTransferItem transferItem,
+        IPlayer buyer,
+        IPlayer seller,
+        IItem payment,
+        IItem transferDocument)
+    {
+        if (!transferItem.Complete(buyer))
+        {
+            OperationFailService.Send(seller.CreatureId, DEFAULT_ERROR_MESSAGE);
+            OperationFailService.Send(buyer.CreatureId, DEFAULT_ERROR_MESSAGE);
+            return SafeTradeError.InvalidParameters;
+        }
+
+        ExchangeOfferedItem(seller, payment, transferDocument);
+        return SafeTradeError.None;
     }
 
     private void ExchangeOfferedItem(IPlayer receiver, IItem offeredItem, IItem transferDocument)

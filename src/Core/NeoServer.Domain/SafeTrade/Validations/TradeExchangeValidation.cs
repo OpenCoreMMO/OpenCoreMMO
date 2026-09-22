@@ -22,7 +22,16 @@ internal static class TradeExchangeValidation
         IPlayer playerRequesting,
         IItem itemFromPlayerRequested)
     {
-        if (itemFromPlayerRequesting is not Houses.HouseTransferItem)
+        var requestingOfferedHouseTransfer = itemFromPlayerRequesting is Houses.HouseTransferItem;
+        var requestedOfferedHouseTransfer = itemFromPlayerRequested is Houses.HouseTransferItem;
+        if (requestingOfferedHouseTransfer && requestedOfferedHouseTransfer)
+        {
+            OperationFailService.Send(playerRequesting.CreatureId, DEFAULT_ERROR_MESSAGE);
+            OperationFailService.Send(playerRequested.CreatureId, DEFAULT_ERROR_MESSAGE);
+            return SafeTradeError.InvalidParameters;
+        }
+
+        if (!requestingOfferedHouseTransfer)
         {
             var firstPlayerCanAddItem = CanAddItem(playerRequested, itemFromPlayerRequesting, itemFromPlayerRequested);
             if (firstPlayerCanAddItem is not SafeTradeError.None)
@@ -32,7 +41,7 @@ internal static class TradeExchangeValidation
             }
         }
 
-        if (itemFromPlayerRequested is Houses.HouseTransferItem) return SafeTradeError.None;
+        if (requestedOfferedHouseTransfer) return SafeTradeError.None;
 
         var secondPlayerCanAddItem = CanAddItem(playerRequesting, itemFromPlayerRequested, itemFromPlayerRequesting);
         if (secondPlayerCanAddItem is SafeTradeError.None) return secondPlayerCanAddItem;
