@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using NeoServer.Domain.Common.Contracts.Creatures;
@@ -10,6 +11,8 @@ using NeoServer.Networking.Packets.Outgoing.Login;
 using NeoServer.Networking.Packets.Security;
 using NeoServer.Server.Common.Contracts.Network;
 using Serilog;
+
+[assembly: InternalsVisibleTo("NeoServer.Networking.Tests")]
 
 namespace NeoServer.Networking.Packets.Connection;
 
@@ -89,6 +92,10 @@ public class Connection : IConnection
             if (OutgoingPackets == null || OutgoingPackets.Count == 0 || force) CloseSocket();
 
             OnCloseEvent?.Invoke(this, new ConnectionEventArgs(this));
+        }
+        catch (Exception ex) when (IsClientDisconnected(ex))
+        {
+            _logger.Debug("Connection already closed: {Exception}", ex.Message);
         }
         catch (Exception ex)
         {
@@ -184,14 +191,23 @@ public class Connection : IConnection
             _isReading = true;
 
             while (!_isDisposed && _socket.Connected && !Disconnected)
+            {
                 try
                 {
                     await ReadMessageAsync();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    // Peer abort/reset ends the read. Close here so later logout and ping
+                    // sends do not keep writing on a dead socket.
+                    if (IsClientDisconnected(ex))
+                    {
+                        Close(true);
+                    }
+
                     break;
                 }
+            }
         }
         finally
         {
@@ -272,7 +288,7 @@ public class Connection : IConnection
             var eventArgs = new ConnectionEventArgs(this);
             OnPostProcessEvent?.Invoke(this, eventArgs);
         }
-        catch (Exception ex) when (ex is ObjectDisposedException or SocketException)
+        catch (Exception ex) when (IsClientDisconnected(ex))
         {
             _logger.Debug("Connection closed during send: {Exception}", ex.Message);
             Close();
@@ -295,9 +311,29 @@ public class Connection : IConnection
             _socket.Shutdown(SocketShutdown.Both);
             _socket.Close();
         }
+        catch (Exception ex) when (IsClientDisconnected(ex))
+        {
+            _logger.Debug("Socket already closed: {Exception}", ex.Message);
+        }
         catch (Exception ex)
         {
             _logger.Warning(ex, "Unable to close socket gracefully");
         }
+    }
+
+    /// <summary>
+    ///     NetworkStream wraps a peer abort as <see cref="IOException" />. On Windows the inner
+    ///     exception is <see cref="SocketException" /> 10053 (connection aborted) or 10054 (reset).
+    ///     On Linux the same wrapper carries ECONNRESET or EPIPE (broken pipe).
+    /// </summary>
+    internal static bool IsClientDisconnected(Exception exception)
+    {
+        for (var current = exception; current is not null; current = current.InnerException)
+        {
+            if (current is ObjectDisposedException or SocketException or EndOfStreamException)
+                return true;
+        }
+
+        return false;
     }
 }
