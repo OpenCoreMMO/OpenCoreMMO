@@ -22,15 +22,27 @@ internal static class TradeExchangeValidation
         IPlayer playerRequesting,
         IItem itemFromPlayerRequested)
     {
-        // Check if playerRequested has enough inventory space to add itemFromPlayerRequesting
-        var firstPlayerCanAddItem = CanAddItem(playerRequested, itemFromPlayerRequesting, itemFromPlayerRequested);
-        if (firstPlayerCanAddItem is not SafeTradeError.None)
+        var requestingOfferedHouseTransfer = itemFromPlayerRequesting is Houses.HouseTransferItem;
+        var requestedOfferedHouseTransfer = itemFromPlayerRequested is Houses.HouseTransferItem;
+        if (requestingOfferedHouseTransfer && requestedOfferedHouseTransfer)
         {
             OperationFailService.Send(playerRequesting.CreatureId, DEFAULT_ERROR_MESSAGE);
-            return firstPlayerCanAddItem;
+            OperationFailService.Send(playerRequested.CreatureId, DEFAULT_ERROR_MESSAGE);
+            return SafeTradeError.InvalidParameters;
         }
 
-        // Check if playerRequesting has enough inventory space to add itemFromPlayerRequested
+        if (!requestingOfferedHouseTransfer)
+        {
+            var firstPlayerCanAddItem = CanAddItem(playerRequested, itemFromPlayerRequesting, itemFromPlayerRequested);
+            if (firstPlayerCanAddItem is not SafeTradeError.None)
+            {
+                OperationFailService.Send(playerRequesting.CreatureId, DEFAULT_ERROR_MESSAGE);
+                return firstPlayerCanAddItem;
+            }
+        }
+
+        if (requestedOfferedHouseTransfer) return SafeTradeError.None;
+
         var secondPlayerCanAddItem = CanAddItem(playerRequesting, itemFromPlayerRequested, itemFromPlayerRequesting);
         if (secondPlayerCanAddItem is SafeTradeError.None) return secondPlayerCanAddItem;
 
