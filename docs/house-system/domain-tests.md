@@ -111,6 +111,8 @@
 - SetOwner_LeavesNonPickupableItems → depot seam not called when only fixed items exist.
 - SetOwner_PersistsHouse → repository.Save called after aggregate state change.
 - SetOwner_RaisesHouseOwnerChangedEvent → event raised with old/new owner guids.
+- SetOwner_ToZeroGuid_EvictsAllOccupantsIncludingOldOwner → eviction seam called for owner and guests (`!leavehouse`).
+- SetOwner_ToZeroGuid_MarksHouseUnownedAndPersists → OwnerGuid=0, repository.Save, event NewOwnerGuid=0.
 - PayRent_Warned_RaisesHouseRentWarningEvent → warning event raised with house, owner, warning number.
 - PayRent_Evicted_RaisesHouseEvictedEvent → eviction event raised with house.
 - PayRent_Paid_PersistsHouseState → repository.Save called after successful payment.

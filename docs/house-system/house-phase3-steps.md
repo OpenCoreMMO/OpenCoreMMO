@@ -185,28 +185,25 @@ Reference behavior: TFS `sellhouse.lua` + `house:startTrade` (phantom `ITEM_DOCU
 
 ---
 
-## Slice 6 — `/owner` (GM set/clear house owner) — DONE
+## Slice 6 — `!leavehouse` (Abandon House) — DONE
 
-Reference behavior: TFS `owner.lua` (words `/owner`, space separator). God/GM must stand on a house tile. Empty param or `none` clears ownership; otherwise the target must be an online player.
+Reference behavior: TFS `leavehouse.lua` (words `!leavehouse`). Owner must stand inside the house. Calls `house:setOwnerGuid(0)` which already evicts occupants, wakes beds, and moves pickupables to the old owner depot.
 
 ### What shipped
 
-- `data/scripts/talkactions/god/owner.lua` — `getAccess()` gate (same as other staff commands). Always `return true` so the command is not spoken.
-- Reuses existing `house:setOwnerGuid` (name/account from the online player; guid `0` marks the house unowned, evicts occupants, and persists).
+1. **Talkaction** — `data/scripts/talkactions/house/leavehouse.lua`. Owner check is `getOwnerGuid() == getGuid()` (subowners cannot leave). OpenCoreMMO talkaction `true` swallows chat (opposite of TFS booleans). POFF uses the position captured before ownership change because `SetOwner(0)` teleports the caster to the exit.
 
 ### In-game smoke checklist
 
-- [ ] God inside a house: `/owner PlayerName` (online) → that player owns the house
-- [ ] God inside a house: `/owner` or `/owner none` → house unowned; occupants at exit
-- [ ] Unknown / offline name → “Player not found.”; owner unchanged
-- [ ] Not standing on a house tile → “You are not inside a house.”
-- [ ] Player without group access: command is swallowed, no cancel, owner unchanged
-- [ ] Command text is not shown in public chat
+- [ ] Owner inside house: `!leavehouse` → house unowned, success text, occupants at exit, command not shown in chat
+- [ ] Pickupables from the house appear in the old owner depot (config flag on)
+- [ ] Guest / subowner inside the house → “You are not the owner of this house.”
+- [ ] Cast from street → “You are not inside a house.”
+- [ ] Owner standing in someone else's house → “You are not the owner of this house.”
 
 ---
 
 ## Later slices (not started)
 
-- [ ] Talkaction: `leavehouse`
 - [ ] Full `HouseFunctions` surface (tiles, doors, beds, rent, trade, save)
 - [ ] Rent warning letters
