@@ -135,6 +135,54 @@ public class HouseServiceTests
     }
 
     [Fact]
+    [Trait("Category", "HappyPath")]
+    public void SetOwner_ToZeroGuid_EvictsAllOccupantsIncludingOldOwner()
+    {
+        var now = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var owner = HouseTestDataBuilder.CreatePlayer(id: 1, level: 100);
+        var guest = HouseTestDataBuilder.CreatePlayer(id: 2, level: 5);
+
+        var tileMock = HouseTestDataBuilder.CreateTileMock(players: new List<IPlayer> { owner, guest });
+        var house = HouseTestDataBuilder.Build(
+            ownerGuid: 1,
+            tiles: new List<Mock<IDynamicTile>> { tileMock },
+            entryPosition: new Location(100, 100, 7));
+
+        var evictionMock = new Mock<IHouseEviction>();
+        var service = CreateService(eviction: evictionMock);
+
+        service.SetOwner(house, 0, null, 0, false, now, 86400);
+
+        evictionMock.Verify(x => x.TeleportToExit(owner,
+            It.Is<Location>(l => l.X == 100 && l.Y == 100 && l.Z == 7)), Times.Once);
+        evictionMock.Verify(x => x.TeleportToExit(guest,
+            It.Is<Location>(l => l.X == 100 && l.Y == 100 && l.Z == 7)), Times.Once);
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void SetOwner_ToZeroGuid_MarksHouseUnownedAndPersists()
+    {
+        var now = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        HouseOwnerChangedEvent capturedEvent = null;
+        EventAggregatorTestHelper.SetupEventAggregator<HouseOwnerChangedEvent>(e => capturedEvent = e);
+
+        var house = HouseTestDataBuilder.Build(ownerGuid: 1, ownerName: "Owner", ownerAccountId: 50);
+        var repoMock = new Mock<IHouseRepository>();
+        var service = CreateService(repo: repoMock);
+
+        service.SetOwner(house, 0, null, 0, false, now, 86400);
+
+        house.OwnerGuid.Should().Be(0);
+        house.OwnerName.Should().BeEmpty();
+        house.OwnerAccountId.Should().Be(0);
+        repoMock.Verify(x => x.Save(house), Times.Once);
+        capturedEvent.Should().NotBeNull();
+        capturedEvent.OldOwnerGuid.Should().Be(1);
+        capturedEvent.NewOwnerGuid.Should().Be(0);
+    }
+
+    [Fact]
     public void SetOwner_RaisesHouseOwnerChangedEvent()
     {
         var now = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
