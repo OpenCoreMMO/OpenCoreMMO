@@ -7,6 +7,7 @@ using NeoServer.Domain.Common.Contracts.World.Tiles;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Results;
 using NeoServer.Domain.Creatures.Conditions.Enums;
+using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Services;
 using NeoServer.Domain.Spells;
 using NeoServer.Domain.Spells.Entities;
@@ -20,6 +21,10 @@ namespace NeoServer.Domain.Tests.Spell;
 
 public class SpellTests
 {
+    private const uint AttackRuneCooldown = 2_000;
+    private const uint HealingRuneCooldown = 1_000;
+    private const uint FocusSpellCooldown = 40_000;
+
     private readonly Mock<IEventAggregator> _eventAggregatorMock;
     private readonly SpellListManager _spellListManager;
     private readonly SpellService _spellService;
@@ -408,6 +413,171 @@ public class SpellTests
         secondResult.Should().BeFalse();
         _eventAggregatorMock.Verify(x => x.InvokeEvent(It.Is<SpellFailedToCastEvent>(e =>
             e.Caster == player && e.Spell == spell)), Times.Once);
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void Cast_Blocks_Different_Spell_When_Primary_Group_Cooldown_Is_Active()
+    {
+        // Arrange
+        var player = PlayerTestDataBuilder.Build();
+        var target = PlayerTestDataBuilder.Build();
+        var firstSpell = new TestSpell
+        {
+            NeedsTarget = true,
+            Cooldown = AttackRuneCooldown,
+            PrimaryGroup = ("attack", AttackRuneCooldown)
+        };
+        var secondSpell = new TestSpell
+        {
+            NeedsTarget = true,
+            Cooldown = AttackRuneCooldown,
+            PrimaryGroup = ("attack", AttackRuneCooldown)
+        };
+
+        // Act
+        var firstResult = _spellService.Cast(player, target, firstSpell, false);
+        var secondResult = _spellService.Cast(player, target, secondSpell, false);
+
+        // Assert
+        firstResult.Should().BeTrue();
+        secondResult.Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait("Category", "Validation")]
+    public void Cast_Blocks_Different_Spell_When_Secondary_Group_Cooldown_Is_Active()
+    {
+        // Arrange
+        var player = PlayerTestDataBuilder.Build();
+        var target = PlayerTestDataBuilder.Build();
+        var firstSpell = new TestSpell
+        {
+            NeedsTarget = true,
+            Cooldown = FocusSpellCooldown,
+            SecondaryGroup = ("focus", FocusSpellCooldown)
+        };
+        var secondSpell = new TestSpell
+        {
+            NeedsTarget = true,
+            Cooldown = FocusSpellCooldown,
+            SecondaryGroup = ("focus", FocusSpellCooldown)
+        };
+
+        // Act
+        var firstResult = _spellService.Cast(player, target, firstSpell, false);
+        var secondResult = _spellService.Cast(player, target, secondSpell, false);
+
+        // Assert
+        firstResult.Should().BeTrue();
+        secondResult.Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait("Category", "EdgeCase")]
+    public void Cast_Treats_Cooldown_Group_Names_As_Case_Insensitive()
+    {
+        // Arrange
+        var player = PlayerTestDataBuilder.Build();
+        var target = PlayerTestDataBuilder.Build();
+        var firstSpell = new TestSpell
+        {
+            NeedsTarget = true,
+            Cooldown = AttackRuneCooldown,
+            PrimaryGroup = ("attack", AttackRuneCooldown)
+        };
+        var secondSpell = new TestSpell
+        {
+            NeedsTarget = true,
+            Cooldown = AttackRuneCooldown,
+            PrimaryGroup = ("Attack", AttackRuneCooldown)
+        };
+
+        // Act
+        var firstResult = _spellService.Cast(player, target, firstSpell, false);
+        var secondResult = _spellService.Cast(player, target, secondSpell, false);
+
+        // Assert
+        firstResult.Should().BeTrue();
+        secondResult.Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void Cast_Allows_Different_Spell_When_Cooldown_Groups_Are_Different()
+    {
+        // Arrange
+        var player = PlayerTestDataBuilder.Build();
+        var target = PlayerTestDataBuilder.Build();
+        var attackSpell = new TestSpell
+        {
+            NeedsTarget = true,
+            Cooldown = AttackRuneCooldown,
+            PrimaryGroup = ("attack", AttackRuneCooldown)
+        };
+        var healingSpell = new TestSpell
+        {
+            NeedsTarget = true,
+            Cooldown = HealingRuneCooldown,
+            PrimaryGroup = ("healing", HealingRuneCooldown)
+        };
+
+        // Act
+        var attackResult = _spellService.Cast(player, target, attackSpell, false);
+        var healingResult = _spellService.Cast(player, target, healingSpell, false);
+
+        // Assert
+        attackResult.Should().BeTrue();
+        healingResult.Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void Player_Does_Not_Start_Cooldown_When_Has_No_Exhaustion_Flag()
+    {
+        // Arrange
+        var player = PlayerTestDataBuilder.Build();
+        var target = PlayerTestDataBuilder.Build();
+        var spell = new TestSpell
+        {
+            NeedsTarget = true,
+            Cooldown = AttackRuneCooldown,
+            PrimaryGroup = ("attack", AttackRuneCooldown)
+        };
+        player.Group.EnableFlag(PlayerFlag.HasNoExhaustion);
+
+        // Act
+        var firstResult = _spellService.Cast(player, target, spell, false);
+        player.Group.DisableFlag(PlayerFlag.HasNoExhaustion);
+        var resultAfterDisablingFlag = _spellService.Cast(player, target, spell, false);
+
+        // Assert
+        firstResult.Should().BeTrue();
+        resultAfterDisablingFlag.Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait("Category", "HappyPath")]
+    public void Player_Casts_Spell_While_Existing_Cooldown_Is_Active_When_Has_No_Exhaustion_Flag()
+    {
+        // Arrange
+        var player = PlayerTestDataBuilder.Build();
+        var target = PlayerTestDataBuilder.Build();
+        var spell = new TestSpell
+        {
+            NeedsTarget = true,
+            Cooldown = AttackRuneCooldown,
+            PrimaryGroup = ("attack", AttackRuneCooldown)
+        };
+
+        // Act
+        var firstResult = _spellService.Cast(player, target, spell, false);
+        player.Group.EnableFlag(PlayerFlag.HasNoExhaustion);
+        var resultWithFlag = _spellService.Cast(player, target, spell, false);
+
+        // Assert
+        firstResult.Should().BeTrue();
+        resultWithFlag.Should().BeTrue();
     }
 
 

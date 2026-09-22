@@ -8,10 +8,11 @@ public interface IHasCooldown
     public uint Cooldown { get; set; }
 
     public bool HasAnyCooldownGroup =>
-        !string.IsNullOrWhiteSpace(PrimaryGroup.Name) || !string.IsNullOrWhiteSpace(PrimaryGroup.Name);
+        !string.IsNullOrWhiteSpace(PrimaryGroup.Name) || !string.IsNullOrWhiteSpace(SecondaryGroup.Name);
 
     public bool HasCooldownGroup(string name)
     {
-        return PrimaryGroup.Name == name || SecondaryGroup.Name == name;
+        return string.Equals(PrimaryGroup.Name, name, StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(SecondaryGroup.Name, name, StringComparison.OrdinalIgnoreCase);
     }
 }
