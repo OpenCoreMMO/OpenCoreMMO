@@ -6,15 +6,17 @@ using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Services;
 using NeoServer.Domain.Locker;
+using NeoServer.Domain.Repositories;
 using NeoServer.Server.Common.Contracts;
 using NeoServer.Server.Common.Contracts.Commands;
+using IPlayerRepository = NeoServer.Data.Interfaces.IPlayerRepository;
 
 namespace NeoServer.Server.Commands.Player;
 
 public class PlayerLogOutCommand(
     IGameServer gameServer,
     IPlayerRepository playerRepository,
-    IPlayerDepotItemRepository playerDepotItemRepository,
+    IPlayerDepotRepository playerDepotItemRepository,
     IPlayerMailItemRepository playerMailItemRepository,
     LockerManager lockerManager,
     ITradeService tradeService,

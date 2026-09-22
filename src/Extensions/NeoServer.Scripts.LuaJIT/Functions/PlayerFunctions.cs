@@ -1,15 +1,19 @@
-﻿using LuaNET;
+using LuaNET;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.DataStores;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
+using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Creatures;
 using NeoServer.Domain.Common.Item;
 using NeoServer.Domain.Common.Location.Structs;
 using NeoServer.Domain.Creatures.Player;
 using NeoServer.Domain.Creatures.Player.Inventory;
 using NeoServer.Domain.Guild;
+using NeoServer.Domain.Houses;
+using NeoServer.Domain.Houses.Services;
 using NeoServer.Networking.Packets.Outgoing;
+using NeoServer.Networking.Packets.Outgoing.Window;
 using NeoServer.Scripts.LuaJIT.Enums;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Server.Common.Contracts;
@@ -23,17 +27,32 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
     private static IGameCreatureManager _gameCreatureManager;
     private static IItemFactory _itemFactory;
     private static IItemTypeStore _itemTypeStore;
+    private static IHouseEditWindowStore _houseEditWindowStore;
+    private static IHouseStore _houseStore;
+    private static IHouseService _houseService;
+    private static ICoinTransaction _coinTransaction;
+    private static ICoinTypeStore _coinTypeStore;
     private static ILogger _logger;
 
     public PlayerFunctions(
         IGameCreatureManager gameCreatureManager,
         IItemFactory itemFactory,
         IItemTypeStore itemTypeStore,
+        IHouseEditWindowStore houseEditWindowStore,
+        IHouseStore houseStore,
+        IHouseService houseService,
+        ICoinTransaction coinTransaction,
+        ICoinTypeStore coinTypeStore,
         ILogger logger) : base(nameof(PlayerFunctions))
     {
         _gameCreatureManager = gameCreatureManager;
         _itemFactory = itemFactory;
         _itemTypeStore = itemTypeStore;
+        _houseEditWindowStore = houseEditWindowStore;
+        _houseStore = houseStore;
+        _houseService = houseService;
+        _coinTransaction = coinTransaction;
+        _coinTypeStore = coinTypeStore;
         _logger = logger;
     }
 
@@ -71,6 +90,16 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
         RegisterMethod(luaState, "Player", "setStorageValue", LuaPlayerSetStorageValue);
 
         RegisterMethod(luaState, "Player", "showTextDialog", LuaPlayerShowTextDialog);
+        RegisterMethod(luaState, "Player", "setEditHouse", LuaPlayerSetEditHouse);
+        RegisterMethod(luaState, "Player", "sendHouseWindow", LuaPlayerSendHouseWindow);
+        RegisterMethod(luaState, "Player", "getGuid", LuaPlayerGetGuid);
+        RegisterMethod(luaState, "Player", "getHouse", LuaPlayerGetHouse);
+        RegisterMethod(luaState, "Player", "isPremium", LuaPlayerIsPremium);
+        RegisterMethod(luaState, "Player", "canOwnHouse", LuaPlayerCanOwnHouse);
+        RegisterMethod(luaState, "Player", "getMoney", LuaPlayerGetMoney);
+        RegisterMethod(luaState, "Player", "removeMoney", LuaPlayerRemoveMoney);
+        RegisterMethod(luaState, "Player", "getBankBalance", LuaPlayerGetBankBalance);
+        RegisterMethod(luaState, "Player", "setBankBalance", LuaPlayerSetBankBalance);
 
         RegisterMethod(luaState, "Player", "addItem", LuaPlayerAddItem);
         RegisterMethod(luaState, "Player", "removeItem", LuaPlayerRemoveItem);
@@ -528,6 +557,190 @@ public class PlayerFunctions : LuaScriptInterface, IPlayerFunctions
 
         player.Read(reliableItem);
 
+        return 1;
+    }
+
+    private static int LuaPlayerSetEditHouse(LuaState luaState)
+    {
+        // player:setEditHouse(house, listId)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        var house = GetUserdata<House>(luaState, 2);
+        var listId = GetNumber<uint>(luaState, 3);
+
+        if (player is null || house is null)
+        {
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        _houseEditWindowStore.SetEditHouse(player, house.Id, listId);
+        PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaPlayerSendHouseWindow(LuaState luaState)
+    {
+        // player:sendHouseWindow(house, listId)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        var house = GetUserdata<House>(luaState, 2);
+        var listId = GetNumber<uint>(luaState, 3);
+
+        if (player is null || house is null)
+        {
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        if (!_gameCreatureManager.GetPlayerConnection(player.CreatureId, out var connection))
+        {
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        // Prefer existing setEditHouse session; otherwise open a new one.
+        if (!_houseEditWindowStore.TryGetCurrent(player, out var windowTextId, out var sessionHouseId, out var sessionListId) ||
+            sessionHouseId != house.Id ||
+            sessionListId != listId)
+        {
+            windowTextId = _houseEditWindowStore.SetEditHouse(player, house.Id, listId);
+        }
+
+        var text = house.GetAccessList(listId)?.RawText ?? string.Empty;
+
+        connection.OutgoingPackets.Enqueue(new HouseWindowPacket(windowTextId, text));
+        connection.Send();
+
+        PushBoolean(luaState, true);
+        return 1;
+    }
+
+    private static int LuaPlayerGetGuid(LuaState luaState)
+    {
+        // player:getGuid()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        Lua.PushNumber(luaState, player.Id);
+        return 1;
+    }
+
+    private static int LuaPlayerGetHouse(LuaState luaState)
+    {
+        // player:getHouse()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var house = _houseStore.GetByOwnerGuid(player.Id);
+        if (house is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        PushUserdata(luaState, house);
+        SetMetatable(luaState, -1, "House");
+        return 1;
+    }
+
+    private static int LuaPlayerIsPremium(LuaState luaState)
+    {
+        // player:isPremium()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        PushBoolean(luaState, player.HasPremiumTime);
+        return 1;
+    }
+
+    private static int LuaPlayerCanOwnHouse(LuaState luaState)
+    {
+        // player:canOwnHouse()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        PushBoolean(luaState, _houseService.CanPlayerOwnHouse(player));
+        return 1;
+    }
+
+    private static int LuaPlayerGetMoney(LuaState luaState)
+    {
+        // player:getMoney()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var money = player.Inventory?.GetTotalMoney(_coinTypeStore) ?? 0;
+        Lua.PushNumber(luaState, money);
+        return 1;
+    }
+
+    private static int LuaPlayerRemoveMoney(LuaState luaState)
+    {
+        // player:removeMoney(money)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var amount = GetNumber<ulong>(luaState, 2);
+        PushBoolean(luaState, _coinTransaction.RemoveCoins(player, amount, useBank: false));
+        return 1;
+    }
+
+    private static int LuaPlayerGetBankBalance(LuaState luaState)
+    {
+        // player:getBankBalance()
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        Lua.PushNumber(luaState, player.BankAmount);
+        return 1;
+    }
+
+    private static int LuaPlayerSetBankBalance(LuaState luaState)
+    {
+        // player:setBankBalance(amount)
+        var player = GetUserdata<IPlayer>(luaState, 1);
+        if (player?.Bank is null)
+        {
+            PushBoolean(luaState, false);
+            return 1;
+        }
+
+        var amount = GetNumber<ulong>(luaState, 2);
+        var current = player.BankAmount;
+        if (amount > current)
+        {
+            player.Bank.Credit(amount - current);
+            PushBoolean(luaState, true);
+            return 1;
+        }
+
+        if (amount < current)
+        {
+            player.Bank.Debit(current - amount);
+        }
+
+        PushBoolean(luaState, true);
         return 1;
     }
 

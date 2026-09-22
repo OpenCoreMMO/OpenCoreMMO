@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Domain.Chat.Factory;
+using NeoServer.Domain.Houses;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.World.Tiles;
@@ -37,6 +38,8 @@ public static class FactoryInjection
         builder.AddSingleton<INpcFactory, NpcFactory>();
         builder.AddSingleton<ITileFactory, TileFactory>();
         builder.AddSingleton<PacketHandlerRouter>();
+
+        builder.AddSingleton<IHouseFactory, HouseFactory>();
 
         return builder;
     }

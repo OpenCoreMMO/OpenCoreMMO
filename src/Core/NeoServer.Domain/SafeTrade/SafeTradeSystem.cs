@@ -123,9 +123,13 @@ public class SafeTradeSystem : ITradeService
 
         var tradeFromPlayerRequested = TradeRequestTracker.GetTradeRequest(tradeRequest.PlayerRequested);
 
-        // Unsubscribe both players from the trade request event.
         var itemFromPlayerRequesting = tradeRequest.Items;
         var itemFromPlayerRequested = tradeFromPlayerRequested?.Items ?? [];
+
+        CancelHouseTransfers(itemFromPlayerRequesting);
+        CancelHouseTransfers(itemFromPlayerRequested);
+
+        // Unsubscribe both players from the trade request event.
 
         TradeRequestEventHandler.Unsubscribe(tradeRequest.PlayerRequesting, itemFromPlayerRequesting);
         TradeRequestEventHandler.Unsubscribe(tradeRequest.PlayerRequested, itemFromPlayerRequested);
@@ -137,6 +141,22 @@ public class SafeTradeSystem : ITradeService
         TradeRequestTracker.Untrack(tradeRequest.PlayerRequested);
 
         OnClosed?.Invoke(tradeRequest);
+    }
+
+    private static void CancelHouseTransfers(IItem[] items)
+    {
+        if (items is null)
+        {
+            return;
+        }
+
+        foreach (var item in items)
+        {
+            if (item is Houses.HouseTransferItem transferItem)
+            {
+                transferItem.Cancel();
+            }
+        }
     }
 
     private static IItem[] GetItems(IItem item)

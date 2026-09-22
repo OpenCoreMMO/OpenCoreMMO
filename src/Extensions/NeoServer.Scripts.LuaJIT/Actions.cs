@@ -350,14 +350,8 @@ public class Actions : IActions
 
     public ReturnValueType InternalUseItem(IPlayer player, Location pos, byte index, IItem item, bool isHotkey)
     {
-        //todo: implement this?
-        //if (std.shared_ptr < Door > door = item.GetDoor())
-        //{
-        //    if (!door.CanUse(player))
-        //    {
-        //        return ReturnValue.CANNOTUSETHISOBJECT;
-        //    }
-        //}
+        // House door access is enforced in LuaActionScriptService before ExecuteUse.
+        // This InternalUseItem stub is unused by the live use path.
 
         //var itemId = item.ID;
         //var itemType = Item.items[itemId];

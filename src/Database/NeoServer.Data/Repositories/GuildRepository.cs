@@ -28,7 +28,9 @@ public class GuildRepository : BaseRepository<GuildEntity>, IGuildRepository
     public async Task<GuildEntity> GetByName(string name)
     {
         await using var context = NewDbContext;
-        return await context.Guilds.FirstOrDefaultAsync(x => x.Name == name);
+        return await context.Guilds
+            .Include(x => x.Ranks)
+            .FirstOrDefaultAsync(x => x.Name == name);
     }
 
     public async Task<GuildEntity> GetById(int id)

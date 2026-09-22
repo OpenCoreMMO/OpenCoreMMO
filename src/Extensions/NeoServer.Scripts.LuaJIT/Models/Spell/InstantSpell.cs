@@ -34,13 +34,14 @@ public class InstantSpell : ScriptedSpell
 
         LuaVariant variant = default;
 
-        if (HasParams && Params.Length > 0)
+        if (HasParams)
         {
+            // Params are optional; empty string lets scripts fall back (e.g. house kick → self).
             variant = new LuaVariant
             {
                 Type = LuaVariantType.VARIANT_STRING,
                 InstantName = LuaInstantSpell.Name,
-                Text = Params[0].ToString(),
+                Text = Params is { Length: > 0 } ? Params[0]?.ToString() ?? string.Empty : string.Empty,
                 RuneName = string.Empty
             };
         }

@@ -2,7 +2,9 @@
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Helpers;
+using NeoServer.Domain.Common.Services;
 using NeoServer.Domain.Creatures.Player.Inventory;
+using NeoServer.Domain.Houses;
 using NeoServer.Domain.SafeTrade.Request;
 using NeoServer.Domain.SafeTrade.Trackers;
 using NeoServer.Domain.SafeTrade.Validations;
@@ -53,15 +55,44 @@ public class TradeItemExchanger
         //untrack items before exchanging them
         ItemTradedTracker.UntrackItems(tradeRequest.Items.Concat(secondTradeRequest.Items));
 
-        ExchangeItem(playerRequesting, playerRequested, itemFromPlayerRequested, itemFromPlayerRequesting);
-
-        return SafeTradeError.None;
+        return ExchangeItem(playerRequesting, playerRequested, itemFromPlayerRequested, itemFromPlayerRequesting);
     }
 
-    private void ExchangeItem(IPlayer playerRequesting, IPlayer playerRequested, IItem itemFromPlayerRequested,
+    private SafeTradeError ExchangeItem(IPlayer playerRequesting, IPlayer playerRequested, IItem itemFromPlayerRequested,
         IItem itemFromPlayerRequesting)
     {
-        if (Guard.AnyNull(itemFromPlayerRequested, playerRequesting, itemFromPlayerRequesting, playerRequested)) return;
+        if (Guard.AnyNull(itemFromPlayerRequested, playerRequesting, itemFromPlayerRequesting, playerRequested))
+        {
+            return SafeTradeError.InvalidParameters;
+        }
+
+        var houseTransferFromRequestingPlayer = itemFromPlayerRequesting as HouseTransferItem;
+        var houseTransferFromRequestedPlayer = itemFromPlayerRequested as HouseTransferItem;
+
+        if (houseTransferFromRequestingPlayer is not null && houseTransferFromRequestedPlayer is not null)
+        {
+            return SafeTradeError.InvalidParameters;
+        }
+
+        if (houseTransferFromRequestingPlayer is not null)
+        {
+            return CompleteHouseTransfer(
+                houseTransferFromRequestingPlayer,
+                playerRequested,
+                playerRequesting,
+                itemFromPlayerRequested,
+                itemFromPlayerRequesting);
+        }
+
+        if (houseTransferFromRequestedPlayer is not null)
+        {
+            return CompleteHouseTransfer(
+                houseTransferFromRequestedPlayer,
+                playerRequesting,
+                playerRequested,
+                itemFromPlayerRequesting,
+                itemFromPlayerRequested);
+        }
 
         var playerRequestingSlotDestination =
             TradeSlotDestinationQuery.Get(playerRequesting, itemFromPlayerRequested, itemFromPlayerRequesting);
@@ -69,13 +100,37 @@ public class TradeItemExchanger
         var playerRequestedSlotDestination =
             TradeSlotDestinationQuery.Get(playerRequested, itemFromPlayerRequesting, itemFromPlayerRequested);
 
-        // Remove the items from their previous locations
         _itemRemoveService.Remove(itemFromPlayerRequesting);
         _itemRemoveService.Remove(itemFromPlayerRequested);
 
-        // Add the items to each player's inventory
         AddItemToInventory(playerRequesting, itemFromPlayerRequested, playerRequestingSlotDestination);
         AddItemToInventory(playerRequested, itemFromPlayerRequesting, playerRequestedSlotDestination);
+        return SafeTradeError.None;
+    }
+
+    private SafeTradeError CompleteHouseTransfer(
+        HouseTransferItem transferItem,
+        IPlayer buyer,
+        IPlayer seller,
+        IItem payment,
+        IItem transferDocument)
+    {
+        if (!transferItem.Complete(buyer))
+        {
+            OperationFailService.Send(seller.CreatureId, DEFAULT_ERROR_MESSAGE);
+            OperationFailService.Send(buyer.CreatureId, DEFAULT_ERROR_MESSAGE);
+            return SafeTradeError.InvalidParameters;
+        }
+
+        ExchangeOfferedItem(seller, payment, transferDocument);
+        return SafeTradeError.None;
+    }
+
+    private void ExchangeOfferedItem(IPlayer receiver, IItem offeredItem, IItem transferDocument)
+    {
+        var slotDestination = TradeSlotDestinationQuery.Get(receiver, offeredItem, transferDocument);
+        _itemRemoveService.Remove(offeredItem);
+        AddItemToInventory(receiver, offeredItem, slotDestination);
     }
 
     private static void AddItemToInventory(IPlayer player, IItem item, Slot slot)

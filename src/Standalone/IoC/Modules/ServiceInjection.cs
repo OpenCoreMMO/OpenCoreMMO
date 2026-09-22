@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using NeoServer.Domain.Combat.Attacks;
 using NeoServer.Domain.Combat.Monster;
@@ -10,6 +10,7 @@ using NeoServer.Domain.Common.Contracts.Services;
 using NeoServer.Domain.Common.Contracts.World;
 using NeoServer.Domain.Creatures.Monster.Services;
 using NeoServer.Domain.Creatures.Services;
+using NeoServer.Domain.Houses.Services;
 using NeoServer.Domain.Items.Services;
 using NeoServer.Domain.Items.Services.ItemTransform;
 using NeoServer.Domain.Items.Services.ItemTransform.Operations;
@@ -67,7 +68,7 @@ public static class ServiceInjection
         builder.AddSingleton<IMonsterTargetSearch, MonsterTargetSearch>();
         builder.AddSingleton<IMonsterTargetingService, MonsterTargetingService>();
         builder.AddSingleton<MonsterStateService>();
-        builder.AddSingleton<ITradeService, SafeTradeSystem>();
+        builder.AddSingleton<ITradeService>(sp => sp.GetRequiredService<SafeTradeSystem>());
         builder.AddSingleton<PlayerChannelService>();
         builder.AddSingleton<TargetDetectorService>();
         builder.AddSingleton<ICreatureMovementService, CreatureMovementService>();
@@ -116,6 +117,13 @@ public static class ServiceInjection
         //spells
         builder.AddSingleton<SpellService>();
         builder.AddSingleton<SpellCastValidation>();
+
+        //house services
+        builder.AddSingleton<IHouseService, HouseService>();
+        builder.AddSingleton<IHouseTradeService, HouseTradeService>();
+        builder.AddSingleton<IHouseEviction, HouseEvictionService>();
+        builder.AddSingleton<IHouseBedWaker, HouseBedWakerService>();
+        builder.AddSingleton<IHouseDepotTransfer, HouseDepotTransferService>();
 
         return builder;
     }

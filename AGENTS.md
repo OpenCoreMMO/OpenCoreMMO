@@ -235,6 +235,7 @@ Supported databases: **InMemory** (default for dev), **SQLite**, **PostgreSQL**.
   - Required braces: `if (condition) DoSomething();` ❌ → `if (condition) { DoSomething(); }` ✅
 - **Use primary constructors when possible** — prefer the concise `class Service(IType dep)` syntax over explicit field backing for simple dependency injection and immutable state.
 - **Use the latest C# language features** — the project targets .NET 10, so use the latest available features (file-scoped namespaces, collection expressions, `List<string>`, primary constructors, raw string literals, etc.) unless there is a specific compatibility or readability reason not to.
+- **Do not cite TFS / Forgotten Server in code comments** — OpenCoreMMO is informed by that lineage, but comments, XML docs, and inline notes must describe *this* codebase's behavior on their own. Prefer domain wording (e.g. "after guest/subowner list changes, kick anyone no longer invited") over references like "TFS", "forgottenserver", or `House::setAccessList`. Design docs under `docs/` may still name external sources when tracing history or ports.
 
 ### Naming
 

@@ -17,13 +17,18 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
     private static IGameServer _gameServer;
     private static IItemTypeStore _itemTypeStore;
     private static IItemClientServerIdMapStore _itemClientServerIdMapStore;
+    private static IHouseStore _houseStore;
 
-    public TileFunctions(IGameServer gameServer, IItemClientServerIdMapStore itemClientServerIdMapStore,
-        IItemTypeStore itemTypeStore) : base(nameof(TileFunctions))
+    public TileFunctions(
+        IGameServer gameServer,
+        IItemClientServerIdMapStore itemClientServerIdMapStore,
+        IItemTypeStore itemTypeStore,
+        IHouseStore houseStore) : base(nameof(TileFunctions))
     {
         _gameServer = gameServer;
         _itemClientServerIdMapStore = itemClientServerIdMapStore;
         _itemTypeStore = itemTypeStore;
+        _houseStore = houseStore;
     }
 
     public void Init(LuaState luaState)
@@ -53,6 +58,7 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
         RegisterMethod(luaState, "Tile", "hasFlag", LuaTileHasFlag);
 
         RegisterMethod(luaState, "Tile", "queryAdd", LuaTileQueryAdd);
+        RegisterMethod(luaState, "Tile", "getHouse", LuaTileGetHouse);
     }
 
     public static int LuaCreateTile(LuaState luaState)
@@ -498,6 +504,28 @@ public class TileFunctions : LuaScriptInterface, ITileFunctions
             Lua.PushNil(luaState);
         }
 
+        return 1;
+    }
+
+    private static int LuaTileGetHouse(LuaState luaState)
+    {
+        // tile:getHouse()
+        var tile = GetUserdata<ITile>(luaState, 1);
+        if (tile is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        var house = _houseStore.GetByTile(tile);
+        if (house is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        PushUserdata(luaState, house);
+        SetMetatable(luaState, -1, "House");
         return 1;
     }
 }

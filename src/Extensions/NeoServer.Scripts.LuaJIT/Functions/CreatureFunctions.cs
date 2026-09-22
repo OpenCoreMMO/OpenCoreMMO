@@ -53,6 +53,7 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
         RegisterMethod(luaState, "Creature", "getName", LuaCreatureGetName);
         RegisterMethod(luaState, "Creature", "getPosition", LuaCreatureGetPosition);
         RegisterMethod(luaState, "Creature", "getDirection", LuaCreatureGetDirection);
+        RegisterMethod(luaState, "Creature", "getTile", LuaCreatureGetTile);
 
         RegisterMethod(luaState, "Creature", "getHealth", LuaCreatureGetHealth);
         RegisterMethod(luaState, "Creature", "setHealth", LuaCreatureSetHealth);
@@ -260,6 +261,21 @@ public class CreatureFunctions : LuaScriptInterface, ICreatureFunctions
             Lua.PushNumber(luaState, (byte)creature.Direction);
         else
             Lua.PushNil(luaState);
+        return 1;
+    }
+
+    private static int LuaCreatureGetTile(LuaState luaState)
+    {
+        // creature:getTile()
+        var creature = GetUserdata<ICreature>(luaState, 1);
+        if (creature?.Tile is null)
+        {
+            Lua.PushNil(luaState);
+            return 1;
+        }
+
+        PushUserdata(luaState, creature.Tile);
+        SetMetatable(luaState, -1, "Tile");
         return 1;
     }
 

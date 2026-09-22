@@ -99,7 +99,8 @@ function door.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 		player:sendTextMessage(MESSAGE_INFO_DESCR, "It is locked.")
 		return true
 	elseif table.contains(openDoors, itemId) or
-		table.contains(openExtraDoors, itemId) then
+		table.contains(openExtraDoors, itemId) or
+		table.contains(openHouseDoors, itemId) then
 		local creaturePositionTable = {}
 		local doorCreatures = Tile(toPosition):getCreatures()
 		if doorCreatures and #doorCreatures > 0 then
@@ -120,7 +121,8 @@ function door.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 		item:transform(itemId - 1)
 		return true
 	elseif table.contains(closedDoors, itemId) or
-		table.contains(closedExtraDoors, itemId) then
+		table.contains(closedExtraDoors, itemId) or
+		table.contains(closedHouseDoors, itemId) then
 		item:transform(itemId + 1)
 		return true
 	end
@@ -129,7 +131,7 @@ end
 
 local doorTables = {
 	keys, openDoors, closedDoors, lockedDoors, openExtraDoors, closedExtraDoors,
-	closedQuestDoors, closedLevelDoors
+	openHouseDoors, closedHouseDoors, closedQuestDoors, closedLevelDoors
 }
 for _, doors in pairs(doorTables) do
 	for _, doorId in pairs(doors) do door:id(doorId) end

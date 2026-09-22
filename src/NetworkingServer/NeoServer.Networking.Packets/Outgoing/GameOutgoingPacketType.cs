@@ -64,6 +64,7 @@ public enum GameOutgoingPacketType : byte
     OnlineStatusVip = 0xD3,
     OfflineStatusVip = 0xD4,
     TextWindow = 0x96,
+    HouseWindow = 0x97,
     NetworkPing = 0x40,
     QuestLog = 0xF0,
     QuestLine = 0xF1

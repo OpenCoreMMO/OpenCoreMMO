@@ -31,7 +31,7 @@ public record ServerConfiguration(
 
 public record LogConfiguration(string MinimumLevel);
 
-public record SaveConfiguration(uint Players);
+public record SaveConfiguration(uint Players, uint HouseTiles);
 
 public record DatabaseConfiguration(Dictionary<DatabaseType, string> Connections, DatabaseType Active, bool DropOnStartup);
 

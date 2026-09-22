@@ -13,6 +13,7 @@ public enum MovementValidationFailureReason
     TileNotFound,
     ProtectionZoneBlocked,
     CanEnterFunctionDenied,
+    NotInvitedToHouse,
     TileEnterRuleDenied
 }
 
@@ -69,10 +70,19 @@ public class CreatureMovementValidation(IMap map)
         if (creature is IPlayer player && nextTile.ProtectionZone && player.IsProtectionZoneBlocked)
             return new MovementValidationResult(false, MovementValidationFailureReason.ProtectionZoneBlocked, nextTile);
 
-        // Check tile-specific entry conditions (e.g., locked doors, special areas).
+        // Check tile-specific entry conditions (e.g., house invite, tile rules).
         if (!(dynamicTile.CanEnterFunction?.Invoke(creature) ?? true))
+        {
+            // Uninvited players on house tiles get a specific cancel message.
+            if (dynamicTile.HouseId is > 0 && creature is IPlayer)
+            {
+                return new MovementValidationResult(false, MovementValidationFailureReason.NotInvitedToHouse,
+                    nextTile);
+            }
+
             return new MovementValidationResult(false, MovementValidationFailureReason.CanEnterFunctionDenied,
                 nextTile);
+        }
 
         // Use the creature's tile enter rule to check if it can enter the tile.
         if (!creature.TileEnterRule.CanEnter(nextTile, creature))

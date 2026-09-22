@@ -1,4 +1,5 @@
-﻿using LuaNET;
+using LuaNET;
+using NeoServer.Domain.Common;
 using NeoServer.Scripts.LuaJIT.Enums.Config;
 using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 using NeoServer.Scripts.LuaJIT.Interfaces;
@@ -11,15 +12,18 @@ public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
     private static IConfigManager _configManager;
     private static ConfigurationMap _configurationMap;
     private static ServerConfiguration _serverConfiguration;
+    private static HouseConfiguration _houseConfiguration;
 
     public ConfigFunctions(
         IConfigManager configManager,
         ConfigurationMap configurationMap,
-        ServerConfiguration serverConfiguration) : base(nameof(ConfigFunctions))
+        ServerConfiguration serverConfiguration,
+        HouseConfiguration houseConfiguration) : base(nameof(ConfigFunctions))
     {
         _configManager = configManager;
         _configurationMap = configurationMap;
         _serverConfiguration = serverConfiguration;
+        _houseConfiguration = houseConfiguration ?? new HouseConfiguration();
     }
 
     public void Init(LuaState luaState)
@@ -35,6 +39,7 @@ public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
         RegisterEnumIn<StringConfigType>(luaState, "configKeys");
         RegisterEnumIn<IntegerConfigType>(luaState, "configKeys");
         RegisterEnumIn<FloatingConfigType>(luaState, "configKeys");
+        RegisterVariable(luaState, "configKeys", "HOUSE_PRICE", IntegerConfigType.HOUSE_PRICE_PER_SQM);
 
         // foreach (var item in Enum.GetValues<BooleanConfigType>())
         //     RegisterVariable(luaState, "configKeys", item.ToString(), item);
@@ -68,7 +73,14 @@ public class ConfigFunctions : LuaScriptInterface, IConfigFunctions
     public static int LuaConfigManagerGetNumber(LuaState luaState)
     {
         // configManager:getNumber()
-        Lua.PushNumber(luaState, _configManager.GetNumber(GetNumber<IntegerConfigType>(luaState, -1)));
+        var key = GetNumber<IntegerConfigType>(luaState, -1);
+        if (key == IntegerConfigType.HOUSE_PRICE_PER_SQM)
+        {
+            Lua.PushNumber(luaState, _houseConfiguration.PricePerSqm);
+            return 1;
+        }
+
+        Lua.PushNumber(luaState, _configManager.GetNumber(key));
         return 1;
     }
 
