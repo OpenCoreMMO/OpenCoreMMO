@@ -185,8 +185,25 @@ Reference behavior: TFS `sellhouse.lua` + `house:startTrade` (phantom `ITEM_DOCU
 
 ---
 
+## Slice 6 — `!leavehouse` (Abandon House) — DONE
+
+Reference behavior: TFS `leavehouse.lua` (words `!leavehouse`). Owner must stand inside the house. Calls `house:setOwnerGuid(0)` which already evicts occupants, wakes beds, and moves pickupables to the old owner depot.
+
+### What shipped
+
+1. **Talkaction** — `data/scripts/talkactions/house/leavehouse.lua`. Owner check is `getOwnerGuid() == getGuid()` (subowners cannot leave). OpenCoreMMO talkaction `true` swallows chat (opposite of TFS booleans). POFF uses the position captured before ownership change because `SetOwner(0)` teleports the caster to the exit.
+
+### In-game smoke checklist
+
+- [ ] Owner inside house: `!leavehouse` → house unowned, success text, occupants at exit, command not shown in chat
+- [ ] Pickupables from the house appear in the old owner depot (config flag on)
+- [ ] Guest / subowner inside the house → “You are not the owner of this house.”
+- [ ] Cast from street → “You are not inside a house.”
+- [ ] Owner standing in someone else's house → “You are not the owner of this house.”
+
+---
+
 ## Later slices (not started)
 
-- [ ] Talkaction: `leavehouse`
 - [ ] Full `HouseFunctions` surface (tiles, doors, beds, rent, trade, save)
 - [ ] Rent warning letters

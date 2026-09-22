@@ -10,7 +10,7 @@ using NeoServer.Scripts.LuaJIT.Functions.Interfaces;
 namespace NeoServer.Scripts.LuaJIT.Functions;
 
 /// <summary>
-///     House Lua bindings for Phase 3 (access-list spells, kick, !buyhouse, and !sellhouse).
+///     House Lua bindings for Phase 3 (access-list spells, kick, !buyhouse, !sellhouse, and !leavehouse).
 ///     Full HouseFunctions surface (tiles, beds, rent, save) comes in later slices.
 /// </summary>
 public class HouseFunctions : LuaScriptInterface, IHouseFunctions
