@@ -76,20 +76,11 @@ public class HouseServiceTests
             tiles: new List<Mock<IDynamicTile>> { tileMock });
 
         var depotMock = new Mock<IHouseDepotTransfer>();
-        var oldOwnerPlayer = HouseTestDataBuilder.CreatePlayer(id: 1);
-        var creatureGameInstanceMock = new Mock<ICreatureGameInstance>();
-        var outPlayer = oldOwnerPlayer;
-        creatureGameInstanceMock
-            .Setup(x => x.TryGetPlayer(1, out outPlayer))
-            .Returns(true);
-
-        var service = CreateService(depotTransfer: depotMock, creatureGameInstance: creatureGameInstanceMock);
+        var service = CreateService(depotTransfer: depotMock);
 
         service.SetOwner(house, 10, "NewOwner", 100, false, now, 86400);
 
-        depotMock.Verify(x => x.TransferToOwnerDepot(house,
-            It.Is<IPlayer>(p => p.Id == 1)),
-            Times.Once);
+        depotMock.Verify(x => x.TransferToOwnerDepot(house, 1u), Times.Once);
     }
 
     [Fact]
@@ -105,19 +96,11 @@ public class HouseServiceTests
             tiles: new List<Mock<IDynamicTile>> { tileMock });
 
         var depotMock = new Mock<IHouseDepotTransfer>();
-        var oldOwnerPlayer = HouseTestDataBuilder.CreatePlayer(id: 1);
-        var creatureGameInstanceMock = new Mock<ICreatureGameInstance>();
-        var outPlayer = oldOwnerPlayer;
-        creatureGameInstanceMock
-            .Setup(x => x.TryGetPlayer(1, out outPlayer))
-            .Returns(true);
-
-        var service = CreateService(depotTransfer: depotMock, creatureGameInstance: creatureGameInstanceMock);
+        var service = CreateService(depotTransfer: depotMock);
 
         service.SetOwner(house, 10, "NewOwner", 100, false, now, 86400);
 
-        depotMock.Verify(x => x.TransferToOwnerDepot(house,
-            It.Is<IPlayer>(p => p.Id == 1)), Times.Once);
+        depotMock.Verify(x => x.TransferToOwnerDepot(house, 1u), Times.Once);
     }
 
     [Fact]
@@ -209,13 +192,15 @@ public class HouseServiceTests
         var player = HouseTestDataBuilder.CreatePlayerWithBank(id: 1, bankAmount: 0);
         var house = HouseTestDataBuilder.Build(ownerGuid: 1, paidUntil: now.AddDays(-1));
 
-        var service = CreateService();
+        var depotMock = new Mock<IHouseDepotTransfer>();
+        var service = CreateService(depotTransfer: depotMock);
 
         service.PayRent(house, player, now, 86400);
 
         capturedEvent.Should().NotBeNull();
         capturedEvent.House.Should().Be(house);
         capturedEvent.WarningNumber.Should().Be(1);
+        depotMock.Verify(x => x.TransferToOwnerDepot(It.IsAny<House>(), It.IsAny<uint>()), Times.Never);
     }
 
     [Fact]
@@ -228,12 +213,14 @@ public class HouseServiceTests
         var player = HouseTestDataBuilder.CreatePlayerWithBank(id: 1, bankAmount: 0);
         var house = HouseTestDataBuilder.Build(ownerGuid: 1, paidUntil: now.AddDays(-1), payRentWarnings: 6);
 
-        var service = CreateService();
+        var depotMock = new Mock<IHouseDepotTransfer>();
+        var service = CreateService(depotTransfer: depotMock);
 
         service.PayRent(house, player, now, 86400);
 
         capturedEvent.Should().NotBeNull();
         capturedEvent.House.Should().Be(house);
+        depotMock.Verify(x => x.TransferToOwnerDepot(house, player.Id), Times.Once);
     }
 
     [Fact]
@@ -371,7 +358,6 @@ public class HouseServiceTests
         Mock<IHouseEviction> eviction = null,
         Mock<IHouseBedWaker> bedWaker = null,
         Mock<IHouseDepotTransfer> depotTransfer = null,
-        Mock<ICreatureGameInstance> creatureGameInstance = null,
         HouseConfiguration houseConfiguration = null)
     {
         return new HouseService(
@@ -379,7 +365,6 @@ public class HouseServiceTests
             eviction?.Object ?? new Mock<IHouseEviction>().Object,
             bedWaker?.Object ?? new Mock<IHouseBedWaker>().Object,
             depotTransfer?.Object ?? new Mock<IHouseDepotTransfer>().Object,
-            creatureGameInstance?.Object ?? new Mock<ICreatureGameInstance>().Object,
             houseConfiguration ?? new HouseConfiguration());
     }
 }

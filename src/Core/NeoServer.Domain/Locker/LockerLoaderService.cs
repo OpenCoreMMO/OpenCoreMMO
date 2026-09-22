@@ -1,3 +1,4 @@
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Location.Structs;
@@ -29,7 +30,7 @@ public class LockerLoaderService(IItemFactory itemFactory, LockerManager lockerM
         locker = (Locker)itemFactory.Create(container.Metadata, container.Location);
 
         var mailInbox = (Container)itemFactory.Create(2593, new Location(0));
-        var chest = (Container)itemFactory.Create(2594, new Location(1));
+        var chest = (Container)itemFactory.Create(GameConstants.DEPOT_CHEST_SERVER_ID, new Location(1));
 
         locker.AddItem(mailInbox);
         locker.AddItem(chest);

@@ -58,15 +58,20 @@ public class PlayerDepotRepository : BaseRepository<PlayerDepotItemEntity>,
         neoContext.PlayerDepotItems.RemoveRange(items);
     }
 
-    public async Task Save(IPlayer player, IContainer depotChest)
+    public Task Save(IPlayer player, IContainer depotChest)
+    {
+        return Save(player.Id, depotChest);
+    }
+
+    public async Task Save(uint playerId, IContainer depotChest)
     {
         await using var context = NewDbContext;
 
-        await DeleteAll(player.Id, context);
+        await DeleteAll(playerId, context);
 
         if (depotChest is null) return;
 
-        await ContainerManager.Save<PlayerDepotItemEntity>(player, depotChest, context);
+        await ContainerManager.Save<PlayerDepotItemEntity>((int)playerId, depotChest, context);
         await context.SaveChangesAsync();
     }
 

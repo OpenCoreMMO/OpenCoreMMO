@@ -16,4 +16,7 @@ public interface IPlayerDepotRepository
 
     /// <summary>Saves the complete depot chest contents, replacing any existing data.</summary>
     Task Save(IPlayer player, IContainer depotChest);
+
+    /// <summary>Saves the complete depot chest contents for a player who may be offline.</summary>
+    Task Save(uint playerId, IContainer depotChest);
 }

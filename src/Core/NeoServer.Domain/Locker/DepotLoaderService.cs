@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using NeoServer.Domain.Common;
 using NeoServer.Domain.Common.Contracts.Creatures;
 using NeoServer.Domain.Common.Contracts.Items;
 using NeoServer.Domain.Common.Contracts.Items.Types;
@@ -34,7 +35,7 @@ public class DepotLoaderService
         if (locker is null)
             throw new Exception($"Locker does not exist for player {player.Id}");
 
-        if (locker.Items.FirstOrDefault()?.ServerId != 2594)
+        if (locker.Items.FirstOrDefault()?.ServerId != GameConstants.DEPOT_CHEST_SERVER_ID)
             throw new Exception($"Depot chest is not the first container in the Locker for player {player.Id}");
 
         if (_lockerManager.IsDepotLoaded(player.Id))

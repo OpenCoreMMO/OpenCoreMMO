@@ -17,7 +17,6 @@ public class HouseService(
     IHouseEviction eviction,
     IHouseBedWaker bedWaker,
     IHouseDepotTransfer depotTransfer,
-    ICreatureGameInstance creatureGameInstance,
     HouseConfiguration houseConfiguration) : IHouseService
 {
     /// <summary>Transfer house to a new owner. Evicts old occupants, wakes beds, moves items to the old owner depot.</summary>
@@ -49,8 +48,7 @@ public class HouseService(
 
             if (houseConfiguration.TransferItemsToDepotOnOwnershipChange)
             {
-                creatureGameInstance.TryGetPlayer(oldOwnerGuid, out var oldOwnerPlayer);
-                depotTransfer.TransferToOwnerDepot(house, oldOwnerPlayer);
+                depotTransfer.TransferToOwnerDepot(house, oldOwnerGuid);
             }
         }
 
@@ -71,7 +69,7 @@ public class HouseService(
 
         if (result == HouseRentResult.Evicted)
         {
-            depotTransfer.TransferToOwnerDepot(house, owner);
+            depotTransfer.TransferToOwnerDepot(house, owner.Id);
             EventAggregator.Invoke(new HouseEvictedEvent(house));
         }
 

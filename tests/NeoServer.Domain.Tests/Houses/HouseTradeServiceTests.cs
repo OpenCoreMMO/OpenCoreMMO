@@ -271,7 +271,6 @@ public class HouseTradeServiceTests
             new Mock<IHouseEviction>().Object,
             new Mock<IHouseBedWaker>().Object,
             new Mock<IHouseDepotTransfer>().Object,
-            new Mock<ICreatureGameInstance>().Object,
             new HouseConfiguration());
 
         var tradeService = new HouseTradeService(
